@@ -52,7 +52,10 @@
               "apps/web/tsconfig.json",
               "apps/web/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/web/**"]
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/web/**"
+            ]
           }
         },
         "test": {
@@ -88,8 +91,75 @@
           "options": {
             "linter": "eslint",
             "config": "apps/web-e2e/.eslintrc",
-            "tsConfig": ["apps/web-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/web-e2e/**"]
+            "tsConfig": [
+              "apps/web-e2e/tsconfig.e2e.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/web-e2e/**"
+            ]
+          }
+        }
+      }
+    },
+    "myapp": {
+      "root": "apps/myapp",
+      "sourceRoot": "apps/myapp/src",
+      "projectType": "application",
+      "prefix": "myapp",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/myapp",
+            "main": "apps/myapp/src/main.ts",
+            "tsConfig": "apps/myapp/tsconfig.app.json",
+            "assets": [
+              "apps/myapp/src/assets"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/myapp/src/environments/environment.ts",
+                  "with": "apps/myapp/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "myapp:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/myapp/.eslintrc",
+            "tsConfig": [
+              "apps/myapp/tsconfig.app.json",
+              "apps/myapp/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/myapp/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/myapp/jest.config.js",
+            "tsConfig": "apps/myapp/tsconfig.spec.json",
+            "passWithNoTests": true
           }
         }
       }
