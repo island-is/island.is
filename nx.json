@@ -7,7 +7,6 @@
       "devDependencies": "*"
     },
     "tsconfig.json": "*",
-    "tslint.json": "*",
     "nx.json": "*"
   },
   "tasksRunnerOptions": {
@@ -18,7 +17,8 @@
           "build",
           "lint",
           "test",
-          "e2e"
+          "e2e",
+          "build-storybook"
         ]
       }
     }
@@ -35,6 +35,15 @@
     },
     "myapp": {
       "tags": []
+    },
+    "components": {
+      "tags": []
+    },
+    "components-e2e": {
+      "tags": [],
+      "implicitDependencies": [
+        "components"
+      ]
     }
   }
 }

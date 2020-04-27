@@ -34,13 +34,18 @@
     "react-dom": "16.12.0"
   },
   "devDependencies": {
+    "@babel/core": "7.8.3",
     "@nrwl/cypress": "9.2.2",
     "@nrwl/eslint-plugin-nx": "9.2.2",
     "@nrwl/jest": "9.2.2",
     "@nrwl/next": "9.2.2",
+    "@nrwl/node": "9.2.2",
     "@nrwl/react": "9.2.2",
+    "@nrwl/storybook": "^9.2.2",
     "@nrwl/web": "9.2.2",
     "@nrwl/workspace": "9.2.2",
+    "@storybook/addon-knobs": "5.3.9",
+    "@storybook/react": "5.3.9",
     "@testing-library/react": "9.4.0",
     "@types/jest": "25.1.4",
     "@types/node": "~8.9.4",
@@ -48,6 +53,7 @@
     "@types/react-dom": "16.9.4",
     "@typescript-eslint/eslint-plugin": "2.19.2",
     "@typescript-eslint/parser": "2.19.2",
+    "babel-loader": "8.0.6",
     "cypress": "^4.1.0",
     "dotenv": "6.2.0",
     "eslint": "6.8.0",
@@ -61,8 +67,6 @@
     "prettier": "1.19.1",
     "ts-jest": "25.2.1",
     "ts-node": "~7.0.0",
-    "tslint": "~6.0.0",
-    "typescript": "~3.8.3",
-    "@nrwl/node": "9.2.2"
+    "typescript": "~3.8.3"
   }
 }

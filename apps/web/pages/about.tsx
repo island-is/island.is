@@ -4,7 +4,6 @@ import './index.scss';
 
 import { ReactComponent as NxLogo } from '../assets/nx-logo-white.svg';
 import { environment } from '../environments/environment';
-import { Components } from '@island.is/components';
 
 export const Index = () => {
   /*
@@ -20,7 +19,6 @@ export const Index = () => {
       </header>
       <main>
         <h2>Resources &amp; Tools</h2>
-        <Components />
         <p>Thank you for using and showing some ♥ for Nx.</p>
         <div className="flex github-star-container">
           <a
