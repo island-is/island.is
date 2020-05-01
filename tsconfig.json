@@ -16,7 +16,11 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@island.is/components": ["libs/components/src/index.ts"]
+      "@island.is/island-ui": ["libs/island-ui/src/index.ts"],
+      "@island.is/web/*": ["apps/web/*"],
+      "@island.is/lol/dir/nested/my-lib": [
+        "libs/lol/dir/nested/my-lib/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

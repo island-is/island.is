@@ -52,10 +52,7 @@
               "apps/web/tsconfig.json",
               "apps/web/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/web/**"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/web/**"]
           }
         },
         "test": {
@@ -91,82 +88,15 @@
           "options": {
             "linter": "eslint",
             "config": "apps/web-e2e/.eslintrc",
-            "tsConfig": [
-              "apps/web-e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/web-e2e/**"
-            ]
+            "tsConfig": ["apps/web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/web-e2e/**"]
           }
         }
       }
     },
-    "myapp": {
-      "root": "apps/myapp",
-      "sourceRoot": "apps/myapp/src",
-      "projectType": "application",
-      "prefix": "myapp",
-      "schematics": {},
-      "architect": {
-        "build": {
-          "builder": "@nrwl/node:build",
-          "options": {
-            "outputPath": "dist/apps/myapp",
-            "main": "apps/myapp/src/main.ts",
-            "tsConfig": "apps/myapp/tsconfig.app.json",
-            "assets": [
-              "apps/myapp/src/assets"
-            ]
-          },
-          "configurations": {
-            "production": {
-              "optimization": true,
-              "extractLicenses": true,
-              "inspect": false,
-              "fileReplacements": [
-                {
-                  "replace": "apps/myapp/src/environments/environment.ts",
-                  "with": "apps/myapp/src/environments/environment.prod.ts"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/node:execute",
-          "options": {
-            "buildTarget": "myapp:build"
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "config": "apps/myapp/.eslintrc",
-            "tsConfig": [
-              "apps/myapp/tsconfig.app.json",
-              "apps/myapp/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/myapp/**"
-            ]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "apps/myapp/jest.config.js",
-            "tsConfig": "apps/myapp/tsconfig.spec.json",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
-    "components": {
-      "root": "libs/components",
-      "sourceRoot": "libs/components/src",
+    "island-ui": {
+      "root": "libs/island-ui",
+      "sourceRoot": "libs/island-ui/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -174,22 +104,19 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/components/.eslintrc",
+            "config": "libs/island-ui/.eslintrc",
             "tsConfig": [
-              "libs/components/tsconfig.lib.json",
-              "libs/components/tsconfig.spec.json"
+              "libs/island-ui/tsconfig.lib.json",
+              "libs/island-ui/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/components/**"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/island-ui/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/components/jest.config.js",
-            "tsConfig": "libs/components/tsconfig.spec.json",
+            "jestConfig": "libs/island-ui/jest.config.js",
+            "tsConfig": "libs/island-ui/tsconfig.spec.json",
             "passWithNoTests": true
           }
         },
@@ -199,7 +126,7 @@
             "uiFramework": "@storybook/react",
             "port": 4400,
             "config": {
-              "configFolder": "libs/components/.storybook"
+              "configFolder": "libs/island-ui/.storybook"
             }
           },
           "configurations": {
@@ -212,9 +139,9 @@
           "builder": "@nrwl/storybook:build",
           "options": {
             "uiFramework": "@storybook/react",
-            "outputPath": "dist/storybook/components",
+            "outputPath": "dist/storybook/island-ui",
             "config": {
-              "configFolder": "libs/components/.storybook"
+              "configFolder": "libs/island-ui/.storybook"
             }
           },
           "configurations": {
@@ -224,44 +151,10 @@
           }
         }
       }
-    },
-    "components-e2e": {
-      "root": "apps/components-e2e",
-      "sourceRoot": "apps/components-e2e/src",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@nrwl/cypress:cypress",
-          "options": {
-            "cypressConfig": "apps/components-e2e/cypress.json",
-            "tsConfig": "apps/components-e2e/tsconfig.e2e.json",
-            "devServerTarget": "components:storybook"
-          },
-          "configurations": {
-            "ci": {
-              "devServerTarget": "components:storybook:ci"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "config": "apps/components-e2e/.eslintrc",
-            "tsConfig": [
-              "apps/components-e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/components-e2e/**"
-            ]
-          }
-        }
-      }
     }
   },
   "cli": {
-    "defaultCollection": "@nrwl/next"
+    "defaultCollection": "@nrwl/react"
   },
   "schematics": {
     "@nrwl/workspace": {
@@ -277,7 +170,14 @@
     "@nrwl/react": {
       "application": {
         "linter": "eslint",
+        "pascalCaseFiles": true,
+        "style": "scss",
         "babel": true
+      },
+      "component": {
+        "pascalCaseFiles": true,
+        "style": "scss",
+        "export": true
       }
     },
     "@nrwl/next": {

@@ -29,21 +29,10 @@
     },
     "web-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "web"
-      ]
+      "implicitDependencies": ["web"]
     },
-    "myapp": {
+    "island-ui": {
       "tags": []
-    },
-    "components": {
-      "tags": []
-    },
-    "components-e2e": {
-      "tags": [],
-      "implicitDependencies": [
-        "components"
-      ]
     }
   }
 }

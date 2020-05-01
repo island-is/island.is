@@ -1,76 +1,57 @@
-# Island.Is
+# Island
 
-This project was generated using [Nx](https://nx.dev).
+## Working in the monorepo
 
-<p align="center"><img src="https://raw.githubusercontent.com/nrwl/nx/master/nx-logo.png" width="450"></p>
+### Generate an application
 
-🔎 **Nx is a set of Extensible Dev Tools for Monorepos.**
+Run `yarn generate @nrwl/react:app my-app` to generate a simple React application.
 
-## Adding capabilities to your workspace
+To get a React application with server-side-rendering, we recommend using Next.JS: `yarn generate @nrwl/next:app my-app`
 
-Nx supports many plugins which add capabilities for developing different types of applications and different tools.
+To create an API, you can get started with Node.JS like this: `yarn generate @nrwl/node:app my-api`
 
-These capabilities include generating applications, libraries, etc as well as the devtools to test, and build projects as well.
+### Generate a library
 
-Below are some plugins which you can add to your workspace:
+Run `yarn generate @nrwl/react:lib my-lib` to generate a React library.
 
-- [React](https://reactjs.org)
-  - `npm install --save-dev @nrwl/react`
-- Web (no framework frontends)
-  - `npm install --save-dev @nrwl/web`
-- [Angular](https://angular.io)
-  - `npm install --save-dev @nrwl/angular`
-- [Nest](https://nestjs.com)
-  - `npm install --save-dev @nrwl/nest`
-- [Express](https://expressjs.com)
-  - `npm install --save-dev @nrwl/express`
-- [Node](https://nodejs.org)
-  - `npm install --save-dev @nrwl/node`
+To create a JS library that can be used on the server as well: `yarn generate @nrwl/node:lib my-lib`
 
-## Generate an application
+Libraries are sharable across libraries and applications. They can be imported from `@island.is/my-lib`.
 
-Run `nx g @nrwl/react:app my-app` to generate an application.
+Applications and libraries can be structured in a hierarchy using subfolders:
 
-> You can use any of the plugins above to generate applications as well.
+```
+yarn generate @nrwl/node:lib common/my-lib
+```
 
-When using Nx, you can create multiple applications and libraries in the same workspace.
+### Generate a component
 
-## Generate a library
+Run `yarn generate @nrwl/react:component MyComponent --project=island-ui` to generate a new component in island-ui.
 
-Run `nx g @nrwl/react:lib my-lib` to generate a library.
+### Development server
 
-> You can also use any of the plugins above to generate libraries as well.
+Run `yarn start web` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
 
-Libraries are sharable across libraries and applications. They can be imported from `@island.is/mylib`.
+### Build
 
-## Development server
+Run `yarn build web` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
-Run `nx serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+### Running unit tests
 
-## Code scaffolding
+Run `yarn test web` to execute the unit tests via [Jest](https://jestjs.io).
 
-Run `nx g @nrwl/react:component my-component --project=my-app` to generate a new component.
+Run `yarn affected:test` to execute the unit tests affected by a change.
 
-## Build
+### Running end-to-end tests
 
-Run `nx build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Run `yarn e2e web-e2e` to execute end-to-end tests via [Cypress](https://www.cypress.io).
 
-## Running unit tests
+Run `yarn affected:e2e` to execute the end-to-end tests affected by a change.
 
-Run `nx test my-app` to execute the unit tests via [Jest](https://jestjs.io).
+### Understand your workspace
 
-Run `nx affected:test` to execute the unit tests affected by a change.
+Run `yarn nx dep-graph` to see a diagram of the dependencies of your projects.
 
-## Running end-to-end tests
-
-Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
-
-Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
-
-## Understand your workspace
-
-Run `nx dep-graph` to see a diagram of the dependencies of your projects.
-
-## Further help
+### Further help
 
 Visit the [Nx Documentation](https://nx.dev) to learn more.
