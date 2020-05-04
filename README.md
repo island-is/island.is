@@ -2,6 +2,30 @@
 
 ## Working in the monorepo
 
+### Development server
+
+Run `yarn start web` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+
+### Build
+
+Run `yarn build web` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+
+### Running unit tests
+
+Run `yarn test web` to execute the unit tests via [Jest](https://jestjs.io).
+
+Run `yarn affected:test` to execute the unit tests affected by a change.
+
+### Running end-to-end tests
+
+Run `yarn e2e web-e2e` to execute end-to-end tests via [Cypress](https://www.cypress.io).
+
+Run `yarn affected:e2e` to execute the end-to-end tests affected by a change.
+
+### Generate a component
+
+Run `yarn generate @nrwl/react:component MyComponent --project=island-ui` to generate a new component in island-ui.
+
 ### Generate an application
 
 Run `yarn generate @nrwl/react:app my-app` to generate a simple React application.
@@ -23,30 +47,6 @@ Applications and libraries can be structured in a hierarchy using subfolders:
 ```
 yarn generate @nrwl/node:lib common/my-lib
 ```
-
-### Generate a component
-
-Run `yarn generate @nrwl/react:component MyComponent --project=island-ui` to generate a new component in island-ui.
-
-### Development server
-
-Run `yarn start web` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
-
-### Build
-
-Run `yarn build web` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-### Running unit tests
-
-Run `yarn test web` to execute the unit tests via [Jest](https://jestjs.io).
-
-Run `yarn affected:test` to execute the unit tests affected by a change.
-
-### Running end-to-end tests
-
-Run `yarn e2e web-e2e` to execute end-to-end tests via [Cypress](https://www.cypress.io).
-
-Run `yarn affected:e2e` to execute the end-to-end tests affected by a change.
 
 ### Understand your workspace
 
