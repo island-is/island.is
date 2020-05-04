@@ -1,0 +1,22 @@
+generates:
+  ./apps/gjafakort-api/src/types/schema.d.ts:
+    schema:
+      - ./apps/gjafakort-api/src/graphql/**/typeDefs.ts
+    plugins:
+      - typescript
+      - typescript-resolvers
+  ./apps/gjafakort-web/graphql/schema.tsx:
+    schema:
+      - ./apps/gjafakort-api/src/graphql/**/typeDefs.ts
+    documents:
+      - ./apps/gjafakort-web/screens/**/*.(ts|tsx)
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo
+    config:
+      withHooks: true
+      withHOC: false
+      withComponent: false
+      avoidOptionals:
+        object: true

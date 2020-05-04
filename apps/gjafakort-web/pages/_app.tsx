@@ -1,7 +1,9 @@
 import React from 'react'
 import Head from 'next/head'
+import { ApolloProvider } from 'react-apollo'
 import { Page, Header, Footer } from '../components'
 import '../global-styles.css'
+import initApollo from '../graphql/client';
 
 const Layout: React.FC = ({ children }) => {
   return (
@@ -91,11 +93,14 @@ const Layout: React.FC = ({ children }) => {
 const SupportApplication: React.FC<{
   Component: React.FC
   pageProps: any
+  apolloClient: any
 }> = ({ Component, pageProps }) => {
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <ApolloProvider client={initApollo(pageProps.apolloState)}>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+    </ApolloProvider>
   )
 }
 

@@ -323,6 +323,14 @@
             "tsConfig": "apps/gjafakort-api/tsconfig.spec.json",
             "passWithNoTests": true
           }
+        },
+        "codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+                { "command": "graphql-codegen --config apps/gjafakort-api/codegen.yml" }
+            ]
+          }
         }
       }
     }
