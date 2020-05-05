@@ -4,6 +4,7 @@ import { ApolloProvider } from 'react-apollo'
 import { Page, Header, Footer } from '../components'
 import '../global-styles.css'
 import initApollo from '../graphql/client'
+import appWithTranslation from '../i18n/appWithTranslation'
 
 const Layout: React.FC = ({ children }) => {
   return (
@@ -104,4 +105,4 @@ const SupportApplication: React.FC<{
   )
 }
 
-export default SupportApplication
+export default appWithTranslation(SupportApplication)

@@ -30,18 +30,19 @@
   "private": true,
   "dependencies": {
     "@zeit/next-sass": "1.0.1",
-    "apollo-cache-inmemory": "^1.6.5",
-    "apollo-client": "^2.6.8",
-    "apollo-link-http": "^1.5.17",
-    "apollo-server-express": "^2.13.0",
+    "apollo-cache-inmemory": "1.6.5",
+    "apollo-client": "2.6.8",
+    "apollo-link-http": "1.5.17",
+    "apollo-server-express": "2.13.0",
     "document-register-element": "1.13.1",
-    "graphql-tag": "^2.10.3",
-    "isomorphic-unfetch": "^3.0.0",
-    "lodash": "^4.17.15",
+    "graphql-tag": "2.10.3",
+    "isomorphic-unfetch": "3.0.0",
+    "lodash": "4.17.15",
     "next": "9.3.3",
     "react": "16.12.0",
-    "react-apollo": "^3.1.5",
-    "react-dom": "16.12.0"
+    "react-apollo": "3.1.5",
+    "react-dom": "16.12.0",
+    "rosetta": "1.0.0"
   },
   "devDependencies": {
     "@babel/core": "7.8.3",

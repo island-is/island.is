@@ -6,6 +6,7 @@ import {
 } from '../graphql/schema'
 import { Screen } from './types'
 import { withApollo } from '../graphql'
+import { useI18n } from '../i18n'
 
 interface HomePageProps {
   application: GetApplicationQuery['getApplication']
@@ -19,11 +20,16 @@ const QUERY = gql`
   }
 `
 
-const HomePage: Screen<HomePageProps> = ({ application }) => (
-  <div>
-    <h1>You have visited the Home Page with application {application.id}</h1>
-  </div>
-)
+const HomePage: Screen<HomePageProps> = ({ application }) => {
+  const { t } = useI18n()
+  return (
+    <div>
+      <h1>
+        {t('intro.welcome')} {application.id}
+      </h1>
+    </div>
+  )
+}
 
 HomePage.getInitialProps = async ({ apolloClient }) => {
   const {
