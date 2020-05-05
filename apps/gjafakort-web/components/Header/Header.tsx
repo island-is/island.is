@@ -1,7 +1,8 @@
 import React from 'react';
+import styles from './Header.module.css';
 
 export const Header = () => (
-  <header>
-    i am good header
+  <header className={styles.wrapper}>
+    I am a good header
   </header>
 );

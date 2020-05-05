@@ -1,10 +1,8 @@
 import React from 'react';
+import styles from './Page.module.css';
 
 export const Page = ({children}) => (
-  <div>
-    i am good page
-    <div>
-      {children}
-    </div>
-  </div>
+  <main className={styles.container}>
+    {children}
+  </main>
 );
