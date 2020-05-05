@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server-express';
+import { gql } from 'apollo-server-express'
 
 export default gql`
   type Application {
@@ -8,4 +8,4 @@ export default gql`
   extend type Query {
     getApplication: Application
   }
-`;
+`

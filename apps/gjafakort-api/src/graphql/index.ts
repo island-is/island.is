@@ -6,8 +6,9 @@ import rootTypeDefs from './typeDefs'
 import domains from './domains'
 
 const resolvers = domains.reduce(
-  (combinedDomains, currentDomain) => merge(currentDomain.resolvers, combinedDomains),
-  {}
+  (combinedDomains, currentDomain) =>
+    merge(currentDomain.resolvers, combinedDomains),
+  {},
 )
 
 const typeDefs = [rootTypeDefs, ...domains.map((domain) => domain.typeDefs)]

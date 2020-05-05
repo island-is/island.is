@@ -1,3 +1,3 @@
-import applications from './applications';
+import applications from './applications'
 
-export default [applications];
+export default [applications]

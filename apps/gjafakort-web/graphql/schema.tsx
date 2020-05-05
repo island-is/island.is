@@ -1,51 +1,47 @@
-import gql from 'graphql-tag';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
-export type Maybe<T> = T | null;
+import gql from 'graphql-tag'
+import * as ApolloReactCommon from '@apollo/react-common'
+import * as ApolloReactHooks from '@apollo/react-hooks'
+export type Maybe<T> = T | null
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string;
-  String: string;
-  Boolean: boolean;
-  Int: number;
-  Float: number;
-};
+  ID: string
+  String: string
+  Boolean: boolean
+  Int: number
+  Float: number
+}
 
 export type Application = {
-   __typename?: 'Application';
-  id: Scalars['String'];
-};
+  __typename?: 'Application'
+  id: Scalars['String']
+}
 
 export type Mutation = {
-   __typename?: 'Mutation';
-  root?: Maybe<Scalars['String']>;
-};
+  __typename?: 'Mutation'
+  root?: Maybe<Scalars['String']>
+}
 
 export type Query = {
-   __typename?: 'Query';
-  getApplication?: Maybe<Application>;
-  root?: Maybe<Scalars['String']>;
-};
+  __typename?: 'Query'
+  getApplication?: Maybe<Application>
+  root?: Maybe<Scalars['String']>
+}
 
-export type GetApplicationQueryVariables = {};
+export type GetApplicationQueryVariables = {}
 
-
-export type GetApplicationQuery = (
-  { __typename?: 'Query' }
-  & { getApplication?: Maybe<(
-    { __typename?: 'Application' }
-    & Pick<Application, 'id'>
-  )> }
-);
-
+export type GetApplicationQuery = { __typename?: 'Query' } & {
+  getApplication?: Maybe<
+    { __typename?: 'Application' } & Pick<Application, 'id'>
+  >
+}
 
 export const GetApplicationDocument = gql`
-    query GetApplication {
-  getApplication {
-    id
+  query GetApplication {
+    getApplication {
+      id
+    }
   }
-}
-    `;
+`
 
 /**
  * __useGetApplicationQuery__
@@ -62,12 +58,35 @@ export const GetApplicationDocument = gql`
  *   },
  * });
  */
-export function useGetApplicationQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetApplicationQuery, GetApplicationQueryVariables>) {
-        return ApolloReactHooks.useQuery<GetApplicationQuery, GetApplicationQueryVariables>(GetApplicationDocument, baseOptions);
-      }
-export function useGetApplicationLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetApplicationQuery, GetApplicationQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<GetApplicationQuery, GetApplicationQueryVariables>(GetApplicationDocument, baseOptions);
-        }
-export type GetApplicationQueryHookResult = ReturnType<typeof useGetApplicationQuery>;
-export type GetApplicationLazyQueryHookResult = ReturnType<typeof useGetApplicationLazyQuery>;
-export type GetApplicationQueryResult = ApolloReactCommon.QueryResult<GetApplicationQuery, GetApplicationQueryVariables>;
+export function useGetApplicationQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    GetApplicationQuery,
+    GetApplicationQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useQuery<
+    GetApplicationQuery,
+    GetApplicationQueryVariables
+  >(GetApplicationDocument, baseOptions)
+}
+export function useGetApplicationLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    GetApplicationQuery,
+    GetApplicationQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useLazyQuery<
+    GetApplicationQuery,
+    GetApplicationQueryVariables
+  >(GetApplicationDocument, baseOptions)
+}
+export type GetApplicationQueryHookResult = ReturnType<
+  typeof useGetApplicationQuery
+>
+export type GetApplicationLazyQueryHookResult = ReturnType<
+  typeof useGetApplicationLazyQuery
+>
+export type GetApplicationQueryResult = ApolloReactCommon.QueryResult<
+  GetApplicationQuery,
+  GetApplicationQueryVariables
+>

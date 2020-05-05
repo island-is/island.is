@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { ApolloProvider } from 'react-apollo'
 import { Page, Header, Footer } from '../components'
 import '../global-styles.css'
-import initApollo from '../graphql/client';
+import initApollo from '../graphql/client'
 
 const Layout: React.FC = ({ children }) => {
   return (
@@ -97,9 +97,9 @@ const SupportApplication: React.FC<{
 }> = ({ Component, pageProps }) => {
   return (
     <ApolloProvider client={initApollo(pageProps.apolloState)}>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
     </ApolloProvider>
   )
 }

@@ -3,7 +3,7 @@ import { Resolvers } from '../../../types'
 const resolvers: Resolvers = {
   Query: {
     getApplication() {
-      return {id: '1'};
+      return { id: '1' }
     },
   },
 }

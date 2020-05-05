@@ -52,10 +52,7 @@
               "apps/web/tsconfig.json",
               "apps/web/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/web/**"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/web/**"]
           }
         },
         "test": {
@@ -91,13 +88,8 @@
           "options": {
             "linter": "eslint",
             "config": "apps/web-e2e/.eslintrc",
-            "tsConfig": [
-              "apps/web-e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/web-e2e/**"
-            ]
+            "tsConfig": ["apps/web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/web-e2e/**"]
           }
         }
       }
@@ -117,10 +109,7 @@
               "libs/island-ui/tsconfig.lib.json",
               "libs/island-ui/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/island-ui/**"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/island-ui/**"]
           }
         },
         "test": {
@@ -214,10 +203,7 @@
               "apps/gjafakort-web/tsconfig.json",
               "apps/gjafakort-web/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/gjafakort-web/**"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/gjafakort-web/**"]
           }
         },
         "test": {
@@ -253,13 +239,8 @@
           "options": {
             "linter": "eslint",
             "config": "apps/gjafakort-web-e2e/.eslintrc",
-            "tsConfig": [
-              "apps/gjafakort-web-e2e/tsconfig.e2e.json"
-            ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/gjafakort-web-e2e/**"
-            ]
+            "tsConfig": ["apps/gjafakort-web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/gjafakort-web-e2e/**"]
           }
         }
       }
@@ -277,9 +258,7 @@
             "outputPath": "dist/apps/gjafakort-api",
             "main": "apps/gjafakort-api/src/main.ts",
             "tsConfig": "apps/gjafakort-api/tsconfig.app.json",
-            "assets": [
-              "apps/gjafakort-api/src/assets"
-            ]
+            "assets": ["apps/gjafakort-api/src/assets"]
           },
           "configurations": {
             "production": {
@@ -310,10 +289,7 @@
               "apps/gjafakort-api/tsconfig.app.json",
               "apps/gjafakort-api/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!apps/gjafakort-api/**"
-            ]
+            "exclude": ["**/node_modules/**", "!apps/gjafakort-api/**"]
           }
         },
         "test": {
@@ -328,7 +304,9 @@
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
-                { "command": "graphql-codegen --config apps/gjafakort-api/codegen.yml" }
+              {
+                "command": "graphql-codegen --config apps/gjafakort-api/codegen.yml"
+              }
             ]
           }
         }
