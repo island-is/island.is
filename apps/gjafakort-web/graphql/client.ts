@@ -6,15 +6,16 @@ import getConfig from 'next/config'
 
 const { serverRuntimeConfig, publicRuntimeConfig } = getConfig()
 
-const isBrowser: boolean = (process as any).browser
+const isBrowser: boolean = (process as NodeJS.Process).browser
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
 // Polyfill fetch() on the server (used by apollo-client)
 if (!isBrowser) {
-  ;(global as any).fetch = fetch
+  ;(global as any).fetch = fetch // eslint-disable-line
 }
 
+// eslint-disable-next-line
 function create(initialState: any) {
   const httpLink = createHttpLink({
     uri: serverRuntimeConfig.apiUrl || publicRuntimeConfig.apiUrl,
@@ -29,6 +30,7 @@ function create(initialState: any) {
   })
 }
 
+// eslint-disable-next-line
 export default function initApollo(initialState?: any) {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)

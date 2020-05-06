@@ -1,6 +1,9 @@
 import React from 'react'
 import Head from 'next/head'
+import { AppProps } from 'next/app'
 import { ApolloProvider } from 'react-apollo'
+import { ApolloClient } from 'apollo-client'
+import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { Page, Header, Footer } from '../components'
 import '../global-styles.css'
 import initApollo from '../graphql/client'
@@ -93,8 +96,8 @@ const Layout: React.FC = ({ children }) => {
 
 const SupportApplication: React.FC<{
   Component: React.FC
-  pageProps: any
-  apolloClient: any
+  pageProps: AppProps['pageProps']
+  apolloClient: ApolloClient<NormalizedCacheObject>
 }> = ({ Component, pageProps }) => {
   return (
     <ApolloProvider client={initApollo(pageProps.apolloState)}>

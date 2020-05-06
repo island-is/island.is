@@ -1,0 +1,65 @@
+name: Monorepo build
+
+on:
+  push:
+    branches:
+      - 'master'
+    paths-ignore:
+      - '**/*.md'
+  pull_request:
+    branches: [master]
+
+jobs:
+  check-code:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setting up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+
+      - name: Get global yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Pulling cache for global Yarn modules cache
+        uses: actions/cache@v1
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn
+          restore-keys: |
+            ${{ runner.os }}-yarn
+
+      - name: Pulling cache for Node.js modules
+        uses: actions/cache@v1
+        id: node-modules-cache
+        with:
+          path: ./node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('./yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-node-modules-
+
+      - name: Installing dependencies
+        run: yarn
+
+      # - name: Auditing Node.js modules
+      #   run: yarn run security:audit
+
+      - name: Linting code
+        run: yarn run affected:lint --base origin/master
+
+      - name: Check formatting of code
+        run: yarn run format:check --base origin/master
+
+      # - name: Run tests
+      #   run: yarn nx affected:test --base origin/master
+
+      - name: Building code
+        run: yarn run affected:build --base origin/master
+
+      # - name: Running E2E tests
+      #   run: yarn run affected:e2e --base origin/master
