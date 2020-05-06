@@ -20,7 +20,7 @@ const QUERY = gql`
   }
 `
 
-const HomePage: Screen<HomePageProps> = ({ application }) => {
+export const HomePage: Screen<HomePageProps> = ({ application }) => {
   const { t } = useI18n()
   return (
     <div>

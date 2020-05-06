@@ -55,8 +55,8 @@ jobs:
       - name: Check formatting of code
         run: yarn run format:check --base origin/master
 
-      # - name: Run tests
-      #   run: yarn nx affected:test --base origin/master
+      - name: Run tests
+        run: yarn run affected:test --base origin/master
 
       - name: Building code
         run: yarn run affected:build --base origin/master
