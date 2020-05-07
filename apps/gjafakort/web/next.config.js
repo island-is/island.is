@@ -10,7 +10,7 @@ module.exports = withSass(
   withCss({
     cssModules: true,
     sassLoaderOptions: {
-      includePaths: ['./apps/gjafakort-web/styles'],
+      includePaths: ['./apps/gjafakort/web/styles'],
     },
     serverRuntimeConfig: {
       // Will only be available on the server side
