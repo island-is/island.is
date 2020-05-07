@@ -1,12 +1,13 @@
 import React from 'react'
 import gql from 'graphql-tag'
+
 import {
   GetApplicationQuery,
   GetApplicationQueryVariables,
-} from '../graphql/schema'
-import { Screen } from './types'
-import { withApollo } from '../graphql'
-import { useI18n } from '../i18n'
+} from '../../graphql/schema'
+import { Screen } from '../types'
+import { withApollo } from '../../graphql'
+import { useI18n } from '../../i18n'
 
 interface HomePageProps {
   application: GetApplicationQuery['getApplication']
