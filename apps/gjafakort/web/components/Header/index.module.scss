@@ -1,0 +1,10 @@
+@import 'theme';
+
+.wrapper {
+  height: $spacing20;
+  border-bottom: $spacing-px solid $gray50;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
