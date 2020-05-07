@@ -1,0 +1,138 @@
+/**** SPACING ****/
+
+// Spacing
+$spacing0: 0;
+$spacing-px: 1px;
+$spacing1: 0.25rem;
+$spacing2: 0.5rem;
+$spacing3: 0.75rem;
+$spacing4: 1rem;
+$spacing5: 1.25rem;
+$spacing6: 1.5rem;
+$spacing8: 2rem;
+$spacing10: 2.5rem;
+$spacing12: 3rem;
+$spacing16: 4rem;
+$spacing20: 5rem;
+$spacing24: 6rem;
+$spacing32: 8rem;
+$spacing40: 10rem;
+$spacing48: 12rem;
+$spacing56: 14rem;
+$spacing64: 16rem;
+
+// Screen Breakpoints
+$screen-xs: 540px;
+$screen-sm: 640px;
+$screen-md: 768px;
+$screen-lg: 1024px;
+$screen-xl: 1280px;
+
+// Max Height
+$max-height-full: 100%;
+$max-height-screen: 100vh;
+
+// Max Width
+$max-width-xs: 20rem;
+$max-width-sm: 24rem;
+$max-width-md: 28rem;
+$max-width-lg: 32rem;
+$max-width-xl: 36rem;
+$max-width-2xl: 42rem;
+$max-width-3xl: 48rem;
+$max-width-4xl: 56rem;
+$max-width-5xl: 64rem;
+$max-width-6xl: 72rem;
+$max-width-full: 100%;
+
+// Min Height
+$min-height-0: 0;
+$min-height-full: 100%;
+$min-height-screen: 100vh;
+
+// Min Width
+$min-width-0: 0;
+$min-width-full: 100%;
+
+// Width
+$width-auto: auto;
+$width-1_2: 50%;
+$width-1_3: 33.333333%;
+$width-2_3: 66.666667%;
+$width-1_4: 25%;
+$width-2_4: 50%;
+$width-3_4: 75%;
+$width-1_5: 20%;
+$width-2_5: 40%;
+$width-3_5: 60%;
+$width-4_5: 80%;
+$width-1_6: 16.666667%;
+$width-2_6: 33.333333%;
+$width-3_6: 50%;
+$width-4_6: 66.666667%;
+$width-5_6: 83.333333%;
+$width-1_12: 8.333333%;
+$width-2_12: 16.666667%;
+$width-3_12: 25%;
+$width-4_12: 33.333333%;
+$width-5_12: 41.666667%;
+$width-6_12: 50%;
+$width-7_12: 58.333333%;
+$width-8_12: 66.666667%;
+$width-9_12: 75%;
+$width-10_12: 83.333333%;
+$width-11_12: 91.666667%;
+$width-full: 100%;
+$width-screen: 100vw;
+
+// Height
+$height-full: 100%;
+
+
+/**** COLORS ****/
+
+// Black & White
+$black: #000000;
+$white: #FFFFFF;
+
+// Gray
+$gray10: #F7FAFC;
+$gray20: #EDF2F7;
+$gray30: #E2E8F0;
+$gray40: #CBD5E0;
+$gray50: #A0AEC0;
+$gray60: #718096;
+$gray70: #4A5568;
+$gray80: #2D3748;
+$gray90: #1A202C;
+
+
+/**** Containers ****/
+
+// Border Radius
+$radius-none: 0;
+$radius-sm: .125rem;
+$radius-default: .25rem;
+$radius-lg: .5rem;
+$radius-full: 9999px;
+
+// Border Width
+$border-width-default: 1px;
+$border-width-0: 0;
+$border-width-2: 2px;
+$border-width-4: 4px;
+$border-width-8: 8px;
+
+// Borders
+$border-inner: 2px solid hsl(212, 12%, 72%);
+$border-outer: 4px solid #FFFFFF;
+
+// Box Shadow
+$box-shadow-default: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+$box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$box-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+$box-shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+$box-shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+$box-shadow-outline: 0 0 0 3px rgba(66, 153, 225, 0.5);
+$box-shadow-none: none;

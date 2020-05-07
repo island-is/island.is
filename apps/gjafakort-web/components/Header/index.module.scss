@@ -1,6 +1,8 @@
+@import 'theme';
+
 .wrapper {
-  height: 50px;
-  border-bottom: 1px solid #ccc;
+  height: $spacing20;
+  border-bottom: $spacing-px solid $gray50;
 
   display: flex;
   justify-content: center;

@@ -1,6 +1,6 @@
-@import 'consts/theme';
+@import 'theme';
 
 .container {
-  min-height: 100vh;
-  background-color: $base-color;
+  min-height: $max-height-screen;
+  background-color: $gray10;
 }
