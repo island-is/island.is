@@ -2,7 +2,6 @@ import React from 'react'
 import gql from 'graphql-tag'
 
 import { Application } from '../../graphql/schema'
-import { Screen } from '../types'
 import { withApollo } from '../../graphql'
 import { useI18n } from '../../i18n'
 
