@@ -153,23 +153,23 @@
       }
     },
     "gjafakort-web": {
-      "root": "apps/gjafakort-web",
-      "sourceRoot": "apps/gjafakort-web",
+      "root": "apps/gjafakort/web",
+      "sourceRoot": "apps/gjafakort/web",
       "projectType": "application",
       "schematics": {},
       "architect": {
         "build": {
           "builder": "@nrwl/next:build",
           "options": {
-            "root": "apps/gjafakort-web",
-            "outputPath": "dist/apps/gjafakort-web"
+            "root": "apps/gjafakort/web",
+            "outputPath": "dist/apps/gjafakort/web"
           },
           "configurations": {
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "apps/gjafakort-web/environments/environment.ts",
-                  "with": "apps/gjafakort-web/environments/environment.prod.ts"
+                  "replace": "apps/gjafakort/web/environments/environment.ts",
+                  "with": "apps/gjafakort/web/environments/environment.prod.ts"
                 }
               ]
             }
@@ -198,39 +198,39 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/gjafakort-web/.eslintrc",
+            "config": "apps/gjafakort/web/.eslintrc",
             "tsConfig": [
-              "apps/gjafakort-web/tsconfig.json",
-              "apps/gjafakort-web/tsconfig.spec.json"
+              "apps/gjafakort/web/tsconfig.json",
+              "apps/gjafakort/web/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/gjafakort-web/**"]
+            "exclude": ["**/node_modules/**", "!apps/gjafakort/web/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/gjafakort-web/jest.config.js",
-            "tsConfig": "apps/gjafakort-web/tsconfig.spec.json",
+            "jestConfig": "apps/gjafakort/web/jest.config.js",
+            "tsConfig": "apps/gjafakort/web/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }
       }
     },
     "gjafakort-web-e2e": {
-      "root": "apps/gjafakort-web-e2e",
-      "sourceRoot": "apps/gjafakort-web-e2e/src",
+      "root": "apps/gjafakort/web-e2e",
+      "sourceRoot": "apps/gjafakort/web-e2e/src",
       "projectType": "application",
       "architect": {
         "e2e": {
           "builder": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/gjafakort-web-e2e/cypress.json",
-            "tsConfig": "apps/gjafakort-web-e2e/tsconfig.e2e.json",
-            "devServerTarget": "gjafakort-web:serve"
+            "cypressConfig": "apps/gjafakort/web-e2e/cypress.json",
+            "tsConfig": "apps/gjafakort/web-e2e/tsconfig.e2e.json",
+            "devServerTarget": "gjafakort/web:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "gjafakort-web:serve:production"
+              "devServerTarget": "gjafakort/web:serve:production"
             }
           }
         },
@@ -238,16 +238,16 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/gjafakort-web-e2e/.eslintrc",
-            "tsConfig": ["apps/gjafakort-web-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/gjafakort-web-e2e/**"]
+            "config": "apps/gjafakort/web-e2e/.eslintrc",
+            "tsConfig": ["apps/gjafakort/web-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/gjafakort/web-e2e/**"]
           }
         }
       }
     },
     "gjafakort-api": {
-      "root": "apps/gjafakort-api",
-      "sourceRoot": "apps/gjafakort-api/src",
+      "root": "apps/gjafakort/api",
+      "sourceRoot": "apps/gjafakort/api/src",
       "projectType": "application",
       "prefix": "gjafakort-api",
       "schematics": {},
@@ -255,9 +255,9 @@
         "build": {
           "builder": "@nrwl/node:build",
           "options": {
-            "outputPath": "dist/apps/gjafakort-api",
-            "main": "apps/gjafakort-api/src/main.ts",
-            "tsConfig": "apps/gjafakort-api/tsconfig.app.json",
+            "outputPath": "dist/apps/gjafakort/api",
+            "main": "apps/gjafakort/api/src/main.ts",
+            "tsConfig": "apps/gjafakort/api/tsconfig.app.json",
             "assets": []
           },
           "configurations": {
@@ -267,8 +267,8 @@
               "inspect": false,
               "fileReplacements": [
                 {
-                  "replace": "apps/gjafakort-api/src/environments/environment.ts",
-                  "with": "apps/gjafakort-api/src/environments/environment.prod.ts"
+                  "replace": "apps/gjafakort/api/src/environments/environment.ts",
+                  "with": "apps/gjafakort/api/src/environments/environment.prod.ts"
                 }
               ]
             }
@@ -284,19 +284,19 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/gjafakort-api/.eslintrc",
+            "config": "apps/gjafakort/api/.eslintrc",
             "tsConfig": [
-              "apps/gjafakort-api/tsconfig.app.json",
-              "apps/gjafakort-api/tsconfig.spec.json"
+              "apps/gjafakort/api/tsconfig.app.json",
+              "apps/gjafakort/api/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/gjafakort-api/**"]
+            "exclude": ["**/node_modules/**", "!apps/gjafakort/api/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/gjafakort-api/jest.config.js",
-            "tsConfig": "apps/gjafakort-api/tsconfig.spec.json",
+            "jestConfig": "apps/gjafakort/api/jest.config.js",
+            "tsConfig": "apps/gjafakort/api/tsconfig.spec.json",
             "passWithNoTests": true
           }
         },
@@ -305,7 +305,7 @@
           "options": {
             "commands": [
               {
-                "command": "graphql-codegen --config apps/gjafakort-api/codegen.yml"
+                "command": "graphql-codegen --config apps/gjafakort/api/codegen.yml"
               }
             ]
           }
