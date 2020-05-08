@@ -2,6 +2,12 @@ import React from 'react'
 
 import styles from './index.module.scss'
 
-export const Page = ({ children }) => (
-  <main className={styles.container}>{children}</main>
-)
+interface PropTypes {
+  children: React.ReactNode
+}
+
+function Page({ children }: PropTypes) {
+  return <main className={styles.container}>{children}</main>
+}
+
+export default Page
