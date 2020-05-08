@@ -1,19 +1,16 @@
 import React from 'react'
 import gql from 'graphql-tag'
 
-import {
-  GetApplicationQuery,
-  GetApplicationQueryVariables,
-} from '../../graphql/schema'
+import { Application } from '../../graphql/schema'
 import { Screen } from '../types'
 import { withApollo } from '../../graphql'
 import { useI18n } from '../../i18n'
 
-interface HomePageProps {
-  application: GetApplicationQuery['getApplication']
+interface PropTypes {
+  application: Application
 }
 
-const QUERY = gql`
+const GetApplicationQuery = gql`
   query GetApplication {
     getApplication {
       id
@@ -21,7 +18,7 @@ const QUERY = gql`
   }
 `
 
-export const HomePage: Screen<HomePageProps> = ({ application }) => {
+function HomePage({ application }: PropTypes) {
   const { t } = useI18n()
   return (
     <div>
@@ -35,11 +32,8 @@ export const HomePage: Screen<HomePageProps> = ({ application }) => {
 HomePage.getInitialProps = async ({ apolloClient }) => {
   const {
     data: { getApplication: application },
-  } = await apolloClient.query<
-    GetApplicationQuery,
-    GetApplicationQueryVariables
-  >({
-    query: QUERY,
+  } = await apolloClient.query({
+    query: GetApplicationQuery,
   })
 
   return { application }
