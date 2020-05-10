@@ -386,6 +386,15 @@
                 "command": "graphql-codegen --config libs/api/schema/codegen.yml"
               }
             ]
+          },
+          "configurations": {
+            "watch": {
+              "commands": [
+                {
+                  "command": "graphql-codegen --config libs/api/schema/codegen.yml --watch"
+                }
+              ]
+            }
           }
         }
       }
@@ -401,9 +410,7 @@
           "options": {
             "linter": "eslint",
             "config": "libs/island-ui/storybook/.eslintrc",
-            "tsConfig": [
-              "libs/island-ui/storybook/tsconfig.lib.json"
-            ],
+            "tsConfig": ["libs/island-ui/storybook/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**", "!libs/island-ui/storybook/**"]
           }
         },
