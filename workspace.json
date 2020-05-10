@@ -94,9 +94,9 @@
         }
       }
     },
-    "island-ui": {
-      "root": "libs/island-ui",
-      "sourceRoot": "libs/island-ui/src",
+    "island-ui-core": {
+      "root": "libs/island-ui/core",
+      "sourceRoot": "libs/island-ui/core/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -104,50 +104,20 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/island-ui/.eslintrc",
+            "config": "libs/island-ui/core/.eslintrc",
             "tsConfig": [
-              "libs/island-ui/tsconfig.lib.json",
-              "libs/island-ui/tsconfig.spec.json"
+              "libs/island-ui/core/tsconfig.lib.json",
+              "libs/island-ui/core/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/island-ui/**"]
+            "exclude": ["**/node_modules/**", "!libs/island-ui/core/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/island-ui/jest.config.js",
-            "tsConfig": "libs/island-ui/tsconfig.spec.json",
+            "jestConfig": "libs/island-ui/core/jest.config.js",
+            "tsConfig": "libs/island-ui/core/tsconfig.spec.json",
             "passWithNoTests": true
-          }
-        },
-        "storybook": {
-          "builder": "@nrwl/storybook:storybook",
-          "options": {
-            "uiFramework": "@storybook/react",
-            "port": 4400,
-            "config": {
-              "configFolder": "libs/island-ui/.storybook"
-            }
-          },
-          "configurations": {
-            "ci": {
-              "quiet": true
-            }
-          }
-        },
-        "build-storybook": {
-          "builder": "@nrwl/storybook:build",
-          "options": {
-            "uiFramework": "@storybook/react",
-            "outputPath": "dist/storybook/island-ui",
-            "config": {
-              "configFolder": "libs/island-ui/.storybook"
-            }
-          },
-          "configurations": {
-            "ci": {
-              "quiet": true
-            }
           }
         }
       }
@@ -404,9 +374,7 @@
           "options": {
             "linter": "eslint",
             "config": "libs/api/schema/.eslintrc",
-            "tsConfig": [
-              "libs/api/schema/tsconfig.lib.json"
-            ],
+            "tsConfig": ["libs/api/schema/tsconfig.lib.json"],
             "exclude": ["**/node_modules/**", "!libs/api/schema/**"]
           }
         },
@@ -418,6 +386,55 @@
                 "command": "graphql-codegen --config libs/api/schema/codegen.yml"
               }
             ]
+          }
+        }
+      }
+    },
+    "island-ui-storybook": {
+      "root": "libs/island-ui/storybook",
+      "sourceRoot": "libs/island-ui/storybook/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/island-ui/storybook/.eslintrc",
+            "tsConfig": [
+              "libs/island-ui/storybook/tsconfig.lib.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/island-ui/storybook/**"]
+          }
+        },
+        "storybook": {
+          "builder": "@nrwl/storybook:storybook",
+          "options": {
+            "uiFramework": "@storybook/react",
+            "port": 4400,
+            "config": {
+              "configFolder": "libs/island-ui/storybook/config"
+            }
+          },
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
+        },
+        "build-storybook": {
+          "builder": "@nrwl/storybook:build",
+          "options": {
+            "uiFramework": "@storybook/react",
+            "outputPath": "dist/storybook/island-ui",
+            "config": {
+              "configFolder": "libs/island-ui/storybook/config"
+            }
+          },
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
           }
         }
       }

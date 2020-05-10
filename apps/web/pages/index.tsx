@@ -1,8 +1,7 @@
 import React from 'react'
+import { Logo } from '@island.is/island-ui/core'
 
 import './index.scss'
-
-import { Logo } from '@island.is/island-ui'
 
 export const Index = () => {
   /*

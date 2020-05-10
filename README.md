@@ -24,7 +24,7 @@ Run `yarn affected:e2e` to execute the end-to-end tests affected by a change.
 
 ### Generate a component
 
-Run `yarn generate @nrwl/react:component MyComponent --project=island-ui` to generate a new component in island-ui.
+Run `yarn generate @nrwl/react:component MyComponent --project=island-ui-core` to generate a new component in island-ui-core.
 
 ### Generate an application
 
@@ -36,7 +36,7 @@ To create an API, you can get started with Node.JS like this: `yarn generate @nr
 
 ### Generate a library
 
-Run `yarn generate @nrwl/react:lib my-lib` to generate a React library.
+Run `yarn generate @nrwl/react:lib my-lib --linter eslint` to generate a React library.
 
 To create a JS library that can be used on the server as well: `yarn generate @nrwl/node:lib my-lib`
 
