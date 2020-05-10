@@ -44,6 +44,16 @@
     },
     "gjafakort-api": {
       "tags": []
+    },
+    "api": {
+      "tags": []
+    },
+    "api-domains-hello-world": {
+      "tags": []
+    },
+    "api-schema": {
+      "tags": [],
+      "implicitDependencies": ["api", "api-domains-hello-world"]
     }
   }
 }

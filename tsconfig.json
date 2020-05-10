@@ -14,13 +14,15 @@
     "lib": ["es2017", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
       "@island.is/island-ui": ["libs/island-ui/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
-      "@island.is/lol/dir/nested/my-lib": [
-        "libs/lol/dir/nested/my-lib/src/index.ts"
-      ]
+      "@island.is/api/domains/hello-world": [
+        "libs/api/domains/hello-world/src/index.ts"
+      ],
+      "@island.is/api/schema": ["libs/api/schema/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
