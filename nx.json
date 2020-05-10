@@ -52,8 +52,7 @@
       "tags": []
     },
     "api-schema": {
-      "tags": [],
-      "implicitDependencies": ["api", "api-domains-hello-world"]
+      "tags": []
     },
     "island-ui-storybook": {
       "tags": []

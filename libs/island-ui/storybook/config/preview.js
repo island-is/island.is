@@ -1,10 +1,10 @@
-import { addDecorator, addParameters } from '@storybook/react';
+import { addDecorator, addParameters } from '@storybook/react'
 import storyBookTheme from './storyBookTheme'
-import { withKnobs } from '@storybook/addon-knobs';
+import { withKnobs } from '@storybook/addon-knobs'
 
 addParameters({
   options: {
-    theme: storyBookTheme
-  }
+    theme: storyBookTheme,
+  },
 })
-addDecorator(withKnobs);
+addDecorator(withKnobs)

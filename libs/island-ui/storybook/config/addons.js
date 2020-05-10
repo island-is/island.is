@@ -1,1 +1,1 @@
-import '../../../../.storybook/addons';
+import '../../../../.storybook/addons'
