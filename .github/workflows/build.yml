@@ -50,16 +50,16 @@ jobs:
       #   run: yarn run security:audit
 
       - name: Linting code
-        run: yarn run affected:lint --base origin/master
+        run: yarn run affected:lint --base origin/master --parallel
 
       - name: Check formatting of code
-        run: yarn run format:check --base origin/master
+        run: yarn run format:check --base origin/master --parallel
 
       - name: Run tests
         run: yarn run affected:test --base origin/master
 
       - name: Building code
-        run: yarn run affected:build --base origin/master
+        run: yarn run affected:build --base origin/master --parallel
 
       # - name: Running E2E tests
       #   run: yarn run affected:e2e --base origin/master
