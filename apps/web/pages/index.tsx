@@ -1,8 +1,7 @@
 import React from 'react'
+import { Logo } from '@island.is/island-ui/core'
 
 import './index.scss'
-
-import { Logo } from '@island.is/island-ui'
 
 export const Index = () => {
   /*
@@ -14,8 +13,7 @@ export const Index = () => {
     <div className="app">
       <header className="flex">
         <h1>
-          Welcome to{' '}
-          <Logo solid width={140} />
+          Welcome to <Logo solid width={140} />
         </h1>
       </header>
     </div>

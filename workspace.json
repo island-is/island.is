@@ -94,9 +94,9 @@
         }
       }
     },
-    "island-ui": {
-      "root": "libs/island-ui",
-      "sourceRoot": "libs/island-ui/src",
+    "island-ui-core": {
+      "root": "libs/island-ui/core",
+      "sourceRoot": "libs/island-ui/core/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -104,50 +104,20 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/island-ui/.eslintrc",
+            "config": "libs/island-ui/core/.eslintrc",
             "tsConfig": [
-              "libs/island-ui/tsconfig.lib.json",
-              "libs/island-ui/tsconfig.spec.json"
+              "libs/island-ui/core/tsconfig.lib.json",
+              "libs/island-ui/core/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/island-ui/**"]
+            "exclude": ["**/node_modules/**", "!libs/island-ui/core/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/island-ui/jest.config.js",
-            "tsConfig": "libs/island-ui/tsconfig.spec.json",
+            "jestConfig": "libs/island-ui/core/jest.config.js",
+            "tsConfig": "libs/island-ui/core/tsconfig.spec.json",
             "passWithNoTests": true
-          }
-        },
-        "storybook": {
-          "builder": "@nrwl/storybook:storybook",
-          "options": {
-            "uiFramework": "@storybook/react",
-            "port": 4400,
-            "config": {
-              "configFolder": "libs/island-ui/.storybook"
-            }
-          },
-          "configurations": {
-            "ci": {
-              "quiet": true
-            }
-          }
-        },
-        "build-storybook": {
-          "builder": "@nrwl/storybook:build",
-          "options": {
-            "uiFramework": "@storybook/react",
-            "outputPath": "dist/storybook/island-ui",
-            "config": {
-              "configFolder": "libs/island-ui/.storybook"
-            }
-          },
-          "configurations": {
-            "ci": {
-              "quiet": true
-            }
           }
         }
       }
@@ -308,6 +278,170 @@
                 "command": "graphql-codegen --config apps/gjafakort/api/codegen.yml"
               }
             ]
+          }
+        }
+      }
+    },
+    "api": {
+      "root": "apps/api",
+      "sourceRoot": "apps/api/src",
+      "projectType": "application",
+      "prefix": "api",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/api",
+            "main": "apps/api/src/main.ts",
+            "tsConfig": "apps/api/tsconfig.app.json"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/api/.eslintrc",
+            "tsConfig": [
+              "apps/api/tsconfig.app.json",
+              "apps/api/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/api/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/api/jest.config.js",
+            "tsConfig": "apps/api/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "api-domains-hello-world": {
+      "root": "libs/api/domains/hello-world",
+      "sourceRoot": "libs/api/domains/hello-world/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/api/domains/hello-world/.eslintrc",
+            "tsConfig": [
+              "libs/api/domains/hello-world/tsconfig.lib.json",
+              "libs/api/domains/hello-world/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/hello-world/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/hello-world/jest.config.js",
+            "tsConfig": "libs/api/domains/hello-world/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "api-schema": {
+      "root": "libs/api/schema",
+      "sourceRoot": "libs/api/schema/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/api/schema/.eslintrc",
+            "tsConfig": ["libs/api/schema/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/api/schema/**"]
+          }
+        },
+        "codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "graphql-codegen --config libs/api/schema/codegen.yml"
+              }
+            ]
+          },
+          "configurations": {
+            "watch": {
+              "commands": [
+                {
+                  "command": "graphql-codegen --config libs/api/schema/codegen.yml --watch"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "island-ui-storybook": {
+      "root": "libs/island-ui/storybook",
+      "sourceRoot": "libs/island-ui/storybook/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/island-ui/storybook/.eslintrc",
+            "tsConfig": ["libs/island-ui/storybook/tsconfig.lib.json"],
+            "exclude": ["**/node_modules/**", "!libs/island-ui/storybook/**"]
+          }
+        },
+        "storybook": {
+          "builder": "@nrwl/storybook:storybook",
+          "options": {
+            "uiFramework": "@storybook/react",
+            "port": 4400,
+            "config": {
+              "configFolder": "libs/island-ui/storybook/config"
+            }
+          },
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
+        },
+        "build-storybook": {
+          "builder": "@nrwl/storybook:build",
+          "options": {
+            "uiFramework": "@storybook/react",
+            "outputPath": "dist/storybook/island-ui",
+            "config": {
+              "configFolder": "libs/island-ui/storybook/config"
+            }
+          },
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
           }
         }
       }
