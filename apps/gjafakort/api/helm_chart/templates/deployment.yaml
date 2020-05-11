@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gjafakort-api.fullname" . }}
+  labels:
+    {{- include "gjafakort-api.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount.default }}
+  selector:
+    matchLabels:
+      {{- include "gjafakort-api.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "gjafakort-api.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "gjafakort-api.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: migration
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: ["npx"]
+          args: ["sequelize-cli", "db:migrate"]
+          env:
+            {{- with .Values.postgres }}
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: gjafakort-api
+                  key: DB_PASS
+            - name: DB_USER
+              value: {{ .username }}
+            - name: DB_NAME
+              value: {{ .name }}
+            - name: DB_HOST
+              value: {{ .host }}
+            - name: NODE_ENV
+              value: "production"
+            {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 3333
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          env:
+            {{- with .Values.postgres }}
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: gjafakort-api
+                  key: DB_PASS
+            - name: DB_USER
+              value: {{ .username }}
+            - name: DB_NAME
+              value: {{ .name }}
+            - name: DB_HOST
+              value: {{ .host }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
