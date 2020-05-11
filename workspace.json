@@ -183,6 +183,20 @@
             "tsConfig": "apps/gjafakort/web/tsconfig.spec.json",
             "passWithNoTests": true
           }
+        },
+        "docker": {
+          "builder": "@gperdomor/nx-docker:build",
+          "options": {
+            "repository": "gjafakort-web",
+            "dockerfile": "apps/gjafakort/web/Dockerfile",
+            "registry": "$DOCKER_REG",
+            "username": "$DOCKER_REG_USER",
+            "password": "$DOCKER_REG_PASSWORD",
+            "tags": "$DOCKER_TAGS",
+            "build_args": "$BUILD_ARGS",
+            "push": true,
+            "socket": "/var/run/docker.sock"
+          }
         }
       }
     },
@@ -278,6 +292,20 @@
                 "command": "graphql-codegen --config apps/gjafakort/api/codegen.yml"
               }
             ]
+          }
+        },
+        "docker": {
+          "builder": "@gperdomor/nx-docker:build",
+          "options": {
+            "repository": "gjafakort-api",
+            "dockerfile": "apps/gjafakort/api/Dockerfile",
+            "registry": "$DOCKER_REG",
+            "username": "$DOCKER_REG_USER",
+            "password": "$DOCKER_REG_PASSWORD",
+            "tags": "$DOCKER_TAGS",
+            "build_args": "$BUILD_ARGS",
+            "push": true,
+            "socket": "/var/run/docker.sock"
           }
         }
       }

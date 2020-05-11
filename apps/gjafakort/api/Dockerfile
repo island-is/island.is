@@ -13,7 +13,7 @@ RUN yarn
 
 # Adding the rest of the code
 ADD --chown=runner:runners . .
-RUN yarn run build api
+RUN yarn run build gjafakort-api
 
 FROM node:12.16.2-alpine3.11
 
@@ -25,7 +25,7 @@ RUN addgroup runners && adduser -D runner -G runners
 RUN chown -R runner:runners /webapp
 USER runner
 
-COPY --from=builder --chown=runner:runners /build/dist/apps/gjafakort-api /webapp
+COPY --from=builder --chown=runner:runners /build/dist/apps/gjafakort/api /webapp
 COPY --from=builder --chown=runner:runners /build/node_modules /webapp/node_modules
 
 ENTRYPOINT [ "node" ]

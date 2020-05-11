@@ -21,27 +21,6 @@ spec:
       serviceAccountName: {{ include "gjafakort-api.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      initContainers:
-        - name: migration
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          command: ["npx"]
-          args: ["sequelize-cli", "db:migrate"]
-          env:
-            {{- with .Values.postgres }}
-            - name: DB_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: gjafakort-api
-                  key: DB_PASS
-            - name: DB_USER
-              value: {{ .username }}
-            - name: DB_NAME
-              value: {{ .name }}
-            - name: DB_HOST
-              value: {{ .host }}
-            - name: NODE_ENV
-              value: "production"
-            {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -60,20 +39,6 @@ spec:
             httpGet:
               path: /
               port: http
-          env:
-            {{- with .Values.postgres }}
-            - name: DB_PASS
-              valueFrom:
-                secretKeyRef:
-                  name: gjafakort-api
-                  key: DB_PASS
-            - name: DB_USER
-              value: {{ .username }}
-            - name: DB_NAME
-              value: {{ .name }}
-            - name: DB_HOST
-              value: {{ .host }}
-            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

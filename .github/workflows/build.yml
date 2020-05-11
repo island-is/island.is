@@ -1,4 +1,4 @@
-name: Monorepo build
+name: Monorepo pipeline
 
 on:
   push:
@@ -56,10 +56,26 @@ jobs:
         run: yarn run format:check --base origin/master --parallel
 
       - name: Run tests
-        run: yarn run affected:test --base origin/master
-
-      - name: Building code
-        run: yarn run affected:build --base origin/master --parallel
+        run: yarn run affected:test --base origin/master --parallel
 
       # - name: Running E2E tests
       #   run: yarn run affected:e2e --base origin/master
+
+      - name: Prepare environment to run docker
+        id: docker_env
+        run: |
+          export GIT_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}
+          export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH} | tr "/." "-" )
+          export DOCKER_TAG=${GITHUB_RUN_NUMBER}_${DOCKER_BRANCH_TAG}_${GITHUB_SHA:0:7}
+          echo "Docker tag will be ${DOCKER_TAG}"
+          echo "::set-env name=BUILD_ARGS::GIT_SHA=${GITHUB_SHA},GIT_BRANCH=${GIT_BRANCH}"
+          echo "::set-env name=DOCKER_TAGS::${DOCKER_TAG},latest_${DOCKER_BRANCH_TAG}"
+          echo "::set-env name=DOCKER_REG::553296336529.dkr.ecr.eu-west-1.amazonaws.com"
+          echo "::set-env name=DOCKER_REG_USER::AWS"
+          echo "::set-env name=DOCKER_REG_PASSWORD::$(aws ecr get-login-password --region eu-west-1)"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Build and push docker
+        run: yarn run affected:docker --base origin/master --parallel

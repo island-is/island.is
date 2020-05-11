@@ -16,12 +16,6 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-postgres:
-  host: 'host'
-  name: 'name'
-  username: 'username'
-  password_secret_path: '/k8s/gjafakort/api/DB_PASSWORD'
-
 serviceAccount:
   # Specifies whether a service account should be created
   create: false
