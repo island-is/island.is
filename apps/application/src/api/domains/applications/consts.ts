@@ -3,7 +3,7 @@ export const Types = {
 }
 
 export const States = {
-  NEW: 'new',
+  PENDING: 'pending',
   APPROVED: 'approved',
   REJECTED: 'rejected',
 }

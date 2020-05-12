@@ -12,5 +12,6 @@ export const getApplicationByIssuerAndType = (
 export const createApplication = (
   issuerSSN: string,
   type: string,
+  state: string,
   data: object,
-) => Application.create({ issuerSSN, data, type, state: States.NEW })
+) => Application.create({ issuerSSN, type, state, data })

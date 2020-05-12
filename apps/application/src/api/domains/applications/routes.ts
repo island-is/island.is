@@ -1,7 +1,7 @@
 import express from 'express'
 import { body, validationResult } from 'express-validator'
 
-import { Types } from './consts'
+import { States, Types } from './consts'
 import * as applicationService from './service'
 
 const router = express.Router()
@@ -11,6 +11,10 @@ router.post(
   [
     body('ssn').isLength({ min: 10, max: 10 }),
     body('type').isIn(Object.values(Types)),
+    body('state')
+      .optional()
+      .customSanitizer((value) => value || States.PENDING)
+      .isIn(Object.values(States)),
     body('data').custom((value) => {
       if (typeof value !== 'object' || value === null) {
         return Promise.reject('Must provide data as an object')
@@ -24,7 +28,7 @@ router.post(
       return res.status(422).json({ errors: errors.array() })
     }
 
-    const { ssn, type, data } = req.body
+    const { ssn, type, state, data } = req.body
     let application = await applicationService.getApplicationByIssuerAndType(
       ssn,
       type,
@@ -40,7 +44,7 @@ router.post(
       })
     }
 
-    application = await applicationService.createApplication(ssn, type, data)
+    application = await applicationService.createApplication(ssn, type, state, data)
 
     return res.status(201).json({ application })
   },
