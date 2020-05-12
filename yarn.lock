@@ -1608,6 +1608,15 @@
     tslib "~1.11.1"
     upper-case "2.0.1"
 
+"@graphql-codegen/schema-ast@^1.13.5":
+  version "1.13.5"
+  resolved "https://registry.yarnpkg.com/@graphql-codegen/schema-ast/-/schema-ast-1.13.5.tgz#4a09793874f2d875c589df665096609b20aa1bd2"
+  integrity sha512-nxT6ldStPJSFFtO66HzG4BH0bTEtTllM489Al6eulET4+6wEbzEV3KvydI26C1lo42/WqDX3r4wpMgI8ZVQQGg==
+  dependencies:
+    "@graphql-codegen/plugin-helpers" "1.13.5"
+    "@graphql-toolkit/common" "~0.10.4"
+    tslib "~1.11.1"
+
 "@graphql-codegen/typescript-operations@^1.13.5":
   version "1.13.5"
   resolved "https://registry.yarnpkg.com/@graphql-codegen/typescript-operations/-/typescript-operations-1.13.5.tgz#842c779cd4d1facface08d937aa2fc37a4529a6f"
@@ -2066,6 +2075,15 @@
   integrity sha512-xN7mnNo4FSio73JzPYIhaBJVWeTLhgN5+Cz8j21U/o8f3pIvFs3Aoq4P4nyO7Gmb5wc8sfCMpmvmFGLsQavjGA==
   dependencies:
     "@typescript-eslint/experimental-utils" "^2.19.2"
+
+"@nrwl/express@9.2.3":
+  version "9.2.3"
+  resolved "https://registry.yarnpkg.com/@nrwl/express/-/express-9.2.3.tgz#e18400ab73d193eec55024da503663f972d85521"
+  integrity sha512-gmEmv+Hwy7WsXdhwKcwicoZvZKO9Ab0EuDrJgExlqmsAKaN/Q/aviL8l8lBaM68K2n/2uPhj1veUpZwvwknUIw==
+  dependencies:
+    "@angular-devkit/schematics" "~9.1.0"
+    "@nrwl/jest" "9.2.3"
+    "@nrwl/node" "9.2.3"
 
 "@nrwl/jest@9.2.3":
   version "9.2.3"
@@ -3117,6 +3135,15 @@
     "@types/body-parser" "*"
     "@types/express-serve-static-core" "*"
     "@types/qs" "*"
+    "@types/serve-static" "*"
+
+"@types/express@4.17.0":
+  version "4.17.0"
+  resolved "https://registry.yarnpkg.com/@types/express/-/express-4.17.0.tgz#49eaedb209582a86f12ed9b725160f12d04ef287"
+  integrity sha512-CjaMu57cjgjuZbh9DpkloeGxV45CnMGlVd+XpG7Gm9QgVrd7KFq+X4HY0vM+2v0bczS48Wg7bvnMY5TN+Xmcfw==
+  dependencies:
+    "@types/body-parser" "*"
+    "@types/express-serve-static-core" "*"
     "@types/serve-static" "*"
 
 "@types/express@4.17.4":
@@ -8121,7 +8148,7 @@ expect@^25.5.0:
     jest-message-util "^25.5.0"
     jest-regex-util "^25.2.6"
 
-express@^4.17.0, express@^4.17.1:
+express@4.17.1, express@^4.17.0, express@^4.17.1:
   version "4.17.1"
   resolved "https://registry.yarnpkg.com/express/-/express-4.17.1.tgz#4491fc38605cf51f8629d39c2b5d026f98a4c134"
   integrity sha512-mHJ9O79RqluphRrcw2X/GTh3k9tVv8YcoyY4Kkh4WDMUYKRZUq0h1o0w2rrrxBqM7VoeUVqgb27xlEMXTnYt4g==

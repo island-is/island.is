@@ -1,0 +1,14 @@
+schema:
+  - ./apps/api/src/graphql/typeDefs.ts
+  - ./libs/api/domains/*/src/lib/typeDefs.ts
+generates:
+  ./libs/api/schema/src/lib/schema.d.ts:
+    plugins:
+      - typescript
+      - typescript-resolvers
+  ./libs/api/schema/schema.graphql:
+    plugins:
+      - schema-ast
+hooks:
+  afterAllFileWrite:
+    - prettier --write
