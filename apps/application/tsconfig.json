@@ -1,12 +1,8 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "types": [
-      "node",
-      "jest"
-    ]
+    "allowSyntheticDefaultImports": true,
+    "types": ["node", "jest", "express"]
   },
-  "include": [
-    "**/*.ts"
-  ]
+  "include": ["**/*.ts"]
 }
