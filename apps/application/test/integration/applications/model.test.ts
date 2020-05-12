@@ -1,12 +1,10 @@
-import 'jest'
-
 import { applicationFactory } from '../../factory'
 
 describe('Application model', () => {
   it('should provide a default id', async () => {
     // Arrange
     const ssn = '123456-7890'
-    const application = await applicationFactory({ssn})
+    const application = await applicationFactory({ ssn })
 
     // Assert
     expect(!!application.id).toBeTruthy()
@@ -15,7 +13,7 @@ describe('Application model', () => {
   it('should trigger modified on update', async () => {
     // Arrange
     const ssn = '123456-7890'
-    const application = await applicationFactory({ssn})
+    const application = await applicationFactory({ ssn })
     const lastModified = application.modified
     application.changed('modified', true)
 

@@ -49,6 +49,7 @@ yarn generate @nrwl/node:lib common/my-lib
 ```
 
 ### Migrations
+
 Using the `sequelize-cli` we support version controlled migrations that keep track of changes to the database.
 
 #### Generate a migrations

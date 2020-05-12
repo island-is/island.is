@@ -1,1 +1,1 @@
-export { default as applicationFactory } from './application';
+export { default as applicationFactory } from './application'
