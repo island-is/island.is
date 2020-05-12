@@ -1,5 +1,6 @@
 import { Model, DataTypes } from 'sequelize'
 
+import { Types, States } from './consts'
 import { sequelize } from '../../../extensions'
 
 class Application extends Model {
@@ -7,6 +8,11 @@ class Application extends Model {
 
   public readonly created!: Date
   public readonly modified!: Date
+
+  public type!: string
+  public state!: string
+  public issuerSSN!: string
+  public data!: object
 }
 
 Application.init(
@@ -14,6 +20,7 @@ Application.init(
     id: {
       type: DataTypes.UUID,
       primaryKey: true,
+      allowNull: false,
       defaultValue: DataTypes.UUIDV4,
     },
     created: {
@@ -24,10 +31,40 @@ Application.init(
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
+    type: {
+      type: DataTypes.ENUM,
+      values: Object.values(Types),
+      allowNull: false,
+    },
+    state: {
+      type: DataTypes.ENUM,
+      values: Object.values(States),
+      allowNull: false,
+    },
+    issuerSSN: {
+      type: DataTypes.STRING,
+      field: 'issuer_ssn',
+      allowNull: false,
+      references: {
+        model: 'issuer',
+        key: 'ssn',
+      },
+    },
+    data: {
+      type: DataTypes.JSONB,
+      defaultValue: {},
+      allowNull: false,
+    },
   },
   {
     sequelize,
     tableName: 'application',
+    indexes: [
+      {
+        unique: true,
+        fields: ['issuerSSN', 'type'],
+      },
+    ],
   },
 )
 

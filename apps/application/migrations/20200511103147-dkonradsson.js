@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -6,12 +6,10 @@ module.exports = {
       BEGIN;
 
         CREATE TABLE issuer (
-          id UUID NOT NULL,
           ssn VARCHAR NOT NULL,
           created TIMESTAMP WITH TIME ZONE DEFAULT now(),
           modified TIMESTAMP WITH TIME ZONE,
-          UNIQUE (ssn),
-          PRIMARY KEY (id)
+          PRIMARY KEY (ssn)
         );
 
         CREATE TABLE application (
@@ -20,9 +18,10 @@ module.exports = {
           modified TIMESTAMP WITH TIME ZONE,
           type VARCHAR NOT NULL,
           state VARCHAR NOT NULL,
-          issuer_id UUID NOT NULL,
+          issuer_ssn VARCHAR NOT NULL,
           data JSONB NOT NULL DEFAULT '{}',
-          FOREIGN KEY (issuer_id) REFERENCES "issuer" (id) ON DELETE CASCADE,
+          UNIQUE (issuer_ssn, type),
+          FOREIGN KEY (issuer_ssn) REFERENCES "issuer" (ssn) ON DELETE CASCADE,
           PRIMARY KEY (id)
         );
 
@@ -39,5 +38,5 @@ module.exports = {
 
       COMMIT;
     `)
-  }
-};
+  },
+}
