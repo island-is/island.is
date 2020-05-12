@@ -6,7 +6,7 @@ const models = [application]
 export const truncate = () => {
   Promise.all(
     models.map((model) => {
-      if (['sequelize', 'Sequelize'].includes(model.tableName)) {
+      if (model.tableName.toLowerCase() === 'sequelize') {
         return null
       }
 
