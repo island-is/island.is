@@ -1,0 +1,9 @@
+@import '../styles/theme';
+
+.container {
+  max-width: $container-max-width;
+  padding-right: $padding-x;
+  padding-left: $padding-x;
+  margin-right: auto;
+  margin-left: auto;
+}

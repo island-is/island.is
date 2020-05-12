@@ -1,0 +1,270 @@
+// Primary colors
+$blue-600: #0044B3;
+$blue-400: #0061FF;
+$blue-300: #99C0FF;
+$blue-200: #CCDFFF;
+$blue-100: #F2F7FF;
+
+$dark-400: #00003C;
+$dark-300: #9999B1;
+$dark-200: #CCCCD8;
+$dark-100: #F2F2F5;
+
+$red-600: #B30038;
+$red-400: #FF0050;
+$red-300: #FF99B9;
+$red-200: #FFCCDC;
+$red-100: #FFF2F6;
+
+$white: #FFFFFF;
+
+// Support colors
+$blueberry-600: #24268E;
+$blueberry-400: #4649D0;
+$blueberry-300: #B5B6EC;
+$blueberry-200: #DADBF6;
+$blueberry-100: #F6F6FD;
+
+$purple-600: #421C63;
+$purple-400: #6A2EA0;
+$purple-300: #C3ABD9;
+$purple-200: #E1D5EC;
+$purple-100: #F8F5FA;
+
+$rose-tinted-600: #4D003A;
+$rose-tinted-400: #9A0074;
+$rose-tinted-300: #D799C7;
+$rose-tinted-200: #EBCCE3;
+$rose-tinted-100: #FAF2F8;
+
+// Attention colors
+$mint-600: #00B39E;
+$mint-400: #00E4CA;
+$mint-200: #CCFAF4;
+$mint-300: #99F4EA;
+$mint-100: #F2FEFC;
+
+$yellow-600: #E6CF00;
+$yellow-400: #FFF066;
+$yellow-200: #FFFCE0;
+$yellow-300: #FFF9C2;
+$yellow-100: #FFFEF7;
+
+// Typography
+$font-family: 'IBM Plex Sans', sans-serif;
+
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semi-bold: 600;
+
+$headings-font-weight: $font-weight-semi-bold;
+$eyebrow-font-weight: $font-weight-semi-bold;
+
+$h1-font-size: 42px;
+$h1-line-height: 52px;
+
+$h2-font-size: 34px;
+$h2-line-height: 44px;
+
+$h3-font-size: 24px;
+$h3-line-height: 34px;
+
+$h4-font-size: 20px;
+$h4-line-height: 30px;
+
+$h5-font-size: 18px;
+$h5-line-height: 28px;
+
+$eyebrow-font-size: 14px;
+$eyebrow-line-height: 16px;
+$eyebrow-color: $red-400;
+
+$intro-font-size: 24px;
+$intro-line-height: 34px;
+
+$base-font-size: 18px;
+$base-line-height: 28px;
+
+$small-font-weight: $font-weight-regular;
+$small-font-size: 15px;
+$small-line-height: 25px;
+
+// Typography mobile
+$h1-font-size-mobile: 32px;
+$h1-line-height-mobile: 40px;
+
+$h2-font-size-mobile: 26px;
+$h2-line-height-mobile: 34px;
+
+$h3-font-size-mobile: 20px;
+$h3-line-height-mobile: 28px;
+
+$h4-font-size-mobile: 18px;
+$h4-line-height-mobile: 24px;
+
+$h5-font-size-mobile: 15px;
+$h5-line-height-mobile: 20px;
+
+$intro-font-size-mobile: 20px;
+$intro-line-height-mobile: 28px;
+
+$base-font-size-mobile: 15px;
+$base-line-height-mobile: 22px;
+
+$small-font-size-mobile: 12px;
+$small-line-height-mobile: 16px;
+
+$eyebrow-font-size-mobile: 12px;
+$eyebrow-line-height-mobile: 16px;
+
+// base
+$base-color: $dark-400;
+$base-bg: $white;
+$base-font-family: $font-family;
+$base-font-weight: $font-weight-light;
+
+// Container
+$container-max-width: 1340px;
+$gutter: 16px;
+$padding-x: 16px;
+
+$spacer: 8px;
+$spacers: (
+  0: 0,
+  1: $spacer,
+  2: ($spacer * 2),
+  3: ($spacer * 3),
+  4: ($spacer * 4),
+  5: ($spacer * 5),
+  6: ($spacer * 7),
+  7: ($spacer * 9),
+  8: ($spacer * 12),
+  9: ($spacer * 15),
+  10: ($spacer * 25)
+);
+
+
+/**** SPACING ****/
+
+// Spacing
+$spacing0: 0;
+$spacing-px: 1px;
+$spacing1: 0.25rem;
+$spacing2: 0.5rem;
+$spacing3: 0.75rem;
+$spacing4: 1rem;
+$spacing5: 1.25rem;
+$spacing6: 1.5rem;
+$spacing8: 2rem;
+$spacing10: 2.5rem;
+$spacing12: 3rem;
+$spacing16: 4rem;
+$spacing20: 5rem;
+$spacing24: 6rem;
+$spacing32: 8rem;
+$spacing40: 10rem;
+$spacing48: 12rem;
+$spacing56: 14rem;
+$spacing64: 16rem;
+
+// Screen Breakpoints
+$screen-xs: 540px;
+$screen-sm: 640px;
+$screen-md: 768px;
+$screen-lg: 1024px;
+$screen-xl: 1280px;
+
+// Max Height
+$max-height-full: 100%;
+$max-height-screen: 100vh;
+
+// Max Width
+$max-width-xs: 20rem;
+$max-width-sm: 24rem;
+$max-width-md: 28rem;
+$max-width-lg: 32rem;
+$max-width-xl: 36rem;
+$max-width-2xl: 42rem;
+$max-width-3xl: 48rem;
+$max-width-4xl: 56rem;
+$max-width-5xl: 64rem;
+$max-width-6xl: 72rem;
+$max-width-full: 100%;
+
+// Min Height
+$min-height-0: 0;
+$min-height-full: 100%;
+$min-height-screen: 100vh;
+
+// Min Width
+$min-width-0: 0;
+$min-width-full: 100%;
+
+// Width
+$width-auto: auto;
+$width-1_2: 50%;
+$width-1_3: 33.333333%;
+$width-2_3: 66.666667%;
+$width-1_4: 25%;
+$width-2_4: 50%;
+$width-3_4: 75%;
+$width-1_5: 20%;
+$width-2_5: 40%;
+$width-3_5: 60%;
+$width-4_5: 80%;
+$width-1_6: 16.666667%;
+$width-2_6: 33.333333%;
+$width-3_6: 50%;
+$width-4_6: 66.666667%;
+$width-5_6: 83.333333%;
+$width-1_12: 8.333333%;
+$width-2_12: 16.666667%;
+$width-3_12: 25%;
+$width-4_12: 33.333333%;
+$width-5_12: 41.666667%;
+$width-6_12: 50%;
+$width-7_12: 58.333333%;
+$width-8_12: 66.666667%;
+$width-9_12: 75%;
+$width-10_12: 83.333333%;
+$width-11_12: 91.666667%;
+$width-full: 100%;
+$width-screen: 100vw;
+
+// Height
+$height-full: 100%;
+
+/**** Containers ****/
+
+// Border Radius
+$radius-none: 0;
+$radius-sm: 0.125rem;
+$radius-default: 0.25rem;
+$radius-lg: 0.5rem;
+$radius-full: 9999px;
+
+// Border Width
+$border-width-default: 1px;
+$border-width-0: 0;
+$border-width-2: 2px;
+$border-width-4: 4px;
+$border-width-8: 8px;
+
+// Borders
+$border-inner: 2px solid hsl(212, 12%, 72%);
+$border-outer: 4px solid #ffffff;
+
+// Box Shadow
+$box-shadow-default: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+  0 1px 2px 0 rgba(0, 0, 0, 0.06);
+$box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+  0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+  0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$box-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+  0 10px 10px -5px rgba(0, 0, 0, 0.04);
+$box-shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+$box-shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+$box-shadow-outline: 0 0 0 3px rgba(66, 153, 225, 0.5);
+$box-shadow-none: none;

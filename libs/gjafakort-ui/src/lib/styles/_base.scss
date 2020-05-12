@@ -1,7 +1,10 @@
 html {
   box-sizing: border-box;
-  font-size: 16px;
   scroll-behavior: smooth;
+  font-weight: $base-font-weight;
+  font-family: $base-font-family;
+  background-color: $base-bg;
+  color: $base-color;
 }
 
 body {
@@ -27,9 +30,6 @@ ul,
 blockquote {
   margin: 0;
   padding: 0;
-  font-weight: normal;
-  font-family: 'IBM Plex Sans', sans-serif;
-  color: #00003c;
 }
 
 ol,

@@ -44,6 +44,9 @@
     },
     "gjafakort-api": {
       "tags": []
+    },
+    "gjafakort-ui": {
+      "tags": []
     }
   }
 }

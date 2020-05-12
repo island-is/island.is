@@ -1,0 +1,8 @@
+@import '../styles/theme';
+
+.container {
+  height: 112px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid $blue-200;
+}

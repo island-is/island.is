@@ -1,6 +1,5 @@
-@import 'theme';
+@import '../styles/theme';
 
 .container {
   min-height: $max-height-screen;
-  background-color: $gray10;
 }

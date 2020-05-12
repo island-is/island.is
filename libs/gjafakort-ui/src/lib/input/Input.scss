@@ -1,0 +1,55 @@
+@import '../styles/theme';
+
+.label {
+  display: inline-block;
+  color:$blue-400;
+  font-weight: $font-weight-semi-bold;
+  margin-bottom: 8px;
+  transition: color .1s;
+}
+
+.input {
+  background: $white;
+  border: none;
+  width: 100%;
+  border: 1px solid $blue-200;
+  box-sizing: border-box;
+  border-radius: 5px;
+  caret-color: $blue-400;
+  font-weight: $font-weight-semi-bold;
+  font-size: $h3-font-size;
+  padding: 14px 24px 14px 24px;
+  transition: box-shadow .1s, border-color .1s;
+
+  &::-webkit-input-placeholder, &:-ms-input-placeholder, &::placeholder {
+    color: $dark-400;
+    font-weight: $font-weight-light;
+  }
+
+  &:hover {
+    border-color: $blue-400;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px $mint-400;
+  }
+}
+
+.errorMessage {
+  display: inline-block;
+  color: $red-400;
+  font-weight: $font-weight-semi-bold;
+  margin-top: 8px;
+}
+
+// States
+.hasError {
+  .label {
+    color: $red-400;
+  }
+
+  .input {
+    border-color: $red-400;
+  }
+}

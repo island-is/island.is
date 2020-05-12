@@ -4,8 +4,8 @@ import { AppProps } from 'next/app'
 import { ApolloProvider } from 'react-apollo'
 import { ApolloClient } from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
-import { Page, Header, Footer } from '../components'
-import '../global-styles.css'
+import '@island.is/gjafakort-ui'
+import { Page, Header, GridContainer } from '@island.is/gjafakort-ui'
 import initApollo from '../graphql/client'
 import appWithTranslation from '../i18n/appWithTranslation'
 
@@ -40,9 +40,10 @@ const Layout: React.FC = ({ children }) => {
         />
         <title>Ísland.is</title>
       </Head>
-      <Header />
+      <GridContainer>
+        <Header />
+      </GridContainer>
       {children}
-      <Footer />
       <style jsx global>{`
         @font-face {
           font-family: 'IBM Plex Sans';
