@@ -310,28 +310,6 @@
             "buildTarget": "api:build"
           }
         },
-        "migrate": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              {
-                "command": "sequelize-cli db:migrate"
-              }
-            ],
-            "cwd": "apps/application"
-          }
-        },
-        "migrate/generate": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              {
-                "command": "sequelize-cli migration:generate --name $(whoami)"
-              }
-            ],
-            "cwd": "apps/application"
-          }
-        },
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {
