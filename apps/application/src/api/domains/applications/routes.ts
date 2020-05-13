@@ -1,10 +1,10 @@
-import express from 'express'
+import { Router } from 'express'
 import { body, validationResult } from 'express-validator'
 
 import { States, Types } from './consts'
 import * as applicationService from './service'
 
-const router = express.Router()
+const router = Router()
 
 router.post(
   '/',
@@ -44,7 +44,12 @@ router.post(
       })
     }
 
-    application = await applicationService.createApplication(ssn, type, state, data)
+    application = await applicationService.createApplication(
+      ssn,
+      type,
+      state,
+      data,
+    )
 
     return res.status(201).json({ application })
   },

@@ -1,9 +1,9 @@
-import express from 'express'
+import { Router } from 'express'
 import { body, validationResult } from 'express-validator'
 
 import * as issuerService from './service'
 
-const router = express.Router()
+const router = Router()
 
 router.post(
   '/',

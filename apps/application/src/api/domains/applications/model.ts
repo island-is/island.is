@@ -62,7 +62,7 @@ Application.init(
     indexes: [
       {
         unique: true,
-        fields: ['issuerSSN', 'type'],
+        fields: ['issuer_ssn', 'type'],
       },
     ],
   },
