@@ -1,4 +1,5 @@
 import Application from '@island.is/application/api/domains/applications/model'
+import Issuer from '@island.is/application/api/domains/issuers/model'
 import {
   Types,
   States,
@@ -6,7 +7,13 @@ import {
 
 import { issuerFactory } from '.'
 
-const data = async (props: any = {}) => {
+type Properties = {
+  issuer?: Issuer
+  type?: string
+  state?: string
+}
+
+const data = async (props: Properties = {}) => {
   let issuer = props.issuer
   if (!issuer) {
     issuer = await issuerFactory()

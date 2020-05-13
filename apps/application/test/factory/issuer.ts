@@ -1,7 +1,11 @@
 import Issuer from '@island.is/application/api/domains/issuers/model'
 
-const data = async (props = {}) => {
-  const defaultProps = {ssn: '0000000000'}
+type Properties = {
+  ssn?: string
+}
+
+const data = async (props: Properties = {}) => {
+  const defaultProps = { ssn: '0000000000' }
   return Object.assign({}, defaultProps, props)
 }
 

@@ -1,5 +1,4 @@
 import Application from './model'
-import { States } from './consts'
 
 export const getApplicationByIssuerAndType = (
   issuerSSN: string,
