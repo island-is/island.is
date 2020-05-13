@@ -4,10 +4,11 @@ import { AppProps } from 'next/app'
 import { ApolloProvider } from 'react-apollo'
 import { ApolloClient } from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
-import '@island.is/gjafakort-ui'
-import { Page, Header, GridContainer } from '@island.is/gjafakort-ui'
+import { Page, Header, Footer } from '../components'
 import initApollo from '../graphql/client'
 import appWithTranslation from '../i18n/appWithTranslation'
+
+import '../styles/global.treat'
 
 const Layout: React.FC = ({ children }) => {
   return (
