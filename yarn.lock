@@ -1542,23 +1542,10 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@fidm/asn1@^1.0.4":
-  version "1.0.4"
-  resolved "https://registry.yarnpkg.com/@fidm/asn1/-/asn1-1.0.4.tgz#afbf9f10a0cb83aca2114c6f59a97dd48eb7dd84"
-  integrity sha512-esd1jyNvRb2HVaQGq2Gg8Z0kbQPXzV9Tq5Z14KNIov6KfFD6PTaRIO8UpcsYiTNzOqJpmyzWgVTrUwFV3UF4TQ==
-
-"@fidm/x509@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@fidm/x509/-/x509-1.2.1.tgz#ae546a661005d776cc4dca674b399c1132c1e0e4"
-  integrity sha512-nwc2iesjyc9hkuzcrMCBXQRn653XuAUKorfWM8PZyJawiy1QzLj4vahwzaI25+pfpwOLvMzbJ0uKpWLDNmo16w==
-  dependencies:
-    "@fidm/asn1" "^1.0.4"
-    tweetnacl "^1.0.1"
-
 "@gperdomor/nx-docker@^0.2.2":
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/@gperdomor/nx-docker/-/nx-docker-0.2.3.tgz#0eec27100fd7b1882568bce87add12b6124d9e17"
-  integrity sha512-VgD44PQhV9wKPgEXSga0+utKdb/BngYnpzN7eMG+UkAG3NbR/w8ccr/qt2c26/nd6SpBHv0JttPEQlTK6o44zg==
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@gperdomor/nx-docker/-/nx-docker-0.2.2.tgz#d47afc1b1cb9c53f42dff584e34d58c38d9387ce"
+  integrity sha512-ScqQgmS4RynZ31Ee3yHYYOga61Nrd6DiFRL9WN2wrFzosVoHSRHqBbU9/m7Oc/GIBUCkO68tRGy8PMSehMRwaw==
 
 "@graphql-codegen/cli@^1.13.5":
   version "1.15.1"

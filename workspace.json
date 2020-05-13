@@ -678,29 +678,59 @@
         }
       }
     },
-    "cache": {
-      "root": "libs/cache",
-      "sourceRoot": "libs/cache/src",
-      "projectType": "library",
+    "reference-backend": {
+      "root": "apps/reference-backend",
+      "sourceRoot": "apps/reference-backend/src",
+      "projectType": "application",
+      "prefix": "reference-backend",
       "schematics": {},
       "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/reference-backend",
+            "main": "apps/reference-backend/src/main.ts",
+            "tsConfig": "apps/reference-backend/tsconfig.app.json",
+            "webpackConfig": "webpack.config.js",
+            "assets": ["apps/reference-backend/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/reference-backend/src/environments/environment.ts",
+                  "with": "apps/reference-backend/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "reference-backend:build"
+          }
+        },
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/cache/.eslintrc",
+            "config": "apps/reference-backend/.eslintrc",
             "tsConfig": [
-              "libs/cache/tsconfig.lib.json",
-              "libs/cache/tsconfig.spec.json"
+              "apps/reference-backend/tsconfig.app.json",
+              "apps/reference-backend/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/cache/**"]
+            "exclude": ["**/node_modules/**", "!apps/reference-backend/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/cache/jest.config.js",
-            "tsConfig": "libs/cache/tsconfig.spec.json",
+            "jestConfig": "apps/reference-backend/jest.config.js",
+            "tsConfig": "apps/reference-backend/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }

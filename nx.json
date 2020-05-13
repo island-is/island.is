@@ -29,18 +29,24 @@
     },
     "web-e2e": {
       "tags": [],
-      "implicitDependencies": ["web"]
+      "implicitDependencies": [
+        "web"
+      ]
     },
     "island-ui-core": {
       "tags": []
     },
     "gjafakort-web": {
       "tags": [],
-      "implicitDependencies": ["gjafakort-api"]
+      "implicitDependencies": [
+        "gjafakort-api"
+      ]
     },
     "gjafakort-web-e2e": {
       "tags": [],
-      "implicitDependencies": ["gjafakort-web"]
+      "implicitDependencies": [
+        "gjafakort-web"
+      ]
     },
     "gjafakort-api": {
       "tags": []
@@ -69,7 +75,7 @@
     "logging": {
       "tags": []
     },
-    "cache": {
+    "reference-backend": {
       "tags": []
     }
   }
