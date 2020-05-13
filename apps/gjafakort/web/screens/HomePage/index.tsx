@@ -25,9 +25,16 @@ function HomePage({ application }: PropTypes) {
       <h1>
         {t('intro.welcome')} {application.id}
       </h1>
-      <Input label='Nafn tengiliðar' placeholder='test'/>
-      <Input label='Nafn tengiliðar' placeholder='test' hasError/>
-      <Input label='Nafn tengiliðar' placeholder='test' hasError errorMessage='obbosí'/>
+      <div style={{ paddingTop: 50, paddingBottom: 50 }}>
+        <Input label="Nafn tengiliðar" placeholder="test" />
+      </div>
+      <Input label="Nafn tengiliðar" placeholder="test" hasError />
+      <Input
+        label="Nafn tengiliðar"
+        placeholder="test"
+        hasError
+        errorMessage="obbosí"
+      />
     </GridContainer>
   )
 }

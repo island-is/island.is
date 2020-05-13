@@ -2,13 +2,13 @@
 
 .label {
   display: inline-block;
-  color:$blue-400;
+  color: $blue-400;
   font-weight: $font-weight-semi-bold;
   margin-bottom: 8px;
-  transition: color .1s;
+  transition: color 0.1s;
 }
 
-.input {
+.container {
   background: $white;
   border: none;
   width: 100%;
@@ -19,13 +19,13 @@
   font-weight: $font-weight-semi-bold;
   font-size: $h3-font-size;
   padding: $input-padding;
-  transition: box-shadow .1s, border-color .1s;
+  transition: box-shadow 0.1s, border-color 0.1s;
 
   &:hover {
     border-color: $blue-400;
   }
 
-  &:focus {
+  &:focus-within {
     outline: none;
     box-shadow: 0 0 0 4px $mint-400;
   }

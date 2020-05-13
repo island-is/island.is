@@ -5,7 +5,7 @@ import Input from './Input'
 
 describe(' Input', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Input label='Text' />)
+    const { baseElement } = render(<Input label="Text" />)
     expect(baseElement).toBeTruthy()
   })
 })
