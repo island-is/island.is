@@ -1,19 +1,20 @@
 import { sequelize } from '@island.is/application/extensions'
-import application from '@island.is/application/api/domains/applications/model'
 
-const models = [application]
-
-export const truncate = () => {
+export const truncate = () =>
   Promise.all(
-    models.map((model) => {
+    Object.values(sequelize.models).map((model) => {
       if (model.tableName.toLowerCase() === 'sequelize') {
         return null
       }
 
-      return model.destroy({ where: {}, force: true })
+      return model.destroy({
+        where: {},
+        cascade: true,
+        truncate: true,
+        force: true,
+      })
     }),
   )
-}
 
 beforeEach(() => truncate())
 
