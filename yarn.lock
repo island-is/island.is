@@ -12350,7 +12350,7 @@ next-tick@~1.0.0:
   resolved "https://registry.yarnpkg.com/next-tick/-/next-tick-1.0.0.tgz#ca86d1fe8828169b0120208e3dc8424b9db8342c"
   integrity sha1-yobR/ogoFpsBICCOPchCS524NCw=
 
-next-treat@^1.3.0:
+next-treat@1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/next-treat/-/next-treat-1.3.0.tgz#f380ffbfb6f353fe5d9acb25b2ad4128190a402a"
   integrity sha512-HBxkLyCpky649N2WsxeT0Kzjc9zcnICvdnHJwgLGyKWhPYlcykXewQw79GIqyom2QsvlHm6/HTxo3cgRGDFCPA==
@@ -13330,7 +13330,7 @@ pg-connection-string@^2.2.2:
   resolved "https://registry.yarnpkg.com/pg-connection-string/-/pg-connection-string-2.2.2.tgz#fdc2fb2084e655f0b3e6e50c69330f6932df452e"
   integrity sha512-+hel4DGuSZCjCZwglAuyi+XlodHnKmrbyTw0hVWlmGN2o4AfJDkDo5obAFzblS5M5PFBMx0uDt5Y1QjlNC+tqg==
 
-pg-hstore@^2.3.3:
+pg-hstore@2.3.3:
   version "2.3.3"
   resolved "https://registry.yarnpkg.com/pg-hstore/-/pg-hstore-2.3.3.tgz#d1978c12a85359830b1388d3b0ff233b88928e96"
   integrity sha512-qpeTpdkguFgfdoidtfeTho1Q1zPVPbtMHgs8eQ+Aan05iLmIs3Z3oo5DOZRclPGoQ4i68I1kCtQSJSa7i0ZVYg==
@@ -13363,10 +13363,17 @@ pg-types@^2.1.0:
     postgres-date "~1.0.4"
     postgres-interval "^1.1.0"
 
+<<<<<<< HEAD
 pg@^8.1.0:
   version "8.2.0"
   resolved "https://registry.yarnpkg.com/pg/-/pg-8.2.0.tgz#c569ddfb8b700b695835fcd77f1679d74141a20e"
   integrity sha512-EQeWKZv7qBTQZQa7EraR61AOi0bpizvlZLvrPdgAGaraX4YI+y40iQnL39XjPMXVnHOOG3jV6kAGtc0WSJn/+A==
+=======
+pg@8.1.0:
+  version "8.1.0"
+  resolved "https://registry.yarnpkg.com/pg/-/pg-8.1.0.tgz#e5ac5ac2b77bad438130d93982cb60485d5c1a8c"
+  integrity sha512-Jp+XSNTGYDztc2FgIbmBXeeYMR7kKjfgnl3R+ioO6rkcxDmaea+YPp/gaxe13PBnJAFYyEGl0ixpwPm2gb6eUw==
+>>>>>>> Pin versions
   dependencies:
     buffer-writer "2.0.0"
     packet-reader "1.0.0"
@@ -14885,7 +14892,7 @@ react-transition-group@^4.3.0:
     loose-envify "^1.4.0"
     prop-types "^15.6.2"
 
-react-treat@^1.4.1:
+react-treat@1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/react-treat/-/react-treat-1.4.1.tgz#682be7bf63ca9f9b9f45251b7bea253227044b4f"
   integrity sha512-TumvBGUIc4LqgvE30CfBKBdj6ylPEUpwrZ9XxINF9K7nYqnJXZ1BkzZEENpfV2jAmbXtQ+mM1ej/k05m3bPYGA==
@@ -15874,10 +15881,17 @@ sequelize-pool@^2.3.0:
   resolved "https://registry.yarnpkg.com/sequelize-pool/-/sequelize-pool-2.3.0.tgz#64f1fe8744228172c474f530604b6133be64993d"
   integrity sha512-Ibz08vnXvkZ8LJTiUOxRcj1Ckdn7qafNZ2t59jYHMX1VIebTAOYefWdRYFt6z6+hy52WGthAHAoLc9hvk3onqA==
 
+<<<<<<< HEAD
 sequelize@^5.21.8:
   version "5.21.9"
   resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-5.21.9.tgz#6f572d84c89d3819b942f68710142986e5cbc494"
   integrity sha512-CCUgdaGm92ro9ULF3Pi4CLToAYajB3bCAw6mkruAtAsrb/PkK1sl83kLhBiTIxEzTcrtj5Tt/ZqJ8kKE1cRncA==
+=======
+sequelize@5.21.8:
+  version "5.21.8"
+  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-5.21.8.tgz#3e3664dec6e66a63afe756384a40835406abb65d"
+  integrity sha512-UOxGMJ7eSnProTMWX9wRr0T9TcuW0YedFmU7s+YBZT9/RmfJeANYPdJXjXg4E+Yg+dJl4WWvBEu9r2oe+d/1/Q==
+>>>>>>> Pin versions
   dependencies:
     bluebird "^3.5.0"
     cls-bluebird "^2.1.0"
@@ -17186,7 +17200,7 @@ traverse@0.6.6:
   resolved "https://registry.yarnpkg.com/traverse/-/traverse-0.6.6.tgz#cbdf560fd7b9af632502fed40f918c157ea97137"
   integrity sha1-y99WD9e5r2MlAv7UD5GMFX6pcTc=
 
-treat@^1.4.1:
+treat@1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/treat/-/treat-1.4.1.tgz#42ab9d65404fff5e1e0600fe5d5bbadc4b434edd"
   integrity sha512-tkQyAgs4QqflZg55061VAgsr0fyVdF2Y5cYbUHmyjBn/MD/C4Sa9mAkRDkHR5oC97BePlIevACVbew5GrWLbyA==
