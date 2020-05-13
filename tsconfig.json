@@ -22,7 +22,8 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
-      "@island.is/api/schema": ["libs/api/schema/src/index.ts"]
+      "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
+      "@island.is/application/*": ["apps/application/src/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

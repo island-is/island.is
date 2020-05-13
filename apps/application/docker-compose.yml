@@ -1,0 +1,22 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres:11.6
+    container_name: application_db
+    environment:
+      - POSTGRES_PASSWORD=$APPLICATION_POSTGRES_PASSWORD
+      - DB_USER=$APPLICATION_DB_USER
+      - DB_PASS=$APPLICATION_DB_PASS
+      - DB_NAME=$APPLICATION_DB_NAME
+      - TEST_DB_USER=$APPLICATION_TEST_DB_USER
+      - TEST_DB_PASS=$APPLICATION_TEST_DB_PASS
+      - TEST_DB_NAME=$APPLICATION_TEST_DB_NAME
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./bin/startup.sql:/docker-entrypoint-initdb.d/startup.sql
+    ports:
+      - 5432:5432
+
+volumes:
+  db_data:

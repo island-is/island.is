@@ -13,6 +13,29 @@ jobs:
   check-code:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:11.6
+        env:
+          # TODO: make this more generic (workflows should trigger these services)
+          POSTGRES_DB: application_test
+          POSTGRES_PASSWORD: application_test
+          POSTGRES_USER: application_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    env:
+      # TODO: make this more generic (workflows should trigger these services)
+      APPLICATION_TEST_DB_USER: application_test
+      APPLICATION_TEST_DB_PASS: application_test
+      APPLICATION_TEST_DB_NAME: application_test
+      APPLICATION_DB_HOST: localhost
+
     steps:
       - uses: actions/checkout@v1
 
