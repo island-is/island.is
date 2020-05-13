@@ -30,10 +30,11 @@ jobs:
           - 5432:5432
 
     env:
-      TEST_DB_USER: application_test
-      TEST_DB_PASS: application_test
-      TEST_DB_NAME: application_test
-      DB_HOST: localhost
+      # TODO: make this more generic (workflows should trigger these services)
+      APPLICATION_TEST_DB_USER: application_test
+      APPLICATION_TEST_DB_PASS: application_test
+      APPLICATION_TEST_DB_NAME: application_test
+      APPLICATION_DB_HOST: localhost
 
     steps:
       - uses: actions/checkout@v1
