@@ -459,7 +459,18 @@
             "outputPath": "dist/apps/application",
             "main": "apps/application/src/main.ts",
             "tsConfig": "apps/application/tsconfig.app.json",
-            "assets": []
+            "assets": [
+              {
+                "glob": "*sequelize*",
+                "input": "apps/application",
+                "output": "./"
+              },
+              {
+                "glob": "migrations",
+                "input": "apps/application",
+                "output": "./"
+              }
+            ]
           },
           "configurations": {
             "production": {
