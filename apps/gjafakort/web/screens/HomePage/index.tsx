@@ -25,16 +25,20 @@ function HomePage({ application }: PropTypes) {
       <h1>
         {t('intro.welcome')} {application.id}
       </h1>
-      <div style={{ paddingTop: 50, paddingBottom: 50 }}>
+      <div style={{ paddingTop: 25, paddingBottom: 25 }}>
         <Input label="Nafn tengiliðar" placeholder="test" />
       </div>
-      <Input label="Nafn tengiliðar" placeholder="test" hasError />
-      <Input
-        label="Nafn tengiliðar"
-        placeholder="test"
-        hasError
-        errorMessage="obbosí"
-      />
+      <div style={{ paddingTop: 25, paddingBottom: 25 }}>
+        <Input label="Nafn tengiliðar" placeholder="test" hasError />
+      </div>
+      <div style={{ paddingTop: 25, paddingBottom: 25 }}>
+        <Input
+          label="Nafn tengiliðar"
+          placeholder="test"
+          hasError
+          errorMessage="obbosí"
+        />
+      </div>
     </GridContainer>
   )
 }

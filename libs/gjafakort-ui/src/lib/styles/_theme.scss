@@ -173,6 +173,9 @@ $screen-xl: 1280px;
 $max-height-full: 100%;
 $max-height-screen: 100vh;
 
-// Input
+// COMPONENTS
 
-$input-padding: 14px 24px;
+// Input
+$input-container-padding: 7px 7px 13px 7px;
+$input-padding: 0 16px 0 16px;
+$input-label-font-size: 14px;

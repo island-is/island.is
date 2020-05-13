@@ -1,10 +1,12 @@
 @import '../styles/theme';
 
 .label {
-  display: inline-block;
+  display: block;
   color: $blue-400;
   font-weight: $font-weight-semi-bold;
+  font-size: $input-label-font-size;
   margin-bottom: 8px;
+  cursor: text;
   transition: color 0.1s;
 }
 
@@ -15,19 +17,37 @@
   border: 1px solid $blue-200;
   box-sizing: border-box;
   border-radius: 5px;
-  caret-color: $blue-400;
-  font-weight: $font-weight-semi-bold;
-  font-size: $h3-font-size;
-  padding: $input-padding;
+  padding: $input-container-padding;
+  cursor: text;
   transition: box-shadow 0.1s, border-color 0.1s;
 
   &:hover {
     border-color: $blue-400;
   }
 
-  &:focus-within {
+  &.hasFocus {
     outline: none;
     box-shadow: 0 0 0 4px $mint-400;
+  }
+}
+
+.input {
+  caret-color: $blue-400;
+  font-weight: $font-weight-semi-bold;
+  font-size: $h3-font-size;
+  padding: $input-padding;
+  border: none;
+  width: 100%;
+  background: none;
+  box-shadow: none;
+
+  &::placeholder {
+    color: $dark-300;
+    font-weight: $font-weight-light;
+  }
+
+  &:focus {
+    outline: none;
   }
 }
 
@@ -35,16 +55,15 @@
   display: inline-block;
   color: $red-400;
   font-weight: $font-weight-semi-bold;
+  font-size: $input-label-font-size;
   margin-top: 8px;
 }
 
 // States
 .hasError {
+  border-color: $red-400;
+
   .label {
     color: $red-400;
-  }
-
-  .input {
-    border-color: $red-400;
   }
 }
