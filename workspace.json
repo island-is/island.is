@@ -131,6 +131,8 @@
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {
+            "linter": "eslint",
+            "config": "libs/gjafakort-ui/.eslintrc",
             "tsConfig": [
               "libs/gjafakort-ui/tsconfig.lib.json",
               "libs/gjafakort-ui/tsconfig.spec.json"
