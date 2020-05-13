@@ -129,7 +129,7 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
             "tsConfig": [
               "libs/gjafakort-ui/tsconfig.lib.json",

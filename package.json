@@ -34,7 +34,7 @@
     "apollo-client": "2.6.8",
     "apollo-link-http": "1.5.17",
     "apollo-server-express": "2.13.0",
-    "classnames": "^2.2.6",
+    "classnames": "2.2.6",
     "document-register-element": "1.13.1",
     "express": "4.17.1",
     "graphql-tag": "2.10.3",

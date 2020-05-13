@@ -18,13 +18,8 @@
   caret-color: $blue-400;
   font-weight: $font-weight-semi-bold;
   font-size: $h3-font-size;
-  padding: 14px 24px 14px 24px;
+  padding: $input-padding;
   transition: box-shadow .1s, border-color .1s;
-
-  &::-webkit-input-placeholder, &:-ms-input-placeholder, &::placeholder {
-    color: $dark-400;
-    font-weight: $font-weight-light;
-  }
 
   &:hover {
     border-color: $blue-400;
