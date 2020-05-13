@@ -51,8 +51,7 @@ globalStyle('button', {
   lineHeight: 1,
   cursor: 'pointer',
   textAlign: 'center',
-  // '-webkit-appearance': 'none',
-  // '-moz-appearance': 'none',
+  appearance: 'none',
 })
 
 globalStyle('.visually-hidden', {
