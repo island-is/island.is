@@ -1,6 +1,6 @@
 import React from 'react'
 
-import styles from './GridContainer.scss'
+import styles from './GridContainer.module.scss'
 
 /* eslint-disable-next-line */
 export interface GridContainerProps {}

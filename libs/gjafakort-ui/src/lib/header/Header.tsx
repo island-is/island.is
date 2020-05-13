@@ -1,7 +1,7 @@
 import React from 'react'
 import { Logo } from '@island.is/island-ui/core'
 
-import styles from './Header.scss'
+import styles from './Header.module.scss'
 
 export const Header = () => {
   return (

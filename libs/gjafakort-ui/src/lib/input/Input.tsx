@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { uniqueId } from 'lodash'
 import cn from 'classnames'
-import styles from './Input.scss'
+import styles from './Input.module.scss'
 
 interface InputProps {
   label: string,
