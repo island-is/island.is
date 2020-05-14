@@ -13,22 +13,20 @@ RUN yarn
 ARG APP
 ENV APP=${APP}
 
-FROM deps as builder
+FROM deps as src
 
-# Adding the rest of the code
 ADD --chown=runner:runners . .
+
+FROM src as builder
+
 RUN yarn run build ${APP}
 
-FROM deps as linter
+FROM src as linter
 
-# Adding the rest of the code
-ADD --chown=runner:runners . .
 RUN yarn run lint ${APP}
 
-FROM deps as tests
+FROM src as tests
 
-# Adding the rest of the code
-ADD --chown=runner:runners . .
 RUN yarn run test ${APP}
 
 FROM node:12.16.2-alpine3.11

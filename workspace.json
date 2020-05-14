@@ -734,12 +734,12 @@
             "passWithNoTests": true
           }
         },
-        "dist": {
+        "docker": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
               {
-                "command": "docker build -f apps/reference-backend/Dockerfile --build-arg APP=reference-backend -t ${DOCKER_REGISTRY}ref . "
+                "command": "DOCKER_BUILDKIT=1 APP=reference-backend ./scripts/build-docker-image.sh"
               }
             ]
           }
