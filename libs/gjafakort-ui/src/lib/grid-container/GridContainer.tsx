@@ -1,11 +1,7 @@
 import React from 'react'
-
 import styles from './GridContainer.module.scss'
 
-/* eslint-disable-next-line */
-export interface GridContainerProps {}
-
-export const GridContainer: React.FC<GridContainerProps> = ({ children }) => (
+export const GridContainer: React.FC = ({ children }) => (
   <div className={styles.container}>{children}</div>
 )
 

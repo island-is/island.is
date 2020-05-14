@@ -10,6 +10,7 @@ interface InputProps {
   id?: string
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 function mergeRefs(refs) {
@@ -34,6 +35,7 @@ export const Input = forwardRef(
       onFocus,
       onBlur,
       placeholder,
+      ...inputProps
     } = props
     const [hasFocus, setHasFocus] = useState(false)
     const inputRef = useRef(null)
@@ -72,6 +74,7 @@ export const Input = forwardRef(
                 onBlur(e)
               }
             }}
+            {...inputProps}
           />
         </div>
         {hasError && errorMessage && (
