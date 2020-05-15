@@ -20,3 +20,6 @@ generates:
       withComponent: false
       avoidOptionals:
         object: true
+hooks:
+  afterAllFileWrite:
+    - prettier --write

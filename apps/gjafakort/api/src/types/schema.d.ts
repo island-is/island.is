@@ -1,5 +1,9 @@
 import { GraphQLResolveInfo } from 'graphql'
 export type Maybe<T> = T | null
+export type RequireFields<T, K extends keyof T> = {
+  [X in Exclude<keyof T, K>]?: T[X]
+} &
+  { [P in K]-?: NonNullable<T[P]> }
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string
@@ -12,17 +16,38 @@ export type Scalars = {
 export type Application = {
   __typename?: 'Application'
   id: Scalars['String']
+  email: Scalars['String']
+  state: Scalars['String']
+}
+
+export type CreateApplicationInput = {
+  ssn: Scalars['String']
+  email: Scalars['String']
+}
+
+export type CreateApplicationPayload = {
+  __typename?: 'createApplicationPayload'
+  application?: Maybe<Application>
 }
 
 export type Mutation = {
   __typename?: 'Mutation'
+  createApplication?: Maybe<CreateApplicationPayload>
   root?: Maybe<Scalars['String']>
+}
+
+export type MutationCreateApplicationArgs = {
+  input: CreateApplicationInput
 }
 
 export type Query = {
   __typename?: 'Query'
   getApplication?: Maybe<Application>
   root?: Maybe<Scalars['String']>
+}
+
+export type QueryGetApplicationArgs = {
+  ssn: Scalars['String']
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -134,18 +159,22 @@ export type DirectiveResolverFn<
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>
-  Application: ResolverTypeWrapper<Application>
   String: ResolverTypeWrapper<Scalars['String']>
+  Application: ResolverTypeWrapper<Application>
   Mutation: ResolverTypeWrapper<{}>
+  createApplicationInput: CreateApplicationInput
+  createApplicationPayload: ResolverTypeWrapper<CreateApplicationPayload>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
 }
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Query: {}
-  Application: Application
   String: Scalars['String']
+  Application: Application
   Mutation: {}
+  createApplicationInput: CreateApplicationInput
+  createApplicationPayload: CreateApplicationPayload
   Boolean: Scalars['Boolean']
 }
 
@@ -154,6 +183,20 @@ export type ApplicationResolvers<
   ParentType extends ResolversParentTypes['Application'] = ResolversParentTypes['Application']
 > = {
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  state?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: isTypeOfResolverFn<ParentType>
+}
+
+export type CreateApplicationPayloadResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['createApplicationPayload'] = ResolversParentTypes['createApplicationPayload']
+> = {
+  application?: Resolver<
+    Maybe<ResolversTypes['Application']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 
@@ -161,6 +204,12 @@ export type MutationResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = {
+  createApplication?: Resolver<
+    Maybe<ResolversTypes['createApplicationPayload']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateApplicationArgs, 'input'>
+  >
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
 }
 
@@ -171,13 +220,15 @@ export type QueryResolvers<
   getApplication?: Resolver<
     Maybe<ResolversTypes['Application']>,
     ParentType,
-    ContextType
+    ContextType,
+    RequireFields<QueryGetApplicationArgs, 'ssn'>
   >
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
 }
 
 export type Resolvers<ContextType = any> = {
   Application?: ApplicationResolvers<ContextType>
+  createApplicationPayload?: CreateApplicationPayloadResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
 }

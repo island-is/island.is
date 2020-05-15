@@ -18,7 +18,7 @@ interface PropTypes {
 
 const GetApplicationQuery = gql`
   query GetApplication {
-    getApplication {
+    getApplication(ssn: "2101932009") {
       id
     }
   }
