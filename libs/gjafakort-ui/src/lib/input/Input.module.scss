@@ -1,36 +1,36 @@
 @import '../styles/theme';
 
-.label {
+@mixin label {
   display: block;
+  width: 100%;
   color: $blue-400;
   font-weight: $font-weight-semi-bold;
   font-size: $input-label-font-size;
-  margin-bottom: 8px;
-  cursor: text;
+  margin-bottom: map-get($spacers, 1);
   transition: color 0.1s;
 }
 
-.container {
+@mixin container {
   background: $white;
   width: 100%;
   border: 1px solid $blue-200;
   box-sizing: border-box;
-  border-radius: 5px;
+  border-radius: $input-border-radius;
   padding: $input-container-padding;
   cursor: text;
   transition: box-shadow 0.1s, border-color 0.1s;
-
-  &:hover {
-    border-color: $blue-400;
-  }
-
-  &.hasFocus {
-    outline: none;
-    box-shadow: 0 0 0 4px $mint-400;
-  }
 }
 
-.input {
+@mixin container-hover {
+  border-color: $blue-400;
+}
+
+@mixin container-focus {
+  outline: none;
+  box-shadow: 0 0 0 4px $mint-400;
+}
+
+@mixin input {
   caret-color: $blue-400;
   font-weight: $font-weight-semi-bold;
   font-size: $h3-font-size;
@@ -39,30 +39,82 @@
   width: 100%;
   background: none;
   box-shadow: none;
-
-  &::placeholder {
-    color: $dark-300;
-    font-weight: $font-weight-light;
-  }
-
-  &:focus {
-    outline: none;
-  }
 }
 
-.errorMessage {
+@mixin input-placeholder {
+  color: $dark-300;
+  font-weight: $font-weight-light;
+}
+
+@mixin input-focus {
+  outline: none;
+}
+
+@mixin placeholder {
+  color: $dark-300;
+  font-weight: $font-weight-light;
+  font-size: $h3-font-size;
+  padding: $input-padding;
+  width: 100%;
+}
+
+@mixin error-message {
   display: inline-block;
   color: $red-400;
   font-weight: $font-weight-semi-bold;
   font-size: $input-label-font-size;
-  margin-top: 8px;
+  margin-top: map-get($spacers, 1);
+}
+
+@mixin input-error-state {
+  border-color: $red-400;
+}
+
+@mixin label-error-state {
+  color: $red-400;
+}
+
+.label {
+  @include label();
+}
+
+.container {
+  @include container;
+
+  &:hover {
+    @include container-hover;
+  }
+
+  &.hasFocus {
+    @include container-focus;
+  }
+}
+
+.input {
+  @include input;
+
+  &::placeholder {
+    @include input-placeholder;
+  }
+
+  &:focus {
+    @include input-focus;
+  }
+}
+
+.placeholder {
+  @include placeholder;
+}
+
+.errorMessage {
+  @include error-message;
 }
 
 // States
 .hasError {
-  border-color: $red-400;
+  @include input-error-state;
 
   .label {
-    color: $red-400;
+    @include label-error-state;
   }
 }
