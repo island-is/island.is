@@ -1,5 +1,7 @@
 import { globalStyle } from 'treat'
 
+import { fontStack } from './fontStack'
+
 globalStyle('html', {
   boxSizing: 'border-box',
   fontSize: '16px',
@@ -18,7 +20,7 @@ globalStyle('body, h1, h2, h3, h4, h5, h6, p, ol, ul, blockquote', {
   margin: 0,
   padding: 0,
   fontWeight: 'normal',
-  fontFamily: '"IBM Plex Sans", sans-serif',
+  fontFamily: fontStack,
   color: '#00003c',
 })
 
