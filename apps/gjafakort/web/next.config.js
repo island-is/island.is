@@ -1,7 +1,7 @@
 const withTreat = require('next-treat')()
 
 const {
-  API_URL = 'http://localhost:4444/api',
+  API_URL = 'http://localhost:3333/api',
   WEB_PUBLIC_URL = 'http://localhost:4200',
 } = process.env
 
