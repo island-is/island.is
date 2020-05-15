@@ -1,0 +1,8 @@
+@import '../styles/theme';
+
+.container {
+  height: $header-height;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid $blue-200;
+}
