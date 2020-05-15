@@ -48,6 +48,18 @@ Applications and libraries can be structured in a hierarchy using subfolders:
 yarn generate @nrwl/node:lib common/my-lib
 ```
 
+### Migrations
+
+Using the `sequelize-cli` we support version controlled migrations that keep track of changes to the database.
+
+#### Generate a migrations
+
+Run `yarn nx run <project>:migrate/generate`
+
+#### Migrating
+
+Run `yarn nx run <project>:migrate`
+
 ### Understand your workspace
 
 Run `yarn nx dep-graph` to see a diagram of the dependencies of your projects.

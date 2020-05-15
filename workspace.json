@@ -211,6 +211,20 @@
             "tsConfig": "apps/gjafakort/web/tsconfig.spec.json",
             "passWithNoTests": true
           }
+        },
+        "docker": {
+          "builder": "@gperdomor/nx-docker:build",
+          "options": {
+            "repository": "gjafakort-web",
+            "dockerfile": "apps/gjafakort/web/Dockerfile",
+            "registry": "$DOCKER_REG",
+            "username": "$DOCKER_REG_USER",
+            "password": "$DOCKER_REG_PASSWORD",
+            "tags": "$DOCKER_TAGS",
+            "build_args": "$BUILD_ARGS",
+            "push": true,
+            "socket": "/var/run/docker.sock"
+          }
         }
       }
     },
@@ -306,6 +320,20 @@
                 "command": "graphql-codegen --config apps/gjafakort/api/codegen.yml"
               }
             ]
+          }
+        },
+        "docker": {
+          "builder": "@gperdomor/nx-docker:build",
+          "options": {
+            "repository": "gjafakort-api",
+            "dockerfile": "apps/gjafakort/api/Dockerfile",
+            "registry": "$DOCKER_REG",
+            "username": "$DOCKER_REG_USER",
+            "password": "$DOCKER_REG_PASSWORD",
+            "tags": "$DOCKER_TAGS",
+            "build_args": "$BUILD_ARGS",
+            "push": true,
+            "socket": "/var/run/docker.sock"
           }
         }
       }
@@ -470,6 +498,96 @@
             "ci": {
               "quiet": true
             }
+          }
+        }
+      }
+    },
+    "application": {
+      "root": "apps/application",
+      "sourceRoot": "apps/application/src",
+      "projectType": "application",
+      "prefix": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/application",
+            "main": "apps/application/src/main.ts",
+            "tsConfig": "apps/application/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "*sequelize*",
+                "input": "apps/application",
+                "output": "./"
+              },
+              {
+                "glob": "migrations",
+                "input": "apps/application",
+                "output": "./"
+              }
+            ]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/application/src/environments/environment.ts",
+                  "with": "apps/application/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "application:build"
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "sequelize-cli db:migrate"
+              }
+            ],
+            "cwd": "apps/application"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "sequelize-cli migration:generate --name $(whoami)"
+              }
+            ],
+            "cwd": "apps/application"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/application/.eslintrc",
+            "tsConfig": [
+              "apps/application/tsconfig.app.json",
+              "apps/application/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/application/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/application/jest.config.js",
+            "tsConfig": "apps/application/tsconfig.spec.json",
+            "passWithNoTests": true
           }
         }
       }

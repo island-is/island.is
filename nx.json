@@ -59,6 +59,9 @@
     },
     "island-ui-storybook": {
       "tags": []
+    },
+    "application": {
+      "tags": []
     }
   }
 }
