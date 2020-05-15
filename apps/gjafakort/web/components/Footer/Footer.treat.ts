@@ -1,6 +1,8 @@
 import { style } from 'treat'
 
-export const root = style((theme) => ({
+import { theme } from '../../styles'
+
+export const root = style({
   position: 'absolute',
   bottom: 0,
   width: '100%',
@@ -9,4 +11,4 @@ export const root = style((theme) => ({
   justifyContent: 'center',
   alignItems: 'center',
   borderTop: `1px solid ${theme.gray50}`,
-}))
+})
