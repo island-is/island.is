@@ -1,10 +1,7 @@
 import express from 'express'
-import {
-  register,
-  Counter,
-  collectDefaultMetrics,
-  Histogram,
-} from 'prom-client'
+import { collectDefaultMetrics, Histogram } from 'prom-client'
+import { routes } from './routes'
+import { metricsApp } from './infra/metrics-publisher'
 
 const app = express()
 
@@ -37,21 +34,7 @@ app.use((req, res, next) => {
 })
 
 // secured
-const requests = new Counter({
-  name: 'requests',
-  labelNames: ['resource'],
-  help: 'Number of resource requests',
-})
-
-app.use('/resourceA', (req, res) => {
-  res.status(200).send({ a: 5 })
-  requests.labels('resourceA').inc()
-})
-
-app.use('/resourceB', (req, res) => {
-  res.status(200).send({ b: 10 })
-  requests.labels('resourceB').inc()
-})
+app.use('/', routes)
 
 // metrics related middleware part 2
 app.use((req, res, next) => {
@@ -62,13 +45,6 @@ app.use((req, res, next) => {
     .observe(responseTimeInMs)
 
   next()
-})
-
-// a separate express app to serve the metrics listening on a different port
-const metricsApp = express()
-metricsApp.get('/metrics', (req, res) => {
-  res.set('Content-Type', register.contentType)
-  res.end(register.metrics())
 })
 
 metricsApp.listen(9696, () => {
