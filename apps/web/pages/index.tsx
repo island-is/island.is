@@ -1,22 +1,93 @@
+import '@island.is/island-ui/core/reset'
 import React from 'react'
-import { Logo } from '@island.is/island-ui/core'
-
-import './index.scss'
+import { ContentBlock, Box, Logo, Tiles } from '@island.is/island-ui/core'
 
 export const Index = () => {
-  /*
-   * Replace the elements below with your own.
-   *
-   * Note: The corresponding styles are in the ./${fileName}.${style} file.
-   */
   return (
-    <div className="app">
-      <header className="flex">
-        <h1>
-          Welcome to <Logo solid width={140} />
-        </h1>
-      </header>
-    </div>
+    <ContentBlock width="large">
+      <Box background="blue400" padding="large">
+        <Tiles space="large" columns={[1, 2, 3, 4, 5]}>
+          <Box background="mint100" boxShadow="small" padding="large">
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
+          </Box>
+          <Box background="mint100" boxShadow="small" padding="large">
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
+          </Box>
+          <Box background="mint100" boxShadow="small" padding="large">
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
+          </Box>
+          <Box background="mint100" boxShadow="small" padding="large">
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
+          </Box>
+          <Box background="mint100" boxShadow="small" padding="large">
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
+          </Box>
+          <Box background="mint100" boxShadow="small" padding="large">
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
+          </Box>
+          <Box background="mint100" boxShadow="small" padding="large">
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
+          </Box>
+          <Box background="mint100" boxShadow="small" padding="large">
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
+          </Box>
+          <Box background="mint100" boxShadow="small" padding="large">
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
+          </Box>
+          <Box background="mint100" boxShadow="small" padding="large">
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
+          </Box>
+          <Box background="mint100" boxShadow="small" padding="large">
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
+          </Box>
+          <Box background="mint100" boxShadow="small" padding="large">
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
+          </Box>
+          <Box background="mint100" boxShadow="small" padding="large">
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
+          </Box>
+        </Tiles>
+      </Box>
+    </ContentBlock>
   )
 }
 
