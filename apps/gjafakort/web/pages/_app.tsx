@@ -5,7 +5,7 @@ import { ApolloProvider } from 'react-apollo'
 import { ApolloClient } from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 
-import { Page, Header, Footer } from '../components'
+import { Header, GridContainer, Page } from '@island.is/gjafakort-ui'
 import initApollo from '../graphql/client'
 import appWithTranslation from '../i18n/appWithTranslation'
 
@@ -42,7 +42,9 @@ const Layout: React.FC = ({ children }) => {
         />
         <title>Ísland.is</title>
       </Head>
-      <Header />
+      <GridContainer>
+        <Header />
+      </GridContainer>
       {children}
       <style jsx global>{`
         @font-face {

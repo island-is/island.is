@@ -1,6 +1,6 @@
 import React, { useState, useRef, forwardRef } from 'react'
 import cn from 'classnames'
-import styles from './Input.module.scss'
+import * as styles from './Input.treat'
 
 interface InputProps {
   label: string
