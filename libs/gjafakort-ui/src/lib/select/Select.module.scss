@@ -1,0 +1,111 @@
+@import '../input/Input.module.scss';
+
+.wrapper {
+  .valueContainer {
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    margin-left: 0;
+
+    // not sure if this is auto-generated cant find source (wrapper around input)
+    :global(.css-b8ldur-Input) {
+      margin: 0;
+      padding: 0;
+    }
+  }
+  .placeholder {
+    margin-left: 0;
+    @include placeholder;
+  }
+  .input input {
+    @include input;
+
+    &:focus {
+      @include input-focus;
+    }
+  }
+  :global(.island-select__control).container {
+    @include container;
+    transition: border-color 0.1s;
+
+    &:hover:not(:global(.island-select__control--is-focused)) {
+      @include container-hover;
+    }
+    &:global(.island-select__control--menu-is-open) {
+      border-color: transparent;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+    &:global(.island-select__control--is-focused) {
+      @include container-focus;
+    }
+  }
+  .label {
+    @include label;
+  }
+  .singleValue {
+    @include input;
+  }
+  .indicatorsContainer {
+    height: 100%;
+    position: absolute;
+    right: 32px;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .dropdownIndicator {
+    padding: 0;
+  }
+
+  .menu {
+    margin-top: -1px;
+    box-shadow: 0 0 0 4px $mint-400;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: 0;
+      right: 0;
+      height: 4px;
+      width: 100%;
+      background-color: $white;
+      border-bottom: 1px solid $blue-200;
+    }
+  }
+
+  .option {
+    position: relative;
+    font-size: $intro-font-size;
+    font-weight: $font-weight-light;
+    padding: 23px 24px;
+
+    &:global(.island-select__option--is-focused) {
+      background-color: $blue-100;
+
+      &:before {
+        content: '';
+        height: 1px;
+        background-color: $white;
+        position: absolute;
+        top: -1px;
+        right: 20px;
+        left: 20px;
+      }
+    }
+    &:not(:last-of-type):not(:global(.island-select__option--is-focused)):after {
+      content: '';
+      height: 1px;
+      background-color: $blue-200;
+      position: absolute;
+      bottom: 0;
+      right: 20px;
+      left: 20px;
+    }
+  }
+}
