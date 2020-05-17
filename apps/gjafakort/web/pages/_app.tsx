@@ -9,8 +9,6 @@ import { Header, GridContainer, Page } from '@island.is/gjafakort-ui'
 import initApollo from '../graphql/client'
 import appWithTranslation from '../i18n/appWithTranslation'
 
-import '../styles/global.treat'
-
 const Layout: React.FC = ({ children }) => {
   return (
     <Page>

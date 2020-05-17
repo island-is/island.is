@@ -1,1 +1,0 @@
-import './gjafakort-ui.scss'

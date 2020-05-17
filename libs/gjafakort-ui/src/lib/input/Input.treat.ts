@@ -28,6 +28,6 @@ export const label = style({
 
 export const hasFocus = style({
   selectors: {
-    [`${container} &`]: mixins.containerFocus,
+    [`&${container}`]: mixins.containerFocus,
   },
 })

@@ -1,10 +1,9 @@
 import { globalStyle } from 'treat'
-
-import { fontStack } from './fontStack'
+import { theme } from './'
 
 globalStyle('html', {
   boxSizing: 'border-box',
-  fontSize: '16px',
+  fontSize: theme.baseFontSize,
   scrollBehavior: 'smooth',
 })
 
@@ -20,8 +19,8 @@ globalStyle('body, h1, h2, h3, h4, h5, h6, p, ol, ul, blockquote', {
   margin: 0,
   padding: 0,
   fontWeight: 'normal',
-  fontFamily: fontStack,
-  color: '#00003c',
+  fontFamily: theme.fontFamily,
+  color: theme.baseColor,
 })
 
 globalStyle('ol, ul', {
@@ -40,6 +39,13 @@ globalStyle('a:hover', {
 globalStyle('img', {
   maxWidth: '100%',
   height: 'auto',
+})
+
+globalStyle('button, input, optgroup, select, textarea', {
+  margin: 0,
+  fontFamily: 'inherit',
+  fontSize: 'inherit',
+  lineHeight: 'inherit',
 })
 
 globalStyle('button', {
