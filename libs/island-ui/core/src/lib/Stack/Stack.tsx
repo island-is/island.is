@@ -33,7 +33,7 @@ const useStackItem = ({ align, space }: UseStackItemProps) => ({
     ? null
     : {
         display: mapResponsiveProp(align, alignToDisplay) || 'flex',
-        flexDirection: 'column',
+        flexDirection: 'column' as const,
         alignItems: alignToFlexAlign(align),
       }),
 })
@@ -77,7 +77,7 @@ const calculateHiddenStackItemProps = (
       hiddenOnMd ? 'none' : displayMd,
       hiddenOnLg ? 'none' : displayLg,
       hiddenOnXl ? 'none' : displayXl,
-    ],
+    ] as ResponsiveProp<'block' | 'flex' | 'none' | 'inline' | 'inlineBlock'>,
   }
 }
 
