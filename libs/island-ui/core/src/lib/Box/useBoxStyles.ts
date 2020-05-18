@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ElementType } from 'react'
 import classnames from 'classnames'
 import { Theme } from 'treat/theme'
