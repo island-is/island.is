@@ -1,3 +1,4 @@
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import '@island.is/island-ui/core/reset'
 import React from 'react'
 import { ContentBlock, Box, Logo, Tiles } from '@island.is/island-ui/core'

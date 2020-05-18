@@ -1,9 +1,3 @@
-import { ReactElement } from 'react'
+import { ReactNode } from 'react'
 
-interface ReactNodeArray extends Array<ReactNodeNoStrings> {}
-export type ReactNodeNoStrings =
-  | ReactElement
-  | ReactNodeArray
-  | boolean
-  | null
-  | undefined
+export type ReactNodeNoStrings = ReactNode | boolean | null | undefined
