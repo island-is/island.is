@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import gql from 'graphql-tag'
 
 import { Application } from '../../graphql/schema'
@@ -9,6 +9,7 @@ import {
   Input,
   Select,
   Typography,
+  Checkbox,
 } from '@island.is/gjafakort-ui'
 
 interface PropTypes {
@@ -25,6 +26,7 @@ const GetApplicationQuery = gql`
 
 function HomePage({ application }: PropTypes) {
   const { t } = useI18n()
+  const [checkbox, setCheckbox] = useState(false)
   return (
     <GridContainer>
       <Typography variant="eyebrow">Hi yo whatup</Typography>
@@ -128,6 +130,20 @@ function HomePage({ application }: PropTypes) {
           options={[]}
         />
       </div>
+      <div style={{ paddingTop: 25, paddingBottom: 25 }}>
+        <Checkbox
+          name="c1"
+          label="Hér er einn möguleiki sem hægt er að velja"
+          onChange={(e) => {
+            setCheckbox(e.target.checked)
+          }}
+          checked={checkbox}
+        />
+      </div>
+      <div style={{ paddingTop: 25, paddingBottom: 25 }}>
+        <Checkbox name="c1" label="Og þessi er valinn" checked />
+      </div>
+      <div style={{ marginBottom: 500 }}></div>
     </GridContainer>
   )
 }
