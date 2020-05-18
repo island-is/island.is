@@ -20,15 +20,6 @@ export const container = {
   transition: 'box-shadow 0.1s, border-color 0.1s',
 }
 
-export const containerHover = {
-  borderColor: theme.blue400,
-}
-
-export const containerFocus = {
-  outline: 'none',
-  boxShadow: `0 0 0 4px ${theme.mint400}`,
-}
-
 export const input = {
   caretColor: theme.blue400,
   fontFamily: theme.fontFamily,
@@ -46,10 +37,6 @@ export const inputPlaceholder = {
   fontWeight: theme.fontWeightLight,
 }
 
-export const inputFocus = {
-  outline: 'none',
-}
-
 export const placeholder = {
   color: theme.dark300,
   fontWeight: theme.fontWeightLight,
@@ -58,6 +45,7 @@ export const placeholder = {
   width: '100%',
 }
 
+// Error state
 export const errorMessage = {
   display: 'inline-block',
   color: theme.red400,
@@ -72,4 +60,33 @@ export const inputErrorState = {
 
 export const labelErrorState = {
   color: theme.red400,
+}
+
+// Focus state
+export const containerFocus = {
+  outline: 'none',
+  boxShadow: `0 0 0 4px ${theme.mint400}`,
+}
+
+export const inputFocus = {
+  outline: 'none',
+}
+
+// Hover state
+export const containerHover = {
+  borderColor: theme.blue400,
+}
+
+// Disabled state
+export const labelDisabledEmptyInput = {
+  color: theme.blue300,
+}
+
+export const containerDisabled = {
+  backgroundColor: theme.blue100,
+}
+
+export const inputDisabled = {
+  backgroundColor: theme.blue100,
+  color: theme.baseColor,
 }

@@ -1,16 +1,22 @@
 import { style } from 'treat'
 import * as mixins from './Input.mixins'
 
+export const containerDisabled = style({})
+
 export const container = style({
   ...mixins.container,
   boxSizing: 'border-box',
-  ':hover': mixins.containerHover,
+  selectors: {
+    [`&:hover:not(${containerDisabled})`]: mixins.containerHover,
+    [`&${containerDisabled}`]: mixins.containerDisabled,
+  },
 })
 
 export const input = style({
   ...mixins.input,
   '::placeholder': mixins.inputPlaceholder,
   ':focus': mixins.inputFocus,
+  ':disabled': mixins.inputDisabled,
 })
 
 export const errorMessage = style(mixins.errorMessage)
@@ -25,6 +31,7 @@ export const label = style({
     [`${hasError} &`]: mixins.labelErrorState,
   },
 })
+export const labelDisabledEmptyInput = style(mixins.labelDisabledEmptyInput)
 
 export const hasFocus = style({
   selectors: {
