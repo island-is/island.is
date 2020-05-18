@@ -5,7 +5,7 @@ import Select from './Select'
 
 describe(' Select', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Select />)
+    const { baseElement } = render(<Select options={[]} name="s1" />)
     expect(baseElement).toBeTruthy()
   })
 })
