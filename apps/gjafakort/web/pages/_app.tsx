@@ -5,7 +5,7 @@ import { ApolloProvider } from 'react-apollo'
 import { ApolloClient } from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 
-import { Page, Header, Footer } from '../components'
+import { Page, Header } from '../components'
 import initApollo from '../graphql/client'
 import appWithTranslation from '../i18n/appWithTranslation'
 

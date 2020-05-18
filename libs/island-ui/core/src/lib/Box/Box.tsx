@@ -12,7 +12,6 @@ export interface BoxProps
   component?: ElementType
 }
 
-/** General layout component. */
 export const Box = forwardRef<HTMLElement, BoxProps>(
   (
     {
