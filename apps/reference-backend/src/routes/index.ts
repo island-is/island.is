@@ -8,6 +8,7 @@ const resourceRequests = new Counter({
 })
 
 export const routes = Router()
+
 routes.use('/resourceA', (req, res) => {
   res.status(200).send({ a: 5 })
   resourceRequests.labels('resourceA').inc()
