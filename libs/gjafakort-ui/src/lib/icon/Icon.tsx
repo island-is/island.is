@@ -1,7 +1,5 @@
 import React from 'react'
 
-import './Icon.scss'
-
 // type IconType = 'cheveron' | 'check' | 'external-link' | 'arrow' | 'calendar' | 'search' | 'info' | 'close' | 'attachment' | 'plus' | 'loading'
 type IconTypes = 'cheveron'
 type Icons = {

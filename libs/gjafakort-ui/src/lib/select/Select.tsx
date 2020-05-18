@@ -1,18 +1,27 @@
 import React from 'react'
 import ReactSelect, { components } from 'react-select'
-import styles from './Select.module.scss'
+import cn from 'classnames'
+import * as styles from './Select.treat'
 import Icon from '../icon/Icon'
 
 type Option = { label: string; value: string | number }
 
 export interface SelectProps {
+  name: string
+  id?: string
+  disabled?: boolean
   options: Option[]
+  noOptionsMessage?: string
   onChange?: (selected?: Option | Option[] | null) => void
   label?: string
   placeholder?: string
 }
 
 export const Select = ({
+  name,
+  id = name,
+  disabled,
+  noOptionsMessage,
   options,
   onChange,
   label,
@@ -21,6 +30,10 @@ export const Select = ({
   return (
     <div className={styles.wrapper}>
       <ReactSelect
+        noOptionsMessage={() => noOptionsMessage}
+        id={id}
+        name={name}
+        isDisabled={disabled}
         options={options}
         styles={customStyles}
         classNamePrefix="island-select"
@@ -83,7 +96,12 @@ const Input = (props) => (
 
 const Control = (props) => {
   return (
-    <components.Control className={styles.container} {...props}>
+    <components.Control
+      className={cn(styles.container, {
+        [styles.containerDisabled]: props.isDisabled,
+      })}
+      {...props}
+    >
       <label htmlFor={props.name} className={styles.label}>
         {props.selectProps.label}
       </label>

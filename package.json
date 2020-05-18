@@ -49,6 +49,7 @@
     "react": "16.12.0",
     "react-apollo": "3.1.5",
     "react-dom": "16.12.0",
+    "react-select": "^3.1.0",
     "rosetta": "1.0.0",
     "sequelize": "5.21.8",
     "treat": "1.4.1"
@@ -83,6 +84,7 @@
     "@types/node": "~8.9.4",
     "@types/react": "16.9.17",
     "@types/react-dom": "16.9.4",
+    "@types/react-select": "^3.0.13",
     "@typescript-eslint/eslint-plugin": "2.19.2",
     "@typescript-eslint/parser": "2.19.2",
     "babel-loader": "8.0.6",
