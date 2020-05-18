@@ -13,6 +13,24 @@ import {
 export const Index = () => {
   return (
     <>
+      <Columns collapseBelow="md" space="small">
+        <Column>
+          <Box background="white" boxShadow="small" padding="large">
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
+          </Box>
+        </Column>
+        <Column>
+          <Box background="white" boxShadow="small" padding="large">
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
+          </Box>
+        </Column>
+      </Columns>
       <Columns space={['small', 'medium', 'large']}>
         <Column>
           <Box background="white" boxShadow="small" padding="large">

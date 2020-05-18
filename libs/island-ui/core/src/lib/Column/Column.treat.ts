@@ -1,6 +1,6 @@
-import { style, styleMap } from 'treat';
+import { style, styleMap } from 'treat'
 
-export const column = style({});
+export const column = style({})
 
 export const columnContent = style({
   selectors: {
@@ -8,11 +8,11 @@ export const columnContent = style({
       paddingTop: 0,
     },
   },
-});
+})
 
 const getSizeStyle = (scale: number) => ({
   flex: `0 0 ${scale * 100}%`,
-});
+})
 
 export const width = styleMap({
   '1/2': getSizeStyle(1 / 2),
@@ -24,4 +24,4 @@ export const width = styleMap({
   '2/5': getSizeStyle(2 / 5),
   '3/5': getSizeStyle(3 / 5),
   '4/5': getSizeStyle(4 / 5),
-});
+})

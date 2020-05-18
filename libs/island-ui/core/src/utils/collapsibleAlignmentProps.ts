@@ -31,64 +31,81 @@ export function resolveCollapsibleAlignmentProps({
   collapseBelow,
   reverse,
 }: CollapsibleAlignmentProps) {
-  const [collapseMobile, collapseTablet] = resolveResponsiveRangeProps({
+  const [
+    collapseXs,
+    collapseSm,
+    collapseMd,
+    collapseLg,
+  ] = resolveResponsiveRangeProps({
     below: collapseBelow,
   })
 
-  const rowReverseTablet = collapseMobile && reverse
-  const rowReverseDesktop = (collapseMobile || collapseTablet) && reverse
+  const rowReverseSm = collapseXs && reverse
+  const rowReverseMd = (collapseXs || collapseSm) && reverse
+  const rowReverseLg = (collapseXs || collapseSm || collapseMd) && reverse
+  const rowReverseXl =
+    (collapseXs || collapseSm || collapseMd || collapseLg) && reverse
 
   const [
-    justifyContentMobile,
-    justifyContentTablet,
-    justifyContentDesktop,
+    justifyContentXs,
+    justifyContentSm,
+    justifyContentMd,
+    justifyContentLg,
+    justifyContentXl,
   ] = normaliseResponsiveProp(alignToFlexAlign(align) || 'flexStart')
 
   return {
-    collapseMobile,
-    collapseTablet,
+    collapseXs,
+    collapseSm,
+    collapseMd,
+    collapseLg,
     orderChildren: (children: ReactNode) => {
       const childrenArray = Children.toArray(children)
-      return !collapseMobile && !collapseTablet && reverse
+      return !collapseXs && !collapseSm && !collapseMd && !collapseLg && reverse
         ? childrenArray.reverse()
         : childrenArray
     },
     collapsibleAlignmentProps: {
       display: [
-        collapseMobile ? 'block' : 'flex',
-        collapseTablet ? 'block' : 'flex',
+        collapseXs ? 'block' : 'flex',
+        collapseSm ? 'block' : 'flex',
+        collapseMd ? 'block' : 'flex',
+        collapseLg ? 'block' : 'flex',
         'flex',
       ],
       flexDirection: [
-        collapseMobile ? 'column' : 'row',
+        collapseXs ? 'column' : 'row',
         // eslint-disable-next-line no-nested-ternary
-        collapseTablet ? 'column' : rowReverseTablet ? 'rowReverse' : 'row',
-        rowReverseDesktop ? 'rowReverse' : 'row',
+        collapseSm ? 'column' : rowReverseSm ? 'rowReverse' : 'row',
+        collapseMd ? 'column' : rowReverseMd ? 'rowReverse' : 'row',
+        collapseLg ? 'column' : rowReverseLg ? 'rowReverse' : 'row',
+        rowReverseXl ? 'rowReverse' : 'row',
       ],
       justifyContent: align
         ? ([
-            justifyContentMobile,
-            rowReverseTablet
-              ? invertAlignment(justifyContentTablet)
-              : justifyContentTablet,
-            rowReverseDesktop
-              ? invertAlignment(justifyContentDesktop)
-              : justifyContentDesktop,
+            justifyContentXs,
+            rowReverseSm ? invertAlignment(justifyContentSm) : justifyContentSm,
+            rowReverseMd ? invertAlignment(justifyContentMd) : justifyContentMd,
+            rowReverseLg ? invertAlignment(justifyContentLg) : justifyContentLg,
+            rowReverseXl ? invertAlignment(justifyContentXl) : justifyContentXl,
           ] as const)
         : undefined,
       alignItems: alignY ? alignYToFlexAlign(alignY) : undefined,
     },
     collapsibleAlignmentChildProps: {
       display: [
-        collapseMobile && justifyContentMobile !== 'flexStart'
-          ? 'flex'
-          : 'block',
-        collapseTablet && justifyContentTablet !== 'flexStart'
-          ? 'flex'
-          : 'block',
+        collapseXs && justifyContentXs !== 'flexStart' ? 'flex' : 'block',
+        collapseSm && justifyContentSm !== 'flexStart' ? 'flex' : 'block',
+        collapseMd && justifyContentMd !== 'flexStart' ? 'flex' : 'block',
+        collapseLg && justifyContentLg !== 'flexStart' ? 'flex' : 'block',
         'block',
       ],
-      justifyContent: [justifyContentMobile, justifyContentTablet],
+      justifyContent: [
+        justifyContentXs,
+        justifyContentSm,
+        justifyContentMd,
+        justifyContentLg,
+      ],
     },
   } as const
 }

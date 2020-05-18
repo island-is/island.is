@@ -11,11 +11,15 @@ export interface ColumnProps {
 /** Standard columns */
 export const Column = ({ children, width }: ColumnProps) => {
   const {
-    collapseMobile,
-    collapseTablet,
-    mobileSpace,
-    tabletSpace,
-    desktopSpace,
+    collapseXs,
+    collapseSm,
+    collapseMd,
+    collapseLg,
+    xsSpace,
+    smSpace,
+    mdSpace,
+    lgSpace,
+    xlSpace,
     collapsibleAlignmentChildProps,
   } = useContext(ColumnsContext)
 
@@ -31,15 +35,19 @@ export const Column = ({ children, width }: ColumnProps) => {
     >
       <Box
         paddingLeft={[
-          collapseMobile ? 'none' : mobileSpace,
-          collapseTablet ? 'none' : tabletSpace,
-          desktopSpace,
+          collapseXs ? 'none' : xsSpace,
+          collapseSm ? 'none' : smSpace,
+          collapseMd ? 'none' : mdSpace,
+          collapseLg ? 'none' : lgSpace,
+          xlSpace,
         ]}
         paddingTop={
-          collapseMobile || collapseTablet
+          collapseXs || collapseSm || collapseMd || collapseLg
             ? [
-                collapseMobile ? mobileSpace : 'none',
-                collapseTablet ? tabletSpace : 'none',
+                collapseXs ? xsSpace : 'none',
+                collapseSm ? smSpace : 'none',
+                collapseMd ? mdSpace : 'none',
+                collapseLg ? lgSpace : 'none',
                 'none',
               ]
             : undefined
