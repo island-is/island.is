@@ -1,19 +1,16 @@
 import React, { ReactNode } from 'react'
 import { Box } from '../Box/Box'
-import * as styleRefs from './ContentBlock.treat'
+import * as styles from './ContentBlock.treat'
 
+/** ContentBlock is a container with a set max-width that centers its children. */
 export interface ContentBlockProps {
   children: ReactNode
-  width?: keyof typeof styleRefs.width
+  width?: keyof typeof styles.width
 }
 
 export const ContentBlock = ({
   width = 'medium',
   children,
-}: ContentBlockProps) => {
-  const styles = {
-    ...styleRefs,
-  }
-
-  return <Box className={[styles.root, styles.width[width]]}>{children}</Box>
-}
+}: ContentBlockProps) => (
+  <Box className={[styles.root, styles.width[width]]}>{children}</Box>
+)

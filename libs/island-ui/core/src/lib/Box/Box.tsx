@@ -5,7 +5,6 @@ import {
   ElementType,
 } from 'react'
 import { useBoxStyles, UseBoxStylesProps } from './useBoxStyles'
-import { renderBackgroundProvider } from './BackgroundContext'
 
 export interface BoxProps
   extends Omit<UseBoxStylesProps, 'component'>,
@@ -13,7 +12,7 @@ export interface BoxProps
   component?: ElementType
 }
 
-const NamedBox = forwardRef<HTMLElement, BoxProps>(
+export const Box = forwardRef<HTMLElement, BoxProps>(
   (
     {
       component = 'div',
@@ -109,16 +108,10 @@ const NamedBox = forwardRef<HTMLElement, BoxProps>(
       className,
     })
 
-    const element = createElement(component, {
+    return createElement(component, {
       className: boxStyles,
       ...restProps,
       ref,
     })
-
-    return renderBackgroundProvider(background, element)
   },
 )
-
-NamedBox.displayName = 'Box'
-
-export const Box = NamedBox

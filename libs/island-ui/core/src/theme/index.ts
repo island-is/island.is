@@ -1,3 +1,5 @@
+import { makeThemeUtils } from '../themeUtils'
+
 // island.is colors
 const colors = {
   body: '#FFFFFF',
@@ -98,3 +100,5 @@ export const theme = {
   },
   color: colors,
 }
+
+export const themeUtils = makeThemeUtils(theme)
