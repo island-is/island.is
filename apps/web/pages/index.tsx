@@ -9,27 +9,69 @@ import {
   Column,
   Inline,
   Columns,
+  Stack,
 } from '@island.is/island-ui/core'
 
 export const Index = () => {
   return (
     <>
+      <Stack align={['center', 'left']} space={['small', 'large']}>
+        <Box background="blueberry100" padding="small">
+          <div>
+            <h3>Stuff here</h3>
+            <Logo width={140} />
+          </div>
+        </Box>
+        <Box background="blueberry100" padding="small">
+          <div>
+            <h3>Stuff here</h3>
+            <Logo width={140} />
+          </div>
+        </Box>
+        <Box background="blueberry100" padding="small">
+          <div>
+            <h3>Stuff here</h3>
+            <Logo width={140} />
+          </div>
+        </Box>
+        <Box background="blueberry100" padding="small">
+          <div>
+            <h3>Stuff here</h3>
+            <Logo width={140} />
+          </div>
+        </Box>
+      </Stack>
       <Box padding="large">
         <Inline space={['small', 'medium', 'large', 'xlarge', 'xxlarge']}>
           <Box background="blueberry100" padding="small">
-            Stuff here
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
           </Box>
           <Box background="blueberry100" padding="small">
-            Stuff here
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
           </Box>
           <Box background="blueberry100" padding="small">
-            Stuff here
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
           </Box>
           <Box background="blueberry100" padding="small">
-            Stuff here
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
           </Box>
           <Box background="blueberry100" padding="small">
-            Stuff here
+            <div>
+              <h3>Stuff here</h3>
+              <Logo width={140} />
+            </div>
           </Box>
         </Inline>
       </Box>
