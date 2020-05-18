@@ -7,12 +7,32 @@ import {
   Logo,
   Tiles,
   Column,
+  Inline,
   Columns,
 } from '@island.is/island-ui/core'
 
 export const Index = () => {
   return (
     <>
+      <Box padding="large">
+        <Inline space={['small', 'medium', 'large', 'xlarge', 'xxlarge']}>
+          <Box background="blueberry100" padding="small">
+            Stuff here
+          </Box>
+          <Box background="blueberry100" padding="small">
+            Stuff here
+          </Box>
+          <Box background="blueberry100" padding="small">
+            Stuff here
+          </Box>
+          <Box background="blueberry100" padding="small">
+            Stuff here
+          </Box>
+          <Box background="blueberry100" padding="small">
+            Stuff here
+          </Box>
+        </Inline>
+      </Box>
       <Columns collapseBelow="md" space="small">
         <Column>
           <Box background="white" boxShadow="small" padding="large">
