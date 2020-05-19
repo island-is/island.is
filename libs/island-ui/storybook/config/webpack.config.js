@@ -1,7 +1,10 @@
+const TreatPlugin = require('treat/webpack-plugin')
 const rootWebpackConfig = require('../../../../.storybook/webpack.config')
 // Export a function. Accept the base config as the only param.
 module.exports = async ({ config, mode }) => {
   config = await rootWebpackConfig({ config, mode })
+
+  config.plugins.push(new TreatPlugin())
 
   config.resolve.extensions.push('.tsx')
   config.resolve.extensions.push('.ts')

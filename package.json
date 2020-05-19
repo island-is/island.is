@@ -26,7 +26,8 @@
     "update": "nx migrate latest",
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
-    "help": "nx help"
+    "help": "nx help",
+    "storybook:island-ui": "nx run island-ui-storybook:storybook"
   },
   "private": true,
   "dependencies": {
@@ -77,6 +78,7 @@
     "@nrwl/storybook": "9.2.4",
     "@nrwl/web": "9.2.4",
     "@nrwl/workspace": "9.2.4",
+    "@storybook/addon-a11y": "^5.3.18",
     "@storybook/addon-knobs": "5.3.9",
     "@storybook/react": "5.3.9",
     "@testing-library/react": "9.4.0",
@@ -104,5 +106,8 @@
     "ts-jest": "25.2.1",
     "ts-node": "~7.0.0",
     "typescript": "~3.8.3"
+  },
+  "resolutions": {
+    "webpack": "4.43.0"
   }
 }
