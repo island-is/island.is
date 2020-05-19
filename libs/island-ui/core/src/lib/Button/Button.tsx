@@ -3,8 +3,8 @@ import cn from 'classnames'
 
 import * as styles from './Button.treat'
 
-export type ButtonSize = 'normal' | 'large'
-export type ButtonVariant = 'default' | 'ghost' | 'text'
+export type ButtonSize = 'small' | 'medium' | 'large'
+export type ButtonVariant = 'normal' | 'ghost' | 'text'
 
 /* eslint-disable-next-line */
 export interface ButtonProps {
@@ -18,8 +18,8 @@ export const Button: FC<ButtonProps> = ({
   children,
   onClick,
   disabled,
-  variant = 'default',
-  size = 'normal',
+  variant = 'normal',
+  size = 'medium',
 }) => {
   return (
     <button

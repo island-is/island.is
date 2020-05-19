@@ -39,32 +39,28 @@ export const button = style({
   },
 })
 
-export const sizes = styleMap({
-  normal: {
-    fontSize: '18px',
-    lineHeight: '28px',
-    height: '64px',
-    padding: '0 32px',
-  },
-  large: {
-    fontSize: '24px',
-    lineHeight: '34px',
-    height: '80px',
-    padding: '0 32px',
-  },
-})
-
-const textButtonSize = {
-  height: '42px',
-  padding: '0',
-  fontStyle: 'normal',
-  fontWeight: 600,
-  fontSize: '24px',
-  lineHeight: '34px',
+const sizeMedium = {
+  fontSize: '18px',
+  lineHeight: '28px',
+  height: '64px',
+  padding: '0 32px',
 }
 
+const sizeLarge = {
+  fontSize: '24px',
+  lineHeight: '34px',
+  height: '80px',
+  padding: '0 32px',
+}
+
+export const sizes = styleMap({
+  small: sizeMedium,
+  medium: sizeMedium,
+  large: sizeLarge,
+})
+
 export const variants = styleMap({
-  default: {
+  normal: {
     backgroundColor: theme.color.blue400,
     color: theme.color.white,
     selectors: {
@@ -125,8 +121,25 @@ export const variants = styleMap({
     backgroundColor: 'transparent',
     color: theme.color.blue400,
     borderRadius: 0,
+    fontStyle: 'normal',
+    padding: '0',
+    fontWeight: 600,
     selectors: {
-      [`&${sizes.normal}, &${sizes.large}`]: textButtonSize,
+      [`&${sizes.small}`]: {
+        height: '24px',
+        fontSize: '14px',
+        lineHeight: '16px',
+      },
+      [`&${sizes.medium}`]: {
+        height: '36px',
+        fontSize: '18px',
+        lineHeight: '28px',
+      },
+      [`&${sizes.large}`]: {
+        height: '42px',
+        fontSize: '24px',
+        lineHeight: '34px',
+      },
       '&:after': {
         opacity: 1,
         borderWidth: '1px',

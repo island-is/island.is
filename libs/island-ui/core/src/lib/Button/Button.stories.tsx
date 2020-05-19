@@ -7,10 +7,10 @@ export default {
   component: Button,
 }
 
-const makeButton = (variant: ButtonVariant = 'default') => {
+const makeButton = (variant: ButtonVariant = 'normal', text = '') => {
   const label = 'Size'
-  const options = ['normal', 'large']
-  const defaultValue = 'normal'
+  const options = ['small', 'medium', 'large']
+  const defaultValue = 'medium'
 
   const size: string = select(label, options, defaultValue)
   const selectedSize: ButtonSize = size as ButtonSize
@@ -19,15 +19,11 @@ const makeButton = (variant: ButtonVariant = 'default') => {
 
   return (
     <Button disabled={disabled} size={selectedSize} variant={variant}>
-      Default button
+      {text}
     </Button>
   )
 }
 
-export const Normal = () => makeButton()
-export const Ghost = () => makeButton('ghost')
-export const Text = () => (
-  <Button disabled={boolean('Disabled', false)} variant="text">
-    Text button
-  </Button>
-)
+export const Normal = () => makeButton('normal', 'Normal button')
+export const Ghost = () => makeButton('ghost', 'Ghost button')
+export const Text = () => makeButton('text', 'Text button')
