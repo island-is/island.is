@@ -1,5 +1,5 @@
 import React from 'react'
-import Button, { ButtonSize, ButtonVariant } from './Button'
+import { Button, ButtonSize, ButtonVariant } from './Button'
 import { boolean, select } from '@storybook/addon-knobs'
 
 export default {
