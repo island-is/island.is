@@ -35,6 +35,7 @@
     "apollo-client": "2.6.8",
     "apollo-link-http": "1.5.17",
     "apollo-server-express": "2.13.0",
+    "aws-sdk": "2.678.0",
     "classnames": "2.2.6",
     "document-register-element": "1.13.1",
     "express": "4.17.1",
@@ -58,6 +59,7 @@
     "reakit": "^1.0.2",
     "rosetta": "1.0.0",
     "sequelize": "5.21.8",
+    "sqs-consumer": "5.4.0",
     "treat": "1.4.1"
   },
   "devDependencies": {

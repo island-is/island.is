@@ -3,10 +3,17 @@ import { getApplication, createApplication } from './service'
 
 const resolvers: Resolvers = {
   Mutation: {
-    async createApplication(_, args) {
-      return {
-        application: await createApplication(args.input),
+    async createApplication(_, args, context) {
+      const { channel, appExchangeId } = context
+      const application = await createApplication(args.input)
+      if (application.state === 'approved') {
+        channel.publish({
+          exchangeId: appExchangeId,
+          message: application,
+          routingKey: application.state,
+        })
       }
+      return { application }
     },
   },
   Query: {
