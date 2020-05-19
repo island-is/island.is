@@ -62,6 +62,9 @@
     },
     "application": {
       "tags": []
+    },
+    "gjafakort-queue-listener": {
+      "tags": []
     }
   }
 }

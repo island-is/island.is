@@ -591,6 +591,65 @@
           }
         }
       }
+    },
+    "gjafakort-queue-listener": {
+      "root": "apps/gjafakort/queue-listener",
+      "sourceRoot": "apps/gjafakort/queue-listener/src",
+      "projectType": "application",
+      "prefix": "gjafakort-queue-listener",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/gjafakort/queue-listener",
+            "main": "apps/gjafakort/queue-listener/src/main.ts",
+            "tsConfig": "apps/gjafakort/queue-listener/tsconfig.app.json"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/gjafakort/queue-listener/src/environments/environment.ts",
+                  "with": "apps/gjafakort/queue-listener/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "gjafakort-queue-listener:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/gjafakort/queue-listener/.eslintrc",
+            "tsConfig": [
+              "apps/gjafakort/queue-listener/tsconfig.app.json",
+              "apps/gjafakort/queue-listener/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/gjafakort/queue-listener/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/gjafakort/queue-listener/jest.config.js",
+            "tsConfig": "apps/gjafakort/queue-listener/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {
