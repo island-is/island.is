@@ -13,13 +13,22 @@ export interface Theme {
   touchableSize: number
   space: {
     gutter: number
-    xxsmall: number
-    xsmall: number
-    small: number
-    medium: number
-    large: number
-    xlarge: number
-    xxlarge: number
+    smallGutter: number
+    containerGutter: number
+    spacer0: number
+    spacer1: number
+    spacer2: number
+    spacer3: number
+    spacer4: number
+    spacer5: number
+    spacer6: number
+    spacer7: number
+    spacer8: number
+    spacer9: number
+    spacer10: number
+    spacer12: number
+    spacer15: number
+    spacer25: number
   }
   transforms: {
     touchable: string
