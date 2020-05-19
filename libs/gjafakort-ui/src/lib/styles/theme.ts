@@ -76,61 +76,52 @@ export const headingsFontWeight = fontWeightSemiBold
 export const eyebrowFontWeight = fontWeightSemiBold
 
 export const h1FontSize = 42
-export const h1LineHeight = 52
+export const h1LineHeight = 1.238095
 
 export const h2FontSize = 34
-export const h2LineHeight = 44
+export const h2LineHeight = 1.294118
 
 export const h3FontSize = 24
-export const h3LineHeight = 34
+export const h3LineHeight = 1.416667
 
 export const h4FontSize = 20
-export const h4LineHeight = 30
+export const h4LineHeight = 1.5
 
 export const h5FontSize = 18
-export const h5LineHeight = 28
+export const h5LineHeight = 1.555556
 
 export const eyebrowFontSize = 14
-export const eyebrowLineHeight = 16
+export const eyebrowLineHeight = 1.142857
 export const eyebrowColor = red400
 
 export const introFontSize = 24
-export const introLineHeight = 34
+export const introLineHeight = 1.416667
 
 export const baseFontSize = 18
-export const baseLineHeight = 28
+export const baseLineHeight = 1.555556
 
 export const smallFontWeight = fontWeightRegular
 export const smallFontSize = 15
-export const smallLineHeight = 25
+export const smallLineHeight = 1.666667
 
 // Typography mobile
 export const h1FontSizeMobile = 32
-export const h1LineHeightMobile = 40
 
 export const h2FontSizeMobile = 26
-export const h2LineHeightMobile = 34
 
 export const h3FontSizeMobile = 20
-export const h3LineHeightMobile = 28
 
 export const h4FontSizeMobile = 18
-export const h4LineHeightMobile = 24
 
 export const h5FontSizeMobile = 15
-export const h5LineHeightMobile = 20
 
 export const introFontSizeMobile = 20
-export const introLineHeightMobile = 28
 
 export const baseFontSizeMobile = 15
-export const baseLineHeightMobile = 22
 
 export const smallFontSizeMobile = 12
-export const smallLineHeightMobile = 16
 
 export const eyebrowFontSizeMobile = 12
-export const eyebrowLineHeightMobile = 16
 
 // base
 export const baseColor = dark400
@@ -144,11 +135,14 @@ export const gutter = 16
 export const paddingX = 16
 
 // Screen Breakpoints
-export const screenXs = 540
-export const screenSm = 640
-export const screenMd = 768
-export const screenLg = 1024
-export const screenXl = 1280
+export const breakpoints = {
+  xs: 0,
+  sm: 576,
+  md: 768,
+  lg: 992,
+  xl: 1200,
+  xxl: 1400,
+}
 
 // Max Height
 export const maxHeightFull = '100%'

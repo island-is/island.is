@@ -4,7 +4,12 @@ import gql from 'graphql-tag'
 import { Application } from '../../graphql/schema'
 import { withApollo } from '../../graphql'
 import { useI18n } from '../../i18n'
-import { GridContainer, Input, Select } from '@island.is/gjafakort-ui'
+import {
+  GridContainer,
+  Input,
+  Select,
+  Typography,
+} from '@island.is/gjafakort-ui'
 
 interface PropTypes {
   application: Application
@@ -22,6 +27,7 @@ function HomePage({ application }: PropTypes) {
   const { t } = useI18n()
   return (
     <GridContainer>
+      <Typography variant="eyebrow">Hi yo whatup</Typography>
       <h1>
         {t('intro.welcome')} {application.id}
       </h1>
