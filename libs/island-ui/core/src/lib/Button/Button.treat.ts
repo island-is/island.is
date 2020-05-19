@@ -14,29 +14,27 @@ export const button = style({
   fontStyle: 'normal',
   fontWeight: 600,
   transition: 'color 150ms ease, background-color 150ms ease',
-  selectors: {
-    '&:disabled': {
-      pointerEvents: 'none',
-    },
-    '&:focus': {
-      color: theme.color.dark400,
-      backgroundColor: theme.color.mint400,
-    },
-    '&:after': {
-      content: "''",
-      position: 'absolute',
-      pointerEvents: 'none',
-      borderStyle: 'solid',
-      borderWidth: '4px',
-      borderColor: theme.color.mint400,
-      borderRadius: '10px',
-      top: 0,
-      left: 0,
-      bottom: 0,
-      right: 0,
-      opacity: 0,
-      transition: 'opacity 150ms ease',
-    },
+  ':disabled': {
+    pointerEvents: 'none',
+  },
+  ':focus': {
+    color: theme.color.dark400,
+    backgroundColor: theme.color.mint400,
+  },
+  ':after': {
+    content: "''",
+    position: 'absolute',
+    pointerEvents: 'none',
+    borderStyle: 'solid',
+    borderWidth: '4px',
+    borderColor: theme.color.mint400,
+    borderRadius: '10px',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    opacity: 0,
+    transition: 'opacity 150ms ease',
   },
 })
 
@@ -64,17 +62,17 @@ export const variants = styleMap({
   normal: {
     backgroundColor: theme.color.blue400,
     color: theme.color.white,
+    ':disabled': {
+      backgroundColor: theme.color.blue300,
+    },
+    ':hover': {
+      color: theme.color.white,
+      backgroundColor: theme.color.blueberry400,
+    },
+    ':active': {
+      backgroundColor: theme.color.blueberry400,
+    },
     selectors: {
-      '&:disabled': {
-        backgroundColor: theme.color.blue300,
-      },
-      '&:hover': {
-        color: theme.color.white,
-        backgroundColor: theme.color.blueberry400,
-      },
-      '&:active': {
-        backgroundColor: theme.color.blueberry400,
-      },
       '&:hover:active:after': {
         opacity: 1,
       },
@@ -83,34 +81,34 @@ export const variants = styleMap({
   ghost: {
     backgroundColor: 'transparent',
     color: theme.color.blue400,
+    ':disabled': {
+      color: theme.color.blue300,
+    },
+    ':after': {
+      opacity: 1,
+      borderWidth: '1px',
+      borderColor: theme.color.blue400,
+      borderRadius: '10px',
+    },
+    ':hover': {
+      color: theme.color.blueberry400,
+    },
+    ':focus': {
+      color: theme.color.dark400,
+    },
+    ':active': {
+      backgroundColor: 'transparent',
+      color: theme.color.blue400,
+    },
     selectors: {
-      '&:disabled': {
-        color: theme.color.blue300,
-      },
       '&:disabled:after': {
         borderColor: theme.color.blue300,
-      },
-      '&:after': {
-        opacity: 1,
-        borderWidth: '1px',
-        borderColor: theme.color.blue400,
-        borderRadius: '10px',
-      },
-      '&:hover': {
-        color: theme.color.blueberry400,
       },
       '&:hover:after': {
         borderColor: theme.color.blueberry400,
       },
-      '&:focus': {
-        color: theme.color.dark400,
-      },
       '&:focus:after': {
         borderColor: theme.color.mint400,
-      },
-      '&:active': {
-        backgroundColor: 'transparent',
-        color: theme.color.blue400,
       },
       '&:hover:active:after': {
         borderWidth: '4px',
@@ -125,10 +123,22 @@ export const variants = styleMap({
     fontStyle: 'normal',
     padding: '0',
     fontWeight: 600,
+    ':disabled': {
+      color: theme.color.blue300,
+    },
+    ':after': {
+      opacity: 1,
+      borderWidth: '1px',
+      borderTop: 0,
+      borderLeft: 0,
+      borderRight: 0,
+      borderColor: theme.color.blue400,
+      borderRadius: 0,
+    },
+    ':hover': {
+      color: theme.color.blueberry400,
+    },
     selectors: {
-      '&:disabled': {
-        color: theme.color.blue300,
-      },
       '&:disabled:after': {
         borderColor: theme.color.blue300,
       },
@@ -146,18 +156,6 @@ export const variants = styleMap({
         height: '42px',
         fontSize: '24px',
         lineHeight: '34px',
-      },
-      '&:after': {
-        opacity: 1,
-        borderWidth: '1px',
-        borderTop: 0,
-        borderLeft: 0,
-        borderRight: 0,
-        borderColor: theme.color.blue400,
-        borderRadius: 0,
-      },
-      '&:hover': {
-        color: theme.color.blueberry400,
       },
       '&:focus:hover': {
         color: theme.color.dark400,
