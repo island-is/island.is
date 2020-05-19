@@ -1,11 +1,11 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 
-import Input from './Input'
+import Select from './Select'
 
-describe(' Input', () => {
+describe(' Select', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Input label="Text" name="t1" />)
+    const { baseElement } = render(<Select options={[]} name="s1" />)
     expect(baseElement).toBeTruthy()
   })
 })

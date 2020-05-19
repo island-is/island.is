@@ -1,13 +1,16 @@
 import React, { useState, useRef, forwardRef } from 'react'
 import cn from 'classnames'
-import styles from './Input.module.scss'
+import * as styles from './Input.treat'
 
 interface InputProps {
   label: string
+  name: string
+  id?: string
+  value?: string | number
+  disabled?: boolean
   hasError?: boolean
   errorMessage?: string
   placeholder?: string
-  id?: string
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
@@ -29,9 +32,12 @@ export const Input = forwardRef(
   (props: InputProps, ref?: React.Ref<HTMLInputElement>) => {
     const {
       label,
+      name,
       hasError = false,
+      value,
       errorMessage = '',
-      id,
+      id = name,
+      disabled,
       onFocus,
       onBlur,
       placeholder,
@@ -46,6 +52,7 @@ export const Input = forwardRef(
           className={cn(styles.container, {
             [styles.hasError]: hasError,
             [styles.hasFocus]: hasFocus,
+            [styles.containerDisabled]: disabled,
           })}
           onClick={(e) => {
             e.preventDefault()
@@ -54,14 +61,22 @@ export const Input = forwardRef(
             }
           }}
         >
-          <label htmlFor={id} className={styles.label}>
+          <label
+            htmlFor={id}
+            className={cn(styles.label, {
+              [styles.labelDisabledEmptyInput]: disabled && !value,
+            })}
+          >
             {label}
           </label>
           <input
             className={styles.input}
             id={id}
+            disabled={disabled}
+            name={name}
             ref={mergeRefs([inputRef, ref])}
             placeholder={placeholder}
+            value={value}
             onFocus={(e) => {
               setHasFocus(true)
               if (onFocus) {

@@ -1,11 +1,11 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 
-import Input from './Input'
+import Icon from './Icon'
 
-describe(' Input', () => {
+describe(' Icon', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<Input label="Text" name="t1" />)
+    const { baseElement } = render(<Icon type="cheveron" />)
     expect(baseElement).toBeTruthy()
   })
 })

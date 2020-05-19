@@ -1,6 +1,6 @@
 import React from 'react'
 
-import styles from './Page.module.scss'
+import * as styles from './Page.treat'
 
 export const Page: React.FC = ({ children }) => (
   <main className={styles.container}>{children}</main>
