@@ -1,7 +1,12 @@
 import express from 'express'
+
+import { authRoutes } from './api'
 import createGraphqlServer from './graphql'
 
 const app = express()
+
+app.use(express.json())
+app.use('/api/auth', authRoutes)
 
 createGraphqlServer(app)
 

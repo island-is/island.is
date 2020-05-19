@@ -15,7 +15,7 @@ export const withApollo = <
   }
 
   Component.getInitialProps = async (ctx) => {
-    const apolloClient = initApollo()
+    const apolloClient = initApollo({}, ctx)
     const newContext = Object.assign({}, ctx, { apolloClient })
     const props = await getInitialProps(newContext)
     const cache = apolloClient.cache.extract()
