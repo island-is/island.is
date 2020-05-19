@@ -9,6 +9,7 @@ export const button = style({
   borderRadius: '10px',
   outline: 0,
   border: 0,
+  cursor: 'pointer',
   fontFamily: 'IBM Plex Sans, sans-serif',
   fontStyle: 'normal',
   fontWeight: 600,
@@ -125,6 +126,12 @@ export const variants = styleMap({
     padding: '0',
     fontWeight: 600,
     selectors: {
+      '&:disabled': {
+        color: theme.color.blue300,
+      },
+      '&:disabled:after': {
+        borderColor: theme.color.blue300,
+      },
       [`&${sizes.small}`]: {
         height: '24px',
         fontSize: '14px',
