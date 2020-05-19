@@ -8,6 +8,7 @@ export * from './lib/Tiles/Tiles'
 export * from './lib/Inline/Inline'
 export * from './lib/Columns/Columns'
 export * from './lib/Stack/Stack'
+export * from './lib/Hidden/Hidden'
 export * from './lib/Column/Column'
 export * from './lib/ContentBlock/ContentBlock'
 
