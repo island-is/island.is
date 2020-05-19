@@ -1,0 +1,15 @@
+version: '3.3'
+
+services:
+  db:
+    image: postgres:11.6
+    container_name: db
+    environment:
+      - POSTGRES_PASSWORD=XjFsvIrGyCCrdE
+      - TEST_DB_USER=test_db
+      - TEST_DB_PASS=test_db
+      - TEST_DB_NAME=test_db
+    volumes:
+      - ./bin/startup.sql:/docker-entrypoint-initdb.d/startup.sql
+    ports:
+      - 5432:5432

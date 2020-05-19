@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { Counter } from 'prom-client'
+import { SampleApp } from '../data'
 
 const resourceRequests = new Counter({
   name: 'requests',
@@ -9,12 +10,13 @@ const resourceRequests = new Counter({
 
 export const routes = Router()
 
-routes.use('/resourceA', (req, res) => {
+routes.get('/resourceA', (req, res) => {
   res.status(200).send({ a: 5 })
   resourceRequests.labels('resourceA').inc()
 })
 
-routes.use('/resourceB', (req, res) => {
+routes.post('/resourceB', async (req, res) => {
+  await SampleApp.create({ ssn: '1111111111' })
   res.status(200).send({ b: 10 })
   resourceRequests.labels('resourceB').inc()
 })
