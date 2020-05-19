@@ -1,11 +1,10 @@
 import express from 'express'
 
-import { applicationRoutes, issuerRoutes } from './api'
+import { issuerRoutes } from './api'
 
 const app = express()
 
 app.use(express.json())
-app.use('/applications', applicationRoutes)
 app.use('/issuers', issuerRoutes)
 
 app.get('/status', (req, res) => {

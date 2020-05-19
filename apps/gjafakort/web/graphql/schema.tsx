@@ -14,17 +14,38 @@ export type Scalars = {
 export type Application = {
   __typename?: 'Application'
   id: Scalars['String']
+  email: Scalars['String']
+  state: Scalars['String']
+}
+
+export type CreateApplicationInput = {
+  ssn: Scalars['String']
+  email: Scalars['String']
+}
+
+export type CreateApplicationPayload = {
+  __typename?: 'createApplicationPayload'
+  application?: Maybe<Application>
 }
 
 export type Mutation = {
   __typename?: 'Mutation'
+  createApplication?: Maybe<CreateApplicationPayload>
   root?: Maybe<Scalars['String']>
+}
+
+export type MutationCreateApplicationArgs = {
+  input: CreateApplicationInput
 }
 
 export type Query = {
   __typename?: 'Query'
   getApplication?: Maybe<Application>
   root?: Maybe<Scalars['String']>
+}
+
+export type QueryGetApplicationArgs = {
+  ssn: Scalars['String']
 }
 
 export type GetApplicationQueryVariables = {}
@@ -37,7 +58,7 @@ export type GetApplicationQuery = { __typename?: 'Query' } & {
 
 export const GetApplicationDocument = gql`
   query GetApplication {
-    getApplication {
+    getApplication(ssn: "2101932009") {
       id
     }
   }
