@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { Counter } from 'prom-client'
-import { SampleApp } from '../data'
+import { SampleApp } from '../app/data'
 
 const resourceRequests = new Counter({
   name: 'requests',

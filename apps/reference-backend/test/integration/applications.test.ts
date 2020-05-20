@@ -1,4 +1,4 @@
-import { Applications } from '../../src/data'
+import { Applications } from '../../src/app/applications'
 
 describe('Applications registration', () => {
   it('should register valid ssn', async () => {
