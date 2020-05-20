@@ -18,7 +18,7 @@ const testConfig = {
 export const configMap = {
   development: devConfig,
   production: prodConfig,
-  test: testConfig,
+  test: devConfig,
 }
 
 export default configMap[process.env.NODE_ENV || 'development']
