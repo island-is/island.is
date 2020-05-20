@@ -6,7 +6,7 @@ import * as styles from './Checkbox.treat'
 import Icon from '../icon/Icon'
 
 export interface CheckboxProps {
-  name: string
+  name?: string
   label?: string
   checked?: boolean
   disabled?: boolean

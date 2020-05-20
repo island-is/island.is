@@ -30,6 +30,7 @@ export const checkbox = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+  backgroundColor: theme.white,
   transition: 'border-color .1s, shadow .1s, background-color .1s',
   selectors: {
     [`${container}:hover &`]: {
