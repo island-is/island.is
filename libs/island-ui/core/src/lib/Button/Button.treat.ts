@@ -10,7 +10,7 @@ export const button = style({
   outline: 0,
   border: 0,
   cursor: 'pointer',
-  fontFamily: theme.fontFamily,
+  fontFamily: 'IBM Plex Sans, sans-serif',
   fontStyle: 'normal',
   fontWeight: 600,
   transition: 'color 150ms ease, background-color 150ms ease',

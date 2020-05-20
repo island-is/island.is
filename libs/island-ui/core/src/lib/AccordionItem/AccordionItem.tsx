@@ -1,4 +1,4 @@
-import React, { useState, ReactNode } from 'react'
+import React, { useContext, useState, ReactNode } from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
 import { Box, Columns, Column } from '../../'
@@ -7,7 +7,9 @@ import { useVirtualTouchable } from '../private/touchable/useVirtualTouchable'
 import { hideFocusRingsClassName } from '../private/hideFocusRings/hideFocusRings'
 import { Overlay } from '../private/Overlay/Overlay'
 import * as styles from './AccordionItem.treat'
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { Typography } from '../../../../../gjafakort-ui/src/lib/typography/Typography'
+import { AccordionContext } from '../Accordion/Accordion'
 
 const accordionSpace = 'spacer1'
 
@@ -54,9 +56,18 @@ export const AccordionItem = ({
     }
   }
 
+  const { toggledId, setToggledId } = useContext(AccordionContext)
   const [expandedFallback, setExpandedFallback] = useState(false)
-  const expanded = expandedProp ?? expandedFallback
+  let expanded = expandedProp ?? expandedFallback
   const [height, setHeight] = useState(expanded ? 'auto' : 0)
+
+  if (toggledId && toggledId !== id && expanded) {
+    expanded = false
+
+    if (height !== 0) {
+      setHeight(0)
+    }
+  }
 
   return (
     <Box>
@@ -72,6 +83,10 @@ export const AccordionItem = ({
           aria-expanded={expanded}
           onClick={() => {
             const newValue = !expanded
+
+            if (typeof setToggledId === 'function' && newValue) {
+              setToggledId(id)
+            }
 
             setHeight(newValue ? 'auto' : 0)
 
