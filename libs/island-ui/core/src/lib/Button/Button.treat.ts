@@ -5,7 +5,7 @@ export const button = style({
   display: 'inline-flex',
   position: 'relative',
   justifyContent: 'center',
-  alignContent: 'center',
+  alignItems: 'center',
   borderRadius: '10px',
   outline: 0,
   border: 0,
