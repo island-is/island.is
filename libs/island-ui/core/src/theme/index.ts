@@ -60,6 +60,9 @@ export const theme = {
   },
   grid: 8,
   touchableSize: 10,
+  typography: {
+    fontFamily: 'IBM Plex Sans, sans-serif',
+  },
   space: {
     gutter: 3,
     smallGutter: 2.5,
@@ -89,14 +92,15 @@ export const theme = {
   border: {
     radius: {
       standard: '4px',
+      circle: '50%',
     },
     width: {
       standard: 1,
       large: 2,
     },
     color: {
-      standard: colors.blue400,
-      focus: colors.red400,
+      standard: colors.blue200,
+      focus: colors.red200,
     },
   },
   shadows: {

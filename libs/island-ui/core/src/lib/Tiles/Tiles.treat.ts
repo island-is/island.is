@@ -12,7 +12,6 @@ const columnsWidths = {
   6: `${100 / 6}%`,
 } as const
 
-// Remove this when 'styleMap' supports numbers as keys and it's been released to sku consumers,
 type ColumnWidths = Record<keyof typeof columnsWidths, string>
 const makeColumnsAtoms = (breakpoint: keyof Theme['breakpoint']) =>
   styleMap(

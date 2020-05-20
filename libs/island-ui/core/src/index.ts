@@ -21,6 +21,8 @@ export * from './lib/Stack/Stack'
 export * from './lib/Hidden/Hidden'
 export * from './lib/Column/Column'
 export * from './lib/ContentBlock/ContentBlock'
+export * from './lib/Accordion/Accordion'
+export * from './lib/AccordionItem/AccordionItem'
 
 // Theme
 export * from './theme/styles'
