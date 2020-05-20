@@ -2,7 +2,7 @@ import { Counter } from 'prom-client'
 import { ApplicationsModel } from './data'
 
 const applicationsRegistered = new Counter({
-  name: 'apps.registered',
+  name: 'apps_registered',
   labelNames: ['resource'],
   help: 'Number of applications',
 })
