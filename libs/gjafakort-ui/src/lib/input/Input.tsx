@@ -1,10 +1,11 @@
 import React, { useState, useRef, forwardRef } from 'react'
 import cn from 'classnames'
 import * as styles from './Input.treat'
+import { useUID } from 'react-uid'
 
 interface InputProps {
-  label: string
-  name: string
+  label?: string
+  name?: string
   id?: string
   value?: string | number
   disabled?: boolean
@@ -45,6 +46,13 @@ export const Input = forwardRef(
     } = props
     const [hasFocus, setHasFocus] = useState(false)
     const inputRef = useRef(null)
+    const errorID = useUID()
+    const ariaError = hasError
+      ? {
+          'aria-invalid': true,
+          'aria-describedby': errorID,
+        }
+      : {}
 
     return (
       <div>
@@ -89,11 +97,14 @@ export const Input = forwardRef(
                 onBlur(e)
               }
             }}
+            {...ariaError}
             {...inputProps}
           />
         </div>
         {hasError && errorMessage && (
-          <div className={styles.errorMessage}>{errorMessage}</div>
+          <div className={styles.errorMessage} id={errorID}>
+            {errorMessage}
+          </div>
         )}
       </div>
     )
