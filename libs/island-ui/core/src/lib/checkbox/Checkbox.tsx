@@ -3,7 +3,7 @@ import { useUID } from 'react-uid'
 import cn from 'classnames'
 
 import * as styles from './Checkbox.treat'
-import Icon from '../icon/Icon'
+import Icon from '../Icon/Icon'
 
 export interface CheckboxProps {
   name?: string

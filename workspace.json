@@ -122,34 +122,6 @@
         }
       }
     },
-    "gjafakort-ui": {
-      "root": "libs/gjafakort-ui",
-      "sourceRoot": "libs/gjafakort-ui/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "config": "libs/gjafakort-ui/.eslintrc",
-            "tsConfig": [
-              "libs/gjafakort-ui/tsconfig.lib.json",
-              "libs/gjafakort-ui/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/gjafakort-ui/**"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/gjafakort-ui/jest.config.js",
-            "tsConfig": "libs/gjafakort-ui/tsconfig.spec.json",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "gjafakort-web": {
       "root": "apps/gjafakort/web",
       "sourceRoot": "apps/gjafakort/web",

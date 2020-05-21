@@ -2,7 +2,7 @@ import React from 'react'
 import ReactSelect, { components } from 'react-select'
 import cn from 'classnames'
 import * as styles from './Select.treat'
-import Icon from '../icon/Icon'
+import Icon from '../Icon/Icon'
 
 type Option = { label: string; value: string | number }
 

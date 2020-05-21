@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import * as theme from '../../theme/theme'
+import * as theme from '../../theme/variables'
 
 const checkboxSize = 24
 const checkboxMargin = 16
