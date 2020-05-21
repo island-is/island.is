@@ -1,6 +1,6 @@
 import { style, globalStyle } from 'treat'
 import * as theme from '../../theme/variables'
-import * as inputMixins from '../input/Input.mixins'
+import * as inputMixins from '../Input/Input.mixins'
 
 export const wrapper = style({}, 'wrapper')
 
