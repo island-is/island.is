@@ -1,5 +1,5 @@
 import { globalStyle } from 'treat'
-import { theme } from './'
+import * as theme from './variables'
 
 globalStyle('html', {
   boxSizing: 'border-box',

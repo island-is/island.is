@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { theme } from '../styles'
+import * as theme from '../../theme/variables'
 
 export const container = style({
   height: theme.headerHeight,

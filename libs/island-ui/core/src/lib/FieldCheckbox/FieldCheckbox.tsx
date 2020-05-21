@@ -1,6 +1,6 @@
 import React from 'react'
 import { FieldInputProps } from 'formik'
-import { Checkbox, CheckboxProps } from '../checkbox/Checkbox'
+import { Checkbox, CheckboxProps } from '../Checkbox/Checkbox'
 
 export interface FieldCheckboxProps extends CheckboxProps {
   field?: FieldInputProps<boolean>

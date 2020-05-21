@@ -1,7 +1,7 @@
 import React from 'react'
 import { FormikState, FieldInputProps } from 'formik'
 import { get } from 'lodash'
-import { Input } from '../input/Input'
+import { Input } from '../Input/Input'
 
 interface FieldNumberInputProps {
   form?: FormikState<string | number>

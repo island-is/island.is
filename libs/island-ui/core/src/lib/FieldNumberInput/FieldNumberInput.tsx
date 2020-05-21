@@ -3,7 +3,7 @@ import { get } from 'lodash'
 
 import { FormikState, FieldInputProps } from 'formik'
 import NumberFormat, { NumberFormatProps } from 'react-number-format'
-import { Input } from '../input/Input'
+import { Input } from '../Input/Input'
 
 type valueType = 'floatValue' | 'formattedValue' | 'value'
 

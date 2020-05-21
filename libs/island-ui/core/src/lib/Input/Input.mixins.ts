@@ -1,4 +1,4 @@
-import { theme } from '../styles'
+import * as theme from '../../theme/variables'
 
 export const label = {
   display: 'block',

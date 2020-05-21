@@ -5,12 +5,12 @@ import { Application } from '../../graphql/schema'
 import { withApollo } from '../../graphql'
 import { useI18n } from '../../i18n'
 import {
-  GridContainer,
   Input,
   Select,
   Typography,
   Checkbox,
-} from '@island.is/gjafakort-ui'
+  ContentBlock,
+} from '@island.is/island-ui/core'
 
 interface PropTypes {
   application: Application
@@ -28,7 +28,7 @@ function HomePage({ application }: PropTypes) {
   const { t } = useI18n()
   const [checkbox, setCheckbox] = useState(false)
   return (
-    <GridContainer>
+    <ContentBlock width="large">
       <Typography variant="eyebrow">Hi yo whatup</Typography>
       <h1>
         {t('intro.welcome')} {application.id}
@@ -144,7 +144,7 @@ function HomePage({ application }: PropTypes) {
         <Checkbox name="c1" label="Og þessi er valinn" checked />
       </div>
       <div style={{ marginBottom: 500 }}></div>
-    </GridContainer>
+    </ContentBlock>
   )
 }
 
