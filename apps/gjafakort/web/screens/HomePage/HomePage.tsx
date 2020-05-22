@@ -9,6 +9,7 @@ import {
   Accordion,
   AccordionItem,
   Button,
+  Hidden,
 } from '@island.is/island-ui/core'
 import packageSvg from '../../assets/ferdagjof-pakki.svg'
 
@@ -48,7 +49,7 @@ function HomePage() {
       <ContentBlock width="large">
         <Columns space="spacer15" collapseBelow="lg">
           <Column width="2/3">
-            <Box paddingLeft={['spacer0', 'spacer9']}>
+            <Box paddingLeft={['spacer0', 'spacer0', 'spacer0', 'spacer9']}>
               <Stack space="spacer3">
                 <Typography variant="h1" as="h1">
                   Gjöf til ferðalaga innanlands
@@ -58,13 +59,21 @@ function HomePage() {
                   gjafabréf sem hægt er að nota á ferðalögum innanlands.
                 </Typography>
               </Stack>
-              <Box marginBottom="spacer12" marginTop="spacer1">
+              <Box
+                marginBottom={['spacer3', 'spacer3', 'spacer3', 'spacer12']}
+                marginTop="spacer1"
+              >
                 <Typography variant="p">
                   Ferðagjöfin er liður í aðgerðum stjórnvalda til eflingar á
                   hagkerfinu í kjölfar kórónuveirufaraldursins, og er ætlað að
                   styðja við íslenska ferðaþjónustu.
                 </Typography>
               </Box>
+              <Hidden above="md">
+                <Box marginBottom="spacer3">
+                  <GiftCTA />
+                </Box>
+              </Hidden>
               <Box marginBottom="spacer3">
                 <Typography variant="h2" as="h2">
                   Algengar spurningar
@@ -82,8 +91,11 @@ function HomePage() {
               </Accordion>
             </Box>
           </Column>
+
           <Column width="1/3">
-            <GiftCTA />
+            <Hidden below="lg">
+              <GiftCTA />
+            </Hidden>
           </Column>
         </Columns>
       </ContentBlock>
