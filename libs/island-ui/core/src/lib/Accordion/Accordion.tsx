@@ -36,12 +36,12 @@ export const Accordion = ({
         setToggledId,
       }}
     >
-      <Stack space="spacer0" dividers>
+      <Stack space="spacer2" dividers>
         {children}
       </Stack>
     </AccordionContext.Provider>
   ) : (
-    <Stack space="spacer0" dividers>
+    <Stack space="spacer2" dividers>
       {children}
     </Stack>
   )
@@ -49,7 +49,7 @@ export const Accordion = ({
   return (
     <Box>
       {dividerOnTop && <Divider />}
-      <Box paddingY="spacer0">{Accordions}</Box>
+      <Box paddingY="spacer2">{Accordions}</Box>
       {dividerOnBottom && <Divider />}
     </Box>
   )

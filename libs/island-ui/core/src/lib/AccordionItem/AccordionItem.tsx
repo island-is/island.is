@@ -7,11 +7,10 @@ import { useVirtualTouchable } from '../private/touchable/useVirtualTouchable'
 import { hideFocusRingsClassName } from '../private/hideFocusRings/hideFocusRings'
 import { Overlay } from '../private/Overlay/Overlay'
 import * as styles from './AccordionItem.treat'
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { Typography } from '../../../../../gjafakort-ui/src/lib/typography/Typography'
+import { Typography } from '../Typography/Typography'
 import { AccordionContext } from '../Accordion/Accordion'
 
-const accordionSpace = 'spacer1'
+const accordionSpace = 'spacer2'
 
 export type AccordionItemBaseProps = {
   id: string
@@ -121,12 +120,9 @@ export const AccordionItem = ({
           className={[styles.focusRing, hideFocusRingsClassName]}
         />
       </Box>
-      <AnimateHeight
-        duration={300}
-        height={height} // see props documentation below
-      >
-        <Box paddingBottom={['spacer2', 'spacer3']} id={id}>
-          <Typography variant="p" as="span">
+      <AnimateHeight duration={300} height={height}>
+        <Box paddingTop="spacer2" id={id}>
+          <Typography variant="p" as="p">
             {children}
           </Typography>
         </Box>
