@@ -1,1 +1,1 @@
-export const hideFocusRingsDataAttribute = 'data-braid-hidefocusrings';
+export const hideFocusRingsDataAttribute = 'data-braid-hidefocusrings'

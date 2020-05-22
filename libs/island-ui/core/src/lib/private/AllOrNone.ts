@@ -1,1 +1,1 @@
-export type AllOrNone<T> = T | { [K in keyof T]?: never };
+export type AllOrNone<T> = T | { [K in keyof T]?: never }

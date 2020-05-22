@@ -1,4 +1,4 @@
-import { hitArea } from './hitArea';
+import { hitArea } from './hitArea'
 
 export const virtualTouchableRules = {
   transform: 'translateY(-50%)',
@@ -6,4 +6,4 @@ export const virtualTouchableRules = {
   minWidth: hitArea,
   height: '100%',
   top: '50%',
-};
+}
