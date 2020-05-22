@@ -2,6 +2,7 @@ import express from 'express'
 import MsgQueue from '@island.is/message-queue'
 import createGraphqlServer from './graphql'
 import { environment } from './environments/environment'
+import { Context } from './types'
 ;(async () => {
   const { production, applicationExchange } = environment
 
@@ -15,7 +16,7 @@ import { environment } from './environments/environment'
   const appExchangeId = await channel.declareExchange({
     name: applicationExchange,
   })
-  const context = {
+  const context: Context = {
     channel,
     appExchangeId,
   }

@@ -1,4 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql'
+import { Context } from './src/types/context'
 export type Maybe<T> = T | null
 export type RequireFields<T, K extends keyof T> = {
   [X in Exclude<keyof T, K>]?: T[X]
@@ -179,7 +180,7 @@ export type ResolversParentTypes = {
 }
 
 export type ApplicationResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Application'] = ResolversParentTypes['Application']
 > = {
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
@@ -189,7 +190,7 @@ export type ApplicationResolvers<
 }
 
 export type CreateApplicationPayloadResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['createApplicationPayload'] = ResolversParentTypes['createApplicationPayload']
 > = {
   application?: Resolver<
@@ -201,7 +202,7 @@ export type CreateApplicationPayloadResolvers<
 }
 
 export type MutationResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = {
   createApplication?: Resolver<
@@ -214,7 +215,7 @@ export type MutationResolvers<
 }
 
 export type QueryResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
   getApplication?: Resolver<
@@ -226,7 +227,7 @@ export type QueryResolvers<
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
 }
 
-export type Resolvers<ContextType = any> = {
+export type Resolvers<ContextType = Context> = {
   Application?: ApplicationResolvers<ContextType>
   createApplicationPayload?: CreateApplicationPayloadResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
@@ -237,4 +238,4 @@ export type Resolvers<ContextType = any> = {
  * @deprecated
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
-export type IResolvers<ContextType = any> = Resolvers<ContextType>
+export type IResolvers<ContextType = Context> = Resolvers<ContextType>
