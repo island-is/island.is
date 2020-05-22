@@ -63,6 +63,7 @@ export const theme = {
   touchableSize: 10,
   typography: {
     fontFamily: variables.fontFamily,
+    fontSize: variables.baseFontSize,
   },
   space: {
     gutter: 3,
