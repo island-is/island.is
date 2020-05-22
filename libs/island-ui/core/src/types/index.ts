@@ -27,6 +27,7 @@ export interface Theme {
     spacer9: number
     spacer10: number
     spacer12: number
+    spacer13: number
     spacer15: number
     spacer25: number
   }
