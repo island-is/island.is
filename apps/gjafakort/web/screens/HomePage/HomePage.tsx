@@ -97,13 +97,15 @@ const GiftCTA = () => (
       <Box marginBottom="spacer2">
         <Typography variant="h4">Einstaklingar</Typography>
       </Box>
-      <Button>Sækja Ferðagjöf</Button>
+      <Button width="fluid">Sækja Ferðagjöf</Button>
     </Box>
     <Box background="purple100" padding="spacer4" marginBottom="spacer3">
       <Box marginBottom="spacer2">
         <Typography variant="h4">Einstaklingar</Typography>
       </Box>
-      <Button variant="ghost">Skrá fyrirtæki</Button>
+      <Button width="fluid" variant="ghost">
+        Skrá fyrirtæki
+      </Button>
     </Box>
     <Box textAlign="center" padding="spacer3">
       <img src={packageSvg} alt="" />
