@@ -7,8 +7,8 @@ const SNS_LOCALSTACK_ENDPOINT = 'http://localhost:4575'
 const SQS_LOCALSTACK_ENDPOINT = 'http://localhost:4576'
 
 class Channel {
-  sns: any
-  sqs: any
+  sns: AWS.SNS
+  sqs: AWS.SQS
 
   constructor(production: boolean) {
     this.sns = new AWS.SNS({
@@ -22,13 +22,13 @@ class Channel {
     })
   }
 
-  async declareExchange({ name }) {
+  async declareExchange({ name }: { name: string }) {
     const { TopicArn } = await this.sns.createTopic({ Name: name }).promise()
     console.log(`Declared exchange ${TopicArn}`)
     return TopicArn
   }
 
-  async declareQueue({ name }) {
+  async declareQueue({ name }: { name: string }) {
     const queueUrl = await this.getQueueUrl({ name })
     if (queueUrl) {
       console.log(`Declared queue ${queueUrl}`)
@@ -45,7 +45,15 @@ class Channel {
     return QueueUrl
   }
 
-  async setDlQueue({ queueId, dlQueueId, maxReceiveCount = 5 }) {
+  async setDlQueue({
+    queueId,
+    dlQueueId,
+    maxReceiveCount = 5,
+  }: {
+    queueId: string
+    dlQueueId: string
+    maxReceiveCount?: number
+  }) {
     const { QueueArn } = await this.getQueueAttributes({
       queueId: dlQueueId,
       attributes: ['QueueArn'],
@@ -62,7 +70,15 @@ class Channel {
     console.log(`Set queue ${dlQueueId} as dead letter queue for ${queueId}`)
   }
 
-  async bindQueue({ queueId, exchangeId, routingKeys = [] }) {
+  async bindQueue({
+    queueId,
+    exchangeId,
+    routingKeys = [],
+  }: {
+    queueId: string
+    exchangeId: string
+    routingKeys?: string[]
+  }) {
     const { SubscriptionArn } = await this.sns
       .subscribe({
         Protocol: 'sqs',
@@ -89,10 +105,20 @@ class Channel {
     return SubscriptionArn
   }
 
-  consume({ queueId, handler }) {
+  consume({
+    queueId,
+    handler,
+  }: {
+    queueId: string
+    handler: (message) => Promise<void>
+  }) {
     const app = Consumer.create({
       queueUrl: queueId,
-      handleMessage: handler,
+      handleMessage: async ({ Body }) => {
+        const parsedBody = JSON.parse(Body)
+        const message = JSON.parse(parsedBody.Message)
+        handler(message)
+      },
     })
 
     app.on('error', (err) => {
@@ -106,7 +132,16 @@ class Channel {
     app.start()
   }
 
-  async publish({ exchangeId, message, routingKey = undefined }) {
+  // TODO fix any
+  async publish({
+    exchangeId,
+    message,
+    routingKey = undefined,
+  }: {
+    exchangeId: string
+    message: any
+    routingKey?: string
+  }) {
     const params = {
       Message: JSON.stringify(message),
       TopicArn: exchangeId,
@@ -126,7 +161,7 @@ class Channel {
     )
   }
 
-  private async getQueueUrl({ name }) {
+  private async getQueueUrl({ name }: { name: string }) {
     try {
       const { QueueUrl } = await this.sqs
         .getQueueUrl({ QueueName: name })
@@ -137,7 +172,13 @@ class Channel {
     }
   }
 
-  private async getQueueAttributes({ queueId, attributes = [] }) {
+  private async getQueueAttributes({
+    queueId,
+    attributes,
+  }: {
+    queueId: string
+    attributes: string[]
+  }) {
     const { Attributes } = await this.sqs
       .getQueueAttributes({
         QueueUrl: queueId,
