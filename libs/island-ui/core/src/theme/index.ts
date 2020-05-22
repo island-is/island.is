@@ -1,4 +1,5 @@
 import { makeThemeUtils } from '../themeUtils'
+import * as variables from './variables'
 
 // island.is colors
 const colors = {
@@ -61,7 +62,7 @@ export const theme = {
   grid: 8,
   touchableSize: 10,
   typography: {
-    fontFamily: 'IBM Plex Sans, sans-serif',
+    fontFamily: variables.fontFamily,
   },
   space: {
     gutter: 3,

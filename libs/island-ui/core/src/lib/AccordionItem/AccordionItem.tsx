@@ -122,9 +122,7 @@ export const AccordionItem = ({
       </Box>
       <AnimateHeight duration={300} height={height}>
         <Box paddingTop="spacer2" id={id}>
-          <Typography variant="p" as="p">
-            {children}
-          </Typography>
+          {children}
         </Box>
       </AnimateHeight>
     </Box>
