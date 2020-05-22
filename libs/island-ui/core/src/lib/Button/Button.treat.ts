@@ -58,6 +58,15 @@ export const sizes = styleMap({
   large: sizeLarge,
 })
 
+export const width = styleMap({
+  normal: {
+    width: 'auto',
+  },
+  fluid: {
+    width: '100%',
+  },
+})
+
 export const variants = styleMap({
   normal: {
     backgroundColor: theme.color.blue400,
