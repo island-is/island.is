@@ -6,6 +6,8 @@ generates:
     plugins:
       - typescript
       - typescript-resolvers
+    config:
+      contextType: ./context#Context
   ./libs/api/schema/schema.graphql:
     plugins:
       - schema-ast

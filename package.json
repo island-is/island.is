@@ -17,6 +17,7 @@
     "affected:test": "nx affected:test",
     "affected:lint": "nx affected:lint",
     "affected:dep-graph": "nx affected:dep-graph",
+    "affected:codegen": "nx affected --target=codegen",
     "affected:docker": "nx affected --target=docker",
     "affected": "nx affected",
     "generate": "nx generate",
