@@ -1,7 +1,7 @@
 import { style } from 'treat'
 import * as CSS from 'csstype'
 import { isObject } from 'lodash'
-import * as theme from '../../theme/variables'
+import { theme } from '../../theme/index'
 
 export type VariantTypes =
   | 'p'
@@ -30,50 +30,77 @@ type Variants = {
 
 export const variants: Variants = {
   h1: {
-    fontSize: { xs: theme.h1FontSizeMobile, md: theme.h1FontSize },
-    fontWeight: theme.headingsFontWeight,
-    lineHeight: theme.h1LineHeight,
+    fontSize: {
+      xs: theme.typography.h1FontSizeMobile,
+      md: theme.typography.h1FontSize,
+    },
+    fontWeight: theme.typography.headingsFontWeight,
+    lineHeight: theme.typography.h1LineHeight,
   },
   h2: {
-    fontSize: { xs: theme.h2FontSizeMobile, md: theme.h2FontSize },
-    fontWeight: theme.headingsFontWeight,
-    lineHeight: theme.h2LineHeight,
+    fontSize: {
+      xs: theme.typography.h2FontSizeMobile,
+      md: theme.typography.h2FontSize,
+    },
+    fontWeight: theme.typography.headingsFontWeight,
+    lineHeight: theme.typography.h2LineHeight,
   },
   h3: {
-    fontSize: { xs: theme.h3FontSizeMobile, md: theme.h3FontSize },
-    fontWeight: theme.headingsFontWeight,
-    lineHeight: theme.h3LineHeight,
+    fontSize: {
+      xs: theme.typography.h3FontSizeMobile,
+      md: theme.typography.h3FontSize,
+    },
+    fontWeight: theme.typography.headingsFontWeight,
+    lineHeight: theme.typography.h3LineHeight,
   },
   h4: {
-    fontSize: { xs: theme.h4FontSizeMobile, md: theme.h4FontSize },
-    fontWeight: theme.headingsFontWeight,
-    lineHeight: theme.h4LineHeight,
+    fontSize: {
+      xs: theme.typography.h4FontSizeMobile,
+      md: theme.typography.h4FontSize,
+    },
+    fontWeight: theme.typography.headingsFontWeight,
+    lineHeight: theme.typography.h4LineHeight,
   },
   h5: {
-    fontSize: { xs: theme.h5FontSizeMobile, md: theme.h5FontSize },
-    fontWeight: theme.headingsFontWeight,
-    lineHeight: theme.h5LineHeight,
+    fontSize: {
+      xs: theme.typography.h5FontSizeMobile,
+      md: theme.typography.h5FontSize,
+    },
+    fontWeight: theme.typography.headingsFontWeight,
+    lineHeight: theme.typography.h5LineHeight,
   },
   p: {
-    fontSize: { xs: theme.baseFontSizeMobile, md: theme.baseFontSize },
-    fontWeight: theme.baseFontWeight,
-    lineHeight: theme.baseLineHeight,
+    fontSize: {
+      xs: theme.typography.baseFontSizeMobile,
+      md: theme.typography.baseFontSize,
+    },
+    fontWeight: theme.typography.baseFontWeight,
+    lineHeight: theme.typography.baseLineHeight,
   },
   pSmall: {
-    fontSize: { xs: theme.smallFontSizeMobile, md: theme.smallFontSize },
-    fontWeight: theme.smallFontWeight,
-    lineHeight: theme.smallLineHeight,
+    fontSize: {
+      xs: theme.typography.smallFontSizeMobile,
+      md: theme.typography.smallFontSize,
+    },
+    fontWeight: theme.typography.smallFontWeight,
+    lineHeight: theme.typography.smallLineHeight,
   },
   intro: {
-    fontSize: { xs: theme.introFontSizeMobile, md: theme.introFontSize },
-    fontWeight: theme.baseFontWeight,
-    lineHeight: theme.introLineHeight,
+    fontSize: {
+      xs: theme.typography.introFontSizeMobile,
+      md: theme.typography.introFontSize,
+    },
+    fontWeight: theme.typography.baseFontWeight,
+    lineHeight: theme.typography.introLineHeight,
   },
   eyebrow: {
-    fontSize: { xs: theme.eyebrowFontSizeMobile, md: theme.eyebrowFontSize },
-    fontWeight: theme.eyebrowFontWeight,
-    lineHeight: theme.eyebrowLineHeight,
-    color: theme.eyebrowColor,
+    fontSize: {
+      xs: theme.typography.eyebrowFontSizeMobile,
+      md: theme.typography.eyebrowFontSize,
+    },
+    fontWeight: theme.typography.eyebrowFontWeight,
+    lineHeight: theme.typography.eyebrowLineHeight,
+    color: theme.color.red400,
   },
 }
 

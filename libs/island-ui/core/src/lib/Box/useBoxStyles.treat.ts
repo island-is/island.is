@@ -14,7 +14,7 @@ const spaceMapToCss = (
   breakpoint: keyof Theme['breakpoint'],
 ) => {
   const spaceWithNone = {
-    ...theme.space,
+    ...theme.spacing,
     none: 0,
   }
 
@@ -23,7 +23,7 @@ const spaceMapToCss = (
     cssPropertyName,
     (value, propertyName) => {
       const styles = {
-        [propertyName]: value * theme.grid,
+        [propertyName]: value,
       }
 
       const minWidth = theme.breakpoint[breakpoint]
@@ -132,7 +132,7 @@ export const width = {
   ...styleMap(mapToStyleProperty(widthRules, 'width'), 'width'),
   ...styleMap(
     (theme) => ({
-      touchable: { width: theme.grid * theme.touchableSize },
+      touchable: { width: theme.spacing[1] * theme.touchableSize },
     }),
     'width',
   ),
@@ -145,7 +145,7 @@ export const height = {
   ...styleMap(mapToStyleProperty(heightRules, 'height'), 'height'),
   ...styleMap(
     (theme) => ({
-      touchable: { height: theme.grid * theme.touchableSize },
+      touchable: { height: theme.spacing[1] * theme.touchableSize },
     }),
     'height',
   ),

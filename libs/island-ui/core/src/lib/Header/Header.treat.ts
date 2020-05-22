@@ -1,9 +1,9 @@
 import { style } from 'treat'
-import * as theme from '../../theme/variables'
+import { theme } from '../../theme/index'
 
 export const container = style({
-  height: theme.headerHeight,
+  height: 111,
   display: 'flex',
   alignItems: 'center',
-  borderBottom: `1px solid ${theme.blue200}`,
+  borderBottom: `1px solid ${theme.color.blue200}`,
 })

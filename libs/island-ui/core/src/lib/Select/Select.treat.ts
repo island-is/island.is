@@ -1,5 +1,5 @@
 import { style, globalStyle } from 'treat'
-import * as theme from '../../theme/variables'
+import { theme } from '../../theme/index'
 import * as inputMixins from '../Input/Input.mixins'
 
 export const wrapper = style({}, 'wrapper')
@@ -107,7 +107,7 @@ export const menu = style(
     selectors: {
       [`${wrapper} &`]: {
         marginTop: -1,
-        boxShadow: `0 0 0 4px ${theme.mint400}`,
+        boxShadow: `0 0 0 4px ${theme.color.mint400}`,
         borderTopLeftRadius: 0,
         borderTopRightRadius: 0,
       },
@@ -119,8 +119,8 @@ export const menu = style(
         right: 0,
         height: 4,
         width: '100%',
-        backgroundColor: theme.white,
-        borderBottom: `1px solid ${theme.blue200}`,
+        backgroundColor: theme.color.white,
+        borderBottom: `1px solid ${theme.color.blue200}`,
       },
     },
   },
@@ -132,7 +132,7 @@ export const option = style(
       [`${wrapper} &`]: {
         position: 'relative',
         fontSize: theme.introFontSize,
-        fontWeight: theme.fontWeightLight,
+        fontWeight: 300,
         padding: '23px 24px',
       },
     },
@@ -141,25 +141,25 @@ export const option = style(
 )
 
 globalStyle(`${wrapper} ${option}.island-select__option--is-focused`, {
-  backgroundColor: theme.blue100,
+  backgroundColor: theme.color.blue100,
 })
 
 globalStyle(`${wrapper} ${option}.island-select__option--is-selected`, {
-  fontWeight: theme.fontWeightSemiBold,
-  color: theme.baseColor,
+  fontWeight: 500,
+  color: theme.color.dark400,
 })
 
 globalStyle(
   `${wrapper} ${option}.island-select__option--is-selected:not(.island-select__option--is-focused)`,
   {
-    backgroundColor: theme.white,
+    backgroundColor: theme.color.white,
   },
 )
 
 globalStyle(`${wrapper} ${option}.island-select__option--is-focused:before`, {
   content: '""',
   height: 1,
-  backgroundColor: theme.white,
+  backgroundColor: theme.color.white,
   position: 'absolute',
   top: -1,
   right: 20,
@@ -171,7 +171,7 @@ globalStyle(
   {
     content: '""',
     height: 1,
-    backgroundColor: theme.blue200,
+    backgroundColor: theme.color.blue200,
     position: 'absolute',
     bottom: 0,
     right: 20,

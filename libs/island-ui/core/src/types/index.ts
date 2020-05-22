@@ -1,17 +1,19 @@
-import '../theme.d'
+import '../theme'
 
 export const breakpoints = ['xs', 'sm', 'md', 'lg', 'xl'] as const
 type Breakpoint = typeof breakpoints[number]
 
 export interface Theme {
   breakpoint: Record<Breakpoint, number>
+  typography: {
+    fontFamily: string
+  }
   contentWidth: {
     medium: number
     large: number
   }
-  grid: number
   touchableSize: number
-  space: {
+  spacing: {
     gutter: number
     smallGutter: number
     containerGutter: number

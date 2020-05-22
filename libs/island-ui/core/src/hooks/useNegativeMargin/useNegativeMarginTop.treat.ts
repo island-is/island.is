@@ -7,8 +7,8 @@ const utils = makeThemeUtils(theme)
 
 const preventCollapse = 1
 
-const negativeMarginTop = (grid: number, rows: number) => ({
-  ':before': { marginTop: -(grid * rows) - preventCollapse },
+const negativeMarginTop = (spacing: number, rows: number) => ({
+  ':before': { marginTop: -(spacing * rows) - preventCollapse },
 })
 
 export const base = style({
@@ -17,27 +17,27 @@ export const base = style({
 })
 
 export const xs = styleMap(
-  mapToStyleProperty({ none: 0, ...theme.space }, 'marginTop', (rows) =>
-    negativeMarginTop(theme.grid, rows),
+  mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginTop', (rows) =>
+    negativeMarginTop(1, rows),
   ),
 )
 export const sm = styleMap(
-  mapToStyleProperty({ none: 0, ...theme.space }, 'marginTop', (rows) =>
-    utils.responsiveStyle({ sm: negativeMarginTop(theme.grid, rows) }),
+  mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginTop', (rows) =>
+    utils.responsiveStyle({ sm: negativeMarginTop(1, rows) }),
   ),
 )
 export const md = styleMap(
-  mapToStyleProperty({ none: 0, ...theme.space }, 'marginTop', (rows) =>
-    utils.responsiveStyle({ md: negativeMarginTop(theme.grid, rows) }),
+  mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginTop', (rows) =>
+    utils.responsiveStyle({ md: negativeMarginTop(1, rows) }),
   ),
 )
 export const lg = styleMap(
-  mapToStyleProperty({ none: 0, ...theme.space }, 'marginTop', (rows) =>
-    utils.responsiveStyle({ lg: negativeMarginTop(theme.grid, rows) }),
+  mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginTop', (rows) =>
+    utils.responsiveStyle({ lg: negativeMarginTop(1, rows) }),
   ),
 )
 export const xl = styleMap(
-  mapToStyleProperty({ none: 0, ...theme.space }, 'marginTop', (rows) =>
-    utils.responsiveStyle({ xl: negativeMarginTop(theme.grid, rows) }),
+  mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginTop', (rows) =>
+    utils.responsiveStyle({ xl: negativeMarginTop(1, rows) }),
   ),
 )

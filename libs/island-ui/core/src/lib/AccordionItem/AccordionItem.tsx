@@ -10,8 +10,6 @@ import * as styles from './AccordionItem.treat'
 import { Typography } from '../Typography/Typography'
 import { AccordionContext } from '../Accordion/Accordion'
 
-const accordionSpace = 'spacer2'
-
 export type AccordionItemBaseProps = {
   id: string
   label: string
@@ -98,7 +96,7 @@ export const AccordionItem = ({
             }
           }}
         >
-          <Columns space={accordionSpace} alignY="center">
+          <Columns space={2} alignY="center">
             <Column>
               <Typography variant="h3" as="h3">
                 {label}
@@ -121,7 +119,7 @@ export const AccordionItem = ({
         />
       </Box>
       <AnimateHeight duration={300} height={height}>
-        <Box paddingTop="spacer2" id={id}>
+        <Box paddingTop={2} id={id}>
           {children}
         </Box>
       </AnimateHeight>
