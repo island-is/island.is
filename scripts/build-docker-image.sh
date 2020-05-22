@@ -1,17 +1,12 @@
 #!/bin/bash
+set -euxo pipefail
 
-set -euoxo pipefail
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-LATEST_TAG=latest
-CURRENT_TAG=latest
-LAST_DEPS_TAG=${LATEST_TAG}_deps
-DEPS_TAG=${CURRENT_TAG}_deps
-SRC_TAG=${CURRENT_TAG}_src
-DOCKER_REGISTRY=
-docker build -f apps/${APP}/Dockerfile --target=deps --cache-from=${DOCKER_REGISTRY}${APP}:${LAST_DEPS_TAG} --build-arg APP=${APP} -t ${DOCKER_REGISTRY}${APP}:${DEPS_TAG} . 
-docker build -f apps/${APP}/Dockerfile --target=src --cache-from=${DOCKER_REGISTRY}${APP}:${DEPS_TAG} --build-arg APP=${APP} -t ${DOCKER_REGISTRY}${APP}:${SRC_TAG} . 
-# docker push ${DOCKER_REGISTRY}${APP}:${DEPS_TAG}
-docker build -f apps/${APP}/Dockerfile --target=linter --cache-from=${DOCKER_REGISTRY}${APP}:${SRC_TAG} --build-arg APP=${APP} . 
-docker build -f apps/${APP}/Dockerfile --target=tests --cache-from=${DOCKER_REGISTRY}${APP}:${SRC_TAG} --build-arg APP=${APP} .
+source $DIR/_common.sh
 
-docker images | grep ${APP}
+# docker build -f ${DIR}/Dockerfile --target=output-express --cache-from=${DOCKER_REGISTRY}${APP}:${DEPS_TAG} --build-arg APP=${APP} -t ${DOCKER_REGISTRY}${APP}:${DEPS_TAG} . 
+# docker build -f ${DIR}/Dockerfile --target=tests --cache-from=${DOCKER_REGISTRY}${APP}:${DEPS_TAG} --build-arg APP=${APP} -t tests .
+# docker-compose -f ${DIR}/../apps/${APP}/docker-compose.yml
+
+# docker images | grep ${APP}

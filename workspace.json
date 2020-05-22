@@ -739,7 +739,7 @@
           "options": {
             "commands": [
               {
-                "command": "echo 'saving on build time'"
+                "command": "DOCKER_BUILDKIT=1 APP=reference-backend ./scripts/build-docker-image.sh"
               }
             ]
           }
