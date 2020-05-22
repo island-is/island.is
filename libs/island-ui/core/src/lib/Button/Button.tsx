@@ -5,6 +5,7 @@ import * as styles from './Button.treat'
 
 export type ButtonSize = 'small' | 'medium' | 'large'
 export type ButtonVariant = 'normal' | 'ghost' | 'text'
+export type ButtonWidth = 'normal' | 'fluid'
 
 /* eslint-disable-next-line */
 export interface ButtonProps {
@@ -12,6 +13,7 @@ export interface ButtonProps {
   onClick?: () => void
   variant?: ButtonVariant
   size?: ButtonSize
+  width?: ButtonWidth
 }
 
 export const Button: FC<ButtonProps> = ({
@@ -20,6 +22,7 @@ export const Button: FC<ButtonProps> = ({
   disabled,
   variant = 'normal',
   size = 'medium',
+  width = 'normal',
 }) => {
   return (
     <button
@@ -29,6 +32,7 @@ export const Button: FC<ButtonProps> = ({
         styles.button,
         styles.variants[variant],
         styles.sizes[size],
+        styles.width[width],
       )}
     >
       {children}
