@@ -3,6 +3,7 @@ import { theme } from '../theme/index'
 
 globalStyle('html, body', {
   margin: 0,
+  fontFamily: theme.typography.fontFamily,
   background: theme.color.background,
   padding: 0,
 })
