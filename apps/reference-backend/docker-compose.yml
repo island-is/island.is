@@ -4,6 +4,8 @@ services:
   db:
     image: postgres:11.6
     container_name: db
+    networks:
+      - local
     environment:
       - POSTGRES_PASSWORD=XjFsvIrGyCCrdE
       - TEST_DB_USER=test_db
@@ -13,3 +15,16 @@ services:
       - ./bin/startup.sql:/docker-entrypoint-initdb.d/startup.sql
     ports:
       - 5432:5432
+
+  sut:
+    image: ${SUT}
+    networks:
+      - local
+    environment:
+      - POSTGRES_PASSWORD=XjFsvIrGyCCrdE
+      - TEST_DB_USER=test_db
+      - TEST_DB_PASS=test_db
+      - TEST_DB_NAME=test_db
+
+networks:
+  local:
