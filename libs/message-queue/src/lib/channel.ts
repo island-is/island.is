@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk'
 import { Consumer } from 'sqs-consumer'
+import { Message } from './types'
 
 AWS.config.update({ region: 'eu-west-1' })
 
@@ -110,7 +111,7 @@ class Channel {
     handler,
   }: {
     queueId: string
-    handler: (message) => Promise<void>
+    handler: (message: Message) => Promise<void>
   }) {
     const app = Consumer.create({
       queueUrl: queueId,
@@ -132,14 +133,13 @@ class Channel {
     app.start()
   }
 
-  // TODO fix any
   async publish({
     exchangeId,
     message,
     routingKey = undefined,
   }: {
     exchangeId: string
-    message: any
+    message: Message
     routingKey?: string
   }) {
     const params = {

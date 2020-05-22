@@ -4,10 +4,16 @@ import { environment } from '../../../environments/environment'
 
 const APPLICATION_TYPE = 'gjafakort'
 
-const formatApplication = ({ id, state, data: { email } }) => ({
-  id,
-  state,
-  email,
+interface Application {
+  id: string
+  state: string
+  email: string
+}
+
+const formatApplication: (application: any) => Application = (application) => ({
+  id: application.id,
+  state: application.state,
+  email: application.data.email,
 })
 
 export const createApplication = async (

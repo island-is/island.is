@@ -1,34 +1,29 @@
 import { environment } from './environments/environment'
 import queueHandlers from './queue-handlers'
-import MsgQueue from '@island.is/message-queue'
+import MsgQueue, { ApplicationMessage } from '@island.is/message-queue'
 
-const { production, exchangeName, queueName } = environment
+const { production, exchangeName } = environment
 
-if (Object.keys(queueHandlers).includes(queueName)) {
-  ;(async () => {
-    const channel = MsgQueue.connect(production)
+const listen = async (
+  queueName: string,
+  handler: (message: ApplicationMessage) => Promise<void>,
+  routingKeys: string[],
+) => {
+  const channel = MsgQueue.connect(production)
 
-    const exchangeId = await channel.declareExchange({ name: exchangeName })
-    const queueId = await channel.declareQueue({ name: queueName })
-    const dlQueueName = `${queueName}-deadletter`
-    const dlQueueId = await channel.declareQueue({ name: dlQueueName })
-    await channel.setDlQueue({ queueId, dlQueueId })
+  const exchangeId = await channel.declareExchange({ name: exchangeName })
+  const queueId = await channel.declareQueue({ name: queueName })
+  const dlQueueName = `${queueName}-deadletter`
+  const dlQueueId = await channel.declareQueue({ name: dlQueueName })
+  await channel.setDlQueue({ queueId, dlQueueId })
+  await channel.bindQueue({ queueId, exchangeId, routingKeys })
 
-    const { handler, routingKeys } = queueHandlers[queueName]
-    await channel.bindQueue({ queueId, exchangeId, routingKeys })
-
-    channel.consume({ queueId, handler })
-
-    console.log(`Listening on queue ${queueName}`)
-  })().catch((err) => {
-    console.error(err)
-  })
-} else {
-  const redText = '\x1b[31m%s\x1b[0m'
-  console.error(
-    redText,
-    `FATAL ERROR: environment variable QUEUE_NAME must be one of [${Object.keys(
-      queueHandlers,
-    ).join(' ')}]`,
-  )
+  channel.consume({ queueId, handler })
 }
+
+Object.keys(queueHandlers).forEach((queueName: string) => {
+  const { handler, routingKeys } = queueHandlers[queueName]
+  listen(queueName, handler, routingKeys).then(() => {
+    console.log(`Listening on queue ${queueName}`)
+  })
+})
