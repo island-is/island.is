@@ -40,6 +40,7 @@ export interface Theme {
   border: {
     radius: {
       standard: string
+      circle: string
     }
     width: {
       standard: number
