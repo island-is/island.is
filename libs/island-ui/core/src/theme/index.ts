@@ -80,7 +80,6 @@ export const theme = {
     spacer9: 9,
     spacer10: 10,
     spacer12: 12,
-    spacer13: 13,
     spacer15: 15,
     spacer25: 25,
   },
