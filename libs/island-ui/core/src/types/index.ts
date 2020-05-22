@@ -15,20 +15,20 @@ export interface Theme {
     gutter: number
     smallGutter: number
     containerGutter: number
-    spacer0: number
-    spacer1: number
-    spacer2: number
-    spacer3: number
-    spacer4: number
-    spacer5: number
-    spacer6: number
-    spacer7: number
-    spacer8: number
-    spacer9: number
-    spacer10: number
-    spacer12: number
-    spacer15: number
-    spacer25: number
+    0: 0
+    1: 1
+    2: 2
+    3: 3
+    4: 4
+    5: 5
+    6: 6
+    7: 7
+    8: 8
+    9: 9
+    10: 10
+    12: 12
+    15: 15
+    25: 25
   }
   transforms: {
     touchable: string

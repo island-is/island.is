@@ -5,6 +5,7 @@ import { Application } from '../../graphql/schema'
 import { withApollo } from '../../graphql'
 import { useI18n } from '../../i18n'
 import {
+  Box,
   Input,
   Select,
   Typography,
@@ -33,13 +34,13 @@ function HomePage({ application }: PropTypes) {
       <h1>
         {t('intro.welcome')} {application.id}
       </h1>
-      <div style={{ paddingTop: 25, paddingBottom: 25 }}>
+      <Box paddingY={[1, 2, 3]}>
         <Input label="Nafn tengiliðar" placeholder="test" name="t1" />
-      </div>
-      <div style={{ paddingTop: 25, paddingBottom: 25 }}>
+      </Box>
+      <Box paddingY={[1, 2, 3]}>
         <Input label="Nafn tengiliðar" placeholder="test" name="t2" disabled />
-      </div>
-      <div style={{ paddingTop: 25, paddingBottom: 25 }}>
+      </Box>
+      <Box paddingY={[1, 2, 3]}>
         <Input
           label="Nafn tengiliðar"
           placeholder="test"
@@ -47,11 +48,11 @@ function HomePage({ application }: PropTypes) {
           value="test"
           disabled
         />
-      </div>
-      <div style={{ paddingTop: 25, paddingBottom: 25 }}>
+      </Box>
+      <Box paddingY={[1, 2, 3]}>
         <Input label="Nafn tengiliðar" placeholder="test" name="t4" hasError />
-      </div>
-      <div style={{ paddingTop: 25, paddingBottom: 25 }}>
+      </Box>
+      <Box paddingY={[1, 2, 3]}>
         <Input
           label="Nafn tengiliðar"
           placeholder="test"
@@ -59,8 +60,8 @@ function HomePage({ application }: PropTypes) {
           hasError
           errorMessage="obbosí"
         />
-      </div>
-      <div style={{ paddingTop: 25, paddingBottom: 25 }}>
+      </Box>
+      <Box paddingY={[1, 2, 3]}>
         <Select
           name="s1"
           label="Tegund fyrirtækis"
@@ -85,8 +86,8 @@ function HomePage({ application }: PropTypes) {
           ]}
           noOptionsMessage="Enginn valmöguleiki"
         />
-      </div>
-      <div style={{ paddingTop: 25, paddingBottom: 25 }}>
+      </Box>
+      <Box paddingY={[1, 2, 3]}>
         <Select
           name="s2"
           label="Tegund fyrirtækis"
@@ -94,8 +95,8 @@ function HomePage({ application }: PropTypes) {
           options={[]}
           noOptionsMessage="Enginn valmöguleiki"
         />
-      </div>
-      <div style={{ paddingTop: 25, paddingBottom: 25 }}>
+      </Box>
+      <Box paddingY={[1, 2, 3]}>
         <Select
           disabled
           name="s2"
@@ -120,8 +121,8 @@ function HomePage({ application }: PropTypes) {
             },
           ]}
         />
-      </div>
-      <div style={{ paddingTop: 25, paddingBottom: 25 }}>
+      </Box>
+      <Box paddingY={['gutter', 1, 2, 3]}>
         <Select
           disabled
           name="s2"
@@ -129,8 +130,8 @@ function HomePage({ application }: PropTypes) {
           placeholder="Veldu tegund"
           options={[]}
         />
-      </div>
-      <div style={{ paddingTop: 25, paddingBottom: 25 }}>
+      </Box>
+      <Box paddingY={[1, 2, 3]}>
         <Checkbox
           name="c1"
           label="Hér er einn möguleiki sem hægt er að velja"
@@ -139,10 +140,10 @@ function HomePage({ application }: PropTypes) {
           }}
           checked={checkbox}
         />
-      </div>
-      <div style={{ paddingTop: 25, paddingBottom: 25 }}>
+      </Box>
+      <Box paddingY={[1, 2, 3]}>
         <Checkbox name="c1" label="Og þessi er valinn" checked />
-      </div>
+      </Box>
       <div style={{ marginBottom: 500 }}></div>
     </ContentBlock>
   )

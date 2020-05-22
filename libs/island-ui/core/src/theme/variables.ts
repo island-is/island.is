@@ -1,16 +1,23 @@
 // Spacing
-export const spacer = 8
-export const spacer0 = 0
-export const spacer1 = spacer
-export const spacer2 = spacer * 2
-export const spacer3 = spacer * 3
-export const spacer4 = spacer * 4
-export const spacer5 = spacer * 5
-export const spacer6 = spacer * 7
-export const spacer7 = spacer * 9
-export const spacer8 = spacer * 12
-export const spacer9 = spacer * 15
-export const spacer10 = spacer * 25
+export const UNIT = 8
+export const spacing = {
+  0: UNIT * 0,
+  0.5: UNIT * 0.5,
+  1: UNIT * 1,
+  2: UNIT * 2,
+  3: UNIT * 3,
+  4: UNIT * 4,
+  5: UNIT * 5,
+  6: UNIT * 6,
+  7: UNIT * 7,
+  8: UNIT * 8,
+  9: UNIT * 9,
+  10: UNIT * 10,
+  12: UNIT * 12,
+  15: UNIT * 15,
+  20: UNIT * 20,
+  gutter: UNIT * 2,
+}
 
 // Primary colors
 export const blue600 = '#0044b3'
@@ -131,8 +138,8 @@ export const baseFontWeight = fontWeightLight
 
 // Container
 export const containerMaxWidth = 1340
-export const gutter = 16
-export const paddingX = 16
+export const gutter = UNIT * 2
+export const paddingX = UNIT * 2
 
 // Screen Breakpoints
 export const breakpoints = {

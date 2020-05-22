@@ -1,16 +1,5 @@
 // Spacing
-export const spacer = 8
-export const spacer0 = 0
-export const spacer1 = spacer
-export const spacer2 = spacer * 2
-export const spacer3 = spacer * 3
-export const spacer4 = spacer * 4
-export const spacer5 = spacer * 5
-export const spacer6 = spacer * 7
-export const spacer7 = spacer * 9
-export const spacer8 = spacer * 12
-export const spacer9 = spacer * 15
-export const spacer10 = spacer * 25
+export const UNIT = 8
 
 // Primary colors
 export const blue600 = '#0044b3'

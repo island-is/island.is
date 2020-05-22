@@ -6,7 +6,7 @@ export const label = {
   color: theme.blue400,
   fontWeight: theme.fontWeightSemiBold,
   fontSize: theme.inputLabelFontSize,
-  marginBottom: theme.spacer1,
+  marginBottom: theme.spacing[1],
   transition: 'color 0.1s',
 }
 
@@ -51,7 +51,7 @@ export const errorMessage = {
   color: theme.red400,
   fontWeight: theme.fontWeightSemiBold,
   fontSize: theme.inputLabelFontSize,
-  marginTop: theme.spacer1,
+  marginTop: theme.spacing[1],
 }
 
 export const inputErrorState = {
