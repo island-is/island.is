@@ -54,6 +54,7 @@ jobs:
           echo "Docker tag will be ${DOCKER_TAG}"
           echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
           echo "::set-env name=GIT_BRANCH::${GIT_BRANCH}"
+          echo "::set-env name=DOCKER_BRANCH_TAG::${DOCKER_BRANCH_TAG}"
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "::set-output name=DOCKER_LATEST_TAG::latest_${DOCKER_BRANCH_TAG}"
 
@@ -75,7 +76,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Building dependencies
-        run: APP=gjafakort-api PUBLISH=true BRANCH=$GIT_BRANCH ./scripts/prepare_deps.sh
+        run: APP=gjafakort-api PUBLISH=true BRANCH=$DOCKER_BRANCH_TAG ./scripts/prepare_deps.sh
 
   linting:
     runs-on: self-hosted
