@@ -53,6 +53,7 @@ jobs:
           export DOCKER_TAG=${GITHUB_RUN_NUMBER}_${DOCKER_BRANCH_TAG}_${GITHUB_SHA:0:7}
           echo "Docker tag will be ${DOCKER_TAG}"
           echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
+          echo "::set-env name=GIT_BRANCH::${GIT_BRANCH}"
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "::set-output name=DOCKER_LATEST_TAG::latest_${DOCKER_BRANCH_TAG}"
 
