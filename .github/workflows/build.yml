@@ -74,7 +74,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Building dependencies
-        run: APP=gjafakort-api PUBLISH=true ./scripts/prepare_deps.sh
+        run: APP=gjafakort-api PUBLISH=true BRANCH=$GIT_BRANCH ./scripts/prepare_deps.sh
 
   linting:
     runs-on: self-hosted
