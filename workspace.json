@@ -185,17 +185,13 @@
           }
         },
         "docker": {
-          "builder": "@gperdomor/nx-docker:build",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "repository": "gjafakort-web",
-            "dockerfile": "apps/gjafakort/web/Dockerfile",
-            "registry": "$DOCKER_REG",
-            "username": "$DOCKER_REG_USER",
-            "password": "$DOCKER_REG_PASSWORD",
-            "tags": "$DOCKER_TAGS",
-            "build_args": "$BUILD_ARGS",
-            "push": true,
-            "socket": "/var/run/docker.sock"
+            "commands": [
+              {
+                "command": "APP=gjafakort-web ./scripts/build-docker-image.sh"
+              }
+            ]
           }
         }
       }
@@ -295,17 +291,13 @@
           }
         },
         "docker": {
-          "builder": "@gperdomor/nx-docker:build",
+          "builder": "@nrwl/workspace:run-commands",
           "options": {
-            "repository": "gjafakort-api",
-            "dockerfile": "apps/gjafakort/api/Dockerfile",
-            "registry": "$DOCKER_REG",
-            "username": "$DOCKER_REG_USER",
-            "password": "$DOCKER_REG_PASSWORD",
-            "tags": "$DOCKER_TAGS",
-            "build_args": "$BUILD_ARGS",
-            "push": true,
-            "socket": "/var/run/docker.sock"
+            "commands": [
+              {
+                "command": "APP=gjafakort-api ./scripts/build-docker-image.sh"
+              }
+            ]
           }
         }
       }
