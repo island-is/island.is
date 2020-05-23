@@ -1,9 +1,11 @@
 import { Router } from 'express'
 import { Applications } from '../app/applications'
+import { logger } from '../infra/logging'
 
 export const routes = Router()
 
 routes.get('/resourceA', (req, res) => {
+  logger.debug(`Got it`);
   res.status(200).send({ a: 5 })
 })
 

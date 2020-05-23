@@ -1,5 +1,6 @@
 import { Counter } from 'prom-client'
 import { ApplicationsModel } from './data'
+import { logger } from '../infra/logging'
 
 const applicationsRegistered = new Counter({
   name: 'apps_registered',
@@ -13,11 +14,12 @@ export class Applications {
    */
   public async register({ ssn }: { ssn: string }) {
     if (ssn && ssn.length === 10) {
+      logger.debug(`SSN is just fine`)
       const newApp = await ApplicationsModel.create({ ssn })
       applicationsRegistered.labels('res1').inc()
       return newApp.id
     } else {
-      applicationsRegistered
+      logger.error(`SSN too short`)
       throw new Error(`SSN missing or invalid length ${ssn}`)
     }
   }
