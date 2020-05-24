@@ -56,6 +56,7 @@ jobs:
           echo "::set-env name=GIT_BRANCH::${GIT_BRANCH}"
           echo "::set-env name=DOCKER_BRANCH_TAG::${DOCKER_BRANCH_TAG}"
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
+          echo "::set-env name=DOCKER_TAG::${DOCKER_TAG}"
           echo "::set-output name=DOCKER_LATEST_TAG::latest_${DOCKER_BRANCH_TAG}"
 
       - name: Set NX base SHA
@@ -95,6 +96,9 @@ jobs:
 
       - name: Lint
         run: APP=gjafakort-api PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG ./scripts/lint.sh
+
+      - name: Building
+        run: APP=gjafakort-api PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG ./scripts/build.sh
 
       # - name: Auditing Node.js modules
       #   run: yarn run security:audit

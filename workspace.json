@@ -235,7 +235,7 @@
         "build": {
           "builder": "@nrwl/node:build",
           "options": {
-            "outputPath": "dist/apps/gjafakort/api",
+            "outputPath": "dist/apps/gjafakort-api",
             "main": "apps/gjafakort/api/src/main.ts",
             "tsConfig": "apps/gjafakort/api/tsconfig.app.json",
             "assets": []
