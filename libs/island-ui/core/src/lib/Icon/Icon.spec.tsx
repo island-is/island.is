@@ -8,4 +8,8 @@ describe(' Icon', () => {
     const { baseElement } = render(<Icon type="cheveron" />)
     expect(baseElement).toBeTruthy()
   })
+  it('should render title', () => {
+    const renderedIcon = render(<Icon type="cheveron" title="cheveron" />)
+    expect(renderedIcon.getByTitle('cheveron')).toBeTruthy()
+  })
 })
