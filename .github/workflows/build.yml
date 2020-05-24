@@ -75,8 +75,23 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: latest
+          qemu-version: latest          
+
+      - name: Cache deps
+        id: cache-deps
+        uses: actions/cache@v1
+        with:
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+
       - name: Building dependencies
-        run: APP=gjafakort-api PUBLISH=true BRANCH=$DOCKER_BRANCH_TAG ./scripts/prepare_deps.sh
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: APP=gjafakort-api PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG ./scripts/prepare_deps.sh
 
   linting:
     runs-on: self-hosted
