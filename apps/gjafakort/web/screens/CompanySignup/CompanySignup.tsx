@@ -20,6 +20,39 @@ const isEmailValid = (email) => {
   return re.test(email)
 }
 
+const companyOperations = [
+  {
+    name: 'validPermit',
+    label: 'Fyrirtæki með gilt starfsleyfi Ferðamálastofu',
+  },
+  {
+    name: 'validLicenses',
+    label:
+      'Fyrirtæki með rekstrarleyfi vegna veitingastaða, gististaða og skemmtanahalds',
+  },
+  {
+    name: 'operatingPermitForVehicles',
+    label: 'Fyrirtæki með starfsleyfi vegna leigu skráningarskyldra ökutækja',
+  },
+  {
+    name: 'acknowledgedMuseum',
+    label: 'Safn viðurkennt skv. safnalögum',
+  },
+  {
+    name: 'exhibition',
+    label: 'Sýning sem gerir út á náttúru eða menningu eða sögu',
+  },
+  {
+    name: 'followingLaws',
+    label:
+      'Fyrirtæki í atvinnurekstri á grundvelli laga um hollustuhætti og mengunarvarnar s.s. baðstofur, gufubaðsstofur, götuleikhús, tvívolu, útihátíðir, tjald og hjólhýsasvæði',
+  },
+  {
+    name: 'noneOfTheAbove',
+    label: 'Ekkert að ofangreindu á við',
+  },
+]
+
 function CompanySignup() {
   const [
     { companyName, ssn, isat, serviceCategory, address, postNumber },
@@ -153,6 +186,27 @@ function CompanySignup() {
                         disabled
                       />
                     </Tiles>
+                  </Box>
+                  <Box marginBottom="spacer6">
+                    <Box marginBottom="spacer1">
+                      <Typography variant="h4" as="h2">
+                        Starfsemi fyrirtækis
+                      </Typography>
+                    </Box>
+                    <Stack space="spacer5">
+                      <Typography variant="p">
+                        Vinsamlegast hakaðu við viðeigandi tegund starfsemi
+                        fyrirtækis. Hægt er að haka við einn eða fleiri
+                        möguleika.
+                      </Typography>
+                      {companyOperations.map((operation) => (
+                        <Field
+                          key={operation.name}
+                          component={FieldCheckbox}
+                          {...operation}
+                        />
+                      ))}
+                    </Stack>
                   </Box>
                   <Stack space="spacer3">
                     <Typography variant="h4" as="h2">
