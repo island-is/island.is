@@ -19,7 +19,7 @@ ADD --chown=runner:runners . .
 
 FROM src as formatting
 
-RUN yarn run format:check
+RUN yarn run format:check --all
 
 FROM src as builder
 
