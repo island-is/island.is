@@ -17,6 +17,10 @@ FROM deps as src
 
 ADD --chown=runner:runners . .
 
+FROM src as formatting
+
+RUN yarn run format:check
+
 FROM src as builder
 
 RUN yarn run build ${APP}
