@@ -3,7 +3,7 @@ import { ApolloServer } from 'apollo-server-express'
 import merge from 'lodash/merge'
 import rootTypeDefs from './typeDefs'
 import domains from './domains'
-import { Context } from '@island.is/api/schema'
+import { createContext } from './context'
 
 const resolvers = domains.reduce(
   (combinedDomains, currentDomain) =>
@@ -21,9 +21,7 @@ const createServer = (app: Express) => {
   const server = new ApolloServer({
     resolvers,
     typeDefs,
-    context({ req, res }): Context {
-      return { req, res }
-    },
+    context: createContext,
     playground: enablePlayground,
     introspection: enablePlayground,
   })
