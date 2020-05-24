@@ -93,10 +93,11 @@ jobs:
         if: steps.cache-deps.outputs.cache-hit != 'true'
         run: APP=gjafakort-api PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG ./scripts/prepare_deps.sh
 
-  linting:
-    runs-on: self-hosted
-    # runs-on: ubuntu-latest
-    needs: check-code
+      - name: Lint
+        run: APP=gjafakort-api PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG ./scripts/lint.sh
+
+      # - name: Auditing Node.js modules
+      #   run: yarn run security:audit
 
       # - name: Linting code
       #   run: yarn run affected:lint --base origin/master --parallel
