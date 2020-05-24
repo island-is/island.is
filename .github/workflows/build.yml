@@ -194,5 +194,14 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+      - name: docker info
+        run: docker info
+
+      - name: Set up Docker Buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: latest
+          qemu-version: latest
+
       - name: Building
         run: APP=gjafakort-api PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG ./scripts/build.sh
