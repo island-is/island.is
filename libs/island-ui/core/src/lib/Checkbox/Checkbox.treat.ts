@@ -16,6 +16,7 @@ export const input = style({
 })
 export const label = style({
   fontSize: theme.baseFontSize,
+  fontWeight: theme.fontWeightLight,
 })
 export const labelChecked = style({
   fontWeight: theme.fontWeightSemiBold,
