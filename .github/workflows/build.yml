@@ -77,7 +77,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
 
       - name: Set up Docker Buildx
         if: steps.cache-deps.outputs.cache-hit != 'true'
@@ -87,6 +87,8 @@ jobs:
           buildx-version: latest
           qemu-version: latest
 
+      - name: docker info
+        run: docker info && docker version
 
       - name: Building dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
@@ -137,13 +139,10 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
 
       - name: Check formatting
         run: APP=gjafakort-api PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG ./scripts/check_formatting.sh
-
-      - name: Lint
-        run: APP=gjafakort-api PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG ./scripts/lint.sh
 
   linting:
     runs-on: ubuntu-latest
@@ -163,7 +162,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
 
       - name: Lint
         run: APP=gjafakort-api PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG ./scripts/lint.sh
@@ -186,7 +185,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
 
       - name: Docker login to ECR repo
         run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}gjafakort-api
@@ -195,7 +194,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: docker info
-        run: docker info
+        run: docker info && docker version
 
       - name: Set up Docker Buildx
         uses: crazy-max/ghaction-docker-buildx@v1
