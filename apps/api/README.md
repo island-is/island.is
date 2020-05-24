@@ -6,7 +6,7 @@ It's built as a thin GraphQL layer on top of data and services provided by gover
 
 [![](https://mermaid.ink/img/eyJjb2RlIjoiZ3JhcGggVERcblx0c3ViZ3JhcGggSXNsYW5kLmlzXG5cdFx0c3ViZ3JhcGggQVBJXG5cdFx0XHRhcHBbXCJHcmFwaFFMIHNlcnZlcjxicj48YnI-L2FwcHMvYXBpPGJyPkF1dGhlbnRpY2F0aW9uPGJyPk1ldHJpY3NcIl1cblx0XHRcdGRvbWFpbltcIlJTSyBkb21haW48YnI-PGJyPi9saWJzL2FwaS9kb21haW5zL3Jzazxicj5HcmFwaFFMIFNjaGVtYTxicj5HcmFwaFFMIFJlc29sdmVyczxicj5TZXJ2aWNlc1wiXVxuXHRcdFx0ZG9tYWluMltcIkFwcGxpY2F0aW9ucyBkb21haW48YnI-PGJyPi9saWJzL2FwaS9kb21haW5zL2FwcGxpY2F0aW9uczxicj5HcmFwaFFMIFNjaGVtYTxicj5HcmFwaFFMIFJlc29sdmVyczxicj5TZXJ2aWNlc1wiXVxuXG5cdFx0XHRhcHAtLT58Q29tYmluZXMgR3JhcGhRTHxkb21haW4gJiBkb21haW4yXG5cdFx0XHRkb21haW4yIC0tPiB8Q2FsbHMgc2VydmljZXN8ZG9tYWluXG5cdFx0ZW5kXG5cdFx0eC1yb2FkW1wiWC1Sb2FkIFNlY3VyaXR5IFNlcnZlclwiXVxuXHRcdG1pY3Jvc2VydmljZVtcIkFwcGxpY2F0aW9ucyBNaWNyb3NlcnZpY2U8YnI-PGJyPi9hcHBzL3NlcnZpY2VzL2FwcGxpY2F0aW9uc1wiXVxuXHRcdGRhdGFiYXNlW1wiUG9zdGdyZVNRTCBEYXRhYmFzZVwiXVxuXHRcdGRvbWFpbjIgLS0-IG1pY3Jvc2VydmljZSAtLT4gZGF0YWJhc2Vcblx0ZW5kXG5cdHN1YmdyYXBoIFJTS1xuXHRcdHgtcm9hZDJbXCJYLVJvYWQgU2VjdXJpdHkgU2VydmVyXCJdXG5cdFx0cnNrLXNlcnZpY2VbXCJSU0sgV2Vic2VydmljZVwiXVxuXHRlbmRcblxuXHRkb21haW4gLS0-IHgtcm9hZFxuXHR4LXJvYWQgLS0-IHgtcm9hZDJcblx0eC1yb2FkMiAtLT4gcnNrLXNlcnZpY2VcbiIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoiZ3JhcGggVERcblx0c3ViZ3JhcGggSXNsYW5kLmlzXG5cdFx0c3ViZ3JhcGggQVBJXG5cdFx0XHRhcHBbXCJHcmFwaFFMIHNlcnZlcjxicj48YnI-L2FwcHMvYXBpPGJyPkF1dGhlbnRpY2F0aW9uPGJyPk1ldHJpY3NcIl1cblx0XHRcdGRvbWFpbltcIlJTSyBkb21haW48YnI-PGJyPi9saWJzL2FwaS9kb21haW5zL3Jzazxicj5HcmFwaFFMIFNjaGVtYTxicj5HcmFwaFFMIFJlc29sdmVyczxicj5TZXJ2aWNlc1wiXVxuXHRcdFx0ZG9tYWluMltcIkFwcGxpY2F0aW9ucyBkb21haW48YnI-PGJyPi9saWJzL2FwaS9kb21haW5zL2FwcGxpY2F0aW9uczxicj5HcmFwaFFMIFNjaGVtYTxicj5HcmFwaFFMIFJlc29sdmVyczxicj5TZXJ2aWNlc1wiXVxuXG5cdFx0XHRhcHAtLT58Q29tYmluZXMgR3JhcGhRTHxkb21haW4gJiBkb21haW4yXG5cdFx0XHRkb21haW4yIC0tPiB8Q2FsbHMgc2VydmljZXN8ZG9tYWluXG5cdFx0ZW5kXG5cdFx0eC1yb2FkW1wiWC1Sb2FkIFNlY3VyaXR5IFNlcnZlclwiXVxuXHRcdG1pY3Jvc2VydmljZVtcIkFwcGxpY2F0aW9ucyBNaWNyb3NlcnZpY2U8YnI-PGJyPi9hcHBzL3NlcnZpY2VzL2FwcGxpY2F0aW9uc1wiXVxuXHRcdGRhdGFiYXNlW1wiUG9zdGdyZVNRTCBEYXRhYmFzZVwiXVxuXHRcdGRvbWFpbjIgLS0-IG1pY3Jvc2VydmljZSAtLT4gZGF0YWJhc2Vcblx0ZW5kXG5cdHN1YmdyYXBoIFJTS1xuXHRcdHgtcm9hZDJbXCJYLVJvYWQgU2VjdXJpdHkgU2VydmVyXCJdXG5cdFx0cnNrLXNlcnZpY2VbXCJSU0sgV2Vic2VydmljZVwiXVxuXHRlbmRcblxuXHRkb21haW4gLS0-IHgtcm9hZFxuXHR4LXJvYWQgLS0-IHgtcm9hZDJcblx0eC1yb2FkMiAtLT4gcnNrLXNlcnZpY2VcbiIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)
 
-## Project structure 
+## Project structure
 
 The code in this app package should be kept as small as possible. Most business logic should be in [domain libraries](../../libs/api/domains). Shared utilities and middlewares should be in libraries as well.
 
@@ -16,9 +16,9 @@ Domain libraries represent and wrap an underlying data model or service. As a ru
 
 They can contain the following exports:
 
-* **typeDefs**: GraphQL schema describing the types, inputs, queries and mutations of the domain.
-* **resolvers**: Object containing GraphQL resolvers for any fields, queries and mutations as needed by the domain.
-* **services**: The domain can export arbitrary services for other domains. These should be strongly typed and not expose any internals of the domain.
+- **typeDefs**: GraphQL schema describing the types, inputs, queries and mutations of the domain.
+- **resolvers**: Object containing GraphQL resolvers for any fields, queries and mutations as needed by the domain.
+- **services**: The domain can export arbitrary services for other domains. These should be strongly typed and not expose any internals of the domain.
 
 The `typeDefs` and `resolvers` for all domains are merged into a single GraphQL server.
 
@@ -43,10 +43,10 @@ import { Resolvers } from '@island.is/api/schema'
 
 export const resolvers: Resolvers = {
   Person: {
-    application(person, input, context) {}
+    application(person, input, context) {},
   },
   Query: {
-    allApplications(_, input, context) {}
+    allApplications(_, input, context) {},
   },
 }
 ```
