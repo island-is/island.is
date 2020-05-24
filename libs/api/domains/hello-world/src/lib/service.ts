@@ -1,6 +1,7 @@
 import HelloWorldRepository from './repository'
+import { HelloWorldService as Service } from '@island.is/api/schema'
 
-export class HelloWorldService {
+export class HelloWorldService implements Service {
   constructor(private repository: HelloWorldRepository) {}
 
   getMessage(name: string) {

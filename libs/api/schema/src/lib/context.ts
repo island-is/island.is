@@ -1,5 +1,8 @@
 import { Request, Response } from 'express'
-import { HelloWorldService } from '@island.is/api/domains/hello-world'
+
+export interface HelloWorldService {
+  getMessage(name: string): string
+}
 
 export interface Context {
   req: Request
