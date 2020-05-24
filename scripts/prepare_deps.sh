@@ -7,5 +7,5 @@ source $DIR/_common.sh
 
 # docker pull ${DOCKER_REGISTRY}${APP}:${DEPS_TAG} || true
 docker buildx build --platform=linux/amd64 --cache-from=type=local,src=$PROJECT_ROOT/cache --cache-to=type=local,dest=$PROJECT_ROOT/cache -f ${DIR}/Dockerfile --target=deps --load --build-arg APP=${APP} -t ${DOCKER_REGISTRY}${APP}:${DEPS_TAG} . 
-$PUBLISH || echo "Not publishing ${DEPS_TAG}"
-$PUBLISH && docker push ${DOCKER_REGISTRY}${APP}:${DEPS_TAG}
+# $PUBLISH || echo "Not publishing ${DEPS_TAG}"
+# $PUBLISH && docker push ${DOCKER_REGISTRY}${APP}:${DEPS_TAG}
