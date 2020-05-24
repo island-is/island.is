@@ -18,13 +18,19 @@ They can contain the following exports:
 
 * **typeDefs**: GraphQL schema describing the types, inputs, queries and mutations of the domain.
 * **resolvers**: Object containing GraphQL resolvers for any fields, queries and mutations as needed by the domain.
-* Service functions: The domain can export arbitrary functions and utilities for other domains. These should be strongly typed and not expose any internals of the domain.
+* **services**: The domain can export arbitrary services for other domains. These should be strongly typed and not expose any internals of the domain.
 
 The `typeDefs` and `resolvers` for all domains are merged into a single GraphQL server.
 
 Generally, the resolvers should be really small. They should only manage the resolver arguments, including input and payload wrappers.
 
-The actual resolver logic should be in service functions. These may call other service functions, call external services and publish messages on exchanges.
+The actual resolver logic should be in service functions. These may call another domain's service, call external services and publish messages on exchanges.
+
+### Services
+
+Services are classes that contain most of the logic for a domain. They should be easy to test and use dependency injection (DI) to get access to other services and connectors.
+
+Currently, there is no DI container. Everything is hooked up manually in tests and `/apps/api/src/graphql/context`.
 
 ### Type Generation
 
@@ -71,7 +77,7 @@ Examples:
 
 This API has minimal logic and mostly wraps external services. Until we figure out an integration/contract testing strategy, the main focus is on unit tests using mocks for external dependencies.
 
-There should be good test coverage on shared code and service functions. The resolvers are tricky to test so they should be kept simple, with the main logic in unit tested service functions.
+There should be good test coverage on shared code and services. The resolvers are tricky to test so they should be kept simple, with the main logic in unit tested services.
 
 ## Quick start
 
