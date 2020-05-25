@@ -1,9 +1,9 @@
-import Application from '@island.is/application/api/domains/applications/model'
-import Issuer from '@island.is/application/api/domains/issuers/model'
+import Application from '@island.is/gjafakort/application/api/domains/applications/model'
+import Issuer from '@island.is/gjafakort/application/api/domains/issuers/model'
 import {
   Types,
   States,
-} from '@island.is/application/api/domains/applications/consts'
+} from '@island.is/gjafakort/application/api/domains/applications/consts'
 
 import { issuerFactory } from '.'
 
