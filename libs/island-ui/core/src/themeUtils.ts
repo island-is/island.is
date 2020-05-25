@@ -1,8 +1,9 @@
 import isEqual from 'lodash/isEqual'
 import { Style } from 'treat'
 import omit from 'lodash/omit'
-import { Theme } from './types'
+import { theme } from './theme/index'
 
+type Theme = typeof theme
 type RequiredTokens = Pick<Theme, 'breakpoint'>
 type StyleWithoutMediaQueries = Exclude<Style['@media'], undefined>[string]
 
