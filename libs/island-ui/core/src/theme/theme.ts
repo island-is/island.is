@@ -1,5 +1,5 @@
 import { makeThemeUtils } from '../themeUtils'
-import * as colors from '../theme/colors'
+import * as color from '../theme/colors'
 
 export const UNIT = 8
 const spacing = {
@@ -94,8 +94,8 @@ export const theme = {
       large: 2,
     },
     color: {
-      standard: colors.blue200,
-      focus: colors.red200,
+      standard: color.blue200,
+      focus: color.red200,
     },
   },
   shadows: {
@@ -106,7 +106,7 @@ export const theme = {
     large:
       '0 2px 4px 0px rgba(28,28,28,.1), 0 12px 12px -4px rgba(28,28,28,.1), 0 20px 20px -12px rgba(28,28,28,.2)',
   },
-  color: colors,
+  color,
 }
 
 export type Theme = typeof theme
