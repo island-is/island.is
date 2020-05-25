@@ -1,6 +1,6 @@
 import { style, styleMap } from 'treat'
 import { mapToStyleProperty } from '../../utils'
-import { theme } from '../../theme/index'
+import { theme } from '../../theme/'
 import { makeThemeUtils } from '../../themeUtils'
 
 const utils = makeThemeUtils(theme)

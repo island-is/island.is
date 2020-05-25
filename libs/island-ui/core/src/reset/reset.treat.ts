@@ -1,5 +1,5 @@
 import { globalStyle, style } from 'treat'
-import { theme } from '../theme/index'
+import { theme } from '../theme/'
 
 globalStyle('html, body', {
   margin: 0,

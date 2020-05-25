@@ -1,7 +1,7 @@
 import isEqual from 'lodash/isEqual'
 import { Style } from 'treat'
 import omit from 'lodash/omit'
-import { theme } from './theme/index'
+import { theme } from './theme/'
 
 type Theme = typeof theme
 type RequiredTokens = Pick<Theme, 'breakpoint'>

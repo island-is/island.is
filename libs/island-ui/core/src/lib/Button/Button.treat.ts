@@ -1,5 +1,5 @@
 import { styleMap, style } from 'treat'
-import { theme } from '../../theme/index'
+import { theme } from '../../theme/'
 
 export const button = style({
   display: 'inline-flex',

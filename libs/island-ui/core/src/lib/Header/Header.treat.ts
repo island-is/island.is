@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { theme } from '../../theme/index'
+import { theme } from '../../theme/'
 
 export const container = style({
   height: 111,

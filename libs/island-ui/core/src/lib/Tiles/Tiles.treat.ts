@@ -1,6 +1,6 @@
 import { styleMap } from 'treat'
 import mapValues from 'lodash/mapValues'
-import { theme, themeUtils } from '../../theme/index'
+import { theme, themeUtils } from '../../theme/'
 type Theme = typeof theme
 
 const columnsWidths = {
