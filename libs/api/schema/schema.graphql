@@ -1,3 +1,13 @@
+type Article {
+  id: String!
+  title: String!
+  body: String
+}
+
+input ArticleInput {
+  id: String
+}
+
 type HelloWorld {
   message: String!
 }
@@ -11,6 +21,7 @@ type Mutation {
 }
 
 type Query {
+  article(input: ArticleInput): Article!
   helloWorld(input: HelloWorldInput): HelloWorld!
   root: String
 }
