@@ -26,6 +26,7 @@ router.post('/callback', async (req, res) => {
     verifyResult = await loginIS.verify(token)
   } catch (err) {
     console.error(err)
+    // TODO: change (redirection)
     return res.status(401).json({ message: 'Unauthorized' })
   }
 
@@ -38,7 +39,7 @@ router.post('/callback', async (req, res) => {
   const { jwtExpiresInSeconds } = environment.auth
   const jwtToken = jwt.sign(
     {
-      user: { ssn: user.kennitala },
+      user: { ssn: user.kennitala, name: user.nafn },
       csrfToken,
     },
     jwtSecret, //TODO: Use cert to sign jwt
@@ -50,15 +51,13 @@ router.post('/callback', async (req, res) => {
     return res.status(401).json({ message: 'Invalid auth state' })
   }
 
-  const [header, payload, signature] = jwtToken.split('.')
   const maxAge = jwtExpiresInSeconds * 1000
-
   res
-    .cookie(CSRF_COOKIE.name, `${signature}.${csrfToken}`, {
+    .cookie(CSRF_COOKIE.name, csrfToken, {
       ...CSRF_COOKIE.options,
       maxAge,
     })
-    .cookie(ACCESS_TOKEN_COOKIE.name, `${header}.${payload}`, {
+    .cookie(ACCESS_TOKEN_COOKIE.name, jwtToken, {
       ...ACCESS_TOKEN_COOKIE.options,
       maxAge,
     })

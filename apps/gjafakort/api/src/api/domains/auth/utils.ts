@@ -38,18 +38,11 @@ export const authorize = (permissions: Permissions) => (
   descriptor.value = (...args: any[]) => {
     const context = args.length === 4 && (args[2] as AuthContext)
 
-    console.log("context: ", context)
     if (!context) {
-      return () => null
+      throw new Error('Only use this decorator for graphql resolvers.')
     }
 
-    if (!context.user?.ssn) {
-      return () => null
-    }
-
-    console.log('here', context.user.ssn)
-
-    if (!checkPermissions(context.user, permissions)) {
+    if (!context.user?.ssn || !checkPermissions(context.user, permissions)) {
       return () => null
     }
 

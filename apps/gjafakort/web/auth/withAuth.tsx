@@ -2,15 +2,15 @@ import React, { Component } from 'react'
 import cookies from 'next-cookies'
 import Router from 'next/router'
 import { NextComponentType } from 'next'
-import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
+import { NextPageContext } from 'next/dist/next-server/lib/utils'
 
 import { isAuthenticated } from './utils'
 
 const AUTH_URL = '/api/auth/login'
 
-export default (WrappedComponent: any) =>
+export default (WrappedComponent: NextComponentType) =>
   class extends Component {
-    static async getInitialProps(ctx: any) {
+    static async getInitialProps(ctx: NextPageContext) {
       if (!isAuthenticated(ctx)) {
         const authUrl = `${AUTH_URL}?returnUrl=${ctx.asPath}`
         const { res } = ctx

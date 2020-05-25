@@ -14,6 +14,7 @@ export type AuthContext = {
 
 export type VerifiedUser = {
   kennitala: string
+  nafn: string
   authId: string
 }
 
