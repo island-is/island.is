@@ -82,6 +82,7 @@ function HomePage() {
               <Accordion dividerOnTop={false}>
                 {mockAccordion.map((accordionItem, index) => (
                   <AccordionItem
+                    key={index}
                     label={accordionItem.label}
                     id={index.toString()}
                   >
