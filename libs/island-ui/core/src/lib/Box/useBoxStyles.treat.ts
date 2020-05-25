@@ -7,7 +7,7 @@ import { theme, themeUtils } from '../../theme'
 const spaceMapToCss = (
   t: typeof theme,
   cssPropertyName: keyof Properties,
-  breakpoint: keyof typeof theme['breakpoint'],
+  breakpoint: keyof typeof theme['breakpoints'],
 ) => {
   const spaceWithNone = {
     ...t.spacing,
@@ -22,7 +22,7 @@ const spaceMapToCss = (
         [propertyName]: value,
       }
 
-      const minWidth = t.breakpoint[breakpoint]
+      const minWidth = t.breakpoints[breakpoint]
 
       return minWidth === 0
         ? styles

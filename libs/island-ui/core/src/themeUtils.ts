@@ -4,17 +4,17 @@ import omit from 'lodash/omit'
 import { theme } from './theme'
 
 type Theme = typeof theme
-type RequiredTokens = Pick<Theme, 'breakpoint'>
+type RequiredTokens = Pick<Theme, 'breakpoints'>
 type StyleWithoutMediaQueries = Exclude<Style['@media'], undefined>[string]
 
 export const makeThemeUtils = (tokens: RequiredTokens) => {
-  const makeMediaQuery = (breakpoint: keyof RequiredTokens['breakpoint']) => (
+  const makeMediaQuery = (breakpoint: keyof RequiredTokens['breakpoints']) => (
     styles: StyleWithoutMediaQueries,
   ) =>
     !styles || Object.keys(styles).length === 0
       ? {}
       : {
-          [`screen and (min-width: ${tokens.breakpoint[breakpoint]}px)`]: styles,
+          [`screen and (min-width: ${tokens.breakpoints[breakpoint]}px)`]: styles,
         }
 
   const mediaQuery = {

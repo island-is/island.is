@@ -1,5 +1,5 @@
 import { theme } from '../theme'
-type Breakpoint = keyof typeof theme['breakpoint']
+type Breakpoint = keyof typeof theme['breakpoints']
 
 const breakpoints = Object.keys(theme.breakpoints)
 
