@@ -17,15 +17,15 @@ export const REDIRECT_COOKIE: Cookie = {
   },
 }
 
-export const PAYLOAD_COOKIE: Cookie = {
-  name: 'gjafakort.token',
+export const CSRF_COOKIE: Cookie = {
+  name: 'gjafakort.csrf',
   options: {
     ...defaultCookieOptions,
     httpOnly: false,
   },
 }
 
-export const SIGNATURE_COOKIE: Cookie = {
-  name: 'gjafakort.signature',
+export const ACCESS_TOKEN_COOKIE: Cookie = {
+  name: 'gjafakort.token',
   options: defaultCookieOptions,
 }

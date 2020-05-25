@@ -2,10 +2,10 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   type Application {
-    id: String!
+    id: String
   }
 
   extend type Query {
-    getApplication: Application
+    application: Application
   }
 `

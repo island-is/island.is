@@ -22,7 +22,6 @@ export type Cookie = {
   options: CookieOptions
 }
 
-export type Authorize = {
-  role?: 'admin' | 'company' | 'person'
-  permissions?: ('createLoanApplication' | 'updateLoanApplication')[]
+export type Permissions = {
+  role?: 'admin'
 }

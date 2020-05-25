@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken'
 
-import { Authorize, User, AuthContext } from './types'
+import { Permissions, User, AuthContext } from './types'
 import { environment } from '../../../environments/environment'
 
 export const verifyToken = (token: string): User | null => {
@@ -19,33 +19,40 @@ export const verifyToken = (token: string): User | null => {
   return user
 }
 
-const isAdmin = ({ ssn }: User): boolean =>
-  ['1501933119', '2101932009'].includes(ssn)
+const checkPermissions = (user: User, { role }: Permissions): boolean => {
+  switch (role) {
+    case 'admin':
+      return ['1501933119', '2101932009'].includes(user.ssn)
+    default:
+      return true
+  }
+}
 
-export const authorize = ({ role, permissions }: Authorize) => {
-  return function(
-    target: Record<string, any>,
-    propertyKey: string,
-    descriptor: PropertyDescriptor,
-  ) {
-    const originalValue = descriptor.value
+export const authorize = (permissions: Permissions) => (
+  target: Record<string, any>,
+  propertyKey: string,
+  descriptor: PropertyDescriptor,
+) => {
+  const originalValue = descriptor.value
 
-    descriptor.value = function(...args: any[]) {
-      const context = args.length === 4 && (args[2] as AuthContext)
+  descriptor.value = (...args: any[]) => {
+    const context = args.length === 4 && (args[2] as AuthContext)
 
-      if (!context) {
-        throw new Error('Only use this decorator for graphql resolvers.')
-      }
-
-      if (!context.user?.ssn) {
-        throw new Error('Not authorized!')
-      }
-
-      if (!isAdmin) {
-        throw new Error('Admin access needed!')
-      }
-
-      return originalValue.apply(this, args)
+    console.log("context: ", context)
+    if (!context) {
+      return () => null
     }
+
+    if (!context.user?.ssn) {
+      return () => null
+    }
+
+    console.log('here', context.user.ssn)
+
+    if (!checkPermissions(context.user, permissions)) {
+      return () => null
+    }
+
+    return originalValue.apply(this, args)
   }
 }

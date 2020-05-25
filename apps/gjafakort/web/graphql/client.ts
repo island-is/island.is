@@ -5,7 +5,7 @@ import { createHttpLink } from 'apollo-link-http'
 import fetch from 'isomorphic-unfetch'
 import getConfig from 'next/config'
 
-import { decodeToken } from '../auth'
+import { decodeToken, getToken } from '../auth'
 
 const { serverRuntimeConfig, publicRuntimeConfig } = getConfig()
 
@@ -20,10 +20,10 @@ if (!isBrowser) {
 
 // eslint-disable-next-line
 function create(initialState: any, ctx?: BaseContext) {
-  const token = decodeToken(ctx)
+  const token = getToken(ctx)
   const { headers = {} } = ctx?.req || {}
   if (token) {
-    headers['X-CSRF-TOKEN'] = token.csrfToken
+    headers['X-CSRF-TOKEN'] = token
   }
 
   const httpLink = createHttpLink({

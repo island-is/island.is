@@ -1,15 +1,19 @@
 import jwtDecode from 'jwt-decode'
 import cookies from 'next-cookies'
 
-export const COOKIE_KEY = 'gjafakort.token'
+export const COOKIE_KEY = 'gjafakort.csrf'
 
 export type DecodedToken = {
   readonly exp: number
   readonly csrfToken: string
 }
 
+export const getToken = (ctx: any) => {
+  return cookies(ctx || {})[COOKIE_KEY]
+}
+
 export const decodeToken = (ctx: any): DecodedToken | null => {
-  const token = cookies(ctx || {})[COOKIE_KEY]
+  const token = getToken(ctx)
 
   if (!token) {
     return null
@@ -25,6 +29,5 @@ export const decodeToken = (ctx: any): DecodedToken | null => {
 }
 
 export const isAuthenticated = (ctx: any) => {
-  const { exp = 0 } = decodeToken(ctx) || {}
-  return new Date() < new Date(exp * 1000)
+  return Boolean(getToken(ctx))
 }

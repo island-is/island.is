@@ -6,7 +6,7 @@ import IslandisLogin from 'islandis-login'
 import { uuid } from 'uuidv4'
 
 import { VerifyResult } from './types'
-import { REDIRECT_COOKIE, PAYLOAD_COOKIE, SIGNATURE_COOKIE } from './consts'
+import { REDIRECT_COOKIE, ACCESS_TOKEN_COOKIE, CSRF_COOKIE } from './consts'
 import { environment } from '../../../environments/environment'
 
 const router = Router()
@@ -26,15 +26,16 @@ router.post('/callback', async (req, res) => {
     verifyResult = await loginIS.verify(token)
   } catch (err) {
     console.error(err)
-    return res.redirect('/auth/error')
+    return res.status(401).json({ message: 'Unauthorized' })
   }
 
   const { user } = verifyResult
+  // TODO: need to check audience and issuer
   if (!user || authId !== user?.authId || returnUrl.charAt(0) !== '/') {
-    return res.redirect('/auth/error')
+    return res.status(401).json({ message: 'Invalid auth state' })
   }
 
-  const csrfToken = new Entropy({ bits: 128 })
+  const csrfToken = new Entropy({ bits: 128 }).string()
   const { jwtExpiresInSeconds } = environment.auth
   const jwtToken = jwt.sign(
     {
@@ -47,27 +48,22 @@ router.post('/callback', async (req, res) => {
 
   const tokenParts = jwtToken.split('.')
   if (tokenParts.length !== 3) {
-    return res.redirect('/auth/error')
+    return res.status(401).json({ message: 'Invalid auth state' })
   }
 
   const [header, payload, signature] = jwtToken.split('.')
   const maxAge = jwtExpiresInSeconds * 1000
 
   res
-    .cookie(SIGNATURE_COOKIE.name, `${signature}.${csrfToken}`, {
-      ...SIGNATURE_COOKIE.options,
+    .cookie(CSRF_COOKIE.name, `${signature}.${csrfToken}`, {
+      ...CSRF_COOKIE.options,
       maxAge,
     })
-    .cookie(PAYLOAD_COOKIE.name, `${header}.${payload}`, {
-      ...PAYLOAD_COOKIE.options,
+    .cookie(ACCESS_TOKEN_COOKIE.name, `${header}.${payload}`, {
+      ...ACCESS_TOKEN_COOKIE.options,
       maxAge,
     })
     .redirect(returnUrl)
-})
-
-//TODO: will be better to redirect to the client here
-router.get('/error', (_, res) => {
-  return res.status(401).send({ message: 'Invalid auth state' })
 })
 
 router.get('/login', (req, res) => {
@@ -79,9 +75,6 @@ router.get('/login', (req, res) => {
     returnUrl = '/'
   }
 
-  // Since the authid parameter is the only usable state parameter, use it
-  // to store the redirect url in a cookie. It would be best if the SAML implementation
-  // supports relay state
   res
     .cookie(name, { authId, returnUrl }, { ...options, maxAge: 15 * 60 * 1000 })
     .redirect(`${samlEntryPoint}&authid=${authId}`)
