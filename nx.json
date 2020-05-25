@@ -54,6 +54,9 @@
     "api-domains-hello-world": {
       "tags": []
     },
+    "api-domains-cms": {
+      "tags": []
+    },
     "api-schema": {
       "tags": []
     },
