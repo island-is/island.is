@@ -6,7 +6,7 @@ generates:
       - typescript
       - typescript-resolvers
     config:
-      contextType: ./src/types/context#Context
+      contextType: ./context#Context
   ./apps/gjafakort/web/graphql/schema.tsx:
     schema:
       - ./apps/gjafakort/api/src/graphql/**/typeDefs.ts

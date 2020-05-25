@@ -10,7 +10,7 @@ interface Application {
   email: string
 }
 
-const formatApplication: (application: any) => Application = (application) => ({
+const formatApplication = (application: any): Application => ({
   id: application.id,
   state: application.state,
   email: application.data.email,
