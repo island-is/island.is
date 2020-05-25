@@ -30,7 +30,6 @@ router.post('/callback', async (req, res) => {
   }
 
   const { user } = verifyResult
-  // TODO: need to check audience and issuer
   if (!user || authId !== user?.authId || returnUrl.charAt(0) !== '/') {
     return res.status(401).json({ message: 'Invalid auth state' })
   }
