@@ -1,57 +1,30 @@
-import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
-import { BaseContext } from 'next/dist/next-server/lib/utils'
-import { createHttpLink } from 'apollo-link-http'
-import fetch from 'isomorphic-unfetch'
-import getConfig from 'next/config'
+import { ApolloLink } from 'apollo-link'
+import {
+  InMemoryCache,
+  IntrospectionFragmentMatcher,
+} from 'apollo-cache-inmemory'
 
-import { decodeToken, getToken } from '../auth'
+import authLink from './authLink'
+import errorLink from './errorLink'
+import httpLink from './httpLink'
+import retryLink from './retryLink'
 
-const { serverRuntimeConfig, publicRuntimeConfig } = getConfig()
+import introspectionQueryResultData from './possibleTypes.json'
 
-const isBrowser: boolean = (process as NodeJS.Process).browser
+const link = ApolloLink.from([retryLink, errorLink, authLink, httpLink])
 
-let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
+export const cache = new InMemoryCache({
+  fragmentMatcher: new IntrospectionFragmentMatcher({
+    introspectionQueryResultData,
+  }),
+})
 
-// Polyfill fetch() on the server (used by apollo-client)
-if (!isBrowser) {
-  ;(global as any).fetch = fetch // eslint-disable-line
-}
+const client = new ApolloClient({
+  name: 'gjafakort-web-client',
+  version: '0.1',
+  link,
+  cache,
+})
 
-// eslint-disable-next-line
-function create(initialState: any, ctx?: BaseContext) {
-  const token = getToken(ctx)
-  const { headers = {} } = ctx?.req || {}
-  if (token) {
-    headers['X-CSRF-TOKEN'] = token
-  }
-
-  const httpLink = createHttpLink({
-    uri: serverRuntimeConfig.apiUrl || publicRuntimeConfig.apiUrl,
-    headers,
-  })
-
-  // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
-  return new ApolloClient({
-    connectToDevTools: isBrowser,
-    ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
-    link: httpLink,
-    cache: new InMemoryCache().restore(initialState || {}),
-  })
-}
-
-// eslint-disable-next-line
-export default function initApollo(initialState?: any, ctx?: BaseContext) {
-  // Make sure to create a new client for every server-side request so that data
-  // isn't shared between connections (which would be bad)
-  if (!isBrowser) {
-    return create(initialState, ctx)
-  }
-
-  // Reuse client on the client-side
-  if (!apolloClient) {
-    apolloClient = create(initialState, ctx)
-  }
-
-  return apolloClient
-}
+export default client

@@ -1,1 +1,1 @@
-export * from './withApollo'
+export { default as client } from './client'

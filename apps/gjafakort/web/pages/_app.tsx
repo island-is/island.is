@@ -6,7 +6,7 @@ import { ApolloClient } from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 
 import { Page, Header, Footer } from '../components'
-import initApollo from '../graphql/client'
+import { client } from '../graphql'
 import appWithTranslation from '../i18n/appWithTranslation'
 
 import '../styles/global.treat'
@@ -101,7 +101,7 @@ const SupportApplication: React.FC<{
   apolloClient: ApolloClient<NormalizedCacheObject>
 }> = ({ Component, pageProps }) => {
   return (
-    <ApolloProvider client={initApollo(pageProps.apolloState)}>
+    <ApolloProvider client={client}>
       <Layout>
         <Component {...pageProps} />
       </Layout>
