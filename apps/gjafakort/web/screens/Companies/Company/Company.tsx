@@ -1,12 +1,8 @@
 import React from 'react'
 import gql from 'graphql-tag'
+import { useQuery } from 'react-apollo'
 
 import { Application } from '../../../graphql/schema'
-import { withApollo } from '../../../graphql'
-
-interface PropTypes {
-  application: Application
-}
 
 const ApplicationQuery = gql`
   query Application {
@@ -16,18 +12,15 @@ const ApplicationQuery = gql`
   }
 `
 
-function Company({ application }) {
+function Company() {
+  const { data, loading } = useQuery(ApplicationQuery)
+
+  const application = (data || {}).application as Application
+  if (loading) {
+    return <div>Loading...</div>
+  }
+
   return <div>Company page, owned by {application.id}</div>
 }
 
-Company.getInitialProps = async ({ apolloClient }) => {
-  const {
-    data: { application },
-  } = await apolloClient.query({
-    query: ApplicationQuery,
-  })
-
-  return { application }
-}
-
-export default withApollo(Company)
+export default Company
