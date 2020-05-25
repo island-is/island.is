@@ -62,6 +62,7 @@ const spacing = {
   12: UNIT * 12,
   15: UNIT * 15,
   20: UNIT * 20,
+  none: UNIT * 0,
   gutter: UNIT * 2,
   containerGutter: UNIT * 6,
 }

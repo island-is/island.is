@@ -1,4 +1,6 @@
+import { theme } from './theme'
+
 declare module 'treat/theme' {
-  type MyTheme = import('./types').Theme
-  export interface Theme extends MyTheme {}
+  type MyTheme = typeof theme
+  export type Theme = MyTheme
 }

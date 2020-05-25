@@ -113,10 +113,7 @@ export const AccordionItem = ({
             </Column>
           </Columns>
         </Box>
-        <Overlay
-          transition="fast"
-          className={[styles.focusRing, hideFocusRingsClassName]}
-        />
+        <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
       </Box>
       <AnimateHeight duration={300} height={height}>
         <Box paddingTop={2} id={id}>

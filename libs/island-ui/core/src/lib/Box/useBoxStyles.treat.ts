@@ -3,18 +3,16 @@ import { Properties } from 'csstype'
 import omit from 'lodash/omit'
 import { mapToStyleProperty } from '../../utils'
 import { makeThemeUtils } from '../../themeUtils'
-import { Theme } from 'treat/theme'
-import { theme } from '../../theme/index'
+import { theme, themeUtils } from '../../theme/index'
 
-const utils = makeThemeUtils(theme)
 
 const spaceMapToCss = (
-  theme: Theme,
+  t: typeof theme,
   cssPropertyName: keyof Properties,
-  breakpoint: keyof Theme['breakpoint'],
+  breakpoint: keyof typeof theme['breakpoint'],
 ) => {
   const spaceWithNone = {
-    ...theme.spacing,
+    ...t.spacing,
     none: 0,
   }
 
@@ -26,7 +24,7 @@ const spaceMapToCss = (
         [propertyName]: value,
       }
 
-      const minWidth = theme.breakpoint[breakpoint]
+      const minWidth = t.breakpoint[breakpoint]
 
       return minWidth === 0
         ? styles
@@ -168,28 +166,28 @@ const displayRules = {
 export const display = styleMap(mapToStyleProperty(displayRules, 'display'))
 export const displaySm = styleMap(
   mapToStyleProperty(displayRules, 'display', (value, propertyName) =>
-    utils.responsiveStyle({
+    themeUtils.responsiveStyle({
       sm: { [propertyName]: value },
     }),
   ),
 )
 export const displayMd = styleMap(
   mapToStyleProperty(displayRules, 'display', (value, propertyName) =>
-    utils.responsiveStyle({
+    themeUtils.responsiveStyle({
       md: { [propertyName]: value },
     }),
   ),
 )
 export const displayLg = styleMap(
   mapToStyleProperty(displayRules, 'display', (value, propertyName) =>
-    utils.responsiveStyle({
+    themeUtils.responsiveStyle({
       lg: { [propertyName]: value },
     }),
   ),
 )
 export const displayXl = styleMap(
   mapToStyleProperty(displayRules, 'display', (value, propertyName) =>
-    utils.responsiveStyle({
+    themeUtils.responsiveStyle({
       xl: { [propertyName]: value },
     }),
   ),
@@ -205,28 +203,28 @@ export const alignItems = styleMap(
 )
 export const alignItemsSm = styleMap(
   mapToStyleProperty(alignItemsRules, 'alignItems', (value, propertyName) =>
-    utils.responsiveStyle({
+    themeUtils.responsiveStyle({
       sm: { [propertyName]: value },
     }),
   ),
 )
 export const alignItemsMd = styleMap(
   mapToStyleProperty(alignItemsRules, 'alignItems', (value, propertyName) =>
-    utils.responsiveStyle({
+    themeUtils.responsiveStyle({
       md: { [propertyName]: value },
     }),
   ),
 )
 export const alignItemsLg = styleMap(
   mapToStyleProperty(alignItemsRules, 'alignItems', (value, propertyName) =>
-    utils.responsiveStyle({
+    themeUtils.responsiveStyle({
       lg: { [propertyName]: value },
     }),
   ),
 )
 export const alignItemsXl = styleMap(
   mapToStyleProperty(alignItemsRules, 'alignItems', (value, propertyName) =>
-    utils.responsiveStyle({
+    themeUtils.responsiveStyle({
       xl: { [propertyName]: value },
     }),
   ),
@@ -246,7 +244,7 @@ export const justifyContentSm = styleMap(
     justifyContentRules,
     'justifyContent',
     (value, propertyName) =>
-      utils.responsiveStyle({
+      themeUtils.responsiveStyle({
         sm: { [propertyName]: value },
       }),
   ),
@@ -256,7 +254,7 @@ export const justifyContentMd = styleMap(
     justifyContentRules,
     'justifyContent',
     (value, propertyName) =>
-      utils.responsiveStyle({
+      themeUtils.responsiveStyle({
         md: { [propertyName]: value },
       }),
   ),
@@ -266,7 +264,7 @@ export const justifyContentLg = styleMap(
     justifyContentRules,
     'justifyContent',
     (value, propertyName) =>
-      utils.responsiveStyle({
+      themeUtils.responsiveStyle({
         lg: { [propertyName]: value },
       }),
   ),
@@ -276,7 +274,7 @@ export const justifyContentXl = styleMap(
     justifyContentRules,
     'justifyContent',
     (value, propertyName) =>
-      utils.responsiveStyle({
+      themeUtils.responsiveStyle({
         xl: { [propertyName]: value },
       }),
   ),
@@ -296,7 +294,7 @@ export const flexDirectionSm = styleMap(
     flexDirectionRules,
     'flexDirection',
     (value, propertyName) =>
-      utils.responsiveStyle({
+      themeUtils.responsiveStyle({
         sm: { [propertyName]: value },
       }),
   ),
@@ -306,7 +304,7 @@ export const flexDirectionMd = styleMap(
     flexDirectionRules,
     'flexDirection',
     (value, propertyName) =>
-      utils.responsiveStyle({
+      themeUtils.responsiveStyle({
         md: { [propertyName]: value },
       }),
   ),
@@ -316,7 +314,7 @@ export const flexDirectionLg = styleMap(
     flexDirectionRules,
     'flexDirection',
     (value, propertyName) =>
-      utils.responsiveStyle({
+      themeUtils.responsiveStyle({
         lg: { [propertyName]: value },
       }),
   ),
@@ -326,7 +324,7 @@ export const flexDirectionXl = styleMap(
     flexDirectionRules,
     'flexDirection',
     (value, propertyName) =>
-      utils.responsiveStyle({
+      themeUtils.responsiveStyle({
         xl: { [propertyName]: value },
       }),
   ),
@@ -392,28 +390,28 @@ export const textAlign = styleMap(
 )
 export const textAlignSm = styleMap(
   mapToStyleProperty(textAlignRules, 'textAlign', (value, propertyName) =>
-    utils.responsiveStyle({
+    themeUtils.responsiveStyle({
       sm: { [propertyName]: value },
     }),
   ),
 )
 export const textAlignMd = styleMap(
   mapToStyleProperty(textAlignRules, 'textAlign', (value, propertyName) =>
-    utils.responsiveStyle({
+    themeUtils.responsiveStyle({
       md: { [propertyName]: value },
     }),
   ),
 )
 export const textAlignLg = styleMap(
   mapToStyleProperty(textAlignRules, 'textAlign', (value, propertyName) =>
-    utils.responsiveStyle({
+    themeUtils.responsiveStyle({
       lg: { [propertyName]: value },
     }),
   ),
 )
 export const textAlignXl = styleMap(
   mapToStyleProperty(textAlignRules, 'textAlign', (value, propertyName) =>
-    utils.responsiveStyle({
+    themeUtils.responsiveStyle({
       xl: { [propertyName]: value },
     }),
   ),

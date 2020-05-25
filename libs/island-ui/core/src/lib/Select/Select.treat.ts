@@ -131,7 +131,7 @@ export const option = style(
     selectors: {
       [`${wrapper} &`]: {
         position: 'relative',
-        fontSize: theme.introFontSize,
+        fontSize: theme.typography.introFontSize,
         fontWeight: 300,
         padding: '23px 24px',
       },
