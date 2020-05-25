@@ -2,7 +2,6 @@ import { style, styleMap } from 'treat'
 import { Properties } from 'csstype'
 import omit from 'lodash/omit'
 import { mapToStyleProperty } from '../../utils'
-import { makeThemeUtils } from '../../themeUtils'
 import { theme, themeUtils } from '../../theme/index'
 
 const spaceMapToCss = (
