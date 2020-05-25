@@ -43,6 +43,8 @@ export const theme = {
     medium: 500,
     semiBold: 600,
     headingsFontWeight: 500,
+    baseFontSize: 18,
+    baseLineHeight: 1.5,
   },
   spacing,
   transforms: {
