@@ -10,3 +10,4 @@ docker pull ${DOCKER_REGISTRY}${APP}:${DEPS_TAG} || true
 exec docker build -f ${DIR}/Dockerfile --target=formatting --cache-from=${DOCKER_REGISTRY}${APP}:${DEPS_TAG} --build-arg APP=${APP} . 
 # $PUBLISH || echo "Not publishing ${DEPS_TAG}"
 # $PUBLISH && docker push ${DOCKER_REGISTRY}${APP}:${DEPS_TAG}
+docker rmi ${DOCKER_REGISTRY}${APP}:${DEPS_TAG}
