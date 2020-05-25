@@ -31,75 +31,75 @@ type Variants = {
 export const variants: Variants = {
   h1: {
     fontSize: {
-      xs: theme.typography.h1FontSizeMobile,
-      md: theme.typography.h1FontSize,
+      xs: 32,
+      md: 42,
     },
     fontWeight: theme.typography.headingsFontWeight,
-    lineHeight: theme.typography.h1LineHeight,
+    lineHeight: 1.238095,
   },
   h2: {
     fontSize: {
-      xs: theme.typography.h2FontSizeMobile,
-      md: theme.typography.h2FontSize,
+      xs: 26,
+      md: 34,
     },
     fontWeight: theme.typography.headingsFontWeight,
-    lineHeight: theme.typography.h2LineHeight,
+    lineHeight: 1.294118,
   },
   h3: {
     fontSize: {
-      xs: theme.typography.h3FontSizeMobile,
-      md: theme.typography.h3FontSize,
+      xs: 20,
+      md: 24,
     },
     fontWeight: theme.typography.headingsFontWeight,
-    lineHeight: theme.typography.h3LineHeight,
+    lineHeight: 1.416667,
   },
   h4: {
     fontSize: {
-      xs: theme.typography.h4FontSizeMobile,
-      md: theme.typography.h4FontSize,
+      xs: 18,
+      md: 20,
     },
     fontWeight: theme.typography.headingsFontWeight,
-    lineHeight: theme.typography.h4LineHeight,
+    lineHeight: 1.5,
   },
   h5: {
     fontSize: {
-      xs: theme.typography.h5FontSizeMobile,
-      md: theme.typography.h5FontSize,
+      xs: 15,
+      md: 18,
     },
     fontWeight: theme.typography.headingsFontWeight,
-    lineHeight: theme.typography.h5LineHeight,
+    lineHeight: 1.5,
   },
   p: {
     fontSize: {
-      xs: theme.typography.baseFontSizeMobile,
-      md: theme.typography.baseFontSize,
+      xs: 15,
+      md: 18,
     },
-    fontWeight: theme.typography.baseFontWeight,
-    lineHeight: theme.typography.baseLineHeight,
+    fontWeight: theme.typography.regular,
+    lineHeight: 1.5,
   },
   pSmall: {
     fontSize: {
-      xs: theme.typography.smallFontSizeMobile,
-      md: theme.typography.smallFontSize,
+      xs: 12,
+      md: 15,
     },
-    fontWeight: theme.typography.smallFontWeight,
-    lineHeight: theme.typography.smallLineHeight,
+    fontWeight: theme.typography.regular,
+    lineHeight: 1.666,
   },
   intro: {
     fontSize: {
-      xs: theme.typography.introFontSizeMobile,
-      md: theme.typography.introFontSize,
+      xs: 20,
+      md: 24,
     },
-    fontWeight: theme.typography.baseFontWeight,
-    lineHeight: theme.typography.introLineHeight,
+    fontWeight: theme.typography.regular,
+    lineHeight: 1.416667,
   },
   eyebrow: {
     fontSize: {
-      xs: theme.typography.eyebrowFontSizeMobile,
-      md: theme.typography.eyebrowFontSize,
+      xs: 12,
+      md: 14,
     },
-    fontWeight: theme.typography.eyebrowFontWeight,
-    lineHeight: theme.typography.eyebrowLineHeight,
+    fontWeight: theme.typography.medium,
+    lineHeight: 1.142857,
     color: theme.color.red400,
   },
 }
