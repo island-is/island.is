@@ -1,4 +1,4 @@
-import { theme } from '../../theme'
+import { theme } from '../../theme/index'
 
 const containerPaddingTop = 7
 const containerPaddingRight = 7
@@ -31,7 +31,7 @@ export const container = {
 
 export const input = {
   caretColor: theme.color.blue400,
-  fontFamily: theme.fontFamily,
+  fontFamily: theme.typography.fontFamily,
   fontWeight: 500,
   fontSize: 24,
   padding: inputPadding,
@@ -97,5 +97,5 @@ export const containerDisabled = {
 
 export const inputDisabled = {
   backgroundColor: theme.color.blue100,
-  color: theme.baseColor,
+  color: theme.color.dark400,
 }
