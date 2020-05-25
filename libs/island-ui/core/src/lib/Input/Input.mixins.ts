@@ -13,7 +13,7 @@ export const label = {
   display: 'block',
   width: '100%',
   color: theme.color.blue400,
-  fontWeight: 500,
+  fontWeight: theme.typography.medium,
   fontSize: inputLabelFontSize,
   marginBottom: theme.spacing[1],
   transition: 'color 0.1s',
@@ -32,7 +32,7 @@ export const container = {
 export const input = {
   caretColor: theme.color.blue400,
   fontFamily: theme.typography.fontFamily,
-  fontWeight: 500,
+  fontWeight: theme.typography.medium,
   fontSize: 24,
   padding: inputPadding,
   border: 'none',
@@ -43,12 +43,12 @@ export const input = {
 
 export const inputPlaceholder = {
   color: theme.color.dark300,
-  fontWeight: 300,
+  fontWeight: theme.typography.light,
 }
 
 export const placeholder = {
   color: theme.color.dark300,
-  fontWeight: 300,
+  fontWeight: theme.typography.light,
   fontSize: 24,
   padding: inputPadding,
   width: '100%',
@@ -58,7 +58,7 @@ export const placeholder = {
 export const errorMessage = {
   display: 'inline-block',
   color: theme.color.red400,
-  fontWeight: 500,
+  fontWeight: theme.typography.medium,
   fontSize: inputLabelFontSize,
   marginTop: theme.spacing[1],
 }

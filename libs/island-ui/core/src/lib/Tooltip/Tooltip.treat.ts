@@ -12,7 +12,7 @@ export const tooltip = style({
   opacity: 0,
   transformOrigin: 'top center',
   transform: 'translate3d(0, -10px, 0)',
-  fontWeight: 300,
+  fontWeight: theme.typography.light,
   fontSize: '14px',
   fontFamily: theme.typography.fontFamily,
   lineHeight: '20px',

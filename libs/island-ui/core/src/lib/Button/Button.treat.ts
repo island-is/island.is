@@ -12,7 +12,7 @@ export const button = style({
   cursor: 'pointer',
   fontFamily: 'IBM Plex Sans, sans-serif',
   fontStyle: 'normal',
-  fontWeight: 600,
+  fontWeight: theme.typography.semiBold,
   transition: 'color 150ms ease, background-color 150ms ease',
   ':disabled': {
     pointerEvents: 'none',
@@ -131,7 +131,7 @@ export const variants = styleMap({
     borderRadius: 0,
     fontStyle: 'normal',
     padding: '0',
-    fontWeight: 600,
+    fontWeight: theme.typography.semiBold,
     ':disabled': {
       color: theme.color.blue300,
     },

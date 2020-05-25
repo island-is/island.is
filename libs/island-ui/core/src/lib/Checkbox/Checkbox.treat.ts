@@ -18,7 +18,7 @@ export const label = style({
   fontSize: theme.typography.baseFontSize,
 })
 export const labelChecked = style({
-  fontWeight: 500,
+  fontWeight: theme.typography.medium,
 })
 export const checkbox = style({
   height: checkboxSize,

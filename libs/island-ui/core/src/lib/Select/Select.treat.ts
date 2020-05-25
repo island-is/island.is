@@ -131,8 +131,8 @@ export const option = style(
     selectors: {
       [`${wrapper} &`]: {
         position: 'relative',
-        fontSize: theme.typography.introFontSize,
-        fontWeight: 300,
+        fontSize: 24,
+        fontWeight: theme.typography.light,
         padding: '23px 24px',
       },
     },
@@ -145,7 +145,7 @@ globalStyle(`${wrapper} ${option}.island-select__option--is-focused`, {
 })
 
 globalStyle(`${wrapper} ${option}.island-select__option--is-selected`, {
-  fontWeight: 500,
+  fontWeight: theme.typography.medium,
   color: theme.color.dark400,
 })
 
