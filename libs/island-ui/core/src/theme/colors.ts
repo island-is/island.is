@@ -1,4 +1,3 @@
-
 // Primary colors
 export const blue600 = '#0044b3'
 export const blue400 = '#0061ff'

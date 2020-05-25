@@ -74,7 +74,8 @@ export const theme = {
     lg: 992,
     xl: 1200,
   },
-  breakpoint: { //todo
+  breakpoint: {
+    //todo
     xs: 0,
     sm: 576,
     md: 768,
@@ -88,61 +89,42 @@ export const theme = {
   touchableSize: 10,
   typography: {
     fontFamily: `"IBM Plex Sans", sans-serif`,
-
     fontWeightLight: 300,
     fontWeightRegular: 400,
     fontWeightMedium: 500,
     fontWeightSemiBold: 600,
     baseFontWeight: 400,
-
     headingsFontWeight: 500,
     eyebrowFontWeight: 500,
-
     h1FontSize: 42,
     h1LineHeight: 1.238095,
-
     h2FontSize: 34,
     h2LineHeight: 1.294118,
-
     h3FontSize: 24,
     h3LineHeight: 1.416667,
-
     h4FontSize: 20,
     h4LineHeight: 1.5,
-
     h5FontSize: 18,
     h5LineHeight: 1.555556,
-
     eyebrowFontSize: 14,
     eyebrowLineHeight: 1.142857,
-
     introFontSize: 24,
     introLineHeight: 1.416667,
-
     baseFontSize: 18,
     baseLineHeight: 1.555556,
-
     smallFontWeight: 400,
     smallFontSize: 15,
     smallLineHeight: 1.666667,
 
     // Typography mobile
     h1FontSizeMobile: 32,
-
     h2FontSizeMobile: 26,
-
     h3FontSizeMobile: 20,
-
     h4FontSizeMobile: 18,
-
     h5FontSizeMobile: 15,
-
     introFontSizeMobile: 20,
-
     baseFontSizeMobile: 15,
-
     smallFontSizeMobile: 12,
-
     eyebrowFontSizeMobile: 12,
   },
   spacing,
