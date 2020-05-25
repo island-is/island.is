@@ -14,6 +14,17 @@ export type Scalars = {
   Float: number
 }
 
+export type Article = {
+  __typename?: 'Article'
+  id: Scalars['String']
+  title: Scalars['String']
+  body?: Maybe<Scalars['String']>
+}
+
+export type ArticleInput = {
+  id?: Maybe<Scalars['String']>
+}
+
 export type HelloWorld = {
   __typename?: 'HelloWorld'
   message: Scalars['String']
@@ -30,8 +41,13 @@ export type Mutation = {
 
 export type Query = {
   __typename?: 'Query'
+  article: Article
   helloWorld: HelloWorld
   root?: Maybe<Scalars['String']>
+}
+
+export type QueryArticleArgs = {
+  input?: Maybe<ArticleInput>
 }
 
 export type QueryHelloWorldArgs = {
@@ -147,8 +163,10 @@ export type DirectiveResolverFn<
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>
-  HelloWorldInput: HelloWorldInput
+  ArticleInput: ArticleInput
   String: ResolverTypeWrapper<Scalars['String']>
+  Article: ResolverTypeWrapper<Article>
+  HelloWorldInput: HelloWorldInput
   HelloWorld: ResolverTypeWrapper<HelloWorld>
   Mutation: ResolverTypeWrapper<{}>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
@@ -157,11 +175,23 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Query: {}
-  HelloWorldInput: HelloWorldInput
+  ArticleInput: ArticleInput
   String: Scalars['String']
+  Article: Article
+  HelloWorldInput: HelloWorldInput
   HelloWorld: HelloWorld
   Mutation: {}
   Boolean: Scalars['Boolean']
+}
+
+export type ArticleResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']
+> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 
 export type HelloWorldResolvers<
@@ -183,6 +213,12 @@ export type QueryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
+  article?: Resolver<
+    ResolversTypes['Article'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryArticleArgs, never>
+  >
   helloWorld?: Resolver<
     ResolversTypes['HelloWorld'],
     ParentType,
@@ -193,6 +229,7 @@ export type QueryResolvers<
 }
 
 export type Resolvers<ContextType = Context> = {
+  Article?: ArticleResolvers<ContextType>
   HelloWorld?: HelloWorldResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
