@@ -1,4 +1,4 @@
-import AWS from 'aws-sdk'
+import * as AWS from 'aws-sdk'
 import { Consumer } from 'sqs-consumer'
 import { Message } from './types'
 
@@ -159,6 +159,7 @@ class Channel {
     console.log(
       `Published message ${MessageId} to ${exchangeId} with routingKey ${routingKey}`,
     )
+    return MessageId
   }
 
   private async getQueueUrl({ name }: { name: string }) {
