@@ -561,6 +561,20 @@
             "tsConfig": "apps/gjafakort/application/tsconfig.spec.json",
             "passWithNoTests": true
           }
+        },
+        "docker": {
+          "builder": "@gperdomor/nx-docker:build",
+          "options": {
+            "repository": "gjafakort-application",
+            "dockerfile": "apps/gjafakort/application/Dockerfile",
+            "registry": "$DOCKER_REG",
+            "username": "$DOCKER_REG_USER",
+            "password": "$DOCKER_REG_PASSWORD",
+            "tags": "$DOCKER_TAGS",
+            "build_args": "$BUILD_ARGS",
+            "push": true,
+            "socket": "/var/run/docker.sock"
+          }
         }
       }
     }
