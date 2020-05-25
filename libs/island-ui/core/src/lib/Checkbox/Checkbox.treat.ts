@@ -45,8 +45,8 @@ export const checkbox = style({
 export const checkboxChecked = style({
   selectors: {
     [`&${checkbox}`]: {
-      backgroundColor: theme.blue400,
-      borderColor: theme.blue400,
+      backgroundColor: theme.color.blue400,
+      borderColor: theme.color.blue400,
     },
   },
 })
