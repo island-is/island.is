@@ -739,7 +739,7 @@
           "options": {
             "commands": [
               {
-                "command": "DOCKER_BUILDKIT=1 APP=reference-backend ./scripts/build-docker-image.sh"
+                "command": "echo 'not done yet'"
               }
             ]
           }
