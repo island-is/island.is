@@ -12,6 +12,7 @@ export * from './lib/Select/Select'
 export * from './lib/Page/Page'
 export * from './lib/Header/Header'
 export * from './lib/Input/Input'
+export * from './lib/Tabs/Tabs'
 
 // Layout
 export * from './lib/Box/Box'

@@ -4,7 +4,11 @@ import cn from 'classnames'
 import * as styles from './Select.treat'
 import Icon from '../Icon/Icon'
 
-export type Option = { label: string; value: string | number }
+export type Option = {
+  label: string
+  value: string | number
+  disabled?: boolean
+}
 
 export interface SelectProps {
   name: string
@@ -20,6 +24,7 @@ export interface SelectProps {
   label?: string
   value?: ValueType<Option>
   placeholder?: string
+  defaultValue?: Option
 }
 
 export const Select = ({
@@ -32,6 +37,7 @@ export const Select = ({
   label,
   value,
   placeholder = '',
+  defaultValue,
 }: SelectProps) => {
   return (
     <div className={styles.wrapper}>
@@ -47,6 +53,8 @@ export const Select = ({
         label={label}
         value={value}
         placeholder={placeholder}
+        defaultValue={defaultValue}
+        isOptionDisabled={(option) => option.disabled}
         components={{
           Control,
           Input,
