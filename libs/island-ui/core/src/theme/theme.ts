@@ -162,4 +162,6 @@ export const theme = {
   color: colors,
 }
 
+export type Theme = typeof theme
+
 export const themeUtils = makeThemeUtils(theme)

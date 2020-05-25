@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { theme } from '../../theme/'
+import { theme } from '../../theme'
 
 export const button = style({})
 

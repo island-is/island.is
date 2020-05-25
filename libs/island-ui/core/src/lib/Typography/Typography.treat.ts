@@ -1,7 +1,7 @@
 import { style } from 'treat'
 import * as CSS from 'csstype'
 import { isObject } from 'lodash'
-import { theme } from '../../theme/'
+import { theme } from '../../theme'
 
 export type VariantTypes =
   | 'p'

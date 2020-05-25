@@ -1,4 +1,4 @@
-import { theme } from '../theme/'
+import { theme } from '../theme'
 type Breakpoint = keyof typeof theme['breakpoint']
 
 const breakpoints = Object.keys(theme.breakpoints)

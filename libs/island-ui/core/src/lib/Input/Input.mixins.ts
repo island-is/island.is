@@ -1,4 +1,4 @@
-import { theme } from '../../theme/'
+import { theme } from '../../theme'
 
 const containerPaddingTop = 7
 const containerPaddingRight = 7

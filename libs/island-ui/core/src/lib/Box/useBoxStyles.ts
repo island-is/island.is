@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ElementType } from 'react'
 import classnames from 'classnames'
-import { theme } from '../../theme/'
+import { theme } from '../../theme'
 import {
   resolveResponsiveProp,
   ResponsiveProp,
