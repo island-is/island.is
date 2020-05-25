@@ -5,7 +5,6 @@ import { mapToStyleProperty } from '../../utils'
 import { makeThemeUtils } from '../../themeUtils'
 import { theme, themeUtils } from '../../theme/index'
 
-
 const spaceMapToCss = (
   t: typeof theme,
   cssPropertyName: keyof Properties,
