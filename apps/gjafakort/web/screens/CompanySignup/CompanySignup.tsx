@@ -54,29 +54,12 @@ const companyOperations = [
 ]
 
 function CompanySignup() {
-  const [
-    { companyName, ssn, isat, serviceCategory, address, postNumber },
-    setFakeFetchData,
-  ] = useState({
-    companyName: '',
-    ssn: '',
-    isat: '',
-    serviceCategory: '',
-    address: '',
-    postNumber: '',
-  })
-  useEffect(() => {
-    setTimeout(() => {
-      setFakeFetchData({
-        companyName: 'Kaffi klettur',
-        ssn: '1902795829',
-        isat: 'IS-5978512',
-        serviceCategory: 'Veitingastaður',
-        address: 'Biskupsbraut 18',
-        postNumber: '230',
-      })
-    }, 1500)
-  }, [])
+  const companyName = 'Kaffi klettur'
+  const ssn = '1902795829'
+  const isat = 'IS-5978512'
+  const serviceCategory = 'Veitingastaður'
+  const address = 'Biskupsbraut 18'
+  const postNumber = '230'
   const intro = 'Fylltu inn upplýsingar hér að neðan'
   return (
     <ContentBlock width="large">
