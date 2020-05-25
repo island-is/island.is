@@ -9,25 +9,28 @@ on:
   pull_request:
     branches: [master]
 
+env:
+  DOCKER_REGISTRY: 553296336529.dkr.ecr.eu-west-1.amazonaws.com/
+
 jobs:
   check-code:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
+    # runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:11.6
-        env:
-          # TODO: make this more generic (workflows should trigger these services)
-          POSTGRES_DB: application_test
-          POSTGRES_PASSWORD: application_test
-          POSTGRES_USER: application_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
+    # services:
+    #   postgres:
+    #     image: postgres:11.6
+    #     env:
+    #       POSTGRES_DB: application_test
+    #       POSTGRES_PASSWORD: application_test
+    #       POSTGRES_USER: application_test
+    #     options: >-
+    #       --health-cmd pg_isready
+    #       --health-interval 10s
+    #       --health-timeout 5s
+    #       --health-retries 5
+    #     ports:
+    #       - 5432:5432
 
     env:
       # TODO: make this more generic (workflows should trigger these services)
@@ -36,69 +39,186 @@ jobs:
       APPLICATION_TEST_DB_NAME: application_test
       APPLICATION_DB_HOST: localhost
 
+    outputs:
+      GIT_BRANCH: ${{ steps.docker_tags.outputs.GIT_BRANCH }}
+      DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
+      DOCKER_LATEST_TAG: ${{ steps.docker_tags.outputs.DOCKER_LATEST_TAG }}
+      DOCKER_BRANCH_TAG: ${{ steps.docker_tags.outputs.DOCKER_BRANCH_TAG }}
     steps:
       - uses: actions/checkout@v1
 
-      - name: Setting up Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12.x
-
-      - name: Get global yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Pulling cache for global Yarn modules cache
-        uses: actions/cache@v1
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn
-          restore-keys: |
-            ${{ runner.os }}-yarn
-
-      - name: Pulling cache for Node.js modules
-        uses: actions/cache@v1
-        id: node-modules-cache
-        with:
-          path: ./node_modules
-          key: ${{ runner.os }}-node-modules-${{ hashFiles('./yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node-modules-
-
-      - name: Installing dependencies
-        run: yarn
-
-      # - name: Auditing Node.js modules
-      #   run: yarn run security:audit
-
-      - name: Linting code
-        run: yarn run affected:lint --base origin/master --parallel
-
-      - name: Check formatting of code
-        run: yarn run format:check --base origin/master --parallel
-
-      - name: Run tests
-        run: yarn run affected:test --base origin/master --parallel
-
-      # - name: Running E2E tests
-      #   run: yarn run affected:e2e --base origin/master
-
-      - name: Prepare environment to run docker
-        id: docker_env
+      - name: Set docker image tag
+        id: docker_tags
         run: |
           export GIT_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}
           export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH} | tr "/." "-" )
           export DOCKER_TAG=${GITHUB_RUN_NUMBER}_${DOCKER_BRANCH_TAG}_${GITHUB_SHA:0:7}
           echo "Docker tag will be ${DOCKER_TAG}"
-          echo "::set-env name=BUILD_ARGS::GIT_SHA=${GITHUB_SHA},GIT_BRANCH=${GIT_BRANCH}"
-          echo "::set-env name=DOCKER_TAGS::${DOCKER_TAG},latest_${DOCKER_BRANCH_TAG}"
-          echo "::set-env name=DOCKER_REG::553296336529.dkr.ecr.eu-west-1.amazonaws.com"
-          echo "::set-env name=DOCKER_REG_USER::AWS"
-          echo "::set-env name=DOCKER_REG_PASSWORD::$(aws ecr get-login-password --region eu-west-1)"
+          echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
+          echo "::set-env name=GIT_BRANCH::${GIT_BRANCH}"
+          echo "::set-env name=DOCKER_BRANCH_TAG::${DOCKER_BRANCH_TAG}"
+          echo "::set-output name=DOCKER_BRANCH_TAG::${DOCKER_BRANCH_TAG}"
+          echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
+          echo "::set-env name=DOCKER_TAG::${DOCKER_TAG}"
+          echo "::set-output name=DOCKER_LATEST_TAG::latest_${DOCKER_BRANCH_TAG}"
+
+      - name: Set NX base SHA
+        run: |
+          if [[ $GITHUB_BASE_REF ]]
+          then
+            export NX_BASE=$(git merge-base $GITHUB_SHA origin/${GITHUB_BASE_REF})
+          else
+            export NX_BASE=$(git rev-parse HEAD~1)
+          fi
+          echo "::set-env name=NX_BASE::${NX_BASE}"
+          echo "Base => $NX_BASE"
+
+      - name: Cache deps
+        id: cache-deps
+        uses: actions/cache@v1
+        with:
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
+
+      - name: Set up Docker Buildx
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: latest
+          qemu-version: latest
+
+      - name: docker info
+        run: docker info && docker version
+
+      - name: Building dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: APP=gjafakort-api PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG ./scripts/prepare_deps.sh
+
+      # - name: Auditing Node.js modules
+      #   run: yarn run security:audit
+      # - name: Linting code
+      #   run: yarn run affected:lint --base origin/master --parallel
+      # - name: Check formatting of code
+      #   run: yarn run format:check --base origin/master --parallel
+      # - name: Run tests
+      #   run: yarn run affected:test --base origin/master --parallel
+      # - name: Running E2E tests
+      #   run: yarn run affected:e2e --base origin/master
+      # - name: Prepare environment to run docker
+      #   id: docker_env
+      #   run: |
+      #     export GIT_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}
+      #     export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH} | tr "/." "-" )
+      #     export DOCKER_TAG=${GITHUB_RUN_NUMBER}_${DOCKER_BRANCH_TAG}_${GITHUB_SHA:0:7}
+      #     echo "Docker tag will be ${DOCKER_TAG}"
+      #     echo "::set-env name=BUILD_ARGS::GIT_SHA=${GITHUB_SHA},GIT_BRANCH=${GIT_BRANCH}"
+      #     echo "::set-env name=DOCKER_TAGS::${DOCKER_TAG},latest_${DOCKER_BRANCH_TAG}"
+      #     echo "::set-env name=DOCKER_REG::553296336529.dkr.ecr.eu-west-1.amazonaws.com"
+      #     echo "::set-env name=DOCKER_REG_USER::AWS"
+      #     echo "::set-env name=DOCKER_REG_PASSWORD::$(aws ecr get-login-password --region eu-west-1)"
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # - name: Build and push docker
+      #   run: yarn run affected:docker --base origin/master --parallel
+  check-formatting:
+    runs-on: self-hosted
+    # runs-on: ubuntu-latest
+    needs: check-code
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: set Docker tags env vars
+        run: |
+          echo "::set-env name=GIT_BRANCH::${{needs.check-code.outputs.GIT_BRANCH}}"
+          echo "::set-env name=DOCKER_TAG::${{needs.check-code.outputs.DOCKER_TAG}}"
+          echo "::set-env name=DOCKER_BRANCH_TAG::${{needs.check-code.outputs.DOCKER_BRANCH_TAG}}"
+          echo "::set-env name=DOCKER_LATEST_TAG::${{needs.check-code.outputs.DOCKER_LATEST_TAG}}"
+
+      - name: Cache deps
+        id: cache-deps
+        uses: actions/cache@v1
+        with:
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: latest
+          qemu-version: latest
+
+      - name: Check formatting
+        run: APP=gjafakort-api PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG ./scripts/check_formatting.sh
+
+  linting:
+    runs-on: self-hosted
+    # runs-on: ubuntu-latest
+    needs: check-code
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: set Docker tags env vars
+        run: |
+          echo "::set-env name=GIT_BRANCH::${{needs.check-code.outputs.GIT_BRANCH}}"
+          echo "::set-env name=DOCKER_TAG::${{needs.check-code.outputs.DOCKER_TAG}}"
+          echo "::set-env name=DOCKER_BRANCH_TAG::${{needs.check-code.outputs.DOCKER_BRANCH_TAG}}"
+          echo "::set-env name=DOCKER_LATEST_TAG::${{needs.check-code.outputs.DOCKER_LATEST_TAG}}"
+
+      - name: Cache deps
+        id: cache-deps
+        uses: actions/cache@v1
+        with:
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: latest
+          qemu-version: latest
+
+      - name: Lint
+        run: APP=gjafakort-api PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG ./scripts/lint.sh
+
+  build-web-artifacts:
+    runs-on: self-hosted
+    # runs-on: ubuntu-latest
+    needs: [check-code, check-formatting, linting]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: set Docker tags env vars
+        run: |
+          echo "::set-env name=GIT_BRANCH::${{needs.check-code.outputs.GIT_BRANCH}}"
+          echo "::set-env name=DOCKER_TAG::${{needs.check-code.outputs.DOCKER_TAG}}"
+          echo "::set-env name=DOCKER_BRANCH_TAG::${{needs.check-code.outputs.DOCKER_BRANCH_TAG}}"
+          echo "::set-env name=DOCKER_LATEST_TAG::${{needs.check-code.outputs.DOCKER_LATEST_TAG}}"
+
+      - name: Cache deps
+        id: cache-deps
+        uses: actions/cache@v1
+        with:
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
+
+      - name: Docker login to ECR repo
+        run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}gjafakort-api
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Build and push docker
-        run: yarn run affected:docker --base origin/master --parallel
+      - name: docker info
+        run: docker info && docker version
+
+      - name: Set up Docker Buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: latest
+          qemu-version: latest
+
+      - name: Building
+        run: APP=gjafakort-api PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG ./scripts/build.sh
