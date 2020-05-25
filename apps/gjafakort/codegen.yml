@@ -20,3 +20,8 @@ generates:
       withComponent: false
       avoidOptionals:
         object: true
+  ./apps/gjafakort/web/graphql/possibleTypes.json:
+    schema:
+      - ./apps/gjafakort/api/src/graphql/**/typeDefs.ts
+    plugins:
+      - fragment-matcher

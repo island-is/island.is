@@ -317,7 +317,7 @@
           "options": {
             "commands": [
               {
-                "command": "graphql-codegen --config apps/gjafakort/api/codegen.yml"
+                "command": "graphql-codegen --config apps/gjafakort/codegen.yml"
               }
             ]
           }
