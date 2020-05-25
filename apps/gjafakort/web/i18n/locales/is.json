@@ -1,5 +1,36 @@
 {
   "intro": {
-    "welcome": "Halló"
+    "title": "Gjöf til ferðalaga innanlands",
+    "intro": "Allir íbúar á Íslandi 18 ára og eldri fá Ferðagjöf, stafrænt gjafabréf sem hægt er að nota á ferðalögum innanlands.",
+    "description": "Ferðagjöfin er liður í aðgerðum stjórnvalda til eflingar á hagkerfinu í kjölfar kórónuveirufaraldursins, og er ætlað að styðja við íslenska ferðaþjónustu.",
+    "FAQ": {
+      "title": "Algengar spurningar",
+      "List": [
+        {
+          "label": "Hverjir fá Ferðagjöf?",
+          "content": "Allir íbúar á Íslandi með íslenska kennitölu og eru fæddir árið 2002 og fyrr fá Ferðgjöf að andvirði 5.000 kr. "
+        },
+        {
+          "label": "Hvernig nota ég Ferðagjöfina?",
+          "content": "Einfalt er að nýta gjöfina sem má nálgast í smáforritinu \"Ferðagjöf\".  Þegar nýta á gjöfina skannar ferðaþjónustufyrirtæki strikamerki í smáforritinu. Einnig má nálgast strikamerkið á island.is."
+        },
+        {
+          "label": "Hvar get ég notað Ferðagjöfina?",
+          "content": "Hægt er að nýta gjöfina hjá fjölmörgum ferðaþjónustufyrirtækjum viðsvegar um landið.  Á www.ferdalag.is má sjá yfirlit hvar hægt er að nýta gjöfina."
+        },
+        {
+          "label": "Get ég gefið Ferðagjöfina áfram?",
+          "content": ""
+        },
+        {
+          "label": "Hver er gildistími Ferðagjafarinnar?",
+          "content": ""
+        },
+        {
+          "label": "Hvaða fyrirtæki mega taka þátt?",
+          "content": ""
+        }
+      ]
+    }
   }
 }
