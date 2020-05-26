@@ -26,13 +26,13 @@ const mockAccordion = [
 
 function SignupReady() {
   return (
-    <Box marginTop="spacer12">
+    <Box marginTop={12}>
       <ContentBlock width="large">
-        <Columns space="spacer15" collapseBelow="lg">
+        <Columns space={15} collapseBelow="lg">
           <Column width="2/3">
-            <Box paddingLeft={['spacer0', 'spacer0', 'spacer0', 'spacer9']}>
-              <Box marginBottom="spacer6">
-                <Stack space="spacer3">
+            <Box paddingLeft={[0, 0, 0, 9]}>
+              <Box marginBottom={6}>
+                <Stack space={3}>
                   <Typography variant="h1" as="h1">
                     Til hamingju
                   </Typography>
@@ -41,10 +41,10 @@ function SignupReady() {
                   </Typography>
                 </Stack>
               </Box>
-              <Box marginBottom="spacer15">
+              <Box marginBottom={15}>
                 <Button variant="text" size="large">
                   Áfram til Yay{' '}
-                  <Box marginLeft="spacer1" alignItems="center" display="flex">
+                  <Box marginLeft={1} alignItems="center" display="flex">
                     <Icon type="arrow" width={16} />
                   </Box>
                 </Button>
@@ -64,7 +64,7 @@ function SignupReady() {
           </Column>
 
           <Column width="1/3">
-            <Box textAlign="center" padding="spacer3">
+            <Box textAlign="center" padding={3}>
               <img src={packageSvg} alt="" />
             </Box>
           </Column>

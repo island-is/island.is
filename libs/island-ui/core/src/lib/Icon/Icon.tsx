@@ -1,8 +1,8 @@
 import React from 'react'
-import { blue400 } from '../../theme/variables'
+import { theme } from '../../theme'
 
-// type IconType = 'cheveron' | 'check' | 'external-link' | 'arrow' | 'calendar' | 'search' | 'info' | 'close' | 'attachment' | 'plus' | 'loading'
 type IconTypes = 'cheveron' | 'check' | 'arrow'
+
 type Icons = {
   [Type in IconTypes]: {
     width: string | number
@@ -58,7 +58,7 @@ const iconsConf: Icons = {
 const SvgPathContainer = ({
   width,
   height,
-  color = blue400,
+  color = theme.color.blue400,
   viewBox,
   fill = 'none',
   path,

@@ -1,10 +1,10 @@
 import { globalStyle, style } from 'treat'
-import { theme } from '../theme/index'
+import { theme } from '../theme'
 
 globalStyle('html, body', {
   margin: 0,
   fontFamily: theme.typography.fontFamily,
-  background: theme.color.background,
+  background: theme.color.white, // todo
   padding: 0,
 })
 

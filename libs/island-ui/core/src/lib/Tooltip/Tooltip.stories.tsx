@@ -45,7 +45,7 @@ export const WithChildren = () => (
       </Typography>
     </Box>
     <Box padding="gutter">
-      <Inline space="spacer1">
+      <Inline space={1}>
         <Typography variant="p" as="span">
           Here is some text.
         </Typography>

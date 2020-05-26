@@ -1,5 +1,5 @@
 import { style, styleMap } from 'treat'
-import { theme } from '../../theme/index'
+import { theme } from '../../theme'
 import { mapToStyleProperty } from '../../utils'
 
 export const root = style({ margin: '0 auto' })

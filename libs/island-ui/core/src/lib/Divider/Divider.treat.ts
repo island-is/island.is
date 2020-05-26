@@ -1,5 +1,5 @@
 import { style, styleMap } from 'treat'
-import { theme } from '../../theme/index'
+import { theme } from '../../theme'
 
 export const base = style({
   height: theme.border.width.standard,

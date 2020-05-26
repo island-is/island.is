@@ -45,12 +45,12 @@ const mockAccordion = [
 
 function HomePage() {
   return (
-    <Box marginTop="spacer12">
+    <Box marginTop={12}>
       <ContentBlock width="large">
-        <Columns space="spacer15" collapseBelow="lg">
+        <Columns space={15} collapseBelow="lg">
           <Column width="2/3">
-            <Box paddingLeft={['spacer0', 'spacer0', 'spacer0', 'spacer9']}>
-              <Stack space="spacer3">
+            <Box paddingLeft={[0, 0, 0, 9]}>
+              <Stack space={3}>
                 <Typography variant="h1" as="h1">
                   Gjöf til ferðalaga innanlands
                 </Typography>
@@ -59,10 +59,7 @@ function HomePage() {
                   gjafabréf sem hægt er að nota á ferðalögum innanlands.
                 </Typography>
               </Stack>
-              <Box
-                marginBottom={['spacer3', 'spacer3', 'spacer3', 'spacer12']}
-                marginTop="spacer1"
-              >
+              <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
                 <Typography variant="p">
                   Ferðagjöfin er liður í aðgerðum stjórnvalda til eflingar á
                   hagkerfinu í kjölfar kórónuveirufaraldursins, og er ætlað að
@@ -70,11 +67,11 @@ function HomePage() {
                 </Typography>
               </Box>
               <Hidden above="md">
-                <Box marginBottom="spacer3">
+                <Box marginBottom={3}>
                   <GiftCTA />
                 </Box>
               </Hidden>
-              <Box marginBottom="spacer3">
+              <Box marginBottom={3}>
                 <Typography variant="h2" as="h2">
                   Algengar spurningar
                 </Typography>
@@ -106,21 +103,21 @@ function HomePage() {
 
 const GiftCTA = () => (
   <Box>
-    <Box background="purple100" padding="spacer4" marginBottom="spacer3">
-      <Box marginBottom="spacer2">
+    <Box background="purple100" padding={4} marginBottom={3}>
+      <Box marginBottom={2}>
         <Typography variant="h4">Einstaklingar</Typography>
       </Box>
       <Button width="fluid">Sækja Ferðagjöf</Button>
     </Box>
-    <Box background="purple100" padding="spacer4" marginBottom="spacer3">
-      <Box marginBottom="spacer2">
+    <Box background="purple100" padding={4} marginBottom={3}>
+      <Box marginBottom={2}>
         <Typography variant="h4">Einstaklingar</Typography>
       </Box>
       <Button width="fluid" variant="ghost">
         Skrá fyrirtæki
       </Button>
     </Box>
-    <Box textAlign="center" padding="spacer3">
+    <Box textAlign="center" padding={3}>
       <img src={packageSvg} alt="" />
     </Box>
   </Box>

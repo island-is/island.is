@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { theme } from '../../theme/index'
+import { theme } from '../../theme'
 
 export const button = style({})
 
@@ -30,9 +30,9 @@ export const focusRing = [
     },
   }),
   style({
-    top: -theme.space.spacer1 * theme.grid,
-    bottom: -theme.space.spacer1 * theme.grid,
-    left: -theme.space.spacer1 * theme.grid,
-    right: -theme.space.spacer1 * theme.grid,
+    top: -theme.spacing[1],
+    bottom: -theme.spacing[1],
+    left: -theme.spacing[1],
+    right: -theme.spacing[1],
   }),
 ]

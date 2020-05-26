@@ -1,6 +1,7 @@
-import { breakpoints, Theme } from '../types'
+import { theme } from '../theme'
+type Breakpoint = keyof typeof theme['breakpoints']
 
-type Breakpoint = keyof Theme['breakpoint']
+const breakpoints = Object.keys(theme.breakpoints)
 
 export interface ResponsiveRangeProps {
   above?: Exclude<Breakpoint, 'xl'>

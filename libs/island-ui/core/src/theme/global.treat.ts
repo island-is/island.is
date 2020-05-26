@@ -1,9 +1,9 @@
 import { globalStyle } from 'treat'
-import * as theme from './variables'
+import { theme } from './theme'
 
 globalStyle('html', {
   boxSizing: 'border-box',
-  fontSize: theme.baseFontSize,
+  fontSize: theme.typography.baseFontSize,
   scrollBehavior: 'smooth',
 })
 
@@ -19,8 +19,8 @@ globalStyle('body, h1, h2, h3, h4, h5, h6, p, ol, ul, blockquote', {
   margin: 0,
   padding: 0,
   fontWeight: 'normal',
-  fontFamily: theme.fontFamily,
-  color: theme.baseColor,
+  fontFamily: theme.typography.fontFamily,
+  color: theme.color.dark400,
 })
 
 globalStyle('ol, ul', {

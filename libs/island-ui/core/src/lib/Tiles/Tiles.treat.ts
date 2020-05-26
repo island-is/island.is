@@ -1,7 +1,7 @@
 import { styleMap } from 'treat'
 import mapValues from 'lodash/mapValues'
-import { themeUtils } from '../../theme/index'
-import { Theme } from 'treat/theme'
+import { theme, themeUtils } from '../../theme'
+type Theme = typeof theme
 
 const columnsWidths = {
   1: '100%',
@@ -13,7 +13,7 @@ const columnsWidths = {
 } as const
 
 type ColumnWidths = Record<keyof typeof columnsWidths, string>
-const makeColumnsAtoms = (breakpoint: keyof Theme['breakpoint']) =>
+const makeColumnsAtoms = (breakpoint: keyof Theme['breakpoints']) =>
   styleMap(
     mapValues(columnsWidths, (width) =>
       themeUtils.responsiveStyle({ [breakpoint]: { flex: `0 0 ${width}` } }),

@@ -17,17 +17,17 @@ export const CompanySelection = () => {
         <Column width="2/3">
           <Box
             background="blue100"
-            paddingX={['spacer5', 'spacer12']}
-            paddingY={['spacer5', 'spacer9']}
-            borderRadius="standard"
-            marginTop="spacer12"
+            paddingX={[5, 12]}
+            paddingY={[5, 9]}
+            borderRadius="full"
+            marginTop={12}
           >
-            <Box marginBottom="spacer2">
+            <Box marginBottom={2}>
               <Typography variant="h1" as="h1">
                 Prókúruhafi
               </Typography>
             </Box>
-            <Box marginBottom="spacer6">
+            <Box marginBottom={6}>
               <Typography variant="intro">
                 Hvaða fyrirtæki viltu skrá?
               </Typography>
@@ -45,7 +45,7 @@ export const CompanySelection = () => {
                 <Form>
                   <Columns space="gutter" collapseBelow="xl">
                     <Column width="1/2">
-                      <Box marginBottom="spacer6">
+                      <Box marginBottom={6}>
                         <Field
                           component={FieldSelect}
                           name="company"

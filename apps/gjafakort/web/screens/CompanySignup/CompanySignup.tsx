@@ -67,17 +67,17 @@ function CompanySignup() {
         <Column width="2/3">
           <Box
             background="blue100"
-            paddingX={['spacer5', 'spacer12']}
-            paddingY={['spacer5', 'spacer9']}
+            paddingX={[5, 12]}
+            paddingY={[5, 9]}
             borderRadius="standard"
-            marginTop="spacer12"
+            marginTop={12}
           >
-            <Box marginBottom="spacer2">
+            <Box marginBottom={2}>
               <Typography variant="h1" as="h1">
                 {companyName}
               </Typography>
             </Box>
-            <Box marginBottom="spacer6">
+            <Box marginBottom={6}>
               <Typography variant="intro">{intro}</Typography>
             </Box>
             <Formik
@@ -129,8 +129,8 @@ function CompanySignup() {
             >
               {() => (
                 <Form>
-                  <Box marginBottom="spacer6">
-                    <Tiles columns={[1, 1, 2]} space="spacer3">
+                  <Box marginBottom={6}>
+                    <Tiles columns={[1, 1, 2]} space={3}>
                       <Field
                         component={FieldInput}
                         label="Nafn fyrirtækis"
@@ -170,13 +170,13 @@ function CompanySignup() {
                       />
                     </Tiles>
                   </Box>
-                  <Box marginBottom="spacer6">
-                    <Box marginBottom="spacer1">
+                  <Box marginBottom={6}>
+                    <Box marginBottom={1}>
                       <Typography variant="h4" as="h2">
                         Starfsemi fyrirtækis
                       </Typography>
                     </Box>
-                    <Stack space="spacer5">
+                    <Stack space={5}>
                       <Typography variant="p">
                         Vinsamlegast hakaðu við viðeigandi tegund starfsemi
                         fyrirtækis. Hægt er að haka við einn eða fleiri
@@ -191,7 +191,7 @@ function CompanySignup() {
                       ))}
                     </Stack>
                   </Box>
-                  <Stack space="spacer3">
+                  <Stack space={3}>
                     <Typography variant="h4" as="h2">
                       Tengiliður
                     </Typography>
@@ -219,7 +219,7 @@ function CompanySignup() {
                       format="### ####"
                     />
                   </Stack>
-                  <Box marginY="spacer5">
+                  <Box marginY={5}>
                     <Field
                       component={FieldCheckbox}
                       name="approveTerms"

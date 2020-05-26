@@ -1,15 +1,14 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ElementType } from 'react'
 import classnames from 'classnames'
-import { Theme } from 'treat/theme'
+import { theme } from '../../theme'
 import {
   resolveResponsiveProp,
   ResponsiveProp,
 } from '../../utils/responsiveProp'
 import * as resetStyleRefs from '../../reset/reset.treat'
 import * as styleRefs from './useBoxStyles.treat'
-
-export type Space = keyof Theme['space'] | 'none'
+export type Space = keyof typeof theme.spacing
 export type ResponsiveSpace = ResponsiveProp<Space>
 
 export interface UseBoxStylesProps {
