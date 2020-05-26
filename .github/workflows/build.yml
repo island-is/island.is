@@ -73,20 +73,20 @@ jobs:
           echo "::set-env name=NX_BASE::${NX_BASE}"
           echo "Base => $NX_BASE"
 
-      # - name: Cache deps
-      #   id: cache-deps
-      #   uses: actions/cache@v1
-      #   with:
-      #     path: cache
-      #     key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
+      - name: Cache deps
+        id: cache-deps
+        uses: actions/cache@v1
+        with:
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
 
-      # - name: Set up Docker Buildx
-      #   if: steps.cache-deps.outputs.cache-hit != 'true'
-      #   id: buildx
-      #   uses: crazy-max/ghaction-docker-buildx@v1
-      #   with:
-      #     buildx-version: latest
-      #     qemu-version: latest
+      - name: Set up Docker Buildx
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: latest
+          qemu-version: latest
 
       # - name: docker info
       #   run: docker info && docker version
@@ -141,19 +141,19 @@ jobs:
           echo "::set-env name=DOCKER_BRANCH_TAG::${{needs.check-code.outputs.DOCKER_BRANCH_TAG}}"
           echo "::set-env name=DOCKER_LATEST_TAG::${{needs.check-code.outputs.DOCKER_LATEST_TAG}}"
 
-      # - name: Cache deps
-      #   id: cache-deps
-      #   uses: actions/cache@v1
-      #   with:
-      #     path: cache
-      #     key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
+      - name: Cache deps
+        id: cache-deps
+        uses: actions/cache@v1
+        with:
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
 
-      # - name: Set up Docker Buildx
-      #   id: buildx
-      #   uses: crazy-max/ghaction-docker-buildx@v1
-      #   with:
-      #     buildx-version: latest
-      #     qemu-version: latest
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: latest
+          qemu-version: latest
       - name: Docker login to ECR repo
         run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}gjafakort-api
         env:
@@ -177,19 +177,19 @@ jobs:
           echo "::set-env name=DOCKER_BRANCH_TAG::${{needs.check-code.outputs.DOCKER_BRANCH_TAG}}"
           echo "::set-env name=DOCKER_LATEST_TAG::${{needs.check-code.outputs.DOCKER_LATEST_TAG}}"
 
-      # - name: Cache deps
-      #   id: cache-deps
-      #   uses: actions/cache@v1
-      #   with:
-      #     path: cache
-      #     key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
+      - name: Cache deps
+        id: cache-deps
+        uses: actions/cache@v1
+        with:
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
 
-      # - name: Set up Docker Buildx
-      #   id: buildx
-      #   uses: crazy-max/ghaction-docker-buildx@v1
-      #   with:
-      #     buildx-version: latest
-      #     qemu-version: latest
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: latest
+          qemu-version: latest
       - name: Docker login to ECR repo
         run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}gjafakort-api
         env:
@@ -213,12 +213,12 @@ jobs:
           echo "::set-env name=DOCKER_BRANCH_TAG::${{needs.check-code.outputs.DOCKER_BRANCH_TAG}}"
           echo "::set-env name=DOCKER_LATEST_TAG::${{needs.check-code.outputs.DOCKER_LATEST_TAG}}"
 
-      # - name: Cache deps
-      #   id: cache-deps
-      #   uses: actions/cache@v1
-      #   with:
-      #     path: cache
-      #     key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
+      - name: Cache deps
+        id: cache-deps
+        uses: actions/cache@v1
+        with:
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}
 
       - name: Docker login to ECR repo
         run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}gjafakort-api
@@ -229,11 +229,11 @@ jobs:
       # - name: docker info
       #   run: docker info && docker version
 
-      # - name: Set up Docker Buildx
-      #   uses: crazy-max/ghaction-docker-buildx@v1
-      #   with:
-      #     buildx-version: latest
-      #     qemu-version: latest
+      - name: Set up Docker Buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: latest
+          qemu-version: latest
 
       - name: Building
         run: APP=gjafakort-api PUBLISH=true BRANCH=$DOCKER_BRANCH_TAG ./scripts/build.sh
