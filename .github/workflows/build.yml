@@ -78,7 +78,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-1
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-2
 
       - name: Set up Docker Buildx
         if: steps.cache-deps.outputs.cache-hit != 'true'
@@ -144,7 +144,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-1
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-2
 
       - name: Set up Docker Buildx
         id: buildx
@@ -181,7 +181,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-1
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-2
 
       - name: Set up Docker Buildx
         id: buildx
@@ -218,7 +218,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-1
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-2
 
       - name: Docker login to ECR repo
         run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}gjafakort-api
