@@ -1,8 +1,9 @@
 import { Sequelize } from 'sequelize'
+import { environment } from '../environments/environment'
 
-import config from '../config'
+const { databaseUri } = environment
 
-export default new Sequelize(config.DATABASE_URI, {
+export default new Sequelize(databaseUri, {
   define: {
     underscored: true,
     timestamps: true,

@@ -54,11 +54,11 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
+              path: /status
               port: http
           readinessProbe:
             httpGet:
-              path: /
+              path: /status
               port: http
           env:
             {{- with .Values.postgres }}
@@ -73,6 +73,8 @@ spec:
               value: {{ .name }}
             - name: DB_HOST
               value: {{ .host }}
+            - name: NODE_ENV
+              value: "production"
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
