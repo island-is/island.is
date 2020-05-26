@@ -59,10 +59,7 @@ function HomePage() {
                   gjafabréf sem hægt er að nota á ferðalögum innanlands.
                 </Typography>
               </Stack>
-              <Box
-                marginBottom={[3, 3, 3, 12]}
-                marginTop={1}
-              >
+              <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
                 <Typography variant="p">
                   Ferðagjöfin er liður í aðgerðum stjórnvalda til eflingar á
                   hagkerfinu í kjölfar kórónuveirufaraldursins, og er ætlað að
