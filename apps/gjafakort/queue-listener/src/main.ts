@@ -1,29 +1,17 @@
-import { environment } from './environments/environment'
-import queueHandlers from './queue-handlers'
-import MsgQueue, { ApplicationMessage } from '@island.is/message-queue'
+import express from 'express'
+import { startConsumers } from './consumers'
 
-const { production, exchangeName } = environment
-
-const listen = async (
-  queueName: string,
-  handler: (message: ApplicationMessage) => Promise<void>,
-  routingKeys: string[],
-) => {
-  const channel = MsgQueue.connect(production)
-
-  const exchangeId = await channel.declareExchange({ name: exchangeName })
-  const queueId = await channel.declareQueue({ name: queueName })
-  const dlQueueName = `${queueName}-deadletter`
-  const dlQueueId = await channel.declareQueue({ name: dlQueueName })
-  await channel.setDlQueue({ queueId, dlQueueId })
-  await channel.bindQueue({ queueId, exchangeId, routingKeys })
-
-  channel.consume({ queueId, handler })
-}
-
-Object.keys(queueHandlers).forEach((queueName: string) => {
-  const { handler, routingKeys } = queueHandlers[queueName]
-  listen(queueName, handler, routingKeys).then(() => {
-    console.log(`Listening on queue ${queueName}`)
-  })
+startConsumers().then(() => {
+  console.log('All consumers have been started')
 })
+
+const app = express()
+app.get('/', (req, res) => {
+  res.send({ message: 'Hello, I am a liveness probe' })
+})
+
+const port = process.env.port || 7777
+const server = app.listen(port, () => {
+  console.log(`Listening at http://localhost:${port}`)
+})
+server.on('error', console.error)
