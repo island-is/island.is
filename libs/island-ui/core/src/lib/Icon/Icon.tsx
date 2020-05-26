@@ -1,6 +1,5 @@
 import React from 'react'
 
-// type IconType = 'cheveron' | 'check' | 'external-link' | 'arrow' | 'calendar' | 'search' | 'info' | 'close' | 'attachment' | 'plus' | 'loading'
 type IconTypes = 'cheveron' | 'check'
 type Icons = {
   [Type in IconTypes]: (
