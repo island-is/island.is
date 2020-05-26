@@ -9,7 +9,7 @@ export interface ContentBlockProps {
 }
 
 export const ContentBlock = ({
-  width = 'medium',
+  width = 'large',
   children,
 }: ContentBlockProps) => (
   <Box className={[styles.root, styles.width[width]]}>{children}</Box>

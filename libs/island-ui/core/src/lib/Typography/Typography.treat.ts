@@ -13,6 +13,8 @@ export type VariantTypes =
   | 'h5'
   | 'intro'
   | 'eyebrow'
+  | 'footerLink'
+  | 'footerLinkLarge'
 
 type ResponsiveProps<T> = {
   xs?: T
@@ -101,6 +103,24 @@ export const variants: Variants = {
     fontWeight: theme.typography.medium,
     lineHeight: 1.142857,
     color: theme.color.red400,
+  },
+  footerLink: {
+    fontSize: {
+      xs: 20,
+      sm: 18,
+    },
+    fontWeight: theme.typography.light,
+    lineHeight: 1.416667,
+    color: theme.color.white,
+  },
+  footerLinkLarge: {
+    fontSize: {
+      xs: 20,
+      xl: 24,
+    },
+    fontWeight: theme.typography.light,
+    lineHeight: 1.416667,
+    color: theme.color.white,
   },
 }
 

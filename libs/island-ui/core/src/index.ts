@@ -13,6 +13,7 @@ export * from './lib/Page/Page'
 export * from './lib/Header/Header'
 export * from './lib/Input/Input'
 export * from './lib/Tabs/Tabs'
+export * from './lib/Footer/Footer'
 
 // Layout
 export * from './lib/Box/Box'
