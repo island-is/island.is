@@ -14,5 +14,6 @@ docker build -f ${DIR}/Dockerfile --target=deps --cache-from=${DOCKER_REGISTRY}$
 
 $PUBLISH || echo "Not publishing ${DEPS_TAG}"
 $PUBLISH && docker push ${DOCKER_REGISTRY}${APP}:${DEPS_TAG}
-docker rmi ${DOCKER_REGISTRY}${APP}:${DEPS_TAG}
-docker system prune -a -f
+
+# docker rmi ${DOCKER_REGISTRY}${APP}:${DEPS_TAG}
+# docker system prune -a -f

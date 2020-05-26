@@ -10,5 +10,6 @@ docker pull ${DOCKER_REGISTRY}${APP}:${DEPS_TAG} || true
 docker build -f ${DIR}/Dockerfile --target=formatting --cache-from=${DOCKER_REGISTRY}${APP}:${DEPS_TAG} --build-arg BUILDKIT_INLINE_CACHE=1  --build-arg APP=${APP} . 
 # $PUBLISH || echo "Not publishing ${DEPS_TAG}"
 # $PUBLISH && docker push ${DOCKER_REGISTRY}${APP}:${DEPS_TAG}
-docker rmi ${DOCKER_REGISTRY}${APP}:${DEPS_TAG}
-docker system prune -a -f
+
+# docker rmi ${DOCKER_REGISTRY}${APP}:${DEPS_TAG}
+# docker system prune -a -f
