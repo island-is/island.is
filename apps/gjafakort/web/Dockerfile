@@ -34,6 +34,7 @@ USER runner
 
 COPY --from=builder --chown=runner:runners /build/node_modules /webapp/node_modules
 COPY --from=builder --chown=runner:runners /build/apps/gjafakort/web/next.config.js /webapp
+COPY --from=builder --chown=runner:runners /build/apps/gjafakort/web/public /webapp/public
 COPY --from=builder --chown=runner:runners /build/dist/apps/gjafakort/web /webapp/.next
 
 ENTRYPOINT [ "npx", "next", "start", "-p", "4200" ]
