@@ -1,7 +1,7 @@
 import React from 'react'
 import { theme } from '../../theme'
 
-type IconTypes = 'cheveron' | 'check'
+type IconTypes = 'cheveron' | 'check' | 'arrow'
 
 type Icons = {
   [Type in IconTypes]: {
