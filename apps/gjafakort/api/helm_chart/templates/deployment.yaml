@@ -39,6 +39,9 @@ spec:
             httpGet:
               path: /
               port: http
+          env:
+            - name: APPLICATION_URL
+              value: "http://web-gjafakort-application"
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

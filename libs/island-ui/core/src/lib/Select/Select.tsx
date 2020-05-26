@@ -1,10 +1,10 @@
 import React from 'react'
-import ReactSelect, { components } from 'react-select'
+import ReactSelect, { components, ValueType, ActionMeta } from 'react-select'
 import cn from 'classnames'
 import * as styles from './Select.treat'
 import Icon from '../Icon/Icon'
 
-type Option = { label: string; value: string | number }
+export type Option = { label: string; value: string | number }
 
 export interface SelectProps {
   name: string
@@ -12,8 +12,13 @@ export interface SelectProps {
   disabled?: boolean
   options: Option[]
   noOptionsMessage?: string
-  onChange?: (selected?: Option | Option[] | null) => void
+  onChange?: ((
+    value: ValueType<Option>,
+    actionMeta: ActionMeta<Option>,
+  ) => void) &
+    ((value: ValueType<Option>, action: ActionMeta<Option>) => void)
   label?: string
+  value?: ValueType<Option>
   placeholder?: string
 }
 
@@ -25,6 +30,7 @@ export const Select = ({
   options,
   onChange,
   label,
+  value,
   placeholder = '',
 }: SelectProps) => {
   return (
@@ -39,6 +45,7 @@ export const Select = ({
         classNamePrefix="island-select"
         onChange={onChange}
         label={label}
+        value={value}
         placeholder={placeholder}
         components={{
           Control,
