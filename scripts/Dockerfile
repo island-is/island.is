@@ -8,7 +8,7 @@ USER runner
 
 # Adding and installing packages
 ADD --chown=runner:runners package.json yarn.lock ./
-RUN yarn
+RUN yarn && rm -rf /home/runner/.cache
 
 ARG APP
 ENV APP=${APP}
