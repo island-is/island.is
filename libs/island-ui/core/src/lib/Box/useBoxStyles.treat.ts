@@ -109,6 +109,7 @@ export const transition = styleMap(({ transitions }) =>
 
 const borderRadiusRules = {
   full: '50%',
+  standard: '4px',
 }
 export const borderRadius = {
   ...styleMap(
