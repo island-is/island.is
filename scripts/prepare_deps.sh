@@ -10,7 +10,7 @@ source $DIR/_common.sh
 # docker buildx build --platform=linux/amd64 --cache-from=type=local,src=$PROJECT_ROOT/cache --cache-to=type=local,dest=$PROJECT_ROOT/cache -f ${DIR}/Dockerfile --target=deps --build-arg APP=${APP} -t ${DOCKER_REGISTRY}${APP}:${DEPS_TAG} . 
 
 docker pull ${DOCKER_REGISTRY}${APP}:${DEPS_TAG} || true
-docker build -f ${DIR}/Dockerfile --target=deps --cache-from=${DOCKER_REGISTRY}${APP}:${DEPS_TAG} --build-arg APP=${APP} -t ${DOCKER_REGISTRY}${APP}:${DEPS_TAG} . 
+docker build -f ${DIR}/Dockerfile --target=deps --cache-from=${DOCKER_REGISTRY}${APP}:${DEPS_TAG} --build-arg BUILDKIT_INLINE_CACHE=1 --build-arg APP=${APP} -t ${DOCKER_REGISTRY}${APP}:${DEPS_TAG} . 
 
 $PUBLISH || echo "Not publishing ${DEPS_TAG}"
 $PUBLISH && docker push ${DOCKER_REGISTRY}${APP}:${DEPS_TAG}
