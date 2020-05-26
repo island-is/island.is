@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "gjafakort-queue-listener.fullname" . }}-test-connection"
+  labels:
+    {{- include "gjafakort-queue-listener.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "gjafakort-queue-listener.fullname" . }}:{{ .Values.service.port }}']
+  restartPolicy: Never
