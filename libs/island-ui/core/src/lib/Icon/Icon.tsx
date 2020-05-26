@@ -1,14 +1,15 @@
 import React from 'react'
 import { theme } from '../../theme'
 
-type IconTypes = 'cheveron' | 'check' | 'arrow' | 'caret'
+type IconTypes = 'cheveron' | 'check' | 'arrow' | 'caret' | 'bullet'
 
 type Icons = {
   [Type in IconTypes]: {
     width: string | number
     height: string | number
     viewBox: string
-    path: string
+    path?: string
+    circle?: object
   }
 }
 
@@ -23,12 +24,13 @@ export interface IconProps {
 
 export interface SvgPathContainerProps {
   viewBox: string
-  path: string
+  path?: string
   width?: string | number
   height?: string | number
   color?: string
   fill?: string
   title?: string
+  circle?: object
 }
 
 const iconsConf: Icons = {
@@ -60,6 +62,16 @@ const iconsConf: Icons = {
     path:
       'M0.354609 1.03252C0.0458594 1.32502 0.0458594 1.79752 0.354609 2.09002L3.42628 5.00002L0.354609 7.91002C0.0458594 8.20252 0.0458594 8.67502 0.354609 8.96752C0.663359 9.26002 1.16211 9.26002 1.47086 8.96752L5.10461 5.52502C5.41336 5.23252 5.41336 4.76002 5.10461 4.46752L1.47086 1.02502C1.17003 0.740016 0.663359 0.740017 0.354609 1.03252Z',
   },
+  bullet: {
+    width: 10,
+    height: 10,
+    viewBox: '0 0 10 10',
+    circle: {
+      cx: 5,
+      cy: 5,
+      r: 5,
+    },
+  },
 }
 
 const SvgPathContainer = ({
@@ -70,6 +82,7 @@ const SvgPathContainer = ({
   fill = 'none',
   path,
   title,
+  circle,
 }: SvgPathContainerProps) => {
   return (
     <svg
@@ -80,7 +93,9 @@ const SvgPathContainer = ({
       viewBox={viewBox}
     >
       {title && <title>{title}</title>}
-      <path fill={color} d={path}></path>
+      {path && <path fill={color} d={path}></path>}
+      {circle && <circle fill={color} {...circle} />}
+      <div>{color}</div>
     </svg>
   )
 }
@@ -96,6 +111,7 @@ export const Icon = ({
   return (
     <SvgPathContainer
       path={iconsConf[type].path}
+      circle={iconsConf[type].circle}
       viewBox={iconsConf[type].viewBox}
       width={width ?? iconsConf[type].width}
       height={height ?? iconsConf[type].height}
