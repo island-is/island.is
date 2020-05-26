@@ -1,22 +1,22 @@
 import jwt from 'jsonwebtoken'
 
-import { Permissions, User, AuthContext } from './types'
-import { environment } from '../../../environments/environment'
+import { Permissions, User, AuthContext, Credentials } from './types'
+import { environment } from '../../environments/environment'
 
-export const verifyToken = (token: string): User | null => {
+export const verifyToken = (
+  token: string,
+): Credentials | null => {
   if (!token) {
     return null
   }
 
   const { jwtSecret } = environment.auth
-  let user: User | null = null
-  jwt.verify(token as string, jwtSecret, (err, decoded) => {
+  return jwt.verify(token as string, jwtSecret, (err, decoded) => {
     if (!err) {
-      user = decoded as User
+      return decoded
     }
+    return null
   })
-
-  return user
 }
 
 const checkPermissions = (user: User, { role }: Permissions): boolean => {
@@ -29,13 +29,14 @@ const checkPermissions = (user: User, { role }: Permissions): boolean => {
 }
 
 export const authorize = (permissions: Permissions) => (
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   target: Record<string, any>,
   propertyKey: string,
   descriptor: PropertyDescriptor,
 ) => {
   const originalValue = descriptor.value
 
-  descriptor.value = (...args: any[]) => {
+  descriptor.value = (...args: object[]) => {
     const context = args.length === 4 && (args[2] as AuthContext)
 
     if (!context) {

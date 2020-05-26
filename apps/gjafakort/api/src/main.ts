@@ -1,8 +1,8 @@
 import express from 'express'
 import cookieParser from 'cookie-parser'
 
-import { authRoutes } from './api'
-import createGraphqlServer from './graphql'
+import { authRoutes, resolvers, typeDefs } from './domains'
+import { createServer } from './graphql'
 
 const app = express()
 
@@ -12,7 +12,8 @@ app.use(cookieParser())
 
 app.use('/api/auth', authRoutes)
 
-createGraphqlServer(app)
+const graphQLServer = createServer(resolvers, typeDefs)
+graphQLServer.applyMiddleware({ app, path: '/api' })
 
 const port = process.env.port || 3333
 const server = app.listen(port, () => {

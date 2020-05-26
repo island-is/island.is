@@ -14,7 +14,7 @@ export type AuthContext = {
 
 export type VerifiedUser = {
   kennitala: string
-  nafn: string
+  fullname: string
   authId: string
 }
 
@@ -25,4 +25,9 @@ export type Cookie = {
 
 export type Permissions = {
   role?: 'admin'
+}
+
+export type Credentials = {
+  user: User
+  csrfToken: string
 }

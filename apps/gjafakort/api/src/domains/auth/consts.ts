@@ -1,6 +1,6 @@
 import { CookieOptions } from 'express'
 
-import { environment } from '../../../environments/environment'
+import { environment } from '../../environments/environment'
 import { Cookie } from './types'
 
 const defaultCookieOptions: CookieOptions = {

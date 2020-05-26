@@ -1,10 +1,9 @@
-import { Resolvers } from '../../../types'
-import { authorize } from '../../../api'
-import { AuthContext } from '../../../api/domains/auth/types'
+import { Resolvers } from '../../types'
+import { authorize } from '../auth'
 
 class ApplicationResolver {
   @authorize({ role: 'admin' })
-  public getApplication(root, args, { user }: AuthContext) {
+  public getApplication() {
     return { id: '1' }
   }
 }
