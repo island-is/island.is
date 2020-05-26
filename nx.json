@@ -59,6 +59,12 @@
     },
     "island-ui-storybook": {
       "tags": []
+    },
+    "gjafakort-queue-listener": {
+      "tags": []
+    },
+    "message-queue": {
+      "tags": []
     }
   }
 }

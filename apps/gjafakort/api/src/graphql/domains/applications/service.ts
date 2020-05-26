@@ -1,17 +1,24 @@
 import fetch from 'isomorphic-unfetch'
-import { CreateApplicationInput } from '../../../types'
+import { Context, CreateApplicationInput } from '../../../types'
 import { environment } from '../../../environments/environment'
 
 const APPLICATION_TYPE = 'gjafakort'
 
-const formatApplication = ({ id, state, data: { email } }) => ({
-  id,
-  state,
-  email,
+interface Application {
+  id: string
+  state: string
+  email: string
+}
+
+const formatApplication = (application: any): Application => ({
+  id: application.id,
+  state: application.state,
+  email: application.data.email,
 })
 
 export const createApplication = async (
   application: CreateApplicationInput,
+  context: Context,
 ) => {
   const url = `${environment.applicationUrl}/issuers/${application.ssn}/applications`
   const { email } = application
@@ -26,7 +33,16 @@ export const createApplication = async (
     }),
   })
   const data = await res.json()
-  return formatApplication(data.application)
+  const formattedApplication = formatApplication(data.application)
+
+  if (formattedApplication.state === 'approved') {
+    context.channel.publish({
+      exchangeId: context.appExchangeId,
+      message: formattedApplication,
+      routingKey: formattedApplication.state,
+    })
+  }
+  return formattedApplication
 }
 
 export const getApplication = async (ssn: string) => {

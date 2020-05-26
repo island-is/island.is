@@ -29,7 +29,10 @@
         "libs/api/domains/hello-world/src/index.ts"
       ],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
-      "@island.is/gjafakort/application/*": ["apps/gjafakort/application/src/*"]
+      "@island.is/gjafakort/application/*": [
+        "apps/gjafakort/application/src/*"
+      ],
+      "@island.is/message-queue": ["libs/message-queue/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

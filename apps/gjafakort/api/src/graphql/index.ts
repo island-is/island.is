@@ -1,8 +1,8 @@
 import { Express } from 'express'
 import { ApolloServer } from 'apollo-server-express'
+import { Context } from '../types'
 import merge from 'lodash/merge'
 import rootTypeDefs from './typeDefs'
-
 import domains from './domains'
 
 const resolvers = domains.reduce(
@@ -13,7 +13,7 @@ const resolvers = domains.reduce(
 
 const typeDefs = [rootTypeDefs, ...domains.map((domain) => domain.typeDefs)]
 
-const createServer = (app: Express) => {
+const createServer = (app: Express, context: Context) => {
   const enablePlayground =
     process.env.NODE_ENV === 'development' ||
     process.env.GQL_PLAYGROUND_ENABLED === '1'
@@ -21,6 +21,7 @@ const createServer = (app: Express) => {
   const server = new ApolloServer({
     resolvers,
     typeDefs,
+    context,
     playground: enablePlayground,
     introspection: enablePlayground,
   })

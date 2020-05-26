@@ -3,10 +3,9 @@ import { getApplication, createApplication } from './service'
 
 const resolvers: Resolvers = {
   Mutation: {
-    async createApplication(_, args) {
-      return {
-        application: await createApplication(args.input),
-      }
+    async createApplication(_, args, context) {
+      const application = await createApplication(args.input, context)
+      return { application }
     },
   },
   Query: {
