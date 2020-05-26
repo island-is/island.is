@@ -26,7 +26,8 @@
     "update": "nx migrate latest",
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
-    "help": "nx help"
+    "help": "nx help",
+    "storybook:island-ui": "nx run island-ui-storybook:storybook"
   },
   "private": true,
   "dependencies": {
@@ -40,12 +41,14 @@
     "apollo-link-http-common": "0.2.16",
     "apollo-link-retry": "2.2.16",
     "apollo-server-express": "2.13.0",
+    "aws-sdk": "2.678.0",
     "classnames": "2.2.6",
     "cookie-parser": "1.4.5",
     "document-register-element": "1.13.1",
     "entropy-string": "4.2.0",
     "express": "4.17.1",
     "express-validator": "6.4.1",
+    "formik": "^2.1.4",
     "graphql-tag": "2.10.3",
     "islandis-login": "1.1.4",
     "isomorphic-unfetch": "3.0.0",
@@ -59,11 +62,17 @@
     "pg-hstore": "2.3.3",
     "pubsub-js": "1.8.0",
     "react": "16.12.0",
+    "react-animate-height": "^2.0.21",
     "react-apollo": "3.1.5",
     "react-dom": "16.12.0",
+    "react-keyed-flatten-children": "^1.2.0",
+    "react-number-format": "^4.4.1",
+    "react-select": "^3.1.0",
+    "react-uid": "2.2.0",
+    "reakit": "^1.0.2",
     "rosetta": "1.0.0",
     "sequelize": "5.21.8",
-    "swagger-ui-express": "4.1.4",
+    "sqs-consumer": "5.4.0",
     "treat": "1.4.1",
     "uuidv4": "6.0.8"
   },
@@ -90,6 +99,7 @@
     "@nrwl/storybook": "9.2.4",
     "@nrwl/web": "9.2.4",
     "@nrwl/workspace": "9.2.4",
+    "@storybook/addon-a11y": "^5.3.18",
     "@storybook/addon-knobs": "5.3.9",
     "@storybook/react": "5.3.9",
     "@testing-library/react": "9.4.0",
@@ -98,9 +108,11 @@
     "@types/node": "~8.9.4",
     "@types/react": "16.9.17",
     "@types/react-dom": "16.9.4",
+    "@types/react-select": "^3.0.13",
     "@typescript-eslint/eslint-plugin": "2.19.2",
     "@typescript-eslint/parser": "2.19.2",
     "babel-loader": "8.0.6",
+    "csstype": "^2.6.10",
     "cypress": "^4.1.0",
     "dotenv": "6.2.0",
     "eslint": "6.8.0",
@@ -110,11 +122,13 @@
     "eslint-plugin-react": "7.17.0",
     "eslint-plugin-react-hooks": "2.3.0",
     "jest": "25.2.3",
-    "node-sass": "4.13.1",
     "prettier": "1.19.1",
     "sequelize-cli": "^5.5.1",
     "ts-jest": "25.2.1",
     "ts-node": "~7.0.0",
     "typescript": "~3.8.3"
+  },
+  "resolutions": {
+    "webpack": "4.42.0"
   }
 }

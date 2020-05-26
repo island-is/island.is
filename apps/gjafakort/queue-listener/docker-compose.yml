@@ -1,0 +1,12 @@
+version: '2.1'
+
+services:
+  localstack:
+    container_name: localstack
+    image: localstack/localstack:0.11.1
+    environment:
+      - AWS_DEFAULT_REGION=eu-west-1
+      - SERVICES=sns:4575,sqs:4576
+    ports:
+      - "4575:4575"
+      - "4576:4576"

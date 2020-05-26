@@ -45,7 +45,7 @@
     "gjafakort-api": {
       "tags": []
     },
-    "gjafakort-ui": {
+    "gjafakort-application": {
       "tags": []
     },
     "api": {
@@ -60,7 +60,10 @@
     "island-ui-storybook": {
       "tags": []
     },
-    "application": {
+    "gjafakort-queue-listener": {
+      "tags": []
+    },
+    "message-queue": {
       "tags": []
     }
   }

@@ -1,4 +1,4 @@
-const withTreat = require('next-treat')()
+const withTreat = require('next-treat')() // eslint-disable-line
 
 const {
   API_URL = 'http://localhost:3333/api',

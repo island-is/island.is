@@ -18,16 +18,21 @@
     "baseUrl": ".",
     "paths": {
       "@island.is/island-ui/core": ["libs/island-ui/core/src/index.ts"],
+      "@island.is/island-ui/core/reset": [
+        "libs/island-ui/core/src/reset/index.ts"
+      ],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/lol/dir/nested/my-lib": [
         "libs/lol/dir/nested/my-lib/src/index.ts"
       ],
-      "@island.is/gjafakort-ui": ["libs/gjafakort-ui/src/index.ts"],
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
-      "@island.is/application/*": ["apps/application/src/*"]
+      "@island.is/gjafakort/application/*": [
+        "apps/gjafakort/application/src/*"
+      ],
+      "@island.is/message-queue": ["libs/message-queue/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -122,34 +122,6 @@
         }
       }
     },
-    "gjafakort-ui": {
-      "root": "libs/gjafakort-ui",
-      "sourceRoot": "libs/gjafakort-ui/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "config": "libs/gjafakort-ui/.eslintrc",
-            "tsConfig": [
-              "libs/gjafakort-ui/tsconfig.lib.json",
-              "libs/gjafakort-ui/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/gjafakort-ui/**"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/gjafakort-ui/jest.config.js",
-            "tsConfig": "libs/gjafakort-ui/tsconfig.spec.json",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "gjafakort-web": {
       "root": "apps/gjafakort/web",
       "sourceRoot": "apps/gjafakort/web",
@@ -502,28 +474,28 @@
         }
       }
     },
-    "application": {
-      "root": "apps/application",
-      "sourceRoot": "apps/application/src",
+    "gjafakort-application": {
+      "root": "apps/gjafakort/application",
+      "sourceRoot": "apps/gjafakort/application/src",
       "projectType": "application",
-      "prefix": "application",
+      "prefix": "gjafakort-application",
       "schematics": {},
       "architect": {
         "build": {
           "builder": "@nrwl/node:build",
           "options": {
-            "outputPath": "dist/apps/application",
-            "main": "apps/application/src/main.ts",
-            "tsConfig": "apps/application/tsconfig.app.json",
+            "outputPath": "dist/apps/gjafakort/application",
+            "main": "apps/gjafakort/application/src/main.ts",
+            "tsConfig": "apps/gjafakort/application/tsconfig.app.json",
             "assets": [
               {
                 "glob": "*sequelize*",
-                "input": "apps/application",
+                "input": "apps/gjafakort/application",
                 "output": "./"
               },
               {
                 "glob": "migrations",
-                "input": "apps/application",
+                "input": "apps/gjafakort/application",
                 "output": "./"
               }
             ]
@@ -535,8 +507,8 @@
               "inspect": false,
               "fileReplacements": [
                 {
-                  "replace": "apps/application/src/environments/environment.ts",
-                  "with": "apps/application/src/environments/environment.prod.ts"
+                  "replace": "apps/gjafakort/application/src/environments/environment.ts",
+                  "with": "apps/gjafakort/application/src/environments/environment.prod.ts"
                 }
               ]
             }
@@ -545,7 +517,7 @@
         "serve": {
           "builder": "@nrwl/node:execute",
           "options": {
-            "buildTarget": "application:build"
+            "buildTarget": "gjafakort-application:build"
           }
         },
         "migrate": {
@@ -556,7 +528,7 @@
                 "command": "sequelize-cli db:migrate"
               }
             ],
-            "cwd": "apps/application"
+            "cwd": "apps/gjafakort/application"
           }
         },
         "migrate/generate": {
@@ -567,26 +539,141 @@
                 "command": "sequelize-cli migration:generate --name $(whoami)"
               }
             ],
-            "cwd": "apps/application"
+            "cwd": "apps/gjafakort/application"
           }
         },
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/application/.eslintrc",
+            "config": "apps/gjafakort/application/.eslintrc",
             "tsConfig": [
-              "apps/application/tsconfig.app.json",
-              "apps/application/tsconfig.spec.json"
+              "apps/gjafakort/application/tsconfig.app.json",
+              "apps/gjafakort/application/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/application/**"]
+            "exclude": ["**/node_modules/**", "!apps/gjafakort/application/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/application/jest.config.js",
-            "tsConfig": "apps/application/tsconfig.spec.json",
+            "jestConfig": "apps/gjafakort/application/jest.config.js",
+            "tsConfig": "apps/gjafakort/application/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "docker": {
+          "builder": "@gperdomor/nx-docker:build",
+          "options": {
+            "repository": "gjafakort-application",
+            "dockerfile": "apps/gjafakort/application/Dockerfile",
+            "registry": "$DOCKER_REG",
+            "username": "$DOCKER_REG_USER",
+            "password": "$DOCKER_REG_PASSWORD",
+            "tags": "$DOCKER_TAGS",
+            "build_args": "$BUILD_ARGS",
+            "push": true,
+            "socket": "/var/run/docker.sock"
+          }
+        }
+      }
+    },
+    "gjafakort-queue-listener": {
+      "root": "apps/gjafakort/queue-listener",
+      "sourceRoot": "apps/gjafakort/queue-listener/src",
+      "projectType": "application",
+      "prefix": "gjafakort-queue-listener",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/gjafakort/queue-listener",
+            "main": "apps/gjafakort/queue-listener/src/main.ts",
+            "tsConfig": "apps/gjafakort/queue-listener/tsconfig.app.json"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/gjafakort/queue-listener/src/environments/environment.ts",
+                  "with": "apps/gjafakort/queue-listener/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "gjafakort-queue-listener:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/gjafakort/queue-listener/.eslintrc",
+            "tsConfig": [
+              "apps/gjafakort/queue-listener/tsconfig.app.json",
+              "apps/gjafakort/queue-listener/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/gjafakort/queue-listener/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/gjafakort/queue-listener/jest.config.js",
+            "tsConfig": "apps/gjafakort/queue-listener/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "docker": {
+          "builder": "@gperdomor/nx-docker:build",
+          "options": {
+            "repository": "gjafakort-queue-listener",
+            "dockerfile": "apps/gjafakort/queue-listener/Dockerfile",
+            "registry": "$DOCKER_REG",
+            "username": "$DOCKER_REG_USER",
+            "password": "$DOCKER_REG_PASSWORD",
+            "tags": "$DOCKER_TAGS",
+            "build_args": "$BUILD_ARGS",
+            "push": true,
+            "socket": "/var/run/docker.sock"
+          }
+        }
+      }
+    },
+    "message-queue": {
+      "root": "libs/message-queue",
+      "sourceRoot": "libs/message-queue/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/message-queue/.eslintrc",
+            "tsConfig": [
+              "libs/message-queue/tsconfig.lib.json",
+              "libs/message-queue/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/message-queue/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/message-queue/jest.config.js",
+            "tsConfig": "libs/message-queue/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }

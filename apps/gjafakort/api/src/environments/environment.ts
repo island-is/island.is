@@ -6,4 +6,6 @@ export const environment = {
     jwtSecret: 'supersecret',
     jwtExpiresInSeconds: 1800,
   },
+  applicationUrl: 'http://localhost:4242',
+  applicationExchange: 'gjafakort-application-updates-topic',
 }

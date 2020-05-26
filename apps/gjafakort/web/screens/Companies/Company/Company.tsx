@@ -5,15 +5,15 @@ import { useQuery } from 'react-apollo'
 import { Application } from '../../../graphql/schema'
 
 const ApplicationQuery = gql`
-  query Application {
-    application {
+  query ApplicationQuery($ssn: String!) {
+    application(ssn: $ssn) {
       id
     }
   }
 `
 
 function Company() {
-  const { data, loading } = useQuery(ApplicationQuery)
+  const { data, loading } = useQuery(ApplicationQuery, { variables: { ssn: '1' }})
 
   const application = (data || {}).application as Application
   if (loading) {

@@ -1,13 +1,15 @@
 generates:
   ./apps/gjafakort/api/src/types/schema.d.ts:
     schema:
-      - ./apps/gjafakort/api/src/graphql/**/typeDefs.ts
+      - ./apps/gjafakort/api/src/**/typeDefs.ts
     plugins:
       - typescript
       - typescript-resolvers
+    config:
+      contextType: ./context#Context
   ./apps/gjafakort/web/graphql/schema.tsx:
     schema:
-      - ./apps/gjafakort/api/src/graphql/**/typeDefs.ts
+      - ./apps/gjafakort/api/src/**/typeDefs.ts
     documents:
       - ./apps/gjafakort/web/screens/**/*.(ts|tsx)
     plugins:
@@ -22,6 +24,9 @@ generates:
         object: true
   ./apps/gjafakort/web/graphql/possibleTypes.json:
     schema:
-      - ./apps/gjafakort/api/src/graphql/**/typeDefs.ts
+      - ./apps/gjafakort/api/src/**/typeDefs.ts
     plugins:
       - fragment-matcher
+hooks:
+  afterAllFileWrite:
+    - prettier --write

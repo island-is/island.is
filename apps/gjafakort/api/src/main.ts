@@ -12,11 +12,15 @@ app.use(cookieParser())
 
 app.use('/api/auth', authRoutes)
 
-const graphQLServer = createServer(resolvers, typeDefs)
-graphQLServer.applyMiddleware({ app, path: '/api' })
+createServer(resolvers, typeDefs)
+  .then((graphQLServer) => {
+    graphQLServer.applyMiddleware({ app, path: '/api' })
 
-const port = process.env.port || 3333
-const server = app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}/api`)
-})
-server.on('error', console.error)
+    const port = process.env.port || 3333
+    app
+      .listen(port, () => {
+        console.log(`Listening at http://localhost:${port}/api`)
+      })
+      .on('error', console.error)
+  })
+  .catch((e) => console.error(e))

@@ -13,7 +13,7 @@ RUN yarn
 
 # Adding the rest of the code
 ADD --chown=runner:runners . .
-RUN yarn run build gjafakort-api
+RUN yarn run build gjafakort-api --prod
 
 FROM node:12.16.2-alpine3.11
 

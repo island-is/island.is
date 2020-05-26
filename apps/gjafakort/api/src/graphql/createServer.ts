@@ -2,42 +2,61 @@ import { ApolloServer } from 'apollo-server-express'
 import { DocumentNode } from 'graphql'
 import merge from 'lodash/merge'
 
-import { verifyToken, AuthContext, ACCESS_TOKEN_COOKIE } from '../domains'
-import { Resolvers } from '../types'
+import MessageQueue from '@island.is/message-queue'
+
+import { environment } from '../environments/environment'
+import { verifyToken, ACCESS_TOKEN_COOKIE } from '../domains'
+import { Resolvers, GraphQLContext } from '../types'
 import rootTypeDefs from './typeDefs'
 
-const createServer = (
+const { production, applicationExchange } = environment
+
+const createServer = async (
   resolvers: Resolvers[],
   typeDefs: DocumentNode[],
-): ApolloServer => {
+): Promise<ApolloServer> => {
   const enablePlayground =
     process.env.NODE_ENV === 'development' ||
     process.env.GQL_PLAYGROUND_ENABLED === '1'
 
+  const fooresolvers = resolvers.reduce(
+    (combinedDomains, currentDomain) => merge(currentDomain, combinedDomains),
+    {},
+  )
+
+  const channel = null // TODO: await MessageQueue.connect(production)
+  const context = {
+    channel,
+    appExchangeId:
+      '' /* TODO await channel.declareExchange({
+      name: applicationExchange,
+    }),*/,
+  }
+
   return new ApolloServer({
-    resolvers: resolvers.reduce((acc, resolver) => merge(resolver, acc)),
+    resolvers: fooresolvers,
     typeDefs: [rootTypeDefs, ...typeDefs],
     playground: enablePlayground,
     introspection: enablePlayground,
-    context: ({ req }): AuthContext | null => {
+    context: ({ req }): GraphQLContext | null => {
       const accessToken = req.cookies[ACCESS_TOKEN_COOKIE.name]
       if (!accessToken) {
-        return null
+        return context
       }
 
       const credentials = verifyToken(accessToken)
       if (!credentials) {
         console.error('signature validation failed')
-        return null
+        return context
       }
 
       const { csrfToken, user } = credentials
       if (csrfToken && `Bearer ${csrfToken}` !== req.headers.authorization) {
         console.error('invalid csrf token')
-        return null
+        return context
       }
 
-      return { user }
+      return { ...context, user }
     },
   })
 }

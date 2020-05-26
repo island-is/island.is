@@ -6,4 +6,6 @@ export const environment = {
     jwtSecret: process.env.AUTH_JWT_SECRET,
     jwtExpiresInSeconds: process.env.AUTH_JWT_EXPIRES_IN_SECONDS,
   },
+  applicationUrl: process.env.APPLICATION_URL,
+  applicationExchange: 'gjafakort-application-updates-topic',
 }

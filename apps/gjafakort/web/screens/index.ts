@@ -1,3 +1,6 @@
 export { Companies, Company } from './Companies'
+export { CompanySelection } from './CompanySelection'
+export { CompanySignup } from './CompanySignup'
 export { Home } from './Home'
+export { SignupReady } from './SignupReady'
 export { User } from './User'

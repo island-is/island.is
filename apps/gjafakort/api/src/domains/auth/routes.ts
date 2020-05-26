@@ -5,7 +5,8 @@ import { Entropy } from 'entropy-string'
 import IslandisLogin from 'islandis-login'
 import { uuid } from 'uuidv4'
 
-import { VerifyResult, Credentials } from './types'
+import { Credentials } from '../../types'
+import { VerifyResult } from './types'
 import { REDIRECT_COOKIE, ACCESS_TOKEN_COOKIE, CSRF_COOKIE } from './consts'
 import { environment } from '../../environments/environment'
 

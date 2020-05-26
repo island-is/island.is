@@ -1,11 +1,10 @@
 import jwt from 'jsonwebtoken'
 
-import { Permissions, User, AuthContext, Credentials } from './types'
+import { GraphQLContext, User, Credentials } from '../../types'
+import { Permissions } from './types'
 import { environment } from '../../environments/environment'
 
-export const verifyToken = (
-  token: string,
-): Credentials | null => {
+export const verifyToken = (token: string): Credentials | null => {
   if (!token) {
     return null
   }
@@ -28,7 +27,7 @@ const checkPermissions = (user: User, { role }: Permissions): boolean => {
   }
 }
 
-export const authorize = (permissions: Permissions) => (
+export const authorize = (permissions: Permissions = {}) => (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   target: Record<string, any>,
   propertyKey: string,
@@ -37,7 +36,7 @@ export const authorize = (permissions: Permissions) => (
   const originalValue = descriptor.value
 
   descriptor.value = (...args: object[]) => {
-    const context = args.length === 4 && (args[2] as AuthContext)
+    const context = args.length === 4 && (args[2] as GraphQLContext)
 
     if (!context) {
       throw new Error('Only use this decorator for graphql resolvers.')

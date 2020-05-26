@@ -4,14 +4,6 @@ export type VerifyResult = {
   user?: VerifiedUser
 }
 
-export type User = {
-  ssn: string
-}
-
-export type AuthContext = {
-  user: User
-}
-
 export type VerifiedUser = {
   kennitala: string
   fullname: string
@@ -25,9 +17,4 @@ export type Cookie = {
 
 export type Permissions = {
   role?: 'admin'
-}
-
-export type Credentials = {
-  user: User
-  csrfToken: string
 }
