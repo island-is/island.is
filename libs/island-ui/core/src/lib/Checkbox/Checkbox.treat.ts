@@ -1,5 +1,9 @@
 import { style } from 'treat'
 import { theme } from '../../theme'
+import {
+  inputErrorState,
+  errorMessage as inputErrorMessage,
+} from '../Input/Input.mixins'
 
 const checkboxSize = 24
 const checkboxMargin = 16
@@ -51,3 +55,6 @@ export const checkboxChecked = style({
     },
   },
 })
+
+export const checkboxError = style(inputErrorState)
+export const errorMessage = style(inputErrorMessage)
