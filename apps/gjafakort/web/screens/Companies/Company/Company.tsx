@@ -16,7 +16,7 @@ const companies = [
   },
   {
     name: 'Kosmos & Kaos',
-    ssn: '1903795829',
+    ssn: '1903795839',
     state: 'approved',
   },
 ]
