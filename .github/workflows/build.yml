@@ -95,7 +95,7 @@ jobs:
         run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/check_formatting.sh
 
       - name: Lining
-        run: BRANCH=$DOCKER_BRANCH_TAG ./script/run-nx-in-parallel.sh lint
+        run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/run-nx-in-parallel.sh lint
 
       - name: Docker login to ECR repo
         run: |
@@ -106,7 +106,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Building
-        run: BRANCH=$DOCKER_BRANCH_TAG ./script/run-nx-in-parallel.sh build
+        run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/run-nx-in-parallel.sh build
 
       # - name: Auditing Node.js modules
       #   run: yarn run security:audit
