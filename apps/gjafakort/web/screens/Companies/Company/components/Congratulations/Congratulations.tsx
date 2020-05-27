@@ -11,7 +11,8 @@ import {
   Button,
   Icon,
 } from '@island.is/island-ui/core'
-import packageSvg from '../../assets/ferdagjof-pakki.svg'
+
+import packageSvg from '../../../../../assets/ferdagjof-pakki.svg'
 
 const mockAccordion = [
   {
@@ -24,7 +25,7 @@ const mockAccordion = [
   },
 ]
 
-function SignupReady() {
+function Congratulations() {
   return (
     <Box marginTop={12}>
       <ContentBlock width="large">
@@ -74,4 +75,4 @@ function SignupReady() {
   )
 }
 
-export default SignupReady
+export default Congratulations
