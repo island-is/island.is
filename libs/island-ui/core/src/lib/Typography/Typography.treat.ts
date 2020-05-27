@@ -110,7 +110,7 @@ export const variants: Variants = {
     },
     fontWeight: theme.typography.semiBold,
     lineHeight: 1.142857,
-    color: theme.color.red400,
+    color: theme.color.roseTinted400,
   },
 }
 

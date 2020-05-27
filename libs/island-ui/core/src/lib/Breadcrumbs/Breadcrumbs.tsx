@@ -24,7 +24,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
           </Typography>
           {crumbs.length - 1 > index && (
             <span className={styles.divider}>
-              <Icon type="caret" color={theme.color.red400} />
+              <Icon type="bullet" width="4" color={theme.color.roseTinted400} />
             </span>
           )}
         </span>
