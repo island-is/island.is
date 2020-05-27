@@ -81,7 +81,6 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-2
 
       - name: Set up Docker Buildx
-        if: steps.cache-deps.outputs.cache-hit != 'true'
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1
         with:
