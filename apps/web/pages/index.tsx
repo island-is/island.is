@@ -8,11 +8,18 @@ import {
   Tiles,
   Accordion,
   AccordionItem,
+  BulletList,
+  Bullet,
 } from '@island.is/island-ui/core'
 
 export const Index = () => {
   return (
     <ContentBlock width="large">
+      <BulletList type="ol">
+        <Bullet>This thing is number one</Bullet>
+        <Bullet>This is number two</Bullet>
+        <Bullet>And this one here is number three</Bullet>
+      </BulletList>
       <Box padding={['smallGutter', 'containerGutter']}>
         <Accordion>
           <AccordionItem id="id_1" label="Hvenær þarf að skila umsókn?">
