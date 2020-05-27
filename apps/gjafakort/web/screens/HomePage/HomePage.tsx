@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import {
   ContentBlock,
   Columns,
@@ -113,9 +114,13 @@ const GiftCTA = () => (
       <Box marginBottom={2}>
         <Typography variant="h4">Einstaklingar</Typography>
       </Box>
-      <Button width="fluid" variant="ghost">
-        Skrá fyrirtæki
-      </Button>
+      <Link href="/skra-fyrirtaeki">
+        <span>
+          <Button width="fluid" variant="ghost">
+            Skrá fyrirtæki
+          </Button>
+        </span>
+      </Link>
     </Box>
     <Box textAlign="center" padding={3}>
       <img src={packageSvg} alt="" />
