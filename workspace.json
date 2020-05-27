@@ -560,7 +560,7 @@
         "build": {
           "builder": "@nrwl/node:build",
           "options": {
-            "outputPath": "dist/apps/gjafakort/queue-listener",
+            "outputPath": "dist/apps/gjafakort-queue-listener",
             "main": "apps/gjafakort/queue-listener/src/main.ts",
             "tsConfig": "apps/gjafakort/queue-listener/tsconfig.app.json"
           },

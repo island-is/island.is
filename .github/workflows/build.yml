@@ -71,6 +71,8 @@ jobs:
             export NX_BASE=$(git rev-parse HEAD~1)
           fi
           echo "::set-env name=NX_BASE::${NX_BASE}"
+          echo "::set-env name=BASE::${NX_BASE}"
+          echo "::set-env name=HEAD::${GITHUB_SHA}"
           echo "Base => $NX_BASE"
 
       - name: Cache deps

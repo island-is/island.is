@@ -9,4 +9,4 @@ source $DIR/_common.sh
 
 APP=nx-runner
 docker image inspect ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} -f ' ' || docker buildx build --platform=linux/amd64 --cache-from=type=local,src=$PROJECT_ROOT/cache -f ${DIR}/Dockerfile --target=nx-runner --load --build-arg BUILDKIT_INLINE_CACHE=1 -t ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} $PROJECT_ROOT
-exec docker run --rm ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} nx print-affected --target=$1 --select=tasks.target.project 
+exec docker run --rm ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} nx print-affected --target=$1 --select=tasks.target.project --head=$HEAD --base=$BASE

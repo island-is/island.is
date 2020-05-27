@@ -11,3 +11,5 @@ export DOCKER_REGISTRY=${DOCKER_REGISTRY:-}
 export PUBLISH=${PUBLISH:-false}
 export DOCKER_BUILDKIT=1 
 export PROJECT_ROOT=$DIR/..
+export HEAD=${HEAD:-HEAD}
+export BASE=${BASE:-master}
