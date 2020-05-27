@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-unfetch'
-import { Context, CreateApplicationInput } from '../../../types'
-import { environment } from '../../../environments/environment'
+
+import { GraphQLContext, CreateApplicationInput } from '../../types'
+import { environment } from '../../environments/environment'
 
 const APPLICATION_TYPE = 'gjafakort'
 
@@ -10,15 +11,16 @@ interface Application {
   email: string
 }
 
-const formatApplication = (application: any): Application => ({
-  id: application.id,
-  state: application.state,
-  email: application.data.email,
-})
+const formatApplication = (application: any): Application =>
+  application && {
+    id: application.id,
+    state: application.state,
+    email: application.data.email,
+  }
 
 export const createApplication = async (
   application: CreateApplicationInput,
-  context: Context,
+  context: GraphQLContext,
 ) => {
   const url = `${environment.applicationUrl}/issuers/${application.ssn}/applications`
   const { email } = application

@@ -13,7 +13,7 @@ export type Scalars = {
 
 export type Application = {
   __typename?: 'Application'
-  id: Scalars['String']
+  id?: Maybe<Scalars['String']>
   email: Scalars['String']
   state: Scalars['String']
 }
@@ -40,74 +40,75 @@ export type MutationCreateApplicationArgs = {
 
 export type Query = {
   __typename?: 'Query'
-  getApplication?: Maybe<Application>
+  application?: Maybe<Application>
   root?: Maybe<Scalars['String']>
 }
 
-export type QueryGetApplicationArgs = {
+export type QueryApplicationArgs = {
   ssn: Scalars['String']
 }
 
-export type GetApplicationQueryVariables = {}
-
-export type GetApplicationQuery = { __typename?: 'Query' } & {
-  getApplication?: Maybe<
-    { __typename?: 'Application' } & Pick<Application, 'id'>
-  >
+export type ApplicationQueryQueryVariables = {
+  ssn: Scalars['String']
 }
 
-export const GetApplicationDocument = gql`
-  query GetApplication {
-    getApplication(ssn: "2101932009") {
+export type ApplicationQueryQuery = { __typename?: 'Query' } & {
+  application?: Maybe<{ __typename?: 'Application' } & Pick<Application, 'id'>>
+}
+
+export const ApplicationQueryDocument = gql`
+  query ApplicationQuery($ssn: String!) {
+    application(ssn: $ssn) {
       id
     }
   }
 `
 
 /**
- * __useGetApplicationQuery__
+ * __useApplicationQueryQuery__
  *
- * To run a query within a React component, call `useGetApplicationQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetApplicationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useApplicationQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useApplicationQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetApplicationQuery({
+ * const { data, loading, error } = useApplicationQueryQuery({
  *   variables: {
+ *      ssn: // value for 'ssn'
  *   },
  * });
  */
-export function useGetApplicationQuery(
+export function useApplicationQueryQuery(
   baseOptions?: ApolloReactHooks.QueryHookOptions<
-    GetApplicationQuery,
-    GetApplicationQueryVariables
+    ApplicationQueryQuery,
+    ApplicationQueryQueryVariables
   >,
 ) {
   return ApolloReactHooks.useQuery<
-    GetApplicationQuery,
-    GetApplicationQueryVariables
-  >(GetApplicationDocument, baseOptions)
+    ApplicationQueryQuery,
+    ApplicationQueryQueryVariables
+  >(ApplicationQueryDocument, baseOptions)
 }
-export function useGetApplicationLazyQuery(
+export function useApplicationQueryLazyQuery(
   baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
-    GetApplicationQuery,
-    GetApplicationQueryVariables
+    ApplicationQueryQuery,
+    ApplicationQueryQueryVariables
   >,
 ) {
   return ApolloReactHooks.useLazyQuery<
-    GetApplicationQuery,
-    GetApplicationQueryVariables
-  >(GetApplicationDocument, baseOptions)
+    ApplicationQueryQuery,
+    ApplicationQueryQueryVariables
+  >(ApplicationQueryDocument, baseOptions)
 }
-export type GetApplicationQueryHookResult = ReturnType<
-  typeof useGetApplicationQuery
+export type ApplicationQueryQueryHookResult = ReturnType<
+  typeof useApplicationQueryQuery
 >
-export type GetApplicationLazyQueryHookResult = ReturnType<
-  typeof useGetApplicationLazyQuery
+export type ApplicationQueryLazyQueryHookResult = ReturnType<
+  typeof useApplicationQueryLazyQuery
 >
-export type GetApplicationQueryResult = ApolloReactCommon.QueryResult<
-  GetApplicationQuery,
-  GetApplicationQueryVariables
+export type ApplicationQueryQueryResult = ApolloReactCommon.QueryResult<
+  ApplicationQueryQuery,
+  ApplicationQueryQueryVariables
 >

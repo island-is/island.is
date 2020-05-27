@@ -5,8 +5,8 @@ import { ApolloProvider } from 'react-apollo'
 import { ApolloClient } from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 
+import { client } from '../graphql'
 import { ContentBlock, Box, Header, Page } from '@island.is/island-ui/core'
-import initApollo from '../graphql/client'
 import appWithTranslation from '../i18n/appWithTranslation'
 
 const Layout: React.FC = ({ children }) => {
@@ -103,7 +103,7 @@ const SupportApplication: React.FC<{
   apolloClient: ApolloClient<NormalizedCacheObject>
 }> = ({ Component, pageProps }) => {
   return (
-    <ApolloProvider client={initApollo(pageProps.apolloState)}>
+    <ApolloProvider client={client}>
       <Layout>
         <Component {...pageProps} />
       </Layout>

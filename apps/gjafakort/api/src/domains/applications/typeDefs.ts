@@ -8,7 +8,7 @@ export default gql`
   }
 
   extend type Query {
-    getApplication(ssn: String!): Application
+    application(ssn: String!): Application
   }
 
   input createApplicationInput {
