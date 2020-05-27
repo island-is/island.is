@@ -1,4 +1,14 @@
 export default {
   production: true,
   exchangeName: 'gjafakort-application-updates-topic',
+  applicationUrl: process.env.APPLICATION_URL,
+  ferdalag: {
+    url: process.env.FERDALAG_URL,
+    apiKey: process.env.FERDALAG_API_KEY,
+  },
+  yay: {
+    url: process.env.YAY_URL,
+    apiKey: process.env.YAY_API_KEY,
+    secretKey: process.env.YAY_SECRET_KEY,
+  },
 }

@@ -1,18 +1,13 @@
-import * as ferdalagApplicationApproved from './ferdalagApplicationApproved'
-import * as yayApplicationCreated from './yayApplicationCreated'
-import * as yayApplicationRejected from './yayApplicationRejected'
-import { Message } from '@island.is/message-queue'
+import * as ferdalagApplication from './ferdalagApplication'
+import * as yayApplication from './yayApplication'
+import { Message, RoutingKey } from '@island.is/message-queue'
 
 interface Handler {
   queueName: string
-  routingKeys: string[]
-  handler: (message: Message) => Promise<void>
+  routingKeys: RoutingKey[]
+  handler: (message: Message, routingKey: RoutingKey) => Promise<void>
 }
 
-const handlers: Handler[] = [
-  ferdalagApplicationApproved,
-  yayApplicationCreated,
-  yayApplicationRejected,
-]
+const handlers: Handler[] = [ferdalagApplication, yayApplication]
 
 export default handlers

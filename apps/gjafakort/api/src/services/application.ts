@@ -34,7 +34,7 @@ export const createApplication = async (
   state: string,
   comments: string[],
 ): Promise<ApplicationResponse> => {
-  const url = `${environment.applicationUrl}/issuers/${application.ssn}/applications`
+  const url = `${environment.applicationUrl}/issuers/${application.companySSN}/applications`
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

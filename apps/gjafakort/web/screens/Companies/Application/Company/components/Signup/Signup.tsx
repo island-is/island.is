@@ -135,7 +135,7 @@ function Signup({ company, handleSubmition }: PropTypes) {
             </Box>
             <Formik
               initialValues={{
-                ssn: company.ssn,
+                companySSN: company.ssn,
                 companyName: company.name,
                 companyDisplayName: company.application?.companyDisplayName,
                 serviceCategory: company.application?.serviceCategory,
@@ -183,7 +183,7 @@ function Signup({ company, handleSubmition }: PropTypes) {
                         component={FieldNumberInput}
                         label="Kennitala"
                         disabled
-                        name="ssn"
+                        name="companySSN"
                         format="######-####"
                       />
                       <Field
