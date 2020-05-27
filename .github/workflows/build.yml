@@ -95,7 +95,7 @@ jobs:
         run: PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG ./scripts/check_formatting.sh
 
       - name: Lining
-        run: PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG nx affected --target=ci-script --args="--script=lint" --parallel
+        run: PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG npx nx affected --target=ci-script --args="--script=lint" --parallel
 
       - name: Docker login to ECR repo
         run: |
@@ -106,7 +106,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Building
-        run: PUBLISH=true BRANCH=$DOCKER_BRANCH_TAG nx affected --target=ci-script --args="--script=build" --parallel
+        run: PUBLISH=true BRANCH=$DOCKER_BRANCH_TAG npx nx affected --target=ci-script --args="--script=build" --parallel
 
       # - name: Auditing Node.js modules
       #   run: yarn run security:audit
