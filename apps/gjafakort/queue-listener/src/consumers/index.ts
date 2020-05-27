@@ -20,9 +20,9 @@ export const startConsumers = async () => {
         routingKeys: handler.routingKeys,
       })
 
-      channel.consume({ queueId, handler: handler.handler })
-
+      const consumer = channel.consume({ queueId, handler: handler.handler })
       console.log(`Listening on queue ${handler.queueName}`)
+      return consumer
     }),
   )
 }

@@ -80,11 +80,16 @@ class Channel {
     exchangeId: string
     routingKeys?: string[]
   }) {
+    const { QueueArn } = await this.getQueueAttributes({
+      queueId,
+      attributes: ['QueueArn'],
+    })
+
     const { SubscriptionArn } = await this.sns
       .subscribe({
         Protocol: 'sqs',
         TopicArn: exchangeId,
-        Endpoint: queueId,
+        Endpoint: QueueArn,
       })
       .promise()
 
@@ -113,7 +118,7 @@ class Channel {
     queueId: string
     handler: (message: Message) => Promise<void>
   }) {
-    const app = Consumer.create({
+    const consumer = Consumer.create({
       queueUrl: queueId,
       handleMessage: async ({ Body }) => {
         const parsedBody = JSON.parse(Body)
@@ -122,15 +127,16 @@ class Channel {
       },
     })
 
-    app.on('error', (err) => {
+    consumer.on('error', (err) => {
       console.error('Unexpected error', err.message)
     })
 
-    app.on('processing_error', (err) => {
+    consumer.on('processing_error', (err) => {
       console.error('Failed processing message', err.message)
     })
 
-    app.start()
+    consumer.start()
+    return consumer
   }
 
   async publish({

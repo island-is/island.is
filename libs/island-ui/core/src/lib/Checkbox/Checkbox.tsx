@@ -1,26 +1,41 @@
-import React from 'react'
+import React, { ReactElement } from 'react'
 import { useUID } from 'react-uid'
 import cn from 'classnames'
 
 import * as styles from './Checkbox.treat'
 import Icon from '../Icon/Icon'
+import Tooltip from '../Tooltip/Tooltip'
+import { Box } from '../Box'
 
 export interface CheckboxProps {
   name?: string
+  id?: string
   label?: string
   checked?: boolean
   disabled?: boolean
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
+  tooltip?: string
+  hasError?: boolean
+  errorMessage?: string
 }
 
 export const Checkbox = ({
   label,
   name,
+  id = name,
   checked,
   disabled,
   onChange,
+  tooltip,
+  hasError,
+  errorMessage,
 }: CheckboxProps) => {
-  const id = useUID()
+  const ariaError = hasError
+    ? {
+        'aria-invalid': true,
+        'aria-describedby': id,
+      }
+    : {}
   return (
     <div className={styles.container}>
       <input
@@ -30,6 +45,7 @@ export const Checkbox = ({
         disabled={disabled}
         id={id}
         onChange={onChange}
+        {...ariaError}
       />
       <label
         className={cn(styles.label, {
@@ -40,6 +56,7 @@ export const Checkbox = ({
         <div
           className={cn(styles.checkbox, {
             [styles.checkboxChecked]: checked,
+            [styles.checkboxError]: hasError,
           })}
         >
           <Icon
@@ -49,6 +66,16 @@ export const Checkbox = ({
           />
         </div>
         {label}
+        {tooltip && (
+          <Box marginLeft={2} display="inlineBlock">
+            <Tooltip text={tooltip} />
+          </Box>
+        )}
+        {hasError && errorMessage && (
+          <div className={styles.errorMessage} id={id}>
+            {errorMessage}
+          </div>
+        )}
       </label>
     </div>
   )

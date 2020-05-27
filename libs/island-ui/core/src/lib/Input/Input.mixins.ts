@@ -56,7 +56,6 @@ export const placeholder = {
 
 // Error state
 export const errorMessage = {
-  display: 'inline-block',
   color: theme.color.red400,
   fontWeight: theme.typography.medium,
   fontSize: inputLabelFontSize,

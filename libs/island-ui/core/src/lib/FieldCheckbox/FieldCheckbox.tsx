@@ -1,15 +1,19 @@
 import React from 'react'
-import { FieldInputProps } from 'formik'
+import { FormikState, FieldInputProps } from 'formik'
+import { get } from 'lodash'
 import { Checkbox, CheckboxProps } from '../Checkbox/Checkbox'
 
 export interface FieldCheckboxProps extends CheckboxProps {
   field?: FieldInputProps<boolean>
+  form?: FormikState<string | number>
 }
 
 export const FieldCheckbox = ({
   field: { onChange, value, ...field },
+  form: { touched, errors },
   ...props
 }: FieldCheckboxProps) => {
+  const nameArray = (field.name && field.name.split('.')) || []
   return (
     <Checkbox
       {...props}
@@ -26,6 +30,8 @@ export const FieldCheckbox = ({
         }
         onChange(event)
       }}
+      hasError={!!(get(touched, nameArray) && get(errors, nameArray))}
+      errorMessage={get(errors, nameArray)}
     />
   )
 }

@@ -1,17 +1,19 @@
 import React, { useState, useRef, forwardRef } from 'react'
 import cn from 'classnames'
 import * as styles from './Input.treat'
-import { useUID } from 'react-uid'
+import { Box } from '../Box'
+import Tooltip from '../Tooltip/Tooltip'
 
 interface InputProps {
+  name: string
   label?: string
-  name?: string
   id?: string
   value?: string | number
   disabled?: boolean
   hasError?: boolean
   errorMessage?: string
   placeholder?: string
+  tooltip?: string
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
@@ -42,15 +44,15 @@ export const Input = forwardRef(
       onFocus,
       onBlur,
       placeholder,
+      tooltip,
       ...inputProps
     } = props
     const [hasFocus, setHasFocus] = useState(false)
     const inputRef = useRef(null)
-    const errorID = useUID()
     const ariaError = hasError
       ? {
           'aria-invalid': true,
-          'aria-describedby': errorID,
+          'aria-describedby': id,
         }
       : {}
 
@@ -76,6 +78,11 @@ export const Input = forwardRef(
             })}
           >
             {label}
+            {tooltip && (
+              <Box marginLeft={1} display="inlineBlock">
+                <Tooltip text={tooltip} />
+              </Box>
+            )}
           </label>
           <input
             className={styles.input}
@@ -102,7 +109,7 @@ export const Input = forwardRef(
           />
         </div>
         {hasError && errorMessage && (
-          <div className={styles.errorMessage} id={errorID}>
+          <div className={styles.errorMessage} id={id}>
             {errorMessage}
           </div>
         )}
