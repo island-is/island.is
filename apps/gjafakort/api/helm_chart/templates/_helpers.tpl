@@ -56,7 +56,7 @@ Create the name of the service account to use
 */}}
 {{- define "gjafakort-api.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create -}}
-    {{ default (include "gjafakort-api.fullname" .) .Values.serviceAccount.name }}
+    {{ default .Values.serviceAccount.name }}
 {{- else -}}
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}

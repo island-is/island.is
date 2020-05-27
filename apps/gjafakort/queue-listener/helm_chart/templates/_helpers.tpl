@@ -56,7 +56,7 @@ Create the name of the service account to use
 */}}
 {{- define "gjafakort-queue-listener.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create -}}
-    {{ default (include "gjafakort-queue-listener.fullname" .) .Values.serviceAccount.name }}
+    {{ default .Values.serviceAccount.name }}
 {{- else -}}
     {{ default "default" .Values.serviceAccount.name }}
 {{- end -}}
