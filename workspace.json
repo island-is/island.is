@@ -184,14 +184,15 @@
             "passWithNoTests": true
           }
         },
-        "docker": {
+        "ci-script": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
               {
-                "command": "APP=gjafakort-web ./scripts/build-docker-image.sh"
+                "command": "APP=gjafakort-web ./scripts/{args.script}.sh"
               }
-            ]
+            ],
+            "parallel": true
           }
         }
       }
@@ -290,14 +291,15 @@
             ]
           }
         },
-        "docker": {
+        "ci-script": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
               {
-                "command": "APP=gjafakort-api ./scripts/build-docker-image.sh"
+                "command": "APP=gjafakort-api ./scripts/{args.script}.sh"
               }
-            ]
+            ],
+            "parallel": true
           }
         }
       }
