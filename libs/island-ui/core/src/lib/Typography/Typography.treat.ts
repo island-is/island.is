@@ -13,6 +13,7 @@ export type VariantTypes =
   | 'h5'
   | 'intro'
   | 'eyebrow'
+  | 'breadcrumb'
 
 type ResponsiveProps<T> = {
   xs?: T
@@ -99,6 +100,15 @@ export const variants: Variants = {
       md: 14,
     },
     fontWeight: theme.typography.medium,
+    lineHeight: 1.142857,
+    color: theme.color.red400,
+  },
+  breadcrumb: {
+    fontSize: {
+      xs: 14,
+      md: 16,
+    },
+    fontWeight: theme.typography.semiBold,
     lineHeight: 1.142857,
     color: theme.color.red400,
   },
