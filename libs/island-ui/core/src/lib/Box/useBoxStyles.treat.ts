@@ -122,28 +122,22 @@ export const borderRadius = {
   ),
 }
 
-const widthRules = {
-  full: '100%',
-}
 export const width = {
-  ...styleMap(mapToStyleProperty(widthRules, 'width'), 'width'),
   ...styleMap(
-    (theme) => ({
+    {
+      full: { width: '100%' },
       touchable: { width: theme.spacing[1] * theme.touchableSize },
-    }),
+    },
     'width',
   ),
 }
 
-const heightRules = {
-  full: '100%',
-}
 export const height = {
-  ...styleMap(mapToStyleProperty(heightRules, 'height'), 'height'),
   ...styleMap(
-    (theme) => ({
+    {
+      full: { height: '100%' },
       touchable: { height: theme.spacing[1] * theme.touchableSize },
-    }),
+    },
     'height',
   ),
 }
