@@ -13,7 +13,7 @@ export type Scalars = {
 
 export type Application = {
   __typename?: 'Application'
-  id?: Maybe<Scalars['String']>
+  id: Scalars['String']
   email: Scalars['String']
   state: Scalars['String']
 }
