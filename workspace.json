@@ -183,17 +183,6 @@
             "tsConfig": "apps/gjafakort/web/tsconfig.spec.json",
             "passWithNoTests": true
           }
-        },
-        "ci-script": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              {
-                "command": "APP=gjafakort-web ./scripts/{args.script}.sh"
-              }
-            ],
-            "parallel": true
-          }
         }
       }
     },
@@ -289,17 +278,6 @@
                 "command": "graphql-codegen --config apps/gjafakort/codegen.yml"
               }
             ]
-          }
-        },
-        "ci-script": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              {
-                "command": "APP=gjafakort-api ./scripts/{args.script}.sh"
-              }
-            ],
-            "parallel": true
           }
         }
       }

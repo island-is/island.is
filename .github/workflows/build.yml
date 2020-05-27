@@ -89,13 +89,13 @@ jobs:
 
       - name: Building dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
-        run: APP=gjafakort-api PUBLISH=true BRANCH=$DOCKER_BRANCH_TAG ./scripts/prepare_deps.sh
+        run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/prepare_deps.sh
 
       - name: Check formatting
-        run: PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG ./scripts/check_formatting.sh
+        run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/check_formatting.sh
 
       - name: Lining
-        run: PUBLISH=false BRANCH=$DOCKER_BRANCH_TAG npx nx affected --target=ci-script --args="--script=lint" --parallel
+        run: BRANCH=$DOCKER_BRANCH_TAG ./script/run-nx-in-parallel.sh lint
 
       - name: Docker login to ECR repo
         run: |
@@ -106,7 +106,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Building
-        run: PUBLISH=true BRANCH=$DOCKER_BRANCH_TAG npx nx affected --target=ci-script --args="--script=build" --parallel
+        run: BRANCH=$DOCKER_BRANCH_TAG ./script/run-nx-in-parallel.sh build
 
       # - name: Auditing Node.js modules
       #   run: yarn run security:audit

@@ -1,4 +1,7 @@
 FROM node:12.16.2-alpine3.11 as deps
+
+RUN apk add -U git
+
 WORKDIR /build
 
 # Adding user for building the app
@@ -36,6 +39,10 @@ ARG APP
 ENV APP=${APP}
 
 CMD yarn run test ${APP}
+
+FROM src as nx-runner
+
+ENV PATH=./node_modules/.bin:$PATH
 
 FROM node:12.16.2-alpine3.11 as output-express
 
