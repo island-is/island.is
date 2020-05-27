@@ -3,6 +3,7 @@ import ReactSelect, { components, ValueType, ActionMeta } from 'react-select'
 import cn from 'classnames'
 import * as styles from './Select.treat'
 import Icon from '../Icon/Icon'
+import { theme } from '../../theme'
 
 export type Option = {
   label: string
@@ -15,6 +16,8 @@ export interface SelectProps {
   id?: string
   disabled?: boolean
   options: Option[]
+  hasError?: boolean
+  errorMessage?: string
   noOptionsMessage?: string
   onChange?: ((
     value: ValueType<Option>,
@@ -36,6 +39,8 @@ export const Select = ({
   onChange,
   label,
   value,
+  hasError = false,
+  errorMessage = '',
   placeholder = '',
   defaultValue,
 }: SelectProps) => {
@@ -55,6 +60,7 @@ export const Select = ({
         placeholder={placeholder}
         defaultValue={defaultValue}
         isOptionDisabled={(option) => option.disabled}
+        hasError={hasError}
         components={{
           Control,
           Input,
@@ -67,6 +73,11 @@ export const Select = ({
           Option,
         }}
       />
+      {hasError && errorMessage && (
+        <div className={styles.errorMessage} id={id}>
+          {errorMessage}
+        </div>
+      )}
     </div>
   )
 }
@@ -89,7 +100,13 @@ const IndicatorsContainer = (props) => (
 
 const DropdownIndicator = (props) => (
   <components.DropdownIndicator className={styles.dropdownIndicator} {...props}>
-    <Icon type="cheveron" width="25" />
+    <Icon
+      type="cheveron"
+      width="25"
+      color={
+        props.selectProps.hasError ? theme.color.red400 : theme.color.blue400
+      }
+    />
   </components.DropdownIndicator>
 )
 
@@ -114,6 +131,7 @@ const Control = (props) => {
     <components.Control
       className={cn(styles.container, {
         [styles.containerDisabled]: props.isDisabled,
+        [styles.hasError]: props.selectProps.hasError,
       })}
       {...props}
     >
