@@ -111,10 +111,12 @@ const GiftCTA = () => (
       <Button width="fluid">Sækja Ferðagjöf</Button>
     </Box>
     <Box background="purple100" padding={4} marginBottom={3}>
-      <Box marginBottom={2}>
-        <Typography variant="h4">Einstaklingar</Typography>
-      </Box>
-      <Link href="/skra-fyrirtaeki">
+      <Link href="/notendur">
+        <Box marginBottom={2}>
+          <Typography variant="h4">Einstaklingar</Typography>
+        </Box>
+      </Link>
+      <Link href="/fyrirtaeki">
         <span>
           <Button width="fluid" variant="ghost">
             Skrá fyrirtæki
