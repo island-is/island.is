@@ -11,11 +11,12 @@ interface Application {
   email: string
 }
 
-const formatApplication = (application: any): Application => ({
-  id: application.id,
-  state: application.state,
-  email: application.data.email,
-})
+const formatApplication = (application: any): Application =>
+  application && {
+    id: application.id,
+    state: application.state,
+    email: application.data.email,
+  }
 
 export const createApplication = async (
   application: CreateApplicationInput,

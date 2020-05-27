@@ -3,10 +3,11 @@ import fetch from 'isomorphic-unfetch'
 
 import { RequestsService } from '../services'
 
-const isBrowser: boolean = (process as any).browser
+const isBrowser: boolean = process.browser
 
 // Polyfill fetch() on the server (used by apollo-client)
 if (!isBrowser) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ;(global as any).fetch = fetch
 }
 

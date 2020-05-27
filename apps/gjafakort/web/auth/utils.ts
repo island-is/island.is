@@ -8,11 +8,13 @@ export type DecodedToken = {
   readonly csrfToken: string
 }
 
-export const getAccessToken = (ctx: any) => {
+type CookieContext = { req?: { headers: { cookie?: string } } }
+
+export const getAccessToken = (ctx: CookieContext) => {
   return cookies(ctx || {})[COOKIE_KEY]
 }
 
-export const decodeToken = (ctx: any): DecodedToken | null => {
+export const decodeToken = (ctx: CookieContext): DecodedToken | null => {
   const token = getAccessToken(ctx)
 
   if (!token) {
@@ -28,7 +30,7 @@ export const decodeToken = (ctx: any): DecodedToken | null => {
   return decodedToken
 }
 
-export const isAuthenticated = (ctx: any) => {
+export const isAuthenticated = (ctx: CookieContext) => {
   const { exp = 0 } = decodeToken(ctx) || {}
   return new Date() < new Date(exp * 1000)
 }

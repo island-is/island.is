@@ -20,7 +20,7 @@ function Company() {
     return <div>Loading...</div>
   }
 
-  return <div>Company page, owned by {application.id}</div>
+  return <div>Company page, owned by {application && application.id}</div>
 }
 
 export default Company

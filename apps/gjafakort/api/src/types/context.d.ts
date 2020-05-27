@@ -5,8 +5,7 @@ export type User = {
 }
 
 export interface GraphQLContext {
-  // TODO: not optional
-  channel?: Channel
+  channel: Channel
   appExchangeId: string
   user?: User
 }

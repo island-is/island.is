@@ -24,13 +24,12 @@ const createServer = async (
     {},
   )
 
-  const channel = null // TODO: await MessageQueue.connect(production)
+  const channel = await MessageQueue.connect(production)
   const context = {
     channel,
-    appExchangeId:
-      '' /* TODO await channel.declareExchange({
+    appExchangeId: await channel.declareExchange({
       name: applicationExchange,
-    }),*/,
+    }),
   }
 
   return new ApolloServer({

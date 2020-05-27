@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   type Application {
-    id: String
+    id: String!
     email: String!
     state: String!
   }
