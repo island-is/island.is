@@ -1,5 +1,6 @@
 import React from 'react'
 import { Formik, Form, Field } from 'formik'
+import * as Yup from 'yup'
 import {
   FieldInput,
   FieldNumberInput,
@@ -12,54 +13,89 @@ import {
   Stack,
   Button,
   Typography,
+  FieldSelect,
+  Option,
 } from '@island.is/island-ui/core'
-
-// TODO: move this to a more central place or use another if it already excists
-const isEmailValid = (email) => {
-  const re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
-  return re.test(email)
-}
+import { Company } from '../CompanySignupWrapper/CompanySignupWrapper'
 
 const companyOperations = [
   {
     name: 'validPermit',
     label: 'Fyrirtæki með gilt starfsleyfi Ferðamálastofu',
+    tooltip: 'test',
   },
   {
     name: 'validLicenses',
     label:
       'Fyrirtæki með rekstrarleyfi vegna veitingastaða, gististaða og skemmtanahalds',
+    tooltip: 'test',
   },
   {
     name: 'operatingPermitForVehicles',
     label: 'Fyrirtæki með starfsleyfi vegna leigu skráningarskyldra ökutækja',
+    tooltip: 'test',
   },
   {
     name: 'acknowledgedMuseum',
     label: 'Safn viðurkennt skv. safnalögum',
+    tooltip: 'test',
   },
   {
     name: 'exhibition',
     label: 'Sýning sem gerir út á náttúru eða menningu eða sögu',
+    tooltip: 'test',
   },
   {
     name: 'followingLaws',
     label:
       'Fyrirtæki í atvinnurekstri á grundvelli laga um hollustuhætti og mengunarvarnar s.s. baðstofur, gufubaðsstofur, götuleikhús, tvívolu, útihátíðir, tjald og hjólhýsasvæði',
+    tooltip: 'test',
   },
   {
     name: 'noneOfTheAbove',
     label: 'Ekkert að ofangreindu á við',
+    tooltip: 'test',
   },
 ]
 
-function CompanySignup() {
-  const companyName = 'Kaffi klettur'
-  const ssn = '1902795829'
-  const isat = 'IS-5978512'
-  const serviceCategory = 'Veitingastaður'
-  const address = 'Biskupsbraut 18'
-  const postNumber = '230'
+interface CompanySignupProps {
+  company: Company
+  onSubmit: (values: {
+    companyName: string
+    ssn: string | number
+    companyDisplayName: string
+    serviceCategory: Option
+    name: string
+    email: string
+    generalEmail: string
+    webpage: string
+    phoneNumber: string
+    approveTerms: boolean
+  }) => void
+}
+
+const emailValidation = Yup.string()
+  .email('Netfang ekki gilt')
+  .required('Þessi reitur má ekki vera tómur')
+
+const SignupSchema = Yup.object().shape({
+  companyDisplayName: Yup.string().required('Þessi reitur má ekki vera tómur'),
+  serviceCategory: Yup.object()
+    .nullable()
+    .required('Þessi reitur má ekki vera tómur'),
+  name: Yup.string().required('Þessi reitur má ekki vera tómur'),
+  email: emailValidation,
+  generalEmail: emailValidation,
+  phoneNumber: Yup.string()
+    .length(7, 'Símanúmer þarf að vera sjö tölustafir')
+    .required('Þessi reitur má ekki vera tómur'),
+  approveTerms: Yup.bool().oneOf(
+    [true],
+    'Það þarf að samþykkja skilmála til að halda áfram',
+  ),
+})
+
+function CompanySignup({ company, onSubmit }: CompanySignupProps) {
   const intro = 'Fylltu inn upplýsingar hér að neðan'
   return (
     <ContentBlock width="large">
@@ -69,12 +105,11 @@ function CompanySignup() {
             background="blue100"
             paddingX={[5, 12]}
             paddingY={[5, 9]}
-            borderRadius="standard"
             marginTop={12}
           >
             <Box marginBottom={2}>
               <Typography variant="h1" as="h1">
-                {companyName}
+                {company.name}
               </Typography>
             </Box>
             <Box marginBottom={6}>
@@ -82,12 +117,10 @@ function CompanySignup() {
             </Box>
             <Formik
               initialValues={{
-                companyName,
-                ssn,
-                isat,
-                serviceCategory,
-                address,
-                postNumber,
+                companyName: company.name,
+                ssn: company.ssn,
+                companyDisplayName: company.name,
+                serviceCategory: null,
                 name: '',
                 email: '',
                 generalEmail: '',
@@ -95,36 +128,8 @@ function CompanySignup() {
                 phoneNumber: '',
                 approveTerms: false,
               }}
-              validate={(values) => {
-                const errors = {}
-                if (!values.name) {
-                  errors['name'] = 'Þessi reitur má ekki vera tómur'
-                }
-                if (!values.email) {
-                  errors['email'] = 'Þessi reitur má ekki vera tómur'
-                } else if (!isEmailValid(values.email)) {
-                  errors['email'] = 'Netfang ekki gilt'
-                }
-                if (!values.generalEmail) {
-                  errors['generalEmail'] = 'Þessi reitur má ekki vera tómur'
-                } else if (!isEmailValid(values.generalEmail)) {
-                  errors['generalEmail'] = 'Netfang ekki gilt'
-                }
-                if (!values.phoneNumber) {
-                  errors['phoneNumber'] = 'Þessi reitur má ekki vera tómur'
-                } else if (values.phoneNumber.length !== 7) {
-                  errors['phoneNumber'] =
-                    'Símanúmer þarf að vera sjö tölustafir'
-                }
-                if (!values.approveTerms) {
-                  errors['approveTerms'] =
-                    'Það þarf að samþykkja skilmála til að halda áfram'
-                }
-                return errors
-              }}
-              onSubmit={(values) => {
-                console.log('submit', values)
-              }}
+              validationSchema={SignupSchema}
+              onSubmit={onSubmit}
               enableReinitialize
             >
               {() => (
@@ -146,27 +151,21 @@ function CompanySignup() {
                       />
                       <Field
                         component={FieldInput}
-                        label="Isat flokkun"
-                        name="isat"
-                        disabled
+                        label="Nafn fyrirtækis útávið"
+                        name="companyDisplayName"
+                        tooltip="test"
                       />
                       <Field
-                        component={FieldInput}
-                        label="Þjónustuflokkur"
+                        component={FieldSelect}
                         name="serviceCategory"
-                        disabled
-                      />
-                      <Field
-                        component={FieldInput}
-                        label="Heimilisfang"
-                        name="address"
-                        disabled
-                      />
-                      <Field
-                        component={FieldInput}
-                        label="Póstnúmer"
-                        name="postNumber"
-                        disabled
+                        label="Þjónustuflokkur"
+                        placeholder="Veldu flokk"
+                        options={[
+                          {
+                            label: 'Veitingastaður',
+                            value: 'resturant',
+                          },
+                        ]}
                       />
                     </Tiles>
                   </Box>

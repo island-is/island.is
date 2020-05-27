@@ -75,7 +75,7 @@ export const variants: Variants = {
       xs: 15,
       md: 18,
     },
-    fontWeight: theme.typography.regular,
+    fontWeight: theme.typography.light,
     lineHeight: 1.5,
   },
   pSmall: {
@@ -91,7 +91,7 @@ export const variants: Variants = {
       xs: 20,
       md: 24,
     },
-    fontWeight: theme.typography.regular,
+    fontWeight: theme.typography.light,
     lineHeight: 1.416667,
   },
   eyebrow: {
@@ -99,7 +99,7 @@ export const variants: Variants = {
       xs: 12,
       md: 14,
     },
-    fontWeight: theme.typography.medium,
+    fontWeight: theme.typography.semiBold,
     lineHeight: 1.142857,
     color: theme.color.red400,
   },

@@ -40,12 +40,19 @@ export const input = style(inputMixins.input, 'input')
 globalStyle(`${wrapper} ${input} input`, inputMixins.input)
 globalStyle(`${wrapper} ${input} input:focus`, inputMixins.inputFocus)
 
+export const errorMessage = style(inputMixins.errorMessage)
+export const hasError = style({})
+
 export const containerDisabled = style({})
 export const container = style({}, 'container')
 globalStyle(`${wrapper} .island-select__control${container}`, {
   ...inputMixins.container,
   transition: 'border-color 0.1s',
 })
+globalStyle(
+  `${wrapper} .island-select__control${container}${hasError}`,
+  inputMixins.inputErrorState,
+)
 globalStyle(
   `${wrapper} .island-select__control${container}${containerDisabled}`,
   inputMixins.containerDisabled,
@@ -67,7 +74,12 @@ globalStyle(
   },
 )
 
-export const label = style(inputMixins.label, 'label')
+export const label = style({
+  ...inputMixins.label,
+  selectors: {
+    [`${hasError} &`]: inputMixins.labelErrorState,
+  },
+})
 export const singleValue = style(
   {
     marginLeft: 0,
