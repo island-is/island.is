@@ -1,2 +1,2 @@
-export {default as NotificationService} from './notification';
-export {default as RequestsService} from './requests';
+export { default as NotificationService } from './notification'
+export { default as RequestsService } from './requests'

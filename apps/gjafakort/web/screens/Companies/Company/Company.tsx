@@ -13,7 +13,9 @@ const ApplicationQuery = gql`
 `
 
 function Company() {
-  const { data, loading } = useQuery(ApplicationQuery, { variables: { ssn: '1' }})
+  const { data, loading } = useQuery(ApplicationQuery, {
+    variables: { ssn: '1' },
+  })
 
   const application = (data || {}).application as Application
   if (loading) {
