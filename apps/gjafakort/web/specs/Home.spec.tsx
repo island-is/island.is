@@ -1,11 +1,11 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 
-import { HomePage } from '../screens'
+import { Home } from '../screens'
 
-describe('HomePage', () => {
+describe('Home', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<HomePage />)
+    const { baseElement } = render(<Home />)
     expect(baseElement).toBeTruthy()
   })
 })
