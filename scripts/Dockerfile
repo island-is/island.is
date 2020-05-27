@@ -10,8 +10,6 @@ USER runner
 ADD --chown=runner:runners package.json yarn.lock ./
 RUN yarn && rm -rf /home/runner/.cache
 
-ARG APP
-ENV APP=${APP}
 
 FROM deps as src
 
@@ -22,14 +20,20 @@ FROM src as formatting
 RUN yarn run format:check --all
 
 FROM src as builder
+ARG APP
+ENV APP=${APP}
 
 RUN yarn run build ${APP}
 
 FROM src as linter
+ARG APP
+ENV APP=${APP}
 
 RUN yarn run lint ${APP}
 
 FROM src as tests
+ARG APP
+ENV APP=${APP}
 
 CMD yarn run test ${APP}
 
