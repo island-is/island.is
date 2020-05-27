@@ -1,11 +1,26 @@
 import { style } from 'treat'
 import { theme } from '../../theme/'
 
+export const container = style({
+  counterReset: 'section',
+})
+
 export const bullet = style({
   display: 'inline-block',
   width: '24px',
-  color: theme.color.red400,
-  fontWeight: theme.typography.semiBold,
+  ':before': {
+    display: 'none',
+    color: theme.color.red400,
+    fontWeight: theme.typography.semiBold,
+    counterIncrement: 'section',
+    content: 'counter(section)',
+  },
+})
+
+export const numbered = style({
+  ':before': {
+    display: 'inline-block',
+  },
 })
 
 export const icon = style({

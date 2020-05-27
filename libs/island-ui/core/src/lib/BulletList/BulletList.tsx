@@ -1,23 +1,31 @@
-import React, { FC, ReactElement, Children } from 'react'
+import React, { FC, createContext, useContext, ReactNode } from 'react'
+import cn from 'classnames'
 import { Box, Typography, Stack, StackProps, Icon } from '../..'
 import { theme } from '../../theme/theme'
 
 import * as styles from './BulletList.treat'
 
-interface BulletProps {
-  index?: number
+interface BulletListContextValue {
   type: string
 }
 
-export const Bullet: FC<BulletProps> = ({ index, type, children }) => {
+const BulletListContext = createContext<BulletListContextValue>({
+  type: 'ul',
+})
+
+export const Bullet: FC = ({ children }) => {
+  const { type } = useContext(BulletListContext)
+
   return (
     <Typography variant="p" as="span">
       <Box display="flex">
         <Box display="flex">
-          <span className={styles.bullet}>
-            {type === 'ol' ? (
-              index + 1
-            ) : (
+          <span
+            className={cn(styles.bullet, {
+              [styles.numbered]: type === 'ol',
+            })}
+          >
+            {type === 'ul' && (
               <span className={styles.icon}>
                 <Icon
                   type="bullet"
@@ -36,7 +44,7 @@ export const Bullet: FC<BulletProps> = ({ index, type, children }) => {
 }
 
 interface BulletListProps {
-  children: ReactElement<HTMLLIElement>[]
+  children: ReactNode
   space?: StackProps['space']
   type?: 'ul' | 'ol'
 }
@@ -46,20 +54,14 @@ export const BulletList: FC<BulletListProps> = ({
   space = 1,
   type = 'ul',
 }) => {
-  const items = Children.toArray(children).filter((c) => {
-    if (process.env.NODE_ENV !== 'production' && c.type !== 'li') {
-      throw new Error('BulletList may only contain <li> elements.')
-    }
-
-    return c.type === 'li'
-  })
-
   return (
-    <Stack component={type} space={space}>
-      {items.map(({ props }, index) => (
-        <Bullet key={index} index={index} type={type} {...props} />
-      ))}
-    </Stack>
+    <div className={styles.container}>
+      <BulletListContext.Provider value={{ type }}>
+        <Stack component={type} space={space}>
+          {children}
+        </Stack>
+      </BulletListContext.Provider>
+    </div>
   )
 }
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { BulletList } from './BulletList'
+import { BulletList, Bullet } from './BulletList'
 import { Box } from '../Box'
 import { boolean } from '@storybook/addon-knobs'
 
@@ -14,19 +14,19 @@ export const Default = () => {
   return (
     <Box padding="gutter">
       <BulletList type={type ? 'ol' : 'ul'}>
-        <li>
+        <Bullet>
           Réttur til fæðingarorlofs vegna fæðingar fellur niður er barnið nær 24
           mánaða aldri.
-        </li>
-        <li>
+        </Bullet>
+        <Bullet>
           Réttur til fæðingarorlofs vegna ættleiðingar eða varanlegs fóstur
           fellur niður 24 mánuðum eftir að barnið kom inn á heimilið.
-        </li>
-        <li>
+        </Bullet>
+        <Bullet>
           Réttur foreldris til fæðingarorlofs er bundinn því að það fari sjálft
           með forsjá barnsins eða hafi sameiginlega forsjá ásamt hinu foreldri
           þess þegar taka fæðingarorlofs hefst.
-        </li>
+        </Bullet>
       </BulletList>
     </Box>
   )

@@ -9,15 +9,16 @@ import {
   Accordion,
   AccordionItem,
   BulletList,
+  Bullet,
 } from '@island.is/island-ui/core'
 
 export const Index = () => {
   return (
     <ContentBlock width="large">
       <BulletList type="ol">
-        <li>This thing is number one</li>
-        <li>This is number two</li>
-        <li>And this one here is number three</li>
+        <Bullet>This thing is number one</Bullet>
+        <Bullet>This is number two</Bullet>
+        <Bullet>And this one here is number three</Bullet>
       </BulletList>
       <Box padding={['smallGutter', 'containerGutter']}>
         <Accordion>
