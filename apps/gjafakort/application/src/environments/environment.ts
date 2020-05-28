@@ -1,4 +1,4 @@
-export const environment = {
+export default {
   production: false,
   databaseUri:
     `postgres://${process.env.APPLICATION_DB_USER}` +

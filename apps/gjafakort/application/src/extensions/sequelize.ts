@@ -1,5 +1,5 @@
 import { Sequelize } from 'sequelize'
-import { environment } from '../environments/environment'
+import { environment } from '../environments'
 
 const { databaseUri } = environment
 

@@ -124,3 +124,5 @@ jobs:
       #   run: yarn run affected:test --base origin/master --parallel
       # - name: Running E2E tests
       #   run: yarn run affected:e2e --base origin/master
+      # - name: Build and push docker
+      #   run: yarn run affected:docker --base origin/master

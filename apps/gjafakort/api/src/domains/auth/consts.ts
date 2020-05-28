@@ -1,6 +1,6 @@
 import { CookieOptions } from 'express'
 
-import { environment } from '../../environments/environment'
+import { environment } from '../../environments'
 import { Cookie } from './types'
 
 const defaultCookieOptions: CookieOptions = {
@@ -8,6 +8,8 @@ const defaultCookieOptions: CookieOptions = {
   httpOnly: true,
   sameSite: 'lax',
 }
+
+export const JWT_EXPIRES_IN_SECONDS = 1800
 
 export const REDIRECT_COOKIE: Cookie = {
   name: 'gjafakort.redirect',

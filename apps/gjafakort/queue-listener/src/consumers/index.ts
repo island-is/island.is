@@ -1,5 +1,5 @@
 import MsgQueue from '@island.is/message-queue'
-import { environment } from '../environments/environment'
+import { environment } from '../environments'
 import handlers from './handlers'
 
 const { production, exchangeName } = environment
