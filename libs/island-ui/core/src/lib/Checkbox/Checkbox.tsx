@@ -50,6 +50,7 @@ export const Checkbox = ({
       <label
         className={cn(styles.label, {
           [styles.labelChecked]: checked,
+          [styles.checkboxLabelDisabled]: disabled,
         })}
         htmlFor={id}
       >
@@ -57,12 +58,15 @@ export const Checkbox = ({
           className={cn(styles.checkbox, {
             [styles.checkboxChecked]: checked,
             [styles.checkboxError]: hasError,
+            [styles.checkboxDisabled]: disabled,
           })}
         >
           <Icon
             type="check"
             width={styles.checkMarkWidth}
-            color={styles.checkMarkColor}
+            color={
+              checked ? styles.checkMarkColor : styles.checkMarkColorUnchecked
+            }
           />
         </div>
         {label}

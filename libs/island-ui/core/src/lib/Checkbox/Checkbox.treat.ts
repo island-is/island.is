@@ -3,6 +3,7 @@ import { theme } from '../../theme'
 import {
   inputErrorState,
   errorMessage as inputErrorMessage,
+  labelDisabledEmptyInput,
 } from '../Input/Input.mixins'
 
 const checkboxSize = 24
@@ -12,11 +13,16 @@ export const container = style({
   position: 'relative',
   paddingLeft: checkboxSize + checkboxMargin,
 })
+export const checkMarkColorUnchecked = 'transparent'
 export const checkMarkColor = theme.color.white
 export const checkMarkWidth = 17
 export const input = style({
   position: 'absolute',
   opacity: 0,
+  left: 0,
+  top: 0,
+  height: checkboxSize,
+  width: checkboxSize,
 })
 export const label = style({
   fontSize: theme.typography.baseFontSize,
@@ -24,6 +30,10 @@ export const label = style({
 })
 export const labelChecked = style({
   fontWeight: theme.typography.medium,
+})
+export const checkboxDisabled = style({
+  borderColor: theme.color.blue200,
+  background: 'transparent',
 })
 export const checkbox = style({
   height: checkboxSize,
@@ -38,7 +48,7 @@ export const checkbox = style({
   backgroundColor: theme.color.white,
   transition: 'border-color .1s, shadow .1s, background-color .1s',
   selectors: {
-    [`${container}:hover &`]: {
+    [`${container}:hover &:not(${checkboxDisabled})`]: {
       borderColor: theme.color.blue400,
     },
     [`${input}:focus + ${label} &`]: {
@@ -54,6 +64,10 @@ export const checkboxChecked = style({
       borderColor: theme.color.blue400,
     },
   },
+})
+
+export const checkboxLabelDisabled = style({
+  color: theme.color.dark300,
 })
 
 export const checkboxError = style(inputErrorState)

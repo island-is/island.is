@@ -11,6 +11,7 @@ export interface FieldCheckboxProps extends CheckboxProps {
 export const FieldCheckbox = ({
   field: { onChange, value, ...field },
   form: { touched, errors },
+  onChange: customOnChange,
   ...props
 }: FieldCheckboxProps) => {
   const nameArray = (field.name && field.name.split('.')) || []
@@ -29,6 +30,9 @@ export const FieldCheckbox = ({
           },
         }
         onChange(event)
+        if (customOnChange) {
+          customOnChange(e)
+        }
       }}
       hasError={!!(get(touched, nameArray) && get(errors, nameArray))}
       errorMessage={get(errors, nameArray)}
