@@ -1,10 +1,14 @@
 import { authorize } from '../auth'
 import { getApplication, createApplication } from './service'
+import { ferdalagService } from '../../services'
 
 class ApplicationResolver {
   @authorize({ role: 'admin' })
-  public getApplication(_, args) {
-    return getApplication(args.ssn)
+  public async getApplication(_, args) {
+    const application = await getApplication(args.ssn)
+    if (!application) {
+      return ferdalagService.getCompany(args.ssn)
+    }
   }
 
   @authorize()

@@ -16,7 +16,7 @@ export type Scalars = {
 
 export type Application = {
   __typename?: 'Application'
-  id?: Maybe<Scalars['String']>
+  id: Scalars['String']
   email: Scalars['String']
   state: Scalars['String']
 }
@@ -183,7 +183,7 @@ export type ApplicationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Application'] = ResolversParentTypes['Application']
 > = {
-  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   state?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: isTypeOfResolverFn<ParentType>

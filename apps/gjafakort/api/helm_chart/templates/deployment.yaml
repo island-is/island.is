@@ -40,8 +40,17 @@ spec:
               path: /
               port: http
           env:
+            {{- with .Values.environment }}
+            - name: FERDALAG_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gjafakort-api
+                  key: FERDALAG_API_KEY
+            - name: FERDALAG_URL
+              value: {{ .ferdalag_url }}
             - name: APPLICATION_URL
-              value: "http://web-gjafakort-application"
+              value: {{ .application_url }}
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
