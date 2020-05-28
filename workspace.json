@@ -132,7 +132,7 @@
           "builder": "@nrwl/next:build",
           "options": {
             "root": "apps/gjafakort/web",
-            "outputPath": "dist/apps/gjafakort/web"
+            "outputPath": "dist/apps/gjafakort-web"
           },
           "configurations": {
             "production": {
@@ -484,7 +484,7 @@
         "build": {
           "builder": "@nrwl/node:build",
           "options": {
-            "outputPath": "dist/apps/gjafakort/application",
+            "outputPath": "dist/apps/gjafakort-application",
             "main": "apps/gjafakort/application/src/main.ts",
             "tsConfig": "apps/gjafakort/application/tsconfig.app.json",
             "assets": [
