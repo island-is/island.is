@@ -65,4 +65,34 @@ USER runner
 
 COPY --from=builder --chown=runner:runners /build/dist/apps/${APP} /webapp/dist/apps/${APP}
 
-ENTRYPOINT node /webapp/dist/apps/${APP}/main.js
+COPY --from=builder --chown=runner:runners /build/dist/apps/${APP} /webapp
+COPY --from=builder --chown=runner:runners /build/node_modules /webapp/node_modules
+
+ENTRYPOINT [ "node" ]
+CMD [ "main.js" ]
+
+FROM node:12.16.2-alpine3.11 as output-next
+
+ARG GIT_BRANCH
+ARG GIT_SHA
+LABEL branch=${GIT_BRANCH}
+LABEL commit=${GIT_SHA}
+ENV GIT_BRANCH=${GIT_BRANCH}
+ENV GIT_SHA=${GIT_SHA}
+ARG APP
+ENV APP=${APP}
+
+RUN apk add bash -U && rm -rf /var/cache/apk/*
+WORKDIR /webapp
+
+# Adding user for running the app
+RUN addgroup runners && adduser -D runner -G runners
+RUN chown -R runner:runners /webapp
+USER runner
+
+COPY --from=builder --chown=runner:runners /build/node_modules /webapp/node_modules
+COPY --from=builder --chown=runner:runners /build/apps/${APP}/next.config.js /webapp
+COPY --from=builder --chown=runner:runners /build/apps/${APP}/public /webapp/public
+COPY --from=builder --chown=runner:runners /build/dist/apps/${APP} /webapp/.next
+
+ENTRYPOINT [ "npx", "next", "start", "-p", "4200" ]

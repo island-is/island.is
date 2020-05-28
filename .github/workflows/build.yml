@@ -109,8 +109,10 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Building
-        run: BRANCH=$DOCKER_BRANCH_TAG MAX_JOBS=1 ./scripts/run-nx-in-parallel.sh docker
+      - name: Building Express apps
+        run: BRANCH=$DOCKER_BRANCH_TAG MAX_JOBS=2 ./scripts/run-nx-in-parallel.sh docker-express
+      - name: Building Nest.js apps
+        run: BRANCH=$DOCKER_BRANCH_TAG MAX_JOBS=2 ./scripts/run-nx-in-parallel.sh docker-next
 
       # - name: Auditing Node.js modules
       #   run: yarn run security:audit

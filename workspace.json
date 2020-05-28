@@ -184,7 +184,7 @@
             "passWithNoTests": true
           }
         },
-        "docker": {
+        "docker-next": {
           "builder": "@gperdomor/nx-docker:build",
           "options": {
             "repository": "gjafakort-web",
@@ -294,7 +294,7 @@
             ]
           }
         },
-        "docker": {
+        "docker-express": {
           "builder": "@gperdomor/nx-docker:build",
           "options": {
             "repository": "gjafakort-api",
@@ -562,7 +562,7 @@
             "passWithNoTests": true
           }
         },
-        "docker": {
+        "docker-express": {
           "builder": "@gperdomor/nx-docker:build",
           "options": {
             "repository": "gjafakort-application",
@@ -635,7 +635,7 @@
             "passWithNoTests": true
           }
         },
-        "docker": {
+        "docker-express": {
           "builder": "@gperdomor/nx-docker:build",
           "options": {
             "repository": "gjafakort-queue-listener",
