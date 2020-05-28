@@ -12,7 +12,7 @@ import {
   Icon,
 } from '@island.is/island-ui/core'
 
-import packageSvg from '../../../../../../assets/ferdagjof-pakki.svg'
+import packageSvg from '@island.is/gjafakort-web/assets/ferdagjof-pakki.svg'
 
 const mockAccordion = [
   {

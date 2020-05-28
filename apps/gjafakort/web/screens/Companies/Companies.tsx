@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 import { Box, Typography, Button } from '@island.is/island-ui/core'
 
-import packageSvg from '../../assets/ferdagjof-pakki.svg'
+import packageSvg from '@island.is/gjafakort-web/assets/ferdagjof-pakki.svg'
 
 function Companies() {
   return (
