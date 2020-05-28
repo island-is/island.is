@@ -47,6 +47,7 @@ export const containerDisabled = style({})
 export const container = style({}, 'container')
 globalStyle(`${wrapper} .island-select__control${container}`, {
   ...inputMixins.container,
+  paddingRight: 70,
   transition: 'border-color 0.1s',
 })
 globalStyle(
@@ -83,7 +84,9 @@ export const label = style({
 export const singleValue = style(
   {
     marginLeft: 0,
+    marginRight: 0,
     ...inputMixins.input,
+    paddingRight: 0,
   },
   'singleValue',
 )

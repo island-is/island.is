@@ -47,6 +47,7 @@ export const Select = ({
   return (
     <div className={styles.wrapper}>
       <ReactSelect
+        instanceId={id}
         noOptionsMessage={() => noOptionsMessage}
         id={id}
         name={name}
