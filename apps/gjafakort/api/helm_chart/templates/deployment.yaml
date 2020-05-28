@@ -50,6 +50,15 @@ spec:
               value: {{ .ferdalag_url }}
             - name: APPLICATION_URL
               value: {{ .application_url }}
+            - name: SAML_ENTRY_POINT
+              value: {{ .saml_entry_point }}
+            - name: AUTH_AUDIENCE
+              value: {{ .auth_audience }}
+            - name: AUTH_JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: gjafakort-api
+                  key: AUTH_JWT_SECRET
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
