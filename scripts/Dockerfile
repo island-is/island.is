@@ -63,8 +63,6 @@ RUN addgroup runners && adduser -D runner -G runners
 RUN chown -R runner:runners /webapp
 USER runner
 
-COPY --from=builder --chown=runner:runners /build/dist/apps/${APP} /webapp/dist/apps/${APP}
-
 COPY --from=builder --chown=runner:runners /build/dist/apps/${APP} /webapp
 COPY --from=builder --chown=runner:runners /build/node_modules /webapp/node_modules
 
