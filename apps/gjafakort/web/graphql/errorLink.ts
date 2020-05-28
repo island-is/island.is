@@ -5,13 +5,7 @@ import { ServerError } from 'apollo-link-http-common'
 import { NotificationService } from '../services'
 
 export default onError(
-  ({
-    graphQLErrors,
-    networkError,
-    operation,
-    forward,
-    response,
-  }: ErrorResponse) => {
+  ({ graphQLErrors, networkError, response }: ErrorResponse) => {
     if (response) {
       response.errors = undefined
     }

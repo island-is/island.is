@@ -1,6 +1,7 @@
 import React from 'react'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
+
 import {
   FieldInput,
   FieldNumberInput,
@@ -14,9 +15,17 @@ import {
   Button,
   Typography,
   FieldSelect,
-  Option,
 } from '@island.is/island-ui/core'
-import { Company } from '../CompanySignupWrapper/CompanySignupWrapper'
+
+export type CompanyType = {
+  name: string
+  ssn: string | number
+}
+
+interface PropTypes {
+  company: CompanyType
+  onSubmit: () => void
+}
 
 const companyOperations = [
   {
@@ -58,22 +67,6 @@ const companyOperations = [
   },
 ]
 
-interface CompanySignupProps {
-  company: Company
-  onSubmit: (values: {
-    companyName: string
-    ssn: string | number
-    companyDisplayName: string
-    serviceCategory: Option
-    name: string
-    email: string
-    generalEmail: string
-    webpage: string
-    phoneNumber: string
-    approveTerms: boolean
-  }) => void
-}
-
 const emailValidation = Yup.string()
   .email('Netfang ekki gilt')
   .required('Þessi reitur má ekki vera tómur')
@@ -95,8 +88,7 @@ const SignupSchema = Yup.object().shape({
   ),
 })
 
-function CompanySignup({ company, onSubmit }: CompanySignupProps) {
-  const intro = 'Fylltu inn upplýsingar hér að neðan'
+function Signup({ company, onSubmit }: PropTypes) {
   return (
     <ContentBlock width="large">
       <Columns space="gutter" collapseBelow="lg">
@@ -113,7 +105,9 @@ function CompanySignup({ company, onSubmit }: CompanySignupProps) {
               </Typography>
             </Box>
             <Box marginBottom={6}>
-              <Typography variant="intro">{intro}</Typography>
+              <Typography variant="intro">
+                Fylltu inn upplýsingar hér að neðan
+              </Typography>
             </Box>
             <Formik
               initialValues={{
@@ -225,7 +219,7 @@ function CompanySignup({ company, onSubmit }: CompanySignupProps) {
                       label="Ég samþykki skilmála Ferðagjafarinnar"
                     />
                   </Box>
-                  <Button>Skrá fyrirtækið mitt</Button>
+                  <Button htmlType="submit">Skrá fyrirtækið mitt</Button>
                 </Form>
               )}
             </Formik>
@@ -235,4 +229,5 @@ function CompanySignup({ company, onSubmit }: CompanySignupProps) {
     </ContentBlock>
   )
 }
-export default CompanySignup
+
+export default Signup

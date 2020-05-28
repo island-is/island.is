@@ -1,28 +1,40 @@
-import React from 'react'
-import gql from 'graphql-tag'
-import { useQuery } from 'react-apollo'
+import React, { useState } from 'react'
+import { useRouter } from 'next/router'
 
-import { Application } from '../../../graphql/schema'
+import { Signup, Congratulations } from './components'
 
-const ApplicationQuery = gql`
-  query ApplicationQuery($ssn: String!) {
-    application(ssn: $ssn) {
-      id
-    }
-  }
-`
+export type CompanyType = {
+  name: string
+  ssn: string | number
+}
+
+const companies = [
+  {
+    name: 'Kaffi Klettur',
+    ssn: '1903795829',
+    state: 'pending',
+  },
+  {
+    name: 'Kosmos & Kaos',
+    ssn: '1903795839',
+    state: 'approved',
+  },
+]
 
 function Company() {
-  const { data, loading } = useQuery(ApplicationQuery, {
-    variables: { ssn: '1' },
-  })
+  const router = useRouter()
+  const { ssn } = router.query
+  const [company, setCompany] = useState(companies.find((c) => c.ssn === ssn))
 
-  const application = (data || {}).application as Application
-  if (loading) {
-    return <div>Loading...</div>
+  const onSubmit = () => {
+    setCompany({ ...company, state: 'approved' })
   }
 
-  return <div>Company page, owned by {application && application.id}</div>
+  if (company.state === 'approved') {
+    return <Congratulations />
+  }
+
+  return <Signup company={company} onSubmit={onSubmit} />
 }
 
 export default Company

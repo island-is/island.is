@@ -14,18 +14,21 @@ export interface ButtonProps {
   variant?: ButtonVariant
   size?: ButtonSize
   width?: ButtonWidth
+  htmlType?: 'button' | 'submit'
 }
 
 export const Button: FC<ButtonProps> = ({
   children,
   onClick,
   disabled,
+  htmlType = 'button',
   variant = 'normal',
   size = 'medium',
   width = 'normal',
 }) => {
   return (
     <button
+      type={htmlType}
       disabled={disabled}
       onClick={onClick}
       className={cn(

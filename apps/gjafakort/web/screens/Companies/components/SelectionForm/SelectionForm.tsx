@@ -1,65 +1,31 @@
 import React from 'react'
 import { Formik, Form, Field } from 'formik'
+
 import {
   FieldSelect,
   Box,
-  ContentBlock,
   Column,
   Columns,
   Button,
   Typography,
   Option,
 } from '@island.is/island-ui/core'
-import { Company } from '../CompanySignupWrapper/CompanySignupWrapper'
-import Link from 'next/link'
 
-interface CompanySelectionProps {
-  onSubmit: (values: Company) => void
-  companies: Company[]
+export type CompanyType = {
+  name: string
+  ssn: string | number
+}
+
+interface PropTypes {
+  onSubmit: (values: CompanyType) => void
+  companies: CompanyType[]
 }
 
 interface FormValues {
   company: Option | undefined
 }
 
-export const CompanySelection = ({
-  onSubmit,
-  companies,
-}: CompanySelectionProps) => {
-  return (
-    <ContentBlock width="large">
-      <Columns space="gutter" collapseBelow="lg">
-        <Column width="2/3">
-          <Box
-            background="blue100"
-            paddingX={[5, 12]}
-            paddingY={[5, 9]}
-            marginTop={12}
-          >
-            <Box marginBottom={2}>
-              <Typography variant="h1" as="h1">
-                Prókúruhafi
-              </Typography>
-              {companies.length > 0 ? (
-                <CompanySelectionForm
-                  onSubmit={onSubmit}
-                  companies={companies}
-                />
-              ) : (
-                <NoConnectedCompanies />
-              )}
-            </Box>
-          </Box>
-        </Column>
-      </Columns>
-    </ContentBlock>
-  )
-}
-
-const CompanySelectionForm = ({
-  onSubmit,
-  companies,
-}: CompanySelectionProps) => {
+function SelectionForm({ onSubmit, companies }: PropTypes) {
   const initialValues: FormValues = {
     company: undefined,
   }
@@ -93,7 +59,7 @@ const CompanySelectionForm = ({
                   }))}
                 />
               </Box>
-              <Button>Áfram</Button>
+              <Button htmlType="submit">Áfram</Button>
             </Column>
           </Columns>
           <Columns space="gutter" collapseBelow="xl">
@@ -112,19 +78,4 @@ const CompanySelectionForm = ({
   )
 }
 
-const NoConnectedCompanies = () => (
-  <>
-    <Box marginBottom={5}>
-      <Typography variant="intro">
-        Þú ert ekki skráður prókúruhafi, vinsamlegast hafðu samband við RSK
-      </Typography>
-    </Box>
-    <Link href="/">
-      <span>
-        <Button variant="text">Tilbaka</Button>
-      </span>
-    </Link>
-  </>
-)
-
-export default CompanySelection
+export default SelectionForm
