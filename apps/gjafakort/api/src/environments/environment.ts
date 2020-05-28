@@ -1,14 +1,9 @@
-export const environment = {
+export default {
   production: false,
   auth: {
-    samlEntryPoint:
-      process.env.GJAFAKORT_SAML_ENTRYPOINT ||
-      'https://innskraning.island.is/?id=ferdagjof.dev',
-    audience:
-      process.env.GJAFAKORT_AUTH_AUDIENCE ||
-      'https://ferdagjof.dev01.devland.is',
-    jwtSecret: 'supersecret',
-    jwtExpiresInSeconds: 1800,
+    samlEntryPoint: 'https://innskraning.island.is/?id=ferdagjof.local',
+    audience: 'localhost:4200',
+    jwtSecret: 'securesecret',
   },
   applicationUrl: 'http://localhost:4242',
   applicationExchange: 'gjafakort-application-updates-topic',

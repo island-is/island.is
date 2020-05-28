@@ -101,4 +101,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Build and push docker
-        run: yarn run affected:docker --base origin/master --parallel
+        run: yarn run affected:docker --base origin/master
