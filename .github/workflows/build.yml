@@ -1,4 +1,4 @@
-name: Monorepo pipeline
+name: Monorepo pipeline v2
 
 on:
   push:
@@ -13,7 +13,7 @@ env:
   DOCKER_REGISTRY: 553296336529.dkr.ecr.eu-west-1.amazonaws.com/
 
 jobs:
-  check-code:
+  test-build:
     #runs-on: self-hosted
     runs-on: ubuntu-latest
 
