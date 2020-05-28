@@ -4,7 +4,11 @@ import {
   resolvers as applicationResolvers,
   typeDefs as applicationTypeDefs,
 } from './applications'
+import {
+  resolvers as companyResolvers,
+  typeDefs as companyTypeDefs,
+} from './companies'
 
-export const resolvers = [applicationResolvers]
+export const resolvers = [applicationResolvers, companyResolvers]
 
-export const typeDefs = [applicationTypeDefs]
+export const typeDefs = [applicationTypeDefs, companyTypeDefs]

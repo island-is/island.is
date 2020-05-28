@@ -21,6 +21,12 @@ export type Application = {
   state: Scalars['String']
 }
 
+export type Company = {
+  __typename?: 'Company'
+  ssn: Scalars['String']
+  name: Scalars['String']
+}
+
 export type CreateApplicationInput = {
   ssn: Scalars['String']
   email: Scalars['String']
@@ -44,6 +50,7 @@ export type MutationCreateApplicationArgs = {
 export type Query = {
   __typename?: 'Query'
   application?: Maybe<Application>
+  companies?: Maybe<Array<Maybe<Company>>>
   root?: Maybe<Scalars['String']>
 }
 
@@ -162,6 +169,7 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>
   String: ResolverTypeWrapper<Scalars['String']>
   Application: ResolverTypeWrapper<Application>
+  Company: ResolverTypeWrapper<Company>
   Mutation: ResolverTypeWrapper<{}>
   createApplicationInput: CreateApplicationInput
   createApplicationPayload: ResolverTypeWrapper<CreateApplicationPayload>
@@ -173,6 +181,7 @@ export type ResolversParentTypes = {
   Query: {}
   String: Scalars['String']
   Application: Application
+  Company: Company
   Mutation: {}
   createApplicationInput: CreateApplicationInput
   createApplicationPayload: CreateApplicationPayload
@@ -186,6 +195,15 @@ export type ApplicationResolvers<
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   state?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: isTypeOfResolverFn<ParentType>
+}
+
+export type CompanyResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Company'] = ResolversParentTypes['Company']
+> = {
+  ssn?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 
@@ -224,11 +242,17 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryApplicationArgs, 'ssn'>
   >
+  companies?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Company']>>>,
+    ParentType,
+    ContextType
+  >
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
 }
 
 export type Resolvers<ContextType = Context> = {
   Application?: ApplicationResolvers<ContextType>
+  Company?: CompanyResolvers<ContextType>
   createApplicationPayload?: CreateApplicationPayloadResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
