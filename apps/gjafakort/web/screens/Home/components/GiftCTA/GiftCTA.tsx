@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 import { Box, Typography, Button } from '@island.is/island-ui/core'
 
-import packageSvg from '../../../../assets/ferdagjof-pakki.svg'
+import packageSvg from '@island.is/gjafakort-web/assets/ferdagjof-pakki.svg'
 
 function GiftCTA() {
   return (
@@ -12,7 +12,7 @@ function GiftCTA() {
         <Box marginBottom={2}>
           <Typography variant="h4">Einstaklingar</Typography>
         </Box>
-        <Link href="/notendur">
+        <Link href="/notandi">
           <span>
             <Button width="fluid">Sækja Ferðagjöf</Button>
           </span>
@@ -25,7 +25,7 @@ function GiftCTA() {
         <Link href="/fyrirtaeki">
           <span>
             <Button width="fluid" variant="ghost">
-              Skrá fyrirtæki
+              Sjá nánar
             </Button>
           </span>
         </Link>

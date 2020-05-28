@@ -1,5 +1,7 @@
 import React from 'react'
+
 import { Logo } from '../Logo/Logo'
+
 import * as styles from './Header.treat'
 
 export const Header = () => {

@@ -1,58 +1,29 @@
 import React from 'react'
-import { useRouter } from 'next/router'
+import Link from 'next/link'
 
-import {
-  Box,
-  ContentBlock,
-  Column,
-  Columns,
-  Typography,
-} from '@island.is/island-ui/core'
+import { Box, Typography, Button } from '@island.is/island-ui/core'
 
-import { SelectionForm, NoConnection } from './components'
-
-const companies = [
-  {
-    name: 'Kaffi Klettur',
-    ssn: '1903795829',
-  },
-  {
-    name: 'Kosmos & Kaos',
-    ssn: '1903795839',
-  },
-]
+import packageSvg from '@island.is/gjafakort-web/assets/ferdagjof-pakki.svg'
 
 function Companies() {
-  const router = useRouter()
-
-  const onSubmit = ({ ssn }) => {
-    router.push(`/fyrirtaeki/${ssn}`)
-  }
-
   return (
-    <ContentBlock width="large">
-      <Columns space="gutter" collapseBelow="lg">
-        <Column width="2/3">
-          <Box
-            background="blue100"
-            paddingX={[5, 12]}
-            paddingY={[5, 9]}
-            marginTop={12}
-          >
-            <Box marginBottom={2}>
-              <Typography variant="h1" as="h1">
-                Prókúruhafi
-              </Typography>
-              {companies.length > 0 ? (
-                <SelectionForm onSubmit={onSubmit} companies={companies} />
-              ) : (
-                <NoConnection />
-              )}
-            </Box>
-          </Box>
-        </Column>
-      </Columns>
-    </ContentBlock>
+    <Box>
+      <Box background="purple100" padding={4} marginBottom={3}>
+        <Box marginBottom={2}>
+          <Typography variant="h4">Ferðaþjónustufyrirtæki</Typography>
+        </Box>
+        <Link href="/fyrirtaeki/umsokn">
+          <span>
+            <Button width="fluid" variant="ghost">
+              Sækja um
+            </Button>
+          </span>
+        </Link>
+      </Box>
+      <Box textAlign="center" padding={3}>
+        <img src={packageSvg} alt="" />
+      </Box>
+    </Box>
   )
 }
 
