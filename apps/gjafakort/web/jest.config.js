@@ -1,3 +1,5 @@
+const path = require('path')
+
 module.exports = {
   name: 'gjafakort-web',
   preset: '../../../jest.config.js',
@@ -6,6 +8,9 @@ module.exports = {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
+  moduleNameMapper: {
+    '^@island.is/gjafakort-web/(.*)$': path.resolve(__dirname),
+  },
   coverageDirectory: '../../../coverage/apps/gjafakort/web',
   setupFiles: ['./jest.setup.js'],
 }
