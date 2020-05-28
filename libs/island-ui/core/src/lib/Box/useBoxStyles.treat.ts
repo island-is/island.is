@@ -345,9 +345,18 @@ export const flexGrow = styleMap(
   mapToStyleProperty(flexGrowRules, 'flexGrow'),
 ) as Record<keyof typeof flexGrowRules, string> // Remove this when 'styleMap' supports numbers as keys and it's been released to sku consumers
 
-export const background = styleMap(
-  mapToStyleProperty(omit(theme.color, 'body'), 'background'),
-)
+const dotDesktop = `url('data:image/svg+xml,%0A%3Csvg width="33" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1.96472 3.92944C3.0498 3.92944 3.92943 3.0498 3.92943 1.96472C3.92943 0.879639 3.0498 0 1.96472 0C0.879633 0 0 0.879639 0 1.96472C0 3.0498 0.879633 3.92944 1.96472 3.92944Z" fill="%23CCDFFF"/%3E%3C/svg%3E%0A')`
+const dotMobile = `url('data:image/svg+xml,%0A%3Csvg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Crect width="24" height="24" fill="white"/%3E%3Cpath d="M1.41521 2.83041C2.19681 2.83041 2.83041 2.19681 2.83041 1.41521C2.83041 0.63361 2.19681 0 1.41521 0C0.63361 0 0 0.63361 0 1.41521C0 2.19681 0.63361 2.83041 1.41521 2.83041Z" fill="%23CCDFFF"/%3E%3C/svg%3E%0A')`
+
+export const background = styleMap({
+  ...mapToStyleProperty(omit(theme.color, 'body'), 'background'),
+  dotted: {
+    ...themeUtils.responsiveStyle({
+      md: { background: dotDesktop },
+      xs: { background: dotMobile },
+    }),
+  },
+})
 
 const boxShadowProps = {
   borderWidth: theme.border.width,

@@ -15,6 +15,8 @@ export type VariantTypes =
   | 'intro'
   | 'eyebrow'
   | 'breadcrumb'
+  | 'tag'
+  | 'cardCategoryTitle'
 
 type ResponsiveProps<T> = {
   xs?: T
@@ -112,6 +114,23 @@ export const variants: Variants = {
     fontWeight: theme.typography.semiBold,
     lineHeight: 1.142857,
     color: theme.color.roseTinted400,
+  },
+  tag: {
+    fontSize: {
+      xs: 12,
+      md: 14,
+    },
+    fontWeight: theme.typography.semiBold,
+    lineHeight: 1.142857,
+  },
+  cardCategoryTitle: {
+    fontSize: {
+      xs: 20,
+      md: 24,
+    },
+    fontWeight: theme.typography.headingsFontWeight,
+    lineHeight: 1.416667,
+    color: theme.color.blue400,
   },
 }
 

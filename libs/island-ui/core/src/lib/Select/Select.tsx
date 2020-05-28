@@ -27,6 +27,7 @@ export interface SelectProps {
   value?: ValueType<Option>
   placeholder?: string
   defaultValue?: Option
+  icon?: string
 }
 
 export const Select = ({
@@ -42,6 +43,7 @@ export const Select = ({
   errorMessage = '',
   placeholder = '',
   defaultValue,
+  icon = 'cheveron',
 }: SelectProps) => {
   return (
     <div className={styles.wrapper}>
@@ -57,6 +59,7 @@ export const Select = ({
         onChange={onChange}
         label={label}
         value={value}
+        icon={icon}
         placeholder={placeholder}
         defaultValue={defaultValue}
         isOptionDisabled={(option) => option.disabled}
@@ -98,15 +101,18 @@ const IndicatorsContainer = (props) => (
   />
 )
 
-const DropdownIndicator = (props) => (
-  <components.DropdownIndicator className={styles.dropdownIndicator} {...props}>
-    <Icon
-      type="cheveron"
-      width="25"
-      color={props.selectProps.hasError ? 'red400' : 'blue400'}
-    />
-  </components.DropdownIndicator>
-)
+const DropdownIndicator = (props) => {
+  const { icon, hasError } = props.selectProps
+
+  return (
+    <components.DropdownIndicator
+      className={styles.dropdownIndicator}
+      {...props}
+    >
+      <Icon type={icon} width="25" color={hasError ? 'red400' : 'blue400'} />
+    </components.DropdownIndicator>
+  )
+}
 
 const SingleValue = (props) => (
   <components.SingleValue className={styles.singleValue} {...props} />
