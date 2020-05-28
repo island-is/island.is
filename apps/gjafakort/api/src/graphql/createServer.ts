@@ -4,7 +4,7 @@ import merge from 'lodash/merge'
 
 import MessageQueue from '@island.is/message-queue'
 
-import { environment } from '../environments/environment'
+import { environment } from '../environments'
 import { verifyToken, ACCESS_TOKEN_COOKIE } from '../domains'
 import { Resolvers, GraphQLContext } from '../types'
 import rootTypeDefs from './typeDefs'

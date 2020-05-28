@@ -7,8 +7,13 @@ import { uuid } from 'uuidv4'
 
 import { Credentials } from '../../types'
 import { VerifyResult } from './types'
-import { REDIRECT_COOKIE, ACCESS_TOKEN_COOKIE, CSRF_COOKIE } from './consts'
-import { environment } from '../../environments/environment'
+import {
+  REDIRECT_COOKIE,
+  ACCESS_TOKEN_COOKIE,
+  CSRF_COOKIE,
+  JWT_EXPIRES_IN_SECONDS,
+} from './consts'
+import { environment } from '../../environments'
 
 const router = Router()
 
@@ -44,14 +49,13 @@ router.post(
     }
 
     const csrfToken = new Entropy({ bits: 128 }).string()
-    const { jwtExpiresInSeconds } = environment.auth
     const jwtToken = jwt.sign(
       {
         user: { ssn: user.kennitala, name: user.fullname },
         csrfToken,
       } as Credentials,
       jwtSecret, //TODO: Use cert to sign jwt
-      { expiresIn: jwtExpiresInSeconds },
+      { expiresIn: JWT_EXPIRES_IN_SECONDS },
     )
 
     const tokenParts = jwtToken.split('.')
@@ -59,7 +63,7 @@ router.post(
       return res.status(401).json({ error: 'Invalid auth state' })
     }
 
-    const maxAge = jwtExpiresInSeconds * 1000
+    const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
     return res
       .cookie(CSRF_COOKIE.name, csrfToken, {
         ...CSRF_COOKIE.options,

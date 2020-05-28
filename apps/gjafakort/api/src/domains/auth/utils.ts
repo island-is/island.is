@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken'
 
 import { GraphQLContext, User, Credentials } from '../../types'
 import { Permissions } from './types'
-import { environment } from '../../environments/environment'
+import { environment } from '../../environments'
 
 export const verifyToken = (token: string): Credentials | null => {
   if (!token) {

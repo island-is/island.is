@@ -5,7 +5,7 @@ import {
   GraphQLContext,
   CreateApplicationInput,
 } from '../../types'
-import { environment } from '../../environments/environment'
+import { environment } from '../../environments'
 
 const APPLICATION_TYPE = 'gjafakort'
 
