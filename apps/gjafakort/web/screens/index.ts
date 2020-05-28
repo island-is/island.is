@@ -4,4 +4,4 @@ export {
   Company,
 } from './Companies'
 export { Home } from './Home'
-export { Application } from './Application'
+export { User } from './User'

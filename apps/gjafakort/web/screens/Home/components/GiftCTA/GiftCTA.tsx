@@ -12,7 +12,7 @@ function GiftCTA() {
         <Box marginBottom={2}>
           <Typography variant="h4">Einstaklingar</Typography>
         </Box>
-        <Link href="/umsokn">
+        <Link href="/notandi">
           <span>
             <Button width="fluid">Sækja Ferðagjöf</Button>
           </span>
