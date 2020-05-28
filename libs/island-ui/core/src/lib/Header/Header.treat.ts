@@ -7,3 +7,7 @@ export const container = style({
   alignItems: 'center',
   borderBottom: `1px solid ${theme.color.blue200}`,
 })
+
+export const pointer = style({
+  cursor: 'pointer',
+})

@@ -1,11 +1,19 @@
 import React from 'react'
+
 import { Logo } from '../Logo/Logo'
+
 import * as styles from './Header.treat'
 
-export const Header = () => {
+interface PropTypes {
+  withPointer?: boolean
+}
+
+export const Header = ({ withPointer = false }: PropTypes) => {
   return (
     <div className={styles.container}>
-      <Logo width={160} />
+      <div className={withPointer ? styles.pointer : undefined}>
+        <Logo width={160} />
+      </div>
     </div>
   )
 }

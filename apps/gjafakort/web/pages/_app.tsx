@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import Head from 'next/head'
 import { AppProps } from 'next/app'
 import { ApolloProvider } from 'react-apollo'
@@ -42,7 +43,11 @@ const Layout: React.FC = ({ children }) => {
       </Head>
       <Box paddingX="gutter">
         <ContentBlock width="large">
-          <Header />
+          <Link href="/">
+            <span>
+              <Header withPointer />
+            </span>
+          </Link>
         </ContentBlock>
         {children}
       </Box>
