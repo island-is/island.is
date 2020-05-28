@@ -1,18 +1,18 @@
 import React from 'react'
-import Link from 'next/link'
+
 import {
-  ContentBlock,
-  Columns,
-  Column,
-  Box,
-  Typography,
-  Stack,
   Accordion,
   AccordionItem,
-  Button,
+  Box,
+  Column,
+  Columns,
+  ContentBlock,
   Hidden,
+  Stack,
+  Typography,
 } from '@island.is/island-ui/core'
-import packageSvg from '../../assets/ferdagjof-pakki.svg'
+
+import { GiftCTA } from './components'
 
 const mockAccordion = [
   {
@@ -101,33 +101,5 @@ function HomePage() {
     </Box>
   )
 }
-
-const GiftCTA = () => (
-  <Box>
-    <Box background="purple100" padding={4} marginBottom={3}>
-      <Box marginBottom={2}>
-        <Typography variant="h4">Einstaklingar</Typography>
-      </Box>
-      <Button width="fluid">Sækja Ferðagjöf</Button>
-    </Box>
-    <Box background="purple100" padding={4} marginBottom={3}>
-      <Link href="/notendur">
-        <Box marginBottom={2}>
-          <Typography variant="h4">Einstaklingar</Typography>
-        </Box>
-      </Link>
-      <Link href="/fyrirtaeki">
-        <span>
-          <Button width="fluid" variant="ghost">
-            Skrá fyrirtæki
-          </Button>
-        </span>
-      </Link>
-    </Box>
-    <Box textAlign="center" padding={3}>
-      <img src={packageSvg} alt="" />
-    </Box>
-  </Box>
-)
 
 export default HomePage
