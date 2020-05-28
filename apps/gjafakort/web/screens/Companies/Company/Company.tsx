@@ -21,20 +21,13 @@ const companies = [
   },
 ]
 
-const useForceUpdate = () => {
-  const [_, setValue] = useState(0)
-  return () => setValue((value) => ++value)
-}
-
 function Company() {
   const router = useRouter()
-  const forceUpdate = useForceUpdate()
   const { ssn } = router.query
-  const company = companies.find((c) => c.ssn === ssn)
+  const [company, setCompany] = useState(companies.find((c) => c.ssn === ssn))
 
   const onSubmit = () => {
-    company.state = 'approved'
-    forceUpdate()
+    setCompany({ ...company, state: 'approved' })
   }
 
   if (company.state === 'approved') {
