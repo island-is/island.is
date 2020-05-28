@@ -110,7 +110,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Building
-        run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/run-nx-in-parallel.sh docker
+        run: BRANCH=$DOCKER_BRANCH_TAG MAX_JOBS=1 ./scripts/run-nx-in-parallel.sh docker
 
       # - name: Auditing Node.js modules
       #   run: yarn run security:audit
