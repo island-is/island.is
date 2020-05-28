@@ -59,7 +59,7 @@ function SelectionForm({ onSubmit, companies }: PropTypes) {
                   }))}
                 />
               </Box>
-              <Button type="submit">Áfram</Button>
+              <Button htmlType="submit">Áfram</Button>
             </Column>
           </Columns>
           <Columns space="gutter" collapseBelow="xl">

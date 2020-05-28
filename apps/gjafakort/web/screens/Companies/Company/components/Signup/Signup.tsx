@@ -219,7 +219,7 @@ function Signup({ company, onSubmit }: PropTypes) {
                       label="Ég samþykki skilmála Ferðagjafarinnar"
                     />
                   </Box>
-                  <Button type="submit">Skrá fyrirtækið mitt</Button>
+                  <Button htmlType="submit">Skrá fyrirtækið mitt</Button>
                 </Form>
               )}
             </Formik>
