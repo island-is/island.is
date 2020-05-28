@@ -96,8 +96,8 @@ jobs:
       # - name: Check formatting
       #   run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/check_formatting.sh
 
-      - name: Security audit Node modules
-        run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/security-audit.sh
+      # - name: Security audit Node modules
+      #   run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/security-audit.sh
 
       - name: Running tests
         run: BRANCH=$DOCKER_BRANCH_TAG MAX_JOBS=1 ./scripts/run-affected-in-parallel.sh test
