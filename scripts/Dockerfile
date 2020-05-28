@@ -30,7 +30,7 @@ FROM src as builder
 ARG APP
 ENV APP=${APP}
 
-RUN yarn run build ${APP}
+RUN yarn run build ${APP} --prod
 
 FROM src as linter
 ARG APP
@@ -64,6 +64,7 @@ ARG APP
 ARG APP_HOME
 ARG APP_DIST_HOME
 ENV APP=${APP}
+ENV NODE_ENV=production
 
 RUN apk add bash -U && rm -rf /var/cache/apk/*
 WORKDIR /webapp
