@@ -17,20 +17,20 @@ jobs:
     #runs-on: self-hosted
     runs-on: ubuntu-latest
 
-    # services:
-    #   postgres:
-    #     image: postgres:11.6
-    #     env:
-    #       POSTGRES_DB: application_test
-    #       POSTGRES_PASSWORD: application_test
-    #       POSTGRES_USER: application_test
-    #     options: >-
-    #       --health-cmd pg_isready
-    #       --health-interval 10s
-    #       --health-timeout 5s
-    #       --health-retries 5
-    #     ports:
-    #       - 5432:5432
+    services:
+      postgres:
+        image: postgres:11.6
+        env:
+          POSTGRES_DB: application_test
+          POSTGRES_PASSWORD: application_test
+          POSTGRES_USER: application_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
     env:
       # TODO: make this more generic (workflows should trigger these services)
@@ -93,36 +93,34 @@ jobs:
         if: steps.cache-deps.outputs.cache-hit != 'true'
         run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/prepare_deps.sh
 
-      - name: Check formatting
-        run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/check_formatting.sh
+      # - name: Check formatting
+      #   run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/check_formatting.sh
 
-      - name: Lining
-        run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/run-affected-in-parallel.sh lint
+      - name: Security audit Node modules
+        run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/security-audit.sh
 
-      - name: Docker login to ECR repo
-        run: |
-          aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}gjafakort-api
-          aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}gjafakort-web
-          aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}gjafakort-queue-listener
-          aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}gjafakort-application
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Running tests
+        run: BRANCH=$DOCKER_BRANCH_TAG MAX_JOBS=1 ./scripts/run-affected-in-parallel.sh test
 
-      - name: Building Express apps
-        run: BRANCH=$DOCKER_BRANCH_TAG MAX_JOBS=2 ./scripts/run-affected-in-parallel.sh docker-express
-      - name: Building Nest.js apps
-        run: BRANCH=$DOCKER_BRANCH_TAG MAX_JOBS=2 ./scripts/run-affected-in-parallel.sh docker-next
+      # - name: Lining
+      #   run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/run-affected-in-parallel.sh lint
 
-      # - name: Auditing Node.js modules
-      #   run: yarn run security:audit
-      # - name: Linting code
-      #   run: yarn run affected:lint --base origin/master --parallel
-      # - name: Check formatting of code
-      #   run: yarn run format:check --base origin/master --parallel
+      # - name: Docker login to ECR repo
+      #   run: |
+      #     aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}gjafakort-api
+      #     aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}gjafakort-web
+      #     aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}gjafakort-queue-listener
+      #     aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}gjafakort-application
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      # - name: Building Express apps
+      #   run: BRANCH=$DOCKER_BRANCH_TAG MAX_JOBS=2 ./scripts/run-affected-in-parallel.sh docker-express
+      # - name: Building Nest.js apps
+      #   run: BRANCH=$DOCKER_BRANCH_TAG MAX_JOBS=2 ./scripts/run-affected-in-parallel.sh docker-next
+
       # - name: Run tests
       #   run: yarn run affected:test --base origin/master --parallel
       # - name: Running E2E tests
       #   run: yarn run affected:e2e --base origin/master
-      # - name: Build and push docker
-      #   run: yarn run affected:docker --base origin/master

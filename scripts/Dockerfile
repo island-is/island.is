@@ -22,6 +22,10 @@ FROM src as formatting
 
 RUN yarn run format:check --all
 
+FROM src as security-audit
+
+RUN yarn run security:audit
+
 FROM src as builder
 ARG APP
 ENV APP=${APP}
@@ -33,6 +37,10 @@ ARG APP
 ENV APP=${APP}
 
 RUN yarn run lint ${APP}
+
+FROM src as test
+
+CMD yarn run test ${APP}
 
 FROM src as tests
 ARG APP
