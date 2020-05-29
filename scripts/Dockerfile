@@ -12,7 +12,7 @@ USER runner
 
 # Adding and installing packages
 ADD --chown=runner:runners package.json yarn.lock ./
-RUN yarn && rm -rf /home/runner/.cache
+RUN yarn install --frozen-lockfile && rm -rf /home/runner/.cache
 
 FROM deps as src
 # image with the source code
