@@ -107,7 +107,7 @@ jobs:
         run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/run-affected-in-parallel.sh lint
 
       - name: Docker login to ECR repo
-        if: github.base_ref == null # run this only on master
+        # if: github.base_ref == null # run this only on master
         run: |
           aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}gjafakort-api
           aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}gjafakort-web
