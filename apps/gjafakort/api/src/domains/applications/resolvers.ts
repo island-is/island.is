@@ -1,3 +1,5 @@
+import { ForbiddenError } from 'apollo-server-express'
+
 import { authorize } from '../auth'
 import { getApplication, createApplication } from './service'
 import { ferdalagService } from '../../services'
@@ -5,6 +7,11 @@ import { ferdalagService } from '../../services'
 class ApplicationResolver {
   @authorize({ role: 'admin' })
   public async getApplication(_, args) {
+    if (true) {
+      throw new ForbiddenError('Forbidden')
+    }
+
+    return { id: '1', email: 'foo', state: 'bla' }
     const application = await getApplication(args.ssn)
     if (application) {
       return {
