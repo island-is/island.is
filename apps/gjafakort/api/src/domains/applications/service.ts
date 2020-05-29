@@ -1,25 +1,29 @@
 import fetch from 'isomorphic-unfetch'
 
-import {
-  Application,
-  GraphQLContext,
-  CreateApplicationInput,
-} from '../../types'
+import { GraphQLContext, CreateApplicationInput } from '../../types'
 import { environment } from '../../environments'
 
 const APPLICATION_TYPE = 'gjafakort'
 
-const formatApplication = (application): Application =>
-  application && {
-    id: application.id,
-    state: application.state,
-    email: application.data.email,
+interface ApplicationResponse {
+  created: string
+  modified: string
+  id: string
+  issuerSSN: string
+  type: string
+  state: string
+  data: {
+    email: string
+    comment: string[]
   }
+}
 
 export const createApplication = async (
   application: CreateApplicationInput,
   context: GraphQLContext,
-): Promise<Application> => {
+  state: string,
+  comment: string[],
+): Promise<ApplicationResponse> => {
   const url = `${environment.applicationUrl}/issuers/${application.ssn}/applications`
   const { email } = application
 
@@ -28,27 +32,29 @@ export const createApplication = async (
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       type: APPLICATION_TYPE,
-      state: 'approved',
-      data: { email },
+      state,
+      data: {
+        email,
+        comment,
+      },
     }),
   })
   const data = await res.json()
-  const formattedApplication = formatApplication(data.application)
 
-  if (formattedApplication.state === 'approved') {
-    context.channel.publish({
-      exchangeId: context.appExchangeId,
-      message: formattedApplication,
-      routingKey: formattedApplication.state,
-    })
-  }
-  return formattedApplication
+  context.channel.publish({
+    exchangeId: context.appExchangeId,
+    message: data.application,
+    routingKey: data.application.state,
+  })
+  return data.application
 }
 
-export const getApplication = async (ssn: string): Promise<Application> => {
+export const getApplication = async (
+  ssn: string,
+): Promise<ApplicationResponse> => {
   const url = `${environment.applicationUrl}/issuers/${ssn}/applications/${APPLICATION_TYPE}`
 
   const res = await fetch(url)
   const data = await res.json()
-  return formatApplication(data.application)
+  return data.application
 }
