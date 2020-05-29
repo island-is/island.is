@@ -104,7 +104,7 @@ jobs:
       - name: Running tests
         run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/run-affected-in-parallel.sh test
 
-      - name: Lining
+      - name: Linting
         run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/run-affected-in-parallel.sh lint
 
       - name: Docker login to ECR repo
