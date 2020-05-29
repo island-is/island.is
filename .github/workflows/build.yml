@@ -118,10 +118,10 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Building Express apps
-        if: github.base_ref == null # run this only on master
+        # if: github.base_ref == null # run this only on master
         run: BRANCH=$DOCKER_BRANCH_TAG MAX_JOBS=2 ./scripts/run-affected-in-parallel.sh docker-express
       - name: Building Nest.js apps
-        if: github.base_ref == null # run this only on master
+        # if: github.base_ref == null # run this only on master
         run: BRANCH=$DOCKER_BRANCH_TAG MAX_JOBS=2 ./scripts/run-affected-in-parallel.sh docker-next
 
       # - name: Running E2E tests
