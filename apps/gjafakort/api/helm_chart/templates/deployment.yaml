@@ -41,6 +41,11 @@ spec:
               port: http
           env:
             {{- with .Values.environment }}
+            - name: RSK_API_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gjafakort-api
+                  key: RSK_API_PASSWORD
             - name: FERDALAG_API_KEY
               valueFrom:
                 secretKeyRef:

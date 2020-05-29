@@ -37,7 +37,7 @@ const createServer = async (
     typeDefs: [rootTypeDefs, ...typeDefs],
     playground: enablePlayground,
     introspection: enablePlayground,
-    context: ({ req }): GraphQLContext | null => {
+    context: ({ req }): GraphQLContext => {
       const accessToken = req.cookies[ACCESS_TOKEN_COOKIE.name]
       if (!accessToken) {
         return context
