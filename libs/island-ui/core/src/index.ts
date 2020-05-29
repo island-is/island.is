@@ -15,6 +15,7 @@ export * from './lib/Input/Input'
 export * from './lib/Tabs/Tabs'
 export * from './lib/Breadcrumbs/Breadcrumbs'
 export * from './lib/BulletList/BulletList'
+export * from './lib/VideoIframe/VideoIframe'
 
 // Layout
 export * from './lib/Box/Box'
