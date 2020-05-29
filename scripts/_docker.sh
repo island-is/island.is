@@ -15,4 +15,15 @@ else
     # Just build the container but do not publish it to the registry
     PUBLISH_TO_REGISTRY=""
 fi
-exec docker buildx build --platform=linux/amd64 --cache-from=type=local,src=$PROJECT_ROOT/cache -f ${DIR}/Dockerfile --target=$TARGET $PUBLISH_TO_REGISTRY --build-arg BUILDKIT_INLINE_CACHE=1  --build-arg APP=${APP} --build-arg APP_HOME=${APP_HOME} --build-arg APP_DIST_HOME=${APP_DIST_HOME}   -t ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} $PROJECT_ROOT
+
+exec docker buildx build \
+  --platform=linux/amd64 \
+  --cache-from=type=local,src=$PROJECT_ROOT/cache \
+  -f ${DIR}/Dockerfile \
+  --target=$TARGET $PUBLISH_TO_REGISTRY \
+  --build-arg BUILDKIT_INLINE_CACHE=1  \
+  --build-arg APP=${APP} \
+  --build-arg APP_HOME=${APP_HOME} \
+  --build-arg APP_DIST_HOME=${APP_DIST_HOME} \
+  -t ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} \
+  $PROJECT_ROOT

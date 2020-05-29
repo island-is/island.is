@@ -9,4 +9,10 @@ source $DIR/_common.sh
 
 mkdir -p $PROJECT_ROOT/cache
 docker buildx create --driver docker-container --use
-exec docker buildx build --platform=linux/amd64 --cache-from=type=local,src=$PROJECT_ROOT/cache --cache-to=type=local,dest=$PROJECT_ROOT/cache -f ${DIR}/Dockerfile --target=deps $PROJECT_ROOT
+exec docker buildx build \
+  --platform=linux/amd64 \
+  --cache-from=type=local,src=$PROJECT_ROOT/cache \
+  --cache-to=type=local,dest=$PROJECT_ROOT/cache \
+  -f ${DIR}/Dockerfile \
+  --target=deps \
+  $PROJECT_ROOT

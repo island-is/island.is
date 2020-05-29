@@ -7,4 +7,4 @@ source $DIR/_common.sh
 MAX_JOBS=${MAX_JOBS:-2}
 
 # This is a helper script to run in parallel affected projects for a specific target
-exec parallel --lb -j $MAX_JOBS APP={} $DIR/$1.sh ::: `$DIR/nx-affected-targets.sh $1 | tr '\n,' ' '`
+exec parallel --lb -j $MAX_JOBS APP={} $DIR/$1.sh ::: `$DIR/_nx-affected-targets.sh $1 | tr '\n,' ' '`

@@ -1,3 +1,4 @@
+# This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
 FROM node:12.16.2-alpine3.11 as deps
 
 RUN apk add -U git
@@ -13,9 +14,8 @@ USER runner
 ADD --chown=runner:runners package.json yarn.lock ./
 RUN yarn && rm -rf /home/runner/.cache
 
-
 FROM deps as src
-
+# image with the source code
 ADD --chown=runner:runners . .
 
 FROM src as formatting
@@ -42,18 +42,12 @@ FROM src as test
 
 CMD yarn run test ${APP}
 
-FROM src as tests
-ARG APP
-ENV APP=${APP}
-
-CMD yarn run test ${APP}
-
 FROM src as nx-runner
-
+# image use to run NX-related operations (print-affected, etc.)
 ENV PATH=./node_modules/.bin:$PATH
 
 FROM node:12.16.2-alpine3.11 as output-base
-
+# this is base image for containers that are to be deployed
 ARG GIT_BRANCH
 ARG GIT_SHA
 LABEL branch=${GIT_BRANCH}
@@ -75,6 +69,7 @@ RUN chown -R runner:runners /webapp
 USER runner
 
 FROM output-base as output-express
+# image with build of an Express.js app
 
 COPY --from=builder --chown=runner:runners /build/${APP_DIST_HOME} /webapp
 COPY --from=builder --chown=runner:runners /build/node_modules /webapp/node_modules
@@ -83,6 +78,7 @@ ENTRYPOINT [ "node" ]
 CMD [ "main.js" ]
 
 FROM output-base as output-next
+# image with build of an Next.js app
 
 COPY --from=builder --chown=runner:runners /build/node_modules /webapp/node_modules
 COPY --from=builder --chown=runner:runners /build/${APP_HOME}/next.config.js /webapp
