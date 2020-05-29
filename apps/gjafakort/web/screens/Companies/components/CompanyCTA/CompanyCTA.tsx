@@ -12,7 +12,7 @@ function CompanyCTA() {
         <Box marginBottom={2}>
           <Typography variant="h4">Ferðaþjónustufyrirtæki</Typography>
         </Box>
-        <Link href="/fyrirtaeki">
+        <Link href="/fyrirtaeki/umsokn">
           <span>
             <Button width="fluid">Skrá fyrirtæki</Button>
           </span>
