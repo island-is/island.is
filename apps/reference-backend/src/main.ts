@@ -27,6 +27,11 @@ app.get('/status', (req, res) => {
   res.json({ ok: true })
 })
 
+// version of the code running
+app.get('/version', (req, res) => {
+  res.json({ version: process.env.REVISION })
+})
+
 // security middleware
 app.use((req, res, next) => {
   // we need to secure all routes by default. OAuth?
