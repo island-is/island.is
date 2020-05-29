@@ -10,37 +10,47 @@ import {
   Hidden,
   Stack,
   Typography,
+  Breadcrumbs,
 } from '@island.is/island-ui/core'
 
 import { GiftCTA } from './components'
+import Link from 'next/link'
 
 const mockAccordion = [
   {
     label: 'Hverjir fá Ferðagjöf?',
     content:
-      'Allir íbúar á Íslandi með íslenska kennitölu og eru fæddir árið 2002 og fyrr fá Ferðgjöf að andvirði 5.000 kr. ',
+      'Allir einstaklingar með íslenska kennitölu og eru fæddir árið 2002 eða fyrr fá Ferðagjöf.',
   },
   {
     label: 'Hvernig nota ég Ferðagjöfina?',
-    content:
-      'Einfalt er að nýta gjöfina sem má nálgast í smáforritinu "Ferðagjöf".  Þegar nýta á gjöfina skannar ferðaþjónustufyrirtæki strikamerki í smáforritinu. Einnig má nálgast strikamerkið á island.is.',
+    content: (
+      <Stack space={1}>
+        <Typography variant="p">
+          Til að nýta Ferðagjöfina þarf að sækja gjöfina hér á Ísland.is með
+          innskráningu. Sótt er smáforritið Ferðagjöf í App eða Play store og
+          strikamerki skannað við kaupa á þjónustu.
+        </Typography>
+        <Typography variant="p">
+          Einnig er hægt að nýta Ferðagjöfina beint inn á Ísland.is fyrir þá sem
+          ekki eru með snjallsíma.
+        </Typography>
+      </Stack>
+    ),
   },
   {
     label: 'Hvar get ég notað Ferðagjöfina?',
     content:
-      'Hægt er að nýta gjöfina hjá fjölmörgum ferðaþjónustufyrirtækjum viðsvegar um landið.  Á www.ferdalag.is má sjá yfirlit hvar hægt er að nýta gjöfina.',
+      'Ferðagjöfina má nýta hjá Ferðaþjónustufyrirtækjum viðsvegar um landið.  Sjá má yfirlit yfir fyrirtæki sem hafa skráð sig til þátttöku á Ferðalag.is og í smáforritinu Ferðagjöf',
   },
   {
     label: 'Get ég gefið Ferðagjöfina áfram?',
-    content: '',
+    content:
+      'Allir eru hvattir til að nýta gjöfina en heimilt er að gefa eigin gjöf, hver einstaklingur getur þó að hámarki nýtt 15 Ferðagjafir.',
   },
   {
     label: 'Hver er gildistími Ferðagjafarinnar?',
-    content: '',
-  },
-  {
-    label: 'Hvaða fyrirtæki mega taka þátt?',
-    content: '',
+    content: 'Ferðagjöfin er í gildi til 31.desember 2020.  ',
   },
 ]
 
@@ -51,21 +61,29 @@ function HomePage() {
         <Columns space={15} collapseBelow="lg">
           <Column width="2/3">
             <Box paddingLeft={[0, 0, 0, 9]}>
-              <Stack space={3}>
-                <Typography variant="h1" as="h1">
-                  Gjöf til ferðalaga innanlands
-                </Typography>
-                <Typography variant="intro">
-                  Allir íbúar á Íslandi 18 ára og eldri fá Ferðagjöf, stafrænt
-                  gjafabréf sem hægt er að nota á ferðalögum innanlands.
-                </Typography>
-              </Stack>
+              <Box marginBottom={4}>
+                <Breadcrumbs>
+                  <Link href="/">Ísland.is</Link>
+                  <span>Ferðagjöf</span>
+                </Breadcrumbs>
+              </Box>
               <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
-                <Typography variant="p">
-                  Ferðagjöfin er liður í aðgerðum stjórnvalda til eflingar á
-                  hagkerfinu í kjölfar kórónuveirufaraldursins, og er ætlað að
-                  styðja við íslenska ferðaþjónustu.
-                </Typography>
+                <Stack space={3}>
+                  <Typography variant="h1" as="h1">
+                    Gjöf til ferðalaga innanlands
+                  </Typography>
+                  <Typography variant="intro">
+                    Búum til minningar á ferðalagi innanlands og styðjum við
+                    bakið á íslenskri ferðaþjónustu
+                  </Typography>
+                  <Typography variant="p">
+                    Allir einstaklingar 18 ára og eldri fá Ferðagjöf að andvirði
+                    5.000 kr. Gjöfin er liður í því að styðja við bakið á
+                    íslenskri ferðaþjónustu í kjölfar kórónufaraldurs og efla
+                    þannig íslenska ferðaþjónustu sem og hvetja landsmenn til að
+                    eiga góðar stundir á ferðalagi víðsvegar um landið.
+                  </Typography>
+                </Stack>
               </Box>
               <Hidden above="md">
                 <Box marginBottom={3}>
@@ -84,7 +102,13 @@ function HomePage() {
                     label={accordionItem.label}
                     id={index.toString()}
                   >
-                    <Typography variant="p">{accordionItem.content}</Typography>
+                    {typeof accordionItem.content === 'string' ? (
+                      <Typography variant="p">
+                        {accordionItem.content}
+                      </Typography>
+                    ) : (
+                      accordionItem.content
+                    )}
                   </AccordionItem>
                 ))}
               </Accordion>
