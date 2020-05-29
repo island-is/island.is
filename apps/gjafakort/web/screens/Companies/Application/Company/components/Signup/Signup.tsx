@@ -24,7 +24,7 @@ export type CompanyType = {
 
 interface PropTypes {
   company: CompanyType
-  onSubmit: () => void
+  onSubmit: (values) => void
 }
 
 const companyOperations = [
@@ -58,11 +58,6 @@ const companyOperations = [
     name: 'followingLaws',
     label:
       'Fyrirtæki í atvinnurekstri á grundvelli laga um hollustuhætti og mengunarvarnar s.s. baðstofur, gufubaðsstofur, götuleikhús, tvívolu, útihátíðir, tjald og hjólhýsasvæði',
-    tooltip: 'test',
-  },
-  {
-    name: 'noneOfTheAbove',
-    label: 'Ekkert að ofangreindu á við',
     tooltip: 'test',
   },
 ]
@@ -121,12 +116,31 @@ function Signup({ company, onSubmit }: PropTypes) {
                 webpage: '',
                 phoneNumber: '',
                 approveTerms: false,
+                operations: companyOperations.reduce((acc, o) => {
+                  acc[o.name] = false
+                  return acc
+                }, {}),
+                noneOfTheAbove: false,
+              }}
+              validate={(values) => {
+                const errors = {}
+                const noOperations = companyOperations.every(
+                  (o) => !values.operations[o.name],
+                )
+                if (!values.noneOfTheAbove && noOperations) {
+                  errors['operations'] = {}
+                  companyOperations.forEach((o) => {
+                    errors['operations'][o.name] =
+                      'Velja þarf minnst einn reit eða "Ekkert að ofangreindu á við"'
+                  })
+                }
+                return errors
               }}
               validationSchema={SignupSchema}
               onSubmit={onSubmit}
               enableReinitialize
             >
-              {() => (
+              {({ values, setFieldValue }) => (
                 <Form>
                   <Box marginBottom={6}>
                     <Tiles columns={[1, 1, 2]} space={3}>
@@ -179,9 +193,28 @@ function Signup({ company, onSubmit }: PropTypes) {
                         <Field
                           key={operation.name}
                           component={FieldCheckbox}
-                          {...operation}
+                          name={`operations.${operation.name}`}
+                          tooltip={operation.tooltip}
+                          label={operation.label}
+                          disabled={values.noneOfTheAbove}
                         />
                       ))}
+                      <Field
+                        component={FieldCheckbox}
+                        name="noneOfTheAbove"
+                        label="Ekkert að ofangreindu á við"
+                        tooltip="test texti"
+                        onChange={() => {
+                          // we want this to run in the next render cycle so "noneOfTheAbove" is true before we uncheck all operations
+                          setTimeout(() => {
+                            companyOperations.forEach((o) => {
+                              if (values.operations[o.name]) {
+                                setFieldValue(`operations.${o.name}`, false)
+                              }
+                            })
+                          }, 0)
+                        }}
+                      />
                     </Stack>
                   </Box>
                   <Stack space={3}>
