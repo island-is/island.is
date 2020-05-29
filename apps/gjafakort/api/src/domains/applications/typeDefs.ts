@@ -3,12 +3,20 @@ import { gql } from 'apollo-server-express'
 export default gql`
   type Application {
     id: String!
+    companySSN: String!
+    name: String!
+    companyDisplayName: String!
+    serviceCategory: String!
     email: String!
+    generalEmail: String!
+    phoneNumber: String!
+    approveTerms: Boolean!
+    companyDisplayName: String!
     state: String!
   }
 
   extend type Query {
-    getApplication(ssn: String!): getApplicationPayload
+    getApplication(companySSN: String!): getApplicationPayload
   }
 
   type getApplicationPayload {
@@ -16,8 +24,16 @@ export default gql`
   }
 
   input createApplicationInput {
-    ssn: String!
+    company {
+      ssn: String!
+      name: String!
+      displayName: String!
+      serviceCategory: String!
+    }
     email: String!
+    generalEmail: String!
+    phoneNumber: String!
+    approveTerms: Boolean!
   }
 
   type createApplicationPayload {
