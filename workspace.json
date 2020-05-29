@@ -184,8 +184,7 @@
             "passWithNoTests": true
           }
         },
-        "docker-next": {
-        }
+        "docker-next": {}
       }
     },
     "gjafakort-web-e2e": {
@@ -282,8 +281,7 @@
             ]
           }
         },
-        "docker-express": {
-        }
+        "docker-express": {}
       }
     },
     "api": {
@@ -538,8 +536,7 @@
             "passWithNoTests": true
           }
         },
-        "docker-express": {
-        }
+        "docker-express": {}
       }
     },
     "gjafakort-queue-listener": {
@@ -599,8 +596,7 @@
             "passWithNoTests": true
           }
         },
-        "docker-express": {
-        }
+        "docker-express": {}
       }
     },
     "message-queue": {
