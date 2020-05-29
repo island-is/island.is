@@ -1,15 +1,8 @@
 import { environment } from '../environments'
-import { Application } from '../types'
 
 const { ferdalag } = environment
 
-interface CompanyContactInfo {
-  email: string
-  name: string
-  phone: string
-}
-
-interface Company {
+interface ServiceProvider {
   serviceProviderId: string
   SSN: string
   legalName: string
@@ -18,17 +11,18 @@ interface Company {
   phoneNr: string
   email: string
   website: string
-  contactInfo: CompanyContactInfo
+  contactInfo: {
+    email: string
+    name: string
+    phone: string
+  }
 }
 
-const formatCompany = (company: Company): Application => ({
-  id: company.serviceProviderId,
-  email: company.email,
-  state: 'empty',
-})
-
-export const getCompany = async (ssn: string): Promise<Application> => {
+export const getServiceProviders = async (
+  ssn: string,
+): Promise<ServiceProvider[]> => {
   try {
+    console.debug(`Requesting service provider for ${ssn}`)
     const res = await fetch(
       `${ferdalag.url}/ssn/${ssn}?key=${ferdalag.apiKey}`,
       {
@@ -41,15 +35,9 @@ export const getCompany = async (ssn: string): Promise<Application> => {
       throw new Error(text)
     }
     const { data } = await res.json()
-    if (data.length === 1) {
-      return formatCompany(data[0])
-    } else if (data.length > 1) {
-      console.debug(`Got multiple entries for ssn ${ssn}`)
-    } else if (data.length < 1) {
-      console.debug(`Got no entries for ssn ${ssn}`)
-    }
+    return data
   } catch (err) {
     console.error('Failed fetching company from ferdalag:', err)
   }
-  return null
+  return []
 }

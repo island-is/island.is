@@ -6,7 +6,11 @@ export default gql`
     name: String!
   }
 
-  extend type Query {
+  type getCompaniesPayload {
     companies: [Company]
+  }
+
+  extend type Query {
+    getCompanies: getCompaniesPayload
   }
 `

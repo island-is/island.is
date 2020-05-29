@@ -8,16 +8,18 @@ class CompanyResolver {
     const membersWithProcuration = members.filter(
       (member) => member.ErProkuruhafi === '1',
     )
-    return membersWithProcuration.map((member) => ({
-      ssn: member.Kennitala,
-      name: member.Nafn,
-    }))
+    return {
+      companies: membersWithProcuration.map((member) => ({
+        ssn: member.Kennitala,
+        name: member.Nafn,
+      })),
+    }
   }
 }
 
 const resolver = new CompanyResolver()
 export default {
   Query: {
-    companies: resolver.getCompanies,
+    getCompanies: resolver.getCompanies,
   },
 }
