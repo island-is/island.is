@@ -12,6 +12,10 @@ app.use(cookieParser())
 
 app.use('/api/auth', authRoutes)
 
+app.get('/', (req, res) => {
+  res.send({ message: 'Hello, I am a readiness probe' })
+})
+
 createServer(resolvers, typeDefs)
   .then((graphQLServer) => {
     graphQLServer.applyMiddleware({ app, path: '/api' })
