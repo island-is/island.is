@@ -3,7 +3,6 @@ import { theme } from '../../theme'
 import {
   inputErrorState,
   errorMessage as inputErrorMessage,
-  labelDisabledEmptyInput,
 } from '../Input/Input.mixins'
 
 const checkboxSize = 24

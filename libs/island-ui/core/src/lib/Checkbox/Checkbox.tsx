@@ -1,5 +1,4 @@
-import React, { ReactElement } from 'react'
-import { useUID } from 'react-uid'
+import React from 'react'
 import cn from 'classnames'
 
 import * as styles from './Checkbox.treat'

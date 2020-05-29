@@ -140,7 +140,7 @@ function Signup({ company, onSubmit }: PropTypes) {
               onSubmit={onSubmit}
               enableReinitialize
             >
-              {({ values, setFieldValue, errors }) => (
+              {({ values, setFieldValue }) => (
                 <Form>
                   <Box marginBottom={6}>
                     <Tiles columns={[1, 1, 2]} space={3}>
