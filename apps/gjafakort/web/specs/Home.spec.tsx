@@ -4,6 +4,7 @@ import { render } from '@testing-library/react'
 import { Home } from '../screens'
 
 describe('Home', () => {
+  // skeleton test
   it('should render successfully', () => {
     const { baseElement } = render(<Home />)
     expect(baseElement).toBeTruthy()
