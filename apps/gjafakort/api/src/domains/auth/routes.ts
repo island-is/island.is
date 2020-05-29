@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { body, cookie, validationResult } from 'express-validator'
+import { body, cookie, query, validationResult } from 'express-validator'
 import jwt from 'jsonwebtoken'
 import { Entropy } from 'entropy-string'
 import IslandisLogin from 'islandis-login'
@@ -77,18 +77,39 @@ router.post(
   },
 )
 
-router.get('/login', (req, res) => {
-  const { name, options } = REDIRECT_COOKIE
-  res.clearCookie(name, options)
-  const authId = uuid()
-  let { returnUrl = '/' } = req.query
-  if (!returnUrl || String(returnUrl).charAt(0) !== '/') {
-    returnUrl = '/'
-  }
+router.get(
+  '/login',
+  [
+    query('returnUrl')
+      .optional()
+      .isString()
+      .customSanitizer((value) => {
+        if (!value || String(value).charAt(0) !== '/') {
+          return '/'
+        }
+        return value
+      }),
+  ],
+  (req, res) => {
+    const { name, options } = REDIRECT_COOKIE
+    res.clearCookie(name, options)
+    const authId = uuid()
+    let { returnUrl } = req.query
 
-  res
-    .cookie(name, { authId, returnUrl }, { ...options, maxAge: 15 * 60 * 1000 })
-    .redirect(`${samlEntryPoint}&authid=${authId}`)
+    res
+      .cookie(
+        name,
+        { authId, returnUrl },
+        { ...options, maxAge: 15 * 60 * 1000 },
+      )
+      .redirect(`${samlEntryPoint}&authid=${authId}`)
+  },
+)
+
+router.get('/logout', (req, res) => {
+  res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
+  res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
+  res.json({ logout: true })
 })
 
 export default router

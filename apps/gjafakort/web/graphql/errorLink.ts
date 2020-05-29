@@ -1,4 +1,5 @@
 import { ApolloError } from 'apollo-client'
+import Router from 'next/router'
 import { onError, ErrorResponse } from 'apollo-link-error'
 import { ServerError } from 'apollo-link-http-common'
 
@@ -11,19 +12,26 @@ export default onError(
     }
 
     if (networkError) {
-      if ((networkError as ServerError).statusCode === 401) {
-        // return refreshRequest(operation, forward)
-        // TODO: logout
-        console.error(networkError)
-      } else {
-        return NotificationService.onNetworkError(networkError as ServerError)
-      }
+      return NotificationService.onNetworkError(networkError as ServerError)
     }
 
     if (graphQLErrors) {
-      return NotificationService.onGraphQLError({
-        graphQLErrors,
-      } as ApolloError)
+      graphQLErrors.forEach((err) => {
+        switch (err.extensions.code) {
+          case 'UNAUTHENTICATED':
+            return fetch('/api/auth/logout', {
+              method: 'GET',
+              headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+              },
+            }).then(() => Router.reload())
+          default:
+            return NotificationService.onGraphQLError({
+              graphQLErrors,
+            } as ApolloError)
+        }
+      })
     }
   },
 )
