@@ -6,7 +6,7 @@ import { ferdalagService } from '../../services'
 
 class ApplicationResolver {
   @authorize({ role: 'admin' })
-  public async getApplication(_, args) {
+  public async getApplication(_, args, context) {
     if (true) {
       throw new ForbiddenError('Forbidden')
     }

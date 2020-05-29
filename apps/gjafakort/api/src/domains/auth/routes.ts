@@ -26,12 +26,12 @@ router.post(
   '/callback',
   [body('token').notEmpty(), cookie(REDIRECT_COOKIE.name).notEmpty()],
   async (req, res) => {
-    const { token } = req.body
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(400).json({ error: errors.array() })
     }
 
+    const { token } = req.body
     const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE.name]
     res.clearCookie(REDIRECT_COOKIE.name, REDIRECT_COOKIE.options)
     let verifyResult: VerifyResult
@@ -91,6 +91,11 @@ router.get(
       }),
   ],
   (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: errors.array() })
+    }
+
     const { name, options } = REDIRECT_COOKIE
     res.clearCookie(name, options)
     const authId = uuid()
