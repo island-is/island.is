@@ -184,20 +184,7 @@
             "passWithNoTests": true
           }
         },
-        "docker": {
-          "builder": "@gperdomor/nx-docker:build",
-          "options": {
-            "repository": "gjafakort-web",
-            "dockerfile": "apps/gjafakort/web/Dockerfile",
-            "registry": "$DOCKER_REG",
-            "username": "$DOCKER_REG_USER",
-            "password": "$DOCKER_REG_PASSWORD",
-            "tags": "$DOCKER_TAGS",
-            "build_args": "$BUILD_ARGS",
-            "push": true,
-            "socket": "/var/run/docker.sock"
-          }
-        }
+        "docker-next": {}
       }
     },
     "gjafakort-web-e2e": {
@@ -294,20 +281,7 @@
             ]
           }
         },
-        "docker": {
-          "builder": "@gperdomor/nx-docker:build",
-          "options": {
-            "repository": "gjafakort-api",
-            "dockerfile": "apps/gjafakort/api/Dockerfile",
-            "registry": "$DOCKER_REG",
-            "username": "$DOCKER_REG_USER",
-            "password": "$DOCKER_REG_PASSWORD",
-            "tags": "$DOCKER_TAGS",
-            "build_args": "$BUILD_ARGS",
-            "push": true,
-            "socket": "/var/run/docker.sock"
-          }
-        }
+        "docker-express": {}
       }
     },
     "api": {
@@ -562,20 +536,7 @@
             "passWithNoTests": true
           }
         },
-        "docker": {
-          "builder": "@gperdomor/nx-docker:build",
-          "options": {
-            "repository": "gjafakort-application",
-            "dockerfile": "apps/gjafakort/application/Dockerfile",
-            "registry": "$DOCKER_REG",
-            "username": "$DOCKER_REG_USER",
-            "password": "$DOCKER_REG_PASSWORD",
-            "tags": "$DOCKER_TAGS",
-            "build_args": "$BUILD_ARGS",
-            "push": true,
-            "socket": "/var/run/docker.sock"
-          }
-        }
+        "docker-express": {}
       }
     },
     "gjafakort-queue-listener": {
@@ -635,20 +596,7 @@
             "passWithNoTests": true
           }
         },
-        "docker": {
-          "builder": "@gperdomor/nx-docker:build",
-          "options": {
-            "repository": "gjafakort-queue-listener",
-            "dockerfile": "apps/gjafakort/queue-listener/Dockerfile",
-            "registry": "$DOCKER_REG",
-            "username": "$DOCKER_REG_USER",
-            "password": "$DOCKER_REG_PASSWORD",
-            "tags": "$DOCKER_TAGS",
-            "build_args": "$BUILD_ARGS",
-            "push": true,
-            "socket": "/var/run/docker.sock"
-          }
-        }
+        "docker-express": {}
       }
     },
     "message-queue": {
