@@ -99,7 +99,7 @@ router.get(
     const { name, options } = REDIRECT_COOKIE
     res.clearCookie(name, options)
     const authId = uuid()
-    let { returnUrl } = req.query
+    const { returnUrl } = req.query
 
     res
       .cookie(

@@ -11,7 +11,7 @@ generates:
     schema:
       - ./apps/gjafakort/api/src/**/typeDefs.ts
     documents:
-      - ./apps/gjafakort/web/screens/**/*.(ts|tsx)
+      - ./apps/gjafakort/web/**/*.(ts|tsx)
     plugins:
       - typescript
       - typescript-operations

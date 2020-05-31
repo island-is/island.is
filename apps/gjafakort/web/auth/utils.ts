@@ -1,4 +1,3 @@
-import jwtDecode from 'jwt-decode'
 import cookies from 'next-cookies'
 
 export const COOKIE_KEY = 'gjafakort.csrf'

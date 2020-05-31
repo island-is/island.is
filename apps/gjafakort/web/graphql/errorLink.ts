@@ -27,7 +27,7 @@ export default onError(
               },
             }).then(() => Router.reload())
           case 'FORBIDDEN':
-            Router.push('/404')
+            return Router.push('/404')
           default:
             return NotificationService.onGraphQLError({
               graphQLErrors,
