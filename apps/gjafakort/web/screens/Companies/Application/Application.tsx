@@ -1,5 +1,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
+import { useQuery } from 'react-apollo'
+import gql from 'graphql-tag'
 
 import {
   Box,
@@ -11,19 +13,27 @@ import {
 
 import { SelectionForm, NoConnection } from './components'
 
-const companies = [
-  {
-    name: 'Kaffi Klettur',
-    ssn: '1903795829',
-  },
-  {
-    name: 'Kosmos & Kaos',
-    ssn: '1903795839',
-  },
-]
+const GetCompaniesQuery = gql`
+  query GetCompaniesQuery {
+    getCompanies {
+      companies {
+        ssn
+        name
+      }
+    }
+  }
+`
 
 function Companies() {
   const router = useRouter()
+  const { data } = useQuery(GetCompaniesQuery)
+  if (!data) {
+    return <div>Loading...</div>
+  }
+
+  const {
+    getCompanies: { companies },
+  } = data
 
   const onSubmit = ({ ssn }) => {
     router.push(`/fyrirtaeki/umsokn/${ssn}`)
