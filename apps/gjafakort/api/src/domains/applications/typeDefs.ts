@@ -2,17 +2,18 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   type Application {
-    id: String!
-    companySSN: String!
+    id: String
     name: String!
-    companyDisplayName: String!
-    serviceCategory: String!
     email: String!
-    generalEmail: String!
-    phoneNumber: String!
-    approveTerms: Boolean!
-    companyDisplayName: String!
     state: String!
+    companySSN: String!
+    serviceCategory: String
+    generalEmail: String!
+    webpage: String!
+    phoneNumber: String!
+    approveTerms: Boolean
+    companyName: String
+    companyDisplayName: String
   }
 
   extend type Query {

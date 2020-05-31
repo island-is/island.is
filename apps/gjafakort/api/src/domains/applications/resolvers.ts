@@ -73,9 +73,6 @@ class ApplicationResolver {
 
 const resolver = new ApplicationResolver()
 export default {
-  Query: {
-    getApplication: resolver.getApplication,
-  },
   Mutation: {
     createApplication: resolver.createApplication,
   },
