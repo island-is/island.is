@@ -13,8 +13,18 @@ interface ApplicationResponse {
   type: string
   state: string
   data: {
+    name: string
     email: string
-    comment: string[]
+    state: string
+    companySSN: string
+    serviceCategory: string
+    generalEmail: string
+    webpage: string
+    phoneNumber: string
+    approveTerms: boolean
+    companyName: string
+    companyDisplayName: string
+    comment: string
   }
 }
 
@@ -25,8 +35,6 @@ export const createApplication = async (
   comment: string[],
 ): Promise<ApplicationResponse> => {
   const url = `${environment.applicationUrl}/issuers/${application.ssn}/applications`
-  const { email } = application
-
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -34,7 +42,7 @@ export const createApplication = async (
       type: APPLICATION_TYPE,
       state,
       data: {
-        email,
+        ...application,
         comment,
       },
     }),

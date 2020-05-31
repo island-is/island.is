@@ -1,49 +1,23 @@
 import { ForbiddenError } from 'apollo-server-express'
 
 import { authorize } from '../auth'
-import { getApplication, createApplication } from './service'
+import { createApplication } from './service'
 import { ferdalagService, rskService } from '../../services'
 
 class ApplicationResolver {
-  @authorize({ role: 'admin' })
-  public async getApplication(_, { companySSN }, context) {
-    const registeredCompanies = await rskService.getCompanyRegistryMembers(companySSN)
-    if (/*TODO: registeredCompanies.any.kennitala not in companySSN */) {
-      throw new ForbiddenError('Forbidden')
-    }
-
-    return { id: '1', email: 'foo', state: 'bla' }
-    const application = await getApplication(companySSN)
-    if (application) {
-      return {
-        application: {
-          id: application.id,
-          state: application.state,
-          email: application.data.email,
-        },
-      }
-    }
-
-    const serviceProviders = await ferdalagService.getServiceProviders(companySSN)
-    if (serviceProviders.length === 1) {
-      console.debug(`Got a single service provider for ssn ${companySSN}`)
-      const [serviceProvider] = serviceProviders
-      return {
-        application: {
-          id: serviceProvider.serviceProviderId,
-          email: serviceProvider.email,
-          state: 'empty',
-        },
-      }
-    }
-
-    return null
-  }
-
   @authorize()
-  public async createApplication(_, args, context) {
+  public async createApplication(_, { input }, context) {
+    const members = await rskService.getCompanyRegistryMembers(context.user.ssn)
+    const company = members.find(
+      (member) =>
+        member.ErProkuruhafi === '1' && member.Kennitala === input.ssn,
+    )
+    if (!company) {
+      throw new ForbiddenError('Company not found!')
+    }
+
     const serviceProviders = await ferdalagService.getServiceProviders(
-      args.input.ssn,
+      input.ssn,
     )
     let state = 'approved'
     const comments = []
@@ -55,17 +29,21 @@ class ApplicationResolver {
       comments.push('No service provider found for ssn')
     }
 
-    const application = await createApplication(
-      args.input,
-      context,
-      state,
-      comments,
-    )
+    const application = await createApplication(input, context, state, comments)
     return {
       application: {
         id: application.id,
-        state: application.state,
+        name: application.data.name,
         email: application.data.email,
+        state: application.state,
+        companySSN: application.data.companySSN,
+        serviceCategory: application.data.serviceCategory,
+        generalEmail: application.data.generalEmail,
+        webpage: application.data.webpage,
+        phoneNumber: application.data.phoneNumber,
+        approveTerms: application.data.approveTerms,
+        companyName: application.data.companyName,
+        companyDisplayName: application.data.companyDisplayName,
       },
     }
   }

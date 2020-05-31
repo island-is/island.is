@@ -16,32 +16,30 @@ export default gql`
     companyDisplayName: String
   }
 
-  extend type Query {
-    getApplication(companySSN: String!): getApplicationPayload
-  }
-
-  type getApplicationPayload {
-    application: Application
-  }
-
-  input createApplicationInput {
-    company {
-      ssn: String!
-      name: String!
-      displayName: String!
-      serviceCategory: String!
-    }
+  input CreateApplicationInput {
     email: String!
     generalEmail: String!
     phoneNumber: String!
     approveTerms: Boolean!
+    ssn: String!
+    name: String!
+    serviceCategory: String!
+    webpage: String!
+    companyName: String!
+    companyDisplayName: String!
+    acknowledgedMuseum: Boolean!
+    exhibition: Boolean!
+    followingLaws: Boolean!
+    operatingPermitForVehicles: Boolean!
+    validLicenses: Boolean!
+    validPermit: Boolean!
   }
 
-  type createApplicationPayload {
+  type createApplication {
     application: Application
   }
 
   extend type Mutation {
-    createApplication(input: createApplicationInput!): createApplicationPayload
+    createApplication(input: CreateApplicationInput!): createApplication
   }
 `

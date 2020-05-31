@@ -1,4 +1,6 @@
 import React from 'react'
+import { useMutation } from 'react-apollo'
+import gql from 'graphql-tag'
 import { Formik, Form, Field } from 'formik'
 import * as Yup from 'yup'
 
@@ -16,16 +18,23 @@ import {
   Typography,
   FieldSelect,
 } from '@island.is/island-ui/core'
-
-export type CompanyType = {
-  name: string
-  ssn: string | number
-}
+import { Company } from '@island.is/gjafakort-web/graphql/schema'
 
 interface PropTypes {
-  company: CompanyType
-  onSubmit: (values) => void
+  company: Company
+  handleSubmition: (_: boolean) => void
 }
+
+const CreateApplicationMutation = gql`
+  mutation CreateApplicationMutation($input: CreateApplicationInput!) {
+    createApplication(input: $input) {
+      application {
+        id
+        state
+      }
+    }
+  }
+`
 
 const companyOperations = [
   {
@@ -83,7 +92,27 @@ const SignupSchema = Yup.object().shape({
   ),
 })
 
-function Signup({ company, onSubmit }: PropTypes) {
+function Signup({ company, handleSubmition }: PropTypes) {
+  const [createApplication] = useMutation(CreateApplicationMutation)
+  const onSubmit = async (values) => {
+    if (values.noneOfTheAbove) {
+      return handleSubmition(false)
+    }
+
+    await createApplication({
+      variables: {
+        input: {
+          ...values,
+          operations: undefined,
+          noneOfTheAbove: undefined,
+          serviceCategory: values.serviceCategory.label,
+          ...values.operations,
+        },
+      },
+    })
+    return handleSubmition(true)
+  }
+
   return (
     <ContentBlock width="large">
       <Columns space="gutter" collapseBelow="lg">
@@ -106,16 +135,16 @@ function Signup({ company, onSubmit }: PropTypes) {
             </Box>
             <Formik
               initialValues={{
-                companyName: company.name,
                 ssn: company.ssn,
-                companyDisplayName: company.name,
-                serviceCategory: null,
-                name: '',
-                email: '',
-                generalEmail: '',
-                webpage: '',
-                phoneNumber: '',
-                approveTerms: false,
+                companyName: company.name,
+                companyDisplayName: company.application?.companyDisplayName,
+                serviceCategory: company.application?.serviceCategory,
+                name: company.application?.name,
+                email: company.application?.email,
+                generalEmail: company.application?.generalEmail,
+                webpage: company.application?.webpage,
+                phoneNumber: company.application?.phoneNumber.replace(/-/g, ''),
+                approveTerms: company.application?.approveTerms,
                 operations: companyOperations.reduce((acc, o) => {
                   acc[o.name] = false
                   return acc
