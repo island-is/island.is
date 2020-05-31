@@ -40,3 +40,6 @@ testem.log
 .DS_Store
 Thumbs.db
 cache/
+
+# Used to store local secrets
+.env.secret
