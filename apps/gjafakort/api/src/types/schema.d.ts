@@ -47,7 +47,7 @@ export type CreateApplicationInput = {
   generalEmail: Scalars['String']
   phoneNumber: Scalars['String']
   approveTerms: Scalars['Boolean']
-  ssn: Scalars['String']
+  companySSN: Scalars['String']
   name: Scalars['String']
   serviceCategory: Scalars['String']
   webpage: Scalars['String']

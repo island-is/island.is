@@ -1,6 +1,6 @@
 import * as AWS from 'aws-sdk'
 import { Consumer } from 'sqs-consumer'
-import { Message } from './types'
+import { Message, RoutingKey } from './types'
 
 AWS.config.update({ region: 'eu-west-1' })
 
@@ -78,7 +78,7 @@ class Channel {
   }: {
     queueId: string
     exchangeId: string
-    routingKeys?: string[]
+    routingKeys?: RoutingKey[]
   }) {
     const { QueueArn } = await this.getQueueAttributes({
       queueId,
@@ -116,23 +116,25 @@ class Channel {
     handler,
   }: {
     queueId: string
-    handler: (message: Message) => Promise<void>
+    handler: (message: Message, routingKey: RoutingKey) => Promise<void>
   }) {
     const consumer = Consumer.create({
       queueUrl: queueId,
       handleMessage: async ({ Body }) => {
         const parsedBody = JSON.parse(Body)
-        const message = JSON.parse(parsedBody.Message)
-        handler(message)
+        const { Message, MessageAttributes } = parsedBody
+        const routingKey = MessageAttributes?.event_type?.Value
+        const message = JSON.parse(Message)
+        await handler(message, routingKey)
       },
     })
 
     consumer.on('error', (err) => {
-      console.error('Unexpected error', err.message)
+      console.error('Unexpected error:', err.message)
     })
 
     consumer.on('processing_error', (err) => {
-      console.error('Failed processing message', err.message)
+      console.error('Failed processing message:', err.message)
     })
 
     consumer.start()
@@ -146,7 +148,7 @@ class Channel {
   }: {
     exchangeId: string
     message: Message
-    routingKey?: string
+    routingKey?: RoutingKey
   }) {
     const params = {
       Message: JSON.stringify(message),

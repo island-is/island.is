@@ -21,7 +21,7 @@ export default gql`
     generalEmail: String!
     phoneNumber: String!
     approveTerms: Boolean!
-    ssn: String!
+    companySSN: String!
     name: String!
     serviceCategory: String!
     webpage: String!

@@ -15,7 +15,7 @@ class ApplicationResolver {
     }
 
     const serviceProviders = await ferdalagService.getServiceProviders(
-      input.ssn,
+      input.companySSN,
     )
     let state = 'approved'
     const comments = []

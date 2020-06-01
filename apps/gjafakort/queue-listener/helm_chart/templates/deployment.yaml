@@ -39,6 +39,30 @@ spec:
             httpGet:
               path: /
               port: http
+          env:
+            {{- with .Values.environment }}
+            - name: YAY_URL
+              value: {{ .yay_url }}
+            - name: YAY_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gjafakort-queue-listener
+                  key: YAY_API_KEY
+            - name: YAY_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gjafakort-queue-listener
+                  key: YAY_SECRET_KEY
+            - name: FERDALAG_URL
+              value: {{ .ferdalag_url }}
+            - name: FERDALAG_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gjafakort-queue-listener
+                  key: FERDALAG_API_KEY
+            - name: APPLICATION_URL
+              value: {{ .application_url }}
+            {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
