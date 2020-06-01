@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@island.is/island-ui/core'
 
+import { ContentLoader } from '@island.is/gjafakort-web/components'
 import { SelectionForm, NoConnection } from './components'
 
 const GetCompaniesQuery = gql`
@@ -24,15 +25,15 @@ const GetCompaniesQuery = gql`
 
 function Companies() {
   const router = useRouter()
-  const { data } = useQuery(GetCompaniesQuery)
-  if (!data) {
-    return <div>Loading...</div>
-  }
-
-  const { companies } = data
+  const { data, loading } = useQuery(GetCompaniesQuery)
+  const { companies } = data || {}
 
   const onSubmit = ({ ssn }) => {
     router.push(`/fyrirtaeki/umsokn/${ssn}`)
+  }
+
+  if (loading && !data) {
+    return <ContentLoader />
   }
 
   return (
