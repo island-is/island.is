@@ -7,11 +7,7 @@ import { ferdalagService, rskService } from '../../services'
 class ApplicationResolver {
   @authorize()
   public async createApplication(_, { input }, context) {
-    const members = await rskService.getCompanyRegistryMembers(context.user.ssn)
-    const company = members.find(
-      (member) =>
-        member.ErProkuruhafi === '1' && member.Kennitala === input.ssn,
-    )
+    const company = await rskService.getCompany(user.ssn)
     if (!company) {
       throw new ForbiddenError('Company not found!')
     }

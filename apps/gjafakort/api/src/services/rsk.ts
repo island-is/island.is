@@ -37,3 +37,12 @@ export const getCompanyRegistryMembers = async (
   }
   return MemberCompanies
 }
+
+export const getCompany = async (
+  userSsn: string,
+): Promise<CompanyRegistryMember> => {
+  const members = await getCompanyRegistryMembers(userSsn)
+  return members.find(
+    (member) => member.ErProkuruhafi === '1' && member.Kennitala === ssn,
+  )
+}

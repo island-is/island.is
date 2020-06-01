@@ -22,10 +22,7 @@ class CompanyResolver {
 
   @authorize()
   public async getCompany(_, { ssn }, { user }) {
-    const members = await rskService.getCompanyRegistryMembers(user.ssn)
-    const company = members.find(
-      (member) => member.ErProkuruhafi === '1' && member.Kennitala === ssn,
-    )
+    const company = await rskService.getCompany(user.ssn)
     if (!company) {
       throw new ForbiddenError('Company not found!')
     }
