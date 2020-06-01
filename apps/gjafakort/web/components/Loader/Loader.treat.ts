@@ -1,8 +1,5 @@
 import { style } from 'treat'
 
-const pulse = style({
-})
-
 export const animate = style({
   '@keyframes': {
     '50%': {

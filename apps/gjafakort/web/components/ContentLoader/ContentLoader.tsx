@@ -8,11 +8,11 @@ interface PropTypes {
   width?: '1/2' | '2/3'
 }
 
-function ContentLoader({ width = '2/3' }) {
+function ContentLoader({ width = '2/3' }: PropTypes) {
   return (
     <ContentBlock width="large">
       <Columns space="gutter" collapseBelow="lg">
-        <Column width="2/3">
+        <Column width={width}>
           <Box
             background="blue100"
             paddingX={[5, 12]}
