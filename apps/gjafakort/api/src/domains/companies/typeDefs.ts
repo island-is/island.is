@@ -4,13 +4,11 @@ export default gql`
   type Company {
     ssn: String!
     name: String!
-  }
-
-  type getCompaniesPayload {
-    companies: [Company]
+    application: Application
   }
 
   extend type Query {
-    getCompanies: getCompaniesPayload
+    companies: [Company]
+    company(ssn: String!): Company
   }
 `

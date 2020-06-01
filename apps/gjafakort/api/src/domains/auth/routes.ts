@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { body, cookie, validationResult } from 'express-validator'
+import { body, cookie, query, validationResult } from 'express-validator'
 import jwt from 'jsonwebtoken'
 import { Entropy } from 'entropy-string'
 import IslandisLogin from 'islandis-login'
@@ -8,10 +8,11 @@ import { uuid } from 'uuidv4'
 import { Credentials } from '../../types'
 import { VerifyResult } from './types'
 import {
-  REDIRECT_COOKIE,
   ACCESS_TOKEN_COOKIE,
   CSRF_COOKIE,
+  FIFTEEN_MINUTES,
   JWT_EXPIRES_IN_SECONDS,
+  REDIRECT_COOKIE,
 } from './consts'
 import { environment } from '../../environments'
 
@@ -26,12 +27,12 @@ router.post(
   '/callback',
   [body('token').notEmpty(), cookie(REDIRECT_COOKIE.name).notEmpty()],
   async (req, res) => {
-    const { token } = req.body
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(400).json({ error: errors.array() })
     }
 
+    const { token } = req.body
     const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE.name]
     res.clearCookie(REDIRECT_COOKIE.name, REDIRECT_COOKIE.options)
     let verifyResult: VerifyResult
@@ -54,7 +55,7 @@ router.post(
         user: { ssn: user.kennitala, name: user.fullname },
         csrfToken,
       } as Credentials,
-      jwtSecret, //TODO: Use cert to sign jwt
+      jwtSecret,
       { expiresIn: JWT_EXPIRES_IN_SECONDS },
     )
 
@@ -77,18 +78,44 @@ router.post(
   },
 )
 
-router.get('/login', (req, res) => {
-  const { name, options } = REDIRECT_COOKIE
-  res.clearCookie(name, options)
-  const authId = uuid()
-  let { returnUrl = '/' } = req.query
-  if (!returnUrl || String(returnUrl).charAt(0) !== '/') {
-    returnUrl = '/'
-  }
+router.get(
+  '/login',
+  [
+    query('returnUrl')
+      .optional()
+      .isString()
+      .customSanitizer((value) => {
+        if (!value || String(value).charAt(0) !== '/') {
+          return '/'
+        }
+        return value
+      }),
+  ],
+  (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ error: errors.array() })
+    }
 
-  res
-    .cookie(name, { authId, returnUrl }, { ...options, maxAge: 15 * 60 * 1000 })
-    .redirect(`${samlEntryPoint}&authid=${authId}`)
+    const { name, options } = REDIRECT_COOKIE
+    res.clearCookie(name, options)
+    const authId = uuid()
+    const { returnUrl } = req.query
+
+    res
+      .cookie(
+        name,
+        { authId, returnUrl },
+        { ...options, maxAge: FIFTEEN_MINUTES },
+      )
+      .redirect(`${samlEntryPoint}&authid=${authId}`)
+  },
+)
+
+router.get('/logout', (req, res) => {
+  res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
+  res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
+  res.json({ logout: true })
 })
 
 export default router

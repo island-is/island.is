@@ -1,50 +1,61 @@
 import React, { useState } from 'react'
+import { useQuery } from 'react-apollo'
 import { useRouter } from 'next/router'
+import gql from 'graphql-tag'
 
 import { Signup, Congratulations, NotQualified } from './components'
 
-export type CompanyType = {
-  name: string
-  ssn: string | number
-}
-
-const companies = [
-  {
-    name: 'Kaffi Klettur',
-    ssn: '1903795829',
-    state: 'pending',
-  },
-  {
-    name: 'Kosmos & Kaos',
-    ssn: '1903795839',
-    state: 'approved',
-  },
-]
+export const GetCompanyQuery = gql`
+  query GetCompanyQuery($ssn: String!) {
+    company(ssn: $ssn) {
+      ssn
+      name
+      application {
+        id
+        name
+        email
+        state
+        companySSN
+        serviceCategory
+        generalEmail
+        webpage
+        phoneNumber
+        approveTerms
+        companyName
+        companyDisplayName
+      }
+    }
+  }
+`
 
 function Company() {
   const router = useRouter()
-  const [notQualified, setNotQualified] = useState(false)
-
   const { ssn } = router.query
-  const [company, setCompany] = useState(companies.find((c) => c.ssn === ssn))
+  const [submition, setSubmition] = useState<
+    'pending' | 'rejected' | 'approved'
+  >('pending')
+  const { data } = useQuery(GetCompanyQuery, { variables: { ssn } })
+  if (!data) {
+    return <div>Loading...</div>
+  }
 
-  const onSubmit = (values) => {
-    if (values.noneOfTheAbove) {
-      setNotQualified(true)
+  const { company } = data
+
+  const onSubmit = (isSuccess: boolean) => {
+    if (isSuccess) {
+      setSubmition('approved')
     } else {
-      setCompany({ ...company, state: 'approved' })
+      setSubmition('rejected')
     }
   }
 
-  if (company.state === 'approved') {
+  if (company.application?.state === 'approved' || submition === 'approved') {
     return <Congratulations />
-  }
-
-  if (notQualified) {
+  } else if (submition === 'rejected') {
     return <NotQualified />
   }
 
-  return <Signup company={company} onSubmit={onSubmit} />
+  return <Signup company={company} handleSubmition={onSubmit} />
 }
 
 export default Company

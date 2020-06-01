@@ -2,29 +2,44 @@ import { gql } from 'apollo-server-express'
 
 export default gql`
   type Application {
-    id: String!
+    id: String
+    name: String!
     email: String!
     state: String!
+    companySSN: String!
+    serviceCategory: String
+    generalEmail: String!
+    webpage: String!
+    phoneNumber: String!
+    approveTerms: Boolean
+    companyName: String
+    companyDisplayName: String
   }
 
-  extend type Query {
-    getApplication(ssn: String!): getApplicationPayload
-  }
-
-  type getApplicationPayload {
-    application: Application
-  }
-
-  input createApplicationInput {
-    ssn: String!
+  input CreateApplicationInput {
     email: String!
+    generalEmail: String!
+    phoneNumber: String!
+    approveTerms: Boolean!
+    ssn: String!
+    name: String!
+    serviceCategory: String!
+    webpage: String!
+    companyName: String!
+    companyDisplayName: String!
+    acknowledgedMuseum: Boolean!
+    exhibition: Boolean!
+    followingLaws: Boolean!
+    operatingPermitForVehicles: Boolean!
+    validLicenses: Boolean!
+    validPermit: Boolean!
   }
 
-  type createApplicationPayload {
+  type createApplication {
     application: Application
   }
 
   extend type Mutation {
-    createApplication(input: createApplicationInput!): createApplicationPayload
+    createApplication(input: CreateApplicationInput!): createApplication
   }
 `

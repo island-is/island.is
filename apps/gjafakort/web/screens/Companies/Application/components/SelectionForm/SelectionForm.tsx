@@ -10,15 +10,11 @@ import {
   Typography,
   Option,
 } from '@island.is/island-ui/core'
-
-export type CompanyType = {
-  name: string
-  ssn: string | number
-}
+import { Company } from '@island.is/gjafakort-web/graphql/schema'
 
 interface PropTypes {
-  onSubmit: (values: CompanyType) => void
-  companies: CompanyType[]
+  onSubmit: (values: Company) => void
+  companies: Company[]
 }
 
 interface FormValues {
@@ -29,13 +25,14 @@ function SelectionForm({ onSubmit, companies }: PropTypes) {
   const initialValues: FormValues = {
     company: undefined,
   }
+
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={(values) => {
+      onSubmit={({ company }) => {
         onSubmit({
-          name: values.company.label,
-          ssn: values.company.value,
+          name: company.label,
+          ssn: company.value.toString(),
         })
       }}
       enableReinitialize

@@ -1,60 +1,39 @@
-import fetch from 'isomorphic-unfetch'
+import { applicationService, ferdalagService } from '../../services'
 
-import { GraphQLContext, CreateApplicationInput } from '../../types'
-import { environment } from '../../environments'
-
-const APPLICATION_TYPE = 'gjafakort'
-
-interface ApplicationResponse {
-  created: string
-  modified: string
-  id: string
-  issuerSSN: string
-  type: string
-  state: string
-  data: {
-    email: string
-    comment: string[]
+export const getApplication = async (ssn: string) => {
+  const application = await applicationService.getApplication(ssn)
+  if (application) {
+    return {
+      id: application.id,
+      name: application.data.name,
+      email: application.data.email,
+      state: application.state,
+      companySSN: application.data.ssn,
+      serviceCategory: application.data.serviceCategory,
+      generalEmail: application.data.generalEmail,
+      webpage: application.data.webpage,
+      phoneNumber: application.data.phoneNumber,
+      approveTerms: application.data.approveTerms,
+      companyName: application.data.companyName,
+      companyDisplayName: application.data.companyDisplayName,
+    }
   }
-}
 
-export const createApplication = async (
-  application: CreateApplicationInput,
-  context: GraphQLContext,
-  state: string,
-  comment: string[],
-): Promise<ApplicationResponse> => {
-  const url = `${environment.applicationUrl}/issuers/${application.ssn}/applications`
-  const { email } = application
+  const serviceProviders = await ferdalagService.getServiceProviders(ssn)
+  if (serviceProviders.length === 1) {
+    console.debug(`Got a single service provider for ssn ${ssn}`)
+    const [serviceProvider] = serviceProviders
+    return {
+      name: serviceProvider.contactInfo.name,
+      companyDisplayName: serviceProvider.legalName,
+      email: serviceProvider.email,
+      state: 'empty',
+      companySSN: serviceProvider.SSN,
+      generalEmail: serviceProvider.contactInfo.email,
+      webpage: serviceProvider.website,
+      phoneNumber: serviceProvider.phoneNr || serviceProvider.contactInfo.phone,
+    }
+  }
 
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      type: APPLICATION_TYPE,
-      state,
-      data: {
-        email,
-        comment,
-      },
-    }),
-  })
-  const data = await res.json()
-
-  context.channel.publish({
-    exchangeId: context.appExchangeId,
-    message: data.application,
-    routingKey: data.application.state,
-  })
-  return data.application
-}
-
-export const getApplication = async (
-  ssn: string,
-): Promise<ApplicationResponse> => {
-  const url = `${environment.applicationUrl}/issuers/${ssn}/applications/${APPLICATION_TYPE}`
-
-  const res = await fetch(url)
-  const data = await res.json()
-  return data.application
+  return null
 }

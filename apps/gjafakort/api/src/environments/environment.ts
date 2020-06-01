@@ -8,7 +8,7 @@ export default {
   applicationUrl: 'http://localhost:4242',
   applicationExchange: 'gjafakort-application-updates-topic',
   ferdalag: {
-    url: 'https://island-dot-itb-gagnagrunnur-dev.appspot.com',
+    url: 'https://island-dev-dot-itb-gagnagrunnur-dev.appspot.com',
     apiKey: process.env.FERDALAG_API_KEY,
   },
   rsk: {

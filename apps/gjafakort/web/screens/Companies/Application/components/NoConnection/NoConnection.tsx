@@ -11,7 +11,7 @@ function NoConnection() {
           Þú ert ekki skráður prókúruhafi, vinsamlegast hafðu samband við RSK
         </Typography>
       </Box>
-      <Link href="/">
+      <Link href="/fyrirtaeki">
         <span>
           <Button variant="text">Tilbaka</Button>
         </span>

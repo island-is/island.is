@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken'
+import { AuthenticationError } from 'apollo-server-express'
 
 import { GraphQLContext, User, Credentials } from '../../types'
 import { Permissions } from './types'
@@ -42,7 +43,11 @@ export const authorize = (permissions: Permissions = {}) => (
       throw new Error('Only use this decorator for graphql resolvers.')
     }
 
-    if (!context.user?.ssn || !checkPermissions(context.user, permissions)) {
+    if (!context.user?.ssn) {
+      throw new AuthenticationError('Unauthorized')
+    }
+
+    if (!checkPermissions(context.user, permissions)) {
       return () => null
     }
 

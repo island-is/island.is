@@ -1,41 +1,21 @@
+import { ForbiddenError } from 'apollo-server-express'
+
 import { authorize } from '../auth'
-import { getApplication, createApplication } from './service'
-import { ferdalagService } from '../../services'
+import { applicationService, ferdalagService, rskService } from '../../services'
 
 class ApplicationResolver {
-  @authorize({ role: 'admin' })
-  public async getApplication(_, args) {
-    const application = await getApplication(args.ssn)
-    if (application) {
-      return {
-        application: {
-          id: application.id,
-          state: application.state,
-          email: application.data.email,
-        },
-      }
-    }
-
-    const serviceProviders = await ferdalagService.getServiceProviders(args.ssn)
-    if (serviceProviders.length === 1) {
-      console.debug(`Got a single service provider for ssn ${args.ssn}`)
-      const [serviceProvider] = serviceProviders
-      return {
-        application: {
-          id: serviceProvider.serviceProviderId,
-          email: serviceProvider.email,
-          state: 'empty',
-        },
-      }
-    }
-
-    return null
-  }
-
   @authorize()
-  public async createApplication(_, args, context) {
+  public async createApplication(_, { input }, context) {
+    const company = await rskService.getCompanyBySSN(
+      context.user.ssn,
+      input.companySSN,
+    )
+    if (!company) {
+      throw new ForbiddenError('Company not found!')
+    }
+
     const serviceProviders = await ferdalagService.getServiceProviders(
-      args.input.ssn,
+      input.ssn,
     )
     let state = 'approved'
     const comments = []
@@ -47,8 +27,8 @@ class ApplicationResolver {
       comments.push('No service provider found for ssn')
     }
 
-    const application = await createApplication(
-      args.input,
+    const application = await applicationService.createApplication(
+      input,
       context,
       state,
       comments,
@@ -56,8 +36,17 @@ class ApplicationResolver {
     return {
       application: {
         id: application.id,
-        state: application.state,
+        name: application.data.name,
         email: application.data.email,
+        state: application.state,
+        companySSN: application.data.ssn,
+        serviceCategory: application.data.serviceCategory,
+        generalEmail: application.data.generalEmail,
+        webpage: application.data.webpage,
+        phoneNumber: application.data.phoneNumber,
+        approveTerms: application.data.approveTerms,
+        companyName: application.data.companyName,
+        companyDisplayName: application.data.companyDisplayName,
       },
     }
   }
@@ -65,9 +54,6 @@ class ApplicationResolver {
 
 const resolver = new ApplicationResolver()
 export default {
-  Query: {
-    getApplication: resolver.getApplication,
-  },
   Mutation: {
     createApplication: resolver.createApplication,
   },

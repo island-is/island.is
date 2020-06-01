@@ -32,7 +32,7 @@ function NoConnection() {
                 þátt í Ferðagjöfnni. Fyrir nánari upplýsinga hafðu samband við ?
               </Typography>
             </Box>
-            <Link href="/fyrirtaeki">
+            <Link href="/fyrirtaeki/umsokn">
               <span>
                 <Button variant="text">Tilbaka</Button>
               </span>
