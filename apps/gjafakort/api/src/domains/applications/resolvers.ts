@@ -6,7 +6,10 @@ import { applicationService, ferdalagService, rskService } from '../../services'
 class ApplicationResolver {
   @authorize()
   public async createApplication(_, { input }, context) {
-    const company = await rskService.getCompanyBySSN(context.user.ssn, input.companySSN)
+    const company = await rskService.getCompanyBySSN(
+      context.user.ssn,
+      input.companySSN,
+    )
     if (!company) {
       throw new ForbiddenError('Company not found!')
     }
@@ -24,7 +27,12 @@ class ApplicationResolver {
       comments.push('No service provider found for ssn')
     }
 
-    const application = await applicationService.createApplication(input, context, state, comments)
+    const application = await applicationService.createApplication(
+      input,
+      context,
+      state,
+      comments,
+    )
     return {
       application: {
         id: application.id,

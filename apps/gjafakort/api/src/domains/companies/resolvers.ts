@@ -2,7 +2,7 @@ import { ForbiddenError } from 'apollo-server-express'
 
 import { applicationsService } from '../applications'
 import { authorize } from '../auth'
-import { rskService, ferdalagService } from '../../services'
+import { rskService } from '../../services'
 
 class CompanyResolver {
   @authorize()
