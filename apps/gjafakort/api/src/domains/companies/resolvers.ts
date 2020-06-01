@@ -1,6 +1,6 @@
 import { ForbiddenError } from 'apollo-server-express'
 
-import { applicationService } from '../applications'
+import { applicationsService } from '../applications'
 import { authorize } from '../auth'
 import { rskService, ferdalagService } from '../../services'
 
@@ -27,59 +27,9 @@ class CompanyResolver {
       throw new ForbiddenError('Company not found!')
     }
 
-    const application = await applicationService.getApplication(ssn)
-    if (application) {
-      return {
-        company: {
-          ssn: company.Kennitala,
-          name: company.Nafn,
-          application: {
-            id: application.id,
-            name: application.data.name,
-            email: application.data.email,
-            state: application.state,
-            companySSN: application.data.ssn,
-            serviceCategory: application.data.serviceCategory,
-            generalEmail: application.data.generalEmail,
-            webpage: application.data.webpage,
-            phoneNumber: application.data.phoneNumber,
-            approveTerms: application.data.approveTerms,
-            companyName: application.data.companyName,
-            companyDisplayName: application.data.companyDisplayName,
-          },
-        },
-      }
-    }
-
-    const serviceProviders = await ferdalagService.getServiceProviders(ssn)
-    if (serviceProviders.length === 1) {
-      console.debug(`Got a single service provider for ssn ${ssn}`)
-      const [serviceProvider] = serviceProviders
-      return {
-        company: {
-          ssn: company.Kennitala,
-          name: company.Nafn,
-          application: {
-            name: serviceProvider.contactInfo.name,
-            companyDisplayName: serviceProvider.legalName || company.Nafn,
-            email: serviceProvider.email,
-            state: 'empty',
-            companySSN: serviceProvider.SSN,
-            generalEmail: serviceProvider.contactInfo.email,
-            webpage: serviceProvider.website,
-            phoneNumber:
-              serviceProvider.phoneNr || serviceProvider.contactInfo.phone,
-          },
-        },
-      }
-    }
-
     return {
-      company: {
-        ssn: company.Kennitala,
-        name: company.Nafn,
-        application: null,
-      },
+      ssn: company.Kennitala,
+      name: company.Nafn,
     }
   }
 }

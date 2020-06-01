@@ -1,5 +1,5 @@
-import * as applicationService from './service'
+import * as applicationsService from './service'
 
-export { applicationService }
+export { applicationsService }
 export { default as resolvers } from './resolvers'
 export { default as typeDefs } from './typeDefs'

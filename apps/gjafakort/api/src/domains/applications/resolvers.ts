@@ -1,8 +1,7 @@
 import { ForbiddenError } from 'apollo-server-express'
 
 import { authorize } from '../auth'
-import { createApplication } from './service'
-import { ferdalagService, rskService } from '../../services'
+import { applicationService, ferdalagService, rskService } from '../../services'
 
 class ApplicationResolver {
   @authorize()
@@ -25,7 +24,7 @@ class ApplicationResolver {
       comments.push('No service provider found for ssn')
     }
 
-    const application = await createApplication(input, context, state, comments)
+    const application = await applicationService.createApplication(input, context, state, comments)
     return {
       application: {
         id: application.id,
