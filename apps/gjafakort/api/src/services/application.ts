@@ -16,7 +16,7 @@ interface ApplicationResponse {
     name: string
     email: string
     state: string
-    ssn: string
+    companySSN: string
     serviceCategory: string
     generalEmail: string
     webpage: string
@@ -58,9 +58,9 @@ export const createApplication = async (
 }
 
 export const getApplication = async (
-  ssn: string,
+  companySSN: string,
 ): Promise<ApplicationResponse> => {
-  const url = `${environment.applicationUrl}/issuers/${ssn}/applications/${APPLICATION_TYPE}`
+  const url = `${environment.applicationUrl}/issuers/${companySSN}/applications/${APPLICATION_TYPE}`
 
   const res = await fetch(url)
   const data = await res.json()

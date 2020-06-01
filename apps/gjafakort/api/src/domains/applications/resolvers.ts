@@ -39,7 +39,7 @@ class ApplicationResolver {
         name: application.data.name,
         email: application.data.email,
         state: application.state,
-        companySSN: application.data.ssn,
+        companySSN: application.data.companySSN,
         serviceCategory: application.data.serviceCategory,
         generalEmail: application.data.generalEmail,
         webpage: application.data.webpage,
