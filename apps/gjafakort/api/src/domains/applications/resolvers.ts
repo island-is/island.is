@@ -7,7 +7,7 @@ import { ferdalagService, rskService } from '../../services'
 class ApplicationResolver {
   @authorize()
   public async createApplication(_, { input }, context) {
-    const company = await rskService.getCompany(user.ssn)
+    const company = await rskService.getCompanyBySSN(context.user.ssn, input.companySSN)
     if (!company) {
       throw new ForbiddenError('Company not found!')
     }
@@ -32,7 +32,7 @@ class ApplicationResolver {
         name: application.data.name,
         email: application.data.email,
         state: application.state,
-        companySSN: application.data.companySSN,
+        companySSN: application.data.ssn,
         serviceCategory: application.data.serviceCategory,
         generalEmail: application.data.generalEmail,
         webpage: application.data.webpage,

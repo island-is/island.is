@@ -16,7 +16,7 @@ interface ApplicationResponse {
     name: string
     email: string
     state: string
-    companySSN: string
+    ssn: string
     serviceCategory: string
     generalEmail: string
     webpage: string

@@ -13,10 +13,10 @@ interface CompanyRegistryMember {
 }
 
 export const getCompanyRegistryMembers = async (
-  userSsn: string,
+  userSSN: string,
 ): Promise<CompanyRegistryMember[]> => {
   const res = await fetch(
-    `${rsk.url}/companyregistry/members/${userSsn}/companies`,
+    `${rsk.url}/companyregistry/members/${userSSN}/companies`,
     {
       method: 'GET',
       headers: {
@@ -38,11 +38,12 @@ export const getCompanyRegistryMembers = async (
   return MemberCompanies
 }
 
-export const getCompany = async (
-  userSsn: string,
+export const getCompanyBySSN = async (
+  userSSN: string,
+  companySSN: string,
 ): Promise<CompanyRegistryMember> => {
-  const members = await getCompanyRegistryMembers(userSsn)
+  const members = await getCompanyRegistryMembers(userSSN)
   return members.find(
-    (member) => member.ErProkuruhafi === '1' && member.Kennitala === ssn,
+    (member) => member.ErProkuruhafi === '1' && member.Kennitala === companySSN,
   )
 }
