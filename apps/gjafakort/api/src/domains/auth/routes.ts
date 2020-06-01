@@ -8,10 +8,11 @@ import { uuid } from 'uuidv4'
 import { Credentials } from '../../types'
 import { VerifyResult } from './types'
 import {
-  REDIRECT_COOKIE,
   ACCESS_TOKEN_COOKIE,
   CSRF_COOKIE,
+  FIFTEEN_MINUTES,
   JWT_EXPIRES_IN_SECONDS,
+  REDIRECT_COOKIE,
 } from './consts'
 import { environment } from '../../environments'
 
@@ -54,7 +55,7 @@ router.post(
         user: { ssn: user.kennitala, name: user.fullname },
         csrfToken,
       } as Credentials,
-      jwtSecret, //TODO: Use cert to sign jwt
+      jwtSecret,
       { expiresIn: JWT_EXPIRES_IN_SECONDS },
     )
 
@@ -105,7 +106,7 @@ router.get(
       .cookie(
         name,
         { authId, returnUrl },
-        { ...options, maxAge: 15 * 60 * 1000 },
+        { ...options, maxAge: FIFTEEN_MINUTES },
       )
       .redirect(`${samlEntryPoint}&authid=${authId}`)
   },

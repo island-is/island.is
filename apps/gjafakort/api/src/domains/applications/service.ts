@@ -24,7 +24,7 @@ interface ApplicationResponse {
     approveTerms: boolean
     companyName: string
     companyDisplayName: string
-    comment: string
+    comments: string[]
   }
 }
 
@@ -32,7 +32,7 @@ export const createApplication = async (
   application: CreateApplicationInput,
   context: GraphQLContext,
   state: string,
-  comment: string[],
+  comments: string[],
 ): Promise<ApplicationResponse> => {
   const url = `${environment.applicationUrl}/issuers/${application.ssn}/applications`
   const res = await fetch(url, {
@@ -43,7 +43,7 @@ export const createApplication = async (
       state,
       data: {
         ...application,
-        comment,
+        comments,
       },
     }),
   })
