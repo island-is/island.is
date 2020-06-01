@@ -35,11 +35,11 @@ export default gql`
     validPermit: Boolean!
   }
 
-  type createApplication {
+  type CreateApplication {
     application: Application
   }
 
   extend type Mutation {
-    createApplication(input: CreateApplicationInput!): createApplication
+    createApplication(input: CreateApplicationInput!): CreateApplication
   }
 `
