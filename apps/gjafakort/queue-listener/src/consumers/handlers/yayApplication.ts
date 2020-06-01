@@ -41,6 +41,7 @@ export const handler = async (
   if (routingKey === 'approved' || routingKey === 'pending') {
     res = await request({
       queueName,
+      applicationId: message.id,
       method: 'POST',
       url: `${url}/api/v1/Company`,
       headers: getHeaders(),
@@ -54,6 +55,7 @@ export const handler = async (
   } else if (routingKey === 'rejected') {
     res = await request({
       queueName,
+      applicationId: message.id,
       method: 'DELETE',
       url: `${url}/api/v1/Company/${message.issuerSSN}`,
       headers: getHeaders(),
