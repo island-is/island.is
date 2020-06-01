@@ -7,24 +7,22 @@ import { Signup, Congratulations, NotQualified } from './components'
 
 export const GetCompanyQuery = gql`
   query GetCompanyQuery($ssn: String!) {
-    getCompany(ssn: $ssn) {
-      company {
-        ssn
+    company(ssn: $ssn) {
+      ssn
+      name
+      application {
+        id
         name
-        application {
-          id
-          name
-          email
-          state
-          companySSN
-          serviceCategory
-          generalEmail
-          webpage
-          phoneNumber
-          approveTerms
-          companyName
-          companyDisplayName
-        }
+        email
+        state
+        companySSN
+        serviceCategory
+        generalEmail
+        webpage
+        phoneNumber
+        approveTerms
+        companyName
+        companyDisplayName
       }
     }
   }
@@ -41,9 +39,7 @@ function Company() {
     return <div>Loading...</div>
   }
 
-  const {
-    getCompany: { company },
-  } = data
+  const { company } = data
 
   const onSubmit = (isSuccess: boolean) => {
     if (isSuccess) {

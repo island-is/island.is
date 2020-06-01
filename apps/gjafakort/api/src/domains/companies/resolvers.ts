@@ -12,12 +12,10 @@ class CompanyResolver {
       (member) => member.ErProkuruhafi === '1',
     )
 
-    return {
-      companies: membersWithProcuration.map((member) => ({
-        ssn: member.Kennitala,
-        name: member.Nafn,
-      })),
-    }
+    return membersWithProcuration.map((member) => ({
+      ssn: member.Kennitala,
+      name: member.Nafn,
+    }))
   }
 
   @authorize()
@@ -37,7 +35,13 @@ class CompanyResolver {
 const resolver = new CompanyResolver()
 export default {
   Query: {
-    getCompanies: resolver.getCompanies,
-    getCompany: resolver.getCompany,
+    companies: resolver.getCompanies,
+    company: resolver.getCompany,
+  },
+
+  Company: {
+    application(parent) {
+      return applicationsService.getApplication(parent.ssn)
+    },
   },
 }

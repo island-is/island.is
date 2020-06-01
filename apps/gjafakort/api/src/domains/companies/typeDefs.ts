@@ -7,16 +7,8 @@ export default gql`
     application: Application
   }
 
-  type getCompanies {
-    companies: [Company]
-  }
-
-  type getCompany {
-    company: Company
-  }
-
   extend type Query {
-    getCompanies: getCompanies
-    getCompany(ssn: String!): getCompany
+    companies: [Company]
+    company(ssn: String!): Company
   }
 `

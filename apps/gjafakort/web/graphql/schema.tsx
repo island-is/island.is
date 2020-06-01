@@ -23,6 +23,7 @@ export type Application = {
   webpage: Scalars['String']
   phoneNumber: Scalars['String']
   approveTerms?: Maybe<Scalars['Boolean']>
+  companyName?: Maybe<Scalars['String']>
   companyDisplayName?: Maybe<Scalars['String']>
 }
 
@@ -47,17 +48,14 @@ export type CreateApplicationInput = {
   name: Scalars['String']
   serviceCategory: Scalars['String']
   webpage: Scalars['String']
+  companyName: Scalars['String']
   companyDisplayName: Scalars['String']
-}
-
-export type GetCompanies = {
-  __typename?: 'getCompanies'
-  companies?: Maybe<Array<Maybe<Company>>>
-}
-
-export type GetCompany = {
-  __typename?: 'getCompany'
-  company?: Maybe<Company>
+  acknowledgedMuseum: Scalars['Boolean']
+  exhibition: Scalars['Boolean']
+  followingLaws: Scalars['Boolean']
+  operatingPermitForVehicles: Scalars['Boolean']
+  validLicenses: Scalars['Boolean']
+  validPermit: Scalars['Boolean']
 }
 
 export type Mutation = {
@@ -72,24 +70,20 @@ export type MutationCreateApplicationArgs = {
 
 export type Query = {
   __typename?: 'Query'
-  getCompanies?: Maybe<GetCompanies>
-  getCompany?: Maybe<GetCompany>
+  companies?: Maybe<Array<Maybe<Company>>>
+  company?: Maybe<Company>
   root?: Maybe<Scalars['String']>
 }
 
-export type QueryGetCompanyArgs = {
+export type QueryCompanyArgs = {
   ssn: Scalars['String']
 }
 
 export type GetCompaniesQueryQueryVariables = {}
 
 export type GetCompaniesQueryQuery = { __typename?: 'Query' } & {
-  getCompanies?: Maybe<
-    { __typename?: 'getCompanies' } & {
-      companies?: Maybe<
-        Array<Maybe<{ __typename?: 'Company' } & Pick<Company, 'ssn' | 'name'>>>
-      >
-    }
+  companies?: Maybe<
+    Array<Maybe<{ __typename?: 'Company' } & Pick<Company, 'ssn' | 'name'>>>
   >
 }
 
@@ -98,28 +92,26 @@ export type GetCompanyQueryQueryVariables = {
 }
 
 export type GetCompanyQueryQuery = { __typename?: 'Query' } & {
-  getCompany?: Maybe<
-    { __typename?: 'getCompany' } & {
-      company?: Maybe<
-        { __typename?: 'Company' } & Pick<Company, 'ssn' | 'name'> & {
-            application?: Maybe<
-              { __typename?: 'Application' } & Pick<
-                Application,
-                | 'id'
-                | 'companySSN'
-                | 'name'
-                | 'serviceCategory'
-                | 'email'
-                | 'generalEmail'
-                | 'phoneNumber'
-                | 'approveTerms'
-                | 'companyDisplayName'
-                | 'state'
-              >
-            >
-          }
-      >
-    }
+  company?: Maybe<
+    { __typename?: 'Company' } & Pick<Company, 'ssn' | 'name'> & {
+        application?: Maybe<
+          { __typename?: 'Application' } & Pick<
+            Application,
+            | 'id'
+            | 'name'
+            | 'email'
+            | 'state'
+            | 'companySSN'
+            | 'serviceCategory'
+            | 'generalEmail'
+            | 'webpage'
+            | 'phoneNumber'
+            | 'approveTerms'
+            | 'companyName'
+            | 'companyDisplayName'
+          >
+        >
+      }
   >
 }
 
@@ -139,11 +131,9 @@ export type CreateApplicationMutationMutation = { __typename?: 'Mutation' } & {
 
 export const GetCompaniesQueryDocument = gql`
   query GetCompaniesQuery {
-    getCompanies {
-      companies {
-        ssn
-        name
-      }
+    companies {
+      ssn
+      name
     }
   }
 `
@@ -197,22 +187,22 @@ export type GetCompaniesQueryQueryResult = ApolloReactCommon.QueryResult<
 >
 export const GetCompanyQueryDocument = gql`
   query GetCompanyQuery($ssn: String!) {
-    getCompany(ssn: $ssn) {
-      company {
-        ssn
+    company(ssn: $ssn) {
+      ssn
+      name
+      application {
+        id
         name
-        application {
-          id
-          companySSN
-          name
-          serviceCategory
-          email
-          generalEmail
-          phoneNumber
-          approveTerms
-          companyDisplayName
-          state
-        }
+        email
+        state
+        companySSN
+        serviceCategory
+        generalEmail
+        webpage
+        phoneNumber
+        approveTerms
+        companyName
+        companyDisplayName
       }
     }
   }

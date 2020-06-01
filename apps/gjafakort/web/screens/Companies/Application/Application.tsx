@@ -15,11 +15,9 @@ import { SelectionForm, NoConnection } from './components'
 
 const GetCompaniesQuery = gql`
   query GetCompaniesQuery {
-    getCompanies {
-      companies {
-        ssn
-        name
-      }
+    companies {
+      ssn
+      name
     }
   }
 `
@@ -31,9 +29,7 @@ function Companies() {
     return <div>Loading...</div>
   }
 
-  const {
-    getCompanies: { companies },
-  } = data
+  const { companies } = data
 
   const onSubmit = ({ ssn }) => {
     router.push(`/fyrirtaeki/umsokn/${ssn}`)

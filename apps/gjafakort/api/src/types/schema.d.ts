@@ -26,6 +26,7 @@ export type Application = {
   webpage: Scalars['String']
   phoneNumber: Scalars['String']
   approveTerms?: Maybe<Scalars['Boolean']>
+  companyName?: Maybe<Scalars['String']>
   companyDisplayName?: Maybe<Scalars['String']>
 }
 
@@ -50,17 +51,14 @@ export type CreateApplicationInput = {
   name: Scalars['String']
   serviceCategory: Scalars['String']
   webpage: Scalars['String']
+  companyName: Scalars['String']
   companyDisplayName: Scalars['String']
-}
-
-export type GetCompanies = {
-  __typename?: 'getCompanies'
-  companies?: Maybe<Array<Maybe<Company>>>
-}
-
-export type GetCompany = {
-  __typename?: 'getCompany'
-  company?: Maybe<Company>
+  acknowledgedMuseum: Scalars['Boolean']
+  exhibition: Scalars['Boolean']
+  followingLaws: Scalars['Boolean']
+  operatingPermitForVehicles: Scalars['Boolean']
+  validLicenses: Scalars['Boolean']
+  validPermit: Scalars['Boolean']
 }
 
 export type Mutation = {
@@ -75,12 +73,12 @@ export type MutationCreateApplicationArgs = {
 
 export type Query = {
   __typename?: 'Query'
-  getCompanies?: Maybe<GetCompanies>
-  getCompany?: Maybe<GetCompany>
+  companies?: Maybe<Array<Maybe<Company>>>
+  company?: Maybe<Company>
   root?: Maybe<Scalars['String']>
 }
 
-export type QueryGetCompanyArgs = {
+export type QueryCompanyArgs = {
   ssn: Scalars['String']
 }
 
@@ -193,12 +191,10 @@ export type DirectiveResolverFn<
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>
-  getCompanies: ResolverTypeWrapper<GetCompanies>
   Company: ResolverTypeWrapper<Company>
   String: ResolverTypeWrapper<Scalars['String']>
   Application: ResolverTypeWrapper<Application>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
-  getCompany: ResolverTypeWrapper<GetCompany>
   Mutation: ResolverTypeWrapper<{}>
   CreateApplicationInput: CreateApplicationInput
   createApplication: ResolverTypeWrapper<CreateApplication>
@@ -207,12 +203,10 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Query: {}
-  getCompanies: GetCompanies
   Company: Company
   String: Scalars['String']
   Application: Application
   Boolean: Scalars['Boolean']
-  getCompany: GetCompany
   Mutation: {}
   CreateApplicationInput: CreateApplicationInput
   createApplication: CreateApplication
@@ -237,6 +231,11 @@ export type ApplicationResolvers<
   phoneNumber?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   approveTerms?: Resolver<
     Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType
+  >
+  companyName?: Resolver<
+    Maybe<ResolversTypes['String']>,
     ParentType,
     ContextType
   >
@@ -274,26 +273,6 @@ export type CreateApplicationResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 
-export type GetCompaniesResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['getCompanies'] = ResolversParentTypes['getCompanies']
-> = {
-  companies?: Resolver<
-    Maybe<Array<Maybe<ResolversTypes['Company']>>>,
-    ParentType,
-    ContextType
-  >
-  __isTypeOf?: isTypeOfResolverFn<ParentType>
-}
-
-export type GetCompanyResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['getCompany'] = ResolversParentTypes['getCompany']
-> = {
-  company?: Resolver<Maybe<ResolversTypes['Company']>, ParentType, ContextType>
-  __isTypeOf?: isTypeOfResolverFn<ParentType>
-}
-
 export type MutationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
@@ -311,16 +290,16 @@ export type QueryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
-  getCompanies?: Resolver<
-    Maybe<ResolversTypes['getCompanies']>,
+  companies?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Company']>>>,
     ParentType,
     ContextType
   >
-  getCompany?: Resolver<
-    Maybe<ResolversTypes['getCompany']>,
+  company?: Resolver<
+    Maybe<ResolversTypes['Company']>,
     ParentType,
     ContextType,
-    RequireFields<QueryGetCompanyArgs, 'ssn'>
+    RequireFields<QueryCompanyArgs, 'ssn'>
   >
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
 }
@@ -329,8 +308,6 @@ export type Resolvers<ContextType = Context> = {
   Application?: ApplicationResolvers<ContextType>
   Company?: CompanyResolvers<ContextType>
   createApplication?: CreateApplicationResolvers<ContextType>
-  getCompanies?: GetCompaniesResolvers<ContextType>
-  getCompany?: GetCompanyResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
 }
