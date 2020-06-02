@@ -16,4 +16,8 @@ export default {
     username: 'rf_api_island.is',
     password: process.env.RSK_API_PASSWORD,
   },
+  redis: {
+    url: process.env.REDIS_URL,
+    password: process.env.REDIS_PASSWORD,
+  },
 }

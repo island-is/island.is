@@ -1,9 +1,12 @@
 import { logger } from '@island.is/logging'
 
-import { applicationService, ferdalagService } from '../../services'
+import { DataSource } from '../../types'
 
-export const getApplication = async (companySSN: string) => {
-  const application = await applicationService.getApplication(companySSN)
+export const getApplication = async (
+  companySSN: string,
+  { applicationApi, ferdalagApi }: DataSource,
+) => {
+  const application = await applicationApi.getApplication(companySSN)
   if (application) {
     return {
       id: application.id,
@@ -21,7 +24,7 @@ export const getApplication = async (companySSN: string) => {
     }
   }
 
-  const serviceProviders = await ferdalagService.getServiceProviders(companySSN)
+  const serviceProviders = await ferdalagApi.getServiceProviders(companySSN)
   if (serviceProviders.length === 1) {
     logger.debug(`Got a single service provider for ssn ${companySSN}`)
     const [serviceProvider] = serviceProviders
