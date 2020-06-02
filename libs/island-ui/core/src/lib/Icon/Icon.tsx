@@ -95,7 +95,6 @@ const SvgPathContainer = ({
       {title && <title>{title}</title>}
       {path && <path fill={color} d={path}></path>}
       {circle && <circle fill={color} {...circle} />}
-      <div>{color}</div>
     </svg>
   )
 }
