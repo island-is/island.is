@@ -1,4 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql'
+import { Context } from './context'
 export type Maybe<T> = T | null
 export type RequireFields<T, K extends keyof T> = {
   [X in Exclude<keyof T, K>]?: T[X]
@@ -164,7 +165,7 @@ export type ResolversParentTypes = {
 }
 
 export type HelloWorldResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['HelloWorld'] = ResolversParentTypes['HelloWorld']
 > = {
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>
@@ -172,14 +173,14 @@ export type HelloWorldResolvers<
 }
 
 export type MutationResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = {
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
 }
 
 export type QueryResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
   helloWorld?: Resolver<
@@ -191,7 +192,7 @@ export type QueryResolvers<
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
 }
 
-export type Resolvers<ContextType = any> = {
+export type Resolvers<ContextType = Context> = {
   HelloWorld?: HelloWorldResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
@@ -201,4 +202,4 @@ export type Resolvers<ContextType = any> = {
  * @deprecated
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
-export type IResolvers<ContextType = any> = Resolvers<ContextType>
+export type IResolvers<ContextType = Context> = Resolvers<ContextType>
