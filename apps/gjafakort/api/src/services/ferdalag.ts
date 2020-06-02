@@ -1,4 +1,7 @@
+import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
+
 import { logger } from '@island.is/logging'
+
 import { environment } from '../environments'
 
 const { ferdalag } = environment
@@ -19,26 +22,28 @@ interface ServiceProvider {
   }
 }
 
-export const getServiceProviders = async (
-  ssn: string,
-): Promise<ServiceProvider[]> => {
-  try {
-    logger.debug(`Requesting service provider for ${ssn}`)
-    const res = await fetch(
-      `${ferdalag.url}/ssn/${ssn}?key=${ferdalag.apiKey}`,
-      {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      },
-    )
-    if (!res.ok) {
-      const text = await res.text()
-      throw new Error(text)
-    }
-    const { data } = await res.json()
-    return data
-  } catch (err) {
-    logger.error('Failed fetching company from ferdalag:', err)
+class FerdalagAPI extends RESTDataSource {
+  baseURL = `${ferdalag.url}/ssn/`
+
+  willSendRequest(request: RequestOptions) {
+    request.params.set('key', ferdalag.apiKey)
+    request.headers.set('Content-Type', 'application/json')
   }
-  return []
+
+  async getServiceProviders(ssn: string): Promise<ServiceProvider[]> {
+    try {
+      console.debug(`Requesting service provider for ${ssn}`)
+      const res = await this.get(ssn)
+      if (!res.status) {
+        throw new Error(res.errors || res.message)
+      }
+
+      return res.data
+    } catch (err) {
+      logger.error('Failed fetching company from ferdalag:', err)
+    }
+    return []
+  }
 }
+
+export default FerdalagAPI

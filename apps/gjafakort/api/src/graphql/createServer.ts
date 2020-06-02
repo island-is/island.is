@@ -1,4 +1,5 @@
 import { ApolloServer } from 'apollo-server-express'
+import { RedisCache } from 'apollo-server-cache-redis'
 import { DocumentNode } from 'graphql'
 import merge from 'lodash/merge'
 
@@ -7,8 +8,11 @@ import { logger } from '@island.is/logging'
 
 import { environment } from '../environments'
 import { verifyToken, ACCESS_TOKEN_COOKIE } from '../domains'
-import { Resolvers, GraphQLContext } from '../types'
+import { Resolvers, GraphQLContext, DataSource } from '../types'
+import { ApplicationAPI, FerdalagAPI, RskAPI } from '../services'
 import rootTypeDefs from './typeDefs'
+
+const EXCHANGE_NAME = 'gjafakort-company-application-updates'
 
 const { production } = environment
 
@@ -26,12 +30,13 @@ const createServer = async (
   )
 
   const channel = await MessageQueue.connect(production)
-  const exchangeName = 'gjafakort-company-application-updates'
   const context = {
-    channel,
-    companyApplicationExchangeId: await channel.declareExchange({
-      name: exchangeName,
-    }),
+    messageQueue: {
+      channel,
+      companyApplicationExchangeId: await channel.declareExchange({
+        name: EXCHANGE_NAME,
+      }),
+    },
   }
 
   return new ApolloServer({
@@ -39,6 +44,35 @@ const createServer = async (
     typeDefs: [rootTypeDefs, ...typeDefs],
     playground: enablePlayground,
     introspection: enablePlayground,
+    cache: new RedisCache({
+      host: environment.redis.url,
+      port: 6379,
+      password: environment.redis.password,
+      name: 'gjafakort_api_service_cache',
+      connectTimeout: 5000,
+      reconnectOnError: (err) => {
+        console.log('Reconnect on error', err)
+        var targetError = 'READONLY'
+        if (err.message.slice(0, targetError.length) === targetError) {
+          // Only reconnect when the error starts with "READONLY"
+          return true
+        }
+      },
+      retryStrategy: (times) => {
+        console.log('Redis Retry', times)
+        if (times >= 3) {
+          return undefined
+        }
+        var delay = Math.min(times * 50, 2000)
+        return delay
+      },
+      socket_keepalive: false,
+    }),
+    dataSources: (): DataSource => ({
+      applicationApi: new ApplicationAPI(),
+      ferdalagApi: new FerdalagAPI(),
+      rskApi: new RskAPI(),
+    }),
     context: ({ req }): GraphQLContext => {
       const accessToken = req.cookies[ACCESS_TOKEN_COOKIE.name]
       if (!accessToken) {

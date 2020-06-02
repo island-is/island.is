@@ -1,8 +1,7 @@
+import { RESTDataSource } from 'apollo-datasource-rest'
 import fetch from 'isomorphic-unfetch'
 
-import { GjafakortApplicationRoutingKey } from '@island.is/message-queue'
-
-import { GraphQLContext, CreateApplicationInput } from '../types'
+import { CreateApplicationInput, MessageQueue } from '../types'
 import { environment } from '../environments'
 
 const APPLICATION_TYPE = 'gjafakort'
@@ -35,46 +34,45 @@ interface ApplicationResponse {
   }
 }
 
-export const createApplication = async (
-  applicationInput: CreateApplicationInput,
-  context: GraphQLContext,
-  state: string,
-  comments: string[],
-): Promise<ApplicationResponse> => {
-  const url = `${environment.applicationUrl}/issuers/${applicationInput.companySSN}/applications`
-  const authorSSN = context.user.ssn
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      authorSSN,
-      type: APPLICATION_TYPE,
-      state,
-      data: {
-        ...applicationInput,
-        comments,
-      },
-    }),
-  })
-  const { application }: { application: ApplicationResponse } = await res.json()
+class ApplicationAPI extends RESTDataSource {
+  baseURL = `${environment.applicationUrl}/issuers/`
 
-  context.channel.publish({
-    exchangeId: context.companyApplicationExchangeId,
-    message: {
-      ...application,
-      authorSSN,
-    },
-    routingKey: application.state as GjafakortApplicationRoutingKey,
-  })
-  return application
+  async createApplication(
+    application: CreateApplicationInput,
+    messageQueue: MessageQueue,
+    state: string,
+    comments: string[],
+  ): Promise<ApplicationResponse> {
+    const url = `${this.baseURL}${application.companySSN}/applications`
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: APPLICATION_TYPE,
+        state,
+        data: {
+          ...application,
+          comments,
+        },
+      }),
+    })
+    const data = await res.json()
+
+    messageQueue.channel.publish({
+      exchangeId: messageQueue.companyApplicationExchangeId,
+      message: data.application,
+      routingKey: data.application.state,
+    })
+    return data.application
+  }
+
+  async getApplication(companySSN: string): Promise<ApplicationResponse> {
+    const url = `${this.baseURL}${companySSN}/applications/${APPLICATION_TYPE}`
+
+    const res = await fetch(url)
+    const data = await res.json()
+    return data.application
+  }
 }
 
-export const getApplication = async (
-  companySSN: string,
-): Promise<ApplicationResponse> => {
-  const url = `${environment.applicationUrl}/issuers/${companySSN}/applications/${APPLICATION_TYPE}`
-
-  const res = await fetch(url)
-  const data = await res.json()
-  return data.application
-}
+export default ApplicationAPI

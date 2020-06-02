@@ -15,4 +15,8 @@ export default {
     username: 'rf_api_island.is',
     password: process.env.RSK_API_PASSWORD,
   },
+  redis: {
+    url: 'localhost',
+    password: process.env.GJAFAKORT_REDIS_PASS,
+  },
 }

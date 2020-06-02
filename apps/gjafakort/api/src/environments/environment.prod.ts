@@ -15,4 +15,8 @@ export default {
     username: process.env.RSK_USERNAME,
     password: process.env.RSK_API_PASSWORD,
   },
+  redis: {
+    url: process.env.REDIS_URL,
+    password: process.env.REDIS_PASSWORD,
+  },
 }
