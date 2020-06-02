@@ -102,7 +102,7 @@ const mockAccordion = [
         </BulletList>
         <Typography variant="p">
           Nánari útfærsla og spurningar varðandi uppgjör má finna hjá{' '}
-          <Link href="mailto:info@yay.is">info@yay.is</Link>
+          <a href="mailto:info@yay.is">info@yay.is</a>
         </Typography>
       </Stack>
     ),
@@ -128,7 +128,9 @@ function Companies() {
             <Box paddingLeft={[0, 0, 0, 9]}>
               <Box marginBottom={4}>
                 <Breadcrumbs>
-                  <Link href="/">Ísland.is</Link>
+                  <Link href="/">
+                    <a>Ísland.is</a>
+                  </Link>
                   <span>Ferðaþjónustufyrirtæki</span>
                 </Breadcrumbs>
               </Box>

@@ -63,7 +63,9 @@ function HomePage() {
             <Box paddingLeft={[0, 0, 0, 9]}>
               <Box marginBottom={4}>
                 <Breadcrumbs>
-                  <Link href="/">Ísland.is</Link>
+                  <Link href="/">
+                    <a>Ísland.is</a>
+                  </Link>
                   <span>Ferðagjöf</span>
                 </Breadcrumbs>
               </Box>
