@@ -6,14 +6,14 @@ import {
 } from '@island.is/api/domains/hello-world'
 import {
   SearcherService,
-  SearcherRepository,
 } from '@island.is/api/domains/searcher'
+import {ElasticService} from "@island.is/api/searcher";
 
 const helloWorldRepository = new HelloWorldRepository()
 const helloWorld = new HelloWorldService(helloWorldRepository)
 
-const searcherRepository = new SearcherRepository()
-const searcher = new SearcherService(searcherRepository)
+const elasticService = new ElasticService();
+const searcher = new SearcherService(elasticService)
 
 const singletons = {
   helloWorld,

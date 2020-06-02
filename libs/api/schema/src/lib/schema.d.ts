@@ -1,5 +1,4 @@
 import { GraphQLResolveInfo } from 'graphql'
-import { Context } from './context'
 export type Maybe<T> = T | null
 export type RequireFields<T, K extends keyof T> = {
   [X in Exclude<keyof T, K>]?: T[X]
@@ -58,7 +57,7 @@ export type Query = {
   getNamespace?: Maybe<Namespace>
   helloWorld: HelloWorld
   root?: Maybe<Scalars['String']>
-  searcher: Searcher
+  searcher: Array<SearchResult>
 }
 
 export type QueryGetArticleArgs = {
@@ -74,16 +73,21 @@ export type QueryHelloWorldArgs = {
 }
 
 export type QuerySearcherArgs = {
-  input?: Maybe<SearcherInput>
-}
-
-export type Searcher = {
-  __typename?: 'Searcher'
-  message: Scalars['String']
+  query?: Maybe<SearcherInput>
 }
 
 export type SearcherInput = {
-  name?: Maybe<Scalars['String']>
+  content?: Maybe<Scalars['String']>
+  title?: Maybe<Scalars['String']>
+  tag?: Maybe<Scalars['String']>
+}
+
+export type SearchResult = {
+  __typename?: 'SearchResult'
+  _id?: Maybe<Scalars['String']>
+  title?: Maybe<Scalars['String']>
+  content?: Maybe<Scalars['String']>
+  tag?: Maybe<Array<Maybe<Scalars['String']>>>
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -203,7 +207,7 @@ export type ResolversTypes = {
   HelloWorldInput: HelloWorldInput
   HelloWorld: ResolverTypeWrapper<HelloWorld>
   SearcherInput: SearcherInput
-  Searcher: ResolverTypeWrapper<Searcher>
+  SearchResult: ResolverTypeWrapper<SearchResult>
   Mutation: ResolverTypeWrapper<{}>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
 }
@@ -219,7 +223,7 @@ export type ResolversParentTypes = {
   HelloWorldInput: HelloWorldInput
   HelloWorld: HelloWorld
   SearcherInput: SearcherInput
-  Searcher: Searcher
+  SearchResult: SearchResult
   Mutation: {}
   Boolean: Scalars['Boolean']
 }
@@ -236,7 +240,7 @@ export type ArticleResolvers<
 }
 
 export type HelloWorldResolvers<
-  ContextType = Context,
+  ContextType = any,
   ParentType extends ResolversParentTypes['HelloWorld'] = ResolversParentTypes['HelloWorld']
 > = {
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>
@@ -244,7 +248,7 @@ export type HelloWorldResolvers<
 }
 
 export type MutationResolvers<
-  ContextType = Context,
+  ContextType = any,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = {
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
@@ -260,7 +264,7 @@ export type NamespaceResolvers<
 }
 
 export type QueryResolvers<
-  ContextType = Context,
+  ContextType = any,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
   getArticle?: Resolver<
@@ -283,32 +287,39 @@ export type QueryResolvers<
   >
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   searcher?: Resolver<
-    ResolversTypes['Searcher'],
+    Array<ResolversTypes['SearchResult']>,
     ParentType,
     ContextType,
     RequireFields<QuerySearcherArgs, never>
   >
 }
 
-export type SearcherResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['Searcher'] = ResolversParentTypes['Searcher']
+export type SearchResultResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['SearchResult'] = ResolversParentTypes['SearchResult']
 > = {
-  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  _id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  tag?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['String']>>>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 
-export type Resolvers<ContextType = Context> = {
+export type Resolvers<ContextType = any> = {
   Article?: ArticleResolvers<ContextType>
   HelloWorld?: HelloWorldResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
   Namespace?: NamespaceResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
-  Searcher?: SearcherResolvers<ContextType>
+  SearchResult?: SearchResultResolvers<ContextType>
 }
 
 /**
  * @deprecated
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
-export type IResolvers<ContextType = Context> = Resolvers<ContextType>
+export type IResolvers<ContextType = any> = Resolvers<ContextType>
