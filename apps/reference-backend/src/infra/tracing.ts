@@ -2,7 +2,7 @@ import { trace } from '@opentelemetry/api'
 import { B3Propagator } from '@opentelemetry/core'
 import { NodeTracerProvider } from '@opentelemetry/node'
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger'
-import { BatchSpanProcessor } from '@opentelemetry/tracing'
+import { SimpleSpanProcessor } from '@opentelemetry/tracing'
 import { Tag } from '@opentelemetry/exporter-jaeger/build/src/types'
 
 const provider = new NodeTracerProvider({
@@ -43,7 +43,7 @@ const options = {
   maxPacketSize: 65000, // optional
 }
 const exporter = new JaegerExporter(options)
-provider.addSpanProcessor(new BatchSpanProcessor(exporter))
+provider.addSpanProcessor(new SimpleSpanProcessor(exporter))
 provider.register({
   propagator: new B3Propagator(),
 })
