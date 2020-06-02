@@ -58,6 +58,7 @@ export type Query = {
   getNamespace?: Maybe<Namespace>
   helloWorld: HelloWorld
   root?: Maybe<Scalars['String']>
+  searcher: Searcher
 }
 
 export type QueryGetArticleArgs = {
@@ -70,6 +71,19 @@ export type QueryGetNamespaceArgs = {
 
 export type QueryHelloWorldArgs = {
   input?: Maybe<HelloWorldInput>
+}
+
+export type QuerySearcherArgs = {
+  input?: Maybe<SearcherInput>
+}
+
+export type Searcher = {
+  __typename?: 'Searcher'
+  message: Scalars['String']
+}
+
+export type SearcherInput = {
+  name?: Maybe<Scalars['String']>
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -188,6 +202,8 @@ export type ResolversTypes = {
   Namespace: ResolverTypeWrapper<Namespace>
   HelloWorldInput: HelloWorldInput
   HelloWorld: ResolverTypeWrapper<HelloWorld>
+  SearcherInput: SearcherInput
+  Searcher: ResolverTypeWrapper<Searcher>
   Mutation: ResolverTypeWrapper<{}>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
 }
@@ -202,6 +218,8 @@ export type ResolversParentTypes = {
   Namespace: Namespace
   HelloWorldInput: HelloWorldInput
   HelloWorld: HelloWorld
+  SearcherInput: SearcherInput
+  Searcher: Searcher
   Mutation: {}
   Boolean: Scalars['Boolean']
 }
@@ -264,6 +282,20 @@ export type QueryResolvers<
     RequireFields<QueryHelloWorldArgs, never>
   >
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  searcher?: Resolver<
+    ResolversTypes['Searcher'],
+    ParentType,
+    ContextType,
+    RequireFields<QuerySearcherArgs, never>
+  >
+}
+
+export type SearcherResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Searcher'] = ResolversParentTypes['Searcher']
+> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 
 export type Resolvers<ContextType = Context> = {
@@ -272,6 +304,7 @@ export type Resolvers<ContextType = Context> = {
   Mutation?: MutationResolvers<ContextType>
   Namespace?: NamespaceResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
+  Searcher?: SearcherResolvers<ContextType>
 }
 
 /**

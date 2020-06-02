@@ -37,4 +37,13 @@ type Query {
   getNamespace(input: GetNamespaceInput): Namespace
   helloWorld(input: HelloWorldInput): HelloWorld!
   root: String
+  searcher(input: SearcherInput): Searcher!
+}
+
+type Searcher {
+  message: String!
+}
+
+input SearcherInput {
+  name: String = "World"
 }

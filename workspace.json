@@ -968,6 +968,34 @@
           }
         }
       }
+    },
+    "api-domains-searcher": {
+      "root": "libs/api/domains/searcher",
+      "sourceRoot": "libs/api/domains/searcher/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/api/domains/searcher/.eslintrc",
+            "tsConfig": [
+              "libs/api/domains/searcher/tsconfig.lib.json",
+              "libs/api/domains/searcher/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api/domains/searcher/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/searcher/jest.config.js",
+            "tsConfig": "libs/api/domains/searcher/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {
