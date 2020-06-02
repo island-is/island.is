@@ -40,8 +40,12 @@ export default {
   },
 
   Company: {
-    application(parent) {
-      return applicationsService.getApplication(parent.ssn)
+    application(company) {
+      if (!company) {
+        return null
+      }
+
+      return applicationsService.getApplication(company.ssn)
     },
   },
 }

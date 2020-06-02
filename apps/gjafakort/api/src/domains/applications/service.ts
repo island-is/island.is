@@ -1,14 +1,14 @@
 import { applicationService, ferdalagService } from '../../services'
 
-export const getApplication = async (ssn: string) => {
-  const application = await applicationService.getApplication(ssn)
+export const getApplication = async (companySSN: string) => {
+  const application = await applicationService.getApplication(companySSN)
   if (application) {
     return {
       id: application.id,
       name: application.data.name,
       email: application.data.email,
       state: application.state,
-      companySSN: application.data.ssn,
+      companySSN: application.data.companySSN,
       serviceCategory: application.data.serviceCategory,
       generalEmail: application.data.generalEmail,
       webpage: application.data.webpage,
@@ -19,9 +19,9 @@ export const getApplication = async (ssn: string) => {
     }
   }
 
-  const serviceProviders = await ferdalagService.getServiceProviders(ssn)
+  const serviceProviders = await ferdalagService.getServiceProviders(companySSN)
   if (serviceProviders.length === 1) {
-    console.debug(`Got a single service provider for ssn ${ssn}`)
+    console.debug(`Got a single service provider for ssn ${companySSN}`)
     const [serviceProvider] = serviceProviders
     return {
       name: serviceProvider.contactInfo.name,
