@@ -49,12 +49,12 @@ function Companies() {
               <Typography variant="h1" as="h1">
                 Prókúruhafi
               </Typography>
-              {companies && companies.length > 0 ? (
-                <SelectionForm onSubmit={onSubmit} companies={companies} />
-              ) : (
-                <NoConnection />
-              )}
             </Box>
+            {companies && companies.length > 0 ? (
+              <SelectionForm onSubmit={onSubmit} companies={companies} />
+            ) : (
+              <NoConnection />
+            )}
           </Box>
         </Column>
       </Columns>
