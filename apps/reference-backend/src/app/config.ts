@@ -7,7 +7,8 @@ const prodConfig = {
 }
 
 const devConfig = {
-  DATABASE_URI: `postgres://test_db:test_db@${process.env.DB_HOST || 'localhost'}:5432/test_db`,
+  DATABASE_URI: `postgres://test_db:test_db@${process.env.DB_HOST ||
+    'localhost'}:5432/test_db`,
 }
 
 const testConfig = {

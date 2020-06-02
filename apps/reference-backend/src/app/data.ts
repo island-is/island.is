@@ -23,7 +23,6 @@ export const sequelize = new Sequelize(config.DATABASE_URI, {
   logging: false,
 })
 
-
 export class ApplicationsModel extends Model {
   public id!: string
 
@@ -50,4 +49,3 @@ ApplicationsModel.init(
     tableName: 'sample_app',
   },
 )
-

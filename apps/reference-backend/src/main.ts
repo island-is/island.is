@@ -56,11 +56,11 @@ app.use((req, res, next) => {
   next()
 })
 
-app.use(function (err, req, res, next) {
+app.use(function(err, req, res, next) {
   logger.error(`Status code: ${err.status}, msg: ${err.message}`)
-  res.status(err.status || 500);
-  res.send(err.message);
-});
+  res.status(err.status || 500)
+  res.send(err.message)
+})
 
 metricsApp.listen(9696, () => {
   console.log(`Metrics listening ...`)
