@@ -1,5 +1,3 @@
-import * as applicationService from './application'
-import * as ferdalagService from './ferdalag'
-import * as rskService from './rsk'
-
-export { applicationService, ferdalagService, rskService }
+export { default as ApplicationAPI } from './application'
+export { default as FerdalagAPI } from './ferdalag'
+export { default as RskAPI } from './rsk'
