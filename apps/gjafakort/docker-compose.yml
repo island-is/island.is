@@ -18,5 +18,26 @@ services:
     ports:
       - 5432:5432
 
+  redis:
+    image: redis:5.0.8
+    container_name: gjafakort_redis
+    command: >
+      redis-server --requirepass $GJAFAKORT_REDIS_PASS
+    privileged: true
+    sysctls:
+      net.core.somaxconn: '511'
+    ports:
+      - 6379:6379
+
+  localstack:
+    container_name: localstack
+    image: localstack/localstack:0.11.1
+    environment:
+      - AWS_DEFAULT_REGION=eu-west-1
+      - SERVICES=sns:4575,sqs:4576
+    ports:
+      - "4575:4575"
+      - "4576:4576"
+
 volumes:
   db_data:
