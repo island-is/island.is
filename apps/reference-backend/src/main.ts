@@ -5,6 +5,7 @@ import express from 'express'
 import { collectDefaultMetrics, Histogram } from 'prom-client'
 import { routes } from './routes'
 import { metricsApp } from './infra/metrics-publisher'
+import { logger } from './infra/logging'
 
 const app = express()
 
@@ -54,6 +55,12 @@ app.use((req, res, next) => {
 
   next()
 })
+
+app.use(function (err, req, res, next) {
+  logger.error(`Status code: ${err.status}, msg: ${err.message}`)
+  res.status(err.status || 500);
+  res.send(err.message);
+});
 
 metricsApp.listen(9696, () => {
   console.log(`Metrics listening ...`)
