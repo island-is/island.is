@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { Applications } from '../app/applications'
-import { logger } from '../infra/logging'
+import { logger } from '@island.is/logging'
 
 export const routes = Router()
 const asyncRoute = (route) => (req, res, next = console.error) =>

@@ -71,6 +71,9 @@
     },
     "reference-backend": {
       "tags": []
+    },
+    "infra-tracing": {
+      "tags": []
     }
   }
 }

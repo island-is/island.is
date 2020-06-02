@@ -734,8 +734,7 @@
             "passWithNoTests": true
           }
         },
-        "docker-express": {
-        },
+        "docker-express": {},
         "migrate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -756,6 +755,34 @@
               }
             ],
             "cwd": "apps/reference-backend"
+          }
+        }
+      }
+    },
+    "infra-tracing": {
+      "root": "libs/infra-tracing",
+      "sourceRoot": "libs/infra-tracing/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/infra-tracing/.eslintrc",
+            "tsConfig": [
+              "libs/infra-tracing/tsconfig.lib.json",
+              "libs/infra-tracing/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/infra-tracing/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/infra-tracing/jest.config.js",
+            "tsConfig": "libs/infra-tracing/tsconfig.spec.json",
+            "passWithNoTests": true
           }
         }
       }

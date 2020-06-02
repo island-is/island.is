@@ -1,6 +1,6 @@
 import { Counter } from 'prom-client'
 import { ApplicationsModel } from './data'
-import { logger } from '../infra/logging'
+import { logger } from '@island.is/logging'
 
 const applicationsRegistered = new Counter({
   name: 'apps_registered',

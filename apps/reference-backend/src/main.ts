@@ -1,11 +1,11 @@
 // This needs to be the first import in the app to hook into the modules system correctly
-import './infra/tracing'
+import '@island.is/infra-tracing'
 
 import express from 'express'
 import { collectDefaultMetrics, Histogram } from 'prom-client'
 import { routes } from './routes'
 import { metricsApp } from './infra/metrics-publisher'
-import { logger } from './infra/logging'
+import { logger } from '@island.is/logging'
 
 const app = express()
 
