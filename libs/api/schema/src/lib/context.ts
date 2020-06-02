@@ -4,8 +4,13 @@ export interface HelloWorldService {
   getMessage(name: string): string
 }
 
+export interface SearcherService {
+  getMessage(name: string): string
+}
+
 export interface Context {
   req: Request
   res: Response
   helloWorld: HelloWorldService
+  searcher: SearcherService
 }

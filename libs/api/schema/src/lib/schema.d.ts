@@ -32,10 +32,24 @@ export type Query = {
   __typename?: 'Query'
   helloWorld: HelloWorld
   root?: Maybe<Scalars['String']>
+  searcher: Searcher
 }
 
 export type QueryHelloWorldArgs = {
   input?: Maybe<HelloWorldInput>
+}
+
+export type QuerySearcherArgs = {
+  input?: Maybe<SearcherInput>
+}
+
+export type Searcher = {
+  __typename?: 'Searcher'
+  message: Scalars['String']
+}
+
+export type SearcherInput = {
+  name?: Maybe<Scalars['String']>
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -150,6 +164,8 @@ export type ResolversTypes = {
   HelloWorldInput: HelloWorldInput
   String: ResolverTypeWrapper<Scalars['String']>
   HelloWorld: ResolverTypeWrapper<HelloWorld>
+  SearcherInput: SearcherInput
+  Searcher: ResolverTypeWrapper<Searcher>
   Mutation: ResolverTypeWrapper<{}>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
 }
@@ -160,6 +176,8 @@ export type ResolversParentTypes = {
   HelloWorldInput: HelloWorldInput
   String: Scalars['String']
   HelloWorld: HelloWorld
+  SearcherInput: SearcherInput
+  Searcher: Searcher
   Mutation: {}
   Boolean: Scalars['Boolean']
 }
@@ -190,12 +208,27 @@ export type QueryResolvers<
     RequireFields<QueryHelloWorldArgs, never>
   >
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  searcher?: Resolver<
+    ResolversTypes['Searcher'],
+    ParentType,
+    ContextType,
+    RequireFields<QuerySearcherArgs, never>
+  >
+}
+
+export type SearcherResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Searcher'] = ResolversParentTypes['Searcher']
+> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 
 export type Resolvers<ContextType = Context> = {
   HelloWorld?: HelloWorldResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
+  Searcher?: SearcherResolvers<ContextType>
 }
 
 /**

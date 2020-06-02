@@ -13,4 +13,13 @@ type Mutation {
 type Query {
   helloWorld(input: HelloWorldInput): HelloWorld!
   root: String
+  searcher(input: SearcherInput): Searcher!
+}
+
+type Searcher {
+  message: String!
+}
+
+input SearcherInput {
+  name: String = "World"
 }
