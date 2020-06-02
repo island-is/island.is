@@ -14,3 +14,4 @@ exec docker buildx build \
   --build-arg BUILDKIT_INLINE_CACHE=1 \
   --build-arg APP=${APP} \
   $PROJECT_ROOT
+  
