@@ -5,6 +5,8 @@ import { Entropy } from 'entropy-string'
 import IslandisLogin from 'islandis-login'
 import { uuid } from 'uuidv4'
 
+import { logger } from '@island.is/logging'
+
 import { Credentials } from '../../types'
 import { VerifyResult } from './types'
 import {
@@ -40,7 +42,7 @@ router.post(
     try {
       verifyResult = await loginIS.verify(token)
     } catch (err) {
-      console.error(err)
+      logger.error(err)
       return res.status(401).json({ error: 'Unauthorized' })
     }
 

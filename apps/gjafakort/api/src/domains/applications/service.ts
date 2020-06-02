@@ -1,3 +1,5 @@
+import { logger } from '@island.is/logging'
+
 import { applicationService, ferdalagService } from '../../services'
 
 export const getApplication = async (companySSN: string) => {
@@ -21,7 +23,7 @@ export const getApplication = async (companySSN: string) => {
 
   const serviceProviders = await ferdalagService.getServiceProviders(companySSN)
   if (serviceProviders.length === 1) {
-    console.debug(`Got a single service provider for ssn ${companySSN}`)
+    logger.debug(`Got a single service provider for ssn ${companySSN}`)
     const [serviceProvider] = serviceProviders
     return {
       name: serviceProvider.contactInfo.name,

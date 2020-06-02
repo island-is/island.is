@@ -1,8 +1,11 @@
 import express from 'express'
+
+import { logger } from '@island.is/logging'
+
 import { startConsumers } from './consumers'
 ;(async () => {
   const consumers = await startConsumers()
-  console.log('All consumers have been started')
+  logger.info('All consumers have been started')
 
   const app = express()
   app.get('/', (req, res) => {
@@ -15,9 +18,9 @@ import { startConsumers } from './consumers'
 
   const port = process.env.port || 7777
   const server = app.listen(port, () => {
-    console.log(`Listening at http://localhost:${port}`)
+    logger.info(`Listening at http://localhost:${port}`)
   })
-  server.on('error', console.error)
+  server.on('error', logger.error)
 })().catch((err) => {
-  console.error(err)
+  logger.error(err)
 })

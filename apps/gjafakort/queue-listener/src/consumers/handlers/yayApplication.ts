@@ -1,8 +1,11 @@
 import md5 from 'crypto-js/md5'
+
 import {
   ApplicationMessage,
   ApplicationRoutingKey,
 } from '@island.is/message-queue'
+import { logger } from '@island.is/logging'
+
 import { environment } from '../../environments'
 import { RoutingKeyError } from './errors'
 import { request } from './api'
@@ -32,14 +35,13 @@ export const handler = async (
   message: ApplicationMessage,
   routingKey: ApplicationRoutingKey,
 ) => {
-  console.debug(
+  logger.debug(
     `receiving message ${message.id} on ${queueName} with routingKey ${routingKey}`,
     message,
   )
 
-  let res
   if (routingKey === 'approved' || routingKey === 'pending') {
-    res = await request({
+    await request({
       queueName,
       applicationId: message.id,
       method: 'POST',
@@ -53,7 +55,7 @@ export const handler = async (
       }),
     })
   } else if (routingKey === 'rejected') {
-    res = await request({
+    await request({
       queueName,
       applicationId: message.id,
       method: 'DELETE',
@@ -63,6 +65,4 @@ export const handler = async (
   } else {
     throw new RoutingKeyError(queueName, routingKey)
   }
-
-  console.debug(`processed message ${message.id} on ${queueName}`, res.status)
 }

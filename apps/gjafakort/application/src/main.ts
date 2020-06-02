@@ -1,5 +1,7 @@
 import express from 'express'
 
+import { logger } from '@island.is/logging'
+
 import { issuerRoutes, applicationRoutes } from './api'
 
 const app = express()
@@ -14,6 +16,6 @@ app.get('/status', (req, res) => {
 
 const port = process.env.port || 4242
 const server = app.listen(port, () => {
-  console.log(`Listening at http://localhost:${port}`)
+  logger.info(`Listening at http://localhost:${port}`)
 })
-server.on('error', console.error)
+server.on('error', logger.error)

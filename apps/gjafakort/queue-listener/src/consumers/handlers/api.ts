@@ -1,5 +1,8 @@
 import fetch from 'isomorphic-unfetch'
 import timeoutSignal from 'timeout-signal'
+
+import { logger } from '@island.is/logging'
+
 import { ProcessingError } from './errors'
 import { environment } from '../../environments'
 
@@ -75,5 +78,8 @@ export const request = async ({
     updateApplication(applicationId, queueName, false, message)
     throw new ProcessingError(queueName, url, res.status, data)
   }
-  return res
+
+  logger.info(
+    `processed message ${applicationId} on ${queueName} with status ${res.status}`,
+  )
 }
