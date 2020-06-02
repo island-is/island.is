@@ -27,7 +27,6 @@ function Companies() {
   const router = useRouter()
   const { data, loading } = useQuery(GetCompaniesQuery)
   const { companies } = data || {}
-
   const onSubmit = ({ ssn }) => {
     router.push(`/fyrirtaeki/umsokn/${ssn}`)
   }
@@ -50,7 +49,7 @@ function Companies() {
               <Typography variant="h1" as="h1">
                 Prókúruhafi
               </Typography>
-              {companies.length > 0 ? (
+              {companies && companies.length > 0 ? (
                 <SelectionForm onSubmit={onSubmit} companies={companies} />
               ) : (
                 <NoConnection />
