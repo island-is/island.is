@@ -1,16 +1,21 @@
 import { gql } from 'apollo-server-express'
 
 export const typeDefs = gql`
-  type Searcher {
-    message: String!
+  type SearchResult {
+    _id: String
+    title: String
+    content: String
+    tag: [String]
   }
 
   input SearcherInput {
-    name: String = "World"
+    content: String
+    title: String
+    tag: String
   }
 
   extend type Query {
-    searcher(input: SearcherInput): Searcher!
+    searcher(query: SearcherInput): [SearchResult!]!
   }
 `
 

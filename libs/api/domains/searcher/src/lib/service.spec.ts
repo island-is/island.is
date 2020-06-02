@@ -1,14 +1,12 @@
 import SearcherService from './service'
+import {SearchIndexes} from "@island.is/api/searcher";
 
 describe('Searcher services', () => {
   describe('#getMessage', () => {
     it('says hello to the user', () => {
       // Arrange
-      const service = new SearcherService({
-        getSearcher() {
-          return 'Test'
-        },
-      })
+      //todo write test
+      const service = new SearcherService()
       const name = 'Eiki'
 
       // Act
