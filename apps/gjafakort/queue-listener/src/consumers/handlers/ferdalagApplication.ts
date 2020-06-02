@@ -42,6 +42,7 @@ export const handler = async (
   if (routingKey === 'approved') {
     res = await request({
       queueName,
+      applicationId: message.id,
       method: 'POST',
       url: `${url}/ssn/update/${message.issuerSSN}?key=${apiKey}`,
       body: JSON.stringify(body),
@@ -49,6 +50,7 @@ export const handler = async (
   } else if (routingKey === 'manual-approved') {
     res = await request({
       queueName,
+      applicationId: message.id,
       method: 'POST',
       url: `${url}/ssn/create/?key=${apiKey}`,
       body: JSON.stringify({

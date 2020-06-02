@@ -1,3 +1,5 @@
+import merge from 'lodash/merge'
+import isArray from 'lodash/isArray'
 import Application from './model'
 
 export const getApplicationByIssuerAndType = (
@@ -25,6 +27,10 @@ export const updateApplication = (
   state: string,
   data: object,
 ) => {
-  const mergedData = { ...application.data, ...data }
+  const mergedData = merge(application.data, data, (objValue, srcValue) => {
+    if (isArray(objValue)) {
+      return objValue.concat(srcValue)
+    }
+  })
   return application.update({ state, data: mergedData })
 }
