@@ -734,15 +734,7 @@
             "passWithNoTests": true
           }
         },
-        "docker": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              {
-                "command": "echo 'not done yet'"
-              }
-            ]
-          }
+        "docker-express": {
         },
         "migrate": {
           "builder": "@nrwl/workspace:run-commands",
