@@ -1,6 +1,8 @@
 import express from 'express'
 import cookieParser from 'cookie-parser'
 
+import { logger } from '@island.is/logging'
+
 import { authRoutes, resolvers, typeDefs } from './domains'
 import { createServer } from './graphql'
 
@@ -23,8 +25,8 @@ createServer(resolvers, typeDefs)
     const port = process.env.port || 3333
     app
       .listen(port, () => {
-        console.log(`Listening at http://localhost:${port}/api`)
+        logger.info(`Listening at http://localhost:${port}/api`)
       })
-      .on('error', console.error)
+      .on('error', logger.error)
   })
-  .catch((e) => console.error(e))
+  .catch((e) => logger.error(e))

@@ -33,7 +33,8 @@
       "@island.is/gjafakort/application/*": [
         "apps/gjafakort/application/src/*"
       ],
-      "@island.is/message-queue": ["libs/message-queue/src/index.ts"]
+      "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
+      "@island.is/logging": ["libs/logging/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

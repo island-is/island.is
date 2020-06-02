@@ -78,6 +78,7 @@
     "timeout-signal": "1.0.0",
     "treat": "1.4.1",
     "uuidv4": "6.0.8",
+    "winston": "3.2.1",
     "yup": "^0.29.0"
   },
   "devDependencies": {

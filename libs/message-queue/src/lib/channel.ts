@@ -1,5 +1,8 @@
 import * as AWS from 'aws-sdk'
 import { Consumer } from 'sqs-consumer'
+
+import { logger } from '@island.is/logging'
+
 import { Message, RoutingKey } from './types'
 
 AWS.config.update({ region: 'eu-west-1' })
@@ -25,14 +28,14 @@ class Channel {
 
   async declareExchange({ name }: { name: string }) {
     const { TopicArn } = await this.sns.createTopic({ Name: name }).promise()
-    console.log(`Declared exchange ${TopicArn}`)
+    logger.info(`Declared exchange ${TopicArn}`)
     return TopicArn
   }
 
   async declareQueue({ name }: { name: string }) {
     const queueUrl = await this.getQueueUrl({ name })
     if (queueUrl) {
-      console.log(`Declared queue ${queueUrl}`)
+      logger.info(`Declared queue ${queueUrl}`)
       return queueUrl
     }
 
@@ -42,7 +45,7 @@ class Channel {
       })
       .promise()
 
-    console.log(`Declared queue ${QueueUrl}`)
+    logger.info(`Declared queue ${QueueUrl}`)
     return QueueUrl
   }
 
@@ -68,7 +71,7 @@ class Channel {
         },
       })
       .promise()
-    console.log(`Set queue ${dlQueueId} as dead letter queue for ${queueId}`)
+    logger.info(`Set queue ${dlQueueId} as dead letter queue for ${queueId}`)
   }
 
   async bindQueue({
@@ -103,7 +106,7 @@ class Channel {
         .promise()
     }
 
-    console.log(
+    logger.info(
       `Bound queue ${queueId} to exchange ${exchangeId} with routingKeys: ${routingKeys.join(
         ', ',
       )}.`,
@@ -130,11 +133,11 @@ class Channel {
     })
 
     consumer.on('error', (err) => {
-      console.error('Unexpected error:', err.message)
+      logger.error('Unexpected error:', err.message)
     })
 
     consumer.on('processing_error', (err) => {
-      console.error('Failed processing message:', err.message)
+      logger.error('Failed processing message:', err.message)
     })
 
     consumer.start()
@@ -164,7 +167,7 @@ class Channel {
       }
     }
     const { MessageId } = await this.sns.publish(params).promise()
-    console.log(
+    logger.info(
       `Published message ${MessageId} to ${exchangeId} with routingKey ${routingKey}`,
     )
     return MessageId

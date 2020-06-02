@@ -3,6 +3,7 @@ import { DocumentNode } from 'graphql'
 import merge from 'lodash/merge'
 
 import MessageQueue from '@island.is/message-queue'
+import { logger } from '@island.is/logging'
 
 import { environment } from '../environments'
 import { verifyToken, ACCESS_TOKEN_COOKIE } from '../domains'
@@ -45,13 +46,13 @@ const createServer = async (
 
       const credentials = verifyToken(accessToken)
       if (!credentials) {
-        console.error('signature validation failed')
+        logger.error('signature validation failed')
         return context
       }
 
       const { csrfToken, user } = credentials
       if (csrfToken && `Bearer ${csrfToken}` !== req.headers.authorization) {
-        console.error('invalid csrf token')
+        logger.error('invalid csrf token')
         return context
       }
 

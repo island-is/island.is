@@ -65,6 +65,9 @@
     },
     "message-queue": {
       "tags": []
+    },
+    "logging": {
+      "tags": []
     }
   }
 }

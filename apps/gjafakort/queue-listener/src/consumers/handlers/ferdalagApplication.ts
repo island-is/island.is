@@ -2,6 +2,8 @@ import {
   ApplicationMessage,
   ApplicationRoutingKey,
 } from '@island.is/message-queue'
+import { logger } from '@island.is/logging'
+
 import { environment } from '../../environments'
 import { RoutingKeyError } from './errors'
 import { request } from './api'
@@ -21,7 +23,7 @@ export const handler = async (
   message: ApplicationMessage,
   routingKey: ApplicationRoutingKey,
 ) => {
-  console.debug(
+  logger.debug(
     `receiving message ${message.id} on ${queueName} with routingKey ${routingKey}`,
     message,
   )
@@ -38,9 +40,8 @@ export const handler = async (
     legalName: message.data.companyName,
   }
 
-  let res
   if (routingKey === 'approved') {
-    res = await request({
+    await request({
       queueName,
       applicationId: message.id,
       method: 'POST',
@@ -48,7 +49,7 @@ export const handler = async (
       body: JSON.stringify(body),
     })
   } else if (routingKey === 'manual-approved') {
-    res = await request({
+    await request({
       queueName,
       applicationId: message.id,
       method: 'POST',
@@ -61,5 +62,4 @@ export const handler = async (
   } else {
     throw new RoutingKeyError(queueName, routingKey)
   }
-  console.debug(`processed message ${message.id} on ${queueName}`, res.status)
 }

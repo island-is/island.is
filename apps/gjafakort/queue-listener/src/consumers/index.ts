@@ -1,4 +1,6 @@
 import MsgQueue from '@island.is/message-queue'
+import { logger } from '@island.is/logging'
+
 import { environment } from '../environments'
 import handlers from './handlers'
 
@@ -21,7 +23,7 @@ export const startConsumers = async () => {
       })
 
       const consumer = channel.consume({ queueId, handler: handler.handler })
-      console.log(`Listening on queue ${handler.queueName}`)
+      logger.info(`Listening on queue ${handler.queueName}`)
       return consumer
     }),
   )
