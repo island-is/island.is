@@ -786,6 +786,34 @@
           }
         }
       }
+    },
+    "infra-express-server": {
+      "root": "libs/infra-express-server",
+      "sourceRoot": "libs/infra-express-server/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/infra-express-server/.eslintrc",
+            "tsConfig": [
+              "libs/infra-express-server/tsconfig.lib.json",
+              "libs/infra-express-server/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/infra-express-server/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/infra-express-server/jest.config.js",
+            "tsConfig": "libs/infra-express-server/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

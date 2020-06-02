@@ -74,6 +74,9 @@
     },
     "infra-tracing": {
       "tags": []
+    },
+    "infra-express-server": {
+      "tags": []
     }
   }
 }
