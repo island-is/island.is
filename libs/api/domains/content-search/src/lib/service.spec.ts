@@ -1,5 +1,5 @@
 import SearcherService from './service'
-import {SearchIndexes} from "@island.is/api/searcher";
+import {SearchIndexes} from "@island.is/api/content-search";
 
 describe('Searcher services', () => {
   describe('#getMessage', () => {
