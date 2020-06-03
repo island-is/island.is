@@ -37,7 +37,6 @@ class ApplicationAPI extends RESTDataSource {
   baseURL = `${environment.applicationUrl}/issuers/`
 
   willSendRequest(request: RequestOptions) {
-    request.headers.set('Cache-Control', 'private')
     request.headers.set('Content-Type', 'application/json')
   }
 
