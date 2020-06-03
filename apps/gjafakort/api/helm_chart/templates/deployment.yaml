@@ -64,6 +64,13 @@ spec:
                 secretKeyRef:
                   name: gjafakort-api
                   key: AUTH_JWT_SECRET
+            - name: REDIS_URL
+              value: {{ .redis_url }}
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gjafakort-api
+                  key: REDIS_PASSWORD
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

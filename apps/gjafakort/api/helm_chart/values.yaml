@@ -24,6 +24,8 @@ environment:
   auth_audience:
   auth_jwt_secret: "/k8s/gjafakort/api/AUTH_JWT_SECRET"
   rsk_api_password_path: "/k8s/gjafakort/api/RSK_API_PASSWORD"
+  redis_url:
+  redis_password: "/k8s/gjafakort/api/REDIS_PASSWORD"
 
 serviceAccount:
   # Specifies whether a service account should be created
