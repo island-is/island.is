@@ -691,7 +691,6 @@
             "outputPath": "dist/apps/reference-backend",
             "main": "apps/reference-backend/src/main.ts",
             "tsConfig": "apps/reference-backend/tsconfig.app.json",
-            "webpackConfig": "webpack.config.js",
             "assets": ["apps/reference-backend/src/assets"]
           },
           "configurations": {

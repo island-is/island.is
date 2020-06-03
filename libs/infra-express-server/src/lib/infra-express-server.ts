@@ -1,5 +1,5 @@
 // This needs to be the first import in the app to hook into the modules system correctly
-import '@island.is/infra-tracing'
+import { initTracing } from '@island.is/infra-tracing'
 
 import express, { Router } from 'express'
 import { collectDefaultMetrics, Histogram } from 'prom-client'
@@ -8,11 +8,13 @@ import { logger } from '@island.is/logging'
 
 type RunServerParams = {
   routes: Router
+  name: string
   public?: Router
 }
 
 export const runServer = (opts: RunServerParams) => {
   const app = express()
+  initTracing(opts.name)
 
   app.use(express.json())
 
