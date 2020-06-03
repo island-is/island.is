@@ -4466,7 +4466,7 @@ apollo-client@2.6.8:
     tslib "^1.10.0"
     zen-observable "^0.8.0"
 
-apollo-datasource-rest@^0.9.2:
+apollo-datasource-rest@0.9.2:
   version "0.9.2"
   resolved "https://registry.yarnpkg.com/apollo-datasource-rest/-/apollo-datasource-rest-0.9.2.tgz#610e8d6d26b84385265cb91415113a153aa657e9"
   integrity sha512-HoKvcxp4QwnglPtJGXdG4ycncSmw6AnhrWOPNc3Q1T1wu8ffq+qN646keQXJ8ehGmVYCwZfujL1ReaD+DvDuag==
