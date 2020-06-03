@@ -1,7 +1,8 @@
-import { style } from 'treat'
+import { style, styleMap } from 'treat'
 import * as CSS from 'csstype'
 import { isObject } from 'lodash'
 import { theme } from '../../theme'
+import { mapToStyleProperty } from '../../utils'
 
 export type VariantTypes =
   | 'p'
@@ -113,6 +114,8 @@ export const variants: Variants = {
     color: theme.color.roseTinted400,
   },
 }
+
+export const colors = styleMap(mapToStyleProperty(theme.color, 'color'))
 
 const resolveBreakpoints = (variant, attr, acc) => {
   if (isObject(variant[attr])) {
