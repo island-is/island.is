@@ -39,8 +39,7 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
-cache/
-!libs/cache/
+.cache
 
 # Used to store local secrets
 .env.secret

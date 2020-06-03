@@ -16,7 +16,7 @@ export const createCache = (options: Options) =>
     socket_keepalive: false,
     reconnectOnError: (err) => {
       logger.error(`Reconnect on error: ${err}`)
-      var targetError = 'READONLY'
+      const targetError = 'READONLY'
       if (err.message.slice(0, targetError.length) === targetError) {
         // Only reconnect when the error starts with "READONLY"
         return true
@@ -27,7 +27,7 @@ export const createCache = (options: Options) =>
       if (times >= 3) {
         return undefined
       }
-      var delay = Math.min(times * 50, 2000)
+      const delay = Math.min(times * 50, 2000)
       return delay
     },
   })
