@@ -22,10 +22,6 @@ class RskAPI extends RESTDataSource {
   willSendRequest(request: RequestOptions) {
     request.headers.set('Content-Type', 'application/json')
     request.headers.set(
-      'Cache-Control',
-      `public, max-age=${ONE_DAY}, s-maxage=${ONE_DAY}`,
-    )
-    request.headers.set(
       'Authorization',
       `Basic ${Base64.encode(`${rsk.username}:${rsk.password}`)}`,
     )
