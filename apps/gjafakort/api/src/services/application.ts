@@ -1,5 +1,4 @@
-import { RESTDataSource } from 'apollo-datasource-rest'
-import fetch from 'isomorphic-unfetch'
+import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 
 import { CreateApplicationInput, MessageQueue } from '../types'
 import { environment } from '../environments'
@@ -37,41 +36,43 @@ interface ApplicationResponse {
 class ApplicationAPI extends RESTDataSource {
   baseURL = `${environment.applicationUrl}/issuers/`
 
+  willSendRequest(request: RequestOptions) {
+    request.headers.set('Cache-Control', 'private')
+    request.headers.set('Content-Type', 'application/json')
+  }
+
   async createApplication(
     application: CreateApplicationInput,
     messageQueue: MessageQueue,
     state: string,
     comments: string[],
   ): Promise<ApplicationResponse> {
-    const url = `${this.baseURL}${application.companySSN}/applications`
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: APPLICATION_TYPE,
-        state,
-        data: {
-          ...application,
-          comments,
-        },
-      }),
+    const res = await this.post(`${application.companySSN}/applications`, {
+      type: APPLICATION_TYPE,
+      state,
+      data: {
+        ...application,
+        comments,
+      },
     })
-    const data = await res.json()
 
     messageQueue.channel.publish({
       exchangeId: messageQueue.companyApplicationExchangeId,
-      message: data.application,
-      routingKey: data.application.state,
+      message: res.application,
+      routingKey: res.application.state,
     })
-    return data.application
+    return res.application
   }
 
   async getApplication(companySSN: string): Promise<ApplicationResponse> {
-    const url = `${this.baseURL}${companySSN}/applications/${APPLICATION_TYPE}`
-
-    const res = await fetch(url)
-    const data = await res.json()
-    return data.application
+    try {
+      const res = await this.get(
+        `${companySSN}/applications/${APPLICATION_TYPE}`,
+      )
+      return res.application
+    } catch {
+      return null
+    }
   }
 }
 
