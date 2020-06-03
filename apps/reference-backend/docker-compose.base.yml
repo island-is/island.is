@@ -13,8 +13,6 @@ services:
       - TEST_DB_NAME=test_db
     volumes:
       - ./bin/startup.sql:/docker-entrypoint-initdb.d/startup.sql
-    ports:
-      - 5432:5432
 
 
 networks:
