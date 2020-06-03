@@ -28,10 +28,10 @@ export const getApplication = async (companySSN: string) => {
     return {
       name: serviceProvider.contactInfo.name,
       companyDisplayName: serviceProvider.legalName,
-      email: serviceProvider.email,
+      email: serviceProvider.contactInfo.email,
       state: 'empty',
       companySSN: serviceProvider.SSN,
-      generalEmail: serviceProvider.contactInfo.email,
+      generalEmail: serviceProvider.email,
       webpage: serviceProvider.website,
       phoneNumber: serviceProvider.phoneNr || serviceProvider.contactInfo.phone,
     }
