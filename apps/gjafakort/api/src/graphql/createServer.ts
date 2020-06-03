@@ -49,7 +49,7 @@ const createServer = async (
       name: 'gjafakort_api_service_cache',
       connectTimeout: 5000,
       reconnectOnError: (err) => {
-        console.log('Reconnect on error', err)
+        logger.error(`Reconnect on error: ${err}`)
         var targetError = 'READONLY'
         if (err.message.slice(0, targetError.length) === targetError) {
           // Only reconnect when the error starts with "READONLY"
@@ -57,7 +57,7 @@ const createServer = async (
         }
       },
       retryStrategy: (times) => {
-        console.log('Redis Retry', times)
+        logger.info(`Redis Retry: ${times}`)
         if (times >= 3) {
           return undefined
         }
