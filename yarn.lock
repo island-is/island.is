@@ -4593,7 +4593,7 @@ apollo-link@1.2.14, apollo-link@^1.0.0, apollo-link@^1.2.12, apollo-link@^1.2.14
     tslib "^1.9.3"
     zen-observable-ts "^0.8.21"
 
-apollo-server-cache-redis@^1.2.1:
+apollo-server-cache-redis@1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/apollo-server-cache-redis/-/apollo-server-cache-redis-1.2.1.tgz#cb7d1c9fbd85fb8a05d58c3a7cb205bfaf875f2d"
   integrity sha512-CASlrAxM2jEeKlrBjIxYUzuXgZfl8LG38PTtFxvOAlu7Gp/ihq5hAP5H5IyvTR3345SBSUozjiUoR+YZjR1aow==
@@ -9254,7 +9254,7 @@ format@^0.2.0:
   resolved "https://registry.yarnpkg.com/format/-/format-0.2.2.tgz#d6170107e9efdc4ed30c9dc39016df942b5cb58b"
   integrity sha1-1hcBB+nv3E7TDJ3DkBbflCtctYs=
 
-formik@^2.1.4:
+formik@2.1.4:
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/formik/-/formik-2.1.4.tgz#8deef07ec845ea98f75e03da4aad7aab4ac46570"
   integrity sha512-oKz8S+yQBzuQVSEoxkqqJrKQS5XJASWGVn6mrs+oTWrBoHgByVwwI1qHiVc9GKDpZBU9vAxXYAKz2BvujlwunA==
@@ -15028,7 +15028,7 @@ raw-loader@3.1.0, raw-loader@^3.1.0:
     loader-utils "^1.1.0"
     schema-utils "^2.0.1"
 
-react-animate-height@^2.0.21:
+react-animate-height@2.0.21:
   version "2.0.21"
   resolved "https://registry.yarnpkg.com/react-animate-height/-/react-animate-height-2.0.21.tgz#da9223eb0e74457d52f72da477c8626550df2ce6"
   integrity sha512-CZHdjMD8qqp10tYtWmauWYASXxxv9vYeljxFGFtbcrbNXhsUv0w3IjxVK+0yCnyfk7769WfMZKHra4vRcbMnQg==
@@ -15206,7 +15206,7 @@ react-is@^16.12.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4, react-i
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
-react-keyed-flatten-children@^1.2.0:
+react-keyed-flatten-children@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/react-keyed-flatten-children/-/react-keyed-flatten-children-1.2.0.tgz#44c741f9f5acca1a7294c3f7a11f1d31c417c1e1"
   integrity sha512-gJoD3br3tK59+AOKlzb+7G39YtkSC4gWjQjDbWOmHjW7pxgYomnRBemKXuNBafnPYSKpjp7evOlxtGEHwiP11g==
@@ -15218,7 +15218,7 @@ react-lifecycles-compat@^3.0.4:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
-react-number-format@^4.4.1:
+react-number-format@4.4.1:
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/react-number-format/-/react-number-format-4.4.1.tgz#d5614dd25edfc21ed48b97356213440081437a94"
   integrity sha512-ZGFMXZ0U7DcmQ3bSZY3FULOA1mfqreT9NIMYZNoa/ouiSgiTQiYA95Uj2KN8ge6BRr+ghA5vraozqWqsHZQw3Q==
@@ -15257,7 +15257,7 @@ react-redux@^7.0.2:
     prop-types "^15.7.2"
     react-is "^16.9.0"
 
-react-select@^3.0.8, react-select@^3.1.0:
+react-select@3.1.0, react-select@^3.0.8:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/react-select/-/react-select-3.1.0.tgz#ab098720b2e9fe275047c993f0d0caf5ded17c27"
   integrity sha512-wBFVblBH1iuCBprtpyGtd1dGMadsG36W5/t2Aj8OE6WbByDg5jIFyT7X5gT+l0qmT5TqWhxX+VsKJvCEl2uL9g==
@@ -15462,7 +15462,7 @@ reakit-warning@^0.3.0:
   dependencies:
     reakit-utils "^0.12.0"
 
-reakit@^1.0.2:
+reakit@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/reakit/-/reakit-1.0.2.tgz#ff879f63a47b4d61051f8e991b187f14c8fc391e"
   integrity sha512-l1yvXm9sjVGljsVxoPoSOWwsZWVMJZI7nWEgY+HqzPcsVH483F64oLamj21uCAbwpxfaEkQ/hS5g9RAbdfGEog==
@@ -19111,7 +19111,7 @@ yn@^2.0.0:
   resolved "https://registry.yarnpkg.com/yn/-/yn-2.0.0.tgz#e5adabc8acf408f6385fc76495684c88e6af689a"
   integrity sha1-5a2ryKz0CPY4X8dklWhMiOavaJo=
 
-yup@^0.29.0:
+yup@0.29.0:
   version "0.29.0"
   resolved "https://registry.yarnpkg.com/yup/-/yup-0.29.0.tgz#c0670897b2ebcea42ebde12b3567f55ea3a7acaf"
   integrity sha512-rXPkxhMIVPsQ6jZXPRcO+nc+AIT+BBo3012pmiEos2RSrPxAq1LyspZyK7l14ahcXuiKQnEHI0H5bptI47v5Tw==
