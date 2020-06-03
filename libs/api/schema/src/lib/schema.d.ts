@@ -1,4 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql'
+import { Context } from './context'
 export type Maybe<T> = T | null
 export type RequireFields<T, K extends keyof T> = {
   [X in Exclude<keyof T, K>]?: T[X]
@@ -57,7 +58,6 @@ export type Query = {
   getNamespace?: Maybe<Namespace>
   helloWorld: HelloWorld
   root?: Maybe<Scalars['String']>
-  searcher: Array<SearchResult>
 }
 
 export type QueryGetArticleArgs = {
@@ -72,8 +72,8 @@ export type QueryHelloWorldArgs = {
   input?: Maybe<HelloWorldInput>
 }
 
-export type QuerySearcherArgs = {
-  query?: Maybe<SearcherInput>
+export type QueryHelloWorldArgs = {
+  input?: Maybe<HelloWorldInput>
 }
 
 export type SearcherInput = {
@@ -207,7 +207,10 @@ export type ResolversTypes = {
   HelloWorldInput: HelloWorldInput
   HelloWorld: ResolverTypeWrapper<HelloWorld>
   SearcherInput: SearcherInput
+  String: ResolverTypeWrapper<Scalars['String']>
   SearchResult: ResolverTypeWrapper<SearchResult>
+  HelloWorldInput: HelloWorldInput
+  HelloWorld: ResolverTypeWrapper<HelloWorld>
   Mutation: ResolverTypeWrapper<{}>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
 }
@@ -223,7 +226,10 @@ export type ResolversParentTypes = {
   HelloWorldInput: HelloWorldInput
   HelloWorld: HelloWorld
   SearcherInput: SearcherInput
+  String: Scalars['String']
   SearchResult: SearchResult
+  HelloWorldInput: HelloWorldInput
+  HelloWorld: HelloWorld
   Mutation: {}
   Boolean: Scalars['Boolean']
 }
@@ -240,7 +246,7 @@ export type ArticleResolvers<
 }
 
 export type HelloWorldResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['HelloWorld'] = ResolversParentTypes['HelloWorld']
 > = {
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>
@@ -248,7 +254,7 @@ export type HelloWorldResolvers<
 }
 
 export type MutationResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = {
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
@@ -264,7 +270,7 @@ export type NamespaceResolvers<
 }
 
 export type QueryResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
   getArticle?: Resolver<
@@ -286,16 +292,10 @@ export type QueryResolvers<
     RequireFields<QueryHelloWorldArgs, never>
   >
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  searcher?: Resolver<
-    Array<ResolversTypes['SearchResult']>,
-    ParentType,
-    ContextType,
-    RequireFields<QuerySearcherArgs, never>
-  >
 }
 
 export type SearchResultResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['SearchResult'] = ResolversParentTypes['SearchResult']
 > = {
   _id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
@@ -322,4 +322,4 @@ export type Resolvers<ContextType = any> = {
  * @deprecated
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
-export type IResolvers<ContextType = any> = Resolvers<ContextType>
+export type IResolvers<ContextType = Context> = Resolvers<ContextType>

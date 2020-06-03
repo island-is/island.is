@@ -33,11 +33,11 @@ type Namespace {
 }
 
 type Query {
+  content(query: SearcherInput): [SearchResult!]!
   getArticle(input: GetArticleInput): Article
   getNamespace(input: GetNamespaceInput): Namespace
   helloWorld(input: HelloWorldInput): HelloWorld!
   root: String
-  searcher(query: SearcherInput): [SearchResult!]!
 }
 
 input SearcherInput {
