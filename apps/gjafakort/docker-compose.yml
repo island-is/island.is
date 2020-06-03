@@ -21,8 +21,7 @@ services:
   redis:
     image: redis:5.0.8
     container_name: gjafakort_redis
-    command: >
-      redis-server --requirepass $GJAFAKORT_REDIS_PASS
+    command: redis-server
     privileged: true
     sysctls:
       net.core.somaxconn: '511'
