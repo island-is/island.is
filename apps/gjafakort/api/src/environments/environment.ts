@@ -18,6 +18,6 @@ export default {
   },
   redis: {
     url: 'localhost',
-    password: process.env.GJAFAKORT_REDIS_PASS,
+    password: undefined,
   },
 }
