@@ -11,9 +11,9 @@ type Mutation {
 }
 
 type Query {
+  content(query: SearcherInput): [SearchResult!]!
   helloWorld(input: HelloWorldInput): HelloWorld!
   root: String
-  searcher(query: SearcherInput): [SearchResult!]!
 }
 
 input SearcherInput {

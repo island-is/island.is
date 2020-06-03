@@ -15,7 +15,7 @@ export const typeDefs = gql`
   }
 
   extend type Query {
-    searcher(query: SearcherInput): [SearchResult!]!
+    content(query: SearcherInput): [SearchResult!]!
   }
 `
 
