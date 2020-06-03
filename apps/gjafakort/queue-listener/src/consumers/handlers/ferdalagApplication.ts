@@ -35,7 +35,6 @@ export const handler = async (
     email: message.data.generalEmail,
     phone: message.data.phoneNumber,
     website: message.data.webpage,
-    isat: '???', // TODO this should be removed??
     name: message.data.companyDisplayName,
     legalName: message.data.companyName,
   }
