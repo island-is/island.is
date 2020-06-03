@@ -41,6 +41,10 @@ spec:
               port: http
           env:
             {{- with .Values.environment }}
+            - name: RSK_URL
+              value: {{ .rsk_url }}
+            - name: RSK_USERNAME
+              value: {{ .rsk_username }}
             - name: RSK_API_PASSWORD
               valueFrom:
                 secretKeyRef:

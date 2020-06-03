@@ -12,8 +12,8 @@ export default {
     apiKey: process.env.FERDALAG_API_KEY,
   },
   rsk: {
-    url: 'https://thjonusta-s.rsk.is/api',
-    username: 'rf_api_island.is',
+    url: process.env.RSK_URL,
+    username: process.env.RSK_USERNAME,
     password: process.env.RSK_API_PASSWORD,
   },
 }
