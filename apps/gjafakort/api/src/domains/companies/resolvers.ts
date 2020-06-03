@@ -6,9 +6,7 @@ import { authorize } from '../auth'
 class CompanyResolver {
   @authorize()
   public async getCompanies(_1, _2, { user, dataSources }) {
-    const members = await dataSources.rskApi.getCompanyRegistryMembers(
-      user.ssn,
-    )
+    const members = await dataSources.rskApi.getCompanyRegistryMembers(user.ssn)
     const membersWithProcuration = members.filter(
       (member) => member.ErProkuruhafi === '1',
     )
@@ -46,10 +44,7 @@ export default {
         return null
       }
 
-      return applicationService.getApplication(
-        company.ssn,
-        dataSources,
-      )
+      return applicationService.getApplication(company.ssn, dataSources)
     },
   },
 }
