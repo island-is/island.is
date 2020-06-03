@@ -68,6 +68,9 @@
     },
     "logging": {
       "tags": []
+    },
+    "cache": {
+      "tags": []
     }
   }
 }

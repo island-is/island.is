@@ -1,10 +1,10 @@
 import { ApolloServer } from 'apollo-server-express'
-import { RedisCache } from 'apollo-server-cache-redis'
 import { DocumentNode } from 'graphql'
 import merge from 'lodash/merge'
 
 import MessageQueue from '@island.is/message-queue'
 import { logger } from '@island.is/logging'
+import { createCache } from '@island.is/cache'
 
 import { environment } from '../environments'
 import { verifyToken, ACCESS_TOKEN_COOKIE } from '../domains'
@@ -42,29 +42,11 @@ const createServer = async (
     typeDefs: [rootTypeDefs, ...typeDefs],
     playground: enablePlayground,
     introspection: enablePlayground,
-    cache: new RedisCache({
+    cache: createCache({
       host: environment.redis.url,
       port: 6379,
       password: environment.redis.password,
       name: 'gjafakort_api_service_cache',
-      connectTimeout: 5000,
-      reconnectOnError: (err) => {
-        logger.error(`Reconnect on error: ${err}`)
-        var targetError = 'READONLY'
-        if (err.message.slice(0, targetError.length) === targetError) {
-          // Only reconnect when the error starts with "READONLY"
-          return true
-        }
-      },
-      retryStrategy: (times) => {
-        logger.info(`Redis Retry: ${times}`)
-        if (times >= 3) {
-          return undefined
-        }
-        var delay = Math.min(times * 50, 2000)
-        return delay
-      },
-      socket_keepalive: false,
     }),
     dataSources: (): DataSource => ({
       applicationApi: new ApplicationAPI(),
