@@ -880,6 +880,94 @@
           }
         }
       }
+    },
+    "api-content-search": {
+      "root": "libs/api/content-search",
+      "sourceRoot": "libs/api/content-search/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/api/content-search/.eslintrc",
+            "tsConfig": [
+              "libs/api/content-search/tsconfig.lib.json",
+              "libs/api/content-search/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api/content-search/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/content-search/jest.config.js",
+            "tsConfig": "libs/api/content-search/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "services-search-indexer": {
+      "root": "apps/services/search-indexer",
+      "sourceRoot": "apps/services/search-indexer/src",
+      "projectType": "application",
+      "prefix": "services-search-indexer",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/services/search-indexer",
+            "main": "apps/services/search-indexer/src/main.ts",
+            "tsConfig": "apps/services/search-indexer/tsconfig.app.json",
+            "assets": ["apps/services/search-indexer/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/services/search-indexer/src/environments/environment.ts",
+                  "with": "apps/services/search-indexer/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "services-search-indexer:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/services/search-indexer/.eslintrc",
+            "tsConfig": [
+              "apps/services/search-indexer/tsconfig.app.json",
+              "apps/services/search-indexer/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/services/search-indexer/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/services/search-indexer/jest.config.js",
+            "tsConfig": "apps/services/search-indexer/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

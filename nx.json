@@ -83,6 +83,12 @@
     },
     "infra-express-server": {
       "tags": []
+    },
+    "api-content-search": {
+      "tags": []
+    },
+    "services-search-indexer": {
+      "tags": []
     }
   }
 }
