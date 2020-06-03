@@ -68,6 +68,12 @@
     },
     "logging": {
       "tags": []
+    },
+    "api-content-search": {
+      "tags": []
+    },
+    "services-search-indexer": {
+      "tags": []
     }
   }
 }

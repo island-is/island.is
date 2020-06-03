@@ -32,6 +32,7 @@
   },
   "private": true,
   "dependencies": {
+    "@elastic/elasticsearch": "^7.7.1",
     "apollo-cache-inmemory": "1.6.6",
     "apollo-client": "2.6.8",
     "apollo-link": "1.2.14",
@@ -79,7 +80,11 @@
     "treat": "1.4.1",
     "uuidv4": "6.0.8",
     "winston": "3.2.1",
-    "yup": "^0.29.0"
+    "yup": "^0.29.0",
+    "@nestjs/common": "^6.8.3",
+    "@nestjs/core": "^6.8.3",
+    "@nestjs/platform-express": "^6.8.3",
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@babel/core": "7.8.3",
@@ -98,6 +103,7 @@
     "@nrwl/eslint-plugin-nx": "9.2.4",
     "@nrwl/express": "9.2.4",
     "@nrwl/jest": "9.2.4",
+    "@nrwl/nest": "9.2.4",
     "@nrwl/next": "9.2.4",
     "@nrwl/node": "9.2.4",
     "@nrwl/react": "9.2.4",
@@ -132,7 +138,9 @@
     "sequelize-cli": "^5.5.1",
     "ts-jest": "25.2.1",
     "ts-node": "~7.0.0",
-    "typescript": "~3.8.3"
+    "typescript": "~3.8.3",
+    "@nestjs/schematics": "^6.7.0",
+    "@nestjs/testing": "^6.8.3"
   },
   "resolutions": {
     "webpack": "4.42.0"
