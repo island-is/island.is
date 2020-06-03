@@ -6,8 +6,8 @@ import {
 } from '@island.is/api/domains/hello-world'
 import {
   SearcherService,
-} from '@island.is/api/domains/searcher'
-import {ElasticService} from "@island.is/api/searcher";
+} from '@island.is/api/domains/content-search'
+import {ElasticService} from "@island.is/api/content-search";
 
 const helloWorldRepository = new HelloWorldRepository()
 const helloWorld = new HelloWorldService(helloWorldRepository)

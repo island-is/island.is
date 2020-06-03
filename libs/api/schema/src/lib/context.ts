@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import {SearchResult} from "@island.is/api/searcher";
+import {SearchResult} from "@island.is/api/content-search";
 
 export interface HelloWorldService {
   getMessage(name: string): string

@@ -10,6 +10,9 @@ const getConnection = (): Client => {
 }
 
 export class ElasticService {
+  constructor() {
+  }
+
   async index(index: SearchIndexes, document: object) {
     const client = getConnection()
 
@@ -20,7 +23,7 @@ export class ElasticService {
   }
 
   async query(index: SearchIndexes, query) {
-    const body = {
+    let body = {
       query: {
         bool: {
           must: []

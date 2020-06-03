@@ -743,9 +743,9 @@
         }
       }
     },
-    "api-domains-searcher": {
-      "root": "libs/api/domains/searcher",
-      "sourceRoot": "libs/api/domains/searcher/src",
+    "api-domains-content-search": {
+      "root": "libs/api/domains/content-search",
+      "sourceRoot": "libs/api/domains/content-search/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -753,19 +753,19 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/api/domains/searcher/.eslintrc",
+            "config": "libs/api/domains/content-search/.eslintrc",
             "tsConfig": [
-              "libs/api/domains/searcher/tsconfig.lib.json",
-              "libs/api/domains/searcher/tsconfig.spec.json"
+              "libs/api/domains/content-search/tsconfig.lib.json",
+              "libs/api/domains/content-search/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/api/domains/searcher/**"]
+            "exclude": ["**/node_modules/**", "!libs/api/domains/content-search/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/api/domains/searcher/jest.config.js",
-            "tsConfig": "libs/api/domains/searcher/tsconfig.spec.json",
+            "jestConfig": "libs/api/domains/content-search/jest.config.js",
+            "tsConfig": "libs/api/domains/content-search/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }

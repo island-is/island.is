@@ -75,7 +75,7 @@
     "services-search-indexer": {
       "tags": []
     },
-    "api-domains-searcher": {
+    "api-domains-content-search": {
       "tags": []
     }
   }
