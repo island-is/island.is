@@ -106,6 +106,27 @@ class Channel {
         .promise()
     }
 
+    await this.sqs
+      .setQueueAttributes({
+        QueueUrl: queueId,
+        Attributes: {
+          Policy: `{
+            "Statement": [{
+              "Effect": "Allow",
+              "Principal": "*",
+              "Action":"sqs:SendMessage",
+              "Resource": "${QueueArn}",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": "${exchangeId}"
+                }
+              }
+            }]
+          }`,
+        },
+      })
+      .promise()
+
     logger.info(
       `Bound queue ${queueId} to exchange ${exchangeId} with routingKeys: ${routingKeys.join(
         ', ',
@@ -133,11 +154,11 @@ class Channel {
     })
 
     consumer.on('error', (err) => {
-      logger.error('Unexpected error:', err.message)
+      logger.error(`Unexpected error: ${err.message}`)
     })
 
     consumer.on('processing_error', (err) => {
-      logger.error('Failed processing message:', err.message)
+      logger.error(`Failed to process message: ${err.message}`)
     })
 
     consumer.start()
