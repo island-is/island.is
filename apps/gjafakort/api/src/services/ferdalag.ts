@@ -22,19 +22,24 @@ interface ServiceProvider {
   }
 }
 
+const ONE_DAY = 86400
+
 class FerdalagAPI extends RESTDataSource {
   baseURL = `${ferdalag.url}/ssn/`
 
   willSendRequest(request: RequestOptions) {
     request.params.set('key', ferdalag.apiKey)
     request.headers.set('Content-Type', 'application/json')
-    request.headers.set('Cache-Control', 'max-age=86400')
+    request.headers.set(
+      'Cache-Control',
+      `public, max-age=${ONE_DAY}, s-maxage=${ONE_DAY}`,
+    )
   }
 
   async getServiceProviders(ssn: string): Promise<ServiceProvider[]> {
     try {
       console.debug(`Requesting service provider for ${ssn}`)
-      const res = await this.get(ssn)
+      const res = await this.get(ssn, null, { cacheOptions: { ttl: ONE_DAY } })
       if (!res.status) {
         throw new Error(res.errors || res.message)
       }
