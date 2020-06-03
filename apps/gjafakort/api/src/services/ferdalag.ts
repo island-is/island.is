@@ -30,10 +30,6 @@ class FerdalagAPI extends RESTDataSource {
   willSendRequest(request: RequestOptions) {
     request.params.set('key', ferdalag.apiKey)
     request.headers.set('Content-Type', 'application/json')
-    request.headers.set(
-      'Cache-Control',
-      `public, max-age=${ONE_DAY}, s-maxage=${ONE_DAY}`,
-    )
   }
 
   async getServiceProviders(ssn: string): Promise<ServiceProvider[]> {
