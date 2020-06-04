@@ -4,9 +4,6 @@ import {
   Accordion,
   AccordionItem,
   Box,
-  Column,
-  Columns,
-  ContentBlock,
   Hidden,
   Stack,
   Typography,
@@ -18,6 +15,7 @@ import {
 
 import { CompanyCTA } from './components'
 import Link from 'next/link'
+import { Layout } from '@island.is/gjafakort-web/components'
 
 const mockAccordion = [
   {
@@ -121,89 +119,80 @@ const mockAccordion = [
 
 function Companies() {
   return (
-    <Box marginTop={12}>
-      <ContentBlock width="large">
-        <Columns space={15} collapseBelow="lg">
-          <Column width="2/3">
-            <Box paddingLeft={[0, 0, 0, 9]}>
-              <Box marginBottom={4}>
-                <Breadcrumbs>
-                  <Link href="/">
-                    <a>Ísland.is</a>
-                  </Link>
-                  <span>Ferðaþjónustufyrirtæki</span>
-                </Breadcrumbs>
-              </Box>
-              <Box marginBottom={[3, 3, 3, 12]}>
-                <Stack space={3}>
-                  <Typography variant="h1" as="h1">
-                    Ferðaþjónustufyrirtæki
-                  </Typography>
-                  <Typography variant="intro">
-                    Ferðaþjónustufyrirtæki er hvött til að taka þátt í
-                    Ferðagjöfinni og taka á móti landsmönnum á ferðalagi
-                    innanlands.
-                  </Typography>
-                  <Typography variant="p">
-                    Skráning fyrirtækja í Ferðagjöfina fer fram hér á Ísland.is.
-                    Prókúruhafi fyrirtækis þarf að skrá þátttöku með
-                    innskráningu. Fyrirtæki fá sjálfvirka staðfestingu á
-                    skráningu og aðgang að YaY vefsvæði þar sem hægt er að
-                    fylgjast með hversu margir hafa nýtt Ferðagjöfina hjá
-                    viðkomandi fyrirtæki.
-                  </Typography>
-                </Stack>
-              </Box>
-              <Box marginBottom={[3, 3, 3, 12]}>
-                <Stack space={2}>
-                  <Typography variant="h4" as="h2">
-                    Fyrirtæki hafa þrjár leiðir til að móttaka Ferðagjöf:
-                  </Typography>
-                  <BulletList>
-                    <Bullet>Skanna strikamerki með smáforriti</Bullet>
-                    <Bullet>Slá inn númer gjafabréfs í vafra</Bullet>
-                    <Bullet>Beintenging við bókunarkerfi</Bullet>
-                  </BulletList>
-                </Stack>
-              </Box>
-              <Hidden above="md">
-                <Box marginBottom={3}>
-                  <CompanyCTA />
-                </Box>
-              </Hidden>
-              <Box marginBottom={3}>
-                <Typography variant="h2" as="h2">
-                  Algengar Spurningar
-                </Typography>
-              </Box>
-              <Accordion dividerOnTop={false}>
-                {mockAccordion.map((accordionItem, index) => (
-                  <AccordionItem
-                    key={index}
-                    label={accordionItem.label}
-                    id={index.toString()}
-                  >
-                    {typeof accordionItem.content === 'string' ? (
-                      <Typography variant="p">
-                        {accordionItem.content}
-                      </Typography>
-                    ) : (
-                      accordionItem.content
-                    )}
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </Box>
-          </Column>
-
-          <Column width="1/3">
-            <Hidden below="lg">
+    <Layout
+      left={
+        <Box>
+          <Box marginBottom={4}>
+            <Breadcrumbs>
+              <Link href="/">
+                <a>Ísland.is</a>
+              </Link>
+              <span>Ferðaþjónustufyrirtæki</span>
+            </Breadcrumbs>
+          </Box>
+          <Box marginBottom={[3, 3, 3, 12]}>
+            <Stack space={3}>
+              <Typography variant="h1" as="h1">
+                Ferðaþjónustufyrirtæki
+              </Typography>
+              <Typography variant="intro">
+                Ferðaþjónustufyrirtæki er hvött til að taka þátt í Ferðagjöfinni
+                og taka á móti landsmönnum á ferðalagi innanlands.
+              </Typography>
+              <Typography variant="p">
+                Skráning fyrirtækja í Ferðagjöfina fer fram hér á Ísland.is.
+                Prókúruhafi fyrirtækis þarf að skrá þátttöku með innskráningu.
+                Fyrirtæki fá sjálfvirka staðfestingu á skráningu og aðgang að
+                YaY vefsvæði þar sem hægt er að fylgjast með hversu margir hafa
+                nýtt Ferðagjöfina hjá viðkomandi fyrirtæki.
+              </Typography>
+            </Stack>
+          </Box>
+          <Box marginBottom={[3, 3, 3, 12]}>
+            <Stack space={2}>
+              <Typography variant="h4" as="h2">
+                Fyrirtæki hafa þrjár leiðir til að móttaka Ferðagjöf:
+              </Typography>
+              <BulletList>
+                <Bullet>Skanna strikamerki með smáforriti</Bullet>
+                <Bullet>Slá inn númer gjafabréfs í vafra</Bullet>
+                <Bullet>Beintenging við bókunarkerfi</Bullet>
+              </BulletList>
+            </Stack>
+          </Box>
+          <Hidden above="md">
+            <Box marginBottom={3}>
               <CompanyCTA />
-            </Hidden>
-          </Column>
-        </Columns>
-      </ContentBlock>
-    </Box>
+            </Box>
+          </Hidden>
+          <Box marginBottom={3}>
+            <Typography variant="h2" as="h2">
+              Algengar Spurningar
+            </Typography>
+          </Box>
+          <Accordion dividerOnTop={false}>
+            {mockAccordion.map((accordionItem, index) => (
+              <AccordionItem
+                key={index}
+                label={accordionItem.label}
+                id={index.toString()}
+              >
+                {typeof accordionItem.content === 'string' ? (
+                  <Typography variant="p">{accordionItem.content}</Typography>
+                ) : (
+                  accordionItem.content
+                )}
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </Box>
+      }
+      right={
+        <Hidden below="lg">
+          <CompanyCTA />
+        </Hidden>
+      }
+    />
   )
 }
 
