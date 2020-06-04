@@ -15,8 +15,9 @@ describe('logging', () => {
       expect(logger.level).toEqual(logLevel)
     })
 
-    it('should use LOG_LEVEL env variable if defined', async () => {
+    it('should use LOG_LEVEL env variable if is defined and in production', async () => {
       const logLevel = 'warn'
+      process.env.NODE_ENV = 'production'
       process.env.LOG_LEVEL = logLevel
 
       const { logger } = await import('./logging')

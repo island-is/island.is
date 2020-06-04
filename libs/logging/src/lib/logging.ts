@@ -5,12 +5,9 @@ let logLevel = 'debug'
 let logFormat = format.combine(format.colorize(), format.simple())
 
 // Production overrides
-if (process.env.LOG_LEVEL) {
-  logLevel = process.env.LOG_LEVEL
-  logFormat = format.json()
-} else if (process.env.NODE_ENV === 'production') {
-  logLevel = 'info'
-  logFormat = format.json()
+if (process.env.NODE_ENV === 'production') {
+  logLevel = process.env.LOG_LEVEL || 'info'
+  logFormat = format.combine(format.timestamp(), format.json())
 }
 
 export const logger = createLogger({

@@ -154,11 +154,21 @@ class Channel {
     })
 
     consumer.on('error', (err) => {
-      logger.error(`Unexpected error: ${err.message}`)
+      let msg = `Unexpected error on queue ${queueId}: ${err.message}`
+      if (err.stack) {
+        msg += `\n${err.stack}`
+      }
+      msg += '\nStopping Consumer'
+      logger.error(msg)
+      consumer.stop()
     })
 
     consumer.on('processing_error', (err) => {
-      logger.error(`Failed to process message: ${err.message}`)
+      let msg = `Failed to process message on queue ${queueId}: ${err.message}`
+      if (err.stack) {
+        msg += `\n${err.stack}`
+      }
+      logger.error(msg)
     })
 
     consumer.start()
