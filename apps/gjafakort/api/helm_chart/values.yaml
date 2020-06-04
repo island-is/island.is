@@ -26,6 +26,7 @@ environment:
   rsk_url:
   rsk_username: "rf_api_island.is"
   rsk_api_password_path: "/k8s/shared/api/RSK_API_PASSWORD"
+  redis_url:
 
 serviceAccount:
   # Specifies whether a service account should be created
