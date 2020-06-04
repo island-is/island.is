@@ -100,7 +100,7 @@ export const Footer = ({
   languageSwitchLink = defaultLanguageSwitchLink,
 }) => {
   return (
-    <footer className={styles.link}>
+    <footer>
       <Box background="blue400" paddingX="gutter">
         <ContentBlock>
           <Box paddingY={6}>

@@ -36,7 +36,7 @@ export const icon = style({
   overflow: 'visible',
   transition: 'opacity 150ms ease',
   selectors: {
-    [`${link}:hover &`]: {
+    [`${link}:hover &, ${linkLarge}:hover &`]: {
       opacity: 1,
     },
   },
