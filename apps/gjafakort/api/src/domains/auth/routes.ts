@@ -32,7 +32,7 @@ router.post(
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       logger.error(errors.array())
-      return res.redirect("/error")
+      return res.redirect('/error')
     }
 
     const { token } = req.body
@@ -44,12 +44,12 @@ router.post(
       verifyResult = await loginIS.verify(token)
     } catch (err) {
       logger.error(err)
-      return res.redirect("/error")
+      return res.redirect('/error')
     }
 
     const { user } = verifyResult
     if (!user || authId !== user?.authId || returnUrl.charAt(0) !== '/') {
-      return res.redirect("/error")
+      return res.redirect('/error')
     }
 
     const csrfToken = new Entropy({ bits: 128 }).string()
@@ -64,7 +64,7 @@ router.post(
 
     const tokenParts = jwtToken.split('.')
     if (tokenParts.length !== 3) {
-      return res.redirect("/error")
+      return res.redirect('/error')
     }
 
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
