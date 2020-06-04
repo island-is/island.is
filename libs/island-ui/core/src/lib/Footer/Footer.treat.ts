@@ -1,9 +1,32 @@
-import { style, globalStyle } from 'treat'
+import { style } from 'treat'
 import { theme } from '../../theme'
+import { responsiveStyleMap } from '../../utils/responsiveStyleMap'
 
-export const footer = style({})
+export const link = responsiveStyleMap({
+  fontSize: {
+    xs: 20,
+    sm: 18,
+  },
+  fontWeight: theme.typography.light,
+  lineHeight: 1.416667,
+  color: theme.color.blue100,
+  ':hover': {
+    textDecorationColor: theme.color.blue100,
+  },
+})
 
-export const link = style({})
+export const linkLarge = responsiveStyleMap({
+  fontSize: {
+    xs: 20,
+    xl: 24,
+  },
+  fontWeight: theme.typography.light,
+  lineHeight: 1.416667,
+  color: theme.color.blue100,
+  ':hover': {
+    textDecorationColor: theme.color.blue100,
+  },
+})
 
 export const icon = style({
   pointerEvents: 'none',
@@ -17,8 +40,4 @@ export const icon = style({
       opacity: 1,
     },
   },
-})
-
-globalStyle(`${footer} a:hover`, {
-  textDecorationColor: theme.color.white,
 })

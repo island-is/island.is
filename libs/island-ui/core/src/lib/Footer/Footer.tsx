@@ -4,10 +4,9 @@ import { Box } from '../Box/Box'
 import { ContentBlock } from '../ContentBlock/ContentBlock'
 import { Columns } from '../Columns/Columns'
 import { Column } from '../Column/Column'
-import { Stack } from '../Stack/Stack'
-import { Typography } from '../Typography/Typography'
-import { VariantTypes } from '../Typography/Typography.treat'
+import { Tiles } from '../Tiles/Tiles'
 import * as styles from './Footer.treat'
+import { Hidden } from '../Hidden/Hidden'
 
 const isLinkInternal = (to) => {
   // If it's a relative url such as '/path', 'path' and does not contain a protocol we can assume it is internal.
@@ -18,122 +17,155 @@ const isLinkInternal = (to) => {
 
 interface LinkProps {
   href: string
-  variant?: VariantTypes
+  className?: string
 }
 
 // Temporary link component
-const FooterLink: FC<LinkProps> = ({
-  href,
-  variant = 'footerLink',
-  children,
-}) => {
-  const content = (
-    <Typography variant={variant} as="span">
-      {children}
-    </Typography>
-  )
-
+const FooterLink: FC<LinkProps> = ({ href, className, children }) => {
   return isLinkInternal(href) ? (
-    <a href={href}>{content}</a>
+    <a href={href} className={className}>
+      {children}
+    </a>
   ) : (
     <a
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={styles.link}
+      className={className}
     >
-      {content}
+      {children}
       <LinkIcon />
     </a>
   )
 }
 
-export const Footer = () => {
+const defaultTopLinks = [
+  {
+    title: 'Um Stafrænt Ísland',
+    href: 'https://stafraent.island.is/',
+  },
+  {
+    title: 'Hafa samband',
+    href: 'https://island.is/um-island-is/hafa-samband/',
+  },
+]
+
+const defaultLanguageSwitchLink = {
+  title: 'English',
+  href: 'https://island.is/en',
+}
+
+const defaultBottomLinks = [
+  {
+    href: 'https://minarsidur.island.is/',
+    title: 'Mínar síður',
+  },
+  {
+    href: 'https://www.heilsuvera.is/',
+    title: 'Heilsuvera',
+  },
+  {
+    href: 'https://opinbernyskopun.island.is/',
+    title: 'Opinber nýsköpun',
+  },
+  {
+    href: 'https://samradsgatt.island.is/',
+    title: 'Samráðsgátt',
+  },
+  {
+    href: 'https://island.is/mannanofn/',
+    title: 'Mannanöfn',
+  },
+  {
+    href: 'http://vefur.island.is/undirskriftalistar',
+    title: 'Undirskriftarlistar',
+  },
+  {
+    href: 'https://island.is/um-island-is/algengar-spurningar/',
+    title: 'Algengar spurningar',
+  },
+  {
+    href: 'http://www.opnirreikningar.is/',
+    title: 'Opnir reikningar ríkisins',
+  },
+  {
+    href: 'https://tekjusagan.is/',
+    title: 'Tekjusagan',
+  },
+]
+
+export const Footer = ({
+  topLinks = defaultTopLinks,
+  bottomLinks = defaultBottomLinks,
+  languageSwitchLink = defaultLanguageSwitchLink,
+}) => {
   return (
-    <footer className={styles.footer}>
-      <Box background="blue400">
+    <footer className={styles.link}>
+      <Box background="blue400" paddingX="gutter">
         <ContentBlock>
-          <Box paddingY={6} padding={['gutter', 'containerGutter']}>
-            <Columns space="gutter" collapseBelow="lg">
+          <Box paddingY={6}>
+            <Columns collapseBelow="md" space="gutter">
               <Column width="1/12">
-                <Logo iconOnly solid />
-              </Column>
-              <Column width="3/12">
-                <FooterLink
-                  href="https://stafraent.island.is/"
-                  variant="footerLinkLarge"
+                <Box
+                  display="flex"
+                  justifyContent="spaceBetween"
+                  marginBottom="gutter"
                 >
-                  Um Stafrænt Ísland
-                </FooterLink>
+                  <Logo iconOnly solid />
+                  <Hidden above="sm">
+                    <FooterLink
+                      href={languageSwitchLink.href}
+                      className={styles.link}
+                    >
+                      <strong>{languageSwitchLink.title}</strong>
+                    </FooterLink>
+                  </Hidden>
+                </Box>
               </Column>
-              <Column width="3/12">
-                <FooterLink
-                  href="https://island.is/um-island-is/hafa-samband/"
-                  variant="footerLinkLarge"
-                >
-                  Hafa samband
-                </FooterLink>
-              </Column>
-              <Column width="3/12">
-                <FooterLink
-                  href="https://island.is/en"
-                  variant="footerLinkLarge"
-                >
-                  English
-                </FooterLink>
+              <Column width="11/12">
+                <Tiles columns={[1, 2, 3]} space="gutter">
+                  {topLinks.map((link, index) => (
+                    <FooterLink
+                      key={index}
+                      href={link.href}
+                      className={styles.linkLarge}
+                    >
+                      {link.title}
+                    </FooterLink>
+                  ))}
+                  <Hidden below="md">
+                    <FooterLink
+                      href={languageSwitchLink.href}
+                      className={styles.link}
+                    >
+                      <strong>{languageSwitchLink.title}</strong>
+                    </FooterLink>
+                  </Hidden>
+                </Tiles>
               </Column>
             </Columns>
           </Box>
         </ContentBlock>
       </Box>
-      <Box background="blue600">
+      <Box background="blue600" paddingX="gutter">
         <ContentBlock>
-          <Box paddingY={[3, 3, 3, 6]} paddingX={['gutter', 'containerGutter']}>
-            <Columns space="gutter" collapseBelow="lg">
-              <Column width="1/12">
-                <span />
-              </Column>
-              <Column width="3/12">
-                <Stack space="gutter">
-                  <FooterLink href="https://minarsidur.island.is/">
-                    Mínar síður
-                  </FooterLink>
-                  <FooterLink href="https://www.heilsuvera.is/">
-                    Heilsuvera
-                  </FooterLink>
-                  <FooterLink href="https://opinbernyskopun.island.is/">
-                    Opinber nýsköpun
-                  </FooterLink>
-                </Stack>
-              </Column>
-              <Column width="3/12">
-                <Stack space="gutter">
-                  <FooterLink href="https://samradsgatt.island.is/">
-                    Samráðsgátt
-                  </FooterLink>
-                  <FooterLink href="https://island.is/mannanofn/">
-                    Mannanöfn
-                  </FooterLink>
-                  <FooterLink href="http://vefur.island.is/undirskriftalistar">
-                    Undirskriftarlistar
-                  </FooterLink>
-                </Stack>
-              </Column>
-              <Column width="3/12">
-                <Stack space="gutter">
-                  <FooterLink href="https://island.is/um-island-is/algengar-spurningar/">
-                    Algengar spurningar
-                  </FooterLink>
-                  <FooterLink href="http://www.opnirreikningar.is/">
-                    Opnir reikningar ríkisins
-                  </FooterLink>
-                  <FooterLink href="https://tekjusagan.is/">
-                    Tekjusagan
-                  </FooterLink>
-                </Stack>
-              </Column>
-            </Columns>
-          </Box>
+          <Columns align="right" collapseBelow="md" space="gutter">
+            <Column width="11/12">
+              <Box paddingY={[3, 3, 3, 6]}>
+                <Tiles columns={[1, 2, 3]} space="gutter">
+                  {bottomLinks.map((link, index) => (
+                    <FooterLink
+                      key={index}
+                      className={styles.link}
+                      href={link.href}
+                    >
+                      {link.title}
+                    </FooterLink>
+                  ))}
+                </Tiles>
+              </Box>
+            </Column>
+          </Columns>
         </ContentBlock>
       </Box>
     </footer>
