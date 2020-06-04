@@ -6,7 +6,13 @@ import { ApolloClient } from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 
 import { client } from '../graphql'
-import { ContentBlock, Box, Header, Page } from '@island.is/island-ui/core'
+import {
+  ContentBlock,
+  Header,
+  Page,
+  Footer,
+  Box,
+} from '@island.is/island-ui/core'
 import appWithTranslation from '../i18n/appWithTranslation'
 
 const Layout: React.FC = ({ children }) => {
@@ -41,11 +47,14 @@ const Layout: React.FC = ({ children }) => {
         <title>Ísland.is</title>
       </Head>
       <Box paddingX="gutter">
-        <ContentBlock width="large">
+        <ContentBlock>
           <Header />
         </ContentBlock>
+      </Box>
+      <Box paddingTop={[5, 5, 9]} paddingBottom={[7, 7, 12]}>
         {children}
       </Box>
+      <Footer />
       <style jsx global>{`
         @font-face {
           font-family: 'IBM Plex Sans';

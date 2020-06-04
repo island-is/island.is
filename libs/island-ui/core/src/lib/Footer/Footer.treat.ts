@@ -2,6 +2,10 @@ import { style } from 'treat'
 import { theme } from '../../theme'
 import { responsiveStyleMap } from '../../utils/responsiveStyleMap'
 
+export const footer = style({
+  marginTop: 'auto',
+})
+
 export const link = responsiveStyleMap({
   fontSize: {
     xs: 20,
