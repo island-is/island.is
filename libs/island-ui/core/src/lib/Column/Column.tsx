@@ -3,14 +3,18 @@ import React, { ReactNode, useContext } from 'react'
 import { Box } from '../Box/Box'
 import { ColumnsContext } from '../Columns/Columns'
 import * as styles from './Column.treat'
+import {
+  resolveResponsiveProp,
+  ResponsiveProp,
+} from '../../utils/responsiveProp'
 
 export interface ColumnProps {
   children: ReactNode
-  width?: keyof typeof styles.width | 'content'
+  width?: ResponsiveProp<keyof typeof styles.columnsWidths>
 }
 
 /** Standard columns */
-export const Column = ({ children, width }: ColumnProps) => {
+export const Column = ({ children, width = '6/12' }: ColumnProps) => {
   const {
     collapseXs,
     collapseSm,
@@ -27,11 +31,18 @@ export const Column = ({ children, width }: ColumnProps) => {
   return (
     <Box
       minWidth={0}
-      width={width !== 'content' ? 'full' : undefined}
-      flexShrink={width === 'content' ? 0 : undefined}
+      width={!width ? 'full' : undefined}
+      flexShrink={!width ? 0 : undefined}
       className={[
         styles.column,
-        width !== 'content' ? styles.width[width!] : null,
+        resolveResponsiveProp(
+          width,
+          styles.columnsXs,
+          styles.columnsSm,
+          styles.columnsMd,
+          styles.columnsLg,
+          styles.columnsXl,
+        ),
       ]}
     >
       <Box

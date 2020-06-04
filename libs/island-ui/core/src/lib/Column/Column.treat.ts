@@ -1,4 +1,6 @@
 import { style, styleMap } from 'treat'
+import mapValues from 'lodash/mapValues'
+import { Theme, themeUtils } from '../../theme'
 
 export const column = style({})
 
@@ -14,7 +16,7 @@ const getSizeStyle = (scale: number) => ({
   flex: `0 0 ${scale * 100}%`,
 })
 
-export const width = styleMap({
+export const columnsWidths = {
   '1/2': getSizeStyle(1 / 2),
   '1/3': getSizeStyle(1 / 3),
   '2/3': getSizeStyle(2 / 3),
@@ -35,4 +37,19 @@ export const width = styleMap({
   '9/12': getSizeStyle(9 / 12),
   '10/12': getSizeStyle(10 / 12),
   '11/12': getSizeStyle(11 / 12),
-})
+} as const
+
+type ColumnWidths = Record<keyof typeof columnsWidths, string>
+const makeColumnsAtoms = (breakpoint: keyof Theme['breakpoints']) =>
+  styleMap(
+    mapValues(columnsWidths, (width) =>
+      themeUtils.responsiveStyle({ [breakpoint]: width }),
+    ),
+    `columns_${breakpoint}`,
+  ) as ColumnWidths
+
+export const columnsXs = makeColumnsAtoms('xs')
+export const columnsSm = makeColumnsAtoms('sm')
+export const columnsMd = makeColumnsAtoms('md')
+export const columnsLg = makeColumnsAtoms('lg')
+export const columnsXl = makeColumnsAtoms('xl')
