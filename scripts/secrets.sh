@@ -11,7 +11,7 @@ function main {
     > $env_secret_file
   fi
 
-  secrets=$(aws --profile islandis ssm get-parameters-by-path \
+  secrets=$(aws ssm get-parameters-by-path \
     --path "/k8s/$1/" --with-decryption --recursive \
     --parameter-filters Key=Label,Option=Equals,Values=dev \
     | npx jq -r '.Parameters | map(.Name |= split("/")) | .[] | [.Name[-1], .Value] | join("=")')
@@ -24,10 +24,10 @@ function main {
 }
 
 if [ -z ${1-} ]; then
-  echo "Usage: secrets.sh <project> [--reset]"
+  echo "Usage: AWS_PROFILE=<profile> secrets.sh <project> [--reset]"
   echo ""
   echo "Example:"
-  echo "  ./secrets.sh gjafakort --reset"
+  echo "  AWS_PROFILE=islandis ./secrets.sh gjafakort --reset"
   exit 1
 else
   main $*
