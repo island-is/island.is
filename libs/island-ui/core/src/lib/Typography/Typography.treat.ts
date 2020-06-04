@@ -1,8 +1,8 @@
-import { style, styleMap } from 'treat'
+import { styleMap } from 'treat'
 import * as CSS from 'csstype'
-import { isObject } from 'lodash'
 import { theme } from '../../theme'
 import { mapToStyleProperty } from '../../utils'
+import { responsiveStyleMap } from '../../utils/responsiveStyleMap'
 
 export type VariantTypes =
   | 'p'
@@ -117,43 +117,7 @@ export const variants: Variants = {
 
 export const colors = styleMap(mapToStyleProperty(theme.color, 'color'))
 
-const resolveBreakpoints = (variant, attr, acc) => {
-  if (isObject(variant[attr])) {
-    Object.keys(variant[attr]).reduce((acc, breakpointKey) => {
-      if (breakpointKey === 'xs') {
-        acc[attr] = variant[attr].xs
-      } else {
-        if (!acc['@media']) {
-          acc['@media'] = {}
-        }
-        if (
-          !acc['@media'][`(min-width: ${theme.breakpoints[breakpointKey]}px)`]
-        ) {
-          acc['@media'][
-            `(min-width: ${theme.breakpoints[breakpointKey]}px)`
-          ] = {}
-        }
-        acc['@media'][`(min-width: ${theme.breakpoints[breakpointKey]}px)`] = {
-          ...acc['@media'][
-            `(min-width: ${theme.breakpoints[breakpointKey]}px)`
-          ],
-          fontSize: variant[attr][breakpointKey],
-        }
-      }
-      return acc
-    }, acc)
-  } else {
-    acc[attr] = variant[attr]
-  }
-  return acc
-}
-
 export default Object.keys(variants).reduce((acc, variantKey) => {
-  acc[variantKey] = style(
-    Object.keys(variants[variantKey]).reduce(
-      (acc, attr) => resolveBreakpoints(variants[variantKey], attr, acc),
-      {},
-    ),
-  )
+  acc[variantKey] = responsiveStyleMap(variants[variantKey])
   return acc
 }, {})
