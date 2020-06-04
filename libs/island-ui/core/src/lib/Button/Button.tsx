@@ -1,8 +1,9 @@
-import React, { FC, forwardRef, ReactNode } from 'react'
+import React, { forwardRef, ReactNode, useState } from 'react'
 import cn from 'classnames'
-import { Icon, Box } from '../..'
+import { Icon as IconComponent, IconTypes, Box } from '../..'
 
 import * as styles from './Button.treat'
+import { theme } from '../../theme'
 
 export type ButtonSize = 'small' | 'medium' | 'large'
 export type ButtonVariant = 'normal' | 'ghost' | 'text'
@@ -17,7 +18,9 @@ export interface ButtonProps {
   width?: ButtonWidth
   href?: string
   htmlType?: 'button' | 'submit'
+  icon?: IconTypes
   children: ReactNode
+  loading?: boolean
 }
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
@@ -36,9 +39,14 @@ export const Button = forwardRef<
       size = 'medium',
       width = 'normal',
       href,
+      icon,
+      loading,
     },
     ref,
   ) => {
+    //   const [isFocused, setIsFocused] = useState<boolean>(false)
+    //  const [isMouseOver, setIsMouseOver] = useState<boolean>(false)
+
     const className = cn(
       styles.button,
       styles.variants[variant],
@@ -46,20 +54,56 @@ export const Button = forwardRef<
       styles.width[width],
     )
 
-    const isExternal = isLinkExternal(href)
+    const isExternal = href && isLinkExternal(href)
 
     const anchorProps = {
       ...(isExternal && { rel: 'noreferrer noopener' }),
     }
 
-    return href ? (
-      <a href={href} role="button" className={className} {...anchorProps}>
-        {children}
-        {isExternal && (
+    const Icon = () => {
+      const iconProps = {
+        width: 15,
+      }
+
+      if (loading) {
+        return (
           <IconContainer>
-            <Icon type="external" color="white" />
+            <IconComponent spin type="loading" color="blue400" {...iconProps} />
           </IconContainer>
-        )}
+        )
+      }
+
+      if (isExternal) {
+        return (
+          <IconContainer>
+            <IconComponent type="external" {...iconProps} />
+          </IconContainer>
+        )
+      }
+
+      if (icon) {
+        return (
+          <IconContainer>
+            <IconComponent type={icon} {...iconProps} />
+          </IconContainer>
+        )
+      }
+
+      return null
+    }
+
+    const sharedProps = {
+      className,
+      //      onMouseLeave: () => setIsMouseOver(false),
+      //    onMouseOver: () => setIsMouseOver(true),
+      //  onBlur: () => setIsFocused(false),
+      //  onFocus: () => setIsFocused(true),
+    }
+
+    return href ? (
+      <a href={href} role="button" {...anchorProps} {...sharedProps}>
+        {children}
+        <Icon />
       </a>
     ) : (
       <button
@@ -67,14 +111,23 @@ export const Button = forwardRef<
         type={htmlType}
         disabled={disabled}
         onClick={onClick}
-        className={className}
+        {...sharedProps}
       >
         {children}
+        <Icon />
       </button>
     )
   },
 )
 
-const IconContainer: FC = ({ children }) => (
-  <Box paddingLeft={2}>{children}</Box>
+const IconContainer = ({ children }) => (
+  <Box
+    display="flex"
+    height="full"
+    alignItems="center"
+    paddingLeft={2}
+    className={styles.icon}
+  >
+    {children}
+  </Box>
 )

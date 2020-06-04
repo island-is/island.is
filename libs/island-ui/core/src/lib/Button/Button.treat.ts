@@ -1,4 +1,4 @@
-import { styleMap, style } from 'treat'
+import { styleMap, style, globalStyle } from 'treat'
 import { theme, themeUtils } from '../../theme'
 
 export const button = style({
@@ -121,6 +121,9 @@ export const variants = styleMap({
       backgroundColor: theme.color.blueberry400,
     },
     selectors: {
+      '&:focus:active': {
+        color: theme.color.white,
+      },
       '&:hover:active:after': {
         opacity: 1,
       },
@@ -229,3 +232,50 @@ export const variants = styleMap({
     },
   },
 })
+
+// Normal icon colors
+globalStyle(`${variants.normal} path`, {
+  fill: theme.color.white,
+  transition: 'color 150ms ease, background-color 150ms ease',
+})
+globalStyle(`${variants.normal}:focus path`, {
+  fill: theme.color.dark400,
+})
+globalStyle(`${variants.normal}:hover path`, {
+  fill: theme.color.white,
+})
+globalStyle(`${variants.normal}:active path`, {
+  fill: theme.color.white,
+})
+
+// Ghost icon colors
+globalStyle(`${variants.ghost} path`, {
+  fill: theme.color.blue400,
+  transition: 'color 150ms ease, background-color 150ms ease',
+})
+globalStyle(`${variants.ghost}:hover path`, {
+  fill: theme.color.blueberry400,
+})
+globalStyle(`${variants.ghost}:focus path`, {
+  fill: theme.color.dark400,
+})
+globalStyle(`${variants.ghost}:active path`, {
+  fill: theme.color.blue400,
+})
+
+// Text icon colors
+globalStyle(`${variants.text} path`, {
+  fill: theme.color.blue400,
+  transition: 'color 150ms ease, background-color 150ms ease',
+})
+globalStyle(`${variants.text}:hover path`, {
+  fill: theme.color.blueberry400,
+})
+globalStyle(`${variants.text}:focus path`, {
+  fill: theme.color.dark400,
+})
+globalStyle(`${variants.text}:active path`, {
+  fill: theme.color.blue400,
+})
+
+export const icon = style({})
