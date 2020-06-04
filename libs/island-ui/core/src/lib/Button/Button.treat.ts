@@ -41,6 +41,20 @@ export const button = style({
   },
 })
 
+const sizeMenuDesktop = {
+  height: '48px',
+  padding: '0 12px',
+  fontSize: '14px',
+  lineHeight: '16px',
+}
+
+const sizeMenuMobile = {
+  height: '40px',
+  padding: '0 12px',
+  fontSize: '12px',
+  lineHeight: '16px',
+}
+
 const sizeMediumDesktop = {
   fontSize: '18px',
   lineHeight: '28px',
@@ -224,12 +238,27 @@ export const variants = styleMap({
       },
     },
   },
+  menu: {
+    ...themeUtils.responsiveStyle({
+      xs: sizeMenuMobile,
+      md: sizeMenuDesktop,
+    }),
+    ':after': {
+      borderColor: theme.color.blue200,
+      borderWidth: 1,
+      opacity: 1,
+      borderRadius: '10px',
+    },
+  },
+})
+
+globalStyle(`${button} path`, {
+  transition: 'fill 150ms ease',
 })
 
 // Normal icon colors
 globalStyle(`${variants.normal} path`, {
   fill: theme.color.white,
-  transition: 'color 150ms ease, background-color 150ms ease',
 })
 globalStyle(`${variants.normal}:focus path`, {
   fill: theme.color.dark400,
@@ -247,7 +276,6 @@ globalStyle(`${variants.normal}:active path`, {
 // Ghost icon colors
 globalStyle(`${variants.ghost} path`, {
   fill: theme.color.blue400,
-  transition: 'color 150ms ease, background-color 150ms ease',
 })
 globalStyle(`${variants.ghost}:hover path`, {
   fill: theme.color.blueberry400,
@@ -262,7 +290,6 @@ globalStyle(`${variants.ghost}:active path`, {
 // Text icon colors
 globalStyle(`${variants.text} path`, {
   fill: theme.color.blue400,
-  transition: 'color 150ms ease, background-color 150ms ease',
 })
 globalStyle(`${variants.text}:hover path`, {
   fill: theme.color.blueberry400,
@@ -271,5 +298,19 @@ globalStyle(`${variants.text}:focus path`, {
   fill: theme.color.dark400,
 })
 globalStyle(`${variants.text}:active path`, {
+  fill: theme.color.blue400,
+})
+
+// Menu icon colors
+globalStyle(`${variants.menu} path`, {
+  fill: theme.color.blue400,
+})
+globalStyle(`${variants.menu}:hover path`, {
+  fill: theme.color.blueberry400,
+})
+globalStyle(`${variants.menu}:focus path`, {
+  fill: theme.color.dark400,
+})
+globalStyle(`${variants.menu}:active path`, {
   fill: theme.color.blue400,
 })

@@ -1,11 +1,11 @@
 import React, { forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
-import { Icon as IconComponent, IconTypes, Box } from '../..'
+import { Icon as IconComponent, IconTypes, Box, Inline } from '../..'
 
 import * as styles from './Button.treat'
 
 export type ButtonSize = 'small' | 'medium' | 'large'
-export type ButtonVariant = 'normal' | 'ghost' | 'text'
+export type ButtonVariant = 'normal' | 'ghost' | 'text' | 'menu'
 export type ButtonWidth = 'normal' | 'fluid'
 
 export interface ButtonProps {
@@ -17,7 +17,7 @@ export interface ButtonProps {
   href?: string
   htmlType?: 'button' | 'submit'
   icon?: IconTypes
-  children: ReactNode
+  children?: ReactNode
   loading?: boolean
 }
 
@@ -87,10 +87,16 @@ export const Button = forwardRef<
       className,
     }
 
+    const Content = () => (
+      <Inline space={2}>
+        {children && children}
+        <Icon />
+      </Inline>
+    )
+
     return href ? (
       <a href={href} role="button" {...anchorProps} {...sharedProps}>
-        {children}
-        <Icon />
+        <Content />
       </a>
     ) : (
       <button
@@ -100,15 +106,14 @@ export const Button = forwardRef<
         onClick={onClick}
         {...sharedProps}
       >
-        {children}
-        <Icon />
+        <Content />
       </button>
     )
   },
 )
 
 const IconContainer = ({ children }) => (
-  <Box display="flex" height="full" alignItems="center" paddingLeft={2}>
+  <Box display="flex" height="full" alignItems="center">
     {children}
   </Box>
 )
