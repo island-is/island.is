@@ -1,15 +1,13 @@
-import React, { forwardRef, ReactNode, useState } from 'react'
+import React, { forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
 import { Icon as IconComponent, IconTypes, Box } from '../..'
 
 import * as styles from './Button.treat'
-import { theme } from '../../theme'
 
 export type ButtonSize = 'small' | 'medium' | 'large'
 export type ButtonVariant = 'normal' | 'ghost' | 'text'
 export type ButtonWidth = 'normal' | 'fluid'
 
-/* eslint-disable-next-line */
 export interface ButtonProps {
   disabled?: boolean
   onClick?: () => void
@@ -94,10 +92,6 @@ export const Button = forwardRef<
 
     const sharedProps = {
       className,
-      //      onMouseLeave: () => setIsMouseOver(false),
-      //    onMouseOver: () => setIsMouseOver(true),
-      //  onBlur: () => setIsFocused(false),
-      //  onFocus: () => setIsFocused(true),
     }
 
     return href ? (

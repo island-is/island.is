@@ -1,6 +1,6 @@
 import React from 'react'
 import cn from 'classnames'
-import { Colors, theme } from '../../theme/theme'
+import { Colors } from '../../theme/theme'
 
 import * as styles from './Icon.treat'
 
