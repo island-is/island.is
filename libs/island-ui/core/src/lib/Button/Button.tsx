@@ -55,36 +55,32 @@ export const Button = forwardRef<
       ...(isExternal && { rel: 'noreferrer noopener' }),
     }
 
+    const showIcon = icon || isExternal || loading
+
     const Icon = () => {
-      const iconProps = {
-        width: 15,
+      if (!showIcon) {
+        return null
       }
+
+      let type = icon
 
       if (loading) {
-        return (
-          <IconContainer>
-            <IconComponent spin type="loading" color="blue400" {...iconProps} />
-          </IconContainer>
-        )
+        type = 'loading'
+      } else if (isExternal) {
+        type = 'external'
       }
 
-      if (isExternal) {
-        return (
-          <IconContainer>
-            <IconComponent type="external" {...iconProps} />
-          </IconContainer>
-        )
+      const iconProps = {
+        spin: loading,
+        width: 15,
+        type,
       }
 
-      if (icon) {
-        return (
-          <IconContainer>
-            <IconComponent type={icon} {...iconProps} />
-          </IconContainer>
-        )
-      }
-
-      return null
+      return (
+        <IconContainer>
+          <IconComponent {...iconProps} />
+        </IconContainer>
+      )
     }
 
     const sharedProps = {
