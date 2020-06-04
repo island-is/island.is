@@ -12,7 +12,7 @@ import {
 
 import { GiftCTA } from './components'
 import Link from 'next/link'
-import { Layout } from '@island.is/gjafakort-web/components'
+import { Layout } from '../../components'
 
 const mockAccordion = [
   {
@@ -52,7 +52,7 @@ const mockAccordion = [
   },
 ]
 
-function HomePage() {
+function Home() {
   return (
     <Layout
       left={
@@ -119,4 +119,4 @@ function HomePage() {
   )
 }
 
-export default HomePage
+export default Home
