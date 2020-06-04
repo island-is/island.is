@@ -17,7 +17,7 @@ const makeButton = (variant: ButtonVariant = 'normal', text = '') => {
   const selectedSize: ButtonSize = size as ButtonSize
 
   const iconLabel = 'Icon'
-  const iconOptions = ['cheveron', 'loading', 'external']
+  const iconOptions = ['', 'cheveron', 'loading', 'external']
   const iconDefaultValue = ''
 
   const icon: string = select(iconLabel, iconOptions, iconDefaultValue)

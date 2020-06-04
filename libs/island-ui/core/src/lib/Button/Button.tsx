@@ -42,9 +42,6 @@ export const Button = forwardRef<
     },
     ref,
   ) => {
-    //   const [isFocused, setIsFocused] = useState<boolean>(false)
-    //  const [isMouseOver, setIsMouseOver] = useState<boolean>(false)
-
     const className = cn(
       styles.button,
       styles.variants[variant],

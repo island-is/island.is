@@ -247,6 +247,9 @@ globalStyle(`${variants.normal}:hover path`, {
 globalStyle(`${variants.normal}:active path`, {
   fill: theme.color.white,
 })
+globalStyle(`${variants.normal}:active path`, {
+  fill: theme.color.white,
+})
 
 // Ghost icon colors
 globalStyle(`${variants.ghost} path`, {
