@@ -3,7 +3,6 @@ import ReactSelect, { components, ValueType, ActionMeta } from 'react-select'
 import cn from 'classnames'
 import * as styles from './Select.treat'
 import Icon from '../Icon/Icon'
-import { theme } from '../../theme'
 
 export type Option = {
   label: string
@@ -104,9 +103,7 @@ const DropdownIndicator = (props) => (
     <Icon
       type="cheveron"
       width="25"
-      color={
-        props.selectProps.hasError ? theme.color.red400 : theme.color.blue400
-      }
+      color={props.selectProps.hasError ? 'red400' : 'blue400'}
     />
   </components.DropdownIndicator>
 )

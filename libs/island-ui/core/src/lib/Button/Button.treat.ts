@@ -1,5 +1,5 @@
-import { styleMap, style } from 'treat'
-import { theme } from '../../theme'
+import { styleMap, style, globalStyle } from 'treat'
+import { theme, themeUtils } from '../../theme'
 
 export const button = style({
   display: 'inline-flex',
@@ -21,6 +21,9 @@ export const button = style({
     color: theme.color.dark400,
     backgroundColor: theme.color.mint400,
   },
+  ':hover': {
+    textDecoration: 'none',
+  },
   ':after': {
     content: "''",
     position: 'absolute',
@@ -38,24 +41,53 @@ export const button = style({
   },
 })
 
-const sizeMedium = {
+const sizeMediumDesktop = {
   fontSize: '18px',
   lineHeight: '28px',
   height: '64px',
-  padding: '0 32px',
+  padding: '0 24px',
 }
 
-const sizeLarge = {
+const sizeLargeDesktop = {
   fontSize: '24px',
   lineHeight: '34px',
   height: '80px',
-  padding: '0 32px',
+  padding: '0 24px',
+}
+
+const sizeMediumMobile = {
+  fontSize: '15px',
+  lineHeight: '20px',
+  height: '64px',
+  padding: '0 24px',
+}
+
+const sizeLargeMobile = {
+  fontSize: '20px',
+  lineHeight: '28px',
+  height: '72px',
+  padding: '0 24px',
 }
 
 export const sizes = styleMap({
-  small: sizeMedium,
-  medium: sizeMedium,
-  large: sizeLarge,
+  small: {
+    ...themeUtils.responsiveStyle({
+      xs: sizeMediumMobile,
+      md: sizeMediumDesktop,
+    }),
+  },
+  medium: {
+    ...themeUtils.responsiveStyle({
+      xs: sizeMediumMobile,
+      md: sizeMediumDesktop,
+    }),
+  },
+  large: {
+    ...themeUtils.responsiveStyle({
+      xs: sizeLargeMobile,
+      md: sizeLargeDesktop,
+    }),
+  },
 })
 
 export const width = styleMap({
@@ -82,6 +114,9 @@ export const variants = styleMap({
       backgroundColor: theme.color.blueberry400,
     },
     selectors: {
+      '&:focus:active': {
+        color: theme.color.white,
+      },
       '&:hover:active:after': {
         opacity: 1,
       },
@@ -155,16 +190,19 @@ export const variants = styleMap({
         height: '24px',
         fontSize: '14px',
         lineHeight: '16px',
+        padding: '0',
       },
       [`&${sizes.medium}`]: {
         height: '36px',
         fontSize: '18px',
         lineHeight: '28px',
+        padding: '0',
       },
       [`&${sizes.large}`]: {
         height: '42px',
         fontSize: '24px',
         lineHeight: '34px',
+        padding: '0',
       },
       '&:focus:hover': {
         color: theme.color.dark400,
@@ -186,4 +224,52 @@ export const variants = styleMap({
       },
     },
   },
+})
+
+// Normal icon colors
+globalStyle(`${variants.normal} path`, {
+  fill: theme.color.white,
+  transition: 'color 150ms ease, background-color 150ms ease',
+})
+globalStyle(`${variants.normal}:focus path`, {
+  fill: theme.color.dark400,
+})
+globalStyle(`${variants.normal}:hover path`, {
+  fill: theme.color.white,
+})
+globalStyle(`${variants.normal}:active path`, {
+  fill: theme.color.white,
+})
+globalStyle(`${variants.normal}:active path`, {
+  fill: theme.color.white,
+})
+
+// Ghost icon colors
+globalStyle(`${variants.ghost} path`, {
+  fill: theme.color.blue400,
+  transition: 'color 150ms ease, background-color 150ms ease',
+})
+globalStyle(`${variants.ghost}:hover path`, {
+  fill: theme.color.blueberry400,
+})
+globalStyle(`${variants.ghost}:focus path`, {
+  fill: theme.color.dark400,
+})
+globalStyle(`${variants.ghost}:active path`, {
+  fill: theme.color.blue400,
+})
+
+// Text icon colors
+globalStyle(`${variants.text} path`, {
+  fill: theme.color.blue400,
+  transition: 'color 150ms ease, background-color 150ms ease',
+})
+globalStyle(`${variants.text}:hover path`, {
+  fill: theme.color.blueberry400,
+})
+globalStyle(`${variants.text}:focus path`, {
+  fill: theme.color.dark400,
+})
+globalStyle(`${variants.text}:active path`, {
+  fill: theme.color.blue400,
 })

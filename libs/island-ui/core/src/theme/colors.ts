@@ -49,3 +49,5 @@ export const yellow400 = '#fff066'
 export const yellow200 = '#fffce0'
 export const yellow300 = '#fff9c2'
 export const yellow100 = '#fffef7'
+
+export const transparent = 'transparent'

@@ -1,7 +1,6 @@
 import React, { FC, createContext, useContext, ReactNode } from 'react'
 import cn from 'classnames'
 import { Box, Typography, Stack, StackProps, Icon } from '../..'
-import { theme } from '../../theme/theme'
 
 import * as styles from './BulletList.treat'
 
@@ -27,12 +26,7 @@ export const Bullet: FC = ({ children }) => {
           >
             {type === 'ul' && (
               <span className={styles.icon}>
-                <Icon
-                  type="bullet"
-                  color={theme.color.red400}
-                  width="8"
-                  height="8"
-                />
+                <Icon type="bullet" color="red400" width="8" height="8" />
               </span>
             )}
           </span>

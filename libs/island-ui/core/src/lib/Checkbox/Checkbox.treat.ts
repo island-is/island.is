@@ -13,7 +13,7 @@ export const container = style({
   paddingLeft: checkboxSize + checkboxMargin,
 })
 export const checkMarkColorUnchecked = 'transparent'
-export const checkMarkColor = theme.color.white
+export const checkMarkColor = 'white'
 export const checkMarkWidth = 17
 export const input = style({
   position: 'absolute',
