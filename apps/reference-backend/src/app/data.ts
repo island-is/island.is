@@ -2,9 +2,11 @@ import { Model, DataTypes } from 'sequelize'
 
 import { Sequelize } from 'sequelize'
 
-import config from './config'
+import { environment } from '../environments'
 
-export const sequelize = new Sequelize(config.DATABASE_URI, {
+const { databaseUri } = environment
+
+export const sequelize = new Sequelize(databaseUri, {
   define: {
     underscored: true,
     timestamps: true,
