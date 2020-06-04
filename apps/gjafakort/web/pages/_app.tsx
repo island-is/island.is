@@ -5,14 +5,16 @@ import { ApolloProvider } from 'react-apollo'
 import { ApolloClient } from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 
-import { client } from '../graphql'
 import {
+  Box,
   ContentBlock,
+  Footer,
   Header,
   Page,
-  Footer,
-  Box,
 } from '@island.is/island-ui/core'
+
+import { Toast } from '../components'
+import { client } from '../graphql'
 import appWithTranslation from '../i18n/appWithTranslation'
 
 const Layout: React.FC = ({ children }) => {
@@ -115,6 +117,7 @@ const SupportApplication: React.FC<{
     <ApolloProvider client={client}>
       <Layout>
         <Component {...pageProps} />
+        <Toast />
       </Layout>
     </ApolloProvider>
   )
