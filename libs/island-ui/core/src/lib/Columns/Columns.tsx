@@ -40,7 +40,7 @@ export const ColumnsContext = createContext<ColumnsContextValue>({
 })
 
 export interface ColumnsProps extends CollapsibleAlignmentProps {
-  space: ResponsiveSpace
+  space?: ResponsiveSpace
   children:
     | Array<ReactElement<ColumnProps> | null>
     | ReactElement<ColumnProps>

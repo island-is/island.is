@@ -55,8 +55,12 @@ export const theme = {
     touchable: 'transform 0.2s cubic-bezier(0.02, 1.505, 0.745, 1.235)',
   },
   border: {
+    style: {
+      solid: 'solid',
+    },
     radius: {
       standard: '4px',
+      large: '8px',
       circle: '50%',
     },
     width: {

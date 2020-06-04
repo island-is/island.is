@@ -45,7 +45,7 @@ function Congratulations() {
             <Button variant="text" size="large">
               Áfram til Yay{' '}
               <Box marginLeft={1} alignItems="center" display="flex">
-                <Icon type="arrow" width={16} />
+                <Icon type="arrowRight" width={16} />
               </Box>
             </Button>
           </Box>
