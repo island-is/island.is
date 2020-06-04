@@ -1,4 +1,5 @@
 export { ContentLoader } from './ContentLoader'
+export { Toast } from './Toast'
 export { Loader } from './Loader'
 export { FormLayout } from './FormLayout'
 export { Layout } from './Layout'
