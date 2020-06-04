@@ -122,5 +122,6 @@ export type Colors =
   | 'yellow200'
   | 'yellow300'
   | 'yellow100'
+  | 'transparent'
 
 export const themeUtils = makeThemeUtils(theme)

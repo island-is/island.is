@@ -1,7 +1,6 @@
 import React, { FC, Children } from 'react'
 import { Typography } from '../Typography/Typography'
 import Icon from '../Icon/Icon'
-import { theme } from '../../theme/'
 
 import * as styles from './Breadcrumbs.treat'
 
@@ -24,7 +23,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({
           </Typography>
           {crumbs.length - 1 > index && (
             <span className={styles.divider}>
-              <Icon type="bullet" width="4" color={theme.color.roseTinted400} />
+              <Icon type="bullet" width="4" color="roseTinted400" />
             </span>
           )}
         </span>
