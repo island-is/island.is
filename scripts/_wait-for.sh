@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Origin: https://github.com/eficode/wait-for/blob/master/wait-for
+
 TIMEOUT=15
 QUIET=0
 

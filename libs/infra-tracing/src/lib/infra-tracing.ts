@@ -43,20 +43,20 @@ const setupProvider = (serviceName: string) => {
     port: parseInt(process.env.TRACING_PORT || '6832'), // optional
     maxPacketSize: 65000, // optional
   }
-  
+
   const exporter = new JaegerExporter(options)
   provider.addSpanProcessor(new SimpleSpanProcessor(exporter))
   provider.register({
     propagator: new B3Propagator(),
-  })  
+  })
 }
 
-let initiated = false;
+let initiated = false
 
 export const initTracing = (serviceName: string) => {
   if (initiated) {
     throw new Error('Tracing already initiated. Cannot do this again')
   }
   setupProvider(serviceName)
-  initiated = true;
+  initiated = true
 }
