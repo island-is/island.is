@@ -21,6 +21,9 @@ export const button = style({
     color: theme.color.dark400,
     backgroundColor: theme.color.mint400,
   },
+  ':hover': {
+    textDecoration: 'none',
+  },
   ':after': {
     content: "''",
     position: 'absolute',

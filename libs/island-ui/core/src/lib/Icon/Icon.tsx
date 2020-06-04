@@ -1,7 +1,13 @@
 import React from 'react'
 import { theme } from '../../theme'
 
-type IconTypes = 'cheveron' | 'check' | 'arrow' | 'caret' | 'bullet'
+type IconTypes =
+  | 'cheveron'
+  | 'check'
+  | 'arrow'
+  | 'caret'
+  | 'bullet'
+  | 'external'
 
 type Icons = {
   [Type in IconTypes]: {
@@ -34,6 +40,13 @@ export interface SvgPathContainerProps {
 }
 
 const iconsConf: Icons = {
+  external: {
+    width: 18,
+    height: 18,
+    viewBox: '0 0 18 18',
+    path:
+      'M0 10H2V8H0V10ZM0 14H2V12H0V14ZM2 18V16H0C0 17.1 0.89 18 2 18ZM0 6H2V4H0V6ZM12 18H14V16H12V18ZM16 0H6C4.89 0 4 0.9 4 2V12C4 13.1 4.89 14 6 14H16C17.1 14 18 13.1 18 12V2C18 0.9 17.1 0 16 0ZM15 12H7C6.45 12 6 11.55 6 11V3C6 2.45 6.45 2 7 2H15C15.55 2 16 2.45 16 3V11C16 11.55 15.55 12 15 12ZM8 18H10V16H8V18ZM4 18H6V16H4V18Z',
+  },
   cheveron: {
     width: 26,
     height: 16,

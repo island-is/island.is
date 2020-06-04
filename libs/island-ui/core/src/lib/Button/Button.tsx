@@ -1,5 +1,6 @@
-import React, { FC } from 'react'
+import React, { FC, forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
+import { Icon, Box } from '../..'
 
 import * as styles from './Button.treat'
 
@@ -14,31 +15,66 @@ export interface ButtonProps {
   variant?: ButtonVariant
   size?: ButtonSize
   width?: ButtonWidth
+  href?: string
   htmlType?: 'button' | 'submit'
+  children: ReactNode
 }
 
-export const Button: FC<ButtonProps> = ({
-  children,
-  onClick,
-  disabled,
-  htmlType = 'button',
-  variant = 'normal',
-  size = 'medium',
-  width = 'normal',
-}) => {
-  return (
-    <button
-      type={htmlType}
-      disabled={disabled}
-      onClick={onClick}
-      className={cn(
-        styles.button,
-        styles.variants[variant],
-        styles.sizes[size],
-        styles.width[width],
-      )}
-    >
-      {children}
-    </button>
-  )
-}
+const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
+
+export const Button = forwardRef<
+  HTMLAnchorElement & HTMLButtonElement,
+  ButtonProps
+>(
+  (
+    {
+      children,
+      onClick,
+      disabled,
+      htmlType = 'button',
+      variant = 'normal',
+      size = 'medium',
+      width = 'normal',
+      href,
+    },
+    ref,
+  ) => {
+    const className = cn(
+      styles.button,
+      styles.variants[variant],
+      styles.sizes[size],
+      styles.width[width],
+    )
+
+    const isExternal = isLinkExternal(href)
+
+    const anchorProps = {
+      ...(isExternal && { rel: 'noreferrer noopener' }),
+    }
+
+    return href ? (
+      <a href={href} role="button" className={className} {...anchorProps}>
+        {children}
+        {isExternal && (
+          <IconContainer>
+            <Icon type="external" color="white" />
+          </IconContainer>
+        )}
+      </a>
+    ) : (
+      <button
+        ref={ref}
+        type={htmlType}
+        disabled={disabled}
+        onClick={onClick}
+        className={className}
+      >
+        {children}
+      </button>
+    )
+  },
+)
+
+const IconContainer: FC = ({ children }) => (
+  <Box paddingLeft={2}>{children}</Box>
+)
