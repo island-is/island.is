@@ -44,7 +44,6 @@ export const button = style({
 const sizeMediumDesktop = {
   fontSize: '18px',
   lineHeight: '28px',
-  fontWeight: theme.typography.semiBold,
   height: '64px',
   padding: '0 24px',
 }
@@ -52,7 +51,6 @@ const sizeMediumDesktop = {
 const sizeLargeDesktop = {
   fontSize: '24px',
   lineHeight: '34px',
-  fontWeight: theme.typography.semiBold,
   height: '80px',
   padding: '0 24px',
 }
@@ -60,7 +58,6 @@ const sizeLargeDesktop = {
 const sizeMediumMobile = {
   fontSize: '15px',
   lineHeight: '20px',
-  fontWeight: theme.typography.semiBold,
   height: '64px',
   padding: '0 24px',
 }
@@ -68,7 +65,6 @@ const sizeMediumMobile = {
 const sizeLargeMobile = {
   fontSize: '20px',
   lineHeight: '28px',
-  fontWeight: theme.typography.light,
   height: '72px',
   padding: '0 24px',
 }
@@ -78,21 +74,18 @@ export const sizes = styleMap({
     ...themeUtils.responsiveStyle({
       xs: sizeMediumMobile,
       md: sizeMediumDesktop,
-      xl: sizeMediumDesktop,
     }),
   },
   medium: {
     ...themeUtils.responsiveStyle({
       xs: sizeMediumMobile,
       md: sizeMediumDesktop,
-      xl: sizeMediumDesktop,
     }),
   },
   large: {
     ...themeUtils.responsiveStyle({
       xs: sizeLargeMobile,
       md: sizeLargeDesktop,
-      xl: sizeLargeDesktop,
     }),
   },
 })
@@ -280,5 +273,3 @@ globalStyle(`${variants.text}:focus path`, {
 globalStyle(`${variants.text}:active path`, {
   fill: theme.color.blue400,
 })
-
-export const icon = style({})

@@ -108,13 +108,7 @@ export const Button = forwardRef<
 )
 
 const IconContainer = ({ children }) => (
-  <Box
-    display="flex"
-    height="full"
-    alignItems="center"
-    paddingLeft={2}
-    className={styles.icon}
-  >
+  <Box display="flex" height="full" alignItems="center" paddingLeft={2}>
     {children}
   </Box>
 )
