@@ -1,5 +1,5 @@
 import { styleMap, style } from 'treat'
-import { theme } from '../../theme'
+import { theme, themeUtils } from '../../theme'
 
 export const button = style({
   display: 'inline-flex',
@@ -38,24 +38,60 @@ export const button = style({
   },
 })
 
-const sizeMedium = {
+const sizeMediumDesktop = {
   fontSize: '18px',
   lineHeight: '28px',
+  fontWeight: theme.typography.semiBold,
   height: '64px',
-  padding: '0 32px',
+  padding: '0 24px',
 }
 
-const sizeLarge = {
+const sizeLargeDesktop = {
   fontSize: '24px',
   lineHeight: '34px',
+  fontWeight: theme.typography.semiBold,
   height: '80px',
-  padding: '0 32px',
+  padding: '0 24px',
+}
+
+const sizeMediumMobile = {
+  fontSize: '15px',
+  lineHeight: '20px',
+  fontWeight: theme.typography.semiBold,
+  height: '64px',
+  padding: '0 24px',
+}
+
+const sizeLargeMobile = {
+  fontSize: '20px',
+  lineHeight: '28px',
+  fontWeight: theme.typography.light,
+  height: '72px',
+  padding: '0 24px',
 }
 
 export const sizes = styleMap({
-  small: sizeMedium,
-  medium: sizeMedium,
-  large: sizeLarge,
+  small: {
+    ...themeUtils.responsiveStyle({
+      xs: sizeMediumMobile,
+      md: sizeMediumDesktop,
+      xl: sizeMediumDesktop,
+    }),
+  },
+  medium: {
+    ...themeUtils.responsiveStyle({
+      xs: sizeMediumMobile,
+      md: sizeMediumDesktop,
+      xl: sizeMediumDesktop,
+    }),
+  },
+  large: {
+    ...themeUtils.responsiveStyle({
+      xs: sizeLargeMobile,
+      md: sizeLargeDesktop,
+      xl: sizeLargeDesktop,
+    }),
+  },
 })
 
 export const width = styleMap({
@@ -155,16 +191,19 @@ export const variants = styleMap({
         height: '24px',
         fontSize: '14px',
         lineHeight: '16px',
+        padding: '0',
       },
       [`&${sizes.medium}`]: {
         height: '36px',
         fontSize: '18px',
         lineHeight: '28px',
+        padding: '0',
       },
       [`&${sizes.large}`]: {
         height: '42px',
         fontSize: '24px',
         lineHeight: '34px',
+        padding: '0',
       },
       '&:focus:hover': {
         color: theme.color.dark400,
