@@ -32,6 +32,7 @@
   },
   "private": true,
   "dependencies": {
+    "@contentful/rich-text-react-renderer": "13.4.0",
     "apollo-cache-inmemory": "1.6.6",
     "apollo-client": "2.6.8",
     "apollo-link": "1.2.14",
@@ -43,6 +44,7 @@
     "apollo-server-express": "2.13.0",
     "aws-sdk": "2.678.0",
     "classnames": "2.2.6",
+    "contentful": "7.14.4",
     "cookie-parser": "1.4.5",
     "crypto-js": "4.0.0",
     "document-register-element": "1.13.1",

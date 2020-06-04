@@ -27,6 +27,21 @@ export type Application = {
   companyDisplayName?: Maybe<Scalars['String']>
 }
 
+export type Article = {
+  __typename?: 'Article'
+  id: Scalars['String']
+  title: Scalars['String']
+  description: Scalars['String']
+  cta?: Maybe<ArticleCta>
+  content: Scalars['String']
+}
+
+export type ArticleCta = {
+  __typename?: 'ArticleCta'
+  label: Scalars['String']
+  url: Scalars['String']
+}
+
 export type Company = {
   __typename?: 'Company'
   ssn: Scalars['String']
@@ -35,7 +50,7 @@ export type Company = {
 }
 
 export type CreateApplication = {
-  __typename?: 'createApplication'
+  __typename?: 'CreateApplication'
   application?: Maybe<Application>
 }
 
@@ -58,6 +73,39 @@ export type CreateApplicationInput = {
   validPermit: Scalars['Boolean']
 }
 
+export type Form = {
+  __typename?: 'Form'
+  id: Scalars['String']
+  title: Scalars['String']
+  description: Scalars['String']
+  steps: Array<FormStep>
+  postFlowContent?: Maybe<Scalars['String']>
+}
+
+export type FormStep = {
+  __typename?: 'FormStep'
+  id: Scalars['String']
+  type: Scalars['String']
+  title: Scalars['String']
+  navigationTitle: Scalars['String']
+  description: Scalars['String']
+  options?: Maybe<Array<FormStepOption>>
+  followups?: Maybe<Array<FormStepFollowup>>
+}
+
+export type FormStepFollowup = {
+  __typename?: 'FormStepFollowup'
+  id: Scalars['String']
+  answer: Scalars['String']
+  steps: Array<FormStep>
+}
+
+export type FormStepOption = {
+  __typename?: 'FormStepOption'
+  label: Scalars['String']
+  value: Scalars['String']
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<CreateApplication>
@@ -70,13 +118,25 @@ export type MutationCreateApplicationArgs = {
 
 export type Query = {
   __typename?: 'Query'
+  article?: Maybe<Article>
   companies?: Maybe<Array<Maybe<Company>>>
   company?: Maybe<Company>
+  form?: Maybe<Form>
   root?: Maybe<Scalars['String']>
+}
+
+export type QueryArticleArgs = {
+  lang: Scalars['String']
+  id: Scalars['String']
 }
 
 export type QueryCompanyArgs = {
   ssn: Scalars['String']
+}
+
+export type QueryFormArgs = {
+  lang: Scalars['String']
+  id: Scalars['String']
 }
 
 export type GetCompaniesQueryQueryVariables = {}
@@ -121,11 +181,22 @@ export type CreateApplicationMutationMutationVariables = {
 
 export type CreateApplicationMutationMutation = { __typename?: 'Mutation' } & {
   createApplication?: Maybe<
-    { __typename?: 'createApplication' } & {
+    { __typename?: 'CreateApplication' } & {
       application?: Maybe<
         { __typename?: 'Application' } & Pick<Application, 'id' | 'state'>
       >
     }
+  >
+}
+
+export type GetArticleQueryQueryVariables = {}
+
+export type GetArticleQueryQuery = { __typename?: 'Query' } & {
+  article?: Maybe<
+    { __typename?: 'Article' } & Pick<
+      Article,
+      'id' | 'title' | 'description' | 'content'
+    >
   >
 }
 
@@ -308,4 +379,62 @@ export type CreateApplicationMutationMutationResult = ApolloReactCommon.Mutation
 export type CreateApplicationMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<
   CreateApplicationMutationMutation,
   CreateApplicationMutationMutationVariables
+>
+export const GetArticleQueryDocument = gql`
+  query GetArticleQuery {
+    article(lang: "is", id: "travelGift.info") {
+      id
+      title
+      description
+      content
+    }
+  }
+`
+
+/**
+ * __useGetArticleQueryQuery__
+ *
+ * To run a query within a React component, call `useGetArticleQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetArticleQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetArticleQueryQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetArticleQueryQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    GetArticleQueryQuery,
+    GetArticleQueryQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useQuery<
+    GetArticleQueryQuery,
+    GetArticleQueryQueryVariables
+  >(GetArticleQueryDocument, baseOptions)
+}
+export function useGetArticleQueryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    GetArticleQueryQuery,
+    GetArticleQueryQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useLazyQuery<
+    GetArticleQueryQuery,
+    GetArticleQueryQueryVariables
+  >(GetArticleQueryDocument, baseOptions)
+}
+export type GetArticleQueryQueryHookResult = ReturnType<
+  typeof useGetArticleQueryQuery
+>
+export type GetArticleQueryLazyQueryHookResult = ReturnType<
+  typeof useGetArticleQueryLazyQuery
+>
+export type GetArticleQueryQueryResult = ApolloReactCommon.QueryResult<
+  GetArticleQueryQuery,
+  GetArticleQueryQueryVariables
 >

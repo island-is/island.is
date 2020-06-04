@@ -30,6 +30,21 @@ export type Application = {
   companyDisplayName?: Maybe<Scalars['String']>
 }
 
+export type Article = {
+  __typename?: 'Article'
+  id: Scalars['String']
+  title: Scalars['String']
+  description: Scalars['String']
+  cta?: Maybe<ArticleCta>
+  content: Scalars['String']
+}
+
+export type ArticleCta = {
+  __typename?: 'ArticleCta'
+  label: Scalars['String']
+  url: Scalars['String']
+}
+
 export type Company = {
   __typename?: 'Company'
   ssn: Scalars['String']
@@ -38,7 +53,7 @@ export type Company = {
 }
 
 export type CreateApplication = {
-  __typename?: 'createApplication'
+  __typename?: 'CreateApplication'
   application?: Maybe<Application>
 }
 
@@ -61,6 +76,39 @@ export type CreateApplicationInput = {
   validPermit: Scalars['Boolean']
 }
 
+export type Form = {
+  __typename?: 'Form'
+  id: Scalars['String']
+  title: Scalars['String']
+  description: Scalars['String']
+  steps: Array<FormStep>
+  postFlowContent?: Maybe<Scalars['String']>
+}
+
+export type FormStep = {
+  __typename?: 'FormStep'
+  id: Scalars['String']
+  type: Scalars['String']
+  title: Scalars['String']
+  navigationTitle: Scalars['String']
+  description: Scalars['String']
+  options?: Maybe<Array<FormStepOption>>
+  followups?: Maybe<Array<FormStepFollowup>>
+}
+
+export type FormStepFollowup = {
+  __typename?: 'FormStepFollowup'
+  id: Scalars['String']
+  answer: Scalars['String']
+  steps: Array<FormStep>
+}
+
+export type FormStepOption = {
+  __typename?: 'FormStepOption'
+  label: Scalars['String']
+  value: Scalars['String']
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<CreateApplication>
@@ -73,13 +121,25 @@ export type MutationCreateApplicationArgs = {
 
 export type Query = {
   __typename?: 'Query'
+  article?: Maybe<Article>
   companies?: Maybe<Array<Maybe<Company>>>
   company?: Maybe<Company>
+  form?: Maybe<Form>
   root?: Maybe<Scalars['String']>
+}
+
+export type QueryArticleArgs = {
+  lang: Scalars['String']
+  id: Scalars['String']
 }
 
 export type QueryCompanyArgs = {
   ssn: Scalars['String']
+}
+
+export type QueryFormArgs = {
+  lang: Scalars['String']
+  id: Scalars['String']
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -191,25 +251,37 @@ export type DirectiveResolverFn<
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>
-  Company: ResolverTypeWrapper<Company>
   String: ResolverTypeWrapper<Scalars['String']>
+  Article: ResolverTypeWrapper<Article>
+  ArticleCta: ResolverTypeWrapper<ArticleCta>
+  Company: ResolverTypeWrapper<Company>
   Application: ResolverTypeWrapper<Application>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
+  Form: ResolverTypeWrapper<Form>
+  FormStep: ResolverTypeWrapper<FormStep>
+  FormStepOption: ResolverTypeWrapper<FormStepOption>
+  FormStepFollowup: ResolverTypeWrapper<FormStepFollowup>
   Mutation: ResolverTypeWrapper<{}>
   CreateApplicationInput: CreateApplicationInput
-  createApplication: ResolverTypeWrapper<CreateApplication>
+  CreateApplication: ResolverTypeWrapper<CreateApplication>
 }
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Query: {}
-  Company: Company
   String: Scalars['String']
+  Article: Article
+  ArticleCta: ArticleCta
+  Company: Company
   Application: Application
   Boolean: Scalars['Boolean']
+  Form: Form
+  FormStep: FormStep
+  FormStepOption: FormStepOption
+  FormStepFollowup: FormStepFollowup
   Mutation: {}
   CreateApplicationInput: CreateApplicationInput
-  createApplication: CreateApplication
+  CreateApplication: CreateApplication
 }
 
 export type ApplicationResolvers<
@@ -247,6 +319,27 @@ export type ApplicationResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 
+export type ArticleResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']
+> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  cta?: Resolver<Maybe<ResolversTypes['ArticleCta']>, ParentType, ContextType>
+  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: isTypeOfResolverFn<ParentType>
+}
+
+export type ArticleCtaResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['ArticleCta'] = ResolversParentTypes['ArticleCta']
+> = {
+  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: isTypeOfResolverFn<ParentType>
+}
+
 export type CompanyResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Company'] = ResolversParentTypes['Company']
@@ -263,7 +356,7 @@ export type CompanyResolvers<
 
 export type CreateApplicationResolvers<
   ContextType = Context,
-  ParentType extends ResolversParentTypes['createApplication'] = ResolversParentTypes['createApplication']
+  ParentType extends ResolversParentTypes['CreateApplication'] = ResolversParentTypes['CreateApplication']
 > = {
   application?: Resolver<
     Maybe<ResolversTypes['Application']>,
@@ -273,12 +366,69 @@ export type CreateApplicationResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 
+export type FormResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Form'] = ResolversParentTypes['Form']
+> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  steps?: Resolver<Array<ResolversTypes['FormStep']>, ParentType, ContextType>
+  postFlowContent?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: isTypeOfResolverFn<ParentType>
+}
+
+export type FormStepResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['FormStep'] = ResolversParentTypes['FormStep']
+> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  navigationTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  options?: Resolver<
+    Maybe<Array<ResolversTypes['FormStepOption']>>,
+    ParentType,
+    ContextType
+  >
+  followups?: Resolver<
+    Maybe<Array<ResolversTypes['FormStepFollowup']>>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: isTypeOfResolverFn<ParentType>
+}
+
+export type FormStepFollowupResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['FormStepFollowup'] = ResolversParentTypes['FormStepFollowup']
+> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  answer?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  steps?: Resolver<Array<ResolversTypes['FormStep']>, ParentType, ContextType>
+  __isTypeOf?: isTypeOfResolverFn<ParentType>
+}
+
+export type FormStepOptionResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['FormStepOption'] = ResolversParentTypes['FormStepOption']
+> = {
+  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: isTypeOfResolverFn<ParentType>
+}
+
 export type MutationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = {
   createApplication?: Resolver<
-    Maybe<ResolversTypes['createApplication']>,
+    Maybe<ResolversTypes['CreateApplication']>,
     ParentType,
     ContextType,
     RequireFields<MutationCreateApplicationArgs, 'input'>
@@ -290,6 +440,12 @@ export type QueryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
+  article?: Resolver<
+    Maybe<ResolversTypes['Article']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryArticleArgs, 'lang' | 'id'>
+  >
   companies?: Resolver<
     Maybe<Array<Maybe<ResolversTypes['Company']>>>,
     ParentType,
@@ -301,13 +457,25 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryCompanyArgs, 'ssn'>
   >
+  form?: Resolver<
+    Maybe<ResolversTypes['Form']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryFormArgs, 'lang' | 'id'>
+  >
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
 }
 
 export type Resolvers<ContextType = Context> = {
   Application?: ApplicationResolvers<ContextType>
+  Article?: ArticleResolvers<ContextType>
+  ArticleCta?: ArticleCtaResolvers<ContextType>
   Company?: CompanyResolvers<ContextType>
-  createApplication?: CreateApplicationResolvers<ContextType>
+  CreateApplication?: CreateApplicationResolvers<ContextType>
+  Form?: FormResolvers<ContextType>
+  FormStep?: FormStepResolvers<ContextType>
+  FormStepFollowup?: FormStepFollowupResolvers<ContextType>
+  FormStepOption?: FormStepOptionResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
 }

@@ -8,7 +8,22 @@ import {
   resolvers as companyResolvers,
   typeDefs as companyTypeDefs,
 } from './companies'
+import {
+  resolvers as articleResolver,
+  typeDefs as articleTypeDefs,
+} from './articles'
+import { resolvers as formResolver, typeDefs as formTypeDefs } from './forms'
 
-export const resolvers = [applicationResolvers, companyResolvers]
+export const resolvers = [
+  applicationResolvers,
+  companyResolvers,
+  articleResolver,
+  formResolver,
+]
 
-export const typeDefs = [applicationTypeDefs, companyTypeDefs]
+export const typeDefs = [
+  applicationTypeDefs,
+  companyTypeDefs,
+  articleTypeDefs,
+  formTypeDefs,
+]

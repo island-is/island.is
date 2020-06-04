@@ -1,4 +1,6 @@
 import React from 'react'
+import { useQuery } from 'react-apollo'
+import gql from 'graphql-tag'
 
 import {
   Accordion,
@@ -15,6 +17,17 @@ import {
 
 import { GiftCTA } from './components'
 import Link from 'next/link'
+
+const GetArticleQuery = gql`
+  query GetArticleQuery {
+    article(lang: "is", id: "travelGift.info") {
+      id
+      title
+      description
+      content
+    }
+  }
+`
 
 const mockAccordion = [
   {
@@ -55,6 +68,12 @@ const mockAccordion = [
 ]
 
 function HomePage() {
+  const { data, loading } = useQuery(GetArticleQuery)
+  const { article } = data || {}
+  if (!loading && !article) {
+    console.error('No article found')
+    return null
+  }
   return (
     <Box marginTop={12}>
       <ContentBlock width="large">
@@ -72,7 +91,7 @@ function HomePage() {
               <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
                 <Stack space={3}>
                   <Typography variant="h1" as="h1">
-                    Gjöf til ferðalaga innanlands
+                    {article?.title}
                   </Typography>
                   <Typography variant="intro">
                     Búum til minningar á ferðalagi innanlands og styðjum við

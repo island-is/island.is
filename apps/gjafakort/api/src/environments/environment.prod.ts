@@ -16,4 +16,8 @@ export default {
     username: process.env.RSK_USERNAME,
     password: process.env.RSK_API_PASSWORD,
   },
+  contentful: {
+    accessToken: 'dE_D4LxgEJTKOJ2kteFf1c3yPInyod7wW4KGHZvigd8',
+    space: 'bcz5dess12yp',
+  },
 }
