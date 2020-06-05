@@ -64,6 +64,16 @@ Run `yarn nx run <project>:migrate`
 
 Run `yarn nx dep-graph` to see a diagram of the dependencies of your projects.
 
+### Fetch development secrets for your project
+
+Run `AWS_PROFILE=<profile> yarn nx env-secrets <project>`
+
+**Example**:
+
+```
+AWS_PROFILE=islandis yarn nx env-secrets gjafakort-api
+```
+
 ### Further help
 
 Visit the [Nx Documentation](https://nx.dev) to learn more.
