@@ -15,12 +15,11 @@ export interface GjafakortApplicationMessage {
     companyName: string
     phoneNumber: string
     validPermit: boolean
-    approveTerms: boolean
+    operationsTrouble: boolean
     generalEmail: string
-    followingLaws: boolean
     validLicenses: boolean
     serviceCategory: string
-    acknowledgedMuseum: boolean
+    operatingPermitForRestaurant: boolean
     companyDisplayName: string
     operatingPermitForVehicles: boolean
   }

@@ -10,7 +10,6 @@ import {
   Breadcrumbs,
   BulletList,
   Bullet,
-  VideoIframe,
 } from '@island.is/island-ui/core'
 
 import { CompanyCTA } from './components'

@@ -13,18 +13,23 @@ interface ApplicationResponse {
   type: string
   state: string
   data: {
-    name: string
-    email: string
-    state: string
-    companySSN: string
-    serviceCategory: string
-    generalEmail: string
-    webpage: string
-    phoneNumber: string
-    approveTerms: boolean
-    companyName: string
-    companyDisplayName: string
     comments: string[]
+    companyDisplayName: string
+    companyName: string
+    companySSN: string
+    email: string
+    exhibition: boolean
+    generalEmail: string
+    name: string
+    operatingPermitForRestaurant: boolean
+    operatingPermitForVehicles: boolean
+    operationsTrouble: boolean
+    phoneNumber: string
+    serviceCategory: string
+    state: string
+    validLicenses: boolean
+    validPermit: boolean
+    webpage: string
   }
 }
 

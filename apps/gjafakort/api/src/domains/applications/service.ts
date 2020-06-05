@@ -15,9 +15,15 @@ export const getApplication = async (companySSN: string) => {
       generalEmail: application.data.generalEmail,
       webpage: application.data.webpage,
       phoneNumber: application.data.phoneNumber,
-      approveTerms: application.data.approveTerms,
+      operationsTrouble: application.data.operationsTrouble,
       companyName: application.data.companyName,
       companyDisplayName: application.data.companyDisplayName,
+      operatingPermitForRestaurant:
+        application.data.operatingPermitForRestaurant,
+      exhibition: application.data.exhibition,
+      operatingPermitForVehicles: application.data.operatingPermitForVehicles,
+      validLicenses: application.data.validLicenses,
+      validPermit: application.data.validPermit,
     }
   }
 

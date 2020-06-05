@@ -20,11 +20,16 @@ export type Application = {
   companySSN: Scalars['String']
   serviceCategory?: Maybe<Scalars['String']>
   generalEmail: Scalars['String']
-  webpage: Scalars['String']
-  phoneNumber: Scalars['String']
-  approveTerms?: Maybe<Scalars['Boolean']>
-  companyName?: Maybe<Scalars['String']>
   companyDisplayName?: Maybe<Scalars['String']>
+  companyName?: Maybe<Scalars['String']>
+  exhibition?: Maybe<Scalars['Boolean']>
+  operatingPermitForRestaurant?: Maybe<Scalars['Boolean']>
+  operatingPermitForVehicles?: Maybe<Scalars['Boolean']>
+  operationsTrouble?: Maybe<Scalars['Boolean']>
+  phoneNumber: Scalars['String']
+  validLicenses?: Maybe<Scalars['Boolean']>
+  validPermit?: Maybe<Scalars['Boolean']>
+  webpage: Scalars['String']
 }
 
 export type Company = {
@@ -35,7 +40,7 @@ export type Company = {
 }
 
 export type CreateApplication = {
-  __typename?: 'createApplication'
+  __typename?: 'CreateApplication'
   application?: Maybe<Application>
 }
 
@@ -43,16 +48,15 @@ export type CreateApplicationInput = {
   email: Scalars['String']
   generalEmail: Scalars['String']
   phoneNumber: Scalars['String']
-  approveTerms: Scalars['Boolean']
+  operationsTrouble: Scalars['Boolean']
   companySSN: Scalars['String']
   name: Scalars['String']
   serviceCategory: Scalars['String']
   webpage: Scalars['String']
   companyName: Scalars['String']
   companyDisplayName: Scalars['String']
-  acknowledgedMuseum: Scalars['Boolean']
+  operatingPermitForRestaurant: Scalars['Boolean']
   exhibition: Scalars['Boolean']
-  followingLaws: Scalars['Boolean']
   operatingPermitForVehicles: Scalars['Boolean']
   validLicenses: Scalars['Boolean']
   validPermit: Scalars['Boolean']
@@ -106,9 +110,14 @@ export type GetCompanyQueryQuery = { __typename?: 'Query' } & {
             | 'generalEmail'
             | 'webpage'
             | 'phoneNumber'
-            | 'approveTerms'
+            | 'operationsTrouble'
             | 'companyName'
             | 'companyDisplayName'
+            | 'exhibition'
+            | 'operatingPermitForRestaurant'
+            | 'operatingPermitForVehicles'
+            | 'validLicenses'
+            | 'validPermit'
           >
         >
       }
@@ -121,7 +130,7 @@ export type CreateApplicationMutationMutationVariables = {
 
 export type CreateApplicationMutationMutation = { __typename?: 'Mutation' } & {
   createApplication?: Maybe<
-    { __typename?: 'createApplication' } & {
+    { __typename?: 'CreateApplication' } & {
       application?: Maybe<
         { __typename?: 'Application' } & Pick<Application, 'id' | 'state'>
       >
@@ -200,9 +209,14 @@ export const GetCompanyQueryDocument = gql`
         generalEmail
         webpage
         phoneNumber
-        approveTerms
+        operationsTrouble
         companyName
         companyDisplayName
+        exhibition
+        operatingPermitForRestaurant
+        operatingPermitForVehicles
+        validLicenses
+        validPermit
       }
     }
   }
