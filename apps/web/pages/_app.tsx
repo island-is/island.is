@@ -6,7 +6,7 @@ import { AppProps } from 'next/app'
 // import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 
 // import { client } from '../graphql'
-import { Page } from '@island.is/island-ui/core'
+import { Page, Footer } from '@island.is/island-ui/core'
 import { Header } from '../components'
 import appWithTranslation from '../i18n/appWithTranslation'
 
@@ -43,6 +43,7 @@ const Layout: React.FC = ({ children }) => {
       </Head>
       <Header />
       {children}
+      <Footer />
       <style jsx global>{`
         @font-face {
           font-family: 'IBM Plex Sans';

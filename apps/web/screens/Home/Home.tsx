@@ -20,7 +20,7 @@ import { categories, selectOptions, getTags } from '../../json'
 function HomePage() {
   return (
     <>
-      <ContentBlock width="large">
+      <ContentBlock>
         <Box
           position="relative"
           display="flex"
