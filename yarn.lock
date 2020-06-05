@@ -2487,7 +2487,7 @@
     yargs "^11.0.0"
     yargs-parser "10.0.0"
 
-"@opentelemetry/api@^0.8.3":
+"@opentelemetry/api@0.8.3", "@opentelemetry/api@^0.8.3":
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/@opentelemetry/api/-/api-0.8.3.tgz#6048f17e5ab565d1325092c4eed2ee4c6d24aec0"
   integrity sha512-CRd8kKrMN1yisbw2zc2IiXM31zdS8mvQ4sivxPFgWS/eQEW9XuNxMVtSWv5k/tDcqbcLzUHcX6JW0SpVNA5h+g==
@@ -2515,7 +2515,7 @@
     "@opentelemetry/context-base" "^0.8.3"
     semver "^7.1.3"
 
-"@opentelemetry/exporter-jaeger@^0.8.3":
+"@opentelemetry/exporter-jaeger@0.8.3":
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/@opentelemetry/exporter-jaeger/-/exporter-jaeger-0.8.3.tgz#eb740badabf1aedfe6825f2296938909343b9a9b"
   integrity sha512-MixdaZGzFBA3z6sBqUyqKS0EB7AHKgNuAyA4aARYPd5HD8UKfSL3dlIj2PjJILKPIZZWDeLAX+K3w+VyoLWsCQ==
@@ -2525,7 +2525,7 @@
     "@opentelemetry/tracing" "^0.8.3"
     jaeger-client "^3.15.0"
 
-"@opentelemetry/node@^0.8.3":
+"@opentelemetry/node@0.8.3":
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/@opentelemetry/node/-/node-0.8.3.tgz#2866bd4799716f42b880610f1f72492984bd1fc3"
   integrity sha512-B9ks4F+YH3/X8QM5qS9ngv9xFuWPPC94AJkeTvi1SHcktn0Iz86UXHXTs2FzoZlJK6JRFB5DbWnv28oluQKrsg==
@@ -2537,7 +2537,7 @@
     require-in-the-middle "^5.0.0"
     semver "^7.1.3"
 
-"@opentelemetry/plugin-express@^0.8.0":
+"@opentelemetry/plugin-express@0.8.0":
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/@opentelemetry/plugin-express/-/plugin-express-0.8.0.tgz#fbe6a6b6bef919a71daa9e77ab09e7e997138384"
   integrity sha512-ph5NOM1g6jlKXHKgFcWAqQ4xDWu4gtgGf3Epa9LQLkeRGYu7fR8hOFfzQW7R4bU+Ciwi/ibscEdNHj/EstUiqw==
@@ -2546,7 +2546,7 @@
     "@opentelemetry/core" "^0.8.3"
     shimmer "^1.2.1"
 
-"@opentelemetry/plugin-http@^0.8.3":
+"@opentelemetry/plugin-http@0.8.3", "@opentelemetry/plugin-http@^0.8.3":
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/@opentelemetry/plugin-http/-/plugin-http-0.8.3.tgz#702fb6d65a3ae2343c2f581753c2a9f3cacf6f01"
   integrity sha512-rQn3dFgVUGGKMeklqkg5CQsk9IKyo1ss3hzPyom6HqGp7aL8Aeg3eRi1/f74r0kAsA8felu6KQtlQILBGTNy8A==
@@ -2556,7 +2556,7 @@
     semver "^7.1.3"
     shimmer "^1.2.1"
 
-"@opentelemetry/plugin-https@^0.8.3":
+"@opentelemetry/plugin-https@0.8.3":
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/@opentelemetry/plugin-https/-/plugin-https-0.8.3.tgz#36a1a245e34621a469a42baecd78cf3e6a9f95dd"
   integrity sha512-YlY/gBVVeDXFq4Mcrluv5KDpoFHB9NKk01IMy7KAx/95SAENVyaXFaqCbo3RetppkQtokgDQ6B30UuIf0B+QRw==
@@ -2576,7 +2576,7 @@
     "@opentelemetry/core" "^0.8.3"
     gcp-metadata "^3.5.0"
 
-"@opentelemetry/tracing@^0.8.3":
+"@opentelemetry/tracing@0.8.3", "@opentelemetry/tracing@^0.8.3":
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/@opentelemetry/tracing/-/tracing-0.8.3.tgz#70c26ea3e99b70c60c247e300c5b8fd59bc20060"
   integrity sha512-u13gIaIvFYeFsDz3MGGYGsVFckMR9zWG3K1JlT+E+YRAa4Z97p4XxwEvyMBrywl3VHJpEheOJUBHFYfO4rJ00Q==
@@ -14967,7 +14967,7 @@ progress@^2.0.0:
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.3.tgz#7e8cf8d8f5b8f239c1bc68beb4eb78567d572ef8"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
 
-prom-client@^12.0.0:
+prom-client@12.0.0:
   version "12.0.0"
   resolved "https://registry.yarnpkg.com/prom-client/-/prom-client-12.0.0.tgz#9689379b19bd3f6ab88a9866124db9da3d76c6ed"
   integrity sha512-JbzzHnw0VDwCvoqf8y1WDtq4wSBAbthMB1pcVI/0lzdqHGJI3KBJDXle70XK+c7Iv93Gihqo0a5LlOn+g8+DrQ==
