@@ -6,7 +6,7 @@ export interface HelloWorldService {
 }
 
 export interface SearcherService {
-  find(query: string): Promise<SearchResult>
+  find(query): Promise<SearchResult>
 }
 
 export interface Context {
