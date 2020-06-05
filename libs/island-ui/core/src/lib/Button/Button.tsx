@@ -19,6 +19,8 @@ export interface ButtonProps {
   icon?: IconTypes
   children?: ReactNode
   loading?: boolean
+  leftIcon?: IconTypes
+  leftImage?: string
 }
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
@@ -39,6 +41,8 @@ export const Button = forwardRef<
       href,
       icon,
       loading,
+      leftImage,
+      leftIcon,
     },
     ref,
   ) => {
@@ -50,15 +54,16 @@ export const Button = forwardRef<
     )
 
     const isExternal = href && isLinkExternal(href)
+    const isMenuButton = variant === 'menu'
+    const hasLeftContent = leftImage || leftIcon
+    const showRightIcon = icon || isExternal || loading
 
     const anchorProps = {
       ...(isExternal && { rel: 'noreferrer noopener' }),
     }
 
-    const showIcon = icon || isExternal || loading
-
     const Icon = () => {
-      if (!showIcon) {
+      if (!showRightIcon) {
         return null
       }
 
@@ -83,20 +88,40 @@ export const Button = forwardRef<
       )
     }
 
+    const ButtonContent = () => {
+      const LeftImage = () =>
+        leftImage && (
+          <img
+            alt="avatar"
+            style={{
+              backgroundImage: `url(${leftImage})`,
+            }}
+            className={styles.image}
+          />
+        )
+
+      const LeftIcon = () => leftIcon && <IconComponent type={leftIcon} />
+
+      return (
+        <Inline alignY="center" space={2}>
+          {isMenuButton && hasLeftContent ? (
+            <LeftContentContainer>
+              {leftImage ? <LeftImage /> : <LeftIcon />}
+            </LeftContentContainer>
+          ) : null}
+          {children ? children : null}
+          {icon ? <Icon /> : null}
+        </Inline>
+      )
+    }
+
     const sharedProps = {
       className,
     }
 
-    const Content = () => (
-      <Inline space={2}>
-        {children && children}
-        <Icon />
-      </Inline>
-    )
-
     return href ? (
       <a href={href} role="button" {...anchorProps} {...sharedProps}>
-        <Content />
+        <ButtonContent />
       </a>
     ) : (
       <button
@@ -106,7 +131,7 @@ export const Button = forwardRef<
         onClick={onClick}
         {...sharedProps}
       >
-        <Content />
+        <ButtonContent />
       </button>
     )
   },
@@ -117,3 +142,33 @@ const IconContainer = ({ children }) => (
     {children}
   </Box>
 )
+
+const LeftContentContainer = ({ children }) => {
+  return (
+    <>
+      <Box display="inlineBlock" className={styles.leftSpacer} />
+      <Box
+        position="absolute"
+        display="flex"
+        left={0}
+        top={0}
+        bottom={0}
+        alignItems="center"
+        justifyContent="center"
+        background="blue100"
+        className={styles.leftContentContainer}
+      >
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          borderRadius="full"
+          overflow="hidden"
+          className={styles.leftContent}
+        >
+          {children}
+        </Box>
+      </Box>
+    </>
+  )
+}

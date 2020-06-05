@@ -12,6 +12,6 @@ export const badge = style({
 })
 
 export const position = style({
-  top: -5,
-  left: -5,
+  top: -9,
+  left: -9,
 })

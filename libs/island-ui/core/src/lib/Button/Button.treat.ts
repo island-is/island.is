@@ -1,20 +1,23 @@
 import { styleMap, style, globalStyle } from 'treat'
 import { theme, themeUtils } from '../../theme'
 
+const speed = '150ms'
+
 export const button = style({
   display: 'inline-flex',
   position: 'relative',
   justifyContent: 'center',
   alignItems: 'center',
-  borderRadius: '10px',
+  borderRadius: 10,
   outline: 0,
   border: 0,
   cursor: 'pointer',
   fontFamily: 'IBM Plex Sans, sans-serif',
   fontStyle: 'normal',
   fontWeight: theme.typography.semiBold,
-  transition: 'color 150ms ease, background-color 150ms ease',
+  transition: `color ${speed} ease, background-color ${speed} ease`,
   ':disabled': {
+    cursor: 'not-allowed',
     pointerEvents: 'none',
   },
   ':focus': {
@@ -29,57 +32,57 @@ export const button = style({
     position: 'absolute',
     pointerEvents: 'none',
     borderStyle: 'solid',
-    borderWidth: '4px',
+    borderWidth: 4,
     borderColor: theme.color.mint400,
-    borderRadius: '10px',
+    borderRadius: 10,
     top: 0,
     left: 0,
     bottom: 0,
     right: 0,
     opacity: 0,
-    transition: 'opacity 150ms ease',
+    transition: `border-color ${speed} ease, opacity ${speed} ease`,
   },
 })
 
 const sizeMenuDesktop = {
-  height: '48px',
+  height: 48,
   padding: '0 12px',
-  fontSize: '14px',
-  lineHeight: '16px',
+  fontSize: 14,
+  lineHeight: 1.142857,
 }
 
 const sizeMenuMobile = {
-  height: '40px',
+  height: 40,
   padding: '0 12px',
-  fontSize: '12px',
-  lineHeight: '16px',
+  fontSize: 12,
+  lineHeight: 1.333333,
 }
 
 const sizeMediumDesktop = {
-  fontSize: '18px',
-  lineHeight: '28px',
-  height: '64px',
+  fontSize: 18,
+  lineHeight: 1.555555,
+  height: 64,
   padding: '0 24px',
 }
 
 const sizeLargeDesktop = {
-  fontSize: '24px',
-  lineHeight: '34px',
-  height: '80px',
+  fontSize: 24,
+  lineHeight: 1.416666,
+  height: 80,
   padding: '0 24px',
 }
 
 const sizeMediumMobile = {
-  fontSize: '15px',
-  lineHeight: '20px',
-  height: '64px',
+  fontSize: 15,
+  lineHeight: 2.75,
+  height: 64,
   padding: '0 24px',
 }
 
 const sizeLargeMobile = {
-  fontSize: '20px',
-  lineHeight: '28px',
-  height: '72px',
+  fontSize: 20,
+  lineHeight: 1.4,
+  height: 72,
   padding: '0 24px',
 }
 
@@ -144,9 +147,9 @@ export const variants = styleMap({
     },
     ':after': {
       opacity: 1,
-      borderWidth: '1px',
+      borderWidth: 1,
       borderColor: theme.color.blue400,
-      borderRadius: '10px',
+      borderRadius: 10,
     },
     ':hover': {
       color: theme.color.blueberry400,
@@ -169,7 +172,7 @@ export const variants = styleMap({
         borderColor: theme.color.mint400,
       },
       '&:hover:active:after': {
-        borderWidth: '4px',
+        borderWidth: 4,
         opacity: 1,
       },
     },
@@ -179,14 +182,14 @@ export const variants = styleMap({
     color: theme.color.blue400,
     borderRadius: 0,
     fontStyle: 'normal',
-    padding: '0',
+    padding: 0,
     fontWeight: theme.typography.semiBold,
     ':disabled': {
       color: theme.color.blue300,
     },
     ':after': {
       opacity: 1,
-      borderWidth: '1px',
+      borderWidth: 1,
       borderTop: 0,
       borderLeft: 0,
       borderRight: 0,
@@ -201,22 +204,22 @@ export const variants = styleMap({
         borderColor: theme.color.blue300,
       },
       [`&${sizes.small}`]: {
-        height: '24px',
-        fontSize: '14px',
-        lineHeight: '16px',
-        padding: '0',
+        height: 24,
+        fontSize: 14,
+        lineHeight: 1.142857,
+        padding: 0,
       },
       [`&${sizes.medium}`]: {
-        height: '36px',
-        fontSize: '18px',
-        lineHeight: '28px',
-        padding: '0',
+        height: 36,
+        fontSize: 18,
+        lineHeight: 1.555555,
+        padding: 0,
       },
       [`&${sizes.large}`]: {
-        height: '42px',
-        fontSize: '24px',
-        lineHeight: '34px',
-        padding: '0',
+        height: 42,
+        fontSize: 24,
+        lineHeight: 1.416666,
+        padding: 0,
       },
       '&:focus:hover': {
         color: theme.color.dark400,
@@ -232,28 +235,62 @@ export const variants = styleMap({
         borderColor: theme.color.dark400,
       },
       '&:focus:active:after, &:hover:active:after': {
-        borderWidth: '1px',
+        borderWidth: 1,
         borderColor: theme.color.blue400,
         opacity: 1,
       },
     },
   },
   menu: {
+    backgroundColor: theme.color.transparent,
+    borderStyle: 'solid',
+    borderColor: theme.color.blue200,
+    borderWidth: 1,
+    transition: `border-color ${speed} ease`,
     ...themeUtils.responsiveStyle({
       xs: sizeMenuMobile,
       md: sizeMenuDesktop,
     }),
     ':after': {
-      borderColor: theme.color.blue200,
-      borderWidth: 1,
-      opacity: 1,
-      borderRadius: '10px',
+      borderColor: theme.color.mint400,
+      borderWidth: 3,
+      opacity: 0,
+      borderRadius: 10,
+      top: -3,
+      left: -3,
+      bottom: -3,
+      right: -3,
+    },
+    ':disabled': {
+      color: theme.color.dark300,
+      opacity: 0.5,
+    },
+    ':hover': {
+      borderColor: theme.color.blue400,
+      backgroundColor: theme.color.transparent,
+    },
+    ':focus': {
+      borderColor: theme.color.transparent,
+      backgroundColor: theme.color.transparent,
+    },
+    selectors: {
+      [`&:hover:focus`]: {
+        borderColor: theme.color.transparent,
+        backgroundColor: theme.color.transparent,
+      },
+      [`&:hover:after`]: {
+        borderColor: theme.color.blue400,
+      },
+      [`&:focus:after`]: {
+        borderColor: theme.color.mint400,
+        opacity: 1,
+      },
     },
   },
 })
 
 globalStyle(`${button} path`, {
-  transition: 'fill 150ms ease',
+  transition: `fill ${speed} ease`,
 })
 
 // Normal icon colors
@@ -306,11 +343,46 @@ globalStyle(`${variants.menu} path`, {
   fill: theme.color.blue400,
 })
 globalStyle(`${variants.menu}:hover path`, {
-  fill: theme.color.blueberry400,
+  fill: theme.color.blue400,
 })
 globalStyle(`${variants.menu}:focus path`, {
-  fill: theme.color.dark400,
+  fill: theme.color.blue400,
 })
 globalStyle(`${variants.menu}:active path`, {
   fill: theme.color.blue400,
+})
+
+export const leftSpacer = style({
+  ...themeUtils.responsiveStyle({
+    xs: {
+      width: 24,
+    },
+    md: {
+      width: 32,
+    },
+  }),
+})
+
+export const leftContentContainer = style({
+  borderTopLeftRadius: 9,
+  borderBottomLeftRadius: 9,
+  ...themeUtils.responsiveStyle({
+    xs: {
+      width: 40,
+    },
+    md: {
+      width: 48,
+    },
+  }),
+})
+
+export const leftContent = style({
+  height: 32,
+  width: 32,
+})
+
+export const image = style({
+  backgroundSize: 'cover',
+  backgroundPosition: 'center center',
+  backgroundRepeat: 'no-repeat',
 })

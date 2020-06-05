@@ -1,6 +1,8 @@
 import React from 'react'
 import { Badge } from './Badge'
-import { Button, Box } from '../..'
+import { Button, Box, Stack } from '../..'
+
+import avatarImage from '../../assets/avatar.jpg'
 
 export default {
   title: 'Components/Badge',
@@ -26,11 +28,23 @@ export const DoubleDigits = () => {
 export const Wrapper = () => {
   return (
     <Box padding={2}>
-      <Badge number={18}>
-        <Button variant="menu" icon="cheveron">
-          Button here
-        </Button>
-      </Badge>
+      <Stack space={2}>
+        <Badge number={5}>
+          <Button variant="menu" leftImage={avatarImage} icon="cheveron">
+            Button here
+          </Button>
+        </Badge>
+        <Badge number={12}>
+          <Button size="large" icon="caret">
+            Button here
+          </Button>
+        </Badge>
+        <Badge number={38}>
+          <Button variant="ghost" icon="arrow">
+            Button here
+          </Button>
+        </Badge>
+      </Stack>
     </Box>
   )
 }
