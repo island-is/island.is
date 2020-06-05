@@ -18,20 +18,20 @@ const mockAccordion = [
   {
     label: 'Hverjir fá Ferðagjöf?',
     content:
-      'Allir einstaklingar með íslenska kennitölu og eru fæddir árið 2002 eða fyrr fá Ferðagjöf.',
+      'Allir einstaklingar með lögheimili á Íslandi og íslenska kennitölu, sem eru fæddir árið 2002 eða fyrr fá Ferðagjöf.',
   },
   {
-    label: 'Hvernig nota ég Ferðagjöfina?',
+    label: 'Hvernig nálgast ég Ferðagjöfina?',
     content: (
       <Stack space={1}>
         <Typography variant="p">
           Til að nýta Ferðagjöfina þarf að sækja gjöfina hér á Ísland.is með
-          innskráningu. Sótt er smáforritið Ferðagjöf í App eða Play store og
-          strikamerki skannað við kaupa á þjónustu.
+          innskráningu. Smáforritið Ferðagjöf er sótt í App Store eða Play Store
+          og strikamerki skannað við kaup á þjónustu.
         </Typography>
         <Typography variant="p">
-          Einnig er hægt að nýta Ferðagjöfina beint inn á Ísland.is fyrir þá sem
-          ekki eru með snjallsíma.
+          Einnig er hægt að nýta Ferðagjöfina beint inni á Ísland.is fyrir þá
+          sem ekki eru með snjallsíma.
         </Typography>
       </Stack>
     ),
@@ -39,16 +39,16 @@ const mockAccordion = [
   {
     label: 'Hvar get ég notað Ferðagjöfina?',
     content:
-      'Ferðagjöfina má nýta hjá Ferðaþjónustufyrirtækjum viðsvegar um landið.  Sjá má yfirlit yfir fyrirtæki sem hafa skráð sig til þátttöku á Ferðalag.is og í smáforritinu Ferðagjöf',
+      'Ferðagjöfina má nýta hjá ferðaþjónustufyrirtækjum víðs vegar um landið.  Sjá má yfirlit yfir fyrirtæki sem hafa skráð sig til þátttöku á vefnum Ferðalag.is og í smáforritinu Ferðagjöf.',
   },
   {
-    label: 'Get ég gefið Ferðagjöfina áfram?',
+    label: 'Get ég gefið Ferðagjöfina?',
     content:
-      'Allir eru hvattir til að nýta gjöfina en heimilt er að gefa eigin gjöf, hver einstaklingur getur þó að hámarki nýtt 15 Ferðagjafir.',
+      'Allir eru hvattir til að nýta gjöfina en heimilt er að gefa eigin gjöf. Hver einstaklingur getur þó að hámarki fengið 15 Ferðagjafir að gjöf.',
   },
   {
     label: 'Hver er gildistími Ferðagjafarinnar?',
-    content: 'Ferðagjöfin er í gildi til 31.desember 2020.  ',
+    content: 'Ferðagjöfin er í gildi til 31. desember 2020.',
   },
 ]
 
@@ -75,11 +75,11 @@ function Home() {
                 íslenskri ferðaþjónustu
               </Typography>
               <Typography variant="p">
-                Allir einstaklingar 18 ára og eldri fá Ferðagjöf að andvirði
+                Allir einstaklingar fæddir 2002 og fyrr fá Ferðagjöf að andvirði
                 5.000 kr. Gjöfin er liður í því að styðja við bakið á íslenskri
-                ferðaþjónustu í kjölfar kórónufaraldurs og efla þannig íslenska
-                ferðaþjónustu sem og hvetja landsmenn til að eiga góðar stundir
-                á ferðalagi víðsvegar um landið.
+                ferðaþjónustu í kjölfar heimsfaraldurs kórónuveiru og efla
+                þannig íslenska ferðaþjónustu sem og hvetja landsmenn til að
+                eiga góðar stundir á ferðalagi víðs vegar um landið.
               </Typography>
             </Stack>
           </Box>
