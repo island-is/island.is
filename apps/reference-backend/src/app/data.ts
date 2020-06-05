@@ -1,7 +1,4 @@
-import { Model, DataTypes } from 'sequelize'
-
-import { Sequelize } from 'sequelize'
-
+import { Model, DataTypes, Sequelize } from 'sequelize'
 import { environment } from '../environments'
 
 const { databaseUri } = environment
