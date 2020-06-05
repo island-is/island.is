@@ -31,7 +31,7 @@ const CategoryPage = () => {
   }
 
   return (
-    <ContentBlock width="large">
+    <ContentBlock>
       <Box padding={[0, 0, 0, 6]}>
         <div className={styles.layout}>
           <div className={styles.side}>
