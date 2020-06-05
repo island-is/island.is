@@ -133,8 +133,19 @@
 					}
 				}
 			},
-			"type": {
+			"content_type": {
 				"type": "keyword"
+			},
+			"content_id": {
+				"type":"keyword"
+			},
+			"content_source": {
+				"type": "keyword"
+			},
+			"content_blob": {
+				"type":"text",
+				"index": false,
+				"store": true
 			},
 			"all": {
 				"type": "text",
