@@ -9,11 +9,13 @@ export default {
   ferdalag: {
     url: process.env.FERDALAG_URL,
     apiKey: process.env.FERDALAG_API_KEY,
+    ttl: process.env.CACHE_TIME_TO_LIVE,
   },
   rsk: {
     url: process.env.RSK_URL,
     username: process.env.RSK_USERNAME,
     password: process.env.RSK_API_PASSWORD,
+    ttl: process.env.CACHE_TIME_TO_LIVE,
   },
   redis: {
     url: process.env.REDIS_URL,
