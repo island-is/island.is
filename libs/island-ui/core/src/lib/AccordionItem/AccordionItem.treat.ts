@@ -13,7 +13,7 @@ export const icon = style({
   justifyContent: 'center',
   backgroundColor: theme.color.blue100,
   borderRadius: '50%',
-  transform: 'rotate(0deg)',
+  transform: 'rotate(0.000001deg)',
   transition: 'transform 300ms ease',
 })
 
