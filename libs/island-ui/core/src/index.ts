@@ -17,6 +17,9 @@ export * from './lib/Breadcrumbs/Breadcrumbs'
 export * from './lib/BulletList/BulletList'
 export * from './lib/VideoIframe/VideoIframe'
 export * from './lib/Footer/Footer'
+export * from './lib/Tooltip/Tooltip'
+export * from './lib/InputError/InputError'
+export * from './lib/FieldPolarQuestion/FieldPolarQuestion'
 
 // Layout
 export * from './lib/Box/Box'
