@@ -22,8 +22,6 @@ interface ServiceProvider {
   }
 }
 
-const ONE_DAY = 86400
-
 class FerdalagAPI extends RESTDataSource {
   baseURL = `${ferdalag.url}/ssn/`
 
@@ -35,7 +33,9 @@ class FerdalagAPI extends RESTDataSource {
   async getServiceProviders(ssn: string): Promise<ServiceProvider[]> {
     try {
       console.debug(`Requesting service provider for ${ssn}`)
-      const res = await this.get(ssn, null, { cacheOptions: { ttl: ONE_DAY } })
+      const res = await this.get(ssn, null, {
+        cacheOptions: { ttl: ferdalag.ttl },
+      })
       if (!res.status) {
         throw new Error(res.errors || res.message)
       }

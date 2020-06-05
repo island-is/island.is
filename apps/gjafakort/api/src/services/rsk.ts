@@ -14,8 +14,6 @@ interface CompanyRegistryMember {
   ErProkuruhafi: '0' | '1'
 }
 
-const ONE_DAY = 86400
-
 class RskAPI extends RESTDataSource {
   baseURL = `${rsk.url}/companyregistry/members/`
 
@@ -31,7 +29,7 @@ class RskAPI extends RESTDataSource {
     userSSN: string,
   ): Promise<CompanyRegistryMember[]> {
     const res = await this.get(`${userSSN}/companies`, null, {
-      cacheOptions: { ttl: ONE_DAY },
+      cacheOptions: { ttl: rsk.ttl },
     })
     const { MemberCompanies } = res
     if (!MemberCompanies) {
