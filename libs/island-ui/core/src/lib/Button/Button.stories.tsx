@@ -46,7 +46,7 @@ const makeButton = (variant: ButtonVariant = 'normal', text = '') => {
 
 const makeMenuButton = (text = '', props) => {
   const iconLabel = 'Icon'
-  const iconOptions = ['', 'cheveron', 'loading', 'external', 'arrow']
+  const iconOptions = ['', 'cheveron', 'loading', 'external', 'arrowRight']
   const iconDefaultValue = 'cheveron'
 
   const icon: string = select(iconLabel, iconOptions, iconDefaultValue)

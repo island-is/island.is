@@ -382,6 +382,9 @@ export const leftContent = style({
 })
 
 export const image = style({
+  display: 'inline-block',
+  width: '100%',
+  height: '100%',
   backgroundSize: 'cover',
   backgroundPosition: 'center center',
   backgroundRepeat: 'no-repeat',

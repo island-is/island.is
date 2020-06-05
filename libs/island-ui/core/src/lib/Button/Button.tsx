@@ -91,8 +91,7 @@ export const Button = forwardRef<
     const ButtonContent = () => {
       const LeftImage = () =>
         leftImage && (
-          <img
-            alt="avatar"
+          <div
             style={{
               backgroundImage: `url(${leftImage})`,
             }}
@@ -162,7 +161,7 @@ const LeftContentContainer = ({ children }) => {
           display="flex"
           alignItems="center"
           justifyContent="center"
-          borderRadius="full"
+          borderRadius="circle"
           overflow="hidden"
           className={styles.leftContent}
         >
