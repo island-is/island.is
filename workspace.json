@@ -281,6 +281,16 @@
             ]
           }
         },
+        "env-secrets": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "./scripts/secrets.sh gjafakort --reset"
+              }
+            ]
+          }
+        },
         "docker-express": {}
       }
     },

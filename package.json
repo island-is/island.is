@@ -21,6 +21,7 @@
     "affected:docker": "nx affected --target=docker",
     "affected": "nx affected",
     "generate": "nx generate",
+    "env-secrets": "nx env-secrets",
     "format": "nx format:write",
     "format:write": "nx format:write",
     "format:check": "nx format:check",
