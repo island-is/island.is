@@ -13,5 +13,9 @@ module.exports = {
     `)
   },
 
-  down: (queryInterface, Sequelize) => {},
+  down: (queryInterface, Sequelize) => {
+    return queryInterface.sequelize.query(`
+        DROP TABLE sample_app;
+    `)
+  },
 }
