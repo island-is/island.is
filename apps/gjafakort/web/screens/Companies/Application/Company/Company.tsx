@@ -21,7 +21,6 @@ export const GetCompanyQuery = gql`
         generalEmail
         webpage
         phoneNumber
-        approveTerms
         companyName
         companyDisplayName
       }

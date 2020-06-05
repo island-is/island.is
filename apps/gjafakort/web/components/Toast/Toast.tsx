@@ -41,7 +41,7 @@ function Toast() {
 
   return (
     <Box
-      position="absolute"
+      position="fixed"
       background="red100"
       top={20}
       right={0}

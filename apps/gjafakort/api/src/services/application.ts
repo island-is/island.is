@@ -21,7 +21,7 @@ interface ApplicationResponse {
     generalEmail: string
     webpage: string
     phoneNumber: string
-    approveTerms: boolean
+    operationsTrouble: boolean
     companyName: string
     companyDisplayName: string
     comments: string[]

@@ -9,27 +9,31 @@ export default gql`
     companySSN: String!
     serviceCategory: String
     generalEmail: String!
-    webpage: String!
-    phoneNumber: String!
-    approveTerms: Boolean
-    companyName: String
     companyDisplayName: String
+    companyName: String
+    exhibition: Boolean
+    operatingPermitForRestaurant: Boolean
+    operatingPermitForVehicles: Boolean
+    operationsTrouble: Boolean
+    phoneNumber: String!
+    validLicenses: Boolean
+    validPermit: Boolean
+    webpage: String!
   }
 
   input CreateApplicationInput {
     email: String!
     generalEmail: String!
     phoneNumber: String!
-    approveTerms: Boolean!
+    operationsTrouble: Boolean!
     companySSN: String!
     name: String!
     serviceCategory: String!
     webpage: String!
     companyName: String!
     companyDisplayName: String!
-    acknowledgedMuseum: Boolean!
+    operatingPermitForRestaurant: Boolean!
     exhibition: Boolean!
-    followingLaws: Boolean!
     operatingPermitForVehicles: Boolean!
     validLicenses: Boolean!
     validPermit: Boolean!
