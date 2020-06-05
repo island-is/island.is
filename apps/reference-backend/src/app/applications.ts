@@ -1,5 +1,5 @@
 import { Counter } from 'prom-client'
-import { ApplicationsModel } from './data'
+import { ApplicationModel } from './data'
 import { logger } from '@island.is/logging'
 
 const applicationsRegistered = new Counter({
@@ -15,7 +15,7 @@ export class Applications {
   public async register({ ssn }: { ssn: string }) {
     if (ssn && ssn.length === 10) {
       logger.debug(`SSN looks valid`)
-      const newApp = await ApplicationsModel.create({ ssn })
+      const newApp = await ApplicationModel.create({ ssn })
       applicationsRegistered.labels('res1').inc()
       return newApp.id
     } else {
@@ -25,6 +25,6 @@ export class Applications {
   }
 
   public async getBySsn({ ssn }: { ssn: string }) {
-    return await ApplicationsModel.findOne({ where: { ssn } })
+    return await ApplicationModel.findOne({ where: { ssn } })
   }
 }

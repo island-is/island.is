@@ -17,6 +17,7 @@ export const runServer = (opts: RunServerParams) => {
   initTracing(opts.name)
 
   app.use(express.json())
+  app.use(express.urlencoded({ extended: true }))
 
   collectDefaultMetrics()
 
@@ -27,19 +28,16 @@ export const runServer = (opts: RunServerParams) => {
     buckets: [0.1, 5, 15, 50, 100, 200, 300, 400, 500], // buckets for response time from 0.1ms to 500ms
   })
 
-  // metrics related middleware part 1
-  app.use((req, res, next) => {
+  app.use(function collectRouteMetricsPart1(req, res, next) {
     res.locals.startEpoch = Date.now()
     next()
   })
 
-  // open areas
-  app.get('/status', (req, res) => {
+  app.get('/liveness', function liveness(req, res) {
     res.json({ ok: true })
   })
 
-  // version of the code running
-  app.get('/version', (req, res) => {
+  app.get('/version', function versionOfCode(req, res) {
     res.json({ version: process.env.REVISION })
   })
 
@@ -58,8 +56,7 @@ export const runServer = (opts: RunServerParams) => {
   // secured
   app.use('/', opts.routes)
 
-  // metrics related middleware part 2
-  app.use((req, res, next) => {
+  app.use(function collectRouteMetricsPart1(req, res, next) {
     const responseTimeInMs = Date.now() - res.locals.startEpoch
 
     httpRequestDurationMicroseconds
@@ -69,8 +66,7 @@ export const runServer = (opts: RunServerParams) => {
     next()
   })
 
-  // error code handler
-  app.use(function(err, req, res, next) {
+  app.use(function errorHandler(err, req, res, next) {
     logger.error(`Status code: ${err.status}, msg: ${err.message}`)
     res.status(err.status || 500)
     res.send(err.message)

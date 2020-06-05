@@ -25,7 +25,7 @@ export const sequelize = new Sequelize(databaseUri, {
   logging: false,
 })
 
-export class ApplicationsModel extends Model {
+export class ApplicationModel extends Model {
   public id!: string
 
   public ssn!: string
@@ -33,7 +33,7 @@ export class ApplicationsModel extends Model {
   public readonly modified!: Date
 }
 
-ApplicationsModel.init(
+ApplicationModel.init(
   {
     id: {
       type: DataTypes.UUID,
