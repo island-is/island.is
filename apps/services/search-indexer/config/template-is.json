@@ -1,0 +1,161 @@
+{
+	"order": 0,
+	"version": 1,
+	"index_patterns": [
+		"island-is-v*"
+	],
+	"settings": {
+		"analysis": {
+			"filter": {
+				"icelandic_stemmer": {
+					"type": "stemmer_override",
+					"rules_path": "analyzers/{STEMMER}"
+				},
+				"icelandic_stop": {
+					"type": "stop",
+					"stopwords_path": "analyzers/{STOPWORDS}"
+				},
+				"icelandic_keyword": {
+					"type": "keyword_marker",
+					"keywords_path": "analyzers/{KEYWORDS}",
+					"ignore_case": true
+				},
+				"icelandic_synonym": {
+					"type": "synonym",
+					"synonyms_path": "analyzers/{SYNONYMS}",
+					"lenient": true
+				}
+			},
+			"analyzer": {
+				"title_icelandic": {
+					"type": "custom",
+					"tokenizer": "standard",
+					"filter": [
+						"lowercase",
+						"icelandic_synonym",
+						"icelandic_stop",
+						"icelandic_keyword",
+						"icelandic_stemmer"
+					]
+				},
+				"content_icelandic": {
+					"type": "custom",
+					"tokenizer": "standard",
+					"filter": [
+						"lowercase",
+						"icelandic_synonym",
+						"icelandic_stop",
+						"icelandic_keyword",
+						"icelandic_stemmer"
+					]
+				}
+			}
+		}
+	},
+	"mappings": {
+		"properties": {
+			"title": {
+				"type": "text",
+				"fields": {
+					"sort": {
+						"type": "icu_collation_keyword",
+						"index": false,
+						"language": "is",
+						"country": "is"
+					},
+					"stemmed": {
+						"type": "text",
+						"analyzer": "title_icelandic"
+					}
+				}
+			},
+			"content": {
+				"type": "text",
+				"fields": {
+					"stemmed": {
+						"type": "text",
+						"analyzer": "content_icelandic"
+					}
+				}
+			},
+			"date_created": {
+				"type": "date"
+			},
+			"date_updated": {
+				"type": "date"
+			},
+			"date": {
+				"type": "date"
+			},
+			"category": {
+				"type": "keyword",
+				"fields": {
+					"stemmed": {
+						"type": "text",
+						"analyzer": "title_icelandic"
+					}
+				}
+			},
+			"lang": {
+				"type": "keyword"
+			},
+			"tag": {
+				"type": "keyword",
+				"fields": {
+					"stemmed": {
+						"type": "text",
+						"analyzer": "title_icelandic"
+					}
+				}
+			},
+			"url": {
+				"type": "keyword",
+				"fields": {
+					"tokenized": {
+						"type": "text"
+					}
+				}
+			},
+			"slug": {
+				"type": "keyword"
+			},
+			"image": {
+				"type": "keyword",
+				"index": false
+			},
+			"image_text": {
+				"type": "text",
+				"index": false,
+				"fields": {
+					"stemmed": {
+						"type": "text",
+						"analyzer": "title_icelandic"
+					}
+				}
+			},
+			"type": {
+				"type": "keyword"
+			},
+			"all": {
+				"type": "text",
+				"store": false,
+				"fields": {
+					"stemmed": {
+						"type": "text",
+						"analyzer": "content_icelandic"
+					}
+				}
+			},
+			"titles": {
+				"type": "text",
+				"store": false,
+				"fields": {
+					"stemmed": {
+						"type": "text",
+						"analyzer": "title_icelandic"
+					}
+				}
+			}
+		}
+	}
+}

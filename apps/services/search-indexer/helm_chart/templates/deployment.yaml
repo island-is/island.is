@@ -21,6 +21,19 @@ spec:
       serviceAccountName: {{ include "search-indexer-service.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: migration
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          command: "{{ .Values.initEnvironment.migration_script }}"
+          env:
+            {{- with .Values.environment }}
+            - name: ELASTIC_NODE
+              value: {{ .elastic_node }}
+            - name: APPLICATION_URL
+              value: {{ .application_url }}
+            - name: ELASTIC_INDEX
+              value: {{ .elastic_index }}
+            {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -45,6 +58,8 @@ spec:
               value: {{ .elastic_node }}
             - name: APPLICATION_URL
               value: {{ .application_url }}
+            - name: ELASTIC_INDEX
+              value: {{ .elastic_index }}
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
