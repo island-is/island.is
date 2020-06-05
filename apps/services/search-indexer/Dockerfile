@@ -28,5 +28,7 @@ USER runner
 COPY --from=builder --chown=runner:runners /build/dist/apps/services/search-indexer /webapp
 COPY --from=builder --chown=runner:runners /build/node_modules /webapp/node_modules
 
+RUN chmod +x /webapp/bin/*.sh
+
 ENTRYPOINT [ "node" ]
 CMD [ "main.js" ]

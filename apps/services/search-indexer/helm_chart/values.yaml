@@ -18,7 +18,11 @@ fullnameOverride: ""
 
 environment:
   application_url: "http://search-indexer-service"
-  elastic_node: "http://localhost:9200"
+  elastic_node: "https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com"
+  elastic_index: "island-is"
+
+initEnvirontment:
+  migration_script: /webapp/bin/migrate.sh
 
 serviceAccount:
   # Specifies whether a service account should be created
