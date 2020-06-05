@@ -35,7 +35,7 @@ function ArticlePage() {
   }
 
   return (
-    <ContentBlock width="large">
+    <ContentBlock>
       <Box padding={[0, 0, 0, 6]}>
         <div className={cn(styles.layout, styles.reversed)}>
           <div className={styles.side}>
