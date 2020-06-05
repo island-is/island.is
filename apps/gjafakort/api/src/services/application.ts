@@ -50,7 +50,7 @@ export const createApplication = async (
   const data = await res.json()
 
   context.channel.publish({
-    exchangeId: context.appExchangeId,
+    exchangeId: context.companyApplicationExchangeId,
     message: data.application,
     routingKey: data.application.state,
   })

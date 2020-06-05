@@ -1,6 +1,5 @@
 export default {
   production: true,
-  exchangeName: 'gjafakort-application-updates-topic',
   applicationUrl: process.env.APPLICATION_URL,
   ferdalag: {
     url: process.env.FERDALAG_URL,

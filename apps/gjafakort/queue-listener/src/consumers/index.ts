@@ -4,14 +4,16 @@ import { logger } from '@island.is/logging'
 import { environment } from '../environments'
 import handlers from './handlers'
 
-const { production, exchangeName } = environment
+const { production } = environment
 
 export const startConsumers = async () => {
   const channel = MsgQueue.connect(production)
-  const exchangeId = await channel.declareExchange({ name: exchangeName })
 
   return Promise.all(
     handlers.map(async (handler) => {
+      const exchangeId = await channel.declareExchange({
+        name: handler.exchangeName,
+      })
       const queueId = await channel.declareQueue({ name: handler.queueName })
       const dlQueueName = `${handler.queueName}-deadletter`
       const dlQueueId = await channel.declareQueue({ name: dlQueueName })

@@ -3,7 +3,7 @@ import { Consumer } from 'sqs-consumer'
 
 import { logger } from '@island.is/logging'
 
-import { Message, RoutingKey } from './types'
+import { Message, RoutingKey, Exchange } from './types'
 
 AWS.config.update({ region: 'eu-west-1' })
 
@@ -26,7 +26,7 @@ class Channel {
     })
   }
 
-  async declareExchange({ name }: { name: string }) {
+  async declareExchange({ name }: { name: Exchange }) {
     const { TopicArn } = await this.sns.createTopic({ Name: name }).promise()
     logger.info(`Declared exchange ${TopicArn}`)
     return TopicArn

@@ -1,6 +1,6 @@
-export type RoutingKey = ApplicationRoutingKey
+export type RoutingKey = GjafakortApplicationRoutingKey
 
-export type ApplicationRoutingKey =
+export type GjafakortApplicationRoutingKey =
   | 'approved'
   | 'pending'
   | 'rejected'

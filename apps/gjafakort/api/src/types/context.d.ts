@@ -6,7 +6,7 @@ export type User = {
 
 export interface GraphQLContext {
   channel: Channel
-  appExchangeId: string
+  companyApplicationExchangeId: string
   user?: User
 }
 
