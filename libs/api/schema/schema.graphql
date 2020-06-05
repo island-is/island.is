@@ -1,3 +1,27 @@
+input ArticleInput {
+  _id: ID
+  title: String
+  slug: String
+  content: String
+}
+
+input CategoryInput {
+  id: ID
+  slug: String
+}
+
+type ContentArticle {
+  _id: ID
+  title: String
+  slug: String
+}
+
+type ContentCategory {
+  _id: ID
+  title: String
+  slug: String
+}
+
 type HelloWorld {
   message: String!
 }
@@ -11,9 +35,11 @@ type Mutation {
 }
 
 type Query {
-  content(query: SearcherInput): [SearchResult!]!
+  article(input: ArticleInput): [SearchResult!]!
+  category(input: CategoryInput): ContentCategory
   helloWorld(input: HelloWorldInput): HelloWorld!
   root: String
+  search(query: SearcherInput): [SearchResult!]!
 }
 
 input SearcherInput {
