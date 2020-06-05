@@ -31,7 +31,8 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-      return res.status(400).json({ error: errors.array() })
+      logger.error(errors.array())
+      return res.redirect('/error')
     }
 
     const { token } = req.body
@@ -43,12 +44,12 @@ router.post(
       verifyResult = await loginIS.verify(token)
     } catch (err) {
       logger.error(err)
-      return res.status(401).json({ error: 'Unauthorized' })
+      return res.redirect('/error')
     }
 
     const { user } = verifyResult
     if (!user || authId !== user?.authId || returnUrl.charAt(0) !== '/') {
-      return res.status(401).json({ error: 'Invalid auth state' })
+      return res.redirect('/error')
     }
 
     const csrfToken = new Entropy({ bits: 128 }).string()
@@ -63,7 +64,7 @@ router.post(
 
     const tokenParts = jwtToken.split('.')
     if (tokenParts.length !== 3) {
-      return res.status(401).json({ error: 'Invalid auth state' })
+      return res.redirect('/error')
     }
 
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000

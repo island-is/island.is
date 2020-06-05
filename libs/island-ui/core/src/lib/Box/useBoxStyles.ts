@@ -35,6 +35,7 @@ export interface UseBoxStylesProps {
   alignItems?: ResponsiveProp<keyof typeof styleRefs.alignItems>
   justifyContent?: ResponsiveProp<keyof typeof styleRefs.justifyContent>
   textAlign?: ResponsiveProp<keyof typeof styleRefs.textAlign>
+  border?: keyof typeof styleRefs.border
   borderRadius?: keyof typeof styleRefs.borderRadius
   background?: keyof typeof styleRefs.background
   boxShadow?: keyof typeof styleRefs.boxShadow
@@ -81,6 +82,7 @@ export const useBoxStyles = ({
   alignItems,
   justifyContent,
   textAlign,
+  border,
   borderRadius,
   background,
   boxShadow,
@@ -124,6 +126,7 @@ export const useBoxStyles = ({
     component !== null &&
       resetStyles.element[component as keyof typeof resetStyleRefs.element],
     styles.background[background!],
+    styles.border[border!],
     styles.borderRadius[borderRadius!],
     styles.boxShadow[boxShadow!],
     styles.transition[transition!],

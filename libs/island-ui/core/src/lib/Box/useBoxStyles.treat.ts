@@ -107,17 +107,18 @@ export const transition = styleMap(({ transitions }) =>
   mapToStyleProperty(transitions, 'transition'),
 )
 
-const borderRadiusRules = {
-  full: '50%',
-  standard: '4px',
-}
+export const border = styleMap({
+  standard: {
+    border: `${theme.border.style.solid} ${theme.border.width.standard}px ${theme.border.color.standard}`,
+  },
+  focus: {
+    border: `${theme.border.style.solid} ${theme.border.width.standard}px ${theme.border.color.focus}`,
+  },
+})
+
 export const borderRadius = {
   ...styleMap(
-    mapToStyleProperty(borderRadiusRules, 'borderRadius'),
-    'borderRadius',
-  ),
-  ...styleMap(
-    ({ border }) => mapToStyleProperty(border.radius, 'borderRadius'),
+    mapToStyleProperty(theme.border.radius, 'borderRadius'),
     'borderRadius',
   ),
 }
@@ -427,6 +428,7 @@ export const minWidth = styleMap(
 
 const relativePositionRules = {
   0: 0,
+  20: '20px',
 }
 // Remove this when 'styleMap' supports numbers as keys and it's been released to sku consumers,
 type PositionRulesType = Record<keyof typeof relativePositionRules, string>
