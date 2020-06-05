@@ -6,7 +6,6 @@ import * as styles from './Icon.treat'
 
 export type IconTypes =
   | 'alert'
-  | 'arrow'
   | 'arrowLeft'
   | 'arrowRight'
   | 'bullet'

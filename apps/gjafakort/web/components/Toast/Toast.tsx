@@ -6,7 +6,6 @@ import {
   Column,
   Icon,
   Typography,
-  theme,
 } from '@island.is/island-ui/core'
 
 import { NotificationService } from '../../services'
@@ -54,7 +53,7 @@ function Toast() {
       <Columns>
         <Column width="content">
           <Box marginRight={2} alignItems="center" display="flex">
-            <Icon type="alert" color={theme.color.red400} />
+            <Icon type="alert" color="red400" />
           </Box>
         </Column>
         <Column>
@@ -70,7 +69,7 @@ function Toast() {
             cursor="pointer"
             onClick={handleClose}
           >
-            <Icon type="close" color={theme.color.dark200} />
+            <Icon type="close" color="dark200" />
           </Box>
         </Column>
       </Columns>
