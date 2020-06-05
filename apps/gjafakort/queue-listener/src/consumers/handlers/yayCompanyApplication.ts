@@ -1,8 +1,9 @@
 import md5 from 'crypto-js/md5'
 
 import {
-  ApplicationMessage,
-  ApplicationRoutingKey,
+  GjafakortApplicationMessage,
+  GjafakortApplicationRoutingKey,
+  GjafakortApplicationExchange,
 } from '@island.is/message-queue'
 import { logger } from '@island.is/logging'
 
@@ -14,13 +15,16 @@ const {
   yay: { url, apiKey, secretKey },
 } = environment
 
-export const routingKeys: ApplicationRoutingKey[] = [
+export const exchangeName: GjafakortApplicationExchange =
+  'gjafakort-company-application-updates'
+
+export const routingKeys: GjafakortApplicationRoutingKey[] = [
   'approved',
   'pending',
   'rejected',
 ]
 
-export const queueName = 'gjafakort-yay-application'
+export const queueName = 'gjafakort-yay-company-application'
 
 const getHeaders = () => {
   const timestamp = new Date().toISOString()
@@ -32,8 +36,8 @@ const getHeaders = () => {
 }
 
 export const handler = async (
-  message: ApplicationMessage,
-  routingKey: ApplicationRoutingKey,
+  message: GjafakortApplicationMessage,
+  routingKey: GjafakortApplicationRoutingKey,
 ) => {
   logger.debug(
     `receiving message ${message.id} on ${queueName} with routingKey ${routingKey}`,

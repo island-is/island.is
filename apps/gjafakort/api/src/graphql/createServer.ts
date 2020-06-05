@@ -10,7 +10,7 @@ import { verifyToken, ACCESS_TOKEN_COOKIE } from '../domains'
 import { Resolvers, GraphQLContext } from '../types'
 import rootTypeDefs from './typeDefs'
 
-const { production, applicationExchange } = environment
+const { production } = environment
 
 const createServer = async (
   resolvers: Resolvers[],
@@ -26,10 +26,11 @@ const createServer = async (
   )
 
   const channel = await MessageQueue.connect(production)
+  const exchangeName = 'gjafakort-company-application-updates'
   const context = {
     channel,
-    appExchangeId: await channel.declareExchange({
-      name: applicationExchange,
+    companyApplicationExchangeId: await channel.declareExchange({
+      name: exchangeName,
     }),
   }
 

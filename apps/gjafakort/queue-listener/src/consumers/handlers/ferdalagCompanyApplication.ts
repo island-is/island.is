@@ -1,6 +1,7 @@
 import {
-  ApplicationMessage,
-  ApplicationRoutingKey,
+  GjafakortApplicationMessage,
+  GjafakortApplicationRoutingKey,
+  GjafakortApplicationExchange,
 } from '@island.is/message-queue'
 import { logger } from '@island.is/logging'
 
@@ -12,16 +13,19 @@ const {
   ferdalag: { url, apiKey },
 } = environment
 
-export const routingKeys: ApplicationRoutingKey[] = [
+export const exchangeName: GjafakortApplicationExchange =
+  'gjafakort-company-application-updates'
+
+export const routingKeys: GjafakortApplicationRoutingKey[] = [
   'approved',
   'manual-approved',
 ]
 
-export const queueName = 'gjafakort-ferdalag-application'
+export const queueName = 'gjafakort-ferdalag-company-application'
 
 export const handler = async (
-  message: ApplicationMessage,
-  routingKey: ApplicationRoutingKey,
+  message: GjafakortApplicationMessage,
+  routingKey: GjafakortApplicationRoutingKey,
 ) => {
   logger.debug(
     `receiving message ${message.id} on ${queueName} with routingKey ${routingKey}`,

@@ -1,6 +1,6 @@
-export type Message = ApplicationMessage
+export type Message = GjafakortApplicationMessage
 
-export interface ApplicationMessage {
+export interface GjafakortApplicationMessage {
   id: string
   state: string
   issuerSSN: string

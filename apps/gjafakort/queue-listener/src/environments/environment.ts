@@ -1,6 +1,5 @@
 export default {
   production: false,
-  exchangeName: 'gjafakort-application-updates-topic',
   applicationUrl: 'http://localhost:4242',
   ferdalag: {
     url: 'https://island-dev-dot-itb-gagnagrunnur-dev.appspot.com',
