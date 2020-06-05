@@ -31,11 +31,7 @@ const CategoryPage = () => {
   }
 
   return (
-<<<<<<< HEAD
-    <ContentBlock>
-=======
     <ContentBlock width="large">
->>>>>>> Work on frontpage components
       <Box padding={[0, 0, 0, 6]}>
         <div className={styles.layout}>
           <div className={styles.side}>
