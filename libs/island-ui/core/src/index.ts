@@ -20,6 +20,7 @@ export * from './lib/Footer/Footer'
 export * from './lib/Tooltip/Tooltip'
 export * from './lib/InputError/InputError'
 export * from './lib/FieldPolarQuestion/FieldPolarQuestion'
+export * from './lib/Badge/Badge'
 
 // Layout
 export * from './lib/Box/Box'

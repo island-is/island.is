@@ -98,13 +98,13 @@ export const paddingXl = {
 }
 
 export const transform = {
-  touchable: style(({ transforms }) => ({
-    ':active': { transform: transforms.touchable },
-  })),
+  touchable: style({
+    ':active': { transform: theme.transforms.touchable },
+  }),
 }
 
-export const transition = styleMap(({ transitions }) =>
-  mapToStyleProperty(transitions, 'transition'),
+export const transition = styleMap(
+  mapToStyleProperty(theme.transitions, 'transition'),
 )
 
 export const border = styleMap({
