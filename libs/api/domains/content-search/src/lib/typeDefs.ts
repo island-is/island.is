@@ -14,8 +14,34 @@ export const typeDefs = gql`
     tag: String
   }
 
+  input CategoryInput {
+    id: ID,
+    slug: String
+  }
+
+  type ContentCategory {
+    _id: ID
+    title: String
+    slug: String
+  }
+
+  input ArticleInput {
+    _id: ID
+    title: String
+    slug: String
+    content: String
+  }
+
+  type ContentArticle {
+    _id: ID
+    title: String
+    slug: String
+  }
+
   extend type Query {
-    content(query: SearcherInput): [SearchResult!]!
+    search(query: SearcherInput): [SearchResult!]!
+    category(input: CategoryInput): ContentCategory
+    article(input: ArticleInput): [SearchResult!]!
   }
 `
 

@@ -1,18 +1,25 @@
-type Article {
-  id: String!
-  slug: String!
-  title: String!
+input ArticleInput {
+  _id: ID
+  title: String
+  slug: String
   content: String
 }
 
-input GetArticleInput {
+input CategoryInput {
+  id: ID
   slug: String
-  lang: String!
 }
 
-input GetNamespaceInput {
-  namespace: String
-  lang: String!
+type ContentArticle {
+  _id: ID
+  title: String
+  slug: String
+}
+
+type ContentCategory {
+  _id: ID
+  title: String
+  slug: String
 }
 
 type HelloWorld {
@@ -33,11 +40,11 @@ type Namespace {
 }
 
 type Query {
-  content(query: SearcherInput): [SearchResult!]!
-  getArticle(input: GetArticleInput): Article
-  getNamespace(input: GetNamespaceInput): Namespace
+  article(input: ArticleInput): [SearchResult!]!
+  category(input: CategoryInput): ContentCategory
   helloWorld(input: HelloWorldInput): HelloWorld!
   root: String
+  search(query: SearcherInput): [SearchResult!]!
 }
 
 input SearcherInput {

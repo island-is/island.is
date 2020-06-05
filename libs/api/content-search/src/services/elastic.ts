@@ -32,6 +32,10 @@ export class ElasticService {
     };
     let isEmpty = true;
 
+    if (query?._id) {
+      isEmpty = false;
+      body.query.bool.must.push({ "match": { "_id": query._id }});
+    }
     if (query?.tag) {
       isEmpty = false;
       body.query.bool.must.push({ "term": { "tag": query.tag }});

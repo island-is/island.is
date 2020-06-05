@@ -14,9 +14,14 @@ export class SearcherService implements Service {
     });
   }
 
-  getMessage(name: string) {
-    const searcher = 'Searcher Testing '
-    return `${searcher} ${name}!`
+  async getArticle(input): Promise<SearchResult> {
+    const { body } = await this.repository.query(SearchIndexes.test, input);
+
+    return body?.hits?.hits.map((hit) => {
+      const obj = hit._source;
+      obj._id = hit._id;
+      return obj;
+    });
   }
 }
 
