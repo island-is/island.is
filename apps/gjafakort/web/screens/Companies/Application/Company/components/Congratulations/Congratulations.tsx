@@ -15,17 +15,6 @@ import {
 import packageSvg from '@island.is/gjafakort-web/assets/ferdagjof-pakki.svg'
 import Layout from '@island.is/gjafakort-web/components/Layout/Layout'
 
-const mockAccordion = [
-  {
-    label: 'Hvernig tengi ég við kerfið?',
-    content: '',
-  },
-  {
-    label: 'Hvaða fyrirtæki mega taka þátt?',
-    content: '',
-  },
-]
-
 function Congratulations() {
   return (
     <Layout
@@ -34,32 +23,23 @@ function Congratulations() {
           <Box marginBottom={6}>
             <Stack space={3}>
               <Typography variant="h1" as="h1">
-                Til hamingju
+                Til hamingju!
               </Typography>
               <Typography variant="intro">
-                Til þess að sjá nánar skráir þú þig inná kerfið hjá Yay
+                Á næstu mínútum færð þú sendan tölvupóst þar sem fram koma
+                aðgangsupplýsingar að vefsvæði og leiðbeiningar um notkun á
+                Ferðagjöfinni.
               </Typography>
             </Stack>
           </Box>
           <Box marginBottom={15}>
             <Button variant="text" size="large">
-              Áfram til Yay{' '}
+              Áfram á vefsvæði fyrirtækja{' '}
               <Box marginLeft={1} alignItems="center" display="flex">
                 <Icon type="arrow" width={16} />
               </Box>
             </Button>
           </Box>
-          <Accordion dividerOnTop={false}>
-            {mockAccordion.map((accordionItem, index) => (
-              <AccordionItem
-                key={index}
-                label={accordionItem.label}
-                id={index.toString()}
-              >
-                <Typography variant="p">{accordionItem.content}</Typography>
-              </AccordionItem>
-            ))}
-          </Accordion>
         </Box>
       }
       right={
