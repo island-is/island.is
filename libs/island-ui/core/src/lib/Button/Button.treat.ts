@@ -246,6 +246,7 @@ export const variants = styleMap({
     borderStyle: 'solid',
     borderColor: theme.color.blue200,
     borderWidth: 1,
+    borderRadius: 5,
     transition: `border-color ${speed} ease`,
     ...themeUtils.responsiveStyle({
       xs: sizeMenuMobile,
@@ -255,7 +256,7 @@ export const variants = styleMap({
       borderColor: theme.color.mint400,
       borderWidth: 3,
       opacity: 0,
-      borderRadius: 10,
+      borderRadius: 5,
       top: -3,
       left: -3,
       bottom: -3,
@@ -364,8 +365,8 @@ export const leftSpacer = style({
 })
 
 export const leftContentContainer = style({
-  borderTopLeftRadius: 9,
-  borderBottomLeftRadius: 9,
+  borderTopLeftRadius: 5,
+  borderBottomLeftRadius: 5,
   ...themeUtils.responsiveStyle({
     xs: {
       width: 40,
