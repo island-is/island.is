@@ -5,7 +5,6 @@ import { logger } from '@island.is/logging'
 type Options = {
   host: string
   port: number
-  password: string
   name: string
 }
 

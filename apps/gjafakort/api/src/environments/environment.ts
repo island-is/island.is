@@ -17,6 +17,5 @@ export default {
   },
   redis: {
     url: 'localhost',
-    password: undefined,
   },
 }

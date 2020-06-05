@@ -47,7 +47,6 @@ const createServer = async (
     cache: createCache({
       host: environment.redis.url,
       port: 6379,
-      password: environment.redis.password,
       name: 'gjafakort_api_service_cache',
     }),
     dataSources: (): DataSource => ({
