@@ -6,6 +6,7 @@ export const resolvers: Resolvers = {
     search(_, { query }, context) {
       return context.searcher.find(query)
     },
+    // @ts-ignore
     article(_, { input }, context) {
       return context.searcher.getArticle(input)
     }
