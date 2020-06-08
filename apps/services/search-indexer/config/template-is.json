@@ -17,13 +17,13 @@
 				},
 				"icelandic_keyword": {
 					"type": "keyword_marker",
-					"keywords_path": "analyzers/{KEYWORDS}",
-					"ignore_case": true
+					"ignore_case": true,
+					"keywords_path": "analyzers/{KEYWORDS}"
 				},
 				"icelandic_synonym": {
 					"type": "synonym",
-					"synonyms_path": "analyzers/{SYNONYMS}",
-					"lenient": true
+					"lenient": true,
+					"synonyms_path": "analyzers/{SYNONYMS}"
 				}
 			},
 			"analyzer": {
