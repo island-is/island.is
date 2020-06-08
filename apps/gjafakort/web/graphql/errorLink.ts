@@ -4,6 +4,7 @@ import { onError, ErrorResponse } from 'apollo-link-error'
 import { ServerError } from 'apollo-link-http-common'
 
 import { NotificationService } from '../services'
+import { logout } from '../services/api'
 
 export default onError(
   ({ graphQLErrors, networkError, response }: ErrorResponse) => {
@@ -19,13 +20,7 @@ export default onError(
       graphQLErrors.forEach((err) => {
         switch (err.extensions.code) {
           case 'UNAUTHENTICATED':
-            return fetch('/api/auth/logout', {
-              method: 'GET',
-              headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-              },
-            }).then(() => Router.reload())
+            return logout().then(() => Router.reload())
           case 'FORBIDDEN':
             return Router.push('/404')
           default:

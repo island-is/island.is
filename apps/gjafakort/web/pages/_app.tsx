@@ -16,8 +16,14 @@ import {
 import { Toast } from '../components'
 import { client } from '../graphql'
 import appWithTranslation from '../i18n/appWithTranslation'
+import Link from 'next/link'
+import { NextPage } from 'next'
+import { logout } from '../services/api'
+import Router from 'next/router'
 
-const Layout: React.FC = ({ children }) => {
+const Layout: React.FC<{
+  isAuthenticated?: boolean
+}> = ({ children, isAuthenticated }) => {
   return (
     <Page>
       <Head>
@@ -50,7 +56,18 @@ const Layout: React.FC = ({ children }) => {
       </Head>
       <Box paddingX="gutter">
         <ContentBlock>
-          <Header />
+          <Header
+            logoRender={(logo) => (
+              <Link href="/">
+                <a>{logo}</a>
+              </Link>
+            )}
+            authenticated={isAuthenticated}
+            onLogout={() => {
+              // TODO: decide which route to push on logout
+              logout().then(() => Router.push('/'))
+            }}
+          />
         </ContentBlock>
       </Box>
       <Box paddingTop={[5, 5, 9]} paddingBottom={[7, 7, 12]}>
@@ -118,14 +135,14 @@ const Layout: React.FC = ({ children }) => {
   )
 }
 
-const SupportApplication: React.FC<{
+const SupportApplication: NextPage<{
   Component: React.FC
   pageProps: AppProps['pageProps']
   apolloClient: ApolloClient<NormalizedCacheObject>
 }> = ({ Component, pageProps }) => {
   return (
     <ApolloProvider client={client}>
-      <Layout>
+      <Layout isAuthenticated={pageProps?.isAuthenticated}>
         <Component {...pageProps} />
         <Toast />
       </Layout>
