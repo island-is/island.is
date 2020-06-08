@@ -12063,6 +12063,11 @@ markdown-to-jsx@^6.11.4, markdown-to-jsx@^6.9.1, markdown-to-jsx@^6.9.3:
     prop-types "^15.6.2"
     unquote "^1.1.0"
 
+matchmedia-polyfill@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/matchmedia-polyfill/-/matchmedia-polyfill-0.3.2.tgz#4666e252aead72e8dd232a9fbde5d93fa50497d3"
+  integrity sha512-B2zRzjqxZFUusBZrZux59XFFLoTN99SbGranxIHfjZVLGZuy8Iaf/s5iNR3qJwRQZBjBKsU6qBSUCltLV82gdw==
+
 material-colors@^1.2.1:
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/material-colors/-/material-colors-1.2.6.tgz#6d1958871126992ceecc72f4bcc4d8f010865f46"

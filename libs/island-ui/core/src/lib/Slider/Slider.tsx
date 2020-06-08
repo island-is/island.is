@@ -1,3 +1,5 @@
+import 'matchmedia-polyfill'
+import 'matchmedia-polyfill/matchMedia.addListener'
 import React, { FC, Children, useState, useRef } from 'react'
 import ReactResizeDetector from 'react-resize-detector'
 import cn from 'classnames'
