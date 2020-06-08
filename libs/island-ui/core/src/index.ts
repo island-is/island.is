@@ -21,6 +21,8 @@ export * from './lib/Tooltip/Tooltip'
 export * from './lib/InputError/InputError'
 export * from './lib/FieldPolarQuestion/FieldPolarQuestion'
 export * from './lib/Badge/Badge'
+export * from './lib/Slider/Slider'
+export * from './lib/SlideCard/SlideCard'
 
 // Layout
 export * from './lib/Box/Box'
