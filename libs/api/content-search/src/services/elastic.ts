@@ -9,6 +9,8 @@ const getConnection = (): Client => {
   return new Client(elastic)
 }
 
+const esb = require('elastic-builder');
+
 export class ElasticService {
   constructor() {
   }
@@ -23,46 +25,32 @@ export class ElasticService {
   }
 
   async query(index: SearchIndexes, query) {
-    let body = {
-      query: {
-        bool: {
-          must: []
-        }
-      }
-    };
-    let isEmpty = true;
+    const requestBody = esb.requestBodySearch();
+    let must = [];
 
     if (query?._id) {
-      isEmpty = false;
-      body.query.bool.must.push({ "match": { "_id": query._id }});
+      must.push(esb.matchQuery('_id', query._id));
     }
     if (query?.tag) {
-      isEmpty = false;
-      body.query.bool.must.push({ "term": { "tag": query.tag }});
+      must.push(esb.termQuery('tag', query.tag));
     }
     if (query?.content) {
-      isEmpty = false;
-      body.query.bool.must.push({ "match": { "content": query.content }});
+      must.push(esb.matchQuery('content', query.content));
     }
     if (query?.title) {
-      isEmpty = false;
-      body.query.bool.must.push({ "match": { "title": query.title }});
+      must.push(esb.matchQuery('title', query.title));
     }
 
-    if (isEmpty) {
-      return getConnection().search({
-        index: index,
-        body: {
-          query: {
-            match_all: {},
-          },
-        }
-      });
+    if (must) {
+      requestBody.query(
+        esb.boolQuery()
+          .must(must)
+      );
     }
 
     return getConnection().search({
       index: index,
-      body,
+      body: requestBody.toJSON()
     });
   }
 }
