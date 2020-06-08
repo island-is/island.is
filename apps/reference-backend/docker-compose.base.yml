@@ -11,6 +11,9 @@ services:
       - TEST_DB_USER=test_db
       - TEST_DB_PASS=test_db
       - TEST_DB_NAME=test_db
+      - DEV_DB_USER=dev_db
+      - DEV_DB_PASS=dev_db
+      - DEV_DB_NAME=dev_db
     volumes:
       - ./bin/startup.sql:/docker-entrypoint-initdb.d/startup.sql
 

@@ -1,9 +1,16 @@
 module.exports = {
   development: {
+    username: 'dev_db',
+    password: 'dev_db',
+    database: 'dev_db',
+    host: 'localhost',
+    dialect: 'postgres',
+  },
+  test: {
     username: 'test_db',
     password: 'test_db',
     database: 'test_db',
-    host: 'localhost',
+    host: process.env.DB_HOST,
     dialect: 'postgres',
   },
   production: {
