@@ -3,8 +3,7 @@ import Router from 'next/router'
 import { onError, ErrorResponse } from 'apollo-link-error'
 import { ServerError } from 'apollo-link-http-common'
 
-import { NotificationService } from '../services'
-import { logout } from '../services/api'
+import { NotificationService, api } from '../services'
 
 export default onError(
   ({ graphQLErrors, networkError, response }: ErrorResponse) => {
@@ -20,7 +19,7 @@ export default onError(
       graphQLErrors.forEach((err) => {
         switch (err.extensions.code) {
           case 'UNAUTHENTICATED':
-            return logout().then(() => Router.reload())
+            return api.logout().then(() => Router.reload())
           case 'FORBIDDEN':
             return Router.push('/404')
           default:

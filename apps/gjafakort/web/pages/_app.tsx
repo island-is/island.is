@@ -1,6 +1,8 @@
 import React, { useContext } from 'react'
 import Head from 'next/head'
 import App from 'next/app'
+import Link from 'next/link'
+import Router from 'next/router'
 import { ApolloProvider } from 'react-apollo'
 
 import {
@@ -14,11 +16,9 @@ import {
 import { Toast } from '../components'
 import { client } from '../graphql'
 import appWithTranslation from '../i18n/appWithTranslation'
-import Link from 'next/link'
-import { logout } from '../services/api'
-import Router from 'next/router'
 import { isAuthenticated } from '../auth/utils'
 import { UserContext } from '../context/UserContext'
+import { api } from '../services'
 
 const Layout: React.FC<{
   isAuthenticated?: boolean
@@ -64,8 +64,11 @@ const Layout: React.FC<{
             )}
             authenticated={user.isAuthenticated}
             onLogout={() => {
-              // TODO: decide which route to push on logout
-              logout().then(() => Router.push('/'))
+              const redirect = /fyrirtaeki/i.test(Router.pathname)
+                ? '/fyrirtaeki'
+                : '/'
+              console.log(Router.pathname)
+              api.logout().then(() => Router.push(redirect))
             }}
           />
         </ContentBlock>
