@@ -12,7 +12,7 @@ interface LogoProps {
   title?: string
 }
 
-export const Logo: React.FC<LogoProps> = forwardRef(
+export const Logo = forwardRef<SVGSVGElement, LogoProps>(
   (
     {
       width = 200,
