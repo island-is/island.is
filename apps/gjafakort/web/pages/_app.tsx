@@ -65,7 +65,6 @@ const Layout: React.FC = ({ children }) => {
               const redirect = /fyrirtaeki/i.test(Router.pathname)
                 ? '/fyrirtaeki'
                 : '/'
-              console.log(Router.pathname)
               api.logout().then(() => Router.push(redirect))
             }}
           />
