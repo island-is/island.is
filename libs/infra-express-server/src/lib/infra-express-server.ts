@@ -30,12 +30,12 @@ export const runServer = (opts: RunServerParams) => {
 
   app.use(function collectRouteMetricsPart1(req, res, next) {
     res.locals.startEpoch = Date.now()
-    res.on('finish', function () {
+    res.on('finish', function() {
       const responseTimeInMs = Date.now() - res.locals.startEpoch
       httpRequestDurationMicroseconds
         .labels(req.method, req.path, `${res.statusCode}`)
         .observe(responseTimeInMs)
-      })
+    })
     return next()
   })
 
