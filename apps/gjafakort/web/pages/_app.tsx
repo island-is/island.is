@@ -20,9 +20,7 @@ import { isAuthenticated } from '../auth/utils'
 import { UserContext } from '../context/UserContext'
 import { api } from '../services'
 
-const Layout: React.FC<{
-  isAuthenticated?: boolean
-}> = ({ children, isAuthenticated }) => {
+const Layout: React.FC = ({ children }) => {
   const user = useContext(UserContext)
   return (
     <Page>
@@ -152,7 +150,7 @@ class SupportApplication extends App<Props> {
     return (
       <UserContext.Provider value={{ isAuthenticated }}>
         <ApolloProvider client={client}>
-          <Layout isAuthenticated={isAuthenticated}>
+          <Layout>
             <Component {...pageProps} />
             <Toast />
           </Layout>
