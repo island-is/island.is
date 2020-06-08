@@ -30,7 +30,13 @@ export const runServer = (opts: RunServerParams) => {
 
   app.use(function collectRouteMetricsPart1(req, res, next) {
     res.locals.startEpoch = Date.now()
-    next()
+    res.on('finish', function () {
+      const responseTimeInMs = Date.now() - res.locals.startEpoch
+      httpRequestDurationMicroseconds
+        .labels(req.method, req.path, `${res.statusCode}`)
+        .observe(responseTimeInMs)
+      })
+    return next()
   })
 
   app.get('/liveness', function liveness(req, res) {
@@ -55,16 +61,6 @@ export const runServer = (opts: RunServerParams) => {
 
   // secured
   app.use('/', opts.routes)
-
-  app.use(function collectRouteMetricsPart1(req, res, next) {
-    const responseTimeInMs = Date.now() - res.locals.startEpoch
-
-    httpRequestDurationMicroseconds
-      .labels(req.method, req.path, `${res.statusCode}`)
-      .observe(responseTimeInMs)
-
-    next()
-  })
 
   app.use(function errorHandler(err, req, res, next) {
     logger.error(`Status code: ${err.status}, msg: ${err.message}`)
