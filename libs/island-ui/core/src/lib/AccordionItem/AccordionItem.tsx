@@ -1,4 +1,4 @@
-import React, { useContext, useState, ReactNode } from 'react'
+import React, { useContext, useState, ReactNode, forwardRef, FC } from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
 import { Box, Columns, Column } from '../../'
@@ -13,7 +13,11 @@ import { AccordionContext } from '../Accordion/Accordion'
 export type AccordionItemBaseProps = {
   id: string
   label: string
+  visibleContent?: ReactNode
   children: ReactNode
+  onClick?: () => void
+  onBlur?: () => void
+  onFocus?: () => void
 }
 
 export type AccordionItemStateProps = AllOrNone<{
@@ -40,86 +44,124 @@ const IconPlus = ({ color = '#0061FF' }) => (
   </svg>
 )
 
-export const AccordionItem = ({
-  id,
-  label,
-  expanded: expandedProp,
-  onToggle,
-  children,
-}: AccordionItemProps) => {
-  if (process.env.NODE_ENV !== 'production') {
-    if (label !== undefined && typeof label !== 'string') {
-      throw new Error('Label must be a string')
+export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
+  (
+    {
+      id,
+      label,
+      visibleContent,
+      expanded: expandedProp,
+      onToggle,
+      children,
+      onClick,
+      onBlur,
+      onFocus,
+    },
+    forwardedRef,
+  ) => {
+    if (process.env.NODE_ENV !== 'production') {
+      if (label !== undefined && typeof label !== 'string') {
+        throw new Error('Label must be a string')
+      }
     }
-  }
 
-  const { toggledId, setToggledId } = useContext(AccordionContext)
-  const [expandedFallback, setExpandedFallback] = useState(false)
-  let expanded = expandedProp ?? expandedFallback
-  const [height, setHeight] = useState(expanded ? 'auto' : 0)
+    const { toggledId, setToggledId } = useContext(AccordionContext)
+    const [expandedFallback, setExpandedFallback] = useState(false)
+    let expanded = expandedProp ?? expandedFallback
+    const [height, setHeight] = useState(expanded ? 'auto' : 0)
 
-  if (toggledId && toggledId !== id && expanded) {
-    expanded = false
+    if (toggledId && toggledId !== id && expanded) {
+      expanded = false
 
-    if (height !== 0) {
-      setHeight(0)
+      if (height !== 0) {
+        setHeight(0)
+      }
     }
-  }
+
+    return (
+      <Box>
+        <Box position="relative" display="flex">
+          <Box
+            ref={forwardedRef}
+            component="button"
+            cursor="pointer"
+            className={[styles.button, useVirtualTouchable()]}
+            outline="none"
+            width="full"
+            textAlign="left"
+            aria-controls={id}
+            aria-expanded={expanded}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onClick={
+              onClick
+                ? onClick
+                : () => {
+                    const newValue = !expanded
+
+                    if (typeof setToggledId === 'function' && newValue) {
+                      setToggledId(id)
+                    }
+
+                    setHeight(newValue ? 'auto' : 0)
+
+                    if (expandedProp === undefined) {
+                      setExpandedFallback(newValue)
+                    }
+
+                    if (typeof onToggle === 'function') {
+                      onToggle(newValue)
+                    }
+                  }
+            }
+          >
+            <Columns space={2} alignY="center">
+              <Column>
+                <Typography variant="h3" as="h3">
+                  {label}
+                </Typography>
+              </Column>
+              <Column width="content">
+                <div
+                  className={cn(styles.icon, {
+                    [styles.iconTilted]: expanded,
+                  })}
+                >
+                  <IconPlus />
+                </div>
+              </Column>
+            </Columns>
+          </Box>
+          <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
+        </Box>
+        {visibleContent && visibleContent}
+        <AnimateHeight duration={300} height={height}>
+          <Box paddingTop={2} id={id}>
+            {children}
+          </Box>
+        </AnimateHeight>
+      </Box>
+    )
+  },
+)
+
+export const AccordionCard: FC<AccordionItemBaseProps> = (props) => {
+  const [isFocused, setIsFocused] = useState<boolean>(false)
+
+  const handleFocus = () => setIsFocused(true)
+  const handleBlur = () => setIsFocused(false)
 
   return (
-    <Box>
-      <Box position="relative" display="flex">
-        <Box
-          component="button"
-          cursor="pointer"
-          className={[styles.button, useVirtualTouchable()]}
-          outline="none"
-          width="full"
-          textAlign="left"
-          aria-controls={id}
-          aria-expanded={expanded}
-          onClick={() => {
-            const newValue = !expanded
-
-            if (typeof setToggledId === 'function' && newValue) {
-              setToggledId(id)
-            }
-
-            setHeight(newValue ? 'auto' : 0)
-
-            if (expandedProp === undefined) {
-              setExpandedFallback(newValue)
-            }
-
-            if (typeof onToggle === 'function') {
-              onToggle(newValue)
-            }
-          }}
-        >
-          <Columns space={2} alignY="center">
-            <Column>
-              <Typography variant="h3" as="h3">
-                {label}
-              </Typography>
-            </Column>
-            <Column width="content">
-              <div
-                className={cn(styles.icon, {
-                  [styles.iconTilted]: expanded,
-                })}
-              >
-                <IconPlus />
-              </div>
-            </Column>
-          </Columns>
-        </Box>
-        <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
-      </Box>
-      <AnimateHeight duration={300} height={height}>
-        <Box paddingTop={2} id={id}>
-          {children}
-        </Box>
-      </AnimateHeight>
+    <Box
+      height="full"
+      background="white"
+      borderRadius="standard"
+      padding={[2, 2, 4]}
+      className={cn(styles.card, { [styles.focused]: isFocused })}
+    >
+      <AccordionItem {...props} onFocus={handleFocus} onBlur={handleBlur}>
+        {props.children}
+      </AccordionItem>
     </Box>
   )
 }

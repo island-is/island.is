@@ -2,7 +2,7 @@ import React from 'react'
 import Accordion from './Accordion'
 import { ContentBlock } from '../ContentBlock'
 import { Box } from '../Box'
-import { AccordionItem } from '../AccordionItem/AccordionItem'
+import { AccordionItem, AccordionCard } from '../AccordionItem/AccordionItem'
 import { Typography } from '../Typography/Typography'
 import { boolean } from '@storybook/addon-knobs'
 
@@ -43,6 +43,33 @@ export const Basic = () => {
             </Typography>
           </AccordionItem>
         </Accordion>
+      </Box>
+    </ContentBlock>
+  )
+}
+
+export const SingleCard = () => {
+  return (
+    <ContentBlock>
+      <Box paddingY={[1, 2]}>
+        <AccordionCard
+          id="id_1"
+          label="Hvenær þarf að skila umsókn?"
+          visibleContent={
+            <Box paddingY={2} paddingBottom={1}>
+              <Typography variant="p" as="p">
+                Hér getur komið eitthvað meira efni sem sést alltaf og er birt
+                fyrir neðan titil.
+              </Typography>
+            </Box>
+          }
+        >
+          <Typography variant="p" as="p">
+            Hægt er að senda umsóknir og önnur gögn með pósti, tölvupósti eða
+            faxi. Læknisvottorð verða að berast með pósti þar sem við þurfum
+            frumritið.
+          </Typography>
+        </AccordionCard>
       </Box>
     </ContentBlock>
   )
