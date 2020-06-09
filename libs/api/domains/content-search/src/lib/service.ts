@@ -1,5 +1,5 @@
 import {SearcherService as Service} from '@island.is/api/schema'
-import {ElasticService, SearchIndexes, SearchResult} from "@island.is/api/content-search";
+import {ElasticService, SearchIndexes, SearchResult, Document as ContentDocument} from "@island.is/api/content-search";
 
 export class SearcherService implements Service {
   constructor(private repository: ElasticService) {}
@@ -19,14 +19,17 @@ export class SearcherService implements Service {
     }
   }
 
-  async getArticle(input): Promise<SearchResult> {
+  async fetchSingle(input): Promise<ContentDocument> {
     const { body } = await this.repository.query(SearchIndexes.test, input);
 
-    return body?.hits?.hits.map((hit) => {
-      const obj = hit._source;
-      obj._id = hit._id;
-      return obj;
-    });
+    const hit = body?.hits?.hits[0];
+    if (!hit) {
+      return null;
+    }
+
+    const obj = hit._source;
+    obj._id = hit._id;
+    return obj;
   }
 }
 

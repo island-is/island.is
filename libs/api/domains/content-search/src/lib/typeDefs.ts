@@ -24,6 +24,7 @@ export const typeDefs = gql`
 
   input SearcherInput {
     queryString: String
+    lang: String
   }
 
   input CategoryInput {
@@ -37,11 +38,11 @@ export const typeDefs = gql`
     slug: String
   }
 
-  input ArticleInput {
+  input ItemInput {
     _id: ID
-    title: String
     slug: String
-    content: String
+    type: ItemType
+    language: Language
   }
 
   type ContentArticle {
@@ -55,10 +56,14 @@ export const typeDefs = gql`
     en
   }
 
+  enum ItemType {
+    article
+    category
+  }
+
   extend type Query {
-    getSearchResults(query: SearcherInput, language: Language): SearchResult!
-    category(input: CategoryInput): ContentCategory
-    article(input: ArticleInput): ContentItem
+    getSearchResults(query: SearcherInput): SearchResult!
+    getSingleItem(input: ItemInput): ContentItem
   }
 `
 

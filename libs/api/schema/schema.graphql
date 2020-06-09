@@ -1,10 +1,3 @@
-input ArticleInput {
-  _id: ID
-  title: String
-  slug: String
-  content: String
-}
-
 input CategoryInput {
   id: ID
   slug: String
@@ -46,6 +39,18 @@ input HelloWorldInput {
   name: String = "World"
 }
 
+input ItemInput {
+  _id: ID
+  slug: String
+  type: ItemType
+  language: Language
+}
+
+enum ItemType {
+  article
+  category
+}
+
 enum Language {
   is
   en
@@ -61,15 +66,15 @@ type Namespace {
 }
 
 type Query {
-  article(input: ArticleInput): ContentItem
-  category(input: CategoryInput): ContentCategory
-  getSearchResults(query: SearcherInput, language: Language): SearchResult!
+  getSearchResults(query: SearcherInput): SearchResult!
+  getSingleItem(input: ItemInput): ContentItem
   helloWorld(input: HelloWorldInput): HelloWorld!
   root: String
 }
 
 input SearcherInput {
   queryString: String
+  lang: String
 }
 
 type SearchResult {

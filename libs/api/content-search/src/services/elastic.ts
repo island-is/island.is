@@ -55,6 +55,12 @@ export class ElasticService {
     if (query?._id) {
       must.push(esb.matchQuery('_id', query._id));
     }
+    if (query?.slug) {
+      must.push(esb.matchQuery('slug', query.slug));
+    }
+    if (query?.type) {
+      must.push(esb.matchQuery('content_type', query.type));
+    }
     if (query?.tag) {
       must.push(esb.termQuery('tag', query.tag));
     }

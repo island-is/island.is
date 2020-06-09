@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import {SearchResult} from "@island.is/api/content-search";
+import {SearchResult, Document as ContentDocument} from "@island.is/api/content-search";
 
 export interface HelloWorldService {
   getMessage(name: string): string
@@ -7,7 +7,7 @@ export interface HelloWorldService {
 
 export interface SearcherService {
   find(query): Promise<SearchResult>
-  getArticle(input): Promise<SearchResult>
+  fetchSingle(input): Promise<ContentDocument>
 }
 
 export interface Context {
