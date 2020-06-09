@@ -124,7 +124,8 @@ function Signup({ company, handleSubmission }: PropTypes) {
         initialValues={{
           companySSN: company.ssn,
           companyName: company.name,
-          companyDisplayName: company.application?.companyDisplayName,
+          companyDisplayName:
+            company.application?.companyDisplayName ?? company.name,
           serviceCategory: company.application?.serviceCategory,
           name: company.application?.name,
           email: company.application?.email,
