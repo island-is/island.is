@@ -22,7 +22,11 @@ function Congratulations() {
             </Stack>
           </Box>
           <Box marginBottom={15}>
-            <Button variant="text" size="large">
+            <Button
+              variant="text"
+              size="large"
+              href="https://manager.yay.is/Account/Login?ReturnUrl=%2F"
+            >
               Áfram á vefsvæði fyrirtækja{' '}
               <Box marginLeft={1} alignItems="center" display="flex">
                 <Icon type="arrowRight" width={16} />

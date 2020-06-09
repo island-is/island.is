@@ -264,6 +264,7 @@ function Signup({ company, handleSubmition }: PropTypes) {
                 negativeLabel="Nei"
                 label="Var fyrirtæki þitt í rekstrarerfiðleikum 31. desember 2019 í skilningi hópundanþágureglugerðar"
                 tooltip="Fyrirtæki sem metið var í rekstrarerfiðleikum 31. desember 2019 í skilningi hópundanþágureglugerðar (ESB) nr. 651/2014 getur að hámarki tekið við samanlagt 25 millj. kr. greiðslu í formi ferðagjafa."
+                reverse
               />
             </Box>
             <Box marginBottom={5}>

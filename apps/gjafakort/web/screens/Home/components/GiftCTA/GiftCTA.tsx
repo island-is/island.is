@@ -10,13 +10,11 @@ function GiftCTA() {
     <Box>
       <Box background="purple100" padding={4} marginBottom={3}>
         <Box marginBottom={2}>
-          <Typography variant="h4">Einstaklingar</Typography>
+          <Typography variant="h4">Einstaklingar (væntanlegt)</Typography>
         </Box>
-        <Link href="/notandi">
-          <span>
-            <Button width="fluid">Sækja Ferðagjöf</Button>
-          </span>
-        </Link>
+        <Button width="fluid" disabled>
+          Sækja Ferðagjöf
+        </Button>
       </Box>
       <Box background="purple100" padding={4} marginBottom={3}>
         <Box marginBottom={2}>
