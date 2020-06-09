@@ -1,8 +1,8 @@
-import {environment} from '../environments/environment'
-import {Client} from '@elastic/elasticsearch'
-import {SearchIndexes} from '../types'
+import { environment } from '../environments/environment'
+import { Client } from '@elastic/elasticsearch'
+import { Document, SearchIndexes } from '../types'
 
-const {elastic} = environment
+const { elastic } = environment
 
 const getConnection = (): Client => {
   //todo handle pool?
@@ -18,9 +18,23 @@ export class ElasticService {
   async index(index: SearchIndexes, document: object) {
     const client = getConnection()
 
-    await client.index({
+    try {
+      const _id = document._id
+      delete document._id
+      return await client.index({
+        id: _id,
+        index: index,
+        body: document,
+      })
+    } catch (e) {
+      console.log('error indexing document')
+    }
+  }
+
+  async findByQuery(index: SearchIndexes, query) {
+    return getConnection().search({
       index: index,
-      body: document,
+      body: query,
     })
   }
 

@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Param, Body } from '@nestjs/common'
 
 import { IndexingService } from './indexing.service'
-import {Document, SearchIndexes} from "@island.is/api/content-search";
+import { Document, SearchIndexes } from '@island.is/api/content-search'
 
 @Controller('index')
 export class IndexingController {
@@ -12,7 +12,16 @@ export class IndexingController {
     const indexType: SearchIndexes = SearchIndexes[type]
     await this.appService.indexDocument(indexType, document)
     return {
-      'status': 'OK'
+      status: 'OK',
+    }
+  }
+  @Get('sync')
+  async sync() {
+    const syncToken = await this.appService.getLastSyncToken(SearchIndexes.test)
+    if (syncToken) {
+      this.appService.continueSync(syncToken, SearchIndexes.test)
+    } else {
+      this.appService.initialSync(SearchIndexes.test)
     }
   }
 }

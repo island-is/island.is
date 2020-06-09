@@ -1,4 +1,1 @@
-
-export interface SearchResult {
-
-}
+export interface SearchResult {}
