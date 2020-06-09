@@ -44,11 +44,11 @@ class ApplicationAPI extends RESTDataSource {
 
   async createApplication(
     applicationInput: CreateApplicationInput,
+    authorSSN: string,
     messageQueue: MessageQueue,
     state: string,
     comments: string[],
   ): Promise<ApplicationResponse> {
-    const authorSSN = context.user.ssn
     const res = await this.post(`${applicationInput.companySSN}/applications`, {
       authorSSN,
       type: APPLICATION_TYPE,

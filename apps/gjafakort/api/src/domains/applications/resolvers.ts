@@ -33,10 +33,12 @@ class ApplicationResolver {
 
     const application = await applicationApi.createApplication(
       input,
+      user.ssn,
       messageQueue,
       state,
       comments,
     )
+
     return {
       application: {
         id: application.id,
