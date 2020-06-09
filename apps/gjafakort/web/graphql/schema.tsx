@@ -110,14 +110,8 @@ export type GetCompanyQueryQuery = { __typename?: 'Query' } & {
             | 'generalEmail'
             | 'webpage'
             | 'phoneNumber'
-            | 'operationsTrouble'
             | 'companyName'
             | 'companyDisplayName'
-            | 'exhibition'
-            | 'operatingPermitForRestaurant'
-            | 'operatingPermitForVehicles'
-            | 'validLicenses'
-            | 'validPermit'
           >
         >
       }
@@ -209,14 +203,8 @@ export const GetCompanyQueryDocument = gql`
         generalEmail
         webpage
         phoneNumber
-        operationsTrouble
         companyName
         companyDisplayName
-        exhibition
-        operatingPermitForRestaurant
-        operatingPermitForVehicles
-        validLicenses
-        validPermit
       }
     }
   }

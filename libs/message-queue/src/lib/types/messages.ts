@@ -7,6 +7,7 @@ export interface GjafakortApplicationMessage {
   type: string
   data: {
     name: string
+    ssn: string
     email: string
     comments: string[]
     webpage: string
