@@ -7,11 +7,16 @@ export class SearcherService implements Service {
   async find(query): Promise<SearchResult> {
     const { body } = await this.repository.query(SearchIndexes.test, query);
 
-    return body?.hits?.hits.map((hit) => {
+    let items = body?.hits?.hits.map((hit) => {
       const obj = hit._source;
       obj._id = hit._id;
       return obj;
     });
+
+    return {
+      total: items.length,
+      items: items
+    }
   }
 
   async getArticle(input): Promise<SearchResult> {

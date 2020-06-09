@@ -42,6 +42,16 @@ export class ElasticService {
     const requestBody = esb.requestBodySearch();
     let must = [];
 
+    if (query?.queryString) {
+      requestBody.query(
+        esb.queryStringQuery(query.queryString).fields([
+          'title^10',
+          'content^2',
+          'tag'
+        ])
+      )
+    }
+
     if (query?._id) {
       must.push(esb.matchQuery('_id', query._id));
     }
@@ -55,7 +65,7 @@ export class ElasticService {
       must.push(esb.matchQuery('title', query.title));
     }
 
-    if (must) {
+    if (must.length) {
       requestBody.query(
         esb.boolQuery()
           .must(must)

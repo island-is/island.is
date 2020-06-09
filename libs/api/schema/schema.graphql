@@ -22,12 +22,33 @@ type ContentCategory {
   slug: String
 }
 
+type ContentItem {
+  _id: String
+  title: String
+  content: String
+  tag: [String]
+  category: String
+  content_blob: String
+  content_id: String
+  content_type: String
+  date: String
+  image: String
+  imageText: String
+  lang: String
+  slug: String
+}
+
 type HelloWorld {
   message: String!
 }
 
 input HelloWorldInput {
   name: String = "World"
+}
+
+enum Language {
+  is
+  en
 }
 
 type Mutation {
@@ -40,22 +61,18 @@ type Namespace {
 }
 
 type Query {
-  article(input: ArticleInput): [SearchResult!]!
+  article(input: ArticleInput): ContentItem
   category(input: CategoryInput): ContentCategory
+  getSearchResults(query: SearcherInput, language: Language): SearchResult!
   helloWorld(input: HelloWorldInput): HelloWorld!
   root: String
-  search(query: SearcherInput): [SearchResult!]!
 }
 
 input SearcherInput {
-  content: String
-  title: String
-  tag: String
+  queryString: String
 }
 
 type SearchResult {
-  _id: String
-  title: String
-  content: String
-  tag: [String]
+  total: Int
+  items: [ContentItem!]
 }

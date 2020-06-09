@@ -1,1 +1,5 @@
-export interface SearchResult {}
+
+export interface SearchResult {
+  total: number;
+  items: [];
+}
