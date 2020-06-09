@@ -12,13 +12,14 @@ import {
   Bullet,
 } from '@island.is/island-ui/core'
 
+import { useI18n } from '../../i18n'
 import { CompanyCTA } from './components'
 import Link from 'next/link'
 import { Layout } from '@island.is/gjafakort-web/components'
 
 const mockAccordion = [
   {
-    label: 'Hvaða fyrirtæki mega taka þátt:',
+    label: 'Hvaða fyrirtæki mega taka þátt?',
     content: (
       <Stack space={3}>
         <Typography variant="p">
@@ -183,6 +184,8 @@ const mockAccordion = [
 ]
 
 function Companies() {
+  const { t } = useI18n()
+
   return (
     <Layout
       left={
@@ -190,38 +193,33 @@ function Companies() {
           <Box marginBottom={4}>
             <Breadcrumbs>
               <Link href="/">
-                <a>Ísland.is</a>
+                <a>{t('name')}</a>
               </Link>
-              <span>Ferðaþjónustufyrirtæki</span>
+              <span>{t('companies.name')}</span>
             </Breadcrumbs>
           </Box>
           <Box marginBottom={[3, 3, 3, 12]}>
             <Stack space={3}>
               <Typography variant="h1" as="h1">
-                Ferðaþjónustufyrirtæki
+                {t('companies.title')}
               </Typography>
-              <Typography variant="intro">
-                Ferðaþjónustufyrirtæki eru hvött til að taka þátt í
-                Ferðagjöfinni og taka á móti landsmönnum á ferðalagi innanlands.
-              </Typography>
-              <Typography variant="p">
-                Skráning fyrirtækja í Ferðagjöfina fer fram hér á Ísland.is.
-                Prókúruhafi fyrirtækis þarf að skrá þátttöku með innskráningu.
-                Fyrirtæki fá sjálfvirka staðfestingu á skráningu og aðgang að
-                vefsvæði þar sem hægt er að fylgjast með hversu margir hafa nýtt
-                Ferðagjöfina hjá viðkomandi fyrirtæki.
-              </Typography>
+              <Typography variant="intro">{t('companies.intro')}</Typography>
+              <Typography variant="p">{t('companies.description')}</Typography>
             </Stack>
           </Box>
           <Box marginBottom={[3, 3, 3, 12]}>
             <Stack space={2}>
               <Typography variant="h4" as="h2">
-                Fyrirtæki hafa þrjár leiðir til að móttaka Ferðagjöf:
+                {t('companies.notes.label')}
               </Typography>
               <BulletList>
-                <Bullet>Skanna strikamerki með smáforriti</Bullet>
-                <Bullet>Slá inn númer gjafabréfs í vafra</Bullet>
-                <Bullet>Beintenging við bókunarkerfi</Bullet>
+                {((t('companies.notes.items') as unknown) as Array<string>).map(
+                  (item, index) => (
+                    <Bullet key={`companies.notes.items-${index}`}>
+                      {item}
+                    </Bullet>
+                  ),
+                )}
               </BulletList>
             </Stack>
           </Box>
@@ -232,7 +230,7 @@ function Companies() {
           </Hidden>
           <Box marginBottom={3}>
             <Typography variant="h2" as="h2">
-              Algengar spurningar
+              {t('companies.FAQ.title')}
             </Typography>
           </Box>
           <Accordion dividerOnTop={false}>

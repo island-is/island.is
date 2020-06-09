@@ -1,36 +1,76 @@
 {
-  "intro": {
-    "title": "Gjöf til ferðalaga innanlands",
-    "intro": "Allir íbúar á Íslandi 18 ára og eldri fá Ferðagjöf, stafrænt gjafabréf sem hægt er að nota á ferðalögum innanlands.",
-    "description": "Ferðagjöfin er liður í aðgerðum stjórnvalda til eflingar á hagkerfinu í kjölfar kórónuveirufaraldursins, og er ætlað að styðja við íslenska ferðaþjónustu.",
+  "name": "Ísland.is",
+  "companies": {
+    "name": "Ferðaþjónustufyrirtæki",
+    "title": "Ferðaþjónustufyrirtæki",
+    "intro": "Ferðaþjónustufyrirtæki eru hvött til að taka þátt í Ferðagjöfinni og taka á móti landsmönnum á ferðalagi innanlands.",
+    "description": "Skráning fyrirtækja í Ferðagjöfina fer fram hér á Ísland.is.  Prókúruhafi fyrirtækis þarf að skrá þátttöku með innskráningu. Fyrirtæki fá sjálfvirka staðfestingu á skráningu og aðgang að vefsvæði þar sem hægt er að fylgjast með hversu margir hafa nýtt Ferðagjöfina hjá viðkomandi fyrirtæki.",
+    "notes": {
+      "label": "Fyrirtæki hafa þrjár leiðir til að móttaka Ferðagjöf:",
+      "items": [
+        "Skanna strikamerki með smáforriti",
+        "Slá inn númer gjafabréfs í vafra",
+        "Beintenging við bókunarkerfi"
+      ]
+    },
     "FAQ": {
       "title": "Algengar spurningar",
-      "List": [
+      "items": [
         {
           "label": "Hverjir fá Ferðagjöf?",
-          "content": "Allir íbúar á Íslandi með íslenska kennitölu og eru fæddir árið 2002 og fyrr fá Ferðgjöf að andvirði 5.000 kr. "
+          "contents": [
+            "Allir einstaklingar með lögheimili á Íslandi og íslenska kennitölu, sem eru fæddir árið 2002 eða fyrr fá Ferðagjöf."
+          ]
+        }
+      ]
+    }
+  },
+  "intro": {
+    "name": "Ferðagjöf",
+    "title": "Gjöf til ferðalaga innanlands",
+    "intro": "Búum til minningar á ferðalagi innanlands og styðjum við bakið á íslenskri ferðaþjónustu",
+    "description": "Allir einstaklingar fæddir 2002 og fyrr fá Ferðagjöf að andvirði 5.000 kr. Gjöfin er liður í því að styðja við bakið á íslenskri ferðaþjónustu í kjölfar heimsfaraldurs kórónuveiru og efla þannig íslenska ferðaþjónustu sem og hvetja landsmenn til að eiga góðar stundir á ferðalagi víðs vegar um landið.",
+    "FAQ": {
+      "title": "Algengar spurningar",
+      "items": [
+        {
+          "label": "Hverjir fá Ferðagjöf?",
+          "contents": [
+            "Allir einstaklingar með lögheimili á Íslandi og íslenska kennitölu, sem eru fæddir árið 2002 eða fyrr fá Ferðagjöf."
+          ]
         },
         {
-          "label": "Hvernig nota ég Ferðagjöfina?",
-          "content": "Einfalt er að nýta gjöfina sem má nálgast í smáforritinu \"Ferðagjöf\".  Þegar nýta á gjöfina skannar ferðaþjónustufyrirtæki strikamerki í smáforritinu. Einnig má nálgast strikamerkið á island.is."
+          "label": "Hvernig nálgast ég Ferðagjöfina?",
+          "contents": [
+            "Til að nýta Ferðagjöfina þarf að sækja gjöfina hér á Ísland.is með innskráningu. Smáforritið Ferðagjöf er sótt í App Store eða Play Store og strikamerki skannað við kaup á þjónustu.",
+            "Einnig er hægt að nýta Ferðagjöfina beint inni á Ísland.is fyrir þá sem ekki eru með snjallsíma."
+          ]
         },
         {
           "label": "Hvar get ég notað Ferðagjöfina?",
-          "content": "Hægt er að nýta gjöfina hjá fjölmörgum ferðaþjónustufyrirtækjum viðsvegar um landið.  Á www.ferdalag.is má sjá yfirlit hvar hægt er að nýta gjöfina."
+          "contents": [
+            "Ferðagjöfina má nýta hjá ferðaþjónustufyrirtækjum víðs vegar um landið.  Sjá má yfirlit yfir fyrirtæki sem hafa skráð sig til þátttöku á vefnum Ferðalag.is og í smáforritinu Ferðagjöf."
+          ]
         },
         {
-          "label": "Get ég gefið Ferðagjöfina áfram?",
-          "content": ""
+          "label": "Get ég gefið Ferðagjöfina?",
+          "contents": [
+            "Allir eru hvattir til að nýta gjöfina en heimilt er að gefa eigin gjöf. Hver einstaklingur getur þó að hámarki fengið 15 Ferðagjafir að gjöf."
+          ]
         },
         {
           "label": "Hver er gildistími Ferðagjafarinnar?",
-          "content": ""
-        },
-        {
-          "label": "Hvaða fyrirtæki mega taka þátt?",
-          "content": ""
+          "contents": ["Ferðagjöfin er í gildi til 31. desember 2020."]
         }
       ]
+    },
+    "users": {
+      "label": "Einstaklingar (væntanlegt)",
+      "content": "Sækja Ferðagjöf"
+    },
+    "companies": {
+      "label": "Ferðaþjónustufyrirtæki",
+      "content": "Sjá nánar"
     }
   }
 }

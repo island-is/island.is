@@ -17,7 +17,7 @@ export const I18nContext = createContext<I18nContextType | null>(null)
 // default language
 i18n.locale(defaultLanguage)
 
-export default function I18n({ children, locale, translations }) {
+function I18n({ children, locale, translations }) {
   const [activeDict, setActiveDict] = useState(() => translations)
   const activeLocaleRef = useRef(locale || defaultLanguage)
   const [, setTick] = useState(0)
@@ -59,3 +59,5 @@ export default function I18n({ children, locale, translations }) {
     <I18nContext.Provider value={i18nWrapper}>{children}</I18nContext.Provider>
   )
 }
+
+export default I18n
