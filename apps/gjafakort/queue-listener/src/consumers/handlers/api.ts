@@ -2,6 +2,10 @@ import fetch from 'isomorphic-unfetch'
 import timeoutSignal from 'timeout-signal'
 
 import { logger } from '@island.is/logging'
+import {
+  GjafakortApplicationMessage,
+  GjafakortApplicationRoutingKey,
+} from '@island.is/message-queue'
 
 import { ProcessingError } from './errors'
 import { environment } from '../../environments'
@@ -16,29 +20,27 @@ interface ApiParams {
   headers?: any
 
   queueName: string
-  applicationId: string
+  routingKey: GjafakortApplicationRoutingKey
+  message: GjafakortApplicationMessage
 }
 
-const updateApplication = async (
-  applicationId,
-  queueName,
-  success,
-  message,
+const postApplicationEvent = async (
+  message: GjafakortApplicationMessage,
+  success: boolean,
+  description: string,
 ) => {
-  await fetch(`${applicationUrl}/applications/${applicationId}`, {
-    method: 'PUT',
+  await fetch(`${applicationUrl}/applications/${message.id}/events`, {
+    method: 'POST',
     signal: timeoutSignal(SEVEN_SECONDS_TIMEOUT),
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
+      state: message.state,
+      authorSSN: message.authorSSN,
       data: {
-        status: {
-          [queueName]: {
-            success,
-            message,
-          },
-        },
+        success,
+        description,
       },
     }),
   })
@@ -50,11 +52,11 @@ export const request = async ({
   body,
   headers,
   queueName,
-  applicationId,
+  routingKey,
+  message,
 }: ApiParams) => {
-  let res
   try {
-    res = await fetch(url, {
+    const res = await fetch(url, {
       method,
       body,
       signal: timeoutSignal(SEVEN_SECONDS_TIMEOUT),
@@ -63,23 +65,22 @@ export const request = async ({
         ...headers,
       },
     })
+
+    const data = await res.text()
+    if (!res.ok) {
+      throw new ProcessingError(queueName, routingKey, res.status, data)
+    }
+
+    postApplicationEvent(
+      message,
+      true,
+      `Success making request for message on '${queueName}' with routing key '${routingKey}'`,
+    )
+    logger.info(
+      `Processed message ${message.id} on ${queueName} with status ${res.status}`,
+    )
   } catch (err) {
-    const message = `Error making the request: ${err}`
-    updateApplication(applicationId, queueName, false, message)
+    postApplicationEvent(message, false, `Error making the request: ${err}`)
     throw err
   }
-
-  const data = await res.text()
-  if (res.ok) {
-    const message = 'Success from third party'
-    updateApplication(applicationId, queueName, true, message)
-  } else {
-    const message = `Error from third party: ${data}`
-    updateApplication(applicationId, queueName, false, message)
-    throw new ProcessingError(queueName, url, res.status, data)
-  }
-
-  logger.info(
-    `processed message ${applicationId} on ${queueName} with status ${res.status}`,
-  )
 }

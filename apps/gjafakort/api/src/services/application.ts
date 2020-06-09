@@ -21,7 +21,6 @@ interface ApplicationResponse {
     exhibition: boolean
     generalEmail: string
     name: string
-    ssn: string
     operatingPermitForRestaurant: boolean
     operatingPermitForVehicles: boolean
     operationsTrouble: boolean
@@ -50,7 +49,6 @@ export const createApplication = async (
       state,
       data: {
         ...application,
-        ssn: context.user.ssn,
         comments,
       },
     }),

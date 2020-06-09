@@ -1,8 +1,13 @@
 export class ProcessingError extends Error {
-  constructor(queueName: string, url: string, status: number, error: string) {
+  constructor(
+    queueName: string,
+    routingKey: string,
+    status: number,
+    error: string,
+  ) {
     super()
     this.name = 'ProcessingError'
-    this.message = `Queue ${queueName} got ${status} while requesting ${url}.\n${error}`
+    this.message = `Queue '${queueName}' with routing key '${routingKey}' got ${status} while processing message.\n${error}`
   }
 }
 
