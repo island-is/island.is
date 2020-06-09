@@ -14,13 +14,6 @@ export type Scalars = {
   Float: number
 }
 
-export type ArticleInput = {
-  _id?: Maybe<Scalars['ID']>
-  title?: Maybe<Scalars['String']>
-  slug?: Maybe<Scalars['String']>
-  content?: Maybe<Scalars['String']>
-}
-
 export type CategoryInput = {
   id?: Maybe<Scalars['ID']>
   slug?: Maybe<Scalars['String']>
@@ -66,6 +59,18 @@ export type HelloWorldInput = {
   name?: Maybe<Scalars['String']>
 }
 
+export type ItemInput = {
+  _id?: Maybe<Scalars['ID']>
+  slug?: Maybe<Scalars['String']>
+  type?: Maybe<ItemType>
+  language?: Maybe<Language>
+}
+
+export enum ItemType {
+  Article = 'article',
+  Category = 'category',
+}
+
 export enum Language {
   Is = 'is',
   En = 'en',
@@ -78,24 +83,18 @@ export type Mutation = {
 
 export type Query = {
   __typename?: 'Query'
-  article?: Maybe<ContentItem>
-  category?: Maybe<ContentCategory>
   getSearchResults: SearchResult
+  getSingleItem?: Maybe<ContentItem>
   helloWorld: HelloWorld
   root?: Maybe<Scalars['String']>
 }
 
-export type QueryArticleArgs = {
-  input?: Maybe<ArticleInput>
-}
-
-export type QueryCategoryArgs = {
-  input?: Maybe<CategoryInput>
-}
-
 export type QueryGetSearchResultsArgs = {
   query?: Maybe<SearcherInput>
-  language?: Maybe<Language>
+}
+
+export type QueryGetSingleItemArgs = {
+  input?: Maybe<ItemInput>
 }
 
 export type QueryHelloWorldArgs = {
@@ -104,6 +103,7 @@ export type QueryHelloWorldArgs = {
 
 export type SearcherInput = {
   queryString?: Maybe<Scalars['String']>
+  lang?: Maybe<Scalars['String']>
 }
 
 export type SearchResult = {
@@ -221,40 +221,42 @@ export type DirectiveResolverFn<
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>
-  ArticleInput: ArticleInput
-  ID: ResolverTypeWrapper<Scalars['ID']>
-  String: ResolverTypeWrapper<Scalars['String']>
-  ContentItem: ResolverTypeWrapper<ContentItem>
-  CategoryInput: CategoryInput
-  ContentCategory: ResolverTypeWrapper<ContentCategory>
   SearcherInput: SearcherInput
-  Language: Language
+  String: ResolverTypeWrapper<Scalars['String']>
   SearchResult: ResolverTypeWrapper<SearchResult>
   Int: ResolverTypeWrapper<Scalars['Int']>
+  ContentItem: ResolverTypeWrapper<ContentItem>
+  ItemInput: ItemInput
+  ID: ResolverTypeWrapper<Scalars['ID']>
+  ItemType: ItemType
+  Language: Language
   HelloWorldInput: HelloWorldInput
   HelloWorld: ResolverTypeWrapper<HelloWorld>
   Mutation: ResolverTypeWrapper<{}>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
+  CategoryInput: CategoryInput
+  ContentCategory: ResolverTypeWrapper<ContentCategory>
   ContentArticle: ResolverTypeWrapper<ContentArticle>
 }
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Query: {}
-  ArticleInput: ArticleInput
-  ID: Scalars['ID']
-  String: Scalars['String']
-  ContentItem: ContentItem
-  CategoryInput: CategoryInput
-  ContentCategory: ContentCategory
   SearcherInput: SearcherInput
-  Language: Language
+  String: Scalars['String']
   SearchResult: SearchResult
   Int: Scalars['Int']
+  ContentItem: ContentItem
+  ItemInput: ItemInput
+  ID: Scalars['ID']
+  ItemType: ItemType
+  Language: Language
   HelloWorldInput: HelloWorldInput
   HelloWorld: HelloWorld
   Mutation: {}
   Boolean: Scalars['Boolean']
+  CategoryInput: CategoryInput
+  ContentCategory: ContentCategory
   ContentArticle: ContentArticle
 }
 
@@ -333,23 +335,17 @@ export type QueryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
-  article?: Resolver<
-    Maybe<ResolversTypes['ContentItem']>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryArticleArgs, never>
-  >
-  category?: Resolver<
-    Maybe<ResolversTypes['ContentCategory']>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryCategoryArgs, never>
-  >
   getSearchResults?: Resolver<
     ResolversTypes['SearchResult'],
     ParentType,
     ContextType,
     RequireFields<QueryGetSearchResultsArgs, never>
+  >
+  getSingleItem?: Resolver<
+    Maybe<ResolversTypes['ContentItem']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetSingleItemArgs, never>
   >
   helloWorld?: Resolver<
     ResolversTypes['HelloWorld'],

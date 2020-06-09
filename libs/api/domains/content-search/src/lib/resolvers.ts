@@ -7,8 +7,8 @@ export const resolvers: Resolvers = {
       return context.searcher.find(query)
     },
     // @ts-ignore
-    article(_, { input }, context) {
-      return context.searcher.getArticle(input)
+    getSingleItem(_, { input }, context) {
+      return context.searcher.fetchSingle(input)
     }
   },
 }
