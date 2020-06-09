@@ -25,18 +25,18 @@ function Home() {
           <Box marginBottom={4}>
             <Breadcrumbs>
               <Link href="/">
-                <a>{t('name')}</a>
+                <a>{t.name}</a>
               </Link>
-              <span>{t('intro.name')}</span>
+              <span>{t.intro.name}</span>
             </Breadcrumbs>
           </Box>
           <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
             <Stack space={3}>
               <Typography variant="h1" as="h1">
-                {t('intro.title')}
+                {t.intro.title}
               </Typography>
-              <Typography variant="intro">{t('intro.intro')}</Typography>
-              <Typography variant="p">{t('intro.description')}</Typography>
+              <Typography variant="intro">{t.intro.intro}</Typography>
+              <Typography variant="p">{t.intro.description}</Typography>
             </Stack>
           </Box>
           <Hidden above="md">
@@ -46,25 +46,23 @@ function Home() {
           </Hidden>
           <Box marginBottom={3}>
             <Typography variant="h2" as="h2">
-              {t('intro.FAQ.title')}
+              {t.intro.FAQ.title}
             </Typography>
           </Box>
           <Accordion dividerOnTop={false}>
-            {((t('intro.FAQ.items') as unknown) as Array<any>).map(
-              (accordionItem, index) => (
-                <AccordionItem
-                  key={index}
-                  label={accordionItem.label}
-                  id={index.toString()}
-                >
-                  <Stack space={1}>
-                    {accordionItem.contents.map((content) => (
-                      <Typography variant="p">{content}</Typography>
-                    ))}
-                  </Stack>
-                </AccordionItem>
-              ),
-            )}
+            {t.intro.FAQ.items.map((accordionItem, index) => (
+              <AccordionItem
+                key={index}
+                label={accordionItem.label}
+                id={index.toString()}
+              >
+                <Stack space={1}>
+                  {accordionItem.contents.map((content) => (
+                    <Typography variant="p">{content}</Typography>
+                  ))}
+                </Stack>
+              </AccordionItem>
+            ))}
           </Accordion>
         </Box>
       }

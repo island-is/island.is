@@ -1,7 +1,9 @@
 import React from 'react'
-import { Locale } from './I18n'
 import { NextComponentType } from 'next'
 import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
+
+import { Locale } from './I18n'
+import { Translation } from './locales/translation'
 
 const withLocale = <C extends BaseContext = NextPageContext, IP = {}, P = {}>(
   locale: Locale,
@@ -22,7 +24,7 @@ const withLocale = <C extends BaseContext = NextPageContext, IP = {}, P = {}>(
     return {
       ...props,
       locale,
-      translations,
+      translations: translations as Translation,
     }
   }
   return NewComponent

@@ -193,33 +193,29 @@ function Companies() {
           <Box marginBottom={4}>
             <Breadcrumbs>
               <Link href="/">
-                <a>{t('name')}</a>
+                <a>{t.name}</a>
               </Link>
-              <span>{t('companies.name')}</span>
+              <span>{t.companies.name}</span>
             </Breadcrumbs>
           </Box>
           <Box marginBottom={[3, 3, 3, 12]}>
             <Stack space={3}>
               <Typography variant="h1" as="h1">
-                {t('companies.title')}
+                {t.companies.title}
               </Typography>
-              <Typography variant="intro">{t('companies.intro')}</Typography>
-              <Typography variant="p">{t('companies.description')}</Typography>
+              <Typography variant="intro">{t.companies.intro}</Typography>
+              <Typography variant="p">{t.companies.description}</Typography>
             </Stack>
           </Box>
           <Box marginBottom={[3, 3, 3, 12]}>
             <Stack space={2}>
               <Typography variant="h4" as="h2">
-                {t('companies.notes.label')}
+                {t.companies.notes.label}
               </Typography>
               <BulletList>
-                {((t('companies.notes.items') as unknown) as Array<string>).map(
-                  (item, index) => (
-                    <Bullet key={`companies.notes.items-${index}`}>
-                      {item}
-                    </Bullet>
-                  ),
-                )}
+                {t.companies.notes.items.map((item, index) => (
+                  <Bullet key={`companies.notes.items-${index}`}>{item}</Bullet>
+                ))}
               </BulletList>
             </Stack>
           </Box>
@@ -230,7 +226,7 @@ function Companies() {
           </Hidden>
           <Box marginBottom={3}>
             <Typography variant="h2" as="h2">
-              {t('companies.FAQ.title')}
+              {t.companies.FAQ.title}
             </Typography>
           </Box>
           <Accordion dividerOnTop={false}>

@@ -1,6 +1,8 @@
 import React, { createContext, useState, useRef, useEffect } from 'react'
 import rosetta, { Rosetta } from 'rosetta'
 
+import { Translation } from './locales/translation'
+
 const i18n = rosetta()
 
 export type Locale = 'is' | 'en'
@@ -8,8 +10,14 @@ export const defaultLanguage = 'is'
 
 interface I18nContextType {
   activeLocale: string
-  t: Rosetta<object>['t']
+  t: Translation
   locale: (locale: string, dict?: object) => void
+}
+
+interface PropTypes {
+  children: React.ReactNode
+  locale: Locale
+  translations: Translation
 }
 
 export const I18nContext = createContext<I18nContextType | null>(null)
@@ -17,7 +25,7 @@ export const I18nContext = createContext<I18nContextType | null>(null)
 // default language
 i18n.locale(defaultLanguage)
 
-function I18n({ children, locale, translations }) {
+function I18n({ children, locale, translations }: PropTypes) {
   const [activeDict, setActiveDict] = useState(() => translations)
   const activeLocaleRef = useRef(locale || defaultLanguage)
   const [, setTick] = useState(0)
@@ -42,7 +50,7 @@ function I18n({ children, locale, translations }) {
 
   const i18nWrapper = {
     activeLocale: activeLocaleRef.current,
-    t: i18n.t,
+    t: translations,
     locale: (l, dict) => {
       i18n.locale(l)
       activeLocaleRef.current = l
