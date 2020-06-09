@@ -98,6 +98,7 @@ export const Footer = ({
   topLinks = defaultTopLinks,
   bottomLinks = defaultBottomLinks,
   languageSwitchLink = defaultLanguageSwitchLink,
+  hideLanguageSwith = false,
 }) => {
   return (
     <footer className={styles.footer}>
@@ -112,14 +113,16 @@ export const Footer = ({
                   marginBottom="gutter"
                 >
                   <Logo iconOnly solid />
-                  <Hidden above="sm">
-                    <FooterLink
-                      href={languageSwitchLink.href}
-                      className={styles.link}
-                    >
-                      <strong>{languageSwitchLink.title}</strong>
-                    </FooterLink>
-                  </Hidden>
+                  {!hideLanguageSwith && (
+                    <Hidden above="sm">
+                      <FooterLink
+                        href={languageSwitchLink.href}
+                        className={styles.link}
+                      >
+                        <strong>{languageSwitchLink.title}</strong>
+                      </FooterLink>
+                    </Hidden>
+                  )}
                 </Box>
               </Column>
               <Column width="11/12">
@@ -133,14 +136,16 @@ export const Footer = ({
                       {link.title}
                     </FooterLink>
                   ))}
-                  <Hidden below="md">
-                    <FooterLink
-                      href={languageSwitchLink.href}
-                      className={styles.link}
-                    >
-                      <strong>{languageSwitchLink.title}</strong>
-                    </FooterLink>
-                  </Hidden>
+                  {!hideLanguageSwith && (
+                    <Hidden below="md">
+                      <FooterLink
+                        href={languageSwitchLink.href}
+                        className={styles.link}
+                      >
+                        <strong>{languageSwitchLink.title}</strong>
+                      </FooterLink>
+                    </Hidden>
+                  )}
                 </Tiles>
               </Column>
             </Columns>
