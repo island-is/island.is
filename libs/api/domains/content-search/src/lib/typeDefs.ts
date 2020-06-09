@@ -1,17 +1,29 @@
 import { gql } from 'apollo-server-express'
 
 export const typeDefs = gql`
-  type SearchResult {
+    type ContentItem {
     _id: String
     title: String
     content: String
     tag: [String]
+    category: String
+    content_blob: String
+    content_id: String
+    content_type: String
+    date: String
+    image: String
+    imageText: String
+    lang: String
+    slug: String
+  }
+
+  type SearchResult {
+    total: Int
+    items: [ContentItem!]
   }
 
   input SearcherInput {
-    content: String
-    title: String
-    tag: String
+    queryString: String
   }
 
   input CategoryInput {
@@ -38,10 +50,15 @@ export const typeDefs = gql`
     slug: String
   }
 
+  enum Language {
+    is
+    en
+  }
+
   extend type Query {
-    search(query: SearcherInput): [SearchResult!]!
+    getSearchResults(query: SearcherInput, language: Language): SearchResult!
     category(input: CategoryInput): ContentCategory
-    article(input: ArticleInput): [SearchResult!]!
+    article(input: ArticleInput): ContentItem
   }
 `
 
