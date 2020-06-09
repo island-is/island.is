@@ -24,12 +24,12 @@ interface ApiParams {
   message: GjafakortApplicationMessage
 }
 
-const postApplicationEvent = async (
+const postApplicationAuditLog = async (
   message: GjafakortApplicationMessage,
   success: boolean,
   description: string,
 ) => {
-  await fetch(`${applicationUrl}/applications/${message.id}/events`, {
+  await fetch(`${applicationUrl}/applications/${message.id}/auditLog`, {
     method: 'POST',
     signal: timeoutSignal(SEVEN_SECONDS_TIMEOUT),
     headers: {
@@ -38,6 +38,7 @@ const postApplicationEvent = async (
     body: JSON.stringify({
       state: message.state,
       authorSSN: message.authorSSN,
+      title: 'Status from message queue',
       data: {
         success,
         description,
@@ -71,7 +72,7 @@ export const request = async ({
       throw new ProcessingError(queueName, routingKey, res.status, data)
     }
 
-    postApplicationEvent(
+    postApplicationAuditLog(
       message,
       true,
       `Success making request for message on '${queueName}' with routing key '${routingKey}'`,
@@ -80,7 +81,7 @@ export const request = async ({
       `Processed message ${message.id} on ${queueName} with status ${res.status}`,
     )
   } catch (err) {
-    postApplicationEvent(message, false, `Error making the request: ${err}`)
+    postApplicationAuditLog(message, false, `Error making the request: ${err}`)
     throw err
   }
 }

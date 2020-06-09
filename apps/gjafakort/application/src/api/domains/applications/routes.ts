@@ -3,7 +3,7 @@ import { param, body, validationResult } from 'express-validator'
 
 import { consts } from '../common'
 import * as applicationService from './service'
-import { service as eventService } from '../events'
+import { service as auditService } from '../audit'
 
 const router = Router()
 
@@ -78,7 +78,7 @@ router.put(
 
     const title = 'Application updated'
     const { authorSSN } = req.body
-    await eventService.createEvent(state, title, authorSSN, applicationId, {
+    await auditService.createAuditLog(state, title, authorSSN, applicationId, {
       changes: data,
     })
 
@@ -87,11 +87,14 @@ router.put(
 )
 
 router.post(
-  '/:applicationId/events',
+  '/:applicationId/auditLog',
   [
     param('applicationId').isUUID(),
     body('state').isIn(Object.values(consts.States)),
     body('authorSSN').isLength({ min: 10, max: 10 }),
+    body('title')
+      .not()
+      .isEmpty(),
     body('data').custom((value) => {
       if (typeof value !== 'object' || value === null) {
         return Promise.reject('Must provide data as an object')
@@ -120,9 +123,8 @@ router.post(
       })
     }
 
-    const title = 'Custom event'
-    const { state, authorSSN, data } = req.body
-    const event = await eventService.createEvent(
+    const { state, authorSSN, data, title } = req.body
+    const auditLog = await auditService.createAuditLog(
       state,
       title,
       authorSSN,
@@ -130,7 +132,7 @@ router.post(
       data,
     )
 
-    return res.status(201).json({ event })
+    return res.status(201).json({ auditLog })
   },
 )
 

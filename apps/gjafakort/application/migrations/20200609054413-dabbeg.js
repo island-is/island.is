@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.sequelize.query(`
       BEGIN;
 
-        CREATE TABLE event (
+        CREATE TABLE audit_log (
           id UUID NOT NULL,
           created TIMESTAMP WITH TIME ZONE DEFAULT now(),
           modified TIMESTAMP WITH TIME ZONE,
@@ -26,7 +26,7 @@ module.exports = {
     return queryInterface.sequelize.query(`
       BEGIN;
 
-        DROP TABLE event;
+        DROP TABLE audit_log;
 
       COMMIT;
     `)

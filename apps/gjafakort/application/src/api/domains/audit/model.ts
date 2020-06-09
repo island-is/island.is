@@ -3,7 +3,7 @@ import { Model, DataTypes } from 'sequelize'
 import { consts } from '../common'
 import { sequelize } from '../../../extensions'
 
-class Event extends Model {
+class AuditLog extends Model {
   public id!: string
 
   public readonly created!: Date
@@ -16,7 +16,7 @@ class Event extends Model {
   public applicationId!: string
 }
 
-Event.init(
+AuditLog.init(
   {
     id: {
       type: DataTypes.UUID,
@@ -63,8 +63,8 @@ Event.init(
   },
   {
     sequelize,
-    tableName: 'event',
+    tableName: 'audit_log',
   },
 )
 
-export default Event
+export default AuditLog

@@ -4,7 +4,7 @@ import { param, body, validationResult } from 'express-validator'
 import { consts } from '../common'
 import * as issuerService from './service'
 import { service as applicationService } from '../applications'
-import { service as eventService } from '../events'
+import { service as auditService } from '../audit'
 
 const router = Router()
 
@@ -62,7 +62,7 @@ router.post(
 
     const title = 'Application created'
     const { authorSSN } = req.body
-    await eventService.createEvent(state, title, authorSSN, application.id)
+    await auditService.createAuditLog(state, title, authorSSN, application.id)
 
     return res.status(201).json({ application })
   },
