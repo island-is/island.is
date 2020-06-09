@@ -28,14 +28,21 @@ class RskAPI extends RESTDataSource {
   async getCompanyRegistryMembers(
     userSSN: string,
   ): Promise<CompanyRegistryMember[]> {
-    const res = await this.get(`${userSSN}/companies`, null, {
-      cacheOptions: { ttl: rsk.ttl },
-    })
-    const { MemberCompanies } = res
-    if (!MemberCompanies) {
-      return []
+    try {
+      const res = await this.get(`${userSSN}/companies`, null, {
+        cacheOptions: { ttl: rsk.ttl },
+      })
+      const { MemberCompanies } = res
+      if (!MemberCompanies) {
+        return []
+      }
+      return MemberCompanies
+    } catch (err) {
+      logger.error(err)
+      throw new Error(
+        'Error occurred while requesting members from company registry',
+      )
     }
-    return MemberCompanies
   }
 
   async getCompanyBySSN(

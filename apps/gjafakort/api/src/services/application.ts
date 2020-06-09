@@ -1,5 +1,7 @@
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 
+import { GjafakortApplicationRoutingKey } from '@island.is/message-queue'
+
 import { CreateApplicationInput, MessageQueue } from '../types'
 import { environment } from '../environments'
 
@@ -41,24 +43,29 @@ class ApplicationAPI extends RESTDataSource {
   }
 
   async createApplication(
-    application: CreateApplicationInput,
+    applicationInput: CreateApplicationInput,
     messageQueue: MessageQueue,
     state: string,
     comments: string[],
   ): Promise<ApplicationResponse> {
-    const res = await this.post(`${application.companySSN}/applications`, {
+    const authorSSN = context.user.ssn
+    const res = await this.post(`${applicationInput.companySSN}/applications`, {
+      authorSSN,
       type: APPLICATION_TYPE,
       state,
       data: {
-        ...application,
+        ...applicationInput,
         comments,
       },
     })
 
     messageQueue.channel.publish({
       exchangeId: messageQueue.companyApplicationExchangeId,
-      message: res.application,
-      routingKey: res.application.state,
+      message: {
+        ...res.application,
+        authorSSN,
+      },
+      routingKey: res.application.state as GjafakortApplicationRoutingKey,
     })
     return res.application
   }
