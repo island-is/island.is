@@ -1,9 +1,6 @@
 import Application from '@island.is/gjafakort/application/api/domains/applications/model'
 import Issuer from '@island.is/gjafakort/application/api/domains/issuers/model'
-import {
-  Types,
-  States,
-} from '@island.is/gjafakort/application/api/domains/applications/consts'
+import { consts } from '@island.is/gjafakort/application/api/domains/common'
 
 import { issuerFactory } from '.'
 
@@ -21,8 +18,8 @@ const data = async (props: Properties = {}) => {
 
   const defaultProps = {
     issuerSSN: issuer.ssn,
-    type: Types.GJAFAKORT,
-    state: States.PENDING,
+    type: consts.Types.GJAFAKORT,
+    state: consts.States.PENDING,
   }
   return Object.assign({}, defaultProps, props)
 }

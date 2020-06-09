@@ -1,11 +1,10 @@
 import { Router } from 'express'
 import { param, body, validationResult } from 'express-validator'
 
+import { consts } from '../common'
 import * as issuerService from './service'
-import {
-  service as applicationService,
-  consts as applicationConsts,
-} from '../applications'
+import { service as applicationService } from '../applications'
+import { service as auditService } from '../audit'
 
 const router = Router()
 
@@ -13,11 +12,12 @@ router.post(
   '/:ssn/applications',
   [
     param('ssn').isLength({ min: 10, max: 10 }),
-    body('type').isIn(Object.values(applicationConsts.Types)),
+    body('authorSSN').isLength({ min: 10, max: 10 }),
+    body('type').isIn(Object.values(consts.Types)),
     body('state')
       .optional()
-      .customSanitizer((value) => value || applicationConsts.States.PENDING)
-      .isIn(Object.values(applicationConsts.States)),
+      .customSanitizer((value) => value || consts.States.PENDING)
+      .isIn(Object.values(consts.States)),
     body('data').custom((value) => {
       if (typeof value !== 'object' || value === null) {
         return Promise.reject('Must provide data as an object')
@@ -60,6 +60,10 @@ router.post(
       data,
     )
 
+    const title = 'Application created'
+    const { authorSSN } = req.body
+    await auditService.createAuditLog(state, title, authorSSN, application.id)
+
     return res.status(201).json({ application })
   },
 )
@@ -68,7 +72,7 @@ router.get(
   '/:ssn/applications/:type',
   [
     param('ssn').isLength({ min: 10, max: 10 }),
-    param('type').isIn(Object.values(applicationConsts.Types)),
+    param('type').isIn(Object.values(consts.Types)),
   ],
   async (req, res) => {
     const errors = validationResult(req)

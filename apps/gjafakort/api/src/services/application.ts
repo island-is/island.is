@@ -44,6 +44,7 @@ export const createApplication = async (
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
+      authorSSN: context.user.ssn,
       type: APPLICATION_TYPE,
       state,
       data: {
@@ -56,7 +57,10 @@ export const createApplication = async (
 
   context.channel.publish({
     exchangeId: context.companyApplicationExchangeId,
-    message: data.application,
+    message: {
+      ...data.application,
+      authorSSN: context.user.ssn,
+    },
     routingKey: data.application.state,
   })
   return data.application

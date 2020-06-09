@@ -3,19 +3,20 @@ import { Model, DataTypes } from 'sequelize'
 import { consts } from '../common'
 import { sequelize } from '../../../extensions'
 
-class Application extends Model {
+class AuditLog extends Model {
   public id!: string
 
   public readonly created!: Date
   public readonly modified!: Date
 
-  public type!: string
   public state!: string
-  public issuerSSN!: string
+  public title!: string
   public data!: object
+  public authorSSN!: string
+  public applicationId!: string
 }
 
-Application.init(
+AuditLog.init(
   {
     id: {
       type: DataTypes.UUID,
@@ -31,41 +32,39 @@ Application.init(
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
-    type: {
-      type: DataTypes.ENUM,
-      values: Object.values(consts.Types),
-      allowNull: false,
-    },
     state: {
       type: DataTypes.ENUM,
       values: Object.values(consts.States),
       allowNull: false,
     },
-    issuerSSN: {
+    title: {
       type: DataTypes.STRING,
-      field: 'issuer_ssn',
       allowNull: false,
-      references: {
-        model: 'issuer',
-        key: 'ssn',
-      },
     },
     data: {
       type: DataTypes.JSONB,
       defaultValue: {},
       allowNull: false,
     },
+    authorSSN: {
+      type: DataTypes.STRING,
+      field: 'author_ssn',
+      allowNull: false,
+    },
+    applicationId: {
+      type: DataTypes.STRING,
+      field: 'application_id',
+      allowNull: false,
+      references: {
+        model: 'application',
+        key: 'id',
+      },
+    },
   },
   {
     sequelize,
-    tableName: 'application',
-    indexes: [
-      {
-        unique: true,
-        fields: ['issuer_ssn', 'type'],
-      },
-    ],
+    tableName: 'audit_log',
   },
 )
 
-export default Application
+export default AuditLog

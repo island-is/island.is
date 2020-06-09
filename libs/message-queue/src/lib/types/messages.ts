@@ -3,6 +3,7 @@ export type Message = GjafakortApplicationMessage
 export interface GjafakortApplicationMessage {
   id: string
   state: string
+  authorSSN: string
   issuerSSN: string
   type: string
   data: {
