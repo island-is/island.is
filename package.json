@@ -33,6 +33,9 @@
   "private": true,
   "dependencies": {
     "@elastic/elasticsearch": "^7.7.1",
+    "@nestjs/common": "^6.8.3",
+    "@nestjs/core": "^6.8.3",
+    "@nestjs/platform-express": "^6.8.3",
     "apollo-cache-inmemory": "1.6.6",
     "apollo-client": "2.6.8",
     "apollo-link": "1.2.14",
@@ -44,9 +47,11 @@
     "apollo-server-express": "2.13.0",
     "aws-sdk": "2.678.0",
     "classnames": "2.2.6",
+    "contentful": "^7.14.4",
     "cookie-parser": "1.4.5",
     "crypto-js": "4.0.0",
     "document-register-element": "1.13.1",
+    "elastic-builder": "^2.6.1",
     "entropy-string": "4.2.0",
     "express": "4.17.1",
     "express-validator": "6.4.1",
@@ -73,6 +78,7 @@
     "react-select": "^3.1.0",
     "react-uid": "2.2.0",
     "reakit": "^1.0.2",
+    "reflect-metadata": "^0.1.13",
     "rosetta": "1.0.0",
     "sequelize": "5.21.8",
     "sqs-consumer": "5.4.0",
@@ -80,11 +86,7 @@
     "treat": "1.4.1",
     "uuidv4": "6.0.8",
     "winston": "3.2.1",
-    "yup": "^0.29.0",
-    "@nestjs/common": "^6.8.3",
-    "@nestjs/core": "^6.8.3",
-    "@nestjs/platform-express": "^6.8.3",
-    "reflect-metadata": "^0.1.13"
+    "yup": "^0.29.0"
   },
   "devDependencies": {
     "@babel/core": "7.8.3",
@@ -99,6 +101,8 @@
     "@graphql-codegen/typescript-operations": "^1.13.5",
     "@graphql-codegen/typescript-react-apollo": "^1.13.5",
     "@graphql-codegen/typescript-resolvers": "^1.13.5",
+    "@nestjs/schematics": "^6.7.0",
+    "@nestjs/testing": "^6.8.3",
     "@nrwl/cypress": "9.2.4",
     "@nrwl/eslint-plugin-nx": "9.2.4",
     "@nrwl/express": "9.2.4",
@@ -138,9 +142,7 @@
     "sequelize-cli": "^5.5.1",
     "ts-jest": "25.2.1",
     "ts-node": "~7.0.0",
-    "typescript": "~3.8.3",
-    "@nestjs/schematics": "^6.7.0",
-    "@nestjs/testing": "^6.8.3"
+    "typescript": "~3.8.3"
   },
   "resolutions": {
     "webpack": "4.42.0"
