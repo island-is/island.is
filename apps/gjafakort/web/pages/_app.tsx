@@ -73,7 +73,7 @@ const Layout: React.FC = ({ children }) => {
       <Box paddingTop={[5, 5, 9]} paddingBottom={[7, 7, 12]}>
         {children}
       </Box>
-      <Footer />
+      <Footer hideLanguageSwith />
       <style jsx global>{`
         @font-face {
           font-family: 'IBM Plex Sans';
