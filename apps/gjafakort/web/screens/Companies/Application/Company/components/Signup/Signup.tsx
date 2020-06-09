@@ -21,7 +21,7 @@ import { FormLayout } from '@island.is/gjafakort-web/components'
 
 interface PropTypes {
   company: Company
-  handleSubmition: (_: boolean) => void
+  handleSubmission: (_: boolean) => void
 }
 
 const CreateApplicationMutation = gql`
@@ -87,11 +87,11 @@ const SignupSchema = Yup.object().shape({
   operationsTrouble: Yup.bool().required('Velja þarf annaðhvort svarið'),
 })
 
-function Signup({ company, handleSubmition }: PropTypes) {
+function Signup({ company, handleSubmission }: PropTypes) {
   const [createApplication] = useMutation(CreateApplicationMutation)
   const onSubmit = async (values) => {
     if (values.noneOfTheAbove) {
-      return handleSubmition(false)
+      return handleSubmission(false)
     }
 
     await createApplication({
@@ -105,7 +105,7 @@ function Signup({ company, handleSubmition }: PropTypes) {
         },
       },
     })
-    return handleSubmition(true)
+    return handleSubmission(true)
   }
 
   return (

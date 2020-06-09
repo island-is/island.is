@@ -31,7 +31,7 @@ export const GetCompanyQuery = gql`
 function Company() {
   const router = useRouter()
   const { ssn } = router.query
-  const [submition, setSubmition] = useState<
+  const [submission, setSubmission] = useState<
     'pending' | 'rejected' | 'approved'
   >('pending')
   const { data, loading } = useQuery(GetCompanyQuery, { variables: { ssn } })
@@ -39,9 +39,9 @@ function Company() {
 
   const onSubmit = (isSuccess: boolean) => {
     if (isSuccess) {
-      setSubmition('approved')
+      setSubmission('approved')
     } else {
-      setSubmition('rejected')
+      setSubmission('rejected')
     }
   }
 
@@ -49,13 +49,13 @@ function Company() {
     return <ContentLoader />
   }
 
-  if (company.application?.state === 'approved' || submition === 'approved') {
-    return <Congratulations />
-  } else if (submition === 'rejected') {
+  if (company.application?.state === 'rejected' || submission === 'rejected') {
     return <NotQualified />
+  } else if (company.application?.id || submission === 'approved') {
+    return <Congratulations />
   }
 
-  return <Signup company={company} handleSubmition={onSubmit} />
+  return <Signup company={company} handleSubmission={onSubmit} />
 }
 
 export default Company
