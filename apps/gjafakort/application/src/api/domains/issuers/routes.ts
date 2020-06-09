@@ -62,7 +62,9 @@ router.post(
 
     const title = 'Application created'
     const { authorSSN } = req.body
-    await auditService.createAuditLog(state, title, authorSSN, application.id)
+    await auditService.createAuditLog(state, title, authorSSN, application.id, {
+      application: data,
+    })
 
     return res.status(201).json({ application })
   },

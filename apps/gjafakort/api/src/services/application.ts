@@ -1,5 +1,7 @@
 import fetch from 'isomorphic-unfetch'
 
+import { GjafakortApplicationRoutingKey } from '@island.is/message-queue'
+
 import { GraphQLContext, CreateApplicationInput } from '../types'
 import { environment } from '../environments'
 
@@ -34,36 +36,37 @@ interface ApplicationResponse {
 }
 
 export const createApplication = async (
-  application: CreateApplicationInput,
+  applicationInput: CreateApplicationInput,
   context: GraphQLContext,
   state: string,
   comments: string[],
 ): Promise<ApplicationResponse> => {
-  const url = `${environment.applicationUrl}/issuers/${application.companySSN}/applications`
+  const url = `${environment.applicationUrl}/issuers/${applicationInput.companySSN}/applications`
+  const authorSSN = context.user.ssn
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      authorSSN: context.user.ssn,
+      authorSSN,
       type: APPLICATION_TYPE,
       state,
       data: {
-        ...application,
+        ...applicationInput,
         comments,
       },
     }),
   })
-  const data = await res.json()
+  const { application }: { application: ApplicationResponse } = await res.json()
 
   context.channel.publish({
     exchangeId: context.companyApplicationExchangeId,
     message: {
-      ...data.application,
-      authorSSN: context.user.ssn,
+      ...application,
+      authorSSN,
     },
-    routingKey: data.application.state,
+    routingKey: application.state as GjafakortApplicationRoutingKey,
   })
-  return data.application
+  return application
 }
 
 export const getApplication = async (
