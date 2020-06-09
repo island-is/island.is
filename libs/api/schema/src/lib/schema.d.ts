@@ -18,7 +18,7 @@ export type Article = {
   __typename?: 'Article'
   id: Scalars['String']
   title: Scalars['String']
-  body?: Maybe<Scalars['String']>
+  content?: Maybe<Scalars['String']>
 }
 
 export type ArticleInput = {
@@ -190,7 +190,7 @@ export type ArticleResolvers<
 > = {
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 

@@ -33,6 +33,9 @@
   },
   "private": true,
   "dependencies": {
+    "@contentful/rich-text-react-renderer": "^13.4.0",
+    "@contentful/rich-text-types": "^14.1.0",
+    "@sindresorhus/slugify": "^1.0.0",
     "apollo-cache-inmemory": "1.6.6",
     "apollo-client": "2.6.8",
     "apollo-link": "1.2.14",

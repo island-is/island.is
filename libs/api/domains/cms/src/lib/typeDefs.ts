@@ -4,7 +4,7 @@ export const typeDefs = gql`
   type Article {
     id: String!
     title: String!
-    body: String
+    content: String
   }
 
   input ArticleInput {
