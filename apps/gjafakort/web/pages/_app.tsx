@@ -1,9 +1,9 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Head from 'next/head'
-import { AppProps } from 'next/app'
+import App from 'next/app'
+import Link from 'next/link'
+import Router from 'next/router'
 import { ApolloProvider } from 'react-apollo'
-import { ApolloClient } from 'apollo-client'
-import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 
 import {
   Box,
@@ -16,8 +16,12 @@ import {
 import { Toast } from '../components'
 import { client } from '../graphql'
 import appWithTranslation from '../i18n/appWithTranslation'
+import { isAuthenticated } from '../auth/utils'
+import { UserContext } from '../context/UserContext'
+import { api } from '../services'
 
 const Layout: React.FC = ({ children }) => {
+  const user = useContext(UserContext)
   return (
     <Page>
       <Head>
@@ -50,7 +54,20 @@ const Layout: React.FC = ({ children }) => {
       </Head>
       <Box paddingX="gutter">
         <ContentBlock>
-          <Header />
+          <Header
+            logoRender={(logo) => (
+              <Link href="/">
+                <a>{logo}</a>
+              </Link>
+            )}
+            authenticated={user.isAuthenticated}
+            onLogout={() => {
+              const redirect = /fyrirtaeki/i.test(Router.pathname)
+                ? '/fyrirtaeki'
+                : '/'
+              api.logout().then(() => Router.push(redirect))
+            }}
+          />
         </ContentBlock>
       </Box>
       <Box paddingTop={[5, 5, 9]} paddingBottom={[7, 7, 12]}>
@@ -118,19 +135,28 @@ const Layout: React.FC = ({ children }) => {
   )
 }
 
-const SupportApplication: React.FC<{
-  Component: React.FC
-  pageProps: AppProps['pageProps']
-  apolloClient: ApolloClient<NormalizedCacheObject>
-}> = ({ Component, pageProps }) => {
-  return (
-    <ApolloProvider client={client}>
-      <Layout>
-        <Component {...pageProps} />
-        <Toast />
-      </Layout>
-    </ApolloProvider>
-  )
+interface Props {
+  isAuthenticated: boolean
+}
+
+class SupportApplication extends App<Props> {
+  static async getInitialProps(appContext) {
+    const appProps = await App.getInitialProps(appContext)
+    return { ...appProps, isAuthenticated: isAuthenticated(appContext.ctx) }
+  }
+  render() {
+    const { Component, pageProps, isAuthenticated } = this.props
+    return (
+      <UserContext.Provider value={{ isAuthenticated }}>
+        <ApolloProvider client={client}>
+          <Layout>
+            <Component {...pageProps} />
+            <Toast />
+          </Layout>
+        </ApolloProvider>
+      </UserContext.Provider>
+    )
+  }
 }
 
 export default appWithTranslation(SupportApplication)

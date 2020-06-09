@@ -1,11 +1,10 @@
 import { style } from 'treat'
-import { theme } from '../../theme'
 
 export const container = style({
   height: 111,
   display: 'flex',
   alignItems: 'center',
-  borderBottom: `1px solid ${theme.color.blue200}`,
+  justifyContent: 'space-between',
 })
 
 export const pointer = style({

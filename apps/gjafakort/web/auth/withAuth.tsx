@@ -23,13 +23,10 @@ export default (WrappedComponent: NextComponentType) =>
         }
       }
 
-      const props = { isAuthenticated: true }
       if (WrappedComponent.getInitialProps) {
-        return await WrappedComponent.getInitialProps(
-          Object.assign({}, ctx, props),
-        )
+        return await WrappedComponent.getInitialProps(ctx)
       }
-      return { isAuthenticated: true }
+      return {}
     }
 
     render() {
