@@ -79,7 +79,7 @@ router.put(
     const title = 'Application updated'
     const { authorSSN } = req.body
     await auditService.createAuditLog(state, title, authorSSN, applicationId, {
-      changes: data,
+      applicationChanges: data,
     })
 
     return res.status(200).json({ application })
