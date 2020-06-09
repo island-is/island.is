@@ -17,6 +17,32 @@ export interface FieldPolarQuestionProps {
   form?: FormikState<string | number>
 }
 
+const CheckboxMapped = ({
+  field,
+  value,
+  onChange,
+  ariaError,
+  idPostfix,
+  fixedValue,
+  label,
+}) => (
+  <Checkbox
+    {...field}
+    label={label}
+    id={`${field.name}${idPostfix}`}
+    checked={value === fixedValue}
+    onChange={() => {
+      onChange({
+        target: {
+          name: field.name,
+          value: fixedValue,
+        },
+      })
+    }}
+    {...ariaError}
+  />
+)
+
 export const FieldPolarQuestion = ({
   label,
   positiveLabel,
@@ -35,41 +61,23 @@ export const FieldPolarQuestion = ({
         'aria-describedby': field.name,
       }
     : {}
+  const checkboxProps = {
+    field,
+    value,
+    onChange,
+    ariaError,
+  }
+  const posCheckbox = {
+    idPostfix: '-pos',
+    fixedValue: true,
+    label: positiveLabel,
+  }
+  const negCheckbox = {
+    idPostfix: '-neg',
+    fixedValue: false,
+    label: negativeLabel,
+  }
 
-  const NegativeCheckbox = () => (
-    <Checkbox
-      {...field}
-      label={negativeLabel}
-      id={`${field.name}-neg`}
-      checked={value === false}
-      onChange={() => {
-        onChange({
-          target: {
-            name: field.name,
-            value: false,
-          },
-        })
-      }}
-      {...ariaError}
-    />
-  )
-  const PositiveCheckbox = () => (
-    <Checkbox
-      {...field}
-      label={positiveLabel}
-      id={`${field.name}-pos`}
-      checked={value === true}
-      onChange={() => {
-        onChange({
-          target: {
-            name: field.name,
-            value: true,
-          },
-        })
-      }}
-      {...ariaError}
-    />
-  )
   return (
     <Box>
       <Box marginBottom={2}>
@@ -81,10 +89,16 @@ export const FieldPolarQuestion = ({
         </Typography>
       </Box>
       <Box marginRight={4} display="inlineBlock">
-        {reverse ? <NegativeCheckbox /> : <PositiveCheckbox />}
+        <CheckboxMapped
+          {...checkboxProps}
+          {...(reverse ? negCheckbox : posCheckbox)}
+        />
       </Box>
       <Box display="inlineBlock">
-        {!reverse ? <NegativeCheckbox /> : <PositiveCheckbox />}
+        <CheckboxMapped
+          {...checkboxProps}
+          {...(!reverse ? negCheckbox : posCheckbox)}
+        />
       </Box>
 
       {hasError && errorMessage && (
