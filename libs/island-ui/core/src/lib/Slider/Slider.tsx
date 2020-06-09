@@ -1,9 +1,7 @@
-import 'matchmedia-polyfill'
-import 'matchmedia-polyfill/matchMedia.addListener'
-import React, { FC, Children, useState, useRef } from 'react'
+import React, { FC, useState, useRef, useCallback, useEffect } from 'react'
 import ReactResizeDetector from 'react-resize-detector'
 import cn from 'classnames'
-import Slick from 'react-slick'
+import Carousel from 'nuka-carousel'
 import {
   Stack,
   Typography,
@@ -22,113 +20,215 @@ import * as styles from './Slider.treat'
 interface SliderProps {
   settings?: object
   title?: string
-  boxProps: BoxProps
+  boxProps?: BoxProps
 }
 
-const responsive = [
+const breakpoints = [
   {
-    breakpoint: theme.breakpoints.md,
-    settings: {
-      slidesToShow: 1,
-    },
+    breakpoint: theme.breakpoints.xs,
+    slidesToShow: 1,
   },
   {
-    breakpoint: theme.breakpoints.lg,
-    settings: {
-      slidesToShow: 2,
-    },
+    breakpoint: theme.breakpoints.md,
+    slidesToShow: 2,
+  },
+  {
+    breakpoint: theme.breakpoints.xl,
+    slidesToShow: 3,
   },
 ]
 
-export const Slider: FC<SliderProps> = ({
-  settings,
-  children,
-  title,
-  boxProps,
-}) => {
-  const [noPrev, setNoPrev] = useState<boolean>(true)
-  const [noNext, setNoNext] = useState<boolean>(true)
-
+export const Slider: FC<SliderProps> = ({ children, title, boxProps }) => {
+  const containerRef = useRef(null)
   const ref = useRef(null)
+  const [slidesToShow, setSlidesToShow] = useState<number>(3)
 
-  const isClient = typeof window === 'object'
+  const updateSlidesToShow = useCallback(
+    (width) => {
+      const windowWidth = width || window.innerWidth
 
-  const slickSettings = Object.assign(
-    {},
-    {
-      dots: false,
-      arrows: false,
-      speed: 300,
-      slidesToShow: 3,
-      slidesToScroll: 1,
-      infinite: false,
-      responsive: isClient ? responsive : null,
-      afterChange: () => {
-        updateArrows()
-      },
+      setSlidesToShow(() =>
+        breakpoints.reduce((value, current) => {
+          if (windowWidth > current.breakpoint) {
+            return current.slidesToShow
+          }
+
+          return value
+        }, slidesToShow),
+      )
     },
-    settings,
+    [slidesToShow],
   )
 
-  const nextSlide = () => {
-    if (ref.current) {
-      ref.current.slickNext()
+  useEffect(() => {
+    if (typeof window === 'object') {
+      updateSlidesToShow(window.innerWidth)
     }
-  }
+  }, [updateSlidesToShow])
 
-  const prevSlide = () => {
-    if (ref.current) {
-      ref.current.slickPrev()
+  const updateHeights = useCallback(() => {
+    if (containerRef.current) {
+      const liElems = Array.from(
+        containerRef.current.querySelectorAll('li.slider-slide'),
+      )
+
+      const slides = Array.from(
+        containerRef.current.querySelectorAll('li.slider-slide > div'),
+      )
+
+      liElems.forEach((x: HTMLDivElement) => {
+        x.style.display = 'inline-flex'
+      })
+
+      slides.forEach((x: HTMLDivElement) => {
+        x.style.height = 'auto'
+      })
+
+      setTimeout(() => {
+        const tallest = slides.reduce(
+          (height: number, current: HTMLElement) => {
+            return Math.max(height, current.offsetHeight)
+          },
+          0,
+        ) as number
+
+        slides.forEach((x: HTMLDivElement) => {
+          x.style.height = `${tallest}px`
+        })
+
+        console.log('tallest', tallest)
+      }, 0)
     }
-  }
+  }, [])
 
-  const slideCount = Children.toArray(children).filter((c) => c).length
-
-  const updateArrows = () => {
-    if (ref.current) {
-      const { slidesToShow } = ref.current.innerSlider.props
-      const { currentSlide } = ref.current.innerSlider.state
-
-      setNoPrev(currentSlide === 0)
-      setNoNext(currentSlide + slidesToShow === slideCount)
-    }
-  }
-
-  const handleResize = () => {
-    updateArrows()
+  const handleResize = ({ width }) => {
+    updateSlidesToShow(width)
+    // updateHeights()
   }
 
   return (
     <ReactResizeDetector
-      refreshMode="debounce"
-      refreshRate={600}
+      // refreshMode="debounce"
+      // refreshRate={500}
       handleWidth
       onResize={handleResize}
     >
-      <Stack space={[3, 3, 6]}>
-        <Box paddingX={[3, 3, 6]}>
-          <Columns space={2} collapseBelow="md">
-            <Column>
-              <Typography variant="h3" as="h3">
-                {title}
-              </Typography>
-            </Column>
-            <Column width="content">
-              <Hidden below="md">
-                <Inline space={3}>
-                  <NavButton disabled={noPrev} dir="prev" onClick={prevSlide} />
-                  <NavButton disabled={noNext} dir="next" onClick={nextSlide} />
-                </Inline>
-              </Hidden>
-            </Column>
-          </Columns>
-        </Box>
-        <Box {...boxProps}>
-          <Slick ref={ref} {...slickSettings}>
-            {children}
-          </Slick>
-        </Box>
-      </Stack>
+      <Box position="relative">
+        <Stack space={[3, 3, 6]}>
+          <Box paddingX={[3, 3, 6]}>
+            <Columns space={2} collapseBelow="md">
+              <Column>
+                <Typography variant="h3" as="h3">
+                  {title}
+                </Typography>
+              </Column>
+              <Column width="1/4">
+                <span />
+              </Column>
+            </Columns>
+          </Box>
+          <Box {...boxProps} ref={containerRef}>
+            <Carousel
+              ref={ref}
+              frameOverflow="visible"
+              framePadding="0 -12px"
+              heightMode="max"
+              slidesToShow={slidesToShow}
+              renderBottomCenterControls={null}
+              renderCenterRightControls={null}
+              renderCenterLeftControls={null}
+              renderTopRightControls={({ previousSlide, nextSlide }) => (
+                <Hidden below="md">
+                  <Inline space={3}>
+                    <NavButton
+                      disabled={false}
+                      dir="prev"
+                      onClick={previousSlide}
+                    />
+                    <NavButton
+                      disabled={false}
+                      dir="next"
+                      onClick={nextSlide}
+                    />
+                  </Inline>
+                </Hidden>
+              )}
+              getControlsContainerStyles={(key) => {
+                switch (key) {
+                  case 'TopRight':
+                    return {
+                      top: -83,
+                      right: 0,
+                    }
+                  default:
+                    break
+                }
+              }}
+            >
+              <div className={styles.tester}>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+              </div>
+              <div className={styles.tester}>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>
+                  waoinf awofinwaf safkna owinopaiwn foiawbf saepiubf aisdupg
+                  saidubgdsiaubg sdiaubg sdiab gpidsa
+                </div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+              </div>
+              <div className={styles.tester}>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+              </div>
+              <div className={styles.tester}>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+              </div>
+              <div className={styles.tester}>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+              </div>
+              <div className={styles.tester}>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+                <div>waoinf awofinwaf</div>
+              </div>
+            </Carousel>
+          </Box>
+        </Stack>
+      </Box>
     </ReactResizeDetector>
   )
 }
@@ -154,3 +254,5 @@ const NavButton = ({ dir = 'next', onClick, disabled }) => {
     </Box>
   )
 }
+
+export default Slider
