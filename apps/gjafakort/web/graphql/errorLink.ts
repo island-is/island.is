@@ -5,29 +5,23 @@ import { ServerError } from 'apollo-link-http-common'
 
 import { NotificationService, api } from '../services'
 
-export default onError(
-  ({ graphQLErrors, networkError, response }: ErrorResponse) => {
-    if (response) {
-      response.errors = undefined
-    }
+export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
+  if (networkError) {
+    return NotificationService.onNetworkError(networkError as ServerError)
+  }
 
-    if (networkError) {
-      return NotificationService.onNetworkError(networkError as ServerError)
-    }
-
-    if (graphQLErrors) {
-      graphQLErrors.forEach((err) => {
-        switch (err.extensions.code) {
-          case 'UNAUTHENTICATED':
-            return api.logout().then(() => Router.reload())
-          case 'FORBIDDEN':
-            return Router.push('/404')
-          default:
-            return NotificationService.onGraphQLError({
-              graphQLErrors,
-            } as ApolloError)
-        }
-      })
-    }
-  },
-)
+  if (graphQLErrors) {
+    graphQLErrors.forEach((err) => {
+      switch (err.extensions.code) {
+        case 'UNAUTHENTICATED':
+          return api.logout().then(() => Router.reload())
+        case 'FORBIDDEN':
+          return Router.push('/404')
+        default:
+          return NotificationService.onGraphQLError({
+            graphQLErrors,
+          } as ApolloError)
+      }
+    })
+  }
+})
