@@ -25,7 +25,7 @@ environment:
   auth_jwt_secret: "/k8s/gjafakort/api/AUTH_JWT_SECRET"
   rsk_url:
   rsk_username: "rf_api_island.is"
-  rsk_api_password_path: "/k8s/gjafakort/api/RSK_API_PASSWORD"
+  rsk_api_password_path: "/k8s/shared/api/RSK_API_PASSWORD"
 
 serviceAccount:
   # Specifies whether a service account should be created
