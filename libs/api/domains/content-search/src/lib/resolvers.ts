@@ -9,6 +9,10 @@ export const resolvers: Resolvers = {
     // @ts-ignore
     getSingleItem(_, { input }, context) {
       return context.searcher.fetchSingle(input)
+    },
+    // @ts-ignore
+    getCategories(_, { input }, context) {
+      return context.searcher.fetchSingle(input)
     }
   },
 }

@@ -1,6 +1,7 @@
-import { environment } from '../environments/environment'
-import { Client } from '@elastic/elasticsearch'
-import { Document, SearchIndexes } from '../types'
+import {environment} from '../environments/environment'
+import {Client} from '@elastic/elasticsearch'
+import {SearchIndexes} from '../types'
+import {RequestBodySearch, TermsAggregation} from "elastic-builder";
 
 const { elastic } = environment
 
@@ -81,6 +82,20 @@ export class ElasticService {
     return getConnection().search({
       index: index,
       body: requestBody.toJSON()
+    });
+  }
+
+  async fetchCategories(index: SearchIndexes, input) {
+    const query = new RequestBodySearch()
+      .agg(new TermsAggregation('categories', 'category'))
+      .agg(new TermsAggregation('catagories_slugs', 'category_slug'))
+      .size(0)
+
+    return getConnection().search({
+      index: index,
+      body: {
+        query
+      }
     });
   }
 }
