@@ -1,11 +1,6 @@
 import React, { PureComponent } from 'react'
 
-import {
-  Box,
-  Button,
-  ContentBlock,
-  Typography,
-} from '@island.is/island-ui/core'
+import { Box, ContentBlock, Typography } from '@island.is/island-ui/core'
 
 import { Loader } from '../'
 
@@ -48,9 +43,9 @@ class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
                 Eitthvað hefur farið úrskeiðis.
               </Typography>
               <Typography variant="intro">
-                Vinsamlega hafðu samband við{' '}
-                <a href="mailto:david@viceversa.is">
-                  david@viceversa.is
+                Vinsamlega{' '}
+                <a href="https://island.is/um-island-is/hafa-samband/">
+                  hafðu samband
                 </a>{' '}
                 fyrir frekari hjálp
               </Typography>
