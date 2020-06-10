@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import RichText from '../RichText/RichText'
 import Link from 'next/link'
 import { BLOCKS } from '@contentful/rich-text-types'
@@ -11,15 +11,23 @@ import {
   Button,
   Box,
   Stack,
+  BoxProps,
 } from '@island.is/island-ui/core'
 import { BorderedContent } from '../../components'
+
+/* const ContentSection: FC<BoxProps> = ({ children, ...props }) => (
+  <Box {...props}>
+    <Box padding={[3, 3, 6, 0]}>
+      <ContentBlock width="small">{children}</ContentBlock>
+    </Box>
+  </Box>
+) */
 
 const embeddedNodes = {
   processEntry: {
     component: BorderedContent,
+    wrapper: ({ children }) => <Box paddingY={[0, 0, 0, 6]}>{children}</Box>,
     processContent: (node) => {
-      console.log('processContent', node.data.target.fields)
-
       const {
         processTitle,
         processDescription,
@@ -73,21 +81,31 @@ const embeddedNodes = {
 
 const renderNode = {
   [BLOCKS.PARAGRAPH]: (node, children) => (
-    <Typography variant="p" as="p">
-      {children}
-    </Typography>
+    <Box paddingY={1}>
+      <Typography variant="p" as="p">
+        {children}
+      </Typography>
+    </Box>
   ),
-  [BLOCKS.HEADING_2]: (node, children) => (
-    <Typography variant="h2" as="h2">
-      <span id={slugify(children.join(''))}>{children}</span>
-    </Typography>
-  ),
+  [BLOCKS.HEADING_2]: (node, children) => {
+    // console.log('NODE', node, children)
+
+    return (
+      <Typography variant="h2" as="h2">
+        <span id={slugify(children.join(''))}>{children}</span>
+      </Typography>
+    )
+  },
   [BLOCKS.HEADING_3]: (node, children) => (
     <Typography variant="h3" as="h3">
       {children}
     </Typography>
   ),
-  [BLOCKS.UL_LIST]: (node, children) => <BulletList>{children}</BulletList>,
+  [BLOCKS.UL_LIST]: (node, children) => (
+    <Box paddingY={3}>
+      <BulletList>{children}</BulletList>
+    </Box>
+  ),
   [BLOCKS.LIST_ITEM]: (node, children) => <Bullet>{children}</Bullet>,
   [BLOCKS.EMBEDDED_ENTRY]: (node) => {
     const embeddedNode =
@@ -96,8 +114,16 @@ const renderNode = {
     if (!embeddedNode) return null
 
     const Component = embeddedNode.component
+    const Wrapper = embeddedNode.wrapper
+    const Cmp = () => <Component {...embeddedNode.processContent(node)} />
 
-    return <Component {...embeddedNode.processContent(node)} />
+    return Wrapper ? (
+      <Wrapper>
+        <Cmp />
+      </Wrapper>
+    ) : (
+      <Cmp />
+    )
   },
 }
 

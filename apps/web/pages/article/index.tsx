@@ -1,5 +1,4 @@
 import { withLocale } from '../../i18n'
-import { ArticlePage } from '../../screens'
-import { Screen } from '../../types'
+import articleScreen from '../../screens/Article'
 
-export default withLocale('is')(ArticlePage as Screen)
+export default withLocale('is')(articleScreen('3DLRRLt4Nf4jedqgT4SkyI'))

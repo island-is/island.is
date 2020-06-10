@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Link from 'next/link'
-import { Categories, Card } from '../../components'
 import {
   ContentBlock,
   Box,
@@ -12,12 +11,32 @@ import {
   Inline,
   Select,
   Tag,
-  Icon,
 } from '@island.is/island-ui/core'
+import { Categories, Card } from '../components'
+import { withApollo } from '../graphql'
+import { categories, selectOptions, getTags } from '../json'
+import { useI18n } from '../i18n'
+import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
+import { GET_NAMESPACE_QUERY } from './queries'
+import { Screen } from '../types'
 
-import { categories, selectOptions, getTags } from '../../json'
+interface HomeProps {
+  namespace: Query['getNamespace']
+}
 
-function HomePage() {
+const Home: Screen<HomeProps> = ({ namespace }) => {
+  const { t, activeLocale } = useI18n()
+
+  // console.log('activeLocale:', activeLocale)
+
+  const ns = JSON.parse(namespace.fields)
+  console.log('ns', ns)
+
+  const n = (key: string) => {
+    // return ns.fields[key]
+    return ns?.fields?.[key] ?? key
+  }
+
   return (
     <>
       <ContentBlock>
@@ -41,14 +60,13 @@ function HomePage() {
               >
                 <Stack space={3}>
                   <Typography variant="eyebrow" as="h2">
-                    Nýtt Ísland.is
+                    {n('heroPreTitle')}
                   </Typography>
                   <Typography variant="h1" as="h1">
-                    Einn staður fyrir bætta þjónustu
+                    {n('heroTitle')}
                   </Typography>
                   <Typography variant="p" as="p">
-                    Hér rís ný miðlæg þjónustugátt sem ætlað er að einfalda
-                    samskipti einstaklinga og atvinnulífsins við hið opinbera.
+                    {n('heroSubTitle')}
                   </Typography>
                 </Stack>
               </Box>
@@ -74,7 +92,7 @@ function HomePage() {
                 >
                   <Column width="1/2">
                     <Select
-                      placeholder="Leitaðu á Ísland.is"
+                      placeholder={n('heroSearchPlaceholder')}
                       options={selectOptions}
                       name="search"
                       icon="search"
@@ -99,7 +117,7 @@ function HomePage() {
       </ContentBlock>
       <Box background="purple100">
         <ContentBlock width="large">
-          <Categories>
+          <Categories label={n('articlesTitle')} seeMoreText={n('seeMore')}>
             {categories.map((category, index) => {
               return <Card key={index} {...category} href="/category" />
             })}
@@ -109,6 +127,25 @@ function HomePage() {
     </>
   )
 }
+
+Home.getInitialProps = async ({ apolloClient }) => {
+  const {
+    data: { getNamespace: namespace },
+  } = await apolloClient.query<Query, QueryGetNamespaceArgs>({
+    query: GET_NAMESPACE_QUERY,
+    variables: {
+      input: {
+        namespace: 'Homepage',
+      },
+    },
+  })
+
+  return {
+    namespace,
+  }
+}
+
+export default withApollo(Home)
 
 const DottedBackground = () => (
   <Box position="absolute" top={0} bottom={0} left={0} right={0} padding={3}>
@@ -150,4 +187,3 @@ const Svg = () => {
     </svg>
   )
 }
-export default HomePage

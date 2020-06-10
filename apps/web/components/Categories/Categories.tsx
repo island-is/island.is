@@ -8,15 +8,21 @@ import {
 } from '@island.is/island-ui/core'
 
 interface CategoriesProps {
+  label?: string
+  seeMoreText?: string
   children: ReactNode
 }
 
-export const Categories: FC<CategoriesProps> = ({ children }) => {
+export const Categories: FC<CategoriesProps> = ({
+  label = 'Þjónustuflokkar',
+  seeMoreText = 'Sjá fleiri',
+  children,
+}) => {
   return (
     <Box background="purple100" padding={[3, 3, 6]}>
       <Box paddingBottom={2}>
         <Typography variant="h3" as="h3">
-          Þjónustuflokkar
+          {label}
         </Typography>
       </Box>
       <Stack space={6}>
@@ -30,7 +36,7 @@ export const Categories: FC<CategoriesProps> = ({ children }) => {
             }}
             variant="ghost"
           >
-            Sjá fleiri
+            {seeMoreText}
           </Button>
         </Box>
       </Stack>

@@ -14,7 +14,7 @@ if (!isBrowser) {
   ;(global as any).fetch = fetch
 }
 
-function create(initialState?: unknown, ctx?: BaseContext) {
+function create(initialState?: any, ctx?: BaseContext) {
   const httpLink = createHttpLink({
     uri: 'http://localhost:4444/graphql',
   })
@@ -30,7 +30,7 @@ function create(initialState?: unknown, ctx?: BaseContext) {
   })
 }
 
-export default function initApollo(initialState?: unknown, ctx?: BaseContext) {
+export default function initApollo(initialState?: any, ctx?: BaseContext) {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
   if (!isBrowser) {
