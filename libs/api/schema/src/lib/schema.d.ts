@@ -124,7 +124,6 @@ export type SearcherInput = {
   language?: Maybe<Language>
   size?: Maybe<Scalars['Int']>
   page?: Maybe<Scalars['Int']>
-  numPerPage?: Maybe<Scalars['Int']>
 }
 
 export type SearchResult = {
