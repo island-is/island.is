@@ -65,6 +65,7 @@ function Toast() {
         <Column width="content">
           <Box
             alignItems="right"
+            marginLeft={2}
             display="flex"
             cursor="pointer"
             onClick={handleClose}
