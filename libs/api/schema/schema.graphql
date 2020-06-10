@@ -1,3 +1,38 @@
+input CategoriesInput {
+  language: Language
+}
+
+input CategoryInput {
+  id: ID
+  slug: String
+}
+
+type ContentArticle {
+  _id: ID
+  title: String
+  slug: String
+}
+
+type ContentCategory {
+  title: String
+}
+
+type ContentItem {
+  _id: String
+  title: String
+  content: String
+  tag: [String]
+  category: String
+  content_blob: String
+  content_id: String
+  content_type: String
+  date: String
+  image: String
+  imageText: String
+  lang: String
+  slug: String
+}
+
 type HelloWorld {
   message: String!
 }
@@ -6,11 +41,41 @@ input HelloWorldInput {
   name: String = "World"
 }
 
+input ItemInput {
+  _id: ID
+  slug: String
+  type: ItemType
+  language: Language
+}
+
+enum ItemType {
+  article
+  category
+}
+
+enum Language {
+  is
+  en
+}
+
 type Mutation {
   root: String
 }
 
 type Query {
+  getCategories(input: CategoriesInput): [ContentCategory]
+  getSearchResults(query: SearcherInput): SearchResult!
+  getSingleItem(input: ItemInput): ContentItem
   helloWorld(input: HelloWorldInput): HelloWorld!
   root: String
+}
+
+input SearcherInput {
+  queryString: String
+  language: Language
+}
+
+type SearchResult {
+  total: Int
+  items: [ContentItem!]
 }

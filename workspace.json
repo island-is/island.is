@@ -742,6 +742,37 @@
           }
         }
       }
+    },
+    "api-domains-content-search": {
+      "root": "libs/api/domains/content-search",
+      "sourceRoot": "libs/api/domains/content-search/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/api/domains/content-search/.eslintrc",
+            "tsConfig": [
+              "libs/api/domains/content-search/tsconfig.lib.json",
+              "libs/api/domains/content-search/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/content-search/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/content-search/jest.config.js",
+            "tsConfig": "libs/api/domains/content-search/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {
