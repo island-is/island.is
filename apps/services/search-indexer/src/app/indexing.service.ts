@@ -85,6 +85,9 @@ export class IndexingService {
     /* eslint-disable @typescript-eslint/camelcase */
     const document: Document = {
       category: entry.fields?.category?.fields.title,
+      category_slug: entry.fields?.category?.fields.slug,
+      group: entry.fields?.group?.fields.title,
+      group_slug: entry.fields?.group?.fields.slug,
       content: reduceContent(entry.fields.content.content),
       content_blob: JSON.stringify(entry.fields),
       content_id: entry.sys.id,

@@ -6,6 +6,9 @@ export interface Document {
   date: string
   date_updated: Date | null
   category: string
+  category_slug: string
+  group: string
+  group_slug: string
   lang: string
   url: string
   slug: string
