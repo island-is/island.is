@@ -13,7 +13,7 @@ import {
   Page,
 } from '@island.is/island-ui/core'
 
-import { Toast } from '../components'
+import { Toast, ErrorBoundary } from '../components'
 import { client } from '../graphql'
 import appWithTranslation from '../i18n/appWithTranslation'
 import { isAuthenticated } from '../auth/utils'
@@ -150,7 +150,9 @@ class SupportApplication extends App<Props> {
       <UserContext.Provider value={{ isAuthenticated }}>
         <ApolloProvider client={client}>
           <Layout>
-            <Component {...pageProps} />
+            <ErrorBoundary>
+              <Component {...pageProps} />
+            </ErrorBoundary>
             <Toast />
           </Layout>
         </ApolloProvider>
