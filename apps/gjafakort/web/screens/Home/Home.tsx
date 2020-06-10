@@ -36,7 +36,16 @@ function Home() {
                 {t.intro.title}
               </Typography>
               <Typography variant="intro">{t.intro.intro}</Typography>
-              <Typography variant="p">{t.intro.description}</Typography>
+              <Typography variant="p">
+                {t.intro.description} Nánari upplýsingar má finna á{' '}
+                <a
+                  href="https://ferdalag.is"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  ferðalag.is.
+                </a>
+              </Typography>
             </Stack>
           </Box>
           <Hidden above="md">
@@ -57,8 +66,10 @@ function Home() {
                 id={index.toString()}
               >
                 <Stack space={1}>
-                  {accordionItem.contents.map((content) => (
-                    <Typography variant="p">{content}</Typography>
+                  {accordionItem.contents.map((content, index) => (
+                    <Typography variant="p" key={index}>
+                      {content}
+                    </Typography>
                   ))}
                 </Stack>
               </AccordionItem>

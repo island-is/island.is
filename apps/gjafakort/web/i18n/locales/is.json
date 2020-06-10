@@ -34,6 +34,12 @@
       "title": "Algengar spurningar",
       "items": [
         {
+          "label": "Hvenær get ég nálgast ferðagjöfina?",
+          "contents": [
+            "Áætlað er að ferðagjöfin verði aðgengileg um miðjan júní, verði búið að samþykkja frumvarp til laga þess efnis á Alþingi."
+          ]
+        },
+        {
           "label": "Hverjir fá Ferðagjöf?",
           "contents": [
             "Allir einstaklingar með lögheimili á Íslandi og íslenska kennitölu, sem eru fæddir árið 2002 eða fyrr fá Ferðagjöf."

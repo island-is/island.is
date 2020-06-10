@@ -14,7 +14,7 @@ function CompanyCTA() {
         </Box>
         <Link href="/fyrirtaeki/umsokn">
           <span>
-            <Button width="fluid">Skrá fyrirtæki</Button>
+            <Button width="fluid">Forskrá fyrirtæki</Button>
           </span>
         </Link>
       </Box>

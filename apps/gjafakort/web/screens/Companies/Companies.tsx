@@ -50,8 +50,9 @@ const mockAccordion = [
           </Bullet>
         </BulletList>
         <Typography variant="p">
-          Nánari upplýsingar og spurningar varðandi þátttöku fyrirtækja beinast
-          til Ferðamálastofu,{' '}
+          Með fyrirvara um endanlega útfærslu frumvarps sem liggur fyrir á
+          Alþingi. Nánari upplýsingar og spurningar varðandi þátttöku fyrirtækja
+          beinast til Ferðamálastofu,{' '}
           <a href="mailto:grunnur@ferdamalastofa.is">
             grunnur@ferdamalastofa.is
           </a>
