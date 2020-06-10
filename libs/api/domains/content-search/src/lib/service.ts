@@ -47,6 +47,16 @@ export class SearcherService implements Service {
     obj._id = hit._id
     return obj
   }
+
+  async fetchItems(input): Promise<ContentDocument> {
+    const { body } = await this.repository.fetchItems(SearchIndexes.test, input)
+
+    return body?.hits?.hits.map((hit) => {
+      let obj = hit._source
+      obj._id = hit._id
+      return obj
+    })
+  }
 }
 
 export default SearcherService

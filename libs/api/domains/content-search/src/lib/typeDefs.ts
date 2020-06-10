@@ -7,6 +7,7 @@ export const typeDefs = gql`
     content: String
     tag: [String]
     category: String
+    category_slug: String
     content_blob: String
     content_id: String
     content_type: String
@@ -47,6 +48,11 @@ export const typeDefs = gql`
     language: Language
   }
 
+  input ArticlesInCategoryInput {
+    slug: String
+    language: Language
+  }
+
   type ContentArticle {
     _id: ID
     title: String
@@ -67,6 +73,7 @@ export const typeDefs = gql`
     getSearchResults(query: SearcherInput): SearchResult!
     getSingleItem(input: ItemInput): ContentItem
     getCategories(input: CategoriesInput): [ContentCategory]
+    getArticlesInCategory(category: ArticlesInCategoryInput): [ContentItem]
   }
 `
 

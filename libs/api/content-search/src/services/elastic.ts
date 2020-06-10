@@ -91,4 +91,20 @@ export class ElasticService {
       console.log(e)
     }
   }
+
+  async fetchItems(index: SearchIndexes, input) {
+    const requestBody = esb.requestBodySearch()
+
+    requestBody
+      .query(
+        esb.boolQuery().must([
+          esb.matchQuery('category_slug', input.slug)
+        ])
+      )
+
+    return getConnection().search({
+      index: index,
+      body: requestBody.toJSON(),
+    })
+  }
 }

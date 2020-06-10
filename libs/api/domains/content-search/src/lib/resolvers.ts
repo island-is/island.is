@@ -14,6 +14,10 @@ export const resolvers: Resolvers = {
     getCategories(_, { input }, context) {
       return context.searcher.fetchCategories(input)
     },
+    // @ts-ignore
+    getArticlesInCategory(_, { category }, context) {
+      return context.searcher.fetchItems(category)
+    },
   },
 }
 
