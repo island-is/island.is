@@ -37,7 +37,7 @@ function Home() {
               </Typography>
               <Typography variant="intro">{t.intro.intro}</Typography>
               <Typography variant="p">
-                {t.intro.description} Nánari upplýsingar má finna á{' '}
+                {t.intro.description}{' '}
                 <a
                   href="https://ferdalag.is"
                   target="_blank"
