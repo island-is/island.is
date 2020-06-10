@@ -36,7 +36,7 @@ function Companies() {
           Prókúruhafi
         </Typography>
       </Box>
-      {companies && companies.length > 0 ? (
+      {companies.length > 0 ? (
         <SelectionForm onSubmit={onSubmit} companies={companies} />
       ) : (
         <NoConnection />
