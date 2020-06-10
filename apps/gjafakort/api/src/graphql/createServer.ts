@@ -4,7 +4,7 @@ import merge from 'lodash/merge'
 
 import MessageQueue from '@island.is/message-queue'
 import { logger } from '@island.is/logging'
-import { createCache } from '@island.is/cache'
+// import { createCache } from '@island.is/cache'
 
 import { environment } from '../environments'
 import { verifyToken, ACCESS_TOKEN_COOKIE } from '../domains'
@@ -44,11 +44,11 @@ const createServer = async (
     typeDefs: [rootTypeDefs, ...typeDefs],
     playground: enablePlayground,
     introspection: enablePlayground,
-    cache: createCache({
-      host: environment.redis.url,
-      port: 6379,
-      name: 'gjafakort_api_service_cache',
-    }),
+    // cache: createCache({
+    //   host: environment.redis.url,
+    //   port: 6379,
+    //   name: 'gjafakort_api_service_cache',
+    // }),
     dataSources: (): DataSource => ({
       applicationApi: new ApplicationAPI(),
       ferdalagApi: new FerdalagAPI(),
