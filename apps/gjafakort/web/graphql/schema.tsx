@@ -32,18 +32,6 @@ export type Application = {
   webpage: Scalars['String']
 }
 
-export type Company = {
-  __typename?: 'Company'
-  ssn: Scalars['String']
-  name: Scalars['String']
-  application?: Maybe<Application>
-}
-
-export type CreateApplication = {
-  __typename?: 'CreateApplication'
-  application?: Maybe<Application>
-}
-
 export type CreateApplicationInput = {
   email: Scalars['String']
   generalEmail: Scalars['String']
@@ -62,6 +50,11 @@ export type CreateApplicationInput = {
   validPermit: Scalars['Boolean']
 }
 
+export type CreateApplication = {
+  __typename?: 'CreateApplication'
+  application?: Maybe<Application>
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<CreateApplication>
@@ -70,6 +63,13 @@ export type Mutation = {
 
 export type MutationCreateApplicationArgs = {
   input: CreateApplicationInput
+}
+
+export type Company = {
+  __typename?: 'Company'
+  ssn: Scalars['String']
+  name: Scalars['String']
+  application?: Maybe<Application>
 }
 
 export type Query = {

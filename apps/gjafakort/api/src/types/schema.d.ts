@@ -35,18 +35,6 @@ export type Application = {
   webpage: Scalars['String']
 }
 
-export type Company = {
-  __typename?: 'Company'
-  ssn: Scalars['String']
-  name: Scalars['String']
-  application?: Maybe<Application>
-}
-
-export type CreateApplication = {
-  __typename?: 'CreateApplication'
-  application?: Maybe<Application>
-}
-
 export type CreateApplicationInput = {
   email: Scalars['String']
   generalEmail: Scalars['String']
@@ -65,6 +53,11 @@ export type CreateApplicationInput = {
   validPermit: Scalars['Boolean']
 }
 
+export type CreateApplication = {
+  __typename?: 'CreateApplication'
+  application?: Maybe<Application>
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<CreateApplication>
@@ -73,6 +66,13 @@ export type Mutation = {
 
 export type MutationCreateApplicationArgs = {
   input: CreateApplicationInput
+}
+
+export type Company = {
+  __typename?: 'Company'
+  ssn: Scalars['String']
+  name: Scalars['String']
+  application?: Maybe<Application>
 }
 
 export type Query = {
@@ -88,11 +88,18 @@ export type QueryCompanyArgs = {
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
 
-export type StitchingResolver<TResult, TParent, TContext, TArgs> = {
+export type LegacyStitchingResolver<TResult, TParent, TContext, TArgs> = {
   fragment: string
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>
 }
 
+export type NewStitchingResolver<TResult, TParent, TContext, TArgs> = {
+  selectionSet: string
+  resolve: ResolverFn<TResult, TParent, TContext, TArgs>
+}
+export type StitchingResolver<TResult, TParent, TContext, TArgs> =
+  | LegacyStitchingResolver<TResult, TParent, TContext, TArgs>
+  | NewStitchingResolver<TResult, TParent, TContext, TArgs>
 export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
   | ResolverFn<TResult, TParent, TContext, TArgs>
   | StitchingResolver<TResult, TParent, TContext, TArgs>
@@ -172,7 +179,7 @@ export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
   info: GraphQLResolveInfo,
 ) => Maybe<TTypes> | Promise<Maybe<TTypes>>
 
-export type isTypeOfResolverFn<T = {}> = (
+export type IsTypeOfResolverFn<T = {}> = (
   obj: T,
   info: GraphQLResolveInfo,
 ) => boolean | Promise<boolean>
@@ -194,26 +201,26 @@ export type DirectiveResolverFn<
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  Query: ResolverTypeWrapper<{}>
-  Company: ResolverTypeWrapper<Company>
-  String: ResolverTypeWrapper<Scalars['String']>
   Application: ResolverTypeWrapper<Application>
+  String: ResolverTypeWrapper<Scalars['String']>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
-  Mutation: ResolverTypeWrapper<{}>
   CreateApplicationInput: CreateApplicationInput
   CreateApplication: ResolverTypeWrapper<CreateApplication>
+  Mutation: ResolverTypeWrapper<{}>
+  Company: ResolverTypeWrapper<Company>
+  Query: ResolverTypeWrapper<{}>
 }
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Query: {}
-  Company: Company
-  String: Scalars['String']
   Application: Application
+  String: Scalars['String']
   Boolean: Scalars['Boolean']
-  Mutation: {}
   CreateApplicationInput: CreateApplicationInput
   CreateApplication: CreateApplication
+  Mutation: {}
+  Company: Company
+  Query: {}
 }
 
 export type ApplicationResolvers<
@@ -273,21 +280,7 @@ export type ApplicationResolvers<
     ContextType
   >
   webpage?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  __isTypeOf?: isTypeOfResolverFn<ParentType>
-}
-
-export type CompanyResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['Company'] = ResolversParentTypes['Company']
-> = {
-  ssn?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  application?: Resolver<
-    Maybe<ResolversTypes['Application']>,
-    ParentType,
-    ContextType
-  >
-  __isTypeOf?: isTypeOfResolverFn<ParentType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
 export type CreateApplicationResolvers<
@@ -299,7 +292,7 @@ export type CreateApplicationResolvers<
     ParentType,
     ContextType
   >
-  __isTypeOf?: isTypeOfResolverFn<ParentType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
 export type MutationResolvers<
@@ -313,6 +306,20 @@ export type MutationResolvers<
     RequireFields<MutationCreateApplicationArgs, 'input'>
   >
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+}
+
+export type CompanyResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Company'] = ResolversParentTypes['Company']
+> = {
+  ssn?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  application?: Resolver<
+    Maybe<ResolversTypes['Application']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
 export type QueryResolvers<
@@ -335,9 +342,9 @@ export type QueryResolvers<
 
 export type Resolvers<ContextType = Context> = {
   Application?: ApplicationResolvers<ContextType>
-  Company?: CompanyResolvers<ContextType>
   CreateApplication?: CreateApplicationResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
+  Company?: CompanyResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
 }
 

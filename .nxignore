@@ -1,2 +1,6 @@
+# gjafakort
+apps/gjafakort/bin
 apps/gjafakort/codegen.yml
+apps/gjafakort/docker-compose.yml
+apps/gjafakort/Makefile
 apps/gjafakort/README.md

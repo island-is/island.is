@@ -1,8 +1,8 @@
-import fetch from 'isomorphic-unfetch'
+import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 
 import { GjafakortApplicationRoutingKey } from '@island.is/message-queue'
 
-import { GraphQLContext, CreateApplicationInput } from '../types'
+import { CreateApplicationInput, MessageQueue } from '../types'
 import { environment } from '../environments'
 
 const APPLICATION_TYPE = 'gjafakort'
@@ -35,18 +35,21 @@ interface ApplicationResponse {
   }
 }
 
-export const createApplication = async (
-  applicationInput: CreateApplicationInput,
-  context: GraphQLContext,
-  state: string,
-  comments: string[],
-): Promise<ApplicationResponse> => {
-  const url = `${environment.applicationUrl}/issuers/${applicationInput.companySSN}/applications`
-  const authorSSN = context.user.ssn
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
+class ApplicationAPI extends RESTDataSource {
+  baseURL = `${environment.applicationUrl}/issuers/`
+
+  willSendRequest(request: RequestOptions) {
+    request.headers.set('Content-Type', 'application/json')
+  }
+
+  async createApplication(
+    applicationInput: CreateApplicationInput,
+    authorSSN: string,
+    messageQueue: MessageQueue,
+    state: string,
+    comments: string[],
+  ): Promise<ApplicationResponse> {
+    const res = await this.post(`${applicationInput.companySSN}/applications`, {
       authorSSN,
       type: APPLICATION_TYPE,
       state,
@@ -54,27 +57,29 @@ export const createApplication = async (
         ...applicationInput,
         comments,
       },
-    }),
-  })
-  const { application }: { application: ApplicationResponse } = await res.json()
+    })
 
-  context.channel.publish({
-    exchangeId: context.companyApplicationExchangeId,
-    message: {
-      ...application,
-      authorSSN,
-    },
-    routingKey: application.state as GjafakortApplicationRoutingKey,
-  })
-  return application
+    messageQueue.channel.publish({
+      exchangeId: messageQueue.companyApplicationExchangeId,
+      message: {
+        ...res.application,
+        authorSSN,
+      },
+      routingKey: res.application.state as GjafakortApplicationRoutingKey,
+    })
+    return res.application
+  }
+
+  async getApplication(companySSN: string): Promise<ApplicationResponse> {
+    try {
+      const res = await this.get(
+        `${companySSN}/applications/${APPLICATION_TYPE}`,
+      )
+      return res.application
+    } catch {
+      return null
+    }
+  }
 }
 
-export const getApplication = async (
-  companySSN: string,
-): Promise<ApplicationResponse> => {
-  const url = `${environment.applicationUrl}/issuers/${companySSN}/applications/${APPLICATION_TYPE}`
-
-  const res = await fetch(url)
-  const data = await res.json()
-  return data.application
-}
+export default ApplicationAPI

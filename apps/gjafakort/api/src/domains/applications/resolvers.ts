@@ -1,20 +1,24 @@
 import { ForbiddenError } from 'apollo-server-express'
 
 import { authorize } from '../auth'
-import { applicationService, ferdalagService, rskService } from '../../services'
 
 class ApplicationResolver {
   @authorize()
-  public async createApplication(_, { input }, context) {
-    const company = await rskService.getCompanyBySSN(
-      context.user.ssn,
-      input.companySSN,
-    )
+  public async createApplication(
+    _,
+    { input },
+    {
+      user,
+      messageQueue,
+      dataSources: { rskApi, ferdalagApi, applicationApi },
+    },
+  ) {
+    const company = await rskApi.getCompanyBySSN(user.ssn, input.companySSN)
     if (!company) {
       throw new ForbiddenError('Company not found!')
     }
 
-    const serviceProviders = await ferdalagService.getServiceProviders(
+    const serviceProviders = await ferdalagApi.getServiceProviders(
       input.companySSN,
     )
     let state = 'approved'
@@ -27,12 +31,14 @@ class ApplicationResolver {
       comments.push('No service provider found for ssn')
     }
 
-    const application = await applicationService.createApplication(
+    const application = await applicationApi.createApplication(
       input,
-      context,
+      user.ssn,
+      messageQueue,
       state,
       comments,
     )
+
     return {
       application: {
         id: application.id,

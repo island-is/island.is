@@ -1,13 +1,12 @@
 import { ForbiddenError } from 'apollo-server-express'
 
-import { applicationsService } from '../applications'
+import { applicationService } from '../applications'
 import { authorize } from '../auth'
-import { rskService } from '../../services'
 
 class CompanyResolver {
   @authorize()
-  public async getCompanies(_1, _2, { user }) {
-    const members = await rskService.getCompanyRegistryMembers(user.ssn)
+  public async getCompanies(_1, _2, { user, dataSources }) {
+    const members = await dataSources.rskApi.getCompanyRegistryMembers(user.ssn)
     const membersWithProcuration = members.filter(
       (member) => member.ErProkuruhafi === '1',
     )
@@ -19,8 +18,8 @@ class CompanyResolver {
   }
 
   @authorize()
-  public async getCompany(_, { ssn }, { user }) {
-    const company = await rskService.getCompanyBySSN(user.ssn, ssn)
+  public async getCompany(_, { ssn }, { user, dataSources }) {
+    const company = await dataSources.rskApi.getCompanyBySSN(user.ssn, ssn)
     if (!company) {
       throw new ForbiddenError('Company not found!')
     }
@@ -40,12 +39,12 @@ export default {
   },
 
   Company: {
-    application(company) {
+    application(company, _, { dataSources }) {
       if (!company) {
         return null
       }
 
-      return applicationsService.getApplication(company.ssn)
+      return applicationService.getApplication(company.ssn, dataSources)
     },
   },
 }
