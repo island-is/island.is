@@ -8,17 +8,6 @@ import { ExistsQuery, RequestBodySearch, Sort } from 'elastic-builder'
 import { Entry } from 'contentful'
 import { Syncer } from '../contentful/syncer'
 
-function chunk(arr, len) {
-  let i = 0
-  const chunks = [],
-    n = arr.length
-
-  while (i < n) {
-    chunks.push(arr.slice(i, (i += len)))
-  }
-  return chunks
-}
-
 @Injectable()
 export class IndexingService {
   private elasticService: ElasticService
