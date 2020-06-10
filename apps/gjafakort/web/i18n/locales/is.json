@@ -36,31 +36,31 @@
         {
           "label": "Hverjir fá Ferðagjöf?",
           "contents": [
-            "Allir einstaklingar með lögheimili á Íslandi og íslenska kennitölu, sem eru fæddir árið 2002 eða fyrr fá Ferðagjöf."
+            "Einstaklingar með lögheimili á Ísland, íslenska kennitölu og eru fæddir árið 2002 eða fyrr fá Ferðagjöf."
           ]
         },
         {
           "label": "Hvernig nálgast ég Ferðagjöfina?",
           "contents": [
-            "Til að nýta Ferðagjöfina þarf að sækja gjöfina hér á Ísland.is með innskráningu. Smáforritið Ferðagjöf er sótt í App Store eða Play Store og strikamerki skannað við kaup á þjónustu.",
-            "Einnig er hægt að nýta Ferðagjöfina beint inni á Ísland.is fyrir þá sem ekki eru með snjallsíma."
+            "Sækja þarf gjöfina á Ísland.is með innskráningu. Smáforritið Ferðagjöf er sótt í App Store eða Play Store og strikamerki skannað við kaup á þjónustu.",
+            "Einnig er hægt að nýta Ferðagjöfina beint inn á Ísland.is fyrir þá sem ekki geta sótt smáforritið. Þá er hægt að skanna strikamerkið úr farsíma eða stimpla inn númer strikamerkis við kaup á þjónustu."
           ]
         },
         {
           "label": "Hvar get ég notað Ferðagjöfina?",
           "contents": [
-            "Ferðagjöfina má nýta hjá ferðaþjónustufyrirtækjum víðs vegar um landið.  Sjá má yfirlit yfir fyrirtæki sem hafa skráð sig til þátttöku á vefnum Ferðalag.is og í smáforritinu Ferðagjöf."
+            "Nýta má Ferðagjöf hjá skilgreindum fyrirtækjum innan ferðaþjónustunnar sem hafa skráð sig til þátttöku. Sjá má yfirlit yfir fyrirtæki á www.ferðalag.is."
           ]
         },
         {
           "label": "Get ég gefið Ferðagjöfina?",
           "contents": [
-            "Allir eru hvattir til að nýta gjöfina en heimilt er að gefa eigin gjöf. Hver einstaklingur getur þó að hámarki fengið 15 Ferðagjafir að gjöf."
+            "Allir eru hvattir til að nýta gjöfina en heimilt er að gefa eigin gjöf. Hver einstaklingur getur að hámarki gefið eða greitt með 15 Ferðagjöfum á gildistíma Ferðagjafar."
           ]
         },
         {
           "label": "Hver er gildistími Ferðagjafarinnar?",
-          "contents": ["Ferðagjöfin er í gildi til 31. desember 2020."]
+          "contents": ["Gildistími er til og með 31.desember 2020."]
         }
       ]
     },
