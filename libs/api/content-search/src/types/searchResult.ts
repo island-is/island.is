@@ -1,5 +1,4 @@
-
 export interface SearchResult {
-  total: number;
-  items: [];
+  total: number
+  items: []
 }

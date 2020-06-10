@@ -4,20 +4,18 @@ import {
   HelloWorldService,
   HelloWorldRepository,
 } from '@island.is/api/domains/hello-world'
-import {
-  SearcherService,
-} from '@island.is/api/domains/content-search'
-import {ElasticService} from "@island.is/api/content-search";
+import { SearcherService } from '@island.is/api/domains/content-search'
+import { ElasticService } from '@island.is/api/content-search'
 
 const helloWorldRepository = new HelloWorldRepository()
 const helloWorld = new HelloWorldService(helloWorldRepository)
 
-const elasticService = new ElasticService();
+const elasticService = new ElasticService()
 const searcher = new SearcherService(elasticService)
 
 const singletons = {
   helloWorld,
-  searcher
+  searcher,
 }
 
 export const createContext = (

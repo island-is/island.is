@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server-express'
 
 export const typeDefs = gql`
-    type ContentItem {
+  type ContentItem {
     _id: String
     title: String
     content: String
@@ -28,7 +28,7 @@ export const typeDefs = gql`
   }
 
   input CategoryInput {
-    id: ID,
+    id: ID
     slug: String
   }
 
