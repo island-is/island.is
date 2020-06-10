@@ -32,9 +32,7 @@ export type ContentArticle = {
 
 export type ContentCategory = {
   __typename?: 'ContentCategory'
-  _id?: Maybe<Scalars['ID']>
   title?: Maybe<Scalars['String']>
-  slug?: Maybe<Scalars['String']>
 }
 
 export type ContentItem = {
@@ -233,13 +231,13 @@ export type ResolversTypes = {
   CategoriesInput: CategoriesInput
   Language: Language
   ContentCategory: ResolverTypeWrapper<ContentCategory>
-  ID: ResolverTypeWrapper<Scalars['ID']>
   String: ResolverTypeWrapper<Scalars['String']>
   SearcherInput: SearcherInput
   SearchResult: ResolverTypeWrapper<SearchResult>
   Int: ResolverTypeWrapper<Scalars['Int']>
   ContentItem: ResolverTypeWrapper<ContentItem>
   ItemInput: ItemInput
+  ID: ResolverTypeWrapper<Scalars['ID']>
   ItemType: ItemType
   HelloWorldInput: HelloWorldInput
   HelloWorld: ResolverTypeWrapper<HelloWorld>
@@ -255,13 +253,13 @@ export type ResolversParentTypes = {
   CategoriesInput: CategoriesInput
   Language: Language
   ContentCategory: ContentCategory
-  ID: Scalars['ID']
   String: Scalars['String']
   SearcherInput: SearcherInput
   SearchResult: SearchResult
   Int: Scalars['Int']
   ContentItem: ContentItem
   ItemInput: ItemInput
+  ID: Scalars['ID']
   ItemType: ItemType
   HelloWorldInput: HelloWorldInput
   HelloWorld: HelloWorld
@@ -285,9 +283,7 @@ export type ContentCategoryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['ContentCategory'] = ResolversParentTypes['ContentCategory']
 > = {
-  _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 

@@ -1,5 +1,5 @@
 import {SearcherService as Service} from '@island.is/api/schema'
-import {ElasticService, SearchIndexes, SearchResult, Document as ContentDocument} from "@island.is/api/content-search";
+import {Document as ContentDocument, ElasticService, SearchIndexes, SearchResult} from "@island.is/api/content-search";
 
 export class SearcherService implements Service {
   constructor(private repository: ElasticService) {}
@@ -20,15 +20,11 @@ export class SearcherService implements Service {
   }
 
   async fetchCategories(query): Promise<ContentDocument> {
-    const { body } = await this.repository.query(SearchIndexes.test, query);
+    const { body } = await this.repository.fetchCategories(SearchIndexes.test, query);
 
-    let ret = body?.hits?.hits.map((hit) => {
-      let obj = hit._source;
-      obj._id = hit._id;
-      return obj;
+    return body?.aggregations?.categories?.buckets.map((category) => {
+      return {title: category.key};
     });
-
-    return ret;
   }
 
   async fetchSingle(input): Promise<ContentDocument> {

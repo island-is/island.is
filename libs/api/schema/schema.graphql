@@ -14,9 +14,7 @@ type ContentArticle {
 }
 
 type ContentCategory {
-  _id: ID
   title: String
-  slug: String
 }
 
 type ContentItem {

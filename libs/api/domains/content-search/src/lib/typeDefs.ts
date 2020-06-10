@@ -33,9 +33,7 @@ export const typeDefs = gql`
   }
 
   type ContentCategory {
-    _id: ID
     title: String
-    slug: String
   }
 
   input ItemInput {
