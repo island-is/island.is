@@ -70,7 +70,7 @@ type Namespace {
 }
 
 type Query {
-  getCategories(input: CategoriesInput): SearchResult!
+  getCategories(input: CategoriesInput): [ContentCategory]
   getSearchResults(query: SearcherInput): SearchResult!
   getSingleItem(input: ItemInput): ContentItem
   helloWorld(input: HelloWorldInput): HelloWorld!

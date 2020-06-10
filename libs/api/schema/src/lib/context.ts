@@ -8,6 +8,7 @@ export interface HelloWorldService {
 export interface SearcherService {
   find(query): Promise<SearchResult>
   fetchSingle(input): Promise<ContentDocument>
+  fetchCategories(input): Promise<ContentDocument>
 }
 
 export interface Context {
