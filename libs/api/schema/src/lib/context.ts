@@ -12,6 +12,7 @@ export interface SearcherService {
   find(query): Promise<SearchResult>
   fetchSingle(input): Promise<ContentDocument>
   fetchCategories(input): Promise<ContentDocument>
+  fetchItems(input): Promise<ContentDocument>
 }
 
 export interface Context {
