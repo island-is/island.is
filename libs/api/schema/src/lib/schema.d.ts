@@ -14,6 +14,10 @@ export type Scalars = {
   Float: number
 }
 
+export type CategoriesInput = {
+  language?: Maybe<Language>
+}
+
 export type CategoryInput = {
   id?: Maybe<Scalars['ID']>
   slug?: Maybe<Scalars['String']>
@@ -83,10 +87,15 @@ export type Mutation = {
 
 export type Query = {
   __typename?: 'Query'
+  getCategories: SearchResult
   getSearchResults: SearchResult
   getSingleItem?: Maybe<ContentItem>
   helloWorld: HelloWorld
   root?: Maybe<Scalars['String']>
+}
+
+export type QueryGetCategoriesArgs = {
+  input?: Maybe<CategoriesInput>
 }
 
 export type QueryGetSearchResultsArgs = {
@@ -103,7 +112,7 @@ export type QueryHelloWorldArgs = {
 
 export type SearcherInput = {
   queryString?: Maybe<Scalars['String']>
-  lang?: Maybe<Scalars['String']>
+  language?: Maybe<Language>
 }
 
 export type SearchResult = {
@@ -221,15 +230,16 @@ export type DirectiveResolverFn<
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>
-  SearcherInput: SearcherInput
-  String: ResolverTypeWrapper<Scalars['String']>
+  CategoriesInput: CategoriesInput
+  Language: Language
   SearchResult: ResolverTypeWrapper<SearchResult>
   Int: ResolverTypeWrapper<Scalars['Int']>
   ContentItem: ResolverTypeWrapper<ContentItem>
+  String: ResolverTypeWrapper<Scalars['String']>
+  SearcherInput: SearcherInput
   ItemInput: ItemInput
   ID: ResolverTypeWrapper<Scalars['ID']>
   ItemType: ItemType
-  Language: Language
   HelloWorldInput: HelloWorldInput
   HelloWorld: ResolverTypeWrapper<HelloWorld>
   Mutation: ResolverTypeWrapper<{}>
@@ -242,15 +252,16 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Query: {}
-  SearcherInput: SearcherInput
-  String: Scalars['String']
+  CategoriesInput: CategoriesInput
+  Language: Language
   SearchResult: SearchResult
   Int: Scalars['Int']
   ContentItem: ContentItem
+  String: Scalars['String']
+  SearcherInput: SearcherInput
   ItemInput: ItemInput
   ID: Scalars['ID']
   ItemType: ItemType
-  Language: Language
   HelloWorldInput: HelloWorldInput
   HelloWorld: HelloWorld
   Mutation: {}
@@ -335,6 +346,12 @@ export type QueryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
+  getCategories?: Resolver<
+    ResolversTypes['SearchResult'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetCategoriesArgs, never>
+  >
   getSearchResults?: Resolver<
     ResolversTypes['SearchResult'],
     ParentType,

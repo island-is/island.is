@@ -1,3 +1,7 @@
+input CategoriesInput {
+  language: Language
+}
+
 input CategoryInput {
   id: ID
   slug: String
@@ -61,6 +65,7 @@ type Mutation {
 }
 
 type Query {
+  getCategories(input: CategoriesInput): SearchResult!
   getSearchResults(query: SearcherInput): SearchResult!
   getSingleItem(input: ItemInput): ContentItem
   helloWorld(input: HelloWorldInput): HelloWorld!
@@ -69,7 +74,7 @@ type Query {
 
 input SearcherInput {
   queryString: String
-  lang: String
+  language: Language
 }
 
 type SearchResult {
