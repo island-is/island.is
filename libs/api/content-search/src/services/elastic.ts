@@ -72,9 +72,10 @@ export class ElasticService {
 
     if (query?.size) {
       requestBody.size(query.size)
-    }
-    if (query?.page && query?.numPerPage) {
-      requestBody.from(query.page * query.numPerPage);
+
+      if (query?.page > 1) {
+        requestBody.from(query.page * query.size - query.page);
+      }
     }
 
     return getConnection().search({

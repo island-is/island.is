@@ -87,7 +87,6 @@ input SearcherInput {
   language: Language
   size: Int
   page: Int
-  numPerPage: Int
 }
 
 type SearchResult {

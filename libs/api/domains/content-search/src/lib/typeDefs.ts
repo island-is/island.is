@@ -28,7 +28,6 @@ export const typeDefs = gql`
     language: Language
     size: Int
     page: Int
-    numPerPage: Int
   }
 
   input CategoryInput {
