@@ -62,65 +62,25 @@ export const Button = forwardRef<
       ...(isExternal && { rel: 'noreferrer noopener' }),
     }
 
-    const Icon = () => {
-      if (!showRightIcon) {
-        return null
-      }
-
-      let type = icon
-
-      if (loading) {
-        type = 'loading'
-      } else if (isExternal) {
-        type = 'external'
-      }
-
-      const iconProps = {
-        spin: loading,
-        width: 15,
-        type,
-      }
-
-      return (
-        <IconContainer>
-          <IconComponent {...iconProps} />
-        </IconContainer>
-      )
-    }
-
-    const ButtonContent = () => {
-      const LeftImage = () =>
-        leftImage && (
-          <div
-            style={{
-              backgroundImage: `url(${leftImage})`,
-            }}
-            className={styles.image}
-          />
-        )
-
-      const LeftIcon = () => leftIcon && <IconComponent type={leftIcon} />
-
-      return (
-        <Inline alignY="center" space={2}>
-          {isMenuButton && hasLeftContent ? (
-            <LeftContentContainer>
-              {leftImage ? <LeftImage /> : <LeftIcon />}
-            </LeftContentContainer>
-          ) : null}
-          {children ? children : null}
-          {icon ? <Icon /> : null}
-        </Inline>
-      )
-    }
-
     const sharedProps = {
       className,
     }
 
+    const buttonContent = {
+      leftImage,
+      isMenuButton,
+      hasLeftContent,
+      children,
+      icon,
+      leftIcon,
+      showRightIcon,
+      loading,
+      isExternal,
+    }
+
     return href ? (
       <a href={href} role="button" {...anchorProps} {...sharedProps}>
-        <ButtonContent />
+        <ButtonContent {...buttonContent} />
       </a>
     ) : (
       <button
@@ -130,11 +90,84 @@ export const Button = forwardRef<
         onClick={onClick}
         {...sharedProps}
       >
-        <ButtonContent />
+        <ButtonContent {...buttonContent} />
       </button>
     )
   },
 )
+
+const Icon = ({ showRightIcon, icon, loading, isExternal }) => {
+  if (!showRightIcon) {
+    return null
+  }
+
+  let type = icon
+
+  if (loading) {
+    type = 'loading'
+  } else if (isExternal) {
+    type = 'external'
+  }
+
+  const iconProps = {
+    spin: loading,
+    width: 15,
+    type,
+  }
+
+  return (
+    <IconContainer>
+      <IconComponent {...iconProps} />
+    </IconContainer>
+  )
+}
+
+const LeftImage = ({ leftImage }) =>
+  leftImage && (
+    <div
+      style={{
+        backgroundImage: `url(${leftImage})`,
+      }}
+      className={styles.image}
+    />
+  )
+
+const LeftIcon = ({ leftIcon }) => leftIcon && <IconComponent type={leftIcon} />
+
+const ButtonContent = ({
+  leftImage,
+  isMenuButton,
+  hasLeftContent,
+  children,
+  icon,
+  leftIcon,
+  showRightIcon,
+  loading,
+  isExternal,
+}) => {
+  return (
+    <Inline alignY="center" space={2}>
+      {isMenuButton && hasLeftContent ? (
+        <LeftContentContainer>
+          {leftImage ? (
+            <LeftImage leftImage={leftImage} />
+          ) : (
+            <LeftIcon leftIcon={leftIcon} />
+          )}
+        </LeftContentContainer>
+      ) : null}
+      {children ? children : null}
+      {icon ? (
+        <Icon
+          showRightIcon={showRightIcon}
+          icon={icon}
+          loading={loading}
+          isExternal={isExternal}
+        />
+      ) : null}
+    </Inline>
+  )
+}
 
 const IconContainer = ({ children }) => (
   <Box display="flex" height="full" alignItems="center">
