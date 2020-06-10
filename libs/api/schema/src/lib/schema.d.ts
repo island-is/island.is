@@ -87,7 +87,7 @@ export type Mutation = {
 
 export type Query = {
   __typename?: 'Query'
-  getCategories: SearchResult
+  getCategories?: Maybe<Array<Maybe<ContentCategory>>>
   getSearchResults: SearchResult
   getSingleItem?: Maybe<ContentItem>
   helloWorld: HelloWorld
@@ -232,20 +232,20 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>
   CategoriesInput: CategoriesInput
   Language: Language
+  ContentCategory: ResolverTypeWrapper<ContentCategory>
+  ID: ResolverTypeWrapper<Scalars['ID']>
+  String: ResolverTypeWrapper<Scalars['String']>
+  SearcherInput: SearcherInput
   SearchResult: ResolverTypeWrapper<SearchResult>
   Int: ResolverTypeWrapper<Scalars['Int']>
   ContentItem: ResolverTypeWrapper<ContentItem>
-  String: ResolverTypeWrapper<Scalars['String']>
-  SearcherInput: SearcherInput
   ItemInput: ItemInput
-  ID: ResolverTypeWrapper<Scalars['ID']>
   ItemType: ItemType
   HelloWorldInput: HelloWorldInput
   HelloWorld: ResolverTypeWrapper<HelloWorld>
   Mutation: ResolverTypeWrapper<{}>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   CategoryInput: CategoryInput
-  ContentCategory: ResolverTypeWrapper<ContentCategory>
   ContentArticle: ResolverTypeWrapper<ContentArticle>
 }
 
@@ -254,20 +254,20 @@ export type ResolversParentTypes = {
   Query: {}
   CategoriesInput: CategoriesInput
   Language: Language
+  ContentCategory: ContentCategory
+  ID: Scalars['ID']
+  String: Scalars['String']
+  SearcherInput: SearcherInput
   SearchResult: SearchResult
   Int: Scalars['Int']
   ContentItem: ContentItem
-  String: Scalars['String']
-  SearcherInput: SearcherInput
   ItemInput: ItemInput
-  ID: Scalars['ID']
   ItemType: ItemType
   HelloWorldInput: HelloWorldInput
   HelloWorld: HelloWorld
   Mutation: {}
   Boolean: Scalars['Boolean']
   CategoryInput: CategoryInput
-  ContentCategory: ContentCategory
   ContentArticle: ContentArticle
 }
 
@@ -347,7 +347,7 @@ export type QueryResolvers<
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
   getCategories?: Resolver<
-    ResolversTypes['SearchResult'],
+    Maybe<Array<Maybe<ResolversTypes['ContentCategory']>>>,
     ParentType,
     ContextType,
     RequireFields<QueryGetCategoriesArgs, never>

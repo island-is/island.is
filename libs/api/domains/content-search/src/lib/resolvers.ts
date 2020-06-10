@@ -12,7 +12,7 @@ export const resolvers: Resolvers = {
     },
     // @ts-ignore
     getCategories(_, { input }, context) {
-      return context.searcher.fetchSingle(input)
+      return context.searcher.fetchCategories(input)
     }
   },
 }

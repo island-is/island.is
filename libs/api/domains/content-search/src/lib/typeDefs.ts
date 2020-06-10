@@ -68,7 +68,7 @@ export const typeDefs = gql`
   extend type Query {
     getSearchResults(query: SearcherInput): SearchResult!
     getSingleItem(input: ItemInput): ContentItem
-    getCategories(input: CategoriesInput): SearchResult!
+    getCategories(input: CategoriesInput): [ContentCategory]
   }
 `
 

@@ -19,14 +19,16 @@ export class SearcherService implements Service {
     }
   }
 
-  async fetch(query): Promise<SearchResult> {
+  async fetchCategories(query): Promise<ContentDocument> {
     const { body } = await this.repository.query(SearchIndexes.test, query);
 
-    return body?.hits?.hits.map((hit) => {
+    let ret = body?.hits?.hits.map((hit) => {
       let obj = hit._source;
       obj._id = hit._id;
       return obj;
     });
+
+    return ret;
   }
 
   async fetchSingle(input): Promise<ContentDocument> {
