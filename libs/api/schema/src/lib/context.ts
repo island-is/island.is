@@ -1,5 +1,8 @@
 import { Request, Response } from 'express'
-import {SearchResult, Document as ContentDocument} from "@island.is/api/content-search";
+import {
+  SearchResult,
+  Document as ContentDocument,
+} from '@island.is/api/content-search'
 
 export interface HelloWorldService {
   getMessage(name: string): string

@@ -984,7 +984,10 @@
               "libs/api/domains/content-search/tsconfig.lib.json",
               "libs/api/domains/content-search/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/api/domains/content-search/**"]
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/content-search/**"
+            ]
           }
         },
         "test": {
