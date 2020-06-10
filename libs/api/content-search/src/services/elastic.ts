@@ -2,7 +2,7 @@ import { environment } from '../environments/environment'
 import { Client } from '@elastic/elasticsearch'
 import { Document, SearchIndexes } from '../types'
 import { RequestBodySearch, TermsAggregation } from 'elastic-builder'
-import esb from "elastic-builder";
+import esb from 'elastic-builder'
 
 const { elastic } = environment
 
