@@ -1,3 +1,8 @@
+input ArticlesInCategoryInput {
+  slug: String
+  language: Language
+}
+
 input CategoriesInput {
   language: Language
 }
@@ -23,6 +28,7 @@ type ContentItem {
   content: String
   tag: [String]
   category: String
+  category_slug: String
   content_blob: String
   content_id: String
   content_type: String
@@ -63,6 +69,7 @@ type Mutation {
 }
 
 type Query {
+  getArticlesInCategory(category: ArticlesInCategoryInput): [ContentItem]
   getCategories(input: CategoriesInput): [ContentCategory]
   getSearchResults(query: SearcherInput): SearchResult!
   getSingleItem(input: ItemInput): ContentItem
@@ -73,6 +80,9 @@ type Query {
 input SearcherInput {
   queryString: String
   language: Language
+  size: Int
+  page: Int
+  numPerPage: Int
 }
 
 type SearchResult {

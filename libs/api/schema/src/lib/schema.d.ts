@@ -14,6 +14,11 @@ export type Scalars = {
   Float: number
 }
 
+export type ArticlesInCategoryInput = {
+  slug?: Maybe<Scalars['String']>
+  language?: Maybe<Language>
+}
+
 export type CategoriesInput = {
   language?: Maybe<Language>
 }
@@ -42,6 +47,7 @@ export type ContentItem = {
   content?: Maybe<Scalars['String']>
   tag?: Maybe<Array<Maybe<Scalars['String']>>>
   category?: Maybe<Scalars['String']>
+  category_slug?: Maybe<Scalars['String']>
   content_blob?: Maybe<Scalars['String']>
   content_id?: Maybe<Scalars['String']>
   content_type?: Maybe<Scalars['String']>
@@ -85,11 +91,16 @@ export type Mutation = {
 
 export type Query = {
   __typename?: 'Query'
+  getArticlesInCategory?: Maybe<Array<Maybe<ContentItem>>>
   getCategories?: Maybe<Array<Maybe<ContentCategory>>>
   getSearchResults: SearchResult
   getSingleItem?: Maybe<ContentItem>
   helloWorld: HelloWorld
   root?: Maybe<Scalars['String']>
+}
+
+export type QueryGetArticlesInCategoryArgs = {
+  category?: Maybe<ArticlesInCategoryInput>
 }
 
 export type QueryGetCategoriesArgs = {
@@ -111,6 +122,9 @@ export type QueryHelloWorldArgs = {
 export type SearcherInput = {
   queryString?: Maybe<Scalars['String']>
   language?: Maybe<Language>
+  size?: Maybe<Scalars['Int']>
+  page?: Maybe<Scalars['Int']>
+  numPerPage?: Maybe<Scalars['Int']>
 }
 
 export type SearchResult = {
@@ -121,11 +135,18 @@ export type SearchResult = {
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
 
-export type StitchingResolver<TResult, TParent, TContext, TArgs> = {
+export type LegacyStitchingResolver<TResult, TParent, TContext, TArgs> = {
   fragment: string
   resolve: ResolverFn<TResult, TParent, TContext, TArgs>
 }
 
+export type NewStitchingResolver<TResult, TParent, TContext, TArgs> = {
+  selectionSet: string
+  resolve: ResolverFn<TResult, TParent, TContext, TArgs>
+}
+export type StitchingResolver<TResult, TParent, TContext, TArgs> =
+  | LegacyStitchingResolver<TResult, TParent, TContext, TArgs>
+  | NewStitchingResolver<TResult, TParent, TContext, TArgs>
 export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
   | ResolverFn<TResult, TParent, TContext, TArgs>
   | StitchingResolver<TResult, TParent, TContext, TArgs>
@@ -205,7 +226,7 @@ export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
   info: GraphQLResolveInfo,
 ) => Maybe<TTypes> | Promise<Maybe<TTypes>>
 
-export type isTypeOfResolverFn<T = {}> = (
+export type IsTypeOfResolverFn<T = {}> = (
   obj: T,
   info: GraphQLResolveInfo,
 ) => boolean | Promise<boolean>
@@ -228,14 +249,15 @@ export type DirectiveResolverFn<
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>
-  CategoriesInput: CategoriesInput
-  Language: Language
-  ContentCategory: ResolverTypeWrapper<ContentCategory>
+  ArticlesInCategoryInput: ArticlesInCategoryInput
   String: ResolverTypeWrapper<Scalars['String']>
-  SearcherInput: SearcherInput
-  SearchResult: ResolverTypeWrapper<SearchResult>
-  Int: ResolverTypeWrapper<Scalars['Int']>
+  Language: Language
   ContentItem: ResolverTypeWrapper<ContentItem>
+  CategoriesInput: CategoriesInput
+  ContentCategory: ResolverTypeWrapper<ContentCategory>
+  SearcherInput: SearcherInput
+  Int: ResolverTypeWrapper<Scalars['Int']>
+  SearchResult: ResolverTypeWrapper<SearchResult>
   ItemInput: ItemInput
   ID: ResolverTypeWrapper<Scalars['ID']>
   ItemType: ItemType
@@ -250,14 +272,15 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Query: {}
-  CategoriesInput: CategoriesInput
-  Language: Language
-  ContentCategory: ContentCategory
+  ArticlesInCategoryInput: ArticlesInCategoryInput
   String: Scalars['String']
-  SearcherInput: SearcherInput
-  SearchResult: SearchResult
-  Int: Scalars['Int']
+  Language: Language
   ContentItem: ContentItem
+  CategoriesInput: CategoriesInput
+  ContentCategory: ContentCategory
+  SearcherInput: SearcherInput
+  Int: Scalars['Int']
+  SearchResult: SearchResult
   ItemInput: ItemInput
   ID: Scalars['ID']
   ItemType: ItemType
@@ -276,7 +299,7 @@ export type ContentArticleResolvers<
   _id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  __isTypeOf?: isTypeOfResolverFn<ParentType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
 export type ContentCategoryResolvers<
@@ -284,7 +307,7 @@ export type ContentCategoryResolvers<
   ParentType extends ResolversParentTypes['ContentCategory'] = ResolversParentTypes['ContentCategory']
 > = {
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  __isTypeOf?: isTypeOfResolverFn<ParentType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
 export type ContentItemResolvers<
@@ -300,6 +323,11 @@ export type ContentItemResolvers<
     ContextType
   >
   category?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  category_slug?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   content_blob?: Resolver<
     Maybe<ResolversTypes['String']>,
     ParentType,
@@ -320,7 +348,7 @@ export type ContentItemResolvers<
   imageText?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   lang?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  __isTypeOf?: isTypeOfResolverFn<ParentType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
 export type HelloWorldResolvers<
@@ -328,7 +356,7 @@ export type HelloWorldResolvers<
   ParentType extends ResolversParentTypes['HelloWorld'] = ResolversParentTypes['HelloWorld']
 > = {
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  __isTypeOf?: isTypeOfResolverFn<ParentType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
 export type MutationResolvers<
@@ -342,6 +370,12 @@ export type QueryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
+  getArticlesInCategory?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['ContentItem']>>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetArticlesInCategoryArgs, never>
+  >
   getCategories?: Resolver<
     Maybe<Array<Maybe<ResolversTypes['ContentCategory']>>>,
     ParentType,
@@ -379,7 +413,7 @@ export type SearchResultResolvers<
     ParentType,
     ContextType
   >
-  __isTypeOf?: isTypeOfResolverFn<ParentType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
 export type Resolvers<ContextType = Context> = {
