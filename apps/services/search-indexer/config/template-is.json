@@ -96,6 +96,21 @@
 					}
 				}
 			},
+			"category_slug": {
+				"type": "keyword"
+			},
+			"group": {
+				"type": "keyword",
+				"fields": {
+					"stemmed": {
+						"type": "text",
+						"analyzer": "title_icelandic"
+					}
+				}
+			},
+			"group_slug": {
+				"type": "keyword"
+			},
 			"lang": {
 				"type": "keyword"
 			},
