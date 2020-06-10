@@ -15,5 +15,8 @@ export class IndexingController {
     } else {
       this.appService.initialSync(SearchIndexes.test)
     }
+    return {
+      acknowledge: true,
+    }
   }
 }
