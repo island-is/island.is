@@ -9,8 +9,12 @@ import {
 export class SearcherService implements Service {
   constructor(private repository: ElasticService) {}
 
+  getIndex(lang: string) {
+    return SearchIndexes[lang] ?? SearchIndexes.is;
+  }
+
   async find(query): Promise<SearchResult> {
-    const { body } = await this.repository.query(SearchIndexes.test, query)
+    const { body } = await this.repository.query(this.getIndex(query.language), query)
 
     let items = body?.hits?.hits.map((hit) => {
       const obj = hit._source
@@ -26,7 +30,7 @@ export class SearcherService implements Service {
 
   async fetchCategories(query): Promise<ContentDocument> {
     const { body } = await this.repository.fetchCategories(
-      SearchIndexes.test,
+      this.getIndex(query.language),
       query,
     )
 
@@ -36,7 +40,7 @@ export class SearcherService implements Service {
   }
 
   async fetchSingle(input): Promise<ContentDocument> {
-    const { body } = await this.repository.query(SearchIndexes.test, input)
+    const { body } = await this.repository.query(this.getIndex(input.language), input)
 
     const hit = body?.hits?.hits[0]
     if (!hit) {
@@ -49,7 +53,7 @@ export class SearcherService implements Service {
   }
 
   async fetchItems(input): Promise<ContentDocument> {
-    const { body } = await this.repository.fetchItems(SearchIndexes.test, input)
+    const { body } = await this.repository.fetchItems(this.getIndex(input.language), input)
 
     return body?.hits?.hits.map((hit) => {
       let obj = hit._source
