@@ -71,7 +71,7 @@ spec:
             - name: REDIS_URL
               value: {{ .redis_url }}
             - name: CACHE_TIME_TO_LIVE
-              value: {{ .cache_time_to_live }}
+              value: "{{ .cache_time_to_live }}"
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
