@@ -5,7 +5,6 @@ import { ApolloProvider } from 'react-apollo'
 import { ApolloClient } from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 
-import { client } from '../graphql'
 import { Page, Footer, Box } from '@island.is/island-ui/core'
 import { Header } from '../components'
 import appWithTranslation from '../i18n/appWithTranslation'

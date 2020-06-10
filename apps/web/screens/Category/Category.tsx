@@ -17,9 +17,9 @@ import {
 
 import { categories, groups, selectOptions, articles } from '../../json'
 
-import * as styles from './CategoryPage.treat'
+import * as styles from './Category.treat'
 
-const CategoryPage = () => {
+export const categoryScreen = () => {
   const router = useRouter()
 
   const TITLE = 'Fjölskylda og velferð'
@@ -128,4 +128,4 @@ const CategoryPage = () => {
   )
 }
 
-export default CategoryPage
+export default categoryScreen

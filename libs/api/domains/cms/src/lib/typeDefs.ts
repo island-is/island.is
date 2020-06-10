@@ -7,12 +7,22 @@ export const typeDefs = gql`
     content: String
   }
 
-  input ArticleInput {
+  input GetArticleInput {
     id: String
   }
 
+  type Namespace {
+    namespace: String!
+    fields: String!
+  }
+
+  input GetNamespaceInput {
+    namespace: String
+  }
+
   extend type Query {
-    article(input: ArticleInput): Article!
+    getArticle(input: GetArticleInput): Article!
+    getNamespace(input: GetNamespaceInput): Namespace!
   }
 `
 

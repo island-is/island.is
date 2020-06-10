@@ -1,4 +1,3 @@
-// import fetch from 'isomorphic-unfetch'
 import { EntryCollection } from 'contentful'
 import { getLocalizedEntries } from './contentful'
 
@@ -10,13 +9,7 @@ interface Article {
 
 export type RawArticle = EntryCollection<Article>
 
-export const getArticle = (id: string) => ({
-  id,
-  title: 'Forsíða',
-  content: 'Text and some text',
-})
-
-export const getArticleById = async (entryId: string): Promise<Article> => {
+export const getArticle = async (entryId: string): Promise<Article> => {
   let result: RawArticle | null = null
 
   try {
@@ -39,5 +32,32 @@ export const getArticleById = async (entryId: string): Promise<Article> => {
     id,
     title,
     content: JSON.stringify(content) || '',
+  }
+}
+interface Namespace {
+  namespace: string
+  fields: string
+}
+
+export type RawNamespace = EntryCollection<Namespace>
+
+export const getNamespace = async (namespace: string): Promise<Namespace> => {
+  let result: RawNamespace | null = null
+
+  try {
+    result = await getLocalizedEntries('is-IS', {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      content_type: 'uiConfiguration',
+      'fields.namespace': namespace,
+    })
+  } catch (e) {
+    return null
+  }
+
+  const { fields } = result?.items[0] || null
+
+  return {
+    namespace,
+    fields: JSON.stringify(fields) || '',
   }
 }

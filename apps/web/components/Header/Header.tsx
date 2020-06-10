@@ -7,13 +7,20 @@ import {
   Inline,
   Box,
   Button,
-  Select,
+  // Select,
 } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
-import { selectOptions } from '../../json'
+// import { selectOptions } from '../../json'
+import { useI18n } from '@island.is/web/i18n'
 
 export const Header: FC = () => {
+  const { activeLocale } = useI18n()
+
+  console.log('activeLocale', activeLocale)
+  const languageButtonText = activeLocale === 'is' ? 'English' : 'Íslenska'
+  const languageButtonLink = activeLocale === 'en' ? '/' : 'en'
+
   return (
     <Box width="full">
       <ContentBlock>
@@ -35,16 +42,18 @@ export const Header: FC = () => {
                 width="full"
               >
                 <Inline space={2}>
-                  <Button variant="menu">English</Button>
+                  <Link href={languageButtonLink}>
+                    <Button variant="menu">{languageButtonText}</Button>
+                  </Link>
                   <Button variant="menu" leftIcon="user">
                     Innskráning
                   </Button>
-                  <Select
+                  {/* <Select
                     placeholder="Leitaðu á Ísland.is"
                     options={selectOptions}
                     name="search"
                     icon="search"
-                  />
+                  /> */}
                 </Inline>
               </Box>
             </Column>
