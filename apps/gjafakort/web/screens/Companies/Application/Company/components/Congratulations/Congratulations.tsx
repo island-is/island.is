@@ -15,23 +15,33 @@ function Congratulations() {
                 Til hamingju!
               </Typography>
               <Typography variant="intro">
-                Á næstu mínútum færð þú sendan tölvupóst þar sem fram koma
-                aðgangsupplýsingar að vefsvæði og leiðbeiningar um notkun á
-                Ferðagjöfinni.
+                Núna getur þú skráð til inn á vefsvæði fyrirtækja
+              </Typography>
+              <Typography variant="p">
+                Á vefsvæðinu er hægt að fylgjast með notkun á Ferðagjöfinni, slá
+                inn strikamerki og stofnað fleiri aðganga.
+              </Typography>
+              <Button
+                variant="text"
+                size="large"
+                href="https://manager.yay.is/Account/Login?ReturnUrl=%2F"
+              >
+                Áfram á vefsvæði fyrirtækja{' '}
+                <Box marginLeft={1} alignItems="center" display="flex">
+                  <Icon type="arrowRight" width={16} />
+                </Box>
+              </Button>
+              <Typography variant="p">
+                Þú færð tölvupóst frá YaY ehf með aðgangsupplýsingum um
+                vefsvæðið. YaY er tæknibirgi Ferðagjafarinnar og sér um Appið
+                fyrir notendur og vefsvæði fyrirtækja.
+              </Typography>
+              <Typography variant="p">
+                Ferðamálastofa sér um eftirlit með skráningu fyrirtækja, ef
+                fyrirtæki eru ekki með tilsett leyfi verður aðgangur þeirra að
+                Ferðagjöfinni lokaður.
               </Typography>
             </Stack>
-          </Box>
-          <Box marginBottom={15}>
-            <Button
-              variant="text"
-              size="large"
-              href="https://manager.yay.is/Account/Login?ReturnUrl=%2F"
-            >
-              Áfram á vefsvæði fyrirtækja{' '}
-              <Box marginLeft={1} alignItems="center" display="flex">
-                <Icon type="arrowRight" width={16} />
-              </Box>
-            </Button>
           </Box>
         </Box>
       }
