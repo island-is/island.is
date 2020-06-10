@@ -1,7 +1,8 @@
 import { environment } from '../environments/environment'
 import { Client } from '@elastic/elasticsearch'
-import { SearchIndexes } from '../types'
+import { Document, SearchIndexes } from '../types'
 import { RequestBodySearch, TermsAggregation } from 'elastic-builder'
+import esb from "elastic-builder";
 
 const { elastic } = environment
 
@@ -10,12 +11,8 @@ const getConnection = (): Client => {
   return new Client(elastic)
 }
 
-const esb = require('elastic-builder')
-
 export class ElasticService {
-  constructor() {}
-
-  async index(index: SearchIndexes, document: object) {
+  async index(index: SearchIndexes, document: Document) {
     const client = getConnection()
 
     try {
@@ -40,7 +37,7 @@ export class ElasticService {
 
   async query(index: SearchIndexes, query) {
     const requestBody = esb.requestBodySearch()
-    let must = []
+    const must = []
 
     if (query?.queryString) {
       requestBody.query(
