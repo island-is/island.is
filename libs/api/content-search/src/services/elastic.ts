@@ -70,6 +70,13 @@ export class ElasticService {
       requestBody.query(esb.boolQuery().must(must))
     }
 
+    if (query?.size) {
+      requestBody.size(query.size)
+    }
+    if (query?.page && query?.numPerPage) {
+      requestBody.from(query.page * query.numPerPage);
+    }
+
     return getConnection().search({
       index: index,
       body: requestBody.toJSON(),

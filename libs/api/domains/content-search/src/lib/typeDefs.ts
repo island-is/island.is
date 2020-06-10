@@ -26,6 +26,9 @@ export const typeDefs = gql`
   input SearcherInput {
     queryString: String
     language: Language
+    size: Int
+    page: Int
+    numPerPage: Int
   }
 
   input CategoryInput {
