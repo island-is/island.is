@@ -11,7 +11,11 @@ import {
   Typography,
 } from '@island.is/island-ui/core'
 
+import { useI18n } from '../../i18n'
+
 function NotFound() {
+  const { t } = useI18n()
+
   return (
     <ContentBlock width="large">
       <Box marginBottom={4}>
@@ -31,11 +35,9 @@ function NotFound() {
               </Column>
               <Column>
                 <Box marginBottom={1}>
-                  <Typography variant="h4">Umbeðin slóð fannst ekki</Typography>
+                  <Typography variant="h4">{t.notFound.title}</Typography>
                 </Box>
-                <Typography variant="p">
-                  Eitthvað hefur farið úrskeiðis, vinsamlegast reynið aftur
-                </Typography>
+                <Typography variant="p">{t.notFound.content}</Typography>
               </Column>
             </Columns>
           </Box>
@@ -45,7 +47,7 @@ function NotFound() {
         <Box marginRight={1} alignItems="center" display="flex">
           <Icon type="arrowLeft" width={16} />
         </Box>
-        Til baka
+        {t.notFound.button}
       </Button>
     </ContentBlock>
   )

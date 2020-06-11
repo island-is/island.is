@@ -68,7 +68,7 @@ function Home() {
                 <Stack space={1}>
                   {accordionItem.contents.map((content, index) => (
                     <Typography variant="p" key={index}>
-                      {content}
+                      <span dangerouslySetInnerHTML={{ __html: content }} />
                     </Typography>
                   ))}
                 </Stack>
