@@ -42,7 +42,7 @@ export class Syncer {
       const { items } = await this.contentFulClient.getEntries({
         'sys.id[in]': ids.join(','),
       })
-      result.items = items
+      result.items = result.items.concat(items)
     }
     return result
   }
