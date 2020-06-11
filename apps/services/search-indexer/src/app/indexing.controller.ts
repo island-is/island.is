@@ -9,11 +9,11 @@ export class IndexingController {
 
   @Get('sync')
   async sync() {
-    const syncToken = await this.appService.getLastSyncToken(SearchIndexes.test)
+    const syncToken = await this.appService.getLastSyncToken(SearchIndexes.is)
     if (syncToken) {
-      this.appService.continueSync(syncToken, SearchIndexes.test)
+      this.appService.continueSync(syncToken, SearchIndexes.is)
     } else {
-      this.appService.initialSync(SearchIndexes.test)
+      this.appService.initialSync(SearchIndexes.is)
     }
     return {
       acknowledge: true,
