@@ -34,8 +34,12 @@ export class SearcherService implements Service {
       query,
     )
 
-    return body?.aggregations?.categories?.buckets.map((category) => {
-      return { title: category.key }
+    return body?.aggregations?.categories?.buckets.map((category, index) => {
+      console.log(category);
+      return {
+        title: category.key,
+        slug: body?.aggregations?.catagories_slugs?.buckets[index].key,
+      }
     })
   }
 
