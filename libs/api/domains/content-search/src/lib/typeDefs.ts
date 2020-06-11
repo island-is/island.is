@@ -2,15 +2,15 @@ import { gql } from 'apollo-server-express'
 
 export const typeDefs = gql`
   type ContentItem {
-    _id: String
+    id: ID
     title: String
     content: String
     tag: [String]
     category: String
-    category_slug: String
-    content_blob: String
-    content_id: String
-    content_type: String
+    categorySlug: String
+    contentBlob: String
+    contentId: String
+    contentType: String
     date: String
     image: String
     imageText: String
@@ -41,7 +41,7 @@ export const typeDefs = gql`
   }
 
   input ItemInput {
-    _id: ID
+    id: ID
     slug: String
     type: ItemType
     language: ContentLanguage
@@ -57,7 +57,7 @@ export const typeDefs = gql`
   }
 
   type ContentArticle {
-    _id: ID
+    id: ID
     title: String
     slug: String
   }

@@ -13,14 +13,21 @@ export class SearcherService implements Service {
     return SearchIndexes[lang] ?? SearchIndexes.is;
   }
 
+  private fixCase(doc: any) {
+    const obj = doc._source
+    obj.contentType = obj.content_type;
+    obj.contentBlob = obj.content_blob;
+    obj.contentId = obj.content_id;
+    obj.categorySlug = obj.category_slug;
+    obj.groupSlug = obj.group_slug;
+    obj.id = doc._id
+    return obj
+  }
+
   async find(query): Promise<SearchResult> {
     const { body } = await this.repository.query(this.getIndex(query.language), query)
 
-    let items = body?.hits?.hits.map((hit) => {
-      const obj = hit._source
-      obj._id = hit._id
-      return obj
-    })
+    let items = body?.hits?.hits.map(this.fixCase)
 
     return {
       total: items.length,
@@ -50,20 +57,13 @@ export class SearcherService implements Service {
     if (!hit) {
       return null
     }
-
-    const obj = hit._source
-    obj._id = hit._id
-    return obj
+    return this.fixCase(hit);
   }
 
   async fetchItems(input): Promise<ContentDocument> {
     const { body } = await this.repository.fetchItems(this.getIndex(input.language), input)
 
-    return body?.hits?.hits.map((hit) => {
-      let obj = hit._source
-      obj._id = hit._id
-      return obj
-    })
+    return body?.hits?.hits.map(this.fixCase)
   }
 }
 

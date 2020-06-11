@@ -36,7 +36,7 @@ export class ElasticService {
   }
 
   async query(index: SearchIndexes, query) {
-    const requestBody = esb.requestBodySearch()
+    const requestBody = new RequestBodySearch()
     const must = []
 
     if (query?.queryString) {
@@ -48,7 +48,7 @@ export class ElasticService {
     }
 
     if (query?._id) {
-      must.push(esb.matchQuery('_id', query._id))
+      must.push(esb.matchQuery('_id', query.id))
     }
     if (query?.slug) {
       must.push(esb.matchQuery('slug', query.slug))
@@ -78,10 +78,7 @@ export class ElasticService {
       }
     }
 
-    return getConnection().search({
-      index: index,
-      body: requestBody.toJSON(),
-    })
+    return this.findByQuery(index, requestBody)
   }
 
   async fetchCategories(index: SearchIndexes, input) {
@@ -91,28 +88,20 @@ export class ElasticService {
       .size(0)
 
     try {
-      return getConnection().search({
-        index: index,
-        body: query.toJSON(),
-      })
+      return this.findByQuery(index, query)
     } catch (e) {
       console.log(e)
     }
   }
 
   async fetchItems(index: SearchIndexes, input) {
-    const requestBody = esb.requestBodySearch()
-
-    requestBody
+    const requestBody = new RequestBodySearch()
       .query(
         esb.boolQuery().must([
           esb.matchQuery('category_slug', input.slug)
         ])
       )
 
-    return getConnection().search({
-      index: index,
-      body: requestBody.toJSON(),
-    })
+    return this.findByQuery(index, requestBody)
   }
 }
