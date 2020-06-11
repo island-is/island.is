@@ -63,10 +63,8 @@ const embeddedNodes = {
                 {processDescription || 'processDescription'}
               </Typography>
               <Box paddingTop={[1, 1, 2]}>
-                <Link href={processLink}>
-                  <Button
-                    icon={type === 'Not digital' ? 'external' : 'arrowRight'}
-                  >
+                <Link href={processLink} passHref>
+                  <Button icon={type === 'Not digital' ? 'info' : 'external'}>
                     Áfram í innskráningu
                   </Button>
                 </Link>
@@ -88,8 +86,6 @@ const renderNode = {
     </Box>
   ),
   [BLOCKS.HEADING_2]: (node, children) => {
-    // console.log('NODE', node, children)
-
     return (
       <Typography variant="h2" as="h2">
         <span id={slugify(children.join(''))}>{children}</span>

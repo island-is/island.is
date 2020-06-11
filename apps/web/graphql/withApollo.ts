@@ -19,7 +19,6 @@ export const withApollo = <
     const newContext = Object.assign({}, ctx, { apolloClient })
     const props = await getInitialProps(newContext)
     const cache = apolloClient.cache.extract()
-
     return {
       ...props,
       apolloState: cache,

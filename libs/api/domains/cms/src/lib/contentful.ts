@@ -1,8 +1,7 @@
 import { createClient, EntryCollection } from 'contentful'
 
 const space = '8k0h54kbe6bj'
-
-const accessToken = 'JJ15D0eURWtNDEzG-k2U8F8JhzDKQedhkbQJKWNlZow'
+const accessToken = 'C7qk3hTvN5Bu0gUOU1kAXdVuiV22exOcH3uOPJ4nvKY'
 
 if (!space || !accessToken) {
   throw new Error('Missing Contentful environment variables')
@@ -12,7 +11,9 @@ const client = createClient({
   space,
   accessToken,
   environment: 'sandbox',
+  host: 'preview.contentful.com',
 })
+
 const validLocales = ['is-IS', 'en']
 const localeMap = {
   is: 'is-IS',

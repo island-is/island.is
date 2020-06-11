@@ -19,6 +19,7 @@ import { useI18n } from '../i18n'
 import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
 import { GET_NAMESPACE_QUERY } from './queries'
 import { Screen } from '../types'
+import { useNamespace } from '../hooks'
 
 interface HomeProps {
   namespace: Query['getNamespace']
@@ -26,16 +27,7 @@ interface HomeProps {
 
 const Home: Screen<HomeProps> = ({ namespace }) => {
   const { t, activeLocale } = useI18n()
-
-  // console.log('activeLocale:', activeLocale)
-
-  const ns = JSON.parse(namespace.fields)
-  console.log('ns', ns)
-
-  const n = (key: string) => {
-    // return ns.fields[key]
-    return ns?.fields?.[key] ?? key
-  }
+  const n = useNamespace(namespace)
 
   return (
     <>
@@ -56,6 +48,7 @@ const Home: Screen<HomeProps> = ({ namespace }) => {
             >
               <Box
                 textAlign={['center', 'center', 'left']}
+                width="full"
                 paddingRight={[0, 0, 12]}
               >
                 <Stack space={3}>
@@ -82,6 +75,7 @@ const Home: Screen<HomeProps> = ({ namespace }) => {
                 display="flex"
                 background="white"
                 boxShadow="subtle"
+                width="full"
                 justifyContent="center"
                 alignItems="center"
               >
@@ -91,12 +85,14 @@ const Home: Screen<HomeProps> = ({ namespace }) => {
                   alignY="center"
                 >
                   <Column width="1/2">
-                    <Select
-                      placeholder={n('heroSearchPlaceholder')}
-                      options={selectOptions}
-                      name="search"
-                      icon="search"
-                    />
+                    <Box display="inlineFlex" alignItems="center" width="full">
+                      <Select
+                        placeholder={n('heroSearchPlaceholder')}
+                        options={selectOptions}
+                        name="search"
+                        icon="search"
+                      />
+                    </Box>
                   </Column>
                   <Column width="1/2">
                     <Inline space={1}>
@@ -119,7 +115,16 @@ const Home: Screen<HomeProps> = ({ namespace }) => {
         <ContentBlock width="large">
           <Categories label={n('articlesTitle')} seeMoreText={n('seeMore')}>
             {categories.map((category, index) => {
-              return <Card key={index} {...category} href="/category" />
+              return (
+                <Card
+                  key={index}
+                  {...category}
+                  linkProps={{
+                    passHref: true,
+                    href: `${activeLocale === 'en' ? '/en' : ''}/category`,
+                  }}
+                />
+              )
             })}
           </Categories>
         </ContentBlock>
@@ -128,7 +133,7 @@ const Home: Screen<HomeProps> = ({ namespace }) => {
   )
 }
 
-Home.getInitialProps = async ({ apolloClient }) => {
+Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   const {
     data: { getNamespace: namespace },
   } = await apolloClient.query<Query, QueryGetNamespaceArgs>({
@@ -136,6 +141,7 @@ Home.getInitialProps = async ({ apolloClient }) => {
     variables: {
       input: {
         namespace: 'Homepage',
+        lang: locale,
       },
     },
   })
