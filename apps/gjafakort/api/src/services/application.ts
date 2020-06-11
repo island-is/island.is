@@ -34,7 +34,7 @@ interface ApplicationResponse {
 }
 
 class ApplicationAPI extends RESTDataSource {
-  baseURL = `${environment.applicationUrl}/issuers/`
+  baseURL = `${environment.applicationUrl}/`
 
   willSendRequest(request: RequestOptions) {
     request.headers.set('Content-Type', 'application/json')
@@ -46,15 +46,18 @@ class ApplicationAPI extends RESTDataSource {
     state: string,
     comments: string[],
   ): Promise<ApplicationResponse> {
-    const res = await this.post(`${applicationInput.companySSN}/applications`, {
-      authorSSN,
-      type: APPLICATION_TYPE,
-      state,
-      data: {
-        ...applicationInput,
-        comments,
+    const res = await this.post(
+      `issuers/${applicationInput.companySSN}/applications`,
+      {
+        authorSSN,
+        type: APPLICATION_TYPE,
+        state,
+        data: {
+          ...applicationInput,
+          comments,
+        },
       },
-    })
+    )
 
     return res.application
   }
@@ -62,12 +65,17 @@ class ApplicationAPI extends RESTDataSource {
   async getApplication(companySSN: string): Promise<ApplicationResponse> {
     try {
       const res = await this.get(
-        `${companySSN}/applications/${APPLICATION_TYPE}`,
+        `issuers/${companySSN}/applications/${APPLICATION_TYPE}`,
       )
       return res.application
     } catch {
       return null
     }
+  }
+
+  async getApplications(): Promise<ApplicationResponse> {
+    const res = await this.get(`applications/${APPLICATION_TYPE}`)
+    return res.applications
   }
 }
 

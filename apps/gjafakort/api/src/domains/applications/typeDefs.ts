@@ -21,6 +21,35 @@ export default gql`
     webpage: String!
   }
 
+  type Log {
+    id: String!
+    state: String!
+    title: String!
+    data: String
+    authorSSN: String
+  }
+
+  type ApplicationWithLogs {
+    id: String
+    name: String!
+    email: String!
+    state: String!
+    companySSN: String!
+    serviceCategory: String
+    generalEmail: String!
+    companyDisplayName: String
+    companyName: String
+    exhibition: Boolean
+    operatingPermitForRestaurant: Boolean
+    operatingPermitForVehicles: Boolean
+    operationsTrouble: Boolean
+    phoneNumber: String!
+    validLicenses: Boolean
+    validPermit: Boolean
+    webpage: String!
+    logs: [Log]
+  }
+
   input CreateApplicationInput {
     email: String!
     generalEmail: String!
@@ -41,6 +70,10 @@ export default gql`
 
   type CreateApplication {
     application: Application
+  }
+
+  extend type Query {
+    applications: [ApplicationWithLogs]
   }
 
   extend type Mutation {

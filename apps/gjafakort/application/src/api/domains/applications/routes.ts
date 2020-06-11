@@ -8,6 +8,22 @@ import { service as auditService } from '../audit'
 const router = Router()
 
 router.get(
+  '/:type',
+  [param('type').isIn(Object.values(consts.Types))],
+  async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() })
+    }
+
+    const { type } = req.params
+    const applications = await applicationService.getApplicationsByType(type)
+
+    return res.status(200).json({ applications })
+  },
+)
+
+router.get(
   '/:applicationId',
   [param('applicationId').isUUID()],
   async (req, res) => {

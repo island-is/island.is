@@ -57,10 +57,45 @@ class ApplicationResolver {
       },
     }
   }
+
+  @authorize({ role: 'admin' })
+  public async getApplications(_1, _2, { dataSources: { applicationApi } }) {
+    const applications = await applicationApi.getApplications()
+    return applications.map((application) => ({
+      id: application.id,
+      name: application.data.name,
+      email: application.data.email,
+      state: application.state,
+      companySSN: application.data.companySSN,
+      serviceCategory: application.data.serviceCategory,
+      generalEmail: application.data.generalEmail,
+      webpage: application.data.webpage,
+      phoneNumber: application.data.phoneNumber,
+      operationsTrouble: application.data.operationsTrouble,
+      companyName: application.data.companyName,
+      companyDisplayName: application.data.companyDisplayName,
+      operatingPermitForRestaurant:
+        application.data.operatingPermitForRestaurant,
+      exhibition: application.data.exhibition,
+      operatingPermitForVehicles: application.data.operatingPermitForVehicles,
+      validLicenses: application.data.validLicenses,
+      validPermit: application.data.validPermit,
+      logs: application.AuditLogs.map((auditLog) => ({
+        id: auditLog.id,
+        state: auditLog.state,
+        title: auditLog.title,
+        data: '',
+        authorSSN: auditLog.authorSSN,
+      })),
+    }))
+  }
 }
 
 const resolver = new ApplicationResolver()
 export default {
+  Query: {
+    applications: resolver.getApplications,
+  },
   Mutation: {
     createApplication: resolver.createApplication,
   },

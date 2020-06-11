@@ -5,7 +5,6 @@ import merge from 'lodash/merge'
 import { logger } from '@island.is/logging'
 // import { createCache } from '@island.is/cache'
 
-import { environment } from '../environments'
 import { verifyToken, ACCESS_TOKEN_COOKIE } from '../domains'
 import { Resolvers, GraphQLContext, DataSource } from '../types'
 import { ApplicationAPI, FerdalagAPI, RskAPI } from '../services'

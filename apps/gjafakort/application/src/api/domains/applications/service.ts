@@ -1,6 +1,7 @@
 import merge from 'lodash/merge'
 import isArray from 'lodash/isArray'
 import Application from './model'
+import { model as AuditLog } from '../audit'
 
 export const getApplicationByIssuerAndType = (
   issuerSSN: string,
@@ -13,6 +14,16 @@ export const getApplicationByIssuerAndType = (
 export const getApplicationById = (applicationId: string): Application =>
   Application.findOne({
     where: { id: applicationId },
+  })
+
+export const getApplicationsByType = (type: string): [Application] =>
+  Application.findAll({
+    where: { type },
+    include: [
+      {
+        model: AuditLog,
+      },
+    ],
   })
 
 export const createApplication = (
