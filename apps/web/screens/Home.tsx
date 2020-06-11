@@ -35,6 +35,15 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
 
+  const path = activeLocale === 'en' ? 'category' : 'flokkur'
+  const prefix = activeLocale === 'en' ? `/en/${path}` : `/${path}`
+
+  const cards = categories.map(({ title, slug }) => ({
+    title,
+    description: 'description',
+    href: `${prefix}/${slug}`,
+  }))
+
   return (
     <>
       <ContentBlock>
@@ -120,18 +129,8 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
       <Box background="purple100">
         <ContentBlock width="large">
           <Categories label={n('articlesTitle')} seeMoreText={n('seeMore')}>
-            {categories.map((category, index) => {
-              return (
-                <Card
-                  key={index}
-                  {...category}
-                  description="description"
-                  linkProps={{
-                    passHref: true,
-                    href: `${activeLocale === 'en' ? '/en' : ''}/category`,
-                  }}
-                />
-              )
+            {cards.map((card, index) => {
+              return <Card key={index} {...card} />
             })}
           </Categories>
         </ContentBlock>

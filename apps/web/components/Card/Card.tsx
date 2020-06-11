@@ -8,17 +8,18 @@ import * as styles from './Card.treat'
 import { getTags } from '../../json'
 
 interface CardProps {
-  title?: string
-  description?: string
+  title: string
+  description: string
   tags?: boolean
   linkProps?: LinkProps
+  href?: string
 }
 
 export const Card: FC<CardProps> = ({
-  title = 'bla',
-  description = 'desc',
+  title,
+  description,
   tags = true,
-  linkProps = { href: '#', as: null },
+  href,
 }) => {
   const Content = (
     <Box display="flex" height="full" flexDirection="column">
@@ -35,7 +36,7 @@ export const Card: FC<CardProps> = ({
           <Inline space={1}>
             {getTags(4).map(({ title }, index) => {
               return (
-                <Link key={index} {...linkProps}>
+                <Link key={index} href="#">
                   <Tag variant="purple">{title}</Tag>
                 </Link>
               )
@@ -46,12 +47,12 @@ export const Card: FC<CardProps> = ({
     </Box>
   )
 
-  if (!linkProps.href) {
+  if (!href) {
     return <Frame>{Content}</Frame>
   }
 
   return (
-    <Link {...linkProps}>
+    <Link href={href}>
       {/* eslint-disable-next-line */}
       <a className={styles.card}>
         <Box

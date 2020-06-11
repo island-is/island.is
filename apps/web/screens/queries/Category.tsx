@@ -8,3 +8,14 @@ export const GET_CATEGORIES_QUERY = gql`
     }
   }
 `
+
+export const GET_ARTICLES_IN_CATEGORY_QUERY = gql`
+  query GetCategories($category: ArticlesInCategoryInput!) {
+    getArticlesInCategory(category: $category) {
+      content
+      category
+      slug
+      title
+    }
+  }
+`
