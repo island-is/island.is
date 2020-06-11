@@ -7,26 +7,31 @@ import packageSvg from '@island.is/gjafakort-web/assets/ferdagjof-pakki.svg'
 import { useI18n } from '../../../../i18n'
 
 function GiftCTA() {
-  const { t } = useI18n()
+  const {
+    t: {
+      home: { cta: t },
+      routes,
+    },
+  } = useI18n()
 
   return (
     <Box>
       <Box background="purple100" padding={4} marginBottom={3}>
         <Box marginBottom={2}>
-          <Typography variant="h4">{t.intro.cta.users.label}</Typography>
+          <Typography variant="h4">{t.users.label}</Typography>
         </Box>
         <Button width="fluid" disabled>
-          {t.intro.cta.users.content}
+          {t.users.content}
         </Button>
       </Box>
       <Box background="purple100" padding={4} marginBottom={3}>
         <Box marginBottom={2}>
-          <Typography variant="h4">{t.intro.cta.companies.label}</Typography>
+          <Typography variant="h4">{t.companies.label}</Typography>
         </Box>
-        <Link href="/fyrirtaeki">
+        <Link href={routes.companies.home}>
           <span>
             <Button width="fluid" variant="ghost">
-              {t.intro.cta.companies.content}
+              {t.companies.content}
             </Button>
           </span>
         </Link>

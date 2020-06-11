@@ -3,17 +3,24 @@ import Link from 'next/link'
 
 import { Box, Button, Typography } from '@island.is/island-ui/core'
 
+import { useI18n } from '@island.is/gjafakort-web/i18n'
+
 function NoConnection() {
+  const {
+    t: {
+      application: { noConnection: t },
+      routes,
+    },
+  } = useI18n()
+
   return (
     <>
       <Box marginBottom={5}>
-        <Typography variant="intro">
-          Þú ert ekki skráður prókúruhafi, vinsamlegast hafðu samband við RSK
-        </Typography>
+        <Typography variant="intro">{t.content}</Typography>
       </Box>
-      <Link href="/fyrirtaeki">
+      <Link href={routes.companies.home}>
         <span>
-          <Button variant="text">Tilbaka</Button>
+          <Button variant="text">{t.content}</Button>
         </span>
       </Link>
     </>

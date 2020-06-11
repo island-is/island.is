@@ -5,6 +5,7 @@ import gql from 'graphql-tag'
 
 import { Box, Typography } from '@island.is/island-ui/core'
 
+import { useI18n } from '@island.is/gjafakort-web/i18n'
 import { ContentLoader, FormLayout } from '@island.is/gjafakort-web/components'
 import { SelectionForm, NoConnection } from './components'
 
@@ -18,6 +19,9 @@ const GetCompaniesQuery = gql`
 `
 
 function Companies() {
+  const {
+    t: { application: t },
+  } = useI18n()
   const router = useRouter()
   const { data, loading } = useQuery(GetCompaniesQuery)
   const { companies } = data || {}
@@ -33,7 +37,7 @@ function Companies() {
     <FormLayout>
       <Box marginBottom={2}>
         <Typography variant="h1" as="h1">
-          Prókúruhafi
+          {t.title}
         </Typography>
       </Box>
       {companies.length > 0 ? (

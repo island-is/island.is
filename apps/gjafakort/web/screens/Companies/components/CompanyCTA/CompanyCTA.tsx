@@ -7,17 +7,22 @@ import { useI18n } from '@island.is/gjafakort-web/i18n'
 import packageSvg from '@island.is/gjafakort-web/assets/ferdagjof-pakki.svg'
 
 function CompanyCTA() {
-  const { t } = useI18n()
+  const {
+    t: {
+      companies: { cta: t },
+      routes,
+    },
+  } = useI18n()
 
   return (
     <Box>
       <Box background="purple100" padding={4} marginBottom={3}>
         <Box marginBottom={2}>
-          <Typography variant="h4">{t.companies.cta.label}</Typography>
+          <Typography variant="h4">{t.label}</Typography>
         </Box>
-        <Link href="/fyrirtaeki/umsokn">
+        <Link href={routes.companies.application}>
           <span>
-            <Button width="fluid">{t.companies.cta.content}</Button>
+            <Button width="fluid">{t.content}</Button>
           </span>
         </Link>
       </Box>

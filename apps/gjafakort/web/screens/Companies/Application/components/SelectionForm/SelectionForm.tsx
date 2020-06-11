@@ -10,6 +10,8 @@ import {
   Typography,
   Option,
 } from '@island.is/island-ui/core'
+
+import { useI18n } from '@island.is/gjafakort-web/i18n'
 import { Company } from '@island.is/gjafakort-web/graphql/schema'
 
 interface PropTypes {
@@ -22,13 +24,17 @@ interface FormValues {
 }
 
 function SelectionForm({ onSubmit, companies }: PropTypes) {
-  const initialValues: FormValues = {
-    company: undefined,
-  }
+  const {
+    t: { companySignup: t },
+  } = useI18n()
 
   return (
     <Formik
-      initialValues={initialValues}
+      initialValues={
+        {
+          company: undefined,
+        } as FormValues
+      }
       onSubmit={({ company }) => {
         onSubmit({
           name: company.label,
@@ -40,7 +46,7 @@ function SelectionForm({ onSubmit, companies }: PropTypes) {
       {() => (
         <Form>
           <Box marginBottom={6}>
-            <Typography variant="intro">Hvaða fyrirtæki viltu skrá?</Typography>
+            <Typography variant="intro">{t.intro}</Typography>
           </Box>
           <Columns space="gutter" collapseBelow="xl">
             <Column width="1/2">
@@ -48,24 +54,21 @@ function SelectionForm({ onSubmit, companies }: PropTypes) {
                 <Field
                   component={FieldSelect}
                   name="company"
-                  label="Fyrirtæki"
-                  placeholder="Veldu fyrirtæki"
+                  label={t.form.company.label}
+                  placeholder={t.form.company.placeholder}
                   options={companies.map((company) => ({
                     label: company.name,
                     value: company.ssn,
                   }))}
                 />
               </Box>
-              <Button htmlType="submit">Áfram</Button>
+              <Button htmlType="submit">{t.form.submit}</Button>
             </Column>
           </Columns>
           <Columns space="gutter" collapseBelow="xl">
             <Column width="2/3">
               <Box marginTop={6}>
-                <Typography variant="p">
-                  Ef fyrirtækið þitt er ekki í fellilistanum ert þú ekki
-                  prókúruhafi þess, vinsamlegast hafðu samband við RSK
-                </Typography>
+                <Typography variant="p">{t.caption}</Typography>
               </Box>
             </Column>
           </Columns>

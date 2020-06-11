@@ -14,7 +14,9 @@ import {
 import { useI18n } from '../../i18n'
 
 function NotFound() {
-  const { t } = useI18n()
+  const {
+    t: { notFound: t },
+  } = useI18n()
 
   return (
     <ContentBlock width="large">
@@ -35,9 +37,9 @@ function NotFound() {
               </Column>
               <Column>
                 <Box marginBottom={1}>
-                  <Typography variant="h4">{t.notFound.title}</Typography>
+                  <Typography variant="h4">{t.title}</Typography>
                 </Box>
-                <Typography variant="p">{t.notFound.content}</Typography>
+                <Typography variant="p">{t.content}</Typography>
               </Column>
             </Columns>
           </Box>
@@ -47,7 +49,7 @@ function NotFound() {
         <Box marginRight={1} alignItems="center" display="flex">
           <Icon type="arrowLeft" width={16} />
         </Box>
-        {t.notFound.button}
+        {t.button}
       </Button>
     </ContentBlock>
   )

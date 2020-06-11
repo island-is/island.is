@@ -29,7 +29,10 @@ class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
   }
 
   render() {
-    const { children, t } = this.props
+    const {
+      children,
+      t: { errorBoundary: t },
+    } = this.props
     const { error } = this.state
 
     if (error) {
@@ -38,11 +41,11 @@ class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
           <ContentBlock width="large">
             <Box marginBottom={3}>
               <Typography variant="h1" as="h1">
-                {t.errorBoundary.title}
+                {t.title}
               </Typography>
             </Box>
             <Box marginBottom={9}>
-              {t.errorBoundary.contents.map((content, index) => (
+              {t.contents.map((content, index) => (
                 <Typography variant="intro" key={index}>
                   {HtmlParser(content)}
                 </Typography>

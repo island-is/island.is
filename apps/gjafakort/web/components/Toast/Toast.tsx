@@ -9,6 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 
 import { NotificationService } from '../../services'
+import { useI18n } from '../../i18n'
 
 interface NotificationError {
   type?: 'success' | 'info' | 'warning' | 'error'
@@ -16,6 +17,9 @@ interface NotificationError {
 }
 
 function Toast() {
+  const {
+    t: { error: t },
+  } = useI18n()
   const [notification, setNotification] = useState({
     type: undefined,
     message: '',
@@ -58,7 +62,7 @@ function Toast() {
         </Column>
         <Column>
           <Box marginBottom={1}>
-            <Typography variant="h4">Villa kom upp!</Typography>
+            <Typography variant="h4">{t.title}</Typography>
           </Box>
           <Typography variant="p">{notification.message}</Typography>
         </Column>

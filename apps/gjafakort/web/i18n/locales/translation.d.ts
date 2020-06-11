@@ -8,15 +8,29 @@
 // match the expected interface, even if the JSON is valid.
 
 export interface Translation {
-  name: string
-  notFound: Error
+  notFound: NotFound
   error: Error
   errorBoundary: ErrorBoundary
-  companies: Companies
-  intro: Intro
+  companies: TranslationCompanies
+  home: Home
+  application: Application
+  companySignup: CompanySignup
+  company: TranslationCompany
+  validation: Validation
+  routes: Routes
 }
 
-export interface Companies {
+export interface Application {
+  title: string
+  noConnection: NoConnection
+}
+
+export interface NoConnection {
+  content: string
+  button: string
+}
+
+export interface TranslationCompanies {
   name: string
   title: string
   intro: string
@@ -46,9 +60,111 @@ export interface Notes {
   items: string[]
 }
 
+export interface TranslationCompany {
+  congratulations: Congratulations
+  notQualified: NotQualified
+  signup: Signup
+}
+
+export interface Congratulations {
+  title: string
+  intro: string
+  description: string
+  button: string
+  contents: string[]
+}
+
+export interface NotQualified {
+  title: string
+  intro: string
+  description: string
+  conditions: string[]
+  caption: string
+  button: string
+}
+
+export interface Signup {
+  intro: string
+  form: SignupForm
+}
+
+export interface SignupForm {
+  companyName: Company
+  companySSN: Company
+  companyDisplayName: CompanyDisplayName
+  serviceCategory: ServiceCategory
+  operation: Operation
+  operationsTrouble: OperationsTrouble
+  contact: Contact
+  submit: string
+}
+
+export interface CompanyDisplayName {
+  label: string
+  tooltip: string
+}
+
+export interface Company {
+  label: string
+}
+
+export interface Contact {
+  label: string
+  name: string
+  email: string
+  generalEmail: string
+  phoneNumber: string
+}
+
+export interface Operation {
+  label: string
+  instructions: string[]
+  options: OperationOption[]
+}
+
+export interface OperationOption {
+  name: string
+  label: string
+  tooltip: string
+}
+
+export interface OperationsTrouble {
+  positiveLabel: string
+  negativeLabel: string
+  label: string
+  tooltip: string
+}
+
+export interface ServiceCategory {
+  label: string
+  placeholder: string
+  options: ServiceCategoryOption[]
+}
+
+export interface ServiceCategoryOption {
+  label: string
+  value: string
+}
+
+export interface CompanySignup {
+  intro: string
+  form: CompanySignupForm
+  caption: string
+}
+
+export interface CompanySignupForm {
+  company: FormCompany
+  submit: string
+}
+
+export interface FormCompany {
+  label: string
+  placeholder: string
+}
+
 export interface Error {
   title: string
-  content: string
+  intro: string
   button: string
 }
 
@@ -57,16 +173,16 @@ export interface ErrorBoundary {
   contents: string[]
 }
 
-export interface Intro {
+export interface Home {
   name: string
   title: string
   intro: string
   description: string
-  FAQ: IntroFAQ
-  cta: IntroCta
+  FAQ: HomeFAQ
+  cta: HomeCta
 }
 
-export interface IntroFAQ {
+export interface HomeFAQ {
   title: string
   items: FluffyItem[]
 }
@@ -76,10 +192,32 @@ export interface FluffyItem {
   contents: string[]
 }
 
-export interface IntroCta {
+export interface HomeCta {
   users: CompaniesClass
   companies: CompaniesClass
 }
+
+export interface NotFound {
+  title: string
+  content: string
+  button: string
+}
+
+export interface Routes {
+  companies: RoutesCompanies
+  users: Users
+}
+
+export interface RoutesCompanies {
+  home: string
+  application: string
+}
+
+export interface Users {
+  home: string
+}
+
+export interface Validation {}
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
@@ -236,16 +374,34 @@ function r(name: string) {
 const typeMap: any = {
   Translation: o(
     [
-      { json: 'name', js: 'name', typ: '' },
-      { json: 'notFound', js: 'notFound', typ: r('Error') },
+      { json: 'notFound', js: 'notFound', typ: r('NotFound') },
       { json: 'error', js: 'error', typ: r('Error') },
       { json: 'errorBoundary', js: 'errorBoundary', typ: r('ErrorBoundary') },
-      { json: 'companies', js: 'companies', typ: r('Companies') },
-      { json: 'intro', js: 'intro', typ: r('Intro') },
+      { json: 'companies', js: 'companies', typ: r('TranslationCompanies') },
+      { json: 'home', js: 'home', typ: r('Home') },
+      { json: 'application', js: 'application', typ: r('Application') },
+      { json: 'companySignup', js: 'companySignup', typ: r('CompanySignup') },
+      { json: 'company', js: 'company', typ: r('TranslationCompany') },
+      { json: 'validation', js: 'validation', typ: r('Validation') },
+      { json: 'routes', js: 'routes', typ: r('Routes') },
     ],
     false,
   ),
-  Companies: o(
+  Application: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'noConnection', js: 'noConnection', typ: r('NoConnection') },
+    ],
+    false,
+  ),
+  NoConnection: o(
+    [
+      { json: 'content', js: 'content', typ: '' },
+      { json: 'button', js: 'button', typ: '' },
+    ],
+    false,
+  ),
+  TranslationCompanies: o(
     [
       { json: 'name', js: 'name', typ: '' },
       { json: 'title', js: 'title', typ: '' },
@@ -285,10 +441,155 @@ const typeMap: any = {
     ],
     false,
   ),
+  TranslationCompany: o(
+    [
+      {
+        json: 'congratulations',
+        js: 'congratulations',
+        typ: r('Congratulations'),
+      },
+      { json: 'notQualified', js: 'notQualified', typ: r('NotQualified') },
+      { json: 'signup', js: 'signup', typ: r('Signup') },
+    ],
+    false,
+  ),
+  Congratulations: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'intro', js: 'intro', typ: '' },
+      { json: 'description', js: 'description', typ: '' },
+      { json: 'button', js: 'button', typ: '' },
+      { json: 'contents', js: 'contents', typ: a('') },
+    ],
+    false,
+  ),
+  NotQualified: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'intro', js: 'intro', typ: '' },
+      { json: 'description', js: 'description', typ: '' },
+      { json: 'conditions', js: 'conditions', typ: a('') },
+      { json: 'caption', js: 'caption', typ: '' },
+      { json: 'button', js: 'button', typ: '' },
+    ],
+    false,
+  ),
+  Signup: o(
+    [
+      { json: 'intro', js: 'intro', typ: '' },
+      { json: 'form', js: 'form', typ: r('SignupForm') },
+    ],
+    false,
+  ),
+  SignupForm: o(
+    [
+      { json: 'companyName', js: 'companyName', typ: r('Company') },
+      { json: 'companySSN', js: 'companySSN', typ: r('Company') },
+      {
+        json: 'companyDisplayName',
+        js: 'companyDisplayName',
+        typ: r('CompanyDisplayName'),
+      },
+      {
+        json: 'serviceCategory',
+        js: 'serviceCategory',
+        typ: r('ServiceCategory'),
+      },
+      { json: 'operation', js: 'operation', typ: r('Operation') },
+      {
+        json: 'operationsTrouble',
+        js: 'operationsTrouble',
+        typ: r('OperationsTrouble'),
+      },
+      { json: 'contact', js: 'contact', typ: r('Contact') },
+      { json: 'submit', js: 'submit', typ: '' },
+    ],
+    false,
+  ),
+  CompanyDisplayName: o(
+    [
+      { json: 'label', js: 'label', typ: '' },
+      { json: 'tooltip', js: 'tooltip', typ: '' },
+    ],
+    false,
+  ),
+  Company: o([{ json: 'label', js: 'label', typ: '' }], false),
+  Contact: o(
+    [
+      { json: 'label', js: 'label', typ: '' },
+      { json: 'name', js: 'name', typ: '' },
+      { json: 'email', js: 'email', typ: '' },
+      { json: 'generalEmail', js: 'generalEmail', typ: '' },
+      { json: 'phoneNumber', js: 'phoneNumber', typ: '' },
+    ],
+    false,
+  ),
+  Operation: o(
+    [
+      { json: 'label', js: 'label', typ: '' },
+      { json: 'instructions', js: 'instructions', typ: a('') },
+      { json: 'options', js: 'options', typ: a(r('OperationOption')) },
+    ],
+    false,
+  ),
+  OperationOption: o(
+    [
+      { json: 'name', js: 'name', typ: '' },
+      { json: 'label', js: 'label', typ: '' },
+      { json: 'tooltip', js: 'tooltip', typ: '' },
+    ],
+    false,
+  ),
+  OperationsTrouble: o(
+    [
+      { json: 'positiveLabel', js: 'positiveLabel', typ: '' },
+      { json: 'negativeLabel', js: 'negativeLabel', typ: '' },
+      { json: 'label', js: 'label', typ: '' },
+      { json: 'tooltip', js: 'tooltip', typ: '' },
+    ],
+    false,
+  ),
+  ServiceCategory: o(
+    [
+      { json: 'label', js: 'label', typ: '' },
+      { json: 'placeholder', js: 'placeholder', typ: '' },
+      { json: 'options', js: 'options', typ: a(r('ServiceCategoryOption')) },
+    ],
+    false,
+  ),
+  ServiceCategoryOption: o(
+    [
+      { json: 'label', js: 'label', typ: '' },
+      { json: 'value', js: 'value', typ: '' },
+    ],
+    false,
+  ),
+  CompanySignup: o(
+    [
+      { json: 'intro', js: 'intro', typ: '' },
+      { json: 'form', js: 'form', typ: r('CompanySignupForm') },
+      { json: 'caption', js: 'caption', typ: '' },
+    ],
+    false,
+  ),
+  CompanySignupForm: o(
+    [
+      { json: 'company', js: 'company', typ: r('FormCompany') },
+      { json: 'submit', js: 'submit', typ: '' },
+    ],
+    false,
+  ),
+  FormCompany: o(
+    [
+      { json: 'label', js: 'label', typ: '' },
+      { json: 'placeholder', js: 'placeholder', typ: '' },
+    ],
+    false,
+  ),
   Error: o(
     [
       { json: 'title', js: 'title', typ: '' },
-      { json: 'content', js: 'content', typ: '' },
+      { json: 'intro', js: 'intro', typ: '' },
       { json: 'button', js: 'button', typ: '' },
     ],
     false,
@@ -300,18 +601,18 @@ const typeMap: any = {
     ],
     false,
   ),
-  Intro: o(
+  Home: o(
     [
       { json: 'name', js: 'name', typ: '' },
       { json: 'title', js: 'title', typ: '' },
       { json: 'intro', js: 'intro', typ: '' },
       { json: 'description', js: 'description', typ: '' },
-      { json: 'FAQ', js: 'FAQ', typ: r('IntroFAQ') },
-      { json: 'cta', js: 'cta', typ: r('IntroCta') },
+      { json: 'FAQ', js: 'FAQ', typ: r('HomeFAQ') },
+      { json: 'cta', js: 'cta', typ: r('HomeCta') },
     ],
     false,
   ),
-  IntroFAQ: o(
+  HomeFAQ: o(
     [
       { json: 'title', js: 'title', typ: '' },
       { json: 'items', js: 'items', typ: a(r('FluffyItem')) },
@@ -325,11 +626,35 @@ const typeMap: any = {
     ],
     false,
   ),
-  IntroCta: o(
+  HomeCta: o(
     [
       { json: 'users', js: 'users', typ: r('CompaniesClass') },
       { json: 'companies', js: 'companies', typ: r('CompaniesClass') },
     ],
     false,
   ),
+  NotFound: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'content', js: 'content', typ: '' },
+      { json: 'button', js: 'button', typ: '' },
+    ],
+    false,
+  ),
+  Routes: o(
+    [
+      { json: 'companies', js: 'companies', typ: r('RoutesCompanies') },
+      { json: 'users', js: 'users', typ: r('Users') },
+    ],
+    false,
+  ),
+  RoutesCompanies: o(
+    [
+      { json: 'home', js: 'home', typ: '' },
+      { json: 'application', js: 'application', typ: '' },
+    ],
+    false,
+  ),
+  Users: o([{ json: 'home', js: 'home', typ: '' }], false),
+  Validation: o([], false),
 }
