@@ -1,11 +1,8 @@
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
-import getConfig from 'next/config'
 import { createHttpLink } from 'apollo-link-http'
 import fetch from 'isomorphic-unfetch'
 import { BaseContext } from 'next/dist/next-server/lib/utils'
-
-const { serverRuntimeConfig, publicRuntimeConfig } = getConfig()
 
 const isBrowser: boolean = process.browser
 
@@ -19,7 +16,7 @@ if (!isBrowser) {
 
 function create(initialState?: any, ctx?: BaseContext) {
   const httpLink = createHttpLink({
-    uri: serverRuntimeConfig.apiUrl || publicRuntimeConfig.apiUrl,
+    uri: 'http://localhost:4444/graphql',
   })
 
   // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient

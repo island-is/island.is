@@ -13,21 +13,8 @@ const transpileModules = [
 ]
 const withTM = require('next-transpile-modules')(transpileModules)
 
-const { API_URL = 'http://localhost:4444/graphql' } = process.env
-
 module.exports = withTreat(
   withTM({
     cssModules: false,
-    serverRuntimeConfig: {
-      // Will only be available on the server side
-      apiUrl: API_URL,
-    },
-    publicRuntimeConfig: {
-      // Will be available on both server and client
-      apiUrl: API_URL,
-      features: {
-        loanApplication: process.env.LOAN_APPLICATION_ENABLED === 'true',
-      },
-    },
   }),
 )
