@@ -93,7 +93,7 @@
     "treat": "1.4.1",
     "uuidv4": "6.0.8",
     "winston": "3.2.1",
-    "yup": "^0.29.0"
+    "yup": "0.29.0"
   },
   "devDependencies": {
     "@babel/core": "7.8.3",
