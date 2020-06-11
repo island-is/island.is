@@ -57,6 +57,7 @@
     "apollo-server-express": "2.14.3",
     "aws-sdk": "2.678.0",
     "classnames": "2.2.6",
+    "contentful": "^7.14.4",
     "cookie-parser": "1.4.5",
     "crypto-js": "4.0.0",
     "document-register-element": "1.13.1",
