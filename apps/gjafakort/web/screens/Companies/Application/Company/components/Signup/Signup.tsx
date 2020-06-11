@@ -75,10 +75,10 @@ function Signup({ company, handleSubmission }: PropTypes) {
       variables: {
         input: {
           ...values,
+          ...values.operations,
+          serviceCategory: values.serviceCategory.label,
           operations: undefined,
           noneOfTheAbove: undefined,
-          serviceCategory: values.serviceCategory.label,
-          ...values.operations,
         },
       },
     })
