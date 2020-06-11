@@ -17,16 +17,19 @@ export type Scalars = {
 export type Article = {
   __typename?: 'Article'
   id: Scalars['String']
+  slug: Scalars['String']
   title: Scalars['String']
   content?: Maybe<Scalars['String']>
 }
 
 export type GetArticleInput = {
-  id?: Maybe<Scalars['String']>
+  slug?: Maybe<Scalars['String']>
+  lang: Scalars['String']
 }
 
 export type GetNamespaceInput = {
   namespace?: Maybe<Scalars['String']>
+  lang: Scalars['String']
 }
 
 export type HelloWorld = {
@@ -51,8 +54,8 @@ export type Namespace = {
 
 export type Query = {
   __typename?: 'Query'
-  getArticle: Article
-  getNamespace: Namespace
+  getArticle?: Maybe<Article>
+  getNamespace?: Maybe<Namespace>
   helloWorld: HelloWorld
   root?: Maybe<Scalars['String']>
 }
@@ -208,6 +211,7 @@ export type ArticleResolvers<
   ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']
 > = {
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   __isTypeOf?: isTypeOfResolverFn<ParentType>
@@ -242,13 +246,13 @@ export type QueryResolvers<
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
   getArticle?: Resolver<
-    ResolversTypes['Article'],
+    Maybe<ResolversTypes['Article']>,
     ParentType,
     ContextType,
     RequireFields<QueryGetArticleArgs, never>
   >
   getNamespace?: Resolver<
-    ResolversTypes['Namespace'],
+    Maybe<ResolversTypes['Namespace']>,
     ParentType,
     ContextType,
     RequireFields<QueryGetNamespaceArgs, never>

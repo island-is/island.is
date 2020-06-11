@@ -18,9 +18,21 @@ import {
 import { categories, groups, selectOptions, articles } from '../../json'
 
 import * as styles from './Category.treat'
+import { useI18n, routePaths } from '@island.is/web/i18n'
 
-export const categoryScreen = () => {
+import { withApollo } from '../../graphql'
+import { Screen } from '../../types'
+
+interface CategoryProps {
+  category: string
+}
+
+const Category: Screen<CategoryProps> = ({ category }) => {
   const router = useRouter()
+  const { activeLocale } = useI18n()
+
+  const prefix = activeLocale === 'en' ? '/en' : ''
+  const paths = routePaths[activeLocale]
 
   const TITLE = 'Fjölskylda og velferð'
   const DESCRIPTION =
@@ -95,7 +107,12 @@ export const categoryScreen = () => {
                             <Stack space={2}>
                               {articles.map(({ title }, index) => {
                                 return (
-                                  <Link key={index} href="/article">
+                                  <Link
+                                    key={index}
+                                    href={`${
+                                      activeLocale === 'en' ? '/en' : ''
+                                    }/article`}
+                                  >
                                     <LinkCard key={index}>{title}</LinkCard>
                                   </Link>
                                 )
@@ -111,7 +128,12 @@ export const categoryScreen = () => {
                           <Card
                             key={index}
                             {...group}
-                            href="/article"
+                            linkProps={{
+                              href: `${
+                                activeLocale === 'en' ? '/en' : ''
+                              }/article`,
+                              passHref: true,
+                            }}
                             tags={false}
                           />
                         )
@@ -128,4 +150,10 @@ export const categoryScreen = () => {
   )
 }
 
-export default categoryScreen
+Category.getInitialProps = async ({ query, locale }) => {
+  return {
+    category: 'bla',
+  }
+}
+
+export default withApollo(Category)

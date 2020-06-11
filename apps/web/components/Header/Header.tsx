@@ -17,9 +17,10 @@ import { useI18n } from '@island.is/web/i18n'
 export const Header: FC = () => {
   const { activeLocale } = useI18n()
 
-  console.log('activeLocale', activeLocale)
   const languageButtonText = activeLocale === 'is' ? 'English' : 'Íslenska'
-  const languageButtonLink = activeLocale === 'en' ? '/' : 'en'
+  const languageButtonLink = activeLocale === 'en' ? '/' : '/en'
+
+  const english = activeLocale === 'en'
 
   return (
     <Box width="full">
@@ -27,7 +28,7 @@ export const Header: FC = () => {
         <Box width="full" padding={[3, 3, 6]}>
           <Columns alignY="center" space={2}>
             <Column width="content">
-              <Link href="/">
+              <Link href={english ? '/en' : '/'}>
                 {/* eslint-disable-next-line */}
                 <a>
                   <Logo />
@@ -45,6 +46,7 @@ export const Header: FC = () => {
                   <Link href={languageButtonLink}>
                     <Button variant="menu">{languageButtonText}</Button>
                   </Link>
+
                   <Button variant="menu" leftIcon="user">
                     Innskráning
                   </Button>

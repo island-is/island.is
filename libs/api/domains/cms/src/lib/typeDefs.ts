@@ -3,12 +3,14 @@ import { gql } from 'apollo-server-express'
 export const typeDefs = gql`
   type Article {
     id: String!
+    slug: String!
     title: String!
     content: String
   }
 
   input GetArticleInput {
-    id: String
+    slug: String
+    lang: String!
   }
 
   type Namespace {
@@ -18,11 +20,12 @@ export const typeDefs = gql`
 
   input GetNamespaceInput {
     namespace: String
+    lang: String!
   }
 
   extend type Query {
-    getArticle(input: GetArticleInput): Article!
-    getNamespace(input: GetNamespaceInput): Namespace!
+    getArticle(input: GetArticleInput): Article
+    getNamespace(input: GetNamespaceInput): Namespace
   }
 `
 
