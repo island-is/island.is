@@ -85,6 +85,29 @@
           "contents": [
             "Öll fyrirtæki sem skrá sig til þátttöku í Ferðagjöfinni fá aðgang að vefsvæði til að geta fylgst með innlausnum á Ferðagjöfinni. Um leið og gjöf er nýtt kemur hún inn á notkunarskýrslu fyrirtækis."
           ]
+        },
+        {
+          "label": "Hvar sæki ég um viðeigandi leyfi?",
+          "contents": [
+            [
+              "Hver sá sem hyggst starfa sem ferðaskrifstofa eða ferðasali dagsferða skv. III. kafla laga um Ferðamálastofu, <a href='https://www.althingi.is/lagas/150b/2018096.html' target='_blank' rel=noreferrer noopener'>nr. 96/2018</a>, skal hafa til þess leyfi Ferðamálastofu. Sjá nánar hér: <a href='https://www.ferdamalastofa.is/is/leyfi-og-loggjof/ferdasali-dagsferda/unsoknarferlill' target='_blank' rel=noreferrer noopener'>www.ferdamalastofa.is/is/leyfi-og-loggjof/ferdasali-dagsferda/unsoknarferlill</a>",
+              "Sá sem hyggst stunda starfsemi sem fellur undir gistiflokka II-IV og veitingastaðaflokka II og III skv. 7. gr. laga um veitingastaði, gististaði og skemmtanahald, <a href='https://www.althingi.is/lagas/150b/2007085.html' target='_blank' rel=noreferrer noopener'>nr. 85/2007</a> skal hafa til þess rekstrarleyfi útgefið af sýslumönnum. Sjá nánar hér: <a href='https://www.syslumenn.is/thjonusta/leyfi-og-loggildingar/veitingaleyfi/' target='_blank' rel=noreferrer noopener'>www.syslumenn.is/thjonusta/leyfi-og-loggildingar/veitingaleyfi</a>",
+              "Sá sem hyggst stunda starfsemi sem fellur undir veitingastaðaflokk I, sbr. 3. mgr. 4. gr. laga um veitingastaði, gististaði og skemmtanahald, <a href='https://www.althingi.is/lagas/150b/2007085.html' target='_blank' rel=noreferrer noopener'>nr. 85/2007</a> skal hafa til þess gilt starfsleyfi frá viðeigandi heilbrigðisnefnd. Hafið samband við heilbrigðisnefnd í hverju sveitarfélagi varðandi starfsleyfi.",
+              "Ökutækjaleigur skulu hafa gilt starfsleyfi frá Samgöngustofu skv. 1. mgr. 3. gr. laga um leigu skráningarskyldra ökutækja, <a href='https://www.althingi.is/lagas/nuna/2015065.html' target='_blank' rel=noreferrer noopener'>nr. 65/2015</a>. Sjá nánar hér: <a href='https://www.samgongustofa.is/umferd/leyfi-og-eftirlit/' target='_blank' rel=noreferrer noopener'>www.samgongustofa.is/umferd/leyfi-og-eftirlit</a>"
+            ]
+          ]
+        }
+      ],
+      "videos": [
+        {
+          "id": "video1",
+          "label": "Hvernig skanna ég gjöf með smáforriti?",
+          "url": "https://www.youtube.com/embed/q0hfSHLklKk"
+        },
+        {
+          "id": "video2",
+          "label": "Hvernig slæ ég inn númer gjafabréfs í vafra?",
+          "url": "https://www.youtube.com/embed/tkff3XZ6KXE"
         }
       ]
     },
