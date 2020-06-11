@@ -12,4 +12,4 @@ api:
   secrets:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
   env:
-    port: 3333
+    PORT: 3333
