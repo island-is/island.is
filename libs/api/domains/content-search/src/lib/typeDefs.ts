@@ -20,12 +20,12 @@ export const typeDefs = gql`
 
   type SearchResult {
     total: Int
-    items: [ContentItem!]
+    items: [ContentItem!]!
   }
 
   input SearcherInput {
     queryString: String
-    language: Language
+    language: ContentLanguage
     size: Int
     page: Int
   }
@@ -44,16 +44,16 @@ export const typeDefs = gql`
     _id: ID
     slug: String
     type: ItemType
-    language: Language
+    language: ContentLanguage
   }
 
   input CategoriesInput {
-    language: Language
+    language: ContentLanguage
   }
 
   input ArticlesInCategoryInput {
     slug: String
-    language: Language
+    language: ContentLanguage
   }
 
   type ContentArticle {
@@ -62,7 +62,7 @@ export const typeDefs = gql`
     slug: String
   }
 
-  enum Language {
+  enum ContentLanguage {
     is
     en
   }
@@ -73,10 +73,10 @@ export const typeDefs = gql`
   }
 
   extend type Query {
-    getSearchResults(query: SearcherInput): SearchResult!
-    getSingleItem(input: ItemInput): ContentItem
-    getCategories(input: CategoriesInput): [ContentCategory]
-    getArticlesInCategory(category: ArticlesInCategoryInput): [ContentItem]
+    searchResults(query: SearcherInput): SearchResult!
+    singleItem(input: ItemInput): ContentItem
+    categories(input: CategoriesInput): [ContentCategory]
+    articlesInCategory(category: ArticlesInCategoryInput): [ContentItem]
   }
 `
 
