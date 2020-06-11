@@ -678,6 +678,153 @@
         }
       }
     },
+    "reference-backend": {
+      "root": "apps/reference-backend",
+      "sourceRoot": "apps/reference-backend/src",
+      "projectType": "application",
+      "prefix": "reference-backend",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/reference-backend",
+            "main": "apps/reference-backend/src/main.ts",
+            "tsConfig": "apps/reference-backend/tsconfig.app.json",
+            "assets": ["apps/reference-backend/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/reference-backend/src/environments/environment.ts",
+                  "with": "apps/reference-backend/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "reference-backend:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/reference-backend/.eslintrc",
+            "tsConfig": [
+              "apps/reference-backend/tsconfig.app.json",
+              "apps/reference-backend/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/reference-backend/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/reference-backend/jest.config.js",
+            "tsConfig": "apps/reference-backend/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "docker-express": {},
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d"
+              }
+            ],
+            "cwd": "apps/reference-backend"
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "../../node_modules/.bin/sequelize-cli db:migrate"
+              }
+            ],
+            "cwd": "apps/reference-backend"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)"
+              }
+            ],
+            "cwd": "apps/reference-backend"
+          }
+        }
+      }
+    },
+    "infra-tracing": {
+      "root": "libs/infra-tracing",
+      "sourceRoot": "libs/infra-tracing/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/infra-tracing/.eslintrc",
+            "tsConfig": [
+              "libs/infra-tracing/tsconfig.lib.json",
+              "libs/infra-tracing/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/infra-tracing/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/infra-tracing/jest.config.js",
+            "tsConfig": "libs/infra-tracing/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "infra-express-server": {
+      "root": "libs/infra-express-server",
+      "sourceRoot": "libs/infra-express-server/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/infra-express-server/.eslintrc",
+            "tsConfig": [
+              "libs/infra-express-server/tsconfig.lib.json",
+              "libs/infra-express-server/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/infra-express-server/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/infra-express-server/jest.config.js",
+            "tsConfig": "libs/infra-express-server/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "cache": {
       "root": "libs/cache",
       "sourceRoot": "libs/cache/src",
