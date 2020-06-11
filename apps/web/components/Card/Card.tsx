@@ -8,15 +8,15 @@ import * as styles from './Card.treat'
 import { getTags } from '../../json'
 
 interface CardProps {
-  title: string
+  title?: string
   description?: string
   tags?: boolean
   linkProps?: LinkProps
 }
 
 export const Card: FC<CardProps> = ({
-  title,
-  description,
+  title = 'bla',
+  description = 'desc',
   tags = true,
   linkProps = { href: '#', as: null },
 }) => {

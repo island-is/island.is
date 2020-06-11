@@ -20,8 +20,9 @@ import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetCategoriesArgs,
+  Language,
 } from '@island.is/api/schema'
-import { GET_NAMESPACE_QUERY } from './queries'
+import { GET_NAMESPACE_QUERY, GET_CATEGORIES_QUERY } from './queries'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
 
@@ -142,7 +143,7 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
 Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   const [
     {
-      data: { getArticle: article },
+      data: { getCategories },
     },
     {
       data: { getNamespace: namespace },
@@ -152,8 +153,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_CATEGORIES_QUERY,
       variables: {
         input: {
-          slug,
-          lang: locale,
+          language: locale as Language,
         },
       },
     }),
@@ -169,7 +169,7 @@ Home.getInitialProps = async ({ apolloClient, locale, query }) => {
   ])
 
   return {
-    categories,
+    categories: getCategories,
     namespace,
   }
 }
