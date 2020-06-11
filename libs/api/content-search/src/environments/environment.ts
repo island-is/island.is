@@ -2,6 +2,6 @@ export const environment = {
   production: false,
   elastic: {
     node:
-      'https://vpc-test01-nfn4r33r4nygcnrt23fcmvcyk4.eu-west-1.es.amazonaws.com/',
+      'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com/',
   },
 }
