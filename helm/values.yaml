@@ -1,0 +1,15 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  image:
+    tag: latest_master
+
+web:
+  env:
+
+api:
+  secrets:
+    CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
+  env:
+    port: 3333
