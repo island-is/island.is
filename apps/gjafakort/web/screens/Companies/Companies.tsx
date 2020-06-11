@@ -91,7 +91,7 @@ function Companies() {
                 </Stack>
               </AccordionItem>
             ))}
-            {t.companies.FAQ.videos.map((accordionVideo, index) => (
+            {t.FAQ.videos.map((accordionVideo, index) => (
               <AccordionItem
                 key={accordionVideo.id}
                 label={accordionVideo.label}

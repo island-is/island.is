@@ -43,7 +43,7 @@ export interface TranslationCompanies {
 export interface CompaniesFAQ {
   title: string
   items: PurpleItem[]
-  videos: VideoItem[]
+  videos: Video[]
 }
 
 export interface PurpleItem {
@@ -51,7 +51,7 @@ export interface PurpleItem {
   contents: Array<string[] | string>
 }
 
-export interface VideoItem {
+export interface Video {
   id: string
   label: string
   url: string
@@ -424,7 +424,7 @@ const typeMap: any = {
     [
       { json: 'title', js: 'title', typ: '' },
       { json: 'items', js: 'items', typ: a(r('PurpleItem')) },
-      { json: 'videos', js: 'videos', typ: a(r('VideoItem')) },
+      { json: 'videos', js: 'videos', typ: a(r('Video')) },
     ],
     false,
   ),
@@ -432,6 +432,14 @@ const typeMap: any = {
     [
       { json: 'label', js: 'label', typ: '' },
       { json: 'contents', js: 'contents', typ: a(u(a(''), '')) },
+    ],
+    false,
+  ),
+  Video: o(
+    [
+      { json: 'id', js: 'id', typ: '' },
+      { json: 'label', js: 'label', typ: '' },
+      { json: 'url', js: 'url', typ: '' },
     ],
     false,
   ),
