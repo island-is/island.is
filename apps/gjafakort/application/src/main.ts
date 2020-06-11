@@ -14,7 +14,11 @@ app.use('/issuers', issuerRoutes)
 app.use('/applications', applicationRoutes)
 
 app.get('/status', (req, res) => {
-  res.json({ ok: true })
+  if (req.app.get('publishToQueue')) {
+    res.json({ ok: true })
+  } else {
+    res.status(500).json({ ok: false })
+  }
 })
 
 const port = process.env.port || 4242
