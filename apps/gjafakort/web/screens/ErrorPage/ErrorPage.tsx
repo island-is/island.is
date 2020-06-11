@@ -11,22 +11,24 @@ import {
 import { useI18n } from '../../i18n'
 
 function ErrorPage() {
-  const { t } = useI18n()
+  const {
+    t: { error: t },
+  } = useI18n()
 
   return (
     <Box marginTop={12}>
       <ContentBlock width="large">
         <Box marginBottom={3}>
           <Typography variant="h1" as="h1">
-            {t.error.title}
+            {t.title}
           </Typography>
         </Box>
         <Box marginBottom={9}>
-          <Typography variant="intro">{t.error.content}</Typography>
+          <Typography variant="intro">{t.intro}</Typography>
         </Box>
         <Link href="/">
           <span>
-            <Button>{t.error.button}</Button>
+            <Button>{t.button}</Button>
           </span>
         </Link>
       </ContentBlock>

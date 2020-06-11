@@ -17,7 +17,9 @@ import Link from 'next/link'
 import { Layout } from '../../components'
 
 function Home() {
-  const { t } = useI18n()
+  const {
+    t: { home: t },
+  } = useI18n()
 
   return (
     <Layout
@@ -26,27 +28,18 @@ function Home() {
           <Box marginBottom={4}>
             <Breadcrumbs>
               <Link href="/">
-                <a>{t.name}</a>
+                <a>Ísland.is</a>
               </Link>
-              <span>{t.intro.name}</span>
+              <span>{t.name}</span>
             </Breadcrumbs>
           </Box>
           <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
             <Stack space={3}>
               <Typography variant="h1" as="h1">
-                {t.intro.title}
+                {t.title}
               </Typography>
-              <Typography variant="intro">{t.intro.intro}</Typography>
-              <Typography variant="p">
-                {t.intro.description}{' '}
-                <a
-                  href="https://ferdalag.is"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  ferðalag.is.
-                </a>
-              </Typography>
+              <Typography variant="intro">{t.intro}</Typography>
+              <Typography variant="p">{HtmlParser(t.description)}</Typography>
             </Stack>
           </Box>
           <Hidden above="md">
@@ -56,11 +49,11 @@ function Home() {
           </Hidden>
           <Box marginBottom={3}>
             <Typography variant="h2" as="h2">
-              {t.intro.FAQ.title}
+              {t.FAQ.title}
             </Typography>
           </Box>
           <Accordion dividerOnTop={false}>
-            {t.intro.FAQ.items.map((accordionItem, index) => (
+            {t.FAQ.items.map((accordionItem, index) => (
               <AccordionItem
                 key={index}
                 label={accordionItem.label}

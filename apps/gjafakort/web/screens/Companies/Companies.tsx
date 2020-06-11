@@ -19,7 +19,9 @@ import { CompanyCTA } from './components'
 import { Layout } from '../../components'
 
 function Companies() {
-  const { t } = useI18n()
+  const {
+    t: { companies: t },
+  } = useI18n()
 
   return (
     <Layout
@@ -28,27 +30,27 @@ function Companies() {
           <Box marginBottom={4}>
             <Breadcrumbs>
               <Link href="/">
-                <a>{t.name}</a>
+                <a>Ísland.is</a>
               </Link>
-              <span>{t.companies.name}</span>
+              <span>{t.name}</span>
             </Breadcrumbs>
           </Box>
           <Box marginBottom={[3, 3, 3, 12]}>
             <Stack space={3}>
               <Typography variant="h1" as="h1">
-                {t.companies.title}
+                {t.title}
               </Typography>
-              <Typography variant="intro">{t.companies.intro}</Typography>
-              <Typography variant="p">{t.companies.description}</Typography>
+              <Typography variant="intro">{t.intro}</Typography>
+              <Typography variant="p">{t.description}</Typography>
             </Stack>
           </Box>
           <Box marginBottom={[3, 3, 3, 12]}>
             <Stack space={2}>
               <Typography variant="h4" as="h2">
-                {t.companies.notes.label}
+                {t.notes.label}
               </Typography>
               <BulletList>
-                {t.companies.notes.items.map((item, index) => (
+                {t.notes.items.map((item, index) => (
                   <Bullet key={`companies.notes.items-${index}`}>{item}</Bullet>
                 ))}
               </BulletList>
@@ -61,11 +63,11 @@ function Companies() {
           </Hidden>
           <Box marginBottom={3}>
             <Typography variant="h2" as="h2">
-              {t.companies.FAQ.title}
+              {t.FAQ.title}
             </Typography>
           </Box>
           <Accordion dividerOnTop={false}>
-            {t.companies.FAQ.items.map((accordionItem, index) => (
+            {t.FAQ.items.map((accordionItem, index) => (
               <AccordionItem
                 key={index}
                 label={accordionItem.label}

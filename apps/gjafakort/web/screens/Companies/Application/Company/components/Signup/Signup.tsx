@@ -1,4 +1,5 @@
 import React from 'react'
+import HtmlParser from 'react-html-parser'
 import { useMutation } from 'react-apollo'
 import gql from 'graphql-tag'
 import { Formik, Form, Field } from 'formik'
@@ -16,6 +17,8 @@ import {
   FieldSelect,
   FieldPolarQuestion,
 } from '@island.is/island-ui/core'
+
+import { useI18n } from '@island.is/gjafakort-web/i18n'
 import { Company } from '@island.is/gjafakort-web/graphql/schema'
 import { FormLayout } from '@island.is/gjafakort-web/components'
 
@@ -34,40 +37,6 @@ const CreateApplicationMutation = gql`
     }
   }
 `
-
-const companyOperations = [
-  {
-    name: 'validPermit',
-    label: 'Fyrirtæki með gilt starfsleyfi Ferðamálastofu',
-    tooltip:
-      'Fyrirtæki með gilt leyfi Ferðamálastofu skv. III. kafla laga um Ferðamálastofu, nr. 96/2018.',
-  },
-  {
-    name: 'validLicenses',
-    label:
-      'Fyrirtæki með rekstrarleyfi vegna veitingastaða, gististaða og skemmtanahalds',
-    tooltip:
-      'Fyrirtæki með gilt rekstrarleyfi skv. 7. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007.',
-  },
-  {
-    name: 'operatingPermitForRestaurant',
-    label: 'Fyrirtæki með starfsleyfi vegna veitingastaða',
-    tooltip:
-      'Fyrirtæki með gilt starfsleyfi frá viðeigandi heilbrigðisnefnd sem hefur verið gefið út vegna veitingastaða í flokki I, sbr. 3. mgr. 4. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007.',
-  },
-  {
-    name: 'operatingPermitForVehicles',
-    label: 'Fyrirtæki með starfsleyfi vegna leigu skráningarskyldra ökutækja',
-    tooltip:
-      'Ökutækjaleigur með gilt starfsleyfi frá Samgöngustofu skv. 1. mgr. 3. gr. laga um leigu skráningarskyldra ökutækja, nr. 65/2015.',
-  },
-  {
-    name: 'exhibition',
-    label: 'Sýning sem gerir út á náttúru, menningu eða sögu',
-    tooltip:
-      'Söfn og fyrirtæki sem bjóða sýningu gegn endurgjaldi þar sem áhersla er á íslenska náttúru, menningu eða sögu.',
-  },
-]
 
 const emailValidation = Yup.string()
   .email('Netfang ekki gilt')
@@ -88,7 +57,15 @@ const SignupSchema = Yup.object().shape({
 })
 
 function Signup({ company, handleSubmission }: PropTypes) {
+  const {
+    t: {
+      company: { signup: t },
+    },
+  } = useI18n()
   const [createApplication] = useMutation(CreateApplicationMutation)
+
+  const companyOperations = t.form.operation.options
+
   const onSubmit = async (values) => {
     if (values.noneOfTheAbove) {
       return handleSubmission(false)
@@ -116,9 +93,7 @@ function Signup({ company, handleSubmission }: PropTypes) {
         </Typography>
       </Box>
       <Box marginBottom={6}>
-        <Typography variant="intro">
-          Fylltu inn upplýsingar hér að neðan
-        </Typography>
+        <Typography variant="intro">{t.intro}</Typography>
       </Box>
       <Formik
         initialValues={{
@@ -163,72 +138,44 @@ function Signup({ company, handleSubmission }: PropTypes) {
               <Tiles columns={[1, 1, 2]} space={3}>
                 <Field
                   component={FieldInput}
-                  label="Nafn fyrirtækis"
+                  label={t.form.companyName.label}
                   name="companyName"
                   disabled
                 />
                 <Field
                   component={FieldNumberInput}
-                  label="Kennitala"
+                  label={t.form.companySSN.label}
                   disabled
                   name="companySSN"
                   format="######-####"
                 />
                 <Field
                   component={FieldInput}
-                  label="Hjáheiti"
+                  label={t.form.companyDisplayName.label}
                   name="companyDisplayName"
-                  tooltip="Nafn fyrirtækis sem birtist í smáforritinu og á vefsíðunni Ferðalag.is"
+                  tooltip={t.form.companyDisplayName.tooltip}
                 />
                 <Field
                   component={FieldSelect}
                   name="serviceCategory"
-                  label="Þjónustuflokkur"
-                  placeholder="Veldu flokk"
-                  options={[
-                    {
-                      label: 'Afþreying',
-                      value: 'entertainment',
-                    },
-
-                    {
-                      label: 'Gisting',
-                      value: 'accommodation',
-                    },
-
-                    {
-                      label: 'Veitingar',
-                      value: 'restaurant',
-                    },
-
-                    {
-                      label: 'Samgöngur',
-                      value: 'transport',
-                    },
-
-                    {
-                      label: 'Menning',
-                      value: 'culture',
-                    },
-                  ]}
+                  label={t.form.serviceCategory.label}
+                  placeholder={t.form.serviceCategory.placeholder}
+                  options={t.form.serviceCategory.options}
                 />
               </Tiles>
             </Box>
             <Box marginBottom={6}>
               <Box marginBottom={1}>
                 <Typography variant="h4" as="h2">
-                  Starfsemi fyrirtækis
+                  {t.form.operation.label}
                 </Typography>
               </Box>
               <Stack space={5}>
-                <Typography variant="p">
-                  Vinsamlegast hakaðu við viðeigandi tegund starfssemi
-                  fyrirtækis. Hægt er að haka við fleiri en einn valmöguleika.
-                  <br />
-                  Vakin er athygli á að listi yfir fyrirtæki sem taka við
-                  greiðslu í formi Ferðagjafar verður birtur á vefnum
-                  Ferðalag.is
-                </Typography>
+                {t.form.operation.instructions.map((instruction, index) => (
+                  <Typography variant="p" key={index}>
+                    {HtmlParser(instruction)}
+                  </Typography>
+                ))}
                 {companyOperations.map((operation) => (
                   <Field
                     key={operation.name}
