@@ -1,19 +1,12 @@
 import * as ferdalagCompanyApplication from './ferdalagCompanyApplication'
 import * as yayCompanyApplication from './yayCompanyApplication'
-import {
-  GjafakortApplicationMessage,
-  GjafakortApplicationRoutingKey,
-  GjafakortApplicationExchange,
-} from '@island.is/message-queue'
+import { Message, RoutingKey, Exchange } from '@island.is/message-queue'
 
 interface Handler {
-  exchangeName: GjafakortApplicationExchange
+  exchangeName: Exchange
   queueName: string
-  routingKeys: GjafakortApplicationRoutingKey[]
-  handler: (
-    message: GjafakortApplicationMessage,
-    routingKey: GjafakortApplicationRoutingKey,
-  ) => Promise<void>
+  routingKeys: RoutingKey[]
+  handler: (message: Message, routingKey: RoutingKey) => Promise<void>
 }
 
 const handlers: Handler[] = [ferdalagCompanyApplication, yayCompanyApplication]

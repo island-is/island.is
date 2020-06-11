@@ -1,3 +1,3 @@
 export type Exchange = GjafakortApplicationExchange
 
-export type GjafakortApplicationExchange = 'gjafakort-company-application-updates'
+export type GjafakortApplicationExchange = 'gjafakort-application-updates'

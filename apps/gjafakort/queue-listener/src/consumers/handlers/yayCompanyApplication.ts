@@ -1,8 +1,8 @@
 import md5 from 'crypto-js/md5'
 
 import {
-  GjafakortApplicationMessage,
-  GjafakortApplicationRoutingKey,
+  GjafakortCompanyApplicationMessage,
+  GjafakortCompanyApplicationRoutingKey,
   GjafakortApplicationExchange,
 } from '@island.is/message-queue'
 import { logger } from '@island.is/logging'
@@ -16,12 +16,12 @@ const {
 } = environment
 
 export const exchangeName: GjafakortApplicationExchange =
-  'gjafakort-company-application-updates'
+  'gjafakort-application-updates'
 
-export const routingKeys: GjafakortApplicationRoutingKey[] = [
-  'approved',
-  'pending',
-  'rejected',
+export const routingKeys: GjafakortCompanyApplicationRoutingKey[] = [
+  'gjafakort:approved',
+  'gjafakort:pending',
+  'gjafakort:rejected',
 ]
 
 export const queueName = 'gjafakort-yay-company-application'
@@ -36,15 +36,18 @@ const getHeaders = () => {
 }
 
 export const handler = async (
-  message: GjafakortApplicationMessage,
-  routingKey: GjafakortApplicationRoutingKey,
+  message: GjafakortCompanyApplicationMessage,
+  routingKey: GjafakortCompanyApplicationRoutingKey,
 ) => {
   logger.debug(
     `receiving message ${message.id} on ${queueName} with routingKey ${routingKey}`,
     message,
   )
 
-  if (routingKey === 'approved' || routingKey === 'pending') {
+  if (
+    routingKey === 'gjafakort:approved' ||
+    routingKey === 'gjafakort:pending'
+  ) {
     await request({
       queueName,
       routingKey,
@@ -59,7 +62,7 @@ export const handler = async (
         email: message.data.email,
       }),
     })
-  } else if (routingKey === 'rejected') {
+  } else if (routingKey === 'gjafakort:rejected') {
     await request({
       queueName,
       routingKey,

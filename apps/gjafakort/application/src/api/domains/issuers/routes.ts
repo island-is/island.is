@@ -60,6 +60,9 @@ router.post(
       data,
     )
 
+    const publishToQueue = req.app.get('publishToQueue')
+    publishToQueue(application, type, state)
+
     const title = 'Application created'
     const { authorSSN } = req.body
     await auditService.createAuditLog(state, title, authorSSN, application.id, {

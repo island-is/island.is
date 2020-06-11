@@ -32,7 +32,7 @@ class FerdalagAPI extends RESTDataSource {
 
   async getServiceProviders(ssn: string): Promise<ServiceProvider[]> {
     try {
-      console.debug(`Requesting service provider for ${ssn}`)
+      logger.debug(`Requesting service provider for ${ssn}`)
       const res = await this.get(ssn, null, {
         cacheOptions: { ttl: ferdalag.ttl },
       })

@@ -3,8 +3,11 @@ import express from 'express'
 import { logger } from '@island.is/logging'
 
 import { issuerRoutes, applicationRoutes } from './api'
+import { setupMessageQueue } from './extensions'
 
 const app = express()
+
+setupMessageQueue(app)
 
 app.use(express.json())
 app.use('/issuers', issuerRoutes)
