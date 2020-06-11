@@ -87,7 +87,7 @@ export class ElasticService {
   async fetchCategories(index: SearchIndexes, input) {
     const query = new RequestBodySearch()
       .agg(new TermsAggregation('categories', 'category'))
-      //.agg(new TermsAggregation('catagories_slugs', 'category_slug'))
+      .agg(new TermsAggregation('catagories_slugs', 'category_slug'))
       .size(0)
 
     try {
