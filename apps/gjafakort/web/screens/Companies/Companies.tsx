@@ -1,4 +1,5 @@
 import React from 'react'
+import HtmlParser from 'react-html-parser'
 import Link from 'next/link'
 
 import {
@@ -80,7 +81,7 @@ function Companies() {
                       </BulletList>
                     ) : (
                       <Typography variant="p" key={index}>
-                        <span dangerouslySetInnerHTML={{ __html: content }} />
+                        {HtmlParser(content)}
                       </Typography>
                     ),
                   )}

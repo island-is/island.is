@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react'
+import HtmlParser from 'react-html-parser'
 
 import { Box, ContentBlock, Typography } from '@island.is/island-ui/core'
 
@@ -41,9 +42,9 @@ class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
               </Typography>
             </Box>
             <Box marginBottom={9}>
-              {t.errorBoundary.contents.map((content) => (
-                <Typography variant="intro" key={content}>
-                  <span dangerouslySetInnerHTML={{ __html: content }} />
+              {t.errorBoundary.contents.map((content, index) => (
+                <Typography variant="intro" key={index}>
+                  {HtmlParser(content)}
                 </Typography>
               ))}
             </Box>

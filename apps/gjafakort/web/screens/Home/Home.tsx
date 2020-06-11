@@ -1,4 +1,5 @@
 import React from 'react'
+import HtmlParser from 'react-html-parser'
 
 import {
   Accordion,
@@ -68,7 +69,7 @@ function Home() {
                 <Stack space={1}>
                   {accordionItem.contents.map((content, index) => (
                     <Typography variant="p" key={index}>
-                      <span dangerouslySetInnerHTML={{ __html: content }} />
+                      {HtmlParser(content)}
                     </Typography>
                   ))}
                 </Stack>
