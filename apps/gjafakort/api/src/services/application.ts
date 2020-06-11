@@ -1,8 +1,6 @@
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 
-import { GjafakortApplicationRoutingKey } from '@island.is/message-queue'
-
-import { CreateApplicationInput, MessageQueue } from '../types'
+import { CreateApplicationInput } from '../types'
 import { environment } from '../environments'
 
 const APPLICATION_TYPE = 'gjafakort'
@@ -45,7 +43,6 @@ class ApplicationAPI extends RESTDataSource {
   async createApplication(
     applicationInput: CreateApplicationInput,
     authorSSN: string,
-    messageQueue: MessageQueue,
     state: string,
     comments: string[],
   ): Promise<ApplicationResponse> {
@@ -59,14 +56,6 @@ class ApplicationAPI extends RESTDataSource {
       },
     })
 
-    messageQueue.channel.publish({
-      exchangeId: messageQueue.companyApplicationExchangeId,
-      message: {
-        ...res.application,
-        authorSSN,
-      },
-      routingKey: res.application.state as GjafakortApplicationRoutingKey,
-    })
     return res.application
   }
 

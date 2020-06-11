@@ -3,8 +3,8 @@ import timeoutSignal from 'timeout-signal'
 
 import { logger } from '@island.is/logging'
 import {
-  GjafakortApplicationMessage,
-  GjafakortApplicationRoutingKey,
+  GjafakortCompanyApplicationMessage,
+  GjafakortCompanyApplicationRoutingKey,
 } from '@island.is/message-queue'
 
 import { ProcessingError } from './errors'
@@ -20,12 +20,12 @@ interface ApiParams {
   headers?: any
 
   queueName: string
-  routingKey: GjafakortApplicationRoutingKey
-  message: GjafakortApplicationMessage
+  routingKey: GjafakortCompanyApplicationRoutingKey
+  message: GjafakortCompanyApplicationMessage
 }
 
 const postApplicationAuditLog = async (
-  message: GjafakortApplicationMessage,
+  message: GjafakortCompanyApplicationMessage,
   success: boolean,
   description: string,
 ) => {
@@ -37,7 +37,6 @@ const postApplicationAuditLog = async (
     },
     body: JSON.stringify({
       state: message.state,
-      authorSSN: message.authorSSN,
       title: 'Status from message queue',
       data: {
         success,

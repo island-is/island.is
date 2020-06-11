@@ -7,11 +7,7 @@ class ApplicationResolver {
   public async createApplication(
     _,
     { input },
-    {
-      user,
-      messageQueue,
-      dataSources: { rskApi, ferdalagApi, applicationApi },
-    },
+    { user, dataSources: { rskApi, ferdalagApi, applicationApi } },
   ) {
     const company = await rskApi.getCompanyBySSN(user.ssn, input.companySSN)
     if (!company) {
@@ -34,7 +30,6 @@ class ApplicationResolver {
     const application = await applicationApi.createApplication(
       input,
       user.ssn,
-      messageQueue,
       state,
       comments,
     )

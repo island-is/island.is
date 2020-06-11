@@ -1,7 +1,7 @@
-export type RoutingKey = GjafakortApplicationRoutingKey
+export type RoutingKey = GjafakortCompanyApplicationRoutingKey
 
-export type GjafakortApplicationRoutingKey =
-  | 'approved'
-  | 'pending'
-  | 'rejected'
-  | 'manual-approved'
+export type GjafakortCompanyApplicationRoutingKey =
+  | 'gjafakort:approved'
+  | 'gjafakort:pending'
+  | 'gjafakort:rejected'
+  | 'gjafakort:manual-approved'

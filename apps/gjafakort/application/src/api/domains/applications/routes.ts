@@ -76,6 +76,9 @@ router.put(
       data,
     )
 
+    const publishToQueue = req.app.get('publishToQueue')
+    publishToQueue(application, application.type, state)
+
     const title = 'Application updated'
     const { authorSSN } = req.body
     await auditService.createAuditLog(state, title, authorSSN, applicationId, {
@@ -91,7 +94,9 @@ router.post(
   [
     param('applicationId').isUUID(),
     body('state').isIn(Object.values(consts.States)),
-    body('authorSSN').isLength({ min: 10, max: 10 }),
+    body('authorSSN')
+      .optional()
+      .isLength({ min: 10, max: 10 }),
     body('title')
       .not()
       .isEmpty(),
@@ -123,7 +128,7 @@ router.post(
       })
     }
 
-    const { state, authorSSN, data, title } = req.body
+    const { state, authorSSN = '', data, title } = req.body
     const auditLog = await auditService.createAuditLog(
       state,
       title,

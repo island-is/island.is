@@ -1,6 +1,6 @@
 import {
-  GjafakortApplicationMessage,
-  GjafakortApplicationRoutingKey,
+  GjafakortCompanyApplicationMessage,
+  GjafakortCompanyApplicationRoutingKey,
   GjafakortApplicationExchange,
 } from '@island.is/message-queue'
 import { logger } from '@island.is/logging'
@@ -14,18 +14,18 @@ const {
 } = environment
 
 export const exchangeName: GjafakortApplicationExchange =
-  'gjafakort-company-application-updates'
+  'gjafakort-application-updates'
 
-export const routingKeys: GjafakortApplicationRoutingKey[] = [
-  'approved',
-  'manual-approved',
+export const routingKeys: GjafakortCompanyApplicationRoutingKey[] = [
+  'gjafakort:approved',
+  'gjafakort:manual-approved',
 ]
 
 export const queueName = 'gjafakort-ferdalag-company-application'
 
 export const handler = async (
-  message: GjafakortApplicationMessage,
-  routingKey: GjafakortApplicationRoutingKey,
+  message: GjafakortCompanyApplicationMessage,
+  routingKey: GjafakortCompanyApplicationRoutingKey,
 ) => {
   logger.debug(
     `receiving message ${message.id} on ${queueName} with routingKey ${routingKey}`,
@@ -43,7 +43,7 @@ export const handler = async (
     legalName: message.data.companyName,
   }
 
-  if (routingKey === 'approved') {
+  if (routingKey === 'gjafakort:approved') {
     await request({
       queueName,
       routingKey,
@@ -52,7 +52,7 @@ export const handler = async (
       url: `${url}/ssn/update/${message.issuerSSN}?key=${apiKey}`,
       body: JSON.stringify(body),
     })
-  } else if (routingKey === 'manual-approved') {
+  } else if (routingKey === 'gjafakort:manual-approved') {
     await request({
       queueName,
       routingKey,

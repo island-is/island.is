@@ -2,7 +2,6 @@ import { ApolloServer } from 'apollo-server-express'
 import { DocumentNode } from 'graphql'
 import merge from 'lodash/merge'
 
-import MessageQueue from '@island.is/message-queue'
 import { logger } from '@island.is/logging'
 // import { createCache } from '@island.is/cache'
 
@@ -11,10 +10,6 @@ import { verifyToken, ACCESS_TOKEN_COOKIE } from '../domains'
 import { Resolvers, GraphQLContext, DataSource } from '../types'
 import { ApplicationAPI, FerdalagAPI, RskAPI } from '../services'
 import rootTypeDefs from './typeDefs'
-
-const EXCHANGE_NAME = 'gjafakort-company-application-updates'
-
-const { production } = environment
 
 const createServer = async (
   resolvers: Resolvers[],
@@ -28,16 +23,6 @@ const createServer = async (
     (combinedDomains, currentDomain) => merge(currentDomain, combinedDomains),
     {},
   )
-
-  const channel = await MessageQueue.connect(production)
-  const context = {
-    messageQueue: {
-      channel,
-      companyApplicationExchangeId: await channel.declareExchange({
-        name: EXCHANGE_NAME,
-      }),
-    },
-  }
 
   return new ApolloServer({
     resolvers: fooresolvers,
@@ -57,22 +42,22 @@ const createServer = async (
     context: ({ req }): GraphQLContext => {
       const accessToken = req.cookies[ACCESS_TOKEN_COOKIE.name]
       if (!accessToken) {
-        return context
+        return {}
       }
 
       const credentials = verifyToken(accessToken)
       if (!credentials) {
         logger.error('signature validation failed')
-        return context
+        return {}
       }
 
       const { csrfToken, user } = credentials
       if (csrfToken && `Bearer ${csrfToken}` !== req.headers.authorization) {
         logger.error('invalid csrf token')
-        return context
+        return {}
       }
 
-      return { ...context, user }
+      return { user }
     },
   })
 }
