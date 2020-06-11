@@ -33,8 +33,8 @@ function NotQualified() {
           <Typography variant="intro">{t.intro}</Typography>
           <Typography variant="p">{t.description}</Typography>
           <BulletList type="ol">
-            {t.conditions.map((condition) => (
-              <Bullet>{condition}</Bullet>
+            {t.conditions.map((condition, index) => (
+              <Bullet key={index}>{condition}</Bullet>
             ))}
           </BulletList>
           <Typography variant="p">{t.caption}</Typography>

@@ -171,8 +171,10 @@ function Signup({ company, handleSubmission }: PropTypes) {
                 </Typography>
               </Box>
               <Stack space={5}>
-                {t.form.operation.instructions.map((instruction) => (
-                  <Typography variant="p">{HtmlParser(instruction)}</Typography>
+                {t.form.operation.instructions.map((instruction, index) => (
+                  <Typography variant="p" key={index}>
+                    {HtmlParser(instruction)}
+                  </Typography>
                 ))}
                 {companyOperations.map((operation) => (
                   <Field

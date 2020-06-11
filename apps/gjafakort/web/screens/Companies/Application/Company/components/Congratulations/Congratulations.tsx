@@ -34,8 +34,10 @@ function Congratulations() {
                   <Icon type="arrowRight" width={16} />
                 </Box>
               </Button>
-              {t.contents.map((content) => (
-                <Typography variant="p">{content}</Typography>
+              {t.contents.map((content, index) => (
+                <Typography variant="p" key={index}>
+                  {content}
+                </Typography>
               ))}
             </Stack>
           </Box>
