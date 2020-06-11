@@ -62,7 +62,8 @@
             "tsConfig": "apps/web/tsconfig.spec.json",
             "passWithNoTests": true
           }
-        }
+        },
+        "docker-next": {}
       }
     },
     "web-e2e": {
@@ -371,7 +372,8 @@
               ]
             }
           }
-        }
+        },
+        "docker-express": {}
       }
     },
     "api-domains-hello-world": {
