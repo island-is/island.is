@@ -1,5 +1,5 @@
 import React, { createContext, useState, useRef, useEffect } from 'react'
-import rosetta, { Rosetta } from 'rosetta'
+import rosetta from 'rosetta'
 
 import { Translation } from './locales/translation'
 

@@ -8,23 +8,25 @@ import {
   Typography,
 } from '@island.is/island-ui/core'
 
+import { useI18n } from '../../i18n'
+
 function ErrorPage() {
+  const { t } = useI18n()
+
   return (
     <Box marginTop={12}>
       <ContentBlock width="large">
         <Box marginBottom={3}>
           <Typography variant="h1" as="h1">
-            Villa kom upp
+            {t.error.title}
           </Typography>
         </Box>
         <Box marginBottom={9}>
-          <Typography variant="intro">
-            Eitthvað hefur farið úrskeiðis, vinsamlega reyndu aftur
-          </Typography>
+          <Typography variant="intro">{t.error.content}</Typography>
         </Box>
         <Link href="/">
           <span>
-            <Button>Aftur heim</Button>
+            <Button>{t.error.button}</Button>
           </span>
         </Link>
       </ContentBlock>

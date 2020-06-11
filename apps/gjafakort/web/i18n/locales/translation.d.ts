@@ -9,27 +9,36 @@
 
 export interface Translation {
   name: string
-  companies: TranslationCompanies
+  notFound: Error
+  error: Error
+  errorBoundary: ErrorBoundary
+  companies: Companies
   intro: Intro
 }
 
-export interface TranslationCompanies {
+export interface Companies {
   name: string
   title: string
   intro: string
   description: string
   notes: Notes
-  FAQ: FAQ
+  FAQ: CompaniesFAQ
+  cta: CompaniesClass
 }
 
-export interface FAQ {
+export interface CompaniesFAQ {
   title: string
-  items: Item[]
+  items: PurpleItem[]
 }
 
-export interface Item {
+export interface PurpleItem {
   label: string
-  contents: string[]
+  contents: Array<string[] | string>
+}
+
+export interface CompaniesClass {
+  label: string
+  content: string
 }
 
 export interface Notes {
@@ -37,19 +46,39 @@ export interface Notes {
   items: string[]
 }
 
+export interface Error {
+  title: string
+  content: string
+  button: string
+}
+
+export interface ErrorBoundary {
+  title: string
+  contents: string[]
+}
+
 export interface Intro {
   name: string
   title: string
   intro: string
   description: string
-  FAQ: FAQ
-  users: UsersClass
-  companies: UsersClass
+  FAQ: IntroFAQ
+  cta: IntroCta
 }
 
-export interface UsersClass {
+export interface IntroFAQ {
+  title: string
+  items: FluffyItem[]
+}
+
+export interface FluffyItem {
   label: string
-  content: string
+  contents: string[]
+}
+
+export interface IntroCta {
+  users: CompaniesClass
+  companies: CompaniesClass
 }
 
 // Converts JSON strings to/from your types
@@ -208,33 +237,44 @@ const typeMap: any = {
   Translation: o(
     [
       { json: 'name', js: 'name', typ: '' },
-      { json: 'companies', js: 'companies', typ: r('TranslationCompanies') },
+      { json: 'notFound', js: 'notFound', typ: r('Error') },
+      { json: 'error', js: 'error', typ: r('Error') },
+      { json: 'errorBoundary', js: 'errorBoundary', typ: r('ErrorBoundary') },
+      { json: 'companies', js: 'companies', typ: r('Companies') },
       { json: 'intro', js: 'intro', typ: r('Intro') },
     ],
     false,
   ),
-  TranslationCompanies: o(
+  Companies: o(
     [
       { json: 'name', js: 'name', typ: '' },
       { json: 'title', js: 'title', typ: '' },
       { json: 'intro', js: 'intro', typ: '' },
       { json: 'description', js: 'description', typ: '' },
       { json: 'notes', js: 'notes', typ: r('Notes') },
-      { json: 'FAQ', js: 'FAQ', typ: r('FAQ') },
+      { json: 'FAQ', js: 'FAQ', typ: r('CompaniesFAQ') },
+      { json: 'cta', js: 'cta', typ: r('CompaniesClass') },
     ],
     false,
   ),
-  FAQ: o(
+  CompaniesFAQ: o(
     [
       { json: 'title', js: 'title', typ: '' },
-      { json: 'items', js: 'items', typ: a(r('Item')) },
+      { json: 'items', js: 'items', typ: a(r('PurpleItem')) },
     ],
     false,
   ),
-  Item: o(
+  PurpleItem: o(
     [
       { json: 'label', js: 'label', typ: '' },
-      { json: 'contents', js: 'contents', typ: a('') },
+      { json: 'contents', js: 'contents', typ: a(u(a(''), '')) },
+    ],
+    false,
+  ),
+  CompaniesClass: o(
+    [
+      { json: 'label', js: 'label', typ: '' },
+      { json: 'content', js: 'content', typ: '' },
     ],
     false,
   ),
@@ -245,22 +285,50 @@ const typeMap: any = {
     ],
     false,
   ),
+  Error: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'content', js: 'content', typ: '' },
+      { json: 'button', js: 'button', typ: '' },
+    ],
+    false,
+  ),
+  ErrorBoundary: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'contents', js: 'contents', typ: a('') },
+    ],
+    false,
+  ),
   Intro: o(
     [
       { json: 'name', js: 'name', typ: '' },
       { json: 'title', js: 'title', typ: '' },
       { json: 'intro', js: 'intro', typ: '' },
       { json: 'description', js: 'description', typ: '' },
-      { json: 'FAQ', js: 'FAQ', typ: r('FAQ') },
-      { json: 'users', js: 'users', typ: r('UsersClass') },
-      { json: 'companies', js: 'companies', typ: r('UsersClass') },
+      { json: 'FAQ', js: 'FAQ', typ: r('IntroFAQ') },
+      { json: 'cta', js: 'cta', typ: r('IntroCta') },
     ],
     false,
   ),
-  UsersClass: o(
+  IntroFAQ: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'items', js: 'items', typ: a(r('FluffyItem')) },
+    ],
+    false,
+  ),
+  FluffyItem: o(
     [
       { json: 'label', js: 'label', typ: '' },
-      { json: 'content', js: 'content', typ: '' },
+      { json: 'contents', js: 'contents', typ: a('') },
+    ],
+    false,
+  ),
+  IntroCta: o(
+    [
+      { json: 'users', js: 'users', typ: r('CompaniesClass') },
+      { json: 'companies', js: 'companies', typ: r('CompaniesClass') },
     ],
     false,
   ),

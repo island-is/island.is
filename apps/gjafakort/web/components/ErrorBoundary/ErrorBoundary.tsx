@@ -1,11 +1,14 @@
 import React, { PureComponent } from 'react'
+import HtmlParser from 'react-html-parser'
 
 import { Box, ContentBlock, Typography } from '@island.is/island-ui/core'
 
-import { Loader } from '../'
+import { withI18n } from '../../i18n'
+import { Translation } from '../../i18n/locales'
 
 interface PropTypes {
   children: React.ReactNode
+  t?: Translation
 }
 
 interface StateTypes {
@@ -26,7 +29,7 @@ class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
   }
 
   render() {
-    const { children } = this.props
+    const { children, t } = this.props
     const { error } = this.state
 
     if (error) {
@@ -35,20 +38,15 @@ class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
           <ContentBlock width="large">
             <Box marginBottom={3}>
               <Typography variant="h1" as="h1">
-                Villa kom upp
+                {t.errorBoundary.title}
               </Typography>
             </Box>
             <Box marginBottom={9}>
-              <Typography variant="intro">
-                Eitthvað hefur farið úrskeiðis.
-              </Typography>
-              <Typography variant="intro">
-                Vinsamlega{' '}
-                <a href="https://island.is/um-island-is/hafa-samband/">
-                  hafðu samband
-                </a>{' '}
-                fyrir frekari hjálp
-              </Typography>
+              {t.errorBoundary.contents.map((content, index) => (
+                <Typography variant="intro" key={index}>
+                  {HtmlParser(content)}
+                </Typography>
+              ))}
             </Box>
           </ContentBlock>
         </Box>
@@ -56,11 +54,11 @@ class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
     }
 
     return isServer ? (
-      <Loader />
+      <div />
     ) : (
-      <React.Suspense fallback={<Loader />}>{children}</React.Suspense>
+      <React.Suspense fallback={<div />}>{children}</React.Suspense>
     )
   }
 }
 
-export default ErrorBoundary
+export default withI18n(ErrorBoundary)
