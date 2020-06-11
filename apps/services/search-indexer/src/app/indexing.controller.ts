@@ -5,15 +5,15 @@ import { SearchIndexes } from '@island.is/api/content-search'
 
 @Controller('index')
 export class IndexingController {
-  constructor(private readonly appService: IndexingService) {}
+  constructor(private readonly indexingService: IndexingService) {}
 
   @Get('sync')
   async sync() {
-    const syncToken = await this.appService.getLastSyncToken(SearchIndexes.is)
+    const syncToken = await this.indexingService.getLastSyncToken(SearchIndexes.is)
     if (syncToken) {
-      this.appService.continueSync(syncToken, SearchIndexes.is)
+      this.indexingService.continueSync(syncToken, SearchIndexes.is)
     } else {
-      this.appService.initialSync(SearchIndexes.is)
+      this.indexingService.initialSync(SearchIndexes.is)
     }
     return {
       acknowledge: true,
