@@ -12,6 +12,7 @@ import {
   Breadcrumbs,
   BulletList,
   Bullet,
+  VideoIframe,
 } from '@island.is/island-ui/core'
 
 import { useI18n } from '../../i18n'
@@ -88,6 +89,18 @@ function Companies() {
                     ),
                   )}
                 </Stack>
+              </AccordionItem>
+            ))}
+            {t.companies.FAQ.videos.map((accordionVideo, index) => (
+              <AccordionItem
+                key={accordionVideo.id}
+                label={accordionVideo.label}
+                id={index.toString()}
+              >
+                <VideoIframe
+                  src={accordionVideo.url}
+                  title={accordionVideo.label}
+                />
               </AccordionItem>
             ))}
           </Accordion>

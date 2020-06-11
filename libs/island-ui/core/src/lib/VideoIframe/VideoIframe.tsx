@@ -3,7 +3,7 @@ import * as styles from './VideoIframe.treat'
 
 export interface VideoIframeProps {
   src: string
-  title: string
+  title?: string
 }
 
 export const VideoIframe = ({ src, title = 'video' }: VideoIframeProps) => {

@@ -43,11 +43,18 @@ export interface TranslationCompanies {
 export interface CompaniesFAQ {
   title: string
   items: PurpleItem[]
+  videos: VideoItem[]
 }
 
 export interface PurpleItem {
   label: string
   contents: Array<string[] | string>
+}
+
+export interface VideoItem {
+  id: string
+  label: string
+  url: string
 }
 
 export interface CompaniesClass {
@@ -417,6 +424,7 @@ const typeMap: any = {
     [
       { json: 'title', js: 'title', typ: '' },
       { json: 'items', js: 'items', typ: a(r('PurpleItem')) },
+      { json: 'videos', js: 'videos', typ: a(r('VideoItem')) },
     ],
     false,
   ),
