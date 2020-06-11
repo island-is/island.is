@@ -30,7 +30,3 @@ export const typeDefs = gql`
 `
 
 export default typeDefs
-
-// TODO: Map content types to graphql
-// TODO: Generate types for use in API and frontent
-// TODO: Setup mock service for API
