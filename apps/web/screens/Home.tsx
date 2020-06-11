@@ -14,19 +14,24 @@ import {
 } from '@island.is/island-ui/core'
 import { Categories, Card } from '../components'
 import { withApollo } from '../graphql'
-import { categories, selectOptions, getTags } from '../json'
+import { categories as categoriesJson, selectOptions, getTags } from '../json'
 import { useI18n } from '../i18n'
-import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
+import {
+  Query,
+  QueryGetNamespaceArgs,
+  QueryGetCategoriesArgs,
+} from '@island.is/api/schema'
 import { GET_NAMESPACE_QUERY } from './queries'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
 
 interface HomeProps {
+  categories: Query['getCategories']
   namespace: Query['getNamespace']
 }
 
-const Home: Screen<HomeProps> = ({ namespace }) => {
-  const { t, activeLocale } = useI18n()
+const Home: Screen<HomeProps> = ({ categories, namespace }) => {
+  const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
 
   return (
@@ -119,6 +124,7 @@ const Home: Screen<HomeProps> = ({ namespace }) => {
                 <Card
                   key={index}
                   {...category}
+                  description="description"
                   linkProps={{
                     passHref: true,
                     href: `${activeLocale === 'en' ? '/en' : ''}/category`,
@@ -134,19 +140,36 @@ const Home: Screen<HomeProps> = ({ namespace }) => {
 }
 
 Home.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const {
-    data: { getNamespace: namespace },
-  } = await apolloClient.query<Query, QueryGetNamespaceArgs>({
-    query: GET_NAMESPACE_QUERY,
-    variables: {
-      input: {
-        namespace: 'Homepage',
-        lang: locale,
-      },
+  const [
+    {
+      data: { getArticle: article },
     },
-  })
+    {
+      data: { getNamespace: namespace },
+    },
+  ] = await Promise.all([
+    apolloClient.query<Query, QueryGetCategoriesArgs>({
+      query: GET_CATEGORIES_QUERY,
+      variables: {
+        input: {
+          slug,
+          lang: locale,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetNamespaceArgs>({
+      query: GET_NAMESPACE_QUERY,
+      variables: {
+        input: {
+          namespace: 'Homepage',
+          lang: locale,
+        },
+      },
+    }),
+  ])
 
   return {
+    categories,
     namespace,
   }
 }
