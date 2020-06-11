@@ -21,14 +21,17 @@ describe('IndexingController', () => {
       const appController = app.get<IndexingController>(IndexingController)
       const getLastSyncToken = jest
         .spyOn(service, 'getLastSyncToken')
+        .mockClear()
         .mockImplementation(() => undefined)
       const continueSync = jest
         .spyOn(service, 'continueSync')
+        .mockClear()
         .mockImplementation(() => {
           throw Error('Should not be invoked')
         })
       const initialSync = jest
         .spyOn(service, 'initialSync')
+        .mockClear()
         .mockImplementation(() => undefined)
 
       expect(await appController.sync()).toEqual({
@@ -42,12 +45,15 @@ describe('IndexingController', () => {
       const appController = app.get<IndexingController>(IndexingController)
       const getLastSyncToken = jest
         .spyOn(service, 'getLastSyncToken')
+        .mockClear()
         .mockImplementation(async () => '1')
       const continueSync = jest
         .spyOn(service, 'continueSync')
+        .mockClear()
         .mockImplementation(() => undefined)
       const initialSync = jest
         .spyOn(service, 'initialSync')
+        .mockClear()
         .mockImplementation(() => {
           throw Error('Should not be invoked')
         })
