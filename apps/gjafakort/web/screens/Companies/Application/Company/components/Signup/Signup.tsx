@@ -176,16 +176,18 @@ function Signup({ company, handleSubmission }: PropTypes) {
                     {HtmlParser(instruction)}
                   </Typography>
                 ))}
-                {companyOperations.map((operation) => (
-                  <Field
-                    key={operation.name}
-                    component={FieldCheckbox}
-                    name={`operations.${operation.name}`}
-                    tooltip={operation.tooltip}
-                    label={operation.label}
-                    disabled={values.noneOfTheAbove}
-                  />
-                ))}
+                {companyOperations
+                  .filter((operation) => operation.name !== 'noneOfTheAbove')
+                  .map((operation) => (
+                    <Field
+                      key={operation.name}
+                      component={FieldCheckbox}
+                      name={`operations.${operation.name}`}
+                      tooltip={operation.tooltip}
+                      label={operation.label}
+                      disabled={values.noneOfTheAbove}
+                    />
+                  ))}
                 <Field
                   component={FieldCheckbox}
                   name="noneOfTheAbove"
