@@ -71,6 +71,15 @@
     },
     "logging": {
       "tags": []
+    },
+    "api-content-search": {
+      "tags": []
+    },
+    "services-search-indexer": {
+      "tags": []
+    },
+    "api-domains-content-search": {
+      "tags": []
     }
   }
 }

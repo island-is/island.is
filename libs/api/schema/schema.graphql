@@ -5,6 +5,48 @@ type Article {
   content: String
 }
 
+input ArticlesInCategoryInput {
+  slug: String
+  language: Language
+}
+
+input CategoriesInput {
+  language: Language
+}
+
+input CategoryInput {
+  id: ID
+  slug: String
+}
+
+type ContentArticle {
+  _id: ID
+  title: String
+  slug: String
+}
+
+type ContentCategory {
+  title: String
+  slug: String
+}
+
+type ContentItem {
+  _id: String
+  title: String
+  content: String
+  tag: [String]
+  category: String
+  category_slug: String
+  content_blob: String
+  content_id: String
+  content_type: String
+  date: String
+  image: String
+  imageText: String
+  lang: String
+  slug: String
+}
+
 input GetArticleInput {
   slug: String
   lang: String!
@@ -23,6 +65,23 @@ input HelloWorldInput {
   name: String = "World"
 }
 
+input ItemInput {
+  _id: ID
+  slug: String
+  type: ItemType
+  language: Language
+}
+
+enum ItemType {
+  article
+  category
+}
+
+enum Language {
+  is
+  en
+}
+
 type Mutation {
   root: String
 }
@@ -34,7 +93,23 @@ type Namespace {
 
 type Query {
   getArticle(input: GetArticleInput): Article
+  getArticlesInCategory(category: ArticlesInCategoryInput): [ContentItem]
+  getCategories(input: CategoriesInput): [ContentCategory]
   getNamespace(input: GetNamespaceInput): Namespace
+  getSearchResults(query: SearcherInput): SearchResult!
+  getSingleItem(input: ItemInput): ContentItem
   helloWorld(input: HelloWorldInput): HelloWorld!
   root: String
+}
+
+input SearcherInput {
+  queryString: String
+  language: Language
+  size: Int
+  page: Int
+}
+
+type SearchResult {
+  total: Int
+  items: [ContentItem!]
 }

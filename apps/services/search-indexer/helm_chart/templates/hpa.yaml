@@ -1,0 +1,14 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "search-indexer-service.fullname" . }}
+  labels:
+    {{- include "search-indexer-service.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "search-indexer-service.fullname" . }}
+  minReplicas: {{ .Values.replicaCount.min }}
+  maxReplicas: {{ .Values.replicaCount.max }}
+  targetCPUUtilizationPercentage: 70
