@@ -422,10 +422,7 @@
               "libs/api/domains/cms/tsconfig.lib.json",
               "libs/api/domains/cms/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/api/domains/cms/**"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/api/domains/cms/**"]
           }
         },
         "test": {
