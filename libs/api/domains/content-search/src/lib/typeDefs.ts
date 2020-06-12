@@ -9,6 +9,8 @@ export const typeDefs = gql`
     category: String
     categorySlug: String
     categoryDescription: String
+    group: String
+    groupSlug: String
     contentBlob: String
     contentId: String
     contentType: String
