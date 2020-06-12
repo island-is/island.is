@@ -1,5 +1,4 @@
 import { withLocale } from '../i18n'
-import { Home } from '../screens'
-import { Screen } from '../types'
+import homeScreen from '../screens/Home'
 
-export default withLocale('is')(Home as Screen)
+export default withLocale('is')(homeScreen)

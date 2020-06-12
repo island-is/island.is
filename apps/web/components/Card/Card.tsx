@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
+import Link, { LinkProps } from 'next/link'
 import { Box, Stack, Typography, Tag, Inline } from '@island.is/island-ui/core'
-import Link from 'next/link'
 
 import * as styles from './Card.treat'
 
@@ -11,14 +11,14 @@ interface CardProps {
   title: string
   description?: string
   tags?: boolean
-  href?: string
+  linkProps?: LinkProps
 }
 
 export const Card: FC<CardProps> = ({
   title,
   description,
   tags = true,
-  href,
+  linkProps = { href: '#', as: null },
 }) => {
   const Content = (
     <Box display="flex" height="full" flexDirection="column">
@@ -35,12 +35,7 @@ export const Card: FC<CardProps> = ({
           <Inline space={1}>
             {getTags(4).map(({ title }, index) => {
               return (
-                <Link
-                  scroll={false}
-                  key={index}
-                  prefetch={false}
-                  href="/article"
-                >
+                <Link key={index} {...linkProps}>
                   <Tag variant="purple">{title}</Tag>
                 </Link>
               )
@@ -51,12 +46,12 @@ export const Card: FC<CardProps> = ({
     </Box>
   )
 
-  if (!href) {
+  if (!linkProps.href) {
     return <Frame>{Content}</Frame>
   }
 
   return (
-    <Link href={href}>
+    <Link {...linkProps}>
       {/* eslint-disable-next-line */}
       <a className={styles.card}>
         <Box

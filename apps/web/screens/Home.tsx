@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Link from 'next/link'
-import { Categories, Card } from '../../components'
 import {
   ContentBlock,
   Box,
@@ -12,12 +11,24 @@ import {
   Inline,
   Select,
   Tag,
-  Icon,
 } from '@island.is/island-ui/core'
+import { Categories, Card } from '../components'
+import { withApollo } from '../graphql'
+import { categories, selectOptions, getTags } from '../json'
+import { useI18n } from '../i18n'
+import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
+import { GET_NAMESPACE_QUERY } from './queries'
+import { Screen } from '../types'
+import { useNamespace } from '../hooks'
 
-import { categories, selectOptions, getTags } from '../../json'
+interface HomeProps {
+  namespace: Query['getNamespace']
+}
 
-function HomePage() {
+const Home: Screen<HomeProps> = ({ namespace }) => {
+  const { t, activeLocale } = useI18n()
+  const n = useNamespace(namespace)
+
   return (
     <>
       <ContentBlock>
@@ -37,18 +48,18 @@ function HomePage() {
             >
               <Box
                 textAlign={['center', 'center', 'left']}
+                width="full"
                 paddingRight={[0, 0, 12]}
               >
                 <Stack space={3}>
                   <Typography variant="eyebrow" as="h2">
-                    Nýtt Ísland.is
+                    {n('heroPreTitle')}
                   </Typography>
                   <Typography variant="h1" as="h1">
-                    Einn staður fyrir bætta þjónustu
+                    {n('heroTitle')}
                   </Typography>
                   <Typography variant="p" as="p">
-                    Hér rís ný miðlæg þjónustugátt sem ætlað er að einfalda
-                    samskipti einstaklinga og atvinnulífsins við hið opinbera.
+                    {n('heroSubTitle')}
                   </Typography>
                 </Stack>
               </Box>
@@ -64,6 +75,7 @@ function HomePage() {
                 display="flex"
                 background="white"
                 boxShadow="subtle"
+                width="full"
                 justifyContent="center"
                 alignItems="center"
               >
@@ -73,12 +85,14 @@ function HomePage() {
                   alignY="center"
                 >
                   <Column width="1/2">
-                    <Select
-                      placeholder="Leitaðu á Ísland.is"
-                      options={selectOptions}
-                      name="search"
-                      icon="search"
-                    />
+                    <Box display="inlineFlex" alignItems="center" width="full">
+                      <Select
+                        placeholder={n('heroSearchPlaceholder')}
+                        options={selectOptions}
+                        name="search"
+                        icon="search"
+                      />
+                    </Box>
                   </Column>
                   <Column width="1/2">
                     <Inline space={1}>
@@ -99,9 +113,18 @@ function HomePage() {
       </ContentBlock>
       <Box background="purple100">
         <ContentBlock width="large">
-          <Categories>
+          <Categories label={n('articlesTitle')} seeMoreText={n('seeMore')}>
             {categories.map((category, index) => {
-              return <Card key={index} {...category} href="/category" />
+              return (
+                <Card
+                  key={index}
+                  {...category}
+                  linkProps={{
+                    passHref: true,
+                    href: `${activeLocale === 'en' ? '/en' : ''}/category`,
+                  }}
+                />
+              )
             })}
           </Categories>
         </ContentBlock>
@@ -109,6 +132,26 @@ function HomePage() {
     </>
   )
 }
+
+Home.getInitialProps = async ({ apolloClient, locale, query }) => {
+  const {
+    data: { getNamespace: namespace },
+  } = await apolloClient.query<Query, QueryGetNamespaceArgs>({
+    query: GET_NAMESPACE_QUERY,
+    variables: {
+      input: {
+        namespace: 'Homepage',
+        lang: locale,
+      },
+    },
+  })
+
+  return {
+    namespace,
+  }
+}
+
+export default withApollo(Home)
 
 const DottedBackground = () => (
   <Box position="absolute" top={0} bottom={0} left={0} right={0} padding={3}>
@@ -150,4 +193,3 @@ const Svg = () => {
     </svg>
   )
 }
-export default HomePage

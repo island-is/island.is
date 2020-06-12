@@ -1,3 +1,20 @@
+type Article {
+  id: String!
+  slug: String!
+  title: String!
+  content: String
+}
+
+input GetArticleInput {
+  slug: String
+  lang: String!
+}
+
+input GetNamespaceInput {
+  namespace: String
+  lang: String!
+}
+
 type HelloWorld {
   message: String!
 }
@@ -10,7 +27,14 @@ type Mutation {
   root: String
 }
 
+type Namespace {
+  namespace: String!
+  fields: String!
+}
+
 type Query {
+  getArticle(input: GetArticleInput): Article
+  getNamespace(input: GetNamespaceInput): Namespace
   helloWorld(input: HelloWorldInput): HelloWorld!
   root: String
 }

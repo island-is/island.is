@@ -407,6 +407,34 @@
         }
       }
     },
+    "api-domains-cms": {
+      "root": "libs/api/domains/cms",
+      "sourceRoot": "libs/api/domains/cms/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/api/domains/cms/.eslintrc",
+            "tsConfig": [
+              "libs/api/domains/cms/tsconfig.lib.json",
+              "libs/api/domains/cms/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api/domains/cms/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/cms/jest.config.js",
+            "tsConfig": "libs/api/domains/cms/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "api-schema": {
       "root": "libs/api/schema",
       "sourceRoot": "libs/api/schema/src",

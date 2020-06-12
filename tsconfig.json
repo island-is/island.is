@@ -29,6 +29,7 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
+      "@island.is/api/domains/cms": ["libs/api/domains/cms/src/index.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/gjafakort/application/*": [
         "apps/gjafakort/application/src/*"

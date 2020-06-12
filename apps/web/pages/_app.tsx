@@ -1,14 +1,15 @@
 import React from 'react'
 import Head from 'next/head'
 import { AppProps } from 'next/app'
-// import { ApolloProvider } from 'react-apollo'
-// import { ApolloClient } from 'apollo-client'
-// import { NormalizedCacheObject } from 'apollo-cache-inmemory'
+import { ApolloProvider } from 'react-apollo'
+import { ApolloClient } from 'apollo-client'
+import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 
-// import { client } from '../graphql'
 import { Page, Footer, Box } from '@island.is/island-ui/core'
 import { Header } from '../components'
 import appWithTranslation from '../i18n/appWithTranslation'
+
+import initApollo from '../graphql/client'
 
 const Layout: React.FC = ({ children }) => {
   return (
@@ -98,11 +99,14 @@ const Layout: React.FC = ({ children }) => {
 const SupportApplication: React.FC<{
   Component: React.FC
   pageProps: AppProps['pageProps']
+  apolloClient: ApolloClient<NormalizedCacheObject>
 }> = ({ Component, pageProps }) => {
   return (
-    <Layout>
-      <Component {...pageProps} />
-    </Layout>
+    <ApolloProvider client={initApollo(pageProps.apolloState)}>
+      <Layout>
+        <Component {...pageProps} />
+      </Layout>
+    </ApolloProvider>
   )
 }
 

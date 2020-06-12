@@ -14,6 +14,24 @@ export type Scalars = {
   Float: number
 }
 
+export type Article = {
+  __typename?: 'Article'
+  id: Scalars['String']
+  slug: Scalars['String']
+  title: Scalars['String']
+  content?: Maybe<Scalars['String']>
+}
+
+export type GetArticleInput = {
+  slug?: Maybe<Scalars['String']>
+  lang: Scalars['String']
+}
+
+export type GetNamespaceInput = {
+  namespace?: Maybe<Scalars['String']>
+  lang: Scalars['String']
+}
+
 export type HelloWorld = {
   __typename?: 'HelloWorld'
   message: Scalars['String']
@@ -28,10 +46,26 @@ export type Mutation = {
   root?: Maybe<Scalars['String']>
 }
 
+export type Namespace = {
+  __typename?: 'Namespace'
+  namespace: Scalars['String']
+  fields: Scalars['String']
+}
+
 export type Query = {
   __typename?: 'Query'
+  getArticle?: Maybe<Article>
+  getNamespace?: Maybe<Namespace>
   helloWorld: HelloWorld
   root?: Maybe<Scalars['String']>
+}
+
+export type QueryGetArticleArgs = {
+  input?: Maybe<GetArticleInput>
+}
+
+export type QueryGetNamespaceArgs = {
+  input?: Maybe<GetNamespaceInput>
 }
 
 export type QueryHelloWorldArgs = {
@@ -147,8 +181,12 @@ export type DirectiveResolverFn<
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>
-  HelloWorldInput: HelloWorldInput
+  GetArticleInput: GetArticleInput
   String: ResolverTypeWrapper<Scalars['String']>
+  Article: ResolverTypeWrapper<Article>
+  GetNamespaceInput: GetNamespaceInput
+  Namespace: ResolverTypeWrapper<Namespace>
+  HelloWorldInput: HelloWorldInput
   HelloWorld: ResolverTypeWrapper<HelloWorld>
   Mutation: ResolverTypeWrapper<{}>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
@@ -157,11 +195,26 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Query: {}
-  HelloWorldInput: HelloWorldInput
+  GetArticleInput: GetArticleInput
   String: Scalars['String']
+  Article: Article
+  GetNamespaceInput: GetNamespaceInput
+  Namespace: Namespace
+  HelloWorldInput: HelloWorldInput
   HelloWorld: HelloWorld
   Mutation: {}
   Boolean: Scalars['Boolean']
+}
+
+export type ArticleResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']
+> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: isTypeOfResolverFn<ParentType>
 }
 
 export type HelloWorldResolvers<
@@ -179,10 +232,31 @@ export type MutationResolvers<
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
 }
 
+export type NamespaceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Namespace'] = ResolversParentTypes['Namespace']
+> = {
+  namespace?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  fields?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: isTypeOfResolverFn<ParentType>
+}
+
 export type QueryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
+  getArticle?: Resolver<
+    Maybe<ResolversTypes['Article']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetArticleArgs, never>
+  >
+  getNamespace?: Resolver<
+    Maybe<ResolversTypes['Namespace']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetNamespaceArgs, never>
+  >
   helloWorld?: Resolver<
     ResolversTypes['HelloWorld'],
     ParentType,
@@ -193,8 +267,10 @@ export type QueryResolvers<
 }
 
 export type Resolvers<ContextType = Context> = {
+  Article?: ArticleResolvers<ContextType>
   HelloWorld?: HelloWorldResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
+  Namespace?: NamespaceResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
 }
 
