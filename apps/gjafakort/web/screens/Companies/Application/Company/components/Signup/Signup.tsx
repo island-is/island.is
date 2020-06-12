@@ -27,9 +27,11 @@ interface PropTypes {
   handleSubmission: (_: boolean) => void
 }
 
-const CreateApplicationMutation = gql`
-  mutation CreateApplicationMutation($input: CreateApplicationInput!) {
-    createApplication(input: $input) {
+const CreateCompanyApplicationMutation = gql`
+  mutation CreateCompanyApplicationMutation(
+    $input: CreateCompanyApplicationInput!
+  ) {
+    createCompanyApplication(input: $input) {
       application {
         id
         state
@@ -62,7 +64,9 @@ function Signup({ company, handleSubmission }: PropTypes) {
       company: { signup: t },
     },
   } = useI18n()
-  const [createApplication] = useMutation(CreateApplicationMutation)
+  const [createCompanyApplication] = useMutation(
+    CreateCompanyApplicationMutation,
+  )
 
   const companyOperations = t.form.operation.options
 
@@ -71,7 +75,7 @@ function Signup({ company, handleSubmission }: PropTypes) {
       return handleSubmission(false)
     }
 
-    await createApplication({
+    await createCompanyApplication({
       variables: {
         input: {
           ...values,

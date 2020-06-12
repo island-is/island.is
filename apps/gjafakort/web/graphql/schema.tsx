@@ -11,29 +11,15 @@ export type Scalars = {
   Float: number
 }
 
-export type Application = {
-  __typename?: 'Application'
-  id?: Maybe<Scalars['String']>
+export type Company = {
+  __typename?: 'Company'
+  ssn: Scalars['String']
   name: Scalars['String']
-  email: Scalars['String']
-  state: Scalars['String']
-  companySSN: Scalars['String']
-  serviceCategory?: Maybe<Scalars['String']>
-  generalEmail: Scalars['String']
-  companyDisplayName?: Maybe<Scalars['String']>
-  companyName?: Maybe<Scalars['String']>
-  exhibition?: Maybe<Scalars['Boolean']>
-  operatingPermitForRestaurant?: Maybe<Scalars['Boolean']>
-  operatingPermitForVehicles?: Maybe<Scalars['Boolean']>
-  operationsTrouble?: Maybe<Scalars['Boolean']>
-  phoneNumber: Scalars['String']
-  validLicenses?: Maybe<Scalars['Boolean']>
-  validPermit?: Maybe<Scalars['Boolean']>
-  webpage: Scalars['String']
+  application?: Maybe<CompanyApplication>
 }
 
-export type Log = {
-  __typename?: 'Log'
+export type ApplicationLog = {
+  __typename?: 'ApplicationLog'
   id: Scalars['String']
   state: Scalars['String']
   title: Scalars['String']
@@ -41,8 +27,8 @@ export type Log = {
   authorSSN?: Maybe<Scalars['String']>
 }
 
-export type ApplicationWithLogs = {
-  __typename?: 'ApplicationWithLogs'
+export type CompanyApplication = {
+  __typename?: 'CompanyApplication'
   id?: Maybe<Scalars['String']>
   name: Scalars['String']
   email: Scalars['String']
@@ -60,10 +46,10 @@ export type ApplicationWithLogs = {
   validLicenses?: Maybe<Scalars['Boolean']>
   validPermit?: Maybe<Scalars['Boolean']>
   webpage: Scalars['String']
-  logs?: Maybe<Array<Maybe<Log>>>
+  logs?: Maybe<Array<Maybe<ApplicationLog>>>
 }
 
-export type CreateApplicationInput = {
+export type CreateCompanyApplicationInput = {
   email: Scalars['String']
   generalEmail: Scalars['String']
   phoneNumber: Scalars['String']
@@ -81,16 +67,16 @@ export type CreateApplicationInput = {
   validPermit: Scalars['Boolean']
 }
 
-export type CreateApplication = {
-  __typename?: 'CreateApplication'
-  application?: Maybe<Application>
+export type CreateCompanyApplication = {
+  __typename?: 'CreateCompanyApplication'
+  application?: Maybe<CompanyApplication>
 }
 
 export type Query = {
   __typename?: 'Query'
-  applications?: Maybe<Array<Maybe<ApplicationWithLogs>>>
   companies?: Maybe<Array<Maybe<Company>>>
   company?: Maybe<Company>
+  companyApplications?: Maybe<Array<Maybe<CompanyApplication>>>
   root?: Maybe<Scalars['String']>
 }
 
@@ -100,19 +86,54 @@ export type QueryCompanyArgs = {
 
 export type Mutation = {
   __typename?: 'Mutation'
-  createApplication?: Maybe<CreateApplication>
+  createCompanyApplication?: Maybe<CreateCompanyApplication>
   root?: Maybe<Scalars['String']>
 }
 
-export type MutationCreateApplicationArgs = {
-  input: CreateApplicationInput
+export type MutationCreateCompanyApplicationArgs = {
+  input: CreateCompanyApplicationInput
 }
 
-export type Company = {
-  __typename?: 'Company'
-  ssn: Scalars['String']
-  name: Scalars['String']
-  application?: Maybe<Application>
+export type GetCompanyApplicationsQueryQueryVariables = {}
+
+export type GetCompanyApplicationsQueryQuery = { __typename?: 'Query' } & {
+  companyApplications?: Maybe<
+    Array<
+      Maybe<
+        { __typename?: 'CompanyApplication' } & Pick<
+          CompanyApplication,
+          | 'id'
+          | 'name'
+          | 'email'
+          | 'state'
+          | 'companySSN'
+          | 'serviceCategory'
+          | 'generalEmail'
+          | 'companyDisplayName'
+          | 'companyName'
+          | 'exhibition'
+          | 'operatingPermitForRestaurant'
+          | 'operatingPermitForVehicles'
+          | 'operationsTrouble'
+          | 'phoneNumber'
+          | 'validLicenses'
+          | 'validPermit'
+          | 'webpage'
+        > & {
+            logs?: Maybe<
+              Array<
+                Maybe<
+                  { __typename?: 'ApplicationLog' } & Pick<
+                    ApplicationLog,
+                    'id' | 'state' | 'title' | 'data' | 'authorSSN'
+                  >
+                >
+              >
+            >
+          }
+      >
+    >
+  >
 }
 
 export type GetCompaniesQueryQueryVariables = {}
@@ -131,8 +152,8 @@ export type GetCompanyQueryQuery = { __typename?: 'Query' } & {
   company?: Maybe<
     { __typename?: 'Company' } & Pick<Company, 'ssn' | 'name'> & {
         application?: Maybe<
-          { __typename?: 'Application' } & Pick<
-            Application,
+          { __typename?: 'CompanyApplication' } & Pick<
+            CompanyApplication,
             | 'id'
             | 'name'
             | 'email'
@@ -150,20 +171,103 @@ export type GetCompanyQueryQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type CreateApplicationMutationMutationVariables = {
-  input: CreateApplicationInput
+export type CreateCompanyApplicationMutationMutationVariables = {
+  input: CreateCompanyApplicationInput
 }
 
-export type CreateApplicationMutationMutation = { __typename?: 'Mutation' } & {
-  createApplication?: Maybe<
-    { __typename?: 'CreateApplication' } & {
+export type CreateCompanyApplicationMutationMutation = {
+  __typename?: 'Mutation'
+} & {
+  createCompanyApplication?: Maybe<
+    { __typename?: 'CreateCompanyApplication' } & {
       application?: Maybe<
-        { __typename?: 'Application' } & Pick<Application, 'id' | 'state'>
+        { __typename?: 'CompanyApplication' } & Pick<
+          CompanyApplication,
+          'id' | 'state'
+        >
       >
     }
   >
 }
 
+export const GetCompanyApplicationsQueryDocument = gql`
+  query GetCompanyApplicationsQuery {
+    companyApplications {
+      id
+      name
+      email
+      state
+      companySSN
+      serviceCategory
+      generalEmail
+      companyDisplayName
+      companyName
+      exhibition
+      operatingPermitForRestaurant
+      operatingPermitForVehicles
+      operationsTrouble
+      phoneNumber
+      validLicenses
+      validPermit
+      webpage
+      logs {
+        id
+        state
+        title
+        data
+        authorSSN
+      }
+    }
+  }
+`
+
+/**
+ * __useGetCompanyApplicationsQueryQuery__
+ *
+ * To run a query within a React component, call `useGetCompanyApplicationsQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCompanyApplicationsQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCompanyApplicationsQueryQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetCompanyApplicationsQueryQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    GetCompanyApplicationsQueryQuery,
+    GetCompanyApplicationsQueryQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useQuery<
+    GetCompanyApplicationsQueryQuery,
+    GetCompanyApplicationsQueryQueryVariables
+  >(GetCompanyApplicationsQueryDocument, baseOptions)
+}
+export function useGetCompanyApplicationsQueryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    GetCompanyApplicationsQueryQuery,
+    GetCompanyApplicationsQueryQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useLazyQuery<
+    GetCompanyApplicationsQueryQuery,
+    GetCompanyApplicationsQueryQueryVariables
+  >(GetCompanyApplicationsQueryDocument, baseOptions)
+}
+export type GetCompanyApplicationsQueryQueryHookResult = ReturnType<
+  typeof useGetCompanyApplicationsQueryQuery
+>
+export type GetCompanyApplicationsQueryLazyQueryHookResult = ReturnType<
+  typeof useGetCompanyApplicationsQueryLazyQuery
+>
+export type GetCompanyApplicationsQueryQueryResult = ApolloReactCommon.QueryResult<
+  GetCompanyApplicationsQueryQuery,
+  GetCompanyApplicationsQueryQueryVariables
+>
 export const GetCompaniesQueryDocument = gql`
   query GetCompaniesQuery {
     companies {
@@ -290,9 +394,11 @@ export type GetCompanyQueryQueryResult = ApolloReactCommon.QueryResult<
   GetCompanyQueryQuery,
   GetCompanyQueryQueryVariables
 >
-export const CreateApplicationMutationDocument = gql`
-  mutation CreateApplicationMutation($input: CreateApplicationInput!) {
-    createApplication(input: $input) {
+export const CreateCompanyApplicationMutationDocument = gql`
+  mutation CreateCompanyApplicationMutation(
+    $input: CreateCompanyApplicationInput!
+  ) {
+    createCompanyApplication(input: $input) {
       application {
         id
         state
@@ -300,46 +406,46 @@ export const CreateApplicationMutationDocument = gql`
     }
   }
 `
-export type CreateApplicationMutationMutationFn = ApolloReactCommon.MutationFunction<
-  CreateApplicationMutationMutation,
-  CreateApplicationMutationMutationVariables
+export type CreateCompanyApplicationMutationMutationFn = ApolloReactCommon.MutationFunction<
+  CreateCompanyApplicationMutationMutation,
+  CreateCompanyApplicationMutationMutationVariables
 >
 
 /**
- * __useCreateApplicationMutationMutation__
+ * __useCreateCompanyApplicationMutationMutation__
  *
- * To run a mutation, you first call `useCreateApplicationMutationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateApplicationMutationMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateCompanyApplicationMutationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCompanyApplicationMutationMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createApplicationMutationMutation, { data, loading, error }] = useCreateApplicationMutationMutation({
+ * const [createCompanyApplicationMutationMutation, { data, loading, error }] = useCreateCompanyApplicationMutationMutation({
  *   variables: {
  *      input: // value for 'input'
  *   },
  * });
  */
-export function useCreateApplicationMutationMutation(
+export function useCreateCompanyApplicationMutationMutation(
   baseOptions?: ApolloReactHooks.MutationHookOptions<
-    CreateApplicationMutationMutation,
-    CreateApplicationMutationMutationVariables
+    CreateCompanyApplicationMutationMutation,
+    CreateCompanyApplicationMutationMutationVariables
   >,
 ) {
   return ApolloReactHooks.useMutation<
-    CreateApplicationMutationMutation,
-    CreateApplicationMutationMutationVariables
-  >(CreateApplicationMutationDocument, baseOptions)
+    CreateCompanyApplicationMutationMutation,
+    CreateCompanyApplicationMutationMutationVariables
+  >(CreateCompanyApplicationMutationDocument, baseOptions)
 }
-export type CreateApplicationMutationMutationHookResult = ReturnType<
-  typeof useCreateApplicationMutationMutation
+export type CreateCompanyApplicationMutationMutationHookResult = ReturnType<
+  typeof useCreateCompanyApplicationMutationMutation
 >
-export type CreateApplicationMutationMutationResult = ApolloReactCommon.MutationResult<
-  CreateApplicationMutationMutation
+export type CreateCompanyApplicationMutationMutationResult = ApolloReactCommon.MutationResult<
+  CreateCompanyApplicationMutationMutation
 >
-export type CreateApplicationMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<
-  CreateApplicationMutationMutation,
-  CreateApplicationMutationMutationVariables
+export type CreateCompanyApplicationMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<
+  CreateCompanyApplicationMutationMutation,
+  CreateCompanyApplicationMutationMutationVariables
 >

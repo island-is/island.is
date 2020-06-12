@@ -6,9 +6,9 @@ import { ContentLoader } from '@island.is/gjafakort-web/components'
 
 import { ApplicationTable } from './components'
 
-const GetApplicationsQuery = gql`
-  query GetApplicationsQuery {
-    applications {
+const GetCompanyApplicationsQuery = gql`
+  query GetCompanyApplicationsQuery {
+    companyApplications {
       id
       name
       email
@@ -38,8 +38,8 @@ const GetApplicationsQuery = gql`
 `
 
 function Admin() {
-  const { data, loading } = useQuery(GetApplicationsQuery)
-  const { applications } = data || {}
+  const { data, loading } = useQuery(GetCompanyApplicationsQuery)
+  const { companyApplications } = data || {}
 
   if (loading && !data) {
     return <ContentLoader />
@@ -49,24 +49,26 @@ function Admin() {
 
   return (
     <div>
-      <div>Number of applications {applications.length}</div>
+      <div>Number of applications {companyApplications.length}</div>
       <br />
       <div>
         Number of applications pending{' '}
         {
-          applications.filter((application) => application.state === 'pending')
-            .length
+          companyApplications.filter(
+            (application) => application.state === 'pending',
+          ).length
         }
       </div>
       <div>
         Number of applications approved{' '}
         {
-          applications.filter((application) => application.state === 'approved')
-            .length
+          companyApplications.filter(
+            (application) => application.state === 'approved',
+          ).length
         }
       </div>
       <br />
-      <ApplicationTable applications={applications} />
+      <ApplicationTable applications={companyApplications} />
     </div>
   )
 }
