@@ -32,6 +32,37 @@ export type Application = {
   webpage: Scalars['String']
 }
 
+export type Log = {
+  __typename?: 'Log'
+  id: Scalars['String']
+  state: Scalars['String']
+  title: Scalars['String']
+  data?: Maybe<Scalars['String']>
+  authorSSN?: Maybe<Scalars['String']>
+}
+
+export type ApplicationWithLogs = {
+  __typename?: 'ApplicationWithLogs'
+  id?: Maybe<Scalars['String']>
+  name: Scalars['String']
+  email: Scalars['String']
+  state: Scalars['String']
+  companySSN: Scalars['String']
+  serviceCategory?: Maybe<Scalars['String']>
+  generalEmail: Scalars['String']
+  companyDisplayName?: Maybe<Scalars['String']>
+  companyName?: Maybe<Scalars['String']>
+  exhibition?: Maybe<Scalars['Boolean']>
+  operatingPermitForRestaurant?: Maybe<Scalars['Boolean']>
+  operatingPermitForVehicles?: Maybe<Scalars['Boolean']>
+  operationsTrouble?: Maybe<Scalars['Boolean']>
+  phoneNumber: Scalars['String']
+  validLicenses?: Maybe<Scalars['Boolean']>
+  validPermit?: Maybe<Scalars['Boolean']>
+  webpage: Scalars['String']
+  logs?: Maybe<Array<Maybe<Log>>>
+}
+
 export type CreateApplicationInput = {
   email: Scalars['String']
   generalEmail: Scalars['String']
@@ -55,6 +86,18 @@ export type CreateApplication = {
   application?: Maybe<Application>
 }
 
+export type Query = {
+  __typename?: 'Query'
+  applications?: Maybe<Array<Maybe<ApplicationWithLogs>>>
+  companies?: Maybe<Array<Maybe<Company>>>
+  company?: Maybe<Company>
+  root?: Maybe<Scalars['String']>
+}
+
+export type QueryCompanyArgs = {
+  ssn: Scalars['String']
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<CreateApplication>
@@ -70,17 +113,6 @@ export type Company = {
   ssn: Scalars['String']
   name: Scalars['String']
   application?: Maybe<Application>
-}
-
-export type Query = {
-  __typename?: 'Query'
-  companies?: Maybe<Array<Maybe<Company>>>
-  company?: Maybe<Company>
-  root?: Maybe<Scalars['String']>
-}
-
-export type QueryCompanyArgs = {
-  ssn: Scalars['String']
 }
 
 export type GetCompaniesQueryQueryVariables = {}

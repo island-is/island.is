@@ -2,6 +2,7 @@ import { Model, DataTypes } from 'sequelize'
 
 import { consts } from '../common'
 import { sequelize } from '../../../extensions'
+import { model as AuditLog } from '../audit'
 
 class Application extends Model {
   public id!: string
@@ -67,5 +68,7 @@ Application.init(
     ],
   },
 )
+
+Application.hasMany(AuditLog)
 
 export default Application

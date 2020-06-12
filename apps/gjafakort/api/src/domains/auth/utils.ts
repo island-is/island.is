@@ -22,7 +22,13 @@ export const verifyToken = (token: string): Credentials | null => {
 const checkPermissions = (user: User, { role }: Permissions): boolean => {
   switch (role) {
     case 'admin':
-      return ['1501933119', '2101932009'].includes(user.ssn)
+      return [
+        '1501933119', // Darri
+        '2101932009', // David
+        '2501893469', // Brian
+        '2607862299', // Þórhildur
+        '1903795829', // Örvar
+      ].includes(user.ssn)
     default:
       return true
   }
