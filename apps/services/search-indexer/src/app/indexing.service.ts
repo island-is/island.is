@@ -63,6 +63,7 @@ export class IndexingService {
   private async transformAndIndexEntry(
     index: SearchIndexes,
     syncToken: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     entry: Entry<any>,
   ) {
     function reduceContent(content) {

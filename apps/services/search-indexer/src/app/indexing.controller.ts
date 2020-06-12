@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common'
+import { Controller, Get } from '@nestjs/common'
 
 import { IndexingService } from './indexing.service'
 import { SearchIndexes } from '@island.is/api/content-search'

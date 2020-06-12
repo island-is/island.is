@@ -81,7 +81,7 @@ export class ElasticService {
     return this.findByQuery(index, requestBody)
   }
 
-  async fetchCategories(index: SearchIndexes, input) {
+  async fetchCategories(index: SearchIndexes) {
     const query = new RequestBodySearch()
       .agg(new TermsAggregation('categories', 'category'))
       .agg(new TermsAggregation('catagories_slugs', 'category_slug'))

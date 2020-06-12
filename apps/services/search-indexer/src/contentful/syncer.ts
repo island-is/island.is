@@ -7,6 +7,7 @@ import {
 import { environment } from '../environments/environment'
 
 interface SyncerResult {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   items: Entry<any>[]
   token: string | undefined
 }
