@@ -17,7 +17,7 @@ export class SearcherService implements Service {
     return SearchIndexes[lang] ?? SearchIndexes.is
   }
 
-  private fixCase(doc: any) {
+  private fixCase(doc) {
     const obj = doc._source
     obj.contentType = obj.content_type
     obj.contentBlob = obj.content_blob
@@ -35,7 +35,7 @@ export class SearcherService implements Service {
       query,
     )
 
-    let items = body?.hits?.hits.map(this.fixCase)
+    const items = body?.hits?.hits.map(this.fixCase)
 
     return {
       total: items.length,
@@ -58,6 +58,7 @@ export class SearcherService implements Service {
       categories[_source.category_slug] = _source._category
     })
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore
     return Object.values(categories)
   }
