@@ -18,7 +18,7 @@ import { Layout } from '../../components'
 
 function Home() {
   const {
-    t: { home: t },
+    t: { home: t, routes },
   } = useI18n()
 
   return (
@@ -27,7 +27,7 @@ function Home() {
         <Box>
           <Box marginBottom={4}>
             <Breadcrumbs>
-              <Link href="/">
+              <Link href={routes.home}>
                 <a>Ísland.is</a>
               </Link>
               <span>{t.name}</span>
