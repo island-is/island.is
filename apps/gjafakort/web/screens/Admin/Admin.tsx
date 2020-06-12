@@ -43,11 +43,29 @@ function Admin() {
 
   if (loading && !data) {
     return <ContentLoader />
+  } else if (!loading && !data) {
+    return <p>Unauthorized</p>
   }
 
   return (
     <div>
-      <h1>Admin page</h1>
+      <div>Number of applications {applications.length}</div>
+      <br />
+      <div>
+        Number of applications pending{' '}
+        {
+          applications.filter((application) => application.state === 'pending')
+            .length
+        }
+      </div>
+      <div>
+        Number of applications approved{' '}
+        {
+          applications.filter((application) => application.state === 'approved')
+            .length
+        }
+      </div>
+      <br />
       <ApplicationTable applications={applications} />
     </div>
   )
