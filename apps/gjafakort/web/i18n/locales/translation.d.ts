@@ -18,7 +18,7 @@ export interface Translation {
   company: TranslationCompany
   header: Header
   footer: Footer
-  validation: Header
+  validation: Validation
   routes: Routes
 }
 
@@ -192,7 +192,9 @@ export interface Link {
   title: string
 }
 
-export interface Header {}
+export interface Header {
+  logout: string
+}
 
 export interface Home {
   name: string
@@ -238,6 +240,8 @@ export interface RoutesCompanies {
 export interface Users {
   home: string
 }
+
+export interface Validation {}
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
@@ -404,7 +408,7 @@ const typeMap: any = {
       { json: 'company', js: 'company', typ: r('TranslationCompany') },
       { json: 'header', js: 'header', typ: r('Header') },
       { json: 'footer', js: 'footer', typ: r('Footer') },
-      { json: 'validation', js: 'validation', typ: r('Header') },
+      { json: 'validation', js: 'validation', typ: r('Validation') },
       { json: 'routes', js: 'routes', typ: r('Routes') },
     ],
     false,
@@ -646,7 +650,7 @@ const typeMap: any = {
     ],
     false,
   ),
-  Header: o([], false),
+  Header: o([{ json: 'logout', js: 'logout', typ: '' }], false),
   Home: o(
     [
       { json: 'name', js: 'name', typ: '' },
@@ -703,4 +707,5 @@ const typeMap: any = {
     false,
   ),
   Users: o([{ json: 'home', js: 'home', typ: '' }], false),
+  Validation: o([], false),
 }
