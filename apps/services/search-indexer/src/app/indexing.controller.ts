@@ -9,7 +9,9 @@ export class IndexingController {
 
   @Get('sync')
   async sync() {
-    const syncToken = await this.indexingService.getLastSyncToken(SearchIndexes.is)
+    const syncToken = await this.indexingService.getLastSyncToken(
+      SearchIndexes.is,
+    )
     if (syncToken) {
       this.indexingService.continueSync(syncToken, SearchIndexes.is)
     } else {

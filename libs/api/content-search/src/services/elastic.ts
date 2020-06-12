@@ -74,7 +74,7 @@ export class ElasticService {
       requestBody.size(query.size)
 
       if (query?.page > 1) {
-        requestBody.from(query.page * query.size - query.page);
+        requestBody.from(query.page * query.size - query.page)
       }
     }
 
@@ -95,12 +95,9 @@ export class ElasticService {
   }
 
   async fetchItems(index: SearchIndexes, input) {
-    const requestBody = new RequestBodySearch()
-      .query(
-        esb.boolQuery().must([
-          esb.matchQuery('category_slug', input.slug)
-        ])
-      )
+    const requestBody = new RequestBodySearch().query(
+      esb.boolQuery().must([esb.matchQuery('category_slug', input.slug)]),
+    )
 
     return this.findByQuery(index, requestBody)
   }
