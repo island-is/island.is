@@ -142,13 +142,20 @@ class Channel {
     queueId: string
     handler: (message: Message, routingKey: RoutingKey) => Promise<void>
   }) {
+    const parseMessage = (sqsMessage: AWS.SQS.Types.Message) => {
+      const parsedBody = JSON.parse(sqsMessage.Body)
+      const { Message, MessageAttributes } = parsedBody
+      const routingKey = MessageAttributes?.event_type?.Value
+      const message = JSON.parse(Message)
+      return {
+        message,
+        routingKey,
+      }
+    }
     const consumer = Consumer.create({
       queueUrl: queueId,
-      handleMessage: async ({ Body }) => {
-        const parsedBody = JSON.parse(Body)
-        const { Message, MessageAttributes } = parsedBody
-        const routingKey = MessageAttributes?.event_type?.Value
-        const message = JSON.parse(Message)
+      handleMessage: async (sqsMessage) => {
+        const { message, routingKey } = parseMessage(sqsMessage)
         await handler(message, routingKey)
       },
     })
@@ -163,8 +170,9 @@ class Channel {
       consumer.stop()
     })
 
-    consumer.on('processing_error', (err) => {
-      let msg = `Failed to process message on queue ${queueId}: ${err.message}`
+    consumer.on('processing_error', (err, sqsMessage) => {
+      const { routingKey } = parseMessage(sqsMessage)
+      let msg = `Failed to process message on queue ${queueId} with routingKey ${routingKey}: ${err.message}`
       if (err.stack) {
         msg += `\n${err.stack}`
       }

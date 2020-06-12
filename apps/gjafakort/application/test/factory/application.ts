@@ -18,7 +18,7 @@ const data = async (props: Properties = {}) => {
 
   const defaultProps = {
     issuerSSN: issuer.ssn,
-    type: consts.Types.GJAFAKORT,
+    type: consts.Types.GJAFAKORT_COMPANY,
     state: consts.States.PENDING,
   }
   return Object.assign({}, defaultProps, props)

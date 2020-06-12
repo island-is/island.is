@@ -109,7 +109,6 @@ router.post(
   '/:applicationId/auditLog',
   [
     param('applicationId').isUUID(),
-    body('state').isIn(Object.values(consts.States)),
     body('authorSSN')
       .optional()
       .isLength({ min: 10, max: 10 }),
@@ -144,9 +143,9 @@ router.post(
       })
     }
 
-    const { state, authorSSN = '', data, title } = req.body
+    const { authorSSN = '', data, title } = req.body
     const auditLog = await auditService.createAuditLog(
-      state,
+      application.state,
       title,
       authorSSN,
       applicationId,

@@ -78,6 +78,7 @@ export type Query = {
   company?: Maybe<Company>
   companyApplications?: Maybe<Array<Maybe<CompanyApplication>>>
   root?: Maybe<Scalars['String']>
+  userApplication?: Maybe<UserApplication>
 }
 
 export type QueryCompanyArgs = {
@@ -87,11 +88,32 @@ export type QueryCompanyArgs = {
 export type Mutation = {
   __typename?: 'Mutation'
   createCompanyApplication?: Maybe<CreateCompanyApplication>
+  createUserApplication?: Maybe<CreateUserApplication>
   root?: Maybe<Scalars['String']>
 }
 
 export type MutationCreateCompanyApplicationArgs = {
   input: CreateCompanyApplicationInput
+}
+
+export type MutationCreateUserApplicationArgs = {
+  input: Maybe<CreateUserApplicationInput>
+}
+
+export type UserApplication = {
+  __typename?: 'UserApplication'
+  id: Scalars['String']
+  mobileNumber: Scalars['String']
+  countryCode: Scalars['String']
+}
+
+export type CreateUserApplication = {
+  __typename?: 'CreateUserApplication'
+  application?: Maybe<UserApplication>
+}
+
+export type CreateUserApplicationInput = {
+  mobile?: Maybe<Scalars['String']>
 }
 
 export type GetCompanyApplicationsQueryQueryVariables = {}

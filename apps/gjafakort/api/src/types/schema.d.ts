@@ -81,6 +81,7 @@ export type Query = {
   company?: Maybe<Company>
   companyApplications?: Maybe<Array<Maybe<CompanyApplication>>>
   root?: Maybe<Scalars['String']>
+  userApplication?: Maybe<UserApplication>
 }
 
 export type QueryCompanyArgs = {
@@ -90,11 +91,32 @@ export type QueryCompanyArgs = {
 export type Mutation = {
   __typename?: 'Mutation'
   createCompanyApplication?: Maybe<CreateCompanyApplication>
+  createUserApplication?: Maybe<CreateUserApplication>
   root?: Maybe<Scalars['String']>
 }
 
 export type MutationCreateCompanyApplicationArgs = {
   input: CreateCompanyApplicationInput
+}
+
+export type MutationCreateUserApplicationArgs = {
+  input?: Maybe<CreateUserApplicationInput>
+}
+
+export type UserApplication = {
+  __typename?: 'UserApplication'
+  id: Scalars['String']
+  mobileNumber: Scalars['String']
+  countryCode: Scalars['String']
+}
+
+export type CreateUserApplication = {
+  __typename?: 'CreateUserApplication'
+  application?: Maybe<UserApplication>
+}
+
+export type CreateUserApplicationInput = {
+  mobile?: Maybe<Scalars['String']>
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -221,6 +243,9 @@ export type ResolversTypes = {
   CreateCompanyApplication: ResolverTypeWrapper<CreateCompanyApplication>
   Query: ResolverTypeWrapper<{}>
   Mutation: ResolverTypeWrapper<{}>
+  UserApplication: ResolverTypeWrapper<UserApplication>
+  CreateUserApplication: ResolverTypeWrapper<CreateUserApplication>
+  CreateUserApplicationInput: CreateUserApplicationInput
 }
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -234,6 +259,9 @@ export type ResolversParentTypes = {
   CreateCompanyApplication: CreateCompanyApplication
   Query: {}
   Mutation: {}
+  UserApplication: UserApplication
+  CreateUserApplication: CreateUserApplication
+  CreateUserApplicationInput: CreateUserApplicationInput
 }
 
 export type CompanyResolvers<
@@ -360,6 +388,11 @@ export type QueryResolvers<
     ContextType
   >
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  userApplication?: Resolver<
+    Maybe<ResolversTypes['UserApplication']>,
+    ParentType,
+    ContextType
+  >
 }
 
 export type MutationResolvers<
@@ -372,7 +405,35 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationCreateCompanyApplicationArgs, 'input'>
   >
+  createUserApplication?: Resolver<
+    Maybe<ResolversTypes['CreateUserApplication']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateUserApplicationArgs, never>
+  >
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+}
+
+export type UserApplicationResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['UserApplication'] = ResolversParentTypes['UserApplication']
+> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  mobileNumber?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  countryCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type CreateUserApplicationResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['CreateUserApplication'] = ResolversParentTypes['CreateUserApplication']
+> = {
+  application?: Resolver<
+    Maybe<ResolversTypes['UserApplication']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
 export type Resolvers<ContextType = Context> = {
@@ -382,6 +443,8 @@ export type Resolvers<ContextType = Context> = {
   CreateCompanyApplication?: CreateCompanyApplicationResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
+  UserApplication?: UserApplicationResolvers<ContextType>
+  CreateUserApplication?: CreateUserApplicationResolvers<ContextType>
 }
 
 /**
