@@ -175,7 +175,7 @@
   "application": {
     "title": "Prókúruhafi",
     "noConnection": {
-      "content": "Þú ert ekki skráður prókúruhafi, vinsamlegast hafðu samband við RSK",
+      "content": "Þú ert ekki skráður prókúruhafi, vinsamlegast hafðu samband við Skattinn",
       "button": "Til baka"
     }
   },
