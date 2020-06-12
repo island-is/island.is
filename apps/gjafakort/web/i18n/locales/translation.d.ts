@@ -16,7 +16,9 @@ export interface Translation {
   application: Application
   companySignup: CompanySignup
   company: TranslationCompany
-  validation: Validation
+  header: Header
+  footer: Footer
+  validation: Header
   routes: Routes
 }
 
@@ -180,6 +182,18 @@ export interface ErrorBoundary {
   contents: string[]
 }
 
+export interface Footer {
+  topLinks: Link[]
+  bottomLinks: Link[]
+}
+
+export interface Link {
+  href: string
+  title: string
+}
+
+export interface Header {}
+
 export interface Home {
   name: string
   title: string
@@ -211,6 +225,7 @@ export interface NotFound {
 }
 
 export interface Routes {
+  home: string
   companies: RoutesCompanies
   users: Users
 }
@@ -223,8 +238,6 @@ export interface RoutesCompanies {
 export interface Users {
   home: string
 }
-
-export interface Validation {}
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
@@ -389,7 +402,9 @@ const typeMap: any = {
       { json: 'application', js: 'application', typ: r('Application') },
       { json: 'companySignup', js: 'companySignup', typ: r('CompanySignup') },
       { json: 'company', js: 'company', typ: r('TranslationCompany') },
-      { json: 'validation', js: 'validation', typ: r('Validation') },
+      { json: 'header', js: 'header', typ: r('Header') },
+      { json: 'footer', js: 'footer', typ: r('Footer') },
+      { json: 'validation', js: 'validation', typ: r('Header') },
       { json: 'routes', js: 'routes', typ: r('Routes') },
     ],
     false,
@@ -617,6 +632,21 @@ const typeMap: any = {
     ],
     false,
   ),
+  Footer: o(
+    [
+      { json: 'topLinks', js: 'topLinks', typ: a(r('Link')) },
+      { json: 'bottomLinks', js: 'bottomLinks', typ: a(r('Link')) },
+    ],
+    false,
+  ),
+  Link: o(
+    [
+      { json: 'href', js: 'href', typ: '' },
+      { json: 'title', js: 'title', typ: '' },
+    ],
+    false,
+  ),
+  Header: o([], false),
   Home: o(
     [
       { json: 'name', js: 'name', typ: '' },
@@ -659,6 +689,7 @@ const typeMap: any = {
   ),
   Routes: o(
     [
+      { json: 'home', js: 'home', typ: '' },
       { json: 'companies', js: 'companies', typ: r('RoutesCompanies') },
       { json: 'users', js: 'users', typ: r('Users') },
     ],
@@ -672,5 +703,4 @@ const typeMap: any = {
     false,
   ),
   Users: o([{ json: 'home', js: 'home', typ: '' }], false),
-  Validation: o([], false),
 }

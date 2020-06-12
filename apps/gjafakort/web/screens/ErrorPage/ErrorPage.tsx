@@ -12,7 +12,7 @@ import { useI18n } from '../../i18n'
 
 function ErrorPage() {
   const {
-    t: { error: t },
+    t: { error: t, routes },
   } = useI18n()
 
   return (
@@ -26,7 +26,7 @@ function ErrorPage() {
         <Box marginBottom={9}>
           <Typography variant="intro">{t.intro}</Typography>
         </Box>
-        <Link href="/">
+        <Link href={routes.home}>
           <span>
             <Button>{t.button}</Button>
           </span>

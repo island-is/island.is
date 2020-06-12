@@ -1,4 +1,5 @@
 .PHONY: application api web
+CWD=../../
 MAKEFLAGS += -j
 ARGS=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)
@@ -16,15 +17,18 @@ docker:
 	docker-compose up
 
 application:
-	yarn --cwd ../../ nx serve gjafakort-application
+	./${CWD}scripts/_wait-for.sh localhost:5432
+	yarn --cwd ${CWD} nx serve gjafakort-application
 
 queue-listener:
-	yarn --cwd ../../ nx serve gjafakort-queue-listener
+	./${CWD}scripts/_wait-for.sh localhost:4575
+	./${CWD}scripts/_wait-for.sh localhost:4576
+	yarn --cwd ${CWD} nx serve gjafakort-queue-listener
 
 services: docker application queue-listener
 
 api:
-	yarn --cwd ../../ nx serve gjafakort-api
+	yarn --cwd ${CWD} nx serve gjafakort-api
 
 web:
-	yarn --cwd ../../ nx serve gjafakort-web
+	yarn --cwd ${CWD} nx serve gjafakort-web

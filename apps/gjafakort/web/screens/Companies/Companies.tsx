@@ -21,7 +21,7 @@ import { Layout } from '../../components'
 
 function Companies() {
   const {
-    t: { companies: t },
+    t: { companies: t, routes },
   } = useI18n()
 
   return (
@@ -30,7 +30,7 @@ function Companies() {
         <Box>
           <Box marginBottom={4}>
             <Breadcrumbs>
-              <Link href="/">
+              <Link href={routes.home}>
                 <a>Ísland.is</a>
               </Link>
               <span>{t.name}</span>
