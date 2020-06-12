@@ -1,4 +1,5 @@
 import React from 'react'
+import HtmlParser from 'react-html-parser'
 import Link from 'next/link'
 
 import {
@@ -37,7 +38,7 @@ function NotQualified() {
               <Bullet key={index}>{condition}</Bullet>
             ))}
           </BulletList>
-          <Typography variant="p">{t.caption}</Typography>
+          <Typography variant="p">{HtmlParser(t.caption)}</Typography>
         </Stack>
       </Box>
       <Link href={routes.companies.application}>
