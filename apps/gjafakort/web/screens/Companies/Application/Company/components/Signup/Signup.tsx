@@ -67,7 +67,7 @@ function Signup({ company, handleSubmission }: PropTypes) {
   const companyOperations = t.form.operation.options
 
   const onSubmit = async (values) => {
-    if (values.noneOfTheAbove) {
+    if (values.operations.noneOfTheAbove) {
       return handleSubmission(false)
     }
 
@@ -176,34 +176,29 @@ function Signup({ company, handleSubmission }: PropTypes) {
                     {HtmlParser(instruction)}
                   </Typography>
                 ))}
-                {companyOperations
-                  .filter((operation) => operation.name !== 'noneOfTheAbove')
-                  .map((operation) => (
-                    <Field
-                      key={operation.name}
-                      component={FieldCheckbox}
-                      name={`operations.${operation.name}`}
-                      tooltip={operation.tooltip}
-                      label={operation.label}
-                      disabled={values.noneOfTheAbove}
-                    />
-                  ))}
-                <Field
-                  component={FieldCheckbox}
-                  name="noneOfTheAbove"
-                  label="Ekkert af ofangreindu á við"
-                  tooltip="Ef ekkert að ofangreindu á við er fyrirtæki ekki gjaldgengur þátttakandi í Ferðagjöfinni skv. lögum um Ferðagjöf."
-                  onChange={() => {
-                    // we want this to run in the next render cycle so "noneOfTheAbove" is true before we uncheck all operations
-                    setTimeout(() => {
-                      companyOperations.forEach((o) => {
-                        if (values.operations[o.name]) {
-                          setFieldValue(`operations.${o.name}`, false)
-                        }
-                      })
-                    }, 0)
-                  }}
-                />
+                {companyOperations.map((operation) => (
+                  <Field
+                    key={operation.name}
+                    component={FieldCheckbox}
+                    name={`operations.${operation.name}`}
+                    tooltip={operation.tooltip}
+                    label={operation.label}
+                    disabled={values.noneOfTheAbove}
+                    onChange={() => {
+                      if (operation.name === 'noneOfTheAbove') {
+                        // we want this to run in the next render cycle
+                        // so "noneOfTheAbove" is true before we uncheck all operations
+                        setTimeout(() => {
+                          companyOperations.forEach((o) => {
+                            if (values.operations[o.name]) {
+                              setFieldValue(`operations.${o.name}`, false)
+                            }
+                          })
+                        }, 0)
+                      }
+                    }}
+                  />
+                ))}
               </Stack>
             </Box>
             <Box marginBottom={5}>
