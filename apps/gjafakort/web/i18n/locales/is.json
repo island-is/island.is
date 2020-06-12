@@ -310,7 +310,9 @@
       }
     }
   },
-  "header": {},
+  "header": {
+    "logout": "Útskrá"
+  },
   "footer": {
     "topLinks": [
       {

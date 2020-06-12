@@ -62,6 +62,7 @@ const Layout: React.FC = ({ children }) => {
                 <a>{logo}</a>
               </Link>
             )}
+            logoutText={t.header.logout}
             authenticated={user.isAuthenticated}
             onLogout={() => {
               const redirect = Router.pathname.startsWith(
