@@ -31,6 +31,8 @@ import {
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
 import { useApolloClient } from 'react-apollo'
+import { route } from 'next/dist/next-server/server/router'
+import { useRouter } from 'next/router'
 
 interface HomeProps {
   categories: Query['getCategories']
@@ -38,18 +40,20 @@ interface HomeProps {
 }
 
 const Home: Screen<HomeProps> = ({ categories, namespace }) => {
+  const Router = useRouter()
   const client = useApolloClient()
   const [tags, setTags] = useState([])
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
 
-  const path = activeLocale === 'en' ? 'category' : 'flokkur'
-  const prefix = activeLocale === 'en' ? `/en/${path}` : `/${path}`
+  const prefix = activeLocale === 'en' ? `/en` : ``
+  const articlePath = activeLocale === 'en' ? 'article' : 'grein'
+  const categoryPath = activeLocale === 'en' ? 'category' : 'flokkur'
 
   const cards = categories.map(({ title, slug }) => ({
     title,
     description: 'description',
-    href: `${prefix}/${slug}`,
+    href: `${prefix}/${categoryPath}/${slug}`,
   }))
 
   const loadOptions = async (inputValue) => {
@@ -77,6 +81,10 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
 
   const onInputChange = (newValue) => {
     return newValue
+  }
+
+  const onSelectSearch = (option) => {
+    Router.push(`${prefix}/${articlePath}/${option.value}`)
   }
 
   return (
@@ -122,22 +130,22 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
             <Box padding={[1, 1, 6]}>
               <Box
                 padding={[2, 2, 2, 10]}
-                display="flex"
+                display="inlineBlock"
                 background="white"
                 boxShadow="subtle"
                 width="full"
-                justifyContent="center"
-                alignItems="center"
+                border="standard"
               >
                 <Columns
                   space={[4, 4, 4, 12]}
                   collapseBelow="lg"
                   alignY="center"
                 >
-                  <Column width="1/2">
+                  <Column>
                     <Box display="inlineFlex" alignItems="center" width="full">
                       <AsyncSelect
                         placeholder={n('heroSearchPlaceholder')}
+                        onChange={onSelectSearch}
                         name="search"
                         icon="search"
                         options={selectOptions}
@@ -152,7 +160,7 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
                       /> */}
                     </Box>
                   </Column>
-                  <Column width="1/2">
+                  <Column>
                     <Inline space={1}>
                       {tags.map(({ title }, index) => {
                         return (
