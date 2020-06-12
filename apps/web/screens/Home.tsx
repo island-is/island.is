@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
   ContentBlock,
@@ -9,22 +9,28 @@ import {
   Columns,
   Column,
   Inline,
-  Select,
+  AsyncSelect,
   Tag,
 } from '@island.is/island-ui/core'
 import { Categories, Card } from '../components'
 import { withApollo } from '../graphql'
-import { categories as categoriesJson, selectOptions, getTags } from '../json'
+import { selectOptions, getTags } from '../json'
 import { useI18n } from '../i18n'
 import {
   Query,
   QueryGetNamespaceArgs,
   QueryGetCategoriesArgs,
   Language,
+  QueryGetSearchResultsArgs,
 } from '@island.is/api/schema'
-import { GET_NAMESPACE_QUERY, GET_CATEGORIES_QUERY } from './queries'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_CATEGORIES_QUERY,
+  GET_SEARCH_RESULTS_QUERY,
+} from './queries'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
+import { useApolloClient } from 'react-apollo'
 
 interface HomeProps {
   categories: Query['getCategories']
@@ -32,6 +38,8 @@ interface HomeProps {
 }
 
 const Home: Screen<HomeProps> = ({ categories, namespace }) => {
+  const client = useApolloClient()
+  const [tags, setTags] = useState([])
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
 
@@ -43,6 +51,33 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
     description: 'description',
     href: `${prefix}/${slug}`,
   }))
+
+  const loadOptions = async (inputValue) => {
+    const {
+      data: { getSearchResults },
+    } = await client.query<Query, QueryGetSearchResultsArgs>({
+      query: GET_SEARCH_RESULTS_QUERY,
+      variables: {
+        query: {
+          queryString: inputValue ? `${inputValue}*` : '',
+          language: activeLocale as Language,
+        },
+      },
+    })
+
+    return getSearchResults.items.map((x) => ({
+      label: x.title,
+      value: x.slug,
+    }))
+  }
+
+  useEffect(() => {
+    setTags(getTags(8))
+  }, [])
+
+  const onInputChange = (newValue) => {
+    return newValue
+  }
 
   return (
     <>
@@ -101,17 +136,25 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
                 >
                   <Column width="1/2">
                     <Box display="inlineFlex" alignItems="center" width="full">
-                      <Select
+                      <AsyncSelect
                         placeholder={n('heroSearchPlaceholder')}
-                        options={selectOptions}
                         name="search"
                         icon="search"
+                        options={selectOptions}
+                        loadOptions={loadOptions}
+                        onInputChange={onInputChange}
                       />
+                      {/* <Select
+                        placeholder={n('heroSearchPlaceholder')}
+                        name="search"
+                        icon="search"
+                        options={selectOptions}
+                      /> */}
                     </Box>
                   </Column>
                   <Column width="1/2">
                     <Inline space={1}>
-                      {getTags(8).map(({ title }, index) => {
+                      {tags.map(({ title }, index) => {
                         return (
                           <Link key={index} href="/category">
                             <Tag>{title}</Tag>
@@ -130,7 +173,7 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
         <ContentBlock width="large">
           <Categories label={n('articlesTitle')} seeMoreText={n('seeMore')}>
             {cards.map((card, index) => {
-              return <Card key={index} {...card} />
+              return <Card key={index} {...card} tags={false} />
             })}
           </Categories>
         </ContentBlock>

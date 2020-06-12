@@ -9,10 +9,10 @@ export interface LinkCardProps {
 }
 
 export const LinkCard = forwardRef<HTMLButtonElement, LinkCardProps>(
-  ({ onClick, disabled, children }: LinkCardProps, ref) => {
+  ({ onClick, disabled, children, ...props }: LinkCardProps, ref) => {
     return (
       <Box
-        component="button"
+        component="a"
         ref={ref}
         disabled={disabled}
         display="flex"
@@ -20,6 +20,7 @@ export const LinkCard = forwardRef<HTMLButtonElement, LinkCardProps>(
         onClick={onClick}
         padding={[2, 2, 3]}
         className={styles.container}
+        {...props}
       >
         <Typography variant="h4" as="span">
           {children}

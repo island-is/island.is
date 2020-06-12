@@ -51,16 +51,15 @@ const Category: Screen<CategoryProps> = ({
   const router = useRouter()
   const n = useNamespace(namespace)
 
-  const path = activeLocale === 'en' ? 'article' : 'grein'
-  const prefix = activeLocale === 'en' ? `/en/${path}` : `/${path}`
+  const prefix = activeLocale === 'en' ? `/en` : ``
+  const articlePath = activeLocale === 'en' ? 'article' : 'grein'
+  const categoryPath = activeLocale === 'en' ? 'category' : 'flokkur'
 
-  const cards = articles.map(({ title, slug, content }) => ({
+  const articleCards = articles.map(({ title, slug, content }) => ({
     title,
     description: content,
-    href: `${prefix}/${slug}`,
+    href: `${prefix}/${articlePath}/${slug}`,
   }))
-
-  console.log('cards', cards)
 
   const currentCategory = categories.find((x) => x.slug === router.query.slug)
 
@@ -74,7 +73,7 @@ const Category: Screen<CategoryProps> = ({
           <div className={styles.side}>
             <Sidebar title={n('submenuTitle')}>
               {categories.map((c, index) => (
-                <Link key={index} href="#">
+                <Link key={index} href={`${prefix}/${categoryPath}/${c.slug}`}>
                   <a>
                     <Typography variant="p" as="span">
                       {c.title}
@@ -133,9 +132,8 @@ const Category: Screen<CategoryProps> = ({
                                 return (
                                   <Link
                                     key={index}
-                                    href={`${
-                                      activeLocale === 'en' ? '/en' : ''
-                                    }/article`}
+                                    href={`${prefix}/${articlePath}/undanthaga-fra-afborgunum`}
+                                    passHref
                                   >
                                     <LinkCard key={index}>{title}</LinkCard>
                                   </Link>
@@ -147,20 +145,8 @@ const Category: Screen<CategoryProps> = ({
                       })}
                     </Stack>
                     <Stack space={2}>
-                      {groups.map((group, index) => {
-                        return (
-                          <Card
-                            key={index}
-                            {...group}
-                            linkProps={{
-                              href: `${
-                                activeLocale === 'en' ? '/en' : ''
-                              }/article`,
-                              passHref: true,
-                            }}
-                            tags={false}
-                          />
-                        )
+                      {articleCards.map((article, index) => {
+                        return <Card key={index} {...article} tags={false} />
                       })}
                     </Stack>
                   </Stack>

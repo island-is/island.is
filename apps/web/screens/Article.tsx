@@ -22,6 +22,7 @@ import {
   Query,
   QueryGetArticleArgs,
   QueryGetNamespaceArgs,
+  Language,
 } from '@island.is/api/schema'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { withApollo } from '../graphql'
@@ -144,7 +145,7 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
       variables: {
         input: {
           slug,
-          lang: locale,
+          lang: locale as Language,
         },
       },
     }),
