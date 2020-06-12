@@ -1,10 +1,14 @@
-import { SearcherService as Service } from '@island.is/api/schema'
+import {
+  ContentCategory,
+  SearcherService as Service,
+} from '@island.is/api/schema'
 import {
   Document as ContentDocument,
   ElasticService,
   SearchIndexes,
   SearchResult,
 } from '@island.is/api/content-search'
+import { RequestBodySearch } from 'elastic-builder'
 
 export class SearcherService implements Service {
   constructor(private repository: ElasticService) {}
@@ -20,6 +24,7 @@ export class SearcherService implements Service {
     obj.contentId = obj.content_id
     obj.categorySlug = obj.category_slug
     obj.groupSlug = obj.group_slug
+    obj.categoryDescription = obj._category.description
     obj.id = doc._id
     return obj
   }
@@ -38,19 +43,23 @@ export class SearcherService implements Service {
     }
   }
 
-  async fetchCategories(query): Promise<ContentDocument> {
-    const { body } = await this.repository.fetchCategories(
+  async fetchCategories(query): Promise<ContentCategory> {
+    // todo do properly not this awesome hack
+    const queryTmp = new RequestBodySearch().size(1000)
+    const { body } = await this.repository.findByQuery(
       this.getIndex(query.language),
-      query,
+      queryTmp,
     )
-
-    return body?.aggregations?.categories?.buckets.map((category, index) => {
-      console.log(category)
-      return {
-        title: category.key,
-        slug: body?.aggregations?.catagories_slugs?.buckets[index].key,
+    const categories = {}
+    body?.hits?.hits.forEach(({ _source }) => {
+      if (!_source.category_slug) {
+        return
       }
+      categories[_source.category_slug] = _source._category
     })
+
+    // @ts-ignore
+    return Object.values(categories)
   }
 
   async fetchSingle(input): Promise<ContentDocument> {

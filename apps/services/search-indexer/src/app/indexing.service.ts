@@ -102,6 +102,11 @@ export class IndexingService {
       tag: [''],
       title: entry.fields.title,
       url: '',
+      _category: {
+        title: entry.fields?.category?.fields.title,
+        slug: entry.fields?.category?.fields.slug,
+        description: entry.fields?.category?.fields.description,
+      },
       _id: entry.sys.id,
       nextSyncToken: syncToken,
     }

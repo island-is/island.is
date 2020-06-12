@@ -19,4 +19,9 @@ export interface Document {
   content_source: string
   content_blob: any
   nextSyncToken: string
+  _category: {
+    slug: string | null
+    title: string | null
+    description: string | null
+  }
 }

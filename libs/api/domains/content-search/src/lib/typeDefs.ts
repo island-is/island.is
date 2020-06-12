@@ -8,6 +8,7 @@ export const typeDefs = gql`
     tag: [String]
     category: String
     categorySlug: String
+    categoryDescription: String
     contentBlob: String
     contentId: String
     contentType: String
@@ -38,6 +39,7 @@ export const typeDefs = gql`
   type ContentCategory {
     title: String
     slug: String
+    description: String
   }
 
   input ItemInput {
