@@ -14,7 +14,7 @@ import rootTypeDefs from './typeDefs'
 const createServer = async (
   resolvers: Resolvers[],
   typeDefs: DocumentNode[],
-  plugins: ApolloServerPlugin[] | undefined,
+  plugins?: ApolloServerPlugin[],
 ): Promise<ApolloServer> => {
   const enablePlayground =
     process.env.NODE_ENV === 'development' ||
