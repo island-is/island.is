@@ -20,6 +20,7 @@ function Home() {
   const {
     t: { home: t, routes },
   } = useI18n()
+  throw new Error('This should be coming from dev')
 
   return (
     <Layout

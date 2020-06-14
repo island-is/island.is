@@ -30,6 +30,7 @@ class RskAPI extends RESTDataSource {
   async getCompanyRegistryMembers(
     userSSN: string,
   ): Promise<CompanyRegistryMember[]> {
+    throw new Error('API error on dev')
     try {
       const res = await this.get(`${userSSN}/companies`, null, {
         cacheOptions: { ttl: rsk.ttl },
