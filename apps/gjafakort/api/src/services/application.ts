@@ -1,36 +1,10 @@
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 
-import { CreateApplicationInput } from '../types'
 import { environment } from '../environments'
 
-const APPLICATION_TYPE = 'gjafakort'
-
-interface ApplicationResponse {
-  created: string
-  modified: string
-  id: string
-  issuerSSN: string
+interface Application {
   type: string
-  state: string
-  data: {
-    comments: string[]
-    companyDisplayName: string
-    companyName: string
-    companySSN: string
-    email: string
-    exhibition: boolean
-    generalEmail: string
-    name: string
-    operatingPermitForRestaurant: boolean
-    operatingPermitForVehicles: boolean
-    operationsTrouble: boolean
-    phoneNumber: string
-    serviceCategory: string
-    state: string
-    validLicenses: boolean
-    validPermit: boolean
-    webpage: string
-  }
+  data: object
 }
 
 class ApplicationAPI extends RESTDataSource {
@@ -40,32 +14,36 @@ class ApplicationAPI extends RESTDataSource {
     request.headers.set('Content-Type', 'application/json')
   }
 
-  async createApplication(
-    applicationInput: CreateApplicationInput,
-    authorSSN: string,
-    state: string,
-    comments: string[],
-  ): Promise<ApplicationResponse> {
-    const res = await this.post(
-      `issuers/${applicationInput.companySSN}/applications`,
-      {
-        authorSSN,
-        type: APPLICATION_TYPE,
-        state,
-        data: {
-          ...applicationInput,
-          comments,
-        },
-      },
-    )
+  async createApplication<T extends Application>({
+    applicationType,
+    issuerSSN,
+    authorSSN,
+    state,
+    data,
+  }: {
+    applicationType: T['type']
+    issuerSSN: string
+    authorSSN: string
+    state: string
+    data: T['data']
+  }): Promise<T> {
+    const res = await this.post(`issuers/${issuerSSN}/applications`, {
+      authorSSN,
+      type: applicationType,
+      state,
+      data,
+    })
 
     return res.application
   }
 
-  async getApplication(companySSN: string): Promise<ApplicationResponse> {
+  async getApplication<T extends Application>(
+    applicationType: T['type'],
+    issuerSSN: string,
+  ): Promise<T> {
     try {
       const res = await this.get(
-        `issuers/${companySSN}/applications/${APPLICATION_TYPE}`,
+        `issuers/${issuerSSN}/applications/${applicationType}`,
       )
       return res.application
     } catch {
@@ -73,8 +51,10 @@ class ApplicationAPI extends RESTDataSource {
     }
   }
 
-  async getApplications(): Promise<ApplicationResponse> {
-    const res = await this.get(`applications/${APPLICATION_TYPE}`)
+  async getApplications<T extends Application>(
+    applicationType: T['type'],
+  ): Promise<[T]> {
+    const res = await this.get(`applications/${applicationType}`)
     return res.applications
   }
 }

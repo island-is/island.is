@@ -7,6 +7,7 @@ export type VerifyResult = {
 export type VerifiedUser = {
   kennitala: string
   fullname: string
+  mobile: string
   authId: string
 }
 
