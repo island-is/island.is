@@ -1,12 +1,15 @@
 import { Application } from 'express'
-import { sentry } from 'graphql-middleware-sentry'
 import { ApolloServerPlugin } from 'apollo-server-plugin-base'
 import { AuthenticationError, ForbiddenError } from 'apollo-server-express'
 import * as Sentry from '@sentry/node'
 
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-})
+import { environment } from '../environments'
+
+const {
+  sentry: { dsn },
+} = environment
+
+Sentry.init({ dsn })
 
 export const setupRequestHandler = (app: Application) => {
   app.use(Sentry.Handlers.requestHandler())
@@ -34,7 +37,12 @@ export const apolloServerPlugin = {
           })
 
           rc.errors.forEach((error) => {
-            if (error.path || error.name !== 'GraphQLError') {
+            if (
+              error instanceof ForbiddenError ||
+              error instanceof AuthenticationError
+            ) {
+              return
+            } else if (error.path || error.name !== 'GraphQLError') {
               scope.setExtras({
                 path: error.path,
               })
