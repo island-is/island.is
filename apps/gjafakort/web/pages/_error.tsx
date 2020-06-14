@@ -18,9 +18,12 @@ type ErrorProps = {
   isSSRReadyToRender: boolean
 } & NextErrorProps
 
-const NextError = (props: PropTypes): JSX.Element => {
-  const { statusCode, isSSRReadyToRender, err, children = null } = props
-
+const NextError = ({
+  statusCode,
+  isSSRReadyToRender,
+  err,
+  children = null,
+}: PropTypes): JSX.Element => {
   if (!isSSRReadyToRender && err) {
     Sentry.captureException(err)
   }
@@ -28,10 +31,11 @@ const NextError = (props: PropTypes): JSX.Element => {
   return <NotFound />
 }
 
-NextError.getInitialProps = async (
-  props: NextPageContext,
-): Promise<ErrorProps> => {
-  const { res, err, asPath } = props
+NextError.getInitialProps = async ({
+  res,
+  err,
+  asPath,
+}: NextPageContext): Promise<ErrorProps> => {
   // @ts-ignore
   const errorInitialProps: ErrorProps = await Error.getInitialProps({
     res,

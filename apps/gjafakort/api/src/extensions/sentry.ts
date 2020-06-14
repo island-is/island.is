@@ -5,9 +5,7 @@ import { AuthenticationError, ForbiddenError } from 'apollo-server-express'
 import * as Sentry from '@sentry/node'
 
 Sentry.init({
-  // enabled: process.env.NODE_ENV === 'production',
-  environment: process.env.NODE_ENV,
-  dsn: process.env.GJAFAKORT_API_SENTRY_DSN,
+  dsn: process.env.SENTRY_DSN,
 })
 
 export const setupRequestHandler = (app: Application) => {
