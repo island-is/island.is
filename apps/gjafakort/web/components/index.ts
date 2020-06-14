@@ -1,5 +1,6 @@
 export { ContentLoader } from './ContentLoader'
 export { ErrorBoundary } from './ErrorBoundary'
+export { ErrorPanel } from './ErrorPanel'
 export { FormLayout } from './FormLayout'
 export { KeyValue } from './KeyValue'
 export { Layout } from './Layout'

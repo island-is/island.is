@@ -1,7 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
   Box,
-  Button,
   Column,
   Columns,
   ContentBlock,
@@ -16,8 +15,6 @@ import googlePlaySvg from '@island.is/gjafakort-web/assets/googlePlay.svg'
 import { Barcode } from './components/Barcode'
 
 function User() {
-  const [showBarcode, setShowBarcode] = useState(false)
-
   return (
     <Box marginTop={12}>
       <ContentBlock width="large">
@@ -83,20 +80,7 @@ function User() {
                   strikamerkinu sem gjafakóða á vefsíðum
                   ferðaþjónustufyrirtækja.
                 </Typography>
-                {showBarcode ? (
-                  <Barcode />
-                ) : (
-                  <Button
-                    onClick={() => {
-                      setShowBarcode(true)
-                    }}
-                  >
-                    Búa til strikamerki
-                  </Button>
-                )}
-                <Typography variant="p">
-                  Ath. að merkið rennur út eftir 10 mínútur
-                </Typography>
+                <Barcode />
               </Stack>
             </Box>
           </Column>

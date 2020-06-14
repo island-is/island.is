@@ -25,6 +25,7 @@ export * from './lib/Divider/Divider'
 export * from './lib/LinkCard/LinkCard'
 export * from './lib/Tag/Tag'
 export * from './lib/AsyncSelect/AsyncSelect'
+export * from './lib/SkeletonLoader/SkeletonLoader'
 
 // Layout
 export * from './lib/Box/Box'
