@@ -1,4 +1,5 @@
 import { ApolloServer } from 'apollo-server-express'
+import { ApolloServerPlugin } from 'apollo-server-plugin-base'
 import { DocumentNode } from 'graphql'
 import merge from 'lodash/merge'
 
@@ -13,6 +14,7 @@ import rootTypeDefs from './typeDefs'
 const createServer = async (
   resolvers: Resolvers[],
   typeDefs: DocumentNode[],
+  plugins?: ApolloServerPlugin[],
 ): Promise<ApolloServer> => {
   const enablePlayground =
     process.env.NODE_ENV === 'development' ||
@@ -58,6 +60,7 @@ const createServer = async (
 
       return { user }
     },
+    plugins,
   })
 }
 

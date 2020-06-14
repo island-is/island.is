@@ -72,6 +72,8 @@ spec:
               value: {{ .redis_url }}
             - name: CACHE_TIME_TO_LIVE
               value: "{{ .cache_time_to_live }}"
+            - name: SENTRY_DSN
+              value: {{ .sentry_dsn }}
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

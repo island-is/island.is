@@ -1,9 +1,13 @@
 import React, { useContext } from 'react'
+import get from 'lodash/get'
 import Head from 'next/head'
 import App from 'next/app'
 import Link from 'next/link'
 import Router from 'next/router'
+import NextCookies from 'next-cookies'
+import getConfig from 'next/config'
 import { ApolloProvider } from 'react-apollo'
+import * as Sentry from '@sentry/node'
 
 import {
   Box,
@@ -19,6 +23,14 @@ import { appWithTranslation, useI18n } from '../i18n'
 import { isAuthenticated } from '../auth/utils'
 import { UserContext } from '../context/UserContext'
 import { api } from '../services'
+
+const {
+  publicRuntimeConfig: { SENTRY_DSN },
+} = getConfig()
+
+Sentry.init({
+  dsn: SENTRY_DSN,
+})
 
 const Layout: React.FC = ({ children }) => {
   const user = useContext(UserContext)
@@ -76,7 +88,7 @@ const Layout: React.FC = ({ children }) => {
         </ContentBlock>
       </Box>
       <Box paddingTop={[5, 5, 9]} paddingBottom={[7, 7, 12]}>
-        {children}
+        <ErrorBoundary>{children}</ErrorBoundary>
       </Box>
       <Footer
         hideLanguageSwith
@@ -151,10 +163,45 @@ interface Props {
 class SupportApplication extends App<Props> {
   static async getInitialProps(appContext) {
     const appProps = await App.getInitialProps(appContext)
+
+    const readonlyCookies = NextCookies(appContext)
+    Sentry.configureScope((scope) => {
+      scope.setContext('cookies', readonlyCookies)
+    })
+
     return { ...appProps, isAuthenticated: isAuthenticated(appContext.ctx) }
   }
+
+  getLanguage = (path) => {
+    if (path.startsWith('en')) {
+      return 'en'
+    }
+    return 'is'
+  }
+
   render() {
-    const { Component, pageProps, isAuthenticated } = this.props
+    const { Component, pageProps, isAuthenticated, router } = this.props
+
+    Sentry.configureScope((scope) => {
+      scope.setExtra('lang', this.getLanguage(router.pathname))
+      scope.setContext('router', {
+        route: router.route,
+        pathname: router.pathname,
+        query: router.query,
+        asPath: router.asPath,
+      })
+    })
+
+    Sentry.addBreadcrumb({
+      category: 'pages/_app',
+      message: `Rendering app for Component "${get(
+        Component,
+        'name',
+        'unknown',
+      )}" (${process.browser ? 'browser' : 'server'})`,
+      level: Sentry.Severity.Debug,
+    })
+
     return (
       <UserContext.Provider value={{ isAuthenticated }}>
         <ApolloProvider client={client}>

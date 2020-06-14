@@ -28,6 +28,7 @@ environment:
   rsk_api_password_path: "/k8s/shared/api/RSK_API_PASSWORD"
   redis_url:
   cache_time_to_live:
+  sentry_dsn:
 
 serviceAccount:
   # Specifies whether a service account should be created
