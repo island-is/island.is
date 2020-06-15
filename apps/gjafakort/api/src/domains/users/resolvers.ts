@@ -24,7 +24,7 @@ const validateMobile = (mobile: string) => {
   }
   return {
     mobileNumber: phone.nationalNumber.toString(),
-    countryCode: `+${phone.countryCallingCode.toString()}`,
+    countryCode: phone.countryCallingCode.toString(),
   }
 }
 
