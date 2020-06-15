@@ -14,8 +14,24 @@ export type Scalars = {
   Float: number
 }
 
-export type Application = {
-  __typename?: 'Application'
+export type Company = {
+  __typename?: 'Company'
+  ssn: Scalars['String']
+  name: Scalars['String']
+  application?: Maybe<CompanyApplication>
+}
+
+export type ApplicationLog = {
+  __typename?: 'ApplicationLog'
+  id: Scalars['String']
+  state: Scalars['String']
+  title: Scalars['String']
+  data?: Maybe<Scalars['String']>
+  authorSSN?: Maybe<Scalars['String']>
+}
+
+export type CompanyApplication = {
+  __typename?: 'CompanyApplication'
   id?: Maybe<Scalars['String']>
   name: Scalars['String']
   email: Scalars['String']
@@ -33,9 +49,10 @@ export type Application = {
   validLicenses?: Maybe<Scalars['Boolean']>
   validPermit?: Maybe<Scalars['Boolean']>
   webpage: Scalars['String']
+  logs?: Maybe<Array<Maybe<ApplicationLog>>>
 }
 
-export type CreateApplicationInput = {
+export type CreateCompanyApplicationInput = {
   email: Scalars['String']
   generalEmail: Scalars['String']
   phoneNumber: Scalars['String']
@@ -53,37 +70,31 @@ export type CreateApplicationInput = {
   validPermit: Scalars['Boolean']
 }
 
-export type CreateApplication = {
-  __typename?: 'CreateApplication'
-  application?: Maybe<Application>
-}
-
-export type Mutation = {
-  __typename?: 'Mutation'
-  createApplication?: Maybe<CreateApplication>
-  root?: Maybe<Scalars['String']>
-}
-
-export type MutationCreateApplicationArgs = {
-  input: CreateApplicationInput
-}
-
-export type Company = {
-  __typename?: 'Company'
-  ssn: Scalars['String']
-  name: Scalars['String']
-  application?: Maybe<Application>
+export type CreateCompanyApplication = {
+  __typename?: 'CreateCompanyApplication'
+  application?: Maybe<CompanyApplication>
 }
 
 export type Query = {
   __typename?: 'Query'
   companies?: Maybe<Array<Maybe<Company>>>
   company?: Maybe<Company>
+  companyApplications?: Maybe<Array<Maybe<CompanyApplication>>>
   root?: Maybe<Scalars['String']>
 }
 
 export type QueryCompanyArgs = {
   ssn: Scalars['String']
+}
+
+export type Mutation = {
+  __typename?: 'Mutation'
+  createCompanyApplication?: Maybe<CreateCompanyApplication>
+  root?: Maybe<Scalars['String']>
+}
+
+export type MutationCreateCompanyApplicationArgs = {
+  input: CreateCompanyApplicationInput
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -201,31 +212,59 @@ export type DirectiveResolverFn<
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  Application: ResolverTypeWrapper<Application>
-  String: ResolverTypeWrapper<Scalars['String']>
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
-  CreateApplicationInput: CreateApplicationInput
-  CreateApplication: ResolverTypeWrapper<CreateApplication>
-  Mutation: ResolverTypeWrapper<{}>
   Company: ResolverTypeWrapper<Company>
+  String: ResolverTypeWrapper<Scalars['String']>
+  ApplicationLog: ResolverTypeWrapper<ApplicationLog>
+  CompanyApplication: ResolverTypeWrapper<CompanyApplication>
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
+  CreateCompanyApplicationInput: CreateCompanyApplicationInput
+  CreateCompanyApplication: ResolverTypeWrapper<CreateCompanyApplication>
   Query: ResolverTypeWrapper<{}>
+  Mutation: ResolverTypeWrapper<{}>
 }
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  Application: Application
-  String: Scalars['String']
-  Boolean: Scalars['Boolean']
-  CreateApplicationInput: CreateApplicationInput
-  CreateApplication: CreateApplication
-  Mutation: {}
   Company: Company
+  String: Scalars['String']
+  ApplicationLog: ApplicationLog
+  CompanyApplication: CompanyApplication
+  Boolean: Scalars['Boolean']
+  CreateCompanyApplicationInput: CreateCompanyApplicationInput
+  CreateCompanyApplication: CreateCompanyApplication
   Query: {}
+  Mutation: {}
 }
 
-export type ApplicationResolvers<
+export type CompanyResolvers<
   ContextType = Context,
-  ParentType extends ResolversParentTypes['Application'] = ResolversParentTypes['Application']
+  ParentType extends ResolversParentTypes['Company'] = ResolversParentTypes['Company']
+> = {
+  ssn?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  application?: Resolver<
+    Maybe<ResolversTypes['CompanyApplication']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type ApplicationLogResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['ApplicationLog'] = ResolversParentTypes['ApplicationLog']
+> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  state?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  data?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  authorSSN?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type CompanyApplicationResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['CompanyApplication'] = ResolversParentTypes['CompanyApplication']
 > = {
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
@@ -280,42 +319,20 @@ export type ApplicationResolvers<
     ContextType
   >
   webpage?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type CreateApplicationResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['CreateApplication'] = ResolversParentTypes['CreateApplication']
-> = {
-  application?: Resolver<
-    Maybe<ResolversTypes['Application']>,
+  logs?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['ApplicationLog']>>>,
     ParentType,
     ContextType
   >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export type MutationResolvers<
+export type CreateCompanyApplicationResolvers<
   ContextType = Context,
-  ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
+  ParentType extends ResolversParentTypes['CreateCompanyApplication'] = ResolversParentTypes['CreateCompanyApplication']
 > = {
-  createApplication?: Resolver<
-    Maybe<ResolversTypes['CreateApplication']>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationCreateApplicationArgs, 'input'>
-  >
-  root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-}
-
-export type CompanyResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['Company'] = ResolversParentTypes['Company']
-> = {
-  ssn?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   application?: Resolver<
-    Maybe<ResolversTypes['Application']>,
+    Maybe<ResolversTypes['CompanyApplication']>,
     ParentType,
     ContextType
   >
@@ -337,15 +354,34 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryCompanyArgs, 'ssn'>
   >
+  companyApplications?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['CompanyApplication']>>>,
+    ParentType,
+    ContextType
+  >
+  root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+}
+
+export type MutationResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
+> = {
+  createCompanyApplication?: Resolver<
+    Maybe<ResolversTypes['CreateCompanyApplication']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateCompanyApplicationArgs, 'input'>
+  >
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
 }
 
 export type Resolvers<ContextType = Context> = {
-  Application?: ApplicationResolvers<ContextType>
-  CreateApplication?: CreateApplicationResolvers<ContextType>
-  Mutation?: MutationResolvers<ContextType>
   Company?: CompanyResolvers<ContextType>
+  ApplicationLog?: ApplicationLogResolvers<ContextType>
+  CompanyApplication?: CompanyApplicationResolvers<ContextType>
+  CreateCompanyApplication?: CreateCompanyApplicationResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
+  Mutation?: MutationResolvers<ContextType>
 }
 
 /**

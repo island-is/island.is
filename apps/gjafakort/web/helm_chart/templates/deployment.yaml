@@ -48,6 +48,17 @@ spec:
               value: "https://{{ (index .Values.ingress.hosts 0).host }}"
             - name: API_URL
               value: "http://web-gjafakort-api/api"
+            - name: SENTRY_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: gjafakort-web
+                  key: SENTRY_AUTH_TOKEN
+            - name: SENTRY_DSN
+              value: {{ .sentry_dsn }}
+            - name: SENTRY_ORG
+              value: {{ .sentry_org }}
+            - name: SENTRY_PROJECT
+              value: {{ .sentry_project }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

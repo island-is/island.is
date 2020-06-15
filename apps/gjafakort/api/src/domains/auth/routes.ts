@@ -55,7 +55,7 @@ router.post(
     const csrfToken = new Entropy({ bits: 128 }).string()
     const jwtToken = jwt.sign(
       {
-        user: { ssn: user.kennitala, name: user.fullname },
+        user: { ssn: user.kennitala, name: user.fullname, mobile: user.mobile },
         csrfToken,
       } as Credentials,
       jwtSecret,

@@ -1,7 +1,38 @@
 import { ForbiddenError } from 'apollo-server-express'
 
-import { applicationService } from '../applications'
+import * as companyService from './service'
 import { authorize } from '../auth'
+import { CompanyApplication } from '../../types'
+
+const formatApplication = (
+  application: companyService.CompanyApplication,
+): CompanyApplication =>
+  application && {
+    id: application.id,
+    name: application.data.name,
+    email: application.data.email,
+    state: application.state,
+    companySSN: application.data.companySSN,
+    serviceCategory: application.data.serviceCategory,
+    generalEmail: application.data.generalEmail,
+    webpage: application.data.webpage,
+    phoneNumber: application.data.phoneNumber,
+    operationsTrouble: application.data.operationsTrouble,
+    companyName: application.data.companyName,
+    companyDisplayName: application.data.companyDisplayName,
+    operatingPermitForRestaurant: application.data.operatingPermitForRestaurant,
+    exhibition: application.data.exhibition,
+    operatingPermitForVehicles: application.data.operatingPermitForVehicles,
+    validLicenses: application.data.validLicenses,
+    validPermit: application.data.validPermit,
+    logs: application.AuditLogs?.map((auditLog) => ({
+      id: auditLog.id,
+      state: auditLog.state,
+      title: auditLog.title,
+      data: JSON.stringify(auditLog.data),
+      authorSSN: auditLog.authorSSN,
+    })),
+  }
 
 class CompanyResolver {
   @authorize()
@@ -29,6 +60,52 @@ class CompanyResolver {
       name: company.Nafn,
     }
   }
+
+  @authorize()
+  public async createCompanyApplication(
+    _,
+    { input },
+    { user, dataSources: { rskApi, ferdalagApi, applicationApi } },
+  ) {
+    const company = await rskApi.getCompanyBySSN(user.ssn, input.companySSN)
+    if (!company) {
+      throw new ForbiddenError('Company not found!')
+    }
+
+    const serviceProviders = await ferdalagApi.getServiceProviders(
+      input.companySSN,
+    )
+    let state = 'approved'
+    const comments = []
+    if (serviceProviders.length > 1) {
+      state = 'pending'
+      comments.push('Multiple service providers found for ssn')
+    } else if (serviceProviders.length < 1) {
+      state = 'pending'
+      comments.push('No service provider found for ssn')
+    }
+
+    const application = await companyService.createApplication(
+      input,
+      user.ssn,
+      state,
+      comments,
+      applicationApi,
+    )
+    return {
+      application: formatApplication(application),
+    }
+  }
+
+  @authorize({ role: 'admin' })
+  public async getCompanyApplications(
+    _1,
+    _2,
+    { dataSources: { applicationApi } },
+  ) {
+    const applications = await companyService.getApplications(applicationApi)
+    return applications.map((application) => formatApplication(application))
+  }
 }
 
 const resolver = new CompanyResolver()
@@ -36,15 +113,23 @@ export default {
   Query: {
     companies: resolver.getCompanies,
     company: resolver.getCompany,
+    companyApplications: resolver.getCompanyApplications,
+  },
+  Mutation: {
+    createCompanyApplication: resolver.createCompanyApplication,
   },
 
   Company: {
-    application(company, _, { dataSources }) {
+    async application(company, _, { dataSources }) {
       if (!company) {
         return null
       }
 
-      return applicationService.getApplication(company.ssn, dataSources)
+      const application = await companyService.getApplication(
+        company.ssn,
+        dataSources,
+      )
+      return formatApplication(application)
     },
   },
 }

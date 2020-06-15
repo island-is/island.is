@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react'
 import HtmlParser from 'react-html-parser'
+import * as Sentry from '@sentry/node'
 
 import { Box, ContentBlock, Typography } from '@island.is/island-ui/core'
 
@@ -24,8 +25,14 @@ class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
     this.state = { error: undefined }
   }
 
-  componentDidCatch(error: Error) {
+  componentDidCatch(error: Error, errorInfo: {}) {
     this.setState({ error })
+    Sentry.withScope((scope) => {
+      Object.keys(errorInfo).forEach((key) => {
+        scope.setExtra(key, errorInfo[key])
+      })
+      Sentry.captureException(error)
+    })
   }
 
   render() {

@@ -20,13 +20,13 @@ const GetCompaniesQuery = gql`
 
 function Companies() {
   const {
-    t: { application: t },
+    t: { application: t, routes },
   } = useI18n()
   const router = useRouter()
   const { data, loading } = useQuery(GetCompaniesQuery)
   const { companies } = data || {}
   const onSubmit = ({ ssn }) => {
-    router.push(`/fyrirtaeki/umsokn/${ssn}`)
+    router.push(`${routes.companies.application}/${ssn}`)
   }
 
   if (loading && !data) {

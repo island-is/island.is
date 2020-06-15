@@ -1,5 +1,8 @@
 export default {
   production: true,
+  sentry: {
+    dsn: '',
+  },
   auth: {
     samlEntryPoint: process.env.SAML_ENTRY_POINT,
     audience: process.env.AUTH_AUDIENCE,
