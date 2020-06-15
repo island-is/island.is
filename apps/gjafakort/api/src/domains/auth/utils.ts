@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { AuthenticationError } from 'apollo-server-express'
+import { AuthenticationError, ForbiddenError } from 'apollo-server-express'
 
 import { GraphQLContext, User, Credentials } from '../../types'
 import { Permissions } from './types'
@@ -54,7 +54,7 @@ export const authorize = (permissions: Permissions = {}) => (
     }
 
     if (!checkPermissions(context.user, permissions)) {
-      return () => null
+      throw new ForbiddenError('Forbidden')
     }
 
     return originalValue.apply(this, args)

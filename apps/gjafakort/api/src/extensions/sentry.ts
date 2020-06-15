@@ -38,8 +38,7 @@ export const apolloServerPlugin = {
 
           rc.errors.forEach((error) => {
             if (
-              error instanceof ForbiddenError ||
-              error instanceof AuthenticationError
+              ['FORBIDDEN', 'UNAUTHENTICATED'].includes(error.extensions?.code)
             ) {
               return
             } else if (error.path || error.name !== 'GraphQLError') {
