@@ -4,8 +4,12 @@ import {
   resolvers as companyResolvers,
   typeDefs as companyTypeDefs,
 } from './companies'
-import { resolvers as userResolver, typeDefs as userTypeDefs } from './users'
+import { resolvers as userResolvers, typeDefs as userTypeDefs } from './users'
+import {
+  resolvers as commonResolvers,
+  typeDefs as commonTypeDefs,
+} from './common'
 
-export const resolvers = [companyResolvers, userResolver]
+export const resolvers = [companyResolvers, userResolvers, commonResolvers]
 
-export const typeDefs = [companyTypeDefs, userTypeDefs]
+export const typeDefs = [companyTypeDefs, userTypeDefs, commonTypeDefs]

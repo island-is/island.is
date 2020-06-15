@@ -12,7 +12,7 @@ export default gql`
   }
 
   input CreateUserApplicationInput {
-    mobile: String
+    mobile: StringTrimmed
   }
 
   extend type Query {

@@ -37,16 +37,16 @@ export default gql`
   }
 
   input CreateCompanyApplicationInput {
-    email: String!
-    generalEmail: String!
-    phoneNumber: String!
+    email: StringTrimmed!
+    generalEmail: StringTrimmed!
+    phoneNumber: StringTrimmed!
     operationsTrouble: Boolean!
-    companySSN: String!
-    name: String!
-    serviceCategory: String!
-    webpage: String!
-    companyName: String!
-    companyDisplayName: String!
+    companySSN: StringTrimmed!
+    name: StringTrimmed!
+    serviceCategory: StringTrimmed!
+    webpage: StringTrimmed!
+    companyName: StringTrimmed!
+    companyDisplayName: StringTrimmed!
     operatingPermitForRestaurant: Boolean!
     exhibition: Boolean!
     operatingPermitForVehicles: Boolean!

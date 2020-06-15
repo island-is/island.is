@@ -1,4 +1,8 @@
-import { GraphQLResolveInfo } from 'graphql'
+import {
+  GraphQLResolveInfo,
+  GraphQLScalarType,
+  GraphQLScalarTypeConfig,
+} from 'graphql'
 import { Context } from './context'
 export type Maybe<T> = T | null
 export type RequireFields<T, K extends keyof T> = {
@@ -12,6 +16,7 @@ export type Scalars = {
   Boolean: boolean
   Int: number
   Float: number
+  StringTrimmed: any
 }
 
 export type Company = {
@@ -53,16 +58,16 @@ export type CompanyApplication = {
 }
 
 export type CreateCompanyApplicationInput = {
-  email: Scalars['String']
-  generalEmail: Scalars['String']
-  phoneNumber: Scalars['String']
+  email: Scalars['StringTrimmed']
+  generalEmail: Scalars['StringTrimmed']
+  phoneNumber: Scalars['StringTrimmed']
   operationsTrouble: Scalars['Boolean']
-  companySSN: Scalars['String']
-  name: Scalars['String']
-  serviceCategory: Scalars['String']
-  webpage: Scalars['String']
-  companyName: Scalars['String']
-  companyDisplayName: Scalars['String']
+  companySSN: Scalars['StringTrimmed']
+  name: Scalars['StringTrimmed']
+  serviceCategory: Scalars['StringTrimmed']
+  webpage: Scalars['StringTrimmed']
+  companyName: Scalars['StringTrimmed']
+  companyDisplayName: Scalars['StringTrimmed']
   operatingPermitForRestaurant: Scalars['Boolean']
   exhibition: Scalars['Boolean']
   operatingPermitForVehicles: Scalars['Boolean']
@@ -116,7 +121,7 @@ export type CreateUserApplication = {
 }
 
 export type CreateUserApplicationInput = {
-  mobile?: Maybe<Scalars['String']>
+  mobile?: Maybe<Scalars['StringTrimmed']>
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -234,6 +239,7 @@ export type DirectiveResolverFn<
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  StringTrimmed: ResolverTypeWrapper<Scalars['StringTrimmed']>
   Company: ResolverTypeWrapper<Company>
   String: ResolverTypeWrapper<Scalars['String']>
   ApplicationLog: ResolverTypeWrapper<ApplicationLog>
@@ -250,6 +256,7 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  StringTrimmed: Scalars['StringTrimmed']
   Company: Company
   String: Scalars['String']
   ApplicationLog: ApplicationLog
@@ -262,6 +269,11 @@ export type ResolversParentTypes = {
   UserApplication: UserApplication
   CreateUserApplication: CreateUserApplication
   CreateUserApplicationInput: CreateUserApplicationInput
+}
+
+export interface StringTrimmedScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['StringTrimmed'], any> {
+  name: 'StringTrimmed'
 }
 
 export type CompanyResolvers<
@@ -437,6 +449,7 @@ export type CreateUserApplicationResolvers<
 }
 
 export type Resolvers<ContextType = Context> = {
+  StringTrimmed?: GraphQLScalarType
   Company?: CompanyResolvers<ContextType>
   ApplicationLog?: ApplicationLogResolvers<ContextType>
   CompanyApplication?: CompanyApplicationResolvers<ContextType>
