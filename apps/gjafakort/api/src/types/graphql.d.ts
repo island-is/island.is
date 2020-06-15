@@ -3,6 +3,7 @@ import { FerdalagAPI, ApplicationAPI, RskAPI } from '../services'
 export type User = {
   ssn: string
   mobile: string
+  name: string
 }
 
 export interface GraphQLContext {

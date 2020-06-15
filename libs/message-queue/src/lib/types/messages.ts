@@ -1,4 +1,6 @@
-export type Message = GjafakortCompanyApplicationMessage
+export type Message =
+  | GjafakortCompanyApplicationMessage
+  | GjafakortUserApplicationMessage
 
 export interface GjafakortCompanyApplicationMessage {
   id: string
@@ -22,6 +24,20 @@ export interface GjafakortCompanyApplicationMessage {
     operatingPermitForRestaurant: boolean
     companyDisplayName: string
     operatingPermitForVehicles: boolean
+  }
+
+  created: string
+  modified: string
+}
+
+export interface GjafakortUserApplicationMessage {
+  id: string
+  state: string
+  issuerSSN: string
+  type: string
+  data: {
+    mobileNumber: string
+    countryCode: string
   }
 
   created: string

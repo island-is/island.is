@@ -81,6 +81,7 @@
     "js-base64": "2.5.2",
     "js-cookie": "2.2.1",
     "jwt-decode": "2.2.0",
+    "libphonenumber-js": "1.7.53",
     "lodash": "4.17.15",
     "next": "9.3.3",
     "next-cookies": "2.0.3",

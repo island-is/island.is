@@ -1,5 +1,6 @@
 export const Types = {
-  GJAFAKORT: 'gjafakort',
+  GJAFAKORT_COMPANY: 'gjafakort',
+  GJAFAKORT_USER: 'gjafakort-user',
 }
 
 export const States = {

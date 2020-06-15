@@ -1,36 +1,34 @@
 import {
-  GjafakortCompanyApplicationMessage,
-  GjafakortCompanyApplicationRoutingKey,
+  GjafakortUserApplicationMessage,
+  GjafakortUserApplicationRoutingKey,
   GjafakortApplicationExchange,
 } from '@island.is/message-queue'
 import { logger } from '@island.is/logging'
 
 import { RoutingKeyError } from './errors'
-import { ferdalagApi } from './api'
+import { yayApi } from './api'
 
 export const exchangeName: GjafakortApplicationExchange =
   'gjafakort-application-updates'
 
-export const routingKeys: GjafakortCompanyApplicationRoutingKey[] = [
-  'gjafakort:approved',
-  'gjafakort:manual-approved',
+export const routingKeys: GjafakortUserApplicationRoutingKey[] = [
+  'gjafakort-user:pending',
 ]
 
-export const queueName = 'gjafakort-ferdalag-company-application'
+export const queueName = 'gjafakort-yay-user-application'
 
 export const handler = async (
-  message: GjafakortCompanyApplicationMessage,
-  routingKey: GjafakortCompanyApplicationRoutingKey,
+  message: GjafakortUserApplicationMessage,
+  routingKey: GjafakortUserApplicationRoutingKey,
 ) => {
   logger.debug(
     `receiving message ${message.id} on ${queueName} with routingKey ${routingKey}`,
     message,
   )
 
-  if (routingKey === 'gjafakort:approved') {
-    await ferdalagApi.updateProvider(message)
-  } else if (routingKey === 'gjafakort:manual-approved') {
-    await ferdalagApi.createProvider(message)
+  if (routingKey === 'gjafakort-user:pending') {
+    await yayApi.createUser(message)
+    await yayApi.createGiftCard(message)
   } else {
     throw new RoutingKeyError(queueName, routingKey)
   }

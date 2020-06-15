@@ -1,5 +1,3 @@
-import md5 from 'crypto-js/md5'
-
 import {
   GjafakortCompanyApplicationMessage,
   GjafakortCompanyApplicationRoutingKey,
@@ -7,13 +5,8 @@ import {
 } from '@island.is/message-queue'
 import { logger } from '@island.is/logging'
 
-import { environment } from '../../environments'
 import { RoutingKeyError } from './errors'
-import { request } from './api'
-
-const {
-  yay: { url, apiKey, secretKey },
-} = environment
+import { yayApi } from './api'
 
 export const exchangeName: GjafakortApplicationExchange =
   'gjafakort-application-updates'
@@ -25,15 +18,6 @@ export const routingKeys: GjafakortCompanyApplicationRoutingKey[] = [
 ]
 
 export const queueName = 'gjafakort-yay-company-application'
-
-const getHeaders = () => {
-  const timestamp = new Date().toISOString()
-  return {
-    ApiKey: apiKey,
-    'X-Timestamp': timestamp,
-    'X-Signature': md5(`${apiKey}-${secretKey}-${timestamp}`),
-  }
-}
 
 export const handler = async (
   message: GjafakortCompanyApplicationMessage,
@@ -48,30 +32,14 @@ export const handler = async (
     routingKey === 'gjafakort:approved' ||
     routingKey === 'gjafakort:pending'
   ) {
-    await request({
-      queueName,
-      routingKey,
-      message,
-      method: 'POST',
-      url: `${url}/api/v1/Company`,
-      headers: getHeaders(),
-      body: JSON.stringify({
-        socialSecurityNumber: message.issuerSSN,
-        companyName: message.data.companyDisplayName,
-        name: message.data.name,
-        email: message.data.email,
-      }),
-    })
+    await yayApi.createCompany(message)
   } else if (routingKey === 'gjafakort:rejected') {
-    await request({
-      queueName,
-      routingKey,
-      message,
-      method: 'DELETE',
-      url: `${url}/api/v1/Company/${message.issuerSSN}`,
-      headers: getHeaders(),
-    })
+    await yayApi.rejectCompany(message)
   } else {
     throw new RoutingKeyError(queueName, routingKey)
   }
+
+  logger.info(
+    `Successfully processed message ${message.id} on ${queueName} with routingKey ${routingKey}`,
+  )
 }
