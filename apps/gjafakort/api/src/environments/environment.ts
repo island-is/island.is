@@ -3,7 +3,7 @@ const ONE_DAY = 86400
 export default {
   production: false,
   sentry: {
-    dsn: process.env.SENTRY_DSN,
+    dsn: '',
   },
   auth: {
     samlEntryPoint: 'https://innskraning.island.is/?id=ferdagjof.local',
