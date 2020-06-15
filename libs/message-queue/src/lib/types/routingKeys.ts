@@ -8,4 +8,4 @@ export type GjafakortCompanyApplicationRoutingKey =
   | 'gjafakort:rejected'
   | 'gjafakort:manual-approved'
 
-export type GjafakortUserApplicationRoutingKey = 'gjafakort-user:pending'
+export type GjafakortUserApplicationRoutingKey = 'gjafakort-user:approved'

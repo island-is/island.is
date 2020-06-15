@@ -21,8 +21,8 @@ const getYayHeaders = () => {
   }
 }
 
-export const createUser = async (message: GjafakortUserApplicationMessage) => {
-  return await request({
+export const createUser = (message: GjafakortUserApplicationMessage) => {
+  return request({
     applicationId: message.id,
     method: 'POST',
     url: `${url}/api/v1/User`,
@@ -36,10 +36,8 @@ export const createUser = async (message: GjafakortUserApplicationMessage) => {
   })
 }
 
-export const createGiftCard = async (
-  message: GjafakortUserApplicationMessage,
-) => {
-  return await request({
+export const createGiftCard = (message: GjafakortUserApplicationMessage) => {
+  return request({
     applicationId: message.id,
     method: 'POST',
     url: `${url}/api/v1/GiftCardAssignment`,
@@ -47,14 +45,13 @@ export const createGiftCard = async (
     body: JSON.stringify({
       countryCode: message.data.countryCode,
       mobileNumber: message.data.mobileNumber,
+      identifier: message.id,
     }),
   })
 }
 
-export const createCompany = async (
-  message: GjafakortCompanyApplicationMessage,
-) => {
-  return await request({
+export const createCompany = (message: GjafakortCompanyApplicationMessage) => {
+  return request({
     applicationId: message.id,
     method: 'POST',
     url: `${url}/api/v1/Company`,
@@ -68,10 +65,8 @@ export const createCompany = async (
   })
 }
 
-export const rejectCompany = async (
-  message: GjafakortCompanyApplicationMessage,
-) => {
-  return await request({
+export const rejectCompany = (message: GjafakortCompanyApplicationMessage) => {
+  return request({
     applicationId: message.id,
     method: 'DELETE',
     url: `${url}/api/v1/Company/${message.issuerSSN}`,
