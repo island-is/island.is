@@ -16,7 +16,7 @@ export const wrapper = style({
     borderRadius: 6,
     borderWidth: 3,
     borderStyle: 'solid',
-    borderColor: theme.color.mint300,
+    borderColor: theme.color.mint400,
     opacity: 0,
   },
 })

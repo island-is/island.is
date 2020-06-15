@@ -11,7 +11,7 @@ export const menu = style({
   overflowY: 'auto',
   outline: 0,
   opacity: 0,
-  borderColor: theme.color.mint300,
+  borderColor: theme.color.mint400,
   borderWidth: 3,
   borderStyle: 'solid',
   borderTopWidth: 0,

@@ -8,7 +8,7 @@ import * as styles from './AsyncSearch.treat'
 
 export type Sizes = 'medium' | 'large'
 
-export type Option = {
+export type AsyncSearchOption = {
   label: string
   value: string | number
   disabled?: boolean
@@ -17,7 +17,7 @@ export type Option = {
 export interface AsyncSearchProps {
   label?: string
   placeholder?: string
-  options: Option[]
+  options: AsyncSearchOption[]
   colored?: boolean
   size?: Sizes
   loading?: boolean
@@ -44,7 +44,7 @@ export const AsyncSearch = ({
     <Downshift
       onChange={onChange}
       onInputValueChange={onInputValueChange}
-      itemToString={(item: Option) => (item ? item.label : '')}
+      itemToString={(item: AsyncSearchOption) => (item ? item.label : '')}
     >
       {({
         getInputProps,
@@ -66,7 +66,9 @@ export const AsyncSearch = ({
               [styles.open]: shouldShowItems,
             })}
           >
-            <div {...getRootProps({}, { suppressRefError: true })}>
+            <div
+              {...getRootProps({ refKey: 'ref' }, { suppressRefError: true })}
+            >
               <Input
                 {...getInputProps({ onFocus, onBlur })}
                 isOpen={shouldShowItems}
