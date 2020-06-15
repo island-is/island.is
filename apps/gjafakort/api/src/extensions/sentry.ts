@@ -32,7 +32,7 @@ export const apolloServerPlugin = {
           }
 
           scope.setTags({
-            graphql: rc.operation.operation || 'parse_err',
+            graphql: rc.operation?.operation || 'parse_err',
             graphqlName: rc.operationName || rc.request.operationName,
           })
 
