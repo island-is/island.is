@@ -23,4 +23,9 @@ export default {
   redis: {
     url: process.env.REDIS_URL,
   },
+  yay: {
+    url: process.env.YAY_URL,
+    apiKey: process.env.YAY_API_KEY,
+    secretKey: process.env.YAY_SECRET_KEY,
+  },
 }

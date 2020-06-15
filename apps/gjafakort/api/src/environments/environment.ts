@@ -25,4 +25,9 @@ export default {
   redis: {
     url: 'localhost',
   },
+  yay: {
+    url: 'https://dev-serviceapi.yay.is',
+    apiKey: process.env.YAY_API_KEY,
+    secretKey: process.env.YAY_SECRET_KEY,
+  },
 }

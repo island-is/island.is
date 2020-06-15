@@ -8,7 +8,7 @@ import { logger } from '@island.is/logging'
 
 import { verifyToken, ACCESS_TOKEN_COOKIE } from '../domains'
 import { Resolvers, GraphQLContext, DataSource } from '../types'
-import { ApplicationAPI, FerdalagAPI, RskAPI } from '../services'
+import { ApplicationAPI, FerdalagAPI, RskAPI, YayAPI } from '../services'
 import rootTypeDefs from './typeDefs'
 
 const createServer = async (
@@ -39,6 +39,7 @@ const createServer = async (
       applicationApi: new ApplicationAPI(),
       ferdalagApi: new FerdalagAPI(),
       rskApi: new RskAPI(),
+      yayApi: new YayAPI(),
     }),
     context: ({ req }): GraphQLContext => {
       const accessToken = req.cookies[ACCESS_TOKEN_COOKIE.name]

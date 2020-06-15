@@ -1,6 +1,18 @@
 import { gql } from 'apollo-server-express'
 
 export default gql`
+  type GiftCard {
+    giftCardId: Int!
+    amount: Int!
+    applicationId: String
+  }
+
+  type GiftCardCode {
+    code: String!
+    expiryDate: String!
+    pollingUrl: String!
+  }
+
   type UserApplication {
     id: String!
     mobileNumber: String!
@@ -16,6 +28,8 @@ export default gql`
   }
 
   extend type Query {
+    giftCardCode(giftCardId: Int!, mobile: String!): GiftCardCode
+    giftCards(mobile: String!): [GiftCard]
     userApplication: UserApplication
   }
 
