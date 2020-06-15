@@ -40,7 +40,12 @@
       "@island.is/infra-tracing": ["libs/infra-tracing/src/index.ts"],
       "@island.is/infra-express-server": [
         "libs/infra-express-server/src/index.ts"
-      ]
+      ],
+      "@island.is/logging": ["libs/logging/src/index.ts"],
+      "@island.is/api/domains/content-search": [
+        "libs/api/domains/content-search/src/index.ts"
+      ],
+      "@island.is/api/content-search": ["libs/api/content-search/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

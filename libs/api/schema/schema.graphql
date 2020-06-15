@@ -1,3 +1,18 @@
+type Query {
+  articlesInCategory(category: ArticlesInCategoryInput): [ContentItem]
+  categories(input: CategoriesInput): [ContentCategory]
+  getArticle(input: GetArticleInput): Article
+  getNamespace(input: GetNamespaceInput): Namespace
+  helloWorld(input: HelloWorldInput): HelloWorld!
+  root: String
+  searchResults(query: SearcherInput): SearchResult!
+  singleItem(input: ItemInput): ContentItem
+}
+
+type Mutation {
+  root: String
+}
+
 type Article {
   id: String!
   slug: String!
@@ -10,9 +25,89 @@ input GetArticleInput {
   lang: String!
 }
 
+type Namespace {
+  namespace: String!
+  fields: String!
+}
+
 input GetNamespaceInput {
   namespace: String
   lang: String!
+}
+
+type ContentItem {
+  id: ID
+  title: String
+  content: String
+  tag: [String]
+  category: String
+  categorySlug: String
+  categoryDescription: String
+  group: String
+  groupSlug: String
+  contentBlob: String
+  contentId: String
+  contentType: String
+  date: String
+  image: String
+  imageText: String
+  lang: String
+  slug: String
+}
+
+type SearchResult {
+  total: Int
+  items: [ContentItem!]!
+}
+
+input SearcherInput {
+  queryString: String
+  language: ContentLanguage
+  size: Int
+  page: Int
+}
+
+input CategoryInput {
+  id: ID
+  slug: String
+}
+
+type ContentCategory {
+  title: String
+  slug: String
+  description: String
+}
+
+input ItemInput {
+  id: ID
+  slug: String
+  type: ItemType
+  language: ContentLanguage
+}
+
+input CategoriesInput {
+  language: ContentLanguage
+}
+
+input ArticlesInCategoryInput {
+  slug: String
+  language: ContentLanguage
+}
+
+type ContentArticle {
+  id: ID
+  title: String
+  slug: String
+}
+
+enum ContentLanguage {
+  is
+  en
+}
+
+enum ItemType {
+  article
+  category
 }
 
 type HelloWorld {
@@ -21,20 +116,4 @@ type HelloWorld {
 
 input HelloWorldInput {
   name: String = "World"
-}
-
-type Mutation {
-  root: String
-}
-
-type Namespace {
-  namespace: String!
-  fields: String!
-}
-
-type Query {
-  getArticle(input: GetArticleInput): Article
-  getNamespace(input: GetNamespaceInput): Namespace
-  helloWorld(input: HelloWorldInput): HelloWorld!
-  root: String
 }
