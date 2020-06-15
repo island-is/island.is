@@ -9,7 +9,6 @@ const { production } = environment
 export const startConsumers = async () => {
   const channel = MsgQueue.connect(production)
 
-  // TODO yay user application queue needs only a single try
   return Promise.all(
     handlers.map(async (handler) => {
       const exchangeId = await channel.declareExchange({
