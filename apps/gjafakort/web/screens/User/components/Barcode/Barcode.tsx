@@ -13,9 +13,26 @@ import {
   SkeletonLoader as SL,
 } from '@island.is/island-ui/core'
 import { ErrorPanel } from '@island.is/gjafakort-web/components'
-import { barcodeMachine } from './barcodeMachine'
+import { barcodeMachine, GiftCard } from './barcodeMachine'
 import { Countdown } from '../Countdown'
 import { barcodeSvg, invalidBarcode } from './Barcode.treat'
+
+const formatNumber = (numb) => numb.toLocaleString('de-DE')
+
+const giftCards: GiftCard[] = [
+  {
+    id: '1',
+    amount: 1500,
+  },
+  {
+    id: '2',
+    amount: 4000,
+  },
+  {
+    id: '3',
+    amount: 5000,
+  },
+]
 
 const Barcode = () => {
   const [current, send] = useMachine(barcodeMachine, {
@@ -27,18 +44,37 @@ const Barcode = () => {
   if (current.matches('idle')) {
     return (
       <Stack space={3}>
-        <Button
-          onClick={() => {
-            send({
-              type: 'GET_BARCODE',
-              currentGiftCardId: '3',
-            })
-          }}
-        >
-          Búa til strikamerki
-        </Button>
-        <Typography variant="p">
-          Ath. að merkið rennur út eftir 10 mínútur
+        {giftCards.map((giftCard) => (
+          <Box
+            key={giftCard.id}
+            padding={2}
+            border="standard"
+            borderRadius="standard"
+            display="flex"
+            justifyContent="spaceBetween"
+            alignItems="center"
+          >
+            <Typography variant="h4">
+              {formatNumber(giftCard.amount)} kr.
+            </Typography>
+            <Button
+              variant="text"
+              onClick={() => {
+                send({
+                  type: 'GET_BARCODE',
+                  giftCard,
+                })
+              }}
+              icon="arrowRight"
+            >
+              Búa til strikamerki
+            </Button>
+          </Box>
+        ))}
+        <Typography variant="h4" color="blue400">
+          Samtals:{' '}
+          {formatNumber(giftCards.reduce((acc, { amount }) => acc + amount, 0))}{' '}
+          kr.
         </Typography>
       </Stack>
     )
@@ -46,10 +82,23 @@ const Barcode = () => {
 
   if (current.matches('error')) {
     return (
-      <ErrorPanel
-        title="Villa kom upp"
-        message="Eitthvað hefur farið úrskeiðis við að sækja strikamerkið þitt, vinsamlegast reyndu aftur."
-      />
+      <Stack space={3}>
+        <ErrorPanel
+          title="Villa kom upp"
+          message="Eitthvað hefur farið úrskeiðis við að sækja strikamerkið þitt, vinsamlegast reyndu aftur."
+        />
+        <Box marginTop={4}>
+          <Button
+            onClick={() => {
+              send('BACK_TO_LIST')
+            }}
+            variant="text"
+            leftIcon="arrowLeft"
+          >
+            Aftur í lista
+          </Button>
+        </Box>
+      </Stack>
     )
   }
 
@@ -114,7 +163,7 @@ const Barcode = () => {
               >
                 <Button
                   onClick={() => {
-                    send('BACK_TO_LIST')
+                    send('RETRY_BARCODE')
                   }}
                 >
                   Fá nýtt strikamerki
@@ -124,8 +173,22 @@ const Barcode = () => {
           </Box>
           <Stack space={1}>
             <Typography variant="h3">Virði</Typography>
-            <Typography variant="h1">5.000 kr.</Typography>
+            <Typography variant="h1">
+              {formatNumber(current.context.giftCard.amount)} kr.
+            </Typography>
           </Stack>
+        </Box>
+
+        <Box marginTop={4}>
+          <Button
+            onClick={() => {
+              send('BACK_TO_LIST')
+            }}
+            variant="text"
+            leftIcon="arrowLeft"
+          >
+            Aftur í lista
+          </Button>
         </Box>
       </Column>
     </Columns>

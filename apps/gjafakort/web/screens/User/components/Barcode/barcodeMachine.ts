@@ -37,8 +37,13 @@ import { Machine, assign } from 'xstate'
 // const fetchBarcode = (ctx) => fetch(`/api/v1/GiftCardCode/${ctx.id}/${ctx.countryCode}-${ctx.mobileNumber}`).then(response => response.json());
 
 const fetchBarcodeTemp = (ctx) => {
-  console.log(ctx.currentGiftCardId)
+  console.log(ctx.giftCard.id)
   const date = new Date()
+  if (ctx.giftCard.id === '2') {
+    return fetch('https://app.fakesfasdfjson.com/q').then((response) =>
+      response.json(),
+    )
+  }
   return fetch('https://app.fakejson.com/q', {
     method: 'POST',
     headers: {
@@ -47,8 +52,8 @@ const fetchBarcodeTemp = (ctx) => {
     body: JSON.stringify({
       token: '8cold84i0LC3bHfNfnIfYA',
       data: {
-        code: '012345678912',
-        expiryDate: new Date(date.getTime() + 6000),
+        code: '46834268',
+        expiryDate: new Date(date.getTime() + 5000),
         pollingUrl: 'test',
       },
     }),
@@ -76,11 +81,14 @@ interface BarcodeStateSchema {
   }
 }
 
+export type GiftCard = { id: string; amount: number }
+
 type ActionEvents =
-  | { type: 'GET_BARCODE'; currentGiftCardId: string }
+  | { type: 'GET_BARCODE'; giftCard: GiftCard }
   | { type: 'TICK' }
   | { type: 'USE_BARCODE' }
   | { type: 'BACK_TO_LIST' }
+  | { type: 'RETRY_BARCODE' }
 
 interface BarcodeContext {
   elapsed: number
@@ -88,10 +96,7 @@ interface BarcodeContext {
   expiryDate: Date
   secondsToExpiry: number
   error: object
-  currentRemainingAmount: number
-  lastRemainingAmount: number
-  initialAmount: number
-  currentGiftCardId: string
+  giftCard: GiftCard
   pollingUrl: string
 }
 
@@ -109,10 +114,7 @@ export const barcodeMachine = Machine<
       expiryDate: undefined,
       secondsToExpiry: 0,
       error: undefined,
-      currentRemainingAmount: 0,
-      lastRemainingAmount: 0,
-      initialAmount: 0,
-      currentGiftCardId: '',
+      giftCard: { id: '', amount: 0 },
       pollingUrl: '',
     },
     states: {
@@ -120,7 +122,7 @@ export const barcodeMachine = Machine<
         on: {
           GET_BARCODE: {
             actions: assign({
-              currentGiftCardId: (ctx, event) => event.currentGiftCardId,
+              giftCard: (ctx, event) => event.giftCard,
             }),
             target: 'loading',
           },
@@ -171,21 +173,16 @@ export const barcodeMachine = Machine<
           USE_BARCODE: 'success',
         },
       },
-      success: {
-        on: {
-          BACK_TO_LIST: 'idle',
-        },
-      },
+      success: {},
       invalid: {
         on: {
-          BACK_TO_LIST: 'idle',
+          RETRY_BARCODE: 'loading',
         },
       },
-      error: {
-        on: {
-          BACK_TO_LIST: 'idle',
-        },
-      },
+      error: {},
+    },
+    on: {
+      BACK_TO_LIST: 'idle',
     },
   },
   {

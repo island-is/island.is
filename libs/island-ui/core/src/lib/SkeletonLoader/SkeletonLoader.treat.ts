@@ -1,4 +1,5 @@
 import { style } from 'treat'
+import { theme } from '../../theme'
 
 export const loader = style({
   display: 'inline-block',
@@ -6,7 +7,9 @@ export const loader = style({
   width: '100%',
   position: 'relative',
   overflow: 'hidden',
-  backgroundColor: '#DDDBDD',
+  /*   backgroundImage:
+    'linear-gradient(137.17deg, rgba(1, 97, 253, 0.2) 3.57%, rgba(63, 70, 210, 0.2) 26.83%, rgba(129, 46, 164, 0.2) 51.01%, rgba(194, 21, 120, 0.2) 75.19%, rgba(253, 0, 80, 0.2) 96.58%)', */
+  backgroundColor: theme.color.purple100,
   ':after': {
     position: 'absolute',
     top: 0,

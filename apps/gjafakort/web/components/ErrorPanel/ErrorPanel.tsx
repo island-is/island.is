@@ -16,11 +16,7 @@ export interface ErrorPanelProps {
 export const ErrorPanel = ({ title, message }: ErrorPanelProps) => {
   return (
     <Box
-      position="fixed"
       background="red100"
-      top={20}
-      right={0}
-      margin={4}
       padding={[2, 2, 3]}
       border="focus"
       borderRadius="large"
