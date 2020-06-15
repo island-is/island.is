@@ -85,12 +85,23 @@ export type Query = {
   companies?: Maybe<Array<Maybe<Company>>>
   company?: Maybe<Company>
   companyApplications?: Maybe<Array<Maybe<CompanyApplication>>>
+  giftCardCode?: Maybe<GiftCardCode>
+  giftCards?: Maybe<Array<Maybe<GiftCard>>>
   root?: Maybe<Scalars['String']>
   userApplication?: Maybe<UserApplication>
 }
 
 export type QueryCompanyArgs = {
   ssn: Scalars['String']
+}
+
+export type QueryGiftCardCodeArgs = {
+  giftCardId: Scalars['Int']
+  mobile: Scalars['String']
+}
+
+export type QueryGiftCardsArgs = {
+  mobile: Scalars['String']
 }
 
 export type Mutation = {
@@ -106,6 +117,20 @@ export type MutationCreateCompanyApplicationArgs = {
 
 export type MutationCreateUserApplicationArgs = {
   input?: Maybe<CreateUserApplicationInput>
+}
+
+export type GiftCard = {
+  __typename?: 'GiftCard'
+  giftCardId: Scalars['Int']
+  amount: Scalars['Int']
+  applicationId?: Maybe<Scalars['String']>
+}
+
+export type GiftCardCode = {
+  __typename?: 'GiftCardCode'
+  code: Scalars['String']
+  expiryDate: Scalars['String']
+  pollingUrl: Scalars['String']
 }
 
 export type UserApplication = {
@@ -248,7 +273,10 @@ export type ResolversTypes = {
   CreateCompanyApplicationInput: CreateCompanyApplicationInput
   CreateCompanyApplication: ResolverTypeWrapper<CreateCompanyApplication>
   Query: ResolverTypeWrapper<{}>
+  Int: ResolverTypeWrapper<Scalars['Int']>
   Mutation: ResolverTypeWrapper<{}>
+  GiftCard: ResolverTypeWrapper<GiftCard>
+  GiftCardCode: ResolverTypeWrapper<GiftCardCode>
   UserApplication: ResolverTypeWrapper<UserApplication>
   CreateUserApplication: ResolverTypeWrapper<CreateUserApplication>
   CreateUserApplicationInput: CreateUserApplicationInput
@@ -265,7 +293,10 @@ export type ResolversParentTypes = {
   CreateCompanyApplicationInput: CreateCompanyApplicationInput
   CreateCompanyApplication: CreateCompanyApplication
   Query: {}
+  Int: Scalars['Int']
   Mutation: {}
+  GiftCard: GiftCard
+  GiftCardCode: GiftCardCode
   UserApplication: UserApplication
   CreateUserApplication: CreateUserApplication
   CreateUserApplicationInput: CreateUserApplicationInput
@@ -399,6 +430,18 @@ export type QueryResolvers<
     ParentType,
     ContextType
   >
+  giftCardCode?: Resolver<
+    Maybe<ResolversTypes['GiftCardCode']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGiftCardCodeArgs, 'giftCardId' | 'mobile'>
+  >
+  giftCards?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['GiftCard']>>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGiftCardsArgs, 'mobile'>
+  >
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   userApplication?: Resolver<
     Maybe<ResolversTypes['UserApplication']>,
@@ -424,6 +467,30 @@ export type MutationResolvers<
     RequireFields<MutationCreateUserApplicationArgs, never>
   >
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+}
+
+export type GiftCardResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['GiftCard'] = ResolversParentTypes['GiftCard']
+> = {
+  giftCardId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  applicationId?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type GiftCardCodeResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['GiftCardCode'] = ResolversParentTypes['GiftCardCode']
+> = {
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  expiryDate?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  pollingUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
 export type UserApplicationResolvers<
@@ -456,6 +523,8 @@ export type Resolvers<ContextType = Context> = {
   CreateCompanyApplication?: CreateCompanyApplicationResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
+  GiftCard?: GiftCardResolvers<ContextType>
+  GiftCardCode?: GiftCardCodeResolvers<ContextType>
   UserApplication?: UserApplicationResolvers<ContextType>
   CreateUserApplication?: CreateUserApplicationResolvers<ContextType>
 }

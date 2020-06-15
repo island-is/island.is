@@ -41,6 +41,18 @@ spec:
               port: http
           env:
             {{- with .Values.environment }}
+            - name: YAY_URL
+              value: {{ .yay_url }}
+            - name: YAY_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gjafakort-api
+                  key: YAY_API_KEY
+            - name: YAY_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: gjafakort-api
+                  key: YAY_SECRET_KEY
             - name: RSK_URL
               value: {{ .rsk_url }}
             - name: RSK_USERNAME

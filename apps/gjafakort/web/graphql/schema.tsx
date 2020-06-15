@@ -78,12 +78,23 @@ export type Query = {
   companies?: Maybe<Array<Maybe<Company>>>
   company?: Maybe<Company>
   companyApplications?: Maybe<Array<Maybe<CompanyApplication>>>
+  giftCardCode?: Maybe<GiftCardCode>
+  giftCards?: Maybe<Array<Maybe<GiftCard>>>
   root?: Maybe<Scalars['String']>
   userApplication?: Maybe<UserApplication>
 }
 
 export type QueryCompanyArgs = {
   ssn: Scalars['String']
+}
+
+export type QueryGiftCardCodeArgs = {
+  giftCardId: Scalars['Int']
+  mobile: Scalars['String']
+}
+
+export type QueryGiftCardsArgs = {
+  mobile: Scalars['String']
 }
 
 export type Mutation = {
@@ -99,6 +110,20 @@ export type MutationCreateCompanyApplicationArgs = {
 
 export type MutationCreateUserApplicationArgs = {
   input: Maybe<CreateUserApplicationInput>
+}
+
+export type GiftCard = {
+  __typename?: 'GiftCard'
+  giftCardId: Scalars['Int']
+  amount: Scalars['Int']
+  applicationId?: Maybe<Scalars['String']>
+}
+
+export type GiftCardCode = {
+  __typename?: 'GiftCardCode'
+  code: Scalars['String']
+  expiryDate: Scalars['String']
+  pollingUrl: Scalars['String']
 }
 
 export type UserApplication = {

@@ -17,6 +17,9 @@ nameOverride: ""
 fullnameOverride: ""
 
 environment:
+  yay_url:
+  yay_api_key_path: "/k8s/gjafakort/YAY_API_KEY"
+  yay_secret_key_path: "/k8s/gjafakort/YAY_SECRET_KEY"
   ferdalag_url:
   application_url: "http://web-gjafakort-application"
   ferdalag_api_key_path: "/k8s/gjafakort/FERDALAG_API_KEY"
