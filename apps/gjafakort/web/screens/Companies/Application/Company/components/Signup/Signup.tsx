@@ -187,7 +187,10 @@ function Signup({ company, handleSubmission }: PropTypes) {
                     name={`operations.${operation.name}`}
                     tooltip={operation.tooltip}
                     label={operation.label}
-                    disabled={values.noneOfTheAbove}
+                    disabled={
+                      operation.name !== 'noneOfTheAbove' &&
+                      values.operations.noneOfTheAbove
+                    }
                     onChange={() => {
                       if (operation.name === 'noneOfTheAbove') {
                         // we want this to run in the next render cycle
