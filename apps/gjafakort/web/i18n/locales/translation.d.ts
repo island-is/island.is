@@ -174,6 +174,8 @@ export interface FormCompany {
 export interface Error {
   title: string
   intro: string
+  introKennitalaIsNotAPerson: string
+  introUserNotOldEnough: string
   button: string
 }
 
@@ -625,6 +627,12 @@ const typeMap: any = {
     [
       { json: 'title', js: 'title', typ: '' },
       { json: 'intro', js: 'intro', typ: '' },
+      {
+        json: 'introKennitalaIsNotAPerson',
+        js: 'introKennitalaIsNotAPerson',
+        typ: '',
+      },
+      { json: 'introUserNotOldEnough', js: 'introUserNotOldEnough', typ: '' },
       { json: 'button', js: 'button', typ: '' },
     ],
     false,

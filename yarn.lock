@@ -12302,6 +12302,11 @@ karma-source-map-support@1.4.0:
   dependencies:
     source-map-support "^0.5.5"
 
+kennitala@1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/kennitala/-/kennitala-1.2.3.tgz#aaa65e3240c9d7225cefe6d58019556f33744955"
+  integrity sha512-mjcnFBKUDkTDpDnsZHXTbfe8v8nO0YikTHqyDHpE9HZBkLKP/tazcbbBanTRr0F2O68C0t+bGqTPUXpN35VmqQ==
+
 killable@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/killable/-/killable-1.0.1.tgz#4c8ce441187a061c7474fb87ca08e2a638194892"

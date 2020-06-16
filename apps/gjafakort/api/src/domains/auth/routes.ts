@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import { Entropy } from 'entropy-string'
 import IslandisLogin from 'islandis-login'
 import { uuid } from 'uuidv4'
+import kennitala from 'kennitala'
 
 import { logger } from '@island.is/logging'
 
@@ -24,6 +25,8 @@ const { samlEntryPoint, audience: audienceUrl, jwtSecret } = environment.auth
 const loginIS = new IslandisLogin({
   audienceUrl,
 })
+
+const YEAR_BORN_LIMIT = 2002
 
 router.post(
   '/callback',
@@ -50,6 +53,19 @@ router.post(
     const { user } = verifyResult
     if (!user || authId !== user?.authId || returnUrl.charAt(0) !== '/') {
       return res.redirect('/error')
+    }
+
+    if (!kennitala.isPerson(user.kennitala)) {
+      logger.warn('User used company kennitala to log in')
+      return res.redirect('/error?errorType=kennitalaIsNotAPerson')
+    }
+
+    const yearBorn = new Date(
+      kennitala.info(user.kennitala).birthday,
+    ).getFullYear()
+    if (yearBorn > YEAR_BORN_LIMIT) {
+      logger.warn(`User born after ${YEAR_BORN_LIMIT} logged in`)
+      return res.redirect('/error?errorType=userNotOldEnough')
     }
 
     const csrfToken = new Entropy({ bits: 128 }).string()
