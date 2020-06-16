@@ -47,9 +47,11 @@ export const Header: FC = () => {
                     <Button variant="menu">{languageButtonText}</Button>
                   </Link>
 
-                  <Button variant="menu" leftIcon="user">
-                    Innskráning
-                  </Button>
+                  <Link href="https://minarsidur.island.is/" passHref>
+                    <Button variant="menu" leftIcon="user">
+                      Innskráning
+                    </Button>
+                  </Link>
                   {/* <Select
                     placeholder="Leitaðu á Ísland.is"
                     options={selectOptions}

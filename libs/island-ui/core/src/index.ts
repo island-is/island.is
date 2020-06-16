@@ -24,6 +24,7 @@ export * from './lib/Badge/Badge'
 export * from './lib/Divider/Divider'
 export * from './lib/LinkCard/LinkCard'
 export * from './lib/Tag/Tag'
+export * from './lib/AsyncSelect/AsyncSelect'
 
 // Layout
 export * from './lib/Box/Box'

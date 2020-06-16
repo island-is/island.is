@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
   ContentBlock,
@@ -9,25 +9,82 @@ import {
   Columns,
   Column,
   Inline,
-  Select,
+  AsyncSelect,
   Tag,
 } from '@island.is/island-ui/core'
 import { Categories, Card } from '../components'
 import { withApollo } from '../graphql'
-import { categories, selectOptions, getTags } from '../json'
+import { selectOptions, getTags } from '../json'
 import { useI18n } from '../i18n'
-import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
-import { GET_NAMESPACE_QUERY } from './queries'
+import {
+  Query,
+  QueryGetNamespaceArgs,
+  QuerySearchResultsArgs,
+  ContentLanguage,
+  QueryCategoriesArgs,
+} from '@island.is/api/schema'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_CATEGORIES_QUERY,
+  GET_SEARCH_RESULTS_QUERY,
+} from './queries'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
+import { useApolloClient } from 'react-apollo'
+import { useRouter } from 'next/router'
 
 interface HomeProps {
+  categories: Query['categories']
   namespace: Query['getNamespace']
 }
 
-const Home: Screen<HomeProps> = ({ namespace }) => {
-  const { t, activeLocale } = useI18n()
+const Home: Screen<HomeProps> = ({ categories, namespace }) => {
+  const Router = useRouter()
+  const client = useApolloClient()
+  const [tags, setTags] = useState([])
+  const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
+
+  const prefix = activeLocale === 'en' ? `/en` : ``
+  const articlePath = activeLocale === 'en' ? 'article' : 'grein'
+  const categoryPath = activeLocale === 'en' ? 'category' : 'flokkur'
+
+  const cards = categories.map(({ title, slug }) => ({
+    title,
+    description: 'description',
+    href: `${prefix}/${categoryPath}/${slug}`,
+  }))
+
+  const loadOptions = async (inputValue) => {
+    const {
+      data: { searchResults },
+    } = await client.query<Query, QuerySearchResultsArgs>({
+      query: GET_SEARCH_RESULTS_QUERY,
+      variables: {
+        query: {
+          queryString: inputValue ? `${inputValue}*` : '',
+          language: activeLocale as ContentLanguage,
+        },
+      },
+    })
+
+    return searchResults.items.map((x) => ({
+      label: x.title,
+      value: x.slug,
+    }))
+  }
+
+  useEffect(() => {
+    setTags(getTags(8))
+  }, [])
+
+  const onInputChange = (newValue) => {
+    return newValue
+  }
+
+  const onSelectSearch = (option) => {
+    Router.push(`${prefix}/${articlePath}/${option.value}`)
+  }
 
   return (
     <>
@@ -72,31 +129,39 @@ const Home: Screen<HomeProps> = ({ namespace }) => {
             <Box padding={[1, 1, 6]}>
               <Box
                 padding={[2, 2, 2, 10]}
-                display="flex"
+                display="inlineBlock"
                 background="white"
                 boxShadow="subtle"
                 width="full"
-                justifyContent="center"
-                alignItems="center"
+                border="standard"
               >
                 <Columns
                   space={[4, 4, 4, 12]}
                   collapseBelow="lg"
                   alignY="center"
                 >
-                  <Column width="1/2">
+                  <Column>
                     <Box display="inlineFlex" alignItems="center" width="full">
-                      <Select
+                      <AsyncSelect
                         placeholder={n('heroSearchPlaceholder')}
-                        options={selectOptions}
+                        onChange={onSelectSearch}
                         name="search"
                         icon="search"
+                        options={selectOptions}
+                        loadOptions={loadOptions}
+                        onInputChange={onInputChange}
                       />
+                      {/* <Select
+                        placeholder={n('heroSearchPlaceholder')}
+                        name="search"
+                        icon="search"
+                        options={selectOptions}
+                      /> */}
                     </Box>
                   </Column>
-                  <Column width="1/2">
+                  <Column>
                     <Inline space={1}>
-                      {getTags(8).map(({ title }, index) => {
+                      {tags.map(({ title }, index) => {
                         return (
                           <Link key={index} href="/category">
                             <Tag>{title}</Tag>
@@ -114,17 +179,8 @@ const Home: Screen<HomeProps> = ({ namespace }) => {
       <Box background="purple100">
         <ContentBlock width="large">
           <Categories label={n('articlesTitle')} seeMoreText={n('seeMore')}>
-            {categories.map((category, index) => {
-              return (
-                <Card
-                  key={index}
-                  {...category}
-                  linkProps={{
-                    passHref: true,
-                    href: `${activeLocale === 'en' ? '/en' : ''}/category`,
-                  }}
-                />
-              )
+            {cards.map((card, index) => {
+              return <Card key={index} {...card} tags={false} />
             })}
           </Categories>
         </ContentBlock>
@@ -134,19 +190,35 @@ const Home: Screen<HomeProps> = ({ namespace }) => {
 }
 
 Home.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const {
-    data: { getNamespace: namespace },
-  } = await apolloClient.query<Query, QueryGetNamespaceArgs>({
-    query: GET_NAMESPACE_QUERY,
-    variables: {
-      input: {
-        namespace: 'Homepage',
-        lang: locale,
-      },
+  const [
+    {
+      data: { categories },
     },
-  })
+    {
+      data: { getNamespace: namespace },
+    },
+  ] = await Promise.all([
+    apolloClient.query<Query, QueryCategoriesArgs>({
+      query: GET_CATEGORIES_QUERY,
+      variables: {
+        input: {
+          language: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetNamespaceArgs>({
+      query: GET_NAMESPACE_QUERY,
+      variables: {
+        input: {
+          namespace: 'Homepage',
+          lang: locale,
+        },
+      },
+    }),
+  ])
 
   return {
+    categories,
     namespace,
   }
 }
