@@ -37,7 +37,7 @@ class ApplicationAPI extends RESTDataSource {
     return res.application
   }
 
-  async getApplication<T extends Application>(
+  async getApplicationByType<T extends Application>(
     applicationType: T['type'],
     issuerSSN: string,
   ): Promise<T> {
@@ -54,8 +54,28 @@ class ApplicationAPI extends RESTDataSource {
   async getApplications<T extends Application>(
     applicationType: T['type'],
   ): Promise<[T]> {
-    const res = await this.get(`applications/${applicationType}`)
+    const res = await this.get(`applications?type=${applicationType}`)
     return res.applications
+  }
+
+  async getApplication<T extends Application>(id: string): Promise<T> {
+    try {
+      const res = await this.get(`applications/${id}`)
+
+      return res.application
+    } catch {
+      return null
+    }
+  }
+
+  async updateApplication<T extends Application>(
+    id: string,
+    state: 'manual-approved' | 'rejected',
+    authorSSN: string,
+  ): Promise<T> {
+    const res = await this.put(`applications/${id}`, { state, authorSSN })
+
+    return res.application
   }
 }
 

@@ -46,10 +46,9 @@ export const getApplication = async (
   companySSN: string,
   { applicationApi, ferdalagApi }: DataSource,
 ) => {
-  const application = await applicationApi.getApplication<CompanyApplication>(
-    APPLICATION_TYPE,
-    companySSN,
-  )
+  const application = await applicationApi.getApplicationByType<
+    CompanyApplication
+  >(APPLICATION_TYPE, companySSN)
   if (application) {
     return application
   }
@@ -98,4 +97,40 @@ export const createApplication = async (
 
 export const getApplications = async (applicationApi: ApplicationAPI) => {
   return applicationApi.getApplications<CompanyApplication>(APPLICATION_TYPE)
+}
+
+export const approveApplication = (
+  application: CompanyApplication,
+  applicationApi: ApplicationAPI,
+  ssn: string,
+) => {
+  if (application.state !== 'pending') {
+    throw new Error(
+      `Cannot approve an application in the ${application.state} state`,
+    )
+  }
+
+  return applicationApi.updateApplication<CompanyApplication>(
+    application.id,
+    'manual-approved',
+    ssn,
+  )
+}
+
+export const rejectApplication = (
+  application: CompanyApplication,
+  applicationApi: ApplicationAPI,
+  ssn: string,
+) => {
+  if (application.state !== 'pending') {
+    throw new Error(
+      `Cannot reject an application in the ${application.state} state`,
+    )
+  }
+
+  return applicationApi.updateApplication<CompanyApplication>(
+    application.id,
+    'rejected',
+    ssn,
+  )
 }

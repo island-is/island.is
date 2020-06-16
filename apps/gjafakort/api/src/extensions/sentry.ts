@@ -1,6 +1,5 @@
 import { Application } from 'express'
 import { ApolloServerPlugin } from 'apollo-server-plugin-base'
-import { AuthenticationError, ForbiddenError } from 'apollo-server-express'
 import * as Sentry from '@sentry/node'
 
 import { environment } from '../environments'

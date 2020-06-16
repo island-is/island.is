@@ -6,5 +6,6 @@ export const Types = {
 export const States = {
   PENDING: 'pending',
   APPROVED: 'approved',
+  MANUAL_APPROVED: 'manual-approved',
   REJECTED: 'rejected',
 }

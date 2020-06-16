@@ -45,3 +45,10 @@ export const updateApplication = (
   })
   return application.update({ state, data: mergedData })
 }
+
+export const updateApplicationState = (
+  application: Application,
+  state: string,
+): Application => {
+  return application.update({ state })
+}

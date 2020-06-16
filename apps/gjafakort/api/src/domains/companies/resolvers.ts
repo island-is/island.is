@@ -98,6 +98,50 @@ class CompanyResolver {
   }
 
   @authorize({ role: 'admin' })
+  public async approveCompanyApplication(
+    _,
+    { input: { id } },
+    { user, dataSources: { applicationApi } },
+  ) {
+    let application = await applicationApi.getApplication(id)
+    if (!application) {
+      throw new ForbiddenError('Application not found!')
+    }
+
+    application = await companyService.approveApplication(
+      application,
+      applicationApi,
+      user.ssn,
+    )
+
+    return {
+      application: formatApplication(application),
+    }
+  }
+
+  @authorize({ role: 'admin' })
+  public async rejectCompanyApplication(
+    _,
+    { input: { id } },
+    { user, dataSources: { applicationApi } },
+  ) {
+    let application = await applicationApi.getApplication(id)
+    if (!application) {
+      throw new ForbiddenError('Application not found!')
+    }
+
+    application = await companyService.rejectApplication(
+      application,
+      applicationApi,
+      user.ssn,
+    )
+
+    return {
+      application: formatApplication(application),
+    }
+  }
+
+  @authorize({ role: 'admin' })
   public async getCompanyApplications(
     _1,
     _2,
@@ -117,6 +161,8 @@ export default {
   },
   Mutation: {
     createCompanyApplication: resolver.createCompanyApplication,
+    approveCompanyApplication: resolver.approveCompanyApplication,
+    rejectCompanyApplication: resolver.rejectCompanyApplication,
   },
 
   Company: {
