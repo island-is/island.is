@@ -1,4 +1,4 @@
-import { UserInputError } from 'apollo-server-express'
+import { ApolloError, UserInputError } from 'apollo-server-express'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import { authorize } from '../auth'
@@ -17,6 +17,14 @@ const validateMobile = (mobile: string) => {
     mobileNumber: phone.nationalNumber.toString(),
     countryCode: phone.countryCallingCode.toString(),
   }
+}
+
+const getApplication = async (userSSN, applicationApi) => {
+  const application = await userService.getApplication(userSSN, applicationApi)
+  if (!application) {
+    throw new ApolloError('Application does not exist')
+  }
+  return application
 }
 
 class UserResolver {
@@ -54,6 +62,7 @@ class UserResolver {
       countryCode,
       applicationApi,
     )
+
     return {
       application: {
         id: application.id,
@@ -64,9 +73,15 @@ class UserResolver {
   }
 
   @authorize({ role: 'tester' })
-  public async getGiftCards(_1, args, { user, dataSources: { yayApi } }) {
-    const mobile = user.mobile || args.mobile
-    const { mobileNumber, countryCode } = validateMobile(mobile)
+  public async getGiftCards(
+    _1,
+    _2,
+    { user, dataSources: { applicationApi, yayApi } },
+  ) {
+    const application = await getApplication(user.ssn, applicationApi)
+    const {
+      data: { mobileNumber, countryCode },
+    } = application
     const giftCards = await yayApi.getGiftCards(mobileNumber, countryCode)
     return giftCards.map((giftCard) => ({
       giftCardId: giftCard.giftCardId,
@@ -76,9 +91,15 @@ class UserResolver {
   }
 
   @authorize({ role: 'tester' })
-  public async getGiftCardCode(_1, args, { user, dataSources: { yayApi } }) {
-    const mobile = user.mobile || args.mobile
-    const { mobileNumber, countryCode } = validateMobile(mobile)
+  public async getGiftCardCode(
+    _1,
+    args,
+    { user, dataSources: { applicationApi, yayApi } },
+  ) {
+    const application = await getApplication(user.ssn, applicationApi)
+    const {
+      data: { mobileNumber, countryCode },
+    } = application
     const giftCardCode = await yayApi.getGiftCardCode(
       args.giftCardId,
       mobileNumber,
