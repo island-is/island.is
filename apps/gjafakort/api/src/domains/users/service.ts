@@ -19,7 +19,7 @@ export const getApplication = async (
   userSSN: string,
   applicationApi: ApplicationAPI,
 ) => {
-  return applicationApi.getApplication<UserApplication>(
+  return applicationApi.getApplicationByType<UserApplication>(
     APPLICATION_TYPE,
     userSSN,
   )

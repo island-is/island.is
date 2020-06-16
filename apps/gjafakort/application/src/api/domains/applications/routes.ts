@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { param, body, validationResult } from 'express-validator'
+import { param, body, validationResult, query } from 'express-validator'
 
 import { consts } from '../common'
 import * as applicationService from './service'
@@ -8,15 +8,15 @@ import { service as auditService } from '../audit'
 const router = Router()
 
 router.get(
-  '/:type',
-  [param('type').isIn(Object.values(consts.Types))],
+  '/',
+  [query('type').isIn(Object.values(consts.Types))],
   async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() })
     }
 
-    const { type } = req.params
+    const { type } = req.query
     const applications = await applicationService.getApplicationsByType(type)
 
     return res.status(200).json({ applications })

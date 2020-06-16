@@ -37,7 +37,7 @@ class ApplicationAPI extends RESTDataSource {
     return res.application
   }
 
-  async getApplication<T extends Application>(
+  async getApplicationByType<T extends Application>(
     applicationType: T['type'],
     issuerSSN: string,
   ): Promise<T> {
@@ -54,7 +54,7 @@ class ApplicationAPI extends RESTDataSource {
   async getApplications<T extends Application>(
     applicationType: T['type'],
   ): Promise<[T]> {
-    const res = await this.get(`applications/${applicationType}`)
+    const res = await this.get(`applications?type=${applicationType}`)
     return res.applications
   }
 
