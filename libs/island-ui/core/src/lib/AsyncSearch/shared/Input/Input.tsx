@@ -1,6 +1,5 @@
 import React from 'react'
 import cn from 'classnames'
-
 import * as styles from './Input.treat'
 
 export const Input = ({ isOpen, colored, hasLabel, size, ...props }) => {

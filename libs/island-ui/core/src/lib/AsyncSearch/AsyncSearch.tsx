@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import Downshift from 'downshift'
+import React, { forwardRef, useState } from 'react'
+import Downshift, { DownshiftProps } from 'downshift'
 import cn from 'classnames'
 import { Input, Label, Menu, Item } from './shared'
 import { Icon } from '../..'
@@ -25,73 +25,82 @@ export interface AsyncSearchProps {
   onInputValueChange?: (inputValue: string, stateAndHelpers: object) => void
 }
 
-export const AsyncSearch = ({
-  label,
-  placeholder,
-  size = 'medium',
-  colored,
-  options,
-  loading,
-  onChange,
-  onInputValueChange,
-}: AsyncSearchProps) => {
-  const [focused, setFocused] = useState<boolean>(false)
+export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
+  (
+    {
+      label,
+      placeholder,
+      size = 'medium',
+      colored,
+      options,
+      loading,
+      onChange,
+      onInputValueChange,
+    },
+    ref,
+  ) => {
+    const [focused, setFocused] = useState<boolean>(false)
 
-  const onBlur = () => setFocused(false)
-  const onFocus = () => setFocused(true)
+    const onBlur = () => setFocused(false)
+    const onFocus = () => setFocused(true)
 
-  return (
-    <Downshift
-      onChange={onChange}
-      onInputValueChange={onInputValueChange}
-      itemToString={(item: AsyncSearchOption) => (item ? item.label : '')}
-    >
-      {({
-        getInputProps,
-        getItemProps,
-        getLabelProps,
-        getMenuProps,
-        getToggleButtonProps,
-        isOpen,
-        highlightedIndex,
-        getRootProps,
-      }) => {
-        const hasLabel = size === 'large' && label
-        const shouldShowItems = options.length > 0 && isOpen
+    return (
+      <Downshift
+        onChange={onChange}
+        onInputValueChange={onInputValueChange}
+        itemToString={(item: AsyncSearchOption) => (item ? item.label : '')}
+      >
+        {({
+          getInputProps,
+          getItemProps,
+          getLabelProps,
+          getMenuProps,
+          getToggleButtonProps,
+          isOpen,
+          highlightedIndex,
+          getRootProps,
+        }) => {
+          const hasLabel = Boolean(size === 'large' && label)
+          const shouldShowItems = options.length > 0 && isOpen
 
-        return (
-          <div
-            className={cn(styles.wrapper, {
-              [styles.focused]: shouldShowItems || focused,
-              [styles.open]: shouldShowItems,
-            })}
-          >
+          return (
             <div
-              {...getRootProps({ refKey: 'ref' }, { suppressRefError: true })}
+              ref={ref}
+              className={cn(styles.wrapper, {
+                [styles.focused]: shouldShowItems || focused,
+                [styles.open]: shouldShowItems,
+              })}
             >
-              <Input
-                {...getInputProps({ onFocus, onBlur })}
-                isOpen={shouldShowItems}
-                colored={colored}
-                hasLabel={hasLabel}
-                size={size}
-                placeholder={placeholder}
-              />
-              {loading && (
-                <span className={styles.icon}>
-                  <Icon spin type="loading" width={24} />
-                </span>
-              )}
-              {!loading && (
-                <button className={styles.icon} {...getToggleButtonProps()}>
-                  <Icon type="search" width={20} />
-                </button>
-              )}
-            </div>
-            {hasLabel && <Label {...getLabelProps()}>{label}</Label>}
-            {shouldShowItems && (
-              <Menu {...getMenuProps({})} isOpen={isOpen}>
-                {isOpen
+              <div
+                {...getRootProps(
+                  { refKey: 'ref' },
+                  {
+                    suppressRefError: true,
+                  },
+                )}
+              >
+                <Input
+                  {...getInputProps({ onFocus, onBlur })}
+                  isOpen={shouldShowItems}
+                  colored={colored}
+                  hasLabel={hasLabel}
+                  size={size}
+                  placeholder={placeholder}
+                />
+                {loading && (
+                  <span className={styles.icon}>
+                    <Icon spin type="loading" width={24} />
+                  </span>
+                )}
+                {!loading && (
+                  <button className={styles.icon} {...getToggleButtonProps()}>
+                    <Icon type="search" width={20} />
+                  </button>
+                )}
+              </div>
+              {hasLabel && <Label {...getLabelProps()}>{label}</Label>}
+              <Menu {...getMenuProps({ refKey: 'ref' })} isOpen={isOpen}>
+                {shouldShowItems
                   ? options.map((item, index) => (
                       <Item
                         index={index}
@@ -111,12 +120,12 @@ export const AsyncSearch = ({
                     ))
                   : null}
               </Menu>
-            )}
-          </div>
-        )
-      }}
-    </Downshift>
-  )
-}
+            </div>
+          )
+        }}
+      </Downshift>
+    )
+  },
+)
 
 export default AsyncSearch
