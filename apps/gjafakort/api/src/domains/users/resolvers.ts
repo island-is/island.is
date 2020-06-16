@@ -4,15 +4,6 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { authorize } from '../auth'
 import * as userService from './service'
 import { CreateUserApplicationInput } from '../../types'
-import { environment } from '../../environments'
-
-const { production } = environment
-
-const onlyOnDev = () => {
-  if (production) {
-    throw new Error('This feature is not enabled on production.')
-  }
-}
 
 const validateMobile = (mobile: string) => {
   if (!mobile) {
@@ -29,14 +20,12 @@ const validateMobile = (mobile: string) => {
 }
 
 class UserResolver {
-  @authorize()
+  @authorize({ role: 'tester' })
   public async getUserApplication(
     _1,
     _2,
     { user, dataSources: { applicationApi } },
   ) {
-    onlyOnDev()
-
     const application = await userService.getApplication(
       user.ssn,
       applicationApi,
@@ -51,14 +40,12 @@ class UserResolver {
     }
   }
 
-  @authorize()
+  @authorize({ role: 'tester' })
   public async createUserApplication(
     _1,
     { input }: { input: CreateUserApplicationInput },
     { user, dataSources: { applicationApi } },
   ) {
-    onlyOnDev()
-
     const mobile = user.mobile || input.mobile
     const { mobileNumber, countryCode } = validateMobile(mobile)
     const application = await userService.createApplication(
@@ -76,10 +63,8 @@ class UserResolver {
     }
   }
 
-  @authorize()
+  @authorize({ role: 'tester' })
   public async getGiftCards(_1, args, { user, dataSources: { yayApi } }) {
-    onlyOnDev()
-
     const mobile = user.mobile || args.mobile
     const { mobileNumber, countryCode } = validateMobile(mobile)
     const giftCards = await yayApi.getGiftCards(mobileNumber, countryCode)
@@ -90,10 +75,8 @@ class UserResolver {
     }))
   }
 
-  @authorize()
+  @authorize({ role: 'tester' })
   public async getGiftCardCode(_1, args, { user, dataSources: { yayApi } }) {
-    onlyOnDev()
-
     const mobile = user.mobile || args.mobile
     const { mobileNumber, countryCode } = validateMobile(mobile)
     const giftCardCode = await yayApi.getGiftCardCode(
