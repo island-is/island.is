@@ -40,11 +40,22 @@ export const GiftCardCode = gql`
 
 const formatNumber = (numb) => numb.toLocaleString('de-DE')
 
-const Barcode = () => {
+export interface BarcodeProps {
+  shouldPoll: boolean
+}
+
+const Barcode = ({ shouldPoll }: BarcodeProps) => {
   const [current, send] = useMachine(barcodeMachine, {
     devTools: true,
   })
-  const { data } = useQuery(GetGiftCards)
+  const { data, stopPolling } = useQuery(GetGiftCards, {
+    pollInterval: shouldPoll ? 2000 : 0,
+    onCompleted: (data) => {
+      if (shouldPoll && data?.giftCards.length > 0) {
+        stopPolling()
+      }
+    },
+  })
   const [getGiftCardCode] = useLazyQuery(GiftCardCode, {
     fetchPolicy: 'network-only',
     onCompleted: ({ giftCardCode: { code, expiryDate, pollingUrl } }) => {

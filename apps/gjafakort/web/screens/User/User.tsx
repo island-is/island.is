@@ -36,7 +36,9 @@ const CreateUserApplicationMutation = gql`
 `
 
 function User() {
-  const [createUserApplication] = useMutation(CreateUserApplicationMutation)
+  const [createUserApplication, { called: shouldPoll }] = useMutation(
+    CreateUserApplicationMutation,
+  )
   const createUserApp = async () => {
     await createUserApplication({
       variables: {
@@ -46,12 +48,9 @@ function User() {
       },
     })
   }
-  const { stopPolling } = useQuery(GetUserApplication, {
-    pollInterval: 4000,
+  useQuery(GetUserApplication, {
     onCompleted: (data) => {
-      if (data.userApplication) {
-        stopPolling()
-      } else {
+      if (!data.userApplication) {
         createUserApp()
       }
     },
@@ -122,7 +121,7 @@ function User() {
                   strikamerkinu sem gjafakóða á vefsíðum
                   ferðaþjónustufyrirtækja.
                 </Typography>
-                <Barcode />
+                <Barcode shouldPoll={shouldPoll} />
               </Stack>
             </Box>
           </Column>
