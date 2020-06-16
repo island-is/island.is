@@ -70,9 +70,9 @@ function User() {
                   Til að nota Ferðagjöfina sækir þú smáforritið Ferðagjöf, sem
                   er fáanlegt bæði fyrir Apple iOS og Android snjalltæki. Í
                   smáforritinu getur þú nýtt gjafakortið, séð yfirlit yfir
-                  ferðaþjónustufyrirtæki eða gefið gjöfina áfram. Ef þú kýst að
-                  sækja ekki smáforritið má búa til gjafakóða á strikamerki hér
-                  að neðan.
+                  ferðaþjónustufyrirtæki eða gefið öðrum Ferðagjöfina. Ef þú
+                  kýst að sækja ekki smáforritið má búa til gjafakóða á
+                  strikamerki hér að neðan.
                 </Typography>
               </Stack>
             </Box>
@@ -84,11 +84,11 @@ function User() {
             >
               <Stack space={3}>
                 <Typography variant="h4" as="h2">
-                  Sæktu smáforritð fyrir Apple iOS eða Android.
+                  Sæktu smáforritið fyrir Apple iOS eða Android.
                 </Typography>
                 <Typography variant="p">
-                  Einnig er hægt að leita að “Ferðagjöf” inni á Apple App Store
-                  og Google Play.
+                  Einnig er hægt að leita að „Ferðagjöf“ inni á Apple App Store
+                  og Google Play Store.
                 </Typography>
                 <Box marginTop={3}>
                   <Tiles space={4} columns={[1, 2, 3]}>
@@ -117,15 +117,16 @@ function User() {
                 </Typography>
                 <Typography variant="intro">
                   Til að nota gjöfina getur þú sýnt söluaðila strikamerkið á
-                  farsímanum þínu. Hjá völdum aðilum getur þú nýtt númerið á
+                  farsímanum þínum. Hjá völdum aðilum getur þú nýtt númerið á
                   strikamerkinu sem gjafakóða á vefsíðum
                   ferðaþjónustufyrirtækja.
                 </Typography>
-                <Barcode shouldPoll={shouldPoll} />
               </Stack>
+              <Box marginTop={5}>
+                <Barcode shouldPoll={shouldPoll} />
+              </Box>
             </Box>
           </Column>
-
           <Column width="1/3">
             <Hidden below="lg">
               <Box textAlign="center" padding={3}>
