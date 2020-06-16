@@ -110,7 +110,7 @@ export const approveApplication = (
     )
   }
 
-  return applicationApi.updateApplication(
+  return applicationApi.updateApplication<CompanyApplication>(
     application.id,
     'manual-approved',
     ssn,
@@ -128,5 +128,9 @@ export const rejectApplication = (
     )
   }
 
-  return applicationApi.updateApplication(application.id, 'rejected', ssn)
+  return applicationApi.updateApplication<CompanyApplication>(
+    application.id,
+    'rejected',
+    ssn,
+  )
 }

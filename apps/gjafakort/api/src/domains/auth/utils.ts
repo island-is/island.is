@@ -39,14 +39,15 @@ const checkPermissions = (user: User, { role }: Permissions): boolean => {
       ].includes(user.ssn)
     case 'tester':
       return [
-        // Stafrænt Ísland
+        /* Stafrænt Ísland */
         '1501933119', // Darri
         '2101932009', // David
         '2501893469', // Brian
         '2607862299', // Þórhildur
         '1903795829', // Örvar
         '0412824449', // Andri
-        // Yay
+
+        /* Yay */
         '1008763619', // Ari
         '2001764999', // Ragnar
         '0709902539', // Björn

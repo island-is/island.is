@@ -103,22 +103,19 @@ class CompanyResolver {
     { input: { id } },
     { user, dataSources: { applicationApi } },
   ) {
-    const application = await applicationApi.getApplication(id)
+    let application = await applicationApi.getApplication(id)
     if (!application) {
       throw new ForbiddenError('Application not found!')
     }
 
-    await companyService.approveApplication(
+    application = await companyService.approveApplication(
       application,
       applicationApi,
       user.ssn,
     )
 
     return {
-      application: formatApplication({
-        ...application,
-        state: 'manual-approved',
-      }),
+      application: formatApplication(application),
     }
   }
 
@@ -128,19 +125,19 @@ class CompanyResolver {
     { input: { id } },
     { user, dataSources: { applicationApi } },
   ) {
-    const application = await applicationApi.getApplication(id)
+    let application = await applicationApi.getApplication(id)
     if (!application) {
       throw new ForbiddenError('Application not found!')
     }
 
-    await companyService.rejectApplication(
+    application = await companyService.rejectApplication(
       application,
       applicationApi,
       user.ssn,
     )
 
     return {
-      application: formatApplication({ ...application, state: 'rejected' }),
+      application: formatApplication(application),
     }
   }
 
