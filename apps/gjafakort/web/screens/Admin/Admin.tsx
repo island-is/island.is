@@ -179,10 +179,13 @@ function Admin() {
                 </Box>
               </Box>
               <Box marginBottom={8}>
-
                 <Box>
                   <Accordion dividerOnTop={false} dividerOnBottom={false}>
-                    <AccordionItem label="Skoða atburðarsögu" labelVariant="h5" id={application.id}>
+                    <AccordionItem
+                      label="Skoða atburðarsögu"
+                      labelVariant="h5"
+                      id={application.id}
+                    >
                       <Stack space="gutter">
                         {application.logs.map((log) => (
                           <Box key={log.id}>
