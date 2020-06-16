@@ -9,8 +9,8 @@ import { useI18n } from '@island.is/gjafakort-web/i18n'
 import { ContentLoader, FormLayout } from '@island.is/gjafakort-web/components'
 import { SelectionForm, NoConnection } from './components'
 
-const GetCompaniesQuery = gql`
-  query GetCompaniesQuery {
+const CompaniesQuery = gql`
+  query CompaniesQuery {
     companies {
       ssn
       name
@@ -23,7 +23,7 @@ function Companies() {
     t: { application: t, routes },
   } = useI18n()
   const router = useRouter()
-  const { data, loading } = useQuery(GetCompaniesQuery)
+  const { data, loading } = useQuery(CompaniesQuery)
   const { companies } = data || {}
   const onSubmit = ({ ssn }) => {
     router.push(`${routes.companies.application}/${ssn}`)

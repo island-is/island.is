@@ -8,12 +8,12 @@ import {
   Typography,
 } from '@island.is/island-ui/core'
 
-export interface ErrorPanelProps {
+interface PropTypes {
   title?: string
   message?: string
 }
 
-export const ErrorPanel = ({ title, message }: ErrorPanelProps) => {
+function ErrorPanel({ title, message }: PropTypes) {
   return (
     <Box
       background="red100"

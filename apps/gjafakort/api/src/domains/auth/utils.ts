@@ -51,6 +51,8 @@ const checkPermissions = (user: User, { role }: Permissions): boolean => {
         '1008763619', // Ari
         '2001764999', // Ragnar
         '0709902539', // Björn
+
+        '0101303019',
       ].includes(user.ssn)
     default:
       return true

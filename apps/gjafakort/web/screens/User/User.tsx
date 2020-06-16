@@ -1,4 +1,7 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { useQuery, useMutation } from 'react-apollo'
+import gql from 'graphql-tag'
+
 import {
   Box,
   Column,
@@ -9,16 +12,17 @@ import {
   Tiles,
   Typography,
 } from '@island.is/island-ui/core'
+
 import packageSvg from '@island.is/gjafakort-web/assets/ferdagjof-pakki.svg'
 import appleSvg from '@island.is/gjafakort-web/assets/appstore.svg'
 import googlePlaySvg from '@island.is/gjafakort-web/assets/googlePlay.svg'
-import { Barcode } from './components/Barcode'
+import { UserContext } from '@island.is/gjafakort-web/context'
+import { ContentLoader } from '@island.is/gjafakort-web/components'
 
-import { useQuery, useMutation } from 'react-apollo'
-import gql from 'graphql-tag'
+import { Barcode } from './components'
 
-export const GetUserApplication = gql`
-  query userApplicationQuery {
+export const UserApplicationQuery = gql`
+  query UserApplicationQuery {
     userApplication {
       id
     }
@@ -36,22 +40,43 @@ const CreateUserApplicationMutation = gql`
 `
 
 function User() {
+  const { user, loading } = useContext(UserContext)
+  console.log("*************", user)
+
+  /*
+   *
+   * TODO: split into components and check loading
+   *
+   */
+
+  if (loading || !user) {
+    return <ContentLoader />
+  }
+
+  if (!user.mobile) {
+    // TODO: separate component:
+    return (
+      <div>
+        What's your phone number bruuuuhhh? input box ; submit (set to context
+        with setUser)
+      </div>
+    )
+  }
+
+  // TODO: separate component:
   const [createUserApplication, { called: shouldPoll }] = useMutation(
     CreateUserApplicationMutation,
   )
-  const createUserApp = async () => {
-    await createUserApplication({
-      variables: {
-        input: {
-          mobile: '',
-        },
-      },
-    })
-  }
-  useQuery(GetUserApplication, {
-    onCompleted: (data) => {
+  useQuery(UserApplicationQuery, {
+    onCompleted: async (data) => {
       if (!data.userApplication) {
-        createUserApp()
+        await createUserApplication({
+          variables: {
+            input: {
+              mobile: user.mobile,
+            },
+          },
+        })
       }
     },
   })

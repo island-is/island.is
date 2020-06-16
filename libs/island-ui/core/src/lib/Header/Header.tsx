@@ -10,12 +10,14 @@ export interface HeaderPorps {
   authenticated?: boolean
   onLogout?: () => void
   logoutText?: string
+  userName?: string
 }
 
 export const Header = ({
   logoRender,
   authenticated,
   onLogout,
+  userName = '',
   logoutText = 'Útskrá',
 }: HeaderPorps) => {
   const LogoIcon = <Logo width={160} />
@@ -29,9 +31,12 @@ export const Header = ({
     <div className={styles.container}>
       {logo()}{' '}
       {authenticated && (
-        <Button variant="menu" leftIcon="user" onClick={onLogout}>
-          {logoutText}
-        </Button>
+        <div>
+          {userName}
+          <Button variant="menu" leftIcon="user" onClick={onLogout}>
+            {logoutText}
+          </Button>
+        </div>
       )}
     </div>
   )

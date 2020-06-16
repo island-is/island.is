@@ -7,8 +7,8 @@ import { ApplicationStates } from '@island.is/gjafakort/consts'
 import { ContentLoader } from '@island.is/gjafakort-web/components'
 import { Signup, Congratulations, NotQualified } from './components'
 
-export const GetCompanyQuery = gql`
-  query GetCompanyQuery($ssn: String!) {
+export const CompanyQuery = gql`
+  query CompanyQuery($ssn: String!) {
     company(ssn: $ssn) {
       ssn
       name
@@ -35,7 +35,7 @@ function Company() {
   const [submission, setSubmission] = useState<
     'pending' | 'rejected' | 'approved'
   >(ApplicationStates.PENDING)
-  const { data, loading } = useQuery(GetCompanyQuery, { variables: { ssn } })
+  const { data, loading } = useQuery(CompanyQuery, { variables: { ssn } })
   const { company } = data || {}
 
   const onSubmit = (isSuccess: boolean) => {

@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react'
+import { useQuery, useLazyQuery } from 'react-apollo'
+import gql from 'graphql-tag'
 import { useMachine } from '@xstate/react'
-import jsbarcode from 'jsbarcode'
-import cn from 'classnames'
+
 import {
   Box,
   Stack,
@@ -12,25 +13,23 @@ import {
   Column,
   SkeletonLoader as SL,
 } from '@island.is/island-ui/core'
+
 import { ErrorPanel } from '@island.is/gjafakort-web/components'
+
 import { barcodeMachine } from './barcodeMachine'
-import { Countdown } from '../Countdown'
-import { barcodeSvg, invalidBarcode } from './Barcode.treat'
+import { Countdown, RenderBarcode } from '..'
 
-import { useQuery, useLazyQuery } from 'react-apollo'
-import gql from 'graphql-tag'
-
-export const GetGiftCards = gql`
-  query GetGiftCardsQuery {
-    giftCards(mobile: "") {
+export const GiftCardsQuery = gql`
+  query GiftCardsQuery {
+    giftCards {
       giftCardId
       amount
     }
   }
 `
-export const GiftCardCode = gql`
+export const GiftCardCodeQuery = gql`
   query GiftCardCodeQuery($giftCardId: Int!) {
-    giftCardCode(giftCardId: $giftCardId, mobile: "") {
+    giftCardCode(giftCardId: $giftCardId) {
       code
       expiryDate
       pollingUrl
@@ -40,15 +39,15 @@ export const GiftCardCode = gql`
 
 const formatNumber = (numb) => numb.toLocaleString('de-DE')
 
-export interface BarcodeProps {
+interface PropTypes {
   shouldPoll: boolean
 }
 
-const Barcode = ({ shouldPoll }: BarcodeProps) => {
+function Barcode({ shouldPoll }: PropTypes) {
   const [current, send] = useMachine(barcodeMachine, {
     devTools: true,
   })
-  const { data, stopPolling } = useQuery(GetGiftCards, {
+  const { data, stopPolling } = useQuery(GiftCardsQuery, {
     pollInterval: shouldPoll ? 2000 : 0,
     onCompleted: (data) => {
       if (shouldPoll && data?.giftCards.length > 0) {
@@ -56,7 +55,7 @@ const Barcode = ({ shouldPoll }: BarcodeProps) => {
       }
     },
   })
-  const [getGiftCardCode] = useLazyQuery(GiftCardCode, {
+  const [getGiftCardCode] = useLazyQuery(GiftCardCodeQuery, {
     fetchPolicy: 'network-only',
     onCompleted: ({ giftCardCode: { code, expiryDate, pollingUrl } }) => {
       send({
@@ -184,7 +183,7 @@ const Barcode = ({ shouldPoll }: BarcodeProps) => {
               <SL height={250} />
             ) : (
               <RenderBarcode
-                code={current.context.barcode}
+                code={current.context.barcode as string}
                 invalid={isInvalid}
               />
             )}
@@ -230,29 +229,6 @@ const Barcode = ({ shouldPoll }: BarcodeProps) => {
         </Box>
       </Column>
     </Columns>
-  )
-}
-
-const RenderBarcode = ({ code, invalid }) => {
-  const svgRef = useCallback(
-    (node) => {
-      if (node !== null) {
-        jsbarcode(node, code, {
-          font: 'IBM Plex Sans',
-          margin: 0,
-        })
-      }
-    },
-    [code],
-  )
-
-  return (
-    <svg
-      className={cn(barcodeSvg, {
-        [invalidBarcode]: invalid,
-      })}
-      ref={svgRef}
-    />
   )
 }
 

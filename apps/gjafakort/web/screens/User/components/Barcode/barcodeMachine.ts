@@ -43,7 +43,6 @@ const polling = (ctx) => (cb, onReceive) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
         cb({ type: 'POLLING_INFO', data })
       })
   fetchPollingUrl()
