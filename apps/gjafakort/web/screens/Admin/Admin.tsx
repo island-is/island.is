@@ -141,19 +141,19 @@ function Admin() {
           paddingY={[5, 9]}
           width="full"
         >
+          <Hidden above="md">
+            <Box marginBottom={6} width="full">
+              <ReviewStatus
+                approved={approvedApplications.length}
+                pending={applicationsLeft}
+                rejected={rejectedApplications.length}
+              />
+            </Box>
+          </Hidden>
           {!application ? (
             <NoApplications />
           ) : (
             <Box>
-              <Hidden above="md">
-                <Box marginBottom={3}>
-                  <ReviewStatus
-                    approved={approvedApplications.length}
-                    pending={applicationsLeft}
-                    rejected={rejectedApplications.length}
-                  />
-                </Box>
-              </Hidden>
               <Box marginBottom={2}>
                 <Box marginBottom={1}>
                   <Typography variant="h1" as="h1">
