@@ -6,7 +6,7 @@ import {
 import { logger } from '@island.is/logging'
 
 import { RoutingKeyError } from './errors'
-import { ferdalagApi } from './api'
+import { ferdalagApi, postApplicationAuditLog } from './api'
 
 export const exchangeName: GjafakortApplicationExchange =
   'gjafakort-application-updates'
@@ -30,7 +30,16 @@ export const handler = async (
   if (routingKey === 'gjafakort:approved') {
     await ferdalagApi.updateProvider(message)
   } else if (routingKey === 'gjafakort:manual-approved') {
-    await ferdalagApi.createProvider(message)
+    const providers = await ferdalagApi.getProviders(message)
+    if (providers.data.length === 0) {
+      await ferdalagApi.createProvider(message)
+    } else {
+      await postApplicationAuditLog(
+        message.id,
+        true,
+        `Found ${providers.data.length} providers, skipping create.`,
+      )
+    }
   } else {
     throw new RoutingKeyError(queueName, routingKey)
   }

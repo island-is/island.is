@@ -17,7 +17,7 @@ interface ApiParams {
   applicationId: string
 }
 
-const postApplicationAuditLog = async (
+export const postApplicationAuditLog = async (
   applicationId: string,
   success: boolean,
   description: string,
@@ -57,15 +57,20 @@ export const request = async ({
       fullUrl = `${fullUrl}?${urlParams.toString()}`
     }
 
-    const res = await fetch(fullUrl, {
+    const options = {
       method,
-      body,
       signal: timeoutSignal(SEVEN_SECONDS_TIMEOUT),
       headers: {
         'Content-Type': 'application/json',
         ...headers,
       },
-    })
+    }
+
+    if (body) {
+      options['body'] = body
+    }
+
+    const res = await fetch(fullUrl, options)
 
     data = await res.text()
     if (!res.ok) {
