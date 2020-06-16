@@ -5,7 +5,7 @@ import { createHttpLink } from 'apollo-link-http'
 import fetch from 'isomorphic-unfetch'
 import { BaseContext } from 'next/dist/next-server/lib/utils'
 
-const { serverRuntimeConfig, publicRuntimeConfig } = getConfig()
+const { publicRuntimeConfig } = getConfig()
 
 const isBrowser: boolean = process.browser
 
@@ -19,7 +19,7 @@ if (!isBrowser) {
 
 function create(initialState?: any, ctx?: BaseContext) {
   const httpLink = createHttpLink({
-    uri: serverRuntimeConfig.apiUrl || publicRuntimeConfig.apiUrl,
+    uri: publicRuntimeConfig.apiUrl,
   })
 
   // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
