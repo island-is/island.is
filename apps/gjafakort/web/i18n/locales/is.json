@@ -22,7 +22,7 @@
     "name": "Ferðaþjónustufyrirtæki",
     "title": "Ferðaþjónustufyrirtæki",
     "intro": "Ferðaþjónustufyrirtæki eru hvött til að taka þátt í Ferðagjöfinni og taka á móti landsmönnum á ferðalagi innanlands.",
-    "description": "Skráning fyrirtækja í Ferðagjöfina fer fram hér á Ísland.is.  Prókúruhafi fyrirtækis þarf að skrá þátttöku með innskráningu. Fyrirtæki fá sjálfvirka staðfestingu á skráningu og aðgang að vefsvæði þar sem hægt er að fylgjast með hversu margir hafa nýtt Ferðagjöfina hjá viðkomandi fyrirtæki.",
+    "description": "Skráning fyrirtækja í Ferðagjöfina fer fram hér á Ísland.is. Prókúruhafi fyrirtækis þarf að skrá þátttöku með innskráningu. Fyrirtæki fá sjálfvirka staðfestingu á skráningu og aðgang að vefsvæði þar sem hægt er að fylgjast með hversu margir hafa nýtt Ferðagjöfina hjá viðkomandi fyrirtæki.",
     "notes": {
       "label": "Fyrirtæki hafa þrjár leiðir til að móttaka Ferðagjöf:",
       "items": [
@@ -41,8 +41,8 @@
             [
               "Fyrirtæki með gilt leyfi Ferðamálastofu skv. III. kafla laga um Ferðamálastofu, nr. 96/2018.",
               "Fyrirtæki með gilt rekstrarleyfi skv. 7. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007.",
-              "Fyrirtæki með gilt starfsleyfi frá viðeigandi heilbrigðisnefnd sem hefur verið gefið út vegna veitingastaða í flokki I, sbr. 3. mgr. 4.  gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007.",
-              "Ökutækjaleigur með gilt starfsleyfi frá Samgöngustofu skv. 1. mgr.  3. gr. laga um leigu skráningarskyldra ökutækja, nr. 65/2015.",
+              "Fyrirtæki með gilt starfsleyfi frá viðeigandi heilbrigðisnefnd sem hefur verið gefið út vegna veitingastaða í flokki I, sbr. 3. mgr. 4. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007.",
+              "Ökutækjaleigur með gilt starfsleyfi frá Samgöngustofu skv. 1. mgr. 3. gr. laga um leigu skráningarskyldra ökutækja, nr. 65/2015.",
               "Söfn og fyrirtæki sem bjóða sýningu gegn endurgjaldi þar sem áhersla er á íslenska menningu, sögu eða náttúru."
             ],
             "Með fyrirvara um endanlega útfærslu frumvarps sem liggur fyrir á Alþingi. Nánari upplýsingar og spurningar varðandi þátttöku fyrirtækja beinast til Ferðamálastofu, <a href='mailto:grunnur@ferdamalastofa.is'>grunnur@ferdamalastofa.is</a>."
@@ -51,7 +51,7 @@
         {
           "label": "Hver er hámarksfjárhæð fyrirtækja?",
           "contents": [
-            "Ferðagjöfin felur í sér ríkisaðstoð í skilningi EES-samningsins.  Samkvæmt tímabundnum reglum um ríkisaðstoð til stuðnings hagkerfisins vegna yfirstandandi Covid-19 heimsfaraldurs, frá 19. mars 2020, er fyrirtæki heimilt að taka við samanlagt allt að 100 millj. kr.  greiðslu í formi ferðagjafa, að meðtalinni annarri ríkisaðstoð.  Fyrirtæki sem var í rekstrarerfiðleikum 31. desember 2019 í skilningi hópundanþágureglugerðar (ESB) nr. 651/2014 getur að hámarki tekið við samanlagt 25 millj. kr. greiðslu í formi ferðagjafa, að meðtalinni annarri ríkisaðstoð.",
+            "Ferðagjöfin felur í sér ríkisaðstoð í skilningi EES-samningsins. Samkvæmt tímabundnum reglum um ríkisaðstoð til stuðnings hagkerfisins vegna yfirstandandi Covid-19 heimsfaraldurs, frá 19. mars 2020, er fyrirtæki heimilt að taka við samanlagt allt að 100 millj. kr. greiðslu í formi ferðagjafa. Fyrirtæki sem var í rekstrarerfiðleikum 31. desember 2019 í skilningi hópundanþágureglugerðar (ESB) nr. 651/2014 getur að hámarki tekið við samanlagt 25 millj. kr. greiðslu í formi ferðagjafa.",
             "Fyrirtæki telst hafa verið í fjárhagserfiðleikum á þeim tímapunkti ef a.m.k. eitt af eftirfarandi skilyrðum er uppfyllt, samanber skilyrði í tímabundnum reglum um ríkisaðstoð til stuðnings hagkerfisins vegna yfirstandandi heimsfaraldurs, frá 19. mars 2020:",
             [
               "Um er að ræða félag með takmarkaðri ábyrgð og bókfært eigið fé þess, samkvæmt viðurkenndum reikningsskilaaðferðum, er orðið lægra en nemur helmingi innborgaðs hlutafjár að meðtöldum yfirverðsreikningi.",
@@ -210,8 +210,8 @@
       "conditions": [
         "Fyrirtækjum með gilt leyfi Ferðamálastofu skv. III. kafla laga um Ferðamálastofu, nr. 96/2018.",
         "Fyrirtækjum með gilt rekstrarleyfi skv. 7. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007.",
-        "Fyrirtækjum með gilt starfsleyfi frá viðeigandi heilbrigðisnefnd sem hefur verið gefið út vegna veitingastaða í flokki I, sbr. 3.  mgr. 4. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007.",
-        "Ökutækjaleigum með gilt starfsleyfi frá Samgöngustofu skv. 1. mgr.  3. gr. laga um leigu skráningarskyldra ökutækja, nr. 65/2015.",
+        "Fyrirtækjum með gilt starfsleyfi frá viðeigandi heilbrigðisnefnd sem hefur verið gefið út vegna veitingastaða í flokki I, sbr. 3. mgr. 4. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007.",
+        "Ökutækjaleigum með gilt starfsleyfi frá Samgöngustofu skv. 1. mgr. 3. gr. laga um leigu skráningarskyldra ökutækja, nr. 65/2015.",
         "Söfnum og fyrirtækjum sem bjóða sýningu gegn endurgjaldi þar sem áhersla er á íslenska menningu, sögu eða náttúru."
       ],
       "caption": "Nánari upplýsingar og spurningar varðandi þátttöku fyrirtækja beinast til Ferðamálastofu, <a href='mailto:grunnur@ferdamalastofa.is'>grunnur@ferdamalastofa.is</a>",
