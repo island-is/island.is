@@ -108,15 +108,27 @@ function Admin() {
   const application = applicationsLeft && pendingApplications[index]
 
   const onApprove = async () => {
-    await approveApplication({
+    const response = await approveApplication({
       variables: { input: { id: application.id } },
     })
+
+    if (!response.errors) {
+      if (index === applicationsLeft - 1) {
+        setIndex(Math.max(index - 1, 0))
+      }
+    }
   }
 
   const onReject = async () => {
-    await rejectApplication({
+    const response = await rejectApplication({
       variables: { input: { id: application.id } },
     })
+
+    if (!response.errors) {
+      if (index === applicationsLeft - 1) {
+        setIndex(Math.max(index - 1, 0))
+      }
+    }
   }
 
   return (
