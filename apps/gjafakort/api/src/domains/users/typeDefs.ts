@@ -28,8 +28,8 @@ export default gql`
   }
 
   extend type Query {
-    giftCardCode(giftCardId: Int!, mobile: String!): GiftCardCode
-    giftCards(mobile: String!): [GiftCard]
+    giftCardCode(giftCardId: Int!): GiftCardCode
+    giftCards: [GiftCard]
     userApplication: UserApplication
   }
 

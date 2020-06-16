@@ -12,6 +12,33 @@ export type Scalars = {
   StringTrimmed: any
 }
 
+export type AuthUser = {
+  __typename?: 'AuthUser'
+  ssn: Scalars['String']
+  name: Scalars['String']
+  mobile?: Maybe<Scalars['String']>
+}
+
+export type Query = {
+  __typename?: 'Query'
+  companies?: Maybe<Array<Maybe<Company>>>
+  company?: Maybe<Company>
+  companyApplications?: Maybe<Array<Maybe<CompanyApplication>>>
+  giftCardCode?: Maybe<GiftCardCode>
+  giftCards?: Maybe<Array<Maybe<GiftCard>>>
+  root?: Maybe<Scalars['String']>
+  user?: Maybe<AuthUser>
+  userApplication?: Maybe<UserApplication>
+}
+
+export type QueryCompanyArgs = {
+  ssn: Scalars['String']
+}
+
+export type QueryGiftCardCodeArgs = {
+  giftCardId: Scalars['Int']
+}
+
 export type Company = {
   __typename?: 'Company'
   ssn: Scalars['String']
@@ -71,30 +98,6 @@ export type CreateCompanyApplicationInput = {
 export type CreateCompanyApplication = {
   __typename?: 'CreateCompanyApplication'
   application?: Maybe<CompanyApplication>
-}
-
-export type Query = {
-  __typename?: 'Query'
-  companies?: Maybe<Array<Maybe<Company>>>
-  company?: Maybe<Company>
-  companyApplications?: Maybe<Array<Maybe<CompanyApplication>>>
-  giftCardCode?: Maybe<GiftCardCode>
-  giftCards?: Maybe<Array<Maybe<GiftCard>>>
-  root?: Maybe<Scalars['String']>
-  userApplication?: Maybe<UserApplication>
-}
-
-export type QueryCompanyArgs = {
-  ssn: Scalars['String']
-}
-
-export type QueryGiftCardCodeArgs = {
-  giftCardId: Scalars['Int']
-  mobile: Scalars['String']
-}
-
-export type QueryGiftCardsArgs = {
-  mobile: Scalars['String']
 }
 
 export type Mutation = {

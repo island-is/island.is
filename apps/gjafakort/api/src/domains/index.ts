@@ -9,7 +9,18 @@ import {
   resolvers as commonResolvers,
   typeDefs as commonTypeDefs,
 } from './common'
+import { resolvers as authResolvers, typeDefs as authTypeDefs } from './auth'
 
-export const resolvers = [companyResolvers, userResolvers, commonResolvers]
+export const resolvers = [
+  companyResolvers,
+  userResolvers,
+  commonResolvers,
+  authResolvers,
+]
 
-export const typeDefs = [companyTypeDefs, userTypeDefs, commonTypeDefs]
+export const typeDefs = [
+  companyTypeDefs,
+  userTypeDefs,
+  commonTypeDefs,
+  authTypeDefs,
+]
