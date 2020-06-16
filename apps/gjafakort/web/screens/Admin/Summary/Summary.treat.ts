@@ -37,3 +37,7 @@ globalStyle(`${tr} td`, {
 export const right = style({
   textAlign: 'right',
 })
+
+export const breakText = style({
+  wordBreak: 'break-all',
+})

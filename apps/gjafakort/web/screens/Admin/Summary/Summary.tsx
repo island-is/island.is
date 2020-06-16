@@ -84,7 +84,7 @@ function Summary() {
             <thead className={styles.thead}>
               <tr>
                 <th>Nafn fyrirtækis</th>
-                <th>Nafn tengiliða</th>
+                <th className={styles.breakText}>Nafn tengiliða</th>
                 <th>Netfang tengiliða</th>
                 <th>Staða umsóknar</th>
                 <th>Kennitala</th>
