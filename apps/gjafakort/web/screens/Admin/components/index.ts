@@ -1,1 +1,2 @@
-export { ApplicationTable } from './ApplicationTable'
+export { NoApplications } from './NoApplications'
+export { ReviewStatus } from './ReviewStatus'

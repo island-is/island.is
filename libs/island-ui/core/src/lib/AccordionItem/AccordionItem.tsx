@@ -8,11 +8,13 @@ import { hideFocusRingsClassName } from '../private/hideFocusRings/hideFocusRing
 import { Overlay } from '../private/Overlay/Overlay'
 import * as styles from './AccordionItem.treat'
 import { Typography } from '../Typography/Typography'
+import { VariantTypes } from '../Typography/Typography.treat'
 import { AccordionContext } from '../Accordion/Accordion'
 
 export type AccordionItemBaseProps = {
   id: string
   label: string
+  labelVariant?: VariantTypes
   visibleContent?: ReactNode
   children: ReactNode
   onClick?: () => void
@@ -49,6 +51,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
     {
       id,
       label,
+      labelVariant = 'h3',
       visibleContent,
       expanded: expandedProp,
       onToggle,
@@ -117,7 +120,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
           >
             <Columns space={2} alignY="center">
               <Column>
-                <Typography variant="h3" as="h3">
+                <Typography variant={labelVariant} as="h3">
                   {label}
                 </Typography>
               </Column>
