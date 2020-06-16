@@ -44,3 +44,14 @@ export const updateProvider = (message: GjafakortCompanyApplicationMessage) => {
     body: JSON.stringify(formatBody(message)),
   })
 }
+
+export const getProviders = (message: GjafakortCompanyApplicationMessage) => {
+  return request({
+    applicationId: message.id,
+    method: 'GET',
+    url: `${url}/ssn/${message.issuerSSN}`,
+    query: {
+      key: apiKey,
+    },
+  })
+}
