@@ -1,7 +1,7 @@
 import { createClient, EntryCollection } from 'contentful'
 
 const space = '8k0h54kbe6bj'
-const accessToken = 'C7qk3hTvN5Bu0gUOU1kAXdVuiV22exOcH3uOPJ4nvKY'
+const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 
 if (!space || !accessToken) {
   throw new Error('Missing Contentful environment variables')
