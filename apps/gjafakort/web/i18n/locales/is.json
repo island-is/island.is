@@ -7,6 +7,8 @@
   "error": {
     "title": "Villa kom upp",
     "intro": "Eitthvað hefur farið úrskeiðis, vinsamlega reyndu aftur",
+    "introKennitalaIsNotAPerson": "Kennitala sem var notuð við innskráningu passar ekki við einstakling. Nauðsynlegt er að skrá sig inn með kennitölu einstaklings en ekki fyrirtækis.",
+    "introUserNotOldEnough": "Notandi er ekki nógu gamall til þess að taka þátt í Ferðagjöfinni.",
     "button": "Aftur heim"
   },
   "errorBoundary": {

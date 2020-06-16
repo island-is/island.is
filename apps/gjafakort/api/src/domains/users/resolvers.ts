@@ -59,8 +59,6 @@ class UserResolver {
   ) {
     onlyOnDev()
 
-    // TODO check if user is eligible for ferdagjof (age, etc.)
-
     const mobile = user.mobile || input.mobile
     const { mobileNumber, countryCode } = validateMobile(mobile)
     const application = await userService.createApplication(

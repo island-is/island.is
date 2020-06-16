@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 import {
   Box,
@@ -15,6 +16,16 @@ function ErrorPage() {
     t: { error: t, routes },
   } = useI18n()
 
+  const router = useRouter()
+  const { errorType } = router.query
+
+  let intro = t.intro
+  if (errorType === 'kennitalaIsNotAPerson') {
+    intro = t.introKennitalaIsNotAPerson
+  } else if (errorType === 'userNotOldEnough') {
+    intro = t.introUserNotOldEnough
+  }
+
   return (
     <Box marginTop={12}>
       <ContentBlock width="large">
@@ -24,7 +35,7 @@ function ErrorPage() {
           </Typography>
         </Box>
         <Box marginBottom={9}>
-          <Typography variant="intro">{t.intro}</Typography>
+          <Typography variant="intro">{intro}</Typography>
         </Box>
         <Link href={routes.home}>
           <span>
