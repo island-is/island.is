@@ -83,11 +83,13 @@ class UserResolver {
       data: { mobileNumber, countryCode },
     } = application
     const giftCards = await yayApi.getGiftCards(mobileNumber, countryCode)
-    return giftCards.map((giftCard) => ({
-      giftCardId: giftCard.giftCardId,
-      amount: giftCard.amount,
-      applicationId: giftCard.identifier,
-    }))
+    return giftCards
+      .filter((giftCard) => giftCard.identifier === application.id)
+      .map((giftCard) => ({
+        giftCardId: giftCard.giftCardId,
+        amount: giftCard.amount,
+        applicationId: giftCard.identifier,
+      }))
   }
 
   @authorize({ role: 'tester' })
