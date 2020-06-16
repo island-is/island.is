@@ -34,30 +34,24 @@ import { Machine, assign } from 'xstate'
 // explanation that code got expired
 // button to get new code > active state
 
-// const fetchBarcode = (ctx) => fetch(`/api/v1/GiftCardCode/${ctx.id}/${ctx.countryCode}-${ctx.mobileNumber}`).then(response => response.json());
-
-const fetchBarcodeTemp = (ctx) => {
-  console.log(ctx.giftCard.id)
-  const date = new Date()
-  if (ctx.giftCard.id === '2') {
-    return fetch('https://app.fakesfasdfjson.com/q').then((response) =>
-      response.json(),
-    )
-  }
-  return fetch('https://app.fakejson.com/q', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      token: '8cold84i0LC3bHfNfnIfYA',
-      data: {
-        code: '46834268',
-        expiryDate: new Date(date.getTime() + 5000),
-        pollingUrl: 'test',
+const polling = (ctx) => (cb, onReceive) => {
+  const fetchPollingUrl = () =>
+    fetch(ctx.pollingUrl, {
+      headers: {
+        'Content-Type': 'application/json',
       },
-    }),
-  }).then((response) => response.json())
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        cb({ type: 'POLLING_INFO', data })
+      })
+  fetchPollingUrl()
+  onReceive((event) => {
+    if (event === 'POLL') {
+      fetchPollingUrl()
+    }
+  })
 }
 
 const tick = () => (cb) => {
@@ -88,7 +82,13 @@ type ActionEvents =
   | { type: 'TICK' }
   | { type: 'USE_BARCODE' }
   | { type: 'BACK_TO_LIST' }
-  | { type: 'RETRY_BARCODE' }
+  | {
+      type: 'SUCCESS'
+      expiryDate: Date
+      code: string | number
+      pollingUrl: string
+    }
+  | { type: 'ERROR' }
 
 interface BarcodeContext {
   elapsed: number
@@ -129,38 +129,46 @@ export const barcodeMachine = Machine<
         },
       },
       loading: {
-        invoke: {
-          id: 'getBarcode',
-          src: fetchBarcodeTemp,
-          onDone: {
-            target: 'active',
+        on: {
+          SUCCESS: {
+            target: 'active.polling',
             actions: assign({
               secondsToExpiry: (ctx, event) => {
                 const now = new Date()
-                const expiryDate = new Date(event.data.expiryDate)
+                const expiryDate = new Date(event.expiryDate)
                 const secondsToExpiry = Math.abs(
                   (expiryDate.getTime() - now.getTime()) / 1000,
                 )
                 return secondsToExpiry
               },
-              expiryDate: (ctx, event) => event.data.expiryDate,
-              barcode: (ctx, event) => event.data.code,
-              pollingUrl: (ctx, event) => event.data.pollingUrl,
+              expiryDate: (ctx, event) => event.expiryDate,
+              barcode: (ctx, event) => event.code,
+              pollingUrl: (ctx, event) => event.pollingUrl,
             }),
           },
-          onError: {
-            target: 'error',
-            actions: assign({ error: (ctx, event) => event.data }),
-          },
+          ERROR: 'error',
         },
       },
       active: {
         entry: assign({
           elapsed: 0,
         }),
-        invoke: {
-          id: 'timerTick',
-          src: tick,
+        invoke: [
+          {
+            id: 'timerTick',
+            src: tick,
+          },
+          {
+            id: 'pollingUrl',
+            src: polling,
+          },
+        ],
+        states: {
+          polling: {
+            after: {
+              4000: { actions: 'POLL' },
+            },
+          },
         },
         on: {
           TICK: {
@@ -176,7 +184,7 @@ export const barcodeMachine = Machine<
       success: {},
       invalid: {
         on: {
-          RETRY_BARCODE: 'loading',
+          GET_BARCODE: 'loading',
         },
       },
       error: {},

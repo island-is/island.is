@@ -14,7 +14,49 @@ import appleSvg from '@island.is/gjafakort-web/assets/appstore.svg'
 import googlePlaySvg from '@island.is/gjafakort-web/assets/googlePlay.svg'
 import { Barcode } from './components/Barcode'
 
+import { useQuery, useMutation } from 'react-apollo'
+import gql from 'graphql-tag'
+
+export const GetUserApplication = gql`
+  query userApplicationQuery {
+    userApplication {
+      id
+    }
+  }
+`
+
+const CreateUserApplicationMutation = gql`
+  mutation CreateUserApplicationMutation($input: CreateUserApplicationInput!) {
+    createUserApplication(input: $input) {
+      application {
+        id
+      }
+    }
+  }
+`
+
 function User() {
+  const [createUserApplication] = useMutation(CreateUserApplicationMutation)
+  const createUserApp = async () => {
+    await createUserApplication({
+      variables: {
+        input: {
+          mobile: '',
+        },
+      },
+    })
+  }
+  const { stopPolling } = useQuery(GetUserApplication, {
+    pollInterval: 4000,
+    onCompleted: (data) => {
+      if (data.userApplication) {
+        stopPolling()
+      } else {
+        createUserApp()
+      }
+    },
+  })
+
   return (
     <Box marginTop={12}>
       <ContentBlock width="large">

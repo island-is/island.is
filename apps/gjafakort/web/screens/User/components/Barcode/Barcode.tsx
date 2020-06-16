@@ -13,40 +13,70 @@ import {
   SkeletonLoader as SL,
 } from '@island.is/island-ui/core'
 import { ErrorPanel } from '@island.is/gjafakort-web/components'
-import { barcodeMachine, GiftCard } from './barcodeMachine'
+import { barcodeMachine } from './barcodeMachine'
 import { Countdown } from '../Countdown'
 import { barcodeSvg, invalidBarcode } from './Barcode.treat'
 
-const formatNumber = (numb) => numb.toLocaleString('de-DE')
+import { useQuery, useLazyQuery } from 'react-apollo'
+import gql from 'graphql-tag'
 
-const giftCards: GiftCard[] = [
-  {
-    id: '1',
-    amount: 1500,
-  },
-  {
-    id: '2',
-    amount: 4000,
-  },
-  {
-    id: '3',
-    amount: 5000,
-  },
-]
+export const GetGiftCards = gql`
+  query GetGiftCardsQuery {
+    giftCards(mobile: "") {
+      giftCardId
+      amount
+    }
+  }
+`
+export const GiftCardCode = gql`
+  query GiftCardCodeQuery($giftCardId: Int!) {
+    giftCardCode(giftCardId: $giftCardId, mobile: "") {
+      code
+      expiryDate
+      pollingUrl
+    }
+  }
+`
+
+const formatNumber = (numb) => numb.toLocaleString('de-DE')
 
 const Barcode = () => {
   const [current, send] = useMachine(barcodeMachine, {
     devTools: true,
   })
+  const { data } = useQuery(GetGiftCards)
+  const [getGiftCardCode] = useLazyQuery(GiftCardCode, {
+    fetchPolicy: 'network-only',
+    onCompleted: ({ giftCardCode: { code, expiryDate, pollingUrl } }) => {
+      send({
+        type: 'SUCCESS',
+        code,
+        expiryDate,
+        pollingUrl,
+      })
+    },
+    onError: () => {
+      send('ERROR')
+    },
+  })
+  const giftCards = data?.giftCards ?? []
   const isLoading = current.matches('loading')
   const isInvalid = current.matches('invalid')
-
+  const getBarcode = (giftCard) => {
+    getGiftCardCode({
+      variables: { giftCardId: giftCard.giftCardId },
+    })
+    send({
+      type: 'GET_BARCODE',
+      giftCard,
+    })
+  }
   if (current.matches('idle')) {
     return (
       <Stack space={3}>
         {giftCards.map((giftCard) => (
           <Box
-            key={giftCard.id}
+            key={giftCard.giftCardId}
             padding={2}
             border="standard"
             borderRadius="standard"
@@ -60,10 +90,7 @@ const Barcode = () => {
             <Button
               variant="text"
               onClick={() => {
-                send({
-                  type: 'GET_BARCODE',
-                  giftCard,
-                })
+                getBarcode(giftCard)
               }}
               icon="arrowRight"
             >
@@ -163,7 +190,7 @@ const Barcode = () => {
               >
                 <Button
                   onClick={() => {
-                    send('RETRY_BARCODE')
+                    getBarcode(current.context.giftCard)
                   }}
                 >
                   Fá nýtt strikamerki
