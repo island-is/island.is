@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { Card, Sidebar } from '../../components'
 import {
   ContentBlock,
@@ -15,41 +14,66 @@ import {
   LinkCard,
 } from '@island.is/island-ui/core'
 
-import { categories, groups, selectOptions, articles } from '../../json'
+import { groups, selectOptions } from '../../json'
 
 import * as styles from './Category.treat'
-import { useI18n, routePaths } from '@island.is/web/i18n'
+import { useI18n } from '@island.is/web/i18n'
 
 import { withApollo } from '../../graphql'
 import { Screen } from '../../types'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_ARTICLES_IN_CATEGORY_QUERY,
+  GET_CATEGORIES_QUERY,
+} from '../queries'
+import {
+  QueryGetNamespaceArgs,
+  Query,
+  ContentLanguage,
+  QueryArticlesInCategoryArgs,
+  QueryCategoriesArgs,
+} from '@island.is/api/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import { useRouter } from 'next/router'
 
 interface CategoryProps {
-  category: string
+  articles: Query['articlesInCategory']
+  categories: Query['categories']
+  namespace: Query['getNamespace']
 }
 
-const Category: Screen<CategoryProps> = ({ category }) => {
-  const router = useRouter()
+const Category: Screen<CategoryProps> = ({
+  articles,
+  categories,
+  namespace,
+}) => {
   const { activeLocale } = useI18n()
+  const router = useRouter()
+  const n = useNamespace(namespace)
 
-  const prefix = activeLocale === 'en' ? '/en' : ''
-  const paths = routePaths[activeLocale]
+  const prefix = activeLocale === 'en' ? `/en` : ``
+  const articlePath = activeLocale === 'en' ? 'article' : 'grein'
+  const categoryPath = activeLocale === 'en' ? 'category' : 'flokkur'
 
-  const TITLE = 'Fjölskylda og velferð'
+  const articleCards = articles.map(({ title, slug, content }) => ({
+    title,
+    description: content,
+    href: `${prefix}/${articlePath}/${slug}`,
+  }))
+
+  const currentCategory = categories.find((x) => x.slug === router.query.slug)
+
   const DESCRIPTION =
     'Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður.'
-
-  const onChangeCategory = () => {
-    router.push('/article')
-  }
 
   return (
     <ContentBlock>
       <Box padding={[0, 0, 0, 6]}>
         <div className={styles.layout}>
           <div className={styles.side}>
-            <Sidebar title="Flokkar">
+            <Sidebar title={n('submenuTitle')}>
               {categories.map((c, index) => (
-                <Link key={index} href="#">
+                <Link key={index} href={`${prefix}/${categoryPath}/${c.slug}`}>
                   <a>
                     <Typography variant="p" as="span">
                       {c.title}
@@ -74,12 +98,11 @@ const Category: Screen<CategoryProps> = ({ category }) => {
                       label="Þjónustuflokkar"
                       placeholder="Flokkar"
                       options={selectOptions}
-                      onChange={onChangeCategory}
                       name="search"
                     />
                   </Hidden>
                   <Typography variant="h1" as="h1">
-                    {TITLE}
+                    {currentCategory.title}
                   </Typography>
                   <Typography variant="intro" as="p">
                     {DESCRIPTION}
@@ -109,9 +132,8 @@ const Category: Screen<CategoryProps> = ({ category }) => {
                                 return (
                                   <Link
                                     key={index}
-                                    href={`${
-                                      activeLocale === 'en' ? '/en' : ''
-                                    }/article`}
+                                    href={`${prefix}/${articlePath}/undanthaga-fra-afborgunum`}
+                                    passHref
                                   >
                                     <LinkCard key={index}>{title}</LinkCard>
                                   </Link>
@@ -123,20 +145,8 @@ const Category: Screen<CategoryProps> = ({ category }) => {
                       })}
                     </Stack>
                     <Stack space={2}>
-                      {groups.map((group, index) => {
-                        return (
-                          <Card
-                            key={index}
-                            {...group}
-                            linkProps={{
-                              href: `${
-                                activeLocale === 'en' ? '/en' : ''
-                              }/article`,
-                              passHref: true,
-                            }}
-                            tags={false}
-                          />
-                        )
+                      {articleCards.map((article, index) => {
+                        return <Card key={index} {...article} tags={false} />
                       })}
                     </Stack>
                   </Stack>
@@ -150,9 +160,52 @@ const Category: Screen<CategoryProps> = ({ category }) => {
   )
 }
 
-Category.getInitialProps = async ({ query, locale }) => {
+Category.getInitialProps = async ({ apolloClient, locale, query }) => {
+  const slug = query.slug as string
+
+  const [
+    {
+      data: { articlesInCategory },
+    },
+    {
+      data: { categories },
+    },
+    {
+      data: { getNamespace: namespace },
+    },
+  ] = await Promise.all([
+    apolloClient.query<Query, QueryArticlesInCategoryArgs>({
+      query: GET_ARTICLES_IN_CATEGORY_QUERY,
+      variables: {
+        category: {
+          slug,
+          language: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryCategoriesArgs>({
+      query: GET_CATEGORIES_QUERY,
+      variables: {
+        input: {
+          language: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetNamespaceArgs>({
+      query: GET_NAMESPACE_QUERY,
+      variables: {
+        input: {
+          namespace: 'Article',
+          lang: locale,
+        },
+      },
+    }),
+  ])
+
   return {
-    category: 'bla',
+    articles: articlesInCategory,
+    categories,
+    namespace,
   }
 }
 
