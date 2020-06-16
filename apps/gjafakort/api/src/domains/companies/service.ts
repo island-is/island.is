@@ -99,3 +99,35 @@ export const createApplication = async (
 export const getApplications = async (applicationApi: ApplicationAPI) => {
   return applicationApi.getApplications<CompanyApplication>(APPLICATION_TYPE)
 }
+
+export const approveApplication = (
+  application: CompanyApplication,
+  applicationApi: ApplicationAPI,
+  ssn: string,
+) => {
+  if (application.state !== 'pending') {
+    throw new Error(
+      `Cannot approve an application in the ${application.state} state`,
+    )
+  }
+
+  return applicationApi.updateApplication(
+    application.id,
+    'manual-approved',
+    ssn,
+  )
+}
+
+export const rejectApplication = (
+  application: CompanyApplication,
+  applicationApi: ApplicationAPI,
+  ssn: string,
+) => {
+  if (application.state !== 'pending') {
+    throw new Error(
+      `Cannot reject an application in the ${application.state} state`,
+    )
+  }
+
+  return applicationApi.updateApplication(application.id, 'rejected', ssn)
+}

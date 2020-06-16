@@ -57,6 +57,26 @@ class ApplicationAPI extends RESTDataSource {
     const res = await this.get(`applications/${applicationType}`)
     return res.applications
   }
+
+  async getApplication<T extends Application>(id: string): Promise<T> {
+    try {
+      const res = await this.get(`applications/${id}`)
+
+      return res.application
+    } catch {
+      return null
+    }
+  }
+
+  async updateApplication<T extends Application>(
+    id: string,
+    state: 'manual-approved' | 'rejected',
+    authorSSN: string,
+  ): Promise<T> {
+    const res = await this.put(`applications/${id}`, { state, authorSSN })
+
+    return res.application
+  }
 }
 
 export default ApplicationAPI

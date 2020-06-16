@@ -54,7 +54,23 @@ export default gql`
     validPermit: Boolean!
   }
 
+  input ApproveCompanyApplicationInput {
+    id: String!
+  }
+
+  input RejectCompanyApplicationInput {
+    id: String!
+  }
+
   type CreateCompanyApplication {
+    application: CompanyApplication
+  }
+
+  type ApproveCompanyApplication {
+    application: CompanyApplication
+  }
+
+  type RejectCompanyApplication {
     application: CompanyApplication
   }
 
@@ -68,5 +84,11 @@ export default gql`
     createCompanyApplication(
       input: CreateCompanyApplicationInput!
     ): CreateCompanyApplication
+    approveCompanyApplication(
+      input: ApproveCompanyApplicationInput!
+    ): ApproveCompanyApplication
+    rejectCompanyApplication(
+      input: RejectCompanyApplicationInput!
+    ): RejectCompanyApplication
   }
 `
