@@ -69,8 +69,15 @@ interface BarcodeStateSchema {
 
 export type GiftCard = { id: string; amount: number }
 
+type PollingData = {
+  status?: string
+  title?: string
+  body?: string
+  amount?: string
+}
+
 type ActionEvents =
-  | { type: 'GET_BARCODE'; giftCard: GiftCard }
+  | { type: 'GET_BARCODE'; giftCard: GiftCard; pollingData?: PollingData }
   | { type: 'TICK' }
   | { type: 'BACK_TO_LIST' }
   | {
@@ -89,15 +96,10 @@ interface BarcodeContext {
   error: object
   giftCard: GiftCard
   pollingUrl: string
-  pollingData: {
-    status?: string
-    title?: string
-    body?: string
-    amount?: string
-  }
+  pollingData: PollingData
 }
 
-type PollingData = {
+type PollingDataEvent = {
   type: string
   data: object
 }
@@ -168,7 +170,7 @@ export const barcodeMachine = Machine<
               src: fetchPollingUrl,
               onDone: {
                 actions: assign({
-                  pollingData: (cxt, event: PollingData) => {
+                  pollingData: (cxt, event: PollingDataEvent) => {
                     return event.data
                   },
                 }),
@@ -207,7 +209,16 @@ export const barcodeMachine = Machine<
       },
       success: {
         on: {
-          GET_BARCODE: 'loading',
+          GET_BARCODE: {
+            target: 'loading',
+            actions: assign({
+              giftCard: (ctx) => ({
+                ...(ctx.giftCard as GiftCard),
+                amount: parseInt(ctx.pollingData.amount),
+              }),
+              pollingData: {} as PollingData,
+            }),
+          },
         },
       },
       invalid: {
