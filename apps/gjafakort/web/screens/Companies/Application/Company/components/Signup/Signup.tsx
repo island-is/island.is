@@ -40,6 +40,8 @@ const CreateCompanyApplicationMutation = gql`
   }
 `
 
+const urlRegex = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}/gi
+
 const emailValidation = Yup.string()
   .email('Netfang ekki gilt')
   .required('Þessi reitur má ekki vera tómur')
@@ -54,6 +56,9 @@ const SignupSchema = Yup.object().shape({
   generalEmail: emailValidation,
   phoneNumber: Yup.string()
     .length(7, 'Símanúmer þarf að vera sjö tölustafir')
+    .required('Þessi reitur má ekki vera tómur'),
+  webpage: Yup.string()
+    .matches(urlRegex, 'Vefsíða er ekki gild')
     .required('Þessi reitur má ekki vera tómur'),
   operationsTrouble: Yup.bool().required('Velja þarf annaðhvort svarið'),
 })
