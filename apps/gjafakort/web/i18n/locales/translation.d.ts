@@ -9,16 +9,17 @@
 
 export interface Translation {
   notFound: NotFound
-  error: Error
+  error: TranslationError
   errorBoundary: ErrorBoundary
   companies: TranslationCompanies
   home: Home
   application: Application
   companySignup: CompanySignup
   company: TranslationCompany
+  user: User
   header: Header
   footer: Footer
-  validation: Validation
+  validation: TranslationValidation
   routes: Routes
 }
 
@@ -98,8 +99,9 @@ export interface Signup {
 }
 
 export interface SignupForm {
-  companyName: Company
-  companySSN: Company
+  validation: FormValidation
+  companyName: CompanyName
+  companySSN: CompanyName
   companyDisplayName: CompanyDisplayName
   serviceCategory: ServiceCategory
   operation: Operation
@@ -113,7 +115,7 @@ export interface CompanyDisplayName {
   tooltip: string
 }
 
-export interface Company {
+export interface CompanyName {
   label: string
 }
 
@@ -122,6 +124,7 @@ export interface Contact {
   name: string
   email: string
   generalEmail: string
+  webpage: string
   phoneNumber: string
 }
 
@@ -155,6 +158,11 @@ export interface ServiceCategoryOption {
   value: string
 }
 
+export interface FormValidation {
+  operations: string
+  operationsTrouble: string
+}
+
 export interface CompanySignup {
   intro: string
   form: CompanySignupForm
@@ -171,7 +179,7 @@ export interface FormCompany {
   placeholder: string
 }
 
-export interface Error {
+export interface TranslationError {
   title: string
   intro: string
   introKennitalaIsNotAPerson: string
@@ -243,7 +251,71 @@ export interface Users {
   home: string
 }
 
-export interface Validation {}
+export interface User {
+  title: string
+  intro: string
+  appStore: AppStore
+  barcode: Barcode
+  mobileForm: MobileForm
+}
+
+export interface AppStore {
+  title: string
+  content: string
+  google: string
+  apple: string
+}
+
+export interface Barcode {
+  noGiftCards: string
+  title: string
+  intro: string
+  currentAmount: string
+  initialAmount: string
+  create: string
+  value: string
+  total: string
+  expires: Expires
+  expired: string
+  new: string
+  backButton: string
+  error: BarcodeError
+}
+
+export interface BarcodeError {
+  title: string
+  message: string
+  backButton: string
+}
+
+export interface Expires {
+  pre: string
+  post: string
+}
+
+export interface MobileForm {
+  title: string
+  intro: string
+  validation: MobileFormValidation
+  form: MobileFormForm
+}
+
+export interface MobileFormForm {
+  phoneNumber: CompanyName
+  confirmPhoneNumber: CompanyName
+  submit: string
+}
+
+export interface MobileFormValidation {
+  confirmPhoneNumber: string
+}
+
+export interface TranslationValidation {
+  required: string
+  phoneNumber: string
+  email: string
+  webpage: string
+}
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
@@ -401,16 +473,17 @@ const typeMap: any = {
   Translation: o(
     [
       { json: 'notFound', js: 'notFound', typ: r('NotFound') },
-      { json: 'error', js: 'error', typ: r('Error') },
+      { json: 'error', js: 'error', typ: r('TranslationError') },
       { json: 'errorBoundary', js: 'errorBoundary', typ: r('ErrorBoundary') },
       { json: 'companies', js: 'companies', typ: r('TranslationCompanies') },
       { json: 'home', js: 'home', typ: r('Home') },
       { json: 'application', js: 'application', typ: r('Application') },
       { json: 'companySignup', js: 'companySignup', typ: r('CompanySignup') },
       { json: 'company', js: 'company', typ: r('TranslationCompany') },
+      { json: 'user', js: 'user', typ: r('User') },
       { json: 'header', js: 'header', typ: r('Header') },
       { json: 'footer', js: 'footer', typ: r('Footer') },
-      { json: 'validation', js: 'validation', typ: r('Validation') },
+      { json: 'validation', js: 'validation', typ: r('TranslationValidation') },
       { json: 'routes', js: 'routes', typ: r('Routes') },
     ],
     false,
@@ -520,8 +593,9 @@ const typeMap: any = {
   ),
   SignupForm: o(
     [
-      { json: 'companyName', js: 'companyName', typ: r('Company') },
-      { json: 'companySSN', js: 'companySSN', typ: r('Company') },
+      { json: 'validation', js: 'validation', typ: r('FormValidation') },
+      { json: 'companyName', js: 'companyName', typ: r('CompanyName') },
+      { json: 'companySSN', js: 'companySSN', typ: r('CompanyName') },
       {
         json: 'companyDisplayName',
         js: 'companyDisplayName',
@@ -550,13 +624,14 @@ const typeMap: any = {
     ],
     false,
   ),
-  Company: o([{ json: 'label', js: 'label', typ: '' }], false),
+  CompanyName: o([{ json: 'label', js: 'label', typ: '' }], false),
   Contact: o(
     [
       { json: 'label', js: 'label', typ: '' },
       { json: 'name', js: 'name', typ: '' },
       { json: 'email', js: 'email', typ: '' },
       { json: 'generalEmail', js: 'generalEmail', typ: '' },
+      { json: 'webpage', js: 'webpage', typ: '' },
       { json: 'phoneNumber', js: 'phoneNumber', typ: '' },
     ],
     false,
@@ -601,6 +676,13 @@ const typeMap: any = {
     ],
     false,
   ),
+  FormValidation: o(
+    [
+      { json: 'operations', js: 'operations', typ: '' },
+      { json: 'operationsTrouble', js: 'operationsTrouble', typ: '' },
+    ],
+    false,
+  ),
   CompanySignup: o(
     [
       { json: 'intro', js: 'intro', typ: '' },
@@ -623,7 +705,7 @@ const typeMap: any = {
     ],
     false,
   ),
-  Error: o(
+  TranslationError: o(
     [
       { json: 'title', js: 'title', typ: '' },
       { json: 'intro', js: 'intro', typ: '' },
@@ -715,5 +797,90 @@ const typeMap: any = {
     false,
   ),
   Users: o([{ json: 'home', js: 'home', typ: '' }], false),
-  Validation: o([], false),
+  User: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'intro', js: 'intro', typ: '' },
+      { json: 'appStore', js: 'appStore', typ: r('AppStore') },
+      { json: 'barcode', js: 'barcode', typ: r('Barcode') },
+      { json: 'mobileForm', js: 'mobileForm', typ: r('MobileForm') },
+    ],
+    false,
+  ),
+  AppStore: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'content', js: 'content', typ: '' },
+      { json: 'google', js: 'google', typ: '' },
+      { json: 'apple', js: 'apple', typ: '' },
+    ],
+    false,
+  ),
+  Barcode: o(
+    [
+      { json: 'noGiftCards', js: 'noGiftCards', typ: '' },
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'intro', js: 'intro', typ: '' },
+      { json: 'currentAmount', js: 'currentAmount', typ: '' },
+      { json: 'initialAmount', js: 'initialAmount', typ: '' },
+      { json: 'create', js: 'create', typ: '' },
+      { json: 'value', js: 'value', typ: '' },
+      { json: 'total', js: 'total', typ: '' },
+      { json: 'expires', js: 'expires', typ: r('Expires') },
+      { json: 'expired', js: 'expired', typ: '' },
+      { json: 'new', js: 'new', typ: '' },
+      { json: 'backButton', js: 'backButton', typ: '' },
+      { json: 'error', js: 'error', typ: r('BarcodeError') },
+    ],
+    false,
+  ),
+  BarcodeError: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'message', js: 'message', typ: '' },
+      { json: 'backButton', js: 'backButton', typ: '' },
+    ],
+    false,
+  ),
+  Expires: o(
+    [
+      { json: 'pre', js: 'pre', typ: '' },
+      { json: 'post', js: 'post', typ: '' },
+    ],
+    false,
+  ),
+  MobileForm: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'intro', js: 'intro', typ: '' },
+      { json: 'validation', js: 'validation', typ: r('MobileFormValidation') },
+      { json: 'form', js: 'form', typ: r('MobileFormForm') },
+    ],
+    false,
+  ),
+  MobileFormForm: o(
+    [
+      { json: 'phoneNumber', js: 'phoneNumber', typ: r('CompanyName') },
+      {
+        json: 'confirmPhoneNumber',
+        js: 'confirmPhoneNumber',
+        typ: r('CompanyName'),
+      },
+      { json: 'submit', js: 'submit', typ: '' },
+    ],
+    false,
+  ),
+  MobileFormValidation: o(
+    [{ json: 'confirmPhoneNumber', js: 'confirmPhoneNumber', typ: '' }],
+    false,
+  ),
+  TranslationValidation: o(
+    [
+      { json: 'required', js: 'required', typ: '' },
+      { json: 'phoneNumber', js: 'phoneNumber', typ: '' },
+      { json: 'email', js: 'email', typ: '' },
+      { json: 'webpage', js: 'webpage', typ: '' },
+    ],
+    false,
+  ),
 }

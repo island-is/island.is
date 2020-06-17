@@ -19,14 +19,6 @@ const validateMobile = (mobile: string) => {
   }
 }
 
-const getApplication = async (userSSN, applicationApi) => {
-  const application = await userService.getApplication(userSSN, applicationApi)
-  if (!application) {
-    throw new ApolloError('Application does not exist')
-  }
-  return application
-}
-
 class UserResolver {
   @authorize({ role: 'tester' })
   public async getUserApplication(
@@ -78,7 +70,13 @@ class UserResolver {
     _2,
     { user, dataSources: { applicationApi, yayApi } },
   ) {
-    const application = await getApplication(user.ssn, applicationApi)
+    const application = await userService.getApplication(
+      user.ssn,
+      applicationApi,
+    )
+    if (!application) {
+      return []
+    }
     const {
       data: { mobileNumber, countryCode },
     } = application
@@ -98,7 +96,13 @@ class UserResolver {
     args,
     { user, dataSources: { applicationApi, yayApi } },
   ) {
-    const application = await getApplication(user.ssn, applicationApi)
+    const application = await userService.getApplication(
+      user.ssn,
+      applicationApi,
+    )
+    if (!application) {
+      throw new ApolloError('Application does not exist')
+    }
     const {
       data: { mobileNumber, countryCode },
     } = application

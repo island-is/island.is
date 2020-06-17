@@ -1,4 +1,4 @@
-.PHONY: application api web
+.PHONY: application api web queue-listener
 CWD=../../
 MAKEFLAGS += -j
 ARGS=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))

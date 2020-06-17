@@ -2,6 +2,7 @@ import React, { ReactElement } from 'react'
 
 import { Logo } from '../Logo/Logo'
 
+import { Typography } from '../Typography/Typography'
 import * as styles from './Header.treat'
 import { Button } from '../Button/Button'
 
@@ -10,12 +11,14 @@ export interface HeaderPorps {
   authenticated?: boolean
   onLogout?: () => void
   logoutText?: string
+  userName?: string
 }
 
 export const Header = ({
   logoRender,
   authenticated,
   onLogout,
+  userName = '',
   logoutText = 'Útskrá',
 }: HeaderPorps) => {
   const LogoIcon = <Logo width={160} />
@@ -29,9 +32,16 @@ export const Header = ({
     <div className={styles.container}>
       {logo()}{' '}
       {authenticated && (
-        <Button variant="menu" leftIcon="user" onClick={onLogout}>
-          {logoutText}
-        </Button>
+        <div className={styles.authenticated}>
+          <div>
+            <Typography variant="eyebrow">{userName}</Typography>
+          </div>
+          <div>
+            <Button variant="menu" leftIcon="user" onClick={onLogout}>
+              {logoutText}
+            </Button>
+          </div>
+        </div>
       )}
     </div>
   )

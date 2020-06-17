@@ -1,7 +1,168 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
+import { useLazyQuery, useMutation } from 'react-apollo'
+import gql from 'graphql-tag'
+
+import {
+  Box,
+  Column,
+  Columns,
+  ContentBlock,
+  Hidden,
+  Stack,
+  Tiles,
+  Typography,
+} from '@island.is/island-ui/core'
+
+import packageSvg from '@island.is/gjafakort-web/assets/ferdagjof-pakki.svg'
+import appleSvg from '@island.is/gjafakort-web/assets/appstore.svg'
+import googlePlaySvg from '@island.is/gjafakort-web/assets/googlePlay.svg'
+import { UserContext } from '@island.is/gjafakort-web/context'
+import { ContentLoader } from '@island.is/gjafakort-web/components'
+import { useI18n } from '@island.is/gjafakort-web/i18n'
+
+import { Barcode, MobileForm } from './components'
+
+export const UserApplicationQuery = gql`
+  query UserApplicationQuery {
+    userApplication {
+      id
+    }
+  }
+`
+
+const CreateUserApplicationMutation = gql`
+  mutation CreateUserApplicationMutation($input: CreateUserApplicationInput!) {
+    createUserApplication(input: $input) {
+      application {
+        id
+      }
+    }
+  }
+`
 
 function User() {
-  return <div>User page</div>
+  const {
+    t: { user: t },
+  } = useI18n()
+  const { user } = useContext(UserContext)
+  const [createUserApplication, { called: shouldPoll }] = useMutation(
+    CreateUserApplicationMutation,
+    {
+      update(cache, { data: { createUserApplication } }) {
+        cache.writeQuery({
+          query: UserApplicationQuery,
+          data: { userApplication: createUserApplication.application },
+        })
+      },
+    },
+  )
+  const [getUserApplication, { data, loading }] = useLazyQuery(
+    UserApplicationQuery,
+    {
+      onCompleted: async ({ userApplication }) => {
+        if (!userApplication && user.mobile) {
+          await createUserApplication({
+            variables: {
+              input: {
+                mobile: user.mobile,
+              },
+            },
+          })
+        }
+      },
+    },
+  )
+  const { userApplication } = data || {}
+
+  useEffect(() => {
+    if (user && !userApplication) {
+      getUserApplication()
+    }
+  }, [user, userApplication, getUserApplication])
+
+  const onMobileSubmit = async ({ phoneNumber }) => {
+    await createUserApplication({
+      variables: {
+        input: {
+          mobile: phoneNumber,
+        },
+      },
+    })
+  }
+
+  if ((loading && !data) || !user) {
+    return <ContentLoader />
+  } else if (!userApplication && !user.mobile) {
+    return <MobileForm onSubmit={onMobileSubmit} />
+  }
+
+  return (
+    <Box marginTop={12}>
+      <ContentBlock width="large">
+        <Columns space={15} collapseBelow="lg">
+          <Column width="2/3">
+            <Box paddingLeft={[0, 0, 0, 9]} marginBottom={5}>
+              <Stack space={3}>
+                <Typography variant="h1" as="h1">
+                  {t.title}
+                </Typography>
+                <Typography variant="intro">{t.intro}</Typography>
+              </Stack>
+            </Box>
+            <Box
+              background="purple100"
+              paddingX={[5, 12]}
+              paddingY={[5, 9]}
+              marginBottom={12}
+            >
+              <Stack space={3}>
+                <Typography variant="h4" as="h2">
+                  {t.appStore.title}
+                </Typography>
+                <Typography variant="p">{t.appStore.content}</Typography>
+                <Box marginTop={3}>
+                  <Tiles space={4} columns={[1, 2, 3]}>
+                    <a
+                      href="https://play.google.com/store/apps"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      <img src={googlePlaySvg} alt={t.appStore.google} />
+                    </a>
+                    <a
+                      href="https://www.apple.com/ios/app-store/"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    >
+                      <img src={appleSvg} alt={t.appStore.apple} />
+                    </a>
+                  </Tiles>
+                </Box>
+              </Stack>
+            </Box>
+            <Box paddingLeft={[0, 0, 0, 9]}>
+              <Stack space={3}>
+                <Typography variant="h1" as="h2">
+                  {t.barcode.title}
+                </Typography>
+                <Typography variant="intro">{t.barcode.intro}</Typography>
+              </Stack>
+              <Box marginTop={5}>
+                <Barcode shouldPoll={shouldPoll} />
+              </Box>
+            </Box>
+          </Column>
+          <Column width="1/3">
+            <Hidden below="lg">
+              <Box textAlign="center" padding={3}>
+                <img src={packageSvg} alt="" />
+              </Box>
+            </Hidden>
+          </Column>
+        </Columns>
+      </ContentBlock>
+    </Box>
+  )
 }
 
 export default User

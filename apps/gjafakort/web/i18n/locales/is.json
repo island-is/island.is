@@ -220,6 +220,10 @@
     "signup": {
       "intro": "Fylltu inn upplýsingar hér að neðan",
       "form": {
+        "validation": {
+          "operations": "Velja þarf minnst einn reit eða \"Ekkert að ofangreindu á við\"",
+          "operationsTrouble": "Velja þarf annaðhvort svarið"
+        },
         "companyName": {
           "label": "Nafn fyrirtækis"
         },
@@ -306,9 +310,58 @@
           "name": "Nafn",
           "email": "Netfang",
           "generalEmail": "Almennt netfang",
+          "webpage": "Vefsíða",
           "phoneNumber": "Símanúmer"
         },
         "submit": "Skrá fyrirtækið mitt"
+      }
+    }
+  },
+  "user": {
+    "title": "Ferðagjöfin þín",
+    "intro": "Til að nota Ferðagjöfina sækir þú smáforritið Ferðagjöf, sem er fáanlegt bæði fyrir Apple iOS og Android snjalltæki. Í smáforritinu getur þú nýtt gjafakortið, séð yfirlit yfir ferðaþjónustufyrirtæki eða gefið öðrum Ferðagjöfina. Ef þú kýst að sækja ekki smáforritið má búa til gjafakóða á strikamerki hér að neðan.",
+    "appStore": {
+      "title": "Sæktu smáforritið fyrir Apple iOS eða Android.",
+      "content": "Einnig er hægt að leita að „Ferðagjöf“ inni á Apple App Store og Google Play Store.",
+      "google": "smáforrit google play",
+      "apple": "smáforrit apple app store"
+    },
+    "barcode": {
+      "noGiftCards": "Engin skráð gjafabréf",
+      "title": "Gjafakóði á strikamerki",
+      "intro": "Til að nota gjöfina getur þú sýnt söluaðila strikamerkið á farsímanum þínum. Hjá völdum aðilum getur þú nýtt númerið á strikamerkinu sem gjafakóða á vefsíðum ferðaþjónustufyrirtækja.",
+      "currentAmount": "Núvirði",
+      "initialAmount": "Upprunalegt virði",
+      "create": "Búa til strikamerki",
+      "value": "Virði",
+      "total": "Samtals",
+      "expires": {
+        "pre": "Strikamerki rennur út eftir",
+        "post": "mín"
+      },
+      "expired": "Strikamerki útrunnið",
+      "new": "Fá nýtt strikamerki",
+      "backButton": "Aftur í lista",
+      "error": {
+        "title": "Villa kom upp",
+        "message": "Eitthvað hefur farið úrskeiðis við að sækja strikamerkið þitt, vinsamlegast reyndu aftur.",
+        "backButton": "Aftur í lista"
+      }
+    },
+    "mobileForm": {
+      "title": "Símanúmer",
+      "intro": "Vinsamlegast skráðu inn símanúmerið þitt svo hægt sé að búa til gjafabréf fyrir þig",
+      "validation": {
+        "confirmPhoneNumber": "Símanúmer passa ekki. Vinsamlegast sláðu sama símanúmer inn og frá fyrri reit"
+      },
+      "form": {
+        "phoneNumber": {
+          "label": "Símanúmer"
+        },
+        "confirmPhoneNumber": {
+          "label": "Staðfestu símanúmer"
+        },
+        "submit": "Skrá símanúmerið mitt"
       }
     }
   },
@@ -365,7 +418,12 @@
       }
     ]
   },
-  "validation": {},
+  "validation": {
+    "required": "Þessi reitur má ekki vera tómur",
+    "phoneNumber": "Símanúmer þarf að vera sjö tölustafir",
+    "email": "Netfang ekki gilt",
+    "webpage": "Vefsíða er ekki gild"
+  },
   "routes": {
     "home": "/",
     "companies": {

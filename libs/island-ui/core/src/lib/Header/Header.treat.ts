@@ -1,4 +1,4 @@
-import { style } from 'treat'
+import { style, globalStyle } from 'treat'
 
 export const container = style({
   height: 111,
@@ -9,4 +9,18 @@ export const container = style({
 
 export const pointer = style({
   cursor: 'pointer',
+})
+
+export const authenticated = style({
+  display: 'flex',
+  alignItems: 'center',
+  margin: '0 -16px',
+})
+
+globalStyle(`${authenticated} > div`, {
+  padding: '0 16px',
+})
+
+export const userName = style({
+  fontSize: '16px',
 })

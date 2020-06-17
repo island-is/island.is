@@ -42,31 +42,11 @@ const CreateCompanyApplicationMutation = gql`
 
 const urlRegex = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}/gi
 
-const emailValidation = Yup.string()
-  .email('Netfang ekki gilt')
-  .required('Þessi reitur má ekki vera tómur')
-
-const SignupSchema = Yup.object().shape({
-  companyDisplayName: Yup.string().required('Þessi reitur má ekki vera tómur'),
-  serviceCategory: Yup.object()
-    .nullable()
-    .required('Þessi reitur má ekki vera tómur'),
-  name: Yup.string().required('Þessi reitur má ekki vera tómur'),
-  email: emailValidation,
-  generalEmail: emailValidation,
-  phoneNumber: Yup.string()
-    .length(7, 'Símanúmer þarf að vera sjö tölustafir')
-    .required('Þessi reitur má ekki vera tómur'),
-  webpage: Yup.string()
-    .matches(urlRegex, 'Vefsíða er ekki gild')
-    .required('Þessi reitur má ekki vera tómur'),
-  operationsTrouble: Yup.bool().required('Velja þarf annaðhvort svarið'),
-})
-
 function Signup({ company, handleSubmission }: PropTypes) {
   const {
     t: {
       company: { signup: t },
+      validation,
     },
   } = useI18n()
   const [createCompanyApplication] = useMutation(
@@ -131,13 +111,33 @@ function Signup({ company, handleSubmission }: PropTypes) {
           if (!values.noneOfTheAbove && noOperations) {
             errors['operations'] = {}
             companyOperations.forEach((o) => {
-              errors['operations'][o.name] =
-                'Velja þarf minnst einn reit eða "Ekkert að ofangreindu á við"'
+              errors['operations'][o.name] = t.form.validation.operations
             })
           }
           return errors
         }}
-        validationSchema={SignupSchema}
+        validationSchema={Yup.object().shape({
+          companyDisplayName: Yup.string().required(validation.required),
+          serviceCategory: Yup.object()
+            .nullable()
+            .required(validation.required),
+          name: Yup.string().required(validation.required),
+          email: Yup.string()
+            .email(validation.email)
+            .required(validation.required),
+          generalEmail: Yup.string()
+            .email(validation.email)
+            .required(validation.required),
+          phoneNumber: Yup.string()
+            .length(7, validation.phoneNumber)
+            .required(validation.required),
+          operationsTrouble: Yup.bool().required(
+            t.form.validation.operationsTrouble,
+          ),
+          webpage: Yup.string()
+            .matches(urlRegex, validation.webpage)
+            .required(validation.required),
+        })}
         onSubmit={onSubmit}
         enableReinitialize
       >
@@ -217,36 +217,48 @@ function Signup({ company, handleSubmission }: PropTypes) {
               <Field
                 component={FieldPolarQuestion}
                 name="operationsTrouble"
-                positiveLabel="Já"
-                negativeLabel="Nei"
-                label="Var fyrirtæki þitt í rekstrarerfiðleikum 31. desember 2019 í skilningi hópundanþágureglugerðar"
-                tooltip="Fyrirtæki sem metið var í rekstrarerfiðleikum 31. desember 2019 í skilningi hópundanþágureglugerðar (ESB) nr. 651/2014 getur að hámarki tekið við samanlagt 25 millj. kr. greiðslu í formi ferðagjafa."
+                positiveLabel={t.form.operationsTrouble.positiveLabel}
+                negativeLabel={t.form.operationsTrouble.negativeLabel}
+                label={t.form.operationsTrouble.label}
+                tooltip={t.form.operationsTrouble.tooltip}
                 reverse
               />
             </Box>
             <Box marginBottom={5}>
               <Stack space={3}>
                 <Typography variant="h4" as="h2">
-                  Tengiliður
+                  {t.form.contact.label}
                 </Typography>
-                <Field component={FieldInput} label="Nafn" name="name" />
-                <Field component={FieldInput} label="Netfang" name="email" />
                 <Field
                   component={FieldInput}
-                  label="Almennt netfang"
+                  label={t.form.contact.name}
+                  name="name"
+                />
+                <Field
+                  component={FieldInput}
+                  label={t.form.contact.email}
+                  name="email"
+                />
+                <Field
+                  component={FieldInput}
+                  label={t.form.contact.generalEmail}
                   name="generalEmail"
                 />
-                <Field component={FieldInput} label="Vefsíða" name="webpage" />
+                <Field
+                  component={FieldInput}
+                  label={t.form.contact.webpage}
+                  name="webpage"
+                />
                 <Field
                   component={FieldNumberInput}
-                  label="Símanúmer"
+                  label={t.form.contact.phoneNumber}
                   name="phoneNumber"
                   htmltype="tel"
                   format="### ####"
                 />
               </Stack>
             </Box>
-            <Button htmlType="submit">Skrá fyrirtækið mitt</Button>
+            <Button htmlType="submit">{t.form.submit}</Button>
           </Form>
         )}
       </Formik>

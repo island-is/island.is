@@ -155,6 +155,8 @@ const ButtonContent = ({
             <LeftIcon leftIcon={leftIcon} />
           )}
         </LeftContentContainer>
+      ) : leftIcon ? (
+        <LeftIcon leftIcon={leftIcon} />
       ) : null}
       {children ? children : null}
       {icon ? (
