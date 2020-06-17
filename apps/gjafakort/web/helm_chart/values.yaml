@@ -17,7 +17,7 @@ nameOverride: ""
 fullnameOverride: ""
 
 environment:
-  sentry_auth_token: "/k8s/gjafakort/api/SENTRY_AUTH_TOKEN"
+  sentry_auth_token: "/k8s/gjafakort/web/SENTRY_AUTH_TOKEN"
   sentry_dsn:
   sentry_org:
   sentry_project:
