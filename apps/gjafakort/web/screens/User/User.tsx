@@ -18,6 +18,7 @@ import appleSvg from '@island.is/gjafakort-web/assets/appstore.svg'
 import googlePlaySvg from '@island.is/gjafakort-web/assets/googlePlay.svg'
 import { UserContext } from '@island.is/gjafakort-web/context'
 import { ContentLoader } from '@island.is/gjafakort-web/components'
+import { useI18n } from '@island.is/gjafakort-web/i18n'
 
 import { Barcode, MobileForm } from './components'
 
@@ -40,6 +41,9 @@ const CreateUserApplicationMutation = gql`
 `
 
 function User() {
+  const {
+    t: { user: t },
+  } = useI18n()
   const { user } = useContext(UserContext)
   const [createUserApplication, { called: shouldPoll }] = useMutation(
     CreateUserApplicationMutation,
@@ -100,16 +104,9 @@ function User() {
             <Box paddingLeft={[0, 0, 0, 9]} marginBottom={5}>
               <Stack space={3}>
                 <Typography variant="h1" as="h1">
-                  Ferðagjöfin þín
+                  {t.title}
                 </Typography>
-                <Typography variant="intro">
-                  Til að nota Ferðagjöfina sækir þú smáforritið Ferðagjöf, sem
-                  er fáanlegt bæði fyrir Apple iOS og Android snjalltæki. Í
-                  smáforritinu getur þú nýtt gjafakortið, séð yfirlit yfir
-                  ferðaþjónustufyrirtæki eða gefið öðrum Ferðagjöfina. Ef þú
-                  kýst að sækja ekki smáforritið má búa til gjafakóða á
-                  strikamerki hér að neðan.
-                </Typography>
+                <Typography variant="intro">{t.intro}</Typography>
               </Stack>
             </Box>
             <Box
@@ -120,12 +117,9 @@ function User() {
             >
               <Stack space={3}>
                 <Typography variant="h4" as="h2">
-                  Sæktu smáforritið fyrir Apple iOS eða Android.
+                  {t.appStore.title}
                 </Typography>
-                <Typography variant="p">
-                  Einnig er hægt að leita að „Ferðagjöf“ inni á Apple App Store
-                  og Google Play Store.
-                </Typography>
+                <Typography variant="p">{t.appStore.content}</Typography>
                 <Box marginTop={3}>
                   <Tiles space={4} columns={[1, 2, 3]}>
                     <a
@@ -133,14 +127,14 @@ function User() {
                       rel="noopener noreferrer"
                       target="_blank"
                     >
-                      <img src={googlePlaySvg} alt="smáforrit google play" />
+                      <img src={googlePlaySvg} alt={t.appStore.google} />
                     </a>
                     <a
                       href="https://www.apple.com/ios/app-store/"
                       rel="noopener noreferrer"
                       target="_blank"
                     >
-                      <img src={appleSvg} alt="smáforrit apple app store" />
+                      <img src={appleSvg} alt={t.appStore.apple} />
                     </a>
                   </Tiles>
                 </Box>
@@ -149,14 +143,9 @@ function User() {
             <Box paddingLeft={[0, 0, 0, 9]}>
               <Stack space={3}>
                 <Typography variant="h1" as="h2">
-                  Gjafakóði á strikamerki
+                  {t.barcode.title}
                 </Typography>
-                <Typography variant="intro">
-                  Til að nota gjöfina getur þú sýnt söluaðila strikamerkið á
-                  farsímanum þínum. Hjá völdum aðilum getur þú nýtt númerið á
-                  strikamerkinu sem gjafakóða á vefsíðum
-                  ferðaþjónustufyrirtækja.
-                </Typography>
+                <Typography variant="intro">{t.barcode.intro}</Typography>
               </Stack>
               <Box marginTop={5}>
                 <Barcode shouldPoll={shouldPoll} />

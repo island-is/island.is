@@ -133,10 +133,10 @@ function Signup({ company, handleSubmission }: PropTypes) {
             .required(validation.required),
           operationsTrouble: Yup.bool().required(
             t.form.validation.operationsTrouble,
-          webpage: Yup.string()
-            .matches(urlRegex, 'Vefsíða er ekki gild')
-            .required(validation.required),
           ),
+          webpage: Yup.string()
+            .matches(urlRegex, validation.webpage)
+            .required(validation.required),
         })}
         onSubmit={onSubmit}
         enableReinitialize

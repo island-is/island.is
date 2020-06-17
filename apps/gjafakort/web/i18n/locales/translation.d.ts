@@ -9,7 +9,7 @@
 
 export interface Translation {
   notFound: NotFound
-  error: Error
+  error: TranslationError
   errorBoundary: ErrorBoundary
   companies: TranslationCompanies
   home: Home
@@ -179,7 +179,7 @@ export interface FormCompany {
   placeholder: string
 }
 
-export interface Error {
+export interface TranslationError {
   title: string
   intro: string
   introKennitalaIsNotAPerson: string
@@ -252,7 +252,42 @@ export interface Users {
 }
 
 export interface User {
+  title: string
+  intro: string
+  appStore: AppStore
+  barcode: Barcode
   mobileForm: MobileForm
+}
+
+export interface AppStore {
+  title: string
+  content: string
+  google: string
+  apple: string
+}
+
+export interface Barcode {
+  title: string
+  intro: string
+  create: string
+  value: string
+  total: string
+  expires: Expires
+  expired: string
+  new: string
+  backButton: string
+  error: BarcodeError
+}
+
+export interface BarcodeError {
+  title: string
+  message: string
+  backButton: string
+}
+
+export interface Expires {
+  pre: string
+  post: string
 }
 
 export interface MobileForm {
@@ -276,6 +311,7 @@ export interface TranslationValidation {
   required: string
   phoneNumber: string
   email: string
+  webpage: string
 }
 
 // Converts JSON strings to/from your types
@@ -434,7 +470,7 @@ const typeMap: any = {
   Translation: o(
     [
       { json: 'notFound', js: 'notFound', typ: r('NotFound') },
-      { json: 'error', js: 'error', typ: r('Error') },
+      { json: 'error', js: 'error', typ: r('TranslationError') },
       { json: 'errorBoundary', js: 'errorBoundary', typ: r('ErrorBoundary') },
       { json: 'companies', js: 'companies', typ: r('TranslationCompanies') },
       { json: 'home', js: 'home', typ: r('Home') },
@@ -666,7 +702,7 @@ const typeMap: any = {
     ],
     false,
   ),
-  Error: o(
+  TranslationError: o(
     [
       { json: 'title', js: 'title', typ: '' },
       { json: 'intro', js: 'intro', typ: '' },
@@ -759,7 +795,52 @@ const typeMap: any = {
   ),
   Users: o([{ json: 'home', js: 'home', typ: '' }], false),
   User: o(
-    [{ json: 'mobileForm', js: 'mobileForm', typ: r('MobileForm') }],
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'intro', js: 'intro', typ: '' },
+      { json: 'appStore', js: 'appStore', typ: r('AppStore') },
+      { json: 'barcode', js: 'barcode', typ: r('Barcode') },
+      { json: 'mobileForm', js: 'mobileForm', typ: r('MobileForm') },
+    ],
+    false,
+  ),
+  AppStore: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'content', js: 'content', typ: '' },
+      { json: 'google', js: 'google', typ: '' },
+      { json: 'apple', js: 'apple', typ: '' },
+    ],
+    false,
+  ),
+  Barcode: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'intro', js: 'intro', typ: '' },
+      { json: 'create', js: 'create', typ: '' },
+      { json: 'value', js: 'value', typ: '' },
+      { json: 'total', js: 'total', typ: '' },
+      { json: 'expires', js: 'expires', typ: r('Expires') },
+      { json: 'expired', js: 'expired', typ: '' },
+      { json: 'new', js: 'new', typ: '' },
+      { json: 'backButton', js: 'backButton', typ: '' },
+      { json: 'error', js: 'error', typ: r('BarcodeError') },
+    ],
+    false,
+  ),
+  BarcodeError: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'message', js: 'message', typ: '' },
+      { json: 'backButton', js: 'backButton', typ: '' },
+    ],
+    false,
+  ),
+  Expires: o(
+    [
+      { json: 'pre', js: 'pre', typ: '' },
+      { json: 'post', js: 'post', typ: '' },
+    ],
     false,
   ),
   MobileForm: o(
@@ -792,6 +873,7 @@ const typeMap: any = {
       { json: 'required', js: 'required', typ: '' },
       { json: 'phoneNumber', js: 'phoneNumber', typ: '' },
       { json: 'email', js: 'email', typ: '' },
+      { json: 'webpage', js: 'webpage', typ: '' },
     ],
     false,
   ),

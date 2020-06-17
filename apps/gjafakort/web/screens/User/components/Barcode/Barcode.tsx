@@ -14,6 +14,7 @@ import {
   SkeletonLoader as SL,
 } from '@island.is/island-ui/core'
 
+import { useI18n } from '@island.is/gjafakort-web/i18n'
 import { ErrorPanel } from '@island.is/gjafakort-web/components'
 
 import { barcodeMachine } from './barcodeMachine'
@@ -44,6 +45,11 @@ interface PropTypes {
 }
 
 function Barcode({ shouldPoll }: PropTypes) {
+  const {
+    t: {
+      user: { barcode: t },
+    },
+  } = useI18n()
   const [current, send] = useMachine(barcodeMachine, {
     devTools: true,
   })
@@ -105,12 +111,12 @@ function Barcode({ shouldPoll }: PropTypes) {
               }}
               icon="arrowRight"
             >
-              Búa til strikamerki
+              {t.create}
             </Button>
           </Box>
         ))}
         <Typography variant="h4" color="blue400">
-          Samtals:{' '}
+          {t.total}:{' '}
           {formatNumber(giftCards.reduce((acc, { amount }) => acc + amount, 0))}{' '}
           kr.
         </Typography>
@@ -121,10 +127,7 @@ function Barcode({ shouldPoll }: PropTypes) {
   if (current.matches('error')) {
     return (
       <Stack space={3}>
-        <ErrorPanel
-          title="Villa kom upp"
-          message="Eitthvað hefur farið úrskeiðis við að sækja strikamerkið þitt, vinsamlegast reyndu aftur."
-        />
+        <ErrorPanel title={t.error.title} message={t.error.message} />
         <Box marginTop={4}>
           <Button
             onClick={() => {
@@ -133,7 +136,7 @@ function Barcode({ shouldPoll }: PropTypes) {
             variant="text"
             leftIcon="arrowLeft"
           >
-            Aftur í lista
+            {t.error.backButton}
           </Button>
         </Box>
       </Stack>
@@ -152,7 +155,7 @@ function Barcode({ shouldPoll }: PropTypes) {
           marginBottom={3}
         >
           <Typography variant="tag" color="dark400">
-            Strikamerki rennur út eftir
+            {t.expires.pre}
           </Typography>
           <Typography variant="h1" color={isInvalid ? 'red400' : 'dark400'}>
             {isLoading ? (
@@ -163,7 +166,7 @@ function Barcode({ shouldPoll }: PropTypes) {
                 countFromSeconds={current.context.secondsToExpiry}
               />
             )}{' '}
-            mín
+            {t.expires.post}
           </Typography>
           {isInvalid && (
             <Box display="flex" alignItems="center" justifyContent="center">
@@ -171,7 +174,7 @@ function Barcode({ shouldPoll }: PropTypes) {
                 <Icon type="alert" color="red400" width={19} />
               </Box>
               <Typography variant="tag" color="red400">
-                Strikamerki útrunnið
+                {t.expired}
               </Typography>
             </Box>
           )}
@@ -204,13 +207,13 @@ function Barcode({ shouldPoll }: PropTypes) {
                     getBarcode(current.context.giftCard)
                   }}
                 >
-                  Fá nýtt strikamerki
+                  {t.new}
                 </Button>
               </Box>
             )}
           </Box>
           <Stack space={1}>
-            <Typography variant="h3">Virði</Typography>
+            <Typography variant="h3">{t.value}</Typography>
             <Typography variant="h1">
               {formatNumber(current.context.giftCard.amount)} kr.
             </Typography>
@@ -225,7 +228,7 @@ function Barcode({ shouldPoll }: PropTypes) {
             variant="text"
             leftIcon="arrowLeft"
           >
-            Aftur í lista
+            {t.backButton}
           </Button>
         </Box>
       </Column>
