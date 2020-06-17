@@ -2,16 +2,12 @@ import React, { useState } from 'react'
 import get from 'lodash/get'
 import Head from 'next/head'
 import App from 'next/app'
-import Link from 'next/link'
-import Router from 'next/router'
 import NextCookies from 'next-cookies'
 import getConfig from 'next/config'
 import { ApolloProvider } from 'react-apollo'
 import * as Sentry from '@sentry/node'
 
 import { Box, ContentBlock, Footer, Page } from '@island.is/island-ui/core'
-
-import { AuthUser } from '@island.is/gjafakort-web/graphql/schema'
 
 import { Toast, ErrorBoundary, Header } from '../components'
 import { client } from '../graphql'

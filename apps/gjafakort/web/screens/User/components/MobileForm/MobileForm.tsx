@@ -1,19 +1,13 @@
 import React from 'react'
-import gql from 'graphql-tag'
 import { Formik, Form, Field, FormikValues } from 'formik'
 import * as Yup from 'yup'
 
 import {
-  FieldInput,
   FieldNumberInput,
-  FieldCheckbox,
   Box,
-  Tiles,
   Stack,
   Button,
   Typography,
-  FieldSelect,
-  FieldPolarQuestion,
 } from '@island.is/island-ui/core'
 
 import { useI18n } from '@island.is/gjafakort-web/i18n'
@@ -60,7 +54,7 @@ function MobileForm({ onSubmit }: PropTypes) {
         })}
         onSubmit={onSubmit}
       >
-        {({ values, setFieldValue, isValid, dirty }) => (
+        {({ isValid, dirty }) => (
           <Form>
             <Box marginBottom={5}>
               <Stack space={3}>

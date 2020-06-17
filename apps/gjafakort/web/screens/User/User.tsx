@@ -1,5 +1,5 @@
-import React, { useContext } from 'react'
-import { useQuery, useMutation } from 'react-apollo'
+import React, { useContext, useEffect } from 'react'
+import { useLazyQuery, useMutation } from 'react-apollo'
 import gql from 'graphql-tag'
 
 import {
@@ -40,43 +40,57 @@ const CreateUserApplicationMutation = gql`
 `
 
 function User() {
-  const { user, setUser } = useContext(UserContext)
-
-  /*
-   *
-   * TODO: split into components and check loading
-   *
-   */
-
-  if (!user) {
-    return <ContentLoader />
-  }
-
-  const onSubmit = (values) => {
-    setUser({ ...user, mobile: values.phoneNumber })
-  }
-
-  if (!user.mobile) {
-    return <MobileForm onSubmit={onSubmit} />
-  }
-
-  // TODO: separate component:
+  const { user } = useContext(UserContext)
   const [createUserApplication, { called: shouldPoll }] = useMutation(
     CreateUserApplicationMutation,
-  )
-  useQuery(UserApplicationQuery, {
-    onCompleted: async (data) => {
-      if (!data.userApplication) {
-        await createUserApplication({
-          variables: {
-            input: {
-              mobile: user.mobile,
-            },
-          },
+    {
+      update(cache, { data: { createUserApplication } }) {
+        cache.writeQuery({
+          query: UserApplicationQuery,
+          data: { userApplication: createUserApplication.application },
         })
-      }
+      },
     },
-  })
+  )
+  const [getUserApplication, { data, loading }] = useLazyQuery(
+    UserApplicationQuery,
+    {
+      onCompleted: async ({ userApplication }) => {
+        if (!userApplication && user.mobile) {
+          await createUserApplication({
+            variables: {
+              input: {
+                mobile: user.mobile,
+              },
+            },
+          })
+        }
+      },
+    },
+  )
+  const { userApplication } = data || {}
+
+  useEffect(() => {
+    if (user && !userApplication) {
+      getUserApplication()
+    }
+  }, [user, userApplication, getUserApplication])
+
+  const onMobileSubmit = async ({ phoneNumber }) => {
+    await createUserApplication({
+      variables: {
+        input: {
+          mobile: phoneNumber,
+        },
+      },
+    })
+  }
+
+  if ((loading && !data) || !user) {
+    return <ContentLoader />
+  } else if (!userApplication && !user.mobile) {
+    return <MobileForm onSubmit={onMobileSubmit} />
+  }
 
   return (
     <Box marginTop={12}>

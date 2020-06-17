@@ -78,18 +78,22 @@ class UserResolver {
     _2,
     { user, dataSources: { applicationApi, yayApi } },
   ) {
-    const application = await getApplication(user.ssn, applicationApi)
-    const {
-      data: { mobileNumber, countryCode },
-    } = application
-    const giftCards = await yayApi.getGiftCards(mobileNumber, countryCode)
-    return giftCards
-      .filter((giftCard) => giftCard.identifier === application.id)
-      .map((giftCard) => ({
-        giftCardId: giftCard.giftCardId,
-        amount: giftCard.amount,
-        applicationId: giftCard.identifier,
-      }))
+    try {
+      const application = await getApplication(user.ssn, applicationApi)
+      const {
+        data: { mobileNumber, countryCode },
+      } = application
+      const giftCards = await yayApi.getGiftCards(mobileNumber, countryCode)
+      return giftCards
+        .filter((giftCard) => giftCard.identifier === application.id)
+        .map((giftCard) => ({
+          giftCardId: giftCard.giftCardId,
+          amount: giftCard.amount,
+          applicationId: giftCard.identifier,
+        }))
+    } catch (_) {
+      return []
+    }
   }
 
   @authorize({ role: 'tester' })

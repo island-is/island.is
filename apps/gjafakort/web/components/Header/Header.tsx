@@ -30,7 +30,7 @@ function Header() {
   const user = data?.user
   useEffect(() => {
     setUser(user)
-  }, [user])
+  }, [user, setUser])
 
   return (
     <IslandUIHeader

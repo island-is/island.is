@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import { useQuery, useLazyQuery } from 'react-apollo'
 import gql from 'graphql-tag'
 import { useMachine } from '@xstate/react'
