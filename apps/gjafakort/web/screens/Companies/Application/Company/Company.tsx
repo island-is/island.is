@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import gql from 'graphql-tag'
 
 import { ApplicationStates } from '@island.is/gjafakort/consts'
+import { ApplicationStates as ApplicationStatesType } from '@island.is/gjafakort/types'
 import { ContentLoader } from '@island.is/gjafakort-web/components'
 import { Signup, Congratulations, NotQualified } from './components'
 
@@ -33,7 +34,9 @@ function Company() {
   const router = useRouter()
   const { ssn } = router.query
   const [submission, setSubmission] = useState<
-    'pending' | 'rejected' | 'approved'
+    | ApplicationStatesType['PENDING']
+    | ApplicationStatesType['REJECTED']
+    | ApplicationStatesType['APPROVED']
   >(ApplicationStates.PENDING)
   const { data, loading } = useQuery(CompanyQuery, { variables: { ssn } })
   const { company } = data || {}
