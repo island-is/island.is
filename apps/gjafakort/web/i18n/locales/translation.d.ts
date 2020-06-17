@@ -210,7 +210,7 @@ export interface Home {
   name: string
   title: string
   intro: string
-  description: string
+  description: string[]
   FAQ: HomeFAQ
   cta: HomeCta
 }
@@ -746,7 +746,7 @@ const typeMap: any = {
       { json: 'name', js: 'name', typ: '' },
       { json: 'title', js: 'title', typ: '' },
       { json: 'intro', js: 'intro', typ: '' },
-      { json: 'description', js: 'description', typ: '' },
+      { json: 'description', js: 'description', typ: a('') },
       { json: 'FAQ', js: 'FAQ', typ: r('HomeFAQ') },
       { json: 'cta', js: 'cta', typ: r('HomeCta') },
     ],
