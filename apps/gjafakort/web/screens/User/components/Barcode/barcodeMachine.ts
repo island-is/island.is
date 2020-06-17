@@ -122,6 +122,7 @@ export const barcodeMachine = Machine<
     },
     states: {
       idle: {
+        entry: 'refetchList',
         on: {
           GET_BARCODE: {
             actions: assign({
@@ -204,7 +205,11 @@ export const barcodeMachine = Machine<
           },
         },
       },
-      success: {},
+      success: {
+        on: {
+          GET_BARCODE: 'loading',
+        },
+      },
       invalid: {
         on: {
           GET_BARCODE: 'loading',

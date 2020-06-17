@@ -50,18 +50,18 @@ function Barcode({ shouldPoll }: PropTypes) {
       user: { barcode: t },
     },
   } = useI18n()
-  const [current, send] = useMachine(barcodeMachine, {
-    devTools: true,
-  })
-  const { data, stopPolling } = useQuery(GiftCardsQuery, {
-    pollInterval: shouldPoll ? 2000 : 0,
-    notifyOnNetworkStatusChange: true,
-    onCompleted: (data) => {
-      if (shouldPoll && data?.giftCards.length > 0) {
-        stopPolling()
-      }
+  const { data, stopPolling, refetch, loading: loadingGiftCards } = useQuery(
+    GiftCardsQuery,
+    {
+      pollInterval: shouldPoll ? 2000 : 0,
+      notifyOnNetworkStatusChange: true,
+      onCompleted: (data) => {
+        if (shouldPoll && data?.giftCards.length > 0) {
+          stopPolling()
+        }
+      },
     },
-  })
+  )
   const [getGiftCardCode] = useLazyQuery(GiftCardCodeQuery, {
     fetchPolicy: 'network-only',
     onCompleted: ({ giftCardCode: { code, expiryDate, pollingUrl } }) => {
@@ -76,9 +76,20 @@ function Barcode({ shouldPoll }: PropTypes) {
       send('ERROR')
     },
   })
+  const [current, send] = useMachine(barcodeMachine, {
+    devTools: true,
+    actions: {
+      refetchList: () => {
+        console.log('refetching')
+        refetch()
+      },
+    },
+  })
   const giftCards = data?.giftCards ?? []
-  const isLoading = current.matches('loading')
-  const isInvalid = current.matches('invalid')
+  const loadingInitialGiftCards = shouldPoll && giftCards.length === 0
+  const loadingState = current.matches('loading')
+  const invalidState = current.matches('invalid')
+  const successState = current.matches('success')
   const getBarcode = (giftCard) => {
     getGiftCardCode({
       variables: { giftCardId: giftCard.giftCardId },
@@ -91,6 +102,13 @@ function Barcode({ shouldPoll }: PropTypes) {
   if (current.matches('idle')) {
     return (
       <Stack space={3}>
+        {loadingInitialGiftCards && <SL height={70} />}
+        {loadingGiftCards && giftCards.length <= 0 && <SL height={70} />}
+        {!loadingInitialGiftCards &&
+          !loadingGiftCards &&
+          giftCards.length <= 0 && (
+            <Typography variant="h3">{t.noGiftCards}</Typography>
+          )}
         {giftCards.map((giftCard) => (
           <Box
             key={giftCard.giftCardId}
@@ -115,11 +133,15 @@ function Barcode({ shouldPoll }: PropTypes) {
             </Button>
           </Box>
         ))}
-        <Typography variant="h4" color="blue400">
-          {t.total}:{' '}
-          {formatNumber(giftCards.reduce((acc, { amount }) => acc + amount, 0))}{' '}
-          kr.
-        </Typography>
+        {giftCards.length > 0 && (
+          <Typography variant="h4" color="blue400">
+            {t.total}:{' '}
+            {formatNumber(
+              giftCards.reduce((acc, { amount }) => acc + amount, 0),
+            )}{' '}
+            kr.
+          </Typography>
+        )}
       </Stack>
     )
   }
@@ -145,53 +167,58 @@ function Barcode({ shouldPoll }: PropTypes) {
 
   return (
     <Columns reverse collapseBelow="md">
-      <Column>
-        <Box
-          display="flex"
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-          height="full"
-          marginBottom={3}
-        >
-          <Typography variant="tag" color="dark400">
-            {t.expires.pre}
-          </Typography>
-          <Typography variant="h1" color={isInvalid ? 'red400' : 'dark400'}>
-            {isLoading ? (
-              <SL width={114} />
-            ) : (
-              <Countdown
-                counter={current.context.elapsed}
-                countFromSeconds={current.context.secondsToExpiry}
-              />
-            )}{' '}
-            {t.expires.post}
-          </Typography>
-          {isInvalid && (
-            <Box display="flex" alignItems="center" justifyContent="center">
-              <Box marginRight={2}>
-                <Icon type="alert" color="red400" width={19} />
+      <Column width="6/12">
+        {!successState && (
+          <Box
+            display="flex"
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            height="full"
+            marginBottom={3}
+          >
+            <Typography variant="tag" color="dark400">
+              {t.expires.pre}
+            </Typography>
+            <Typography
+              variant="h1"
+              color={invalidState ? 'red400' : 'dark400'}
+            >
+              {loadingState ? (
+                <SL width={114} />
+              ) : (
+                <Countdown
+                  counter={current.context.elapsed}
+                  countFromSeconds={current.context.secondsToExpiry}
+                />
+              )}{' '}
+              {t.expires.post}
+            </Typography>
+            {invalidState && (
+              <Box display="flex" alignItems="center" justifyContent="center">
+                <Box marginRight={2}>
+                  <Icon type="alert" color="red400" width={19} />
+                </Box>
+                <Typography variant="tag" color="red400">
+                  {t.expired}
+                </Typography>
               </Box>
-              <Typography variant="tag" color="red400">
-                {t.expired}
-              </Typography>
-            </Box>
-          )}
-        </Box>
+            )}
+          </Box>
+        )}
       </Column>
-      <Column>
+      <Column width="6/12">
         <Box textAlign="center">
           <Box position="relative" marginBottom={2}>
-            {isLoading ? (
+            {loadingState ? (
               <SL height={250} />
             ) : (
               <RenderBarcode
                 code={current.context.barcode as string}
-                invalid={isInvalid}
+                invalid={invalidState || successState}
               />
             )}
-            {isInvalid && (
+            {(invalidState || successState) && (
               <Box
                 position="absolute"
                 top={0}
@@ -202,22 +229,55 @@ function Barcode({ shouldPoll }: PropTypes) {
                 alignItems="center"
                 justifyContent="center"
               >
-                <Button
-                  onClick={() => {
-                    getBarcode(current.context.giftCard)
-                  }}
-                >
-                  {t.new}
-                </Button>
+                <Stack space={3}>
+                  {successState && (
+                    <>
+                      <Icon
+                        type="check"
+                        width="49"
+                        height="37"
+                        color="dark400"
+                      />
+                      <Typography variant="h1">
+                        {formatNumber(
+                          current.context.giftCard.amount -
+                            parseInt(current.context.pollingData.amount),
+                        )}{' '}
+                        kr.
+                      </Typography>
+                    </>
+                  )}
+                  <Button
+                    onClick={() => {
+                      getBarcode(current.context.giftCard)
+                    }}
+                  >
+                    {t.new}
+                  </Button>
+                </Stack>
               </Box>
             )}
           </Box>
-          <Stack space={1}>
-            <Typography variant="h3">{t.value}</Typography>
-            <Typography variant="h1">
-              {formatNumber(current.context.giftCard.amount)} kr.
-            </Typography>
-          </Stack>
+          {successState ? (
+            <Stack space={1}>
+              <Typography variant="h3">{t.currentAmount}</Typography>
+              <Typography variant="h1">
+                {formatNumber(current.context.pollingData.amount)} kr.
+              </Typography>
+              <Typography variant="p">
+                {t.initialAmount}
+                <br />
+                {formatNumber(current.context.giftCard.amount)} kr.
+              </Typography>
+            </Stack>
+          ) : (
+            <Stack space={1}>
+              <Typography variant="h3">{t.value}</Typography>
+              <Typography variant="h1">
+                {formatNumber(current.context.giftCard.amount)} kr.
+              </Typography>
+            </Stack>
+          )}
         </Box>
 
         <Box marginTop={4}>

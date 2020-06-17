@@ -16,6 +16,7 @@ function RenderBarcode({ code, invalid }: PropTypes) {
         jsbarcode(node, code, {
           font: 'IBM Plex Sans',
           margin: 0,
+          marginBottom: 5,
         })
       }
     },

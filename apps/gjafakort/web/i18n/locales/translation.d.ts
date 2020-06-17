@@ -267,8 +267,11 @@ export interface AppStore {
 }
 
 export interface Barcode {
+  noGiftCards: string
   title: string
   intro: string
+  currentAmount: string
+  initialAmount: string
   create: string
   value: string
   total: string
@@ -815,8 +818,11 @@ const typeMap: any = {
   ),
   Barcode: o(
     [
+      { json: 'noGiftCards', js: 'noGiftCards', typ: '' },
       { json: 'title', js: 'title', typ: '' },
       { json: 'intro', js: 'intro', typ: '' },
+      { json: 'currentAmount', js: 'currentAmount', typ: '' },
+      { json: 'initialAmount', js: 'initialAmount', typ: '' },
       { json: 'create', js: 'create', typ: '' },
       { json: 'value', js: 'value', typ: '' },
       { json: 'total', js: 'total', typ: '' },

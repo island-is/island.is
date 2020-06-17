@@ -327,8 +327,11 @@
       "apple": "smáforrit apple app store"
     },
     "barcode": {
+      "noGiftCards": "Engin skráð gjafabréf",
       "title": "Gjafakóði á strikamerki",
       "intro": "Til að nota gjöfina getur þú sýnt söluaðila strikamerkið á farsímanum þínum. Hjá völdum aðilum getur þú nýtt númerið á strikamerkinu sem gjafakóða á vefsíðum ferðaþjónustufyrirtækja.",
+      "currentAmount": "Núvirði",
+      "initialAmount": "Upprunalegt virði",
       "create": "Búa til strikamerki",
       "value": "Virði",
       "total": "Samtals",
