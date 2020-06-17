@@ -1,11 +1,11 @@
 import cookies from 'next-cookies'
 
-export const COOKIE_KEY = 'gjafakort.csrf'
+import { CSRF_COOKIE_NAME } from '@island.is/gjafakort/consts'
 
 type CookieContext = { req?: { headers: { cookie?: string } } }
 
 export const getCsrfToken = (ctx: CookieContext) => {
-  return cookies(ctx || {})[COOKIE_KEY]
+  return cookies(ctx || {})[CSRF_COOKIE_NAME]
 }
 
 export const isAuthenticated = (ctx: CookieContext) => {

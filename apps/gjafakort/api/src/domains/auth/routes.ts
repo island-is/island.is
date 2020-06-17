@@ -7,6 +7,10 @@ import { uuid } from 'uuidv4'
 import kennitala from 'kennitala'
 
 import { logger } from '@island.is/logging'
+import {
+  SSN_IS_NOT_A_PERSON,
+  USER_NOT_OLD_ENOUGH,
+} from '@island.is/gjafakort/consts'
 
 import { Credentials } from '../../types'
 import { VerifyResult } from './types'
@@ -57,7 +61,7 @@ router.post(
 
     if (!kennitala.isPerson(user.kennitala)) {
       logger.warn('User used company kennitala to log in')
-      return res.redirect('/error?errorType=kennitalaIsNotAPerson')
+      return res.redirect(`/error?errorType=${SSN_IS_NOT_A_PERSON}`)
     }
 
     const yearBorn = new Date(
@@ -65,7 +69,7 @@ router.post(
     ).getFullYear()
     if (yearBorn > YEAR_BORN_LIMIT) {
       logger.warn(`User born after ${YEAR_BORN_LIMIT} logged in`)
-      return res.redirect('/error?errorType=userNotOldEnough')
+      return res.redirect(`/error?errorType=${USER_NOT_OLD_ENOUGH}`)
     }
 
     const csrfToken = new Entropy({ bits: 128 }).string()

@@ -8,6 +8,10 @@ import {
   ContentBlock,
   Typography,
 } from '@island.is/island-ui/core'
+import {
+  SSN_IS_NOT_A_PERSON,
+  USER_NOT_OLD_ENOUGH,
+} from '@island.is/gjafakort/consts'
 
 import { useI18n } from '../../i18n'
 
@@ -20,9 +24,9 @@ function ErrorPage() {
   const { errorType } = router.query
 
   let intro = t.intro
-  if (errorType === 'kennitalaIsNotAPerson') {
+  if (errorType === SSN_IS_NOT_A_PERSON) {
     intro = t.introKennitalaIsNotAPerson
-  } else if (errorType === 'userNotOldEnough') {
+  } else if (errorType === USER_NOT_OLD_ENOUGH) {
     intro = t.introUserNotOldEnough
   }
 
