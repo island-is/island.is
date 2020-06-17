@@ -17,7 +17,7 @@ import { Toast, ErrorBoundary, Header } from '../components'
 import { client } from '../graphql'
 import { appWithTranslation, useI18n } from '../i18n'
 import { isAuthenticated } from '../auth/utils'
-import { UserContext } from '../context/UserContext'
+import { UserContext } from '../context'
 
 const {
   publicRuntimeConfig: { SENTRY_DSN },
@@ -35,15 +35,9 @@ interface LayoutPropTypes {
 function Layout({ children, isAuthenticated }: LayoutPropTypes) {
   const { t } = useI18n()
   const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(false)
-
-  const setAuth = (user: AuthUser, loading: boolean) => {
-    setUser(user)
-    setLoading(loading)
-  }
 
   return (
-    <UserContext.Provider value={{ isAuthenticated, user, setAuth, loading }}>
+    <UserContext.Provider value={{ isAuthenticated, user, setUser }}>
       <Page>
         <Head>
           <link

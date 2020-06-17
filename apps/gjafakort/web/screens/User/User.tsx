@@ -40,8 +40,7 @@ const CreateUserApplicationMutation = gql`
 `
 
 function User() {
-  const { user, loading } = useContext(UserContext)
-  console.log("*************", user)
+  const { user, setUser } = useContext(UserContext)
 
   /*
    *
@@ -49,7 +48,7 @@ function User() {
    *
    */
 
-  if (loading || !user) {
+  if (!user) {
     return <ContentLoader />
   }
 

@@ -2,6 +2,7 @@ import React, { ReactElement } from 'react'
 
 import { Logo } from '../Logo/Logo'
 
+import { Typography } from '../Typography/Typography'
 import * as styles from './Header.treat'
 import { Button } from '../Button/Button'
 
@@ -31,11 +32,17 @@ export const Header = ({
     <div className={styles.container}>
       {logo()}{' '}
       {authenticated && (
-        <div>
-          {userName}
-          <Button variant="menu" leftIcon="user" onClick={onLogout}>
-            {logoutText}
-          </Button>
+        <div className={styles.authenticated}>
+          <div>
+            <Typography variant="h5" className={styles.userName}>
+              {userName}
+            </Typography>
+          </div>
+          <div>
+            <Button variant="menu" leftIcon="user" onClick={onLogout}>
+              {logoutText}
+            </Button>
+          </div>
         </div>
       )}
     </div>

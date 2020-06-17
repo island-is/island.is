@@ -6,7 +6,7 @@ import gql from 'graphql-tag'
 
 import { Header as IslandUIHeader } from '@island.is/island-ui/core'
 
-import { UserContext } from '../../context/UserContext'
+import { UserContext } from '../../context'
 import { useI18n } from '../../i18n'
 import { api } from '../../services'
 
@@ -21,16 +21,16 @@ export const UserQuery = gql`
 `
 
 function Header() {
-  const { setAuth, isAuthenticated } = useContext(UserContext)
+  const { setUser, isAuthenticated } = useContext(UserContext)
   const {
     t: { header: t, routes },
   } = useI18n()
-  const { data, loading } = useQuery(UserQuery)
-  const user = data?.user
+  const { data } = useQuery(UserQuery)
 
+  const user = data?.user
   useEffect(() => {
-    setAuth(user, loading)
-  }, [user, loading])
+    setUser(user)
+  }, [user])
 
   return (
     <IslandUIHeader
