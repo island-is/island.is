@@ -79,10 +79,7 @@ function Barcode({ shouldPoll }: PropTypes) {
   const [current, send] = useMachine(barcodeMachine, {
     devTools: true,
     actions: {
-      refetchList: () => {
-        console.log('refetching')
-        refetch()
-      },
+      refetchList: refetch,
     },
   })
   const giftCards = data?.giftCards ?? []

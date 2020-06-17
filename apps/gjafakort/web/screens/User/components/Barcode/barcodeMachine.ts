@@ -178,7 +178,7 @@ export const barcodeMachine = Machine<
               },
             },
             after: {
-              4000: 'poll',
+              2000: 'poll',
             },
           },
           poll: {
