@@ -45,7 +45,8 @@
         "libs/api/domains/content-search/src/index.ts"
       ],
       "@island.is/api/content-search": ["libs/api/content-search/src/index.ts"],
-      "@island.is/gjafakort/types": ["libs/gjafakort/types/src/index.ts"]
+      "@island.is/gjafakort/types": ["libs/gjafakort/types/src/index.ts"],
+      "@island.is/gjafakort/consts": ["libs/gjafakort/consts/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

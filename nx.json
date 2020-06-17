@@ -95,6 +95,9 @@
     },
     "gjafakort-types": {
       "tags": []
+    },
+    "gjafakort-consts": {
+      "tags": []
     }
   }
 }

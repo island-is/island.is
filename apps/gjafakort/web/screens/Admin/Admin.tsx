@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { useQuery, useMutation } from 'react-apollo'
 import gql from 'graphql-tag'
 
+import { ApplicationStates } from '@island.is/gjafakort/consts'
 import {
   Accordion,
   AccordionItem,
@@ -96,13 +97,15 @@ function Admin() {
   }
 
   const approvedApplications = companyApplications.filter(
-    (a) => a.state === 'approved' || a.state === 'manual-approved',
+    (a) =>
+      a.state === ApplicationStates.APPROVED ||
+      a.state === ApplicationStates.MANUAL_APPROVED,
   )
   const pendingApplications = companyApplications.filter(
-    (a) => a.state === 'pending',
+    (a) => a.state === ApplicationStates.PENDING,
   )
   const rejectedApplications = companyApplications.filter(
-    (a) => a.state === 'rejected',
+    (a) => a.state === ApplicationStates.REJECTED,
   )
   const applicationsLeft = pendingApplications.length
   const application = applicationsLeft && pendingApplications[index]

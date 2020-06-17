@@ -44,7 +44,10 @@ export const startConsumers = async () => {
       handler.queueName,
       handler.routingKeys,
     )
-    const consumer = channel.consume<CompanyApplication, CompanyApplicationRoutingKey>({
+    const consumer = channel.consume<
+      CompanyApplication,
+      CompanyApplicationRoutingKey
+    >({
       queueId,
       handler: handler.handler,
     })
@@ -59,7 +62,10 @@ export const startConsumers = async () => {
       handler.queueName,
       handler.routingKeys,
     )
-    const consumer = channel.consume<UserApplication, UserApplicationRoutingKey>({
+    const consumer = channel.consume<
+      UserApplication,
+      UserApplicationRoutingKey
+    >({
       queueId,
       handler: handler.handler,
     })

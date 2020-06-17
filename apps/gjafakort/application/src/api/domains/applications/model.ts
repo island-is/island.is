@@ -1,6 +1,9 @@
 import { Model, DataTypes } from 'sequelize'
 
-import { consts } from '../common'
+import {
+  ApplicationTypes,
+  ApplicationStates,
+} from '@island.is/gjafakort/consts'
 import { sequelize } from '../../../extensions'
 import { model as AuditLog } from '../audit'
 
@@ -34,12 +37,12 @@ Application.init(
     },
     type: {
       type: DataTypes.ENUM,
-      values: Object.values(consts.Types),
+      values: Object.values(ApplicationTypes),
       allowNull: false,
     },
     state: {
       type: DataTypes.ENUM,
-      values: Object.values(consts.States),
+      values: Object.values(ApplicationStates),
       allowNull: false,
     },
     issuerSSN: {

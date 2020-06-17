@@ -7,7 +7,8 @@ import { environment } from '../environments'
 
 const { production } = environment
 
-const APPLICATION_EXCHANGE: ApplicationExchange = 'gjafakort-application-updates'
+const APPLICATION_EXCHANGE: ApplicationExchange =
+  'gjafakort-application-updates'
 
 const setupMessageQueue = (app: express.Application) => {
   const channel = MessageQueue.connect(production)

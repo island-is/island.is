@@ -1,6 +1,6 @@
 import { Model, DataTypes } from 'sequelize'
 
-import { consts } from '../common'
+import { ApplicationStates } from '@island.is/gjafakort/consts'
 import { sequelize } from '../../../extensions'
 
 class AuditLog extends Model {
@@ -34,7 +34,7 @@ AuditLog.init(
     },
     state: {
       type: DataTypes.ENUM,
-      values: Object.values(consts.States),
+      values: Object.values(ApplicationStates),
       allowNull: false,
     },
     title: {

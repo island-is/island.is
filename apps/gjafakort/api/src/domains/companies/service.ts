@@ -1,5 +1,6 @@
 import { logger } from '@island.is/logging'
 import { CompanyApplication } from '@island.is/gjafakort/types'
+import { ApplicationStates } from '@island.is/gjafakort/consts'
 
 import { CreateCompanyApplicationInput } from '../../types'
 import { DataSource } from '../../types'
@@ -23,7 +24,7 @@ export const getApplication = async (
     logger.debug(`Got a single service provider for ssn ${companySSN}`)
     const [serviceProvider] = serviceProviders
     return {
-      state: 'empty',
+      state: ApplicationStates.NONE,
       data: {
         name: serviceProvider.contactInfo.name,
         companyDisplayName: serviceProvider.legalName,
@@ -43,7 +44,7 @@ export const getApplication = async (
 export const createApplication = async (
   applicationInput: CreateCompanyApplicationInput,
   authorSSN: string,
-  state: string,
+  state: CompanyApplication['state'],
   comments: string[],
   applicationApi: ApplicationAPI,
 ) => {
@@ -69,7 +70,7 @@ export const approveApplication = (
   applicationApi: ApplicationAPI,
   ssn: string,
 ) => {
-  if (application.state !== 'pending') {
+  if (application.state !== ApplicationStates.PENDING) {
     throw new Error(
       `Cannot approve an application in the ${application.state} state`,
     )
@@ -77,7 +78,7 @@ export const approveApplication = (
 
   return applicationApi.updateApplication<CompanyApplication>(
     application.id,
-    'manual-approved',
+    ApplicationStates.MANUAL_APPROVED,
     ssn,
   )
 }
@@ -87,7 +88,7 @@ export const rejectApplication = (
   applicationApi: ApplicationAPI,
   ssn: string,
 ) => {
-  if (application.state !== 'pending') {
+  if (application.state !== ApplicationStates.PENDING) {
     throw new Error(
       `Cannot reject an application in the ${application.state} state`,
     )
@@ -95,7 +96,7 @@ export const rejectApplication = (
 
   return applicationApi.updateApplication<CompanyApplication>(
     application.id,
-    'rejected',
+    ApplicationStates.REJECTED,
     ssn,
   )
 }

@@ -1,3 +1,5 @@
+type ValueOf<T> = T[keyof T]
+
 export type ApplicationExchange = 'gjafakort-application-updates'
 
 export type CompanyApplicationRoutingKey =
@@ -8,19 +10,27 @@ export type CompanyApplicationRoutingKey =
 
 export type UserApplicationRoutingKey = 'gjafakort-user:approved'
 
+export interface ApplicationStates {
+  PENDING: 'pending'
+  APPROVED: 'approved'
+  MANUAL_APPROVED: 'manual-approved'
+  REJECTED: 'rejected'
+  NONE: 'none'
+}
+
 export interface Application {
   id: string
   created: string
   modified: string
 
   issuerSSN: string
-  type: string
-  state: string
+  type: 'gjafakort' | 'gjafakort-user'
+  state: ValueOf<ApplicationStates>
   data: object
   AuditLogs?: [
     {
       id: string
-      state: string
+      state: ValueOf<ApplicationStates>
       title: string
       data: string
       authorSSN: string
@@ -52,6 +62,7 @@ export interface CompanyApplication extends Application {
 
 export interface UserApplication extends Application {
   type: 'gjafakort-user'
+  state: 'approved'
   data: {
     mobileNumber: string
     countryCode: string
