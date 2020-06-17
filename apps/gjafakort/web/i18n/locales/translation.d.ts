@@ -16,9 +16,10 @@ export interface Translation {
   application: Application
   companySignup: CompanySignup
   company: TranslationCompany
+  user: User
   header: Header
   footer: Footer
-  validation: Validation
+  validation: TranslationValidation
   routes: Routes
 }
 
@@ -98,8 +99,9 @@ export interface Signup {
 }
 
 export interface SignupForm {
-  companyName: Company
-  companySSN: Company
+  validation: FormValidation
+  companyName: CompanyName
+  companySSN: CompanyName
   companyDisplayName: CompanyDisplayName
   serviceCategory: ServiceCategory
   operation: Operation
@@ -113,7 +115,7 @@ export interface CompanyDisplayName {
   tooltip: string
 }
 
-export interface Company {
+export interface CompanyName {
   label: string
 }
 
@@ -122,6 +124,7 @@ export interface Contact {
   name: string
   email: string
   generalEmail: string
+  webpage: string
   phoneNumber: string
 }
 
@@ -153,6 +156,11 @@ export interface ServiceCategory {
 export interface ServiceCategoryOption {
   label: string
   value: string
+}
+
+export interface FormValidation {
+  operations: string
+  operationsTrouble: string
 }
 
 export interface CompanySignup {
@@ -243,7 +251,32 @@ export interface Users {
   home: string
 }
 
-export interface Validation {}
+export interface User {
+  mobileForm: MobileForm
+}
+
+export interface MobileForm {
+  title: string
+  intro: string
+  validation: MobileFormValidation
+  form: MobileFormForm
+}
+
+export interface MobileFormForm {
+  phoneNumber: CompanyName
+  confirmPhoneNumber: CompanyName
+  submit: string
+}
+
+export interface MobileFormValidation {
+  confirmPhoneNumber: string
+}
+
+export interface TranslationValidation {
+  required: string
+  phoneNumber: string
+  email: string
+}
 
 // Converts JSON strings to/from your types
 // and asserts the results of JSON.parse at runtime
@@ -408,9 +441,10 @@ const typeMap: any = {
       { json: 'application', js: 'application', typ: r('Application') },
       { json: 'companySignup', js: 'companySignup', typ: r('CompanySignup') },
       { json: 'company', js: 'company', typ: r('TranslationCompany') },
+      { json: 'user', js: 'user', typ: r('User') },
       { json: 'header', js: 'header', typ: r('Header') },
       { json: 'footer', js: 'footer', typ: r('Footer') },
-      { json: 'validation', js: 'validation', typ: r('Validation') },
+      { json: 'validation', js: 'validation', typ: r('TranslationValidation') },
       { json: 'routes', js: 'routes', typ: r('Routes') },
     ],
     false,
@@ -520,8 +554,9 @@ const typeMap: any = {
   ),
   SignupForm: o(
     [
-      { json: 'companyName', js: 'companyName', typ: r('Company') },
-      { json: 'companySSN', js: 'companySSN', typ: r('Company') },
+      { json: 'validation', js: 'validation', typ: r('FormValidation') },
+      { json: 'companyName', js: 'companyName', typ: r('CompanyName') },
+      { json: 'companySSN', js: 'companySSN', typ: r('CompanyName') },
       {
         json: 'companyDisplayName',
         js: 'companyDisplayName',
@@ -550,13 +585,14 @@ const typeMap: any = {
     ],
     false,
   ),
-  Company: o([{ json: 'label', js: 'label', typ: '' }], false),
+  CompanyName: o([{ json: 'label', js: 'label', typ: '' }], false),
   Contact: o(
     [
       { json: 'label', js: 'label', typ: '' },
       { json: 'name', js: 'name', typ: '' },
       { json: 'email', js: 'email', typ: '' },
       { json: 'generalEmail', js: 'generalEmail', typ: '' },
+      { json: 'webpage', js: 'webpage', typ: '' },
       { json: 'phoneNumber', js: 'phoneNumber', typ: '' },
     ],
     false,
@@ -598,6 +634,13 @@ const typeMap: any = {
     [
       { json: 'label', js: 'label', typ: '' },
       { json: 'value', js: 'value', typ: '' },
+    ],
+    false,
+  ),
+  FormValidation: o(
+    [
+      { json: 'operations', js: 'operations', typ: '' },
+      { json: 'operationsTrouble', js: 'operationsTrouble', typ: '' },
     ],
     false,
   ),
@@ -715,5 +758,41 @@ const typeMap: any = {
     false,
   ),
   Users: o([{ json: 'home', js: 'home', typ: '' }], false),
-  Validation: o([], false),
+  User: o(
+    [{ json: 'mobileForm', js: 'mobileForm', typ: r('MobileForm') }],
+    false,
+  ),
+  MobileForm: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'intro', js: 'intro', typ: '' },
+      { json: 'validation', js: 'validation', typ: r('MobileFormValidation') },
+      { json: 'form', js: 'form', typ: r('MobileFormForm') },
+    ],
+    false,
+  ),
+  MobileFormForm: o(
+    [
+      { json: 'phoneNumber', js: 'phoneNumber', typ: r('CompanyName') },
+      {
+        json: 'confirmPhoneNumber',
+        js: 'confirmPhoneNumber',
+        typ: r('CompanyName'),
+      },
+      { json: 'submit', js: 'submit', typ: '' },
+    ],
+    false,
+  ),
+  MobileFormValidation: o(
+    [{ json: 'confirmPhoneNumber', js: 'confirmPhoneNumber', typ: '' }],
+    false,
+  ),
+  TranslationValidation: o(
+    [
+      { json: 'required', js: 'required', typ: '' },
+      { json: 'phoneNumber', js: 'phoneNumber', typ: '' },
+      { json: 'email', js: 'email', typ: '' },
+    ],
+    false,
+  ),
 }

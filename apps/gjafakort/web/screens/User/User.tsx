@@ -19,7 +19,7 @@ import googlePlaySvg from '@island.is/gjafakort-web/assets/googlePlay.svg'
 import { UserContext } from '@island.is/gjafakort-web/context'
 import { ContentLoader } from '@island.is/gjafakort-web/components'
 
-import { Barcode } from './components'
+import { Barcode, MobileForm } from './components'
 
 export const UserApplicationQuery = gql`
   query UserApplicationQuery {
@@ -52,14 +52,12 @@ function User() {
     return <ContentLoader />
   }
 
+  const onSubmit = (values) => {
+    setUser({ ...user, mobile: values.phoneNumber })
+  }
+
   if (!user.mobile) {
-    // TODO: separate component:
-    return (
-      <div>
-        What's your phone number bruuuuhhh? input box ; submit (set to context
-        with setUser)
-      </div>
-    )
+    return <MobileForm onSubmit={onSubmit} />
   }
 
   // TODO: separate component:
