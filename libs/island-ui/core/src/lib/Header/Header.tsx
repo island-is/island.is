@@ -34,9 +34,7 @@ export const Header = ({
       {authenticated && (
         <div className={styles.authenticated}>
           <div>
-            <Typography variant="eyebrows" color="dark400">
-              {userName}
-            </Typography>
+            <Typography variant="eyebrow">{userName}</Typography>
           </div>
           <div>
             <Button variant="menu" leftIcon="user" onClick={onLogout}>

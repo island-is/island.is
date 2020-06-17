@@ -53,7 +53,7 @@ const embeddedNodes = {
         bottomContent: (
           <ContentBlock width="small">
             <Stack space={[2, 2]}>
-              <Typography variant="eyebrow" as="h4">
+              <Typography variant="eyebrow" as="h4" color="red400">
                 Innskráning og umsókn
               </Typography>
               <Typography variant="h3" as="h3">

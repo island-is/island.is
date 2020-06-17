@@ -109,7 +109,7 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
                 paddingRight={[0, 0, 12]}
               >
                 <Stack space={3}>
-                  <Typography variant="eyebrow" as="h2">
+                  <Typography variant="eyebrow" as="h2" color="red400">
                     {n('heroPreTitle')}
                   </Typography>
                   <Typography variant="h1" as="h1">
