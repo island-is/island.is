@@ -14,8 +14,8 @@ import {
 } from '@island.is/island-ui/core'
 
 import packageSvg from '@island.is/gjafakort-web/assets/ferdagjof-pakki.svg'
-import appleSvg from '@island.is/gjafakort-web/assets/appstore.svg'
-import googlePlaySvg from '@island.is/gjafakort-web/assets/googlePlay.svg'
+import { ReactComponent as AppleSvg } from '@island.is/gjafakort-web/assets/appstore.svg'
+import { ReactComponent as GooglePlaySvg } from '@island.is/gjafakort-web/assets/googlePlay.svg'
 import { UserContext } from '@island.is/gjafakort-web/context'
 import { ContentLoader } from '@island.is/gjafakort-web/components'
 import { useI18n } from '@island.is/gjafakort-web/i18n'
@@ -123,18 +123,18 @@ function User() {
                 <Box marginTop={3}>
                   <Tiles space={4} columns={[1, 2, 3]}>
                     <a
-                      href="https://play.google.com/store/apps"
+                      href="https://play.google.com/store/apps/details?id=is.ferdagjof.app"
                       rel="noopener noreferrer"
                       target="_blank"
                     >
-                      <img src={googlePlaySvg} alt={t.appStore.google} />
+                      <GooglePlaySvg title={t.appStore.google} />
                     </a>
                     <a
-                      href="https://www.apple.com/ios/app-store/"
+                      href="https://apps.apple.com/is/app/fer%C3%B0agj%C3%B6f/id1514948705"
                       rel="noopener noreferrer"
                       target="_blank"
                     >
-                      <img src={appleSvg} alt={t.appStore.apple} />
+                      <AppleSvg title={t.appStore.apple} />
                     </a>
                   </Tiles>
                 </Box>
