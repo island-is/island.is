@@ -49,6 +49,7 @@ function Barcode({ shouldPoll }: PropTypes) {
   })
   const { data, stopPolling } = useQuery(GiftCardsQuery, {
     pollInterval: shouldPoll ? 2000 : 0,
+    notifyOnNetworkStatusChange: true,
     onCompleted: (data) => {
       if (shouldPoll && data?.giftCards.length > 0) {
         stopPolling()
