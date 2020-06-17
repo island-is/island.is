@@ -1,5 +1,11 @@
 import { CookieOptions } from 'express'
 
+import {
+  REDIRECT_COOKIE_NAME,
+  CSRF_COOKIE_NAME,
+  ACCESS_TOKEN_COOKIE_NAME,
+} from '@island.is/gjafakort/consts'
+
 import { environment } from '../../environments'
 import { Cookie } from './types'
 
@@ -14,7 +20,7 @@ const defaultCookieOptions: CookieOptions = {
 }
 
 export const REDIRECT_COOKIE: Cookie = {
-  name: 'gjafakort.redirect',
+  name: REDIRECT_COOKIE_NAME,
   options: {
     ...defaultCookieOptions,
     sameSite: 'none',
@@ -22,7 +28,7 @@ export const REDIRECT_COOKIE: Cookie = {
 }
 
 export const CSRF_COOKIE: Cookie = {
-  name: 'gjafakort.csrf',
+  name: CSRF_COOKIE_NAME,
   options: {
     ...defaultCookieOptions,
     httpOnly: false,
@@ -30,6 +36,6 @@ export const CSRF_COOKIE: Cookie = {
 }
 
 export const ACCESS_TOKEN_COOKIE: Cookie = {
-  name: 'gjafakort.token',
+  name: ACCESS_TOKEN_COOKIE_NAME,
   options: defaultCookieOptions,
 }
