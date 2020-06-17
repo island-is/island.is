@@ -26,12 +26,25 @@ class UserResolver {
     _2,
     { user, dataSources: { applicationApi } },
   ) {
-    const application = await userService.getApplication(
-      user.ssn,
-      applicationApi,
-    )
+    let application = await userService.getApplication(user.ssn, applicationApi)
     if (!application) {
       return null
+    }
+    if (user.mobile) {
+      const { mobileNumber, countryCode } = validateMobile(user.mobile)
+      if (
+        !application.data.verified &&
+        mobileNumber === application.data.mobileNumber &&
+        countryCode === application.data.countryCode
+      ) {
+        const verified = true
+        application = await userService.updateApplication(
+          application.id,
+          user.ssn,
+          verified,
+          applicationApi,
+        )
+      }
     }
     return {
       id: application.id,
@@ -47,11 +60,13 @@ class UserResolver {
     { user, dataSources: { applicationApi } },
   ) {
     const mobile = user.mobile || input.mobile
+    const verified = Boolean(user.mobile)
     const { mobileNumber, countryCode } = validateMobile(mobile)
     const application = await userService.createApplication(
       user.ssn,
       mobileNumber,
       countryCode,
+      verified,
       applicationApi,
     )
 
@@ -80,14 +95,17 @@ class UserResolver {
     const {
       data: { mobileNumber, countryCode },
     } = application
-    const giftCards = await yayApi.getGiftCards(mobileNumber, countryCode)
-    return giftCards
-      .filter((giftCard) => giftCard.identifier === application.id)
-      .map((giftCard) => ({
-        giftCardId: giftCard.giftCardId,
-        amount: giftCard.amount,
-        applicationId: giftCard.identifier,
-      }))
+    let giftCards = await yayApi.getGiftCards(mobileNumber, countryCode)
+    if (!application.data.verified) {
+      giftCards = giftCards.filter(
+        (giftCard) => giftCard.identifier === application.id,
+      )
+    }
+    return giftCards.map((giftCard) => ({
+      giftCardId: giftCard.giftCardId,
+      amount: giftCard.amount,
+      applicationId: giftCard.identifier,
+    }))
   }
 
   @authorize({ role: 'tester' })

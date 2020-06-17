@@ -66,5 +66,6 @@ export interface UserApplication extends Application {
   data: {
     mobileNumber: string
     countryCode: string
+    verified: boolean
   }
 }

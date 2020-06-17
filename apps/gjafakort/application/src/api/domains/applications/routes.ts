@@ -59,7 +59,9 @@ router.put(
   [
     param('applicationId').isUUID(),
     body('authorSSN').isLength({ min: 10, max: 10 }),
-    body('state').isIn(Object.values(ApplicationStates)),
+    body('state')
+      .optional()
+      .isIn(Object.values(ApplicationStates)),
     body('data')
       .optional()
       .custom((value) => {
@@ -88,7 +90,8 @@ router.put(
       })
     }
 
-    const { state, data } = req.body
+    const state = req.body.state || application.state
+    const { data } = req.body
     application = await applicationService.updateApplication(
       application,
       state,

@@ -65,12 +65,18 @@ class ApplicationAPI extends RESTDataSource {
     }
   }
 
-  async updateApplication<T extends Application>(
-    id: T['id'],
-    state: Application['state'],
-    authorSSN: string,
-  ): Promise<T> {
-    const res = await this.put(`applications/${id}`, { state, authorSSN })
+  async updateApplication<T extends Application>({
+    id,
+    state,
+    authorSSN,
+    data,
+  }: {
+    id: T['id']
+    authorSSN: string
+    state?: Application['state']
+    data?: object
+  }): Promise<T> {
+    const res = await this.put(`applications/${id}`, { state, authorSSN, data })
 
     return res.application
   }

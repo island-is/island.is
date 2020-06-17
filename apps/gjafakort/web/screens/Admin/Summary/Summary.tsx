@@ -19,7 +19,7 @@ import { KeyValue } from '../../../components'
 import * as styles from './Summary.treat'
 
 const CompanyApplicationsQuery = gql`
-  query CompanyApplicationsQuery {
+  query CompanyApplicationsQueryMinimal {
     companyApplications {
       id
       name
