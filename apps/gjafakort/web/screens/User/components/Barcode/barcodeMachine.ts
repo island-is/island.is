@@ -34,23 +34,16 @@ import { Machine, assign } from 'xstate'
 // explanation that code got expired
 // button to get new code > active state
 
-const polling = (ctx) => (cb, onReceive) => {
-  const fetchPollingUrl = () =>
-    fetch(ctx.pollingUrl, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        cb({ type: 'POLLING_INFO', data })
-      })
-  fetchPollingUrl()
-  onReceive((event) => {
-    if (event === 'POLL') {
-      fetchPollingUrl()
-    }
+const fetchPollingUrl = (ctx) => {
+  return fetch(ctx.pollingUrl, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
   })
+    .then((response) => response.json())
+    .then((data) => {
+      return data
+    })
 }
 
 const tick = () => (cb) => {
@@ -79,7 +72,6 @@ export type GiftCard = { id: string; amount: number }
 type ActionEvents =
   | { type: 'GET_BARCODE'; giftCard: GiftCard }
   | { type: 'TICK' }
-  | { type: 'USE_BARCODE' }
   | { type: 'BACK_TO_LIST' }
   | {
       type: 'SUCCESS'
@@ -97,6 +89,17 @@ interface BarcodeContext {
   error: object
   giftCard: GiftCard
   pollingUrl: string
+  pollingData: {
+    status?: string
+    title?: string
+    body?: string
+    amount?: string
+  }
+}
+
+type PollingData = {
+  type: string
+  data: object
 }
 
 export const barcodeMachine = Machine<
@@ -115,6 +118,7 @@ export const barcodeMachine = Machine<
       error: undefined,
       giftCard: { id: '', amount: 0 },
       pollingUrl: '',
+      pollingData: {},
     },
     states: {
       idle: {
@@ -152,20 +156,41 @@ export const barcodeMachine = Machine<
         entry: assign({
           elapsed: 0,
         }),
-        invoke: [
-          {
-            id: 'timerTick',
-            src: tick,
-          },
-          {
-            id: 'pollingUrl',
-            src: polling,
-          },
-        ],
+        invoke: {
+          id: 'timerTick',
+          src: tick,
+        },
         states: {
           polling: {
+            invoke: {
+              id: 'pollingUrl',
+              src: fetchPollingUrl,
+              onDone: {
+                actions: assign({
+                  pollingData: (cxt, event: PollingData) => {
+                    return event.data
+                  },
+                }),
+              },
+              onError: (ctx, error) => {
+                console.log(error)
+              },
+            },
             after: {
-              4000: { actions: 'POLL' },
+              4000: 'poll',
+            },
+          },
+          poll: {
+            on: {
+              '': [
+                {
+                  cond: 'shouldPoll',
+                  target: 'polling',
+                },
+                {
+                  target: '#barcode.success',
+                },
+              ],
             },
           },
         },
@@ -177,7 +202,6 @@ export const barcodeMachine = Machine<
             cond: 'timesUp',
             target: 'invalid',
           },
-          USE_BARCODE: 'success',
         },
       },
       success: {},
@@ -201,6 +225,9 @@ export const barcodeMachine = Machine<
     guards: {
       timesUp: (context) => {
         return context.elapsed >= context.secondsToExpiry
+      },
+      shouldPoll: (ctx) => {
+        return !ctx.pollingData.amount
       },
     },
   },
