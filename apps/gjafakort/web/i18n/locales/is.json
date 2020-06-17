@@ -122,7 +122,10 @@
     "name": "Ferðagjöf",
     "title": "Gjöf til ferðalaga innanlands",
     "intro": "Búum til minningar á ferðalagi innanlands og styðjum við bakið á íslenskri ferðaþjónustu",
-    "description": "Allir einstaklingar fæddir 2002 og fyrr fá Ferðagjöf að andvirði 5.000 kr. Gjöfin er liður í því að styðja við bakið á íslenskri ferðaþjónustu í kjölfar heimsfaraldurs kórónuveiru og efla þannig íslenska ferðaþjónustu sem og hvetja landsmenn til að eiga góðar stundir á ferðalagi víðs vegar um landið. Nánari upplýsingar má finna á <a href='https://ferdalag.is' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>.",
+    "description": [
+      "Allir einstaklingar fæddir 2002 og fyrr fá Ferðagjöf að andvirði 5.000 kr. Gjöfin er liður í því að styðja við bakið á íslenskri ferðaþjónustu í kjölfar heimsfaraldurs kórónuveiru og efla þannig íslenska ferðaþjónustu sem og hvetja landsmenn til að eiga góðar stundir á ferðalagi víðs vegar um landið. Nánari upplýsingar má finna á <a href='https://ferdalag.is' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>.",
+      "Þegar gjöf er sótt verður til Ferðagjöf sem er tengd við símanúmer eiganda."
+    ],
     "FAQ": {
       "title": "Algengar spurningar",
       "items": [
