@@ -1,46 +1,12 @@
 import { logger } from '@island.is/logging'
+import { CompanyApplication } from '@island.is/gjafakort/types'
+import { ApplicationStates } from '@island.is/gjafakort/consts'
 
 import { CreateCompanyApplicationInput } from '../../types'
 import { DataSource } from '../../types'
 import { ApplicationAPI } from '../../services'
 
 const APPLICATION_TYPE = 'gjafakort'
-
-export interface CompanyApplication {
-  created: string
-  modified: string
-  id: string
-  issuerSSN: string
-  type: 'gjafakort'
-  state: string
-  data: {
-    comments: string[]
-    companyDisplayName: string
-    companyName: string
-    companySSN: string
-    email: string
-    exhibition: boolean
-    generalEmail: string
-    name: string
-    operatingPermitForRestaurant: boolean
-    operatingPermitForVehicles: boolean
-    operationsTrouble: boolean
-    phoneNumber: string
-    serviceCategory: string
-    validLicenses: boolean
-    validPermit: boolean
-    webpage: string
-  }
-  AuditLogs?: [
-    {
-      id: string
-      state: string
-      title: string
-      data: string
-      authorSSN: string
-    },
-  ]
-}
 
 export const getApplication = async (
   companySSN: string,
@@ -58,7 +24,7 @@ export const getApplication = async (
     logger.debug(`Got a single service provider for ssn ${companySSN}`)
     const [serviceProvider] = serviceProviders
     return {
-      state: 'empty',
+      state: ApplicationStates.NONE,
       data: {
         name: serviceProvider.contactInfo.name,
         companyDisplayName: serviceProvider.legalName,
@@ -78,7 +44,7 @@ export const getApplication = async (
 export const createApplication = async (
   applicationInput: CreateCompanyApplicationInput,
   authorSSN: string,
-  state: string,
+  state: CompanyApplication['state'],
   comments: string[],
   applicationApi: ApplicationAPI,
 ) => {
@@ -104,7 +70,7 @@ export const approveApplication = (
   applicationApi: ApplicationAPI,
   ssn: string,
 ) => {
-  if (application.state !== 'pending') {
+  if (application.state !== ApplicationStates.PENDING) {
     throw new Error(
       `Cannot approve an application in the ${application.state} state`,
     )
@@ -112,7 +78,7 @@ export const approveApplication = (
 
   return applicationApi.updateApplication<CompanyApplication>(
     application.id,
-    'manual-approved',
+    ApplicationStates.MANUAL_APPROVED,
     ssn,
   )
 }
@@ -122,7 +88,7 @@ export const rejectApplication = (
   applicationApi: ApplicationAPI,
   ssn: string,
 ) => {
-  if (application.state !== 'pending') {
+  if (application.state !== ApplicationStates.PENDING) {
     throw new Error(
       `Cannot reject an application in the ${application.state} state`,
     )
@@ -130,7 +96,7 @@ export const rejectApplication = (
 
   return applicationApi.updateApplication<CompanyApplication>(
     application.id,
-    'rejected',
+    ApplicationStates.REJECTED,
     ssn,
   )
 }

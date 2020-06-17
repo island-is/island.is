@@ -1,12 +1,15 @@
 import { ForbiddenError } from 'apollo-server-express'
 
+import { CompanyApplication } from '@island.is/gjafakort/types'
+import { ApplicationStates } from '@island.is/gjafakort/consts'
+
 import * as companyService from './service'
 import { authorize } from '../auth'
-import { CompanyApplication } from '../../types'
+import { CompanyApplication as CompanyApplicationGQL } from '../../types'
 
 const formatApplication = (
-  application: companyService.CompanyApplication,
-): CompanyApplication =>
+  application: CompanyApplication,
+): CompanyApplicationGQL =>
   application && {
     id: application.id,
     name: application.data.name,
@@ -75,13 +78,14 @@ class CompanyResolver {
     const serviceProviders = await ferdalagApi.getServiceProviders(
       input.companySSN,
     )
-    let state = 'approved'
+    const state =
+      serviceProviders.length === 1
+        ? ApplicationStates.APPROVED
+        : ApplicationStates.PENDING
     const comments = []
     if (serviceProviders.length > 1) {
-      state = 'pending'
       comments.push('Multiple service providers found for ssn')
     } else if (serviceProviders.length < 1) {
-      state = 'pending'
       comments.push('No service provider found for ssn')
     }
 

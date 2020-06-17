@@ -92,6 +92,12 @@
     },
     "api-domains-content-search": {
       "tags": []
+    },
+    "gjafakort-types": {
+      "tags": []
+    },
+    "gjafakort-consts": {
+      "tags": []
     }
   }
 }

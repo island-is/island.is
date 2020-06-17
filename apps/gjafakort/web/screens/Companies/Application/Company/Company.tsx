@@ -3,6 +3,7 @@ import { useQuery } from 'react-apollo'
 import { useRouter } from 'next/router'
 import gql from 'graphql-tag'
 
+import { ApplicationStates } from '@island.is/gjafakort/consts'
 import { ContentLoader } from '@island.is/gjafakort-web/components'
 import { Signup, Congratulations, NotQualified } from './components'
 
@@ -33,15 +34,15 @@ function Company() {
   const { ssn } = router.query
   const [submission, setSubmission] = useState<
     'pending' | 'rejected' | 'approved'
-  >('pending')
+  >(ApplicationStates.PENDING)
   const { data, loading } = useQuery(GetCompanyQuery, { variables: { ssn } })
   const { company } = data || {}
 
   const onSubmit = (isSuccess: boolean) => {
     if (isSuccess) {
-      setSubmission('approved')
+      setSubmission(ApplicationStates.APPROVED)
     } else {
-      setSubmission('rejected')
+      setSubmission(ApplicationStates.REJECTED)
     }
   }
 
@@ -49,9 +50,15 @@ function Company() {
     return <ContentLoader />
   }
 
-  if (company.application?.state === 'rejected' || submission === 'rejected') {
+  if (
+    company.application?.state === ApplicationStates.REJECTED ||
+    submission === ApplicationStates.REJECTED
+  ) {
     return <NotQualified />
-  } else if (company.application?.id || submission === 'approved') {
+  } else if (
+    company.application?.id ||
+    submission === ApplicationStates.APPROVED
+  ) {
     return <Congratulations />
   }
 

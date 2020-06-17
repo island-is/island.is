@@ -1,7 +1,10 @@
 import { Router } from 'express'
 import { param, body, validationResult } from 'express-validator'
 
-import { consts } from '../common'
+import {
+  ApplicationTypes,
+  ApplicationStates,
+} from '@island.is/gjafakort/consts'
 import * as issuerService from './service'
 import { service as applicationService } from '../applications'
 import { service as auditService } from '../audit'
@@ -13,11 +16,11 @@ router.post(
   [
     param('ssn').isLength({ min: 10, max: 10 }),
     body('authorSSN').isLength({ min: 10, max: 10 }),
-    body('type').isIn(Object.values(consts.Types)),
+    body('type').isIn(Object.values(ApplicationTypes)),
     body('state')
       .optional()
-      .customSanitizer((value) => value || consts.States.PENDING)
-      .isIn(Object.values(consts.States)),
+      .customSanitizer((value) => value || ApplicationStates.PENDING)
+      .isIn(Object.values(ApplicationStates)),
     body('data').custom((value) => {
       if (typeof value !== 'object' || value === null) {
         return Promise.reject('Must provide data as an object')
@@ -77,7 +80,7 @@ router.get(
   '/:ssn/applications/:type',
   [
     param('ssn').isLength({ min: 10, max: 10 }),
-    param('type').isIn(Object.values(consts.Types)),
+    param('type').isIn(Object.values(ApplicationTypes)),
   ],
   async (req, res) => {
     const errors = validationResult(req)

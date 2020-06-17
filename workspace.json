@@ -999,6 +999,62 @@
           }
         }
       }
+    },
+    "gjafakort-types": {
+      "root": "libs/gjafakort/types",
+      "sourceRoot": "libs/gjafakort/types/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/gjafakort/types/.eslintrc",
+            "tsConfig": [
+              "libs/gjafakort/types/tsconfig.lib.json",
+              "libs/gjafakort/types/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/gjafakort/types/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/gjafakort/types/jest.config.js",
+            "tsConfig": "libs/gjafakort/types/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "gjafakort-consts": {
+      "root": "libs/gjafakort/consts",
+      "sourceRoot": "libs/gjafakort/consts/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/gjafakort/consts/.eslintrc",
+            "tsConfig": [
+              "libs/gjafakort/consts/tsconfig.lib.json",
+              "libs/gjafakort/consts/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/gjafakort/consts/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/gjafakort/consts/jest.config.js",
+            "tsConfig": "libs/gjafakort/consts/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

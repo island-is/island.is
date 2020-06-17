@@ -1,11 +1,8 @@
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 
-import { environment } from '../environments'
+import { Application } from '@island.is/gjafakort/types'
 
-interface Application {
-  type: string
-  data: object
-}
+import { environment } from '../environments'
 
 class ApplicationAPI extends RESTDataSource {
   baseURL = `${environment.applicationUrl}/`
@@ -22,9 +19,9 @@ class ApplicationAPI extends RESTDataSource {
     data,
   }: {
     applicationType: T['type']
-    issuerSSN: string
+    issuerSSN: T['issuerSSN']
     authorSSN: string
-    state: string
+    state: T['state']
     data: T['data']
   }): Promise<T> {
     const res = await this.post(`issuers/${issuerSSN}/applications`, {
@@ -39,7 +36,7 @@ class ApplicationAPI extends RESTDataSource {
 
   async getApplicationByType<T extends Application>(
     applicationType: T['type'],
-    issuerSSN: string,
+    issuerSSN: T['issuerSSN'],
   ): Promise<T> {
     try {
       const res = await this.get(
@@ -69,8 +66,8 @@ class ApplicationAPI extends RESTDataSource {
   }
 
   async updateApplication<T extends Application>(
-    id: string,
-    state: 'manual-approved' | 'rejected',
+    id: T['id'],
+    state: Application['state'],
     authorSSN: string,
   ): Promise<T> {
     const res = await this.put(`applications/${id}`, { state, authorSSN })

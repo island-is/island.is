@@ -3,8 +3,6 @@ import { Consumer } from 'sqs-consumer'
 
 import { logger } from '@island.is/logging'
 
-import { Message, RoutingKey, Exchange } from './types'
-
 AWS.config.update({ region: 'eu-west-1' })
 
 const SNS_LOCALSTACK_ENDPOINT = 'http://localhost:4575'
@@ -26,7 +24,7 @@ class Channel {
     })
   }
 
-  async declareExchange({ name }: { name: Exchange }) {
+  async declareExchange({ name }: { name: string }) {
     const { TopicArn } = await this.sns.createTopic({ Name: name }).promise()
     logger.info(`Declared exchange ${TopicArn}`)
     return TopicArn
@@ -74,7 +72,7 @@ class Channel {
     logger.info(`Set queue ${dlQueueId} as dead letter queue for ${queueId}`)
   }
 
-  async bindQueue({
+  async bindQueue<RoutingKey>({
     queueId,
     exchangeId,
     routingKeys = [],
@@ -135,14 +133,19 @@ class Channel {
     return SubscriptionArn
   }
 
-  consume({
+  consume<Message, RoutingKey>({
     queueId,
     handler,
   }: {
     queueId: string
     handler: (message: Message, routingKey: RoutingKey) => Promise<void>
   }) {
-    const parseMessage = (sqsMessage: AWS.SQS.Types.Message) => {
+    const parseMessage = (
+      sqsMessage: AWS.SQS.Types.Message,
+    ): {
+      message: Message
+      routingKey: RoutingKey
+    } => {
       const parsedBody = JSON.parse(sqsMessage.Body)
       const { Message, MessageAttributes } = parsedBody
       const routingKey = MessageAttributes?.event_type?.Value
@@ -183,7 +186,7 @@ class Channel {
     return consumer
   }
 
-  async publish({
+  async publish<Message, RoutingKey>({
     exchangeId,
     message,
     routingKey = undefined,

@@ -1,7 +1,10 @@
 import { Router } from 'express'
 import { param, body, validationResult, query } from 'express-validator'
 
-import { consts } from '../common'
+import {
+  ApplicationTypes,
+  ApplicationStates,
+} from '@island.is/gjafakort/consts'
 import * as applicationService from './service'
 import { service as auditService } from '../audit'
 
@@ -9,7 +12,7 @@ const router = Router()
 
 router.get(
   '/',
-  [query('type').isIn(Object.values(consts.Types))],
+  [query('type').isIn(Object.values(ApplicationTypes))],
   async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
@@ -56,7 +59,7 @@ router.put(
   [
     param('applicationId').isUUID(),
     body('authorSSN').isLength({ min: 10, max: 10 }),
-    body('state').isIn(Object.values(consts.States)),
+    body('state').isIn(Object.values(ApplicationStates)),
     body('data')
       .optional()
       .custom((value) => {

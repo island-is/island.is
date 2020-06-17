@@ -1,19 +1,9 @@
+import { UserApplication } from '@island.is/gjafakort/types'
+import { ApplicationStates } from '@island.is/gjafakort/consts'
+
 import { ApplicationAPI } from '../../services'
 
 const APPLICATION_TYPE = 'gjafakort-user'
-
-interface UserApplication {
-  created: string
-  modified: string
-  id: string
-  issuerSSN: string
-  type: 'gjafakort-user'
-  state: string
-  data: {
-    mobileNumber: string
-    countryCode: string
-  }
-}
 
 export const getApplication = async (
   userSSN: string,
@@ -35,7 +25,7 @@ export const createApplication = async (
     applicationType: APPLICATION_TYPE,
     issuerSSN: userSSN,
     authorSSN: userSSN,
-    state: 'approved',
+    state: ApplicationStates.APPROVED,
     data: { mobileNumber, countryCode },
   })
 }
