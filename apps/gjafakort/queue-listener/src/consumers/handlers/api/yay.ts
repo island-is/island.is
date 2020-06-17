@@ -1,9 +1,6 @@
 import md5 from 'crypto-js/md5'
 
-import {
-  GjafakortUserApplicationMessage,
-  GjafakortCompanyApplicationMessage,
-} from '@island.is/message-queue'
+import { CompanyApplication, UserApplication } from '@island.is/gjafakort/types'
 
 import { environment } from '../../../environments'
 import { request } from './api'
@@ -21,7 +18,7 @@ const getYayHeaders = () => {
   }
 }
 
-export const createUser = (message: GjafakortUserApplicationMessage) => {
+export const createUser = (message: UserApplication) => {
   return request({
     applicationId: message.id,
     method: 'POST',
@@ -36,7 +33,7 @@ export const createUser = (message: GjafakortUserApplicationMessage) => {
   })
 }
 
-export const createGiftCard = (message: GjafakortUserApplicationMessage) => {
+export const createGiftCard = (message: UserApplication) => {
   return request({
     applicationId: message.id,
     method: 'POST',
@@ -50,7 +47,7 @@ export const createGiftCard = (message: GjafakortUserApplicationMessage) => {
   })
 }
 
-export const createCompany = (message: GjafakortCompanyApplicationMessage) => {
+export const createCompany = (message: CompanyApplication) => {
   return request({
     applicationId: message.id,
     method: 'POST',
@@ -65,7 +62,7 @@ export const createCompany = (message: GjafakortCompanyApplicationMessage) => {
   })
 }
 
-export const rejectCompany = (message: GjafakortCompanyApplicationMessage) => {
+export const rejectCompany = (message: CompanyApplication) => {
   return request({
     applicationId: message.id,
     method: 'DELETE',

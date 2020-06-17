@@ -1,4 +1,4 @@
-import { GjafakortCompanyApplicationMessage } from '@island.is/message-queue'
+import { CompanyApplication } from '@island.is/gjafakort/types'
 
 import { environment } from '../../../environments'
 import { request } from './api'
@@ -7,7 +7,7 @@ const {
   ferdalag: { url, apiKey },
 } = environment
 
-const formatBody = (message: GjafakortCompanyApplicationMessage) => ({
+const formatBody = (message: CompanyApplication) => ({
   giftcert: true,
   contactEmail: message.data.email,
   contactName: message.data.name,
@@ -18,7 +18,7 @@ const formatBody = (message: GjafakortCompanyApplicationMessage) => ({
   legalName: message.data.companyName,
 })
 
-export const createProvider = (message: GjafakortCompanyApplicationMessage) => {
+export const createProvider = (message: CompanyApplication) => {
   return request({
     applicationId: message.id,
     method: 'POST',
@@ -33,7 +33,7 @@ export const createProvider = (message: GjafakortCompanyApplicationMessage) => {
   })
 }
 
-export const updateProvider = (message: GjafakortCompanyApplicationMessage) => {
+export const updateProvider = (message: CompanyApplication) => {
   return request({
     applicationId: message.id,
     method: 'POST',
@@ -45,7 +45,7 @@ export const updateProvider = (message: GjafakortCompanyApplicationMessage) => {
   })
 }
 
-export const getProviders = (message: GjafakortCompanyApplicationMessage) => {
+export const getProviders = (message: CompanyApplication) => {
   return request({
     applicationId: message.id,
     method: 'GET',

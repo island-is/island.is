@@ -1,46 +1,11 @@
 import { logger } from '@island.is/logging'
+import { CompanyApplication } from '@island.is/gjafakort/types'
 
 import { CreateCompanyApplicationInput } from '../../types'
 import { DataSource } from '../../types'
 import { ApplicationAPI } from '../../services'
 
 const APPLICATION_TYPE = 'gjafakort'
-
-export interface CompanyApplication {
-  created: string
-  modified: string
-  id: string
-  issuerSSN: string
-  type: 'gjafakort'
-  state: string
-  data: {
-    comments: string[]
-    companyDisplayName: string
-    companyName: string
-    companySSN: string
-    email: string
-    exhibition: boolean
-    generalEmail: string
-    name: string
-    operatingPermitForRestaurant: boolean
-    operatingPermitForVehicles: boolean
-    operationsTrouble: boolean
-    phoneNumber: string
-    serviceCategory: string
-    validLicenses: boolean
-    validPermit: boolean
-    webpage: string
-  }
-  AuditLogs?: [
-    {
-      id: string
-      state: string
-      title: string
-      data: string
-      authorSSN: string
-    },
-  ]
-}
 
 export const getApplication = async (
   companySSN: string,

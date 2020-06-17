@@ -1,11 +1,8 @@
 import { RESTDataSource, RequestOptions } from 'apollo-datasource-rest'
 
-import { environment } from '../environments'
+import { Application } from '@island.is/gjafakort/types'
 
-interface Application {
-  type: string
-  data: object
-}
+import { environment } from '../environments'
 
 class ApplicationAPI extends RESTDataSource {
   baseURL = `${environment.applicationUrl}/`
