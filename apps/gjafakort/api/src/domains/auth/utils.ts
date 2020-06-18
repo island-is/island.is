@@ -69,7 +69,7 @@ const checkPermissions = (user: User, { role }: Permissions): boolean => {
     case 'admin':
       return [...ADMINS, ...DEVELOPERS].includes(user.ssn)
     case 'tester':
-      return [...TESTERS, ...DEVELOPERS].includes(user.ssn)
+      return false
     default: {
       if (role) {
         return false
