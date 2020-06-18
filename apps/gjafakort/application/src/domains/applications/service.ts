@@ -14,6 +14,11 @@ export const getApplicationByIssuerAndType = (
 export const getApplicationById = (applicationId: string): Application =>
   Application.findOne({
     where: { id: applicationId },
+    include: [
+      {
+        model: AuditLog,
+      },
+    ],
   })
 
 export const getApplicationsByType = (type: string): [Application] =>
