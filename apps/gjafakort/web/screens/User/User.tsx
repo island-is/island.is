@@ -114,6 +114,7 @@ function User() {
               paddingX={[3, 3, 3, 12, 15]}
               paddingY={[5, 9]}
               marginBottom={12}
+              borderRadius="standard"
             >
               <Stack space={3}>
                 <Typography variant="h4" as="h2">
@@ -154,7 +155,12 @@ function User() {
           </Column>
           <Column width="1/3">
             <Hidden below="lg">
-              <Box textAlign="center" padding={3}>
+              <Box
+                textAlign="center"
+                padding={3}
+                border="standard"
+                borderRadius="standard"
+              >
                 <img src={packageSvg} alt="" />
               </Box>
             </Hidden>

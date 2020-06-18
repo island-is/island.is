@@ -11,7 +11,12 @@ function FormLayout({ children }: PropTypes) {
       <ContentBlock>
         <Columns space="gutter" collapseBelow="lg">
           <Column width="2/3">
-            <Box background="blue100" paddingX={[5, 12]} paddingY={[5, 9]}>
+            <Box
+              background="blue100"
+              paddingX={[5, 12]}
+              paddingY={[5, 9]}
+              borderRadius="standard"
+            >
               {children}
             </Box>
           </Column>

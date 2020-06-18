@@ -16,7 +16,12 @@ function GiftCTA() {
 
   return (
     <Box>
-      <Box background="purple100" padding={4} marginBottom={3}>
+      <Box
+        background="purple100"
+        padding={4}
+        marginBottom={3}
+        borderRadius="standard"
+      >
         <Box marginBottom={2}>
           <Typography variant="h4">{t.users.label}</Typography>
         </Box>
@@ -24,7 +29,12 @@ function GiftCTA() {
           {t.users.content}
         </Button>
       </Box>
-      <Box background="purple100" padding={4} marginBottom={3}>
+      <Box
+        background="purple100"
+        padding={4}
+        marginBottom={3}
+        borderRadius="standard"
+      >
         <Box marginBottom={2}>
           <Typography variant="h4">{t.companies.label}</Typography>
         </Box>
@@ -36,7 +46,12 @@ function GiftCTA() {
           </span>
         </Link>
       </Box>
-      <Box textAlign="center" padding={3}>
+      <Box
+        textAlign="center"
+        padding={3}
+        border="standard"
+        borderRadius="standard"
+      >
         <img src={packageSvg} alt="" />
       </Box>
     </Box>

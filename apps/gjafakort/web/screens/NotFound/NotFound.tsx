@@ -20,37 +20,38 @@ function NotFound() {
 
   return (
     <ContentBlock width="large">
-      <Box marginBottom={4}>
-        <Columns>
-          <Box
-            background="blue100"
-            padding={[2, 2, 3]}
-            marginTop={12}
-            border="standard"
-            borderRadius="large"
-          >
-            <Columns>
-              <Column width="content">
-                <Box marginRight={2} alignItems="center" display="flex">
-                  <Icon type="info" />
-                </Box>
-              </Column>
-              <Column>
-                <Box marginBottom={1}>
-                  <Typography variant="h4">{t.title}</Typography>
-                </Box>
-                <Typography variant="p">{t.content}</Typography>
-              </Column>
-            </Columns>
-          </Box>
-        </Columns>
-      </Box>
-      <Button variant="text" onClick={() => Router.back()}>
-        <Box marginRight={1} alignItems="center" display="flex">
-          <Icon type="arrowLeft" width={16} />
+      <Box paddingX="gutter">
+        <Box marginBottom={4}>
+          <Columns>
+            <Box
+              background="blue100"
+              padding={[2, 2, 3]}
+              border="standard"
+              borderRadius="large"
+            >
+              <Columns>
+                <Column width="content">
+                  <Box marginRight={2} alignItems="center" display="flex">
+                    <Icon type="info" />
+                  </Box>
+                </Column>
+                <Column>
+                  <Box marginBottom={1}>
+                    <Typography variant="h4">{t.title}</Typography>
+                  </Box>
+                  <Typography variant="p">{t.content}</Typography>
+                </Column>
+              </Columns>
+            </Box>
+          </Columns>
         </Box>
-        {t.button}
-      </Button>
+        <Button variant="text" onClick={() => Router.back()}>
+          <Box marginRight={1} alignItems="center" display="flex">
+            <Icon type="arrowLeft" width={16} />
+          </Box>
+          {t.button}
+        </Button>
+      </Box>
     </ContentBlock>
   )
 }

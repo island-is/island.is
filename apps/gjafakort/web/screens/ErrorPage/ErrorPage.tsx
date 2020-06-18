@@ -31,7 +31,7 @@ function ErrorPage() {
   }
 
   return (
-    <Box marginTop={12}>
+    <Box paddingX="gutter">
       <ContentBlock width="large">
         <Box marginBottom={3}>
           <Typography variant="h1" as="h1">
