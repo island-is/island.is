@@ -6,9 +6,27 @@ import { environment } from '../environments'
 
 const {
   sentry: { dsn },
+  ferdalag,
 } = environment
 
-Sentry.init({ dsn })
+Sentry.init({
+  dsn,
+  environment: 'api',
+  beforeBreadcrumb: (breadCrumb) => {
+    // Strip ferdalag apikey from breadcrumb
+    if (breadCrumb.data.url.startsWith(ferdalag.url)) {
+      const [strippedUrl] = breadCrumb.data.url.split('?')
+      return {
+        ...breadCrumb,
+        data: {
+          ...breadCrumb.data,
+          url: strippedUrl,
+        },
+      }
+    }
+    return breadCrumb
+  },
+})
 
 export const setupRequestHandler = (app: Application) => {
   app.use(Sentry.Handlers.requestHandler())
