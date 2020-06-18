@@ -169,7 +169,7 @@
     },
     "cta": {
       "users": {
-        "label": "Einstaklingar (væntanlegt)",
+        "label": "Einstaklingar",
         "content": "Sækja Ferðagjöf"
       },
       "companies": {
@@ -435,7 +435,7 @@
       "application": "/fyrirtaeki/umsokn"
     },
     "users": {
-      "home": "/notendur"
+      "home": "/notandi"
     }
   }
 }
