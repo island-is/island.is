@@ -6,15 +6,10 @@ import { KeyValue } from '@island.is/gjafakort-web/components'
 import {
   Accordion,
   AccordionItem,
-  Hidden,
   BulletList,
   Bullet,
-  Columns,
-  Column,
   Stack,
-  Icon,
   Box,
-  Button,
   Typography,
 } from '@island.is/island-ui/core'
 

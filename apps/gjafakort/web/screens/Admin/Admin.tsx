@@ -5,11 +5,8 @@ import gql from 'graphql-tag'
 import { ApplicationStates } from '@island.is/gjafakort/consts'
 import {
   Hidden,
-  BulletList,
-  Bullet,
   Columns,
   Column,
-  Stack,
   Icon,
   Box,
   Button,
@@ -17,8 +14,6 @@ import {
 } from '@island.is/island-ui/core'
 
 import { ContentLoader, Layout } from '@island.is/gjafakort-web/components'
-
-import { KeyValue } from '../../components'
 
 import { NoApplications, ReviewStatus, Info } from './components'
 

@@ -1,20 +1,10 @@
 import React from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useQuery } from 'react-apollo'
 import gql from 'graphql-tag'
 
-import {
-  Hidden,
-  BulletList,
-  Bullet,
-  Columns,
-  Column,
-  Stack,
-  Icon,
-  Box,
-  Button,
-  Typography,
-} from '@island.is/island-ui/core'
+import { Icon, Box, Button, Typography } from '@island.is/island-ui/core'
 
 import { ContentLoader, Layout } from '@island.is/gjafakort-web/components'
 import { NotFound } from '@island.is/gjafakort-web/screens'
