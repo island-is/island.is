@@ -26,12 +26,15 @@ export const handler = async (
     message,
   )
 
-  if (routingKey === 'gjafakort:approved') {
-    await ferdalagApi.updateProvider(message)
-  } else if (routingKey === 'gjafakort:manual-approved') {
+  if (
+    routingKey === 'gjafakort:approved' ||
+    routingKey === 'gjafakort:manual-approved'
+  ) {
     const providers = await ferdalagApi.getProviders(message)
     if (providers.data.length === 0) {
       await ferdalagApi.createProvider(message)
+    } else if (providers.data.length === 1) {
+      await ferdalagApi.updateProvider(message)
     } else {
       await postApplicationAuditLog(
         message.id,
