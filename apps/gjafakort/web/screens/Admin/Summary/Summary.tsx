@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import Router from 'next/router'
 import { useQuery } from 'react-apollo'
 import gql from 'graphql-tag'
 
@@ -92,11 +93,12 @@ function Summary() {
                 <th>Staða umsóknar</th>
                 <th>Kennitala</th>
                 <th className={styles.right}>Fjöldi atburða</th>
+                <th />
               </tr>
             </thead>
             <tbody>
-              {companyApplications.map((application) => (
-                <tr className={styles.tr}>
+              {companyApplications.map((application, index) => (
+                <tr className={styles.tr} key={index}>
                   <td>
                     <Box display="flex" flexDirection="column">
                       <Typography variant="p" color="dark400">
@@ -139,6 +141,17 @@ function Summary() {
                     )}-${application.companySSN.slice(6)}`}
                   </td>
                   <td className={styles.right}>{application.logs.length}</td>
+                  <td className={styles.right}>
+                    <Box
+                      display="flex"
+                      onClick={() => Router.push(`/admin/${application.id}`)}
+                      cursor="pointer"
+                      marginLeft={1}
+                      alignItems="center"
+                    >
+                      <Icon type="external" width={16} />
+                    </Box>
+                  </td>
                 </tr>
               ))}
             </tbody>

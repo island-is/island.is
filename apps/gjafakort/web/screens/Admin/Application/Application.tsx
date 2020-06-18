@@ -74,30 +74,44 @@ function Application() {
   return (
     <Layout
       left={
-        <Box
-          background="blue100"
-          position="relative"
-          paddingX={[5, 12]}
-          paddingY={[5, 9]}
-          width="full"
-        >
-          <Box marginBottom={2}>
-            <Box marginBottom={1}>
-              <Typography variant="h1" as="h1">
-                {application.companyName}
+        <>
+          <Box
+            background="blue100"
+            position="relative"
+            paddingX={[5, 12]}
+            paddingY={[5, 9]}
+            width="full"
+          >
+            <Box marginBottom={2}>
+              <Box marginBottom={1}>
+                <Typography variant="h1" as="h1">
+                  {application.companyName}
+                </Typography>
+              </Box>
+              <Typography variant="h3" as="h2" color="blue400">
+                {application.companyDisplayName}
               </Typography>
             </Box>
-            <Typography variant="h3" as="h2" color="blue400">
-              {application.companyDisplayName}
-            </Typography>
-          </Box>
 
-          {user.role === 'developer' ? (
-            <FormInfo application={application} />
-          ) : (
-            <Info application={application} />
-          )}
-        </Box>
+            {user.role === 'developer' ? (
+              <FormInfo application={application} />
+            ) : (
+              <Info application={application} />
+            )}
+          </Box>
+          <Box marginTop={6}>
+            <Link href="/admin/summary">
+              <span>
+                <Button variant="text" size="small">
+                  <Box alignItems="center" display="flex">
+                    <Icon type="arrowLeft" width={12} />
+                  </Box>
+                  Til baka
+                </Button>
+              </span>
+            </Link>
+          </Box>
+        </>
       }
     />
   )
