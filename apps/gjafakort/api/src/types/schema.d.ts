@@ -65,22 +65,22 @@ export type ApplicationLog = {
 export type CompanyApplication = {
   __typename?: 'CompanyApplication'
   id?: Maybe<Scalars['String']>
-  name: Scalars['String']
-  email: Scalars['String']
+  name?: Maybe<Scalars['String']>
+  email?: Maybe<Scalars['String']>
   state: Scalars['String']
   companySSN: Scalars['String']
   serviceCategory?: Maybe<Scalars['String']>
-  generalEmail: Scalars['String']
+  generalEmail?: Maybe<Scalars['String']>
   companyDisplayName?: Maybe<Scalars['String']>
   companyName?: Maybe<Scalars['String']>
   exhibition?: Maybe<Scalars['Boolean']>
   operatingPermitForRestaurant?: Maybe<Scalars['Boolean']>
   operatingPermitForVehicles?: Maybe<Scalars['Boolean']>
   operationsTrouble?: Maybe<Scalars['Boolean']>
-  phoneNumber: Scalars['String']
+  phoneNumber?: Maybe<Scalars['String']>
   validLicenses?: Maybe<Scalars['Boolean']>
   validPermit?: Maybe<Scalars['Boolean']>
-  webpage: Scalars['String']
+  webpage?: Maybe<Scalars['String']>
   logs?: Maybe<Array<Maybe<ApplicationLog>>>
 }
 
@@ -429,8 +429,8 @@ export type CompanyApplicationResolvers<
   ParentType extends ResolversParentTypes['CompanyApplication'] = ResolversParentTypes['CompanyApplication']
 > = {
   id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   state?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   companySSN?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   serviceCategory?: Resolver<
@@ -438,7 +438,11 @@ export type CompanyApplicationResolvers<
     ParentType,
     ContextType
   >
-  generalEmail?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  generalEmail?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   companyDisplayName?: Resolver<
     Maybe<ResolversTypes['String']>,
     ParentType,
@@ -469,7 +473,11 @@ export type CompanyApplicationResolvers<
     ParentType,
     ContextType
   >
-  phoneNumber?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  phoneNumber?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   validLicenses?: Resolver<
     Maybe<ResolversTypes['Boolean']>,
     ParentType,
@@ -480,7 +488,7 @@ export type CompanyApplicationResolvers<
     ParentType,
     ContextType
   >
-  webpage?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  webpage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   logs?: Resolver<
     Maybe<Array<Maybe<ResolversTypes['ApplicationLog']>>>,
     ParentType,
