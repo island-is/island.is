@@ -100,3 +100,16 @@ export const rejectApplication = (
     authorSSN: ssn,
   })
 }
+
+export const updateApplication = (
+  application: CompanyApplication,
+  applicationApi: ApplicationAPI,
+  ssn: string,
+  data: {},
+) => {
+  return applicationApi.updateApplication<CompanyApplication>({
+    id: application.id,
+    authorSSN: ssn,
+    data,
+  })
+}

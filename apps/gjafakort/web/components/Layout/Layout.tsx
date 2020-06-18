@@ -2,7 +2,7 @@ import React, { ReactNode } from 'react'
 import { Box, ContentBlock, Columns, Column } from '@island.is/island-ui/core'
 
 interface PropTypes {
-  left?: ReactNode
+  left: ReactNode
   right?: ReactNode
 }
 

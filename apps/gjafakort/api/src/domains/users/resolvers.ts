@@ -1,4 +1,4 @@
-import { ApolloError, UserInputError } from 'apollo-server-express'
+import { UserInputError } from 'apollo-server-express'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import { authorize } from '../auth'

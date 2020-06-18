@@ -62,6 +62,15 @@ export default gql`
     id: String!
   }
 
+  input UpdateCompanyApplicationInput {
+    id: String!
+    webpage: String
+    generalEmail: String
+    email: String
+    phoneNumber: String
+    name: String
+  }
+
   type CreateCompanyApplication {
     application: CompanyApplication
   }
@@ -74,8 +83,13 @@ export default gql`
     application: CompanyApplication
   }
 
+  type UpdateCompanyApplication {
+    application: CompanyApplication
+  }
+
   extend type Query {
     companyApplications: [CompanyApplication]
+    companyApplication(id: String!): CompanyApplication
     companies: [Company]
     company(ssn: String!): Company
   }
@@ -90,5 +104,8 @@ export default gql`
     rejectCompanyApplication(
       input: RejectCompanyApplicationInput!
     ): RejectCompanyApplication
+    updateCompanyApplication(
+      input: UpdateCompanyApplicationInput!
+    ): UpdateCompanyApplication
   }
 `

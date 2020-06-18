@@ -16,6 +16,7 @@ export const UserQuery = gql`
       name
       ssn
       mobile
+      role
     }
   }
 `
@@ -40,6 +41,7 @@ function Header() {
         </Link>
       )}
       logoutText={t.logout}
+      userLogo={user?.role === 'developer' ? '👑' : undefined}
       userName={user?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {

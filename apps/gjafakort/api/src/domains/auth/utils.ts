@@ -5,6 +5,37 @@ import { GraphQLContext, User, Credentials } from '../../types'
 import { Permissions } from './types'
 import { environment } from '../../environments'
 
+const DEVELOPERS = [
+  '1501933119', // Darri
+  '2101932009', // David
+  '2501893469', // Brian
+]
+
+const ADMINS = [
+  /* Stafrænt Ísland */
+  '2607862299', // Þórhildur
+  '1903795829', // Örvar
+  '0412824449', // Andri
+
+  /* Ferðamálastofa */
+  '2501625379', // Elías
+  '1802653849', // Halldór
+  '2605694739', // Alda
+  '1908862479', // Guðný
+]
+
+const TESTERS = [
+  /* Stafrænt Ísland */
+  '2607862299', // Þórhildur
+  '1903795829', // Örvar
+  '0412824449', // Andri
+
+  /* Yay */
+  '1008763619', // Ari
+  '2001764999', // Ragnar
+  '0709902539', // Björn
+]
+
 export const verifyToken = (token: string): Credentials | null => {
   if (!token) {
     return null
@@ -19,41 +50,32 @@ export const verifyToken = (token: string): Credentials | null => {
   })
 }
 
+export const getRole = (user: User): Permissions['role'] => {
+  if (DEVELOPERS.includes(user.ssn)) {
+    return 'developer'
+  } else if (ADMINS.includes(user.ssn)) {
+    return 'admin'
+  } else if (TESTERS.includes(user.ssn)) {
+    return 'tester'
+  } else {
+    return 'user'
+  }
+}
+
 const checkPermissions = (user: User, { role }: Permissions): boolean => {
   switch (role) {
+    case 'developer':
+      return DEVELOPERS.includes(user.ssn)
     case 'admin':
-      return [
-        /* Stafrænt Ísland */
-        '1501933119', // Darri
-        '2101932009', // David
-        '2501893469', // Brian
-        '2607862299', // Þórhildur
-        '1903795829', // Örvar
-        '0412824449', // Andri
-
-        /* Ferðamálastofa */
-        '2501625379', // Elías
-        '1802653849', // Halldór
-        '2605694739', // Alda
-        '1908862479', // Guðný
-      ].includes(user.ssn)
+      return [...ADMINS, ...DEVELOPERS].includes(user.ssn)
     case 'tester':
-      return [
-        /* Stafrænt Ísland */
-        '1501933119', // Darri
-        '2101932009', // David
-        '2501893469', // Brian
-        '2607862299', // Þórhildur
-        '1903795829', // Örvar
-        '0412824449', // Andri
-
-        /* Yay */
-        '1008763619', // Ari
-        '2001764999', // Ragnar
-        '0709902539', // Björn
-      ].includes(user.ssn)
-    default:
+      return [...TESTERS, ...DEVELOPERS].includes(user.ssn)
+    default: {
+      if (role) {
+        return false
+      }
       return true
+    }
   }
 }
 
