@@ -2,6 +2,8 @@ import React, { FC, useState, useEffect } from 'react'
 import { AsyncSearch } from './AsyncSearch'
 import { Stack, Box } from '../..'
 import { boolean } from '@storybook/addon-knobs'
+import Typography from '../Typography/Typography'
+import { blue100 } from '../../theme/colors'
 
 export default {
   title: 'Components/AsyncSearch',
@@ -22,9 +24,9 @@ const items = [
 
 let timer = null
 
-export const Basic: FC = () => {
-  const [options, setOptions] = useState([])
-  const [value, setValue] = useState(null)
+export const Features: FC = () => {
+  const [options, setOptions] = useState(items)
+  const [value, setValue] = useState('')
   const [loading, setLoading] = useState<boolean>(false)
 
   const simulateAsync = boolean('Simulate async', false)
@@ -70,6 +72,110 @@ export const Basic: FC = () => {
           placeholder="Type in something"
           onInputValueChange={(inputValue) => setValue(inputValue)}
           loading={loading}
+        />
+      </Stack>
+    </Box>
+  )
+}
+
+export const Basic: FC = () => {
+  return (
+    <Box padding={2}>
+      <Stack space={2}>
+        <AsyncSearch useFilter={true} options={items} />
+      </Stack>
+    </Box>
+  )
+}
+
+export const CustomItem: FC = () => {
+  const colored = boolean('Colored', false)
+  const large = boolean('Large', false)
+
+  const Container = ({ active, colored, children }) => {
+    const activeColor = colored ? 'white' : 'blue100'
+    const inactiveColor = colored ? 'blue100' : 'white'
+
+    return (
+      <Box
+        display="flex"
+        background={active ? activeColor : inactiveColor}
+        flexDirection="column"
+        padding={2}
+        paddingY={3}
+      >
+        {children}
+      </Box>
+    )
+  }
+
+  const customItems = [
+    { label: 'Apple', value: 'apple' },
+    {
+      label: 'Skráning nafns',
+      value: 'skraning-nafns',
+      component: (props) => (
+        <Container {...props}>
+          <Typography
+            variant="eyebrow"
+            as="span"
+            color={props.active ? 'blue400' : 'dark400'}
+          >
+            Fjölskyldumál og velferð - Nafn og kyn
+          </Typography>
+          <Typography variant="intro" as="span">
+            Skráning nafns
+          </Typography>
+        </Container>
+      ),
+    },
+    {
+      label: 'Nafnbreyting',
+      value: 'nafnbreyting',
+      component: (props) => (
+        <Container {...props}>
+          <Typography
+            variant="eyebrow"
+            as="span"
+            color={props.active ? 'blue400' : 'dark400'}
+          >
+            Fjölskyldumál og velferð - Nafn og kyn
+          </Typography>
+          <Typography variant="intro" as="span">
+            Nafnbreyting
+          </Typography>
+        </Container>
+      ),
+    },
+    {
+      label: 'Breytt ritun nafns',
+      value: 'breytt-ritun-nafns',
+      component: (props) => (
+        <Container {...props}>
+          <Typography
+            variant="eyebrow"
+            as="span"
+            color={props.active ? 'blue400' : 'dark400'}
+          >
+            Fjölskyldumál og velferð - Nafn og kyn
+          </Typography>
+          <Typography variant="intro" as="span">
+            Breytt ritun nafns
+          </Typography>
+        </Container>
+      ),
+    },
+    { label: 'Orange', value: 'orange' },
+  ]
+
+  return (
+    <Box padding={2}>
+      <Stack space={2}>
+        <AsyncSearch
+          colored={colored}
+          size={large ? 'large' : 'medium'}
+          useFilter={true}
+          options={customItems}
         />
       </Stack>
     </Box>

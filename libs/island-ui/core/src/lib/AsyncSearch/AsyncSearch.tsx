@@ -1,5 +1,5 @@
-import React, { forwardRef, useState } from 'react'
-import Downshift, { DownshiftProps } from 'downshift'
+import React, { forwardRef, useState, ReactNode, ReactElement } from 'react'
+import Downshift from 'downshift'
 import cn from 'classnames'
 import { Input, Label, Menu, Item } from './shared'
 import { Icon } from '../..'
@@ -8,9 +8,16 @@ import * as styles from './AsyncSearch.treat'
 
 export type Sizes = 'medium' | 'large'
 
+type ItemCmpProps = {
+  active?: boolean
+  selected?: boolean
+  colored?: boolean
+}
+
 export type AsyncSearchOption = {
   label: string
   value: string | number
+  component?: (props: ItemCmpProps) => ReactElement
   disabled?: boolean
 }
 
@@ -19,9 +26,11 @@ export interface AsyncSearchProps {
   placeholder?: string
   options: AsyncSearchOption[]
   colored?: boolean
+  useFilter?: boolean
   size?: Sizes
   loading?: boolean
   onChange?: (selection: object) => void
+  customFilter?: (items: AsyncSearchOption) => void
   onInputValueChange?: (inputValue: string, stateAndHelpers: object) => void
 }
 
@@ -33,9 +42,12 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
       size = 'medium',
       colored,
       options,
+      useFilter = false,
+      customFilter,
       loading,
       onChange,
       onInputValueChange,
+      ...props
     },
     ref,
   ) => {
@@ -49,6 +61,7 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
         onChange={onChange}
         onInputValueChange={onInputValueChange}
         itemToString={(item: AsyncSearchOption) => (item ? item.label : '')}
+        {...props}
       >
         {({
           getInputProps,
@@ -59,9 +72,16 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
           isOpen,
           highlightedIndex,
           getRootProps,
+          inputValue,
         }) => {
           const hasLabel = Boolean(size === 'large' && label)
           const shouldShowItems = options.length > 0 && isOpen
+
+          const filter =
+            customFilter ||
+            ((item) =>
+              inputValue &&
+              item.label.toLowerCase().includes(inputValue.toLowerCase()))
 
           return (
             <div
@@ -101,23 +121,26 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
               {hasLabel && <Label {...getLabelProps()}>{label}</Label>}
               <Menu {...getMenuProps({ refKey: 'ref' })} isOpen={isOpen}>
                 {shouldShowItems
-                  ? options.map((item, index) => (
-                      <Item
-                        index={index}
-                        highlightedIndex={highlightedIndex}
-                        isActive={highlightedIndex === index}
-                        colored={colored}
-                        size={size}
-                        {...getItemProps({
-                          key: item.value,
-                          index,
-                          item,
-                          isSelected: options.includes(item),
-                        })}
-                      >
-                        {item.label}
-                      </Item>
-                    ))
+                  ? options
+                      .filter(useFilter ? filter : (x) => x)
+                      .map((item, index) => {
+                        return (
+                          <Item
+                            index={index}
+                            highlightedIndex={highlightedIndex}
+                            isActive={highlightedIndex === index}
+                            colored={colored}
+                            size={size}
+                            item={item}
+                            {...getItemProps({
+                              key: item.value,
+                              index,
+                              item,
+                              isSelected: options.includes(item),
+                            })}
+                          />
+                        )
+                      })
                   : null}
               </Menu>
             </div>

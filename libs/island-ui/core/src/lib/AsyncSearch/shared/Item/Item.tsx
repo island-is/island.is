@@ -3,6 +3,8 @@ import cn from 'classnames'
 
 import * as styles from './Item.treat'
 
+import { AsyncSearchOption } from '../../AsyncSearch'
+
 export const Item = ({
   children,
   isSelected,
@@ -11,11 +13,22 @@ export const Item = ({
   index,
   colored,
   size,
+  item,
   ...props
 }) => {
   const selectedClass = colored ? styles.selectedColored : styles.selected
   const colorClass = colored ? styles.colored : styles.plain
   const isPrev = index === highlightedIndex - 1
+
+  if (item.component) {
+    const Cmp = item.component as AsyncSearchOption['component']
+
+    return (
+      <li {...props}>
+        <Cmp active={isActive} selected={isSelected} colored={colored} />
+      </li>
+    )
+  }
 
   return (
     <li
@@ -24,7 +37,7 @@ export const Item = ({
         [selectedClass]: isActive,
       })}
     >
-      {children}
+      {item.label}
       <span
         className={cn(styles.divider, {
           [styles.dividerVisible]: !isPrev && !isActive,

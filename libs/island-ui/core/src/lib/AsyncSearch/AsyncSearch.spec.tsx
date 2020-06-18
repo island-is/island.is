@@ -1,15 +1,13 @@
 import React from 'react'
-import {
-  render,
-  fireEvent,
-  getByLabelText,
-  getByTestId,
-} from '@testing-library/react'
+import { render, fireEvent } from '@testing-library/react'
+import '@testing-library/jest-dom'
 
 import AsyncSearch from './AsyncSearch'
 
 const items = [
-  { label: 'Apple label', value: 'apple' },
+  { label: 'Apple', value: 'apple' },
+  { label: 'Ape', value: 'ape' },
+  { label: 'Apron', value: 'apron' },
   { label: 'Pear', value: 'pear' },
   { label: 'Orange', value: 'orange' },
   { label: 'Grape', value: 'grape' },
@@ -28,15 +26,24 @@ describe('AsyncSearch', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should show three results', () => {
-    const { baseElement } = render(<AsyncSearch options={items} />)
+  it('should show results', () => {
+    const { baseElement, getByText } = render(
+      <AsyncSearch useFilter options={items} />,
+    )
 
     const inputEl = baseElement.querySelector('input')
-    fireEvent.change(inputEl, { target: { value: 'apple' } })
-    fireEvent.input(inputEl, 'apple')
-    expect(inputEl.value).toBe('apple')
+    fireEvent.change(inputEl, { target: { value: 'ap' } })
+    expect(inputEl.value).toBe('ap')
+    expect(getByText('Apple')).toBeInTheDocument()
+  })
+
+  it('should show 4 items', () => {
+    const { baseElement } = render(<AsyncSearch useFilter options={items} />)
+
+    const inputEl = baseElement.querySelector('input')
+    fireEvent.change(inputEl, { target: { value: 'ap' } })
 
     const listEl = baseElement.querySelector('ul')
-    // expect(listEl.children.length).toHaveLength(1)
+    expect(Object.keys(listEl.children)).toHaveLength(4)
   })
 })
