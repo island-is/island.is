@@ -20,9 +20,11 @@ function GiftCTA() {
         <Box marginBottom={2}>
           <Typography variant="h4">{t.users.label}</Typography>
         </Box>
-        <Button width="fluid" disabled>
-          {t.users.content}
-        </Button>
+        <Link href={routes.users.home}>
+          <span>
+            <Button width="fluid">{t.users.content}</Button>
+          </span>
+        </Link>
       </Box>
       <Box background="purple100" padding={4} marginBottom={3}>
         <Box marginBottom={2}>
