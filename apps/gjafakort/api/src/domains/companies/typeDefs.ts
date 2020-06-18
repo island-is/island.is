@@ -9,6 +9,7 @@ export default gql`
 
   type ApplicationLog {
     id: String!
+    created: String
     state: String!
     title: String!
     data: String

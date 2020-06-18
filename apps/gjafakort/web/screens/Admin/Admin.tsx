@@ -41,6 +41,7 @@ const CompanyApplicationsQuery = gql`
       webpage
       logs {
         id
+        created
         state
         title
         data

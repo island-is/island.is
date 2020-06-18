@@ -62,6 +62,7 @@ export type Company = {
 export type ApplicationLog = {
   __typename?: 'ApplicationLog'
   id: Scalars['String']
+  created?: Maybe<Scalars['String']>
   state: Scalars['String']
   title: Scalars['String']
   data?: Maybe<Scalars['String']>
@@ -453,6 +454,7 @@ export type ApplicationLogResolvers<
   ParentType extends ResolversParentTypes['ApplicationLog'] = ResolversParentTypes['ApplicationLog']
 > = {
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  created?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   state?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   data?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>

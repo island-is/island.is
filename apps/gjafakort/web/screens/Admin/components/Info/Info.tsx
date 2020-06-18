@@ -37,6 +37,11 @@ function Info({ application }: PropTypes) {
                       <Typography variant="h4">{log.title}</Typography>
                       <Box display="flex" flexWrap="wrap">
                         <KeyValue
+                          label="Búin til"
+                          value={new Date(log.created).toLocaleString('is-IS')}
+                          size="p"
+                        />
+                        <KeyValue
                           label="Staða umsóknar"
                           value={log.state}
                           size="p"

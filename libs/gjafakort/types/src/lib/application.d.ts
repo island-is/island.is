@@ -30,6 +30,7 @@ export interface Application {
   AuditLogs?: [
     {
       id: string
+      created: string
       state: ValueOf<ApplicationStates>
       title: string
       data: string
