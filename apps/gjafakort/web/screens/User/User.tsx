@@ -97,11 +97,11 @@ function User() {
   }
 
   return (
-    <Box marginTop={12}>
+    <Box paddingX="gutter" marginBottom={5}>
       <ContentBlock width="large">
         <Columns space={15} collapseBelow="lg">
           <Column width="2/3">
-            <Box paddingLeft={[0, 0, 0, 9]} marginBottom={5}>
+            <Box paddingLeft={[0, 0, 0, 12, 15]} marginBottom={5}>
               <Stack space={3}>
                 <Typography variant="h1" as="h1">
                   {t.title}
@@ -111,7 +111,7 @@ function User() {
             </Box>
             <Box
               background="purple100"
-              paddingX={[5, 12]}
+              paddingX={[3, 3, 3, 12, 15]}
               paddingY={[5, 9]}
               marginBottom={12}
             >
@@ -121,7 +121,7 @@ function User() {
                 </Typography>
                 <Typography variant="p">{t.appStore.content}</Typography>
                 <Box marginTop={3}>
-                  <Tiles space={4} columns={[1, 2, 3]}>
+                  <Tiles space={4} columns={[1, 2, 3, 2, 3]}>
                     <a
                       href="https://play.google.com/store/apps/details?id=is.ferdagjof.app"
                       rel="noopener noreferrer"
@@ -140,7 +140,7 @@ function User() {
                 </Box>
               </Stack>
             </Box>
-            <Box paddingLeft={[0, 0, 0, 9]}>
+            <Box paddingLeft={[0, 0, 0, 12, 15]}>
               <Stack space={3}>
                 <Typography variant="h1" as="h2">
                   {t.barcode.title}
