@@ -34,11 +34,9 @@ export const Features: FC = () => {
   const large = boolean('Large', false)
 
   const update = (value) => {
-    const newOpts = items.filter((item) => {
-      return (
-        value === '' || item.label.toLowerCase().includes(value.toLowerCase())
-      )
-    })
+    const newOpts = items.filter(
+      (item) => value && item.label.toLowerCase().includes(value.toLowerCase()),
+    )
 
     setLoading(false)
 
@@ -78,11 +76,17 @@ export const Features: FC = () => {
   )
 }
 
-export const Basic: FC = () => {
+export const OnSubmit: FC = () => {
   return (
     <Box padding={2}>
       <Stack space={2}>
-        <AsyncSearch useFilter={true} options={items} />
+        <AsyncSearch
+          useFilter
+          onSubmit={(inputValue, selectedOption) =>
+            window.alert('Submit ' + inputValue || selectedOption.value + '!')
+          }
+          options={items}
+        />
       </Stack>
     </Box>
   )
@@ -174,8 +178,8 @@ export const CustomItem: FC = () => {
         <AsyncSearch
           colored={colored}
           size={large ? 'large' : 'medium'}
-          useFilter={true}
           options={customItems}
+          useFilter
         />
       </Stack>
     </Box>

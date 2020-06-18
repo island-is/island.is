@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import {
   ContentBlock,
   Box,
@@ -9,29 +10,21 @@ import {
   Columns,
   Column,
   Inline,
-  AsyncSelect,
   Tag,
 } from '@island.is/island-ui/core'
-import { Categories, Card } from '../components'
+import { Categories, Card, SearchInput } from '../components'
 import { withApollo } from '../graphql'
-import { selectOptions, getTags } from '../json'
+import { getTags } from '../json'
 import { useI18n } from '../i18n'
 import {
   Query,
   QueryGetNamespaceArgs,
-  QuerySearchResultsArgs,
   ContentLanguage,
   QueryCategoriesArgs,
 } from '@island.is/api/schema'
-import {
-  GET_NAMESPACE_QUERY,
-  GET_CATEGORIES_QUERY,
-  GET_SEARCH_RESULTS_QUERY,
-} from './queries'
+import { GET_NAMESPACE_QUERY, GET_CATEGORIES_QUERY } from './queries'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
-import { useApolloClient } from 'react-apollo'
-import { useRouter } from 'next/router'
 
 interface HomeProps {
   categories: Query['categories']
@@ -40,7 +33,6 @@ interface HomeProps {
 
 const Home: Screen<HomeProps> = ({ categories, namespace }) => {
   const Router = useRouter()
-  const client = useApolloClient()
   const [tags, setTags] = useState([])
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
@@ -48,42 +40,31 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
   const prefix = activeLocale === 'en' ? `/en` : ``
   const articlePath = activeLocale === 'en' ? 'article' : 'grein'
   const categoryPath = activeLocale === 'en' ? 'category' : 'flokkur'
+  const searchPath = activeLocale === 'en' ? 'search' : 'leit'
 
   const cards = categories.map(({ title, slug }) => ({
     title,
     description: 'description',
-    href: `${prefix}/${categoryPath}/${slug}`,
+    href: `${prefix}/${categoryPath}/[slug]`,
+    as: `${prefix}/${categoryPath}/${slug}`,
   }))
-
-  const loadOptions = async (inputValue) => {
-    const {
-      data: { searchResults },
-    } = await client.query<Query, QuerySearchResultsArgs>({
-      query: GET_SEARCH_RESULTS_QUERY,
-      variables: {
-        query: {
-          queryString: inputValue ? `${inputValue}*` : '',
-          language: activeLocale as ContentLanguage,
-        },
-      },
-    })
-
-    return searchResults.items.map((x) => ({
-      label: x.title,
-      value: x.slug,
-    }))
-  }
 
   useEffect(() => {
     setTags(getTags(8))
   }, [])
 
-  const onInputChange = (newValue) => {
-    return newValue
-  }
+  const onSubmit = (inputValue, selectedOption) => {
+    if (selectedOption) {
+      return Router.push(
+        `${prefix}/${articlePath}/[slug]`,
+        `${prefix}/${articlePath}/${selectedOption.value}`,
+      )
+    }
 
-  const onSelectSearch = (option) => {
-    Router.push(`${prefix}/${articlePath}/${option.value}`)
+    return Router.push({
+      pathname: `${prefix}/${searchPath}`,
+      query: { q: inputValue },
+    })
   }
 
   return (
@@ -133,7 +114,6 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
                 background="white"
                 boxShadow="subtle"
                 width="full"
-                border="standard"
               >
                 <Columns
                   space={[4, 4, 4, 12]}
@@ -142,21 +122,10 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
                 >
                   <Column>
                     <Box display="inlineFlex" alignItems="center" width="full">
-                      <AsyncSelect
-                        placeholder={n('heroSearchPlaceholder')}
-                        onChange={onSelectSearch}
-                        name="search"
-                        icon="search"
-                        options={selectOptions}
-                        loadOptions={loadOptions}
-                        onInputChange={onInputChange}
+                      <SearchInput
+                        activeLocale={activeLocale}
+                        onSubmit={onSubmit}
                       />
-                      {/* <Select
-                        placeholder={n('heroSearchPlaceholder')}
-                        name="search"
-                        icon="search"
-                        options={selectOptions}
-                      /> */}
                     </Box>
                   </Column>
                   <Column>
@@ -189,7 +158,7 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
   )
 }
 
-Home.getInitialProps = async ({ apolloClient, locale, query }) => {
+Home.getInitialProps = async ({ apolloClient, locale }) => {
   const [
     {
       data: { categories },
