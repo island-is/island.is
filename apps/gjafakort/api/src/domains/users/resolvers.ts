@@ -20,7 +20,7 @@ const validateMobile = (mobile: string) => {
 }
 
 class UserResolver {
-  @authorize({ role: 'tester' })
+  @authorize()
   public async getUserApplication(
     _1,
     _2,
@@ -52,7 +52,7 @@ class UserResolver {
     }
   }
 
-  @authorize({ role: 'tester' })
+  @authorize()
   public async createUserApplication(
     _1,
     { input }: { input: CreateUserApplicationInput },
@@ -78,7 +78,7 @@ class UserResolver {
     }
   }
 
-  @authorize({ role: 'tester' })
+  @authorize()
   public async getGiftCards(
     _1,
     _2,
@@ -107,7 +107,7 @@ class UserResolver {
     }))
   }
 
-  @authorize({ role: 'tester' })
+  @authorize()
   public async getGiftCardCode(
     _1,
     args,
