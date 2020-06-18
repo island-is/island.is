@@ -102,16 +102,40 @@ export type CreateCompanyApplicationInput = {
   validPermit: Scalars['Boolean']
 }
 
+export type ApproveCompanyApplicationInput = {
+  id: Scalars['String']
+}
+
+export type RejectCompanyApplicationInput = {
+  id: Scalars['String']
+}
+
 export type CreateCompanyApplication = {
   __typename?: 'CreateCompanyApplication'
   application?: Maybe<CompanyApplication>
 }
 
+export type ApproveCompanyApplication = {
+  __typename?: 'ApproveCompanyApplication'
+  application?: Maybe<CompanyApplication>
+}
+
+export type RejectCompanyApplication = {
+  __typename?: 'RejectCompanyApplication'
+  application?: Maybe<CompanyApplication>
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
+  approveCompanyApplication?: Maybe<ApproveCompanyApplication>
   createCompanyApplication?: Maybe<CreateCompanyApplication>
   createUserApplication?: Maybe<CreateUserApplication>
+  rejectCompanyApplication?: Maybe<RejectCompanyApplication>
   root?: Maybe<Scalars['String']>
+}
+
+export type MutationApproveCompanyApplicationArgs = {
+  input: ApproveCompanyApplicationInput
 }
 
 export type MutationCreateCompanyApplicationArgs = {
@@ -120,6 +144,10 @@ export type MutationCreateCompanyApplicationArgs = {
 
 export type MutationCreateUserApplicationArgs = {
   input?: Maybe<CreateUserApplicationInput>
+}
+
+export type MutationRejectCompanyApplicationArgs = {
+  input: RejectCompanyApplicationInput
 }
 
 export type GiftCard = {
@@ -277,7 +305,11 @@ export type ResolversTypes = {
   CompanyApplication: ResolverTypeWrapper<CompanyApplication>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   CreateCompanyApplicationInput: CreateCompanyApplicationInput
+  ApproveCompanyApplicationInput: ApproveCompanyApplicationInput
+  RejectCompanyApplicationInput: RejectCompanyApplicationInput
   CreateCompanyApplication: ResolverTypeWrapper<CreateCompanyApplication>
+  ApproveCompanyApplication: ResolverTypeWrapper<ApproveCompanyApplication>
+  RejectCompanyApplication: ResolverTypeWrapper<RejectCompanyApplication>
   Mutation: ResolverTypeWrapper<{}>
   GiftCard: ResolverTypeWrapper<GiftCard>
   GiftCardCode: ResolverTypeWrapper<GiftCardCode>
@@ -298,7 +330,11 @@ export type ResolversParentTypes = {
   CompanyApplication: CompanyApplication
   Boolean: Scalars['Boolean']
   CreateCompanyApplicationInput: CreateCompanyApplicationInput
+  ApproveCompanyApplicationInput: ApproveCompanyApplicationInput
+  RejectCompanyApplicationInput: RejectCompanyApplicationInput
   CreateCompanyApplication: CreateCompanyApplication
+  ApproveCompanyApplication: ApproveCompanyApplication
+  RejectCompanyApplication: RejectCompanyApplication
   Mutation: {}
   GiftCard: GiftCard
   GiftCardCode: GiftCardCode
@@ -465,10 +501,40 @@ export type CreateCompanyApplicationResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type ApproveCompanyApplicationResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['ApproveCompanyApplication'] = ResolversParentTypes['ApproveCompanyApplication']
+> = {
+  application?: Resolver<
+    Maybe<ResolversTypes['CompanyApplication']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type RejectCompanyApplicationResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['RejectCompanyApplication'] = ResolversParentTypes['RejectCompanyApplication']
+> = {
+  application?: Resolver<
+    Maybe<ResolversTypes['CompanyApplication']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type MutationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = {
+  approveCompanyApplication?: Resolver<
+    Maybe<ResolversTypes['ApproveCompanyApplication']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationApproveCompanyApplicationArgs, 'input'>
+  >
   createCompanyApplication?: Resolver<
     Maybe<ResolversTypes['CreateCompanyApplication']>,
     ParentType,
@@ -480,6 +546,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationCreateUserApplicationArgs, never>
+  >
+  rejectCompanyApplication?: Resolver<
+    Maybe<ResolversTypes['RejectCompanyApplication']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationRejectCompanyApplicationArgs, 'input'>
   >
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
 }
@@ -538,6 +610,8 @@ export type Resolvers<ContextType = Context> = {
   ApplicationLog?: ApplicationLogResolvers<ContextType>
   CompanyApplication?: CompanyApplicationResolvers<ContextType>
   CreateCompanyApplication?: CreateCompanyApplicationResolvers<ContextType>
+  ApproveCompanyApplication?: ApproveCompanyApplicationResolvers<ContextType>
+  RejectCompanyApplication?: RejectCompanyApplicationResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
   GiftCard?: GiftCardResolvers<ContextType>
   GiftCardCode?: GiftCardCodeResolvers<ContextType>

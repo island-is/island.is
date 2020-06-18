@@ -76,11 +76,11 @@ export const approveApplication = (
     )
   }
 
-  return applicationApi.updateApplication<CompanyApplication>(
-    application.id,
-    ApplicationStates.MANUAL_APPROVED,
-    ssn,
-  )
+  return applicationApi.updateApplication<CompanyApplication>({
+    id: application.id,
+    state: ApplicationStates.MANUAL_APPROVED,
+    authorSSN: ssn,
+  })
 }
 
 export const rejectApplication = (
@@ -94,9 +94,9 @@ export const rejectApplication = (
     )
   }
 
-  return applicationApi.updateApplication<CompanyApplication>(
-    application.id,
-    ApplicationStates.REJECTED,
-    ssn,
-  )
+  return applicationApi.updateApplication<CompanyApplication>({
+    id: application.id,
+    state: ApplicationStates.REJECTED,
+    authorSSN: ssn,
+  })
 }

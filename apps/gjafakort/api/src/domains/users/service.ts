@@ -19,6 +19,7 @@ export const createApplication = async (
   userSSN: string,
   mobileNumber: string,
   countryCode: string,
+  verified: boolean,
   applicationApi: ApplicationAPI,
 ) => {
   return applicationApi.createApplication<UserApplication>({
@@ -26,6 +27,19 @@ export const createApplication = async (
     issuerSSN: userSSN,
     authorSSN: userSSN,
     state: ApplicationStates.APPROVED,
-    data: { mobileNumber, countryCode },
+    data: { mobileNumber, countryCode, verified },
+  })
+}
+
+export const updateApplication = async (
+  applicationId: string,
+  userSSN: string,
+  verified: boolean,
+  applicationApi: ApplicationAPI,
+) => {
+  return applicationApi.updateApplication<UserApplication>({
+    id: applicationId,
+    authorSSN: userSSN,
+    data: { verified },
   })
 }

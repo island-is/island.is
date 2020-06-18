@@ -10,6 +10,7 @@ const { yay } = environment
 interface GiftCard {
   giftCardId: number
   amount: number
+  statusId: number
   indentifier: string
 }
 
@@ -38,7 +39,10 @@ class RskAPI extends RESTDataSource {
     countryCode: string,
   ): Promise<GiftCard[]> {
     try {
-      return this.get(`GiftCard/${countryCode}-${mobileNumber}`)
+      const giftCards = await this.get(
+        `GiftCard/${countryCode}-${mobileNumber}`,
+      )
+      return giftCards.filter((giftCard) => giftCard.statusId === 1)
     } catch (err) {
       logger.error(err)
       return []
