@@ -17,12 +17,14 @@ export type AuthUser = {
   ssn: Scalars['String']
   name: Scalars['String']
   mobile?: Maybe<Scalars['String']>
+  role: Scalars['String']
 }
 
 export type Query = {
   __typename?: 'Query'
   companies?: Maybe<Array<Maybe<Company>>>
   company?: Maybe<Company>
+  companyApplication?: Maybe<CompanyApplication>
   companyApplications?: Maybe<Array<Maybe<CompanyApplication>>>
   giftCardCode?: Maybe<GiftCardCode>
   giftCards?: Maybe<Array<Maybe<GiftCard>>>
@@ -32,6 +34,10 @@ export type Query = {
 }
 
 export type QueryCompanyArgs = {
+  ssn: Scalars['String']
+}
+
+export type QueryCompanyApplicationArgs = {
   ssn: Scalars['String']
 }
 
@@ -65,7 +71,7 @@ export type CompanyApplication = {
   serviceCategory?: Maybe<Scalars['String']>
   generalEmail?: Maybe<Scalars['String']>
   companyDisplayName?: Maybe<Scalars['String']>
-  companyName?: Maybe<Scalars['String']>
+  companyName: Scalars['String']
   exhibition?: Maybe<Scalars['Boolean']>
   operatingPermitForRestaurant?: Maybe<Scalars['Boolean']>
   operatingPermitForVehicles?: Maybe<Scalars['Boolean']>
@@ -103,6 +109,15 @@ export type RejectCompanyApplicationInput = {
   id: Scalars['String']
 }
 
+export type UpdateCompanyApplicationInput = {
+  id: Scalars['String']
+  webpage?: Maybe<Scalars['String']>
+  generalEmail?: Maybe<Scalars['String']>
+  email?: Maybe<Scalars['String']>
+  phoneNumber?: Maybe<Scalars['String']>
+  name?: Maybe<Scalars['String']>
+}
+
 export type CreateCompanyApplication = {
   __typename?: 'CreateCompanyApplication'
   application?: Maybe<CompanyApplication>
@@ -118,6 +133,11 @@ export type RejectCompanyApplication = {
   application?: Maybe<CompanyApplication>
 }
 
+export type UpdateCompanyApplication = {
+  __typename?: 'UpdateCompanyApplication'
+  application?: Maybe<CompanyApplication>
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   approveCompanyApplication?: Maybe<ApproveCompanyApplication>
@@ -125,6 +145,7 @@ export type Mutation = {
   createUserApplication?: Maybe<CreateUserApplication>
   rejectCompanyApplication?: Maybe<RejectCompanyApplication>
   root?: Maybe<Scalars['String']>
+  updateCompanyApplication?: Maybe<UpdateCompanyApplication>
 }
 
 export type MutationApproveCompanyApplicationArgs = {
@@ -141,6 +162,10 @@ export type MutationCreateUserApplicationArgs = {
 
 export type MutationRejectCompanyApplicationArgs = {
   input: RejectCompanyApplicationInput
+}
+
+export type MutationUpdateCompanyApplicationArgs = {
+  input: UpdateCompanyApplicationInput
 }
 
 export type GiftCard = {
@@ -177,7 +202,10 @@ export type UserQueryQueryVariables = {}
 
 export type UserQueryQuery = { __typename?: 'Query' } & {
   user?: Maybe<
-    { __typename?: 'AuthUser' } & Pick<AuthUser, 'name' | 'ssn' | 'mobile'>
+    { __typename?: 'AuthUser' } & Pick<
+      AuthUser,
+      'name' | 'ssn' | 'mobile' | 'role'
+    >
   >
 }
 
@@ -251,6 +279,66 @@ export type RejectCompanyApplicationMutation = { __typename?: 'Mutation' } & {
         { __typename?: 'CompanyApplication' } & Pick<
           CompanyApplication,
           'id' | 'state'
+        >
+      >
+    }
+  >
+}
+
+export type CompanyApplicationQueryQueryVariables = {
+  ssn: Scalars['String']
+}
+
+export type CompanyApplicationQueryQuery = { __typename?: 'Query' } & {
+  user?: Maybe<{ __typename?: 'AuthUser' } & Pick<AuthUser, 'role'>>
+  companyApplication?: Maybe<
+    { __typename?: 'CompanyApplication' } & Pick<
+      CompanyApplication,
+      | 'id'
+      | 'name'
+      | 'email'
+      | 'state'
+      | 'companySSN'
+      | 'serviceCategory'
+      | 'generalEmail'
+      | 'companyDisplayName'
+      | 'companyName'
+      | 'exhibition'
+      | 'operatingPermitForRestaurant'
+      | 'operatingPermitForVehicles'
+      | 'operationsTrouble'
+      | 'phoneNumber'
+      | 'validLicenses'
+      | 'validPermit'
+      | 'webpage'
+    > & {
+        logs?: Maybe<
+          Array<
+            Maybe<
+              { __typename?: 'ApplicationLog' } & Pick<
+                ApplicationLog,
+                'id' | 'state' | 'title' | 'data' | 'authorSSN'
+              >
+            >
+          >
+        >
+      }
+  >
+}
+
+export type UpdateCompanyApplicationMutationMutationVariables = {
+  input: UpdateCompanyApplicationInput
+}
+
+export type UpdateCompanyApplicationMutationMutation = {
+  __typename?: 'Mutation'
+} & {
+  updateCompanyApplication?: Maybe<
+    { __typename?: 'UpdateCompanyApplication' } & {
+      application?: Maybe<
+        { __typename?: 'CompanyApplication' } & Pick<
+          CompanyApplication,
+          'id' | 'webpage' | 'generalEmail' | 'email' | 'phoneNumber' | 'name'
         >
       >
     }
@@ -396,6 +484,7 @@ export const UserQueryDocument = gql`
       name
       ssn
       mobile
+      role
     }
   }
 `
@@ -628,6 +717,147 @@ export type RejectCompanyApplicationMutationResult = ApolloReactCommon.MutationR
 export type RejectCompanyApplicationMutationOptions = ApolloReactCommon.BaseMutationOptions<
   RejectCompanyApplicationMutation,
   RejectCompanyApplicationMutationVariables
+>
+export const CompanyApplicationQueryDocument = gql`
+  query CompanyApplicationQuery($ssn: String!) {
+    user {
+      role
+    }
+    companyApplication(ssn: $ssn) {
+      id
+      name
+      email
+      state
+      companySSN
+      serviceCategory
+      generalEmail
+      companyDisplayName
+      companyName
+      exhibition
+      operatingPermitForRestaurant
+      operatingPermitForVehicles
+      operationsTrouble
+      phoneNumber
+      validLicenses
+      validPermit
+      webpage
+      logs {
+        id
+        state
+        title
+        data
+        authorSSN
+      }
+    }
+  }
+`
+
+/**
+ * __useCompanyApplicationQueryQuery__
+ *
+ * To run a query within a React component, call `useCompanyApplicationQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCompanyApplicationQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCompanyApplicationQueryQuery({
+ *   variables: {
+ *      ssn: // value for 'ssn'
+ *   },
+ * });
+ */
+export function useCompanyApplicationQueryQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    CompanyApplicationQueryQuery,
+    CompanyApplicationQueryQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useQuery<
+    CompanyApplicationQueryQuery,
+    CompanyApplicationQueryQueryVariables
+  >(CompanyApplicationQueryDocument, baseOptions)
+}
+export function useCompanyApplicationQueryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    CompanyApplicationQueryQuery,
+    CompanyApplicationQueryQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useLazyQuery<
+    CompanyApplicationQueryQuery,
+    CompanyApplicationQueryQueryVariables
+  >(CompanyApplicationQueryDocument, baseOptions)
+}
+export type CompanyApplicationQueryQueryHookResult = ReturnType<
+  typeof useCompanyApplicationQueryQuery
+>
+export type CompanyApplicationQueryLazyQueryHookResult = ReturnType<
+  typeof useCompanyApplicationQueryLazyQuery
+>
+export type CompanyApplicationQueryQueryResult = ApolloReactCommon.QueryResult<
+  CompanyApplicationQueryQuery,
+  CompanyApplicationQueryQueryVariables
+>
+export const UpdateCompanyApplicationMutationDocument = gql`
+  mutation UpdateCompanyApplicationMutation(
+    $input: UpdateCompanyApplicationInput!
+  ) {
+    updateCompanyApplication(input: $input) {
+      application {
+        id
+        webpage
+        generalEmail
+        email
+        phoneNumber
+        name
+      }
+    }
+  }
+`
+export type UpdateCompanyApplicationMutationMutationFn = ApolloReactCommon.MutationFunction<
+  UpdateCompanyApplicationMutationMutation,
+  UpdateCompanyApplicationMutationMutationVariables
+>
+
+/**
+ * __useUpdateCompanyApplicationMutationMutation__
+ *
+ * To run a mutation, you first call `useUpdateCompanyApplicationMutationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateCompanyApplicationMutationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateCompanyApplicationMutationMutation, { data, loading, error }] = useUpdateCompanyApplicationMutationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateCompanyApplicationMutationMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    UpdateCompanyApplicationMutationMutation,
+    UpdateCompanyApplicationMutationMutationVariables
+  >,
+) {
+  return ApolloReactHooks.useMutation<
+    UpdateCompanyApplicationMutationMutation,
+    UpdateCompanyApplicationMutationMutationVariables
+  >(UpdateCompanyApplicationMutationDocument, baseOptions)
+}
+export type UpdateCompanyApplicationMutationMutationHookResult = ReturnType<
+  typeof useUpdateCompanyApplicationMutationMutation
+>
+export type UpdateCompanyApplicationMutationMutationResult = ApolloReactCommon.MutationResult<
+  UpdateCompanyApplicationMutationMutation
+>
+export type UpdateCompanyApplicationMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<
+  UpdateCompanyApplicationMutationMutation,
+  UpdateCompanyApplicationMutationMutationVariables
 >
 export const CompanyApplicationsQueryMinimalDocument = gql`
   query CompanyApplicationsQueryMinimal {
