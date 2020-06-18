@@ -75,6 +75,8 @@ spec:
               value: {{ .host }}
             - name: NODE_ENV
               value: "production"
+            - name: SENTRY_DSN
+              value: {{ .sentry_dsn }}
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

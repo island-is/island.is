@@ -3,9 +3,15 @@ import express from 'express'
 import { logger } from '@island.is/logging'
 
 import { issuerRoutes, applicationRoutes } from './domains'
-import { setupMessageQueue } from './extensions'
+import {
+  setupMessageQueue,
+  setupSentryRequestHandler,
+  setupSentryErrorHandler,
+} from './extensions'
 
 const app = express()
+
+setupSentryRequestHandler(app)
 
 setupMessageQueue(app)
 
@@ -20,6 +26,8 @@ app.get('/status', (req, res) => {
     res.status(500).json({ ok: false })
   }
 })
+
+setupSentryErrorHandler(app)
 
 const port = process.env.port || 4242
 const server = app.listen(port, () => {
