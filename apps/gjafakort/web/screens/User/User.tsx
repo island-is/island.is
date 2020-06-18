@@ -148,7 +148,7 @@ function User() {
                 <Typography variant="intro">{t.barcode.intro}</Typography>
               </Stack>
               <Box marginTop={5}>
-                <Barcode shouldPoll={shouldPoll} />
+                {userApplication && <Barcode shouldPoll={shouldPoll} />}
               </Box>
             </Box>
           </Column>
