@@ -55,6 +55,7 @@ function Companies() {
                   <Bullet key={`companies.notes.items-${index}`}>{item}</Bullet>
                 ))}
               </BulletList>
+              <Typography variant="p">{t.notes.disclaimer}</Typography>
             </Stack>
           </Box>
           <Hidden above="md">

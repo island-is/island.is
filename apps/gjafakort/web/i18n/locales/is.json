@@ -29,7 +29,8 @@
         "Skanna strikamerki með smáforriti",
         "Slá inn númer gjafabréfs í vafra",
         "Beintenging við bókunarkerfi"
-      ]
+      ],
+      "disclaimer": "Athugið mikilvægt er að skanna eða slá inn strikamerkið strax við notkun því hvert strikamerki hefur aðeins nokkurra mínútna líftíma."
     },
     "FAQ": {
       "title": "Algengar spurningar",
