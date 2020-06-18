@@ -2,7 +2,7 @@ import express from 'express'
 
 import { logger } from '@island.is/logging'
 
-import { issuerRoutes, applicationRoutes } from './api'
+import { issuerRoutes, applicationRoutes } from './domains'
 import { setupMessageQueue } from './extensions'
 
 const app = express()

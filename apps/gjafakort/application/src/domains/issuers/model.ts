@@ -1,6 +1,6 @@
 import { Model, DataTypes } from 'sequelize'
 
-import { sequelize } from '../../../extensions'
+import { sequelize } from '../../extensions'
 
 class Issuer extends Model {
   public ssn!: string

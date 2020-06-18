@@ -1,7 +1,7 @@
 import { Model, DataTypes } from 'sequelize'
 
 import { ApplicationStates } from '@island.is/gjafakort/consts'
-import { sequelize } from '../../../extensions'
+import { sequelize } from '../../extensions'
 
 class AuditLog extends Model {
   public id!: string
