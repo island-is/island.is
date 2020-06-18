@@ -4,7 +4,7 @@ import {
   ApplicationTypes,
   ApplicationStates,
 } from '@island.is/gjafakort/consts'
-import { sequelize } from '../../../extensions'
+import { sequelize } from '../../extensions'
 import { model as AuditLog } from '../audit'
 
 class Application extends Model {
