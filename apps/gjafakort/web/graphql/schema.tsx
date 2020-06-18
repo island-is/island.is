@@ -58,22 +58,22 @@ export type ApplicationLog = {
 export type CompanyApplication = {
   __typename?: 'CompanyApplication'
   id?: Maybe<Scalars['String']>
-  name: Scalars['String']
-  email: Scalars['String']
+  name?: Maybe<Scalars['String']>
+  email?: Maybe<Scalars['String']>
   state: Scalars['String']
   companySSN: Scalars['String']
   serviceCategory?: Maybe<Scalars['String']>
-  generalEmail: Scalars['String']
+  generalEmail?: Maybe<Scalars['String']>
   companyDisplayName?: Maybe<Scalars['String']>
   companyName?: Maybe<Scalars['String']>
   exhibition?: Maybe<Scalars['Boolean']>
   operatingPermitForRestaurant?: Maybe<Scalars['Boolean']>
   operatingPermitForVehicles?: Maybe<Scalars['Boolean']>
   operationsTrouble?: Maybe<Scalars['Boolean']>
-  phoneNumber: Scalars['String']
+  phoneNumber?: Maybe<Scalars['String']>
   validLicenses?: Maybe<Scalars['Boolean']>
   validPermit?: Maybe<Scalars['Boolean']>
-  webpage: Scalars['String']
+  webpage?: Maybe<Scalars['String']>
   logs?: Maybe<Array<Maybe<ApplicationLog>>>
 }
 

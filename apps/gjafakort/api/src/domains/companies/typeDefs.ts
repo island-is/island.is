@@ -24,7 +24,7 @@ export default gql`
     serviceCategory: String
     generalEmail: String
     companyDisplayName: String
-    companyName: String!
+    companyName: String
     exhibition: Boolean
     operatingPermitForRestaurant: Boolean
     operatingPermitForVehicles: Boolean
