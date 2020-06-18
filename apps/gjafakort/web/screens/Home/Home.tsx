@@ -40,7 +40,9 @@ function Home() {
               </Typography>
               <Typography variant="intro">{t.intro}</Typography>
               {t.description.map((item, index) => (
-                <Typography variant="p">{HtmlParser(item)}</Typography>
+                <Typography variant="p" key={index}>
+                  {HtmlParser(item)}
+                </Typography>
               ))}
             </Stack>
           </Box>
