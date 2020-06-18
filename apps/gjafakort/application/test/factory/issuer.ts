@@ -1,4 +1,4 @@
-import Issuer from '@island.is/gjafakort/application/api/domains/issuers/model'
+import Issuer from '@island.is/gjafakort/application/domains/issuers/model'
 
 type Properties = {
   ssn?: string

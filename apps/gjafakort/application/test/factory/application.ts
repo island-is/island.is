@@ -1,5 +1,5 @@
-import Application from '@island.is/gjafakort/application/api/domains/applications/model'
-import Issuer from '@island.is/gjafakort/application/api/domains/issuers/model'
+import Application from '@island.is/gjafakort/application/domains/applications/model'
+import Issuer from '@island.is/gjafakort/application/domains/issuers/model'
 import {
   ApplicationTypes,
   ApplicationStates,
