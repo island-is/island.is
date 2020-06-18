@@ -71,7 +71,7 @@ export type CompanyApplication = {
   serviceCategory?: Maybe<Scalars['String']>
   generalEmail?: Maybe<Scalars['String']>
   companyDisplayName?: Maybe<Scalars['String']>
-  companyName: Scalars['String']
+  companyName?: Maybe<Scalars['String']>
   exhibition?: Maybe<Scalars['Boolean']>
   operatingPermitForRestaurant?: Maybe<Scalars['Boolean']>
   operatingPermitForVehicles?: Maybe<Scalars['Boolean']>

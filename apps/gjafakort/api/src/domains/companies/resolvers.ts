@@ -184,9 +184,7 @@ class CompanyResolver {
     { id },
     { dataSources: { applicationApi } },
   ) {
-    const application = await applicationApi.getApplication<CompanyApplication>(
-      id,
-    )
+    const application = await applicationApi.getApplication(id)
     return formatApplication(application)
   }
 }

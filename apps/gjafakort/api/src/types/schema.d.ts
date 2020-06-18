@@ -24,12 +24,14 @@ export type AuthUser = {
   ssn: Scalars['String']
   name: Scalars['String']
   mobile?: Maybe<Scalars['String']>
+  role: Scalars['String']
 }
 
 export type Query = {
   __typename?: 'Query'
   companies?: Maybe<Array<Maybe<Company>>>
   company?: Maybe<Company>
+  companyApplication?: Maybe<CompanyApplication>
   companyApplications?: Maybe<Array<Maybe<CompanyApplication>>>
   giftCardCode?: Maybe<GiftCardCode>
   giftCards?: Maybe<Array<Maybe<GiftCard>>>
@@ -42,13 +44,10 @@ export type QueryCompanyArgs = {
   ssn: Scalars['String']
 }
 
-<<<<<<< HEAD
-=======
 export type QueryCompanyApplicationArgs = {
   id: Scalars['String']
 }
 
->>>>>>> a3442e4... Query by id instead
 export type QueryGiftCardCodeArgs = {
   giftCardId: Scalars['Int']
 }
@@ -117,6 +116,15 @@ export type RejectCompanyApplicationInput = {
   id: Scalars['String']
 }
 
+export type UpdateCompanyApplicationInput = {
+  id: Scalars['String']
+  webpage?: Maybe<Scalars['String']>
+  generalEmail?: Maybe<Scalars['String']>
+  email?: Maybe<Scalars['String']>
+  phoneNumber?: Maybe<Scalars['String']>
+  name?: Maybe<Scalars['String']>
+}
+
 export type CreateCompanyApplication = {
   __typename?: 'CreateCompanyApplication'
   application?: Maybe<CompanyApplication>
@@ -132,6 +140,11 @@ export type RejectCompanyApplication = {
   application?: Maybe<CompanyApplication>
 }
 
+export type UpdateCompanyApplication = {
+  __typename?: 'UpdateCompanyApplication'
+  application?: Maybe<CompanyApplication>
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   approveCompanyApplication?: Maybe<ApproveCompanyApplication>
@@ -139,6 +152,7 @@ export type Mutation = {
   createUserApplication?: Maybe<CreateUserApplication>
   rejectCompanyApplication?: Maybe<RejectCompanyApplication>
   root?: Maybe<Scalars['String']>
+  updateCompanyApplication?: Maybe<UpdateCompanyApplication>
 }
 
 export type MutationApproveCompanyApplicationArgs = {
@@ -155,6 +169,10 @@ export type MutationCreateUserApplicationArgs = {
 
 export type MutationRejectCompanyApplicationArgs = {
   input: RejectCompanyApplicationInput
+}
+
+export type MutationUpdateCompanyApplicationArgs = {
+  input: UpdateCompanyApplicationInput
 }
 
 export type GiftCard = {
@@ -314,9 +332,11 @@ export type ResolversTypes = {
   CreateCompanyApplicationInput: CreateCompanyApplicationInput
   ApproveCompanyApplicationInput: ApproveCompanyApplicationInput
   RejectCompanyApplicationInput: RejectCompanyApplicationInput
+  UpdateCompanyApplicationInput: UpdateCompanyApplicationInput
   CreateCompanyApplication: ResolverTypeWrapper<CreateCompanyApplication>
   ApproveCompanyApplication: ResolverTypeWrapper<ApproveCompanyApplication>
   RejectCompanyApplication: ResolverTypeWrapper<RejectCompanyApplication>
+  UpdateCompanyApplication: ResolverTypeWrapper<UpdateCompanyApplication>
   Mutation: ResolverTypeWrapper<{}>
   GiftCard: ResolverTypeWrapper<GiftCard>
   GiftCardCode: ResolverTypeWrapper<GiftCardCode>
@@ -339,9 +359,11 @@ export type ResolversParentTypes = {
   CreateCompanyApplicationInput: CreateCompanyApplicationInput
   ApproveCompanyApplicationInput: ApproveCompanyApplicationInput
   RejectCompanyApplicationInput: RejectCompanyApplicationInput
+  UpdateCompanyApplicationInput: UpdateCompanyApplicationInput
   CreateCompanyApplication: CreateCompanyApplication
   ApproveCompanyApplication: ApproveCompanyApplication
   RejectCompanyApplication: RejectCompanyApplication
+  UpdateCompanyApplication: UpdateCompanyApplication
   Mutation: {}
   GiftCard: GiftCard
   GiftCardCode: GiftCardCode
@@ -357,6 +379,7 @@ export type AuthUserResolvers<
   ssn?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   mobile?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  role?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -375,15 +398,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryCompanyArgs, 'ssn'>
   >
-<<<<<<< HEAD
-=======
   companyApplication?: Resolver<
     Maybe<ResolversTypes['CompanyApplication']>,
     ParentType,
     ContextType,
     RequireFields<QueryCompanyApplicationArgs, 'id'>
   >
->>>>>>> a3442e4... Query by id instead
   companyApplications?: Resolver<
     Maybe<Array<Maybe<ResolversTypes['CompanyApplication']>>>,
     ParentType,
@@ -549,6 +569,18 @@ export type RejectCompanyApplicationResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type UpdateCompanyApplicationResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['UpdateCompanyApplication'] = ResolversParentTypes['UpdateCompanyApplication']
+> = {
+  application?: Resolver<
+    Maybe<ResolversTypes['CompanyApplication']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type MutationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
@@ -578,6 +610,12 @@ export type MutationResolvers<
     RequireFields<MutationRejectCompanyApplicationArgs, 'input'>
   >
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  updateCompanyApplication?: Resolver<
+    Maybe<ResolversTypes['UpdateCompanyApplication']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateCompanyApplicationArgs, 'input'>
+  >
 }
 
 export type GiftCardResolvers<
@@ -636,6 +674,7 @@ export type Resolvers<ContextType = Context> = {
   CreateCompanyApplication?: CreateCompanyApplicationResolvers<ContextType>
   ApproveCompanyApplication?: ApproveCompanyApplicationResolvers<ContextType>
   RejectCompanyApplication?: RejectCompanyApplicationResolvers<ContextType>
+  UpdateCompanyApplication?: UpdateCompanyApplicationResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
   GiftCard?: GiftCardResolvers<ContextType>
   GiftCardCode?: GiftCardCodeResolvers<ContextType>
