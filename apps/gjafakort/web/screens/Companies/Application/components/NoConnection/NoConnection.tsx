@@ -20,7 +20,7 @@ function NoConnection() {
       </Box>
       <Link href={routes.companies.home}>
         <span>
-          <Button variant="text">{t.content}</Button>
+          <Button variant="text">{t.button}</Button>
         </span>
       </Link>
     </>
