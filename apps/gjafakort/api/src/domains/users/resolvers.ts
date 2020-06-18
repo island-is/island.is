@@ -30,10 +30,9 @@ class UserResolver {
     if (!application) {
       return null
     }
-    if (user.mobile) {
+    if (!application.data.verified && user.mobile) {
       const { mobileNumber, countryCode } = validateMobile(user.mobile)
       if (
-        !application.data.verified &&
         mobileNumber === application.data.mobileNumber &&
         countryCode === application.data.countryCode
       ) {
