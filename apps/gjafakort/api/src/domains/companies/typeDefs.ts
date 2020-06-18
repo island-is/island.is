@@ -17,22 +17,22 @@ export default gql`
 
   type CompanyApplication {
     id: String
-    name: String!
-    email: String!
+    name: String
+    email: String
     state: String!
     companySSN: String!
     serviceCategory: String
-    generalEmail: String!
+    generalEmail: String
     companyDisplayName: String
-    companyName: String
+    companyName: String!
     exhibition: Boolean
     operatingPermitForRestaurant: Boolean
     operatingPermitForVehicles: Boolean
     operationsTrouble: Boolean
-    phoneNumber: String!
+    phoneNumber: String
     validLicenses: Boolean
     validPermit: Boolean
-    webpage: String!
+    webpage: String
     logs: [ApplicationLog]
   }
 
