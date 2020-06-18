@@ -16,7 +16,12 @@ function CompanyCTA() {
 
   return (
     <Box>
-      <Box background="purple100" padding={4} marginBottom={3}>
+      <Box
+        background="purple100"
+        padding={4}
+        marginBottom={3}
+        borderRadius="standard"
+      >
         <Box marginBottom={2}>
           <Typography variant="h4">{t.label}</Typography>
         </Box>
@@ -26,7 +31,12 @@ function CompanyCTA() {
           </span>
         </Link>
       </Box>
-      <Box textAlign="center" padding={3}>
+      <Box
+        textAlign="center"
+        padding={3}
+        border="standard"
+        borderRadius="standard"
+      >
         <img src={packageSvg} alt="" />
       </Box>
     </Box>

@@ -44,7 +44,12 @@ function Congratulations() {
         </Box>
       }
       right={
-        <Box textAlign="center" padding={3}>
+        <Box
+          textAlign="center"
+          padding={3}
+          border="standard"
+          borderRadius="standard"
+        >
           <img src={packageSvg} alt="" />
         </Box>
       }
