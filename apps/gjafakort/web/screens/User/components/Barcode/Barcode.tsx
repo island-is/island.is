@@ -100,7 +100,6 @@ function Barcode({ shouldPoll }: PropTypes) {
     return (
       <Stack space={3}>
         {loadingInitialGiftCards && <SL height={70} />}
-        {loadingGiftCards && giftCards.length <= 0 && <SL height={70} />}
         {!loadingInitialGiftCards &&
           !loadingGiftCards &&
           giftCards.length <= 0 && (

@@ -40,7 +40,7 @@ const CreateCompanyApplicationMutation = gql`
   }
 `
 
-const urlRegex = /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}/gi
+const urlRegex = /[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}/gi
 
 function Signup({ company, handleSubmission }: PropTypes) {
   const {
