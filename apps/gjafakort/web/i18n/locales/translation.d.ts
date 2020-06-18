@@ -68,6 +68,7 @@ export interface CompaniesClass {
 export interface Notes {
   label: string
   items: string[]
+  disclaimer: string
 }
 
 export interface TranslationCompany {
@@ -548,6 +549,7 @@ const typeMap: any = {
     [
       { json: 'label', js: 'label', typ: '' },
       { json: 'items', js: 'items', typ: a('') },
+      { json: 'disclaimer', js: 'disclaimer', typ: '' },
     ],
     false,
   ),
