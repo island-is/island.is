@@ -6,7 +6,7 @@ import { CreateCompanyApplicationInput } from '../../types'
 import { DataSource } from '../../types'
 import { ApplicationAPI } from '../../services'
 
-const APPLICATION_TYPE = 'gjafakort'
+export const APPLICATION_TYPE = 'gjafakort'
 
 export const getApplication = async (
   companySSN: string,
@@ -98,5 +98,18 @@ export const rejectApplication = (
     id: application.id,
     state: ApplicationStates.REJECTED,
     authorSSN: ssn,
+  })
+}
+
+export const updateApplication = (
+  application: CompanyApplication,
+  applicationApi: ApplicationAPI,
+  ssn: string,
+  data: {},
+) => {
+  return applicationApi.updateApplication<CompanyApplication>({
+    id: application.id,
+    authorSSN: ssn,
+    data,
   })
 }

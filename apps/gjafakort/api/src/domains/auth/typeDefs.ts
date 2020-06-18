@@ -5,6 +5,7 @@ export default gql`
     ssn: String!
     name: String!
     mobile: String
+    role: String!
   }
 
   extend type Query {

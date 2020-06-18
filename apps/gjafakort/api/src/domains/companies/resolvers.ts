@@ -145,6 +145,29 @@ class CompanyResolver {
     }
   }
 
+  @authorize({ role: 'developer' })
+  public async updateCompanyApplication(
+    _,
+    { input: { id, ...rest } },
+    { user, dataSources: { applicationApi } },
+  ) {
+    let application = await applicationApi.getApplication(id)
+    if (!application) {
+      throw new ForbiddenError('Application not found!')
+    }
+
+    application = await companyService.updateApplication(
+      application,
+      applicationApi,
+      user.ssn,
+      rest,
+    )
+
+    return {
+      application: formatApplication(application),
+    }
+  }
+
   @authorize({ role: 'admin' })
   public async getCompanyApplications(
     _1,
@@ -154,6 +177,18 @@ class CompanyResolver {
     const applications = await companyService.getApplications(applicationApi)
     return applications.map((application) => formatApplication(application))
   }
+
+  @authorize({ role: 'admin' })
+  public async getCompanyApplication(
+    _1,
+    { ssn },
+    { dataSources: { applicationApi } },
+  ) {
+    const application = await applicationApi.getApplicationByType<
+      CompanyApplication
+    >(companyService.APPLICATION_TYPE, ssn)
+    return formatApplication(application)
+  }
 }
 
 const resolver = new CompanyResolver()
@@ -162,11 +197,13 @@ export default {
     companies: resolver.getCompanies,
     company: resolver.getCompany,
     companyApplications: resolver.getCompanyApplications,
+    companyApplication: resolver.getCompanyApplication,
   },
   Mutation: {
     createCompanyApplication: resolver.createCompanyApplication,
     approveCompanyApplication: resolver.approveCompanyApplication,
     rejectCompanyApplication: resolver.rejectCompanyApplication,
+    updateCompanyApplication: resolver.updateCompanyApplication,
   },
 
   Company: {

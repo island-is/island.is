@@ -17,5 +17,5 @@ export type Cookie = {
 }
 
 export type Permissions = {
-  role?: 'admin' | 'tester'
+  role?: 'developer' | 'admin' | 'tester' | 'user'
 }
