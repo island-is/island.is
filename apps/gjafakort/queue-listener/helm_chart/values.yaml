@@ -23,6 +23,7 @@ environment:
   ferdalag_url:
   ferdalag_api_key_path: "/k8s/gjafakort/FERDALAG_API_KEY"
   application_url: "http://web-gjafakort-application"
+  sentry_dsn:
 
 serviceAccount:
   # Specifies whether a service account should be created

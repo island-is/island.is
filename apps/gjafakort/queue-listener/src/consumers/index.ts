@@ -10,6 +10,7 @@ import {
 
 import { environment } from '../environments'
 import { companyHandlers, userHandlers } from './handlers'
+import { sentryErrorHandler } from '../extensions'
 
 const { production } = environment
 
@@ -49,7 +50,8 @@ export const startConsumers = async () => {
       CompanyApplicationRoutingKey
     >({
       queueId,
-      handler: handler.handler,
+      messageHandler: handler.handler,
+      errorHandler: sentryErrorHandler,
     })
     logger.info(`Listening on queue ${handler.queueName}`)
     return consumer
@@ -67,7 +69,8 @@ export const startConsumers = async () => {
       UserApplicationRoutingKey
     >({
       queueId,
-      handler: handler.handler,
+      messageHandler: handler.handler,
+      errorHandler: sentryErrorHandler,
     })
     logger.info(`Listening on queue ${handler.queueName}`)
     return consumer

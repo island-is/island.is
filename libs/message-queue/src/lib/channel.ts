@@ -135,10 +135,12 @@ class Channel {
 
   consume<Message, RoutingKey>({
     queueId,
-    handler,
+    messageHandler,
+    errorHandler,
   }: {
     queueId: string
-    handler: (message: Message, routingKey: RoutingKey) => Promise<void>
+    messageHandler: (message: Message, routingKey: RoutingKey) => Promise<void>
+    errorHandler?: (error) => void
   }) {
     const parseMessage = (
       sqsMessage: AWS.SQS.Types.Message,
@@ -159,7 +161,7 @@ class Channel {
       queueUrl: queueId,
       handleMessage: async (sqsMessage) => {
         const { message, routingKey } = parseMessage(sqsMessage)
-        await handler(message, routingKey)
+        await messageHandler(message, routingKey)
       },
     })
 
@@ -170,6 +172,9 @@ class Channel {
       }
       msg += '\nStopping Consumer'
       logger.error(msg)
+      if (errorHandler) {
+        errorHandler(err)
+      }
       consumer.stop()
     })
 
@@ -180,6 +185,9 @@ class Channel {
         msg += `\n${err.stack}`
       }
       logger.error(msg)
+      if (errorHandler) {
+        errorHandler(err)
+      }
     })
 
     consumer.start()

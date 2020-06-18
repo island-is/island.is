@@ -21,6 +21,7 @@ postgres:
   name: 'name'
   username: 'username'
   password_secret_path: '/k8s/gjafakort/application/DB_PASSWORD'
+  sentry_dsn:
 
 serviceAccount:
   # Specifies whether a service account should be created
