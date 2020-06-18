@@ -118,8 +118,9 @@ class UserResolver {
       applicationApi,
     )
     if (!application) {
-      throw new ApolloError('Application does not exist')
+      return null
     }
+
     const {
       data: { mobileNumber, countryCode },
     } = application
@@ -128,6 +129,7 @@ class UserResolver {
       mobileNumber,
       countryCode,
     )
+
     return {
       code: giftCardCode.code,
       expiryDate: giftCardCode.expiryDate,
