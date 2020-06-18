@@ -1,6 +1,9 @@
 export default {
   production: false,
   applicationUrl: 'http://localhost:4242',
+  sentry: {
+    dsn: '',
+  },
   ferdalag: {
     url: 'https://island-dev-dot-itb-gagnagrunnur-dev.appspot.com',
     apiKey: process.env.FERDALAG_API_KEY,

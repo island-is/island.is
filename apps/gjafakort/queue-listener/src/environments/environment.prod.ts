@@ -1,6 +1,9 @@
 export default {
   production: true,
   applicationUrl: process.env.APPLICATION_URL,
+  sentry: {
+    dsn: process.env.SENTRY_DSN,
+  },
   ferdalag: {
     url: process.env.FERDALAG_URL,
     apiKey: process.env.FERDALAG_API_KEY,

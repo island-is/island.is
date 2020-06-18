@@ -62,6 +62,8 @@ spec:
                   key: FERDALAG_API_KEY
             - name: APPLICATION_URL
               value: {{ .application_url }}
+            - name: SENTRY_DSN
+              value: {{ .sentry_dsn }}
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
