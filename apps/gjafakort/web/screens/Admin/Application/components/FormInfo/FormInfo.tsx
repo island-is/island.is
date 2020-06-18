@@ -53,15 +53,15 @@ function FormInfo({ application }: PropTypes) {
   )
 
   const onSubmit = async (values) => {
-    // const response = await updateCompanyApplication({
-    //   variables: { input: { ...values, id: application.id } },
-    // })
-    // if (!response.errors) {
+    const response = await updateCompanyApplication({
+      variables: { input: { ...values, id: application.id } },
+    })
+    if (!response.errors) {
       setSuccess(true)
       setTimeout(() => {
         setSuccess(false)
       }, 2000)
-    // }
+    }
   }
   return (
     <Formik
@@ -208,8 +208,8 @@ function FormInfo({ application }: PropTypes) {
             </Box>
           </Box>
           {success ? (
-            <Box paddingX={3} paddingY={3}>
-              <Typography variant="h6" color="blue400">
+            <Box paddingX={3} paddingY={2}>
+              <Typography variant="h4" color="blue400">
                 Uppfært
               </Typography>
             </Box>

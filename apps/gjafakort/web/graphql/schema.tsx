@@ -38,7 +38,7 @@ export type QueryCompanyArgs = {
 }
 
 export type QueryCompanyApplicationArgs = {
-  ssn: Scalars['String']
+  id: Scalars['String']
 }
 
 export type QueryGiftCardCodeArgs = {
@@ -286,7 +286,7 @@ export type RejectCompanyApplicationMutation = { __typename?: 'Mutation' } & {
 }
 
 export type CompanyApplicationQueryQueryVariables = {
-  ssn: Scalars['String']
+  id: Scalars['String']
 }
 
 export type CompanyApplicationQueryQuery = { __typename?: 'Query' } & {
@@ -719,11 +719,11 @@ export type RejectCompanyApplicationMutationOptions = ApolloReactCommon.BaseMuta
   RejectCompanyApplicationMutationVariables
 >
 export const CompanyApplicationQueryDocument = gql`
-  query CompanyApplicationQuery($ssn: String!) {
+  query CompanyApplicationQuery($id: String!) {
     user {
       role
     }
-    companyApplication(ssn: $ssn) {
+    companyApplication(id: $id) {
       id
       name
       email
@@ -764,7 +764,7 @@ export const CompanyApplicationQueryDocument = gql`
  * @example
  * const { data, loading, error } = useCompanyApplicationQueryQuery({
  *   variables: {
- *      ssn: // value for 'ssn'
+ *      id: // value for 'id'
  *   },
  * });
  */

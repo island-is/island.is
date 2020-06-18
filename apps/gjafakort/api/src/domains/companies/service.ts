@@ -6,7 +6,7 @@ import { CreateCompanyApplicationInput } from '../../types'
 import { DataSource } from '../../types'
 import { ApplicationAPI } from '../../services'
 
-export const APPLICATION_TYPE = 'gjafakort'
+const APPLICATION_TYPE = 'gjafakort'
 
 export const getApplication = async (
   companySSN: string,

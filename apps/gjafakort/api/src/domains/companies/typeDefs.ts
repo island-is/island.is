@@ -89,7 +89,7 @@ export default gql`
 
   extend type Query {
     companyApplications: [CompanyApplication]
-    companyApplication(ssn: String!): CompanyApplication
+    companyApplication(id: String!): CompanyApplication
     companies: [Company]
     company(ssn: String!): Company
   }

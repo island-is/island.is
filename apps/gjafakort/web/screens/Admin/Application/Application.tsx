@@ -23,12 +23,12 @@ import { Info } from '../components'
 import { FormInfo } from './components'
 
 const CompanyApplicationQuery = gql`
-  query CompanyApplicationQuery($ssn: String!) {
+  query CompanyApplicationQuery($id: String!) {
     user {
       role
     }
 
-    companyApplication(ssn: $ssn) {
+    companyApplication(id: $id) {
       id
       name
       email
@@ -59,9 +59,9 @@ const CompanyApplicationQuery = gql`
 
 function Application() {
   const router = useRouter()
-  const { ssn } = router.query
+  const { id } = router.query
   const { data, loading } = useQuery(CompanyApplicationQuery, {
-    variables: { ssn },
+    variables: { id },
   })
   const { companyApplication: application, user } = data || {}
 

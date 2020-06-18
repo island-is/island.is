@@ -42,6 +42,13 @@ export type QueryCompanyArgs = {
   ssn: Scalars['String']
 }
 
+<<<<<<< HEAD
+=======
+export type QueryCompanyApplicationArgs = {
+  id: Scalars['String']
+}
+
+>>>>>>> a3442e4... Query by id instead
 export type QueryGiftCardCodeArgs = {
   giftCardId: Scalars['Int']
 }
@@ -368,6 +375,15 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryCompanyArgs, 'ssn'>
   >
+<<<<<<< HEAD
+=======
+  companyApplication?: Resolver<
+    Maybe<ResolversTypes['CompanyApplication']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryCompanyApplicationArgs, 'id'>
+  >
+>>>>>>> a3442e4... Query by id instead
   companyApplications?: Resolver<
     Maybe<Array<Maybe<ResolversTypes['CompanyApplication']>>>,
     ParentType,

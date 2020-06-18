@@ -181,12 +181,12 @@ class CompanyResolver {
   @authorize({ role: 'admin' })
   public async getCompanyApplication(
     _1,
-    { ssn },
+    { id },
     { dataSources: { applicationApi } },
   ) {
-    const application = await applicationApi.getApplicationByType<
-      CompanyApplication
-    >(companyService.APPLICATION_TYPE, ssn)
+    const application = await applicationApi.getApplication<CompanyApplication>(
+      id,
+    )
     return formatApplication(application)
   }
 }
