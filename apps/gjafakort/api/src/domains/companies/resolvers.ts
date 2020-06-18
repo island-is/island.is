@@ -30,6 +30,7 @@ const formatApplication = (
     validPermit: application.data.validPermit,
     logs: application.AuditLogs?.map((auditLog) => ({
       id: auditLog.id,
+      created: auditLog.created,
       state: auditLog.state,
       title: auditLog.title,
       data: JSON.stringify(auditLog.data),

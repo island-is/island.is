@@ -55,6 +55,7 @@ export type Company = {
 export type ApplicationLog = {
   __typename?: 'ApplicationLog'
   id: Scalars['String']
+  created?: Maybe<Scalars['String']>
   state: Scalars['String']
   title: Scalars['String']
   data?: Maybe<Scalars['String']>
@@ -240,7 +241,7 @@ export type CompanyApplicationsQueryQuery = { __typename?: 'Query' } & {
                 Maybe<
                   { __typename?: 'ApplicationLog' } & Pick<
                     ApplicationLog,
-                    'id' | 'state' | 'title' | 'data' | 'authorSSN'
+                    'id' | 'created' | 'state' | 'title' | 'data' | 'authorSSN'
                   >
                 >
               >
@@ -317,7 +318,7 @@ export type CompanyApplicationQueryQuery = { __typename?: 'Query' } & {
             Maybe<
               { __typename?: 'ApplicationLog' } & Pick<
                 ApplicationLog,
-                'id' | 'state' | 'title' | 'data' | 'authorSSN'
+                'id' | 'created' | 'state' | 'title' | 'data' | 'authorSSN'
               >
             >
           >
@@ -556,6 +557,7 @@ export const CompanyApplicationsQueryDocument = gql`
       webpage
       logs {
         id
+        created
         state
         title
         data
@@ -743,6 +745,7 @@ export const CompanyApplicationQueryDocument = gql`
       webpage
       logs {
         id
+        created
         state
         title
         data

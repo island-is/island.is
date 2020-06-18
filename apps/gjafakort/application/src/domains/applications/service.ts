@@ -19,11 +19,24 @@ export const getApplicationById = (applicationId: string): Application =>
         model: AuditLog,
       },
     ],
+    order: [
+      [
+        {
+          model: AuditLog,
+        },
+        'created',
+        'ASC',
+      ],
+    ],
   })
 
 export const getApplicationsByType = (type: string): [Application] =>
   Application.findAll({
     where: { type },
+    order: [
+      ['created', 'ASC'],
+      [{ model: AuditLog }, 'created', 'ASC'],
+    ],
     include: [
       {
         model: AuditLog,
