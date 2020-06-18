@@ -64,12 +64,18 @@ export const getRole = (user: User): Permissions['role'] => {
 
 const checkPermissions = (user: User, { role }: Permissions): boolean => {
   switch (role) {
+    case 'developer':
+      return DEVELOPERS.includes(user.ssn)
     case 'admin':
       return [...ADMINS, ...DEVELOPERS].includes(user.ssn)
     case 'tester':
       return [...TESTERS, ...DEVELOPERS].includes(user.ssn)
-    default:
+    default: {
+      if (role) {
+        return false
+      }
       return true
+    }
   }
 }
 
