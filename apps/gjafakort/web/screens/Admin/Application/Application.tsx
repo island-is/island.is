@@ -65,7 +65,7 @@ function Application() {
   return (
     <Layout
       left={
-        <>
+        <Box>
           <Box
             background="blue100"
             position="relative"
@@ -102,7 +102,7 @@ function Application() {
               </span>
             </Link>
           </Box>
-        </>
+        </Box>
       }
     />
   )

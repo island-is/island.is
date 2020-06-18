@@ -1,5 +1,6 @@
 import merge from 'lodash/merge'
 import isArray from 'lodash/isArray'
+
 import Application from './model'
 import { model as AuditLog } from '../audit'
 
@@ -19,29 +20,18 @@ export const getApplicationById = (applicationId: string): Application =>
         model: AuditLog,
       },
     ],
-    order: [
-      [
-        {
-          model: AuditLog,
-        },
-        'created',
-        'ASC',
-      ],
-    ],
+    order: [[AuditLog, 'created', 'ASC']],
   })
 
 export const getApplicationsByType = (type: string): [Application] =>
   Application.findAll({
     where: { type },
-    order: [
-      ['created', 'ASC'],
-      [{ model: AuditLog }, 'created', 'ASC'],
-    ],
     include: [
       {
         model: AuditLog,
       },
     ],
+    order: [[AuditLog, 'created', 'ASC']],
   })
 
 export const createApplication = (
