@@ -74,14 +74,15 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
           getRootProps,
           inputValue,
         }) => {
-          const hasLabel = Boolean(size === 'large' && label)
-          const shouldShowItems = options.length > 0 && isOpen
-
           const filter =
             customFilter ||
             ((item) =>
               inputValue &&
               item.label.toLowerCase().includes(inputValue.toLowerCase()))
+
+          const hasLabel = Boolean(size === 'large' && label)
+          const shouldShowItems =
+            options.filter(useFilter ? filter : (x) => x).length > 0 && isOpen
 
           return (
             <div
@@ -119,7 +120,11 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
                 )}
               </div>
               {hasLabel && <Label {...getLabelProps()}>{label}</Label>}
-              <Menu {...getMenuProps({ refKey: 'ref' })} isOpen={isOpen}>
+              <Menu
+                {...getMenuProps({ refKey: 'ref' })}
+                isOpen={isOpen}
+                shouldShowItems={shouldShowItems}
+              >
                 {shouldShowItems
                   ? options
                       .filter(useFilter ? filter : (x) => x)

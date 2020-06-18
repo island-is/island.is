@@ -23,3 +23,7 @@ export const open = style({
   zIndex: 1,
   opacity: 1,
 })
+
+export const hidden = style({
+  visibility: 'hidden',
+})

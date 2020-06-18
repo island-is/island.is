@@ -24,8 +24,13 @@ export const Item = ({
     const Cmp = item.component as AsyncSearchOption['component']
 
     return (
-      <li {...props}>
+      <li className={styles.customItem} {...props}>
         <Cmp active={isActive} selected={isSelected} colored={colored} />
+        <span
+          className={cn(styles.divider, {
+            [styles.dividerVisible]: !isPrev && !isActive,
+          })}
+        />
       </li>
     )
   }

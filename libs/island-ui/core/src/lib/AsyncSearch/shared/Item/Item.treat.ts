@@ -24,6 +24,10 @@ export const item = style({
   outline: 0,
 })
 
+export const customItem = style({
+  position: 'relative',
+})
+
 export const divider = style({
   position: 'absolute',
   backgroundColor: theme.color.blue200,
@@ -34,7 +38,7 @@ export const divider = style({
   pointerEvents: 'none',
   opacity: 0,
   selectors: {
-    [`${item}:last-child &`]: {
+    [`${item}:last-child &, ${customItem}:last-child &`]: {
       opacity: 0,
     },
   },

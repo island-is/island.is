@@ -5,16 +5,20 @@ import * as styles from './Menu.treat'
 
 interface MenuProps {
   isOpen: boolean
+  shouldShowItems: boolean
   children: ReactNode
 }
 
 export const Menu = forwardRef<HTMLUListElement, MenuProps>(
-  ({ isOpen, children, ...props }, ref) => {
+  ({ isOpen, shouldShowItems, children, ...props }, ref) => {
     return (
       <ul
         ref={ref}
         {...props}
-        className={cn(styles.menu, { [styles.open]: isOpen })}
+        className={cn(styles.menu, {
+          [styles.hidden]: !shouldShowItems,
+          [styles.open]: isOpen,
+        })}
       >
         {children}
       </ul>
