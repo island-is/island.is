@@ -9,7 +9,6 @@ import * as Sentry from '@sentry/node'
 
 import { Box, ContentBlock, Footer, Page } from '@island.is/island-ui/core'
 
-import packageSvg from '../assets/ferdagjof-pakki.svg'
 import { Toast, ErrorBoundary, Header } from '../components'
 import { client } from '../graphql'
 import { appWithTranslation, useI18n } from '../i18n'
@@ -64,7 +63,9 @@ function Layout({ children, isAuthenticated }: LayoutPropTypes) {
             content="https://ferdagjof.island.is"
           />
           <meta name="title" property="og:title" content="Ísland.is" />
-          <meta name="image" property="og:image" content={packageSvg} />
+          <meta name="image" property="og:image" content="/og-img.png" />
+          <meta name="image-width" property="og:image:width" content="1080" />
+          <meta name="image-height" property="og:image:height" content="1203" />
           <meta
             name="description"
             property="og:description"
