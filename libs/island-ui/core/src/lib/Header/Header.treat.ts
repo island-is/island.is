@@ -1,4 +1,5 @@
-import { style, globalStyle } from 'treat'
+import { style } from 'treat'
+import { theme } from '../../theme'
 
 export const container = style({
   height: 111,
@@ -7,20 +8,16 @@ export const container = style({
   justifyContent: 'space-between',
 })
 
-export const pointer = style({
-  cursor: 'pointer',
-})
-
-export const authenticated = style({
+export const userNameContainer = style({
   display: 'flex',
   alignItems: 'center',
-  margin: '0 -16px',
+  flex: 1,
+  minWidth: 0,
+  marginLeft: theme.spacing[2],
+  marginRight: theme.spacing[2],
 })
 
-globalStyle(`${authenticated} > div`, {
-  padding: '0 16px',
-})
-
-export const userName = style({
-  fontSize: '16px',
+export const actionsContainer = style({
+  display: 'flex',
+  alignItems: 'center',
 })
