@@ -9,6 +9,7 @@ import * as Sentry from '@sentry/node'
 
 import { Box, ContentBlock, Footer, Page } from '@island.is/island-ui/core'
 
+import packageSvg from '../assets/ferdagjof-pakki.svg'
 import { Toast, ErrorBoundary, Header } from '../components'
 import { client } from '../graphql'
 import { appWithTranslation, useI18n } from '../i18n'
@@ -57,9 +58,13 @@ function Layout({ children, isAuthenticated }: LayoutPropTypes) {
           <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
           <meta name="msapplication-TileColor" content="#da532c" />
           <meta name="theme-color" content="#ffffff" />
-          <meta name="url" property="og:url" content="https://ferdagjof.island.is" />
+          <meta
+            name="url"
+            property="og:url"
+            content="https://ferdagjof.island.is"
+          />
           <meta name="title" property="og:title" content="Ísland.is" />
-          <meta name="image" property="og:image" content="/ferdagjof-pakki.svg" />
+          <meta name="image" property="og:image" content={packageSvg} />
           <meta
             name="description"
             property="og:description"
