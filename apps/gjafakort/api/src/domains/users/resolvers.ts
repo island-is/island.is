@@ -79,14 +79,8 @@ class UserResolver {
   }
 
   @authorize({ role: 'developer' })
-  public async getUserApplicationCount(
-    _1,
-    _2,
-    { dataSources: { applicationApi } },
-  ) {
-    const applications = await userService.getApplications(applicationApi)
-
-    return applications.length
+  public getUserApplicationCount(_1, _2, { dataSources: { applicationApi } }) {
+    return userService.getApplicationCount(applicationApi)
   }
 
   @authorize()

@@ -40,6 +40,11 @@ export const getApplicationsByType = (type: string): [Application] =>
     order: [[AuditLog, 'created', 'ASC']],
   })
 
+export const getApplicationCountByType = (type: string): number =>
+  Application.count({
+    where: { type },
+  })
+
 export const createApplication = (
   issuerSSN: string,
   type: string,
