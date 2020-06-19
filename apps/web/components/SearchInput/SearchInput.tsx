@@ -6,7 +6,12 @@ import {
   QuerySearchResultsArgs,
   Query,
 } from '@island.is/api/schema'
-import { AsyncSearch, AsyncSearchOption } from '@island.is/island-ui/core'
+import {
+  AsyncSearch,
+  AsyncSearchOption,
+  Typography,
+  Box,
+} from '@island.is/island-ui/core'
 
 interface SearchInputProps {
   activeLocale: string
@@ -45,6 +50,20 @@ export const SearchInput = ({
       searchResults.items.map((x) => ({
         label: x.title,
         value: x.slug,
+        component: (props) => (
+          <ItemContainer {...props}>
+            <Typography
+              variant="eyebrow"
+              as="span"
+              color={props.active ? 'blue400' : 'dark400'}
+            >
+              {x.category} {x.group}
+            </Typography>
+            <Typography variant="intro" as="span">
+              {x.title}
+            </Typography>
+          </ItemContainer>
+        ),
       })),
     )
 
@@ -92,6 +111,23 @@ export const SearchInput = ({
       closeMenuOnSubmit
       colored
     />
+  )
+}
+
+const ItemContainer = ({ active, colored, children }) => {
+  const activeColor = colored ? 'white' : 'blue100'
+  const inactiveColor = colored ? 'blue100' : 'white'
+
+  return (
+    <Box
+      display="flex"
+      background={active ? activeColor : inactiveColor}
+      flexDirection="column"
+      padding={2}
+      paddingY={3}
+    >
+      {children}
+    </Box>
   )
 }
 

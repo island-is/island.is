@@ -8,6 +8,8 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
         title
         content
         slug
+        category
+        group
       }
     }
   }
