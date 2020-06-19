@@ -19,5 +19,5 @@
     "baseUrl": "."
   },
   "exclude": ["node_modules", "dist"],
-  "include": [".github/**/*.ts"]
+  "include": ["./*.ts"]
 }
