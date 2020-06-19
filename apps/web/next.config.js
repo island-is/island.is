@@ -20,11 +20,11 @@ module.exports = withTreat(
     cssModules: false,
     serverRuntimeConfig: {
       // Will only be available on the server side
-      apiUrl: API_URL,
+      graphqlEndpoint: `${API_URL}/graphql`,
     },
     publicRuntimeConfig: {
       // Will be available on both server and client
-      apiUrl: '/api/graphql',
+      graphqlEndpoint: '/api/graphql',
     },
   }),
 )

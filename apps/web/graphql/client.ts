@@ -19,7 +19,9 @@ if (!isBrowser) {
 
 function create(initialState?: any) {
   const httpLink = createHttpLink({
-    uri: serverRuntimeConfig.apiUrl || publicRuntimeConfig.apiUrl,
+    uri:
+      serverRuntimeConfig.graphqlEndpoint ||
+      publicRuntimeConfig.graphqlEndpoint,
   })
 
   // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
