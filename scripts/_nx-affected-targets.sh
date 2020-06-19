@@ -8,7 +8,13 @@ source $DIR/_common.sh
 # This is a helper script to find NX affected projects for a specific target
 
 APP=nx-runner
-
+AFFECTED_ALL=${AFFECTED_ALL:-false} # Allow for doing a full build if needed
+if [ "$AFFECTED_ALL" = "true" ] 
+then
+  AFFECTED_FLAGS=" --all "
+else
+  AFFECTED_FLAGS=" --head=$HEAD --base=$BASE "
+fi
 # Build NX runner image if does not exist
 docker image inspect ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} -f ' ' || \
   docker buildx build \
@@ -23,4 +29,4 @@ docker image inspect ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} -f ' ' || \
 exec docker run \
   --rm \
   ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} \
-  nx print-affected --target=$1 --select=tasks.target.project --head=$HEAD --base=$BASE
+  nx print-affected --target=$1 --select=tasks.target.project $AFFECTED_FLAGS
