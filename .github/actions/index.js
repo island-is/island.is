@@ -5121,11 +5121,11 @@ module.exports = /******/ (function(modules, runtime) {
         var oppositeDirectionsLessThan =
           cmp(this.semver, '<', comp.semver, options) &&
           (this.operator === '>=' || this.operator === '>') &&
-            (comp.operator === '<=' || comp.operator === '<')
+          (comp.operator === '<=' || comp.operator === '<')
         var oppositeDirectionsGreaterThan =
           cmp(this.semver, '>', comp.semver, options) &&
           (this.operator === '<=' || this.operator === '<') &&
-            (comp.operator === '>=' || comp.operator === '>')
+          (comp.operator === '>=' || comp.operator === '>')
 
         return (
           sameDirectionIncreasing ||
