@@ -28,7 +28,7 @@ export const Header = ({
   const LogoIcon = (
     <>
       <Hidden above="sm">
-        <Logo width={160} iconOnly />
+        <Logo width={40} iconOnly />
       </Hidden>
       <Hidden below="md">
         <Logo width={160} />

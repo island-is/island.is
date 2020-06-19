@@ -1,8 +1,9 @@
 import { style } from 'treat'
 import { theme } from '../../theme'
+import { responsiveStyleMap } from '../../utils/responsiveStyleMap'
 
-export const container = style({
-  height: 111,
+export const container = responsiveStyleMap({
+  height: { xs: 80, md: 112 },
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',

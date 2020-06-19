@@ -32,7 +32,7 @@ export const resolveBreakpoints = (variant, attr, acc) => {
           ...acc['@media'][
             `(min-width: ${theme.breakpoints[breakpointKey]}px)`
           ],
-          fontSize: variant[attr][breakpointKey],
+          [attr]: variant[attr][breakpointKey],
         }
       }
       return acc
