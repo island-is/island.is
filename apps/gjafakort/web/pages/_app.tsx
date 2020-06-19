@@ -57,15 +57,12 @@ function Layout({ children, isAuthenticated }: LayoutPropTypes) {
           <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
           <meta name="msapplication-TileColor" content="#da532c" />
           <meta name="theme-color" content="#ffffff" />
-          <meta name="og:url" content="https://ferdagjof.island.is" />
-          <meta name="og:title" content="Ísland.is" />
-          <meta
-            name="og:description"
-            content="Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt."
-          />
-          <meta name="og:image" content="/ferdagjof-pakki.svg" />
+          <meta name="url" property="og:url" content="https://ferdagjof.island.is" />
+          <meta name="title" property="og:title" content="Ísland.is" />
+          <meta name="image" property="og:image" content="/ferdagjof-pakki.svg" />
           <meta
             name="description"
+            property="og:description"
             content="Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt."
           />
           <title>Ísland.is</title>
