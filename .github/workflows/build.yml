@@ -78,7 +78,13 @@ jobs:
       - run: git checkout "$GIT_BASE_BRANCH"
       - run: git checkout $GITHUB_SHA
       - run: git branch
-      - run: git log --format=%H --first-parent "$BRANCH" | node .github/actions/index.js
+      - run: |
+          LAST_GOOD_BUILD=`git log --format=%H --first-parent "$BRANCH" | node .github/actions/index.js`
+          echo "LAST_GOOD_SHA $(echo $LAST_GOOD_BUILD | jq '.sha' )"
+          echo "::set-env name=BASE::`echo $LAST_GOOD_BUILD | jq -r '.sha'`"
+          echo "::set-env name=HEAD::GITHUB_SHA"
+        name: Preparing HEAD and BASE tags
+
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: ${{ env.GIT_BRANCH }}
@@ -119,8 +125,8 @@ jobs:
       # Commenting this out since we do have a package that is problematic and that would block the pipeline
       # - name: Security audit Node modules
       #   run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/security-audit.sh
-      # - name: Running tests
-      #   run: ./scripts/run-affected-in-parallel.sh test
+      - name: Running tests
+        run: ./scripts/run-affected-in-parallel.sh test
       # - name: Linting
       #   run: ./scripts/run-affected-in-parallel.sh lint
       # - name: Docker login to ECR repo

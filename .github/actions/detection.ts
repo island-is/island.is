@@ -4,7 +4,11 @@ const getSuccessWorkflowsForBranch = (
   response: ActionsListWorkflowRunsForRepoResponseData,
 ) => {
   return response.workflow_runs
-    .map((wr) => ({ run_number: wr.run_number, sha: wr.head_sha }))
+    .map((wr) => ({
+      run_number: wr.run_number,
+      sha: wr.head_sha,
+      branch: wr.head_branch,
+    }))
     .sort((a, b) => b.run_number - a.run_number)
 }
 

@@ -6,18 +6,19 @@ describe('Discovering last successful build', () => {
   it('should find it on the same branch', async () => {
     const workflowQueried = Substitute.for<WorkflowQueries>()
     workflowQueried
-      .getData('branch')
+      .getData('new-br')
       .resolves(
         (workflowsBranch as unknown) as ActionsListWorkflowRunsForRepoResponseData,
       )
     const lastGoodBuild = await findLastGoodBuild(
       shasBranch,
-      'branch',
+      'new-br',
       'master',
       workflowQueried,
     )
     expect(lastGoodBuild).toStrictEqual({
       sha: '9998ae544a070a2f88b14d1d4fb3fa35e982a01e',
+      branch: 'new-br',
       run_number: 43,
     })
   })
@@ -30,16 +31,17 @@ describe('Discovering last successful build', () => {
         (workflowsMaster as unknown) as ActionsListWorkflowRunsForRepoResponseData,
       )
     workflowQueried
-      .getData('branch')
+      .getData('new-br')
       .resolves({ total_count: 0, workflow_runs: [] })
     const lastGoodBuild = await findLastGoodBuild(
       shasBranch,
-      'branch',
+      'new-br',
       'master',
       workflowQueried,
     )
     expect(lastGoodBuild).toStrictEqual({
       sha: '4be24b2648c1bde30bc7f0358d251652a9aee08a',
+      branch: 'master',
       run_number: 23,
     })
   })
@@ -51,7 +53,7 @@ describe('Discovering last successful build', () => {
       .resolves({ total_count: 0, workflow_runs: [] })
     const lastGoodBuild = await findLastGoodBuild(
       shasBranch,
-      'branch',
+      'new-br',
       'master',
       workflowQueried,
     )
