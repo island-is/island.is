@@ -75,10 +75,10 @@ function User() {
   const { userApplication } = data || {}
 
   useEffect(() => {
-    if (user && !userApplication) {
+    if (user && !data) {
       getUserApplication()
     }
-  }, [user, userApplication, getUserApplication])
+  }, [user, data, getUserApplication])
 
   const onMobileSubmit = async ({ phoneNumber }) => {
     await createUserApplication({
@@ -90,10 +90,12 @@ function User() {
     })
   }
 
-  if ((loading && !data) || !user) {
+  if (!data || loading || !user) {
     return <ContentLoader />
   } else if (!userApplication && !user.mobile) {
     return <MobileForm onSubmit={onMobileSubmit} />
+  } else if (!userApplication) {
+    return <ContentLoader />
   }
 
   return (
