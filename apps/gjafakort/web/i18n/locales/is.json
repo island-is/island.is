@@ -340,7 +340,7 @@
       "value": "Virði",
       "total": "Samtals",
       "expires": {
-        "pre": "Strikamerki rennur út eftir",
+        "pre": "Strikamerki endurnýjast eftir",
         "post": "mín"
       },
       "expired": "Strikamerki útrunnið",
