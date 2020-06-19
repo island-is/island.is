@@ -48,7 +48,6 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
 
   const prefix = activeLocale === 'en' ? `/en` : ``
   const articlePath = activeLocale === 'en' ? 'article' : 'grein'
-  // const categoryPath = activeLocale === 'en' ? 'category' : 'flokkur'
   const searchPath = activeLocale === 'en' ? 'search' : 'leit'
 
   const onSubmit = (inputValue, selectedOption) => {
@@ -74,7 +73,7 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
       all.push({
         key,
         total: 1,
-        title: cur.category || '(vantar titil)',
+        title: cur.category || '',
       })
     } else {
       item.total += 1
