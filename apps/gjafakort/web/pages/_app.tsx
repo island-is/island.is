@@ -58,7 +58,17 @@ function Layout({ children, isAuthenticated }: LayoutPropTypes) {
           <meta name="msapplication-TileColor" content="#da532c" />
           <meta name="theme-color" content="#ffffff" />
           <meta
+            name="url"
+            property="og:url"
+            content="https://ferdagjof.island.is"
+          />
+          <meta name="title" property="og:title" content="Ísland.is" />
+          <meta name="image" property="og:image" content="/og-img.png" />
+          <meta name="image-width" property="og:image:width" content="1080" />
+          <meta name="image-height" property="og:image:height" content="1203" />
+          <meta
             name="description"
+            property="og:description"
             content="Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt."
           />
           <title>Ísland.is</title>
