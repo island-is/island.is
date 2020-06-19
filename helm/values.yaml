@@ -7,6 +7,7 @@ global:
 
 web:
   env:
+    API_URL: 'http://deploy-dev-api/api'
 
 api:
   secrets:
