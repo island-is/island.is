@@ -1,4 +1,4 @@
-import { styleMap } from 'treat'
+import { styleMap, style } from 'treat'
 import * as CSS from 'csstype'
 import { theme } from '../../theme'
 import { mapToStyleProperty } from '../../utils'
@@ -31,6 +31,12 @@ type Variants = {
     string | ResponsiveProps<string | number>
   >
 }
+
+export const turnicate = style({
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+})
 
 export const variants: Variants = {
   h1: {

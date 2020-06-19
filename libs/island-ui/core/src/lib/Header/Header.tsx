@@ -6,6 +6,7 @@ import { Box } from '../Box/Box'
 import { Typography } from '../Typography/Typography'
 import * as styles from './Header.treat'
 import { Button } from '../Button/Button'
+import { Hidden } from '../Hidden/Hidden'
 
 export interface HeaderPorps {
   logoRender?: (ReactElement) => ReactElement
@@ -24,7 +25,16 @@ export const Header = ({
   userLogo,
   logoutText = 'Útskrá',
 }: HeaderPorps) => {
-  const LogoIcon = <Logo width={160} />
+  const LogoIcon = (
+    <>
+      <Hidden above="sm">
+        <Logo width={40} iconOnly />
+      </Hidden>
+      <Hidden below="md">
+        <Logo width={160} />
+      </Hidden>
+    </>
+  )
   const logo = () => {
     if (logoRender) {
       return logoRender(LogoIcon)
@@ -33,10 +43,10 @@ export const Header = ({
   }
   return (
     <div className={styles.container}>
-      {logo()}{' '}
+      {logo()}
       {authenticated && (
-        <div className={styles.authenticated}>
-          <Box display="flex" alignItems="center">
+        <div className={styles.actionsContainer}>
+          <div className={styles.userNameContainer}>
             {userLogo && (
               <Box marginRight={1} marginBottom={1}>
                 <span role="img" aria-label="user">
@@ -44,13 +54,13 @@ export const Header = ({
                 </span>
               </Box>
             )}
-            <Typography variant="eyebrow">{userName}</Typography>
-          </Box>
-          <div>
-            <Button variant="menu" leftIcon="user" onClick={onLogout}>
-              {logoutText}
-            </Button>
+            <Typography variant="eyebrow" turnicate>
+              {userName}
+            </Typography>
           </div>
+          <Button variant="menu" leftIcon="lock" onClick={onLogout}>
+            {logoutText}
+          </Button>
         </div>
       )}
     </div>
