@@ -16,6 +16,7 @@ export const Tag = forwardRef<HTMLButtonElement, TagProps>(
     return (
       <Box
         component="button"
+        type="button"
         display="inlineBlock"
         ref={ref}
         paddingY="smallGutter"

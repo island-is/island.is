@@ -1,7 +1,15 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
 import Link, { LinkProps } from 'next/link'
-import { Box, Stack, Typography, Tag, Inline } from '@island.is/island-ui/core'
+import {
+  Box,
+  Stack,
+  Typography,
+  Tag,
+  Inline,
+  Columns,
+  Column,
+} from '@island.is/island-ui/core'
 
 import * as styles from './Card.treat'
 
@@ -10,9 +18,12 @@ import { getTags } from '../../json'
 interface CardProps {
   title: string
   description: string
+  category?: string
+  group?: string
   tags?: boolean
   linkProps?: LinkProps
   href?: string
+  as?: string
 }
 
 export const Card: FC<CardProps> = ({
@@ -20,14 +31,29 @@ export const Card: FC<CardProps> = ({
   description,
   tags = true,
   href,
+  as,
+  category,
+  group,
 }) => {
   const Content = (
     <Box display="flex" height="full" flexDirection="column">
       <Box flexGrow={1} height="full">
         <Stack space={1}>
-          <Typography variant="cardCategoryTitle" as="h3">
-            {title}
-          </Typography>
+          <Columns>
+            <Column>
+              <Typography variant="cardCategoryTitle" as="h3">
+                {title}
+              </Typography>
+            </Column>
+            {(category || group) && (
+              <Column width="content">
+                <Inline space={2}>
+                  {category && <Tag variant="purple">{category}</Tag>}
+                  {group && <Tag variant="purple">{group}</Tag>}
+                </Inline>
+              </Column>
+            )}
+          </Columns>
           {description && <Typography variant="p">{description}</Typography>}
         </Stack>
       </Box>
@@ -52,7 +78,7 @@ export const Card: FC<CardProps> = ({
   }
 
   return (
-    <Link href={href}>
+    <Link href={href} as={as}>
       {/* eslint-disable-next-line */}
       <a className={styles.card}>
         <Box
