@@ -58,7 +58,7 @@ export const Header = ({
               {userName}
             </Typography>
           </div>
-          <Button variant="menu" leftIcon="user" onClick={onLogout}>
+          <Button variant="menu" leftIcon="lock" onClick={onLogout}>
             {logoutText}
           </Button>
         </div>
