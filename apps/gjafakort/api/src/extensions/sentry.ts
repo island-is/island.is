@@ -44,7 +44,8 @@ export const apolloServerPlugin = {
           const user = rc.context.user
           if (user) {
             scope.setUser({
-              ...user,
+              ssn: user.ssn,
+              mobile: user.mobile,
             })
           }
 
