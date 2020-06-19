@@ -9,12 +9,12 @@ import {
   Stack,
   Breadcrumbs,
   Hidden,
-  AccordionCard,
   Select,
+  AccordionCard,
   LinkCard,
 } from '@island.is/island-ui/core'
 
-import { groups, selectOptions } from '../../json'
+import { selectOptions } from '../../json'
 
 import * as styles from './Category.treat'
 import { useI18n } from '@island.is/web/i18n'
@@ -55,16 +55,33 @@ const Category: Screen<CategoryProps> = ({
   const articlePath = activeLocale === 'en' ? 'article' : 'grein'
   const categoryPath = activeLocale === 'en' ? 'category' : 'flokkur'
 
-  const articleCards = articles.map(({ title, slug, content }) => ({
-    title,
-    description: content,
-    href: `${prefix}/${articlePath}/${slug}`,
-  }))
+  // group articles
+  const { groups, cards } = articles.reduce(
+    (content, article) => {
+      if (!content.groups[article.groupSlug]) {
+        // group does not exist create the collection
+        content.groups[article.groupSlug] = {
+          title: article.group,
+          description: 'Some group description goes here',
+          articles: [article],
+        }
+      } else if (article.groupSlug) {
+        // group should exists push into collection
+        content.groups[article.groupSlug].articles.push(article)
+      } else {
+        // this article belongs to no group
+        content.cards.push(article)
+      }
+      return content
+    },
+    {
+      groups: {},
+      cards: [],
+    },
+  )
 
-  const currentCategory = categories.find((x) => x.slug === router.query.slug)
-
-  const DESCRIPTION =
-    'Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður.'
+  // find current category in categories list
+  const category = categories.find((x) => x.slug === router.query.slug)
 
   return (
     <ContentBlock>
@@ -102,10 +119,10 @@ const Category: Screen<CategoryProps> = ({
                     />
                   </Hidden>
                   <Typography variant="h1" as="h1">
-                    {currentCategory.title}
+                    {category.title}
                   </Typography>
                   <Typography variant="intro" as="p">
-                    {DESCRIPTION}
+                    {category.description}
                   </Typography>
                 </Stack>
               </ContentBlock>
@@ -115,24 +132,28 @@ const Category: Screen<CategoryProps> = ({
                 <ContentBlock width="small">
                   <Stack space={2}>
                     <Stack space={2}>
-                      {groups.map((group, index) => {
+                      {Object.keys(groups).map((groupSlug, index) => {
+                        const { title, description, articles } = groups[
+                          groupSlug
+                        ]
                         return (
                           <AccordionCard
                             key={index}
                             id={`accordion-${index}`}
-                            label={group.title}
+                            label={title}
                             visibleContent={
                               <Box paddingY={2} paddingBottom={1}>
-                                {group.description}
+                                {description}
                               </Box>
                             }
                           >
                             <Stack space={2}>
-                              {articles.map(({ title }, index) => {
+                              {articles.map(({ title, slug }, index) => {
                                 return (
                                   <Link
                                     key={index}
-                                    href={`${prefix}/${articlePath}/undanthaga-fra-afborgunum`}
+                                    href={`${prefix}/${articlePath}/[slug]`}
+                                    as={`${prefix}/${articlePath}/${slug}`}
                                     passHref
                                   >
                                     <LinkCard key={index}>{title}</LinkCard>
@@ -145,7 +166,7 @@ const Category: Screen<CategoryProps> = ({
                       })}
                     </Stack>
                     <Stack space={2}>
-                      {articleCards.map((article, index) => {
+                      {cards.map((article, index) => {
                         return <Card key={index} {...article} tags={false} />
                       })}
                     </Stack>
