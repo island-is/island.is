@@ -32,6 +32,7 @@ const CompanyApplicationsQuery = gql`
       companyName
       logs {
         id
+        data
       }
     }
   }
@@ -93,6 +94,7 @@ function Summary() {
                 <th>Staða umsóknar</th>
                 <th>Kennitala</th>
                 <th className={styles.right}>Fjöldi atburða</th>
+                <th className={styles.right}>Fjöldi villa</th>
                 <th />
               </tr>
             </thead>
@@ -141,6 +143,13 @@ function Summary() {
                     )}-${application.companySSN.slice(6)}`}
                   </td>
                   <td className={styles.right}>{application.logs.length}</td>
+                  <td className={styles.right}>
+                    {
+                      application.logs.filter(
+                        (log) => JSON.parse(log.data).success === false,
+                      ).length
+                    }
+                  </td>
                   <td className={styles.right}>
                     <Box
                       display="flex"
