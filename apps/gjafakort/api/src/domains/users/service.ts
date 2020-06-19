@@ -15,6 +15,10 @@ export const getApplication = async (
   )
 }
 
+export const getApplications = async (applicationApi: ApplicationAPI) => {
+  return applicationApi.getApplications<UserApplication>(APPLICATION_TYPE)
+}
+
 export const createApplication = async (
   userSSN: string,
   mobileNumber: string,

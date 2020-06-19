@@ -38,6 +38,7 @@ export type Query = {
   root?: Maybe<Scalars['String']>
   user?: Maybe<AuthUser>
   userApplication?: Maybe<UserApplication>
+  userApplicationCount?: Maybe<Scalars['Int']>
 }
 
 export type QueryCompanyArgs = {
@@ -151,6 +152,7 @@ export type Mutation = {
   approveCompanyApplication?: Maybe<ApproveCompanyApplication>
   createCompanyApplication?: Maybe<CreateCompanyApplication>
   createUserApplication?: Maybe<CreateUserApplication>
+  fetchUserApplication?: Maybe<UserApplication>
   rejectCompanyApplication?: Maybe<RejectCompanyApplication>
   root?: Maybe<Scalars['String']>
   updateCompanyApplication?: Maybe<UpdateCompanyApplication>
@@ -166,6 +168,10 @@ export type MutationCreateCompanyApplicationArgs = {
 
 export type MutationCreateUserApplicationArgs = {
   input?: Maybe<CreateUserApplicationInput>
+}
+
+export type MutationFetchUserApplicationArgs = {
+  ssn: Scalars['String']
 }
 
 export type MutationRejectCompanyApplicationArgs = {
@@ -195,6 +201,7 @@ export type UserApplication = {
   id: Scalars['String']
   mobileNumber: Scalars['String']
   countryCode: Scalars['String']
+  logs?: Maybe<Array<Maybe<ApplicationLog>>>
 }
 
 export type CreateUserApplication = {
@@ -428,6 +435,11 @@ export type QueryResolvers<
     ParentType,
     ContextType
   >
+  userApplicationCount?: Resolver<
+    Maybe<ResolversTypes['Int']>,
+    ParentType,
+    ContextType
+  >
 }
 
 export interface StringTrimmedScalarConfig
@@ -605,6 +617,12 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationCreateUserApplicationArgs, never>
   >
+  fetchUserApplication?: Resolver<
+    Maybe<ResolversTypes['UserApplication']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationFetchUserApplicationArgs, 'ssn'>
+  >
   rejectCompanyApplication?: Resolver<
     Maybe<ResolversTypes['RejectCompanyApplication']>,
     ParentType,
@@ -651,6 +669,11 @@ export type UserApplicationResolvers<
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   mobileNumber?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   countryCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  logs?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['ApplicationLog']>>>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
