@@ -92,7 +92,7 @@ const Category: Screen<CategoryProps> = ({
               {categories.map((c, index) => (
                 <Link key={index} href={`${prefix}/${categoryPath}/${c.slug}`}>
                   <a>
-                    <Typography variant='p' as='span'>
+                    <Typography variant="p" as="span">
                       {c.title}
                     </Typography>
                   </a>
@@ -101,27 +101,27 @@ const Category: Screen<CategoryProps> = ({
             </Sidebar>
           </div>
 
-          <Box paddingLeft={[0, 0, 0, 4]} width='full'>
+          <Box paddingLeft={[0, 0, 0, 4]} width="full">
             <Box padding={[3, 3, 6, 0]}>
-              <ContentBlock width='small'>
+              <ContentBlock width="small">
                 <Stack space={[3, 3, 4]}>
                   <Breadcrumbs>
-                    <Link href='/'>
+                    <Link href="/">
                       <a>Ísland.is</a>
                     </Link>
                   </Breadcrumbs>
-                  <Hidden above='md'>
+                  <Hidden above="md">
                     <Select
-                      label='Þjónustuflokkar'
-                      placeholder='Flokkar'
+                      label="Þjónustuflokkar"
+                      placeholder="Flokkar"
                       options={selectOptions}
-                      name='search'
+                      name="search"
                     />
                   </Hidden>
-                  <Typography variant='h1' as='h1'>
+                  <Typography variant="h1" as="h1">
                     {category.title}
                   </Typography>
-                  <Typography variant='intro' as='p'>
+                  <Typography variant="intro" as="p">
                     {category.description}
                   </Typography>
                 </Stack>
@@ -129,7 +129,7 @@ const Category: Screen<CategoryProps> = ({
             </Box>
             <div className={styles.bg}>
               <Box padding={[3, 3, 6, 0]} paddingTop={[3, 3, 6, 6]}>
-                <ContentBlock width='small'>
+                <ContentBlock width="small">
                   <Stack space={2}>
                     <Stack space={2}>
                       {Object.keys(groups).map((groupSlug, index) => {
