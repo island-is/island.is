@@ -5,7 +5,7 @@ import { createHttpLink } from 'apollo-link-http'
 import fetch from 'isomorphic-unfetch'
 import { BaseContext } from 'next/dist/next-server/lib/utils'
 
-const { publicRuntimeConfig } = getConfig()
+const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 
 const isBrowser: boolean = process.browser
 
@@ -17,9 +17,9 @@ if (!isBrowser) {
   ;(global as any).fetch = fetch
 }
 
-function create(initialState?: any, ctx?: BaseContext) {
+function create(initialState?: any) {
   const httpLink = createHttpLink({
-    uri: publicRuntimeConfig.apiUrl,
+    uri: serverRuntimeConfig.apiUrl || publicRuntimeConfig.apiUrl,
   })
 
   // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
@@ -33,16 +33,16 @@ function create(initialState?: any, ctx?: BaseContext) {
   })
 }
 
-export default function initApollo(initialState?: any, ctx?: BaseContext) {
+export default function initApollo(initialState?: any) {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
   if (!isBrowser) {
-    return create(initialState, ctx)
+    return create(initialState)
   }
 
   // Reuse client on the client-side
   if (!apolloClient) {
-    apolloClient = create(initialState, ctx)
+    apolloClient = create(initialState)
   }
 
   return apolloClient

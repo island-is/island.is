@@ -28,7 +28,8 @@
           "builder": "@nrwl/next:dev-server",
           "options": {
             "buildTarget": "web:build",
-            "dev": true
+            "dev": true,
+            "proxyConfig": "apps/web/proxy.config.json"
           },
           "configurations": {
             "production": {
