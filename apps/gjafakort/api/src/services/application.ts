@@ -58,9 +58,7 @@ class ApplicationAPI extends RESTDataSource {
   async getApplicationCount<T extends Application>(
     applicationType: T['type'],
   ): Promise<number> {
-    const res = await this.get(
-      `applications?type=${applicationType}&count=true`,
-    )
+    const res = await this.get(`applications/count?type=${applicationType}`)
     return res.count
   }
 

@@ -12,29 +12,34 @@ const router = Router()
 
 router.get(
   '/',
-  [
-    query('type').isIn(Object.values(ApplicationTypes)),
-    query('count')
-      .isBoolean()
-      .optional(),
-  ],
+  [query('type').isIn(Object.values(ApplicationTypes))],
   async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() })
     }
 
-    const { type, count } = req.query
-    if (count) {
-      const numberOfApplications = await applicationService.getApplicationCountByType(
-        type,
-      )
-      return res.status(200).json({ count: numberOfApplications })
-    }
-
+    const { type } = req.query
     const applications = await applicationService.getApplicationsByType(type)
 
     return res.status(200).json({ applications })
+  },
+)
+
+router.get(
+  '/count',
+  [query('type').isIn(Object.values(ApplicationTypes))],
+  async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() })
+    }
+
+    const { type } = req.query
+    const numberOfApplications = await applicationService.getApplicationCountByType(
+      type,
+    )
+    return res.status(200).json({ count: numberOfApplications })
   },
 )
 
