@@ -41,10 +41,11 @@ export const apolloServerPlugin = {
     return {
       didEncounterErrors(rc) {
         Sentry.withScope((scope) => {
-          const ssn = rc.context.user?.ssn
-          if (ssn) {
+          const user = rc.context.user
+          if (user) {
             scope.setUser({
-              ssn,
+              ssn: user.ssn,
+              mobile: user.mobile,
             })
           }
 
