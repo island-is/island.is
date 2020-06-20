@@ -63,14 +63,16 @@ function MobileForm({ onSubmit }: PropTypes) {
                   label={t.form.phoneNumber.label}
                   name="phoneNumber"
                   htmltype="tel"
-                  format="### ####"
+                  format="+354 ### ####"
+                  allowEmptyFormatting
                 />
                 <Field
                   component={FieldNumberInput}
                   label={t.form.confirmPhoneNumber.label}
                   name="confirmPhoneNumber"
                   htmltype="tel"
-                  format="### ####"
+                  format="+354 ### ####"
+                  allowEmptyFormatting
                 />
               </Stack>
             </Box>
