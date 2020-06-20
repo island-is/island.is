@@ -79,7 +79,7 @@ jobs:
       - run: git checkout $GITHUB_SHA
       - run: git branch
       - run: |
-          LAST_GOOD_BUILD=`git log --format=%H --first-parent "$BRANCH" | node .github/actions/index.js`
+          LAST_GOOD_BUILD=`git log --format=%H --first-parent "$BASE_BRANCH" | node .github/actions/index.js`
           echo "LAST_GOOD_SHA $(echo $LAST_GOOD_BUILD | jq '.sha' )"
           echo "::set-env name=BASE::`echo $LAST_GOOD_BUILD | jq -r '.sha'`"
           echo "::set-env name=HEAD::${GITHUB_SHA}"
