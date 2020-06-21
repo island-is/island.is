@@ -8,8 +8,8 @@ source $DIR/_common.sh
 # This is a helper script to find NX affected projects for a specific target
 
 APP=nx-runner
-AFFECTED_ALL=${AFFECTED_ALL:-false} # Allow for doing a full build if needed
-if [ "$AFFECTED_ALL" = "true" ] 
+AFFECTED_ALL=${AFFECTED_ALL:-} # Allow for doing a full build if needed
+if [[ ! -z "$BRANCH" && ! -z "$AFFECTED_ALL" && "$AFFECTED_ALL" == "$BRANCH" ]] 
 then
   AFFECTED_FLAGS=" --all "
 else
