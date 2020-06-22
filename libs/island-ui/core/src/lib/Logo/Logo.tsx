@@ -49,11 +49,11 @@ export const Logo = forwardRef<SVGSVGElement, LogoProps>(
             y2="38.8728"
             gradientUnits="userSpaceOnUse"
           >
-            <stop stop-color="#0161FD" />
-            <stop offset="0.2457" stop-color="#3F46D2" />
-            <stop offset="0.5079" stop-color="#812EA4" />
-            <stop offset="0.7726" stop-color="#C21578" />
-            <stop offset="1" stop-color="#FD0050" />
+            <stop stopColor="#0161FD" />
+            <stop offset="0.2457" stopColor="#3F46D2" />
+            <stop offset="0.5079" stopColor="#812EA4" />
+            <stop offset="0.7726" stopColor="#C21578" />
+            <stop offset="1" stopColor="#FD0050" />
           </linearGradient>
         </defs>
       </svg>
