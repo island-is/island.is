@@ -11,6 +11,7 @@ on:
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
+  AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
 
 jobs:
   test-build:
@@ -41,43 +42,79 @@ jobs:
 
     # These outputs are not used right now but are here ready when we go for multiple jobs
     outputs:
-      GIT_BRANCH: ${{ steps.docker_tags.outputs.GIT_BRANCH }}
+      GIT_BRANCH: ${{ steps.git_refs.outputs.GIT_BRANCH }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       DOCKER_LATEST_TAG: ${{ steps.docker_tags.outputs.DOCKER_LATEST_TAG }}
       DOCKER_BRANCH_TAG: ${{ steps.docker_tags.outputs.DOCKER_BRANCH_TAG }}
     steps:
       - uses: actions/checkout@v1
 
-      - name: Set docker image tag
+      - name: Git refs
+        id: git_refs
+        run: |
+          export GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
+          GIT_BASE_BRANCH=`git log --first-parent --pretty=format:'%d' --decorate=no | grep -v HEAD | grep "\S" | cut -d '/' -f2 | tr -d ' )' | head -n 1`
+          GIT_BASE_BRANCH=${GITHUB_BASE_REF:-$GIT_BASE_BRANCH}
+          GIT_BASE_BRANCH=${GIT_BASE_BRANCH:-master}
+          echo "::set-env name=GIT_BRANCH::${GIT_BRANCH}"
+          echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
+          echo "::set-env name=GIT_BASE_BRANCH::${GIT_BASE_BRANCH}"
+          echo "Base branch is '${GIT_BASE_BRANCH}'"
+          echo "Branch is '${GIT_BRANCH}'"
+
+      - name: Generate docker image tag
         id: docker_tags
         run: |
-          export GIT_BRANCH=${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}
           export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH} | tr "/." "-" )
           export DOCKER_TAG=${GITHUB_RUN_NUMBER}_${DOCKER_BRANCH_TAG}_${GITHUB_SHA:0:7}
           echo "Docker tag will be ${DOCKER_TAG}"
-          echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
-          echo "::set-env name=GIT_BRANCH::${GIT_BRANCH}"
           echo "::set-env name=DOCKER_BRANCH_TAG::${DOCKER_BRANCH_TAG}"
           echo "::set-output name=DOCKER_BRANCH_TAG::${DOCKER_BRANCH_TAG}"
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "::set-env name=DOCKER_TAG::${DOCKER_TAG}"
           echo "::set-output name=DOCKER_LATEST_TAG::latest_${DOCKER_BRANCH_TAG}"
 
-      - name: Set NX base SHA
+      - run: git checkout "$GIT_BRANCH"
+      - run: git checkout "$GIT_BASE_BRANCH"
+      - run: git checkout $GITHUB_SHA
+      - run: |
+          echo "::set-env name=HEAD::${GITHUB_SHA}"
+        name: Preparing HEAD tag
+      - run: |
+          if [[ $GITHUB_BASE_REF ]]
+          then
+            export BRANCH=$GIT_BASE_BRANCH
+          else
+            export BRANCH=$GIT_BRANCH
+          fi
+          LAST_GOOD_BUILD=`git log --format=%H --first-parent "$BRANCH" | node .github/actions/dist/index.js`
+          LAST_GOOD_BUILD_SHA=`echo $LAST_GOOD_BUILD | jq -r '.sha'`
+          LAST_GOOD_BUILD_BRANCH=`echo $LAST_GOOD_BUILD | jq -r '.branch'`
+          LAST_GOOD_BUILD_RUN_NUMBER=`echo $LAST_GOOD_BUILD | jq -r '.run_number'`
+          echo "Last successful build on $BRACH is with SHA '$LAST_GOOD_BUILD_SHA', branch '$LAST_GOOD_BUILD_BRANCH' and number '$LAST_GOOD_BUILD_RUN_NUMBER'"
+          echo "::set-env name=BASE::$LAST_GOOD_BUILD_SHA"
+          LAST_GOOD_BUILD_DOCKER_BRANCH_TAG=$(echo ${LAST_GOOD_BUILD_BRANCH} | tr "/." "-" )
+          export LAST_GOOD_BUILD_DOCKER_TAG=${LAST_GOOD_BUILD_RUN_NUMBER}_${LAST_GOOD_BUILD_DOCKER_BRANCH_TAG}_${LAST_GOOD_BUILD_SHA:0:7}
+          echo "Last successful docker tag '$LAST_GOOD_BUILD_DOCKER_TAG'"
+          echo "::set-env name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
+
+        name: Preparing BASE tags
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BASE_BRANCH: ${{ env.GIT_BASE_BRANCH }}
+      - name: GitHub envs
+        run: env | grep GITHUB
+
+      - name: Set publish flag
         run: |
           if [[ $GITHUB_BASE_REF ]]
           then
-            export NX_BASE=$(git merge-base $GITHUB_SHA origin/${GITHUB_BASE_REF})
             export PUBLISH=false
           else
-            export NX_BASE=$(git rev-parse HEAD~1)
             export PUBLISH=true
           fi
-          echo "::set-env name=NX_BASE::${NX_BASE}"
-          echo "::set-env name=BASE::${NX_BASE}"
-          echo "::set-env name=HEAD::${GITHUB_SHA}"
           echo "::set-env name=PUBLISH::${PUBLISH}"
-          echo "Base => $NX_BASE"
 
       - name: Cache for dependencies Docker layer
         id: cache-deps
@@ -95,30 +132,32 @@ jobs:
 
       - name: Building dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
-        run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/prepare_deps.sh
+        run: ./scripts/prepare_deps.sh
 
       - name: Check formatting
-        run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/check_formatting.sh
-
+        run: ./scripts/check_formatting.sh
       # Commenting this out since we do have a package that is problematic and that would block the pipeline
       # - name: Security audit Node modules
       #   run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/security-audit.sh
 
+      - name: set BRANCH env var
+        run: echo "::set-env name=BRANCH::${GIT_BRANCH}"
+
       - name: Running tests
-        run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/run-affected-in-parallel.sh test
-
+        run: ./scripts/run-affected-in-parallel.sh test
       - name: Linting
-        run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/run-affected-in-parallel.sh lint
-
+        run: ./scripts/run-affected-in-parallel.sh lint
       - name: Docker login to ECR repo
         run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
       - name: Building Express apps
-        run: BRANCH=$DOCKER_BRANCH_TAG MAX_JOBS=2 ./scripts/run-affected-in-parallel.sh docker-express
+        run: MAX_JOBS=2 ./scripts/run-affected-in-parallel.sh docker-express
       - name: Building Next.js apps
-        run: BRANCH=$DOCKER_BRANCH_TAG MAX_JOBS=2 ./scripts/run-affected-in-parallel.sh docker-next
+        run: MAX_JOBS=2 ./scripts/run-affected-in-parallel.sh docker-next
       # - name: Running E2E tests
       #   run: yarn run affected:e2e --base origin/master
+      - name: Retag unaffected Docker images
+        if: env.PUBLISH == 'true'
+        run: ./scripts/retag-unaffected.sh
