@@ -75,7 +75,7 @@ const RejectCompanyApplication = gql`
 `
 
 function Admin() {
-  const { data, loading } = useQuery(CompanyApplicationsQuery)
+  const { data, loading, error } = useQuery(CompanyApplicationsQuery)
   const [approveApplication, { loading: approveLoading }] = useMutation(
     ApproveCompanyApplication,
   )
@@ -85,7 +85,7 @@ function Admin() {
   const [index, setIndex] = useState(0)
 
   const { companyApplications } = data || {}
-  if (loading && !data) {
+  if (error || (loading && !data)) {
     return <ContentLoader />
   } else if (!loading && !data) {
     return <p>Unauthorized</p>
