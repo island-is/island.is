@@ -82,6 +82,7 @@ export type CompanyApplication = {
   validLicenses?: Maybe<Scalars['Boolean']>
   validPermit?: Maybe<Scalars['Boolean']>
   webpage?: Maybe<Scalars['String']>
+  publicHelpAmount?: Maybe<Scalars['Int']>
   logs?: Maybe<Array<Maybe<ApplicationLog>>>
 }
 
@@ -101,6 +102,7 @@ export type CreateCompanyApplicationInput = {
   operatingPermitForVehicles: Scalars['Boolean']
   validLicenses: Scalars['Boolean']
   validPermit: Scalars['Boolean']
+  publicHelpAmount: Scalars['Int']
 }
 
 export type ApproveCompanyApplicationInput = {
@@ -242,6 +244,7 @@ export type CompanyApplicationsQueryQuery = { __typename?: 'Query' } & {
           | 'validLicenses'
           | 'validPermit'
           | 'webpage'
+          | 'publicHelpAmount'
         > & {
             logs?: Maybe<
               Array<
@@ -319,6 +322,7 @@ export type CompanyApplicationQueryQuery = { __typename?: 'Query' } & {
       | 'validLicenses'
       | 'validPermit'
       | 'webpage'
+      | 'publicHelpAmount'
     > & {
         logs?: Maybe<
           Array<
@@ -373,7 +377,10 @@ export type CompanyApplicationsQueryMinimalQuery = { __typename?: 'Query' } & {
             logs?: Maybe<
               Array<
                 Maybe<
-                  { __typename?: 'ApplicationLog' } & Pick<ApplicationLog, 'id'>
+                  { __typename?: 'ApplicationLog' } & Pick<
+                    ApplicationLog,
+                    'id' | 'data'
+                  >
                 >
               >
             >
@@ -440,6 +447,7 @@ export type CompanyQueryQuery = { __typename?: 'Query' } & {
             | 'serviceCategory'
             | 'generalEmail'
             | 'webpage'
+            | 'publicHelpAmount'
             | 'phoneNumber'
             | 'companyName'
             | 'companyDisplayName'
@@ -593,6 +601,7 @@ export const CompanyApplicationsQueryDocument = gql`
       validLicenses
       validPermit
       webpage
+      publicHelpAmount
       logs {
         id
         created
@@ -781,6 +790,7 @@ export const CompanyApplicationQueryDocument = gql`
       validLicenses
       validPermit
       webpage
+      publicHelpAmount
       logs {
         id
         created
@@ -913,6 +923,7 @@ export const CompanyApplicationsQueryMinimalDocument = gql`
       companyName
       logs {
         id
+        data
       }
     }
   }
@@ -1148,6 +1159,7 @@ export const CompanyQueryDocument = gql`
         serviceCategory
         generalEmail
         webpage
+        publicHelpAmount
         phoneNumber
         companyName
         companyDisplayName

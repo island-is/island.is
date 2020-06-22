@@ -309,6 +309,13 @@
           "label": "Var fyrirtæki þitt í rekstrarerfiðleikum 31. desember 2019 í skilningi hópundanþágureglugerðar",
           "tooltip": "Fyrirtæki sem metið var í rekstrarerfiðleikum 31. desember 2019 í skilningi hópundanþágureglugerðar (ESB) nr. 651/2014 getur að hámarki tekið við samanlagt 25 millj. kr. greiðslu í formi ferðagjafa."
         },
+        "gotPublicHelp": {
+          "positiveLabel": "Já",
+          "negativeLabel": "Nei",
+          "label": "Hefur fyrirtækið á síðastliðnum tveimur reikningsárum eða á yfirstandandi reikningsári fengið opinbera aðstoð sem telst til minniháttaraðstoðar í skilningi EES-reglugerðar nr. 1407/2013?",
+          "tooltip": "Dæmi um aðstoð sem getur talist til minniháttaraðstoðar eru lokunarstyrkir, stuðningslán, greiðslur með ferðagjöf, fyrirtækja- eða frumherjastyrkir frá Rannís, sýningarstyrkir frá Kvikmyndamiðstöð Íslands, flutningsjöfnunarstyrkir frá Byggðastofnun, styrkir í tengslum við sóknaráætlanir landshluta og styrkir úr Framkvæmdasjóði ferðamannastaða."
+        },
+        "gotPublicHelpAmount": "Vinsamlegast tilgreindu frjárhæð ríkisaðstoðar",
         "contact": {
           "label": "Tengiliður",
           "name": "Nafn",

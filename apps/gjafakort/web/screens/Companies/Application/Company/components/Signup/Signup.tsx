@@ -55,8 +55,14 @@ function Signup({ company, handleSubmission }: PropTypes) {
 
   const companyOperations = t.form.operation.options
 
-  const onSubmit = async (values) => {
-    if (values.operations.noneOfTheAbove) {
+  const onSubmit = async ({
+    operations,
+    serviceCategory,
+    gotPublicHelpAmount,
+    gotPublicHelp,
+    ...values
+  }) => {
+    if (operations.noneOfTheAbove) {
       return handleSubmission(false)
     }
 
@@ -64,13 +70,16 @@ function Signup({ company, handleSubmission }: PropTypes) {
       variables: {
         input: {
           ...values,
-          ...values.operations,
-          serviceCategory: values.serviceCategory.label,
-          operations: undefined,
+          ...operations,
+          serviceCategory: serviceCategory.label,
+          publicHelpAmount: parseInt(
+            gotPublicHelp ? gotPublicHelpAmount || 0 : 0,
+          ),
           noneOfTheAbove: undefined,
         },
       },
     })
+
     return handleSubmission(true)
   }
 
@@ -102,6 +111,8 @@ function Signup({ company, handleSubmission }: PropTypes) {
           }, {}),
           noneOfTheAbove: false,
           operationsTrouble: undefined,
+          gotPublicHelp: undefined,
+          gotPublicHelpAmount: 0,
         }}
         validate={(values) => {
           const errors = {}
@@ -133,6 +144,16 @@ function Signup({ company, handleSubmission }: PropTypes) {
             .required(validation.required),
           operationsTrouble: Yup.bool().required(
             t.form.validation.operationsTrouble,
+          ),
+          gotPublicHelp: Yup.bool().required(
+            t.form.validation.operationsTrouble,
+          ),
+          gotPublicHelpAmount: Yup.number().when(
+            'gotPublicHelp',
+            (gotPublicHelp, gotPublicHelpAmount) =>
+              gotPublicHelp
+                ? gotPublicHelpAmount.required(validation.required)
+                : gotPublicHelpAmount,
           ),
           webpage: Yup.string()
             .matches(urlRegex, validation.webpage)
@@ -213,16 +234,38 @@ function Signup({ company, handleSubmission }: PropTypes) {
                 ))}
               </Stack>
             </Box>
+
             <Box marginBottom={5}>
-              <Field
-                component={FieldPolarQuestion}
-                name="operationsTrouble"
-                positiveLabel={t.form.operationsTrouble.positiveLabel}
-                negativeLabel={t.form.operationsTrouble.negativeLabel}
-                label={t.form.operationsTrouble.label}
-                tooltip={t.form.operationsTrouble.tooltip}
-                reverse
-              />
+              <Stack space={5}>
+                <Field
+                  component={FieldPolarQuestion}
+                  name="operationsTrouble"
+                  positiveLabel={t.form.operationsTrouble.positiveLabel}
+                  negativeLabel={t.form.operationsTrouble.negativeLabel}
+                  label={t.form.operationsTrouble.label}
+                  tooltip={t.form.operationsTrouble.tooltip}
+                  reverse
+                />
+                <Field
+                  component={FieldPolarQuestion}
+                  name="gotPublicHelp"
+                  positiveLabel={t.form.gotPublicHelp.positiveLabel}
+                  negativeLabel={t.form.gotPublicHelp.negativeLabel}
+                  label={t.form.gotPublicHelp.label}
+                  tooltip={t.form.gotPublicHelp.tooltip}
+                  reverse
+                />
+                {values.gotPublicHelp && (
+                  <Field
+                    component={FieldNumberInput}
+                    label={t.form.gotPublicHelpAmount}
+                    decimalSeparator=","
+                    thousandSeparator="."
+                    suffix=" kr."
+                    name="gotPublicHelpAmount"
+                  />
+                )}
+              </Stack>
             </Box>
             <Box marginBottom={5}>
               <Stack space={3}>
@@ -253,7 +296,6 @@ function Signup({ company, handleSubmission }: PropTypes) {
                   component={FieldNumberInput}
                   label={t.form.contact.phoneNumber}
                   name="phoneNumber"
-                  htmltype="tel"
                   format="### ####"
                 />
               </Stack>

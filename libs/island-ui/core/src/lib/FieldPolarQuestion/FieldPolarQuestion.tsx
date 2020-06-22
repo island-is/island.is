@@ -1,7 +1,7 @@
 import React from 'react'
 import { FormikState, FieldInputProps } from 'formik'
 import { get } from 'lodash'
-import { Checkbox } from '../Checkbox/Checkbox'
+import { RadioButton } from '../RadioButton/RadioButton'
 import { Typography } from '../..'
 import InputError from '../InputError/InputError'
 import { Box } from '../Box/Box'
@@ -17,7 +17,7 @@ export interface FieldPolarQuestionProps {
   form?: FormikState<string | number>
 }
 
-const CheckboxMapped = ({
+const RadioButtonMapped = ({
   field,
   value,
   onChange,
@@ -26,7 +26,7 @@ const CheckboxMapped = ({
   fixedValue,
   label,
 }) => (
-  <Checkbox
+  <RadioButton
     {...field}
     label={label}
     id={`${field.name}${idPostfix}`}
@@ -61,18 +61,18 @@ export const FieldPolarQuestion = ({
         'aria-describedby': field.name,
       }
     : {}
-  const checkboxProps = {
+  const RadioButtonProps = {
     field,
     value,
     onChange,
     ariaError,
   }
-  const posCheckbox = {
+  const posRadioButton = {
     idPostfix: '-pos',
     fixedValue: true,
     label: positiveLabel,
   }
-  const negCheckbox = {
+  const negRadioButton = {
     idPostfix: '-neg',
     fixedValue: false,
     label: negativeLabel,
@@ -89,15 +89,15 @@ export const FieldPolarQuestion = ({
         </Typography>
       </Box>
       <Box marginRight={4} display="inlineBlock">
-        <CheckboxMapped
-          {...checkboxProps}
-          {...(reverse ? negCheckbox : posCheckbox)}
+        <RadioButtonMapped
+          {...RadioButtonProps}
+          {...(reverse ? negRadioButton : posRadioButton)}
         />
       </Box>
       <Box display="inlineBlock">
-        <CheckboxMapped
-          {...checkboxProps}
-          {...(!reverse ? negCheckbox : posCheckbox)}
+        <RadioButtonMapped
+          {...RadioButtonProps}
+          {...(!reverse ? negRadioButton : posRadioButton)}
         />
       </Box>
 

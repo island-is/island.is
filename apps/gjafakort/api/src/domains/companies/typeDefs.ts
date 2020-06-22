@@ -34,6 +34,7 @@ export default gql`
     validLicenses: Boolean
     validPermit: Boolean
     webpage: String
+    publicHelpAmount: Int
     logs: [ApplicationLog]
   }
 
@@ -53,6 +54,7 @@ export default gql`
     operatingPermitForVehicles: Boolean!
     validLicenses: Boolean!
     validPermit: Boolean!
+    publicHelpAmount: Int!
   }
 
   input ApproveCompanyApplicationInput {

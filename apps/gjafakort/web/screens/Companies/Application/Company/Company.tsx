@@ -22,6 +22,7 @@ export const CompanyQuery = gql`
         serviceCategory
         generalEmail
         webpage
+        publicHelpAmount
         phoneNumber
         companyName
         companyDisplayName
