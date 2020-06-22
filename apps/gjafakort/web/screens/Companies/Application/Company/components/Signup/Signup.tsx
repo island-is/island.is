@@ -59,6 +59,7 @@ function Signup({ company, handleSubmission }: PropTypes) {
     operations,
     serviceCategory,
     gotPublicHelpAmount,
+    gotPublicHelp,
     ...values
   }) => {
     if (operations.noneOfTheAbove) {
@@ -71,9 +72,10 @@ function Signup({ company, handleSubmission }: PropTypes) {
           ...values,
           ...operations,
           serviceCategory: serviceCategory.label,
-          publicHelpAmount: parseInt(gotPublicHelpAmount || 0),
+          publicHelpAmount: parseInt(
+            gotPublicHelp ? gotPublicHelpAmount || 0 : 0,
+          ),
           noneOfTheAbove: undefined,
-          gotPublicHelp: undefined,
         },
       },
     })
