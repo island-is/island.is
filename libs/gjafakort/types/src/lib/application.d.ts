@@ -58,6 +58,7 @@ export interface CompanyApplication extends Application {
     validLicenses: boolean
     validPermit: boolean
     webpage: string
+    publicHelpAmount: number
   }
 }
 

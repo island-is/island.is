@@ -64,18 +64,20 @@ function Signup({ company, handleSubmission }: PropTypes) {
     if (operations.noneOfTheAbove) {
       return handleSubmission(false)
     }
+
     await createCompanyApplication({
       variables: {
         input: {
           ...values,
           ...operations,
           serviceCategory: serviceCategory.label,
-          gotPublicHelpAmount: values.gotPublicHelp
-            ? gotPublicHelpAmount
-            : undefined,
+          publicHelpAmount: parseInt(gotPublicHelpAmount || 0),
+          noneOfTheAbove: undefined,
+          gotPublicHelp: undefined,
         },
       },
     })
+
     return handleSubmission(true)
   }
 
@@ -108,7 +110,7 @@ function Signup({ company, handleSubmission }: PropTypes) {
           noneOfTheAbove: false,
           operationsTrouble: undefined,
           gotPublicHelp: undefined,
-          gotPublicHelpAmount: '',
+          gotPublicHelpAmount: 0,
         }}
         validate={(values) => {
           const errors = {}
@@ -144,7 +146,7 @@ function Signup({ company, handleSubmission }: PropTypes) {
           gotPublicHelp: Yup.bool().required(
             t.form.validation.operationsTrouble,
           ),
-          gotPublicHelpAmount: Yup.string().when(
+          gotPublicHelpAmount: Yup.number().when(
             'gotPublicHelp',
             (gotPublicHelp, gotPublicHelpAmount) =>
               gotPublicHelp
