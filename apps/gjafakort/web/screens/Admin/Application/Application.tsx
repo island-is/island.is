@@ -36,6 +36,7 @@ const CompanyApplicationQuery = gql`
       validLicenses
       validPermit
       webpage
+      publicHelpAmount
       logs {
         id
         created
