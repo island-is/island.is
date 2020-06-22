@@ -1,32 +1,34 @@
 import React from 'react'
 import { FormikState, FieldInputProps } from 'formik'
 import get from 'lodash/get'
-import { Checkbox, CheckboxProps } from '../Checkbox/Checkbox'
+import { RadioButton, RadioButtonProps } from '../RadioButton/RadioButton'
 
-export interface FieldCheckboxProps extends CheckboxProps {
-  field?: FieldInputProps<boolean>
+export interface FieldRadioButtonProps extends RadioButtonProps {
+  field?: FieldInputProps<string>
   form?: FormikState<string | number>
 }
 
-export const FieldCheckbox = ({
-  field: { onChange, value, ...field },
+export const FieldRadioButton = ({
+  field: { onChange, value: fieldValue, ...field },
   form: { touched, errors },
   onChange: customOnChange,
+  value,
   ...props
-}: FieldCheckboxProps) => {
+}: FieldRadioButtonProps) => {
   const nameArray = (field.name && field.name.split('.')) || []
+
   return (
-    <Checkbox
+    <RadioButton
       {...props}
       {...field}
-      checked={value}
+      checked={value === fieldValue}
       onChange={(e) => {
         const event = {
           ...e,
           target: {
             ...e.target,
             name: field.name,
-            value: e.target.checked,
+            value: value,
           },
         }
         onChange(event)
@@ -40,4 +42,4 @@ export const FieldCheckbox = ({
   )
 }
 
-export default FieldCheckbox
+export default FieldRadioButton
