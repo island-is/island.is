@@ -9,21 +9,12 @@ replicaCount:
 
 image:
   repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/gjafakort-queue-listener
-  tag: latest_master
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
-environment:
-  yay_url:
-  yay_api_key_path: "/k8s/gjafakort/YAY_API_KEY"
-  yay_secret_key_path: "/k8s/gjafakort/YAY_SECRET_KEY"
-  ferdalag_url:
-  ferdalag_api_key_path: "/k8s/gjafakort/FERDALAG_API_KEY"
-  application_url: "http://web-gjafakort-application"
-  sentry_dsn:
 
 serviceAccount:
   # Specifies whether a service account should be created
