@@ -50,20 +50,6 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
   const articlePath = activeLocale === 'en' ? 'article' : 'grein'
   const searchPath = activeLocale === 'en' ? 'search' : 'leit'
 
-  const onSubmit = (inputValue, selectedOption) => {
-    if (selectedOption) {
-      return Router.push(
-        `${prefix}/${articlePath}/[slug]`,
-        `${prefix}/${articlePath}/${selectedOption.value}`,
-      )
-    }
-
-    return Router.push({
-      pathname: `${prefix}/${searchPath}`,
-      query: { q: inputValue },
-    })
-  }
-
   const sidebarCategories = searchResults.items.reduce((all, cur) => {
     const key = cur.categorySlug
 
@@ -147,9 +133,9 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
                     </Link>
                   </Breadcrumbs>
                   <SearchInput
+                    size="large"
                     activeLocale={activeLocale}
                     initialInputValue={q}
-                    onSubmit={onSubmit}
                   />
                   <Hidden above="md">
                     <Select
@@ -160,18 +146,26 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
                     />
                   </Hidden>
                   <Typography variant="intro" as="p">
-                    {filteredItems.length} leitarniðurstöður{' '}
-                    {filters.category && (
-                      <>
-                        í flokki
-                        {categoryTitle ? (
+                    {filteredItems.length === 0 ? (
+                      <div>
+                        Ekkert fannst við leit á <strong>{q}</strong>
+                      </div>
+                    ) : (
+                      <div>
+                        {filteredItems.length} leitarniðurstöður{' '}
+                        {filters.category && (
                           <>
-                            : <strong>{categoryTitle}</strong>
+                            í flokki
+                            {categoryTitle ? (
+                              <>
+                                : <strong>{categoryTitle}</strong>
+                              </>
+                            ) : (
+                              '.'
+                            )}
                           </>
-                        ) : (
-                          '.'
                         )}
-                      </>
+                      </div>
                     )}
                   </Typography>
                 </Stack>

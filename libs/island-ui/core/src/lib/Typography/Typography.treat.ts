@@ -113,12 +113,12 @@ export const variants: Variants = {
   },
   breadcrumb: {
     fontSize: {
-      xs: 14,
-      md: 16,
+      xs: 12,
+      md: 14,
     },
     fontWeight: theme.typography.semiBold,
     lineHeight: 1.142857,
-    color: theme.color.roseTinted400,
+    color: theme.color.purple400,
   },
   tag: {
     fontSize: {

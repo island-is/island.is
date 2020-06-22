@@ -7,15 +7,19 @@ import {
   Inline,
   Box,
   Button,
-  // Select,
 } from '@island.is/island-ui/core'
 import Link from 'next/link'
 
-// import { selectOptions } from '../../json'
 import { useI18n } from '@island.is/web/i18n'
+import { SearchInput } from '../'
+import { useRouter } from 'next/router'
 
 export const Header: FC = () => {
   const { activeLocale } = useI18n()
+  const Router = useRouter()
+
+  const noSearchPaths = ['/', '/en', '/leit', '/en/search']
+  const showSearch = noSearchPaths.indexOf(Router.pathname) < 0
 
   const languageButtonText = activeLocale === 'is' ? 'English' : 'Íslenska'
   const languageButtonLink = activeLocale === 'en' ? '/' : '/en'
@@ -46,18 +50,18 @@ export const Header: FC = () => {
                   <Link href={languageButtonLink}>
                     <Button variant="menu">{languageButtonText}</Button>
                   </Link>
-
                   <Link href="https://minarsidur.island.is/" passHref>
                     <Button variant="menu" leftIcon="user">
                       Innskráning
                     </Button>
                   </Link>
-                  {/* <Select
-                    placeholder="Leitaðu á Ísland.is"
-                    options={selectOptions}
-                    name="search"
-                    icon="search"
-                  /> */}
+                  {showSearch && (
+                    <SearchInput
+                      size="medium"
+                      activeLocale={activeLocale}
+                      autocomplete={false}
+                    />
+                  )}
                 </Inline>
               </Box>
             </Column>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
+import { useRouter } from 'next/router'
 import { useApolloClient } from 'react-apollo'
 import { GET_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
 import {
@@ -9,21 +10,29 @@ import {
 import {
   AsyncSearch,
   AsyncSearchOption,
+  AsyncSearchSizes,
   Typography,
   Box,
 } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/web/i18n/I18n'
+import useRouteNames from '@island.is/web/i18n/useRouteNames'
 
 interface SearchInputProps {
   activeLocale: string
   initialInputValue?: string
+  size?: AsyncSearchSizes
+  autocomplete?: boolean
   onSubmit?: (inputValue: string, selectedOption: AsyncSearchOption) => void
 }
 
 export const SearchInput = ({
   activeLocale,
   initialInputValue,
+  size = 'medium',
+  autocomplete = true,
   onSubmit,
 }: SearchInputProps) => {
+  const Router = useRouter()
   const [options, setOptions] = useState([])
   const [prevOptions, setPrevOptions] = useState([])
   const [queryString, setQueryString] = useState('')
@@ -32,6 +41,21 @@ export const SearchInput = ({
   const client = useApolloClient()
   const isFirstRun = useRef(true)
   const timer = useRef(null)
+  const { makePath } = useRouteNames(activeLocale as Locale)
+
+  const defaultOnSubmit = (inputValue, selectedOption) => {
+    if (selectedOption) {
+      return Router.push(
+        `${makePath('article')}/[slug]`,
+        makePath('article', selectedOption.value),
+      )
+    }
+
+    return Router.push({
+      pathname: makePath('search'),
+      query: { q: inputValue },
+    })
+  }
 
   const fetchData = useCallback(async () => {
     const {
@@ -76,8 +100,10 @@ export const SearchInput = ({
       return
     }
 
-    fetchData()
-  }, [queryString, fetchData])
+    if (autocomplete) {
+      fetchData()
+    }
+  }, [autocomplete, queryString, fetchData])
 
   useEffect(() => {
     if (options.length) {
@@ -87,7 +113,7 @@ export const SearchInput = ({
 
   return (
     <AsyncSearch
-      size="large"
+      size={size}
       placeholder="Leitaðu á Ísland.is"
       initialInputValue={initialInputValue}
       inputValue={inputValue}
@@ -101,11 +127,14 @@ export const SearchInput = ({
         } else if (value === queryString) {
           setOptions(prevOptions)
         } else {
-          setLoading(true)
+          if (autocomplete) {
+            setLoading(true)
+          }
+
           timer.current = setTimeout(() => setQueryString(value), 300)
         }
       }}
-      onSubmit={onSubmit}
+      onSubmit={onSubmit || defaultOnSubmit}
       options={options}
       loading={loading}
       closeMenuOnSubmit

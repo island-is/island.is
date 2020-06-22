@@ -14,25 +14,27 @@ type Mutation {
 }
 
 type Article {
-  content: String
   id: String!
   slug: String!
   title: String!
+  content: String
+  group: String
+  category: String
 }
 
 input GetArticleInput {
-  lang: String!
   slug: String
+  lang: String!
 }
 
 type Namespace {
-  fields: String!
   namespace: String!
+  fields: String!
 }
 
 input GetNamespaceInput {
-  lang: String!
   namespace: String
+  lang: String!
 }
 
 type ContentItem {
