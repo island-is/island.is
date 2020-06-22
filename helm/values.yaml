@@ -57,3 +57,16 @@ gjafakort-queue-listener:
     ferdalag_api_key_path: "/k8s/gjafakort/FERDALAG_API_KEY"
     application_url: "http://web-gjafakort-application"
     sentry_dsn:
+    
+search-indexer-service:
+  environment:
+    application_url: "http://search-indexer-service"
+    elastic_node: "https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com"
+    elastic_index: "island-is"
+    contentful_space: "8k0h54kbe6bj"
+    contentful_access_token: "/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN"
+    contentful_environment: "sandbox"
+    contentful_host: "preview.contentful.com"
+
+  initEnvirontment:
+    migration_script: /webapp/bin/migrate.sh
