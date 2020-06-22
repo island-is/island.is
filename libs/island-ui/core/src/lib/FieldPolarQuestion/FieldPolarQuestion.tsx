@@ -1,6 +1,6 @@
 import React from 'react'
 import { FormikState, FieldInputProps } from 'formik'
-import { get } from 'lodash'
+import get from 'lodash/get'
 import { RadioButton } from '../RadioButton/RadioButton'
 import { Typography } from '../..'
 import InputError from '../InputError/InputError'

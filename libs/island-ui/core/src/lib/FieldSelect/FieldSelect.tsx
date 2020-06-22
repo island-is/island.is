@@ -1,7 +1,7 @@
 import React from 'react'
 import { FieldInputProps, FormikState } from 'formik'
 import { ValueType } from 'react-select'
-import { get } from 'lodash'
+import get from 'lodash/get'
 import { Select, SelectProps, Option } from '../Select/Select'
 
 export interface FieldSelectProps extends SelectProps {
