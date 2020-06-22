@@ -39,3 +39,10 @@ gjafakort-web:
     sentry_dsn:
     sentry_org:
     sentry_project:
+gjafakort-application:
+  postgres:
+    host: 'host'
+    name: 'name'
+    username: 'username'
+    password_secret_path: '/k8s/gjafakort/application/DB_PASSWORD'
+    sentry_dsn:
