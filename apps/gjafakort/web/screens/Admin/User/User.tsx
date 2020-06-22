@@ -10,7 +10,11 @@ import {
   Typography,
 } from '@island.is/island-ui/core'
 
-import { Loader, Layout, KeyValue } from '@island.is/gjafakort-web/components'
+import {
+  Layout,
+  KeyValue,
+  ContentLoader,
+} from '@island.is/gjafakort-web/components'
 import { nFormatter } from '@island.is/gjafakort-web/utils'
 
 import { Value } from './components'
@@ -43,7 +47,7 @@ const FetchUserApplicationQuery = gql`
 
 function User() {
   const [value, setValue] = useState('')
-  const { data: countData, loading: countLoading } = useQuery(
+  const { error, data: countData, loading: countLoading } = useQuery(
     UserApplicationCountQuery,
   )
   const [getUserApplication, { loading, data }] = useMutation(
@@ -74,21 +78,17 @@ function User() {
     }
   }
 
+  if (error || countLoading) {
+    return <ContentLoader />
+  }
+
   return (
     <Layout
       left={
         <Box marginBottom={6}>
           <Box marginBottom={8} display="flex" justifyContent="spaceAround">
-            <Value
-              loading={countLoading}
-              label="gjafabréf sótt"
-              value={count}
-            />
-            <Value
-              loading={countLoading}
-              label="virði í kr."
-              value={nFormatter(count * 5000)}
-            />
+            <Value label="gjafabréf sótt" value={count} />
+            <Value label="virði í kr." value={nFormatter(count * 5000)} />
           </Box>
           <Box padding="gutter">
             <Input

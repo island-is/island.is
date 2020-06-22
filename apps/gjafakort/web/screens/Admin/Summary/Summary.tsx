@@ -39,9 +39,9 @@ const CompanyApplicationsQuery = gql`
 `
 
 function Summary() {
-  const { data, loading } = useQuery(CompanyApplicationsQuery)
+  const { data, loading, error } = useQuery(CompanyApplicationsQuery)
   const { companyApplications } = data || {}
-  if (loading && !data) {
+  if (error || (loading && !data)) {
     return <ContentLoader />
   }
 
