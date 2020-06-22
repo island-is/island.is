@@ -1,12 +1,16 @@
 export default (num: number): string | number => {
+  const toLocale = (value: number): string => {
+    return Number(value.toFixed(1).replace(/\.0$/, '')).toLocaleString('de-DE')
+  }
+
   if (num >= 1000000000) {
-    return (num / 1000000000).toFixed(1).replace(/\.0$/, '') + 'G'
+    return toLocale(num / 1000000000) + 'G'
   }
   if (num >= 1000000) {
-    return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M'
+    return toLocale(num / 1000000) + 'M'
   }
   if (num >= 1000) {
-    return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'k'
+    return toLocale(num / 1000) + 'k'
   }
-  return num
+  return num.toLocaleString('de-DE')
 }
