@@ -179,6 +179,13 @@ function FormInfo({ application }: PropTypes) {
                   value={application.serviceCategory}
                   color="blue400"
                 />
+                <KeyValue
+                  label="Fjárhæð ríkisaðstoðar"
+                  value={`${(application.publicHelpAmount || 0).toLocaleString(
+                    'de-DE',
+                  )} kr`}
+                  color="blue400"
+                />
               </Box>
               <Box marginBottom={5}>
                 <Stack space={3}>

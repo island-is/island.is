@@ -89,6 +89,7 @@ export type CompanyApplication = {
   validLicenses?: Maybe<Scalars['Boolean']>
   validPermit?: Maybe<Scalars['Boolean']>
   webpage?: Maybe<Scalars['String']>
+  publicHelpAmount?: Maybe<Scalars['Int']>
   logs?: Maybe<Array<Maybe<ApplicationLog>>>
 }
 
@@ -108,6 +109,7 @@ export type CreateCompanyApplicationInput = {
   operatingPermitForVehicles: Scalars['Boolean']
   validLicenses: Scalars['Boolean']
   validPermit: Scalars['Boolean']
+  publicHelpAmount: Scalars['Int']
 }
 
 export type ApproveCompanyApplicationInput = {
@@ -539,6 +541,11 @@ export type CompanyApplicationResolvers<
     ContextType
   >
   webpage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  publicHelpAmount?: Resolver<
+    Maybe<ResolversTypes['Int']>,
+    ParentType,
+    ContextType
+  >
   logs?: Resolver<
     Maybe<Array<Maybe<ResolversTypes['ApplicationLog']>>>,
     ParentType,
