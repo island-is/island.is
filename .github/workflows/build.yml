@@ -3,14 +3,14 @@ name: Monorepo pipeline
 on:
   push:
     branches:
-      - 'master'
+      - "master"
     paths-ignore:
-      - '**/*.md'
+      - "**/*.md"
   pull_request:
     branches: [master]
 
 env:
-  DOCKER_REGISTRY: 553296336529.dkr.ecr.eu-west-1.amazonaws.com/
+  DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
 jobs:
   test-build:
@@ -120,6 +120,5 @@ jobs:
         run: BRANCH=$DOCKER_BRANCH_TAG MAX_JOBS=2 ./scripts/run-affected-in-parallel.sh docker-express
       - name: Building Next.js apps
         run: BRANCH=$DOCKER_BRANCH_TAG MAX_JOBS=2 ./scripts/run-affected-in-parallel.sh docker-next
-
       # - name: Running E2E tests
       #   run: yarn run affected:e2e --base origin/master
