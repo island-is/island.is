@@ -87,7 +87,7 @@ jobs:
           else
             export BRANCH=$GIT_BRANCH
           fi
-          LAST_GOOD_BUILD=`git log --format=%H --first-parent "$BRANCH" | node .github/actions/index.js`
+          LAST_GOOD_BUILD=`git log --format=%H --first-parent "$BRANCH" | node .github/actions/dist/index.js`
           LAST_GOOD_BUILD_SHA=`echo $LAST_GOOD_BUILD | jq -r '.sha'`
           LAST_GOOD_BUILD_BRANCH=`echo $LAST_GOOD_BUILD | jq -r '.branch'`
           LAST_GOOD_BUILD_RUN_NUMBER=`echo $LAST_GOOD_BUILD | jq -r '.run_number'`

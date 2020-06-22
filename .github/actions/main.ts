@@ -8,8 +8,6 @@ class GitHubWorkflowQueries implements WorkflowQueries {
   async getData(branch: string) {
     return (
       await octokit.request('GET /repos/:owner/:repo/actions/runs', {
-        // owner: "island-is",
-        // repo: "island.is",
         owner,
         repo,
         branch,

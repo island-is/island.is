@@ -5,6 +5,10 @@
   "repository": "git@github.com:island-is/island.is.git",
   "author": "Petar Shomov <petar@andes.is>",
   "license": "MIT",
+  "scripts": {
+    "build": "./node_modules/.bin/ncc build ./main.ts -o ./dist",
+    "test": "./node_modules/.bin/jest"
+  },
   "dependencies": {
     "@octokit/action": "^3.0.0",
     "@octokit/core": "^3.0.0",
@@ -13,6 +17,7 @@
   "devDependencies": {
     "@fluffy-spoon/substitute": "^1.143.0",
     "@types/jest": "^26.0.0",
+    "@zeit/ncc": "^0.22.3",
     "jest": "^26.0.1",
     "ts-jest": "^26.1.0",
     "ts-node": "^8.10.2",
