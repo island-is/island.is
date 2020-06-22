@@ -25,4 +25,4 @@ UNAFFECTED_DOCKER_IMAGES=`node << EOM
 EOM
 `
 
-echo $UNAFFECTED_DOCKER_IMAGES | xargs -n 1 -I {} bash -c "IMAGE={} $DIR/retag.sh || exit 255" # exit code 255 makes xargs fail fast
+echo $UNAFFECTED_DOCKER_IMAGES | tr ' ' '\n' | xargs -I {} bash -c "IMAGE={} $DIR/retag.sh || exit 255" # exit code 255 makes xargs fail fast
