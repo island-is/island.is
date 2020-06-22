@@ -42,9 +42,9 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
   const categoryPath = activeLocale === 'en' ? 'category' : 'flokkur'
   const searchPath = activeLocale === 'en' ? 'search' : 'leit'
 
-  const cards = categories.map(({ title, slug }) => ({
+  const cards = categories.map(({ title, slug, description }) => ({
     title,
-    description: 'description',
+    description,
     href: `${prefix}/${categoryPath}/[slug]`,
     as: `${prefix}/${categoryPath}/${slug}`,
   }))
