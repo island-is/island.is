@@ -13,7 +13,7 @@ function KeyValue({ label, value, color, size = 'h3' }: PropTypes) {
   return (
     <Box
       textAlign={isNaN(Number(value)) ? 'left' : 'right'}
-      marginRight={6}
+      marginRight={[2, 6]}
       marginBottom={2}
     >
       <Typography variant="pSmall">{label}</Typography>

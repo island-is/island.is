@@ -139,7 +139,7 @@ function Admin() {
           width="full"
         >
           <Hidden above="md">
-            <Box marginBottom={6} width="full">
+            <Box marginBottom={6} marginTop={2} width="full">
               <ReviewStatus
                 approved={approvedApplications.length}
                 pending={applicationsLeft}

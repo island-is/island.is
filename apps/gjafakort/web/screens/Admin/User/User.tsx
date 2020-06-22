@@ -11,6 +11,9 @@ import {
 } from '@island.is/island-ui/core'
 
 import { Loader, Layout, KeyValue } from '@island.is/gjafakort-web/components'
+import { nFormatter } from '@island.is/gjafakort-web/utils'
+
+import { Value } from './components'
 
 import * as styles from './User.treat'
 
@@ -75,16 +78,17 @@ function User() {
     <Layout
       left={
         <Box marginBottom={6}>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            marginBottom={8}
-          >
-            <Typography variant="h1" color="blue400">
-              {countLoading ? <Loader /> : count}
-            </Typography>
-            <Typography variant="pSmall">gjafabréf sótt</Typography>
+          <Box marginBottom={8} display="flex" justifyContent="spaceAround">
+            <Value
+              loading={countLoading}
+              label="gjafabréf sótt"
+              value={count}
+            />
+            <Value
+              loading={countLoading}
+              label="virði í kr."
+              value={nFormatter(count * 5000)}
+            />
           </Box>
           <Box padding="gutter">
             <Input
