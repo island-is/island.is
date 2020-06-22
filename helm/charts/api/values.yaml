@@ -8,7 +8,7 @@ replicaCount:
   max: 10
 
 image:
-  repository: 553296336529.dkr.ecr.eu-west-1.amazonaws.com/api
+  repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/api
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
