@@ -31,6 +31,7 @@ export type Query = {
   root?: Maybe<Scalars['String']>
   user?: Maybe<AuthUser>
   userApplication?: Maybe<UserApplication>
+  userApplicationCount?: Maybe<Scalars['Int']>
 }
 
 export type QueryCompanyArgs = {
@@ -81,6 +82,7 @@ export type CompanyApplication = {
   validLicenses?: Maybe<Scalars['Boolean']>
   validPermit?: Maybe<Scalars['Boolean']>
   webpage?: Maybe<Scalars['String']>
+  publicHelpAmount?: Maybe<Scalars['Int']>
   logs?: Maybe<Array<Maybe<ApplicationLog>>>
 }
 
@@ -100,6 +102,7 @@ export type CreateCompanyApplicationInput = {
   operatingPermitForVehicles: Scalars['Boolean']
   validLicenses: Scalars['Boolean']
   validPermit: Scalars['Boolean']
+  publicHelpAmount: Scalars['Int']
 }
 
 export type ApproveCompanyApplicationInput = {
@@ -144,6 +147,7 @@ export type Mutation = {
   approveCompanyApplication?: Maybe<ApproveCompanyApplication>
   createCompanyApplication?: Maybe<CreateCompanyApplication>
   createUserApplication?: Maybe<CreateUserApplication>
+  fetchUserApplication?: Maybe<UserApplication>
   rejectCompanyApplication?: Maybe<RejectCompanyApplication>
   root?: Maybe<Scalars['String']>
   updateCompanyApplication?: Maybe<UpdateCompanyApplication>
@@ -159,6 +163,10 @@ export type MutationCreateCompanyApplicationArgs = {
 
 export type MutationCreateUserApplicationArgs = {
   input: Maybe<CreateUserApplicationInput>
+}
+
+export type MutationFetchUserApplicationArgs = {
+  ssn: Scalars['String']
 }
 
 export type MutationRejectCompanyApplicationArgs = {
@@ -188,6 +196,7 @@ export type UserApplication = {
   id: Scalars['String']
   mobileNumber: Scalars['String']
   countryCode: Scalars['String']
+  logs?: Maybe<Array<Maybe<ApplicationLog>>>
 }
 
 export type CreateUserApplication = {
@@ -235,6 +244,7 @@ export type CompanyApplicationsQueryQuery = { __typename?: 'Query' } & {
           | 'validLicenses'
           | 'validPermit'
           | 'webpage'
+          | 'publicHelpAmount'
         > & {
             logs?: Maybe<
               Array<
@@ -312,6 +322,7 @@ export type CompanyApplicationQueryQuery = { __typename?: 'Query' } & {
       | 'validLicenses'
       | 'validPermit'
       | 'webpage'
+      | 'publicHelpAmount'
     > & {
         logs?: Maybe<
           Array<
@@ -366,13 +377,47 @@ export type CompanyApplicationsQueryMinimalQuery = { __typename?: 'Query' } & {
             logs?: Maybe<
               Array<
                 Maybe<
-                  { __typename?: 'ApplicationLog' } & Pick<ApplicationLog, 'id'>
+                  { __typename?: 'ApplicationLog' } & Pick<
+                    ApplicationLog,
+                    'id' | 'data'
+                  >
                 >
               >
             >
           }
       >
     >
+  >
+}
+
+export type UserApplicationCountQueryQueryVariables = {}
+
+export type UserApplicationCountQueryQuery = { __typename?: 'Query' } & Pick<
+  Query,
+  'userApplicationCount'
+>
+
+export type FetchUserApplicationQueryMutationVariables = {
+  ssn: Scalars['String']
+}
+
+export type FetchUserApplicationQueryMutation = { __typename?: 'Mutation' } & {
+  fetchUserApplication?: Maybe<
+    { __typename?: 'UserApplication' } & Pick<
+      UserApplication,
+      'id' | 'mobileNumber' | 'countryCode'
+    > & {
+        logs?: Maybe<
+          Array<
+            Maybe<
+              { __typename?: 'ApplicationLog' } & Pick<
+                ApplicationLog,
+                'id' | 'created' | 'state' | 'title' | 'data' | 'authorSSN'
+              >
+            >
+          >
+        >
+      }
   >
 }
 
@@ -402,6 +447,7 @@ export type CompanyQueryQuery = { __typename?: 'Query' } & {
             | 'serviceCategory'
             | 'generalEmail'
             | 'webpage'
+            | 'publicHelpAmount'
             | 'phoneNumber'
             | 'companyName'
             | 'companyDisplayName'
@@ -555,6 +601,7 @@ export const CompanyApplicationsQueryDocument = gql`
       validLicenses
       validPermit
       webpage
+      publicHelpAmount
       logs {
         id
         created
@@ -743,6 +790,7 @@ export const CompanyApplicationQueryDocument = gql`
       validLicenses
       validPermit
       webpage
+      publicHelpAmount
       logs {
         id
         created
@@ -875,6 +923,7 @@ export const CompanyApplicationsQueryMinimalDocument = gql`
       companyName
       logs {
         id
+        data
       }
     }
   }
@@ -926,6 +975,119 @@ export type CompanyApplicationsQueryMinimalLazyQueryHookResult = ReturnType<
 export type CompanyApplicationsQueryMinimalQueryResult = ApolloReactCommon.QueryResult<
   CompanyApplicationsQueryMinimalQuery,
   CompanyApplicationsQueryMinimalQueryVariables
+>
+export const UserApplicationCountQueryDocument = gql`
+  query UserApplicationCountQuery {
+    userApplicationCount
+  }
+`
+
+/**
+ * __useUserApplicationCountQueryQuery__
+ *
+ * To run a query within a React component, call `useUserApplicationCountQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserApplicationCountQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserApplicationCountQueryQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useUserApplicationCountQueryQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    UserApplicationCountQueryQuery,
+    UserApplicationCountQueryQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useQuery<
+    UserApplicationCountQueryQuery,
+    UserApplicationCountQueryQueryVariables
+  >(UserApplicationCountQueryDocument, baseOptions)
+}
+export function useUserApplicationCountQueryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    UserApplicationCountQueryQuery,
+    UserApplicationCountQueryQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useLazyQuery<
+    UserApplicationCountQueryQuery,
+    UserApplicationCountQueryQueryVariables
+  >(UserApplicationCountQueryDocument, baseOptions)
+}
+export type UserApplicationCountQueryQueryHookResult = ReturnType<
+  typeof useUserApplicationCountQueryQuery
+>
+export type UserApplicationCountQueryLazyQueryHookResult = ReturnType<
+  typeof useUserApplicationCountQueryLazyQuery
+>
+export type UserApplicationCountQueryQueryResult = ApolloReactCommon.QueryResult<
+  UserApplicationCountQueryQuery,
+  UserApplicationCountQueryQueryVariables
+>
+export const FetchUserApplicationQueryDocument = gql`
+  mutation FetchUserApplicationQuery($ssn: String!) {
+    fetchUserApplication(ssn: $ssn) {
+      id
+      mobileNumber
+      countryCode
+      logs {
+        id
+        created
+        state
+        title
+        data
+        authorSSN
+      }
+    }
+  }
+`
+export type FetchUserApplicationQueryMutationFn = ApolloReactCommon.MutationFunction<
+  FetchUserApplicationQueryMutation,
+  FetchUserApplicationQueryMutationVariables
+>
+
+/**
+ * __useFetchUserApplicationQueryMutation__
+ *
+ * To run a mutation, you first call `useFetchUserApplicationQueryMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useFetchUserApplicationQueryMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [fetchUserApplicationQueryMutation, { data, loading, error }] = useFetchUserApplicationQueryMutation({
+ *   variables: {
+ *      ssn: // value for 'ssn'
+ *   },
+ * });
+ */
+export function useFetchUserApplicationQueryMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    FetchUserApplicationQueryMutation,
+    FetchUserApplicationQueryMutationVariables
+  >,
+) {
+  return ApolloReactHooks.useMutation<
+    FetchUserApplicationQueryMutation,
+    FetchUserApplicationQueryMutationVariables
+  >(FetchUserApplicationQueryDocument, baseOptions)
+}
+export type FetchUserApplicationQueryMutationHookResult = ReturnType<
+  typeof useFetchUserApplicationQueryMutation
+>
+export type FetchUserApplicationQueryMutationResult = ApolloReactCommon.MutationResult<
+  FetchUserApplicationQueryMutation
+>
+export type FetchUserApplicationQueryMutationOptions = ApolloReactCommon.BaseMutationOptions<
+  FetchUserApplicationQueryMutation,
+  FetchUserApplicationQueryMutationVariables
 >
 export const CompaniesQueryDocument = gql`
   query CompaniesQuery {
@@ -997,6 +1159,7 @@ export const CompanyQueryDocument = gql`
         serviceCategory
         generalEmail
         webpage
+        publicHelpAmount
         phoneNumber
         companyName
         companyDisplayName

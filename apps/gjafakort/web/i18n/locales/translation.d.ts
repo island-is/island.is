@@ -106,7 +106,9 @@ export interface SignupForm {
   companyDisplayName: CompanyDisplayName
   serviceCategory: ServiceCategory
   operation: Operation
-  operationsTrouble: OperationsTrouble
+  operationsTrouble: GotPublicHelp
+  gotPublicHelp: GotPublicHelp
+  gotPublicHelpAmount: string
   contact: Contact
   submit: string
 }
@@ -129,6 +131,13 @@ export interface Contact {
   phoneNumber: string
 }
 
+export interface GotPublicHelp {
+  positiveLabel: string
+  negativeLabel: string
+  label: string
+  tooltip: string
+}
+
 export interface Operation {
   label: string
   instructions: string[]
@@ -137,13 +146,6 @@ export interface Operation {
 
 export interface OperationOption {
   name: string
-  label: string
-  tooltip: string
-}
-
-export interface OperationsTrouble {
-  positiveLabel: string
-  negativeLabel: string
   label: string
   tooltip: string
 }
@@ -612,8 +614,10 @@ const typeMap: any = {
       {
         json: 'operationsTrouble',
         js: 'operationsTrouble',
-        typ: r('OperationsTrouble'),
+        typ: r('GotPublicHelp'),
       },
+      { json: 'gotPublicHelp', js: 'gotPublicHelp', typ: r('GotPublicHelp') },
+      { json: 'gotPublicHelpAmount', js: 'gotPublicHelpAmount', typ: '' },
       { json: 'contact', js: 'contact', typ: r('Contact') },
       { json: 'submit', js: 'submit', typ: '' },
     ],
@@ -638,6 +642,15 @@ const typeMap: any = {
     ],
     false,
   ),
+  GotPublicHelp: o(
+    [
+      { json: 'positiveLabel', js: 'positiveLabel', typ: '' },
+      { json: 'negativeLabel', js: 'negativeLabel', typ: '' },
+      { json: 'label', js: 'label', typ: '' },
+      { json: 'tooltip', js: 'tooltip', typ: '' },
+    ],
+    false,
+  ),
   Operation: o(
     [
       { json: 'label', js: 'label', typ: '' },
@@ -649,15 +662,6 @@ const typeMap: any = {
   OperationOption: o(
     [
       { json: 'name', js: 'name', typ: '' },
-      { json: 'label', js: 'label', typ: '' },
-      { json: 'tooltip', js: 'tooltip', typ: '' },
-    ],
-    false,
-  ),
-  OperationsTrouble: o(
-    [
-      { json: 'positiveLabel', js: 'positiveLabel', typ: '' },
-      { json: 'negativeLabel', js: 'negativeLabel', typ: '' },
       { json: 'label', js: 'label', typ: '' },
       { json: 'tooltip', js: 'tooltip', typ: '' },
     ],

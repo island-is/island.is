@@ -39,6 +39,7 @@ const CompanyApplicationsQuery = gql`
       validLicenses
       validPermit
       webpage
+      publicHelpAmount
       logs {
         id
         created
@@ -74,7 +75,7 @@ const RejectCompanyApplication = gql`
 `
 
 function Admin() {
-  const { data, loading } = useQuery(CompanyApplicationsQuery)
+  const { data, loading, error } = useQuery(CompanyApplicationsQuery)
   const [approveApplication, { loading: approveLoading }] = useMutation(
     ApproveCompanyApplication,
   )
@@ -84,7 +85,7 @@ function Admin() {
   const [index, setIndex] = useState(0)
 
   const { companyApplications } = data || {}
-  if (loading && !data) {
+  if (error || (loading && !data)) {
     return <ContentLoader />
   } else if (!loading && !data) {
     return <p>Unauthorized</p>
@@ -139,7 +140,7 @@ function Admin() {
           width="full"
         >
           <Hidden above="md">
-            <Box marginBottom={6} width="full">
+            <Box marginBottom={6} marginTop={2} width="full">
               <ReviewStatus
                 approved={approvedApplications.length}
                 pending={applicationsLeft}

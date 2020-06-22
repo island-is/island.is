@@ -127,6 +127,13 @@ function Info({ application }: PropTypes) {
             value={application.webpage}
             color="blue400"
           />
+          <KeyValue
+            label="Fjárhæð ríkisaðstoðar"
+            value={`${(application.publicHelpAmount || 0).toLocaleString(
+              'de-DE',
+            )} kr`}
+            color="blue400"
+          />
         </Box>
       </Box>
       <Box marginBottom={12}>

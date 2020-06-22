@@ -7,4 +7,9 @@ export { ErrorPage } from './ErrorPage'
 export { Home } from './Home'
 export { NotFound } from './NotFound'
 export { User } from './User'
-export { Admin, Summary, Application as AdminApplication } from './Admin'
+export {
+  Admin,
+  Summary,
+  Application as AdminApplication,
+  User as AdminUserApplication,
+} from './Admin'

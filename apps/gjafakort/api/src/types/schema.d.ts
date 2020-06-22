@@ -38,6 +38,7 @@ export type Query = {
   root?: Maybe<Scalars['String']>
   user?: Maybe<AuthUser>
   userApplication?: Maybe<UserApplication>
+  userApplicationCount?: Maybe<Scalars['Int']>
 }
 
 export type QueryCompanyArgs = {
@@ -88,6 +89,7 @@ export type CompanyApplication = {
   validLicenses?: Maybe<Scalars['Boolean']>
   validPermit?: Maybe<Scalars['Boolean']>
   webpage?: Maybe<Scalars['String']>
+  publicHelpAmount?: Maybe<Scalars['Int']>
   logs?: Maybe<Array<Maybe<ApplicationLog>>>
 }
 
@@ -107,6 +109,7 @@ export type CreateCompanyApplicationInput = {
   operatingPermitForVehicles: Scalars['Boolean']
   validLicenses: Scalars['Boolean']
   validPermit: Scalars['Boolean']
+  publicHelpAmount: Scalars['Int']
 }
 
 export type ApproveCompanyApplicationInput = {
@@ -151,6 +154,7 @@ export type Mutation = {
   approveCompanyApplication?: Maybe<ApproveCompanyApplication>
   createCompanyApplication?: Maybe<CreateCompanyApplication>
   createUserApplication?: Maybe<CreateUserApplication>
+  fetchUserApplication?: Maybe<UserApplication>
   rejectCompanyApplication?: Maybe<RejectCompanyApplication>
   root?: Maybe<Scalars['String']>
   updateCompanyApplication?: Maybe<UpdateCompanyApplication>
@@ -166,6 +170,10 @@ export type MutationCreateCompanyApplicationArgs = {
 
 export type MutationCreateUserApplicationArgs = {
   input?: Maybe<CreateUserApplicationInput>
+}
+
+export type MutationFetchUserApplicationArgs = {
+  ssn: Scalars['String']
 }
 
 export type MutationRejectCompanyApplicationArgs = {
@@ -195,6 +203,7 @@ export type UserApplication = {
   id: Scalars['String']
   mobileNumber: Scalars['String']
   countryCode: Scalars['String']
+  logs?: Maybe<Array<Maybe<ApplicationLog>>>
 }
 
 export type CreateUserApplication = {
@@ -428,6 +437,11 @@ export type QueryResolvers<
     ParentType,
     ContextType
   >
+  userApplicationCount?: Resolver<
+    Maybe<ResolversTypes['Int']>,
+    ParentType,
+    ContextType
+  >
 }
 
 export interface StringTrimmedScalarConfig
@@ -527,6 +541,11 @@ export type CompanyApplicationResolvers<
     ContextType
   >
   webpage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  publicHelpAmount?: Resolver<
+    Maybe<ResolversTypes['Int']>,
+    ParentType,
+    ContextType
+  >
   logs?: Resolver<
     Maybe<Array<Maybe<ResolversTypes['ApplicationLog']>>>,
     ParentType,
@@ -605,6 +624,12 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationCreateUserApplicationArgs, never>
   >
+  fetchUserApplication?: Resolver<
+    Maybe<ResolversTypes['UserApplication']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationFetchUserApplicationArgs, 'ssn'>
+  >
   rejectCompanyApplication?: Resolver<
     Maybe<ResolversTypes['RejectCompanyApplication']>,
     ParentType,
@@ -651,6 +676,11 @@ export type UserApplicationResolvers<
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   mobileNumber?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   countryCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  logs?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['ApplicationLog']>>>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 

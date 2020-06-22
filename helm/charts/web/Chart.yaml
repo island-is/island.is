@@ -1,0 +1,4 @@
+apiVersion: v2
+name: web
+type: application
+version: 0.0.0 # dummy version, not used

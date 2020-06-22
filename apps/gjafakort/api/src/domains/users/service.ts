@@ -5,7 +5,7 @@ import { ApplicationAPI } from '../../services'
 
 const APPLICATION_TYPE = 'gjafakort-user'
 
-export const getApplication = async (
+export const getApplication = (
   userSSN: string,
   applicationApi: ApplicationAPI,
 ) => {
@@ -15,7 +15,15 @@ export const getApplication = async (
   )
 }
 
-export const createApplication = async (
+export const getApplications = (applicationApi: ApplicationAPI) => {
+  return applicationApi.getApplications<UserApplication>(APPLICATION_TYPE)
+}
+
+export const getApplicationCount = (applicationApi: ApplicationAPI) => {
+  return applicationApi.getApplicationCount<UserApplication>(APPLICATION_TYPE)
+}
+
+export const createApplication = (
   userSSN: string,
   mobileNumber: string,
   countryCode: string,
@@ -31,7 +39,7 @@ export const createApplication = async (
   })
 }
 
-export const updateApplication = async (
+export const updateApplication = (
   applicationId: string,
   userSSN: string,
   verified: boolean,

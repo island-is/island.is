@@ -39,9 +39,9 @@ const CompanyApplicationsQuery = gql`
 `
 
 function Summary() {
-  const { data, loading } = useQuery(CompanyApplicationsQuery)
+  const { data, loading, error } = useQuery(CompanyApplicationsQuery)
   const { companyApplications } = data || {}
-  if (loading && !data) {
+  if (error || (loading && !data)) {
     return <ContentLoader />
   }
 
@@ -61,7 +61,7 @@ function Summary() {
     <Box paddingX="gutter">
       <ContentBlock>
         <Box display="flex" justifyContent="center" marginBottom={6}>
-          <Box marginX={[6, 6]}>
+          <Box marginX={[2, 6]}>
             <KeyValue
               label="Umsóknir"
               value={approvedApplications.length}
@@ -69,14 +69,14 @@ function Summary() {
               size="h1"
             />
           </Box>
-          <Box marginX={[6, 6]}>
+          <Box marginX={[2, 6]}>
             <KeyValue
               label="Eftir að yfirfara"
               value={pendingApplications.length}
               size="h1"
             />
           </Box>
-          <Box marginX={[6, 6]}>
+          <Box marginX={[2, 6]}>
             <KeyValue
               label="Hafnaðar"
               value={rejectedApplications.length}
@@ -84,7 +84,7 @@ function Summary() {
             />
           </Box>
         </Box>
-        <Box marginBottom={6}>
+        <Box marginBottom={6} overflow="scroll">
           <table className={styles.table}>
             <thead className={styles.thead}>
               <tr>

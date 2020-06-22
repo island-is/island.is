@@ -17,6 +17,7 @@ export default gql`
     id: String!
     mobileNumber: String!
     countryCode: String!
+    logs: [ApplicationLog]
   }
 
   type CreateUserApplication {
@@ -31,9 +32,11 @@ export default gql`
     giftCardCode(giftCardId: Int!): GiftCardCode
     giftCards: [GiftCard]
     userApplication: UserApplication
+    userApplicationCount: Int
   }
 
   extend type Mutation {
+    fetchUserApplication(ssn: String!): UserApplication
     createUserApplication(
       input: CreateUserApplicationInput
     ): CreateUserApplication

@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC } from 'react'
 import Link from 'next/link'
+import Head from 'next/head'
 import DefaultErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
@@ -54,78 +55,85 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
   }
 
   return (
-    <ContentBlock>
-      <Box padding={[0, 0, 0, 6]}>
-        <div className={cn(styles.layout, styles.reversed)}>
-          <div className={styles.side}>
-            <Sidebar title={n('submenuTitle')}>
-              {categories.map((c, index) => (
-                <Link key={index} href="#">
-                  <a>
-                    <Typography variant="p" as="span">
-                      {c.title}
-                    </Typography>
-                  </a>
-                </Link>
-              ))}
-            </Sidebar>
+    <>
+      <Head>
+        <title>{article.title} - Ísland.is</title>
+      </Head>
+      <ContentBlock>
+        <Box padding={[0, 0, 0, 6]}>
+          <div className={cn(styles.layout, styles.reversed)}>
+            <div className={styles.side}>
+              <Sidebar title={n('submenuTitle')}>
+                {categories.map((c, index) => (
+                  <Link key={index} href="#">
+                    <a>
+                      <Typography variant="p" as="span">
+                        {c.title}
+                      </Typography>
+                    </a>
+                  </Link>
+                ))}
+              </Sidebar>
+            </div>
+
+            <Box paddingRight={[0, 0, 0, 4]} width="full">
+              <ContentContainer>
+                <Stack space={[3, 3, 4]}>
+                  <Breadcrumbs>
+                    <Link href="/">
+                      <a>Ísland.is</a>
+                    </Link>
+                    <Link
+                      href={`${activeLocale === 'en' ? '/en' : ''}/category`}
+                    >
+                      <a>Fjölskyldumál</a>
+                    </Link>
+                  </Breadcrumbs>
+                  <Hidden above="md">
+                    <Select
+                      label="Þjónustuflokkar"
+                      placeholder="Flokkar"
+                      options={selectOptions}
+                      onChange={onChangeCategory}
+                      name="search"
+                    />
+                  </Hidden>
+                  <Typography variant="h1" as="h1">
+                    {article.title}
+                  </Typography>
+                </Stack>
+              </ContentContainer>
+
+              <Content document={article.content} />
+
+              <ContentContainer paddingY={[6, 6, 6, 20]}>
+                <Stack space={6}>
+                  <Typography variant="h2" as="h2">
+                    Spurt og svarað um nafngjöf
+                  </Typography>
+                  <Accordion>
+                    <AccordionItem label="Að tilkynna nafngjöf" id="id_1">
+                      <Typography variant="p">Að tilkynna nafngjöf</Typography>
+                    </AccordionItem>
+                    <AccordionItem label="Nafnabreytingar" id="id_2">
+                      <Typography variant="p">Nafnabreytingar</Typography>
+                    </AccordionItem>
+                    <AccordionItem
+                      label="Nafnritun og birting í Þjóðskrá"
+                      id="id_3"
+                    >
+                      <Typography variant="p">
+                        Nafnritun og birting í Þjóðskrá
+                      </Typography>
+                    </AccordionItem>
+                  </Accordion>
+                </Stack>
+              </ContentContainer>
+            </Box>
           </div>
-
-          <Box paddingRight={[0, 0, 0, 4]} width="full">
-            <ContentContainer>
-              <Stack space={[3, 3, 4]}>
-                <Breadcrumbs>
-                  <Link href="/">
-                    <a>Ísland.is</a>
-                  </Link>
-                  <Link href={`${activeLocale === 'en' ? '/en' : ''}/category`}>
-                    <a>Fjölskyldumál</a>
-                  </Link>
-                </Breadcrumbs>
-                <Hidden above="md">
-                  <Select
-                    label="Þjónustuflokkar"
-                    placeholder="Flokkar"
-                    options={selectOptions}
-                    onChange={onChangeCategory}
-                    name="search"
-                  />
-                </Hidden>
-                <Typography variant="h1" as="h1">
-                  {article.title}
-                </Typography>
-              </Stack>
-            </ContentContainer>
-
-            <Content document={article.content} />
-
-            <ContentContainer paddingY={[6, 6, 6, 20]}>
-              <Stack space={6}>
-                <Typography variant="h2" as="h2">
-                  Spurt og svarað um nafngjöf
-                </Typography>
-                <Accordion>
-                  <AccordionItem label="Að tilkynna nafngjöf" id="id_1">
-                    <Typography variant="p">Að tilkynna nafngjöf</Typography>
-                  </AccordionItem>
-                  <AccordionItem label="Nafnabreytingar" id="id_2">
-                    <Typography variant="p">Nafnabreytingar</Typography>
-                  </AccordionItem>
-                  <AccordionItem
-                    label="Nafnritun og birting í Þjóðskrá"
-                    id="id_3"
-                  >
-                    <Typography variant="p">
-                      Nafnritun og birting í Þjóðskrá
-                    </Typography>
-                  </AccordionItem>
-                </Accordion>
-              </Stack>
-            </ContentContainer>
-          </Box>
-        </div>
-      </Box>
-    </ContentBlock>
+        </Box>
+      </ContentBlock>
+    </>
   )
 }
 

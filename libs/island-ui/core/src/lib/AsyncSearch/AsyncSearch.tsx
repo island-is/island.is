@@ -1,10 +1,12 @@
-import React, { forwardRef, useState, ReactNode, ReactElement } from 'react'
-import Downshift from 'downshift'
+import React, { forwardRef, useState, ReactElement } from 'react'
+import Downshift, { StateChangeFunction } from 'downshift'
+import { ControllerStateAndHelpers } from 'downshift/typings'
 import cn from 'classnames'
 import { Input, Label, Menu, Item } from './shared'
 import { Icon } from '../..'
 
 import * as styles from './AsyncSearch.treat'
+import { selected } from './shared/Item/Item.treat'
 
 export type Sizes = 'medium' | 'large'
 
@@ -27,11 +29,19 @@ export interface AsyncSearchProps {
   options: AsyncSearchOption[]
   colored?: boolean
   useFilter?: boolean
+  inputValue?: string
+  initialInputValue?: string
   size?: Sizes
   loading?: boolean
+  closeMenuOnSubmit?: boolean
+  onSubmit?: (inputValue: string, selectedOption?: AsyncSearchOption) => void
+  onClearItems?: () => void
   onChange?: (selection: object) => void
   customFilter?: (items: AsyncSearchOption) => void
-  onInputValueChange?: (inputValue: string, stateAndHelpers: object) => void
+  onInputValueChange?: (
+    inputValue: string,
+    stateAndHelpers: ControllerStateAndHelpers<StateChangeFunction<Downshift>>,
+  ) => void
 }
 
 export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
@@ -45,7 +55,12 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
       useFilter = false,
       customFilter,
       loading,
+      inputValue,
+      closeMenuOnSubmit,
+      initialInputValue,
       onChange,
+      onSubmit,
+      onClearItems,
       onInputValueChange,
       ...props
     },
@@ -59,7 +74,23 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
     return (
       <Downshift
         onChange={onChange}
+        initialInputValue={initialInputValue}
         onInputValueChange={onInputValueChange}
+        onOuterClick={(ctx) => {
+          ctx.clearItems()
+          ctx.setState({ inputValue })
+        }}
+        onStateChange={(changes, ctx) => {
+          switch (changes.type) {
+            case '__autocomplete_unknown__':
+            case '__autocomplete_mouseup__':
+            case '__autocomplete_blur_input__':
+              ctx.setState({ inputValue })
+              break
+            default:
+              break
+          }
+        }}
         itemToString={(item: AsyncSearchOption) => (item ? item.label : '')}
         {...props}
       >
@@ -69,6 +100,7 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
           getLabelProps,
           getMenuProps,
           getToggleButtonProps,
+          closeMenu,
           isOpen,
           highlightedIndex,
           getRootProps,
@@ -83,6 +115,19 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
           const hasLabel = Boolean(size === 'large' && label)
           const shouldShowItems =
             options.filter(useFilter ? filter : (x) => x).length > 0 && isOpen
+
+          const onKeyDown = (event: any) => {
+            if (event.key === 'Enter') {
+              // Prevent Downshift's default 'Enter' behavior.
+              event.nativeEvent.preventDownshiftDefault = true
+
+              const selectedOption =
+                highlightedIndex !== null ? options[highlightedIndex] : null
+
+              closeMenuOnSubmit && closeMenu()
+              onSubmit(inputValue, selectedOption)
+            }
+          }
 
           return (
             <div
@@ -101,7 +146,11 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
                 )}
               >
                 <Input
-                  {...getInputProps({ onFocus, onBlur })}
+                  {...getInputProps({
+                    onFocus,
+                    onBlur,
+                    ...(onSubmit && { onKeyDown }),
+                  })}
                   isOpen={shouldShowItems}
                   colored={colored}
                   hasLabel={hasLabel}
@@ -114,7 +163,17 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
                   </span>
                 )}
                 {!loading && (
-                  <button className={styles.icon} {...getToggleButtonProps()}>
+                  <button
+                    className={styles.icon}
+                    {...(onSubmit
+                      ? {
+                          onClick: () => {
+                            closeMenuOnSubmit && closeMenu()
+                            onSubmit(inputValue)
+                          },
+                        }
+                      : getToggleButtonProps())}
+                  >
                     <Icon type="search" width={20} />
                   </button>
                 )}

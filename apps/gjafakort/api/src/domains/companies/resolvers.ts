@@ -19,6 +19,7 @@ const formatApplication = (
     serviceCategory: application.data.serviceCategory,
     generalEmail: application.data.generalEmail,
     webpage: application.data.webpage,
+    publicHelpAmount: application.data.publicHelpAmount,
     phoneNumber: application.data.phoneNumber,
     operationsTrouble: application.data.operationsTrouble,
     companyName: application.data.companyName,

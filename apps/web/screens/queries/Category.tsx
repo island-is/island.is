@@ -5,6 +5,7 @@ export const GET_CATEGORIES_QUERY = gql`
     categories(input: $input) {
       title
       slug
+      description
     }
   }
 `
@@ -16,6 +17,8 @@ export const GET_ARTICLES_IN_CATEGORY_QUERY = gql`
       category
       slug
       title
+      group
+      groupSlug
     }
   }
 `

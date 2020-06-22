@@ -1,0 +1,16 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  image:
+    tag: latest_master
+
+web:
+  env:
+    API_URL: 'http://deploy-dev-api/api'
+
+api:
+  secrets:
+    CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
+  env:
+    PORT: 3333

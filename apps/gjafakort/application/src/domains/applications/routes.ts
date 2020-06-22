@@ -27,6 +27,23 @@ router.get(
 )
 
 router.get(
+  '/count',
+  [query('type').isIn(Object.values(ApplicationTypes))],
+  async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(422).json({ errors: errors.array() })
+    }
+
+    const { type } = req.query
+    const numberOfApplications = await applicationService.getApplicationCountByType(
+      type,
+    )
+    return res.status(200).json({ count: numberOfApplications })
+  },
+)
+
+router.get(
   '/:applicationId',
   [param('applicationId').isUUID()],
   async (req, res) => {

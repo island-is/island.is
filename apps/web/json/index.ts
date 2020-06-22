@@ -32,35 +32,6 @@ export const categories = [
   },
 ]
 
-export const groups = [
-  {
-    title: 'Andlát og erfðamál',
-    description:
-      'Allt það helsta sem þarf að sækja um og ganga frá við flutning til landsins, hvort sem er tímabundið eða til frambúðar.',
-  },
-  {
-    title: 'Sambúð og gifting',
-    description:
-      'Hvernig skólakerfið virkar, hvaða nám er í boði og hvernig hægt er að sækja um. Grunnskólar, framhaldsskólar og háskólar',
-  },
-  {
-    title: 'Meðlag og forsjá barna',
-    description:
-      'Hvernig skólakerfið virkar, hvaða nám er í boði og hvernig hægt er að sækja um. Grunnskólar, framhaldsskólar og háskólar.',
-  },
-  { title: 'Nafn og kyn', description: 'Atvinnuleyfi, samningar og réttindi.' },
-  {
-    title: 'Barnalífeyrir',
-    description:
-      'Útlendingur frá ríki utan Evrópska efnahagssvæðisins (EES) eða aðildarríkja EFTA, sem hyggst dvelja á Íslandi lengur en þrjá mánuði, þarf að fá útgefið dvalarleyfi hjá Útlendingastofnun.',
-  },
-  {
-    title: 'Örorka',
-    description:
-      'Umsækjendum er heimilt að kæra ágreiningsatriði og hér er nánari útlistun á því sem nær í tvær línur og svo kannski aðeins lengra hér.',
-  },
-]
-
 export const tags = [
   { title: 'COVID-19' },
   { title: 'Atvinnuleysisbætur' },

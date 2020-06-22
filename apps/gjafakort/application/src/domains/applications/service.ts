@@ -10,6 +10,12 @@ export const getApplicationByIssuerAndType = (
 ): Application =>
   Application.findOne({
     where: { type, issuerSSN },
+    include: [
+      {
+        model: AuditLog,
+      },
+    ],
+    order: [[AuditLog, 'created', 'ASC']],
   })
 
 export const getApplicationById = (applicationId: string): Application =>
@@ -32,6 +38,11 @@ export const getApplicationsByType = (type: string): [Application] =>
       },
     ],
     order: [[AuditLog, 'created', 'ASC']],
+  })
+
+export const getApplicationCountByType = (type: string): number =>
+  Application.count({
+    where: { type },
   })
 
 export const createApplication = (

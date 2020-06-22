@@ -52,6 +52,37 @@ class UserResolver {
     }
   }
 
+  @authorize({ role: 'developer' })
+  public async fetchGetUserApplication(
+    _1,
+    { ssn },
+    { dataSources: { applicationApi } },
+  ) {
+    const application = await userService.getApplication(ssn, applicationApi)
+    if (!application) {
+      return null
+    }
+
+    return {
+      id: application.id,
+      mobileNumber: application.data.mobileNumber,
+      countryCode: application.data.countryCode,
+      logs: application.AuditLogs?.map((auditLog) => ({
+        id: auditLog.id,
+        created: auditLog.created,
+        state: auditLog.state,
+        title: auditLog.title,
+        data: JSON.stringify(auditLog.data),
+        authorSSN: auditLog.authorSSN,
+      })),
+    }
+  }
+
+  @authorize({ role: 'developer' })
+  public getUserApplicationCount(_1, _2, { dataSources: { applicationApi } }) {
+    return userService.getApplicationCount(applicationApi)
+  }
+
   @authorize()
   public async createUserApplication(
     _1,
@@ -144,8 +175,10 @@ export default {
     giftCardCode: resolver.getGiftCardCode,
     giftCards: resolver.getGiftCards,
     userApplication: resolver.getUserApplication,
+    userApplicationCount: resolver.getUserApplicationCount,
   },
   Mutation: {
+    fetchUserApplication: resolver.fetchGetUserApplication,
     createUserApplication: resolver.createUserApplication,
   },
 }
