@@ -12,11 +12,14 @@ const BulletListContext = createContext<BulletListContextValue>({
   type: 'ul',
 })
 
-export const Bullet: FC = ({ children }) => {
+export const Bullet: FC<{ typographyLinks?: boolean }> = ({
+  children,
+  typographyLinks,
+}) => {
   const { type } = useContext(BulletListContext)
 
   return (
-    <Typography variant="p" as="span">
+    <Typography variant="p" as="span" links={typographyLinks}>
       <Box display="flex">
         <Box display="flex">
           <span

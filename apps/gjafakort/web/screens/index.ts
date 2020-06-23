@@ -7,6 +7,7 @@ export { ErrorPage } from './ErrorPage'
 export { Home } from './Home'
 export { NotFound } from './NotFound'
 export { User } from './User'
+export { PrivacyPolicy } from './PrivacyPolicy'
 export {
   Admin,
   Summary,

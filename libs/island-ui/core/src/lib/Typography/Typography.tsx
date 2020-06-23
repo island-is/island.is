@@ -5,6 +5,7 @@ import styles, {
   VariantTypes,
   colors,
   turnicate as turnicateStyle,
+  links as linksStyle,
 } from './Typography.treat'
 import { Colors } from '../../theme/theme'
 
@@ -14,6 +15,7 @@ export interface TypographyProps {
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p' | 'span' | 'div' | 'label'
   color?: Colors
   turnicate?: boolean
+  links?: boolean
 }
 
 export const Typography = ({
@@ -22,10 +24,12 @@ export const Typography = ({
   children,
   color,
   turnicate,
+  links,
 }: TypographyProps) => (
   <Cmp
     className={cn(styles[variant], colors[color], {
       [turnicateStyle]: turnicate,
+      [linksStyle]: links,
     })}
   >
     {children}

@@ -17,6 +17,7 @@ export interface Translation {
   companySignup: CompanySignup
   company: TranslationCompany
   user: User
+  privacyPolicy: PrivacyPolicy
   header: Header
   footer: Footer
   validation: TranslationValidation
@@ -237,6 +238,11 @@ export interface NotFound {
   title: string
   content: string
   button: string
+}
+
+export interface PrivacyPolicy {
+  title: string
+  sections: string[]
 }
 
 export interface Routes {
@@ -484,6 +490,7 @@ const typeMap: any = {
       { json: 'companySignup', js: 'companySignup', typ: r('CompanySignup') },
       { json: 'company', js: 'company', typ: r('TranslationCompany') },
       { json: 'user', js: 'user', typ: r('User') },
+      { json: 'privacyPolicy', js: 'privacyPolicy', typ: r('PrivacyPolicy') },
       { json: 'header', js: 'header', typ: r('Header') },
       { json: 'footer', js: 'footer', typ: r('Footer') },
       { json: 'validation', js: 'validation', typ: r('TranslationValidation') },
@@ -784,6 +791,13 @@ const typeMap: any = {
       { json: 'title', js: 'title', typ: '' },
       { json: 'content', js: 'content', typ: '' },
       { json: 'button', js: 'button', typ: '' },
+    ],
+    false,
+  ),
+  PrivacyPolicy: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'sections', js: 'sections', typ: a('') },
     ],
     false,
   ),
