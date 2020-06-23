@@ -1,4 +1,4 @@
-import { styleMap, style } from 'treat'
+import { styleMap, style, globalStyle } from 'treat'
 import * as CSS from 'csstype'
 import { theme } from '../../theme'
 import { mapToStyleProperty } from '../../utils'
@@ -138,6 +138,18 @@ export const variants: Variants = {
     color: theme.color.blue400,
   },
 }
+
+export const links = style({})
+globalStyle(`${links} a`, {
+  color: theme.color.blue400,
+  textDecoration: 'underline',
+  textUnderlinePosition: 'under',
+  transition: 'color .2s',
+})
+globalStyle(`${links} a:hover`, {
+  color: theme.color.blueberry400,
+  textDecoration: 'underline',
+})
 
 export const colors = styleMap(mapToStyleProperty(theme.color, 'color'))
 

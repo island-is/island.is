@@ -80,11 +80,13 @@ function Companies() {
                     Array.isArray(content) ? (
                       <BulletList type="ol" key={index}>
                         {content.map((item) => (
-                          <Bullet key={item}>{HtmlParser(item)}</Bullet>
+                          <Bullet typographyLinks key={item}>
+                            {HtmlParser(item)}
+                          </Bullet>
                         ))}
                       </BulletList>
                     ) : (
-                      <Typography variant="p" key={index}>
+                      <Typography variant="p" links key={index}>
                         {HtmlParser(content)}
                       </Typography>
                     ),

@@ -40,7 +40,7 @@ function Home() {
               </Typography>
               <Typography variant="intro">{t.intro}</Typography>
               {t.description.map((item, index) => (
-                <Typography variant="p" key={index}>
+                <Typography variant="p" links key={index}>
                   {HtmlParser(item)}
                 </Typography>
               ))}
@@ -65,7 +65,7 @@ function Home() {
               >
                 <Stack space={1}>
                   {accordionItem.contents.map((content, index) => (
-                    <Typography variant="p" key={index}>
+                    <Typography variant="p" links key={index}>
                       {HtmlParser(content)}
                     </Typography>
                   ))}
