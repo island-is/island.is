@@ -348,7 +348,9 @@
       "total": "Samtals",
       "expires": {
         "pre": "Strikamerki endurnýjast eftir",
-        "post": "mín"
+        "post": "mín",
+        "attention": "Athugið",
+        "disclaimer": "Þetta strikamerki dettur úr gildi"
       },
       "expired": "Strikamerki útrunnið",
       "new": "Fá nýtt strikamerki",
@@ -383,7 +385,8 @@
       "Skráning upplýsinganna í gagnagrunninn og vinnsla þeirra í smáforritinu er til að uppfylla lagaskyldu samkvæmt lögum um ferðagjöf og samkvæmt ríkisstyrkjareglum EES-samningsins og byggist þess vegna á 3. og 5. tölul. 9. gr. laga nr. 90/2018 um persónuvernd og vinnslu persónuupplýsinga.",
       "Atvinnuvega- og nýsköpunarráðuneytið, Skúlagötu 4, 101 Reykjavík, er ábyrgðaraðili við vinnslu persónuupplýsinga vegna ferðagjafarinnar. Gagnagrunnurinn telst eign og er á ábyrgð atvinnuvega- og nýsköpunarráðuneytisins en er hýstur hjá YAY ehf. Upplýsingar úr grunninum ekki veittar öðrum nema samkvæmt lagaskyldu. Hægt er að hafa samband við ráðuneytið í síma <a href='tel:5459700'>5459700</a> eða á tölvupóstfangið <a href='mailto:anr@anr.is'>anr@anr.is</a>.",
       "Nánari upplýsingar um vinnslu persónuupplýsinga hjá Stjórnarráði Íslands má finna í persónuverndarstefnu þess, svo sem um varðveislutíma og réttindi einstaklinga, <a href='https://www.stjornarradid.is/medferd_personuupplysinga' rel='noopener noreferrer'>https://www.stjornarradid.is/medferd_personuupplysinga</a>. Nánari upplýsingar um vinnslu persónuupplýsinga hjá YAY ehf. sem þróar og þjónustar Ferðagjöf skv. samningi við stjórnvöld má finna í persónuverndarstefnu fyrirtækisins, <a href='https://www.yay.is/Docs/Privacy' rel='noopener noreferrer'>https://www.yay.is/Docs/Privacy</a>."
-    ]
+    ],
+    "privacyPolicyButton": "Persónuverndarstefna"
   },
   "header": {
     "logout": "Útskrá"
@@ -452,6 +455,7 @@
     },
     "users": {
       "home": "/notandi"
-    }
+    },
+    "privacyPolicy": "/personuverndarstefna"
   }
 }

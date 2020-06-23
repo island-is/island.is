@@ -2,6 +2,8 @@ import React from 'react'
 import { useQuery, useLazyQuery } from 'react-apollo'
 import gql from 'graphql-tag'
 import { useMachine } from '@xstate/react'
+import { format } from 'date-fns'
+import { is } from 'date-fns/locale'
 
 import {
   Box,
@@ -162,133 +164,162 @@ function Barcode({ shouldPoll }: PropTypes) {
   }
 
   return (
-    <Columns reverse collapseBelow="md">
-      <Column width="6/12">
-        {!successState && (
-          <Box
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
-            alignItems="center"
-            height="full"
-            marginBottom={3}
-          >
-            <Typography variant="tag" color="dark400">
-              {t.expires.pre}
+    <div>
+      {current.context.expiryDate && (
+        <Box
+          marginBottom={4}
+          background="blue100"
+          borderRadius="standard"
+          display="flex"
+          alignItems="center"
+          padding={3}
+        >
+          <Icon type="alert" color="blue400" />
+          <Box marginLeft={1} marginRight={2}>
+            <Typography variant="p">
+              <strong>{t.expires.attention}</strong>
             </Typography>
-            <Typography
-              variant="h1"
-              color={invalidState ? 'red400' : 'dark400'}
+          </Box>
+          <Typography variant="p">
+            {t.expires.disclaimer}{' '}
+            {format(
+              new Date(current.context.expiryDate),
+              "dd. MMMM 'kl.' k:mm",
+              {
+                locale: is,
+              },
+            )}
+          </Typography>
+        </Box>
+      )}
+      <Columns reverse collapseBelow="md">
+        <Column width="6/12">
+          {!successState && (
+            <Box
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              height="full"
+              marginBottom={3}
             >
-              {loadingState ? (
-                <SL width={114} />
-              ) : (
-                <Countdown
-                  counter={current.context.elapsed}
-                  countFromSeconds={current.context.secondsToExpiry}
-                />
-              )}{' '}
-              {t.expires.post}
-            </Typography>
-            {invalidState && (
-              <Box display="flex" alignItems="center" justifyContent="center">
-                <Box marginRight={2}>
-                  <Icon type="alert" color="red400" width={19} />
-                </Box>
-                <Typography variant="tag" color="red400">
-                  {t.expired}
-                </Typography>
-              </Box>
-            )}
-          </Box>
-        )}
-      </Column>
-      <Column width="6/12">
-        <Box textAlign="center">
-          <Box position="relative" marginBottom={2}>
-            {loadingState ? (
-              <SL height={250} />
-            ) : (
-              <RenderBarcode
-                code={current.context.barcode as string}
-                invalid={invalidState || successState}
-              />
-            )}
-            {(invalidState || successState) && (
-              <Box
-                position="absolute"
-                top={0}
-                bottom={0}
-                left={0}
-                right={0}
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
+              <Typography variant="tag" color="dark400">
+                {t.expires.pre}
+              </Typography>
+              <Typography
+                variant="h1"
+                color={invalidState ? 'red400' : 'dark400'}
               >
-                <Stack space={3}>
-                  {successState && (
-                    <>
-                      <Icon
-                        type="check"
-                        width="49"
-                        height="37"
-                        color="dark400"
-                      />
-                      <Typography variant="h1">
-                        {formatNumber(
-                          current.context.giftCard.amount -
-                            parseInt(current.context.pollingData.amount),
-                        )}{' '}
-                        kr.
-                      </Typography>
-                    </>
-                  )}
-                  <Button
-                    onClick={() => {
-                      getBarcode(current.context.giftCard)
-                    }}
-                  >
-                    {t.new}
-                  </Button>
-                </Stack>
-              </Box>
+                {loadingState ? (
+                  <SL width={114} />
+                ) : (
+                  <Countdown
+                    counter={current.context.elapsed}
+                    countFromSeconds={current.context.secondsToExpiry}
+                  />
+                )}{' '}
+                {t.expires.post}
+              </Typography>
+              {invalidState && (
+                <Box display="flex" alignItems="center" justifyContent="center">
+                  <Box marginRight={2}>
+                    <Icon type="alert" color="red400" width={19} />
+                  </Box>
+                  <Typography variant="tag" color="red400">
+                    {t.expired}
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+          )}
+        </Column>
+        <Column width="6/12">
+          <Box textAlign="center">
+            <Box position="relative" marginBottom={2}>
+              {loadingState ? (
+                <SL height={250} />
+              ) : (
+                <RenderBarcode
+                  code={current.context.barcode as string}
+                  invalid={invalidState || successState}
+                />
+              )}
+              {(invalidState || successState) && (
+                <Box
+                  position="absolute"
+                  top={0}
+                  bottom={0}
+                  left={0}
+                  right={0}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <Stack space={3}>
+                    {successState && (
+                      <>
+                        <Icon
+                          type="check"
+                          width="49"
+                          height="37"
+                          color="dark400"
+                        />
+                        <Typography variant="h1">
+                          {formatNumber(
+                            current.context.giftCard.amount -
+                              parseInt(current.context.pollingData.amount),
+                          )}{' '}
+                          kr.
+                        </Typography>
+                      </>
+                    )}
+                    <Button
+                      onClick={() => {
+                        getBarcode(current.context.giftCard)
+                      }}
+                    >
+                      {t.new}
+                    </Button>
+                  </Stack>
+                </Box>
+              )}
+            </Box>
+            {successState ? (
+              <Stack space={1}>
+                <Typography variant="h3">{t.currentAmount}</Typography>
+                <Typography variant="h1">
+                  {formatNumber(current.context.pollingData.amount)} kr.
+                </Typography>
+                <Typography variant="p">
+                  {t.initialAmount}
+                  <br />
+                  {formatNumber(current.context.giftCard.amount)} kr.
+                </Typography>
+              </Stack>
+            ) : (
+              <Stack space={1}>
+                <Typography variant="h3">{t.value}</Typography>
+                <Typography variant="h1">
+                  {formatNumber(current.context.giftCard.amount)} kr.
+                </Typography>
+              </Stack>
             )}
           </Box>
-          {successState ? (
-            <Stack space={1}>
-              <Typography variant="h3">{t.currentAmount}</Typography>
-              <Typography variant="h1">
-                {formatNumber(current.context.pollingData.amount)} kr.
-              </Typography>
-              <Typography variant="p">
-                {t.initialAmount}
-                <br />
-                {formatNumber(current.context.giftCard.amount)} kr.
-              </Typography>
-            </Stack>
-          ) : (
-            <Stack space={1}>
-              <Typography variant="h3">{t.value}</Typography>
-              <Typography variant="h1">
-                {formatNumber(current.context.giftCard.amount)} kr.
-              </Typography>
-            </Stack>
-          )}
-        </Box>
 
-        <Box marginTop={4}>
-          <Button
-            onClick={() => {
-              send('BACK_TO_LIST')
-            }}
-            variant="text"
-            leftIcon="arrowLeft"
-          >
-            {t.backButton}
-          </Button>
-        </Box>
-      </Column>
-    </Columns>
+          <Box marginTop={4}>
+            <Button
+              onClick={() => {
+                send('BACK_TO_LIST')
+              }}
+              variant="text"
+              leftIcon="arrowLeft"
+            >
+              {t.backButton}
+            </Button>
+          </Box>
+        </Column>
+      </Columns>
+    </div>
   )
 }
 
