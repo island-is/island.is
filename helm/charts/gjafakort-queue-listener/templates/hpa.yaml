@@ -2,6 +2,9 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "gjafakort-queue-listener.fullname" . }}
+  {{- if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{- end }}
   labels:
     {{- include "gjafakort-queue-listener.labels" . | nindent 4 }}
 spec:

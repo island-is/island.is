@@ -2,6 +2,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: "{{ include "search-indexer-service.fullname" . }}-test-connection"
+  {{- if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{- end }}
   labels:
     {{- include "search-indexer-service.labels" . | nindent 4 }}
   annotations:

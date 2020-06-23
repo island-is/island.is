@@ -9,6 +9,9 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
+  {{- if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{- end }}
   labels:
     {{- include "search-indexer-service.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
