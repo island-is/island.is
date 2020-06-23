@@ -2,6 +2,9 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "web.fullname" . }}
+  {{- if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{- end }}
   labels: {{- include "web.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:

@@ -1,29 +1,42 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "api.fullname" . }}
+  name: {{ include "search-indexer-service.fullname" . }}
   {{- if .Values.namespace }}
   namespace: {{ .Values.namespace }}
   {{- end }}
   labels:
-    {{- include "api.labels" . | nindent 4 }}
+    {{- include "search-indexer-service.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount.default }}
   selector:
     matchLabels:
-      {{- include "api.selectorLabels" . | nindent 6 }}
+      {{- include "search-indexer-service.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "api.selectorLabels" . | nindent 8 }}
+        {{- include "search-indexer-service.selectorLabels" . | nindent 8 }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ include "api.serviceAccountName" . }}
+      serviceAccountName: {{ include "search-indexer-service.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: migration
+          image: "{{ .Values.image.repository }}:{{ .Values.global.image.tag }}"
+          command: "{{ .Values.initEnvironment.migration_script }}"
+          env:
+            {{- with .Values.environment }}
+            - name: ELASTIC_NODE
+              value: {{ .elastic_node }}
+            - name: APPLICATION_URL
+              value: {{ .application_url }}
+            - name: ELASTIC_INDEX
+              value: {{ .elastic_index }}
+            {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -43,16 +56,13 @@ spec:
               path: /
               port: http
           env:
-            {{- range $key, $value := .Values.env }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
-            {{- range $key, $value := .Values.secrets }}
-            - name: {{ $key }}
-              valueFrom:
-                secretKeyRef:
-                  name: api
-                  key: {{ $key }}
+            {{- with .Values.environment }}
+            - name: ELASTIC_NODE
+              value: {{ .elastic_node }}
+            - name: APPLICATION_URL
+              value: {{ .application_url }}
+            - name: ELASTIC_INDEX
+              value: {{ .elastic_index }}
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

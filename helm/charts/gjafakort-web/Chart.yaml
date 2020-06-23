@@ -1,0 +1,4 @@
+apiVersion: v2
+name: gjafakort-web
+type: application
+version: 0.0.0

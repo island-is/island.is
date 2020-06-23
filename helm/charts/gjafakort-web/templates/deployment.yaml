@@ -1,27 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "api.fullname" . }}
+  name: {{ include "gjafakort-web.fullname" . }}
   {{- if .Values.namespace }}
   namespace: {{ .Values.namespace }}
   {{- end }}
   labels:
-    {{- include "api.labels" . | nindent 4 }}
+    {{- include "gjafakort-web.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount.default }}
   selector:
     matchLabels:
-      {{- include "api.selectorLabels" . | nindent 6 }}
+      {{- include "gjafakort-web.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "api.selectorLabels" . | nindent 8 }}
+        {{- include "gjafakort-web.selectorLabels" . | nindent 8 }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ include "api.serviceAccountName" . }}
+      serviceAccountName: {{ include "gjafakort-web.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
@@ -32,28 +32,36 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 3333
+              containerPort: 4200
               protocol: TCP
           livenessProbe:
             httpGet:
               path: /
               port: http
+            failureThreshold: 50
+            periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /
               port: http
+            failureThreshold: 50
+            periodSeconds: 10
           env:
-            {{- range $key, $value := .Values.env }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
-            {{- range $key, $value := .Values.secrets }}
-            - name: {{ $key }}
+            - name: WEB_PUBLIC_URL
+              value: "https://{{ (index .Values.ingress.hosts 0).host }}"
+            - name: API_URL
+              value: "http://web-gjafakort-api/api"
+            - name: SENTRY_AUTH_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: api
-                  key: {{ $key }}
-            {{- end }}
+                  name: gjafakort-web
+                  key: SENTRY_AUTH_TOKEN
+            - name: SENTRY_DSN
+              value: {{ .sentry_dsn }}
+            - name: SENTRY_ORG
+              value: {{ .sentry_org }}
+            - name: SENTRY_PROJECT
+              value: {{ .sentry_project }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
