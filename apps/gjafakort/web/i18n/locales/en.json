@@ -1,36 +1,448 @@
 {
-  "intro": {
-    "title": "Gjöf til ferðalaga innanlands",
-    "intro": "Allir íbúar á Íslandi 18 ára og eldri fá Ferðagjöf, stafrænt gjafabréf sem hægt er að nota á ferðalögum innanlands.",
-    "description": "Ferðagjöfin er liður í aðgerðum stjórnvalda til eflingar á hagkerfinu í kjölfar kórónuveirufaraldursins, og er ætlað að styðja við íslenska ferðaþjónustu.",
+  "notFound": {
+    "title": "Umbeðin slóð fannst ekki",
+    "content": "Eitthvað hefur farið úrskeiðis, vinsamlegast reynið aftur",
+    "button": "Til baka"
+  },
+  "error": {
+    "title": "Villa kom upp",
+    "intro": "Eitthvað hefur farið úrskeiðis, vinsamlega reyndu aftur",
+    "introKennitalaIsNotAPerson": "Kennitala sem var notuð við innskráningu passar ekki við einstakling. Nauðsynlegt er að skrá sig inn með kennitölu einstaklings en ekki fyrirtækis.",
+    "introUserNotOldEnough": "Notandi er ekki nógu gamall til þess að taka þátt í Ferðagjöfinni.",
+    "button": "Aftur heim"
+  },
+  "errorBoundary": {
+    "title": "Villa kom upp",
+    "contents": [
+      "Eitthvað hefur farið úrskeiðis.",
+      "Vinsamlega <a href='https://island.is/um-island-is/hafa-samband/'>hafðu samband</a> fyrir frekari hjálp"
+    ]
+  },
+  "companies": {
+    "name": "Ferðaþjónustufyrirtæki",
+    "title": "Ferðaþjónustufyrirtæki",
+    "intro": "Ferðaþjónustufyrirtæki eru hvött til að taka þátt í Ferðagjöfinni og taka á móti landsmönnum á ferðalagi innanlands.",
+    "description": "Skráning fyrirtækja í Ferðagjöfina fer fram hér á Ísland.is. Prókúruhafi fyrirtækis þarf sjálfur að skrá þátttöku þess. Innskráning er gerð með einstaklings skilríkjum prókúruhafa. Fyrirtæki fá sjálfvirka staðfestingu á skráningu og aðgang að vefsvæði þar sem hægt er að fylgjast með hversu margir hafa nýtt Ferðagjöfina hjá viðkomandi fyrirtæki.",
+    "notes": {
+      "label": "Fyrirtæki hafa þrjár leiðir til að móttaka Ferðagjöf:",
+      "items": [
+        "Skanna strikamerki með smáforriti",
+        "Slá inn númer gjafabréfs í vafra",
+        "Beintenging við bókunarkerfi"
+      ],
+      "disclaimer": "Athugið mikilvægt er að skanna eða slá inn strikamerkið strax við notkun því hvert strikamerki hefur aðeins nokkurra mínútna líftíma."
+    },
     "FAQ": {
       "title": "Algengar spurningar",
-      "List": [
+      "items": [
         {
-          "label": "Hverjir fá Ferðagjöf?",
-          "content": "Allir íbúar á Íslandi með íslenska kennitölu og eru fæddir árið 2002 og fyrr fá Ferðgjöf að andvirði 5.000 kr. "
+          "label": "Hvaða fyrirtæki mega taka þátt?",
+          "contents": [
+            "Fyrirtæki sem uppfylla eitt af eftirtöldum skilyrðum og eru með starfsstöð á Íslandi geta skráð sig í Ferðagjöfina:",
+            [
+              "Fyrirtæki með gilt leyfi Ferðamálastofu skv. III. kafla laga um Ferðamálastofu, nr. 96/2018.",
+              "Fyrirtæki með gilt rekstrarleyfi skv. 7. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007.",
+              "Fyrirtæki með gilt starfsleyfi frá viðeigandi heilbrigðisnefnd sem hefur verið gefið út vegna veitingastaða í flokki I, sbr. 3. mgr. 4. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007.",
+              "Ökutækjaleigur með gilt starfsleyfi frá Samgöngustofu skv. 1. mgr. 3. gr. laga um leigu skráningarskyldra ökutækja, nr. 65/2015.",
+              "Söfn og fyrirtæki sem bjóða sýningu gegn endurgjaldi þar sem áhersla er á íslenska menningu, sögu eða náttúru."
+            ],
+            "Með fyrirvara um endanlega útfærslu frumvarps sem liggur fyrir á Alþingi. Nánari upplýsingar og spurningar varðandi þátttöku fyrirtækja beinast til Ferðamálastofu, <a href='mailto:grunnur@ferdamalastofa.is'>grunnur@ferdamalastofa.is</a>."
+          ]
         },
         {
-          "label": "Hvernig nota ég Ferðagjöfina?",
-          "content": "Einfalt er að nýta gjöfina sem má nálgast í smáforritinu \"Ferðagjöf\".  Þegar nýta á gjöfina skannar ferðaþjónustufyrirtæki strikamerki í smáforritinu. Einnig má nálgast strikamerkið á island.is."
+          "label": "Hver er hámarksfjárhæð fyrirtækja?",
+          "contents": [
+            "Ferðagjöfin felur í sér ríkisaðstoð í skilningi EES-samningsins. Samkvæmt tímabundnum reglum um ríkisaðstoð til stuðnings hagkerfisins vegna yfirstandandi Covid-19 heimsfaraldurs, frá 19. mars 2020, er fyrirtæki heimilt að taka við samanlagt allt að 100 millj. kr. greiðslu í formi ferðagjafa. Fyrirtæki sem var í rekstrarerfiðleikum 31. desember 2019 í skilningi hópundanþágureglugerðar (ESB) nr. 651/2014 getur að hámarki tekið við samanlagt 25 millj. kr. greiðslu í formi ferðagjafa.",
+            "Fyrirtæki telst hafa verið í fjárhagserfiðleikum á þeim tímapunkti ef a.m.k. eitt af eftirfarandi skilyrðum er uppfyllt, samanber skilyrði í tímabundnum reglum um ríkisaðstoð til stuðnings hagkerfisins vegna yfirstandandi heimsfaraldurs, frá 19. mars 2020:",
+            [
+              "Um er að ræða félag með takmarkaðri ábyrgð og bókfært eigið fé þess, samkvæmt viðurkenndum reikningsskilaaðferðum, er orðið lægra en nemur helmingi innborgaðs hlutafjár að meðtöldum yfirverðsreikningi.",
+              "Um er að ræða félag þar sem a.m.k. einn aðili ber ótakmarkaða ábyrgð á skuldum félagsins og bókfært eigið fé þess, samkvæmt viðurkenndum reikningsskilaaðferðum, er orðið lægra en nemur helmingi innborgaðs hlutafjár að meðtöldum yfirverðsreikningi.",
+              "Um er að ræða fyrirtæki sem sætir gjaldþrotameðferð eða uppfyllir skilyrði um að vera tekið til gjaldþrotameðferðar að beiðni kröfuhafa.",
+              "Um er að ræða fyrirtæki sem hefur fengið björgunaraðstoð í skilningi leiðbeinandi reglna Eftirlitsstofnunar EFTA (ESA) um björgun og endurskipulagningu fyrirtækja, og hefur enn ekki endurgreitt lánið eða aflétt ábyrgðinni eða hefur fengið aðstoð til endurskipulagningar og er því enn bundið af samþykktri áætlun um endurskipulagningu.",
+              "Eftirtalin skilyrði hafa átt við síðustu tvö reikningsár: a) hlutfall milli bókfærðra skulda fyrirtækisins og eigin fjár hefur verið hærra en 7,5 og b) hagnaður fyrir afskriftir og vexti (EBITDA) nemur lægri fjárhæð en nettófjármagnskostnaður ársins."
+            ],
+            "Skilyrði (1) og (2) eiga ekki við um fyrirtæki sem er lítið eða meðalstórt, hafi starfsemi þess staðið yfir í þrjú ár eða skemur.",
+            "Skilyrði (5) á ekki við um fyrirtæki sem er lítið eða meðalstórt.",
+            "Um skilgreiningu á litlum og meðalstórum fyrirtækjum fer eftir lögum um ársreikninga nr. 3/2006."
+          ]
+        },
+        {
+          "label": "Hvernig beintengi ég við bókunarkerfi?",
+          "contents": [
+            "Fyrirtæki geta beintengt Ferðagjöfina við kassa- og/eða bókunarkerfi. Með beintengingu má nýta Ferðagjöfina sem gjafakóða þegar bókað er á vef.",
+            "Nánari upplýsingar varðandi beintengingu má finna hjá <a href='mailto:info@yay.is'>info@yay.is</a>."
+          ]
+        },
+        {
+          "label": "Hvernig er uppgjörsferlið á Ferðagjöfinni?",
+          "contents": [
+            "Umsýsla með uppgjöri á Ferðagjöfinni.",
+            [
+              "Ferðaþjónustufyrirtæki fá mánaðarlega sendar söluskýrslu um nýtingu á Ferðagjöfinni",
+              "Ferðaþjónustufyrirtæki frá greitt mánaðarlega skv. söluskýrslu"
+            ]
+          ]
+        },
+        {
+          "label": "Hvar er hægt að fylgjast með nýtingu á Ferðagjöfinni?",
+          "contents": [
+            "Öll fyrirtæki sem skrá sig til þátttöku í Ferðagjöfinni fá aðgang að vefsvæði til að geta fylgst með innlausnum á Ferðagjöfinni. Um leið og gjöf er nýtt kemur hún inn á notkunarskýrslu fyrirtækis."
+          ]
+        },
+        {
+          "label": "Hvar sæki ég um viðeigandi leyfi?",
+          "contents": [
+            [
+              "Hver sá sem hyggst starfa sem ferðaskrifstofa eða ferðasali dagsferða skv. III. kafla laga um Ferðamálastofu, <a href='https://www.althingi.is/lagas/150b/2018096.html' target='_blank' rel=noreferrer noopener'>nr. 96/2018</a>, skal hafa til þess leyfi Ferðamálastofu. Sjá nánar hér: <a href='https://www.ferdamalastofa.is/is/leyfi-og-loggjof/ferdasali-dagsferda/unsoknarferlill' target='_blank' rel=noreferrer noopener'>www.ferdamalastofa.is/is/leyfi-og-loggjof/ferdasali-dagsferda/unsoknarferlill</a>",
+              "Sá sem hyggst stunda starfsemi sem fellur undir gistiflokka II-IV og veitingastaðaflokka II og III skv. 7. gr. laga um veitingastaði, gististaði og skemmtanahald, <a href='https://www.althingi.is/lagas/150b/2007085.html' target='_blank' rel=noreferrer noopener'>nr. 85/2007</a> skal hafa til þess rekstrarleyfi útgefið af sýslumönnum. Sjá nánar hér: <a href='https://www.syslumenn.is/thjonusta/leyfi-og-loggildingar/veitingaleyfi/' target='_blank' rel=noreferrer noopener'>www.syslumenn.is/thjonusta/leyfi-og-loggildingar/veitingaleyfi</a>",
+              "Sá sem hyggst stunda starfsemi sem fellur undir veitingastaðaflokk I, sbr. 3. mgr. 4. gr. laga um veitingastaði, gististaði og skemmtanahald, <a href='https://www.althingi.is/lagas/150b/2007085.html' target='_blank' rel=noreferrer noopener'>nr. 85/2007</a> skal hafa til þess gilt starfsleyfi frá viðeigandi heilbrigðisnefnd. Hafið samband við heilbrigðisnefnd í hverju sveitarfélagi varðandi starfsleyfi.",
+              "Ökutækjaleigur skulu hafa gilt starfsleyfi frá Samgöngustofu skv. 1. mgr. 3. gr. laga um leigu skráningarskyldra ökutækja, <a href='https://www.althingi.is/lagas/nuna/2015065.html' target='_blank' rel=noreferrer noopener'>nr. 65/2015</a>. Sjá nánar hér: <a href='https://www.samgongustofa.is/umferd/leyfi-og-eftirlit/' target='_blank' rel=noreferrer noopener'>www.samgongustofa.is/umferd/leyfi-og-eftirlit</a>"
+            ]
+          ]
+        }
+      ],
+      "videos": [
+        {
+          "id": "video1",
+          "label": "Hvernig skanna ég gjöf með smáforriti?",
+          "url": "https://www.youtube.com/embed/q0hfSHLklKk"
+        },
+        {
+          "id": "video2",
+          "label": "Hvernig slæ ég inn númer gjafabréfs í vafra?",
+          "url": "https://www.youtube.com/embed/tkff3XZ6KXE"
+        }
+      ]
+    },
+    "cta": {
+      "label": "Ferðaþjónustufyrirtæki",
+      "content": "Skrá fyrirtæki"
+    }
+  },
+  "home": {
+    "name": "Ferðagjöf",
+    "title": "Gjöf til ferðalaga innanlands",
+    "intro": "Búum til minningar á ferðalagi innanlands og styðjum við bakið á íslenskri ferðaþjónustu",
+    "description": [
+      "Allir einstaklingar, með lögheimili á Íslandi, fæddir 2002 og fyrr fá Ferðagjöf að andvirði 5.000 kr. Gjöfin er liður í því að styðja við bakið á íslenskri ferðaþjónustu í kjölfar heimsfaraldurs kórónuveiru og efla þannig íslenska ferðaþjónustu sem og hvetja landsmenn til að eiga góðar stundir á ferðalagi víðs vegar um landið. Nánari upplýsingar má finna á <a href='https://ferdalag.is' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>.",
+      "Þegar gjöf er sótt verður til Ferðagjöf sem er tengd við símanúmer eiganda."
+    ],
+    "FAQ": {
+      "title": "Algengar spurningar",
+      "items": [
+        {
+          "label": "Hvenær get ég nálgast ferðagjöfina?",
+          "contents": [
+            "Áætlað er að ferðagjöfin verði aðgengileg um miðjan júní, verði búið að samþykkja frumvarp til laga þess efnis á Alþingi."
+          ]
+        },
+        {
+          "label": "Hverjir fá Ferðagjöf?",
+          "contents": [
+            "Einstaklingar með lögheimili á Ísland, íslenska kennitölu og eru fæddir árið 2002 eða fyrr fá Ferðagjöf."
+          ]
+        },
+        {
+          "label": "Hvernig nálgast ég Ferðagjöfina?",
+          "contents": [
+            "Sækja þarf gjöfina á Ísland.is með innskráningu. Smáforritið Ferðagjöf er sótt í App Store eða Play Store og strikamerki skannað við kaup á þjónustu.",
+            "Einnig er hægt að nýta Ferðagjöfina beint inn á Ísland.is fyrir þá sem ekki geta sótt smáforritið. Þá er hægt að skanna strikamerkið úr farsíma eða stimpla inn númer strikamerkis við kaup á þjónustu."
+          ]
         },
         {
           "label": "Hvar get ég notað Ferðagjöfina?",
-          "content": "Hægt er að nýta gjöfina hjá fjölmörgum ferðaþjónustufyrirtækjum viðsvegar um landið.  Á www.ferdalag.is má sjá yfirlit hvar hægt er að nýta gjöfina."
+          "contents": [
+            "Nýta má Ferðagjöf hjá skilgreindum fyrirtækjum innan ferðaþjónustunnar sem hafa skráð sig til þátttöku. Sjá má yfirlit yfir fyrirtæki á <a href='https://ferdalag.is' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>."
+          ]
         },
         {
-          "label": "Get ég gefið Ferðagjöfina áfram?",
-          "content": ""
+          "label": "Get ég gefið Ferðagjöfina?",
+          "contents": [
+            "Allir eru hvattir til að nýta gjöfina en heimilt er að gefa eigin gjöf. Hver einstaklingur getur að hámarki gefið eða greitt með 15 Ferðagjöfum á gildistíma Ferðagjafar."
+          ]
         },
         {
           "label": "Hver er gildistími Ferðagjafarinnar?",
-          "content": ""
-        },
-        {
-          "label": "Hvaða fyrirtæki mega taka þátt?",
-          "content": ""
+          "contents": ["Gildistími er til og með 31.desember 2020."]
         }
       ]
+    },
+    "cta": {
+      "users": {
+        "label": "Einstaklingar",
+        "content": "Sækja Ferðagjöf"
+      },
+      "companies": {
+        "label": "Ferðaþjónustufyrirtæki",
+        "content": "Sjá nánar"
+      }
+    }
+  },
+  "application": {
+    "title": "Prókúruhafi",
+    "noConnection": {
+      "content": "Þú ert ekki skráður prókúruhafi, vinsamlegast hafðu samband við Skattinn",
+      "button": "Til baka"
+    }
+  },
+  "companySignup": {
+    "intro": "Hvaða fyrirtæki viltu skrá?",
+    "form": {
+      "company": {
+        "label": "Fyrirtæki",
+        "placeholder": "Veldu fyrirtæki"
+      },
+      "submit": "Áfram"
+    },
+    "caption": "Ef fyrirtækið þitt er ekki í fellilistanum ert þú ekki prókúruhafi þess, vinsamlegast hafðu samband við RSK"
+  },
+  "company": {
+    "congratulations": {
+      "title": "Til hamingju!",
+      "intro": "Núna getur þú skráð til inn á vefsvæði fyrirtækja",
+      "description": "Á vefsvæðinu er hægt að fylgjast með notkun á Ferðagjöfinni, slá inn strikamerki og stofnað fleiri aðganga.",
+      "button": "Áfram á vefsvæði fyrirtækja",
+      "contents": [
+        "Þú færð tölvupóst frá YaY ehf með aðgangsupplýsingum um vefsvæðið. YaY er tæknibirgi Ferðagjafarinnar og sér um Appið fyrir notendur og vefsvæði fyrirtækja.",
+        "Ferðamálastofa sér um eftirlit með skráningu fyrirtækja, ef fyrirtæki eru ekki með tilsett leyfi verður aðgangur þeirra að Ferðagjöfinni lokaður."
+      ]
+    },
+    "notQualified": {
+      "title": "Því miður",
+      "intro": "Því miður fellur fyrirtæki þitt ekki undir skilyrði til þátttöku fyrirtæka í Ferðagjöfinni.",
+      "description": "Einstaklingur getur notað ferðagjöf til greiðslu hjá fyrirtækjum sem uppfylla eitt af eftirfarandi skilyrðum og hafa starfsstöð á Íslandi:",
+      "conditions": [
+        "Fyrirtækjum með gilt leyfi Ferðamálastofu skv. III. kafla laga um Ferðamálastofu, nr. 96/2018.",
+        "Fyrirtækjum með gilt rekstrarleyfi skv. 7. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007.",
+        "Fyrirtækjum með gilt starfsleyfi frá viðeigandi heilbrigðisnefnd sem hefur verið gefið út vegna veitingastaða í flokki I, sbr. 3. mgr. 4. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007.",
+        "Ökutækjaleigum með gilt starfsleyfi frá Samgöngustofu skv. 1. mgr. 3. gr. laga um leigu skráningarskyldra ökutækja, nr. 65/2015.",
+        "Söfnum og fyrirtækjum sem bjóða sýningu gegn endurgjaldi þar sem áhersla er á íslenska menningu, sögu eða náttúru."
+      ],
+      "caption": "Nánari upplýsingar og spurningar varðandi þátttöku fyrirtækja beinast til Ferðamálastofu, <a href='mailto:grunnur@ferdamalastofa.is'>grunnur@ferdamalastofa.is</a>",
+      "button": "Til baka"
+    },
+    "signup": {
+      "intro": "Fylltu inn upplýsingar hér að neðan",
+      "form": {
+        "validation": {
+          "operations": "Velja þarf minnst einn reit eða \"Ekkert að ofangreindu á við\"",
+          "operationsTrouble": "Velja þarf annaðhvort svarið"
+        },
+        "companyName": {
+          "label": "Nafn fyrirtækis"
+        },
+        "companySSN": {
+          "label": "Kennitala"
+        },
+        "companyDisplayName": {
+          "label": "Hjáheiti",
+          "tooltip": "Nafn fyrirtækis sem birtist í smáforritinu og á vefsíðunni Ferðalag.is"
+        },
+        "serviceCategory": {
+          "label": "Þjónustuflokkur",
+          "placeholder": "Veldu flokk",
+          "options": [
+            {
+              "label": "Afþreying",
+              "value": "entertainment"
+            },
+            {
+              "label": "Gisting",
+              "value": "accommodation"
+            },
+            {
+              "label": "Veitingar",
+              "value": "restaurant"
+            },
+            {
+              "label": "Samgöngur",
+              "value": "transport"
+            },
+            {
+              "label": "Menning",
+              "value": "culture"
+            }
+          ]
+        },
+        "operation": {
+          "label": "Starfsemi fyrirtækis",
+          "instructions": [
+            "Vinsamlegast hakaðu við viðeigandi tegund starfssemi fyrirtækis. Hægt er að haka við fleiri en einn valmöguleika.",
+            "Vakin er athygli á að listi yfir fyrirtæki sem taka við greiðslu í formi Ferðagjafar verður birtur á vefnum <a href='https://ferdalag.is' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>."
+          ],
+          "options": [
+            {
+              "name": "validPermit",
+              "label": "Fyrirtæki með gilt starfsleyfi Ferðamálastofu",
+              "tooltip": "Fyrirtæki með gilt leyfi Ferðamálastofu skv. III. kafla laga um Ferðamálastofu, nr. 96/2018."
+            },
+            {
+              "name": "validLicenses",
+              "label": "Fyrirtæki með rekstrarleyfi vegna veitingastaða, gististaða og skemmtanahalds",
+              "tooltip": "Fyrirtæki með gilt rekstrarleyfi skv. 7. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007."
+            },
+            {
+              "name": "operatingPermitForRestaurant",
+              "label": "Fyrirtæki með starfsleyfi vegna veitingastaða",
+              "tooltip": "Fyrirtæki með gilt starfsleyfi frá viðeigandi heilbrigðisnefnd sem hefur verið gefið út vegna veitingastaða í flokki I, sbr. 3. mgr. 4. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007."
+            },
+            {
+              "name": "operatingPermitForVehicles",
+              "label": "Fyrirtæki með starfsleyfi vegna leigu skráningarskyldra ökutækja",
+              "tooltip": "Ökutækjaleigur með gilt starfsleyfi frá Samgöngustofu skv. 1. mgr. 3. gr. laga um leigu skráningarskyldra ökutækja, nr. 65/2015."
+            },
+            {
+              "name": "exhibition",
+              "label": "Sýning sem gerir út á náttúru, menningu eða sögu",
+              "tooltip": "Söfn og fyrirtæki sem bjóða sýningu gegn endurgjaldi þar sem áhersla er á íslenska náttúru, menningu eða sögu."
+            },
+            {
+              "name": "noneOfTheAbove",
+              "label": "Ekkert af ofangreindu á við",
+              "tooltip": "Ef ekkert að ofangreindu á við er fyrirtæki ekki gjaldgengur þátttakandi í Ferðagjöfinni skv. lögum um Ferðagjöf."
+            }
+          ]
+        },
+        "operationsTrouble": {
+          "positiveLabel": "Já",
+          "negativeLabel": "Nei",
+          "label": "Var fyrirtæki þitt í rekstrarerfiðleikum 31. desember 2019 í skilningi hópundanþágureglugerðar",
+          "tooltip": "Fyrirtæki sem metið var í rekstrarerfiðleikum 31. desember 2019 í skilningi hópundanþágureglugerðar (ESB) nr. 651/2014 getur að hámarki tekið við samanlagt 25 millj. kr. greiðslu í formi ferðagjafa."
+        },
+        "gotPublicHelp": {
+          "positiveLabel": "Já",
+          "negativeLabel": "Nei",
+          "label": "Hefur fyrirtækið á síðastliðnum tveimur reikningsárum eða á yfirstandandi reikningsári fengið opinbera aðstoð sem telst til minniháttaraðstoðar í skilningi EES-reglugerðar nr. 1407/2013?",
+          "tooltip": "Dæmi um aðstoð sem getur talist til minniháttaraðstoðar eru lokunarstyrkir, stuðningslán, greiðslur með ferðagjöf, fyrirtækja- eða frumherjastyrkir frá Rannís, sýningarstyrkir frá Kvikmyndamiðstöð Íslands, flutningsjöfnunarstyrkir frá Byggðastofnun, styrkir í tengslum við sóknaráætlanir landshluta og styrkir úr Framkvæmdasjóði ferðamannastaða."
+        },
+        "gotPublicHelpAmount": "Vinsamlegast tilgreindu frjárhæð ríkisaðstoðar",
+        "contact": {
+          "label": "Tengiliður",
+          "name": "Nafn",
+          "email": "Netfang",
+          "generalEmail": "Almennt netfang",
+          "webpage": "Vefsíða",
+          "phoneNumber": "Símanúmer"
+        },
+        "submit": "Skrá fyrirtækið mitt"
+      }
+    }
+  },
+  "user": {
+    "title": "Ferðagjöfin þín",
+    "intro": "Til að nota Ferðagjöfina sækir þú smáforritið Ferðagjöf, sem er fáanlegt bæði fyrir Apple iOS og Android snjalltæki. Í smáforritinu getur þú nýtt gjafakortið, séð yfirlit yfir ferðaþjónustufyrirtæki eða gefið öðrum Ferðagjöfina. Ef þú kýst að sækja ekki smáforritið má búa til gjafakóða á strikamerki hér að neðan.",
+    "appStore": {
+      "title": "Sæktu smáforritið fyrir Apple iOS eða Android.",
+      "content": "Einnig er hægt að leita að „Ferðagjöf“ inni á Apple App Store og Google Play Store.",
+      "google": "smáforrit google play",
+      "apple": "smáforrit apple app store"
+    },
+    "barcode": {
+      "noGiftCards": "Engin skráð gjafabréf",
+      "title": "Gjafakóði á strikamerki",
+      "intro": "Til að nota gjöfina getur þú sýnt söluaðila strikamerkið á farsímanum þínum. Hjá völdum aðilum getur þú nýtt númerið á strikamerkinu sem gjafakóða á vefsíðum ferðaþjónustufyrirtækja.",
+      "currentAmount": "Núvirði",
+      "initialAmount": "Upprunalegt virði",
+      "create": "Búa til strikamerki",
+      "value": "Virði",
+      "total": "Samtals",
+      "expires": {
+        "pre": "Strikamerki endurnýjast eftir",
+        "post": "mín"
+      },
+      "expired": "Strikamerki útrunnið",
+      "new": "Fá nýtt strikamerki",
+      "backButton": "Aftur í lista",
+      "error": {
+        "title": "Villa kom upp",
+        "message": "Eitthvað hefur farið úrskeiðis við að sækja strikamerkið þitt, vinsamlegast reyndu aftur.",
+        "backButton": "Aftur í lista"
+      }
+    },
+    "mobileForm": {
+      "title": "Símanúmer",
+      "intro": "Vinsamlegast skráðu inn símanúmerið þitt svo hægt sé að búa til gjafabréf fyrir þig",
+      "validation": {
+        "confirmPhoneNumber": "Símanúmer passa ekki. Vinsamlegast sláðu sama símanúmer inn og frá fyrri reit"
+      },
+      "form": {
+        "phoneNumber": {
+          "label": "Símanúmer"
+        },
+        "confirmPhoneNumber": {
+          "label": "Staðfestu símanúmer"
+        },
+        "submit": "Skrá símanúmerið mitt"
+      }
+    }
+  },
+  "header": {
+    "logout": "Útskrá"
+  },
+  "footer": {
+    "topLinks": [
+      {
+        "title": "Um Stafrænt Ísland",
+        "href": "https://stafraent.island.is/"
+      },
+      {
+        "title": "Hafa samband",
+        "href": "https://island.is/um-island-is/hafa-samband/"
+      }
+    ],
+    "bottomLinks": [
+      {
+        "href": "https://minarsidur.island.is/",
+        "title": "Mínar síður"
+      },
+      {
+        "href": "https://www.heilsuvera.is/",
+        "title": "Heilsuvera"
+      },
+      {
+        "href": "https://opinbernyskopun.island.is/",
+        "title": "Opinber nýsköpun"
+      },
+      {
+        "href": "https://samradsgatt.island.is/",
+        "title": "Samráðsgátt"
+      },
+      {
+        "href": "https://island.is/mannanofn/",
+        "title": "Mannanöfn"
+      },
+      {
+        "href": "http://vefur.island.is/undirskriftalistar",
+        "title": "Undirskriftarlistar"
+      },
+      {
+        "href": "https://island.is/um-island-is/algengar-spurningar/",
+        "title": "Algengar spurningar"
+      },
+      {
+        "href": "http://www.opnirreikningar.is/",
+        "title": "Opnir reikningar ríkisins"
+      },
+      {
+        "href": "https://tekjusagan.is/",
+        "title": "Tekjusagan"
+      }
+    ]
+  },
+  "validation": {
+    "required": "Þessi reitur má ekki vera tómur",
+    "phoneNumber": "Símanúmer þarf að vera sjö tölustafir",
+    "email": "Netfang ekki gilt",
+    "webpage": "Vefsíða er ekki gild"
+  },
+  "routes": {
+    "home": "/en",
+    "companies": {
+      "home": "/en/company",
+      "application": "/en/company/application"
+    },
+    "users": {
+      "home": "/en/user"
     }
   }
 }
