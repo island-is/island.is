@@ -52,7 +52,12 @@ function Companies() {
               </Typography>
               <BulletList>
                 {t.notes.items.map((item, index) => (
-                  <Bullet key={`companies.notes.items-${index}`}>{item}</Bullet>
+                  <Bullet
+                    typographyLinks
+                    key={`companies.notes.items-${index}`}
+                  >
+                    {item}
+                  </Bullet>
                 ))}
               </BulletList>
               <Typography variant="p">{t.notes.disclaimer}</Typography>
