@@ -125,16 +125,22 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
                   </Column>
                   <Column>
                     <Inline space={1}>
-                      {n('featuredArticles', []).map(({title, url}, index) => {
-                        // TODO: Find a permanent solution to handle this url, currently only supports article urls
-                        return (
-                          <Link key={index} href={`${prefix}/${articlePath}/[slug]`} as={url}>
-                            <a>
-                              <Tag>{title}</Tag>
-                            </a>
-                          </Link>
-                        )
-                      })}
+                      {n('featuredArticles', []).map(
+                        ({ title, url }, index) => {
+                          // TODO: Find a permanent solution to handle this url, currently only supports article urls
+                          return (
+                            <Link
+                              key={index}
+                              href={`${prefix}/${articlePath}/[slug]`}
+                              as={url}
+                            >
+                              <a>
+                                <Tag>{title}</Tag>
+                              </a>
+                            </Link>
+                          )
+                        },
+                      )}
                     </Inline>
                   </Column>
                 </Columns>
@@ -171,23 +177,30 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetNamespaceArgs>({
-      query: GET_NAMESPACE_QUERY,
-      variables: {
-        input: {
-          namespace: 'Homepage',
-          lang: locale,
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Homepage',
+            lang: locale,
+          },
         },
-      },
-    }).then((variables) => {
-      // map data here to reduce data processing in component
-      const namespaceObject = JSON.parse(variables.data.getNamespace.fields)
-      // featuredArticles is a csv in contentful seperated by : where the first value is the title and the second is the url
-      return {...namespaceObject.fields, featuredArticles: namespaceObject.fields['featuredArticles'].map((featuredArticle) => {
-        const [title = '', url = ''] = featuredArticle.split(':');
-        return {title, url};
-      })}
-    }),
+      })
+      .then((variables) => {
+        // map data here to reduce data processing in component
+        const namespaceObject = JSON.parse(variables.data.getNamespace.fields)
+        // featuredArticles is a csv in contentful seperated by : where the first value is the title and the second is the url
+        return {
+          ...namespaceObject.fields,
+          featuredArticles: namespaceObject.fields['featuredArticles'].map(
+            (featuredArticle) => {
+              const [title = '', url = ''] = featuredArticle.split(':')
+              return { title, url }
+            },
+          ),
+        }
+      }),
   ])
 
   return {
