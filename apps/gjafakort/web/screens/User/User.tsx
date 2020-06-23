@@ -35,7 +35,7 @@ const CreateUserApplicationMutation = gql`
 
 function User() {
   const {
-    t: { user: t, privacyPolicy, routes },
+    t: { user: t, routes },
   } = useI18n()
   const { user } = useContext(UserContext)
   const [createUserApplication, { called: shouldPoll }] = useMutation(
@@ -117,7 +117,7 @@ function User() {
           <AppsSidebar />
           <Link href={routes.privacyPolicy}>
             <Button variant="text" icon="arrowRight">
-              {privacyPolicy.privacyPolicyButton}
+              {t.privacyPolicyButton}
             </Button>
           </Link>
         </Stack>

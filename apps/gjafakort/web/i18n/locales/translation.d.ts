@@ -243,7 +243,6 @@ export interface NotFound {
 export interface PrivacyPolicy {
   title: string
   sections: string[]
-  privacyPolicyButton: string
 }
 
 export interface Routes {
@@ -266,6 +265,7 @@ export interface User {
   title: string
   intro: string
   appStore: AppStore
+  privacyPolicyButton: string
   barcode: Barcode
   mobileForm: MobileForm
 }
@@ -802,7 +802,6 @@ const typeMap: any = {
     [
       { json: 'title', js: 'title', typ: '' },
       { json: 'sections', js: 'sections', typ: a('') },
-      { json: 'privacyPolicyButton', js: 'privacyPolicyButton', typ: '' },
     ],
     false,
   ),
@@ -828,6 +827,7 @@ const typeMap: any = {
       { json: 'title', js: 'title', typ: '' },
       { json: 'intro', js: 'intro', typ: '' },
       { json: 'appStore', js: 'appStore', typ: r('AppStore') },
+      { json: 'privacyPolicyButton', js: 'privacyPolicyButton', typ: '' },
       { json: 'barcode', js: 'barcode', typ: r('Barcode') },
       { json: 'mobileForm', js: 'mobileForm', typ: r('MobileForm') },
     ],
