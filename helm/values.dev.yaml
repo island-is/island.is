@@ -52,7 +52,7 @@ gjafakort-application:
   ingress:
     enabled: false
   podSecurityContext:
-    fsGroup: '65534'
+    fsGroup: 65534
   serviceAccount:
     annotations:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/gjafakort-sqs-producer'
@@ -66,7 +66,7 @@ gjafakort-queue-listener:
     yay_url: 'https://dev-serviceapi.yay.is'
 
   podSecurityContext:
-    fsGroup: '65534'
+    fsGroup: 65534
   serviceAccount:
     annotations:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/gjafakort-sqs-consumer'
