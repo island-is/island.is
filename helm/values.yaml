@@ -68,5 +68,5 @@ search-indexer-service:
     contentful_environment: "sandbox"
     contentful_host: "preview.contentful.com"
 
-  initEnvirontment:
+  initEnvironment:
     migration_script: /webapp/bin/migrate.sh
