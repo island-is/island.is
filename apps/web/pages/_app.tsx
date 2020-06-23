@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import Head from 'next/head'
 import { AppProps } from 'next/app'
 import { ApolloProvider } from 'react-apollo'
@@ -11,7 +11,11 @@ import appWithTranslation from '../i18n/appWithTranslation'
 
 import initApollo from '../graphql/client'
 
-const Layout: React.FC = ({ children }) => {
+interface LayoutProps {
+  showSearchInHeader?: boolean
+}
+
+const Layout: FC<LayoutProps> = ({ showSearchInHeader, children }) => {
   return (
     <Page>
       <Head>
@@ -42,7 +46,7 @@ const Layout: React.FC = ({ children }) => {
         />
         <title>Ísland.is</title>
       </Head>
-      <Header />
+      <Header showSearchInHeader={showSearchInHeader} />
       <Box width="full">{children}</Box>
       <Footer />
       <style jsx global>{`
@@ -96,14 +100,16 @@ const Layout: React.FC = ({ children }) => {
   )
 }
 
-const SupportApplication: React.FC<{
+const SupportApplication: FC<{
   Component: React.FC
   pageProps: AppProps['pageProps']
   apolloClient: ApolloClient<NormalizedCacheObject>
 }> = ({ Component, pageProps }) => {
+  const { showSearchInHeader } = pageProps
+
   return (
     <ApolloProvider client={initApollo(pageProps.apolloState)}>
-      <Layout>
+      <Layout showSearchInHeader={showSearchInHeader}>
         <Component {...pageProps} />
       </Layout>
     </ApolloProvider>

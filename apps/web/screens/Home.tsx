@@ -186,6 +186,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   return {
     categories,
     namespace,
+    showSearchInHeader: false,
   }
 }
 

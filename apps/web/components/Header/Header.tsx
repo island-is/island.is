@@ -9,17 +9,15 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import Link from 'next/link'
-
 import { useI18n } from '@island.is/web/i18n'
 import { SearchInput } from '../'
-import { useRouter } from 'next/router'
 
-export const Header: FC = () => {
+interface HeaderProps {
+  showSearchInHeader?: boolean
+}
+
+export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const { activeLocale } = useI18n()
-  const Router = useRouter()
-
-  const noSearchPaths = ['/', '/en', '/leit', '/en/search']
-  const showSearch = noSearchPaths.indexOf(Router.pathname) < 0
 
   const languageButtonText = activeLocale === 'is' ? 'English' : 'Íslenska'
   const languageButtonLink = activeLocale === 'en' ? '/' : '/en'
@@ -55,7 +53,7 @@ export const Header: FC = () => {
                       Innskráning
                     </Button>
                   </Link>
-                  {showSearch && (
+                  {showSearchInHeader && (
                     <SearchInput
                       size="medium"
                       activeLocale={activeLocale}

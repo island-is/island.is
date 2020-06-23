@@ -6,10 +6,14 @@ import React, {
   useRef,
 } from 'react'
 import cn from 'classnames'
-import { Box, Typography, BoxProps } from '@island.is/island-ui/core'
+import { Box, Typography, BoxProps, Icon } from '@island.is/island-ui/core'
 import { useScrollPosition } from './useScrollPosition'
 
 import * as styles from './useSidebarLinks.treat'
+
+interface LinkProps {
+  boxProps?: BoxProps
+}
 
 export const useSidebarLinks = (selector?: string) => {
   const [offsets, setOffsets] = useState([])
@@ -86,26 +90,37 @@ export const useSidebarLinks = (selector?: string) => {
 
   return {
     links: elements.map((link, index) => {
-      return (boxProps: BoxProps) => (
-        <Box
-          component="button"
-          type="button"
-          textAlign="left"
-          outline="none"
-          onClick={() => goTo(index)}
-          {...boxProps}
-        >
-          <Typography variant="p" as="span">
-            <span
-              className={cn({
-                [styles.active]: index === currentIndex,
-              })}
-            >
-              {link.textContent}
-            </span>
-          </Typography>
-        </Box>
-      )
+      return ({ boxProps }: LinkProps) => {
+        const selected = index === currentIndex
+
+        return (
+          <Box
+            component="button"
+            type="button"
+            textAlign="left"
+            outline="none"
+            onClick={() => {
+              goTo(index)
+            }}
+            {...boxProps}
+          >
+            {selected && (
+              <span className={styles.bullet}>
+                <Icon type="bullet" color="red400" />
+              </span>
+            )}
+            <Typography variant="p" as="span">
+              <span
+                className={cn({
+                  [styles.active]: selected,
+                })}
+              >
+                {link.textContent}
+              </span>
+            </Typography>
+          </Box>
+        )
+      }
     }),
   }
 }

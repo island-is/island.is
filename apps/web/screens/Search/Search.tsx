@@ -147,11 +147,11 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
                   </Hidden>
                   <Typography variant="intro" as="p">
                     {filteredItems.length === 0 ? (
-                      <div>
+                      <span>
                         Ekkert fannst við leit á <strong>{q}</strong>
-                      </div>
+                      </span>
                     ) : (
-                      <div>
+                      <span>
                         {filteredItems.length} leitarniðurstöður{' '}
                         {filters.category && (
                           <>
@@ -165,7 +165,7 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
                             )}
                           </>
                         )}
-                      </div>
+                      </span>
                     )}
                   </Typography>
                 </Stack>
@@ -235,6 +235,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     q: queryString,
     searchResults,
     namespace,
+    showSearchInHeader: false,
   }
 }
 
