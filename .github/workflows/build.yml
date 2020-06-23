@@ -49,6 +49,8 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: GitHub envs
+        run: env | grep GITHUB
       - name: Git refs
         id: git_refs
         run: |
@@ -103,8 +105,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BASE_BRANCH: ${{ env.GIT_BASE_BRANCH }}
-      - name: GitHub envs
-        run: env | grep GITHUB
 
       - name: Set publish flag
         run: |
