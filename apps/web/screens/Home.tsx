@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import {
@@ -14,7 +14,6 @@ import {
 } from '@island.is/island-ui/core'
 import { Categories, Card, SearchInput } from '../components'
 import { withApollo } from '../graphql'
-import { getTags } from '../json'
 import { useI18n } from '../i18n'
 import {
   Query,
@@ -33,10 +32,10 @@ interface HomeProps {
 
 const Home: Screen<HomeProps> = ({ categories, namespace }) => {
   const Router = useRouter()
-  const [tags, setTags] = useState([])
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
 
+  // TODO: Create a central link resolver to handle these urls
   const prefix = activeLocale === 'en' ? `/en` : ``
   const articlePath = activeLocale === 'en' ? 'article' : 'grein'
   const categoryPath = activeLocale === 'en' ? 'category' : 'flokkur'
@@ -48,10 +47,6 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
     href: `${prefix}/${categoryPath}/[slug]`,
     as: `${prefix}/${categoryPath}/${slug}`,
   }))
-
-  useEffect(() => {
-    setTags(getTags(8))
-  }, [])
 
   const onSubmit = (inputValue, selectedOption) => {
     if (selectedOption) {
@@ -130,13 +125,22 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
                   </Column>
                   <Column>
                     <Inline space={1}>
-                      {tags.map(({ title }, index) => {
-                        return (
-                          <Link key={index} href="/category">
-                            <Tag>{title}</Tag>
-                          </Link>
-                        )
-                      })}
+                      {n('featuredArticles', []).map(
+                        ({ title, url }, index) => {
+                          // TODO: Find a permanent solution to handle this url, currently only supports article urls
+                          return (
+                            <Link
+                              key={index}
+                              href={`${prefix}/${articlePath}/[slug]`}
+                              as={url}
+                            >
+                              <a>
+                                <Tag>{title}</Tag>
+                              </a>
+                            </Link>
+                          )
+                        },
+                      )}
                     </Inline>
                   </Column>
                 </Columns>
@@ -163,9 +167,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     {
       data: { categories },
     },
-    {
-      data: { getNamespace: namespace },
-    },
+    namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryCategoriesArgs>({
       query: GET_CATEGORIES_QUERY,
@@ -175,15 +177,30 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetNamespaceArgs>({
-      query: GET_NAMESPACE_QUERY,
-      variables: {
-        input: {
-          namespace: 'Homepage',
-          lang: locale,
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Homepage',
+            lang: locale,
+          },
         },
-      },
-    }),
+      })
+      .then((variables) => {
+        // map data here to reduce data processing in component
+        const namespaceObject = JSON.parse(variables.data.getNamespace.fields)
+        // featuredArticles is a csv in contentful seperated by : where the first value is the title and the second is the url
+        return {
+          ...namespaceObject.fields,
+          featuredArticles: namespaceObject.fields['featuredArticles'].map(
+            (featuredArticle) => {
+              const [title = '', url = ''] = featuredArticle.split(':')
+              return { title, url }
+            },
+          ),
+        }
+      }),
   ])
 
   return {

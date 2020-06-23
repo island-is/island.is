@@ -209,9 +209,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     {
       data: { searchResults },
     },
-    {
-      data: { getNamespace: namespace },
-    },
+    namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QuerySearchResultsArgs>({
       query: GET_SEARCH_RESULTS_QUERY_DETAILED,
@@ -222,15 +220,21 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetNamespaceArgs>({
-      query: GET_NAMESPACE_QUERY,
-      variables: {
-        input: {
-          namespace: 'Articles',
-          lang: locale,
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Articles',
+            lang: locale,
+          },
         },
-      },
-    }),
+      })
+      .then((variables) => {
+        // map data here to reduce data processing in component
+        const namespaceObject = JSON.parse(variables.data.getNamespace.fields)
+        return namespaceObject.fields
+      }),
   ])
 
   return {
