@@ -19,84 +19,84 @@
     ]
   },
   "companies": {
-    "name": "Ferðaþjónustufyrirtæki",
-    "title": "Ferðaþjónustufyrirtæki",
-    "intro": "Ferðaþjónustufyrirtæki eru hvött til að taka þátt í Ferðagjöfinni og taka á móti landsmönnum á ferðalagi innanlands.",
-    "description": "Skráning fyrirtækja í Ferðagjöfina fer fram hér á Ísland.is. Prókúruhafi fyrirtækis þarf sjálfur að skrá þátttöku þess. Innskráning er gerð með einstaklings skilríkjum prókúruhafa. Fyrirtæki fá sjálfvirka staðfestingu á skráningu og aðgang að vefsvæði þar sem hægt er að fylgjast með hversu margir hafa nýtt Ferðagjöfina hjá viðkomandi fyrirtæki.",
+    "name": "Tourism companies",
+    "title": "Tourism companies",
+    "intro": "We encourage travel related businesses and companies to participate in the Travel gift and welcome Icelanders travelling domestically.",
+    "description": "Companies can sign up for participation on Ísland.is. The company's authorised signer has to submit the application using his or her personal electronic certificate (rafræn skilríki). The company will receive an automatic confirmation for registration and gain access to an online account, containing data on the amount of Travel gifts used with the company.",
     "notes": {
-      "label": "Fyrirtæki hafa þrjár leiðir til að móttaka Ferðagjöf:",
+      "label": "Companies have three possibilities to receive Travel gifts:",
       "items": [
-        "Skanna strikamerki með smáforriti",
-        "Slá inn númer gjafabréfs í vafra",
-        "Beintenging við bókunarkerfi"
+        "Scan a bar code from the app",
+        "Scan a bar code number to a browser",
+        "Direct connection to a booking system"
       ],
-      "disclaimer": "Athugið mikilvægt er að skanna eða slá inn strikamerkið strax við notkun því hvert strikamerki hefur aðeins nokkurra mínútna líftíma."
+      "disclaimer": "Please note that bar codes must be scanned shortly after activation, as each bar code is only active for a few minutes."
     },
     "FAQ": {
       "title": "Algengar spurningar",
       "items": [
         {
-          "label": "Hvaða fyrirtæki mega taka þátt?",
+          "label": "Which companies qualify for the Travel gift?",
           "contents": [
-            "Fyrirtæki sem uppfylla eitt af eftirtöldum skilyrðum og eru með starfsstöð á Íslandi geta skráð sig í Ferðagjöfina:",
+            "All companies meeting one of the following conditions, operating in Iceland, can sign up:",
             [
-              "Fyrirtæki með gilt leyfi Ferðamálastofu skv. III. kafla laga um Ferðamálastofu, nr. 96/2018.",
-              "Fyrirtæki með gilt rekstrarleyfi skv. 7. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007.",
-              "Fyrirtæki með gilt starfsleyfi frá viðeigandi heilbrigðisnefnd sem hefur verið gefið út vegna veitingastaða í flokki I, sbr. 3. mgr. 4. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007.",
-              "Ökutækjaleigur með gilt starfsleyfi frá Samgöngustofu skv. 1. mgr. 3. gr. laga um leigu skráningarskyldra ökutækja, nr. 65/2015.",
-              "Söfn og fyrirtæki sem bjóða sýningu gegn endurgjaldi þar sem áhersla er á íslenska menningu, sögu eða náttúru."
+              "Companies holding a valid permit issued by the Icelandic Tourist Board (Ferðamálastofa) in accordance with Chapter III of Act No. 96/2018 on the Icelandic Tourist Board.",
+              "Companies holding a valid operating licence in accordance to Article 7 of Act No. 85/2007 on Restaurants, Accommodation and Festivities.",
+              "Companies holding a valid permit issued by an appropriate board of health applying to restaurants in category I, as in subsection 3, Article 4 of Act No. 85/2007 on Restaurants, Accommodation and Festivities.",
+              "Car rentals holding a valid permit issued by the Icelandic Transport Authority in accordance with subsection 1, Article 3 of Act No. 65/2015 on Car rentals.",
+              "Museums and business establishments selling entry to exhibitions focusing on Icelandic culture, history or nature."
             ],
-            "Með fyrirvara um endanlega útfærslu frumvarps sem liggur fyrir á Alþingi. Nánari upplýsingar og spurningar varðandi þátttöku fyrirtækja beinast til Ferðamálastofu, <a href='mailto:grunnur@ferdamalastofa.is'>grunnur@ferdamalastofa.is</a>."
+            "Please contact <a href='mailto:grunnur@ferdamalastofa.is'>grunnur@ferdamalastofa.is</a> for more information."
           ]
         },
         {
-          "label": "Hver er hámarksfjárhæð fyrirtækja?",
+          "label": "What is the maximum amount in ISK each company is allowed to receive through the Travel gift?",
           "contents": [
-            "Ferðagjöfin felur í sér ríkisaðstoð í skilningi EES-samningsins. Samkvæmt tímabundnum reglum um ríkisaðstoð til stuðnings hagkerfisins vegna yfirstandandi Covid-19 heimsfaraldurs, frá 19. mars 2020, er fyrirtæki heimilt að taka við samanlagt allt að 100 millj. kr. greiðslu í formi ferðagjafa. Fyrirtæki sem var í rekstrarerfiðleikum 31. desember 2019 í skilningi hópundanþágureglugerðar (ESB) nr. 651/2014 getur að hámarki tekið við samanlagt 25 millj. kr. greiðslu í formi ferðagjafa.",
-            "Fyrirtæki telst hafa verið í fjárhagserfiðleikum á þeim tímapunkti ef a.m.k. eitt af eftirfarandi skilyrðum er uppfyllt, samanber skilyrði í tímabundnum reglum um ríkisaðstoð til stuðnings hagkerfisins vegna yfirstandandi heimsfaraldurs, frá 19. mars 2020:",
+            "The Travel gift is an official state aid according to the EEA agreement. According to temporary regulations on state aids due to the COVID-19 epidemic, from 19. March 2020, a company is allowed to accept Travel gifts equivalent to a maximum of 100.000.000 ISK. A company that was facing operational difficulties on 31. December 2019, according to the EU Block Exemption Regulation No. 651/2014, can accept a maximum of 25.000.000 ISK.",
+            "A company was considered having operational difficulties at that time if it met at least one of the following conditions, as per regulations on state aids to mitigate the economic effect due to the COVID-19 epidemic:",
             [
-              "Um er að ræða félag með takmarkaðri ábyrgð og bókfært eigið fé þess, samkvæmt viðurkenndum reikningsskilaaðferðum, er orðið lægra en nemur helmingi innborgaðs hlutafjár að meðtöldum yfirverðsreikningi.",
-              "Um er að ræða félag þar sem a.m.k. einn aðili ber ótakmarkaða ábyrgð á skuldum félagsins og bókfært eigið fé þess, samkvæmt viðurkenndum reikningsskilaaðferðum, er orðið lægra en nemur helmingi innborgaðs hlutafjár að meðtöldum yfirverðsreikningi.",
-              "Um er að ræða fyrirtæki sem sætir gjaldþrotameðferð eða uppfyllir skilyrði um að vera tekið til gjaldþrotameðferðar að beiðni kröfuhafa.",
-              "Um er að ræða fyrirtæki sem hefur fengið björgunaraðstoð í skilningi leiðbeinandi reglna Eftirlitsstofnunar EFTA (ESA) um björgun og endurskipulagningu fyrirtækja, og hefur enn ekki endurgreitt lánið eða aflétt ábyrgðinni eða hefur fengið aðstoð til endurskipulagningar og er því enn bundið af samþykktri áætlun um endurskipulagningu.",
-              "Eftirtalin skilyrði hafa átt við síðustu tvö reikningsár: a) hlutfall milli bókfærðra skulda fyrirtækisins og eigin fjár hefur verið hærra en 7,5 og b) hagnaður fyrir afskriftir og vexti (EBITDA) nemur lægri fjárhæð en nettófjármagnskostnaður ársins."
+              "The corporation has limited liability, and carried equity according to acknowledged accounting principles is less than half of proceeds from issue of capital stock, including share premium account.",
+              "At least one member of the corporation carries unlimited liability, and carried equity according to acknowledged accounting principles is less than half of proceeds from issue of capital stock, including share premium account.",
+              "The corporation is undergoing liquidation or meets the requirements of bankruptcy proceedings as per creditor's request.",
+              "The corporation has received corporate rescue as defined by EFTA's rescuing and restructuring aid, and has yet to make the loan payment or relieve liability, or has received restructuring aid and is still bound by a restructuring programme.",
+              "The following applies to 2 previous financial years: a) the debt-to-equity ratio is higher than 7,5 and b) earnings before interest, taxes, depreciation and amortization (EBITDA) is lower than the annual net cost of capital."
             ],
-            "Skilyrði (1) og (2) eiga ekki við um fyrirtæki sem er lítið eða meðalstórt, hafi starfsemi þess staðið yfir í þrjú ár eða skemur.",
-            "Skilyrði (5) á ekki við um fyrirtæki sem er lítið eða meðalstórt.",
-            "Um skilgreiningu á litlum og meðalstórum fyrirtækjum fer eftir lögum um ársreikninga nr. 3/2006."
+            "Conditions (1) and (2) do not apply to small or medium-sized businesses that have been operating for less than 3 years.",
+            "Condition (5) does not apply to small or medium-sized businesses.",
+            "Businesses are defined as small or medium-sized according to Act No. 3/2006 on annual financial statements."
           ]
         },
         {
-          "label": "Hvernig beintengi ég við bókunarkerfi?",
+          "label": "How do I establish a direct connection to a booking system?",
           "contents": [
-            "Fyrirtæki geta beintengt Ferðagjöfina við kassa- og/eða bókunarkerfi. Með beintengingu má nýta Ferðagjöfina sem gjafakóða þegar bókað er á vef.",
-            "Nánari upplýsingar varðandi beintengingu má finna hjá <a href='mailto:info@yay.is'>info@yay.is</a>."
+            "Companies can directly connect the Travel gift to their own register- or booking system. This way, the Travel gift bar code can be used when booking online.",
+            "Please contact <a href='mailto:info@yay.is'>info@yay.is</a> for more details on direct connection."
           ]
         },
         {
-          "label": "Hvernig er uppgjörsferlið á Ferðagjöfinni?",
+          "label": "How do I handle settlements and accounting?",
           "contents": [
             "Umsýsla með uppgjöri á Ferðagjöfinni.",
             [
-              "Ferðaþjónustufyrirtæki fá mánaðarlega sendar söluskýrslu um nýtingu á Ferðagjöfinni",
-              "Ferðaþjónustufyrirtæki frá greitt mánaðarlega skv. söluskýrslu"
+              "Travel related businesses and companies receive a monthly report on the number of Travel gifts used to purchase services.",
+              "Travel related businesses and companies receive a monthly payment in accordance with the report."
             ]
           ]
         },
         {
-          "label": "Hvar er hægt að fylgjast með nýtingu á Ferðagjöfinni?",
+          "label": "How do I monitor the Travel gifts used with my company?",
           "contents": [
-            "Öll fyrirtæki sem skrá sig til þátttöku í Ferðagjöfinni fá aðgang að vefsvæði til að geta fylgst með innlausnum á Ferðagjöfinni. Um leið og gjöf er nýtt kemur hún inn á notkunarskýrslu fyrirtækis."
+            "All registered companies have access to an online account where they can monitor all Travel gifts received as payment. When a gift is used to purchase services, it appears on the company's report."
           ]
         },
         {
-          "label": "Hvar sæki ég um viðeigandi leyfi?",
+          "label": "How do I apply for the appropriate permit?",
           "contents": [
             [
-              "Hver sá sem hyggst starfa sem ferðaskrifstofa eða ferðasali dagsferða skv. III. kafla laga um Ferðamálastofu, <a href='https://www.althingi.is/lagas/150b/2018096.html' target='_blank' rel=noreferrer noopener'>nr. 96/2018</a>, skal hafa til þess leyfi Ferðamálastofu. Sjá nánar hér: <a href='https://www.ferdamalastofa.is/is/leyfi-og-loggjof/ferdasali-dagsferda/unsoknarferlill' target='_blank' rel=noreferrer noopener'>www.ferdamalastofa.is/is/leyfi-og-loggjof/ferdasali-dagsferda/unsoknarferlill</a>",
-              "Sá sem hyggst stunda starfsemi sem fellur undir gistiflokka II-IV og veitingastaðaflokka II og III skv. 7. gr. laga um veitingastaði, gististaði og skemmtanahald, <a href='https://www.althingi.is/lagas/150b/2007085.html' target='_blank' rel=noreferrer noopener'>nr. 85/2007</a> skal hafa til þess rekstrarleyfi útgefið af sýslumönnum. Sjá nánar hér: <a href='https://www.syslumenn.is/thjonusta/leyfi-og-loggildingar/veitingaleyfi/' target='_blank' rel=noreferrer noopener'>www.syslumenn.is/thjonusta/leyfi-og-loggildingar/veitingaleyfi</a>",
-              "Sá sem hyggst stunda starfsemi sem fellur undir veitingastaðaflokk I, sbr. 3. mgr. 4. gr. laga um veitingastaði, gististaði og skemmtanahald, <a href='https://www.althingi.is/lagas/150b/2007085.html' target='_blank' rel=noreferrer noopener'>nr. 85/2007</a> skal hafa til þess gilt starfsleyfi frá viðeigandi heilbrigðisnefnd. Hafið samband við heilbrigðisnefnd í hverju sveitarfélagi varðandi starfsleyfi.",
-              "Ökutækjaleigur skulu hafa gilt starfsleyfi frá Samgöngustofu skv. 1. mgr. 3. gr. laga um leigu skráningarskyldra ökutækja, <a href='https://www.althingi.is/lagas/nuna/2015065.html' target='_blank' rel=noreferrer noopener'>nr. 65/2015</a>. Sjá nánar hér: <a href='https://www.samgongustofa.is/umferd/leyfi-og-eftirlit/' target='_blank' rel=noreferrer noopener'>www.samgongustofa.is/umferd/leyfi-og-eftirlit</a>"
+              "Those who seek to operate a travel or tourist agency in accordance with Chapter III, <a href='https://www.althingi.is/lagas/150b/2018096.html' target='_blank' rel=noreferrer noopener'>Act No. 96/2018</a>, should hold the appropriate permit issued by the Icelandic Tourist Board. See <a href='https://www.ferdamalastofa.is/is/leyfi-og-loggjof/ferdasali-dagsferda/unsoknarferlill' target='_blank' rel=noreferrer noopener'>www.ferdamalastofa.is/is/leyfi-og-loggjof/ferdasali-dagsferda/unsoknarferlill</a>",
+              "Those who seek to operate accommodation facilities in categories II-IV in accordance with Article 7 of <a href='https://www.althingi.is/lagas/150b/2007085.html' target='_blank' rel=noreferrer noopener'>Act No. 85/2007</a> on Restaurants, Accommodation and Festivities, should hold the appropriate permit issued by District Magistrates. See <a href='https://www.syslumenn.is/thjonusta/leyfi-og-loggildingar/veitingaleyfi/' target='_blank' rel=noreferrer noopener'>www.syslumenn.is/thjonusta/leyfi-og-loggildingar/veitingaleyfi</a>",
+              "Those who seek to operate food services in category I in accordance with subsection 3, Article 4 of <a href='https://www.althingi.is/lagas/150b/2007085.html' target='_blank' rel=noreferrer noopener'>Act No. 85/2007</a> on Restaurants, Accommodation and Festivities, should hold the appropriate permit. Please contact your Local Authorities' board of health.",
+              "Car rentals should hold a valid permit issued by the Icelandic Transport Authority in accordance with subsection 1, Article 3 of <a href='https://www.althingi.is/lagas/nuna/2015065.html' target='_blank' rel=noreferrer noopener'>Act No. 65/2015</a>. on Car rentals. See <a href='https://www.samgongustofa.is/umferd/leyfi-og-eftirlit/' target='_blank' rel=noreferrer noopener'>www.samgongustofa.is/umferd/leyfi-og-eftirlit</a>"
             ]
           ]
         }
@@ -104,18 +104,18 @@
       "videos": [
         {
           "id": "video1",
-          "label": "Hvernig skanna ég gjöf með smáforriti?",
+          "label": "How do I scan a Travel gift using the app?",
           "url": "https://www.youtube.com/embed/q0hfSHLklKk"
         },
         {
           "id": "video2",
-          "label": "Hvernig slæ ég inn númer gjafabréfs í vafra?",
+          "label": "How do I enter the Travel gift barcode to a browser?",
           "url": "https://www.youtube.com/embed/tkff3XZ6KXE"
         }
       ]
     },
     "cta": {
-      "label": "Ferðaþjónustufyrirtæki",
+      "label": "Tourism companies",
       "content": "Skrá fyrirtæki"
     }
   },
