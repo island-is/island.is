@@ -967,7 +967,8 @@
             "tsConfig": "apps/services/search-indexer/tsconfig.spec.json",
             "passWithNoTests": true
           }
-        }
+        },
+        "docker-express": {}
       }
     },
     "api-domains-content-search": {
