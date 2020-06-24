@@ -3,9 +3,9 @@ name: Monorepo pipeline
 on:
   push:
     branches:
-      - 'master'
+      - "master"
     paths-ignore:
-      - '**/*.md'
+      - "**/*.md"
   pull_request:
     branches: [master]
 
