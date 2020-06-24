@@ -4,12 +4,15 @@ import { DocumentNode } from 'graphql'
 import merge from 'lodash/merge'
 
 import { logger } from '@island.is/logging'
-// import { createCache } from '@island.is/cache'
+import { createApolloClusterCache } from '@island.is/cache'
 
+import { environment } from '../environments'
 import { verifyToken, ACCESS_TOKEN_COOKIE } from '../domains'
 import { Resolvers, GraphQLContext, DataSource } from '../types'
 import { ApplicationAPI, FerdalagAPI, RskAPI, YayAPI } from '../services'
 import rootTypeDefs from './typeDefs'
+
+const { redis } = environment
 
 const createServer = async (
   resolvers: Resolvers[],
@@ -30,11 +33,15 @@ const createServer = async (
     typeDefs: [rootTypeDefs, ...typeDefs],
     playground: enablePlayground,
     introspection: enablePlayground,
-    // cache: createCache({
-    //   host: environment.redis.url,
-    //   port: 6379,
-    //   name: 'gjafakort_api_service_cache',
-    // }),
+    cache: createApolloClusterCache({
+      name: 'gjafakort_api_service_cache',
+      nodes: [
+        {
+          host: redis.url,
+          port: redis.port,
+        },
+      ],
+    }),
     dataSources: (): DataSource => ({
       applicationApi: new ApplicationAPI(),
       ferdalagApi: new FerdalagAPI(),

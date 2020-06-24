@@ -18,15 +18,11 @@ services:
     ports:
       - 5432:5432
 
-  redis:
-    image: redis:5.0.8
-    container_name: gjafakort_redis
-    command: redis-server
-    privileged: true
-    sysctls:
-      net.core.somaxconn: '511'
+  redis-cluster:
+    container_name: redis_cluster
+    image: grokzen/redis-cluster:5.0.6
     ports:
-      - 6379:6379
+      - '7000:7000'
 
   localstack:
     container_name: localstack

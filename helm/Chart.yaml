@@ -2,4 +2,4 @@ apiVersion: v2
 name: islandis
 description: Íslandis umbrella chart
 type: application
-version: 0.0.5
+version: 0.0.6

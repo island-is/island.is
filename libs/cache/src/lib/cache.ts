@@ -1,16 +1,21 @@
-import { RedisCache } from 'apollo-server-cache-redis'
+import { RedisClusterCache } from 'apollo-server-cache-redis'
 
 import { logger } from '@island.is/logging'
 
-type Options = {
+interface ClusterNode {
   host: string
   port: number
-  name: string
 }
 
-export const createCache = (options: Options) =>
-  new RedisCache({
+type Options = {
+  name: string
+  nodes: ClusterNode[]
+}
+
+export const createApolloClusterCache = (options: Options) =>
+  new RedisClusterCache(options.nodes, {
     ...options,
+    keyPrefix: `${options.name}:`,
     connectTimeout: 5000,
     socket_keepalive: false,
     reconnectOnError: (err) => {
