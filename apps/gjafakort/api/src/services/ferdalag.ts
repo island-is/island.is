@@ -26,7 +26,7 @@ class FerdalagAPI extends RESTDataSource {
   baseURL = `${ferdalag.url}/ssn/`
 
   willSendRequest(request: RequestOptions) {
-    request.params.set('key', ferdalag.apiKey)
+    request.headers.set('x-api-key', ferdalag.apiKey)
     request.headers.set('Content-Type', 'application/json')
   }
 

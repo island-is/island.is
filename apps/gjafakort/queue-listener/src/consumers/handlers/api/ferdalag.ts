@@ -7,6 +7,10 @@ const {
   ferdalag: { url, apiKey },
 } = environment
 
+const getHeaders = () => ({
+  'x-api-key': apiKey,
+})
+
 const formatBody = (message: CompanyApplication) => ({
   giftcert: true,
   contactEmail: message.data.email,
@@ -23,9 +27,7 @@ export const createProvider = (message: CompanyApplication) => {
     applicationId: message.id,
     method: 'POST',
     url: `${url}/ssn/create`,
-    query: {
-      key: apiKey,
-    },
+    headers: getHeaders(),
     body: JSON.stringify({
       SSN: message.issuerSSN,
       ...formatBody(message),
@@ -38,9 +40,7 @@ export const updateProvider = (message: CompanyApplication) => {
     applicationId: message.id,
     method: 'POST',
     url: `${url}/ssn/update/${message.issuerSSN}`,
-    query: {
-      key: apiKey,
-    },
+    headers: getHeaders(),
     body: JSON.stringify(formatBody(message)),
   })
 }
@@ -50,8 +50,6 @@ export const getProviders = (message: CompanyApplication) => {
     applicationId: message.id,
     method: 'GET',
     url: `${url}/ssn/${message.issuerSSN}`,
-    query: {
-      key: apiKey,
-    },
+    headers: getHeaders(),
   })
 }
