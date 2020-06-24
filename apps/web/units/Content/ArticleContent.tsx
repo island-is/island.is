@@ -175,14 +175,18 @@ const embeddedNodes = {
         <ContentContainer>
           <Stack space={6}>
             <Typography variant="h2" as="h2" data-sidebar-scollable>
-              <span data-sidebar-link={title}>{title}</span>
+              <span data-sidebar-link={slugify(title)}>{title}</span>
             </Typography>
             <Accordion>
               {items.map((item, index) => {
                 const { answer, question } = item
 
                 return (
-                  <AccordionItem id={`faq_${index}`} label={question}>
+                  <AccordionItem
+                    key={index}
+                    id={`faq_${index}`}
+                    label={question}
+                  >
                     <RichText
                       document={answer}
                       renderNode={customProcessEntryRenderNode}
