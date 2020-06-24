@@ -200,9 +200,7 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
     {
       data: { categories },
     },
-    {
-      data: { getNamespace: namespace },
-    },
+    namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryArticlesInCategoryArgs>({
       query: GET_ARTICLES_IN_CATEGORY_QUERY,
@@ -221,15 +219,17 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetNamespaceArgs>({
-      query: GET_NAMESPACE_QUERY,
-      variables: {
-        input: {
-          namespace: 'Article',
-          lang: locale,
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Articles',
+            lang: locale,
+          },
         },
-      },
-    }),
+      })
+      .then((variables) => JSON.parse(variables.data.getNamespace.fields)),
   ])
 
   return {

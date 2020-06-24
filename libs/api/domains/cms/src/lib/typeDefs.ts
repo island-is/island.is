@@ -1,13 +1,19 @@
 import { gql } from 'apollo-server-express'
 
 export const typeDefs = gql`
+  type Taxonomy {
+    title: String
+    slug: String
+    description: String!
+  }
+
   type Article {
     id: String!
     slug: String!
     title: String!
     content: String
-    group: String
-    category: String
+    group: Taxonomy
+    category: Taxonomy!
   }
 
   input GetArticleInput {
@@ -16,8 +22,8 @@ export const typeDefs = gql`
   }
 
   type Namespace {
-    namespace: String!
-    fields: String!
+    namespace: String
+    fields: String
   }
 
   input GetNamespaceInput {

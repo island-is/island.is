@@ -57,11 +57,8 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
     return <DefaultErrorPage statusCode={404} />
   }
 
-  const category = JSON.parse(article.category)
-  const { slug: categorySlug, title: categoryTitle } = category.fields
-
-  const group = JSON.parse(article.group)
-  const { title: groupTitle } = group.fields
+  const {slug: categorySlug, title: categoryTitle} = article.category
+  const groupTitle = article.group?.title
 
   const onChangeCategory = () => {
     router.push('/article')
@@ -100,7 +97,7 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
                     >
                       <a>{categoryTitle}</a>
                     </Link>
-                    <Tag variant="purple">{groupTitle}</Tag>
+                    {groupTitle && <Tag variant="purple">{groupTitle}</Tag>}
                   </Breadcrumbs>
                   <Hidden above="md">
                     <Select
@@ -160,8 +157,7 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
       })
       .then((variables) => {
         // map data here to reduce data processing in component
-        const namespaceObject = JSON.parse(variables.data.getNamespace.fields)
-        return namespaceObject.fields
+        return JSON.parse(variables.data.getNamespace.fields)
       }),
   ])
 

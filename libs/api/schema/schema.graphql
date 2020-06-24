@@ -13,13 +13,19 @@ type Mutation {
   root: String
 }
 
+type Taxonomy {
+  title: String
+  slug: String
+  description: String!
+}
+
 type Article {
   id: String!
   slug: String!
   title: String!
   content: String
-  group: String
-  category: String
+  group: Taxonomy
+  category: Taxonomy!
 }
 
 input GetArticleInput {
@@ -28,8 +34,8 @@ input GetArticleInput {
 }
 
 type Namespace {
-  namespace: String!
-  fields: String!
+  namespace: String
+  fields: String
 }
 
 input GetNamespaceInput {
