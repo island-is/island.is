@@ -22,6 +22,7 @@ export default {
   },
   redis: {
     url: process.env.REDIS_URL,
+    port: process.env.REDIS_PORT,
   },
   yay: {
     url: process.env.YAY_URL,
