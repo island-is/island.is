@@ -337,6 +337,7 @@
       "google": "smáforrit google play",
       "apple": "smáforrit apple app store"
     },
+    "privacyPolicyButton": "Persónuverndarstefna",
     "barcode": {
       "noGiftCards": "Engin skráð gjafabréf",
       "title": "Gjafakóði á strikamerki",
@@ -348,7 +349,9 @@
       "total": "Samtals",
       "expires": {
         "pre": "Strikamerki endurnýjast eftir",
-        "post": "mín"
+        "post": "mín",
+        "attention": "Athugið",
+        "disclaimer": "Þetta strikamerki dettur úr gildi"
       },
       "expired": "Strikamerki útrunnið",
       "new": "Fá nýtt strikamerki",
@@ -377,7 +380,7 @@
     }
   },
   "privacyPolicy": {
-    "title": "Skilmálar",
+    "title": "Persónuverndarstefna",
     "sections": [
       "Þegar smáforritið Ferðagjöf er notað eru skráðar upplýsingar um kennitölu, símanúmer og netfang í gagnagrunn sem vistaður er á gagnasvæði á vegum atvinnuvega- og nýsköpunarráðuneytisins. Upplýsingarnar verða nýttar í þeim tilgangi að hafa yfirsýn yfir nýtingu og dreifingu útgefinna ferðagjafa á gildistíma þeirra, sbr. lög um Ferðagjöf, frá 12.júní 2020. Upplýsingar í grunninum verða aðeins notaðar af atvinnuvega- og nýsköpunarráðuneytinu í þeim tilgangi að sannreyna nýtingu Ferðagjafar.",
       "Skráning upplýsinganna í gagnagrunninn og vinnsla þeirra í smáforritinu er til að uppfylla lagaskyldu samkvæmt lögum um ferðagjöf og samkvæmt ríkisstyrkjareglum EES-samningsins og byggist þess vegna á 3. og 5. tölul. 9. gr. laga nr. 90/2018 um persónuvernd og vinnslu persónuupplýsinga.",
@@ -452,6 +455,7 @@
     },
     "users": {
       "home": "/notandi"
-    }
+    },
+    "privacyPolicy": "/personuverndarstefna"
   }
 }

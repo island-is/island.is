@@ -6,7 +6,7 @@ import { ReactComponent as AppleSvg } from '@island.is/gjafakort-web/assets/apps
 import { ReactComponent as GooglePlaySvg } from '@island.is/gjafakort-web/assets/googlePlay.svg'
 import { useI18n } from '@island.is/gjafakort-web/i18n'
 
-function AppSidebar() {
+function AppsSidebar() {
   const {
     t: { user: t },
   } = useI18n()
@@ -46,4 +46,4 @@ function AppSidebar() {
   )
 }
 
-export default AppSidebar
+export default AppsSidebar

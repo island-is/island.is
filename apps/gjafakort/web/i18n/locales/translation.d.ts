@@ -249,6 +249,7 @@ export interface Routes {
   home: string
   companies: RoutesCompanies
   users: Users
+  privacyPolicy: string
 }
 
 export interface RoutesCompanies {
@@ -264,6 +265,7 @@ export interface User {
   title: string
   intro: string
   appStore: AppStore
+  privacyPolicyButton: string
   barcode: Barcode
   mobileForm: MobileForm
 }
@@ -300,6 +302,8 @@ export interface BarcodeError {
 export interface Expires {
   pre: string
   post: string
+  attention: string
+  disclaimer: string
 }
 
 export interface MobileForm {
@@ -806,6 +810,7 @@ const typeMap: any = {
       { json: 'home', js: 'home', typ: '' },
       { json: 'companies', js: 'companies', typ: r('RoutesCompanies') },
       { json: 'users', js: 'users', typ: r('Users') },
+      { json: 'privacyPolicy', js: 'privacyPolicy', typ: '' },
     ],
     false,
   ),
@@ -822,6 +827,7 @@ const typeMap: any = {
       { json: 'title', js: 'title', typ: '' },
       { json: 'intro', js: 'intro', typ: '' },
       { json: 'appStore', js: 'appStore', typ: r('AppStore') },
+      { json: 'privacyPolicyButton', js: 'privacyPolicyButton', typ: '' },
       { json: 'barcode', js: 'barcode', typ: r('Barcode') },
       { json: 'mobileForm', js: 'mobileForm', typ: r('MobileForm') },
     ],
@@ -866,6 +872,8 @@ const typeMap: any = {
     [
       { json: 'pre', js: 'pre', typ: '' },
       { json: 'post', js: 'post', typ: '' },
+      { json: 'attention', js: 'attention', typ: '' },
+      { json: 'disclaimer', js: 'disclaimer', typ: '' },
     ],
     false,
   ),
