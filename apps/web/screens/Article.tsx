@@ -131,7 +131,10 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
                 </Stack>
               </ContentContainer>
 
-              <ArticleContent document={article.content} />
+              <ArticleContent
+                document={article.content}
+                locale={activeLocale as Locale}
+              />
             </Box>
           </div>
         </Box>

@@ -3,7 +3,6 @@ import { ContentBlock, Box } from '@island.is/island-ui/core'
 
 import * as styles from './BorderedContent.treat'
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface BorderedContentProps {
   topContent: ReactNode
   bottomContent: ReactNode

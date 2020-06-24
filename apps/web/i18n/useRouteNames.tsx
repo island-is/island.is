@@ -13,7 +13,7 @@ const routeNames = {
   },
 }
 
-type pathTypes = 'article' | 'category' | 'search'
+export type pathTypes = 'article' | 'category' | 'search'
 
 const useRouteNames = (locale: Locale = defaultLanguage) => {
   return {

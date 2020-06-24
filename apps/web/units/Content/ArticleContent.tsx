@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import Link from 'next/link'
-import { BLOCKS } from '@contentful/rich-text-types'
+import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
 import {
   Typography,
@@ -15,8 +15,14 @@ import {
   Accordion,
   AccordionItem,
 } from '@island.is/island-ui/core'
-import { BorderedContent } from '@island.is/web/components'
+import { Locale } from '../../i18n/I18n'
+import { BorderedContent, Hyperlink } from '@island.is/web/components'
 import RichText from '../RichText/RichText'
+
+const mappedContentfulTypes = {
+  article: 'article',
+  articleCategory: 'category',
+}
 
 const simpleSpacing = [2, 2, 3] as ResponsiveSpace
 
@@ -26,16 +32,18 @@ const ContentContainer: FC<BoxProps> = ({ children, ...props }) => (
   </Box>
 )
 
-const customListItemRenderNode = {
+const customListItemRenderNode = (locale) => ({
+  ...defaultRenderNode(locale),
   [BLOCKS.LIST_ITEM]: (node, children) => {
     return <Bullet>{children}</Bullet>
   },
   [BLOCKS.PARAGRAPH]: (node, children) => {
     return <>{children}</>
   },
-}
+})
 
-const customProcessEntryRenderNode = {
+const customProcessEntryRenderNode = (locale) => ({
+  ...defaultRenderNode(locale),
   [BLOCKS.PARAGRAPH]: (node, children) => {
     if (!children.find((x) => x !== '')) {
       return null
@@ -71,11 +79,60 @@ const customProcessEntryRenderNode = {
     </ContentContainer>
   ),
   [BLOCKS.LIST_ITEM]: (node, children) => {
-    return <RichText document={node} renderNode={customListItemRenderNode} />
+    return (
+      <RichText document={node} renderNode={customListItemRenderNode(locale)} />
+    )
   },
-}
+})
 
-const defaultRenderNode = {
+const defaultRenderNode = (locale) => ({
+  [INLINES.HYPERLINK]: (node, children) => {
+    const {
+      data: { uri: href },
+    } = node
+
+    if (
+      !['http://', 'https://'].reduce((hasProtocol, protocol) => {
+        if (hasProtocol || href.startsWith(protocol)) {
+          return true
+        }
+
+        return false
+      }, false)
+    ) {
+      return children
+    }
+
+    return (
+      <Hyperlink locale={locale} href={href}>
+        {children}
+      </Hyperlink>
+    )
+  },
+  [INLINES.ENTRY_HYPERLINK]: (node, children) => {
+    const {
+      data: {
+        target: {
+          fields: { slug },
+          sys: {
+            contentType: {
+              sys: { id },
+            },
+          },
+        },
+      },
+    } = node
+
+    const pathType = mappedContentfulTypes[id]
+
+    return pathType ? (
+      <Hyperlink locale={locale} pathType={pathType} slug={slug}>
+        {children}
+      </Hyperlink>
+    ) : (
+      children
+    )
+  },
   [BLOCKS.PARAGRAPH]: (node, children) => {
     if (!children.find((x: string) => x !== '')) {
       return null
@@ -111,11 +168,14 @@ const defaultRenderNode = {
     </ContentContainer>
   ),
   [BLOCKS.LIST_ITEM]: (node, children) => {
-    return <RichText document={node} renderNode={customListItemRenderNode} />
+    return (
+      <RichText document={node} renderNode={customListItemRenderNode(locale)} />
+    )
   },
   [BLOCKS.EMBEDDED_ENTRY]: (node) => {
-    const embeddedNode =
-      embeddedNodes[node.data.target?.sys?.contentType?.sys?.id]
+    const embeddedNode = embeddedNodes(locale)[
+      node.data.target?.sys?.contentType?.sys?.id
+    ]
 
     if (!embeddedNode) return null
 
@@ -139,17 +199,18 @@ const defaultRenderNode = {
       <Cmp />
     )
   },
-}
+})
 
 type Props = {
+  locale: Locale
   document: string
 }
 
-export const ArticleContent: React.FC<Props> = ({ document }) => {
-  return <RichText document={document} renderNode={defaultRenderNode} />
+export const ArticleContent: React.FC<Props> = ({ document, locale }) => {
+  return <RichText document={document} renderNode={defaultRenderNode(locale)} />
 }
 
-const embeddedNodes = {
+const embeddedNodes = (locale) => ({
   faqList: {
     component: Box,
     wrapper: ({ children }) => {
@@ -189,7 +250,7 @@ const embeddedNodes = {
                   >
                     <RichText
                       document={answer}
-                      renderNode={customProcessEntryRenderNode}
+                      renderNode={customProcessEntryRenderNode(locale)}
                     />
                   </AccordionItem>
                 )
@@ -230,7 +291,7 @@ const embeddedNodes = {
               ) : null}
               <RichText
                 document={details}
-                renderNode={customProcessEntryRenderNode}
+                renderNode={customProcessEntryRenderNode(locale)}
               />
             </Stack>
           </ContentBlock>
@@ -260,6 +321,6 @@ const embeddedNodes = {
       }
     },
   },
-}
+})
 
 export default ArticleContent
