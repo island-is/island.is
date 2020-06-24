@@ -59,7 +59,6 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
 
   const { slug: categorySlug, title: categoryTitle } = article.category
   const groupTitle = article.group?.title
-
   const contentOverviewOptions =
     getHeadingLinkElements().map((link) => ({
       label: link.textContent,
