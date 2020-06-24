@@ -7,14 +7,16 @@ import {
   Inline,
   Box,
   Button,
-  // Select,
 } from '@island.is/island-ui/core'
 import Link from 'next/link'
-
-// import { selectOptions } from '../../json'
 import { useI18n } from '@island.is/web/i18n'
+import { SearchInput } from '../'
 
-export const Header: FC = () => {
+interface HeaderProps {
+  showSearchInHeader?: boolean
+}
+
+export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const { activeLocale } = useI18n()
 
   const languageButtonText = activeLocale === 'is' ? 'English' : 'Íslenska'
@@ -46,18 +48,18 @@ export const Header: FC = () => {
                   <Link href={languageButtonLink}>
                     <Button variant="menu">{languageButtonText}</Button>
                   </Link>
-
                   <Link href="https://minarsidur.island.is/" passHref>
                     <Button variant="menu" leftIcon="user">
                       Innskráning
                     </Button>
                   </Link>
-                  {/* <Select
-                    placeholder="Leitaðu á Ísland.is"
-                    options={selectOptions}
-                    name="search"
-                    icon="search"
-                  /> */}
+                  {showSearchInHeader && (
+                    <SearchInput
+                      size="medium"
+                      activeLocale={activeLocale}
+                      autocomplete={false}
+                    />
+                  )}
                 </Inline>
               </Box>
             </Column>

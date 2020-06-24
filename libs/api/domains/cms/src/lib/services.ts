@@ -6,6 +6,8 @@ interface Article {
   slug: string
   title: string
   content: string
+  group: string
+  category: string
 }
 
 export type RawArticle = EntryCollection<Article>
@@ -34,13 +36,15 @@ export const getArticle = async (
   const article = result.items[0]
 
   const { id } = article.sys
-  const { title, content } = article.fields
+  const { title, content, group, category } = article.fields
 
   return {
     id,
     slug,
     title,
     content: JSON.stringify(content) || '',
+    group: JSON.stringify(group) || '',
+    category: JSON.stringify(category) || '',
   }
 }
 

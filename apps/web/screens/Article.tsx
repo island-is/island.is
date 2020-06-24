@@ -5,6 +5,7 @@ import Head from 'next/head'
 import DefaultErrorPage from 'next/error'
 import { useRouter } from 'next/router'
 import cn from 'classnames'
+import slugify from '@sindresorhus/slugify'
 import {
   ContentBlock,
   Box,
@@ -13,12 +14,11 @@ import {
   Breadcrumbs,
   Hidden,
   Select,
-  // Divider,
-  Accordion,
-  AccordionItem,
   BoxProps,
+  ResponsiveSpace,
+  Tag,
 } from '@island.is/island-ui/core'
-import { Sidebar } from '../components'
+import { Sidebar } from '@island.is/web/components'
 import {
   Query,
   QueryGetArticleArgs,
@@ -28,27 +28,40 @@ import {
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { withApollo } from '../graphql'
 import { Screen } from '../types'
-import Content from '../units/Content/Content'
+import ArticleContent from '../units/Content/ArticleContent'
 
 import * as styles from './Category/Category.treat'
 
-import { categories, selectOptions } from '../json'
-import { useNamespace } from '../hooks'
+import { selectOptions } from '../json'
+import { useNamespace, useSidebarLinks } from '../hooks'
 import { useI18n } from '../i18n'
+import { Locale } from '../i18n/I18n'
+import useRouteNames from '../i18n/useRouteNames'
 
 interface ArticleProps {
   article: Query['getArticle']
   namespace: Query['getNamespace']
 }
 
+const simpleSpacing = [2, 2, 3] as ResponsiveSpace
+
 const Article: Screen<ArticleProps> = ({ article, namespace }) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const n = useNamespace(namespace)
+  const { makePath } = useRouteNames(activeLocale as Locale)
+  const { links } = useSidebarLinks()
 
   if (!article) {
     return <DefaultErrorPage statusCode={404} />
   }
+
+  const category = JSON.parse(article.category)
+  const { slug: categorySlug, title: categoryTitle } = category.fields
+
+  const group = JSON.parse(article.group)
+  const { title: groupTitle } = group.fields
 
   const onChangeCategory = () => {
     router.push('/article')
@@ -57,78 +70,58 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
   return (
     <>
       <Head>
-        <title>{article.title} - Ísland.is</title>
+        <title>{article.title} | Ísland.is</title>
       </Head>
       <ContentBlock>
-        <Box padding={[0, 0, 0, 6]}>
+        <Box component="article" padding={[0, 0, 0, 6]}>
           <div className={cn(styles.layout, styles.reversed)}>
             <div className={styles.side}>
-              <Sidebar title={n('submenuTitle')}>
-                {categories.map((c, index) => (
-                  <Link key={index} href="#">
-                    <a>
-                      <Typography variant="p" as="span">
-                        {c.title}
-                      </Typography>
-                    </a>
-                  </Link>
+              <Sidebar title="Efnisyfirlit">
+                {links.map((Link, index) => (
+                  <Link key={index} />
                 ))}
               </Sidebar>
             </div>
 
             <Box paddingRight={[0, 0, 0, 4]} width="full">
-              <ContentContainer>
+              <ContentContainer
+                padding="none"
+                paddingX={[3, 3, 6, 0]}
+                marginBottom={simpleSpacing}
+              >
                 <Stack space={[3, 3, 4]}>
                   <Breadcrumbs>
-                    <Link href="/">
+                    <Link href={makePath()}>
                       <a>Ísland.is</a>
                     </Link>
                     <Link
-                      href={`${activeLocale === 'en' ? '/en' : ''}/category`}
+                      href={`${makePath('category')}/[slug]`}
+                      as={makePath('category', categorySlug)}
                     >
-                      <a>Fjölskyldumál</a>
+                      <a>{categoryTitle}</a>
                     </Link>
+                    <Tag variant="purple">{groupTitle}</Tag>
                   </Breadcrumbs>
                   <Hidden above="md">
                     <Select
-                      label="Þjónustuflokkar"
+                      label="Efnisyfirlit"
                       placeholder="Flokkar"
                       options={selectOptions}
                       onChange={onChangeCategory}
                       name="search"
                     />
                   </Hidden>
-                  <Typography variant="h1" as="h1">
-                    {article.title}
-                  </Typography>
+                  <Box marginBottom={simpleSpacing}>
+                    <Typography variant="h1" as="h1">
+                      <span data-sidebar-link={slugify(article.title)}>
+                        {article.title}
+                      </span>
+                    </Typography>
+                  </Box>
                 </Stack>
               </ContentContainer>
 
-              <Content document={article.content} />
-
-              <ContentContainer paddingY={[6, 6, 6, 20]}>
-                <Stack space={6}>
-                  <Typography variant="h2" as="h2">
-                    Spurt og svarað um nafngjöf
-                  </Typography>
-                  <Accordion>
-                    <AccordionItem label="Að tilkynna nafngjöf" id="id_1">
-                      <Typography variant="p">Að tilkynna nafngjöf</Typography>
-                    </AccordionItem>
-                    <AccordionItem label="Nafnabreytingar" id="id_2">
-                      <Typography variant="p">Nafnabreytingar</Typography>
-                    </AccordionItem>
-                    <AccordionItem
-                      label="Nafnritun og birting í Þjóðskrá"
-                      id="id_3"
-                    >
-                      <Typography variant="p">
-                        Nafnritun og birting í Þjóðskrá
-                      </Typography>
-                    </AccordionItem>
-                  </Accordion>
-                </Stack>
-              </ContentContainer>
+              <ArticleContent document={article.content} />
             </Box>
           </div>
         </Box>
@@ -181,9 +174,7 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
 export default withApollo(Article)
 
 const ContentContainer: FC<BoxProps> = ({ children, ...props }) => (
-  <Box {...props}>
-    <Box padding={[3, 3, 6, 0]}>
-      <ContentBlock width="small">{children}</ContentBlock>
-    </Box>
+  <Box padding={[3, 3, 6, 0]} {...props}>
+    <ContentBlock width="small">{children}</ContentBlock>
   </Box>
 )

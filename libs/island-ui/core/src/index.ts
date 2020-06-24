@@ -32,6 +32,7 @@ export * from './lib/SkeletonLoader/SkeletonLoader'
 
 // Layout
 export * from './lib/Box/Box'
+export * from './lib/Box/useBoxStyles'
 export * from './lib/Tiles/Tiles'
 export * from './lib/Inline/Inline'
 export * from './lib/Columns/Columns'

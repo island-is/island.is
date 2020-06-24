@@ -6,6 +6,8 @@ export const typeDefs = gql`
     slug: String!
     title: String!
     content: String
+    group: String
+    category: String
   }
 
   input GetArticleInput {

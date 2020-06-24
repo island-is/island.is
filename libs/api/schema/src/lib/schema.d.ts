@@ -61,26 +61,28 @@ export type Mutation = {
 
 export type Article = {
   __typename?: 'Article'
-  content?: Maybe<Scalars['String']>
   id: Scalars['String']
   slug: Scalars['String']
   title: Scalars['String']
+  content?: Maybe<Scalars['String']>
+  group?: Maybe<Scalars['String']>
+  category?: Maybe<Scalars['String']>
 }
 
 export type GetArticleInput = {
-  lang: Scalars['String']
   slug?: Maybe<Scalars['String']>
+  lang: Scalars['String']
 }
 
 export type Namespace = {
   __typename?: 'Namespace'
-  fields: Scalars['String']
   namespace: Scalars['String']
+  fields: Scalars['String']
 }
 
 export type GetNamespaceInput = {
-  lang: Scalars['String']
   namespace?: Maybe<Scalars['String']>
+  lang: Scalars['String']
 }
 
 export type ContentItem = {
@@ -398,10 +400,12 @@ export type ArticleResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']
 > = {
-  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  group?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  category?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -409,8 +413,8 @@ export type NamespaceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Namespace'] = ResolversParentTypes['Namespace']
 > = {
-  fields?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   namespace?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  fields?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 

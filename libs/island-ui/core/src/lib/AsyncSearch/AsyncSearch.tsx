@@ -6,9 +6,8 @@ import { Input, Label, Menu, Item } from './shared'
 import { Icon } from '../..'
 
 import * as styles from './AsyncSearch.treat'
-import { selected } from './shared/Item/Item.treat'
 
-export type Sizes = 'medium' | 'large'
+export type AsyncSearchSizes = 'medium' | 'large'
 
 type ItemCmpProps = {
   active?: boolean
@@ -31,7 +30,7 @@ export interface AsyncSearchProps {
   useFilter?: boolean
   inputValue?: string
   initialInputValue?: string
-  size?: Sizes
+  size?: AsyncSearchSizes
   loading?: boolean
   closeMenuOnSubmit?: boolean
   onSubmit?: (inputValue: string, selectedOption?: AsyncSearchOption) => void
@@ -73,6 +72,7 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
 
     return (
       <Downshift
+        id="downshift"
         onChange={onChange}
         initialInputValue={initialInputValue}
         onInputValueChange={onInputValueChange}

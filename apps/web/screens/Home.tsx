@@ -1,6 +1,6 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import {
   ContentBlock,
   Box,
@@ -24,6 +24,8 @@ import {
 import { GET_NAMESPACE_QUERY, GET_CATEGORIES_QUERY } from './queries'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
+import { Locale } from '../i18n/I18n'
+import useRouteNames from '../i18n/useRouteNames'
 
 interface HomeProps {
   categories: Query['categories']
@@ -31,36 +33,16 @@ interface HomeProps {
 }
 
 const Home: Screen<HomeProps> = ({ categories, namespace }) => {
-  const Router = useRouter()
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
-
-  // TODO: Create a central link resolver to handle these urls
-  const prefix = activeLocale === 'en' ? `/en` : ``
-  const articlePath = activeLocale === 'en' ? 'article' : 'grein'
-  const categoryPath = activeLocale === 'en' ? 'category' : 'flokkur'
-  const searchPath = activeLocale === 'en' ? 'search' : 'leit'
+  const { makePath } = useRouteNames(activeLocale as Locale)
 
   const cards = categories.map(({ title, slug, description }) => ({
     title,
     description,
-    href: `${prefix}/${categoryPath}/[slug]`,
-    as: `${prefix}/${categoryPath}/${slug}`,
+    href: `${makePath('category')}/[slug]`,
+    as: makePath('category', slug),
   }))
-
-  const onSubmit = (inputValue, selectedOption) => {
-    if (selectedOption) {
-      return Router.push(
-        `${prefix}/${articlePath}/[slug]`,
-        `${prefix}/${articlePath}/${selectedOption.value}`,
-      )
-    }
-
-    return Router.push({
-      pathname: `${prefix}/${searchPath}`,
-      query: { q: inputValue },
-    })
-  }
 
   return (
     <>
@@ -117,10 +99,7 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
                 >
                   <Column>
                     <Box display="inlineFlex" alignItems="center" width="full">
-                      <SearchInput
-                        activeLocale={activeLocale}
-                        onSubmit={onSubmit}
-                      />
+                      <SearchInput size="large" activeLocale={activeLocale} />
                     </Box>
                   </Column>
                   <Column>
@@ -131,8 +110,9 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
                           return (
                             <Link
                               key={index}
-                              href={`${prefix}/${articlePath}/[slug]`}
+                              href={`${makePath('article')}/[slug]`}
                               as={url}
+                              passHref
                             >
                               <a>
                                 <Tag>{title}</Tag>
@@ -206,6 +186,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   return {
     categories,
     namespace,
+    showSearchInHeader: false,
   }
 }
 
