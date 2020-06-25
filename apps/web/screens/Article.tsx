@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
 import DefaultErrorPage from 'next/error'
@@ -48,10 +48,20 @@ interface ArticleProps {
 const simpleSpacing = [2, 2, 3] as ResponsiveSpace
 
 const Article: Screen<ArticleProps> = ({ article, namespace }) => {
+  const [contentOverviewOptions, setContentOverviewOptions] = useState([])
   const { activeLocale } = useI18n()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const n = useNamespace(namespace)
   const { makePath } = useRouteNames(activeLocale as Locale)
+
+  useEffect(() => {
+    setContentOverviewOptions(
+      getHeadingLinkElements().map((link) => ({
+        label: link.textContent,
+        value: slugify(link.textContent),
+      })) || [],
+    )
+  }, [])
 
   if (!article) {
     return <DefaultErrorPage statusCode={404} />
@@ -60,11 +70,17 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
   const { slug: categorySlug, title: categoryTitle } = article.category
   const groupTitle = article.group?.title
 
-  const contentOverviewOptions =
-    getHeadingLinkElements().map((link) => ({
-      label: link.textContent,
-      value: slugify(link.textContent),
-    })) || []
+  const onChangeContentOverview = ({ value }: Option) => {
+    const slug = value as string
+
+    const el = document.querySelector(
+      `[data-sidebar-link="${slug}"]`,
+    ) as HTMLElement
+
+    if (el) {
+      window.scrollTo(0, el.offsetTop)
+    }
+  }
 
   return (
     <>
@@ -104,17 +120,7 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
                       label="Efnisyfirlit"
                       placeholder="Flokkar"
                       options={contentOverviewOptions}
-                      onChange={({ value }: Option) => {
-                        const slug = value as string
-
-                        const el = document.querySelector(
-                          `[data-sidebar-link="${slug}"]`,
-                        ) as HTMLElement
-
-                        if (el) {
-                          window.scrollTo(0, el.offsetTop)
-                        }
-                      }}
+                      onChange={onChangeContentOverview}
                       name="content-overview"
                     />
                   </Hidden>
