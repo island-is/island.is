@@ -132,15 +132,16 @@
       "title": "Algengar spurningar",
       "items": [
         {
-          "label": "Hvenær get ég nálgast ferðagjöfina?",
-          "contents": [
-            "Áætlað er að ferðagjöfin verði aðgengileg um miðjan júní, verði búið að samþykkja frumvarp til laga þess efnis á Alþingi."
-          ]
-        },
-        {
           "label": "Hverjir fá Ferðagjöf?",
           "contents": [
             "Einstaklingar með lögheimili á Ísland, íslenska kennitölu og eru fæddir árið 2002 eða fyrr fá Ferðagjöf."
+          ]
+        },
+        {
+          "label": "Hvernig nálgast ég Ferðagjöfina?",
+          "contents": [
+            "Sækja þarf gjöfina á Ísland.is með innskráningu. Smáforritið Ferðagjöf er sótt í App Store eða Play Store og strikamerki skannað við kaup á þjónustu.",
+            "Einnig er hægt að nýta Ferðagjöfina beint inn á Ísland.is fyrir þá sem ekki geta sótt smáforritið. Þá er hægt að skanna strikamerkið úr farsíma eða stimpla inn númer strikamerkis við kaup á þjónustu."
           ]
         },
         {
@@ -152,7 +153,7 @@
         {
           "label": "Hvar get ég notað Ferðagjöfina?",
           "contents": [
-            "Nýta má Ferðagjöf hjá skilgreindum fyrirtækjum innan ferðaþjónustunnar sem hafa skráð sig til þátttöku. Sjá má yfirlit yfir fyrirtæki á <a href='https://ferdalag.is' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>."
+            "Nýta má Ferðagjöf hjá skilgreindum fyrirtækjum innan ferðaþjónustunnar sem hafa skráð sig til þátttöku. Sjá má yfirlit yfir fyrirtæki á <a href='https://www.ferdalag.is/is/fyrirtaeki-sem-taka-a-moti-ferdagjof-thjonustuflokkar' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>."
           ]
         },
         {
