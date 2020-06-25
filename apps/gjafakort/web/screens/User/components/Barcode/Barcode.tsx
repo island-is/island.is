@@ -4,6 +4,7 @@ import gql from 'graphql-tag'
 import { useMachine } from '@xstate/react'
 import { format } from 'date-fns'
 import { is } from 'date-fns/locale'
+import * as Yup from 'yup'
 
 import {
   Box,
@@ -14,6 +15,9 @@ import {
   Columns,
   Column,
   SkeletonLoader as SL,
+  Divider,
+  FieldNumberInput,
+  FieldInput,
 } from '@island.is/island-ui/core'
 
 import { useI18n } from '@island.is/gjafakort-web/i18n'
@@ -21,6 +25,7 @@ import { ErrorPanel } from '@island.is/gjafakort-web/components'
 
 import { barcodeMachine } from './barcodeMachine'
 import { Countdown, RenderBarcode } from '..'
+import { Form, Formik, Field } from 'formik'
 
 const GiftCardsQuery = gql`
   query GiftCardsQuery {
@@ -68,6 +73,7 @@ function Barcode({ shouldPoll }: PropTypes) {
   const {
     t: {
       user: { barcode: t },
+      validation,
     },
   } = useI18n()
   const { data, stopPolling, refetch, loading: loadingGiftCards } = useQuery(
@@ -126,7 +132,7 @@ function Barcode({ shouldPoll }: PropTypes) {
   }
   if (current.matches('idle')) {
     return (
-      <Stack space={3}>
+      <Stack space={5}>
         {loadingInitialGiftCards && <SL height={70} />}
         {!loadingInitialGiftCards &&
           !loadingGiftCards &&
@@ -134,48 +140,112 @@ function Barcode({ shouldPoll }: PropTypes) {
             <Typography variant="h3">{t.noGiftCards}</Typography>
           )}
         {giftCards.map((giftCard) => (
-          <Box
-            key={giftCard.giftCardId}
-            padding={2}
-            border="standard"
-            borderRadius="standard"
-            display="flex"
-            justifyContent="spaceBetween"
-            alignItems="center"
-          >
-            <Typography variant="h4">
-              {formatNumber(giftCard.amount)} kr.
-            </Typography>
-            <Button
-              variant="text"
-              onClick={() =>
-                onSubmit(giftCard.giftCardId, '6617246', 'My custom message')
-              }
-              icon="user"
+          <Box>
+            <Box
+              key={giftCard.giftCardId}
+              padding={2}
+              marginBottom={2}
+              border="standard"
+              borderRadius="standard"
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              background="blue100"
             >
-              GEFA GJÖF
-            </Button>
+              <Box>
+                <Typography variant="h3">
+                  {formatNumber(giftCard.amount)} kr.
+                </Typography>
+                <Typography variant="p">
+                  Frá: {giftCard.giftDetail.from}
+                </Typography>
+              </Box>
+              <Button
+                onClick={() => {
+                  getBarcode(giftCard)
+                }}
+              >
+                {t.create}
+              </Button>
+            </Box>
             <Button
               variant="text"
-              onClick={() => {
-                getBarcode(giftCard)
-              }}
               icon="arrowRight"
+              onClick={() => {
+                send({
+                  type: 'GIVE_GIFT_CARD',
+                  giftCard,
+                })
+              }}
             >
-              {t.create}
+              Gefa áfram
             </Button>
           </Box>
         ))}
-        {giftCards.length > 0 && (
-          <Typography variant="h4" color="blue400">
-            {t.total}:{' '}
-            {formatNumber(
-              giftCards.reduce((acc, { amount }) => acc + amount, 0),
-            )}{' '}
-            kr.
-          </Typography>
-        )}
+        <Stack space={2}>
+          <Divider />
+          {giftCards.length > 0 && (
+            <Typography variant="h3" color="blue400">
+              {t.total}:{' '}
+              {formatNumber(
+                giftCards.reduce((acc, { amount }) => acc + amount, 0),
+              )}{' '}
+              kr.
+            </Typography>
+          )}
+        </Stack>
       </Stack>
+    )
+  }
+
+  if (current.matches('give')) {
+    return (
+      <Formik
+        validationSchema={Yup.object().shape({
+          phoneNumber: Yup.string()
+            .length(7, validation.phoneNumber)
+            .required(validation.required),
+        })}
+        initialValues={{
+          phoneNumber: '',
+          message: '',
+        }}
+        onSubmit={(values) => {
+          console.log(values)
+        }}
+      >
+        {() => (
+          <Form>
+            <Stack space={3}>
+              <Typography variant="h4">
+                Gefa Ferðagjöf: {console.log(current.context)}
+                {current.context.giftCard.amount &&
+                  formatNumber(current.context.giftCard.amount)}{' '}
+                kr.
+              </Typography>
+              <Field
+                component={FieldNumberInput}
+                label={'Símanúmer'}
+                name="phoneNumber"
+                format="+354 ### ####"
+                allowEmptyFormatting
+              />
+              <Field component={FieldInput} label={'Skilaboð'} name="message" />
+              <Box display="flex" justifyContent="spaceBetween">
+                <Button
+                  onClick={() => {
+                    send('BACK_TO_LIST')
+                  }}
+                  variant="ghost"
+                >
+                  Tilbaka
+                </Button>
+                <Button htmlType="submit">Gefa</Button>
+              </Box>
+            </Stack>
+          </Form>
+        )}
+      </Formik>
     )
   }
 

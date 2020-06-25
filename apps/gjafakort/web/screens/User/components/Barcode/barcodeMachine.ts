@@ -59,6 +59,7 @@ const tick = () => (cb) => {
 interface BarcodeStateSchema {
   states: {
     idle: {}
+    give: {}
     loading: {}
     active: {}
     success: {}
@@ -87,6 +88,7 @@ type ActionEvents =
       pollingUrl: string
     }
   | { type: 'ERROR' }
+  | { type: 'GIVE_GIFT_CARD'; giftCard: GiftCard }
 
 interface BarcodeContext {
   elapsed: number
@@ -132,8 +134,15 @@ export const barcodeMachine = Machine<
             }),
             target: 'loading',
           },
+          GIVE_GIFT_CARD: {
+            actions: assign({
+              giftCard: (ctx, event) => event.giftCard,
+            }),
+            target: 'give',
+          },
         },
       },
+      give: {},
       loading: {
         on: {
           SUCCESS: {
