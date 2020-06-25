@@ -19,7 +19,7 @@ import { Layout } from '../../components'
 
 function Home() {
   const {
-    t: { routes, ...t },
+    t: { routes, home: t },
   } = useI18n()
 
   return (
@@ -31,16 +31,16 @@ function Home() {
               <Link href={routes.home}>
                 <a>Ísland.is</a>
               </Link>
-              <span>{t.home.name}</span>
+              <span>{t.name}</span>
             </Breadcrumbs>
           </Box>
           <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
             <Stack space={3}>
               <Typography variant="h1" as="h1">
-                {t.home.title}
+                {t.title}
               </Typography>
-              <Typography variant="intro">{t.home.intro}</Typography>
-              {t.home.description.map((item, index) => (
+              <Typography variant="intro">{t.intro}</Typography>
+              {t.description.map((item, index) => (
                 <Typography variant="p" links key={index}>
                   {HtmlParser(item)}
                 </Typography>
@@ -54,11 +54,11 @@ function Home() {
           </Hidden>
           <Box marginBottom={3}>
             <Typography variant="h2" as="h2">
-              {t.home.FAQ.title}
+              {t.FAQ.title}
             </Typography>
           </Box>
           <Accordion dividerOnTop={false}>
-            {t.home.FAQ.items.map((accordionItem, index) => (
+            {t.FAQ.items.map((accordionItem, index) => (
               <AccordionItem
                 key={index}
                 label={accordionItem.label}
@@ -82,7 +82,7 @@ function Home() {
             <GiftCTA />
             <Link href={routes.privacyPolicy}>
               <Button variant="text" icon="arrowRight">
-                {t.user.privacyPolicyButton}
+                {t.privacyPolicyButton}
               </Button>
             </Link>
           </Stack>
