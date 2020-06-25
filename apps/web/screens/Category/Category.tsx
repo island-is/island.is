@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import Link from 'next/link'
-import { Card, Sidebar } from '../../components'
+import { useRouter } from 'next/router'
+import Head from 'next/head'
 import {
   ContentBlock,
   Box,
@@ -12,15 +13,12 @@ import {
   Select,
   AccordionCard,
   LinkCard,
+  Option,
 } from '@island.is/island-ui/core'
-
-import { selectOptions } from '../../json'
-
-import * as styles from './Category.treat'
+import { Card, Sidebar, Sticky } from '../../components'
+import { withApollo } from '../../graphql'
 import { useI18n } from '@island.is/web/i18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
-
-import { withApollo } from '../../graphql'
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
@@ -35,9 +33,9 @@ import {
   QueryCategoriesArgs,
 } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { useRouter } from 'next/router'
-import Head from 'next/head'
 import { Locale } from '@island.is/web/i18n/I18n'
+
+import * as styles from './Category.treat'
 
 interface CategoryProps {
   articles: Query['articlesInCategory']
@@ -51,7 +49,7 @@ const Category: Screen<CategoryProps> = ({
   namespace,
 }) => {
   const { activeLocale } = useI18n()
-  const router = useRouter()
+  const Router = useRouter()
   const n = useNamespace(namespace)
   const { makePath } = useRouteNames(activeLocale as Locale)
 
@@ -81,7 +79,19 @@ const Category: Screen<CategoryProps> = ({
   )
 
   // find current category in categories list
-  const category = categories.find((x) => x.slug === router.query.slug)
+  const category = categories.find((x) => x.slug === Router.query.slug)
+
+  const sidebarCategoryLinks = categories.map((c) => ({
+    title: c.title,
+    active: c.slug === Router.query.slug,
+    href: `${makePath('category')}/[slug]`,
+    as: makePath('category', c.slug),
+  }))
+
+  const categoryOptions = categories.map((c) => ({
+    label: c.title,
+    value: c.slug,
+  }))
 
   return (
     <>
@@ -92,21 +102,13 @@ const Category: Screen<CategoryProps> = ({
         <Box padding={[0, 0, 0, 6]}>
           <div className={styles.layout}>
             <div className={styles.side}>
-              <Sidebar title={n('submenuTitle')}>
-                {categories.map((c, index) => (
-                  <Link
-                    key={index}
-                    href={`${makePath('category')}/[slug]`}
-                    as={makePath('category', c.slug)}
-                  >
-                    <a>
-                      <Typography variant="p" as="span">
-                        {c.title}
-                      </Typography>
-                    </a>
-                  </Link>
-                ))}
-              </Sidebar>
+              <Sticky>
+                <Sidebar
+                  bullet="right"
+                  items={sidebarCategoryLinks}
+                  title={n('submenuTitle')}
+                />
+              </Sticky>
             </div>
 
             <Box paddingLeft={[0, 0, 0, 4]} width="full">
@@ -121,9 +123,20 @@ const Category: Screen<CategoryProps> = ({
                     <Hidden above="md">
                       <Select
                         label="Þjónustuflokkar"
-                        placeholder="Flokkar"
-                        options={selectOptions}
-                        name="search"
+                        defaultValue={{
+                          label: category.title,
+                          value: category.slug,
+                        }}
+                        onChange={({ value }: Option) => {
+                          const slug = value as string
+
+                          Router.push(
+                            `${makePath('category')}/[slug]`,
+                            makePath('category', slug),
+                          )
+                        }}
+                        options={categoryOptions}
+                        name="categories"
                       />
                     </Hidden>
                     <Typography variant="h1" as="h1">
@@ -144,6 +157,7 @@ const Category: Screen<CategoryProps> = ({
                           const { title, description, articles } = groups[
                             groupSlug
                           ]
+
                           return (
                             <AccordionCard
                               key={index}
