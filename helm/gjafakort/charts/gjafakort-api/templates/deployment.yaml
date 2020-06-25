@@ -83,10 +83,8 @@ spec:
                 secretKeyRef:
                   name: gjafakort-api
                   key: AUTH_JWT_SECRET
-            - name: REDIS_URL
-              value: {{ .redis_url }}
-            - name: REDIS_PORT
-              value: {{ .redis_port }}
+            - name: REDIS_URL_NODE_01
+              value: {{ .redis_url_node_01 }}
             - name: CACHE_TIME_TO_LIVE
               value: "{{ .cache_time_to_live }}"
             - name: SENTRY_DSN

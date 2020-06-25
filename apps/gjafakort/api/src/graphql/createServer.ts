@@ -36,12 +36,7 @@ const createServer = async (
     cache: createApolloClusterCache({
       name: 'gjafakort_api_service_cache',
       ssl: production,
-      nodes: [
-        {
-          host: redis.url,
-          port: redis.port,
-        },
-      ],
+      nodes: redis.urls,
     }),
     dataSources: (): DataSource => ({
       applicationApi: new ApplicationAPI(),

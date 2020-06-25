@@ -27,7 +27,7 @@ services:
     environment:
       - IP=0.0.0.0
     ports:
-      - '7000:7000'
+      - '7000-7005:7000-7005'
 
   localstack:
     container_name: localstack
