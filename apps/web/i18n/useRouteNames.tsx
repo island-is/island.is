@@ -34,7 +34,7 @@ const useRouteNames = (locale: Locale = defaultLanguage) => {
         path += '/' + subfix
       }
 
-      return path
+      return path || '/'
     },
   }
 }
