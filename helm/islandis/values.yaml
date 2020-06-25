@@ -1,0 +1,32 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  image:
+    tag: latest_master
+
+web:
+  namespace: islandis
+  env:
+    API_URL: 'http://deploy-dev-api/api'
+
+api:
+  namespace: islandis
+  secrets:
+    CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
+  env:
+    PORT: 3333
+    
+search-indexer-service:
+  namespace: search-indexer
+  environment:
+    application_url: "http://search-indexer-service"
+    elastic_node: "https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com"
+    elastic_index: "island-is"
+    contentful_space: "8k0h54kbe6bj"
+    contentful_access_token: "/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN"
+    contentful_environment: "sandbox"
+    contentful_host: "preview.contentful.com"
+
+  initEnvironment:
+    migration_script: /webapp/bin/migrate.sh

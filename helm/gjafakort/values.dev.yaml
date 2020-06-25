@@ -1,10 +1,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-web:
-  env:
-    API_URL: 'http://web-api'
-
 gjafakort-api:
   environment:
     auth_audience: 'gjafakort.dev01.devland.is'

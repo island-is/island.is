@@ -1,0 +1,17 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "gjafakort-application.fullname" . }}
+  {{- if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{- end }}
+  labels:
+    {{- include "gjafakort-application.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "gjafakort-application.fullname" . }}
+  minReplicas: {{ .Values.replicaCount.min }}
+  maxReplicas: {{ .Values.replicaCount.max }}
+  targetCPUUtilizationPercentage: 70
