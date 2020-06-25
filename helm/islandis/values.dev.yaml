@@ -3,4 +3,4 @@
 
 web:
   env:
-    API_URL: 'http://web-api'
+    API_URL: 'http://web-api/api'
