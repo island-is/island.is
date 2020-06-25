@@ -57,7 +57,7 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
     return <DefaultErrorPage statusCode={404} />
   }
 
-  const {slug: categorySlug, title: categoryTitle} = article.category
+  const { slug: categorySlug, title: categoryTitle } = article.category
   const groupTitle = article.group?.title
 
   const onChangeCategory = () => {
