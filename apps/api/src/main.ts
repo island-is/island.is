@@ -12,6 +12,6 @@ app.get('/', (req, res) => res.sendStatus(200))
 
 const port = process.env.PORT || 4444
 const server = app.listen(port, () => {
-  logger.info(`Listening at http://localhost:${port}/graphql`)
+  logger.info(`Graphql running at http://localhost:${port}/api/graphql`)
 })
 server.on('error', logger.error)

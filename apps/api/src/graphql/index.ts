@@ -26,7 +26,7 @@ const createServer = (app: Express) => {
     introspection: enablePlayground,
   })
 
-  server.applyMiddleware({ app, path: '/graphql' })
+  server.applyMiddleware({ app, path: '/api/graphql' })
 }
 
 export default createServer

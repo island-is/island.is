@@ -13,18 +13,20 @@ const transpileModules = [
 ]
 const withTM = require('next-transpile-modules')(transpileModules)
 
-const { API_URL = 'http://localhost:4444/graphql' } = process.env
+const { API_URL = 'http://localhost:4444' } = process.env
+const graphqlPath = '/api/graphql'
 
 module.exports = withTreat(
   withTM({
     cssModules: false,
     serverRuntimeConfig: {
       // Will only be available on the server side
-      graphqlEndpoint: `${API_URL}/graphql`,
+      // Requests made by the server are internal request made directly to the api hostname
+      graphqlEndpoint: `${API_URL}${graphqlPath}`,
     },
     publicRuntimeConfig: {
       // Will be available on both server and client
-      graphqlEndpoint: '/api/graphql',
+      graphqlEndpoint: graphqlPath,
     },
   }),
 )
