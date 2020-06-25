@@ -140,15 +140,27 @@ export const variants: Variants = {
 }
 
 export const links = style({})
+
 globalStyle(`${links} a`, {
   color: theme.color.blue400,
-  textDecoration: 'underline',
-  textUnderlinePosition: 'under',
-  transition: 'color .2s',
+  transition: 'color .2s, box-shadow .2s',
+  textDecoration: 'none',
+  boxShadow: `inset 0 -1px 0 0 ${theme.color.blue400}`,
 })
+
 globalStyle(`${links} a:hover`, {
   color: theme.color.blueberry400,
-  textDecoration: 'underline',
+  boxShadow: `inset 0 -2px 0 0 ${theme.color.blueberry400}`,
+  textDecoration: 'none',
+})
+
+globalStyle(`${links} a svg path`, {
+  transition: 'fill .2s, box-shadow .2s',
+  fill: theme.color.blue400,
+})
+
+globalStyle(`${links} a:hover svg path`, {
+  fill: theme.color.blueberry400,
 })
 
 export const colors = styleMap(mapToStyleProperty(theme.color, 'color'))

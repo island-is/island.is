@@ -49,20 +49,18 @@ export const Hyperlink: FC<HyperlinkProps> = ({
   }
 
   return (
-    <Link {...linkProps}>
-      <a className={styles.link} {...anchorProps}>
-        <Inline space={1} alignY="center">
-          <Typography variant="p" as="span" color="blue400">
-            {children}
-          </Typography>
-          {isExternalLink ? (
-            <Box display="flex" alignItems="center" role="presentation">
-              <Icon type="external" width={14} color="blue400" />
-            </Box>
-          ) : null}
-        </Inline>
-      </a>
-    </Link>
+    <Typography variant="p" as="span" links>
+      <Link {...linkProps}>
+        <a className={styles.link} {...anchorProps}>
+          {children}
+          {isExternalLink && (
+            <span className={styles.icon}>
+              <Icon type="external" width={14} />
+            </span>
+          )}
+        </a>
+      </Link>
+    </Typography>
   )
 }
 
