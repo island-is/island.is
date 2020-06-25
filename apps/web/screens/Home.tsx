@@ -143,7 +143,6 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
 }
 
 Home.getInitialProps = async ({ apolloClient, locale }) => {
-  // TODO: Group queries into one call
   const [
     {
       data: { categories },

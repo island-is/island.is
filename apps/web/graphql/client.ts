@@ -1,9 +1,8 @@
 import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
 import getConfig from 'next/config'
-import { createHttpLink } from 'apollo-link-http'
+import { BatchHttpLink } from 'apollo-link-batch-http'
 import fetch from 'isomorphic-unfetch'
-import { BaseContext } from 'next/dist/next-server/lib/utils'
 
 const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 
@@ -18,7 +17,7 @@ if (!isBrowser) {
 }
 
 function create(initialState?: any) {
-  const httpLink = createHttpLink({
+  const httpLink = new BatchHttpLink({
     uri:
       serverRuntimeConfig.graphqlEndpoint ||
       publicRuntimeConfig.graphqlEndpoint,
