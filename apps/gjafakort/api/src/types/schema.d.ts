@@ -184,11 +184,27 @@ export type MutationUpdateCompanyApplicationArgs = {
   input: UpdateCompanyApplicationInput
 }
 
+export type Greeting = {
+  __typename?: 'Greeting'
+  greetingType?: Maybe<Scalars['Int']>
+  text?: Maybe<Scalars['String']>
+  contentUrl?: Maybe<Scalars['String']>
+}
+
+export type GiftDetail = {
+  __typename?: 'GiftDetail'
+  packageId: Scalars['ID']
+  from?: Maybe<Scalars['String']>
+  greeting?: Maybe<Greeting>
+  personalMessage?: Maybe<Scalars['String']>
+}
+
 export type GiftCard = {
   __typename?: 'GiftCard'
-  giftCardId: Scalars['Int']
+  giftCardId: Scalars['ID']
   amount: Scalars['Int']
   applicationId?: Maybe<Scalars['String']>
+  giftDetail?: Maybe<GiftDetail>
 }
 
 export type GiftCardCode = {
@@ -348,6 +364,9 @@ export type ResolversTypes = {
   RejectCompanyApplication: ResolverTypeWrapper<RejectCompanyApplication>
   UpdateCompanyApplication: ResolverTypeWrapper<UpdateCompanyApplication>
   Mutation: ResolverTypeWrapper<{}>
+  Greeting: ResolverTypeWrapper<Greeting>
+  GiftDetail: ResolverTypeWrapper<GiftDetail>
+  ID: ResolverTypeWrapper<Scalars['ID']>
   GiftCard: ResolverTypeWrapper<GiftCard>
   GiftCardCode: ResolverTypeWrapper<GiftCardCode>
   UserApplication: ResolverTypeWrapper<UserApplication>
@@ -375,6 +394,9 @@ export type ResolversParentTypes = {
   RejectCompanyApplication: RejectCompanyApplication
   UpdateCompanyApplication: UpdateCompanyApplication
   Mutation: {}
+  Greeting: Greeting
+  GiftDetail: GiftDetail
+  ID: Scalars['ID']
   GiftCard: GiftCard
   GiftCardCode: GiftCardCode
   UserApplication: UserApplication
@@ -645,14 +667,52 @@ export type MutationResolvers<
   >
 }
 
+export type GreetingResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Greeting'] = ResolversParentTypes['Greeting']
+> = {
+  greetingType?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
+  text?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  contentUrl?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type GiftDetailResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['GiftDetail'] = ResolversParentTypes['GiftDetail']
+> = {
+  packageId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  from?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  greeting?: Resolver<
+    Maybe<ResolversTypes['Greeting']>,
+    ParentType,
+    ContextType
+  >
+  personalMessage?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type GiftCardResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['GiftCard'] = ResolversParentTypes['GiftCard']
 > = {
-  giftCardId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  giftCardId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   applicationId?: Resolver<
     Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  giftDetail?: Resolver<
+    Maybe<ResolversTypes['GiftDetail']>,
     ParentType,
     ContextType
   >
@@ -708,6 +768,8 @@ export type Resolvers<ContextType = Context> = {
   RejectCompanyApplication?: RejectCompanyApplicationResolvers<ContextType>
   UpdateCompanyApplication?: UpdateCompanyApplicationResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
+  Greeting?: GreetingResolvers<ContextType>
+  GiftDetail?: GiftDetailResolvers<ContextType>
   GiftCard?: GiftCardResolvers<ContextType>
   GiftCardCode?: GiftCardCodeResolvers<ContextType>
   UserApplication?: UserApplicationResolvers<ContextType>

@@ -177,11 +177,27 @@ export type MutationUpdateCompanyApplicationArgs = {
   input: UpdateCompanyApplicationInput
 }
 
+export type Greeting = {
+  __typename?: 'Greeting'
+  greetingType?: Maybe<Scalars['Int']>
+  text?: Maybe<Scalars['String']>
+  contentUrl?: Maybe<Scalars['String']>
+}
+
+export type GiftDetail = {
+  __typename?: 'GiftDetail'
+  packageId: Scalars['ID']
+  from?: Maybe<Scalars['String']>
+  greeting?: Maybe<Greeting>
+  personalMessage?: Maybe<Scalars['String']>
+}
+
 export type GiftCard = {
   __typename?: 'GiftCard'
-  giftCardId: Scalars['Int']
+  giftCardId: Scalars['ID']
   amount: Scalars['Int']
   applicationId?: Maybe<Scalars['String']>
+  giftDetail?: Maybe<GiftDetail>
 }
 
 export type GiftCardCode = {
@@ -506,7 +522,24 @@ export type GiftCardsQueryQuery = { __typename?: 'Query' } & {
   giftCards?: Maybe<
     Array<
       Maybe<
-        { __typename?: 'GiftCard' } & Pick<GiftCard, 'giftCardId' | 'amount'>
+        { __typename?: 'GiftCard' } & Pick<
+          GiftCard,
+          'giftCardId' | 'amount'
+        > & {
+            giftDetail?: Maybe<
+              { __typename?: 'GiftDetail' } & Pick<
+                GiftDetail,
+                'packageId' | 'from' | 'personalMessage'
+              > & {
+                  greeting?: Maybe<
+                    { __typename?: 'Greeting' } & Pick<
+                      Greeting,
+                      'greetingType' | 'text' | 'contentUrl'
+                    >
+                  >
+                }
+            >
+          }
       >
     >
   >
@@ -1383,6 +1416,16 @@ export const GiftCardsQueryDocument = gql`
     giftCards {
       giftCardId
       amount
+      giftDetail {
+        packageId
+        from
+        personalMessage
+        greeting {
+          greetingType
+          text
+          contentUrl
+        }
+      }
     }
   }
 `

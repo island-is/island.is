@@ -27,6 +27,16 @@ export const GiftCardsQuery = gql`
     giftCards {
       giftCardId
       amount
+      giftDetail {
+        packageId
+        from
+        personalMessage
+        greeting {
+          greetingType
+          text
+          contentUrl
+        }
+      }
     }
   }
 `
