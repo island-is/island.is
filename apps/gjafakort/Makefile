@@ -8,7 +8,7 @@ db:
 	docker-compose up -d db ${ARGS}
 
 redis:
-	docker-compose up -d redis ${ARGS}
+	docker-compose up -d redis-cluster ${ARGS}
 
 localstack:
 	docker-compose up -d localstack ${ARGS}
