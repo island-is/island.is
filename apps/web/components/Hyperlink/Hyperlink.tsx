@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, ReactElement } from 'react'
 import Link from 'next/link'
-import { Icon, Typography, Inline, Box } from '@island.is/island-ui/core'
+import { Icon, Typography, TypographyProps } from '@island.is/island-ui/core'
 import useRouteNames, { pathTypes } from '../../i18n/useRouteNames'
 import { Locale } from '@island.is/web/i18n/I18n'
 
@@ -12,6 +12,8 @@ interface HyperlinkProps {
   slug?: string
   pathType?: pathTypes
   locale?: Locale
+  variant?: TypographyProps['variant']
+  as?: TypographyProps['as']
   children: ReactElement
 }
 
@@ -22,6 +24,8 @@ export const Hyperlink: FC<HyperlinkProps> = ({
   slug,
   pathType,
   locale,
+  variant = 'p',
+  as = 'span',
   children,
 }) => {
   const { makePath } = useRouteNames(locale)
@@ -48,8 +52,13 @@ export const Hyperlink: FC<HyperlinkProps> = ({
     return children
   }
 
+  const props = {
+    variant,
+    as,
+  }
+
   return (
-    <Typography variant="p" as="span" links>
+    <Typography links {...props}>
       <Link {...linkProps}>
         <a className={styles.link} {...anchorProps}>
           {children}

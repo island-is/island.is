@@ -29,6 +29,7 @@ export * from './lib/LinkCard/LinkCard'
 export * from './lib/Tag/Tag'
 export * from './lib/AsyncSelect/AsyncSelect'
 export * from './lib/SkeletonLoader/SkeletonLoader'
+export * from './lib/Blockquote/Blockquote'
 
 // Layout
 export * from './lib/Box/Box'
