@@ -12,7 +12,7 @@ import { Resolvers, GraphQLContext, DataSource } from '../types'
 import { ApplicationAPI, FerdalagAPI, RskAPI, YayAPI } from '../services'
 import rootTypeDefs from './typeDefs'
 
-const { redis } = environment
+const { production, redis } = environment
 
 const createServer = async (
   resolvers: Resolvers[],
@@ -35,6 +35,7 @@ const createServer = async (
     introspection: enablePlayground,
     cache: createApolloClusterCache({
       name: 'gjafakort_api_service_cache',
+      ssl: production,
       nodes: [
         {
           host: redis.url,
