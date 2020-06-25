@@ -9,6 +9,7 @@ import {
   Stack,
   Typography,
   Breadcrumbs,
+  Button,
 } from '@island.is/island-ui/core'
 
 import { useI18n } from '../../i18n'
@@ -18,7 +19,7 @@ import { Layout } from '../../components'
 
 function Home() {
   const {
-    t: { home: t, routes },
+    t: { routes, home: t },
   } = useI18n()
 
   return (
@@ -77,7 +78,14 @@ function Home() {
       }
       right={
         <Hidden below="lg">
-          <GiftCTA />
+          <Stack space={3}>
+            <GiftCTA />
+            <Link href={routes.privacyPolicy}>
+              <Button variant="text" icon="arrowRight">
+                {t.privacyPolicyButton}
+              </Button>
+            </Link>
+          </Stack>
         </Hidden>
       }
     />

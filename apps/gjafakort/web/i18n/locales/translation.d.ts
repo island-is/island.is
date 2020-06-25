@@ -215,6 +215,7 @@ export interface Home {
   title: string
   intro: string
   description: string[]
+  privacyPolicyButton: string
   FAQ: HomeFAQ
   cta: HomeCta
 }
@@ -764,6 +765,7 @@ const typeMap: any = {
       { json: 'title', js: 'title', typ: '' },
       { json: 'intro', js: 'intro', typ: '' },
       { json: 'description', js: 'description', typ: a('') },
+      { json: 'privacyPolicyButton', js: 'privacyPolicyButton', typ: '' },
       { json: 'FAQ', js: 'FAQ', typ: r('HomeFAQ') },
       { json: 'cta', js: 'cta', typ: r('HomeCta') },
     ],

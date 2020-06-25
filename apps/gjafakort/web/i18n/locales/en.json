@@ -127,15 +127,10 @@
       "Allir einstaklingar, með lögheimili á Íslandi, fæddir 2002 og fyrr fá Ferðagjöf að andvirði 5.000 kr. Gjöfin er liður í því að styðja við bakið á íslenskri ferðaþjónustu í kjölfar heimsfaraldurs kórónuveiru og efla þannig íslenska ferðaþjónustu sem og hvetja landsmenn til að eiga góðar stundir á ferðalagi víðs vegar um landið. Nánari upplýsingar má finna á <a href='https://ferdalag.is' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>.",
       "Þegar gjöf er sótt verður til Ferðagjöf sem er tengd við símanúmer eiganda."
     ],
+    "privacyPolicyButton": "Persónuverndarstefna",
     "FAQ": {
       "title": "Algengar spurningar",
       "items": [
-        {
-          "label": "Hvenær get ég nálgast ferðagjöfina?",
-          "contents": [
-            "Áætlað er að ferðagjöfin verði aðgengileg um miðjan júní, verði búið að samþykkja frumvarp til laga þess efnis á Alþingi."
-          ]
-        },
         {
           "label": "Hverjir fá Ferðagjöf?",
           "contents": [
@@ -150,9 +145,15 @@
           ]
         },
         {
+          "label": "Hvað ef ég á ekki snjalltæki?",
+          "contents": [
+            "Ferðagjöfina má nálgast á Ísland.is í tölvu, til að nýta Ferðagjöfina þarf annað hvort að panta þjónustu á vef hjá þeim fyrirtæki sem bjóða upp á vefbókanir, hringja í ferðaþjónustufyrirtæki og lesa upp númer strikamerkis eða fá að innskrá sig á Ísland.is hjá ferðaþjónustufyrirtæki og framkalla strikamerki í tölvu á staðnum. Ekki er ráðlagt að prenta út strikamerkið þar sem hvert strikamerki er aðeins virkt í 15 mínútur."
+          ]
+        },
+        {
           "label": "Hvar get ég notað Ferðagjöfina?",
           "contents": [
-            "Nýta má Ferðagjöf hjá skilgreindum fyrirtækjum innan ferðaþjónustunnar sem hafa skráð sig til þátttöku. Sjá má yfirlit yfir fyrirtæki á <a href='https://ferdalag.is' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>."
+            "Nýta má Ferðagjöf hjá skilgreindum fyrirtækjum innan ferðaþjónustunnar sem hafa skráð sig til þátttöku. Sjá má yfirlit yfir fyrirtæki á <a href='https://www.ferdalag.is/is/fyrirtaeki-sem-taka-a-moti-ferdagjof-thjonustuflokkar' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>."
           ]
         },
         {

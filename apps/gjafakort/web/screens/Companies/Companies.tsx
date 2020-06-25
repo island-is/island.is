@@ -42,7 +42,7 @@ function Companies() {
                 {t.title}
               </Typography>
               <Typography variant="intro">{t.intro}</Typography>
-              <Typography variant="p">{t.description}</Typography>
+              <Typography variant="p">{HtmlParser(t.description)}</Typography>
             </Stack>
           </Box>
           <Box marginBottom={[3, 3, 3, 12]}>
@@ -60,7 +60,9 @@ function Companies() {
                   </Bullet>
                 ))}
               </BulletList>
-              <Typography variant="p">{t.notes.disclaimer}</Typography>
+              <Typography variant="p">
+                {HtmlParser(t.notes.disclaimer)}
+              </Typography>
             </Stack>
           </Box>
           <Hidden above="md">
