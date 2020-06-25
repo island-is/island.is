@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import Link from 'next/link'
 import {
   Logo,
   Columns,
@@ -7,8 +8,9 @@ import {
   Inline,
   Box,
   Button,
+  Hidden,
 } from '@island.is/island-ui/core'
-import Link from 'next/link'
+import { Locale } from '@island.is/web/i18n/I18n'
 import { useI18n } from '@island.is/web/i18n'
 import { SearchInput } from '../'
 
@@ -16,12 +18,42 @@ interface HeaderProps {
   showSearchInHeader?: boolean
 }
 
+const LanguageToggler: FC<{
+  activeLocale?: Locale
+  hideWhenMobile?: boolean
+}> = ({ activeLocale, hideWhenMobile }) => {
+  const languageButtonText =
+    activeLocale === 'is' ? (
+      <span>
+        <Hidden above="md">EN</Hidden>
+        <Hidden below="lg">English</Hidden>
+      </span>
+    ) : (
+      <span>
+        <Hidden above="md">IS</Hidden>
+        <Hidden below="lg">Íslenska</Hidden>
+      </span>
+    )
+
+  const languageButtonLink = activeLocale === 'en' ? '/' : '/en'
+
+  const LanguageButton = (
+    <Link href={languageButtonLink}>
+      <Button variant="menu">{languageButtonText}</Button>
+    </Link>
+  )
+
+  return !hideWhenMobile ? (
+    LanguageButton
+  ) : (
+    <Hidden below="md">{LanguageButton}</Hidden>
+  )
+}
+
 export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const { activeLocale } = useI18n()
 
-  const languageButtonText = activeLocale === 'is' ? 'English' : 'Íslenska'
-  const languageButtonLink = activeLocale === 'en' ? '/' : '/en'
-
+  const locale = activeLocale as Locale
   const english = activeLocale === 'en'
 
   return (
@@ -33,7 +65,12 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
               <Link href={english ? '/en' : '/'}>
                 {/* eslint-disable-next-line */}
                 <a>
-                  <Logo />
+                  <Hidden above="md">
+                    <Logo width={40} iconOnly />
+                  </Hidden>
+                  <Hidden below="lg">
+                    <Logo width={160} />
+                  </Hidden>
                 </a>
               </Link>
             </Column>
@@ -45,9 +82,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                 width="full"
               >
                 <Inline space={2}>
-                  <Link href={languageButtonLink}>
-                    <Button variant="menu">{languageButtonText}</Button>
-                  </Link>
+                  <LanguageToggler hideWhenMobile activeLocale={locale} />
                   <Link href="https://minarsidur.island.is/" passHref>
                     <Button variant="menu" leftIcon="user">
                       Innskráning
@@ -56,7 +91,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                   {showSearchInHeader && (
                     <SearchInput
                       size="medium"
-                      activeLocale={activeLocale}
+                      activeLocale={locale}
                       autocomplete={false}
                     />
                   )}
