@@ -9,16 +9,28 @@ interface ClusterNode {
 
 type Options = {
   name: string
-  nodes: ClusterNode[]
+  nodes: string[]
   ssl: boolean
 }
 
+const DEFAULT_PORT = 6379
+
 export const createApolloClusterCache = (options: Options) => {
+  const nodes: ClusterNode[] = options.nodes
+    .filter((url) => url)
+    .map((url) => {
+      const [host, port] = url.split(':')
+      return {
+        host,
+        port: parseInt(port, 10) || DEFAULT_PORT,
+      }
+    })
   const redisOptions = {}
   if (options.ssl) {
     redisOptions['tls'] = {}
   }
-  return new RedisClusterCache(options.nodes, {
+  logger.info(`Making caching connection with nodes: `, nodes)
+  return new RedisClusterCache(nodes, {
     ...options,
     keyPrefix: `${options.name}:`,
     connectTimeout: 5000,

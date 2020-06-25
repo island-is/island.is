@@ -21,8 +21,7 @@ export default {
     ttl: process.env.CACHE_TIME_TO_LIVE,
   },
   redis: {
-    url: process.env.REDIS_URL,
-    port: process.env.REDIS_PORT,
+    urls: [process.env.REDIS_URL_NODE_01],
   },
   yay: {
     url: process.env.YAY_URL,

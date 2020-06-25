@@ -6,8 +6,7 @@ gjafakort-api:
     auth_audience: 'gjafakort.dev01.devland.is'
     cache_time_to_live: '300'
     ferdalag_url: 'https://island-dev-dot-itb-gagnagrunnur-dev.appspot.com'
-    redis_url: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com'
-    redis_port: 6379
+    redis_url_node_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
     rsk_url: 'https://thjonusta-s.rsk.is/api'
     saml_entry_point: 'https://innskraning.island.is/?id=ferdagjof.dev'
     sentry_dsn: 'https://91d3faa6cc0545a9971ea989eaa48fb9@o406638.ingest.sentry.io/5274533'

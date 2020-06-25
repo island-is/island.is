@@ -23,8 +23,14 @@ export default {
     ttl: TEN_MINUTES,
   },
   redis: {
-    url: 'localhost',
-    port: 7000,
+    urls: [
+      'localhost:7000',
+      'localhost:7001',
+      'localhost:7002',
+      'localhost:7003',
+      'localhost:7004',
+      'localhost:7005',
+    ],
   },
   yay: {
     url: 'https://dev-serviceapi.yay.is',
