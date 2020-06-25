@@ -77,10 +77,6 @@ const useHeadingLinks = ({
   }, [getElements])
 
   useEffect(() => {
-    updateOffsets()
-  }, [updateOffsets])
-
-  useEffect(() => {
     window.addEventListener('resize', updateOffsets)
     updateOffsets()
     return () => {
