@@ -12,6 +12,16 @@ interface GiftCard {
   amount: number
   statusId: number
   indentifier: string
+  giftDetail: {
+    packageId: string
+    from: string
+    greeting: {
+      greetingType: number
+      text: string
+      contentUrl: string
+    }
+    personalMessage: string
+  }
 }
 
 interface GiftCardCode {

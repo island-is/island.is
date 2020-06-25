@@ -131,10 +131,9 @@ class UserResolver {
         (giftCard) => giftCard.identifier === application.id,
       )
     }
-    return giftCards.map((giftCard) => ({
-      giftCardId: giftCard.giftCardId,
-      amount: giftCard.amount,
-      applicationId: giftCard.identifier,
+    return giftCards.map(({ identifier, ...giftCard }) => ({
+      ...giftCard,
+      applicationId: identifier,
     }))
   }
 
