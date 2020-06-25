@@ -10,14 +10,22 @@ interface ClusterNode {
 type Options = {
   name: string
   nodes: ClusterNode[]
+  ssl: boolean
 }
 
-export const createApolloClusterCache = (options: Options) =>
-  new RedisClusterCache(options.nodes, {
+export const createApolloClusterCache = (options: Options) => {
+  const redisOptions = {}
+  if (options.ssl) {
+    redisOptions['tls'] = {}
+  }
+  return new RedisClusterCache(options.nodes, {
     ...options,
     keyPrefix: `${options.name}:`,
     connectTimeout: 5000,
     socket_keepalive: false,
+    // https://www.npmjs.com/package/ioredis#special-note-aws-elasticache-clusters-with-tls
+    dnsLookup: (address, callback) => callback(null, address),
+    redisOptions,
     reconnectOnError: (err) => {
       logger.error(`Reconnect on error: ${err}`)
       const targetError = 'READONLY'
@@ -35,3 +43,4 @@ export const createApolloClusterCache = (options: Options) =>
       return delay
     },
   })
+}
