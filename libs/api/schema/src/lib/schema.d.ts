@@ -59,14 +59,21 @@ export type Mutation = {
   root?: Maybe<Scalars['String']>
 }
 
+export type Taxonomy = {
+  __typename?: 'Taxonomy'
+  title?: Maybe<Scalars['String']>
+  slug?: Maybe<Scalars['String']>
+  description: Scalars['String']
+}
+
 export type Article = {
   __typename?: 'Article'
   id: Scalars['String']
   slug: Scalars['String']
   title: Scalars['String']
   content?: Maybe<Scalars['String']>
-  group?: Maybe<Scalars['String']>
-  category?: Maybe<Scalars['String']>
+  group?: Maybe<Taxonomy>
+  category: Taxonomy
 }
 
 export type GetArticleInput = {
@@ -76,8 +83,8 @@ export type GetArticleInput = {
 
 export type Namespace = {
   __typename?: 'Namespace'
-  namespace: Scalars['String']
-  fields: Scalars['String']
+  namespace?: Maybe<Scalars['String']>
+  fields?: Maybe<Scalars['String']>
 }
 
 export type GetNamespaceInput = {
@@ -291,6 +298,7 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>
   String: ResolverTypeWrapper<Scalars['String']>
   Mutation: ResolverTypeWrapper<{}>
+  Taxonomy: ResolverTypeWrapper<Taxonomy>
   Article: ResolverTypeWrapper<Article>
   GetArticleInput: GetArticleInput
   Namespace: ResolverTypeWrapper<Namespace>
@@ -318,6 +326,7 @@ export type ResolversParentTypes = {
   Query: {}
   String: Scalars['String']
   Mutation: {}
+  Taxonomy: Taxonomy
   Article: Article
   GetArticleInput: GetArticleInput
   Namespace: Namespace
@@ -396,6 +405,16 @@ export type MutationResolvers<
   root?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
 }
 
+export type TaxonomyResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Taxonomy'] = ResolversParentTypes['Taxonomy']
+> = {
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type ArticleResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']
@@ -404,8 +423,8 @@ export type ArticleResolvers<
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  group?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  category?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  group?: Resolver<Maybe<ResolversTypes['Taxonomy']>, ParentType, ContextType>
+  category?: Resolver<ResolversTypes['Taxonomy'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -413,8 +432,8 @@ export type NamespaceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Namespace'] = ResolversParentTypes['Namespace']
 > = {
-  namespace?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  fields?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  namespace?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  fields?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -510,6 +529,7 @@ export type HelloWorldResolvers<
 export type Resolvers<ContextType = Context> = {
   Query?: QueryResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
+  Taxonomy?: TaxonomyResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
   Namespace?: NamespaceResolvers<ContextType>
   ContentItem?: ContentItemResolvers<ContextType>

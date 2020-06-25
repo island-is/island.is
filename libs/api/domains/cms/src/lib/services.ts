@@ -1,50 +1,59 @@
-import { EntryCollection } from 'contentful'
 import { getLocalizedEntries } from './contentful'
+import { logger } from '@island.is/logging'
+import { Entry } from 'contentful'
+import { Article } from '@island.is/api/schema'
 
-interface Article {
+interface Taxonomy {
+  title: string
+  slug: string
+  description: string
+}
+
+interface CmsArticle {
   id: string
   slug: string
   title: string
   content: string
-  group: string
-  category: string
+  group: Entry<Taxonomy>
+  category: Entry<Taxonomy>
 }
-
-export type RawArticle = EntryCollection<Article>
-
 export const getArticle = async (
   slug: string,
   lang: string,
 ): Promise<Article> => {
-  let result: RawArticle | null = null
+  const result = await getLocalizedEntries<CmsArticle>(lang, {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    content_type: 'article',
+    'fields.slug': slug,
+    include: 10,
+  }).catch((error) => {
+    logger.error(error)
+    throw new Error('Failed to resolve request in getArticle')
+  })
 
-  try {
-    result = await getLocalizedEntries(lang, {
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      content_type: 'article',
-      'fields.slug': slug,
-      include: 10,
-    })
-  } catch (e) {
-    return null
+  if (!result.total) {
+    throw new Error(`Article ${slug} not found`)
   }
 
-  if (!result.items.length) {
-    return null
-  }
-
-  const article = result.items[0]
-
-  const { id } = article.sys
-  const { title, content, group, category } = article.fields
+  const [
+    {
+      sys: { id },
+      fields: {
+        title,
+        content,
+        group: { fields: groupFields } = { fields: null },
+        category: { fields: categoryFields },
+      },
+    },
+  ] = result.items
 
   return {
     id,
     slug,
     title,
-    content: JSON.stringify(content) || '',
-    group: JSON.stringify(group) || '',
-    category: JSON.stringify(category) || '',
+    group: groupFields,
+    category: categoryFields,
+    content: JSON.stringify(content),
   }
 }
 
@@ -53,32 +62,31 @@ interface Namespace {
   fields: string
 }
 
-export type RawNamespace = EntryCollection<Namespace>
-
 export const getNamespace = async (
   namespace: string,
   lang: string,
 ): Promise<Namespace> => {
-  let result: RawNamespace | null = null
+  const result = await getLocalizedEntries<Namespace>(lang, {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    content_type: 'uiConfiguration',
+    'fields.namespace': namespace,
+  }).catch((error) => {
+    logger.error(error)
+    throw new Error('Failed to resolve request in getNamespace')
+  })
 
-  try {
-    result = await getLocalizedEntries(lang, {
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      content_type: 'uiConfiguration',
-      'fields.namespace': namespace,
-    })
-  } catch (e) {
-    return null
+  if (!result.total) {
+    throw new Error(`${namespace} not found in namespaces`)
   }
 
-  if (!result.items.length) {
-    return null
-  }
-
-  const { fields } = result?.items[0]
+  const [
+    {
+      fields: { fields },
+    },
+  ] = result.items
 
   return {
     namespace,
-    fields: JSON.stringify(fields) || '',
+    fields: JSON.stringify(fields),
   }
 }

@@ -7,8 +7,13 @@ export const GET_ARTICLE_QUERY = gql`
       slug
       title
       content
-      group
-      category
+      group {
+        title
+      }
+      category {
+        title
+        slug
+      }
     }
   }
 `

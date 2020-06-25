@@ -226,8 +226,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       })
       .then((variables) => {
         // map data here to reduce data processing in component
-        const namespaceObject = JSON.parse(variables.data.getNamespace.fields)
-        return namespaceObject.fields
+        return JSON.parse(variables.data.getNamespace.fields)
       }),
   ])
 

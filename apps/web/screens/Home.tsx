@@ -143,6 +143,7 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
 }
 
 Home.getInitialProps = async ({ apolloClient, locale }) => {
+  // TODO: Group queries into one call
   const [
     {
       data: { categories },
@@ -170,10 +171,11 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       .then((variables) => {
         // map data here to reduce data processing in component
         const namespaceObject = JSON.parse(variables.data.getNamespace.fields)
+
         // featuredArticles is a csv in contentful seperated by : where the first value is the title and the second is the url
         return {
-          ...namespaceObject.fields,
-          featuredArticles: namespaceObject.fields['featuredArticles'].map(
+          ...namespaceObject,
+          featuredArticles: namespaceObject['featuredArticles'].map(
             (featuredArticle) => {
               const [title = '', url = ''] = featuredArticle.split(':')
               return { title, url }
