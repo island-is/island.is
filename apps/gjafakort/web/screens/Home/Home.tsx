@@ -9,6 +9,7 @@ import {
   Stack,
   Typography,
   Breadcrumbs,
+  Button,
 } from '@island.is/island-ui/core'
 
 import { useI18n } from '../../i18n'
@@ -18,7 +19,7 @@ import { Layout } from '../../components'
 
 function Home() {
   const {
-    t: { home: t, routes },
+    t: { routes, ...t },
   } = useI18n()
 
   return (
@@ -30,16 +31,16 @@ function Home() {
               <Link href={routes.home}>
                 <a>Ísland.is</a>
               </Link>
-              <span>{t.name}</span>
+              <span>{t.home.name}</span>
             </Breadcrumbs>
           </Box>
           <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
             <Stack space={3}>
               <Typography variant="h1" as="h1">
-                {t.title}
+                {t.home.title}
               </Typography>
-              <Typography variant="intro">{t.intro}</Typography>
-              {t.description.map((item, index) => (
+              <Typography variant="intro">{t.home.intro}</Typography>
+              {t.home.description.map((item, index) => (
                 <Typography variant="p" links key={index}>
                   {HtmlParser(item)}
                 </Typography>
@@ -53,11 +54,11 @@ function Home() {
           </Hidden>
           <Box marginBottom={3}>
             <Typography variant="h2" as="h2">
-              {t.FAQ.title}
+              {t.home.FAQ.title}
             </Typography>
           </Box>
           <Accordion dividerOnTop={false}>
-            {t.FAQ.items.map((accordionItem, index) => (
+            {t.home.FAQ.items.map((accordionItem, index) => (
               <AccordionItem
                 key={index}
                 label={accordionItem.label}
@@ -77,7 +78,14 @@ function Home() {
       }
       right={
         <Hidden below="lg">
-          <GiftCTA />
+          <Stack space={3}>
+            <GiftCTA />
+            <Link href={routes.privacyPolicy}>
+              <Button variant="text" icon="arrowRight">
+                {t.user.privacyPolicyButton}
+              </Button>
+            </Link>
+          </Stack>
         </Hidden>
       }
     />

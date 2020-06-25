@@ -22,7 +22,7 @@
     "name": "Ferðaþjónustufyrirtæki",
     "title": "Ferðaþjónustufyrirtæki",
     "intro": "Ferðaþjónustufyrirtæki eru hvött til að taka þátt í Ferðagjöfinni og taka á móti landsmönnum á ferðalagi innanlands.",
-    "description": "Skráning fyrirtækja í Ferðagjöfina fer fram hér á Ísland.is. Prókúruhafi fyrirtækis þarf sjálfur að skrá þátttöku þess. Innskráning er gerð með einstaklings skilríkjum prókúruhafa. Fyrirtæki fá sjálfvirka staðfestingu á skráningu og aðgang að vefsvæði þar sem hægt er að fylgjast með hversu margir hafa nýtt Ferðagjöfina hjá viðkomandi fyrirtæki.",
+    "description": "Skráning fyrirtækja í Ferðagjöfina fer fram hér á Ísland.is. Prókúruhafi fyrirtækis þarf sjálfur að skrá þátttöku þess. <strong>Innskráning er gerð með einstaklings skilríkjum prókúruhafa</strong>. Fyrirtæki fá sjálfvirka staðfestingu á skráningu og aðgang að vefsvæði þar sem hægt er að fylgjast með hversu margir hafa nýtt Ferðagjöfina hjá viðkomandi fyrirtæki.",
     "notes": {
       "label": "Fyrirtæki hafa þrjár leiðir til að móttaka Ferðagjöf:",
       "items": [
@@ -30,7 +30,7 @@
         "Slá inn númer gjafabréfs í vafra",
         "Beintenging við bókunarkerfi"
       ],
-      "disclaimer": "Athugið mikilvægt er að skanna eða slá inn strikamerkið strax við notkun því hvert strikamerki hefur aðeins nokkurra mínútna líftíma."
+      "disclaimer": "<strong>Athugið</strong> mikilvægt er að skanna eða slá inn strikamerkið strax við notkun því hvert strikamerki hefur aðeins nokkurra mínútna líftíma."
     },
     "FAQ": {
       "title": "Algengar spurningar",
@@ -76,10 +76,10 @@
         {
           "label": "Hvernig er uppgjörsferlið á Ferðagjöfinni?",
           "contents": [
-            "Umsýsla með uppgjöri á Ferðagjöfinni.",
+            "Fjársýsla Ríkisins sér um að greiðslur til fyrirtækja í upphafi hvers mánaðar.",
             [
-              "Ferðaþjónustufyrirtæki fá mánaðarlega sendar söluskýrslu um nýtingu á Ferðagjöfinni",
-              "Ferðaþjónustufyrirtæki frá greitt mánaðarlega skv. söluskýrslu"
+              "Ferðaþjónustufyrirtæki fá mánaðarlega sendar söluskýrslu um nýtingu á Ferðagjöfinni.",
+              "Ferðaþjónustufyrirtæki frá greitt inn á valinn reikning skv. söluskýrslu."
             ]
           ]
         },
@@ -131,12 +131,6 @@
       "title": "Algengar spurningar",
       "items": [
         {
-          "label": "Hvenær get ég nálgast ferðagjöfina?",
-          "contents": [
-            "Áætlað er að ferðagjöfin verði aðgengileg um miðjan júní, verði búið að samþykkja frumvarp til laga þess efnis á Alþingi."
-          ]
-        },
-        {
           "label": "Hverjir fá Ferðagjöf?",
           "contents": [
             "Einstaklingar með lögheimili á Ísland, íslenska kennitölu og eru fæddir árið 2002 eða fyrr fá Ferðagjöf."
@@ -150,9 +144,15 @@
           ]
         },
         {
+          "label": "Hvað ef ég á ekki snjalltæki?",
+          "contents": [
+            "Ferðagjöfina má nálgast á Ísland.is í tölvu, til að nýta Ferðagjöfina þarf annað hvort að panta þjónustu á vef hjá þeim fyrirtæki sem bjóða upp á vefbókanir, hringja í ferðaþjónustufyrirtæki og lesa upp númer strikamerkis eða fá að innskrá sig á Ísland.is hjá ferðaþjónustufyrirtæki og framkalla strikamerki í tölvu á staðnum. Ekki er ráðlagt að prenta út strikamerkið þar sem hvert strikamerki er aðeins virkt í 15 mínútur."
+          ]
+        },
+        {
           "label": "Hvar get ég notað Ferðagjöfina?",
           "contents": [
-            "Nýta má Ferðagjöf hjá skilgreindum fyrirtækjum innan ferðaþjónustunnar sem hafa skráð sig til þátttöku. Sjá má yfirlit yfir fyrirtæki á <a href='https://ferdalag.is' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>."
+            "Nýta má Ferðagjöf hjá skilgreindum fyrirtækjum innan ferðaþjónustunnar sem hafa skráð sig til þátttöku. Sjá má yfirlit yfir fyrirtæki á <a href='https://www.ferdalag.is/is/fyrirtaeki-sem-taka-a-moti-ferdagjof-thjonustuflokkar' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>."
           ]
         },
         {
