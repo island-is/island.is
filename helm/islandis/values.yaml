@@ -30,3 +30,7 @@ search-indexer-service:
 
   initEnvironment:
     migration_script: /webapp/bin/migrate.sh
+  serviceAccount:
+    create: true
+    name: 'search-indexer'
+

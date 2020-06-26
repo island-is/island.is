@@ -3,4 +3,9 @@
 
 web:
   env:
-    API_URL: 'http://web-api/api'
+    API_URL: "http://web-api/api"
+
+search-indexer-service:
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: "arn:aws:iam::013313053092:role/search-indexer"
