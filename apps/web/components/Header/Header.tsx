@@ -89,12 +89,17 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                     </Button>
                   </Link>
                   {showSearchInHeader && (
-                    <SearchInput
-                      size="medium"
-                      activeLocale={locale}
-                      autocomplete={false}
-                    />
+                    <Hidden below="lg">
+                      <SearchInput
+                        size="medium"
+                        activeLocale={locale}
+                        autocomplete={false}
+                      />
+                    </Hidden>
                   )}
+                  <Hidden above="md">
+                    <Button variant="menu" icon="search" />
+                  </Hidden>
                 </Inline>
               </Box>
             </Column>
