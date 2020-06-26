@@ -140,9 +140,8 @@ function Barcode({ shouldPoll }: PropTypes) {
             <Typography variant="h3">{t.noGiftCards}</Typography>
           )}
         {giftCards.map((giftCard) => (
-          <Box>
+          <Box key={giftCard.giftCardId}>
             <Box
-              key={giftCard.giftCardId}
               padding={2}
               marginBottom={2}
               border="standard"
@@ -157,7 +156,7 @@ function Barcode({ shouldPoll }: PropTypes) {
                   {formatNumber(giftCard.amount)} kr.
                 </Typography>
                 <Typography variant="p">
-                  Frá: {giftCard.giftDetail.from}
+                  {t.fromPrefix} {giftCard.giftDetail.from}
                 </Typography>
               </Box>
               <Button
@@ -165,7 +164,7 @@ function Barcode({ shouldPoll }: PropTypes) {
                   getBarcode(giftCard)
                 }}
               >
-                {t.create}
+                {t.createButton}
               </Button>
             </Box>
             <Button
@@ -178,7 +177,7 @@ function Barcode({ shouldPoll }: PropTypes) {
                 })
               }}
             >
-              Gefa áfram
+              {t.giveButton}
             </Button>
           </Box>
         ))}
@@ -218,19 +217,23 @@ function Barcode({ shouldPoll }: PropTypes) {
           <Form>
             <Stack space={3}>
               <Typography variant="h4">
-                Gefa Ferðagjöf: {console.log(current.context)}
+                {t.giveGiftCard}{' '}
                 {current.context.giftCard.amount &&
                   formatNumber(current.context.giftCard.amount)}{' '}
                 kr.
               </Typography>
               <Field
                 component={FieldNumberInput}
-                label={'Símanúmer'}
+                label={t.phoneNumberInput}
                 name="phoneNumber"
                 format="+354 ### ####"
                 allowEmptyFormatting
               />
-              <Field component={FieldInput} label={'Skilaboð'} name="message" />
+              <Field
+                component={FieldInput}
+                label={t.messageInput}
+                name="message"
+              />
               <Box display="flex" justifyContent="spaceBetween">
                 <Button
                   onClick={() => {
@@ -238,9 +241,9 @@ function Barcode({ shouldPoll }: PropTypes) {
                   }}
                   variant="ghost"
                 >
-                  Tilbaka
+                  {t.backButton}
                 </Button>
-                <Button htmlType="submit">Gefa</Button>
+                <Button htmlType="submit">{t.giveContinueButton}</Button>
               </Box>
             </Stack>
           </Form>

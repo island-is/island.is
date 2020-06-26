@@ -284,9 +284,15 @@ export interface Barcode {
   intro: string
   currentAmount: string
   initialAmount: string
-  create: string
+  createButton: string
+  giveButton: string
+  fromPrefix: string
   value: string
   total: string
+  giveGiftCard: string
+  phoneNumberInput: string
+  messageInput: string
+  giveContinueButton: string
   expires: Expires
   expired: string
   new: string
@@ -851,9 +857,15 @@ const typeMap: any = {
       { json: 'intro', js: 'intro', typ: '' },
       { json: 'currentAmount', js: 'currentAmount', typ: '' },
       { json: 'initialAmount', js: 'initialAmount', typ: '' },
-      { json: 'create', js: 'create', typ: '' },
+      { json: 'createButton', js: 'createButton', typ: '' },
+      { json: 'giveButton', js: 'giveButton', typ: '' },
+      { json: 'fromPrefix', js: 'fromPrefix', typ: '' },
       { json: 'value', js: 'value', typ: '' },
       { json: 'total', js: 'total', typ: '' },
+      { json: 'giveGiftCard', js: 'giveGiftCard', typ: '' },
+      { json: 'phoneNumberInput', js: 'phoneNumberInput', typ: '' },
+      { json: 'messageInput', js: 'messageInput', typ: '' },
+      { json: 'giveContinueButton', js: 'giveContinueButton', typ: '' },
       { json: 'expires', js: 'expires', typ: r('Expires') },
       { json: 'expired', js: 'expired', typ: '' },
       { json: 'new', js: 'new', typ: '' },
