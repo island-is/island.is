@@ -193,7 +193,7 @@ export type Greeting = {
 
 export type GiftDetail = {
   __typename?: 'GiftDetail'
-  packageId: Scalars['ID']
+  packageId: Scalars['String']
   from?: Maybe<Scalars['String']>
   greeting?: Maybe<Greeting>
   personalMessage?: Maybe<Scalars['String']>
@@ -201,7 +201,7 @@ export type GiftDetail = {
 
 export type GiftCard = {
   __typename?: 'GiftCard'
-  giftCardId: Scalars['ID']
+  giftCardId: Scalars['Int']
   amount: Scalars['Int']
   applicationId?: Maybe<Scalars['String']>
   giftDetail?: Maybe<GiftDetail>
@@ -366,7 +366,6 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>
   Greeting: ResolverTypeWrapper<Greeting>
   GiftDetail: ResolverTypeWrapper<GiftDetail>
-  ID: ResolverTypeWrapper<Scalars['ID']>
   GiftCard: ResolverTypeWrapper<GiftCard>
   GiftCardCode: ResolverTypeWrapper<GiftCardCode>
   UserApplication: ResolverTypeWrapper<UserApplication>
@@ -396,7 +395,6 @@ export type ResolversParentTypes = {
   Mutation: {}
   Greeting: Greeting
   GiftDetail: GiftDetail
-  ID: Scalars['ID']
   GiftCard: GiftCard
   GiftCardCode: GiftCardCode
   UserApplication: UserApplication
@@ -685,7 +683,7 @@ export type GiftDetailResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['GiftDetail'] = ResolversParentTypes['GiftDetail']
 > = {
-  packageId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  packageId?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   from?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   greeting?: Resolver<
     Maybe<ResolversTypes['Greeting']>,
@@ -704,7 +702,7 @@ export type GiftCardResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['GiftCard'] = ResolversParentTypes['GiftCard']
 > = {
-  giftCardId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  giftCardId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   applicationId?: Resolver<
     Maybe<ResolversTypes['String']>,
