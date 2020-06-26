@@ -165,3 +165,10 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Trigger Spinnaker deployment
+        if: env.PUBLISH == 'true'
+        env:
+          TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
+          ENDPOINT: https://spinnaker-gate.shared.devland.is/webhooks/webhook/islandis
+        run: curl $ENDPOINT -X POST -H 'content-type:application/json' -d '{"token":"$TOKEN", "branch":"$GIT_BRANCH" ,"parameters":{ "docker_tag":"$DOCKER_TAG" } }'
