@@ -202,7 +202,7 @@ export type GiftDetail = {
 export type GiftCard = {
   __typename?: 'GiftCard'
   giftCardId: Scalars['Int']
-  amount: Scalars['Int']
+  amount: Scalars['Float']
   applicationId?: Maybe<Scalars['String']>
   giftDetail?: Maybe<GiftDetail>
 }
@@ -367,6 +367,7 @@ export type ResolversTypes = {
   Greeting: ResolverTypeWrapper<Greeting>
   GiftDetail: ResolverTypeWrapper<GiftDetail>
   GiftCard: ResolverTypeWrapper<GiftCard>
+  Float: ResolverTypeWrapper<Scalars['Float']>
   GiftCardCode: ResolverTypeWrapper<GiftCardCode>
   UserApplication: ResolverTypeWrapper<UserApplication>
   CreateUserApplication: ResolverTypeWrapper<CreateUserApplication>
@@ -396,6 +397,7 @@ export type ResolversParentTypes = {
   Greeting: Greeting
   GiftDetail: GiftDetail
   GiftCard: GiftCard
+  Float: Scalars['Float']
   GiftCardCode: GiftCardCode
   UserApplication: UserApplication
   CreateUserApplication: CreateUserApplication
@@ -703,7 +705,7 @@ export type GiftCardResolvers<
   ParentType extends ResolversParentTypes['GiftCard'] = ResolversParentTypes['GiftCard']
 > = {
   giftCardId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
-  amount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  amount?: Resolver<ResolversTypes['Float'], ParentType, ContextType>
   applicationId?: Resolver<
     Maybe<ResolversTypes['String']>,
     ParentType,
