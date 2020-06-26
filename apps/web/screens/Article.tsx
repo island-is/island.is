@@ -113,7 +113,11 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
                     >
                       <a>{categoryTitle}</a>
                     </Link>
-                    {groupTitle && <Tag variant="purple">{groupTitle}</Tag>}
+                    {groupTitle && (
+                      <Tag variant="purple" label>
+                        {groupTitle}
+                      </Tag>
+                    )}
                   </Breadcrumbs>
                   <Hidden above="md">
                     <Select

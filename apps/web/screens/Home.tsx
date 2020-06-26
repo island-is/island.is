@@ -112,9 +112,7 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
                               as={url}
                               passHref
                             >
-                              <a>
-                                <Tag>{title}</Tag>
-                              </a>
+                              <Tag>{title}</Tag>
                             </Link>
                           )
                         },
@@ -131,7 +129,7 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
         <ContentBlock width="large">
           <Categories label={n('articlesTitle')} seeMoreText={n('seeMore')}>
             {cards.map((card, index) => {
-              return <Card key={index} {...card} tags={false} />
+              return <Card key={index} {...card} />
             })}
           </Categories>
         </ContentBlock>

@@ -3,7 +3,12 @@ import React from 'react'
 import Link from 'next/link'
 import { withApollo } from '../../graphql'
 import { Screen } from '../../types'
-import { Sidebar, SearchInput, Card } from '@island.is/web/components'
+import {
+  Sidebar,
+  SearchInput,
+  Card,
+  CardTagsProps,
+} from '@island.is/web/components'
 import { selectOptions } from '@island.is/web/json'
 import {
   ContentBlock,
@@ -176,14 +181,18 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
                 <ContentBlock width="small">
                   <Stack space={2}>
                     {filteredItems.map((item, index) => {
-                      return (
-                        <Card
-                          key={index}
-                          title={item.title}
-                          {...item}
-                          tags={false}
-                        />
-                      )
+                      const tags = [] as Array<CardTagsProps>
+
+                      if (item.group) {
+                        tags.push({
+                          title: item.group,
+                          tagProps: {
+                            label: true,
+                          },
+                        })
+                      }
+
+                      return <Card key={index} {...item} tags={tags} />
                     })}
                   </Stack>
                 </ContentBlock>

@@ -62,7 +62,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
         <Box width="full" padding={[3, 3, 6]}>
           <Columns alignY="center" space={2}>
             <Column width="content">
-              <Link href={english ? '/en' : '/'}>
+              <Link href={english ? '/en' : '/'} passHref>
                 {/* eslint-disable-next-line */}
                 <a>
                   <Hidden above="md">

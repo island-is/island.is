@@ -5,7 +5,7 @@ import { Icon as IconComponent, IconTypes, Box, Inline } from '../..'
 import * as styles from './Button.treat'
 
 export type ButtonSize = 'small' | 'medium' | 'large'
-export type ButtonVariant = 'normal' | 'ghost' | 'text' | 'menu'
+export type ButtonVariant = 'normal' | 'ghost' | 'text' | 'menu' | 'tag'
 export type ButtonWidth = 'normal' | 'fluid'
 
 export interface ButtonProps {

@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react'
 import cn from 'classnames'
-import { Typography, Box } from '../..'
+import { Typography } from '../..'
+
 import * as styles from './Tag.treat'
 
 export type TagVariant = 'blue' | 'purple'
@@ -8,27 +9,66 @@ export type TagVariant = 'blue' | 'purple'
 export interface TagProps {
   onClick?: () => void
   variant?: TagVariant
+  href?: string
+  disabled?: boolean
+  label?: boolean
   children: string
 }
 
+const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
+
 export const Tag = forwardRef<HTMLButtonElement, TagProps>(
-  ({ children, variant = 'blue', ...props }: TagProps, ref) => {
-    return (
-      <Box
-        component="button"
-        type="button"
-        display="inlineBlock"
+  (
+    {
+      children,
+      href,
+      onClick,
+      variant = 'blue',
+      disabled,
+      label,
+      ...props
+    }: TagProps,
+    ref,
+  ) => {
+    const className = cn(styles.container, styles.variants[variant], {
+      [styles.label]: label,
+    })
+
+    const isExternal = href && isLinkExternal(href)
+
+    const anchorProps = {
+      ...(isExternal && { rel: 'noreferrer noopener' }),
+    }
+
+    const sharedProps = {
+      className,
+    }
+
+    const content = (
+      <Typography variant="tag" as="span">
+        {children}
+      </Typography>
+    )
+
+    if (label) {
+      return <span {...sharedProps}>{content}</span>
+    }
+
+    return href ? (
+      <a href={href} role="button" {...anchorProps} {...sharedProps} {...props}>
+        {content}
+      </a>
+    ) : (
+      <button
         ref={ref}
-        paddingY="smallGutter"
-        paddingX={1}
-        className={cn(styles.container, styles.variant[variant])}
-        tabIndex={-1}
+        type="button"
+        disabled={disabled}
+        onClick={onClick}
+        {...sharedProps}
         {...props}
       >
-        <Typography variant="tag" as="span">
-          {children}
-        </Typography>
-      </Box>
+        {content}
+      </button>
     )
   },
 )

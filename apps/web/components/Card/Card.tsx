@@ -7,20 +7,26 @@ import {
   Typography,
   Tag,
   Inline,
-  Columns,
-  Column,
+  TagProps,
 } from '@island.is/island-ui/core'
 
 import * as styles from './Card.treat'
 
-import { getTags } from '../../json'
+export type CardTagsProps = {
+  tagProps?: Omit<TagProps, 'children'>
+  href?: string
+  as?: string
+  title: string
+}
+
+const tagPropsDefaults: Omit<TagProps, 'children'> = {
+  variant: 'purple',
+}
 
 interface CardProps {
   title: string
   description: string
-  category?: string
-  group?: string
-  tags?: boolean
+  tags?: Array<CardTagsProps>
   linkProps?: LinkProps
   href?: string
   as?: string
@@ -29,42 +35,34 @@ interface CardProps {
 export const Card: FC<CardProps> = ({
   title,
   description,
-  tags = true,
+  tags = [],
   href,
   as,
-  category,
-  group,
 }) => {
   const Content = (
     <Box display="flex" height="full" flexDirection="column">
       <Box flexGrow={1} height="full">
         <Stack space={1}>
-          <Columns>
-            <Column>
-              <Typography variant="cardCategoryTitle" as="h3">
-                {title}
-              </Typography>
-            </Column>
-            {(category || group) && (
-              <Column width="content">
-                <Inline space={2}>
-                  {category && <Tag variant="purple">{category}</Tag>}
-                  {group && <Tag variant="purple">{group}</Tag>}
-                </Inline>
-              </Column>
-            )}
-          </Columns>
+          <Typography variant="cardCategoryTitle" as="h3">
+            {title}
+          </Typography>
           {description && <Typography variant="p">{description}</Typography>}
         </Stack>
       </Box>
-      {tags && (
+      {tags.length > 0 && (
         <Box paddingTop={3} flexGrow={0}>
           <Inline space={1}>
-            {getTags(4).map(({ title }, index) => {
-              return (
-                <Link key={index} href="#">
-                  <Tag variant="purple">{title}</Tag>
+            {tags.map(({ title, href, as, ...props }: CardTagsProps, index) => {
+              const tagProps = { ...tagPropsDefaults, ...props.tagProps }
+
+              return href ? (
+                <Link key={index} href={href} as={as}>
+                  <Tag {...tagProps}>{title}</Tag>
                 </Link>
+              ) : (
+                <Tag key={index} {...tagProps}>
+                  {title}
+                </Tag>
               )
             })}
           </Inline>
@@ -78,7 +76,7 @@ export const Card: FC<CardProps> = ({
   }
 
   return (
-    <Link href={href} as={as}>
+    <Link href={href} as={as} passHref>
       {/* eslint-disable-next-line */}
       <a className={styles.card}>
         <Box
