@@ -186,7 +186,7 @@ export type Greeting = {
 
 export type GiftDetail = {
   __typename?: 'GiftDetail'
-  packageId: Scalars['ID']
+  packageId: Scalars['String']
   from?: Maybe<Scalars['String']>
   greeting?: Maybe<Greeting>
   personalMessage?: Maybe<Scalars['String']>
@@ -194,7 +194,7 @@ export type GiftDetail = {
 
 export type GiftCard = {
   __typename?: 'GiftCard'
-  giftCardId: Scalars['ID']
+  giftCardId: Scalars['Int']
   amount: Scalars['Int']
   applicationId?: Maybe<Scalars['String']>
   giftDetail?: Maybe<GiftDetail>

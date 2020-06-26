@@ -15,7 +15,7 @@ export default gql`
   }
 
   type GiftCard {
-    giftCardId: ID!
+    giftCardId: Int!
     amount: Int!
     applicationId: String
     giftDetail: GiftDetail
