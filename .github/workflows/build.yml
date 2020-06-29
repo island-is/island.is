@@ -3,10 +3,10 @@ name: Monorepo pipeline
 on:
   push:
     branches:
-      - "master"
-      - "release/**"
+      - 'master'
+      - 'release/**'
     paths-ignore:
-      - "**/*.md"
+      - '**/*.md'
   pull_request:
     branches: [master]
 
@@ -159,6 +159,26 @@ jobs:
         run: MAX_JOBS=2 ./scripts/run-affected-in-parallel.sh docker-next
       # - name: Running E2E tests
       #   run: yarn run affected:e2e --base origin/master
+
+      - name: Install Helm push plugin
+        if: env.PUBLISH == 'true'
+        run: helm plugin install https://github.com/chartmuseum/helm-push.git --version=0.8.1
+
+      - name: Install Our ChartMuseum
+        if: env.PUBLISH == 'true'
+        run: helm repo add chartmuseum https://chartmuseum.smaug.andes.cloud --username=$USERNAME --password=$PASSWORD
+        env:
+          USERNAME: ${{ secrets.HELM_CHART_USERNAME }}
+          PASSWORD: ${{ secrets.HELM_CHART_PASSWORD }}
+
+      - name: Push islandis chart to the museum
+        if: env.PUBLISH == 'true'
+        run: helm push helm/islandis chartmuseum || true
+
+      - name: Push gjafakort chart to the museum
+        if: env.PUBLISH == 'true'
+        run: helm push helm/gjafakort chartmuseum || true
+
       - name: Retag unaffected Docker images
         if: env.PUBLISH == 'true'
         run: ./scripts/retag-unaffected.sh
