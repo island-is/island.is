@@ -47,7 +47,7 @@ export default gql`
   }
 
   input GiveGiftInput {
-    giftCardId: String!
+    giftCardId: Int!
     recipientMobileNumber: StringTrimmed!
     message: String
   }
