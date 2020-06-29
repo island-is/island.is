@@ -112,7 +112,9 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
                               as={url}
                               passHref
                             >
-                              <Tag>{title}</Tag>
+                              <a>
+                                <Tag>{title}</Tag>
+                              </a>
                             </Link>
                           )
                         },

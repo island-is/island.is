@@ -17,7 +17,7 @@ export interface TagProps {
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
 
-export const Tag = forwardRef<HTMLButtonElement, TagProps>(
+export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
   (
     {
       children,
@@ -42,6 +42,7 @@ export const Tag = forwardRef<HTMLButtonElement, TagProps>(
 
     const sharedProps = {
       className,
+      ref,
     }
 
     const content = (
@@ -55,12 +56,11 @@ export const Tag = forwardRef<HTMLButtonElement, TagProps>(
     }
 
     return href ? (
-      <a href={href} role="button" {...anchorProps} {...sharedProps} {...props}>
-        {content}
+      <a href={href} {...anchorProps} {...sharedProps} {...props}>
+        {content} anchor
       </a>
     ) : (
       <button
-        ref={ref}
         type="button"
         disabled={disabled}
         onClick={onClick}
