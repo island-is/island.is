@@ -70,11 +70,11 @@ export const SearchInput = ({
     })
   }
 
-  const cleanString = (string: string) => {
+  const cleanString = useCallback((string: string) => {
     const regex = /[a-zA-Z\u00C0-\u00FF]+/
-    const words = [...queryString['matchAll'](new RegExp(regex, 'gi'))]
+    const words = [...string['matchAll'](new RegExp(regex, 'gi'))]
     return words.join(' ')
-  }
+  }, [])
 
   const fetchData = useCallback(async () => {
     const cleanedQueryString = cleanString(queryString)
@@ -123,7 +123,7 @@ export const SearchInput = ({
     )
 
     setLoading(false)
-  }, [queryString, activeLocale, client])
+  }, [cleanString, queryString, activeLocale, client])
 
   useEffect(() => {
     if (isFirstRun.current) {
