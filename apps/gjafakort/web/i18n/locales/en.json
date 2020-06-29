@@ -12,7 +12,7 @@
     "button": "Aftur heim"
   },
   "errorBoundary": {
-    "title": "Villa kom upp",
+    "title": "An error occurred",
     "contents": [
       "Eitthvað hefur farið úrskeiðis.",
       "Vinsamlega <a href='https://island.is/um-island-is/hafa-samband/'>hafðu samband</a> fyrir frekari hjálp"
@@ -116,7 +116,7 @@
     },
     "cta": {
       "label": "Tourism companies",
-      "content": "Skrá fyrirtæki"
+      "content": "Register company"
     }
   },
   "home": {
