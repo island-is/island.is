@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import Link from 'next/link'
 
 import { Box, Typography, Button } from '@island.is/island-ui/core'
 
 import { useI18n } from '@island.is/gjafakort-web/i18n'
+import { UserContext } from '@island.is/gjafakort-web/context'
 import packageSvg from '@island.is/gjafakort-web/assets/ferdagjof-pakki.svg'
 
 function CompanyCTA() {
@@ -12,6 +14,7 @@ function CompanyCTA() {
       routes,
     },
   } = useI18n()
+  const { isAuthenticated } = useContext(UserContext)
 
   return (
     <Box>
@@ -24,9 +27,15 @@ function CompanyCTA() {
         <Box marginBottom={2}>
           <Typography variant="h4">{t.label}</Typography>
         </Box>
-        <Button width="fluid" href={routes.companies.application}>
-          {t.content}
-        </Button>
+        {isAuthenticated ? (
+          <Link href={routes.companies.application}>
+            <Button width="fluid">{t.content}</Button>
+          </Link>
+        ) : (
+          <Button width="fluid" href={routes.companies.application}>
+            {t.content}
+          </Button>
+        )}
       </Box>
       <Box
         textAlign="center"
