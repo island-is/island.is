@@ -206,11 +206,14 @@ function Barcode({ shouldPoll }: PropTypes) {
             .required(validation.required),
         })}
         initialValues={{
-          phoneNumber: '',
-          message: '',
+          phoneNumber: current.context.giveInfo.phoneNumber,
+          message: current.context.giveInfo.message,
         }}
         onSubmit={(values) => {
-          console.log(values)
+          send({
+            type: 'CONFIRM_GIVE',
+            giveInfo: values,
+          })
         }}
       >
         {() => (
@@ -235,20 +238,62 @@ function Barcode({ shouldPoll }: PropTypes) {
                 name="message"
               />
               <Box display="flex" justifyContent="spaceBetween">
-                <Button
-                  onClick={() => {
-                    send('BACK_TO_LIST')
-                  }}
-                  variant="ghost"
-                >
-                  {t.backButton}
-                </Button>
-                <Button htmlType="submit">{t.giveContinueButton}</Button>
+                <Box marginRight={1} flexGrow={1}>
+                  <Button
+                    width="fixed"
+                    onClick={() => {
+                      send('BACK_TO_LIST')
+                    }}
+                    variant="ghost"
+                  >
+                    {t.backButton}
+                  </Button>
+                </Box>
+                <Box marginLeft={1} flexGrow={1} textAlign="right">
+                  <Button width="fixed" htmlType="submit">
+                    {t.giveContinueButton}
+                  </Button>
+                </Box>
               </Box>
             </Stack>
           </Form>
         )}
       </Formik>
+    )
+  }
+
+  if (current.matches('confirmGive')) {
+    return (
+      <Stack space={7}>
+        <Typography variant="h4">
+          {t.giveGiftCard}{' '}
+          {current.context.giftCard.amount &&
+            formatNumber(current.context.giftCard.amount)}{' '}
+          kr.
+        </Typography>
+        <Typography variant="h4">
+          +354 {current.context.giveInfo.phoneNumber}
+        </Typography>
+        <Typography variant="h4">{current.context.giveInfo.message}</Typography>
+        <Box display="flex" justifyContent="spaceBetween">
+          <Box marginRight={1} flexGrow={1}>
+            <Button
+              width="fixed"
+              onClick={() => {
+                send('BACK_TO_GIVE')
+              }}
+              variant="ghost"
+            >
+              {t.backButton}
+            </Button>
+          </Box>
+          <Box marginLeft={1} flexGrow={1} textAlign="right">
+            <Button width="fixed" htmlType="submit">
+              {t.giveContinueButton}
+            </Button>
+          </Box>
+        </Box>
+      </Stack>
     )
   }
 

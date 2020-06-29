@@ -111,6 +111,10 @@ export const width = styleMap({
   normal: {
     width: 'auto',
   },
+  fixed: {
+    maxWidth: 210,
+    width: '100%',
+  },
   fluid: {
     width: '100%',
   },
