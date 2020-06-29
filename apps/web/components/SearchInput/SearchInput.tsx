@@ -43,6 +43,18 @@ export const SearchInput = ({
   const timer = useRef(null)
   const { makePath } = useRouteNames(activeLocale as Locale)
 
+  const insert = (mainStr: string, insStr: string, pos: number) => {
+    if (typeof pos == 'undefined') {
+      pos = 0
+    }
+
+    if (typeof insStr == 'undefined') {
+      insStr = ''
+    }
+
+    return mainStr.slice(0, pos) + insStr + mainStr.slice(pos)
+  }
+
   const defaultOnSubmit = (inputValue, selectedOption) => {
     if (selectedOption) {
       return Router.push(
@@ -74,20 +86,30 @@ export const SearchInput = ({
       searchResults.items.map((x) => ({
         label: x.title,
         value: x.slug,
-        component: (props) => (
-          <ItemContainer {...props}>
-            <Typography
-              variant="eyebrow"
-              as="span"
-              color={props.active ? 'blue400' : 'dark400'}
-            >
-              {x.category} {x.group}
-            </Typography>
-            <Typography variant="intro" as="span">
-              {x.title}
-            </Typography>
-          </ItemContainer>
-        ),
+        component: (props) => {
+          const qs = queryString.toLowerCase()
+          const str = x.title.toLowerCase()
+
+          const indexes = [...str['matchAll'](new RegExp(qs, 'gi'))]
+            .map((a) => a.index)
+            .reverse()
+
+          let newStr = `<strong>${x.title}</strong>`
+
+          indexes.forEach((idx) => {
+            const newIdx = idx + 8
+            newStr = insert(newStr, '</strong>', newIdx)
+            newStr = insert(newStr, '<strong>', newIdx + 9 + qs.length)
+          })
+
+          const optionString = newStr
+
+          return (
+            <ItemContainer {...props}>
+              <span dangerouslySetInnerHTML={{ __html: optionString }} />
+            </ItemContainer>
+          )
+        },
       })),
     )
 
@@ -131,7 +153,7 @@ export const SearchInput = ({
             setLoading(true)
           }
 
-          timer.current = setTimeout(() => setQueryString(value), 300)
+          timer.current = setTimeout(() => setQueryString(value), 30)
         }
       }}
       onSubmit={onSubmit || defaultOnSubmit}
