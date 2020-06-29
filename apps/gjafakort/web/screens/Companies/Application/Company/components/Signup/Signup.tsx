@@ -55,14 +55,19 @@ function Signup({ company, handleSubmission }: PropTypes) {
 
   const companyOperations = t.form.operation.options
 
-  const onSubmit = async ({
-    operations,
-    serviceCategory,
-    gotPublicHelpAmount,
-    gotPublicHelp,
-    ...values
-  }) => {
+  const onSubmit = async (
+    {
+      operations,
+      serviceCategory,
+      gotPublicHelpAmount,
+      gotPublicHelp,
+      ...values
+    },
+    { setSubmitting },
+  ) => {
+    setSubmitting(true)
     if (operations.noneOfTheAbove) {
+      setSubmitting(false)
       return handleSubmission(false)
     }
 
@@ -80,6 +85,7 @@ function Signup({ company, handleSubmission }: PropTypes) {
       },
     })
 
+    setSubmitting(false)
     return handleSubmission(true)
   }
 
@@ -100,11 +106,11 @@ function Signup({ company, handleSubmission }: PropTypes) {
           companyDisplayName:
             company.application?.companyDisplayName ?? company.name,
           serviceCategory: company.application?.serviceCategory,
-          name: company.application?.name,
-          email: company.application?.email,
-          generalEmail: company.application?.generalEmail,
-          webpage: company.application?.webpage,
-          phoneNumber: company.application?.phoneNumber.replace(/-/g, ''),
+          name: company.application?.name ?? '',
+          email: company.application?.email ?? '',
+          generalEmail: company.application?.generalEmail ?? '',
+          webpage: company.application?.webpage ?? '',
+          phoneNumber: company.application?.phoneNumber.replace(/-/g, '') ?? '',
           operations: companyOperations.reduce((acc, o) => {
             acc[o.name] = false
             return acc
@@ -112,7 +118,7 @@ function Signup({ company, handleSubmission }: PropTypes) {
           noneOfTheAbove: false,
           operationsTrouble: undefined,
           gotPublicHelp: undefined,
-          gotPublicHelpAmount: 0,
+          gotPublicHelpAmount: '',
         }}
         validate={(values) => {
           const errors = {}
@@ -162,7 +168,7 @@ function Signup({ company, handleSubmission }: PropTypes) {
         onSubmit={onSubmit}
         enableReinitialize
       >
-        {({ values, setFieldValue }) => (
+        {({ values, setFieldValue, isSubmitting }) => (
           <Form>
             <Box marginBottom={6}>
               <Tiles columns={[1, 1, 2]} space={3}>
@@ -300,7 +306,9 @@ function Signup({ company, handleSubmission }: PropTypes) {
                 />
               </Stack>
             </Box>
-            <Button htmlType="submit">{t.form.submit}</Button>
+            <Button htmlType="submit" disabled={isSubmitting}>
+              {t.form.submit}
+            </Button>
           </Form>
         )}
       </Formik>

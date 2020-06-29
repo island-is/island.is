@@ -1,5 +1,5 @@
 import React from 'react'
-import { Formik, Form, Field, FormikValues } from 'formik'
+import { Formik, Form, Field, FormikValues, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 
 import {
@@ -14,7 +14,10 @@ import { useI18n } from '@island.is/gjafakort-web/i18n'
 import { FormLayout } from '@island.is/gjafakort-web/components'
 
 interface PropTypes {
-  onSubmit: (_: FormikValues) => void
+  onSubmit: (
+    values: FormikValues,
+    formikHelpers: FormikHelpers<FormikValues>,
+  ) => void
 }
 
 function MobileForm({ onSubmit }: PropTypes) {
@@ -36,7 +39,10 @@ function MobileForm({ onSubmit }: PropTypes) {
         <Typography variant="intro">{t.intro}</Typography>
       </Box>
       <Formik
-        initialValues={{}}
+        initialValues={{
+          phoneNumber: '',
+          confirmPhoneNumber: '',
+        }}
         validate={(values) => {
           if (values.phoneNumber !== values.confirmPhoneNumber) {
             return {
@@ -54,7 +60,7 @@ function MobileForm({ onSubmit }: PropTypes) {
         })}
         onSubmit={onSubmit}
       >
-        {({ isValid, dirty }) => (
+        {({ isSubmitting }) => (
           <Form>
             <Box marginBottom={5}>
               <Stack space={3}>
@@ -62,7 +68,6 @@ function MobileForm({ onSubmit }: PropTypes) {
                   component={FieldNumberInput}
                   label={t.form.phoneNumber.label}
                   name="phoneNumber"
-                  htmltype="tel"
                   format="+354 ### ####"
                   allowEmptyFormatting
                 />
@@ -70,13 +75,12 @@ function MobileForm({ onSubmit }: PropTypes) {
                   component={FieldNumberInput}
                   label={t.form.confirmPhoneNumber.label}
                   name="confirmPhoneNumber"
-                  htmltype="tel"
                   format="+354 ### ####"
                   allowEmptyFormatting
                 />
               </Stack>
             </Box>
-            <Button htmlType="submit" disabled={!dirty || !isValid}>
+            <Button htmlType="submit" disabled={isSubmitting}>
               {t.form.submit}
             </Button>
           </Form>
