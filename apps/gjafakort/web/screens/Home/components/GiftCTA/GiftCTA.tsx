@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Link from 'next/link'
 
 import { Box, Typography, Button } from '@island.is/island-ui/core'
 
 import packageSvg from '@island.is/gjafakort-web/assets/ferdagjof-pakki.svg'
-import { useI18n } from '../../../../i18n'
+import { UserContext } from '@island.is/gjafakort-web/context'
+import { useI18n } from '@island.is/gjafakort-web/i18n'
 
 function GiftCTA() {
   const {
@@ -13,6 +14,7 @@ function GiftCTA() {
       routes,
     },
   } = useI18n()
+  const { isAuthenticated } = useContext(UserContext)
 
   return (
     <Box>
@@ -25,11 +27,15 @@ function GiftCTA() {
         <Box marginBottom={2}>
           <Typography variant="h4">{t.users.label}</Typography>
         </Box>
-        <Link href={routes.users.home}>
-          <span>
+        {isAuthenticated ? (
+          <Link href={routes.users.home}>
             <Button width="fluid">{t.users.content}</Button>
-          </span>
-        </Link>
+          </Link>
+        ) : (
+          <Button width="fluid" href={routes.users.home}>
+            {t.users.content}
+          </Button>
+        )}
       </Box>
       <Box
         background="purple100"
