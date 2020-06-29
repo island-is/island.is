@@ -16,6 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/web/i18n/I18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import { input } from 'libs/island-ui/core/src/lib/AsyncSearch/shared/Input/Input.treat'
 
 interface SearchInputProps {
   activeLocale: string
@@ -56,6 +57,8 @@ export const SearchInput = ({
   }
 
   const defaultOnSubmit = (inputValue, selectedOption) => {
+    const cleanInputValue = cleanString(inputValue)
+
     if (selectedOption) {
       return Router.push(
         `${makePath('article')}/[slug]`,
@@ -65,18 +68,26 @@ export const SearchInput = ({
 
     return Router.push({
       pathname: makePath('search'),
-      query: { q: inputValue },
+      query: { q: cleanInputValue },
     })
   }
 
+  const cleanString = (string: string) => {
+    const regex = /[a-zA-Z\u00C0-\u00FF]+/
+    const words = [...queryString['matchAll'](new RegExp(regex, 'gi'))]
+    return words.join(' ')
+  }
+
   const fetchData = useCallback(async () => {
+    const cleanedQueryString = cleanString(queryString)
+
     const {
       data: { searchResults },
     } = await client.query<Query, QuerySearchResultsArgs>({
       query: GET_SEARCH_RESULTS_QUERY,
       variables: {
         query: {
-          queryString: queryString ? `${queryString}*` : '',
+          queryString: cleanedQueryString ? `${cleanedQueryString}*` : '',
           language: activeLocale as ContentLanguage,
         },
       },
@@ -87,7 +98,7 @@ export const SearchInput = ({
         label: x.title,
         value: x.slug,
         component: (props) => {
-          const qs = queryString.toLowerCase()
+          const qs = cleanedQueryString.toLowerCase()
           const str = x.title.toLowerCase()
 
           const indexes = [...str['matchAll'](new RegExp(qs, 'gi'))]
