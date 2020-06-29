@@ -1,5 +1,5 @@
 import React from 'react'
-import { useQuery, useLazyQuery } from 'react-apollo'
+import { useQuery, useLazyQuery, useMutation } from 'react-apollo'
 import gql from 'graphql-tag'
 import { useMachine } from '@xstate/react'
 import { format } from 'date-fns'
@@ -22,7 +22,7 @@ import { ErrorPanel } from '@island.is/gjafakort-web/components'
 import { barcodeMachine } from './barcodeMachine'
 import { Countdown, RenderBarcode } from '..'
 
-export const GiftCardsQuery = gql`
+const GiftCardsQuery = gql`
   query GiftCardsQuery {
     giftCards {
       giftCardId
@@ -40,12 +40,20 @@ export const GiftCardsQuery = gql`
     }
   }
 `
-export const GiftCardCodeQuery = gql`
+const GiftCardCodeQuery = gql`
   query GiftCardCodeQuery($giftCardId: Int!) {
     giftCardCode(giftCardId: $giftCardId) {
       code
       expiryDate
       pollingUrl
+    }
+  }
+`
+
+const GiveGiftMutation = gql`
+  mutation GiveGiftMutation($input: GiveGiftInput!) {
+    giveGift(input: $input) {
+      success
     }
   }
 `
@@ -88,12 +96,20 @@ function Barcode({ shouldPoll }: PropTypes) {
       send('ERROR')
     },
   })
+  const [giveGift, { data: giveGiftData }] = useMutation(GiveGiftMutation)
   const [current, send] = useMachine(barcodeMachine, {
     devTools: true,
     actions: {
       refetchList: refetch,
     },
   })
+
+  const onSubmit = async (giftCardId, recipientMobileNumber, message) => {
+    await giveGift({
+      variables: { input: { giftCardId, recipientMobileNumber, message } },
+    })
+  }
+
   const giftCards = data?.giftCards ?? []
   const loadingInitialGiftCards = shouldPoll && giftCards.length === 0
   const loadingState = current.matches('loading')
@@ -130,6 +146,15 @@ function Barcode({ shouldPoll }: PropTypes) {
             <Typography variant="h4">
               {formatNumber(giftCard.amount)} kr.
             </Typography>
+            <Button
+              variant="text"
+              onClick={() =>
+                onSubmit(giftCard.giftCardId, '6617246', 'My custom message')
+              }
+              icon="user"
+            >
+              GEFA GJÖF
+            </Button>
             <Button
               variant="text"
               onClick={() => {

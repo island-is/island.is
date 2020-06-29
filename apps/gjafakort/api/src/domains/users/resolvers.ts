@@ -1,3 +1,4 @@
+import { logger } from '@island.is/logging'
 import { UserInputError } from 'apollo-server-express'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
