@@ -73,7 +73,8 @@ function User() {
     }
   }, [user, data, getUserApplication])
 
-  const onMobileSubmit = async ({ phoneNumber }) => {
+  const onMobileSubmit = async ({ phoneNumber }, { setSubmitting }) => {
+    setSubmitting(true)
     await createUserApplication({
       variables: {
         input: {
@@ -81,6 +82,7 @@ function User() {
         },
       },
     })
+    setSubmitting(false)
   }
 
   if (!data || loading || !user) {
