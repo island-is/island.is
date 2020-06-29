@@ -11,12 +11,10 @@ import {
   AsyncSearch,
   AsyncSearchOption,
   AsyncSearchSizes,
-  Typography,
   Box,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/web/i18n/I18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
-import { input } from 'libs/island-ui/core/src/lib/AsyncSearch/shared/Input/Input.treat'
 
 interface SearchInputProps {
   activeLocale: string

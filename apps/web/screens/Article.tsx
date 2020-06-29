@@ -50,6 +50,7 @@ const simpleSpacing = [2, 2, 3] as ResponsiveSpace
 const Article: Screen<ArticleProps> = ({ article, namespace }) => {
   const [contentOverviewOptions, setContentOverviewOptions] = useState([])
   const { activeLocale } = useI18n()
+  // TODO: get language strings from namespace...
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const n = useNamespace(namespace)
   const { makePath } = useRouteNames(activeLocale as Locale)
