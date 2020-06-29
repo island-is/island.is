@@ -1,5 +1,4 @@
 import React from 'react'
-import Link from 'next/link'
 
 import { Box, Typography, Button } from '@island.is/island-ui/core'
 
@@ -25,11 +24,9 @@ function CompanyCTA() {
         <Box marginBottom={2}>
           <Typography variant="h4">{t.label}</Typography>
         </Box>
-        <Link href={routes.companies.application}>
-          <span>
-            <Button width="fluid">{t.content}</Button>
-          </span>
-        </Link>
+        <Button width="fluid" href={routes.companies.application}>
+          {t.content}
+        </Button>
       </Box>
       <Box
         textAlign="center"

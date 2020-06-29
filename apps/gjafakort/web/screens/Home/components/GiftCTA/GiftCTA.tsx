@@ -25,11 +25,9 @@ function GiftCTA() {
         <Box marginBottom={2}>
           <Typography variant="h4">{t.users.label}</Typography>
         </Box>
-        <Link href={routes.users.home}>
-          <span>
-            <Button width="fluid">{t.users.content}</Button>
-          </span>
-        </Link>
+        <Button width="fluid" href={routes.users.home}>
+          {t.users.content}
+        </Button>
       </Box>
       <Box
         background="purple100"
