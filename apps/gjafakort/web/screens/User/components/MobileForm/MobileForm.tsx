@@ -60,9 +60,8 @@ function MobileForm({ onSubmit }: PropTypes) {
         })}
         onSubmit={onSubmit}
       >
-        {({ isSubmitting, values, isValidating, errors }) => (
+        {({ isSubmitting }) => (
           <Form>
-            {console.log(values, isValidating, errors)}
             <Box marginBottom={5}>
               <Stack space={3}>
                 <Field
