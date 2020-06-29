@@ -166,6 +166,41 @@ class UserResolver {
       pollingUrl: giftCardCode.pollingUrl,
     }
   }
+
+  @authorize()
+  public async giveGift(
+    _1,
+    { giftCardId, recipientMobileNumber, message },
+    { user, dataSources: { applicationApi, yayApi } },
+  ) {
+    const application = await userService.getApplication(
+      user.ssn,
+      applicationApi,
+    )
+    if (!application) {
+      return new ApolloError('No application found')
+    }
+
+    const {
+      data: { mobileNumber, countryCode },
+    } = application
+    try {
+      const response = await yayApi.giveGift({
+        mobileNumber,
+        countryCode,
+        giftCardId,
+        fromName: user.name,
+        giftToMobileNumber: recipientMobileNumber,
+        giftToCountryCode: countryCode,
+        personalMessage: message,
+      })
+
+      return { success: true }
+    } catch (err) {
+      logger.error(err)
+      return { success: false }
+    }
+  }
 }
 
 const resolver = new UserResolver()
@@ -179,5 +214,6 @@ export default {
   Mutation: {
     fetchUserApplication: resolver.fetchGetUserApplication,
     createUserApplication: resolver.createUserApplication,
+    giveGift: resolver.giveGift,
   },
 }
