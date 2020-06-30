@@ -11,7 +11,6 @@ import {
   Card,
   CardTagsProps,
 } from '@island.is/web/components'
-import { selectOptions } from '@island.is/web/json'
 import {
   ContentBlock,
   Box,
@@ -21,6 +20,7 @@ import {
   Hidden,
   Select,
   Divider,
+  Option,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
@@ -100,6 +100,26 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
   const categoryTitle = items.find((x) => x.categorySlug === filters.category)
     ?.category
 
+  const categorySlug = items.find((x) => x.categorySlug === filters.category)
+    ?.categorySlug
+
+  const categorySelectOptions = sidebarCategories.map(
+    ({ title, total, key }) => ({
+      label: `${title} (${total})`,
+      value: key,
+    }),
+  )
+
+  categorySelectOptions.unshift({ label: 'Allir flokkar', value: '' })
+
+  const onChangeSelectCategoryOptions = ({ value }: Option) => {
+    onSelectCategory(value as string)
+  }
+
+  const defaultSelectedCategory = categoryTitle
+    ? { label: categoryTitle, value: categorySlug }
+    : { label: 'Allir flokkar', value: '' }
+
   return (
     <>
       <Head>
@@ -148,10 +168,12 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
                     />
                     <Hidden above="md">
                       <Select
-                        label="Þjónustuflokkar"
+                        label="Leitarflokkar"
                         placeholder="Flokkar"
-                        options={selectOptions}
-                        name="search"
+                        defaultValue={defaultSelectedCategory}
+                        options={categorySelectOptions}
+                        onChange={onChangeSelectCategoryOptions}
+                        name="content-overview"
                       />
                     </Hidden>
                     <Typography variant="intro" as="p">

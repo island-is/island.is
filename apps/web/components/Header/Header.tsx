@@ -5,10 +5,10 @@ import {
   Columns,
   Column,
   ContentBlock,
-  Inline,
   Box,
   Button,
   Hidden,
+  ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/web/i18n/I18n'
 import { useI18n } from '@island.is/web/i18n'
@@ -50,6 +50,8 @@ const LanguageToggler: FC<{
   )
 }
 
+const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
+
 export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const { activeLocale } = useI18n()
 
@@ -81,26 +83,32 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                 justifyContent="flexEnd"
                 width="full"
               >
-                <Inline space={2}>
-                  <LanguageToggler hideWhenMobile activeLocale={locale} />
+                <LanguageToggler hideWhenMobile activeLocale={locale} />
+                <Box marginLeft={marginLeft}>
                   <Link href="https://minarsidur.island.is/" passHref>
                     <Button variant="menu" leftIcon="user">
                       Innskráning
                     </Button>
                   </Link>
-                  {showSearchInHeader && (
+                </Box>
+                {showSearchInHeader && (
+                  <>
                     <Hidden below="lg">
-                      <SearchInput
-                        size="medium"
-                        activeLocale={locale}
-                        autocomplete={false}
-                      />
+                      <Box marginLeft={marginLeft}>
+                        <SearchInput
+                          size="medium"
+                          activeLocale={locale}
+                          autocomplete={false}
+                        />
+                      </Box>
                     </Hidden>
-                  )}
-                  <Hidden above="md">
-                    <Button variant="menu" icon="search" />
-                  </Hidden>
-                </Inline>
+                    <Hidden above="md">
+                      <Box marginLeft={marginLeft}>
+                        <Button variant="menu" icon="search" />
+                      </Box>
+                    </Hidden>
+                  </>
+                )}
               </Box>
             </Column>
           </Columns>
