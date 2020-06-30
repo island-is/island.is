@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useQuery, useLazyQuery, useMutation } from 'react-apollo'
 import gql from 'graphql-tag'
 import { useMachine } from '@xstate/react'
@@ -26,6 +26,7 @@ import { ErrorPanel } from '@island.is/gjafakort-web/components'
 import { barcodeMachine } from './barcodeMachine'
 import { Countdown, RenderBarcode } from '..'
 import { Form, Formik, Field } from 'formik'
+import { NotificationService } from '@island.is/gjafakort-web/services'
 
 const GiftCardsQuery = gql`
   query GiftCardsQuery {
@@ -69,7 +70,10 @@ interface PropTypes {
   shouldPoll: boolean
 }
 
-function Barcode({ shouldPoll }: PropTypes) {
+function Barcode({ shouldPoll: initialPolling }: PropTypes) {
+  const [initialPollingActive, setInitialPollingActive] = useState(true)
+  const shouldPoll = initialPollingActive && initialPolling
+
   const {
     t: {
       user: { barcode: t },
@@ -83,6 +87,7 @@ function Barcode({ shouldPoll }: PropTypes) {
       notifyOnNetworkStatusChange: true,
       onCompleted: (data) => {
         if (shouldPoll && data?.giftCards.length > 0) {
+          setInitialPollingActive(false)
           stopPolling()
         }
       },
@@ -102,7 +107,7 @@ function Barcode({ shouldPoll }: PropTypes) {
       send('ERROR')
     },
   })
-  const [giveGift, { data: giveGiftData }] = useMutation(GiveGiftMutation)
+  const [giveGift] = useMutation(GiveGiftMutation)
   const [current, send] = useMachine(barcodeMachine, {
     devTools: true,
     actions: {
@@ -110,10 +115,25 @@ function Barcode({ shouldPoll }: PropTypes) {
     },
   })
 
-  const onSubmit = async (giftCardId, recipientMobileNumber, message) => {
-    await giveGift({
+  const confirmGiveGift = async (
+    giftCardId,
+    recipientMobileNumber,
+    message,
+  ) => {
+    const {
+      data: { giveGift: giveGiftResponse },
+    } = await giveGift({
       variables: { input: { giftCardId, recipientMobileNumber, message } },
     })
+    if (giveGiftResponse.success) {
+      NotificationService.success('Aðgerð tókst! gjöf var send til ******')
+    } else {
+      NotificationService.success('Ekki tókst að gefa gjöf')
+    }
+
+    console.log(giveGiftResponse)
+    //TODO: Show success toast or error toast
+    send('BACK_TO_LIST')
   }
 
   const giftCards = data?.giftCards ?? []
@@ -288,7 +308,16 @@ function Barcode({ shouldPoll }: PropTypes) {
             </Button>
           </Box>
           <Box marginLeft={1} flexGrow={1} textAlign="right">
-            <Button width="fixed" htmlType="submit">
+            <Button
+              width="fixed"
+              onClick={() => {
+                confirmGiveGift(
+                  current.context.giftCard.giftCardId,
+                  current.context.giveInfo.phoneNumber,
+                  current.context.giveInfo.message,
+                )
+              }}
+            >
               {t.giveContinueButton}
             </Button>
           </Box>
@@ -426,13 +455,17 @@ function Barcode({ shouldPoll }: PropTypes) {
                         </Typography>
                       </>
                     )}
-                    <Button
-                      onClick={() => {
-                        getBarcode(current.context.giftCard)
-                      }}
-                    >
-                      {t.new}
-                    </Button>
+                    {(invalidState ||
+                      (successState &&
+                        parseInt(current.context.pollingData.amount) > 0)) && (
+                      <Button
+                        onClick={() => {
+                          getBarcode(current.context.giftCard)
+                        }}
+                      >
+                        {t.new}
+                      </Button>
+                    )}
                   </Stack>
                 </Box>
               )}
