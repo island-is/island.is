@@ -1,7 +1,7 @@
 import isEqual from 'lodash/isEqual'
 import { Style } from 'treat'
 import omit from 'lodash/omit'
-import { theme } from './theme'
+import { theme } from '@island.is/island-ui/theme'
 
 type Theme = typeof theme
 type RequiredTokens = Pick<Theme, 'breakpoints'>

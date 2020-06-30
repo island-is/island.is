@@ -7,7 +7,7 @@ import styles, {
   turnicate as turnicateStyle,
   links as linksStyle,
 } from './Typography.treat'
-import { Colors } from '../../theme/theme'
+import { Colors } from '@island.is/island-ui/theme'
 
 export interface TypographyProps {
   variant?: VariantTypes

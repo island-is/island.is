@@ -44,5 +44,4 @@ export * from './lib/Accordion/Accordion'
 export * from './lib/AccordionItem/AccordionItem'
 
 // Theme
-export * from './theme/global.treat'
-export * from './theme'
+export * from '../../theme/src/global.treat'

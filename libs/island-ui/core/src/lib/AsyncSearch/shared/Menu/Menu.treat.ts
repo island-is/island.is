@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { theme } from '../../../../theme/theme'
+import { theme } from '@island.is/island-ui/theme'
 
 export const menu = style({
   padding: 0,

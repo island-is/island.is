@@ -1,5 +1,5 @@
 import { globalStyle, style } from 'treat'
-import { theme } from '../theme'
+import { theme } from '@island.is/island-ui/theme'
 
 globalStyle('html, body', {
   margin: 0,

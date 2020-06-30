@@ -1,5 +1,5 @@
-import { makeThemeUtils } from '../themeUtils'
-import * as color from '../theme/colors'
+import { makeThemeUtils } from '../../core/src/themeUtils'
+import * as color from './colors'
 
 export const UNIT = 8
 const spacing = {

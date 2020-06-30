@@ -1,6 +1,6 @@
 import { style, styleMap } from 'treat'
 import { mapToStyleProperty } from '../../utils'
-import { theme } from '../../theme'
+import { theme } from '@island.is/island-ui/theme'
 import { makeThemeUtils } from '../../themeUtils'
 
 const utils = makeThemeUtils(theme)
