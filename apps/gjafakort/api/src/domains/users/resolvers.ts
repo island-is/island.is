@@ -1,5 +1,5 @@
 import { logger } from '@island.is/logging'
-import { UserInputError } from 'apollo-server-express'
+import { UserInputError, ApolloError } from 'apollo-server-express'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 import { authorize } from '../auth'
@@ -199,7 +199,7 @@ class UserResolver {
       return { success: true }
     } catch (err) {
       logger.error(err)
-      return { success: false }
+      throw new ApolloError('Could not give gift')
     }
   }
 }

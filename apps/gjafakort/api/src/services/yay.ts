@@ -80,8 +80,8 @@ class RskAPI extends RESTDataSource {
   }
 
   giveGift(body: {
-    mobileNumber: string,
-    countryCode: string,
+    mobileNumber: string
+    countryCode: string
     giftCardId: number
     fromName: string
     giftToMobileNumber: string
