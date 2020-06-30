@@ -1,42 +1,42 @@
 {
   "notFound": {
-    "title": "Umbeðin slóð fannst ekki",
-    "content": "Eitthvað hefur farið úrskeiðis, vinsamlegast reynið aftur",
-    "button": "Til baka"
+    "title": "Resource could not be found",
+    "content": "Something went wrong, please try again",
+    "button": "Back"
   },
   "error": {
-    "title": "Villa kom upp",
-    "intro": "Eitthvað hefur farið úrskeiðis, vinsamlega reyndu aftur",
-    "introKennitalaIsNotAPerson": "Kennitala sem var notuð við innskráningu passar ekki við einstakling. Nauðsynlegt er að skrá sig inn með kennitölu einstaklings en ekki fyrirtækis.",
-    "introUserNotOldEnough": "Notandi er ekki nógu gamall til þess að taka þátt í Ferðagjöfinni.",
-    "button": "Aftur heim"
+    "title": "An error occurred",
+    "intro": "Something went wrong, please try again",
+    "introKennitalaIsNotAPerson": "The SSN used for identification does not match a person. Please login with your own SSN, not a company SSN.",
+    "introUserNotOldEnough": "The current user does not meet the age criteria to participate in the Travel Gift.",
+    "button": "Go home"
   },
   "errorBoundary": {
-    "title": "Villa kom upp",
+    "title": "An error occurred",
     "contents": [
-      "Eitthvað hefur farið úrskeiðis.",
-      "Vinsamlega <a href='https://island.is/um-island-is/hafa-samband/'>hafðu samband</a> fyrir frekari hjálp"
+      "Something went wrong.",
+      "Please <a href='https://island.is/um-island-is/hafa-samband/'>contact</a> for further help"
     ]
   },
   "companies": {
     "name": "Tourism companies",
     "title": "Tourism companies",
-    "intro": "We encourage travel related businesses and companies to participate in the Travel gift and welcome Icelanders travelling domestically.",
-    "description": "Companies can sign up for participation on Ísland.is. The company's authorised signer has to submit the application using his or her personal electronic certificate (rafræn skilríki). The company will receive an automatic confirmation for registration and gain access to an online account, containing data on the amount of Travel gifts used with the company.",
+    "intro": "We encourage travel related businesses and companies to participate in the Travel Gift and welcome Icelanders travelling domestically.",
+    "description": "Companies can sign up for participation on Ísland.is. <strong>The company's authorised signer has to submit the application using his or her personal electronic certificate (rafræn skilríki)</strong>. The company will receive an automatic confirmation for registration and gain access to an online account, containing data on the amount of Travel Gifts used with the company.",
     "notes": {
-      "label": "Companies have three possibilities to receive Travel gifts:",
+      "label": "Companies have three possibilities to receive Travel Gifts:",
       "items": [
         "Scan a bar code from the app",
         "Scan a bar code number to a browser",
         "Direct connection to a booking system"
       ],
-      "disclaimer": "Please note that bar codes must be scanned shortly after activation, as each bar code is only active for a few minutes."
+      "disclaimer": "<strong>Please note</strong> that bar codes must be scanned shortly after activation, as each bar code is only active for a few minutes."
     },
     "FAQ": {
       "title": "FAQ",
       "items": [
         {
-          "label": "Which companies qualify for the Travel gift?",
+          "label": "Which companies qualify for the Travel Gift?",
           "contents": [
             "All companies meeting one of the following conditions, operating in Iceland, can sign up:",
             [
@@ -50,9 +50,9 @@
           ]
         },
         {
-          "label": "What is the maximum amount in ISK each company is allowed to receive through the Travel gift?",
+          "label": "What is the maximum amount in ISK each company is allowed to receive through the Travel Gift?",
           "contents": [
-            "The Travel gift is an official state aid according to the EEA agreement. According to temporary regulations on state aids due to the COVID-19 epidemic, from 19. March 2020, a company is allowed to accept Travel gifts equivalent to a maximum of 100.000.000 ISK. A company that was facing operational difficulties on 31. December 2019, according to the EU Block Exemption Regulation No. 651/2014, can accept a maximum of 25.000.000 ISK.",
+            "The Travel Gift is an official state aid according to the EEA agreement. According to temporary regulations on state aids due to the COVID-19 epidemic, from 19. March 2020, a company is allowed to accept Travel Gifts equivalent to a maximum of 100.000.000 ISK. A company that was facing operational difficulties on 31. December 2019, according to the EU Block Exemption Regulation No. 651/2014, can accept a maximum of 25.000.000 ISK.",
             "A company was considered having operational difficulties at that time if it met at least one of the following conditions, as per regulations on state aids to mitigate the economic effect due to the COVID-19 epidemic:",
             [
               "The corporation has limited liability, and carried equity according to acknowledged accounting principles is less than half of proceeds from issue of capital stock, including share premium account.",
@@ -69,7 +69,7 @@
         {
           "label": "How do I establish a direct connection to a booking system?",
           "contents": [
-            "Companies can directly connect the Travel gift to their own register- or booking system. This way, the Travel gift bar code can be used when booking online.",
+            "Companies can directly connect the Travel Gift to their own register- or booking system. This way, the Travel Gift bar code can be used when booking online.",
             "Please contact <a href='mailto:info@yay.is'>info@yay.is</a> for more details on direct connection."
           ]
         },
@@ -78,15 +78,15 @@
           "contents": [
             "Settlements and accounting.",
             [
-              "Travel related businesses and companies receive a monthly report on the number of Travel gifts used to purchase services.",
+              "Travel related businesses and companies receive a monthly report on the number of Travel Gifts used to purchase services.",
               "Travel related businesses and companies receive a monthly payment in accordance with the report."
             ]
           ]
         },
         {
-          "label": "How do I monitor the Travel gifts used with my company?",
+          "label": "How do I monitor the Travel Gifts used with my company?",
           "contents": [
-            "All registered companies have access to an online account where they can monitor all Travel gifts received as payment. When a gift is used to purchase services, it appears on the company's report."
+            "All registered companies have access to an online account where they can monitor all Travel Gifts received as payment. When a gift is used to purchase services, it appears on the company's report."
           ]
         },
         {
@@ -104,113 +104,113 @@
       "videos": [
         {
           "id": "video1",
-          "label": "How do I scan a Travel gift using the app?",
+          "label": "How do I scan a Travel Gift using the app?",
           "url": "https://www.youtube.com/embed/q0hfSHLklKk"
         },
         {
           "id": "video2",
-          "label": "How do I enter the Travel gift barcode to a browser?",
+          "label": "How do I enter the Travel Gift barcode to a browser?",
           "url": "https://www.youtube.com/embed/tkff3XZ6KXE"
         }
       ]
     },
     "cta": {
       "label": "Tourism companies",
-      "content": "Skrá fyrirtæki"
+      "content": "Register company"
     }
   },
   "home": {
-    "name": "Ferðagjöf",
-    "title": "Gjöf til ferðalaga innanlands",
-    "intro": "Búum til minningar á ferðalagi innanlands og styðjum við bakið á íslenskri ferðaþjónustu",
+    "name": "Travel Gift",
+    "title": "A gift for domestic traveling",
+    "intro": "Create memories while domestically traveling, and support Icelandic tourism",
     "description": [
-      "Allir einstaklingar, með lögheimili á Íslandi, fæddir 2002 og fyrr fá Ferðagjöf að andvirði 5.000 kr. Gjöfin er liður í því að styðja við bakið á íslenskri ferðaþjónustu í kjölfar heimsfaraldurs kórónuveiru og efla þannig íslenska ferðaþjónustu sem og hvetja landsmenn til að eiga góðar stundir á ferðalagi víðs vegar um landið. Nánari upplýsingar má finna á <a href='https://ferdalag.is' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>.",
-      "Þegar gjöf er sótt verður til Ferðagjöf sem er tengd við símanúmer eiganda."
+      "All individuals with legal residence in Iceland, born 2002 and earlier, can recieve a 5,000 kr. Travel Gift. The gift is a part of supporing Icelandic tourism following the COVID-19 epidemic, and encourage Icelanders to have quality times while traveling domestically. Further information can be sought at <a href='https://ferdalag.is' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>.",
+      "When a gift is sought, a corresponding Travel Gift will be created using the owner's personal phone number"
     ],
-    "privacyPolicyButton": "Persónuverndarstefna",
+    "privacyPolicyButton": "Privacy policy",
     "FAQ": {
-      "title": "Algengar spurningar",
+      "title": "FAQ",
       "items": [
         {
-          "label": "Hverjir fá Ferðagjöf?",
+          "label": "Who can receive a Travel Gift?",
           "contents": [
-            "Einstaklingar með lögheimili á Ísland, íslenska kennitölu og eru fæddir árið 2002 eða fyrr fá Ferðagjöf."
+            "Individuals with a legal recidence in Iceland, an Icelandic SSN, and born 2002 or earlier, can receive a Travel Gift."
           ]
         },
         {
-          "label": "Hvernig nálgast ég Ferðagjöfina?",
+          "label": "How do I get my Travel Gift?",
           "contents": [
-            "Sækja þarf gjöfina á Ísland.is með innskráningu. Smáforritið Ferðagjöf er sótt í App Store eða Play Store og strikamerki skannað við kaup á þjónustu.",
-            "Einnig er hægt að nýta Ferðagjöfina beint inn á Ísland.is fyrir þá sem ekki geta sótt smáforritið. Þá er hægt að skanna strikamerkið úr farsíma eða stimpla inn númer strikamerkis við kaup á þjónustu."
+            "The gift needs to be fetched at Ísland.is with a personal electronic certificate (rafræn skilríki).",
+            "From there you can either download the Ferðagjöf app from App Store or Play Store; or simply use your Travel Gift from Ísland.is, and scan the barcode upon purchase"
           ]
         },
         {
-          "label": "Hvað ef ég á ekki snjalltæki?",
+          "label": "What if I don't have a smart device?",
           "contents": [
-            "Ferðagjöfina má nálgast á Ísland.is í tölvu, til að nýta Ferðagjöfina þarf annað hvort að panta þjónustu á vef hjá þeim fyrirtæki sem bjóða upp á vefbókanir, hringja í ferðaþjónustufyrirtæki og lesa upp númer strikamerkis eða fá að innskrá sig á Ísland.is hjá ferðaþjónustufyrirtæki og framkalla strikamerki í tölvu á staðnum. Ekki er ráðlagt að prenta út strikamerkið þar sem hvert strikamerki er aðeins virkt í 15 mínútur."
+            "The Travel Gift can be sought at Ísland.is using a computer. To use your Travel gift, you can purchase from companies websites (for those that support it); you can call tourism companies and give up the barcode number; or simply login to Ísland.is from a computer and generate the barcode at the tourism company site. We do not recomment printing out the barcode, since each barcode only lasts for 15 minutes."
           ]
         },
         {
-          "label": "Hvar get ég notað Ferðagjöfina?",
+          "label": "Where can I use my Travel Gift?",
           "contents": [
-            "Nýta má Ferðagjöf hjá skilgreindum fyrirtækjum innan ferðaþjónustunnar sem hafa skráð sig til þátttöku. Sjá má yfirlit yfir fyrirtæki á <a href='https://www.ferdalag.is/is/fyrirtaeki-sem-taka-a-moti-ferdagjof-thjonustuflokkar' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>."
+            "Travel Gifts can be used at tourism companies that have signed up for the Travel Gift's participation. You can view a summary of all available companies at <a href='https://www.ferdalag.is/is/fyrirtaeki-sem-taka-a-moti-ferdagjof-thjonustuflokkar' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>."
           ]
         },
         {
-          "label": "Get ég gefið Ferðagjöfina?",
+          "label": "Can I give away my Travel Gift?",
           "contents": [
-            "Allir eru hvattir til að nýta gjöfina en heimilt er að gefa eigin gjöf. Hver einstaklingur getur að hámarki gefið eða greitt með 15 Ferðagjöfum á gildistíma Ferðagjafar."
+            "We encourage everyone to use your own Travel Gift, but giving it away is permitted. Each individual can give or use at a maximum 15 Travel Gifts within the expiration date of the Travel Gift."
           ]
         },
         {
-          "label": "Hver er gildistími Ferðagjafarinnar?",
-          "contents": ["Gildistími er til og með 31.desember 2020."]
+          "label": "What is the expiration date of the Travel Gift?",
+          "contents": ["The Travel Gift expires after 31st of December, 2020."]
         }
       ]
     },
     "cta": {
       "users": {
-        "label": "Einstaklingar",
-        "content": "Sækja Ferðagjöf"
+        "label": "Individuals",
+        "content": "Fetch Travel Gift"
       },
       "companies": {
-        "label": "Ferðaþjónustufyrirtæki",
-        "content": "Sjá nánar"
+        "label": "Tourism companies",
+        "content": "See details"
       }
     }
   },
   "application": {
-    "title": "Prókúruhafi",
+    "title": "Procuration holder",
     "noConnection": {
-      "content": "Þú ert ekki skráður prókúruhafi, vinsamlegast hafðu samband við Skattinn",
-      "button": "Til baka"
+      "content": "You are not registered as a procuration holder, please contact the Skattur",
+      "button": "Back"
     }
   },
   "companySignup": {
-    "intro": "Hvaða fyrirtæki viltu skrá?",
+    "intro": "Which company do you want to register?",
     "form": {
       "company": {
-        "label": "Fyrirtæki",
-        "placeholder": "Veldu fyrirtæki"
+        "label": "Companies",
+        "placeholder": "Choose a company"
       },
-      "submit": "Áfram"
+      "submit": "Continue"
     },
-    "caption": "Ef fyrirtækið þitt er ekki í fellilistanum ert þú ekki prókúruhafi þess, vinsamlegast hafðu samband við RSK"
+    "caption": "If your company does not show up, then you are not a procuration holder for that company, please contact RSK for further information"
   },
   "company": {
     "congratulations": {
-      "title": "Til hamingju!",
-      "intro": "Núna getur þú skráð til inn á vefsvæði fyrirtækja",
-      "description": "Á vefsvæðinu er hægt að fylgjast með notkun á Ferðagjöfinni, slá inn strikamerki og stofnað fleiri aðganga.",
-      "button": "Áfram á vefsvæði fyrirtækja",
+      "title": "Congratulations!",
+      "intro": "Now you can proceed to the company website manager",
+      "description": "From the website, you can monitor the Travel Gift's usage, enter barcodes, and create accounts.",
+      "button": "Continue to the company website manager",
       "contents": [
-        "Þú færð tölvupóst frá YaY ehf með aðgangsupplýsingum um vefsvæðið. YaY er tæknibirgi Ferðagjafarinnar og sér um Appið fyrir notendur og vefsvæði fyrirtækja.",
-        "Ferðamálastofa sér um eftirlit með skráningu fyrirtækja, ef fyrirtæki eru ekki með tilsett leyfi verður aðgangur þeirra að Ferðagjöfinni lokaður."
+        "You'll recieve an email from YaY ehf. with access information for your company. YaY is the Travel Gift's technical supplier, as well as handling the company website and developing the app for users.",
+        "The Icelandic Tourist Board (Ferðamálastofa) handles all company registration inspection. If companies do not have the right license, their Travel Gift account will be closed."
       ]
     },
     "notQualified": {
-      "title": "Því miður",
-      "intro": "Því miður fellur fyrirtæki þitt ekki undir skilyrði til þátttöku fyrirtæka í Ferðagjöfinni.",
+      "title": "Sorry",
+      "intro": "Your company unfortunately does not meet the conditions to participate in the Travel Gift.",
       "description": "Einstaklingur getur notað ferðagjöf til greiðslu hjá fyrirtækjum sem uppfylla eitt af eftirfarandi skilyrðum og hafa starfsstöð á Íslandi:",
       "conditions": [
         "Fyrirtækjum með gilt leyfi Ferðamálastofu skv. III. kafla laga um Ferðamálastofu, nr. 96/2018.",
@@ -220,7 +220,7 @@
         "Söfnum og fyrirtækjum sem bjóða sýningu gegn endurgjaldi þar sem áhersla er á íslenska menningu, sögu eða náttúru."
       ],
       "caption": "Nánari upplýsingar og spurningar varðandi þátttöku fyrirtækja beinast til Ferðamálastofu, <a href='mailto:grunnur@ferdamalastofa.is'>grunnur@ferdamalastofa.is</a>",
-      "button": "Til baka"
+      "button": "Back"
     },
     "signup": {
       "intro": "Fylltu inn upplýsingar hér að neðan",
@@ -230,37 +230,37 @@
           "operationsTrouble": "Velja þarf annaðhvort svarið"
         },
         "companyName": {
-          "label": "Nafn fyrirtækis"
+          "label": "Company name"
         },
         "companySSN": {
-          "label": "Kennitala"
+          "label": "SSN"
         },
         "companyDisplayName": {
-          "label": "Hjáheiti",
+          "label": "Company display name",
           "tooltip": "Nafn fyrirtækis sem birtist í smáforritinu og á vefsíðunni Ferðalag.is"
         },
         "serviceCategory": {
-          "label": "Þjónustuflokkur",
-          "placeholder": "Veldu flokk",
+          "label": "Service category",
+          "placeholder": "Choose category",
           "options": [
             {
-              "label": "Afþreying",
+              "label": "Entertainment",
               "value": "entertainment"
             },
             {
-              "label": "Gisting",
+              "label": "Accommodation",
               "value": "accommodation"
             },
             {
-              "label": "Veitingar",
+              "label": "Restaurant",
               "value": "restaurant"
             },
             {
-              "label": "Samgöngur",
+              "label": "Transport",
               "value": "transport"
             },
             {
-              "label": "Menning",
+              "label": "Culture",
               "value": "culture"
             }
           ]
@@ -305,32 +305,32 @@
           ]
         },
         "operationsTrouble": {
-          "positiveLabel": "Já",
-          "negativeLabel": "Nei",
+          "positiveLabel": "Yes",
+          "negativeLabel": "No",
           "label": "Var fyrirtæki þitt í rekstrarerfiðleikum 31. desember 2019 í skilningi hópundanþágureglugerðar",
           "tooltip": "Fyrirtæki sem metið var í rekstrarerfiðleikum 31. desember 2019 í skilningi hópundanþágureglugerðar (ESB) nr. 651/2014 getur að hámarki tekið við samanlagt 25 millj. kr. greiðslu í formi ferðagjafa."
         },
         "gotPublicHelp": {
-          "positiveLabel": "Já",
-          "negativeLabel": "Nei",
+          "positiveLabel": "Yes",
+          "negativeLabel": "No",
           "label": "Hefur fyrirtækið á síðastliðnum tveimur reikningsárum eða á yfirstandandi reikningsári fengið opinbera aðstoð sem telst til minniháttaraðstoðar í skilningi EES-reglugerðar nr. 1407/2013?",
           "tooltip": "Dæmi um aðstoð sem getur talist til minniháttaraðstoðar eru lokunarstyrkir, stuðningslán, greiðslur með ferðagjöf, fyrirtækja- eða frumherjastyrkir frá Rannís, sýningarstyrkir frá Kvikmyndamiðstöð Íslands, flutningsjöfnunarstyrkir frá Byggðastofnun, styrkir í tengslum við sóknaráætlanir landshluta og styrkir úr Framkvæmdasjóði ferðamannastaða."
         },
         "gotPublicHelpAmount": "Vinsamlegast tilgreindu frjárhæð ríkisaðstoðar",
         "contact": {
           "label": "Tengiliður",
-          "name": "Nafn",
-          "email": "Netfang",
-          "generalEmail": "Almennt netfang",
-          "webpage": "Vefsíða",
-          "phoneNumber": "Símanúmer"
+          "name": "Name",
+          "email": "Email",
+          "generalEmail": "General email",
+          "webpage": "Webpage",
+          "phoneNumber": "Phone number"
         },
-        "submit": "Skrá fyrirtækið mitt"
+        "submit": "Register my company"
       }
     }
   },
   "user": {
-    "title": "Ferðagjöfin þín",
+    "title": "Your Travel Gift",
     "intro": "Til að nota Ferðagjöfina sækir þú smáforritið Ferðagjöf, sem er fáanlegt bæði fyrir Apple iOS og Android snjalltæki. Í smáforritinu getur þú nýtt gjafakortið, séð yfirlit yfir ferðaþjónustufyrirtæki eða gefið öðrum Ferðagjöfina. Ef þú kýst að sækja ekki smáforritið má búa til gjafakóða á strikamerki hér að neðan.",
     "appStore": {
       "title": "Sæktu smáforritið fyrir Apple iOS eða Android.",
