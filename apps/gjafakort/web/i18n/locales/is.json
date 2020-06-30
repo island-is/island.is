@@ -335,8 +335,8 @@
     "appStore": {
       "title": "Sæktu smáforritið fyrir Apple iOS eða Android.",
       "content": "Einnig er hægt að leita að „Ferðagjöf“ inni á Apple App Store og Google Play Store.",
-      "google": "smáforrit google play",
-      "apple": "smáforrit apple app store"
+      "google": "smáforrit Google Play",
+      "apple": "smáforrit Apple App Store"
     },
     "privacyPolicyButton": "Persónuverndarstefna",
     "barcode": {
