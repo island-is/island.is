@@ -160,24 +160,31 @@ jobs:
       # - name: Running E2E tests
       #   run: yarn run affected:e2e --base origin/master
 
+      - name: Set Helm chart version
+        id: helm-chart-version
+        run: |
+          export HELM_CHART_VERSION=1.0.0+${DOCKER_TAG}
+          echo "Helm chart version will be ${HELM_CHART_VERSION}"
+          echo "::set-env name=HELM_CHART_VERSION::${HELM_CHART_VERSION}"
+
       - name: Install Helm push plugin
         if: env.PUBLISH == 'true'
         run: helm plugin install https://github.com/chartmuseum/helm-push.git --version=0.8.1
 
       - name: Install Our ChartMuseum
         if: env.PUBLISH == 'true'
-        run: helm repo add chartmuseum https://chartmuseum.smaug.andes.cloud --username=$USERNAME --password=$PASSWORD
+        run: helm repo add chartmuseum https://chartmuseum.shared.devland.is --username=$USERNAME --password=$PASSWORD
         env:
           USERNAME: ${{ secrets.HELM_CHART_USERNAME }}
           PASSWORD: ${{ secrets.HELM_CHART_PASSWORD }}
 
       - name: Push islandis chart to the museum
         if: env.PUBLISH == 'true'
-        run: helm push helm/islandis chartmuseum || true
+        run: helm push helm/islandis --version="$HELM_CHART_VERSION" -f chartmuseum
 
       - name: Push gjafakort chart to the museum
         if: env.PUBLISH == 'true'
-        run: helm push helm/gjafakort chartmuseum || true
+        run: helm push helm/gjafakort --version="$HELM_CHART_VERSION" -f chartmuseum
 
       - name: Retag unaffected Docker images
         if: env.PUBLISH == 'true'
@@ -185,3 +192,69 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Trigger Deployment for islandis
+        if: env.PUBLISH == 'true'
+        env:
+          TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_ISLANDIS_TOKEN }}
+          ENDPOINT: https://spinnaker-gate.shared.devland.is/webhooks/webhook/islandis
+        run: |
+          curl -v $ENDPOINT -X POST -H "content-type: application/json" --data-binary @- <<BODY
+          {
+            "token": "$TOKEN",
+            "branch": "$GIT_BRANCH",
+            "parameters": { "docker_tag": "$DOCKER_TAG" },
+            "artifacts": [
+              {
+                "type": "github/file",
+                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.dev.yaml",
+                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.dev.yaml",
+                "version": "$GITHUB_SHA"
+              },
+              {
+                "type": "github/file",
+                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.prod.yaml",
+                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.prod.yaml",
+                "version": "$GITHUB_SHA"
+              },
+              {
+                "name": "islandis",
+                "type": "helm/chart",
+                "version": "$HELM_CHART_VERSION"
+              }
+            ]
+          }
+          BODY
+
+      - name: Trigger Deployment for gjafakort
+        if: env.PUBLISH == 'true'
+        env:
+          TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_GJAFAKORT_TOKEN }}
+          ENDPOINT: https://spinnaker-gate.shared.devland.is/webhooks/webhook/gjafakort
+        run: |
+          curl -v $ENDPOINT -X POST -H "content-type: application/json" --data-binary @- <<BODY
+          {
+            "token": "$TOKEN",
+            "branch": "$GIT_BRANCH",
+            "parameters": { "docker_tag": "$DOCKER_TAG" },
+            "artifacts": [
+              {
+                "type": "github/file",
+                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.dev.yaml",
+                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.dev.yaml",
+                "version": "$GITHUB_SHA"
+              },
+              {
+                "type": "github/file",
+                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.prod.yaml",
+                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.prod.yaml",
+                "version": "$GITHUB_SHA"
+              },
+              {
+                "name": "gjafakort",
+                "type": "helm/chart",
+                "version": "$HELM_CHART_VERSION"
+              }
+            ]
+          }
+          BODY
