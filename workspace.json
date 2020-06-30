@@ -124,6 +124,34 @@
         }
       }
     },
+    "island-ui-theme": {
+      "root": "libs/island-ui/theme",
+      "sourceRoot": "libs/island-ui/theme/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/island-ui/theme/.eslintrc",
+            "tsConfig": [
+              "libs/island-ui/theme/tsconfig.lib.json",
+              "libs/island-ui/theme/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/island-ui/theme/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/island-ui/theme/jest.config.js",
+            "tsConfig": "libs/island-ui/theme/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "gjafakort-web": {
       "root": "apps/gjafakort/web",
       "sourceRoot": "apps/gjafakort/web",
