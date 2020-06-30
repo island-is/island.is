@@ -199,6 +199,19 @@ const defaultRenderNode = (locale) => ({
       <Cmp />
     )
   },
+  [BLOCKS.EMBEDDED_ASSET]: (node) => {
+    const file = node.data.target.fields.file
+
+    if (file.contentType.startsWith('image/')) {
+      return (
+        <ContentContainer>
+          <img src={file.url + '?w=774'} />
+        </ContentContainer>
+      )
+    }
+
+    return null
+  },
 })
 
 type Props = {
