@@ -4,27 +4,20 @@ import * as styles from './LinkCard.treat'
 
 export interface LinkCardProps {
   onClick?: () => void
-  disabled?: boolean
+  href?: string
   children: string
 }
 
-export const LinkCard = forwardRef<HTMLButtonElement, LinkCardProps>(
-  ({ onClick, disabled, children }: LinkCardProps, ref) => {
+export const LinkCard = forwardRef<HTMLAnchorElement, LinkCardProps>(
+  ({ href, onClick, children }: LinkCardProps, ref) => {
     return (
-      <Box
-        component="button"
-        ref={ref}
-        disabled={disabled}
-        display="flex"
-        width="full"
-        onClick={onClick}
-        padding={[2, 2, 3]}
-        className={styles.container}
-      >
-        <Typography variant="h4" as="span">
-          {children}
-        </Typography>
-      </Box>
+      <a ref={ref} href={href} onClick={onClick} className={styles.container}>
+        <Box padding={[2, 2, 3]}>
+          <Typography variant="h4" as="span">
+            {children}
+          </Typography>
+        </Box>
+      </a>
     )
   },
 )
