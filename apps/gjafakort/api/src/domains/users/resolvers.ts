@@ -171,7 +171,7 @@ class UserResolver {
   @authorize()
   public async giveGift(
     _1,
-    { giftCardId, recipientMobileNumber, message },
+    { input: { giftCardId, recipientMobileNumber, message } },
     { user, dataSources: { applicationApi, yayApi } },
   ) {
     const application = await userService.getApplication(
