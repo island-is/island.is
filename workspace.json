@@ -923,7 +923,18 @@
             "outputPath": "dist/apps/services/search-indexer",
             "main": "apps/services/search-indexer/src/main.ts",
             "tsConfig": "apps/services/search-indexer/tsconfig.app.json",
-            "assets": ["apps/services/search-indexer/src/assets"]
+            "assets": [
+              {
+                "glob": "config",
+                "input": "apps/services/search-indexer",
+                "output": "./"
+              },
+              {
+                "glob": "bin",
+                "input": "apps/services/search-indexer",
+                "output": "./"
+              }
+            ]
           },
           "configurations": {
             "production": {
