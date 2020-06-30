@@ -43,7 +43,6 @@ export const Card: FC<CardProps> = ({
   href,
   as,
 }) => {
-  console.log('icon', icon)
   const Content = (
     <Box display="flex" height="full" flexDirection="column">
       <Box flexGrow={1} height="full">

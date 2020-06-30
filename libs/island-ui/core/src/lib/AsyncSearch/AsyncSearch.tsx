@@ -9,7 +9,7 @@ import * as styles from './AsyncSearch.treat'
 
 export type AsyncSearchSizes = 'medium' | 'large'
 
-type ItemCmpProps = {
+export type ItemCmpProps = {
   active?: boolean
   selected?: boolean
   colored?: boolean
@@ -43,7 +43,7 @@ export interface AsyncSearchProps {
   ) => void
 }
 
-export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
+export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
   (
     {
       label,
@@ -134,7 +134,6 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
 
           return (
             <div
-              ref={ref}
               className={cn(styles.wrapper, {
                 [styles.focused]: shouldShowItems || focused,
                 [styles.open]: shouldShowItems,
@@ -152,6 +151,7 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
                   {...getInputProps({
                     onFocus,
                     onBlur,
+                    ref,
                     ...(onSubmit && { onKeyDown }),
                   })}
                   isOpen={shouldShowItems}

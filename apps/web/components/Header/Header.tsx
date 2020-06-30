@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC } from 'react'
 import Link from 'next/link'
 import {
@@ -12,7 +13,9 @@ import {
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/web/i18n/I18n'
 import { useI18n } from '@island.is/web/i18n'
+import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { SearchInput } from '../'
+import { useRouter } from 'next/router'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
@@ -54,6 +57,8 @@ const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 
 export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const { activeLocale } = useI18n()
+  const Router = useRouter()
+  const { makePath } = useRouteNames(activeLocale as Locale)
 
   const locale = activeLocale as Locale
   const english = activeLocale === 'en'
@@ -104,7 +109,16 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                     </Hidden>
                     <Hidden above="md">
                       <Box marginLeft={marginLeft}>
-                        <Button variant="menu" icon="search" />
+                        <Button
+                          variant="menu"
+                          icon="search"
+                          onClick={() => {
+                            Router.push({
+                              pathname: makePath('search'),
+                              query: { focus: true },
+                            })
+                          }}
+                        />
                       </Box>
                     </Hidden>
                   </>

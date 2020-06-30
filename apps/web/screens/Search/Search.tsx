@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -47,6 +47,7 @@ interface CategoryProps {
 
 const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
   const { activeLocale } = useI18n()
+  const searchRef = useRef<HTMLInputElement | null>(null)
   const Router = useRouter()
   const n = useNamespace(namespace)
   const { makePath } = useRouteNames(activeLocale as Locale)
@@ -54,6 +55,12 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
   const filters = {
     category: Router.query.category,
   }
+
+  useEffect(() => {
+    if (searchRef.current) {
+      searchRef.current.focus()
+    }
+  }, [searchRef])
 
   const sidebarCategories = searchResults.items.reduce((all, cur) => {
     const key = cur.categorySlug
@@ -162,6 +169,7 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
                       </Link>
                     </Breadcrumbs>
                     <SearchInput
+                      ref={searchRef}
                       size="large"
                       activeLocale={activeLocale}
                       initialInputValue={q}
