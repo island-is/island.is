@@ -16,16 +16,20 @@ import {
 import { Locale } from '@island.is/web/i18n/I18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 
+const DEBOUNCE_TIMER = 300
+
 interface SearchInputProps {
   activeLocale: string
   initialInputValue?: string
   size?: AsyncSearchSizes
+  label?: string
   autocomplete?: boolean
   onSubmit?: (inputValue: string, selectedOption: AsyncSearchOption) => void
 }
 
 export const SearchInput = ({
   activeLocale,
+  label,
   initialInputValue,
   size = 'medium',
   autocomplete = true,
@@ -54,15 +58,28 @@ export const SearchInput = ({
     return mainStr.slice(0, pos) + insStr + mainStr.slice(pos)
   }
 
-  const defaultOnSubmit = (inputValue, selectedOption) => {
+  const defaultOnSubmit = (
+    inputValue: string,
+    selectedOption: AsyncSearchOption,
+  ) => {
+    if (selectedOption) {
+      const cleanLabel = cleanString(selectedOption.label)
+
+      setInputValue(cleanLabel)
+
+      return Router.push({
+        pathname: makePath('search'),
+        query: { q: cleanLabel },
+      })
+    }
+
+    if (!inputValue) {
+      return false
+    }
+
     const cleanInputValue = cleanString(inputValue)
 
-    if (selectedOption) {
-      return Router.push(
-        `${makePath('article')}/[slug]`,
-        makePath('article', selectedOption.value),
-      )
-    }
+    setInputValue(cleanInputValue)
 
     return Router.push({
       pathname: makePath('search'),
@@ -145,7 +162,14 @@ export const SearchInput = ({
   return (
     <AsyncSearch
       size={size}
+      label={label}
       placeholder="Leitaðu á Ísland.is"
+      onChange={(selection: AsyncSearchOption) => {
+        return Router.push({
+          pathname: makePath('search'),
+          query: { q: selection.label },
+        })
+      }}
       initialInputValue={initialInputValue}
       inputValue={inputValue}
       onInputValueChange={(value) => {
@@ -162,7 +186,10 @@ export const SearchInput = ({
             setLoading(true)
           }
 
-          timer.current = setTimeout(() => setQueryString(value), 30)
+          timer.current = setTimeout(
+            () => setQueryString(value),
+            DEBOUNCE_TIMER,
+          )
         }
       }}
       onSubmit={onSubmit || defaultOnSubmit}
