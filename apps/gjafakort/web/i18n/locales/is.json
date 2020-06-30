@@ -353,7 +353,8 @@
       "giveGiftCard": "Gefa Ferðagjöf:",
       "phoneNumberInput": "Símanúmer",
       "messageInput": "Skilaboð",
-      "giveContinueButton": "Gefa",
+      "giveContinueButton": "Halda áfram",
+      "giveSubmitButton": "Gefa",
       "expires": {
         "pre": "Strikamerki endurnýjast eftir",
         "post": "mín",

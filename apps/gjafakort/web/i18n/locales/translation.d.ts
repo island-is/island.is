@@ -293,6 +293,7 @@ export interface Barcode {
   phoneNumberInput: string
   messageInput: string
   giveContinueButton: string
+  giveSubmitButton: string
   expires: Expires
   expired: string
   new: string
@@ -866,6 +867,7 @@ const typeMap: any = {
       { json: 'phoneNumberInput', js: 'phoneNumberInput', typ: '' },
       { json: 'messageInput', js: 'messageInput', typ: '' },
       { json: 'giveContinueButton', js: 'giveContinueButton', typ: '' },
+      { json: 'giveSubmitButton', js: 'giveSubmitButton', typ: '' },
       { json: 'expires', js: 'expires', typ: r('Expires') },
       { json: 'expired', js: 'expired', typ: '' },
       { json: 'new', js: 'new', typ: '' },

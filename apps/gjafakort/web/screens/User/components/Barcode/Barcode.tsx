@@ -318,7 +318,7 @@ function Barcode({ shouldPoll: initialPolling }: PropTypes) {
                 )
               }}
             >
-              {t.giveContinueButton}
+              {t.giveSubmitButton}
             </Button>
           </Box>
         </Box>
