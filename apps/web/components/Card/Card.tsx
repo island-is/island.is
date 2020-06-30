@@ -8,6 +8,8 @@ import {
   Tag,
   Inline,
   TagProps,
+  IconTypes,
+  Icon,
 } from '@island.is/island-ui/core'
 
 import * as styles from './Card.treat'
@@ -25,6 +27,7 @@ const tagPropsDefaults: Omit<TagProps, 'children'> = {
 
 interface CardProps {
   title: string
+  icon?: IconTypes
   description: string
   tags?: Array<CardTagsProps>
   linkProps?: LinkProps
@@ -34,17 +37,28 @@ interface CardProps {
 
 export const Card: FC<CardProps> = ({
   title,
+  icon,
   description,
   tags = [],
   href,
   as,
 }) => {
+  console.log('icon', icon)
   const Content = (
     <Box display="flex" height="full" flexDirection="column">
       <Box flexGrow={1} height="full">
         <Stack space={1}>
           <Typography variant="cardCategoryTitle" as="h3">
-            {title}
+            <Box display="flex" flexDirection="row" alignItems="center">
+              <Box display="inlineFlex" flexGrow={1}>
+                {title}
+              </Box>
+              {icon && (
+                <Box marginLeft={1} display="inlineFlex">
+                  <Icon type={icon} />
+                </Box>
+              )}
+            </Box>
           </Typography>
           {description && <Typography variant="p">{description}</Typography>}
         </Stack>

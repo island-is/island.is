@@ -196,7 +196,14 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
                           })
                         }
 
-                        return <Card key={index} {...item} tags={tags} />
+                        return (
+                          <Card
+                            key={index}
+                            icon="article"
+                            tags={tags}
+                            {...item}
+                          />
+                        )
                       })}
                     </Stack>
                   </ContentBlock>
