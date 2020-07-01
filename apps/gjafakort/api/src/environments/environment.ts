@@ -37,4 +37,9 @@ export default {
     apiKey: process.env.YAY_API_KEY,
     secretKey: process.env.YAY_SECRET_KEY,
   },
+  nova: {
+    url: 'https://smsapi.devnova.is',
+    username: '???', // TODO get credentials
+    password: process.env.NOVA_PASSWORD,
+  },
 }

@@ -12,7 +12,7 @@ import {
 } from '@island.is/gjafakort-web/components'
 import { useI18n } from '@island.is/gjafakort-web/i18n'
 
-import { Barcode, MobileForm } from './components'
+import { Barcode, ConfirmMobile } from './components'
 import Link from 'next/link'
 
 export const UserApplicationQuery = gql`
@@ -33,11 +33,22 @@ const CreateUserApplicationMutation = gql`
   }
 `
 
+const VerifyUserApplicationMutation = gql`
+  mutation VerifyUserApplicationMutation($input: VerifyUserApplicationInput!) {
+    verifyUserApplication(input: $input) {
+      application {
+        id
+      }
+    }
+  }
+`
+
 function User() {
   const {
     t: { user: t, routes },
   } = useI18n()
   const { user } = useContext(UserContext)
+  const [verifyUserApplication] = useMutation(VerifyUserApplicationMutation)
   const [createUserApplication, { called: shouldPoll }] = useMutation(
     CreateUserApplicationMutation,
     {
@@ -56,9 +67,7 @@ function User() {
         if (!userApplication && user.mobile) {
           await createUserApplication({
             variables: {
-              input: {
-                mobile: user.mobile,
-              },
+              input: {},
             },
           })
         }
@@ -73,22 +82,39 @@ function User() {
     }
   }, [user, data, getUserApplication])
 
-  const onMobileSubmit = async ({ phoneNumber }, { setSubmitting }) => {
-    setSubmitting(true)
+  const onConfirmMobileSubmit = async (mobile, confirmCode) => {
     await createUserApplication({
       variables: {
         input: {
-          mobile: phoneNumber,
+          mobile,
+          confirmCode,
         },
       },
     })
-    setSubmitting(false)
+  }
+
+  const onVerifyMobileSubmit = async (mobile, confirmCode) => {
+    await verifyUserApplication({
+      variables: {
+        input: {
+          mobile,
+          confirmCode,
+        },
+      },
+    })
   }
 
   if (!data || loading || !user) {
     return <ContentLoader />
   } else if (!userApplication && !user.mobile) {
-    return <MobileForm onSubmit={onMobileSubmit} />
+    return <ConfirmMobile onSubmit={onConfirmMobileSubmit} />
+  } else if (userApplication && userApplication.verified === false) {
+    return (
+      <ConfirmMobile
+        onSubmit={onVerifyMobileSubmit}
+        mobileNumber={userApplication.mobileNumber}
+      />
+    )
   } else if (!userApplication) {
     return <ContentLoader />
   }

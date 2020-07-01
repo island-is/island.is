@@ -1,4 +1,4 @@
 export { Barcode } from './Barcode'
 export { Countdown } from './Countdown'
-export { MobileForm } from './MobileForm'
+export { ConfirmMobile } from './ConfirmMobile'
 export { RenderBarcode } from './RenderBarcode'

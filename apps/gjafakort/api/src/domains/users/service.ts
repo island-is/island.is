@@ -1,9 +1,13 @@
 import { UserApplication } from '@island.is/gjafakort/types'
 import { ApplicationStates } from '@island.is/gjafakort/consts'
 
-import { ApplicationAPI } from '../../services'
+import cache from '../../extensions/cache'
+import { ApplicationAPI, NovaAPI } from '../../services'
 
 const APPLICATION_TYPE = 'gjafakort-user'
+
+const getConfirmCacheKey = (ssn: string, mobile: string) =>
+  `confirm.mobile.${ssn}.${mobile}`
 
 export const getApplication = (
   userSSN: string,
@@ -27,7 +31,6 @@ export const createApplication = (
   userSSN: string,
   mobileNumber: string,
   countryCode: string,
-  verified: boolean,
   applicationApi: ApplicationAPI,
 ) => {
   return applicationApi.createApplication<UserApplication>({
@@ -35,7 +38,7 @@ export const createApplication = (
     issuerSSN: userSSN,
     authorSSN: userSSN,
     state: ApplicationStates.APPROVED,
-    data: { mobileNumber, countryCode, verified },
+    data: { mobileNumber, countryCode, verified: true },
   })
 }
 
@@ -50,4 +53,43 @@ export const updateApplication = (
     authorSSN: userSSN,
     data: { verified },
   })
+}
+
+export const sendConfirmCode = async (
+  userSSN: string,
+  mobileNumber: string,
+  novaApi: NovaAPI,
+) => {
+  const confirmCodeLength = 6
+  const confirmCode = Math.round(
+    Math.random() * 10 ** confirmCodeLength,
+  ).toString()
+
+  const maxSmsAllowed = 20
+  const smsSentCacheKey = `confirm.sms.sent.${userSSN}`
+  const smsSent = parseInt(await cache.get(smsSentCacheKey), 10)
+  if (smsSent > maxSmsAllowed) {
+    throw new Error('User has exceeded the limit of sms sent')
+  }
+  await cache.set(smsSentCacheKey, (smsSent ? smsSent + 1 : 1).toString())
+
+  const confirmCacheKey = getConfirmCacheKey(userSSN, mobileNumber)
+  const ttlTenMinutes = 60 * 10
+  await cache.set(confirmCacheKey, confirmCode)
+  await cache.expire(confirmCacheKey, ttlTenMinutes)
+
+  novaApi.sendSms(mobileNumber, confirmCode)
+}
+
+export const verifyConfirmCode = async (
+  userSSN: string,
+  mobileNumber: string,
+  confirmCode: string,
+) => {
+  const cacheKey = getConfirmCacheKey(userSSN, mobileNumber)
+  const expectedConfirmCode = await cache.get(cacheKey)
+  if (!confirmCode || expectedConfirmCode !== confirmCode) {
+    return false
+  }
+  return true
 }

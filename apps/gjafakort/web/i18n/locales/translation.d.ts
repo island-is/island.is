@@ -269,6 +269,7 @@ export interface User {
   privacyPolicyButton: string
   barcode: Barcode
   mobileForm: MobileForm
+  confirmCodeForm: ConfirmCodeForm
 }
 
 export interface AppStore {
@@ -320,6 +321,22 @@ export interface Expires {
   post: string
   attention: string
   disclaimer: string
+}
+
+export interface ConfirmCodeForm {
+  title: string
+  intro: string
+  validation: ConfirmCodeFormValidation
+  form: ConfirmCodeFormForm
+}
+
+export interface ConfirmCodeFormForm {
+  confirmCode: CompanyName
+  submit: string
+}
+
+export interface ConfirmCodeFormValidation {
+  confirmCode: string
 }
 
 export interface MobileForm {
@@ -847,6 +864,11 @@ const typeMap: any = {
       { json: 'privacyPolicyButton', js: 'privacyPolicyButton', typ: '' },
       { json: 'barcode', js: 'barcode', typ: r('Barcode') },
       { json: 'mobileForm', js: 'mobileForm', typ: r('MobileForm') },
+      {
+        json: 'confirmCodeForm',
+        js: 'confirmCodeForm',
+        typ: r('ConfirmCodeForm'),
+      },
     ],
     false,
   ),
@@ -907,6 +929,30 @@ const typeMap: any = {
       { json: 'attention', js: 'attention', typ: '' },
       { json: 'disclaimer', js: 'disclaimer', typ: '' },
     ],
+    false,
+  ),
+  ConfirmCodeForm: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'intro', js: 'intro', typ: '' },
+      {
+        json: 'validation',
+        js: 'validation',
+        typ: r('ConfirmCodeFormValidation'),
+      },
+      { json: 'form', js: 'form', typ: r('ConfirmCodeFormForm') },
+    ],
+    false,
+  ),
+  ConfirmCodeFormForm: o(
+    [
+      { json: 'confirmCode', js: 'confirmCode', typ: r('CompanyName') },
+      { json: 'submit', js: 'submit', typ: '' },
+    ],
+    false,
+  ),
+  ConfirmCodeFormValidation: o(
+    [{ json: 'confirmCode', js: 'confirmCode', typ: '' }],
     false,
   ),
   MobileForm: o(

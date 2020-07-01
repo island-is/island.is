@@ -393,6 +393,19 @@
         },
         "submit": "Skrá símanúmerið mitt"
       }
+    },
+    "confirmCodeForm": {
+      "title": "Staðfestingarkóði",
+      "intro": "Vinsamlegast sláðu inn SMS staðfestingarkóðann",
+      "validation": {
+        "confirmCode": "Staðfestingarkóðinn þarf að 6 tölustafir"
+      },
+      "form": {
+        "confirmCode": {
+          "label": "SMS staðfestingarkóði"
+        },
+        "submit": "Staðfesta símanúmerið mitt"
+      }
     }
   },
   "privacyPolicy": {

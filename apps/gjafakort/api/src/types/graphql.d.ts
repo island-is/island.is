@@ -1,4 +1,10 @@
-import { FerdalagAPI, ApplicationAPI, RskAPI, YayAPI } from '../services'
+import {
+  FerdalagAPI,
+  ApplicationAPI,
+  RskAPI,
+  YayAPI,
+  NovaAPI,
+} from '../services'
 
 export type User = {
   ssn: string
@@ -20,4 +26,5 @@ export type DataSource = {
   ferdalagApi: FerdalagAPI
   rskApi: RskAPI
   yayApi: YayAPI
+  novaApi: NovaAPI
 }

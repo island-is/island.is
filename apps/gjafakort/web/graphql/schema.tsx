@@ -145,16 +145,23 @@ export type UpdateCompanyApplication = {
 export type Mutation = {
   __typename?: 'Mutation'
   approveCompanyApplication?: Maybe<ApproveCompanyApplication>
+  confirmMobile?: Maybe<ConfirmMobile>
   createCompanyApplication?: Maybe<CreateCompanyApplication>
   createUserApplication?: Maybe<CreateUserApplication>
   fetchUserApplication?: Maybe<UserApplication>
+  giveGift?: Maybe<GiveGift>
   rejectCompanyApplication?: Maybe<RejectCompanyApplication>
   root?: Maybe<Scalars['String']>
   updateCompanyApplication?: Maybe<UpdateCompanyApplication>
+  verifyUserApplication?: Maybe<VerifyUserApplication>
 }
 
 export type MutationApproveCompanyApplicationArgs = {
   input: ApproveCompanyApplicationInput
+}
+
+export type MutationConfirmMobileArgs = {
+  input: Maybe<ConfirmMobileInput>
 }
 
 export type MutationCreateCompanyApplicationArgs = {
@@ -169,12 +176,20 @@ export type MutationFetchUserApplicationArgs = {
   ssn: Scalars['String']
 }
 
+export type MutationGiveGiftArgs = {
+  input: Maybe<GiveGiftInput>
+}
+
 export type MutationRejectCompanyApplicationArgs = {
   input: RejectCompanyApplicationInput
 }
 
 export type MutationUpdateCompanyApplicationArgs = {
   input: UpdateCompanyApplicationInput
+}
+
+export type MutationVerifyUserApplicationArgs = {
+  input: Maybe<VerifyUserApplicationInput>
 }
 
 export type Greeting = {
@@ -212,7 +227,13 @@ export type UserApplication = {
   id: Scalars['String']
   mobileNumber: Scalars['String']
   countryCode: Scalars['String']
+  verified: Scalars['Boolean']
   logs?: Maybe<Array<Maybe<ApplicationLog>>>
+}
+
+export type GiveGift = {
+  __typename?: 'GiveGift'
+  success: Scalars['Boolean']
 }
 
 export type CreateUserApplication = {
@@ -222,6 +243,33 @@ export type CreateUserApplication = {
 
 export type CreateUserApplicationInput = {
   mobile?: Maybe<Scalars['StringTrimmed']>
+  confirmCode?: Maybe<Scalars['StringTrimmed']>
+}
+
+export type VerifyUserApplication = {
+  __typename?: 'VerifyUserApplication'
+  application?: Maybe<UserApplication>
+}
+
+export type VerifyUserApplicationInput = {
+  mobile?: Maybe<Scalars['StringTrimmed']>
+  confirmCode?: Maybe<Scalars['StringTrimmed']>
+}
+
+export type ConfirmMobile = {
+  __typename?: 'ConfirmMobile'
+  mobile: Scalars['String']
+  success: Scalars['Boolean']
+}
+
+export type ConfirmMobileInput = {
+  mobile?: Maybe<Scalars['StringTrimmed']>
+}
+
+export type GiveGiftInput = {
+  giftCardId: Scalars['Int']
+  recipientMobileNumber: Scalars['StringTrimmed']
+  message?: Maybe<Scalars['String']>
 }
 
 export type UserQueryQueryVariables = {}
@@ -516,6 +564,22 @@ export type CreateUserApplicationMutationMutation = {
   >
 }
 
+export type VerifyUserApplicationMutationMutationVariables = {
+  input: VerifyUserApplicationInput
+}
+
+export type VerifyUserApplicationMutationMutation = {
+  __typename?: 'Mutation'
+} & {
+  verifyUserApplication?: Maybe<
+    { __typename?: 'VerifyUserApplication' } & {
+      application?: Maybe<
+        { __typename?: 'UserApplication' } & Pick<UserApplication, 'id'>
+      >
+    }
+  >
+}
+
 export type GiftCardsQueryQueryVariables = {}
 
 export type GiftCardsQueryQuery = { __typename?: 'Query' } & {
@@ -555,6 +619,24 @@ export type GiftCardCodeQueryQuery = { __typename?: 'Query' } & {
       GiftCardCode,
       'code' | 'expiryDate' | 'pollingUrl'
     >
+  >
+}
+
+export type GiveGiftMutationMutationVariables = {
+  input: GiveGiftInput
+}
+
+export type GiveGiftMutationMutation = { __typename?: 'Mutation' } & {
+  giveGift?: Maybe<{ __typename?: 'GiveGift' } & Pick<GiveGift, 'success'>>
+}
+
+export type ConfirmMobileMutationMutationVariables = {
+  input: ConfirmMobileInput
+}
+
+export type ConfirmMobileMutationMutation = { __typename?: 'Mutation' } & {
+  confirmMobile?: Maybe<
+    { __typename?: 'ConfirmMobile' } & Pick<ConfirmMobile, 'success' | 'mobile'>
   >
 }
 
@@ -1411,6 +1493,58 @@ export type CreateUserApplicationMutationMutationOptions = ApolloReactCommon.Bas
   CreateUserApplicationMutationMutation,
   CreateUserApplicationMutationMutationVariables
 >
+export const VerifyUserApplicationMutationDocument = gql`
+  mutation VerifyUserApplicationMutation($input: VerifyUserApplicationInput!) {
+    verifyUserApplication(input: $input) {
+      application {
+        id
+      }
+    }
+  }
+`
+export type VerifyUserApplicationMutationMutationFn = ApolloReactCommon.MutationFunction<
+  VerifyUserApplicationMutationMutation,
+  VerifyUserApplicationMutationMutationVariables
+>
+
+/**
+ * __useVerifyUserApplicationMutationMutation__
+ *
+ * To run a mutation, you first call `useVerifyUserApplicationMutationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVerifyUserApplicationMutationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [verifyUserApplicationMutationMutation, { data, loading, error }] = useVerifyUserApplicationMutationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useVerifyUserApplicationMutationMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    VerifyUserApplicationMutationMutation,
+    VerifyUserApplicationMutationMutationVariables
+  >,
+) {
+  return ApolloReactHooks.useMutation<
+    VerifyUserApplicationMutationMutation,
+    VerifyUserApplicationMutationMutationVariables
+  >(VerifyUserApplicationMutationDocument, baseOptions)
+}
+export type VerifyUserApplicationMutationMutationHookResult = ReturnType<
+  typeof useVerifyUserApplicationMutationMutation
+>
+export type VerifyUserApplicationMutationMutationResult = ApolloReactCommon.MutationResult<
+  VerifyUserApplicationMutationMutation
+>
+export type VerifyUserApplicationMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<
+  VerifyUserApplicationMutationMutation,
+  VerifyUserApplicationMutationMutationVariables
+>
 export const GiftCardsQueryDocument = gql`
   query GiftCardsQuery {
     giftCards {
@@ -1534,4 +1668,105 @@ export type GiftCardCodeQueryLazyQueryHookResult = ReturnType<
 export type GiftCardCodeQueryQueryResult = ApolloReactCommon.QueryResult<
   GiftCardCodeQueryQuery,
   GiftCardCodeQueryQueryVariables
+>
+export const GiveGiftMutationDocument = gql`
+  mutation GiveGiftMutation($input: GiveGiftInput!) {
+    giveGift(input: $input) {
+      success
+    }
+  }
+`
+export type GiveGiftMutationMutationFn = ApolloReactCommon.MutationFunction<
+  GiveGiftMutationMutation,
+  GiveGiftMutationMutationVariables
+>
+
+/**
+ * __useGiveGiftMutationMutation__
+ *
+ * To run a mutation, you first call `useGiveGiftMutationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGiveGiftMutationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [giveGiftMutationMutation, { data, loading, error }] = useGiveGiftMutationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGiveGiftMutationMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    GiveGiftMutationMutation,
+    GiveGiftMutationMutationVariables
+  >,
+) {
+  return ApolloReactHooks.useMutation<
+    GiveGiftMutationMutation,
+    GiveGiftMutationMutationVariables
+  >(GiveGiftMutationDocument, baseOptions)
+}
+export type GiveGiftMutationMutationHookResult = ReturnType<
+  typeof useGiveGiftMutationMutation
+>
+export type GiveGiftMutationMutationResult = ApolloReactCommon.MutationResult<
+  GiveGiftMutationMutation
+>
+export type GiveGiftMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<
+  GiveGiftMutationMutation,
+  GiveGiftMutationMutationVariables
+>
+export const ConfirmMobileMutationDocument = gql`
+  mutation ConfirmMobileMutation($input: ConfirmMobileInput!) {
+    confirmMobile(input: $input) {
+      success
+      mobile
+    }
+  }
+`
+export type ConfirmMobileMutationMutationFn = ApolloReactCommon.MutationFunction<
+  ConfirmMobileMutationMutation,
+  ConfirmMobileMutationMutationVariables
+>
+
+/**
+ * __useConfirmMobileMutationMutation__
+ *
+ * To run a mutation, you first call `useConfirmMobileMutationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useConfirmMobileMutationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [confirmMobileMutationMutation, { data, loading, error }] = useConfirmMobileMutationMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useConfirmMobileMutationMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    ConfirmMobileMutationMutation,
+    ConfirmMobileMutationMutationVariables
+  >,
+) {
+  return ApolloReactHooks.useMutation<
+    ConfirmMobileMutationMutation,
+    ConfirmMobileMutationMutationVariables
+  >(ConfirmMobileMutationDocument, baseOptions)
+}
+export type ConfirmMobileMutationMutationHookResult = ReturnType<
+  typeof useConfirmMobileMutationMutation
+>
+export type ConfirmMobileMutationMutationResult = ApolloReactCommon.MutationResult<
+  ConfirmMobileMutationMutation
+>
+export type ConfirmMobileMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<
+  ConfirmMobileMutationMutation,
+  ConfirmMobileMutationMutationVariables
 >
