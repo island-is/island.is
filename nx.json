@@ -98,6 +98,19 @@
     },
     "gjafakort-consts": {
       "tags": []
+    },
+    "application-schema": {
+      "tags": []
+    },
+    "application-form": {
+      "tags": []
+    },
+    "application-system-form": {
+      "tags": []
+    },
+    "application-system-form-e2e": {
+      "tags": [],
+      "implicitDependencies": ["application-system-form"]
     }
   }
 }
