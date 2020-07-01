@@ -1,3 +1,4 @@
+const path = require('path')
 const TreatPlugin = require('treat/webpack-plugin')
 const rootWebpackConfig = require('../../../../.storybook/webpack.config')
 // Export a function. Accept the base config as the only param.
@@ -19,6 +20,14 @@ module.exports = async ({ config, mode }) => {
       ],
     },
   })
+
+  config.resolve = {
+    ...config.resolve,
+    alias: {
+      ...config.resolve.alias,
+      '@island.is/island-ui/theme': path.resolve(__dirname, '../../theme/src'),
+    },
+  }
 
   return config
 }
