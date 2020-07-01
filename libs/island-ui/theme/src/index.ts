@@ -1,2 +1,2 @@
-export * from './colors'
-export * from './theme'
+export * from './lib/colors'
+export * from './lib/theme'

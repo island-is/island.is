@@ -1,7 +1,1 @@
-{
-  "extends": ["../../../.eslintrc.react.json"],
-  "rules": {
-    "@typescript-eslint/no-var-requires": "off"
-  },
-  "ignorePatterns": ["!**/*"]
-}
+{ "extends": "../../../.eslintrc", "rules": {}, "ignorePatterns": ["!**/*"] }
