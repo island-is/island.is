@@ -43,5 +43,5 @@ export * from './lib/ContentBlock/ContentBlock'
 export * from './lib/Accordion/Accordion'
 export * from './lib/AccordionItem/AccordionItem'
 
-// Theme
-export * from '../../theme/src/global.treat'
+// Global reset
+export * from './global/global.treat'

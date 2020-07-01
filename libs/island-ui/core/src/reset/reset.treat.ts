@@ -4,7 +4,7 @@ import { theme } from '@island.is/island-ui/theme'
 globalStyle('html, body', {
   margin: 0,
   fontFamily: theme.typography.fontFamily,
-  background: theme.color.white, // todo
+  background: theme.color.white,
   padding: 0,
 })
 

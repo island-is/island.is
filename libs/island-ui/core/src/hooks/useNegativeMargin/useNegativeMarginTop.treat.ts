@@ -1,9 +1,6 @@
 import { style, styleMap } from 'treat'
 import { mapToStyleProperty } from '../../utils'
-import { theme } from '@island.is/island-ui/theme'
-import { makeThemeUtils } from '../../themeUtils'
-
-const utils = makeThemeUtils(theme)
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 const preventCollapse = 1
 
@@ -23,21 +20,21 @@ export const xs = styleMap(
 )
 export const sm = styleMap(
   mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginTop', (rows) =>
-    utils.responsiveStyle({ sm: negativeMarginTop(1, rows) }),
+    themeUtils.responsiveStyle({ sm: negativeMarginTop(1, rows) }),
   ),
 )
 export const md = styleMap(
   mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginTop', (rows) =>
-    utils.responsiveStyle({ md: negativeMarginTop(1, rows) }),
+    themeUtils.responsiveStyle({ md: negativeMarginTop(1, rows) }),
   ),
 )
 export const lg = styleMap(
   mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginTop', (rows) =>
-    utils.responsiveStyle({ lg: negativeMarginTop(1, rows) }),
+    themeUtils.responsiveStyle({ lg: negativeMarginTop(1, rows) }),
   ),
 )
 export const xl = styleMap(
   mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginTop', (rows) =>
-    utils.responsiveStyle({ xl: negativeMarginTop(1, rows) }),
+    themeUtils.responsiveStyle({ xl: negativeMarginTop(1, rows) }),
   ),
 )
