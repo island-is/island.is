@@ -1,5 +1,5 @@
 import { styleMap, style } from 'treat'
-import { theme } from '../../theme/theme'
+import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
   borderRadius: '5px',

@@ -3,7 +3,7 @@ import { AsyncSearch } from './AsyncSearch'
 import { Stack, Box } from '../..'
 import { boolean } from '@storybook/addon-knobs'
 import Typography from '../Typography/Typography'
-import { blue100 } from '../../theme/colors'
+import { blue100 } from '@island.is/island-ui/theme'
 
 export default {
   title: 'Components/AsyncSearch',

@@ -1,5 +1,5 @@
 import { style, styleMap } from 'treat'
-import { theme } from '../../theme'
+import { theme } from '@island.is/island-ui/theme'
 
 export const wrapper = style({
   display: 'inline-block',

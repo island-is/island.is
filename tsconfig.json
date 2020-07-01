@@ -18,9 +18,6 @@
     "baseUrl": ".",
     "paths": {
       "@island.is/island-ui/core": ["libs/island-ui/core/src/index.ts"],
-      "@island.is/island-ui/core/reset": [
-        "libs/island-ui/core/src/reset/index.ts"
-      ],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/lol/dir/nested/my-lib": [
         "libs/lol/dir/nested/my-lib/src/index.ts"
@@ -46,7 +43,8 @@
       ],
       "@island.is/api/content-search": ["libs/api/content-search/src/index.ts"],
       "@island.is/gjafakort/types": ["libs/gjafakort/types/src/index.ts"],
-      "@island.is/gjafakort/consts": ["libs/gjafakort/consts/src/index.ts"]
+      "@island.is/gjafakort/consts": ["libs/gjafakort/consts/src/index.ts"],
+      "@island.is/island-ui/theme": ["libs/island-ui/theme/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

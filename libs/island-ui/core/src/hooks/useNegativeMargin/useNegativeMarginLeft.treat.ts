@@ -1,9 +1,6 @@
 import { styleMap } from 'treat'
 import { mapToStyleProperty } from '../../utils'
-import { theme } from '../../theme'
-import { makeThemeUtils } from '../../themeUtils'
-
-const utils = makeThemeUtils(theme)
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 const negativeMarginLeft = (grid: number, rows: number) => ({
   marginLeft: -(grid * rows),
@@ -17,21 +14,21 @@ export const xs = styleMap({
 })
 export const sm = styleMap(
   mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginLeft', (rows) =>
-    utils.responsiveStyle({ sm: negativeMarginLeft(1, rows) }),
+    themeUtils.responsiveStyle({ sm: negativeMarginLeft(1, rows) }),
   ),
 )
 export const md = styleMap(
   mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginLeft', (rows) =>
-    utils.responsiveStyle({ md: negativeMarginLeft(1, rows) }),
+    themeUtils.responsiveStyle({ md: negativeMarginLeft(1, rows) }),
   ),
 )
 export const lg = styleMap(
   mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginLeft', (rows) =>
-    utils.responsiveStyle({ lg: negativeMarginLeft(1, rows) }),
+    themeUtils.responsiveStyle({ lg: negativeMarginLeft(1, rows) }),
   ),
 )
 export const xl = styleMap(
   mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginLeft', (rows) =>
-    utils.responsiveStyle({ xl: negativeMarginLeft(1, rows) }),
+    themeUtils.responsiveStyle({ xl: negativeMarginLeft(1, rows) }),
   ),
 )

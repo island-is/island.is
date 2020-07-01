@@ -1,5 +1,5 @@
 import { style, styleMap } from 'treat'
-import { theme, themeUtils } from '../../../../theme/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const colored = style({
   backgroundColor: theme.color.blue100,

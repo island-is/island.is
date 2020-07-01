@@ -1,6 +1,6 @@
 import { style } from 'treat'
 import { isObject } from 'lodash'
-import { theme } from '../theme'
+import { theme } from '@island.is/island-ui/theme'
 
 export const resolveBreakpoints = (variant, attr, acc) => {
   if (isObject(variant[attr])) {
