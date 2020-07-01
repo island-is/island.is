@@ -60,7 +60,8 @@ ARG APP_DIST_HOME
 ENV APP=${APP}
 ENV NODE_ENV=production
 
-RUN apk add bash -U && rm -rf /var/cache/apk/*
+RUN apk add bash aws-cli jq curl -U \
+    && rm -rf /var/cache/apk/*
 WORKDIR /webapp
 
 # Adding user for running the app
