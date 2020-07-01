@@ -21,6 +21,7 @@ import {
   Select,
   Divider,
   Option,
+  SidebarAccordion,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
@@ -143,19 +144,26 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
                   text={`Allir flokkar (${searchResults.total})`}
                 />
                 <Divider weight="alternate" />
-                {sidebarCategories.map((c, index) => {
-                  const selected = c.key === filters.category
-                  const text = `${c.title} (${c.total})`
+                <SidebarAccordion
+                  id="sidebar_accordion_categories"
+                  label="Sjá flokka"
+                >
+                  <Stack space={[1, 1, 2]}>
+                    {sidebarCategories.map((c, index) => {
+                      const selected = c.key === filters.category
+                      const text = `${c.title} (${c.total})`
 
-                  return (
-                    <Filter
-                      key={index}
-                      selected={selected}
-                      onClick={() => onSelectCategory(c.key)}
-                      text={text}
-                    />
-                  )
-                })}
+                      return (
+                        <Filter
+                          key={index}
+                          selected={selected}
+                          onClick={() => onSelectCategory(c.key)}
+                          text={text}
+                        />
+                      )
+                    })}
+                  </Stack>
+                </SidebarAccordion>
               </Sidebar>
             </div>
 
