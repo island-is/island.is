@@ -178,7 +178,7 @@ const Category: Screen<CategoryProps> = ({
                                       as={makePath('article', slug)}
                                       passHref
                                     >
-                                      <LinkCard key={index}>{title}</LinkCard>
+                                      <LinkCard>{title}</LinkCard>
                                     </Link>
                                   )
                                 })}

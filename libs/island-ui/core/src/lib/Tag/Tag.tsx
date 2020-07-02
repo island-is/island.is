@@ -1,6 +1,7 @@
 import React, { forwardRef } from 'react'
 import cn from 'classnames'
-import { Typography, Box } from '../..'
+import { Typography } from '../..'
+
 import * as styles from './Tag.treat'
 
 export type TagVariant = 'blue' | 'purple'
@@ -8,27 +9,66 @@ export type TagVariant = 'blue' | 'purple'
 export interface TagProps {
   onClick?: () => void
   variant?: TagVariant
+  href?: string
+  disabled?: boolean
+  label?: boolean
   children: string
 }
 
-export const Tag = forwardRef<HTMLButtonElement, TagProps>(
-  ({ children, variant = 'blue', ...props }: TagProps, ref) => {
-    return (
-      <Box
-        component="button"
+const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
+
+export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
+  (
+    {
+      children,
+      href,
+      onClick,
+      variant = 'blue',
+      disabled,
+      label,
+      ...props
+    }: TagProps,
+    ref,
+  ) => {
+    const className = cn(styles.container, styles.variants[variant], {
+      [styles.label]: label,
+    })
+
+    const isExternal = href && isLinkExternal(href)
+
+    const anchorProps = {
+      ...(isExternal && { rel: 'noreferrer noopener' }),
+    }
+
+    const sharedProps = {
+      className,
+      ref,
+    }
+
+    const content = (
+      <Typography variant="tag" as="span">
+        {children}
+      </Typography>
+    )
+
+    if (label) {
+      return <span {...sharedProps}>{content}</span>
+    }
+
+    return href ? (
+      <a href={href} {...anchorProps} {...sharedProps} {...props}>
+        {content} anchor
+      </a>
+    ) : (
+      <button
         type="button"
-        display="inlineBlock"
-        ref={ref}
-        paddingY="smallGutter"
-        paddingX={1}
-        className={cn(styles.container, styles.variant[variant])}
-        tabIndex={-1}
+        disabled={disabled}
+        onClick={onClick}
+        {...sharedProps}
         {...props}
       >
-        <Typography variant="tag" as="span">
-          {children}
-        </Typography>
-      </Box>
+        {content}
+      </button>
     )
   },
 )

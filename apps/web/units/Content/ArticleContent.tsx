@@ -14,6 +14,7 @@ import {
   BoxProps,
   Accordion,
   AccordionItem,
+  Blockquote,
 } from '@island.is/island-ui/core'
 import { Locale } from '../../i18n/I18n'
 import { BorderedContent, Hyperlink } from '@island.is/web/components'
@@ -37,9 +38,18 @@ const customListItemRenderNode = (locale) => ({
   [BLOCKS.LIST_ITEM]: (node, children) => {
     return <Bullet>{children}</Bullet>
   },
-  [BLOCKS.PARAGRAPH]: (node, children) => {
-    return <>{children}</>
+  [BLOCKS.PARAGRAPH]: (node, children) => children,
+})
+
+const customBlockquoteRenderNode = (locale) => ({
+  [BLOCKS.QUOTE]: (node, children) => {
+    return (
+      <ContentContainer>
+        <Blockquote>{children}</Blockquote>
+      </ContentContainer>
+    )
   },
+  [BLOCKS.PARAGRAPH]: (node, children) => children,
 })
 
 const customProcessEntryRenderNode = (locale) => ({
@@ -85,121 +95,139 @@ const customProcessEntryRenderNode = (locale) => ({
   },
 })
 
-const defaultRenderNode = (locale) => ({
-  [INLINES.HYPERLINK]: (node, children) => {
-    const {
-      data: { uri: href },
-    } = node
+const defaultRenderNode = (locale, overrides = {}) => {
+  const settings = {
+    [INLINES.HYPERLINK]: (node, children) => {
+      const {
+        data: { uri: href },
+      } = node
 
-    if (
-      !['http://', 'https://'].reduce((hasProtocol, protocol) => {
-        if (hasProtocol || href.startsWith(protocol)) {
-          return true
-        }
+      if (
+        !['http://', 'https://'].reduce((hasProtocol, protocol) => {
+          if (hasProtocol || href.startsWith(protocol)) {
+            return true
+          }
 
-        return false
-      }, false)
-    ) {
-      return children
-    }
+          return false
+        }, false)
+      ) {
+        return children
+      }
 
-    return (
-      <Hyperlink locale={locale} href={href}>
-        {children}
-      </Hyperlink>
-    )
-  },
-  [INLINES.ENTRY_HYPERLINK]: (node, children) => {
-    const {
-      data: {
-        target: {
-          fields: { slug },
-          sys: {
-            contentType: {
-              sys: { id },
+      return (
+        <Hyperlink locale={locale} href={href}>
+          {children}
+        </Hyperlink>
+      )
+    },
+    [INLINES.ENTRY_HYPERLINK]: (node, children) => {
+      const {
+        data: {
+          target: {
+            fields: { slug },
+            sys: {
+              contentType: {
+                sys: { id },
+              },
             },
           },
         },
-      },
-    } = node
+      } = node
 
-    const pathType = mappedContentfulTypes[id]
+      const pathType = mappedContentfulTypes[id]
 
-    return pathType ? (
-      <Hyperlink locale={locale} pathType={pathType} slug={slug}>
-        {children}
-      </Hyperlink>
-    ) : (
-      children
-    )
-  },
-  [BLOCKS.PARAGRAPH]: (node, children) => {
-    if (!children.find((x: string) => x !== '')) {
-      return null
-    }
+      return pathType ? (
+        <Hyperlink locale={locale} pathType={pathType} slug={slug}>
+          {children}
+        </Hyperlink>
+      ) : (
+        children
+      )
+    },
+    [BLOCKS.PARAGRAPH]: (node, children) => {
+      if (!children.find((x: string) => x !== '')) {
+        return null
+      }
 
-    return (
+      return (
+        <ContentContainer>
+          <Box marginBottom={simpleSpacing}>
+            <Typography variant="p" as="p">
+              {children}
+            </Typography>
+          </Box>
+        </ContentContainer>
+      )
+    },
+    [BLOCKS.QUOTE]: (node, children) => {
+      return (
+        <RichText
+          document={node}
+          renderNode={customBlockquoteRenderNode(locale)}
+        />
+      )
+    },
+    [BLOCKS.HEADING_2]: (node, children) => (
       <ContentContainer>
-        <Box marginBottom={simpleSpacing}>
-          <Typography variant="p" as="p">
-            {children}
-          </Typography>
-        </Box>
+        <Typography variant="h2" as="h2">
+          <span data-sidebar-link={slugify(children.join(''))}>{children}</span>
+        </Typography>
       </ContentContainer>
-    )
-  },
-  [BLOCKS.HEADING_2]: (node, children) => (
-    <ContentContainer>
-      <Typography variant="h2" as="h2">
-        <span data-sidebar-link={slugify(children.join(''))}>{children}</span>
-      </Typography>
-    </ContentContainer>
-  ),
-  [BLOCKS.HEADING_3]: (node, children) => (
-    <ContentContainer>
-      <Typography variant="h3" as="h3">
-        <span data-sidebar-link={slugify(children.join(''))}>{children}</span>
-      </Typography>
-    </ContentContainer>
-  ),
-  [BLOCKS.UL_LIST]: (node, children) => (
-    <ContentContainer>
-      <BulletList>{children}</BulletList>
-    </ContentContainer>
-  ),
-  [BLOCKS.LIST_ITEM]: (node, children) => {
-    return (
-      <RichText document={node} renderNode={customListItemRenderNode(locale)} />
-    )
-  },
-  [BLOCKS.EMBEDDED_ENTRY]: (node) => {
-    const embeddedNode = embeddedNodes(locale)[
-      node.data.target?.sys?.contentType?.sys?.id
-    ]
+    ),
+    [BLOCKS.HEADING_3]: (node, children) => (
+      <ContentContainer>
+        <Typography variant="h3" as="h3">
+          <span data-sidebar-link={slugify(children.join(''))}>{children}</span>
+        </Typography>
+      </ContentContainer>
+    ),
+    [BLOCKS.UL_LIST]: (node, children) => (
+      <ContentContainer>
+        <BulletList>{children}</BulletList>
+      </ContentContainer>
+    ),
+    [BLOCKS.LIST_ITEM]: (node, children) => {
+      return (
+        <RichText
+          document={node}
+          renderNode={customListItemRenderNode(locale)}
+        />
+      )
+    },
+    [BLOCKS.EMBEDDED_ENTRY]: (node) => {
+      const embeddedNode = embeddedNodes(locale)[
+        node.data.target?.sys?.contentType?.sys?.id
+      ]
 
-    if (!embeddedNode) return null
+      if (!embeddedNode) return null
 
-    const Component = embeddedNode.component
-    const Wrapper = embeddedNode.wrapper
-    const Cmp = () => (
-      <Component
-        {...(embeddedNode.processContent && {
-          ...embeddedNode.processContent(node),
-        })}
-      >
-        {embeddedNode.children && embeddedNode.children(node)}
-      </Component>
-    )
+      const Component = embeddedNode.component
+      const Wrapper = embeddedNode.wrapper
+      const Cmp = () => (
+        <Component
+          {...(embeddedNode.processContent && {
+            ...embeddedNode.processContent(node),
+          })}
+        >
+          {embeddedNode.children && embeddedNode.children(node)}
+        </Component>
+      )
 
-    return Wrapper ? (
-      <Wrapper>
+      return Wrapper ? (
+        <Wrapper>
+          <Cmp />
+        </Wrapper>
+      ) : (
         <Cmp />
-      </Wrapper>
-    ) : (
-      <Cmp />
-    )
-  },
-})
+      )
+    },
+  }
+
+  return {
+    ...settings,
+    ...overrides,
+  }
+}
 
 type Props = {
   locale: Locale
@@ -276,6 +304,7 @@ const embeddedNodes = (locale) => ({
       } = node.data.target.fields
 
       return {
+        showTopContent: details.content.length,
         topContent: (
           <ContentBlock width="small">
             <Stack space={[2, 2]}>

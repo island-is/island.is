@@ -59,6 +59,8 @@ const tick = () => (cb) => {
 interface BarcodeStateSchema {
   states: {
     idle: {}
+    give: {}
+    confirmGive: {}
     loading: {}
     active: {}
     success: {}
@@ -68,6 +70,10 @@ interface BarcodeStateSchema {
 }
 
 export type GiftCard = { id: string; amount: number }
+export type GiveInfo = {
+  phoneNumber: string
+  message: string
+}
 
 type PollingData = {
   status?: string
@@ -87,6 +93,9 @@ type ActionEvents =
       pollingUrl: string
     }
   | { type: 'ERROR' }
+  | { type: 'GIVE_GIFT_CARD'; giftCard: GiftCard }
+  | { type: 'CONFIRM_GIVE'; giveInfo: GiveInfo }
+  | { type: 'BACK_TO_GIVE' }
 
 interface BarcodeContext {
   elapsed: number
@@ -95,6 +104,7 @@ interface BarcodeContext {
   secondsToExpiry: number
   error: object
   giftCard: GiftCard
+  giveInfo: GiveInfo
   pollingUrl: string
   pollingData: PollingData
 }
@@ -121,6 +131,7 @@ export const barcodeMachine = Machine<
       giftCard: { id: '', amount: 0 },
       pollingUrl: '',
       pollingData: {},
+      giveInfo: { phoneNumber: '', message: '' },
     },
     states: {
       idle: {
@@ -132,6 +143,27 @@ export const barcodeMachine = Machine<
             }),
             target: 'loading',
           },
+          GIVE_GIFT_CARD: {
+            actions: assign({
+              giftCard: (ctx, event) => event.giftCard,
+            }),
+            target: 'give',
+          },
+        },
+      },
+      give: {
+        on: {
+          CONFIRM_GIVE: {
+            actions: assign({
+              giveInfo: (ctx, event) => event.giveInfo,
+            }),
+            target: 'confirmGive',
+          },
+        },
+      },
+      confirmGive: {
+        on: {
+          BACK_TO_GIVE: 'give',
         },
       },
       loading: {

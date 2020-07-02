@@ -2,9 +2,14 @@ import React from 'react'
 import Accordion from './Accordion'
 import { ContentBlock } from '../ContentBlock'
 import { Box } from '../Box'
-import { AccordionItem, AccordionCard } from '../AccordionItem/AccordionItem'
+import {
+  AccordionItem,
+  AccordionCard,
+  SidebarAccordion,
+} from '../AccordionItem/AccordionItem'
 import { Typography } from '../Typography/Typography'
 import { boolean } from '@storybook/addon-knobs'
+import { Stack } from '../Stack/Stack'
 
 export default {
   title: 'Components/Accordion',
@@ -71,6 +76,33 @@ export const SingleCard = () => {
           </Typography>
         </AccordionCard>
       </Box>
+    </ContentBlock>
+  )
+}
+
+export const Sidebar = () => {
+  return (
+    <ContentBlock>
+      <div style={{ maxWidth: 300 }}>
+        <Box paddingY={[1, 2]}>
+          <SidebarAccordion id="mini_accordion" label="Sýna flokka">
+            <Stack space={[1, 1, 2]}>
+              <Typography variant="p" as="p">
+                Flokkur 1
+              </Typography>
+              <Typography variant="p" as="p">
+                Flokkur 1
+              </Typography>
+              <Typography variant="p" as="p">
+                Flokkur 1
+              </Typography>
+              <Typography variant="p" as="p">
+                Flokkur 1
+              </Typography>
+            </Stack>
+          </SidebarAccordion>
+        </Box>
+      </div>
     </ContentBlock>
   )
 }

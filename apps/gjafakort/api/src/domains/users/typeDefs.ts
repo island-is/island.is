@@ -34,12 +34,22 @@ export default gql`
     logs: [ApplicationLog]
   }
 
+  type GiveGift {
+    success: Boolean!
+  }
+
   type CreateUserApplication {
     application: UserApplication
   }
 
   input CreateUserApplicationInput {
     mobile: StringTrimmed
+  }
+
+  input GiveGiftInput {
+    giftCardId: Int!
+    recipientMobileNumber: StringTrimmed!
+    message: String
   }
 
   extend type Query {
@@ -54,5 +64,6 @@ export default gql`
     createUserApplication(
       input: CreateUserApplicationInput
     ): CreateUserApplication
+    giveGift(input: GiveGiftInput): GiveGift
   }
 `

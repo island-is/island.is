@@ -9,7 +9,7 @@ import * as styles from './AsyncSearch.treat'
 
 export type AsyncSearchSizes = 'medium' | 'large'
 
-type ItemCmpProps = {
+export type ItemCmpProps = {
   active?: boolean
   selected?: boolean
   colored?: boolean
@@ -43,7 +43,7 @@ export interface AsyncSearchProps {
   ) => void
 }
 
-export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
+export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
   (
     {
       label,
@@ -116,7 +116,10 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
           const shouldShowItems =
             options.filter(useFilter ? filter : (x) => x).length > 0 && isOpen
 
-          const onKeyDown = (event: any) => {
+          const onKeyDown = (event: {
+            key: string
+            nativeEvent: { preventDownshiftDefault: boolean }
+          }) => {
             if (event.key === 'Enter') {
               // Prevent Downshift's default 'Enter' behavior.
               event.nativeEvent.preventDownshiftDefault = true
@@ -131,7 +134,6 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
 
           return (
             <div
-              ref={ref}
               className={cn(styles.wrapper, {
                 [styles.focused]: shouldShowItems || focused,
                 [styles.open]: shouldShowItems,
@@ -149,6 +151,7 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
                   {...getInputProps({
                     onFocus,
                     onBlur,
+                    ref,
                     ...(onSubmit && { onKeyDown }),
                   })}
                   isOpen={shouldShowItems}
@@ -157,25 +160,32 @@ export const AsyncSearch = forwardRef<HTMLDivElement, AsyncSearchProps>(
                   size={size}
                   placeholder={placeholder}
                 />
+                <button
+                  className={cn(styles.icon, styles.iconSizes[size])}
+                  onBlur={onBlur}
+                  onFocus={onFocus}
+                  {...(onSubmit
+                    ? {
+                        onClick: () => {
+                          closeMenuOnSubmit && closeMenu()
+                          onSubmit(inputValue)
+                        },
+                      }
+                    : getToggleButtonProps())}
+                >
+                  <Icon type="search" width={20} color="blue400" />
+                </button>
                 {loading && (
-                  <span className={styles.icon}>
+                  <span
+                    className={cn(
+                      styles.loadingIcon,
+                      styles.loadingIconSizes[size],
+                    )}
+                    aria-hidden="false"
+                    aria-label="Loading"
+                  >
                     <Icon spin type="loading" width={24} />
                   </span>
-                )}
-                {!loading && (
-                  <button
-                    className={styles.icon}
-                    {...(onSubmit
-                      ? {
-                          onClick: () => {
-                            closeMenuOnSubmit && closeMenu()
-                            onSubmit(inputValue)
-                          },
-                        }
-                      : getToggleButtonProps())}
-                  >
-                    <Icon type="search" width={20} />
-                  </button>
                 )}
               </div>
               {hasLabel && <Label {...getLabelProps()}>{label}</Label>}
