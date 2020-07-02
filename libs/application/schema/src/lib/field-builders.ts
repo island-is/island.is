@@ -1,16 +1,10 @@
-import {
-  CheckboxField,
-  Condition,
-  DateField,
-  FieldTypes,
-  IntroductionField,
-  Option,
-  RadioField,
-  TextField,
-  ValidationError,
-} from '@island.is/application/schema'
-
-import { isAfter, isBefore } from 'date-fns'
+import { Condition } from '../types/condition'
+import { FieldTypes, Option } from '../types/fields/base'
+import { CheckboxField } from '../types/fields/checkbox-field'
+import { DateField } from '../types/fields/date-field'
+import { RadioField } from '../types/fields/radio-field'
+import { TextField } from '../types/fields/text-field'
+import { IntroductionField } from '../types/fields/introduction-field'
 
 export function buildCheckboxField(data: {
   condition?: Condition
@@ -19,23 +13,7 @@ export function buildCheckboxField(data: {
   options: Option[]
   isRequired: boolean
 }): CheckboxField {
-  const { condition, id, name, options, isRequired } = data
-  return {
-    children: undefined,
-    isQuestion: true,
-    condition,
-    id,
-    name,
-    options,
-    type: FieldTypes.CHECKBOX,
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validate(answer: any): ValidationError {
-      if (isRequired && !answer) {
-        return { error: 'this is required' }
-      }
-      return {}
-    },
-  }
+  return new CheckboxField(data)
 }
 
 export function buildDateField(data: {
@@ -46,30 +24,7 @@ export function buildDateField(data: {
   minDate?: Date
   isRequired: boolean
 }): DateField {
-  const { condition, id, name, maxDate, minDate, isRequired } = data
-  return {
-    children: undefined,
-    isQuestion: true,
-    condition,
-    id,
-    name,
-    maxDate,
-    minDate,
-    type: FieldTypes.DATE,
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validate(answer: any): ValidationError {
-      if (isRequired && !answer) {
-        return { error: 'this is required' }
-      }
-      if (maxDate && isAfter(answer, maxDate)) {
-        return { error: 'your answer is too far in the future' }
-      }
-      if (minDate && isBefore(answer, minDate)) {
-        return { error: 'your answer is too far in the past' }
-      }
-      return {}
-    },
-  }
+  return new DateField(data)
 }
 
 export function buildIntroductionField(data: {
@@ -96,23 +51,7 @@ export function buildRadioField(data: {
   options: Option[]
   isRequired: boolean
 }): RadioField {
-  const { condition, id, name, options, isRequired } = data
-  return {
-    children: undefined,
-    isQuestion: true,
-    condition,
-    id,
-    name,
-    options,
-    type: FieldTypes.RADIO,
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validate(answer: any): ValidationError {
-      if (isRequired && !answer) {
-        return { error: 'this is required' }
-      }
-      return {}
-    },
-  }
+  return new RadioField(data)
 }
 
 export function buildTextField(data: {
@@ -121,20 +60,5 @@ export function buildTextField(data: {
   name: string
   isRequired: boolean
 }): TextField {
-  const { condition, id, name, isRequired } = data
-  return {
-    children: undefined,
-    isQuestion: true,
-    condition,
-    id,
-    name,
-    type: FieldTypes.TEXT,
-    //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    validate(answer: any): ValidationError {
-      if (isRequired && !answer) {
-        return { error: 'this is required' }
-      }
-      return {}
-    },
-  }
+  return new TextField(data)
 }

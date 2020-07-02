@@ -1,5 +1,13 @@
 import React, { FC } from 'react'
-import { Answers, Field, FieldTypes } from '@island.is/application/schema'
+import {
+  Answers,
+  CheckboxField,
+  Field,
+  FieldTypes,
+  IntroductionField,
+  RadioField,
+  TextField,
+} from '@island.is/application/schema'
 import CheckboxFormField from '../fields/CheckboxFormField'
 import IntroductionFormField from '../fields/IntroductionFormField'
 import TextFormField from '../fields/TextFormField'
@@ -12,40 +20,42 @@ const FormField: FC<{
   field: Field
   showFieldName?: boolean
 }> = ({ field, answerQuestion, answers, showFieldName }) => {
-  switch (field.type) {
-    case FieldTypes.CHECKBOX:
-      return (
-        <CheckboxFormField
-          answerQuestion={answerQuestion}
-          answers={answers}
-          field={field}
-          showFieldName={showFieldName}
-        />
-      )
-    case FieldTypes.INTRO:
-      return (
-        <IntroductionFormField field={field} showFieldName={showFieldName} />
-      )
-    case FieldTypes.RADIO:
-      return (
-        <RadioFormField
-          field={field}
-          answers={answers}
-          answerQuestion={answerQuestion}
-          showFieldName={showFieldName}
-        />
-      )
-    case FieldTypes.TEXT:
-      return (
-        <TextFormField
-          field={field}
-          answers={answers}
-          answerQuestion={answerQuestion}
-          showFieldName={showFieldName}
-        />
-      )
-    default:
-      return <p>We have not implemented this field yet {field.type}</p>
+  if (field.type === FieldTypes.CHECKBOX) {
+    return (
+      <CheckboxFormField
+        answerQuestion={answerQuestion}
+        answers={answers}
+        field={field as CheckboxField}
+        showFieldName={showFieldName}
+      />
+    )
+  } else if (field.type === FieldTypes.INTRO) {
+    return (
+      <IntroductionFormField
+        field={field as IntroductionField}
+        showFieldName={showFieldName}
+      />
+    )
+  } else if (field.type === FieldTypes.RADIO) {
+    return (
+      <RadioFormField
+        field={field as RadioField}
+        answers={answers}
+        answerQuestion={answerQuestion}
+        showFieldName={showFieldName}
+      />
+    )
+  } else if (field.type === FieldTypes.TEXT) {
+    return (
+      <TextFormField
+        field={field as TextField}
+        answers={answers}
+        answerQuestion={answerQuestion}
+        showFieldName={showFieldName}
+      />
+    )
+  } else {
+    return <p>We have not implemented this field yet {field.type}</p>
   }
 }
 

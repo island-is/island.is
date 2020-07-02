@@ -1,12 +1,6 @@
-import {
-  Form,
-  FormItemTypes,
-  FormNode,
-  FormScreen,
-  Question,
-  Section,
-  SubSection,
-} from '@island.is/application/schema'
+import { FormNode, FormScreen } from '../types/form-tree'
+import { Form, FormItemTypes, Section, SubSection } from '../types/form'
+import { Question } from '../types/fields/question'
 
 const isValidScreen = (node: FormNode): boolean => {
   if (!node.children) {
@@ -65,7 +59,7 @@ export function getSectionsInForm(form: Form): Section[] {
   const sections: Section[] = []
   form.children.forEach((child) => {
     if (child.type === FormItemTypes.SECTION) {
-      sections.push(child)
+      sections.push(child as Section)
     }
   })
   return sections
@@ -74,7 +68,7 @@ export function getSubSectionsInSection(section: Section): SubSection[] {
   const subSections: SubSection[] = []
   section.children.forEach((child) => {
     if (child.type === FormItemTypes.SUB_SECTION) {
-      subSections.push(child)
+      subSections.push(child as SubSection)
     }
   })
   return subSections
