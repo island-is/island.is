@@ -1,5 +1,5 @@
 import React from 'react'
-import { Formik, Form, Field, FormikValues } from 'formik'
+import { Formik, Form, Field, FormikValues, FormikHelpers } from 'formik'
 import * as Yup from 'yup'
 
 import {
@@ -14,7 +14,10 @@ import { useI18n } from '@island.is/gjafakort-web/i18n'
 import { FormLayout } from '@island.is/gjafakort-web/components'
 
 interface PropTypes {
-  onSubmit: (_: FormikValues) => void
+  onSubmit: (
+    values: FormikValues,
+    formikHelpers: FormikHelpers<FormikValues>,
+  ) => void
 }
 
 function ConfirmCodeForm({ onSubmit }: PropTypes) {
@@ -24,6 +27,8 @@ function ConfirmCodeForm({ onSubmit }: PropTypes) {
       validation,
     },
   } = useI18n()
+
+  // TODO put a link to resend the sms confirmation @Brian
 
   return (
     <FormLayout>

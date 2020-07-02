@@ -1,6 +1,8 @@
 import React, { useContext, useEffect } from 'react'
+import { ApolloError } from 'apollo-client'
 import { useLazyQuery, useMutation } from 'react-apollo'
 import gql from 'graphql-tag'
+import get from 'lodash/get'
 
 import { Box, Stack, Typography, Button } from '@island.is/island-ui/core'
 
@@ -19,6 +21,8 @@ export const UserApplicationQuery = gql`
   query UserApplicationQuery {
     userApplication {
       id
+      verified
+      mobileNumber
     }
   }
 `
@@ -28,6 +32,8 @@ const CreateUserApplicationMutation = gql`
     createUserApplication(input: $input) {
       application {
         id
+        verified
+        mobileNumber
       }
     }
   }
@@ -38,6 +44,8 @@ const VerifyUserApplicationMutation = gql`
     verifyUserApplication(input: $input) {
       application {
         id
+        verified
+        mobileNumber
       }
     }
   }
@@ -82,36 +90,41 @@ function User() {
     }
   }, [user, data, getUserApplication])
 
-  const onConfirmMobileSubmit = async (mobile, confirmCode) => {
-    await createUserApplication({
-      variables: {
-        input: {
-          mobile,
-          confirmCode,
+  const onConfirmMobileSubmit = (action) => async (
+    { mobile, confirmCode },
+    { setSubmitting, setErrors },
+  ) => {
+    setSubmitting(true)
+    try {
+      await action({
+        variables: {
+          input: {
+            mobile,
+            confirmCode,
+          },
         },
-      },
-    })
-  }
-
-  const onVerifyMobileSubmit = async (mobile, confirmCode) => {
-    await verifyUserApplication({
-      variables: {
-        input: {
-          mobile,
-          confirmCode,
-        },
-      },
-    })
+      })
+    } catch (error) {
+      const confirmCodeError = (error as ApolloError).graphQLErrors.filter(
+        (e) => e.extensions.code === 'CONFIRM_CODE_ERROR',
+      )[0]
+      if (confirmCodeError) {
+        setErrors({ confirmCode: get(t, confirmCodeError.message) })
+      }
+    }
+    setSubmitting(false)
   }
 
   if (!data || loading || !user) {
     return <ContentLoader />
   } else if (!userApplication && !user.mobile) {
-    return <ConfirmMobile onSubmit={onConfirmMobileSubmit} />
+    return (
+      <ConfirmMobile onSubmit={onConfirmMobileSubmit(createUserApplication)} />
+    )
   } else if (userApplication && userApplication.verified === false) {
     return (
       <ConfirmMobile
-        onSubmit={onVerifyMobileSubmit}
+        onSubmit={onConfirmMobileSubmit(verifyUserApplication)}
         mobileNumber={userApplication.mobileNumber}
       />
     )

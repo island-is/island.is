@@ -400,6 +400,9 @@
       "validation": {
         "confirmCode": "Staðfestingarkóðinn þarf að 6 tölustafir"
       },
+      "errors": {
+        "confirmCode": "Staðfestingarkóðinn er ekki réttur"
+      },
       "form": {
         "confirmCode": {
           "label": "SMS staðfestingarkóði"

@@ -37,7 +37,6 @@ const parseNodes = (nodes: string[]): ClusterNode[] =>
     .map((url) => {
       const [host, port] = url.split(':')
       return {
-        prunp: 'asdf',
         host,
         port: parseInt(port, 10) || DEFAULT_PORT,
       }

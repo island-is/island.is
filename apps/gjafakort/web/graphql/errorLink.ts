@@ -17,6 +17,8 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
           return api.logout().then(() => Router.reload())
         case 'FORBIDDEN':
           return Router.push('/404')
+        case 'CONFIRM_CODE_ERROR':
+          break
         default:
           return NotificationService.onGraphQLError({
             graphQLErrors,

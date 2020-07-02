@@ -87,7 +87,8 @@ class NovaAPI extends RESTDataSource {
         IsFlash: false,
       },
     }
-    return this.wrappedPost(`SendSms`, body)
+    console.log(`sending sms to ${mobileNumber} with code ${confirmationCode}`)
+    //return this.wrappedPost(`SendSms`, body)
   }
 }
 

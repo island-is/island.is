@@ -2,6 +2,7 @@ import { logger } from '@island.is/logging'
 import { UserInputError, ApolloError } from 'apollo-server-express'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
+import { ConfirmCodeError } from './errors'
 import { authorize } from '../auth'
 import * as userService from './service'
 import {
@@ -99,13 +100,13 @@ class UserResolver {
     const mobile = user.mobile || input.mobile
     const { mobileNumber, countryCode } = validateMobile(mobile)
     if (!user.mobile) {
-      const match = userService.verifyConfirmCode(
+      const match = await userService.verifyConfirmCode(
         user.ssn,
         mobileNumber,
         input.confirmCode,
       )
       if (!match) {
-        return null
+        throw new ConfirmCodeError()
       }
     }
 
@@ -139,7 +140,7 @@ class UserResolver {
       input.confirmCode,
     )
     if (!match) {
-      return null
+      throw new ConfirmCodeError()
     }
 
     let application = await userService.getApplication(user.ssn, applicationApi)

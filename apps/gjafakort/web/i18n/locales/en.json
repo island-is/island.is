@@ -398,7 +398,10 @@
       "title": "Confirmation code",
       "intro": "Please enter your SMS confirmation code",
       "validation": {
-        "confirmCode": "The confirmation code needs to be 6 numbers"
+        "confirmCode": "The confirmation code needs to be 6 digits"
+      },
+      "errors": {
+        "confirmCode": "The confirmation code is incorrect"
       },
       "form": {
         "confirmCode": {

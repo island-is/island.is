@@ -6,9 +6,6 @@ import { ApplicationAPI, NovaAPI } from '../../services'
 
 const APPLICATION_TYPE = 'gjafakort-user'
 
-const getConfirmCacheKey = (ssn: string, mobile: string) =>
-  `confirm.mobile.${ssn}.${mobile}`
-
 export const getApplication = (
   userSSN: string,
   applicationApi: ApplicationAPI,
@@ -55,6 +52,9 @@ export const updateApplication = (
   })
 }
 
+const getConfirmCacheKey = (ssn: string, mobile: string) =>
+  `confirm.mobile.${ssn}.${mobile}`
+
 export const sendConfirmCode = async (
   userSSN: string,
   mobileNumber: string,
@@ -85,10 +85,10 @@ export const verifyConfirmCode = async (
   userSSN: string,
   mobileNumber: string,
   confirmCode: string,
-) => {
+): Promise<boolean> => {
   const cacheKey = getConfirmCacheKey(userSSN, mobileNumber)
   const expectedConfirmCode = await cache.get(cacheKey)
-  if (!confirmCode || expectedConfirmCode !== confirmCode) {
+  if (!expectedConfirmCode || expectedConfirmCode !== confirmCode) {
     return false
   }
   return true

@@ -1,15 +1,18 @@
 import React from 'react'
 import gql from 'graphql-tag'
 import { useMutation } from 'react-apollo'
+import { FormikValues, FormikHelpers } from 'formik'
 
 import { ContentLoader } from '@island.is/gjafakort-web/components'
 
-import MobileForm from './MobileForm'
-import ConfirmCodeForm from './ConfirmCodeForm'
+import { MobileForm, ConfirmCodeForm } from '../'
 
 interface PropTypes {
   mobileNumber?: string
-  onSubmit: (mobile: string, confirmCode: string) => void
+  onSubmit: (
+    values: FormikValues,
+    formikHelpers: FormikHelpers<FormikValues>,
+  ) => void
 }
 
 const ConfirmMobileMutation = gql`
@@ -21,7 +24,7 @@ const ConfirmMobileMutation = gql`
   }
 `
 
-function MobileSteps({ onSubmit, mobileNumber }: PropTypes) {
+function ConfirmMobile({ onSubmit, mobileNumber }: PropTypes) {
   const [confirmMobile, { data, loading }] = useMutation(ConfirmMobileMutation)
   const {
     confirmMobile: { mobile },
@@ -39,11 +42,12 @@ function MobileSteps({ onSubmit, mobileNumber }: PropTypes) {
     setSubmitting(false)
   }
 
-  const onConfirmSubmit = ({ confirmCode }) => {
-    onSubmit(mobile || mobileNumber, confirmCode)
+  const phoneNumber = mobile || mobileNumber
+
+  const onConfirmSubmit = ({ confirmCode }, helpers) => {
+    onSubmit({ mobile: phoneNumber, confirmCode }, helpers)
   }
 
-  console.log(loading, data, mobile, mobileNumber)
   if (loading) {
     return <ContentLoader />
   } else if (!mobile && !mobileNumber) {
@@ -53,4 +57,4 @@ function MobileSteps({ onSubmit, mobileNumber }: PropTypes) {
   }
 }
 
-export default MobileSteps
+export default ConfirmMobile
