@@ -6,18 +6,18 @@ export const withErrorBoundary = (Component) => {
   class ErrorBoundary extends React.Component<ErrorProps> {
     state = { ...this.props }
 
-    static getDerivedStateFromError (error: Error) {
+    static getDerivedStateFromError(error: Error) {
       // All throws from frontend are critical crashes,
       // return generic error code unless the error is a custom error object
       return { statusCode: 500, ...error }
     }
 
-    componentDidCatch (error: Error, info: React.ErrorInfo) {
+    componentDidCatch(error: Error, info: React.ErrorInfo) {
       // console.error(info)
       // TODO: Log error here
     }
 
-    render () {
+    render() {
       const { statusCode, title, children } = this.state
       if (statusCode) {
         // Display error page for all client side errors during render
@@ -54,7 +54,7 @@ export const withErrorBoundary = (Component) => {
 export class CustomNextError extends Error {
   statusCode
   title
-  constructor (statusCode: number, title?: string, message?: string) {
+  constructor(statusCode: number, title?: string, message?: string) {
     super(message ?? title)
     this.statusCode = statusCode
     this.title = title
