@@ -1,5 +1,5 @@
 import { Condition } from './condition'
-import { Field } from './fields'
+import { Field } from './fields/field'
 
 export enum FormItemTypes {
   FORM = 'FORM',
@@ -18,7 +18,7 @@ export interface Form {
   children: FormChildren[]
 }
 
-export type FormChildren = Section | MultiField | Field | Repeater
+export type FormChildren = Section | MultiField | Repeater | Field
 export type SectionChildren = SubSection | MultiField | Repeater | Field
 export type SubSectionChildren = MultiField | Repeater | Field
 export type RepeaterChildren = MultiField | Repeater | Field
