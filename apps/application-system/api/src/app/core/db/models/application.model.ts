@@ -50,7 +50,7 @@ export class Application extends Model<Application> {
   @Column({
     type: DataType.STRING,
   })
-  assigne: string
+  assignee: string
 
   @Column({
     type: DataType.STRING,

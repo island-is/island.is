@@ -23,7 +23,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      assigne: {
+      assignee: {
         type: Sequelize.STRING,
       },
       externalId: {
