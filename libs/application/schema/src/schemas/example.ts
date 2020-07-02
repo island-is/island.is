@@ -87,8 +87,8 @@ const CareerSection: Section = buildSection({
   ],
 })
 
-export const ExampleForm: Form = buildForm({
-  id: 'unemployment',
+export const ExampleSchema: Form = buildForm({
+  id: 'example',
   ownerId: 'DOL',
   name: 'Atvinnuleysisbætur',
   children: [IntroSection, CareerSection],
