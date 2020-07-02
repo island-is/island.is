@@ -10,7 +10,7 @@ module.exports = {
           applicant: '123456-7890',
           state: 'PENDING',
           attatchments: ['https://google.com', 'https://aranja.com'],
-          typeId: 'FOO',
+          typeId: 'example',
           answers: JSON.stringify({
             question1: 'some answer',
             question2: 'another answer',
