@@ -1,5 +1,5 @@
 import { style, styleMap } from 'treat'
-import { theme, themeUtils } from '../../../../theme/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const input = style({
   position: 'relative',
@@ -9,7 +9,10 @@ export const input = style({
   fontWeight: theme.typography.light,
   borderColor: theme.color.blue200,
   borderWidth: 1,
-  padding: '16px 46px 16px 16px',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  padding: '16px 96px 16px 16px',
   borderStyle: 'solid',
   outline: 0,
   transition: 'border-color 150ms ease',

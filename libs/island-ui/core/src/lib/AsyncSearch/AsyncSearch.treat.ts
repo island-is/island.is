@@ -1,5 +1,5 @@
 import { style, styleMap } from 'treat'
-import { theme } from '../../theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const wrapper = style({
   display: 'inline-block',
@@ -45,17 +45,75 @@ export const open = style({
 
 export const icon = style({
   position: 'absolute',
+  lineHeight: 0,
   top: '50%',
-  right: 16,
+  right: 26,
   transform: 'translateY(-50%)',
   outline: 0,
   ':before': {
+    zIndex: -1,
     content: '""',
+    borderRadius: 5,
     position: 'absolute',
     cursor: 'pointer',
-    left: -10,
-    right: -10,
-    top: -10,
-    bottom: -10,
+    backgroundColor: theme.color.white,
+    borderColor: theme.color.blue200,
+    borderStyle: 'solid',
+    borderWidth: 1,
+  },
+  selectors: {
+    '&:focus:before': {
+      borderColor: theme.color.blue400,
+      borderWidth: 1,
+      borderStyle: 'solid',
+    },
+  },
+})
+
+export const iconSizes = styleMap({
+  medium: {
+    right: 8,
+    ':before': {
+      left: -5,
+      right: -5,
+      top: -5,
+      bottom: -5,
+    },
+    ...themeUtils.responsiveStyle({
+      md: {
+        right: 13,
+      },
+    }),
+  },
+  large: {
+    right: 26,
+    ':before': {
+      left: -10,
+      right: -10,
+      top: -10,
+      bottom: -10,
+    },
+  },
+})
+
+export const loadingIcon = style({
+  position: 'absolute',
+  lineHeight: 0,
+  top: '50%',
+  transform: 'translateY(-50%)',
+  outline: 0,
+})
+
+export const loadingIconSizes = styleMap({
+  medium: {
+    right: 36,
+    ...themeUtils.responsiveStyle({
+      md: {
+        right: 43,
+      },
+    }),
+  },
+  large: {
+    right: 66,
   },
 })

@@ -153,7 +153,7 @@
         {
           "label": "Where can I use my Travel Gift?",
           "contents": [
-            "Travel Gifts can be used at tourism companies that have signed up for the Travel Gift's participation. You can view a summary of all available companies at <a href='https://www.ferdalag.is/is/fyrirtaeki-sem-taka-a-moti-ferdagjof-thjonustuflokkar' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>."
+            "Travel Gifts can be used at tourism companies that have signed up for the Travel Gift's participation. You can view the full list of available companies at <a href='https://www.ferdalag.is/is/fyrirtaeki-sem-taka-a-moti-ferdagjof-thjonustuflokkar' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>."
           ]
         },
         {
@@ -211,23 +211,23 @@
     "notQualified": {
       "title": "Sorry",
       "intro": "Your company unfortunately does not meet the conditions to participate in the Travel Gift.",
-      "description": "Einstaklingur getur notað ferðagjöf til greiðslu hjá fyrirtækjum sem uppfylla eitt af eftirfarandi skilyrðum og hafa starfsstöð á Íslandi:",
+      "description": "Individuals can use the Travel Gift at companies in Iceland, that fulfill one of the following conditions:",
       "conditions": [
-        "Fyrirtækjum með gilt leyfi Ferðamálastofu skv. III. kafla laga um Ferðamálastofu, nr. 96/2018.",
-        "Fyrirtækjum með gilt rekstrarleyfi skv. 7. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007.",
-        "Fyrirtækjum með gilt starfsleyfi frá viðeigandi heilbrigðisnefnd sem hefur verið gefið út vegna veitingastaða í flokki I, sbr. 3. mgr. 4. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007.",
-        "Ökutækjaleigum með gilt starfsleyfi frá Samgöngustofu skv. 1. mgr. 3. gr. laga um leigu skráningarskyldra ökutækja, nr. 65/2015.",
-        "Söfnum og fyrirtækjum sem bjóða sýningu gegn endurgjaldi þar sem áhersla er á íslenska menningu, sögu eða náttúru."
+        "Companies holding a valid permit issued by the Icelandic Tourist Board (Ferðamálastofa) in accordance with Chapter III of Act No. 96/2018 on the Icelandic Tourist Board.",
+        "Companies holding a valid operating licence in accordance to Article 7 of Act No. 85/2007 on Restaurants, Accommodation and Festivities.",
+        "Companies holding a valid permit issued by an appropriate board of health applying to restaurants in category I, as in subsection 3, Article 4 of Act No. 85/2007 on Restaurants, Accommodation and Festivities.",
+        "Car rentals holding a valid permit issued by the Icelandic Transport Authority in accordance with subsection 1, Article 3 of Act No. 65/2015 on Car rentals.",
+        "Museums and business establishments selling entry to exhibitions focusing on Icelandic culture, history or nature."
       ],
-      "caption": "Nánari upplýsingar og spurningar varðandi þátttöku fyrirtækja beinast til Ferðamálastofu, <a href='mailto:grunnur@ferdamalastofa.is'>grunnur@ferdamalastofa.is</a>",
+      "caption": "Further information and questions should go to Ferðamálastofa, <a href='mailto:grunnur@ferdamalastofa.is'>grunnur@ferdamalastofa.is</a>",
       "button": "Back"
     },
     "signup": {
-      "intro": "Fylltu inn upplýsingar hér að neðan",
+      "intro": "Please fill in the information below",
       "form": {
         "validation": {
-          "operations": "Velja þarf minnst einn reit eða \"Ekkert að ofangreindu á við\"",
-          "operationsTrouble": "Velja þarf annaðhvort svarið"
+          "operations": "You need to choose at least one field or \"None of the above\"",
+          "operationsTrouble": "Either answer must be chosen"
         },
         "companyName": {
           "label": "Company name"
@@ -237,7 +237,7 @@
         },
         "companyDisplayName": {
           "label": "Company display name",
-          "tooltip": "Nafn fyrirtækis sem birtist í smáforritinu og á vefsíðunni Ferðalag.is"
+          "tooltip": "The name of the company that will be displayed in the app and on Ferðalag.is"
         },
         "serviceCategory": {
           "label": "Service category",
@@ -266,59 +266,59 @@
           ]
         },
         "operation": {
-          "label": "Starfsemi fyrirtækis",
+          "label": "Business operations",
           "instructions": [
-            "Vinsamlegast hakaðu við viðeigandi tegund starfssemi fyrirtækis. Hægt er að haka við fleiri en einn valmöguleika.",
-            "Vakin er athygli á að listi yfir fyrirtæki sem taka við greiðslu í formi Ferðagjafar verður birtur á vefnum <a href='https://ferdalag.is' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>."
+            "Please check the appropriate operation of your company. More than one operation can be checked.",
+            "Please note that a list of available Travel Gift companies will be published at <a href='https://ferdalag.is' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>."
           ],
           "options": [
             {
               "name": "validPermit",
-              "label": "Fyrirtæki með gilt starfsleyfi Ferðamálastofu",
-              "tooltip": "Fyrirtæki með gilt leyfi Ferðamálastofu skv. III. kafla laga um Ferðamálastofu, nr. 96/2018."
+              "label": "Companies holding a valid permit issued by the Icelandic Tourist Board (Ferðamálastofa)",
+              "tooltip": "Companies holding a valid permit issued by the Icelandic Tourist Board (Ferðamálastofa) in accordance with Chapter III of Act No. 96/2018 on the Icelandic Tourist Board."
             },
             {
               "name": "validLicenses",
-              "label": "Fyrirtæki með rekstrarleyfi vegna veitingastaða, gististaða og skemmtanahalds",
-              "tooltip": "Fyrirtæki með gilt rekstrarleyfi skv. 7. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007."
+              "label": "Companies holding a valid operating license on restaurants, accommodation, and festivities.",
+              "tooltip": "Companies holding a valid operating licence in accordance to Article 7 of Act No. 85/2007 on Restaurants, Accommodation and Festivities."
             },
             {
               "name": "operatingPermitForRestaurant",
-              "label": "Fyrirtæki með starfsleyfi vegna veitingastaða",
-              "tooltip": "Fyrirtæki með gilt starfsleyfi frá viðeigandi heilbrigðisnefnd sem hefur verið gefið út vegna veitingastaða í flokki I, sbr. 3. mgr. 4. gr. laga um veitingastaði, gististaði og skemmtanahald, nr. 85/2007."
+              "label": "Companies holding a valid permit on restaurants",
+              "tooltip": "Companies holding a valid permit issued by an appropriate board of health applying to restaurants in category I, as in subsection 3, Article 4 of Act No. 85/2007 on Restaurants, Accommodation and Festivities."
             },
             {
               "name": "operatingPermitForVehicles",
-              "label": "Fyrirtæki með starfsleyfi vegna leigu skráningarskyldra ökutækja",
-              "tooltip": "Ökutækjaleigur með gilt starfsleyfi frá Samgöngustofu skv. 1. mgr. 3. gr. laga um leigu skráningarskyldra ökutækja, nr. 65/2015."
+              "label": "Companies with a valid permit on car rentals",
+              "tooltip": "Car rentals holding a valid permit issued by the Icelandic Transport Authority in accordance with subsection 1, Article 3 of Act No. 65/2015 on Car rentals."
             },
             {
               "name": "exhibition",
-              "label": "Sýning sem gerir út á náttúru, menningu eða sögu",
-              "tooltip": "Söfn og fyrirtæki sem bjóða sýningu gegn endurgjaldi þar sem áhersla er á íslenska náttúru, menningu eða sögu."
+              "label": "Exhibitions focusing on Icelandic culture, history, and nature",
+              "tooltip": "Museums and business establishments selling entry to exhibitions focusing on Icelandic culture, history or nature."
             },
             {
               "name": "noneOfTheAbove",
-              "label": "Ekkert af ofangreindu á við",
-              "tooltip": "Ef ekkert að ofangreindu á við er fyrirtæki ekki gjaldgengur þátttakandi í Ferðagjöfinni skv. lögum um Ferðagjöf."
+              "label": "None of the above applies",
+              "tooltip": "The company won't be able to register the Travel Gift if none of the above applies"
             }
           ]
         },
         "operationsTrouble": {
           "positiveLabel": "Yes",
           "negativeLabel": "No",
-          "label": "Var fyrirtæki þitt í rekstrarerfiðleikum 31. desember 2019 í skilningi hópundanþágureglugerðar",
-          "tooltip": "Fyrirtæki sem metið var í rekstrarerfiðleikum 31. desember 2019 í skilningi hópundanþágureglugerðar (ESB) nr. 651/2014 getur að hámarki tekið við samanlagt 25 millj. kr. greiðslu í formi ferðagjafa."
+          "label": "Was your company facing operational difficulties on December 31st 2019, according to the EU Block Exemption Regulation?",
+          "tooltip": "A company that was facing operational difficulties on 31. December 2019, according to the EU Block Exemption Regulation No. 651/2014, can accept a maximum of 25.000.000 ISK."
         },
         "gotPublicHelp": {
           "positiveLabel": "Yes",
           "negativeLabel": "No",
-          "label": "Hefur fyrirtækið á síðastliðnum tveimur reikningsárum eða á yfirstandandi reikningsári fengið opinbera aðstoð sem telst til minniháttaraðstoðar í skilningi EES-reglugerðar nr. 1407/2013?",
-          "tooltip": "Dæmi um aðstoð sem getur talist til minniháttaraðstoðar eru lokunarstyrkir, stuðningslán, greiðslur með ferðagjöf, fyrirtækja- eða frumherjastyrkir frá Rannís, sýningarstyrkir frá Kvikmyndamiðstöð Íslands, flutningsjöfnunarstyrkir frá Byggðastofnun, styrkir í tengslum við sóknaráætlanir landshluta og styrkir úr Framkvæmdasjóði ferðamannastaða."
+          "label": "Has your company, in the last 2 financial years, had any official help which falls under the Commission Regulation in regards of EES No. 1407/2013?",
+          "tooltip": "An example can be closing grants, supporing loands, payments with Travel Gifts, company- or pioneers-grants from Rannís, exhibition-grants from Kvikmyndamiðstöð Íslands, transporting-grants from Byggðastofnun, grants in regards of region reactions, and grants from Framkvæmdasjóði ferðamannastaða."
         },
-        "gotPublicHelpAmount": "Vinsamlegast tilgreindu frjárhæð ríkisaðstoðar",
+        "gotPublicHelpAmount": "Please specify the amount received",
         "contact": {
-          "label": "Tengiliður",
+          "label": "Contact",
           "name": "Name",
           "email": "Email",
           "generalEmail": "General email",
@@ -331,75 +331,90 @@
   },
   "user": {
     "title": "Your Travel Gift",
-    "intro": "Til að nota Ferðagjöfina sækir þú smáforritið Ferðagjöf, sem er fáanlegt bæði fyrir Apple iOS og Android snjalltæki. Í smáforritinu getur þú nýtt gjafakortið, séð yfirlit yfir ferðaþjónustufyrirtæki eða gefið öðrum Ferðagjöfina. Ef þú kýst að sækja ekki smáforritið má búa til gjafakóða á strikamerki hér að neðan.",
+    "intro": "To use the Travel Gift download the Ferðagjöf app, available for both Apple iOS and Android. In the app, you can purchase using the Travel Gift, see an overview of tourism companies available, or give away the Travel Gift. If you prefer to use the website instead of the app, you can create a barcode down below.",
     "appStore": {
-      "title": "Sæktu smáforritið fyrir Apple iOS eða Android.",
-      "content": "Einnig er hægt að leita að „Ferðagjöf“ inni á Apple App Store og Google Play Store.",
-      "google": "smáforrit google play",
-      "apple": "smáforrit apple app store"
+      "title": "Download the app for Apple iOS or Android.",
+      "content": "You can also search for „Ferðagjöf“ in Apple's App Store and/or Google Play Store.",
+      "google": "Google Play",
+      "apple": "Apple's App Store"
     },
-    "privacyPolicyButton": "Persónuverndarstefna",
+    "privacyPolicyButton": "Privacy policy",
     "barcode": {
-      "noGiftCards": "Engin skráð gjafabréf",
-      "title": "Gjafakóði á strikamerki",
-      "intro": "Til að nota gjöfina getur þú sýnt söluaðila strikamerkið á farsímanum þínum. Hjá völdum aðilum getur þú nýtt númerið á strikamerkinu sem gjafakóða á vefsíðum ferðaþjónustufyrirtækja.",
-      "currentAmount": "Núvirði",
-      "initialAmount": "Upprunalegt virði",
-      "create": "Búa til strikamerki",
-      "value": "Virði",
-      "total": "Samtals",
+      "noGiftCards": "No registered Travel Gifts",
+      "title": "Travel Gift in a barcode",
+      "intro": "To use the gift, allow your vendor to scan the barcode. Some tourism companies allow entering the barcode number on their websites to purchase products.",
+      "currentAmount": "Current amount",
+      "initialAmount": "Initial amount",
+      "createButton": "Use gift",
+      "giveButton": "Give gift",
+      "fromPrefix": "From:",
+      "value": "Value",
+      "total": "Total",
+      "giveGiftCard": "Give giftcard:",
+      "phoneNumberInput": "Phone number",
+      "messageInput": "Message",
+      "giveContinueButton": "Give",
+      "giftOverview": "Gift overview: confirm gift",
+      "receiver": "Receiver:",
+      "message": "Message:",
+      "editButton": "Edit",
+      "giveSubmitButton": "Give",
+      "successToastTitle": "Success!",
+      "successToastText": "Gift was sent to: ",
+      "errorToastTitle": "Error",
+      "errorToastText": "Failed to send gift",
       "expires": {
-        "pre": "Strikamerki endurnýjast eftir",
-        "post": "mín",
-        "attention": "Athugið",
-        "disclaimer": "Þetta strikamerki dettur úr gildi"
+        "pre": "Barcode renews after",
+        "post": "min",
+        "attention": "Note",
+        "disclaimer": "This barcode expires"
       },
-      "expired": "Strikamerki útrunnið",
-      "new": "Fá nýtt strikamerki",
-      "backButton": "Aftur í lista",
+      "expired": "Barcode expired",
+      "new": "Get new barcode",
+      "backButton": "Back to list",
       "error": {
-        "title": "Villa kom upp",
-        "message": "Eitthvað hefur farið úrskeiðis við að sækja strikamerkið þitt, vinsamlegast reyndu aftur.",
-        "backButton": "Aftur í lista"
+        "title": "An error occurred",
+        "message": "Something went wrong while fetching your barcode, please try again.",
+        "backButton": "Back to list"
       }
     },
     "mobileForm": {
-      "title": "Símanúmer",
-      "intro": "Vinsamlegast skráðu inn símanúmerið þitt svo hægt sé að búa til gjafabréf fyrir þig",
+      "title": "Phone number",
+      "intro": "Please enter your phone number so a Travel Gift can be created",
       "validation": {
-        "confirmPhoneNumber": "Símanúmer passa ekki. Vinsamlegast sláðu sama símanúmer inn og frá fyrri reit"
+        "confirmPhoneNumber": "The phone numbers do not match. Please enter the same phone number from previous field"
       },
       "form": {
         "phoneNumber": {
-          "label": "Símanúmer"
+          "label": "Phone number"
         },
         "confirmPhoneNumber": {
-          "label": "Staðfestu símanúmer"
+          "label": "Confirm phone number"
         },
-        "submit": "Skrá símanúmerið mitt"
+        "submit": "Subit phone number"
       }
     }
   },
   "privacyPolicy": {
-    "title": "Persónuverndarstefna",
+    "title": "Privacy policy",
     "sections": [
-      "Þegar smáforritið Ferðagjöf er notað eru skráðar upplýsingar um kennitölu, símanúmer og netfang í gagnagrunn sem vistaður er á gagnasvæði á vegum atvinnuvega- og nýsköpunarráðuneytisins. Upplýsingarnar verða nýttar í þeim tilgangi að hafa yfirsýn yfir nýtingu og dreifingu útgefinna ferðagjafa á gildistíma þeirra, sbr. lög um Ferðagjöf, frá 12.júní 2020. Upplýsingar í grunninum verða aðeins notaðar af atvinnuvega- og nýsköpunarráðuneytinu í þeim tilgangi að sannreyna nýtingu Ferðagjafar.",
-      "Skráning upplýsinganna í gagnagrunninn og vinnsla þeirra í smáforritinu er til að uppfylla lagaskyldu samkvæmt lögum um ferðagjöf og samkvæmt ríkisstyrkjareglum EES-samningsins og byggist þess vegna á 3. og 5. tölul. 9. gr. laga nr. 90/2018 um persónuvernd og vinnslu persónuupplýsinga.",
-      "Atvinnuvega- og nýsköpunarráðuneytið, Skúlagötu 4, 101 Reykjavík, er ábyrgðaraðili við vinnslu persónuupplýsinga vegna ferðagjafarinnar. Gagnagrunnurinn telst eign og er á ábyrgð atvinnuvega- og nýsköpunarráðuneytisins en er hýstur hjá YAY ehf. Upplýsingar úr grunninum ekki veittar öðrum nema samkvæmt lagaskyldu. Hægt er að hafa samband við ráðuneytið í síma <a href='tel:5459700'>5459700</a> eða á tölvupóstfangið <a href='mailto:anr@anr.is'>anr@anr.is</a>.",
-      "Nánari upplýsingar um vinnslu persónuupplýsinga hjá Stjórnarráði Íslands má finna í persónuverndarstefnu þess, svo sem um varðveislutíma og réttindi einstaklinga, <a href='https://www.stjornarradid.is/medferd_personuupplysinga' rel='noopener noreferrer'>https://www.stjornarradid.is/medferd_personuupplysinga</a>. Nánari upplýsingar um vinnslu persónuupplýsinga hjá YAY ehf. sem þróar og þjónustar Ferðagjöf skv. samningi við stjórnvöld má finna í persónuverndarstefnu fyrirtækisins, <a href='https://www.yay.is/Docs/Privacy' rel='noopener noreferrer'>https://www.yay.is/Docs/Privacy</a>."
+      "When using the Ferðagjöf app, information regarding the SSN (kennitala), phone number and email address of the user are registered in a database owned by the Ministry of Industry and Innovation. The information will be used to give overview of the usage and distribution of the gift while the gift is valid according to the law on Ferðagjöf from the 12th of June, 2020. The information stored in the database will only be used by the ministry to verify the usage of the Travel Gift.",
+      "The registering of information in the database and usage of them in the app are in accordance with the laws on Ferðagjöf, as well as the EEA rules on state aid, and are based on the 3rd and 5th paragraph of article 9 in Act 90/2018 on Data Protection and the Processing of Personal data.",
+      "The Ministry of Industry and Innovation, Skúlagata 4, 101 Reykjavík, is the responsible party when it comes to the processing of personal data in connection to Ferðagjöf. The database is owned by the ministry and the ministry is responsible for its data. The database is however hosted by YAY ehf. Information from the database will not be distributed except by statutory requirements. You can contact the ministry by phone: <a href='tel:5459700'>5459700</a>, or via email: <a href='mailto:anr@anr.is'>anr@anr.is</a>.",
+      "Further information regarding processing of personal information within the Government of Iceland can be found in its privacy policy and laws on personal data protection, e.g. retention periods and the rights of individuals. Further information regarding the processing of personal information with YAY ehf., the company that develops and hosts Ferðagjöf by an agreement with the Icelandic government, can be found in the privacy policy of the company, <a href='https://www.yay.is/Docs/Privacy' rel='noopener noreferrer'>https://www.yay.is/Docs/Privacy</a>."
     ]
   },
   "header": {
-    "logout": "Útskrá"
+    "logout": "Logout"
   },
   "footer": {
     "topLinks": [
       {
-        "title": "Um Stafrænt Ísland",
+        "title": "About Stafrænt Ísland",
         "href": "https://stafraent.island.is/"
       },
       {
-        "title": "Hafa samband",
+        "title": "Contact",
         "href": "https://island.is/um-island-is/hafa-samband/"
       }
     ],
@@ -430,7 +445,7 @@
       },
       {
         "href": "https://island.is/um-island-is/algengar-spurningar/",
-        "title": "Algengar spurningar"
+        "title": "FAQs"
       },
       {
         "href": "http://www.opnirreikningar.is/",
@@ -443,10 +458,10 @@
     ]
   },
   "validation": {
-    "required": "Þessi reitur má ekki vera tómur",
-    "phoneNumber": "Símanúmer þarf að vera sjö tölustafir",
-    "email": "Netfang ekki gilt",
-    "webpage": "Vefsíða er ekki gild"
+    "required": "This field cannot be empty",
+    "phoneNumber": "The phone number needs to be seven digits",
+    "email": "The email address is not valid",
+    "webpage": "The URL is not valid"
   },
   "routes": {
     "home": "/en",

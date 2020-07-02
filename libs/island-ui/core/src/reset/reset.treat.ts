@@ -1,12 +1,4 @@
-import { globalStyle, style } from 'treat'
-import { theme } from '../theme'
-
-globalStyle('html, body', {
-  margin: 0,
-  fontFamily: theme.typography.fontFamily,
-  background: theme.color.white, // todo
-  padding: 0,
-})
+import { style } from 'treat'
 
 export const base = style({
   margin: 0,

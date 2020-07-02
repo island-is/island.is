@@ -32,7 +32,8 @@
       "implicitDependencies": ["web"]
     },
     "island-ui-core": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["island-ui-theme"]
     },
     "gjafakort-web": {
       "tags": [],
@@ -97,6 +98,9 @@
       "tags": []
     },
     "gjafakort-consts": {
+      "tags": []
+    },
+    "island-ui-theme": {
       "tags": []
     }
   }

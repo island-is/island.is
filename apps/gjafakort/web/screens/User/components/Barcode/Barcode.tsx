@@ -1,9 +1,10 @@
-import React from 'react'
-import { useQuery, useLazyQuery } from 'react-apollo'
+import React, { useState } from 'react'
+import { useQuery, useLazyQuery, useMutation } from 'react-apollo'
 import gql from 'graphql-tag'
 import { useMachine } from '@xstate/react'
 import { format } from 'date-fns'
 import { is } from 'date-fns/locale'
+import * as Yup from 'yup'
 
 import {
   Box,
@@ -14,6 +15,9 @@ import {
   Columns,
   Column,
   SkeletonLoader as SL,
+  Divider,
+  FieldNumberInput,
+  FieldInput,
 } from '@island.is/island-ui/core'
 
 import { useI18n } from '@island.is/gjafakort-web/i18n'
@@ -21,8 +25,10 @@ import { ErrorPanel } from '@island.is/gjafakort-web/components'
 
 import { barcodeMachine } from './barcodeMachine'
 import { Countdown, RenderBarcode } from '..'
+import { Form, Formik, Field } from 'formik'
+import { NotificationService } from '@island.is/gjafakort-web/services'
 
-export const GiftCardsQuery = gql`
+const GiftCardsQuery = gql`
   query GiftCardsQuery {
     giftCards {
       giftCardId
@@ -40,12 +46,20 @@ export const GiftCardsQuery = gql`
     }
   }
 `
-export const GiftCardCodeQuery = gql`
+const GiftCardCodeQuery = gql`
   query GiftCardCodeQuery($giftCardId: Int!) {
     giftCardCode(giftCardId: $giftCardId) {
       code
       expiryDate
       pollingUrl
+    }
+  }
+`
+
+const GiveGiftMutation = gql`
+  mutation GiveGiftMutation($input: GiveGiftInput!) {
+    giveGift(input: $input) {
+      success
     }
   }
 `
@@ -56,10 +70,14 @@ interface PropTypes {
   shouldPoll: boolean
 }
 
-function Barcode({ shouldPoll }: PropTypes) {
+function Barcode({ shouldPoll: initialPolling }: PropTypes) {
+  const [initialPollingActive, setInitialPollingActive] = useState(true)
+  const shouldPoll = initialPollingActive && initialPolling
+
   const {
     t: {
       user: { barcode: t },
+      validation,
     },
   } = useI18n()
   const { data, stopPolling, refetch, loading: loadingGiftCards } = useQuery(
@@ -69,6 +87,7 @@ function Barcode({ shouldPoll }: PropTypes) {
       notifyOnNetworkStatusChange: true,
       onCompleted: (data) => {
         if (shouldPoll && data?.giftCards.length > 0) {
+          setInitialPollingActive(false)
           stopPolling()
         }
       },
@@ -88,12 +107,38 @@ function Barcode({ shouldPoll }: PropTypes) {
       send('ERROR')
     },
   })
+  const [giveGift] = useMutation(GiveGiftMutation)
   const [current, send] = useMachine(barcodeMachine, {
     devTools: true,
     actions: {
       refetchList: refetch,
     },
   })
+
+  const confirmGiveGift = async (
+    giftCardId,
+    recipientMobileNumber,
+    message,
+  ) => {
+    const {
+      data: { giveGift: giveGiftResponse },
+    } = await giveGift({
+      variables: { input: { giftCardId, recipientMobileNumber, message } },
+    })
+    if (giveGiftResponse.success) {
+      NotificationService.success({
+        title: t.successToastTitle,
+        text: t.successToastText + recipientMobileNumber,
+      })
+    } else {
+      NotificationService.error({
+        title: t.errorToastTitle,
+        text: t.errorToastText,
+      })
+    }
+    send('BACK_TO_LIST')
+  }
+
   const giftCards = data?.giftCards ?? []
   const loadingInitialGiftCards = shouldPoll && giftCards.length === 0
   const loadingState = current.matches('loading')
@@ -110,7 +155,7 @@ function Barcode({ shouldPoll }: PropTypes) {
   }
   if (current.matches('idle')) {
     return (
-      <Stack space={3}>
+      <Stack space={5}>
         {loadingInitialGiftCards && <SL height={70} />}
         {!loadingInitialGiftCards &&
           !loadingGiftCards &&
@@ -118,38 +163,191 @@ function Barcode({ shouldPoll }: PropTypes) {
             <Typography variant="h3">{t.noGiftCards}</Typography>
           )}
         {giftCards.map((giftCard) => (
-          <Box
-            key={giftCard.giftCardId}
-            padding={2}
-            border="standard"
-            borderRadius="standard"
-            display="flex"
-            justifyContent="spaceBetween"
-            alignItems="center"
-          >
-            <Typography variant="h4">
-              {formatNumber(giftCard.amount)} kr.
-            </Typography>
+          <Box key={giftCard.giftCardId}>
+            <Box
+              padding={2}
+              marginBottom={2}
+              border="standard"
+              borderRadius="standard"
+              display="flex"
+              justifyContent="spaceBetween"
+              alignItems="center"
+              background="blue100"
+            >
+              <Box>
+                <Typography variant="h3">
+                  {formatNumber(giftCard.amount)} kr.
+                </Typography>
+                <Typography variant="p">
+                  {t.fromPrefix} {giftCard.giftDetail.from}
+                </Typography>
+              </Box>
+              <Button
+                onClick={() => {
+                  getBarcode(giftCard)
+                }}
+              >
+                {t.createButton}
+              </Button>
+            </Box>
             <Button
               variant="text"
-              onClick={() => {
-                getBarcode(giftCard)
-              }}
               icon="arrowRight"
+              onClick={() => {
+                send({
+                  type: 'GIVE_GIFT_CARD',
+                  giftCard,
+                })
+              }}
             >
-              {t.create}
+              {t.giveButton}
             </Button>
           </Box>
         ))}
-        {giftCards.length > 0 && (
-          <Typography variant="h4" color="blue400">
-            {t.total}:{' '}
-            {formatNumber(
-              giftCards.reduce((acc, { amount }) => acc + amount, 0),
-            )}{' '}
-            kr.
-          </Typography>
+        <Stack space={2}>
+          <Divider />
+          {giftCards.length > 0 && (
+            <Typography variant="h3" color="blue400">
+              {t.total}:{' '}
+              {formatNumber(
+                giftCards.reduce((acc, { amount }) => acc + amount, 0),
+              )}{' '}
+              kr.
+            </Typography>
+          )}
+        </Stack>
+      </Stack>
+    )
+  }
+
+  if (current.matches('give')) {
+    return (
+      <Formik
+        validationSchema={Yup.object().shape({
+          phoneNumber: Yup.string()
+            .length(7, validation.phoneNumber)
+            .required(validation.required),
+        })}
+        initialValues={{
+          phoneNumber: current.context.giveInfo.phoneNumber,
+          message: current.context.giveInfo.message,
+        }}
+        onSubmit={(values) => {
+          send({
+            type: 'CONFIRM_GIVE',
+            giveInfo: values,
+          })
+        }}
+      >
+        {() => (
+          <Form>
+            <Stack space={3}>
+              <Typography variant="h4">
+                {t.giveGiftCard}{' '}
+                {current.context.giftCard.amount &&
+                  formatNumber(current.context.giftCard.amount)}{' '}
+                kr.
+              </Typography>
+              <Field
+                component={FieldNumberInput}
+                label={t.phoneNumberInput}
+                name="phoneNumber"
+                format="+354 ### ####"
+                allowEmptyFormatting
+              />
+              <Field
+                component={FieldInput}
+                label={t.messageInput}
+                name="message"
+              />
+              <Box display="flex" justifyContent="spaceBetween">
+                <Box marginRight={1} flexGrow={1}>
+                  <Button
+                    width="fixed"
+                    onClick={() => {
+                      send('BACK_TO_LIST')
+                    }}
+                    variant="ghost"
+                  >
+                    {t.backButton}
+                  </Button>
+                </Box>
+                <Box marginLeft={1} flexGrow={1} textAlign="right">
+                  <Button width="fixed" htmlType="submit">
+                    {t.giveContinueButton}
+                  </Button>
+                </Box>
+              </Box>
+            </Stack>
+          </Form>
         )}
+      </Formik>
+    )
+  }
+
+  if (current.matches('confirmGive')) {
+    return (
+      <Stack space={3}>
+        <Box
+          background="blue100"
+          paddingX={5}
+          paddingY={5}
+          borderRadius="standard"
+        >
+          <Stack space={3}>
+            <Typography variant="h2">{t.giftOverview}</Typography>
+            <div>
+              <Typography variant="h4">{t.giveGiftCard}</Typography>
+              <Typography variant="p">
+                {current.context.giftCard.amount &&
+                  formatNumber(current.context.giftCard.amount)}{' '}
+                kr.
+              </Typography>
+            </div>
+            <div>
+              <Typography variant="h4">{t.receiver}</Typography>
+              <Typography variant="p">
+                +354 {current.context.giveInfo.phoneNumber}
+              </Typography>
+            </div>
+            {current.context.giveInfo.message && (
+              <div>
+                <Typography variant="h4">{t.message}</Typography>
+                <Typography variant="p">
+                  {current.context.giveInfo.message}
+                </Typography>
+              </div>
+            )}
+          </Stack>
+        </Box>
+        <Box display="flex" justifyContent="spaceBetween">
+          <Box marginRight={1} flexGrow={1}>
+            <Button
+              width="fixed"
+              onClick={() => {
+                send('BACK_TO_GIVE')
+              }}
+              variant="ghost"
+            >
+              {t.editButton}
+            </Button>
+          </Box>
+          <Box marginLeft={1} flexGrow={1} textAlign="right">
+            <Button
+              width="fixed"
+              htmlType="submit"
+              onClick={() => {
+                confirmGiveGift(
+                  current.context.giftCard.giftCardId,
+                  current.context.giveInfo.phoneNumber,
+                  current.context.giveInfo.message,
+                )
+              }}
+            >
+              {t.giveSubmitButton}
+            </Button>
+          </Box>
+        </Box>
       </Stack>
     )
   }
@@ -283,13 +481,17 @@ function Barcode({ shouldPoll }: PropTypes) {
                         </Typography>
                       </>
                     )}
-                    <Button
-                      onClick={() => {
-                        getBarcode(current.context.giftCard)
-                      }}
-                    >
-                      {t.new}
-                    </Button>
+                    {(invalidState ||
+                      (successState &&
+                        parseInt(current.context.pollingData.amount) > 0)) && (
+                      <Button
+                        onClick={() => {
+                          getBarcode(current.context.giftCard)
+                        }}
+                      >
+                        {t.new}
+                      </Button>
+                    )}
                   </Stack>
                 </Box>
               )}

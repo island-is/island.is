@@ -1,5 +1,5 @@
 import { globalStyle } from 'treat'
-import { theme } from './theme'
+import { theme } from '@island.is/island-ui/theme'
 
 globalStyle('html', {
   boxSizing: 'border-box',

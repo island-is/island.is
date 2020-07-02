@@ -1,5 +1,5 @@
 import { style, globalStyle } from 'treat'
-import { theme } from '../../theme'
+import { theme } from '@island.is/island-ui/theme'
 import * as inputMixins from '../Input/Input.mixins'
 
 export const wrapper = style({}, 'wrapper')

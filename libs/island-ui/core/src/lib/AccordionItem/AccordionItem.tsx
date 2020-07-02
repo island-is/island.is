@@ -1,7 +1,7 @@
 import React, { useContext, useState, ReactNode, forwardRef, FC } from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
-import { Box, Columns, Column } from '../../'
+import { Box, Columns, Column, Icon } from '../../'
 import { AllOrNone } from '../private/AllOrNone'
 import { useVirtualTouchable } from '../private/touchable/useVirtualTouchable'
 import { hideFocusRingsClassName } from '../private/hideFocusRings/hideFocusRings'
@@ -11,10 +11,13 @@ import { Typography } from '../Typography/Typography'
 import { VariantTypes } from '../Typography/Typography.treat'
 import { AccordionContext } from '../Accordion/Accordion'
 
+type IconVariantTypes = 'default' | 'sidebar'
+
 export type AccordionItemBaseProps = {
   id: string
   label: string
   labelVariant?: VariantTypes
+  iconVariant?: IconVariantTypes
   visibleContent?: ReactNode
   children: ReactNode
   onClick?: () => void
@@ -30,28 +33,13 @@ export type AccordionItemStateProps = AllOrNone<{
 export type AccordionItemProps = AccordionItemBaseProps &
   AccordionItemStateProps
 
-// TODO: Get icon from icon component...
-const IconPlus = ({ color = '#0061FF' }) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="21"
-    height="21"
-    fill="none"
-    viewBox="0 0 21 21"
-  >
-    <path
-      fill={color}
-      d="M19.071 11.929H11.93v7.142c0 .786-.643 1.429-1.429 1.429a1.433 1.433 0 01-1.429-1.429V11.93H1.93A1.433 1.433 0 01.5 10.5c0-.786.643-1.429 1.429-1.429H9.07V1.93C9.071 1.143 9.714.5 10.5.5s1.429.643 1.429 1.429V9.07h7.142c.786 0 1.429.643 1.429 1.429s-.643 1.429-1.429 1.429z"
-    ></path>
-  </svg>
-)
-
 export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
   (
     {
       id,
       label,
       labelVariant = 'h3',
+      iconVariant = 'default',
       visibleContent,
       expanded: expandedProp,
       onToggle,
@@ -126,11 +114,15 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
               </Column>
               <Column width="content">
                 <div
-                  className={cn(styles.icon, {
+                  className={cn(styles.icon, styles.iconVariants[iconVariant], {
                     [styles.iconTilted]: expanded,
                   })}
                 >
-                  <IconPlus />
+                  <Icon
+                    type="plus"
+                    width={iconVariant === 'default' ? 21 : 12}
+                    color={iconVariant === 'default' ? 'blue400' : 'purple400'}
+                  />
                 </div>
               </Column>
             </Columns>
@@ -148,7 +140,12 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
   },
 )
 
-export const AccordionCard: FC<AccordionItemBaseProps> = (props) => {
+type AlternateAccordionItemBaseProps = Omit<
+  AccordionItemBaseProps,
+  'labelVariant' | 'iconVariant'
+>
+
+export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
   const [isFocused, setIsFocused] = useState<boolean>(false)
 
   const handleFocus = () => setIsFocused(true)
@@ -166,5 +163,15 @@ export const AccordionCard: FC<AccordionItemBaseProps> = (props) => {
         {props.children}
       </AccordionItem>
     </Box>
+  )
+}
+
+export const SidebarAccordion: FC<AlternateAccordionItemBaseProps> = (
+  props,
+) => {
+  return (
+    <AccordionItem {...props} labelVariant="p" iconVariant="sidebar">
+      {props.children}
+    </AccordionItem>
   )
 }

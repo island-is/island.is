@@ -30,6 +30,11 @@ interface GiftCardCode {
   pollingUrl: string
 }
 
+interface GiveGift {
+  success: boolean
+  message: string
+}
+
 class RskAPI extends RESTDataSource {
   baseURL = `${yay.url}/api/v1/`
 
@@ -59,7 +64,7 @@ class RskAPI extends RESTDataSource {
     }
   }
 
-  async getGiftCardCode(
+  getGiftCardCode(
     giftCardId: string,
     mobileNumber: string,
     countryCode: string,
@@ -72,6 +77,18 @@ class RskAPI extends RESTDataSource {
       logger.error(err)
       throw new Error('Error occurred while requesting giftcardcode')
     }
+  }
+
+  giveGift(body: {
+    mobileNumber: string
+    countryCode: string
+    giftCardId: number
+    fromName: string
+    giftToMobileNumber: string
+    giftToCountryCode: string
+    personalMessage: string
+  }): Promise<GiveGift> {
+    return this.post('ReGift', body)
   }
 }
 

@@ -1,7 +1,6 @@
 import { styleMap } from 'treat'
 import mapValues from 'lodash/mapValues'
-import { theme, themeUtils } from '../../theme'
-type Theme = typeof theme
+import { themeUtils, Theme } from '@island.is/island-ui/theme'
 
 const columnsWidths = {
   1: '100%',

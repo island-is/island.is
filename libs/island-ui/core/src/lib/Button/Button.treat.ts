@@ -1,5 +1,5 @@
 import { styleMap, style, globalStyle } from 'treat'
-import { theme, themeUtils } from '../../theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 const speed = '150ms'
 
@@ -110,6 +110,10 @@ export const sizes = styleMap({
 export const width = styleMap({
   normal: {
     width: 'auto',
+  },
+  fixed: {
+    maxWidth: 210,
+    width: '100%',
   },
   fluid: {
     width: '100%',

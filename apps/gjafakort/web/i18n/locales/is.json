@@ -335,8 +335,8 @@
     "appStore": {
       "title": "Sæktu smáforritið fyrir Apple iOS eða Android.",
       "content": "Einnig er hægt að leita að „Ferðagjöf“ inni á Apple App Store og Google Play Store.",
-      "google": "smáforrit google play",
-      "apple": "smáforrit apple app store"
+      "google": "smáforrit Google Play",
+      "apple": "smáforrit Apple App Store"
     },
     "privacyPolicyButton": "Persónuverndarstefna",
     "barcode": {
@@ -345,9 +345,24 @@
       "intro": "Til að nota gjöfina getur þú sýnt söluaðila strikamerkið á farsímanum þínum. Hjá völdum aðilum getur þú nýtt númerið á strikamerkinu sem gjafakóða á vefsíðum ferðaþjónustufyrirtækja.",
       "currentAmount": "Núvirði",
       "initialAmount": "Upprunalegt virði",
-      "create": "Búa til strikamerki",
+      "createButton": "Nota gjöf",
+      "giveButton": "Gefa áfram",
+      "fromPrefix": "Frá:",
       "value": "Virði",
       "total": "Samtals",
+      "giveGiftCard": "Gjöf að verðmati:",
+      "phoneNumberInput": "Símanúmer",
+      "messageInput": "Skilaboð",
+      "giveContinueButton": "Halda áfram",
+      "giftOverview": "Gjafayfirlit: staðfesta gjöf",
+      "receiver": "Móttakandi:",
+      "message": "Skilaboð:",
+      "editButton": "Breyta",
+      "giveSubmitButton": "Gefa",
+      "successToastTitle": "Aðgerð tókst!",
+      "successToastText": "gjöf var send á símanúmer: ",
+      "errorToastTitle": "Villa kom upp",
+      "errorToastText": "Ekki tókst að senda gjöf",
       "expires": {
         "pre": "Strikamerki endurnýjast eftir",
         "post": "mín",
