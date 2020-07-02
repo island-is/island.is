@@ -37,6 +37,10 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
   const n = useNamespace(namespace)
   const { makePath } = useRouteNames(activeLocale as Locale)
 
+  if (typeof document === 'object') {
+    document.documentElement.lang = activeLocale
+  }
+
   const cards = categories.map(({ title, slug, description }) => ({
     title,
     description,
