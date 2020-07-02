@@ -3,7 +3,6 @@ import {
   SequelizeModuleOptions,
   SequelizeOptionsFactory,
 } from '@nestjs/sequelize'
-// import { databaseConfig } from './db.config'
 import databaseConfig from '../../../../sequelize.config.js'
 import { DEVELOPMENT, PRODUCTION, TEST } from '../constants'
 import { Application } from './models/application.model'
