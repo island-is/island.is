@@ -111,6 +111,9 @@
     "application-system-form-e2e": {
       "tags": [],
       "implicitDependencies": ["application-system-form"]
+    },
+    "application-system-api": {
+      "tags": []
     }
   }
 }
