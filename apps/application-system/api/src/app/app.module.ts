@@ -9,7 +9,6 @@ import { ApplicationModule } from './modules/applications/applications.module'
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    // DatabaseModule,
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
