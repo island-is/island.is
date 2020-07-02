@@ -2,7 +2,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
-import DefaultErrorPage from 'next/error'
 import slugify from '@sindresorhus/slugify'
 import {
   ContentBlock,
@@ -33,6 +32,7 @@ import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
 import { Locale } from '../i18n/I18n'
 import useRouteNames from '../i18n/useRouteNames'
+import { CustomNextError } from '../units/ErrorBoundary'
 
 interface ArticleProps {
   article: Query['getArticle']
@@ -58,10 +58,6 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
     )
   }, [])
 
-  if (!article) {
-    return <DefaultErrorPage statusCode={404} />
-  }
-
   const { slug: categorySlug, title: categoryTitle } = article.category
   const groupTitle = article.group?.title
 
@@ -83,10 +79,10 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
         <title>{article.title} | Ísland.is</title>
       </Head>
       <ArticleLayout
-        sidebar={<Sidebar title="Efnisyfirlit" bullet="left" headingLinks />}
+        sidebar={<Sidebar title='Efnisyfirlit' bullet='left' headingLinks />}
       >
         <ContentContainer
-          padding="none"
+          padding='none'
           paddingX={[3, 3, 6, 0]}
           marginBottom={simpleSpacing}
         >
@@ -102,22 +98,22 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
                 <a>{categoryTitle}</a>
               </Link>
               {groupTitle && (
-                <Tag variant="purple" label>
+                <Tag variant='purple' label>
                   {groupTitle}
                 </Tag>
               )}
             </Breadcrumbs>
-            <Hidden above="md">
+            <Hidden above='md'>
               <Select
-                label="Efnisyfirlit"
-                placeholder="Flokkar"
+                label='Efnisyfirlit'
+                placeholder='Flokkar'
                 options={contentOverviewOptions}
                 onChange={onChangeContentOverview}
-                name="content-overview"
+                name='content-overview'
               />
             </Hidden>
             <Box marginBottom={simpleSpacing}>
-              <Typography variant="h1" as="h1">
+              <Typography variant='h1' as='h1'>
                 <span data-sidebar-link={slugify(article.title)}>
                   {article.title}
                 </span>
@@ -137,7 +133,6 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
 
 Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
-
   const [
     {
       data: { getArticle: article },
@@ -167,7 +162,22 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
         // map data here to reduce data processing in component
         return JSON.parse(variables.data.getNamespace.fields)
       }),
-  ])
+  ]).catch(({ graphQLErrors }) => {
+    /* 
+    Normalize the apollo error for handling in error boundary
+    We assume the url is wrong if we find a NOT_FOUND code in apollo response so we pass a 404 error
+    */
+    const has404Error = Boolean(
+      graphQLErrors.find(
+        (graphQLError) => graphQLError.extensions.code === 'NOT_FOUND',
+      ),
+    )
+    if (has404Error) {
+      throw new CustomNextError(404, 'Article not found')
+    } else {
+      throw new CustomNextError(500)
+    }
+  })
 
   return {
     article,
@@ -179,6 +189,6 @@ export default withApollo(Article)
 
 const ContentContainer: FC<BoxProps> = ({ children, ...props }) => (
   <Box padding={[3, 3, 6, 0]} {...props}>
-    <ContentBlock width="small">{children}</ContentBlock>
+    <ContentBlock width='small'>{children}</ContentBlock>
   </Box>
 )

@@ -1,4 +1,5 @@
 import { withLocale } from '../../i18n'
 import homeScreen from '../../screens/Home'
+import { withErrorBoundary } from '../../units/ErrorBoundary'
 
-export default withLocale('en')(homeScreen)
+export default withLocale('en')(withErrorBoundary(homeScreen))
