@@ -78,7 +78,7 @@ export const sendConfirmCode = async (
   await cache.set(confirmCacheKey, confirmCode)
   await cache.expire(confirmCacheKey, ttlTenMinutes)
 
-  novaApi.sendSms(mobileNumber, confirmCode)
+  await novaApi.sendSms(mobileNumber, confirmCode)
 }
 
 export const verifyConfirmCode = async (

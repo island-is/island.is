@@ -43,7 +43,7 @@ class NovaAPI extends RESTDataSource {
   }
 
   async login(): Promise<string> {
-    const res: NovaAuthResponse = await this.get('Login', undefined, {
+    const res: NovaAuthResponse = await this.post('Login', undefined, {
       headers: {
         username: nova.username,
         password: nova.password,

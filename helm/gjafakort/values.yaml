@@ -24,6 +24,7 @@ gjafakort-api:
     redis_port: 6379
     cache_time_to_live:
     sentry_dsn:
+    nova_password_path: "/k8s/gjafakort/NOVA_PASSWORD"
 
 gjafakort-web:
   namespace: gjafakort
