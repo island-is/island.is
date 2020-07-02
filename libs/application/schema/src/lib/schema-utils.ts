@@ -3,6 +3,7 @@ import {
   FormItemTypes,
   FormNode,
   FormScreen,
+  Question,
   Section,
   SubSection,
 } from '@island.is/application/schema'
@@ -26,10 +27,17 @@ const isValidScreen = (node: FormNode): boolean => {
   }
 }
 
-export const getScreensForFormNode = (node: FormNode): FormScreen[] => {
+export const getScreensForFormNode = (
+  node: FormNode,
+  onlyQuestions: boolean = false,
+): FormScreen[] => {
   const { children } = node
   if (isValidScreen(node)) {
-    return [node as FormScreen]
+    if (onlyQuestions && 'isQuestion' in node && node.isQuestion) {
+      return [node as FormScreen]
+    } else if (!onlyQuestions) {
+      return [node as FormScreen]
+    }
   }
 
   let leafs: FormScreen[] = []
@@ -47,6 +55,10 @@ export const getScreensForFormNode = (node: FormNode): FormScreen[] => {
 
 export const getScreensForForm = (form: Form): FormScreen[] => {
   return getScreensForFormNode(form)
+}
+
+export const getQuestionsInForm = (form: Form): Question[] => {
+  return getScreensForFormNode(form, true) as Question[]
 }
 
 export function getSectionsInForm(form: Form): Section[] {

@@ -1,9 +1,9 @@
-import { ExampleForm } from '../fixtures/example-form'
+import { ExampleSchema } from '../schemas/example'
 import { getScreensForForm, getScreensForFormNode } from './schema-utils'
 
 describe('application schema utility functions', () => {
   it('should get all screens in a form', () => {
-    const screens = getScreensForForm(ExampleForm)
+    const screens = getScreensForForm(ExampleSchema)
 
     expect(screens.length).toBe(5)
     expect(screens[0].id).toBe('field')
@@ -13,13 +13,13 @@ describe('application schema utility functions', () => {
     expect(screens[4].id).toBe('where')
   })
   it('can get all screens for a given form node', () => {
-    const screens = getScreensForFormNode(ExampleForm.children[0])
+    const screens = getScreensForFormNode(ExampleSchema.children[0])
 
     expect(screens.length).toBe(2)
     expect(screens[0].id).toBe('field')
     expect(screens[1].id).toBe('about')
 
-    const otherScreens = getScreensForFormNode(ExampleForm.children[1])
+    const otherScreens = getScreensForFormNode(ExampleSchema.children[1])
 
     expect(otherScreens.length).toBe(3)
     expect(otherScreens[0].id).toBe('any')
