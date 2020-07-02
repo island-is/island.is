@@ -1,20 +1,30 @@
-import { style } from 'treat'
+import { style, styleMap } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const button = style({})
 
 export const icon = style({
-  width: '40px',
-  height: '40px',
   display: 'inline-flex',
   alignSelf: 'center',
   justifySelf: 'center',
   alignItems: 'center',
   justifyContent: 'center',
-  backgroundColor: theme.color.blue100,
   borderRadius: '50%',
   transform: 'rotate(0.000001deg)',
   transition: 'transform 300ms ease',
+})
+
+export const iconVariants = styleMap({
+  default: {
+    width: '40px',
+    height: '40px',
+    backgroundColor: theme.color.blue100,
+  },
+  sidebar: {
+    width: '24px',
+    height: '24px',
+    backgroundColor: theme.color.purple200,
+  },
 })
 
 export const iconTilted = style({
