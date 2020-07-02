@@ -25,6 +25,11 @@ export const ApplicationSchemaType = {
 
 @Table({
   timestamps: true,
+  indexes: [
+    {
+      fields: ['typeId', 'applicant'],
+    },
+  ],
 })
 export class Application extends Model<Application> {
   @Column({
