@@ -47,7 +47,7 @@ module.exports = {
           type: Sequelize.ARRAY(Sequelize.STRING),
         },
         typeId: {
-          type: Sequelize.ENUM('FOO', 'BAR'),
+          type: Sequelize.STRING,
           allowNull: false,
         },
         answers: {

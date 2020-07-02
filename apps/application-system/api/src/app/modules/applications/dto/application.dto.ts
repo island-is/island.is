@@ -1,12 +1,10 @@
-import { IsEnum, IsJSON, IsNotEmpty } from 'class-validator'
-import {
-  ApplicationSchemaType,
-  ApplicationStates,
-} from '../../../core/db/models/application.model'
+import { IsEnum, IsJSON, IsNotEmpty, IsString } from 'class-validator'
+import { ApplicationStates } from '../../../core/db/models/application.model'
 
 export class ApplicationDto {
   @IsNotEmpty()
-  @IsEnum(ApplicationSchemaType)
+  @IsString()
+  // @IsIn(['example', 'example2'])  import allowed values from schema lib ?
   readonly typeId: string
 
   @IsNotEmpty()

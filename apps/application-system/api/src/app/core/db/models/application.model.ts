@@ -6,7 +6,6 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-
 export const ApplicationStates = {
   DRAFT: 'DRAFT',
   BEING_PROCESSED: 'BEING_PROCESSED',
@@ -16,11 +15,6 @@ export const ApplicationStates = {
   MANUAL_APPROVED: 'MANUAL_APPROVED',
   REJECTED: 'REJECTED',
   UNKNOWN: 'UNKNOWN',
-} // TODO get from somewhere
-
-export const ApplicationSchemaType = {
-  FOO: 'FOO',
-  BAR: 'BAR',
 } // TODO get from somewhere
 
 @Table({
@@ -75,9 +69,8 @@ export class Application extends Model<Application> {
   attatchments: string[]
 
   @Column({
-    type: DataType.ENUM,
+    type: DataType.STRING,
     allowNull: false,
-    values: Object.values(ApplicationSchemaType),
   })
   typeId: string
 
