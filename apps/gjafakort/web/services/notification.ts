@@ -7,9 +7,13 @@ const TYPE = {
   ERROR: 'error',
   SUCCESS: 'success',
 }
+type Message = {
+  title?: string
+  text?: string
+}
 
 class NotificationService {
-  info(message: string) {
+  info(message: Message) {
     PubSub.publish('notifications', {
       message,
       type: TYPE.INFO,
@@ -17,7 +21,7 @@ class NotificationService {
     })
   }
 
-  success(message: string) {
+  success(message: Message) {
     PubSub.publish('notifications', {
       message,
       type: TYPE.SUCCESS,
@@ -25,7 +29,7 @@ class NotificationService {
     })
   }
 
-  error(message: string) {
+  error(message: Message) {
     PubSub.publish('notifications', {
       message,
       type: TYPE.ERROR,
@@ -34,7 +38,10 @@ class NotificationService {
 
   onFormError(error: Error) {
     PubSub.publish('notifications', {
-      message: error.message,
+      message: {
+        title: 'Villa kom upp!',
+        text: error.message,
+      },
       type: TYPE.ERROR,
       source: 'form',
     })
@@ -46,7 +53,10 @@ class NotificationService {
       : 'Unable to connect to network'
 
     PubSub.publish('notifications', {
-      message,
+      message: {
+        title: 'Villa kom upp!',
+        text: message,
+      },
       type: TYPE.ERROR,
       source: 'network',
     })
@@ -54,7 +64,10 @@ class NotificationService {
 
   onGraphQLError(error: ApolloError) {
     PubSub.publish('notifications', {
-      message: error.graphQLErrors.map((e) => e.message).join(''),
+      message: {
+        title: 'Villa kom upp!',
+        text: error.graphQLErrors.map((e) => e.message).join(''),
+      },
       type: TYPE.ERROR,
       source: 'graphql',
     })

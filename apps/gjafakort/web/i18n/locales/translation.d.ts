@@ -284,9 +284,24 @@ export interface Barcode {
   intro: string
   currentAmount: string
   initialAmount: string
-  create: string
+  createButton: string
+  giveButton: string
+  fromPrefix: string
   value: string
   total: string
+  giveGiftCard: string
+  phoneNumberInput: string
+  messageInput: string
+  giveContinueButton: string
+  giftOverview: string
+  receiver: string
+  message: string
+  editButton: string
+  giveSubmitButton: string
+  successToastTitle: string
+  successToastText: string
+  errorToastTitle: string
+  errorToastText: string
   expires: Expires
   expired: string
   new: string
@@ -851,9 +866,24 @@ const typeMap: any = {
       { json: 'intro', js: 'intro', typ: '' },
       { json: 'currentAmount', js: 'currentAmount', typ: '' },
       { json: 'initialAmount', js: 'initialAmount', typ: '' },
-      { json: 'create', js: 'create', typ: '' },
+      { json: 'createButton', js: 'createButton', typ: '' },
+      { json: 'giveButton', js: 'giveButton', typ: '' },
+      { json: 'fromPrefix', js: 'fromPrefix', typ: '' },
       { json: 'value', js: 'value', typ: '' },
       { json: 'total', js: 'total', typ: '' },
+      { json: 'giveGiftCard', js: 'giveGiftCard', typ: '' },
+      { json: 'phoneNumberInput', js: 'phoneNumberInput', typ: '' },
+      { json: 'messageInput', js: 'messageInput', typ: '' },
+      { json: 'giveContinueButton', js: 'giveContinueButton', typ: '' },
+      { json: 'giftOverview', js: 'giftOverview', typ: '' },
+      { json: 'receiver', js: 'receiver', typ: '' },
+      { json: 'message', js: 'message', typ: '' },
+      { json: 'editButton', js: 'editButton', typ: '' },
+      { json: 'giveSubmitButton', js: 'giveSubmitButton', typ: '' },
+      { json: 'successToastTitle', js: 'successToastTitle', typ: '' },
+      { json: 'successToastText', js: 'successToastText', typ: '' },
+      { json: 'errorToastTitle', js: 'errorToastTitle', typ: '' },
+      { json: 'errorToastText', js: 'errorToastText', typ: '' },
       { json: 'expires', js: 'expires', typ: r('Expires') },
       { json: 'expired', js: 'expired', typ: '' },
       { json: 'new', js: 'new', typ: '' },
