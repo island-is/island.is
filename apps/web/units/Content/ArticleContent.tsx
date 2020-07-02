@@ -234,7 +234,7 @@ const defaultRenderNode = (locale, overrides = {}) => {
 
       return null
     },
-  })
+  }
 
   return {
     ...settings,
