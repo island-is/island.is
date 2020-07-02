@@ -2,7 +2,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
-import cn from 'classnames'
 import slugify from '@sindresorhus/slugify'
 import {
   ContentBlock,
@@ -17,11 +16,7 @@ import {
   Tag,
   Option,
 } from '@island.is/island-ui/core'
-import {
-  Sidebar,
-  Sticky,
-  getHeadingLinkElements,
-} from '@island.is/web/components'
+import { Sidebar, getHeadingLinkElements } from '@island.is/web/components'
 import {
   Query,
   QueryGetArticleArgs,
@@ -29,6 +24,7 @@ import {
   ContentLanguage,
 } from '@island.is/api/schema'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
+import { ArticleLayout } from './Layouts/Layouts'
 import { withApollo } from '../graphql'
 import { Screen } from '../types'
 import ArticleContent from '../units/Content/ArticleContent'
@@ -37,7 +33,6 @@ import { useI18n } from '../i18n'
 import { Locale } from '../i18n/I18n'
 import useRouteNames from '../i18n/useRouteNames'
 
-import * as styles from './Category/Category.treat'
 import { CustomNextError } from '../units/ErrorBoundary'
 
 interface ArticleProps {
@@ -84,65 +79,58 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
       <Head>
         <title>{article.title} | Ísland.is</title>
       </Head>
-      <ContentBlock>
-        <Box component="article" padding={[0, 0, 0, 6]}>
-          <div className={cn(styles.layout, styles.reversed)}>
-            <div className={styles.side}>
-              <Sticky>
-                <Sidebar title="Efnisyfirlit" bullet="left" headingLinks />
-              </Sticky>
-            </div>
+      <ArticleLayout
+        sidebar={<Sidebar title="Efnisyfirlit" bullet="left" headingLinks />}
+        content={
+          <>
+            <ContentContainer
+              padding="none"
+              paddingX={[3, 3, 6, 0]}
+              marginBottom={simpleSpacing}
+            >
+              <Stack space={[3, 3, 4]}>
+                <Breadcrumbs>
+                  <Link href={makePath()}>
+                    <a>Ísland.is</a>
+                  </Link>
+                  <Link
+                    href={`${makePath('category')}/[slug]`}
+                    as={makePath('category', categorySlug)}
+                  >
+                    <a>{categoryTitle}</a>
+                  </Link>
+                  {groupTitle && (
+                    <Tag variant="purple" label>
+                      {groupTitle}
+                    </Tag>
+                  )}
+                </Breadcrumbs>
+                <Hidden above="md">
+                  <Select
+                    label="Efnisyfirlit"
+                    placeholder="Flokkar"
+                    options={contentOverviewOptions}
+                    onChange={onChangeContentOverview}
+                    name="content-overview"
+                  />
+                </Hidden>
+                <Box marginBottom={simpleSpacing}>
+                  <Typography variant="h1" as="h1">
+                    <span data-sidebar-link={slugify(article.title)}>
+                      {article.title}
+                    </span>
+                  </Typography>
+                </Box>
+              </Stack>
+            </ContentContainer>
 
-            <Box paddingRight={[0, 0, 0, 4]} width="full">
-              <ContentContainer
-                padding="none"
-                paddingX={[3, 3, 6, 0]}
-                marginBottom={simpleSpacing}
-              >
-                <Stack space={[3, 3, 4]}>
-                  <Breadcrumbs>
-                    <Link href={makePath()}>
-                      <a>Ísland.is</a>
-                    </Link>
-                    <Link
-                      href={`${makePath('category')}/[slug]`}
-                      as={makePath('category', categorySlug)}
-                    >
-                      <a>{categoryTitle}</a>
-                    </Link>
-                    {groupTitle && (
-                      <Tag variant="purple" label>
-                        {groupTitle}
-                      </Tag>
-                    )}
-                  </Breadcrumbs>
-                  <Hidden above="md">
-                    <Select
-                      label="Efnisyfirlit"
-                      placeholder="Flokkar"
-                      options={contentOverviewOptions}
-                      onChange={onChangeContentOverview}
-                      name="content-overview"
-                    />
-                  </Hidden>
-                  <Box marginBottom={simpleSpacing}>
-                    <Typography variant="h1" as="h1">
-                      <span data-sidebar-link={slugify(article.title)}>
-                        {article.title}
-                      </span>
-                    </Typography>
-                  </Box>
-                </Stack>
-              </ContentContainer>
-
-              <ArticleContent
-                document={article.content}
-                locale={activeLocale as Locale}
-              />
-            </Box>
-          </div>
-        </Box>
-      </ContentBlock>
+            <ArticleContent
+              document={article.content}
+              locale={activeLocale as Locale}
+            />
+          </>
+        }
+      />
     </>
   )
 }
