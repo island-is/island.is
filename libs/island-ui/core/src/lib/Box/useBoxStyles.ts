@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { ElementType } from 'react'
 import classnames from 'classnames'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, Colors } from '@island.is/island-ui/theme'
 import {
   resolveResponsiveProp,
   ResponsiveProp,
@@ -36,6 +36,7 @@ export interface UseBoxStylesProps {
   justifyContent?: ResponsiveProp<keyof typeof styleRefs.justifyContent>
   textAlign?: ResponsiveProp<keyof typeof styleRefs.textAlign>
   border?: keyof typeof styleRefs.border
+  borderColor?: Colors
   borderRadius?: keyof typeof styleRefs.borderRadius
   background?: keyof typeof styleRefs.background
   boxShadow?: keyof typeof styleRefs.boxShadow
@@ -83,6 +84,7 @@ export const useBoxStyles = ({
   justifyContent,
   textAlign,
   border,
+  borderColor,
   borderRadius,
   background,
   boxShadow,
@@ -127,6 +129,7 @@ export const useBoxStyles = ({
       resetStyles.element[component as keyof typeof resetStyleRefs.element],
     styles.background[background!],
     styles.border[border!],
+    styles.borderColor[borderColor!],
     styles.borderRadius[borderRadius!],
     styles.boxShadow[boxShadow!],
     styles.transition[transition!],

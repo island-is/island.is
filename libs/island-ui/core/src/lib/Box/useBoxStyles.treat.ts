@@ -2,7 +2,7 @@ import { style, styleMap } from 'treat'
 import { Properties } from 'csstype'
 import omit from 'lodash/omit'
 import { mapToStyleProperty } from '../../utils'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils, colors } from '@island.is/island-ui/theme'
 
 const spaceMapToCss = (
   t: typeof theme,
@@ -115,6 +115,20 @@ export const border = styleMap({
     border: `${theme.border.style.solid} ${theme.border.width.standard}px ${theme.border.color.focus}`,
   },
 })
+
+export const borderColors = Object.keys(colors).map((key) => {
+  return {
+    [key]: {
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor: colors[key],
+    },
+  }
+})
+
+export const borderColor = {
+  ...styleMap(Object.assign({}, ...borderColors), 'borderColor'),
+}
 
 export const borderRadius = {
   ...styleMap(

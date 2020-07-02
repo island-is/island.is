@@ -5,6 +5,8 @@ import * as color from './colors'
 
 export const UNIT = 8
 
+export const colors = color
+
 export const spacing = {
   0: UNIT * 0,
   1: UNIT * 1,
