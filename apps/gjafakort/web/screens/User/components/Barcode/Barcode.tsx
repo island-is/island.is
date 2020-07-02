@@ -126,13 +126,16 @@ function Barcode({ shouldPoll: initialPolling }: PropTypes) {
       variables: { input: { giftCardId, recipientMobileNumber, message } },
     })
     if (giveGiftResponse.success) {
-      NotificationService.success('Aðgerð tókst! gjöf var send til ******')
+      NotificationService.success({
+        title: t.successToastTitle,
+        text: t.successToastText + recipientMobileNumber,
+      })
     } else {
-      NotificationService.success('Ekki tókst að gefa gjöf')
+      NotificationService.error({
+        title: t.errorToastTitle,
+        text: t.errorToastText,
+      })
     }
-
-    console.log(giveGiftResponse)
-    //TODO: Show success toast or error toast
     send('BACK_TO_LIST')
   }
 
@@ -284,17 +287,39 @@ function Barcode({ shouldPoll: initialPolling }: PropTypes) {
 
   if (current.matches('confirmGive')) {
     return (
-      <Stack space={7}>
-        <Typography variant="h4">
-          {t.giveGiftCard}{' '}
-          {current.context.giftCard.amount &&
-            formatNumber(current.context.giftCard.amount)}{' '}
-          kr.
-        </Typography>
-        <Typography variant="h4">
-          +354 {current.context.giveInfo.phoneNumber}
-        </Typography>
-        <Typography variant="h4">{current.context.giveInfo.message}</Typography>
+      <Stack space={3}>
+        <Box
+          background="blue100"
+          paddingX={5}
+          paddingY={5}
+          borderRadius="standard"
+        >
+          <Stack space={3}>
+            <Typography variant="h2">{t.giftOverview}</Typography>
+            <div>
+              <Typography variant="h4">{t.giveGiftCard}</Typography>
+              <Typography variant="p">
+                {current.context.giftCard.amount &&
+                  formatNumber(current.context.giftCard.amount)}{' '}
+                kr.
+              </Typography>
+            </div>
+            <div>
+              <Typography variant="h4">{t.receiver}</Typography>
+              <Typography variant="p">
+                +354 {current.context.giveInfo.phoneNumber}
+              </Typography>
+            </div>
+            {current.context.giveInfo.message && (
+              <div>
+                <Typography variant="h4">{t.message}</Typography>
+                <Typography variant="p">
+                  {current.context.giveInfo.message}
+                </Typography>
+              </div>
+            )}
+          </Stack>
+        </Box>
         <Box display="flex" justifyContent="spaceBetween">
           <Box marginRight={1} flexGrow={1}>
             <Button
@@ -304,12 +329,13 @@ function Barcode({ shouldPoll: initialPolling }: PropTypes) {
               }}
               variant="ghost"
             >
-              {t.backButton}
+              {t.editButton}
             </Button>
           </Box>
           <Box marginLeft={1} flexGrow={1} textAlign="right">
             <Button
               width="fixed"
+              htmlType="submit"
               onClick={() => {
                 confirmGiveGift(
                   current.context.giftCard.giftCardId,

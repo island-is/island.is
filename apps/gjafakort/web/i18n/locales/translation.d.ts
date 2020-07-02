@@ -293,7 +293,15 @@ export interface Barcode {
   phoneNumberInput: string
   messageInput: string
   giveContinueButton: string
+  giftOverview: string
+  receiver: string
+  message: string
+  editButton: string
   giveSubmitButton: string
+  successToastTitle: string
+  successToastText: string
+  errorToastTitle: string
+  errorToastText: string
   expires: Expires
   expired: string
   new: string
@@ -867,7 +875,15 @@ const typeMap: any = {
       { json: 'phoneNumberInput', js: 'phoneNumberInput', typ: '' },
       { json: 'messageInput', js: 'messageInput', typ: '' },
       { json: 'giveContinueButton', js: 'giveContinueButton', typ: '' },
+      { json: 'giftOverview', js: 'giftOverview', typ: '' },
+      { json: 'receiver', js: 'receiver', typ: '' },
+      { json: 'message', js: 'message', typ: '' },
+      { json: 'editButton', js: 'editButton', typ: '' },
       { json: 'giveSubmitButton', js: 'giveSubmitButton', typ: '' },
+      { json: 'successToastTitle', js: 'successToastTitle', typ: '' },
+      { json: 'successToastText', js: 'successToastText', typ: '' },
+      { json: 'errorToastTitle', js: 'errorToastTitle', typ: '' },
+      { json: 'errorToastText', js: 'errorToastText', typ: '' },
       { json: 'expires', js: 'expires', typ: r('Expires') },
       { json: 'expired', js: 'expired', typ: '' },
       { json: 'new', js: 'new', typ: '' },
