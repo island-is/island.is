@@ -4,7 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { SequelizeConfigService } from './core/db/config.service'
-import { ApplicationModule } from './modules/applications/applications.module'
+import { ApplicationsModule } from './modules/applications/applications.module'
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { ApplicationModule } from './modules/applications/applications.module'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
-    ApplicationModule,
+    ApplicationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
