@@ -1,8 +1,10 @@
 import React, { FC } from 'react'
 import {
   Answers,
+  Field,
   FormItemTypes,
   FormScreen,
+  MultiField,
   Section,
 } from '@island.is/application/schema'
 import { Typography, Box, Button, Divider } from '@island.is/island-ui/core'
@@ -34,13 +36,13 @@ const Screen: FC<ScreenProps> = ({
         {screen.type === FormItemTypes.REPEATER ? null : screen.type ===
           FormItemTypes.MULTI_FIELD ? (
           <FormMultiField
-            multiField={screen}
+            multiField={screen as MultiField}
             answerQuestion={answerQuestion}
             answers={answers}
           />
         ) : (
           <FormField
-            field={screen}
+            field={screen as Field}
             answers={answers}
             answerQuestion={answerQuestion}
           />

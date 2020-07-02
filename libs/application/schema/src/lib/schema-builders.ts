@@ -1,17 +1,17 @@
+import { Field } from '../types/fields/field'
+import { Condition } from '../types/condition'
 import {
-  Condition,
-  Field,
   Form,
   FormChildren,
-  FormItemTypes,
   MultiField,
-  Repeater,
-  RepeaterChildren,
-  Section,
-  SectionChildren,
   SubSection,
+  Section,
+  FormItemTypes,
+  RepeaterChildren,
+  Repeater,
+  SectionChildren,
   SubSectionChildren,
-} from '@island.is/application/schema'
+} from '../types/form'
 
 export function buildForm(data: {
   id: string

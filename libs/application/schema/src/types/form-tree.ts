@@ -1,4 +1,4 @@
-import { Field } from './fields'
+import { Field } from './fields/field'
 import { Form, MultiField, Repeater, Section, SubSection } from './form'
 
 export type FormNode =
