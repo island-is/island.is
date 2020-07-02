@@ -2,7 +2,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
-import DefaultErrorPage from 'next/error'
 import cn from 'classnames'
 import slugify from '@sindresorhus/slugify'
 import {
@@ -39,6 +38,7 @@ import { Locale } from '../i18n/I18n'
 import useRouteNames from '../i18n/useRouteNames'
 
 import * as styles from './Category/Category.treat'
+import { CustomNextError } from '../units/ErrorBoundary'
 
 interface ArticleProps {
   article: Query['getArticle']
@@ -63,11 +63,7 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
       })) || [],
     )
   }, [])
-
-  if (!article) {
-    return <DefaultErrorPage statusCode={404} />
-  }
-
+          
   const { slug: categorySlug, title: categoryTitle } = article.category
   const groupTitle = article.group?.title
 
@@ -153,7 +149,6 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
 
 Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
-
   const [
     {
       data: { getArticle: article },
@@ -183,7 +178,22 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
         // map data here to reduce data processing in component
         return JSON.parse(variables.data.getNamespace.fields)
       }),
-  ])
+  ]).catch(({ graphQLErrors }) => {
+    /* 
+    Normalize the apollo error for handling in error boundary
+    We assume the url is wrong if we find a NOT_FOUND code in apollo response so we pass a 404 error
+    */
+    const has404Error = Boolean(
+      graphQLErrors.find(
+        (graphQLError) => graphQLError.extensions.code === 'NOT_FOUND',
+      ),
+    )
+    if (has404Error) {
+      throw new CustomNextError(404, 'Article not found')
+    } else {
+      throw new CustomNextError(500)
+    }
+  })
 
   return {
     article,
