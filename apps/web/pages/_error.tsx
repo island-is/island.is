@@ -1,8 +1,7 @@
 import React from 'react'
 import { ErrorProps } from 'next/error'
 
-function CustomError ({ statusCode, title = '', ...props }: ErrorProps) {
-  console.log('Inside cmp error props')
+function CustomError({ statusCode, title = '', ...props }: ErrorProps) {
   return (
     <h1>
       Error: {statusCode}: {title}

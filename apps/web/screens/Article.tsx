@@ -166,13 +166,16 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
         // map data here to reduce data processing in component
         return JSON.parse(variables.data.getNamespace.fields)
       }),
-  ])
-  .catch(({graphQLErrors}) => {
+  ]).catch(({ graphQLErrors }) => {
     /* 
     Normalize the apollo error for handling in error boundary
     We assume the url is wrong if we find a NOT_FOUND code in apollo response so we pass a 404 error
     */
-    const has404Error = Boolean(graphQLErrors.find((graphQLError => graphQLError.extensions.code === 'NOT_FOUND')))
+    const has404Error = Boolean(
+      graphQLErrors.find(
+        (graphQLError) => graphQLError.extensions.code === 'NOT_FOUND',
+      ),
+    )
     if (has404Error) {
       throw new CustomNextError(404, 'Article not found')
     } else {
