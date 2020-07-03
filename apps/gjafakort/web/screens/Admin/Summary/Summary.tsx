@@ -29,6 +29,8 @@ const CompanyApplicationsQuery = gql`
       companySSN
       generalEmail
       companyDisplayName
+      operationsTrouble
+      publicHelpAmount
       companyName
       logs {
         id
@@ -84,6 +86,26 @@ function Summary() {
             />
           </Box>
         </Box>
+        <Box marginBottom={4}>
+          <Box display="flex" alignItems="center" marginBottom={1}>
+            <Icon type="alert" width={20} color="yellow600" />
+            <Box marginLeft={2}>
+              <Typography variant="p">
+                merkir fyrirtæki sem voru í rekstrarerfiðleikum 31. desember
+                2019 í skilningi hópundanþágureglugerðar
+              </Typography>
+            </Box>
+          </Box>
+          <Box display="flex" alignItems="center">
+            <Icon type="info" width={20} color="blue600" />
+            <Box marginLeft={2}>
+              <Typography variant="p">
+                merkir fyrirtæki sem hafa á síðastliðnum tveimur reikningsárum
+                eða á yfirstandandi reikningsári fengið opinbera aðstoð
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
         <Box marginBottom={6} overflow="scroll">
           <table className={styles.table}>
             <thead className={styles.thead}>
@@ -105,6 +127,16 @@ function Summary() {
                     <Box display="flex" flexDirection="column">
                       <Typography variant="p" color="dark400">
                         {application.companyName}
+                        {application.publicHelpAmount > 0 && (
+                          <Box marginLeft={1} display="inlineFlex">
+                            <Icon type="info" width={16} color="blue600" />
+                          </Box>
+                        )}
+                        {application.operationsTrouble && (
+                          <Box marginLeft={1} display="inlineFlex">
+                            <Icon type="alert" width={16} color="yellow600" />
+                          </Box>
+                        )}
                       </Typography>
                       <Typography variant="pSmall" color="dark300">
                         {application.companyDisplayName}
