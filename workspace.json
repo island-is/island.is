@@ -1267,6 +1267,74 @@
           }
         }
       }
+    },
+    "application-system-api": {
+      "root": "apps/application-system/api",
+      "sourceRoot": "apps/application-system/api/src",
+      "projectType": "application",
+      "prefix": "application-system-api",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/application-system/api",
+            "main": "apps/application-system/api/src/main.ts",
+            "tsConfig": "apps/application-system/api/tsconfig.app.json",
+            "assets": ["apps/application-system/api/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/application-system/api/src/environments/environment.ts",
+                  "with": "apps/application-system/api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "application-system-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/application-system/api/.eslintrc",
+            "tsConfig": [
+              "apps/application-system/api/tsconfig.app.json",
+              "apps/application-system/api/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/application-system/api/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/application-system/api/jest.config.js",
+            "tsConfig": "apps/application-system/api/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d"
+              }
+            ],
+            "cwd": "apps/application-system/api"
+          }
+        }
+      }
     }
   },
   "cli": {
