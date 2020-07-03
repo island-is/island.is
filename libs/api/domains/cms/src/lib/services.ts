@@ -2,7 +2,6 @@ import { getLocalizedEntries } from './contentful'
 import { logger } from '@island.is/logging'
 import { Entry } from 'contentful'
 import { Article } from '@island.is/api/schema'
-import { ApolloError } from 'apollo-server-express'
 
 interface Taxonomy {
   title: string
@@ -29,11 +28,11 @@ export const getArticle = async (
     include: 10,
   }).catch((error) => {
     logger.error(error)
-    throw new ApolloError('Failed to resolve request in getArticle')
+    throw new Error('Failed to resolve request in getArticle')
   })
 
   if (!result.total) {
-    throw new ApolloError(`Article ${slug} not found`, 'NOT_FOUND')
+    throw new Error(`Article ${slug} not found`)
   }
 
   const [
@@ -73,11 +72,11 @@ export const getNamespace = async (
     'fields.namespace': namespace,
   }).catch((error) => {
     logger.error(error)
-    throw new ApolloError('Failed to resolve request in getNamespace')
+    throw new Error('Failed to resolve request in getNamespace')
   })
 
   if (!result.total) {
-    throw new ApolloError(`${namespace} not found in namespaces`, 'NOT_FOUND')
+    throw new Error(`${namespace} not found in namespaces`)
   }
 
   const [
