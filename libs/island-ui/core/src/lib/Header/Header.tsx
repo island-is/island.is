@@ -10,7 +10,7 @@ import { Hidden } from '../Hidden/Hidden'
 
 export interface HeaderPorps {
   authenticated?: boolean
-  language?: 'Íslenska' | 'English'
+  language?: 'is' | 'en'
   logoRender?: (ReactElement) => ReactElement
   logoutText?: string
   onLogout?: () => void

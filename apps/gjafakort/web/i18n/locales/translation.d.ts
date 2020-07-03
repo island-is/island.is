@@ -22,6 +22,7 @@ export interface Translation {
   footer: Footer
   validation: TranslationValidation
   routes: Routes
+  routeSwitcher: RouteSwitcher
 }
 
 export interface Application {
@@ -244,6 +245,21 @@ export interface NotFound {
 export interface PrivacyPolicy {
   title: string
   sections: string[]
+}
+
+export interface RouteSwitcher {
+  '/': string
+  '/fyrirtaeki': string
+  '/fyrirtaeki/umsokn': string
+  '/fyrirtaeki/umsokn/[ssn]': string
+  '/notandi': string
+  '/personuverndarstefna': string
+  '/en': string
+  '/en/company': string
+  '/en/company/application': string
+  '/en/company/application/[ssn]': string
+  '/en/user': string
+  '/en/privacy-policy': string
 }
 
 export interface Routes {
@@ -515,6 +531,7 @@ const typeMap: any = {
       { json: 'footer', js: 'footer', typ: r('Footer') },
       { json: 'validation', js: 'validation', typ: r('TranslationValidation') },
       { json: 'routes', js: 'routes', typ: r('Routes') },
+      { json: 'routeSwitcher', js: 'routeSwitcher', typ: r('RouteSwitcher') },
     ],
     false,
   ),
@@ -819,6 +836,35 @@ const typeMap: any = {
     [
       { json: 'title', js: 'title', typ: '' },
       { json: 'sections', js: 'sections', typ: a('') },
+    ],
+    false,
+  ),
+  RouteSwitcher: o(
+    [
+      { json: '/', js: '/', typ: '' },
+      { json: '/fyrirtaeki', js: '/fyrirtaeki', typ: '' },
+      { json: '/fyrirtaeki/umsokn', js: '/fyrirtaeki/umsokn', typ: '' },
+      {
+        json: '/fyrirtaeki/umsokn/[ssn]',
+        js: '/fyrirtaeki/umsokn/[ssn]',
+        typ: '',
+      },
+      { json: '/notandi', js: '/notandi', typ: '' },
+      { json: '/personuverndarstefna', js: '/personuverndarstefna', typ: '' },
+      { json: '/en', js: '/en', typ: '' },
+      { json: '/en/company', js: '/en/company', typ: '' },
+      {
+        json: '/en/company/application',
+        js: '/en/company/application',
+        typ: '',
+      },
+      {
+        json: '/en/company/application/[ssn]',
+        js: '/en/company/application/[ssn]',
+        typ: '',
+      },
+      { json: '/en/user', js: '/en/user', typ: '' },
+      { json: '/en/privacy-policy', js: '/en/privacy-policy', typ: '' },
     ],
     false,
   ),

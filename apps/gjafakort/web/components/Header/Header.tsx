@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react'
 import Link from 'next/link'
-import Router from 'next/router'
+import { useRouter } from 'next/router'
 import { useQuery } from 'react-apollo'
 import gql from 'graphql-tag'
 
@@ -22,37 +22,30 @@ export const UserQuery = gql`
 `
 
 function Header() {
+  const router = useRouter()
   const { setUser, isAuthenticated } = useContext(UserContext)
   const {
-    t: { header: t, routes },
+    t: { header: t, routes, routeSwitcher },
     activeLocale,
     locale,
   } = useI18n()
   const { data } = useQuery(UserQuery)
-
   const user = data?.user
   useEffect(() => {
     setUser(user)
   }, [user, setUser])
 
   const switchLanguage = () => {
-    // TODO: parse the routes to push to the correct one (tricky)
-    switch (activeLocale) {
-      case 'is':
-        return locale('en')
-      case 'en':
-        return locale('is')
-      default:
-        return
-    }
+    const queryKeys = Object.keys(router.query)
+    const path = queryKeys.reduce(
+      (acc, key) => acc.replace(`[${key}]`, router.query[key].toString()),
+      routeSwitcher[router.pathname],
+    )
+    router.replace(routeSwitcher[router.pathname], path)
+    locale(activeLocale === 'is' ? 'en' : 'is')
   }
-
   const language =
-    activeLocale === 'is'
-      ? 'English'
-      : activeLocale === 'en'
-      ? 'Íslenska'
-      : undefined
+    activeLocale === 'is' ? 'en' : activeLocale === 'en' ? 'is' : undefined
 
   return (
     <IslandUIHeader
@@ -68,10 +61,10 @@ function Header() {
       userName={user?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {
-        const redirect = Router.pathname.startsWith(routes.companies.home)
+        const redirect = router.pathname.startsWith(routes.companies.home)
           ? routes.companies.home
           : routes.home
-        api.logout().then(() => Router.push(redirect))
+        api.logout().then(() => router.push(redirect))
       }}
     />
   )
