@@ -31,7 +31,6 @@ function ConfirmMobile({ onSubmit, mobileNumber }: PropTypes) {
   } = data || { confirmMobile: {} }
 
   const sendConfirmation = async ({ phoneNumber }, { setSubmitting }) => {
-    setSubmitting(true)
     await confirmMobile({
       variables: {
         input: {

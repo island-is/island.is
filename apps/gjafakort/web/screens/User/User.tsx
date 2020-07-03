@@ -94,7 +94,6 @@ function User() {
     { mobile, confirmCode },
     { setSubmitting, setErrors },
   ) => {
-    setSubmitting(true)
     try {
       await action({
         variables: {

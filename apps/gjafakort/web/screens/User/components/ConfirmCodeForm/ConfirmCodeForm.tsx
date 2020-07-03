@@ -41,7 +41,9 @@ function ConfirmCodeForm({ onSubmit }: PropTypes) {
         <Typography variant="intro">{t.intro}</Typography>
       </Box>
       <Formik
-        initialValues={{}}
+        initialValues={{
+          confirmCode: '',
+        }}
         validationSchema={Yup.object().shape({
           confirmCode: Yup.string()
             .length(6, t.validation.confirmCode)
@@ -49,22 +51,19 @@ function ConfirmCodeForm({ onSubmit }: PropTypes) {
         })}
         onSubmit={onSubmit}
       >
-        {({ isValid, dirty }) => (
+        {({ isSubmitting }) => (
           <Form>
-            <Box marginBottom={5}>
-              <Stack space={3}>
-                <Field
-                  component={FieldNumberInput}
-                  label={t.form.confirmCode.label}
-                  name="confirmCode"
-                  format="######"
-                  allowEmptyFormatting
-                />
-              </Stack>
-            </Box>
-            <Button htmlType="submit" disabled={!dirty || !isValid}>
-              {t.form.submit}
-            </Button>
+            <Stack space={5}>
+              <Field
+                component={FieldNumberInput}
+                label={t.form.confirmCode.label}
+                name="confirmCode"
+                format="######"
+              />
+              <Button htmlType="submit" disabled={isSubmitting}>
+                {t.form.submit}
+              </Button>
+            </Stack>
           </Form>
         )}
       </Formik>
