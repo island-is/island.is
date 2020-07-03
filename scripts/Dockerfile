@@ -60,8 +60,9 @@ ARG APP_DIST_HOME
 ENV APP=${APP}
 ENV NODE_ENV=production
 
-RUN apk add bash aws-cli jq curl -U \
+RUN apk add bash python py-pip jq curl -U \
     && rm -rf /var/cache/apk/*
+RUN pip install awscli
 WORKDIR /webapp
 
 # Adding user for running the app
