@@ -6,15 +6,14 @@ import { Sticky } from '../../components'
 import * as styles from './Layouts.treat'
 
 interface CategoryProps {
-  topContent: ReactNode
-  bottomContent: ReactNode
   sidebar: ReactNode
+  belowContent?: ReactNode
 }
 
 export const CategoryLayout: FC<CategoryProps> = ({
-  topContent,
-  bottomContent,
   sidebar,
+  belowContent,
+  children,
 }) => (
   <ContentBlock>
     <Box padding={[0, 0, 0, 6]}>
@@ -24,13 +23,15 @@ export const CategoryLayout: FC<CategoryProps> = ({
         </div>
         <Box paddingLeft={[0, 0, 0, 4]} width="full">
           <Box padding={[3, 3, 6, 0]}>
-            <ContentBlock width="small">{topContent}</ContentBlock>
+            <ContentBlock width="small">{children}</ContentBlock>
           </Box>
-          <div className={styles.bg}>
-            <Box padding={[3, 3, 6, 0]} paddingTop={[3, 3, 6, 6]}>
-              <ContentBlock width="small">{bottomContent}</ContentBlock>
-            </Box>
-          </div>
+          {belowContent && (
+            <div className={styles.bg}>
+              <Box padding={[3, 3, 6, 0]} paddingTop={[3, 3, 6, 6]}>
+                <ContentBlock width="small">{belowContent}</ContentBlock>
+              </Box>
+            </div>
+          )}
         </Box>
       </div>
     </Box>
@@ -38,11 +39,10 @@ export const CategoryLayout: FC<CategoryProps> = ({
 )
 
 interface ArticleProps {
-  content: ReactNode
   sidebar: ReactNode
 }
 
-export const ArticleLayout: FC<ArticleProps> = ({ content, sidebar }) => (
+export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
   <ContentBlock>
     <Box padding={[0, 0, 0, 6]}>
       <div className={cn(styles.layout, styles.reversed)}>
@@ -50,7 +50,7 @@ export const ArticleLayout: FC<ArticleProps> = ({ content, sidebar }) => (
           <Sticky>{sidebar}</Sticky>
         </div>
         <Box paddingRight={[0, 0, 0, 4]} width="full">
-          {content}
+          {children}
         </Box>
       </div>
     </Box>

@@ -162,55 +162,7 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
             </SidebarAccordion>
           </Sidebar>
         }
-        topContent={
-          <Stack space={[3, 3, 4]}>
-            <Breadcrumbs>
-              <Link href="/">
-                <a>Ísland.is</a>
-              </Link>
-            </Breadcrumbs>
-            <SearchInput
-              ref={searchRef}
-              size="large"
-              activeLocale={activeLocale}
-              initialInputValue={q}
-            />
-            <Hidden above="md">
-              <Select
-                label="Leitarflokkar"
-                placeholder="Flokkar"
-                defaultValue={defaultSelectedCategory}
-                options={categorySelectOptions}
-                onChange={onChangeSelectCategoryOptions}
-                name="content-overview"
-              />
-            </Hidden>
-            <Typography variant="intro" as="p">
-              {filteredItems.length === 0 ? (
-                <span>
-                  Ekkert fannst við leit á <strong>{q}</strong>
-                </span>
-              ) : (
-                <span>
-                  {filteredItems.length} leitarniðurstöður{' '}
-                  {filters.category && (
-                    <>
-                      í flokki
-                      {categoryTitle ? (
-                        <>
-                          : <strong>{categoryTitle}</strong>
-                        </>
-                      ) : (
-                        '.'
-                      )}
-                    </>
-                  )}
-                </span>
-              )}
-            </Typography>
-          </Stack>
-        }
-        bottomContent={
+        belowContent={
           <Stack space={2}>
             {filteredItems.map((item, index) => {
               const tags = [] as Array<CardTagsProps>
@@ -228,7 +180,54 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
             })}
           </Stack>
         }
-      />
+      >
+        <Stack space={[3, 3, 4]}>
+          <Breadcrumbs>
+            <Link href="/">
+              <a>Ísland.is</a>
+            </Link>
+          </Breadcrumbs>
+          <SearchInput
+            ref={searchRef}
+            size="large"
+            activeLocale={activeLocale}
+            initialInputValue={q}
+          />
+          <Hidden above="md">
+            <Select
+              label="Leitarflokkar"
+              placeholder="Flokkar"
+              defaultValue={defaultSelectedCategory}
+              options={categorySelectOptions}
+              onChange={onChangeSelectCategoryOptions}
+              name="content-overview"
+            />
+          </Hidden>
+          <Typography variant="intro" as="p">
+            {filteredItems.length === 0 ? (
+              <span>
+                Ekkert fannst við leit á <strong>{q}</strong>
+              </span>
+            ) : (
+              <span>
+                {filteredItems.length} leitarniðurstöður{' '}
+                {filters.category && (
+                  <>
+                    í flokki
+                    {categoryTitle ? (
+                      <>
+                        : <strong>{categoryTitle}</strong>
+                      </>
+                    ) : (
+                      '.'
+                    )}
+                  </>
+                )}
+              </span>
+            )}
+          </Typography>
+        </Stack>
+      </CategoryLayout>
     </>
   )
 }

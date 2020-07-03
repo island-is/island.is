@@ -81,56 +81,53 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
       </Head>
       <ArticleLayout
         sidebar={<Sidebar title="Efnisyfirlit" bullet="left" headingLinks />}
-        content={
-          <>
-            <ContentContainer
-              padding="none"
-              paddingX={[3, 3, 6, 0]}
-              marginBottom={simpleSpacing}
-            >
-              <Stack space={[3, 3, 4]}>
-                <Breadcrumbs>
-                  <Link href={makePath()}>
-                    <a>Ísland.is</a>
-                  </Link>
-                  <Link
-                    href={`${makePath('category')}/[slug]`}
-                    as={makePath('category', categorySlug)}
-                  >
-                    <a>{categoryTitle}</a>
-                  </Link>
-                  {groupTitle && (
-                    <Tag variant="purple" label>
-                      {groupTitle}
-                    </Tag>
-                  )}
-                </Breadcrumbs>
-                <Hidden above="md">
-                  <Select
-                    label="Efnisyfirlit"
-                    placeholder="Flokkar"
-                    options={contentOverviewOptions}
-                    onChange={onChangeContentOverview}
-                    name="content-overview"
-                  />
-                </Hidden>
-                <Box marginBottom={simpleSpacing}>
-                  <Typography variant="h1" as="h1">
-                    <span data-sidebar-link={slugify(article.title)}>
-                      {article.title}
-                    </span>
-                  </Typography>
-                </Box>
-              </Stack>
-            </ContentContainer>
+      >
+        <ContentContainer
+          padding="none"
+          paddingX={[3, 3, 6, 0]}
+          marginBottom={simpleSpacing}
+        >
+          <Stack space={[3, 3, 4]}>
+            <Breadcrumbs>
+              <Link href={makePath()}>
+                <a>Ísland.is</a>
+              </Link>
+              <Link
+                href={`${makePath('category')}/[slug]`}
+                as={makePath('category', categorySlug)}
+              >
+                <a>{categoryTitle}</a>
+              </Link>
+              {groupTitle && (
+                <Tag variant="purple" label>
+                  {groupTitle}
+                </Tag>
+              )}
+            </Breadcrumbs>
+            <Hidden above="md">
+              <Select
+                label="Efnisyfirlit"
+                placeholder="Flokkar"
+                options={contentOverviewOptions}
+                onChange={onChangeContentOverview}
+                name="content-overview"
+              />
+            </Hidden>
+            <Box marginBottom={simpleSpacing}>
+              <Typography variant="h1" as="h1">
+                <span data-sidebar-link={slugify(article.title)}>
+                  {article.title}
+                </span>
+              </Typography>
+            </Box>
+          </Stack>
+        </ContentContainer>
 
-            <ArticleContent
-              document={article.content}
-              locale={activeLocale as Locale}
-            />
-          </>
-        }
-      />
+        <ArticleContent
+          document={article.content}
+          locale={activeLocale as Locale}
+        />
+      </ArticleLayout>
     </>
   )
 }

@@ -104,41 +104,7 @@ const Category: Screen<CategoryProps> = ({
             title={n('submenuTitle')}
           />
         }
-        topContent={
-          <Stack space={[3, 3, 4]}>
-            <Breadcrumbs>
-              <Link href={makePath()}>
-                <a>Ísland.is</a>
-              </Link>
-            </Breadcrumbs>
-            <Hidden above="md">
-              <Select
-                label="Þjónustuflokkar"
-                defaultValue={{
-                  label: category.title,
-                  value: category.slug,
-                }}
-                onChange={({ value }: Option) => {
-                  const slug = value as string
-
-                  Router.push(
-                    `${makePath('category')}/[slug]`,
-                    makePath('category', slug),
-                  )
-                }}
-                options={categoryOptions}
-                name="categories"
-              />
-            </Hidden>
-            <Typography variant="h1" as="h1">
-              {category.title}
-            </Typography>
-            <Typography variant="intro" as="p">
-              {category.description}
-            </Typography>
-          </Stack>
-        }
-        bottomContent={
+        belowContent={
           <Stack space={2}>
             <Stack space={2}>
               {Object.keys(groups).map((groupSlug, index) => {
@@ -180,7 +146,40 @@ const Category: Screen<CategoryProps> = ({
             </Stack>
           </Stack>
         }
-      />
+      >
+        <Stack space={[3, 3, 4]}>
+          <Breadcrumbs>
+            <Link href={makePath()}>
+              <a>Ísland.is</a>
+            </Link>
+          </Breadcrumbs>
+          <Hidden above="md">
+            <Select
+              label="Þjónustuflokkar"
+              defaultValue={{
+                label: category.title,
+                value: category.slug,
+              }}
+              onChange={({ value }: Option) => {
+                const slug = value as string
+
+                Router.push(
+                  `${makePath('category')}/[slug]`,
+                  makePath('category', slug),
+                )
+              }}
+              options={categoryOptions}
+              name="categories"
+            />
+          </Hidden>
+          <Typography variant="h1" as="h1">
+            {category.title}
+          </Typography>
+          <Typography variant="intro" as="p">
+            {category.description}
+          </Typography>
+        </Stack>
+      </CategoryLayout>
     </>
   )
 }
