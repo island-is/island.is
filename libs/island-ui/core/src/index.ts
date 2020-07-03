@@ -1,4 +1,5 @@
 // Components
+export * from './lib/Timeline/Timeline'
 export * from './lib/AsyncSearch/AsyncSearch'
 export * from './lib/Button/Button'
 export * from './lib/Logo/Logo'
