@@ -83,7 +83,7 @@ export const sendConfirmCode = async (
 
   try {
     await novaApi.sendSms(mobileNumber, confirmCode)
-  } catch(err) {
+  } catch (err) {
     logger.error(err)
     throw new Error('Failed sending sms')
   }

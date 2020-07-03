@@ -54,14 +54,19 @@ class NovaAPI extends RESTDataSource {
       })
       logger.info('Authenticated with nova successfully')
       return res.Token
-    } catch(error) {
+    } catch (error) {
       const code = error?.extensions?.response?.body?.Code
-      const message = error?.extensions?.response?.body?.Message || error.message
+      const message =
+        error?.extensions?.response?.body?.Message || error.message
       throw new NovaError(code, message)
     }
   }
 
-  private async wrappedPost(url: string, body: object, isRetry = false): Promise<NovaResponse> {
+  private async wrappedPost(
+    url: string,
+    body: object,
+    isRetry = false,
+  ): Promise<NovaResponse> {
     if (!token) {
       token = await this.login()
     }
@@ -73,11 +78,12 @@ class NovaAPI extends RESTDataSource {
         },
       })
       return res
-    } catch(error) {
+    } catch (error) {
       // Nova token is only valid for 24 hours
       const status = error?.extensions?.response?.status
       const code = error?.extensions?.response?.body?.Code
-      const message = error?.extensions?.response?.body?.Message || error.message
+      const message =
+        error?.extensions?.response?.body?.Message || error.message
       if (!isRetry && status === 401) {
         logger.info('Nova returned 401, refreshing auth token')
         token = await this.login()
@@ -87,7 +93,10 @@ class NovaAPI extends RESTDataSource {
     }
   }
 
-  async sendSms(mobileNumber: string, confirmationCode: string): Promise<NovaResponse> {
+  async sendSms(
+    mobileNumber: string,
+    confirmationCode: string,
+  ): Promise<NovaResponse> {
     const body = {
       request: {
         Recipients: [mobileNumber],

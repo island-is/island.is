@@ -109,7 +109,7 @@ class UserResolver {
         mobileNumber,
         input.confirmCode,
       )
-      if (!match) {
+      if (match !== true) {
         throw new ConfirmCodeError()
       }
     }
@@ -138,12 +138,12 @@ class UserResolver {
     { user, dataSources: { applicationApi } },
   ) {
     const { mobileNumber } = validateMobile(input.mobile)
-    const match = userService.verifyConfirmCode(
+    const match = await userService.verifyConfirmCode(
       user.ssn,
       mobileNumber,
       input.confirmCode,
     )
-    if (!match) {
+    if (match !== true) {
       throw new ConfirmCodeError()
     }
 

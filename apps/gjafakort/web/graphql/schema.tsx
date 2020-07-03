@@ -544,7 +544,10 @@ export type UserApplicationQueryQueryVariables = {}
 
 export type UserApplicationQueryQuery = { __typename?: 'Query' } & {
   userApplication?: Maybe<
-    { __typename?: 'UserApplication' } & Pick<UserApplication, 'id'>
+    { __typename?: 'UserApplication' } & Pick<
+      UserApplication,
+      'id' | 'verified' | 'mobileNumber'
+    >
   >
 }
 
@@ -558,7 +561,10 @@ export type CreateUserApplicationMutationMutation = {
   createUserApplication?: Maybe<
     { __typename?: 'CreateUserApplication' } & {
       application?: Maybe<
-        { __typename?: 'UserApplication' } & Pick<UserApplication, 'id'>
+        { __typename?: 'UserApplication' } & Pick<
+          UserApplication,
+          'id' | 'verified' | 'mobileNumber'
+        >
       >
     }
   >
@@ -574,7 +580,10 @@ export type VerifyUserApplicationMutationMutation = {
   verifyUserApplication?: Maybe<
     { __typename?: 'VerifyUserApplication' } & {
       application?: Maybe<
-        { __typename?: 'UserApplication' } & Pick<UserApplication, 'id'>
+        { __typename?: 'UserApplication' } & Pick<
+          UserApplication,
+          'id' | 'verified' | 'mobileNumber'
+        >
       >
     }
   >
@@ -1390,6 +1399,8 @@ export const UserApplicationQueryDocument = gql`
   query UserApplicationQuery {
     userApplication {
       id
+      verified
+      mobileNumber
     }
   }
 `
@@ -1446,6 +1457,8 @@ export const CreateUserApplicationMutationDocument = gql`
     createUserApplication(input: $input) {
       application {
         id
+        verified
+        mobileNumber
       }
     }
   }
@@ -1498,6 +1511,8 @@ export const VerifyUserApplicationMutationDocument = gql`
     verifyUserApplication(input: $input) {
       application {
         id
+        verified
+        mobileNumber
       }
     }
   }
