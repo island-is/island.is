@@ -113,6 +113,9 @@
       "tags": [],
       "implicitDependencies": ["application-system-form"]
     },
+    "application-system-api": {
+      "tags": []
+    },
     "island-ui-theme": {
       "tags": []
     }
