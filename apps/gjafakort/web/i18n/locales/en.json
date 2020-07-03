@@ -397,6 +397,8 @@
     "confirmCodeForm": {
       "title": "Confirmation code",
       "intro": "Please enter your SMS confirmation code",
+      "noSMS": "If you did not receive SMS",
+      "sendSMSButton": "click here to try again",
       "validation": {
         "confirmCode": "The confirmation code needs to be 6 digits"
       },

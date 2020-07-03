@@ -18,9 +18,10 @@ interface PropTypes {
     values: FormikValues,
     formikHelpers: FormikHelpers<FormikValues>,
   ) => void
+  sendConfirmationSMS: () => void
 }
 
-function ConfirmCodeForm({ onSubmit }: PropTypes) {
+function ConfirmCodeForm({ onSubmit, sendConfirmationSMS }: PropTypes) {
   const {
     t: {
       user: { confirmCodeForm: t },
@@ -39,6 +40,12 @@ function ConfirmCodeForm({ onSubmit }: PropTypes) {
       </Box>
       <Box marginBottom={6}>
         <Typography variant="intro">{t.intro}</Typography>
+        <Typography variant="p">
+          {t.noSMS}{' '}
+          <Button variant="text" onClick={sendConfirmationSMS}>
+            {t.sendSMSButton}
+          </Button>
+        </Typography>
       </Box>
       <Formik
         initialValues={{

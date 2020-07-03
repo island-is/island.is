@@ -397,6 +397,8 @@
     "confirmCodeForm": {
       "title": "Staðfestingarkóði",
       "intro": "Vinsamlegast sláðu inn SMS staðfestingarkóðann",
+      "noSMS": "Ef þú fékkst ekki kóðan getur þú",
+      "sendSMSButton": "smellt hér til að senda aftur",
       "validation": {
         "confirmCode": "Staðfestingarkóðinn þarf að 6 tölustafir"
       },

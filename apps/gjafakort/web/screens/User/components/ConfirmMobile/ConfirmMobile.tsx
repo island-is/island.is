@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useCallback } from 'react'
 import gql from 'graphql-tag'
 import { useMutation } from 'react-apollo'
 import { FormikValues, FormikHelpers } from 'formik'
@@ -30,14 +30,21 @@ function ConfirmMobile({ onSubmit, mobileNumber }: PropTypes) {
     confirmMobile: { mobile },
   } = data || { confirmMobile: {} }
 
-  const sendConfirmation = async ({ phoneNumber }, { setSubmitting }) => {
-    await confirmMobile({
-      variables: {
-        input: {
-          mobile: phoneNumber,
+  const sendConfirmationSMS = useCallback(
+    async (phoneNumber) => {
+      await confirmMobile({
+        variables: {
+          input: {
+            mobile: phoneNumber,
+          },
         },
-      },
-    })
+      })
+    },
+    [confirmMobile],
+  )
+
+  const sendConfirmation = async ({ phoneNumber }, { setSubmitting }) => {
+    await sendConfirmationSMS(phoneNumber)
     setSubmitting(false)
   }
 
@@ -47,12 +54,25 @@ function ConfirmMobile({ onSubmit, mobileNumber }: PropTypes) {
     onSubmit({ mobile: phoneNumber, confirmCode }, helpers)
   }
 
-  if (loading) {
+  useEffect(() => {
+    if (mobileNumber) {
+      sendConfirmationSMS(mobileNumber)
+    }
+  }, [mobileNumber, sendConfirmationSMS])
+
+  if (loading && !phoneNumber) {
     return <ContentLoader />
   } else if (!mobile && !mobileNumber) {
     return <MobileForm onSubmit={sendConfirmation} />
   } else {
-    return <ConfirmCodeForm onSubmit={onConfirmSubmit} />
+    return (
+      <ConfirmCodeForm
+        onSubmit={onConfirmSubmit}
+        sendConfirmationSMS={() => {
+          sendConfirmationSMS(phoneNumber)
+        }}
+      />
+    )
   }
 }
 

@@ -326,6 +326,8 @@ export interface Expires {
 export interface ConfirmCodeForm {
   title: string
   intro: string
+  noSMS: string
+  sendSMSButton: string
   validation: Errors
   errors: Errors
   form: ConfirmCodeFormForm
@@ -937,6 +939,8 @@ const typeMap: any = {
     [
       { json: 'title', js: 'title', typ: '' },
       { json: 'intro', js: 'intro', typ: '' },
+      { json: 'noSMS', js: 'noSMS', typ: '' },
+      { json: 'sendSMSButton', js: 'sendSMSButton', typ: '' },
       { json: 'validation', js: 'validation', typ: r('Errors') },
       { json: 'errors', js: 'errors', typ: r('Errors') },
       { json: 'form', js: 'form', typ: r('ConfirmCodeFormForm') },
