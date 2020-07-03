@@ -326,17 +326,18 @@ export interface Expires {
 export interface ConfirmCodeForm {
   title: string
   intro: string
-  validation: ConfirmCodeFormValidation
+  validation: Errors
+  errors: Errors
   form: ConfirmCodeFormForm
+}
+
+export interface Errors {
+  confirmCode: string
 }
 
 export interface ConfirmCodeFormForm {
   confirmCode: CompanyName
   submit: string
-}
-
-export interface ConfirmCodeFormValidation {
-  confirmCode: string
 }
 
 export interface MobileForm {
@@ -359,6 +360,7 @@ export interface MobileFormValidation {
 export interface TranslationValidation {
   required: string
   phoneNumber: string
+  phoneNumberInvalid: string
   email: string
   webpage: string
 }
@@ -935,24 +937,18 @@ const typeMap: any = {
     [
       { json: 'title', js: 'title', typ: '' },
       { json: 'intro', js: 'intro', typ: '' },
-      {
-        json: 'validation',
-        js: 'validation',
-        typ: r('ConfirmCodeFormValidation'),
-      },
+      { json: 'validation', js: 'validation', typ: r('Errors') },
+      { json: 'errors', js: 'errors', typ: r('Errors') },
       { json: 'form', js: 'form', typ: r('ConfirmCodeFormForm') },
     ],
     false,
   ),
+  Errors: o([{ json: 'confirmCode', js: 'confirmCode', typ: '' }], false),
   ConfirmCodeFormForm: o(
     [
       { json: 'confirmCode', js: 'confirmCode', typ: r('CompanyName') },
       { json: 'submit', js: 'submit', typ: '' },
     ],
-    false,
-  ),
-  ConfirmCodeFormValidation: o(
-    [{ json: 'confirmCode', js: 'confirmCode', typ: '' }],
     false,
   ),
   MobileForm: o(
@@ -984,6 +980,7 @@ const typeMap: any = {
     [
       { json: 'required', js: 'required', typ: '' },
       { json: 'phoneNumber', js: 'phoneNumber', typ: '' },
+      { json: 'phoneNumberInvalid', js: 'phoneNumberInvalid', typ: '' },
       { json: 'email', js: 'email', typ: '' },
       { json: 'webpage', js: 'webpage', typ: '' },
     ],

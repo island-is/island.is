@@ -476,6 +476,7 @@
   "validation": {
     "required": "Þessi reitur má ekki vera tómur",
     "phoneNumber": "Símanúmer þarf að vera sjö tölustafir",
+    "phoneNumberInvalid": "Símanúmer þarf að vera gilt",
     "email": "Netfang ekki gilt",
     "webpage": "Vefsíða er ekki gild"
   },

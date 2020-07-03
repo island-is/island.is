@@ -476,6 +476,7 @@
   "validation": {
     "required": "This field cannot be empty",
     "phoneNumber": "The phone number needs to be seven digits",
+    "phoneNumberInvalid": "Phone number must be valid",
     "email": "The email address is not valid",
     "webpage": "The URL is not valid"
   },
