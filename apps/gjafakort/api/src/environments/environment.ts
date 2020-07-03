@@ -39,7 +39,7 @@ export default {
   },
   nova: {
     url: 'https://smsapi.devnova.is',
-    username: 'ViceVersa_User_Development',
+    username: 'IslandIs_User_Development',
     password: process.env.NOVA_PASSWORD,
   },
 }

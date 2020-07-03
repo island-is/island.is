@@ -12,12 +12,16 @@ import {
 } from '../../types'
 
 const validateMobile = (mobile: string) => {
+  const ICELAND_COUNTRY_CODE = 'IS'
   if (!mobile) {
     throw new UserInputError('Mobile number is required')
   }
-  const phone = parsePhoneNumberFromString(mobile, 'IS')
+  const phone = parsePhoneNumberFromString(mobile, ICELAND_COUNTRY_CODE)
   if (!phone.isValid()) {
     throw new UserInputError('Mobile number is invalid')
+  }
+  if (phone.country !== ICELAND_COUNTRY_CODE) {
+    throw new UserInputError('Icelandic mobile number is required')
   }
   return {
     mobileNumber: phone.nationalNumber.toString(),
@@ -267,12 +271,8 @@ class UserResolver {
     { input }: { input: ConfirmMobileInput },
     { user, dataSources: { novaApi } },
   ) {
-    const { mobileNumber, countryCode } = validateMobile(input.mobile)
-    if (countryCode !== '354') {
-      throw new Error('Not possible to confirm foreign mobile number')
-    }
-
-    userService.sendConfirmCode(user.ssn, mobileNumber, novaApi)
+    const { mobileNumber } = validateMobile(input.mobile)
+    await userService.sendConfirmCode(user.ssn, mobileNumber, novaApi)
 
     return {
       success: true,
