@@ -1,6 +1,9 @@
 import React, { FC, createContext, useContext, ReactNode } from 'react'
 import cn from 'classnames'
-import { Box, Typography, Stack, StackProps, Icon } from '../..'
+import { Box } from '../Box'
+import { Typography } from '../Typography/Typography'
+import { Stack, StackProps } from '../Stack/Stack'
+import { Icon } from '../Icon/Icon'
 
 import * as styles from './BulletList.treat'
 

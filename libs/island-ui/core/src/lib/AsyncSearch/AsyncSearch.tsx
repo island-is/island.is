@@ -3,7 +3,7 @@ import Downshift, { StateChangeFunction } from 'downshift'
 import { ControllerStateAndHelpers } from 'downshift/typings'
 import cn from 'classnames'
 import { Input, Label, Menu, Item } from './shared'
-import { Icon } from '../..'
+import { Icon } from '../Icon/Icon'
 
 import * as styles from './AsyncSearch.treat'
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -euxo pipefail
 
 ES_INDEX_MAIN="${ELASTIC_INDEX:-island-is}"
 ES_DOMAIN="${ES_DOMAIN:-search}"
@@ -6,8 +7,7 @@ CODE_TEMPLATE="${CODE_TEMPLATE:-/webapp/config/template-is.json}"
 GITHUB_DICT_REPO="${GITHUB_DICT_REPO:-https://api.github.com/repos/island-is/elasticsearch-dictionaries}"
 S3_BUCKET="${S3_BUCKET:-prod-es-custom-packages}"
 S3_FOLDER="${S3_FOLDER:-}"
-AWS_INSTALL_DIR="/tmp/aws-cli"
-AWS_BIN="${AWS_BIN:-$AWS_INSTALL_DIR/v2/current/bin/aws}"
+AWS_BIN=aws
 
 INDEX_FORMAT="island-is-v%d"
 TEMPLATE_NAME="template-is"
@@ -20,30 +20,11 @@ if [ "$ELASTIC_NODE" == "" ]; then
 	exit 1
 fi
 
-if ! command -v curl >/dev/null; then
-	echo "Error: curl is missing"
-	exit 1
-fi
-
-if ! command -v jq >/dev/null; then
-	apk install jq
-	if ! command -v jq >/dev/null; then
-		exit 1
-	fi
-fi
-
-install_deps() {
-	local dir=/tmp/aws-install
-
-	mkdir "$dir"
-	cd "$dir"
-	curl --fail -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-	unzip awscliv2.zip
-	./aws/install --install-dir "$AWS_INSTALL_DIR" --bin-dir /dev/null
-}
+# Strip trailing slash
+ELASTIC_NODE=${ELASTIC_NODE%/}
 
 migrate_dictionary() {
-  # version will have a leading "+" if updated is needed
+	# version will have a leading "+" if updated is needed
 	local version=$(get_next_dictionary_version)
 	local needsUpdate=${version:0:1}
 	# strip potentional leading "+"
@@ -98,7 +79,7 @@ create_package() {
 
 	local package_id=$(echo "$out" | jq -r '.PackageDetails.PackageID')
 
-	$AWS_BIN es associate-package --package-id "$package_id" --domain-name "$ES_DOMAIN" > /dev/null
+	$AWS_BIN es associate-package --package-id "$package_id" --domain-name "$ES_DOMAIN" >/dev/null
 
 	wait_until_associated "$package_id"
 }
@@ -144,7 +125,7 @@ get_package_version_from_name() {
 }
 
 push_to_s3() {
-  local lang="$1"
+	local lang="$1"
 	local file="$(realpath "$2")"
 
 	$AWS_BIN s3 cp --quiet "$file" "s3://$S3_BUCKET$S3_FOLDER/$lang/"
@@ -163,12 +144,12 @@ get_next_dictionary_version() {
 
 	local repo_version="$(get_dictionary_latest_version)"
 	# Just pick the stemmer as an example to find version
-	local stemmer=$(get_all_es_packages | jq -r '.DomainPackageDetailsList[]|select(.DomainPackageStatus=="ACTIVE")|.PackageName' | grep stemmer |sort -r| head -n 1)
+	local stemmer=$(get_all_es_packages | jq -r '.DomainPackageDetailsList[]|select(.DomainPackageStatus=="ACTIVE")|.PackageName' | grep stemmer | sort -r | head -n 1)
 	local es_version=$(get_package_version_from_name "$stemmer")
 	local updateNeeded=""
 
 	if [[ "$es_version" == "" ]] || [[ "$es_version" -lt "$repo_version" ]]; then
-	  updateNeeded="+"
+		updateNeeded="+"
 	fi
 	echo "$updateNeeded$repo_version"
 }
@@ -186,7 +167,10 @@ push_new_config_template() {
 }
 
 reindex_to_new_index() {
-	local dict_version="$1"
+	local code_version="$1"
+	local old_version=$((code_version - 1))
+	local old_name=$(get_index_name "$old_version")
+	local new_name=$(get_index_name "$code_version")
 	local request='{
 	"source": {
 		"index": "OLD"
@@ -195,9 +179,13 @@ reindex_to_new_index() {
 		"index": "NEW"
 	}
 }'
-	local old_version=$((dict_version - 1))
-	local old_name=$(get_index_name $old_version)
-	local new_name=$(get_index_name "$dict_version")
+
+	if [ "$old_version" == "0" ]; then
+		if ! has_index_version "$code_version"; then
+			create_new_index "$new_name"
+			return
+		fi
+	fi
 
 	request=${request//OLD/$old_name}
 	request=${request//NEW/$new_name}
@@ -206,9 +194,24 @@ reindex_to_new_index() {
 	switch_alias "$old_name" "$new_name"
 }
 
+create_new_index() {
+	local index_name="$1"
+	curl --fail -XPUT "$ELASTIC_NODE/$index_name" -H 'Content-Type: application/json'
+	local request='{
+	"actions": [
+	  { "add": { "index": "NEW", "alias": "MAIN" } }
+	]
+}'
+
+	request=${request//NEW/$index_name}
+	request=${request//MAIN/$ES_INDEX_MAIN}
+
+	curl --fail -XPOST "$ELASTIC_NODE/_aliases" -H 'Content-Type: application/json' -d "$request"
+}
+
 switch_alias() {
-  local old_name="$1"
-  local new_name="$2"
+	local old_name="$1"
+	local new_name="$2"
 
 	local request='{
 	"actions": [
@@ -237,12 +240,13 @@ generate_config() {
 	local map=$(get_package_map "$dict_version")
 	local dict_len=$((${#dict_version} + 1))
 
-  cp "$CODE_TEMPLATE" "$outfile"
+	cp "$CODE_TEMPLATE" "$outfile"
 
 	local parts
 	local package_name
 	local package_id
 	local search
+	local config=
 
 	for m in $map; do
 		# shellcheck disable=SC2206
@@ -282,27 +286,35 @@ get_code_version() {
 
 do_migrate() {
 	local dict_version=$(migrate_dictionary)
+	local code_version=$(get_code_version)
 
 	push_new_config_template "$dict_version"
 
-	reindex_to_new_index "$dict_version"
+	reindex_to_new_index "$code_version"
 }
 
 has_index_version() {
 	local version="$1"
 	local name=$(get_index_name "$version")
 
-	curl --fail -s "$ELASTIC_NODE/_cat/indices" -H 'Content-Type: application/json'|grep -q -E "\b$name\b"
+	curl --fail -s "$ELASTIC_NODE/_cat/indices" -H 'Content-Type: application/json' | grep -q -E "\b$name\b"
 }
 
 needs_migrate() {
 	local code_version=$(get_code_version)
 
-	if has_index_version "$code_version" ; then
+	if has_index_version "$code_version"; then
 		return 1
 	fi
 
 	return 0
+}
+
+check_aws() {
+	($AWS_BIN es list-domain-names | jq '.DomainNames[].DomainName' | grep -q "$ES_DOMAIN") && return
+
+	echo "Could not find ES domain"
+	exit 2
 }
 
 main() {
@@ -313,8 +325,10 @@ main() {
 
 set -f
 
-if [ "$1" != "--test" ]; then
+ARG1="${1:-}"
+
+if [ "$ARG1" != "--test" ]; then
 	set -e
-	install_deps
+	check_aws
 	main
 fi

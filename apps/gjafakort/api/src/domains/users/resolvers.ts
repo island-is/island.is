@@ -179,7 +179,9 @@ class UserResolver {
       applicationApi,
     )
     if (!application) {
-      return new ApolloError('No application found')
+      throw new ApolloError('No application found')
+    } else if (!application.data.verified) {
+      throw new ApolloError('Phone number not verified')
     }
 
     const {

@@ -27,7 +27,7 @@ spec:
       initContainers:
         - name: migration
           image: "{{ .Values.image.repository }}:{{ .Values.global.image.tag }}"
-          command: [{{ .Values.initEnvironment.migration_script | quote }}]
+          command: ['/bin/bash', {{ .Values.initEnvironment.migration_script | quote }}]
           env:
             {{- with .Values.environment }}
             - name: ELASTIC_NODE

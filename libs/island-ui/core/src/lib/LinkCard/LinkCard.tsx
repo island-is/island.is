@@ -1,5 +1,6 @@
 import React, { forwardRef } from 'react'
-import { Typography, Box } from '../..'
+import { Box } from '../Box/Box'
+import { Typography } from '../Typography/Typography'
 import * as styles from './LinkCard.treat'
 
 export interface LinkCardProps {
