@@ -1,6 +1,8 @@
 import React, { forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
-import { Icon as IconComponent, IconTypes, Box, Inline } from '../..'
+import { Box } from '../Box'
+import { Inline } from '../Inline/Inline'
+import { IconTypes, Icon as IconComponent } from '../Icon/Icon'
 
 import * as styles from './Button.treat'
 

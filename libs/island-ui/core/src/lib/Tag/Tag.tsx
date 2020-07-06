@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react'
 import cn from 'classnames'
-import { Typography } from '../..'
+import { Typography } from '../Typography/Typography'
 
 import * as styles from './Tag.treat'
 

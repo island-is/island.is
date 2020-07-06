@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
-import { Box, Typography } from '../..'
+import { Box } from '../Box/Box'
+import { Typography } from '../Typography/Typography'
 
 import * as styles from './Blockquote.treat'
 
