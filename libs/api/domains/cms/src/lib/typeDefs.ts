@@ -22,7 +22,7 @@ export const typeDefs = gql`
     title: String!
     content: String
     group: Taxonomy
-    category: Taxonomy
+    category: Taxonomy!
   }
 
   input GetArticleInput {

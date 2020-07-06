@@ -93,7 +93,7 @@ export type Article = {
   title: Scalars['String']
   content?: Maybe<Scalars['String']>
   group?: Maybe<Taxonomy>
-  category?: Maybe<Taxonomy>
+  category: Taxonomy
 }
 
 export type GetArticleInput = {
@@ -506,11 +506,7 @@ export type ArticleResolvers<
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   group?: Resolver<Maybe<ResolversTypes['Taxonomy']>, ParentType, ContextType>
-  category?: Resolver<
-    Maybe<ResolversTypes['Taxonomy']>,
-    ParentType,
-    ContextType
-  >
+  category?: Resolver<ResolversTypes['Taxonomy'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
