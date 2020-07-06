@@ -1,21 +1,26 @@
-import { IsEnum, IsJSON, IsNotEmpty, IsString, IsIn } from 'class-validator'
-import { ApplicationStates } from '../../../core/db/models/application.model'
-import { schemaTypes } from '@island.is/application/schema'
+import { IsEnum, IsNotEmpty, IsObject, IsString } from 'class-validator';
+import { ApplicationState } from '../../../core/db/models/application.model'
+import { SchemaType } from '@island.is/application/schema'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class ApplicationDto {
   @IsNotEmpty()
   @IsString()
-  @IsIn(Object.keys(schemaTypes))
-  readonly typeId: string
+  @IsEnum(SchemaType)
+  @ApiProperty({ enum: SchemaType })
+  readonly typeId: SchemaType
 
   @IsNotEmpty()
+  @ApiProperty()
   readonly applicant: string
 
   @IsNotEmpty()
-  @IsEnum(ApplicationStates)
+  @IsEnum(ApplicationState)
+  @ApiProperty({ enum: ApplicationState })
   readonly state: string
 
   @IsNotEmpty()
-  @IsJSON()
+  @IsObject()
+  @ApiProperty()
   readonly answers: object
 }
