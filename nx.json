@@ -109,6 +109,9 @@
     "service-portal-e2e": {
       "tags": [],
       "implicitDependencies": ["service-portal"]
+    },
+    "service-portal-modules": {
+      "tags": []
     }
   }
 }

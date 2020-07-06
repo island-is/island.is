@@ -6,6 +6,7 @@ import { ReactComponent as Logo } from './logo.svg'
 import star from './star.svg'
 
 import { Route, Link } from 'react-router-dom'
+import { ServicePortalModules } from '@island.is/service-portal/modules'
 
 export const App = () => {
   /*
@@ -19,6 +20,7 @@ export const App = () => {
         <Logo width="75" height="75" />
         <h1>Welcome to service-portal!</h1>
       </header>
+      <ServicePortalModules></ServicePortalModules>
       <main>
         <h2>Resources &amp; Tools</h2>
         <p>Thank you for using and showing some ♥ for Nx.</p>
