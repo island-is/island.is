@@ -9,6 +9,7 @@ import { Header as IslandUIHeader } from '@island.is/island-ui/core'
 import { UserContext } from '../../context'
 import { useI18n } from '../../i18n'
 import { api } from '../../services'
+import { getRoutefromLocale } from '@island.is/gjafakort-web/utils/routesMapper'
 
 export const UserQuery = gql`
   query UserQuery {
@@ -25,7 +26,7 @@ function Header() {
   const router = useRouter()
   const { setUser, isAuthenticated } = useContext(UserContext)
   const {
-    t: { header: t, routes, routeSwitcher },
+    t: { header: t, routes },
     activeLocale,
     locale,
   } = useI18n()
@@ -35,14 +36,19 @@ function Header() {
     setUser(user)
   }, [user, setUser])
 
-  const switchLanguage = () => {
+  const switchLanguage = async (toLanguage) => {
+    const route = await getRoutefromLocale(
+      router.pathname,
+      activeLocale,
+      toLanguage,
+    )
     const queryKeys = Object.keys(router.query)
     const path = queryKeys.reduce(
       (acc, key) => acc.replace(`[${key}]`, router.query[key].toString()),
-      routeSwitcher[router.pathname],
+      route,
     )
-    router.replace(routeSwitcher[router.pathname], path)
-    locale(activeLocale === 'is' ? 'en' : 'is')
+    router.replace(route, path)
+    locale(toLanguage)
   }
   const language =
     activeLocale === 'is' ? 'en' : activeLocale === 'en' ? 'is' : undefined
@@ -57,7 +63,9 @@ function Header() {
       logoutText={t.logout}
       userLogo={user?.role === 'developer' ? '👑' : undefined}
       language={language}
-      switchLanguage={switchLanguage}
+      switchLanguage={() => {
+        switchLanguage(language)
+      }}
       userName={user?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {

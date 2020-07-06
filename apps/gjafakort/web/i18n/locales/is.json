@@ -467,25 +467,12 @@
     "home": "/",
     "companies": {
       "home": "/fyrirtaeki",
-      "application": "/fyrirtaeki/umsokn"
+      "application": "/fyrirtaeki/umsokn",
+      "applicationSsn": "/fyrirtaeki/umsokn/[ssn]"
     },
     "users": {
       "home": "/notandi"
     },
     "privacyPolicy": "/personuverndarstefna"
-  },
-  "routeSwitcher": {
-    "/": "/en",
-    "/fyrirtaeki": "/en/company",
-    "/fyrirtaeki/umsokn": "/en/company/application",
-    "/fyrirtaeki/umsokn/[ssn]": "/en/company/application/[ssn]",
-    "/notandi": "/en/user",
-    "/personuverndarstefna": "/en/privacy-policy",
-    "/en": "/",
-    "/en/company": "/fyrirtaeki",
-    "/en/company/application": "/fyrirtaeki/umsokn",
-    "/en/company/application/[ssn]": "/fyrirtaeki/umsokn/[ssn]",
-    "/en/user": "/notandi",
-    "/en/privacy-policy": "/personuverndarstefna"
   }
 }
