@@ -1,7 +1,11 @@
 import React, { useContext, useState, ReactNode, forwardRef, FC } from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
-import { Box, Columns, Column, Icon } from '../../'
+
+import { Box } from '../Box/Box'
+import { Column } from '../Column/Column'
+import { Columns } from '../Columns/Columns'
+import { Icon } from '../Icon/Icon'
 import { AllOrNone } from '../private/AllOrNone'
 import { useVirtualTouchable } from '../private/touchable/useVirtualTouchable'
 import { hideFocusRingsClassName } from '../private/hideFocusRings/hideFocusRings'

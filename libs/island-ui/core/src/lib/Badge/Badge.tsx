@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from 'react'
 import cn from 'classnames'
-import { Box } from '../..'
+import { Box } from '../Box/Box'
 import * as styles from './Badge.treat'
 
 interface BadgeProps {
