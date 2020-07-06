@@ -47,8 +47,10 @@ function Header() {
       (acc, key) => acc.replace(`[${key}]`, router.query[key].toString()),
       route,
     )
-    router.replace(route, path)
-    locale(toLanguage)
+    if (route) {
+      router.replace(route, path)
+      locale(toLanguage)
+    }
   }
   const language =
     activeLocale === 'is' ? 'en' : activeLocale === 'en' ? 'is' : undefined
@@ -62,7 +64,7 @@ function Header() {
       )}
       logoutText={t.logout}
       userLogo={user?.role === 'developer' ? '👑' : undefined}
-      language={language}
+      language={language.toUpperCase()}
       switchLanguage={() => {
         switchLanguage(language)
       }}
