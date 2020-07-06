@@ -7,7 +7,7 @@ const getLocale = async (locale) => {
     try {
       locales[locale] = await import(`../i18n/locales/${locale}.json`)
     } catch (error) {
-      throw new Error(`locale "${locale}" is not available`)
+      console.error(`locale "${locale}" is not available`)
     }
   }
 }
