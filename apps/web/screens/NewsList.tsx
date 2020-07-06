@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 import { groupBy, range } from 'lodash'
 import Link from 'next/link'
 import Head from 'next/head'
-import cn from 'classnames'
 import { Screen } from '../types'
 import { withApollo } from '../graphql'
 import { useI18n } from '@island.is/web/i18n'
@@ -17,7 +16,6 @@ import {
   Breadcrumbs,
   Hidden,
   Select,
-  BoxProps,
   Divider,
   Columns,
   Column,
@@ -73,9 +71,15 @@ const NewsList: Screen<NewsListProps> = ({ newsList, dateRange }) => {
                     <Divider weight="alternate" />
                     <Select value={options[0]} name="" options={options} />
                     {months.map((date) => (
-                      <Typography variant="p" as="p">
+                      <Typography key={date.toISOString()} variant="p" as="p">
                         <Link
-                          href={`?y=${date.getFullYear()}&m=${date.getMonth()}`}
+                          href={{
+                            pathname: '/frett',
+                            query: {
+                              y: date.getFullYear(),
+                              m: date.getMonth(),
+                            },
+                          }}
                         >
                           <a>{format(date, 'MMMM')}</a>
                         </Link>
@@ -109,8 +113,13 @@ const NewsList: Screen<NewsListProps> = ({ newsList, dateRange }) => {
                 <ContentBlock width="small">
                   <Stack space={4}>
                     {newsList.map((newsItem) => (
-                      <Box key={newsItem.id} boxShadow="subtle" padding={6}>
-                        <Columns space={8} collapseBelow='xl'>
+                      <Box
+                        key={newsItem.id}
+                        boxShadow="subtle"
+                        padding={6}
+                        paddingRight={3}
+                      >
+                        <Columns space={4} collapseBelow="xl">
                           <Column>
                             <Stack space={2}>
                               <Typography
@@ -119,7 +128,7 @@ const NewsList: Screen<NewsListProps> = ({ newsList, dateRange }) => {
                                 color="purple400"
                               >
                                 {format(
-                                  new Date(newsItem.created),
+                                  new Date(newsItem.date),
                                   'do MMMM yyyy',
                                 )}
                               </Typography>
@@ -131,18 +140,11 @@ const NewsList: Screen<NewsListProps> = ({ newsList, dateRange }) => {
                               </Typography>
                             </Stack>
                           </Column>
-                          <Column>
-                            <div
-                              style={{
-                                width: '100%',
-                                height: '100%',
-                                backgroundImage: `url(${newsItem.image.url}?w=500)`,
-                                backgroundSize: 'contain',
-                                backgroundPosition: 'center center',
-                                backgroundRepeat: 'no-repeat',
-                              }}
-                            />
-                          </Column>
+                          {newsItem.image && (
+                            <Column width="2/5">
+                              <img src={newsItem.image.url + '?w=524'} />
+                            </Column>
+                          )}
                         </Columns>
                       </Box>
                     ))}
@@ -157,7 +159,7 @@ const NewsList: Screen<NewsListProps> = ({ newsList, dateRange }) => {
   )
 }
 
-NewsList.getInitialProps = async ({ apolloClient, locale }) => {
+NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   const [
     {
       data: { getNewsList: oldest },
@@ -192,6 +194,8 @@ NewsList.getInitialProps = async ({ apolloClient, locale }) => {
         input: {
           lang: locale as ContentLanguage,
           limit: PER_PAGE,
+          year: getIntParam(query.y),
+          month: getIntParam(query.m),
         },
       },
     }),
@@ -200,10 +204,15 @@ NewsList.getInitialProps = async ({ apolloClient, locale }) => {
   return {
     newsList,
     dateRange: createDateRange(
-      latest[0] && new Date(latest[0].created),
-      oldest[0] && new Date(oldest[0].created),
+      oldest[0] && new Date(oldest[0].date),
+      latest[0] && new Date(latest[0].date),
     ),
   }
+}
+
+const getIntParam = (s) => {
+  const i = parseInt(s, 10)
+  if (!isNaN(i)) return i
 }
 
 const createDateRange = (min: Date, max: Date): string[] => {

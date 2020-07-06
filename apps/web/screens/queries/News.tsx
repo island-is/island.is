@@ -5,7 +5,7 @@ export const GET_NEWS_LIST_QUERY = gql`
     getNewsList(input: $input) {
       id
       title
-      created
+      date
       slug
       intro
       image {

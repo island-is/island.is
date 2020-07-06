@@ -91,7 +91,6 @@ export type Article = {
   id: Scalars['String']
   slug: Scalars['String']
   title: Scalars['String']
-  created?: Maybe<Scalars['String']>
   content?: Maybe<Scalars['String']>
   group?: Maybe<Taxonomy>
   category?: Maybe<Taxonomy>
@@ -109,7 +108,7 @@ export type News = {
   title: Scalars['String']
   intro: Scalars['String']
   image?: Maybe<Image>
-  created: Scalars['String']
+  date: Scalars['String']
   content?: Maybe<Scalars['String']>
 }
 
@@ -505,7 +504,6 @@ export type ArticleResolvers<
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  created?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   group?: Resolver<Maybe<ResolversTypes['Taxonomy']>, ParentType, ContextType>
   category?: Resolver<
@@ -525,7 +523,7 @@ export type NewsResolvers<
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
-  created?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }

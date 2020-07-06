@@ -34,7 +34,6 @@ type Article {
   id: String!
   slug: String!
   title: String!
-  created: String
   content: String
   group: Taxonomy
   category: Taxonomy
@@ -51,7 +50,7 @@ type News {
   title: String!
   intro: String!
   image: Image
-  created: String!
+  date: String!
   content: String
 }
 

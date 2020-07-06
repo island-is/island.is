@@ -20,7 +20,6 @@ export const typeDefs = gql`
     id: String!
     slug: String!
     title: String!
-    created: String
     content: String
     group: Taxonomy
     category: Taxonomy
@@ -37,7 +36,7 @@ export const typeDefs = gql`
     title: String!
     intro: String!
     image: Image
-    created: String!
+    date: String!
     content: String
   }
 

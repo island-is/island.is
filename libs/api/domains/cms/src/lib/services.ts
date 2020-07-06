@@ -24,7 +24,6 @@ const extractArticle = (article: any): Article => {
     slug: article.fields.slug,
     title: article.fields.title,
     group: article.fields.group?.fields,
-    created: article.sys.createdAt,
     category: article.fields.category?.fields,
     content: JSON.stringify(article.fields.content),
   }
@@ -51,27 +50,6 @@ export const getArticle = async (
   return extractArticle(result.items[0])
 }
 
-/*
-export const getArticles = async (
-  lang: string,
-  order: string,
-  limit: number,
-): Promise<Array<Article>> => {
-  const result = await getLocalizedEntries<Article>(lang, {
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    content_type: 'article',
-    include: 10,
-    order,
-    limit,
-  }).catch((error) => {
-    logger.error(error)
-    throw new Error('Failed to resolve request in getArticles')
-  })
-
-  return result.items.map(extractArticle)
-}
-*/
-
 const formatImage = ({ fields }): Image => ({
   url: fields.file.url,
   title: fields.title,
@@ -87,7 +65,7 @@ const formatNewsItem = ({ fields, sys }): News => ({
   title: fields.title,
   intro: fields.intro,
   image: formatImage(fields.image),
-  created: sys.createdAt,
+  date: fields.date,
   content: JSON.stringify(fields.content),
 })
 
@@ -115,16 +93,17 @@ export const getNewsList = async (
   const params = {
     content_type: 'news',
     include: 10,
-    order: (ascending ? '' : '-') + 'sys.createdAt',
+    order: (ascending ? '' : '-') + 'fields.date',
     skip: offset,
     limit,
   }
 
   if (year) {
-    params['sys.createdAt[gte]'] = new Date(year, month ?? 0, 1)
-    params['sys.createdAt[lt]'] = month
-      ? new Date(year, month + 1, 1)
-      : new Date(year + 1, 0, 1)
+    params['fields.date[gte]'] = new Date(year, month ?? 0, 1)
+    params['fields.date[lt]'] =
+      month != undefined
+        ? new Date(year, month + 1, 1)
+        : new Date(year + 1, 0, 1)
   }
 
   const r = await getLocalizedEntries<News>(lang, params)

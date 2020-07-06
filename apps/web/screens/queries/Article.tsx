@@ -17,14 +17,3 @@ export const GET_ARTICLE_QUERY = gql`
     }
   }
 `
-
-export const GET_ARTICLES_QUERY = gql`
-  query articles($input: GetArticlesInput!) {
-    getArticles(input: $input) {
-      id
-      slug
-      title
-      content
-    }
-  }
-`
