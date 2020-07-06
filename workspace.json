@@ -1096,6 +1096,115 @@
           }
         }
       }
+    },
+    "service-portal": {
+      "root": "apps/service-portal",
+      "sourceRoot": "apps/service-portal/src",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/web:build",
+          "options": {
+            "outputPath": "dist/apps/service-portal",
+            "index": "apps/service-portal/src/index.html",
+            "main": "apps/service-portal/src/main.tsx",
+            "polyfills": "apps/service-portal/src/polyfills.ts",
+            "tsConfig": "apps/service-portal/tsconfig.app.json",
+            "assets": [
+              "apps/service-portal/src/favicon.ico",
+              "apps/service-portal/src/assets"
+            ],
+            "styles": ["apps/service-portal/src/styles.scss"],
+            "scripts": [],
+            "webpackConfig": "@nrwl/react/plugins/webpack"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/service-portal/src/environments/environment.ts",
+                  "with": "apps/service-portal/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/web:dev-server",
+          "options": {
+            "buildTarget": "service-portal:build"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "service-portal:build:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/service-portal/.eslintrc",
+            "tsConfig": [
+              "apps/service-portal/tsconfig.app.json",
+              "apps/service-portal/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/service-portal/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/service-portal/jest.config.js",
+            "tsConfig": "apps/service-portal/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-e2e": {
+      "root": "apps/service-portal-e2e",
+      "sourceRoot": "apps/service-portal-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/service-portal-e2e/cypress.json",
+            "tsConfig": "apps/service-portal-e2e/tsconfig.e2e.json",
+            "devServerTarget": "service-portal:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "service-portal:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/service-portal-e2e/.eslintrc",
+            "tsConfig": ["apps/service-portal-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/service-portal-e2e/**"]
+          }
+        }
+      }
     }
   },
   "cli": {
@@ -1114,15 +1223,17 @@
     },
     "@nrwl/react": {
       "application": {
+        "style": "scss",
         "linter": "eslint",
         "pascalCaseFiles": true,
-        "style": "scss",
         "babel": true
       },
       "component": {
-        "pascalCaseFiles": true,
+        "style": "scss"
+      },
+      "library": {
         "style": "scss",
-        "export": true
+        "linter": "eslint"
       }
     },
     "@nrwl/next": {
