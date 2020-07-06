@@ -1,7 +1,9 @@
 import React, { FC } from 'react'
 import { groupBy, range } from 'lodash'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import Head from 'next/head'
+import DefaultErrorPage from 'next/error'
 import { Screen } from '../types'
 import { withApollo } from '../graphql'
 import { useI18n } from '@island.is/web/i18n'
@@ -19,25 +21,37 @@ import {
   Divider,
   Columns,
   Column,
+  Option,
 } from '@island.is/island-ui/core'
 import { Sticky } from '@island.is/web/components'
 import { GET_NEWS_LIST_QUERY } from './queries'
+import { NewsListLayout } from './Layouts/Layouts'
 import {
   Query,
   ContentLanguage,
   QueryGetNewsListArgs,
 } from '@island.is/api/schema'
 
-import * as styles from './Category/Category.treat'
-
 const PER_PAGE = 10
 
 interface NewsListProps {
   newsList: any[]
   dateRange: string[]
+  year?: number
+  month?: number
 }
 
-const NewsList: Screen<NewsListProps> = ({ newsList, dateRange }) => {
+const NewsList: Screen<NewsListProps> = ({
+  newsList,
+  dateRange,
+  year,
+  month,
+}) => {
+  if (year && newsList.length == 0) {
+    return <DefaultErrorPage statusCode={404} />
+  }
+
+  const Router = useRouter()
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale as Locale)
   const { format } = useDateUtils()
@@ -46,120 +60,109 @@ const NewsList: Screen<NewsListProps> = ({ newsList, dateRange }) => {
   const datesByYear = groupBy(dates, (d) => d.getFullYear())
 
   const years = Object.keys(datesByYear)
-  const months = datesByYear[years[0]] ?? []
+  const months = datesByYear[year] ?? []
 
   const options = years.map((y) => ({
     label: y,
     value: y,
   }))
 
+  const sidebar = (
+    <Stack space={3}>
+      <Typography variant="h4" as="h4">
+        Fréttir og tilkynningar
+      </Typography>
+      <Divider weight="alternate" />
+      <Select
+        value={{ value: '' + year, label: '' + year }}
+        name="year"
+        options={options}
+        onChange={({ value }: Option) => {
+          Router.push({
+            pathname: '/frett',
+            query: { y: value },
+          })
+        }}
+      />
+      {months.map((date) => (
+        <Typography key={date.toISOString()} variant="p" as="p">
+          <Link
+            href={{
+              pathname: '/frett',
+              query: {
+                y: date.getFullYear(),
+                m: date.getMonth(),
+              },
+            }}
+          >
+            <a>{format(date, 'MMMM')}</a>
+          </Link>
+        </Typography>
+      ))}
+    </Stack>
+  )
+
   return (
     <>
       <Head>
         <title>Fréttir | Ísland.is</title>
       </Head>
-      <ContentBlock>
-        <Box padding={[0, 0, 0, 6]}>
-          <div className={styles.layout}>
-            <div className={styles.side}>
-              <Sticky>
-                <Box background="purple100" padding={4}>
-                  <Stack space={3}>
-                    <Typography variant="h4" as="h4">
-                      Fréttir og tilkynningar
-                    </Typography>
-                    <Divider weight="alternate" />
-                    <Select value={options[0]} name="" options={options} />
-                    {months.map((date) => (
-                      <Typography key={date.toISOString()} variant="p" as="p">
-                        <Link
-                          href={{
-                            pathname: '/frett',
-                            query: {
-                              y: date.getFullYear(),
-                              m: date.getMonth(),
-                            },
-                          }}
-                        >
-                          <a>{format(date, 'MMMM')}</a>
-                        </Link>
-                      </Typography>
-                    ))}
-                  </Stack>
-                </Box>
-              </Sticky>
-            </div>
+      <NewsListLayout sidebar={sidebar}>
+        <Stack space={[3, 3, 4]}>
+          <Breadcrumbs>
+            <Link href={makePath()}>
+              <a>Ísland.is</a>
+            </Link>
+            <Link href={makePath()}>
+              <a>Fréttir og tilkynningar</a>
+            </Link>
+          </Breadcrumbs>
+          <Typography variant="h1" as="h1">
+            {year}
+          </Typography>
 
-            <Box paddingLeft={[0, 0, 0, 4]} width="full">
-              <Box padding={[3, 3, 6, 0]}>
-                <ContentBlock width="small">
-                  <Stack space={[3, 3, 4]}>
-                    <Breadcrumbs>
-                      <Link href={makePath()}>
-                        <a>Ísland.is</a>
-                      </Link>
-                      <Link href={makePath()}>
-                        <a>Fréttir og tilkynningar</a>
-                      </Link>
-                    </Breadcrumbs>
-                    <Typography variant="h1" as="h1">
-                      {years[0]}
-                    </Typography>
-                  </Stack>
-                </ContentBlock>
-              </Box>
-
-              <Box padding={[3, 3, 6, 0]} paddingTop={[3, 3, 6, 6]}>
-                <ContentBlock width="small">
-                  <Stack space={4}>
-                    {newsList.map((newsItem) => (
-                      <Box
-                        key={newsItem.id}
-                        boxShadow="subtle"
-                        padding={6}
-                        paddingRight={3}
-                      >
-                        <Columns space={4} collapseBelow="xl">
-                          <Column>
-                            <Stack space={2}>
-                              <Typography
-                                variant="eyebrow"
-                                as="p"
-                                color="purple400"
-                              >
-                                {format(
-                                  new Date(newsItem.date),
-                                  'do MMMM yyyy',
-                                )}
-                              </Typography>
-                              <Typography variant="h3" as="h3" color="blue400">
-                                {newsItem.title}
-                              </Typography>
-                              <Typography variant="p" as="p">
-                                {newsItem.intro}
-                              </Typography>
-                            </Stack>
-                          </Column>
-                          {newsItem.image && (
-                            <Column width="2/5">
-                              <img src={newsItem.image.url + '?w=524'} />
-                            </Column>
-                          )}
-                        </Columns>
-                      </Box>
-                    ))}
-                  </Stack>
-                </ContentBlock>
-              </Box>
-            </Box>
-          </div>
-        </Box>
-      </ContentBlock>
+          {newsList.map((newsItem) => (
+            <NewsListItem newsItem={newsItem} />
+          ))}
+        </Stack>
+      </NewsListLayout>
     </>
   )
 }
 
+const NewsListItem = ({ newsItem }) => {
+  const { format } = useDateUtils()
+
+  return (
+    <Box key={newsItem.id} boxShadow="subtle" padding={6} paddingRight={3}>
+      <Columns space={4} collapseBelow="xl">
+        <Column>
+          <Stack space={2}>
+            <Typography variant="eyebrow" as="p" color="purple400">
+              {format(new Date(newsItem.date), 'do MMMM yyyy')}
+            </Typography>
+            <Typography variant="h3" as="h3" color="blue400">
+              {newsItem.title}
+            </Typography>
+            <Typography variant="p" as="p">
+              {newsItem.intro}
+            </Typography>
+          </Stack>
+        </Column>
+        {newsItem.image && (
+          <Column width="2/5">
+            <img src={newsItem.image.url + '?w=524'} />
+          </Column>
+        )}
+      </Columns>
+    </Box>
+  )
+}
+
 NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
+  let year = getIntParam(query.y)
+  let month = year && getIntParam(query.m)
+
   const [
     {
       data: { getNewsList: oldest },
@@ -194,15 +197,22 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
         input: {
           lang: locale as ContentLanguage,
           limit: PER_PAGE,
-          year: getIntParam(query.y),
-          month: getIntParam(query.m),
+          year,
+          month,
         },
       },
     }),
   ])
 
+  // default to year of first result if no year is selected
+  if (!year && newsList.length > 0) {
+    year = new Date(newsList[0].date).getFullYear()
+  }
+
   return {
     newsList,
+    year,
+    month,
     dateRange: createDateRange(
       oldest[0] && new Date(oldest[0].date),
       latest[0] && new Date(latest[0].date),
