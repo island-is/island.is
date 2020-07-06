@@ -149,7 +149,10 @@ const NewsListItem = ({ newsItem }) => {
         </Column>
         {newsItem.image && (
           <Column width="2/5">
-            <img src={newsItem.image.url + '?w=524'} alt={newsItem.image.title} />
+            <img
+              src={newsItem.image.url + '?w=524'}
+              alt={newsItem.image.title}
+            />
           </Column>
         )}
       </Columns>
