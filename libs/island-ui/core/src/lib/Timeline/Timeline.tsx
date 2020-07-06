@@ -1,9 +1,15 @@
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
+import cn from 'classnames'
 
-import * as styles from './Timeline.treat'
+import * as timelineStyles from './Timeline.treat'
+import * as eventBarStyles from './EventBar.treat'
+import { Icon } from '../..'
 
 /* eslint-disable-next-line */
 export interface TimelineProps {}
+
+const renderValue = (value) =>
+  value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
 
 const months = [
   'Janúar',
@@ -32,8 +38,8 @@ const initialState = [
   {
     date: new Date('04/04/2019'),
     title: 'Ferðagjöf',
-    amount: 36788,
-    maxAmount: 242767,
+    value: 36788,
+    maxValue: 242767,
     valueLabel: 'Sóttar ferðagjafir',
     data: {
       labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
@@ -62,9 +68,69 @@ const initialState = [
     date: new Date('03/10/2018'),
     title: 'Meira hér!',
   },
+  {
+    date: new Date('05/05/2017'),
+    title: 'Rásfundur: 5 teymi',
+  },
+  {
+    date: new Date('04/08/2017'),
+    title: 'Ytri vefur: BETA',
+  },
+  {
+    date: new Date('04/04/2017'),
+    title: 'Ferðagjöf',
+    value: 36788,
+    maxValue: 242767,
+    valueLabel: 'Sóttar ferðagjafir',
+    data: {
+      labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
+      markup: `
+      <p>Ferðagjöfin er liður í að efla íslenska ferðaþjónustu
+      í kjölfar kórónuveirufaraldurs og er ætlað að hvetja
+      landsmenn til að ferðast innanlands.</p>
+
+      <h3>Þú færð allar upplýsingar um Ferðagjöfina á ferdalag.is.</h3>
+
+      <p>Allir einstaklingar með lögheimili á Íslandi, fæddir árið
+      2002 eða fyrr, fá Ferðagjöf að andvirði 5.000 kr. Gildistími
+      Ferðagjafarinnar er til og með 31. desember 2020.</p>`,
+      link: 'https://frettabladid.overcastcdn.com/documents/200626.pdf',
+    },
+  },
+  {
+    date: new Date('02/02/2020'),
+    title: 'Viðspyrna',
+    data: {
+      labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
+      markup: `
+      <p>Ferðagjöfin er liður í að efla íslenska ferðaþjónustu
+      í kjölfar kórónuveirufaraldurs og er ætlað að hvetja
+      landsmenn til að ferðast innanlands.</p>
+
+      <h3>Þú færð allar upplýsingar um Ferðagjöfina á ferdalag.is.</h3>
+
+      <p>Allir einstaklingar með lögheimili á Íslandi, fæddir árið
+      2002 eða fyrr, fá Ferðagjöf að andvirði 5.000 kr. Gildistími
+      Ferðagjafarinnar er til og með 31. desember 2020.</p>`,
+      link: 'https://frettabladid.overcastcdn.com/documents/200626.pdf',
+    },
+  },
+  {
+    date: new Date('04/23/2017'),
+    title: 'Eitthvað sniðugt: OMEGA',
+  },
+  {
+    date: new Date('03/09/2016'),
+    title: 'Margt gerðist hér!',
+  },
+  {
+    date: new Date('03/10/2016'),
+    title: 'Meira hér!',
+  },
 ].sort((a, b) => b.date.getTime() - a.date.getTime())
 
 export const Timeline = (props: TimelineProps) => {
+  const frameRef = useRef<HTMLDivElement>(null)
   const [events, setEvents] = useState(initialState)
 
   const usableYears = events.reduce((usableYears, item) => {
@@ -99,49 +165,117 @@ export const Timeline = (props: TimelineProps) => {
     )
 
   return (
-    <div className={styles.container}>
-      {usableYears.map((year, index) => {
-        const usableMonths = getUsableMonthsInYear(year)
+    <div className={timelineStyles.container}>
+      <ArrowButton type="prev" />
+      <ArrowButton type="next" />
+      <div ref={frameRef} className={timelineStyles.frame}>
+        <div className={timelineStyles.innerContainer}>
+          {usableYears.map((year, index) => {
+            const usableMonths = getUsableMonthsInYear(year)
 
-        return (
-          <div key={index}>
-            <div className={styles.section}>
-              <div className={styles.left}>{year}</div>
-            </div>
-            {usableMonths.map((month, index) => {
-              const usableEvents = getUsableEventsInMonthAndYear(year, month)
-
-              return (
-                <div key={index}>
-                  <div className={styles.section}>
-                    <div className={styles.left}>
-                      <span className={styles.month}>{months[month]}</span>
-                    </div>
-                    <div className={styles.right}></div>
+            return (
+              <div key={index} className={timelineStyles.yearContainer}>
+                <div className={timelineStyles.section}>
+                  <div className={timelineStyles.left}>
+                    <span
+                      className={cn(
+                        timelineStyles.year,
+                        timelineStyles.leftLabel,
+                      )}
+                    >
+                      {year}
+                    </span>
                   </div>
-
-                  <div key={index} className={styles.section}>
-                    <div className={styles.left}></div>
-                    <div className={styles.right}>
-                      {usableEvents.map((event, index) => {
-                        return (
-                          <div key={index} className={styles.event}>
-                            <div className={styles.bulletLine}>
-                              <BulletLine />
-                            </div>
-
-                            {event.title}
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
+                  <div className={timelineStyles.right}>&nbsp;</div>
                 </div>
-              )
-            })}
-          </div>
-        )
-      })}
+                {usableMonths.map((month, index) => {
+                  const usableEvents = getUsableEventsInMonthAndYear(
+                    year,
+                    month,
+                  )
+
+                  return (
+                    <div key={index} className={timelineStyles.monthContainer}>
+                      <div className={timelineStyles.section}>
+                        <div className={timelineStyles.left}>
+                          <span
+                            className={cn(
+                              timelineStyles.month,
+                              timelineStyles.leftLabel,
+                            )}
+                          >
+                            {months[month]}
+                          </span>
+                        </div>
+                        <div className={timelineStyles.right}>&nbsp;</div>
+                      </div>
+
+                      <div className={timelineStyles.section}>
+                        <div className={timelineStyles.left}>&nbsp;</div>
+                        <div className={timelineStyles.right}>
+                          <div className={timelineStyles.eventsContainer}>
+                            {usableEvents.map((event, index) => {
+                              const larger = Boolean(event.data)
+
+                              return (
+                                <div
+                                  key={index}
+                                  className={timelineStyles.eventWrapper}
+                                >
+                                  <span
+                                    className={cn(timelineStyles.bulletLine, {
+                                      [timelineStyles.bulletLineLarger]: larger,
+                                    })}
+                                  >
+                                    <BulletLine />
+                                  </span>
+                                  {larger ? (
+                                    <EventBar {...event} />
+                                  ) : (
+                                    <div className={timelineStyles.event}>
+                                      {event.title}
+                                    </div>
+                                  )}
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const EventBar = (event) => {
+  return (
+    <div className={eventBarStyles.eventBar}>
+      <div className={eventBarStyles.eventBarTitle}>
+        <div className={eventBarStyles.eventBarIcon}>
+          <Icon type="user" color="purple400" width="24" />
+        </div>
+        <span className={eventBarStyles.title}>{event.title}</span>
+      </div>
+      {event.value && (
+        <div className={eventBarStyles.eventBarStats}>
+          <span className={eventBarStyles.valueWrapper}>
+            <span className={eventBarStyles.value}>
+              {renderValue(event.value)}
+            </span>
+            <span className={eventBarStyles.maxValue}>
+              /{renderValue(event.maxValue)}
+            </span>
+          </span>
+          <span className={eventBarStyles.valueLabel}>{event.valueLabel}</span>
+        </div>
+      )}
     </div>
   )
 }
@@ -162,6 +296,25 @@ const BulletLine = ({ selected = false }: { selected?: boolean }) => {
         clipRule="evenodd"
       ></path>
     </svg>
+  )
+}
+
+type ArrowButtonTypes = 'prev' | 'next'
+
+interface ArrowButtonProps {
+  type: ArrowButtonTypes
+}
+
+const ArrowButton = ({ type = 'prev' }: ArrowButtonProps) => {
+  return (
+    <button
+      className={cn(
+        timelineStyles.arrowButton,
+        timelineStyles.arrowButtonTypes[type],
+      )}
+    >
+      <Icon type="arrowLeft" color="blue400" width="15" />
+    </button>
   )
 }
 
