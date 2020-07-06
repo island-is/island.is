@@ -1,4 +1,5 @@
-import React, { FC } from 'react'
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React from 'react'
 import { groupBy, range } from 'lodash'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -11,19 +12,16 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { Locale } from '@island.is/web/i18n/I18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import {
-  ContentBlock,
   Box,
   Typography,
   Stack,
   Breadcrumbs,
-  Hidden,
   Select,
   Divider,
   Columns,
   Column,
   Option,
 } from '@island.is/island-ui/core'
-import { Sticky } from '@island.is/web/components'
 import { GET_NEWS_LIST_QUERY } from './queries'
 import { NewsListLayout } from './Layouts/Layouts'
 import {
@@ -35,7 +33,7 @@ import {
 const PER_PAGE = 10
 
 interface NewsListProps {
-  newsList: any[]
+  newsList: Query['getNewsList']
   dateRange: string[]
   year?: number
   month?: number
@@ -47,14 +45,14 @@ const NewsList: Screen<NewsListProps> = ({
   year,
   month,
 }) => {
-  if (year && newsList.length == 0) {
-    return <DefaultErrorPage statusCode={404} />
-  }
-
   const Router = useRouter()
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale as Locale)
   const { format } = useDateUtils()
+
+  if (year && newsList.length === 0) {
+    return <DefaultErrorPage statusCode={404} />
+  }
 
   const dates = dateRange.map((s) => new Date(s))
   const datesByYear = groupBy(dates, (d) => d.getFullYear())
@@ -62,9 +60,9 @@ const NewsList: Screen<NewsListProps> = ({
   const years = Object.keys(datesByYear)
   const months = datesByYear[year] ?? []
 
-  const options = years.map((y) => ({
-    label: y,
-    value: y,
+  const options = years.map((year) => ({
+    label: year,
+    value: year,
   }))
 
   const sidebar = (
@@ -151,7 +149,7 @@ const NewsListItem = ({ newsItem }) => {
         </Column>
         {newsItem.image && (
           <Column width="2/5">
-            <img src={newsItem.image.url + '?w=524'} />
+            <img src={newsItem.image.url + '?w=524'} alt={newsItem.image.title} />
           </Column>
         )}
       </Columns>
@@ -161,7 +159,7 @@ const NewsListItem = ({ newsItem }) => {
 
 NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   let year = getIntParam(query.y)
-  let month = year && getIntParam(query.m)
+  const month = year && getIntParam(query.m)
 
   const [
     {
