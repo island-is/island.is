@@ -7,7 +7,8 @@ CODE_TEMPLATE="${CODE_TEMPLATE:-/webapp/config/template-is.json}"
 GITHUB_DICT_REPO="${GITHUB_DICT_REPO:-https://api.github.com/repos/island-is/elasticsearch-dictionaries}"
 S3_BUCKET="${S3_BUCKET:-prod-es-custom-packages}"
 S3_FOLDER="${S3_FOLDER:-}"
-AWS_BIN=aws
+AWS_REGION="${AWS_REGION:-eu-west-1}"
+AWS_BIN="aws --region ${AWS_REGION}"
 
 INDEX_FORMAT="island-is-v%d"
 TEMPLATE_NAME="template-is"
