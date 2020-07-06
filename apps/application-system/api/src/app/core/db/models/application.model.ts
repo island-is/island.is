@@ -6,15 +6,17 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-export const ApplicationStates = {
-  DRAFT: 'DRAFT',
-  BEING_PROCESSED: 'BEING_PROCESSED',
-  NEEDS_INFORMATION: 'NEEDS_INFORMATION',
-  PENDING: 'PENDING',
-  APPROVED: 'APPROVED',
-  MANUAL_APPROVED: 'MANUAL_APPROVED',
-  REJECTED: 'REJECTED',
-  UNKNOWN: 'UNKNOWN',
+import { ApiProperty } from '@nestjs/swagger';
+
+export enum ApplicationState {
+  DRAFT = 'DRAFT',
+  BEING_PROCESSED = 'BEING_PROCESSED',
+  NEEDS_INFORMATION = 'NEEDS_INFORMATION',
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  MANUAL_APPROVED = 'MANUAL_APPROVED',
+  REJECTED = 'REJECTED',
+  UNKNOWN = 'UNKNOWN',
 } // TODO get from somewhere
 
 @Table({
@@ -32,46 +34,55 @@ export class Application extends Model<Application> {
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
+  @ApiProperty()
   id: string
 
   @CreatedAt
+  @ApiProperty()
   created: Date
 
   @UpdatedAt
+  @ApiProperty()
   modified: Date
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
+  @ApiProperty()
   applicant: string
 
   @Column({
     type: DataType.STRING,
   })
+  @ApiProperty()
   assignee: string
 
   @Column({
     type: DataType.STRING,
   })
+  @ApiProperty()
   externalId: string
 
   @Column({
     type: DataType.ENUM,
     allowNull: false,
-    values: Object.values(ApplicationStates),
+    values: Object.values(ApplicationState),
   })
+  @ApiProperty({ enum: ApplicationState })
   state: string
 
   @Column({
     type: DataType.ARRAY(DataType.STRING),
   })
+  @ApiProperty()
   attatchments: string[]
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
+  @ApiProperty()
   typeId: string
 
   @Column({
@@ -79,5 +90,6 @@ export class Application extends Model<Application> {
     defaultValue: {},
     allowNull: false,
   })
+  @ApiProperty()
   answers: object
 }

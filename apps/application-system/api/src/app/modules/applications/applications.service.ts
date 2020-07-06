@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Application } from '../../core/db/models/application.model'
+import { ApplicationDto } from './dto/application.dto'
 
 @Injectable()
 export class ApplicationsService {
@@ -10,26 +11,27 @@ export class ApplicationsService {
   ) {}
 
   async findAll(): Promise<Application[]> {
-    return await this.applicationModel.findAll<Application>()
+    return this.applicationModel.findAll<Application>()
   }
 
   async findOne(id: string): Promise<Application> {
-    return await this.applicationModel.findOne({
+    return this.applicationModel.findOne({
       where: { id },
     })
   }
-  async create(application: any): Promise<Application> {
-    return await this.applicationModel.create<Application>({
+
+  async create(application: ApplicationDto): Promise<Application> {
+    return this.applicationModel.create<Application>({
       ...application,
     })
   }
 
-  async update(id: string, data: object) {
+  async update(id: string, application: ApplicationDto) {
     const [
       numberOfAffectedRows,
       [updatedApplication],
     ] = await this.applicationModel.update(
-      { ...data },
+      { ...application },
       { where: { id }, returning: true },
     )
 
@@ -37,6 +39,6 @@ export class ApplicationsService {
   }
 
   async delete(id: string) {
-    return await this.applicationModel.destroy({ where: { id } })
+    return this.applicationModel.destroy({ where: { id } })
   }
 }
