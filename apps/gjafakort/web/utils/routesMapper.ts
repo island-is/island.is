@@ -1,8 +1,9 @@
 import { isObject } from 'util'
+import { Translation } from '../i18n/locales'
 
 const locales = {}
 
-const getLocale = async (locale) => {
+export const getLocale = async (locale: string): Promise<Translation> => {
   if (!locales[locale]) {
     try {
       locales[locale] = await import(`../i18n/locales/${locale}.json`)
@@ -10,6 +11,7 @@ const getLocale = async (locale) => {
       console.error(`locale "${locale}" is not available`)
     }
   }
+  return locales[locale]
 }
 
 export const getRoutefromLocale = async (
@@ -17,8 +19,8 @@ export const getRoutefromLocale = async (
   from: string,
   to: string,
 ) => {
-  await getLocale(from)
-  await getLocale(to)
+  const fromLocale = await getLocale(from)
+  const toLocale = await getLocale(to)
   const findPath = (baseObj, returnObj, path) => {
     return Object.keys(baseObj).reduce((acc, key) => {
       if (baseObj[key] === path) {
@@ -33,5 +35,5 @@ export const getRoutefromLocale = async (
       return acc
     }, '')
   }
-  return findPath(locales[from], locales[to], path)
+  return findPath(fromLocale.routes, toLocale.routes, path)
 }
