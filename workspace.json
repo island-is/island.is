@@ -1098,80 +1098,28 @@
       }
     },
     "service-portal": {
-      "root": "apps/service-portal",
-      "sourceRoot": "apps/service-portal/src",
-      "projectType": "application",
+      "root": "libs/service-portal",
+      "sourceRoot": "libs/service-portal/src",
+      "projectType": "library",
       "schematics": {},
       "architect": {
-        "build": {
-          "builder": "@nrwl/web:build",
-          "options": {
-            "outputPath": "dist/apps/service-portal",
-            "index": "apps/service-portal/src/index.html",
-            "main": "apps/service-portal/src/main.tsx",
-            "polyfills": "apps/service-portal/src/polyfills.ts",
-            "tsConfig": "apps/service-portal/tsconfig.app.json",
-            "assets": [
-              "apps/service-portal/src/favicon.ico",
-              "apps/service-portal/src/assets"
-            ],
-            "styles": ["apps/service-portal/src/styles.scss"],
-            "scripts": [],
-            "webpackConfig": "@nrwl/react/plugins/webpack"
-          },
-          "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "apps/service-portal/src/environments/environment.ts",
-                  "with": "apps/service-portal/src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@nrwl/web:dev-server",
-          "options": {
-            "buildTarget": "service-portal:build"
-          },
-          "configurations": {
-            "production": {
-              "buildTarget": "service-portal:build:production"
-            }
-          }
-        },
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/service-portal/.eslintrc",
+            "config": "libs/service-portal/.eslintrc",
             "tsConfig": [
-              "apps/service-portal/tsconfig.app.json",
-              "apps/service-portal/tsconfig.spec.json"
+              "libs/service-portal/tsconfig.lib.json",
+              "libs/service-portal/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/service-portal/**"]
+            "exclude": ["**/node_modules/**", "!libs/service-portal/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/service-portal/jest.config.js",
-            "tsConfig": "apps/service-portal/tsconfig.spec.json",
+            "jestConfig": "libs/service-portal/jest.config.js",
+            "tsConfig": "libs/service-portal/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }
