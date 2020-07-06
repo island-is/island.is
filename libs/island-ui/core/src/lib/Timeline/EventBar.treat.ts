@@ -5,13 +5,19 @@ export const eventBar = style({
   position: 'relative',
   zIndex: 0,
   height: 64,
-  left: 110,
+  // left: 0,
   width: 'auto',
   display: 'inline-flex',
   alignItems: 'center',
   borderRadius: 50,
+  outline: '1px solid white',
   backgroundColor: theme.color.purple400,
   cursor: 'pointer',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      // left: 110,
+    },
+  }),
 })
 
 export const eventBarIcon = style({

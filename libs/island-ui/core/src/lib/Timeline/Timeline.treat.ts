@@ -58,16 +58,18 @@ export const eventWrapper = style({
   position: 'relative',
   display: 'inline-flex',
   width: 'auto',
-  minHeight: 600,
+  minHeight: 300,
   marginRight: 40,
+  outline: '1px solid orange',
   marginBottom: 0,
-  flexDirection: 'column-reverse',
+  justifyContent: 'flex-end',
+  flexDirection: 'column',
   ':last-child': {
     marginRight: 0,
   },
   ...themeUtils.responsiveStyle({
     lg: {
-      flexDirection: 'row',
+      flexDirection: 'row-reverse',
       minHeight: 'auto',
       marginRight: 0,
       marginBottom: 40,
@@ -80,7 +82,7 @@ export const eventWrapper = style({
 
 export const event = style({
   position: 'relative',
-  left: 120,
+  // left: 120,
   minWidth: 300,
   fontWeight: theme.typography.light,
   fontSize: 18,
@@ -91,15 +93,12 @@ export const event = style({
 export const eventLarge = style({ minWidth: 1000 })
 
 export const bulletLine = style({
-  zIndex: 1,
-  position: 'absolute',
-  left: -12,
-})
-
-export const bulletLineLarger = style({
-  position: 'absolute',
-  top: 20,
-  left: -12,
+  outline: '1px solid green',
+  textAlign: 'center',
+  position: 'relative',
+  transform: `rotate(-90deg)`,
+  bottom: 51,
+  // transformOrigin: 'center bottom',
 })
 
 export const section = style({

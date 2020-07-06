@@ -222,13 +222,6 @@ export const Timeline = (props: TimelineProps) => {
                                   key={index}
                                   className={timelineStyles.eventWrapper}
                                 >
-                                  <span
-                                    className={cn(timelineStyles.bulletLine, {
-                                      [timelineStyles.bulletLineLarger]: larger,
-                                    })}
-                                  >
-                                    <BulletLine />
-                                  </span>
                                   {larger ? (
                                     <EventBar {...event} />
                                   ) : (
@@ -236,6 +229,13 @@ export const Timeline = (props: TimelineProps) => {
                                       {event.title}
                                     </div>
                                   )}
+                                  <span
+                                    className={cn(timelineStyles.bulletLine, {
+                                      // [timelineStyles.bulletLineLarger]: larger,
+                                    })}
+                                  >
+                                    <BulletLine />
+                                  </span>
                                 </div>
                               )
                             })}
