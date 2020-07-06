@@ -1,10 +1,13 @@
-import { Condition } from '../types/condition'
-import { FieldTypes, Option } from '../types/fields/base'
-import { CheckboxField } from '../types/fields/checkbox-field'
-import { DateField } from '../types/fields/date-field'
-import { RadioField } from '../types/fields/radio-field'
-import { TextField } from '../types/fields/text-field'
-import { IntroductionField } from '../types/fields/introduction-field'
+import {
+  CheckboxField,
+  Condition,
+  DateField,
+  FieldTypes,
+  IntroductionField,
+  Option,
+  RadioField,
+  TextField,
+} from '@island.is/application/schema'
 
 export function buildCheckboxField(data: {
   condition?: Condition
@@ -13,7 +16,17 @@ export function buildCheckboxField(data: {
   options: Option[]
   isRequired: boolean
 }): CheckboxField {
-  return new CheckboxField(data)
+  const { condition, id, name, options, isRequired } = data
+  return {
+    children: undefined,
+    isQuestion: true,
+    isRequired,
+    condition,
+    id,
+    name,
+    options,
+    type: FieldTypes.CHECKBOX,
+  }
 }
 
 export function buildDateField(data: {
@@ -24,7 +37,18 @@ export function buildDateField(data: {
   minDate?: Date
   isRequired: boolean
 }): DateField {
-  return new DateField(data)
+  const { condition, id, name, maxDate, minDate, isRequired } = data
+  return {
+    children: undefined,
+    isQuestion: true,
+    condition,
+    id,
+    isRequired,
+    name,
+    maxDate,
+    minDate,
+    type: FieldTypes.DATE,
+  }
 }
 
 export function buildIntroductionField(data: {
@@ -51,7 +75,17 @@ export function buildRadioField(data: {
   options: Option[]
   isRequired: boolean
 }): RadioField {
-  return new RadioField(data)
+  const { condition, id, name, options, isRequired } = data
+  return {
+    children: undefined,
+    isQuestion: true,
+    isRequired,
+    condition,
+    id,
+    name,
+    options,
+    type: FieldTypes.RADIO,
+  }
 }
 
 export function buildTextField(data: {
@@ -60,5 +94,14 @@ export function buildTextField(data: {
   name: string
   isRequired: boolean
 }): TextField {
-  return new TextField(data)
+  const { condition, id, name, isRequired } = data
+  return {
+    children: undefined,
+    isRequired,
+    isQuestion: true,
+    condition,
+    id,
+    name,
+    type: FieldTypes.TEXT,
+  }
 }

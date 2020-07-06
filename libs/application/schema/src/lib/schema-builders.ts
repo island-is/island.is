@@ -1,4 +1,4 @@
-import { Field } from '../types/fields/field'
+import { Field } from '../types/fields'
 import { Condition } from '../types/condition'
 import {
   Form,
