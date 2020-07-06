@@ -1,6 +1,6 @@
 import { FormNode, FormScreen } from '../types/form-tree'
 import { Form, FormItemTypes, Section, SubSection } from '../types/form'
-import { Question } from '../types/fields/question'
+import { Question } from '../types/fields'
 
 const isValidScreen = (node: FormNode): boolean => {
   if (!node.children) {
@@ -23,7 +23,7 @@ const isValidScreen = (node: FormNode): boolean => {
 
 export const getScreensForFormNode = (
   node: FormNode,
-  onlyQuestions: boolean = false,
+  onlyQuestions = false,
 ): FormScreen[] => {
   const { children } = node
   if (isValidScreen(node)) {

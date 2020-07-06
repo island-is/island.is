@@ -1,5 +1,5 @@
 import { Condition } from './condition'
-import { Field } from './fields/field'
+import { Field } from './fields'
 
 export enum FormItemTypes {
   FORM = 'FORM',

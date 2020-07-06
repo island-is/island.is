@@ -18,7 +18,6 @@ const TextFormField: FC<Props> = ({ answers, answerQuestion, field }) => {
         label={name}
         value={value}
         onBlur={() => {
-          console.log('am i valid', field.validate(value))
           answerQuestion({ id, answer: value })
         }}
         onChange={(e) => {
