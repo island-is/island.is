@@ -13,12 +13,13 @@ export function makeServer({ environment = "development" } = {}) {
 				nationalId: '2606862759',
 				scope: [
 					'@Island.is/health',
-					'@Island.is/health.perscriptions',
-					'@Island.is/health.view'
+					'@Island.is/health/perscriptions.edit',
+					'@Island.is/health/vaccines.view'
 				],
 				accountType: 'person',
-				name: 'Ólafur Björn Magnússon'
-
+				name: 'Ólafur Björn Magnússon',
+				actor: '2606862759',
+				subject: '2606862759'
 			} as any)
 		},
 		routes() {
