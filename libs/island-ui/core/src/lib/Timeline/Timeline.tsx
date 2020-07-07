@@ -2,13 +2,11 @@ import React, { useState, useRef, useEffect, useCallback } from 'react'
 import cn from 'classnames'
 
 import * as timelineStyles from './Timeline.treat'
-import * as eventBarStyles from './EventBar.treat'
+import * as eventStyles from './Event.treat'
 import { Icon } from '../..'
 
 /* eslint-disable-next-line */
 export interface TimelineProps {}
-
-let i = 0
 
 const renderValue = (value) =>
   value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
@@ -216,6 +214,7 @@ export const Timeline = (props: TimelineProps) => {
   const [frameHeight, setFrameHeight] = useState(0)
   const [frameJump, setFrameJump] = useState(0)
   const [jumpIndex, setJumpIndex] = useState(0)
+  const [visibleModal, setVisibleModal] = useState(null)
 
   const usableYears = events.reduce((usableYears, item) => {
     const eventYear = item.date.getFullYear()
@@ -302,11 +301,11 @@ export const Timeline = (props: TimelineProps) => {
       <ArrowButton type="next" onClick={() => jumpTo('next')} />
       <div ref={frameRef} className={timelineStyles.frame}>
         <div ref={innerContainerRef} className={timelineStyles.innerContainer}>
-          {usableYears.map((year, index) => {
+          {usableYears.map((year, yearIndex) => {
             const usableMonths = getUsableMonthsInYear(year)
 
             return (
-              <div key={index} className={timelineStyles.yearContainer}>
+              <div key={yearIndex} className={timelineStyles.yearContainer}>
                 <div className={timelineStyles.section}>
                   <div className={timelineStyles.left}>
                     <span
@@ -320,14 +319,17 @@ export const Timeline = (props: TimelineProps) => {
                   </div>
                   <div className={timelineStyles.right}>&nbsp;</div>
                 </div>
-                {usableMonths.map((month, index) => {
+                {usableMonths.map((month, monthIndex) => {
                   const usableEvents = getUsableEventsInMonthAndYear(
                     year,
                     month,
                   )
 
                   return (
-                    <div key={index} className={timelineStyles.monthContainer}>
+                    <div
+                      key={monthIndex}
+                      className={timelineStyles.monthContainer}
+                    >
                       <div className={timelineStyles.section}>
                         <div className={timelineStyles.left}>
                           <span
@@ -346,17 +348,27 @@ export const Timeline = (props: TimelineProps) => {
                         <div className={timelineStyles.left}>&nbsp;</div>
                         <div className={timelineStyles.right}>
                           <div className={timelineStyles.eventsContainer}>
-                            {usableEvents.map((event, index) => {
+                            {usableEvents.map((event, eventIndex) => {
                               const larger = Boolean(event.data)
+                              const modalKey = `modal-${yearIndex}-${monthIndex}-${eventIndex}`
 
                               return (
                                 <div
-                                  key={index}
+                                  key={eventIndex}
                                   className={timelineStyles.eventWrapper}
                                 >
                                   <div className={timelineStyles.event}>
                                     {larger ? (
-                                      <EventBar {...event} />
+                                      <EventBar
+                                        onClick={() =>
+                                          setVisibleModal(
+                                            visibleModal === modalKey
+                                              ? null
+                                              : modalKey,
+                                          )
+                                        }
+                                        event={event}
+                                      />
                                     ) : (
                                       <span
                                         className={timelineStyles.eventSimple}
@@ -364,6 +376,10 @@ export const Timeline = (props: TimelineProps) => {
                                         {event.title}
                                       </span>
                                     )}
+                                    <EventModal
+                                      event={event}
+                                      showModal={visibleModal === modalKey}
+                                    />
                                   </div>
                                   <span
                                     className={cn(timelineStyles.bulletLine, {
@@ -390,28 +406,53 @@ export const Timeline = (props: TimelineProps) => {
   )
 }
 
-const EventBar = (event) => {
+interface EventBarProps {
+  event: any
+  onClick: () => void
+}
+
+const EventBar = ({ event, onClick }: EventBarProps) => {
   return (
-    <div className={eventBarStyles.eventBar}>
-      <div className={eventBarStyles.eventBarTitle}>
-        <div className={eventBarStyles.eventBarIcon}>
+    <button onClick={onClick} className={eventStyles.eventBar}>
+      <div className={eventStyles.eventBarTitle}>
+        <div className={eventStyles.eventBarIcon}>
           <Icon type="user" color="purple400" width="24" />
         </div>
-        <span className={eventBarStyles.title}>{event.title}</span>
+        <span className={eventStyles.title}>{event.title}</span>
       </div>
       {event.value && (
-        <div className={eventBarStyles.eventBarStats}>
-          <span className={eventBarStyles.valueWrapper}>
-            <span className={eventBarStyles.value}>
+        <div className={eventStyles.eventBarStats}>
+          <span className={eventStyles.valueWrapper}>
+            <span className={eventStyles.value}>
               {renderValue(event.value)}
             </span>
-            <span className={eventBarStyles.maxValue}>
+            <span className={eventStyles.maxValue}>
               /{renderValue(event.maxValue)}
             </span>
           </span>
-          <span className={eventBarStyles.valueLabel}>{event.valueLabel}</span>
+          <span className={eventStyles.valueLabel}>{event.valueLabel}</span>
         </div>
       )}
+    </button>
+  )
+}
+
+interface EventModalProps {
+  showModal: boolean
+  event: any
+}
+
+const EventModal = ({ event, showModal = false }: EventModalProps) => {
+  return (
+    <div
+      className={cn(eventStyles.eventModal, {
+        [eventStyles.eventModalVisible]: showModal,
+      })}
+    >
+      <div className={eventStyles.eventModalContent}>
+        <h3>{event.title}</h3>
+        <span dangerouslySetInnerHTML={{ __html: event.data?.markup }} />
+      </div>
     </div>
   )
 }

@@ -64,6 +64,7 @@ export const year = style({
 
 export const eventWrapper = style({
   position: 'relative',
+  outline: 0,
   display: 'inline-flex',
   width: 'auto',
   minHeight: 300,
@@ -89,6 +90,7 @@ export const eventWrapper = style({
 })
 
 export const event = style({
+  position: 'relative',
   marginBottom: 110,
   marginLeft: 0,
   ...themeUtils.responsiveStyle({

@@ -3,6 +3,7 @@ import { themeUtils, theme } from '@island.is/island-ui/theme'
 
 export const eventBar = style({
   position: 'relative',
+  outline: 0,
   zIndex: 0,
   height: 64,
   width: 'auto',
@@ -79,4 +80,32 @@ export const maxValue = style({
   display: 'inline-block',
   fontWeight: theme.typography.light,
   color: theme.color.purple300,
+})
+
+// Modal
+export const eventModal = style({
+  position: 'absolute',
+  transition: `all 300ms ease`,
+  opacity: 0,
+  visibility: 'hidden',
+  zIndex: -1,
+  top: 0,
+  left: 0,
+  borderRadius: `50px 5px 5px 5px`,
+  padding: 48,
+  boxSizing: 'border-box',
+  maxWidth: '660px',
+  width: '100%',
+  whiteSpace: 'normal',
+  backgroundColor: theme.color.purple100,
+})
+
+export const eventModalVisible = style({
+  opacity: 1,
+  visibility: 'initial',
+  zIndex: 1,
+})
+
+export const eventModalContent = style({
+  outline: '2px solid lime',
 })
