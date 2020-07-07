@@ -3,7 +3,7 @@
 
 web:
   env:
-    API_URL: "http://web-api/api"
+    API_URL: "http://web-api"
 
 search-indexer-service:
   serviceAccount:
