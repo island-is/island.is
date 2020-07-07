@@ -100,7 +100,7 @@ class NovaAPI extends RESTDataSource {
     const body = {
       request: {
         Recipients: [mobileNumber],
-        SenderName: 'Ísland.is',
+        SenderName: 'Island.is',
         SmsText: `Staðfestingarkóði: ${confirmationCode}`,
         IsFlash: false,
       },

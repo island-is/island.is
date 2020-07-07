@@ -18,7 +18,7 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
         case 'FORBIDDEN':
           return Router.push('/404')
         case 'CONFIRM_CODE_ERROR':
-          break
+          return
         default:
           return NotificationService.onGraphQLError({
             graphQLErrors,

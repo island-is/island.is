@@ -66,15 +66,12 @@ export const sendConfirmCode = async (
     Math.random() * 10 ** confirmCodeLength,
   ).toString()
 
-  const maxSmsAllowed = 10
+  const maxSmsAllowed = 20
   const smsSentCacheKey = `confirm.sms.sent.${userSSN}`
   const smsSent = parseInt(await cache.get(smsSentCacheKey), 10)
   if (smsSent > maxSmsAllowed) {
     throw new Error('User has exceeded the limit of sms sent')
   }
-  await cache.set(smsSentCacheKey, (smsSent ? smsSent + 1 : 1).toString())
-  const ttlOneDay = 60 * 60 * 24
-  await cache.expire(smsSentCacheKey, ttlOneDay)
 
   const confirmCacheKey = getConfirmCacheKey(userSSN, mobileNumber)
   const ttlTenMinutes = 60 * 10
@@ -83,6 +80,10 @@ export const sendConfirmCode = async (
 
   try {
     await novaApi.sendSms(mobileNumber, confirmCode)
+
+    const ttlOneDay = 60 * 60 * 24
+    await cache.set(smsSentCacheKey, (smsSent ? smsSent + 1 : 1).toString())
+    await cache.expire(smsSentCacheKey, ttlOneDay)
   } catch (err) {
     logger.error(err)
     throw new Error('Failed sending sms')
