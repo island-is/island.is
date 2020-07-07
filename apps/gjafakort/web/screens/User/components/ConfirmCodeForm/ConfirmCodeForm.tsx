@@ -29,8 +29,6 @@ function ConfirmCodeForm({ onSubmit, sendConfirmationSMS }: PropTypes) {
     },
   } = useI18n()
 
-  // TODO put a link to resend the sms confirmation @Brian
-
   return (
     <FormLayout>
       <Box marginBottom={2}>
