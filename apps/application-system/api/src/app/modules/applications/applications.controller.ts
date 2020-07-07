@@ -6,32 +6,33 @@ import {
   Param,
   Post,
   Put,
-  Request,
 } from '@nestjs/common'
 import { Application } from '../../core/db/models/application.model'
 import { ApplicationsService } from './applications.service'
 import { ApplicationDto } from './dto/application.dto'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
+@ApiTags('applications')
 @Controller('applications')
 export class ApplicationsController {
   constructor(private readonly applicationService: ApplicationsService) {}
 
   @Get()
-  async findAll() {
+  @ApiOkResponse({ type: [Application] })
+  async findAll(): Promise<Array<Application>> {
     return await this.applicationService.findAll()
   }
 
   @Post()
-  async create(
-    @Body() application: ApplicationDto,
-    @Request() req,
-  ): Promise<Application> {
+  @ApiCreatedResponse({ type: Application })
+  async create(@Body() application: ApplicationDto): Promise<Application> {
     // Validate answers based of typeId
     // GET schema for typeId
     return await this.applicationService.create(application)
   }
 
   @Get(':id')
+  @ApiOkResponse({ type: Application })
   async findOne(@Param('id') id: string): Promise<Application> {
     const application = await this.applicationService.findOne(id)
 
@@ -43,11 +44,11 @@ export class ApplicationsController {
   }
 
   @Put(':id')
+  @ApiOkResponse({ type: Application })
   async update(
     @Param('id') id: string,
-    @Body() application: any,
-    @Request() req,
-  ): Promise<any> {
+    @Body() application: ApplicationDto,
+  ): Promise<Application> {
     const {
       numberOfAffectedRows,
       updatedApplication,

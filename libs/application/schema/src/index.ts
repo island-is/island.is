@@ -8,6 +8,6 @@ export * from './lib/schema-utils'
 export * from './lib/field-builders'
 export * from './lib/schema-builders'
 export * from './schemas/example'
-export * from './schemas/schemaTypes'
+export * from './schemas/SchemaType'
 
 export * from './validation/validators'
