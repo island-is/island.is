@@ -300,7 +300,7 @@ has_index_version() {
 	local version="$1"
 	local name=$(get_index_name "$version")
 
-	curl --fail -s "$ELASTIC_NODE/_cat/indices" -H 'Content-Type: application/json' | grep -q -E "\b$name\b"
+	curl --fail --head "$ELASTIC_NODE/$name" > /dev/null 2>&1
 }
 
 needs_migrate() {
@@ -314,7 +314,7 @@ needs_migrate() {
 }
 
 check_aws() {
-	($AWS_BIN es list-domain-names | jq '.DomainNames[].DomainName' | grep -q "$ES_DOMAIN") && return
+	($AWS_BIN es list-domain-names | jq '.DomainNames[].DomainName' | grep -q -E "\b${ES_DOMAIN}\b") && return
 
 	echo "Could not find ES domain"
 	exit 2
