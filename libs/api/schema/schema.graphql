@@ -3,6 +3,8 @@ type Query {
   categories(input: CategoriesInput): [ContentCategory]
   getArticle(input: GetArticleInput): Article
   getNamespace(input: GetNamespaceInput): Namespace
+  getNews(input: GetNewsInput!): News
+  getNewsList(input: GetNewsListInput): [News!]!
   helloWorld(input: HelloWorldInput): HelloWorld!
   root: String
   searchResults(query: SearcherInput): SearchResult!
@@ -19,6 +21,15 @@ type Taxonomy {
   description: String!
 }
 
+type Image {
+  url: String!
+  title: String
+  filename: String
+  contentType: String
+  width: Int
+  height: Int
+}
+
 type Article {
   id: String!
   slug: String!
@@ -31,6 +42,30 @@ type Article {
 input GetArticleInput {
   slug: String
   lang: String!
+}
+
+type News {
+  id: String!
+  slug: String!
+  title: String!
+  intro: String!
+  image: Image
+  date: String!
+  content: String
+}
+
+input GetNewsInput {
+  slug: String!
+  lang: String
+}
+
+input GetNewsListInput {
+  lang: String
+  year: Int
+  month: Int
+  ascending: Boolean
+  offset: Int
+  limit: Int
 }
 
 type Namespace {

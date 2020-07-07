@@ -56,4 +56,30 @@ export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
     </Box>
   </ContentBlock>
 )
+
+interface NewsListProps {
+  sidebar: ReactNode
+}
+
+export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
+  <ContentBlock>
+    <Box padding={[0, 0, 0, 6]}>
+      <div className={cn(styles.layout)}>
+        <div className={styles.side}>
+          <Sticky>
+            <Box background="purple100" padding={4}>
+              {sidebar}
+            </Box>
+          </Sticky>
+        </div>
+        <Box paddingLeft={[0, 0, 0, 4]} width="full">
+          <Box padding={[3, 3, 6, 0]}>
+            <ContentBlock width="small">{children}</ContentBlock>
+          </Box>
+        </Box>
+      </div>
+    </Box>
+  </ContentBlock>
+)
+
 export default ArticleLayout

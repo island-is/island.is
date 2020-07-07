@@ -7,6 +7,15 @@ export const typeDefs = gql`
     description: String!
   }
 
+  type Image {
+    url: String!
+    title: String
+    filename: String
+    contentType: String
+    width: Int
+    height: Int
+  }
+
   type Article {
     id: String!
     slug: String!
@@ -21,6 +30,30 @@ export const typeDefs = gql`
     lang: String!
   }
 
+  type News {
+    id: String!
+    slug: String!
+    title: String!
+    intro: String!
+    image: Image
+    date: String!
+    content: String
+  }
+
+  input GetNewsInput {
+    slug: String!
+    lang: String
+  }
+
+  input GetNewsListInput {
+    lang: String
+    year: Int
+    month: Int
+    ascending: Boolean
+    offset: Int
+    limit: Int
+  }
+
   type Namespace {
     namespace: String
     fields: String
@@ -33,6 +66,8 @@ export const typeDefs = gql`
 
   extend type Query {
     getArticle(input: GetArticleInput): Article
+    getNews(input: GetNewsInput!): News
+    getNewsList(input: GetNewsListInput): [News!]!
     getNamespace(input: GetNamespaceInput): Namespace
   }
 `
