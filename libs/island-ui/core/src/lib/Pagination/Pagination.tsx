@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import cn from 'classnames'
 import { uniq } from 'lodash'
 import { Icon } from '../Icon/Icon'
@@ -50,7 +50,7 @@ export const Pagination = ({ page, totalPages, makeHref, linkComp }) => {
       </div>
       <div>
         {ranges.map((thisPage, i) => (
-          <>
+          <Fragment key={thisPage}>
             {i > 0 && ranges[i - 1] !== thisPage - 1 && (
               <span className={styles.gap}>&hellip;</span>
             )}
@@ -62,7 +62,7 @@ export const Pagination = ({ page, totalPages, makeHref, linkComp }) => {
             >
               {thisPage}
             </Link>
-          </>
+          </Fragment>
         ))}
       </div>
       <div>

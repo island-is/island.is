@@ -127,8 +127,9 @@ const NewsList: Screen<NewsListProps> = ({
           </Typography>
 
           {newsList.map((newsItem) => (
-            <NewsListItem newsItem={newsItem} />
+            <NewsListItem key={newsItem.id} newsItem={newsItem} />
           ))}
+
           <Box paddingTop={8}>
             <Pagination
               {...page}
