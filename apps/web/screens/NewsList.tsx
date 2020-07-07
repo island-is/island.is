@@ -31,7 +31,7 @@ import {
   QueryGetNewsListArgs,
 } from '@island.is/api/schema'
 
-const PageLink = ({children, href, ...props}) => (
+const PageLink = ({ children, href, ...props }) => (
   <Link href={href}>
     <a {...props}>{children}</a>
   </Link>
@@ -138,7 +138,7 @@ const NewsList: Screen<NewsListProps> = ({
                 query: {
                   ...Router.query,
                   page: p,
-                }
+                },
               })}
             />
           </Box>
