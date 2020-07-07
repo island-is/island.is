@@ -36,6 +36,8 @@ spec:
               value: {{ .application_url }}
             - name: ELASTIC_INDEX
               value: {{ .elastic_index }}
+            - name: S3_BUCKET
+              value: {{ .s3_bucket }}
             {{- end }}
       containers:
         - name: {{ .Chart.Name }}
