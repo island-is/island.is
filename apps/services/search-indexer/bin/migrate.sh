@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-set -euxo pipefail
+set -Eeuxo pipefail
+
+trap "exit 2" ERR
 
 ES_INDEX_MAIN="${ELASTIC_INDEX:-island-is}"
 ES_DOMAIN="${ES_DOMAIN:-search}"
