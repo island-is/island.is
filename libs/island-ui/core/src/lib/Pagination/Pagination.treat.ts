@@ -1,4 +1,5 @@
 import { style } from 'treat'
+import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
   display: 'flex',
@@ -20,22 +21,22 @@ export const link = style({
 })
 
 export const linkCurrent = style({
-  backgroundColor: '#F8F5FA',
+  backgroundColor: theme.color.purple100,
   fontWeight: 600,
-  color: '#6A2EA0',
+  color: theme.color.purple400,
 })
 
 export const edge = style({
-  backgroundColor: '#F8F5FA',
+  backgroundColor: theme.color.purple100,
   ':hover': {
     transform: 'scale(1.1)',
   },
 })
 
 export const linkDisabled = style({
-  border: '1px solid #E1D5EC',
+  border: `1px solid ${theme.color.purple200}`,
 })
 
 export const gap = style({
-  color: '#E1D5EC',
+  color: theme.color.purple200,
 })
