@@ -152,16 +152,23 @@ export type UpdateCompanyApplication = {
 export type Mutation = {
   __typename?: 'Mutation'
   approveCompanyApplication?: Maybe<ApproveCompanyApplication>
+  confirmMobile?: Maybe<ConfirmMobile>
   createCompanyApplication?: Maybe<CreateCompanyApplication>
   createUserApplication?: Maybe<CreateUserApplication>
   fetchUserApplication?: Maybe<UserApplication>
+  giveGift?: Maybe<GiveGift>
   rejectCompanyApplication?: Maybe<RejectCompanyApplication>
   root?: Maybe<Scalars['String']>
   updateCompanyApplication?: Maybe<UpdateCompanyApplication>
+  verifyUserApplication?: Maybe<VerifyUserApplication>
 }
 
 export type MutationApproveCompanyApplicationArgs = {
   input: ApproveCompanyApplicationInput
+}
+
+export type MutationConfirmMobileArgs = {
+  input?: Maybe<ConfirmMobileInput>
 }
 
 export type MutationCreateCompanyApplicationArgs = {
@@ -176,12 +183,20 @@ export type MutationFetchUserApplicationArgs = {
   ssn: Scalars['String']
 }
 
+export type MutationGiveGiftArgs = {
+  input?: Maybe<GiveGiftInput>
+}
+
 export type MutationRejectCompanyApplicationArgs = {
   input: RejectCompanyApplicationInput
 }
 
 export type MutationUpdateCompanyApplicationArgs = {
   input: UpdateCompanyApplicationInput
+}
+
+export type MutationVerifyUserApplicationArgs = {
+  input?: Maybe<VerifyUserApplicationInput>
 }
 
 export type Greeting = {
@@ -219,7 +234,13 @@ export type UserApplication = {
   id: Scalars['String']
   mobileNumber: Scalars['String']
   countryCode: Scalars['String']
+  verified: Scalars['Boolean']
   logs?: Maybe<Array<Maybe<ApplicationLog>>>
+}
+
+export type GiveGift = {
+  __typename?: 'GiveGift'
+  success: Scalars['Boolean']
 }
 
 export type CreateUserApplication = {
@@ -229,6 +250,33 @@ export type CreateUserApplication = {
 
 export type CreateUserApplicationInput = {
   mobile?: Maybe<Scalars['StringTrimmed']>
+  confirmCode?: Maybe<Scalars['StringTrimmed']>
+}
+
+export type VerifyUserApplication = {
+  __typename?: 'VerifyUserApplication'
+  application?: Maybe<UserApplication>
+}
+
+export type VerifyUserApplicationInput = {
+  mobile?: Maybe<Scalars['StringTrimmed']>
+  confirmCode?: Maybe<Scalars['StringTrimmed']>
+}
+
+export type ConfirmMobile = {
+  __typename?: 'ConfirmMobile'
+  mobile: Scalars['String']
+  success: Scalars['Boolean']
+}
+
+export type ConfirmMobileInput = {
+  mobile?: Maybe<Scalars['StringTrimmed']>
+}
+
+export type GiveGiftInput = {
+  giftCardId: Scalars['Int']
+  recipientMobileNumber: Scalars['StringTrimmed']
+  message?: Maybe<Scalars['String']>
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -370,8 +418,14 @@ export type ResolversTypes = {
   Float: ResolverTypeWrapper<Scalars['Float']>
   GiftCardCode: ResolverTypeWrapper<GiftCardCode>
   UserApplication: ResolverTypeWrapper<UserApplication>
+  GiveGift: ResolverTypeWrapper<GiveGift>
   CreateUserApplication: ResolverTypeWrapper<CreateUserApplication>
   CreateUserApplicationInput: CreateUserApplicationInput
+  VerifyUserApplication: ResolverTypeWrapper<VerifyUserApplication>
+  VerifyUserApplicationInput: VerifyUserApplicationInput
+  ConfirmMobile: ResolverTypeWrapper<ConfirmMobile>
+  ConfirmMobileInput: ConfirmMobileInput
+  GiveGiftInput: GiveGiftInput
 }
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -400,8 +454,14 @@ export type ResolversParentTypes = {
   Float: Scalars['Float']
   GiftCardCode: GiftCardCode
   UserApplication: UserApplication
+  GiveGift: GiveGift
   CreateUserApplication: CreateUserApplication
   CreateUserApplicationInput: CreateUserApplicationInput
+  VerifyUserApplication: VerifyUserApplication
+  VerifyUserApplicationInput: VerifyUserApplicationInput
+  ConfirmMobile: ConfirmMobile
+  ConfirmMobileInput: ConfirmMobileInput
+  GiveGiftInput: GiveGiftInput
 }
 
 export type AuthUserResolvers<
@@ -634,6 +694,12 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationApproveCompanyApplicationArgs, 'input'>
   >
+  confirmMobile?: Resolver<
+    Maybe<ResolversTypes['ConfirmMobile']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationConfirmMobileArgs, never>
+  >
   createCompanyApplication?: Resolver<
     Maybe<ResolversTypes['CreateCompanyApplication']>,
     ParentType,
@@ -652,6 +718,12 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationFetchUserApplicationArgs, 'ssn'>
   >
+  giveGift?: Resolver<
+    Maybe<ResolversTypes['GiveGift']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationGiveGiftArgs, never>
+  >
   rejectCompanyApplication?: Resolver<
     Maybe<ResolversTypes['RejectCompanyApplication']>,
     ParentType,
@@ -664,6 +736,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationUpdateCompanyApplicationArgs, 'input'>
+  >
+  verifyUserApplication?: Resolver<
+    Maybe<ResolversTypes['VerifyUserApplication']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationVerifyUserApplicationArgs, never>
   >
 }
 
@@ -736,11 +814,20 @@ export type UserApplicationResolvers<
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   mobileNumber?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   countryCode?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  verified?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
   logs?: Resolver<
     Maybe<Array<Maybe<ResolversTypes['ApplicationLog']>>>,
     ParentType,
     ContextType
   >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type GiveGiftResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['GiveGift'] = ResolversParentTypes['GiveGift']
+> = {
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -753,6 +840,27 @@ export type CreateUserApplicationResolvers<
     ParentType,
     ContextType
   >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type VerifyUserApplicationResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['VerifyUserApplication'] = ResolversParentTypes['VerifyUserApplication']
+> = {
+  application?: Resolver<
+    Maybe<ResolversTypes['UserApplication']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type ConfirmMobileResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['ConfirmMobile'] = ResolversParentTypes['ConfirmMobile']
+> = {
+  mobile?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -773,7 +881,10 @@ export type Resolvers<ContextType = Context> = {
   GiftCard?: GiftCardResolvers<ContextType>
   GiftCardCode?: GiftCardCodeResolvers<ContextType>
   UserApplication?: UserApplicationResolvers<ContextType>
+  GiveGift?: GiveGiftResolvers<ContextType>
   CreateUserApplication?: CreateUserApplicationResolvers<ContextType>
+  VerifyUserApplication?: VerifyUserApplicationResolvers<ContextType>
+  ConfirmMobile?: ConfirmMobileResolvers<ContextType>
 }
 
 /**

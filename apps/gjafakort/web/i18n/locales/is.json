@@ -393,6 +393,24 @@
         },
         "submit": "Skrá símanúmerið mitt"
       }
+    },
+    "confirmCodeForm": {
+      "title": "Staðfestingarkóði",
+      "intro": "Vinsamlegast sláðu inn SMS staðfestingarkóðann",
+      "noSMS": "Ef þú fékkst ekki kóðann getur þú",
+      "sendSMSButton": "smellt hér til að senda aftur",
+      "validation": {
+        "confirmCode": "Staðfestingarkóðinn þarf að 6 tölustafir"
+      },
+      "errors": {
+        "confirmCode": "Staðfestingarkóðinn er ekki réttur"
+      },
+      "form": {
+        "confirmCode": {
+          "label": "SMS staðfestingarkóði"
+        },
+        "submit": "Staðfesta símanúmerið mitt"
+      }
     }
   },
   "privacyPolicy": {
@@ -460,6 +478,7 @@
   "validation": {
     "required": "Þessi reitur má ekki vera tómur",
     "phoneNumber": "Símanúmer þarf að vera sjö tölustafir",
+    "phoneNumberInvalid": "Símanúmer þarf að vera gilt",
     "email": "Netfang ekki gilt",
     "webpage": "Vefsíða er ekki gild"
   },
@@ -467,7 +486,8 @@
     "home": "/",
     "companies": {
       "home": "/fyrirtaeki",
-      "application": "/fyrirtaeki/umsokn"
+      "application": "/fyrirtaeki/umsokn",
+      "applicationSsn": "/fyrirtaeki/umsokn/[ssn]"
     },
     "users": {
       "home": "/notandi"

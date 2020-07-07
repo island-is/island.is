@@ -1,7 +1,12 @@
 import { getLocalizedEntries } from './contentful'
 import { logger } from '@island.is/logging'
-import { Entry } from 'contentful'
-import { Image, Article, News, Namespace } from '@island.is/api/schema'
+import {
+  Image,
+  Article,
+  News,
+  Namespace,
+  Pagination,
+} from '@island.is/api/schema'
 
 const formatArticle = ({ sys, fields }): Article => {
   return {
@@ -31,6 +36,17 @@ const formatNewsItem = ({ fields, sys }): News => ({
   image: formatImage(fields.image),
   date: fields.date,
   content: JSON.stringify(fields.content),
+})
+
+const makePage = (
+  page: number,
+  perPage: number,
+  totalResults: number,
+): Pagination => ({
+  page,
+  perPage,
+  totalResults,
+  totalPages: Math.ceil(totalResults / perPage),
 })
 
 export const getArticle = async (
@@ -73,16 +89,16 @@ export const getNewsList = async (
   year: number,
   month: number,
   ascending: boolean,
-  offset: number,
-  limit: number,
+  page = 1,
+  perPage = 10,
 ) => {
   const params = {
     // eslint-disable-next-line @typescript-eslint/camelcase
     content_type: 'news',
     include: 10,
     order: (ascending ? '' : '-') + 'fields.date',
-    skip: offset,
-    limit,
+    skip: (page - 1) * perPage,
+    limit: perPage,
   }
 
   if (year) {
@@ -93,8 +109,15 @@ export const getNewsList = async (
         : new Date(year + 1, 0, 1)
   }
 
-  const r = await getLocalizedEntries<News>(lang, params)
-  return r.items.map(formatNewsItem)
+  const r = await getLocalizedEntries<News>(lang, params).catch((error) => {
+    logger.error(error)
+    throw new Error('Failed to resolve request in getNewsList')
+  })
+
+  return {
+    page: makePage(page, perPage, r.total),
+    news: r.items.map(formatNewsItem),
+  }
 }
 
 export const getNamespace = async (

@@ -89,6 +89,15 @@ spec:
               value: "{{ .cache_time_to_live }}"
             - name: SENTRY_DSN
               value: {{ .sentry_dsn }}
+            - name: NOVA_URL
+              value: {{ .nova_url }}
+            - name: NOVA_USERNAME
+              value: {{ .nova_username }}
+            - name: NOVA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gjafakort-api
+                  key: NOVA_PASSWORD
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}

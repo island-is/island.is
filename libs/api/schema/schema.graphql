@@ -4,7 +4,7 @@ type Query {
   getArticle(input: GetArticleInput): Article
   getNamespace(input: GetNamespaceInput): Namespace
   getNews(input: GetNewsInput!): News
-  getNewsList(input: GetNewsListInput): [News!]!
+  getNewsList(input: GetNewsListInput): PaginatedNews!
   helloWorld(input: HelloWorldInput): HelloWorld!
   root: String
   searchResults(query: SearcherInput): SearchResult!
@@ -28,6 +28,13 @@ type Image {
   contentType: String
   width: Int
   height: Int
+}
+
+type Pagination {
+  page: Int!
+  perPage: Int!
+  totalResults: Int!
+  totalPages: Int!
 }
 
 type Article {
@@ -54,6 +61,11 @@ type News {
   content: String
 }
 
+type PaginatedNews {
+  page: Pagination!
+  news: [News!]!
+}
+
 input GetNewsInput {
   slug: String!
   lang: String
@@ -64,8 +76,8 @@ input GetNewsListInput {
   year: Int
   month: Int
   ascending: Boolean
-  offset: Int
-  limit: Int
+  page: Int
+  perPage: Int
 }
 
 type Namespace {

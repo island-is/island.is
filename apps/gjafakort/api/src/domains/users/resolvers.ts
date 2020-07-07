@@ -2,17 +2,26 @@ import { logger } from '@island.is/logging'
 import { UserInputError, ApolloError } from 'apollo-server-express'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
+import { ConfirmCodeError } from './errors'
 import { authorize } from '../auth'
 import * as userService from './service'
-import { CreateUserApplicationInput } from '../../types'
+import {
+  CreateUserApplicationInput,
+  ConfirmMobileInput,
+  VerifyUserApplicationInput,
+} from '../../types'
 
 const validateMobile = (mobile: string) => {
+  const ICELAND_COUNTRY_CODE = 'IS'
   if (!mobile) {
     throw new UserInputError('Mobile number is required')
   }
-  const phone = parsePhoneNumberFromString(mobile, 'IS')
+  const phone = parsePhoneNumberFromString(mobile, ICELAND_COUNTRY_CODE)
   if (!phone.isValid()) {
     throw new UserInputError('Mobile number is invalid')
+  }
+  if (phone.country !== ICELAND_COUNTRY_CODE) {
+    throw new UserInputError('Icelandic mobile number is required')
   }
   return {
     mobileNumber: phone.nationalNumber.toString(),
@@ -50,6 +59,7 @@ class UserResolver {
       id: application.id,
       mobileNumber: application.data.mobileNumber,
       countryCode: application.data.countryCode,
+      verified: application.data.verified,
     }
   }
 
@@ -68,6 +78,7 @@ class UserResolver {
       id: application.id,
       mobileNumber: application.data.mobileNumber,
       countryCode: application.data.countryCode,
+      verified: application.data.verified,
       logs: application.AuditLogs?.map((auditLog) => ({
         id: auditLog.id,
         created: auditLog.created,
@@ -91,12 +102,60 @@ class UserResolver {
     { user, dataSources: { applicationApi } },
   ) {
     const mobile = user.mobile || input.mobile
-    const verified = Boolean(user.mobile)
     const { mobileNumber, countryCode } = validateMobile(mobile)
+    if (!user.mobile) {
+      const match = await userService.verifyConfirmCode(
+        user.ssn,
+        mobileNumber,
+        input.confirmCode,
+      )
+      if (match !== true) {
+        throw new ConfirmCodeError()
+      }
+    }
+
     const application = await userService.createApplication(
       user.ssn,
       mobileNumber,
       countryCode,
+      applicationApi,
+    )
+
+    return {
+      application: {
+        id: application.id,
+        mobileNumber: application.data.mobileNumber,
+        countryCode: application.data.countryCode,
+        verified: application.data.verified,
+      },
+    }
+  }
+
+  @authorize()
+  public async verifyUserApplication(
+    _1,
+    { input }: { input: VerifyUserApplicationInput },
+    { user, dataSources: { applicationApi } },
+  ) {
+    const { mobileNumber } = validateMobile(input.mobile)
+    const match = await userService.verifyConfirmCode(
+      user.ssn,
+      mobileNumber,
+      input.confirmCode,
+    )
+    if (match !== true) {
+      throw new ConfirmCodeError()
+    }
+
+    let application = await userService.getApplication(user.ssn, applicationApi)
+    if (!application) {
+      return null
+    }
+
+    const verified = true
+    application = await userService.updateApplication(
+      application.id,
+      user.ssn,
       verified,
       applicationApi,
     )
@@ -106,6 +165,7 @@ class UserResolver {
         id: application.id,
         mobileNumber: application.data.mobileNumber,
         countryCode: application.data.countryCode,
+        verified: application.data.verified,
       },
     }
   }
@@ -204,6 +264,21 @@ class UserResolver {
       throw new ApolloError('Could not give gift')
     }
   }
+
+  @authorize()
+  public async confirmMobile(
+    _1,
+    { input }: { input: ConfirmMobileInput },
+    { user, dataSources: { novaApi } },
+  ) {
+    const { mobileNumber } = validateMobile(input.mobile)
+    await userService.sendConfirmCode(user.ssn, mobileNumber, novaApi)
+
+    return {
+      success: true,
+      mobile: mobileNumber,
+    }
+  }
 }
 
 const resolver = new UserResolver()
@@ -218,5 +293,7 @@ export default {
     fetchUserApplication: resolver.fetchGetUserApplication,
     createUserApplication: resolver.createUserApplication,
     giveGift: resolver.giveGift,
+    verifyUserApplication: resolver.verifyUserApplication,
+    confirmMobile: resolver.confirmMobile,
   },
 }

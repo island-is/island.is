@@ -1,8 +1,11 @@
 import React, { useContext, useEffect } from 'react'
+import { ApolloError } from 'apollo-client'
 import { useLazyQuery, useMutation } from 'react-apollo'
 import gql from 'graphql-tag'
+import get from 'lodash/get'
 
 import { Box, Stack, Typography, Button } from '@island.is/island-ui/core'
+import { CONFIRM_CODE_ERROR } from '@island.is/gjafakort/consts'
 
 import { UserContext } from '@island.is/gjafakort-web/context'
 import {
@@ -12,13 +15,15 @@ import {
 } from '@island.is/gjafakort-web/components'
 import { useI18n } from '@island.is/gjafakort-web/i18n'
 
-import { Barcode, MobileForm } from './components'
+import { Barcode, ConfirmMobile } from './components'
 import Link from 'next/link'
 
 export const UserApplicationQuery = gql`
   query UserApplicationQuery {
     userApplication {
       id
+      verified
+      mobileNumber
     }
   }
 `
@@ -28,6 +33,20 @@ const CreateUserApplicationMutation = gql`
     createUserApplication(input: $input) {
       application {
         id
+        verified
+        mobileNumber
+      }
+    }
+  }
+`
+
+const VerifyUserApplicationMutation = gql`
+  mutation VerifyUserApplicationMutation($input: VerifyUserApplicationInput!) {
+    verifyUserApplication(input: $input) {
+      application {
+        id
+        verified
+        mobileNumber
       }
     }
   }
@@ -38,6 +57,7 @@ function User() {
     t: { user: t, routes },
   } = useI18n()
   const { user } = useContext(UserContext)
+  const [verifyUserApplication] = useMutation(VerifyUserApplicationMutation)
   const [createUserApplication, { called: shouldPoll }] = useMutation(
     CreateUserApplicationMutation,
     {
@@ -56,9 +76,7 @@ function User() {
         if (!userApplication && user.mobile) {
           await createUserApplication({
             variables: {
-              input: {
-                mobile: user.mobile,
-              },
+              input: {},
             },
           })
         }
@@ -73,22 +91,43 @@ function User() {
     }
   }, [user, data, getUserApplication])
 
-  const onMobileSubmit = async ({ phoneNumber }, { setSubmitting }) => {
-    setSubmitting(true)
-    await createUserApplication({
-      variables: {
-        input: {
-          mobile: phoneNumber,
+  const onConfirmMobileSubmit = (action) => async (
+    { mobile, confirmCode },
+    { setSubmitting, setErrors },
+  ) => {
+    try {
+      await action({
+        variables: {
+          input: {
+            mobile,
+            confirmCode,
+          },
         },
-      },
-    })
+      })
+    } catch (error) {
+      const confirmCodeError = (error as ApolloError).graphQLErrors.filter(
+        (e) => e.extensions.code === CONFIRM_CODE_ERROR,
+      )[0]
+      if (confirmCodeError) {
+        setErrors({ confirmCode: get(t, confirmCodeError.message) })
+      }
+    }
     setSubmitting(false)
   }
 
   if (!data || loading || !user) {
     return <ContentLoader />
   } else if (!userApplication && !user.mobile) {
-    return <MobileForm onSubmit={onMobileSubmit} />
+    return (
+      <ConfirmMobile onSubmit={onConfirmMobileSubmit(createUserApplication)} />
+    )
+  } else if (userApplication && userApplication.verified === false) {
+    return (
+      <ConfirmMobile
+        onSubmit={onConfirmMobileSubmit(verifyUserApplication)}
+        mobileNumber={userApplication.mobileNumber}
+      />
+    )
   } else if (!userApplication) {
     return <ContentLoader />
   }
