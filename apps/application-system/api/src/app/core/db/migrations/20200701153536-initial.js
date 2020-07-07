@@ -43,7 +43,7 @@ module.exports = {
           ),
           allowNull: false,
         },
-        attatchments: {
+        attachments: {
           type: Sequelize.ARRAY(Sequelize.STRING),
         },
         typeId: {

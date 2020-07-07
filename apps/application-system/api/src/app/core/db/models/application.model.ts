@@ -76,7 +76,7 @@ export class Application extends Model<Application> {
     type: DataType.ARRAY(DataType.STRING),
   })
   @ApiProperty()
-  attatchments: string[]
+  attachments: string[]
 
   @Column({
     type: DataType.STRING,
