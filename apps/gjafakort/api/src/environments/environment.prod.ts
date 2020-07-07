@@ -28,4 +28,9 @@ export default {
     apiKey: process.env.YAY_API_KEY,
     secretKey: process.env.YAY_SECRET_KEY,
   },
+  nova: {
+    url: process.env.NOVA_URL,
+    username: process.env.NOVA_USERNAME,
+    password: process.env.NOVA_PASSWORD,
+  },
 }

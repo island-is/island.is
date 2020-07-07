@@ -11,6 +11,8 @@ gjafakort-api:
     saml_entry_point: 'https://innskraning.island.is/?id=ferdagjof.prod'
     sentry_dsn: 'https://91d3faa6cc0545a9971ea989eaa48fb9@o406638.ingest.sentry.io/5274533'
     yay_url: 'https://serviceapi.yay.is'
+    nova_url: 'https://smsapi.nova.is'
+    nova_username: 'IslandIs_User_Production'
 
   ingress:
     annotations:

@@ -35,7 +35,7 @@ interface GiveGift {
   message: string
 }
 
-class RskAPI extends RESTDataSource {
+class YayAPI extends RESTDataSource {
   baseURL = `${yay.url}/api/v1/`
 
   willSendRequest(request: RequestOptions) {
@@ -92,4 +92,4 @@ class RskAPI extends RESTDataSource {
   }
 }
 
-export default RskAPI
+export default YayAPI
