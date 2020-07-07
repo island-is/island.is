@@ -1,6 +1,5 @@
 import { getLocalizedEntries } from './contentful'
 import { logger } from '@island.is/logging'
-import { Entry } from 'contentful'
 import {
   Image,
   Article,
@@ -90,8 +89,8 @@ export const getNewsList = async (
   year: number,
   month: number,
   ascending: boolean,
-  page: number = 1,
-  perPage: number = 10,
+  page = 1,
+  perPage = 10,
 ) => {
   const params = {
     // eslint-disable-next-line @typescript-eslint/camelcase
