@@ -5,6 +5,7 @@ import gql from 'graphql-tag'
 import get from 'lodash/get'
 
 import { Box, Stack, Typography, Button } from '@island.is/island-ui/core'
+import { CONFIRM_CODE_ERROR } from '@island.is/gjafakort/consts'
 
 import { UserContext } from '@island.is/gjafakort-web/context'
 import {
@@ -105,7 +106,7 @@ function User() {
       })
     } catch (error) {
       const confirmCodeError = (error as ApolloError).graphQLErrors.filter(
-        (e) => e.extensions.code === 'CONFIRM_CODE_ERROR',
+        (e) => e.extensions.code === CONFIRM_CODE_ERROR,
       )[0]
       if (confirmCodeError) {
         setErrors({ confirmCode: get(t, confirmCodeError.message) })
