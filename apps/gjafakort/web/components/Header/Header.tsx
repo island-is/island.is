@@ -10,6 +10,7 @@ import { UserContext } from '../../context'
 import { useI18n } from '../../i18n'
 import { api } from '../../services'
 import { getRoutefromLocale } from '@island.is/gjafakort-web/utils/routesMapper'
+import { Locale } from '@island.is/gjafakort-web/i18n/I18n'
 
 export const UserQuery = gql`
   query UserQuery {
@@ -36,7 +37,7 @@ function Header() {
     setUser(user)
   }, [user, setUser])
 
-  const switchLanguage = async (toLanguage) => {
+  const switchLanguage = async (toLanguage: Locale) => {
     const route = await getRoutefromLocale(
       router.pathname,
       activeLocale,
@@ -52,8 +53,7 @@ function Header() {
       locale(toLanguage)
     }
   }
-  const language =
-    activeLocale === 'is' ? 'en' : activeLocale === 'en' ? 'is' : undefined
+  const language = activeLocale === 'is' ? 'en' : 'is'
 
   return (
     <IslandUIHeader
