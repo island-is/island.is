@@ -25,7 +25,9 @@ gjafakort-api:
 
 gjafakort-web:
   environment:
-    sentry_auth_token: 'https://7d11c5b6d23449659e812f4cb0b711d3@o406638.ingest.sentry.io/5274507'
+    sentry_dsn: 'https://7d11c5b6d23449659e812f4cb0b711d3@o406638.ingest.sentry.io/5274507'
+    sentry_org: 'island_is'
+    sentry_project: 'gjafakort-web'
 
   ingress:
     annotations:
