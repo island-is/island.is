@@ -10,18 +10,18 @@ const AboutYouMultiField: MultiField = buildMultiField({
   id: 'about',
   name: 'Um þig',
   children: [
-    buildTextField({ id: 'name', name: 'Nafn', isRequired: true }),
+    buildTextField({ id: 'name', name: 'Nafn', required: true }),
     buildTextField({
       id: 'nationalId',
       name: 'Kennitala',
-      isRequired: true,
+      required: true,
     }),
     buildTextField({
       id: 'phoneNumber',
       name: 'Símanúmer',
-      isRequired: false,
+      required: false,
     }),
-    buildTextField({ id: 'email', name: 'Netfang', isRequired: false }),
+    buildTextField({ id: 'email', name: 'Netfang', required: false }),
   ],
 })
 

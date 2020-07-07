@@ -14,7 +14,7 @@ describe(' ApplicationForm', () => {
       buildTextField({
         id: 'text',
         name: 'what is your name?',
-        isRequired: false,
+        required: false,
       }),
     ],
   })

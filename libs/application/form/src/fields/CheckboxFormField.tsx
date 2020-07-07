@@ -1,34 +1,32 @@
 import React, { FC } from 'react'
 import { CheckboxField } from '@island.is/application/schema'
-import { Typography, Checkbox, Box } from '@island.is/island-ui/core'
+import { Typography, Box } from '@island.is/island-ui/core'
 import { FieldBaseProps } from './types'
 
 interface Props extends FieldBaseProps {
   field: CheckboxField
 }
 const CheckboxFormField: FC<Props> = ({
-  answers,
+  autoFocus,
   showFieldName = false,
-  answerQuestion,
   field,
+  register,
 }) => {
   const { id, name, options } = field
-  const answer = answers[id] || {}
   return (
     <div>
       {showFieldName && <Typography variant="p">{name}</Typography>}
-      {options.map(({ value, label }) => {
-        const checked = !!answer[value]
+      {options.map(({ value, label }, index) => {
         return (
           <Box key={value} paddingTop={2}>
-            <Checkbox
+            <input
+              autoFocus={autoFocus && index === 0}
+              type="checkbox"
+              name={`${id}[${index}]`}
               id={`${id}-${value}`}
-              label={label}
-              checked={checked}
-              onChange={() => {
-                answerQuestion({ id, answer: { ...answer, [value]: !checked } })
-              }}
+              ref={register}
             />
+            <label htmlFor={`${id}-${value}`}>{label}</label>
           </Box>
         )
       })}

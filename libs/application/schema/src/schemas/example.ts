@@ -16,18 +16,18 @@ const AboutYouMultiField: MultiField = buildMultiField({
   id: 'about',
   name: 'Um þig',
   children: [
-    buildTextField({ id: 'name', name: 'Nafn', isRequired: true }),
+    buildTextField({ id: 'name', name: 'Nafn', required: true }),
     buildTextField({
       id: 'nationalId',
       name: 'Kennitala',
-      isRequired: true,
+      required: true,
     }),
     buildTextField({
       id: 'phoneNumber',
       name: 'Símanúmer',
-      isRequired: false,
+      required: false,
     }),
-    buildTextField({ id: 'email', name: 'Netfang', isRequired: false }),
+    buildTextField({ id: 'email', name: 'Netfang', required: false }),
   ],
 })
 
@@ -55,7 +55,7 @@ const CareerSection: Section = buildSection({
         buildRadioField({
           id: 'any',
           name: 'Hefurðu unnið yfir höfuð einhvern tímann áður?',
-          isRequired: true,
+          required: true,
           options: [
             { value: 'yes', label: 'Já' },
             { value: 'no', label: 'Nei' },
@@ -64,7 +64,7 @@ const CareerSection: Section = buildSection({
         buildCheckboxField({
           id: 'those',
           name: 'Hefurðu unnið fyrir eftirfarandi aðila?',
-          isRequired: false,
+          required: false,
           options: [
             { value: 'government', label: 'Ríkið' },
             { value: 'aranja', label: 'Aranja' },
@@ -80,7 +80,7 @@ const CareerSection: Section = buildSection({
         buildTextField({
           id: 'where',
           name: 'Einhver draumavinnustaður?',
-          isRequired: false,
+          required: false,
         }),
       ],
     }),

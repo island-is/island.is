@@ -51,8 +51,15 @@ export const getScreensForForm = (form: Form): FormScreen[] => {
   return getScreensForFormNode(form)
 }
 
-export const getQuestionsInForm = (form: Form): Question[] => {
-  return getScreensForFormNode(form, true) as Question[]
+export const getQuestionsForFormNode = (
+  node: FormNode,
+): { [key: string]: Question } => {
+  const questions = getScreensForFormNode(node, true) as Question[]
+  const questionMap = {}
+  questions.forEach((question) => {
+    questionMap[question.id] = question
+  })
+  return questionMap
 }
 
 export function getSectionsInForm(form: Form): Section[] {

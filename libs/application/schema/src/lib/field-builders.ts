@@ -1,26 +1,26 @@
+import { Condition } from '../types/condition'
 import {
   CheckboxField,
-  Condition,
   DateField,
   FieldTypes,
   IntroductionField,
   Option,
   RadioField,
   TextField,
-} from '@island.is/application/schema'
+} from '../types/fields'
 
 export function buildCheckboxField(data: {
   condition?: Condition
   id: string
   name: string
   options: Option[]
-  isRequired: boolean
+  required: boolean
 }): CheckboxField {
-  const { condition, id, name, options, isRequired } = data
+  const { condition, id, name, options, required } = data
   return {
     children: undefined,
     isQuestion: true,
-    isRequired,
+    required: required,
     condition,
     id,
     name,
@@ -35,15 +35,15 @@ export function buildDateField(data: {
   name: string
   maxDate?: Date
   minDate?: Date
-  isRequired: boolean
+  required: boolean
 }): DateField {
-  const { condition, id, name, maxDate, minDate, isRequired } = data
+  const { condition, id, name, maxDate, minDate, required } = data
   return {
     children: undefined,
     isQuestion: true,
     condition,
     id,
-    isRequired,
+    required: required,
     name,
     maxDate,
     minDate,
@@ -73,13 +73,13 @@ export function buildRadioField(data: {
   id: string
   name: string
   options: Option[]
-  isRequired: boolean
+  required: boolean
 }): RadioField {
-  const { condition, id, name, options, isRequired } = data
+  const { condition, id, name, options, required } = data
   return {
     children: undefined,
     isQuestion: true,
-    isRequired,
+    required,
     condition,
     id,
     name,
@@ -92,12 +92,12 @@ export function buildTextField(data: {
   condition?: Condition
   id: string
   name: string
-  isRequired: boolean
+  required: boolean
 }): TextField {
-  const { condition, id, name, isRequired } = data
+  const { condition, id, name, required } = data
   return {
     children: undefined,
-    isRequired,
+    required,
     isQuestion: true,
     condition,
     id,

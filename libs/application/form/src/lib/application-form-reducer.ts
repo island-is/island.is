@@ -1,4 +1,5 @@
 import {
+  Answers,
   Form,
   FormScreen,
   Section,
@@ -21,10 +22,6 @@ export function initializeReducer(
     sections,
   }
 }
-
-// TODO how should we type this?
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface Answers {}
 
 export interface ApplicationUIState {
   answers: Answers
@@ -97,7 +94,7 @@ export const ApplicationReducer = (
         ...state,
         answers: {
           ...state.answers,
-          [action.payload.id]: action.payload.answer,
+          ...action.payload,
         },
       }
     default:

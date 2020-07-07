@@ -1,11 +1,10 @@
 import React, { FC, useReducer } from 'react'
-import { Form } from '@island.is/application/schema'
+import { Answers, Form } from '@island.is/application/schema'
 import FormProgress from '../components/form-progress'
 import ApplicationName from '../components/application-name'
 import Screen from '../components/screen'
 import {
   ActionTypes,
-  Answers,
   ApplicationReducer,
   initializeReducer,
 } from './application-form-reducer'
@@ -63,9 +62,10 @@ export const ApplicationForm: FC<ApplicationProps> = ({
           >
             <Screen
               answers={answers}
-              answerQuestion={({ id, answer }) =>
-                dispatch({ type: ActionTypes.ANSWER, payload: { id, answer } })
+              answerQuestions={(payload) =>
+                dispatch({ type: ActionTypes.ANSWER, payload })
               }
+              shouldSubmit={activeScreen === screens.length - 1}
               screen={screens[activeScreen]}
               section={sections[activeSection]}
               nextScreen={() => dispatch({ type: ActionTypes.NEXT_SCREEN })}

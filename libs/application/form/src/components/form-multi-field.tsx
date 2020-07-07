@@ -1,21 +1,18 @@
 import React, { FC } from 'react'
-import { Answers, MultiField } from '@island.is/application/schema'
+import { MultiField } from '@island.is/application/schema'
 import FormField from './form-field'
 
 const FormMultiField: FC<{
-  answers: Answers
-  answerQuestion({ id: string, answer: any }): void
   multiField: MultiField
-}> = ({ answers, answerQuestion, multiField }) => {
+}> = ({ multiField }) => {
   return (
     <div>
-      {multiField.children.map((field) => (
+      {multiField.children.map((field, index) => (
         <FormField
           showFieldName
           field={field}
-          answers={answers}
-          answerQuestion={answerQuestion}
           key={field.id}
+          autoFocus={index === 0}
         />
       ))}
     </div>

@@ -1,6 +1,14 @@
 import { Condition } from './condition'
 import { Field } from './fields'
 
+export interface ValidationError {
+  [key: string]: {
+    type: string
+    message: string
+    value: Answer
+  }
+}
+
 export enum FormItemTypes {
   FORM = 'FORM',
   SECTION = 'SECTION',
@@ -50,4 +58,6 @@ export interface MultiField extends FormItem {
   children: Field[]
 }
 
-export type Answers = object
+export type Answer = string | number | object | string[]
+
+export type Answers = { [key: string]: Answer }
