@@ -486,7 +486,8 @@
     "home": "/",
     "companies": {
       "home": "/fyrirtaeki",
-      "application": "/fyrirtaeki/umsokn"
+      "application": "/fyrirtaeki/umsokn",
+      "applicationSsn": "/fyrirtaeki/umsokn/[ssn]"
     },
     "users": {
       "home": "/notandi"

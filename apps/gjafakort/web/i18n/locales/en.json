@@ -486,7 +486,8 @@
     "home": "/en",
     "companies": {
       "home": "/en/company",
-      "application": "/en/company/application"
+      "application": "/en/company/application",
+      "applicationSsn": "/en/company/application/[ssn]"
     },
     "users": {
       "home": "/en/user"

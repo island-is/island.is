@@ -256,6 +256,7 @@ export interface Routes {
 export interface RoutesCompanies {
   home: string
   application: string
+  applicationSsn: string
 }
 
 export interface Users {
@@ -856,6 +857,7 @@ const typeMap: any = {
     [
       { json: 'home', js: 'home', typ: '' },
       { json: 'application', js: 'application', typ: '' },
+      { json: 'applicationSsn', js: 'applicationSsn', typ: '' },
     ],
     false,
   ),

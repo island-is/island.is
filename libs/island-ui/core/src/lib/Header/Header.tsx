@@ -9,21 +9,25 @@ import { Button } from '../Button/Button'
 import { Hidden } from '../Hidden/Hidden'
 
 export interface HeaderPorps {
-  logoRender?: (ReactElement) => ReactElement
   authenticated?: boolean
-  onLogout?: () => void
+  language?: string
+  logoRender?: (ReactElement) => ReactElement
   logoutText?: string
-  userName?: string
+  onLogout?: () => void
+  switchLanguage?: () => void
   userLogo?: string
+  userName?: string
 }
 
 export const Header = ({
-  logoRender,
   authenticated,
-  onLogout,
-  userName = '',
-  userLogo,
+  language,
+  logoRender,
   logoutText = 'Útskrá',
+  onLogout,
+  switchLanguage,
+  userLogo,
+  userName = '',
 }: HeaderPorps) => {
   const LogoIcon = (
     <>
@@ -44,8 +48,8 @@ export const Header = ({
   return (
     <div className={styles.container}>
       {logo()}
-      {authenticated && (
-        <div className={styles.actionsContainer}>
+      <div className={styles.actionsContainer}>
+        {authenticated && (
           <div className={styles.userNameContainer}>
             {userLogo && (
               <Box marginRight={1} marginBottom={1}>
@@ -58,11 +62,20 @@ export const Header = ({
               {userName}
             </Typography>
           </div>
+        )}
+        {language && (
+          <Box marginRight={2}>
+            <Button variant="menu" onClick={switchLanguage}>
+              {language}
+            </Button>
+          </Box>
+        )}
+        {authenticated && (
           <Button variant="menu" leftIcon="lock" onClick={onLogout}>
             {logoutText}
           </Button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   )
 }
