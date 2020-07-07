@@ -10,35 +10,55 @@ export const container = style({
 export const innerContainer = style({
   position: 'relative',
   whiteSpace: 'nowrap',
-  display: 'flex',
+  display: 'inline-flex',
   height: 'auto',
   flexDirection: 'row',
   transition: `transform 300ms ease`,
   // border: '5px solid lime',
+  ':before': {
+    content: '""',
+    position: 'absolute',
+    opacity: 0.5,
+    width: '100%',
+    height: 8,
+    left: 0,
+    right: 0,
+    top: 'initial',
+    bottom: 56,
+    borderRadius: 10,
+    background: `linear-gradient(-90.09deg, #0161FD 15.89%, #3F46D2 33.21%, #812EA4 51.23%, #C21578 69.24%, #FD0050 85.18%)`,
+  },
   ...themeUtils.responsiveStyle({
     lg: {
       minWidth: '100%',
       // padding: '40px 0',
       flexDirection: 'column',
+      ':before': {
+        background: `linear-gradient(359.09deg, #0161FD 15.89%, #3F46D2 33.21%, #812EA4 51.23%, #C21578 69.24%, #FD0050 85.18%)`,
+        width: 8,
+        height: 'auto',
+        left: 96,
+        top: 0,
+        bottom: 0,
+      },
     },
   }),
 })
 
 export const frame = style({
   position: 'relative',
-  display: 'inline-block',
-  padding: '0 20px',
+  display: 'flex',
+  padding: '0',
   minHeight: '100%',
   minWidth: '100%',
-  overflowY: 'hidden',
+  height: 600,
   overflowX: 'scroll',
   transition: `transform 500ms ease`,
   ...themeUtils.responsiveStyle({
     lg: {
-      padding: '20px 0',
-      maxHeight: 900,
-      overflowY: 'hidden',
-      overflowX: 'hidden',
+      display: 'inline-block',
+      height: 1000,
+      overflow: 'hidden',
     },
   }),
 })
@@ -169,6 +189,7 @@ export const left = style({
 
 export const right = style({
   position: 'relative',
+  display: 'flex',
   flexGrow: 1,
 })
 
@@ -188,30 +209,9 @@ export const yearContainer = style({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'flex-end',
-  ':before': {
-    content: '""',
-    position: 'absolute',
-    opacity: 0.5,
-    width: 'auto',
-    height: 8,
-    left: 0,
-    right: 0,
-    top: 'initial',
-    bottom: 56,
-    borderRadius: 10,
-    background: `linear-gradient(-90.09deg, #0161FD 15.89%, #3F46D2 33.21%, #812EA4 51.23%, #C21578 69.24%, #FD0050 85.18%)`,
-  },
   ...themeUtils.responsiveStyle({
     lg: {
       flexDirection: 'column',
-      ':before': {
-        background: `linear-gradient(359.09deg, #0161FD 15.89%, #3F46D2 33.21%, #812EA4 51.23%, #C21578 69.24%, #FD0050 85.18%)`,
-        width: 8,
-        height: 'auto',
-        left: 96,
-        top: 0,
-        bottom: 0,
-      },
     },
   }),
 })
@@ -259,7 +259,7 @@ export const arrowButtonTypes = styleMap({
     ...themeUtils.responsiveStyle({
       lg: {
         top: -20,
-        left: 81,
+        left: 79,
         transform: `rotate(90deg)`,
       },
     }),
@@ -271,7 +271,7 @@ export const arrowButtonTypes = styleMap({
     ...themeUtils.responsiveStyle({
       lg: {
         bottom: -20,
-        left: 81,
+        left: 79,
         transform: `rotate(-90deg)`,
       },
     }),

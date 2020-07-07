@@ -1,9 +1,14 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
 import cn from 'classnames'
+import { Icon } from '../Icon/Icon'
+import { Button } from '../Button/Button'
+import { Stack } from '../Stack/Stack'
+import { Tag } from '../Tag/Tag'
+import Typography from '../Typography/Typography'
+import { Inline } from '../Inline/Inline'
 
 import * as timelineStyles from './Timeline.treat'
 import * as eventStyles from './Event.treat'
-import { Icon } from '../..'
 
 /* eslint-disable-next-line */
 export interface TimelineProps {}
@@ -43,16 +48,8 @@ const initialState = [
     valueLabel: 'Sóttar ferðagjafir',
     data: {
       labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
-      markup: `
-      <p>Ferðagjöfin er liður í að efla íslenska ferðaþjónustu
-      í kjölfar kórónuveirufaraldurs og er ætlað að hvetja
-      landsmenn til að ferðast innanlands.</p>
-
-      <h3>Þú færð allar upplýsingar um Ferðagjöfina á ferdalag.is.</h3>
-
-      <p>Allir einstaklingar með lögheimili á Íslandi, fæddir árið
-      2002 eða fyrr, fá Ferðagjöf að andvirði 5.000 kr. Gildistími
-      Ferðagjafarinnar er til og með 31. desember 2020.</p>`,
+      text:
+        'Ferðagjöfin er liður í að efla íslenska ferðaþjónustu í kjölfar kórónuveirufaraldurs og er ætlað að hvetja landsmenn til að ferðast innanlands.',
       link: 'https://frettabladid.overcastcdn.com/documents/200626.pdf',
     },
   },
@@ -68,16 +65,8 @@ const initialState = [
     valueLabel: 'Sóttar ferðagjafir',
     data: {
       labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
-      markup: `
-      <p>Ferðagjöfin er liður í að efla íslenska ferðaþjónustu
-      í kjölfar kórónuveirufaraldurs og er ætlað að hvetja
-      landsmenn til að ferðast innanlands.</p>
-
-      <h3>Þú færð allar upplýsingar um Ferðagjöfina á ferdalag.is.</h3>
-
-      <p>Allir einstaklingar með lögheimili á Íslandi, fæddir árið
-      2002 eða fyrr, fá Ferðagjöf að andvirði 5.000 kr. Gildistími
-      Ferðagjafarinnar er til og með 31. desember 2020.</p>`,
+      text:
+        'Ferðagjöfin er liður í að efla íslenska ferðaþjónustu í kjölfar kórónuveirufaraldurs og er ætlað að hvetja landsmenn til að ferðast innanlands.',
       link: 'https://frettabladid.overcastcdn.com/documents/200626.pdf',
     },
   },
@@ -109,16 +98,8 @@ const initialState = [
     valueLabel: 'Sóttar ferðagjafir',
     data: {
       labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
-      markup: `
-      <p>Ferðagjöfin er liður í að efla íslenska ferðaþjónustu
-      í kjölfar kórónuveirufaraldurs og er ætlað að hvetja
-      landsmenn til að ferðast innanlands.</p>
-
-      <h3>Þú færð allar upplýsingar um Ferðagjöfina á ferdalag.is.</h3>
-
-      <p>Allir einstaklingar með lögheimili á Íslandi, fæddir árið
-      2002 eða fyrr, fá Ferðagjöf að andvirði 5.000 kr. Gildistími
-      Ferðagjafarinnar er til og með 31. desember 2020.</p>`,
+      text:
+        'Ferðagjöfin er liður í að efla íslenska ferðaþjónustu í kjölfar kórónuveirufaraldurs og er ætlað að hvetja landsmenn til að ferðast innanlands.',
       link: 'https://frettabladid.overcastcdn.com/documents/200626.pdf',
     },
   },
@@ -127,16 +108,8 @@ const initialState = [
     title: 'Viðspyrna',
     data: {
       labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
-      markup: `
-      <p>Ferðagjöfin er liður í að efla íslenska ferðaþjónustu
-      í kjölfar kórónuveirufaraldurs og er ætlað að hvetja
-      landsmenn til að ferðast innanlands.</p>
-
-      <h3>Þú færð allar upplýsingar um Ferðagjöfina á ferdalag.is.</h3>
-
-      <p>Allir einstaklingar með lögheimili á Íslandi, fæddir árið
-      2002 eða fyrr, fá Ferðagjöf að andvirði 5.000 kr. Gildistími
-      Ferðagjafarinnar er til og með 31. desember 2020.</p>`,
+      text:
+        'Ferðagjöfin er liður í að efla íslenska ferðaþjónustu í kjölfar kórónuveirufaraldurs og er ætlað að hvetja landsmenn til að ferðast innanlands.',
       link: 'https://frettabladid.overcastcdn.com/documents/200626.pdf',
     },
   },
@@ -160,16 +133,8 @@ const initialState = [
     valueLabel: 'Sóttar ferðagjafir',
     data: {
       labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
-      markup: `
-      <p>Ferðagjöfin er liður í að efla íslenska ferðaþjónustu
-      í kjölfar kórónuveirufaraldurs og er ætlað að hvetja
-      landsmenn til að ferðast innanlands.</p>
-
-      <h3>Þú færð allar upplýsingar um Ferðagjöfina á ferdalag.is.</h3>
-
-      <p>Allir einstaklingar með lögheimili á Íslandi, fæddir árið
-      2002 eða fyrr, fá Ferðagjöf að andvirði 5.000 kr. Gildistími
-      Ferðagjafarinnar er til og með 31. desember 2020.</p>`,
+      text:
+        'Ferðagjöfin er liður í að efla íslenska ferðaþjónustu í kjölfar kórónuveirufaraldurs og er ætlað að hvetja landsmenn til að ferðast innanlands.',
       link: 'https://frettabladid.overcastcdn.com/documents/200626.pdf',
     },
   },
@@ -178,16 +143,8 @@ const initialState = [
     title: 'Viðspyrna',
     data: {
       labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
-      markup: `
-      <p>Ferðagjöfin er liður í að efla íslenska ferðaþjónustu
-      í kjölfar kórónuveirufaraldurs og er ætlað að hvetja
-      landsmenn til að ferðast innanlands.</p>
-
-      <h3>Þú færð allar upplýsingar um Ferðagjöfina á ferdalag.is.</h3>
-
-      <p>Allir einstaklingar með lögheimili á Íslandi, fæddir árið
-      2002 eða fyrr, fá Ferðagjöf að andvirði 5.000 kr. Gildistími
-      Ferðagjafarinnar er til og með 31. desember 2020.</p>`,
+      text:
+        'Ferðagjöfin er liður í að efla íslenska ferðaþjónustu í kjölfar kórónuveirufaraldurs og er ætlað að hvetja landsmenn til að ferðast innanlands.',
       link: 'https://frettabladid.overcastcdn.com/documents/200626.pdf',
     },
   },
@@ -207,8 +164,8 @@ const initialState = [
 
 export const Timeline = (props: TimelineProps) => {
   const frameRef = useRef<HTMLDivElement>(null)
-
   const innerContainerRef = useRef<HTMLDivElement>(null)
+
   const [events, setEvents] = useState(initialState)
   const [containerHeight, setContainerHeight] = useState(0)
   const [frameHeight, setFrameHeight] = useState(0)
@@ -259,11 +216,10 @@ export const Timeline = (props: TimelineProps) => {
     return () => window.removeEventListener('resize', onResize)
   }, [onResize])
 
-  console.log(frameJump, jumpIndex)
-
   const jumpTo = (dir) => {
-    // console.log(frameRef.current.getBoundingClientRect())
-    // console.log(innerContainerRef.current.getBoundingClientRect())
+    setVisibleModal(null)
+    const jump = frameJump * jumpIndex
+    const diff = containerHeight - frameHeight
 
     switch (dir) {
       case 'prev':
@@ -272,9 +228,6 @@ export const Timeline = (props: TimelineProps) => {
         }
         break
       case 'next':
-        const jump = frameJump * jumpIndex
-        const diff = containerHeight - frameHeight
-
         if (jump < diff) {
           setJumpIndex(jumpIndex + 1)
         }
@@ -293,7 +246,7 @@ export const Timeline = (props: TimelineProps) => {
     }
 
     innerContainerRef.current.style.transform = `translateY(-${jump}px)`
-  }, [frameJump, innerContainerRef, jumpIndex, containerHeight, frameHeight])
+  }, [frameJump, jumpIndex, containerHeight, frameHeight])
 
   return (
     <div className={timelineStyles.container}>
@@ -351,6 +304,7 @@ export const Timeline = (props: TimelineProps) => {
                             {usableEvents.map((event, eventIndex) => {
                               const larger = Boolean(event.data)
                               const modalKey = `modal-${yearIndex}-${monthIndex}-${eventIndex}`
+                              const isVisible = visibleModal === modalKey
 
                               return (
                                 <div
@@ -359,16 +313,21 @@ export const Timeline = (props: TimelineProps) => {
                                 >
                                   <div className={timelineStyles.event}>
                                     {larger ? (
-                                      <EventBar
-                                        onClick={() =>
-                                          setVisibleModal(
-                                            visibleModal === modalKey
-                                              ? null
-                                              : modalKey,
-                                          )
-                                        }
-                                        event={event}
-                                      />
+                                      <>
+                                        <EventBar
+                                          onClick={() => {
+                                            setVisibleModal(
+                                              isVisible ? null : modalKey,
+                                            )
+                                          }}
+                                          event={event}
+                                        />
+                                        <EventModal
+                                          event={event}
+                                          visible={isVisible}
+                                          onClose={() => setVisibleModal(null)}
+                                        />
+                                      </>
                                     ) : (
                                       <span
                                         className={timelineStyles.eventSimple}
@@ -376,17 +335,13 @@ export const Timeline = (props: TimelineProps) => {
                                         {event.title}
                                       </span>
                                     )}
-                                    <EventModal
-                                      event={event}
-                                      showModal={visibleModal === modalKey}
-                                    />
                                   </div>
                                   <span
                                     className={cn(timelineStyles.bulletLine, {
                                       [timelineStyles.bulletLineLarger]: larger,
                                     })}
                                   >
-                                    <BulletLine />
+                                    <BulletLine selected={isVisible} />
                                   </span>
                                 </div>
                               )
@@ -407,51 +362,80 @@ export const Timeline = (props: TimelineProps) => {
 }
 
 interface EventBarProps {
-  event: any
+  event: any // TODO: Create a type to use here...
   onClick: () => void
 }
 
 const EventBar = ({ event, onClick }: EventBarProps) => {
   return (
-    <button onClick={onClick} className={eventStyles.eventBar}>
-      <div className={eventStyles.eventBarTitle}>
-        <div className={eventStyles.eventBarIcon}>
-          <Icon type="user" color="purple400" width="24" />
+    <>
+      <button onClick={onClick} className={eventStyles.eventBar}>
+        <div className={eventStyles.eventBarTitle}>
+          <div className={eventStyles.eventBarIcon}>
+            <Icon type="user" color="purple400" width="24" />
+          </div>
+          <span className={eventStyles.title}>{event.title}</span>
         </div>
-        <span className={eventStyles.title}>{event.title}</span>
-      </div>
-      {event.value && (
-        <div className={eventStyles.eventBarStats}>
-          <span className={eventStyles.valueWrapper}>
-            <span className={eventStyles.value}>
-              {renderValue(event.value)}
+        {event.value && (
+          <div className={eventStyles.eventBarStats}>
+            <span className={eventStyles.valueWrapper}>
+              <span className={eventStyles.value}>
+                {renderValue(event.value)}
+              </span>
+              <span className={eventStyles.maxValue}>
+                /{renderValue(event.maxValue)}
+              </span>
             </span>
-            <span className={eventStyles.maxValue}>
-              /{renderValue(event.maxValue)}
-            </span>
-          </span>
-          <span className={eventStyles.valueLabel}>{event.valueLabel}</span>
-        </div>
-      )}
-    </button>
+            <span className={eventStyles.valueLabel}>{event.valueLabel}</span>
+          </div>
+        )}
+      </button>
+    </>
   )
 }
 
 interface EventModalProps {
-  showModal: boolean
-  event: any
+  event: any // TODO: Create a type to use here...
+  visible: boolean
+  onClose: () => void
 }
 
-const EventModal = ({ event, showModal = false }: EventModalProps) => {
+const EventModal = ({ event, visible, onClose }: EventModalProps) => {
+  if (!event) {
+    return null
+  }
+
   return (
     <div
       className={cn(eventStyles.eventModal, {
-        [eventStyles.eventModalVisible]: showModal,
+        [eventStyles.eventModalVisible]: visible,
       })}
     >
+      <div className={eventStyles.eventBarIcon}>
+        <Icon type="user" color="purple400" width="24" />
+      </div>
       <div className={eventStyles.eventModalContent}>
-        <h3>{event.title}</h3>
-        <span dangerouslySetInnerHTML={{ __html: event.data?.markup }} />
+        <button onClick={onClose} className={eventStyles.eventModalClose}>
+          <Icon type="close" />
+        </button>
+        <Stack space={3}>
+          <Typography variant="h2" as="h3" color="purple400">
+            {event.title}
+          </Typography>
+          {event.data?.labels && (
+            <Inline space={2}>
+              {event.data.labels.map((label, index) => (
+                <Tag label>{label}</Tag>
+              ))}
+            </Inline>
+          )}
+          <Typography variant="p" as="p">
+            {event.data.text}
+          </Typography>
+          <Button variant="text" icon="arrowRight">
+            Lesa meira
+          </Button>
+        </Stack>
       </div>
     </div>
   )
@@ -480,7 +464,7 @@ type ArrowButtonTypes = 'prev' | 'next'
 
 interface ArrowButtonProps {
   type: ArrowButtonTypes
-  onClick: Function
+  onClick: () => void
 }
 
 const ArrowButton = ({ type = 'prev', onClick }: ArrowButtonProps) => {

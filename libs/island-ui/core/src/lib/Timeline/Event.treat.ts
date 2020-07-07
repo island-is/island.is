@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { themeUtils, theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/theme'
 
 export const eventBar = style({
   position: 'relative',
@@ -88,13 +88,13 @@ export const eventModal = style({
   transition: `all 300ms ease`,
   opacity: 0,
   visibility: 'hidden',
-  zIndex: -1,
+  zIndex: 1,
   top: 0,
   left: 0,
   borderRadius: `50px 5px 5px 5px`,
-  padding: 48,
   boxSizing: 'border-box',
   maxWidth: '660px',
+  minWidth: '660px',
   width: '100%',
   whiteSpace: 'normal',
   backgroundColor: theme.color.purple100,
@@ -107,5 +107,18 @@ export const eventModalVisible = style({
 })
 
 export const eventModalContent = style({
-  outline: '2px solid lime',
+  textAlign: 'left',
+  padding: 30,
+})
+
+export const eventModalClose = style({
+  position: 'absolute',
+  top: 15,
+  right: 15,
+  width: 40,
+  height: 40,
+  lineHeight: 0,
+  backgroundColor: theme.color.white,
+  borderRadius: '50%',
+  outline: 0,
 })
