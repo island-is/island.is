@@ -11,11 +11,14 @@ export const innerContainer = style({
   position: 'relative',
   whiteSpace: 'nowrap',
   display: 'flex',
+  height: 'auto',
   flexDirection: 'row',
+  transition: `transform 300ms ease`,
+  // border: '5px solid lime',
   ...themeUtils.responsiveStyle({
     lg: {
       minWidth: '100%',
-      padding: '40px 0',
+      // padding: '40px 0',
       flexDirection: 'column',
     },
   }),
@@ -23,14 +26,19 @@ export const innerContainer = style({
 
 export const frame = style({
   position: 'relative',
-  display: 'flex',
+  display: 'inline-block',
   padding: '0 20px',
+  minHeight: '100%',
   minWidth: '100%',
-  overflow: 'scroll',
+  overflowY: 'hidden',
+  overflowX: 'scroll',
+  transition: `transform 500ms ease`,
   ...themeUtils.responsiveStyle({
     lg: {
       padding: '20px 0',
-      maxHeight: 1200,
+      maxHeight: 900,
+      overflowY: 'hidden',
+      overflowX: 'hidden',
     },
   }),
 })
@@ -60,9 +68,9 @@ export const eventWrapper = style({
   width: 'auto',
   minHeight: 300,
   marginRight: 40,
-  outline: '1px solid orange',
   marginBottom: 0,
   justifyContent: 'flex-end',
+  alignItems: 'center',
   flexDirection: 'column',
   ':last-child': {
     marginRight: 0,
@@ -81,8 +89,17 @@ export const eventWrapper = style({
 })
 
 export const event = style({
+  marginBottom: 110,
+  marginLeft: 0,
+  ...themeUtils.responsiveStyle({
+    lg: {
+      marginBottom: 0,
+    },
+  }),
+})
+
+export const eventSimple = style({
   position: 'relative',
-  // left: 120,
   minWidth: 300,
   fontWeight: theme.typography.light,
   fontSize: 18,
@@ -93,12 +110,34 @@ export const event = style({
 export const eventLarge = style({ minWidth: 1000 })
 
 export const bulletLine = style({
-  outline: '1px solid green',
-  textAlign: 'center',
+  display: 'inline-flex',
+  justifyItems: 'center',
+  maxWidth: 126,
+  alignItems: 'center',
+  height: 'auto',
   position: 'relative',
+  left: 0,
   transform: `rotate(-90deg)`,
-  bottom: 51,
-  // transformOrigin: 'center bottom',
+  transformOrigin: '50% 50%',
+  bottom: 52,
+  ...themeUtils.responsiveStyle({
+    lg: {
+      transform: `rotate(0deg)`,
+      left: -12,
+      bottom: 'initial',
+    },
+  }),
+})
+
+export const bulletLineLarger = style({
+  marginTop: -10,
+  marginRight: 'initial',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      marginTop: 'initial',
+      marginRight: -15,
+    },
+  }),
 })
 
 export const section = style({
@@ -157,6 +196,7 @@ export const yearContainer = style({
     right: 0,
     top: 'initial',
     bottom: 56,
+    borderRadius: 10,
     background: `linear-gradient(-90.09deg, #0161FD 15.89%, #3F46D2 33.21%, #812EA4 51.23%, #C21578 69.24%, #FD0050 85.18%)`,
   },
   ...themeUtils.responsiveStyle({
@@ -201,6 +241,12 @@ export const arrowButton = style({
   borderRadius: '50%',
   zIndex: 1,
   outline: 0,
+  display: 'none',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      display: 'inline-block',
+    },
+  }),
 })
 
 export const arrowButtonTypes = styleMap({

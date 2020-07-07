@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import cn from 'classnames'
 
 import * as timelineStyles from './Timeline.treat'
@@ -7,6 +7,8 @@ import { Icon } from '../..'
 
 /* eslint-disable-next-line */
 export interface TimelineProps {}
+
+let i = 0
 
 const renderValue = (value) =>
   value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
@@ -58,6 +60,31 @@ const initialState = [
   },
   {
     date: new Date('04/23/2019'),
+    title: 'Eitthvað sniðugt: OMEGA',
+  },
+  {
+    date: new Date('07/07/2019'),
+    title: 'Ferðagjöf',
+    value: 36788,
+    maxValue: 242767,
+    valueLabel: 'Sóttar ferðagjafir',
+    data: {
+      labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
+      markup: `
+      <p>Ferðagjöfin er liður í að efla íslenska ferðaþjónustu
+      í kjölfar kórónuveirufaraldurs og er ætlað að hvetja
+      landsmenn til að ferðast innanlands.</p>
+
+      <h3>Þú færð allar upplýsingar um Ferðagjöfina á ferdalag.is.</h3>
+
+      <p>Allir einstaklingar með lögheimili á Íslandi, fæddir árið
+      2002 eða fyrr, fá Ferðagjöf að andvirði 5.000 kr. Gildistími
+      Ferðagjafarinnar er til og með 31. desember 2020.</p>`,
+      link: 'https://frettabladid.overcastcdn.com/documents/200626.pdf',
+    },
+  },
+  {
+    date: new Date('04/20/2019'),
     title: 'Eitthvað sniðugt: OMEGA',
   },
   {
@@ -127,11 +154,68 @@ const initialState = [
     date: new Date('03/10/2016'),
     title: 'Meira hér!',
   },
+  {
+    date: new Date('04/04/2015'),
+    title: 'Ferðagjöf',
+    value: 36788,
+    maxValue: 242767,
+    valueLabel: 'Sóttar ferðagjafir',
+    data: {
+      labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
+      markup: `
+      <p>Ferðagjöfin er liður í að efla íslenska ferðaþjónustu
+      í kjölfar kórónuveirufaraldurs og er ætlað að hvetja
+      landsmenn til að ferðast innanlands.</p>
+
+      <h3>Þú færð allar upplýsingar um Ferðagjöfina á ferdalag.is.</h3>
+
+      <p>Allir einstaklingar með lögheimili á Íslandi, fæddir árið
+      2002 eða fyrr, fá Ferðagjöf að andvirði 5.000 kr. Gildistími
+      Ferðagjafarinnar er til og með 31. desember 2020.</p>`,
+      link: 'https://frettabladid.overcastcdn.com/documents/200626.pdf',
+    },
+  },
+  {
+    date: new Date('02/02/2015'),
+    title: 'Viðspyrna',
+    data: {
+      labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
+      markup: `
+      <p>Ferðagjöfin er liður í að efla íslenska ferðaþjónustu
+      í kjölfar kórónuveirufaraldurs og er ætlað að hvetja
+      landsmenn til að ferðast innanlands.</p>
+
+      <h3>Þú færð allar upplýsingar um Ferðagjöfina á ferdalag.is.</h3>
+
+      <p>Allir einstaklingar með lögheimili á Íslandi, fæddir árið
+      2002 eða fyrr, fá Ferðagjöf að andvirði 5.000 kr. Gildistími
+      Ferðagjafarinnar er til og með 31. desember 2020.</p>`,
+      link: 'https://frettabladid.overcastcdn.com/documents/200626.pdf',
+    },
+  },
+  {
+    date: new Date('04/23/2015'),
+    title: 'Eitthvað sniðugt: OMEGA',
+  },
+  {
+    date: new Date('03/09/2015'),
+    title: 'Margt gerðist hér!',
+  },
+  {
+    date: new Date('03/10/2015'),
+    title: 'Meira hér!',
+  },
 ].sort((a, b) => b.date.getTime() - a.date.getTime())
 
 export const Timeline = (props: TimelineProps) => {
   const frameRef = useRef<HTMLDivElement>(null)
+
+  const innerContainerRef = useRef<HTMLDivElement>(null)
   const [events, setEvents] = useState(initialState)
+  const [containerHeight, setContainerHeight] = useState(0)
+  const [frameHeight, setFrameHeight] = useState(0)
+  const [frameJump, setFrameJump] = useState(0)
+  const [jumpIndex, setJumpIndex] = useState(0)
 
   const usableYears = events.reduce((usableYears, item) => {
     const eventYear = item.date.getFullYear()
@@ -164,12 +248,60 @@ export const Timeline = (props: TimelineProps) => {
         event.date.getFullYear() === year && event.date.getMonth() === month,
     )
 
+  const onResize = useCallback(() => {
+    setFrameJump(frameRef.current.offsetHeight / 2)
+    setContainerHeight(innerContainerRef.current.offsetHeight)
+    setFrameHeight(frameRef.current.offsetHeight)
+  }, [innerContainerRef, frameRef, setFrameJump])
+
+  useEffect(() => {
+    window.addEventListener('resize', onResize)
+    onResize()
+    return () => window.removeEventListener('resize', onResize)
+  }, [onResize])
+
+  console.log(frameJump, jumpIndex)
+
+  const jumpTo = (dir) => {
+    // console.log(frameRef.current.getBoundingClientRect())
+    // console.log(innerContainerRef.current.getBoundingClientRect())
+
+    switch (dir) {
+      case 'prev':
+        if (jumpIndex !== 0) {
+          setJumpIndex(jumpIndex - 1)
+        }
+        break
+      case 'next':
+        const jump = frameJump * jumpIndex
+        const diff = containerHeight - frameHeight
+
+        if (jump < diff) {
+          setJumpIndex(jumpIndex + 1)
+        }
+        break
+      default:
+        break
+    }
+  }
+
+  useEffect(() => {
+    let jump = frameJump * jumpIndex
+    const diff = containerHeight - frameHeight
+
+    if (jump > containerHeight - frameHeight) {
+      jump = diff
+    }
+
+    innerContainerRef.current.style.transform = `translateY(-${jump}px)`
+  }, [frameJump, innerContainerRef, jumpIndex, containerHeight, frameHeight])
+
   return (
     <div className={timelineStyles.container}>
-      <ArrowButton type="prev" />
-      <ArrowButton type="next" />
+      <ArrowButton type="prev" onClick={() => jumpTo('prev')} />
+      <ArrowButton type="next" onClick={() => jumpTo('next')} />
       <div ref={frameRef} className={timelineStyles.frame}>
-        <div className={timelineStyles.innerContainer}>
+        <div ref={innerContainerRef} className={timelineStyles.innerContainer}>
           {usableYears.map((year, index) => {
             const usableMonths = getUsableMonthsInYear(year)
 
@@ -222,16 +354,20 @@ export const Timeline = (props: TimelineProps) => {
                                   key={index}
                                   className={timelineStyles.eventWrapper}
                                 >
-                                  {larger ? (
-                                    <EventBar {...event} />
-                                  ) : (
-                                    <div className={timelineStyles.event}>
-                                      {event.title}
-                                    </div>
-                                  )}
+                                  <div className={timelineStyles.event}>
+                                    {larger ? (
+                                      <EventBar {...event} />
+                                    ) : (
+                                      <span
+                                        className={timelineStyles.eventSimple}
+                                      >
+                                        {event.title}
+                                      </span>
+                                    )}
+                                  </div>
                                   <span
                                     className={cn(timelineStyles.bulletLine, {
-                                      // [timelineStyles.bulletLineLarger]: larger,
+                                      [timelineStyles.bulletLineLarger]: larger,
                                     })}
                                   >
                                     <BulletLine />
@@ -303,11 +439,13 @@ type ArrowButtonTypes = 'prev' | 'next'
 
 interface ArrowButtonProps {
   type: ArrowButtonTypes
+  onClick: Function
 }
 
-const ArrowButton = ({ type = 'prev' }: ArrowButtonProps) => {
+const ArrowButton = ({ type = 'prev', onClick }: ArrowButtonProps) => {
   return (
     <button
+      onClick={onClick}
       className={cn(
         timelineStyles.arrowButton,
         timelineStyles.arrowButtonTypes[type],
