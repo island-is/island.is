@@ -10,6 +10,10 @@ export const Default = () => (
   <Pagination page={10} totalPages={44} makeHref={(p) => `#page=${p}`} />
 )
 
+export const SinglePage = () => (
+  <Pagination page={1} totalPages={1} makeHref={(p) => `#page=${p}`} />
+)
+
 export const Edge = () => (
   <Pagination page={1} totalPages={7} makeHref={(p) => `#page=${p}`} />
 )

@@ -15,8 +15,8 @@ export const resolvers: Resolvers = {
         input?.year,
         input?.month,
         input?.ascending,
-        input?.offset ?? 0,
-        input?.limit ?? 10,
+        input?.page ?? 1,
+        input?.perPage ?? 10,
       )
     },
     getNamespace(_, { input }) {

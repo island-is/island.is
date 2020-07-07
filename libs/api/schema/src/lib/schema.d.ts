@@ -21,7 +21,7 @@ export type Query = {
   getArticle?: Maybe<Article>
   getNamespace?: Maybe<Namespace>
   getNews?: Maybe<News>
-  getNewsList: Array<News>
+  getNewsList: PaginatedNews
   helloWorld: HelloWorld
   root?: Maybe<Scalars['String']>
   searchResults: SearchResult
@@ -86,6 +86,14 @@ export type Image = {
   height?: Maybe<Scalars['Int']>
 }
 
+export type Pagination = {
+  __typename?: 'Pagination'
+  page: Scalars['Int']
+  perPage: Scalars['Int']
+  totalResults: Scalars['Int']
+  totalPages: Scalars['Int']
+}
+
 export type Article = {
   __typename?: 'Article'
   id: Scalars['String']
@@ -112,6 +120,12 @@ export type News = {
   content?: Maybe<Scalars['String']>
 }
 
+export type PaginatedNews = {
+  __typename?: 'PaginatedNews'
+  page: Pagination
+  news: Array<News>
+}
+
 export type GetNewsInput = {
   slug: Scalars['String']
   lang?: Maybe<Scalars['String']>
@@ -122,8 +136,8 @@ export type GetNewsListInput = {
   year?: Maybe<Scalars['Int']>
   month?: Maybe<Scalars['Int']>
   ascending?: Maybe<Scalars['Boolean']>
-  offset?: Maybe<Scalars['Int']>
-  limit?: Maybe<Scalars['Int']>
+  page?: Maybe<Scalars['Int']>
+  perPage?: Maybe<Scalars['Int']>
 }
 
 export type Namespace = {
@@ -346,9 +360,11 @@ export type ResolversTypes = {
   Taxonomy: ResolverTypeWrapper<Taxonomy>
   Image: ResolverTypeWrapper<Image>
   Int: ResolverTypeWrapper<Scalars['Int']>
+  Pagination: ResolverTypeWrapper<Pagination>
   Article: ResolverTypeWrapper<Article>
   GetArticleInput: GetArticleInput
   News: ResolverTypeWrapper<News>
+  PaginatedNews: ResolverTypeWrapper<PaginatedNews>
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
@@ -378,9 +394,11 @@ export type ResolversParentTypes = {
   Taxonomy: Taxonomy
   Image: Image
   Int: Scalars['Int']
+  Pagination: Pagination
   Article: Article
   GetArticleInput: GetArticleInput
   News: News
+  PaginatedNews: PaginatedNews
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
   Boolean: Scalars['Boolean']
@@ -437,7 +455,7 @@ export type QueryResolvers<
     RequireFields<QueryGetNewsArgs, 'input'>
   >
   getNewsList?: Resolver<
-    Array<ResolversTypes['News']>,
+    ResolversTypes['PaginatedNews'],
     ParentType,
     ContextType,
     RequireFields<QueryGetNewsListArgs, never>
@@ -497,6 +515,17 @@ export type ImageResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type PaginationResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Pagination'] = ResolversParentTypes['Pagination']
+> = {
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  perPage?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  totalResults?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type ArticleResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']
@@ -521,6 +550,15 @@ export type NewsResolvers<
   image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type PaginatedNewsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['PaginatedNews'] = ResolversParentTypes['PaginatedNews']
+> = {
+  page?: Resolver<ResolversTypes['Pagination'], ParentType, ContextType>
+  news?: Resolver<Array<ResolversTypes['News']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -627,8 +665,10 @@ export type Resolvers<ContextType = Context> = {
   Mutation?: MutationResolvers<ContextType>
   Taxonomy?: TaxonomyResolvers<ContextType>
   Image?: ImageResolvers<ContextType>
+  Pagination?: PaginationResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
   News?: NewsResolvers<ContextType>
+  PaginatedNews?: PaginatedNewsResolvers<ContextType>
   Namespace?: NamespaceResolvers<ContextType>
   ContentItem?: ContentItemResolvers<ContextType>
   SearchResult?: SearchResultResolvers<ContextType>

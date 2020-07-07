@@ -21,6 +21,7 @@ import {
   Columns,
   Column,
   Option,
+  Pagination,
 } from '@island.is/island-ui/core'
 import { GET_NEWS_LIST_QUERY } from './queries'
 import { NewsListLayout } from './Layouts/Layouts'
@@ -30,10 +31,15 @@ import {
   QueryGetNewsListArgs,
 } from '@island.is/api/schema'
 
-const PER_PAGE = 10
+const PageLink = ({children, href, ...props}) => (
+  <Link href={href}>
+    <a {...props}>{children}</a>
+  </Link>
+)
 
 interface NewsListProps {
-  newsList: Query['getNewsList']
+  newsList: Query['getNewsList']['news']
+  page: Query['getNewsList']['page']
   dateRange: string[]
   year?: number
   month?: number
@@ -41,6 +47,7 @@ interface NewsListProps {
 
 const NewsList: Screen<NewsListProps> = ({
   newsList,
+  page,
   dateRange,
   year,
   month,
@@ -50,7 +57,7 @@ const NewsList: Screen<NewsListProps> = ({
   const { makePath } = useRouteNames(activeLocale as Locale)
   const { format } = useDateUtils()
 
-  if (year && newsList.length === 0) {
+  if ((year || page.page > 1) && newsList.length === 0) {
     return <DefaultErrorPage statusCode={404} />
   }
 
@@ -122,6 +129,19 @@ const NewsList: Screen<NewsListProps> = ({
           {newsList.map((newsItem) => (
             <NewsListItem newsItem={newsItem} />
           ))}
+          <Box paddingTop={8}>
+            <Pagination
+              {...page}
+              linkComp={PageLink}
+              makeHref={(p) => ({
+                pathname: '/frett',
+                query: {
+                  ...Router.query,
+                  page: p,
+                }
+              })}
+            />
+          </Box>
         </Stack>
       </NewsListLayout>
     </>
@@ -166,20 +186,26 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   const [
     {
-      data: { getNewsList: oldest },
+      data: {
+        getNewsList: { news: oldest },
+      },
     },
     {
-      data: { getNewsList: latest },
+      data: {
+        getNewsList: { news: latest },
+      },
     },
     {
-      data: { getNewsList: newsList },
+      data: {
+        getNewsList: { news: newsList, page },
+      },
     },
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetNewsListArgs>({
       query: GET_NEWS_LIST_QUERY,
       variables: {
         input: {
-          limit: 1,
+          perPage: 1,
           ascending: true,
         },
       },
@@ -188,7 +214,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_NEWS_LIST_QUERY,
       variables: {
         input: {
-          limit: 1,
+          perPage: 1,
         },
       },
     }),
@@ -197,7 +223,8 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       variables: {
         input: {
           lang: locale as ContentLanguage,
-          limit: PER_PAGE,
+          page: getIntParam(query.page) ?? 1,
+          perPage: 10,
           year,
           month,
         },
@@ -212,6 +239,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     newsList,
+    page,
     year,
     month,
     dateRange: createDateRange(

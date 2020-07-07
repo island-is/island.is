@@ -10,16 +10,13 @@ const range = (min, max) =>
 export interface PaginationProps {
   page: number
   totalPages: number
-  makeHref: (number) => string
+  makeHref: (number) => any
   linkComp?: React.ReactType
 }
 
-export const Pagination = ({
-  page,
-  totalPages,
-  makeHref,
-  linkComp: Link = 'a',
-}) => {
+export const Pagination = ({ page, totalPages, makeHref, linkComp }) => {
+  const Link = linkComp ?? 'a'
+
   const renderEdgeLink = ({ page, isActive, iconType }) => {
     return isActive ? (
       <Link className={cn(styles.link, styles.edge)} href={makeHref(page)}>
