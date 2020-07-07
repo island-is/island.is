@@ -7,6 +7,7 @@ import star from './star.svg'
 
 import { Route, Link } from 'react-router-dom'
 import { ServicePortalModules } from '@island.is/service-portal/modules'
+import { makeServer } from 'apps/service-portal/mirage-server'
 
 export const App = () => {
   /*
@@ -14,6 +15,7 @@ export const App = () => {
    *
    * Note: The corresponding styles are in the ./App.scss file.
    */
+  makeServer();
   return (
     <div className="app">
       <header className="flex">

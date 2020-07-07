@@ -19633,6 +19633,11 @@ wcwidth@^1.0.1:
   dependencies:
     defaults "^1.0.3"
 
+webcrypto-jwt@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/webcrypto-jwt/-/webcrypto-jwt-0.2.2.tgz#dc21c4e8a78c3e11fe9210d0cd1ce4f8c1151a13"
+  integrity sha512-ykmbh97Pf68pI9P/K12pRGPVovY+r0WC+DwdWS93omRYwlaCTSIs20tV7EDny1aHTNaZGFByE4t0fVI7V4OffA==
+
 webidl-conversions@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-4.0.2.tgz#a855980b1f0b6b359ba1d5d9fb39ae941faa63ad"

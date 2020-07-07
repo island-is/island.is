@@ -115,6 +115,7 @@
     "timeout-signal": "1.0.0",
     "treat": "1.4.1",
     "uuidv4": "6.0.8",
+    "webcrypto-jwt": "^0.2.2",
     "winston": "3.2.1",
     "xstate": "4.10.0",
     "yup": "0.29.0"
