@@ -10,6 +10,11 @@ export class SentryTransport extends Transport {
     // Checks whether sentry has been initialized
     // https://github.com/getsentry/sentry-go/issues/9
     if (Sentry.getCurrentHub()?.getClient()) {
+      if (info.extra) {
+        Object.keys(info.extra).forEach((key) => {
+          Sentry.setExtra(key, info.extra[key])
+        })
+      }
       Sentry.captureMessage(info.message)
     }
     callback()

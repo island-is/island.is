@@ -248,7 +248,7 @@ class UserResolver {
       data: { mobileNumber, countryCode },
     } = application
     try {
-      const response = await yayApi.giveGift({
+      await yayApi.giveGift({
         mobileNumber,
         countryCode,
         giftCardId,
