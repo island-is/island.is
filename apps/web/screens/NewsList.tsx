@@ -78,9 +78,8 @@ const NewsList: Screen<NewsListProps> = ({
       </Typography>
       <Divider weight="alternate" />
       <Select
-        reselect
-        value={year.toString()}
         name="year"
+        value={year.toString()}
         options={options}
         onChange={(e) => {
           Router.push({
@@ -89,6 +88,19 @@ const NewsList: Screen<NewsListProps> = ({
           })
         }}
       />
+
+      <Typography variant="p" as="p">
+        <Link
+          href={{
+            pathname: '/frett',
+            query: {
+              y: year,
+            },
+          }}
+        >
+          <a>Allt árið {year}</a>
+        </Link>
+      </Typography>
       {months.map((date: Date) => (
         <Typography key={date.toISOString()} variant="p" as="p">
           <Link
