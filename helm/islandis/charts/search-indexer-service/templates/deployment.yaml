@@ -59,12 +59,20 @@ spec:
               port: http
           env:
             {{- with .Values.environment }}
-            - name: ELASTIC_NODE
-              value: {{ .elastic_node }}
             - name: APPLICATION_URL
               value: {{ .application_url }}
+            - name: ELASTIC_NODE
+              value: {{ .elastic_node }}
             - name: ELASTIC_INDEX
               value: {{ .elastic_index }}
+            - name: CONTENTFUL_SPACE
+              value: {{ .contentful_space }}
+            - name: CONTENTFUL_ACCESS_TOKEN
+              value: {{ .contentful_access_token }}
+            - name: CONTENTFUL_ENVIRONMENT
+              value: {{ .contentful_environment }}
+            - name: CONTENTFUL_HOST
+              value: {{ .contentful_host }}
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
