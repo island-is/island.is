@@ -42,16 +42,6 @@ export const ExampleForm: Form = buildForm({
       id: 'intro',
       name: 'Upplýsingar',
       children: [
-        buildCheckboxField({
-          id: 'careerHistoryCompanies',
-          name: 'Hefurðu unnið fyrir eftirfarandi aðila?',
-          required: false,
-          options: [
-            { value: 'government', label: 'Ríkið' },
-            { value: 'aranja', label: 'Aranja' },
-            { value: 'advania', label: 'Advania' },
-          ],
-        }),
         buildIntroductionField({
           id: 'field',
           name: 'Velkomin(n)',

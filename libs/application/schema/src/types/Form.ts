@@ -18,6 +18,7 @@ export enum FormItemTypes {
   MULTI_FIELD = 'MULTI_FIELD',
 }
 
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Schema = ZodObject<any>
 
 export interface Form {

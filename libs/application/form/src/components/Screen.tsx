@@ -47,6 +47,7 @@ const Screen: FC<ScreenProps> = ({
   }, [screen])
   const onSubmit: SubmitHandler<Answers> = (data) => {
     if (shouldSubmit) {
+      console.log('here we will submit')
     } else {
       answerQuestions(data)
       nextScreen()
