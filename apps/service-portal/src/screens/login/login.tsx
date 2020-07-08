@@ -3,7 +3,6 @@ import React from 'react'
 import { fetchToken } from './../../auth/utils'
 import { useStateValue } from './../../stateProvider'
 import jwtDecode from 'jwt-decode'
-import {} from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
 
 interface Subject {
