@@ -5,6 +5,8 @@ import { useStateValue } from './../../stateProvider'
 import jwtDecode from 'jwt-decode'
 import { useHistory } from 'react-router-dom'
 
+const MOCK_AUTH_KEY = 'mockAuthenticated'
+
 interface Subject {
   accountType: string
   email: string
@@ -26,11 +28,13 @@ export const Login = () => {
   const history = useHistory()
   const handleLogin = async () => {
     const userData = await fetchToken()
-    const decodedToken: DecodedJwtToken = jwtDecode(userData.token)
+    const Token = userData.token
+    const decodedToken: DecodedJwtToken = jwtDecode(Token)
     dispatch({
       type: 'setUser',
       payload: decodedToken.user,
     })
+    localStorage[MOCK_AUTH_KEY] = Token
     history.push('/')
   }
   return (
