@@ -30,7 +30,7 @@ export const Select: FC<SelectProps> = ({
   return (
     <div className={styles.container}>
       <label className={styles.label}>
-        {selected != null && selected.label}
+        {selected !== undefined && selected.label}
         <div className={styles.icon}>
           <Icon type="cheveron" width={16} height={9} />
         </div>

@@ -79,7 +79,7 @@ const NewsList: Screen<NewsListProps> = ({
       <Divider weight="alternate" />
       <Select
         reselect
-        value={'' + year}
+        value={year.toString()}
         name="year"
         options={options}
         onChange={(e) => {
