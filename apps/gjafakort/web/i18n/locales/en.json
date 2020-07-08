@@ -350,11 +350,12 @@
       "fromPrefix": "From:",
       "value": "Value",
       "total": "Total",
-      "giveGiftCard": "Give giftcard:",
-      "phoneNumberInput": "Phone number",
+      "giveGiftCard": "Give giftcard",
+      "phoneNumberInput": "Recipient phone number",
       "messageInput": "Message",
       "giveContinueButton": "Give",
-      "giftOverview": "Gift overview: confirm gift",
+      "giftOverview": "Gift overview",
+      "confirmGift": "confirm gift",
       "receiver": "Receiver:",
       "message": "Message:",
       "editButton": "Edit",
@@ -391,7 +392,7 @@
         "confirmPhoneNumber": {
           "label": "Confirm phone number"
         },
-        "submit": "Subit phone number"
+        "submit": "Submit phone number"
       }
     },
     "confirmCodeForm": {
@@ -409,7 +410,7 @@
         "confirmCode": {
           "label": "SMS confirmation code"
         },
-        "submit": "Confirm my mobile number"
+        "submit": "Confirm my phone number"
       }
     }
   },

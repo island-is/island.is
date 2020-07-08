@@ -27,6 +27,7 @@ import { barcodeMachine } from './barcodeMachine'
 import { Countdown, RenderBarcode } from '..'
 import { Form, Formik, Field } from 'formik'
 import { NotificationService } from '@island.is/gjafakort-web/services'
+import * as styles from './Barcode.treat'
 
 const GiftCardsQuery = gql`
   query GiftCardsQuery {
@@ -244,9 +245,11 @@ function Barcode({ shouldPoll: initialPolling }: PropTypes) {
             <Stack space={3}>
               <Typography variant="h4">
                 {t.giveGiftCard}{' '}
-                {current.context.giftCard.amount &&
-                  formatNumber(current.context.giftCard.amount)}{' '}
-                kr.
+                <span className={styles.amount}>
+                  {current.context.giftCard.amount &&
+                    formatNumber(current.context.giftCard.amount)}{' '}
+                  kr.
+                </span>
               </Typography>
               <Field
                 component={FieldNumberInput}
@@ -295,7 +298,12 @@ function Barcode({ shouldPoll: initialPolling }: PropTypes) {
           borderRadius="standard"
         >
           <Stack space={3}>
-            <Typography variant="h2">{t.giftOverview}</Typography>
+            <Typography variant="h2">
+              {t.giftOverview}
+              <Typography variant="h3" color="dark300">
+                {t.confirmGift}
+              </Typography>
+            </Typography>
             <div>
               <Typography variant="h4">{t.giveGiftCard}</Typography>
               <Typography variant="p">
