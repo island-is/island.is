@@ -296,6 +296,7 @@ export interface Barcode {
   messageInput: string
   giveContinueButton: string
   giftOverview: string
+  confirmGift: string
   receiver: string
   message: string
   editButton: string
@@ -904,6 +905,7 @@ const typeMap: any = {
       { json: 'messageInput', js: 'messageInput', typ: '' },
       { json: 'giveContinueButton', js: 'giveContinueButton', typ: '' },
       { json: 'giftOverview', js: 'giftOverview', typ: '' },
+      { json: 'confirmGift', js: 'confirmGift', typ: '' },
       { json: 'receiver', js: 'receiver', typ: '' },
       { json: 'message', js: 'message', typ: '' },
       { json: 'editButton', js: 'editButton', typ: '' },
