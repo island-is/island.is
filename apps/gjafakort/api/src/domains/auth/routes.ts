@@ -17,8 +17,8 @@ import { VerifyResult } from './types'
 import {
   ACCESS_TOKEN_COOKIE,
   CSRF_COOKIE,
-  FIFTEEN_MINUTES,
   JWT_EXPIRES_IN_SECONDS,
+  ONE_HOUR,
   REDIRECT_COOKIE,
 } from './consts'
 import { environment } from '../../environments'
@@ -129,11 +129,7 @@ router.get(
     const { returnUrl } = req.query
 
     res
-      .cookie(
-        name,
-        { authId, returnUrl },
-        { ...options, maxAge: FIFTEEN_MINUTES },
-      )
+      .cookie(name, { authId, returnUrl }, { ...options, maxAge: ONE_HOUR })
       .redirect(`${samlEntryPoint}&authid=${authId}`)
   },
 )
