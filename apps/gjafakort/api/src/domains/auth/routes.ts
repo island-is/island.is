@@ -52,7 +52,7 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
   }
 
   const { user } = verifyResult
-  if (!user || authId !== user?.authId || returnUrl.charAt(0) !== '/') {
+  if (!user || authId !== user?.authId) {
     logger.error('Invalid verification', {
       extra: {
         user,
@@ -101,7 +101,7 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
       ...ACCESS_TOKEN_COOKIE.options,
       maxAge,
     })
-    .redirect(returnUrl)
+    .redirect(returnUrl.charAt(0) !== '/' ? '/' : returnUrl)
 })
 
 router.get(
