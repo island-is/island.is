@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import DefaultErrorPage from 'next/error'
 import { Screen } from '../types'
+import Select from '../components/Select/Select'
 import { withApollo } from '../graphql'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -16,11 +17,9 @@ import {
   Typography,
   Stack,
   Breadcrumbs,
-  Select,
   Divider,
   Columns,
   Column,
-  Option,
   Pagination,
 } from '@island.is/island-ui/core'
 import { GET_NEWS_LIST_QUERY } from './queries'
@@ -62,7 +61,7 @@ const NewsList: Screen<NewsListProps> = ({
   }
 
   const dates = dateRange.map((s) => new Date(s))
-  const datesByYear = groupBy(dates, (d) => d.getFullYear())
+  const datesByYear = groupBy(dates, (d: Date) => d.getFullYear())
 
   const years = Object.keys(datesByYear)
   const months = datesByYear[year] ?? []
@@ -79,17 +78,18 @@ const NewsList: Screen<NewsListProps> = ({
       </Typography>
       <Divider weight="alternate" />
       <Select
-        value={{ value: '' + year, label: '' + year }}
+        reselect
+        value={'' + year}
         name="year"
         options={options}
-        onChange={({ value }: Option) => {
+        onChange={(e) => {
           Router.push({
             pathname: '/frett',
-            query: { y: value },
+            query: { y: e.target.value },
           })
         }}
       />
-      {months.map((date) => (
+      {months.map((date: Date) => (
         <Typography key={date.toISOString()} variant="p" as="p">
           <Link
             href={{
@@ -134,7 +134,7 @@ const NewsList: Screen<NewsListProps> = ({
             <Pagination
               {...page}
               linkComp={PageLink}
-              makeHref={(p) => ({
+              makeHref={(p: number) => ({
                 pathname: '/frett',
                 query: {
                   ...Router.query,
@@ -250,8 +250,8 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-const getIntParam = (s) => {
-  const i = parseInt(s, 10)
+const getIntParam = (s: string | string[]) => {
+  const i = parseInt(Array.isArray(s) ? s[0] : s, 10)
   if (!isNaN(i)) return i
 }
 
@@ -262,7 +262,7 @@ const createDateRange = (min: Date, max: Date): string[] => {
     max.getFullYear() * 12 + max.getMonth(),
     min.getFullYear() * 12 + min.getMonth() - 1,
     -1,
-  ).map((i) => new Date(Math.floor(i / 12), i % 12).toISOString())
+  ).map((i: number) => new Date(Math.floor(i / 12), i % 12).toISOString())
 }
 
 export default withApollo(NewsList)
