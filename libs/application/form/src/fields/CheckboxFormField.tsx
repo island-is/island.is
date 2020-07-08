@@ -22,9 +22,10 @@ const CheckboxFormField: FC<Props> = ({
             <input
               autoFocus={autoFocus && index === 0}
               type="checkbox"
+              value={value}
               name={`${id}[${index}]`}
               id={`${id}-${value}`}
-              ref={register}
+              ref={register()}
             />
             <label htmlFor={`${id}-${value}`}>{label}</label>
           </Box>

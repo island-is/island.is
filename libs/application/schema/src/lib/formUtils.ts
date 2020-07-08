@@ -1,6 +1,6 @@
-import { FormNode, FormScreen } from '../types/form-tree'
-import { Form, FormItemTypes, Section, SubSection } from '../types/form'
-import { Question } from '../types/fields'
+import { FormNode, FormScreen } from '../types/FormTree'
+import { Form, FormItemTypes, Section, SubSection } from '../types/Form'
+import { Question } from '../types/Fields'
 
 const isValidScreen = (node: FormNode): boolean => {
   if (!node.children) {

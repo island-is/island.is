@@ -1,5 +1,5 @@
-import { Field } from './fields'
-import { Form, MultiField, Repeater, Section, SubSection } from './form'
+import { Field } from './Fields'
+import { Form, MultiField, Repeater, Section, SubSection } from './Form'
 
 export type FormNode =
   | Form

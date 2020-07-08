@@ -1,53 +1,25 @@
-import { Answers, Answer, ValidationError } from '../types/form'
-import { Question } from '../types/fields'
-import { FormNode } from '../types/form-tree'
-import { getQuestionsForFormNode } from '../lib/schema-utils'
-
-export function hasValue(value): boolean {
-  const isNotNull = value !== null
-  const isNotUndefined = value !== undefined
-  const isNotEmptyString = value !== ''
-
-  if (typeof value === 'object') {
-    if (value instanceof Array) {
-      return value.length > 0
-    }
-  }
-
-  return isNotNull && isNotUndefined && isNotEmptyString
-}
-
-const isRequired = (answer: Answer, question: Question): ValidationError => {
-  if (!question.required) {
-    return {}
-  }
-  if (hasValue(answer)) {
-    return {}
-  }
-  return {
-    [question.id]: {
-      type: 'required',
-      message: '',
-      value: answer,
-    },
-  }
-}
+import { Answers, Schema } from '../types/Form'
+import { FormNode } from '../types/FormTree'
+import { getQuestionsForFormNode } from '../lib/formUtils'
+import { ZodError } from 'zod'
 
 export function areAnswersValid(
   answers: Answers,
   formNode: FormNode,
-): ValidationError {
+  partialValidation: boolean,
+  dataSchema: Schema,
+): ZodError {
   const questionMap = getQuestionsForFormNode(formNode)
-  const questionIds = Object.keys(questionMap)
-
-  let errors: ValidationError = {}
-
-  questionIds.forEach((questionId) => {
-    const question = questionMap[questionId]
-    const answer = answers[questionId]
-
-    errors = { ...errors, ...isRequired(answer, question) }
+  const questionsToCheck = {}
+  Object.keys(partialValidation ? answers : questionMap).forEach((id) => {
+    questionsToCheck[id] = true
   })
 
-  return errors
+  const newSchema = dataSchema.pick(questionsToCheck)
+  try {
+    newSchema.parse(answers)
+  } catch (error) {
+    return error as ZodError
+  }
+  return undefined
 }

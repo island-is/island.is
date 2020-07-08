@@ -1,4 +1,4 @@
-import { FormItem } from './form'
+import { FormItem } from './Form'
 
 export interface Option {
   value: string

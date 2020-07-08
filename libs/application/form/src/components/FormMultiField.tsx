@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { MultiField } from '@island.is/application/schema'
-import FormField from './form-field'
+import FormField from './FormField'
 
 const FormMultiField: FC<{
   multiField: MultiField

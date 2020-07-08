@@ -2,23 +2,29 @@ import {
   Answers,
   areAnswersValid,
   FormNode,
+  Schema,
 } from '@island.is/application/schema'
+import { Resolver } from 'react-hook-form'
 
-// example for our own validation
-export const resolver = (formNode: FormNode) => async (answers: Answers) => {
-  const validationError = areAnswersValid(answers, formNode)
+type Context = { formNode: FormNode; dataSchema: Schema }
 
-  const faultyQuestionIds = Object.keys(validationError)
-  const values = {}
-  const errors = {}
-  faultyQuestionIds.forEach((questionId) => {
-    const validation = validationError[questionId]
-    values[questionId] = validationError.value
-    errors[questionId] = { type: validation.type, message: validation.message }
-  })
+export const resolver: Resolver<Answers, Context> = async (
+  answers,
+  context,
+) => {
+  const { formNode, dataSchema } = context
+  const validationError = areAnswersValid(answers, formNode, true, dataSchema)
+  if (validationError) {
+    const { errors } = validationError
+    const errorMap = {}
+    errors.forEach(({ path, message }) => {
+      errorMap[path.toString()] = { message }
+    })
+    return { values: {}, errors: errorMap }
+  }
 
   return {
-    values,
-    errors,
+    values: answers,
+    errors: {},
   }
 }

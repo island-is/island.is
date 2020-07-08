@@ -1,5 +1,6 @@
-import { Condition } from './condition'
-import { Field } from './fields'
+import { ZodObject } from 'zod'
+import { Condition } from './Condition'
+import { Field } from './Fields'
 
 export interface ValidationError {
   [key: string]: {
@@ -17,9 +18,12 @@ export enum FormItemTypes {
   MULTI_FIELD = 'MULTI_FIELD',
 }
 
+export type Schema = ZodObject<any>
+
 export interface Form {
   id: string
   name: string
+  schema: Schema
   type: FormItemTypes.FORM
   icon?: string
   ownerId: string

@@ -1,21 +1,23 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import {
   Answers,
   Field,
   FormItemTypes,
   FormScreen,
   MultiField,
+  Schema,
   Section,
 } from '@island.is/application/schema'
 import { Typography, Box, Button, Divider } from '@island.is/island-ui/core'
-import { useForm, FormProvider } from 'react-hook-form'
-import FormMultiField from './form-multi-field'
-import FormField from './form-field'
+import { useForm, FormProvider, SubmitHandler } from 'react-hook-form'
+import FormMultiField from './FormMultiField'
+import FormField from './FormField'
 import { resolver } from '../validation/resolver'
 
 type ScreenProps = {
   answers: Answers
   answerQuestions(Answers): void
+  dataSchema: Schema
   shouldSubmit?: boolean
   nextScreen(): void
   prevScreen(): void
@@ -26,22 +28,26 @@ type ScreenProps = {
 const Screen: FC<ScreenProps> = ({
   answers,
   answerQuestions,
+  dataSchema,
   nextScreen,
   prevScreen,
   shouldSubmit = false,
   screen,
   section,
 }) => {
-  const methods = useForm({
+  const methods = useForm<Answers>({
+    mode: 'onSubmit',
     defaultValues: answers,
     shouldUnregister: false,
-    resolver: resolver(screen),
+    resolver,
+    context: { dataSchema, formNode: screen },
   })
-  const onSubmit = (data) => {
+  useEffect(() => {
+    methods.reset(answers)
+  }, [screen])
+  const onSubmit: SubmitHandler<Answers> = (data) => {
     if (shouldSubmit) {
-      console.log('lets submit')
     } else {
-      console.log(data)
       answerQuestions(data)
       nextScreen()
     }

@@ -1,4 +1,4 @@
-import { Condition } from '../types/condition'
+import { Condition } from '../types/Condition'
 import {
   CheckboxField,
   DateField,
@@ -7,7 +7,7 @@ import {
   Option,
   RadioField,
   TextField,
-} from '../types/fields'
+} from '../types/Fields'
 
 export function buildCheckboxField(data: {
   condition?: Condition
