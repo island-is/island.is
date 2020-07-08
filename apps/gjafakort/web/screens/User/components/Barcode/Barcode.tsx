@@ -183,6 +183,7 @@ function Barcode({ shouldPoll: initialPolling }: PropTypes) {
                 </Typography>
               </Box>
               <Button
+                noWrap
                 onClick={() => {
                   getBarcode(giftCard)
                 }}
