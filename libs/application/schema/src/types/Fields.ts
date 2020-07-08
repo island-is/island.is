@@ -1,4 +1,4 @@
-import { FormItem } from './form'
+import { FormItem } from './Form'
 
 export interface Option {
   value: string
@@ -20,7 +20,7 @@ export enum FieldTypes {
 
 export interface Question extends BaseField {
   readonly isQuestion: true
-  isRequired?: boolean
+  required?: boolean
 }
 
 export interface CheckboxField extends Question {
@@ -46,6 +46,8 @@ export interface RadioField extends Question {
 
 export interface TextField extends Question {
   readonly type: FieldTypes.TEXT
+  minLength?: number
+  maxLength?: number
 }
 
 export type Field =

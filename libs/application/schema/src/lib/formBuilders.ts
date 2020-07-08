@@ -1,5 +1,5 @@
-import { Field } from '../types/fields'
-import { Condition } from '../types/condition'
+import { Field } from '../types/Fields'
+import { Condition } from '../types/Condition'
 import {
   Form,
   FormChildren,
@@ -11,13 +11,15 @@ import {
   Repeater,
   SectionChildren,
   SubSectionChildren,
-} from '../types/form'
+  Schema,
+} from '../types/Form'
 
 export function buildForm(data: {
   id: string
   ownerId: string
   name: string
   children: FormChildren[]
+  schema: Schema
 }): Form {
   return { ...data, type: FormItemTypes.FORM }
 }

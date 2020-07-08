@@ -1,9 +1,10 @@
-import { Answers, Field } from '@island.is/application/schema'
+import { Field } from '@island.is/application/schema'
+import { Ref } from 'react'
 
 export interface FieldBaseProps {
   field: Field
-  answers: Answers
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  answerQuestion: (a: { id: string; answer: any }) => void
+  autoFocus?: boolean
   showFieldName?: boolean
+  //eslint-disable-next-line @typescript-eslint/no-explicit-any
+  register: () => Ref<any> | null
 }

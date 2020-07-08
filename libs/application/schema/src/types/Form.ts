@@ -1,5 +1,14 @@
-import { Condition } from './condition'
-import { Field } from './fields'
+import { ZodObject } from 'zod'
+import { Condition } from './Condition'
+import { Field } from './Fields'
+
+export interface ValidationError {
+  [key: string]: {
+    type: string
+    message: string
+    value: Answer
+  }
+}
 
 export enum FormItemTypes {
   FORM = 'FORM',
@@ -9,9 +18,13 @@ export enum FormItemTypes {
   MULTI_FIELD = 'MULTI_FIELD',
 }
 
+//eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Schema = ZodObject<any>
+
 export interface Form {
   id: string
   name: string
+  schema: Schema
   type: FormItemTypes.FORM
   icon?: string
   ownerId: string
@@ -50,4 +63,6 @@ export interface MultiField extends FormItem {
   children: Field[]
 }
 
-export type Answers = object
+export type Answer = string | number | object | string[]
+
+export type Answers = { [key: string]: Answer }

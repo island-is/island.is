@@ -26,8 +26,6 @@ export class ApplicationsController {
   @Post()
   @ApiCreatedResponse({ type: Application })
   async create(@Body() application: ApplicationDto): Promise<Application> {
-    // Validate answers based of typeId
-    // GET schema for typeId
     return await this.applicationService.create(application)
   }
 

@@ -1,6 +1,5 @@
 import React, { FC } from 'react'
 import {
-  Answers,
   CheckboxField,
   Field,
   FieldTypes,
@@ -8,23 +7,24 @@ import {
   RadioField,
   TextField,
 } from '@island.is/application/schema'
+import { useFormContext } from 'react-hook-form'
 import CheckboxFormField from '../fields/CheckboxFormField'
 import IntroductionFormField from '../fields/IntroductionFormField'
 import TextFormField from '../fields/TextFormField'
 import RadioFormField from '../fields/RadioFormField'
 
 const FormField: FC<{
-  answers: Answers
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  answerQuestion: (a: any) => void
   field: Field
   showFieldName?: boolean
-}> = ({ field, answerQuestion, answers, showFieldName }) => {
+  autoFocus?: boolean
+}> = ({ autoFocus, field, showFieldName }) => {
+  const { register } = useFormContext()
+
   if (field.type === FieldTypes.CHECKBOX) {
     return (
       <CheckboxFormField
-        answerQuestion={answerQuestion}
-        answers={answers}
+        autoFocus={autoFocus}
+        register={register}
         field={field as CheckboxField}
         showFieldName={showFieldName}
       />
@@ -39,18 +39,18 @@ const FormField: FC<{
   } else if (field.type === FieldTypes.RADIO) {
     return (
       <RadioFormField
+        autoFocus={autoFocus}
         field={field as RadioField}
-        answers={answers}
-        answerQuestion={answerQuestion}
+        register={register}
         showFieldName={showFieldName}
       />
     )
   } else if (field.type === FieldTypes.TEXT) {
     return (
       <TextFormField
+        autoFocus={autoFocus}
         field={field as TextField}
-        answers={answers}
-        answerQuestion={answerQuestion}
+        register={register}
         showFieldName={showFieldName}
       />
     )

@@ -11,11 +11,9 @@ import {
 // TODO this definitely needs more ui improvements
 const FormProgressSection: FC<{
   section: Section
-  isCompleted: boolean
   isActive: boolean
   sectionIndex: number
-  subSectionIndex?: number
-}> = ({ section, sectionIndex, isCompleted, isActive, subSectionIndex }) => {
+}> = ({ section, sectionIndex, isActive }) => {
   return (
     <Box border="standard" padding={4}>
       <Box padding={1} background="blue100">

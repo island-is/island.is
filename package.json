@@ -107,6 +107,7 @@
     "react-animate-height": "2.0.21",
     "react-apollo": "3.1.5",
     "react-dom": "16.12.0",
+    "react-hook-form": "6.0.1",
     "react-html-parser": "2.0.2",
     "react-keyed-flatten-children": "1.2.0",
     "react-number-format": "4.4.1",
@@ -125,7 +126,8 @@
     "uuidv4": "6.0.8",
     "winston": "3.2.1",
     "xstate": "4.10.0",
-    "yup": "0.29.0"
+    "yup": "0.29.0",
+    "zod": "1.7.2"
   },
   "devDependencies": {
     "@babel/core": "7.8.3",

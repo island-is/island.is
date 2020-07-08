@@ -1,23 +1,21 @@
 import React, { FC } from 'react'
 import { Section } from '@island.is/application/schema'
-import FormProgressSection from './form-progress-section'
+import FormProgressSection from './FormProgressSection'
 
 // TODO this definitely needs more ui improvements
 const FormProgress: FC<{
   activeSection: number
   activeSubSection: number
   sections: Section[]
-}> = ({ sections, activeSection, activeSubSection }) => {
+}> = ({ sections, activeSection }) => {
   return (
     <div>
       {sections.map((section, index) => (
         <FormProgressSection
           key={`${section.name}-${index}`}
           section={section}
-          isCompleted={activeSection > index}
           isActive={index === activeSection}
           sectionIndex={index}
-          subSectionIndex={index === activeSubSection ? activeSubSection : -1}
         />
       ))}
     </div>

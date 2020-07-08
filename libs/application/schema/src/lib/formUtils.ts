@@ -1,6 +1,6 @@
-import { FormNode, FormScreen } from '../types/form-tree'
-import { Form, FormItemTypes, Section, SubSection } from '../types/form'
-import { Question } from '../types/fields'
+import { FormNode, FormScreen } from '../types/FormTree'
+import { Form, FormItemTypes, Section, SubSection } from '../types/Form'
+import { Question } from '../types/Fields'
 
 const isValidScreen = (node: FormNode): boolean => {
   if (!node.children) {
@@ -51,8 +51,15 @@ export const getScreensForForm = (form: Form): FormScreen[] => {
   return getScreensForFormNode(form)
 }
 
-export const getQuestionsInForm = (form: Form): Question[] => {
-  return getScreensForFormNode(form, true) as Question[]
+export const getQuestionsForFormNode = (
+  node: FormNode,
+): { [key: string]: Question } => {
+  const questions = getScreensForFormNode(node, true) as Question[]
+  const questionMap = {}
+  questions.forEach((question) => {
+    questionMap[question.id] = question
+  })
+  return questionMap
 }
 
 export function getSectionsInForm(form: Form): Section[] {
