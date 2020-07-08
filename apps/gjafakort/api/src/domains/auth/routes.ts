@@ -40,7 +40,7 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
   }
 
   const { token } = req.body
-  const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE.name]
+  const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE.name] || {}
   res.clearCookie(REDIRECT_COOKIE.name, REDIRECT_COOKIE.options)
   let verifyResult: VerifyResult
 
@@ -54,7 +54,9 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
   const { user } = verifyResult
   if (!user || authId !== user?.authId || returnUrl.charAt(0) !== '/') {
     logger.error(
-      `Invalid verification: user<${user}> authId<${authId}> returnUrl<${returnUrl}>`,
+      `Invalid verification: user<${JSON.stringify(
+        user,
+      )}> authId<${authId}> returnUrl<${returnUrl}>`,
     )
     return res.redirect('/error')
   }
