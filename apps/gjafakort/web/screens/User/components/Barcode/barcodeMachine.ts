@@ -135,7 +135,7 @@ export const barcodeMachine = Machine<
     },
     states: {
       idle: {
-        entry: 'refetchList',
+        entry: ['refetchList', 'resetGiveInfo'],
         on: {
           GET_BARCODE: {
             actions: assign({
@@ -268,6 +268,9 @@ export const barcodeMachine = Machine<
     actions: {
       tick: assign({
         elapsed: ({ elapsed }) => elapsed + 1,
+      }),
+      resetGiveInfo: assign({
+        giveInfo: { phoneNumber: '', message: '' },
       }),
     },
     guards: {
