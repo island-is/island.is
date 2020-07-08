@@ -7,6 +7,7 @@ import { Login } from '../screens/login/login'
 import { StateProvider } from '../stateProvider'
 import * as store from '../store'
 import Authenticator from '../components/authenticator/authenticator'
+import Header from '../components/header/header'
 
 export const App = () => {
   makeServer()
@@ -18,7 +19,8 @@ export const App = () => {
             <Login />
           </Route>
           <Authenticator>
-            <div>Va home</div>
+            <Header />
+            <div>Logged in</div>
           </Authenticator>
         </Switch>
       </StateProvider>

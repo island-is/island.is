@@ -12,7 +12,7 @@ export default sleep
 
 export const isAuthenticated = () => localStorage[MOCK_AUTH_KEY] === 'true'
 
-export const fetchToken = async (value: boolean): Promise<MockToken> => {
+export const fetchToken = async (): Promise<MockToken> => {
   const nationalId = '2606862759'
   const token = await fetch('/user/token', {
     method: 'POST', // or 'PUT'
@@ -21,6 +21,10 @@ export const fetchToken = async (value: boolean): Promise<MockToken> => {
     },
     body: JSON.stringify(nationalId),
   })
-  localStorage[MOCK_AUTH_KEY] = value
+  localStorage[MOCK_AUTH_KEY] = true
   return token.json()
+}
+
+export const removeToken = async () => {
+  localStorage[MOCK_AUTH_KEY] = false
 }

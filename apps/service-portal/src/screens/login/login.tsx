@@ -3,6 +3,7 @@ import React from 'react'
 import { fetchToken } from './../../auth/utils'
 import { useStateValue } from './../../stateProvider'
 import jwtDecode from 'jwt-decode'
+import {} from 'react-router-dom'
 
 interface Subject {
   accountType: string
@@ -22,20 +23,14 @@ interface DecodedJwtToken {
 
 export const Login = () => {
   const [, dispatch] = useStateValue()
-  // const history = useHistory()
-  // const location = useLocation()
-  // // @ts-ignore
-  // const { from } = location.state || { from: { pathname: '/' } }
-
   const handleLogin = async () => {
-    const userData = await fetchToken(true)
+    const userData = await fetchToken()
     const decodedToken: DecodedJwtToken = jwtDecode(userData.token)
-
     dispatch({
       type: 'setUser',
       payload: decodedToken.user,
     })
-    // history.replace(from)
+    window.location.replace('/')
   }
   return (
     <div>

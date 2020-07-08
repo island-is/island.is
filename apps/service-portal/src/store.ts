@@ -28,12 +28,12 @@ export const initialState: State = {
 
 export const reducer = (state, action) => {
   switch (action.type) {
-    case 'fetchingToken':
+    case 'fetchingUser':
       return {
         ...state,
         userInfoState: 'pending',
       }
-    case 'setUserInfo':
+    case 'setUser':
       return {
         ...state,
         userInfo: action.payload,

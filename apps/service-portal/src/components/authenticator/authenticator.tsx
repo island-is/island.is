@@ -9,19 +9,21 @@ export interface AuthenticatorProps {
 export const Authenticator: FC<AuthenticatorProps> = ({
   children,
   ...rest
-}) => (
-  <Route
-    {...rest}
-    render={({ location }) =>
-      isAuthenticated() ? (
-        children
-      ) : (
-        <Redirect
-          to={{ pathname: '/innskraning', state: { from: location } }}
-        />
-      )
-    }
-  />
-)
+}) => {
+  return (
+    <Route
+      {...rest}
+      render={({ location }) =>
+        isAuthenticated() ? (
+          children
+        ) : (
+          <Redirect
+            to={{ pathname: '/innskraning', state: { from: location } }}
+          />
+        )
+      }
+    />
+  )
+}
 
 export default Authenticator

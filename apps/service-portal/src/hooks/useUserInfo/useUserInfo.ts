@@ -8,11 +8,11 @@ export const useUserInfo = () => {
 
   const fetchUser = async () => {
     dispatch({
-      type: 'fetchingToken',
+      type: 'fetchingUser',
     })
-    const userInfo = await fetchToken(true)
+    const userInfo = await fetchToken()
     dispatch({
-      type: 'setUserInfo',
+      type: 'setUser',
       payload: userInfo,
     })
   }
