@@ -4,6 +4,7 @@ import { fetchToken } from './../../auth/utils'
 import { useStateValue } from './../../stateProvider'
 import jwtDecode from 'jwt-decode'
 import {} from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 
 interface Subject {
   accountType: string
@@ -23,6 +24,7 @@ interface DecodedJwtToken {
 
 export const Login = () => {
   const [, dispatch] = useStateValue()
+  const history = useHistory()
   const handleLogin = async () => {
     const userData = await fetchToken()
     const decodedToken: DecodedJwtToken = jwtDecode(userData.token)
@@ -30,13 +32,11 @@ export const Login = () => {
       type: 'setUser',
       payload: decodedToken.user,
     })
-    window.location.replace('/')
+    history.push('/')
   }
   return (
     <div>
-      <div>
-        <button onClick={handleLogin}>Innskráning</button>
-      </div>
+      <button onClick={handleLogin}>Innskráning</button>
     </div>
   )
 }

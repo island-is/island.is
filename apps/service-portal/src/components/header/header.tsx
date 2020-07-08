@@ -9,14 +9,13 @@ export interface HeaderProps {
 }
 
 export const Header = (props: HeaderProps) => {
-  const [state, setState] = useStateValue()
+  const [, setState] = useStateValue()
   const handleLogout = async () => {
     console.log('logout')
     await removeToken()
     setState(initialState)
     window.location.replace('/innskraning')
   }
-  console.log(state)
 
   return (
     <header>
