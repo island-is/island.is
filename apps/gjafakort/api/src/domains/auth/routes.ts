@@ -53,6 +53,9 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
 
   const { user } = verifyResult
   if (!user || authId !== user?.authId || returnUrl.charAt(0) !== '/') {
+    logger.error(
+      `Invalid verification: user<${user}> authId<${authId}> returnUrl<${returnUrl}>`,
+    )
     return res.redirect('/error')
   }
 
