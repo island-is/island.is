@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { useStateValue } from './../../stateProvider'
 import { initialState } from '../../store'
 import { useHistory } from 'react-router-dom'
-import { usePersistedState } from '../../hooks/usePersistedState/usePersistUserInfo'
+import { usePersistUserInfo } from '../../hooks/usePersistUserInfo/usePersistUserInfo'
 
 const MOCK_AUTH_KEY = 'mockAuthenticated'
 
@@ -13,7 +13,7 @@ interface HeaderProps {
 }
 
 export const Header = (props: HeaderProps) => {
-  const { userInfo, userInfoState } = usePersistedState()
+  usePersistUserInfo()
   const [state, setState] = useStateValue()
   const history = useHistory()
   console.log(state)

@@ -3,7 +3,7 @@ import { MockUserData, AsyncActionState } from '../../store'
 import { useEffect } from 'react'
 import { fetchToken } from '../../auth/utils'
 
-export const usePersistedState = () => {
+export const usePersistUserInfo = () => {
   const [{ userInfo, userInfoState }, dispatch] = useStateValue()
 
   useEffect(() => {
