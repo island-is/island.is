@@ -130,7 +130,7 @@ router.get(
 
     res
       .cookie(name, { authId, returnUrl }, { ...options, maxAge: ONE_HOUR })
-      .redirect(`${samlEntryPoint}&authid=${authId}`)
+      .redirect(`${samlEntryPoint}&authId=${authId}`)
   },
 )
 
