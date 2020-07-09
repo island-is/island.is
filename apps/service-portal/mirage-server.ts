@@ -1,36 +1,75 @@
-import { Server, Model, Response, hasMany, Factory } from "miragejs"
-import { JwtUtils } from './src/mirage-server/jwt-utils'
+import { Server, Model, Response, hasMany } from "miragejs"
+import actors from './src/mirage-server/fixtures/actors'
+import subjects from './src/mirage-server/fixtures/subjects'
+import { JwtToken , JwtUtils } from './src/mirage-server/models/jwt-model'
+import { Actor } from './src/mirage-server/models/actor'
+import { AuthService } from './src/mirage-server/auth-service'
+import { Subject } from './src/mirage-server/models/subject'
 
 export function makeServer({ environment = "development" } = {}) {
+
 	const JWT_SECRET = '098765432345678987654'
 	
 	let server = new Server({
 		models: {
-			actor: Model
+			actor:Model.extend({
+				account: hasMany(),
+			}),
+			account: Model
+		},
+		fixtures: {
+			actors: actors,
+			subjects: subjects
 		},
 		seeds(server) {
-			server.create('actor', {
-				nationalId: '2606862759',
-				scope: [
-					'@Island.is/health',
-					'@Island.is/health/perscriptions.edit',
-					'@Island.is/health/vaccines.view'
-				],
-				accountType: 'person',
-				name: 'Ólafur Björn Magnússon',
-				actor: '2606862759',
-				subject: '2606862759'
-			} as any)
+			server.loadFixtures("actors", "subjects")
 		},
 		routes() {
-			this.post("/user/token", async (schema, request) => {
+			
+			this.post("/user/token", async (schema , request) => {
+				const authService = new AuthService(server.db)
 				let nationalId = JSON.parse(request.requestBody)
+				const actor : Actor = authService.getActorByNationalId(nationalId)
+				if(!actor) return new Response(403)
+				const subject = authService.getSubjectByNationalId(nationalId)
 
-				const user = schema.db.actors.findBy(x => x.nationalId === nationalId)
-				if(!user) return new Response(403)
-				const token = await JwtUtils.signJwt(user, JWT_SECRET)
+				const jwt = new JwtToken(actor, subject)
+				const token = await jwt.signJwt(JWT_SECRET)
 
 				return new Response(200, {}, {token})
+			})
+
+			this.get("/user/accounts", async (schema, request) => {
+				const authService = new AuthService(server.db)
+				const token = request.requestHeaders.authorization
+				const isValid = await JwtUtils.isValidJwt(token, JWT_SECRET)
+
+				if(!isValid) return new Response(403)
+
+				const parsedToken: JwtToken = await JwtUtils.parseJwt(token)
+				const subjects = authService.getSubjectListByNationalId(parsedToken.actor.nationalId)
+
+				return new Response(200, {}, {subjects})
+			})
+
+			this.get("/user/tokenexchange/:nationalId", async (schema, request) => {
+				const authService = new AuthService(server.db)
+				const token = request.requestHeaders.authorization
+				const isValid = await JwtUtils.isValidJwt(token, JWT_SECRET)
+				if(!isValid) return new Response(403)
+
+				const parsedToken: JwtToken = await JwtUtils.parseJwt(token)
+				const actor : Actor = authService.getActorByNationalId(parsedToken.actor.nationalId)
+				const subject: Subject = authService.getSubjectForActor(actor)
+
+				if(!subject) {
+					return new Response(403)
+				}
+
+				const jwt = new JwtToken(actor, subject)
+				const newToken = await jwt.signJwt(JWT_SECRET)
+
+				return new Response(200, {}, {newToken})
 			})
 		}
 	})
