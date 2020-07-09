@@ -1,4 +1,4 @@
-const MOCK_AUTH_KEY = 'mockAuthenticated'
+import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
 
 const sleep = (ms = 0) => {
   return new Promise((r) => setTimeout(r, ms))

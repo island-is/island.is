@@ -4,8 +4,7 @@ import { fetchToken } from './../../auth/utils'
 import { useStateValue } from './../../stateProvider'
 import jwtDecode from 'jwt-decode'
 import { useHistory } from 'react-router-dom'
-
-const MOCK_AUTH_KEY = 'mockAuthenticated'
+import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
 
 interface Subject {
   accountType: string

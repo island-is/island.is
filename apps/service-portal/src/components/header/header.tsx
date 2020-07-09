@@ -5,8 +5,7 @@ import { useStateValue } from './../../stateProvider'
 import { initialState } from '../../store'
 import { useHistory } from 'react-router-dom'
 import { usePersistUserInfo } from '../../hooks/usePersistUserInfo/usePersistUserInfo'
-
-const MOCK_AUTH_KEY = 'mockAuthenticated'
+import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
 
 interface HeaderProps {
   something?: string
