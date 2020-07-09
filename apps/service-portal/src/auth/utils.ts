@@ -10,7 +10,7 @@ interface MockToken {
 
 export default sleep
 
-export const isAuthenticated = () => localStorage[MOCK_AUTH_KEY].length > 0
+export const isAuthenticated = () => localStorage[MOCK_AUTH_KEY]?.length > 0
 
 export const fetchToken = async (): Promise<MockToken> => {
   const nationalId = '2606862759'
