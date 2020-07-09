@@ -24,3 +24,22 @@ export const GET_NEWS_LIST_QUERY = gql`
     }
   }
 `
+
+export const GET_NEWS_ITEM_QUERY = gql`
+  query($input: GetNewsInput!) {
+    getNews(input: $input) {
+      id
+      title
+      date
+      slug
+      intro
+      content
+      image {
+        url
+        title
+        width
+        height
+      }
+    }
+  }
+`

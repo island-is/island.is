@@ -1,12 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { groupBy, range } from 'lodash'
+import { groupBy, range, capitalize } from 'lodash'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import DefaultErrorPage from 'next/error'
 import { Screen } from '../types'
 import Select from '../components/Select/Select'
+import Bullet from '../components/Bullet/Bullet'
 import { withApollo } from '../graphql'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -40,23 +41,23 @@ interface NewsListProps {
   newsList: Query['getNewsList']['news']
   page: Query['getNewsList']['page']
   dateRange: string[]
-  year?: number
-  month?: number
+  selectedYear: number
+  selectedMonth: number
 }
 
 const NewsList: Screen<NewsListProps> = ({
   newsList,
   page,
   dateRange,
-  year,
-  month,
+  selectedYear,
+  selectedMonth,
 }) => {
   const Router = useRouter()
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale as Locale)
   const { format } = useDateUtils()
 
-  if ((year || page.page > 1) && newsList.length === 0) {
+  if ((selectedYear || page.page > 1) && newsList.length === 0) {
     return <DefaultErrorPage statusCode={404} />
   }
 
@@ -64,7 +65,7 @@ const NewsList: Screen<NewsListProps> = ({
   const datesByYear = groupBy(dates, (d: Date) => d.getFullYear())
 
   const years = Object.keys(datesByYear)
-  const months = datesByYear[year] ?? []
+  const months = datesByYear[selectedYear] ?? []
 
   const options = years.map((year) => ({
     label: year,
@@ -79,11 +80,11 @@ const NewsList: Screen<NewsListProps> = ({
       <Divider weight="alternate" />
       <Select
         name="year"
-        value={year.toString()}
+        value={selectedYear.toString()}
         options={options}
         onChange={(e) => {
           Router.push({
-            pathname: '/frett',
+            pathname: makePath('news'),
             query: { y: e.target.value },
           })
         }}
@@ -92,28 +93,30 @@ const NewsList: Screen<NewsListProps> = ({
       <Typography variant="p" as="p">
         <Link
           href={{
-            pathname: '/frett',
+            pathname: makePath('news'),
             query: {
-              y: year,
+              y: selectedYear,
             },
           }}
         >
-          <a>Allt árið {year}</a>
+          <a>Allt árið {selectedYear}</a>
         </Link>
+        {selectedMonth === undefined && <Bullet align="right" />}
       </Typography>
       {months.map((date: Date) => (
         <Typography key={date.toISOString()} variant="p" as="p">
           <Link
             href={{
-              pathname: '/frett',
+              pathname: makePath('news'),
               query: {
                 y: date.getFullYear(),
                 m: date.getMonth(),
               },
             }}
           >
-            <a>{format(date, 'MMMM')}</a>
+            <a>{capitalize(format(date, 'MMMM'))}</a>
           </Link>
+          {selectedMonth === date.getMonth() && <Bullet align="right" />}
         </Typography>
       ))}
     </Stack>
@@ -130,12 +133,12 @@ const NewsList: Screen<NewsListProps> = ({
             <Link href={makePath()}>
               <a>Ísland.is</a>
             </Link>
-            <Link href={makePath()}>
+            <Link href={makePath('news')}>
               <a>Fréttir og tilkynningar</a>
             </Link>
           </Breadcrumbs>
           <Typography variant="h1" as="h1">
-            {year}
+            {selectedYear}
           </Typography>
 
           {newsList.map((newsItem) => (
@@ -147,7 +150,7 @@ const NewsList: Screen<NewsListProps> = ({
               {...page}
               linkComp={PageLink}
               makeHref={(p: number) => ({
-                pathname: '/frett',
+                pathname: makePath('news'),
                 query: {
                   ...Router.query,
                   page: p,
@@ -162,6 +165,8 @@ const NewsList: Screen<NewsListProps> = ({
 }
 
 const NewsListItem = ({ newsItem }) => {
+  const { activeLocale } = useI18n()
+  const { makePath } = useRouteNames(activeLocale as Locale)
   const { format } = useDateUtils()
 
   return (
@@ -173,7 +178,9 @@ const NewsListItem = ({ newsItem }) => {
               {format(new Date(newsItem.date), 'do MMMM yyyy')}
             </Typography>
             <Typography variant="h3" as="h3" color="blue400">
-              {newsItem.title}
+              <Link href={makePath('news', newsItem.slug)}>
+                <a>{newsItem.title}</a>
+              </Link>
             </Typography>
             <Typography variant="p" as="p">
               {newsItem.intro}
@@ -182,10 +189,14 @@ const NewsListItem = ({ newsItem }) => {
         </Column>
         {newsItem.image && (
           <Column width="2/5">
-            <img
-              src={newsItem.image.url + '?w=524'}
-              alt={newsItem.image.title}
-            />
+            <Link href={makePath('news', newsItem.slug)}>
+              <a>
+                <img
+                  src={newsItem.image.url + '?w=524'}
+                  alt={newsItem.image.title}
+                />
+              </a>
+            </Link>
           </Column>
         )}
       </Columns>
@@ -253,8 +264,8 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   return {
     newsList,
     page,
-    year,
-    month,
+    selectedYear: year,
+    selectedMonth: month,
     dateRange: createDateRange(
       oldest[0] && new Date(oldest[0].date),
       latest[0] && new Date(latest[0].date),
