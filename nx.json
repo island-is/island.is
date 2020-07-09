@@ -112,6 +112,9 @@
     },
     "service-portal-modules": {
       "tags": []
+    },
+    "service-portal-constants": {
+      "tags": []
     }
   }
 }

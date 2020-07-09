@@ -3,8 +3,8 @@ import React from 'react'
 import { fetchToken } from './../../auth/utils'
 import { useStateValue } from './../../stateProvider'
 import jwtDecode from 'jwt-decode'
-import {} from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
+import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
 
 interface Subject {
   accountType: string
@@ -27,11 +27,13 @@ export const Login = () => {
   const history = useHistory()
   const handleLogin = async () => {
     const userData = await fetchToken()
-    const decodedToken: DecodedJwtToken = jwtDecode(userData.token)
+    const Token = userData.token
+    const decodedToken: DecodedJwtToken = jwtDecode(Token)
     dispatch({
       type: 'setUser',
       payload: decodedToken.user,
     })
+    localStorage[MOCK_AUTH_KEY] = Token
     history.push('/')
   }
   return (

@@ -3,23 +3,24 @@ import { MockUserData, AsyncActionState } from '../../store'
 import { useEffect } from 'react'
 import { fetchToken } from '../../auth/utils'
 
-export const useUserInfo = () => {
+export const usePersistUserInfo = () => {
   const [{ userInfo, userInfoState }, dispatch] = useStateValue()
 
-  const fetchUser = async () => {
-    dispatch({
-      type: 'fetchingUser',
-    })
-    const userInfo = await fetchToken()
-    dispatch({
-      type: 'setUser',
-      payload: userInfo,
-    })
-  }
-
   useEffect(() => {
-    if (!userInfo) fetchUser()
-  })
+    if (!userInfo) {
+      const fetchUserInfo = async () => {
+        dispatch({
+          type: 'fetchingUser',
+        })
+        const userInfo = await fetchToken()
+        dispatch({
+          type: 'setUser',
+          payload: userInfo,
+        })
+      }
+      fetchUserInfo()
+    }
+  }, [userInfo, dispatch])
 
   return {
     userInfo: userInfo as MockUserData | null,

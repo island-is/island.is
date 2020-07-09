@@ -3,18 +3,24 @@ import { removeToken } from '../../auth/utils'
 import { Link } from 'react-router-dom'
 import { useStateValue } from './../../stateProvider'
 import { initialState } from '../../store'
+import { useHistory } from 'react-router-dom'
+import { usePersistUserInfo } from '../../hooks/usePersistUserInfo/usePersistUserInfo'
+import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
 
-export interface HeaderProps {
+interface HeaderProps {
   something?: string
 }
 
 export const Header = (props: HeaderProps) => {
-  const [, setState] = useStateValue()
+  usePersistUserInfo()
+  const [state, setState] = useStateValue()
+  const history = useHistory()
+  console.log(state)
   const handleLogout = async () => {
-    console.log('logout')
     await removeToken()
     setState(initialState)
-    window.location.replace('/innskraning')
+    localStorage.removeItem(MOCK_AUTH_KEY)
+    history.push('/innskraning')
   }
 
   return (

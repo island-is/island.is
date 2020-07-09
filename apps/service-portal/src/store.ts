@@ -14,6 +14,8 @@ export interface MockUserData {
   }[]
 }
 
+type Action = { type: 'fetchingUser' } | { type: 'setUser'; payload: object }
+
 export type AsyncActionState = 'passive' | 'pending' | 'fulfilled' | 'failed'
 
 interface State {
@@ -26,7 +28,7 @@ export const initialState: State = {
   userInfoState: 'passive',
 }
 
-export const reducer = (state, action) => {
+export const reducer = (state: State, action: Action) => {
   switch (action.type) {
     case 'fetchingUser':
       return {
