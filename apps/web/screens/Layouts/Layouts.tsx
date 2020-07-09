@@ -18,7 +18,7 @@ export const CategoryLayout: FC<CategoryProps> = ({
   <ContentBlock>
     <Box padding={[0, 0, 0, 6]}>
       <div className={styles.layout}>
-        <div className={styles.side}>
+        <div className={styles.desktopSide}>
           <Sticky>{sidebar}</Sticky>
         </div>
         <Box paddingLeft={[0, 0, 0, 4]} width="full">
@@ -46,7 +46,7 @@ export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
   <ContentBlock>
     <Box padding={[0, 0, 0, 6]}>
       <div className={cn(styles.layout, styles.reversed)}>
-        <div className={styles.side}>
+        <div className={styles.desktopSide}>
           <Sticky>{sidebar}</Sticky>
         </div>
         <Box paddingRight={[0, 0, 0, 4]} width="full">
@@ -65,7 +65,7 @@ export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
   <ContentBlock>
     <Box padding={[0, 0, 0, 6]}>
       <div className={cn(styles.layout)}>
-        <div className={styles.side}>
+        <div className={styles.desktopSide}>
           <Sticky>
             <Box background="purple100" padding={4}>
               {sidebar}
@@ -77,6 +77,29 @@ export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
             <ContentBlock width="small">{children}</ContentBlock>
           </Box>
         </Box>
+      </div>
+    </Box>
+  </ContentBlock>
+)
+
+interface NewsItemProps {
+  sidebar: ReactNode
+}
+
+export const NewsItemLayout: FC<NewsItemProps> = ({ sidebar, children }) => (
+  <ContentBlock>
+    <Box padding={[0, 0, 0, 6]}>
+      <div className={cn(styles.layout)}>
+        <Box paddingRight={[0, 0, 0, 4]} width="full">
+          {children}
+        </Box>
+        <div className={styles.side}>
+          <Sticky>
+            <Box background="purple100" padding={4}>
+              {sidebar}
+            </Box>
+          </Sticky>
+        </div>
       </div>
     </Box>
   </ContentBlock>
