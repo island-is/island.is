@@ -23,7 +23,6 @@ module.exports = async ({ config, mode }) => {
           },
         },
         {
-          // commenting this out, improves performance significantly
           loader: 'react-docgen-typescript-loader',
         },
       ],
