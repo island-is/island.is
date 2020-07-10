@@ -17,7 +17,7 @@ export interface SkeletonLoaderProps {
   repeat?: number
 }
 /**
- * Animated placeholder for content to manage user expectations
+ * Animated content placeholder to manage user expectations
  */
 export const SkeletonLoader = ({
   width,
