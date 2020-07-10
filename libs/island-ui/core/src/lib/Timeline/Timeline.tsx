@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react'
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
 import cn from 'classnames'
 import { Icon } from '../Icon/Icon'
 import { Button } from '../Button/Button'
@@ -10,10 +10,7 @@ import { Inline } from '../Inline/Inline'
 import * as timelineStyles from './Timeline.treat'
 import * as eventStyles from './Event.treat'
 
-/* eslint-disable-next-line */
-export interface TimelineProps {}
-
-const renderValue = (value) =>
+const formatNumber = (value: number) =>
   value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
 
 const months = [
@@ -26,183 +23,58 @@ const months = [
   'Júlí',
   'Ágúst',
   'September',
-  'Oktober',
+  'Október',
   'Nóvember',
   'Desember',
 ]
 
-const initialState = [
-  {
-    date: new Date('05/05/2019'),
-    title: 'Rásfundur: 5 teymi',
-  },
-  {
-    date: new Date('04/08/2019'),
-    title: 'Ytri vefur: BETA',
-  },
-  {
-    date: new Date('04/04/2019'),
-    title: 'Ferðagjöf',
-    value: 36788,
-    maxValue: 242767,
-    valueLabel: 'Sóttar ferðagjafir',
-    data: {
-      labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
-      text:
-        'Ferðagjöfin er liður í að efla íslenska ferðaþjónustu í kjölfar kórónuveirufaraldurs og er ætlað að hvetja landsmenn til að ferðast innanlands.',
-      link: 'https://frettabladid.overcastcdn.com/documents/200626.pdf',
-    },
-  },
-  {
-    date: new Date('04/23/2019'),
-    title: 'Eitthvað sniðugt: OMEGA',
-  },
-  {
-    date: new Date('07/07/2019'),
-    title: 'Ferðagjöf',
-    value: 36788,
-    maxValue: 242767,
-    valueLabel: 'Sóttar ferðagjafir',
-    data: {
-      labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
-      text:
-        'Ferðagjöfin er liður í að efla íslenska ferðaþjónustu í kjölfar kórónuveirufaraldurs og er ætlað að hvetja landsmenn til að ferðast innanlands.',
-      link: 'https://frettabladid.overcastcdn.com/documents/200626.pdf',
-    },
-  },
-  {
-    date: new Date('04/20/2019'),
-    title: 'Eitthvað sniðugt: OMEGA',
-  },
-  {
-    date: new Date('03/09/2018'),
-    title: 'Margt gerðist hér!',
-  },
-  {
-    date: new Date('03/10/2018'),
-    title: 'Meira hér!',
-  },
-  {
-    date: new Date('05/05/2017'),
-    title: 'Rásfundur: 5 teymi',
-  },
-  {
-    date: new Date('04/08/2017'),
-    title: 'Ytri vefur: BETA',
-  },
-  {
-    date: new Date('04/04/2017'),
-    title: 'Ferðagjöf',
-    value: 36788,
-    maxValue: 242767,
-    valueLabel: 'Sóttar ferðagjafir',
-    data: {
-      labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
-      text:
-        'Ferðagjöfin er liður í að efla íslenska ferðaþjónustu í kjölfar kórónuveirufaraldurs og er ætlað að hvetja landsmenn til að ferðast innanlands.',
-      link: 'https://frettabladid.overcastcdn.com/documents/200626.pdf',
-    },
-  },
-  {
-    date: new Date('02/02/2020'),
-    title: 'Viðspyrna',
-    data: {
-      labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
-      text:
-        'Ferðagjöfin er liður í að efla íslenska ferðaþjónustu í kjölfar kórónuveirufaraldurs og er ætlað að hvetja landsmenn til að ferðast innanlands.',
-      link: 'https://frettabladid.overcastcdn.com/documents/200626.pdf',
-    },
-  },
-  {
-    date: new Date('04/23/2017'),
-    title: 'Eitthvað sniðugt: OMEGA',
-  },
-  {
-    date: new Date('03/09/2016'),
-    title: 'Margt gerðist hér!',
-  },
-  {
-    date: new Date('03/10/2016'),
-    title: 'Meira hér!',
-  },
-  {
-    date: new Date('04/04/2015'),
-    title: 'Ferðagjöf',
-    value: 36788,
-    maxValue: 242767,
-    valueLabel: 'Sóttar ferðagjafir',
-    data: {
-      labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
-      text:
-        'Ferðagjöfin er liður í að efla íslenska ferðaþjónustu í kjölfar kórónuveirufaraldurs og er ætlað að hvetja landsmenn til að ferðast innanlands.',
-      link: 'https://frettabladid.overcastcdn.com/documents/200626.pdf',
-    },
-  },
-  {
-    date: new Date('02/02/2015'),
-    title: 'Viðspyrna',
-    data: {
-      labels: ['Parallel', 'Kosmos & Kaos', 'YAY', 'Andes'],
-      text:
-        'Ferðagjöfin er liður í að efla íslenska ferðaþjónustu í kjölfar kórónuveirufaraldurs og er ætlað að hvetja landsmenn til að ferðast innanlands.',
-      link: 'https://frettabladid.overcastcdn.com/documents/200626.pdf',
-    },
-  },
-  {
-    date: new Date('04/23/2015'),
-    title: 'Eitthvað sniðugt: OMEGA',
-  },
-  {
-    date: new Date('03/09/2015'),
-    title: 'Margt gerðist hér!',
-  },
-  {
-    date: new Date('03/10/2015'),
-    title: 'Meira hér!',
-  },
-].sort((a, b) => b.date.getTime() - a.date.getTime())
+export type TimelineEvent = {
+  date: Date
+  title: string
+  value?: number
+  maxValue?: number
+  valueLabel?: string
+  data?: {
+    labels: string[]
+    text: string
+    link: string
+  }
+}
 
-export const Timeline = (props: TimelineProps) => {
+export interface TimelineProps {
+  events: TimelineEvent[]
+}
+
+function setDefault<K, V>(map: Map<K, V>, key: K, value: V): V {
+  if (!map.has(key)) map.set(key, value)
+  return map.get(key)
+}
+
+const mapEvents = (
+  events: TimelineEvent[],
+): Map<number, Map<number, TimelineEvent[]>> => {
+  events = events.slice().sort((a, b) => b.date.getTime() - a.date.getTime())
+
+  const byYear = new Map()
+  for (const event of events) {
+    const byMonth = setDefault(byYear, event.date.getFullYear(), new Map())
+    setDefault(byMonth, event.date.getMonth(), []).push(event)
+  }
+
+  return byYear
+}
+
+export const Timeline = ({ events }: TimelineProps) => {
   const frameRef = useRef<HTMLDivElement>(null)
   const innerContainerRef = useRef<HTMLDivElement>(null)
 
-  const [events, setEvents] = useState(initialState)
   const [containerHeight, setContainerHeight] = useState(0)
   const [frameHeight, setFrameHeight] = useState(0)
   const [frameJump, setFrameJump] = useState(0)
   const [jumpIndex, setJumpIndex] = useState(0)
-  const [visibleModal, setVisibleModal] = useState(null)
+  const [visibleModal, setVisibleModal] = useState('')
 
-  const usableYears = events.reduce((usableYears, item) => {
-    const eventYear = item.date.getFullYear()
-
-    if (usableYears.indexOf(eventYear) < 0) {
-      usableYears.push(eventYear)
-    }
-
-    return usableYears
-  }, [])
-
-  const getUsableMonthsInYear = (year) =>
-    events.reduce((usableMonths, item) => {
-      const eventYear = item.date.getFullYear()
-
-      if (eventYear === year) {
-        const month = item.date.getMonth()
-
-        if (usableMonths.indexOf(month) < 0) {
-          usableMonths.push(month)
-        }
-      }
-
-      return usableMonths
-    }, [])
-
-  const getUsableEventsInMonthAndYear = (year, month) =>
-    events.filter(
-      (event) =>
-        event.date.getFullYear() === year && event.date.getMonth() === month,
-    )
+  const eventMap = useMemo(() => mapEvents(events), [events])
 
   const onResize = useCallback(() => {
     setFrameJump(frameRef.current.offsetHeight / 2)
@@ -216,24 +88,15 @@ export const Timeline = (props: TimelineProps) => {
     return () => window.removeEventListener('resize', onResize)
   }, [onResize])
 
-  const jumpTo = (dir) => {
+  const jumpTo = (dir: 'prev' | 'next') => {
     setVisibleModal(null)
     const jump = frameJump * jumpIndex
     const diff = containerHeight - frameHeight
 
-    switch (dir) {
-      case 'prev':
-        if (jumpIndex !== 0) {
-          setJumpIndex(jumpIndex - 1)
-        }
-        break
-      case 'next':
-        if (jump < diff) {
-          setJumpIndex(jumpIndex + 1)
-        }
-        break
-      default:
-        break
+    if (dir === 'prev' && jumpIndex > 0) {
+      setJumpIndex(jumpIndex - 1)
+    } else if (dir === 'next' && jump < diff) {
+      setJumpIndex(jumpIndex + 1)
     }
   }
 
@@ -254,107 +117,91 @@ export const Timeline = (props: TimelineProps) => {
       <ArrowButton type="next" onClick={() => jumpTo('next')} />
       <div ref={frameRef} className={timelineStyles.frame}>
         <div ref={innerContainerRef} className={timelineStyles.innerContainer}>
-          {usableYears.map((year, yearIndex) => {
-            const usableMonths = getUsableMonthsInYear(year)
-
-            return (
-              <div key={yearIndex} className={timelineStyles.yearContainer}>
-                <div className={timelineStyles.section}>
-                  <div className={timelineStyles.left}>
-                    <span
-                      className={cn(
-                        timelineStyles.year,
-                        timelineStyles.leftLabel,
-                      )}
-                    >
-                      {year}
-                    </span>
-                  </div>
-                  <div className={timelineStyles.right}>&nbsp;</div>
+          {Array.from(eventMap.entries(), ([year, eventsByMonth]) => (
+            <div key={year} className={timelineStyles.yearContainer}>
+              <div className={timelineStyles.section}>
+                <div className={timelineStyles.left}>
+                  <span
+                    className={cn(
+                      timelineStyles.year,
+                      timelineStyles.leftLabel,
+                    )}
+                  >
+                    {year}
+                  </span>
                 </div>
-                {usableMonths.map((month, monthIndex) => {
-                  const usableEvents = getUsableEventsInMonthAndYear(
-                    year,
-                    month,
-                  )
+                <div className={timelineStyles.right}>&nbsp;</div>
+              </div>
+              {Array.from(eventsByMonth.entries(), ([month, monthEvents]) => (
+                <div key={month} className={timelineStyles.monthContainer}>
+                  <div className={timelineStyles.section}>
+                    <div className={timelineStyles.left}>
+                      <span
+                        className={cn(
+                          timelineStyles.month,
+                          timelineStyles.leftLabel,
+                        )}
+                      >
+                        {months[month]}
+                      </span>
+                    </div>
+                    <div className={timelineStyles.right}>&nbsp;</div>
+                  </div>
 
-                  return (
-                    <div
-                      key={monthIndex}
-                      className={timelineStyles.monthContainer}
-                    >
-                      <div className={timelineStyles.section}>
-                        <div className={timelineStyles.left}>
-                          <span
-                            className={cn(
-                              timelineStyles.month,
-                              timelineStyles.leftLabel,
-                            )}
-                          >
-                            {months[month]}
-                          </span>
-                        </div>
-                        <div className={timelineStyles.right}>&nbsp;</div>
-                      </div>
+                  <div className={timelineStyles.section}>
+                    <div className={timelineStyles.left}>&nbsp;</div>
+                    <div className={timelineStyles.right}>
+                      <div className={timelineStyles.eventsContainer}>
+                        {monthEvents.map((event, eventIndex) => {
+                          const larger = Boolean(event.data)
+                          const modalKey = `modal-${year}-${month}-${eventIndex}`
+                          const isVisible = visibleModal === modalKey
 
-                      <div className={timelineStyles.section}>
-                        <div className={timelineStyles.left}>&nbsp;</div>
-                        <div className={timelineStyles.right}>
-                          <div className={timelineStyles.eventsContainer}>
-                            {usableEvents.map((event, eventIndex) => {
-                              const larger = Boolean(event.data)
-                              const modalKey = `modal-${yearIndex}-${monthIndex}-${eventIndex}`
-                              const isVisible = visibleModal === modalKey
-
-                              return (
-                                <div
-                                  key={eventIndex}
-                                  className={timelineStyles.eventWrapper}
-                                >
-                                  <div className={timelineStyles.event}>
-                                    {larger ? (
-                                      <>
-                                        <EventBar
-                                          onClick={() => {
-                                            setVisibleModal(
-                                              isVisible ? null : modalKey,
-                                            )
-                                          }}
-                                          event={event}
-                                        />
-                                        <EventModal
-                                          event={event}
-                                          visible={isVisible}
-                                          onClose={() => setVisibleModal(null)}
-                                        />
-                                      </>
-                                    ) : (
-                                      <span
-                                        className={timelineStyles.eventSimple}
-                                      >
-                                        {event.title}
-                                      </span>
-                                    )}
-                                  </div>
-                                  <span
-                                    className={cn(timelineStyles.bulletLine, {
-                                      [timelineStyles.bulletLineLarger]: larger,
-                                    })}
-                                  >
-                                    <BulletLine selected={isVisible} />
+                          return (
+                            <div
+                              key={eventIndex}
+                              className={timelineStyles.eventWrapper}
+                            >
+                              <div className={timelineStyles.event}>
+                                {larger ? (
+                                  <>
+                                    <EventBar
+                                      onClick={() => {
+                                        setVisibleModal(
+                                          isVisible ? null : modalKey,
+                                        )
+                                      }}
+                                      event={event}
+                                    />
+                                    <EventModal
+                                      event={event}
+                                      visible={isVisible}
+                                      onClose={() => setVisibleModal(null)}
+                                    />
+                                  </>
+                                ) : (
+                                  <span className={timelineStyles.eventSimple}>
+                                    {event.title}
                                   </span>
-                                </div>
-                              )
-                            })}
-                          </div>
-                        </div>
+                                )}
+                              </div>
+                              <span
+                                className={cn(timelineStyles.bulletLine, {
+                                  [timelineStyles.bulletLineLarger]: larger,
+                                })}
+                              >
+                                <BulletLine selected={isVisible} />
+                              </span>
+                            </div>
+                          )
+                        })}
                       </div>
                     </div>
-                  )
-                })}
-              </div>
-            )
-          })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -362,7 +209,7 @@ export const Timeline = (props: TimelineProps) => {
 }
 
 interface EventBarProps {
-  event: any // TODO: Create a type to use here...
+  event: TimelineEvent
   onClick: () => void
 }
 
@@ -380,10 +227,10 @@ const EventBar = ({ event, onClick }: EventBarProps) => {
           <div className={eventStyles.eventBarStats}>
             <span className={eventStyles.valueWrapper}>
               <span className={eventStyles.value}>
-                {renderValue(event.value)}
+                {formatNumber(event.value)}
               </span>
               <span className={eventStyles.maxValue}>
-                /{renderValue(event.maxValue)}
+                /{formatNumber(event.maxValue)}
               </span>
             </span>
             <span className={eventStyles.valueLabel}>{event.valueLabel}</span>
@@ -395,7 +242,7 @@ const EventBar = ({ event, onClick }: EventBarProps) => {
 }
 
 interface EventModalProps {
-  event: any // TODO: Create a type to use here...
+  event: TimelineEvent
   visible: boolean
   onClose: () => void
 }
@@ -424,7 +271,7 @@ const EventModal = ({ event, visible, onClose }: EventModalProps) => {
           </Typography>
           {event.data?.labels && (
             <Inline space={2}>
-              {event.data.labels.map((label, index) => (
+              {event.data.labels.map((label) => (
                 <Tag label>{label}</Tag>
               ))}
             </Inline>
@@ -460,10 +307,8 @@ const BulletLine = ({ selected = false }: { selected?: boolean }) => {
   )
 }
 
-type ArrowButtonTypes = 'prev' | 'next'
-
 interface ArrowButtonProps {
-  type: ArrowButtonTypes
+  type: 'prev' | 'next'
   onClick: () => void
 }
 
