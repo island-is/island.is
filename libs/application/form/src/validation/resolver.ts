@@ -1,5 +1,5 @@
 import {
-  Answers,
+  FormValue,
   areAnswersValid,
   FormNode,
   Schema,
@@ -8,12 +8,12 @@ import { Resolver } from 'react-hook-form'
 
 type Context = { formNode: FormNode; dataSchema: Schema }
 
-export const resolver: Resolver<Answers, Context> = async (
-  answers,
+export const resolver: Resolver<FormValue, Context> = async (
+  formValue,
   context,
 ) => {
   const { formNode, dataSchema } = context
-  const validationError = areAnswersValid(answers, formNode, true, dataSchema)
+  const validationError = areAnswersValid(formValue, formNode, true, dataSchema)
   if (validationError) {
     const { errors } = validationError
     const errorMap = {}
@@ -24,7 +24,7 @@ export const resolver: Resolver<Answers, Context> = async (
   }
 
   return {
-    values: answers,
+    values: formValue,
     errors: {},
   }
 }

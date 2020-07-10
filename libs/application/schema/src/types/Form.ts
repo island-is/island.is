@@ -2,14 +2,6 @@ import { ZodObject } from 'zod'
 import { Condition } from './Condition'
 import { Field } from './Fields'
 
-export interface ValidationError {
-  [key: string]: {
-    type: string
-    message: string
-    value: Answer
-  }
-}
-
 export enum FormItemTypes {
   FORM = 'FORM',
   SECTION = 'SECTION',
@@ -40,7 +32,6 @@ export interface FormItem {
   readonly id?: string
   readonly type: string
   readonly name: string
-  condition?: Condition
 }
 
 export interface Section extends FormItem {
@@ -56,13 +47,17 @@ export interface SubSection extends FormItem {
 export interface Repeater extends FormItem {
   type: FormItemTypes.REPEATER
   children: RepeaterChildren[]
+  condition?: Condition
 }
 
 export interface MultiField extends FormItem {
   type: FormItemTypes.MULTI_FIELD
   children: Field[]
+  condition?: Condition
 }
 
-export type Answer = string | number | object | string[]
+export type Answer = string | number | string[] | FormValue
 
-export type Answers = { [key: string]: Answer }
+export interface FormValue {
+  [key: string]: Answer
+}

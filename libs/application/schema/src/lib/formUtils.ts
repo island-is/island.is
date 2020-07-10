@@ -1,4 +1,4 @@
-import { FormNode, FormScreen } from '../types/FormTree'
+import { FormNode, FormLeaf } from '../types/FormTree'
 import { Form, FormItemTypes, Section, SubSection } from '../types/Form'
 import { Question } from '../types/Fields'
 
@@ -21,24 +21,24 @@ const isValidScreen = (node: FormNode): boolean => {
   }
 }
 
-export const getScreensForFormNode = (
+export const getFormNodeLeaves = (
   node: FormNode,
   onlyQuestions = false,
-): FormScreen[] => {
+): FormLeaf[] => {
   const { children } = node
   if (isValidScreen(node)) {
     if (onlyQuestions && 'isQuestion' in node && node.isQuestion) {
-      return [node as FormScreen]
+      return [node as FormLeaf]
     } else if (!onlyQuestions) {
-      return [node as FormScreen]
+      return [node as FormLeaf]
     }
   }
 
-  let leafs: FormScreen[] = []
-  let newLeafs: FormScreen[] = []
+  let leafs: FormLeaf[] = []
+  let newLeafs: FormLeaf[] = []
   if (children) {
     for (let i = 0; i < children.length; i++) {
-      newLeafs = getScreensForFormNode(children[i])
+      newLeafs = getFormNodeLeaves(children[i])
       if (newLeafs.length) {
         leafs = [...leafs, ...newLeafs]
       }
@@ -47,14 +47,14 @@ export const getScreensForFormNode = (
   return leafs
 }
 
-export const getScreensForForm = (form: Form): FormScreen[] => {
-  return getScreensForFormNode(form)
+export const getFormLeaves = (form: Form): FormLeaf[] => {
+  return getFormNodeLeaves(form)
 }
 
 export const getQuestionsForFormNode = (
   node: FormNode,
 ): { [key: string]: Question } => {
-  const questions = getScreensForFormNode(node, true) as Question[]
+  const questions = getFormNodeLeaves(node, true) as Question[]
   const questionMap = {}
   questions.forEach((question) => {
     questionMap[question.id] = question
@@ -83,7 +83,7 @@ export function getSubSectionsInSection(section: Section): SubSection[] {
 
 export function findSectionIndexForScreen(
   form: Form,
-  screen: FormScreen,
+  screen: FormLeaf,
 ): number {
   const sections = getSectionsInForm(form)
   if (!sections.length) {
@@ -91,7 +91,7 @@ export function findSectionIndexForScreen(
   }
   for (let i = 0; i < sections.length; i++) {
     const section = sections[i]
-    const screensInSection = getScreensForFormNode(section)
+    const screensInSection = getFormNodeLeaves(section)
     if (screensInSection.find(({ id }) => id === screen.id) !== undefined) {
       return i
     }
@@ -101,7 +101,7 @@ export function findSectionIndexForScreen(
 
 export function findSubSectionIndexForScreen(
   section: Section,
-  screen: FormScreen,
+  screen: FormLeaf,
 ): number {
   const subSections = getSubSectionsInSection(section)
   if (!subSections.length) {
@@ -109,7 +109,7 @@ export function findSubSectionIndexForScreen(
   }
   for (let i = 0; i < subSections.length; i++) {
     const subSection = subSections[i]
-    const screensInSection = getScreensForFormNode(subSection)
+    const screensInSection = getFormNodeLeaves(subSection)
     if (screensInSection.find(({ id }) => id === screen.id) !== undefined) {
       return i
     }

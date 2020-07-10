@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
 import {
   CheckboxField,
-  Field,
   FieldTypes,
   IntroductionField,
   RadioField,
@@ -12,48 +11,38 @@ import CheckboxFormField from '../fields/CheckboxFormField'
 import IntroductionFormField from '../fields/IntroductionFormField'
 import TextFormField from '../fields/TextFormField'
 import RadioFormField from '../fields/RadioFormField'
+import { FieldDef } from '../types'
 
 const FormField: FC<{
-  field: Field
-  showFieldName?: boolean
   autoFocus?: boolean
+  field: FieldDef
+  showFieldName?: boolean
 }> = ({ autoFocus, field, showFieldName }) => {
   const { register } = useFormContext()
 
-  if (field.type === FieldTypes.CHECKBOX) {
-    return (
-      <CheckboxFormField
-        autoFocus={autoFocus}
-        register={register}
-        field={field as CheckboxField}
-        showFieldName={showFieldName}
-      />
-    )
-  } else if (field.type === FieldTypes.INTRO) {
+  const fieldProps = {
+    autoFocus,
+    showFieldName,
+    register,
+  }
+
+  if (!field.isVisible) {
+    return null
+  }
+
+  if (field.type === FieldTypes.INTRO) {
     return (
       <IntroductionFormField
         field={field as IntroductionField}
         showFieldName={showFieldName}
       />
     )
+  } else if (field.type === FieldTypes.CHECKBOX) {
+    return <CheckboxFormField field={field as CheckboxField} {...fieldProps} />
   } else if (field.type === FieldTypes.RADIO) {
-    return (
-      <RadioFormField
-        autoFocus={autoFocus}
-        field={field as RadioField}
-        register={register}
-        showFieldName={showFieldName}
-      />
-    )
+    return <RadioFormField field={field as RadioField} {...fieldProps} />
   } else if (field.type === FieldTypes.TEXT) {
-    return (
-      <TextFormField
-        autoFocus={autoFocus}
-        field={field as TextField}
-        register={register}
-        showFieldName={showFieldName}
-      />
-    )
+    return <TextFormField field={field as TextField} {...fieldProps} />
   } else {
     return <p>We have not implemented this field yet {field.type}</p>
   }
