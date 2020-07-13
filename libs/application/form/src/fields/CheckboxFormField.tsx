@@ -1,33 +1,39 @@
 import React, { FC } from 'react'
 import { CheckboxField } from '@island.is/application/schema'
-import { Typography, Box } from '@island.is/island-ui/core'
+import { Checkbox, Typography, Box } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '../types'
+import { Controller, useFormContext } from 'react-hook-form'
 
 interface Props extends FieldBaseProps {
   field: CheckboxField
 }
-const CheckboxFormField: FC<Props> = ({
-  autoFocus,
-  showFieldName = false,
-  field,
-  register,
-}) => {
+const CheckboxFormField: FC<Props> = ({ showFieldName = false, field }) => {
   const { id, name, options } = field
+  const { control } = useFormContext()
   return (
     <div>
       {showFieldName && <Typography variant="p">{name}</Typography>}
-      {options.map(({ value, label }, index) => {
+      {options.map((option, index) => {
         return (
-          <Box key={value} paddingTop={2}>
-            <input
-              autoFocus={autoFocus && index === 0}
-              type="checkbox"
-              value={value}
+          <Box key={option.value} paddingTop={2}>
+            <Controller
               name={`${id}[${index}]`}
-              id={`${id}-${value}`}
-              ref={register()}
+              control={control}
+              render={({ value, onChange }) => {
+                const checked = value === option.value
+                return (
+                  <Checkbox
+                    onChange={(e) => {
+                      onChange(checked ? undefined : option.value)
+                    }}
+                    checked={checked}
+                    name={`${id}[${index}]`}
+                    label={option.label}
+                    value={option.value}
+                  />
+                )
+              }}
             />
-            <label htmlFor={`${id}-${value}`}>{label}</label>
           </Box>
         )
       })}

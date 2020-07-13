@@ -4,6 +4,7 @@ import {
   FieldTypes,
   IntroductionField,
   RadioField,
+  SelectField,
   TextField,
 } from '@island.is/application/schema'
 import { useFormContext } from 'react-hook-form'
@@ -11,6 +12,7 @@ import CheckboxFormField from '../fields/CheckboxFormField'
 import IntroductionFormField from '../fields/IntroductionFormField'
 import TextFormField from '../fields/TextFormField'
 import RadioFormField from '../fields/RadioFormField'
+import SelectFormField from '../fields/SelectFormField'
 import { FieldDef } from '../types'
 
 const FormField: FC<{
@@ -41,6 +43,8 @@ const FormField: FC<{
     return <CheckboxFormField field={field as CheckboxField} {...fieldProps} />
   } else if (field.type === FieldTypes.RADIO) {
     return <RadioFormField field={field as RadioField} {...fieldProps} />
+  } else if (field.type === FieldTypes.SELECT) {
+    return <SelectFormField field={field as SelectField} {...fieldProps} />
   } else if (field.type === FieldTypes.TEXT) {
     return <TextFormField field={field as TextField} {...fieldProps} />
   } else {

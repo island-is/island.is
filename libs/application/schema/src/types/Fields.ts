@@ -1,4 +1,4 @@
-import { FormItem, FormValue } from './Form'
+import { FormItem } from './Form'
 import { Condition } from './Condition'
 
 export interface Option {
@@ -20,6 +20,7 @@ export enum FieldTypes {
   INTRO = 'INTRO',
   RADIO = 'RADIO',
   EMAIL = 'EMAIL',
+  SELECT = 'SELECT',
   TEXT = 'TEXT',
 }
 
@@ -48,10 +49,18 @@ export interface RadioField extends Question {
   readonly type: FieldTypes.RADIO
   options: Option[]
 }
+
+export interface SelectField extends Question {
+  readonly type: FieldTypes.SELECT
+  options: Option[]
+  placeholder?: string
+}
+
 export interface TextField extends Question {
   readonly type: FieldTypes.TEXT
   minLength?: number
   maxLength?: number
+  placeholder?: string
 }
 
 export type Field =
@@ -59,4 +68,5 @@ export type Field =
   | DateField
   | IntroductionField
   | RadioField
+  | SelectField
   | TextField

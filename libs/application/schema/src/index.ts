@@ -8,7 +8,6 @@ export * from './lib/conditionUtils'
 export * from './lib/formUtils'
 export * from './lib/fieldBuilders'
 export * from './lib/formBuilders'
-export * from './schemas/ExampleForm'
-export * from './schemas/SchemaType'
+export * from './schemas/'
 
 export * from './validation/validators'

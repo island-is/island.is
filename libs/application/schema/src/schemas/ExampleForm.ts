@@ -35,8 +35,8 @@ const ExampleSchema = z.object({
   careerHistory: z.enum(['yes', 'no']).optional(),
   careerHistoryCompanies: z
     .array(
-      // TODO checkbox answers are [false, 'aranja', false] and we need to do something about it...
-      z.union([z.enum(['government', 'aranja', 'advania']), z.boolean()]),
+      // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
+      z.union([z.enum(['government', 'aranja', 'advania']), z.undefined()]),
     )
     .nonempty(),
   dreamJob: z.string().optional(),

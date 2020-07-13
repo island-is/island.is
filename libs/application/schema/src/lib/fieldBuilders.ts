@@ -6,6 +6,7 @@ import {
   IntroductionField,
   Option,
   RadioField,
+  SelectField,
   TextField,
 } from '../types/Fields'
 
@@ -14,9 +15,9 @@ export function buildCheckboxField(data: {
   id: string
   name: string
   options: Option[]
-  required: boolean
+  required?: boolean
 }): CheckboxField {
-  const { condition, id, name, options, required } = data
+  const { condition, id, name, options, required = false } = data
   return {
     children: undefined,
     isQuestion: true,
@@ -35,9 +36,9 @@ export function buildDateField(data: {
   name: string
   maxDate?: Date
   minDate?: Date
-  required: boolean
+  required?: boolean
 }): DateField {
-  const { condition, id, name, maxDate, minDate, required } = data
+  const { condition, id, name, maxDate, minDate, required = false } = data
   return {
     children: undefined,
     isQuestion: true,
@@ -73,9 +74,9 @@ export function buildRadioField(data: {
   id: string
   name: string
   options: Option[]
-  required: boolean
+  required?: boolean
 }): RadioField {
-  const { condition, id, name, options, required } = data
+  const { condition, id, name, options, required = false } = data
   return {
     children: undefined,
     isQuestion: true,
@@ -88,13 +89,35 @@ export function buildRadioField(data: {
   }
 }
 
+export function buildSelectField(data: {
+  condition?: Condition
+  id: string
+  name: string
+  placeholder?: string
+  options: Option[]
+  required?: boolean
+}): SelectField {
+  const { condition, id, name, options, placeholder, required = false } = data
+  return {
+    children: undefined,
+    isQuestion: true,
+    placeholder,
+    required,
+    condition,
+    id,
+    name,
+    options,
+    type: FieldTypes.SELECT,
+  }
+}
+
 export function buildTextField(data: {
   condition?: Condition
   id: string
   name: string
-  required: boolean
+  required?: boolean
 }): TextField {
-  const { condition, id, name, required } = data
+  const { condition, id, name, required = false } = data
   return {
     children: undefined,
     required,
