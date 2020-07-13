@@ -60,7 +60,7 @@ spec:
             - name: {{ $key }}
               valueFrom:
                 secretKeyRef:
-                  name: api
+                  name: search-indexer-service
                   key: {{ $key }}
             {{- end }}
           resources:
