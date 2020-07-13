@@ -3,9 +3,16 @@ import { IndexingService } from './indexing.service'
 import { SearchIndexes } from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
 
-@Controller('index')
+@Controller('')
 export class IndexingController {
   constructor(private readonly indexingService: IndexingService) {}
+
+  @Get('/')
+  async hello() {
+    return {
+      ready: true,
+    }
+  }
 
   @Get('sync')
   async sync() {

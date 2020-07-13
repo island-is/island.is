@@ -69,6 +69,7 @@ class App {
 
   constructor(config) {
     this.config = config
+    AWS.config.update({ region: config.awsRegion })
     this.awsEs = new AWS.ES()
     this.esClient = new ES.Client({
       node: this.config.elasticNode,
