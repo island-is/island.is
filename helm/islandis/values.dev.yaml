@@ -4,10 +4,23 @@
 web:
   env:
     API_URL: "http://web-api"
+
 search-indexer-service:
+  namespace: search-indexer
   serviceAccount:
+    create: true
+    name: 'search-indexer'
     annotations:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/search-indexer'
-  environment:
+  secrets:
+    CONTENTFUL_ACCESS_TOKEN: "/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN"
+  env:
+    APPLICATION_URL: "http://search-indexer-service"
+    ELASTIC_NODE: "https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com"
+    ELASTIC_INDEX: "island-is"
+    CONTENTFUL_SPACE: "8k0h54kbe6bj"
+    CONTENTFUL_ENVIRONMENT: "master"
+    CONTENTFUL_HOST: "preview.contentful.com"
     S3_BUCKET: "dev-es-custom-packages"
-    ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
+
+  migration_script: /webapp/bin/migrate.js
