@@ -7,6 +7,7 @@ import {
 import { ExistsQuery, RequestBodySearch, Sort } from 'elastic-builder'
 import { Entry } from 'contentful'
 import { Syncer } from '../contentful/syncer'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class IndexingService {
@@ -37,27 +38,38 @@ export class IndexingService {
   }
 
   async continueSync(syncToken: string, index: SearchIndexes) {
+    logger.debug('Start continue sync')
     const result = await this.contentFulSyncer.getSyncEntries({
       nextSyncToken: syncToken,
       // eslint-disable-next-line @typescript-eslint/camelcase
       content_type: 'article',
       resolveLinks: true,
     })
+    logger.debug('Continue sync found results', {
+      numItems: result.items.length,
+    })
     result.items.forEach(
       this.transformAndIndexEntry.bind(this, index, result.token),
     )
+    logger.debug('Continue sync done')
   }
 
   async initialSync(index: SearchIndexes) {
+    logger.debug('Start initial sync')
     const result = await this.contentFulSyncer.getSyncEntries({
       initial: true,
       // eslint-disable-next-line @typescript-eslint/camelcase
       content_type: 'article',
       resolveLinks: true,
     })
+    logger.debug('Initial sync found result', {
+      numItems: result.items.length,
+    })
     result.items.forEach(
       this.transformAndIndexEntry.bind(this, index, result.token),
     )
+
+    logger.debug('Initial sync done')
   }
 
   private async transformAndIndexEntry(
@@ -83,6 +95,7 @@ export class IndexingService {
       })
       return response
     }
+
     /* eslint-disable @typescript-eslint/camelcase */
     const document: Document = {
       category: entry.fields?.category?.fields.title,
@@ -115,7 +128,10 @@ export class IndexingService {
     try {
       await this.elasticService.index(index, document)
     } catch (e) {
-      console.log(e)
+      logger.error('Error indexing', {
+        e: e,
+        id: document._id,
+      })
     }
   }
 }

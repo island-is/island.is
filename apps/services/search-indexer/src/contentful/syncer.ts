@@ -1,10 +1,12 @@
 import {
-  createClient,
   ContentfulClientApi,
-  SyncCollection,
+  createClient,
+  CreateClientParams,
   Entry,
+  SyncCollection,
 } from 'contentful'
 import { environment } from '../environments/environment'
+import { logger } from '@island.is/logging'
 
 interface SyncerResult {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,8 +27,16 @@ function chunk(arr, len) {
 
 export class Syncer {
   private contentFulClient: ContentfulClientApi
+
   constructor() {
-    this.contentFulClient = createClient(environment.contentful)
+    const params: CreateClientParams = {
+      space: environment.contentful.space,
+      accessToken: environment.contentful.accessToken,
+      environment: environment.contentful.environment,
+      host: environment.contentful.host,
+    }
+    logger.debug('Syncer created', params)
+    this.contentFulClient = createClient(params)
   }
 
   async getSyncEntries(opts): Promise<SyncerResult> {
