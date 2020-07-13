@@ -1,3 +1,5 @@
+import { FormValue } from './Form'
+
 export enum Comparators {
   EQUALS = 'eq',
   NOT_EQUAL = 'neq',
@@ -7,14 +9,27 @@ export enum Comparators {
   LTE = 'lte',
 }
 
-export interface ConditionalCheck {
-  questionId: string
-  comparator: Comparators
-  value: string
+export enum AllOrAny {
+  ALL = 'all',
+  ANY = 'any',
 }
 
-export interface Condition {
-  show: boolean
-  on: 'all' | 'any'
-  check: ConditionalCheck[]
+export interface StaticCheck {
+  isMultiCheck?: false
+  questionId: string
+  comparator: Comparators
+  value: string | number
 }
+
+export type DynamicCheck = (formValue: FormValue, context?: object) => boolean
+
+export type SingleConditionCheck = StaticCheck | DynamicCheck
+
+export interface MultiConditionCheck {
+  isMultiCheck: true
+  show: boolean
+  on: AllOrAny
+  check: SingleConditionCheck[]
+}
+
+export type Condition = MultiConditionCheck | SingleConditionCheck

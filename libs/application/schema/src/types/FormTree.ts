@@ -9,4 +9,4 @@ export type FormNode =
   | MultiField
   | Field
 
-export type FormScreen = MultiField | Field | Repeater
+export type FormLeaf = MultiField | Field | Repeater

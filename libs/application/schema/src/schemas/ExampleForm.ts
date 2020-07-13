@@ -1,28 +1,38 @@
 import * as z from 'zod'
 import {
   buildForm,
-  buildSubSection,
   buildMultiField,
   buildSection,
+  buildSubSection,
 } from '../lib/formBuilders'
 import {
   buildCheckboxField,
-  buildRadioField,
   buildIntroductionField,
+  buildRadioField,
   buildTextField,
 } from '../lib/fieldBuilders'
 import { Form } from '../types/Form'
 import { nationalIdRegex } from './schemaUtils'
+import { Comparators } from '../types/Condition'
 
 const ExampleSchema = z.object({
-  name: z
-    .string()
-    .nonempty()
-    .max(256),
-  nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
-  phoneNumber: z.string().min(7),
-  email: z.string().email(),
-  careerHistory: z.enum(['yes', 'no']),
+  person: z.object({
+    age: z.string().refine((x) => {
+      const asNumber = parseInt(x)
+      if (isNaN(asNumber)) {
+        return false
+      }
+      return asNumber > 15
+    }),
+    name: z
+      .string()
+      .nonempty()
+      .max(256),
+    nationalId: z.string().refine((x) => (x ? nationalIdRegex.test(x) : false)),
+    phoneNumber: z.string().min(7),
+    email: z.string().email(),
+  }),
+  careerHistory: z.enum(['yes', 'no']).optional(),
   careerHistoryCompanies: z
     .array(
       // TODO checkbox answers are [false, 'aranja', false] and we need to do something about it...
@@ -31,6 +41,8 @@ const ExampleSchema = z.object({
     .nonempty(),
   dreamJob: z.string().optional(),
 })
+
+type ExampleSchemaFormValues = z.infer<typeof ExampleSchema>
 
 export const ExampleForm: Form = buildForm({
   id: 'example',
@@ -52,21 +64,36 @@ export const ExampleForm: Form = buildForm({
           name: 'Um þig',
           children: [
             buildTextField({
-              id: 'name',
+              id: 'person.name',
               name: 'Nafn',
               required: true,
             }),
             buildTextField({
-              id: 'nationalId',
+              id: 'person.nationalId',
               name: 'Kennitala',
               required: true,
             }),
             buildTextField({
-              id: 'phoneNumber',
-              name: 'Símanúmer',
+              id: 'person.age',
+              name: 'Aldur',
+              required: true,
+            }),
+            buildTextField({
+              id: 'person.email',
+              name: 'Netfang',
               required: false,
             }),
-            buildTextField({ id: 'email', name: 'Netfang', required: false }),
+            buildTextField({
+              id: 'person.phoneNumber',
+              name: 'Símanúmer',
+              required: false,
+              condition: {
+                questionId: 'person.age',
+                isMultiCheck: false,
+                comparator: Comparators.GTE,
+                value: '18',
+              },
+            }),
           ],
         }),
       ],
@@ -87,6 +114,9 @@ export const ExampleForm: Form = buildForm({
                 { value: 'yes', label: 'Já' },
                 { value: 'no', label: 'Nei' },
               ],
+              condition: (formValue: ExampleSchemaFormValues) => {
+                return formValue?.person?.age >= '18'
+              },
             }),
             buildCheckboxField({
               id: 'careerHistoryCompanies',

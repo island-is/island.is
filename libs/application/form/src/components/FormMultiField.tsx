@@ -1,9 +1,9 @@
 import React, { FC } from 'react'
-import { MultiField } from '@island.is/application/schema'
 import FormField from './FormField'
+import { MultiFieldScreen } from '../types'
 
 const FormMultiField: FC<{
-  multiField: MultiField
+  multiField: MultiFieldScreen
 }> = ({ multiField }) => {
   return (
     <div>

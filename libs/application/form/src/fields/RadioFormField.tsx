@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { RadioField } from '@island.is/application/schema'
 import { Typography, Box } from '@island.is/island-ui/core'
-import { FieldBaseProps } from './types'
+import { FieldBaseProps } from '../types'
 
 interface Props extends FieldBaseProps {
   field: RadioField
@@ -26,7 +26,7 @@ const RadioFormField: FC<Props> = ({
               key={value}
               id={`${id}-${value}`}
               name={id}
-              ref={register}
+              ref={register()}
               value={value}
             />
             <label htmlFor={`${id}-${value}`}>{label}</label>

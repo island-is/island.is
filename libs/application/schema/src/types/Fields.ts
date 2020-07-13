@@ -1,4 +1,5 @@
-import { FormItem } from './Form'
+import { FormItem, FormValue } from './Form'
+import { Condition } from './Condition'
 
 export interface Option {
   value: string
@@ -8,6 +9,9 @@ export interface BaseField extends FormItem {
   readonly id: string
   readonly name: string
   readonly children: undefined
+  condition?: Condition
+  // TODO use something like this for non-schema validation?
+  // validate?: (formValue: FormValue, context?: object) => boolean
 }
 
 export enum FieldTypes {
@@ -15,6 +19,7 @@ export enum FieldTypes {
   DATE = 'DATE',
   INTRO = 'INTRO',
   RADIO = 'RADIO',
+  EMAIL = 'EMAIL',
   TEXT = 'TEXT',
 }
 
@@ -43,7 +48,6 @@ export interface RadioField extends Question {
   readonly type: FieldTypes.RADIO
   options: Option[]
 }
-
 export interface TextField extends Question {
   readonly type: FieldTypes.TEXT
   minLength?: number

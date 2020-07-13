@@ -1,21 +1,20 @@
 import React, { FC, useEffect } from 'react'
 import {
-  Answers,
-  Field,
+  FormValue,
   FormItemTypes,
-  FormScreen,
-  MultiField,
   Schema,
   Section,
 } from '@island.is/application/schema'
 import { Typography, Box, Button, Divider } from '@island.is/island-ui/core'
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form'
+import { FieldDef, FormScreen, MultiFieldScreen } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
 import { resolver } from '../validation/resolver'
+import ConditionHandler from './ConditionHandler'
 
 type ScreenProps = {
-  answers: Answers
+  formValue: FormValue
   answerQuestions(Answers): void
   dataSchema: Schema
   shouldSubmit?: boolean
@@ -26,7 +25,7 @@ type ScreenProps = {
 }
 
 const Screen: FC<ScreenProps> = ({
-  answers,
+  formValue,
   answerQuestions,
   dataSchema,
   nextScreen,
@@ -35,38 +34,47 @@ const Screen: FC<ScreenProps> = ({
   screen,
   section,
 }) => {
-  const methods = useForm<Answers>({
-    mode: 'onSubmit',
-    defaultValues: answers,
+  const methods = useForm<FormValue>({
+    mode: 'onBlur',
+    defaultValues: formValue,
     shouldUnregister: false,
     resolver,
     context: { dataSchema, formNode: screen },
   })
+
+  const { reset, handleSubmit } = methods
+
   useEffect(() => {
-    methods.reset(answers)
-  }, [screen])
-  const onSubmit: SubmitHandler<Answers> = (data) => {
+    reset(formValue)
+  }, [screen, reset, formValue])
+
+  const onSubmit: SubmitHandler<FormValue> = (data) => {
     if (shouldSubmit) {
-      console.log('here we will submit')
+      console.log('here we will submit', formValue)
     } else {
+      console.log('these were my answers:', data)
       answerQuestions(data)
       nextScreen()
     }
   }
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <ConditionHandler
+          answerQuestions={answerQuestions}
+          formValue={formValue}
+          screen={screen}
+        />
         <Box>
           {section && (
             <Typography variant="breadcrumb">{section.name}</Typography>
           )}
           <Typography variant="h2">{screen.name}</Typography>
           <Box>
-            {screen.type === FormItemTypes.REPEATER ? null : screen.type ===
-              FormItemTypes.MULTI_FIELD ? (
-              <FormMultiField multiField={screen as MultiField} />
+            {screen.type === FormItemTypes.MULTI_FIELD ? (
+              <FormMultiField multiField={screen as MultiFieldScreen} />
             ) : (
-              <FormField autoFocus field={screen as Field} />
+              <FormField autoFocus field={screen as FieldDef} />
             )}
           </Box>
           <Divider />
