@@ -57,4 +57,8 @@ export class Syncer {
     }
     return result
   }
+
+  async getEntry(id: string): Promise<Entry<unknown> | undefined> {
+    return this.contentFulClient.getEntry(id)
+  }
 }

@@ -72,6 +72,24 @@ export class IndexingService {
     logger.debug('Initial sync done')
   }
 
+  async syncById(index: SearchIndexes, id: string) {
+    logger.debug('Sync by ID', { id: id })
+    let result
+    try {
+      result = await this.contentFulSyncer.getEntry(id)
+    } catch (e) {
+      logger.info('No entry found')
+      return
+    }
+    logger.debug('Sync by ID found entry', {
+      result: result.id,
+    })
+    if (result) {
+      await this.transformAndIndexEntry.bind(this, index, result)
+    }
+    logger.debug('Sync by ID done')
+  }
+
   private async transformAndIndexEntry(
     index: SearchIndexes,
     syncToken: string,
