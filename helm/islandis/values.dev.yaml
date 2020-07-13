@@ -9,5 +9,5 @@ search-indexer-service:
     annotations:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/search-indexer'
   environment:
-    s3_bucket: dev-es-custom-packages
-    elastic_node: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
+    S3_BUCKET: "dev-es-custom-packages"
+    ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
