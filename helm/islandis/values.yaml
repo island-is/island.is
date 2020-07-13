@@ -8,7 +8,7 @@ global:
 web:
   namespace: islandis
   env:
-    API_URL: 'http://deploy-dev-api/api'
+    API_URL: 'http://web-api'
 
 api:
   namespace: islandis
@@ -16,7 +16,7 @@ api:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
   env:
     PORT: 3333
-    
+
 search-indexer-service:
   namespace: search-indexer
   environment:

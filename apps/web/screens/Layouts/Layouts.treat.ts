@@ -1,4 +1,5 @@
 import { style } from 'treat'
+import { theme } from '@island.is/island-ui/theme'
 
 export const layout = style({
   display: 'flex',
@@ -17,6 +18,15 @@ export const side = style({
   flex: '0 0 318px',
   '@media': {
     [`screen and (max-width: 991px)`]: {
+      flex: 'auto',
+    },
+  },
+})
+
+export const desktopSide = style({
+  flex: '0 0 318px',
+  '@media': {
+    [`screen and (max-width: 991px)`]: {
       display: 'none',
     },
   },
@@ -25,7 +35,7 @@ export const side = style({
 export const bg = style({
   '@media': {
     [`screen and (max-width: 991px)`]: {
-      backgroundColor: '#F8F5FA',
+      backgroundColor: theme.color.purple100,
     },
   },
 })

@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-set -euxo pipefail
+exit 0
+set -Eeuxo pipefail
+
+trap "exit 2" ERR
 
 ES_INDEX_MAIN="${ELASTIC_INDEX:-island-is}"
 ES_DOMAIN="${ES_DOMAIN:-search}"
@@ -7,7 +10,8 @@ CODE_TEMPLATE="${CODE_TEMPLATE:-/webapp/config/template-is.json}"
 GITHUB_DICT_REPO="${GITHUB_DICT_REPO:-https://api.github.com/repos/island-is/elasticsearch-dictionaries}"
 S3_BUCKET="${S3_BUCKET:-prod-es-custom-packages}"
 S3_FOLDER="${S3_FOLDER:-}"
-AWS_BIN=aws
+AWS_REGION="${AWS_REGION:-eu-west-1}"
+AWS_BIN="aws --region ${AWS_REGION}"
 
 INDEX_FORMAT="island-is-v%d"
 TEMPLATE_NAME="template-is"
@@ -163,7 +167,7 @@ push_new_config_template() {
 	local tmp=$(mktemp)
 	generate_config "$dict_version" "$tmp"
 
-	curl --fail -XPUT "$ELASTIC_NODE/_template/$TEMPLATE_NAME" -H 'Content-Type: application/json' -d @"$tmp"
+	curl --fail -s -XPUT "$ELASTIC_NODE/_template/$TEMPLATE_NAME" -H 'Content-Type: application/json' -d @"$tmp"
 }
 
 reindex_to_new_index() {
@@ -189,14 +193,14 @@ reindex_to_new_index() {
 
 	request=${request//OLD/$old_name}
 	request=${request//NEW/$new_name}
-	curl --fail -XPOST "$ELASTIC_NODE/_reindex" -H 'Content-Type: application/json' -d "$request"
+	curl --fail -s -XPOST "$ELASTIC_NODE/_reindex" -H 'Content-Type: application/json' -d "$request"
 
 	switch_alias "$old_name" "$new_name"
 }
 
 create_new_index() {
 	local index_name="$1"
-	curl --fail -XPUT "$ELASTIC_NODE/$index_name" -H 'Content-Type: application/json'
+	curl --fail -s -XPUT "$ELASTIC_NODE/$index_name" -H 'Content-Type: application/json'
 	local request='{
 	"actions": [
 	  { "add": { "index": "NEW", "alias": "MAIN" } }
@@ -206,7 +210,7 @@ create_new_index() {
 	request=${request//NEW/$index_name}
 	request=${request//MAIN/$ES_INDEX_MAIN}
 
-	curl --fail -XPOST "$ELASTIC_NODE/_aliases" -H 'Content-Type: application/json' -d "$request"
+	curl --fail -s -XPOST "$ELASTIC_NODE/_aliases" -H 'Content-Type: application/json' -d "$request"
 }
 
 switch_alias() {
@@ -224,7 +228,7 @@ switch_alias() {
 	request=${request//NEW/$new_name}
 	request=${request//MAIN/$ES_INDEX_MAIN}
 
-	curl --fail -XPOST "$ELASTIC_NODE/_aliases" -H 'Content-Type: application/json' -d "$request"
+	curl --fail -s -XPOST "$ELASTIC_NODE/_aliases" -H 'Content-Type: application/json' -d "$request"
 }
 
 get_index_name() {
@@ -297,7 +301,7 @@ has_index_version() {
 	local version="$1"
 	local name=$(get_index_name "$version")
 
-	curl --fail -s "$ELASTIC_NODE/_cat/indices" -H 'Content-Type: application/json' | grep -q -E "\b$name\b"
+	curl --fail -s --head "$ELASTIC_NODE/$name" > /dev/null 2>&1
 }
 
 needs_migrate() {
@@ -311,7 +315,7 @@ needs_migrate() {
 }
 
 check_aws() {
-	($AWS_BIN es list-domain-names | jq '.DomainNames[].DomainName' | grep -q "$ES_DOMAIN") && return
+	($AWS_BIN es list-domain-names | jq '.DomainNames[].DomainName' | grep -q -E "\b${ES_DOMAIN}\b") && return
 
 	echo "Could not find ES domain"
 	exit 2

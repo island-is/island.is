@@ -10,7 +10,7 @@ if (!space || !accessToken) {
 const client = createClient({
   space,
   accessToken,
-  environment: 'sandbox',
+  environment: 'master',
   host: 'preview.contentful.com',
 })
 

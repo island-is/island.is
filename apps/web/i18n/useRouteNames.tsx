@@ -4,16 +4,18 @@ const routeNames = {
   is: {
     article: 'grein',
     category: 'flokkur',
+    news: 'frett',
     search: 'leit',
   },
   en: {
     article: 'article',
     category: 'category',
+    news: 'news',
     search: 'search',
   },
 }
 
-export type pathTypes = 'article' | 'category' | 'search'
+export type pathTypes = 'article' | 'category' | 'news' | 'search'
 
 const useRouteNames = (locale: Locale = defaultLanguage) => {
   return {

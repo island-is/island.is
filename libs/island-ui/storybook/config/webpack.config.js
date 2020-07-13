@@ -7,19 +7,38 @@ module.exports = async ({ config, mode }) => {
 
   config.plugins.push(new TreatPlugin())
 
-  config.resolve.extensions.push('.tsx')
-  config.resolve.extensions.push('.ts')
-  config.module.rules.push({
-    test: /\.(ts|tsx)$/,
-    loader: require.resolve('babel-loader'),
-    options: {
-      presets: [
-        '@babel/preset-env',
-        '@babel/preset-react',
-        '@babel/preset-typescript',
+  config.resolve.extensions.push('.tsx', '.ts')
+  config.module.rules.push(
+    {
+      test: /\.(ts|tsx)$/,
+      use: [
+        {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              '@babel/preset-env',
+              '@babel/preset-react',
+              '@babel/preset-typescript',
+            ],
+          },
+        },
+        {
+          loader: 'react-docgen-typescript-loader',
+        },
       ],
     },
-  })
+    {
+      test: /\.stories\.(ts|tsx)$/,
+      exclude: path.resolve(__dirname, '../node_modules/'),
+      use: [
+        {
+          // needed for docs addon
+          loader: '@storybook/source-loader',
+          options: { injectParameters: true },
+        },
+      ],
+    },
+  )
 
   config.resolve = {
     ...config.resolve,

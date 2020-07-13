@@ -256,6 +256,7 @@ export interface Routes {
 export interface RoutesCompanies {
   home: string
   application: string
+  applicationSsn: string
 }
 
 export interface Users {
@@ -269,6 +270,7 @@ export interface User {
   privacyPolicyButton: string
   barcode: Barcode
   mobileForm: MobileForm
+  confirmCodeForm: ConfirmCodeForm
 }
 
 export interface AppStore {
@@ -294,6 +296,7 @@ export interface Barcode {
   messageInput: string
   giveContinueButton: string
   giftOverview: string
+  confirmGift: string
   receiver: string
   message: string
   editButton: string
@@ -322,6 +325,25 @@ export interface Expires {
   disclaimer: string
 }
 
+export interface ConfirmCodeForm {
+  title: string
+  intro: string
+  noSMS: string
+  sendSMSButton: string
+  validation: Errors
+  errors: Errors
+  form: ConfirmCodeFormForm
+}
+
+export interface Errors {
+  confirmCode: string
+}
+
+export interface ConfirmCodeFormForm {
+  confirmCode: CompanyName
+  submit: string
+}
+
 export interface MobileForm {
   title: string
   intro: string
@@ -342,6 +364,7 @@ export interface MobileFormValidation {
 export interface TranslationValidation {
   required: string
   phoneNumber: string
+  phoneNumberInvalid: string
   email: string
   webpage: string
 }
@@ -835,6 +858,7 @@ const typeMap: any = {
     [
       { json: 'home', js: 'home', typ: '' },
       { json: 'application', js: 'application', typ: '' },
+      { json: 'applicationSsn', js: 'applicationSsn', typ: '' },
     ],
     false,
   ),
@@ -847,6 +871,11 @@ const typeMap: any = {
       { json: 'privacyPolicyButton', js: 'privacyPolicyButton', typ: '' },
       { json: 'barcode', js: 'barcode', typ: r('Barcode') },
       { json: 'mobileForm', js: 'mobileForm', typ: r('MobileForm') },
+      {
+        json: 'confirmCodeForm',
+        js: 'confirmCodeForm',
+        typ: r('ConfirmCodeForm'),
+      },
     ],
     false,
   ),
@@ -876,6 +905,7 @@ const typeMap: any = {
       { json: 'messageInput', js: 'messageInput', typ: '' },
       { json: 'giveContinueButton', js: 'giveContinueButton', typ: '' },
       { json: 'giftOverview', js: 'giftOverview', typ: '' },
+      { json: 'confirmGift', js: 'confirmGift', typ: '' },
       { json: 'receiver', js: 'receiver', typ: '' },
       { json: 'message', js: 'message', typ: '' },
       { json: 'editButton', js: 'editButton', typ: '' },
@@ -909,6 +939,26 @@ const typeMap: any = {
     ],
     false,
   ),
+  ConfirmCodeForm: o(
+    [
+      { json: 'title', js: 'title', typ: '' },
+      { json: 'intro', js: 'intro', typ: '' },
+      { json: 'noSMS', js: 'noSMS', typ: '' },
+      { json: 'sendSMSButton', js: 'sendSMSButton', typ: '' },
+      { json: 'validation', js: 'validation', typ: r('Errors') },
+      { json: 'errors', js: 'errors', typ: r('Errors') },
+      { json: 'form', js: 'form', typ: r('ConfirmCodeFormForm') },
+    ],
+    false,
+  ),
+  Errors: o([{ json: 'confirmCode', js: 'confirmCode', typ: '' }], false),
+  ConfirmCodeFormForm: o(
+    [
+      { json: 'confirmCode', js: 'confirmCode', typ: r('CompanyName') },
+      { json: 'submit', js: 'submit', typ: '' },
+    ],
+    false,
+  ),
   MobileForm: o(
     [
       { json: 'title', js: 'title', typ: '' },
@@ -938,6 +988,7 @@ const typeMap: any = {
     [
       { json: 'required', js: 'required', typ: '' },
       { json: 'phoneNumber', js: 'phoneNumber', typ: '' },
+      { json: 'phoneNumberInvalid', js: 'phoneNumberInvalid', typ: '' },
       { json: 'email', js: 'email', typ: '' },
       { json: 'webpage', js: 'webpage', typ: '' },
     ],

@@ -11,7 +11,7 @@ import { Cookie } from './types'
 
 export const JWT_EXPIRES_IN_SECONDS = 1800
 
-export const FIFTEEN_MINUTES = 15 * 60 * 1000
+export const ONE_HOUR = 60 * 60 * 1000
 
 const defaultCookieOptions: CookieOptions = {
   secure: environment.production,

@@ -1,0 +1,1 @@
+export const CONFIRM_CODE_ERROR = 'CONFIRM_CODE_ERROR'

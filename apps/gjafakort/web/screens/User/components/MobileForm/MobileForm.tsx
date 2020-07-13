@@ -1,5 +1,12 @@
 import React from 'react'
-import { Formik, Form, Field, FormikValues, FormikHelpers } from 'formik'
+import {
+  Formik,
+  Form,
+  Field,
+  FormikValues,
+  FormikHelpers,
+  FormikErrors,
+} from 'formik'
 import * as Yup from 'yup'
 
 import {
@@ -10,6 +17,7 @@ import {
   Typography,
 } from '@island.is/island-ui/core'
 
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { useI18n } from '@island.is/gjafakort-web/i18n'
 import { FormLayout } from '@island.is/gjafakort-web/components'
 
@@ -27,7 +35,6 @@ function MobileForm({ onSubmit }: PropTypes) {
       validation,
     },
   } = useI18n()
-
   return (
     <FormLayout>
       <Box marginBottom={2}>
@@ -44,13 +51,18 @@ function MobileForm({ onSubmit }: PropTypes) {
           confirmPhoneNumber: '',
         }}
         validate={(values) => {
-          if (values.phoneNumber !== values.confirmPhoneNumber) {
-            return {
-              confirmPhoneNumber: t.validation.confirmPhoneNumber,
-            }
+          const errors: FormikErrors<FormikValues> = {}
+          const parsePhoneNumber = parsePhoneNumberFromString(
+            values.phoneNumber,
+            'IS',
+          )
+          if (!parsePhoneNumber?.isValid()) {
+            errors.phoneNumber = validation.phoneNumberInvalid
           }
-
-          return {}
+          if (values.phoneNumber !== values.confirmPhoneNumber) {
+            errors.confirmPhoneNumber = t.validation.confirmPhoneNumber
+          }
+          return errors
         }}
         validationSchema={Yup.object().shape({
           phoneNumber: Yup.string()

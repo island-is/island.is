@@ -9,9 +9,9 @@ export type Locale = 'is' | 'en'
 export const defaultLanguage = 'is'
 
 interface I18nContextType {
-  activeLocale: string
+  activeLocale: Locale
   t: Translation
-  locale: (locale: string, dict?: object) => void
+  locale: (locale: Locale, dict?: object) => void
 }
 
 interface PropTypes {
