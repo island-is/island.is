@@ -30,8 +30,7 @@ search-indexer-service:
     CONTENTFUL_ENVIRONMENT: "sandbox"
     CONTENTFUL_HOST: "preview.contentful.com"
 
-  initEnvironment:
-    migration_script: /webapp/bin/migrate.sh
+  migration_script: /webapp/bin/migrate.js
   serviceAccount:
     create: true
     name: 'search-indexer'

@@ -27,7 +27,7 @@ spec:
       initContainers:
         - name: migration
           image: "{{ .Values.image.repository }}:{{ .Values.global.image.tag }}"
-          command: ['/bin/bash', {{ .Values.initEnvironment.migration_script | quote }}]
+          command: ['/usr/local/bin/node', {{ .Values.migration_script | quote }}]
           env:
             {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
