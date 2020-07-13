@@ -1,35 +1,35 @@
 import { environment } from '../environments/environment'
 import { Client } from '@elastic/elasticsearch'
 import { Document, SearchIndexes } from '../types'
-import { RequestBodySearch, TermsAggregation } from 'elastic-builder'
-import esb from 'elastic-builder'
+import esb, { RequestBodySearch, TermsAggregation } from 'elastic-builder'
+import { logger } from '@island.is/logging'
 
 const { elastic } = environment
 
-const getConnection = (): Client => {
-  //todo handle pool?
-  return new Client(elastic)
-}
-
 export class ElasticService {
+  private client: Client
+
   async index(index: SearchIndexes, document: Document) {
-    const client = getConnection()
+    const _id = document._id
 
     try {
-      const _id = document._id
       delete document._id
-      return await client.index({
+      return await this.getClient().index({
         id: _id,
         index: index,
         body: document,
       })
     } catch (e) {
-      console.log('error indexing document')
+      logger.error('Error indexing ES document', {
+        id: _id,
+        index: index,
+        error: e,
+      })
     }
   }
 
   async findByQuery(index: SearchIndexes, query) {
-    return getConnection().search({
+    return this.getClient().search({
       index: index,
       body: query,
     })
@@ -100,5 +100,16 @@ export class ElasticService {
     )
 
     return this.findByQuery(index, requestBody)
+  }
+
+  private getClient(): Client {
+    if (this.client) {
+      return this.client
+    }
+    //todo handle pool?
+    logger.info('Create ES Client', elastic)
+    const client = new Client(elastic)
+    this.client = client
+    return client
   }
 }

@@ -27,9 +27,6 @@ serviceAccount:
 podSecurityContext:
   fsGroup: 65534
 
-initEnvironment:
-    migration_script: /webapp/bin/migrate.sh
-
 securityContext: {}
   # capabilities:
   #   drop:

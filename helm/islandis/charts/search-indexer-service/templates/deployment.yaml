@@ -27,19 +27,13 @@ spec:
       initContainers:
         - name: migration
           image: "{{ .Values.image.repository }}:{{ .Values.global.image.tag }}"
-          command: ['/bin/bash', {{ .Values.initEnvironment.migration_script | quote }}]
+          command: ['/usr/local/bin/node', {{ .Values.migration_script | quote }}]
           env:
-            {{- with .Values.environment }}
-            - name: ELASTIC_NODE
-              value: {{ .elastic_node }}
-            - name: APPLICATION_URL
-              value: {{ .application_url }}
-            - name: ELASTIC_INDEX
-              value: {{ .elastic_index }}
-            - name: S3_BUCKET
-              value: {{ .s3_bucket }}
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
             {{- end }}
-      containers:
+    containers:
         - name: {{ .Chart.Name }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
@@ -58,21 +52,16 @@ spec:
               path: /
               port: http
           env:
-            {{- with .Values.environment }}
-            - name: APPLICATION_URL
-              value: {{ .application_url }}
-            - name: ELASTIC_NODE
-              value: {{ .elastic_node }}
-            - name: ELASTIC_INDEX
-              value: {{ .elastic_index }}
-            - name: CONTENTFUL_SPACE
-              value: {{ .contentful_space }}
-            - name: CONTENTFUL_ACCESS_TOKEN
-              value: {{ .contentful_access_token }}
-            - name: CONTENTFUL_ENVIRONMENT
-              value: {{ .contentful_environment }}
-            - name: CONTENTFUL_HOST
-              value: {{ .contentful_host }}
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- range $key, $value := .Values.secrets }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  name: api
+                  key: {{ $key }}
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
