@@ -16,7 +16,6 @@ api:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
   env:
     PORT: 3333
-    ELASTIC_NODE: "https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com"
 
 search-indexer-service:
   namespace: search-indexer
