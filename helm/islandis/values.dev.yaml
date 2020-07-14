@@ -38,7 +38,6 @@ search-indexer-service:
           - search-indexer-service.dev01.devland.is
 
   initContainer:
-    create: true
     env:
       ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
       APPLICATION_URL: 'http://search-indexer-service'
