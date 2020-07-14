@@ -42,8 +42,8 @@ export const ApplicationForm: FC<ApplicationProps> = ({
     screens,
   } = state
   return (
-    <Box width="full" height="full">
-      <Columns>
+    <Box display="flex" flexGrow={1}>
+      <Box display="flex" flexGrow={1} flexDirection="row">
         <Column width="1/4">
           <Box background="blue100" height="full" border="standard">
             <ApplicationName name={form.name} />
@@ -55,12 +55,7 @@ export const ApplicationForm: FC<ApplicationProps> = ({
           </Box>
         </Column>
         <Column width="3/4">
-          <Box
-            border="standard"
-            paddingLeft={8}
-            paddingRight={8}
-            paddingTop={4}
-          >
+          <Box border="standard" paddingX={12} paddingTop={4} height="full">
             <Screen
               answerQuestions={(payload) =>
                 dispatch({ type: ActionTypes.ANSWER, payload })
@@ -75,7 +70,7 @@ export const ApplicationForm: FC<ApplicationProps> = ({
             />
           </Box>
         </Column>
-      </Columns>
+      </Box>
     </Box>
   )
 }
