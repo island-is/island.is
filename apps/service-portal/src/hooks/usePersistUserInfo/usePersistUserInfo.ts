@@ -4,22 +4,6 @@ import { useEffect } from 'react'
 import { fetchToken } from '../../auth/utils'
 import jwtDecode from 'jwt-decode'
 
-interface Subject {
-  accountType: string
-  email: string
-  name: string
-  nationalId: string
-  phone: string
-  scope: string[]
-}
-
-interface DecodedJwtToken {
-  user: string
-  availableSubjects: Subject[]
-  id: number
-  nationalId: string
-}
-
 export const usePersistUserInfo = () => {
   const [{ userInfo, userInfoState }, dispatch] = useStateValue()
 
