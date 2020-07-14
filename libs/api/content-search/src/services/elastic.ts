@@ -104,6 +104,10 @@ export class ElasticService {
     return this.findByQuery(index, requestBody)
   }
 
+  async ping() {
+    return this.getClient().ping()
+  }
+
   private getClient(): Client {
     if (this.client) {
       return this.client
