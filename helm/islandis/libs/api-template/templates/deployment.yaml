@@ -24,29 +24,31 @@ spec:
       serviceAccountName: {{ include "api-template.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+
+      {{- if .Values.initContainer.create }}
       initContainers:
         - name: migration
           image: "{{ .Values.image.repository }}:{{ .Values.global.image.tag }}"
-          command: ["npx"]
-          args: ["sequelize-cli", "db:migrate"]
+          {{- with .Values.initContainer }}
+          command: {{ .command }}
+          args: {{ .args }}
           env:
-            {{- with .Values.env }}
-            - name: POSTGRES_PASSWORD
+            {{- range $key, $value := .env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- range $key, $value := .secrets }}
+            - name: {{ $key }}
               valueFrom:
                 secretKeyRef:
-                  name: vidspyrna-api
-                  key: POSTGRES_PASSWORD
-            - name: POSTGRES_USER
-              value: {{ .POSTGRES_USER }}
-            - name: POSTGRES_DB
-              value: {{ .POSTGRES_DB }}
-            - name: POSTGRES_HOST
-              value: {{ .POSTGRES_HOST }}
-            - name: NODE_ENV
-              value: "production"
+                  name: {{ include "api-template.fullname" . }}
+                  key: {{ $key }}
             {{- end }}
+          {{- end }}
             - name: APP_VERSION
               value: {{ .Values.global.image.tag }}
+
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:

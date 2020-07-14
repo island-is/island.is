@@ -5,6 +5,6 @@ dependencies:
     - name: api-template
       repository: file://libs/api-template
       version: 0.0.1
-      alias: grafana-service
+      alias: search-indexer-service
 type: application
 version: 0.0.9

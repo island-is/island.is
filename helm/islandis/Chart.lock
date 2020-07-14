@@ -2,5 +2,5 @@ dependencies:
 - name: api-template
   repository: file://libs/api-template
   version: 0.0.1
-digest: sha256:f6a9391b2e6ed1f12ea97b4dfd397dd06f1dc04bea712bf96ed38cf8eeada211
-generated: "2020-07-11T23:40:05.155716Z"
+digest: sha256:06526b26c8fbad2faf60b6e68e0889039e894a326984401958a01674ea2493bc
+generated: "2020-07-13T00:11:33.113941Z"

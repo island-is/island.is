@@ -6,7 +6,13 @@ global:
     tag: latest_master
 
 
-grafana-service:
+search-indexer-service:
+  image: 
+    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer
+  initContainer:
+    create: true
+    command: ["/bin/bash", "/webapp/bin/migrate.sh"]
+    args: []
   ingress:
     enabled: true
 
