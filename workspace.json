@@ -854,6 +854,37 @@
         }
       }
     },
+    "infra-nest-server": {
+      "root": "libs/infra-nest-server",
+      "sourceRoot": "libs/infra-nest-server/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/infra-nest-server/.eslintrc",
+            "tsConfig": [
+              "libs/infra-nest-server/tsconfig.lib.json",
+              "libs/infra-nest-server/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/infra-nest-server/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/infra-nest-server/jest.config.js",
+            "tsConfig": "libs/infra-nest-server/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "cache": {
       "root": "libs/cache",
       "sourceRoot": "libs/cache/src",
