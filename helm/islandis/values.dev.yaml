@@ -6,9 +6,7 @@ web:
     API_URL: 'http://web-api'
 
 search-indexer-service:
-  namespace: search-indexer
   serviceAccount:
-    create: true
     name: 'search-indexer'
     annotations:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/search-indexer'
