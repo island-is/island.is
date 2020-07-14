@@ -40,7 +40,13 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
   }
 
   const { token } = req.body
-  const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE.name] || {}
+  const redirectCookie = req.cookies[REDIRECT_COOKIE.name]
+  if (!redirectCookie) {
+    logger.info('Redirect cookie not sent')
+    return res.redirect('/api/auth/login')
+  }
+
+  const { authId, returnUrl } = redirectCookie
   res.clearCookie(REDIRECT_COOKIE.name, REDIRECT_COOKIE.options)
   let verifyResult: VerifyResult
 
@@ -101,7 +107,7 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
       ...ACCESS_TOKEN_COOKIE.options,
       maxAge,
     })
-    .redirect(returnUrl.charAt(0) !== '/' ? '/' : returnUrl)
+    .redirect(!returnUrl || returnUrl.charAt(0) !== '/' ? '/' : returnUrl)
 })
 
 router.get(
@@ -128,7 +134,7 @@ router.get(
     const authId = uuid()
     const { returnUrl } = req.query
 
-    res
+    return res
       .cookie(name, { authId, returnUrl }, { ...options, maxAge: ONE_HOUR })
       .redirect(`${samlEntryPoint}&authId=${authId}`)
   },
@@ -137,7 +143,7 @@ router.get(
 router.get('/logout', (req, res) => {
   res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
   res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
-  res.json({ logout: true })
+  return res.json({ logout: true })
 })
 
 export default router
