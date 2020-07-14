@@ -1,3 +1,4 @@
+{{- $fullName := include "api-template.fullname" . -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -41,7 +42,7 @@ spec:
             - name: {{ $key }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "api-template.fullname" . }}
+                  name: {{ $fullName }}
                   key: {{ $key }}
             {{- end }}
           {{- end }}
@@ -78,7 +79,7 @@ spec:
             - name: {{ $key }}
               valueFrom:
                 secretKeyRef:
-                  name: vidspyrna-api
+                  name: {{ $fullName }}
                   key: {{ $key }}
             {{- end }}
           resources:
