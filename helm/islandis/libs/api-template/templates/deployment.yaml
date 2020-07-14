@@ -31,8 +31,8 @@ spec:
         - name: migration
           image: "{{ .Values.image.repository }}:{{ .Values.global.image.tag }}"
           {{- with .Values.initContainer }}
-          command: {{ .command }}
-          args: {{ .args }}
+          command: {{ .command | toJson }}
+          args: {{ .args | toJson }}
           env:
             {{- range $key, $value := .env }}
             - name: {{ $key }}
