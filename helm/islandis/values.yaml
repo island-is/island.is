@@ -30,7 +30,7 @@ search-indexer-service:
     CONTENTFUL_HOST: "preview.contentful.com"
     S3_BUCKET: "prod-es-custom-packages"
 
-  migration_script: /webapp/bin/migrate.js
+  migration_script: /webapp/migrate.js
   serviceAccount:
     create: true
     name: 'search-indexer'
