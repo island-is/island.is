@@ -1,12 +1,8 @@
-import { environment } from '../environments/environment'
 import { Client } from '@elastic/elasticsearch'
-import { AwsSignedConnection, UnsignedConnection } from './AwsEsConnector'
 import { Document, SearchIndexes } from '../types'
 import esb, { RequestBodySearch, TermsAggregation } from 'elastic-builder'
 import { logger } from '@island.is/logging'
-import * as AWS from 'aws-sdk'
-
-const { elastic } = environment
+import { EsClientFactory } from '../clients/esClientFactory'
 
 export class ElasticService {
   private client: Client
@@ -112,17 +108,6 @@ export class ElasticService {
     if (this.client) {
       return this.client
     }
-    const hasAWS = Boolean(AWS.config?.credentials?.accessKeyId)
-    //todo handle pool?
-    logger.info('Create ES Client', {
-      esConfig: elastic,
-      withAwsClient: hasAWS,
-    })
-    const client = new Client({
-      Connection: hasAWS ? AwsSignedConnection : UnsignedConnection,
-      node: elastic.node,
-    })
-    this.client = client
-    return client
+    return EsClientFactory.create()
   }
 }
