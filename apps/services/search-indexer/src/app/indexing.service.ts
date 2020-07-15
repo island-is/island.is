@@ -90,6 +90,10 @@ export class IndexingService {
     logger.debug('Sync by ID done')
   }
 
+  async ping() {
+    return this.elasticService.ping()
+  }
+
   private async transformAndIndexEntry(
     index: SearchIndexes,
     syncToken: string,

@@ -14,6 +14,11 @@ export class IndexingController {
     }
   }
 
+  @Get('ping')
+  async ping() {
+    return this.indexingService.ping()
+  }
+
   @Get('sync')
   async sync() {
     const syncToken = await this.indexingService.getLastSyncToken(

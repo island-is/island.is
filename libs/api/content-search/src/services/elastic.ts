@@ -1,10 +1,8 @@
-import { environment } from '../environments/environment'
 import { Client } from '@elastic/elasticsearch'
 import { Document, SearchIndexes } from '../types'
 import esb, { RequestBodySearch, TermsAggregation } from 'elastic-builder'
 import { logger } from '@island.is/logging'
-
-const { elastic } = environment
+import { EsClientFactory } from '../clients/esClientFactory'
 
 export class ElasticService {
   private client: Client
@@ -102,14 +100,14 @@ export class ElasticService {
     return this.findByQuery(index, requestBody)
   }
 
+  async ping() {
+    return this.getClient().ping()
+  }
+
   private getClient(): Client {
     if (this.client) {
       return this.client
     }
-    //todo handle pool?
-    logger.info('Create ES Client', elastic)
-    const client = new Client(elastic)
-    this.client = client
-    return client
+    return EsClientFactory.create()
   }
 }
