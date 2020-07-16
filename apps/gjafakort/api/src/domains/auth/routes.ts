@@ -40,16 +40,7 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
   }
 
   const { token } = req.body
-  const redirectCookie = req.cookies[REDIRECT_COOKIE.name]
-  if (!redirectCookie) {
-    logger.info('Redirect cookie not sent')
-    return res.redirect('/api/auth/login')
-  }
-
-  const { authId, returnUrl } = redirectCookie
-  res.clearCookie(REDIRECT_COOKIE.name, REDIRECT_COOKIE.options)
   let verifyResult: VerifyResult
-
   try {
     verifyResult = await loginIS.verify(token)
   } catch (err) {
@@ -58,8 +49,20 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
   }
 
   const { user } = verifyResult
+  const redirectCookie = req.cookies[REDIRECT_COOKIE.name]
+  res.clearCookie(REDIRECT_COOKIE.name, REDIRECT_COOKIE.options)
+  if (!redirectCookie) {
+    logger.error('Redirect cookie not sent', {
+      extra: {
+        user,
+      },
+    })
+    return res.redirect('/api/auth/login')
+  }
+
+  const { authId, returnUrl } = redirectCookie
   if (!user || authId !== user?.authId) {
-    logger.error('Invalid verification', {
+    logger.error('Could not verify user authenticity', {
       extra: {
         user,
         authId,
