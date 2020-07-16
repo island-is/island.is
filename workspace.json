@@ -774,6 +774,21 @@
             "cwd": "apps/reference-backend"
           }
         },
+        "generate-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "outputPath": "apps/reference-backend/src/openapi.yaml",
+            "commands": [
+              {
+                "command": "yarn build reference-backend"
+              },
+              {
+                "command": "node dist/apps/reference-backend/main --generate-schema apps/reference-backend/src/openapi.yaml"
+              }
+            ]
+          }
+        },
         "migrate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
