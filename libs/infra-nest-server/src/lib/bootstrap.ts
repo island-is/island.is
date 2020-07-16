@@ -7,7 +7,7 @@ import { initTracing } from '@island.is/infra-tracing'
 import { collectDefaultMetrics } from 'prom-client'
 import { httpRequestDurationMiddleware } from './httpRequestDurationMiddleware'
 import { InfraModule } from './infra/infra.module'
-import YAML from 'yaml'
+import yaml from 'js-yaml'
 import * as yargs from 'yargs'
 import * as fs from 'fs'
 
@@ -60,7 +60,7 @@ function setupOpenApi(app: INestApplication, options: RunServerOptions) {
 
 function generateSchema(filePath: string, document: OpenAPIObject) {
   logger.info('Generating OpenAPI schema.', { context: 'Bootstrap' })
-  fs.writeFileSync(filePath, YAML.stringify(document))
+  fs.writeFileSync(filePath, yaml.safeDump(document, { noRefs: true }))
 }
 
 export const bootstrap = async (options: RunServerOptions) => {
