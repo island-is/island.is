@@ -31,3 +31,7 @@ search-indexer-service:
     create: true
   podSecurityContext:
     fsGroup: 65534
+  replicaCount:
+    default: 1
+    min: 1
+    max: 2    
