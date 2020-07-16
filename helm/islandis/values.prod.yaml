@@ -1,0 +1,19 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+search-indexer-service:
+  env:
+    APPLICATION_URL: 'http://search-indexer-service'
+    ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
+    ELASTIC_INDEX: 'island-is'
+    CONTENTFUL_SPACE: '8k0h54kbe6bj'
+    CONTENTFUL_ENVIRONMENT: 'master'
+    CONTENTFUL_HOST: 'preview.contentful.com'
+    S3_BUCKET: 'prod-es-custom-packages'
+
+  initContainer:
+    env:
+      ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
+      APPLICATION_URL: 'http://search-indexer-service'
+      ELASTIC_INDEX: 'island-is'
+      S3_BUCKET: 'prod-es-custom-packages'

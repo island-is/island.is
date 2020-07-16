@@ -1,38 +1,55 @@
+{{- $fullName := include "api-template.fullname" . -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "search-indexer-service.fullname" . }}
+  name: {{ include "api-template.fullname" . }}
   {{- if .Values.namespace }}
   namespace: {{ .Values.namespace }}
   {{- end }}
   labels:
-    {{- include "search-indexer-service.labels" . | nindent 4 }}
+    {{- include "api-template.labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount.default }}
   selector:
     matchLabels:
-      {{- include "search-indexer-service.selectorLabels" . | nindent 6 }}
+      {{- include "api-template.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "search-indexer-service.selectorLabels" . | nindent 8 }}
+        {{- include "api-template.selectorLabels" . | nindent 8 }}
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
-      serviceAccountName: {{ include "search-indexer-service.serviceAccountName" . }}
+      serviceAccountName: {{ include "api-template.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+
+      {{- if .Values.initContainer.create }}
       initContainers:
         - name: migration
           image: "{{ .Values.image.repository }}:{{ .Values.global.image.tag }}"
-          command: ['/usr/local/bin/node', {{ .Values.migration_script | quote }}]
+          {{- with .Values.initContainer }}
+          command: {{ .command | toJson }}
+          args: {{ .args | toJson }}
           env:
-            {{- range $key, $value := .Values.env }}
+            {{- range $key, $value := .env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
             {{- end }}
+            {{- range $key, $value := .secrets }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $fullName }}
+                  key: {{ $key }}
+            {{- end }}
+          {{- end }}
+            - name: APP_VERSION
+              value: {{ .Values.global.image.tag }}
+
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -52,6 +69,8 @@ spec:
               path: /
               port: http
           env:
+            - name: APP_VERSION
+              value: {{ .Values.global.image.tag }}
             {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
@@ -60,20 +79,20 @@ spec:
             - name: {{ $key }}
               valueFrom:
                 secretKeyRef:
-                  name: search-indexer-service
+                  name: {{ $fullName }}
                   key: {{ $key }}
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-        {{- with .Values.nodeSelector }}
-        nodeSelector:
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
-      {{- with .Values.affinity }}
-        affinity:
-          {{- toYaml . | nindent 8 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
-        tolerations:
-          {{- toYaml . | nindent 8 }}
-      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

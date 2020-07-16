@@ -19,19 +19,19 @@ api:
 
 search-indexer-service:
   namespace: search-indexer
-  secrets:
-    CONTENTFUL_ACCESS_TOKEN: "/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN"
-  environment:
-    APPLICATION_URL: "http://search-indexer-service"
-    ELASTIC_NODE: "https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com"
-    ELASTIC_INDEX: "island-is"
-    CONTENTFUL_SPACE: "8k0h54kbe6bj"
-    CONTENTFUL_ENVIRONMENT: "master"
-    CONTENTFUL_HOST: "preview.contentful.com"
-    S3_BUCKET: "prod-es-custom-packages"
-
-  migration_script: /webapp/migrate.js
+  image: 
+    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-search-indexer
+  initContainer:
+    create: true
+    command: ["/usr/local/bin/node"]
+    args: ["/webapp/bin/migrate.js"]
+  ingress:
+    enabled: true
   serviceAccount:
     create: true
-    name: 'search-indexer'
-
+  podSecurityContext:
+    fsGroup: 65534
+  replicaCount:
+    default: 1
+    min: 1
+    max: 2    
