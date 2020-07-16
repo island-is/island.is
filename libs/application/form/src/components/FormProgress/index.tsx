@@ -7,7 +7,7 @@ const FormProgress: FC<{
   activeSection: number
   activeSubSection: number
   sections: Section[]
-}> = ({ sections, activeSection, activeSubSection }) => {
+}> = ({ activeSection, activeSubSection, sections }) => {
   return (
     <Box paddingTop={5} paddingLeft={5}>
       {sections.map((section, index) => (
