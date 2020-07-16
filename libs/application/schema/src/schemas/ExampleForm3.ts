@@ -10,6 +10,7 @@ import {
   buildIntroductionField,
   buildRadioField,
   buildTextField,
+  buildSelectField,
 } from '../lib/fieldBuilders'
 import { Form } from '../types/Form'
 import { nationalIdRegex } from './schemaUtils'
@@ -32,15 +33,39 @@ const ExampleSchema = z.object({
     phoneNumber: z.string().min(7),
     email: z.string().email(),
   }),
-  careerHistory: z.enum(['yes', 'no']).optional(),
-  careerHistoryCompanies: z
+  historyCars: z
     .array(
       // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
-      z.union([z.enum(['government', 'aranja', 'advania']), z.undefined()]),
+      z.union([
+        z.enum(['VW', 'Audi', 'Porsche', 'Tesla', 'None']),
+        z.undefined(),
+      ]),
     )
     .nonempty(),
-  dreamJob: z.string().optional(),
-  dreamJob1: z.string().optional(),
+  historyLicense: z.enum(['yes', 'no']),
+  historyLicense_where: z
+    .string()
+    .nonempty()
+    .max(256),
+  instructor: z.enum(['1', '2', '3', '4']),
+  carNeeded: z.enum(['yes', 'no']),
+  transmission: z.enum(['manual', 'automatic']),
+  paymentType: z.enum(['credit', 'bank']),
+  creditCard: z.string().refine((x) => {
+    const asNumber = parseInt(x)
+    console.log(asNumber)
+    if (isNaN(asNumber)) {
+      return false
+    }
+    return true
+  }),
+  bankAccount: z.number().refine((x) => {
+    const asNumber = parseInt(x)
+    if (isNaN(asNumber)) {
+      return false
+    }
+    return true
+  }),
 })
 
 type ExampleSchemaFormValues = z.infer<typeof ExampleSchema>
@@ -52,139 +77,162 @@ export const ExampleForm3: Form = buildForm({
   schema: ExampleSchema,
   children: [
     buildSection({
-      id: 'career',
-      name: 'Test',
+      id: 'student',
+      name: 'Student',
       children: [
+        buildIntroductionField({
+          id: 'field',
+          name: 'Welcome',
+          introduction: "This is a sample driver's license application.",
+        }),
         buildSubSection({
-          id: 'test1',
-          name: 'History of driver',
+          id: 'student',
+          name: 'Student Information',
           children: [
+            buildTextField({
+              id: 'person.name',
+              name: 'Name',
+              required: true,
+            }),
             buildCheckboxField({
-              id: 'careerHistoryCompanies',
-              name: 'Hefurðu unnið fyrir eftirfarandi aðila?',
+              id: 'historyCars',
+              name: 'Which cars have you driven before?',
               required: false,
               options: [
-                { value: 'government', label: 'Ríkið' },
-                { value: 'aranja', label: 'Aranja' },
-                { value: 'advania', label: 'Advania' },
+                { value: 'VW', label: 'VW' },
+                { value: 'Audi', label: 'Audi' },
+                { value: 'Porsche', label: 'Porsche' },
+                { value: 'Tesla', label: 'Tesla' },
+                { value: 'None', label: 'None of these' },
               ],
             }),
           ],
         }),
-        // buildSubSection({
-        //   id: 'future1',
-        //   name: 'Hvar langar þig að vinna?',
-        //   children: [
-        //     buildTextField({
-        //       id: 'dreamJob',
-        //       name: 'Einhver draumavinnustaður?',
-        //       required: false,
-        //     }),
-        //   ],
-        // }),
-        // buildSubSection({
-        //   id: 'future2',
-        //   name: 'Third question',
-        //   children: [
-        //     buildTextField({
-        //       id: 'dreamJob1',
-        //       name: 'Where do you want to work?',
-        //       required: false,
-        //     }),
-        //   ],
-        // }),
+        buildSubSection({
+          id: 'background',
+          name: 'Driving background',
+          children: [
+            buildRadioField({
+              id: 'historyLicense',
+              name: "Have you had a driver's license before?",
+              required: true,
+              options: [
+                { value: 'yes', label: 'Yes' },
+                { value: 'no', label: 'No' },
+              ],
+            }),
+            buildTextField({
+              id: 'historyLicense_where',
+              name: 'Where was your license from?',
+              required: true,
+              condition: (formValue: ExampleSchemaFormValues) => {
+                return formValue?.historyLicense === 'yes'
+              },
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({
       id: 'intro',
-      name: 'Upplýsingar',
+      name: 'Instructor',
       children: [
-        buildIntroductionField({
-          id: 'field',
-          name: 'Velkomin(n)',
-          introduction: 'Þessi umsókn snýr að atvinnuleysisbótum',
-        }),
-        buildMultiField({
-          id: 'about',
-          name: 'Um þig',
+        buildSubSection({
+          id: 'instructorInfo',
+          name: 'Instructor Information',
           children: [
-            buildTextField({
-              id: 'person.name',
-              name: 'Nafn',
-              required: true,
+            buildSelectField({
+              id: 'instructor',
+              name: 'Which instructor would you like to drive with?',
+              placeholder: 'Select instructor',
+              options: [
+                {
+                  label: 'Ingólfur Jónsson (101)',
+                  value: '1',
+                },
+                {
+                  label: 'Hallveig Traustadóttir (105)',
+                  value: '2',
+                },
+                {
+                  label: 'Björn Egilsson (107)',
+                  value: '3',
+                },
+                {
+                  label: 'Auður Egilsdóttir (170)',
+                  value: '4',
+                },
+              ],
             }),
-            // buildTextField({
-            //   id: 'person.nationalId',
-            //   name: 'Kennitala',
-            //   required: true,
-            // }),
-            // buildTextField({
-            //   id: 'person.age',
-            //   name: 'Aldur',
-            //   required: true,
-            // }),
-            // buildTextField({
-            //   id: 'person.email',
-            //   name: 'Netfang',
-            //   required: false,
-            // }),
-            // buildTextField({
-            //   id: 'person.phoneNumber',
-            //   name: 'Símanúmer',
-            //   required: false,
-            //   condition: {
-            //     questionId: 'person.age',
-            //     isMultiCheck: false,
-            //     comparator: Comparators.GTE,
-            //     value: '18',
-            //   },
-            // }),
+          ],
+        }),
+        buildSubSection({
+          id: 'carInfo',
+          name: 'Car Information',
+          children: [
+            buildMultiField({
+              id: 'car',
+              name: 'Car for training and test',
+              children: [
+                buildRadioField({
+                  id: 'carNeeded',
+                  name: "Will you need to use an instructor's car?",
+                  required: true,
+                  options: [
+                    { value: 'yes', label: 'Yes' },
+                    { value: 'no', label: 'No' },
+                  ],
+                }),
+                buildRadioField({
+                  id: 'transmission',
+                  name: 'What type of transmission do you prefer?',
+                  required: true,
+                  options: [
+                    { value: 'manual', label: 'Manual' },
+                    { value: 'automatic', label: 'Automatic' },
+                  ],
+                  condition: (formValue: ExampleSchemaFormValues) => {
+                    return formValue?.carNeeded === 'yes'
+                  },
+                }),
+              ],
+            }),
           ],
         }),
       ],
     }),
     buildSection({
-      id: 'career123',
-      name: 'Starfsferill',
+      id: 'payment',
+      name: 'Payment Information',
       children: [
-        buildSubSection({
-          id: 'history123',
-          name: 'Hvar hefur þú unnið áður?',
-          children: [
-            buildRadioField({
-              id: 'careerHistory123',
-              name: 'Hefurðu unnið yfir höfuð einhvern tímann áður?',
-              required: true,
-              options: [
-                { value: 'yes', label: 'Já' },
-                { value: 'no', label: 'Nei' },
-              ],
-              condition: (formValue: ExampleSchemaFormValues) => {
-                return formValue?.person?.age >= '18'
-              },
-            }),
-            buildCheckboxField({
-              id: 'careerHistoryCompanies123',
-              name: 'Hefurðu unnið fyrir eftirfarandi aðila?',
-              required: false,
-              options: [
-                { value: 'government', label: 'Ríkið' },
-                { value: 'aranja', label: 'Aranja' },
-                { value: 'advania', label: 'Advania' },
-              ],
-            }),
+        buildRadioField({
+          id: 'paymentType',
+          name: 'Which payment method will you use?',
+          required: true,
+          options: [
+            { value: 'credit', label: 'Credit card' },
+            { value: 'bank', label: 'Bank transfer' },
           ],
         }),
-        buildSubSection({
-          id: 'future123',
-          name: 'Hvar langar þig að vinna?',
-          children: [
-            buildTextField({
-              id: 'dreamJob123',
-              name: 'Einhver draumavinnustaður?',
-              required: false,
-            }),
-          ],
+        buildTextField({
+          id: 'creditCard',
+          name: 'Card number',
+          condition: (formValue: ExampleSchemaFormValues) => {
+            return formValue?.paymentType === 'credit'
+          },
+        }),
+        buildTextField({
+          id: 'bankAccount',
+          name: 'Bank account number',
+          condition: (formValue: ExampleSchemaFormValues) => {
+            return formValue?.paymentType === 'bank'
+          },
+        }),
+        buildIntroductionField({
+          id: 'Summary',
+          name: 'Next steps',
+          introduction:
+            'The instructor will contact you after you submit this application. Have a nice day!',
         }),
       ],
     }),
