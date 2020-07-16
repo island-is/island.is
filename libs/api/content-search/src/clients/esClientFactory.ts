@@ -8,7 +8,10 @@ const { elastic } = environment
 
 export class EsClientFactory {
   static create() {
-    const hasAWS = Boolean(AWS.config?.credentials?.accessKeyId)
+    const hasAWS = this.hasAWS()
+    if (hasAWS) {
+      this.initCredentials()
+    }
     //todo handle pool?
     logger.info('Create ES Client', {
       esConfig: elastic,
@@ -17,6 +20,33 @@ export class EsClientFactory {
     return new Client({
       Connection: hasAWS ? AwsSignedConnection : UnsignedConnection,
       node: elastic.node,
+    })
+  }
+
+  private static hasAWS(): boolean {
+    return (
+      'AWS_WEB_IDENTITY_TOKEN_FILE' in process.env ||
+      'AWS_SECRET_ACCESS_KEY' in process.env
+    )
+  }
+
+  private static initCredentials() {
+    if (AWS.config.credentials) {
+      return
+    }
+
+    AWS.config.getCredentials((err) => {
+      logger.debug('Trying to initialize AWS Credentials')
+
+      if (!err) {
+        return
+      }
+
+      logger.error('AWS Credentials Error', {
+        error: err,
+      })
+
+      throw new Error('AWS Credentials Error')
     })
   }
 }
