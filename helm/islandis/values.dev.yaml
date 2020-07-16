@@ -21,7 +21,6 @@ search-indexer-service:
     CONTENTFUL_HOST: 'preview.contentful.com'
     S3_BUCKET: 'dev-es-custom-packages'
 
-  migration_script: /webapp/migrate.js
   ingress:
     enabled: true
     annotations:

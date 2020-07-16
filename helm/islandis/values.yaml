@@ -27,6 +27,8 @@ search-indexer-service:
     args: ["/webapp/bin/migrate.js"]
   ingress:
     enabled: true
+  serviceAccount:
+    create: true
 
 search-indexer-service:
   namespace: search-indexer
@@ -42,5 +44,3 @@ search-indexer-service:
     S3_BUCKET: "prod-es-custom-packages"
 
   migration_script: /webapp/migrate.js
-  serviceAccount:
-    create: true
