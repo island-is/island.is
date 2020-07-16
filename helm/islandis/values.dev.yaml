@@ -19,6 +19,7 @@ search-indexer-service:
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'preview.contentful.com'
+    AWS_REGION: 'eu-west-1'
 
   ingress:
     enabled: true
@@ -39,3 +40,4 @@ search-indexer-service:
       APPLICATION_URL: 'http://search-indexer-service'
       ELASTIC_INDEX: 'island-is'
       S3_BUCKET: 'dev-es-custom-packages'
+      AWS_REGION: 'eu-west-1'
