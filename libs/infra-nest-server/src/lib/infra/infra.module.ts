@@ -1,6 +1,6 @@
 import { Module, DynamicModule, Type } from '@nestjs/common'
 import { InfraController } from './infra.controller'
-import { LoggingModule } from '@island.is/logging';
+import { LoggingModule } from '@island.is/logging'
 
 @Module({
   controllers: [InfraController],

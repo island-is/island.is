@@ -1,6 +1,6 @@
 import express from 'express'
 import { register } from 'prom-client'
-import { logger } from '@island.is/logging';
+import { logger } from '@island.is/logging'
 
 // a separate express app to serve the metrics listening on a different port
 export const runMetricServer = (port: number) => {

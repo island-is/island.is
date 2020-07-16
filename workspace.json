@@ -884,10 +884,7 @@
               "libs/infra-nest-server/tsconfig.lib.json",
               "libs/infra-nest-server/tsconfig.spec.json"
             ],
-            "exclude": [
-              "**/node_modules/**",
-              "!libs/infra-nest-server/**"
-            ]
+            "exclude": ["**/node_modules/**", "!libs/infra-nest-server/**"]
           }
         },
         "test": {
