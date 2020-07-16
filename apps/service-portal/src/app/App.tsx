@@ -10,6 +10,9 @@ import * as store from '../store'
 import Authenticator from '../components/Authenticator/Authenticator'
 import Header from '../components/Header/Header'
 import { createApolloClient } from '../graphql/client'
+import { Columns, Column, ContentBlock } from '@island.is/island-ui/core'
+import Sidebar from '../components/Sidebar/Sidebar'
+import Dashboard from '../components/Dashboard/Dashboard'
 
 export const App = () => {
   makeServer()
@@ -26,7 +29,16 @@ export const App = () => {
             </Route>
             <Authenticator>
               <Header />
-              <div>Logged in</div>
+              <ContentBlock>
+                <Columns>
+                  <Column width="3/12">
+                    <Sidebar />
+                  </Column>
+                  <Column width="9/12">
+                    <Dashboard />
+                  </Column>
+                </Columns>
+              </ContentBlock>
             </Authenticator>
           </Switch>
         </StateProvider>
