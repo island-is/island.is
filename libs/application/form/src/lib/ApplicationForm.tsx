@@ -11,6 +11,8 @@ import {
 import { ActionTypes } from '../reducer/ReducerTypes'
 import { Box, Column } from '@island.is/island-ui/core'
 
+import * as styles from './ApplicationForm.treat'
+
 type ApplicationProps = {
   form: Form
   initialAnswers: FormValue
@@ -56,7 +58,12 @@ export const ApplicationForm: FC<ApplicationProps> = ({
           </Sidebar>
         </Column>
         <Column width="3/4">
-          <Box border="standard" paddingX={12} paddingTop={4} height="full">
+          <Box
+            paddingX={12}
+            paddingTop={4}
+            height="full"
+            className={styles.screenContainer}
+          >
             <Screen
               answerQuestions={(payload) =>
                 dispatch({ type: ActionTypes.ANSWER, payload })
