@@ -2,12 +2,11 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "jsx": "react",
-	"allowJs": true,
-	"noImplicitAny": true,
+    "allowJs": true,
+    "noImplicitAny": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["node", "jest"],
-    "noImplicitAny": true
+    "types": ["node", "jest"]
   },
   "files": [
     "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",

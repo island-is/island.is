@@ -6,6 +6,7 @@ import { initialState } from '../../store'
 import { useHistory } from 'react-router-dom'
 import { usePersistUserInfo } from '../../hooks/usePersistUserInfo/usePersistUserInfo'
 import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
+import { Logo, Box, ContentBlock } from '@island.is/island-ui/core'
 
 interface HeaderProps {
   something?: string
@@ -25,10 +26,14 @@ export const Header = (props: HeaderProps) => {
 
   return (
     <header>
-      <div>
-        <Link to="/">Home</Link>
-        <button onClick={handleLogout}>Útskráning</button>
-      </div>
+      <Box width="full">
+        <ContentBlock>
+          <div>
+            <Link to="/">Home</Link>
+            <button onClick={handleLogout}>Útskráning</button>
+          </div>
+        </ContentBlock>
+      </Box>
     </header>
   )
 }

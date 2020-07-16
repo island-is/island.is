@@ -7,8 +7,8 @@ import { Login } from '../screens/login/login'
 import { StateProvider } from '../stateProvider'
 import { ApolloProvider } from '@apollo/react-hooks'
 import * as store from '../store'
-import Authenticator from '../components/authenticator/authenticator'
-import Header from '../components/header/header'
+import Authenticator from '../components/Authenticator/Authenticator'
+import Header from '../components/Header/Header'
 import { createApolloClient } from '../graphql/client'
 
 export const App = () => {
