@@ -1,11 +1,11 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 
-import ServicePortalModules from './service-portal-modules'
+import ServicePortalCore from './service-portal-core'
 
-describe(' ServicePortalModules', () => {
+describe(' ServicePortalCore', () => {
   it('should render successfully', () => {
-    const { baseElement } = render(<ServicePortalModules />)
+    const { baseElement } = render(<ServicePortalCore />)
     expect(baseElement).toBeTruthy()
   })
 })

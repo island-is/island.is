@@ -50,6 +50,9 @@
       ],
       "@island.is/service-portal/constants": [
         "libs/service-portal/constants/src/index.ts"
+      ],
+      "@island.is/service-portal/core": [
+        "libs/service-portal/core/src/index.ts"
       ]
     }
   },

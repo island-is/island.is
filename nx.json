@@ -110,10 +110,10 @@
       "tags": [],
       "implicitDependencies": ["service-portal"]
     },
-    "service-portal-modules": {
+    "service-portal-constants": {
       "tags": []
     },
-    "service-portal-constants": {
+    "service-portal-core": {
       "tags": []
     }
   }
