@@ -18,7 +18,7 @@ export const SubSectionItem: FC<SubSectionItemProps> = ({
       currentState === 'active'
         ? 'blue400'
         : currentState === 'previous'
-        ? 'dark300'
+        ? 'dark200'
         : 'dark400'
     }
   >
