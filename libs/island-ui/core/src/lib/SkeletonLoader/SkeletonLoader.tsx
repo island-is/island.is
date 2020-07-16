@@ -3,11 +3,22 @@ import React from 'react'
 import * as styles from './SkeletonLoader.treat'
 
 export interface SkeletonLoaderProps {
+  /**
+   * Define a fixed width, default skeleton loader will fill remaining space
+   */
   width?: string | number
+  /**
+   * Define a fixed height, default skeleton loader will fill remaining space
+   */
   height?: string | number
+  /**
+   * Adds multiple lines of skeleton loader, usefull for mimicking block of text
+   */
   repeat?: number
 }
-
+/**
+ * Animated content placeholder to manage user expectations
+ */
 export const SkeletonLoader = ({
   width,
   height,

@@ -156,6 +156,7 @@ const displayRules = {
   none: 'none',
   inlineBlock: 'inline-block',
   flex: 'flex',
+  inlineFlex: 'inline-flex',
 }
 export const display = styleMap(mapToStyleProperty(displayRules, 'display'))
 export const displaySm = styleMap(

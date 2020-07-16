@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { body, cookie, query, validationResult } from 'express-validator'
+import { body, query, validationResult } from 'express-validator'
 import jwt from 'jsonwebtoken'
 import { Entropy } from 'entropy-string'
 import IslandisLogin from 'islandis-login'
@@ -17,8 +17,8 @@ import { VerifyResult } from './types'
 import {
   ACCESS_TOKEN_COOKIE,
   CSRF_COOKIE,
-  FIFTEEN_MINUTES,
   JWT_EXPIRES_IN_SECONDS,
+  ONE_HOUR,
   REDIRECT_COOKIE,
 } from './consts'
 import { environment } from '../../environments'
@@ -32,74 +32,86 @@ const loginIS = new IslandisLogin({
 
 const YEAR_BORN_LIMIT = 2002
 
-router.post(
-  '/callback',
-  [body('token').notEmpty(), cookie(REDIRECT_COOKIE.name).notEmpty()],
-  async (req, res) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      logger.error(errors.array())
-      return res.redirect('/error')
-    }
+router.post('/callback', [body('token').notEmpty()], async (req, res) => {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    logger.error(errors.array())
+    return res.redirect('/error')
+  }
 
-    const { token } = req.body
-    const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE.name]
-    res.clearCookie(REDIRECT_COOKIE.name, REDIRECT_COOKIE.options)
-    let verifyResult: VerifyResult
+  const { token } = req.body
+  let verifyResult: VerifyResult
+  try {
+    verifyResult = await loginIS.verify(token)
+  } catch (err) {
+    logger.error(err)
+    return res.redirect('/error')
+  }
 
-    try {
-      verifyResult = await loginIS.verify(token)
-    } catch (err) {
-      logger.error(err)
-      return res.redirect('/error')
-    }
+  const { user } = verifyResult
+  const redirectCookie = req.cookies[REDIRECT_COOKIE.name]
+  res.clearCookie(REDIRECT_COOKIE.name, REDIRECT_COOKIE.options)
+  if (!redirectCookie) {
+    logger.error('Redirect cookie not sent', {
+      extra: {
+        user,
+      },
+    })
+    return res.redirect('/api/auth/login')
+  }
 
-    const { user } = verifyResult
-    if (!user || authId !== user?.authId || returnUrl.charAt(0) !== '/') {
-      return res.redirect('/error')
-    }
+  const { authId, returnUrl } = redirectCookie
+  if (!user || authId !== user?.authId) {
+    logger.error('Could not verify user authenticity', {
+      extra: {
+        user,
+        authId,
+        returnUrl,
+      },
+    })
+    return res.redirect('/error')
+  }
 
-    if (!kennitala.isPerson(user.kennitala)) {
-      logger.warn('User used company kennitala to log in')
-      return res.redirect(`/error?errorType=${SSN_IS_NOT_A_PERSON}`)
-    }
+  if (!kennitala.isPerson(user.kennitala)) {
+    logger.warn('User used company kennitala to log in')
+    return res.redirect(`/error?errorType=${SSN_IS_NOT_A_PERSON}`)
+  }
 
-    const yearBorn = new Date(
-      kennitala.info(user.kennitala).birthday,
-    ).getFullYear()
-    if (yearBorn > YEAR_BORN_LIMIT) {
-      logger.warn(`User born after ${YEAR_BORN_LIMIT} logged in`)
-      return res.redirect(`/error?errorType=${USER_NOT_OLD_ENOUGH}`)
-    }
+  const yearBorn = new Date(
+    kennitala.info(user.kennitala).birthday,
+  ).getFullYear()
+  if (yearBorn > YEAR_BORN_LIMIT) {
+    logger.warn(`User born after ${YEAR_BORN_LIMIT} logged in`)
+    return res.redirect(`/error?errorType=${USER_NOT_OLD_ENOUGH}`)
+  }
 
-    const csrfToken = new Entropy({ bits: 128 }).string()
-    const jwtToken = jwt.sign(
-      {
-        user: { ssn: user.kennitala, name: user.fullname, mobile: user.mobile },
-        csrfToken,
-      } as Credentials,
-      jwtSecret,
-      { expiresIn: JWT_EXPIRES_IN_SECONDS },
-    )
+  const csrfToken = new Entropy({ bits: 128 }).string()
+  const jwtToken = jwt.sign(
+    {
+      user: { ssn: user.kennitala, name: user.fullname, mobile: user.mobile },
+      csrfToken,
+    } as Credentials,
+    jwtSecret,
+    { expiresIn: JWT_EXPIRES_IN_SECONDS },
+  )
 
-    const tokenParts = jwtToken.split('.')
-    if (tokenParts.length !== 3) {
-      return res.redirect('/error')
-    }
+  const tokenParts = jwtToken.split('.')
+  if (tokenParts.length !== 3) {
+    return res.redirect('/error')
+  }
 
-    const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
-    return res
-      .cookie(CSRF_COOKIE.name, csrfToken, {
-        ...CSRF_COOKIE.options,
-        maxAge,
-      })
-      .cookie(ACCESS_TOKEN_COOKIE.name, jwtToken, {
-        ...ACCESS_TOKEN_COOKIE.options,
-        maxAge,
-      })
-      .redirect(returnUrl)
-  },
-)
+  const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
+  return res
+    .cookie(CSRF_COOKIE.name, csrfToken, {
+      ...CSRF_COOKIE.options,
+      maxAge,
+    })
+    .cookie(ACCESS_TOKEN_COOKIE.name, jwtToken, {
+      ...ACCESS_TOKEN_COOKIE.options,
+      maxAge,
+    })
+    .redirect(!returnUrl || returnUrl.charAt(0) !== '/' ? '/' : returnUrl)
+})
 
 router.get(
   '/login',
@@ -125,20 +137,16 @@ router.get(
     const authId = uuid()
     const { returnUrl } = req.query
 
-    res
-      .cookie(
-        name,
-        { authId, returnUrl },
-        { ...options, maxAge: FIFTEEN_MINUTES },
-      )
-      .redirect(`${samlEntryPoint}&authid=${authId}`)
+    return res
+      .cookie(name, { authId, returnUrl }, { ...options, maxAge: ONE_HOUR })
+      .redirect(`${samlEntryPoint}&authId=${authId}`)
   },
 )
 
 router.get('/logout', (req, res) => {
   res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
   res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
-  res.json({ logout: true })
+  return res.json({ logout: true })
 })
 
 export default router

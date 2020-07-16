@@ -44,6 +44,10 @@ export const button = style({
   },
 })
 
+export const noWrap = style({
+  whiteSpace: 'nowrap',
+})
+
 const sizeMenuDesktop = {
   height: 48,
   padding: '0 12px',

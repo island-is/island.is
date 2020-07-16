@@ -27,15 +27,11 @@ spec:
       initContainers:
         - name: migration
           image: "{{ .Values.image.repository }}:{{ .Values.global.image.tag }}"
-          command: ['/bin/bash', {{ .Values.initEnvironment.migration_script | quote }}]
+          command: ['/usr/local/bin/node', {{ .Values.migration_script | quote }}]
           env:
-            {{- with .Values.environment }}
-            - name: ELASTIC_NODE
-              value: {{ .elastic_node }}
-            - name: APPLICATION_URL
-              value: {{ .application_url }}
-            - name: ELASTIC_INDEX
-              value: {{ .elastic_index }}
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
             {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -56,25 +52,28 @@ spec:
               path: /
               port: http
           env:
-            {{- with .Values.environment }}
-            - name: ELASTIC_NODE
-              value: {{ .elastic_node }}
-            - name: APPLICATION_URL
-              value: {{ .application_url }}
-            - name: ELASTIC_INDEX
-              value: {{ .elastic_index }}
+            {{- range $key, $value := .Values.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- range $key, $value := .Values.secrets }}
+            - name: {{ $key }}
+              valueFrom:
+                secretKeyRef:
+                  name: search-indexer-service
+                  key: {{ $key }}
             {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-      {{- with .Values.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
+        {{- with .Values.nodeSelector }}
+        nodeSelector:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.affinity }}
+        affinity:
+          {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.affinity }}
-      affinity:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
-    {{- with .Values.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+      {{- with .Values.tolerations }}
+        tolerations:
+          {{- toYaml . | nindent 8 }}
+      {{- end }}

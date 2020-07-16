@@ -31,6 +31,7 @@ export default gql`
     id: String!
     mobileNumber: String!
     countryCode: String!
+    verified: Boolean!
     logs: [ApplicationLog]
   }
 
@@ -43,6 +44,25 @@ export default gql`
   }
 
   input CreateUserApplicationInput {
+    mobile: StringTrimmed
+    confirmCode: StringTrimmed
+  }
+
+  type VerifyUserApplication {
+    application: UserApplication
+  }
+
+  input VerifyUserApplicationInput {
+    mobile: StringTrimmed
+    confirmCode: StringTrimmed
+  }
+
+  type ConfirmMobile {
+    mobile: String!
+    success: Boolean!
+  }
+
+  input ConfirmMobileInput {
     mobile: StringTrimmed
   }
 
@@ -65,5 +85,9 @@ export default gql`
       input: CreateUserApplicationInput
     ): CreateUserApplication
     giveGift(input: GiveGiftInput): GiveGift
+    verifyUserApplication(
+      input: VerifyUserApplicationInput
+    ): VerifyUserApplication
+    confirmMobile(input: ConfirmMobileInput): ConfirmMobile
   }
 `

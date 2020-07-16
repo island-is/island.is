@@ -111,15 +111,15 @@ export const useBoxStyles = ({
     ...styleRefs,
   }
 
-  const resolvedPaddingTop = paddingTop || paddingY || padding
-  const resolvedPaddingBottom = paddingBottom || paddingY || padding
-  const resolvedPaddingLeft = paddingLeft || paddingX || padding
-  const resolvedPaddingRight = paddingRight || paddingX || padding
+  const resolvedPaddingTop = paddingTop ?? paddingY ?? padding
+  const resolvedPaddingBottom = paddingBottom ?? paddingY ?? padding
+  const resolvedPaddingLeft = paddingLeft ?? paddingX ?? padding
+  const resolvedPaddingRight = paddingRight ?? paddingX ?? padding
 
-  const resolvedMarginTop = marginTop || marginY || margin
-  const resolvedMarginBottom = marginBottom || marginY || margin
-  const resolvedMarginLeft = marginLeft || marginX || margin
-  const resolvedMarginRight = marginRight || marginX || margin
+  const resolvedMarginTop = marginTop ?? marginY ?? margin
+  const resolvedMarginBottom = marginBottom ?? marginY ?? margin
+  const resolvedMarginLeft = marginLeft ?? marginX ?? margin
+  const resolvedMarginRight = marginRight ?? marginX ?? margin
 
   return classnames(
     component !== null && resetStyles.base,

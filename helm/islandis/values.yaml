@@ -8,7 +8,7 @@ global:
 web:
   namespace: islandis
   env:
-    API_URL: 'http://deploy-dev-api/api'
+    API_URL: 'http://web-api'
 
 api:
   namespace: islandis
@@ -16,20 +16,21 @@ api:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
   env:
     PORT: 3333
-    
+
 search-indexer-service:
   namespace: search-indexer
+  secrets:
+    CONTENTFUL_ACCESS_TOKEN: "/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN"
   environment:
-    application_url: "http://search-indexer-service"
-    elastic_node: "https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com"
-    elastic_index: "island-is"
-    contentful_space: "8k0h54kbe6bj"
-    contentful_access_token: "/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN"
-    contentful_environment: "sandbox"
-    contentful_host: "preview.contentful.com"
+    APPLICATION_URL: "http://search-indexer-service"
+    ELASTIC_NODE: "https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com"
+    ELASTIC_INDEX: "island-is"
+    CONTENTFUL_SPACE: "8k0h54kbe6bj"
+    CONTENTFUL_ENVIRONMENT: "master"
+    CONTENTFUL_HOST: "preview.contentful.com"
+    S3_BUCKET: "prod-es-custom-packages"
 
-  initEnvironment:
-    migration_script: /webapp/bin/migrate.sh
+  migration_script: /webapp/migrate.js
   serviceAccount:
     create: true
     name: 'search-indexer'

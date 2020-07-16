@@ -928,13 +928,9 @@
                 "glob": "config",
                 "input": "apps/services/search-indexer",
                 "output": "./"
-              },
-              {
-                "glob": "bin",
-                "input": "apps/services/search-indexer",
-                "output": "./"
               }
-            ]
+            ],
+            "webpackConfig": "apps/services/search-indexer/webpack.config.js"
           },
           "configurations": {
             "production": {
