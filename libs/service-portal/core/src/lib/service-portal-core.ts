@@ -3,7 +3,7 @@ import React, { LazyExoticComponent } from 'react'
 export interface ServicePortalNavigationItem {
   name: string
   url: string
-  children: ServicePortalNavigationItem[]
+  children?: ServicePortalNavigationItem[]
 }
 
 /* eslint-disable-next-line */

@@ -10,7 +10,12 @@ import * as store from '../store'
 import Authenticator from '../components/Authenticator/Authenticator'
 import Header from '../components/Header/Header'
 import { createApolloClient } from '../graphql/client'
-import { Columns, Column, ContentBlock } from '@island.is/island-ui/core'
+import {
+  Columns,
+  Column,
+  ContentBlock,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import Sidebar from '../components/Sidebar/Sidebar'
 import Dashboard from '../components/Dashboard/Dashboard'
 import { ServicePortalModule } from '@island.is/service-portal/core'
@@ -29,7 +34,7 @@ const ModuleLoader: FC<{ module: ServicePortalModule }> = ({ module }) => {
 
   if (App)
     return (
-      <Suspense fallback="Sæki einingu">
+      <Suspense fallback={<SkeletonLoader />}>
         <App />
       </Suspense>
     )
@@ -41,7 +46,6 @@ const Modules = () => {
   return (
     <>
       <Route
-        exact
         path="/umsoknir"
         render={() => <ModuleLoader module={modules.applicationsModule} />}
       />

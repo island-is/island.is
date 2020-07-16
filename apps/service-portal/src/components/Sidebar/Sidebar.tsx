@@ -23,24 +23,34 @@ export const Sidebar: FC<{}> = () => {
 
   return (
     <Box background="purple100" padding={4}>
-      <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h4">
-          Sidebar
-        </Typography>
-        <Stack space={[1, 1, 2]}>
-          <Divider weight="alternate" />
-          {navigation.applications && (
-            <Link to={navigation.applications.url}>
-              <Box textAlign="left" outline="none">
-                <Typography variant="p" as="span">
-                  {navigation.applications.name}
-                </Typography>
-              </Box>
-            </Link>
+      <Typography variant="h4" as="h4">
+        Sidebar
+      </Typography>
+      <Divider weight="alternate" />
+      {navigation.applications && (
+        <>
+          <Link to={navigation.applications.url}>
+            <Box marginTop={1}>
+              <Typography variant="p" as="span">
+                {navigation.applications.name}
+              </Typography>
+            </Box>
+          </Link>
+          {navigation.applications.children && (
+            <Box paddingLeft={1}>
+              {navigation.applications.children.map((child, index) => (
+                <Link to={child.url} key={`child-${index}`}>
+                  <Box>
+                    <Typography variant="p" as="span">
+                      {child.name}
+                    </Typography>
+                  </Box>
+                </Link>
+              ))}
+            </Box>
           )}
-        </Stack>
-        <Divider />
-      </Stack>
+        </>
+      )}
     </Box>
   )
 }

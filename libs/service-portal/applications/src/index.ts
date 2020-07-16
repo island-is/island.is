@@ -10,7 +10,16 @@ export const applicationsModule: ServicePortalModule = {
     return {
       name: 'Umsóknir',
       url: '/umsoknir',
-      children: [],
+      children: [
+        {
+          name: 'Opnar umsóknir',
+          url: '/umsoknir/opnar-umsoknir',
+        },
+        {
+          name: 'Ný umsókn',
+          url: '/umsoknir/ny-umsokn',
+        },
+      ],
     }
   },
   widgets: () => lazy(() => import('./widgets')),

@@ -1,8 +1,6 @@
 import React from 'react'
 import { removeToken } from '../../auth/utils'
 import { Link } from 'react-router-dom'
-import { useStateValue } from './../../stateProvider'
-import { initialState } from '../../store'
 import { useHistory } from 'react-router-dom'
 import { usePersistUserInfo } from '../../hooks/usePersistUserInfo/usePersistUserInfo'
 import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
