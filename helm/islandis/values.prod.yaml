@@ -9,7 +9,6 @@ search-indexer-service:
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'preview.contentful.com'
-    S3_BUCKET: 'prod-es-custom-packages'
 
   initContainer:
     env:
