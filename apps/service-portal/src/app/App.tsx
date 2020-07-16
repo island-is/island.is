@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useEffect, useState, FC, Suspense } from 'react'
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { makeServer } from 'apps/service-portal/mirage-server'
 import { Login } from '../screens/login/login'
-import { StateProvider } from '../stateProvider'
+import { StateProvider, useStateValue } from '../stateProvider'
 import { ApolloProvider } from '@apollo/react-hooks'
 import * as store from '../store'
 import Authenticator from '../components/Authenticator/Authenticator'
@@ -13,9 +13,45 @@ import { createApolloClient } from '../graphql/client'
 import { Columns, Column, ContentBlock } from '@island.is/island-ui/core'
 import Sidebar from '../components/Sidebar/Sidebar'
 import Dashboard from '../components/Dashboard/Dashboard'
+import { ServicePortalModule } from '@island.is/service-portal/core'
+
+const ModuleLoader: FC<{ module: ServicePortalModule }> = ({ module }) => {
+  const [App, setApp] = useState<any>()
+
+  useEffect(() => {
+    async function fetchWidgets() {
+      const app = await module.render()
+      setApp(app)
+    }
+
+    fetchWidgets()
+  }, [module])
+
+  if (App)
+    return (
+      <Suspense fallback="Sæki einingu">
+        <App />
+      </Suspense>
+    )
+  return null
+}
+
+const Modules = () => {
+  const [{ modules }] = useStateValue()
+  return (
+    <>
+      <Route
+        exact
+        path="/umsoknir"
+        render={() => <ModuleLoader module={modules.applicationsModule} />}
+      />
+    </>
+  )
+}
 
 export const App = () => {
   makeServer()
+
   return (
     <Router>
       <ApolloProvider client={createApolloClient()}>
@@ -35,7 +71,10 @@ export const App = () => {
                     <Sidebar />
                   </Column>
                   <Column width="9/12">
-                    <Dashboard />
+                    <Route exact path="/">
+                      <Dashboard />
+                    </Route>
+                    <Modules />
                   </Column>
                 </Columns>
               </ContentBlock>

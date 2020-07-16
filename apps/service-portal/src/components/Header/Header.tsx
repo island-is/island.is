@@ -14,12 +14,11 @@ interface HeaderProps {
 
 export const Header = (props: HeaderProps) => {
   usePersistUserInfo()
-  const [state, setState] = useStateValue()
   const history = useHistory()
-  console.log(state)
+
   const handleLogout = async () => {
     await removeToken()
-    setState(initialState)
+    // TODO: Remove store state?
     localStorage.removeItem(MOCK_AUTH_KEY)
     history.push('/innskraning')
   }

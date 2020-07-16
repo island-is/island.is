@@ -115,6 +115,9 @@
     },
     "service-portal-core": {
       "tags": []
+    },
+    "service-portal-applications": {
+      "tags": []
     }
   }
 }
