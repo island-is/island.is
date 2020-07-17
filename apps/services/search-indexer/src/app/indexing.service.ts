@@ -32,12 +32,16 @@ export class IndexingService {
     try {
       const result = await this.elasticService.findByQuery(index, query)
       return result.body?.hits?.hits[0]?._source?.nextSyncToken
-    } catch {
+    } catch (e) {
+      logger.error('Could not fetch last sync token', {
+        error: e,
+      })
       return undefined
     }
   }
 
   async continueSync(syncToken: string, index: SearchIndexes) {
+    await this.needConnection()
     logger.debug('Start continue sync')
     const result = await this.contentFulSyncer.getSyncEntries({
       nextSyncToken: syncToken,
@@ -48,13 +52,15 @@ export class IndexingService {
     logger.debug('Continue sync found results', {
       numItems: result.items.length,
     })
-    result.items.forEach(
-      this.transformAndIndexEntry.bind(this, index, result.token),
-    )
+    for (const item of result.items) {
+      // one at a time please, else ES will be unhappy
+      await this.transformAndIndexEntry(index, result.token, item)
+    }
     logger.debug('Continue sync done')
   }
 
   async initialSync(index: SearchIndexes) {
+    await this.needConnection()
     logger.debug('Start initial sync')
     const result = await this.contentFulSyncer.getSyncEntries({
       initial: true,
@@ -65,16 +71,20 @@ export class IndexingService {
     logger.debug('Initial sync found result', {
       numItems: result.items.length,
     })
-    result.items.forEach(
-      this.transformAndIndexEntry.bind(this, index, result.token),
-    )
+
+    for (const item of result.items) {
+      // one at a time please, else ES will be unhappy
+      await this.transformAndIndexEntry(index, result.token, item)
+    }
 
     logger.debug('Initial sync done')
   }
 
   async syncById(index: SearchIndexes, id: string) {
+    await this.needConnection()
     logger.debug('Sync by ID', { id: id })
-    let result
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let result: Entry<any>
     try {
       result = await this.contentFulSyncer.getEntry(id)
     } catch (e) {
@@ -82,10 +92,10 @@ export class IndexingService {
       return
     }
     logger.debug('Sync by ID found entry', {
-      result: result.id,
+      resultID: result.sys.id,
     })
     if (result) {
-      await this.transformAndIndexEntry.bind(this, index, result)
+      await this.transformAndIndexEntry(index, null, result)
     }
     logger.debug('Sync by ID done')
   }
@@ -96,7 +106,7 @@ export class IndexingService {
 
   private async transformAndIndexEntry(
     index: SearchIndexes,
-    syncToken: string,
+    syncToken: string | null,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     entry: Entry<any>,
   ) {
@@ -144,16 +154,17 @@ export class IndexingService {
         description: entry.fields?.category?.fields.description,
       },
       _id: entry.sys.id,
-      nextSyncToken: syncToken,
+    }
+    if (syncToken) {
+      document.nextSyncToken = syncToken
     }
 
-    try {
-      await this.elasticService.index(index, document)
-    } catch (e) {
-      logger.error('Error indexing', {
-        e: e,
-        id: document._id,
-      })
-    }
+    await this.elasticService.index(index, document)
+  }
+
+  private async needConnection() {
+    await this.elasticService.ping().catch((e) => {
+      ElasticService.handleError('Indexer does not have connection', {}, e)
+    })
   }
 }
