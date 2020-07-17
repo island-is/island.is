@@ -7,7 +7,7 @@ import { model as AuditLog } from '../audit'
 export const getApplicationByIssuerAndType = (
   issuerSSN: string,
   type: string,
-): Application =>
+): Promise<Application> =>
   Application.findOne({
     where: { type, issuerSSN },
     include: [
@@ -18,7 +18,9 @@ export const getApplicationByIssuerAndType = (
     order: [[AuditLog, 'created', 'ASC']],
   })
 
-export const getApplicationById = (applicationId: string): Application =>
+export const getApplicationById = (
+  applicationId: string,
+): Promise<Application> =>
   Application.findOne({
     where: { id: applicationId },
     include: [
@@ -29,7 +31,7 @@ export const getApplicationById = (applicationId: string): Application =>
     order: [[AuditLog, 'created', 'ASC']],
   })
 
-export const getApplicationsByType = (type: string): [Application] =>
+export const getApplicationsByType = (type: string): Promise<Application[]> =>
   Application.findAll({
     where: { type },
     include: [
@@ -40,7 +42,7 @@ export const getApplicationsByType = (type: string): [Application] =>
     order: [[AuditLog, 'created', 'ASC']],
   })
 
-export const getApplicationCountByType = (type: string): number =>
+export const getApplicationCountByType = (type: string): Promise<number> =>
   Application.count({
     where: { type },
   })
@@ -50,13 +52,13 @@ export const createApplication = (
   type: string,
   state: string,
   data: object,
-): Application => Application.create({ issuerSSN, type, state, data })
+): Promise<Application> => Application.create({ issuerSSN, type, state, data })
 
 export const updateApplication = (
   application: Application,
   state: string,
   data: object,
-): Application => {
+): Promise<Application> => {
   const mergedData = merge(application.data, data, (objValue, srcValue) => {
     if (isArray(objValue)) {
       return objValue.concat(srcValue)
@@ -68,6 +70,6 @@ export const updateApplication = (
 export const updateApplicationState = (
   application: Application,
   state: string,
-): Application => {
+): Promise<Application> => {
   return application.update({ state })
 }
