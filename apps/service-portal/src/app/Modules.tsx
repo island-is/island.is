@@ -2,7 +2,7 @@ import React, { FC, Suspense } from 'react'
 import { Route } from 'react-router-dom'
 import { ServicePortalModule } from '@island.is/service-portal/core'
 import { SkeletonLoader } from '@island.is/island-ui/core'
-import { useStateValue } from '../stateProvider'
+import { useStore } from '../stateProvider'
 
 const ModuleLoader: FC<{ module: ServicePortalModule }> = React.memo(
   ({ module }) => {
@@ -23,13 +23,17 @@ const ModuleLoader: FC<{ module: ServicePortalModule }> = React.memo(
 )
 
 const Modules: FC<{}> = () => {
-  const [{ modules }] = useStateValue()
+  const [{ modules }] = useStore()
 
   return (
     <>
       <Route
         path="/umsoknir"
         render={() => <ModuleLoader module={modules.applicationsModule} />}
+      />
+      <Route
+        path="/rafraen-skjol"
+        render={() => <ModuleLoader module={modules.documentsModule} />}
       />
     </>
   )

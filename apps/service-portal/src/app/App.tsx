@@ -14,6 +14,7 @@ import { Columns, Column, ContentBlock } from '@island.is/island-ui/core'
 import Sidebar from '../components/Sidebar/Sidebar'
 import Dashboard from '../components/Dashboard/Dashboard'
 import Modules from './Modules'
+import ContentBreadcrumbs from '../components/ContentBreadcrumbs/ContentBreadcrumbs'
 
 export const App = () => {
   makeServer()
@@ -37,6 +38,7 @@ export const App = () => {
                     <Sidebar />
                   </Column>
                   <Column width="9/12">
+                    <ContentBreadcrumbs />
                     <Route exact path="/">
                       <Dashboard />
                     </Route>

@@ -1,11 +1,11 @@
-import { useStateValue } from '../../stateProvider'
+import { useStore } from '../../stateProvider'
 import { MockUserData, AsyncActionState } from '../../store'
 import { useEffect } from 'react'
 import { fetchToken } from '../../auth/utils'
 import jwtDecode from 'jwt-decode'
 
 export const usePersistUserInfo = () => {
-  const [{ userInfo, userInfoState }, dispatch] = useStateValue()
+  const [{ userInfo, userInfoState }, dispatch] = useStore()
 
   useEffect(() => {
     if (!userInfo) {

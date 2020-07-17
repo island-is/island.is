@@ -1,4 +1,6 @@
 import { applicationsModule } from '@island.is/service-portal/applications'
+import { documentsModule } from '@island.is/service-portal/documents'
+
 import {
   ServicePortalModule,
   ServicePortalNavigationItem,
@@ -21,6 +23,7 @@ export interface MockUserData {
 
 export interface Navigation {
   applications: ServicePortalNavigationItem | null
+  documents: ServicePortalNavigationItem | null
 }
 
 export type Action =
@@ -35,6 +38,7 @@ export interface StoreState {
   userInfoState: AsyncActionState
   modules: {
     applicationsModule: ServicePortalModule
+    documentsModule: ServicePortalModule
   }
   navigation: Navigation
   navigationState: AsyncActionState
@@ -45,9 +49,11 @@ export const initialState: StoreState = {
   userInfoState: 'passive',
   modules: {
     applicationsModule,
+    documentsModule,
   },
   navigation: {
     applications: null,
+    documents: null,
   },
   navigationState: 'passive',
 }

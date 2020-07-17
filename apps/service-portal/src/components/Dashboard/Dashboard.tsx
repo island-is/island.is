@@ -6,7 +6,7 @@ import {
   Divider,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
-import { useStateValue } from '../../stateProvider'
+import { useStore } from '../../stateProvider'
 import { ServicePortalModule } from '@island.is/service-portal/core'
 
 const WidgetLoader: FC<{ module: ServicePortalModule }> = React.memo(
@@ -27,7 +27,7 @@ const WidgetLoader: FC<{ module: ServicePortalModule }> = React.memo(
 )
 
 export const Dashboard: FC<{}> = () => {
-  const [{ modules }] = useStateValue()
+  const [{ modules }] = useStore()
 
   return (
     <Box padding={4}>
@@ -37,6 +37,7 @@ export const Dashboard: FC<{}> = () => {
         </Typography>
         <Divider />
         <WidgetLoader module={modules.applicationsModule} />
+        <WidgetLoader module={modules.documentsModule} />
       </Stack>
     </Box>
   )

@@ -118,6 +118,9 @@
     },
     "service-portal-applications": {
       "tags": []
+    },
+    "service-portal-documents": {
+      "tags": []
     }
   }
 }
