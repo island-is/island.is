@@ -319,7 +319,8 @@
           "options": {
             "outputPath": "dist/apps/api",
             "main": "apps/api/src/main.ts",
-            "tsConfig": "apps/api/tsconfig.app.json"
+            "tsConfig": "apps/api/tsconfig.app.json",
+            "showCircularDependencies": false
           },
           "configurations": {
             "production": {
