@@ -16,9 +16,16 @@ const WidgetLoader: FC<{ module: ServicePortalModule }> = React.memo(
     if (Widgets)
       // TODO: Better loader
       return (
-        <Suspense fallback={<SkeletonLoader />}>
-          <Widgets />
-        </Suspense>
+        <Box marginBottom={8}>
+          <Box marginBottom={2}>
+            <Typography variant="h3" as="h3">
+              {module.name}
+            </Typography>
+          </Box>
+          <Suspense fallback={<SkeletonLoader />}>
+            <Widgets />
+          </Suspense>
+        </Box>
       )
 
     // TODO: Fallback
@@ -30,15 +37,9 @@ export const Dashboard: FC<{}> = () => {
   const [{ modules }] = useStore()
 
   return (
-    <Box padding={4}>
-      <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h4">
-          Dashboard
-        </Typography>
-        <Divider />
-        <WidgetLoader module={modules.applicationsModule} />
-        <WidgetLoader module={modules.documentsModule} />
-      </Stack>
+    <Box padding={3}>
+      <WidgetLoader module={modules.applicationsModule} />
+      <WidgetLoader module={modules.documentsModule} />
     </Box>
   )
 }

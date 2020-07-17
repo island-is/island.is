@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react'
-
-import './service-portal-documents.scss'
 import { Typography, Box } from '@island.is/island-ui/core'
 
 const ExternalData = () => {
