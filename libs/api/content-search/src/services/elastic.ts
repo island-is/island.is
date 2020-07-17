@@ -2,7 +2,9 @@ import { Client } from '@elastic/elasticsearch'
 import { Document, SearchIndexes } from '../types'
 import esb, { RequestBodySearch, TermsAggregation } from 'elastic-builder'
 import { logger } from '@island.is/logging'
+// noinspection ES6PreferShortImport
 import { EsClientFactory } from '../clients/esClientFactory'
+import merge from 'lodash/merge'
 
 export class ElasticService {
   private client: Client
@@ -18,19 +20,27 @@ export class ElasticService {
         body: document,
       })
     } catch (e) {
-      logger.error('Error indexing ES document', {
-        id: _id,
-        index: index,
-        error: e,
-      })
+      ElasticService.handleError(
+        'Error indexing ES document',
+        { id: _id, index: index },
+        e,
+      )
     }
   }
 
   async findByQuery(index: SearchIndexes, query) {
-    return this.getClient().search({
-      index: index,
-      body: query,
-    })
+    try {
+      return this.getClient().search({
+        index: index,
+        body: query,
+      })
+    } catch (e) {
+      ElasticService.handleError(
+        'Error in ElasticService.findByQuery',
+        { query: query, index: index },
+        e,
+      )
+    }
   }
 
   async query(index: SearchIndexes, query) {
@@ -101,7 +111,30 @@ export class ElasticService {
   }
 
   async ping() {
-    return this.getClient().ping()
+    return this.getClient()
+      .ping()
+      .catch((e) => {
+        ElasticService.handleError('Error in ping', {}, e)
+      })
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static handleError(message: string, context: any, error: any) {
+    ElasticService.logError(message, context, error)
+    throw new Error(message)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static logError(message: string, context: any, error: any) {
+    const errorCtx = {
+      error: {
+        message: error.message,
+        reason: error.error?.meta?.body?.error?.reason,
+        status: error.error?.meta?.body?.status,
+      },
+    }
+
+    logger.error(message, merge(context, errorCtx))
   }
 
   private getClient(): Client {
