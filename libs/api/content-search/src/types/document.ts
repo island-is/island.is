@@ -19,7 +19,7 @@ export interface Document {
   content_source: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   content_blob: any
-  nextSyncToken: string
+  nextSyncToken?: string
   _category: {
     slug: string | null
     title: string | null
