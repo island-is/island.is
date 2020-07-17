@@ -1,8 +1,10 @@
 import { LazyExoticComponent, ComponentType } from 'react'
+import { IconTypes } from '@island.is/island-ui/core'
 
 export interface ServicePortalNavigationItem {
   name: string
   url: string
+  icon?: IconTypes
   children?: ServicePortalNavigationItem[]
 }
 

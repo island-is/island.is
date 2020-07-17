@@ -11,6 +11,7 @@ export const applicationsModule: ServicePortalModule = {
     return {
       name: 'Umsóknir',
       url: '/umsoknir',
+      icon: 'user',
       children: [
         {
           name: 'Opnar umsóknir',

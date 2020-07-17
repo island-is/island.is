@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, useEffect } from 'react'
-import { Box, Typography, Stack, Divider } from '@island.is/island-ui/core'
+import { Box, Typography, Divider, Icon } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 import { useStateValue } from '../../stateProvider'
 
@@ -32,6 +32,9 @@ export const Sidebar: FC<{}> = () => {
         <>
           <Link to={navigation.applications.url}>
             <Box marginTop={1}>
+              {navigation.applications.icon && (
+                <Icon type={navigation.applications.icon} />
+              )}
               <Typography variant="p" as="span">
                 {navigation.applications.name}
               </Typography>
