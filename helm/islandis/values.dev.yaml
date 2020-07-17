@@ -41,3 +41,18 @@ search-indexer-service:
       ELASTIC_INDEX: 'island-is'
       S3_BUCKET: 'dev-es-custom-packages'
       AWS_REGION: 'eu-west-1'
+api:
+  secrets:
+    CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
+  ingress:
+    annotations:
+      nginx.ingress.kubernetes.io/enable-global-auth: 'false'
+      kubernetes.io/ingress.class: nginx-external
+      cert-manager.io/cluster-issuer: devland-is-letsencrypt-dns01
+    hosts:
+      - host: beta.dev01.devland.is
+        paths: ['/api']
+    tls:
+      - secretName: web-tls
+        hosts:
+          - beta.dev01.devland.is
