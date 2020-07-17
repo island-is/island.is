@@ -108,6 +108,7 @@ export class ElasticService {
     if (this.client) {
       return this.client
     }
-    return EsClientFactory.create()
+    this.client = EsClientFactory.create()
+    return this.client
   }
 }
