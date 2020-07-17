@@ -12,7 +12,8 @@ const FormProgressSection: FC<{
   isComplete: boolean
   activeSubSection: number
 }> = ({ section, sectionIndex, isActive, isComplete, activeSubSection }) => {
-  const hasSubSections = getSubSectionsInSection(section).length > 0
+  const subSections = getSubSectionsInSection(section)
+  const hasSubSections = subSections.length > 0
 
   return (
     <Box marginBottom={2}>
@@ -35,7 +36,7 @@ const FormProgressSection: FC<{
       {isActive && hasSubSections && (
         <Box paddingLeft={1}>
           <BulletList>
-            {getSubSectionsInSection(section).map((subSection, i) => (
+            {subSections.map((subSection, i) => (
               <SubSectionItem
                 key={`${subSection.name}-${i}`}
                 currentState={
