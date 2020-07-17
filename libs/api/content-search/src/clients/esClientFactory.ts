@@ -10,6 +10,7 @@ export class EsClientFactory {
   static create() {
     const hasAWS = this.hasAWS()
     if (hasAWS) {
+      // noinspection JSIgnoredPromiseFromCall
       this.initCredentials()
     }
     //todo handle pool?
@@ -30,23 +31,27 @@ export class EsClientFactory {
     )
   }
 
-  private static initCredentials() {
+  private static async initCredentials() {
     if (AWS.config.credentials) {
       return
     }
-
-    AWS.config.getCredentials((err) => {
-      logger.debug('Trying to initialize AWS Credentials')
-
-      if (!err) {
-        return
-      }
-
+    await EsClientFactory.credentialsPromise().catch((err) => {
       logger.error('AWS Credentials Error', {
         error: err,
       })
-
       throw new Error('AWS Credentials Error')
+    })
+  }
+
+  private static async credentialsPromise() {
+    return new Promise((resolve, reject) => {
+      logger.info('Start AWS GetCredentials')
+      AWS.config.getCredentials((err) => {
+        if (err) {
+          return reject(err)
+        }
+        return resolve()
+      })
     })
   }
 }
