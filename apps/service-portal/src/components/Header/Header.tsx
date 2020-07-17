@@ -4,7 +4,11 @@ import { Link } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
 import { usePersistUserInfo } from '../../hooks/usePersistUserInfo/usePersistUserInfo'
 import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
-import { Logo, Box, ContentBlock, Hidden } from '@island.is/island-ui/core'
+import { Logo, Box, Hidden } from '@island.is/island-ui/core'
+import MenuButton from '../MenuButton/MenuButton'
+
+import * as styles from './Header.treat'
+import UserNavigation from '../UserNavigation/UserNavigation'
 
 export const Header: FC<{}> = () => {
   usePersistUserInfo()
@@ -18,31 +22,25 @@ export const Header: FC<{}> = () => {
   }
 
   return (
-    <header>
-      <Box width="full">
-        <ContentBlock>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-            width="full"
-            padding={[3, 3, 6]}
-          >
-            <Link to="/">
-              {/* eslint-disable-next-line */}
-              <Hidden above="md">
-                <Logo width={40} iconOnly />
-              </Hidden>
-              <Hidden below="lg">
-                <Logo width={160} />
-              </Hidden>
-            </Link>
-            <button style={{ marginLeft: 'auto' }} onClick={handleLogout}>
-              Útskráning
-            </button>
-          </Box>
-        </ContentBlock>
+    <header className={styles.container}>
+      <Box display={'flex'} alignItems={'center'} padding={'gutter'}>
+        <Hidden above="sm">
+          <Link to="/">
+            <Logo width={40} iconOnly />
+          </Link>
+        </Hidden>
+        <Hidden below="md">
+          <Link to="/">
+            <Logo width={160} />
+          </Link>
+        </Hidden>
       </Box>
+      <div className={styles.infoContainer}>
+        <MenuButton>{'👑'}</MenuButton>
+        <MenuButton>{'👑'}</MenuButton>
+        <UserNavigation />
+        <MenuButton onClick={handleLogout}>{'👑'}</MenuButton>
+      </div>
     </header>
   )
 }

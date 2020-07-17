@@ -14,6 +14,7 @@ import { Columns, Column, ContentBlock } from '@island.is/island-ui/core'
 import Sidebar from '../components/Sidebar/Sidebar'
 import Dashboard from '../components/Dashboard/Dashboard'
 import Modules from './Modules'
+import Layout from '../components/Layout/Layout'
 
 export const App = () => {
   makeServer()
@@ -30,7 +31,13 @@ export const App = () => {
               <Login />
             </Route>
             <Authenticator>
-              <Header />
+              <Layout>
+                <Route exact path="/">
+                  <Dashboard />
+                </Route>
+                <Modules />
+              </Layout>
+              {/* <Header />
               <ContentBlock>
                 <Columns>
                   <Column width="3/12">
@@ -43,7 +50,7 @@ export const App = () => {
                     <Modules />
                   </Column>
                 </Columns>
-              </ContentBlock>
+              </ContentBlock> */}
             </Authenticator>
           </Switch>
         </StateProvider>
