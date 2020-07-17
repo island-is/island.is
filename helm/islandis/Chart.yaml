@@ -10,5 +10,9 @@ dependencies:
       repository: file://libs/api-template
       version: 0.0.1
       alias: api
+    - name: api-template
+      repository: file://libs/api-template
+      version: 0.0.1
+      alias: web
 type: application
 version: 0.0.9
