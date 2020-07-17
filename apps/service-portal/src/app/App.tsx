@@ -13,7 +13,7 @@ import { createApolloClient } from '../graphql/client'
 import { Columns, Column, ContentBlock } from '@island.is/island-ui/core'
 import Sidebar from '../components/Sidebar/Sidebar'
 import Dashboard from '../components/Dashboard/Dashboard'
-import Modules from './Modules'
+import Modules from '../components/Modules/Modules'
 import ContentBreadcrumbs from '../components/ContentBreadcrumbs/ContentBreadcrumbs'
 
 export const App = () => {

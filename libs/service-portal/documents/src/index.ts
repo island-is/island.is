@@ -6,6 +6,7 @@ const sleep = (ms = 0) => {
 }
 
 export const documentsModule: ServicePortalModule = {
+  name: 'Rafræn skjöl',
   navigation: async () => {
     await sleep(500)
     return {
