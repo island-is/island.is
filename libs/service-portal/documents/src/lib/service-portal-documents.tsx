@@ -1,7 +1,36 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
 import './service-portal-documents.scss'
 import { Typography, Box } from '@island.is/island-ui/core'
+
+const ExternalData = () => {
+  const [data, setData] = useState<any>([])
+
+  useEffect(() => {
+    async function fetchDocuments() {
+      const res = await fetch('/documents', {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const data = await res.json()
+      setData(data)
+    }
+    fetchDocuments()
+  }, [])
+
+  return (
+    <div>
+      {data?.map((item) => (
+        <Box border="standard" padding={2} marginTop={1} key={item.id}>
+          <Typography variant="h3" as="h3">
+            {item.name}
+          </Typography>
+        </Box>
+      ))}
+    </div>
+  )
+}
 
 /* eslint-disable-next-line */
 export interface ServicePortalDocumentsProps {}
@@ -17,6 +46,7 @@ export const ServicePortalDocuments = (props: ServicePortalDocumentsProps) => {
           Greiðsluseðill (Bifr.gjöld) - Ríkissjóðsinnheimtur
         </Typography>
       </Box>
+      <ExternalData />
     </Box>
   )
 }

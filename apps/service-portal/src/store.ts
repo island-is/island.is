@@ -5,6 +5,7 @@ import {
   ServicePortalModule,
   ServicePortalNavigationItem,
 } from '@island.is/service-portal/core'
+import { Subject } from './mirage-server/models/subject'
 
 export interface MockUserData {
   actor: {
@@ -13,12 +14,7 @@ export interface MockUserData {
   }
   exp: string
   iat: string
-  sub: {
-    name: string
-    nationalId: string
-    scope: string[]
-    subjectType: string
-  }
+  sub: Subject
 }
 
 export interface Navigation {
