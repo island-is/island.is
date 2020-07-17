@@ -1,19 +1,32 @@
 import ApolloClient from 'apollo-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
-import { HttpLink } from 'apollo-link-http'
 import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
+import Cookies from 'js-cookie'
+import { setContext } from 'apollo-link-context'
+import { createHttpLink } from 'apollo-link-http'
+import fetch from 'isomorphic-unfetch'
+import { ApolloLink } from 'apollo-link'
 
-export const createApolloClient = () => {
-  const token = localStorage[MOCK_AUTH_KEY] || ''
-  return new ApolloClient({
-    link: new HttpLink({
-      // TODO: Remove mock link
-      uri: 'https://48p1r2roz4.sse.codesandbox.io',
-      // uri: 'bla',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }),
-    cache: new InMemoryCache(),
-  })
-}
+const httpLink = createHttpLink({
+  uri: '/api/graphql',
+  credentials: 'include',
+  fetch,
+})
+
+const authLink = setContext((_, { headers }) => {
+  const token = Cookies.get(MOCK_AUTH_KEY)
+  return {
+    headers: {
+      ...headers,
+      authorization: token ? `Bearer ${token}` : '',
+    },
+  }
+})
+
+export const client = new ApolloClient({
+  name: 'service-portal',
+  version: '0.1',
+  link: ApolloLink.from([authLink, httpLink]),
+  cache: new InMemoryCache(),
+})
+
