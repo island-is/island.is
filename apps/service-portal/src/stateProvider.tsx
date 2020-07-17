@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useReducer } from 'react'
+import { StoreState, Action } from './store'
 export const StateContext = createContext(null)
 
 type StateProviderTypes = {
@@ -18,4 +19,5 @@ export const StateProvider = ({
     </StateContext.Provider>
   )
 }
-export const useStateValue = () => useContext(StateContext)
+export const useStateValue: () => [StoreState, (action: Action) => void] = () =>
+  useContext(StateContext)

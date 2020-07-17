@@ -7,12 +7,17 @@ import { Login } from '../screens/login/login'
 import { StateProvider } from '../stateProvider'
 import { ApolloProvider } from '@apollo/react-hooks'
 import * as store from '../store'
-import Authenticator from '../components/authenticator/authenticator'
-import Header from '../components/header/header'
+import Authenticator from '../components/Authenticator/Authenticator'
+import Header from '../components/Header/Header'
 import { client } from '../graphql/client'
+import { Columns, Column, ContentBlock } from '@island.is/island-ui/core'
+import Sidebar from '../components/Sidebar/Sidebar'
+import Dashboard from '../components/Dashboard/Dashboard'
+import Modules from './Modules'
 
 export const App = () => {
   makeServer()
+
   return (
     <Router>
       <ApolloProvider client={client}>
@@ -26,7 +31,19 @@ export const App = () => {
             </Route>
             <Authenticator>
               <Header />
-              <div>Logged in</div>
+              <ContentBlock>
+                <Columns>
+                  <Column width="3/12">
+                    <Sidebar />
+                  </Column>
+                  <Column width="9/12">
+                    <Route exact path="/">
+                      <Dashboard />
+                    </Route>
+                    <Modules />
+                  </Column>
+                </Columns>
+              </ContentBlock>
             </Authenticator>
           </Switch>
         </StateProvider>

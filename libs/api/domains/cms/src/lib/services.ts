@@ -1,27 +1,59 @@
 import { getLocalizedEntries } from './contentful'
 import { logger } from '@island.is/logging'
-import { Entry } from 'contentful'
-import { Article } from '@island.is/api/schema'
+import {
+  Image,
+  Article,
+  News,
+  Namespace,
+  Pagination,
+} from '@island.is/api/schema'
 
-interface Taxonomy {
-  title: string
-  slug: string
-  description: string
+const formatArticle = ({ sys, fields }): Article => {
+  return {
+    id: sys.id,
+    slug: fields.slug,
+    title: fields.title,
+    group: fields.group?.fields,
+    category: fields.category?.fields,
+    content: JSON.stringify(fields.content),
+  }
 }
 
-interface CmsArticle {
-  id: string
-  slug: string
-  title: string
-  content: string
-  group: Entry<Taxonomy>
-  category: Entry<Taxonomy>
-}
+const formatImage = ({ fields }): Image => ({
+  url: fields.file.url,
+  title: fields.title,
+  filename: fields.file.fileName,
+  contentType: fields.file.contentType,
+  width: fields.file.details.image.width,
+  height: fields.file.details.image.height,
+})
+
+const formatNewsItem = ({ fields, sys }): News => ({
+  id: sys.id,
+  slug: fields.slug,
+  title: fields.title,
+  intro: fields.intro,
+  image: formatImage(fields.image),
+  date: fields.date,
+  content: JSON.stringify(fields.content),
+})
+
+const makePage = (
+  page: number,
+  perPage: number,
+  totalResults: number,
+): Pagination => ({
+  page,
+  perPage,
+  totalResults,
+  totalPages: Math.ceil(totalResults / perPage),
+})
+
 export const getArticle = async (
   slug: string,
   lang: string,
 ): Promise<Article> => {
-  const result = await getLocalizedEntries<CmsArticle>(lang, {
+  const result = await getLocalizedEntries<Article>(lang, {
     // eslint-disable-next-line @typescript-eslint/camelcase
     content_type: 'article',
     'fields.slug': slug,
@@ -35,31 +67,57 @@ export const getArticle = async (
     throw new Error(`Article ${slug} not found`)
   }
 
-  const [
-    {
-      sys: { id },
-      fields: {
-        title,
-        content,
-        group: { fields: groupFields } = { fields: null },
-        category: { fields: categoryFields },
-      },
-    },
-  ] = result.items
-
-  return {
-    id,
-    slug,
-    title,
-    group: groupFields,
-    category: categoryFields,
-    content: JSON.stringify(content),
-  }
+  return formatArticle(result.items[0])
 }
 
-interface Namespace {
-  namespace: string
-  fields: string
+export const getNews = async (lang: string, slug: string) => {
+  const r = await getLocalizedEntries<News>(lang, {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    content_type: 'news',
+    include: 10,
+    'fields.slug': slug,
+  }).catch((error) => {
+    logger.error(error)
+    throw new Error('Failed to resolve request in getArticle')
+  })
+
+  return r.items[0] && formatNewsItem(r.items[0])
+}
+
+export const getNewsList = async (
+  lang: string,
+  year: number,
+  month: number,
+  ascending: boolean,
+  page = 1,
+  perPage = 10,
+) => {
+  const params = {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    content_type: 'news',
+    include: 10,
+    order: (ascending ? '' : '-') + 'fields.date',
+    skip: (page - 1) * perPage,
+    limit: perPage,
+  }
+
+  if (year) {
+    params['fields.date[gte]'] = new Date(year, month ?? 0, 1)
+    params['fields.date[lt]'] =
+      month != undefined
+        ? new Date(year, month + 1, 1)
+        : new Date(year + 1, 0, 1)
+  }
+
+  const r = await getLocalizedEntries<News>(lang, params).catch((error) => {
+    logger.error(error)
+    throw new Error('Failed to resolve request in getNewsList')
+  })
+
+  return {
+    page: makePage(page, perPage, r.total),
+    news: r.items.map(formatNewsItem),
+  }
 }
 
 export const getNamespace = async (

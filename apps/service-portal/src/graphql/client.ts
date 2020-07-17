@@ -5,29 +5,7 @@ import Cookies from 'js-cookie'
 import { setContext } from 'apollo-link-context'
 import { createHttpLink } from 'apollo-link-http'
 import fetch from 'isomorphic-unfetch'
-// import { onError, ErrorResponse } from 'apollo-link-error'
-// import { ServerError } from 'apollo-link-http-common'
 import { ApolloLink } from 'apollo-link'
-
-// const logoutLink = onError(({ graphQLErrors, networkError }: ErrorResponse) => {
-//   if (networkError) {
-//     return console.error(networkError as ServerError)
-//   }
-// if (graphQLErrors) {
-//   graphQLErrors.forEach((err) => {
-//     switch (err.extensions.code) {
-//       case 'UNAUTHENTICATED':
-//         return api.logout().then(() => Router.reload())
-//       case 'FORBIDDEN':
-//         return Router.push('/404')
-//       default:
-//         return NotificationService.onGraphQLError({
-//           graphQLErrors,
-//         } as ApolloError)
-//     }
-//   })
-// }
-// })
 
 const httpLink = createHttpLink({
   uri: '/api/graphql',
@@ -51,3 +29,4 @@ export const client = new ApolloClient({
   link: ApolloLink.from([authLink, httpLink]),
   cache: new InMemoryCache(),
 })
+

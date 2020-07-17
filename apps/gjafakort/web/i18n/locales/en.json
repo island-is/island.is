@@ -350,11 +350,12 @@
       "fromPrefix": "From:",
       "value": "Value",
       "total": "Total",
-      "giveGiftCard": "Give giftcard:",
-      "phoneNumberInput": "Phone number",
+      "giveGiftCard": "Give giftcard",
+      "phoneNumberInput": "Recipient phone number",
       "messageInput": "Message",
       "giveContinueButton": "Give",
-      "giftOverview": "Gift overview: confirm gift",
+      "giftOverview": "Gift overview",
+      "confirmGift": "confirm gift",
       "receiver": "Receiver:",
       "message": "Message:",
       "editButton": "Edit",
@@ -391,7 +392,25 @@
         "confirmPhoneNumber": {
           "label": "Confirm phone number"
         },
-        "submit": "Subit phone number"
+        "submit": "Submit phone number"
+      }
+    },
+    "confirmCodeForm": {
+      "title": "Confirmation code",
+      "intro": "Please enter your SMS confirmation code",
+      "noSMS": "If you did not receive SMS",
+      "sendSMSButton": "click here to try again",
+      "validation": {
+        "confirmCode": "The confirmation code needs to be 6 digits"
+      },
+      "errors": {
+        "confirmCode": "The confirmation code is incorrect"
+      },
+      "form": {
+        "confirmCode": {
+          "label": "SMS confirmation code"
+        },
+        "submit": "Confirm my phone number"
       }
     }
   },
@@ -460,6 +479,7 @@
   "validation": {
     "required": "This field cannot be empty",
     "phoneNumber": "The phone number needs to be seven digits",
+    "phoneNumberInvalid": "Phone number must be valid",
     "email": "The email address is not valid",
     "webpage": "The URL is not valid"
   },
@@ -467,7 +487,8 @@
     "home": "/en",
     "companies": {
       "home": "/en/company",
-      "application": "/en/company/application"
+      "application": "/en/company/application",
+      "applicationSsn": "/en/company/application/[ssn]"
     },
     "users": {
       "home": "/en/user"

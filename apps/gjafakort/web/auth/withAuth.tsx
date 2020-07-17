@@ -15,6 +15,7 @@ export default (WrappedComponent: NextComponentType) =>
         if (res) {
           res.writeHead(302, {
             Location: authUrl,
+            withCrendentials: true,
           })
           res.end()
         } else {

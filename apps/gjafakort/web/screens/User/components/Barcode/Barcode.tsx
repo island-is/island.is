@@ -183,6 +183,7 @@ function Barcode({ shouldPoll: initialPolling }: PropTypes) {
                 </Typography>
               </Box>
               <Button
+                noWrap
                 onClick={() => {
                   getBarcode(giftCard)
                 }}
@@ -244,9 +245,11 @@ function Barcode({ shouldPoll: initialPolling }: PropTypes) {
             <Stack space={3}>
               <Typography variant="h4">
                 {t.giveGiftCard}{' '}
-                {current.context.giftCard.amount &&
-                  formatNumber(current.context.giftCard.amount)}{' '}
-                kr.
+                <Typography color="blue400" as="span">
+                  {current.context.giftCard.amount &&
+                    formatNumber(current.context.giftCard.amount)}{' '}
+                  kr.
+                </Typography>
               </Typography>
               <Field
                 component={FieldNumberInput}
@@ -294,10 +297,13 @@ function Barcode({ shouldPoll: initialPolling }: PropTypes) {
           paddingY={5}
           borderRadius="standard"
         >
+          <Box marginBottom={4}>
+            <Typography variant="h2">{t.confirmGift}</Typography>
+          </Box>
           <Stack space={3}>
-            <Typography variant="h2">{t.giftOverview}</Typography>
+            <Typography variant="h3">{t.giftOverview}</Typography>
             <div>
-              <Typography variant="h4">{t.giveGiftCard}</Typography>
+              <Typography variant="eyebrow">{t.giveGiftCard}</Typography>
               <Typography variant="p">
                 {current.context.giftCard.amount &&
                   formatNumber(current.context.giftCard.amount)}{' '}
@@ -305,14 +311,17 @@ function Barcode({ shouldPoll: initialPolling }: PropTypes) {
               </Typography>
             </div>
             <div>
-              <Typography variant="h4">{t.receiver}</Typography>
+              <Typography variant="eyebrow">{t.receiver}</Typography>
               <Typography variant="p">
-                +354 {current.context.giveInfo.phoneNumber}
+                +354{' '}
+                {current.context.giveInfo.phoneNumber
+                  .toString()
+                  .replace(/(\d{3})/, '$1 ')}
               </Typography>
             </div>
             {current.context.giveInfo.message && (
               <div>
-                <Typography variant="h4">{t.message}</Typography>
+                <Typography variant="eyebrow">{t.message}</Typography>
                 <Typography variant="p">
                   {current.context.giveInfo.message}
                 </Typography>

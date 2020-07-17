@@ -23,6 +23,7 @@ export interface ButtonProps {
   loading?: boolean
   leftIcon?: IconTypes
   leftImage?: string
+  noWrap?: boolean
 }
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
@@ -45,6 +46,7 @@ export const Button = forwardRef<
       loading,
       leftImage,
       leftIcon,
+      noWrap,
     },
     ref,
   ) => {
@@ -53,6 +55,9 @@ export const Button = forwardRef<
       styles.variants[variant],
       styles.sizes[size],
       styles.width[width],
+      {
+        [styles.noWrap]: noWrap,
+      },
     )
 
     const isExternal = href && isLinkExternal(href)

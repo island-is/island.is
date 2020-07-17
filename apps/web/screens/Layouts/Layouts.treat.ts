@@ -18,6 +18,15 @@ export const side = style({
   flex: '0 0 318px',
   '@media': {
     [`screen and (max-width: 991px)`]: {
+      flex: 'auto',
+    },
+  },
+})
+
+export const desktopSide = style({
+  flex: '0 0 318px',
+  '@media': {
+    [`screen and (max-width: 991px)`]: {
       display: 'none',
     },
   },
