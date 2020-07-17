@@ -1,4 +1,4 @@
-import React, { LazyExoticComponent } from 'react'
+import { LazyExoticComponent, ComponentType } from 'react'
 
 export interface ServicePortalNavigationItem {
   name: string
@@ -9,10 +9,14 @@ export interface ServicePortalNavigationItem {
 /* eslint-disable-next-line */
 export interface ServicePortalModuleProps {}
 
+export type ServicePortalModuleWidgets = LazyExoticComponent<ComponentType<any>>
+
+export type ServicePortalModuleRenderValue = LazyExoticComponent<
+  (props: ServicePortalModuleProps) => JSX.Element
+>
+
 export interface ServicePortalModule {
   navigation: () => Promise<ServicePortalNavigationItem>
-  widgets: () => React.LazyExoticComponent<React.ComponentType<any>>
-  render: () => React.LazyExoticComponent<
-    (props: ServicePortalModuleProps) => JSX.Element
-  >
+  widgets: () => ServicePortalModuleWidgets
+  render: () => ServicePortalModuleRenderValue
 }

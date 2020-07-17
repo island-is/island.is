@@ -5,6 +5,7 @@ import { useStateValue } from './../../stateProvider'
 import jwtDecode from 'jwt-decode'
 import { useHistory } from 'react-router-dom'
 import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
+import { MockUserData } from '../../store'
 
 interface Subject {
   accountType: string
@@ -16,7 +17,7 @@ interface Subject {
 }
 
 interface DecodedJwtToken {
-  user: string
+  user: MockUserData
   availableSubjects: Subject[]
   id: number
   nationalId: string

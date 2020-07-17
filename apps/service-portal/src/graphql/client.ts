@@ -7,7 +7,9 @@ export const createApolloClient = () => {
   const token = localStorage[MOCK_AUTH_KEY] || ''
   return new ApolloClient({
     link: new HttpLink({
-      uri: 'bla',
+      // TODO: Remove mock link
+      uri: 'https://48p1r2roz4.sse.codesandbox.io',
+      // uri: 'bla',
       headers: {
         Authorization: `Bearer ${token}`,
       },

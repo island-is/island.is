@@ -2,9 +2,9 @@ import React from 'react'
 import { ServicePortalModuleProps } from '@island.is/service-portal/core'
 import { Route } from 'react-router-dom'
 
-const Greeting = () => (
-  <h1>Welcome to service-portal-applications component!</h1>
-)
+const Greeting = () => {
+  return <h1>Welcome to service-portal-applications component!</h1>
+}
 const OpenApplications = () => <h1>Opnar umsóknir</h1>
 const NewApplication = () => <h1>Ný umsókn</h1>
 

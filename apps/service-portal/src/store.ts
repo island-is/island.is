@@ -5,27 +5,28 @@ import {
 } from '@island.is/service-portal/core'
 
 export interface MockUserData {
-  userInfo: {
-    nationalId: string
-    availableSubjects: {
-      name: string
-      email: string
-      nationalId: string
-      scopes: string[]
-    }
-  }
-  name: ''
-  modules: {
+  actor: {
     name: string
-  }[]
+    nationalId: string
+  }
+  exp: string
+  iat: string
+  sub: {
+    name: string
+    nationalId: string
+    scope: string[]
+    subjectType: string
+  }
 }
 
-export type ActionType = 'fetchingUser' | 'setUser' | 'setNavigation'
-
-export type Action = {
-  type: ActionType
-  payload?: null | object | string | number | boolean
+export interface Navigation {
+  applications: ServicePortalNavigationItem | null
 }
+
+export type Action =
+  | { type: 'fetchingUser' }
+  | { type: 'setUser'; payload: MockUserData }
+  | { type: 'setNavigation'; payload: Navigation }
 
 export type AsyncActionState = 'passive' | 'pending' | 'fulfilled' | 'failed'
 
@@ -35,9 +36,8 @@ export interface StoreState {
   modules: {
     applicationsModule: ServicePortalModule
   }
-  navigation: {
-    applications: ServicePortalNavigationItem | null
-  }
+  navigation: Navigation
+  navigationState: AsyncActionState
 }
 
 export const initialState: StoreState = {
@@ -49,6 +49,7 @@ export const initialState: StoreState = {
   navigation: {
     applications: null,
   },
+  navigationState: 'passive',
 }
 
 export const reducer = (state: StoreState, action: Action) => {
@@ -68,8 +69,8 @@ export const reducer = (state: StoreState, action: Action) => {
       return {
         ...state,
         navigation: action.payload,
+        navigationState: 'fulfilled',
       }
-
     default:
       return state
   }

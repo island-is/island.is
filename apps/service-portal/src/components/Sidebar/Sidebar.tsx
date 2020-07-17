@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import { useStateValue } from '../../stateProvider'
 
 export const Sidebar: FC<{}> = () => {
-  const [{ modules, navigation }, dispatch] = useStateValue()
+  const [{ modules, navigation, navigationState }, dispatch] = useStateValue()
 
   useEffect(() => {
     async function fetchNavigation() {
@@ -18,8 +18,9 @@ export const Sidebar: FC<{}> = () => {
         },
       })
     }
-    fetchNavigation()
-  }, [dispatch, navigation, modules.applicationsModule])
+
+    if (navigationState === 'passive') fetchNavigation()
+  }, [dispatch, navigation, modules.applicationsModule, navigationState])
 
   return (
     <Box background="purple100" padding={4}>

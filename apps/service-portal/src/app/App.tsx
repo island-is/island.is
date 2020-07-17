@@ -1,57 +1,19 @@
-import React, { useEffect, useState, FC, Suspense } from 'react'
+import React from 'react'
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { makeServer } from 'apps/service-portal/mirage-server'
 import { Login } from '../screens/login/login'
-import { StateProvider, useStateValue } from '../stateProvider'
+import { StateProvider } from '../stateProvider'
 import { ApolloProvider } from '@apollo/react-hooks'
 import * as store from '../store'
 import Authenticator from '../components/Authenticator/Authenticator'
 import Header from '../components/Header/Header'
 import { createApolloClient } from '../graphql/client'
-import {
-  Columns,
-  Column,
-  ContentBlock,
-  SkeletonLoader,
-} from '@island.is/island-ui/core'
+import { Columns, Column, ContentBlock } from '@island.is/island-ui/core'
 import Sidebar from '../components/Sidebar/Sidebar'
 import Dashboard from '../components/Dashboard/Dashboard'
-import { ServicePortalModule } from '@island.is/service-portal/core'
-
-const ModuleLoader: FC<{ module: ServicePortalModule }> = ({ module }) => {
-  const [App, setApp] = useState<any>()
-
-  useEffect(() => {
-    async function fetchWidgets() {
-      const app = await module.render()
-      setApp(app)
-    }
-
-    fetchWidgets()
-  }, [module])
-
-  if (App)
-    return (
-      <Suspense fallback={<SkeletonLoader />}>
-        <App />
-      </Suspense>
-    )
-  return null
-}
-
-const Modules = () => {
-  const [{ modules }] = useStateValue()
-  return (
-    <>
-      <Route
-        path="/umsoknir"
-        render={() => <ModuleLoader module={modules.applicationsModule} />}
-      />
-    </>
-  )
-}
+import Modules from './Modules'
 
 export const App = () => {
   makeServer()

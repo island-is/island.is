@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { removeToken } from '../../auth/utils'
 import { Link } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
@@ -6,11 +6,7 @@ import { usePersistUserInfo } from '../../hooks/usePersistUserInfo/usePersistUse
 import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
 import { Logo, Box, ContentBlock, Hidden } from '@island.is/island-ui/core'
 
-interface HeaderProps {
-  something?: string
-}
-
-export const Header = (props: HeaderProps) => {
+export const Header: FC<{}> = () => {
   usePersistUserInfo()
   const history = useHistory()
 

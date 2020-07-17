@@ -1,20 +1,33 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, Suspense, useEffect, useState } from 'react'
-import { Box, Typography, Stack, Divider } from '@island.is/island-ui/core'
+import React, { FC, Suspense } from 'react'
+import {
+  Box,
+  Typography,
+  Stack,
+  Divider,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { useStateValue } from '../../stateProvider'
+import { ServicePortalModule } from '@island.is/service-portal/core'
+
+const WidgetLoader: FC<{ module: ServicePortalModule }> = React.memo(
+  ({ module }) => {
+    const Widgets = module.widgets()
+
+    if (Widgets)
+      // TODO: Better loader
+      return (
+        <Suspense fallback={<SkeletonLoader />}>
+          <Widgets />
+        </Suspense>
+      )
+
+    // TODO: Fallback
+    return null
+  },
+)
 
 export const Dashboard: FC<{}> = () => {
   const [{ modules }] = useStateValue()
-  const [ApplicationWidgets, setApplicationWidgets] = useState<any>()
-
-  useEffect(() => {
-    async function fetchWidgets() {
-      const ApplicationWidgets = await modules.applicationsModule.widgets()
-      setApplicationWidgets(ApplicationWidgets)
-    }
-
-    fetchWidgets()
-  }, [modules.applicationsModule])
 
   return (
     <Box padding={4}>
@@ -23,11 +36,7 @@ export const Dashboard: FC<{}> = () => {
           Dashboard
         </Typography>
         <Divider />
-        {ApplicationWidgets && (
-          <Suspense fallback="Loading">
-            <ApplicationWidgets />
-          </Suspense>
-        )}
+        <WidgetLoader module={modules.applicationsModule} />
       </Stack>
     </Box>
   )
