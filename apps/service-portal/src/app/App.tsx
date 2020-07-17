@@ -9,7 +9,7 @@ import { ApolloProvider } from '@apollo/react-hooks'
 import * as store from '../store'
 import Authenticator from '../components/Authenticator/Authenticator'
 import Header from '../components/Header/Header'
-import { createApolloClient } from '../graphql/client'
+import { client } from '../graphql/client'
 import { Columns, Column, ContentBlock } from '@island.is/island-ui/core'
 import Sidebar from '../components/Sidebar/Sidebar'
 import Dashboard from '../components/Dashboard/Dashboard'
@@ -21,7 +21,7 @@ export const App = () => {
 
   return (
     <Router>
-      <ApolloProvider client={createApolloClient()}>
+      <ApolloProvider client={client}>
         <StateProvider
           initialState={store.initialState}
           reducer={store.reducer}
