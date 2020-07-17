@@ -9,13 +9,13 @@ import { ApolloProvider } from '@apollo/react-hooks'
 import * as store from '../store'
 import Authenticator from '../components/authenticator/authenticator'
 import Header from '../components/header/header'
-import { createApolloClient } from '../graphql/client'
+import { client } from '../graphql/client'
 
 export const App = () => {
   makeServer()
   return (
     <Router>
-      <ApolloProvider client={createApolloClient()}>
+      <ApolloProvider client={client}>
         <StateProvider
           initialState={store.initialState}
           reducer={store.reducer}
