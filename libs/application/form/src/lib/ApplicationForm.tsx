@@ -2,13 +2,16 @@ import React, { FC, useReducer } from 'react'
 import { FormValue, Form } from '@island.is/application/schema'
 import FormProgress from '../components/FormProgress'
 import ApplicationName from '../components/ApplicationName'
+import Sidebar from '../components/Sidebar'
 import Screen from '../components/Screen'
 import {
   ApplicationReducer,
   initializeReducer,
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
-import { Box, Column, Columns } from '@island.is/island-ui/core'
+import { Box, Column } from '@island.is/island-ui/core'
+
+import * as styles from './ApplicationForm.treat'
 
 type ApplicationProps = {
   form: Form
@@ -42,24 +45,24 @@ export const ApplicationForm: FC<ApplicationProps> = ({
     screens,
   } = state
   return (
-    <Box width="full" height="full">
-      <Columns>
+    <Box display="flex" flexGrow={1}>
+      <Box display="flex" flexGrow={1} flexDirection="row">
         <Column width="1/4">
-          <Box background="blue100" height="full" border="standard">
+          <Sidebar>
             <ApplicationName name={form.name} />
             <FormProgress
               sections={sections}
               activeSection={activeSection}
               activeSubSection={activeSubSection}
             />
-          </Box>
+          </Sidebar>
         </Column>
         <Column width="3/4">
           <Box
-            border="standard"
-            paddingLeft={8}
-            paddingRight={8}
+            paddingX={12}
             paddingTop={4}
+            height="full"
+            className={styles.screenContainer}
           >
             <Screen
               answerQuestions={(payload) =>
@@ -75,7 +78,7 @@ export const ApplicationForm: FC<ApplicationProps> = ({
             />
           </Box>
         </Column>
-      </Columns>
+      </Box>
     </Box>
   )
 }

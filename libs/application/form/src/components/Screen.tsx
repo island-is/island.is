@@ -59,16 +59,21 @@ const Screen: FC<ScreenProps> = ({
   }
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <Box
+        component="form"
+        display="flex"
+        flexDirection="column"
+        justifyContent="spaceBetween"
+        height="full"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <ConditionHandler
           answerQuestions={answerQuestions}
           formValue={formValue}
           screen={screen}
         />
-        <Box>
-          {section && (
-            <Typography variant="breadcrumb">{section.name}</Typography>
-          )}
+        <Box flexGrow={1}>
+          {section && <Typography color="dark300">{section.name}</Typography>}
           <Typography variant="h2">{screen.name}</Typography>
           <Box>
             {screen.type === FormItemTypes.MULTI_FIELD ? (
@@ -77,14 +82,22 @@ const Screen: FC<ScreenProps> = ({
               <FormField autoFocus field={screen as FieldDef} />
             )}
           </Box>
-          <Divider />
-          <Box bottom={0} paddingTop={7} paddingBottom={7}>
-            <Box padding={2}>
+        </Box>
+        <Box>
+          <Divider weight="regular" />
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="spaceBetween"
+            paddingTop={4}
+            paddingBottom={5}
+          >
+            <Box display="inlineFlex" padding={2} paddingLeft="none">
               <Button variant="text" leftIcon="arrowLeft" onClick={prevScreen}>
                 Til baka
               </Button>
             </Box>
-            <Box padding={2}>
+            <Box display="inlineFlex" padding={2} paddingRight="none">
               {shouldSubmit ? (
                 <Button htmlType="submit">Submit</Button>
               ) : (
@@ -95,7 +108,7 @@ const Screen: FC<ScreenProps> = ({
             </Box>
           </Box>
         </Box>
-      </form>
+      </Box>
     </FormProvider>
   )
 }
