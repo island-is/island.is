@@ -6533,6 +6533,13 @@ autoprefixer@^9.6.0, autoprefixer@^9.6.1, autoprefixer@^9.7.2:
     postcss "^7.0.30"
     postcss-value-parser "^4.1.0"
 
+aws-elasticsearch-connector@^9.0.0:
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/aws-elasticsearch-connector/-/aws-elasticsearch-connector-9.0.0.tgz#03656f28f78735c191c3e2108d505543b623b1b8"
+  integrity sha512-O+A9HEa14gOiKTAp6U6Ha1RRJvQjc046wIn9CJ69wc+c1c5CfPE4xl4Av6Zyv6dgzs+RVGxdetjm8RpSlTUmhQ==
+  dependencies:
+    aws4 "^1.10.0"
+
 aws-sdk@2.678.0:
   version "2.678.0"
   resolved "https://registry.yarnpkg.com/aws-sdk/-/aws-sdk-2.678.0.tgz#b16230f4894d40ead50f9e23805c874f4ca62549"
@@ -6568,7 +6575,7 @@ aws-sign2@~0.7.0:
   resolved "https://registry.yarnpkg.com/aws-sign2/-/aws-sign2-0.7.0.tgz#b46e890934a9591f2d2f6f86d7e6a9f1b3fe76a8"
   integrity sha1-tG6JCTSpWR8tL2+G1+ap8bP+dqg=
 
-aws4@^1.8.0:
+aws4@^1.10.0, aws4@^1.8.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.10.0.tgz#a17b3a8ea811060e74d47d306122400ad4497ae2"
   integrity sha512-3YDiu347mtVtjpyV3u5kVqQLP242c06zwDOgpeRnybmXlYYsLbtTrUBUm8i8srONt+FWobl5aibnU1030PeeuA==

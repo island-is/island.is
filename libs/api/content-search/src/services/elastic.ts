@@ -2,9 +2,12 @@ import { Client } from '@elastic/elasticsearch'
 import { Document, SearchIndexes } from '../types'
 import esb, { RequestBodySearch, TermsAggregation } from 'elastic-builder'
 import { logger } from '@island.is/logging'
-// noinspection ES6PreferShortImport
-import { EsClientFactory } from '../clients/esClientFactory'
 import merge from 'lodash/merge'
+import { environment } from '../environments/environment'
+import * as AWS from 'aws-sdk'
+import * as AwsConnector from 'aws-elasticsearch-connector'
+
+const { elastic } = environment
 
 export class ElasticService {
   private client: Client
@@ -14,7 +17,8 @@ export class ElasticService {
 
     try {
       delete document._id
-      return await this.getClient().index({
+      const client = await this.getClient()
+      return await client.index({
         id: _id,
         index: index,
         body: document,
@@ -30,7 +34,8 @@ export class ElasticService {
 
   async findByQuery(index: SearchIndexes, query) {
     try {
-      return this.getClient().search({
+      const client = await this.getClient()
+      return client.search({
         index: index,
         body: query,
       })
@@ -111,11 +116,10 @@ export class ElasticService {
   }
 
   async ping() {
-    return this.getClient()
-      .ping()
-      .catch((e) => {
-        ElasticService.handleError('Error in ping', {}, e)
-      })
+    const client = await this.getClient()
+    return client.ping().catch((e) => {
+      ElasticService.handleError('Error in ping', {}, e)
+    })
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -131,17 +135,40 @@ export class ElasticService {
         message: error.message,
         reason: error.error?.meta?.body?.error?.reason,
         status: error.error?.meta?.body?.status,
+        statusCode: error.error?.meta?.statusCode,
       },
     }
 
     logger.error(message, merge(context, errorCtx))
   }
 
-  private getClient(): Client {
+  async getClient(): Promise<Client> {
     if (this.client) {
       return this.client
     }
-    this.client = EsClientFactory.create()
+    this.client = await this.createEsClient()
     return this.client
+  }
+
+  async createEsClient(): Promise<Client> {
+    const hasAWS =
+      'AWS_WEB_IDENTITY_TOKEN_FILE' in process.env ||
+      'AWS_SECRET_ACCESS_KEY' in process.env
+
+    logger.info('Create AWS ES Client', {
+      esConfig: elastic,
+      withAWS: hasAWS,
+    })
+
+    if (!hasAWS) {
+      return new Client({
+        node: elastic.node,
+      })
+    }
+
+    return new Client({
+      ...AwsConnector(AWS.config),
+      node: elastic.node,
+    })
   }
 }
