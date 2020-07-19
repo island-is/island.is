@@ -11,14 +11,10 @@ import { logger } from '@island.is/logging'
 
 @Injectable()
 export class IndexingService {
-  private elasticService: ElasticService
-  private contentFulSyncer: Syncer
-
-  constructor() {
-    // todo replace with di
-    this.elasticService = new ElasticService()
-    this.contentFulSyncer = new Syncer()
-  }
+  constructor(
+    private readonly elasticService: ElasticService,
+    private readonly contentFulSyncer: Syncer,
+  ) {}
 
   async indexDocument(index: SearchIndexes, document) {
     return this.elasticService.index(index, document)

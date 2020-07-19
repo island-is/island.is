@@ -7,6 +7,7 @@ import {
 } from 'contentful'
 import { environment } from '../environments/environment'
 import { logger } from '@island.is/logging'
+import { Injectable } from '@nestjs/common'
 
 interface SyncerResult {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,6 +26,7 @@ function chunk(arr, len) {
   return chunks
 }
 
+@Injectable()
 export class Syncer {
   private contentFulClient: ContentfulClientApi
 

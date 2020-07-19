@@ -6,11 +6,16 @@ import merge from 'lodash/merge'
 import { environment } from '../environments/environment'
 import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
+import { Injectable } from '@nestjs/common'
 
 const { elastic } = environment
 
+@Injectable()
 export class ElasticService {
   private client: Client
+  constructor() {
+    logger.debug('Created ES Service')
+  }
 
   async index(index: SearchIndexes, document: Document) {
     const _id = document._id
