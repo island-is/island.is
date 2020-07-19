@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing'
 
 import { IndexingController } from './indexing.controller'
 import { IndexingService } from './indexing.service'
-import { ElasticService } from "@island.is/api/content-search";
-import { Syncer } from "../contentful/syncer";
+import { ElasticService } from '@island.is/api/content-search'
+import { Syncer } from '../contentful/syncer'
 
 describe('IndexingController', () => {
   let app: TestingModule
