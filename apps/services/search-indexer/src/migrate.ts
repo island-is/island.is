@@ -209,10 +209,10 @@ class App {
         },
       },
     }
-    logger.debug('Reindex to new index', params)
+    logger.info('Reindex to new index', params)
     const client = await this.getEsClient()
-    const x = await client.reindex(params)
-    logger.debug('Reindex returned', x)
+    const response = await client.reindex(params)
+    logger.info('Reindex returned', response)
     return this.switchAlias(oldIndex, newIndex)
   }
 
@@ -237,7 +237,7 @@ class App {
         actions: actions,
       },
     }
-    logger.debug('Switch Alias', params)
+    logger.info('Switch Alias', params)
 
     const client = await this.getEsClient()
     return client.indices.updateAliases(params)
@@ -248,7 +248,7 @@ class App {
     const params = {
       index: name,
     }
-    logger.debug('Create Index', params)
+    logger.info('Create Index', params)
     const client = await this.getEsClient()
     return client.indices
       .create(params)
@@ -257,7 +257,7 @@ class App {
 
   private async createTemplate(config: string) {
     const templateName = this.templateName
-    logger.debug('Create template', templateName)
+    logger.info('Create template', templateName)
     const client = await this.getEsClient()
     return client.indices.putTemplate({
       name: templateName,
