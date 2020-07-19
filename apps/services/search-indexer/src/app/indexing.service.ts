@@ -42,33 +42,33 @@ export class IndexingService {
 
   async continueSync(syncToken: string, index: SearchIndexes) {
     await this.needConnection()
-    logger.debug('Start continue sync')
+    logger.info('Start continue sync')
     const result = await this.contentFulSyncer.getSyncEntries({
       nextSyncToken: syncToken,
       // eslint-disable-next-line @typescript-eslint/camelcase
       content_type: 'article',
       resolveLinks: true,
     })
-    logger.debug('Continue sync found results', {
+    logger.info('Continue sync found results', {
       numItems: result.items.length,
     })
     for (const item of result.items) {
       // one at a time please, else ES will be unhappy
       await this.transformAndIndexEntry(index, result.token, item)
     }
-    logger.debug('Continue sync done')
+    logger.info('Continue sync done')
   }
 
   async initialSync(index: SearchIndexes) {
     await this.needConnection()
-    logger.debug('Start initial sync')
+    logger.info('Start initial sync')
     const result = await this.contentFulSyncer.getSyncEntries({
       initial: true,
       // eslint-disable-next-line @typescript-eslint/camelcase
       content_type: 'article',
       resolveLinks: true,
     })
-    logger.debug('Initial sync found result', {
+    logger.info('Initial sync found result', {
       numItems: result.items.length,
     })
 
@@ -77,27 +77,27 @@ export class IndexingService {
       await this.transformAndIndexEntry(index, result.token, item)
     }
 
-    logger.debug('Initial sync done')
+    logger.info('Initial sync done')
   }
 
   async syncById(index: SearchIndexes, id: string) {
     await this.needConnection()
-    logger.debug('Sync by ID', { id: id })
+    logger.info('Sync by ID', { id: id })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let result: Entry<any>
     try {
       result = await this.contentFulSyncer.getEntry(id)
     } catch (e) {
-      logger.info('No entry found')
+      logger.notice('No entry found')
       return
     }
-    logger.debug('Sync by ID found entry', {
+    logger.info('Sync by ID found entry', {
       resultID: result.sys.id,
     })
     if (result) {
       await this.transformAndIndexEntry(index, null, result)
     }
-    logger.debug('Sync by ID done')
+    logger.info('Sync by ID done')
   }
 
   async ping() {
