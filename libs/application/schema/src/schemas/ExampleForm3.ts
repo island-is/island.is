@@ -99,11 +99,34 @@ export const ExampleForm3: Form = buildForm({
               name: 'Which cars have you driven before?',
               required: false,
               options: [
-                { value: 'VW', label: 'VW' },
-                { value: 'Audi', label: 'Audi' },
-                { value: 'Porsche', label: 'Porsche' },
-                { value: 'Tesla', label: 'Tesla' },
-                { value: 'None', label: 'None of these' },
+                {
+                  value: 'VW',
+                  label: 'VW',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'Audi',
+                  label: 'Audi',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'Porsche',
+                  label: 'Porsche',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'Tesla',
+                  label: 'Tesla',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'None',
+                  label: 'None of these',
+                },
               ],
             }),
           ],

@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { CheckboxField } from '@island.is/application/schema'
-import { Checkbox, Typography, Box } from '@island.is/island-ui/core'
+import { Checkbox, Typography, Box, Tooltip } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '../types'
 import { Controller, useFormContext } from 'react-hook-form'
 
@@ -15,7 +15,12 @@ const CheckboxFormField: FC<Props> = ({ showFieldName = false, field }) => {
       {showFieldName && <Typography variant="p">{name}</Typography>}
       {options.map((option, index) => {
         return (
-          <Box key={option.value} paddingTop={2}>
+          <Box
+            display="flex"
+            alignItems="center"
+            key={option.value}
+            paddingTop={2}
+          >
             <Controller
               name={`${id}[${index}]`}
               control={control}
@@ -34,6 +39,16 @@ const CheckboxFormField: FC<Props> = ({ showFieldName = false, field }) => {
                 )
               }}
             />
+            {option.tooltip && (
+              <Box marginLeft={1}>
+                <Tooltip
+                  colored={true}
+                  placement="top"
+                  as="button"
+                  text={option.tooltip}
+                />
+              </Box>
+            )}
           </Box>
         )
       })}
