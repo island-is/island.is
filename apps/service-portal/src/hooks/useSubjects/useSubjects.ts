@@ -1,8 +1,10 @@
 import { useStore } from '../../stateProvider'
 import { useEffect } from 'react'
 import { fetchWithAuth } from '../../utils/http'
+import { useHistory } from 'react-router-dom'
 
 const useSubjects = () => {
+  const history = useHistory()
   const [
     { subjectList, subjectListState, activeSubjectId },
     dispatch,
@@ -32,6 +34,7 @@ const useSubjects = () => {
       type: 'setActiveSubjectId',
       payload: nationalId,
     })
+    history.push('/')
   }
 
   return {
