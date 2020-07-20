@@ -54,6 +54,9 @@ search-indexer-service:
 api:
   secrets:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
+  env:
+    ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
+    AWS_REGION: 'eu-west-1'
   ingress:
     annotations:
       nginx.ingress.kubernetes.io/enable-global-auth: 'false'
