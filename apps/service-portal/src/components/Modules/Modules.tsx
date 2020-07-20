@@ -5,35 +5,51 @@ import { useStore } from '../../stateProvider'
 import ModuleLoadingScreen from './ModuleLoadingScreen'
 import ModuleErrorScreen, { ModuleErrorBoundary } from './ModuleErrorScreen'
 
-const ModuleLoader: FC<{ module: ServicePortalModule }> = React.memo(
-  ({ module }) => {
-    const App = module.render()
+const ModuleLoader: FC<{
+  module: ServicePortalModule
+  activeSubjectId: string
+}> = React.memo(({ module, activeSubjectId }) => {
+  const moduleProps = {
+    activeSubjectNationalId: activeSubjectId,
+  }
 
-    if (App)
-      return (
-        <Suspense fallback={<ModuleLoadingScreen name={module.name} />}>
-          <ModuleErrorBoundary name={module.name}>
-            <App />
-          </ModuleErrorBoundary>
-        </Suspense>
-      )
+  const App = module.render(moduleProps)
 
-    return <ModuleErrorScreen name={module.name} />
-  },
-)
+  if (App)
+    return (
+      <Suspense fallback={<ModuleLoadingScreen name={module.name} />}>
+        <ModuleErrorBoundary name={module.name}>
+          <App />
+        </ModuleErrorBoundary>
+      </Suspense>
+    )
+
+  return <ModuleErrorScreen name={module.name} />
+})
 
 const Modules: FC<{}> = () => {
-  const [{ modules }] = useStore()
+  const [{ modules, activeSubjectId }] = useStore()
+  if (!activeSubjectId) return null
 
   return (
     <>
       <Route
         path="/umsoknir"
-        render={() => <ModuleLoader module={modules.applicationsModule} />}
+        render={() => (
+          <ModuleLoader
+            module={modules.applicationsModule}
+            activeSubjectId={activeSubjectId}
+          />
+        )}
       />
       <Route
         path="/rafraen-skjol"
-        render={() => <ModuleLoader module={modules.documentsModule} />}
+        render={() => (
+          <ModuleLoader
+            module={modules.documentsModule}
+            activeSubjectId={activeSubjectId}
+          />
+        )}
       />
     </>
   )

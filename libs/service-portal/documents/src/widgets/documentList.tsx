@@ -8,24 +8,41 @@ import {
   Icon,
 } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
+// eslint-disable-next-line
+import { useStore } from 'apps/service-portal/src/stateProvider'
 
 const sleep = (ms = 0) => {
   return new Promise((r) => setTimeout(r, ms))
 }
 
+const userDocuments = [
+  { date: '19.03.2020', title: 'Þjóðskrá', document: 'Skuldleysisvottorð' },
+  { date: '25.05.2020', title: 'Þjóðskrá', document: 'Skuldleysisvottorð' },
+  { date: '07.08.2020', title: 'Þjóðskrá', document: 'Skuldleysisvottorð' },
+  { date: '19.11.2020', title: 'Þjóðskrá', document: 'Skuldleysisvottorð' },
+]
+
+const companyDocuments = [
+  { date: '19.03.2020', title: 'Ríkisskattstjóri', document: 'Launaseðill' },
+  { date: '25.05.2020', title: 'Ríkisskattstjóri', document: 'Launaseðill' },
+]
+
 const DocumentList: FC<{}> = () => {
-  const [mockState, setMockState] = useState<
-    'passive' | 'render' | 'do-not-render'
-  >('passive')
+  const [{ activeSubjectId }] = useStore()
+  const [mockState, setMockState] = useState<'passive' | 'render'>('passive')
 
   useEffect(() => {
+    setMockState('passive')
     async function checkSomething() {
       await sleep(500)
       // setMockState('do-not-render')
       setMockState('render')
     }
     checkSomething()
-  }, [])
+  }, [activeSubjectId])
+
+  const documents =
+    activeSubjectId === '5401482231' ? companyDocuments : userDocuments
 
   if (mockState === 'render') {
     return (
@@ -55,27 +72,27 @@ const DocumentList: FC<{}> = () => {
             </Column>
           </Columns>
         </Box>
-        {[...Array(4)].map((_key, index) => (
+        {documents.map((document, index) => (
           <div key={index}>
             <Columns>
               <Column width="3/12">
                 <Box padding={2}>
                   <Typography variant="pSmall" as="p">
-                    19.03.2020
+                    {document.date}
                   </Typography>
                 </Box>
               </Column>
               <Column width="4/12">
                 <Box padding={2}>
                   <Typography variant="pSmall" as="p">
-                    Þjóðskrá
+                    {document.title}
                   </Typography>
                 </Box>
               </Column>
               <Column width="5/12">
                 <Box padding={2}>
                   <Typography variant="pSmall" as="p">
-                    Skuldleysisvottorð
+                    {document.document}
                   </Typography>
                 </Box>
               </Column>

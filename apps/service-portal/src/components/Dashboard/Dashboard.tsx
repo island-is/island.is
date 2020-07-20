@@ -1,45 +1,50 @@
 import React, { FC, Suspense } from 'react'
-import {
-  Box,
-  Typography,
-  Stack,
-  Divider,
-  SkeletonLoader,
-} from '@island.is/island-ui/core'
+import { Box, Typography, SkeletonLoader } from '@island.is/island-ui/core'
 import { useStore } from '../../stateProvider'
 import { ServicePortalModule } from '@island.is/service-portal/core'
 
-const WidgetLoader: FC<{ module: ServicePortalModule }> = React.memo(
-  ({ module }) => {
-    const Widgets = module.widgets()
+const WidgetLoader: FC<{
+  module: ServicePortalModule
+  activeSubjectId: string
+}> = React.memo(({ module, activeSubjectId }) => {
+  const moduleProps = {
+    activeSubjectNationalId: activeSubjectId,
+  }
+  const Widgets = module.widgets(moduleProps)
 
-    if (Widgets)
-      // TODO: Better loader
-      return (
-        <Box marginBottom={8}>
-          <Box marginBottom={2}>
-            <Typography variant="h3" as="h3">
-              {module.name}
-            </Typography>
-          </Box>
-          <Suspense fallback={<SkeletonLoader />}>
-            <Widgets />
-          </Suspense>
+  if (Widgets)
+    // TODO: Better loader
+    return (
+      <Box marginBottom={8}>
+        <Box marginBottom={2}>
+          <Typography variant="h3" as="h3">
+            {module.name}
+          </Typography>
         </Box>
-      )
+        <Suspense fallback={<SkeletonLoader />}>
+          <Widgets />
+        </Suspense>
+      </Box>
+    )
 
-    // TODO: Fallback
-    return null
-  },
-)
+  // TODO: Fallback
+  return null
+})
 
 export const Dashboard: FC<{}> = () => {
-  const [{ modules }] = useStore()
+  const [{ modules, activeSubjectId }] = useStore()
+  if (!activeSubjectId) return null
 
   return (
     <Box padding={3}>
-      <WidgetLoader module={modules.applicationsModule} />
-      <WidgetLoader module={modules.documentsModule} />
+      <WidgetLoader
+        module={modules.applicationsModule}
+        activeSubjectId={activeSubjectId}
+      />
+      <WidgetLoader
+        module={modules.documentsModule}
+        activeSubjectId={activeSubjectId}
+      />
     </Box>
   )
 }

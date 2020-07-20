@@ -7,8 +7,6 @@ const useNavigation = () => {
     dispatch,
   ] = useStore()
 
-  console.log(activeSubjectId)
-
   useEffect(() => {
     async function fetchNavigation() {
       dispatch({ type: 'fetchNavigationPending' })
