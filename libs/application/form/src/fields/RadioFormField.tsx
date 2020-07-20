@@ -1,38 +1,43 @@
 import React, { FC } from 'react'
 import { RadioField } from '@island.is/application/schema'
-import { Typography, Box } from '@island.is/island-ui/core'
+import { Typography, Box, RadioButton, Stack } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '../types'
+import { useFormContext, Controller } from 'react-hook-form'
 
 interface Props extends FieldBaseProps {
   field: RadioField
 }
-const RadioFormField: FC<Props> = ({
-  autoFocus,
-  showFieldName = false,
-  field,
-  register,
-}) => {
+const RadioFormField: FC<Props> = ({ showFieldName = false, field }) => {
   const { id, name, options } = field
-
+  const { control } = useFormContext()
   return (
     <div>
       {showFieldName && <Typography variant="p">{name}</Typography>}
-      {options.map(({ value, label }, index) => {
-        return (
-          <Box key={value} paddingTop={2}>
-            <input
-              autoFocus={autoFocus && index === 0}
-              type="radio"
-              key={value}
-              id={`${id}-${value}`}
-              name={id}
-              ref={register()}
-              value={value}
-            />
-            <label htmlFor={`${id}-${value}`}>{label}</label>
-          </Box>
-        )
-      })}
+      <Box paddingTop={2}>
+        <Controller
+          name={`${id}`}
+          control={control}
+          render={({ value, onChange }) => {
+            return (
+              <Stack space={2}>
+                {options.map((option, index) => (
+                  <RadioButton
+                    key={`${id}-${index}`}
+                    onChange={({ target }) => {
+                      onChange(target.value)
+                    }}
+                    checked={option.value === value}
+                    id={`${id}-${index}`}
+                    name={`${id}`}
+                    label={option.label}
+                    value={option.value}
+                  />
+                ))}
+              </Stack>
+            )
+          }}
+        />
+      </Box>
     </div>
   )
 }
