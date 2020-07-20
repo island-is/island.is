@@ -11,3 +11,7 @@ export const sidebar = style({
 })
 
 export const sidebarContainer = style({})
+
+export const iconWrapper = style({
+  marginRight: '15px',
+})

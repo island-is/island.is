@@ -73,6 +73,16 @@ export function makeServer({ environment = 'development' } = {}) {
 
         return new Response(200, {}, { newToken })
       })
+
+      this.get('/documents', async (schema, request) => {
+        return new Response(200, {}, [
+          {
+            id: 1,
+            name: 'Greiðsluseðill (Bifr.gjöld) - Ríkissjóðsinnheimtur',
+          },
+          { id: 2, name: 'Greiðsluseðill (Laun) - Ríkissjóðsinnheimtur' },
+        ])
+      })
     },
   })
 }

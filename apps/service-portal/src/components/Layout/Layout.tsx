@@ -2,6 +2,8 @@ import React, { FC } from 'react'
 import Header from '../header/header'
 import Sidebar from '../sidebar/sidebar'
 import { Page, ContentBlock } from '@island.is/island-ui/core'
+import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
+
 import * as styles from './Layout.treat'
 
 const Layout: FC = ({ children }) => {
@@ -11,7 +13,8 @@ const Layout: FC = ({ children }) => {
       <div className={styles.mainWrapper}>
         <Sidebar />
         <Page>
-          <ContentBlock>{children}</ContentBlock>
+          <ContentBreadcrumbs />
+          {children}
         </Page>
       </div>
     </>

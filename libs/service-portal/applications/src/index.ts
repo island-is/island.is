@@ -6,6 +6,7 @@ const sleep = (ms = 0) => {
 }
 
 export const applicationsModule: ServicePortalModule = {
+  name: 'Umsóknir',
   navigation: async () => {
     await sleep(1000)
     return {

@@ -19,5 +19,5 @@ export const StateProvider = ({
     </StateContext.Provider>
   )
 }
-export const useStateValue: () => [StoreState, (action: Action) => void] = () =>
+export const useStore: () => [StoreState, (action: Action) => void] = () =>
   useContext(StateContext)

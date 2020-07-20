@@ -1,7 +1,7 @@
 import React, { FC, ReactNode, useState } from 'react'
 import MenuButton from '../MenuButton/MenuButton'
 import { Box, Icon, Typography } from '@island.is/island-ui/core'
-import { useStateValue } from './../../stateProvider'
+import { useStore } from './../../stateProvider'
 
 import * as styles from './UserNavigation.treat'
 
@@ -16,7 +16,7 @@ const UserNavigation: FC<UserNavigationProps> = ({
   name,
   children,
 }) => {
-  const [{ userInfo }] = useStateValue()
+  const [{ userInfo }] = useStore()
   const [toggleNav, setToggleNav] = useState<boolean>(false)
   const handleToggle = () => {
     setToggleNav(!toggleNav)

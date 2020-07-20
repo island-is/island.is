@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
 import { usePersistUserInfo } from '../../hooks/usePersistUserInfo/usePersistUserInfo'
 import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
-import { Logo, Box, Hidden } from '@island.is/island-ui/core'
+import { Logo, Box, Hidden, Icon } from '@island.is/island-ui/core'
 import MenuButton from '../MenuButton/MenuButton'
 
 import * as styles from './Header.treat'
@@ -36,10 +36,9 @@ export const Header: FC<{}> = () => {
         </Hidden>
       </Box>
       <div className={styles.infoContainer}>
-        <MenuButton>{'👑'}</MenuButton>
-        <MenuButton>{'👑'}</MenuButton>
-        <UserNavigation />
-        <MenuButton onClick={handleLogout}>{'👑'}</MenuButton>
+        <MenuButton onClick={handleLogout}>
+          <Icon type="lock" />
+        </MenuButton>
       </div>
     </header>
   )

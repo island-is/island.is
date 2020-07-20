@@ -18,6 +18,7 @@ export type ServicePortalModuleRenderValue = LazyExoticComponent<
 >
 
 export interface ServicePortalModule {
+  name: string
   navigation: () => Promise<ServicePortalNavigationItem>
   widgets: () => ServicePortalModuleWidgets
   render: () => ServicePortalModuleRenderValue
