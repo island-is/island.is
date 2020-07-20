@@ -1,5 +1,11 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+global:
+  env:
+    AWS_REGION: 'eu-west-1'
+  initContainer:
+    env:
+      AWS_REGION: 'eu-west-1'
 
 web:
   ingress:
@@ -29,7 +35,6 @@ search-indexer-service:
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
     CONTENTFUL_ENVIRONMENT: 'master'
     CONTENTFUL_HOST: 'preview.contentful.com'
-    AWS_REGION: 'eu-west-1'
 
   ingress:
     enabled: true
@@ -50,13 +55,11 @@ search-indexer-service:
       APPLICATION_URL: 'http://search-indexer-service'
       ELASTIC_INDEX: 'island-is'
       S3_BUCKET: 'dev-es-custom-packages'
-      AWS_REGION: 'eu-west-1'
 api:
   secrets:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
   env:
     ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
-    AWS_REGION: 'eu-west-1'
   ingress:
     annotations:
       nginx.ingress.kubernetes.io/enable-global-auth: 'false'

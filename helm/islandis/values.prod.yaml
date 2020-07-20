@@ -1,6 +1,13 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+global:
+  env:
+    AWS_REGION: 'eu-west-1'
+  initContainer:
+    env:
+      AWS_REGION: 'eu-west-1'
+
 search-indexer-service:
   env:
     APPLICATION_URL: 'http://search-indexer-service'
