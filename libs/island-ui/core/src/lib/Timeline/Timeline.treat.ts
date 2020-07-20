@@ -4,7 +4,6 @@ import { themeUtils, theme } from '@island.is/island-ui/theme'
 export const container = style({
   position: 'relative',
   display: 'flex',
-  background: `linear-gradient(120.27deg, #0161FD -0.52%, #3F46D2 29.07%, #812EA4 59.85%, #C21578 90.63%, #FD0050 117.86%)`,
 })
 
 export const innerContainer = style({
@@ -51,13 +50,13 @@ export const frame = style({
   padding: '0',
   minHeight: '100%',
   minWidth: '100%',
-  height: 600,
+  maxHeight: 600,
   overflowX: 'scroll',
   transition: `transform 500ms ease`,
   ...themeUtils.responsiveStyle({
     lg: {
       display: 'inline-block',
-      height: 1000,
+      maxHeight: 1000,
       overflow: 'hidden',
     },
   }),

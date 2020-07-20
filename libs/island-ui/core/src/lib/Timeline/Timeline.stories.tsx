@@ -130,7 +130,7 @@ const events: TimelineEvent[] = [
     date: new Date('03/10/2015'),
     title: 'Meira hér!',
   },
-].sort((a, b) => b.date.getTime() - a.date.getTime())
+]
 
 export default {
   title: 'Components/Timeline',

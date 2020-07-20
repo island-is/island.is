@@ -13,9 +13,19 @@ import initApollo from '../graphql/client'
 
 interface LayoutProps {
   showSearchInHeader?: boolean
+  wrapContent?: boolean
+  showHeader?: boolean
+  showFooter?: boolean
 }
 
-const Layout: FC<LayoutProps> = ({ showSearchInHeader, children }) => {
+const Layout: FC<LayoutProps> = ({
+  showSearchInHeader = true,
+  wrapContent = true,
+  showHeader = true,
+  showFooter = true,
+  children,
+}) => {
+  console.log('wrapContent', wrapContent)
   return (
     <Page>
       <Head>
@@ -46,9 +56,9 @@ const Layout: FC<LayoutProps> = ({ showSearchInHeader, children }) => {
         />
         <title>Ísland.is</title>
       </Head>
-      <Header showSearchInHeader={showSearchInHeader} />
-      <Box width="full">{children}</Box>
-      <Footer />
+      {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
+      {wrapContent ? <Box width="full">{children}</Box> : children}
+      {showFooter && <Footer />}
       <style jsx global>{`
         @font-face {
           font-family: 'IBM Plex Sans';
@@ -105,11 +115,11 @@ const SupportApplication: FC<{
   pageProps: AppProps['pageProps']
   apolloClient: ApolloClient<NormalizedCacheObject>
 }> = ({ Component, pageProps }) => {
-  const { showSearchInHeader } = pageProps
+  const { showSearchInHeader, layoutConfig = {} } = pageProps
 
   return (
     <ApolloProvider client={initApollo(pageProps.apolloState)}>
-      <Layout showSearchInHeader={showSearchInHeader}>
+      <Layout showSearchInHeader={showSearchInHeader} {...layoutConfig}>
         <Component {...pageProps} />
       </Layout>
     </ApolloProvider>
