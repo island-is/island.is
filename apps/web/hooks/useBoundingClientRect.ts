@@ -1,4 +1,5 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState } from 'react'
+import useViewport from './useViewport'
 
 const useBoundingClientRect = (): [
   (e: HTMLElement) => void,
@@ -6,20 +7,11 @@ const useBoundingClientRect = (): [
 ] => {
   const [element, setElement] = useState<HTMLElement>()
   const [rect, setRect] = useState<ClientRect>()
+  const [position, size] = useViewport()
 
-  const onChange = useCallback(() => {
+  useEffect(() => {
     setRect(element?.getBoundingClientRect())
-  }, [element])
-
-  useEffect(() => {
-    window.addEventListener('scroll', onChange, { passive: true })
-    return () => window.removeEventListener('scroll', onChange)
-  }, [onChange])
-
-  useEffect(() => {
-    window.addEventListener('resize', onChange, { passive: true })
-    return () => window.removeEventListener('resize', onChange)
-  }, [onChange])
+  }, [position, size])
 
   return [setElement, rect]
 }

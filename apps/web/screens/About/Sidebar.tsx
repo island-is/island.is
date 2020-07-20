@@ -46,10 +46,14 @@ const Sidebar: FC<SidebarProps> = ({ type }) => {
         className={cn(
           styles.container,
           isFixed ? styles.containerFixed : styles.containerAbsolute,
-          type === 'gradient' && styles.containerGradient,
         )}
         style={isFixed ? { left: rect.left } : {}}
       >
+        <div
+          className={cn(styles.gradient, {
+            [styles.gradientVisible]: type === 'gradient',
+          })}
+        />
         <Box padding={4}>
           <Stack space={2}>
             <Typography variant="h3" as="h3" color={colors.main}>
@@ -57,7 +61,7 @@ const Sidebar: FC<SidebarProps> = ({ type }) => {
             </Typography>
             <Divider weight={colors.divider} />
             <Typography variant="p" as="p" color={colors.main}>
-              <b>Verkefnið</b>
+              Verkefnið
             </Typography>
             <Stack space={0}>
               <Typography variant="p" as="p" color={colors.main}>

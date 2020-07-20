@@ -7,6 +7,7 @@ import { Locale } from '@island.is/web/i18n/I18n'
 import { withApollo } from '../../graphql'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import Header from '@island.is/web/components/Header/Header'
+import useScrollSpy from '../../hooks/useScrollSpy'
 import BulletList, { BulletListProps } from './BulletList'
 import MailingListSignup from '@island.is/web/components/MailingListSignup/MailingListSignup'
 import Collaborators from './Collaborators'
@@ -85,81 +86,101 @@ export const About: Screen<AboutProps> = ({
   news,
   changes,
 }) => {
+  const [spy, currentId] = useScrollSpy(230)
+
   return (
     <div>
-      <Layout background="gradient">
-        <Header />
-        <Content offsetRight columns={7} center>
-          <Box paddingY={2}>
-            <Intro />
-          </Box>
-          <Sidebar type="gradient" />
-        </Content>
-        <TimelineSection events={timelineEvents} />
-      </Layout>
+      <div ref={spy('timeline:gradient')}>
+        <Layout background="gradient">
+          <Header />
+          <Content offsetRight columns={7} center>
+            <Box paddingY={2}>
+              <Intro />
+            </Box>
+            <Sidebar type={currentId.endsWith(':gradient') ? 'gradient' : 'standard'} />
+          </Content>
+          <TimelineSection events={timelineEvents} />
+        </Layout>
+      </div>
 
-      <Layout
-        background="blue100"
-        contentProps={{ columns: 7, center: true, offsetRight: true }}
-        boxProps={{ paddingTop: 8, paddingBottom: 6 }}
-      >
-        <MailingListSignup />
-      </Layout>
+      <div ref={spy('mailinglist:gradient')}>
+        <Layout
+          background="blue100"
+          contentProps={{ columns: 7, center: true, offsetRight: true }}
+          boxProps={{ paddingTop: 8, paddingBottom: 6 }}
+        >
+          <MailingListSignup />
+        </Layout>
+      </div>
 
-      <Layout
-        contentProps={{ columns: 7, center: true, offsetRight: true }}
-        boxProps={{ paddingTop: 15, paddingBottom: 10 }}
-      >
-        <SectionHeading
-          title="Öll opinber þjónusta á einum stað"
-          intro="Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn."
-        />
-      </Layout>
+      <div ref={spy('heading1')}>
+        <Layout
+          contentProps={{ columns: 7, center: true, offsetRight: true }}
+          boxProps={{ paddingTop: 15, paddingBottom: 10 }}
+        >
+          <SectionHeading
+            title="Öll opinber þjónusta á einum stað"
+            intro="Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn."
+          />
+        </Layout>
+      </div>
 
-      <Layout
-        background="dotted"
-        contentProps={{ columns: 8 }}
-        boxProps={{ paddingTop: 8, paddingBottom: 10 }}
-      >
-        <Cards {...changes} />
-      </Layout>
+      <div ref={spy('changes')}>
+        <Layout
+          background="dotted"
+          contentProps={{ columns: 8 }}
+          boxProps={{ paddingTop: 8, paddingBottom: 10 }}
+        >
+          <Cards {...changes} />
+        </Layout>
+      </div>
 
-      <Layout
-        contentProps={{ columns: 7, center: true, offsetRight: true }}
-        boxProps={{ paddingTop: 15, paddingBottom: 10 }}
-      >
-        <SectionHeading
-          title="Fagleg nálgun"
-          intro="Við vinnum að margvíslegum verkefnum sem öll stuðla að því að gera opinbera þjónustu skilvirkari og notendavænni."
-        />
-      </Layout>
+      <div ref={spy('heading2')}>
+        <Layout
+          contentProps={{ columns: 7, center: true, offsetRight: true }}
+          boxProps={{ paddingTop: 15, paddingBottom: 10 }}
+        >
+          <SectionHeading
+            title="Fagleg nálgun"
+            intro="Við vinnum að margvíslegum verkefnum sem öll stuðla að því að gera opinbera þjónustu skilvirkari og notendavænni."
+          />
+        </Layout>
+      </div>
 
-      <Layout contentProps={{ columns: 7, offsetRight: true }}>
-        <BulletList items={bullets} />
-      </Layout>
+      <div ref={spy('bullets')}>
+        <Layout contentProps={{ columns: 7, offsetRight: true }}>
+          <BulletList items={bullets} />
+        </Layout>
+      </div>
 
-      <Layout
-        background="gradient"
-        contentProps={{ columns: 7, center: true, offsetRight: true }}
-        boxProps={{ paddingTop: 15, paddingBottom: 6 }}
-      >
-        <Collaborators />
-      </Layout>
+      <div ref={spy('collaborators:gradient')}>
+        <Layout
+          background="gradient"
+          contentProps={{ columns: 7, center: true, offsetRight: true }}
+          boxProps={{ paddingTop: 15, paddingBottom: 6 }}
+        >
+          <Collaborators />
+        </Layout>
+      </div>
 
-      <Layout
-        background="gradient"
-        contentProps={{ columns: 7, offsetRight: true }}
-        boxProps={{ paddingTop: 12, paddingBottom: 10 }}
-      >
-        <ProjectStories stories={[]} />
-      </Layout>
+      <div ref={spy('stories:gradient')}>
+        <Layout
+          background="gradient"
+          contentProps={{ columns: 7, offsetRight: true }}
+          boxProps={{ paddingTop: 12, paddingBottom: 10 }}
+        >
+          <ProjectStories stories={[]} />
+        </Layout>
+      </div>
 
-      <Layout
-        contentProps={{ columns: 8, offsetRight: true }}
-        boxProps={{ paddingTop: 12, paddingBottom: 10 }}
-      >
-        <LatestNews title="Fréttir og tilkynningar" newsList={news} />
-      </Layout>
+      <div ref={spy('news')}>
+        <Layout
+          contentProps={{ columns: 8, offsetRight: true }}
+          boxProps={{ paddingTop: 12, paddingBottom: 10 }}
+        >
+          <LatestNews title="Fréttir og tilkynningar" newsList={news} />
+        </Layout>
+      </div>
     </div>
   )
 }
