@@ -25,6 +25,7 @@ interface DecodedJwtToken {
 export const Login = () => {
   const [, dispatch] = useStore()
   const history = useHistory()
+
   const handleLogin = async () => {
     const userData = await fetchToken()
     const Token = userData.token
@@ -35,6 +36,7 @@ export const Login = () => {
     })
     history.push('/')
   }
+
   return (
     <div>
       <button onClick={handleLogin}>Innskráning</button>

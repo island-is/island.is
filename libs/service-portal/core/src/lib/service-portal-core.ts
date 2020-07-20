@@ -8,8 +8,9 @@ export interface ServicePortalNavigationItem {
   children?: ServicePortalNavigationItem[]
 }
 
-/* eslint-disable-next-line */
-export interface ServicePortalModuleProps {}
+export interface ServicePortalModuleProps {
+  activeSubjectNationalId: string
+}
 
 export type ServicePortalModuleWidgets = LazyExoticComponent<ComponentType<any>>
 
@@ -19,7 +20,9 @@ export type ServicePortalModuleRenderValue = LazyExoticComponent<
 
 export interface ServicePortalModule {
   name: string
-  navigation: () => Promise<ServicePortalNavigationItem>
+  navigation: (
+    props: ServicePortalModuleProps,
+  ) => Promise<ServicePortalNavigationItem>
   widgets: () => ServicePortalModuleWidgets
   render: () => ServicePortalModuleRenderValue
 }

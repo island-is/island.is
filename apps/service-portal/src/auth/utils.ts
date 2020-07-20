@@ -1,7 +1,7 @@
 import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
 import Cookies from 'js-cookie'
 
-const sleep = (ms = 0) => {
+export const sleep = (ms = 0) => {
   return new Promise((r) => setTimeout(r, ms))
 }
 
@@ -9,12 +9,11 @@ interface MockToken {
   token: ''
 }
 
-export default sleep
-
 export const isAuthenticated = () => Cookies.get(MOCK_AUTH_KEY)?.length > 0
 
-export const fetchToken = async (): Promise<MockToken> => {
-  const nationalId = '2606862759'
+export const fetchToken = async (
+  nationalId = '2606862759',
+): Promise<MockToken> => {
   const token = await fetch('/user/token', {
     method: 'POST', // or 'PUT'
     headers: {
@@ -23,8 +22,8 @@ export const fetchToken = async (): Promise<MockToken> => {
     body: JSON.stringify(nationalId),
   })
   const expirationTime = new Date(new Date().getTime() + 8 * 60 * 60 * 1000)
-  const retToken = token.json()
-  Cookies.set(MOCK_AUTH_KEY, retToken, {
+  const retToken = await token.json()
+  Cookies.set(MOCK_AUTH_KEY, retToken.token, {
     sameSite: 'lax',
     expires: expirationTime,
   })
