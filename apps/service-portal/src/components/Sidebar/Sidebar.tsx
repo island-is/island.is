@@ -1,27 +1,20 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useEffect } from 'react'
 import { Box, Typography, Icon, Stack } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 import { useStore } from '../../stateProvider'
 import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
-import { useHistory } from 'react-router-dom'
 import * as styles from './Sidebar.treat'
 
 export const Sidebar: FC<{}> = () => {
   const [{ modules, navigation, navigationState }, dispatch] = useStore()
-  const history = useHistory()
-  const [pathName, setPathName] = useState<string>('')
-
   const renderModuleNavTree = (nav: ServicePortalNavigationItem) => (
     <>
       <Link to={nav.url}>
         <Box marginTop={1}>
           {nav.icon && (
             <span className={styles.iconWrapper}>
-              <Icon
-                color={pathName.startsWith(nav.url) ? 'blue400' : 'dark200'}
-                type={nav.icon}
-              />
+              <Icon type={nav.icon} />
             </span>
           )}
           <Typography variant="p" as="span">
@@ -29,7 +22,7 @@ export const Sidebar: FC<{}> = () => {
           </Typography>
         </Box>
       </Link>
-      {nav.children && pathName.startsWith(nav.url) && (
+      {nav.children && (
         <Box paddingLeft={1}>
           {nav.children.map((child, index) => (
             <Link to={child.url} key={`child-${index}`}>
@@ -66,18 +59,14 @@ export const Sidebar: FC<{}> = () => {
     if (navigationState === 'passive') fetchNavigation()
   }, [dispatch, navigation, modules, navigationState])
 
-  useEffect(() => {
-    history.listen((location) => {
-      setPathName(location.pathname)
-    })
-  }, [history])
-
   return (
     <aside className={styles.sidebar}>
       <Box padding="containerGutter" className={styles.sidebarContainer}>
         <Stack space={[0, 2]}>
           {navigation?.applications?.url &&
             renderModuleNavTree(navigation.applications)}
+          {navigation?.documents?.url &&
+            renderModuleNavTree(navigation.documents)}
         </Stack>
       </Box>
     </aside>

@@ -23,10 +23,11 @@ const authLink = setContext((_, { headers }) => {
   }
 })
 
-export const client = new ApolloClient({
+const client = new ApolloClient({
   name: 'service-portal',
   version: '0.1',
   link: ApolloLink.from([authLink, httpLink]),
   cache: new InMemoryCache(),
 })
 
+export default client

@@ -3,7 +3,7 @@ import { useLocation, Link } from 'react-router-dom'
 import { useStore } from '../../stateProvider'
 import { Breadcrumbs, Box } from '@island.is/island-ui/core'
 import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
-
+import * as styles from './ContentBreadcrumbs.treat'
 const nodeByUrl = (url: string, data: ServicePortalNavigationItem[]) => {
   let result: ServicePortalNavigationItem | null = null
 
@@ -35,7 +35,7 @@ const ContentBreadcrumbs: FC<{}> = () => {
     : null
 
   return (
-    <Box padding={3} border="standard">
+    <Box className={styles.wrapper} padding={3}>
       <Breadcrumbs>
         <Link to="/">Mitt Ísland</Link>
         {navItem && <Link to={navItem.url}>{navItem.name}</Link>}
