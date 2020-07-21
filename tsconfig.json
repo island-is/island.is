@@ -59,6 +59,9 @@
       ],
       "@island.is/service-portal/documents": [
         "libs/service-portal/documents/src/index.ts"
+      ],
+      "@island.is/service-portal/settings": [
+        "libs/service-portal/settings/src/index.ts"
       ]
     }
   },
