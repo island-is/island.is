@@ -2,12 +2,12 @@
 import React, { FC, useEffect } from 'react'
 import { Box, Typography, Icon, Stack } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
-import { useStore } from '../../stateProvider'
 import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
+import useNavigation from '../../hooks/useNavigation/useNavigation'
 import * as styles from './Sidebar.treat'
 
 export const Sidebar: FC<{}> = () => {
-  const [{ modules, navigation, navigationState }, dispatch] = useStore()
+  const { navigation, navigationState } = useNavigation()
   const renderModuleNavTree = (nav: ServicePortalNavigationItem) => (
     <>
       <Link to={nav.url}>
@@ -38,26 +38,7 @@ export const Sidebar: FC<{}> = () => {
     </>
   )
 
-  useEffect(() => {
-    async function fetchNavigation() {
-      // TODO: Wait for them all or load them in as soon as they arrive?
-      const nav = await Promise.all([
-        modules.applicationsModule.navigation(),
-        modules.documentsModule.navigation(),
-      ])
-
-      dispatch({
-        type: 'setNavigation',
-        payload: {
-          ...navigation,
-          applications: nav[0],
-          documents: nav[1],
-        },
-      })
-    }
-
-    if (navigationState === 'passive') fetchNavigation()
-  }, [dispatch, navigation, modules, navigationState])
+  if (navigationState.state === 'pending') return <div>loading</div>
 
   return (
     <aside className={styles.sidebar}>

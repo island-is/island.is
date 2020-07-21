@@ -1,4 +1,4 @@
-import { LazyExoticComponent, ComponentType } from 'react'
+import { LazyExoticComponent } from 'react'
 import { IconTypes } from '@island.is/island-ui/core'
 
 export interface ServicePortalNavigationItem {
@@ -8,18 +8,19 @@ export interface ServicePortalNavigationItem {
   children?: ServicePortalNavigationItem[]
 }
 
-/* eslint-disable-next-line */
-export interface ServicePortalModuleProps {}
-
-export type ServicePortalModuleWidgets = LazyExoticComponent<ComponentType<any>>
+export interface ServicePortalModuleProps {
+  activeSubjectNationalId: string
+}
 
 export type ServicePortalModuleRenderValue = LazyExoticComponent<
-  (props: ServicePortalModuleProps) => JSX.Element
+  () => JSX.Element
 >
 
 export interface ServicePortalModule {
   name: string
-  navigation: () => Promise<ServicePortalNavigationItem>
-  widgets: () => ServicePortalModuleWidgets
-  render: () => ServicePortalModuleRenderValue
+  navigation: (
+    props: ServicePortalModuleProps,
+  ) => Promise<ServicePortalNavigationItem>
+  widgets: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue
+  render: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue
 }

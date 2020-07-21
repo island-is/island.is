@@ -4,10 +4,19 @@ import { Link } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
 import { usePersistUserInfo } from '../../hooks/usePersistUserInfo/usePersistUserInfo'
 import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
-import { Logo, Box, Hidden, Icon } from '@island.is/island-ui/core'
+import SubjectSwitcher from './SubjectSwitcher/SubjectSwitcher'
+// import { Logo, Box, Hidden, Icon } from '@island.is/island-ui/core'
 import MenuButton from '../MenuButton/MenuButton'
-
 import * as styles from './Header.treat'
+import {
+  Logo,
+  Box,
+  ContentBlock,
+  Hidden,
+  Columns,
+  Column,
+  Divider,
+} from '@island.is/island-ui/core'
 
 export const Header: FC<{}> = () => {
   usePersistUserInfo()
@@ -21,24 +30,65 @@ export const Header: FC<{}> = () => {
   }
 
   return (
-    <header className={styles.container}>
-      <Box display={'flex'} alignItems={'center'} padding={'gutter'}>
-        <Hidden above="sm">
-          <Link to="/">
-            <Logo width={40} iconOnly />
-          </Link>
-        </Hidden>
-        <Hidden below="md">
-          <Link to="/">
-            <Logo width={160} />
-          </Link>
-        </Hidden>
+    // <<<<<<< HEAD
+    //     <header className={styles.container}>
+    //       <Box display={'flex'} alignItems={'center'} padding={'gutter'}>
+    //         <Hidden above="sm">
+    //           <Link to="/">
+    //             <Logo width={40} iconOnly />
+    //           </Link>
+    //         </Hidden>
+    //         <Hidden below="md">
+    //           <Link to="/">
+    //             <Logo width={160} />
+    //           </Link>
+    //         </Hidden>
+    //       </Box>
+    //       <div className={styles.infoContainer}>
+    //         <MenuButton onClick={handleLogout}>
+    //           <Icon type="lock" />
+    //         </MenuButton>
+    //       </div>
+    // =======
+    <header>
+      <Box
+        width="full"
+        paddingTop={1}
+        paddingBottom={1}
+        paddingRight={3}
+        paddingLeft={3}
+      >
+        <ContentBlock>
+          <Columns>
+            <Column width="8/12">
+              <Link to="/">
+                <Box display="flex" height="full" alignItems="center">
+                  <Hidden above="md">
+                    <Logo width={40} iconOnly />
+                  </Hidden>
+                  <Hidden below="lg">
+                    <Logo width={160} />
+                  </Hidden>
+                </Box>
+              </Link>
+            </Column>
+            <Column width="3/12">
+              <SubjectSwitcher />
+            </Column>
+            <Column width="1/12">
+              <Box
+                display="flex"
+                height="full"
+                alignItems="center"
+                marginLeft={1}
+              >
+                <button onClick={handleLogout}>Útskráning</button>
+              </Box>
+            </Column>
+          </Columns>
+        </ContentBlock>
       </Box>
-      <div className={styles.infoContainer}>
-        <MenuButton onClick={handleLogout}>
-          <Icon type="lock" />
-        </MenuButton>
-      </div>
+      <Divider />
     </header>
   )
 }

@@ -7,8 +7,14 @@ const sleep = (ms = 0) => {
 
 export const applicationsModule: ServicePortalModule = {
   name: 'Umsóknir',
-  navigation: async () => {
+  navigation: async (props) => {
     await sleep(1000)
+    if (props.activeSubjectNationalId === '5401482231')
+      return {
+        name: 'Umsóknir',
+        url: '/umsoknir',
+        icon: 'user',
+      }
     return {
       name: 'Umsóknir',
       url: '/umsoknir',
