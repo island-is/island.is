@@ -65,6 +65,18 @@ export const typeDefs = gql`
     perPage: Int
   }
 
+  type Timeline {
+    id: ID!
+    title: String!
+    date: String!
+    numerator: Int
+    denominator: Int
+    label: String!
+    body: String
+    tags: [String]!
+    link: String!
+  }
+
   type Namespace {
     namespace: String
     fields: String
@@ -80,6 +92,7 @@ export const typeDefs = gql`
     getNews(input: GetNewsInput!): News
     getNewsList(input: GetNewsListInput): PaginatedNews!
     getNamespace(input: GetNamespaceInput): Namespace
+    getTimeline: [Timeline!]!
   }
 `
 

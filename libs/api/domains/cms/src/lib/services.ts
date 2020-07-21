@@ -6,6 +6,7 @@ import {
   News,
   Namespace,
   Pagination,
+  Timeline,
 } from '@island.is/api/schema'
 import { ApolloError } from 'apollo-server-express'
 
@@ -38,6 +39,18 @@ const formatNewsItem = ({ fields, sys }): News => ({
   content: JSON.stringify(fields.content),
 })
 
+const formatTimeline = ({ fields, sys }): Timeline => ({
+  id: sys.id,
+  title: fields.title,
+  date: fields.date,
+  numerator: fields.numerator,
+  denominator: fields.denominator,
+  label: fields.label ?? '',
+  body: fields.body && JSON.stringify(fields.body),
+  tags: fields.tags ?? [],
+  link: fields.link ?? '',
+})
+
 const makePage = (
   page: number,
   perPage: number,
@@ -48,6 +61,13 @@ const makePage = (
   totalResults,
   totalPages: Math.ceil(totalResults / perPage),
 })
+
+const errorHandler = (name: string) => {
+  return (error: Error) => {
+    logger.error(error)
+    throw new Error('Failed to resolve request in ' + name)
+  }
+}
 
 export const getArticle = async (
   slug: string,
@@ -94,8 +114,7 @@ export const getNewsList = async (
   perPage = 10,
 ) => {
   const params = {
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    content_type: 'news',
+    ['content_type']: 'news',
     include: 10,
     order: (ascending ? '' : '-') + 'fields.date',
     skip: (page - 1) * perPage,
@@ -119,6 +138,17 @@ export const getNewsList = async (
     page: makePage(page, perPage, r.total),
     news: r.items.map(formatNewsItem),
   }
+}
+
+export const getTimeline = async () => {
+  const result = await getLocalizedEntries<Timeline>('is', {
+    ['content_type']: 'timeline',
+    include: 0,
+    order: 'fields.date',
+    limit: 1000,
+  }).catch(errorHandler('getTimeline'))
+
+  return result.items.map(formatTimeline)
 }
 
 export const getNamespace = async (

@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, ReactElement } from 'react'
+import React, { FC, ReactElement, useMemo } from 'react'
 import cn from 'classnames'
 import { Screen } from '../../types'
 import { useI18n } from '@island.is/web/i18n'
@@ -26,13 +26,12 @@ import {
   TimelineEvent,
 } from '@island.is/island-ui/core'
 import Link from 'next/link'
-import { GET_NEWS_LIST_QUERY } from '../queries'
+import { GET_NEWS_LIST_QUERY, GET_TIMELINE_QUERY } from '../queries'
 import {
   Query,
-  ContentLanguage,
   QueryGetNewsListArgs,
+  Timeline as TimelineApi,
 } from '@island.is/api/schema'
-import * as styles from './About.treat'
 
 const Intro = () => {
   const { activeLocale } = useI18n()
@@ -74,19 +73,23 @@ const TimelineSection: FC<TimelineSectionProps> = ({ events }) => (
 )
 
 interface AboutProps {
-  timelineEvents: TimelineEvent[]
+  timelineEvents: TimelineApi[]
   bullets: BulletListProps['items']
   changes: CardsProps
   news: Query['getNewsList']['news']
 }
 
 export const About: Screen<AboutProps> = ({
-  timelineEvents,
+  timelineEvents: apiTimeline,
   bullets,
   news,
   changes,
 }) => {
   const [spy, currentId] = useScrollSpy({ margin: 230 })
+
+  const timelineEvents = useMemo(() => {
+    return apiTimeline.map(mapTimeline)
+  }, [apiTimeline])
 
   const sections: [string, string][] = [
     ['timeline:gradient', 'Verkefnið'],
@@ -206,24 +209,25 @@ export const About: Screen<AboutProps> = ({
 }
 
 About.getInitialProps = async ({ apolloClient }) => {
-  const {
-    data: {
-      getNewsList: { news },
-    },
-  } = await apolloClient.query<Query, QueryGetNewsListArgs>({
-    query: GET_NEWS_LIST_QUERY,
-    variables: {
-      input: {
-        perPage: 3,
+  const [news, timeline] = await Promise.all([
+    apolloClient.query<Query, QueryGetNewsListArgs>({
+      query: GET_NEWS_LIST_QUERY,
+      variables: {
+        input: {
+          perPage: 3,
+        },
       },
-    },
-  })
+    }),
+    apolloClient.query<Query>({
+      query: GET_TIMELINE_QUERY,
+    }),
+  ])
 
   const mocks = await import('./mockdata.json')
 
   return {
-    news,
-    timelineEvents: mocks.timeline as TimelineEvent[],
+    news: news.data.getNewsList.news,
+    timelineEvents: timeline.data.getTimeline,
     bullets: mocks.bullets as BulletListProps['items'],
     changes: mocks.changes as CardsProps,
     layoutConfig: {
@@ -232,5 +236,17 @@ About.getInitialProps = async ({ apolloClient }) => {
     },
   }
 }
+
+const mapTimeline = (e: TimelineApi): TimelineEvent => ({
+  date: new Date(e.date),
+  title: e.title,
+  value: e.numerator,
+  maxValue: e.denominator,
+  data: e.body && {
+    labels: e.tags,
+    text: e.body,
+    link: e.link,
+  },
+})
 
 export default withApollo(About)

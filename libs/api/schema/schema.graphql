@@ -5,6 +5,7 @@ type Query {
   getNamespace(input: GetNamespaceInput): Namespace
   getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput): PaginatedNews!
+  getTimeline: [Timeline!]!
   helloWorld(input: HelloWorldInput): HelloWorld!
   root: String
   searchResults(query: SearcherInput): SearchResult!
@@ -77,6 +78,18 @@ input GetNewsListInput {
   ascending: Boolean
   page: Int
   perPage: Int
+}
+
+type Timeline {
+  id: ID!
+  title: String!
+  date: String!
+  numerator: Int
+  denominator: Int
+  label: String!
+  body: String
+  tags: [String]!
+  link: String!
 }
 
 type Namespace {

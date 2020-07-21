@@ -1,5 +1,5 @@
 import { Resolvers } from '@island.is/api/schema'
-import { getArticle, getNews, getNewsList, getNamespace } from './services'
+import { getArticle, getNews, getNewsList, getNamespace, getTimeline } from './services'
 
 export const resolvers: Resolvers = {
   Query: {
@@ -22,6 +22,9 @@ export const resolvers: Resolvers = {
     getNamespace(_, { input }) {
       return getNamespace(input?.namespace ?? '', input?.lang ?? 'is-IS')
     },
+    getTimeline() {
+      return getTimeline()
+    }
   },
 }
 

@@ -22,6 +22,7 @@ export type Query = {
   getNamespace?: Maybe<Namespace>
   getNews?: Maybe<News>
   getNewsList: PaginatedNews
+  getTimeline: Array<Timeline>
   helloWorld: HelloWorld
   root?: Maybe<Scalars['String']>
   searchResults: SearchResult
@@ -137,6 +138,19 @@ export type GetNewsListInput = {
   ascending?: Maybe<Scalars['Boolean']>
   page?: Maybe<Scalars['Int']>
   perPage?: Maybe<Scalars['Int']>
+}
+
+export type Timeline = {
+  __typename?: 'Timeline'
+  id: Scalars['ID']
+  title: Scalars['String']
+  date: Scalars['String']
+  numerator?: Maybe<Scalars['Int']>
+  denominator?: Maybe<Scalars['Int']>
+  label: Scalars['String']
+  body?: Maybe<Scalars['String']>
+  tags: Array<Maybe<Scalars['String']>>
+  link: Scalars['String']
 }
 
 export type Namespace = {
@@ -368,10 +382,11 @@ export type ResolversTypes = {
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
+  Timeline: ResolverTypeWrapper<Timeline>
+  ID: ResolverTypeWrapper<Scalars['ID']>
   Namespace: ResolverTypeWrapper<Namespace>
   GetNamespaceInput: GetNamespaceInput
   ContentItem: ResolverTypeWrapper<ContentItem>
-  ID: ResolverTypeWrapper<Scalars['ID']>
   SearchResult: ResolverTypeWrapper<SearchResult>
   SearcherInput: SearcherInput
   CategoryInput: CategoryInput
@@ -402,10 +417,11 @@ export type ResolversParentTypes = {
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
   Boolean: Scalars['Boolean']
+  Timeline: Timeline
+  ID: Scalars['ID']
   Namespace: Namespace
   GetNamespaceInput: GetNamespaceInput
   ContentItem: ContentItem
-  ID: Scalars['ID']
   SearchResult: SearchResult
   SearcherInput: SearcherInput
   CategoryInput: CategoryInput
@@ -459,6 +475,11 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetNewsListArgs, never>
+  >
+  getTimeline?: Resolver<
+    Array<ResolversTypes['Timeline']>,
+    ParentType,
+    ContextType
   >
   helloWorld?: Resolver<
     ResolversTypes['HelloWorld'],
@@ -554,6 +575,26 @@ export type PaginatedNewsResolvers<
 > = {
   page?: Resolver<ResolversTypes['Pagination'], ParentType, ContextType>
   news?: Resolver<Array<ResolversTypes['News']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type TimelineResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Timeline'] = ResolversParentTypes['Timeline']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  numerator?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
+  denominator?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
+  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  tags?: Resolver<
+    Array<Maybe<ResolversTypes['String']>>,
+    ParentType,
+    ContextType
+  >
+  link?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -664,6 +705,7 @@ export type Resolvers<ContextType = Context> = {
   Article?: ArticleResolvers<ContextType>
   News?: NewsResolvers<ContextType>
   PaginatedNews?: PaginatedNewsResolvers<ContextType>
+  Timeline?: TimelineResolvers<ContextType>
   Namespace?: NamespaceResolvers<ContextType>
   ContentItem?: ContentItemResolvers<ContextType>
   SearchResult?: SearchResultResolvers<ContextType>

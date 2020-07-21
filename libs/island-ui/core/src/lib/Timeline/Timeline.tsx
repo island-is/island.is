@@ -29,8 +29,7 @@ const months = [
 ]
 
 export type TimelineEvent = {
-  isoDate: string
-  date?: Date
+  date: Date
   title: string
   value?: number
   maxValue?: number
@@ -54,13 +53,6 @@ function setDefault<K, V>(map: Map<K, V>, key: K, value: V): V {
 const mapEvents = (
   events: TimelineEvent[],
 ): Map<number, Map<number, TimelineEvent[]>> => {
-  // TODO: remove this hack
-  for (const e of events) {
-    if (typeof e.date !== 'object' && e.isoDate) {
-      e.date = new Date(e.isoDate)
-    }
-  }
-
   events = events.slice().sort((a, b) => b.date.getTime() - a.date.getTime())
 
   const byYear = new Map()
