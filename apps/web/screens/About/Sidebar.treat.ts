@@ -13,21 +13,20 @@ export const container = style({
   zIndex: 1,
   borderRadius: '8px',
   transition: 'all .3s',
-  overflow: 'hidden',
   background: theme.color.blue100,
 })
 
 export const gradient = style({
+  borderRadius: '8px',
   position: 'absolute',
   zIndex: -1,
   top: 0,
   bottom: 0,
   left: 0,
   right: 0,
-  margin: '-10px',
   opacity: 0,
   background:
-    'linear-gradient(120.27deg, #0161FD -0.52%, #3F46D2 29.07%, #812EA4 59.85%, #C21578 90.63%, #FD0050 117.86%)',
+    'linear-gradient(125.33deg, #0161FD -55.28%, #3F46D2 5.16%, #812EA4 68.02%, #C21578 130.88%, #FD0050 186.49%)'
 })
 
 export const gradientVisible = style({

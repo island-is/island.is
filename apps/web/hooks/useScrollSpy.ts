@@ -3,9 +3,9 @@ import minBy from 'lodash/minBy'
 import useViewport from './useViewport'
 
 const useScrollSpy = ({
-  offset,
+  margin,
 }: {
-  offset: number
+  margin: number
 }): [(id: string) => (e: HTMLElement) => void, string | undefined] => {
   const [elements, setElements] = useState<{ [key: string]: HTMLElement }>({})
   const [{ y: scrollTop }, { height: windowHeight }] = useViewport()
@@ -27,11 +27,11 @@ const useScrollSpy = ({
     return minBy(candidates, (c) => {
       const { top, height } = c.elem.getBoundingClientRect()
       return Math.min(
-        Math.abs(top - offset),
-        Math.abs(top + height - offset - 1),
+        Math.abs(top - margin),
+        Math.abs(top + height - margin - 1),
       )
     })
-  }, [offset, elements, scrollTop, windowHeight])
+  }, [margin, elements, scrollTop, windowHeight])
 
   return [addRef, current ? current.name : '']
 }

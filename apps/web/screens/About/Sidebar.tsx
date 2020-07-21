@@ -7,6 +7,7 @@ import {
   Divider,
   DividerProps,
 } from '@island.is/island-ui/core'
+import Bullet from '../../components/Bullet/Bullet'
 import { Colors } from '@island.is/island-ui/theme'
 import useBoundingClientRect from '../../hooks/useBoundingClientRect'
 import * as styles from './Sidebar.treat'
@@ -31,10 +32,18 @@ const ColorConfig: { [key: string]: ColorConfig } = {
 }
 
 export interface SidebarProps {
+  title: string
+  sections: [string, string][]
+  currentSection: string
   type: keyof typeof ColorConfig
 }
 
-const Sidebar: FC<SidebarProps> = ({ type }) => {
+const Sidebar: FC<SidebarProps> = ({
+  title,
+  sections,
+  currentSection,
+  type,
+}) => {
   const [ref, rect] = useBoundingClientRect()
 
   const isFixed = !!rect && rect.top < 0
@@ -57,28 +66,16 @@ const Sidebar: FC<SidebarProps> = ({ type }) => {
         <Box padding={4}>
           <Stack space={2}>
             <Typography variant="h3" as="h3" color={colors.main}>
-              Stafrænt Ísland
+              {title}
             </Typography>
             <Divider weight={colors.divider} />
-            <Typography variant="p" as="p" color={colors.main}>
-              Verkefnið
-            </Typography>
             <Stack space={0}>
-              <Typography variant="p" as="p" color={colors.main}>
-                Vertu með
-              </Typography>
-              <Typography variant="p" as="p" color={colors.main}>
-                Hvað breytist?
-              </Typography>
-              <Typography variant="p" as="p" color={colors.main}>
-                Fagleg nálgun
-              </Typography>
-              <Typography variant="p" as="p" color={colors.main}>
-                Samstarf
-              </Typography>
-              <Typography variant="p" as="p" color={colors.main}>
-                Fréttir og tilkynningar
-              </Typography>
+              {sections.map(([id, text]) => (
+                <Typography variant="p" as="p" color={colors.main}>
+                  {id === currentSection && <Bullet align="left" />}
+                  {text}
+                </Typography>
+              ))}
             </Stack>
             <Divider weight={colors.divider} />
             <Typography variant="p" as="p" color={colors.secondary}>

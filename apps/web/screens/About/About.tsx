@@ -86,7 +86,22 @@ export const About: Screen<AboutProps> = ({
   news,
   changes,
 }) => {
-  const [spy, currentId] = useScrollSpy(230)
+  const [spy, currentId] = useScrollSpy({ margin: 230 })
+
+  const sections: [string, string][] = [
+    ['timeline:gradient', 'Verkefnið'],
+    ['mailinglist:gradient', 'Vertu með'],
+    ['changes', 'Hvað breytist'],
+    ['bullets', 'Fagleg nálgun'],
+    ['collaborators:gradient', 'Samstarf'],
+    ['news', 'Fréttir og tilkynningar'],
+  ]
+
+  const aliases = {
+    heading1: 'changes',
+    heading2: 'bullets',
+    'stories:gradient': 'collaborators:gradient',
+  }
 
   return (
     <div>
@@ -97,7 +112,12 @@ export const About: Screen<AboutProps> = ({
             <Box paddingY={2}>
               <Intro />
             </Box>
-            <Sidebar type={currentId.endsWith(':gradient') ? 'gradient' : 'standard'} />
+            <Sidebar
+              title="Stafrænt Ísland"
+              sections={sections}
+              currentSection={aliases[currentId] || currentId}
+              type={currentId.endsWith(':gradient') ? 'gradient' : 'standard'}
+            />
           </Content>
           <TimelineSection events={timelineEvents} />
         </Layout>
