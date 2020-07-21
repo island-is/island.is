@@ -40,7 +40,7 @@ const Intro = () => {
   return (
     <>
       <Stack space={3}>
-        <Breadcrumbs>
+        <Breadcrumbs color="blue300" separatorColor="blue300">
           <Link href={makePath()}>
             <a>Ísland.is</a>
           </Link>

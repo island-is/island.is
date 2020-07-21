@@ -14,7 +14,6 @@ export type VariantTypes =
   | 'h5'
   | 'intro'
   | 'eyebrow'
-  | 'breadcrumb'
   | 'tag'
   | 'cardCategoryTitle'
 
@@ -110,15 +109,6 @@ export const variants: Variants = {
     },
     fontWeight: theme.typography.semiBold,
     lineHeight: 1.142857,
-  },
-  breadcrumb: {
-    fontSize: {
-      xs: 12,
-      md: 14,
-    },
-    fontWeight: theme.typography.semiBold,
-    lineHeight: 1.142857,
-    color: theme.color.purple400,
   },
   tag: {
     fontSize: {
