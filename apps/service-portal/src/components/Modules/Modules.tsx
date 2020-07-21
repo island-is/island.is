@@ -43,6 +43,15 @@ const Modules: FC<{}> = () => {
         )}
       />
       <Route
+        path="/stillingar"
+        render={() => (
+          <ModuleLoader
+            module={modules.settingsModule}
+            activeSubjectId={activeSubjectId}
+          />
+        )}
+      />
+      <Route
         path="/rafraen-skjol"
         render={() => (
           <ModuleLoader

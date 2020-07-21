@@ -43,6 +43,7 @@ export const Sidebar: FC<{}> = () => {
       </Typography>
       <Divider weight="alternate" />
       {navigation.applications && renderModuleNavTree(navigation.applications)}
+      {navigation.settings && renderModuleNavTree(navigation.settings)}
       {navigation.documents && renderModuleNavTree(navigation.documents)}
     </Box>
   )

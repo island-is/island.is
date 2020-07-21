@@ -20,6 +20,7 @@ const useNavigation = () => {
         const nav = await Promise.all([
           modules.applicationsModule.navigation(moduleProps),
           modules.documentsModule.navigation(moduleProps),
+          modules.settingsModule.navigation(moduleProps),
         ])
 
         dispatch({
@@ -30,6 +31,7 @@ const useNavigation = () => {
               ...navigation,
               applications: nav[0],
               documents: nav[1],
+              settings: nav[2],
             },
           },
         })
