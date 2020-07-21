@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
 import { usePersistUserInfo } from '../../hooks/usePersistUserInfo/usePersistUserInfo'
 import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
+import SubjectSwitcher from './SubjectSwitcher/SubjectSwitcher'
 import {
   Logo,
   Box,
@@ -11,9 +12,8 @@ import {
   Hidden,
   Columns,
   Column,
-  Divider,
 } from '@island.is/island-ui/core'
-import SubjectSwitcher from './SubjectSwitcher/SubjectSwitcher'
+import * as styles from './Header.treat'
 
 export const Header: FC<{}> = () => {
   usePersistUserInfo()
@@ -27,7 +27,7 @@ export const Header: FC<{}> = () => {
   }
 
   return (
-    <header>
+    <header className={styles.header}>
       <Box
         width="full"
         paddingTop={1}
@@ -65,7 +65,6 @@ export const Header: FC<{}> = () => {
           </Columns>
         </ContentBlock>
       </Box>
-      <Divider />
     </header>
   )
 }
