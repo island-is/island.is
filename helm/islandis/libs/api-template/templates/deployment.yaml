@@ -30,10 +30,14 @@ spec:
       initContainers:
         - name: migration
           image: "{{ .Values.image.repository }}:{{ .Values.global.image.tag }}"
-          {{- with .Values.initContainer }}
-          command: {{ .command | toJson }}
-          args: {{ .args | toJson }}
+          command: {{ .Values.initContainer.command | toJson }}
+          args: {{ .Values.initContainer.args | toJson }}
           env:
+            {{- range $key, $value := .Values.global.initContainer.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- with .Values.initContainer }}
             {{- range $key, $value := .env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
@@ -45,7 +49,7 @@ spec:
                   name: {{ $fullName }}
                   key: {{ $key }}
             {{- end }}
-          {{- end }}
+            {{- end }}
             - name: APP_VERSION
               value: {{ .Values.global.image.tag }}
 
@@ -71,6 +75,10 @@ spec:
           env:
             - name: APP_VERSION
               value: {{ .Values.global.image.tag }}
+            {{- range $key, $value := .Values.global.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
             {{- range $key, $value := .Values.env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
