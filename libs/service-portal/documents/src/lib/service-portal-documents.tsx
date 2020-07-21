@@ -30,10 +30,7 @@ const ExternalData = () => {
   )
 }
 
-/* eslint-disable-next-line */
-export interface ServicePortalDocumentsProps {}
-
-export const ServicePortalDocuments = (props: ServicePortalDocumentsProps) => {
+export const ServicePortalDocuments = () => {
   return (
     <Box padding={4}>
       <Typography variant="h3" as="h3">

@@ -27,7 +27,7 @@ const companyDocuments = [
   { date: '25.05.2020', title: 'Ríkisskattstjóri', document: 'Launaseðill' },
 ]
 
-const DocumentList: FC<{}> = () => {
+const DocumentList = () => {
   const [{ activeSubjectId }] = useStore()
   const [mockState, setMockState] = useState<'passive' | 'render'>('passive')
 

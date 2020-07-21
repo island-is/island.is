@@ -17,7 +17,7 @@ const userApplications = [
   },
 ]
 
-const ApplicationList: FC<{}> = () => {
+const ApplicationList = () => {
   const [{ activeSubjectId }] = useStore()
 
   const applications =

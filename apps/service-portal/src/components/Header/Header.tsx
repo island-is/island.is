@@ -11,6 +11,7 @@ import {
   Hidden,
   Columns,
   Column,
+  Divider,
 } from '@island.is/island-ui/core'
 import SubjectSwitcher from './SubjectSwitcher/SubjectSwitcher'
 
@@ -27,18 +28,25 @@ export const Header: FC<{}> = () => {
 
   return (
     <header>
-      <Box width="full" padding={[3, 3, 6]}>
+      <Box
+        width="full"
+        paddingTop={1}
+        paddingBottom={1}
+        paddingRight={3}
+        paddingLeft={3}
+      >
         <ContentBlock>
           <Columns>
             <Column width="8/12">
               <Link to="/">
-                {/* eslint-disable-next-line */}
-                <Hidden above="md">
-                  <Logo width={40} iconOnly />
-                </Hidden>
-                <Hidden below="lg">
-                  <Logo width={160} />
-                </Hidden>
+                <Box display="flex" height="full" alignItems="center">
+                  <Hidden above="md">
+                    <Logo width={40} iconOnly />
+                  </Hidden>
+                  <Hidden below="lg">
+                    <Logo width={160} />
+                  </Hidden>
+                </Box>
               </Link>
             </Column>
             <Column width="3/12">
@@ -57,6 +65,7 @@ export const Header: FC<{}> = () => {
           </Columns>
         </ContentBlock>
       </Box>
+      <Divider />
     </header>
   )
 }
