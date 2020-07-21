@@ -5,9 +5,6 @@ import { useHistory } from 'react-router-dom'
 import { usePersistUserInfo } from '../../hooks/usePersistUserInfo/usePersistUserInfo'
 import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
 import SubjectSwitcher from './SubjectSwitcher/SubjectSwitcher'
-// import { Logo, Box, Hidden, Icon } from '@island.is/island-ui/core'
-import MenuButton from '../MenuButton/MenuButton'
-import * as styles from './Header.treat'
 import {
   Logo,
   Box,
@@ -30,26 +27,6 @@ export const Header: FC<{}> = () => {
   }
 
   return (
-    // <<<<<<< HEAD
-    //     <header className={styles.container}>
-    //       <Box display={'flex'} alignItems={'center'} padding={'gutter'}>
-    //         <Hidden above="sm">
-    //           <Link to="/">
-    //             <Logo width={40} iconOnly />
-    //           </Link>
-    //         </Hidden>
-    //         <Hidden below="md">
-    //           <Link to="/">
-    //             <Logo width={160} />
-    //           </Link>
-    //         </Hidden>
-    //       </Box>
-    //       <div className={styles.infoContainer}>
-    //         <MenuButton onClick={handleLogout}>
-    //           <Icon type="lock" />
-    //         </MenuButton>
-    //       </div>
-    // =======
     <header>
       <Box
         width="full"
