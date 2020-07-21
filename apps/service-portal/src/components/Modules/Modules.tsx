@@ -4,6 +4,7 @@ import { ServicePortalModule } from '@island.is/service-portal/core'
 import { useStore } from '../../stateProvider'
 import ModuleLoadingScreen from './ModuleLoadingScreen'
 import ModuleErrorScreen, { ModuleErrorBoundary } from './ModuleErrorScreen'
+import { Box } from '@island.is/island-ui/core'
 
 const ModuleLoader: FC<{
   module: ServicePortalModule
@@ -32,7 +33,7 @@ const Modules: FC<{}> = () => {
   if (!activeSubjectId) return null
 
   return (
-    <>
+    <Box paddingY={4} paddingX={3}>
       <Route
         path="/umsoknir"
         render={() => (
@@ -60,7 +61,7 @@ const Modules: FC<{}> = () => {
           />
         )}
       />
-    </>
+    </Box>
   )
 }
 

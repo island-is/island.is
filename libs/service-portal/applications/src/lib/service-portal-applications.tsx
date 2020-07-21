@@ -6,7 +6,7 @@ import { useStore } from 'apps/service-portal/src/stateProvider'
 
 const Greeting = () => {
   return (
-    <Box padding={4}>
+    <>
       <Typography variant="h2">Umsóknir</Typography>
       <Divider />
       <Box marginTop={4} marginBottom={2} padding={2} border="standard">
@@ -23,7 +23,7 @@ const Greeting = () => {
         <Typography variant="h4">Umsókn um ökunám</Typography>
         <Typography variant="p">01 júl. 2020 - Samþykkt</Typography>
       </Box>
-    </Box>
+    </>
   )
 }
 const OpenApplications = () => <h1>Opnar umsóknir</h1>

@@ -15,6 +15,7 @@ import Sidebar from '../components/Sidebar/Sidebar'
 import Dashboard from '../components/Dashboard/Dashboard'
 import Modules from '../components/Modules/Modules'
 import ContentBreadcrumbs from '../components/ContentBreadcrumbs/ContentBreadcrumbs'
+import './App.css'
 
 export const App = () => {
   makeServer()

@@ -32,7 +32,7 @@ const ExternalData = () => {
 
 export const ServicePortalDocuments = () => {
   return (
-    <Box padding={4}>
+    <>
       <Typography variant="h3" as="h3">
         Rafræn skjöl
       </Typography>
@@ -42,7 +42,7 @@ export const ServicePortalDocuments = () => {
         </Typography>
       </Box>
       <ExternalData />
-    </Box>
+    </>
   )
 }
 
