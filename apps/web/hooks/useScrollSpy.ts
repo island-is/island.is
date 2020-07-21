@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import minBy from 'lodash/minBy'
 import useViewport from './useViewport'
 
@@ -7,33 +7,45 @@ const useScrollSpy = ({
 }: {
   margin: number
 }): [(id: string) => (e: HTMLElement) => void, string | undefined] => {
-  const [elements, setElements] = useState<{ [key: string]: HTMLElement }>({})
-  const [{ y: scrollTop }, { height: windowHeight }] = useViewport()
+  const elements = useRef<{ [key: string]: HTMLElement }>({})
+  const [currentId, setCurrentId] = useState('')
 
-  const addRef = useCallback(
+  // re-render on scroll or resize
+  useViewport()
+
+  // Elements are cleared on each render. After the component that calls this
+  // hook has finished rendering, the useEffect hook below runs with
+  // elements.current populated by the component using this hook.
+  elements.current = {}
+
+  const spy = useCallback(
     (key: string) => {
       return (e: HTMLElement) => {
-        setElements((es) => (es[key] ? es : { ...es, [key]: e }))
+        elements.current[key] = e
       }
     },
-    [setElements],
+    [elements],
   )
 
-  const current = useMemo(() => {
+  useEffect(() => {
     const candidates = Array.from(
-      Object.entries(elements),
+      Object.entries(elements.current),
     ).map(([name, elem]) => ({ name, elem }))
 
-    return minBy(candidates, (c) => {
+    const best = minBy(candidates, (c) => {
       const { top, height } = c.elem.getBoundingClientRect()
       return Math.min(
         Math.abs(top - margin),
         Math.abs(top + height - margin - 1),
       )
     })
-  }, [margin, elements, scrollTop, windowHeight])
 
-  return [addRef, current ? current.name : '']
+    if (best && best.name !== currentId) {
+      setCurrentId(best.name)
+    }
+  })
+
+  return [spy, currentId]
 }
 
 export default useScrollSpy
