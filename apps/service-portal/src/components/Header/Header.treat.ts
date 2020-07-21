@@ -1,23 +1,8 @@
 import { style } from 'treat'
-// import { responsiveStyleMap } from '@island.is/island-ui/core/src/utils/responsiveStyleMap'
+import { theme } from '@island.is/island-ui/theme'
 
-export const container = style({
-  // height: { xs: 80, md: 112 },
-  display: 'flex',
-  // alignItems: 'center',
-  justifyContent: 'space-between',
-  borderBottom: '1px solid #F2F2F5',
-})
+const border = `${theme.border.width.standard}px ${theme.border.style.solid} ${theme.color.dark100}`
 
-export const infoContainer = style({
-  display: 'flex',
-  alignItems: 'center',
-  // selectors: {
-  //   []
-  // },
-})
-
-export const logoWrapper = style({
-  display: 'flex',
-  alignItems: 'center',
+export const header = style({
+  borderBottom: border,
 })

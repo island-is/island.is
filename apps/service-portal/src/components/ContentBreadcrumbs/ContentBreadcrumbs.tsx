@@ -4,6 +4,7 @@ import { useStore } from '../../stateProvider'
 import { Breadcrumbs, Box } from '@island.is/island-ui/core'
 import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
 import * as styles from './ContentBreadcrumbs.treat'
+
 const nodeByUrl = (url: string, data: ServicePortalNavigationItem[]) => {
   let result: ServicePortalNavigationItem | null = null
 

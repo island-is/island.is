@@ -1,5 +1,9 @@
 import { style } from 'treat'
+import { theme } from '@island.is/island-ui/theme'
+
+const border = `${theme.border.width.standard}px ${theme.border.style.solid} ${theme.color.dark100}`
 
 export const wrapper = style({
-  borderBottom: '1px solid #F2F2F5',
+  borderBottom: `${border}`,
+  borderRight: `${border}`,
 })

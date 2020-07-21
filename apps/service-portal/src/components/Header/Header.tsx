@@ -12,8 +12,8 @@ import {
   Hidden,
   Columns,
   Column,
-  Divider,
 } from '@island.is/island-ui/core'
+import * as styles from './Header.treat'
 
 export const Header: FC<{}> = () => {
   usePersistUserInfo()
@@ -27,7 +27,7 @@ export const Header: FC<{}> = () => {
   }
 
   return (
-    <header>
+    <header className={styles.header}>
       <Box
         width="full"
         paddingTop={1}
@@ -65,7 +65,6 @@ export const Header: FC<{}> = () => {
           </Columns>
         </ContentBlock>
       </Box>
-      <Divider />
     </header>
   )
 }
