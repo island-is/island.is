@@ -35,35 +35,33 @@ export const Header: FC<{}> = () => {
         paddingRight={3}
         paddingLeft={3}
       >
-        <ContentBlock>
-          <Columns>
-            <Column width="8/12">
-              <Link to="/">
-                <Box display="flex" height="full" alignItems="center">
-                  <Hidden above="md">
-                    <Logo width={40} iconOnly />
-                  </Hidden>
-                  <Hidden below="lg">
-                    <Logo width={160} />
-                  </Hidden>
-                </Box>
-              </Link>
-            </Column>
-            <Column width="3/12">
-              <SubjectSwitcher />
-            </Column>
-            <Column width="1/12">
-              <Box
-                display="flex"
-                height="full"
-                alignItems="center"
-                marginLeft={1}
-              >
-                <button onClick={handleLogout}>Útskráning</button>
+        <Columns>
+          <Column width="8/12">
+            <Link to="/">
+              <Box display="flex" height="full" alignItems="center">
+                <Hidden above="md">
+                  <Logo width={40} iconOnly />
+                </Hidden>
+                <Hidden below="lg">
+                  <Logo width={160} />
+                </Hidden>
               </Box>
-            </Column>
-          </Columns>
-        </ContentBlock>
+            </Link>
+          </Column>
+          <Column width="3/12">
+            <SubjectSwitcher />
+          </Column>
+          <Column width="1/12">
+            <Box
+              display="flex"
+              height="full"
+              alignItems="center"
+              marginLeft={1}
+            >
+              <button onClick={handleLogout}>Útskráning</button>
+            </Box>
+          </Column>
+        </Columns>
       </Box>
     </header>
   )

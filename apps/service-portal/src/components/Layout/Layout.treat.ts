@@ -4,11 +4,11 @@ import { theme } from '@island.is/island-ui/theme'
 export const mainWrapper = style({
   display: 'flex',
   position: 'relative',
-  overflow: 'hidden',
 })
 
 export const mainContainer = style({
-  maxWidth: theme.contentWidth.large,
+  width: '100%',
+  maxWidth: theme.contentWidth.medium,
 })
 
 export const sidebar = style({
