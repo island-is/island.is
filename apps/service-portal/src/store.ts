@@ -1,5 +1,6 @@
 import { applicationsModule } from '@island.is/service-portal/applications'
 import { documentsModule } from '@island.is/service-portal/documents'
+import { settingsModule } from '@island.is/service-portal/settings'
 
 import {
   ServicePortalModule,
@@ -20,6 +21,7 @@ export interface MockUserData {
 export interface Navigation {
   applications: ServicePortalNavigationItem | null
   documents: ServicePortalNavigationItem | null
+  settings: ServicePortalNavigationItem | null
 }
 
 export interface SetNavigationPayload {
@@ -47,6 +49,7 @@ export interface StoreState {
   modules: {
     applicationsModule: ServicePortalModule
     documentsModule: ServicePortalModule
+    settingsModule: ServicePortalModule
   }
   navigation: Navigation
   navigationState: {
@@ -64,10 +67,12 @@ export const initialState: StoreState = {
   modules: {
     applicationsModule,
     documentsModule,
+    settingsModule,
   },
   navigation: {
     applications: null,
     documents: null,
+    settings: null,
   },
   navigationState: {
     subjectId: null,

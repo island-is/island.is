@@ -121,6 +121,9 @@
     },
     "service-portal-documents": {
       "tags": []
+    },
+    "service-portal-settings": {
+      "tags": []
     }
   }
 }

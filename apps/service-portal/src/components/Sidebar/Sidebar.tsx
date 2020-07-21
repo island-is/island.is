@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC } from 'react'
 import { Box, Typography, SkeletonLoader } from '@island.is/island-ui/core'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
@@ -24,6 +23,7 @@ export const Sidebar: FC<{}> = () => {
                   </Typography>
                 </Box>
                 <ModuleNavigation nav={navigation.applications} />
+                <ModuleNavigation nav={navigation.settings} />
               </Box>
             )}
             {navigation?.applications?.url && (

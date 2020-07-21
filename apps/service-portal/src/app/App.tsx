@@ -13,6 +13,7 @@ import Dashboard from '../components/Dashboard/Dashboard'
 import Layout from '../components/Layout/Layout'
 import Modules from '../components/Modules/Modules'
 import * as styles from './App.treat'
+import './App.css'
 
 export const App = () => {
   makeServer()
