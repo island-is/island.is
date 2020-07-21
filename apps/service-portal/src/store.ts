@@ -90,9 +90,9 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
         userInfo: action.payload,
         userInfoState: 'fulfilled',
         /*
-			Setting the user himself as the active subject by default
-			Still undecided on how this will be handled
-		*/
+          Setting the user himself as the active subject by default
+          Still undecided on how this will be handled
+        */
         activeSubjectId:
           state.activeSubjectId === null
             ? action.payload.actor.nationalId
