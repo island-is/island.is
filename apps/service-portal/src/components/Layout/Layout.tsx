@@ -1,8 +1,7 @@
 import React, { FC } from 'react'
 import Header from '../header/header'
 import Sidebar from '../sidebar/sidebar'
-import cx from 'classnames'
-import { Box, Page } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import * as styles from './Layout.treat'
 
@@ -10,15 +9,14 @@ const Layout: FC = ({ children }) => {
   return (
     <>
       <Header />
-      <Box className={styles.mainWrapper}>
-        <Sidebar />
-        <Box className={cx(styles.mainContainer)}>
-          <ContentBreadcrumbs />
-          <Box padding={3}>
-            <Page>{children}</Page>
-          </Box>
+      <Box display="flex" position="relative" overflow="hidden" height="full">
+        <Box className={styles.sidebar}>
+          <Sidebar />
         </Box>
-        <div className={cx(styles.messages)} />
+        <Box as="main" className={styles.mainContainer}>
+          <ContentBreadcrumbs />
+          <Box padding={3}>{children}</Box>
+        </Box>
       </Box>
     </>
   )

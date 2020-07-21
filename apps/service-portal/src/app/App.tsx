@@ -12,33 +12,36 @@ import { client } from '../graphql'
 import Dashboard from '../components/Dashboard/Dashboard'
 import Layout from '../components/Layout/Layout'
 import Modules from '../components/Modules/Modules'
+import * as styles from './App.treat'
 
 export const App = () => {
   makeServer()
 
   return (
-    <Router>
-      <ApolloProvider client={client}>
-        <StateProvider
-          initialState={store.initialState}
-          reducer={store.reducer}
-        >
-          <Switch>
-            <Route path="/innskraning">
-              <Login />
-            </Route>
-            <Authenticator>
-              <Layout>
-                <Route exact path="/">
-                  <Dashboard />
-                </Route>
-                <Modules />
-              </Layout>
-            </Authenticator>
-          </Switch>
-        </StateProvider>
-      </ApolloProvider>
-    </Router>
+    <div className={styles.page}>
+      <Router>
+        <ApolloProvider client={client}>
+          <StateProvider
+            initialState={store.initialState}
+            reducer={store.reducer}
+          >
+            <Switch>
+              <Route path="/innskraning">
+                <Login />
+              </Route>
+              <Authenticator>
+                <Layout>
+                  <Route exact path="/">
+                    <Dashboard />
+                  </Route>
+                  <Modules />
+                </Layout>
+              </Authenticator>
+            </Switch>
+          </StateProvider>
+        </ApolloProvider>
+      </Router>
+    </div>
   )
 }
 
