@@ -56,6 +56,10 @@ search-indexer-service:
       ELASTIC_INDEX: 'island-is'
       S3_BUCKET: 'dev-es-custom-packages'
 api:
+  serviceAccount:
+    name: 'api'
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/api'
   secrets:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
   env:
