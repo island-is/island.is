@@ -52,7 +52,7 @@ export const ApplicationForm: FC<ApplicationProps> = ({
           <Sidebar>
             <ApplicationName name={form.name} />
             <ProgressIndicator
-              progress={(activeScreen / (screens.length - 1)) * 100}
+              progress={(activeScreen / screens.length) * 100}
             />
             <FormProgress
               sections={sections}
