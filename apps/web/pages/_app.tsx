@@ -25,7 +25,6 @@ const Layout: FC<LayoutProps> = ({
   showFooter = true,
   children,
 }) => {
-  console.log('wrapContent', wrapContent)
   return (
     <Page>
       <Head>
