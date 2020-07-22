@@ -80,20 +80,20 @@ export const ExampleForm3: Form = buildForm({
       id: 'student',
       name: 'Student',
       children: [
-        // buildIntroductionField({
-        //   id: 'field',
-        //   name: 'Welcome',
-        //   introduction: "This is a sample driver's license application.",
-        // }),
+        buildIntroductionField({
+          id: 'field',
+          name: 'Welcome',
+          introduction: "This is a sample driver's license application.",
+        }),
         buildSubSection({
           id: 'student',
           name: 'Student Information',
           children: [
-            // buildTextField({
-            //   id: 'person.name',
-            //   name: 'Name',
-            //   required: true,
-            // }),
+            buildTextField({
+              id: 'person.name',
+              name: 'Name',
+              required: true,
+            }),
             buildCheckboxField({
               id: 'historyCars',
               name: 'Which cars have you driven before?',
