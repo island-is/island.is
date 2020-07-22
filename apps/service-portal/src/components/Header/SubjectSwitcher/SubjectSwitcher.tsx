@@ -4,10 +4,12 @@ import useSubjects from 'apps/service-portal/src/hooks/useSubjects/useSubjects'
 import { Select, Option } from '@island.is/island-ui/core'
 // eslint-disable-next-line
 import { useStore } from 'apps/service-portal/src/stateProvider'
+import useUserInfo from '../../../hooks/useUserInfo/useUserInfo'
 
 const SubjectSwitcher: FC<{}> = () => {
   const [{ userInfo }] = useStore()
-  const { subjectList, subjectListState, setSubject } = useSubjects()
+  const { subjectList, subjectListState } = useSubjects()
+  const { setUser } = useUserInfo()
   const options =
     subjectListState === 'fulfilled'
       ? subjectList.map((subject) => ({
@@ -23,7 +25,7 @@ const SubjectSwitcher: FC<{}> = () => {
       value={value}
       options={options}
       onChange={(option) => {
-        setSubject((option as Option).value.toString())
+        setUser(userInfo.actor.nationalId, (option as Option).value.toString())
       }}
     />
   )
