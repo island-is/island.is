@@ -140,7 +140,12 @@ export const ExampleForm3: Form = buildForm({
               name: "Have you had a driver's license before?",
               required: true,
               options: [
-                { value: 'yes', label: 'Yes' },
+                {
+                  value: 'yes',
+                  label: 'Yes',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
                 { value: 'no', label: 'No' },
               ],
             }),
