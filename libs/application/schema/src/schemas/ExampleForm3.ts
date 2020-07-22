@@ -16,6 +16,8 @@ import { Form } from '../types/Form'
 import { nationalIdRegex } from './schemaUtils'
 import { Comparators } from '../types/Condition'
 
+const formIcon = require('./ExampleForm3Icon.svg').default
+
 const ExampleSchema = z.object({
   person: z.object({
     age: z.string().refine((x) => {
@@ -75,6 +77,7 @@ export const ExampleForm3: Form = buildForm({
   ownerId: 'DOL',
   name: "Driver's license",
   schema: ExampleSchema,
+  icon: formIcon,
   children: [
     buildSection({
       id: 'student',
