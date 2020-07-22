@@ -10,25 +10,23 @@ interface Props extends FieldBaseProps {
 const CheckboxFormField: FC<Props> = ({ showFieldName = false, field }) => {
   const { id, name, options } = field
   const { control } = useFormContext()
+  const excludeOptionsLookup = options.map((o) => o.excludeOthers && o.value)
 
-  const [checkedValues, setCheckedValues] = useState([])
-
-  function handleSelect(option) {
-    let newValues = []
+  function handleSelect(option, checkedValues) {
+    let newChoices = []
     if (option.excludeOthers && !checkedValues.includes(option.value)) {
-      newValues = [option.value]
-      setCheckedValues(newValues)
-      return newValues
+      return [option.value]
     }
 
-    const newNames = checkedValues?.includes(option.value)
+    newChoices = checkedValues?.includes(option.value)
       ? checkedValues?.filter((val) => val !== option.value)
       : [...checkedValues, option.value]
-    setCheckedValues(newNames)
 
-    console.log('newNames', newNames)
+    newChoices = newChoices.filter(
+      (choice) => !excludeOptionsLookup.includes(choice),
+    )
 
-    return newNames
+    return newChoices
   }
 
   return (
@@ -45,7 +43,7 @@ const CheckboxFormField: FC<Props> = ({ showFieldName = false, field }) => {
                   <Checkbox
                     key={`${id}-${index}`}
                     onChange={() => {
-                      onChange(handleSelect(option))
+                      onChange(handleSelect(option, value || []))
                     }}
                     checked={value && value.includes(option.value)}
                     name={`${id}[${index}]`}
