@@ -31,7 +31,8 @@ const NewApplication = () => <h1>Ný umsókn</h1>
 const NotFound = () => <h1>404</h1>
 
 export const ServicePortalApplications = () => {
-  const [{ activeSubjectId }] = useStore()
+  const [{ userInfo }] = useStore()
+  const activeSubjectId = userInfo.sub.nationalId
 
   return (
     <div>

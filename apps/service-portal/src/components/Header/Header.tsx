@@ -2,26 +2,17 @@ import React, { FC } from 'react'
 import { removeToken } from '../../auth/utils'
 import { Link } from 'react-router-dom'
 import { useHistory } from 'react-router-dom'
-import { usePersistUserInfo } from '../../hooks/usePersistUserInfo/usePersistUserInfo'
 import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
 import SubjectSwitcher from './SubjectSwitcher/SubjectSwitcher'
-import {
-  Logo,
-  Box,
-  ContentBlock,
-  Hidden,
-  Columns,
-  Column,
-} from '@island.is/island-ui/core'
+import { Logo, Box, Hidden, Columns, Column } from '@island.is/island-ui/core'
 import * as styles from './Header.treat'
 
 export const Header: FC<{}> = () => {
-  usePersistUserInfo()
   const history = useHistory()
 
   const handleLogout = async () => {
     await removeToken()
-    // TODO: Remove store state?
+    // TODO: Loading state, Hard reload?
     localStorage.removeItem(MOCK_AUTH_KEY)
     history.push('/innskraning')
   }

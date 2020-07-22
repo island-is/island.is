@@ -1,12 +1,15 @@
 import { applicationsModule } from '@island.is/service-portal/applications'
 import { documentsModule } from '@island.is/service-portal/documents'
 import { settingsModule } from '@island.is/service-portal/settings'
+import Cookies from 'js-cookie'
 
 import {
   ServicePortalModule,
   ServicePortalNavigationItem,
 } from '@island.is/service-portal/core'
 import { Subject, SubjectListDto } from './mirage-server/models/subject'
+import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
+import jwtDecode from 'jwt-decode'
 
 export interface MockUserData {
   actor: {
@@ -30,7 +33,7 @@ export interface SetNavigationPayload {
 }
 
 export type Action =
-  | { type: 'fetchingUser' }
+  | { type: 'setUserPending' }
   | { type: 'setUser'; payload: MockUserData }
   | { type: 'fetchNavigationPending' }
   | { type: 'fetchNavigationFulfilled'; payload: SetNavigationPayload }
@@ -38,14 +41,12 @@ export type Action =
   | { type: 'fetchSubjectListPending' }
   | { type: 'fetchSubjectListFulfilled'; payload: SubjectListDto[] }
   | { type: 'fetchSubjectListFailed' }
-  | { type: 'setActiveSubjectId'; payload: string }
 
 export type AsyncActionState = 'passive' | 'pending' | 'fulfilled' | 'failed'
 
 export interface StoreState {
   userInfo: MockUserData | null
   userInfoState: AsyncActionState
-  activeSubjectId: string | null
   modules: {
     applicationsModule: ServicePortalModule
     documentsModule: ServicePortalModule
@@ -60,10 +61,11 @@ export interface StoreState {
   subjectListState: AsyncActionState
 }
 
+const authCookie = Cookies.get(MOCK_AUTH_KEY) as string
+
 export const initialState: StoreState = {
-  userInfo: null,
+  userInfo: authCookie ? jwtDecode(authCookie) : null,
   userInfoState: 'passive',
-  activeSubjectId: null,
   modules: {
     applicationsModule,
     documentsModule,
@@ -84,7 +86,7 @@ export const initialState: StoreState = {
 
 export const reducer = (state: StoreState, action: Action): StoreState => {
   switch (action.type) {
-    case 'fetchingUser':
+    case 'setUserPending':
       return {
         ...state,
         userInfoState: 'pending',
@@ -94,14 +96,6 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
         ...state,
         userInfo: action.payload,
         userInfoState: 'fulfilled',
-        /*
-          Setting the user himself as the active subject by default
-          Still undecided on how this will be handled
-        */
-        activeSubjectId:
-          state.activeSubjectId === null
-            ? action.payload.actor.nationalId
-            : state.activeSubjectId,
       }
     case 'fetchNavigationPending':
       return {
@@ -143,11 +137,6 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
       return {
         ...state,
         subjectListState: 'failed',
-      }
-    case 'setActiveSubjectId':
-      return {
-        ...state,
-        activeSubjectId: action.payload,
       }
     default:
       return state

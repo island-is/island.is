@@ -2,13 +2,12 @@ import { useStore } from '../../stateProvider'
 import { useEffect } from 'react'
 import { fetchWithAuth } from '../../utils/http'
 import { useHistory } from 'react-router-dom'
+import { setUserToken } from '../../auth/utils'
+import jwtDecode from 'jwt-decode'
 
 const useSubjects = () => {
   const history = useHistory()
-  const [
-    { subjectList, subjectListState, activeSubjectId },
-    dispatch,
-  ] = useStore()
+  const [{ subjectList, subjectListState, userInfo }, dispatch] = useStore()
 
   useEffect(() => {
     async function fetchSubjectList() {
@@ -29,16 +28,26 @@ const useSubjects = () => {
     fetchSubjectList()
   }, [dispatch])
 
-  const setSubject = (nationalId: string) => {
-    dispatch({
-      type: 'setActiveSubjectId',
-      payload: nationalId,
-    })
+  const setSubject = (subjectNationalId: string) => {
+    async function fetchUserInfo() {
+      dispatch({
+        type: 'setUserPending',
+      })
+      const updatedInfo = await setUserToken(
+        userInfo.actor.nationalId,
+        subjectNationalId,
+      )
+      dispatch({
+        type: 'setUser',
+        payload: jwtDecode(updatedInfo.token),
+      })
+    }
+
+    fetchUserInfo()
     history.push('/')
   }
 
   return {
-    activeSubjectId,
     subjectList,
     subjectListState,
     setSubject,

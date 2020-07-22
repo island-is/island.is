@@ -32,18 +32,17 @@ const WidgetLoader: FC<{
 })
 
 export const Dashboard: FC<{}> = () => {
-  const [{ modules, activeSubjectId }] = useStore()
-  if (!activeSubjectId) return null
+  const [{ modules, userInfo }] = useStore()
 
   return (
     <Box padding={3}>
       <WidgetLoader
         module={modules.applicationsModule}
-        activeSubjectId={activeSubjectId}
+        activeSubjectId={userInfo.sub.nationalId}
       />
       <WidgetLoader
         module={modules.documentsModule}
-        activeSubjectId={activeSubjectId}
+        activeSubjectId={userInfo.sub.nationalId}
       />
     </Box>
   )

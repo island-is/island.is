@@ -29,8 +29,7 @@ const ModuleLoader: FC<{
 })
 
 const Modules: FC<{}> = () => {
-  const [{ modules, activeSubjectId }] = useStore()
-  if (!activeSubjectId) return null
+  const [{ modules, userInfo }] = useStore()
 
   return (
     <Box paddingY={4} paddingX={3}>
@@ -39,7 +38,7 @@ const Modules: FC<{}> = () => {
         render={() => (
           <ModuleLoader
             module={modules.applicationsModule}
-            activeSubjectId={activeSubjectId}
+            activeSubjectId={userInfo.sub.nationalId}
           />
         )}
       />
@@ -48,7 +47,7 @@ const Modules: FC<{}> = () => {
         render={() => (
           <ModuleLoader
             module={modules.settingsModule}
-            activeSubjectId={activeSubjectId}
+            activeSubjectId={userInfo.sub.nationalId}
           />
         )}
       />
@@ -57,7 +56,7 @@ const Modules: FC<{}> = () => {
         render={() => (
           <ModuleLoader
             module={modules.documentsModule}
-            activeSubjectId={activeSubjectId}
+            activeSubjectId={userInfo.sub.nationalId}
           />
         )}
       />

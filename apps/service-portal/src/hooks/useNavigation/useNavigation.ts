@@ -3,9 +3,11 @@ import { useStore } from '../../stateProvider'
 
 const useNavigation = () => {
   const [
-    { modules, navigation, navigationState, activeSubjectId },
+    { modules, navigation, navigationState, userInfo },
     dispatch,
   ] = useStore()
+
+  const activeSubjectId = userInfo.sub.nationalId
 
   useEffect(() => {
     async function fetchNavigation() {

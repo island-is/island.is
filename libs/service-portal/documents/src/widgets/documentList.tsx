@@ -28,7 +28,8 @@ const companyDocuments = [
 ]
 
 const DocumentList = () => {
-  const [{ activeSubjectId }] = useStore()
+  const [{ userInfo }] = useStore()
+  const activeSubjectId = userInfo.sub.nationalId
   const [mockState, setMockState] = useState<'passive' | 'render'>('passive')
 
   useEffect(() => {

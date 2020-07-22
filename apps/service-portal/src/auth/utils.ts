@@ -11,22 +11,28 @@ interface MockToken {
 
 export const isAuthenticated = () => Cookies.get(MOCK_AUTH_KEY)?.length > 0
 
-export const fetchToken = async (
-  nationalId = '2606862759',
+export const setUserToken = async (
+  actorNationalId = '2606862759',
+  subjectNationalId = '2606862759',
 ): Promise<MockToken> => {
   const token = await fetch('/user/token', {
-    method: 'POST', // or 'PUT'
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(nationalId),
+    body: JSON.stringify({
+      actorNationalId,
+      subjectNationalId,
+    }),
   })
   const expirationTime = new Date(new Date().getTime() + 8 * 60 * 60 * 1000)
   const retToken = await token.json()
+
   Cookies.set(MOCK_AUTH_KEY, retToken.token, {
     sameSite: 'lax',
     expires: expirationTime,
   })
+
   return retToken
 }
 

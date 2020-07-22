@@ -26,10 +26,12 @@ export function makeServer({ environment = 'development' } = {}) {
     routes() {
       this.post('/user/token', async (schema, request) => {
         const authService = new AuthService(server.db)
-        const nationalId = JSON.parse(request.requestBody)
-        const actor: Actor = authService.getActorByNationalId(nationalId)
+        const body = JSON.parse(request.requestBody)
+        const actorNationalId = body.actorNationalId
+        const subjectNationalId = body.subjectNationalId
+        const actor: Actor = authService.getActorByNationalId(actorNationalId)
         if (!actor) return new Response(403)
-        const subject = authService.getSubjectByNationalId(nationalId)
+        const subject = authService.getSubjectByNationalId(subjectNationalId)
 
         const jwt = new JwtToken(actor, subject)
         const token = await jwt.signJwt(JWT_SECRET)

@@ -18,7 +18,8 @@ const userApplications = [
 ]
 
 const ApplicationList = () => {
-  const [{ activeSubjectId }] = useStore()
+  const [{ userInfo }] = useStore()
+  const activeSubjectId = userInfo.sub.nationalId
 
   const applications =
     activeSubjectId === '5401482231' ? companyApplications : userApplications

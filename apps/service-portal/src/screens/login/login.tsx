@@ -1,6 +1,6 @@
 import React from 'react'
 // import { useHistory, useLocation } from 'react-router-dom'
-import { fetchToken } from './../../auth/utils'
+import { setUserToken } from './../../auth/utils'
 import { useStore } from './../../stateProvider'
 import jwtDecode from 'jwt-decode'
 import { useHistory } from 'react-router-dom'
@@ -19,11 +19,14 @@ export const Login = () => {
   const history = useHistory()
 
   const handleLogin = async () => {
-    const userData = await fetchToken()
+    // Defaulting to main user as actor and subject here at the moment
+    const userData = await setUserToken()
+
     dispatch({
       type: 'setUser',
       payload: jwtDecode(userData.token),
     })
+
     history.push('/')
   }
 
