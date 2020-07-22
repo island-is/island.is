@@ -1,12 +1,12 @@
 import React, { FC } from 'react'
-import { Query } from '@island.is/api/schema'
+import { News } from '@island.is/api/schema'
 import { Typography, Box, Stack, Tiles } from '@island.is/island-ui/core'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import * as styles from './LatestNews.treat'
 
 export interface LatestNewsProps {
   title: string
-  newsList: Query['getNewsList']['news']
+  newsList: News[]
 }
 
 const LatestNews: FC<LatestNewsProps> = ({ title, newsList }) => {
@@ -37,7 +37,7 @@ const LatestNews: FC<LatestNewsProps> = ({ title, newsList }) => {
   )
 }
 
-const BigNewsItem = ({ news }: { news: Query['getNewsList']['news'][0] }) => {
+const BigNewsItem = ({ news }: { news: News }) => {
   const { format } = useDateUtils()
 
   return (
@@ -58,20 +58,16 @@ const BigNewsItem = ({ news }: { news: Query['getNewsList']['news'][0] }) => {
   )
 }
 
-const NewsItem = ({ news }: { news: Query['getNewsList']['news'][0] }) => (
-  <Box boxShadow="subtle" borderRadius="standard">
+const NewsItem = ({ news }: { news: News }) => (
+  <Box boxShadow="subtle" overflow="hidden" borderRadius="large">
     <img src={news.image.url} alt={news.image.title} />
     <Box paddingX={3} paddingY={4}>
-      <Stack space={5}>
-        <Typography variant="eyebrow">
-          COVID-19
-        </Typography>
+      <Stack space={2}>
+        <Typography variant="eyebrow">COVID-19???</Typography>
         <Typography variant="h3" as="h3">
           {news.title}
         </Typography>
-        <Typography variant="p">
-          {news.intro}
-        </Typography>
+        <Typography variant="p">{news.intro}</Typography>
       </Stack>
     </Box>
   </Box>
