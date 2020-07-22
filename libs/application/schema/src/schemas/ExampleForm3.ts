@@ -232,7 +232,7 @@ export const ExampleForm3: Form = buildForm({
           id: 'Summary',
           name: 'Next steps',
           introduction:
-            'The instructor will contact you after you submit this application. Have a nice day!',
+            'The instructor will contact you after you submit this application.',
         }),
       ],
     }),
