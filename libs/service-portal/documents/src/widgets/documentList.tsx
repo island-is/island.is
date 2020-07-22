@@ -8,8 +8,7 @@ import {
   Icon,
 } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
-// eslint-disable-next-line
-import { useStore } from 'apps/service-portal/src/stateProvider'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 
 const sleep = (ms = 0) => {
   return new Promise((r) => setTimeout(r, ms))
@@ -27,9 +26,7 @@ const companyDocuments = [
   { date: '25.05.2020', title: 'Ríkisskattstjóri', document: 'Launaseðill' },
 ]
 
-const DocumentList = () => {
-  const [{ userInfo }] = useStore()
-  const activeSubjectId = userInfo.sub.nationalId
+const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
   const [mockState, setMockState] = useState<'passive' | 'render'>('passive')
 
   useEffect(() => {
@@ -40,10 +37,10 @@ const DocumentList = () => {
       setMockState('render')
     }
     checkSomething()
-  }, [activeSubjectId])
+  }, [userInfo])
 
   const documents =
-    activeSubjectId === '5401482231' ? companyDocuments : userDocuments
+    userInfo.sub.subjectType === 'company' ? companyDocuments : userDocuments
 
   if (mockState === 'render') {
     return (

@@ -11,7 +11,7 @@ export const Sidebar: FC<{}> = () => {
     <aside className={styles.sidebar}>
       <Box paddingY={7} paddingX={6}>
         {/* TODO: Sidebar loading state? */}
-        {navigationState.state === 'pending' ? (
+        {navigationState === 'pending' ? (
           <SkeletonLoader />
         ) : (
           <>

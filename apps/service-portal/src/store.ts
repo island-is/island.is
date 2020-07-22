@@ -43,9 +43,7 @@ export interface StoreState {
     settingsModule: ServicePortalModule
   }
   navigation: Navigation
-  navigationState: {
-    state: AsyncActionState
-  }
+  navigationState: AsyncActionState
   subjectList: SubjectListDto[]
   subjectListState: AsyncActionState
 }
@@ -65,9 +63,7 @@ export const initialState: StoreState = {
     documents: null,
     settings: null,
   },
-  navigationState: {
-    state: 'passive',
-  },
+  navigationState: 'passive',
   subjectList: [],
   subjectListState: 'passive',
 }
@@ -88,26 +84,18 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
     case 'fetchNavigationPending':
       return {
         ...state,
-        navigationState: {
-          ...state.navigationState,
-          state: 'pending',
-        },
+        navigationState: 'pending',
       }
     case 'fetchNavigationFulfilled':
       return {
         ...state,
         navigation: action.payload.navigation,
-        navigationState: {
-          state: 'fulfilled',
-        },
+        navigationState: 'fulfilled',
       }
     case 'fetchNavigationFailed':
       return {
         ...state,
-        navigationState: {
-          ...state.navigationState,
-          state: 'failed',
-        },
+        navigationState: 'failed',
       }
     case 'fetchSubjectListPending':
       return {

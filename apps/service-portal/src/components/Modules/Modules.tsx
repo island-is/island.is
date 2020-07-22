@@ -17,7 +17,7 @@ const ModuleLoader: FC<{
     return (
       <Suspense fallback={<ModuleLoadingScreen name={module.name} />}>
         <ModuleErrorBoundary name={module.name}>
-          <App />
+          <App userInfo={userInfo} />
         </ModuleErrorBoundary>
       </Suspense>
     )

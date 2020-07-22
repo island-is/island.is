@@ -1,7 +1,6 @@
-import React, { FC } from 'react'
+import React from 'react'
 import { Box, Typography, Icon, Divider } from '@island.is/island-ui/core'
-// eslint-disable-next-line
-import { useStore } from 'apps/service-portal/src/stateProvider'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 
 const companyApplications = [
   {
@@ -17,8 +16,7 @@ const userApplications = [
   },
 ]
 
-const ApplicationList = () => {
-  const [{ userInfo }] = useStore()
+const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
   const activeSubjectId = userInfo.sub.nationalId
 
   const applications =

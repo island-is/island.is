@@ -9,7 +9,7 @@ export const applicationsModule: ServicePortalModule = {
   name: 'Umsóknir',
   navigation: async (props) => {
     await sleep(1000)
-    if (props.sub.nationalId === '5401482231')
+    if (props.sub.subjectType === 'company')
       return {
         name: 'Umsóknir',
         url: '/umsoknir',

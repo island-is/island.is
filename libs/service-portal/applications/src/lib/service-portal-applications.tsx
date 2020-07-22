@@ -1,8 +1,7 @@
 import React from 'react'
 import { Route, Switch } from 'react-router-dom'
 import { Box, Typography, Divider } from '@island.is/island-ui/core'
-// eslint-disable-next-line
-import { useStore } from 'apps/service-portal/src/stateProvider'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 
 const Greeting = () => {
   return (
@@ -30,8 +29,9 @@ const OpenApplications = () => <h1>Opnar umsóknir</h1>
 const NewApplication = () => <h1>Ný umsókn</h1>
 const NotFound = () => <h1>404</h1>
 
-export const ServicePortalApplications = () => {
-  const [{ userInfo }] = useStore()
+export const ServicePortalApplications: ServicePortalModuleComponent = ({
+  userInfo,
+}) => {
   const activeSubjectId = userInfo.sub.nationalId
 
   return (

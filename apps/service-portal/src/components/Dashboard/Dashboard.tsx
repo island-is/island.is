@@ -20,7 +20,7 @@ const WidgetLoader: FC<{
           </Typography>
         </Box>
         <Suspense fallback={<SkeletonLoader />}>
-          <Widgets />
+          <Widgets userInfo={userInfo} />
         </Suspense>
       </Box>
     )

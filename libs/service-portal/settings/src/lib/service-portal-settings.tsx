@@ -3,6 +3,7 @@ import { Switch, Route } from 'react-router-dom'
 import {
   NavigationScreenItem,
   NavigationScreen,
+  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
 import SubjectInfo from '../screens/subjectInfo/subjectInfo'
 
@@ -23,14 +24,14 @@ const navScreenItems: NavigationScreenItem[] = [
 
 const SettingsNavScreen = () => <NavigationScreen items={navScreenItems} />
 
-export const ServicePortalSettings = () => {
+export const ServicePortalSettings: ServicePortalModuleComponent = (props) => {
   return (
     <Switch>
       <Route exact path="/stillingar" component={SettingsNavScreen} />
       <Route
         exact
         path="/stillingar/minar-upplysingar"
-        component={SubjectInfo}
+        render={() => <SubjectInfo {...props} />}
       />
     </Switch>
   )

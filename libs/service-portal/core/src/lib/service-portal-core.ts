@@ -1,4 +1,4 @@
-import { LazyExoticComponent } from 'react'
+import { LazyExoticComponent, FC } from 'react'
 import { IconTypes } from '@island.is/island-ui/core'
 // eslint-disable-next-line
 import { JwtToken } from 'apps/service-portal/src/mirage-server/models/jwt-model'
@@ -10,8 +10,14 @@ export interface ServicePortalNavigationItem {
   children?: ServicePortalNavigationItem[]
 }
 
+interface ServicePortalModuleProps {
+  userInfo: JwtToken
+}
+
+export type ServicePortalModuleComponent = FC<ServicePortalModuleProps>
+
 export type ServicePortalModuleRenderValue = LazyExoticComponent<
-  () => JSX.Element
+  ServicePortalModuleComponent
 >
 
 export interface ServicePortalModule {

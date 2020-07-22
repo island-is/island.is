@@ -12,9 +12,9 @@
         "name": "Ólafur Björn Magnússon",
         "nationalId": "2606862759",
         "scope": [
-          "@Island.is/finance",
-          "@Island.is/finance/personal.edit",
-          "@Island.is/finance/vaccines.view"
+          "@island.is/finance",
+          "@island.is/finance/personal.edit",
+          "@island.is/finance/vaccines.view"
         ],
         "subjectType": "person"
       },
@@ -23,9 +23,9 @@
         "name": "Sendiráðið",
         "nationalId": "5401482231",
         "scope": [
-          "@Island.is/finance",
-          "@Island.is/finance/accounts",
-          "@Island.is/finance/vaccines.view"
+          "@island.is/finance",
+          "@island.is/finance/accounts",
+          "@island.is/finance/vaccines.view"
         ],
         "subjectType": "company"
       }
@@ -46,9 +46,9 @@
             "name": "Ólafur Björn Magnússon",
             "nationalId": "2606862759",
             "scope": [
-              "@Island.is/finance",
-              "@Island.is/finance/personal.edit",
-              "@Island.is/finance/vaccines.view"
+              "@island.is/finance",
+              "@island.is/finance/personal.edit",
+              "@island.is/finance/vaccines.view"
             ],
             "subjectType": "person"
           }
@@ -87,7 +87,7 @@
             "description": "The scope the subject has access to. ",
             "default": [],
             "examples": [
-              ["@Island.is/finance", "@Island.is/finance/personal.edit"]
+              ["@island.is/finance", "@island.is/finance/personal.edit"]
             ],
             "additionalItems": true,
             "items": {
@@ -99,8 +99,8 @@
                   "description": "An explanation about the purpose of this instance.",
                   "default": "",
                   "examples": [
-                    "@Island.is/finance",
-                    "@Island.is/finance/personal.edit"
+                    "@island.is/finance",
+                    "@island.is/finance/personal.edit"
                   ]
                 }
               ],

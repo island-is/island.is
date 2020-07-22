@@ -3,7 +3,7 @@ export class Subject {
   name: string
   nationalId: string
   scope: string[]
-  subjectType: string
+  subjectType: 'person' | 'company'
 }
 
 export type SubjectDto = Omit<Subject, 'id'>

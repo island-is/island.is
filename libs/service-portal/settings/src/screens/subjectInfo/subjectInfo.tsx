@@ -1,6 +1,4 @@
 import React, { FC } from 'react'
-// eslint-disable-next-line
-import { useStore } from 'apps/service-portal/src/stateProvider'
 import {
   Typography,
   Box,
@@ -8,6 +6,7 @@ import {
   Columns,
   Column,
 } from '@island.is/island-ui/core'
+import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 
 type ColumnWidth = '6/12' | '4/12' | '2/12'
 
@@ -23,11 +22,8 @@ const Row: FC<{ values: string[] }> = ({ values }) => (
   </Columns>
 )
 
-const SubjectInfo: FC<{}> = () => {
-  const [{ userInfo }] = useStore()
-
-  // TODO: The user info object contains our actor atm and not the active subject
-  // When a subject is set the token must be updated to our current subject
+const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
+  const { sub } = userInfo
 
   return (
     <div>
@@ -38,8 +34,8 @@ const SubjectInfo: FC<{}> = () => {
       </Box>
       <Stack space={[0, 2]} dividers>
         <Typography variant="h3">Grunnupplýsingar</Typography>
-        <Row values={['Nafn', userInfo.actor.name]} />
-        <Row values={['Kennitala', userInfo.actor.nationalId]} />
+        <Row values={['Nafn', sub.name]} />
+        <Row values={['Kennitala', sub.nationalId]} />
       </Stack>
     </div>
   )
