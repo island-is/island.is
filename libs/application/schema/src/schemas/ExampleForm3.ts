@@ -37,7 +37,7 @@ const ExampleSchema = z.object({
     .array(
       // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
       z.union([
-        z.enum(['VW', 'Audi', 'Porsche', 'Tesla', 'None']),
+        z.enum(['VW', 'Audi', 'Porsche', 'Tesla', 'none']),
         z.undefined(),
       ]),
     )
@@ -124,8 +124,9 @@ export const ExampleForm3: Form = buildForm({
                     'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
                 },
                 {
-                  value: 'None',
+                  value: 'none',
                   label: 'None of these',
+                  excludeOthers: true,
                 },
               ],
             }),

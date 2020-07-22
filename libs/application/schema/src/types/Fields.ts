@@ -5,6 +5,7 @@ export interface Option {
   value: string
   label: string
   tooltip?: string
+  excludeOthers?: boolean
 }
 export interface BaseField extends FormItem {
   readonly id: string
