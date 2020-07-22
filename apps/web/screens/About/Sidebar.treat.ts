@@ -1,7 +1,7 @@
 import { style, globalStyle } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-export const positionRef = style({
+export const parent = style({
   position: 'absolute',
   top: 0,
   right: 0,
@@ -13,10 +13,13 @@ export const container = style({
   zIndex: 1,
   borderRadius: '8px',
   transition: 'all .3s',
-  background: theme.color.blue100,
 })
 
-export const gradient = style({
+globalStyle(`${container} *`, {
+  transition: 'all 0.3s',
+})
+
+export const background = style({
   borderRadius: '8px',
   position: 'absolute',
   zIndex: -1,
@@ -25,16 +28,16 @@ export const gradient = style({
   left: 0,
   right: 0,
   opacity: 0,
-  background:
-    'linear-gradient(125.33deg, #0161FD -55.28%, #3F46D2 5.16%, #812EA4 68.02%, #C21578 130.88%, #FD0050 186.49%)'
+  background: theme.color.blue100,
 })
 
-export const gradientVisible = style({
+export const visible = style({
   opacity: 1,
 })
 
-globalStyle(`${container} *`, {
-  transition: 'all .3s',
+export const gradient = style({
+  background:
+    'linear-gradient(125.33deg, #0161FD -55.28%, #3F46D2 5.16%, #812EA4 68.02%, #C21578 130.88%, #FD0050 186.49%)'
 })
 
 export const containerAbsolute = style({

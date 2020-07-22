@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, MouseEvent } from 'react'
 import cn from 'classnames'
 import {
   Box,
@@ -50,7 +50,7 @@ const Sidebar: FC<SidebarProps> = ({
   const colors = ColorConfig[type]
 
   return (
-    <div ref={ref} className={styles.positionRef}>
+    <div ref={ref} className={styles.parent}>
       <div
         className={cn(
           styles.container,
@@ -59,8 +59,13 @@ const Sidebar: FC<SidebarProps> = ({
         style={isFixed ? { left: rect.left } : {}}
       >
         <div
-          className={cn(styles.gradient, {
-            [styles.gradientVisible]: type === 'gradient',
+          className={cn(styles.background, {
+            [styles.visible]: type === 'standard',
+          })}
+        />
+        <div
+          className={cn(styles.background, styles.gradient, {
+            [styles.visible]: type === 'gradient',
           })}
         />
         <Box padding={4}>
@@ -71,10 +76,12 @@ const Sidebar: FC<SidebarProps> = ({
             <Divider weight={colors.divider} />
             <Stack space={0}>
               {sections.map(([id, text]) => (
-                <Typography variant="p" as="p" color={colors.main}>
-                  {id === currentSection && <Bullet align="left" />}
-                  {text}
-                </Typography>
+                <a href={'#' + id} onClick={(e) => scrollIntoView(e, id)}>
+                  <Typography variant="p" as="p" color={colors.main}>
+                    {id === currentSection && <Bullet align="left" />}
+                    {text}
+                  </Typography>
+                </a>
               ))}
             </Stack>
             <Divider weight={colors.divider} />
@@ -94,6 +101,11 @@ const Sidebar: FC<SidebarProps> = ({
       </div>
     </div>
   )
+}
+
+const scrollIntoView = (e: MouseEvent, id: string) => {
+  e.preventDefault()
+  document.getElementById(id).scrollIntoView()
 }
 
 export default Sidebar

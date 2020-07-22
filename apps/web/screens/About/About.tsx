@@ -122,7 +122,7 @@ export const About: Screen<AboutProps> = ({
 
   return (
     <div>
-      <div ref={spy('timeline')}>
+      <div ref={spy('timeline')} id="timeline">
         <Layout background="gradient">
           <Header />
           <Content offsetRight columns={7} center>
@@ -140,7 +140,7 @@ export const About: Screen<AboutProps> = ({
         </Layout>
       </div>
 
-      <div ref={spy('mailinglist')}>
+      <div ref={spy('mailinglist')} id="mailinglist">
         <Layout
           background="blue100"
           contentProps={{ columns: 7, center: true, offsetRight: true }}
@@ -162,7 +162,7 @@ export const About: Screen<AboutProps> = ({
         </Layout>
       </div>
 
-      <div ref={spy('changes')}>
+      <div ref={spy('changes')} id="changes">
         <Layout
           background="dotted"
           contentProps={{ columns: 8 }}
@@ -172,7 +172,7 @@ export const About: Screen<AboutProps> = ({
         </Layout>
       </div>
 
-      <div ref={spy('heading2')}>
+      <div ref={spy('heading2')} id="bullets">
         <Layout
           contentProps={{ columns: 7, center: true, offsetRight: true }}
           boxProps={{ paddingTop: 15, paddingBottom: 10 }}
@@ -193,7 +193,7 @@ export const About: Screen<AboutProps> = ({
         </Layout>
       </div>
 
-      <div ref={spy('collaborators')}>
+      <div ref={spy('collaborators')} id="collaborators">
         <Layout
           background="gradient"
           contentProps={{ columns: 7, center: true, offsetRight: true }}
@@ -213,7 +213,7 @@ export const About: Screen<AboutProps> = ({
         </Layout>
       </div>
 
-      <div ref={spy('news')}>
+      <div ref={spy('news')} id="news">
         <Layout
           contentProps={{ columns: 8, offsetRight: true }}
           boxProps={{ paddingTop: 12, paddingBottom: 10 }}
