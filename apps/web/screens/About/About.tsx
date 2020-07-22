@@ -11,7 +11,7 @@ import useScrollSpy from '../../hooks/useScrollSpy'
 import BulletList, { BulletListProps } from './BulletList'
 import MailingListSignup from '@island.is/web/components/MailingListSignup/MailingListSignup'
 import Collaborators from './Collaborators'
-import ProjectStories from './ProjectStories'
+import ProjectStories, { StoryProps } from './ProjectStories'
 import SectionHeading from './SectionHeading'
 import Cards, { CardsProps } from './Cards'
 import Sidebar from './Sidebar'
@@ -26,11 +26,18 @@ import {
   TimelineEvent,
 } from '@island.is/island-ui/core'
 import Link from 'next/link'
-import { GET_NEWS_LIST_QUERY, GET_TIMELINE_QUERY } from '../queries'
+import {
+  GET_NEWS_LIST_QUERY,
+  GET_TIMELINE_QUERY,
+  GET_STORIES_QUERY,
+} from '../queries'
 import {
   Query,
   QueryGetNewsListArgs,
+  QueryGetStoriesArgs,
   Timeline as TimelineApi,
+  Story,
+  ContentLanguage,
 } from '@island.is/api/schema'
 
 const Intro = () => {
@@ -73,6 +80,7 @@ const TimelineSection: FC<TimelineSectionProps> = ({ events }) => (
 )
 
 interface AboutProps {
+  stories: Query['getStories']
   timelineEvents: TimelineApi[]
   bullets: BulletListProps['items']
   changes: CardsProps
@@ -80,12 +88,15 @@ interface AboutProps {
 }
 
 export const About: Screen<AboutProps> = ({
+  stories: apiStories,
   timelineEvents: apiTimeline,
   bullets,
   news,
   changes,
 }) => {
   const [spy, currentId] = useScrollSpy({ margin: 230 })
+
+  const stories = useMemo(() => apiStories.map(mapStory), [apiStories])
 
   const timelineEvents = useMemo(() => {
     return apiTimeline.map(mapTimeline)
@@ -192,7 +203,7 @@ export const About: Screen<AboutProps> = ({
           contentProps={{ columns: 7, offsetRight: true }}
           boxProps={{ paddingTop: 12, paddingBottom: 10 }}
         >
-          <ProjectStories stories={[]} />
+          <ProjectStories stories={stories} />
         </Layout>
       </div>
 
@@ -208,13 +219,21 @@ export const About: Screen<AboutProps> = ({
   )
 }
 
-About.getInitialProps = async ({ apolloClient }) => {
-  const [news, timeline] = await Promise.all([
+About.getInitialProps = async ({ apolloClient, locale }) => {
+  const [news, stories, timeline] = await Promise.all([
     apolloClient.query<Query, QueryGetNewsListArgs>({
       query: GET_NEWS_LIST_QUERY,
       variables: {
         input: {
           perPage: 3,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetStoriesArgs>({
+      query: GET_STORIES_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
         },
       },
     }),
@@ -228,6 +247,7 @@ About.getInitialProps = async ({ apolloClient }) => {
   return {
     news: news.data.getNewsList.news,
     timelineEvents: timeline.data.getTimeline,
+    stories: stories.data.getStories,
     bullets: mocks.bullets as BulletListProps['items'],
     changes: mocks.changes as CardsProps,
     layoutConfig: {
@@ -236,6 +256,13 @@ About.getInitialProps = async ({ apolloClient }) => {
     },
   }
 }
+
+const mapStory = (story: Story): StoryProps => ({
+  logo: story.logo.url,
+  label: story.label,
+  title: story.title,
+  intro: story.intro,
+})
 
 const mapTimeline = (e: TimelineApi): TimelineEvent => ({
   date: new Date(e.date),

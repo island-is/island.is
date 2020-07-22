@@ -1,5 +1,12 @@
 import { Resolvers } from '@island.is/api/schema'
-import { getArticle, getNews, getNewsList, getNamespace, getTimeline } from './services'
+import {
+  getArticle,
+  getNews,
+  getNewsList,
+  getNamespace,
+  getTimeline,
+  getStories,
+} from './services'
 
 export const resolvers: Resolvers = {
   Query: {
@@ -24,7 +31,10 @@ export const resolvers: Resolvers = {
     },
     getTimeline() {
       return getTimeline()
-    }
+    },
+    getStories(_, { input }) {
+      return getStories(input?.lang ?? 'is-IS')
+    },
   },
 }
 

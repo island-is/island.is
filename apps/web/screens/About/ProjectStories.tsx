@@ -14,35 +14,29 @@ const ProjectStories: FC<ProjectStoriesProps> = ({ stories }) => (
     {stories.map((story, i) => (
       <Story key={i} {...story} />
     ))}
-    <Story
-      logo=""
-      partner="Aranja"
-      title="Viðspyrna"
-      intro="Í kjölfar kórónuveirufaraldursins gripu stjórnvöld til ýmissa úrræða til að aðstoða fyrirtæki við að komast yfir mesta hjallann. Þar á meðal voru stuðnings- og brúarlán, ætluð fyrirtækjum sem orðið höfðu af tekjum í samkomubanninu."
-    />
-    <div className={styles.margin}>
-      <Button variant="ghost">Sjá fleiri verkefnasögur</Button>
-    </div>
+    {stories.length > 0 && (
+      <div className={styles.margin}>
+        <Button variant="ghost">Sjá fleiri verkefnasögur</Button>
+      </div>
+    )}
   </Stack>
 )
 
-interface StoryProps {
+export interface StoryProps {
   logo: string
-  partner: string
+  label: string
   title: string
   intro: string
 }
 
-const Story: FC<StoryProps> = ({ logo, partner, title, intro }) => (
+const Story: FC<StoryProps> = ({ logo, label, title, intro }) => (
   <div className={styles.margin}>
     <div className={styles.icon}>
-      <IconBullet variant="gradient">
-        <Hand />
-      </IconBullet>
+      <IconBullet variant="gradient" image={logo} />
     </div>
     <Stack space={2}>
       <Typography variant="eyebrow" color="white">
-        {partner}
+        {label}
       </Typography>
       <Typography variant="h2" as="h2" color="white">
         {title}

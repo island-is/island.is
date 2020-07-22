@@ -6,12 +6,14 @@ export interface IconBulletProps {
   variant?: 'red' | 'blue' | 'gradient'
   size?: 'small' | 'large'
   center?: boolean
+  image?: string
 }
 
 const IconBullet: FC<IconBulletProps> = ({
   variant = 'blue',
   size = 'large',
   center = false,
+  image,
   children,
 }) => (
   <div
@@ -22,7 +24,7 @@ const IconBullet: FC<IconBulletProps> = ({
       [styles.center]: center,
     })}
   >
-    <span>{children}</span>
+    {image ? <img className={styles.image} src={image} alt="" /> : children}
   </div>
 )
 

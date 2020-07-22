@@ -22,6 +22,7 @@ export type Query = {
   getNamespace?: Maybe<Namespace>
   getNews?: Maybe<News>
   getNewsList: PaginatedNews
+  getStories: Array<Story>
   getTimeline: Array<Timeline>
   helloWorld: HelloWorld
   root?: Maybe<Scalars['String']>
@@ -51,6 +52,10 @@ export type QueryGetNewsArgs = {
 
 export type QueryGetNewsListArgs = {
   input?: Maybe<GetNewsListInput>
+}
+
+export type QueryGetStoriesArgs = {
+  input?: Maybe<GetStoriesInput>
 }
 
 export type QueryHelloWorldArgs = {
@@ -151,6 +156,20 @@ export type Timeline = {
   body?: Maybe<Scalars['String']>
   tags: Array<Maybe<Scalars['String']>>
   link: Scalars['String']
+}
+
+export type Story = {
+  __typename?: 'Story'
+  label: Scalars['String']
+  title: Scalars['String']
+  logo: Image
+  date: Scalars['String']
+  intro: Scalars['String']
+  body?: Maybe<Scalars['String']>
+}
+
+export type GetStoriesInput = {
+  lang: Scalars['String']
 }
 
 export type Namespace = {
@@ -384,6 +403,8 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   Timeline: ResolverTypeWrapper<Timeline>
   ID: ResolverTypeWrapper<Scalars['ID']>
+  Story: ResolverTypeWrapper<Story>
+  GetStoriesInput: GetStoriesInput
   Namespace: ResolverTypeWrapper<Namespace>
   GetNamespaceInput: GetNamespaceInput
   ContentItem: ResolverTypeWrapper<ContentItem>
@@ -419,6 +440,8 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']
   Timeline: Timeline
   ID: Scalars['ID']
+  Story: Story
+  GetStoriesInput: GetStoriesInput
   Namespace: Namespace
   GetNamespaceInput: GetNamespaceInput
   ContentItem: ContentItem
@@ -475,6 +498,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetNewsListArgs, never>
+  >
+  getStories?: Resolver<
+    Array<ResolversTypes['Story']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetStoriesArgs, never>
   >
   getTimeline?: Resolver<
     Array<ResolversTypes['Timeline']>,
@@ -598,6 +627,19 @@ export type TimelineResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type StoryResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Story'] = ResolversParentTypes['Story']
+> = {
+  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  logo?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
+  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type NamespaceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Namespace'] = ResolversParentTypes['Namespace']
@@ -706,6 +748,7 @@ export type Resolvers<ContextType = Context> = {
   News?: NewsResolvers<ContextType>
   PaginatedNews?: PaginatedNewsResolvers<ContextType>
   Timeline?: TimelineResolvers<ContextType>
+  Story?: StoryResolvers<ContextType>
   Namespace?: NamespaceResolvers<ContextType>
   ContentItem?: ContentItemResolvers<ContextType>
   SearchResult?: SearchResultResolvers<ContextType>

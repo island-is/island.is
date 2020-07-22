@@ -12,6 +12,13 @@ export const container = style({
   justifyContent: 'center',
 })
 
+export const image = style({
+  maxWidth: '45%',
+  maxHeight: '55%',
+  width: 'auto',
+  height: 'auto',
+})
+
 export const red = style({
   color: theme.color.red400,
   backgroundColor: theme.color.red100,

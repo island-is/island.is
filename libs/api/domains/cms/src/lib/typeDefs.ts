@@ -77,6 +77,19 @@ export const typeDefs = gql`
     link: String!
   }
 
+  type Story {
+    label: String!
+    title: String!
+    logo: Image!
+    date: String!
+    intro: String!
+    body: String
+  }
+
+  input GetStoriesInput {
+    lang: String!
+  }
+
   type Namespace {
     namespace: String
     fields: String
@@ -93,6 +106,7 @@ export const typeDefs = gql`
     getNewsList(input: GetNewsListInput): PaginatedNews!
     getNamespace(input: GetNamespaceInput): Namespace
     getTimeline: [Timeline!]!
+    getStories(input: GetStoriesInput): [Story!]!
   }
 `
 

@@ -7,19 +7,18 @@ import {
   Namespace,
   Pagination,
   Timeline,
+  Story,
 } from '@island.is/api/schema'
 import { ApolloError } from 'apollo-server-express'
 
-const formatArticle = ({ sys, fields }): Article => {
-  return {
-    id: sys.id,
-    slug: fields.slug,
-    title: fields.title,
-    group: fields.group?.fields,
-    category: fields.category?.fields,
-    content: JSON.stringify(fields.content),
-  }
-}
+const formatArticle = ({ sys, fields }): Article => ({
+  id: sys.id,
+  slug: fields.slug,
+  title: fields.title,
+  group: fields.group?.fields,
+  category: fields.category?.fields,
+  content: JSON.stringify(fields.content),
+})
 
 const formatImage = ({ fields }): Image => ({
   url: fields.file.url,
@@ -49,6 +48,15 @@ const formatTimeline = ({ fields, sys }): Timeline => ({
   body: fields.body && JSON.stringify(fields.body),
   tags: fields.tags ?? [],
   link: fields.link ?? '',
+})
+
+const formatStory = ({ fields, sys }): Story => ({
+  title: fields.title ?? '',
+  label: fields.label ?? '',
+  date: sys.createdAt,
+  logo: formatImage(fields.logo),
+  intro: fields.intro,
+  body: fields.body && JSON.stringify(fields.body),
 })
 
 const makePage = (
@@ -149,6 +157,15 @@ export const getTimeline = async () => {
   }).catch(errorHandler('getTimeline'))
 
   return result.items.map(formatTimeline)
+}
+
+export const getStories = async (lang: string) => {
+  const result = await getLocalizedEntries<Story>(lang, {
+    ['content_type']: 'story',
+    include: 1,
+  }).catch(errorHandler('getStories'))
+
+  return result.items.map(formatStory)
 }
 
 export const getNamespace = async (
