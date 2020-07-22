@@ -6,7 +6,7 @@ export const row = style({
 })
 
 export const leftCol = style({
-  width: '90px',
+  flex: '0 0 90px',
   marginRight: '24px',
 })
 
@@ -26,8 +26,8 @@ export const circleRed = style({
 })
 
 export const circleSmall = style({
-  width: '50%',
-  paddingTop: '50%',
+  width: '48px',
+  paddingTop: '48px',
 })
 
 export const icon = style({

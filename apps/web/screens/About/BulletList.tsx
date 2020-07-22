@@ -10,6 +10,9 @@ export interface BulletListProps {
 }
 
 const BulletList: FC<BulletListProps> = ({ items }) => {
+  let i = 1
+  items = items.map((item) => ({ ...item, index: item.icon ? 0 : i++ }))
+
   return (
     <Stack space={3}>
       {items.map((item, i) => (
@@ -19,18 +22,13 @@ const BulletList: FC<BulletListProps> = ({ items }) => {
   )
 }
 
-// title="Aðgengi fyrir alla"
-// body="Við leggjum áherslu á aðgengilega opinbera þjónustu sem byggist á þörfum notenda. Við viljum bjóða borgurum einfalda þjónustu í samskiptum við hið opinbera og hverfa frá því fyrirkomulagi að notendur þurfi að sækja þjónustu til margra mismunandi stofnana."
-// link="Ávinningur fyrir stofnanir"
-// href="/"
-// icon=""
-
 interface BulletListItemProps {
   title: string
   body: string
   link?: string
   href?: string
   icon?: string
+  index?: number
   size?: 'small' | 'large'
   color?: 'blue' | 'red'
 }
@@ -41,21 +39,10 @@ const BulletListItem: FC<BulletListItemProps> = ({
   link,
   href,
   icon,
+  index,
   size = 'large',
   color = 'blue',
 }) => {
-  // if (typeof icon === 'string') {
-  //   icon = (
-  //     <Typography
-  //       variant="h4"
-  //       as="span"
-  //       color={color === 'blue' ? 'blue400' : 'red400'}
-  //     >
-  //       {icon}
-  //     </Typography>
-  //   )
-  // }
-
   const titleTag = size === 'large' ? 'h3' : 'h4'
 
   return (
@@ -67,7 +54,15 @@ const BulletListItem: FC<BulletListItemProps> = ({
             [styles.circleSmall]: size === 'small',
           })}
         >
-          <img src={icon} alt="" className={styles.icon} />
+          <span className={styles.icon}>
+            {icon ? (
+              <img src={icon} alt="" />
+            ) : (
+              <Typography variant="h4" as="span">
+                {index}
+              </Typography>
+            )}
+          </span>
         </div>
       </div>
       <Stack space={1}>

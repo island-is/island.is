@@ -94,7 +94,23 @@ export const About: Screen<AboutProps> = ({
   news,
   changes,
 }) => {
-  const [spy, currentId] = useScrollSpy({ margin: 230 })
+  const sections: [string, string][] = [
+    ['timeline', 'Verkefnið'],
+    ['mailinglist', 'Vertu með'],
+    ['changes', 'Hvað breytist'],
+    ['bullets', 'Fagleg nálgun'],
+    ['collaborators', 'Samstarf'],
+    ['news', 'Fréttir og tilkynningar'],
+  ]
+
+  const aliases = {
+    heading1: 'changes',
+    heading2: 'bullets',
+    stories: 'collaborators',
+  }
+
+  const [spy, _currentId] = useScrollSpy({ margin: 230 })
+  const currentId = aliases[_currentId] || _currentId
 
   const stories = useMemo(() => apiStories.map(mapStory), [apiStories])
 
@@ -102,24 +118,11 @@ export const About: Screen<AboutProps> = ({
     return apiTimeline.map(mapTimeline)
   }, [apiTimeline])
 
-  const sections: [string, string][] = [
-    ['timeline:gradient', 'Verkefnið'],
-    ['mailinglist:gradient', 'Vertu með'],
-    ['changes', 'Hvað breytist'],
-    ['bullets', 'Fagleg nálgun'],
-    ['collaborators:gradient', 'Samstarf'],
-    ['news', 'Fréttir og tilkynningar'],
-  ]
-
-  const aliases = {
-    heading1: 'changes',
-    heading2: 'bullets',
-    'stories:gradient': 'collaborators:gradient',
-  }
+  const gradients = ['timeline', 'mailinglist', 'collaborators']
 
   return (
     <div>
-      <div ref={spy('timeline:gradient')}>
+      <div ref={spy('timeline')}>
         <Layout background="gradient">
           <Header />
           <Content offsetRight columns={7} center>
@@ -129,15 +132,15 @@ export const About: Screen<AboutProps> = ({
             <Sidebar
               title="Stafrænt Ísland"
               sections={sections}
-              currentSection={aliases[currentId] || currentId}
-              type={currentId.endsWith(':gradient') ? 'gradient' : 'standard'}
+              currentSection={currentId}
+              type={gradients.includes(currentId) ? 'gradient' : 'standard'}
             />
           </Content>
           <TimelineSection events={timelineEvents} />
         </Layout>
       </div>
 
-      <div ref={spy('mailinglist:gradient')}>
+      <div ref={spy('mailinglist')}>
         <Layout
           background="blue100"
           contentProps={{ columns: 7, center: true, offsetRight: true }}
@@ -182,12 +185,15 @@ export const About: Screen<AboutProps> = ({
       </div>
 
       <div ref={spy('bullets')}>
-        <Layout contentProps={{ columns: 7, offsetRight: true }}>
+        <Layout
+          contentProps={{ columns: 7, offsetRight: true }}
+          boxProps={{ paddingBottom: 15 }}
+        >
           <BulletList items={bullets} />
         </Layout>
       </div>
 
-      <div ref={spy('collaborators:gradient')}>
+      <div ref={spy('collaborators')}>
         <Layout
           background="gradient"
           contentProps={{ columns: 7, center: true, offsetRight: true }}
@@ -197,7 +203,7 @@ export const About: Screen<AboutProps> = ({
         </Layout>
       </div>
 
-      <div ref={spy('stories:gradient')}>
+      <div ref={spy('stories')}>
         <Layout
           background="gradient"
           contentProps={{ columns: 7, offsetRight: true }}
@@ -269,6 +275,7 @@ const mapTimeline = (e: TimelineApi): TimelineEvent => ({
   title: e.title,
   value: e.numerator,
   maxValue: e.denominator,
+  valueLabel: e.label,
   data: e.body && {
     labels: e.tags,
     text: e.body,
