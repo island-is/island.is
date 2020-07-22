@@ -3,8 +3,8 @@ import { StoreState, Action } from './store'
 export const StateContext = createContext(null)
 
 type StateProviderTypes = {
-  reducer: React.Reducer<any, any>
-  initialState: React.ReducerState<any>
+  reducer: React.Reducer<StoreState, Action>
+  initialState: StoreState
   children: React.ReactNode
 }
 

@@ -24,7 +24,7 @@ export interface SetNavigationPayload {
 
 export type Action =
   | { type: 'setUserPending' }
-  | { type: 'setUser'; payload: JwtToken }
+  | { type: 'setUserFulfilled'; payload: JwtToken }
   | { type: 'fetchNavigationPending' }
   | { type: 'fetchNavigationFulfilled'; payload: SetNavigationPayload }
   | { type: 'fetchNavigationFailed' }
@@ -75,7 +75,7 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
         ...state,
         userInfoState: 'pending',
       }
-    case 'setUser':
+    case 'setUserFulfilled':
       return {
         ...state,
         userInfo: action.payload,

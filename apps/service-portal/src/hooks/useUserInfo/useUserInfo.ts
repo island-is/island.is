@@ -22,7 +22,7 @@ const useUserInfo = () => {
       )
 
       dispatch({
-        type: 'setUser',
+        type: 'setUserFulfilled',
         payload: jwtDecode(updatedInfo.token),
       })
 
