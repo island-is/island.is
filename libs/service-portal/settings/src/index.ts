@@ -11,7 +11,7 @@ export const settingsNav: ServicePortalNavigationItem = {
   children: [
     {
       name: 'Upplýsingar',
-      url: '/stillingar/upplysingar',
+      url: '/stillingar/minar-upplysingar',
     },
     {
       name: 'Umboð',
