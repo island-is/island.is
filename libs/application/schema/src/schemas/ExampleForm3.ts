@@ -36,11 +36,10 @@ const ExampleSchema = z.object({
   historyCars: z
     .array(
       // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
-      z.enum(['VW', 'Audi', 'Porsche', 'Tesla', 'none']),
-      // z.union([
-      //   z.enum(['VW', 'Audi', 'Porsche', 'Tesla', 'none']),
-      //   z.undefined(),
-      // ]),
+      z.union([
+        z.enum(['VW', 'Audi', 'Porsche', 'Tesla', 'none']),
+        z.undefined(),
+      ]),
     )
     .nonempty(),
   historyLicense: z.enum(['yes', 'no']),
