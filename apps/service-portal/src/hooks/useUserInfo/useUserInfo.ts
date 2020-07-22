@@ -5,7 +5,7 @@ import jwtDecode from 'jwt-decode'
 
 const useUserInfo = () => {
   const history = useHistory()
-  const [{ userInfo }, dispatch] = useStore()
+  const [{ userInfo, userInfoState }, dispatch] = useStore()
 
   const setUser = async (
     actorNationalId?: string,
@@ -34,6 +34,7 @@ const useUserInfo = () => {
 
   return {
     userInfo,
+    userInfoState,
     setUser,
   }
 }
