@@ -5,16 +5,13 @@ import { useStore } from '../../stateProvider'
 import ModuleLoadingScreen from './ModuleLoadingScreen'
 import ModuleErrorScreen, { ModuleErrorBoundary } from './ModuleErrorScreen'
 import { Box } from '@island.is/island-ui/core'
+import { JwtToken } from '../../mirage-server/models/jwt-model'
 
 const ModuleLoader: FC<{
   module: ServicePortalModule
-  activeSubjectId: string
-}> = React.memo(({ module, activeSubjectId }) => {
-  const moduleProps = {
-    activeSubjectNationalId: activeSubjectId,
-  }
-
-  const App = module.render(moduleProps)
+  userInfo: JwtToken
+}> = React.memo(({ module, userInfo }) => {
+  const App = module.render(userInfo)
 
   if (App)
     return (
@@ -38,26 +35,20 @@ const Modules: FC<{}> = () => {
         render={() => (
           <ModuleLoader
             module={modules.applicationsModule}
-            activeSubjectId={userInfo.sub.nationalId}
+            userInfo={userInfo}
           />
         )}
       />
       <Route
         path="/stillingar"
         render={() => (
-          <ModuleLoader
-            module={modules.settingsModule}
-            activeSubjectId={userInfo.sub.nationalId}
-          />
+          <ModuleLoader module={modules.settingsModule} userInfo={userInfo} />
         )}
       />
       <Route
         path="/rafraen-skjol"
         render={() => (
-          <ModuleLoader
-            module={modules.documentsModule}
-            activeSubjectId={userInfo.sub.nationalId}
-          />
+          <ModuleLoader module={modules.documentsModule} userInfo={userInfo} />
         )}
       />
     </Box>

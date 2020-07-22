@@ -1,5 +1,7 @@
 import { LazyExoticComponent } from 'react'
 import { IconTypes } from '@island.is/island-ui/core'
+// eslint-disable-next-line
+import { JwtToken } from 'apps/service-portal/src/mirage-server/models/jwt-model'
 
 export interface ServicePortalNavigationItem {
   name: string
@@ -8,19 +10,13 @@ export interface ServicePortalNavigationItem {
   children?: ServicePortalNavigationItem[]
 }
 
-export interface ServicePortalModuleProps {
-  activeSubjectNationalId: string
-}
-
 export type ServicePortalModuleRenderValue = LazyExoticComponent<
   () => JSX.Element
 >
 
 export interface ServicePortalModule {
   name: string
-  navigation: (
-    props: ServicePortalModuleProps,
-  ) => Promise<ServicePortalNavigationItem>
-  widgets: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue
-  render: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue
+  navigation: (userInfo: JwtToken) => Promise<ServicePortalNavigationItem>
+  widgets: (userInfo: JwtToken) => ServicePortalModuleRenderValue
+  render: (userInfo: JwtToken) => ServicePortalModuleRenderValue
 }

@@ -7,28 +7,21 @@ const useNavigation = () => {
     dispatch,
   ] = useStore()
 
-  const activeSubjectId = userInfo.sub.nationalId
-
   useEffect(() => {
     async function fetchNavigation() {
       dispatch({ type: 'fetchNavigationPending' })
 
-      const moduleProps = {
-        activeSubjectNationalId: activeSubjectId,
-      }
-
       try {
         // TODO: Wait for them all or load them in as soon as they arrive?
         const nav = await Promise.all([
-          modules.applicationsModule.navigation(moduleProps),
-          modules.documentsModule.navigation(moduleProps),
-          modules.settingsModule.navigation(moduleProps),
+          modules.applicationsModule.navigation(userInfo),
+          modules.documentsModule.navigation(userInfo),
+          modules.settingsModule.navigation(userInfo),
         ])
 
         dispatch({
           type: 'fetchNavigationFulfilled',
           payload: {
-            subjectId: activeSubjectId,
             navigation: {
               ...navigation,
               applications: nav[0],
@@ -42,12 +35,8 @@ const useNavigation = () => {
       }
     }
 
-    if (
-      navigationState.state === 'passive' ||
-      navigationState.subjectId !== activeSubjectId
-    )
-      fetchNavigation()
-  }, [activeSubjectId])
+    fetchNavigation()
+  }, [userInfo]) // eslint-disable-line
 
   return {
     navigation,

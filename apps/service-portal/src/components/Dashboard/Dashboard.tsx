@@ -2,15 +2,13 @@ import React, { FC, Suspense } from 'react'
 import { Box, Typography, SkeletonLoader } from '@island.is/island-ui/core'
 import { useStore } from '../../stateProvider'
 import { ServicePortalModule } from '@island.is/service-portal/core'
+import { JwtToken } from '../../mirage-server/models/jwt-model'
 
 const WidgetLoader: FC<{
   module: ServicePortalModule
-  activeSubjectId: string
-}> = React.memo(({ module, activeSubjectId }) => {
-  const moduleProps = {
-    activeSubjectNationalId: activeSubjectId,
-  }
-  const Widgets = module.widgets(moduleProps)
+  userInfo: JwtToken
+}> = React.memo(({ module, userInfo }) => {
+  const Widgets = module.widgets(userInfo)
 
   if (Widgets)
     // TODO: Better loader
@@ -36,14 +34,8 @@ export const Dashboard: FC<{}> = () => {
 
   return (
     <Box padding={3}>
-      <WidgetLoader
-        module={modules.applicationsModule}
-        activeSubjectId={userInfo.sub.nationalId}
-      />
-      <WidgetLoader
-        module={modules.documentsModule}
-        activeSubjectId={userInfo.sub.nationalId}
-      />
+      <WidgetLoader module={modules.applicationsModule} userInfo={userInfo} />
+      <WidgetLoader module={modules.documentsModule} userInfo={userInfo} />
     </Box>
   )
 }

@@ -7,19 +7,10 @@ import {
   ServicePortalModule,
   ServicePortalNavigationItem,
 } from '@island.is/service-portal/core'
-import { Subject, SubjectListDto } from './mirage-server/models/subject'
+import { SubjectListDto } from './mirage-server/models/subject'
 import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
 import jwtDecode from 'jwt-decode'
-
-export interface MockUserData {
-  actor: {
-    name: string
-    nationalId: string
-  }
-  exp: string
-  iat: string
-  sub: Subject
-}
+import { JwtToken } from './mirage-server/models/jwt-model'
 
 export interface Navigation {
   applications: ServicePortalNavigationItem | null
@@ -28,13 +19,12 @@ export interface Navigation {
 }
 
 export interface SetNavigationPayload {
-  subjectId: string
   navigation: Navigation
 }
 
 export type Action =
   | { type: 'setUserPending' }
-  | { type: 'setUser'; payload: MockUserData }
+  | { type: 'setUser'; payload: JwtToken }
   | { type: 'fetchNavigationPending' }
   | { type: 'fetchNavigationFulfilled'; payload: SetNavigationPayload }
   | { type: 'fetchNavigationFailed' }
@@ -45,7 +35,7 @@ export type Action =
 export type AsyncActionState = 'passive' | 'pending' | 'fulfilled' | 'failed'
 
 export interface StoreState {
-  userInfo: MockUserData | null
+  userInfo: JwtToken | null
   userInfoState: AsyncActionState
   modules: {
     applicationsModule: ServicePortalModule
@@ -54,7 +44,6 @@ export interface StoreState {
   }
   navigation: Navigation
   navigationState: {
-    subjectId: string | null
     state: AsyncActionState
   }
   subjectList: SubjectListDto[]
@@ -77,7 +66,6 @@ export const initialState: StoreState = {
     settings: null,
   },
   navigationState: {
-    subjectId: null,
     state: 'passive',
   },
   subjectList: [],
@@ -110,7 +98,6 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
         ...state,
         navigation: action.payload.navigation,
         navigationState: {
-          subjectId: action.payload.subjectId,
           state: 'fulfilled',
         },
       }
