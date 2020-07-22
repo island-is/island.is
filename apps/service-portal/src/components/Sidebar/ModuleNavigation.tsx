@@ -31,7 +31,7 @@ const ModuleNavigation: FC<Props> = ({ nav }) => {
       </Link>
       {nav.children && (
         <AnimateHeight duration={300} height={isModuleActive ? 'auto' : 0}>
-          <Box paddingLeft={5} paddingTop={3} marginBottom={3}>
+          <Box paddingLeft={5} paddingTop={3}>
             {nav.children.map((child, index) => (
               <Link to={child.url} key={`child-${index}`}>
                 <Box>
