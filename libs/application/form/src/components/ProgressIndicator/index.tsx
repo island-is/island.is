@@ -24,10 +24,9 @@ const ProgressIndicator: FC<{ progress: number }> = ({ progress }) => (
         ></Box>
       </Box>
       <Box className={styles.progressNumber}>
-        <Typography
-          variant="pSmall"
-          color="blue400"
-        >{`${progress}%`}</Typography>
+        <Typography variant="pSmall" color="blue400">{`${Math.round(
+          progress,
+        )}%`}</Typography>
       </Box>
     </Box>
   </Box>
