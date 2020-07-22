@@ -52,11 +52,9 @@ const Screen: FC<ScreenProps> = ({
     if (shouldSubmit) {
       console.log('here we will submit', formValue)
     } else {
+      console.log('these were my answers:', data)
       answerQuestions(data)
-      console.log('these were my answers:', data, formValue)
-      setTimeout(() => {
-        nextScreen()
-      }, 500)
+      nextScreen()
     }
   }
   return (
