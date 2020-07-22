@@ -1,10 +1,8 @@
 import { useStore } from '../../stateProvider'
-import { useHistory } from 'react-router-dom'
 import { setUserToken } from '../../auth/utils'
 import jwtDecode from 'jwt-decode'
 
 const useUserInfo = () => {
-  const history = useHistory()
   const [{ userInfo, userInfoState }, dispatch] = useStore()
 
   const setUser = async (
@@ -25,11 +23,9 @@ const useUserInfo = () => {
         type: 'setUserFulfilled',
         payload: jwtDecode(updatedInfo.token),
       })
-
-      history.push('/')
     }
 
-    fetchUserInfo()
+    return fetchUserInfo()
   }
 
   return {
