@@ -32,6 +32,7 @@ export const ApplicationReducer = (
       return moveToScreen(state, state.activeScreen - 1)
     case ActionTypes.ANSWER:
       // eslint-disable-next-line no-case-declarations
+      console.log('DISPATCH', state.formValue, action.payload)
       const newFormValue = merge(state.formValue, action.payload)
       return {
         ...state,

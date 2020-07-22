@@ -36,10 +36,11 @@ const ExampleSchema = z.object({
   historyCars: z
     .array(
       // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
-      z.union([
-        z.enum(['VW', 'Audi', 'Porsche', 'Tesla', 'None']),
-        z.undefined(),
-      ]),
+      z.enum(['VW', 'Audi', 'Porsche', 'Tesla', 'none']),
+      // z.union([
+      //   z.enum(['VW', 'Audi', 'Porsche', 'Tesla', 'none']),
+      //   z.undefined(),
+      // ]),
     )
     .nonempty(),
   historyLicense: z.enum(['yes', 'no']),
@@ -80,20 +81,20 @@ export const ExampleForm3: Form = buildForm({
       id: 'student',
       name: 'Student',
       children: [
-        buildIntroductionField({
-          id: 'field',
-          name: 'Welcome',
-          introduction: "This is a sample driver's license application.",
-        }),
+        // buildIntroductionField({
+        //   id: 'field',
+        //   name: 'Welcome',
+        //   introduction: "This is a sample driver's license application.",
+        // }),
         buildSubSection({
           id: 'student',
           name: 'Student Information',
           children: [
-            buildTextField({
-              id: 'person.name',
-              name: 'Name',
-              required: true,
-            }),
+            // buildTextField({
+            //   id: 'person.name',
+            //   name: 'Name',
+            //   required: true,
+            // }),
             buildCheckboxField({
               id: 'historyCars',
               name: 'Which cars have you driven before?',
@@ -103,7 +104,7 @@ export const ExampleForm3: Form = buildForm({
                 { value: 'Audi', label: 'Audi' },
                 { value: 'Porsche', label: 'Porsche' },
                 { value: 'Tesla', label: 'Tesla' },
-                { value: 'None', label: 'None of these' },
+                { value: 'none', label: 'None of these', excludeOthers: true },
               ],
             }),
           ],

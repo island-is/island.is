@@ -4,6 +4,7 @@ import { Condition } from './Condition'
 export interface Option {
   value: string
   label: string
+  excludeOthers?: boolean
 }
 export interface BaseField extends FormItem {
   readonly id: string
