@@ -1,4 +1,11 @@
-import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react'
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+  Fragment,
+} from 'react'
 import cn from 'classnames'
 import { Icon } from '../Icon/Icon'
 import { Button } from '../Button/Button'
@@ -233,7 +240,14 @@ const EventBar = ({ event, onClick }: EventBarProps) => {
                 /{formatNumber(event.maxValue)}
               </span>
             </span>
-            <span className={eventStyles.valueLabel}>{event.valueLabel}</span>
+            <span className={eventStyles.valueLabel}>
+              {event.valueLabel.split(/[\r\n]+/).map((line, i) => (
+                <Fragment key={i}>
+                  {line}
+                  <br />
+                </Fragment>
+              ))}
+            </span>
           </div>
         )}
       </button>

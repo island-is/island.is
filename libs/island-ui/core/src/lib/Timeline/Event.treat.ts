@@ -60,6 +60,7 @@ export const valueLabel = style({
   color: theme.color.white,
   fontWeight: theme.typography.semiBold,
   lineHeight: 1.142857,
+  textAlign: 'left',
 })
 
 export const valueWrapper = style({
