@@ -1,4 +1,5 @@
 import { style } from 'treat'
+import { theme } from '@island.is/island-ui/theme'
 
 export const content = style({
   position: 'relative',
@@ -10,7 +11,11 @@ export const backgroundGradient = style({
 })
 
 export const offsetRight = style({
-  paddingRight: '342px',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      paddingRight: '342px',
+    },
+  },
 })
 
 export const center = style({
@@ -19,13 +24,13 @@ export const center = style({
 })
 
 export const col6 = style({
-  width: '660px',
+  maxWidth: '660px',
 })
 
 export const col7 = style({
-  width: '776px',
+  maxWidth: '776px',
 })
 
 export const col8 = style({
-  width: '890px',
+  maxWidth: '890px',
 })

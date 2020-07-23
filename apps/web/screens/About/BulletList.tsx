@@ -54,15 +54,19 @@ const BulletListItem: FC<BulletListItemProps> = ({
             [styles.circleSmall]: size === 'small',
           })}
         >
-          <span className={styles.icon}>
+          <div
+            className={cn(styles.icon, {
+              [styles.iconSmall]: size === 'small',
+            })}
+          >
             {icon ? (
               <img src={icon} alt="" />
             ) : (
-              <Typography variant="h4" as="span">
+              <Typography variant="h4" as="div">
                 {index}
               </Typography>
             )}
-          </span>
+          </div>
         </div>
       </div>
       <Stack space={1}>

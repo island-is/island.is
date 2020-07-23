@@ -6,6 +6,13 @@ export const parent = style({
   top: 0,
   right: 0,
   width: '318px',
+  display: 'none',
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      display: 'block',
+    },
+  },
 })
 
 export const container = style({
@@ -37,7 +44,7 @@ export const visible = style({
 
 export const gradient = style({
   background:
-    'linear-gradient(125.33deg, #0161FD -55.28%, #3F46D2 5.16%, #812EA4 68.02%, #C21578 130.88%, #FD0050 186.49%)'
+    'linear-gradient(125.33deg, #0161FD -55.28%, #3F46D2 5.16%, #812EA4 68.02%, #C21578 130.88%, #FD0050 186.49%)',
 })
 
 export const containerAbsolute = style({

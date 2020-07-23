@@ -21,7 +21,7 @@ const Cards: FC<CardsProps> = ({ title, cards }) => (
         {title}
       </Typography>
     </Box>
-    <Tiles columns={[1, 1, 1, 2]} space={4}>
+    <Tiles columns={[1, 1, 1, 1, 2]} space={4}>
       {cards.map((card, i) => (
         <Card key={i} {...card} />
       ))}

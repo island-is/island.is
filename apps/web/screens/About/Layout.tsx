@@ -7,14 +7,20 @@ export interface LayoutProps {
   background?: BackgroundProps['type']
   contentProps?: ContentProps
   boxProps?: BoxProps
+  mobilePadding?: boolean
 }
 
 const Layout: FC<LayoutProps> = ({
   background,
   contentProps,
   boxProps,
+  mobilePadding = true,
   children,
 }) => {
+  if (mobilePadding) {
+    children = <Box paddingX={[3, 3, 6, 0]}>{children}</Box>
+  }
+
   if (boxProps) {
     children = <Box {...boxProps}>{children}</Box>
   }

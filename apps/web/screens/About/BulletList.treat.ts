@@ -6,8 +6,14 @@ export const row = style({
 })
 
 export const leftCol = style({
-  flex: '0 0 90px',
+  flex: '0 0 60px',
   marginRight: '24px',
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      flex: '0 0 90px',
+    }
+  }
 })
 
 export const circle = style({
@@ -37,6 +43,11 @@ export const icon = style({
   transform: 'translate(-50%, -50%)',
   width: 'auto',
   height: 'auto',
+  maxWidth: '40%',
+  maxHeight: '40%',
+})
+
+export const iconSmall = style({
   maxWidth: '60%',
   maxHeight: '60%',
 })

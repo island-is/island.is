@@ -14,7 +14,7 @@ export const MailingListSignup: FC = () => {
           stafrænni opinberri þjónustu.
         </Typography>
       </div>
-      <Columns alignY="center" space={8}>
+      <Columns alignY="center" space={[2, 2, 8]} collapseBelow="md">
         <Column>
           <Input name="name" label="Netfang" />
         </Column>

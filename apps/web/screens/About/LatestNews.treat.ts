@@ -1,5 +1,18 @@
 import { style } from 'treat'
+import { theme } from '@island.is/island-ui/theme'
 
 export const indent = style({
-  marginLeft: '130px',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      marginLeft: '130px',
+    },
+  },
+})
+
+export const first = style({
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
+      display: 'none',
+    }
+  }
 })

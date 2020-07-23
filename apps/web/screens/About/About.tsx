@@ -123,10 +123,10 @@ export const About: Screen<AboutProps> = ({
   return (
     <div>
       <div ref={spy('timeline')} id="timeline">
-        <Layout background="gradient">
+        <Layout background="gradient" mobilePadding={false}>
           <Header />
           <Content offsetRight columns={7} center>
-            <Box paddingY={2}>
+            <Box paddingY={2} paddingX={[3, 3, 6, 0]}>
               <Intro />
             </Box>
             <Sidebar
@@ -153,7 +153,7 @@ export const About: Screen<AboutProps> = ({
       <div ref={spy('heading1')}>
         <Layout
           contentProps={{ columns: 7, center: true, offsetRight: true }}
-          boxProps={{ paddingTop: 15, paddingBottom: 10 }}
+          boxProps={{ paddingTop: [8, 8, 15], paddingBottom: 10 }}
         >
           <SectionHeading
             title="Öll opinber þjónusta á einum stað"
@@ -166,7 +166,7 @@ export const About: Screen<AboutProps> = ({
         <Layout
           background="dotted"
           contentProps={{ columns: 8 }}
-          boxProps={{ paddingTop: 8, paddingBottom: 10 }}
+          boxProps={{ paddingTop: 8, paddingBottom: 8 }}
         >
           <Cards {...changes} />
         </Layout>
@@ -175,7 +175,7 @@ export const About: Screen<AboutProps> = ({
       <div ref={spy('heading2')} id="bullets">
         <Layout
           contentProps={{ columns: 7, center: true, offsetRight: true }}
-          boxProps={{ paddingTop: 15, paddingBottom: 10 }}
+          boxProps={{ paddingTop: [8, 8, 15], paddingBottom: 10 }}
         >
           <SectionHeading
             title="Fagleg nálgun"
@@ -187,7 +187,7 @@ export const About: Screen<AboutProps> = ({
       <div ref={spy('bullets')}>
         <Layout
           contentProps={{ columns: 7, offsetRight: true }}
-          boxProps={{ paddingBottom: 15 }}
+          boxProps={{ paddingBottom: [8, 8, 15] }}
         >
           <BulletList items={bullets} />
         </Layout>
@@ -197,7 +197,7 @@ export const About: Screen<AboutProps> = ({
         <Layout
           background="gradient"
           contentProps={{ columns: 7, center: true, offsetRight: true }}
-          boxProps={{ paddingTop: 15, paddingBottom: 6 }}
+          boxProps={{ paddingTop: [8, 8, 15], paddingBottom: 6 }}
         >
           <Collaborators />
         </Layout>
@@ -207,7 +207,7 @@ export const About: Screen<AboutProps> = ({
         <Layout
           background="gradient"
           contentProps={{ columns: 7, offsetRight: true }}
-          boxProps={{ paddingTop: 12, paddingBottom: 10 }}
+          boxProps={{ paddingTop: [8, 8, 12], paddingBottom: 10 }}
         >
           <ProjectStories stories={stories} />
         </Layout>

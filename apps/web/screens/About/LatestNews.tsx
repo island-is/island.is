@@ -1,4 +1,5 @@
 import React, { FC } from 'react'
+import cn from 'classnames'
 import { News } from '@island.is/api/schema'
 import { Typography, Box, Stack, Tiles } from '@island.is/island-ui/core'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -26,9 +27,9 @@ const LatestNews: FC<LatestNewsProps> = ({ title, newsList }) => {
       </div>
       {rest.length > 0 && (
         <Box paddingTop={15}>
-          <Tiles space={3} columns={2}>
+          <Tiles space={3} columns={[1, 1, 2]}>
             {rest.map((news, i) => (
-              <NewsItem key={i} news={news} />
+              <NewsItem key={i} news={news} index={i} />
             ))}
           </Tiles>
         </Box>
@@ -58,7 +59,7 @@ const BigNewsItem = ({ news }: { news: News }) => {
   )
 }
 
-const NewsItem = ({ news }: { news: News }) => (
+const NewsItem = ({ news, index }: { news: News, index: number }) => (
   <Box boxShadow="subtle" overflow="hidden" borderRadius="large">
     <img src={news.image.url} alt={news.image.title} />
     <Box paddingX={3} paddingY={4}>
