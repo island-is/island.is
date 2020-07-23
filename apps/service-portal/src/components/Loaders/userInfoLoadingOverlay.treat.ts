@@ -9,7 +9,7 @@ export const overlay = style({
   width: '100%',
   height: '100%',
   zIndex: 2,
-  backgroundColor: 'rgba(255, 255, 255, 0.4)',
+  backgroundColor: 'rgba(255, 255, 255, 0.8)',
   '@keyframes': {
     '0%': {
       transform: 'scale(1.05)',
