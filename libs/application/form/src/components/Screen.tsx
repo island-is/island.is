@@ -89,8 +89,8 @@ const Screen: FC<ScreenProps> = ({
             display="flex"
             flexDirection="row"
             justifyContent="spaceBetween"
-            paddingTop={4}
-            paddingBottom={5}
+            paddingTop={[1, 4]}
+            paddingBottom={[1, 5]}
           >
             <Box display="inlineFlex" padding={2} paddingLeft="none">
               <Button variant="text" leftIcon="arrowLeft" onClick={prevScreen}>

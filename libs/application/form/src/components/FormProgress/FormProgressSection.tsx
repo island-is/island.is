@@ -1,9 +1,8 @@
 import React, { FC } from 'react'
 import { Section, getSubSectionsInSection } from '@island.is/application/schema'
-import { BulletList, Box, Bullet, Typography } from '@island.is/island-ui/core'
+import { BulletList, Box, Typography } from '@island.is/island-ui/core'
 import SectionNumber from '../SectionNumber'
 import SubSectionItem from '../SubSectionItem'
-import { has } from 'lodash'
 
 const FormProgressSection: FC<{
   section: Section
@@ -16,8 +15,13 @@ const FormProgressSection: FC<{
   const hasSubSections = subSections.length > 0
 
   return (
-    <Box marginBottom={2}>
-      <Box display="flex" alignItems="flexStart" marginBottom={1}>
+    <Box marginBottom={[0, 2]} marginRight={[3, 0]}>
+      <Box
+        display="flex"
+        alignItems="flexStart"
+        marginBottom={1}
+        style={{ whiteSpace: 'nowrap' }}
+      >
         <Box padding={1} background="blue100" marginRight={3}>
           <SectionNumber
             currentState={
@@ -34,7 +38,7 @@ const FormProgressSection: FC<{
         </Typography>
       </Box>
       {isActive && hasSubSections && (
-        <Box paddingLeft={1}>
+        <Box display={['none', 'block']} paddingLeft={1}>
           <BulletList>
             {subSections.map((subSection, i) => (
               <SubSectionItem
