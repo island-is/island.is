@@ -25,18 +25,12 @@ export const menu = style({
   boxShadow: theme.shadows.subtle,
   backgroundColor: theme.color.white,
   borderRadius: 4,
-  transition: 'opacity 200ms, transform 200ms',
-})
-
-export const menuOpen = style({
-  opacity: 1,
-  transform: 'translate3d(0, 0, 0)',
-})
-
-export const menuClosed = style({
   opacity: 0,
-  transform: 'translate3d(10px, -10px, 0)',
-  visibility: 'hidden',
+  '@keyframes': {
+    '0%': { opacity: 0, transform: 'translate3d(10px, -10px, 0)' },
+    '100%': { opacity: 1, transform: 'translate3d(0px, 0px, 0)' },
+  },
+  animation: '@keyframes 150ms ease forwards',
 })
 
 export const menuItem = style({

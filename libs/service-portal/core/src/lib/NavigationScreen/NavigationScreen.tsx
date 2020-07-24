@@ -1,5 +1,6 @@
 import React, { FC } from 'react'
 import { Typography, Box, Tiles } from '@island.is/island-ui/core'
+import * as styles from './NavigationScreen.treat'
 import { Link } from 'react-router-dom'
 import { Card } from '@island.is/web/components/Card/Card'
 
@@ -24,7 +25,7 @@ export const NavigationScreen: FC<Props> = ({ items }) => {
       </Box>
       <Tiles space="gutter" columns={2}>
         {items.map((item, index) => (
-          <Link to={item.url} key={index}>
+          <Link to={item.url} key={index} className={styles.link}>
             <Card
               title={item.name}
               description={item.text}
