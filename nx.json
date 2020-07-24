@@ -124,6 +124,9 @@
     },
     "service-portal-settings": {
       "tags": []
+    },
+    "service-portal-finance": {
+      "tags": []
     }
   }
 }

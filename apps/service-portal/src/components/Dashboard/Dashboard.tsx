@@ -34,8 +34,8 @@ export const Dashboard: FC<{}> = () => {
 
   return (
     <Box padding={3}>
-      {Object.keys(modules).map((key) => (
-        <WidgetLoader module={modules[key]} key={key} userInfo={userInfo} />
+      {modules.map((module, index) => (
+        <WidgetLoader module={module} key={index} userInfo={userInfo} />
       ))}
     </Box>
   )

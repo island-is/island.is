@@ -30,13 +30,11 @@ const Modules: FC<{}> = () => {
 
   return (
     <Box paddingY={4} paddingX={3}>
-      {Object.keys(modules).map((key) => (
+      {modules.map((module) => (
         <Route
-          path={modules[key].path}
-          key={modules[key].path}
-          render={() => (
-            <ModuleLoader module={modules[key]} userInfo={userInfo} />
-          )}
+          path={module.path}
+          key={module.path}
+          render={() => <ModuleLoader module={module} userInfo={userInfo} />}
         />
       ))}
     </Box>

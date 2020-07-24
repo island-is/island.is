@@ -3,19 +3,14 @@ import { Box, Typography, SkeletonLoader } from '@island.is/island-ui/core'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import * as styles from './Sidebar.treat'
 import ModuleNavigation from './ModuleNavigation'
-import { ServicePortalNavigationRoot } from '@island.is/service-portal/core'
 
 export const Sidebar: FC<{}> = () => {
   const { navigation, navigationState } = useNavigation()
-  const navigationList: ServicePortalNavigationRoot[] =
-    navigationState === 'fulfilled'
-      ? Object.keys(navigation).map((x) => navigation[x])
-      : []
 
-  const actionsNavList = navigationList
+  const actionsNavList = navigation
     .filter((x) => x.section === 'actions')
     .sort((a, b) => a.order - b.order)
-  const infoNavList = navigationList
+  const infoNavList = navigation
     .filter((x) => x.section === 'info')
     .sort((a, b) => a.order - b.order)
 
@@ -27,7 +22,7 @@ export const Sidebar: FC<{}> = () => {
           <SkeletonLoader />
         ) : (
           <>
-            {navigation?.applications?.url && (
+            {actionsNavList.length > 0 && (
               <Box marginBottom={4}>
                 <Box marginBottom={3}>
                   <Typography variant="h4" as="h4">
@@ -39,7 +34,7 @@ export const Sidebar: FC<{}> = () => {
                 ))}
               </Box>
             )}
-            {navigation?.applications?.url && (
+            {infoNavList.length > 0 && (
               <Box marginBottom={4}>
                 <Box marginBottom={3}>
                   <Typography variant="h4" as="h4">
