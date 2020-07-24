@@ -7,11 +7,13 @@ export const menu = style({
   width: 366,
   padding: 0,
   margin: 0,
+  opacity: 0,
   backgroundColor: theme.color.white,
   overflowY: 'auto',
   border: `1px solid ${theme.color.dark100}`,
   boxShadow: theme.shadows.subtle,
   visibility: 'hidden',
+  transition: 'opacity 200ms',
 })
 
 export const open = style({

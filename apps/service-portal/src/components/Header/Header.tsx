@@ -4,6 +4,7 @@ import { Box, Hidden } from '@island.is/island-ui/core'
 import * as styles from './Header.treat'
 import { Logo } from '../Logo/Logo'
 import UserMenu from '../UserMenu/UserMenu'
+import NotificationMenuTrigger from '../Notifications/NotificationMenuTrigger/NotificationMenuTrigger'
 
 export const Header: FC<{}> = () => {
   return (
@@ -26,6 +27,8 @@ export const Header: FC<{}> = () => {
       >
         <div className={styles.divider} />
         <UserMenu />
+        <div className={styles.divider} />
+        <NotificationMenuTrigger />
       </Box>
     </header>
   )

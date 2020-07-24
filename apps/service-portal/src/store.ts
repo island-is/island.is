@@ -22,6 +22,8 @@ export interface SetNavigationPayload {
   navigation: Navigation
 }
 
+type NotificationSidebarState = 'open' | 'closed'
+
 export type Action =
   | { type: 'setUserPending' }
   | { type: 'setUserFulfilled'; payload: JwtToken }
@@ -31,6 +33,7 @@ export type Action =
   | { type: 'fetchSubjectListPending' }
   | { type: 'fetchSubjectListFulfilled'; payload: SubjectListDto[] }
   | { type: 'fetchSubjectListFailed' }
+  | { type: 'setNotificationSidebarState'; payload: NotificationSidebarState }
 
 export type AsyncActionState = 'passive' | 'pending' | 'fulfilled' | 'failed'
 
@@ -46,6 +49,7 @@ export interface StoreState {
   navigationState: AsyncActionState
   subjectList: SubjectListDto[]
   subjectListState: AsyncActionState
+  notificationSidebarState: NotificationSidebarState
 }
 
 const authCookie = Cookies.get(MOCK_AUTH_KEY) as string
@@ -66,6 +70,7 @@ export const initialState: StoreState = {
   navigationState: 'passive',
   subjectList: [],
   subjectListState: 'passive',
+  notificationSidebarState: 'open',
 }
 
 export const reducer = (state: StoreState, action: Action): StoreState => {
@@ -112,6 +117,11 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
       return {
         ...state,
         subjectListState: 'failed',
+      }
+    case 'setNotificationSidebarState':
+      return {
+        ...state,
+        notificationSidebarState: action.payload,
       }
     default:
       return state

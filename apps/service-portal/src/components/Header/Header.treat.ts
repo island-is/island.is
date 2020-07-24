@@ -8,8 +8,8 @@ export const header = style({
   justifyContent: 'space-between',
   width: '100%',
   borderBottom: border,
-  height: '80px',
-  padding: `0 ${theme.spacing['6']}px`,
+  height: 80,
+  paddingLeft: theme.spacing['6'],
 })
 
 export const divider = style({
