@@ -24,10 +24,10 @@ const nodeByUrl = (url: string, data: ServicePortalNavigationItem[]) => {
 const ContentBreadcrumbs: FC<{}> = () => {
   const location = useLocation()
   const [{ navigation }] = useStore()
-  const node = nodeByUrl(location.pathname, [
-    navigation.applications,
-    navigation.documents,
-  ])
+  const node = nodeByUrl(
+    location.pathname,
+    Object.keys(navigation).map((x) => navigation[x]),
+  )
 
   const navItem = node
     ? { name: node.name, url: node.url }

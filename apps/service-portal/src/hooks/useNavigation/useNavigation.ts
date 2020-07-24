@@ -13,11 +13,9 @@ const useNavigation = () => {
 
       try {
         // TODO: Wait for them all or load them in as soon as they arrive?
-        const nav = await Promise.all([
-          modules.applicationsModule.navigation(userInfo),
-          modules.documentsModule.navigation(userInfo),
-          modules.settingsModule.navigation(userInfo),
-        ])
+        const nav = await Promise.all(
+          Object.keys(modules).map((key) => modules[key].navigation(userInfo)),
+        )
 
         dispatch({
           type: 'fetchNavigationFulfilled',

@@ -3,9 +3,21 @@ import { Box, Typography, SkeletonLoader } from '@island.is/island-ui/core'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
 import * as styles from './Sidebar.treat'
 import ModuleNavigation from './ModuleNavigation'
+import { ServicePortalNavigationRoot } from '@island.is/service-portal/core'
 
 export const Sidebar: FC<{}> = () => {
   const { navigation, navigationState } = useNavigation()
+  const navigationList: ServicePortalNavigationRoot[] =
+    navigationState === 'fulfilled'
+      ? Object.keys(navigation).map((x) => navigation[x])
+      : []
+
+  const actionsNavList = navigationList
+    .filter((x) => x.section === 'actions')
+    .sort((a, b) => a.order - b.order)
+  const infoNavList = navigationList
+    .filter((x) => x.section === 'info')
+    .sort((a, b) => a.order - b.order)
 
   return (
     <aside className={styles.sidebar}>
@@ -22,8 +34,9 @@ export const Sidebar: FC<{}> = () => {
                     Aðgerðir
                   </Typography>
                 </Box>
-                <ModuleNavigation nav={navigation.applications} />
-                <ModuleNavigation nav={navigation.settings} />
+                {actionsNavList.map((navRoot, index) => (
+                  <ModuleNavigation nav={navRoot} key={index} />
+                ))}
               </Box>
             )}
             {navigation?.applications?.url && (
@@ -33,7 +46,9 @@ export const Sidebar: FC<{}> = () => {
                     Upplýsingar
                   </Typography>
                 </Box>
-                <ModuleNavigation nav={navigation.documents} />
+                {infoNavList.map((navRoot, index) => (
+                  <ModuleNavigation nav={navRoot} key={index} />
+                ))}
               </Box>
             )}
           </>

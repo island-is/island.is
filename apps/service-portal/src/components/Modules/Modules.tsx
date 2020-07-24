@@ -30,27 +30,15 @@ const Modules: FC<{}> = () => {
 
   return (
     <Box paddingY={4} paddingX={3}>
-      <Route
-        path="/umsoknir"
-        render={() => (
-          <ModuleLoader
-            module={modules.applicationsModule}
-            userInfo={userInfo}
-          />
-        )}
-      />
-      <Route
-        path="/stillingar"
-        render={() => (
-          <ModuleLoader module={modules.settingsModule} userInfo={userInfo} />
-        )}
-      />
-      <Route
-        path="/rafraen-skjol"
-        render={() => (
-          <ModuleLoader module={modules.documentsModule} userInfo={userInfo} />
-        )}
-      />
+      {Object.keys(modules).map((key) => (
+        <Route
+          path={modules[key].path}
+          key={modules[key].path}
+          render={() => (
+            <ModuleLoader module={modules[key]} userInfo={userInfo} />
+          )}
+        />
+      ))}
     </Box>
   )
 }

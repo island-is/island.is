@@ -7,6 +7,7 @@ const sleep = (ms = 0) => {
 
 export const applicationsModule: ServicePortalModule = {
   name: 'Umsóknir',
+  path: '/umsoknir',
   navigation: async (props) => {
     await sleep(1000)
     if (props.sub.subjectType === 'company')
@@ -14,11 +15,15 @@ export const applicationsModule: ServicePortalModule = {
         name: 'Umsóknir',
         url: '/umsoknir',
         icon: 'user',
+        section: 'actions',
+        order: 0,
       }
     return {
       name: 'Umsóknir',
       url: '/umsoknir',
       icon: 'user',
+      section: 'actions',
+      order: 0,
       children: [
         {
           name: 'Opnar umsóknir',

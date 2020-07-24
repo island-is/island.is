@@ -62,6 +62,11 @@ export const notifications: NotificationsContainer = {
           },
           isRead: true,
         },
+      ],
+    },
+    {
+      timestamp: new Date(),
+      cards: [
         {
           id: 'asdff',
           title: 'Vegabréfið að renna út',

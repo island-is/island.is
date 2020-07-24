@@ -25,7 +25,7 @@ const NotificationSidebar: FC<{}> = () => {
         {notifications.sections.map((section, index) => (
           <div key={index}>
             <Box textAlign="right" padding={2}>
-              <Typography variant="pSmall" as="span" color="purple400">
+              <Typography variant="eyebrow" as="span" color="purple400">
                 Í dag
               </Typography>
             </Box>

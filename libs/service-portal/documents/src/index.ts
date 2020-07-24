@@ -7,12 +7,16 @@ const sleep = (ms = 0) => {
 
 export const documentsModule: ServicePortalModule = {
   name: 'Rafræn skjöl',
+  path: '/rafraen-skjol',
   navigation: async () => {
     await sleep(500)
     return {
       name: 'Rafræn skjöl',
       url: '/rafraen-skjol',
       icon: 'article',
+      // TODO: This should be in actions
+      section: 'info',
+      order: 2,
     }
   },
   widgets: () => lazy(() => import('./widgets')),

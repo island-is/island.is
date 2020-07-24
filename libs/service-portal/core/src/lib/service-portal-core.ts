@@ -10,6 +10,12 @@ export interface ServicePortalNavigationItem {
   children?: ServicePortalNavigationItem[]
 }
 
+export interface ServicePortalNavigationRoot
+  extends ServicePortalNavigationItem {
+  section: 'actions' | 'info'
+  order: number
+}
+
 interface ServicePortalModuleProps {
   userInfo: JwtToken
 }
@@ -22,7 +28,8 @@ export type ServicePortalModuleRenderValue = LazyExoticComponent<
 
 export interface ServicePortalModule {
   name: string
-  navigation: (userInfo: JwtToken) => Promise<ServicePortalNavigationItem>
+  path: string
+  navigation: (userInfo: JwtToken) => Promise<ServicePortalNavigationRoot>
   widgets: (userInfo: JwtToken) => ServicePortalModuleRenderValue
   render: (userInfo: JwtToken) => ServicePortalModuleRenderValue
 }
