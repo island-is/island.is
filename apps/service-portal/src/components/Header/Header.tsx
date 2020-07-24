@@ -8,29 +8,32 @@ import NotificationMenuTrigger from '../Notifications/NotificationMenuTrigger/No
 
 export const Header: FC<{}> = () => {
   return (
-    <header className={styles.header}>
-      <Link to="/">
-        <Box display="flex" height="full" alignItems="center">
-          <Hidden above="md">
-            <Logo width={40} iconOnly />
-          </Hidden>
-          <Hidden below="lg">
-            <Logo />
-          </Hidden>
+    <>
+      <div className={styles.placeholder} />
+      <header className={styles.header}>
+        <Link to="/">
+          <Box display="flex" height="full" alignItems="center">
+            <Hidden above="md">
+              <Logo width={40} iconOnly />
+            </Hidden>
+            <Hidden below="lg">
+              <Logo />
+            </Hidden>
+          </Box>
+        </Link>
+        <Box
+          display="flex"
+          justifyContent="flexEnd"
+          height="full"
+          alignItems="center"
+        >
+          <div className={styles.divider} />
+          <UserMenu />
+          <div className={styles.divider} />
+          <NotificationMenuTrigger />
         </Box>
-      </Link>
-      <Box
-        display="flex"
-        justifyContent="flexEnd"
-        height="full"
-        alignItems="center"
-      >
-        <div className={styles.divider} />
-        <UserMenu />
-        <div className={styles.divider} />
-        <NotificationMenuTrigger />
-      </Box>
-    </header>
+      </header>
+    </>
   )
 }
 

@@ -11,24 +11,31 @@ const NotificationSidebar: FC<{}> = () => {
   const [{ notificationSidebarState }] = useStore()
 
   return (
-    <div
-      className={cn(styles.wrapper, {
-        [styles.active]: notificationSidebarState === 'open',
-      })}
-    >
-      {notifications.sections.map((section, index) => (
-        <div key={index}>
-          <Box textAlign="right" padding={2}>
-            <Typography variant="pSmall" as="span" color="purple400">
-              Í dag
-            </Typography>
-          </Box>
-          {section.cards.map((card) => (
-            <NotificationCard key={card.id} card={card} />
-          ))}
-        </div>
-      ))}
-    </div>
+    <>
+      <div
+        className={cn(styles.placeholder, {
+          [styles.active]: notificationSidebarState === 'open',
+        })}
+      />
+      <div
+        className={cn(styles.wrapper, {
+          [styles.active]: notificationSidebarState === 'open',
+        })}
+      >
+        {notifications.sections.map((section, index) => (
+          <div key={index}>
+            <Box textAlign="right" padding={2}>
+              <Typography variant="pSmall" as="span" color="purple400">
+                Í dag
+              </Typography>
+            </Box>
+            {section.cards.map((card) => (
+              <NotificationCard key={card.id} card={card} />
+            ))}
+          </div>
+        ))}
+      </div>
+    </>
   )
 }
 

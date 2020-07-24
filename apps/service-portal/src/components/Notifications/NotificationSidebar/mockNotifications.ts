@@ -62,6 +62,47 @@ export const notifications: NotificationsContainer = {
           },
           isRead: true,
         },
+        {
+          id: 'asdff',
+          title: 'Vegabréfið að renna út',
+          text: 'Vegabréfið þitt rennur út 23.06.2020',
+          link: {
+            title: 'Endurnýja ökuskírteini',
+            url: '/stillingar',
+          },
+          isRead: false,
+        },
+        {
+          id: 'fdsafdsf',
+          title: 'Skimun á krabbameini',
+          text:
+            'Þú hefur fengið boð um að mæta í hópleit að brjóstakrabbameini',
+          link: {
+            title: 'Finna tíma í skimun',
+            url: '/umsoknir',
+          },
+          isRead: true,
+        },
+        {
+          id: 'ffddsadsf',
+          title: 'Skuldleysisvottorð',
+          text: 'Þú hefur fengið sent skuldleysisvottorð einstaklings',
+          link: {
+            title: 'Sækja skuldleysisvottorð',
+            url: '/rafraen-skjol',
+          },
+          isRead: true,
+        },
+        {
+          id: 'aaasdfdfdf',
+          title: 'Lyfseðill',
+          text: 'Þú hefur fengið sendan lyfseðil í lyfseðilsgáttina',
+          link: {
+            title: 'Skoða lyfseðil',
+            url: '/umsoknir/opnar-umsoknir',
+          },
+          isRead: true,
+        },
       ],
     },
   ],
