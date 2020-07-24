@@ -27,9 +27,29 @@ export type ServicePortalModuleRenderValue = LazyExoticComponent<
 >
 
 export interface ServicePortalModule {
+  /**
+   * Used as the module title in the shell
+   * in various components such as when rendering
+   * widgets on the dashboard*/
   name: string
+  /**
+   * Describes the root route of this module
+   * and how the shell navigates to it
+   * Fx: Module: Fjármál, path: /fjarmal
+   */
   path: string
+  /**
+   * Returns a promise of a navigation tree
+   * that will render in the shell's sidebar.
+   */
   navigation: (userInfo: JwtToken) => Promise<ServicePortalNavigationRoot>
+  /**
+   * An optional render value of widgets that should
+   * be displayed on the dashboard
+   */
   widgets: (userInfo: JwtToken) => ServicePortalModuleRenderValue
+  /**
+   * The root render value of this module.
+   */
   render: (userInfo: JwtToken) => ServicePortalModuleRenderValue
 }

@@ -3,6 +3,8 @@ import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
 import { Box, Icon, Typography } from '@island.is/island-ui/core'
 import { Link, useLocation } from 'react-router-dom'
 import AnimateHeight from 'react-animate-height'
+import * as styles from './Sidebar.treat'
+import cn from 'classnames'
 
 interface Props {
   nav: ServicePortalNavigationItem
@@ -14,7 +16,12 @@ const ModuleNavigation: FC<Props> = ({ nav }) => {
 
   return (
     <Box marginBottom={2}>
-      <Link to={nav.url}>
+      <Link
+        to={nav.url}
+        className={cn(styles.navItem, {
+          [styles.navItemActive]: isModuleActive,
+        })}
+      >
         <Box display="flex" alignItems="center">
           {nav.icon && (
             <Box marginRight={3}>
@@ -24,27 +31,21 @@ const ModuleNavigation: FC<Props> = ({ nav }) => {
               />
             </Box>
           )}
-          <Typography variant={isModuleActive ? 'h5' : 'p'} as="div">
-            {nav.name}
-          </Typography>
+          <div>{nav.name}</div>
         </Box>
       </Link>
       {nav.children && (
         <AnimateHeight duration={300} height={isModuleActive ? 'auto' : 0}>
           <Box paddingLeft={5} paddingTop={3}>
             {nav.children.map((child, index) => (
-              <Link to={child.url} key={`child-${index}`}>
-                <Box>
-                  <Typography
-                    variant="pSmall"
-                    as="span"
-                    color={
-                      location.pathname === child.url ? 'blue400' : 'dark400'
-                    }
-                  >
-                    {child.name}
-                  </Typography>
-                </Box>
+              <Link
+                to={child.url}
+                key={`child-${index}`}
+                className={cn(styles.navItem, styles.subNavItem, {
+                  [styles.navItemActive]: location.pathname === child.url,
+                })}
+              >
+                {child.name}
               </Link>
             ))}
           </Box>
