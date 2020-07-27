@@ -16,6 +16,7 @@ import {
   Box,
   ContentBlock,
 } from '@island.is/island-ui/core'
+import Image, { apiImageToProps } from '../components/Image/Image'
 import { NewsItemLayout } from './Layouts/Layouts'
 import { GET_NEWS_ITEM_QUERY } from './queries'
 import { Query, ContentLanguage, QueryGetNewsArgs } from '@island.is/api/schema'
@@ -77,10 +78,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
               </Typography>
               {Boolean(newsItem.image) && (
                 <Box paddingY={2}>
-                  <img
-                    src={newsItem.image.url + '?w=774'}
-                    alt={newsItem.image.title}
-                  />
+                  <Image {...apiImageToProps(newsItem.image)} />
                 </Box>
               )}
             </Stack>

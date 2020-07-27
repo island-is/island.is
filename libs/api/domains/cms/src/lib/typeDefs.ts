@@ -9,11 +9,10 @@ export const typeDefs = gql`
 
   type Image {
     url: String!
-    title: String
-    filename: String
-    contentType: String
-    width: Int
-    height: Int
+    title: String!
+    contentType: String!
+    width: Int!
+    height: Int!
   }
 
   type Pagination {

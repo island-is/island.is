@@ -79,11 +79,10 @@ export type Taxonomy = {
 export type Image = {
   __typename?: 'Image'
   url: Scalars['String']
-  title?: Maybe<Scalars['String']>
-  filename?: Maybe<Scalars['String']>
-  contentType?: Maybe<Scalars['String']>
-  width?: Maybe<Scalars['Int']>
-  height?: Maybe<Scalars['Int']>
+  title: Scalars['String']
+  contentType: Scalars['String']
+  width: Scalars['Int']
+  height: Scalars['Int']
 }
 
 export type Pagination = {
@@ -503,15 +502,10 @@ export type ImageResolvers<
   ParentType extends ResolversParentTypes['Image'] = ResolversParentTypes['Image']
 > = {
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  filename?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  contentType?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
-  width?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
-  height?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  contentType?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
