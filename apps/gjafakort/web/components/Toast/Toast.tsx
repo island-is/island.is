@@ -100,7 +100,7 @@ function Toast() {
           </Column>
           <Column width="content">
             <Box
-              alignItems="right"
+              alignItems="flexEnd"
               marginLeft={2}
               display="flex"
               cursor="pointer"
