@@ -22,7 +22,6 @@ const formatArticle = ({ sys, fields }): Article => {
 const formatImage = ({ fields }): Image => ({
   url: fields.file.url,
   title: fields.title,
-  filename: fields.file.fileName,
   contentType: fields.file.contentType,
   width: fields.file.details.image.width,
   height: fields.file.details.image.height,
