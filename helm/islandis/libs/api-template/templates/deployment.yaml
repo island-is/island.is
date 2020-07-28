@@ -17,6 +17,10 @@ spec:
     metadata:
       labels:
         {{- include "api-template.selectorLabels" . | nindent 8 }}
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/path: /metrics
+        prometheus.io/port: {{ add1 .Values.service.targetPort  | quote }} # The metrics port is +1 on the HTTP service port
     spec:
     {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
