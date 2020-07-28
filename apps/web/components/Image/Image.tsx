@@ -3,6 +3,39 @@ import cn from 'classnames'
 import { Image as ApiImage } from '@island.is/api/schema'
 import * as styles from './Image.treat'
 
+export type CustomImage = {
+  type: 'custom'
+  src: string
+  thumbnail: string
+  alt: string
+  originalWidth: number
+  originalHeight: number
+}
+
+export type ApiImageSource = {
+  type: 'apiImage'
+  maxWidth?: number
+  image: ApiImage
+}
+
+type AnyImageType = CustomImage | ApiImageSource
+
+const normalizeImage = (img: AnyImageType): CustomImage => {
+  switch (img.type) {
+    case 'custom':
+      return img
+    case 'apiImage':
+      return {
+        type: 'custom',
+        src: img.image.url + (img.maxWidth ? '?w=' + img.maxWidth : ''),
+        thumbnail: img.image.url + '?w=50',
+        alt: img.image.title ?? '',
+        originalWidth: img.image.width,
+        originalHeight: img.image.height,
+      }
+  }
+}
+
 const useImageLoader = (url: string): boolean => {
   const [loaded, setLoaded] = useState(false)
 
@@ -15,14 +48,10 @@ const useImageLoader = (url: string): boolean => {
   return loaded
 }
 
-export interface ImageProps {
-  src: string
-  thumbnail: string
-  alt: string
-  ratio: number
-}
-
-const Image: FC<ImageProps> = ({ src, thumbnail, alt = '', ratio }) => {
+const Image: FC<AnyImageType> = (image) => {
+  const { src, thumbnail, alt, originalWidth, originalHeight } = normalizeImage(
+    image,
+  )
   const imageLoaded = useImageLoader(src)
 
   return (
@@ -33,7 +62,9 @@ const Image: FC<ImageProps> = ({ src, thumbnail, alt = '', ratio }) => {
         })}
         style={{
           backgroundImage: `url(${thumbnail})`,
-          paddingTop: imageLoaded ? 0 : (1 / ratio) * 100 + '%',
+          paddingTop: imageLoaded
+            ? 0
+            : (originalHeight / originalWidth) * 100 + '%',
         }}
       />
       <img
@@ -46,15 +77,5 @@ const Image: FC<ImageProps> = ({ src, thumbnail, alt = '', ratio }) => {
     </div>
   )
 }
-
-export const apiImageToProps = (
-  img: ApiImage,
-  { width, alt }: { width?: number; alt?: string } | undefined = {},
-): ImageProps => ({
-  src: img.url + (width ? '?w=' + width : ''),
-  thumbnail: img.url + '?w=50',
-  alt: alt ?? img.title ?? '',
-  ratio: img.width / img.height,
-})
 
 export default Image
