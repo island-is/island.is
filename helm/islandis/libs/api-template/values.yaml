@@ -64,3 +64,6 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+healthCheck:
+  livenessPath: /

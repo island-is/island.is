@@ -70,11 +70,11 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
+              path: {{ .Values.healthCheck.livenessPath }}
               port: http
           readinessProbe:
             httpGet:
-              path: /
+              path: {{ .Values.healthCheck.livenessPath }}
               port: http
           env:
             - name: APP_VERSION
