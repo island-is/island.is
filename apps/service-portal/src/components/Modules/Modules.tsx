@@ -1,7 +1,7 @@
 import React, { FC, Suspense } from 'react'
 import { Route } from 'react-router-dom'
 import { ServicePortalModule } from '@island.is/service-portal/core'
-import { useStore } from '../../stateProvider'
+import { useStore } from '../../store/stateProvider'
 import ModuleLoadingScreen from './ModuleLoadingScreen'
 import ModuleErrorScreen, { ModuleErrorBoundary } from './ModuleErrorScreen'
 import { Box } from '@island.is/island-ui/core'

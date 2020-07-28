@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { useLocation, Link } from 'react-router-dom'
-import { useStore } from '../../stateProvider'
+import { useStore } from '../../store/stateProvider'
 import { Breadcrumbs, Box } from '@island.is/island-ui/core'
 import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
 import * as styles from './ContentBreadcrumbs.treat'

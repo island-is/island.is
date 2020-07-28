@@ -65,6 +65,12 @@
       ],
       "@island.is/service-portal/finance": [
         "libs/service-portal/finance/src/index.ts"
+      ],
+      "@island.is/service-portal/family": [
+        "libs/service-portal/family/src/index.ts"
+      ],
+      "@island.is/service-portal/health": [
+        "libs/service-portal/health/src/index.ts"
       ]
     }
   },

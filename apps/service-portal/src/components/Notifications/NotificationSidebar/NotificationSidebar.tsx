@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import * as styles from './NotificationSidebar.treat'
 import cn from 'classnames'
 // eslint-disable-next-line
-import { useStore } from 'apps/service-portal/src/stateProvider'
+import { useStore } from 'apps/service-portal/src/store/stateProvider'
 import { Box, Typography } from '@island.is/island-ui/core'
 import { notifications } from './mockNotifications'
 import NotificationCard from './NotificationCard/NotificationCard'

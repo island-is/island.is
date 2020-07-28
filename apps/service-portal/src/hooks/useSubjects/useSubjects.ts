@@ -1,4 +1,4 @@
-import { useStore } from '../../stateProvider'
+import { useStore } from '../../store/stateProvider'
 import { useEffect } from 'react'
 import { fetchWithAuth } from '../../utils/http'
 

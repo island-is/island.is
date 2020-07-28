@@ -1,4 +1,4 @@
-import { useStore } from '../../stateProvider'
+import { useStore } from '../../store/stateProvider'
 import { setUserToken } from '../../auth/utils'
 import jwtDecode from 'jwt-decode'
 

@@ -1,17 +1,14 @@
-import { applicationsModule } from '@island.is/service-portal/applications'
-import { documentsModule } from '@island.is/service-portal/documents'
-import { settingsModule } from '@island.is/service-portal/settings'
-import { financeModule } from '@island.is/service-portal/finance'
 import Cookies from 'js-cookie'
 
 import {
   ServicePortalModule,
   ServicePortalNavigationRoot,
 } from '@island.is/service-portal/core'
-import { SubjectListDto } from './mirage-server/models/subject'
+import { SubjectListDto } from '../mirage-server/models/subject'
 import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
 import jwtDecode from 'jwt-decode'
-import { JwtToken } from './mirage-server/models/jwt-model'
+import { JwtToken } from '../mirage-server/models/jwt-model'
+import { modules } from './modules'
 
 type NotificationSidebarState = 'open' | 'closed'
 
@@ -44,7 +41,7 @@ const authCookie = Cookies.get(MOCK_AUTH_KEY) as string
 export const initialState: StoreState = {
   userInfo: authCookie ? jwtDecode(authCookie) : null,
   userInfoState: 'passive',
-  modules: [applicationsModule, documentsModule, settingsModule, financeModule],
+  modules: modules,
   navigation: [],
   navigationState: 'passive',
   subjectList: [],

@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import * as styles from './NotificationMenuTrigger.treat'
 import { Icon, Box } from '@island.is/island-ui/core'
 // eslint-disable-next-line
-import { useStore } from 'apps/service-portal/src/stateProvider'
+import { useStore } from 'apps/service-portal/src/store/stateProvider'
 import cn from 'classnames'
 
 const NotificationMenuTrigger: FC<{}> = () => {

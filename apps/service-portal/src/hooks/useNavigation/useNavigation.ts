@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { useStore } from '../../stateProvider'
+import { useStore } from '../../store/stateProvider'
 
 const useNavigation = () => {
   const [

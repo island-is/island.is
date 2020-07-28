@@ -1,7 +1,7 @@
 import React, { FC, useState, useRef } from 'react'
 import { useHistory } from 'react-router-dom'
 import * as styles from './UserMenu.treat'
-import { useStore } from '../../stateProvider'
+import { useStore } from '../../store/stateProvider'
 import useSubjects from '../../hooks/useSubjects/useSubjects'
 import useUserInfo from '../../hooks/useUserInfo/useUserInfo'
 import { Box, Icon } from '@island.is/island-ui/core'

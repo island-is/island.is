@@ -1380,6 +1380,62 @@
           }
         }
       }
+    },
+    "service-portal-family": {
+      "root": "libs/service-portal/family",
+      "sourceRoot": "libs/service-portal/family/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/family/.eslintrc",
+            "tsConfig": [
+              "libs/service-portal/family/tsconfig.lib.json",
+              "libs/service-portal/family/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/service-portal/family/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/family/jest.config.js",
+            "tsConfig": "libs/service-portal/family/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-health": {
+      "root": "libs/service-portal/health",
+      "sourceRoot": "libs/service-portal/health/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/health/.eslintrc",
+            "tsConfig": [
+              "libs/service-portal/health/tsconfig.lib.json",
+              "libs/service-portal/health/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/service-portal/health/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/health/jest.config.js",
+            "tsConfig": "libs/service-portal/health/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {
