@@ -19,11 +19,14 @@ import {
 import { Sidebar, getHeadingLinkElements } from '@island.is/web/components'
 import {
   Query,
-  QueryGetArticleArgs,
   QueryGetNamespaceArgs,
   ContentLanguage,
+  QuerySingleItemArgs,
 } from '@island.is/api/schema'
-import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_ARTICLE_QUERY,
+} from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
 import { withApollo } from '../graphql'
 import { Screen } from '../types'
@@ -35,7 +38,7 @@ import useRouteNames from '../i18n/useRouteNames'
 import { CustomNextError } from '../units/ErrorBoundary'
 
 interface ArticleProps {
-  article: Query['getArticle']
+  article: Query['singleItem']
   namespace: Query['getNamespace']
 }
 
@@ -58,8 +61,8 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
     )
   }, [])
 
-  const { slug: categorySlug, title: categoryTitle } = article.category
-  const groupTitle = article.group?.title
+  const { categorySlug, category: categoryTitle } = article
+  const groupTitle = article.group
 
   const onChangeContentOverview = ({ value }: Option) => {
     const slug = value as string
@@ -133,21 +136,26 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
 
 Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
-  const [
-    {
-      data: { getArticle: article },
-    },
-    namespace,
-  ] = await Promise.all([
-    apolloClient.query<Query, QueryGetArticleArgs>({
-      query: GET_ARTICLE_QUERY,
-      variables: {
-        input: {
-          slug,
-          lang: locale as ContentLanguage,
+  const [article, namespace] = await Promise.all([
+    apolloClient
+      .query<Query, QuerySingleItemArgs>({
+        query: GET_ARTICLE_QUERY,
+        variables: {
+          input: {
+            slug,
+            language: locale as ContentLanguage,
+          },
         },
-      },
-    }),
+      })
+      .then((content) => {
+        // map data here to reduce data processing in component
+        // TODO: Elastic endpoint is returning the article document json nested inside ContentItem, look into flattening this
+        const contentObject = JSON.parse(content.data.singleItem.content)
+        return {
+          ...content.data.singleItem,
+          content: JSON.stringify(contentObject.content),
+        }
+      }),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -158,9 +166,9 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
           },
         },
       })
-      .then((variables) => {
+      .then((content) => {
         // map data here to reduce data processing in component
-        return JSON.parse(variables.data.getNamespace.fields)
+        return JSON.parse(content.data.getNamespace.fields)
       }),
   ])
 
@@ -182,3 +190,5 @@ const ContentContainer: FC<BoxProps> = ({ children, ...props }) => (
     <ContentBlock width="small">{children}</ContentBlock>
   </Box>
 )
+
+// TODO: Add fields for micro strings to article namespace
