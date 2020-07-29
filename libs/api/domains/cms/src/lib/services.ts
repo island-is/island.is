@@ -63,8 +63,9 @@ export const getArticle = async (
     throw new ApolloError('Failed to resolve request in getArticle')
   })
 
+  // if we have no results
   if (!result.total) {
-    throw new ApolloError(`Article ${slug} not found`, 'NOT_FOUND')
+    return null
   }
 
   return formatArticle(result.items[0])
@@ -133,8 +134,9 @@ export const getNamespace = async (
     throw new ApolloError('Failed to resolve request in getNamespace')
   })
 
+  // if we have no results
   if (!result.total) {
-    throw new ApolloError(`${namespace} not found in namespaces`, 'NOT_FOUND')
+    return null
   }
 
   const [
