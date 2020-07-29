@@ -79,10 +79,10 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
         <title>{article.title} | Ísland.is</title>
       </Head>
       <ArticleLayout
-        sidebar={<Sidebar title='Efnisyfirlit' bullet='left' headingLinks />}
+        sidebar={<Sidebar title="Efnisyfirlit" bullet="left" headingLinks />}
       >
         <ContentContainer
-          padding='none'
+          padding="none"
           paddingX={[3, 3, 6, 0]}
           marginBottom={simpleSpacing}
         >
@@ -98,22 +98,22 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
                 <a>{categoryTitle}</a>
               </Link>
               {groupTitle && (
-                <Tag variant='purple' label>
+                <Tag variant="purple" label>
                   {groupTitle}
                 </Tag>
               )}
             </Breadcrumbs>
-            <Hidden above='md'>
+            <Hidden above="md">
               <Select
-                label='Efnisyfirlit'
-                placeholder='Flokkar'
+                label="Efnisyfirlit"
+                placeholder="Flokkar"
                 options={contentOverviewOptions}
                 onChange={onChangeContentOverview}
-                name='content-overview'
+                name="content-overview"
               />
             </Hidden>
             <Box marginBottom={simpleSpacing}>
-              <Typography variant='h1' as='h1'>
+              <Typography variant="h1" as="h1">
                 <span data-sidebar-link={slugify(article.title)}>
                   {article.title}
                 </span>
@@ -189,6 +189,6 @@ export default withApollo(Article)
 
 const ContentContainer: FC<BoxProps> = ({ children, ...props }) => (
   <Box padding={[3, 3, 6, 0]} {...props}>
-    <ContentBlock width='small'>{children}</ContentBlock>
+    <ContentBlock width="small">{children}</ContentBlock>
   </Box>
 )

@@ -13,8 +13,7 @@ export const withErrorBoundary = (Component) => {
     }
 
     componentDidCatch(error: Error, info: React.ErrorInfo) {
-      // console.error(info)
-      // TODO: Log error here
+      console.error(error, info)
     }
 
     render() {
@@ -40,8 +39,8 @@ export const withErrorBoundary = (Component) => {
     NewComponent.getInitialProps = async (ctx) => {
       try {
         return await Component.getInitialProps(ctx)
-      } catch ({ statusCode = 500, title }) {
-        // TODO: Log error here
+      } catch ({ statusCode = 500, title, ...error }) {
+        console.error(error)
         // Let ErrorBoundary handle error display for getInitialProps
         return { error: { statusCode, title } }
       }
