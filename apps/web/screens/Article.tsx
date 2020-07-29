@@ -23,7 +23,7 @@ import {
   ContentLanguage,
   QuerySingleItemArgs,
 } from '@island.is/api/schema'
-import { GET_NAMESPACE_QUERY, GET_ARTICLE_QUERY } from './queries'
+import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
 import { withApollo } from '../graphql'
 import { Screen } from '../types'
