@@ -13,6 +13,8 @@ export const withErrorBoundary = (Component) => {
     }
 
     componentDidCatch(error: Error, info: React.ErrorInfo) {
+      // TODO: Add central logging here
+      // TODO: Restrict console logging to development
       console.error(error, info)
     }
 
@@ -40,6 +42,8 @@ export const withErrorBoundary = (Component) => {
       try {
         return await Component.getInitialProps(ctx)
       } catch ({ statusCode = 500, title, ...error }) {
+        // TODO: Add central logging here
+        // TODO: Restrict console logging to development
         console.error(error)
         // Let ErrorBoundary handle error display for getInitialProps
         return { error: { statusCode, title } }
