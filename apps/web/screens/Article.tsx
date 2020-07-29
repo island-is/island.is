@@ -2,7 +2,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
-import DefaultErrorPage from 'next/error'
 import slugify from '@sindresorhus/slugify'
 import {
   ContentBlock,
@@ -33,6 +32,7 @@ import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
 import { Locale } from '../i18n/I18n'
 import useRouteNames from '../i18n/useRouteNames'
+import { CustomNextError } from '../units/ErrorBoundary'
 
 interface ArticleProps {
   article: Query['getArticle']
@@ -57,10 +57,6 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
       })) || [],
     )
   }, [])
-
-  if (!article) {
-    return <DefaultErrorPage statusCode={404} />
-  }
 
   const { slug: categorySlug, title: categoryTitle } = article.category
   const groupTitle = article.group?.title
@@ -137,7 +133,6 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
 
 Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
-
   const [
     {
       data: { getArticle: article },
@@ -168,6 +163,11 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
         return JSON.parse(variables.data.getNamespace.fields)
       }),
   ])
+
+  // we assume 404 if no article is found
+  if (!article) {
+    throw new CustomNextError(404, 'Article not found')
+  }
 
   return {
     article,
