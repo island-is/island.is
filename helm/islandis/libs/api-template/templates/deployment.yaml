@@ -8,6 +8,9 @@ metadata:
   {{- end }}
   labels:
     {{- include "api-template.labels" . | nindent 4 }}
+    tags.datadoghq.com/env: {{ .Values.global.env.name }}
+    tags.datadoghq.com/service: {{ include "api-template.name" . }}
+    tags.datadoghq.com/version: {{ .Values.global.image.tag }}
 spec:
   replicas: {{ .Values.replicaCount.default }}
   selector:
@@ -17,6 +20,10 @@ spec:
     metadata:
       labels:
         {{- include "api-template.selectorLabels" . | nindent 8 }}
+        tags.datadoghq.com/env: {{ .Values.global.env.name }}
+        tags.datadoghq.com/service: {{ include "api-template.name" . }}
+        tags.datadoghq.com/version: {{ .Values.global.image.tag }}
+
       annotations:
         prometheus.io/scrape: "true"
         prometheus.io/path: /metrics
@@ -56,7 +63,18 @@ spec:
             {{- end }}
             - name: APP_VERSION
               value: {{ .Values.global.image.tag }}
-
+            - name: DD_ENV
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/env']
+            - name: DD_SERVICE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/service']
+            - name: DD_VERSION
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/version']
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -79,6 +97,18 @@ spec:
           env:
             - name: APP_VERSION
               value: {{ .Values.global.image.tag }}
+            - name: DD_ENV
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/env']
+            - name: DD_SERVICE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/service']
+            - name: DD_VERSION
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/version']              
             {{- range $key, $value := .Values.global.env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
