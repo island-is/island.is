@@ -1,5 +1,6 @@
 // This needs to be the first import in the app to hook into the modules system correctly
 import { initTracing } from '@island.is/infra-tracing'
+import './datadog-tracer' // must come before importing any instrumented module.
 
 import express, { Router } from 'express'
 import { collectDefaultMetrics, Histogram } from 'prom-client'
