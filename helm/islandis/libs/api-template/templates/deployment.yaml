@@ -75,6 +75,9 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.labels['tags.datadoghq.com/version']
+            - name: DD_LOGS_INJECTION
+              value: "true"
+
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -109,6 +112,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.labels['tags.datadoghq.com/version']              
+            - name: DD_LOGS_INJECTION
+              value: "true"
             {{- range $key, $value := .Values.global.env }}
             - name: {{ $key }}
               value: {{ $value | quote }}
