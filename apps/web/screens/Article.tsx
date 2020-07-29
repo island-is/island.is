@@ -79,7 +79,9 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
         <title>{article.title} | Ísland.is</title>
       </Head>
       <ArticleLayout
-        sidebar={<Sidebar title="Efnisyfirlit" bullet="left" headingLinks />}
+        sidebar={
+          <Sidebar title={n('sidebarHeader')} bullet="left" headingLinks />
+        }
       >
         <ContentContainer
           padding="none"
