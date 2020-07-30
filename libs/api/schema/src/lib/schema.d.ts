@@ -1,6 +1,7 @@
 import { GraphQLResolveInfo } from 'graphql'
 import { Context } from './context'
 export type Maybe<T> = T | null
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 export type RequireFields<T, K extends keyof T> = {
   [X in Exclude<keyof T, K>]?: T[X]
 } &
@@ -22,8 +23,9 @@ export type Query = {
   getNamespace?: Maybe<Namespace>
   getNews?: Maybe<News>
   getNewsList: PaginatedNews
+  getPage?: Maybe<Page>
   getStories: Array<Story>
-  getTimeline: Array<Timeline>
+  getTimeline: Array<TimelineEvent>
   helloWorld: HelloWorld
   root?: Maybe<Scalars['String']>
   searchResults: SearchResult
@@ -52,6 +54,10 @@ export type QueryGetNewsArgs = {
 
 export type QueryGetNewsListArgs = {
   input?: Maybe<GetNewsListInput>
+}
+
+export type QueryGetPageArgs = {
+  input: GetPageInput
 }
 
 export type QueryGetStoriesArgs = {
@@ -145,8 +151,8 @@ export type GetNewsListInput = {
   perPage?: Maybe<Scalars['Int']>
 }
 
-export type Timeline = {
-  __typename?: 'Timeline'
+export type TimelineEvent = {
+  __typename?: 'TimelineEvent'
   id: Scalars['ID']
   title: Scalars['String']
   date: Scalars['String']
@@ -154,8 +160,15 @@ export type Timeline = {
   denominator?: Maybe<Scalars['Int']>
   label: Scalars['String']
   body?: Maybe<Scalars['String']>
-  tags: Array<Maybe<Scalars['String']>>
+  tags: Array<Scalars['String']>
   link: Scalars['String']
+}
+
+export type TimelineSlice = {
+  __typename?: 'TimelineSlice'
+  id: Scalars['ID']
+  title: Scalars['String']
+  events: Array<TimelineEvent>
 }
 
 export type Story = {
@@ -163,13 +176,90 @@ export type Story = {
   label: Scalars['String']
   title: Scalars['String']
   logo: Image
+  readMoreText: Scalars['String']
   date: Scalars['String']
   intro: Scalars['String']
   body?: Maybe<Scalars['String']>
 }
 
+export type StorySlice = {
+  __typename?: 'StorySlice'
+  id: Scalars['ID']
+  readMoreText: Scalars['String']
+  stories: Array<Story>
+}
+
 export type GetStoriesInput = {
   lang: Scalars['String']
+}
+
+export type HeadingSlice = {
+  __typename?: 'HeadingSlice'
+  id: Scalars['ID']
+  title: Scalars['String']
+  body: Scalars['String']
+}
+
+export type LatestNewsSlice = {
+  __typename?: 'LatestNewsSlice'
+  id: Scalars['ID']
+  title: Scalars['String']
+  news: Array<News>
+}
+
+export type MailingListSignupSlice = {
+  __typename?: 'MailingListSignupSlice'
+  id: Scalars['ID']
+  title: Scalars['String']
+  description: Scalars['String']
+  inputLabel: Scalars['String']
+  buttonText: Scalars['String']
+}
+
+export type LinkCard = {
+  __typename?: 'LinkCard'
+  title: Scalars['String']
+  body: Scalars['String']
+  link: Scalars['String']
+  linkText: Scalars['String']
+}
+
+export type LinkCardSlice = {
+  __typename?: 'LinkCardSlice'
+  id: Scalars['ID']
+  title: Scalars['String']
+  cards: Array<LinkCard>
+}
+
+export type LogoListSlice = {
+  __typename?: 'LogoListSlice'
+  id: Scalars['ID']
+  title: Scalars['String']
+  body: Scalars['String']
+  images: Array<Image>
+}
+
+export type Slice =
+  | TimelineSlice
+  | HeadingSlice
+  | StorySlice
+  | LinkCardSlice
+  | LatestNewsSlice
+  | MailingListSignupSlice
+  | LogoListSlice
+
+export type GetPageInput = {
+  slug: Scalars['String']
+  lang: Scalars['String']
+}
+
+export type Page = {
+  __typename?: 'Page'
+  title: Scalars['String']
+  slug: Scalars['String']
+  seoDescription: Scalars['String']
+  numSlicesInHeader: Scalars['Int']
+  slices: Array<Slice>
 }
 
 export type Namespace = {
@@ -401,10 +491,30 @@ export type ResolversTypes = {
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
-  Timeline: ResolverTypeWrapper<Timeline>
+  TimelineEvent: ResolverTypeWrapper<TimelineEvent>
   ID: ResolverTypeWrapper<Scalars['ID']>
+  TimelineSlice: ResolverTypeWrapper<TimelineSlice>
   Story: ResolverTypeWrapper<Story>
+  StorySlice: ResolverTypeWrapper<StorySlice>
   GetStoriesInput: GetStoriesInput
+  HeadingSlice: ResolverTypeWrapper<HeadingSlice>
+  LatestNewsSlice: ResolverTypeWrapper<LatestNewsSlice>
+  MailingListSignupSlice: ResolverTypeWrapper<MailingListSignupSlice>
+  LinkCard: ResolverTypeWrapper<LinkCard>
+  LinkCardSlice: ResolverTypeWrapper<LinkCardSlice>
+  LogoListSlice: ResolverTypeWrapper<LogoListSlice>
+  Slice:
+    | ResolversTypes['TimelineSlice']
+    | ResolversTypes['HeadingSlice']
+    | ResolversTypes['StorySlice']
+    | ResolversTypes['LinkCardSlice']
+    | ResolversTypes['LatestNewsSlice']
+    | ResolversTypes['MailingListSignupSlice']
+    | ResolversTypes['LogoListSlice']
+  GetPageInput: GetPageInput
+  Page: ResolverTypeWrapper<
+    Omit<Page, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
+  >
   Namespace: ResolverTypeWrapper<Namespace>
   GetNamespaceInput: GetNamespaceInput
   ContentItem: ResolverTypeWrapper<ContentItem>
@@ -438,10 +548,28 @@ export type ResolversParentTypes = {
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
   Boolean: Scalars['Boolean']
-  Timeline: Timeline
+  TimelineEvent: TimelineEvent
   ID: Scalars['ID']
+  TimelineSlice: TimelineSlice
   Story: Story
+  StorySlice: StorySlice
   GetStoriesInput: GetStoriesInput
+  HeadingSlice: HeadingSlice
+  LatestNewsSlice: LatestNewsSlice
+  MailingListSignupSlice: MailingListSignupSlice
+  LinkCard: LinkCard
+  LinkCardSlice: LinkCardSlice
+  LogoListSlice: LogoListSlice
+  Slice:
+    | ResolversParentTypes['TimelineSlice']
+    | ResolversParentTypes['HeadingSlice']
+    | ResolversParentTypes['StorySlice']
+    | ResolversParentTypes['LinkCardSlice']
+    | ResolversParentTypes['LatestNewsSlice']
+    | ResolversParentTypes['MailingListSignupSlice']
+    | ResolversParentTypes['LogoListSlice']
+  GetPageInput: GetPageInput
+  Page: Omit<Page, 'slices'> & { slices: Array<ResolversParentTypes['Slice']> }
   Namespace: Namespace
   GetNamespaceInput: GetNamespaceInput
   ContentItem: ContentItem
@@ -499,6 +627,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetNewsListArgs, never>
   >
+  getPage?: Resolver<
+    Maybe<ResolversTypes['Page']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetPageArgs, 'input'>
+  >
   getStories?: Resolver<
     Array<ResolversTypes['Story']>,
     ParentType,
@@ -506,7 +640,7 @@ export type QueryResolvers<
     RequireFields<QueryGetStoriesArgs, never>
   >
   getTimeline?: Resolver<
-    Array<ResolversTypes['Timeline']>,
+    Array<ResolversTypes['TimelineEvent']>,
     ParentType,
     ContextType
   >
@@ -607,9 +741,9 @@ export type PaginatedNewsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export type TimelineResolvers<
+export type TimelineEventResolvers<
   ContextType = Context,
-  ParentType extends ResolversParentTypes['Timeline'] = ResolversParentTypes['Timeline']
+  ParentType extends ResolversParentTypes['TimelineEvent'] = ResolversParentTypes['TimelineEvent']
 > = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
@@ -618,12 +752,22 @@ export type TimelineResolvers<
   denominator?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  tags?: Resolver<
-    Array<Maybe<ResolversTypes['String']>>,
+  tags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>
+  link?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type TimelineSliceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['TimelineSlice'] = ResolversParentTypes['TimelineSlice']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  events?: Resolver<
+    Array<ResolversTypes['TimelineEvent']>,
     ParentType,
     ContextType
   >
-  link?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -634,9 +778,113 @@ export type StoryResolvers<
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   logo?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
+  readMoreText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type StorySliceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['StorySlice'] = ResolversParentTypes['StorySlice']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  readMoreText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  stories?: Resolver<Array<ResolversTypes['Story']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type HeadingSliceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['HeadingSlice'] = ResolversParentTypes['HeadingSlice']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type LatestNewsSliceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['LatestNewsSlice'] = ResolversParentTypes['LatestNewsSlice']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  news?: Resolver<Array<ResolversTypes['News']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type MailingListSignupSliceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['MailingListSignupSlice'] = ResolversParentTypes['MailingListSignupSlice']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  inputLabel?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  buttonText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type LinkCardResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['LinkCard'] = ResolversParentTypes['LinkCard']
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  link?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  linkText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type LinkCardSliceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['LinkCardSlice'] = ResolversParentTypes['LinkCardSlice']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  cards?: Resolver<Array<ResolversTypes['LinkCard']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type LogoListSliceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['LogoListSlice'] = ResolversParentTypes['LogoListSlice']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type SliceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Slice'] = ResolversParentTypes['Slice']
+> = {
+  __resolveType: TypeResolveFn<
+    | 'TimelineSlice'
+    | 'HeadingSlice'
+    | 'StorySlice'
+    | 'LinkCardSlice'
+    | 'LatestNewsSlice'
+    | 'MailingListSignupSlice'
+    | 'LogoListSlice',
+    ParentType,
+    ContextType
+  >
+}
+
+export type PageResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  seoDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  numSlicesInHeader?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  slices?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -747,8 +995,18 @@ export type Resolvers<ContextType = Context> = {
   Article?: ArticleResolvers<ContextType>
   News?: NewsResolvers<ContextType>
   PaginatedNews?: PaginatedNewsResolvers<ContextType>
-  Timeline?: TimelineResolvers<ContextType>
+  TimelineEvent?: TimelineEventResolvers<ContextType>
+  TimelineSlice?: TimelineSliceResolvers<ContextType>
   Story?: StoryResolvers<ContextType>
+  StorySlice?: StorySliceResolvers<ContextType>
+  HeadingSlice?: HeadingSliceResolvers<ContextType>
+  LatestNewsSlice?: LatestNewsSliceResolvers<ContextType>
+  MailingListSignupSlice?: MailingListSignupSliceResolvers<ContextType>
+  LinkCard?: LinkCardResolvers<ContextType>
+  LinkCardSlice?: LinkCardSliceResolvers<ContextType>
+  LogoListSlice?: LogoListSliceResolvers<ContextType>
+  Slice?: SliceResolvers
+  Page?: PageResolvers<ContextType>
   Namespace?: NamespaceResolvers<ContextType>
   ContentItem?: ContentItemResolvers<ContextType>
   SearchResult?: SearchResultResolvers<ContextType>

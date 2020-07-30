@@ -1,20 +1,16 @@
 import React, { FC } from 'react'
 import { Stack, Typography } from '@island.is/island-ui/core'
+import { HeadingSlice as HeadingSliceType } from '@island.is/api/schema'
 
-export interface SectionHeadingProps {
-  title: string
-  intro: string
-}
-
-const SectionHeading: FC<SectionHeadingProps> = ({ title, intro }) => (
+export const HeadingSlice: FC<HeadingSliceType> = ({ title, body }) => (
   <Stack space={3}>
     <Typography variant="h1" as="h2">
       {title}
     </Typography>
     <Typography variant="intro" as="p">
-      {intro}
+      {body}
     </Typography>
   </Stack>
 )
 
-export default SectionHeading
+export default HeadingSlice

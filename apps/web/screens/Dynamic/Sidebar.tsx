@@ -46,7 +46,7 @@ const Sidebar: FC<SidebarProps> = ({
 }) => {
   const [ref, rect] = useBoundingClientRect()
 
-  const isFixed = !!rect && rect.top < 0
+  const isFixed = rect && rect.top < 0
   const colors = ColorConfig[type]
 
   return (
@@ -85,6 +85,8 @@ const Sidebar: FC<SidebarProps> = ({
               ))}
             </Stack>
             <Divider weight={colors.divider} />
+
+            {/* TODO: where should those be defined? */}
             <Typography variant="p" as="p" color={colors.secondary}>
               Þjónusta
             </Typography>

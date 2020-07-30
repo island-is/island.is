@@ -65,7 +65,7 @@ export const typeDefs = gql`
     perPage: Int
   }
 
-  type Timeline {
+  type TimelineEvent {
     id: ID!
     title: String!
     date: String!
@@ -73,21 +73,96 @@ export const typeDefs = gql`
     denominator: Int
     label: String!
     body: String
-    tags: [String]!
+    tags: [String!]!
     link: String!
+  }
+
+  type TimelineSlice {
+    id: ID!
+    title: String!
+    events: [TimelineEvent!]!
   }
 
   type Story {
     label: String!
     title: String!
     logo: Image!
+    readMoreText: String!
     date: String!
     intro: String!
     body: String
   }
 
+  type StorySlice {
+    id: ID!
+    readMoreText: String!
+    stories: [Story!]!
+  }
+
   input GetStoriesInput {
     lang: String!
+  }
+
+  type HeadingSlice {
+    id: ID!
+    title: String!
+    body: String!
+  }
+
+  type LatestNewsSlice {
+    id: ID!
+    title: String!
+    news: [News!]!
+  }
+
+  type MailingListSignupSlice {
+    id: ID!
+    title: String!
+    description: String!
+    inputLabel: String!
+    buttonText: String!
+  }
+
+  type LinkCard {
+    title: String!
+    body: String!
+    link: String!
+    linkText: String!
+  }
+
+  type LinkCardSlice {
+    id: ID!
+    title: String!
+    cards: [LinkCard!]!
+  }
+
+  type LogoListSlice {
+    id: ID!
+    title: String!
+    body: String!
+    images: [Image!]!
+  }
+
+  union Slice =
+      TimelineSlice
+    | HeadingSlice
+    | StorySlice
+    | LinkCardSlice
+    | LatestNewsSlice
+    | MailingListSignupSlice
+    | LogoListSlice
+
+  input GetPageInput {
+    slug: String!
+    lang: String!
+  }
+
+  type Page {
+    title: String!
+    slug: String!
+    seoDescription: String!
+    numSlicesInHeader: Int!
+    slices: [Slice!]!
   }
 
   type Namespace {
@@ -105,8 +180,7 @@ export const typeDefs = gql`
     getNews(input: GetNewsInput!): News
     getNewsList(input: GetNewsListInput): PaginatedNews!
     getNamespace(input: GetNamespaceInput): Namespace
-    getTimeline: [Timeline!]!
-    getStories(input: GetStoriesInput): [Story!]!
+    getPage(input: GetPageInput!): Page
   }
 `
 

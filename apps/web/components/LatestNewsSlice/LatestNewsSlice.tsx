@@ -1,17 +1,15 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
-import { News } from '@island.is/api/schema'
 import { Typography, Box, Stack, Tiles } from '@island.is/island-ui/core'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import * as styles from './LatestNews.treat'
+import {
+  News,
+  LatestNewsSlice as ApiLatestNewsSlice,
+} from '@island.is/api/schema'
+import * as styles from './LatestNewsSlice.treat'
 
-export interface LatestNewsProps {
-  title: string
-  newsList: News[]
-}
-
-const LatestNews: FC<LatestNewsProps> = ({ title, newsList }) => {
-  const [first, ...rest] = newsList
+export const LatestNewsSlice: FC<ApiLatestNewsSlice> = ({ title, news }) => {
+  const [first, ...rest] = news
 
   return (
     <>
@@ -19,7 +17,7 @@ const LatestNews: FC<LatestNewsProps> = ({ title, newsList }) => {
         {Boolean(title) && (
           <Box paddingBottom={6}>
             <Typography variant="h1" as="h2">
-              Fréttir og tilkynningar
+              {title}
             </Typography>
           </Box>
         )}
@@ -29,7 +27,7 @@ const LatestNews: FC<LatestNewsProps> = ({ title, newsList }) => {
         <Box paddingTop={15}>
           <Tiles space={3} columns={[1, 1, 2]}>
             {rest.map((news, i) => (
-              <NewsItem key={i} news={news} index={i} />
+              <NewsItem key={i} news={news} />
             ))}
           </Tiles>
         </Box>
@@ -59,7 +57,7 @@ const BigNewsItem = ({ news }: { news: News }) => {
   )
 }
 
-const NewsItem = ({ news, index }: { news: News, index: number }) => (
+const NewsItem = ({ news }: { news: News }) => (
   <Box boxShadow="subtle" overflow="hidden" borderRadius="large">
     <img src={news.image.url} alt={news.image.title} />
     <Box paddingX={3} paddingY={4}>
@@ -74,4 +72,4 @@ const NewsItem = ({ news, index }: { news: News, index: number }) => (
   </Box>
 )
 
-export default LatestNews
+export default LatestNewsSlice

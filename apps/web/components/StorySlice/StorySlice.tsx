@@ -1,38 +1,26 @@
 import React, { FC } from 'react'
 import { Button, Typography, Stack } from '@island.is/island-ui/core'
-import BigLink from './BigLink'
-import IconBullet from './IconBullet'
-import { Hand } from './images'
-import * as styles from './ProjectStories.treat'
+import { StorySlice as ApiStorySlice, Story as ApiStory } from '@island.is/api/schema'
+import IconBullet from '@island.is/web/screens/About/IconBullet'
+import * as styles from './StorySlice.treat'
 
-export interface ProjectStoriesProps {
-  stories: StoryProps[]
-}
-
-const ProjectStories: FC<ProjectStoriesProps> = ({ stories }) => (
+export const StorySlice: FC<ApiStorySlice> = ({ readMoreText, stories }) => (
   <Stack space={8}>
     {stories.map((story, i) => (
       <Story key={i} {...story} />
     ))}
     {stories.length > 0 && (
       <div className={styles.margin}>
-        <Button variant="ghost">Sjá fleiri verkefnasögur</Button>
+        <Button variant="ghost">{readMoreText}</Button>
       </div>
     )}
   </Stack>
 )
 
-export interface StoryProps {
-  logo: string
-  label: string
-  title: string
-  intro: string
-}
-
-const Story: FC<StoryProps> = ({ logo, label, title, intro }) => (
+const Story: FC<ApiStory> = ({ logo, label, title, intro, readMoreText }) => (
   <div className={styles.margin}>
     <div className={styles.icon}>
-      <IconBullet variant="gradient" image={logo} />
+      <IconBullet variant="gradient" image={logo.url} />
     </div>
     <Stack space={2}>
       <Typography variant="eyebrow" color="white">
@@ -44,11 +32,11 @@ const Story: FC<StoryProps> = ({ logo, label, title, intro }) => (
       <Typography variant="p" color="white">
         {intro}
       </Typography>
-      <BigLink color="white" href="/">
-        Nánar um verkefnið
-      </BigLink>
+      <Button variant="text" size="medium">
+        {readMoreText}
+      </Button>
     </Stack>
   </div>
 )
 
-export default ProjectStories
+export default StorySlice

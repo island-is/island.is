@@ -2,19 +2,12 @@
 import React, { FC } from 'react'
 import Link from 'next/link'
 import {
-  Typography,
-  Box,
-  Stack,
-  Tiles,
-  Icon,
-} from '@island.is/island-ui/core'
+  LinkCard,
+  LinkCardSlice as LinkCardSliceType,
+} from '@island.is/api/schema'
+import { Typography, Box, Stack, Tiles, Icon } from '@island.is/island-ui/core'
 
-export interface CardsProps {
-  title: string
-  cards: CardProps[]
-}
-
-const Cards: FC<CardsProps> = ({ title, cards }) => (
+export const LinkCardSlice: FC<LinkCardSliceType> = ({ title, cards }) => (
   <>
     <Box paddingBottom={6}>
       <Typography variant="h2" as="h2">
@@ -29,14 +22,7 @@ const Cards: FC<CardsProps> = ({ title, cards }) => (
   </>
 )
 
-interface CardProps {
-  title: string
-  body: string
-  link: string
-  href: string
-}
-
-const Card: FC<CardProps> = ({ title, body, link, href }) => {
+const Card: FC<LinkCard> = ({ title, body, link, linkText }) => {
   return (
     <Box background="white" padding={5}>
       <Stack space={2}>
@@ -47,9 +33,9 @@ const Card: FC<CardProps> = ({ title, body, link, href }) => {
           {body}
         </Typography>
         <Typography variant="h4" as="span" color="blue400" links>
-          <Link href={href}>
+          <Link href={link}>
             <a>
-              {link} <Icon type="arrowRight" width="15" height="15" />
+              {linkText} <Icon type="arrowRight" width="15" height="15" />
             </a>
           </Link>
         </Typography>
@@ -58,4 +44,4 @@ const Card: FC<CardProps> = ({ title, body, link, href }) => {
   )
 }
 
-export default Cards
+export default LinkCardSlice

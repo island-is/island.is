@@ -6,12 +6,31 @@ import {
   News,
   Namespace,
   Pagination,
-  Timeline,
+  TimelineSlice,
+  TimelineEvent,
   Story,
+  StorySlice,
+  Slice,
+  Page,
+  MailingListSignupSlice,
+  HeadingSlice,
+  LinkCard,
+  LinkCardSlice,
+  LatestNewsSlice,
+  LogoListSlice,
+  GetNewsListInput,
+  GetPageInput,
+  PaginatedNews,
 } from '@island.is/api/schema'
 import { ApolloError } from 'apollo-server-express'
+import { Entry } from 'contentful'
+
+type CmsPage = Omit<Page, 'slices'> & {
+  slices: Entry<Slice>[]
+}
 
 const formatArticle = ({ sys, fields }): Article => ({
+  __typename: 'Article',
   id: sys.id,
   slug: fields.slug,
   title: fields.title,
@@ -21,6 +40,7 @@ const formatArticle = ({ sys, fields }): Article => ({
 })
 
 const formatImage = ({ fields }): Image => ({
+  __typename: 'Image',
   url: fields.file.url,
   title: fields.title,
   contentType: fields.file.contentType,
@@ -29,6 +49,7 @@ const formatImage = ({ fields }): Image => ({
 })
 
 const formatNewsItem = ({ fields, sys }): News => ({
+  __typename: 'News',
   id: sys.id,
   slug: fields.slug,
   title: fields.title,
@@ -38,7 +59,8 @@ const formatNewsItem = ({ fields, sys }): News => ({
   content: JSON.stringify(fields.content),
 })
 
-const formatTimeline = ({ fields, sys }): Timeline => ({
+const formatTimelineEvent = ({ fields, sys }): TimelineEvent => ({
+  __typename: 'TimelineEvent',
   id: sys.id,
   title: fields.title,
   date: fields.date,
@@ -50,13 +72,117 @@ const formatTimeline = ({ fields, sys }): Timeline => ({
   link: fields.link ?? '',
 })
 
+const formatTimelineSlice = ({ fields, sys }): TimelineSlice => ({
+  __typename: 'TimelineSlice',
+  id: sys.id,
+  title: fields.title,
+  events: fields.events.map(formatTimelineEvent),
+})
+
 const formatStory = ({ fields, sys }): Story => ({
+  __typename: 'Story',
   title: fields.title ?? '',
   label: fields.label ?? '',
   date: sys.createdAt,
+  readMoreText: fields.readMoreText,
   logo: formatImage(fields.logo),
   intro: fields.intro,
   body: fields.body && JSON.stringify(fields.body),
+})
+
+const formatStorySlice = ({ fields, sys }): StorySlice => ({
+  __typename: 'StorySlice',
+  id: sys.id,
+  readMoreText: fields.readMoreText ?? '',
+  stories: fields.stories.map(formatStory),
+})
+
+const formatMailingListSignup = ({ fields, sys }): MailingListSignupSlice => ({
+  __typename: 'MailingListSignupSlice',
+  id: sys.id,
+  title: fields.title ?? '',
+  description: fields.description ?? '',
+  inputLabel: fields.inputLabel ?? '',
+  buttonText: fields.buttonText ?? '',
+})
+
+const formatSectionHeading = ({ fields, sys }): HeadingSlice => ({
+  __typename: 'HeadingSlice',
+  id: sys.id,
+  title: fields.title ?? '',
+  body: fields.description ?? '',
+})
+
+const formatLinkCard = ({ fields }): LinkCard => ({
+  __typename: 'LinkCard',
+  title: fields.title ?? '',
+  body: fields.body ?? '',
+  link: fields.link ?? '',
+  linkText: fields.linkText ?? '',
+})
+
+const formatLinkCardSlice = ({ fields, sys }): LinkCardSlice => ({
+  __typename: 'LinkCardSlice',
+  id: sys.id,
+  title: fields.title ?? '',
+  cards: fields.cards.map(formatLinkCard),
+})
+
+const formatLatestNews = ({ fields, sys }, news: News[]): LatestNewsSlice => ({
+  __typename: 'LatestNewsSlice',
+  id: sys.id,
+  title: fields.title ?? '',
+  news: news,
+})
+
+const formatLogoListSlice = ({ fields, sys }): LogoListSlice => ({
+  __typename: 'LogoListSlice',
+  id: sys.id,
+  title: fields.title,
+  body: fields.body,
+  images: fields.images.map(formatImage),
+})
+
+const formatSlice = async (
+  slice: Entry<Slice>,
+  lang: string,
+): Promise<Slice> => {
+  const sliceName = slice.sys.contentType.sys.id
+  switch (sliceName) {
+    case 'timeline':
+      return formatTimelineSlice(slice)
+    case 'mailingListSignup':
+      return formatMailingListSignup(slice)
+    case 'sectionHeading':
+      return formatSectionHeading(slice)
+    case 'cardSection':
+      return formatLinkCardSlice(slice)
+    case 'storySection':
+      return formatStorySlice(slice)
+    case 'logoListSlice':
+      return formatLogoListSlice(slice)
+    case 'latestNewsSlice': {
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+      const { news } = await getNewsList({ lang, perPage: 3 })
+      return formatLatestNews(slice, news)
+    }
+    default:
+      throw new ApolloError(`Can not convert to slice: ${sliceName}`)
+  }
+}
+
+const formatPage = async (
+  { fields }: Entry<CmsPage>,
+  lang: string,
+): Promise<Page> => ({
+  __typename: 'Page',
+  numSlicesInHeader: fields.numSlicesInHeader,
+  slices: await Promise.all(
+    fields.slices.map((slice) => formatSlice(slice, lang)),
+  ),
+  title: fields.title,
+  slug: fields.slug,
+  seoDescription: fields.seoDescription ?? '',
 })
 
 const makePage = (
@@ -73,7 +199,7 @@ const makePage = (
 const errorHandler = (name: string) => {
   return (error: Error) => {
     logger.error(error)
-    throw new Error('Failed to resolve request in ' + name)
+    throw new ApolloError('Failed to resolve request in ' + name)
   }
 }
 
@@ -82,14 +208,10 @@ export const getArticle = async (
   lang: string,
 ): Promise<Article> => {
   const result = await getLocalizedEntries<Article>(lang, {
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    content_type: 'article',
+    ['content_type']: 'article',
     'fields.slug': slug,
     include: 10,
-  }).catch((error) => {
-    logger.error(error)
-    throw new ApolloError('Failed to resolve request in getArticle')
-  })
+  }).catch(errorHandler('getArticle'))
 
   // if we have no results
   if (!result.total) {
@@ -101,26 +223,22 @@ export const getArticle = async (
 
 export const getNews = async (lang: string, slug: string) => {
   const r = await getLocalizedEntries<News>(lang, {
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    content_type: 'news',
+    ['content_type']: 'news',
     include: 10,
     'fields.slug': slug,
-  }).catch((error) => {
-    logger.error(error)
-    throw new Error('Failed to resolve request in getArticle')
-  })
+  }).catch(errorHandler('getNews'))
 
   return r.items[0] && formatNewsItem(r.items[0])
 }
 
-export const getNewsList = async (
-  lang: string,
-  year: number,
-  month: number,
-  ascending: boolean,
+export const getNewsList = async ({
+  lang = 'is-IS',
+  year,
+  month,
+  ascending = false,
   page = 1,
   perPage = 10,
-) => {
+}: GetNewsListInput): Promise<PaginatedNews> => {
   const params = {
     ['content_type']: 'news',
     include: 10,
@@ -137,10 +255,9 @@ export const getNewsList = async (
         : new Date(year + 1, 0, 1)
   }
 
-  const r = await getLocalizedEntries<News>(lang, params).catch((error) => {
-    logger.error(error)
-    throw new Error('Failed to resolve request in getNewsList')
-  })
+  const r = await getLocalizedEntries<News>(lang, params).catch(
+    errorHandler('getNewsList'),
+  )
 
   return {
     page: makePage(page, perPage, r.total),
@@ -148,24 +265,18 @@ export const getNewsList = async (
   }
 }
 
-export const getTimeline = async () => {
-  const result = await getLocalizedEntries<Timeline>('is', {
-    ['content_type']: 'timeline',
-    include: 0,
-    order: 'fields.date',
-    limit: 1000,
-  }).catch(errorHandler('getTimeline'))
+export const getPage = async ({ lang, slug }: GetPageInput): Promise<Page> => {
+  const result = await getLocalizedEntries<CmsPage>(lang, {
+    ['content_type']: 'aboutPage',
+    'fields.slug': slug,
+    include: 10,
+  }).catch(errorHandler('getPage'))
 
-  return result.items.map(formatTimeline)
-}
+  if (!result.total) {
+    return null
+  }
 
-export const getStories = async (lang: string) => {
-  const result = await getLocalizedEntries<Story>(lang, {
-    ['content_type']: 'story',
-    include: 1,
-  }).catch(errorHandler('getStories'))
-
-  return result.items.map(formatStory)
+  return await formatPage(result.items[0], lang)
 }
 
 export const getNamespace = async (
@@ -173,13 +284,9 @@ export const getNamespace = async (
   lang: string,
 ): Promise<Namespace> => {
   const result = await getLocalizedEntries<Namespace>(lang, {
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    content_type: 'uiConfiguration',
+    ['content_type']: 'uiConfiguration',
     'fields.namespace': namespace,
-  }).catch((error) => {
-    logger.error(error)
-    throw new ApolloError('Failed to resolve request in getNamespace')
-  })
+  }).catch(errorHandler('getNamespace'))
 
   // if we have no results
   if (!result.total) {

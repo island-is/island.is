@@ -6,6 +6,7 @@ import {
   getNamespace,
   getTimeline,
   getStories,
+  getPage,
 } from './services'
 
 export const resolvers: Resolvers = {
@@ -17,24 +18,18 @@ export const resolvers: Resolvers = {
       return getNews(input.lang ?? 'is-IS', input.slug)
     },
     getNewsList(_, { input }) {
-      return getNewsList(
-        input?.lang ?? 'is-IS',
-        input?.year,
-        input?.month,
-        input?.ascending,
-        input?.page ?? 1,
-        input?.perPage ?? 10,
-      )
+      return getNewsList(input)
     },
     getNamespace(_, { input }) {
       return getNamespace(input?.namespace ?? '', input?.lang ?? 'is-IS')
     },
-    getTimeline() {
-      return getTimeline()
+    getPage(_, { input }) {
+      return getPage(input)
     },
-    getStories(_, { input }) {
-      return getStories(input?.lang ?? 'is-IS')
-    },
+  },
+
+  Slice: {
+    __resolveType: (obj) => obj.__typename
   },
 }
 
