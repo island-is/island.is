@@ -107,6 +107,9 @@ export class IndexingService {
     entry: Entry<any>,
   ) {
     function reduceContent(content) {
+      if (!content) {
+        return ''
+      }
       let response = ''
       content.forEach((doc) => {
         if (doc.content && doc.content.length) {
