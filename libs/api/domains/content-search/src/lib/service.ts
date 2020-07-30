@@ -23,8 +23,9 @@ export class SearcherService implements Service {
     obj.contentBlob = obj.content_blob
     obj.contentId = obj.content_id
     obj.categorySlug = obj.category_slug
-    obj.groupSlug = obj.group_slug
     obj.categoryDescription = obj.category_description
+    obj.groupSlug = obj.group_slug
+    obj.groupDescription = obj.group_description
     obj.id = doc._id
     return obj
   }

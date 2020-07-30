@@ -10,6 +10,7 @@ export interface Document {
   category_description: string
   group: string
   group_slug: string
+  group_description: string
   lang: string
   url: string
   slug: string

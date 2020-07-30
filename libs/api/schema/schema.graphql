@@ -99,6 +99,7 @@ type ContentItem {
   categoryDescription: String
   group: String
   groupSlug: String
+  groupDescription: String
   contentBlob: String
   contentId: String
   contentType: String
