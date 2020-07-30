@@ -161,6 +161,7 @@ export type ContentItem = {
   categoryDescription?: Maybe<Scalars['String']>
   group?: Maybe<Scalars['String']>
   groupSlug?: Maybe<Scalars['String']>
+  groupDescription?: Maybe<Scalars['String']>
   contentBlob?: Maybe<Scalars['String']>
   contentId?: Maybe<Scalars['String']>
   contentType?: Maybe<Scalars['String']>

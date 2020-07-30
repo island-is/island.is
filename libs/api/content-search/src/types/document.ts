@@ -7,8 +7,10 @@ export interface Document {
   date_updated: Date | null
   category: string
   category_slug: string
+  category_description: string
   group: string
   group_slug: string
+  group_description: string
   lang: string
   url: string
   slug: string
@@ -20,9 +22,4 @@ export interface Document {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   content_blob: any
   nextSyncToken?: string
-  _category: {
-    slug: string | null
-    title: string | null
-    description: string | null
-  }
 }
