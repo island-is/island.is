@@ -1,12 +1,13 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
+import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/service-portal/constants'
 
 const width = 336
 const breakpoint = 914 + width
 
 export const wrapper = style({
   position: 'fixed',
-  top: 80,
+  top: SERVICE_PORTAL_HEADER_HEIGHT_LG,
   right: 0,
   zIndex: 2,
   width: width,
