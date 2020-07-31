@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
-import useUserInfo from '../../hooks/useUserInfo/useUserInfo'
-import * as styles from './userInfoLoadingOverlay.treat'
+import useUserInfo from '../../../hooks/useUserInfo/useUserInfo'
+import * as styles from './UserInfoLoadingOverlay.treat'
 import { Typography } from '@island.is/island-ui/core'
 
 const UserInfoLoadingOverlay: FC<{}> = () => {

@@ -4,7 +4,7 @@ import Sidebar from '../sidebar/sidebar'
 import { Box, Columns, Column } from '@island.is/island-ui/core'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import * as styles from './Layout.treat'
-import UserInfoLoadingOverlay from '../Loaders/userInfoLoadingOverlay'
+import UserInfoLoadingOverlay from '../Loaders/UserInfoLoadingOverlay/UserInfoLoadingOverlay'
 import NotificationSidebar from '../Notifications/NotificationSidebar/NotificationSidebar'
 
 const Layout: FC = ({ children }) => {

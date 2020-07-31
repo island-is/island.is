@@ -3,6 +3,7 @@ import { Box, Typography, SkeletonLoader } from '@island.is/island-ui/core'
 import { useStore } from '../../store/stateProvider'
 import { ServicePortalModule } from '@island.is/service-portal/core'
 import { JwtToken } from '../../mirage-server/models/jwt-model'
+import ModuleLoader from '../Loaders/ModuleLoader/ModuleLoader'
 
 const WidgetLoader: FC<{
   module: ServicePortalModule
@@ -11,7 +12,6 @@ const WidgetLoader: FC<{
   const Widgets = module.widgets(userInfo)
 
   if (Widgets)
-    // TODO: Better loader
     return (
       <Box marginBottom={8}>
         <Box marginBottom={2}>
@@ -19,13 +19,12 @@ const WidgetLoader: FC<{
             {module.name}
           </Typography>
         </Box>
-        <Suspense fallback={<SkeletonLoader />}>
+        <Suspense fallback={<ModuleLoader />}>
           <Widgets userInfo={userInfo} />
         </Suspense>
       </Box>
     )
 
-  // TODO: Fallback
   return null
 })
 

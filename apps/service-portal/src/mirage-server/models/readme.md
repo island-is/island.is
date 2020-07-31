@@ -30,12 +30,12 @@ From a default standpoint, at least three things must be considered when initiat
 
 Given the following scenario:
 
-_User Mary Does logs into her account and sets the subject to Bananas Inc. She delegates access to viewing finance reports to John Doe_
+_User Mary Doe logs into her account and sets the subject to Bananas Inc. She delegates access to viewing finance reports to John Doe_
 
 A model for John Doe must be present in the database if we are going to be able to delegate access to him.
 Should we create one on the go or should a model for him already exist in the database? If a model should already
-exist for, are we going to import the entire population of Iceland (364k) into the database? Given that a new subject
-model must be created for single user-subject relation, the amount of subjects could go up very fast.
+exist for John, are we going to import the entire population of Iceland (364k) into the database? Given that a new subject
+model must be created for a single user-subject relation, the amount of subjects could go up very fast.
 `Icelanders * a user to himself as a subject + parents * their children + procurers * their companies = ~ 1 million subjects on the initial import?`
 
 Given the following scenario:
