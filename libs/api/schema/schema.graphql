@@ -6,8 +6,6 @@ type Query {
   getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput): PaginatedNews!
   getPage(input: GetPageInput!): Page
-  getStories(input: GetStoriesInput): [Story!]!
-  getTimeline: [TimelineEvent!]!
   helloWorld(input: HelloWorldInput): HelloWorld!
   root: String
   searchResults(query: SearcherInput): SearchResult!
@@ -114,10 +112,6 @@ type StorySlice {
   id: ID!
   readMoreText: String!
   stories: [Story!]!
-}
-
-input GetStoriesInput {
-  lang: String!
 }
 
 type HeadingSlice {

@@ -24,8 +24,6 @@ export type Query = {
   getNews?: Maybe<News>
   getNewsList: PaginatedNews
   getPage?: Maybe<Page>
-  getStories: Array<Story>
-  getTimeline: Array<TimelineEvent>
   helloWorld: HelloWorld
   root?: Maybe<Scalars['String']>
   searchResults: SearchResult
@@ -58,10 +56,6 @@ export type QueryGetNewsListArgs = {
 
 export type QueryGetPageArgs = {
   input: GetPageInput
-}
-
-export type QueryGetStoriesArgs = {
-  input?: Maybe<GetStoriesInput>
 }
 
 export type QueryHelloWorldArgs = {
@@ -187,10 +181,6 @@ export type StorySlice = {
   id: Scalars['ID']
   readMoreText: Scalars['String']
   stories: Array<Story>
-}
-
-export type GetStoriesInput = {
-  lang: Scalars['String']
 }
 
 export type HeadingSlice = {
@@ -496,7 +486,6 @@ export type ResolversTypes = {
   TimelineSlice: ResolverTypeWrapper<TimelineSlice>
   Story: ResolverTypeWrapper<Story>
   StorySlice: ResolverTypeWrapper<StorySlice>
-  GetStoriesInput: GetStoriesInput
   HeadingSlice: ResolverTypeWrapper<HeadingSlice>
   LatestNewsSlice: ResolverTypeWrapper<LatestNewsSlice>
   MailingListSignupSlice: ResolverTypeWrapper<MailingListSignupSlice>
@@ -553,7 +542,6 @@ export type ResolversParentTypes = {
   TimelineSlice: TimelineSlice
   Story: Story
   StorySlice: StorySlice
-  GetStoriesInput: GetStoriesInput
   HeadingSlice: HeadingSlice
   LatestNewsSlice: LatestNewsSlice
   MailingListSignupSlice: MailingListSignupSlice
@@ -632,17 +620,6 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetPageArgs, 'input'>
-  >
-  getStories?: Resolver<
-    Array<ResolversTypes['Story']>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryGetStoriesArgs, never>
-  >
-  getTimeline?: Resolver<
-    Array<ResolversTypes['TimelineEvent']>,
-    ParentType,
-    ContextType
   >
   helloWorld?: Resolver<
     ResolversTypes['HelloWorld'],
@@ -922,6 +899,11 @@ export type ContentItemResolvers<
   >
   group?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   groupSlug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  groupDescription?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   contentBlob?: Resolver<
     Maybe<ResolversTypes['String']>,
     ParentType,

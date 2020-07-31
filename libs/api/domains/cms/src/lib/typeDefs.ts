@@ -99,10 +99,6 @@ export const typeDefs = gql`
     stories: [Story!]!
   }
 
-  input GetStoriesInput {
-    lang: String!
-  }
-
   type HeadingSlice {
     id: ID!
     title: String!
