@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import {theme} from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/theme'
 
 export const margin = style({
   position: 'relative',
@@ -8,8 +8,8 @@ export const margin = style({
   '@media': {
     [`screen and min-width(${theme.breakpoints.sm}px)`]: {
       paddingLeft: '90px',
-    }
-  }
+    },
+  },
 })
 
 export const icon = style({

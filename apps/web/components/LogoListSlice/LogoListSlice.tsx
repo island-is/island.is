@@ -3,7 +3,11 @@ import { Typography, Box } from '@island.is/island-ui/core'
 import { LogoListSlice as ApiLogoListSlice } from '@island.is/api/schema'
 import * as styles from './LogoListSlice.treat'
 
-export const LogoListSlice: FC<ApiLogoListSlice> = ({ title, body, images }) => (
+export const LogoListSlice: FC<ApiLogoListSlice> = ({
+  title,
+  body,
+  images,
+}) => (
   <div>
     <Typography variant="h1" as="h2" color="white">
       {title}

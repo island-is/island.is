@@ -27,7 +27,7 @@ export const resolvers: Resolvers = {
   },
 
   Slice: {
-    __resolveType: (obj) => obj.__typename
+    __resolveType: (obj) => obj.__typename,
   },
 }
 
