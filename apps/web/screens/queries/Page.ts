@@ -9,6 +9,7 @@ export const GET_PAGE_QUERY = gql`
       numSlicesInHeader
       slices {
         ... on TimelineSlice {
+          __typename
           id
           title
           events {
@@ -24,6 +25,7 @@ export const GET_PAGE_QUERY = gql`
           }
         }
         ... on MailingListSignupSlice {
+          __typename
           id
           title
           description
@@ -31,6 +33,7 @@ export const GET_PAGE_QUERY = gql`
           buttonText
         }
         ... on StorySlice {
+          __typename
           id
           readMoreText
           stories {
@@ -47,6 +50,7 @@ export const GET_PAGE_QUERY = gql`
           }
         }
         ... on LatestNewsSlice {
+          __typename
           id
           title
           news {
@@ -64,6 +68,7 @@ export const GET_PAGE_QUERY = gql`
           }
         }
         ... on LinkCardSlice {
+          __typename
           id
           title
           cards {
@@ -74,11 +79,13 @@ export const GET_PAGE_QUERY = gql`
           }
         }
         ... on HeadingSlice {
+          __typename
           id
           title
           body
         }
         ... on LogoListSlice {
+          __typename
           id
           title
           body

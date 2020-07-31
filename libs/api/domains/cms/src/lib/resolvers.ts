@@ -4,8 +4,6 @@ import {
   getNews,
   getNewsList,
   getNamespace,
-  getTimeline,
-  getStories,
   getPage,
 } from './services'
 

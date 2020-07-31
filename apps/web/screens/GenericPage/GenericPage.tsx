@@ -27,9 +27,10 @@ import {
   BoxProps,
   Breadcrumbs,
 } from '@island.is/island-ui/core'
-import Sidebar from './Sidebar'
-import * as styles from './Dynamic.treat'
+import Sidebar, { SidebarProps } from './Sidebar'
+import * as styles from './GenericPage.treat'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
+import Head from 'next/head'
 
 export interface LayoutProps {
   width: ColumnProps['width']
@@ -62,7 +63,7 @@ const renderSlice = (
   switch (slice.__typename) {
     case 'TimelineSlice':
       return (
-        <ContentBlock>
+        <ContentBlock key={slice.id}>
           <Box paddingX={[0, 0, 0, 6]}>
             <TimelineSlice {...slice} />
           </Box>
@@ -70,7 +71,7 @@ const renderSlice = (
       )
     case 'HeadingSlice':
       return (
-        <div ref={ref(slice.id)}>
+        <div key={slice.id} ref={ref(slice.id)}>
           <Layout
             indent="1/12"
             width="7/12"
@@ -82,7 +83,7 @@ const renderSlice = (
       )
     case 'LinkCardSlice':
       return (
-        <Box ref={ref(slice.id)} background="dotted">
+        <Box key={slice.id} ref={ref(slice.id)} background="dotted">
           <Layout width="8/12" boxProps={{ paddingTop: 8, paddingBottom: 10 }}>
             <LinkCardSlice {...slice} />
           </Layout>
@@ -90,7 +91,7 @@ const renderSlice = (
       )
     case 'MailingListSignupSlice':
       return (
-        <Box ref={ref(slice.id)} background="blue100">
+        <Box key={slice.id} ref={ref(slice.id)} background="blue100">
           <Layout
             width="7/12"
             indent="1/12"
@@ -102,7 +103,7 @@ const renderSlice = (
       )
     case 'StorySlice':
       return (
-        <div ref={ref(slice.id)} className={styles.gradient}>
+        <div key={slice.id} ref={ref(slice.id)} className={styles.gradient}>
           <Layout width="7/12" boxProps={{ paddingY: 10 }}>
             <StorySlice {...slice} />
           </Layout>
@@ -110,7 +111,7 @@ const renderSlice = (
       )
     case 'LatestNewsSlice':
       return (
-        <div ref={ref(slice.id)}>
+        <div key={slice.id} ref={ref(slice.id)}>
           <Layout width="8/12" boxProps={{ paddingTop: 15, paddingBottom: 12 }}>
             <LatestNewsSlice {...slice} />
           </Layout>
@@ -118,7 +119,7 @@ const renderSlice = (
       )
     case 'LogoListSlice':
       return (
-        <div ref={ref(slice.id)} className={styles.gradient}>
+        <div key={slice.id} ref={ref(slice.id)} className={styles.gradient}>
           <Layout width="7/12" boxProps={{ paddingY: 10 }}>
             <LogoListSlice {...slice} />
           </Layout>
@@ -141,11 +142,21 @@ const extractSliceTitle = (slice: Slice): [string, string] | null => {
   }
 }
 
-export interface DynamicProps {
+const decideSidebarType = (slice?: Slice): SidebarProps['type'] => {
+  switch (slice && slice.__typename) {
+    case 'MailingListSignupSlice':
+    case 'LogoListSlice':
+      return 'gradient'
+    default:
+      return 'standard'
+  }
+}
+
+export interface GenericPageProps {
   page?: Page
 }
 
-const Dynamic: Screen<DynamicProps> = ({ page }) => {
+const GenericPage: Screen<GenericPageProps> = ({ page }) => {
   const refs: Ref<{ [k: string]: HTMLDivElement }> = useRef({})
   const [spy, currentId] = useScrollSpy({ margin: 200 })
   const { activeLocale } = useI18n()
@@ -153,6 +164,8 @@ const Dynamic: Screen<DynamicProps> = ({ page }) => {
   const sections = page.slices.map(extractSliceTitle).filter(Boolean)
   const slicesInHeader = page.slices.slice(0, page.numSlicesInHeader)
   const slices = page.slices.slice(page.numSlicesInHeader)
+  const currentSlice = page.slices.find((s) => !currentId || s.id === currentId)
+  const sidebarType = decideSidebarType(currentSlice)
 
   const setRef = (id: string) => {
     return (e: HTMLDivElement) => {
@@ -163,12 +176,15 @@ const Dynamic: Screen<DynamicProps> = ({ page }) => {
 
   return (
     <>
+      <Head>
+        <title>{page.title}</title>
+      </Head>
       <div className={styles.gradient}>
         <Header />
         <ContentBlock>
-          <Box position="relative" marginX={[0, 0, 0, 6]}>
+          <Box position="relative" marginTop={6} marginX={[0, 0, 0, 6]}>
             <Sidebar
-              type="standard"
+              type={sidebarType}
               title={page.title}
               sections={sections}
               currentSection={currentId}
@@ -192,7 +208,7 @@ const Dynamic: Screen<DynamicProps> = ({ page }) => {
   )
 }
 
-Dynamic.getInitialProps = async ({ apolloClient, locale, query }) => {
+GenericPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   const {
     data: { getPage: page },
   } = await apolloClient.query<Query, QueryGetPageArgs>({
@@ -214,4 +230,4 @@ Dynamic.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withApollo(Dynamic)
+export default withApollo(GenericPage)

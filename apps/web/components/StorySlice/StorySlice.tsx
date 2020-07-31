@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { Button, Typography, Stack } from '@island.is/island-ui/core'
 import { StorySlice as ApiStorySlice, Story as ApiStory } from '@island.is/api/schema'
-import IconBullet from '@island.is/web/screens/About/IconBullet'
+import IconBullet from '../IconBullet/IconBullet'
 import * as styles from './StorySlice.treat'
 
 export const StorySlice: FC<ApiStorySlice> = ({ readMoreText, stories }) => (

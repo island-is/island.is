@@ -1,4 +1,4 @@
 import { withLocale } from '../../i18n'
-import dynamicScreen from '../../screens/Dynamic/Dynamic'
+import genericScreen from '../../screens/GenericPage/GenericPage'
 
-export default withLocale('is')(dynamicScreen)
+export default withLocale('is')(genericScreen)

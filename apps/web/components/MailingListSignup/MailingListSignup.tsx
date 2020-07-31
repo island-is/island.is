@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import Background from '../Background/Background'
 import {
   Columns,
   Column,
