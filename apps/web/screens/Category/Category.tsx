@@ -101,7 +101,7 @@ const Category: Screen<CategoryProps> = ({
           <Sidebar
             bullet="right"
             items={sidebarCategoryLinks}
-            title={n('submenuTitle')}
+            title={n('sidebarHeader')}
           />
         }
         belowContent={
@@ -226,7 +226,7 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Articles',
+            namespace: 'Categories',
             lang: locale,
           },
         },
