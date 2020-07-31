@@ -8,11 +8,3 @@ export const indent = style({
     },
   },
 })
-
-export const first = style({
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.sm}px)`]: {
-      display: 'none',
-    }
-  }
-})

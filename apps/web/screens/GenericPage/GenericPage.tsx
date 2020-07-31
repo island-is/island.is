@@ -47,7 +47,7 @@ const Layout: FC<LayoutProps> = ({
   return (
     <ContentBlock>
       <Box paddingX={[0, 0, 0, 6]} {...boxProps}>
-        <Columns>
+        <Columns collapseBelow="lg">
           {indent && <Column width={indent}>{null}</Column>}
           <Column width={width}>{children}</Column>
         </Columns>
@@ -191,7 +191,7 @@ const GenericPage: Screen<GenericPageProps> = ({ page }) => {
             />
           </Box>
         </ContentBlock>
-        <Layout width="content">
+        <Layout width="content" indent="1/12">
           <Breadcrumbs color="blue300" separatorColor="blue300">
             <Link href={makePath()}>
               <a>Ísland.is</a>

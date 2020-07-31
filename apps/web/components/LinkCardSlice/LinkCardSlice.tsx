@@ -5,7 +5,13 @@ import {
   LinkCard,
   LinkCardSlice as LinkCardSliceType,
 } from '@island.is/api/schema'
-import { Typography, Box, Stack, Tiles, Icon } from '@island.is/island-ui/core'
+import {
+  Button,
+  Typography,
+  Box,
+  Stack,
+  Tiles,
+} from '@island.is/island-ui/core'
 
 export const LinkCardSlice: FC<LinkCardSliceType> = ({ title, cards }) => (
   <>
@@ -32,13 +38,11 @@ const Card: FC<LinkCard> = ({ title, body, link, linkText }) => {
         <Typography variant="p" as="p">
           {body}
         </Typography>
-        <Typography variant="h4" as="span" color="blue400" links>
-          <Link href={link}>
-            <a>
-              {linkText} <Icon type="arrowRight" width="15" height="15" />
-            </a>
-          </Link>
-        </Typography>
+        <Link href={link}>
+          <Button variant="text" size="large" href={link} icon="arrowRight">
+            {linkText}
+          </Button>
+        </Link>
       </Stack>
     </Box>
   )

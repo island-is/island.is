@@ -15,7 +15,7 @@ export const TimelineSlice: FC<ApiTimelineSlice> = ({ title, events }) => {
 
   return (
     <div>
-      <Box marginLeft={12} paddingY={5}>
+      <Box marginLeft={15} paddingY={5}>
         <Typography variant="p" as="p" color="white">
           {title}
         </Typography>
