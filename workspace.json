@@ -1436,6 +1436,37 @@
           }
         }
       }
+    },
+    "service-portal-education": {
+      "root": "libs/service-portal/education",
+      "sourceRoot": "libs/service-portal/education/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/education/.eslintrc",
+            "tsConfig": [
+              "libs/service-portal/education/tsconfig.lib.json",
+              "libs/service-portal/education/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/education/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/education/jest.config.js",
+            "tsConfig": "libs/service-portal/education/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

@@ -1,5 +1,5 @@
 import React, { FC, Suspense } from 'react'
-import { Box, Typography, SkeletonLoader } from '@island.is/island-ui/core'
+import { Box, Typography } from '@island.is/island-ui/core'
 import { useStore } from '../../store/stateProvider'
 import { ServicePortalModule } from '@island.is/service-portal/core'
 import { JwtToken } from '../../mirage-server/models/jwt-model'

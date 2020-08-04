@@ -71,6 +71,9 @@
       ],
       "@island.is/service-portal/health": [
         "libs/service-portal/health/src/index.ts"
+      ],
+      "@island.is/service-portal/education": [
+        "libs/service-portal/education/src/index.ts"
       ]
     }
   },
