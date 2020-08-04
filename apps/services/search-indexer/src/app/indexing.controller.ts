@@ -14,6 +14,11 @@ export class IndexingController {
     }
   }
 
+  @Get('ping')
+  async ping() {
+    return this.indexingService.ping()
+  }
+
   @Get('sync')
   async sync() {
     const syncToken = await this.indexingService.getLastSyncToken(
@@ -38,6 +43,17 @@ export class IndexingController {
     logger.debug('Sync one', { id: id })
     // noinspection ES6MissingAwait
     this.indexingService.syncById(SearchIndexes.is, id)
+    return {
+      acknowledge: true,
+    }
+  }
+
+  @Get('re-sync')
+  async resync() {
+    logger.debug('IndexReSync')
+
+    // noinspection ES6MissingAwait
+    this.indexingService.initialSync(SearchIndexes.is)
     return {
       acknowledge: true,
     }

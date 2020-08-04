@@ -7,6 +7,7 @@ import {
   Namespace,
   Pagination,
 } from '@island.is/api/schema'
+import { ApolloError } from 'apollo-server-express'
 
 const formatArticle = ({ sys, fields }): Article => {
   return {
@@ -22,7 +23,6 @@ const formatArticle = ({ sys, fields }): Article => {
 const formatImage = ({ fields }): Image => ({
   url: fields.file.url,
   title: fields.title,
-  filename: fields.file.fileName,
   contentType: fields.file.contentType,
   width: fields.file.details.image.width,
   height: fields.file.details.image.height,
@@ -60,11 +60,12 @@ export const getArticle = async (
     include: 10,
   }).catch((error) => {
     logger.error(error)
-    throw new Error('Failed to resolve request in getArticle')
+    throw new ApolloError('Failed to resolve request in getArticle')
   })
 
+  // if we have no results
   if (!result.total) {
-    throw new Error(`Article ${slug} not found`)
+    return null
   }
 
   return formatArticle(result.items[0])
@@ -130,11 +131,12 @@ export const getNamespace = async (
     'fields.namespace': namespace,
   }).catch((error) => {
     logger.error(error)
-    throw new Error('Failed to resolve request in getNamespace')
+    throw new ApolloError('Failed to resolve request in getNamespace')
   })
 
+  // if we have no results
   if (!result.total) {
-    throw new Error(`${namespace} not found in namespaces`)
+    return null
   }
 
   const [

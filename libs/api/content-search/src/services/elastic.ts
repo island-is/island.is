@@ -1,38 +1,56 @@
-import { environment } from '../environments/environment'
 import { Client } from '@elastic/elasticsearch'
 import { Document, SearchIndexes } from '../types'
 import esb, { RequestBodySearch, TermsAggregation } from 'elastic-builder'
 import { logger } from '@island.is/logging'
+import merge from 'lodash/merge'
+import { environment } from '../environments/environment'
+import * as AWS from 'aws-sdk'
+import * as AwsConnector from 'aws-elasticsearch-connector'
+import { Injectable } from '@nestjs/common'
 
 const { elastic } = environment
 
+@Injectable()
 export class ElasticService {
   private client: Client
+  constructor() {
+    logger.debug('Created ES Service')
+  }
 
   async index(index: SearchIndexes, document: Document) {
     const _id = document._id
 
     try {
       delete document._id
-      return await this.getClient().index({
+      const client = await this.getClient()
+      return await client.index({
         id: _id,
         index: index,
         body: document,
       })
     } catch (e) {
-      logger.error('Error indexing ES document', {
-        id: _id,
-        index: index,
-        error: e,
-      })
+      ElasticService.handleError(
+        'Error indexing ES document',
+        { id: _id, index: index },
+        e,
+      )
     }
   }
 
   async findByQuery(index: SearchIndexes, query) {
-    return this.getClient().search({
-      index: index,
-      body: query,
-    })
+    try {
+      const client = await this.getClient()
+      return client.search({
+        index: index,
+        body: query,
+      })
+    } catch (e) {
+      ElasticService.handleError(
+        'Error in ElasticService.findByQuery',
+        { query: query, index: index },
+        e,
+      )
+    }
   }
 
   async query(index: SearchIndexes, query) {
@@ -43,7 +61,7 @@ export class ElasticService {
       requestBody.query(
         esb
           .queryStringQuery(query.queryString)
-          .fields(['title^10', 'content^2', 'tag']),
+          .fields(['title.stemmed^10', 'content.stemmed^2', 'tag.stemmed']),
       )
     }
 
@@ -102,14 +120,60 @@ export class ElasticService {
     return this.findByQuery(index, requestBody)
   }
 
-  private getClient(): Client {
+  async ping() {
+    const client = await this.getClient()
+    return client.ping().catch((e) => {
+      ElasticService.handleError('Error in ping', {}, e)
+    })
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static handleError(message: string, context: any, error: any) {
+    ElasticService.logError(message, context, error)
+    throw new Error(message)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static logError(message: string, context: any, error: any) {
+    const errorCtx = {
+      error: {
+        message: error.message,
+        reason: error.error?.meta?.body?.error?.reason,
+        status: error.error?.meta?.body?.status,
+        statusCode: error.error?.meta?.statusCode,
+      },
+    }
+
+    logger.error(message, merge(context, errorCtx))
+  }
+
+  async getClient(): Promise<Client> {
     if (this.client) {
       return this.client
     }
-    //todo handle pool?
-    logger.info('Create ES Client', elastic)
-    const client = new Client(elastic)
-    this.client = client
-    return client
+    this.client = await this.createEsClient()
+    return this.client
+  }
+
+  async createEsClient(): Promise<Client> {
+    const hasAWS =
+      'AWS_WEB_IDENTITY_TOKEN_FILE' in process.env ||
+      'AWS_SECRET_ACCESS_KEY' in process.env
+
+    logger.info('Create AWS ES Client', {
+      esConfig: elastic,
+      withAWS: hasAWS,
+    })
+
+    if (!hasAWS) {
+      return new Client({
+        node: elastic.node,
+      })
+    }
+
+    return new Client({
+      ...AwsConnector(AWS.config),
+      node: elastic.node,
+    })
   }
 }

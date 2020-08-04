@@ -13,6 +13,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { Locale } from '@island.is/web/i18n/I18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import Image from '../components/Image/Image'
 import {
   Box,
   Typography,
@@ -191,10 +192,7 @@ const NewsListItem = ({ newsItem }) => {
           <Column width="2/5">
             <Link href={makePath('news', newsItem.slug)}>
               <a>
-                <img
-                  src={newsItem.image.url + '?w=524'}
-                  alt={newsItem.image.title}
-                />
+                <Image type="apiImage" image={newsItem.image} maxWidth={524} />
               </a>
             </Link>
           </Column>

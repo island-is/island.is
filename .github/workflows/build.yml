@@ -48,7 +48,9 @@ jobs:
       DOCKER_LATEST_TAG: ${{ steps.docker_tags.outputs.DOCKER_LATEST_TAG }}
       DOCKER_BRANCH_TAG: ${{ steps.docker_tags.outputs.DOCKER_BRANCH_TAG }}
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Git refs
         id: git_refs

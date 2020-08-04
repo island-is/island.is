@@ -23,11 +23,10 @@ type Taxonomy {
 
 type Image {
   url: String!
-  title: String
-  filename: String
-  contentType: String
-  width: Int
-  height: Int
+  title: String!
+  contentType: String!
+  width: Int!
+  height: Int!
 }
 
 type Pagination {
@@ -100,6 +99,7 @@ type ContentItem {
   categoryDescription: String
   group: String
   groupSlug: String
+  groupDescription: String
   contentBlob: String
   contentId: String
   contentType: String

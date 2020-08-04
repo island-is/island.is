@@ -2,7 +2,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
-import DefaultErrorPage from 'next/error'
 import slugify from '@sindresorhus/slugify'
 import {
   ContentBlock,
@@ -20,9 +19,9 @@ import {
 import { Sidebar, getHeadingLinkElements } from '@island.is/web/components'
 import {
   Query,
-  QueryGetArticleArgs,
   QueryGetNamespaceArgs,
   ContentLanguage,
+  QuerySingleItemArgs,
 } from '@island.is/api/schema'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
@@ -33,9 +32,10 @@ import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
 import { Locale } from '../i18n/I18n'
 import useRouteNames from '../i18n/useRouteNames'
+import { CustomNextError } from '../units/ErrorBoundary'
 
 interface ArticleProps {
-  article: Query['getArticle']
+  article: Query['singleItem']
   namespace: Query['getNamespace']
 }
 
@@ -58,12 +58,8 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
     )
   }, [])
 
-  if (!article) {
-    return <DefaultErrorPage statusCode={404} />
-  }
-
-  const { slug: categorySlug, title: categoryTitle } = article.category
-  const groupTitle = article.group?.title
+  const { categorySlug, category: categoryTitle } = article
+  const groupTitle = article.group
 
   const onChangeContentOverview = ({ value }: Option) => {
     const slug = value as string
@@ -83,7 +79,9 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
         <title>{article.title} | Ísland.is</title>
       </Head>
       <ArticleLayout
-        sidebar={<Sidebar title="Efnisyfirlit" bullet="left" headingLinks />}
+        sidebar={
+          <Sidebar title={n('sidebarHeader')} bullet="left" headingLinks />
+        }
       >
         <ContentContainer
           padding="none"
@@ -137,22 +135,26 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
 
 Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
-
-  const [
-    {
-      data: { getArticle: article },
-    },
-    namespace,
-  ] = await Promise.all([
-    apolloClient.query<Query, QueryGetArticleArgs>({
-      query: GET_ARTICLE_QUERY,
-      variables: {
-        input: {
-          slug,
-          lang: locale as ContentLanguage,
+  const [article, namespace] = await Promise.all([
+    apolloClient
+      .query<Query, QuerySingleItemArgs>({
+        query: GET_ARTICLE_QUERY,
+        variables: {
+          input: {
+            slug,
+            language: locale as ContentLanguage,
+          },
         },
-      },
-    }),
+      })
+      .then((content) => {
+        // map data here to reduce data processing in component
+        // TODO: Elastic endpoint is returning the article document json nested inside ContentItem, look into flattening this
+        const contentObject = JSON.parse(content.data.singleItem.content)
+        return {
+          ...content.data.singleItem,
+          content: JSON.stringify(contentObject.content),
+        }
+      }),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -163,11 +165,16 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
           },
         },
       })
-      .then((variables) => {
+      .then((content) => {
         // map data here to reduce data processing in component
-        return JSON.parse(variables.data.getNamespace.fields)
+        return JSON.parse(content.data.getNamespace.fields)
       }),
   ])
+
+  // we assume 404 if no article is found
+  if (!article) {
+    throw new CustomNextError(404, 'Article not found')
+  }
 
   return {
     article,
@@ -182,3 +189,5 @@ const ContentContainer: FC<BoxProps> = ({ children, ...props }) => (
     <ContentBlock width="small">{children}</ContentBlock>
   </Box>
 )
+
+// TODO: Add fields for micro strings to article namespace
