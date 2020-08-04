@@ -6,8 +6,8 @@ const useUserInfo = () => {
   const [{ userInfo, userInfoState }, dispatch] = useStore()
 
   const setUser = async (
-    actorNationalId?: string,
-    subjectNationalId?: string,
+    actorNationalId: string,
+    subjectNationalId: string,
   ) => {
     async function fetchUserInfo() {
       dispatch({

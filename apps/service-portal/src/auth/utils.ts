@@ -12,8 +12,8 @@ interface MockToken {
 export const isAuthenticated = () => Cookies.get(MOCK_AUTH_KEY)?.length > 0
 
 export const setUserToken = async (
-  actorNationalId = '2606862759',
-  subjectNationalId = '2606862759',
+  actorNationalId,
+  subjectNationalId,
 ): Promise<MockToken> => {
   const token = await fetch('/user/token', {
     method: 'POST',
