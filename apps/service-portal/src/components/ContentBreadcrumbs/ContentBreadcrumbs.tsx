@@ -2,41 +2,43 @@ import React, { FC } from 'react'
 import { useLocation, Link } from 'react-router-dom'
 import { useStore } from '../../store/stateProvider'
 import { Breadcrumbs, Box } from '@island.is/island-ui/core'
-import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
 import * as styles from './ContentBreadcrumbs.treat'
 
-const nodeByUrl = (url: string, data: ServicePortalNavigationItem[]) => {
-  let result: ServicePortalNavigationItem | null = null
+type TreeItem = { url?: string; children?: TreeItem[] }
 
-  function iter(a: ServicePortalNavigationItem) {
-    if (!a) return null
-    if (a.url === url) {
-      result = a
-      return true
-    }
-    return Array.isArray(a.children) && a.children.some(iter)
-  }
+const reduce = (
+  f: (acc: TreeItem[], n: TreeItem) => TreeItem[],
+  tree: TreeItem,
+  acc: TreeItem[],
+) => {
+  const { children } = tree
+  const newAcc = f(acc, tree)
 
-  data.some(iter)
-  return result
+  if (!children) return newAcc
+  return children.reduce((iAcc, n) => reduce(f, n, iAcc), newAcc)
 }
 
 const ContentBreadcrumbs: FC<{}> = () => {
   const location = useLocation()
   const [{ navigation }] = useStore()
-  const node = nodeByUrl(location.pathname, navigation)
-
-  const navItem = node
-    ? { name: node.name, url: node.url }
-    : location.pathname === '/'
-    ? { name: 'Forsíða', url: '/' }
-    : null
+  const items = reduce(
+    (acc, n) => {
+      if (location.pathname.includes(n.url)) return [...acc, n]
+      else return acc
+    },
+    { url: undefined, children: navigation },
+    [],
+  )
 
   return (
     <Box className={styles.wrapper} padding={3}>
       <Breadcrumbs>
         <Link to="/">Mitt Ísland</Link>
-        {navItem && <Link to={navItem.url}>{navItem.name}</Link>}
+        {items.map((item, index) => (
+          <Link key={index} to={item.url}>
+            {item.name}
+          </Link>
+        ))}
       </Breadcrumbs>
     </Box>
   )

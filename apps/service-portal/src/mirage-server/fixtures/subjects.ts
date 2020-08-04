@@ -9,7 +9,7 @@ export default [
       '@island.is/finance',
       '@island.is/finance/personal.edit',
       '@island.is/finance/vaccines.view',
-      '@farmalastofa/finance/rsk.view',
+      '@fjarmalastofa/finance/rsk.view',
       '@fjarmalastofa/procure/companystatus.view',
       '@sendiradid/staff/health.view',
     ],
