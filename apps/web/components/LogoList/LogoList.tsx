@@ -1,9 +1,9 @@
 import React, { FC } from 'react'
 import { Typography, Box } from '@island.is/island-ui/core'
 import { LogoListSlice as ApiLogoListSlice } from '@island.is/api/schema'
-import * as styles from './LogoListSlice.treat'
+import * as styles from './LogoList.treat'
 
-export const LogoListSlice: FC<ApiLogoListSlice> = ({
+export const LogoList: FC<ApiLogoListSlice> = ({
   title,
   body,
   images,
@@ -25,4 +25,4 @@ export const LogoListSlice: FC<ApiLogoListSlice> = ({
   </div>
 )
 
-export default LogoListSlice
+export default LogoList

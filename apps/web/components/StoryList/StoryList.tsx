@@ -1,13 +1,22 @@
 import React, { FC } from 'react'
 import { Button, Typography, Stack } from '@island.is/island-ui/core'
-import {
-  StorySlice as ApiStorySlice,
-  Story as ApiStory,
-} from '@island.is/api/schema'
 import IconBullet from '../IconBullet/IconBullet'
-import * as styles from './StorySlice.treat'
+import * as styles from './StoryList.treat'
 
-export const StorySlice: FC<ApiStorySlice> = ({ readMoreText, stories }) => (
+export interface StoryProps {
+  logoUrl: string
+  label: string
+  title: string
+  intro: string
+  readMoreText: string
+}
+
+export interface StoryListProps {
+  readMoreText: string
+  stories: StoryProps[]
+}
+
+export const StoryList: FC<StoryListProps> = ({ readMoreText, stories }) => (
   <Stack space={8}>
     {stories.map((story, i) => (
       <Story key={i} {...story} />
@@ -20,10 +29,10 @@ export const StorySlice: FC<ApiStorySlice> = ({ readMoreText, stories }) => (
   </Stack>
 )
 
-const Story: FC<ApiStory> = ({ logo, label, title, intro, readMoreText }) => (
+const Story: FC<StoryProps> = ({ logoUrl, label, title, intro, readMoreText }) => (
   <div className={styles.margin}>
     <div className={styles.icon}>
-      <IconBullet variant="gradient" image={logo.url} />
+      <IconBullet variant="gradient" image={logoUrl} />
     </div>
     <Stack space={2}>
       <Typography variant="eyebrow" color="white">
@@ -42,4 +51,4 @@ const Story: FC<ApiStory> = ({ logo, label, title, intro, readMoreText }) => (
   </div>
 )
 
-export default StorySlice
+export default StoryList

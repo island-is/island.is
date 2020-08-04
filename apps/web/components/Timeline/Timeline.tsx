@@ -1,16 +1,28 @@
 import React, { FC, useMemo } from 'react'
 import {
-  TimelineSlice as ApiTimelineSlice,
-  TimelineEvent as ApiTimelineEvent,
-} from '@island.is/api/schema'
-import {
   Box,
   Typography,
-  Timeline,
+  Timeline as UITimeline,
   TimelineEvent,
 } from '@island.is/island-ui/core'
 
-export const TimelineSlice: FC<ApiTimelineSlice> = ({ title, events }) => {
+export interface TimelineEventProps {
+  date: string
+  title: string
+  numerator?: number
+  denominator?: number
+  label?: string
+  body?: string
+  tags?: string[]
+  link?: string
+}
+
+export interface TimelineProps {
+  title: string
+  events: TimelineEventProps[]
+}
+
+export const Timeline: FC<TimelineProps> = ({ title, events }) => {
   const mappedEvents = useMemo(() => events.map(mapEvent), [events])
 
   return (
@@ -20,12 +32,12 @@ export const TimelineSlice: FC<ApiTimelineSlice> = ({ title, events }) => {
           {title}
         </Typography>
       </Box>
-      <Timeline events={mappedEvents} />
+      <UITimeline events={mappedEvents} />
     </div>
   )
 }
 
-const mapEvent = (e: ApiTimelineEvent): TimelineEvent => ({
+const mapEvent = (e: TimelineEventProps): TimelineEvent => ({
   date: new Date(e.date),
   title: e.title,
   value: e.numerator,
@@ -38,4 +50,4 @@ const mapEvent = (e: ApiTimelineEvent): TimelineEvent => ({
   },
 })
 
-export default TimelineSlice
+export default Timeline

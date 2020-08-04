@@ -10,13 +10,13 @@ import { Screen } from '@island.is/web/types'
 import { withApollo } from '../../graphql'
 import {
   Header,
-  LinkCardSlice,
-  HeadingSlice,
-  TimelineSlice,
-  StorySlice,
-  LatestNewsSlice,
-  MailingListSignup,
-  LogoListSlice,
+  LinkCardList,
+  Heading,
+  Timeline,
+  StoryList,
+  LatestNews,
+  EmailSignup,
+  LogoList,
 } from '@island.is/web/components'
 import {
   ContentBlock,
@@ -65,7 +65,7 @@ const renderSlice = (
       return (
         <ContentBlock key={slice.id}>
           <Box paddingX={[0, 0, 0, 6]}>
-            <TimelineSlice {...slice} />
+            <Timeline {...slice} />
           </Box>
         </ContentBlock>
       )
@@ -77,7 +77,7 @@ const renderSlice = (
             width="7/12"
             boxProps={{ paddingTop: 15, paddingBottom: 10 }}
           >
-            <HeadingSlice {...slice} />
+            <Heading {...slice} />
           </Layout>
         </div>
       )
@@ -85,7 +85,7 @@ const renderSlice = (
       return (
         <Box key={slice.id} ref={ref(slice.id)} background="dotted">
           <Layout width="8/12" boxProps={{ paddingTop: 8, paddingBottom: 10 }}>
-            <LinkCardSlice {...slice} />
+            <LinkCardList {...slice} />
           </Layout>
         </Box>
       )
@@ -97,7 +97,7 @@ const renderSlice = (
             indent="1/12"
             boxProps={{ paddingTop: 10, paddingBottom: 7 }}
           >
-            <MailingListSignup {...slice} />
+            <EmailSignup {...slice} />
           </Layout>
         </Box>
       )
@@ -105,7 +105,13 @@ const renderSlice = (
       return (
         <div key={slice.id} ref={ref(slice.id)} className={styles.gradient}>
           <Layout width="7/12" boxProps={{ paddingY: 10 }}>
-            <StorySlice {...slice} />
+            <StoryList
+              {...slice}
+              stories={slice.stories.map((story) => ({
+                ...story,
+                logoUrl: story.logo.url,
+              }))}
+            />
           </Layout>
         </div>
       )
@@ -113,7 +119,7 @@ const renderSlice = (
       return (
         <div key={slice.id} ref={ref(slice.id)}>
           <Layout width="8/12" boxProps={{ paddingTop: 15, paddingBottom: 12 }}>
-            <LatestNewsSlice {...slice} />
+            <LatestNews {...slice} />
           </Layout>
         </div>
       )
@@ -121,7 +127,7 @@ const renderSlice = (
       return (
         <div key={slice.id} ref={ref(slice.id)} className={styles.gradient}>
           <Layout width="7/12" boxProps={{ paddingY: 10 }}>
-            <LogoListSlice {...slice} />
+            <LogoList {...slice} />
           </Layout>
         </div>
       )

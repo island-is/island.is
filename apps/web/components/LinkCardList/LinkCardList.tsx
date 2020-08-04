@@ -2,10 +2,6 @@
 import React, { FC } from 'react'
 import Link from 'next/link'
 import {
-  LinkCard,
-  LinkCardSlice as LinkCardSliceType,
-} from '@island.is/api/schema'
-import {
   Button,
   Typography,
   Box,
@@ -13,7 +9,19 @@ import {
   Tiles,
 } from '@island.is/island-ui/core'
 
-export const LinkCardSlice: FC<LinkCardSliceType> = ({ title, cards }) => (
+export interface LinkCardProps {
+  title: string
+  body: string
+  link: string
+  linkText: string
+}
+
+export interface LinkCardListProps {
+  title: string
+  cards: LinkCardProps[]
+}
+
+export const LinkCardList: FC<LinkCardListProps> = ({ title, cards }) => (
   <>
     <Box paddingBottom={6}>
       <Typography variant="h2" as="h2">
@@ -22,13 +30,13 @@ export const LinkCardSlice: FC<LinkCardSliceType> = ({ title, cards }) => (
     </Box>
     <Tiles columns={[1, 1, 1, 1, 2]} space={4}>
       {cards.map((card, i) => (
-        <Card key={i} {...card} />
+        <LinkCard key={i} {...card} />
       ))}
     </Tiles>
   </>
 )
 
-const Card: FC<LinkCard> = ({ title, body, link, linkText }) => {
+const LinkCard: FC<LinkCardProps> = ({ title, body, link, linkText }) => {
   return (
     <Box background="white" padding={5}>
       <Stack space={2}>
@@ -48,4 +56,4 @@ const Card: FC<LinkCard> = ({ title, body, link, linkText }) => {
   )
 }
 
-export default LinkCardSlice
+export default LinkCardList

@@ -7,9 +7,15 @@ import {
   Input,
   Button,
 } from '@island.is/island-ui/core'
-import { MailingListSignupSlice } from '@island.is/api/schema'
 
-export const MailingListSignup: FC<MailingListSignupSlice> = ({
+export interface EmailSignupProps {
+  title: string
+  description: string
+  inputLabel: string
+  buttonText: string
+}
+
+export const EmailSignup: FC<EmailSignupProps> = ({
   title,
   description,
   inputLabel,
@@ -37,4 +43,4 @@ export const MailingListSignup: FC<MailingListSignupSlice> = ({
   )
 }
 
-export default MailingListSignup
+export default EmailSignup

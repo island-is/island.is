@@ -3,12 +3,23 @@ import cn from 'classnames'
 import { Typography, Box, Stack, Tiles } from '@island.is/island-ui/core'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import {
-  News,
-  LatestNewsSlice as ApiLatestNewsSlice,
+  Image
 } from '@island.is/api/schema'
-import * as styles from './LatestNewsSlice.treat'
+import * as styles from './LatestNews.treat'
 
-export const LatestNewsSlice: FC<ApiLatestNewsSlice> = ({ title, news }) => {
+export interface LatestNewsItem {
+  date: string | Date
+  title: string
+  intro: string
+  image?: Image
+}
+
+export interface LatestNewsProps {
+  title: string
+  news: LatestNewsItem[]
+}
+
+export const LatestNews: FC<LatestNewsProps> = ({ title, news }) => {
   const [first, ...rest] = news
 
   return (
@@ -36,7 +47,7 @@ export const LatestNewsSlice: FC<ApiLatestNewsSlice> = ({ title, news }) => {
   )
 }
 
-const BigNewsItem = ({ news }: { news: News }) => {
+const BigNewsItem = ({ news }: { news: LatestNewsItem }) => {
   const { format } = useDateUtils()
 
   return (
@@ -57,7 +68,7 @@ const BigNewsItem = ({ news }: { news: News }) => {
   )
 }
 
-const NewsItem = ({ news }: { news: News }) => (
+const NewsItem = ({ news }: { news: LatestNewsItem }) => (
   <Box boxShadow="subtle" overflow="hidden" borderRadius="large">
     <img src={news.image.url} alt={news.image.title} />
     <Box paddingX={3} paddingY={4}>
@@ -72,4 +83,4 @@ const NewsItem = ({ news }: { news: News }) => (
   </Box>
 )
 
-export default LatestNewsSlice
+export default LatestNews
