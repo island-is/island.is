@@ -138,10 +138,10 @@
           ]
         },
         {
-          "label": "Hvernig nálgast ég Ferðagjöfina?",
+          "label": "Hvernig nota ég Ferðagjöfina?",
           "contents": [
-            "Sækja þarf gjöfina á Ísland.is með innskráningu. Smáforritið Ferðagjöf er sótt í App Store eða Play Store og strikamerki skannað við kaup á þjónustu.",
-            "Einnig er hægt að nýta Ferðagjöfina beint inn á Ísland.is fyrir þá sem ekki geta sótt smáforritið. Þá er hægt að skanna strikamerkið úr farsíma eða stimpla inn númer strikamerkis við kaup á þjónustu."
+            "Til að nýta Ferðagjöfina þarf að sækja gjöfina hér á <a href='https://ferdagjof.island.is'>Ísland.is</a> með innskráningu. Sótt er smáforritið Ferðagjöf í App eða Play store og strikamerki skannað við kaup á þjónustu.",
+            "Einnig er hægt að nýta Ferðagjöfina beint inn á <a href='https://ferdagjof.island.is'>Ísland.is</a> fyrir þá sem ekki eru með snjallsíma."
           ]
         },
         {
@@ -153,13 +153,13 @@
         {
           "label": "Hvar get ég notað Ferðagjöfina?",
           "contents": [
-            "Nýta má Ferðagjöf hjá skilgreindum fyrirtækjum innan ferðaþjónustunnar sem hafa skráð sig til þátttöku. Sjá má yfirlit yfir fyrirtæki á <a href='https://www.ferdalag.is/is/fyrirtaeki-sem-taka-a-moti-ferdagjof-thjonustuflokkar' target='_blank' rel='noreferrer noopener'>ferðalag.is</a>."
+            "Ferðagjöfina má nýta hjá Ferðaþjónustufyrirtækjum víðsvegar um landið. Sjá má yfirlit yfir fyrirtæki sem hafa skráð sig til þátttöku á <a href='https://www.ferdalag.is/is/fyrirtaeki-sem-taka-a-moti-ferdagjof-thjonustuflokkar' target='_blank' rel='noreferrer noopener'>ferðalag.is</a> og í smáforritinu Ferðagjöf. Athugið að þau fyrirtæki sem taka þátt í Ferðagjöfinni eru merkt sérstaklega með gulum borða sem á stendur Ferðagjöf."
           ]
         },
         {
           "label": "Get ég gefið Ferðagjöfina?",
           "contents": [
-            "Allir eru hvattir til að nýta gjöfina en heimilt er að gefa eigin gjöf. Hver einstaklingur getur að hámarki gefið eða greitt með 15 Ferðagjöfum á gildistíma Ferðagjafar."
+            "Allir eru hvattir til að nýta gjöfina en heimilt er að gefa eigin gjöf, hver einstaklingur getur þó að hámarki nýtt 15 Ferðagjafir. Mögulegt er að gefa gjöfina áfram bæði í smáforritinu Ferðagjöf sem og beint af <a href='https://ferdagjof.island.is'>Ísland.is</a>. Í smáforritinu þarf að ýta á uppæðina en þá kemur upp valmöguleikinn að \"Nota gjöf\" eða \"Gefa áfram\". Kjósi fólk að senda mynd eða myndband með Ferðagjöfinni þarf smáforritið aðgang að myndavél símans en einnig er mögulegt að senda skriflega kveðju. Á <a href='https://ferdagjof.island.is'>Ísland.is</a> þarf að skrá sig inná með því að smella á \"Sækja Ferðagjöf\". Þá opnast gluggi með valmöguleikanum að nota ferðagjöfina eða \"Gefa áfram\"."
           ]
         },
         {
@@ -350,7 +350,7 @@
       "fromPrefix": "Frá:",
       "value": "Virði",
       "total": "Samtals",
-      "giveGiftCard": "Gjöf að verðmati:",
+      "giveGiftCard": "Gjöf að verðmæti:",
       "phoneNumberInput": "Símanúmer viðtakanda",
       "messageInput": "Skilaboð",
       "giveContinueButton": "Halda áfram",
