@@ -9,4 +9,5 @@ export const weight = styleMap({
   regular: { background: theme.border.color.standard },
   strong: { background: theme.border.color.focus },
   alternate: { background: theme.color.purple200 },
+  purple400: { background: theme.color.purple400 },
 })
