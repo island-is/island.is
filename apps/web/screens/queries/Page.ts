@@ -24,7 +24,7 @@ export const GET_PAGE_QUERY = gql`
     }
   }
 
-  fragment TimelineFields on TimelineSlice  {
+  fragment TimelineFields on TimelineSlice {
     __typename
     id
     title

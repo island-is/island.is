@@ -29,7 +29,13 @@ export const StoryList: FC<StoryListProps> = ({ readMoreText, stories }) => (
   </Stack>
 )
 
-const Story: FC<StoryProps> = ({ logoUrl, label, title, intro, readMoreText }) => (
+const Story: FC<StoryProps> = ({
+  logoUrl,
+  label,
+  title,
+  intro,
+  readMoreText,
+}) => (
   <div className={styles.margin}>
     <div className={styles.icon}>
       <IconBullet variant="gradient" image={logoUrl} />

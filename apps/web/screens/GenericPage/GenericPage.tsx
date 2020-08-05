@@ -80,7 +80,6 @@ const Background: FC<BackgroundProps> = ({
   light = false,
   children,
 }) => {
-  console.log('THEME', theme)
   if (theme === 'gradient') {
     return <div className={styles.gradient}>{children}</div>
   }
@@ -114,7 +113,6 @@ interface SectionProps {
 }
 
 const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
-  console.log("PAGE", page)
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale as Locale)
 

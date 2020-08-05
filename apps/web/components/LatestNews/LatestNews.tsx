@@ -2,9 +2,7 @@ import React, { FC } from 'react'
 import cn from 'classnames'
 import { Typography, Box, Stack, Tiles } from '@island.is/island-ui/core'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import {
-  Image
-} from '@island.is/api/schema'
+import { Image } from '@island.is/api/schema'
 import * as styles from './LatestNews.treat'
 
 export interface LatestNewsItem {
