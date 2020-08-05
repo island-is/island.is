@@ -65,6 +65,11 @@ export const typeDefs = gql`
     perPage: Int
   }
 
+  type Link {
+    text: String!
+    url: String!
+  }
+
   type TimelineEvent {
     id: ID!
     title: String!
@@ -139,8 +144,18 @@ export const typeDefs = gql`
     images: [Image!]!
   }
 
+  type PageHeaderSlice {
+    id: ID!
+    title: String!
+    introduction: String!
+    navigationText: String!
+    links: [Link!]!
+    slices: [Slice!]!
+  }
+
   union Slice =
-      TimelineSlice
+      PageHeaderSlice
+    | TimelineSlice
     | HeadingSlice
     | StorySlice
     | LinkCardSlice
@@ -157,7 +172,7 @@ export const typeDefs = gql`
     title: String!
     slug: String!
     seoDescription: String!
-    numSlicesInHeader: Int!
+    theme: String!
     slices: [Slice!]!
   }
 

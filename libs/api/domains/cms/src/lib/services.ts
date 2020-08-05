@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-use-before-define */
 import { getLocalizedEntries } from './contentful'
 import { logger } from '@island.is/logging'
 import {
@@ -8,6 +9,8 @@ import {
   Pagination,
   TimelineSlice,
   TimelineEvent,
+  PageHeaderSlice,
+  Link,
   Story,
   StorySlice,
   Slice,
@@ -57,6 +60,21 @@ const formatNewsItem = ({ fields, sys }): News => ({
   image: formatImage(fields.image),
   date: fields.date,
   content: JSON.stringify(fields.content),
+})
+
+const formatLink = ({ fields }): Link => ({
+  text: fields.text,
+  url: fields.url,
+})
+
+const formatPageHeaderSlice = ({ fields, sys }): PageHeaderSlice => ({
+  __typename: 'PageHeaderSlice',
+  id: sys.id,
+  title: fields.title,
+  introduction: fields.introduction,
+  navigationText: fields.navigationText,
+  links: fields.links.map(formatLink),
+  slices: fields.slices.map(formatSlice),
 })
 
 const formatTimelineEvent = ({ fields, sys }): TimelineEvent => ({
@@ -128,11 +146,11 @@ const formatLinkCardSlice = ({ fields, sys }): LinkCardSlice => ({
   cards: fields.cards.map(formatLinkCard),
 })
 
-const formatLatestNews = ({ fields, sys }, news: News[]): LatestNewsSlice => ({
+const formatLatestNews = ({ fields, sys }): LatestNewsSlice => ({
   __typename: 'LatestNewsSlice',
   id: sys.id,
   title: fields.title ?? '',
-  news: news,
+  news: [],
 })
 
 const formatLogoListSlice = ({ fields, sys }): LogoListSlice => ({
@@ -143,12 +161,11 @@ const formatLogoListSlice = ({ fields, sys }): LogoListSlice => ({
   images: fields.images.map(formatImage),
 })
 
-const formatSlice = async (
-  slice: Entry<Slice>,
-  lang: string,
-): Promise<Slice> => {
+const formatSlice = (slice: Entry<Slice>): Slice => {
   const sliceName = slice.sys.contentType.sys.id
   switch (sliceName) {
+    case 'pageHeader':
+      return formatPageHeaderSlice(slice)
     case 'timeline':
       return formatTimelineSlice(slice)
     case 'mailingListSignup':
@@ -162,26 +179,19 @@ const formatSlice = async (
     case 'logoListSlice':
       return formatLogoListSlice(slice)
     case 'latestNewsSlice': {
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      const { news } = await getNewsList({ lang, perPage: 3 })
-      return formatLatestNews(slice, news)
+      return formatLatestNews(slice)
     }
     default:
       throw new ApolloError(`Can not convert to slice: ${sliceName}`)
   }
 }
 
-const formatPage = async (
-  { fields }: Entry<CmsPage>,
-  lang: string,
-): Promise<Page> => ({
+const formatPage = ({ fields }: Entry<CmsPage>): Page => ({
   __typename: 'Page',
-  numSlicesInHeader: fields.numSlicesInHeader,
-  slices: await Promise.all(
-    fields.slices.map((slice) => formatSlice(slice, lang)),
-  ),
+  slices: fields.slices.map(formatSlice),
   title: fields.title,
   slug: fields.slug,
+  theme: fields.theme.toLowerCase(),
   seoDescription: fields.seoDescription ?? '',
 })
 
@@ -195,6 +205,24 @@ const makePage = (
   totalResults,
   totalPages: Math.ceil(totalResults / perPage),
 })
+
+const loadSlice = async (slice: Slice, lang: string): Promise<Slice> => {
+  switch (slice.__typename) {
+    case 'PageHeaderSlice':
+      return {
+        ...slice,
+        slices: await Promise.all(
+          slice.slices.map((slice) => loadSlice(slice, lang)),
+        ),
+      }
+    case 'LatestNewsSlice': {
+      const { news } = await getNewsList({ lang, perPage: 3 })
+      return { ...slice, news }
+    }
+    default:
+      return slice
+  }
+}
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -267,7 +295,7 @@ export const getNewsList = async ({
 
 export const getPage = async ({ lang, slug }: GetPageInput): Promise<Page> => {
   const result = await getLocalizedEntries<CmsPage>(lang, {
-    ['content_type']: 'aboutPage',
+    ['content_type']: 'page',
     'fields.slug': slug,
     include: 10,
   }).catch(errorHandler('getPage'))
@@ -276,7 +304,13 @@ export const getPage = async ({ lang, slug }: GetPageInput): Promise<Page> => {
     return null
   }
 
-  return await formatPage(result.items[0], lang)
+  const page = formatPage(result.items[0])
+  return {
+    ...page,
+    slices: await Promise.all(
+      page.slices.map((slice) => loadSlice(slice, lang)),
+    ),
+  }
 }
 
 export const getNamespace = async (

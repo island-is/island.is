@@ -3,12 +3,14 @@ import minBy from 'lodash/minBy'
 import useViewport from './useViewport'
 
 const useScrollSpy = ({
-  margin,
+  margin = 0,
+  initialId = '',
 }: {
-  margin: number
+  margin?: number
+  initialId?: string
 }): [(id: string) => (e: HTMLElement) => void, string | undefined] => {
   const elements = useRef<{ [key: string]: HTMLElement }>({})
-  const [currentId, setCurrentId] = useState('')
+  const [currentId, setCurrentId] = useState(initialId)
 
   // re-render on scroll or resize
   useViewport()

@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, ReactNode, useRef, Ref, forwardRef } from 'react'
+import React, { FC, ReactNode, useRef, Ref } from 'react'
 import Link from 'next/link'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { Locale } from '@island.is/web/i18n/I18n'
@@ -32,6 +32,20 @@ import * as styles from './GenericPage.treat'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import Head from 'next/head'
 
+const extractSliceTitle = (slice: Slice): [string, string] | null => {
+  switch (slice.__typename) {
+    case 'HeadingSlice':
+    case 'LinkCardSlice':
+    case 'MailingListSignupSlice':
+    case 'LatestNewsSlice':
+    case 'LogoListSlice':
+      return [slice.id, slice.title]
+    case 'TimelineSlice':
+    case 'StorySlice':
+      return null
+  }
+}
+
 export interface LayoutProps {
   width: ColumnProps['width']
   indent?: ColumnProps['width']
@@ -56,11 +70,94 @@ const Layout: FC<LayoutProps> = ({
   )
 }
 
-const renderSlice = (
-  slice: Slice,
-  ref: (k: string) => (e: HTMLDivElement) => void,
-): ReactNode => {
+interface BackgroundProps {
+  theme: string // 'neutral' | 'red' | 'blue' | 'gradient'
+  light?: boolean
+}
+
+const Background: FC<BackgroundProps> = ({
+  theme,
+  light = false,
+  children,
+}) => {
+  console.log('THEME', theme)
+  if (theme === 'gradient') {
+    return <div className={styles.gradient}>{children}</div>
+  }
+
+  let background = null
+  if (theme === 'blue') {
+    background = light ? 'blueberry100' : 'blueberry400'
+  } else if (theme === 'red') {
+    background = light ? 'rosetinted100' : 'roseTinted400'
+  }
+
+  return <Box background={background}>{children}</Box>
+}
+
+const decideSidebarType = (slice?: Slice): SidebarProps['type'] => {
+  switch (slice && slice.__typename) {
+    case 'PageHeaderSlice':
+    case 'MailingListSignupSlice':
+    case 'LogoListSlice':
+      return 'gradient'
+    default:
+      return 'standard'
+  }
+}
+
+interface SectionProps {
+  slice: Slice
+  page: Page
+  currentSliceId: string
+  setRef: (k: string) => (e: HTMLDivElement) => void
+}
+
+const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
+  console.log("PAGE", page)
+  const { activeLocale } = useI18n()
+  const { makePath } = useRouteNames(activeLocale as Locale)
+
   switch (slice.__typename) {
+    case 'PageHeaderSlice':
+      return (
+        <Background theme={page.theme}>
+          <ContentBlock>
+            <Box paddingX={[0, 0, 0, 6]}>
+              <Header />
+              <Box position="relative" marginTop={6} marginX={[0, 0, 0, 6]}>
+                <Sidebar
+                  type={decideSidebarType(
+                    page.slices.find(
+                      (slice) => !currentSliceId || slice.id === currentSliceId,
+                    ),
+                  )}
+                  title={page.title}
+                  sections={page.slices.map(extractSliceTitle).filter(Boolean)}
+                  currentSection={currentSliceId}
+                />
+              </Box>
+              <Breadcrumbs color="blue300" separatorColor="blue300">
+                <Link href={makePath()}>
+                  <a>Ísland.is</a>
+                </Link>
+                <Link href={''}>
+                  <a>{page.title}</a>
+                </Link>
+              </Breadcrumbs>
+              {slice.slices.map((slice) => (
+                <Section
+                  key={slice.id}
+                  slice={slice}
+                  page={page}
+                  currentSliceId={currentSliceId}
+                  setRef={setRef}
+                />
+              ))}
+            </Box>
+          </ContentBlock>
+        </Background>
+      )
     case 'TimelineSlice':
       return (
         <ContentBlock key={slice.id}>
@@ -71,7 +168,7 @@ const renderSlice = (
       )
     case 'HeadingSlice':
       return (
-        <div key={slice.id} ref={ref(slice.id)}>
+        <div key={slice.id} ref={setRef(slice.id)}>
           <Layout
             indent="1/12"
             width="7/12"
@@ -83,7 +180,7 @@ const renderSlice = (
       )
     case 'LinkCardSlice':
       return (
-        <Box key={slice.id} ref={ref(slice.id)} background="dotted">
+        <Box key={slice.id} ref={setRef(slice.id)} background="dotted">
           <Layout width="8/12" boxProps={{ paddingTop: 8, paddingBottom: 10 }}>
             <LinkCardList {...slice} />
           </Layout>
@@ -91,7 +188,7 @@ const renderSlice = (
       )
     case 'MailingListSignupSlice':
       return (
-        <Box key={slice.id} ref={ref(slice.id)} background="blue100">
+        <Box key={slice.id} ref={setRef(slice.id)} background="blue100">
           <Layout
             width="7/12"
             indent="1/12"
@@ -103,7 +200,7 @@ const renderSlice = (
       )
     case 'StorySlice':
       return (
-        <div key={slice.id} ref={ref(slice.id)} className={styles.gradient}>
+        <div key={slice.id} ref={setRef(slice.id)} className={styles.gradient}>
           <Layout width="7/12" boxProps={{ paddingY: 10 }}>
             <StoryList
               {...slice}
@@ -117,7 +214,7 @@ const renderSlice = (
       )
     case 'LatestNewsSlice':
       return (
-        <div key={slice.id} ref={ref(slice.id)}>
+        <div key={slice.id} ref={setRef(slice.id)}>
           <Layout width="8/12" boxProps={{ paddingTop: 15, paddingBottom: 12 }}>
             <LatestNews {...slice} />
           </Layout>
@@ -125,36 +222,12 @@ const renderSlice = (
       )
     case 'LogoListSlice':
       return (
-        <div key={slice.id} ref={ref(slice.id)} className={styles.gradient}>
+        <div key={slice.id} ref={setRef(slice.id)} className={styles.gradient}>
           <Layout width="7/12" boxProps={{ paddingY: 10 }}>
             <LogoList {...slice} />
           </Layout>
         </div>
       )
-  }
-}
-
-const extractSliceTitle = (slice: Slice): [string, string] | null => {
-  switch (slice.__typename) {
-    case 'HeadingSlice':
-    case 'LinkCardSlice':
-    case 'MailingListSignupSlice':
-    case 'LatestNewsSlice':
-    case 'LogoListSlice':
-      return [slice.id, slice.title]
-    case 'TimelineSlice':
-    case 'StorySlice':
-      return null
-  }
-}
-
-const decideSidebarType = (slice?: Slice): SidebarProps['type'] => {
-  switch (slice && slice.__typename) {
-    case 'MailingListSignupSlice':
-    case 'LogoListSlice':
-      return 'gradient'
-    default:
-      return 'standard'
   }
 }
 
@@ -165,13 +238,6 @@ export interface GenericPageProps {
 const GenericPage: Screen<GenericPageProps> = ({ page }) => {
   const refs: Ref<{ [k: string]: HTMLDivElement }> = useRef({})
   const [spy, currentId] = useScrollSpy({ margin: 200 })
-  const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale as Locale)
-  const sections = page.slices.map(extractSliceTitle).filter(Boolean)
-  const slicesInHeader = page.slices.slice(0, page.numSlicesInHeader)
-  const slices = page.slices.slice(page.numSlicesInHeader)
-  const currentSlice = page.slices.find((s) => !currentId || s.id === currentId)
-  const sidebarType = decideSidebarType(currentSlice)
 
   const setRef = (id: string) => {
     return (e: HTMLDivElement) => {
@@ -184,32 +250,17 @@ const GenericPage: Screen<GenericPageProps> = ({ page }) => {
     <>
       <Head>
         <title>{page.title}</title>
+        <meta name="description" content={page.seoDescription} />
       </Head>
-      <div className={styles.gradient}>
-        <Header />
-        <ContentBlock>
-          <Box position="relative" marginTop={6} marginX={[0, 0, 0, 6]}>
-            <Sidebar
-              type={sidebarType}
-              title={page.title}
-              sections={sections}
-              currentSection={currentId}
-            />
-          </Box>
-        </ContentBlock>
-        <Layout width="content" indent="1/12">
-          <Breadcrumbs color="blue300" separatorColor="blue300">
-            <Link href={makePath()}>
-              <a>Ísland.is</a>
-            </Link>
-            <Link href={''}>
-              <a>{page.title}</a>
-            </Link>
-          </Breadcrumbs>
-        </Layout>
-        {slicesInHeader.map((s) => renderSlice(s, setRef))}
-      </div>
-      {slices.map((s) => renderSlice(s, setRef))}
+      {page.slices.map((slice) => (
+        <Section
+          key={slice.id}
+          slice={slice}
+          page={page}
+          currentSliceId={currentId}
+          setRef={setRef}
+        />
+      ))}
     </>
   )
 }
