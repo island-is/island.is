@@ -24,6 +24,11 @@ import {
   GetNewsListInput,
   GetPageInput,
   PaginatedNews,
+  IconBullet,
+  NumberBullet,
+  NumberBulletGroup,
+  BulletEntry,
+  BulletListSlice,
 } from '@island.is/api/schema'
 import { ApolloError } from 'apollo-server-express'
 import { Entry } from 'contentful'
@@ -161,6 +166,45 @@ const formatLogoListSlice = ({ fields, sys }): LogoListSlice => ({
   images: fields.images.map(formatImage),
 })
 
+const formatIconBullet = ({ fields, sys }): IconBullet => ({
+  __typename: 'IconBullet',
+  id: sys.id,
+  title: fields.title,
+  body: fields.body,
+  icon: formatImage(fields.icon),
+  url: fields.url,
+  linkText: fields.linkText,
+})
+
+const formatNumberBullet = ({ fields, sys }): NumberBullet => ({
+  __typename: 'NumberBullet',
+  id: sys.id,
+  title: fields.title,
+  body: fields.body,
+})
+
+const formatNumberBulletGroup = ({ fields, sys}): NumberBulletGroup => ({
+  __typename: 'NumberBulletGroup',
+  id: sys.id,
+  defaultVisible: fields.defaultVisible,
+  bullets: fields.bullets.map(formatNumberBullet),
+})
+
+const formatBulletEntry = ({ fields, sys }): BulletEntry => {
+  switch (sys.contentType.sys.id) {
+    case 'iconBullet':
+      return formatIconBullet({ fields, sys })
+    case 'numberBulletSection':
+      return formatNumberBulletGroup({ fields, sys })
+  }
+}
+
+const formatBulletListSlice = ({ fields, sys }): BulletListSlice => ({
+  __typename: 'BulletListSlice',
+  id: sys.id,
+  bullets: fields.bullets.map(formatBulletEntry),
+})
+
 const formatSlice = (slice: Entry<Slice>): Slice => {
   const sliceName = slice.sys.contentType.sys.id
   switch (sliceName) {
@@ -180,6 +224,8 @@ const formatSlice = (slice: Entry<Slice>): Slice => {
       return formatLogoListSlice(slice)
     case 'latestNewsSlice':
       return formatLatestNews(slice)
+    case 'bigBulletList':
+      return formatBulletListSlice(slice)
     default:
       throw new ApolloError(`Can not convert to slice: ${sliceName}`)
   }

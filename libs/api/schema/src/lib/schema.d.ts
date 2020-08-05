@@ -245,6 +245,38 @@ export type PageHeaderSlice = {
   slices: Array<Slice>
 }
 
+export type IconBullet = {
+  __typename?: 'IconBullet'
+  id: Scalars['ID']
+  title: Scalars['String']
+  body: Scalars['String']
+  icon: Image
+  url?: Maybe<Scalars['String']>
+  linkText?: Maybe<Scalars['String']>
+}
+
+export type NumberBullet = {
+  __typename?: 'NumberBullet'
+  id: Scalars['ID']
+  title: Scalars['String']
+  body: Scalars['String']
+}
+
+export type NumberBulletGroup = {
+  __typename?: 'NumberBulletGroup'
+  id: Scalars['ID']
+  defaultVisible: Scalars['Int']
+  bullets: Array<NumberBullet>
+}
+
+export type BulletEntry = IconBullet | NumberBulletGroup
+
+export type BulletListSlice = {
+  __typename?: 'BulletListSlice'
+  id: Scalars['ID']
+  bullets: Array<BulletEntry>
+}
+
 export type Slice =
   | PageHeaderSlice
   | TimelineSlice
@@ -254,6 +286,7 @@ export type Slice =
   | LatestNewsSlice
   | MailingListSignupSlice
   | LogoListSlice
+  | BulletListSlice
 
 export type GetPageInput = {
   slug: Scalars['String']
@@ -513,6 +546,17 @@ export type ResolversTypes = {
   PageHeaderSlice: ResolverTypeWrapper<
     Omit<PageHeaderSlice, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
   >
+  IconBullet: ResolverTypeWrapper<IconBullet>
+  NumberBullet: ResolverTypeWrapper<NumberBullet>
+  NumberBulletGroup: ResolverTypeWrapper<NumberBulletGroup>
+  BulletEntry:
+    | ResolversTypes['IconBullet']
+    | ResolversTypes['NumberBulletGroup']
+  BulletListSlice: ResolverTypeWrapper<
+    Omit<BulletListSlice, 'bullets'> & {
+      bullets: Array<ResolversTypes['BulletEntry']>
+    }
+  >
   Slice:
     | ResolversTypes['PageHeaderSlice']
     | ResolversTypes['TimelineSlice']
@@ -522,6 +566,7 @@ export type ResolversTypes = {
     | ResolversTypes['LatestNewsSlice']
     | ResolversTypes['MailingListSignupSlice']
     | ResolversTypes['LogoListSlice']
+    | ResolversTypes['BulletListSlice']
   GetPageInput: GetPageInput
   Page: ResolverTypeWrapper<
     Omit<Page, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
@@ -574,6 +619,15 @@ export type ResolversParentTypes = {
   PageHeaderSlice: Omit<PageHeaderSlice, 'slices'> & {
     slices: Array<ResolversParentTypes['Slice']>
   }
+  IconBullet: IconBullet
+  NumberBullet: NumberBullet
+  NumberBulletGroup: NumberBulletGroup
+  BulletEntry:
+    | ResolversParentTypes['IconBullet']
+    | ResolversParentTypes['NumberBulletGroup']
+  BulletListSlice: Omit<BulletListSlice, 'bullets'> & {
+    bullets: Array<ResolversParentTypes['BulletEntry']>
+  }
   Slice:
     | ResolversParentTypes['PageHeaderSlice']
     | ResolversParentTypes['TimelineSlice']
@@ -583,6 +637,7 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['LatestNewsSlice']
     | ResolversParentTypes['MailingListSignupSlice']
     | ResolversParentTypes['LogoListSlice']
+    | ResolversParentTypes['BulletListSlice']
   GetPageInput: GetPageInput
   Page: Omit<Page, 'slices'> & { slices: Array<ResolversParentTypes['Slice']> }
   Namespace: Namespace
@@ -885,6 +940,67 @@ export type PageHeaderSliceResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type IconBulletResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['IconBullet'] = ResolversParentTypes['IconBullet']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  icon?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  linkText?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type NumberBulletResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['NumberBullet'] = ResolversParentTypes['NumberBullet']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type NumberBulletGroupResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['NumberBulletGroup'] = ResolversParentTypes['NumberBulletGroup']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  defaultVisible?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  bullets?: Resolver<
+    Array<ResolversTypes['NumberBullet']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type BulletEntryResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['BulletEntry'] = ResolversParentTypes['BulletEntry']
+> = {
+  __resolveType: TypeResolveFn<
+    'IconBullet' | 'NumberBulletGroup',
+    ParentType,
+    ContextType
+  >
+}
+
+export type BulletListSliceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['BulletListSlice'] = ResolversParentTypes['BulletListSlice']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  bullets?: Resolver<
+    Array<ResolversTypes['BulletEntry']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type SliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Slice'] = ResolversParentTypes['Slice']
@@ -897,7 +1013,8 @@ export type SliceResolvers<
     | 'LinkCardSlice'
     | 'LatestNewsSlice'
     | 'MailingListSignupSlice'
-    | 'LogoListSlice',
+    | 'LogoListSlice'
+    | 'BulletListSlice',
     ParentType,
     ContextType
   >
@@ -1039,6 +1156,11 @@ export type Resolvers<ContextType = Context> = {
   LinkCardSlice?: LinkCardSliceResolvers<ContextType>
   LogoListSlice?: LogoListSliceResolvers<ContextType>
   PageHeaderSlice?: PageHeaderSliceResolvers<ContextType>
+  IconBullet?: IconBulletResolvers<ContextType>
+  NumberBullet?: NumberBulletResolvers<ContextType>
+  NumberBulletGroup?: NumberBulletGroupResolvers<ContextType>
+  BulletEntry?: BulletEntryResolvers
+  BulletListSlice?: BulletListSliceResolvers<ContextType>
   Slice?: SliceResolvers
   Page?: PageResolvers<ContextType>
   Namespace?: NamespaceResolvers<ContextType>

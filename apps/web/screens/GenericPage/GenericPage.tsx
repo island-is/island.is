@@ -17,6 +17,7 @@ import {
   LatestNews,
   EmailSignup,
   LogoList,
+  BulletList,
 } from '@island.is/web/components'
 import {
   ContentBlock,
@@ -116,6 +117,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale as Locale)
 
+  const typename = slice.__typename
   switch (slice.__typename) {
     case 'PageHeaderSlice':
       return (
@@ -226,6 +228,25 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           </Layout>
         </div>
       )
+    case 'BulletListSlice':
+      return (
+        <div key={slice.id} ref={setRef(slice.id)}>
+          <Layout width="7/12" boxProps={{paddingBottom: 10}}>
+            <BulletList
+              bullets={slice.bullets.map((bullet) => {
+                switch (bullet.__typename) {
+                  case 'IconBullet':
+                    return { ...bullet, type: 'IconBullet', icon: bullet.icon.url }
+                  case 'NumberBulletGroup':
+                    return { ...bullet, type: 'NumberBulletGroup' }
+                  default:
+                    return null
+                }
+              })}
+            />
+          </Layout>
+        </div>
+    )
   }
 }
 
