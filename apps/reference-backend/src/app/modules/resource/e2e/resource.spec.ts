@@ -1,6 +1,6 @@
+import { setup } from '../../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
-import { setup } from '../../../../../test/setup'
 
 let app: INestApplication
 
