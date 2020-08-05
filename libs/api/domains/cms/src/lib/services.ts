@@ -178,9 +178,8 @@ const formatSlice = (slice: Entry<Slice>): Slice => {
       return formatStorySlice(slice)
     case 'logoListSlice':
       return formatLogoListSlice(slice)
-    case 'latestNewsSlice': {
+    case 'latestNewsSlice':
       return formatLatestNews(slice)
-    }
     default:
       throw new ApolloError(`Can not convert to slice: ${sliceName}`)
   }

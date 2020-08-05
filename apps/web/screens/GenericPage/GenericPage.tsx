@@ -222,7 +222,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       return (
         <div key={slice.id} ref={setRef(slice.id)} className={styles.gradient}>
           <Layout width="7/12" boxProps={{ paddingY: 10 }}>
-            <LogoList {...slice} />
+            <LogoList {...slice} images={slice.images.map((img) => img.url)} />
           </Layout>
         </div>
       )

@@ -1,9 +1,14 @@
 import React, { FC } from 'react'
 import { Typography, Box } from '@island.is/island-ui/core'
-import { LogoListSlice as ApiLogoListSlice } from '@island.is/api/schema'
 import * as styles from './LogoList.treat'
 
-export const LogoList: FC<ApiLogoListSlice> = ({ title, body, images }) => (
+export interface LogoListProps {
+  title: string
+  body: string
+  images: string[]
+}
+
+export const LogoList: FC<LogoListProps> = ({ title, body, images }) => (
   <div>
     <Typography variant="h1" as="h2" color="white">
       {title}
@@ -14,8 +19,8 @@ export const LogoList: FC<ApiLogoListSlice> = ({ title, body, images }) => (
       </Typography>
     </Box>
     <div className={styles.logos}>
-      {images.map((img, i) => (
-        <img key={i} src={img.url} alt={img.title} className={styles.logo} />
+      {images.map((src, i) => (
+        <img key={i + src} src={src} alt="" className={styles.logo} />
       ))}
     </div>
   </div>
