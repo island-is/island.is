@@ -12,6 +12,10 @@ export const container = style({
   justifyContent: 'center',
 })
 
+export const clickable = style({
+  cursor: 'pointer',
+})
+
 export const image = style({
   maxWidth: '45%',
   maxHeight: '55%',

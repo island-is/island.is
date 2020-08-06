@@ -110,6 +110,33 @@ export const GET_PAGE_QUERY = gql`
     }
   }
 
+  fragment BulletListFields on BulletListSlice {
+    __typename
+    id
+    bullets {
+      ... on IconBullet {
+        __typename
+        id
+        title
+        body
+        url
+        linkText
+        icon {
+          ...ImageFields
+        }
+      }
+      ... on NumberBulletGroup {
+        __typename
+        id
+        defaultVisible
+        bullets {
+          title
+          body
+        }
+      }
+    }
+  }
+
   query($input: GetPageInput!) {
     getPage(input: $input) {
       title
@@ -125,6 +152,7 @@ export const GET_PAGE_QUERY = gql`
         ...LinkCardFields
         ...HeadingFields
         ...LogoListFields
+        ...BulletListFields
       }
     }
   }
