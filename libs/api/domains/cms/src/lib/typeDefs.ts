@@ -153,6 +153,34 @@ export const typeDefs = gql`
     slices: [Slice!]!
   }
 
+  type IconBullet {
+    id: ID!
+    title: String!
+    body: String!
+    icon: Image!
+    url: String
+    linkText: String
+  }
+
+  type NumberBullet {
+    id: ID!
+    title: String!
+    body: String!
+  }
+
+  type NumberBulletGroup {
+    id: ID!
+    defaultVisible: Int!
+    bullets: [NumberBullet!]!
+  }
+
+  union BulletEntry = IconBullet | NumberBulletGroup
+
+  type BulletListSlice {
+    id: ID!
+    bullets: [BulletEntry!]!
+  }
+
   union Slice =
       PageHeaderSlice
     | TimelineSlice
@@ -162,6 +190,7 @@ export const typeDefs = gql`
     | LatestNewsSlice
     | MailingListSignupSlice
     | LogoListSlice
+    | BulletListSlice
 
   input GetPageInput {
     slug: String!
