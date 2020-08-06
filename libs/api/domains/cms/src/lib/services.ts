@@ -183,7 +183,7 @@ const formatNumberBullet = ({ fields, sys }): NumberBullet => ({
   body: fields.body,
 })
 
-const formatNumberBulletGroup = ({ fields, sys}): NumberBulletGroup => ({
+const formatNumberBulletGroup = ({ fields, sys }): NumberBulletGroup => ({
   __typename: 'NumberBulletGroup',
   id: sys.id,
   defaultVisible: fields.defaultVisible,

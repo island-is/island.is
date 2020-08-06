@@ -231,12 +231,16 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
     case 'BulletListSlice':
       return (
         <div key={slice.id} ref={setRef(slice.id)}>
-          <Layout width="7/12" boxProps={{paddingBottom: 10}}>
+          <Layout width="7/12" boxProps={{ paddingBottom: 10 }}>
             <BulletList
               bullets={slice.bullets.map((bullet) => {
                 switch (bullet.__typename) {
                   case 'IconBullet':
-                    return { ...bullet, type: 'IconBullet', icon: bullet.icon.url }
+                    return {
+                      ...bullet,
+                      type: 'IconBullet',
+                      icon: bullet.icon.url,
+                    }
                   case 'NumberBulletGroup':
                     return { ...bullet, type: 'NumberBulletGroup' }
                   default:
@@ -246,7 +250,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
             />
           </Layout>
         </div>
-    )
+      )
   }
 }
 
