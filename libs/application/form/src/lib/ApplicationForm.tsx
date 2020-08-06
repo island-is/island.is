@@ -12,6 +12,7 @@ import { ActionTypes } from '../reducer/ReducerTypes'
 import { Box, Column } from '@island.is/island-ui/core'
 
 import * as styles from './ApplicationForm.treat'
+import ProgressIndicator from '../components/ProgressIndicator'
 
 type ApplicationProps = {
   form: Form
@@ -49,7 +50,10 @@ export const ApplicationForm: FC<ApplicationProps> = ({
       <Box display="flex" flexGrow={1} flexDirection="row">
         <Column width="1/4">
           <Sidebar>
-            <ApplicationName name={form.name} />
+            <ApplicationName name={form.name} icon={form.icon} />
+            <ProgressIndicator
+              progress={(activeScreen / screens.length) * 100}
+            />
             <FormProgress
               sections={sections}
               activeSection={activeSection}
