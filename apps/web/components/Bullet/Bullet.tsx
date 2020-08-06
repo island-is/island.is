@@ -5,14 +5,16 @@ import { Icon } from '@island.is/island-ui/core'
 
 interface BulletProps {
   align?: 'left' | 'right'
+  top: string | number
 }
 
-export const Bullet: FC<BulletProps> = ({ align }) => (
+export const Bullet: FC<BulletProps> = ({ align, top }) => (
   <span
     className={cn(styles.bullet, {
       [styles.bulletLeft]: align === 'left',
       [styles.bulletRight]: align === 'right',
     })}
+    style={{ top }}
   >
     <Icon type="bullet" color="red400" />
   </span>

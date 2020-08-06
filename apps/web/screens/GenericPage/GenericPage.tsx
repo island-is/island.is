@@ -1,5 +1,11 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, ReactNode, useRef, Ref } from 'react'
+import React, {
+  FC,
+  ReactNode,
+  useRef,
+  Ref,
+  forwardRef,
+} from 'react'
 import Link from 'next/link'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { Locale } from '@island.is/web/i18n/I18n'
@@ -19,6 +25,8 @@ import {
   LogoList,
 } from '@island.is/web/components'
 import {
+  Typography,
+  Divider,
   ContentBlock,
   Box,
   Column,
@@ -26,6 +34,7 @@ import {
   ColumnProps,
   BoxProps,
   Breadcrumbs,
+  Stack,
 } from '@island.is/island-ui/core'
 import Sidebar, { SidebarProps } from './Sidebar'
 import * as styles from './GenericPage.treat'
@@ -34,6 +43,8 @@ import Head from 'next/head'
 
 const extractSliceTitle = (slice: Slice): [string, string] | null => {
   switch (slice.__typename) {
+    case 'PageHeaderSlice':
+      return [slice.id, slice.navigationText]
     case 'HeadingSlice':
     case 'LinkCardSlice':
     case 'MailingListSignupSlice':
@@ -72,27 +83,35 @@ const Layout: FC<LayoutProps> = ({
 
 interface BackgroundProps {
   theme: string // 'neutral' | 'red' | 'blue' | 'gradient'
+  id?: string
   light?: boolean
+  children: ReactNode
 }
 
-const Background: FC<BackgroundProps> = ({
-  theme,
-  light = false,
-  children,
-}) => {
-  if (theme === 'gradient') {
-    return <div className={styles.gradient}>{children}</div>
-  }
+const Background = forwardRef<HTMLDivElement, BackgroundProps>(
+  ({ theme, id, light = false, children }, ref) => {
+    if (theme === 'gradient') {
+      return (
+        <div ref={ref} className={styles.gradient} id={id}>
+          {children}
+        </div>
+      )
+    }
 
-  let background = null
-  if (theme === 'blue') {
-    background = light ? 'blueberry100' : 'blueberry400'
-  } else if (theme === 'red') {
-    background = light ? 'rosetinted100' : 'roseTinted400'
-  }
+    let background = null
+    if (theme === 'blue') {
+      background = light ? 'blueberry100' : 'blueberry400'
+    } else if (theme === 'red') {
+      background = light ? 'rosetinted100' : 'roseTinted400'
+    }
 
-  return <Box background={background}>{children}</Box>
-}
+    return (
+      <Box ref={ref} id={id} background={background}>
+        {children}
+      </Box>
+    )
+  },
+)
 
 const decideSidebarType = (slice?: Slice): SidebarProps['type'] => {
   switch (slice && slice.__typename) {
@@ -119,21 +138,70 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
   switch (slice.__typename) {
     case 'PageHeaderSlice':
       return (
-        <Background theme={page.theme}>
+        <Background ref={setRef(slice.id)} id={slice.id} theme={page.theme}>
           <ContentBlock>
             <Box paddingX={[0, 0, 0, 6]}>
               <Header />
               <Box position="relative" marginTop={6} marginX={[0, 0, 0, 6]}>
                 <Sidebar
+                  title={page.title}
                   type={decideSidebarType(
                     page.slices.find(
                       (slice) => !currentSliceId || slice.id === currentSliceId,
                     ),
                   )}
-                  title={page.title}
-                  sections={page.slices.map(extractSliceTitle).filter(Boolean)}
-                  currentSection={currentSliceId}
-                />
+                >
+                  {({ bulletRef, colors }) => (
+                    <>
+                      {page.slices
+                        .map(extractSliceTitle)
+                        .filter(Boolean)
+                        .map(([id, text], index) => (
+                          <Box paddingBottom={index === 0 ? 2 : 0}>
+                            <a
+                              key={id}
+                              ref={id === currentSliceId ? bulletRef : null}
+                              href={'#' + id}
+                              onClick={(e) => {
+                                e.preventDefault()
+                                document.getElementById(id).scrollIntoView()
+                              }}
+                            >
+                              <Typography
+                                variant="p"
+                                as="p"
+                                color={colors.main}
+                              >
+                                {id === currentSliceId ? <b>{text}</b> : text}
+                              </Typography>
+                            </a>
+                          </Box>
+                        ))}
+                      {slice.links.length > 0 && (
+                        <Box paddingTop={2}>
+                          <Stack space={2}>
+                            {slice.links.map(({ url, text }) => (
+                              <>
+                                <Divider weight={colors.divider} />
+                                <Link href={url}>
+                                  <a>
+                                    <Typography
+                                      variant="p"
+                                      as="div"
+                                      color={colors.secondary}
+                                    >
+                                      {text}
+                                    </Typography>
+                                  </a>
+                                </Link>
+                              </>
+                            ))}
+                          </Stack>
+                        </Box>
+                      )}
+                    </>
+                  )}
+                </Sidebar>
               </Box>
               <Breadcrumbs color="blue300" separatorColor="blue300">
                 <Link href={makePath()}>
@@ -166,7 +234,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       )
     case 'HeadingSlice':
       return (
-        <div key={slice.id} ref={setRef(slice.id)}>
+        <div key={slice.id} id={slice.id} ref={setRef(slice.id)}>
           <Layout
             indent="1/12"
             width="7/12"
@@ -178,7 +246,12 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       )
     case 'LinkCardSlice':
       return (
-        <Box key={slice.id} ref={setRef(slice.id)} background="dotted">
+        <Box
+          key={slice.id}
+          id={slice.id}
+          ref={setRef(slice.id)}
+          background="dotted"
+        >
           <Layout width="8/12" boxProps={{ paddingTop: 8, paddingBottom: 10 }}>
             <LinkCardList {...slice} />
           </Layout>
@@ -186,7 +259,12 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       )
     case 'MailingListSignupSlice':
       return (
-        <Box key={slice.id} ref={setRef(slice.id)} background="blue100">
+        <Box
+          key={slice.id}
+          id={slice.id}
+          ref={setRef(slice.id)}
+          background="blue100"
+        >
           <Layout
             width="7/12"
             indent="1/12"
@@ -198,7 +276,12 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       )
     case 'StorySlice':
       return (
-        <div key={slice.id} ref={setRef(slice.id)} className={styles.gradient}>
+        <div
+          key={slice.id}
+          id={slice.id}
+          ref={setRef(slice.id)}
+          className={styles.gradient}
+        >
           <Layout width="7/12" boxProps={{ paddingY: 10 }}>
             <StoryList
               {...slice}
@@ -212,7 +295,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       )
     case 'LatestNewsSlice':
       return (
-        <div key={slice.id} ref={setRef(slice.id)}>
+        <div key={slice.id} id={slice.id} ref={setRef(slice.id)}>
           <Layout width="8/12" boxProps={{ paddingTop: 15, paddingBottom: 12 }}>
             <LatestNews {...slice} />
           </Layout>
@@ -220,7 +303,12 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       )
     case 'LogoListSlice':
       return (
-        <div key={slice.id} ref={setRef(slice.id)} className={styles.gradient}>
+        <div
+          key={slice.id}
+          id={slice.id}
+          ref={setRef(slice.id)}
+          className={styles.gradient}
+        >
           <Layout width="7/12" boxProps={{ paddingY: 10 }}>
             <LogoList {...slice} images={slice.images.map((img) => img.url)} />
           </Layout>
