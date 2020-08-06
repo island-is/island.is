@@ -16,6 +16,8 @@ import { Form } from '../types/Form'
 import { nationalIdRegex } from './schemaUtils'
 import { Comparators } from '../types/Condition'
 
+const formIcon = require('./ExampleForm3Icon.svg').default
+
 const ExampleSchema = z.object({
   person: z.object({
     age: z.string().refine((x) => {
@@ -37,7 +39,7 @@ const ExampleSchema = z.object({
     .array(
       // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
       z.union([
-        z.enum(['VW', 'Audi', 'Porsche', 'Tesla', 'None']),
+        z.enum(['VW', 'Audi', 'Porsche', 'Tesla', 'none']),
         z.undefined(),
       ]),
     )
@@ -75,6 +77,7 @@ export const ExampleForm3: Form = buildForm({
   ownerId: 'DOL',
   name: "Driver's license",
   schema: ExampleSchema,
+  icon: formIcon,
   children: [
     buildSection({
       id: 'student',
@@ -85,52 +88,81 @@ export const ExampleForm3: Form = buildForm({
           name: 'Welcome',
           introduction: "This is a sample driver's license application.",
         }),
-        // buildSubSection({
-        //   id: 'student',
-        //   name: 'Student Information',
-        //   children: [
-        //     buildTextField({
-        //       id: 'person.name',
-        //       name: 'Name',
-        //       required: true,
-        //     }),
-        //     buildCheckboxField({
-        //       id: 'historyCars',
-        //       name: 'Which cars have you driven before?',
-        //       required: false,
-        //       options: [
-        //         { value: 'VW', label: 'VW' },
-        //         { value: 'Audi', label: 'Audi' },
-        //         { value: 'Porsche', label: 'Porsche' },
-        //         { value: 'Tesla', label: 'Tesla' },
-        //         { value: 'None', label: 'None of these' },
-        //       ],
-        //     }),
-        //   ],
-        // }),
-        // buildSubSection({
-        //   id: 'background',
-        //   name: 'Driving background',
-        //   children: [
-        //     buildRadioField({
-        //       id: 'historyLicense',
-        //       name: "Have you had a driver's license before?",
-        //       required: true,
-        //       options: [
-        //         { value: 'yes', label: 'Yes' },
-        //         { value: 'no', label: 'No' },
-        //       ],
-        //     }),
-        //     buildTextField({
-        //       id: 'historyLicense_where',
-        //       name: 'Where was your license from?',
-        //       required: true,
-        //       condition: (formValue: ExampleSchemaFormValues) => {
-        //         return formValue?.historyLicense === 'yes'
-        //       },
-        //     }),
-        //   ],
-        // }),
+        buildSubSection({
+          id: 'student',
+          name: 'Student Information',
+          children: [
+            buildTextField({
+              id: 'person.name',
+              name: 'Name',
+              required: true,
+            }),
+            buildCheckboxField({
+              id: 'historyCars',
+              name: 'Which cars have you driven before?',
+              required: false,
+              options: [
+                {
+                  value: 'VW',
+                  label: 'VW',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'Audi',
+                  label: 'Audi',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'Porsche',
+                  label: 'Porsche',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'Tesla',
+                  label: 'Tesla',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'none',
+                  label: 'None of these',
+                  excludeOthers: true,
+                },
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'background',
+          name: 'Driving background',
+          children: [
+            buildRadioField({
+              id: 'historyLicense',
+              name: "Have you had a driver's license before?",
+              required: true,
+              options: [
+                {
+                  value: 'yes',
+                  label: 'Yes',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                { value: 'no', label: 'No' },
+              ],
+            }),
+            buildTextField({
+              id: 'historyLicense_where',
+              name: 'Where was your license from?',
+              required: true,
+              condition: (formValue: ExampleSchemaFormValues) => {
+                return formValue?.historyLicense === 'yes'
+              },
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({
@@ -232,7 +264,7 @@ export const ExampleForm3: Form = buildForm({
           id: 'Summary',
           name: 'Next steps',
           introduction:
-            'The instructor will contact you after you submit this application. Have a nice day!',
+            'The instructor will contact you after you submit this application.',
         }),
       ],
     }),
