@@ -5,7 +5,7 @@ import { Icon } from '@island.is/island-ui/core'
 
 interface BulletProps {
   align?: 'left' | 'right'
-  top: string | number
+  top?: string | number
 }
 
 export const Bullet: FC<BulletProps> = ({ align, top }) => (
