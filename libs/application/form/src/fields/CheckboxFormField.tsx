@@ -1,6 +1,12 @@
 import React, { FC, useState } from 'react'
 import { CheckboxField } from '@island.is/application/schema'
-import { Checkbox, Typography, Box, Stack } from '@island.is/island-ui/core'
+import {
+  Checkbox,
+  Typography,
+  Box,
+  Tooltip,
+  Stack,
+} from '@island.is/island-ui/core'
 import { FieldBaseProps } from '../types'
 import { Controller, useFormContext } from 'react-hook-form'
 
@@ -40,16 +46,27 @@ const CheckboxFormField: FC<Props> = ({ showFieldName = false, field }) => {
             return (
               <Stack space={2}>
                 {options.map((option, index) => (
-                  <Checkbox
-                    key={`${id}-${index}`}
-                    onChange={() => {
-                      onChange(handleSelect(option, value || []))
-                    }}
-                    checked={value && value.includes(option.value)}
-                    name={`${id}[${index}]`}
-                    label={option.label}
-                    value={option.value}
-                  />
+                  <Box display="flex" key={`${id}-${index}`}>
+                    <Checkbox
+                      onChange={() => {
+                        onChange(handleSelect(option, value || []))
+                      }}
+                      checked={value && value.includes(option.value)}
+                      name={`${id}[${index}]`}
+                      label={option.label}
+                      value={option.value}
+                    />
+                    {option.tooltip && (
+                      <Box marginLeft={1}>
+                        <Tooltip
+                          colored={true}
+                          placement="top"
+                          as="button"
+                          text={option.tooltip}
+                        />
+                      </Box>
+                    )}
+                  </Box>
                 ))}
               </Stack>
             )

@@ -20,6 +20,7 @@ export function buildForm(data: {
   name: string
   children: FormChildren[]
   schema: Schema
+  icon?: string
 }): Form {
   return { ...data, type: FormItemTypes.FORM }
 }
