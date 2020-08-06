@@ -1,11 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, {
-  FC,
-  ReactNode,
-  useRef,
-  Ref,
-  forwardRef,
-} from 'react'
+import React, { FC, ReactNode, useRef, Ref, forwardRef } from 'react'
 import Link from 'next/link'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { Locale } from '@island.is/web/i18n/I18n'
