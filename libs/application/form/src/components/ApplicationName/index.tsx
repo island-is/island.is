@@ -11,9 +11,9 @@ const ApplicationName: FC<{ name: string; icon?: string }> = ({
     <Box
       display="flex"
       alignItems="center"
-      paddingTop={4}
-      paddingBottom={4}
-      paddingLeft={5}
+      paddingTop={[2, 2, 4]}
+      paddingBottom={[2, 2, 4]}
+      paddingLeft={[3, 3, 5]}
       className={styles.root}
     >
       {icon && <img src={icon} />}
