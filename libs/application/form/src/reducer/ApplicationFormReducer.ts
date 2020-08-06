@@ -5,7 +5,8 @@ import {
 } from '@island.is/application/schema'
 import { Action, ActionTypes, ApplicationUIState } from './ReducerTypes'
 import { applyConditionsToFormFields, moveToScreen } from './reducerUtils'
-import { mergeWith, isArray } from 'lodash'
+import mergeWith from 'lodash/mergeWith'
+import isArray from 'lodash/isArray'
 
 /* 
   Makes it so that lodash merge only uses the newer array.
