@@ -1,6 +1,12 @@
 import React, { FC } from 'react'
 import { RadioField } from '@island.is/application/schema'
-import { Typography, Box, RadioButton, Stack } from '@island.is/island-ui/core'
+import {
+  Typography,
+  Box,
+  RadioButton,
+  Stack,
+  Tooltip,
+} from '@island.is/island-ui/core'
 import { FieldBaseProps } from '../types'
 import { useFormContext, Controller } from 'react-hook-form'
 
@@ -21,17 +27,29 @@ const RadioFormField: FC<Props> = ({ showFieldName = false, field }) => {
             return (
               <Stack space={2}>
                 {options.map((option, index) => (
-                  <RadioButton
-                    key={`${id}-${index}`}
-                    onChange={({ target }) => {
-                      onChange(target.value)
-                    }}
-                    checked={option.value === value}
-                    id={`${id}-${index}`}
-                    name={`${id}`}
-                    label={option.label}
-                    value={option.value}
-                  />
+                  <Box display="flex" alignItems="center" key={option.value}>
+                    <RadioButton
+                      key={`${id}-${index}`}
+                      onChange={({ target }) => {
+                        onChange(target.value)
+                      }}
+                      checked={option.value === value}
+                      id={`${id}-${index}`}
+                      name={`${id}`}
+                      label={option.label}
+                      value={option.value}
+                    />
+                    {option.tooltip && (
+                      <Box marginLeft={1}>
+                        <Tooltip
+                          colored={true}
+                          placement="top"
+                          as="button"
+                          text={option.tooltip}
+                        />
+                      </Box>
+                    )}
+                  </Box>
                 ))}
               </Stack>
             )
