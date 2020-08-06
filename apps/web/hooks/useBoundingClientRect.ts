@@ -11,7 +11,7 @@ const useBoundingClientRect = (): [
 
   useEffect(() => {
     setRect(element?.getBoundingClientRect())
-  }, [position, size])
+  }, [element, position, size])
 
   return [setElement, rect]
 }
