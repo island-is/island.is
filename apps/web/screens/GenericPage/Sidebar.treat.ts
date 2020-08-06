@@ -19,11 +19,11 @@ export const container = style({
   width: '318px',
   zIndex: 1,
   borderRadius: '8px',
-  transition: 'all .3s',
+  transition: 'all 150ms',
 })
 
-globalStyle(`${container} *`, {
-  transition: 'all 0.3s',
+globalStyle(`${container} *:not(b)`, {
+  transition: 'all 150ms',
 })
 
 export const background = style({

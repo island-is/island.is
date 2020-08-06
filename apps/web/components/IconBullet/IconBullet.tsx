@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, MouseEvent } from 'react'
 import cn from 'classnames'
 import * as styles from './IconBullet.treat'
 
@@ -7,13 +7,14 @@ export interface IconBulletProps {
   size?: 'small' | 'large'
   center?: boolean
   image?: string
+  onClick?: (e: MouseEvent) => void
 }
 
 const IconBullet: FC<IconBulletProps> = ({
   variant = 'blue',
   size = 'large',
-  center = false,
   image,
+  onClick,
   children,
 }) => (
   <div
@@ -21,8 +22,9 @@ const IconBullet: FC<IconBulletProps> = ({
       [styles.red]: variant === 'red',
       [styles.gradient]: variant === 'gradient',
       [styles.small]: size === 'small',
-      [styles.center]: center,
+      [styles.clickable]: Boolean(onClick),
     })}
+    onClick={onClick}
   >
     {image ? <img className={styles.image} src={image} alt="" /> : children}
   </div>
