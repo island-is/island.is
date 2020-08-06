@@ -37,7 +37,7 @@ const ExampleSchema = z.object({
     .array(
       // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
       z.union([
-        z.enum(['VW', 'Audi', 'Porsche', 'Tesla', 'None']),
+        z.enum(['VW', 'Audi', 'Porsche', 'Tesla', 'none']),
         z.undefined(),
       ]),
     )
@@ -99,11 +99,35 @@ export const ExampleForm3: Form = buildForm({
               name: 'Which cars have you driven before?',
               required: false,
               options: [
-                { value: 'VW', label: 'VW' },
-                { value: 'Audi', label: 'Audi' },
-                { value: 'Porsche', label: 'Porsche' },
-                { value: 'Tesla', label: 'Tesla' },
-                { value: 'None', label: 'None of these' },
+                {
+                  value: 'VW',
+                  label: 'VW',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'Audi',
+                  label: 'Audi',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'Porsche',
+                  label: 'Porsche',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'Tesla',
+                  label: 'Tesla',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'none',
+                  label: 'None of these',
+                  excludeOthers: true,
+                },
               ],
             }),
           ],
@@ -117,7 +141,12 @@ export const ExampleForm3: Form = buildForm({
               name: "Have you had a driver's license before?",
               required: true,
               options: [
-                { value: 'yes', label: 'Yes' },
+                {
+                  value: 'yes',
+                  label: 'Yes',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
                 { value: 'no', label: 'No' },
               ],
             }),
