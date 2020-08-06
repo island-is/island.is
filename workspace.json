@@ -774,6 +774,21 @@
             "cwd": "apps/reference-backend"
           }
         },
+        "generate-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "outputPath": "apps/reference-backend/src/openapi.yaml",
+            "commands": [
+              {
+                "command": "yarn build reference-backend"
+              },
+              {
+                "command": "node dist/apps/reference-backend/main --generate-schema apps/reference-backend/src/openapi.yaml"
+              }
+            ]
+          }
+        },
         "migrate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -849,6 +864,34 @@
           "options": {
             "jestConfig": "libs/infra-express-server/jest.config.js",
             "tsConfig": "libs/infra-express-server/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "infra-nest-server": {
+      "root": "libs/infra-nest-server",
+      "sourceRoot": "libs/infra-nest-server/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/infra-nest-server/.eslintrc",
+            "tsConfig": [
+              "libs/infra-nest-server/tsconfig.lib.json",
+              "libs/infra-nest-server/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/infra-nest-server/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/infra-nest-server/jest.config.js",
+            "tsConfig": "libs/infra-nest-server/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }

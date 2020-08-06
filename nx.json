@@ -85,6 +85,9 @@
     "infra-express-server": {
       "tags": []
     },
+    "infra-nest-server": {
+      "tags": []
+    },
     "api-content-search": {
       "tags": []
     },
