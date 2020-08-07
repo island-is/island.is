@@ -97,6 +97,9 @@
     "api-domains-content-search": {
       "tags": []
     },
+    "contentful-importer": {
+      "tags": []
+    },
     "gjafakort-types": {
       "tags": []
     },
