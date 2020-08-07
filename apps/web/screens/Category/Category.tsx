@@ -58,7 +58,7 @@ const Category: Screen<CategoryProps> = ({
         // group does not exist create the collection
         content.groups[article.groupSlug] = {
           title: article.group,
-          description: 'Some group description goes here',
+          description: article.groupDescription,
           articles: [article],
         }
       } else if (article.groupSlug) {
