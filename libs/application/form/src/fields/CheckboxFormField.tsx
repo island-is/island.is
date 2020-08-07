@@ -17,9 +17,10 @@ interface Props extends FieldBaseProps {
 const CheckboxFormField: FC<Props> = ({ showFieldName = false, field }) => {
   const { id, name, options } = field
   const { control } = useFormContext()
-  const excludeOptionsLookup = options.map((o) => o.excludeOthers && o.value)
 
   function handleSelect(option: Option, checkedValues: String[]) {
+    const excludeOptionsLookup = options.map((o) => o.excludeOthers && o.value)
+
     let newChoices = []
     if (option.excludeOthers && !checkedValues.includes(option.value)) {
       return [option.value]
