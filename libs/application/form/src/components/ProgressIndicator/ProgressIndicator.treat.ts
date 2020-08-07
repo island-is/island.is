@@ -9,17 +9,28 @@ export const root = style({
 })
 
 export const progressContainer = style({
-  background: theme.color.white,
-  borderRadius: '100px',
-  height: '5px',
+  borderRadius: '0',
+  height: '2px',
   flex: 0.975,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      borderRadius: '100px',
+      background: theme.color.white,
+      height: '5px',
+    },
+  },
 })
 
 export const progress = style({
   background: theme.color.blue400,
   borderRadius: '100px',
-  height: '5px',
+  height: '2px',
   transition: 'width .5s ease',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      height: '5px',
+    },
+  },
 })
 
 export const progressNumber = style({

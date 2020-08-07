@@ -4,18 +4,20 @@ import { Route } from 'react-router-dom'
 
 import { ApplicationForm } from '@island.is/application/form'
 import { ExampleForm3 } from '@island.is/application/schema'
-import { Header, Page, Box } from '@island.is/island-ui/core'
+import { Header, Box } from '@island.is/island-ui/core'
+
+import * as styles from './App.treat'
 
 export const App = () => {
   return (
-    <Page>
+    <Box className={styles.root}>
       <Route path="/">
-        <Box paddingLeft={5}>
+        <Box paddingLeft={[3, 3, 5]}>
           <Header />
         </Box>
         <ApplicationForm form={ExampleForm3} initialAnswers={{}} />
       </Route>
-    </Page>
+    </Box>
   )
 }
 
