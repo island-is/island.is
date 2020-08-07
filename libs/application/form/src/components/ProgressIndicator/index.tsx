@@ -11,7 +11,7 @@ const ProgressIndicator: FC<{ progress: number }> = ({ progress }) => (
       paddingLeft={[0, 5]}
       paddingRight={[0, 5]}
       className={styles.root}
-      display={['none', 'block']}
+      display={['none', 'none', 'block']}
     >
       <Box display="flex" justifyContent="spaceBetween">
         <Typography variant="pSmall" color="dark400">
@@ -32,7 +32,10 @@ const ProgressIndicator: FC<{ progress: number }> = ({ progress }) => (
         </Box>
       </Box>
     </Box>
-    <Box display={['flex', 'none']} className={styles.progressContainer}>
+    <Box
+      display={['flex', 'flex', 'none']}
+      className={styles.progressContainer}
+    >
       <Box className={styles.progress} style={{ width: `${progress}%` }}></Box>
     </Box>
   </>
