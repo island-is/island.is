@@ -56,14 +56,16 @@ export const ApplicationForm: FC<ApplicationProps> = ({
         <Box className={styles.sidebarContainer}>
           <Sidebar>
             <ApplicationName name={form.name} icon={form.icon} />
-            <ProgressIndicator
-              progress={(activeScreen / screens.length) * 100}
-            />
-            <FormProgress
-              sections={sections}
-              activeSection={activeSection}
-              activeSubSection={activeSubSection}
-            />
+            <Box display="flex" flexDirection={['column', 'columnReverse']}>
+              <FormProgress
+                sections={sections}
+                activeSection={activeSection}
+                activeSubSection={activeSubSection}
+              />
+              <ProgressIndicator
+                progress={(activeScreen / screens.length) * 100}
+              />
+            </Box>
           </Sidebar>
         </Box>
 
