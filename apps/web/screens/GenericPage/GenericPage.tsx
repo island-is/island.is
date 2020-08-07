@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, ReactNode, useRef, Ref, forwardRef } from 'react'
+import React, { FC, ReactNode, useRef, useMemo, Ref, forwardRef } from 'react'
+import fromPairs from 'lodash/fromPairs'
 import Link from 'next/link'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { Locale } from '@island.is/web/i18n/I18n'
@@ -46,10 +47,20 @@ const extractSliceTitle = (slice: Slice): [string, string] | null => {
     case 'LatestNewsSlice':
     case 'LogoListSlice':
       return [slice.id, slice.title]
-    case 'TimelineSlice':
-    case 'StorySlice':
+    default:
       return null
   }
+}
+
+const connectSlices = (slices: Slice[]): { [k: string]: string } => {
+  let head = slices.find(extractSliceTitle)
+  const pairs = slices.map((slice) => {
+    if (extractSliceTitle(slice)) {
+      head = slice
+    }
+    return [slice.id, head.id]
+  })
+  return fromPairs(pairs)
 }
 
 export interface LayoutProps {
@@ -130,7 +141,6 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale as Locale)
 
-  const typename = slice.__typename
   switch (slice.__typename) {
     case 'PageHeaderSlice':
       return (
@@ -153,9 +163,8 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                         .map(extractSliceTitle)
                         .filter(Boolean)
                         .map(([id, text], index) => (
-                          <Box paddingBottom={index === 0 ? 2 : 0}>
+                          <Box key={id} paddingBottom={index === 0 ? 2 : 0}>
                             <a
-                              key={id}
                               ref={id === currentSliceId ? bulletRef : null}
                               href={'#' + id}
                               onClick={(e) => {
@@ -342,7 +351,8 @@ export interface GenericPageProps {
 
 const GenericPage: Screen<GenericPageProps> = ({ page }) => {
   const refs: Ref<{ [k: string]: HTMLDivElement }> = useRef({})
-  const [spy, currentId] = useScrollSpy({ margin: 200 })
+  const [spy, sliceId] = useScrollSpy({ margin: 200 })
+  const sliceMap = useMemo(() => connectSlices(page.slices), [page.slices])
 
   const setRef = (id: string) => {
     return (e: HTMLDivElement) => {
@@ -362,7 +372,7 @@ const GenericPage: Screen<GenericPageProps> = ({ page }) => {
           key={slice.id}
           slice={slice}
           page={page}
-          currentSliceId={currentId}
+          currentSliceId={sliceMap[sliceId]}
           setRef={setRef}
         />
       ))}
