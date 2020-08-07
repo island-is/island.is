@@ -91,9 +91,7 @@ jobs:
             export BRANCH=$GIT_BRANCH
           fi
           NUMBER_NEWER_COMMITS_THEN_ME=`git log --format=%H --first-parent "$BRANCH"  $GITHUB_SHA... $BRANCH | wc -l | tr -d '[:space:]'`
-          COMMITS_AFTER_ME=`git log --format=%H --first-parent "$BRANCH" | tail -n +$((NUMBER_NEWER_COMMITS_THEN_ME+1))`
-          echo $COMMITS_AFTER_ME
-          LAST_GOOD_BUILD=`echo $COMMITS_AFTER_ME | node .github/actions/dist/index.js`
+          LAST_GOOD_BUILD=`git log --format=%H --first-parent "$BRANCH" | tail -n +$((NUMBER_NEWER_COMMITS_THEN_ME+1)) | node .github/actions/dist/index.js`
           echo $LAST_GOOD_BUILD
           LAST_GOOD_BUILD_SHA=`echo $LAST_GOOD_BUILD | jq -r '.sha'`
           LAST_GOOD_BUILD_BRANCH=`echo $LAST_GOOD_BUILD | jq -r '.branch'`
