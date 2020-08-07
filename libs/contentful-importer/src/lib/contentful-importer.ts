@@ -12,11 +12,11 @@ import { ContentfulImportOptions, ContentfulImportData } from './types'
 export class ContentfulImporter {
   options: ContentfulImportOptions
   environment: Environment
-  constructor (options: ContentfulImportOptions) {
+  constructor(options: ContentfulImportOptions) {
     this.options = options
   }
 
-  async connect () {
+  async connect() {
     const client = createClient({
       accessToken: this.options.accessToken,
       retryLimit: 20,
@@ -28,7 +28,7 @@ export class ContentfulImporter {
 
   localeValue = curry((locale, value) => ({ [locale]: value }))
 
-  async mapFields (
+  async mapFields(
     locale: string,
     data: ContentfulImportData,
   ): Promise<Omit<EntryProp, 'sys'>> {
@@ -96,7 +96,7 @@ export class ContentfulImporter {
     return { fields: contentfulFields }
   }
 
-  async importContentType (
+  async importContentType(
     contentTypeId: string,
     data: ContentfulImportData,
     { locale = 'is-IS' } = {},
