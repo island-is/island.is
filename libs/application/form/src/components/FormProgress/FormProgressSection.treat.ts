@@ -9,3 +9,13 @@ export const root = style({
     },
   },
 })
+
+export const sectionName = style({
+  // Fixes vertical center alignemnt of text and number
+  paddingTop: '3px',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      paddingTop: 0,
+    },
+  },
+})

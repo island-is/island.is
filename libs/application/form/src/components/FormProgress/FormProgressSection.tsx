@@ -62,12 +62,14 @@ const FormProgressSection: FC<{
             number={sectionIndex + 1}
           />
         </Box>
-        <Typography
-          variant="h4"
-          color={isActive || isComplete ? 'blue400' : 'dark200'}
-        >
-          {section.name}
-        </Typography>
+        <Box className={styles.sectionName}>
+          <Typography
+            variant="h4"
+            color={isActive || isComplete ? 'blue400' : 'dark200'}
+          >
+            {section.name}
+          </Typography>
+        </Box>
       </Box>
       {isActive && hasSubSections && (
         <Box display={['none', 'none', 'block']} paddingLeft={1}>
