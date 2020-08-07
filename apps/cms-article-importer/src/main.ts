@@ -42,7 +42,7 @@ const getGroups = (data) => {
 }
 
 const getDataFromExcelFile = () => {
-  const dataFile = '/Users/stefanharald/Downloads/import_data.xlsx'
+  const dataFile = './import_data.xlsx'
   const sheets = [1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 16]
   return Promise.all(
     sheets.map((sheet) => {
