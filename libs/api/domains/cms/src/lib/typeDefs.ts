@@ -31,9 +31,22 @@ export const typeDefs = gql`
     category: Taxonomy!
   }
 
+  type VidspyrnaItem {
+    id: String!
+    slug: String!
+    title: String!
+    description: String!
+    content: String
+  }
+
   input GetArticleInput {
     slug: String
     lang: String!
+  }
+
+  input GetVidspyrnaItemsInput {
+    lang: String!
+    perPage: Int
   }
 
   type News {
@@ -51,9 +64,26 @@ export const typeDefs = gql`
     news: [News!]!
   }
 
+  type VidspyrnaItems {
+    items: [VidspyrnaItem!]!
+  }
+
+  type VidspyrnaFrontpage {
+    items: VidspyrnaItem!
+  }
+
+  input GetVidspyrnaFrontpageInput {
+    lang: String
+  }
+
   input GetNewsInput {
     slug: String!
     lang: String
+  }
+
+  input GetVidspyrnaItemInput {
+    lang: String
+    slug: String!
   }
 
   input GetNewsListInput {
@@ -217,6 +247,9 @@ export const typeDefs = gql`
 
   extend type Query {
     getArticle(input: GetArticleInput): Article
+    getVidspyrnaItem(input: GetVidspyrnaItemInput): VidspyrnaItem!
+    getVidspyrnaItems(input: GetVidspyrnaItemsInput): VidspyrnaItems!
+    getVidspyrnaFrontpage(input: GetVidspyrnaFrontpageInput): VidspyrnaItem!
     getNews(input: GetNewsInput!): News
     getNewsList(input: GetNewsListInput): PaginatedNews!
     getNamespace(input: GetNamespaceInput): Namespace

@@ -6,6 +6,9 @@ type Query {
   getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput): PaginatedNews!
   getPage(input: GetPageInput!): Page
+  getVidspyrnaFrontpage(input: GetVidspyrnaFrontpageInput): VidspyrnaItem!
+  getVidspyrnaItem(input: GetVidspyrnaItemInput): VidspyrnaItem!
+  getVidspyrnaItems(input: GetVidspyrnaItemsInput): VidspyrnaItems!
   helloWorld(input: HelloWorldInput): HelloWorld!
   root: String
   searchResults(query: SearcherInput): SearchResult!
@@ -46,9 +49,22 @@ type Article {
   category: Taxonomy!
 }
 
+type VidspyrnaItem {
+  id: String!
+  slug: String!
+  title: String!
+  description: String!
+  content: String
+}
+
 input GetArticleInput {
   slug: String
   lang: String!
+}
+
+input GetVidspyrnaItemsInput {
+  lang: String!
+  perPage: Int
 }
 
 type News {
@@ -66,9 +82,26 @@ type PaginatedNews {
   news: [News!]!
 }
 
+type VidspyrnaItems {
+  items: [VidspyrnaItem!]!
+}
+
+type VidspyrnaFrontpage {
+  items: VidspyrnaItem!
+}
+
+input GetVidspyrnaFrontpageInput {
+  lang: String
+}
+
 input GetNewsInput {
   slug: String!
   lang: String
+}
+
+input GetVidspyrnaItemInput {
+  lang: String
+  slug: String!
 }
 
 input GetNewsListInput {

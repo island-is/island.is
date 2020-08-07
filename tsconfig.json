@@ -19,6 +19,7 @@
     "paths": {
       "@island.is/island-ui/core": ["libs/island-ui/core/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
+      "@island.is/adgerdir/*": ["apps/adgerdir/*"],
       "@island.is/gjafakort-web/*": ["apps/gjafakort/web/*"],
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"

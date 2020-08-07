@@ -4,6 +4,10 @@ import { logger } from '@island.is/logging'
 import {
   Image,
   Article,
+  VidspyrnaItem,
+  VidspyrnaItems,
+  GetVidspyrnaItemsInput,
+  GetVidspyrnaItemInput,
   News,
   Namespace,
   Pagination,
@@ -44,6 +48,15 @@ const formatArticle = ({ sys, fields }): Article => ({
   title: fields.title,
   group: fields.group?.fields,
   category: fields.category?.fields,
+  content: JSON.stringify(fields.content),
+})
+
+const formatVidspyrnaItem = ({ sys, fields }): VidspyrnaItem => ({
+  __typename: 'VidspyrnaItem',
+  id: sys.id,
+  slug: fields.slug,
+  title: fields.title,
+  description: fields.description,
   content: JSON.stringify(fields.content),
 })
 
@@ -292,6 +305,50 @@ export const getArticle = async (
   }
 
   return formatArticle(result.items[0])
+}
+
+export const getVidspyrnaFrontpage = async (
+  lang: string,
+): Promise<VidspyrnaItem> => {
+  const result = await getLocalizedEntries<Article>(lang, {
+    ['content_type']: 'vidspyrna-frontpage',
+    include: 1,
+  }).catch(errorHandler('getVidspyrnaFrontpage'))
+
+  // if we have no results
+  if (!result.total) {
+    return null
+  }
+
+  return formatVidspyrnaItem(result.items[0])
+}
+
+export const getVidspyrnaItems = async (
+  lang = 'is-IS',
+): Promise<VidspyrnaItems> => {
+  const params = {
+    ['content_type']: 'vidspyrna-page',
+    include: 10,
+    limit: 100,
+  }
+
+  const r = await getLocalizedEntries<News>(lang, params).catch(
+    errorHandler('getVidspyrnaItems'),
+  )
+
+  return {
+    items: r.items.map(formatVidspyrnaItem),
+  }
+}
+
+export const getVidspyrnaItem = async (slug: string, lang: string) => {
+  const r = await getLocalizedEntries<VidspyrnaItem>(lang, {
+    ['content_type']: 'vidspyrna-page',
+    include: 10,
+    'fields.slug': slug,
+  }).catch(errorHandler('getVidspyrnaItem'))
+
+  return r.items[0] && formatVidspyrnaItem(r.items[0])
 }
 
 export const getNews = async (lang: string, slug: string) => {

@@ -24,6 +24,9 @@ export type Query = {
   getNews?: Maybe<News>
   getNewsList: PaginatedNews
   getPage?: Maybe<Page>
+  getVidspyrnaFrontpage: VidspyrnaItem
+  getVidspyrnaItem: VidspyrnaItem
+  getVidspyrnaItems: VidspyrnaItems
   helloWorld: HelloWorld
   root?: Maybe<Scalars['String']>
   searchResults: SearchResult
@@ -56,6 +59,18 @@ export type QueryGetNewsListArgs = {
 
 export type QueryGetPageArgs = {
   input: GetPageInput
+}
+
+export type QueryGetVidspyrnaFrontpageArgs = {
+  input?: Maybe<GetVidspyrnaFrontpageInput>
+}
+
+export type QueryGetVidspyrnaItemArgs = {
+  input?: Maybe<GetVidspyrnaItemInput>
+}
+
+export type QueryGetVidspyrnaItemsArgs = {
+  input?: Maybe<GetVidspyrnaItemsInput>
 }
 
 export type QueryHelloWorldArgs = {
@@ -109,9 +124,23 @@ export type Article = {
   category: Taxonomy
 }
 
+export type VidspyrnaItem = {
+  __typename?: 'VidspyrnaItem'
+  id: Scalars['String']
+  slug: Scalars['String']
+  title: Scalars['String']
+  description: Scalars['String']
+  content?: Maybe<Scalars['String']>
+}
+
 export type GetArticleInput = {
   slug?: Maybe<Scalars['String']>
   lang: Scalars['String']
+}
+
+export type GetVidspyrnaItemsInput = {
+  lang: Scalars['String']
+  perPage?: Maybe<Scalars['Int']>
 }
 
 export type News = {
@@ -131,9 +160,28 @@ export type PaginatedNews = {
   news: Array<News>
 }
 
+export type VidspyrnaItems = {
+  __typename?: 'VidspyrnaItems'
+  items: Array<VidspyrnaItem>
+}
+
+export type VidspyrnaFrontpage = {
+  __typename?: 'VidspyrnaFrontpage'
+  items: VidspyrnaItem
+}
+
+export type GetVidspyrnaFrontpageInput = {
+  lang?: Maybe<Scalars['String']>
+}
+
 export type GetNewsInput = {
   slug: Scalars['String']
   lang?: Maybe<Scalars['String']>
+}
+
+export type GetVidspyrnaItemInput = {
+  lang?: Maybe<Scalars['String']>
+  slug: Scalars['String']
 }
 
 export type GetNewsListInput = {
@@ -525,10 +573,16 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>
   Pagination: ResolverTypeWrapper<Pagination>
   Article: ResolverTypeWrapper<Article>
+  VidspyrnaItem: ResolverTypeWrapper<VidspyrnaItem>
   GetArticleInput: GetArticleInput
+  GetVidspyrnaItemsInput: GetVidspyrnaItemsInput
   News: ResolverTypeWrapper<News>
   PaginatedNews: ResolverTypeWrapper<PaginatedNews>
+  VidspyrnaItems: ResolverTypeWrapper<VidspyrnaItems>
+  VidspyrnaFrontpage: ResolverTypeWrapper<VidspyrnaFrontpage>
+  GetVidspyrnaFrontpageInput: GetVidspyrnaFrontpageInput
   GetNewsInput: GetNewsInput
+  GetVidspyrnaItemInput: GetVidspyrnaItemInput
   GetNewsListInput: GetNewsListInput
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   Link: ResolverTypeWrapper<Link>
@@ -598,10 +652,16 @@ export type ResolversParentTypes = {
   Int: Scalars['Int']
   Pagination: Pagination
   Article: Article
+  VidspyrnaItem: VidspyrnaItem
   GetArticleInput: GetArticleInput
+  GetVidspyrnaItemsInput: GetVidspyrnaItemsInput
   News: News
   PaginatedNews: PaginatedNews
+  VidspyrnaItems: VidspyrnaItems
+  VidspyrnaFrontpage: VidspyrnaFrontpage
+  GetVidspyrnaFrontpageInput: GetVidspyrnaFrontpageInput
   GetNewsInput: GetNewsInput
+  GetVidspyrnaItemInput: GetVidspyrnaItemInput
   GetNewsListInput: GetNewsListInput
   Boolean: Scalars['Boolean']
   Link: Link
@@ -703,6 +763,24 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetPageArgs, 'input'>
   >
+  getVidspyrnaFrontpage?: Resolver<
+    ResolversTypes['VidspyrnaItem'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetVidspyrnaFrontpageArgs, never>
+  >
+  getVidspyrnaItem?: Resolver<
+    ResolversTypes['VidspyrnaItem'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetVidspyrnaItemArgs, never>
+  >
+  getVidspyrnaItems?: Resolver<
+    ResolversTypes['VidspyrnaItems'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetVidspyrnaItemsArgs, never>
+  >
   helloWorld?: Resolver<
     ResolversTypes['HelloWorld'],
     ParentType,
@@ -777,6 +855,18 @@ export type ArticleResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type VidspyrnaItemResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['VidspyrnaItem'] = ResolversParentTypes['VidspyrnaItem']
+> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type NewsResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['News'] = ResolversParentTypes['News']
@@ -797,6 +887,26 @@ export type PaginatedNewsResolvers<
 > = {
   page?: Resolver<ResolversTypes['Pagination'], ParentType, ContextType>
   news?: Resolver<Array<ResolversTypes['News']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type VidspyrnaItemsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['VidspyrnaItems'] = ResolversParentTypes['VidspyrnaItems']
+> = {
+  items?: Resolver<
+    Array<ResolversTypes['VidspyrnaItem']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type VidspyrnaFrontpageResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['VidspyrnaFrontpage'] = ResolversParentTypes['VidspyrnaFrontpage']
+> = {
+  items?: Resolver<ResolversTypes['VidspyrnaItem'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1142,8 +1252,11 @@ export type Resolvers<ContextType = Context> = {
   Image?: ImageResolvers<ContextType>
   Pagination?: PaginationResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
+  VidspyrnaItem?: VidspyrnaItemResolvers<ContextType>
   News?: NewsResolvers<ContextType>
   PaginatedNews?: PaginatedNewsResolvers<ContextType>
+  VidspyrnaItems?: VidspyrnaItemsResolvers<ContextType>
+  VidspyrnaFrontpage?: VidspyrnaFrontpageResolvers<ContextType>
   Link?: LinkResolvers<ContextType>
   TimelineEvent?: TimelineEventResolvers<ContextType>
   TimelineSlice?: TimelineSliceResolvers<ContextType>
