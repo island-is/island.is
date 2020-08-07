@@ -1,5 +1,5 @@
-import React, { FC, useState } from 'react'
-import { CheckboxField } from '@island.is/application/schema'
+import React, { FC } from 'react'
+import { CheckboxField, Option } from '@island.is/application/schema'
 import {
   Checkbox,
   Typography,
@@ -8,6 +8,7 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '../types'
+
 import { Controller, useFormContext } from 'react-hook-form'
 
 interface Props extends FieldBaseProps {
@@ -18,7 +19,7 @@ const CheckboxFormField: FC<Props> = ({ showFieldName = false, field }) => {
   const { control } = useFormContext()
   const excludeOptionsLookup = options.map((o) => o.excludeOthers && o.value)
 
-  function handleSelect(option, checkedValues) {
+  function handleSelect(option: Option, checkedValues: String[]) {
     let newChoices = []
     if (option.excludeOthers && !checkedValues.includes(option.value)) {
       return [option.value]
