@@ -83,7 +83,7 @@ const Screen: FC<ScreenProps> = ({
             )}
           </Box>
         </Box>
-        <Box marginTop={[3, 0]}>
+        <Box marginTop={[3, 3, 0]}>
           <Divider weight="regular" />
           <Box
             display="flex"
