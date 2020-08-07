@@ -4,8 +4,6 @@ import ErrorPage from '../../pages/_error'
 
 export const withErrorBoundary = (Component) => {
   class ErrorBoundary extends React.Component<ErrorProps> {
-    state = { ...this.props }
-
     static getDerivedStateFromError(error: Error) {
       // All throws from frontend are critical crashes,
       // return generic error code unless the error is a custom error object
@@ -19,7 +17,7 @@ export const withErrorBoundary = (Component) => {
     }
 
     render() {
-      const { statusCode, title, children } = this.state
+      const { statusCode, title, children } = this.props
       if (statusCode) {
         // Display error page for all client side errors during render
         return <ErrorPage statusCode={statusCode} title={title} />
