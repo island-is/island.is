@@ -19,20 +19,20 @@ jobs:
     #runs-on: self-hosted
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:11.6
-        env:
-          POSTGRES_DB: application_test
-          POSTGRES_PASSWORD: application_test
-          POSTGRES_USER: application_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
+    # services:
+    #   postgres:
+    #     image: postgres:11.6
+    #     env:
+    #       POSTGRES_DB: application_test
+    #       POSTGRES_PASSWORD: application_test
+    #       POSTGRES_USER: application_test
+    #     options: >-
+    #       --health-cmd pg_isready
+    #       --health-interval 10s
+    #       --health-timeout 5s
+    #       --health-retries 5
+    #     ports:
+    #       - 5432:5432
 
     env:
       # TODO: make this more generic (workflows should trigger these services)
@@ -91,7 +91,7 @@ jobs:
             export BRANCH=$GIT_BRANCH
           fi
           NUMBER_NEWER_COMMITS_THEN_ME=`git log --format=%H --first-parent "$BRANCH"  $GITHUB_SHA... $BRANCH | wc -l | tr -d '[:space:]'`
-          COMMITS_AFTER_ME=`git log --format=%H --first-parent "$BRANCH" | tail -n +$((NUMBER_NEWER_COMMITS_THEN_ME+1)) | head -n 5`
+          COMMITS_AFTER_ME=`git log --format=%H --first-parent "$BRANCH" | tail -n +$((NUMBER_NEWER_COMMITS_THEN_ME+1))`
           echo $COMMITS_AFTER_ME
           LAST_GOOD_BUILD=`echo $COMMITS_AFTER_ME | node .github/actions/dist/index.js`
           echo $LAST_GOOD_BUILD
