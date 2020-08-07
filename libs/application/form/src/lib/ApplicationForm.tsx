@@ -9,7 +9,7 @@ import {
   initializeReducer,
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
-import { Box, Column } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 
 import * as styles from './ApplicationForm.treat'
 import ProgressIndicator from '../components/ProgressIndicator'
@@ -47,41 +47,47 @@ export const ApplicationForm: FC<ApplicationProps> = ({
   } = state
   return (
     <Box display="flex" flexGrow={1}>
-      <Box display="flex" flexGrow={1} flexDirection="row">
-        <Column width="1/4">
+      <Box
+        display="flex"
+        flexGrow={1}
+        flexDirection="row"
+        className={styles.applicationContainer}
+      >
+        <Box className={styles.sidebarContainer}>
           <Sidebar>
             <ApplicationName name={form.name} icon={form.icon} />
-            <ProgressIndicator
-              progress={(activeScreen / screens.length) * 100}
-            />
-            <FormProgress
-              sections={sections}
-              activeSection={activeSection}
-              activeSubSection={activeSubSection}
-            />
+            <Box display="flex" flexDirection={['column', 'columnReverse']}>
+              <FormProgress
+                sections={sections}
+                activeSection={activeSection}
+                activeSubSection={activeSubSection}
+              />
+              <ProgressIndicator
+                progress={(activeScreen / screens.length) * 100}
+              />
+            </Box>
           </Sidebar>
-        </Column>
-        <Column width="3/4">
-          <Box
-            paddingX={12}
-            paddingTop={4}
-            height="full"
-            className={styles.screenContainer}
-          >
-            <Screen
-              answerQuestions={(payload) =>
-                dispatch({ type: ActionTypes.ANSWER, payload })
-              }
-              dataSchema={form.schema}
-              formValue={formValue}
-              nextScreen={() => dispatch({ type: ActionTypes.NEXT_SCREEN })}
-              prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
-              shouldSubmit={activeScreen === screens.length - 1}
-              screen={screens[activeScreen]}
-              section={sections[activeSection]}
-            />
-          </Box>
-        </Column>
+        </Box>
+
+        <Box
+          paddingX={[3, 3, 12]}
+          paddingTop={4}
+          height="full"
+          className={styles.screenContainer}
+        >
+          <Screen
+            answerQuestions={(payload) =>
+              dispatch({ type: ActionTypes.ANSWER, payload })
+            }
+            dataSchema={form.schema}
+            formValue={formValue}
+            nextScreen={() => dispatch({ type: ActionTypes.NEXT_SCREEN })}
+            prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
+            shouldSubmit={activeScreen === screens.length - 1}
+            screen={screens[activeScreen]}
+            section={sections[activeSection]}
+          />
+        </Box>
       </Box>
     </Box>
   )
