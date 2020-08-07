@@ -4,7 +4,7 @@ import * as styles from './LogoList.treat'
 
 export interface LogoListProps {
   title: string
-  body: string
+  body?: string
   images: string[]
 }
 

@@ -3,7 +3,7 @@ import { Stack, Typography } from '@island.is/island-ui/core'
 
 export interface HeadingProps {
   title: string
-  body: string
+  body?: string
 }
 
 export const Heading: FC<HeadingProps> = ({ title, body }) => (

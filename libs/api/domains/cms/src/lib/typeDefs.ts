@@ -76,10 +76,10 @@ export const typeDefs = gql`
     date: String!
     numerator: Int
     denominator: Int
-    label: String!
+    label: String
     body: String
     tags: [String!]!
-    link: String!
+    link: String
   }
 
   type TimelineSlice {
@@ -107,7 +107,7 @@ export const typeDefs = gql`
   type HeadingSlice {
     id: ID!
     title: String!
-    body: String!
+    body: String
   }
 
   type LatestNewsSlice {
@@ -126,7 +126,7 @@ export const typeDefs = gql`
 
   type LinkCard {
     title: String!
-    body: String!
+    body: String
     link: String!
     linkText: String!
   }
@@ -140,7 +140,7 @@ export const typeDefs = gql`
   type LogoListSlice {
     id: ID!
     title: String!
-    body: String!
+    body: String
     images: [Image!]!
   }
 

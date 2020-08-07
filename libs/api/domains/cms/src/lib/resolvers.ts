@@ -7,6 +7,11 @@ import {
   getPage,
 } from './services'
 
+const richTextResolver = (source, _args, _context, info) => {
+  const v = source[info.fieldName]
+  return v && JSON.stringify(v)
+}
+
 export const resolvers: Resolvers = {
   Query: {
     getArticle(_, { input }) {
@@ -27,7 +32,22 @@ export const resolvers: Resolvers = {
   },
 
   Slice: {
-    __resolveType: (obj) => obj.__typename,
+    __resolveType: (slice) => {
+      return slice.__typename
+    },
+  },
+  LatestNewsSlice: {
+    news: async () => (await getNewsList({ lang: 'is', perPage: 3 })).news,
+  },
+  News: {
+    content: richTextResolver,
+  },
+  TimelineEvent: {
+    body: richTextResolver,
+    tags: ({ tags }) => tags ?? []
+  },
+  Story: {
+    body: richTextResolver,
   },
 }
 

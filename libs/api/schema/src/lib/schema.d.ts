@@ -158,10 +158,10 @@ export type TimelineEvent = {
   date: Scalars['String']
   numerator?: Maybe<Scalars['Int']>
   denominator?: Maybe<Scalars['Int']>
-  label: Scalars['String']
+  label?: Maybe<Scalars['String']>
   body?: Maybe<Scalars['String']>
   tags: Array<Scalars['String']>
-  link: Scalars['String']
+  link?: Maybe<Scalars['String']>
 }
 
 export type TimelineSlice = {
@@ -193,7 +193,7 @@ export type HeadingSlice = {
   __typename?: 'HeadingSlice'
   id: Scalars['ID']
   title: Scalars['String']
-  body: Scalars['String']
+  body?: Maybe<Scalars['String']>
 }
 
 export type LatestNewsSlice = {
@@ -215,7 +215,7 @@ export type MailingListSignupSlice = {
 export type LinkCard = {
   __typename?: 'LinkCard'
   title: Scalars['String']
-  body: Scalars['String']
+  body?: Maybe<Scalars['String']>
   link: Scalars['String']
   linkText: Scalars['String']
 }
@@ -231,7 +231,7 @@ export type LogoListSlice = {
   __typename?: 'LogoListSlice'
   id: Scalars['ID']
   title: Scalars['String']
-  body: Scalars['String']
+  body?: Maybe<Scalars['String']>
   images: Array<Image>
 }
 
@@ -818,10 +818,10 @@ export type TimelineEventResolvers<
   date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   numerator?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
   denominator?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
-  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  label?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   tags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>
-  link?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -869,7 +869,7 @@ export type HeadingSliceResolvers<
 > = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -900,7 +900,7 @@ export type LinkCardResolvers<
   ParentType extends ResolversParentTypes['LinkCard'] = ResolversParentTypes['LinkCard']
 > = {
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   link?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   linkText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
@@ -922,7 +922,7 @@ export type LogoListSliceResolvers<
 > = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }

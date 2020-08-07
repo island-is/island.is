@@ -11,7 +11,7 @@ import {
 
 export interface LinkCardProps {
   title: string
-  body: string
+  body?: string
   link: string
   linkText: string
 }
