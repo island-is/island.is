@@ -61,7 +61,7 @@ const ExampleSchema = z.object({
     }
     return true
   }),
-  bankAccount: z.number().refine((x) => {
+  bankAccount: z.string().refine((x) => {
     const asNumber = parseInt(x)
     if (isNaN(asNumber)) {
       return false
