@@ -92,7 +92,6 @@ jobs:
           fi
           NUMBER_NEWER_COMMITS_THEN_ME=`git log --format=%H --first-parent "$BRANCH"  $GITHUB_SHA... $BRANCH | wc -l | tr -d '[:space:]'`
           LAST_GOOD_BUILD=`git log --format=%H --first-parent "$BRANCH" | tail -n +$((NUMBER_NEWER_COMMITS_THEN_ME+1)) | node .github/actions/dist/index.js`
-          echo $LAST_GOOD_BUILD
           LAST_GOOD_BUILD_SHA=`echo $LAST_GOOD_BUILD | jq -r '.sha'`
           LAST_GOOD_BUILD_BRANCH=`echo $LAST_GOOD_BUILD | jq -r '.branch'`
           LAST_GOOD_BUILD_RUN_NUMBER=`echo $LAST_GOOD_BUILD | jq -r '.run_number'`
