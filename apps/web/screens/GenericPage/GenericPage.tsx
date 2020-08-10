@@ -53,7 +53,7 @@ const extractSliceTitle = (slice: Slice): [string, string] | null => {
 }
 
 const connectSlices = (slices: Slice[]): { [k: string]: string } => {
-  let head = slices.find(extractSliceTitle)
+  let head = slices.find(extractSliceTitle) ?? slices[0]
   const pairs = slices.map((slice) => {
     if (extractSliceTitle(slice)) {
       head = slice
@@ -148,66 +148,58 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           <ContentBlock>
             <Box paddingX={[0, 0, 0, 6]}>
               <Header />
-              <Box position="relative" marginTop={6} marginX={[0, 0, 0, 6]}>
-                <Sidebar
-                  title={page.title}
-                  type={decideSidebarType(
-                    page.slices.find(
-                      (slice) => !currentSliceId || slice.id === currentSliceId,
-                    ),
-                  )}
-                >
-                  {({ bulletRef, colors }) => (
-                    <>
-                      {page.slices
-                        .map(extractSliceTitle)
-                        .filter(Boolean)
-                        .map(([id, text], index) => (
-                          <Box key={id} paddingBottom={index === 0 ? 2 : 0}>
-                            <a
-                              ref={id === currentSliceId ? bulletRef : null}
-                              href={'#' + id}
-                              onClick={(e) => {
-                                e.preventDefault()
-                                document.getElementById(id).scrollIntoView()
-                              }}
-                            >
-                              <Typography
-                                variant="p"
-                                as="p"
-                                color={colors.main}
-                              >
-                                {id === currentSliceId ? <b>{text}</b> : text}
-                              </Typography>
-                            </a>
-                          </Box>
-                        ))}
-                      {slice.links.length > 0 && (
-                        <Box paddingTop={2}>
-                          <Stack space={2}>
-                            {slice.links.map(({ url, text }) => (
-                              <>
-                                <Divider weight={colors.divider} />
-                                <Link href={url}>
-                                  <a>
-                                    <Typography
-                                      variant="p"
-                                      as="div"
-                                      color={colors.secondary}
-                                    >
-                                      {text}
-                                    </Typography>
-                                  </a>
-                                </Link>
-                              </>
-                            ))}
-                          </Stack>
+            </Box>
+            <Box position="relative" marginTop={6} marginX={[0, 0, 0, 6]}>
+              <Sidebar
+                title={page.title}
+                type={decideSidebarType(
+                  page.slices.find(
+                    (slice) => !currentSliceId || slice.id === currentSliceId,
+                  ),
+                )}
+              >
+                {({ bulletRef, colors }) => (
+                  <>
+                    {page.slices
+                      .map(extractSliceTitle)
+                      .filter(Boolean)
+                      .map(([id, text], index) => (
+                        <Box key={id} paddingBottom={index === 0 ? 2 : 0}>
+                          <a
+                            ref={id === currentSliceId ? bulletRef : null}
+                            href={'#' + id}
+                            onClick={(e) => {
+                              e.preventDefault()
+                              document.getElementById(id).scrollIntoView()
+                            }}
+                          >
+                            <Typography variant="p" as="p" color={colors.main}>
+                              {id === currentSliceId ? <b>{text}</b> : text}
+                            </Typography>
+                          </a>
                         </Box>
-                      )}
-                    </>
-                  )}
-                </Sidebar>
-              </Box>
+                      ))}
+                    {slice.links.map(({ url, text }) => (
+                      <>
+                        <Box paddingY={2}>
+                          <Divider weight={colors.divider} />
+                        </Box>
+                        <Link href={url}>
+                          <a>
+                            <Typography
+                              variant="p"
+                              as="div"
+                              color={colors.secondary}
+                            >
+                              {text}
+                            </Typography>
+                          </a>
+                        </Link>
+                      </>
+                    ))}
+                  </>
+                )}
+              </Sidebar>
               <Breadcrumbs color="blue300" separatorColor="blue300">
                 <Link href={makePath()}>
                   <a>Ísland.is</a>
