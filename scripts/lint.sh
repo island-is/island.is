@@ -10,7 +10,7 @@ exec docker buildx build \
   --platform=linux/amd64 \
   --cache-from=type=local,src=$PROJECT_ROOT/cache \
   -f ${DIR}/Dockerfile \
-  --target=linter \
+  --target=linter-affected \
   --build-arg BUILDKIT_INLINE_CACHE=1 \
   --build-arg APP=${APP} \
   $PROJECT_ROOT
