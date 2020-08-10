@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
-import { HelloWorldModule } from '@island.is/api/domains/hello-world'
 import { GraphQLModule } from '@nestjs/graphql'
+import { HelloWorldModule } from '@island.is/api/domains/hello-world'
+import { ContentSearchModule } from '@island.is/api/domains/content-search';
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -14,6 +15,7 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
       path: '/api/graphql',
     }),
     HelloWorldModule,
+    ContentSearchModule,
   ],
 })
 export class AppModule {}

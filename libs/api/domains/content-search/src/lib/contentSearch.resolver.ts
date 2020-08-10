@@ -1,0 +1,38 @@
+import { Args, Query, Resolver } from '@nestjs/graphql'
+import { ContentSearchService } from './contentSearch.service'
+import { SearcherInput } from './dto/searcher.input'
+import { SearchResult } from './models/searchResult.model'
+import { ContentItem } from './models/contentItem.model'
+import { ItemInput } from './dto/item.input'
+import { ContentCategory } from './models/contentCategory.model'
+import { CategoriesInput } from './dto/categories.input'
+import { ArticlesInCategoryInput } from './dto/articlesInCategory.input'
+
+@Resolver()
+export class ContentSearchResolver {
+  constructor(private contentSearchService: ContentSearchService) {}
+
+  @Query((returns) => SearchResult)
+  searchResults(@Args('query') query: SearcherInput): Promise<SearchResult> {
+    return this.contentSearchService.find(query)
+  }
+
+  @Query((returns) => ContentItem, { nullable: true })
+  singleItem(@Args('input') input: ItemInput): Promise<ContentItem> {
+    return this.contentSearchService.fetchSingle(input)
+  }
+
+  @Query((returns) => [ContentCategory])
+  categories(
+    @Args('input') input: CategoriesInput,
+  ): Promise<ContentCategory[]> {
+    return this.contentSearchService.fetchCategories(input)
+  }
+
+  @Query((returns) => [ContentItem])
+  articlesInCategory(
+    @Args('category') category: ArticlesInCategoryInput,
+  ): Promise<ContentItem[]> {
+    return this.contentSearchService.fetchItems(category)
+  }
+}

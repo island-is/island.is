@@ -1,16 +1,12 @@
-import {
-  ContentCategory,
-  SearcherService as Service,
-} from '@island.is/api/schema'
-import {
-  Document as ContentDocument,
-  ElasticService,
-  SearchIndexes,
-  SearchResult,
-} from '@island.is/api/content-search'
+import { Injectable } from '@nestjs/common'
+import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
 import { RequestBodySearch } from 'elastic-builder'
+import { ContentCategory } from './models/contentCategory.model'
+import { ContentItem } from './models/contentItem.model'
+import { SearchResult } from './models/searchResult.model'
 
-export class SearcherService implements Service {
+@Injectable()
+export class ContentSearchService {
   constructor(private repository: ElasticService) {}
 
   getIndex(lang: string) {
@@ -44,7 +40,7 @@ export class SearcherService implements Service {
     }
   }
 
-  async fetchCategories(query): Promise<ContentCategory> {
+  async fetchCategories(query): Promise<ContentCategory[]> {
     // todo do properly not this awesome hack
     const queryTmp = new RequestBodySearch().size(1000)
     const { body } = await this.repository.findByQuery(
@@ -68,7 +64,7 @@ export class SearcherService implements Service {
     return Object.values(categories)
   }
 
-  async fetchSingle(input): Promise<ContentDocument> {
+  async fetchSingle(input): Promise<ContentItem> {
     const { body } = await this.repository.query(
       this.getIndex(input.language),
       input,
@@ -81,7 +77,7 @@ export class SearcherService implements Service {
     return this.fixCase(hit)
   }
 
-  async fetchItems(input): Promise<ContentDocument> {
+  async fetchItems(input): Promise<ContentItem[]> {
     const { body } = await this.repository.fetchItems(
       this.getIndex(input.language),
       input,
@@ -90,5 +86,3 @@ export class SearcherService implements Service {
     return body?.hits?.hits.map(this.fixCase)
   }
 }
-
-export default SearcherService
