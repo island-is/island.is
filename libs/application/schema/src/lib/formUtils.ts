@@ -1,22 +1,40 @@
-import { FormNode, FormLeaf } from '../types/FormTree'
+import { FormNode, FormLeaf } from '../types/Form'
 import { Form, FormItemTypes, Section, SubSection } from '../types/Form'
 import { Question } from '../types/Fields'
 
-const isValidScreen = (node: FormNode): boolean => {
-  if (!node.children) {
-    // only Field has no children attribute
-    return true
+export function findNode(
+  id: string,
+  type: FormItemTypes,
+  formNode: FormNode,
+): FormNode {
+  if (id === formNode.id && type === formNode.type) {
+    return formNode
   }
+  const { children } = formNode
+  if (children) {
+    for (let i = 0; i < children.length; i++) {
+      const foundNode = findNode(id, type, children[i])
+      if (foundNode) {
+        return foundNode
+      }
+    }
+  }
+  return undefined
+}
+const isValidScreen = (node: FormNode): boolean => {
   switch (node.type) {
-    case FormItemTypes.MULTI_FIELD: {
-      return true
+    case FormItemTypes.FORM: {
+      return false
+    }
+    case FormItemTypes.SECTION: {
+      return false
     }
 
-    case FormItemTypes.REPEATER: {
-      return true
+    case FormItemTypes.SUB_SECTION: {
+      return false
     }
     default: {
-      return false
+      return true
     }
   }
 }
@@ -34,17 +52,17 @@ export const getFormNodeLeaves = (
     }
   }
 
-  let leafs: FormLeaf[] = []
-  let newLeafs: FormLeaf[] = []
+  let leaves: FormLeaf[] = []
+  let newLeaves: FormLeaf[] = []
   if (children) {
     for (let i = 0; i < children.length; i++) {
-      newLeafs = getFormNodeLeaves(children[i])
-      if (newLeafs.length) {
-        leafs = [...leafs, ...newLeafs]
+      newLeaves = getFormNodeLeaves(children[i])
+      if (newLeaves.length) {
+        leaves = [...leaves, ...newLeaves]
       }
     }
   }
-  return leafs
+  return leaves
 }
 
 export const getFormLeaves = (form: Form): FormLeaf[] => {

@@ -28,7 +28,7 @@ const FormField: FC<{
     register,
   }
 
-  if (!field.isVisible) {
+  if (!field.isNavigable) {
     return null
   }
 

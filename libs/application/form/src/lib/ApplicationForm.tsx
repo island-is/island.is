@@ -67,6 +67,9 @@ export const ApplicationForm: FC<ApplicationProps> = ({
               }
               dataSchema={form.schema}
               formValue={formValue}
+              expandRepeater={() =>
+                dispatch({ type: ActionTypes.EXPAND_REPEATER })
+              }
               nextScreen={() => dispatch({ type: ActionTypes.NEXT_SCREEN })}
               prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
               shouldSubmit={activeScreen === screens.length - 1}

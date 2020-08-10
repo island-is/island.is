@@ -100,4 +100,58 @@ describe('extractPartialSchemaForValues', () => {
       ),
     ).toThrow()
   })
+  it('should pick nested object inside an array from a schema', () => {
+    const schemaWithArray = z.object({
+      person: z
+        .array(
+          z.object({
+            age: z.string().refine((x) => {
+              const asNumber = parseInt(x)
+              if (isNaN(asNumber)) {
+                return false
+              }
+              return asNumber > 15
+            }),
+            name: z
+              .string()
+              .nonempty()
+              .max(256),
+          }),
+        )
+        .max(5)
+        .nonempty(),
+      requiredString: z.string().nonempty(),
+    })
+    const okFormValue = {
+      requiredString: 'yes',
+      person: [{ name: 'Name' }],
+    }
+
+    expect(() =>
+      extractPartialSchemaForValues(schemaWithArray, okFormValue).parse(
+        okFormValue,
+      ),
+    ).not.toThrow()
+
+    const anotherGoodFormValue = {
+      person: [{ name: 'Name', age: '25' }],
+    }
+
+    expect(() =>
+      extractPartialSchemaForValues(
+        schemaWithArray,
+        anotherGoodFormValue,
+      ).parse(anotherGoodFormValue),
+    ).not.toThrow()
+
+    const badFormValue = {
+      requiredString: null,
+      person: [{ name: 'Name', age: '25' }],
+    }
+    expect(() =>
+      extractPartialSchemaForValues(schemaWithArray, badFormValue).parse(
+        badFormValue,
+      ),
+    ).toThrow()
+  })
 })

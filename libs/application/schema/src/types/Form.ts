@@ -23,10 +23,17 @@ export interface Form {
   children: FormChildren[]
 }
 
-export type FormChildren = Section | MultiField | Repeater | Field
-export type SectionChildren = SubSection | MultiField | Repeater | Field
-export type SubSectionChildren = MultiField | Repeater | Field
-export type RepeaterChildren = MultiField | Repeater | Field
+export type FormNode =
+  | Form
+  | Section
+  | SubSection
+  | Repeater
+  | MultiField
+  | Field
+
+export type FormLeaf = MultiField | Field | Repeater
+export type FormChildren = Section | FormLeaf
+export type SectionChildren = SubSection | FormLeaf
 
 export interface FormItem {
   readonly id?: string
@@ -41,22 +48,28 @@ export interface Section extends FormItem {
 
 export interface SubSection extends FormItem {
   type: FormItemTypes.SUB_SECTION
-  children: SubSectionChildren[]
+  children: FormLeaf[]
 }
 
 export interface Repeater extends FormItem {
   type: FormItemTypes.REPEATER
-  children: RepeaterChildren[]
+  children: FormLeaf[]
   condition?: Condition
+  repetitions: number
+  required?: boolean
+  repeaterIndex?: number
+  // todo how do we handle presentation of different repeaters? maybe a map to a react component?
+  // presentation: RepeaterPresentorsEnum....
 }
 
 export interface MultiField extends FormItem {
   type: FormItemTypes.MULTI_FIELD
   children: Field[]
   condition?: Condition
+  repeaterIndex?: number
 }
 
-export type Answer = string | number | string[] | FormValue
+export type Answer = string | number | Answer[] | FormValue
 
 export interface FormValue {
   [key: string]: Answer

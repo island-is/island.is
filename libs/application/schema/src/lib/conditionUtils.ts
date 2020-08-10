@@ -1,5 +1,4 @@
-import { FormValue } from '../types/Form'
-import { Field } from '../types/Fields'
+import { FormLeaf, FormValue } from '../types/Form'
 import {
   AllOrAny,
   Comparators,
@@ -54,8 +53,11 @@ function applyStaticConditionalCheck(
   return isValid
 }
 
-export function shouldShowField(field: Field, formValue: FormValue): boolean {
-  const { condition } = field
+export function shouldShowFormLeaf(
+  leaf: FormLeaf,
+  formValue: FormValue,
+): boolean {
+  const { condition } = leaf
   if (!condition) {
     return true
   }
