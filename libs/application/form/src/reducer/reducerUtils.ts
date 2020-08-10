@@ -60,6 +60,15 @@ export const moveToScreen = (
   }
 }
 
+function immutableSplice<T>(
+  arr: T[],
+  start: number,
+  deleteCount: number,
+  ...items: T[]
+): T[] {
+  return [...arr.slice(0, start), ...items, ...arr.slice(start + deleteCount)]
+}
+
 export function expandRepeater(
   repeaterIndex: number,
   formLeaves: FormLeaf[],
@@ -71,12 +80,12 @@ export function expandRepeater(
     return [undefined, undefined]
   }
   const { children, id, repetitions = 0 } = repeater
-
-  formLeaves.splice(repeaterIndex, 1, {
+  let newFormLeaves = immutableSplice(formLeaves, repeaterIndex, 1, {
     ...repeater,
     repetitions: repetitions + 1,
   })
-  screens.splice(
+  let newFormScreens = immutableSplice(
+    screens,
     repeaterIndex,
     1,
     convertLeafToScreen(
@@ -87,8 +96,8 @@ export function expandRepeater(
       formValue,
     ),
   )
-  const newFormLeaves: FormLeaf[] = []
-  const newFormScreens: FormScreen[] = []
+  const improvedFormLeaves: FormLeaf[] = []
+  const improvedFormScreens: FormScreen[] = []
   for (let k = 0; k < children.length; k++) {
     const child = children[k]
     const improvedChild = {
@@ -96,20 +105,23 @@ export function expandRepeater(
       repeaterIndex,
       id: `${id}[${repetitions}].${child.id}`,
     }
-    newFormLeaves[k] = improvedChild
-    newFormScreens[k] = convertLeafToScreen(improvedChild, formValue)
+    improvedFormLeaves[k] = improvedChild
+    improvedFormScreens[k] = convertLeafToScreen(improvedChild, formValue)
   }
-  formLeaves.splice(
+  newFormLeaves = immutableSplice(
+    newFormLeaves,
     repeaterIndex + 1 + children.length * repetitions,
     0,
-    ...newFormLeaves,
+    ...improvedFormLeaves,
   )
-  screens.splice(
+  newFormScreens = immutableSplice(
+    newFormScreens,
     repeaterIndex + 1 + children.length * repetitions,
     0,
-    ...newFormScreens,
+    ...improvedFormScreens,
   )
-  return [formLeaves, screens]
+
+  return [newFormLeaves, newFormScreens]
 }
 
 function convertFieldToScreen(field: Field, formValue: FormValue): FieldDef {

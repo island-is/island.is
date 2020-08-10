@@ -14,7 +14,6 @@ import {
 } from '../lib/fieldBuilders'
 import { Form } from '../types/Form'
 import { nationalIdRegex } from './schemaUtils'
-import { Comparators } from '../types/Condition'
 
 const formIcon = require('./ExampleForm3Icon.svg').default
 
@@ -45,6 +44,7 @@ const ExampleSchema = z.object({
     )
     .nonempty(),
   historyLicense: z.enum(['yes', 'no']),
+  // eslint-disable-next-line @typescript-eslint/camelcase
   historyLicense_where: z
     .string()
     .nonempty()
@@ -55,14 +55,13 @@ const ExampleSchema = z.object({
   paymentType: z.enum(['credit', 'bank']),
   creditCard: z.string().refine((x) => {
     const asNumber = parseInt(x)
-    console.log(asNumber)
     if (isNaN(asNumber)) {
       return false
     }
     return true
   }),
   bankAccount: z.number().refine((x) => {
-    const asNumber = parseInt(x)
+    const asNumber = parseInt(String(x), 10)
     if (isNaN(asNumber)) {
       return false
     }

@@ -1,7 +1,7 @@
 import React, { FC, useReducer } from 'react'
 import { FormValue, Form } from '@island.is/application/schema'
-import FormProgress from '../components/FormProgress'
-import ApplicationName from '../components/ApplicationName'
+import FormProgress from '../components/FormProgress/'
+import ApplicationName from '../components/ApplicationName/'
 import Sidebar from '../components/Sidebar'
 import Screen from '../components/Screen'
 import {
