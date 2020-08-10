@@ -151,7 +151,7 @@ jobs:
         run: ./scripts/run-affected-in-parallel.sh test
 
       - name: Linting
-        run: ./scripts/lint.sh
+        run: APP=dummy ./scripts/lint.sh
       - name: Docker login to ECR repo
         run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
         env:
