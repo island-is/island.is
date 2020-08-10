@@ -188,6 +188,7 @@
     "eslint-plugin-react": "7.17.0",
     "eslint-plugin-react-hooks": "2.3.0",
     "jest": "25.2.3",
+    "jest-transform-stub": "^2.0.0",
     "next-transpile-modules": "^3.3.0",
     "prettier": "1.19.1",
     "quicktype": "15.0.245",
