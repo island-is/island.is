@@ -15,20 +15,13 @@ describe(' ApplicationFormReducer', () => {
         children: [],
       }),
       formLeaves: [],
-      formValue: {},
+      formValue: { historyCars: ['VW', 'Tesla'] },
       activeSection: 0,
       activeSubSection: 0,
       activeScreen: 0,
       screens: [],
       sections: [],
     }
-
-    const firstAction = {
-      type: ActionTypes.ANSWER,
-      payload: { historyCars: ['VW', 'Tesla'] },
-    }
-    const firstState = ApplicationReducer(initialState, firstAction)
-    expect(firstState.formValue).toEqual({ historyCars: ['VW', 'Tesla'] })
 
     const updateAction = {
       type: ActionTypes.ANSWER,
