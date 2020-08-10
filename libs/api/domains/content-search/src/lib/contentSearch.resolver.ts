@@ -12,24 +12,24 @@ import { ArticlesInCategoryInput } from './dto/articlesInCategory.input'
 export class ContentSearchResolver {
   constructor(private contentSearchService: ContentSearchService) {}
 
-  @Query((returns) => SearchResult)
+  @Query(() => SearchResult)
   searchResults(@Args('query') query: SearcherInput): Promise<SearchResult> {
     return this.contentSearchService.find(query)
   }
 
-  @Query((returns) => ContentItem, { nullable: true })
+  @Query(() => ContentItem, { nullable: true })
   singleItem(@Args('input') input: ItemInput): Promise<ContentItem> {
     return this.contentSearchService.fetchSingle(input)
   }
 
-  @Query((returns) => [ContentCategory])
+  @Query(() => [ContentCategory])
   categories(
     @Args('input') input: CategoriesInput,
   ): Promise<ContentCategory[]> {
     return this.contentSearchService.fetchCategories(input)
   }
 
-  @Query((returns) => [ContentItem])
+  @Query(() => [ContentItem])
   articlesInCategory(
     @Args('category') category: ArticlesInCategoryInput,
   ): Promise<ContentItem[]> {

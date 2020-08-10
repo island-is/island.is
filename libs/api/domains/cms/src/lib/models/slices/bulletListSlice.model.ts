@@ -4,12 +4,12 @@ import { BulletEntry } from '../bullets/bulletEntry.model'
 @ObjectType()
 export class BulletListSlice {
   constructor(initializer: BulletListSlice) {
-    Object.assign(this, initializer);
+    Object.assign(this, initializer)
   }
 
-  @Field((type) => ID)
+  @Field(() => ID)
   id: string
 
-  @Field((type) => [BulletEntry])
+  @Field(() => [BulletEntry])
   bullets: Array<typeof BulletEntry>
 }

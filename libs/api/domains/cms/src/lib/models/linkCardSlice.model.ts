@@ -3,12 +3,12 @@ import { LinkCard } from './linkCard.model'
 
 @ObjectType()
 export class LinkCardSlice {
-  @Field(type => ID)
+  @Field(() => ID)
   id: string
 
   @Field()
   title: string
 
-  @Field(type => [LinkCard])
+  @Field(() => [LinkCard])
   cards: LinkCard[]
 }

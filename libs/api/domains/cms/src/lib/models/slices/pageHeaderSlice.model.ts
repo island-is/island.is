@@ -4,11 +4,11 @@ import { Slice } from './slice.model'
 
 @ObjectType()
 export class PageHeaderSlice {
-  constructor(initializer: PageHeaderSlice ) {
-    Object.assign(this, initializer);
+  constructor(initializer: PageHeaderSlice) {
+    Object.assign(this, initializer)
   }
 
-  @Field(type => ID)
+  @Field(() => ID)
   id: string
 
   @Field()
@@ -20,9 +20,9 @@ export class PageHeaderSlice {
   @Field()
   navigationText: string
 
-  @Field(type => [Link])
+  @Field(() => [Link])
   links: Link[]
 
-  @Field(type => [Slice])
+  @Field(() => [Slice])
   slices: Array<typeof Slice>
 }

@@ -2,7 +2,7 @@ import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class TimelineEvent {
-  @Field((type) => ID)
+  @Field(() => ID)
   id: string
 
   @Field()
@@ -11,10 +11,10 @@ export class TimelineEvent {
   @Field()
   date: string
 
-  @Field((type) => Int, { nullable: true })
+  @Field(() => Int, { nullable: true })
   numerator: number
 
-  @Field((type) => Int, { nullable: true })
+  @Field(() => Int, { nullable: true })
   denominator: number
 
   @Field()
@@ -23,7 +23,7 @@ export class TimelineEvent {
   @Field({ nullable: true })
   body: string
 
-  @Field((type) => [String])
+  @Field(() => [String])
   tags: string[]
 
   @Field()

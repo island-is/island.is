@@ -1,4 +1,4 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { TimelineEvent } from '../timelineEvent.model'
 
 @ObjectType()
@@ -7,12 +7,12 @@ export class TimelineSlice {
     Object.assign(this, initializer)
   }
 
-  @Field((type) => ID)
+  @Field(() => ID)
   id: string
 
   @Field()
   title: string
 
-  @Field((type) => [TimelineEvent])
+  @Field(() => [TimelineEvent])
   events: TimelineEvent[]
 }

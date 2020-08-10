@@ -4,15 +4,15 @@ import { News } from '../news.model'
 @ObjectType()
 export class LatestNewsSlice {
   constructor(initializer: LatestNewsSlice) {
-    Object.assign(this, initializer);
+    Object.assign(this, initializer)
   }
 
-  @Field(type => ID)
+  @Field(() => ID)
   id: string
 
   @Field()
   title: string
 
-  @Field(type => [News])
+  @Field(() => [News])
   news: News[]
 }

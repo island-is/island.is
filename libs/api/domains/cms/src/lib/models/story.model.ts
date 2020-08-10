@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql'
 import { Image } from './image.model'
 
 @ObjectType()
@@ -9,7 +9,7 @@ export class Story {
   @Field()
   title: string
 
-  @Field(type => Image)
+  @Field(() => Image)
   logo: Image
 
   @Field()

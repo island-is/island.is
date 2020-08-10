@@ -1,16 +1,16 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class Pagination {
-  @Field(type => Int)
+  @Field(() => Int)
   page: number
 
-  @Field(type => Int)
+  @Field(() => Int)
   perPage: number
 
-  @Field(type => Int)
+  @Field(() => Int)
   totalResults: number
 
-  @Field(type => Int)
+  @Field(() => Int)
   totalPages: number
 }

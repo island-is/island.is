@@ -15,6 +15,6 @@ export class Page {
   @Field()
   theme: string
 
-  @Field((type) => [Slice])
+  @Field(() => [Slice])
   slices: Array<typeof Slice>
 }

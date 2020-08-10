@@ -7,10 +7,8 @@ import { HelloWorldInput } from './dto/helloWorld.input'
 export class HelloWorldResolver {
   constructor(private helloWorldService: HelloWorldService) {}
 
-  @Query((returns) => HelloWorld)
-  helloWorld(
-    @Args('input') input: HelloWorldInput,
-  ): HelloWorld {
+  @Query(() => HelloWorld)
+  helloWorld(@Args('input') input: HelloWorldInput): HelloWorld {
     const message = this.helloWorldService.getMessage(input?.name ?? 'World')
     return { message }
   }

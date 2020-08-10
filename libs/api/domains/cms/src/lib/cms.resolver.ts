@@ -19,27 +19,29 @@ import {
 
 @Resolver()
 export class CmsResolver {
-  @Query((returns) => Article, { nullable: true })
+  @Query(() => Article, { nullable: true })
   getArticle(@Args('input') input: GetArticleInput): Promise<Article | null> {
     return getArticle(input?.slug ?? '', input?.lang ?? 'is-IS')
   }
 
-  @Query((returns) => News, { nullable: true })
+  @Query(() => News, { nullable: true })
   getNews(@Args('input') input: GetNewsInput): Promise<News | null> {
     return getNews(input.lang ?? 'is-IS', input.slug)
   }
 
-  @Query((returns) => PaginatedNews)
+  @Query(() => PaginatedNews)
   getNewsList(@Args('input') input: GetNewsListInput): Promise<PaginatedNews> {
     return getNewsList(input)
   }
 
-  @Query((returns) => Namespace, { nullable: true })
-  getNamespace(@Args('input') input: GetNamespaceInput): Promise<Namespace | null> {
+  @Query(() => Namespace, { nullable: true })
+  getNamespace(
+    @Args('input') input: GetNamespaceInput,
+  ): Promise<Namespace | null> {
     return getNamespace(input?.namespace ?? '', input?.lang ?? 'is-IS')
   }
 
-  @Query((returns) => Page, { nullable: true })
+  @Query(() => Page, { nullable: true })
   getPage(@Args('input') input: GetPageInput): Promise<Page | null> {
     return getPage(input)
   }

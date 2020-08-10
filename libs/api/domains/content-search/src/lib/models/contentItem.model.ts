@@ -2,7 +2,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class ContentItem {
-  @Field((type) => ID)
+  @Field(() => ID)
   id: string
 
   @Field({ nullable: true })
@@ -11,7 +11,7 @@ export class ContentItem {
   @Field({ nullable: true })
   content: string
 
-  @Field((type) => [String], { nullable: true })
+  @Field(() => [String], { nullable: true })
   tag: string[]
 
   @Field({ nullable: true })

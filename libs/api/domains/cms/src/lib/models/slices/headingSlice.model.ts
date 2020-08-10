@@ -1,13 +1,12 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { Story } from '../story.model'
 
 @ObjectType()
 export class HeadingSlice {
   constructor(initializer: HeadingSlice) {
-    Object.assign(this, initializer);
+    Object.assign(this, initializer)
   }
 
-  @Field(type => ID)
+  @Field(() => ID)
   id: string
 
   @Field()

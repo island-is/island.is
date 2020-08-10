@@ -8,12 +8,12 @@ export class GetNewsListInput {
   @IsOptional()
   lang?: string
 
-  @Field((type) => Int, { nullable: true })
+  @Field(() => Int, { nullable: true })
   @IsInt()
   @IsOptional()
   year?: number
 
-  @Field((type) => Int, { nullable: true })
+  @Field(() => Int, { nullable: true })
   @IsInt()
   @IsOptional()
   month?: number
@@ -23,12 +23,12 @@ export class GetNewsListInput {
   @IsOptional()
   ascending?: boolean
 
-  @Field((type) => Int, { nullable: true })
+  @Field(() => Int, { nullable: true })
   @IsInt()
   @IsOptional()
   page?: number
 
-  @Field((type) => Int, { nullable: true })
+  @Field(() => Int, { nullable: true })
   @IsInt()
   @IsOptional()
   perPage?: number

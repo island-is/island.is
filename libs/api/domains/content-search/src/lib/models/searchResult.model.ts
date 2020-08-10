@@ -1,11 +1,11 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
-import { ContentItem } from './contentItem.model';
+import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { ContentItem } from './contentItem.model'
 
 @ObjectType()
 export class SearchResult {
-  @Field(type => Int)
+  @Field(() => Int)
   total: number
 
-  @Field((type) => [ContentItem])
+  @Field(() => [ContentItem])
   items: ContentItem[]
 }

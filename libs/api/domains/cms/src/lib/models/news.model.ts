@@ -1,5 +1,5 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-import { Image } from './image.model';
+import { Field, ObjectType } from '@nestjs/graphql'
+import { Image } from './image.model'
 
 @ObjectType()
 export class News {
@@ -15,7 +15,7 @@ export class News {
   @Field()
   intro: string
 
-  @Field(type => Image, { nullable: true })
+  @Field(() => Image, { nullable: true })
   image?: Image
 
   @Field()

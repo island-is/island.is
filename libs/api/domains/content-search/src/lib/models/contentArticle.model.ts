@@ -1,8 +1,8 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class ContentArticle {
-  @Field(type => ID, { nullable: true })
+  @Field(() => ID, { nullable: true })
   id: string
 
   @Field({ nullable: true })

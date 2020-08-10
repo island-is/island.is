@@ -1,10 +1,9 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { LinkCard } from './linkCard.model'
 import { Image } from './image.model'
 
 @ObjectType()
 export class LogoListSlice {
-  @Field(type => ID)
+  @Field(() => ID)
   id: string
 
   @Field()
@@ -13,6 +12,6 @@ export class LogoListSlice {
   @Field()
   body: string
 
-  @Field(type => [Image])
+  @Field(() => [Image])
   images: Image[]
 }

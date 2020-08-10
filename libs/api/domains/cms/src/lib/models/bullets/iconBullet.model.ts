@@ -4,10 +4,10 @@ import { Image } from '../image.model'
 @ObjectType()
 export class IconBullet {
   constructor(initializer: IconBullet) {
-    Object.assign(this, initializer);
+    Object.assign(this, initializer)
   }
 
-  @Field((type) => ID)
+  @Field(() => ID)
   id: string
 
   @Field()
@@ -16,7 +16,7 @@ export class IconBullet {
   @Field()
   body: string
 
-  @Field((type) => Image)
+  @Field(() => Image)
   icon: Image
 
   @Field({ nullable: true })
