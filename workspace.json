@@ -1052,6 +1052,34 @@
         }
       }
     },
+    "contentful-importer": {
+      "root": "libs/contentful-importer",
+      "sourceRoot": "libs/contentful-importer/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/contentful-importer/.eslintrc",
+            "tsConfig": [
+              "libs/contentful-importer/tsconfig.lib.json",
+              "libs/contentful-importer/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/contentful-importer/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/contentful-importer/jest.config.js",
+            "tsConfig": "libs/contentful-importer/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "gjafakort-types": {
       "root": "libs/gjafakort/types",
       "sourceRoot": "libs/gjafakort/types/src",
