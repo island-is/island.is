@@ -198,11 +198,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                                   as="p"
                                   color={colors.main}
                                 >
-                                  {id === currentSliceId ? (
-                                    <b>{text}</b>
-                                  ) : (
-                                    text
-                                  )}
+                                  {id === currentSliceId ? <b>{text}</b> : text}
                                 </Typography>
                               </a>
                             </Box>
