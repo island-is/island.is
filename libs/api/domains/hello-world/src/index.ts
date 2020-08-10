@@ -1,4 +1,3 @@
-export * from './lib/typeDefs'
-export * from './lib/resolvers'
-export * from './lib/service'
-export * from './lib/repository'
+export * from './lib/helloWorld.service'
+export * from './lib/helloWorld.repository'
+export * from './lib/helloWorld.module'
