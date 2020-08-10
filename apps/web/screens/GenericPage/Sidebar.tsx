@@ -2,7 +2,6 @@ import React, { FC, ReactNode, MouseEvent, createRef } from 'react'
 import cn from 'classnames'
 import {
   Box,
-  Stack,
   Typography,
   Divider,
   DividerProps,

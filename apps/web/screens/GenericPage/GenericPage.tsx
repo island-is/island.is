@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, ReactNode, useRef, Ref, forwardRef } from 'react'
+import React, { FC, ReactNode, useRef, useMemo, Ref, forwardRef } from 'react'
+import fromPairs from 'lodash/fromPairs'
 import Link from 'next/link'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { Locale } from '@island.is/web/i18n/I18n'
@@ -46,10 +47,20 @@ const extractSliceTitle = (slice: Slice): [string, string] | null => {
     case 'LatestNewsSlice':
     case 'LogoListSlice':
       return [slice.id, slice.title]
-    case 'TimelineSlice':
-    case 'StorySlice':
+    default:
       return null
   }
+}
+
+const connectSlices = (slices: Slice[]): { [k: string]: string } => {
+  let head = slices.find(extractSliceTitle) ?? slices[0]
+  const pairs = slices.map((slice) => {
+    if (extractSliceTitle(slice)) {
+      head = slice
+    }
+    return [slice.id, head.id]
+  })
+  return fromPairs(pairs)
 }
 
 export interface LayoutProps {
@@ -130,7 +141,6 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale as Locale)
 
-  const typename = slice.__typename
   switch (slice.__typename) {
     case 'PageHeaderSlice':
       return (
@@ -138,67 +148,58 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           <ContentBlock>
             <Box paddingX={[0, 0, 0, 6]}>
               <Header />
-              <Box position="relative" marginTop={6} marginX={[0, 0, 0, 6]}>
-                <Sidebar
-                  title={page.title}
-                  type={decideSidebarType(
-                    page.slices.find(
-                      (slice) => !currentSliceId || slice.id === currentSliceId,
-                    ),
-                  )}
-                >
-                  {({ bulletRef, colors }) => (
-                    <>
-                      {page.slices
-                        .map(extractSliceTitle)
-                        .filter(Boolean)
-                        .map(([id, text], index) => (
-                          <Box paddingBottom={index === 0 ? 2 : 0}>
-                            <a
-                              key={id}
-                              ref={id === currentSliceId ? bulletRef : null}
-                              href={'#' + id}
-                              onClick={(e) => {
-                                e.preventDefault()
-                                document.getElementById(id).scrollIntoView()
-                              }}
-                            >
-                              <Typography
-                                variant="p"
-                                as="p"
-                                color={colors.main}
-                              >
-                                {id === currentSliceId ? <b>{text}</b> : text}
-                              </Typography>
-                            </a>
-                          </Box>
-                        ))}
-                      {slice.links.length > 0 && (
-                        <Box paddingTop={2}>
-                          <Stack space={2}>
-                            {slice.links.map(({ url, text }) => (
-                              <>
-                                <Divider weight={colors.divider} />
-                                <Link href={url}>
-                                  <a>
-                                    <Typography
-                                      variant="p"
-                                      as="div"
-                                      color={colors.secondary}
-                                    >
-                                      {text}
-                                    </Typography>
-                                  </a>
-                                </Link>
-                              </>
-                            ))}
-                          </Stack>
+            </Box>
+            <Box position="relative" marginTop={6} marginX={[0, 0, 0, 6]}>
+              <Sidebar
+                title={page.title}
+                type={decideSidebarType(
+                  page.slices.find(
+                    (slice) => !currentSliceId || slice.id === currentSliceId,
+                  ),
+                )}
+              >
+                {({ bulletRef, colors }) => (
+                  <>
+                    {page.slices
+                      .map(extractSliceTitle)
+                      .filter(Boolean)
+                      .map(([id, text], index) => (
+                        <Box key={id} paddingBottom={index === 0 ? 2 : 0}>
+                          <a
+                            ref={id === currentSliceId ? bulletRef : null}
+                            href={'#' + id}
+                            onClick={(e) => {
+                              e.preventDefault()
+                              document.getElementById(id).scrollIntoView()
+                            }}
+                          >
+                            <Typography variant="p" as="p" color={colors.main}>
+                              {id === currentSliceId ? <b>{text}</b> : text}
+                            </Typography>
+                          </a>
                         </Box>
-                      )}
-                    </>
-                  )}
-                </Sidebar>
-              </Box>
+                      ))}
+                    {slice.links.map(({ url, text }) => (
+                      <>
+                        <Box paddingY={2}>
+                          <Divider weight={colors.divider} />
+                        </Box>
+                        <Link href={url}>
+                          <a>
+                            <Typography
+                              variant="p"
+                              as="div"
+                              color={colors.secondary}
+                            >
+                              {text}
+                            </Typography>
+                          </a>
+                        </Link>
+                      </>
+                    ))}
+                  </>
+                )}
+              </Sidebar>
               <Breadcrumbs color="blue300" separatorColor="blue300">
                 <Link href={makePath()}>
                   <a>Ísland.is</a>
@@ -342,7 +343,8 @@ export interface GenericPageProps {
 
 const GenericPage: Screen<GenericPageProps> = ({ page }) => {
   const refs: Ref<{ [k: string]: HTMLDivElement }> = useRef({})
-  const [spy, currentId] = useScrollSpy({ margin: 200 })
+  const [spy, sliceId] = useScrollSpy({ margin: 200 })
+  const sliceMap = useMemo(() => connectSlices(page.slices), [page.slices])
 
   const setRef = (id: string) => {
     return (e: HTMLDivElement) => {
@@ -362,7 +364,7 @@ const GenericPage: Screen<GenericPageProps> = ({ page }) => {
           key={slice.id}
           slice={slice}
           page={page}
-          currentSliceId={currentId}
+          currentSliceId={sliceMap[sliceId]}
           setRef={setRef}
         />
       ))}
