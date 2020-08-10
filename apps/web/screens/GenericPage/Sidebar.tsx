@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, MouseEvent, createRef } from 'react'
+import React, { FC, ReactNode, MouseEvent, useState, createRef } from 'react'
 import cn from 'classnames'
 import {
   Box,
@@ -40,54 +40,53 @@ export interface SidebarProps {
 }
 
 const Sidebar: FC<SidebarProps> = ({ title, type, children }) => {
-  const [containerRef, containerRect] = useBoundingClientRect()
-  const [bulletRef, bulletRect] = useBoundingClientRect()
-
-  const isFixed = containerRect && containerRect.top < 0
+  const [container, containerRef] = useState(null)
+  const [bullet, bulletRef] = useState(null)
   const colors = ColorConfig[type]
 
   return (
-    <div ref={containerRef} className={styles.parent}>
+    <div ref={containerRef} className={styles.container}>
       <div
-        className={cn(
-          styles.container,
-          isFixed ? styles.containerFixed : styles.containerAbsolute,
-        )}
-        style={isFixed ? { left: containerRect.left } : {}}
+        style={
+          container && {
+            position: 'absolute',
+            top: container.offsetTop + 'px',
+            left: container.offsetLeft + 'px',
+            width: container.offsetWidth + 'px',
+            bottom: 0,
+          }
+        }
       >
-        {bulletRect && (
-          <Bullet
-            align="left"
-            top={
-              bulletRect
-                ? bulletRect.top - Math.max(0, containerRect.top) + 'px'
-                : 0
-            }
-          />
-        )}
-        <div
-          className={cn(styles.background, {
-            [styles.visible]: type === 'standard',
-          })}
-        />
-        <div
-          className={cn(styles.background, styles.gradient, {
-            [styles.visible]: type === 'gradient',
-          })}
-        />
-        <Box paddingX={4} paddingY={3}>
-          {title && (
-            <>
-              <Typography variant="h3" as="h3" color={colors.main}>
-                {title}
-              </Typography>
-              <Box paddingY={2}>
-                <Divider weight={colors.divider} />
+        <div className={styles.sticky}>
+          <div className={styles.stickyInner}>
+            <div
+              className={cn(styles.background, {
+                [styles.visible]: type === 'standard',
+              })}
+            />
+            <div
+              className={cn(styles.background, styles.gradient, {
+                [styles.visible]: type === 'gradient',
+              })}
+            />
+            <Box position="relative">
+              <Box paddingX={4} paddingY={3}>
+                {title && (
+                  <>
+                    <Typography variant="h3" as="h3" color={colors.main}>
+                      {title}
+                    </Typography>
+                    <Box paddingY={2}>
+                      <Divider weight={colors.divider} />
+                    </Box>
+                  </>
+                )}
+                {children({ bulletRef, colors })}
               </Box>
-            </>
-          )}
-          {children({ bulletRef, colors })}
-        </Box>
+            </Box>
+            {bullet && <Bullet align="left" top={bullet.offsetTop + 'px'} />}
+          </div>
+        </div>
       </div>
     </div>
   )
