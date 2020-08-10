@@ -16,7 +16,7 @@ const ApplicationName: FC<{ name: string; icon?: string }> = ({
       paddingLeft={[3, 3, 5]}
       className={styles.root}
     >
-      {icon && <img src={icon} />}
+      {icon && <img src={icon} alt="application-icon" />}
       <Box marginLeft={icon ? 1 : 0}>
         <Typography variant="h4">{name}</Typography>
       </Box>

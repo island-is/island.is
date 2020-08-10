@@ -179,9 +179,9 @@ describe('ApplicationFormReducer', () => {
           },
           expandAction,
         ),
-        activeScreen: 2,
+        activeScreen: 4,
       }
-      expect(updatedState.activeScreen).toBe(2)
+      expect(updatedState.activeScreen).toBe(4)
 
       const finalState = ApplicationReducer(updatedState, action)
       expect(finalState.activeScreen).toBe(0)
@@ -240,9 +240,9 @@ describe('ApplicationFormReducer', () => {
       expect(updatedState.screens[2].isNavigable).toBeTruthy()
     })
   })
-  describe.only('expand repeater', () => {
+  describe('expand repeater', () => {
     const action = { type: ActionTypes.EXPAND_REPEATER }
-    it.only('should not do anything if the current screen is not a repeater', () => {
+    it('should not do anything if the current screen is not a repeater', () => {
       const stateWhereActiveScreenIsNoRepeater = ApplicationReducer(
         initializedState,
         { type: ActionTypes.NEXT_SCREEN },
@@ -262,7 +262,7 @@ describe('ApplicationFormReducer', () => {
       expect(updatedState.screens[2].id).toBe('person[0].age')
       expect(updatedState.screens[3].id).toBe('familyName')
     })
-    it.only('should add new screens after the already added screens when expanding the repeater for the nth time', () => {
+    it('should add new screens after the already added screens when expanding the repeater for the nth time', () => {
       const updatedState = ApplicationReducer(
         { ...ApplicationReducer(initializedState, action), activeScreen: 0 },
         action,
