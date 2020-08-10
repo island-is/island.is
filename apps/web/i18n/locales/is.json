@@ -1,5 +1,7 @@
 {
-  "home": {
-    "title": "Velkomin"
-  }
+  "otherLanguage": {
+    "name": "English",
+    "code": "en"
+  },
+  "login": "Innskráning"
 }

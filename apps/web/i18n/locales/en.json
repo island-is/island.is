@@ -1,5 +1,7 @@
 {
-  "home": {
-    "title": "Welcome"
-  }
+  "otherLanguage": {
+    "name": "Íslenska",
+    "code": "is"
+  },
+  "login": "Login"
 }

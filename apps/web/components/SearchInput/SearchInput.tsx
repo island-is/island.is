@@ -30,6 +30,7 @@ interface SearchInputProps {
   size?: AsyncSearchSizes
   label?: string
   autocomplete?: boolean
+  placeholder?: string
   onSubmit?: (inputValue: string, selectedOption: AsyncSearchOption) => void
 }
 
@@ -41,6 +42,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       initialInputValue,
       size = 'medium',
       autocomplete = true,
+      placeholder = '',
       onSubmit,
     },
     ref,
@@ -174,7 +176,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         ref={ref}
         size={size}
         label={label}
-        placeholder="Leitaðu á Ísland.is"
+        placeholder={placeholder}
         onChange={(selection: AsyncSearchOption) => {
           return Router.push({
             pathname: makePath('search'),
@@ -219,9 +221,9 @@ const ItemContainer = ({ active, colored, children }) => {
 
   return (
     <Box
-      display="flex"
+      display='flex'
       background={active ? activeColor : inactiveColor}
-      flexDirection="column"
+      flexDirection='column'
       padding={2}
       paddingY={3}
     >
