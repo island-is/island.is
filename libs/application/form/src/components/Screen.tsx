@@ -63,16 +63,22 @@ const Screen: FC<ScreenProps> = ({
   }
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} key={screen.id}>
+      <Box
+        component="form"
+        display="flex"
+        flexDirection="column"
+        justifyContent="spaceBetween"
+        key={screen.id}
+        height="full"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <ConditionHandler
           answerQuestions={answerQuestions}
           formValue={formValue}
           screen={screen}
         />
-        <Box>
-          {section && (
-            <Typography variant="breadcrumb">{section.name}</Typography>
-          )}
+        <Box flexGrow={1}>
+          {section && <Typography color="dark300">{section.name}</Typography>}
           <Typography variant="h2">{screen.name}</Typography>
           <Box>
             {screen.type === FormItemTypes.REPEATER ? (
@@ -87,14 +93,22 @@ const Screen: FC<ScreenProps> = ({
               <FormField autoFocus field={screen} />
             )}
           </Box>
-          <Divider />
-          <Box bottom={0} paddingTop={7} paddingBottom={7}>
-            <Box padding={2}>
+        </Box>
+        <Box marginTop={[3, 3, 0]}>
+          <Divider weight="regular" />
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="spaceBetween"
+            paddingTop={[1, 4]}
+            paddingBottom={[1, 5]}
+          >
+            <Box display="inlineFlex" padding={2} paddingLeft="none">
               <Button variant="text" leftIcon="arrowLeft" onClick={goBack}>
                 Til baka
               </Button>
             </Box>
-            <Box padding={2}>
+            <Box display="inlineFlex" padding={2} paddingRight="none">
               {shouldSubmit ? (
                 <Button htmlType="submit">Submit</Button>
               ) : (
@@ -105,7 +119,7 @@ const Screen: FC<ScreenProps> = ({
             </Box>
           </Box>
         </Box>
-      </form>
+      </Box>
     </FormProvider>
   )
 }

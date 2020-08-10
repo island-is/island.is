@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import FormField from './FormField'
 import { MultiFieldScreen } from '../types'
+import { Box } from '@island.is/island-ui/core'
 
 const FormMultiField: FC<{
   multiField: MultiFieldScreen
@@ -8,12 +9,14 @@ const FormMultiField: FC<{
   return (
     <div>
       {multiField.children.map((field, index) => (
-        <FormField
-          showFieldName
-          field={field}
-          key={field.id}
-          autoFocus={index === 0}
-        />
+        <Box key={field.id} paddingTop={2}>
+          <FormField
+            showFieldName
+            field={field}
+            key={field.id}
+            autoFocus={index === 0}
+          />
+        </Box>
       ))}
     </div>
   )

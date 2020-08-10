@@ -3,17 +3,21 @@ import React from 'react'
 import { Route } from 'react-router-dom'
 
 import { ApplicationForm } from '@island.is/application/form'
-import { FamilyAndPets } from '@island.is/application/schema'
-import { Header, Page } from '@island.is/island-ui/core'
+import { ExampleForm3 } from '@island.is/application/schema'
+import { Header, Box } from '@island.is/island-ui/core'
+
+import * as styles from './App.treat'
 
 export const App = () => {
   return (
-    <Page>
+    <Box className={styles.root}>
       <Route path="/">
-        <Header />
-        <ApplicationForm form={FamilyAndPets} initialAnswers={{}} />
+        <Box paddingLeft={[3, 3, 5]}>
+          <Header />
+        </Box>
+        <ApplicationForm form={ExampleForm3} initialAnswers={{}} />
       </Route>
-    </Page>
+    </Box>
   )
 }
 
