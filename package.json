@@ -40,6 +40,7 @@
     "@elastic/elasticsearch": "7.7.1",
     "@nestjs/common": "6.8.3",
     "@nestjs/core": "6.8.3",
+    "@nestjs/graphql": "^7.5.5",
     "@nestjs/platform-express": "6.8.3",
     "@nestjs/sequelize": "^0.1.0",
     "@nestjs/swagger": "^4.5.12",

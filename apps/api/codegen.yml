@@ -1,6 +1,5 @@
 schema:
-  - ./apps/api/src/graphql/typeDefs.ts
-  - ./libs/api/domains/*/src/lib/typeDefs.ts
+  - apps/api/src/api.graphql
 generates:
   ./libs/api/schema/src/lib/schema.d.ts:
     plugins:
@@ -8,9 +7,6 @@ generates:
       - typescript-resolvers
     config:
       contextType: ./context#Context
-  ./libs/api/schema/schema.graphql:
-    plugins:
-      - schema-ast
 hooks:
   afterAllFileWrite:
     - prettier --write

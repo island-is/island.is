@@ -1,1 +1,1 @@
-export * from './elastic'
+export * from './elastic.service'

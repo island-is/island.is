@@ -3,6 +3,9 @@ import { createClient, EntryCollection } from 'contentful'
 const space = '8k0h54kbe6bj'
 const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ContentfulQuery = any
+
 if (!space || !accessToken) {
   throw new Error('Missing Contentful environment variables')
 }
@@ -32,7 +35,7 @@ export async function getLocales() {
 
 export async function getLocalizedEntries<Fields>(
   languageCode: undefined | null | string,
-  query: any,
+  query: ContentfulQuery,
 ): Result<Fields> {
   let code = languageCode ?? 'is-IS'
   if (localeMap[code]) {
