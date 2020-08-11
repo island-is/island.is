@@ -7,25 +7,35 @@ import { FieldBaseProps } from '../types'
 interface Props extends FieldBaseProps {
   field: SelectField
 }
-const SelectFormField: FC<Props> = ({ showFieldName = false, field }) => {
+const SelectFormField: FC<Props> = ({
+  error,
+  showFieldName = false,
+  field,
+}) => {
   const { id, name, options, placeholder } = field
 
-  const { control } = useFormContext()
+  const { clearErrors, control } = useFormContext()
   return (
     <div>
       {showFieldName && <Typography variant="p">{name}</Typography>}
       <Controller
         control={control}
+        defaultValue=""
         name={id}
         render={({ onChange, value }) => (
           <Box paddingTop={2}>
             <Select
+              hasError={error !== undefined}
+              errorMessage={error}
               name={id}
               options={options}
               label={name}
               placeholder={placeholder}
               value={options.find((option) => option.value === value)}
-              onChange={(newVal) => onChange((newVal as Option).value)}
+              onChange={(newVal) => {
+                clearErrors(id)
+                onChange((newVal as Option).value)
+              }}
             />
           </Box>
         )}

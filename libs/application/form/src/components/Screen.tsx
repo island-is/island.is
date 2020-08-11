@@ -37,15 +37,16 @@ const Screen: FC<ScreenProps> = ({
   screen,
   section,
 }) => {
-  const methods = useForm<FormValue>({
+  const hookFormData = useForm<FormValue>({
     mode: 'onBlur',
+    reValidateMode: 'onBlur',
     defaultValues: formValue,
     shouldUnregister: false,
     resolver,
     context: { dataSchema, formNode: screen },
   })
 
-  const { reset, handleSubmit } = methods
+  const { reset, handleSubmit, errors } = hookFormData
 
   const goBack = () => {
     reset()
@@ -62,7 +63,7 @@ const Screen: FC<ScreenProps> = ({
     }
   }
   return (
-    <FormProvider {...methods}>
+    <FormProvider {...hookFormData}>
       <Box
         component="form"
         display="flex"
@@ -88,9 +89,9 @@ const Screen: FC<ScreenProps> = ({
                 formValue={formValue}
               />
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
-              <FormMultiField multiField={screen} />
+              <FormMultiField errors={errors} multiField={screen} />
             ) : (
-              <FormField autoFocus field={screen} />
+              <FormField autoFocus errors={errors} field={screen} />
             )}
           </Box>
         </Box>
