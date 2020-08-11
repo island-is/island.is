@@ -241,4 +241,4 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withApollo(Category)
+export default Category

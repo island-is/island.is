@@ -1,5 +1,6 @@
-import { withLocale } from '../../../i18n'
+import { withLocale } from '@island.is/web/i18n'
 import categoryScreen from '../../../screens/Category/Category'
-import { withErrorBoundary } from '../../../units/ErrorBoundary'
+import { withApollo } from '@island.is/web/graphql'
+import { withErrorBoundary } from '@island.is/web/units/ErrorBoundary'
 
-export default withLocale('is')(withErrorBoundary(categoryScreen))
+export default withApollo(withLocale('is')(withErrorBoundary(categoryScreen)))
