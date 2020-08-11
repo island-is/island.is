@@ -27,12 +27,11 @@ const LanguageToggler: FC<{
   const { activeLocale, locale, t } = useI18n()
   const otherLanguageUrl = activeLocale === 'en' ? '/' : '/en'
   const onClick = () => {
-    console.log('code', t('otherLanguage.code'))
-    locale(t('otherLanguage.code'))
+    locale(t.otherLanguageCode)
   }
   const languageButtonText =
-  activeLocale === 'is' ? (
-    <span>
+    activeLocale === 'is' ? (
+      <span>
         <Hidden above="md">EN</Hidden>
         <Hidden below="lg">English</Hidden>
       </span>
@@ -42,10 +41,12 @@ const LanguageToggler: FC<{
         <Hidden below="lg">Íslenska</Hidden>
       </span>
     )
-    
+
   const LanguageButton = (
     <Link href={otherLanguageUrl}>
-      <Button variant="menu" onClick={onClick}>{t('otherLanguage.name')}</Button>
+      <Button variant="menu" onClick={onClick}>
+        {t.otherLanguageName}
+      </Button>
     </Link>
   )
 
@@ -95,7 +96,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                 <Box marginLeft={marginLeft}>
                   <Link href="https://minarsidur.island.is/" passHref>
                     <Button variant="menu" leftIcon="user">
-                      {t('login')}
+                      {t.login}
                     </Button>
                   </Link>
                 </Box>

@@ -1,5 +1,5 @@
 import { withLocale } from '../i18n'
 import homeScreen from '../screens/Home'
-import { withErrorBoundary } from '../units/ErrorBoundary'
+import { withApollo } from '../graphql'
 
-export default withLocale('is')(withErrorBoundary(homeScreen))
+export default withApollo(withLocale('is')(homeScreen))

@@ -33,6 +33,7 @@ import { useI18n } from '../i18n'
 import { Locale } from '../i18n/I18n'
 import useRouteNames from '../i18n/useRouteNames'
 import { CustomNextError } from '../units/ErrorBoundary'
+import { Button } from '@island.is/island-ui/core'
 
 interface ArticleProps {
   article: Query['singleItem']
@@ -99,6 +100,13 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
               >
                 <a>{categoryTitle}</a>
               </Link>
+              <Button
+                onClick={() => {
+                  throw new Error('test')
+                }}
+              >
+                Error
+              </Button>
               {groupTitle && (
                 <Tag variant="purple" label>
                   {groupTitle}
@@ -182,7 +190,7 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   }
 }
 
-export default withApollo(Article)
+export default Article
 
 const ContentContainer: FC<BoxProps> = ({ children, ...props }) => (
   <Box padding={[3, 3, 6, 0]} {...props}>

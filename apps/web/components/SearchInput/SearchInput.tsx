@@ -221,9 +221,9 @@ const ItemContainer = ({ active, colored, children }) => {
 
   return (
     <Box
-      display='flex'
+      display="flex"
       background={active ? activeColor : inactiveColor}
-      flexDirection='column'
+      flexDirection="column"
       padding={2}
       paddingY={3}
     >

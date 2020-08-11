@@ -1,5 +1,5 @@
-import { withLocale } from '../../../i18n'
+import { withLocale } from '@island.is/web/i18n'
 import searchScreen from '../../../screens/Search/Search'
-import { withErrorBoundary } from '../../../units/ErrorBoundary'
+import { withApollo } from '@island.is/web/graphql'
 
-export default withLocale('is')(withErrorBoundary(searchScreen))
+export default withApollo(withLocale('is')(searchScreen))

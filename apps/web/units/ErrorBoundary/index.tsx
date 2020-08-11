@@ -4,20 +4,25 @@ import ErrorPage from '../../pages/_error'
 
 export const withErrorBoundary = (Component) => {
   class ErrorBoundary extends React.Component<ErrorProps> {
+    state = this.props
     static getDerivedStateFromError(error: Error) {
       // All throws from frontend are critical crashes,
       // return generic error code unless the error is a custom error object
+      console.log('Handling frontend')
       return { statusCode: 500, ...error }
     }
+    z
 
     componentDidCatch(error: Error, info: React.ErrorInfo) {
       // TODO: Add central logging here
       // TODO: Restrict console logging to development
+      console.log('Cought frontend')
       console.error(error, info)
     }
 
     render() {
-      const { statusCode, title, children } = this.props
+      const { statusCode, title, children } = this.state
+      console.log(statusCode)
       if (statusCode) {
         // Display error page for all client side errors during render
         return <ErrorPage statusCode={statusCode} title={title} />
@@ -38,10 +43,11 @@ export const withErrorBoundary = (Component) => {
     // Wrap getInitialProps to be able to pass custom error codes to error page
     NewComponent.getInitialProps = async (ctx) => {
       try {
-        return await Component.getInitialProps(ctx)
+        return Component.getInitialProps(ctx)
       } catch ({ statusCode = 500, title, ...error }) {
         // TODO: Add central logging here
         // TODO: Restrict console logging to development
+        console.error('Initial props')
         console.error(error)
         // Let ErrorBoundary handle error display for getInitialProps
         return { error: { statusCode, title } }

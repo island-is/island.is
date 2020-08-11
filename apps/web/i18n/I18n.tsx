@@ -8,7 +8,7 @@ export const defaultLanguage = 'is'
 
 interface I18nContextType {
   activeLocale: string
-  t: Rosetta<object>['t']
+  t: any
   locale: (locale: string, dict?: object) => void
 }
 
@@ -29,7 +29,7 @@ export default function I18n({ children, locale, translations }) {
     i18n.locale(locale)
     i18n.set(locale, activeDict)
   }
-  console.log('locale', locale)
+
   useEffect(() => {
     if (locale) {
       i18n.locale(locale)
@@ -37,19 +37,17 @@ export default function I18n({ children, locale, translations }) {
       activeLocaleRef.current = locale
       // force rerender
       setTick((tick) => tick + 1)
-      console.log('Ran!', activeDict)
     }
   }, [locale, activeDict])
 
   const i18nWrapper = {
     activeLocale: activeLocaleRef.current,
-    t: i18n.t,
+    t: translations,
     locale: (l, dict) => {
       i18n.locale(l)
       activeLocaleRef.current = l
       if (dict) {
         i18n.set(l, dict)
-        console.log('setting dict', dict)
         setActiveDict(dict)
       } else {
         setTick((tick) => tick + 1)

@@ -290,4 +290,4 @@ const Filter = ({ selected, text, onClick, ...props }) => {
     </Box>
   )
 }
-export default withApollo(Search)
+export default Search

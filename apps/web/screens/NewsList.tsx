@@ -75,12 +75,12 @@ const NewsList: Screen<NewsListProps> = ({
 
   const sidebar = (
     <Stack space={3}>
-      <Typography variant="h4" as="h4">
+      <Typography variant='h4' as='h4'>
         Fréttir og tilkynningar
       </Typography>
-      <Divider weight="alternate" />
+      <Divider weight='alternate' />
       <Select
-        name="year"
+        name='year'
         value={selectedYear.toString()}
         options={options}
         onChange={(e) => {
@@ -91,7 +91,7 @@ const NewsList: Screen<NewsListProps> = ({
         }}
       />
 
-      <Typography variant="p" as="p">
+      <Typography variant='p' as='p'>
         <Link
           href={{
             pathname: makePath('news'),
@@ -102,10 +102,10 @@ const NewsList: Screen<NewsListProps> = ({
         >
           <a>Allt árið {selectedYear}</a>
         </Link>
-        {selectedMonth === undefined && <Bullet align="right" />}
+        {selectedMonth === undefined && <Bullet align='right' />}
       </Typography>
       {months.map((date: Date) => (
-        <Typography key={date.toISOString()} variant="p" as="p">
+        <Typography key={date.toISOString()} variant='p' as='p'>
           <Link
             href={{
               pathname: makePath('news'),
@@ -117,7 +117,7 @@ const NewsList: Screen<NewsListProps> = ({
           >
             <a>{capitalize(format(date, 'MMMM'))}</a>
           </Link>
-          {selectedMonth === date.getMonth() && <Bullet align="right" />}
+          {selectedMonth === date.getMonth() && <Bullet align='right' />}
         </Typography>
       ))}
     </Stack>
@@ -138,7 +138,7 @@ const NewsList: Screen<NewsListProps> = ({
               <a>Fréttir og tilkynningar</a>
             </Link>
           </Breadcrumbs>
-          <Typography variant="h1" as="h1">
+          <Typography variant='h1' as='h1'>
             {selectedYear}
           </Typography>
 
@@ -171,28 +171,28 @@ const NewsListItem = ({ newsItem }) => {
   const { format } = useDateUtils()
 
   return (
-    <Box key={newsItem.id} boxShadow="subtle" padding={6} paddingRight={3}>
-      <Columns space={4} collapseBelow="xl">
+    <Box key={newsItem.id} boxShadow='subtle' padding={6} paddingRight={3}>
+      <Columns space={4} collapseBelow='xl'>
         <Column>
           <Stack space={2}>
-            <Typography variant="eyebrow" as="p" color="purple400">
+            <Typography variant='eyebrow' as='p' color='purple400'>
               {format(new Date(newsItem.date), 'do MMMM yyyy')}
             </Typography>
-            <Typography variant="h3" as="h3" color="blue400">
+            <Typography variant='h3' as='h3' color='blue400'>
               <Link href={makePath('news', newsItem.slug)}>
                 <a>{newsItem.title}</a>
               </Link>
             </Typography>
-            <Typography variant="p" as="p">
+            <Typography variant='p' as='p'>
               {newsItem.intro}
             </Typography>
           </Stack>
         </Column>
         {newsItem.image && (
-          <Column width="2/5">
+          <Column width='2/5'>
             <Link href={makePath('news', newsItem.slug)}>
               <a>
-                <Image type="apiImage" image={newsItem.image} maxWidth={524} />
+                <Image type='apiImage' image={newsItem.image} maxWidth={524} />
               </a>
             </Link>
           </Column>
@@ -286,4 +286,4 @@ const createDateRange = (min: Date, max: Date): string[] => {
   ).map((i: number) => new Date(Math.floor(i / 12), i % 12).toISOString())
 }
 
-export default withApollo(NewsList)
+export default NewsList
