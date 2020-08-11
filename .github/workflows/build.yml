@@ -169,8 +169,9 @@ jobs:
 
       - name: set BRANCH env var
         run: echo "::set-env name=BRANCH::${GIT_BRANCH}"
+
   tests:
-    name: testing-${{ matrix.projects }}
+    # name: testing-${{ matrix.projects }}
     needs: prepare
     runs-on: ubuntu-latest
     env:
