@@ -1,7 +1,6 @@
 export * from './types/Condition'
 export * from './types/Fields'
 export * from './types/Form'
-export * from './types/FormTree'
 export * from './types/Application'
 
 export * from './lib/conditionUtils'

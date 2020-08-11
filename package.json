@@ -90,6 +90,7 @@
     "ioredis": "4.17.3",
     "islandis-login": "1.1.4",
     "isomorphic-unfetch": "3.0.0",
+    "jest-svg-transformer": "1.0.0",
     "js-base64": "2.5.2",
     "js-cookie": "2.2.1",
     "jsbarcode": "3.11.0",

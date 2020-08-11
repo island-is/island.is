@@ -12,6 +12,7 @@ export interface BaseField extends FormItem {
   readonly name: string
   readonly children: undefined
   condition?: Condition
+  repeaterIndex?: number
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
 }

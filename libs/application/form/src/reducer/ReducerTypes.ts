@@ -19,6 +19,7 @@ export interface ApplicationUIState {
 
 export enum ActionTypes {
   ANSWER = 'ANSWER',
+  EXPAND_REPEATER = 'EXPAND_REPEATER',
   NEXT_SCREEN = 'NEXT_SCREEN',
   PREV_SCREEN = 'PREV_SCREEN',
 }

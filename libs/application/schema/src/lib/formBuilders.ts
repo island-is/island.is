@@ -7,10 +7,9 @@ import {
   SubSection,
   Section,
   FormItemTypes,
-  RepeaterChildren,
+  FormLeaf,
   Repeater,
   SectionChildren,
-  SubSectionChildren,
   Schema,
 } from '../types/Form'
 
@@ -38,9 +37,9 @@ export function buildRepeater(data: {
   id?: string
   condition?: Condition
   name: string
-  children: RepeaterChildren[]
+  children: FormLeaf[]
 }): Repeater {
-  return { ...data, type: FormItemTypes.REPEATER }
+  return { ...data, type: FormItemTypes.REPEATER, repetitions: 0 }
 }
 
 export function buildSection(data: {
@@ -56,7 +55,7 @@ export function buildSubSection(data: {
   id?: string
   condition?: Condition
   name: string
-  children: SubSectionChildren[]
+  children: FormLeaf[]
 }): SubSection {
   return { ...data, type: FormItemTypes.SUB_SECTION }
 }

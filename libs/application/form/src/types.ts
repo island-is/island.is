@@ -1,4 +1,4 @@
-import { Field, MultiField } from '@island.is/application/schema'
+import { Field, MultiField, Repeater } from '@island.is/application/schema'
 import { Ref } from 'react'
 
 export interface FieldBaseProps {
@@ -10,13 +10,19 @@ export interface FieldBaseProps {
 }
 
 export type FieldDef = {
-  isVisible?: boolean
+  isNavigable?: boolean
 } & Field
 
 export type MultiFieldScreen = {
-  isVisible?: boolean
+  isNavigable?: boolean
 } & MultiField & {
     children: FieldDef[]
   }
 
-export type FormScreen = FieldDef | MultiFieldScreen
+export type RepeaterScreen = {
+  isNavigable?: boolean
+  isExpanded?: boolean
+} & Repeater & {
+    children: (FieldDef | MultiFieldScreen | RepeaterScreen)[]
+  }
+export type FormScreen = FieldDef | MultiFieldScreen | RepeaterScreen

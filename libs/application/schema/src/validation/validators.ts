@@ -1,5 +1,4 @@
-import { FormValue, Schema } from '../types/Form'
-import { FormNode } from '../types/FormTree'
+import { FormNode, FormValue, Schema } from '../types/Form'
 import { getQuestionsForFormNode } from '../lib/formUtils'
 import * as z from 'zod'
 
@@ -13,7 +12,20 @@ export function extractPartialSchemaForValues(
 
     if (typeof value === 'object') {
       if (value.length) {
-        returnSchema = returnSchema.merge(schema.pick({ [key]: true }))
+        if (typeof value[0] === 'object') {
+          returnSchema = returnSchema.merge(
+            z.object({
+              [key]: z.array(
+                extractPartialSchemaForValues(
+                  schema.shape[key]._def.type,
+                  value[0] as FormValue,
+                ),
+              ),
+            }),
+          )
+        } else {
+          returnSchema = returnSchema.merge(schema.pick({ [key]: true }))
+        }
       } else {
         returnSchema = returnSchema.merge(
           z.object({
@@ -28,7 +40,7 @@ export function extractPartialSchemaForValues(
       returnSchema = returnSchema.merge(schema.pick({ [key]: true }))
     }
   })
-  return returnSchema
+  return returnSchema.partial()
 }
 
 export function areAnswersValid(

@@ -1,4 +1,4 @@
-import React, { FC, useLayoutEffect, useRef, useState, useEffect } from 'react'
+import React, { FC, useRef, useState, useEffect } from 'react'
 import { Section, getSubSectionsInSection } from '@island.is/application/schema'
 import { BulletList, Box, Typography } from '@island.is/island-ui/core'
 import SectionNumber from '../SectionNumber'
@@ -36,7 +36,7 @@ const FormProgressSection: FC<{
     return () => {
       window.removeEventListener('resize', handleResize)
     }
-  }, [])
+  }, [isClient])
 
   return (
     <Box

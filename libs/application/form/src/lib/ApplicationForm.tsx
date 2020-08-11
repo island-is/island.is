@@ -1,7 +1,7 @@
 import React, { FC, useReducer } from 'react'
 import { FormValue, Form } from '@island.is/application/schema'
-import FormProgress from '../components/FormProgress'
-import ApplicationName from '../components/ApplicationName'
+import FormProgress from '../components/FormProgress/'
+import ApplicationName from '../components/ApplicationName/'
 import Sidebar from '../components/Sidebar'
 import Screen from '../components/Screen'
 import {
@@ -81,6 +81,9 @@ export const ApplicationForm: FC<ApplicationProps> = ({
             }
             dataSchema={form.schema}
             formValue={formValue}
+            expandRepeater={() =>
+              dispatch({ type: ActionTypes.EXPAND_REPEATER })
+            }
             nextScreen={() => dispatch({ type: ActionTypes.NEXT_SCREEN })}
             prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
             shouldSubmit={activeScreen === screens.length - 1}
