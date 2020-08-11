@@ -1164,6 +1164,201 @@
           }
         }
       }
+    },
+    "air-discount-scheme-api": {
+      "root": "apps/air-discount-scheme/api",
+      "sourceRoot": "apps/air-discount-scheme/api/src",
+      "projectType": "application",
+      "prefix": "air-discount-scheme-api",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/air-discount-scheme/api",
+            "main": "apps/air-discount-scheme/api/src/main.ts",
+            "tsConfig": "apps/air-discount-scheme/api/tsconfig.app.json",
+            "assets": ["apps/air-discount-scheme/api/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/air-discount-scheme/api/src/environments/environment.ts",
+                  "with": "apps/air-discount-scheme/api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "air-discount-scheme-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/air-discount-scheme/api/.eslintrc",
+            "tsConfig": [
+              "apps/air-discount-scheme/api/tsconfig.app.json",
+              "apps/air-discount-scheme/api/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/air-discount-scheme/api/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/air-discount-scheme/api/jest.config.js",
+            "tsConfig": "apps/air-discount-scheme/api/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "graphql-codegen --config apps/air-discount-scheme/codegen.yml"
+              }
+            ]
+          }
+        },
+        "env-secrets": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "./scripts/secrets.sh air-discount-scheme --reset"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "air-discount-scheme-web": {
+      "root": "apps/air-discount-scheme/web",
+      "sourceRoot": "apps/air-discount-scheme/web/src",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/web:build",
+          "options": {
+            "outputPath": "dist/apps/air-discount-scheme/web",
+            "index": "apps/air-discount-scheme/web/src/index.html",
+            "main": "apps/air-discount-scheme/web/src/main.tsx",
+            "polyfills": "apps/air-discount-scheme/web/src/polyfills.ts",
+            "tsConfig": "apps/air-discount-scheme/web/tsconfig.app.json",
+            "assets": [
+              "apps/air-discount-scheme/web/src/favicon.ico",
+              "apps/air-discount-scheme/web/src/assets"
+            ],
+            "styles": ["apps/air-discount-scheme/web/src/styles.scss"],
+            "scripts": [],
+            "webpackConfig": "@nrwl/react/plugins/webpack"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/air-discount-scheme/web/src/environments/environment.ts",
+                  "with": "apps/air-discount-scheme/web/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/web:dev-server",
+          "options": {
+            "buildTarget": "air-discount-scheme-web:build"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "air-discount-scheme-web:build:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/air-discount-scheme/web/.eslintrc",
+            "tsConfig": [
+              "apps/air-discount-scheme/web/tsconfig.app.json",
+              "apps/air-discount-scheme/web/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/air-discount-scheme/web/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/air-discount-scheme/web/jest.config.js",
+            "tsConfig": "apps/air-discount-scheme/web/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "air-discount-scheme/web-e2e": {
+      "root": "apps/air-discount-scheme/web-e2e",
+      "sourceRoot": "apps/air-discount-scheme/web-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/air-discount-scheme/web-e2e/cypress.json",
+            "tsConfig": "apps/air-discount-scheme/web-e2e/tsconfig.e2e.json",
+            "devServerTarget": "air-discount-scheme-web:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "air-discount-scheme-web:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/air-discount-scheme/web-e2e/.eslintrc",
+            "tsConfig": ["apps/air-discount-scheme/web-e2e/tsconfig.e2e.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/air-discount-scheme/web-e2e/**"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {
@@ -1182,15 +1377,17 @@
     },
     "@nrwl/react": {
       "application": {
+        "style": "scss",
         "linter": "eslint",
         "pascalCaseFiles": true,
-        "style": "scss",
         "babel": true
       },
       "component": {
-        "pascalCaseFiles": true,
+        "style": "scss"
+      },
+      "library": {
         "style": "scss",
-        "export": true
+        "linter": "eslint"
       }
     },
     "@nrwl/next": {
