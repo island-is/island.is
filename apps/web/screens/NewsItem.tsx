@@ -33,18 +33,18 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
   const sidebar = (
     <Stack space={3}>
       <Stack space={1}>
-        <Typography variant='eyebrow' as='p' color='blue400'>
+        <Typography variant="eyebrow" as="p" color="blue400">
           Höfundur
         </Typography>
-        <Typography variant='h5' as='p'>
+        <Typography variant="h5" as="p">
           Jón Jónsson
         </Typography>
       </Stack>
       <Stack space={1}>
-        <Typography variant='eyebrow' as='p' color='blue400'>
+        <Typography variant="eyebrow" as="p" color="blue400">
           Birt
         </Typography>
-        <Typography variant='h5' as='p'>
+        <Typography variant="h5" as="p">
           {format(new Date(newsItem.date), 'do MMMM yyyy')}
         </Typography>
       </Stack>
@@ -58,7 +58,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
       </Head>
       <NewsItemLayout sidebar={sidebar}>
         <Box padding={[3, 3, 6, 0]} paddingBottom={0}>
-          <ContentBlock width='small'>
+          <ContentBlock width="small">
             <Stack space={3}>
               <Breadcrumbs>
                 <Link href={makePath()}>
@@ -69,16 +69,16 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
                 </Link>
               </Breadcrumbs>
               <Box paddingTop={1}>
-                <Typography variant='h1' as='h1'>
+                <Typography variant="h1" as="h1">
                   {newsItem.title}
                 </Typography>
               </Box>
-              <Typography variant='intro' as='p'>
+              <Typography variant="intro" as="p">
                 {newsItem.intro}
               </Typography>
               {Boolean(newsItem.image) && (
                 <Box paddingY={2}>
-                  <Image type='apiImage' image={newsItem.image} />
+                  <Image type="apiImage" image={newsItem.image} />
                 </Box>
               )}
             </Stack>
