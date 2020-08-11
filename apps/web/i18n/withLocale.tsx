@@ -7,9 +7,13 @@ import { GET_NAMESPACE_QUERY } from '../screens/queries'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 
-export const withLocale = <C, IP = {}, P = {}>(locale: Locale) => (
-  Component: NextComponentType<C, IP, P>,
-): NextComponentType<C, IP> => {
+export const withLocale = <
+  C extends BaseContext = NextPageContext,
+  IP = {},
+  P = {}
+>(
+  locale: Locale,
+) => (Component: NextComponentType<C, IP, P>): NextComponentType<C, IP> => {
   const getInitialProps = Component.getInitialProps
   if (!getInitialProps) {
     return Component
@@ -20,13 +24,11 @@ export const withLocale = <C, IP = {}, P = {}>(locale: Locale) => (
   )
 
   NewComponent.getInitialProps = async (ctx) => {
-    // TODO: Get global namespace here?
     const newContext = { ...ctx, locale } as any
     const [props, translations] = await Promise.all([
       getInitialProps(newContext),
       getGlobalStrings(newContext),
     ])
-    console.log('translations', translations)
     return {
       ...props,
       locale,

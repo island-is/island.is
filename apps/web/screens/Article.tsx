@@ -33,7 +33,6 @@ import { useI18n } from '../i18n'
 import { Locale } from '../i18n/I18n'
 import useRouteNames from '../i18n/useRouteNames'
 import { CustomNextError } from '../units/ErrorBoundary'
-import { Button } from '@island.is/island-ui/core'
 
 interface ArticleProps {
   article: Query['singleItem']
