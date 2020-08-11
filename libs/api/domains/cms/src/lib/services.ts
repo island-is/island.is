@@ -158,14 +158,15 @@ const formatLogoListSlice = ({ fields, sys }): LogoListSlice =>
     images: fields.images.map(formatImage),
   })
 
-const formatIconBullet = ({ fields, sys }): IconBullet => ({
-  id: sys.id,
-  title: fields.title,
-  body: fields.body,
-  icon: formatImage(fields.icon),
-  url: fields.url,
-  linkText: fields.linkText,
-})
+const formatIconBullet = ({ fields, sys }): IconBullet =>
+  new IconBullet({
+    id: sys.id,
+    title: fields.title,
+    body: fields.body,
+    icon: formatImage(fields.icon),
+    url: fields.url,
+    linkText: fields.linkText,
+  })
 
 const formatNumberBullet = ({ fields, sys }): NumberBullet => ({
   id: sys.id,
@@ -173,11 +174,12 @@ const formatNumberBullet = ({ fields, sys }): NumberBullet => ({
   body: fields.body,
 })
 
-const formatNumberBulletGroup = ({ fields, sys }): NumberBulletGroup => ({
-  id: sys.id,
-  defaultVisible: fields.defaultVisible,
-  bullets: fields.bullets.map(formatNumberBullet),
-})
+const formatNumberBulletGroup = ({ fields, sys }): NumberBulletGroup =>
+  new NumberBulletGroup({
+    id: sys.id,
+    defaultVisible: fields.defaultVisible,
+    bullets: fields.bullets.map(formatNumberBullet),
+  })
 
 const formatBulletEntry = ({ fields, sys }): typeof BulletEntry => {
   switch (sys.contentType.sys.id) {
