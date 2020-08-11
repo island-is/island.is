@@ -1,20 +1,20 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Application } from '../../core/db/models/application.model'
+import { Application } from './application.model'
 import { ApplicationDto } from './dto/application.dto'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
-export class ApplicationsService {
+export class ApplicationService {
   constructor(
     @InjectModel(Application)
     private applicationModel: typeof Application,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
 
-  async findAll(): Promise<Application[]> {
-    return this.applicationModel.findAll<Application>()
-  }
-
-  async findOne(id: string): Promise<Application> {
+  async findById(id: string): Promise<Application> {
+    this.logger.debug(`Finding application by id - "${id}"`)
     return this.applicationModel.findOne({
       where: { id },
     })

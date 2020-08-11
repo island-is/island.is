@@ -15,7 +15,7 @@ import {
 import { Form } from '../types/Form'
 import { nationalIdRegex } from './schemaUtils'
 
-const formIcon = require('./ExampleForm3Icon.svg').default
+// const formIcon = require('./ExampleForm3Icon.svg').default
 
 const ExampleSchema = z.object({
   person: z.object({
@@ -76,7 +76,7 @@ export const ExampleForm3: Form = buildForm({
   ownerId: 'DOL',
   name: "Driver's license",
   schema: ExampleSchema,
-  icon: formIcon,
+  // icon: formIcon,
   children: [
     buildSection({
       id: 'student',

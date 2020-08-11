@@ -6,7 +6,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger'
 
 export enum ApplicationState {
   DRAFT = 'DRAFT',
@@ -20,10 +20,11 @@ export enum ApplicationState {
 } // TODO get from somewhere
 
 @Table({
+  tableName: 'application',
   timestamps: true,
   indexes: [
     {
-      fields: ['typeId', 'applicant'],
+      fields: ['type_id', 'applicant'],
     },
   ],
 })

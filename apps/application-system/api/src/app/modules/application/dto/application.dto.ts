@@ -1,5 +1,11 @@
-import { IsEnum, IsNotEmpty, IsObject, IsString } from 'class-validator';
-import { ApplicationState } from '../../../core/db/models/application.model'
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsObject,
+  IsString,
+  IsArray,
+} from 'class-validator'
+import { ApplicationState } from '../application.model'
 import { SchemaType } from '@island.is/application/schema'
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -23,4 +29,8 @@ export class ApplicationDto {
   @IsObject()
   @ApiProperty()
   readonly answers: object
+
+  @IsArray()
+  @ApiProperty()
+  readonly attachments: string[]
 }

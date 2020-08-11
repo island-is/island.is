@@ -7,32 +7,26 @@ import {
   Post,
   Put,
 } from '@nestjs/common'
-import { Application } from '../../core/db/models/application.model'
-import { ApplicationsService } from './applications.service'
+import { Application } from './application.model'
+import { ApplicationService } from './application.service'
 import { ApplicationDto } from './dto/application.dto'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-@ApiTags('applications')
-@Controller('applications')
-export class ApplicationsController {
-  constructor(private readonly applicationService: ApplicationsService) {}
-
-  @Get()
-  @ApiOkResponse({ type: [Application] })
-  async findAll(): Promise<Array<Application>> {
-    return await this.applicationService.findAll()
-  }
+@ApiTags('application')
+@Controller('application')
+export class ApplicationController {
+  constructor(private readonly applicationService: ApplicationService) {}
 
   @Post()
   @ApiCreatedResponse({ type: Application })
   async create(@Body() application: ApplicationDto): Promise<Application> {
-    return await this.applicationService.create(application)
+    return this.applicationService.create(application)
   }
 
   @Get(':id')
   @ApiOkResponse({ type: Application })
   async findOne(@Param('id') id: string): Promise<Application> {
-    const application = await this.applicationService.findOne(id)
+    const application = await this.applicationService.findById(id)
 
     if (!application) {
       throw new NotFoundException("This application doesn't exist")

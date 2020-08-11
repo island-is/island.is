@@ -3,33 +3,20 @@
  * This is only a minimal backend to get started.
  */
 
-import { Logger, ValidationPipe } from '@nestjs/common'
-import { NestFactory } from '@nestjs/core'
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
+import '@island.is/infra-tracing'
+import { DocumentBuilder } from '@nestjs/swagger'
 import { AppModule } from './app/app.module'
+import { bootstrap } from '@island.is/infra-nest-server'
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
-  const globalPrefix = 'api'
-  app.setGlobalPrefix(globalPrefix)
-  app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
-  )
-  const port = process.env.PORT || 3333
-
-  // Swagger
-  const options = new DocumentBuilder()
-    .setTitle('Applications system')
-    .setDescription('The Applications system API description')
+bootstrap({
+  appModule: AppModule,
+  name: 'application-system-api',
+  openApi: new DocumentBuilder()
+    .setTitle('Reference backend')
+    .setDescription(
+      'This is provided as a reference to implement other backends.',
+    )
     .setVersion('1.0')
-    .addTag('applications')
-    .build()
-  const document = SwaggerModule.createDocument(app, options)
-  SwaggerModule.setup('swagger', app, document)
-
-  await app.listen(port, () => {
-    Logger.log('Listening at http://localhost:' + port + '/' + globalPrefix)
-  })
-}
-
-bootstrap()
+    .addTag('application')
+    .build(),
+})

@@ -3,7 +3,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface
-      .createTable('Applications', {
+      .createTable('application', {
         id: {
           type: Sequelize.UUID,
           primaryKey: true,
@@ -27,7 +27,7 @@ module.exports = {
         assignee: {
           type: Sequelize.STRING,
         },
-        externalId: {
+        ['external_id']: {
           type: Sequelize.STRING,
         },
         state: {
@@ -46,7 +46,7 @@ module.exports = {
         attachments: {
           type: Sequelize.ARRAY(Sequelize.STRING),
         },
-        typeId: {
+        ['type_id']: {
           type: Sequelize.STRING,
           allowNull: false,
         },
@@ -57,11 +57,11 @@ module.exports = {
         },
       })
       .then(() =>
-        queryInterface.addIndex('Applications', ['typeId', 'applicant']),
+        queryInterface.addIndex('application', ['type_id', 'applicant']),
       )
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Applications')
+    return queryInterface.dropTable('application')
   },
 }
