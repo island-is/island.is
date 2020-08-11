@@ -118,6 +118,9 @@
     "air-discount-scheme/web-e2e": {
       "tags": [],
       "implicitDependencies": ["air-discount-scheme-web"]
+    },
+    "air-discount-scheme-backend": {
+      "tags": []
     }
   }
 }

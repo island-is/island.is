@@ -1359,6 +1359,66 @@
           }
         }
       }
+    },
+    "air-discount-scheme-backend": {
+      "root": "apps/air-discount-scheme/backend",
+      "sourceRoot": "apps/air-discount-scheme/backend/src",
+      "projectType": "application",
+      "prefix": "air-discount-scheme-backend",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/air-discount-scheme/backend",
+            "main": "apps/air-discount-scheme/backend/src/main.ts",
+            "tsConfig": "apps/air-discount-scheme/backend/tsconfig.app.json",
+            "assets": ["apps/air-discount-scheme/backend/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/air-discount-scheme/backend/src/environments/environment.ts",
+                  "with": "apps/air-discount-scheme/backend/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "air-discount-scheme-backend:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/air-discount-scheme/backend/.eslintrc",
+            "tsConfig": [
+              "apps/air-discount-scheme/backend/tsconfig.app.json",
+              "apps/air-discount-scheme/backend/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/air-discount-scheme/backend/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/air-discount-scheme/backend/jest.config.js",
+            "tsConfig": "apps/air-discount-scheme/backend/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {
