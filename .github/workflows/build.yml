@@ -15,7 +15,7 @@ env:
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
 
 jobs:
-  test-build:
+  prepare:
     #runs-on: self-hosted
     runs-on: ubuntu-latest
 
@@ -44,9 +44,15 @@ jobs:
     # These outputs are not used right now but are here ready when we go for multiple jobs
     outputs:
       GIT_BRANCH: ${{ steps.git_refs.outputs.GIT_BRANCH }}
+      GIT_BASE_BRANCH: ${{ steps.git_refs.outputs.GIT_BASE_BRANCH }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       DOCKER_LATEST_TAG: ${{ steps.docker_tags.outputs.DOCKER_LATEST_TAG }}
       DOCKER_BRANCH_TAG: ${{ steps.docker_tags.outputs.DOCKER_BRANCH_TAG }}
+      BASE: ${{ steps.git_nx_base.outputs.BASE }}
+      HEAD: ${{ steps.git_nx_head.outputs.HEAD }}
+      LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
+      PUBLISH: ${{ steps.publish_flag.outputs.PUBLISH }}
+      TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -62,6 +68,7 @@ jobs:
           echo "::set-env name=GIT_BRANCH::${GIT_BRANCH}"
           echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
           echo "::set-env name=GIT_BASE_BRANCH::${GIT_BASE_BRANCH}"
+          echo "::set-output name=GIT_BASE_BRANCH::${GIT_BASE_BRANCH}"
           echo "Base branch is '${GIT_BASE_BRANCH}'"
           echo "Branch is '${GIT_BRANCH}'"
 
@@ -82,6 +89,8 @@ jobs:
       - run: git checkout $GITHUB_SHA
       - run: |
           echo "::set-env name=HEAD::${GITHUB_SHA}"
+          echo "::set-output name=HEAD::${GITHUB_SHA}"
+        id: git_nx_head
         name: Preparing HEAD tag
       - run: |
           if [[ $GITHUB_BASE_REF ]]
@@ -97,11 +106,14 @@ jobs:
           LAST_GOOD_BUILD_RUN_NUMBER=`echo $LAST_GOOD_BUILD | jq -r '.run_number'`
           echo "Last successful build on $BRANCH is with SHA '$LAST_GOOD_BUILD_SHA', branch '$LAST_GOOD_BUILD_BRANCH' and number '$LAST_GOOD_BUILD_RUN_NUMBER'"
           echo "::set-env name=BASE::$LAST_GOOD_BUILD_SHA"
+          echo "::set-output name=BASE::$LAST_GOOD_BUILD_SHA"
           LAST_GOOD_BUILD_DOCKER_BRANCH_TAG=$(echo ${LAST_GOOD_BUILD_BRANCH} | tr "/." "-" )
           export LAST_GOOD_BUILD_DOCKER_TAG=${LAST_GOOD_BUILD_RUN_NUMBER}_${LAST_GOOD_BUILD_DOCKER_BRANCH_TAG}_${LAST_GOOD_BUILD_SHA:0:7}
           echo "Last successful docker tag '$LAST_GOOD_BUILD_DOCKER_TAG'"
           echo "::set-env name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
+          echo "::set-output name=LAST_GOOD_BUILD_DOCKER_TAG::${LAST_GOOD_BUILD_DOCKER_TAG}"
 
+        id: git_nx_base
         name: Preparing BASE tags
 
         env:
@@ -111,6 +123,7 @@ jobs:
         run: env | grep GITHUB
 
       - name: Set publish flag
+        id: publish_flag
         run: |
           if [[ $GITHUB_BASE_REF ]]
           then
@@ -119,6 +132,7 @@ jobs:
             export PUBLISH=true
           fi
           echo "::set-env name=PUBLISH::${PUBLISH}"
+          echo "::set-output name=PUBLISH::${PUBLISH}"
 
       - name: Cache for dependencies Docker layer
         id: cache-deps
@@ -138,142 +152,166 @@ jobs:
         if: steps.cache-deps.outputs.cache-hit != 'true'
         run: ./scripts/prepare_deps.sh
 
-      - name: Check formatting
-        run: ./scripts/check_formatting.sh
+      - name: Prepare test targets
+        id: test_projects
+        run: |
+          PROJECTS=`./scripts/_nx-affected-targets.sh test`
+          echo "Projects: ${PROJECTS}"
+          CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
+          echo "Chunks: ${CHUNKS}"
+          echo "::set-ouput name=CHUNKS::${CHUNKS}"
+
+      # - name: Check formatting
+      #   run: ./scripts/check_formatting.sh
       # Commenting this out since we do have a package that is problematic and that would block the pipeline
       # - name: Security audit Node modules
       #   run: BRANCH=$DOCKER_BRANCH_TAG ./scripts/security-audit.sh
 
       - name: set BRANCH env var
         run: echo "::set-env name=BRANCH::${GIT_BRANCH}"
+  tests:
+    name: testing-${{ matrix.projects }}
+    needs: prepare
+    runs-on: ubuntu-latest
+    env:
+      AFFECTED_ALL: ${{ matrix.projects }}
+      GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
+      GIT_BASE_BRANCH: ${{ needs.prepare.outputs.GIT_BASE_BRANCH}}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      DOCKER_LATEST_TAG: ${{ needs.prepare.outputs.DOCKER_LATEST_TAG}}
+      DOCKER_BRANCH_TAG: ${{ needs.prepare.outputs.DOCKER_BRANCH_TAG}}
+      BASE: ${{ needs.prepare.outputs.BASE}}
+      HEAD: ${{ needs.prepare.outputs.HEAD}}
+      LAST_GOOD_BUILD_DOCKER_TAG: ${{ needs.prepare.outputs.LAST_GOOD_BUILD_DOCKER_TAG}}
+      PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        projects: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - run: git checkout "$GIT_BRANCH"
+      - run: git checkout "$GIT_BASE_BRANCH"
+      - run: git checkout $GITHUB_SHA
+
+      - name: set BRANCH env var
+        run: echo "::set-env name=BRANCH::${GIT_BRANCH}"
 
       - name: Running tests
-        run: ./scripts/run-affected-in-parallel.sh test
-
-      - name: Linting
-        run: APP=dummy ./scripts/lint.sh
-      - name: Docker login to ECR repo
-        run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Building Express apps
-        run: MAX_JOBS=2 ./scripts/run-affected-in-parallel.sh docker-express
-
-      - name: Building Next.js apps
-        run: MAX_JOBS=2 ./scripts/run-affected-in-parallel.sh docker-next
-      # - name: Running E2E tests
-      #   run: yarn run affected:e2e --base origin/master
-
-      - name: Set Helm chart version
-        id: helm-chart-version
-        run: |
-          export HELM_CHART_VERSION=1.0.0+${DOCKER_TAG}
-          echo "Helm chart version will be ${HELM_CHART_VERSION}"
-          echo "::set-env name=HELM_CHART_VERSION::${HELM_CHART_VERSION}"
-
-      - name: Install Helm push plugin
-        if: env.PUBLISH == 'true'
-        run: helm plugin install https://github.com/chartmuseum/helm-push.git --version=0.8.1
-
-      - name: Install Our ChartMuseum
-        if: env.PUBLISH == 'true'
-        run: helm repo add chartmuseum https://chartmuseum.shared.devland.is --username=$USERNAME --password=$PASSWORD
-        env:
-          USERNAME: ${{ secrets.HELM_CHART_USERNAME }}
-          PASSWORD: ${{ secrets.HELM_CHART_PASSWORD }}
-
-      - name: Push islandis chart to the museum
-        if: env.PUBLISH == 'true'
-        run: helm push helm/islandis --version="$HELM_CHART_VERSION" -f chartmuseum
-
-      - name: Push gjafakort chart to the museum
-        if: env.PUBLISH == 'true'
-        run: helm push helm/gjafakort --version="$HELM_CHART_VERSION" -f chartmuseum
-
-      - name: Push air-discount-scheme chart to the museum
-        if: env.PUBLISH == 'true'
-        run: helm dep build helm/air-discount-scheme && helm push helm/air-discount-scheme --version="$HELM_CHART_VERSION" -f chartmuseum
-
-      - name: Retag unaffected Docker images
-        if: env.PUBLISH == 'true'
-        run: ./scripts/retag-unaffected.sh
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Trigger Deployment for islandis
-        if: env.PUBLISH == 'true'
-        env:
-          TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_ISLANDIS_TOKEN }}
-          ENDPOINT: https://spinnaker-gate.shared.devland.is/webhooks/webhook/islandis
-        run: |
-          curl -v $ENDPOINT -X POST -H "content-type: application/json" --data-binary @- <<BODY
-          {
-            "token": "$TOKEN",
-            "branch": "$GIT_BRANCH",
-            "parameters": { "docker_tag": "$DOCKER_TAG" },
-            "artifacts": [
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.dev.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.dev.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.prod.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.prod.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "name": "islandis",
-                "type": "helm/chart",
-                "version": "$HELM_CHART_VERSION"
-              }
-            ]
-          }
-          BODY
-
-      - name: Trigger Deployment for gjafakort
-        if: env.PUBLISH == 'true'
-        env:
-          TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_GJAFAKORT_TOKEN }}
-          ENDPOINT: https://spinnaker-gate.shared.devland.is/webhooks/webhook/gjafakort
-        run: |
-          curl -v $ENDPOINT -X POST -H "content-type: application/json" --data-binary @- <<BODY
-          {
-            "token": "$TOKEN",
-            "branch": "$GIT_BRANCH",
-            "parameters": { "docker_tag": "$DOCKER_TAG" },
-            "artifacts": [
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.dev.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.dev.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.prod.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.prod.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "name": "gjafakort",
-                "type": "helm/chart",
-                "version": "$HELM_CHART_VERSION"
-              }
-            ]
-          }
-          BODY
-
-      - uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # optional
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-        if: failure() && env.PUBLISH == 'true'
+        run: ./scripts/run-in-parallel.sh test
+      # - name: Linting
+      #   run: APP=dummy ./scripts/lint.sh
+      # - name: Docker login to ECR repo
+      #   run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # - name: Building Express apps
+      #   run: MAX_JOBS=2 ./scripts/run-affected-in-parallel.sh docker-express
+      # - name: Building Next.js apps
+      #   run: MAX_JOBS=2 ./scripts/run-affected-in-parallel.sh docker-next
+      # # - name: Running E2E tests
+      # #   run: yarn run affected:e2e --base origin/master
+      # - name: Set Helm chart version
+      #   id: helm-chart-version
+      #   run: |
+      #     export HELM_CHART_VERSION=1.0.0+${DOCKER_TAG}
+      #     echo "Helm chart version will be ${HELM_CHART_VERSION}"
+      #     echo "::set-env name=HELM_CHART_VERSION::${HELM_CHART_VERSION}"
+      # - name: Install Helm push plugin
+      #   if: env.PUBLISH == 'true'
+      #   run: helm plugin install https://github.com/chartmuseum/helm-push.git --version=0.8.1
+      # - name: Install Our ChartMuseum
+      #   if: env.PUBLISH == 'true'
+      #   run: helm repo add chartmuseum https://chartmuseum.shared.devland.is --username=$USERNAME --password=$PASSWORD
+      #   env:
+      #     USERNAME: ${{ secrets.HELM_CHART_USERNAME }}
+      #     PASSWORD: ${{ secrets.HELM_CHART_PASSWORD }}
+      # - name: Push islandis chart to the museum
+      #   if: env.PUBLISH == 'true'
+      #   run: helm push helm/islandis --version="$HELM_CHART_VERSION" -f chartmuseum
+      # - name: Push gjafakort chart to the museum
+      #   if: env.PUBLISH == 'true'
+      #   run: helm push helm/gjafakort --version="$HELM_CHART_VERSION" -f chartmuseum
+      # - name: Retag unaffected Docker images
+      #   if: env.PUBLISH == 'true'
+      #   run: ./scripts/retag-unaffected.sh
+      #   env:
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # - name: Trigger Deployment for islandis
+      #   if: env.PUBLISH == 'true'
+      #   env:
+      #     TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_ISLANDIS_TOKEN }}
+      #     ENDPOINT: https://spinnaker-gate.shared.devland.is/webhooks/webhook/islandis
+      #   run: |
+      #     curl -v $ENDPOINT -X POST -H "content-type: application/json" --data-binary @- <<BODY
+      #     {
+      #       "token": "$TOKEN",
+      #       "branch": "$GIT_BRANCH",
+      #       "parameters": { "docker_tag": "$DOCKER_TAG" },
+      #       "artifacts": [
+      #         {
+      #           "type": "github/file",
+      #           "name": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.dev.yaml",
+      #           "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.dev.yaml",
+      #           "version": "$GITHUB_SHA"
+      #         },
+      #         {
+      #           "type": "github/file",
+      #           "name": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.prod.yaml",
+      #           "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.prod.yaml",
+      #           "version": "$GITHUB_SHA"
+      #         },
+      #         {
+      #           "name": "islandis",
+      #           "type": "helm/chart",
+      #           "version": "$HELM_CHART_VERSION"
+      #         }
+      #       ]
+      #     }
+      #     BODY
+      # - name: Trigger Deployment for gjafakort
+      #   if: env.PUBLISH == 'true'
+      #   env:
+      #     TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_GJAFAKORT_TOKEN }}
+      #     ENDPOINT: https://spinnaker-gate.shared.devland.is/webhooks/webhook/gjafakort
+      #   run: |
+      #     curl -v $ENDPOINT -X POST -H "content-type: application/json" --data-binary @- <<BODY
+      #     {
+      #       "token": "$TOKEN",
+      #       "branch": "$GIT_BRANCH",
+      #       "parameters": { "docker_tag": "$DOCKER_TAG" },
+      #       "artifacts": [
+      #         {
+      #           "type": "github/file",
+      #           "name": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.dev.yaml",
+      #           "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.dev.yaml",
+      #           "version": "$GITHUB_SHA"
+      #         },
+      #         {
+      #           "type": "github/file",
+      #           "name": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.prod.yaml",
+      #           "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.prod.yaml",
+      #           "version": "$GITHUB_SHA"
+      #         },
+      #         {
+      #           "name": "gjafakort",
+      #           "type": "helm/chart",
+      #           "version": "$HELM_CHART_VERSION"
+      #         }
+      #       ]
+      #     }
+      #     BODY
+      # - uses: 8398a7/action-slack@v3
+      #   with:
+      #     status: ${{ job.status }}
+      #     fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # optional
+      #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+      #   if: failure() && env.PUBLISH == 'true'
