@@ -6,7 +6,7 @@
   "pluginsFile": "./src/plugins/index",
   "supportFile": "./src/support/index.ts",
   "video": true,
-  "videosFolder": "../../../dist/cypress/apps/air-discount-scheme/web-e2e/videos",
-  "screenshotsFolder": "../../../dist/cypress/apps/air-discount-scheme/web-e2e/screenshots",
+  "videosFolder": "../../../dist/cypress/apps/air-discount-scheme/web2-e2e/videos",
+  "screenshotsFolder": "../../../dist/cypress/apps/air-discount-scheme/web2-e2e/screenshots",
   "chromeWebSecurity": false
 }
