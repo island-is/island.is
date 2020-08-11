@@ -1,3 +1,4 @@
+/* eslint-env node */
 module.exports = {
   development: {
     username: 'dev_db',

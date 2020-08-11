@@ -50,7 +50,6 @@ const RadioFormField: FC<Props> = ({ showFieldName = false, field, error }) => {
                         <Tooltip
                           colored={true}
                           placement="top"
-                          as="button"
                           text={option.tooltip}
                         />
                       </Box>

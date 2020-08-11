@@ -193,6 +193,7 @@ const alignItemsRules = {
   center: 'center',
   flexEnd: 'flex-end',
   baseline: 'baseline',
+  stretch: 'stretch',
 }
 export const alignItems = styleMap(
   mapToStyleProperty(alignItemsRules, 'alignItems'),

@@ -774,6 +774,21 @@
             "cwd": "apps/reference-backend"
           }
         },
+        "generate-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "outputPath": "apps/reference-backend/src/openapi.yaml",
+            "commands": [
+              {
+                "command": "yarn build reference-backend"
+              },
+              {
+                "command": "node dist/apps/reference-backend/main --generate-schema apps/reference-backend/src/openapi.yaml"
+              }
+            ]
+          }
+        },
         "migrate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -854,6 +869,34 @@
         }
       }
     },
+    "infra-nest-server": {
+      "root": "libs/infra-nest-server",
+      "sourceRoot": "libs/infra-nest-server/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/infra-nest-server/.eslintrc",
+            "tsConfig": [
+              "libs/infra-nest-server/tsconfig.lib.json",
+              "libs/infra-nest-server/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/infra-nest-server/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/infra-nest-server/jest.config.js",
+            "tsConfig": "libs/infra-nest-server/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "cache": {
       "root": "libs/cache",
       "sourceRoot": "libs/cache/src",
@@ -928,13 +971,9 @@
                 "glob": "config",
                 "input": "apps/services/search-indexer",
                 "output": "./"
-              },
-              {
-                "glob": "bin",
-                "input": "apps/services/search-indexer",
-                "output": "./"
               }
-            ]
+            ],
+            "webpackConfig": "apps/services/search-indexer/webpack.config.js"
           },
           "configurations": {
             "production": {
@@ -1008,6 +1047,34 @@
           "options": {
             "jestConfig": "libs/api/domains/content-search/jest.config.js",
             "tsConfig": "libs/api/domains/content-search/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "contentful-importer": {
+      "root": "libs/contentful-importer",
+      "sourceRoot": "libs/contentful-importer/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/contentful-importer/.eslintrc",
+            "tsConfig": [
+              "libs/contentful-importer/tsconfig.lib.json",
+              "libs/contentful-importer/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/contentful-importer/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/contentful-importer/jest.config.js",
+            "tsConfig": "libs/contentful-importer/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }

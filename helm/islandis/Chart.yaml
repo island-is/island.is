@@ -1,5 +1,18 @@
 apiVersion: v2
 name: islandis
 description: Íslandis umbrella chart
+dependencies:
+    - name: api-template
+      repository: file://libs/api-template
+      version: 0.0.1
+      alias: search-indexer-service
+    - name: api-template
+      repository: file://libs/api-template
+      version: 0.0.1
+      alias: api
+    - name: api-template
+      repository: file://libs/api-template
+      version: 0.0.1
+      alias: web
 type: application
 version: 0.0.9

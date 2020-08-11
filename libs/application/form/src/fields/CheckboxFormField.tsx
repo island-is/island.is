@@ -71,7 +71,6 @@ const CheckboxFormField: FC<Props> = ({
                         <Tooltip
                           colored={true}
                           placement="top"
-                          as="button"
                           text={option.tooltip}
                         />
                       </Box>

@@ -23,8 +23,9 @@ export class SearcherService implements Service {
     obj.contentBlob = obj.content_blob
     obj.contentId = obj.content_id
     obj.categorySlug = obj.category_slug
+    obj.categoryDescription = obj.category_description
     obj.groupSlug = obj.group_slug
-    obj.categoryDescription = obj._category.description
+    obj.groupDescription = obj.group_description
     obj.id = doc._id
     return obj
   }
@@ -55,7 +56,11 @@ export class SearcherService implements Service {
       if (!_source.category_slug) {
         return
       }
-      categories[_source.category_slug] = _source._category
+      categories[_source.category_slug] = {
+        title: _source.category,
+        slug: _source.category_slug,
+        description: _source.category_description,
+      }
     })
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-ignore

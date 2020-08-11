@@ -40,10 +40,7 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
   }
 
   const { token } = req.body
-  const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE.name] || {}
-  res.clearCookie(REDIRECT_COOKIE.name, REDIRECT_COOKIE.options)
   let verifyResult: VerifyResult
-
   try {
     verifyResult = await loginIS.verify(token)
   } catch (err) {
@@ -52,8 +49,20 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
   }
 
   const { user } = verifyResult
+  const redirectCookie = req.cookies[REDIRECT_COOKIE.name]
+  res.clearCookie(REDIRECT_COOKIE.name, REDIRECT_COOKIE.options)
+  if (!redirectCookie) {
+    logger.error('Redirect cookie not sent', {
+      extra: {
+        user,
+      },
+    })
+    return res.redirect('/api/auth/login')
+  }
+
+  const { authId, returnUrl } = redirectCookie
   if (!user || authId !== user?.authId) {
-    logger.error('Invalid verification', {
+    logger.error('Could not verify user authenticity', {
       extra: {
         user,
         authId,
@@ -101,7 +110,7 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
       ...ACCESS_TOKEN_COOKIE.options,
       maxAge,
     })
-    .redirect(returnUrl.charAt(0) !== '/' ? '/' : returnUrl)
+    .redirect(!returnUrl || returnUrl.charAt(0) !== '/' ? '/' : returnUrl)
 })
 
 router.get(
@@ -128,7 +137,7 @@ router.get(
     const authId = uuid()
     const { returnUrl } = req.query
 
-    res
+    return res
       .cookie(name, { authId, returnUrl }, { ...options, maxAge: ONE_HOUR })
       .redirect(`${samlEntryPoint}&authId=${authId}`)
   },
@@ -137,7 +146,7 @@ router.get(
 router.get('/logout', (req, res) => {
   res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
   res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
-  res.json({ logout: true })
+  return res.json({ logout: true })
 })
 
 export default router

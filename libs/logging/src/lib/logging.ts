@@ -1,9 +1,13 @@
 import { createLogger, format, transports } from 'winston'
 import { SentryTransport } from './transports'
+import { utilities } from 'nest-winston'
 
 // Default log settings for debug mode
 let logLevel = 'debug'
-let logFormat = format.combine(format.colorize(), format.simple())
+let logFormat = format.combine(
+  format.timestamp(),
+  utilities.format.nestLike('App'),
+)
 
 // Production overrides
 if (process.env.NODE_ENV === 'production') {

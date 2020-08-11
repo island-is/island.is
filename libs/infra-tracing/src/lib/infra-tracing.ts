@@ -1,4 +1,3 @@
-import { trace } from '@opentelemetry/api'
 import { B3Propagator } from '@opentelemetry/core'
 import { NodeTracerProvider } from '@opentelemetry/node'
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger'
