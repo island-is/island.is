@@ -1,5 +1,11 @@
 import { Resolvers } from '@island.is/api/schema'
-import { getArticle, getNews, getNewsList, getNamespace } from './services'
+import {
+  getArticle,
+  getNews,
+  getNewsList,
+  getNamespace,
+  getPage,
+} from './services'
 
 export const resolvers: Resolvers = {
   Query: {
@@ -10,18 +16,18 @@ export const resolvers: Resolvers = {
       return getNews(input.lang ?? 'is-IS', input.slug)
     },
     getNewsList(_, { input }) {
-      return getNewsList(
-        input?.lang ?? 'is-IS',
-        input?.year,
-        input?.month,
-        input?.ascending,
-        input?.page ?? 1,
-        input?.perPage ?? 10,
-      )
+      return getNewsList(input)
     },
     getNamespace(_, { input }) {
       return getNamespace(input?.namespace ?? '', input?.lang ?? 'is-IS')
     },
+    getPage(_, { input }) {
+      return getPage(input)
+    },
+  },
+
+  Slice: {
+    __resolveType: (obj) => obj.__typename,
   },
 }
 

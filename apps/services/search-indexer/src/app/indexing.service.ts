@@ -7,17 +7,14 @@ import {
 import { ExistsQuery, RequestBodySearch, Sort } from 'elastic-builder'
 import { Entry } from 'contentful'
 import { Syncer } from '../contentful/syncer'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class IndexingService {
-  private elasticService: ElasticService
-  private contentFulSyncer: Syncer
-
-  constructor() {
-    // todo replace with di
-    this.elasticService = new ElasticService()
-    this.contentFulSyncer = new Syncer()
-  }
+  constructor(
+    private readonly elasticService: ElasticService,
+    private readonly contentFulSyncer: Syncer,
+  ) {}
 
   async indexDocument(index: SearchIndexes, document) {
     return this.elasticService.index(index, document)
@@ -31,42 +28,88 @@ export class IndexingService {
     try {
       const result = await this.elasticService.findByQuery(index, query)
       return result.body?.hits?.hits[0]?._source?.nextSyncToken
-    } catch {
+    } catch (e) {
+      logger.error('Could not fetch last sync token', {
+        error: e,
+      })
       return undefined
     }
   }
 
   async continueSync(syncToken: string, index: SearchIndexes) {
+    await this.needConnection()
+    logger.info('Start continue sync')
     const result = await this.contentFulSyncer.getSyncEntries({
       nextSyncToken: syncToken,
       // eslint-disable-next-line @typescript-eslint/camelcase
       content_type: 'article',
       resolveLinks: true,
     })
-    result.items.forEach(
-      this.transformAndIndexEntry.bind(this, index, result.token),
-    )
+    logger.info('Continue sync found results', {
+      numItems: result.items.length,
+    })
+    for (const item of result.items) {
+      // one at a time please, else ES will be unhappy
+      await this.transformAndIndexEntry(index, result.token, item)
+    }
+    logger.info('Continue sync done')
   }
 
   async initialSync(index: SearchIndexes) {
+    await this.needConnection()
+    logger.info('Start initial sync')
     const result = await this.contentFulSyncer.getSyncEntries({
       initial: true,
       // eslint-disable-next-line @typescript-eslint/camelcase
       content_type: 'article',
       resolveLinks: true,
     })
-    result.items.forEach(
-      this.transformAndIndexEntry.bind(this, index, result.token),
-    )
+    logger.info('Initial sync found result', {
+      numItems: result.items.length,
+    })
+
+    for (const item of result.items) {
+      // one at a time please, else ES will be unhappy
+      await this.transformAndIndexEntry(index, result.token, item)
+    }
+
+    logger.info('Initial sync done')
+  }
+
+  async syncById(index: SearchIndexes, id: string) {
+    await this.needConnection()
+    logger.info('Sync by ID', { id: id })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let result: Entry<any>
+    try {
+      result = await this.contentFulSyncer.getEntry(id)
+    } catch (e) {
+      logger.notice('No entry found')
+      return
+    }
+    logger.info('Sync by ID found entry', {
+      resultID: result.sys.id,
+    })
+    if (result) {
+      await this.transformAndIndexEntry(index, null, result)
+    }
+    logger.info('Sync by ID done')
+  }
+
+  async ping() {
+    return this.elasticService.ping()
   }
 
   private async transformAndIndexEntry(
     index: SearchIndexes,
-    syncToken: string,
+    syncToken: string | null,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     entry: Entry<any>,
   ) {
     function reduceContent(content) {
+      if (!content) {
+        return ''
+      }
       let response = ''
       content.forEach((doc) => {
         if (doc.content && doc.content.length) {
@@ -83,13 +126,16 @@ export class IndexingService {
       })
       return response
     }
+
     /* eslint-disable @typescript-eslint/camelcase */
     const document: Document = {
       category: entry.fields?.category?.fields.title,
       category_slug: entry.fields?.category?.fields.slug,
+      category_description: entry.fields?.category?.fields.description,
       group: entry.fields?.group?.fields.title,
       group_slug: entry.fields?.group?.fields.slug,
-      content: reduceContent(entry.fields.content.content),
+      group_description: entry.fields?.group?.fields.description,
+      content: reduceContent(entry.fields.content?.content),
       content_blob: JSON.stringify(entry.fields),
       content_id: entry.sys.id,
       content_source: '',
@@ -103,19 +149,18 @@ export class IndexingService {
       tag: [''],
       title: entry.fields.title,
       url: '',
-      _category: {
-        title: entry.fields?.category?.fields.title,
-        slug: entry.fields?.category?.fields.slug,
-        description: entry.fields?.category?.fields.description,
-      },
       _id: entry.sys.id,
-      nextSyncToken: syncToken,
+    }
+    if (syncToken) {
+      document.nextSyncToken = syncToken
     }
 
-    try {
-      await this.elasticService.index(index, document)
-    } catch (e) {
-      console.log(e)
-    }
+    await this.elasticService.index(index, document)
+  }
+
+  private async needConnection() {
+    await this.elasticService.ping().catch((e) => {
+      ElasticService.handleError('Indexer does not have connection', {}, e)
+    })
   }
 }

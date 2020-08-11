@@ -1,10 +1,13 @@
 import {
-  createClient,
   ContentfulClientApi,
-  SyncCollection,
+  createClient,
+  CreateClientParams,
   Entry,
+  SyncCollection,
 } from 'contentful'
 import { environment } from '../environments/environment'
+import { logger } from '@island.is/logging'
+import { Injectable } from '@nestjs/common'
 
 interface SyncerResult {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,10 +26,19 @@ function chunk(arr, len) {
   return chunks
 }
 
+@Injectable()
 export class Syncer {
   private contentFulClient: ContentfulClientApi
+
   constructor() {
-    this.contentFulClient = createClient(environment.contentful)
+    const params: CreateClientParams = {
+      space: environment.contentful.space,
+      accessToken: environment.contentful.accessToken,
+      environment: environment.contentful.environment,
+      host: environment.contentful.host,
+    }
+    logger.debug('Syncer created', params)
+    this.contentFulClient = createClient(params)
   }
 
   async getSyncEntries(opts): Promise<SyncerResult> {
@@ -46,5 +58,9 @@ export class Syncer {
       result.items = result.items.concat(items)
     }
     return result
+  }
+
+  async getEntry(id: string): Promise<Entry<unknown> | undefined> {
+    return this.contentFulClient.getEntry(id)
   }
 }

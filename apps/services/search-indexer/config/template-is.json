@@ -1,6 +1,6 @@
 {
   "order": 0,
-  "version": 1,
+  "version": 2,
   "index_patterns": ["island-is-v*"],
   "settings": {
     "analysis": {
@@ -97,6 +97,9 @@
       "category_slug": {
         "type": "keyword"
       },
+      "category_description": {
+        "type": "text"
+      },
       "group": {
         "type": "keyword",
         "fields": {
@@ -108,6 +111,9 @@
       },
       "group_slug": {
         "type": "keyword"
+      },
+      "group_description": {
+        "type": "text"
       },
       "lang": {
         "type": "keyword"
