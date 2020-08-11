@@ -14,7 +14,7 @@ export const container = style({
 
 export const sticky = style({
   position: 'sticky',
-  top: '0px',
+  top: '50px',
   borderRadius: '8px',
 })
 
