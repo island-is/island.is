@@ -1,8 +1,12 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { Image } from './image.model'
+import { Image } from '../image.model'
 
 @ObjectType()
 export class LogoListSlice {
+  constructor(initializer: LogoListSlice) {
+    Object.assign(this, initializer)
+  }
+
   @Field(() => ID)
   id: string
 
