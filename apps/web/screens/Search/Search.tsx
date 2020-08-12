@@ -133,7 +133,7 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
       </Head>
       <CategoryLayout
         sidebar={
-          <Sidebar title={n('submenuTitle')}>
+          <Sidebar title={n('sidebarHeader')}>
             <Filter
               selected={!filters.category}
               onClick={() => onSelectCategory(null)}
@@ -255,7 +255,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Articles',
+            namespace: 'Search',
             lang: locale,
           },
         },
