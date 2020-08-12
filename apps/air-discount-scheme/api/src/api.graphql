@@ -1,0 +1,18 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Auth {
+  ssn: String!
+  name: String!
+  mobile: String!
+  role: String!
+}
+
+type Query {
+  auth(input: AuthInput!): Auth!
+}
+
+input AuthInput {
+  name: String = "World"
+}
