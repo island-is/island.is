@@ -101,7 +101,11 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
                 >
                   <Column>
                     <Box display="inlineFlex" alignItems="center" width="full">
-                      <SearchInput size="large" activeLocale={activeLocale} />
+                      <SearchInput
+                        size="large"
+                        activeLocale={activeLocale}
+                        placeholder={n('heroSearchPlaceholder')}
+                      />
                     </Box>
                   </Column>
                   <Column>
@@ -193,7 +197,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withApollo(Home)
+export default Home
 
 const DottedBackground = () => (
   <Box position="absolute" top={0} bottom={0} left={0} right={0} padding={3}>

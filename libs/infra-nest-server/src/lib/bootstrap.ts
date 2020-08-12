@@ -26,7 +26,12 @@ type RunServerOptions = {
   /**
    * OpenAPI definition.
    */
-  openApi: Omit<OpenAPIObject, 'paths'>
+  openApi?: Omit<OpenAPIObject, 'paths'>
+
+  /**
+   * The port to start the server on.
+   */
+  port?: number
 }
 
 const createApp = async (options: RunServerOptions) => {
@@ -41,8 +46,8 @@ const createApp = async (options: RunServerOptions) => {
   return app
 }
 
-const startServer = async (app: INestApplication) => {
-  const servicePort = parseInt(process.env.port || '3333')
+const startServer = async (app: INestApplication, port = 3333) => {
+  const servicePort = parseInt(process.env.port) || port
   const metricsPort = servicePort + 1
   await app.listen(servicePort, () => {
     logger.info(`Service listening at http://localhost:${servicePort}`, {
@@ -82,5 +87,5 @@ export const bootstrap = async (options: RunServerOptions) => {
     }
   }
 
-  startServer(app)
+  startServer(app, options.port)
 }

@@ -8,7 +8,7 @@ export const defaultLanguage = 'is'
 
 interface I18nContextType {
   activeLocale: string
-  t: Rosetta<object>['t']
+  t: any
   locale: (locale: string, dict?: object) => void
 }
 
@@ -42,7 +42,7 @@ export default function I18n({ children, locale, translations }) {
 
   const i18nWrapper = {
     activeLocale: activeLocaleRef.current,
-    t: i18n.t,
+    t: translations,
     locale: (l, dict) => {
       i18n.locale(l)
       activeLocaleRef.current = l

@@ -1,44 +1,41 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { getLocalizedEntries } from './contentful'
 import { logger } from '@island.is/logging'
-import {
-  Image,
-  Article,
-  News,
-  Namespace,
-  Pagination,
-  TimelineSlice,
-  TimelineEvent,
-  PageHeaderSlice,
-  Link,
-  Story,
-  StorySlice,
-  Slice,
-  Page,
-  MailingListSignupSlice,
-  HeadingSlice,
-  LinkCard,
-  LinkCardSlice,
-  LatestNewsSlice,
-  LogoListSlice,
-  GetNewsListInput,
-  GetPageInput,
-  PaginatedNews,
-  IconBullet,
-  NumberBullet,
-  NumberBulletGroup,
-  BulletEntry,
-  BulletListSlice,
-} from '@island.is/api/schema'
 import { ApolloError } from 'apollo-server-express'
 import { Entry } from 'contentful'
+import { Article } from './models/article.model'
+import { Page } from './models/page.model'
+import { News } from './models/news.model'
+import { Link } from './models/link.model'
+import { PageHeaderSlice } from './models/slices/pageHeaderSlice.model'
+import { TimelineEvent } from './models/timelineEvent.model'
+import { TimelineSlice } from './models/slices/timelineSlice.model'
+import { Story } from './models/story.model'
+import { StorySlice } from './models/slices/storySlice.model'
+import { MailingListSignupSlice } from './models/slices/mailingListSignupSlice.model'
+import { HeadingSlice } from './models/slices/headingSlice.model'
+import { LinkCard } from './models/linkCard.model'
+import { LinkCardSlice } from './models/slices/linkCardSlice.model'
+import { LatestNewsSlice } from './models/slices/latestNewsSlice.model'
+import { LogoListSlice } from './models/slices/logoListSlice.model'
+import { IconBullet } from './models/bullets/iconBullet.model'
+import { NumberBullet } from './models/bullets/numberBullet.model'
+import { NumberBulletGroup } from './models/bullets/numberBulletGroup.model'
+import { BulletEntry } from './models/bullets/bulletEntry.model'
+import { BulletListSlice } from './models/slices/bulletListSlice.model'
+import { Slice } from './models/slices/slice.model'
+import { Pagination } from './models/pagination.model'
+import { GetNewsListInput } from './dto/getNewsList.input'
+import { PaginatedNews } from './models/paginatedNews.model'
+import { GetPageInput } from './dto/getPage.input'
+import { Namespace } from './models/namespace.model'
+import { Image } from './models/image.model'
 
 type CmsPage = Omit<Page, 'slices'> & {
-  slices: Entry<Slice>[]
+  slices: Entry<typeof Slice>[]
 }
 
 const formatArticle = ({ sys, fields }): Article => ({
-  __typename: 'Article',
   id: sys.id,
   slug: fields.slug,
   title: fields.title,
@@ -48,7 +45,6 @@ const formatArticle = ({ sys, fields }): Article => ({
 })
 
 const formatImage = ({ fields }): Image => ({
-  __typename: 'Image',
   url: fields.file.url,
   title: fields.title,
   contentType: fields.file.contentType,
@@ -57,7 +53,6 @@ const formatImage = ({ fields }): Image => ({
 })
 
 const formatNewsItem = ({ fields, sys }): News => ({
-  __typename: 'News',
   id: sys.id,
   slug: fields.slug,
   title: fields.title,
@@ -72,18 +67,17 @@ const formatLink = ({ fields }): Link => ({
   url: fields.url,
 })
 
-const formatPageHeaderSlice = ({ fields, sys }): PageHeaderSlice => ({
-  __typename: 'PageHeaderSlice',
-  id: sys.id,
-  title: fields.title,
-  introduction: fields.introduction,
-  navigationText: fields.navigationText,
-  links: fields.links.map(formatLink),
-  slices: fields.slices.map(formatSlice),
-})
+const formatPageHeaderSlice = ({ fields, sys }): PageHeaderSlice =>
+  new PageHeaderSlice({
+    id: sys.id,
+    title: fields.title,
+    introduction: fields.introduction,
+    navigationText: fields.navigationText,
+    links: fields.links.map(formatLink),
+    slices: fields.slices.map(formatSlice),
+  })
 
 const formatTimelineEvent = ({ fields, sys }): TimelineEvent => ({
-  __typename: 'TimelineEvent',
   id: sys.id,
   title: fields.title,
   date: fields.date,
@@ -95,15 +89,14 @@ const formatTimelineEvent = ({ fields, sys }): TimelineEvent => ({
   link: fields.link ?? '',
 })
 
-const formatTimelineSlice = ({ fields, sys }): TimelineSlice => ({
-  __typename: 'TimelineSlice',
-  id: sys.id,
-  title: fields.title,
-  events: fields.events.map(formatTimelineEvent),
-})
+const formatTimelineSlice = ({ fields, sys }): TimelineSlice =>
+  new TimelineSlice({
+    id: sys.id,
+    title: fields.title,
+    events: fields.events.map(formatTimelineEvent),
+  })
 
 const formatStory = ({ fields, sys }): Story => ({
-  __typename: 'Story',
   title: fields.title ?? '',
   label: fields.label ?? '',
   date: sys.createdAt,
@@ -113,84 +106,82 @@ const formatStory = ({ fields, sys }): Story => ({
   body: fields.body && JSON.stringify(fields.body),
 })
 
-const formatStorySlice = ({ fields, sys }): StorySlice => ({
-  __typename: 'StorySlice',
-  id: sys.id,
-  readMoreText: fields.readMoreText ?? '',
-  stories: fields.stories.map(formatStory),
-})
+const formatStorySlice = ({ fields, sys }): StorySlice =>
+  new StorySlice({
+    id: sys.id,
+    readMoreText: fields.readMoreText ?? '',
+    stories: fields.stories.map(formatStory),
+  })
 
-const formatMailingListSignup = ({ fields, sys }): MailingListSignupSlice => ({
-  __typename: 'MailingListSignupSlice',
-  id: sys.id,
-  title: fields.title ?? '',
-  description: fields.description ?? '',
-  inputLabel: fields.inputLabel ?? '',
-  buttonText: fields.buttonText ?? '',
-})
+const formatMailingListSignup = ({ fields, sys }): MailingListSignupSlice =>
+  new MailingListSignupSlice({
+    id: sys.id,
+    title: fields.title ?? '',
+    description: fields.description ?? '',
+    inputLabel: fields.inputLabel ?? '',
+    buttonText: fields.buttonText ?? '',
+  })
 
-const formatSectionHeading = ({ fields, sys }): HeadingSlice => ({
-  __typename: 'HeadingSlice',
-  id: sys.id,
-  title: fields.title ?? '',
-  body: fields.description ?? '',
-})
+const formatSectionHeading = ({ fields, sys }): HeadingSlice =>
+  new HeadingSlice({
+    id: sys.id,
+    title: fields.title ?? '',
+    body: fields.description ?? '',
+  })
 
 const formatLinkCard = ({ fields }): LinkCard => ({
-  __typename: 'LinkCard',
   title: fields.title ?? '',
   body: fields.body ?? '',
   link: fields.link ?? '',
   linkText: fields.linkText ?? '',
 })
 
-const formatLinkCardSlice = ({ fields, sys }): LinkCardSlice => ({
-  __typename: 'LinkCardSlice',
-  id: sys.id,
-  title: fields.title ?? '',
-  cards: fields.cards.map(formatLinkCard),
-})
+const formatLinkCardSlice = ({ fields, sys }): LinkCardSlice =>
+  new LinkCardSlice({
+    id: sys.id,
+    title: fields.title ?? '',
+    cards: fields.cards.map(formatLinkCard),
+  })
 
-const formatLatestNews = ({ fields, sys }): LatestNewsSlice => ({
-  __typename: 'LatestNewsSlice',
-  id: sys.id,
-  title: fields.title ?? '',
-  news: [],
-})
+const formatLatestNews = ({ fields, sys }): LatestNewsSlice =>
+  new LatestNewsSlice({
+    id: sys.id,
+    title: fields.title ?? '',
+    news: [],
+  })
 
-const formatLogoListSlice = ({ fields, sys }): LogoListSlice => ({
-  __typename: 'LogoListSlice',
-  id: sys.id,
-  title: fields.title,
-  body: fields.body,
-  images: fields.images.map(formatImage),
-})
+const formatLogoListSlice = ({ fields, sys }): LogoListSlice =>
+  new LogoListSlice({
+    id: sys.id,
+    title: fields.title,
+    body: fields.body,
+    images: fields.images.map(formatImage),
+  })
 
-const formatIconBullet = ({ fields, sys }): IconBullet => ({
-  __typename: 'IconBullet',
-  id: sys.id,
-  title: fields.title,
-  body: fields.body,
-  icon: formatImage(fields.icon),
-  url: fields.url,
-  linkText: fields.linkText,
-})
+const formatIconBullet = ({ fields, sys }): IconBullet =>
+  new IconBullet({
+    id: sys.id,
+    title: fields.title,
+    body: fields.body,
+    icon: formatImage(fields.icon),
+    url: fields.url,
+    linkText: fields.linkText,
+  })
 
 const formatNumberBullet = ({ fields, sys }): NumberBullet => ({
-  __typename: 'NumberBullet',
   id: sys.id,
   title: fields.title,
   body: fields.body,
 })
 
-const formatNumberBulletGroup = ({ fields, sys }): NumberBulletGroup => ({
-  __typename: 'NumberBulletGroup',
-  id: sys.id,
-  defaultVisible: fields.defaultVisible,
-  bullets: fields.bullets.map(formatNumberBullet),
-})
+const formatNumberBulletGroup = ({ fields, sys }): NumberBulletGroup =>
+  new NumberBulletGroup({
+    id: sys.id,
+    defaultVisible: fields.defaultVisible,
+    bullets: fields.bullets.map(formatNumberBullet),
+  })
 
-const formatBulletEntry = ({ fields, sys }): BulletEntry => {
+const formatBulletEntry = ({ fields, sys }): typeof BulletEntry => {
   switch (sys.contentType.sys.id) {
     case 'iconBullet':
       return formatIconBullet({ fields, sys })
@@ -199,13 +190,13 @@ const formatBulletEntry = ({ fields, sys }): BulletEntry => {
   }
 }
 
-const formatBulletListSlice = ({ fields, sys }): BulletListSlice => ({
-  __typename: 'BulletListSlice',
-  id: sys.id,
-  bullets: fields.bullets.map(formatBulletEntry),
-})
+const formatBulletListSlice = ({ fields, sys }): BulletListSlice =>
+  new BulletListSlice({
+    id: sys.id,
+    bullets: fields.bullets.map(formatBulletEntry),
+  })
 
-const formatSlice = (slice: Entry<Slice>): Slice => {
+const formatSlice = (slice: Entry<typeof Slice>): typeof Slice => {
   const sliceName = slice.sys.contentType.sys.id
   switch (sliceName) {
     case 'pageHeader':
@@ -232,7 +223,6 @@ const formatSlice = (slice: Entry<Slice>): Slice => {
 }
 
 const formatPage = ({ fields }: Entry<CmsPage>): Page => ({
-  __typename: 'Page',
   slices: fields.slices.map(formatSlice),
   title: fields.title,
   slug: fields.slug,
@@ -251,21 +241,22 @@ const makePage = (
   totalPages: Math.ceil(totalResults / perPage),
 })
 
-const loadSlice = async (slice: Slice, lang: string): Promise<Slice> => {
-  switch (slice.__typename) {
-    case 'PageHeaderSlice':
-      return {
-        ...slice,
-        slices: await Promise.all(
-          slice.slices.map((slice) => loadSlice(slice, lang)),
-        ),
-      }
-    case 'LatestNewsSlice': {
-      const { news } = await getNewsList({ lang, perPage: 3 })
-      return { ...slice, news }
-    }
-    default:
-      return slice
+const loadSlice = async (
+  slice: typeof Slice,
+  lang: string,
+): Promise<typeof Slice> => {
+  if (slice instanceof PageHeaderSlice) {
+    return new PageHeaderSlice({
+      ...slice,
+      slices: await Promise.all(
+        slice.slices.map((slice) => loadSlice(slice, lang)),
+      ),
+    })
+  } else if (slice instanceof LatestNewsSlice) {
+    const { news } = await getNewsList({ lang, perPage: 3 })
+    return new LatestNewsSlice({ ...slice, news })
+  } else {
+    return slice
   }
 }
 
@@ -279,7 +270,7 @@ const errorHandler = (name: string) => {
 export const getArticle = async (
   slug: string,
   lang: string,
-): Promise<Article> => {
+): Promise<Article | null> => {
   const result = await getLocalizedEntries<Article>(lang, {
     ['content_type']: 'article',
     'fields.slug': slug,
@@ -338,7 +329,10 @@ export const getNewsList = async ({
   }
 }
 
-export const getPage = async ({ lang, slug }: GetPageInput): Promise<Page> => {
+export const getPage = async ({
+  lang,
+  slug,
+}: GetPageInput): Promise<Page | null> => {
   const result = await getLocalizedEntries<CmsPage>(lang, {
     ['content_type']: 'page',
     'fields.slug': slug,
@@ -361,7 +355,7 @@ export const getPage = async ({ lang, slug }: GetPageInput): Promise<Page> => {
 export const getNamespace = async (
   namespace: string,
   lang: string,
-): Promise<Namespace> => {
+): Promise<Namespace | null> => {
   const result = await getLocalizedEntries<Namespace>(lang, {
     ['content_type']: 'uiConfiguration',
     'fields.namespace': namespace,

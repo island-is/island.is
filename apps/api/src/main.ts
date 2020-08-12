@@ -1,6 +1,9 @@
-import { runServer } from '@island.is/infra-express-server'
-import createGraphqlServer from './graphql'
+import '@island.is/infra-tracing'
+import { AppModule } from './app/app.module'
+import { bootstrap } from '@island.is/infra-nest-server'
 
-const routes = createGraphqlServer()
-
-runServer({ routes, name: 'api', port: 4444 })
+bootstrap({
+  appModule: AppModule,
+  name: 'api',
+  port: 4444,
+})

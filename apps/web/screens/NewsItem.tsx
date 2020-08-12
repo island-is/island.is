@@ -111,4 +111,4 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withApollo(NewsItem)
+export default NewsItem

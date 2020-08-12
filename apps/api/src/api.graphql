@@ -1,0 +1,294 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type HelloWorld {
+  message: String!
+}
+
+type ContentItem {
+  id: ID!
+  title: String
+  content: String
+  tag: [String!]
+  category: String
+  categorySlug: String
+  categoryDescription: String
+  group: String
+  groupSlug: String
+  groupDescription: String
+  contentBlob: String
+  contentId: String
+  contentType: String
+  date: String
+  image: String
+  imageText: String
+  lang: String
+  slug: String
+}
+
+type SearchResult {
+  total: Int!
+  items: [ContentItem!]!
+}
+
+type ContentCategory {
+  title: String
+  slug: String
+  description: String
+}
+
+type Taxonomy {
+  title: String
+  slug: String
+  description: String!
+}
+
+type Article {
+  id: String!
+  slug: String!
+  title: String!
+  content: String
+  group: Taxonomy
+  category: Taxonomy!
+}
+
+type Image {
+  url: String!
+  title: String!
+  contentType: String!
+  width: Int!
+  height: Int!
+}
+
+type News {
+  id: String!
+  slug: String!
+  title: String!
+  intro: String!
+  image: Image
+  date: String!
+  content: String
+}
+
+type Pagination {
+  page: Int!
+  perPage: Int!
+  totalResults: Int!
+  totalPages: Int!
+}
+
+type PaginatedNews {
+  page: Pagination!
+  news: [News!]!
+}
+
+type Namespace {
+  namespace: String
+  fields: String
+}
+
+type Link {
+  text: String!
+  url: String!
+}
+
+type TimelineEvent {
+  id: ID!
+  title: String!
+  date: String!
+  numerator: Int
+  denominator: Int
+  label: String!
+  body: String
+  tags: [String!]!
+  link: String!
+}
+
+type Story {
+  label: String!
+  title: String!
+  logo: Image!
+  readMoreText: String!
+  date: String!
+  intro: String!
+  body: String
+}
+
+type LinkCard {
+  title: String!
+  body: String!
+  link: String!
+  linkText: String!
+}
+
+type NumberBullet {
+  id: ID!
+  title: String!
+  body: String!
+}
+
+type Page {
+  title: String!
+  slug: String!
+  seoDescription: String!
+  theme: String!
+  slices: [Slice!]!
+}
+
+union Slice = PageHeaderSlice | TimelineSlice | HeadingSlice | StorySlice | LinkCardSlice | LatestNewsSlice | MailingListSignupSlice | LogoListSlice | BulletListSlice
+
+type PageHeaderSlice {
+  id: ID!
+  title: String!
+  introduction: String!
+  navigationText: String!
+  links: [Link!]!
+  slices: [Slice!]!
+}
+
+type TimelineSlice {
+  id: ID!
+  title: String!
+  events: [TimelineEvent!]!
+}
+
+type HeadingSlice {
+  id: ID!
+  title: String!
+  body: String!
+}
+
+type StorySlice {
+  id: ID!
+  readMoreText: String!
+  stories: [Story!]!
+}
+
+type LinkCardSlice {
+  id: ID!
+  title: String!
+  cards: [LinkCard!]!
+}
+
+type LatestNewsSlice {
+  id: ID!
+  title: String!
+  news: [News!]!
+}
+
+type MailingListSignupSlice {
+  id: ID!
+  title: String!
+  description: String!
+  inputLabel: String!
+  buttonText: String!
+}
+
+type LogoListSlice {
+  id: ID!
+  title: String!
+  body: String!
+  images: [Image!]!
+}
+
+type BulletListSlice {
+  id: ID!
+  bullets: [BulletEntry!]!
+}
+
+union BulletEntry = IconBullet | NumberBulletGroup
+
+type IconBullet {
+  id: ID!
+  title: String!
+  body: String!
+  icon: Image!
+  url: String
+  linkText: String
+}
+
+type NumberBulletGroup {
+  id: ID!
+  defaultVisible: Int!
+  bullets: [NumberBullet!]!
+}
+
+type Query {
+  helloWorld(input: HelloWorldInput!): HelloWorld!
+  searchResults(query: SearcherInput!): SearchResult!
+  singleItem(input: ItemInput!): ContentItem
+  categories(input: CategoriesInput!): [ContentCategory!]!
+  articlesInCategory(category: ArticlesInCategoryInput!): [ContentItem!]!
+  getArticle(input: GetArticleInput!): Article
+  getNews(input: GetNewsInput!): News
+  getNewsList(input: GetNewsListInput!): PaginatedNews!
+  getNamespace(input: GetNamespaceInput!): Namespace
+  getPage(input: GetPageInput!): Page
+}
+
+input HelloWorldInput {
+  name: String = "World"
+}
+
+input SearcherInput {
+  queryString: String
+  language: ContentLanguage
+  size: Int
+  page: Int
+}
+
+enum ContentLanguage {
+  is
+  en
+}
+
+input ItemInput {
+  id: ID
+  slug: String
+  type: ItemType
+  language: ContentLanguage
+}
+
+enum ItemType {
+  article
+  category
+}
+
+input CategoriesInput {
+  language: ContentLanguage
+}
+
+input ArticlesInCategoryInput {
+  slug: String
+  language: ContentLanguage
+}
+
+input GetArticleInput {
+  slug: String
+  lang: String!
+}
+
+input GetNewsInput {
+  slug: String!
+  lang: String
+}
+
+input GetNewsListInput {
+  lang: String
+  year: Int
+  month: Int
+  ascending: Boolean
+  page: Int
+  perPage: Int
+}
+
+input GetNamespaceInput {
+  namespace: String
+  lang: String!
+}
+
+input GetPageInput {
+  slug: String!
+  lang: String!
+}

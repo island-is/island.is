@@ -405,4 +405,4 @@ GenericPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withApollo(GenericPage)
+export default GenericPage
