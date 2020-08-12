@@ -4,9 +4,11 @@ import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { Entry } from 'contentful'
 import { Article } from './models/article.model'
-import { Page } from './models/page.model'
+import { AboutPage } from './models/AboutPage.model'
+import { LandingPage } from './models/landingPage.model'
 import { News } from './models/news.model'
 import { Link } from './models/link.model'
+import { LinkList } from './models/linkList.model'
 import { PageHeaderSlice } from './models/slices/pageHeaderSlice.model'
 import { TimelineEvent } from './models/timelineEvent.model'
 import { TimelineSlice } from './models/slices/timelineSlice.model'
@@ -27,11 +29,12 @@ import { Slice } from './models/slices/slice.model'
 import { Pagination } from './models/pagination.model'
 import { GetNewsListInput } from './dto/getNewsList.input'
 import { PaginatedNews } from './models/paginatedNews.model'
-import { GetPageInput } from './dto/getPage.input'
+import { GetAboutPageInput } from './dto/getAboutPage.input'
+import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { Namespace } from './models/namespace.model'
 import { Image } from './models/image.model'
 
-type CmsPage = Omit<Page, 'slices'> & {
+type CmsPage = Omit<AboutPage, 'slices'> & {
   slices: Entry<typeof Slice>[]
 }
 
@@ -76,6 +79,11 @@ const formatPageHeaderSlice = ({ fields, sys }): PageHeaderSlice =>
     links: fields.links.map(formatLink),
     slices: fields.slices.map(formatSlice),
   })
+
+const formatLinks = ({ fields }): LinkList => ({
+  title: fields.title,
+  links: (fields.links ?? []).map(formatLink),
+})
 
 const formatTimelineEvent = ({ fields, sys }): TimelineEvent => ({
   id: sys.id,
@@ -222,12 +230,21 @@ const formatSlice = (slice: Entry<typeof Slice>): typeof Slice => {
   }
 }
 
-const formatPage = ({ fields }: Entry<CmsPage>): Page => ({
+const formatAboutPage = ({ fields }: Entry<CmsPage>): AboutPage => ({
   slices: fields.slices.map(formatSlice),
   title: fields.title,
-  slug: fields.slug,
   theme: fields.theme.toLowerCase(),
   seoDescription: fields.seoDescription ?? '',
+})
+
+const formatLandingPage = ({ fields }): LandingPage => ({
+  title: fields.title,
+  slug: fields.slug,
+  introduction: fields.introduction,
+  image: fields.image && formatImage(fields.image),
+  actionButton: fields.actionButton && formatLink(fields.actionButton),
+  links: fields.links && formatLinks(fields.links),
+  content: fields.content && JSON.stringify(fields.content),
 })
 
 const makePage = (
@@ -240,25 +257,6 @@ const makePage = (
   totalResults,
   totalPages: Math.ceil(totalResults / perPage),
 })
-
-const loadSlice = async (
-  slice: typeof Slice,
-  lang: string,
-): Promise<typeof Slice> => {
-  if (slice instanceof PageHeaderSlice) {
-    return new PageHeaderSlice({
-      ...slice,
-      slices: await Promise.all(
-        slice.slices.map((slice) => loadSlice(slice, lang)),
-      ),
-    })
-  } else if (slice instanceof LatestNewsSlice) {
-    const { news } = await getNewsList({ lang, perPage: 3 })
-    return new LatestNewsSlice({ ...slice, news })
-  } else {
-    return slice
-  }
-}
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -329,27 +327,37 @@ export const getNewsList = async ({
   }
 }
 
-export const getPage = async ({
+export const getAboutPage = async ({
   lang,
-  slug,
-}: GetPageInput): Promise<Page | null> => {
+}: GetAboutPageInput): Promise<AboutPage | null> => {
   const result = await getLocalizedEntries<CmsPage>(lang, {
     ['content_type']: 'page',
-    'fields.slug': slug,
     include: 10,
+    order: '-sys.createdAt',
   }).catch(errorHandler('getPage'))
 
   if (!result.total) {
     return null
   }
 
-  const page = formatPage(result.items[0])
-  return {
-    ...page,
-    slices: await Promise.all(
-      page.slices.map((slice) => loadSlice(slice, lang)),
-    ),
+  return formatAboutPage(result.items[0])
+}
+
+export const getLandingPage = async ({
+  lang,
+  slug,
+}: GetLandingPageInput): Promise<LandingPage> => {
+  const result = await getLocalizedEntries<any>(lang, {
+    ['content_type']: 'landingPage',
+    'fields.slug': slug,
+    include: 10,
+  }).catch(errorHandler('getLandingPage'))
+
+  if (!result.total) {
+    return null
   }
+
+  return formatLandingPage(result.items[0])
 }
 
 export const getNamespace = async (

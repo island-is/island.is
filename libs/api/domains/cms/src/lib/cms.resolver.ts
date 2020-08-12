@@ -6,15 +6,18 @@ import { GetNewsInput } from './dto/getNews.input'
 import { GetNewsListInput } from './dto/getNewsList.input'
 import { PaginatedNews } from './models/paginatedNews.model'
 import { Namespace } from './models/namespace.model'
-import { Page } from './models/page.model'
+import { AboutPage } from './models/aboutPage.model'
+import { LandingPage } from './models/landingPage.model'
 import { GetNamespaceInput } from './dto/getNamespace.input'
-import { GetPageInput } from './dto/getPage.input'
+import { GetAboutPageInput } from './dto/getAboutPage.input'
+import { GetLandingPageInput } from './dto/getLandingPage.input'
 import {
   getArticle,
   getNews,
   getNewsList,
   getNamespace,
-  getPage,
+  getAboutPage,
+  getLandingPage,
 } from './services'
 
 @Resolver()
@@ -41,8 +44,17 @@ export class CmsResolver {
     return getNamespace(input?.namespace ?? '', input?.lang ?? 'is-IS')
   }
 
-  @Query(() => Page, { nullable: true })
-  getPage(@Args('input') input: GetPageInput): Promise<Page | null> {
-    return getPage(input)
+  @Query(() => AboutPage, { nullable: true })
+  getAboutPage(
+    @Args('input') input: GetAboutPageInput,
+  ): Promise<AboutPage | null> {
+    return getAboutPage(input)
+  }
+
+  @Query(() => LandingPage, { nullable: true })
+  getLandingPage(
+    @Args('input') input: GetLandingPageInput,
+  ): Promise<LandingPage | null> {
+    return getLandingPage(input)
   }
 }

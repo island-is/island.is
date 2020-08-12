@@ -15,10 +15,13 @@ import {
   Accordion,
   AccordionItem,
   Blockquote,
+  Tiles,
 } from '@island.is/island-ui/core'
 import { Locale } from '../../i18n/I18n'
 import { BorderedContent, Hyperlink } from '@island.is/web/components'
 import RichText from '../RichText/RichText'
+import { Statistic } from '@island.is/web/components/Statistic/Statistic'
+import Background from '@island.is/web/components/Background/Background'
 
 const mappedContentfulTypes = {
   article: 'article',
@@ -348,6 +351,24 @@ const embeddedNodes = (locale) => ({
           </ContentBlock>
         ),
       }
+    },
+  },
+  statistics: {
+    component: Box,
+    children: (node) => {
+      return (
+        <Background background="dotted" paddingY={9} marginTop={5}>
+          <ContentBlock>
+            <Box paddingX={[3, 3, 6, 0]}>
+              <Tiles columns={[2, 2, 4, 2, 4]} space={3}>
+                {node.data.target.fields.statistics.map(({ fields }) => (
+                  <Statistic {...fields} />
+                ))}
+              </Tiles>
+            </Box>
+          </ContentBlock>
+        </Background>
+      )
     },
   },
 })

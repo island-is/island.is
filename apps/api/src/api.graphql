@@ -128,9 +128,8 @@ type NumberBullet {
   body: String!
 }
 
-type Page {
+type AboutPage {
   title: String!
-  slug: String!
   seoDescription: String!
   theme: String!
   slices: [Slice!]!
@@ -214,6 +213,21 @@ type NumberBulletGroup {
   bullets: [NumberBullet!]!
 }
 
+type LinkList {
+  title: String!
+  links: [Link!]!
+}
+
+type LandingPage {
+  title: String!
+  slug: String!
+  introduction: String!
+  image: Image
+  actionButton: Link
+  links: LinkList
+  content: String
+}
+
 type Query {
   helloWorld(input: HelloWorldInput!): HelloWorld!
   searchResults(query: SearcherInput!): SearchResult!
@@ -224,7 +238,8 @@ type Query {
   getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput!): PaginatedNews!
   getNamespace(input: GetNamespaceInput!): Namespace
-  getPage(input: GetPageInput!): Page
+  getAboutPage(input: GetAboutPageInput!): AboutPage
+  getLandingPage(input: GetLandingPageInput!): LandingPage
 }
 
 input HelloWorldInput {
@@ -288,7 +303,11 @@ input GetNamespaceInput {
   lang: String!
 }
 
-input GetPageInput {
+input GetAboutPageInput {
+  lang: String!
+}
+
+input GetLandingPageInput {
   slug: String!
   lang: String!
 }

@@ -155,7 +155,7 @@ export const Sidebar: FC<SidebarProps> = ({
   }, [updateBulletPlacement])
 
   return (
-    <Box ref={parentRef} background="purple100" padding={4}>
+    <Box position="relative" ref={parentRef} background="purple100" padding={4}>
       {top !== 0 && bullet && (
         <span
           className={cn(styles.bullet, {

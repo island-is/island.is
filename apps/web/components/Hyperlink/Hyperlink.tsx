@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, ReactElement } from 'react'
+import React, { FC } from 'react'
 import Link from 'next/link'
 import { Icon, Typography, TypographyProps } from '@island.is/island-ui/core'
 import useRouteNames, { pathTypes } from '../../i18n/useRouteNames'
@@ -14,7 +14,6 @@ interface HyperlinkProps {
   locale?: Locale
   variant?: TypographyProps['variant']
   as?: TypographyProps['as']
-  children: ReactElement
 }
 
 const isLinkInternal = (href: string): boolean => href.indexOf('://') !== -1
@@ -49,7 +48,7 @@ export const Hyperlink: FC<HyperlinkProps> = ({
   }
 
   if (!linkProps.href) {
-    return children
+    return <>{children}</>
   }
 
   const props = {
