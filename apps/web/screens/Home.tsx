@@ -137,7 +137,7 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
       </ContentBlock>
       <Box background="purple100">
         <ContentBlock width="large">
-          <Categories label={n('articlesTitle')} seeMoreText={n('seeMore')}>
+          <Categories label={n('articlesTitle')}>
             {cards.map((card, index) => {
               return <Card key={index} {...card} />
             })}
