@@ -1417,6 +1417,54 @@
             "tsConfig": "apps/air-discount-scheme/backend/tsconfig.spec.json",
             "passWithNoTests": true
           }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d"
+              }
+            ],
+            "cwd": "apps/air-discount-scheme/backend"
+          }
+        },
+        "generate-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "outputPath": "apps/air-discount-scheme/backend/src/openapi.yaml",
+            "commands": [
+              {
+                "command": "yarn build air-discount-scheme-backend"
+              },
+              {
+                "command": "node dist/apps/air-discount-scheme/backend/main --generate-schema apps/air-discount-scheme/backend/src/openapi.yaml"
+              }
+            ]
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "sequelize-cli db:migrate"
+              }
+            ],
+            "cwd": "apps/air-discount-scheme/backend"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "sequelize-cli migration:generate --name $(whoami)"
+              }
+            ],
+            "cwd": "apps/air-discount-scheme/backend"
+          }
         }
       }
     }

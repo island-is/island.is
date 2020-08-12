@@ -1,0 +1,153 @@
+openapi: 3.0.0
+info:
+  title: Air Discount Scheme
+  description: >-
+    This is documentation is provided for airline booking site for integration
+    purposes.
+  version: '1.0'
+  contact: {}
+tags: []
+servers: []
+components:
+  schemas:
+    Liveness:
+      type: object
+      properties:
+        ok:
+          type: boolean
+      required:
+        - ok
+    Version:
+      type: object
+      properties:
+        version:
+          type: string
+      required:
+        - version
+    Discount:
+      type: object
+      properties:
+        discountCode:
+          type: string
+        nationalId:
+          type: string
+        flightLegsLeft:
+          type: number
+      required:
+        - discountCode
+        - nationalId
+        - flightLegsLeft
+    FlightDto:
+      type: object
+      properties:
+        nationalId:
+          type: string
+        numberOfLegs:
+          type: string
+      required:
+        - nationalId
+        - numberOfLegs
+    Flight:
+      type: object
+      properties:
+        id:
+          type: string
+        nationalId:
+          type: string
+        numberOfLegs:
+          type: number
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+      required:
+        - id
+        - nationalId
+        - numberOfLegs
+        - created
+        - modified
+paths:
+  /liveness:
+    get:
+      operationId: InfraController_liveness
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Liveness'
+      tags:
+        - internal
+  /version:
+    get:
+      operationId: InfraController_version
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
+      tags:
+        - internal
+  '/public/discount/{discountCode}':
+    get:
+      operationId: PublicDiscountController_get
+      parameters:
+        - name: discountCode
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: nationalId
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Discount'
+      tags:
+        - discount
+  /public/flight:
+    post:
+      operationId: PublicFlightController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlightDto'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Flight'
+      tags:
+        - flight
+  '/public/flight/{flightId}':
+    delete:
+      operationId: PublicFlightController_delete
+      parameters:
+        - name: flightId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+        - flight
