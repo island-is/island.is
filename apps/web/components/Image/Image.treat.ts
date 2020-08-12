@@ -1,34 +1,28 @@
 import { style } from 'treat'
+import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
   position: 'relative',
+  background: theme.color.dark100,
+  overflow: 'hidden',
 })
 
 export const image = style({
-  height: 'auto',
-  display: 'none',
-  transition: 'opacity .5s',
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  width: '100%',
+  height: '100%',
   opacity: 0,
-})
-
-export const imageShow = style({
-  display: 'block',
-  opacity: 1,
+  transition: 'opacity .5s',
 })
 
 export const thumbnail = style({
-  background: 'no-repeat none center center',
-  backgroundSize: 'cover',
-  filter: 'blur(10px)',
-  transition: 'opacity .5s',
   opacity: 1,
+  filter: 'blur(20px)',
+  transform: 'scale(1.05)',
 })
 
-export const thumbnailHide = style({
-  opacity: 0,
-  position: 'absolute',
-  left: 0,
-  right: 0,
-  top: 0,
-  bottom: 0,
+export const show = style({
+  opacity: 1,
 })
