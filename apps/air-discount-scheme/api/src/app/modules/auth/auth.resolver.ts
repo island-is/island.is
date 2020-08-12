@@ -10,6 +10,6 @@ export class AuthResolver {
   @Query(() => Auth)
   auth(@Args('input') input: AuthInput): Auth {
     const message = this.authService.getMessage(input?.name ?? 'World')
-    return { message }
+    return { ssn: '1234567890', name: message, role: 'user' }
   }
 }

@@ -9,7 +9,7 @@ export class Auth {
   name: string
 
   @Field()
-  mobile: string
+  mobile?: string
 
   @Field()
   role: string

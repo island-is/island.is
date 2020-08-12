@@ -6,6 +6,8 @@ import {
   Param,
   Post,
   Query,
+  Redirect,
+  Req,
   Res,
 } from '@nestjs/common'
 import { uuid } from 'uuidv4'
@@ -14,11 +16,20 @@ import { Entropy } from 'entropy-string'
 import IslandisLogin from 'islandis-login'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
+import {
+  REDIRECT_COOKIE_NAME,
+  CSRF_COOKIE_NAME,
+  ACCESS_TOKEN_COOKIE_NAME,
+} from '@island.is/gjafakort/consts' // TODO: change
+import { logger } from '@island.is/logging'
 import { environment } from '../../../environments'
+import { Credentials } from '../../../types'
 import { Auth } from './auth.model'
 import { AuthService } from './auth.service'
-import { Cookie, CookieOptions, LogoutResponse } from './types'
+import { Cookie, CookieOptions, LogoutResponse, VerifyResult } from './auth.types'
 import { AuthDto } from './dto/auth.dto'
+
+const { samlEntryPoint, audience: audienceUrl, jwtSecret } = environment.auth
 
 export const JWT_EXPIRES_IN_SECONDS = 1800
 
@@ -51,19 +62,24 @@ export const ACCESS_TOKEN_COOKIE: Cookie = {
   options: defaultCookieOptions,
 }
 
+const loginIS = new IslandisLogin({
+  audienceUrl,
+})
+
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('/callback')
-  callback(@Body token: string, @Res res: Response) {
+  @Redirect('/', 302)
+  async callback(@Body() token: string, @Res() res, @Req() req) {
     let verifyResult: VerifyResult
     try {
       verifyResult = await loginIS.verify(token)
     } catch (err) {
       logger.error(err)
-      return res.redirect('/error')
+      return { url: '/error' }
     }
 
     const { user } = verifyResult
@@ -75,7 +91,7 @@ export class AuthController {
           user,
         },
       })
-      return res.redirect('/api/auth/login')
+      return { url: '/api/auth/login' }
     }
 
     const { authId, returnUrl } = redirectCookie
@@ -87,20 +103,7 @@ export class AuthController {
           returnUrl,
         },
       })
-      return res.redirect('/error')
-    }
-
-    if (!kennitala.isPerson(user.kennitala)) {
-      logger.warn('User used company kennitala to log in')
-      return res.redirect(`/error?errorType=${SSN_IS_NOT_A_PERSON}`)
-    }
-
-    const yearBorn = new Date(
-      kennitala.info(user.kennitala).birthday,
-    ).getFullYear()
-    if (yearBorn > YEAR_BORN_LIMIT) {
-      logger.warn(`User born after ${YEAR_BORN_LIMIT} logged in`)
-      return res.redirect(`/error?errorType=${USER_NOT_OLD_ENOUGH}`)
+      return { url: '/error' }
     }
 
     const csrfToken = new Entropy({ bits: 128 }).string()
@@ -115,11 +118,11 @@ export class AuthController {
 
     const tokenParts = jwtToken.split('.')
     if (tokenParts.length !== 3) {
-      return res.redirect('/error')
+      return { url: '/error' }
     }
 
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
-    return res
+    res
       .cookie(CSRF_COOKIE.name, csrfToken, {
         ...CSRF_COOKIE.options,
         maxAge,
@@ -128,25 +131,23 @@ export class AuthController {
         ...ACCESS_TOKEN_COOKIE.options,
         maxAge,
       })
-      .redirect(!returnUrl || returnUrl.charAt(0) !== '/' ? '/' : returnUrl)
+    return { url: !returnUrl || returnUrl.charAt(0) !== '/' ? '/' : returnUrl }
   }
 
   @Get('/login')
-  login(@Query returnUrl: string) {
+  login(@Query('returnUrl') returnUrl: string, @Res() res) {
     const { name, options } = REDIRECT_COOKIE
     res.clearCookie(name, options)
     const authId = uuid()
 
-    return res
-      .cookie(name, { authId, returnUrl }, { ...options, maxAge: ONE_HOUR })
-      .redirect(`${samlEntryPoint}&authId=${authId}`)
+    res.cookie(name, { authId, returnUrl }, { ...options, maxAge: ONE_HOUR })
+    return res.redirect(`${samlEntryPoint}&authId=${authId}`)
   }
 
   @Get('/logout')
-  @ApiOkResponse({ type: LogoutResponse })
-  logout(@Res res: Response): Promise<LogoutResponse> {
-    res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
-    res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
-    return res.json({ logout: true })
+  logout(@Req() req): LogoutResponse {
+    req.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
+    req.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
+    return { logout: true }
   }
 }
