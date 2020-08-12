@@ -1402,6 +1402,21 @@
             "cwd": "apps/application-system/api"
           }
         },
+        "generate-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "outputPath": "apps/application-system/api/src/openapi.yaml",
+            "commands": [
+              {
+                "command": "yarn build application-system-api"
+              },
+              {
+                "command": "node dist/apps/application-system/api/main --generate-schema apps/application-system/api/src/openapi.yaml"
+              }
+            ]
+          }
+        },
         "migrate": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {

@@ -12,7 +12,7 @@ bootstrap({
   appModule: AppModule,
   name: 'application-system-api',
   openApi: new DocumentBuilder()
-    .setTitle('Reference backend')
+    .setTitle('Application backend')
     .setDescription(
       'This is provided as a reference to implement other backends.',
     )
