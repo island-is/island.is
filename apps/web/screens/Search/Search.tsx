@@ -3,7 +3,6 @@ import React, { useRef, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { withApollo } from '../../graphql'
 import { Screen } from '../../types'
 import {
   Sidebar,

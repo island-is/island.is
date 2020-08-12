@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import Link from 'next/link'
+import { useRouter } from 'next/router'
 import {
   ContentBlock,
   Box,
@@ -34,6 +34,7 @@ interface HomeProps {
 const Home: Screen<HomeProps> = ({ categories, namespace }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
+  const Router = useRouter()
   const { makePath } = useRouteNames(activeLocale as Locale)
 
   if (typeof document === 'object') {
@@ -111,18 +112,17 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
                     <Inline space={1}>
                       {n('featuredArticles', []).map(
                         ({ title, url }, index) => {
-                          // TODO: Find a permanent solution to handle this url, currently only supports article urls
                           return (
-                            <Link
-                              key={index}
-                              href={`${makePath('article')}/[slug]`}
-                              as={url}
-                              passHref
+                            <Tag
+                              onClick={() => {
+                                Router.push(
+                                  `${makePath('article')}/[slug]`,
+                                  url,
+                                )
+                              }}
                             >
-                              <a>
-                                <Tag>{title}</Tag>
-                              </a>
-                            </Link>
+                              {title}
+                            </Tag>
                           )
                         },
                       )}
