@@ -6,9 +6,7 @@ import * as styles from './Background.treat'
 export const Background: FC<BoxProps> = ({ children, ...props }) => {
   return (
     <Box {...props} className={cn(styles.container, props.className)}>
-      <div className={styles.inner}>
-        {children}
-      </div>
+      <div className={styles.inner}>{children}</div>
     </Box>
   )
 }
