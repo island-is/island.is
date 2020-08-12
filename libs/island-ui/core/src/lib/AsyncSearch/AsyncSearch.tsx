@@ -161,7 +161,10 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                   placeholder={placeholder}
                 />
                 <button
-                  className={cn(styles.icon, styles.iconSizes[size])}
+                  className={cn(styles.icon, styles.iconSizes[size], {
+                    [styles.focusable]: inputValue,
+                  })}
+                  tabIndex={inputValue ? 0 : -1}
                   onBlur={onBlur}
                   onFocus={onFocus}
                   {...(onSubmit

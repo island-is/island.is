@@ -56,10 +56,12 @@ export const icon = style({
     borderRadius: 5,
     position: 'absolute',
     cursor: 'pointer',
+    opacity: 0,
     backgroundColor: theme.color.white,
     borderColor: theme.color.blue200,
     borderStyle: 'solid',
     borderWidth: 1,
+    transition: `opacity 150ms ease`,
   },
   selectors: {
     '&:focus:before': {
@@ -67,6 +69,12 @@ export const icon = style({
       borderWidth: 1,
       borderStyle: 'solid',
     },
+  },
+})
+
+export const focusable = style({
+  ':before': {
+    opacity: 1,
   },
 })
 
