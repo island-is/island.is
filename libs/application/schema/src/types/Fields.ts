@@ -9,6 +9,7 @@ export interface Option {
 }
 export interface BaseField extends FormItem {
   readonly id: string
+  readonly component: string
   readonly name: string
   readonly children: undefined
   condition?: Condition
@@ -34,33 +35,39 @@ export interface Question extends BaseField {
 
 export interface CheckboxField extends Question {
   readonly type: FieldTypes.CHECKBOX
+  component: 'CheckboxFormField'
   options: Option[]
 }
 
 export interface DateField extends Question {
   readonly type: FieldTypes.DATE
+  component: 'TextFormField' // TODO needs a component
   maxDate?: Date
   minDate?: Date
 }
 
 export interface IntroductionField extends BaseField {
   readonly type: FieldTypes.INTRO
+  component: 'IntroductionFormField'
   readonly introduction: string
 }
 
 export interface RadioField extends Question {
   readonly type: FieldTypes.RADIO
+  component: 'RadioFormField'
   options: Option[]
 }
 
 export interface SelectField extends Question {
   readonly type: FieldTypes.SELECT
+  component: 'SelectFormField'
   options: Option[]
   placeholder?: string
 }
 
 export interface TextField extends Question {
   readonly type: FieldTypes.TEXT
+  component: 'TextFormField'
   minLength?: number
   maxLength?: number
   placeholder?: string

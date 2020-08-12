@@ -27,6 +27,7 @@ export function buildCheckboxField(data: {
     name,
     options,
     type: FieldTypes.CHECKBOX,
+    component: 'CheckboxFormField',
   }
 }
 
@@ -49,6 +50,7 @@ export function buildDateField(data: {
     maxDate,
     minDate,
     type: FieldTypes.DATE,
+    component: 'TextFormField',
   }
 }
 
@@ -66,6 +68,7 @@ export function buildIntroductionField(data: {
     id,
     name,
     type: FieldTypes.INTRO,
+    component: 'IntroductionFormField',
   }
 }
 
@@ -86,6 +89,7 @@ export function buildRadioField(data: {
     name,
     options,
     type: FieldTypes.RADIO,
+    component: 'RadioFormField',
   }
 }
 
@@ -108,6 +112,7 @@ export function buildSelectField(data: {
     name,
     options,
     type: FieldTypes.SELECT,
+    component: 'SelectFormField',
   }
 }
 
@@ -126,5 +131,6 @@ export function buildTextField(data: {
     id,
     name,
     type: FieldTypes.TEXT,
+    component: 'TextFormField',
   }
 }

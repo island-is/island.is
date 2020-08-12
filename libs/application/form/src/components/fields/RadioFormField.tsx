@@ -7,7 +7,7 @@ import {
   Stack,
   Tooltip,
 } from '@island.is/island-ui/core'
-import { FieldBaseProps } from '../types'
+import { FieldBaseProps } from '../../types'
 import { useFormContext, Controller } from 'react-hook-form'
 
 interface Props extends FieldBaseProps {

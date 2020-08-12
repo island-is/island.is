@@ -7,12 +7,13 @@ import {
 import { FormScreen } from '../types'
 
 export interface ApplicationUIState {
-  form: Form
-  formValue: FormValue
   activeSection: number
   activeSubSection: number
   activeScreen: number
+  form: Form
+  formValue: FormValue
   formLeaves: FormLeaf[]
+  progress: number
   screens: FormScreen[]
   sections: Section[]
 }
