@@ -13,7 +13,6 @@ import {
   Tag,
 } from '@island.is/island-ui/core'
 import { Categories, Card, SearchInput } from '../components'
-import { withApollo } from '../graphql'
 import { useI18n } from '../i18n'
 import {
   Query,
