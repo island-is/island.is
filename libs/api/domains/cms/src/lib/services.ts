@@ -134,7 +134,7 @@ const formatSectionHeading = ({ fields, sys }): HeadingSlice =>
   new HeadingSlice({
     id: sys.id,
     title: fields.title ?? '',
-    body: fields.description ?? '',
+    body: fields.body ?? '',
   })
 
 const formatLinkCard = ({ fields }): LinkCard => ({

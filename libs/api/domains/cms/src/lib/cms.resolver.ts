@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver, ResolveField } from '@nestjs/graphql'
 import { Article } from './models/article.model'
 import { GetArticleInput } from './dto/getArticle.input'
 import { News } from './models/news.model'
@@ -19,6 +19,7 @@ import {
   getAboutPage,
   getLandingPage,
 } from './services'
+import { LatestNewsSlice } from './models/slices/latestNewsSlice.model'
 
 @Resolver()
 export class CmsResolver {
@@ -56,5 +57,14 @@ export class CmsResolver {
     @Args('input') input: GetLandingPageInput,
   ): Promise<LandingPage | null> {
     return getLandingPage(input)
+  }
+}
+
+@Resolver((of) => LatestNewsSlice)
+export class LatestNewsSliceResolver {
+  @ResolveField(() => [News])
+  async news() {
+    const { news } = await getNewsList({ lang: 'is', perPage: 3 })
+    return news
   }
 }
