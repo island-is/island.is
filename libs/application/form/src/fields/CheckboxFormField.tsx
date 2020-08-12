@@ -14,11 +14,15 @@ import { Controller, useFormContext } from 'react-hook-form'
 interface Props extends FieldBaseProps {
   field: CheckboxField
 }
-const CheckboxFormField: FC<Props> = ({ showFieldName = false, field }) => {
+const CheckboxFormField: FC<Props> = ({
+  error,
+  showFieldName = false,
+  field,
+}) => {
   const { id, name, options } = field
-  const { control } = useFormContext()
+  const { clearErrors, control } = useFormContext()
 
-  function handleSelect(option: Option, checkedValues: String[]) {
+  function handleSelect(option: Option, checkedValues: string[]) {
     const excludeOptionsLookup = options.map((o) => o.excludeOthers && o.value)
 
     let newChoices = []
@@ -44,6 +48,7 @@ const CheckboxFormField: FC<Props> = ({ showFieldName = false, field }) => {
         <Controller
           name={`${id}`}
           control={control}
+          defaultValue={false}
           render={({ value, onChange }) => {
             return (
               <Stack space={2}>
@@ -51,12 +56,15 @@ const CheckboxFormField: FC<Props> = ({ showFieldName = false, field }) => {
                   <Box display="flex" key={`${id}-${index}`}>
                     <Checkbox
                       onChange={() => {
+                        clearErrors(id)
                         onChange(handleSelect(option, value || []))
                       }}
                       checked={value && value.includes(option.value)}
                       name={`${id}[${index}]`}
                       label={option.label}
                       value={option.value}
+                      errorMessage={index === options.length - 1 && error}
+                      hasError={error !== undefined}
                     />
                     {option.tooltip && (
                       <Box marginLeft={1}>

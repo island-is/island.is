@@ -13,9 +13,9 @@ import { useFormContext, Controller } from 'react-hook-form'
 interface Props extends FieldBaseProps {
   field: RadioField
 }
-const RadioFormField: FC<Props> = ({ showFieldName = false, field }) => {
+const RadioFormField: FC<Props> = ({ showFieldName = false, field, error }) => {
   const { id, name, options } = field
-  const { control } = useFormContext()
+  const { clearErrors, control } = useFormContext()
   return (
     <div>
       {showFieldName && <Typography variant="p">{name}</Typography>}
@@ -23,6 +23,7 @@ const RadioFormField: FC<Props> = ({ showFieldName = false, field }) => {
         <Controller
           name={`${id}`}
           control={control}
+          defaultValue={false}
           render={({ value, onChange }) => {
             return (
               <Stack space={2}>
@@ -31,6 +32,7 @@ const RadioFormField: FC<Props> = ({ showFieldName = false, field }) => {
                     <RadioButton
                       key={`${id}-${index}`}
                       onChange={({ target }) => {
+                        clearErrors(id)
                         onChange(target.value)
                       }}
                       checked={option.value === value}
@@ -38,6 +40,10 @@ const RadioFormField: FC<Props> = ({ showFieldName = false, field }) => {
                       name={`${id}`}
                       label={option.label}
                       value={option.value}
+                      errorMessage={
+                        index === options.length - 1 ? error : undefined
+                      }
+                      hasError={error !== undefined}
                     />
                     {option.tooltip && (
                       <Box marginLeft={1}>

@@ -4,8 +4,9 @@ import { MultiFieldScreen } from '../types'
 import { Box } from '@island.is/island-ui/core'
 
 const FormMultiField: FC<{
+  errors: object
   multiField: MultiFieldScreen
-}> = ({ multiField }) => {
+}> = ({ errors, multiField }) => {
   return (
     <div>
       {multiField.children.map((field, index) => (
@@ -15,6 +16,7 @@ const FormMultiField: FC<{
             field={field}
             key={field.id}
             autoFocus={index === 0}
+            errors={errors}
           />
         </Box>
       ))}

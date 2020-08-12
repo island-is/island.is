@@ -14,16 +14,20 @@ import TextFormField from '../fields/TextFormField'
 import RadioFormField from '../fields/RadioFormField'
 import SelectFormField from '../fields/SelectFormField'
 import { FieldDef } from '../types'
+import { getValueViaPath } from '../utils'
 
 const FormField: FC<{
   autoFocus?: boolean
   field: FieldDef
   showFieldName?: boolean
-}> = ({ autoFocus, field, showFieldName }) => {
+  errors: object
+}> = ({ autoFocus, errors, field, showFieldName }) => {
   const { register } = useFormContext()
 
+  const error = getValueViaPath(errors, field.id, undefined)
   const fieldProps = {
     autoFocus,
+    error,
     showFieldName,
     register,
   }

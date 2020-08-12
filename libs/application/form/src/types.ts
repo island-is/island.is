@@ -3,6 +3,7 @@ import { Ref } from 'react'
 
 export interface FieldBaseProps {
   autoFocus?: boolean
+  error?: string
   field: Field
   //eslint-disable-next-line @typescript-eslint/no-explicit-any
   register: () => Ref<any> | null
