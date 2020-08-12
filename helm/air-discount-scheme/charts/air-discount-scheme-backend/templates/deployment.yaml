@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "air-discount-scheme-backend.fullname" . }}
+  {{- if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{- end }}
+  labels:
+    {{- include "air-discount-scheme-backend.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount.default }}
+  selector:
+    matchLabels:
+      {{- include "air-discount-scheme-backend.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "air-discount-scheme-backend.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      serviceAccountName: {{ include "air-discount-scheme-backend.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+        - name: migration
+          image: "{{ .Values.image.repository }}:{{ .Values.global.image.tag }}"
+          command: ["npx"]
+          args: ["sequelize-cli", "db:migrate"]
+          env:
+            {{- with .Values.postgres }}
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: air-discount-scheme-backend
+                  key: DB_PASS
+            - name: DB_USER
+              value: {{ .username }}
+            - name: DB_NAME
+              value: {{ .name }}
+            - name: DB_HOST
+              value: {{ .host }}
+            - name: NODE_ENV
+              value: "production"
+            {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.global.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 4242
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /status
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /status
+              port: http
+          env:
+            {{- with .Values.postgres }}
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: air-discount-scheme-backend
+                  key: DB_PASS
+            - name: DB_USER
+              value: {{ .username }}
+            - name: DB_NAME
+              value: {{ .name }}
+            - name: DB_HOST
+              value: {{ .host }}
+            - name: NODE_ENV
+              value: "production"
+            - name: SENTRY_DSN
+              value: {{ .sentry_dsn }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}

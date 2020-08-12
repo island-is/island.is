@@ -1,0 +1,4 @@
+apiVersion: v2
+name: air-discount-scheme-backend
+type: application
+version: 0.0.0

@@ -1,0 +1,5 @@
+apiVersion: v2
+name: air-discount-scheme
+description: Air-discount-scheme umbrella chart
+type: application
+version: 0.0.1

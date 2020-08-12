@@ -1,0 +1,40 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+air-discount-scheme-api:
+  environment:
+
+  ingress:
+    annotations:
+      cert-manager.io/cluster-issuer: 'air-discount-scheme-island-is-letsencrypt-dns01'
+    hosts:
+      - host: 'ads.island.is'
+        paths:
+          - '/api'
+    tls:
+      - hosts: ['ads.island.is']
+        secretName: 'air-discount-scheme-web-tls'
+
+air-discount-scheme-web:
+  environment:
+
+  ingress:
+    annotations:
+      cert-manager.io/cluster-issuer: 'air-discount-scheme-island-is-letsencrypt-dns01'
+    hosts:
+      - host: 'ads.island.is'
+        paths:
+          - '/'
+    tls:
+      - hosts: ['ads.island.is']
+        secretName: 'air-discount-scheme-web-tls'
+
+air-discount-scheme-backend:
+  postgres:
+    host: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+    name: 'air_discount_scheme_backend'
+    username: 'air_discount_scheme_backend'
+
+  ingress:
+    enabled: false
+

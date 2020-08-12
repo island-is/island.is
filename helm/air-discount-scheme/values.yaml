@@ -1,0 +1,23 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global:
+  image:
+    tag: latest_master
+
+air-discount-scheme-api:
+  namespace: air-discount-scheme
+  environment:
+    backend_url: "http://web-air-discount-scheme-backend"
+
+air-discount-scheme-web:
+  namespace: air-discount-scheme
+  environment:
+
+air-discount-scheme-backend:
+  namespace: air-discount-scheme
+  postgres:
+    host: 'host'
+    name: 'name'
+    username: 'username'
+    password_secret_path: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
