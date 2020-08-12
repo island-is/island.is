@@ -17,13 +17,13 @@ export class PublicFlightController {
   @Post()
   @ApiCreatedResponse({ type: Flight })
   async create(@Body() flight: FlightDto): Promise<Flight> {
-    return await this.flightService.create(flight)
+    return this.flightService.create(flight)
   }
 
   @Delete(':flightId')
   @ApiOkResponse()
   async delete(@Param('flightId') flightId: string): Promise<number> {
-    return await this.flightService.delete(flightId)
+    return this.flightService.delete(flightId)
   }
 }
 

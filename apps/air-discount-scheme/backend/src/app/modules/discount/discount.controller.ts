@@ -18,7 +18,7 @@ export class PublicDiscountController {
     @Param() params: GetDiscountByCodeParams,
     @Query() query: GetDiscountByCodeQuery,
   ): Promise<Discount> {
-    return await this.discountService.findByDiscountCodeAndNationalId(
+    return this.discountService.findByDiscountCodeAndNationalId(
       params.discountCode,
       query.nationalId,
     )
