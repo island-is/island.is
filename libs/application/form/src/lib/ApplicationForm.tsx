@@ -32,6 +32,7 @@ export const ApplicationForm: FC<ApplicationProps> = ({
       activeSection: 0,
       activeSubSection: 0,
       activeScreen: 0,
+      progress: 0,
       screens: [],
       sections: [],
     },
@@ -42,6 +43,7 @@ export const ApplicationForm: FC<ApplicationProps> = ({
     activeSubSection,
     activeScreen,
     formValue,
+    progress,
     sections,
     screens,
   } = state
@@ -62,9 +64,7 @@ export const ApplicationForm: FC<ApplicationProps> = ({
                 activeSection={activeSection}
                 activeSubSection={activeSubSection}
               />
-              <ProgressIndicator
-                progress={(activeScreen / screens.length) * 100}
-              />
+              <ProgressIndicator progress={progress} />
             </Box>
           </Sidebar>
         </Box>

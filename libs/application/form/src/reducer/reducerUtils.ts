@@ -18,6 +18,33 @@ import {
   RepeaterScreen,
 } from '../types'
 
+export function calculateProgress(
+  activeScreenIndex: number,
+  screens: FormScreen[],
+): number {
+  if (activeScreenIndex <= 0) {
+    return 0
+  } else if (activeScreenIndex >= screens.length - 1) {
+    return 100
+  }
+  let screensThatCountForProgress = 0
+  let pastScreensThatDontCountForProgress = 0
+
+  for (let i = 0; i < screens.length; i++) {
+    const screen = screens[i]
+    if (screen.isNavigable && screen.repeaterIndex === undefined) {
+      screensThatCountForProgress += 1
+    } else if (i <= activeScreenIndex) {
+      pastScreensThatDontCountForProgress += 1
+    }
+  }
+  return (
+    ((activeScreenIndex - pastScreensThatDontCountForProgress) /
+      screensThatCountForProgress) *
+    100
+  )
+}
+
 export const moveToScreen = (
   state: ApplicationUIState,
   screenIndex: number,
@@ -25,7 +52,13 @@ export const moveToScreen = (
   const { activeScreen, form, sections, screens } = state
   const isMovingForward = screenIndex > activeScreen
   if (screenIndex < 0) {
-    return { ...state, activeScreen: 0, activeSection: 0, activeSubSection: 0 }
+    return {
+      ...state,
+      activeScreen: 0,
+      activeSection: 0,
+      activeSubSection: 0,
+      progress: 0,
+    }
   }
   if (screenIndex === screens.length) {
     const subSections = getSubSectionsInSection(sections[sections.length - 1])
@@ -34,6 +67,7 @@ export const moveToScreen = (
       activeScreen: screens.length - 1,
       activeSection: sections.length - 1,
       activeSubSection: subSections.length ? subSections.length - 1 : -1,
+      progress: 100,
     }
   }
 
@@ -57,6 +91,7 @@ export const moveToScreen = (
     activeScreen: screenIndex,
     activeSection: sectionIndexForScreen,
     activeSubSection: subSectionIndexForScreen,
+    progress: calculateProgress(screenIndex, screens),
   }
 }
 
