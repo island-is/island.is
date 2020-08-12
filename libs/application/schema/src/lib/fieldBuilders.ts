@@ -2,6 +2,7 @@ import { Condition } from '../types/Condition'
 import {
   CheckboxField,
   DateField,
+  FieldComponents,
   FieldTypes,
   IntroductionField,
   Option,
@@ -27,7 +28,7 @@ export function buildCheckboxField(data: {
     name,
     options,
     type: FieldTypes.CHECKBOX,
-    component: 'CheckboxFormField',
+    component: FieldComponents.CHECKBOX,
   }
 }
 
@@ -50,7 +51,7 @@ export function buildDateField(data: {
     maxDate,
     minDate,
     type: FieldTypes.DATE,
-    component: 'TextFormField',
+    component: FieldComponents.TEXT,
   }
 }
 
@@ -68,7 +69,7 @@ export function buildIntroductionField(data: {
     id,
     name,
     type: FieldTypes.INTRO,
-    component: 'IntroductionFormField',
+    component: FieldComponents.INTRO,
   }
 }
 
@@ -89,7 +90,7 @@ export function buildRadioField(data: {
     name,
     options,
     type: FieldTypes.RADIO,
-    component: 'RadioFormField',
+    component: FieldComponents.RADIO,
   }
 }
 
@@ -112,7 +113,7 @@ export function buildSelectField(data: {
     name,
     options,
     type: FieldTypes.SELECT,
-    component: 'SelectFormField',
+    component: FieldComponents.SELECT,
   }
 }
 
@@ -131,6 +132,6 @@ export function buildTextField(data: {
     id,
     name,
     type: FieldTypes.TEXT,
-    component: 'TextFormField',
+    component: FieldComponents.TEXT,
   }
 }
