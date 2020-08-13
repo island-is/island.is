@@ -1,13 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import slugify from '@sindresorhus/slugify'
-import {
-  Sidebar,
-  getHeadingLinkElements,
-  Hyperlink,
-  Image,
-} from '@island.is/web/components'
+import { Sidebar, Hyperlink, Image } from '@island.is/web/components'
 import {
   Query,
   LandingPage,
@@ -57,7 +52,9 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
               <Typography variant="p">{page.links.title}</Typography>
             )}
             {page.links.links.map(({ url, text }, index) => (
-              <Hyperlink key={index} href={url}>{text}</Hyperlink>
+              <Hyperlink key={index} href={url}>
+                {text}
+              </Hyperlink>
             ))}
           </Stack>
         </Box>
