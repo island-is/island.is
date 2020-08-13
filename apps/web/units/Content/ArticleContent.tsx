@@ -300,6 +300,7 @@ const embeddedNodes = (locale) => ({
         processTitle,
         processDescription,
         processLink,
+        processLabel,
         type,
         title,
         subtitle,
@@ -331,22 +332,32 @@ const embeddedNodes = (locale) => ({
         bottomContent: (
           <ContentBlock width="small">
             <Stack space={[2, 2]}>
-              <Typography variant="eyebrow" as="h4" color="blue400">
-                Innskráning og umsókn
-              </Typography>
-              <Typography variant="h3" as="h3">
-                {processTitle || 'processTitle'}
-              </Typography>
-              <Typography variant="p" as="p">
-                {processDescription || 'processDescription'}
-              </Typography>
+              {type !== 'Only button' && (
+                <>
+                  <Typography variant="eyebrow" as="h4" color="blue400">
+                    Innskráning og umsókn
+                  </Typography>
+                  {processTitle && (
+                    <Typography variant="h3" as="h3">
+                      {processTitle}
+                    </Typography>
+                  )}
+                  {processDescription && (
+                    <Typography variant="p" as="p">
+                      {processDescription}
+                    </Typography>
+                  )}
+                </>
+              )}
               {processLink ? (
                 <Box paddingTop={[1, 1, 2]}>
                   <Button
                     href={processLink}
                     icon={type === 'Not digital' ? 'info' : 'external'}
                   >
-                    Áfram í innskráningu
+                    {type === 'Only button'
+                      ? processTitle
+                      : 'Áfram í innskráningu'}
                   </Button>
                 </Box>
               ) : null}
