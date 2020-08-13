@@ -6,18 +6,16 @@ global:
     tag: latest_master
 
 air-discount-scheme-api:
-  namespace: air-discount-scheme
-  environment:
-    backend_url: "http://web-air-discount-scheme-backend"
+  env:
+    BACKEND_URL: "http://web-air-discount-scheme-backend"
 
 air-discount-scheme-web:
-  namespace: air-discount-scheme
-  environment:
+  env:
 
 air-discount-scheme-backend:
-  namespace: air-discount-scheme
-  postgres:
-    host: 'host'
-    name: 'name'
-    username: 'username'
-    password_secret_path: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+  env:
+    DB_HOST: 'host'
+    DB_NAME: 'name'
+    DB_USERNAME: 'username'
+  secrets:
+    DB_PASSWORD: '/k8s/air-discount-scheme/backend/DB_PASSWORD'

@@ -1,8 +1,15 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+global:
+  env:
+    name: 'prod'
+    AWS_REGION: 'eu-west-1'
+  initContainer:
+    env:
+      AWS_REGION: 'eu-west-1'
 
 air-discount-scheme-api:
-  environment:
+  env:
 
   ingress:
     annotations:
@@ -16,7 +23,7 @@ air-discount-scheme-api:
         secretName: 'air-discount-scheme-web-tls'
 
 air-discount-scheme-web:
-  environment:
+  env:
 
   ingress:
     annotations:
@@ -30,11 +37,10 @@ air-discount-scheme-web:
         secretName: 'air-discount-scheme-web-tls'
 
 air-discount-scheme-backend:
-  postgres:
-    host: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
-    name: 'air_discount_scheme_backend'
-    username: 'air_discount_scheme_backend'
+  env:
+    DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+    DB_NAME: 'air_discount_scheme_backend'
+    DB_USERNAME: 'air_discount_scheme_backend'
 
   ingress:
     enabled: false
-

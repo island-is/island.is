@@ -195,7 +195,7 @@ jobs:
 
       - name: Push air-discount-scheme chart to the museum
         if: env.PUBLISH == 'true'
-        run: helm push helm/air-discount-scheme --version="$HELM_CHART_VERSION" -f chartmuseum
+        run: helm dep build helm/air-discount-scheme && helm push helm/air-discount-scheme --version="$HELM_CHART_VERSION" -f chartmuseum
 
       - name: Retag unaffected Docker images
         if: env.PUBLISH == 'true'
