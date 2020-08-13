@@ -22,6 +22,7 @@ import { BorderedContent, Hyperlink } from '@island.is/web/components'
 import RichText from '../RichText/RichText'
 import { Statistics } from '@island.is/web/components/Statistics/Statistics'
 import Background from '@island.is/web/components/Background/Background'
+import EmbeddedVideo from '../EmbeddedVideo/EmbeddedVideo'
 
 const mappedContentfulTypes = {
   article: 'article',
@@ -290,6 +291,18 @@ const embeddedNodes = (locale) => ({
           </Stack>
         </ContentContainer>
       )
+    },
+  },
+  embeddedVideo: {
+    component: EmbeddedVideo,
+    wrapper: ({ children }) => <ContentContainer>{children}</ContentContainer>,
+    processContent: (node) => {
+      const { url, title } = node.data.target.fields
+
+      return {
+        title,
+        url,
+      }
     },
   },
   processEntry: {
