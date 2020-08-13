@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, MouseEvent, useState, createRef } from 'react'
+import React, { FC, ReactNode, useState } from 'react'
 import cn from 'classnames'
 import {
   Box,
@@ -8,7 +8,6 @@ import {
 } from '@island.is/island-ui/core'
 import Bullet from '../../components/Bullet/Bullet'
 import { Colors } from '@island.is/island-ui/theme'
-import useBoundingClientRect from '../../hooks/useBoundingClientRect'
 import * as styles from './Sidebar.treat'
 
 type ColorConfig = {
