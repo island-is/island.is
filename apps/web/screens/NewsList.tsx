@@ -190,7 +190,10 @@ const NewsListItem = ({ newsItem }) => {
           <Column width="2/5">
             <Link href={makePath('news', newsItem.slug)}>
               <a>
-                <img src={newsItem.image.url + '?w=524'} alt="" />
+                <img
+                  src={newsItem.image.url + '?w=524'}
+                  alt={`Skoða frétt ${newsItem.title}`}
+                />
               </a>
             </Link>
           </Column>
