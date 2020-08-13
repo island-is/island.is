@@ -52,9 +52,11 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
       {page.links && (
         <Box background="purple100" padding={4}>
           <Stack space={2}>
-            <Typography variant="p">{page.links.title}</Typography>
-            {page.links.links.map(({ url, text }) => (
-              <Hyperlink href={url}>{text}</Hyperlink>
+            {page.links.title && (
+              <Typography variant="p">{page.links.title}</Typography>
+            )}
+            {page.links.links.map(({ url, text }, index) => (
+              <Hyperlink key={index} href={url}>{text}</Hyperlink>
             ))}
           </Stack>
         </Box>
@@ -88,7 +90,7 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
                 {page.introduction}
               </Typography>
               {page.image && (
-                <img src={page.image.url + '?w=774'} alt={page.image.title} />
+                <img src={page.image.url + '?w=774'} alt="" />
               )}
             </Stack>
           </ContentBlock>

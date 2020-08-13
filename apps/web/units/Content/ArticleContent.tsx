@@ -372,8 +372,8 @@ const embeddedNodes = (locale) => ({
               justifyContent="center"
               flexWrap="wrap"
             >
-              {node.data.target.fields.statistics.map(({ fields }) => (
-                <Box display="flex" marginLeft={3} marginTop={3}>
+              {node.data.target.fields.statistics.map(({ fields }, index) => (
+                <Box key={index} display="flex" marginLeft={3} marginTop={3}>
                   <Statistic {...fields} />
                 </Box>
               ))}
