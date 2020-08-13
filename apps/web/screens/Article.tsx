@@ -25,7 +25,6 @@ import {
 } from '@island.is/api/schema'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
-import { withApollo } from '../graphql'
 import { Screen } from '../types'
 import ArticleContent from '../units/Content/ArticleContent'
 import { useNamespace } from '../hooks'
