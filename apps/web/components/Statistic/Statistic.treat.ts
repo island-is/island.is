@@ -6,7 +6,6 @@ export const container = style({
   height: '204px',
   borderRadius: '50%',
   background: 'white',
-  border: '1px solid black',
 })
 
 export const value = style({
