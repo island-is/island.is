@@ -340,13 +340,16 @@ const embeddedNodes = (locale) => ({
               <Typography variant="p" as="p">
                 {processDescription || 'processDescription'}
               </Typography>
-              <Box paddingTop={[1, 1, 2]}>
-                <Link href={processLink} passHref>
-                  <Button icon={type === 'Not digital' ? 'info' : 'external'}>
+              {processLink ? (
+                <Box paddingTop={[1, 1, 2]}>
+                  <Button
+                    href={processLink}
+                    icon={type === 'Not digital' ? 'info' : 'external'}
+                  >
                     Áfram í innskráningu
                   </Button>
-                </Link>
-              </Box>
+                </Box>
+              ) : null}
             </Stack>
           </ContentBlock>
         ),

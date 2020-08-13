@@ -6,7 +6,7 @@ import { ApolloClient } from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 
 import { Page, Footer, Box } from '@island.is/island-ui/core'
-import { Header } from '../components'
+import { Header, SkipToMainContent } from '../components'
 import appWithTranslation from '../i18n/appWithTranslation'
 
 import initApollo from '../graphql/client'
@@ -55,8 +55,11 @@ const Layout: FC<LayoutProps> = ({
         />
         <title>Ísland.is</title>
       </Head>
+      <SkipToMainContent />
       {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
-      {wrapContent ? <Box width="full">{children}</Box> : children}
+      <div id="main-content">
+        {wrapContent ? <Box width="full">{children}</Box> : children}
+      </div>
       {showFooter && <Footer />}
       <style jsx global>{`
         @font-face {
