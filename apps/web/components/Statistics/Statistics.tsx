@@ -9,8 +9,7 @@ export interface StatisticsProps {
 
 export const Statistics: FC<StatisticsProps> = ({ items }) => {
   return (
-    <div className={styles.container}
-    >
+    <div className={styles.container}>
       {items.map((fields, index) => (
         <Box key={index} display="flex" margin={1}>
           <Statistic {...fields} />
