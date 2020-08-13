@@ -6,6 +6,7 @@ import {
   Sidebar,
   getHeadingLinkElements,
   Hyperlink,
+  Image,
 } from '@island.is/web/components'
 import {
   Query,
@@ -42,7 +43,7 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
   const sidebar = (
     <Stack space={3}>
       {page.actionButton && (
-        <Box background="purple100" padding={4}>
+        <Box background="purple100" padding={4} borderRadius="large">
           <Button href={page.actionButton.url} width="fluid">
             {page.actionButton.text}
           </Button>
@@ -50,7 +51,7 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
       )}
       <Sidebar title="Efnisyfirlit" bullet="left" headingLinks />
       {page.links && (
-        <Box background="purple100" padding={4}>
+        <Box background="purple100" padding={4} borderRadius="large">
           <Stack space={2}>
             {page.links.title && (
               <Typography variant="p">{page.links.title}</Typography>
@@ -90,7 +91,7 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
                 {page.introduction}
               </Typography>
               {page.image && (
-                <img src={page.image.url + '?w=774'} alt="" />
+                <Image type="apiImage" image={page.image} maxWidth={774} />
               )}
             </Stack>
           </ContentBlock>
