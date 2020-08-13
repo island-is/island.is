@@ -1104,7 +1104,7 @@
           "options": {
             "outputPath": "dist/apps/service-portal",
             "index": "apps/service-portal/src/index.html",
-            "main": "apps/service-portal/src/main.tsx",
+            "main": "apps/service-portal/src/Main.tsx",
             "polyfills": "apps/service-portal/src/polyfills.ts",
             "tsConfig": "apps/service-portal/tsconfig.app.json",
             "assets": [
