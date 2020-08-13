@@ -20,7 +20,7 @@ import {
 import { Locale } from '../../i18n/I18n'
 import { BorderedContent, Hyperlink } from '@island.is/web/components'
 import RichText from '../RichText/RichText'
-import { Statistic } from '@island.is/web/components/Statistic/Statistic'
+import { Statistics } from '@island.is/web/components/Statistics/Statistics'
 import Background from '@island.is/web/components/Background/Background'
 
 const mappedContentfulTypes = {
@@ -373,26 +373,14 @@ const embeddedNodes = (locale) => ({
       return (
         <Background
           background="dotted"
-          paddingTop={6}
-          paddingBottom={9}
+          paddingY={[6, 6, 10]}
           marginTop={5}
         >
-          <ContentBlock>
-            <Box
-              paddingX={[3, 3, 6, 0]}
-              marginRight={3}
-              marginBottom={3}
-              display="flex"
-              justifyContent="center"
-              flexWrap="wrap"
-            >
-              {node.data.target.fields.statistics.map(({ fields }, index) => (
-                <Box key={index} display="flex" marginLeft={3} marginTop={3}>
-                  <Statistic {...fields} />
-                </Box>
-              ))}
-            </Box>
-          </ContentBlock>
+          <ContentContainer marginTop={0}>
+            <Statistics
+              items={node.data.target.fields.statistics.map((s) => s.fields)}
+            />
+          </ContentContainer>
         </Background>
       )
     },

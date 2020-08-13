@@ -9,5 +9,5 @@ export const container = style({
 })
 
 export const value = style({
-  fontSize: '64px',
+  fontSize: '45px',
 })
