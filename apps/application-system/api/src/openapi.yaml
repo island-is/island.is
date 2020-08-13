@@ -34,6 +34,10 @@ components:
             - EXAMPLE2
         applicant:
           type: string
+        assignee:
+          type: string
+        externalId:
+          type: string
         state:
           type: string
           enum:
@@ -54,6 +58,8 @@ components:
       required:
         - typeId
         - applicant
+        - assignee
+        - externalId
         - state
         - answers
         - attachments

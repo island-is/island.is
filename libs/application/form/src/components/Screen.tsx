@@ -13,6 +13,8 @@ import FormField from './FormField'
 import { resolver } from '../validation/resolver'
 import ConditionHandler from './ConditionHandler'
 import FormRepeater from './FormRepeater'
+import { useMutation } from '@apollo/client'
+import { CREATE_APPLICATION } from '../graphql/mutations/createApplication'
 
 type ScreenProps = {
   formValue: FormValue
@@ -46,6 +48,8 @@ const Screen: FC<ScreenProps> = ({
     context: { dataSchema, formNode: screen },
   })
 
+  const [createApplication, { data }] = useMutation(CREATE_APPLICATION)
+
   const { reset, handleSubmit, errors } = hookFormData
 
   const goBack = () => {
@@ -53,9 +57,22 @@ const Screen: FC<ScreenProps> = ({
     prevScreen()
   }
 
-  const onSubmit: SubmitHandler<FormValue> = (data) => {
+  const onSubmit: SubmitHandler<FormValue> = async (data) => {
     if (shouldSubmit) {
       console.log('here we will submit', formValue)
+      createApplication({
+        variables: {
+          input: {
+            applicant: '123456-1234',
+            state: 'PENDING',
+            attachments: ['https://island.is'],
+            typeId: 'EXAMPLE',
+            assignee: '123456-1235',
+            externalId: 'some_id',
+            answers: formValue,
+          },
+        },
+      })
     } else {
       console.log('these were my answers:', data)
       answerQuestions(data)

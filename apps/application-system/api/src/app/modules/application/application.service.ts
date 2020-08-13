@@ -21,9 +21,7 @@ export class ApplicationService {
   }
 
   async create(application: ApplicationDto): Promise<Application> {
-    return this.applicationModel.create<Application>({
-      ...application,
-    })
+    return this.applicationModel.create(application)
   }
 
   async update(id: string, application: ApplicationDto) {

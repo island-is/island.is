@@ -124,6 +124,9 @@
     },
     "island-ui-theme": {
       "tags": []
+    },
+    "api-domains-application": {
+      "tags": []
     }
   }
 }
