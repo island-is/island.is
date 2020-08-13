@@ -112,7 +112,7 @@ const Category: Screen<CategoryProps> = ({
 
                 return (
                   <AccordionCard
-                    key={index}
+                    key={groupSlug}
                     id={`accordion-${index}`}
                     label={title}
                     visibleContent={

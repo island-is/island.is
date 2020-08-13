@@ -13,6 +13,7 @@ import {
 } from '@island.is/api/schema'
 import { GET_PAGE_QUERY } from '../queries'
 import { Screen } from '@island.is/web/types'
+import ArticleContent from '../../units/Content/ArticleContent'
 import {
   Header,
   LinkCardList,
@@ -34,6 +35,7 @@ import {
   ColumnProps,
   BoxProps,
   Breadcrumbs,
+  Stack,
 } from '@island.is/island-ui/core'
 import Sidebar, { SidebarProps } from './Sidebar'
 import * as styles from './AboutPage.treat'
@@ -150,17 +152,27 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
         <Background ref={setRef(slice.id)} id={slice.id} theme={page.theme}>
           <ContentBlock>
             <Header />
-            <Box padding={[0, 0, 6]}>
+            <Box paddingX={[0, 0, 6]} paddingTop={8}>
               <Columns collapseBelow="lg">
                 <Column width="9/12">
-                  <Breadcrumbs color="blue300" separatorColor="blue300">
-                    <Link href={makePath()}>
-                      <a>Ísland.is</a>
-                    </Link>
-                    <Link href={''}>
-                      <a>{page.title}</a>
-                    </Link>
-                  </Breadcrumbs>
+                  <div className={styles.indent}>
+                    <Stack space={2}>
+                      <Breadcrumbs color="blue300" separatorColor="blue300">
+                        <Link href={makePath()}>
+                          <a>Ísland.is</a>
+                        </Link>
+                        <Link href={''}>
+                          <a>{page.title}</a>
+                        </Link>
+                      </Breadcrumbs>
+                      <Typography variant="h1" as="h1" color="white">
+                        {slice.title}
+                      </Typography>
+                      <Typography variant="p" as="p" color="white">
+                        {slice.introduction}
+                      </Typography>
+                    </Stack>
+                  </div>
                   {slice.slices.map((slice) => (
                     <Section
                       key={slice.id}
@@ -197,7 +209,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                                 }}
                               >
                                 <Typography
-                                  variant="p"
+                                  variant={index === 0 ? 'p' : 'pSmall'}
                                   as="p"
                                   color={colors.main}
                                 >
@@ -235,11 +247,18 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       )
     case 'TimelineSlice':
       return (
-        <ContentBlock key={slice.id}>
-          <Box paddingX={[0, 0, 0, 6]}>
-            <Timeline {...slice} />
-          </Box>
-        </ContentBlock>
+        <Timeline
+          {...slice}
+          events={slice.events.map((event) => ({
+            ...event,
+            body: event.body && (
+              <ArticleContent
+                document={event.body}
+                locale={activeLocale as Locale}
+              />
+            ),
+          }))}
+        />
       )
     case 'HeadingSlice':
       return (
@@ -291,7 +310,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           ref={setRef(slice.id)}
           className={styles.gradient}
         >
-          <Layout width="7/12" boxProps={{ paddingY: 10 }}>
+          <Layout width="7/12" boxProps={{ paddingTop: 12, paddingBottom: 10 }}>
             <StoryList
               {...slice}
               stories={slice.stories.map((story) => ({
@@ -318,7 +337,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           ref={setRef(slice.id)}
           className={styles.gradient}
         >
-          <Layout width="7/12" boxProps={{ paddingY: 10 }}>
+          <Layout width="7/12" boxProps={{ paddingTop: 12, paddingBottom: 10 }}>
             <LogoList {...slice} images={slice.images.map((img) => img.url)} />
           </Layout>
         </div>

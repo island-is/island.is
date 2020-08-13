@@ -52,27 +52,26 @@ export const Image: FC<AnyImageType> = (image) => {
   const { src, thumbnail, alt, originalWidth, originalHeight } = normalizeImage(
     image,
   )
+
+  const thumbLoaded = useImageLoader(thumbnail)
   const imageLoaded = useImageLoader(src)
 
   return (
-    <div className={styles.container}>
-      <div
-        className={cn(styles.thumbnail, {
-          [styles.thumbnailHide]: imageLoaded,
+    <div
+      className={styles.container}
+      style={{ paddingTop: (originalHeight / originalWidth) * 100 + '%' }}
+    >
+      <img
+        src={thumbnail}
+        alt=""
+        className={cn(styles.image, styles.thumbnail, {
+          [styles.show]: thumbLoaded && !imageLoaded,
         })}
-        style={{
-          backgroundImage: `url(${thumbnail})`,
-          paddingTop: imageLoaded
-            ? 0
-            : (originalHeight / originalWidth) * 100 + '%',
-        }}
       />
       <img
         src={src}
         alt={alt}
-        className={cn(styles.image, {
-          [styles.imageShow]: imageLoaded,
-        })}
+        className={cn(styles.image, { [styles.show]: imageLoaded })}
       />
     </div>
   )
