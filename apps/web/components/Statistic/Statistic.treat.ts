@@ -1,23 +1,12 @@
 import { style } from 'treat'
 
 export const container = style({
-  maxWidth: '204px',
-  textAlign: 'center',
-})
-
-export const circle = style({
-  position: 'relative',
-  paddingTop: '100%',
+  display: 'flex',
+  minWidth: '204px',
+  height: '204px',
   borderRadius: '50%',
   background: 'white',
-})
-
-export const content = style({
-  position: 'absolute',
-  top: 0,
-  bottom: 0,
-  left: 0,
-  right: 0,
+  border: '1px solid black',
 })
 
 export const value = style({

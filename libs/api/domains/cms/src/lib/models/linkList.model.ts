@@ -3,7 +3,7 @@ import { Link } from './link.model'
 
 @ObjectType()
 export class LinkList {
-  @Field()
+  @Field({ nullable: true })
   title: string
 
   @Field(() => [Link])

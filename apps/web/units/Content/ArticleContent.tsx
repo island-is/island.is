@@ -357,14 +357,26 @@ const embeddedNodes = (locale) => ({
     component: Box,
     children: (node) => {
       return (
-        <Background background="dotted" paddingY={9} marginTop={5}>
+        <Background
+          background="dotted"
+          paddingTop={6}
+          paddingBottom={9}
+          marginTop={5}
+        >
           <ContentBlock>
-            <Box paddingX={[3, 3, 6, 0]}>
-              <Tiles columns={[2, 2, 4, 2, 4]} space={3}>
-                {node.data.target.fields.statistics.map(({ fields }) => (
+            <Box
+              paddingX={[3, 3, 6, 0]}
+              marginRight={3}
+              marginBottom={3}
+              display="flex"
+              justifyContent="center"
+              flexWrap="wrap"
+            >
+              {node.data.target.fields.statistics.map(({ fields }) => (
+                <Box display="flex" marginLeft={3} marginTop={3}>
                   <Statistic {...fields} />
-                ))}
-              </Tiles>
+                </Box>
+              ))}
             </Box>
           </ContentBlock>
         </Background>

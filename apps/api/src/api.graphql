@@ -214,7 +214,7 @@ type NumberBulletGroup {
 }
 
 type LinkList {
-  title: String!
+  title: String
   links: [Link!]!
 }
 
