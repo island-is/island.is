@@ -1,5 +1,18 @@
 apiVersion: v2
 name: air-discount-scheme
-description: Air-discount-scheme umbrella chart
+description: Air Discount Scheme umbrella chart
+dependencies:
+    - name: air-discount-scheme-api
+      repository: file://charts/air-discount-scheme-api
+      version: 0.0.1
+      alias: air-discount-scheme-api
+    - name: air-discount-scheme-backend
+      repository: file://charts/air-discount-scheme-backend
+      version: 0.0.1
+      alias: air-discount-scheme-backend
+    - name: air-discount-scheme-web
+      repository: file://charts/air-discount-scheme-web
+      version: 0.0.1
+      alias: air-discount-scheme-web
 type: application
 version: 0.0.1
