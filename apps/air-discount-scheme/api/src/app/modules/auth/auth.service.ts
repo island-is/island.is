@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
-
-import { User } from '../../../types'
+import { User } from '../user'
 import { Permissions } from './auth.types'
 
 const DEVELOPERS = [

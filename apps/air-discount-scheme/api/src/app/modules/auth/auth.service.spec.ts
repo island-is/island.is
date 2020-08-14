@@ -1,33 +1,44 @@
 import { Test } from '@nestjs/testing'
 
 import { AuthService } from './auth.service'
-import { AuthRepository } from './auth.repository'
 
 describe('AuthService', () => {
-  let authRepository: AuthRepository
   let authService: AuthService
+
+  const user = {
+    ssn: '1501933119',
+    name: 'tester',
+    mobile: '',
+    role: 'developer',
+  }
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      providers: [AuthService, AuthRepository],
+      providers: [AuthService],
     }).compile()
 
     authService = moduleRef.get(AuthService)
-    authRepository = moduleRef.get(AuthRepository)
   })
 
-  describe('getMessage', () => {
-    it('should return a greeting', () => {
-      // Arrange
-      jest
-        .spyOn(authRepository, 'getAuth')
-        .mockImplementation(() => 'Hi')
-
-      // Act
-      const message = authService.getMessage('test')
+  describe('getRole', () => {
+    it('should return a correct role', () => {
+      // Arrange & Act
+      const role = authService.getRole(user)
 
       // Assert
-      expect(message).toBe('Hi test!')
+      expect(role).toBe('developer')
+    })
+  })
+
+  describe('checkPermissions', () => {
+    it('should return true for valid permission', () => {
+      // Arrange & Act
+      const hasPermission = authService.checkPermissions(user, {
+        role: 'admin',
+      })
+
+      // Assert
+      expect(hasPermission).toBeTruthy()
     })
   })
 })

@@ -2,8 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  NotFoundException,
-  Param,
   Post,
   Query,
   Redirect,
@@ -15,24 +13,15 @@ import { uuid } from 'uuidv4'
 import jwt from 'jsonwebtoken'
 import { Entropy } from 'entropy-string'
 import IslandisLogin from 'islandis-login'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   REDIRECT_COOKIE_NAME,
   CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
-} from '@island.is/gjafakort/consts' // TODO: change
+} from '@island.is/air-discount-scheme/consts'
 import { environment } from '../../../environments'
-import { Credentials } from '../../../types'
-import { User } from './auth.model'
-import {
-  Cookie,
-  CookieOptions,
-  LogoutResponse,
-  VerifyResult,
-} from './auth.types'
-import { AuthDto } from './dto/auth.dto'
+import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
 
 const { samlEntryPoint, audience: audienceUrl, jwtSecret } = environment.auth
 
@@ -71,7 +60,6 @@ const loginIS = new IslandisLogin({
   audienceUrl,
 })
 
-@ApiTags('auth')
 @Controller('/api/auth')
 export class AuthController {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
@@ -150,7 +138,7 @@ export class AuthController {
   }
 
   @Get('/logout')
-  logout(@Res() res): LogoutResponse {
+  logout(@Res() res) {
     res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
     res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
     return res.json({ logout: true })

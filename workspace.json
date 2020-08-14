@@ -1451,6 +1451,37 @@
           }
         }
       }
+    },
+    "air-discount-scheme-consts": {
+      "root": "libs/air-discount-scheme/consts",
+      "sourceRoot": "libs/air-discount-scheme/consts/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/air-discount-scheme/consts/.eslintrc",
+            "tsConfig": [
+              "libs/air-discount-scheme/consts/tsconfig.lib.json",
+              "libs/air-discount-scheme/consts/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/air-discount-scheme/consts/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/air-discount-scheme/consts/jest.config.js",
+            "tsConfig": "libs/air-discount-scheme/consts/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

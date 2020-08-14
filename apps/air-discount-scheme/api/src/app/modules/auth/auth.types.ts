@@ -1,3 +1,5 @@
+import { User } from '../user'
+
 export type CookieOptions = {
   secure: boolean
   httpOnly: boolean
@@ -24,13 +26,7 @@ export type Permissions = {
   role?: 'developer' | 'admin' | 'tester' | 'user'
 }
 
-export type LogoutResponse = {
-  logout: boolean
-}
-
-export interface JwtPayload {
-  id: string;
-  hash: string;
-  iat: number;
-  exp: number;
+export type Credentials = {
+  user: User
+  csrfToken: string
 }

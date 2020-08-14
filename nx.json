@@ -121,6 +121,9 @@
     },
     "air-discount-scheme-backend": {
       "tags": []
+    },
+    "air-discount-scheme-consts": {
+      "tags": []
     }
   }
 }

@@ -1,16 +1,12 @@
 import { AuthenticationError, ForbiddenError } from 'apollo-server-express'
-import {
-  ExecutionContext,
-  Injectable,
-  UnauthorizedException,
-  UseGuards,
-} from '@nestjs/common'
+import { ExecutionContext, UseGuards } from '@nestjs/common'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host'
 import { AuthGuard } from '@nestjs/passport'
 
 import { Permissions } from './auth.types'
 import { AuthService } from './auth.service'
+import { User } from '../user'
 
 type AuthorizeOptions = {
   throwOnUnAuthorized?: boolean
@@ -32,10 +28,10 @@ class GraphQLAuthGuard extends AuthGuard('jwt') {
     return super.canActivate(new ExecutionContextHost([req]))
   }
 
-  handleRequest(err: any, user: any) {
+  handleRequest<TUser extends User>(err: Error, user: TUser): TUser {
     const { throwOnUnAuthorized, permissions } = this.options
     if (throwOnUnAuthorized && (err || !user)) {
-      new AuthenticationError(err || 'Unauthorized')
+      new AuthenticationError((err && err.message) || 'Unauthorized')
     }
 
     if (!authService.checkPermissions(user, permissions)) {

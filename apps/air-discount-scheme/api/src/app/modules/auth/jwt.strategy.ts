@@ -2,13 +2,14 @@ import { Injectable, Inject } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-jwt'
 
+import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/air-discount-scheme/consts'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { environment } from '../../../environments'
-import { JwtPayload } from './auth.types'
+import { Credentials } from './auth.types'
 
 const cookieExtractor = (req) => {
   if (req && req.cookies) {
-    return req.cookies['gjafakort.token']
+    return req.cookies[ACCESS_TOKEN_COOKIE_NAME]
   }
   return null
 }
@@ -23,9 +24,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     })
   }
 
-  async validate(req: Request, payload: JwtPayload) {
-    const { csrfToken, user } = payload
-    if (csrfToken && `Bearer ${csrfToken}` !== req.headers.authorization) {
+  validate(req: Request, { csrfToken, user }: Credentials) {
+    if (csrfToken && `Bearer ${csrfToken}` !== req.headers['authorization']) {
       this.logger.error('invalid csrf token')
       return null
     }
