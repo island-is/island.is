@@ -48,6 +48,7 @@ const Screen: FC<ScreenProps> = ({
     context: { dataSchema, formNode: screen },
   })
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [createApplication, { data }] = useMutation(CREATE_APPLICATION)
 
   const { reset, handleSubmit, errors } = hookFormData

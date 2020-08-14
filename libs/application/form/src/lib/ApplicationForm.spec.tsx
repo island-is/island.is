@@ -3,7 +3,7 @@ import { render } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import * as z from 'zod'
 
-import ApplicationForm from './ApplicationForm'
+import { ApplicationForm } from './ApplicationForm'
 import { buildForm, buildTextField } from '@island.is/application/schema'
 
 describe(' ApplicationForm', () => {

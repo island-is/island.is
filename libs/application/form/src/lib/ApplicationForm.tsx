@@ -1,5 +1,5 @@
 import React, { FC, useReducer } from 'react'
-import { ApolloProvider, useQuery } from '@apollo/client'
+import { ApolloProvider } from '@apollo/client'
 
 import { FormValue, Form } from '@island.is/application/schema'
 import FormProgress from '../components/FormProgress/'
