@@ -1375,7 +1375,18 @@
             "outputPath": "dist/apps/air-discount-scheme/backend",
             "main": "apps/air-discount-scheme/backend/src/main.ts",
             "tsConfig": "apps/air-discount-scheme/backend/tsconfig.app.json",
-            "assets": ["apps/air-discount-scheme/backend/src/assets"]
+            "assets": [
+              {
+                "glob": "*sequelize*",
+                "input": "apps/air-discount-scheme/backend",
+                "output": "./"
+              },
+              {
+                "glob": "migrations",
+                "input": "apps/air-discount-scheme/backend",
+                "output": "./"
+              }
+            ]
           },
           "configurations": {
             "production": {
