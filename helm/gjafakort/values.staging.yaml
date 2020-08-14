@@ -11,6 +11,8 @@ gjafakort-api:
     saml_entry_point: 'https://innskraning.island.is/?id=ferdagjof.dev'
     sentry_dsn: 'https://91d3faa6cc0545a9971ea989eaa48fb9@o406638.ingest.sentry.io/5274533'
     yay_url: 'https://dev-serviceapi.yay.is'
+    nova_url: 'https://smsapi.devnova.is'
+    nova_username: 'IslandIs_User_Development'
 
   ingress:
     annotations:
@@ -25,7 +27,9 @@ gjafakort-api:
 
 gjafakort-web:
   environment:
-    sentry_auth_token: 'https://7d11c5b6d23449659e812f4cb0b711d3@o406638.ingest.sentry.io/5274507'
+    sentry_dsn: 'https://7d11c5b6d23449659e812f4cb0b711d3@o406638.ingest.sentry.io/5274507'
+    sentry_org: 'island_is'
+    sentry_project: 'gjafakort-web'
 
   ingress:
     annotations:
