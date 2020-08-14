@@ -11,6 +11,8 @@ air-discount-scheme-api:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api
   env:
     BACKEND_URL: "http://web-air-discount-scheme-backend"
+  healthCheck:
+    livenessPath: /liveness
 
 air-discount-scheme-web:
   namespace: air-discount-scheme
@@ -28,4 +30,9 @@ air-discount-scheme-backend:
     args: ["sequelize-cli", "db:migrate"]
   env:
   secrets:
-    DB_PASSWORD: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+    DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+  initContainer:
+    secrets:
+      DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+  healthCheck:
+    livenessPath: /liveness
