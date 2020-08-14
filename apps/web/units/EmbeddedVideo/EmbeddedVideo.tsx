@@ -18,11 +18,11 @@ const EmbeddedVideo: FC<EmbeddedVideoProps> = ({ title, url }) => {
     }
   }
 
-  if (url.includes('youtube.com')) {
-    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
+  if (url.match(/(youtube.com|youtu.be)/g)) {
+    const regExp = /^.*((youtu.be|youtube.com\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/
     const match = url.match(regExp)
 
-    const youtubeId = match && match[7].length == 11 ? match[7] : false
+    const youtubeId = match && match[7].length === 11 ? match[7] : false
 
     if (youtubeId) {
       embedUrl = `https://www.youtube.com/embed/${youtubeId}`
