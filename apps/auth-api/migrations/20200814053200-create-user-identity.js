@@ -11,6 +11,7 @@ module.exports = {
           name VARCHAR NOT NULL,
           provider_name VARCHAR NOT NULL,
           provider_subject_id VARCHAR NOT NULL,
+          profile_id UUID,
           created TIMESTAMP WITH TIME ZONE DEFAULT now(),
           modified TIMESTAMP WITH TIME ZONE,
           UNIQUE (subject_id),
@@ -25,6 +26,20 @@ module.exports = {
           value_type VARCHAR NOT NULL,
           issuer VARCHAR NOT NULL,
           original_issuer VARCHAR NOT NULL,
+          created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+          modified TIMESTAMP WITH TIME ZONE,
+          PRIMARY KEY (id)
+        );
+
+        CREATE TABLE user_profile (
+          id UUID NOT NULL,
+          email VARCHAR,
+          email_verified BOOLEAN NOT NULL DEFAULT false,
+          zone_info VARCHAR,
+          locale VARCHAR,
+          phone_number VARCHAR,
+          phone_number_verified BOOLEAN NOT NULL DEFAULT false,
+          bank_account VARCHAR,
           created TIMESTAMP WITH TIME ZONE DEFAULT now(),
           modified TIMESTAMP WITH TIME ZONE,
           PRIMARY KEY (id)
