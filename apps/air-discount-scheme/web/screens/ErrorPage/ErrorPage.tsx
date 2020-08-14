@@ -1,6 +1,5 @@
 import React from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 
 import {
   Box,
@@ -15,8 +14,6 @@ function ErrorPage() {
   const {
     t: { error: t, routes },
   } = useI18n()
-
-  const router = useRouter()
 
   return (
     <Box paddingX="gutter">

@@ -1,11 +1,11 @@
 import { createContext } from 'react'
 
-import { AuthUser } from '@island.is/air-discount-scheme-web/graphql/schema'
+import { User } from '@island.is/air-discount-scheme-web/graphql/schema'
 
 const UserContext = createContext({
   isAuthenticated: false,
-  user: null as AuthUser,
-  setUser: (_: AuthUser) => undefined,
+  user: null as User,
+  setUser: (_: User) => undefined,
 })
 
 export default UserContext

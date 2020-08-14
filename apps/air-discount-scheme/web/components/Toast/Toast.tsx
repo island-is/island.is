@@ -9,7 +9,6 @@ import {
 } from '@island.is/island-ui/core'
 
 import { NotificationService } from '../../services'
-import { useI18n } from '../../i18n'
 
 // TODO: change this to push service (ability to show queue of multiple toasts) and add optional timer
 
@@ -23,9 +22,6 @@ interface NotificationStatus {
 }
 
 function Toast() {
-  const {
-    t: { error: t },
-  } = useI18n()
   const [notification, setNotification] = useState({
     type: undefined,
     message: {
