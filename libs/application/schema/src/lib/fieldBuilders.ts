@@ -1,6 +1,8 @@
 import { Condition } from '../types/Condition'
 import {
   CheckboxField,
+  CustomField,
+  CustomFieldComponents,
   DateField,
   FieldComponents,
   FieldTypes,
@@ -133,5 +135,29 @@ export function buildTextField(data: {
     name,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
+  }
+}
+
+export function buildCustomField(
+  data: {
+    condition?: Condition
+    id: string
+    name: string
+    required?: boolean
+    component: CustomFieldComponents
+  },
+  props: object,
+): CustomField {
+  const { condition, id, name, required = false, component } = data
+  return {
+    children: undefined,
+    required,
+    isQuestion: true,
+    condition,
+    id,
+    name,
+    type: FieldTypes.CUSTOM,
+    component,
+    props,
   }
 }
