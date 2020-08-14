@@ -43,7 +43,7 @@ class GraphQLAuthGuard extends AuthGuard('jwt') {
 }
 
 export const Authorize = ({
-  throwOnUnAuthorized = false,
+  throwOnUnAuthorized = true,
   permissions = {},
 }: AuthorizeOptions): MethodDecorator & ClassDecorator => {
   return UseGuards(new GraphQLAuthGuard({ throwOnUnAuthorized, permissions }))
