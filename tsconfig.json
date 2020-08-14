@@ -20,6 +20,7 @@
       "@island.is/island-ui/core": ["libs/island-ui/core/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/gjafakort-web/*": ["apps/gjafakort/web/*"],
+      "@island.is/air-discount-scheme-web/*": ["apps/air-discount-scheme/web/*"],
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],

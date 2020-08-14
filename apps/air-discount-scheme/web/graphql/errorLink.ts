@@ -2,7 +2,6 @@ import { ApolloError } from 'apollo-client'
 import Router from 'next/router'
 import { onError, ErrorResponse } from 'apollo-link-error'
 import { ServerError } from 'apollo-link-http-common'
-import { CONFIRM_CODE_ERROR } from '@island.is/gjafakort/consts'
 
 import { NotificationService, api } from '../services'
 
@@ -18,8 +17,6 @@ export default onError(({ graphQLErrors, networkError }: ErrorResponse) => {
           return api.logout().then(() => Router.reload())
         case 'FORBIDDEN':
           return Router.push('/404')
-        case CONFIRM_CODE_ERROR:
-          return
         default:
           return NotificationService.onGraphQLError({
             graphQLErrors,

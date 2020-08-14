@@ -21,7 +21,7 @@ export const cache = new InMemoryCache({
 })
 
 const client = new ApolloClient({
-  name: 'gjafakort-web-client',
+  name: 'air-discount-scheme-client',
   version: '0.1',
   link,
   cache,

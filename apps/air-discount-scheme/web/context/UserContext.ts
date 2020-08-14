@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 
-import { AuthUser } from '@island.is/gjafakort-web/graphql/schema'
+import { AuthUser } from '@island.is/air-discount-scheme-web/graphql/schema'
 
 const UserContext = createContext({
   isAuthenticated: false,

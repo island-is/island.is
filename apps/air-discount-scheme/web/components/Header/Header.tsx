@@ -9,8 +9,8 @@ import { Header as IslandUIHeader } from '@island.is/island-ui/core'
 import { UserContext } from '../../context'
 import { useI18n } from '../../i18n'
 import { api } from '../../services'
-import { getRoutefromLocale } from '@island.is/gjafakort-web/utils/routesMapper'
-import { Locale } from '@island.is/gjafakort-web/i18n/I18n'
+import { getRoutefromLocale } from '@island.is/air-discount-scheme-web/utils'
+import { Locale } from '@island.is/air-discount-scheme-web/i18n/I18n'
 
 export const UserQuery = gql`
   query UserQuery {
@@ -59,7 +59,7 @@ function Header() {
     <IslandUIHeader
       logoRender={(logo) => (
         <Link href={routes.home}>
-          <a>{logo}</a>
+          <a href="/">{logo}</a>
         </Link>
       )}
       logoutText={t.logout}
