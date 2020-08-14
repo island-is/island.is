@@ -157,6 +157,7 @@ export const Sidebar: FC<SidebarProps> = ({
   return (
     <Box
       ref={parentRef}
+      position="relative"
       background="purple100"
       borderRadius="large"
       padding={4}

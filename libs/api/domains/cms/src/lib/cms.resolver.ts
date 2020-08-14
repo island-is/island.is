@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver, ResolveField } from '@nestjs/graphql'
 import { Article } from './models/article.model'
 import { GetArticleInput } from './dto/getArticle.input'
 import { News } from './models/news.model'
@@ -6,16 +6,20 @@ import { GetNewsInput } from './dto/getNews.input'
 import { GetNewsListInput } from './dto/getNewsList.input'
 import { PaginatedNews } from './models/paginatedNews.model'
 import { Namespace } from './models/namespace.model'
-import { Page } from './models/page.model'
+import { AboutPage } from './models/aboutPage.model'
+import { LandingPage } from './models/landingPage.model'
 import { GetNamespaceInput } from './dto/getNamespace.input'
-import { GetPageInput } from './dto/getPage.input'
+import { GetAboutPageInput } from './dto/getAboutPage.input'
+import { GetLandingPageInput } from './dto/getLandingPage.input'
 import {
   getArticle,
   getNews,
   getNewsList,
   getNamespace,
-  getPage,
+  getAboutPage,
+  getLandingPage,
 } from './services'
+import { LatestNewsSlice } from './models/slices/latestNewsSlice.model'
 
 @Resolver()
 export class CmsResolver {
@@ -41,8 +45,26 @@ export class CmsResolver {
     return getNamespace(input?.namespace ?? '', input?.lang ?? 'is-IS')
   }
 
-  @Query(() => Page, { nullable: true })
-  getPage(@Args('input') input: GetPageInput): Promise<Page | null> {
-    return getPage(input)
+  @Query(() => AboutPage, { nullable: true })
+  getAboutPage(
+    @Args('input') input: GetAboutPageInput,
+  ): Promise<AboutPage | null> {
+    return getAboutPage(input)
+  }
+
+  @Query(() => LandingPage, { nullable: true })
+  getLandingPage(
+    @Args('input') input: GetLandingPageInput,
+  ): Promise<LandingPage | null> {
+    return getLandingPage(input)
+  }
+}
+
+@Resolver((of) => LatestNewsSlice)
+export class LatestNewsSliceResolver {
+  @ResolveField(() => [News])
+  async news() {
+    const { news } = await getNewsList({ lang: 'is', perPage: 3 })
+    return news
   }
 }

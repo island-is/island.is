@@ -157,10 +157,9 @@ export type NumberBullet = {
   body: Scalars['String']
 }
 
-export type Page = {
-  __typename?: 'Page'
+export type AboutPage = {
+  __typename?: 'AboutPage'
   title: Scalars['String']
-  slug: Scalars['String']
   seoDescription: Scalars['String']
   theme: Scalars['String']
   slices: Array<Slice>
@@ -264,6 +263,23 @@ export type NumberBulletGroup = {
   bullets: Array<NumberBullet>
 }
 
+export type LinkList = {
+  __typename?: 'LinkList'
+  title: Scalars['String']
+  links: Array<Link>
+}
+
+export type LandingPage = {
+  __typename?: 'LandingPage'
+  title: Scalars['String']
+  slug: Scalars['String']
+  introduction: Scalars['String']
+  image?: Maybe<Image>
+  actionButton?: Maybe<Link>
+  links?: Maybe<LinkList>
+  content?: Maybe<Scalars['String']>
+}
+
 export type Query = {
   __typename?: 'Query'
   helloWorld: HelloWorld
@@ -275,7 +291,8 @@ export type Query = {
   getNews?: Maybe<News>
   getNewsList: PaginatedNews
   getNamespace?: Maybe<Namespace>
-  getPage?: Maybe<Page>
+  getAboutPage?: Maybe<AboutPage>
+  getLandingPage?: Maybe<LandingPage>
 }
 
 export type QueryHelloWorldArgs = {
@@ -314,8 +331,12 @@ export type QueryGetNamespaceArgs = {
   input: GetNamespaceInput
 }
 
-export type QueryGetPageArgs = {
-  input: GetPageInput
+export type QueryGetAboutPageArgs = {
+  input: GetAboutPageInput
+}
+
+export type QueryGetLandingPageArgs = {
+  input: GetLandingPageInput
 }
 
 export type HelloWorldInput = {
@@ -379,7 +400,11 @@ export type GetNamespaceInput = {
   lang: Scalars['String']
 }
 
-export type GetPageInput = {
+export type GetAboutPageInput = {
+  lang: Scalars['String']
+}
+
+export type GetLandingPageInput = {
   slug: Scalars['String']
   lang: Scalars['String']
 }
@@ -518,8 +543,8 @@ export type ResolversTypes = {
   Story: ResolverTypeWrapper<Story>
   LinkCard: ResolverTypeWrapper<LinkCard>
   NumberBullet: ResolverTypeWrapper<NumberBullet>
-  Page: ResolverTypeWrapper<
-    Omit<Page, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
+  AboutPage: ResolverTypeWrapper<
+    Omit<AboutPage, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
   >
   Slice:
     | ResolversTypes['PageHeaderSlice']
@@ -551,6 +576,8 @@ export type ResolversTypes = {
     | ResolversTypes['NumberBulletGroup']
   IconBullet: ResolverTypeWrapper<IconBullet>
   NumberBulletGroup: ResolverTypeWrapper<NumberBulletGroup>
+  LinkList: ResolverTypeWrapper<LinkList>
+  LandingPage: ResolverTypeWrapper<LandingPage>
   Query: ResolverTypeWrapper<{}>
   HelloWorldInput: HelloWorldInput
   SearcherInput: SearcherInput
@@ -564,7 +591,8 @@ export type ResolversTypes = {
   GetNewsListInput: GetNewsListInput
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   GetNamespaceInput: GetNamespaceInput
-  GetPageInput: GetPageInput
+  GetAboutPageInput: GetAboutPageInput
+  GetLandingPageInput: GetLandingPageInput
 }
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -588,7 +616,9 @@ export type ResolversParentTypes = {
   Story: Story
   LinkCard: LinkCard
   NumberBullet: NumberBullet
-  Page: Omit<Page, 'slices'> & { slices: Array<ResolversParentTypes['Slice']> }
+  AboutPage: Omit<AboutPage, 'slices'> & {
+    slices: Array<ResolversParentTypes['Slice']>
+  }
   Slice:
     | ResolversParentTypes['PageHeaderSlice']
     | ResolversParentTypes['TimelineSlice']
@@ -617,6 +647,8 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['NumberBulletGroup']
   IconBullet: IconBullet
   NumberBulletGroup: NumberBulletGroup
+  LinkList: LinkList
+  LandingPage: LandingPage
   Query: {}
   HelloWorldInput: HelloWorldInput
   SearcherInput: SearcherInput
@@ -630,7 +662,8 @@ export type ResolversParentTypes = {
   GetNewsListInput: GetNewsListInput
   Boolean: Scalars['Boolean']
   GetNamespaceInput: GetNamespaceInput
-  GetPageInput: GetPageInput
+  GetAboutPageInput: GetAboutPageInput
+  GetLandingPageInput: GetLandingPageInput
 }
 
 export type HelloWorldResolvers<
@@ -855,12 +888,11 @@ export type NumberBulletResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export type PageResolvers<
+export type AboutPageResolvers<
   ContextType = Context,
-  ParentType extends ResolversParentTypes['Page'] = ResolversParentTypes['Page']
+  ParentType extends ResolversParentTypes['AboutPage'] = ResolversParentTypes['AboutPage']
 > = {
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   seoDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   theme?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slices?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
@@ -1027,6 +1059,33 @@ export type NumberBulletGroupResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type LinkListResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['LinkList'] = ResolversParentTypes['LinkList']
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type LandingPageResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['LandingPage'] = ResolversParentTypes['LandingPage']
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  introduction?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
+  actionButton?: Resolver<
+    Maybe<ResolversTypes['Link']>,
+    ParentType,
+    ContextType
+  >
+  links?: Resolver<Maybe<ResolversTypes['LinkList']>, ParentType, ContextType>
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type QueryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
@@ -1085,11 +1144,17 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetNamespaceArgs, 'input'>
   >
-  getPage?: Resolver<
-    Maybe<ResolversTypes['Page']>,
+  getAboutPage?: Resolver<
+    Maybe<ResolversTypes['AboutPage']>,
     ParentType,
     ContextType,
-    RequireFields<QueryGetPageArgs, 'input'>
+    RequireFields<QueryGetAboutPageArgs, 'input'>
+  >
+  getLandingPage?: Resolver<
+    Maybe<ResolversTypes['LandingPage']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetLandingPageArgs, 'input'>
   >
 }
 
@@ -1110,7 +1175,7 @@ export type Resolvers<ContextType = Context> = {
   Story?: StoryResolvers<ContextType>
   LinkCard?: LinkCardResolvers<ContextType>
   NumberBullet?: NumberBulletResolvers<ContextType>
-  Page?: PageResolvers<ContextType>
+  AboutPage?: AboutPageResolvers<ContextType>
   Slice?: SliceResolvers
   PageHeaderSlice?: PageHeaderSliceResolvers<ContextType>
   TimelineSlice?: TimelineSliceResolvers<ContextType>
@@ -1124,6 +1189,8 @@ export type Resolvers<ContextType = Context> = {
   BulletEntry?: BulletEntryResolvers
   IconBullet?: IconBulletResolvers<ContextType>
   NumberBulletGroup?: NumberBulletGroupResolvers<ContextType>
+  LinkList?: LinkListResolvers<ContextType>
+  LandingPage?: LandingPageResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
 }
 

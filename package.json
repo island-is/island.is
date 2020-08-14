@@ -123,6 +123,7 @@
     "react-keyed-flatten-children": "1.2.0",
     "react-number-format": "4.4.1",
     "react-select": "3.1.0",
+    "react-top-loading-bar": "^2.0.0",
     "react-uid": "2.2.0",
     "reakit": "1.0.2",
     "reflect-metadata": "0.1.13",

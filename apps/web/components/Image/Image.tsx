@@ -48,7 +48,7 @@ const useImageLoader = (url: string): boolean => {
   return loaded
 }
 
-const Image: FC<AnyImageType> = (image) => {
+export const Image: FC<AnyImageType> = (image) => {
   const { src, thumbnail, alt, originalWidth, originalHeight } = normalizeImage(
     image,
   )
