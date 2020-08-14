@@ -21,7 +21,7 @@ type ApplicationProps = {
   initialAnswers: FormValue
 }
 
-const ApplicatoinFormWithProvider: FC<ApplicationProps> = ({
+const ApplicationFormBody: FC<ApplicationProps> = ({
   form,
   initialAnswers,
 }) => {
@@ -101,6 +101,6 @@ const ApplicatoinFormWithProvider: FC<ApplicationProps> = ({
 
 export const ApplicationForm = (props: ApplicationProps) => (
   <ApolloProvider client={client}>
-    <ApplicatoinFormWithProvider {...props} />
+    <ApplicationFormBody {...props} />
   </ApolloProvider>
 )

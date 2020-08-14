@@ -14,10 +14,12 @@ describe('Application', () => {
     const response = await request(app.getHttpServer())
       .post('/application')
       .send({
-        applicant: '221290-2169',
+        applicant: '123456-4321',
         state: 'PENDING',
-        attachments: ['https://google.com', 'https://island.is'],
+        attachments: ['https://island.is'],
         typeId: 'EXAMPLE',
+        assignee: '123456-1234',
+        externalId: '123',
         answers: {
           ['key-1']: 'some answer',
           ['key-2']: 'another answer',
