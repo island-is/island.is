@@ -2,12 +2,9 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { Slice } from './slices/slice.model'
 
 @ObjectType()
-export class Page {
+export class AboutPage {
   @Field()
   title: string
-
-  @Field()
-  slug: string
 
   @Field()
   seoDescription: string
