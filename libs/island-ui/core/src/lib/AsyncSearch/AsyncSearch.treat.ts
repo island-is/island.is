@@ -125,3 +125,7 @@ export const loadingIconSizes = styleMap({
     right: 66,
   },
 })
+
+export const white = style({
+  outline: '5px solid red',
+})

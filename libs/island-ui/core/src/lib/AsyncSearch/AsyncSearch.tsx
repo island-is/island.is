@@ -13,6 +13,7 @@ export type ItemCmpProps = {
   active?: boolean
   selected?: boolean
   colored?: boolean
+  white?: boolean
 }
 
 export type AsyncSearchOption = {
@@ -33,6 +34,7 @@ export interface AsyncSearchProps {
   size?: AsyncSearchSizes
   loading?: boolean
   closeMenuOnSubmit?: boolean
+  white?: boolean
   onSubmit?: (inputValue: string, selectedOption?: AsyncSearchOption) => void
   onClearItems?: () => void
   onChange?: (selection: object) => void
@@ -57,6 +59,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
       inputValue,
       closeMenuOnSubmit,
       initialInputValue,
+      white,
       onChange,
       onSubmit,
       onClearItems,
@@ -137,6 +140,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
               className={cn(styles.wrapper, {
                 [styles.focused]: shouldShowItems || focused,
                 [styles.open]: shouldShowItems,
+                [styles.white]: white,
               })}
             >
               <div

@@ -32,6 +32,7 @@ interface SearchInputProps {
   autocomplete?: boolean
   placeholder?: string
   onSubmit?: (inputValue: string, selectedOption: AsyncSearchOption) => void
+  white?: boolean
 }
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
@@ -44,6 +45,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       autocomplete = true,
       placeholder = '',
       onSubmit,
+      white,
     },
     ref,
   ) => {
@@ -173,6 +175,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
     return (
       <AsyncSearch
+        white={white}
         ref={ref}
         size={size}
         label={label}

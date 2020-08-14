@@ -44,6 +44,7 @@ export const FixedNav: FC = () => {
           >
             <Box>
               <SearchInput
+                white
                 size="medium"
                 activeLocale="is"
                 placeholder="Leitaðu á Ísland.is"
@@ -52,8 +53,9 @@ export const FixedNav: FC = () => {
             </Box>
             <Box marginLeft={2}>
               <Button
+                white
                 variant="menu"
-                icon="arrowRight"
+                icon="arrowUp"
                 onClick={() => {
                   window.scrollTo(0, 0)
                 }}
