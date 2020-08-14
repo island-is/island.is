@@ -17,6 +17,19 @@ module.exports = {
           PRIMARY KEY (id)
         );
 
+        CREATE TABLE claim (
+          id UUID NOT NULL,
+          user_identity_id UUID NOT NULL,
+          type VARCHAR NOT NULL,
+          value VARCHAR NOT NULL,
+          value_type VARCHAR NOT NULL,
+          issuer VARCHAR NOT NULL,
+          original_issuer VARCHAR NOT NULL,
+          created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+          modified TIMESTAMP WITH TIME ZONE,
+          PRIMARY KEY (id)
+        );
+
       COMMIT;
     `)
   },

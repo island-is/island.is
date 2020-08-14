@@ -5,9 +5,12 @@ import {
     Model,
     Table,
     UpdatedAt,
+    HasMany,
   } from 'sequelize-typescript'
-  import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
+import { Claim } from './claim.model'
   
+
   @Table({
     tableName: 'user_identity',
     indexes: [
@@ -62,5 +65,8 @@ import {
     @UpdatedAt
     @ApiProperty()
     readonly modified: Date
+
+    @HasMany(() => Claim)
+    @ApiProperty()
+    readonly claims: Claim[]
   }
-  
