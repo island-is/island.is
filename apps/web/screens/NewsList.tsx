@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import DefaultErrorPage from 'next/error'
 import { Screen } from '../types'
-import Select from '../components/Select/Select'
+import NativeSelect from '../components/Select/Select'
 import Bullet from '../components/Bullet/Bullet'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
@@ -21,6 +21,10 @@ import {
   Columns,
   Column,
   Pagination,
+  Hidden,
+  Select,
+  Option,
+  Tiles,
 } from '@island.is/island-ui/core'
 import { GET_NEWS_LIST_QUERY } from './queries'
 import { NewsListLayout } from './Layouts/Layouts'
@@ -66,10 +70,34 @@ const NewsList: Screen<NewsListProps> = ({
   const years = Object.keys(datesByYear)
   const months = datesByYear[selectedYear] ?? []
 
-  const options = years.map((year) => ({
+  const yearOptions = years.map((year) => ({
     label: year,
     value: year,
   }))
+
+  const monthOptions = [
+    {
+      label: 'Allt árið',
+      value: undefined,
+    },
+  ].concat(
+    months.map((date) => ({
+      label: capitalize(format(date, 'MMMM')),
+      value: date.getMonth(),
+    })),
+  )
+
+  const makeHref = (y: string | number, m?: string | number) => {
+    const query: { [k: string]: number | string } = { y }
+    if (m != null) {
+      query.m = m
+    }
+
+    return {
+      pathname: makePath('news'),
+      query,
+    }
+  }
 
   const sidebar = (
     <Stack space={3}>
@@ -77,42 +105,21 @@ const NewsList: Screen<NewsListProps> = ({
         Fréttir og tilkynningar
       </Typography>
       <Divider weight="alternate" />
-      <Select
+      <NativeSelect
         name="year"
         value={selectedYear.toString()}
-        options={options}
-        onChange={(e) => {
-          Router.push({
-            pathname: makePath('news'),
-            query: { y: e.target.value },
-          })
-        }}
+        options={yearOptions}
+        onChange={(e) => Router.push(makeHref(e.target.value))}
       />
-
       <Typography variant="p" as="p">
-        <Link
-          href={{
-            pathname: makePath('news'),
-            query: {
-              y: selectedYear,
-            },
-          }}
-        >
-          <a>Allt árið {selectedYear}</a>
+        <Link href={makeHref(selectedYear)}>
+          <a>Allt árið</a>
         </Link>
         {selectedMonth === undefined && <Bullet align="right" />}
       </Typography>
       {months.map((date: Date) => (
         <Typography key={date.toISOString()} variant="p" as="p">
-          <Link
-            href={{
-              pathname: makePath('news'),
-              query: {
-                y: date.getFullYear(),
-                m: date.getMonth(),
-              },
-            }}
-          >
+          <Link href={makeHref(date.getFullYear(), date.getMonth())}>
             <a>{capitalize(format(date, 'MMMM'))}</a>
           </Link>
           {selectedMonth === date.getMonth() && <Bullet align="right" />}
@@ -136,9 +143,36 @@ const NewsList: Screen<NewsListProps> = ({
               <a>Fréttir og tilkynningar</a>
             </Link>
           </Breadcrumbs>
-          <Typography variant="h1" as="h1">
-            {selectedYear}
-          </Typography>
+          <Hidden below="lg">
+            <Typography variant="h1" as="h1">
+              {selectedYear}
+            </Typography>
+          </Hidden>
+
+          <Hidden above="md">
+            <Tiles space={3} columns={2}>
+              <Select
+                label="Ár"
+                placeholder="Ár"
+                value={yearOptions.find(
+                  (o) => o.value === selectedYear.toString(),
+                )}
+                options={yearOptions}
+                onChange={({ value }: Option) => Router.push(makeHref(value))}
+                name="year"
+              />
+              <Select
+                label="Mánuður"
+                placeholder="Allt árið"
+                value={monthOptions.find((o) => o.value === selectedMonth)}
+                options={monthOptions}
+                onChange={({ value }: Option) =>
+                  Router.push(makeHref(selectedYear, value))
+                }
+                name="month"
+              />
+            </Tiles>
+          </Hidden>
 
           {newsList.map((newsItem) => (
             <NewsListItem key={newsItem.id} newsItem={newsItem} />
