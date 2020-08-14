@@ -26,7 +26,15 @@ export const PageLoader = () => {
     }
   }, [])
 
-  return <LoadingBar color={theme.color.red400} ref={ref} />
+  const colorGradiant = `linear-gradient(90deg,
+    ${theme.color.blue400} 0%,
+    ${theme.color.blue600} 25%,
+    ${theme.color.purple400} 50%,
+    ${theme.color.roseTinted400} 75%,
+    ${theme.color.red400} 100%
+  )`
+
+  return <LoadingBar color={colorGradiant} ref={ref} />
 }
 
 export default PageLoader
