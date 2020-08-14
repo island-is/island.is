@@ -108,6 +108,9 @@
     },
     "island-ui-theme": {
       "tags": []
+    },
+    "auth-api": {
+      "tags": []
     }
   }
 }
