@@ -1,13 +1,56 @@
 import { Injectable } from '@nestjs/common'
 
-import { AuthRepository } from './auth.repository'
+
+import { User } from '../../../types'
+import { Permissions } from './auth.types'
+
+const DEVELOPERS = [
+  /* Vice Versa */
+  '1501933119', // Darri
+  '2101932009', // David
+
+  /* Kosmos & Kaos */
+  '2501893469', // Brian
+]
+
+const ADMINS = [
+  /* Stafrænt Ísland */
+  '1903795829', // Örvar
+]
+
+const TESTERS = [
+  /* Stafrænt Ísland */
+  '1903795829', // Örvar
+]
 
 @Injectable()
 export class AuthService {
-  constructor(private repository: AuthRepository) {}
+  getRole(user: User): Permissions['role'] {
+    if (DEVELOPERS.includes(user.ssn)) {
+      return 'developer'
+    } else if (ADMINS.includes(user.ssn)) {
+      return 'admin'
+    } else if (TESTERS.includes(user.ssn)) {
+      return 'tester'
+    } else {
+      return 'user'
+    }
+  }
 
-  getMessage(name: string) {
-    const auth = this.repository.getAuth()
-    return `${auth} ${name}!`
+  checkPermissions(user: User, { role }: Permissions): boolean {
+    switch (role) {
+      case 'developer':
+        return DEVELOPERS.includes(user.ssn)
+      case 'admin':
+        return [...ADMINS, ...DEVELOPERS].includes(user.ssn)
+      case 'tester':
+        return false
+      default: {
+        if (role) {
+          return false
+        }
+        return true
+      }
+    }
   }
 }

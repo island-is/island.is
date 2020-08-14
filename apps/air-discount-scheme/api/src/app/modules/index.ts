@@ -1,1 +1,2 @@
-export { AuthModule } from './auth/auth.module'
+export { AuthModule } from './auth'
+export { UserModule } from './user'

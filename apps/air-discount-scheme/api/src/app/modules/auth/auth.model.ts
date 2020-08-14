@@ -1,16 +1,16 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 @ObjectType()
-export class Auth {
-  @Field()
-  ssn: string
+export class User {
+  @Field(type => ID, { nullable: true })
+  ssn?: string
 
-  @Field()
-  name: string
+  @Field({ nullable: true })
+  name?: string
 
-  @Field()
+  @Field({ nullable: true })
   mobile?: string
 
-  @Field()
-  role: string
+  @Field({ nullable: true })
+  role?: string
 }

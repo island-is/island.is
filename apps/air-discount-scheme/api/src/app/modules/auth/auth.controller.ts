@@ -9,6 +9,7 @@ import {
   Redirect,
   Req,
   Res,
+  Inject,
 } from '@nestjs/common'
 import { uuid } from 'uuidv4'
 import jwt from 'jsonwebtoken'
@@ -16,17 +17,21 @@ import { Entropy } from 'entropy-string'
 import IslandisLogin from 'islandis-login'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   REDIRECT_COOKIE_NAME,
   CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
 } from '@island.is/gjafakort/consts' // TODO: change
-import { logger } from '@island.is/logging'
 import { environment } from '../../../environments'
 import { Credentials } from '../../../types'
-import { Auth } from './auth.model'
-import { AuthService } from './auth.service'
-import { Cookie, CookieOptions, LogoutResponse, VerifyResult } from './auth.types'
+import { User } from './auth.model'
+import {
+  Cookie,
+  CookieOptions,
+  LogoutResponse,
+  VerifyResult,
+} from './auth.types'
 import { AuthDto } from './dto/auth.dto'
 
 const { samlEntryPoint, audience: audienceUrl, jwtSecret } = environment.auth
@@ -67,18 +72,18 @@ const loginIS = new IslandisLogin({
 })
 
 @ApiTags('auth')
-@Controller('auth')
+@Controller('/api/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
   @Post('/callback')
   @Redirect('/', 302)
-  async callback(@Body() token: string, @Res() res, @Req() req) {
+  async callback(@Body('token') token, @Res() res, @Req() req) {
     let verifyResult: VerifyResult
     try {
       verifyResult = await loginIS.verify(token)
     } catch (err) {
-      logger.error(err)
+      this.logger.error(err)
       return { url: '/error' }
     }
 
@@ -86,7 +91,7 @@ export class AuthController {
     const redirectCookie = req.cookies[REDIRECT_COOKIE.name]
     res.clearCookie(REDIRECT_COOKIE.name, REDIRECT_COOKIE.options)
     if (!redirectCookie) {
-      logger.error('Redirect cookie not sent', {
+      this.logger.error('Redirect cookie not sent', {
         extra: {
           user,
         },
@@ -96,7 +101,7 @@ export class AuthController {
 
     const { authId, returnUrl } = redirectCookie
     if (!user || authId !== user?.authId) {
-      logger.error('Could not verify user authenticity', {
+      this.logger.error('Could not verify user authenticity', {
         extra: {
           user,
           authId,
@@ -145,9 +150,9 @@ export class AuthController {
   }
 
   @Get('/logout')
-  logout(@Req() req): LogoutResponse {
-    req.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
-    req.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
-    return { logout: true }
+  logout(@Res() res): LogoutResponse {
+    res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
+    res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
+    return res.json({ logout: true })
   }
 }

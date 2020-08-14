@@ -27,3 +27,10 @@ export type Permissions = {
 export type LogoutResponse = {
   logout: boolean
 }
+
+export interface JwtPayload {
+  id: string;
+  hash: string;
+  iat: number;
+  exp: number;
+}

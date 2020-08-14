@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 
-import { AuthModule } from './modules'
+import { AuthModule, UserModule } from './modules'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -11,10 +11,12 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
     GraphQLModule.forRoot({
       debug,
       playground,
-      autoSchemaFile: 'apps/air-discount-scheme/api/src/api.graphql',
+      autoSchemaFile: 'apps/air-discount-scheme/api.graphql',
       path: '/api/graphql',
+      context: ({ req }) => ({ req }),
     }),
     AuthModule,
+    UserModule,
   ],
 })
 export class AppModule {}
