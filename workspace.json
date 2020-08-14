@@ -1242,7 +1242,8 @@
               }
             ]
           }
-        }
+        },
+        "docker-express": {}
       }
     },
     "air-discount-scheme-web": {
@@ -1325,7 +1326,8 @@
             "tsConfig": "apps/air-discount-scheme/web/tsconfig.spec.json",
             "passWithNoTests": true
           }
-        }
+        },
+        "docker-next": {}
       }
     },
     "air-discount-scheme/web-e2e": {
@@ -1465,7 +1467,8 @@
             ],
             "cwd": "apps/air-discount-scheme/backend"
           }
-        }
+        },
+        "docker-express": {}
       }
     }
   },
