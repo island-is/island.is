@@ -1,10 +1,11 @@
 import { style } from 'treat'
+import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
-  borderRadius: '5px',
-  borderWidth: '1px',
+  borderRadius: theme.border.radius.large,
+  borderWidth: 1,
   borderStyle: 'solid',
-  borderColor: '#CCDFFF',
+  borderColor: theme.color.blue200,
   overflow: 'hidden',
   '@media': {
     [`screen and (max-width: 991px)`]: {

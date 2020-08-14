@@ -1,13 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC } from 'react'
 import Link from 'next/link'
-import {
-  Button,
-  Typography,
-  Box,
-  Stack,
-  Tiles,
-} from '@island.is/island-ui/core'
+import { Button, Typography, Box, Tiles } from '@island.is/island-ui/core'
 
 export interface LinkCardProps {
   title: string
@@ -38,20 +32,33 @@ export const LinkCardList: FC<LinkCardListProps> = ({ title, cards }) => (
 
 const LinkCard: FC<LinkCardProps> = ({ title, body, link, linkText }) => {
   return (
-    <Box background="white" padding={5}>
-      <Stack space={2}>
-        <Typography variant="h3" as="h3">
-          {title}
-        </Typography>
-        <Typography variant="p" as="p">
-          {body}
-        </Typography>
+    <Box
+      display="flex"
+      justifyContent="spaceBetween"
+      flexDirection="column"
+      height="full"
+      padding={4}
+      background="white"
+    >
+      <div>
+        <Box paddingBottom={2}>
+          <Typography variant="h3" as="h3">
+            {title}
+          </Typography>
+        </Box>
+        <Box paddingBottom={2}>
+          <Typography variant="p" as="p">
+            {body}
+          </Typography>
+        </Box>
+      </div>
+      <div>
         <Link href={link}>
           <Button variant="text" size="large" href={link} icon="arrowRight">
             {linkText}
           </Button>
         </Link>
-      </Stack>
+      </div>
     </Box>
   )
 }

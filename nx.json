@@ -125,6 +125,19 @@
     "island-ui-theme": {
       "tags": []
     },
+    "air-discount-scheme-api": {
+      "tags": []
+    },
+    "air-discount-scheme-web": {
+      "tags": []
+    },
+    "air-discount-scheme/web-e2e": {
+      "tags": [],
+      "implicitDependencies": ["air-discount-scheme-web"]
+    },
+    "air-discount-scheme-backend": {
+      "tags": []
+    },
     "api-domains-application": {
       "tags": []
     }

@@ -3,7 +3,6 @@ import React, { useRef, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { withApollo } from '../../graphql'
 import { Screen } from '../../types'
 import {
   Sidebar,
@@ -133,7 +132,7 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
       </Head>
       <CategoryLayout
         sidebar={
-          <Sidebar title={n('submenuTitle')}>
+          <Sidebar title={n('sidebarHeader')}>
             <Filter
               selected={!filters.category}
               onClick={() => onSelectCategory(null)}
@@ -255,7 +254,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Articles',
+            namespace: 'Search',
             lang: locale,
           },
         },

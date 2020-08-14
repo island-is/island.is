@@ -20,10 +20,10 @@ docker image inspect ${DOCKER_REGISTRY}${RUNNER}:${DOCKER_TAG} -f ' ' || \
   $PROJECT_ROOT
 
 # Checking if we should simple run the test runner container or should we use a docker-compose setup
-if [ -f $PROJECT_ROOT/apps/$APP/docker-compose.ci.yml ]; then
+if [ -f $PROJECT_ROOT/$APP_HOME/docker-compose.ci.yml ]; then
   COMPOSE_FILES="-f $PROJECT_ROOT/$APP_HOME/docker-compose.ci.yml"
   
-  if [ -f $PROJECT_ROOT/apps/$APP/docker-compose.base.yml ]; then
+  if [ -f $PROJECT_ROOT/$APP_HOME/docker-compose.base.yml ]; then
     COMPOSE_FILES="-f $PROJECT_ROOT/$APP_HOME/docker-compose.base.yml $COMPOSE_FILES"
   fi
 

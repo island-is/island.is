@@ -1,21 +1,14 @@
 import React, { FC, ReactNode } from 'react'
-import {
-  Box,
-  Tiles,
-  Button,
-  Stack,
-  Typography,
-} from '@island.is/island-ui/core'
+import { Box, Tiles, Stack, Typography } from '@island.is/island-ui/core'
 
 interface CategoriesProps {
   label?: string
-  seeMoreText?: string
   children: ReactNode
 }
 
 export const Categories: FC<CategoriesProps> = ({
   label = 'Þjónustuflokkar',
-  seeMoreText = 'Sjá fleiri',
+
   children,
 }) => {
   return (
@@ -29,16 +22,6 @@ export const Categories: FC<CategoriesProps> = ({
         <Tiles space={[2, 2, 3]} columns={[1, 1, 2, 2, 3]}>
           {children}
         </Tiles>
-        <Box textAlign="center">
-          <Button
-            onClick={() => {
-              console.log('load more cards...')
-            }}
-            variant="ghost"
-          >
-            {seeMoreText}
-          </Button>
-        </Box>
       </Stack>
     </Box>
   )

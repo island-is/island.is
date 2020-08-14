@@ -16,13 +16,13 @@ export const icon = style({
 
 export const iconVariants = styleMap({
   default: {
-    width: '40px',
-    height: '40px',
+    width: 40,
+    height: 40,
     backgroundColor: theme.color.blue100,
   },
   sidebar: {
-    width: '24px',
-    height: '24px',
+    width: 24,
+    height: 24,
     backgroundColor: theme.color.purple200,
   },
 })
@@ -48,14 +48,21 @@ export const focusRing = [
 ]
 
 export const card = style({
-  position: 'relative',
-  borderWidth: '1px',
+  display: 'flex',
+  height: '100%',
+  flexDirection: 'column',
+  cursor: 'pointer',
+  borderWidth: 1,
+  boxSizing: 'border-box',
   borderStyle: 'solid',
-  borderColor: '#CCDFFF',
+  borderColor: theme.color.blue200,
   transition: 'border-color 150ms ease',
-  borderRadius: '5px',
+  borderRadius: theme.border.radius.large,
+  textDecoration: 'none',
+  position: 'relative',
   ':hover': {
-    borderColor: '#0061FF',
+    borderWidth: 1,
+    borderColor: theme.color.blue400,
     textDecoration: 'none',
   },
   ':focus': {
@@ -67,23 +74,39 @@ export const card = style({
     position: 'absolute',
     pointerEvents: 'none',
     borderStyle: 'solid',
-    borderWidth: '3px',
-    borderColor: '#E1D5EC',
-    borderRadius: '7px',
-    outline: 0,
-    top: '-4px',
-    left: '-4px',
-    bottom: '-4px',
-    right: '-4px',
+    borderWidth: 3,
+    borderColor: theme.color.transparent,
+    borderRadius: 10,
+    top: -3,
+    left: -3,
+    bottom: -3,
+    right: -3,
     opacity: 0,
-    transition: 'opacity 150ms ease',
+    transition: 'border-color 150ms ease, opacity 150ms ease',
+  },
+  selectors: {
+    [`&:focus:before`]: {
+      borderWidth: 3,
+      borderStyle: 'solid',
+      borderColor: theme.color.mint400,
+      opacity: 1,
+      outline: 0,
+    },
+    [`&:focus:hover`]: {
+      borderColor: theme.color.white,
+    },
   },
 })
 
 export const focused = style({
   ':before': {
-    border: '3px solid #00E4CA',
+    borderWidth: 3,
+    borderStyle: 'solid',
+    borderColor: theme.color.mint400,
     opacity: 1,
     outline: 0,
+  },
+  ':hover': {
+    borderColor: theme.color.white,
   },
 })

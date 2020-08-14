@@ -1,0 +1,74 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+gjafakort-api:
+  environment:
+    auth_audience: 'gjafakort.staging01.devland.is'
+    cache_time_to_live: '300'
+    ferdalag_url: 'https://island-dev-dot-itb-gagnagrunnur-dev.appspot.com'
+    redis_url_node_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
+    rsk_url: 'https://thjonusta-s.rsk.is/api'
+    saml_entry_point: 'https://innskraning.island.is/?id=ferdagjof.dev'
+    sentry_dsn: 'https://91d3faa6cc0545a9971ea989eaa48fb9@o406638.ingest.sentry.io/5274533'
+    yay_url: 'https://dev-serviceapi.yay.is'
+    nova_url: 'https://smsapi.devnova.is'
+    nova_username: 'IslandIs_User_Development'
+
+  ingress:
+    annotations:
+      cert-manager.io/cluster-issuer: 'devland-is-letsencrypt-dns01'
+    hosts:
+      - host: 'gjafakort.staging01.devland.is'
+        paths:
+          - '/api'
+    tls:
+      - hosts: ['gjafakort.staging01.devland.is']
+        secretName: 'gjafakort-web-tls'
+
+gjafakort-web:
+  environment:
+    sentry_dsn: 'https://7d11c5b6d23449659e812f4cb0b711d3@o406638.ingest.sentry.io/5274507'
+    sentry_org: 'island_is'
+    sentry_project: 'gjafakort-web'
+
+  ingress:
+    annotations:
+      cert-manager.io/cluster-issuer: 'devland-is-letsencrypt-dns01'
+    hosts:
+      - host: 'gjafakort.staging01.devland.is'
+        paths:
+          - '/'
+    tls:
+      - hosts: ['gjafakort.staging01.devland.is']
+        secretName: 'gjafakort-web-tls'
+
+gjafakort-application:
+  postgres:
+    host: 'staging-vidspyrna-aurora-2.cxg4o2lgih4t.eu-west-1.rds.amazonaws.com'
+    name: 'gjafakort_application'
+    username: 'gjafakort_application'
+    sentry_dsn: 'https://91d3faa6cc0545a9971ea989eaa48fb9@o406638.ingest.sentry.io/5274533'
+
+  ingress:
+    enabled: false
+  podSecurityContext:
+    fsGroup: 65534
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/gjafakort-sqs-producer'
+    create: true
+    name: 'gjafakort-sqs-producer'
+
+gjafakort-queue-listener:
+  environment:
+    ferdalag_url: 'https://island-dev-dot-itb-gagnagrunnur-dev.appspot.com'
+    sentry_dsn: 'https://91d3faa6cc0545a9971ea989eaa48fb9@o406638.ingest.sentry.io/5274533'
+    yay_url: 'https://dev-serviceapi.yay.is'
+
+  podSecurityContext:
+    fsGroup: 65534
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/gjafakort-sqs-consumer'
+    create: true
+    name: 'gjafakort-sqs-consumer'
