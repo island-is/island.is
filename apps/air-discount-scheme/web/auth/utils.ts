@@ -1,6 +1,6 @@
 import cookies from 'next-cookies'
 
-import { CSRF_COOKIE_NAME } from '@island.is/gjafakort/consts'
+import { CSRF_COOKIE_NAME } from '@island.is/air-discount-scheme/consts'
 
 type CookieContext = { req?: { headers: { cookie?: string } } }
 

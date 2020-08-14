@@ -1,7 +1,7 @@
 import { setContext } from 'apollo-link-context'
 import Cookie from 'js-cookie'
 
-import { CSRF_COOKIE_NAME } from '@island.is/gjafakort/consts'
+import { CSRF_COOKIE_NAME } from '@island.is/air-discount-scheme/consts'
 
 export default setContext((_, { headers }) => {
   const token = Cookie.get(CSRF_COOKIE_NAME)
