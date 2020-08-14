@@ -48,6 +48,11 @@
       "@island.is/island-ui/theme": ["libs/island-ui/theme/src/index.ts"],
       "@island.is/air-discount-scheme/consts": [
         "libs/air-discount-scheme/consts/src/index.ts"
+      ],
+      "@island.is/application/schema": ["libs/application/schema/src/index.ts"],
+      "@island.is/application/form": ["libs/application/form/src/index.ts"],
+      "@island.is/api/domains/application": [
+        "libs/api/domains/application/src/index.ts"
       ]
     }
   },
