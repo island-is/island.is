@@ -1,6 +1,6 @@
 import { getGreeting } from '../support/app.po'
 
-describe('air-discount-scheme-web2', () => {
+describe('air-discount-scheme-web', () => {
   beforeEach(() => cy.visit('/'))
 
   it('should display welcome message', () => {
@@ -8,6 +8,6 @@ describe('air-discount-scheme-web2', () => {
     cy.login('my-email@something.com', 'myPassword')
 
     // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains('Welcome to air-discount-scheme-web2!')
+    getGreeting().contains('Welcome to air-discount-scheme-web!')
   })
 })

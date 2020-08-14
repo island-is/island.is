@@ -11,6 +11,6 @@ describe('Index', () => {
 
   it('should have a greeting as the title', () => {
     const { getByText } = render(<Index />)
-    expect(getByText('Welcome to air-discount-scheme-web2! [DEV]')).toBeTruthy()
+    expect(getByText('Welcome to air-discount-scheme-web! [DEV]')).toBeTruthy()
   })
 })
