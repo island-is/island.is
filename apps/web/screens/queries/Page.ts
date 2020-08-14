@@ -137,10 +137,9 @@ export const GET_PAGE_QUERY = gql`
     }
   }
 
-  query($input: GetPageInput!) {
-    getPage(input: $input) {
+  query($input: GetAboutPageInput!) {
+    getAboutPage(input: $input) {
       title
-      slug
       seoDescription
       theme
       slices {

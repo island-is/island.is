@@ -15,10 +15,13 @@ import {
   Accordion,
   AccordionItem,
   Blockquote,
+  Tiles,
 } from '@island.is/island-ui/core'
 import { Locale } from '../../i18n/I18n'
 import { BorderedContent, Hyperlink } from '@island.is/web/components'
 import RichText from '../RichText/RichText'
+import { Statistics } from '@island.is/web/components/Statistics/Statistics'
+import Background from '@island.is/web/components/Background/Background'
 
 const mappedContentfulTypes = {
   article: 'article',
@@ -297,6 +300,7 @@ const embeddedNodes = (locale) => ({
         processTitle,
         processDescription,
         processLink,
+        processLabel,
         type,
         title,
         subtitle,
@@ -328,22 +332,32 @@ const embeddedNodes = (locale) => ({
         bottomContent: (
           <ContentBlock width="small">
             <Stack space={[2, 2]}>
-              <Typography variant="eyebrow" as="h4" color="blue400">
-                Innskráning og umsókn
-              </Typography>
-              <Typography variant="h3" as="h3">
-                {processTitle || 'processTitle'}
-              </Typography>
-              <Typography variant="p" as="p">
-                {processDescription || 'processDescription'}
-              </Typography>
+              {type !== 'Only button' && (
+                <>
+                  <Typography variant="eyebrow" as="h4" color="blue400">
+                    Innskráning og umsókn
+                  </Typography>
+                  {processTitle && (
+                    <Typography variant="h3" as="h3">
+                      {processTitle}
+                    </Typography>
+                  )}
+                  {processDescription && (
+                    <Typography variant="p" as="p">
+                      {processDescription}
+                    </Typography>
+                  )}
+                </>
+              )}
               {processLink ? (
                 <Box paddingTop={[1, 1, 2]}>
                   <Button
                     href={processLink}
                     icon={type === 'Not digital' ? 'info' : 'external'}
                   >
-                    Áfram í innskráningu
+                    {type === 'Only button'
+                      ? processTitle
+                      : 'Áfram í innskráningu'}
                   </Button>
                 </Box>
               ) : null}
@@ -351,6 +365,20 @@ const embeddedNodes = (locale) => ({
           </ContentBlock>
         ),
       }
+    },
+  },
+  statistics: {
+    component: Box,
+    children: (node) => {
+      return (
+        <Background background="dotted" paddingY={[6, 6, 10]} marginTop={5}>
+          <ContentContainer marginTop={0}>
+            <Statistics
+              items={node.data.target.fields.statistics.map((s) => s.fields)}
+            />
+          </ContentContainer>
+        </Background>
+      )
     },
   },
 })

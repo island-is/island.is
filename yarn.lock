@@ -18850,6 +18850,11 @@ react-textarea-autosize@^7.1.0:
     "@babel/runtime" "^7.1.2"
     prop-types "^15.6.0"
 
+react-top-loading-bar@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-top-loading-bar/-/react-top-loading-bar-2.0.0.tgz#531927ec5fb5f2e49a17d6ee602f91fb407a64f1"
+  integrity sha512-nsBElvXeKHTKAHM2GA7IIafPp1Wd05NLFEUAN+64Tlm7sklEnbi9PtiIwOLJd1DtUMelhk0OmqUDEEo0BFBcQQ==
+
 react-transition-group@^4.3.0:
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-4.4.1.tgz#63868f9325a38ea5ee9535d828327f85773345c9"

@@ -5,10 +5,14 @@ import Link from 'next/link'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { Locale } from '@island.is/web/i18n/I18n'
 import { useI18n } from '@island.is/web/i18n'
-import { Query, QueryGetPageArgs, Page, Slice } from '@island.is/api/schema'
+import {
+  Query,
+  QueryGetAboutPageArgs,
+  AboutPage,
+  Slice,
+} from '@island.is/api/schema'
 import { GET_PAGE_QUERY } from '../queries'
 import { Screen } from '@island.is/web/types'
-import { withApollo } from '../../graphql'
 import ArticleContent from '../../units/Content/ArticleContent'
 import {
   Header,
@@ -34,7 +38,7 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import Sidebar, { SidebarProps } from './Sidebar'
-import * as styles from './GenericPage.treat'
+import * as styles from './AboutPage.treat'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import Head from 'next/head'
 
@@ -133,7 +137,7 @@ const decideSidebarType = (slice?: Slice): SidebarProps['type'] => {
 
 interface SectionProps {
   slice: Slice
-  page: Page
+  page: AboutPage
   currentSliceId: string
   setRef: (k: string) => (e: HTMLDivElement) => void
 }
@@ -364,11 +368,11 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
   }
 }
 
-export interface GenericPageProps {
-  page?: Page
+export interface AboutPageProps {
+  page?: AboutPage
 }
 
-const GenericPage: Screen<GenericPageProps> = ({ page }) => {
+const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
   const refs: Ref<{ [k: string]: HTMLDivElement }> = useRef({})
   const [spy, sliceId] = useScrollSpy({ margin: 200 })
   const sliceMap = useMemo(() => connectSlices(page.slices), [page.slices])
@@ -401,16 +405,15 @@ const GenericPage: Screen<GenericPageProps> = ({ page }) => {
   )
 }
 
-GenericPage.getInitialProps = async ({ apolloClient, locale, query }) => {
+AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
   const {
-    data: { getPage: page },
-  } = await apolloClient.query<Query, QueryGetPageArgs>({
+    data: { getAboutPage: page },
+  } = await apolloClient.query<Query, QueryGetAboutPageArgs>({
     query: GET_PAGE_QUERY,
     fetchPolicy: 'no-cache',
     variables: {
       input: {
         lang: locale,
-        slug: query.slug as string,
       },
     },
   })
@@ -423,4 +426,4 @@ GenericPage.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default GenericPage
+export default AboutPageScreen

@@ -128,9 +128,8 @@ type NumberBullet {
   body: String!
 }
 
-type Page {
+type AboutPage {
   title: String!
-  slug: String!
   seoDescription: String!
   theme: String!
   slices: [Slice!]!
@@ -248,6 +247,21 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
+type LinkList {
+  title: String
+  links: [Link!]!
+}
+
+type LandingPage {
+  title: String!
+  slug: String!
+  introduction: String!
+  image: Image
+  actionButton: Link
+  links: LinkList
+  content: String
+}
+
 type Query {
   helloWorld(input: HelloWorldInput!): HelloWorld!
   searchResults(query: SearcherInput!): SearchResult!
@@ -259,6 +273,8 @@ type Query {
   getNewsList(input: GetNewsListInput!): PaginatedNews!
   getNamespace(input: GetNamespaceInput!): Namespace
   getPage(input: GetPageInput!): Page
+  getAboutPage(input: GetAboutPageInput!): AboutPage
+  getLandingPage(input: GetLandingPageInput!): LandingPage
   getApplication(input: GetApplicationInput!): Application
 }
 
@@ -323,7 +339,11 @@ input GetNamespaceInput {
   lang: String!
 }
 
-input GetPageInput {
+input GetAboutPageInput {
+  lang: String!
+}
+
+input GetLandingPageInput {
   slug: String!
   lang: String!
 }
