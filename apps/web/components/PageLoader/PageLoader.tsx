@@ -6,7 +6,6 @@ import { theme } from '@island.is/island-ui/theme'
 export const PageLoader = () => {
   const router = useRouter()
   const ref = useRef(null)
-  theme
 
   useEffect(() => {
     const start = () => {
