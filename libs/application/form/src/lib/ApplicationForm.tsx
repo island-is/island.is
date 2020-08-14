@@ -1,4 +1,6 @@
 import React, { FC, useReducer } from 'react'
+import { ApolloProvider, useQuery } from '@apollo/client'
+
 import { FormValue, Form } from '@island.is/application/schema'
 import FormProgress from '../components/FormProgress/'
 import ApplicationName from '../components/ApplicationName/'
@@ -10,7 +12,7 @@ import {
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
 import { Box } from '@island.is/island-ui/core'
-
+import { client } from '../graphql/client'
 import * as styles from './ApplicationForm.treat'
 import ProgressIndicator from '../components/ProgressIndicator'
 
@@ -19,7 +21,7 @@ type ApplicationProps = {
   initialAnswers: FormValue
 }
 
-export const ApplicationForm: FC<ApplicationProps> = ({
+const ApplicationFormBody: FC<ApplicationProps> = ({
   form,
   initialAnswers,
 }) => {
@@ -47,6 +49,7 @@ export const ApplicationForm: FC<ApplicationProps> = ({
     sections,
     screens,
   } = state
+
   return (
     <Box display="flex" flexGrow={1}>
       <Box
@@ -96,4 +99,8 @@ export const ApplicationForm: FC<ApplicationProps> = ({
   )
 }
 
-export default ApplicationForm
+export const ApplicationForm = (props: ApplicationProps) => (
+  <ApolloProvider client={client}>
+    <ApplicationFormBody {...props} />
+  </ApolloProvider>
+)
