@@ -1,0 +1,19 @@
+version: '3.3'
+
+services:
+  sut:
+    image: ${SUT}
+    networks:
+      - local
+    depends_on:
+      - db
+    environment:
+      - TEST_DB_USER=test_db
+      - TEST_DB_PASS=test_db
+      - TEST_DB_NAME=test_db
+      - DB_HOST=db
+    entrypoint: ["scripts/_wait-for.sh", "db:5432", "-t", "5", "--", "yarn", "run", "test", "application-system-api"]
+
+  db:
+    ports: []
+

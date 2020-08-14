@@ -106,6 +106,22 @@
     "gjafakort-consts": {
       "tags": []
     },
+    "application-schema": {
+      "tags": []
+    },
+    "application-form": {
+      "tags": []
+    },
+    "application-system-form": {
+      "tags": []
+    },
+    "application-system-form-e2e": {
+      "tags": [],
+      "implicitDependencies": ["application-system-form"]
+    },
+    "application-system-api": {
+      "tags": []
+    },
     "island-ui-theme": {
       "tags": []
     },
@@ -120,6 +136,9 @@
       "implicitDependencies": ["air-discount-scheme-web"]
     },
     "air-discount-scheme-backend": {
+      "tags": []
+    },
+    "api-domains-application": {
       "tags": []
     }
   }
