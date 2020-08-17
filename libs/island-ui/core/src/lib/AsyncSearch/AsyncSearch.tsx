@@ -13,6 +13,7 @@ export type ItemCmpProps = {
   active?: boolean
   selected?: boolean
   colored?: boolean
+  white?: boolean
 }
 
 export type AsyncSearchOption = {
@@ -33,6 +34,7 @@ export interface AsyncSearchProps {
   size?: AsyncSearchSizes
   loading?: boolean
   closeMenuOnSubmit?: boolean
+  white?: boolean
   onSubmit?: (inputValue: string, selectedOption?: AsyncSearchOption) => void
   onClearItems?: () => void
   onChange?: (selection: object) => void
@@ -57,6 +59,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
       inputValue,
       closeMenuOnSubmit,
       initialInputValue,
+      white,
       onChange,
       onSubmit,
       onClearItems,
@@ -137,6 +140,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
               className={cn(styles.wrapper, {
                 [styles.focused]: shouldShowItems || focused,
                 [styles.open]: shouldShowItems,
+                [styles.white]: white,
               })}
             >
               <div
@@ -158,11 +162,13 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                   colored={colored}
                   hasLabel={hasLabel}
                   size={size}
+                  white={white}
                   placeholder={placeholder}
                 />
                 <button
                   className={cn(styles.icon, styles.iconSizes[size], {
                     [styles.focusable]: inputValue,
+                    [styles.white]: white,
                   })}
                   tabIndex={inputValue ? 0 : -1}
                   onBlur={onBlur}
@@ -176,7 +182,11 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                       }
                     : getToggleButtonProps())}
                 >
-                  <Icon type="search" width={20} color="blue400" />
+                  <Icon
+                    type="search"
+                    width={20}
+                    color={white ? 'white' : 'blue400'}
+                  />
                 </button>
                 {loading && (
                   <span
@@ -210,7 +220,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                             size={size}
                             item={item}
                             {...getItemProps({
-                              key: item.value,
+                              key: `${item.value}-${index}`,
                               index,
                               item,
                               isSelected: options.includes(item),

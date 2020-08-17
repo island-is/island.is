@@ -125,3 +125,16 @@ export const loadingIconSizes = styleMap({
     right: 66,
   },
 })
+
+export const white = style({
+  backgroundColor: theme.color.transparent,
+  ':before': {
+    backgroundColor: theme.color.transparent,
+  },
+  selectors: {
+    '&:focus:before': {
+      borderColor: theme.color.white,
+      borderWidth: 2,
+    },
+  },
+})
