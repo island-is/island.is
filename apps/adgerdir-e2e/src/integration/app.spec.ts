@@ -1,6 +1,6 @@
 import { getGreeting } from '../support/app.po'
 
-describe('adgerdir', () => {
+describe('vidspyrna', () => {
   beforeEach(() => cy.visit('/'))
 
   it('should display welcome message', () => {
@@ -8,6 +8,6 @@ describe('adgerdir', () => {
     cy.login('my-email@something.com', 'myPassword')
 
     // Function helper example, see `../support/app.po.ts` file
-    getGreeting().contains('Welcome to adgerdir!')
+    getGreeting().contains('Welcome to vidspyrna!')
   })
 })

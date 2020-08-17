@@ -1821,55 +1821,40 @@
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/web:build",
+          "builder": "@nrwl/next:build",
           "options": {
-            "outputPath": "dist/apps/adgerdir",
-            "index": "apps/adgerdir/src/index.html",
-            "main": "apps/adgerdir/src/main.tsx",
-            "polyfills": "apps/adgerdir/src/polyfills.ts",
-            "tsConfig": "apps/adgerdir/tsconfig.app.json",
-            "assets": [
-              "apps/adgerdir/src/favicon.ico",
-              "apps/adgerdir/src/assets"
-            ],
-            "styles": ["apps/adgerdir/src/styles.scss"],
-            "scripts": [],
-            "webpackConfig": "@nrwl/react/plugins/webpack"
+            "root": "apps/adgerdir",
+            "outputPath": "dist/apps/adgerdir"
           },
           "configurations": {
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "apps/adgerdir/src/environments/environment.ts",
-                  "with": "apps/adgerdir/src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "replace": "apps/adgerdir/environments/environment.ts",
+                  "with": "apps/adgerdir/environments/environment.prod.ts"
                 }
               ]
             }
           }
         },
         "serve": {
-          "builder": "@nrwl/web:dev-server",
+          "builder": "@nrwl/next:dev-server",
           "options": {
-            "buildTarget": "adgerdir:build"
+            "buildTarget": "adgerdir:build",
+            "dev": true,
+            "proxyConfig": "apps/adgerdir/proxy.config.json"
           },
           "configurations": {
             "production": {
-              "buildTarget": "adgerdir:build:production"
+              "buildTarget": "adgerdir:build:production",
+              "dev": false
             }
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "adgerdir:build:production"
           }
         },
         "lint": {
@@ -1878,7 +1863,7 @@
             "linter": "eslint",
             "config": "apps/adgerdir/.eslintrc",
             "tsConfig": [
-              "apps/adgerdir/tsconfig.app.json",
+              "apps/adgerdir/tsconfig.json",
               "apps/adgerdir/tsconfig.spec.json"
             ],
             "exclude": ["**/node_modules/**", "!apps/adgerdir/**"]
