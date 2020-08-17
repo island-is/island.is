@@ -120,7 +120,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         query: GET_SEARCH_RESULTS_QUERY,
         variables: {
           query: {
-            queryString: cleanedQueryString ? `${cleanedQueryString}*` : '',
+            queryString: cleanedQueryString,
             language: activeLocale as ContentLanguage,
           },
         },
