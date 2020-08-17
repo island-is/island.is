@@ -10,10 +10,15 @@ export const container = style({
   backgroundColor: theme.color.blue400,
   transform: `translateY(-100%)`,
   opacity: 0,
-  transition: 'opacity 150ms ease, transform 150ms ease',
+  visibility: 'hidden',
+  transition:
+    'opacity 150ms ease, transform 150ms ease, visibility 0ms linear 150ms',
 })
 
 export const show = style({
   transform: `translateY(0%)`,
   opacity: 1,
+  visibility: 'visible',
+  transition:
+    'opacity 150ms ease, transform 150ms ease, visibility 0ms linear 0ms',
 })
