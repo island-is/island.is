@@ -81,10 +81,12 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
         setInputValue(cleanLabel)
 
-        return Router.push({
+        Router.push({
           pathname: makePath('search'),
           query: { q: cleanLabel },
         })
+
+        return window.scrollTo(0, 0)
       }
 
       if (!inputValue) {
@@ -95,10 +97,12 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
       setInputValue(cleanInputValue)
 
-      return Router.push({
+      Router.push({
         pathname: makePath('search'),
         query: { q: cleanInputValue },
       })
+
+      return window.scrollTo(0, 0)
     }
 
     const cleanString = useCallback((string: string) => {
