@@ -8,11 +8,12 @@ interface InputProps {
   isOpen?: boolean
   colored?: boolean
   hasLabel?: boolean
+  white?: boolean
   placeholder?: string
   size: AsyncSearchSizes
 }
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ isOpen, colored, hasLabel, size, ...props }, ref) => {
+  ({ isOpen, colored, hasLabel, size, white, ...props }, ref) => {
     return (
       <input
         {...props}
@@ -21,6 +22,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           [styles.open]: isOpen,
           [styles.colored]: colored,
           [styles.hasLabel]: hasLabel,
+          [styles.white]: white,
         })}
         ref={ref}
       />

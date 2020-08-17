@@ -73,3 +73,23 @@ export const sizes = styleMap({
     }),
   },
 })
+
+export const white = style({
+  backgroundColor: theme.color.transparent,
+  color: theme.color.white,
+  '::placeholder': {
+    color: theme.color.white,
+  },
+  ':focus': {
+    backgroundColor: theme.color.transparent,
+    color: theme.color.white,
+  },
+  ':hover': {
+    borderColor: theme.color.white,
+  },
+  selectors: {
+    [`&:focus:hover`]: {
+      backgroundColor: theme.color.transparent,
+    },
+  },
+})

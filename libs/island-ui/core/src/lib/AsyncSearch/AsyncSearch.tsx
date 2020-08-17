@@ -162,11 +162,13 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                   colored={colored}
                   hasLabel={hasLabel}
                   size={size}
+                  white={white}
                   placeholder={placeholder}
                 />
                 <button
                   className={cn(styles.icon, styles.iconSizes[size], {
                     [styles.focusable]: inputValue,
+                    [styles.white]: white,
                   })}
                   tabIndex={inputValue ? 0 : -1}
                   onBlur={onBlur}
@@ -180,7 +182,11 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                       }
                     : getToggleButtonProps())}
                 >
-                  <Icon type="search" width={20} color="blue400" />
+                  <Icon
+                    type="search"
+                    width={20}
+                    color={white ? 'white' : 'blue400'}
+                  />
                 </button>
                 {loading && (
                   <span
