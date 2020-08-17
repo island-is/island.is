@@ -135,6 +135,7 @@ jobs:
       - name: Prepare test targets
         id: test_projects
         run: |
+          export BRANCH=${GIT_BRANCH}
           PROJECTS=`./scripts/_nx-affected-targets.sh test`
           echo "Projects: ${PROJECTS}"
           CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
