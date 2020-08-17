@@ -10,6 +10,8 @@ global:
 
 air-discount-scheme-api:
   env:
+    SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=ads.dev'
+    AUTH_AUDIENCE: 'ads.dev01.devland.is'
 
   ingress:
     annotations:
