@@ -140,6 +140,13 @@
     },
     "api-domains-application": {
       "tags": []
+    },
+    "adgerdir": {
+      "tags": []
+    },
+    "adgerdir-e2e": {
+      "tags": [],
+      "implicitDependencies": ["adgerdir"]
     }
   }
 }
