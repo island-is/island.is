@@ -139,8 +139,8 @@ jobs:
           PROJECTS=`./scripts/_nx-affected-targets.sh test`
           echo "Projects: ${PROJECTS}"
           CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
-          echo "Chunks: `node scripts/_chunk.js "${PROJECTS}"`"
-          echo "::set-ouput name=CHUNKS::{\"projects\":`node scripts/_chunk.js "${PROJECTS}"`}"
+          echo "Chunks: $CHUNKS"
+          echo "::set-ouput name=CHUNKS::{\"projects\":$CHUNKS}"
 
       # - name: Check formatting
       #   run: ./scripts/check_formatting.sh
