@@ -28,7 +28,7 @@ function chunk(arr, len) {
 
 @Injectable()
 export class Syncer {
-  private defaultIncludeDepth: number = 10
+  private defaultIncludeDepth = 10
   private contentFulClient: ContentfulClientApi
 
   constructor() {
