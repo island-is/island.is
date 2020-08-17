@@ -6,7 +6,7 @@ services:
     networks:
       - local
     depends_on:
-      - db
+      - db_application_system
     environment:
       - TEST_DB_USER=test_db
       - TEST_DB_PASS=test_db
@@ -14,6 +14,6 @@ services:
       - DB_HOST=db
     entrypoint: ["scripts/_wait-for.sh", "db:5432", "-t", "5", "--", "yarn", "run", "test", "application-system-api"]
 
-  db:
+  db_application_system:
     ports: []
 
