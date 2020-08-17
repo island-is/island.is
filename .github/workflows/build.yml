@@ -141,7 +141,7 @@ jobs:
           echo "Projects: ${PROJECTS}"
           CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
           echo "Chunks: $CHUNKS"
-          echo "::set-ouput name=CHUNKS::{\"projects\":$CHUNKS}"
+          echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
       # - name: Check formatting
       #   run: ./scripts/check_formatting.sh
