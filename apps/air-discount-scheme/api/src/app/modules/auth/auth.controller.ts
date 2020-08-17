@@ -15,11 +15,6 @@ import { Entropy } from 'entropy-string'
 import IslandisLogin from 'islandis-login'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import {
-  REDIRECT_COOKIE_NAME,
-  CSRF_COOKIE_NAME,
-  ACCESS_TOKEN_COOKIE_NAME,
-} from '@island.is/air-discount-scheme/consts'
 import { environment } from '../../../environments'
 import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
 
@@ -36,7 +31,7 @@ const defaultCookieOptions: CookieOptions = {
 }
 
 export const REDIRECT_COOKIE: Cookie = {
-  name: REDIRECT_COOKIE_NAME,
+  name: 'gjafakort.redirect',
   options: {
     ...defaultCookieOptions,
     sameSite: 'none',
@@ -44,7 +39,7 @@ export const REDIRECT_COOKIE: Cookie = {
 }
 
 export const CSRF_COOKIE: Cookie = {
-  name: CSRF_COOKIE_NAME,
+  name: 'gjafakort.csrf',
   options: {
     ...defaultCookieOptions,
     httpOnly: false,
@@ -52,7 +47,7 @@ export const CSRF_COOKIE: Cookie = {
 }
 
 export const ACCESS_TOKEN_COOKIE: Cookie = {
-  name: ACCESS_TOKEN_COOKIE_NAME,
+  name: 'gjafakort.token',
   options: defaultCookieOptions,
 }
 

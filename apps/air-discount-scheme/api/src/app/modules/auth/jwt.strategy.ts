@@ -2,14 +2,13 @@ import { Injectable, Inject } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 import { Strategy } from 'passport-jwt'
 
-import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/air-discount-scheme/consts'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { environment } from '../../../environments'
 import { Credentials } from './auth.types'
 
 const cookieExtractor = (req) => {
   if (req && req.cookies) {
-    return req.cookies[ACCESS_TOKEN_COOKIE_NAME]
+    return req.cookies['gjafakort.token']
   }
   return null
 }
