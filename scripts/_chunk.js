@@ -4,12 +4,11 @@ const chunk = (arr, size) =>
     arr.slice(i * size, i * size + size),
   )
 
-// producing string with escaped quotes
-console.log(
+process.stdout.write(
   JSON.stringify(
     chunk(
       process.argv[2].split(',').map((s) => s.trim()),
       2,
     ).map((a) => a.join(',')),
-  ).replace(/"/gi, '\\"'),
+  ),
 )

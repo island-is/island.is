@@ -114,29 +114,30 @@ jobs:
           echo "::set-env name=PUBLISH::${PUBLISH}"
           echo "::set-output name=PUBLISH::${PUBLISH}"
 
-      - name: Cache for dependencies Docker layer
-        id: cache-deps
-        uses: actions/cache@v1
-        with:
-          path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
+      # - name: Cache for dependencies Docker layer
+      #   id: cache-deps
+      #   uses: actions/cache@v1
+      #   with:
+      #     path: cache
+      #     key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
 
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          buildx-version: v0.4.1
-          qemu-version: latest
+      # - name: Set up Docker Buildx
+      #   id: buildx
+      #   uses: crazy-max/ghaction-docker-buildx@v1
+      #   with:
+      #     buildx-version: v0.4.1
+      #     qemu-version: latest
 
-      - name: Building dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true'
-        run: ./scripts/prepare_deps.sh
+      # - name: Building dependencies
+      #   if: steps.cache-deps.outputs.cache-hit != 'true'
+      #   run: ./scripts/prepare_deps.sh
 
       - name: Prepare test targets
         id: test_projects
         run: |
           export BRANCH=${GIT_BRANCH}
-          PROJECTS=`./scripts/_nx-affected-targets.sh test`
+          # PROJECTS=`./scripts/_nx-affected-targets.sh test`
+          PROJECTS="air-discount-scheme-backend, api-domains-content-search, air-discount-scheme-consts, gjafakort-queue-listener, api-domains-hello-world, services-search-indexer, air-discount-scheme-api, air-discount-scheme-web, application-system-form, api-domains-application, application-system-api, gjafakort-application, infra-express-server, contentful-importer, api-content-search, application-schema, reference-backend, infra-nest-server, gjafakort-consts, application-form, api-domains-cms, gjafakort-types, island-ui-theme, island-ui-core, gjafakort-web, gjafakort-api, message-queue, infra-tracing, logging, cache, web, api"
           echo "Projects: ${PROJECTS}"
           CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
           echo "Chunks: $CHUNKS"
