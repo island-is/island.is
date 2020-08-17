@@ -3,13 +3,15 @@ import { useFormContext } from 'react-hook-form'
 import { FieldDef } from '../types'
 import { getValueViaPath } from '../utils'
 import { getComponentByName } from './componentLoader'
+import { FormValue } from '@island.is/application/schema'
 
 const FormField: FC<{
   autoFocus?: boolean
   field: FieldDef
+  formValue: FormValue
   showFieldName?: boolean
   errors: object
-}> = ({ autoFocus, errors, field, showFieldName }) => {
+}> = ({ autoFocus, errors, field, formValue, showFieldName }) => {
   const { register } = useFormContext()
   if (!field.isNavigable) {
     return null
@@ -20,6 +22,7 @@ const FormField: FC<{
     autoFocus,
     error,
     field,
+    formValue,
     showFieldName,
     register,
   }

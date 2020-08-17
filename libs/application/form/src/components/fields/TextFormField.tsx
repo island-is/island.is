@@ -21,7 +21,9 @@ const TextFormField: FC<Props> = ({ autoFocus, error, field, register }) => {
         hasError={error !== undefined}
         errorMessage={error}
         onChange={() => {
-          clearErrors(id)
+          if (error) {
+            clearErrors(id)
+          }
         }}
       />
     </Box>

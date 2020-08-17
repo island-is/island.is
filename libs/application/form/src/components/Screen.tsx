@@ -107,9 +107,18 @@ const Screen: FC<ScreenProps> = ({
                 formValue={formValue}
               />
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
-              <FormMultiField errors={errors} multiField={screen} />
+              <FormMultiField
+                errors={errors}
+                multiField={screen}
+                formValue={formValue}
+              />
             ) : (
-              <FormField autoFocus errors={errors} field={screen} />
+              <FormField
+                autoFocus
+                errors={errors}
+                field={screen}
+                formValue={formValue}
+              />
             )}
           </Box>
         </Box>

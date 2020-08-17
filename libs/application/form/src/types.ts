@@ -1,10 +1,16 @@
-import { Field, MultiField, Repeater } from '@island.is/application/schema'
+import {
+  Field,
+  FormValue,
+  MultiField,
+  Repeater,
+} from '@island.is/application/schema'
 import { Ref } from 'react'
 
 export interface FieldBaseProps {
   autoFocus?: boolean
   error?: string
   field: Field
+  formValue: FormValue
   //eslint-disable-next-line @typescript-eslint/no-explicit-any
   register: () => Ref<any> | null
   showFieldName?: boolean

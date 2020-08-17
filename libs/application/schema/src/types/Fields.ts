@@ -9,7 +9,7 @@ export interface Option {
 }
 export interface BaseField extends FormItem {
   readonly id: string
-  readonly component: FieldComponents
+  readonly component: FieldComponents | CustomFieldComponents // TODO maybe this does not belong here, and application-form lib has a map from type to component
   readonly name: string
   readonly children: undefined
   condition?: Condition
@@ -20,12 +20,17 @@ export interface BaseField extends FormItem {
 
 export enum FieldTypes {
   CHECKBOX = 'CHECKBOX',
+  CUSTOM = 'CUSTOM', // TODO if we map type to component, then we must have unique field type for each custom field
   DATE = 'DATE',
   INTRO = 'INTRO',
   RADIO = 'RADIO',
   EMAIL = 'EMAIL',
   SELECT = 'SELECT',
   TEXT = 'TEXT',
+}
+
+export enum CustomFieldComponents {
+  Country = 'ExampleCountryField',
 }
 
 export enum FieldComponents {
@@ -81,8 +86,15 @@ export interface TextField extends Question {
   placeholder?: string
 }
 
+export interface CustomField extends Question {
+  readonly type: FieldTypes.CUSTOM
+  readonly component: CustomFieldComponents
+  props?: object
+}
+
 export type Field =
   | CheckboxField
+  | CustomField
   | DateField
   | IntroductionField
   | RadioField
