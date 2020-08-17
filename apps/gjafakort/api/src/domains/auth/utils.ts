@@ -36,18 +36,17 @@ const TESTERS = [
   '0709902539', // Björn
 ]
 
-export const verifyToken = (token: string): Credentials | null => {
-  if (!token) {
-    return null
-  }
-
+export const verifyToken = (token: string): Promise<Credentials | null> => {
   const { jwtSecret } = environment.auth
-  return jwt.verify(token as string, jwtSecret, (err, decoded) => {
-    if (!err) {
-      return decoded
-    }
-    return null
-  })
+  return new Promise((resolve) =>
+    jwt.verify(token as string, jwtSecret, (err, decoded: Credentials) => {
+      if (!err) {
+        resolve(decoded)
+      } else {
+        resolve(null)
+      }
+    }),
+  )
 }
 
 export const getRole = (user: User): Permissions['role'] => {
