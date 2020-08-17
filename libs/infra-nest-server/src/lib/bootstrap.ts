@@ -1,5 +1,6 @@
 import { initTracing } from '@island.is/infra-tracing'
 import { NestFactory } from '@nestjs/core'
+import cookieParser from 'cookie-parser'
 import { INestApplication, Type, ValidationPipe } from '@nestjs/common'
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
 import { runMetricServer } from './runMetricServer'
@@ -42,6 +43,7 @@ const createApp = async (options: RunServerOptions) => {
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
   )
   app.use(httpRequestDurationMiddleware())
+  app.use(cookieParser())
 
   return app
 }

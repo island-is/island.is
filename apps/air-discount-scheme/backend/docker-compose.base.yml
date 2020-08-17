@@ -1,9 +1,9 @@
 version: '3.3'
 
 services:
-  db:
+  db_ads_backend:
     image: postgres:11.6
-    container_name: db
+    container_name: db_ads_backend
     networks:
       - local
     environment:

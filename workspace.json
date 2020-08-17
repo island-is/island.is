@@ -1178,7 +1178,7 @@
             "outputPath": "dist/apps/air-discount-scheme/api",
             "main": "apps/air-discount-scheme/api/src/main.ts",
             "tsConfig": "apps/air-discount-scheme/api/tsconfig.app.json",
-            "assets": ["apps/air-discount-scheme/api/src/assets"]
+            "assets": []
           },
           "configurations": {
             "production": {
@@ -1248,60 +1248,44 @@
     },
     "air-discount-scheme-web": {
       "root": "apps/air-discount-scheme/web",
-      "sourceRoot": "apps/air-discount-scheme/web/src",
+      "sourceRoot": "apps/air-discount-scheme/web",
       "projectType": "application",
       "schematics": {},
       "architect": {
         "build": {
-          "builder": "@nrwl/web:build",
+          "builder": "@nrwl/next:build",
           "options": {
-            "outputPath": "dist/apps/air-discount-scheme/web",
-            "index": "apps/air-discount-scheme/web/src/index.html",
-            "main": "apps/air-discount-scheme/web/src/main.tsx",
-            "polyfills": "apps/air-discount-scheme/web/src/polyfills.ts",
-            "tsConfig": "apps/air-discount-scheme/web/tsconfig.app.json",
-            "assets": [
-              "apps/air-discount-scheme/web/src/favicon.ico",
-              "apps/air-discount-scheme/web/src/assets"
-            ],
-            "styles": ["apps/air-discount-scheme/web/src/styles.scss"],
-            "scripts": [],
-            "webpackConfig": "@nrwl/react/plugins/webpack"
+            "root": "apps/air-discount-scheme/web",
+            "outputPath": "dist/apps/air-discount-scheme/web"
           },
           "configurations": {
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "apps/air-discount-scheme/web/src/environments/environment.ts",
-                  "with": "apps/air-discount-scheme/web/src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "replace": "apps/air-discount-scheme/web/environments/environment.ts",
+                  "with": "apps/air-discount-scheme/web/environments/environment.prod.ts"
                 }
               ]
             }
           }
         },
         "serve": {
-          "builder": "@nrwl/web:dev-server",
+          "builder": "@nrwl/next:dev-server",
           "options": {
-            "buildTarget": "air-discount-scheme-web:build"
+            "buildTarget": "air-discount-scheme-web:build",
+            "dev": true
           },
           "configurations": {
             "production": {
-              "buildTarget": "air-discount-scheme-web:build:production"
+              "buildTarget": "air-discount-scheme-web:build:production",
+              "dev": false
             }
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "air-discount-scheme-web:build:production"
           }
         },
         "lint": {
@@ -1310,7 +1294,7 @@
             "linter": "eslint",
             "config": "apps/air-discount-scheme/web/.eslintrc",
             "tsConfig": [
-              "apps/air-discount-scheme/web/tsconfig.app.json",
+              "apps/air-discount-scheme/web/tsconfig.json",
               "apps/air-discount-scheme/web/tsconfig.spec.json"
             ],
             "exclude": [
@@ -1480,6 +1464,37 @@
           }
         },
         "docker-express": {}
+      }
+    },
+    "air-discount-scheme-consts": {
+      "root": "libs/air-discount-scheme/consts",
+      "sourceRoot": "libs/air-discount-scheme/consts/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/air-discount-scheme/consts/.eslintrc",
+            "tsConfig": [
+              "libs/air-discount-scheme/consts/tsconfig.lib.json",
+              "libs/air-discount-scheme/consts/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/air-discount-scheme/consts/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/air-discount-scheme/consts/jest.config.js",
+            "tsConfig": "libs/air-discount-scheme/consts/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
       }
     },
     "application-schema": {
