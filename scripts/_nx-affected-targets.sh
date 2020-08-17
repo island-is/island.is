@@ -9,7 +9,7 @@ source $DIR/_common.sh
 
 APP=nx-runner
 AFFECTED_ALL=${AFFECTED_ALL:-} # Could be used for forcing all projects to be affected
-if [[ ! -z "$BRANCH" && ! -z "$AFFECTED_ALL" && "$AFFECTED_ALL" == "$BRANCH" ]] 
+if [[ ! -z "$BRANCH" && ! -z "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH" ]] 
 then
   AFFECTED_FLAGS=" --all "
 else

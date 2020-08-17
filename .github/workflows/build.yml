@@ -137,7 +137,7 @@ jobs:
         run: |
           export BRANCH=${GIT_BRANCH}
           # PROJECTS=`./scripts/_nx-affected-targets.sh test`
-          PROJECTS="air-discount-scheme-backend, api-domains-content-search, air-discount-scheme-consts, gjafakort-queue-listener, api-domains-hello-world, services-search-indexer, air-discount-scheme-api, air-discount-scheme-web, application-system-form, api-domains-application, application-system-api, gjafakort-application, infra-express-server, contentful-importer, api-content-search, application-schema, reference-backend, infra-nest-server, gjafakort-consts, application-form, api-domains-cms, gjafakort-types, island-ui-theme, island-ui-core, gjafakort-web, gjafakort-api, message-queue, infra-tracing, logging, cache, web, api"
+          PROJECTS="air-discount-scheme-backend, api-domains-content-search, air-discount-scheme-consts"
           echo "Projects: ${PROJECTS}"
           CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
           echo "Chunks: $CHUNKS"
@@ -154,25 +154,25 @@ jobs:
 
   tests:
     # name: testing-${{ matrix.projects }}
-    # services:
-    #   postgres:
-    #     image: postgres:11.6
-    #     env:
-    #       POSTGRES_DB: application_test
-    #       POSTGRES_PASSWORD: application_test
-    #       POSTGRES_USER: application_test
-    #     options: >-
-    #       --health-cmd pg_isready
-    #       --health-interval 10s
-    #       --health-timeout 5s
-    #       --health-retries 5
-    #     ports:
-    #       - 5432:5432
+    services:
+      postgres:
+        image: postgres:11.6
+        env:
+          POSTGRES_DB: application_test
+          POSTGRES_PASSWORD: application_test
+          POSTGRES_USER: application_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
     needs: prepare
     runs-on: ubuntu-latest
     env:
-      AFFECTED_ALL: ${{ matrix.projects }}
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
       GIT_BASE_BRANCH: ${{ needs.prepare.outputs.GIT_BASE_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
