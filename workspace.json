@@ -1813,6 +1813,115 @@
           }
         }
       }
+    },
+    "adgerdir": {
+      "root": "apps/adgerdir",
+      "sourceRoot": "apps/adgerdir/src",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/web:build",
+          "options": {
+            "outputPath": "dist/apps/adgerdir",
+            "index": "apps/adgerdir/src/index.html",
+            "main": "apps/adgerdir/src/main.tsx",
+            "polyfills": "apps/adgerdir/src/polyfills.ts",
+            "tsConfig": "apps/adgerdir/tsconfig.app.json",
+            "assets": [
+              "apps/adgerdir/src/favicon.ico",
+              "apps/adgerdir/src/assets"
+            ],
+            "styles": ["apps/adgerdir/src/styles.scss"],
+            "scripts": [],
+            "webpackConfig": "@nrwl/react/plugins/webpack"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/adgerdir/src/environments/environment.ts",
+                  "with": "apps/adgerdir/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/web:dev-server",
+          "options": {
+            "buildTarget": "adgerdir:build"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "adgerdir:build:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/adgerdir/.eslintrc",
+            "tsConfig": [
+              "apps/adgerdir/tsconfig.app.json",
+              "apps/adgerdir/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/adgerdir/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/adgerdir/jest.config.js",
+            "tsConfig": "apps/adgerdir/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "adgerdir-e2e": {
+      "root": "apps/adgerdir-e2e",
+      "sourceRoot": "apps/adgerdir-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/adgerdir-e2e/cypress.json",
+            "tsConfig": "apps/adgerdir-e2e/tsconfig.e2e.json",
+            "devServerTarget": "adgerdir:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "adgerdir:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/adgerdir-e2e/.eslintrc",
+            "tsConfig": ["apps/adgerdir-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/adgerdir-e2e/**"]
+          }
+        }
+      }
     }
   },
   "cli": {
