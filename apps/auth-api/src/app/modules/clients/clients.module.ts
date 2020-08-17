@@ -5,7 +5,7 @@ import { ClientsController } from './clients.controller'
 import { Client } from './client.model'
 
 @Module({
-  imports: [SequelizeModule.forFeature([Client])],
+  imports: [Client],
   controllers: [ClientsController],
   providers: [ClientsService],
 })
