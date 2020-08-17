@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC } from 'react'
-import Link from 'next/link'
 import { ContentBlock, Box, Typography, Stack } from '@island.is/island-ui/core'
 import { Card } from '../components'
 import { withApollo } from '../graphql'
@@ -9,12 +8,12 @@ import {
   Query,
   QueryGetNamespaceArgs,
   ContentLanguage,
-  QueryGetVidspyrnaItemsArgs,
+  QueryGetAdgerdirPagesArgs,
 } from '@island.is/api/schema'
 import {
   GET_NAMESPACE_QUERY,
-  GET_VIDSPYRNA_ITEMS_QUERY,
-  GET_VIDSPYRNA_FRONTPAGE_QUERY,
+  GET_ADGERDIR_PAGES_QUERY,
+  GET_ADGERDIR_FRONTPAGE_QUERY,
 } from './queries'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
@@ -24,8 +23,8 @@ import useRouteNames from '../i18n/useRouteNames'
 import Head from 'next/head'
 
 interface HomeProps {
-  frontpage: Query['getVidspyrnaFrontpage']
-  items: Query['getVidspyrnaItems']
+  frontpage: Query['getAdgerdirFrontpage']
+  items: Query['getAdgerdirPages']
   namespace: Query['getNamespace']
 }
 
@@ -91,23 +90,23 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
 Home.getInitialProps = async ({ apolloClient, locale }) => {
   const [
     {
-      data: { getVidspyrnaFrontpage },
+      data: { getAdgerdirFrontpage },
     },
     {
-      data: { getVidspyrnaItems },
+      data: { getAdgerdirPages },
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetVidspyrnaItemsArgs>({
-      query: GET_VIDSPYRNA_FRONTPAGE_QUERY,
+    apolloClient.query<Query, QueryGetAdgerdirPagesArgs>({
+      query: GET_ADGERDIR_FRONTPAGE_QUERY,
       variables: {
         input: {
           lang: locale as ContentLanguage,
         },
       },
     }),
-    apolloClient.query<Query, QueryGetVidspyrnaItemsArgs>({
-      query: GET_VIDSPYRNA_ITEMS_QUERY,
+    apolloClient.query<Query, QueryGetAdgerdirPagesArgs>({
+      query: GET_ADGERDIR_PAGES_QUERY,
       variables: {
         input: {
           lang: locale as ContentLanguage,
@@ -142,8 +141,8 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   ])
 
   return {
-    frontpage: getVidspyrnaFrontpage,
-    items: getVidspyrnaItems,
+    frontpage: getAdgerdirFrontpage,
+    items: getAdgerdirPages,
     namespace,
     showSearchInHeader: false,
   }

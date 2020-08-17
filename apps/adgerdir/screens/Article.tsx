@@ -20,9 +20,9 @@ import {
   Query,
   QueryGetNamespaceArgs,
   ContentLanguage,
-  QueryGetVidspyrnaItemArgs,
+  QueryGetAdgerdirPageArgs,
 } from '@island.is/api/schema'
-import { GET_VIDSPYRNA_ITEM_QUERY, GET_NAMESPACE_QUERY } from './queries'
+import { GET_ADGERDIR_PAGE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
 import { withApollo } from '../graphql'
 import { Screen } from '../types'
@@ -34,7 +34,7 @@ import useRouteNames from '../i18n/useRouteNames'
 import { CustomNextError } from '../units/ErrorBoundary'
 
 interface ArticleProps {
-  article: Query['getVidspyrnaItem']
+  article: Query['getAdgerdirPage']
   namespace: Query['getNamespace']
 }
 
@@ -122,12 +122,12 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
   const [
     {
-      data: { getVidspyrnaItem },
+      data: { getAdgerdirPage },
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetVidspyrnaItemArgs>({
-      query: GET_VIDSPYRNA_ITEM_QUERY,
+    apolloClient.query<Query, QueryGetAdgerdirPageArgs>({
+      query: GET_ADGERDIR_PAGE_QUERY,
       variables: {
         input: {
           slug,
@@ -152,12 +152,12 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   ])
 
   // we assume 404 if no article is found
-  if (!getVidspyrnaItem) {
+  if (!getAdgerdirPage) {
     throw new CustomNextError(404, 'Article not found')
   }
 
   return {
-    article: getVidspyrnaItem,
+    article: getAdgerdirPage,
     namespace,
   }
 }

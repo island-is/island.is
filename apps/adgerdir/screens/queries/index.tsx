@@ -1,2 +1,2 @@
 export * from './Namespace'
-export * from './Vidspyrna'
+export * from './Adgerdir'

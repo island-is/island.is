@@ -1,9 +1,15 @@
 import { Args, Query, Resolver, ResolveField } from '@nestjs/graphql'
 import { Article } from './models/article.model'
+import { AdgerdirPage } from './models/adgerdirPage.model'
+import { AdgerdirPages } from './models/adgerdirPages.model'
+import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { GetArticleInput } from './dto/getArticle.input'
 import { News } from './models/news.model'
 import { GetNewsInput } from './dto/getNews.input'
 import { GetNewsListInput } from './dto/getNewsList.input'
+import { GetAdgerdirPageInput } from './dto/getAdgerdirPage.input'
+import { GetAdgerdirPagesInput } from './dto/getAdgerdirPages.input'
+import { GetAdgerdirFrontpageInput } from './dto/getAdgerdirFrontpage.input'
 import { PaginatedNews } from './models/paginatedNews.model'
 import { Namespace } from './models/namespace.model'
 import { AboutPage } from './models/aboutPage.model'
@@ -18,6 +24,9 @@ import {
   getNamespace,
   getAboutPage,
   getLandingPage,
+  getAdgerdirPage,
+  getAdgerdirPages,
+  getAdgerdirFrontpage,
 } from './services'
 import { LatestNewsSlice } from './models/slices/latestNewsSlice.model'
 
@@ -57,6 +66,27 @@ export class CmsResolver {
     @Args('input') input: GetLandingPageInput,
   ): Promise<LandingPage | null> {
     return getLandingPage(input)
+  }
+
+  @Query(() => AdgerdirPage, { nullable: true })
+  getAdgerdirPage(
+    @Args('input') input: GetAdgerdirPageInput,
+  ): Promise<AdgerdirPage | null> {
+    return getAdgerdirPage(input?.slug ?? '', input?.lang ?? 'is-IS')
+  }
+
+  @Query(() => AdgerdirPages, { nullable: true })
+  getAdgerdirPages(
+    @Args('input') input: GetAdgerdirPagesInput,
+  ): Promise<AdgerdirPages | null> {
+    return getAdgerdirPages(input?.lang ?? 'is-IS')
+  }
+
+  @Query(() => AdgerdirFrontpage, { nullable: true })
+  getAdgerdirFrontpage(
+    @Args('input') input: GetAdgerdirFrontpageInput,
+  ): Promise<AdgerdirPage | null> {
+    return getAdgerdirFrontpage(input?.lang ?? 'is-IS')
   }
 }
 

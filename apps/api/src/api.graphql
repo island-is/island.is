@@ -53,6 +53,26 @@ type Article {
   category: Taxonomy!
 }
 
+type AdgerdirPage {
+  id: String!
+  slug: String!
+  title: String!
+  description: String!
+  content: String
+}
+
+type AdgerdirPages {
+  items: [AdgerdirPage!]!
+}
+
+type AdgerdirFrontpage {
+  id: String!
+  slug: String!
+  title: String!
+  description: String!
+  content: String
+}
+
 type Image {
   url: String!
   title: String!
@@ -274,6 +294,9 @@ type Query {
   getNamespace(input: GetNamespaceInput!): Namespace
   getAboutPage(input: GetAboutPageInput!): AboutPage
   getLandingPage(input: GetLandingPageInput!): LandingPage
+  getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
+  getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages
+  getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getApplication(input: GetApplicationInput!): Application
 }
 
@@ -344,6 +367,20 @@ input GetAboutPageInput {
 
 input GetLandingPageInput {
   slug: String!
+  lang: String!
+}
+
+input GetAdgerdirPageInput {
+  slug: String
+  lang: String!
+}
+
+input GetAdgerdirPagesInput {
+  lang: String
+  perPage: Int
+}
+
+input GetAdgerdirFrontpageInput {
   lang: String!
 }
 
