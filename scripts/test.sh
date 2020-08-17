@@ -29,9 +29,13 @@ if [ -f $PROJECT_ROOT/$APP_HOME/docker-compose.ci.yml ]; then
 
   # Cleanup after the test 
   clean_up () {
-    SUT=${DOCKER_REGISTRY}${RUNNER}:${DOCKER_TAG} docker-compose -p test-$APP $COMPOSE_FILES rm -s -f
+    if [ "$1" != "0" ]; then
+      SUT=${DOCKER_REGISTRY}${RUNNER}:${DOCKER_TAG} docker-compose -p test-$APP $COMPOSE_FILES rm -s -f
+      echo "Cleanup result for $APP is $? and exit code is $1"
+      exit $1
+    fi
   } 
-  trap clean_up EXIT
+  trap 'clean_up $? $LINENO' EXIT
 
   # Running the tests using docker-compose
   SUT=${DOCKER_REGISTRY}${RUNNER}:${DOCKER_TAG} docker-compose -p test-$APP $COMPOSE_FILES run --rm sut
