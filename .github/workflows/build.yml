@@ -140,7 +140,7 @@ jobs:
           echo "Projects: ${PROJECTS}"
           CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
           echo "Chunks: ${CHUNKS}"
-          echo "::set-ouput name=CHUNKS::${CHUNKS}"
+          echo "::set-ouput name=CHUNKS::{\"projects\":$CHUNKS}"
 
       # - name: Check formatting
       #   run: ./scripts/check_formatting.sh
@@ -153,20 +153,20 @@ jobs:
 
   tests:
     # name: testing-${{ matrix.projects }}
-    services:
-      postgres:
-        image: postgres:11.6
-        env:
-          POSTGRES_DB: application_test
-          POSTGRES_PASSWORD: application_test
-          POSTGRES_USER: application_test
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
+    # services:
+    #   postgres:
+    #     image: postgres:11.6
+    #     env:
+    #       POSTGRES_DB: application_test
+    #       POSTGRES_PASSWORD: application_test
+    #       POSTGRES_USER: application_test
+    #     options: >-
+    #       --health-cmd pg_isready
+    #       --health-interval 10s
+    #       --health-timeout 5s
+    #       --health-retries 5
+    #     ports:
+    #       - 5432:5432
 
     needs: prepare
     runs-on: ubuntu-latest
@@ -189,8 +189,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix:
-        projects: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
         with:
