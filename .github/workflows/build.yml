@@ -32,7 +32,7 @@ jobs:
       HEAD: ${{ steps.git_nx_head.outputs.HEAD }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       PUBLISH: ${{ steps.publish_flag.outputs.PUBLISH }}
-      TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
+      CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -189,7 +189,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+      matrix: ${{ fromJson(needs.prepare.outputs.CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
         with:
