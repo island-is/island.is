@@ -5,8 +5,12 @@ import { UserProfilesController } from './user-profiles.controller'
 import { UserProfile } from './user-profile.model'
 
 @Module({
-  imports: [SequelizeModule.forFeature([UserProfile])],
+  imports: [
+    SequelizeModule.forFeature([UserProfile])
+  ],
   controllers: [UserProfilesController],
-  providers: [UserProfilesService],
+  providers: [
+    UserProfilesService
+  ],
 })
 export class UserProfilesModule {}
