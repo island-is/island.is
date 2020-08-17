@@ -20,6 +20,7 @@ jobs:
 
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+      CHUNK_SIZE: '1'
 
     # These outputs are not used right now but are here ready when we go for multiple jobs
     outputs:
@@ -150,7 +151,6 @@ jobs:
         id: test_projects
         run: |
           PROJECTS=`./scripts/_nx-affected-targets.sh test`
-          # PROJECTS="air-discount-scheme-backend, api-domains-content-search, air-discount-scheme-consts"
           echo "Projects: ${PROJECTS}"
           CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
           echo "Chunks: $CHUNKS"
@@ -160,7 +160,6 @@ jobs:
         id: docker_express_projects
         run: |
           PROJECTS=`./scripts/_nx-affected-targets.sh docker-express`
-          # PROJECTS="air-discount-scheme-backend"
           echo "Projects: ${PROJECTS}"
           CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
           echo "Chunks: $CHUNKS"
@@ -170,7 +169,6 @@ jobs:
         id: docker_next_projects
         run: |
           PROJECTS=`./scripts/_nx-affected-targets.sh docker-next`
-          # PROJECTS="air-discount-scheme-web"
           echo "Projects: ${PROJECTS}"
           CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
           echo "Chunks: $CHUNKS"

@@ -4,11 +4,12 @@ const chunk = (arr, size) =>
     arr.slice(i * size, i * size + size),
   )
 
+const chunkSize = parseInt(process.env['CHUNK_SIZE'] || '2')
 process.stdout.write(
   JSON.stringify(
     chunk(
       process.argv[2].split(',').map((s) => s.trim()),
-      2,
+      chunkSize,
     ).map((a) => a.join(',')),
   ),
 )
