@@ -220,7 +220,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                             size={size}
                             item={item}
                             {...getItemProps({
-                              key: item.value,
+                              key: `${item.value}-${index}`,
                               index,
                               item,
                               isSelected: options.includes(item),
