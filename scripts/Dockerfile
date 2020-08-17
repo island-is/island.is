@@ -38,12 +38,6 @@ ENV APP=${APP}
 
 RUN yarn run lint ${APP}
 
-FROM src as linter-affected
-ARG APP
-ENV APP=${APP}
-
-RUN yarn run nx affected --all  --target=lint --parallel --maxParallel=5
-
 FROM src as test
 
 CMD yarn run test ${APP}
