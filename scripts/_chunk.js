@@ -5,8 +5,10 @@ const chunk = (arr, size) =>
   )
 
 console.log(
-  chunk(
-    process.argv[2].split(',').map((s) => s.trim()),
-    2,
-  ).map((a) => a.join(',')),
+  JSON.stringify(
+    chunk(
+      process.argv[2].split(',').map((s) => s.trim()),
+      2,
+    ).map((a) => a.join(',')),
+  ),
 )
