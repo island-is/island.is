@@ -49,4 +49,13 @@ air-discount-scheme-backend:
       DB_USER: 'air_discount_scheme_backend'
 
   ingress:
-    enabled: false
+    annotations:
+      cert-manager.io/cluster-issuer: 'devland-is-letsencrypt-dns01'
+    hosts:
+      - host: 'ads.dev01.devland.is'
+        paths:
+          - '/api/swagger'
+          - '/api/public'
+    tls:
+      - hosts: ['ads.dev01.devland.is']
+        secretName: 'air-discount-scheme-web-tls'
