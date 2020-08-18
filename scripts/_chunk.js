@@ -14,6 +14,8 @@ process.stdout.write(
     chunk(
       process.argv[2].split(',').map((s) => s.trim()),
       chunkSize,
-    ).map((a) => a.join(',')),
+    )
+      .map((ch) => ch.join(','))
+      .filter((job) => job.length > 0),
   ),
 )
