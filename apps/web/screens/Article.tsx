@@ -15,6 +15,7 @@ import {
   ResponsiveSpace,
   Tag,
   Option,
+  Button,
 } from '@island.is/island-ui/core'
 import { Sidebar, getHeadingLinkElements } from '@island.is/web/components'
 import {
@@ -71,6 +72,17 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
     }
   }
 
+  const data = JSON.parse(article.content)
+
+  const actionButtonLinks = data.content.map((current) => {
+    return current.data?.target?.fields?.processLink
+  })
+
+  const actionButtonLink =
+    actionButtonLinks.length && actionButtonLinks.length === 1
+      ? actionButtonLinks[0]
+      : null
+
   return (
     <>
       <Head>
@@ -78,7 +90,16 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
       </Head>
       <ArticleLayout
         sidebar={
-          <Sidebar title={n('sidebarHeader')} bullet="left" headingLinks />
+          <Stack space={3}>
+            {actionButtonLink ? (
+              <Box background="purple100" padding={4} borderRadius="large">
+                <Button href={actionButtonLink} width="fluid">
+                  Sækja um
+                </Button>
+              </Box>
+            ) : null}
+            <Sidebar title={n('sidebarHeader')} bullet="left" headingLinks />
+          </Stack>
         }
       >
         <ContentContainer
