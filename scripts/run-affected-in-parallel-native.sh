@@ -27,4 +27,4 @@ echo "Affected projects for target $1 are '$AFFECTED_PROJECTS'"
 exec docker run \
   --rm \
   ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} \
-  nx run-many --target=$1 --projects=$AFFECTED_PROJECTS --parallel --maxParallel=$MAX_JOBS
+  nx run-many --target=$1 --projects="$AFFECTED_PROJECTS" --parallel --maxParallel=$MAX_JOBS
