@@ -65,14 +65,13 @@ export class AuthController {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
   @Post('/callback')
-  @Redirect('/', 302)
   async callback(@Body('token') token, @Res() res, @Req() req) {
     let verifyResult: VerifyResult
     try {
       verifyResult = await loginIS.verify(token)
     } catch (err) {
       this.logger.error(err)
-      return { url: '/error' }
+      return res.redirect('/error')
     }
 
     const { user } = verifyResult
@@ -84,7 +83,7 @@ export class AuthController {
           user,
         },
       })
-      return { url: '/api/auth/login' }
+      return res.redirect('/api/auth/login')
     }
 
     const { authId, returnUrl } = redirectCookie
@@ -96,7 +95,7 @@ export class AuthController {
           returnUrl,
         },
       })
-      return { url: '/error' }
+      return res.redirect('/error')
     }
 
     const csrfToken = new Entropy({ bits: 128 }).string()
@@ -111,11 +110,11 @@ export class AuthController {
 
     const tokenParts = jwtToken.split('.')
     if (tokenParts.length !== 3) {
-      return { url: '/error' }
+      return res.redirect('/error')
     }
 
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
-    res
+    return res
       .cookie(CSRF_COOKIE.name, csrfToken, {
         ...CSRF_COOKIE.options,
         maxAge,
@@ -124,7 +123,7 @@ export class AuthController {
         ...ACCESS_TOKEN_COOKIE.options,
         maxAge,
       })
-    return { url: !returnUrl || returnUrl.charAt(0) !== '/' ? '/' : returnUrl }
+      .redirect(!returnUrl || returnUrl.charAt(0) !== '/' ? '/' : returnUrl)
   }
 
   @Get('/login')
@@ -133,8 +132,9 @@ export class AuthController {
     res.clearCookie(name, options)
     const authId = uuid()
 
-    res.cookie(name, { authId, returnUrl }, { ...options, maxAge: ONE_HOUR })
-    return res.redirect(`${samlEntryPoint}&authId=${authId}`)
+    return res
+      .cookie(name, { authId, returnUrl }, { ...options, maxAge: ONE_HOUR })
+      .redirect(`${samlEntryPoint}&authId=${authId}`)
   }
 
   @Get('/logout')
