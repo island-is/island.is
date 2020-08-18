@@ -42,7 +42,7 @@ export function extractPartialSchemaForValues(
   return returnSchema.partial()
 }
 
-export function areAnswersValid(
+export function validateAnswers(
   answers: FormValue,
   partialValidation: boolean,
   dataSchema: Schema,

@@ -1,6 +1,6 @@
 import {
   FormValue,
-  areAnswersValid,
+  validateAnswers,
   FormNode,
   Schema,
 } from '@island.is/application/schema'
@@ -22,7 +22,7 @@ export const resolver: Resolver<FormValue, Context> = async (
   context,
 ) => {
   const { dataSchema } = context
-  const validationError = areAnswersValid(formValue, true, dataSchema)
+  const validationError = validateAnswers(formValue, true, dataSchema)
   if (validationError) {
     const { errors } = validationError
     const errorMap = {}

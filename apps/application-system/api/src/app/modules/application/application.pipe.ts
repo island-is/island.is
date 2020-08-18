@@ -1,6 +1,6 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common'
 import {
-  areAnswersValid,
+  validateAnswers,
   FormValue,
   getFormByTypeId,
 } from '@island.is/application/schema'
@@ -18,7 +18,7 @@ export class ApplicationValidationPipe implements PipeTransform {
         `No application form definition exists for type: ${application.typeId}`,
       )
     }
-    const schemaFormValidation = areAnswersValid(
+    const schemaFormValidation = validateAnswers(
       application.answers as FormValue,
       this.partialValidation,
       applicationForm.schema,
