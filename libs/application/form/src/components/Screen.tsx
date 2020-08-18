@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import {
   FormValue,
   FormItemTypes,
@@ -15,6 +15,7 @@ import ConditionHandler from './ConditionHandler'
 import FormRepeater from './FormRepeater'
 import { useMutation } from '@apollo/client'
 import { CREATE_APPLICATION } from '../graphql/mutations/createApplication'
+import { UPDATE_APPLICATION } from '../graphql/mutations/updateApplication'
 
 type ScreenProps = {
   formValue: FormValue
@@ -39,6 +40,7 @@ const Screen: FC<ScreenProps> = ({
   screen,
   section,
 }) => {
+  const [existingApplicationId, setExistingApplicationId] = useState(null) // TODO move to form reducer state
   const hookFormData = useForm<FormValue>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -49,7 +51,17 @@ const Screen: FC<ScreenProps> = ({
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [createApplication, { data }] = useMutation(CREATE_APPLICATION)
+  const [createApplication, { data: createData }] = useMutation(
+    CREATE_APPLICATION,
+    {
+      onCompleted({ createApplication }) {
+        setExistingApplicationId(createApplication.id)
+      },
+    },
+  )
+  const [updateApplication, { data: updateData }] = useMutation(
+    UPDATE_APPLICATION,
+  )
 
   const { reset, handleSubmit, errors } = hookFormData
 
@@ -60,26 +72,39 @@ const Screen: FC<ScreenProps> = ({
 
   const onSubmit: SubmitHandler<FormValue> = async (data) => {
     if (shouldSubmit) {
+      // call submit mutation
       console.log('here we will submit', formValue)
-      createApplication({
-        variables: {
-          input: {
-            applicant: '123456-1234',
-            state: 'PENDING',
-            attachments: ['https://island.is'],
-            typeId: 'EXAMPLE',
-            assignee: '123456-1235',
-            externalId: 'some_id',
-            answers: formValue,
-          },
-        },
-      })
     } else {
+      if (existingApplicationId) {
+        updateApplication({
+          variables: {
+            input: {
+              id: existingApplicationId,
+              answers: data,
+            },
+          },
+        })
+      } else {
+        createApplication({
+          variables: {
+            input: {
+              applicant: '123456-1234',
+              state: 'PENDING',
+              attachments: ['https://island.is'],
+              typeId: 'EXAMPLE',
+              assignee: '123456-1235',
+              externalId: 'some_id',
+              answers: data,
+            },
+          },
+        })
+      }
       console.log('these were my answers:', data)
       answerQuestions(data)
       nextScreen()
     }
   }
+
   return (
     <FormProvider {...hookFormData}>
       <Box
