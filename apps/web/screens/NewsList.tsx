@@ -4,7 +4,6 @@ import { groupBy, range, capitalize } from 'lodash'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
-import DefaultErrorPage from 'next/error'
 import { Screen } from '../types'
 import NativeSelect from '../components/Select/Select'
 import Bullet from '../components/Bullet/Bullet'
@@ -33,6 +32,7 @@ import {
   ContentLanguage,
   QueryGetNewsListArgs,
 } from '@island.is/api/schema'
+import { CustomNextError } from '../units/ErrorBoundary'
 
 const PageLink = ({ children, href, ...props }) => (
   <Link href={href}>
@@ -59,10 +59,6 @@ const NewsList: Screen<NewsListProps> = ({
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale as Locale)
   const { format } = useDateUtils()
-
-  if ((selectedYear || page.page > 1) && newsList.length === 0) {
-    return <DefaultErrorPage statusCode={404} />
-  }
 
   const dates = dateRange.map((s) => new Date(s))
   const datesByYear = groupBy(dates, (d: Date) => d.getFullYear())
@@ -240,6 +236,7 @@ const NewsListItem = ({ newsItem }) => {
 NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   let year = getIntParam(query.y)
   const month = year && getIntParam(query.m)
+  const selectedPage = getIntParam(query.page) ?? 1
 
   const [
     {
@@ -280,14 +277,18 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       variables: {
         input: {
           lang: locale as ContentLanguage,
-          page: getIntParam(query.page) ?? 1,
           perPage: 10,
+          page: selectedPage,
           year,
           month,
         },
       },
     }),
   ])
+
+  if ((year || page.page > 1) && newsList.length === 0) {
+    throw new CustomNextError(404)
+  }
 
   // default to year of first result if no year is selected
   if (!year && newsList.length > 0) {
