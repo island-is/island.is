@@ -20,7 +20,7 @@ const UserMenu: FC<{}> = () => {
 
   const handleSelection = async (subjectNationalId: string) => {
     setIsOpen(false)
-    await setUser(userInfo.actor.nationalId, subjectNationalId)
+    //await setUser(userInfo.actor.nationalId, subjectNationalId)
     history.push('/')
   }
 
@@ -31,7 +31,7 @@ const UserMenu: FC<{}> = () => {
         onClick={setIsOpen.bind(null, !isOpen)}
       >
         <div className={styles.avatar} />
-        <div className={styles.username}>{userInfo.sub.name}</div>
+        <div className={styles.username}>{userInfo.profile.name}</div>
         <Box marginLeft={3}>
           <Icon type="cheveron" width="10px" height="12px" />
         </Box>

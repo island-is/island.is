@@ -7,14 +7,14 @@ import {
 import { SubjectListDto } from '../mirage-server/models/subject'
 import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
 import jwtDecode from 'jwt-decode'
-import { JwtToken } from '../mirage-server/models/jwt-model'
 import { modules } from './modules'
+import { User } from 'oidc-client'
 
 type NotificationSidebarState = 'open' | 'closed'
 
 export type Action =
   | { type: 'setUserPending' }
-  | { type: 'setUserFulfilled'; payload: JwtToken }
+  | { type: 'setUserFulfilled'; payload: User }
   | { type: 'fetchNavigationPending' }
   | { type: 'fetchNavigationFulfilled'; payload: ServicePortalNavigationRoot[] }
   | { type: 'fetchNavigationFailed' }
@@ -26,7 +26,7 @@ export type Action =
 export type AsyncActionState = 'passive' | 'pending' | 'fulfilled' | 'failed'
 
 export interface StoreState {
-  userInfo: JwtToken | null
+  userInfo: User
   userInfoState: AsyncActionState
   modules: ServicePortalModule[]
   navigation: ServicePortalNavigationRoot[]

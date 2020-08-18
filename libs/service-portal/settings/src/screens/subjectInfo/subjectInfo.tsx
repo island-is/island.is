@@ -23,7 +23,7 @@ const Row: FC<{ values: string[] }> = ({ values }) => (
 )
 
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
-  const { sub } = userInfo
+  const { profile } = userInfo
 
   return (
     <div>
@@ -34,8 +34,8 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       <Stack space={[0, 2]} dividers>
         <Typography variant="h3">Grunnupplýsingar</Typography>
-        <Row values={['Nafn', sub.name]} />
-        <Row values={['Kennitala', sub.nationalId]} />
+        <Row values={['Nafn', profile.given_name]} />
+        <Row values={['Kennitala', profile.email]} />
       </Stack>
     </div>
   )

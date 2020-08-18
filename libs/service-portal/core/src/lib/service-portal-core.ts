@@ -1,7 +1,6 @@
 import { LazyExoticComponent, FC } from 'react'
 import { IconTypes } from '@island.is/island-ui/core'
-// eslint-disable-next-line
-import { JwtToken } from 'apps/service-portal/src/mirage-server/models/jwt-model'
+import { User } from 'oidc-client'
 
 export interface ServicePortalNavigationItem {
   name: string
@@ -17,7 +16,7 @@ export interface ServicePortalNavigationRoot
 }
 
 interface ServicePortalModuleProps {
-  userInfo: JwtToken
+  userInfo: User
 }
 
 export type ServicePortalModuleComponent = FC<ServicePortalModuleProps>
@@ -42,14 +41,14 @@ export interface ServicePortalModule {
    * Returns a promise of a navigation tree
    * that will render in the shell's sidebar.
    */
-  navigation: (userInfo: JwtToken) => Promise<ServicePortalNavigationRoot>
+  navigation: (userInfo: User) => Promise<ServicePortalNavigationRoot>
   /**
    * An optional render value of widgets that should
    * be displayed on the dashboard
    */
-  widgets: (userInfo: JwtToken) => ServicePortalModuleRenderValue
+  widgets: (userInfo: User) => ServicePortalModuleRenderValue
   /**
    * The root render value of this module.
    */
-  render: (userInfo: JwtToken) => ServicePortalModuleRenderValue
+  render: (userInfo: User) => ServicePortalModuleRenderValue
 }

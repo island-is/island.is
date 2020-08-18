@@ -1,6 +1,6 @@
 import { useStore } from '../../store/stateProvider'
-import { setUserToken } from '../../auth/utils'
-import jwtDecode from 'jwt-decode'
+import { UserManager, User } from 'oidc-client'
+
 
 const useUserInfo = () => {
   const [{ userInfo, userInfoState }, dispatch] = useStore()
@@ -14,24 +14,44 @@ const useUserInfo = () => {
         type: 'setUserPending',
       })
 
-      const updatedInfo = await setUserToken(
+      /*const updatedInfo = await setUserToken(
         actorNationalId || userInfo?.actor?.nationalId,
         subjectNationalId,
-      )
+      )*/
 
       dispatch({
         type: 'setUserFulfilled',
-        payload: jwtDecode(updatedInfo.token),
+        payload: null // jwtDecode(updatedInfo.token),
       })
     }
 
     return fetchUserInfo()
   }
 
+  const fetchUserFromUserManager = async (userManager: UserManager) => {
+    //return await userManager.getUser()
+    async function fetchUser() {
+      dispatch({
+        type: 'setUserPending',
+      })
+
+      const updatedInfo = await userManager.getUser()
+      console.log('UpdatedInfo ',updatedInfo)
+      dispatch({
+        type: 'setUserFulfilled',
+        payload: updatedInfo,
+      })
+
+    }
+
+    return fetchUser()
+  }
+
   return {
     userInfo,
     userInfoState,
     setUser,
+    fetchUserFromUserManager,
   }
 }
 

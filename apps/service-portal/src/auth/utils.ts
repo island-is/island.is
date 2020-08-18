@@ -10,16 +10,17 @@ interface MockToken {
   token: ''
 }
 
-export const isAuthenticated = (userManager: UserManager) => {
+export const isAuthenticated = async (userManager: UserManager) => {
 
   const isLoggedIn = async () => {
     console.log('authnehtisndf')
     const user = await userManager.getUser()
+    if(!user) return false
     console.log('is logged in '+ !!user)
     return !!user
   }
 
-  return isLoggedIn()
+  return await isLoggedIn()
 }
 
 export const setUserToken = async (

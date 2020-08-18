@@ -17,10 +17,11 @@ import { Link, useHistory } from 'react-router-dom'
 // eslint-disable-next-line
 import { removeToken } from 'apps/service-portal/src/auth/utils'
 import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
+import { User } from 'oidc-client'
 
 interface Props {
   isOpen: boolean
-  userInfo: JwtToken
+  userInfo: User
   subjectList: SubjectListDto[]
   onSubjectSelection: (subjectNationalId: string) => void
   onCloseMenu: () => void

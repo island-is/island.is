@@ -1,7 +1,10 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { Route, Redirect } from 'react-router-dom'
 import { isAuthenticated } from '../../auth/utils'
 import { UserManager } from 'oidc-client'
+import { userNameContainer } from 'libs/island-ui/core/src/lib/Header/Header.treat'
+import useUserInfo from '../../hooks/useUserInfo/useUserInfo'
+import { useStore } from '../../store/stateProvider'
 
 export interface AuthenticatorProps {
   userManager?: UserManager
@@ -12,11 +15,19 @@ export const Authenticator: FC<AuthenticatorProps> = ({
   children,
   ...rest
 }) => {
-  if(isAuthenticated(userManager)) {
-    userManager.signinRedirect()
-  }
+  const [{ userInfo }] = useStore()
+
   return (
-  <h1>forsíða</h1>
+    <Route
+    {...rest}
+    render={({ location }) =>
+      !userInfo ? (
+        userManager.signinRedirect()
+      ) : (
+        children
+      )
+    }
+  />
   )
 }
 

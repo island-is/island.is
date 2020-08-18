@@ -2,7 +2,7 @@ import React from 'react'
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { Log, User, UserManager } from 'oidc-client';
+import { Log, User, UserManager, WebStorageStateStore, InMemoryWebStorage } from 'oidc-client';
 import { makeServer } from 'apps/service-portal/mirage-server'
 import { Login } from '../screens/login/login'
 import { StateProvider } from '../store/stateProvider'
@@ -23,7 +23,6 @@ export const App = () => {
     authority: 'https://siidentityserverweb20200805020732.azurewebsites.net/',
     client_id: 'island-is-1',
     redirect_uri: `http://localhost:4200/signin-oidc`,
-    // tslint:disable-next-line:object-literal-sort-keys
     response_type: 'code',
     /* supported types
       "code",
@@ -35,7 +34,8 @@ export const App = () => {
       "code id_token token"
     */
     loadUserInfo: true,
-    scope: 'openid profile offline_access'
+    scope: 'openid profile offline_access',
+    userStore:  new WebStorageStateStore({ store: new InMemoryWebStorage() })
   };
 
   /*
@@ -45,6 +45,7 @@ export const App = () => {
     response_type (string, default: 'id_token'): The type of response desired from the OIDC/OAuth2 provider.
     scope (string, default: 'openid'): The scope being requested from the OIDC/OAuth2 provider.*/
   //
+  const userManager = new UserManager(settings)
   return (
     <div className={styles.page}>
       <Router>
@@ -54,13 +55,10 @@ export const App = () => {
             reducer={store.reducer}
           >
             <Switch>
-              <Route path="/innskraning">
-                <Login />
-              </Route>
               <Route path="/signin-oidc">
-                <OidcSignIn userManager={new UserManager(settings)} />
+                <OidcSignIn userManager={userManager} />
               </Route>
-              <Authenticator userManager={new UserManager(settings)}>
+              <Authenticator userManager={userManager}>
                 <Layout>
                   <Route exact path="/">
                     <Dashboard />

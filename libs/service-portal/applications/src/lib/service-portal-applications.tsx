@@ -32,7 +32,7 @@ const NotFound = () => <h1>404</h1>
 export const ServicePortalApplications: ServicePortalModuleComponent = ({
   userInfo,
 }) => {
-  const activeSubjectId = userInfo.sub.nationalId
+  const activeSubjectId = '2606862759'//userInfo.sub.nationalId
 
   return (
     <div>

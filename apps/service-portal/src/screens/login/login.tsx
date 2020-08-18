@@ -22,7 +22,7 @@ export const Login = () => {
   const [subject, setSubject] = useState<Subject>()
   const historyState = history.location.state as { from?: string }
   const { setUser } = useUserInfo()
-
+/*
   const handleActor = (option: Option) =>
     setActor(actors.find((x) => x.nationalId === option.value))
   const handleSubject = (option: Option) =>
@@ -31,10 +31,11 @@ export const Login = () => {
   const handleLogin = async () => {
     await setUser(actor.nationalId, subject.nationalId)
     history.push(historyState?.from || '/')
-  }
+  }*/
 
   return (
-    <Box width="full" height="full" padding={20}>
+    <h1>Login deactivate</h1>
+  /*   <Box width="full" height="full" padding={20}>
       <ContentBlock width="small">
         <Box display="flex" justifyContent="center" marginBottom={5}>
           <Typography variant="h2">Innskráning</Typography>
@@ -76,5 +77,6 @@ export const Login = () => {
         </Box>
       </ContentBlock>
     </Box>
+  ) */
   )
 }
