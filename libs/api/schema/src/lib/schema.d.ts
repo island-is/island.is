@@ -5,6 +5,9 @@ import {
 } from 'graphql'
 import { Context } from './context'
 export type Maybe<T> = T | null
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K]
+}
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 export type RequireFields<T, K extends keyof T> = {
   [X in Exclude<keyof T, K>]?: T[X]
@@ -864,15 +867,11 @@ export type ResolversParentTypes = {
   Menu: Menu
   Application: Application
   DateTime: Scalars['DateTime']
-  ApplicationStateEnum: ApplicationStateEnum
-  ApplicationTypeIdEnum: ApplicationTypeIdEnum
   JSON: Scalars['JSON']
   Query: {}
   HelloWorldInput: HelloWorldInput
   SearcherInput: SearcherInput
-  ContentLanguage: ContentLanguage
   ItemInput: ItemInput
-  ItemType: ItemType
   CategoriesInput: CategoriesInput
   ArticlesInCategoryInput: ArticlesInCategoryInput
   GetArticleInput: GetArticleInput
@@ -889,11 +888,7 @@ export type ResolversParentTypes = {
   GetApplicationInput: GetApplicationInput
   Mutation: {}
   CreateApplicationInput: CreateApplicationInput
-  CreateApplicationDtoStateEnum: CreateApplicationDtoStateEnum
-  CreateApplicationDtoTypeIdEnum: CreateApplicationDtoTypeIdEnum
   UpdateApplicationInput: UpdateApplicationInput
-  UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
-  UpdateApplicationDtoTypeIdEnum: UpdateApplicationDtoTypeIdEnum
 }
 
 export type HelloWorldResolvers<
@@ -1545,7 +1540,7 @@ export type Resolvers<ContextType = Context> = {
   LinkCard?: LinkCardResolvers<ContextType>
   NumberBullet?: NumberBulletResolvers<ContextType>
   AboutPage?: AboutPageResolvers<ContextType>
-  Slice?: SliceResolvers
+  Slice?: SliceResolvers<ContextType>
   PageHeaderSlice?: PageHeaderSliceResolvers<ContextType>
   TimelineSlice?: TimelineSliceResolvers<ContextType>
   HeadingSlice?: HeadingSliceResolvers<ContextType>
@@ -1555,7 +1550,7 @@ export type Resolvers<ContextType = Context> = {
   MailingListSignupSlice?: MailingListSignupSliceResolvers<ContextType>
   LogoListSlice?: LogoListSliceResolvers<ContextType>
   BulletListSlice?: BulletListSliceResolvers<ContextType>
-  BulletEntry?: BulletEntryResolvers
+  BulletEntry?: BulletEntryResolvers<ContextType>
   IconBullet?: IconBulletResolvers<ContextType>
   NumberBulletGroup?: NumberBulletGroupResolvers<ContextType>
   LinkList?: LinkListResolvers<ContextType>

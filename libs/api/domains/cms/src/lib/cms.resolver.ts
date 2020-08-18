@@ -3,6 +3,7 @@ import { Article } from './models/article.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
 import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
+import { FrontpageSlides } from './models/frontpageSlides.model'
 import { GetArticleInput } from './dto/getArticle.input'
 import { News } from './models/news.model'
 import { GetNewsInput } from './dto/getNews.input'
@@ -10,6 +11,7 @@ import { GetNewsListInput } from './dto/getNewsList.input'
 import { GetAdgerdirPageInput } from './dto/getAdgerdirPage.input'
 import { GetAdgerdirPagesInput } from './dto/getAdgerdirPages.input'
 import { GetAdgerdirFrontpageInput } from './dto/getAdgerdirFrontpage.input'
+import { GetFrontpageSlidesInput } from './dto/getFrontpageSlides.input'
 import { PaginatedNews } from './models/paginatedNews.model'
 import { Namespace } from './models/namespace.model'
 import { AboutPage } from './models/aboutPage.model'
@@ -24,6 +26,7 @@ import {
   getNamespace,
   getAboutPage,
   getLandingPage,
+  getFrontpageSlides,
   getAdgerdirPage,
   getAdgerdirPages,
   getAdgerdirFrontpage,
@@ -83,6 +86,13 @@ export class CmsResolver {
     @Args('input') input: GetAdgerdirPagesInput,
   ): Promise<AdgerdirPages | null> {
     return getAdgerdirPages(input?.lang ?? 'is-IS')
+  }
+
+  @Query(() => FrontpageSlides, { nullable: true })
+  getFrontpageSlides(
+    @Args('input') input: GetFrontpageSlidesInput,
+  ): Promise<FrontpageSlides | null> {
+    return getFrontpageSlides(input?.lang ?? 'is-IS')
   }
 
   @Query(() => AdgerdirFrontpage, { nullable: true })

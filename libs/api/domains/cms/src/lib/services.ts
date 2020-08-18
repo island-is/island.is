@@ -8,6 +8,7 @@ import { AboutPage } from './models/aboutPage.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { LandingPage } from './models/landingPage.model'
+import { FrontpageSlide } from './models/frontpageSlide.model'
 import { News } from './models/news.model'
 import { Link } from './models/link.model'
 import { LinkList } from './models/linkList.model'
@@ -266,6 +267,13 @@ const formatLandingPage = ({ fields }): LandingPage => ({
   content: fields.content && JSON.stringify(fields.content),
 })
 
+const formatFrontpageSlide = ({ fields }): FrontpageSlide => ({
+  title: fields.title,
+  subtitle: fields.subtitle,
+  image: fields.image && formatImage(fields.image),
+  content: fields.content && JSON.stringify(fields.content),
+})
+
 const makePage = (
   page: number,
   perPage: number,
@@ -311,6 +319,21 @@ export const getAdgerdirPages = async (lang = 'is-IS') => {
 
   return {
     items: r.items.map(formatAdgerdirPage),
+  }
+}
+
+export const getFrontpageSlides = async (lang = 'is-IS') => {
+  const params = {
+    ['content_type']: 'frontpageSlider',
+    include: 10,
+  }
+
+  const r = await getLocalizedEntries<FrontpageSlide>(lang, params).catch(
+    errorHandler('getFrontpageSlides'),
+  )
+
+  return {
+    items: r.items.map(formatFrontpageSlide),
   }
 }
 
