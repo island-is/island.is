@@ -22,9 +22,14 @@ docker image inspect ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} -f ' ' || \
 MAX_JOBS=${MAX_JOBS:-2}
 
 AFFECTED_PROJECTS=`$DIR/_nx-affected-targets.sh $1 | tr -d '\n[:space:]'`
-echo "Affected projects for target $1 are '$AFFECTED_PROJECTS'"
+if [ ! -z "$AFFECTED_PROJECTS" ]
+then
+  echo "Affected projects for target $1 are '$AFFECTED_PROJECTS'"
 
-exec docker run \
-  --rm \
-  ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} \
-  nx run-many --target=$1 --projects="$AFFECTED_PROJECTS" --parallel --maxParallel=$MAX_JOBS
+  exec docker run \
+    --rm \
+    ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} \
+    nx run-many --target=$1 --projects="$AFFECTED_PROJECTS" --parallel --maxParallel=$MAX_JOBS
+else
+  echo "No affected projects for target $1"
+fi
