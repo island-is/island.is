@@ -1,4 +1,4 @@
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 import {
   IsString,
@@ -7,7 +7,18 @@ import {
   IsEnum,
   IsObject,
 } from 'class-validator'
-import { ApplicationStateEnum } from '../../../gen/fetch'
+import {
+  CreateApplicationDtoTypeIdEnum,
+  CreateApplicationDtoStateEnum,
+} from '../../../gen/fetch'
+
+registerEnumType(CreateApplicationDtoStateEnum, {
+  name: 'CreateApplicationDtoStateEnum',
+})
+
+registerEnumType(CreateApplicationDtoTypeIdEnum, {
+  name: 'CreateApplicationDtoTypeIdEnum',
+})
 
 @InputType()
 export class CreateApplicationInput {
@@ -22,19 +33,20 @@ export class CreateApplicationInput {
   @Field((type) => String, { nullable: true })
   @IsString()
   @IsOptional()
-  externalId: string
+  externalId?: string
 
-  @Field((type) => ApplicationStateEnum)
-  @IsEnum(ApplicationStateEnum)
-  state: ApplicationStateEnum
+  @Field((type) => CreateApplicationDtoStateEnum)
+  @IsEnum(CreateApplicationDtoStateEnum)
+  state: CreateApplicationDtoStateEnum
 
   @Field((type) => [String], { nullable: true })
   @IsArray()
-  attachments: Array<string>
+  @IsOptional()
+  attachments?: Array<string>
 
-  @Field((type) => String)
-  @IsString()
-  typeId: string
+  @Field((type) => CreateApplicationDtoTypeIdEnum)
+  @IsEnum(CreateApplicationDtoTypeIdEnum)
+  typeId: CreateApplicationDtoTypeIdEnum
 
   @Field((type) => graphqlTypeJson)
   @IsObject()

@@ -3,6 +3,7 @@ import { ApplicationService } from './application.service'
 import { Application } from './application.model'
 import { GetApplicationInput } from './dto/getApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
+import { UpdateApplicationInput } from './dto/updateApplication.input'
 
 @Resolver()
 export class ApplicationResolver {
@@ -20,5 +21,12 @@ export class ApplicationResolver {
     @Args('input') input: CreateApplicationInput,
   ): Promise<Application> {
     return this.applicationService.create(input)
+  }
+
+  @Mutation(() => Application, { nullable: true })
+  updateApplication(
+    @Args('input') input: UpdateApplicationInput,
+  ): Promise<Application> {
+    return this.applicationService.update(input)
   }
 }

@@ -213,6 +213,21 @@ type NumberBulletGroup {
   bullets: [NumberBullet!]!
 }
 
+type LinkList {
+  title: String
+  links: [Link!]!
+}
+
+type LandingPage {
+  title: String!
+  slug: String!
+  introduction: String!
+  image: Image
+  actionButton: Link
+  links: LinkList
+  content: String
+}
+
 type Application {
   id: ID!
   created: DateTime!
@@ -222,7 +237,7 @@ type Application {
   externalId: String
   state: ApplicationStateEnum!
   attachments: [String!]
-  typeId: String!
+  typeId: ApplicationTypeIdEnum!
   answers: JSON!
 }
 
@@ -242,25 +257,15 @@ enum ApplicationStateEnum {
   UNKNOWN
 }
 
+enum ApplicationTypeIdEnum {
+  EXAMPLE
+  EXAMPLE2
+}
+
 """
 The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
-
-type LinkList {
-  title: String
-  links: [Link!]!
-}
-
-type LandingPage {
-  title: String!
-  slug: String!
-  introduction: String!
-  image: Image
-  actionButton: Link
-  links: LinkList
-  content: String
-}
 
 type Query {
   helloWorld(input: HelloWorldInput!): HelloWorld!
@@ -272,7 +277,6 @@ type Query {
   getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput!): PaginatedNews!
   getNamespace(input: GetNamespaceInput!): Namespace
-  getPage(input: GetPageInput!): Page
   getAboutPage(input: GetAboutPageInput!): AboutPage
   getLandingPage(input: GetLandingPageInput!): LandingPage
   getApplication(input: GetApplicationInput!): Application
@@ -354,14 +358,58 @@ input GetApplicationInput {
 
 type Mutation {
   createApplication(input: CreateApplicationInput!): Application
+  updateApplication(input: UpdateApplicationInput!): Application
 }
 
 input CreateApplicationInput {
   applicant: String!
   assignee: String!
   externalId: String
-  state: ApplicationStateEnum!
+  state: CreateApplicationDtoStateEnum!
   attachments: [String!]
-  typeId: String!
+  typeId: CreateApplicationDtoTypeIdEnum!
   answers: JSON!
+}
+
+enum CreateApplicationDtoStateEnum {
+  DRAFT
+  BEINGPROCESSED
+  NEEDSINFORMATION
+  PENDING
+  APPROVED
+  MANUALAPPROVED
+  REJECTED
+  UNKNOWN
+}
+
+enum CreateApplicationDtoTypeIdEnum {
+  EXAMPLE
+  EXAMPLE2
+}
+
+input UpdateApplicationInput {
+  id: String!
+  applicant: String
+  assignee: String
+  externalId: String
+  state: UpdateApplicationDtoStateEnum
+  attachments: [String!]
+  typeId: UpdateApplicationDtoTypeIdEnum
+  answers: JSON
+}
+
+enum UpdateApplicationDtoStateEnum {
+  DRAFT
+  BEINGPROCESSED
+  NEEDSINFORMATION
+  PENDING
+  APPROVED
+  MANUALAPPROVED
+  REJECTED
+  UNKNOWN
+}
+
+enum UpdateApplicationDtoTypeIdEnum {
+  EXAMPLE
+  EXAMPLE2
 }

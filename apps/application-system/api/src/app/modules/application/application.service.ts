@@ -1,8 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
+import { merge, isArray } from 'lodash'
 import { InjectModel } from '@nestjs/sequelize'
 import { Application } from './application.model'
-import { ApplicationDto } from './dto/application.dto'
+import { CreateApplicationDto } from './dto/createApplication.dto'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { UpdateApplicationDto } from './dto/updateApplication.dto'
 
 @Injectable()
 export class ApplicationService {
@@ -20,18 +22,30 @@ export class ApplicationService {
     })
   }
 
-  async create(application: ApplicationDto): Promise<Application> {
+  async create(application: CreateApplicationDto): Promise<Application> {
     return this.applicationModel.create(application)
   }
 
-  async update(id: string, application: ApplicationDto) {
-    // Validate answers based of typeId
-    // GET schema for typeId
+  async update(id: string, application: UpdateApplicationDto) {
+    const existingApplication = await this.applicationModel.findOne({
+      where: { id },
+    })
+
+    const mergedAnswers = merge(
+      existingApplication.answers,
+      application.answers,
+      (objValue, srcValue) => {
+        if (isArray(objValue)) {
+          return objValue.concat(srcValue)
+        }
+      },
+    )
+
     const [
       numberOfAffectedRows,
       [updatedApplication],
     ] = await this.applicationModel.update(
-      { ...application },
+      { ...application, answers: mergedAnswers },
       { where: { id }, returning: true },
     )
 
