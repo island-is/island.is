@@ -34,7 +34,8 @@ export class ApplicationController {
   @Post()
   @ApiCreatedResponse({ type: Application })
   async create(
-    @Body(new ApplicationValidationPipe(false)) application: CreateApplicationDto,
+    @Body(new ApplicationValidationPipe(true))
+    application: CreateApplicationDto,
   ): Promise<Application> {
     return this.applicationService.create(application)
   }
@@ -43,7 +44,8 @@ export class ApplicationController {
   @ApiOkResponse({ type: Application })
   async update(
     @Param('id') id: string,
-    @Body(new ApplicationValidationPipe(true)) application: UpdateApplicationDto,
+    @Body(new ApplicationValidationPipe(true))
+    application: UpdateApplicationDto,
   ): Promise<Application> {
     const {
       numberOfAffectedRows,

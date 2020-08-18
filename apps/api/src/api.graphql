@@ -278,8 +278,10 @@ enum ApplicationStateEnum {
 }
 
 enum ApplicationTypeIdEnum {
-  EXAMPLE
-  EXAMPLE2
+  ExampleForm
+  ExampleForm2
+  ExampleForm3
+  FamilyAndPets
 }
 
 """
@@ -449,6 +451,8 @@ enum UpdateApplicationDtoStateEnum {
 }
 
 enum UpdateApplicationDtoTypeIdEnum {
-  EXAMPLE
-  EXAMPLE2
+  ExampleForm
+  ExampleForm2
+  ExampleForm3
+  FamilyAndPets
 }

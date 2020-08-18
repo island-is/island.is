@@ -4,13 +4,14 @@ import {
   FormValue,
   getFormByTypeId,
 } from '@island.is/application/schema'
-import { ApplicationDto } from './dto/application.dto'
+import { CreateApplicationDto } from './dto/createApplication.dto'
+import { UpdateApplicationDto } from './dto/updateApplication.dto'
 
 @Injectable()
 export class ApplicationValidationPipe implements PipeTransform {
   constructor(private partialValidation: boolean) {}
 
-  transform(application: ApplicationDto) {
+  transform(application: CreateApplicationDto | UpdateApplicationDto) {
     const applicationForm = getFormByTypeId(application.typeId)
     if (applicationForm === null) {
       throw new BadRequestException(
@@ -26,5 +27,6 @@ export class ApplicationValidationPipe implements PipeTransform {
     if (schemaFormValidation) {
       throw new BadRequestException(schemaFormValidation.message)
     }
+    return application
   }
 }
