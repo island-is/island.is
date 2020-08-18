@@ -1,10 +1,11 @@
 #!/bin/bash
-set -euxo pipefail
+set -euo pipefail
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 source $DIR/_common.sh
-
+export HEAD=${HEAD:-HEAD}
+export BASE=${BASE:-master}
 # This is a helper script to find NX affected projects for a specific target
 
 APP=nx-runner

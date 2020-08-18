@@ -8,8 +8,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 AFFECTED_EXPRESS=`$DIR/_nx-affected-targets.sh docker-express | tr -d '\n'`
 AFFECTED_NEXT=`$DIR/_nx-affected-targets.sh docker-next | tr -d '\n'`
-ALL_EXPRESS=`AFFECTED_ALL=${BRANCH} $DIR/_nx-affected-targets.sh docker-express | tr -d '\n'`
-ALL_NEXT=`AFFECTED_ALL=${BRANCH} $DIR/_nx-affected-targets.sh docker-next | tr -d '\n'`
+ALL_EXPRESS=`AFFECTED_ALL=7913-${BRANCH} $DIR/_nx-affected-targets.sh docker-express | tr -d '\n'`
+ALL_NEXT=`AFFECTED_ALL=7913-${BRANCH} $DIR/_nx-affected-targets.sh docker-next | tr -d '\n'`
 
 
 UNAFFECTED_DOCKER_IMAGES=`node << EOM
