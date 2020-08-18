@@ -4,6 +4,7 @@ import {
   buildSection,
   buildTextField,
   Form,
+  FormType,
 } from '@island.is/application/schema'
 import * as z from 'zod'
 import { ApplicationReducer, initializeReducer } from './ApplicationFormReducer'
@@ -41,7 +42,7 @@ const FamilyAndPetsSchema = z.object({
 })
 type FamilyAndPetsSchemaFormValues = z.infer<typeof FamilyAndPetsSchema>
 const FamilyAndPets: Form = buildForm({
-  id: 'familyAndPets',
+  id: FormType.FAMILY_AND_PETS,
   ownerId: 'Aranja',
   name: 'Family and pets',
   schema: FamilyAndPetsSchema,
@@ -244,7 +245,7 @@ describe('ApplicationFormReducer', () => {
       const initialState = {
         form: buildForm({
           schema: z.object({ text: z.string() }),
-          id: '123',
+          id: FormType.FAMILY_AND_PETS,
           name: 'Test',
           ownerId: '222',
           children: [],

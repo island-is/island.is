@@ -1,6 +1,7 @@
 import { ZodObject } from 'zod'
 import { Condition } from './Condition'
 import { Field } from './Fields'
+import { FormType } from '../forms'
 
 export enum FormItemTypes {
   FORM = 'FORM',
@@ -14,7 +15,7 @@ export enum FormItemTypes {
 export type Schema = ZodObject<any>
 
 export interface Form {
-  id: string
+  id: FormType
   name: string
   schema: Schema
   type: FormItemTypes.FORM

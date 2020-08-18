@@ -12,9 +12,10 @@ import {
   SectionChildren,
   Schema,
 } from '../types/Form'
+import { FormType } from '../forms'
 
 export function buildForm(data: {
-  id: string
+  id: FormType
   ownerId: string
   name: string
   children: FormChildren[]

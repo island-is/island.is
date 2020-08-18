@@ -115,8 +115,10 @@ export function UpdateApplicationDtoToJSON(value?: UpdateApplicationDto | null):
 * @enum {string}
 */
 export enum UpdateApplicationDtoTypeIdEnum {
-    EXAMPLE = 'EXAMPLE',
-    EXAMPLE2 = 'EXAMPLE2'
+    ExampleForm = 'ExampleForm',
+    ExampleForm2 = 'ExampleForm2',
+    ExampleForm3 = 'ExampleForm3',
+    FamilyAndPets = 'FamilyAndPets'
 }
 /**
 * @export

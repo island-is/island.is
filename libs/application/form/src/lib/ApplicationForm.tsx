@@ -83,6 +83,7 @@ const ApplicationFormBody: FC<ApplicationProps> = ({
               dispatch({ type: ActionTypes.ANSWER, payload })
             }
             dataSchema={form.schema}
+            formTypeId={form.id}
             formValue={formValue}
             expandRepeater={() =>
               dispatch({ type: ActionTypes.EXPAND_REPEATER })

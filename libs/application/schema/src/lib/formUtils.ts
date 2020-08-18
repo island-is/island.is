@@ -1,6 +1,5 @@
 import { FormNode, FormLeaf } from '../types/Form'
 import { Form, FormItemTypes, Section, SubSection } from '../types/Form'
-import { Question } from '../types/Fields'
 
 export function findNode(
   id: string,
@@ -67,17 +66,6 @@ export const getFormNodeLeaves = (
 
 export const getFormLeaves = (form: Form): FormLeaf[] => {
   return getFormNodeLeaves(form)
-}
-
-export const getQuestionsForFormNode = (
-  node: FormNode,
-): { [key: string]: Question } => {
-  const questions = getFormNodeLeaves(node, true) as Question[]
-  const questionMap = {}
-  questions.forEach((question) => {
-    questionMap[question.id] = question
-  })
-  return questionMap
 }
 
 export function getSectionsInForm(form: Form): Section[] {

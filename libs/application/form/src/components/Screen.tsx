@@ -4,6 +4,7 @@ import {
   FormItemTypes,
   Schema,
   Section,
+  FormType,
 } from '@island.is/application/schema'
 import { Typography, Box, Button, Divider } from '@island.is/island-ui/core'
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form'
@@ -19,6 +20,7 @@ import { UPDATE_APPLICATION } from '../graphql/mutations/updateApplication'
 
 type ScreenProps = {
   formValue: FormValue
+  formTypeId: FormType
   answerQuestions(Answers): void
   dataSchema: Schema
   shouldSubmit?: boolean
@@ -31,6 +33,7 @@ type ScreenProps = {
 
 const Screen: FC<ScreenProps> = ({
   formValue,
+  formTypeId,
   answerQuestions,
   dataSchema,
   expandRepeater,
@@ -92,7 +95,7 @@ const Screen: FC<ScreenProps> = ({
               applicant: '123456-1234',
               state: 'PENDING',
               attachments: ['https://island.is'],
-              typeId: 'EXAMPLE',
+              typeId: formTypeId,
               assignee: '123456-1235',
               externalId: 'some_id',
               answers: data,

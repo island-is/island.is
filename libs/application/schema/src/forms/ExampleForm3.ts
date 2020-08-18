@@ -14,8 +14,9 @@ import {
   buildCustomField,
 } from '../lib/fieldBuilders'
 import { Form } from '../types/Form'
-import { nationalIdRegex } from './schemaUtils'
+import { nationalIdRegex } from './formUtils'
 import { CustomFieldComponents } from '../types/Fields'
+import { FormType } from './FormType'
 
 const ExampleSchema = z.object({
   country: z.string().nonempty(),
@@ -73,7 +74,7 @@ const ExampleSchema = z.object({
 type ExampleSchemaFormValues = z.infer<typeof ExampleSchema>
 
 export const ExampleForm3: Form = buildForm({
-  id: 'example',
+  id: FormType.EXAMPLE3,
   ownerId: 'DOL',
   name: "Driver's license",
   schema: ExampleSchema,

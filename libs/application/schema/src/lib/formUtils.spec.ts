@@ -1,4 +1,4 @@
-import { ExampleForm } from '../schemas/ExampleForm'
+import { ExampleForm } from '../forms/ExampleForm'
 import { getFormLeaves, getFormNodeLeaves } from './formUtils'
 
 describe('application schema utility functions', () => {

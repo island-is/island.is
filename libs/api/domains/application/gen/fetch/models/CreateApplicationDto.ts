@@ -107,8 +107,10 @@ export function CreateApplicationDtoToJSON(value?: CreateApplicationDto | null):
 * @enum {string}
 */
 export enum CreateApplicationDtoTypeIdEnum {
-    EXAMPLE = 'EXAMPLE',
-    EXAMPLE2 = 'EXAMPLE2'
+    ExampleForm = 'ExampleForm',
+    ExampleForm2 = 'ExampleForm2',
+    ExampleForm3 = 'ExampleForm3',
+    FamilyAndPets = 'FamilyAndPets'
 }
 /**
 * @export

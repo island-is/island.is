@@ -2,6 +2,7 @@ import * as z from 'zod'
 import { buildForm, buildRepeater, buildSection } from '../lib/formBuilders'
 import { buildTextField } from '../lib/fieldBuilders'
 import { Form } from '../types/Form'
+import { FormType } from './FormType'
 
 const FamilyAndPetsSchema = z.object({
   person: z
@@ -34,7 +35,7 @@ const FamilyAndPetsSchema = z.object({
 })
 
 export const FamilyAndPets: Form = buildForm({
-  id: 'familyAndPets',
+  id: FormType.FAMILY_AND_PETS,
   ownerId: 'Aranja',
   name: 'Family and pets',
   schema: FamilyAndPetsSchema,

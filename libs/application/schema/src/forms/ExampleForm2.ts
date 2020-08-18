@@ -2,7 +2,8 @@ import { buildForm, buildMultiField } from '../lib/formBuilders'
 import { buildSelectField, buildTextField } from '../lib/fieldBuilders'
 import { Form } from '../types/Form'
 import * as z from 'zod'
-import { nationalIdRegex } from './schemaUtils'
+import { nationalIdRegex } from './formUtils'
+import { FormType } from './FormType'
 
 const ExampleSchema2 = z.object({
   name: z
@@ -15,7 +16,7 @@ const ExampleSchema2 = z.object({
 })
 
 export const ExampleForm2: Form = buildForm({
-  id: 'example2',
+  id: FormType.EXAMPLE2,
   ownerId: 'FOS',
   name: 'Fæðingarorlofssjóður',
   schema: ExampleSchema2,

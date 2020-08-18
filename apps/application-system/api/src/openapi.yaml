@@ -59,8 +59,10 @@ components:
         typeId:
           type: string
           enum:
-            - EXAMPLE
-            - EXAMPLE2
+            - ExampleForm
+            - ExampleForm2
+            - ExampleForm3
+            - FamilyAndPets
         answers:
           type: object
       required:
@@ -78,8 +80,10 @@ components:
         typeId:
           type: string
           enum:
-            - EXAMPLE
-            - EXAMPLE2
+            - ExampleForm
+            - ExampleForm2
+            - ExampleForm3
+            - FamilyAndPets
         applicant:
           type: string
         assignee:
@@ -117,8 +121,10 @@ components:
         typeId:
           type: string
           enum:
-            - EXAMPLE
-            - EXAMPLE2
+            - ExampleForm
+            - ExampleForm2
+            - ExampleForm3
+            - FamilyAndPets
         applicant:
           type: string
         assignee:

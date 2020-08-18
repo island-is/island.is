@@ -145,8 +145,10 @@ export enum ApplicationStateEnum {
 * @enum {string}
 */
 export enum ApplicationTypeIdEnum {
-    EXAMPLE = 'EXAMPLE',
-    EXAMPLE2 = 'EXAMPLE2'
+    ExampleForm = 'ExampleForm',
+    ExampleForm2 = 'ExampleForm2',
+    ExampleForm3 = 'ExampleForm3',
+    FamilyAndPets = 'FamilyAndPets'
 }
 
 
