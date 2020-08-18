@@ -12,6 +12,13 @@ export class FlightService {
     private flightLegModel: typeof FlightLeg,
   ) {}
 
+  async countFlightLegsByNationalId(nationalId: string): Promise<number> {
+    return this.flightModel.count({
+      where: { nationalId },
+      include: [this.flightLegModel],
+    })
+  }
+
   async create(flight: FlightDto): Promise<Flight> {
     return this.flightModel.create(flight, { include: [FlightLeg] })
   }
