@@ -13,7 +13,6 @@ import {
 } from '@island.is/api/schema'
 import { GET_PAGE_QUERY } from '../queries'
 import { Screen } from '@island.is/web/types'
-import ArticleContent from '../../units/Content/ArticleContent'
 import {
   Header,
   LinkCardList,
@@ -37,6 +36,7 @@ import {
   Breadcrumbs,
   Stack,
 } from '@island.is/island-ui/core'
+import { Content } from '@island.is/island-ui/contentful'
 import Sidebar, { SidebarProps } from './Sidebar'
 import * as styles from './AboutPage.treat'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
@@ -251,12 +251,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           {...slice}
           events={slice.events.map((event) => ({
             ...event,
-            body: event.body && (
-              <ArticleContent
-                document={event.body}
-                locale={activeLocale as Locale}
-              />
-            ),
+            body: event.body && <Content document={event.body} />,
           }))}
         />
       )

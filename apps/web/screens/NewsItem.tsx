@@ -7,7 +7,6 @@ import { useI18n } from '@island.is/web/i18n'
 import { Locale } from '@island.is/web/i18n/I18n'
 import { useDateUtils } from '../i18n/useDateUtils'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
-import ArticleContent from '../units/Content/ArticleContent'
 import {
   Typography,
   Stack,
@@ -83,10 +82,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
             </Stack>
           </ContentBlock>
         </Box>
-        <ArticleContent
-          document={newsItem.content}
-          locale={activeLocale as Locale}
-        />
+        <Content document={newsItem.content} />
       </NewsItemLayout>
     </>
   )

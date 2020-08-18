@@ -1,14 +1,12 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC } from 'react'
 import { Icon, Typography, TypographyProps } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/web/i18n/I18n'
 
 import * as styles from './Hyperlink.treat'
 
 interface HyperlinkProps {
   href?: string
   slug?: string
-  locale?: Locale
   variant?: TypographyProps['variant']
   as?: TypographyProps['as']
 }

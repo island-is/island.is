@@ -16,6 +16,7 @@ import {
   Tag,
   Option,
 } from '@island.is/island-ui/core'
+import { Content } from '@island.is/island-ui/contentful'
 import { Sidebar, getHeadingLinkElements } from '@island.is/web/components'
 import {
   Query,
@@ -26,7 +27,6 @@ import {
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
 import { Screen } from '../types'
-import ArticleContent from '../units/Content/ArticleContent'
 import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
 import { Locale } from '../i18n/I18n'
@@ -122,10 +122,7 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
           </Stack>
         </ContentContainer>
 
-        <ArticleContent
-          document={article.content}
-          locale={activeLocale as Locale}
-        />
+        <Content document={article.content} />
       </ArticleLayout>
     </>
   )
