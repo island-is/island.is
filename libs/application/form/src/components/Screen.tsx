@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import React, { FC, useState } from 'react'
 import {
   FormValue,
   FormItemTypes,
@@ -59,6 +59,7 @@ const Screen: FC<ScreenProps> = ({
       },
     },
   )
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [updateApplication, { data: updateData }] = useMutation(
     UPDATE_APPLICATION,
   )
