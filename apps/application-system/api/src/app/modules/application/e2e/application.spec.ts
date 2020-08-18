@@ -21,8 +21,7 @@ describe('Application', () => {
         assignee: '123456-1234',
         externalId: '123',
         answers: {
-          ['key-1']: 'some answer',
-          ['key-2']: 'another answer',
+          person: { age: '19' },
         },
       })
       .expect(201)
