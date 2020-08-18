@@ -34,11 +34,6 @@ export class ApplicationService {
     const mergedAnswers = merge(
       existingApplication.answers,
       application.answers,
-      (objValue, srcValue) => {
-        if (isArray(objValue)) {
-          return objValue.concat(srcValue)
-        }
-      },
     )
 
     const [
