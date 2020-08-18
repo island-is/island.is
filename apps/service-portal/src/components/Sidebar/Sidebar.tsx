@@ -1,11 +1,12 @@
 import React, { FC } from 'react'
-import { Box, Typography, SkeletonLoader } from '@island.is/island-ui/core'
-import useNavigation from '../../hooks/useNavigation/useNavigation'
+import { Box, Typography } from '@island.is/island-ui/core'
 import * as styles from './Sidebar.treat'
 import ModuleNavigation from './ModuleNavigation'
+import { useStore } from '../../store/stateProvider'
 
 export const Sidebar: FC<{}> = () => {
-  const { navigation, navigationState } = useNavigation()
+  const [{ modules, userInfo }] = useStore()
+  const navigation = modules.map((x) => x.navigation(userInfo))
 
   const actionsNavList = navigation
     .filter((x) => x.section === 'actions')
@@ -17,37 +18,32 @@ export const Sidebar: FC<{}> = () => {
   return (
     <aside className={styles.sidebar}>
       <Box paddingY={7} paddingX={6}>
-        {/* TODO: Sidebar loading state? */}
-        {navigationState === 'pending' ? (
-          <SkeletonLoader />
-        ) : (
-          <>
-            {actionsNavList.length > 0 && (
-              <Box marginBottom={4}>
-                <Box marginBottom={3}>
-                  <Typography variant="h4" as="h4">
-                    Aðgerðir
-                  </Typography>
-                </Box>
-                {actionsNavList.map((navRoot, index) => (
-                  <ModuleNavigation nav={navRoot} key={index} />
-                ))}
+        <>
+          {actionsNavList.length > 0 && (
+            <Box marginBottom={4}>
+              <Box marginBottom={3}>
+                <Typography variant="h4" as="h4">
+                  Aðgerðir
+                </Typography>
               </Box>
-            )}
-            {infoNavList.length > 0 && (
-              <Box marginBottom={4}>
-                <Box marginBottom={3}>
-                  <Typography variant="h4" as="h4">
-                    Upplýsingar
-                  </Typography>
-                </Box>
-                {infoNavList.map((navRoot, index) => (
-                  <ModuleNavigation nav={navRoot} key={index} />
-                ))}
+              {actionsNavList.map((navRoot, index) => (
+                <ModuleNavigation nav={navRoot} key={index} />
+              ))}
+            </Box>
+          )}
+          {infoNavList.length > 0 && (
+            <Box marginBottom={4}>
+              <Box marginBottom={3}>
+                <Typography variant="h4" as="h4">
+                  Upplýsingar
+                </Typography>
               </Box>
-            )}
-          </>
-        )}
+              {infoNavList.map((navRoot, index) => (
+                <ModuleNavigation nav={navRoot} key={index} />
+              ))}
+            </Box>
+          )}
+        </>
       </Box>
     </aside>
   )

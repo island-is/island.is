@@ -3,8 +3,7 @@ import { lazy } from 'react'
 
 export const educationModule: ServicePortalModule = {
   name: 'Menntun',
-  path: '/menntun',
-  navigation: async () => ({
+  navigation: () => ({
     name: 'Menntun',
     url: '/menntun',
     order: 3,
@@ -12,6 +11,12 @@ export const educationModule: ServicePortalModule = {
     icon: 'search',
     children: [],
   }),
-  widgets: () => null,
-  render: () => lazy(() => import('./lib/service-portal-education')),
+  widgets: () => [],
+  routes: () => [
+    {
+      name: 'Menntun',
+      path: '/menntun',
+      render: () => lazy(() => import('./lib/service-portal-education')),
+    },
+  ],
 }

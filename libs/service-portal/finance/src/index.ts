@@ -3,8 +3,7 @@ import { lazy } from 'react'
 
 export const financeModule: ServicePortalModule = {
   name: 'Fjármál',
-  path: '/fjarmal',
-  navigation: async (props) => {
+  navigation: () => {
     return {
       name: 'Fjármál',
       url: '/fjarmal',
@@ -13,6 +12,18 @@ export const financeModule: ServicePortalModule = {
       order: 1,
     }
   },
-  widgets: () => lazy(() => import('./lib/service-portal-finance')),
-  render: () => lazy(() => import('./lib/service-portal-finance')),
+  widgets: () => [
+    {
+      name: 'Fjármál',
+      weight: 3,
+      render: () => lazy(() => import('./lib/service-portal-finance')),
+    },
+  ],
+  routes: () => [
+    {
+      name: 'Fjármál',
+      path: '/fjarmal',
+      render: () => lazy(() => import('./lib/service-portal-finance')),
+    },
+  ],
 }

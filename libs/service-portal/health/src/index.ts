@@ -3,8 +3,7 @@ import { lazy } from 'react'
 
 export const healthModule: ServicePortalModule = {
   name: 'Heilsa',
-  path: '/heilsa',
-  navigation: async (props) => {
+  navigation: () => {
     return {
       name: 'Heilsa',
       url: '/heilsa',
@@ -13,6 +12,18 @@ export const healthModule: ServicePortalModule = {
       order: 2,
     }
   },
-  widgets: () => lazy(() => import('./lib/service-portal-health')),
-  render: () => lazy(() => import('./lib/service-portal-health')),
+  widgets: () => [
+    {
+      name: 'Heilsa',
+      weight: 5,
+      render: () => lazy(() => import('./lib/service-portal-health')),
+    },
+  ],
+  routes: () => [
+    {
+      name: 'Heilsa',
+      path: '/heilsa',
+      render: () => lazy(() => import('./lib/service-portal-health')),
+    },
+  ],
 }

@@ -1,31 +1,54 @@
 import React, { FC, Suspense } from 'react'
 import { Box, Typography } from '@island.is/island-ui/core'
 import { useStore } from '../../store/stateProvider'
-import { ServicePortalModule } from '@island.is/service-portal/core'
+import {
+  ServicePortalWidget,
+  ServicePortalModule,
+} from '@island.is/service-portal/core'
 import { JwtToken } from '../../mirage-server/models/jwt-model'
 import ModuleLoader from '../Loaders/ModuleLoader/ModuleLoader'
 
-const WidgetLoader: FC<{
-  module: ServicePortalModule
+const Widget: FC<{
+  widget: ServicePortalWidget
   userInfo: JwtToken
-}> = React.memo(({ module, userInfo }) => {
-  const Widgets = module.widgets(userInfo)
+}> = ({ widget, userInfo }) => {
+  const Component = widget.render(userInfo)
 
-  if (Widgets)
+  if (Component)
     return (
       <Box marginBottom={8}>
         <Box marginBottom={2}>
           <Typography variant="h3" as="h3">
-            {module.name}
+            {widget.name}
           </Typography>
         </Box>
         <Suspense fallback={<ModuleLoader />}>
-          <Widgets userInfo={userInfo} />
+          <Component userInfo={userInfo} />
         </Suspense>
       </Box>
     )
 
   return null
+}
+
+const WidgetLoader: FC<{
+  modules: ServicePortalModule[]
+  userInfo: JwtToken
+}> = React.memo(({ modules, userInfo }) => {
+  const widgets = modules
+    .reduce(
+      (prev, curr) => [...prev, ...curr.widgets(userInfo)],
+      [] as ServicePortalWidget[],
+    )
+    .sort((a, b) => a.weight - b.weight)
+
+  return (
+    <>
+      {widgets.map((widget, index) => (
+        <Widget widget={widget} key={index} userInfo={userInfo} />
+      ))}
+    </>
+  )
 })
 
 export const Dashboard: FC<{}> = () => {
@@ -33,9 +56,7 @@ export const Dashboard: FC<{}> = () => {
 
   return (
     <Box padding={3}>
-      {modules.map((module, index) => (
-        <WidgetLoader module={module} key={index} userInfo={userInfo} />
-      ))}
+      <WidgetLoader modules={modules} userInfo={userInfo} />
     </Box>
   )
 }

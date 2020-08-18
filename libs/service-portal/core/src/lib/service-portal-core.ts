@@ -26,30 +26,93 @@ export type ServicePortalModuleRenderValue = LazyExoticComponent<
   ServicePortalModuleComponent
 >
 
-export interface ServicePortalModule {
+export type ServicePortalRoute = {
   /**
-   * Used as the module title in the shell
-   * in various components such as when rendering
-   * widgets on the dashboard*/
+   * The title of this route
+   */
   name: string
   /**
-   * Describes the root route of this module
-   * and how the shell navigates to it
-   * Fx: Module: Fjármál, path: /fjarmal
+   * Describes the path used to route to this component
    */
   path: string
+  /**
+   * The render value of this component
+   */
+  render: (userInfo: JwtToken) => ServicePortalModuleRenderValue
+}
+
+export type ServicePortalWidget = {
+  /**
+   * Describes the name of this widget, displayed on the dashboard above it fx.
+   */
+  name: string
+  /**
+   * Weight determines how widgets are sorted on the dashboard.
+   * The lower the weight, the higher up it is
+   */
+  weight: number
+  /**
+   * The render value of this widget
+   */
+  render: (userInfo: JwtToken) => ServicePortalModuleRenderValue
+}
+
+export interface ServicePortalModule {
+  /**
+   * The title of this module
+   */
+  name: string
   /**
    * Returns a promise of a navigation tree
    * that will render in the shell's sidebar.
    */
-  navigation: (userInfo: JwtToken) => Promise<ServicePortalNavigationRoot>
+  navigation: (userInfo: JwtToken) => ServicePortalNavigationRoot
   /**
    * An optional render value of widgets that should
    * be displayed on the dashboard
    */
-  widgets: (userInfo: JwtToken) => ServicePortalModuleRenderValue
+  widgets: (userInfo: JwtToken) => ServicePortalWidget[]
   /**
-   * The root render value of this module.
+   * The routes defined by this module
    */
-  render: (userInfo: JwtToken) => ServicePortalModuleRenderValue
+  routes: (userInfo: JwtToken) => ServicePortalRoute[]
 }
+
+// const navItem = {
+//   name: 'Heilsu fjarmal',
+//   module: 'finance',
+//   weight: 0,
+//   path: '/heilsa/fjarmal',
+//   render: () => {},
+// }
+
+// const asf = '/fjarmal/sjukratryggingar'
+
+// const masternav = [
+//   {
+//     id: 'dasf',
+//     name: 'Fjármál',
+//     path: '/fjarmal',
+//     children: [
+//       {
+//         id: 'asfff',
+//         name: 'Heilsu fjarmál',
+//         path: '/heilsa/fjarmal',
+//         children: [],
+//       },
+//       {
+//         id: 'asf',
+//         name: 'Arsreikningar',
+//         path: '/fjarmal/arsreikningar',
+//         children: [],
+//       },
+//     ],
+//   },
+// ]
+
+// We would only render /heilsa/fjarmal if the heilsa module has defined
+// a route for it
+// paths are optional and define whether the item is a link or a parent
+// define paths as an enum defining which paths exist in the application
+// both the master nav and module defined routes would then use this enum
+// to define paths

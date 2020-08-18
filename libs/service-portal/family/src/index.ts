@@ -3,8 +3,7 @@ import { lazy } from 'react'
 
 export const familyModule: ServicePortalModule = {
   name: 'Fjölskyldan',
-  path: '/fjolskyldan',
-  navigation: async (props) => {
+  navigation: () => {
     return {
       name: 'Fjölskyldan',
       url: '/fjolskyldan',
@@ -13,6 +12,18 @@ export const familyModule: ServicePortalModule = {
       order: 0,
     }
   },
-  widgets: () => lazy(() => import('./lib/service-portal-family')),
-  render: () => lazy(() => import('./lib/service-portal-family')),
+  widgets: () => [
+    {
+      name: 'Fjölskyldan',
+      weight: 4,
+      render: () => lazy(() => import('./lib/service-portal-family')),
+    },
+  ],
+  routes: () => [
+    {
+      name: 'Fjölskyldan',
+      path: '/fjolskyldan',
+      render: () => lazy(() => import('./lib/service-portal-family')),
+    },
+  ],
 }

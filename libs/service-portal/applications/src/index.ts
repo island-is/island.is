@@ -1,15 +1,9 @@
 import { ServicePortalModule } from '@island.is/service-portal/core'
 import { lazy } from 'react'
 
-const sleep = (ms = 0) => {
-  return new Promise((r) => setTimeout(r, ms))
-}
-
 export const applicationsModule: ServicePortalModule = {
   name: 'Umsóknir',
-  path: '/umsoknir',
-  navigation: async (props) => {
-    await sleep(1000)
+  navigation: (props) => {
     if (props.sub.subjectType === 'company')
       return {
         name: 'Umsóknir',
@@ -36,6 +30,18 @@ export const applicationsModule: ServicePortalModule = {
       ],
     }
   },
-  widgets: () => lazy(() => import('./widgets')),
-  render: () => lazy(() => import('./lib/service-portal-applications')),
+  widgets: () => [
+    {
+      name: 'Umsóknir',
+      weight: 0,
+      render: () => lazy(() => import('./widgets')),
+    },
+  ],
+  routes: () => [
+    {
+      name: 'Umsóknir',
+      path: '/umsoknir',
+      render: () => lazy(() => import('./lib/service-portal-applications')),
+    },
+  ],
 }

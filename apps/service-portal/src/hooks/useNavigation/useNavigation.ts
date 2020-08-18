@@ -1,6 +1,9 @@
 import { useEffect } from 'react'
 import { useStore } from '../../store/stateProvider'
 
+/**
+ * This hook is deprecated until we decide that module navigations should be async again
+ */
 const useNavigation = () => {
   const [
     { modules, navigation, navigationState, userInfo },

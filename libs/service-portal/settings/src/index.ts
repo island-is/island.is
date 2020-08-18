@@ -24,8 +24,13 @@ export const settingsNav: ServicePortalNavigationRoot = {
 
 export const settingsModule: ServicePortalModule = {
   name: 'Stillingar',
-  path: '/stillingar',
-  navigation: async () => settingsNav,
-  widgets: () => null,
-  render: () => lazy(() => import('./lib/service-portal-settings')),
+  navigation: () => settingsNav,
+  widgets: () => [],
+  routes: () => [
+    {
+      name: 'Stillingar',
+      path: '/stillingar',
+      render: () => lazy(() => import('./lib/service-portal-settings')),
+    },
+  ],
 }
