@@ -3,14 +3,6 @@ import { lazy } from 'react'
 
 export const educationModule: ServicePortalModule = {
   name: 'Menntun',
-  navigation: () => ({
-    name: 'Menntun',
-    url: '/menntun',
-    order: 3,
-    section: 'info',
-    icon: 'search',
-    children: [],
-  }),
   widgets: () => [],
   routes: () => [
     {

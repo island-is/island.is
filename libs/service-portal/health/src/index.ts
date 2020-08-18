@@ -3,15 +3,6 @@ import { lazy } from 'react'
 
 export const healthModule: ServicePortalModule = {
   name: 'Heilsa',
-  navigation: () => {
-    return {
-      name: 'Heilsa',
-      url: '/heilsa',
-      icon: 'plus',
-      section: 'info',
-      order: 2,
-    }
-  },
   widgets: () => [
     {
       name: 'Heilsa',

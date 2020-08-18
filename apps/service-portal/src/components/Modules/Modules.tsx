@@ -38,6 +38,7 @@ const RouteLoader: FC<{
         .routes(userInfo)
         .map((route) => (
           <Route
+            exact
             path={route.path}
             key={route.path}
             render={() => <RouteComponent route={route} userInfo={userInfo} />}

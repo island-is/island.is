@@ -3,15 +3,6 @@ import { lazy } from 'react'
 
 export const familyModule: ServicePortalModule = {
   name: 'Fjölskyldan',
-  navigation: () => {
-    return {
-      name: 'Fjölskyldan',
-      url: '/fjolskyldan',
-      icon: 'user',
-      section: 'info',
-      order: 0,
-    }
-  },
   widgets: () => [
     {
       name: 'Fjölskyldan',

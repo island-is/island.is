@@ -18,6 +18,7 @@ const reduce = (
   return children.reduce((iAcc, n) => reduce(f, n, iAcc), newAcc)
 }
 
+// TODO: This has to be updated to fit the newest refactors to routes and navigation
 const ContentBreadcrumbs: FC<{}> = () => {
   const location = useLocation()
   const [{ navigation }] = useStore()

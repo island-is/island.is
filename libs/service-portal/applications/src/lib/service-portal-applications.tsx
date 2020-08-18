@@ -32,13 +32,11 @@ const NotFound = () => <h1>404</h1>
 export const ServicePortalApplications: ServicePortalModuleComponent = ({
   userInfo,
 }) => {
-  const activeSubjectId = userInfo.sub.nationalId
-
   return (
     <div>
       <Switch>
         <Route exact path="/umsoknir" component={Greeting} />
-        {activeSubjectId === '2606862759' && (
+        {userInfo.sub.subjectType === 'person' && (
           <>
             <Route
               exact
