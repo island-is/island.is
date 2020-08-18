@@ -57,6 +57,14 @@ import { Claim } from './claim.model'
     })
     @ApiProperty()
     providerSubjectId: string
+
+    @Column({
+      type: DataType.UUID,
+      primaryKey: false,
+      allowNull: false,
+    })
+    @ApiProperty()
+    profile_id: string
   
     @CreatedAt
     @ApiProperty()
