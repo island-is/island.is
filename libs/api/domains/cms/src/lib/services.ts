@@ -5,6 +5,8 @@ import { ApolloError } from 'apollo-server-express'
 import { Entry } from 'contentful'
 import { Article } from './models/article.model'
 import { AboutPage } from './models/aboutPage.model'
+import { AdgerdirPage } from './models/adgerdirPage.model'
+import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { LandingPage } from './models/landingPage.model'
 import { News } from './models/news.model'
 import { Link } from './models/link.model'
@@ -37,6 +39,22 @@ import { Image } from './models/image.model'
 type CmsPage = Omit<AboutPage, 'slices'> & {
   slices: Entry<typeof Slice>[]
 }
+
+const formatAdgerdirPage = ({ sys, fields }): AdgerdirPage => ({
+  id: sys.id,
+  slug: fields.slug,
+  title: fields.title,
+  description: fields.description,
+  content: JSON.stringify(fields.content),
+})
+
+const formatAdgerdirFrontpage = ({ sys, fields }): AdgerdirFrontpage => ({
+  id: sys.id,
+  slug: fields.slug,
+  title: fields.title,
+  description: fields.description,
+  content: JSON.stringify(fields.content),
+})
 
 const formatArticle = ({ sys, fields }): Article => ({
   id: sys.id,
@@ -263,6 +281,46 @@ const errorHandler = (name: string) => {
     logger.error(error)
     throw new ApolloError('Failed to resolve request in ' + name)
   }
+}
+
+export const getAdgerdirFrontpage = async (lang = 'is-IS') => {
+  const result = await getLocalizedEntries<AdgerdirFrontpage>(lang, {
+    ['content_type']: 'vidspyrna-frontpage',
+    include: 1,
+  }).catch(errorHandler('getVidspyrnaFrontpage'))
+
+  // if we have no results
+  if (!result.total) {
+    return null
+  }
+
+  return formatAdgerdirFrontpage(result.items[0])
+}
+
+export const getAdgerdirPages = async (lang = 'is-IS') => {
+  const params = {
+    ['content_type']: 'vidspyrna-page',
+    include: 10,
+    limit: 100,
+  }
+
+  const r = await getLocalizedEntries<AdgerdirPage>(lang, params).catch(
+    errorHandler('getAdgerdirPages'),
+  )
+
+  return {
+    items: r.items.map(formatAdgerdirPage),
+  }
+}
+
+export const getAdgerdirPage = async (slug: string, lang: string) => {
+  const r = await getLocalizedEntries<AdgerdirPage>(lang, {
+    ['content_type']: 'vidspyrna-page',
+    include: 10,
+    'fields.slug': slug,
+  }).catch(errorHandler('getAdgerdirPage'))
+
+  return r.items[0] && formatAdgerdirPage(r.items[0])
 }
 
 export const getArticle = async (
