@@ -9,8 +9,12 @@ export const FixedNav: FC = () => {
   const [show, setShow] = useState<boolean>(false)
 
   useScrollPosition(
-    ({ currPos }) => {
-      setShow(-100 > currPos.y)
+    ({ prevPos, currPos }) => {
+      if (prevPos.y < currPos.y) {
+        setShow(false)
+      } else {
+        setShow(-100 > currPos.y)
+      }
     },
     [setShow],
     null,
