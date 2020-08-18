@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Discount } from './discount.model'
-import { FlightService } from '../flight/flight.service'
+import { FlightService } from '../flight'
 import { DiscountLimitExceeded } from './discount.error'
 
 const DEFAULT_AVAILABLE_LEGS = 6
@@ -41,9 +41,18 @@ export class DiscountService {
     return new Discount(discountCode, nationalId, flightLegsLeft)
   }
 
+  private getRandomRange(min: number, max: number) {
+    return Math.random() * (max - min) + min
+  }
+
   private generateDiscountCode() {
     return [...Array(DISCOUNT_CODE_LENGTH)]
-      .map(() => String.fromCharCode(Math.random() * (90 - 65) + 65))
+      .map(() => {
+        const rand = Math.round(Math.random())
+        const digits = this.getRandomRange(48, 57)
+        const upperLetters = this.getRandomRange(65, 90)
+        return String.fromCharCode(rand > 0.5 ? upperLetters : digits)
+      })
       .join('')
   }
 

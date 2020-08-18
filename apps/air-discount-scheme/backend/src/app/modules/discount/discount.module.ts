@@ -4,7 +4,7 @@ import {
   PrivateDiscountController,
 } from './discount.controller'
 import { DiscountService } from './discount.service'
-import { FlightModule } from '../flight/flight.module'
+import { FlightModule } from '../flight'
 
 @Module({
   imports: [FlightModule],

@@ -1,7 +1,7 @@
 import { setup } from '../../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
-import { FlightService } from '../../flight/flight.service'
+import { FlightService } from '../../flight'
 
 let app: INestApplication
 let flightService: FlightService
