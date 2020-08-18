@@ -141,11 +141,15 @@ jobs:
       - name: Check formatting
         run: ./scripts/check_formatting.sh
 
-      - name: Linting
-        run: MAX_JOBS=4 ./scripts/run-affected-in-parallel.sh lint
+      # - name: Linting
+      #   run: MAX_JOBS=4 ./scripts/run-affected-in-parallel.sh lint
 
       - name: Linting
         run: MAX_JOBS=4 ./scripts/run-affected-in-parallel-native.sh lint
+      - name: Linting
+        run: MAX_JOBS=6 ./scripts/run-affected-in-parallel-native.sh lint
+      - name: Linting
+        run: MAX_JOBS=2 ./scripts/run-affected-in-parallel-native.sh lint
 
       # - name: Security audit Node modules
       #   run: ./scripts/security-audit.sh
