@@ -8,6 +8,7 @@ import {
   IsObject,
 } from 'class-validator'
 import { ApplicationStateEnum } from '../../../gen/fetch'
+import { FormType } from '@island.is/application/schema'
 
 @InputType()
 export class CreateApplicationInput {
@@ -33,8 +34,8 @@ export class CreateApplicationInput {
   attachments: Array<string>
 
   @Field((type) => String)
-  @IsString()
-  typeId: string
+  @IsEnum(FormType)
+  typeId: FormType
 
   @Field((type) => graphqlTypeJson)
   @IsObject()

@@ -25,8 +25,6 @@ export class ApplicationService {
   }
 
   async update(id: string, application: ApplicationDto) {
-    // Validate answers based of typeId
-    // GET schema for typeId
     const [
       numberOfAffectedRows,
       [updatedApplication],

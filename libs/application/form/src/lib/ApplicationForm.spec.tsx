@@ -4,12 +4,16 @@ import '@testing-library/jest-dom'
 import * as z from 'zod'
 
 import { ApplicationForm } from './ApplicationForm'
-import { buildForm, buildTextField } from '@island.is/application/schema'
+import {
+  buildForm,
+  buildTextField,
+  FormType,
+} from '@island.is/application/schema'
 
 describe(' ApplicationForm', () => {
   const exampleForm = buildForm({
     schema: z.object({ text: z.string() }),
-    id: '123',
+    id: FormType.FAMILY_AND_PETS,
     name: 'Example',
     ownerId: '222',
     children: [

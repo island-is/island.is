@@ -17,7 +17,7 @@ describe('Application', () => {
         applicant: '123456-4321',
         state: 'PENDING',
         attachments: ['https://island.is'],
-        typeId: 'EXAMPLE',
+        typeId: 'ExampleForm',
         assignee: '123456-1234',
         externalId: '123',
         answers: {

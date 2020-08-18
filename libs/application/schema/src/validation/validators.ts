@@ -1,5 +1,4 @@
-import { FormNode, FormValue, Schema } from '../types/Form'
-import { getQuestionsForFormNode } from '../lib/formUtils'
+import { FormValue, Schema } from '../types/Form'
 import * as z from 'zod'
 
 export function extractPartialSchemaForValues(
@@ -45,7 +44,6 @@ export function extractPartialSchemaForValues(
 
 export function areAnswersValid(
   answers: FormValue,
-  formNode: FormNode,
   partialValidation: boolean,
   dataSchema: Schema,
 ): z.ZodError {
@@ -59,14 +57,8 @@ export function areAnswersValid(
     return undefined
   }
 
-  const questionsToCheck = {}
-  Object.keys(getQuestionsForFormNode(formNode)).forEach((id) => {
-    questionsToCheck[id] = true
-  })
-
-  const newSchema = dataSchema.pick(questionsToCheck)
   try {
-    newSchema.parse(answers)
+    dataSchema.parse(answers)
   } catch (e) {
     return e
   }

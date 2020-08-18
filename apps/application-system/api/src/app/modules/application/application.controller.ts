@@ -11,6 +11,7 @@ import { Application } from './application.model'
 import { ApplicationService } from './application.service'
 import { ApplicationDto } from './dto/application.dto'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApplicationValidationPipe } from './application.pipe'
 
 @ApiTags('application')
 @Controller('application')
@@ -19,7 +20,9 @@ export class ApplicationController {
 
   @Post()
   @ApiCreatedResponse({ type: Application })
-  async create(@Body() application: ApplicationDto): Promise<Application> {
+  async create(
+    @Body(new ApplicationValidationPipe(false)) application: ApplicationDto,
+  ): Promise<Application> {
     return this.applicationService.create(application)
   }
 
@@ -39,7 +42,7 @@ export class ApplicationController {
   @ApiOkResponse({ type: Application })
   async update(
     @Param('id') id: string,
-    @Body() application: ApplicationDto,
+    @Body(new ApplicationValidationPipe(true)) application: ApplicationDto,
   ): Promise<Application> {
     const {
       numberOfAffectedRows,

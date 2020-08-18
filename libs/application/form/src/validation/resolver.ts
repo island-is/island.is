@@ -21,8 +21,8 @@ export const resolver: Resolver<FormValue, Context> = async (
   formValue,
   context,
 ) => {
-  const { formNode, dataSchema } = context
-  const validationError = areAnswersValid(formValue, formNode, true, dataSchema)
+  const { dataSchema } = context
+  const validationError = areAnswersValid(formValue, true, dataSchema)
   if (validationError) {
     const { errors } = validationError
     const errorMap = {}
