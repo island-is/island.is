@@ -27,16 +27,11 @@ export class UserProfilesService {
   async findBySubjectId(subjectId: string): Promise<UserProfile> {
     this.logger.debug(`Finding user profile for subjectId - "${subjectId}"`)
 
-    const [result, meta] = await this.sequelize.query(
-      'SELECT "profile_id" FROM "user_identity" WHERE subject_id=' +
-        "'" +
-        subjectId +
-        "'",
-      {
-        bind: { subjectId: subjectId },
+    const [result, meta] = await this.sequelize.query('SELECT "profile_id" FROM "user_identity" WHERE subject_id=$subjectId',
+    {
+        bind: { subjectId: subjectId},
         model: Profile,
-      },
-    )
+    });
 
     this.logger.debug(`Found profileId - "${result.profile_id}"`)
 
