@@ -1,9 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
-import { Client, GrantTypes, Secret } from './client.model'
+import { Client } from './client.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Counter } from 'prom-client'
-import { Sequelize } from 'sequelize-typescript'
 
 @Injectable()
 export class ClientsService {

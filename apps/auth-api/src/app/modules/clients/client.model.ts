@@ -2,7 +2,7 @@ export class Client {
   ClientId: string;
   ClientSecrets: Secret[];
   Enabled: boolean;
-  AllowedGrantTypes: string;
+  AllowedGrantTypes: string[];
 
   ClientUri: string;
   EnableLocalLogin: boolean;
@@ -14,6 +14,8 @@ export class Client {
 
   AllowOfflineAccess: boolean;
   AllowedScopes: string[];
+  FrontChannelLogoutUri: string;
+
 }
 
 export interface Secret {
@@ -21,4 +23,17 @@ export interface Secret {
 	Value : string;
 	Expiration : Date;
 	Type : string;
+}
+
+export enum GrantTypes {
+  Implicit,
+  ImplicitAndClientCredentials,
+  Code,
+  CodeAndClientCredentials,
+  Hybrid,
+  HybridAndClientCredentials,
+  ClientCredentials,
+  ResourceOwnerPassword,
+  ResourceOwnerPasswordAndClientCredentials,
+  DeviceFlow
 }
