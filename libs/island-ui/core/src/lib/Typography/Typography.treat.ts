@@ -31,7 +31,7 @@ type Variants = {
   >
 }
 
-export const turnicate = style({
+export const truncate = style({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',

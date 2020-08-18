@@ -58,7 +58,7 @@ export const Header = ({
                 </span>
               </Box>
             )}
-            <Typography variant="eyebrow" turnicate>
+            <Typography variant="eyebrow" truncate>
               {userName}
             </Typography>
           </div>
