@@ -1,13 +1,12 @@
 import {
   IsEnum,
-  IsNotEmpty,
   IsObject,
   IsString,
   IsArray,
   IsOptional,
 } from 'class-validator'
 import { ApplicationState } from '../application.model'
-import { SchemaType } from '@island.is/application/schema'
+import { FormType } from '@island.is/application/schema'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateApplicationDto {
@@ -16,9 +15,9 @@ export class UpdateApplicationDto {
   readonly id: string
 
   @IsOptional()
-  @IsEnum(SchemaType)
-  @ApiPropertyOptional({ enum: SchemaType })
-  readonly typeId: SchemaType
+  @IsEnum(FormType)
+  @ApiPropertyOptional({ enum: FormType })
+  readonly typeId: FormType
 
   @IsOptional()
   @IsString()
