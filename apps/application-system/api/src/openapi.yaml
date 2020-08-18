@@ -24,7 +24,55 @@ components:
           type: string
       required:
         - version
-    ApplicationDto:
+    Application:
+      type: object
+      properties:
+        id:
+          type: string
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+        applicant:
+          type: string
+        assignee:
+          type: string
+        externalId:
+          type: string
+        state:
+          type: string
+          enum:
+            - DRAFT
+            - BEING_PROCESSED
+            - NEEDS_INFORMATION
+            - PENDING
+            - APPROVED
+            - MANUAL_APPROVED
+            - REJECTED
+            - UNKNOWN
+        attachments:
+          type: array
+          items:
+            type: string
+        typeId:
+          type: string
+          enum:
+            - EXAMPLE
+            - EXAMPLE2
+        answers:
+          type: object
+      required:
+        - id
+        - created
+        - modified
+        - applicant
+        - assignee
+        - state
+        - typeId
+        - answers
+    CreateApplicationDto:
       type: object
       properties:
         typeId:
@@ -61,21 +109,18 @@ components:
         - typeId
         - applicant
         - assignee
-        - externalId
         - state
         - answers
-        - attachments
-    Application:
+    UpdateApplicationDto:
       type: object
       properties:
         id:
           type: string
-        created:
-          format: date-time
+        typeId:
           type: string
-        modified:
-          format: date-time
-          type: string
+          enum:
+            - EXAMPLE
+            - EXAMPLE2
         applicant:
           type: string
         assignee:
@@ -93,25 +138,14 @@ components:
             - MANUAL_APPROVED
             - REJECTED
             - UNKNOWN
+        answers:
+          type: object
         attachments:
           type: array
           items:
             type: string
-        typeId:
-          type: string
-        answers:
-          type: object
       required:
         - id
-        - created
-        - modified
-        - applicant
-        - assignee
-        - externalId
-        - state
-        - attachments
-        - typeId
-        - answers
 paths:
   /liveness:
     get:
@@ -139,25 +173,6 @@ paths:
                 $ref: '#/components/schemas/Version'
       tags:
         - internal
-  /application:
-    post:
-      operationId: ApplicationController_create
-      parameters: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ApplicationDto'
-      responses:
-        '201':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Application'
-      tags:
-        - application
   '/application/{id}':
     get:
       operationId: ApplicationController_findOne
@@ -189,9 +204,28 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ApplicationDto'
+              $ref: '#/components/schemas/UpdateApplicationDto'
       responses:
         '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+      tags:
+        - application
+  /application:
+    post:
+      operationId: ApplicationController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateApplicationDto'
+      responses:
+        '201':
           description: ''
           content:
             application/json:

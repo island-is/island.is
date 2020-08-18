@@ -6,7 +6,8 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { SchemaType } from '@island.is/application/schema'
 
 export enum ApplicationState {
   DRAFT = 'DRAFT',
@@ -62,7 +63,7 @@ export class Application extends Model<Application> {
   @Column({
     type: DataType.STRING,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   externalId: string
 
   @Column({
@@ -76,14 +77,15 @@ export class Application extends Model<Application> {
   @Column({
     type: DataType.ARRAY(DataType.STRING),
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   attachments: string[]
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
     allowNull: false,
+    values: Object.values(SchemaType),
   })
-  @ApiProperty()
+  @ApiProperty({ enum: SchemaType })
   typeId: string
 
   @Column({

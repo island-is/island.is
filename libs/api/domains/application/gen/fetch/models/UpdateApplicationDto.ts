@@ -16,95 +16,81 @@ import { exists, mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface Application
+ * @interface UpdateApplicationDto
  */
-export interface Application {
+export interface UpdateApplicationDto {
     /**
      * 
      * @type {string}
-     * @memberof Application
+     * @memberof UpdateApplicationDto
      */
     id: string;
     /**
      * 
-     * @type {Date}
-     * @memberof Application
+     * @type {string}
+     * @memberof UpdateApplicationDto
      */
-    created: Date;
-    /**
-     * 
-     * @type {Date}
-     * @memberof Application
-     */
-    modified: Date;
+    typeId?: UpdateApplicationDtoTypeIdEnum;
     /**
      * 
      * @type {string}
-     * @memberof Application
+     * @memberof UpdateApplicationDto
      */
-    applicant: string;
+    applicant?: string;
     /**
      * 
      * @type {string}
-     * @memberof Application
+     * @memberof UpdateApplicationDto
      */
-    assignee: string;
+    assignee?: string;
     /**
      * 
      * @type {string}
-     * @memberof Application
+     * @memberof UpdateApplicationDto
      */
     externalId?: string;
     /**
      * 
      * @type {string}
-     * @memberof Application
+     * @memberof UpdateApplicationDto
      */
-    state: ApplicationStateEnum;
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof Application
-     */
-    attachments?: Array<string>;
-    /**
-     * 
-     * @type {string}
-     * @memberof Application
-     */
-    typeId: ApplicationTypeIdEnum;
+    state?: UpdateApplicationDtoStateEnum;
     /**
      * 
      * @type {object}
-     * @memberof Application
+     * @memberof UpdateApplicationDto
      */
-    answers: object;
+    answers?: object;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof UpdateApplicationDto
+     */
+    attachments?: Array<string>;
 }
 
-export function ApplicationFromJSON(json: any): Application {
-    return ApplicationFromJSONTyped(json, false);
+export function UpdateApplicationDtoFromJSON(json: any): UpdateApplicationDto {
+    return UpdateApplicationDtoFromJSONTyped(json, false);
 }
 
-export function ApplicationFromJSONTyped(json: any, ignoreDiscriminator: boolean): Application {
+export function UpdateApplicationDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): UpdateApplicationDto {
     if ((json === undefined) || (json === null)) {
         return json;
     }
     return {
         
         'id': json['id'],
-        'created': (new Date(json['created'])),
-        'modified': (new Date(json['modified'])),
-        'applicant': json['applicant'],
-        'assignee': json['assignee'],
+        'typeId': !exists(json, 'typeId') ? undefined : json['typeId'],
+        'applicant': !exists(json, 'applicant') ? undefined : json['applicant'],
+        'assignee': !exists(json, 'assignee') ? undefined : json['assignee'],
         'externalId': !exists(json, 'externalId') ? undefined : json['externalId'],
-        'state': json['state'],
+        'state': !exists(json, 'state') ? undefined : json['state'],
+        'answers': !exists(json, 'answers') ? undefined : json['answers'],
         'attachments': !exists(json, 'attachments') ? undefined : json['attachments'],
-        'typeId': json['typeId'],
-        'answers': json['answers'],
     };
 }
 
-export function ApplicationToJSON(value?: Application | null): any {
+export function UpdateApplicationDtoToJSON(value?: UpdateApplicationDto | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -114,15 +100,13 @@ export function ApplicationToJSON(value?: Application | null): any {
     return {
         
         'id': value.id,
-        'created': (value.created.toISOString()),
-        'modified': (value.modified.toISOString()),
+        'typeId': value.typeId,
         'applicant': value.applicant,
         'assignee': value.assignee,
         'externalId': value.externalId,
         'state': value.state,
-        'attachments': value.attachments,
-        'typeId': value.typeId,
         'answers': value.answers,
+        'attachments': value.attachments,
     };
 }
 
@@ -130,7 +114,15 @@ export function ApplicationToJSON(value?: Application | null): any {
 * @export
 * @enum {string}
 */
-export enum ApplicationStateEnum {
+export enum UpdateApplicationDtoTypeIdEnum {
+    EXAMPLE = 'EXAMPLE',
+    EXAMPLE2 = 'EXAMPLE2'
+}
+/**
+* @export
+* @enum {string}
+*/
+export enum UpdateApplicationDtoStateEnum {
     DRAFT = 'DRAFT',
     BEINGPROCESSED = 'BEING_PROCESSED',
     NEEDSINFORMATION = 'NEEDS_INFORMATION',
@@ -139,14 +131,6 @@ export enum ApplicationStateEnum {
     MANUALAPPROVED = 'MANUAL_APPROVED',
     REJECTED = 'REJECTED',
     UNKNOWN = 'UNKNOWN'
-}
-/**
-* @export
-* @enum {string}
-*/
-export enum ApplicationTypeIdEnum {
-    EXAMPLE = 'EXAMPLE',
-    EXAMPLE2 = 'EXAMPLE2'
 }
 
 

@@ -8,11 +8,10 @@ import {
 } from 'class-validator'
 import { ApplicationState } from '../application.model'
 import { FormType } from '@island.is/application/schema'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-export class ApplicationDto {
+export class CreateApplicationDto {
   @IsNotEmpty()
-  @IsString()
   @IsEnum(FormType)
   @ApiProperty({ enum: FormType })
   readonly typeId: FormType
@@ -29,13 +28,13 @@ export class ApplicationDto {
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly externalId: string
 
   @IsNotEmpty()
   @IsEnum(ApplicationState)
   @ApiProperty({ enum: ApplicationState })
-  readonly state: string
+  readonly state: ApplicationState
 
   @IsNotEmpty()
   @IsObject()
@@ -44,6 +43,6 @@ export class ApplicationDto {
 
   @IsOptional()
   @IsArray()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly attachments: string[]
 }
