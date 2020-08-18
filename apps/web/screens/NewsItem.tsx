@@ -2,11 +2,6 @@
 import React from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
-import { Screen } from '../types'
-import { useI18n } from '@island.is/web/i18n'
-import { Locale } from '@island.is/web/i18n/I18n'
-import { useDateUtils } from '../i18n/useDateUtils'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import {
   Typography,
   Stack,
@@ -14,7 +9,12 @@ import {
   Box,
   ContentBlock,
 } from '@island.is/island-ui/core'
-import Image from '../components/Image/Image'
+import { Content, Image } from '@island.is/island-ui/contentful'
+import { Screen } from '../types'
+import { useI18n } from '@island.is/web/i18n'
+import { Locale } from '@island.is/web/i18n/I18n'
+import { useDateUtils } from '../i18n/useDateUtils'
+import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { NewsItemLayout } from './Layouts/Layouts'
 import { GET_NEWS_ITEM_QUERY } from './queries'
 import { Query, ContentLanguage, QueryGetNewsArgs } from '@island.is/api/schema'
