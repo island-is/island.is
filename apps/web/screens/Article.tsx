@@ -79,9 +79,7 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
   })
 
   const actionButtonLink =
-    actionButtonLinks.length && actionButtonLinks.length === 1
-      ? actionButtonLinks[0]
-      : null
+    actionButtonLinks.length === 1 ? actionButtonLinks[0] : null
 
   return (
     <>
@@ -94,7 +92,7 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
             {actionButtonLink ? (
               <Box background="purple100" padding={4} borderRadius="large">
                 <Button href={actionButtonLink} width="fluid">
-                  Sækja um
+                  {n('processLinkButtonText')}
                 </Button>
               </Box>
             ) : null}
