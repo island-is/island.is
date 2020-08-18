@@ -2,7 +2,7 @@
 import React from 'react'
 import Link from 'next/link'
 import slugify from '@sindresorhus/slugify'
-import { Sidebar, Hyperlink, Image } from '@island.is/web/components'
+import { Content, Hyperlink, Image } from '@island.is/island-ui/contentful'
 import {
   Query,
   LandingPage,
@@ -13,8 +13,6 @@ import { Screen } from '@island.is/web/types'
 import { GET_LANDING_PAGE_QUERY } from '../queries'
 import { CustomNextError } from '../../units/ErrorBoundary'
 import Head from 'next/head'
-import ArticleLayout from '../Layouts/Layouts'
-import ArticleContent from '@island.is/web/units/Content/ArticleContent'
 import { useI18n } from '@island.is/web/i18n'
 import {
   Stack,
@@ -24,6 +22,8 @@ import {
   ContentBlock,
   Breadcrumbs,
 } from '@island.is/island-ui/core'
+import { Sidebar } from '@island.is/web/components'
+import ArticleLayout from '../Layouts/Layouts'
 import { Locale } from '../../i18n/I18n'
 import useRouteNames from '../../i18n/useRouteNames'
 
@@ -93,10 +93,7 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
             </Stack>
           </ContentBlock>
         </Box>
-        <ArticleContent
-          document={page.content}
-          locale={activeLocale as Locale}
-        />
+        <Content document={page.content} />
       </ArticleLayout>
     </>
   )

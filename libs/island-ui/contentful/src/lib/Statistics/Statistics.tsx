@@ -18,3 +18,5 @@ export const Statistics: FC<StatisticsProps> = ({ items }) => {
     </div>
   )
 }
+
+export default Statistics

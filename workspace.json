@@ -1165,6 +1165,34 @@
         }
       }
     },
+    "island-ui-contentful": {
+      "root": "libs/island-ui/contentful",
+      "sourceRoot": "libs/island-ui/contentful/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/island-ui/contentful/.eslintrc",
+            "tsConfig": [
+              "libs/island-ui/contentful/tsconfig.lib.json",
+              "libs/island-ui/contentful/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/island-ui/contentful/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/island-ui/contentful/jest.config.js",
+            "tsConfig": "libs/island-ui/contentful/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "air-discount-scheme-api": {
       "root": "apps/air-discount-scheme/api",
       "sourceRoot": "apps/air-discount-scheme/api/src",

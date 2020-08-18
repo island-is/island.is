@@ -47,6 +47,9 @@
       "@island.is/gjafakort/types": ["libs/gjafakort/types/src/index.ts"],
       "@island.is/gjafakort/consts": ["libs/gjafakort/consts/src/index.ts"],
       "@island.is/island-ui/theme": ["libs/island-ui/theme/src/index.ts"],
+      "@island.is/island-ui/contentful": [
+        "libs/island-ui/contentful/src/index.ts"
+      ],
       "@island.is/air-discount-scheme/consts": [
         "libs/air-discount-scheme/consts/src/index.ts"
       ],

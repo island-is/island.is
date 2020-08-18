@@ -27,3 +27,5 @@ export const Statistic: FC<StatisticProps> = ({ value, label }) => {
     </div>
   )
 }
+
+export default Statistic
