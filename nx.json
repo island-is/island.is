@@ -125,6 +125,9 @@
     "island-ui-theme": {
       "tags": []
     },
+    "island-ui-contentful": {
+      "tags": []
+    },
     "air-discount-scheme-api": {
       "tags": []
     },
@@ -138,8 +141,18 @@
     "air-discount-scheme-backend": {
       "tags": []
     },
+    "air-discount-scheme-consts": {
+      "tags": []
+    },
     "api-domains-application": {
       "tags": []
+    },
+    "adgerdir": {
+      "tags": []
+    },
+    "adgerdir-e2e": {
+      "tags": [],
+      "implicitDependencies": ["adgerdir"]
     }
   }
 }

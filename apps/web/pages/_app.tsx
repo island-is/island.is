@@ -5,7 +5,7 @@ import { ApolloProvider } from 'react-apollo'
 import { ApolloClient } from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { Page, Footer, Box } from '@island.is/island-ui/core'
-import { Header, PageLoader, SkipToMainContent } from '../components'
+import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import appWithTranslation from '../i18n/appWithTranslation'
 import initApollo from '../graphql/client'
 
@@ -55,6 +55,7 @@ const Layout: FC<LayoutProps> = ({
       </Head>
       <SkipToMainContent />
       <PageLoader />
+      <FixedNav />
       {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
       <div id="main-content">
         {wrapContent ? <Box width="full">{children}</Box> : children}

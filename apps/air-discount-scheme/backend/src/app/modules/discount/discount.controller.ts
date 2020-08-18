@@ -1,31 +1,25 @@
-import { Controller, Param, Get, Query } from '@nestjs/common'
+import { Controller, Param, Get } from '@nestjs/common'
 import { Discount } from './discount.model'
-import {
-  GetDiscountByCodeParams,
-  GetDiscountByCodeQuery,
-} from './discount.validator'
+import { GetDiscountByCodeParams } from './discount.validator'
 import { DiscountService } from './discount.service'
 import { ApiExcludeEndpoint, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 @ApiTags('discount')
-@Controller('public/discount')
+@Controller('public/users')
 export class PublicDiscountController {
   constructor(private readonly discountService: DiscountService) {}
 
-  @Get(':discountCode')
+  @Get(':nationalId/discounts/:discountCode')
   @ApiOkResponse({ type: Discount })
-  async get(
-    @Param() params: GetDiscountByCodeParams,
-    @Query() query: GetDiscountByCodeQuery,
-  ): Promise<Discount> {
+  async get(@Param() params: GetDiscountByCodeParams): Promise<Discount> {
     return this.discountService.findByDiscountCodeAndNationalId(
       params.discountCode,
-      query.nationalId,
+      params.nationalId,
     )
   }
 }
 
-@Controller('private/discount')
+@Controller('private/users')
 export class PrivateDiscountController {
   constructor(private readonly discountService: DiscountService) {}
 

@@ -15,7 +15,9 @@ import {
   ResponsiveSpace,
   Tag,
   Option,
+  Button,
 } from '@island.is/island-ui/core'
+import { Content } from '@island.is/island-ui/contentful'
 import { Sidebar, getHeadingLinkElements } from '@island.is/web/components'
 import {
   Query,
@@ -26,7 +28,6 @@ import {
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
 import { Screen } from '../types'
-import ArticleContent from '../units/Content/ArticleContent'
 import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
 import { Locale } from '../i18n/I18n'
@@ -71,6 +72,15 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
     }
   }
 
+  const data = JSON.parse(article.content)
+
+  const actionButtonLinks = data.content.map((current) => {
+    return current.data?.target?.fields?.processLink
+  })
+
+  const actionButtonLink =
+    actionButtonLinks.length === 1 ? actionButtonLinks[0] : null
+
   return (
     <>
       <Head>
@@ -78,7 +88,16 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
       </Head>
       <ArticleLayout
         sidebar={
-          <Sidebar title={n('sidebarHeader')} bullet="left" headingLinks />
+          <Stack space={3}>
+            {actionButtonLink ? (
+              <Box background="purple100" padding={4} borderRadius="large">
+                <Button href={actionButtonLink} width="fluid">
+                  {n('processLinkButtonText')}
+                </Button>
+              </Box>
+            ) : null}
+            <Sidebar title={n('sidebarHeader')} bullet="left" headingLinks />
+          </Stack>
         }
       >
         <ContentContainer
@@ -122,10 +141,7 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
           </Stack>
         </ContentContainer>
 
-        <ArticleContent
-          document={article.content}
-          locale={activeLocale as Locale}
-        />
+        <Content document={article.content} />
       </ArticleLayout>
     </>
   )

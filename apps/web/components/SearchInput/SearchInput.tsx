@@ -32,6 +32,7 @@ interface SearchInputProps {
   autocomplete?: boolean
   placeholder?: string
   onSubmit?: (inputValue: string, selectedOption: AsyncSearchOption) => void
+  white?: boolean
 }
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
@@ -44,6 +45,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       autocomplete = true,
       placeholder = '',
       onSubmit,
+      white,
     },
     ref,
   ) => {
@@ -79,10 +81,12 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
         setInputValue(cleanLabel)
 
-        return Router.push({
+        Router.push({
           pathname: makePath('search'),
           query: { q: cleanLabel },
         })
+
+        return window.scrollTo(0, 0)
       }
 
       if (!inputValue) {
@@ -93,10 +97,12 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
       setInputValue(cleanInputValue)
 
-      return Router.push({
+      Router.push({
         pathname: makePath('search'),
         query: { q: cleanInputValue },
       })
+
+      return window.scrollTo(0, 0)
     }
 
     const cleanString = useCallback((string: string) => {
@@ -114,7 +120,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         query: GET_SEARCH_RESULTS_QUERY,
         variables: {
           query: {
-            queryString: cleanedQueryString ? `${cleanedQueryString}*` : '',
+            queryString: cleanedQueryString,
             language: activeLocale as ContentLanguage,
           },
         },
@@ -173,6 +179,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
     return (
       <AsyncSearch
+        white={white}
         ref={ref}
         size={size}
         label={label}

@@ -6,6 +6,7 @@ import { bootstrap } from '@island.is/infra-nest-server'
 bootstrap({
   appModule: AppModule,
   name: 'air-discount-scheme-backend',
+  port: 4248,
   openApi: new DocumentBuilder()
     .setTitle('Air Discount Scheme')
     .setDescription(

@@ -25,6 +25,7 @@ export interface ButtonProps {
   leftImage?: string
   noWrap?: boolean
   target?: string
+  white?: boolean
 }
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
@@ -49,6 +50,7 @@ export const Button = forwardRef<
       leftIcon,
       noWrap,
       target = '_blank',
+      white,
     },
     ref,
   ) => {
@@ -59,6 +61,7 @@ export const Button = forwardRef<
       styles.width[width],
       {
         [styles.noWrap]: noWrap,
+        [styles.white]: white,
       },
     )
 
