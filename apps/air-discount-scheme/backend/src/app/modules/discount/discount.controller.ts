@@ -1,6 +1,15 @@
-import { Controller, Param, Get } from '@nestjs/common'
+import {
+  ForbiddenException,
+  Controller,
+  Param,
+  Get,
+  Post,
+} from '@nestjs/common'
 import { Discount } from './discount.model'
-import { GetDiscountByCodeParams } from './discount.validator'
+import {
+  GetDiscountByCodeParams,
+  CreateDiscountCodeParams,
+} from './discount.validator'
 import { DiscountService } from './discount.service'
 import { ApiExcludeEndpoint, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -23,10 +32,11 @@ export class PublicDiscountController {
 export class PrivateDiscountController {
   constructor(private readonly discountService: DiscountService) {}
 
-  @Get()
+  @Post(':nationalId/discounts')
   @ApiExcludeEndpoint()
-  async get(): Promise<string> {
-    // TODO setup private routes
-    return 'Implement me'
+  async createDiscountCode(
+    @Param() params: CreateDiscountCodeParams,
+  ): Promise<Discount> {
+    return this.discountService.createDiscountCode(params.nationalId)
   }
 }

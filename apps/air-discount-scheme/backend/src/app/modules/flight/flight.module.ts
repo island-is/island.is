@@ -11,5 +11,6 @@ import { FlightService } from './flight.service'
   imports: [SequelizeModule.forFeature([Flight, FlightLeg])],
   controllers: [PublicFlightController, PrivateFlightController],
   providers: [FlightService],
+  exports: [FlightService],
 })
 export class FlightModule {}
