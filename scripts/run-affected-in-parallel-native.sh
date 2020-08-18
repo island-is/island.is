@@ -5,7 +5,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 source $DIR/_common.sh
 
-# This is a helper script to find NX affected projects for a specific target
+# This is a helper script to run NX targets in parallel inside the same container
 
 APP=nx-runner
 # Build NX runner image if does not exist
