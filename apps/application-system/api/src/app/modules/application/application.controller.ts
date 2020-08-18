@@ -9,19 +9,14 @@ import {
 } from '@nestjs/common'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
-import { ApplicationDto } from './dto/application.dto'
+import { CreateApplicationDto } from './dto/createApplication.dto'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { UpdateApplicationDto } from './dto/updateApplication.dto'
 
 @ApiTags('application')
 @Controller('application')
 export class ApplicationController {
   constructor(private readonly applicationService: ApplicationService) {}
-
-  @Post()
-  @ApiCreatedResponse({ type: Application })
-  async create(@Body() application: ApplicationDto): Promise<Application> {
-    return this.applicationService.create(application)
-  }
 
   @Get(':id')
   @ApiOkResponse({ type: Application })
@@ -35,11 +30,19 @@ export class ApplicationController {
     return application
   }
 
+  @Post()
+  @ApiCreatedResponse({ type: Application })
+  async create(
+    @Body() application: CreateApplicationDto,
+  ): Promise<Application> {
+    return this.applicationService.create(application)
+  }
+
   @Put(':id')
   @ApiOkResponse({ type: Application })
   async update(
     @Param('id') id: string,
-    @Body() application: ApplicationDto,
+    @Body() application: UpdateApplicationDto,
   ): Promise<Application> {
     const {
       numberOfAffectedRows,
@@ -47,7 +50,9 @@ export class ApplicationController {
     } = await this.applicationService.update(id, application)
 
     if (numberOfAffectedRows === 0) {
-      throw new NotFoundException("This Application doesn't exist")
+      throw new NotFoundException(
+        `An application with the id ${id} does not exist`,
+      )
     }
 
     return updatedApplication

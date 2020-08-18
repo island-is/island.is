@@ -257,7 +257,7 @@ type Application {
   externalId: String
   state: ApplicationStateEnum!
   attachments: [String!]
-  typeId: String!
+  typeId: ApplicationTypeIdEnum!
   answers: JSON!
 }
 
@@ -275,6 +275,11 @@ enum ApplicationStateEnum {
   MANUALAPPROVED
   REJECTED
   UNKNOWN
+}
+
+enum ApplicationTypeIdEnum {
+  EXAMPLE
+  EXAMPLE2
 }
 
 """
@@ -390,14 +395,58 @@ input GetApplicationInput {
 
 type Mutation {
   createApplication(input: CreateApplicationInput!): Application
+  updateApplication(input: UpdateApplicationInput!): Application
 }
 
 input CreateApplicationInput {
   applicant: String!
   assignee: String!
   externalId: String
-  state: ApplicationStateEnum!
+  state: CreateApplicationDtoStateEnum!
   attachments: [String!]
-  typeId: String!
+  typeId: CreateApplicationDtoTypeIdEnum!
   answers: JSON!
+}
+
+enum CreateApplicationDtoStateEnum {
+  DRAFT
+  BEINGPROCESSED
+  NEEDSINFORMATION
+  PENDING
+  APPROVED
+  MANUALAPPROVED
+  REJECTED
+  UNKNOWN
+}
+
+enum CreateApplicationDtoTypeIdEnum {
+  EXAMPLE
+  EXAMPLE2
+}
+
+input UpdateApplicationInput {
+  id: String!
+  applicant: String
+  assignee: String
+  externalId: String
+  state: UpdateApplicationDtoStateEnum
+  attachments: [String!]
+  typeId: UpdateApplicationDtoTypeIdEnum
+  answers: JSON
+}
+
+enum UpdateApplicationDtoStateEnum {
+  DRAFT
+  BEINGPROCESSED
+  NEEDSINFORMATION
+  PENDING
+  APPROVED
+  MANUALAPPROVED
+  REJECTED
+  UNKNOWN
+}
+
+enum UpdateApplicationDtoTypeIdEnum {
+  EXAMPLE
+  EXAMPLE2
 }

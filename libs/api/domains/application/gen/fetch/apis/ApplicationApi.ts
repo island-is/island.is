@@ -18,13 +18,16 @@ import {
     Application,
     ApplicationFromJSON,
     ApplicationToJSON,
-    ApplicationDto,
-    ApplicationDtoFromJSON,
-    ApplicationDtoToJSON,
+    CreateApplicationDto,
+    CreateApplicationDtoFromJSON,
+    CreateApplicationDtoToJSON,
+    UpdateApplicationDto,
+    UpdateApplicationDtoFromJSON,
+    UpdateApplicationDtoToJSON,
 } from '../models';
 
 export interface ApplicationControllerCreateRequest {
-    applicationDto: ApplicationDto;
+    createApplicationDto: CreateApplicationDto;
 }
 
 export interface ApplicationControllerFindOneRequest {
@@ -33,7 +36,7 @@ export interface ApplicationControllerFindOneRequest {
 
 export interface ApplicationControllerUpdateRequest {
     id: string;
-    applicationDto: ApplicationDto;
+    updateApplicationDto: UpdateApplicationDto;
 }
 
 /**
@@ -44,8 +47,8 @@ export class ApplicationApi extends runtime.BaseAPI {
     /**
      */
     async applicationControllerCreateRaw(requestParameters: ApplicationControllerCreateRequest): Promise<runtime.ApiResponse<Application>> {
-        if (requestParameters.applicationDto === null || requestParameters.applicationDto === undefined) {
-            throw new runtime.RequiredError('applicationDto','Required parameter requestParameters.applicationDto was null or undefined when calling applicationControllerCreate.');
+        if (requestParameters.createApplicationDto === null || requestParameters.createApplicationDto === undefined) {
+            throw new runtime.RequiredError('createApplicationDto','Required parameter requestParameters.createApplicationDto was null or undefined when calling applicationControllerCreate.');
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -59,7 +62,7 @@ export class ApplicationApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: ApplicationDtoToJSON(requestParameters.applicationDto),
+            body: CreateApplicationDtoToJSON(requestParameters.createApplicationDto),
         });
 
         return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationFromJSON(jsonValue));
@@ -107,8 +110,8 @@ export class ApplicationApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling applicationControllerUpdate.');
         }
 
-        if (requestParameters.applicationDto === null || requestParameters.applicationDto === undefined) {
-            throw new runtime.RequiredError('applicationDto','Required parameter requestParameters.applicationDto was null or undefined when calling applicationControllerUpdate.');
+        if (requestParameters.updateApplicationDto === null || requestParameters.updateApplicationDto === undefined) {
+            throw new runtime.RequiredError('updateApplicationDto','Required parameter requestParameters.updateApplicationDto was null or undefined when calling applicationControllerUpdate.');
         }
 
         const queryParameters: runtime.HTTPQuery = {};
@@ -122,7 +125,7 @@ export class ApplicationApi extends runtime.BaseAPI {
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: ApplicationDtoToJSON(requestParameters.applicationDto),
+            body: UpdateApplicationDtoToJSON(requestParameters.updateApplicationDto),
         });
 
         return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationFromJSON(jsonValue));

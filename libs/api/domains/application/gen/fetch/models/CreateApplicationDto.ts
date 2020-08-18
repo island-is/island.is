@@ -16,58 +16,58 @@ import { exists, mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface ApplicationDto
+ * @interface CreateApplicationDto
  */
-export interface ApplicationDto {
+export interface CreateApplicationDto {
     /**
      * 
      * @type {string}
-     * @memberof ApplicationDto
+     * @memberof CreateApplicationDto
      */
-    typeId: ApplicationDtoTypeIdEnum;
+    typeId: CreateApplicationDtoTypeIdEnum;
     /**
      * 
      * @type {string}
-     * @memberof ApplicationDto
+     * @memberof CreateApplicationDto
      */
     applicant: string;
     /**
      * 
      * @type {string}
-     * @memberof ApplicationDto
+     * @memberof CreateApplicationDto
      */
     assignee: string;
     /**
      * 
      * @type {string}
-     * @memberof ApplicationDto
+     * @memberof CreateApplicationDto
      */
-    externalId: string;
+    externalId?: string;
     /**
      * 
      * @type {string}
-     * @memberof ApplicationDto
+     * @memberof CreateApplicationDto
      */
-    state: ApplicationDtoStateEnum;
+    state: CreateApplicationDtoStateEnum;
     /**
      * 
      * @type {object}
-     * @memberof ApplicationDto
+     * @memberof CreateApplicationDto
      */
     answers: object;
     /**
      * 
      * @type {Array<string>}
-     * @memberof ApplicationDto
+     * @memberof CreateApplicationDto
      */
-    attachments: Array<string>;
+    attachments?: Array<string>;
 }
 
-export function ApplicationDtoFromJSON(json: any): ApplicationDto {
-    return ApplicationDtoFromJSONTyped(json, false);
+export function CreateApplicationDtoFromJSON(json: any): CreateApplicationDto {
+    return CreateApplicationDtoFromJSONTyped(json, false);
 }
 
-export function ApplicationDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): ApplicationDto {
+export function CreateApplicationDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): CreateApplicationDto {
     if ((json === undefined) || (json === null)) {
         return json;
     }
@@ -76,14 +76,14 @@ export function ApplicationDtoFromJSONTyped(json: any, ignoreDiscriminator: bool
         'typeId': json['typeId'],
         'applicant': json['applicant'],
         'assignee': json['assignee'],
-        'externalId': json['externalId'],
+        'externalId': !exists(json, 'externalId') ? undefined : json['externalId'],
         'state': json['state'],
         'answers': json['answers'],
-        'attachments': json['attachments'],
+        'attachments': !exists(json, 'attachments') ? undefined : json['attachments'],
     };
 }
 
-export function ApplicationDtoToJSON(value?: ApplicationDto | null): any {
+export function CreateApplicationDtoToJSON(value?: CreateApplicationDto | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -106,7 +106,7 @@ export function ApplicationDtoToJSON(value?: ApplicationDto | null): any {
 * @export
 * @enum {string}
 */
-export enum ApplicationDtoTypeIdEnum {
+export enum CreateApplicationDtoTypeIdEnum {
     EXAMPLE = 'EXAMPLE',
     EXAMPLE2 = 'EXAMPLE2'
 }
@@ -114,7 +114,7 @@ export enum ApplicationDtoTypeIdEnum {
 * @export
 * @enum {string}
 */
-export enum ApplicationDtoStateEnum {
+export enum CreateApplicationDtoStateEnum {
     DRAFT = 'DRAFT',
     BEINGPROCESSED = 'BEING_PROCESSED',
     NEEDSINFORMATION = 'NEEDS_INFORMATION',

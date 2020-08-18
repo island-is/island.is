@@ -8,42 +8,45 @@ import {
 } from 'class-validator'
 import { ApplicationState } from '../application.model'
 import { SchemaType } from '@island.is/application/schema'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-export class ApplicationDto {
-  @IsNotEmpty()
+export class UpdateApplicationDto {
   @IsString()
+  @ApiProperty()
+  readonly id: string
+
+  @IsOptional()
   @IsEnum(SchemaType)
-  @ApiProperty({ enum: SchemaType })
+  @ApiPropertyOptional({ enum: SchemaType })
   readonly typeId: SchemaType
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly applicant: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly assignee: string
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly externalId: string
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsEnum(ApplicationState)
-  @ApiProperty({ enum: ApplicationState })
-  readonly state: string
+  @ApiPropertyOptional({ enum: ApplicationState })
+  readonly state: ApplicationState
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsObject()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly answers: object
 
   @IsOptional()
   @IsArray()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly attachments: string[]
 }

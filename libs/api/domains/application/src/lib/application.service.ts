@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { ApplicationApi, Configuration } from '../../gen/fetch'
+import {
+  ApplicationApi,
+  Configuration,
+  UpdateApplicationDto,
+} from '../../gen/fetch'
 import fetch from 'isomorphic-fetch'
+import { CreateApplicationDto } from '../../gen/fetch/models/CreateApplicationDto'
 
 @Injectable()
 export class ApplicationService {
@@ -17,9 +22,16 @@ export class ApplicationService {
     })
   }
 
-  async create(input: any) {
+  async create(input: CreateApplicationDto) {
     return this.api.applicationControllerCreate({
-      applicationDto: input,
+      createApplicationDto: input,
+    })
+  }
+
+  async update(input: UpdateApplicationDto) {
+    return this.api.applicationControllerUpdate({
+      id: input.id,
+      updateApplicationDto: input,
     })
   }
 }
