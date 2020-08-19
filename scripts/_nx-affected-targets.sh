@@ -4,14 +4,12 @@ set -euo pipefail
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 source $DIR/_common.sh
-export HEAD=${HEAD:-HEAD}
-export BASE=${BASE:-master}
+
 # This is a helper script to find NX affected projects for a specific target
 
 APP=nx-runner
-
-AFFECTED_ALL=${AFFECTED_ALL:-} # Could be used for forcing all projects to be affected (set or create `secret` in GitHub with the name of this variable set to the name of the branch that should be affected, prefixed with the magic string `7913-`)
-if [[ ! -z "$BRANCH" && ! -z "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH" ]] 
+AFFECTED_ALL=${AFFECTED_ALL:-} # Could be used for forcing all projects to be affected
+if [[ ! -z "$BRANCH" && ! -z "$AFFECTED_ALL" && "$AFFECTED_ALL" == "$BRANCH" ]] 
 then
   AFFECTED_FLAGS=" --all "
 else

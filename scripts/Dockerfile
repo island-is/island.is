@@ -70,12 +70,11 @@ RUN addgroup runners && adduser -D runner -G runners
 RUN chown -R runner:runners /webapp
 USER runner
 
-COPY --from=builder --chown=runner:runners /build/node_modules /webapp/node_modules
-
 FROM output-base as output-express
 # image with build of an Express.js app
 
 COPY --from=builder --chown=runner:runners /build/${APP_DIST_HOME} /webapp
+COPY --from=builder --chown=runner:runners /build/node_modules /webapp/node_modules
 
 ENTRYPOINT [ "node" ]
 CMD [ "main.js" ]
@@ -83,6 +82,7 @@ CMD [ "main.js" ]
 FROM output-base as output-next
 # image with build of an Next.js app
 
+COPY --from=builder --chown=runner:runners /build/node_modules /webapp/node_modules
 COPY --from=builder --chown=runner:runners /build/${APP_HOME}/next.config.js /webapp
 COPY --from=builder --chown=runner:runners /build/${APP_HOME}/public /webapp/public
 COPY --from=builder --chown=runner:runners /build/${APP_DIST_HOME} /webapp/.next
