@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
+import CacheManager from 'cache-manager'
 import { Discount } from './discount.model'
 import { FlightService } from '../flight'
-import { DiscountLimitExceeded } from './discount.error'
+import { DiscountLimitExceeded, DiscountCodeInvalid } from './discount.error'
 
 const DEFAULT_AVAILABLE_LEGS = 6
 const AVAILABLE_FLIGHT_LEGS = {
@@ -11,9 +12,14 @@ const AVAILABLE_FLIGHT_LEGS = {
 
 const DISCOUNT_CODE_LENGTH = 8
 
+const ONE_DAY = 24 * 60 * 60
+
 @Injectable()
 export class DiscountService {
-  constructor(private readonly flightService: FlightService) {}
+  constructor(
+    @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
+    private readonly flightService: FlightService,
+  ) {}
 
   private async getFlightLegsLeft(nationalId: string) {
     const noFlightLegs = await this.flightService.countFlightLegsByNationalId(
@@ -32,12 +38,21 @@ export class DiscountService {
     return flightLegsLeft
   }
 
+  private getDiscountCodeCacheKey(discountCode: string) {
+    return `discount_code_${discountCode}`
+  }
+
   async findByDiscountCodeAndNationalId(
     discountCode: string,
     nationalId: string,
   ): Promise<Discount> {
+    const cacheKey = this.getDiscountCodeCacheKey(discountCode)
+    const cacheValue = await this.cacheManager.get(cacheKey)
+    if (!cacheValue || cacheValue.nationalId !== nationalId) {
+      throw new DiscountCodeInvalid()
+    }
+
     const flightLegsLeft = await this.getFlightLegsLeft(nationalId)
-    // TODO: check redis if discountCode exists and belongs to the nationalId provided
     return new Discount(discountCode, nationalId, flightLegsLeft)
   }
 
@@ -57,9 +72,11 @@ export class DiscountService {
   }
 
   async createDiscountCode(nationalId: string): Promise<Discount> {
-    const flightLegsLeft = await this.getFlightLegsLeft(nationalId)
     const discountCode = this.generateDiscountCode()
-    // TODO save discountCode in redis
+    const cacheKey = this.getDiscountCodeCacheKey(discountCode)
+    this.cacheManager.set(cacheKey, { nationalId }, { ttl: ONE_DAY })
+
+    const flightLegsLeft = await this.getFlightLegsLeft(nationalId)
     return new Discount(discountCode, nationalId, flightLegsLeft)
   }
 }

@@ -43,6 +43,7 @@ air-discount-scheme-backend:
     DB_HOST: 'dev-vidspyrna-aurora-1.c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
     DB_NAME: 'air_discount_scheme_backend'
     DB_USER: 'air_discount_scheme_backend'
+    REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
 
   initContainer:
     env:
