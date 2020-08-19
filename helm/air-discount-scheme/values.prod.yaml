@@ -13,13 +13,14 @@ air-discount-scheme-api:
 
   ingress:
     annotations:
-      cert-manager.io/cluster-issuer: 'air-discount-scheme-island-is-letsencrypt-dns01'
+      kubernetes.io/ingress.class: 'nginx-external'
+      cert-manager.io/cluster-issuer: 'devland-is-letsencrypt-dns01'
     hosts:
-      - host: 'ads.island.is'
+      - host: 'ads.devland.is'
         paths:
           - '/api'
     tls:
-      - hosts: ['ads.island.is']
+      - hosts: ['ads.devland.is']
         secretName: 'air-discount-scheme-web-tls'
 
 air-discount-scheme-web:
@@ -27,13 +28,14 @@ air-discount-scheme-web:
 
   ingress:
     annotations:
-      cert-manager.io/cluster-issuer: 'air-discount-scheme-island-is-letsencrypt-dns01'
+      kubernetes.io/ingress.class: 'nginx-external'
+      cert-manager.io/cluster-issuer: 'devland-is-letsencrypt-dns01'
     hosts:
-      - host: 'ads.island.is'
+      - host: 'ads.devland.is'
         paths:
           - '/'
     tls:
-      - hosts: ['ads.island.is']
+      - hosts: ['ads.devland.is']
         secretName: 'air-discount-scheme-web-tls'
 
 air-discount-scheme-backend:
@@ -49,4 +51,14 @@ air-discount-scheme-backend:
       DB_USER: 'air_discount_scheme_backend'
 
   ingress:
-    enabled: false
+    annotations:
+      kubernetes.io/ingress.class: 'nginx-external'
+      cert-manager.io/cluster-issuer: 'devland-is-letsencrypt-dns01'
+      nginx.ingress.kubernetes.io/rewrite-target: /$1$2
+    hosts:
+      - host: 'ads.devland.is'
+        paths:
+          - '/api/(swagger|public)(.*)'
+    tls:
+      - hosts: ['ads.devland.is']
+        secretName: 'air-discount-scheme-web-tls'
