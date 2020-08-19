@@ -27,8 +27,11 @@ import {
   getAdgerdirPage,
   getAdgerdirPages,
   getAdgerdirFrontpage,
+  getMenu,
 } from './services'
 import { LatestNewsSlice } from './models/slices/latestNewsSlice.model'
+import { Menu } from './models/menu.model'
+import { GetMenuInput } from './dto/getMenu.input'
 
 @Resolver()
 export class CmsResolver {
@@ -87,6 +90,11 @@ export class CmsResolver {
     @Args('input') input: GetAdgerdirFrontpageInput,
   ): Promise<AdgerdirPage | null> {
     return getAdgerdirFrontpage(input?.lang ?? 'is-IS')
+  }
+
+  @Query(() => Menu, { nullable: true })
+  getMenu(@Args('input') input: GetMenuInput): Promise<Menu | null> {
+    return getMenu(input?.name ?? '', input?.lang ?? 'is-IS')
   }
 }
 

@@ -5,6 +5,7 @@ import appWithTranslation from '../i18n/appWithTranslation'
 import initApollo from '../graphql/client'
 import Layout from '../layouts/main'
 import { NextComponentType } from 'next'
+import { withErrorBoundary } from '../units/ErrorBoundary'
 
 interface AppCustomProps extends AppProps {
   layoutProps: any
@@ -37,7 +38,10 @@ SupportApplication.getInitialProps = async ({ Component, ctx }) => {
     apolloClient,
   }
   const pageProps = (await Component.getInitialProps(customContext)) as any
-  const layoutProps = await Layout.getInitialProps(customContext as any)
+  const layoutProps = await Layout.getInitialProps({
+    ...customContext,
+    locale: pageProps.locale,
+  } as any)
 
   return {
     layoutProps: { ...layoutProps, ...pageProps.layoutConfig },
@@ -45,4 +49,4 @@ SupportApplication.getInitialProps = async ({ Component, ctx }) => {
   }
 }
 
-export default appWithTranslation(SupportApplication)
+export default appWithTranslation(withErrorBoundary(SupportApplication))

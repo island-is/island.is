@@ -248,6 +248,11 @@ type LandingPage {
   content: String
 }
 
+type Menu {
+  title: String!
+  links: [Link!]!
+}
+
 type Application {
   id: ID!
   created: DateTime!
@@ -304,6 +309,7 @@ type Query {
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
   getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
+  getMenu(input: GetMenuInput!): Menu
   getApplication(input: GetApplicationInput!): Application
 }
 
@@ -388,6 +394,11 @@ input GetAdgerdirPagesInput {
 }
 
 input GetAdgerdirFrontpageInput {
+  lang: String!
+}
+
+input GetMenuInput {
+  name: String!
   lang: String!
 }
 

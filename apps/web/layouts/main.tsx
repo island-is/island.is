@@ -1,22 +1,19 @@
-import React, { FC } from 'react'
+import React from 'react'
 import Head from 'next/head'
 import { Page, Footer, Box, LinkProps } from '@island.is/island-ui/core'
 import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import { NextComponentType, NextPageContext } from 'next'
 import { GetInitialPropsContext } from '../types'
-import { GET_ARTICLE_QUERY } from '../screens/queries'
-import {
-  Query,
-  ContentLanguage,
-  QuerySingleItemArgs,
-} from '@island.is/api/schema'
+import { Query, ContentLanguage, QueryGetMenuArgs } from '@island.is/api/schema'
+import { GET_MENU_QUERY } from '../screens/queries/Menu'
 
 interface LayoutProps {
   showSearchInHeader?: boolean
   wrapContent?: boolean
   showHeader?: boolean
   showFooter?: boolean
-  footerContent?: LinkProps[]
+  footerUpperMenu?: LinkProps[]
+  footerLowerMenu?: LinkProps[]
 }
 
 const Layout: NextComponentType<
@@ -28,7 +25,8 @@ const Layout: NextComponentType<
   wrapContent = true,
   showHeader = true,
   showFooter = true,
-  footerContent,
+  footerUpperMenu,
+  footerLowerMenu,
   children,
 }) => {
   return (
@@ -68,7 +66,9 @@ const Layout: NextComponentType<
       <div id="main-content">
         {wrapContent ? <Box width="full">{children}</Box> : children}
       </div>
-      {showFooter && <Footer bottomLinks={footerContent} />}
+      {showFooter && (
+        <Footer topLinks={footerUpperMenu} bottomLinks={footerLowerMenu} />
+      )}
       <style jsx global>{`
         @font-face {
           font-family: 'IBM Plex Sans';
@@ -121,30 +121,34 @@ const Layout: NextComponentType<
 }
 
 Layout.getInitialProps = async ({ apolloClient, locale }) => {
-  const [article] = await Promise.all([
+  const [upperMenu, lowerMenu] = await Promise.all([
     apolloClient
-      .query<Query, QuerySingleItemArgs>({
-        query: GET_ARTICLE_QUERY,
+      .query<Query, QueryGetMenuArgs>({
+        query: GET_MENU_QUERY,
         variables: {
-          input: {
-            slug: 'greinar-daemi',
-            language: locale as ContentLanguage,
-          },
+          input: { name: 'Footer upper', lang: locale as ContentLanguage },
         },
       })
-      .then((content) => {
-        // map data here to reduce data processing in component
-        // TODO: Elastic endpoint is returning the article document json nested inside ContentItem, look into flattening this
-        const contentObject = JSON.parse(content.data.singleItem.content)
-        return {
-          ...content.data.singleItem,
-          content: JSON.stringify(contentObject.content),
-        }
-      }),
+      .then((result) => result.data.getMenu),
+    apolloClient
+      .query<Query, QueryGetMenuArgs>({
+        query: GET_MENU_QUERY,
+        variables: {
+          input: { name: 'Footer lower', lang: locale as ContentLanguage },
+        },
+      })
+      .then((result) => result.data.getMenu),
   ])
-  // console.log('article', article)
+
   return {
-    footerContent: [{ title: 'test1', href: 'hahahah' }],
+    footerUpperMenu: upperMenu.links.map(({ text, url }) => ({
+      title: text,
+      href: url,
+    })),
+    footerLowerMenu: lowerMenu.links.map(({ text, url }) => ({
+      title: text,
+      href: url,
+    })),
   }
 }
 
