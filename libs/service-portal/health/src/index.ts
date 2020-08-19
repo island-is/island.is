@@ -6,18 +6,17 @@ import { lazy } from 'react'
 
 export const healthModule: ServicePortalModule = {
   name: 'Heilsa',
-  widgets: () => [
-    {
-      name: 'Heilsa',
-      weight: 5,
-      render: () => lazy(() => import('./lib/service-portal-health')),
-    },
-  ],
+  widgets: () => [],
   routes: () => [
     {
       name: 'Heilsa',
       path: ServicePortalPath.HeilsaRoot,
       render: () => lazy(() => import('./lib/service-portal-health')),
+    },
+    {
+      name: 'Umsóknir um lyfseðla',
+      path: ServicePortalPath.UmsoknirLyfsedlar,
+      render: () => lazy(() => import('./lib/prescriptionApplications')),
     },
   ],
 }

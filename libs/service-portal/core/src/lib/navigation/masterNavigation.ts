@@ -19,6 +19,10 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
             name: 'Ný umsókn',
             path: ServicePortalPath.UmsoknirNyUmsokn,
           },
+          {
+            name: 'Lyfseðlar',
+            path: ServicePortalPath.UmsoknirLyfsedlar,
+          },
         ],
       },
 

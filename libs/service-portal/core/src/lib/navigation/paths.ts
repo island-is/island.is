@@ -6,6 +6,7 @@ export enum ServicePortalPath {
   UmsoknirRoot = '/umsoknir',
   UmsoknirNyUmsokn = '/umsoknir/ny-umsokn',
   UmsoknirOpnarUmsoknir = '/umsoknir/opnar-umsoknir',
+  UmsoknirLyfsedlar = '/umsoknir/lyfsedlar',
   // Stillingar
   StillingarRoot = '/stillingar',
   StillingarUpplysingar = '/stillingar/upplysingar',

@@ -11,7 +11,7 @@ export const wrapper = style({
   right: 0,
   zIndex: 2,
   width: width,
-  height: '100vh',
+  height: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_LG}px)`,
   flex: '0 0 auto',
   marginRight: -width,
   backgroundColor: theme.color.white,

@@ -6,13 +6,7 @@ import { lazy } from 'react'
 
 export const financeModule: ServicePortalModule = {
   name: 'Fjármál',
-  widgets: () => [
-    {
-      name: 'Fjármál',
-      weight: 3,
-      render: () => lazy(() => import('./lib/service-portal-finance')),
-    },
-  ],
+  widgets: () => [],
   routes: () => [
     {
       name: 'Fjármál',
