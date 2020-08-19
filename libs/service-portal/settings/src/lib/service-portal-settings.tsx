@@ -4,8 +4,8 @@ import {
   NavigationScreenItem,
   NavigationScreen,
   ServicePortalModuleComponent,
+  ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { ServicePortalPath } from '@island.is/service-portal/constants'
 import SubjectInfo from '../screens/subjectInfo/subjectInfo'
 
 const navScreenItems: NavigationScreenItem[] = [

@@ -1,4 +1,7 @@
-import { ServicePortalModule } from '@island.is/service-portal/core'
+import {
+  ServicePortalModule,
+  ServicePortalPath,
+} from '@island.is/service-portal/core'
 import { lazy } from 'react'
 
 export const familyModule: ServicePortalModule = {
@@ -13,7 +16,7 @@ export const familyModule: ServicePortalModule = {
   routes: () => [
     {
       name: 'Fjölskyldan',
-      path: '/fjolskyldan',
+      path: ServicePortalPath.FjolskyldanRoot,
       render: () => lazy(() => import('./lib/service-portal-family')),
     },
   ],

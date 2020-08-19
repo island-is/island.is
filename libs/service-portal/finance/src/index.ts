@@ -1,4 +1,7 @@
-import { ServicePortalModule } from '@island.is/service-portal/core'
+import {
+  ServicePortalModule,
+  ServicePortalPath,
+} from '@island.is/service-portal/core'
 import { lazy } from 'react'
 
 export const financeModule: ServicePortalModule = {
@@ -13,7 +16,7 @@ export const financeModule: ServicePortalModule = {
   routes: () => [
     {
       name: 'Fjármál',
-      path: '/fjarmal',
+      path: ServicePortalPath.FjarmalRoot,
       render: () => lazy(() => import('./lib/service-portal-finance')),
     },
   ],

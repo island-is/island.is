@@ -1,5 +1,7 @@
-import { ServicePortalModule } from '@island.is/service-portal/core'
-import { ServicePortalPath } from '@island.is/service-portal/constants'
+import {
+  ServicePortalModule,
+  ServicePortalPath,
+} from '@island.is/service-portal/core'
 import { lazy } from 'react'
 
 export const applicationsModule: ServicePortalModule = {

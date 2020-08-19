@@ -2,6 +2,7 @@ import { LazyExoticComponent, FC } from 'react'
 import { IconTypes } from '@island.is/island-ui/core'
 // eslint-disable-next-line
 import { JwtToken } from 'apps/service-portal/src/mirage-server/models/jwt-model'
+import { ServicePortalPath } from './navigation/paths'
 
 export interface ServicePortalNavigationItem {
   name: string
@@ -29,7 +30,7 @@ export type ServicePortalRoute = {
   /**
    * Describes the path used to route to this component
    */
-  path: string
+  path: ServicePortalPath
   /**
    * Routes are defined as exact by default
    * This flags it as a catch-all parent route that

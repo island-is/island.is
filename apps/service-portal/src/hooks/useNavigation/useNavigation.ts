@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react'
 import {
   ServicePortalNavigationItem,
   ServicePortalModule,
+  servicePortalMasterNavigation,
 } from '@island.is/service-portal/core'
-import { servicePortalMasterNavigation } from '@island.is/service-portal/constants'
 import { useStore } from '../../store/stateProvider'
 import { JwtToken } from '../../mirage-server/models/jwt-model'
 
