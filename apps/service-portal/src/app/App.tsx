@@ -14,6 +14,7 @@ import Layout from '../components/Layout/Layout'
 import Modules from '../components/Modules/Modules'
 import * as styles from './App.treat'
 import './App.css'
+import { ServicePortalPath } from '@island.is/service-portal/core'
 
 export const App = () => {
   makeServer()
@@ -27,12 +28,12 @@ export const App = () => {
             reducer={store.reducer}
           >
             <Switch>
-              <Route path="/innskraning">
+              <Route path={ServicePortalPath.MinarSidurInnskraning}>
                 <Login />
               </Route>
               <Authenticator>
                 <Layout>
-                  <Route exact path="/">
+                  <Route exact path={ServicePortalPath.MinarSidurRoot}>
                     <Dashboard />
                   </Route>
                   <Modules />

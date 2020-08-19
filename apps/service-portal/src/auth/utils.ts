@@ -1,4 +1,7 @@
-import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
+import {
+  MOCK_AUTH_KEY,
+  API_USER_TOKEN,
+} from '@island.is/service-portal/constants'
 import Cookies from 'js-cookie'
 
 export const sleep = (ms = 0) => {
@@ -15,7 +18,7 @@ export const setUserToken = async (
   actorNationalId,
   subjectNationalId,
 ): Promise<MockToken> => {
-  const token = await fetch('/user/token', {
+  const token = await fetch(API_USER_TOKEN, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

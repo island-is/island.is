@@ -2,6 +2,7 @@ import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
 import { Breadcrumbs, Box } from '@island.is/island-ui/core'
 import * as styles from './ContentBreadcrumbs.treat'
+import { ServicePortalPath } from '@island.is/service-portal/core'
 
 /**
  * Deprecated way of building the breadcrumbs
@@ -38,7 +39,7 @@ const ContentBreadcrumbs: FC<{}> = () => {
   return (
     <Box className={styles.wrapper} padding={3}>
       <Breadcrumbs>
-        <Link to="/">Mitt Ísland</Link>
+        <Link to={ServicePortalPath.MinarSidurRoot}>Mitt Ísland</Link>
       </Breadcrumbs>
     </Box>
   )

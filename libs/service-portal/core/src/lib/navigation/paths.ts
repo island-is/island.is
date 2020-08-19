@@ -1,4 +1,7 @@
 export enum ServicePortalPath {
+  // Mínar síður
+  MinarSidurRoot = '/',
+  MinarSidurInnskraning = '/innskraning',
   // Umsoknir
   UmsoknirRoot = '/umsoknir',
   UmsoknirNyUmsokn = '/umsoknir/ny-umsokn',

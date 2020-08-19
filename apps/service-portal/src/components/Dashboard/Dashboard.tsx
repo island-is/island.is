@@ -6,7 +6,7 @@ import {
   ServicePortalModule,
 } from '@island.is/service-portal/core'
 import { JwtToken } from '../../mirage-server/models/jwt-model'
-import ModuleLoader from '../Loaders/ModuleLoader/ModuleLoader'
+import WidgetLoading from './WidgetLoading/WidgetLoading'
 
 const Widget: FC<{
   widget: ServicePortalWidget
@@ -22,7 +22,7 @@ const Widget: FC<{
             {widget.name}
           </Typography>
         </Box>
-        <Suspense fallback={<ModuleLoader />}>
+        <Suspense fallback={<WidgetLoading />}>
           <Component userInfo={userInfo} />
         </Suspense>
       </Box>
