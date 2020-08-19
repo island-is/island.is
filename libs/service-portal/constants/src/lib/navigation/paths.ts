@@ -1,41 +1,20 @@
-enum Umsoknir {
-  Umsoknir = '/umsoknir',
-  NyUmsokn = '/umsoknir/ny-umsokn',
-  OpnarUmsoknir = '/umsoknir/opnar-umsoknir',
-}
-
-enum Stillingar {
-  Stillingar = '/stillingar',
-  Upplysingar = '/stillingar/upplysingar',
-  Umbod = '/stillingar/umbod',
-}
-
-enum Fjolskyldan {
-  Fjolskyldan = '/fjolskyldan',
-}
-
-enum Fjarmal {
-  Fjarmal = '/fjarmal',
-}
-
-enum RafraenSkjol {
-  RafraenSkjol = '/rafraen-skjol',
-}
-
-enum Heilsa {
-  Heilsa = '/heilsa',
-}
-
-enum Menntun {
-  Menntun = '/menntun',
-}
-
-export const ServicePortalPath = {
-  Umsoknir,
-  Stillingar,
-  Fjolskyldan,
-  Fjarmal,
-  RafraenSkjol,
-  Heilsa,
-  Menntun,
+export enum ServicePortalPath {
+  // Umsoknir
+  UmsoknirRoot = '/umsoknir',
+  UmsoknirNyUmsokn = '/umsoknir/ny-umsokn',
+  UmsoknirOpnarUmsoknir = '/umsoknir/opnar-umsoknir',
+  // Stillingar
+  StillingarRoot = '/stillingar',
+  StillingarUpplysingar = '/stillingar/upplysingar',
+  StillingarUmbod = '/stillingar/umbod',
+  // Fjolskyldan
+  FjolskyldanRoot = '/fjolskyldan',
+  // Fjarmal
+  FjarmalRoot = '/fjarmal',
+  // Rafræn skjöl
+  RafraenSkjolRoot = '/rafraen-skjol',
+  // Heilsa
+  HeilsaRoot = '/heilsa',
+  // Menntun
+  MenntunRoot = '/menntun',
 }

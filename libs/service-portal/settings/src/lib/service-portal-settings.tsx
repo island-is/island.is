@@ -11,13 +11,13 @@ import SubjectInfo from '../screens/subjectInfo/subjectInfo'
 const navScreenItems: NavigationScreenItem[] = [
   {
     name: 'Mínar upplýsingar',
-    url: ServicePortalPath.Stillingar.Upplysingar,
+    url: ServicePortalPath.StillingarUpplysingar,
     text: 'Hér getur þú breytt upplýsingum um þig eða þína fjölskyldu',
     tags: ['Nafn', 'Trúfélag', 'Símanúmer'],
   },
   {
     name: 'Umboð',
-    url: ServicePortalPath.Stillingar.Umbod,
+    url: ServicePortalPath.StillingarUmbod,
     text: 'Hér er hægt að sækja um breyta, gefa eða eyða umboðum. ',
     tags: ['Gefa umboð', 'Sækja um umboð', 'Breyta umboði'],
   },
@@ -30,12 +30,12 @@ export const ServicePortalSettings: ServicePortalModuleComponent = (props) => {
     <Switch>
       <Route
         exact
-        path={ServicePortalPath.Stillingar.Stillingar}
+        path={ServicePortalPath.StillingarRoot}
         component={SettingsNavScreen}
       />
       <Route
         exact
-        path={ServicePortalPath.Stillingar.Upplysingar}
+        path={ServicePortalPath.StillingarUpplysingar}
         render={() => <SubjectInfo {...props} />}
       />
     </Switch>

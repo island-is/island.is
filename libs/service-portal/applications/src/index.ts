@@ -15,23 +15,10 @@ export const applicationsModule: ServicePortalModule = {
     const applicationRoutes = [
       {
         name: 'Umsóknir',
-        path: ServicePortalPath.Umsoknir.Umsoknir,
+        path: ServicePortalPath.UmsoknirRoot,
         render: () => lazy(() => import('./lib/service-portal-applications')),
       },
     ]
-
-    if (userInfo.sub.subjectType === 'person') {
-      applicationRoutes.push({
-        name: 'Ný umsókn',
-        path: ServicePortalPath.Umsoknir.NyUmsokn,
-        render: () => lazy(() => import('./lib/service-portal-applications')),
-      })
-      applicationRoutes.push({
-        name: 'Opnar umsóknir',
-        path: ServicePortalPath.Umsoknir.OpnarUmsoknir,
-        render: () => lazy(() => import('./lib/service-portal-applications')),
-      })
-    }
 
     return applicationRoutes
   },
