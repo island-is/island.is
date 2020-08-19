@@ -2,9 +2,8 @@ import React from 'react'
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { Log, User, UserManager, WebStorageStateStore, InMemoryWebStorage } from 'oidc-client';
-import { makeServer } from 'apps/service-portal/mirage-server'
-import { Login } from '../screens/login/login'
+
+import { makeServer } from '../../mirage-server'
 import { StateProvider } from '../store/stateProvider'
 import { ApolloProvider } from '@apollo/react-hooks'
 import * as store from '../store/store'
@@ -15,34 +14,10 @@ import Layout from '../components/Layout/Layout'
 import Modules from '../components/Modules/Modules'
 import * as styles from './App.treat'
 import './App.css'
-import OidcSignIn from '../components/Authenticator/OidcSignIn';
+import OidcSignIn from '../components/Authenticator/OidcSignIn'
 
 export const App = () => {
   makeServer()
-  const settings = {
-    authority: 'https://siidentityserverweb20200805020732.azurewebsites.net/',
-    client_id: 'island-is-1',
-    redirect_uri: `http://localhost:4200/signin-oidc`,
-    silent_redirect_uri: `http://localhost:4200/signin-oidc`,
-    response_type: 'code',
-    /* supported types
-      "code",
-      "token",
-      "id_token",
-      "id_token token",
-      "code id_token",
-      "code token",
-      "code id_token token"
-    */
-    revokeAccessTokenOnSignout: true,
-    loadUserInfo: true,
-    automaticSilentRenew: true,
-    includeIdTokenInSilentRenew : true,
-    scope: 'openid profile offline_access',
-    userStore:  new WebStorageStateStore({ store: new InMemoryWebStorage() })
-  };
-
-  const userManager = new UserManager(settings)
 
   return (
     <div className={styles.page}>
@@ -54,9 +29,9 @@ export const App = () => {
           >
             <Switch>
               <Route path="/signin-oidc">
-                <OidcSignIn userManager={userManager} />
+                <OidcSignIn />
               </Route>
-              <Authenticator userManager={userManager}>
+              <Authenticator>
                 <Layout>
                   <Route exact path="/">
                     <Dashboard />

@@ -1,6 +1,5 @@
 import { useStore } from '../../store/stateProvider'
-import { UserManager, User } from 'oidc-client'
-import { setUserToken } from '../../auth/utils'
+import { UserManager } from 'oidc-client'
 
 
 const useUserInfo = () => {

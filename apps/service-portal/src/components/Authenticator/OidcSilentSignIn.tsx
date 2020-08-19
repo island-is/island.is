@@ -1,20 +1,17 @@
 import React, { FC } from 'react'
-import { useHistory } from 'react-router-dom'
 import { useStore } from '../../store/stateProvider'
 
-export const OidcSignIn: FC = () => {
+export const OidcSilentSignIn: FC = ({ children, ...rest }) => {
   const [{ userManager }, dispatch] = useStore()
-  const history = useHistory()
-  console.log('request ', window.location.href)
+
   userManager
-    .signinCallback(window.location.href)
+    .signinSilentCallback()
     .then(function(user) {
-      console.log('return user: ',user)
+      console.log(user)
       dispatch({
         type: 'setUserFulfilled',
         payload: user,
       })
-      history.push('/')
     })
     .catch(function(error) {
       console.log(error)
@@ -23,4 +20,4 @@ export const OidcSignIn: FC = () => {
   return <p>redirect</p>
 }
 
-export default OidcSignIn
+export default OidcSilentSignIn

@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom'
 import * as styles from './UserMenu.treat'
 import { useStore } from '../../store/stateProvider'
 import useSubjects from '../../hooks/useSubjects/useSubjects'
-import useUserInfo from '../../hooks/useUserInfo/useUserInfo'
 import { Box, Icon } from '@island.is/island-ui/core'
 import Menu from './Menu/Menu'
 import useOutsideClick from '../../hooks/useOutsideClick/useOutsideClick'
@@ -14,7 +13,6 @@ const UserMenu: FC<{}> = () => {
   const history = useHistory()
   const [{ userInfo }] = useStore()
   const { subjectList } = useSubjects()
-  const { setUser } = useUserInfo()
 
   useOutsideClick(ref, () => setIsOpen(false))
 

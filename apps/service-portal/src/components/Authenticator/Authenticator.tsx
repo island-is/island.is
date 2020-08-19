@@ -1,39 +1,27 @@
-import React, { FC, useEffect, useState } from 'react'
-import { Route, Redirect } from 'react-router-dom'
-import { isAuthenticated } from '../../auth/utils'
-import { UserManager } from 'oidc-client'
-import { userNameContainer } from 'libs/island-ui/core/src/lib/Header/Header.treat'
-import useUserInfo from '../../hooks/useUserInfo/useUserInfo'
+import React, { FC } from 'react'
+import { Route } from 'react-router-dom'
 import { useStore } from '../../store/stateProvider'
 
-export interface AuthenticatorProps {
-  userManager?: UserManager
-}
-
-export const Authenticator: FC<AuthenticatorProps> = ({
-  userManager,
-  children,
-  ...rest
-}) => {
-  const [{ userInfo }] = useStore()
+export const Authenticator: FC = ({ children, ...rest }) => {
+  const [{ userInfo, userManager }] = useStore()
 
   const isAuthenticated = !!userInfo
-  console.log('Authenticator')
+  console.log('Authenticator do authenticate ?', isAuthenticated)
   if(!isAuthenticated) {
-    //userManager.signinRedirect()
-    console.log('is not authenteds')
-    userManager.signinSilent()
+    userManager.signinRedirect()
+    console.log('is not authenticated')
+    //userManager.signinSilent()
   }
 
   return (
+
     <Route
     {...rest}
     render={({ location }) =>
       isAuthenticated ? (
-        <h1>herro {userInfo.profile.name}</h1>
+          children
       ) : (
-      //children
-      <h1>is not rogged in</h1>
+        <h1>is not Logged in</h1>
       )
     }
   />
