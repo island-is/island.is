@@ -9,9 +9,12 @@ export class FrontpageSlide {
   @Field()
   title: string
 
-  @Field({ nullable: true })
-  content?: string
+  @Field()
+  content: string
 
   @Field(() => Image, { nullable: true })
   image?: Image
+
+  @Field({ nullable: true })
+  link?: string
 }

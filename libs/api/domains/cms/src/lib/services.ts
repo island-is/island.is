@@ -270,8 +270,9 @@ const formatLandingPage = ({ fields }): LandingPage => ({
 const formatFrontpageSlide = ({ fields }): FrontpageSlide => ({
   title: fields.title,
   subtitle: fields.subtitle,
+  content: fields.content,
   image: fields.image && formatImage(fields.image),
-  content: fields.content && JSON.stringify(fields.content),
+  link: fields.link && JSON.stringify(fields.link),
 })
 
 const makePage = (

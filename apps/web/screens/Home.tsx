@@ -19,19 +19,30 @@ import {
   QueryGetNamespaceArgs,
   ContentLanguage,
   QueryCategoriesArgs,
+  QueryGetFrontpageSlidesArgs,
 } from '@island.is/api/schema'
-import { GET_NAMESPACE_QUERY, GET_CATEGORIES_QUERY } from './queries'
+import {
+  GET_NAMESPACE_QUERY,
+  GET_CATEGORIES_QUERY,
+  GET_FRONTPAGE_SLIDES_QUERY,
+} from './queries'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
 import { Locale } from '../i18n/I18n'
 import useRouteNames from '../i18n/useRouteNames'
+import FrontpageTabs from '../components/FrontpageTabs/FrontpageTabs'
 
 interface HomeProps {
   categories: Query['categories']
+  frontpageSlides: Query['getFrontpageSlides']['items']
   namespace: Query['getNamespace']
 }
 
-const Home: Screen<HomeProps> = ({ categories, namespace }) => {
+const Home: Screen<HomeProps> = ({
+  categories,
+  frontpageSlides,
+  namespace,
+}) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
   const Router = useRouter()
@@ -48,92 +59,41 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
     as: makePath('category', slug),
   }))
 
+  console.log('frontpageSlides', frontpageSlides)
+
+  const searchContent = (
+    <Box display="flex" flexDirection="column" width="full">
+      <Stack space={3}>
+        <Box display="inlineFlex" alignItems="center" width="full">
+          <SearchInput
+            size="medium"
+            openOnFocus
+            activeLocale={activeLocale}
+            placeholder={n('heroSearchPlaceholder')}
+          />
+        </Box>
+        <Inline space={1}>
+          {n('featuredArticles', []).map(({ title, url }, index) => {
+            return (
+              <Tag
+                onClick={() => {
+                  Router.push(`${makePath('article')}/[slug]`, url)
+                }}
+              >
+                {title}
+              </Tag>
+            )
+          })}
+        </Inline>
+      </Stack>
+    </Box>
+  )
+
   return (
     <>
       <ContentBlock>
-        <Box
-          position="relative"
-          display="flex"
-          flexDirection="column"
-          width="full"
-        >
-          <DottedBackground />
-          <Box position="relative">
-            <Box
-              paddingX={[3, 3, 6, 20]}
-              paddingY={[3, 3, 6, 10]}
-              display="flex"
-              justifyContent="center"
-            >
-              <Box
-                textAlign={['center', 'center', 'left']}
-                width="full"
-                paddingRight={[0, 0, 12]}
-              >
-                <Stack space={3}>
-                  <Typography variant="eyebrow" as="h2" color="red400">
-                    {n('heroPreTitle')}
-                  </Typography>
-                  <Typography variant="h1" as="h1">
-                    {n('heroTitle')}
-                  </Typography>
-                  <Typography variant="p" as="p">
-                    {n('heroSubTitle')}
-                  </Typography>
-                </Stack>
-              </Box>
-              <Hidden below="md">
-                <Box>{heartSvg}</Box>
-              </Hidden>
-            </Box>
-            <Box padding={[1, 1, 6]}>
-              <Box
-                padding={[2, 2, 2, 10]}
-                display="inlineBlock"
-                background="white"
-                boxShadow="subtle"
-                width="full"
-              >
-                <Columns
-                  space={[4, 4, 4, 12]}
-                  collapseBelow="lg"
-                  alignY="center"
-                >
-                  <Column>
-                    <Box display="inlineFlex" alignItems="center" width="full">
-                      <SearchInput
-                        openOnFocus
-                        size="large"
-                        activeLocale={activeLocale}
-                        placeholder={n('heroSearchPlaceholder')}
-                      />
-                    </Box>
-                  </Column>
-                  <Column>
-                    <Inline space={1}>
-                      {n('featuredArticles', []).map(
-                        ({ title, url }, index) => {
-                          return (
-                            <Tag
-                              key={index}
-                              onClick={() => {
-                                Router.push(
-                                  `${makePath('article')}/[slug]`,
-                                  url,
-                                ).then(() => window.scrollTo(0, 0))
-                              }}
-                            >
-                              {title}
-                            </Tag>
-                          )
-                        },
-                      )}
-                    </Inline>
-                  </Column>
-                </Columns>
-              </Box>
-            </Box>
-          </Box>
+        <Box paddingX={[3, 3, 6, 6, 20]} paddingY={[2, 2, 3, 3, 6]}>
+          <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
         </Box>
       </ContentBlock>
       <Box background="purple100">
@@ -152,10 +112,23 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
 Home.getInitialProps = async ({ apolloClient, locale }) => {
   const [
     {
+      data: {
+        getFrontpageSlides: { items },
+      },
+    },
+    {
       data: { categories },
     },
     namespace,
   ] = await Promise.all([
+    apolloClient.query<Query, QueryGetFrontpageSlidesArgs>({
+      query: GET_FRONTPAGE_SLIDES_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
     apolloClient.query<Query, QueryCategoriesArgs>({
       query: GET_CATEGORIES_QUERY,
       variables: {
@@ -192,6 +165,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   ])
 
   return {
+    frontpageSlides: items,
     categories,
     namespace,
     showSearchInHeader: false,

@@ -115,6 +115,23 @@ export type Image = {
   height: Scalars['Int']
 }
 
+<<<<<<< HEAD
+=======
+export type FrontpageSlide = {
+  __typename?: 'FrontpageSlide'
+  subtitle: Scalars['String']
+  title: Scalars['String']
+  content: Scalars['String']
+  image?: Maybe<Image>
+  link?: Maybe<Scalars['String']>
+}
+
+export type FrontpageSlides = {
+  __typename?: 'FrontpageSlides'
+  items: Array<FrontpageSlide>
+}
+
+>>>>>>> More work on frontpage slider component
 export type News = {
   __typename?: 'News'
   id: Scalars['String']
@@ -1046,6 +1063,33 @@ export type ImageResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+<<<<<<< HEAD
+=======
+export type FrontpageSlideResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['FrontpageSlide'] = ResolversParentTypes['FrontpageSlide']
+> = {
+  subtitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
+  link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type FrontpageSlidesResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['FrontpageSlides'] = ResolversParentTypes['FrontpageSlides']
+> = {
+  items?: Resolver<
+    Array<ResolversTypes['FrontpageSlide']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+>>>>>>> More work on frontpage slider component
 export type NewsResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['News'] = ResolversParentTypes['News']
