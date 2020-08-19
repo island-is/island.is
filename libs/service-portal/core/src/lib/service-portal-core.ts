@@ -70,7 +70,16 @@ export interface ServicePortalModule {
    */
   widgets: (userInfo: JwtToken) => ServicePortalWidget[]
   /**
-   * The routes defined by this module
+   * The routes defined by this module.
+   * The service portal shell will define these as routes
+   * within itself and use the provided render function to render out the component
    */
   routes: (userInfo: JwtToken) => ServicePortalRoute[]
+  /**
+   * Proposal:
+   * All paths provided by this module.
+   * These are used to determine what navigational items will be shown
+   * in the sidebar, what breadcrumbs will be generated etc.
+   */
+  // paths: ServicePortalPath[]
 }
