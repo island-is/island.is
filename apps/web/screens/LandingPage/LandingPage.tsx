@@ -8,7 +8,6 @@ import {
   LandingPage,
   QueryGetLandingPageArgs,
 } from '@island.is/api/schema'
-import { withApollo } from '@island.is/web/graphql'
 import { Screen } from '@island.is/web/types'
 import { GET_LANDING_PAGE_QUERY } from '../queries'
 import { CustomNextError } from '../../units/ErrorBoundary'
@@ -38,18 +37,18 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
   const sidebar = (
     <Stack space={3}>
       {page.actionButton && (
-        <Box background="purple100" padding={4} borderRadius="large">
-          <Button href={page.actionButton.url} width="fluid">
+        <Box background='purple100' padding={4} borderRadius='large'>
+          <Button href={page.actionButton.url} width='fluid'>
             {page.actionButton.text}
           </Button>
         </Box>
       )}
-      <Sidebar title="Efnisyfirlit" bullet="left" headingLinks />
+      <Sidebar title='Efnisyfirlit' bullet='left' headingLinks />
       {page.links && (
-        <Box background="purple100" padding={4} borderRadius="large">
+        <Box background='purple100' padding={4} borderRadius='large'>
           <Stack space={2}>
             {page.links.title && (
-              <Typography variant="p">{page.links.title}</Typography>
+              <Typography variant='p'>{page.links.title}</Typography>
             )}
             {page.links.links.map(({ url, text }, index) => (
               <Hyperlink key={index} href={url}>
@@ -68,8 +67,8 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
         <title>{page.title}</title>
       </Head>
       <ArticleLayout sidebar={sidebar}>
-        <Box paddingY="none" paddingX={[3, 3, 6, 0]} marginBottom={[2, 2, 3]}>
-          <ContentBlock width="small">
+        <Box paddingY='none' paddingX={[3, 3, 6, 0]} marginBottom={[2, 2, 3]}>
+          <ContentBlock width='small'>
             <Stack space={[3, 3, 4]}>
               <Breadcrumbs>
                 <Link href={makePath()}>
@@ -79,16 +78,16 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
                   <a>{page.title}</a>
                 </Link>
               </Breadcrumbs>
-              <Typography variant="h1" as="h1">
+              <Typography variant='h1' as='h1'>
                 <span data-sidebar-link={slugify(page.title)}>
                   {page.title}
                 </span>
               </Typography>
-              <Typography variant="intro" as="p">
+              <Typography variant='intro' as='p'>
                 {page.introduction}
               </Typography>
               {page.image && (
-                <Image type="apiImage" image={page.image} maxWidth={774} />
+                <Image type='apiImage' image={page.image} maxWidth={774} />
               )}
             </Stack>
           </ContentBlock>
@@ -121,4 +120,4 @@ LandingPageScreen.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withApollo(LandingPageScreen)
+export default LandingPageScreen

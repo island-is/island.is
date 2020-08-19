@@ -142,7 +142,7 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
         }
       }),
   ])
-  console.log('article', article)
+  // console.log('article', article)
   return {
     footerContent: [{ title: 'test1', href: 'hahahah' }],
   }

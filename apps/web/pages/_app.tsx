@@ -5,7 +5,6 @@ import appWithTranslation from '../i18n/appWithTranslation'
 import initApollo from '../graphql/client'
 import Layout from '../layouts/main'
 import { NextComponentType } from 'next'
-import { withApollo } from '../graphql'
 
 interface AppCustomProps extends AppProps {
   layoutProps: any
@@ -31,11 +30,8 @@ const SupportApplication: NextComponentType<
   )
 }
 
-SupportApplication.getInitialProps = async ({
-  Component,
-  ctx,
-  apolloClient,
-}) => {
+SupportApplication.getInitialProps = async ({ Component, ctx }) => {
+  const apolloClient = initApollo({})
   const customContext = {
     ...ctx,
     apolloClient,
@@ -49,4 +45,4 @@ SupportApplication.getInitialProps = async ({
   }
 }
 
-export default appWithTranslation(withApollo(SupportApplication))
+export default appWithTranslation(SupportApplication)
