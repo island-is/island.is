@@ -8,7 +8,13 @@ import { SubjectListDto } from '../mirage-server/models/subject'
 import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
 import jwtDecode from 'jwt-decode'
 import { modules } from './modules'
-import { User } from 'oidc-client'
+import {
+  Log,
+  User,
+  UserManager,
+  WebStorageStateStore,
+  InMemoryWebStorage,
+} from 'oidc-client'
 
 type NotificationSidebarState = 'open' | 'closed'
 
@@ -34,9 +40,32 @@ export interface StoreState {
   subjectList: SubjectListDto[]
   subjectListState: AsyncActionState
   notificationSidebarState: NotificationSidebarState
+  userManager?: UserManager
 }
 
 const authCookie = Cookies.get(MOCK_AUTH_KEY) as string
+
+const settings = {
+  authority: 'https://siidentityserverweb20200805020732.azurewebsites.net/',
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  client_id: 'island-is-1',
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  redirect_uri: `http://localhost:4200/signin-oidc`,
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  response_type: 'code',
+  /* supported types
+    "code",
+    "token",
+    "id_token",
+    "id_token token",
+    "code id_token",
+    "code token",
+    "code id_token token"
+  */
+  loadUserInfo: true,
+  scope: 'openid profile offline_access',
+  userStore: new WebStorageStateStore({ store: new InMemoryWebStorage() }),
+}
 
 export const initialState: StoreState = {
   userInfo: authCookie ? jwtDecode(authCookie) : null,
@@ -47,6 +76,7 @@ export const initialState: StoreState = {
   subjectList: [],
   subjectListState: 'passive',
   notificationSidebarState: 'open',
+  userManager: new UserManager(settings),
 }
 
 export const reducer = (state: StoreState, action: Action): StoreState => {
