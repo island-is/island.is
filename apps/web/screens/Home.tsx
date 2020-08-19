@@ -102,6 +102,7 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
                   <Column>
                     <Box display="inlineFlex" alignItems="center" width="full">
                       <SearchInput
+                        showCommonSearches
                         size="large"
                         activeLocale={activeLocale}
                         placeholder={n('heroSearchPlaceholder')}
@@ -114,11 +115,12 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
                         ({ title, url }, index) => {
                           return (
                             <Tag
+                              key={index}
                               onClick={() => {
                                 Router.push(
                                   `${makePath('article')}/[slug]`,
                                   url,
-                                )
+                                ).then(() => window.scrollTo(0, 0))
                               }}
                             >
                               {title}
