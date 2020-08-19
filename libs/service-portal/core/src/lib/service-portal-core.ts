@@ -6,7 +6,7 @@ import { ServicePortalPath } from './navigation/paths'
 
 export interface ServicePortalNavigationItem {
   name: string
-  path?: string
+  path?: ServicePortalPath
   external?: boolean
   icon?: IconTypes
   children?: ServicePortalNavigationItem[]

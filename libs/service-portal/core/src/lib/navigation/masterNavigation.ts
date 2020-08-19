@@ -1,4 +1,5 @@
 import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
+import { ServicePortalPath } from './paths'
 
 export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
   {
@@ -7,16 +8,16 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Umsoknir
       {
         name: 'Umsóknir',
-        path: '/umsoknir',
+        path: ServicePortalPath.UmsoknirRoot,
         icon: 'user',
         children: [
           {
             name: 'Opnar umsóknir',
-            path: '/umsoknir/opnar-umsoknir',
+            path: ServicePortalPath.UmsoknirOpnarUmsoknir,
           },
           {
             name: 'Ný umsókn',
-            path: '/umsoknir/ny-umsokn',
+            path: ServicePortalPath.UmsoknirNyUmsokn,
           },
         ],
       },
@@ -24,23 +25,23 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Rafraen skjol
       {
         name: 'Rafræn skjöl',
-        path: '/rafraen-skjol',
+        path: ServicePortalPath.RafraenSkjolRoot,
         icon: 'article',
       },
 
       // Stillingar
       {
         name: 'Stillingar',
-        path: '/stillingar',
+        path: ServicePortalPath.StillingarRoot,
         icon: 'lock',
         children: [
           {
             name: 'Upplýsingar',
-            path: '/stillingar/minar-upplysingar',
+            path: ServicePortalPath.StillingarUpplysingar,
           },
           {
             name: 'Umboð',
-            path: '/stillingar/umbod',
+            path: ServicePortalPath.StillingarUmbod,
           },
         ],
       },
@@ -52,28 +53,28 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
       // Fjolskyldan
       {
         name: 'Fjölskyldan',
-        path: '/fjolskyldan',
+        path: ServicePortalPath.FjolskyldanRoot,
         icon: 'user',
       },
 
       // Fjarmal
       {
         name: 'Fjármál',
-        path: '/fjarmal',
+        path: ServicePortalPath.FjarmalRoot,
         icon: 'user',
       },
 
       // Heilsa
       {
         name: 'Heilsa',
-        path: '/heilsa',
+        path: ServicePortalPath.HeilsaRoot,
         icon: 'plus',
       },
 
       // Menntun
       {
         name: 'Menntun',
-        path: '/menntun',
+        path: ServicePortalPath.MenntunRoot,
         icon: 'search',
       },
     ],
