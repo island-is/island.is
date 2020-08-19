@@ -22,7 +22,9 @@ import {
 */
 const mergeCustomizer = (objValue, srcValue) => {
   if (isArray(objValue)) {
-    return srcValue
+    if (typeof objValue[0] !== 'object') {
+      return srcValue
+    }
   }
 }
 

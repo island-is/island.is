@@ -48,7 +48,7 @@ const Screen: FC<ScreenProps> = ({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
     defaultValues: formValue,
-    shouldUnregister: false,
+    shouldUnregister: true,
     resolver,
     context: { dataSchema, formNode: screen },
   })
@@ -67,10 +67,9 @@ const Screen: FC<ScreenProps> = ({
     UPDATE_APPLICATION,
   )
 
-  const { reset, handleSubmit, errors } = hookFormData
+  const { handleSubmit, errors } = hookFormData
 
   const goBack = () => {
-    reset()
     prevScreen()
   }
 

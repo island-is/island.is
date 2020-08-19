@@ -19,7 +19,7 @@ interface Props extends FieldBaseProps {
 // It shows how to update multiple schema values, async, hidden, and shows how to access
 // already answered questions and other fields even
 const ExampleCountryField: FC<Props> = ({ error, field, formValue }) => {
-  const { clearErrors, control, register } = useFormContext()
+  const { clearErrors, register } = useFormContext()
   const { id } = field
   const [options, setOptions] = useState<AsyncSearchOption[]>([])
   const [pending, setPending] = useState(false)
@@ -60,7 +60,6 @@ const ExampleCountryField: FC<Props> = ({ error, field, formValue }) => {
       <Box paddingTop={2}>
         <Controller
           name={`${id}`}
-          control={control}
           defaultValue=""
           render={({ value, onChange }) => {
             return (

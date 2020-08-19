@@ -1,4 +1,4 @@
-import { FormValue, Schema } from '../types/Form'
+import { Answer, FormValue, Schema } from '../types/Form'
 import * as z from 'zod'
 
 export function extractPartialSchemaForValues(
@@ -11,13 +11,14 @@ export function extractPartialSchemaForValues(
 
     if (typeof value === 'object') {
       if (value.length) {
-        if (typeof value[0] === 'object') {
+        const answerToFocusOn = value[(value as Answer[]).length - 1]
+        if (typeof answerToFocusOn === 'object') {
           returnSchema = returnSchema.merge(
             z.object({
               [key]: z.array(
                 extractPartialSchemaForValues(
                   schema.shape[key]._def.type,
-                  value[0] as FormValue,
+                  answerToFocusOn as FormValue,
                 ),
               ),
             }),
@@ -39,7 +40,7 @@ export function extractPartialSchemaForValues(
       returnSchema = returnSchema.merge(schema.pick({ [key]: true }))
     }
   })
-  return returnSchema.partial()
+  return returnSchema
 }
 
 export function validateAnswers(

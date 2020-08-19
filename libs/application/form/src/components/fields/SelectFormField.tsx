@@ -14,12 +14,11 @@ const SelectFormField: FC<Props> = ({
 }) => {
   const { id, name, options, placeholder } = field
 
-  const { clearErrors, control } = useFormContext()
+  const { clearErrors } = useFormContext()
   return (
     <div>
       {showFieldName && <Typography variant="p">{name}</Typography>}
       <Controller
-        control={control}
         defaultValue=""
         name={id}
         render={({ onChange, value }) => (

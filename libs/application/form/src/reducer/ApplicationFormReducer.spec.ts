@@ -54,6 +54,7 @@ const FamilyAndPets: Form = buildForm({
         buildRepeater({
           id: 'person',
           name: 'Family Member',
+          labelKey: 'name',
           children: [
             buildTextField({
               id: 'name',

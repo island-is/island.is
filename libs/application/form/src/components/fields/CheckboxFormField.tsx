@@ -10,6 +10,7 @@ import {
 import { FieldBaseProps } from '../../types'
 
 import { Controller, useFormContext } from 'react-hook-form'
+import { getValueViaPath } from '../../utils'
 
 interface Props extends FieldBaseProps {
   field: CheckboxField
@@ -18,9 +19,10 @@ const CheckboxFormField: FC<Props> = ({
   error,
   showFieldName = false,
   field,
+  formValue,
 }) => {
   const { id, name, options } = field
-  const { clearErrors, control } = useFormContext()
+  const { clearErrors, setValue } = useFormContext()
 
   function handleSelect(option: Option, checkedValues: string[]) {
     const excludeOptionsLookup = options.map((o) => o.excludeOthers && o.value)
@@ -47,8 +49,7 @@ const CheckboxFormField: FC<Props> = ({
       <Box paddingTop={2}>
         <Controller
           name={`${id}`}
-          control={control}
-          defaultValue={false}
+          defaultValue={getValueViaPath(formValue, id, [])}
           render={({ value, onChange }) => {
             return (
               <Stack space={2}>
@@ -57,7 +58,9 @@ const CheckboxFormField: FC<Props> = ({
                     <Checkbox
                       onChange={() => {
                         clearErrors(id)
-                        onChange(handleSelect(option, value || []))
+                        const newChoices = handleSelect(option, value || [])
+                        onChange(newChoices)
+                        setValue(id, newChoices)
                       }}
                       checked={value && value.includes(option.value)}
                       name={`${id}[${index}]`}
