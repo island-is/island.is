@@ -20,6 +20,16 @@ export class PublicDiscountController {
       params.nationalId,
     )
   }
+
+  // TODO THIS SHOULD NOT GO TO PROD
+  // THIS IS ONLY FOR AIRLINES TO TEST THE API
+  @Post(':nationalId/discounts')
+  @ApiOkResponse({ type: Discount })
+  async createDiscountCode(
+    @Param() params: CreateDiscountCodeParams,
+  ): Promise<Discount> {
+    return this.discountService.createDiscountCode(params.nationalId)
+  }
 }
 
 @Controller('private/users')
