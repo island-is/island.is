@@ -1,24 +1,14 @@
-import React, { FC } from 'react'
-import { useHistory } from 'react-router-dom'
+import React, { FC, useEffect } from 'react'
 import { useStore } from '../../store/stateProvider'
 
 export const OidcSignIn: FC = () => {
-  const [{ userManager }, dispatch] = useStore()
-  const history = useHistory()
-  console.log('request ', window.location.href)
-  userManager
-    .signinCallback(window.location.href)
-    .then(function(user) {
-      console.log('return user: ',user)
-      dispatch({
-        type: 'setUserFulfilled',
-        payload: user,
-      })
-      history.push('/')
-    })
-    .catch(function(error) {
+  const [{ userManager }] = useStore()
+
+  useEffect(() => {
+    userManager.signinSilentCallback().catch(function(error) {
       console.log(error)
     })
+  }, [])
 
   return <p>redirect</p>
 }

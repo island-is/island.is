@@ -27,21 +27,20 @@ const useUserInfo = () => {
 
   const fetchUserFromUserManager = async (userManager: UserManager) => {
     //return await userManager.getUser()
-    async function fetchUser() {
+
       dispatch({
         type: 'setUserPending',
       })
 
       const updatedInfo = await userManager.getUser()
       console.log('UpdatedInfo ',updatedInfo)
-      dispatch({
+     dispatch({
         type: 'setUserFulfilled',
         payload: updatedInfo,
       })
 
-    }
 
-    return fetchUser()
+
   }
 
   const logoutUser = () => {

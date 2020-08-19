@@ -1,30 +1,37 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect } from 'react'
 import { Route } from 'react-router-dom'
 import { useStore } from '../../store/stateProvider'
+import useUserInfo from '../../hooks/useUserInfo/useUserInfo'
 
 export const Authenticator: FC = ({ children, ...rest }) => {
-  const [{ userInfo, userManager }] = useStore()
-
+  const [{ userInfo, userManager }, dispatch] = useStore()
   const isAuthenticated = !!userInfo
-  console.log('Authenticator do authenticate ?', isAuthenticated)
-  if(!isAuthenticated) {
-    userManager.signinRedirect()
-    console.log('is not authenticated')
-    //userManager.signinSilent()
-  }
+
+  useEffect(() => {
+    async function refresh() {
+      dispatch({
+        type: 'setUserPending',
+      })
+
+      try {
+        const user = await userManager.signinSilent()
+        dispatch({
+          type: 'setUserFulfilled',
+          payload: user,
+        })
+      } catch (exception) {
+        console.log(exception)
+        userManager.signinRedirect()
+      }
+    }
+    refresh()
+  }, [])
 
   return (
-
     <Route
-    {...rest}
-    render={({ location }) =>
-      isAuthenticated ? (
-          children
-      ) : (
-        <h1>is not Logged in</h1>
-      )
-    }
-  />
+      {...rest}
+      render={({ location }) => (userInfo ? children : <h2>loading..</h2>)}
+    />
   )
 }
 

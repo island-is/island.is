@@ -51,12 +51,12 @@ const settings = {
   // eslint-disable-next-line @typescript-eslint/camelcase
   silent_redirect_uri: `http://localhost:4200/signin-oidc`,
   // eslint-disable-next-line @typescript-eslint/camelcase
-  redirect_uri: `http://localhost:4200/signin-oidc`,
+  redirect_uri: `http://localhost:4200`,
   // eslint-disable-next-line @typescript-eslint/camelcase
   response_type: 'code',
   revokeAccessTokenOnSignout: true,
   loadUserInfo: true,
-  automaticSilentRenew: false,
+  automaticSilentRenew: true,
   scope: 'openid profile offline_access',
   userStore: new WebStorageStateStore({ store: new InMemoryWebStorage() }),
 }
@@ -125,7 +125,7 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
       }
     case 'setuserLoggedOut':
       return {
-      ...initialState
+        ...initialState
       }
     default:
       return state
