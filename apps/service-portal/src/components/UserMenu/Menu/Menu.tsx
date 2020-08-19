@@ -3,8 +3,6 @@ import cn from 'classnames'
 
 import * as styles from './Menu.treat'
 // eslint-disable-next-line
-import { JwtToken } from 'apps/service-portal/src/mirage-server/models/jwt-model'
-// eslint-disable-next-line
 import { SubjectListDto } from 'apps/service-portal/src/mirage-server/models/subject'
 import {
   Box,
@@ -14,10 +12,8 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { Link, useHistory } from 'react-router-dom'
-// eslint-disable-next-line
-import { removeToken } from 'apps/service-portal/src/auth/utils'
-import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
 import { User } from 'oidc-client'
+import useUserInfo from 'apps/service-portal/src/hooks/useUserInfo/useUserInfo'
 
 interface Props {
   isOpen: boolean
@@ -36,12 +32,10 @@ export const Menu: FC<Props> = ({
   const personSubjects = subjectList.filter((x) => x.subjectType === 'person')
   const companySubjects = subjectList.filter((x) => x.subjectType === 'company')
   const history = useHistory()
+  const { logoutUser } = useUserInfo()
 
   const handleLogout = async () => {
-    await removeToken()
-    // TODO: Loading state, Hard reload?
-    localStorage.removeItem(MOCK_AUTH_KEY)
-    history.push('/innskraning')
+    logoutUser()
   }
 
   return (

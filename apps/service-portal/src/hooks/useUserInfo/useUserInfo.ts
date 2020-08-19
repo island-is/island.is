@@ -1,11 +1,12 @@
 import { useStore } from '../../store/stateProvider'
 import { UserManager, User } from 'oidc-client'
+import { setUserToken } from '../../auth/utils'
 
 
 const useUserInfo = () => {
   const [{ userInfo, userInfoState }, dispatch] = useStore()
 
-  const setUser = async (
+ /* const setUser = async (
     actorNationalId: string,
     subjectNationalId: string,
   ) => {
@@ -14,10 +15,7 @@ const useUserInfo = () => {
         type: 'setUserPending',
       })
 
-      /*const updatedInfo = await setUserToken(
-        actorNationalId || userInfo?.actor?.nationalId,
-        subjectNationalId,
-      )*/
+      const updatedInfo = await setUserToken()
 
       dispatch({
         type: 'setUserFulfilled',
@@ -26,7 +24,7 @@ const useUserInfo = () => {
     }
 
     return fetchUserInfo()
-  }
+  }*/
 
   const fetchUserFromUserManager = async (userManager: UserManager) => {
     //return await userManager.getUser()
@@ -47,12 +45,19 @@ const useUserInfo = () => {
     return fetchUser()
   }
 
+  const logoutUser = () => {
+    console.log('logout User')
+    dispatch({type: 'setuserLoggedOut'})
+  }
+
   return {
     userInfo,
     userInfoState,
-    setUser,
+    logoutUser,
+   // setUser,
     fetchUserFromUserManager,
   }
 }
+
 
 export default useUserInfo

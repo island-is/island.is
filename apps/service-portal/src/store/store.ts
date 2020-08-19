@@ -14,6 +14,7 @@ type NotificationSidebarState = 'open' | 'closed'
 
 export type Action =
   | { type: 'setUserPending' }
+  | { type: 'setuserLoggedOut' }
   | { type: 'setUserFulfilled'; payload: User }
   | { type: 'fetchNavigationPending' }
   | { type: 'fetchNavigationFulfilled'; payload: ServicePortalNavigationRoot[] }
@@ -98,6 +99,10 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
       return {
         ...state,
         notificationSidebarState: action.payload,
+      }
+    case 'setuserLoggedOut':
+      return {
+      ...initialState
       }
     default:
       return state

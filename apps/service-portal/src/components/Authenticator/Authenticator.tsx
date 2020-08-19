@@ -17,14 +17,23 @@ export const Authenticator: FC<AuthenticatorProps> = ({
 }) => {
   const [{ userInfo }] = useStore()
 
+  const isAuthenticated = !!userInfo
+  console.log('Authenticator')
+  if(!isAuthenticated) {
+    //userManager.signinRedirect()
+    console.log('is not authenteds')
+    userManager.signinSilent()
+  }
+
   return (
     <Route
     {...rest}
     render={({ location }) =>
-      !userInfo ? (
-        userManager.signinRedirect()
+      isAuthenticated ? (
+        <h1>herro {userInfo.profile.name}</h1>
       ) : (
-        children
+      //children
+      <h1>is not rogged in</h1>
       )
     }
   />

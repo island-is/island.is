@@ -23,6 +23,7 @@ export const App = () => {
     authority: 'https://siidentityserverweb20200805020732.azurewebsites.net/',
     client_id: 'island-is-1',
     redirect_uri: `http://localhost:4200/signin-oidc`,
+    silent_redirect_uri: `http://localhost:4200/signin-oidc`,
     response_type: 'code',
     /* supported types
       "code",
@@ -33,19 +34,16 @@ export const App = () => {
       "code token",
       "code id_token token"
     */
+    revokeAccessTokenOnSignout: true,
     loadUserInfo: true,
+    automaticSilentRenew: true,
+    includeIdTokenInSilentRenew : true,
     scope: 'openid profile offline_access',
     userStore:  new WebStorageStateStore({ store: new InMemoryWebStorage() })
   };
 
-  /*
-    authority (string): The URL of the OIDC/OAuth2 provider.
-    client_id (string): Your client application's identifier as registered with the OIDC/OAuth2 provider.
-    redirect_uri (string): The redirect URI of your client application to receive a response from the OIDC/OAuth2 provider.
-    response_type (string, default: 'id_token'): The type of response desired from the OIDC/OAuth2 provider.
-    scope (string, default: 'openid'): The scope being requested from the OIDC/OAuth2 provider.*/
-  //
   const userManager = new UserManager(settings)
+
   return (
     <div className={styles.page}>
       <Router>

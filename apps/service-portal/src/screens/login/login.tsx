@@ -21,7 +21,7 @@ export const Login = () => {
   const [actor, setActor] = useState<Actor>()
   const [subject, setSubject] = useState<Subject>()
   const historyState = history.location.state as { from?: string }
-  const { setUser } = useUserInfo()
+
 /*
   const handleActor = (option: Option) =>
     setActor(actors.find((x) => x.nationalId === option.value))

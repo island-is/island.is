@@ -34,8 +34,8 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       <Stack space={[0, 2]} dividers>
         <Typography variant="h3">Grunnupplýsingar</Typography>
-        <Row values={['Nafn', profile.given_name]} />
-        <Row values={['Kennitala', profile.email]} />
+        <Row values={['Nafn', profile.name]} />
+        <Row values={['Kennitala', profile.natreg]} />
       </Stack>
     </div>
   )
