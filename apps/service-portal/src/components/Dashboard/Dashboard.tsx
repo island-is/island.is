@@ -11,7 +11,7 @@ import ModuleLoader from '../Loaders/ModuleLoader/ModuleLoader'
 const Widget: FC<{
   widget: ServicePortalWidget
   userInfo: JwtToken
-}> = ({ widget, userInfo }) => {
+}> = React.memo(({ widget, userInfo }) => {
   const Component = widget.render(userInfo)
 
   if (Component)
@@ -29,7 +29,7 @@ const Widget: FC<{
     )
 
   return null
-}
+})
 
 const WidgetLoader: FC<{
   modules: ServicePortalModule[]

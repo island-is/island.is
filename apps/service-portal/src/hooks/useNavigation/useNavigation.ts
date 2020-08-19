@@ -39,6 +39,8 @@ const filterNavigationTree = (
  * This becomes a problem when a certain module wants to route to it's own route
  * and delegate routing within itself. Every time we route within the module itself,
  * it gets remounted because we are defining it as it's own path so it gets lazy loaded again.
+ * A potential solution to this problem might be that modules expose a property called internalPaths
+ * that would list all other routes included in the module that are not listed as standalone routes
  */
 
 /**

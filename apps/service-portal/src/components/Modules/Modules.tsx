@@ -13,7 +13,7 @@ import { JwtToken } from '../../mirage-server/models/jwt-model'
 const RouteComponent: FC<{
   route: ServicePortalRoute
   userInfo: JwtToken
-}> = ({ route, userInfo }) => {
+}> = React.memo(({ route, userInfo }) => {
   const App = route.render(userInfo)
 
   if (App)
@@ -26,7 +26,7 @@ const RouteComponent: FC<{
     )
 
   return <ModuleErrorScreen name={route.name} />
-}
+})
 
 const RouteLoader: FC<{
   modules: ServicePortalModule[]
@@ -38,7 +38,7 @@ const RouteLoader: FC<{
         .routes(userInfo)
         .map((route) => (
           <Route
-            exact
+            exact={!route.catchAll}
             path={route.path}
             key={route.path}
             render={() => <RouteComponent route={route} userInfo={userInfo} />}

@@ -8,6 +8,7 @@ export const settingsModule: ServicePortalModule = {
     {
       name: 'Stillingar',
       path: '/stillingar',
+      catchAll: true,
       render: () => lazy(() => import('./lib/service-portal-settings')),
     },
   ],

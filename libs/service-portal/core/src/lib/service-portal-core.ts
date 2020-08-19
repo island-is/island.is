@@ -31,6 +31,12 @@ export type ServicePortalRoute = {
    */
   path: string
   /**
+   * Routes are defined as exact by default
+   * This flags it as a catch-all parent route that
+   * defines it's own nested routing
+   */
+  catchAll?: boolean
+  /**
    * The render value of this component
    */
   render: (userInfo: JwtToken) => ServicePortalModuleRenderValue
