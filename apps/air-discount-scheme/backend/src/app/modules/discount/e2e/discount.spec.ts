@@ -1,23 +1,31 @@
 import { setup } from '../../../../../test/setup'
 import * as request from 'supertest'
-import { INestApplication } from '@nestjs/common'
+import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
 import { FlightService } from '../../flight'
+import CacheManger from 'cache-manager'
 
 let app: INestApplication
 let flightService: FlightService
+let cacheManager: CacheManger
 
 beforeAll(async () => {
   app = await setup()
   flightService = app.get<FlightService>(FlightService)
+  cacheManager = app.get<CacheManger>(CACHE_MANAGER)
 
   Date.now = jest.fn(() => 1597760782018)
 })
 
 describe('Get Discount By DiscountCode', () => {
   it(`GET /public/users/:nationalId/discounts/:discountCode should return data`, async () => {
+    const nationalId = '1326487905'
+    const spy = jest
+      .spyOn(cacheManager, 'get')
+      .mockImplementation(() => Promise.resolve({ nationalId }))
     const response = await request(app.getHttpServer())
-      .get('/public/users/1326487905/discounts/12345678')
+      .get(`/public/users/${nationalId}/discounts/12345678`)
       .expect(200)
+    spy.mockRestore()
 
     expect(response.body).toEqual({
       discountCode: '12345678',
@@ -39,13 +47,18 @@ describe('Get Discount By DiscountCode', () => {
   })
 
   it('GET /public/users/:nationalId/discount/:discountCode with no flightLegs left should return forbidden', async () => {
-    const spy = jest
+    const nationalId = '1326487905'
+    const cacheSpy = jest
+      .spyOn(cacheManager, 'get')
+      .mockImplementation(() => Promise.resolve({ nationalId }))
+    const flightSpy = jest
       .spyOn(flightService, 'countFlightLegsByNationalId')
       .mockImplementation(() => Promise.resolve(4))
     await request(app.getHttpServer())
-      .get('/public/users/1326487905/discounts/12345678')
+      .get(`/public/users/${nationalId}/discounts/12345678`)
       .expect(403)
-    spy.mockRestore()
+    cacheSpy.mockRestore()
+    flightSpy.mockRestore()
   })
 })
 

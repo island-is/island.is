@@ -74,6 +74,8 @@
     "apollo-server-plugin-base": "0.9.0",
     "aws-elasticsearch-connector": "9.0.0",
     "aws-sdk": "2.678.0",
+    "cache-manager": "3.3.0",
+    "cache-manager-ioredis": "2.1.0",
     "class-transformer": "0.2.3",
     "class-validator": "0.12.2",
     "classnames": "2.2.6",
