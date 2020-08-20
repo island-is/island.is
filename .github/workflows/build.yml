@@ -153,7 +153,7 @@ jobs:
           # PROJECTS=`./scripts/_nx-affected-targets.sh test`
           # echo "Projects: ${PROJECTS}"
           # CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
-          CHUNKS="[\"dummy\"]"
+          CHUNKS="[]"
           echo "Chunks: $CHUNKS"
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
