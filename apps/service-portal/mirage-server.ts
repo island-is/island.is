@@ -42,16 +42,12 @@ export function makeServer({ environment = 'development' } = {}) {
         return new Response(200, {}, { token })
       })
 
-      this.get('/user/accounts', async (schema, request) => {
+      this.get('/user/accounts/:nationalId', async (schema, request) => {
+        console.log('get user accounts')
         const authService = new AuthService(server.db)
-        const token = request.requestHeaders.authorization
-        const isValid = await JwtUtils.isValidJwt(token, JWT_SECRET)
 
-        if (!isValid) return new Response(403)
-
-        const parsedToken: JwtToken = await JwtUtils.parseJwt(token)
         const subjects = authService.getSubjectListByNationalId(
-          parsedToken.actor.nationalId,
+          request.params.nationalId,
         )
 
         return new Response(200, {}, { subjects })
@@ -60,6 +56,7 @@ export function makeServer({ environment = 'development' } = {}) {
       this.get('/user/tokenexchange/:nationalId', async (schema, request) => {
         const authService = new AuthService(server.db)
         const token = request.requestHeaders.authorization
+
         const isValid = await JwtUtils.isValidJwt(token, JWT_SECRET)
         if (!isValid) return new Response(403)
 

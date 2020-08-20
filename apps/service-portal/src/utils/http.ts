@@ -1,10 +1,9 @@
-import Cookies from 'js-cookie'
-import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
+import { User } from 'oidc-client'
 
-export const fetchWithAuth = (url: string) =>
+export const fetchWithAuth = (url: string, userInfo: User) =>
   fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `${Cookies.get(MOCK_AUTH_KEY)}`,
+      Authorization: `${userInfo.access_token}`,
     },
   })
