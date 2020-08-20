@@ -20,8 +20,6 @@ export const Application = () => {
   if (loading) return 'Loading...'
   if (error) return `Error! ${error.message}`
 
-  console.log('data', data)
-
   return (
     <ApplicationForm
       formType={FormType.EXAMPLE3}

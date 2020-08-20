@@ -38,7 +38,6 @@ export class ApplicationService {
   }
 
   async update(id: string, application: UpdateApplicationDto) {
-    console.log('Update application')
     const existingApplication = await this.applicationModel.findOne({
       where: { id },
     })

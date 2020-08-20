@@ -17,8 +17,6 @@ export const Applications = () => {
   if (loading) return 'Loading...'
   if (error) return `Error! ${error.message}`
 
-  console.log('data', data)
-
   return (
     <ul>
       {data?.getApplicationsByType.map((application) => (
