@@ -24,6 +24,7 @@ export const withLocale = <
   )
 
   NewComponent.getInitialProps = async (ctx) => {
+    console.log('running locale query', ctx.apolloClient)
     const newContext = { ...ctx, locale } as any
     const [props, translations] = await Promise.all([
       getInitialProps(newContext),

@@ -37,15 +37,19 @@ SupportApplication.getInitialProps = async ({ Component, ctx }) => {
     ...ctx,
     apolloClient,
   }
+
   const pageProps = (await Component.getInitialProps(customContext)) as any
   const layoutProps = await Layout.getInitialProps({
     ...customContext,
     locale: pageProps.locale,
   } as any)
 
+  const apolloState = apolloClient.cache.extract()
+
   return {
     layoutProps: { ...layoutProps, ...pageProps.layoutConfig },
     pageProps,
+    apolloState,
   }
 }
 

@@ -120,13 +120,13 @@ const Layout: NextComponentType<
   )
 }
 
-Layout.getInitialProps = async ({ apolloClient, locale }) => {
+Layout.getInitialProps = async ({ apolloClient, locale = 'is' }) => {
   const [upperMenu, lowerMenu] = await Promise.all([
     apolloClient
       .query<Query, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
         variables: {
-          input: { name: 'Footer upper', lang: locale as ContentLanguage },
+          input: { name: 'Footer upper', lang: locale },
         },
       })
       .then((result) => result.data.getMenu),
@@ -134,18 +134,21 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
       .query<Query, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
         variables: {
-          input: { name: 'Footer lower', lang: locale as ContentLanguage },
+          input: { name: 'Footer lower', lang: locale },
         },
       })
       .then((result) => result.data.getMenu),
   ])
 
+  const upperMenuLinks = upperMenu ? upperMenu.links : []
+  const lowerMenuLinks = lowerMenu ? lowerMenu.links : []
+
   return {
-    footerUpperMenu: upperMenu.links.map(({ text, url }) => ({
+    footerUpperMenu: upperMenuLinks.map(({ text, url }) => ({
       title: text,
       href: url,
     })),
-    footerLowerMenu: lowerMenu.links.map(({ text, url }) => ({
+    footerLowerMenu: lowerMenuLinks.map(({ text, url }) => ({
       title: text,
       href: url,
     })),
