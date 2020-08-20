@@ -206,10 +206,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
-    defaults:
-      if: ${{ matrix.projects != 'dummy' }}
     steps:
       - uses: actions/checkout@v2
+        if: ${{ matrix.projects != 'dummy' }}
+
       # - name: Cache for dependencies Docker layer
       #   id: cache-deps
       #   uses: actions/cache@v1
