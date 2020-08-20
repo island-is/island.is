@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer } from 'react'
-import { StoreState, Action } from './store'
+import { StoreState } from './store'
+import { Action } from './actions'
 export const StateContext = createContext(null)
 
 type StateProviderTypes = {

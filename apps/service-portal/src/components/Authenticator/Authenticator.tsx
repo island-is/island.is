@@ -1,35 +1,15 @@
 import React, { FC, useEffect } from 'react'
-import { Route } from 'react-router-dom'
-import { useStore } from '../../store/stateProvider'
+import AuthenticatorLoadingScreen from './AuthenticatorLoadingScreen'
+import useAuth from '../../hooks/useAuth/useAuth'
 
-export const Authenticator: FC = ({ children, ...rest }) => {
-  const [{ userInfo, userManager }, dispatch] = useStore()
+export const Authenticator: FC = ({ children }) => {
+  const { userInfo, userInfoState, signInUser } = useAuth()
 
   useEffect(() => {
-    async function refresh() {
-      dispatch({
-        type: 'setUserPending',
-      })
+    if (userInfo === null && userInfoState === 'passive') signInUser()
+  }, [userInfo, userInfoState, signInUser])
 
-      try {
-        const user = await userManager.signinSilent()
-        dispatch({
-          type: 'setUserFulfilled',
-          payload: user,
-        })
-      } catch (exception) {
-        userManager.signinRedirect()
-      }
-    }
-    refresh()
-  }, [])
-
-  return (
-    <Route
-      {...rest}
-      render={({ location }) => (userInfo ? children : <h2>loading..</h2>)}
-    />
-  )
+  return <>{userInfo ? children : <AuthenticatorLoadingScreen />}</>
 }
 
 export default Authenticator

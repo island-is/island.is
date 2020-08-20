@@ -4,13 +4,14 @@ import { Icon, Box } from '@island.is/island-ui/core'
 // eslint-disable-next-line
 import { useStore } from 'apps/service-portal/src/store/stateProvider'
 import cn from 'classnames'
+import { ActionType } from '../../../store/actions'
 
 const NotificationMenuTrigger: FC<{}> = () => {
   const [{ notificationSidebarState }, dispatch] = useStore()
 
   const handleClick = () =>
     dispatch({
-      type: 'setNotificationSidebarState',
+      type: ActionType.SetNotificationSidebarState,
       payload: notificationSidebarState === 'open' ? 'closed' : 'open',
     })
 

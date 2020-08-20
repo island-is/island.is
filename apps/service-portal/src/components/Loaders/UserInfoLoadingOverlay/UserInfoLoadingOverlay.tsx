@@ -1,10 +1,10 @@
 import React, { FC } from 'react'
-import useUserInfo from '../../../hooks/useUserInfo/useUserInfo'
+import useAuth from '../../../hooks/useAuth/useAuth'
 import * as styles from './UserInfoLoadingOverlay.treat'
 import { Typography } from '@island.is/island-ui/core'
 
 const UserInfoLoadingOverlay: FC<{}> = () => {
-  const { userInfoState } = useUserInfo()
+  const { userInfoState } = useAuth()
 
   if (userInfoState === 'pending')
     return (

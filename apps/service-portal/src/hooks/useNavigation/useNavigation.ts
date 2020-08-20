@@ -5,14 +5,14 @@ import {
   servicePortalMasterNavigation,
 } from '@island.is/service-portal/core'
 import { useStore } from '../../store/stateProvider'
-import { JwtToken } from '../../mirage-server/models/jwt-model'
+import { User } from 'oidc-client'
 
 const tempClone = (item) => JSON.parse(JSON.stringify(item))
 
 const filterNavigationTree = (
   item: ServicePortalNavigationItem,
   modules: ServicePortalModule[],
-  userInfo: JwtToken,
+  userInfo: User,
 ) => {
   // TODO: Each module's route function has already been called in Modules.tsx
   // This should be combined in some way so that we are not calling the same function twice for no reason

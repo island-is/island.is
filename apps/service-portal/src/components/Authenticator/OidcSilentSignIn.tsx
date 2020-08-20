@@ -1,16 +1,18 @@
 import React, { FC, useEffect } from 'react'
-import { useStore } from '../../store/stateProvider'
+import { userManager } from '../../utils/userManager'
+import AuthenticatorLoadingScreen from './AuthenticatorLoadingScreen'
 
+// TODO: This route gets mounted as an iframe to silently log the user in
+// For further optimization it can be minimized into a barebones html file
 export const OidcSilentSignIn: FC = () => {
-  const [{ userManager }] = useStore()
-
   useEffect(() => {
     userManager.signinSilentCallback().catch(function(error) {
+      // TODO: Handle error
       console.log(error)
     })
   }, [])
 
-  return <p>loggin in..</p>
+  return <AuthenticatorLoadingScreen />
 }
 
 export default OidcSilentSignIn

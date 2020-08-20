@@ -2,23 +2,24 @@ import { useStore } from '../../store/stateProvider'
 import { useEffect } from 'react'
 import { fetchWithAuth } from '../../utils/http'
 import { API_USER_ACCOUNTS } from '@island.is/service-portal/constants'
+import { ActionType } from '../../store/actions'
 
 const useSubjects = () => {
   const [{ subjectList, subjectListState }, dispatch] = useStore()
 
   useEffect(() => {
     async function fetchSubjectList() {
-      dispatch({ type: 'fetchSubjectListPending' })
+      dispatch({ type: ActionType.FetchSubjectListPending })
 
       try {
         const res = await fetchWithAuth(API_USER_ACCOUNTS)
         const data = await res.json()
         dispatch({
-          type: 'fetchSubjectListFulfilled',
+          type: ActionType.FetchSubjectListFulfilled,
           payload: data.subjects,
         })
       } catch (err) {
-        dispatch({ type: 'fetchSubjectListFailed' })
+        dispatch({ type: ActionType.FetchSubjectListFailed })
       }
     }
 

@@ -1,5 +1,5 @@
 import React, { FC, Suspense } from 'react'
-import { Route } from 'react-router-dom'
+import { Route, Switch } from 'react-router-dom'
 import {
   ServicePortalRoute,
   ServicePortalModule,
@@ -9,6 +9,7 @@ import ModuleLoadingScreen from './ModuleLoadingScreen'
 import ModuleErrorScreen, { ModuleErrorBoundary } from './ModuleErrorScreen'
 import { Box } from '@island.is/island-ui/core'
 import { User } from 'oidc-client'
+import NotFound from '../../screens/NotFound/NotFound'
 
 const RouteComponent: FC<{
   route: ServicePortalRoute
@@ -32,7 +33,7 @@ const RouteLoader: FC<{
   modules: ServicePortalModule[]
   userInfo: User
 }> = React.memo(({ modules, userInfo }) => (
-  <>
+  <Switch>
     {modules.map((module) =>
       module
         .routes(userInfo)
@@ -45,7 +46,8 @@ const RouteLoader: FC<{
           />
         )),
     )}
-  </>
+    <Route component={NotFound} />
+  </Switch>
 ))
 
 const Modules: FC<{}> = () => {
