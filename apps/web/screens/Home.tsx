@@ -102,7 +102,7 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
                   <Column>
                     <Box display="inlineFlex" alignItems="center" width="full">
                       <SearchInput
-                        showCommonSearches
+                        openOnFocus
                         size="large"
                         activeLocale={activeLocale}
                         placeholder={n('heroSearchPlaceholder')}

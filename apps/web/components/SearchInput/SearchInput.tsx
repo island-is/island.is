@@ -79,7 +79,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
 
     setState({ ...state, isLoading: true })
 
-    const thisTimerId = timer.current = setTimeout(async () => {
+    const thisTimerId = (timer.current = setTimeout(async () => {
       const {
         data: { searchResults: results },
       } = await client.query<Query, QuerySearchResultsArgs>({
@@ -108,7 +108,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
           suggestions,
         })
       }
-    }, DEBOUNCE_TIMER)
+    }, DEBOUNCE_TIMER))
 
     return () => clearTimeout(thisTimerId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -141,7 +141,7 @@ interface SearchInputProps {
   initialInputValue?: string
   size?: AsyncSearchSizes
   autocomplete?: boolean
-  showCommonSearches?: boolean
+  openOnFocus?: boolean
   placeholder?: string
   white?: boolean
 }
@@ -153,7 +153,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       activeLocale,
       initialInputValue = '',
       autocomplete = true,
-      showCommonSearches = false,
+      openOnFocus = false,
       size = 'medium',
       white = false,
     },
@@ -199,7 +199,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             }}
             inputProps={getInputProps({
               inputSize: size,
-              onFocus: () => showCommonSearches && openMenu(),
+              onFocus: () => openOnFocus && openMenu(),
               placeholder,
               colored: true,
               onKeyDown: (e) => {
@@ -289,7 +289,9 @@ const Results: FC<{
             </Typography>
             {search.results.items.map(({ id, title, slug }) => (
               <Typography key={id} links variant="h5" color="blue400">
-                <Link href={makePath('article', slug)}><a>{title}</a></Link>
+                <Link href={makePath('article', slug)}>
+                  <a>{title}</a>
+                </Link>
               </Typography>
             ))}
           </Stack>

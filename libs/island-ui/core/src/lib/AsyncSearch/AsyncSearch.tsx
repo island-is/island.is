@@ -170,10 +170,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             <AsyncSearchInput
               hasFocus={focused}
               loading={loading}
-              rootProps={getRootProps(
-                null,
-                { suppressRefError: true },
-              )}
+              rootProps={getRootProps(null, { suppressRefError: true })}
               inputProps={{
                 ...getInputProps({
                   value: inputValue,
@@ -287,7 +284,11 @@ export const AsyncSearchInput = forwardRef<
             />
           </span>
         )}
-        {showLabel && <Label hasLabel={showLabel} {...labelProps}>{label}</Label>}
+        {showLabel && (
+          <Label hasLabel={showLabel} {...labelProps}>
+            {label}
+          </Label>
+        )}
         <Menu {...{ isOpen, shouldShowItems: isOpen, ...menuProps }}>
           {children}
         </Menu>
