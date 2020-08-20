@@ -1,6 +1,6 @@
 import React, { FC, useRef } from 'react'
-import Header from '../header/header'
-import Sidebar from '../sidebar/sidebar'
+import Header from '../Header/Header'
+import Sidebar from '../Sidebar/Sidebar'
 import { Box, Columns, Column } from '@island.is/island-ui/core'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import * as styles from './Layout.treat'

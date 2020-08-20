@@ -36,20 +36,14 @@ export const ServicePortalApplications: ServicePortalModuleComponent = ({
     <div>
       <Switch>
         <Route exact path="/umsoknir" component={Greeting} />
-        {userInfo.sub.subjectType === 'person' && (
-          <>
-            <Route
-              exact
-              path="/umsoknir/opnar-umsoknir"
-              component={OpenApplications}
-            />
-            <Route
-              exact
-              path="/umsoknir/ny-umsokn"
-              component={NewApplication}
-            />
-          </>
-        )}
+
+        <Route
+          exact
+          path="/umsoknir/opnar-umsoknir"
+          component={OpenApplications}
+        />
+        <Route exact path="/umsoknir/ny-umsokn" component={NewApplication} />
+
         <Route component={NotFound} />
       </Switch>
     </div>

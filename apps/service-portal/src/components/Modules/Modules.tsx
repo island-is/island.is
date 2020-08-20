@@ -8,11 +8,11 @@ import { useStore } from '../../store/stateProvider'
 import ModuleLoadingScreen from './ModuleLoadingScreen'
 import ModuleErrorScreen, { ModuleErrorBoundary } from './ModuleErrorScreen'
 import { Box } from '@island.is/island-ui/core'
-import { JwtToken } from '../../mirage-server/models/jwt-model'
+import { User } from 'oidc-client'
 
 const RouteComponent: FC<{
   route: ServicePortalRoute
-  userInfo: JwtToken
+  userInfo: User
 }> = React.memo(({ route, userInfo }) => {
   const App = route.render(userInfo)
 
@@ -30,7 +30,7 @@ const RouteComponent: FC<{
 
 const RouteLoader: FC<{
   modules: ServicePortalModule[]
-  userInfo: JwtToken
+  userInfo: User
 }> = React.memo(({ modules, userInfo }) => (
   <>
     {modules.map((module) =>

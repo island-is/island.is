@@ -5,12 +5,12 @@ import {
   ServicePortalWidget,
   ServicePortalModule,
 } from '@island.is/service-portal/core'
-import { JwtToken } from '../../mirage-server/models/jwt-model'
 import WidgetLoading from './WidgetLoading/WidgetLoading'
+import { User } from 'oidc-client'
 
 const Widget: FC<{
   widget: ServicePortalWidget
-  userInfo: JwtToken
+  userInfo: User
 }> = React.memo(({ widget, userInfo }) => {
   const Component = widget.render(userInfo)
 
@@ -33,7 +33,7 @@ const Widget: FC<{
 
 const WidgetLoader: FC<{
   modules: ServicePortalModule[]
-  userInfo: JwtToken
+  userInfo: User
 }> = React.memo(({ modules, userInfo }) => {
   const widgets = modules
     .reduce(

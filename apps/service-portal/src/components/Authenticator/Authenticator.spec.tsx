@@ -1,7 +1,7 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 
-import Authenticator from './authenticator'
+import Authenticator from './Authenticator'
 
 describe(' Authenticator', () => {
   it('should render successfully', () => {
