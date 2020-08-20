@@ -5,6 +5,7 @@ import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
+import { FormType } from '@island.is/application/schema'
 
 @Injectable()
 export class ApplicationService {
@@ -22,11 +23,22 @@ export class ApplicationService {
     })
   }
 
+  async findAll(): Promise<Application[]> {
+    return this.applicationModel.findAll()
+  }
+
+  async findAllByType(typeId: FormType): Promise<Application[]> {
+    return this.applicationModel.findAll({
+      where: { typeId },
+    })
+  }
+
   async create(application: CreateApplicationDto): Promise<Application> {
     return this.applicationModel.create(application)
   }
 
   async update(id: string, application: UpdateApplicationDto) {
+    console.log('Update application')
     const existingApplication = await this.applicationModel.findOne({
       where: { id },
     })

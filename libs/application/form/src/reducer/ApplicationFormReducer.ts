@@ -112,6 +112,8 @@ export const ApplicationReducer = (
             : 0) +
           1,
       )
+    case ActionTypes.SET_APPLICATION_ID:
+      return { ...state, applicationId: action.payload }
     default:
       return state
   }

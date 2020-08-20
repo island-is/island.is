@@ -16,6 +16,7 @@ export interface ApplicationUIState {
   progress: number
   screens: FormScreen[]
   sections: Section[]
+  applicationId?: string
 }
 
 export enum ActionTypes {
@@ -23,6 +24,7 @@ export enum ActionTypes {
   EXPAND_REPEATER = 'EXPAND_REPEATER',
   NEXT_SCREEN = 'NEXT_SCREEN',
   PREV_SCREEN = 'PREV_SCREEN',
+  SET_APPLICATION_ID = 'SET_APPLICATION_ID',
 }
 
 export interface Action {

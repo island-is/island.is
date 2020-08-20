@@ -305,6 +305,7 @@ type Query {
   getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getApplication(input: GetApplicationInput!): Application
+  getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
 }
 
 input HelloWorldInput {
@@ -395,6 +396,10 @@ input GetApplicationInput {
   id: String!
 }
 
+input GetApplicationsByTypeInput {
+  typeId: ApplicationTypeIdEnum!
+}
+
 type Mutation {
   createApplication(input: CreateApplicationInput!): Application
   updateApplication(input: UpdateApplicationInput!): Application
@@ -430,13 +435,20 @@ enum CreateApplicationDtoTypeIdEnum {
 
 input UpdateApplicationInput {
   id: String!
+  typeId: UpdateApplicationDtoTypeIdEnum!
   applicant: String
   assignee: String
   externalId: String
   state: UpdateApplicationDtoStateEnum
   attachments: [String!]
-  typeId: UpdateApplicationDtoTypeIdEnum
   answers: JSON
+}
+
+enum UpdateApplicationDtoTypeIdEnum {
+  ExampleForm
+  ExampleForm2
+  ExampleForm3
+  FamilyAndPets
 }
 
 enum UpdateApplicationDtoStateEnum {
@@ -448,11 +460,4 @@ enum UpdateApplicationDtoStateEnum {
   MANUALAPPROVED
   REJECTED
   UNKNOWN
-}
-
-enum UpdateApplicationDtoTypeIdEnum {
-  ExampleForm
-  ExampleForm2
-  ExampleForm3
-  FamilyAndPets
 }

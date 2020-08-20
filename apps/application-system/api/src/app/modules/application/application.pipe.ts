@@ -13,6 +13,7 @@ export class ApplicationValidationPipe implements PipeTransform {
 
   transform(application: CreateApplicationDto | UpdateApplicationDto) {
     const applicationForm = getFormByTypeId(application.typeId)
+    console.log('PIPE....', application)
     if (applicationForm === null) {
       throw new BadRequestException(
         `No application form definition exists for type: ${application.typeId}`,
@@ -25,6 +26,7 @@ export class ApplicationValidationPipe implements PipeTransform {
     )
 
     if (schemaFormValidation) {
+      console.log('schemaFormValidation', schemaFormValidation.message)
       throw new BadRequestException(schemaFormValidation.message)
     }
     return application

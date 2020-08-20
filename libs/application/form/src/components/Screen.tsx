@@ -1,4 +1,5 @@
 import React, { FC, useState } from 'react'
+import { useMutation } from '@apollo/client'
 import {
   FormValue,
   FormItemTypes,
@@ -14,9 +15,8 @@ import FormField from './FormField'
 import { resolver } from '../validation/resolver'
 import ConditionHandler from './ConditionHandler'
 import FormRepeater from './FormRepeater'
-import { useMutation } from '@apollo/client'
-import { CREATE_APPLICATION } from '../graphql/mutations/createApplication'
-import { UPDATE_APPLICATION } from '../graphql/mutations/updateApplication'
+import { CREATE_APPLICATION } from '@island.is/application/graphql'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
 type ScreenProps = {
   formValue: FormValue
@@ -29,6 +29,8 @@ type ScreenProps = {
   prevScreen(): void
   screen: FormScreen
   section?: Section
+  applicationId?: string
+  setApplicationId(id: string): void
 }
 
 const Screen: FC<ScreenProps> = ({
@@ -42,8 +44,10 @@ const Screen: FC<ScreenProps> = ({
   shouldSubmit = false,
   screen,
   section,
+  applicationId,
+  setApplicationId,
 }) => {
-  const [existingApplicationId, setExistingApplicationId] = useState(null) // TODO move to form reducer state
+  // const [existingApplicationId, setExistingApplicationId] = useState(null) // TODO move to form reducer state
   const hookFormData = useForm<FormValue>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -58,7 +62,7 @@ const Screen: FC<ScreenProps> = ({
     CREATE_APPLICATION,
     {
       onCompleted({ createApplication }) {
-        setExistingApplicationId(createApplication.id)
+        setApplicationId(createApplication.id)
       },
     },
   )
@@ -79,11 +83,12 @@ const Screen: FC<ScreenProps> = ({
       // call submit mutation
       console.log('here we will submit', formValue)
     } else {
-      if (existingApplicationId) {
+      if (applicationId) {
         updateApplication({
           variables: {
             input: {
-              id: existingApplicationId,
+              id: applicationId,
+              typeId: formTypeId,
               answers: data,
             },
           },

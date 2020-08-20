@@ -150,6 +150,7 @@ components:
             type: string
       required:
         - id
+        - typeId
 paths:
   /liveness:
     get:
@@ -219,6 +220,25 @@ paths:
       tags:
         - application
   /application:
+    get:
+      operationId: ApplicationController_findAll
+      parameters:
+        - name: typeId
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Application'
+      tags:
+        - application
     post:
       operationId: ApplicationController_create
       parameters: []

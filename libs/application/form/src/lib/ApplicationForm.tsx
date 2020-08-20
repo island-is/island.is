@@ -1,7 +1,11 @@
 import React, { FC, useReducer } from 'react'
-import { ApolloProvider } from '@apollo/client'
 
-import { FormValue, Form } from '@island.is/application/schema'
+import {
+  FormValue,
+  Form,
+  FormType,
+  getFormByTypeId,
+} from '@island.is/application/schema'
 import FormProgress from '../components/FormProgress/'
 import ApplicationName from '../components/ApplicationName/'
 import Sidebar from '../components/Sidebar'
@@ -12,19 +16,23 @@ import {
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
 import { Box } from '@island.is/island-ui/core'
-import { client } from '../graphql/client'
 import * as styles from './ApplicationForm.treat'
 import ProgressIndicator from '../components/ProgressIndicator'
 
 type ApplicationProps = {
-  form: Form
-  initialAnswers: FormValue
+  formType: FormType
+  applicationId?: string
+  initialAnswers?: FormValue
 }
 
-const ApplicationFormBody: FC<ApplicationProps> = ({
-  form,
+export const ApplicationForm: FC<ApplicationProps> = ({
+  formType,
+  applicationId,
   initialAnswers,
 }) => {
+  console.log('id...', applicationId)
+  console.log('initialAnswers...', initialAnswers)
+  const form = getFormByTypeId(formType)
   const [state, dispatch] = useReducer(
     ApplicationReducer,
     {
@@ -37,6 +45,7 @@ const ApplicationFormBody: FC<ApplicationProps> = ({
       progress: 0,
       screens: [],
       sections: [],
+      applicationId,
     },
     initializeReducer,
   )
@@ -48,6 +57,7 @@ const ApplicationFormBody: FC<ApplicationProps> = ({
     progress,
     sections,
     screens,
+    applicationId: existingApplicationId,
   } = state
 
   return (
@@ -91,17 +101,15 @@ const ApplicationFormBody: FC<ApplicationProps> = ({
             nextScreen={() => dispatch({ type: ActionTypes.NEXT_SCREEN })}
             prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
             shouldSubmit={activeScreen === screens.length - 1}
+            setApplicationId={(id) =>
+              dispatch({ type: ActionTypes.SET_APPLICATION_ID, payload: id })
+            }
             screen={screens[activeScreen]}
             section={sections[activeSection]}
+            applicationId={existingApplicationId}
           />
         </Box>
       </Box>
     </Box>
   )
 }
-
-export const ApplicationForm = (props: ApplicationProps) => (
-  <ApolloProvider client={client}>
-    <ApplicationFormBody {...props} />
-  </ApolloProvider>
-)
