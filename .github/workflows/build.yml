@@ -155,7 +155,7 @@ jobs:
           # CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
           CHUNKS="[]"
           echo "Chunks: $CHUNKS"
-          echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
+          echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS, \"runs\": [1]}"
 
       - name: Prepare docker-express targets
         id: docker_express_projects
@@ -228,7 +228,7 @@ jobs:
       # #   run: yarn run affected:e2e --base origin/master
   docker-express:
     needs: [prepare, tests]
-    if: join(fromJson(needs.prepare.outputs.TEST_CHUNKS)) == ''
+    # if: join(fromJson(needs.prepare.outputs.TEST_CHUNKS)) == ''
     runs-on: ubuntu-latest
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
