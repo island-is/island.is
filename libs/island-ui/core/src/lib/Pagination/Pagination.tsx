@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { ReactNode, Fragment, FC, useMemo } from 'react'
 import cn from 'classnames'
 import uniq from 'lodash/uniq'
