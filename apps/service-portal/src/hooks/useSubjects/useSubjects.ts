@@ -1,6 +1,7 @@
 import { useStore } from '../../store/stateProvider'
 import { useEffect } from 'react'
 import { fetchWithAuth } from '../../utils/http'
+import { API_USER_ACCOUNTS } from '@island.is/service-portal/constants'
 
 const useSubjects = () => {
   const [{ subjectList, subjectListState }, dispatch] = useStore()
@@ -10,7 +11,7 @@ const useSubjects = () => {
       dispatch({ type: 'fetchSubjectListPending' })
 
       try {
-        const res = await fetchWithAuth('/user/accounts')
+        const res = await fetchWithAuth(API_USER_ACCOUNTS)
         const data = await res.json()
         dispatch({
           type: 'fetchSubjectListFulfilled',

@@ -1,8 +1,8 @@
 import React, { FC } from 'react'
-import * as styles from './ModuleLoader.treat'
+import * as styles from './WidgetLoading.treat'
 import FadeIn from '../../library/Animations/FadeIn/FadeIn'
 
-const ModuleLoader: FC<{}> = () => {
+const WidgetLoading: FC<{}> = () => {
   return (
     <FadeIn>
       <div className={styles.wrapper} />
@@ -10,4 +10,4 @@ const ModuleLoader: FC<{}> = () => {
   )
 }
 
-export default ModuleLoader
+export default WidgetLoading

@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
-import { Box, Icon, Typography } from '@island.is/island-ui/core'
+import { Box, Icon } from '@island.is/island-ui/core'
 import { Link, useLocation } from 'react-router-dom'
 import AnimateHeight from 'react-animate-height'
 import * as styles from './Sidebar.treat'
@@ -12,12 +12,12 @@ interface Props {
 
 const ModuleNavigation: FC<Props> = ({ nav }) => {
   const location = useLocation()
-  const isModuleActive = location.pathname.includes(nav.url)
+  const isModuleActive = location.pathname.includes(nav.path)
 
   return (
     <Box marginBottom={2}>
       <Link
-        to={nav.url}
+        to={nav.path}
         className={cn(styles.navItem, {
           [styles.navItemActive]: isModuleActive,
         })}
@@ -34,15 +34,15 @@ const ModuleNavigation: FC<Props> = ({ nav }) => {
           <div>{nav.name}</div>
         </Box>
       </Link>
-      {nav.children && (
+      {nav.children?.length > 0 && (
         <AnimateHeight duration={300} height={isModuleActive ? 'auto' : 0}>
           <Box paddingLeft={5} paddingTop={3}>
             {nav.children.map((child, index) => (
               <Link
-                to={child.url}
+                to={child.path}
                 key={`child-${index}`}
                 className={cn(styles.navItem, styles.subNavItem, {
-                  [styles.navItemActive]: location.pathname === child.url,
+                  [styles.navItemActive]: location.pathname === child.path,
                 })}
               >
                 {child.name}

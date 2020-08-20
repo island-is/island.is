@@ -5,13 +5,14 @@ import * as styles from './Header.treat'
 import { Logo } from '../Logo/Logo'
 import UserMenu from '../UserMenu/UserMenu'
 import NotificationMenuTrigger from '../Notifications/NotificationMenuTrigger/NotificationMenuTrigger'
+import { ServicePortalPath } from '@island.is/service-portal/core'
 
 export const Header: FC<{}> = () => {
   return (
     <>
       <div className={styles.placeholder} />
       <header className={styles.header}>
-        <Link to="/">
+        <Link to={ServicePortalPath.MinarSidurRoot}>
           <Box display="flex" height="full" alignItems="center">
             <Hidden above="md">
               <Logo width={40} iconOnly />

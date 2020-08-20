@@ -1,18 +1,23 @@
-import { ServicePortalModule } from '@island.is/service-portal/core'
+import {
+  ServicePortalModule,
+  ServicePortalPath,
+} from '@island.is/service-portal/core'
 import { lazy } from 'react'
 
 export const financeModule: ServicePortalModule = {
   name: 'Fjármál',
-  path: '/fjarmal',
-  navigation: async (props) => {
-    return {
+  widgets: () => [
+    {
       name: 'Fjármál',
-      url: '/fjarmal',
-      icon: 'user',
-      section: 'info',
-      order: 1,
-    }
-  },
-  widgets: () => lazy(() => import('./lib/service-portal-finance')),
-  render: () => lazy(() => import('./lib/service-portal-finance')),
+      weight: 3,
+      render: () => lazy(() => import('./lib/service-portal-finance')),
+    },
+  ],
+  routes: () => [
+    {
+      name: 'Fjármál',
+      path: ServicePortalPath.FjarmalRoot,
+      render: () => lazy(() => import('./lib/service-portal-finance')),
+    },
+  ],
 }

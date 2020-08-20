@@ -1,15 +1,7 @@
-import Cookies from 'js-cookie'
-
-import {
-  ServicePortalModule,
-  ServicePortalNavigationRoot,
-} from '@island.is/service-portal/core'
+import { ServicePortalModule } from '@island.is/service-portal/core'
 import { SubjectListDto } from '../mirage-server/models/subject'
-import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
-import jwtDecode from 'jwt-decode'
 import { modules } from './modules'
 import {
-  Log,
   User,
   UserManager,
   WebStorageStateStore,
@@ -22,9 +14,6 @@ export type Action =
   | { type: 'setUserPending' }
   | { type: 'setuserLoggedOut' }
   | { type: 'setUserFulfilled'; payload: User }
-  | { type: 'fetchNavigationPending' }
-  | { type: 'fetchNavigationFulfilled'; payload: ServicePortalNavigationRoot[] }
-  | { type: 'fetchNavigationFailed' }
   | { type: 'fetchSubjectListPending' }
   | { type: 'fetchSubjectListFulfilled'; payload: SubjectListDto[] }
   | { type: 'fetchSubjectListFailed' }
@@ -36,7 +25,6 @@ export interface StoreState {
   userInfo: User
   userInfoState: AsyncActionState
   modules: ServicePortalModule[]
-  navigation: ServicePortalNavigationRoot[]
   navigationState: AsyncActionState
   subjectList: SubjectListDto[]
   subjectListState: AsyncActionState
@@ -65,7 +53,6 @@ export const initialState: StoreState = {
   userInfo: null,
   userInfoState: 'passive',
   modules: modules,
-  navigation: [],
   navigationState: 'passive',
   subjectList: [],
   subjectListState: 'passive',
@@ -85,22 +72,6 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
         ...state,
         userInfo: action.payload,
         userInfoState: 'fulfilled',
-      }
-    case 'fetchNavigationPending':
-      return {
-        ...state,
-        navigationState: 'pending',
-      }
-    case 'fetchNavigationFulfilled':
-      return {
-        ...state,
-        navigation: action.payload,
-        navigationState: 'fulfilled',
-      }
-    case 'fetchNavigationFailed':
-      return {
-        ...state,
-        navigationState: 'failed',
       }
     case 'fetchSubjectListPending':
       return {

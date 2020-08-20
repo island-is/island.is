@@ -15,13 +15,11 @@ import Modules from '../components/Modules/Modules'
 import * as styles from './App.treat'
 import './App.css'
 import OidcSignIn from '../components/Authenticator/OidcSignIn'
-import { Log } from 'oidc-client'
 import OidcSilentSignIn from '../components/Authenticator/OidcSilentSignIn'
+import { ServicePortalPath } from '@island.is/service-portal/core'
 
 export const App = () => {
   makeServer()
-  //Log.logger = console
-  //Log.level = Log.DEBUG
   return (
     <div className={styles.page}>
       <Router>
@@ -39,7 +37,7 @@ export const App = () => {
               </Route>
               <Authenticator>
                 <Layout>
-                  <Route exact path="/">
+                  <Route exact path={ServicePortalPath.MinarSidurRoot}>
                     <Dashboard />
                   </Route>
                   <Modules />

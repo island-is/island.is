@@ -1,18 +1,16 @@
 import { LazyExoticComponent, FC } from 'react'
 import { IconTypes } from '@island.is/island-ui/core'
 import { User } from 'oidc-client'
+// eslint-disable-next-line
+import { JwtToken } from 'apps/service-portal/src/mirage-server/models/jwt-model'
+import { ServicePortalPath } from './navigation/paths'
 
 export interface ServicePortalNavigationItem {
   name: string
-  url: string
+  path?: string
+  external?: boolean
   icon?: IconTypes
   children?: ServicePortalNavigationItem[]
-}
-
-export interface ServicePortalNavigationRoot
-  extends ServicePortalNavigationItem {
-  section: 'actions' | 'info'
-  order: number
 }
 
 interface ServicePortalModuleProps {
@@ -25,30 +23,64 @@ export type ServicePortalModuleRenderValue = LazyExoticComponent<
   ServicePortalModuleComponent
 >
 
-export interface ServicePortalModule {
+export type ServicePortalRoute = {
   /**
-   * Used as the module title in the shell
-   * in various components such as when rendering
-   * widgets on the dashboard*/
+   * The title of this route
+   */
   name: string
   /**
-   * Describes the root route of this module
-   * and how the shell navigates to it
-   * Fx: Module: Fjármál, path: /fjarmal
+   * Describes the path used to route to this component
    */
-  path: string
+  path: ServicePortalPath
   /**
-   * Returns a promise of a navigation tree
-   * that will render in the shell's sidebar.
+   * Routes are defined as exact by default
+   * This flags it as a catch-all parent route that
+   * defines it's own nested routing
    */
-  navigation: (userInfo: User) => Promise<ServicePortalNavigationRoot>
+  catchAll?: boolean
+  /**
+   * The render value of this component
+   */
+  render: (userInfo: User) => ServicePortalModuleRenderValue
+}
+
+export type ServicePortalWidget = {
+  /**
+   * Describes the name of this widget, displayed on the dashboard above it fx.
+   */
+  name: string
+  /**
+   * Weight determines how widgets are sorted on the dashboard.
+   * The lower the weight, the higher up it is
+   */
+  weight: number
+  /**
+   * The render value of this widget
+   */
+  render: (userInfo: User) => ServicePortalModuleRenderValue
+}
+
+export interface ServicePortalModule {
+  /**
+   * The title of this module
+   */
+  name: string
   /**
    * An optional render value of widgets that should
    * be displayed on the dashboard
    */
-  widgets: (userInfo: User) => ServicePortalModuleRenderValue
+  widgets: (userInfo: User) => ServicePortalWidget[]
   /**
-   * The root render value of this module.
+   * The routes defined by this module.
+   * The service portal shell will define these as routes
+   * within itself and use the provided render function to render out the component
    */
-  render: (userInfo: User) => ServicePortalModuleRenderValue
+  routes: (userInfo: User) => ServicePortalRoute[]
+  /**
+   * Proposal:
+   * All paths provided by this module.
+   * These are used to determine what navigational items will be shown
+   * in the sidebar, what breadcrumbs will be generated etc.
+   */
+  // paths: ServicePortalPath[]
 }

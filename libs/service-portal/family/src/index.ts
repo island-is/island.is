@@ -1,18 +1,23 @@
-import { ServicePortalModule } from '@island.is/service-portal/core'
+import {
+  ServicePortalModule,
+  ServicePortalPath,
+} from '@island.is/service-portal/core'
 import { lazy } from 'react'
 
 export const familyModule: ServicePortalModule = {
   name: 'Fjölskyldan',
-  path: '/fjolskyldan',
-  navigation: async (props) => {
-    return {
+  widgets: () => [
+    {
       name: 'Fjölskyldan',
-      url: '/fjolskyldan',
-      icon: 'user',
-      section: 'info',
-      order: 0,
-    }
-  },
-  widgets: () => lazy(() => import('./lib/service-portal-family')),
-  render: () => lazy(() => import('./lib/service-portal-family')),
+      weight: 4,
+      render: () => lazy(() => import('./lib/service-portal-family')),
+    },
+  ],
+  routes: () => [
+    {
+      name: 'Fjölskyldan',
+      path: ServicePortalPath.FjolskyldanRoot,
+      render: () => lazy(() => import('./lib/service-portal-family')),
+    },
+  ],
 }

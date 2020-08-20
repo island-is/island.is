@@ -1,9 +1,7 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
-
 import * as styles from './Menu.treat'
-// eslint-disable-next-line
-import { SubjectListDto } from 'apps/service-portal/src/mirage-server/models/subject'
+import { SubjectListDto } from '../../../mirage-server/models/subject'
 import {
   Box,
   Icon,
@@ -11,9 +9,10 @@ import {
   Divider,
   Button,
 } from '@island.is/island-ui/core'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { User } from 'oidc-client'
-import useUserInfo from 'apps/service-portal/src/hooks/useUserInfo/useUserInfo'
+import { ServicePortalPath } from '@island.is/service-portal/core'
+import useUserInfo from '../../../hooks/useUserInfo/useUserInfo'
 
 interface Props {
   isOpen: boolean
@@ -31,10 +30,9 @@ export const Menu: FC<Props> = ({
 }) => {
   const personSubjects = subjectList.filter((x) => x.subjectType === 'person')
   const companySubjects = subjectList.filter((x) => x.subjectType === 'company')
-  const history = useHistory()
   const { logoutUser } = useUserInfo()
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     logoutUser()
   }
 
@@ -47,7 +45,7 @@ export const Menu: FC<Props> = ({
       <Box display="flex" alignItems="center" padding={3}>
         <div className={styles.avatar} />
         <div>
-          <Link to="/stillingar" onClick={onCloseMenu}>
+          <Link to={ServicePortalPath.StillingarRoot} onClick={onCloseMenu}>
             <Box display="flex" alignItems="center">
               <Box marginRight={2}>
                 <Icon type="lock" color="dark300" />
@@ -57,7 +55,7 @@ export const Menu: FC<Props> = ({
               </Typography>
             </Box>
           </Link>
-          <Link to="/stillingar/umbod" onClick={onCloseMenu}>
+          <Link to={ServicePortalPath.StillingarUmbod} onClick={onCloseMenu}>
             <Box display="flex" alignItems="center">
               <Box marginRight={2}>
                 <Icon type="user" color="dark300" />

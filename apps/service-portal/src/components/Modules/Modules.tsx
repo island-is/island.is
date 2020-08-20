@@ -1,42 +1,59 @@
 import React, { FC, Suspense } from 'react'
 import { Route } from 'react-router-dom'
-import { ServicePortalModule } from '@island.is/service-portal/core'
+import {
+  ServicePortalRoute,
+  ServicePortalModule,
+} from '@island.is/service-portal/core'
 import { useStore } from '../../store/stateProvider'
 import ModuleLoadingScreen from './ModuleLoadingScreen'
 import ModuleErrorScreen, { ModuleErrorBoundary } from './ModuleErrorScreen'
 import { Box } from '@island.is/island-ui/core'
 import { User } from 'oidc-client'
 
-const ModuleLoader: FC<{
-  module: ServicePortalModule
+const RouteComponent: FC<{
+  route: ServicePortalRoute
   userInfo: User
-}> = React.memo(({ module, userInfo }) => {
-  const App = module.render(userInfo)
+}> = React.memo(({ route, userInfo }) => {
+  const App = route.render(userInfo)
 
   if (App)
     return (
-      <Suspense fallback={<ModuleLoadingScreen name={module.name} />}>
-        <ModuleErrorBoundary name={module.name}>
+      <Suspense fallback={<ModuleLoadingScreen name={route.name} />}>
+        <ModuleErrorBoundary name={route.name}>
           <App userInfo={userInfo} />
         </ModuleErrorBoundary>
       </Suspense>
     )
 
-  return <ModuleErrorScreen name={module.name} />
+  return <ModuleErrorScreen name={route.name} />
 })
+
+const RouteLoader: FC<{
+  modules: ServicePortalModule[]
+  userInfo: User
+}> = React.memo(({ modules, userInfo }) => (
+  <>
+    {modules.map((module) =>
+      module
+        .routes(userInfo)
+        .map((route) => (
+          <Route
+            exact={!route.catchAll}
+            path={route.path}
+            key={route.path}
+            render={() => <RouteComponent route={route} userInfo={userInfo} />}
+          />
+        )),
+    )}
+  </>
+))
 
 const Modules: FC<{}> = () => {
   const [{ modules, userInfo }] = useStore()
 
   return (
     <Box paddingY={4} paddingX={3}>
-      {modules.map((module) => (
-        <Route
-          path={module.path}
-          key={module.path}
-          render={() => <ModuleLoader module={module} userInfo={userInfo} />}
-        />
-      ))}
+      <RouteLoader modules={modules} userInfo={userInfo} />
     </Box>
   )
 }
