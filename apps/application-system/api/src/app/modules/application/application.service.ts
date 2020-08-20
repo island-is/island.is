@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { merge, isArray } from 'lodash'
 import { InjectModel } from '@nestjs/sequelize'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { mergeAnswers } from '@island.is/application/schema'
 import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 
 @Injectable()
@@ -31,7 +31,7 @@ export class ApplicationService {
       where: { id },
     })
 
-    const mergedAnswers = merge(
+    const mergedAnswers = mergeAnswers(
       existingApplication.answers,
       application.answers,
     )

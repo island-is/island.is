@@ -48,13 +48,12 @@ const Screen: FC<ScreenProps> = ({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
     defaultValues: formValue,
-    shouldUnregister: true,
+    shouldUnregister: false,
     resolver,
     context: { dataSchema, formNode: screen },
   })
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [createApplication, { data: createData }] = useMutation(
+  const [createApplication, { loading: createPending }] = useMutation(
     CREATE_APPLICATION,
     {
       onCompleted({ createApplication }) {
@@ -63,13 +62,14 @@ const Screen: FC<ScreenProps> = ({
     },
   )
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [updateApplication, { data: updateData }] = useMutation(
+  const [updateApplication, { loading, data: updateData }] = useMutation(
     UPDATE_APPLICATION,
   )
 
-  const { handleSubmit, errors } = hookFormData
+  const { handleSubmit, errors, reset } = hookFormData
 
   const goBack = () => {
+    reset(formValue)
     prevScreen()
   }
 
@@ -83,6 +83,7 @@ const Screen: FC<ScreenProps> = ({
           variables: {
             input: {
               id: existingApplicationId,
+              typeId: formTypeId,
               answers: data,
             },
           },
@@ -166,9 +167,21 @@ const Screen: FC<ScreenProps> = ({
             </Box>
             <Box display="inlineFlex" padding={2} paddingRight="none">
               {shouldSubmit ? (
-                <Button htmlType="submit">Submit</Button>
+                <Button
+                  loading={loading || createPending}
+                  disabled={loading || createPending}
+                  htmlType="submit"
+                >
+                  Submit
+                </Button>
               ) : (
-                <Button variant="text" icon="arrowRight" htmlType="submit">
+                <Button
+                  loading={loading || createPending}
+                  disabled={loading || createPending}
+                  variant="text"
+                  icon="arrowRight"
+                  htmlType="submit"
+                >
                   Halda áfram
                 </Button>
               )}

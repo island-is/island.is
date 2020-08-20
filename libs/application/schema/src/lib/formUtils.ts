@@ -1,4 +1,5 @@
-import { FormNode, FormLeaf } from '../types/Form'
+import deepmerge from 'deepmerge'
+import { FormNode, FormLeaf, FormValue } from '../types/Form'
 import { Form, FormItemTypes, Section, SubSection } from '../types/Form'
 
 export function findNode(
@@ -121,4 +122,30 @@ export function findSubSectionIndexForScreen(
     }
   }
   return -1
+}
+const overwriteMerge = (destinationArray, sourceArray) => {
+  if (typeof sourceArray[sourceArray.length - 1] !== 'object') {
+    return sourceArray
+  }
+  const result = []
+  for (
+    let i = 0;
+    i < Math.max(destinationArray.length, sourceArray.length);
+    i++
+  ) {
+    result[i] = deepmerge(sourceArray[i] ?? {}, destinationArray[i] ?? {}, {
+      arrayMerge: overwriteMerge,
+    })
+  }
+
+  return result
+}
+
+export function mergeAnswers(
+  currentAnswers: object,
+  newAnswers: object,
+): FormValue {
+  return deepmerge(currentAnswers, newAnswers, {
+    arrayMerge: overwriteMerge,
+  })
 }
