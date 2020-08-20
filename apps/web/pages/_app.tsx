@@ -6,13 +6,15 @@ import initApollo from '../graphql/client'
 import Layout from '../layouts/main'
 import { NextComponentType } from 'next'
 import { withErrorBoundary } from '../units/ErrorBoundary'
+import { ApolloClient } from '@apollo/client'
+import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 
 interface AppCustomProps extends AppProps {
   layoutProps: any
 }
 
 interface AppCustomContext extends AppContext {
-  apolloClient: any
+  apolloClient: ApolloClient<NormalizedCacheObject>
 }
 
 const SupportApplication: NextComponentType<
