@@ -9,13 +9,13 @@ const chunk = (arr, size) =>
 // Chunk size
 const chunkSize = parseInt(process.env['CHUNK_SIZE'] || '2')
 
-process.stdout.write(
-  JSON.stringify(
-    chunk(
-      process.argv[2].split(',').map((s) => s.trim()),
-      chunkSize,
-    )
-      .map((ch) => ch.join(','))
-      .filter((job) => job.length > 0),
-  ),
+let chunks = chunk(
+  process.argv[2].split(',').map((s) => s.trim()),
+  chunkSize,
 )
+  .map((ch) => ch.join(','))
+  .filter((job) => job.length > 0)
+
+if (chunks.length == 0) chunks = ['dummy']
+
+process.stdout.write(JSON.stringify(chunks))
