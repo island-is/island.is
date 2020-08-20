@@ -73,7 +73,14 @@ export class FlightLeg extends Model<FlightLeg> {
   readonly modified: Date
 }
 
-@Table({ tableName: 'flight' })
+@Table({
+  tableName: 'flight',
+  indexes: [
+    {
+      fields: ['national_id', 'invalid'],
+    },
+  ],
+})
 export class Flight extends Model<Flight> {
   @Column({
     type: DataType.UUID,
@@ -90,6 +97,14 @@ export class Flight extends Model<Flight> {
   })
   @ApiProperty()
   nationalId: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  invalid: boolean
 
   @Column({
     type: DataType.DATE,

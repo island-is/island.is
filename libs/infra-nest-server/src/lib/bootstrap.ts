@@ -49,7 +49,7 @@ const createApp = async (options: RunServerOptions) => {
 }
 
 const startServer = async (app: INestApplication, port = 3333) => {
-  const servicePort = parseInt(process.env.port) || port
+  const servicePort = parseInt(process.env.PORT) || port
   const metricsPort = servicePort + 1
   await app.listen(servicePort, () => {
     logger.info(`Service listening at http://localhost:${servicePort}`, {

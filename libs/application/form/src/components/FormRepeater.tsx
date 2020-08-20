@@ -11,7 +11,8 @@ const FormRepeater: FC<{
   const items: Answer = formValue[repeater.id]
   return (
     <div>
-      {items && (items as Answer[]).map((item) => item.toString())}
+      {items &&
+        (items as Answer[]).map((item) => item[repeater.labelKey]).join(', ')}
       <Button onClick={() => expandRepeater(repeater)}>Add a new one</Button>
     </div>
   )

@@ -1,6 +1,6 @@
 import * as z from 'zod'
 import { buildForm, buildRepeater, buildSection } from '../lib/formBuilders'
-import { buildTextField } from '../lib/fieldBuilders'
+import { buildIntroductionField, buildTextField } from '../lib/fieldBuilders'
 import { Form } from '../types/Form'
 import { FormType } from './FormType'
 
@@ -44,9 +44,15 @@ export const FamilyAndPets: Form = buildForm({
       id: 'family',
       name: 'Family',
       children: [
+        buildIntroductionField({
+          id: 'welcome',
+          name: 'Welcome to this amazing application form',
+          introduction: 'This will be one hell of a ride',
+        }),
         buildRepeater({
           id: 'person',
           name: 'Family Member',
+          labelKey: 'name',
           children: [
             buildTextField({
               id: 'name',

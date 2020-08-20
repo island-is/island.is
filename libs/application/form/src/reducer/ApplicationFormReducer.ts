@@ -10,6 +10,7 @@ import { Action, ActionTypes, ApplicationUIState } from './ReducerTypes'
 import {
   convertLeavesToScreens,
   expandRepeater,
+  findCurrentScreen,
   moveToScreen,
 } from './reducerUtils'
 
@@ -21,7 +22,9 @@ import {
 */
 const mergeCustomizer = (objValue, srcValue) => {
   if (isArray(objValue)) {
-    return srcValue
+    if (typeof objValue[0] !== 'object') {
+      return srcValue
+    }
   }
 }
 
@@ -31,13 +34,18 @@ export function initializeReducer(
   const { form, formValue } = state
   const formLeaves: FormLeaf[] = getFormLeaves(form) // todo add conditions here to set isVisible: true/false
   const sections = getSectionsInForm(form)
-  // this is also where we read from the initialAnswers and calculate the active screen index
-  return {
-    ...state,
-    formLeaves,
-    screens: convertLeavesToScreens(formLeaves, formValue),
-    sections,
-  }
+  const screens = convertLeavesToScreens(formLeaves, formValue)
+  const currentScreen = findCurrentScreen(screens, formValue)
+
+  return moveToScreen(
+    {
+      ...state,
+      formLeaves,
+      screens,
+      sections,
+    },
+    currentScreen,
+  )
 }
 
 export const ApplicationReducer = (

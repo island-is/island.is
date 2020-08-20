@@ -17,6 +17,7 @@ import {
   MultiFieldScreen,
   RepeaterScreen,
 } from '../types'
+import { getValueViaPath } from '../utils'
 
 export function calculateProgress(
   activeScreenIndex: number,
@@ -45,12 +46,43 @@ export function calculateProgress(
   )
 }
 
+export const findCurrentScreen = (
+  screens: FormScreen[],
+  formValue: FormValue,
+): number => {
+  let currentScreen = 0
+  screens.forEach((screen, index) => {
+    if (screen.type === FormItemTypes.MULTI_FIELD) {
+      let numberOfAnsweredQuestionsInScreen = 0
+      screen.children.forEach((field) => {
+        if (getValueViaPath(formValue, field.id) !== undefined) {
+          numberOfAnsweredQuestionsInScreen++
+        }
+      })
+      if (numberOfAnsweredQuestionsInScreen === screen.children.length) {
+        currentScreen = index + 1
+      } else if (numberOfAnsweredQuestionsInScreen > 0) {
+        currentScreen = index
+      }
+    } else if (screen.type === FormItemTypes.REPEATER) {
+      if (getValueViaPath(formValue, screen.id) !== undefined) {
+        currentScreen = index
+      }
+    } else {
+      if (getValueViaPath(formValue, screen.id) !== undefined) {
+        currentScreen = index + 1
+      }
+    }
+  })
+  return Math.min(currentScreen, screens.length - 1)
+}
+
 export const moveToScreen = (
   state: ApplicationUIState,
   screenIndex: number,
 ): ApplicationUIState => {
   const { activeScreen, form, sections, screens } = state
-  const isMovingForward = screenIndex > activeScreen
+  const isMovingForward = screenIndex >= activeScreen
   if (screenIndex < 0) {
     return {
       ...state,

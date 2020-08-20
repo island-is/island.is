@@ -54,6 +54,7 @@ const FamilyAndPets: Form = buildForm({
         buildRepeater({
           id: 'person',
           name: 'Family Member',
+          labelKey: 'name',
           children: [
             buildTextField({
               id: 'name',
@@ -83,6 +84,11 @@ const FamilyAndPets: Form = buildForm({
       name: 'Houses',
       children: [
         buildTextField({ id: 'house', name: 'House', required: false }),
+        buildTextField({
+          id: 'garden',
+          name: 'Do you have a garden?',
+          required: false,
+        }),
       ],
     }),
   ],
@@ -107,7 +113,7 @@ describe('ApplicationFormReducer', () => {
   describe('initialize reducer', () => {
     it('should convert the form into valid leaves, screens, and sections', () => {
       expect(initializedState.form).toBe(FamilyAndPets)
-      expect(initializedState.screens.length).toBe(3)
+      expect(initializedState.screens.length).toBe(4)
       expect(initializedState.screens[0].isNavigable).toBe(true)
       expect(initializedState.screens[1].isNavigable).toBe(true)
       expect(initializedState.sections.length).toBe(2)
@@ -128,6 +134,19 @@ describe('ApplicationFormReducer', () => {
       expect(initializedState.screens[1].isNavigable).toBe(false)
       expect(initializedState.formValue).toEqual(formValue)
     })
+    it('should go to the screen where the last answer belongs to the screen before', () => {
+      const formValue = {
+        person: [{ age: '19', name: 'Ingolfur' }],
+        familyName: 'Arnarson',
+      }
+      const state = {
+        ...initialState,
+        formValue,
+      }
+      const initializedState = initializeReducer(state)
+      expect(initializedState.activeScreen).toBe(2)
+      expect(initializedState.activeSection).toBe(1)
+    })
   })
   describe('next screen', () => {
     const action = { type: ActionTypes.NEXT_SCREEN }
@@ -144,15 +163,18 @@ describe('ApplicationFormReducer', () => {
       expect(updatedState.activeScreen).toBe(2)
       expect(updatedState.activeSection).toBe(1)
     })
-    it('should not be able go to the next screen, if the current screen is the last one', () => {
+    it('should not be able to go to the next screen, if the current screen is the last one', () => {
       const updatedState = ApplicationReducer(
         ApplicationReducer(
-          ApplicationReducer(initializedState, action),
+          ApplicationReducer(
+            ApplicationReducer(initializedState, action),
+            action,
+          ),
           action,
         ),
         action,
       )
-      expect(updatedState.activeScreen).toBe(2)
+      expect(updatedState.activeScreen).toBe(3)
     })
     it('should jump over all screens that already belong to the repeater, if the current screen is a repeater', () => {
       const expandAction = { type: ActionTypes.EXPAND_REPEATER }
@@ -283,7 +305,7 @@ describe('ApplicationFormReducer', () => {
     })
     it('should add new screens directly after the repeater when expanding a given repeater for the first time', () => {
       const updatedState = ApplicationReducer(initializedState, action)
-      expect(updatedState.screens.length).toBe(5)
+      expect(updatedState.screens.length).toBe(6)
       expect(updatedState.screens[1].repeaterIndex).toBe(0)
       expect(updatedState.screens[1].id).toBe('person[0].name')
       expect(updatedState.screens[2].repeaterIndex).toBe(0)
@@ -296,7 +318,7 @@ describe('ApplicationFormReducer', () => {
         action,
       )
 
-      expect(updatedState.screens.length).toBe(7)
+      expect(updatedState.screens.length).toBe(8)
       expect(updatedState.screens[1].repeaterIndex).toBe(0)
       expect(updatedState.screens[2].repeaterIndex).toBe(0)
       expect(updatedState.screens[3].repeaterIndex).toBe(0)

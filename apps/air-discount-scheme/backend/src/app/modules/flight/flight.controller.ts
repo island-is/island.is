@@ -1,11 +1,20 @@
-import { Body, Controller, Param, Get, Post, Delete } from '@nestjs/common'
+import {
+  Get,
+  HttpCode,
+  Body,
+  Controller,
+  Param,
+  Post,
+  Delete,
+} from '@nestjs/common'
 import { Flight } from './flight.model'
 import { FlightService } from './flight.service'
 import { FlightDto } from './dto/flight.dto'
+import { DeleteFlightParams } from './flight.validator'
 import {
-  ApiExcludeEndpoint,
   ApiCreatedResponse,
-  ApiOkResponse,
+  ApiNoContentResponse,
+  ApiExcludeEndpoint,
   ApiTags,
 } from '@nestjs/swagger'
 
@@ -21,9 +30,10 @@ export class PublicFlightController {
   }
 
   @Delete(':flightId')
-  @ApiOkResponse()
-  async delete(@Param('flightId') flightId: string): Promise<number> {
-    return this.flightService.delete(flightId)
+  @HttpCode(204)
+  @ApiNoContentResponse()
+  async delete(@Param() params: DeleteFlightParams): Promise<void> {
+    await this.flightService.delete(params.flightId)
   }
 }
 
@@ -33,8 +43,7 @@ export class PrivateFlightController {
 
   @Get()
   @ApiExcludeEndpoint()
-  async get(): Promise<string> {
-    // TODO setup private routes
-    return 'Implement me'
+  async get(): Promise<Flight[]> {
+    return this.flightService.findAll()
   }
 }
