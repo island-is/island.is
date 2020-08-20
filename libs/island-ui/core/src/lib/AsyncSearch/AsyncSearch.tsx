@@ -2,7 +2,6 @@ import React, {
   forwardRef,
   useState,
   ReactElement,
-  useCallback,
   HTMLProps,
   ButtonHTMLAttributes,
   LabelHTMLAttributes,
@@ -82,17 +81,6 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
 
     const hasLabel = Boolean(size === 'large' && label)
 
-    const filterFunc = useCallback(() => {
-      if (typeof filter === 'function') {
-        return filter
-      } else if (filter) {
-        return (item: AsyncSearchOption) =>
-          item.label.toLowerCase().includes(inputValue.toLowerCase())
-      } else {
-        return () => true
-      }
-    }, [inputValue, filter])
-
     return (
       <Downshift
         id="downshift"
@@ -129,6 +117,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             inputValue,
           } = downshiftProps
 
+          const filterFunc = createFilterFunction(filter, inputValue)
           const filteredOptions = options.filter(filterFunc)
           const shouldShowItems = filteredOptions.length > 0 && isOpen
 
@@ -171,7 +160,10 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             <AsyncSearchInput
               hasFocus={focused}
               loading={loading}
-              rootProps={getRootProps(null, { suppressRefError: true })}
+              rootProps={getRootProps(
+                { refKey: 'ref' },
+                { suppressRefError: true },
+              )}
               inputProps={{
                 ...getInputProps({
                   value: inputValue,
@@ -215,6 +207,22 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
     )
   },
 )
+
+const createFilterFunction = (
+  filter: AsyncSearchProps['filter'],
+  inputValue: string,
+): ((item: AsyncSearchOption) => boolean) => {
+  if (typeof filter === 'function') {
+    return filter
+  }
+
+  if (filter) {
+    return (item) =>
+      item.label.toLowerCase().includes((inputValue ?? '').toLowerCase())
+  }
+
+  return () => true
+}
 
 export interface AsyncSearchInputProps {
   hasFocus: boolean
