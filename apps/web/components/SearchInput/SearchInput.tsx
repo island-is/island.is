@@ -144,6 +144,7 @@ interface SearchInputProps {
   openOnFocus?: boolean
   placeholder?: string
   white?: boolean
+  colored?: boolean
 }
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
@@ -156,6 +157,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       openOnFocus = false,
       size = 'medium',
       white = false,
+      colored = true,
     },
     ref,
   ) => {
@@ -201,7 +203,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               inputSize: size,
               onFocus: () => openOnFocus && openMenu(),
               placeholder,
-              colored: true,
+              colored,
               onKeyDown: (e) => {
                 if (e.key === 'Enter' && highlightedIndex == null) {
                   closeMenu()

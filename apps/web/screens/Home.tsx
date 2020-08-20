@@ -60,8 +60,9 @@ const Home: Screen<HomeProps> = ({
       <Stack space={[1, 1, 3]}>
         <Box display="inlineFlex" alignItems="center" width="full">
           <SearchInput
-            size="medium"
             openOnFocus
+            size="medium"
+            colored={false}
             activeLocale={activeLocale}
             placeholder={n('heroSearchPlaceholder')}
           />
