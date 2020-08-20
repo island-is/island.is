@@ -144,8 +144,8 @@ jobs:
       - name: Linting
         run: ./scripts/run-affected-in-parallel-native.sh lint
 
-      - name: Security audit Node modules
-        run: ./scripts/security-audit.sh
+      # - name: Security audit Node modules
+      #   run: ./scripts/security-audit.sh
 
       - name: Prepare test targets
         id: test_projects
