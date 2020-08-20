@@ -17,7 +17,7 @@ const userApplications = [
 ]
 
 const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
-    const activeSubjectId = '5401482231' //userInfo.sub.nationalId
+  const activeSubjectId = '5401482231'
 
   const applications =
     activeSubjectId === '5401482231' ? companyApplications : userApplications

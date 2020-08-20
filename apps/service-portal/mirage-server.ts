@@ -24,7 +24,9 @@ export function makeServer({ environment = 'development' } = {}) {
       server.loadFixtures('actors', 'subjects')
     },
     routes() {
-      this.passthrough('https://siidentityserverweb20200805020732.azurewebsites.net/**');
+      this.passthrough(
+        'https://siidentityserverweb20200805020732.azurewebsites.net/**',
+      )
       this.post('/user/token', async (schema, request) => {
         const authService = new AuthService(server.db)
         const body = JSON.parse(request.requestBody)

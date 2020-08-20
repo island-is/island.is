@@ -39,8 +39,7 @@ const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
     checkSomething()
   }, [userInfo])
 
-  const documents =
-    /*userInfo.sub.subjectType === 'company'*/ false ? companyDocuments : userDocuments
+  const documents = userDocuments
 
   if (mockState === 'render') {
     return (
