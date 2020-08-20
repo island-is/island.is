@@ -1,0 +1,145 @@
+import React, { FC, useState, useReducer } from 'react'
+import { FileUploadField } from '@island.is/application/schema'
+import { Box, InputFileUpload, Typography } from '@island.is/island-ui/core'
+import { FieldBaseProps } from '../../types'
+import { useFormContext, Controller } from 'react-hook-form'
+import { UploadFile } from 'libs/island-ui/core/src/lib/InputFileUpload/InputFileUpload.types'
+import { fileToObject } from 'libs/island-ui/core/src/lib/InputFileUpload/InputFileUpload.utils'
+
+enum ActionTypes {
+  ADD = 'ADD',
+  REMOVE = 'REMOVE',
+  UPDATE = 'UPDATE',
+}
+
+const uploadFile = (file: UploadFile, dispatch) => {
+  return new Promise((resolve, reject) => {
+    const req = new XMLHttpRequest()
+
+    req.upload.addEventListener('progress', (event) => {
+      if (event.lengthComputable) {
+        const percent = Math.round((event.loaded / event.total) * 100)
+
+        dispatch({
+          type: ActionTypes.UPDATE,
+          payload: { file, status: 'uploading', percent },
+        })
+      }
+    })
+
+    req.upload.addEventListener('load', (event) => {
+      dispatch({
+        type: ActionTypes.UPDATE,
+        payload: { file, status: 'done', percent: 100 },
+      })
+      resolve(req.response)
+    })
+
+    req.upload.addEventListener('error', (event) => {
+      dispatch({
+        type: ActionTypes.UPDATE,
+        payload: { file, status: 'error', percent: 0 },
+      })
+      reject(req.response)
+    })
+
+    const formData = new FormData()
+    formData.append('file', file.originalFileObj, file.name)
+
+    req.open('POST', 'http://localhost:5000/')
+    req.send(formData)
+  })
+}
+
+const initialUploadFiles: UploadFile[] = []
+
+function reducer(state, action) {
+  switch (action.type) {
+    case ActionTypes.ADD:
+      const updatedFiles = state.concat(action.payload.newFiles)
+      return updatedFiles
+    case ActionTypes.REMOVE:
+      const updatedFileList = state.filter(
+        (file) => file.name !== action.payload.fileToRemove.name,
+      )
+      return [...updatedFileList]
+    case ActionTypes.UPDATE:
+      const updatedStatusList = state.map((file: UploadFile) => {
+        if (file.name == action.payload.file.name) {
+          file.status = action.payload.status
+          file.percent = action.payload.percent
+        }
+        return file
+      })
+      return [...updatedStatusList]
+    default:
+      throw new Error()
+  }
+}
+
+interface Props extends FieldBaseProps {
+  field: FileUploadField
+}
+const FileUploadFormField: FC<Props> = ({ error, field }) => {
+  const { id, name, introduction } = field
+  const { clearErrors, control } = useFormContext()
+
+  return (
+    <Box>
+      <Typography variant="p">{introduction}</Typography>
+      <Controller
+        name={`${id}`}
+        control={control}
+        defaultValue={false}
+        render={({ value, onChange }) => {
+          const [state, dispatch] = useReducer(reducer, initialUploadFiles)
+          const [error, setError] = useState<string | undefined>(undefined)
+
+          const onFileChange = (newFiles: File[]) => {
+            const newUploadFiles = newFiles.map((f) => fileToObject(f))
+
+            setError(undefined)
+
+            newUploadFiles.forEach((f: UploadFile) => {
+              uploadFile(f, dispatch).catch((e) => {
+                setError('An error occurred uploading one or more files')
+              })
+            })
+
+            dispatch({
+              type: ActionTypes.ADD,
+              payload: {
+                newFiles: newUploadFiles,
+              },
+            })
+          }
+
+          const remove = (fileToRemove: UploadFile) => {
+            dispatch({
+              type: ActionTypes.REMOVE,
+              payload: {
+                fileToRemove,
+              },
+            })
+          }
+
+          return (
+            <Box paddingTop={2}>
+              <InputFileUpload
+                fileList={state}
+                header="Drag documents here to upload"
+                description="Documents accepted with extension: .pdf, .docx, .rtf"
+                buttonLabel="Select documents to upload"
+                onChange={onFileChange}
+                onRemove={remove}
+                errorMessage={state.length > 0 && error}
+              />
+            </Box>
+          )
+        }}
+      />
+    </Box>
+  )
+}
+
+export default FileUploadFormField
