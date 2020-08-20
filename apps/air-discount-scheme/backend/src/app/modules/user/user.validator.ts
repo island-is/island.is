@@ -1,9 +1,9 @@
 import { IsString, Length } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
-export class CreateDiscountCodeParams {
+export class GetUserByDiscountCodeParams {
   @IsString()
-  @Length(10, 10)
+  @Length(8, 8)
   @ApiProperty()
-  readonly nationalId: string
+  readonly discountCode: string
 }
