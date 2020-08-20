@@ -77,6 +77,9 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
   ) => {
     const [focused, setFocused] = useState<boolean>(false)
 
+    const onFocus = () => setFocused(true)
+    const onBlur = () => setFocused(false)
+
     const hasLabel = Boolean(size === 'large' && label)
 
     const filterFunc = useCallback(() => {
@@ -126,8 +129,6 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
             inputValue,
           } = downshiftProps
 
-          const onFocus = () => setFocused(true)
-          const onBlur = () => setFocused(false)
           const filteredOptions = options.filter(filterFunc)
           const shouldShowItems = filteredOptions.length > 0 && isOpen
 
