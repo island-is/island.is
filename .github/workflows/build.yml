@@ -163,7 +163,7 @@ jobs:
           # PROJECTS=`./scripts/_nx-affected-targets.sh docker-express`
           # echo "Projects: ${PROJECTS}"
           # CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
-          CHUNKS="[]"
+          CHUNKS="[\"dummy\"]"
           echo "Chunks: $CHUNKS"
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
@@ -173,7 +173,7 @@ jobs:
           # PROJECTS=`./scripts/_nx-affected-targets.sh docker-next`
           # echo "Projects: ${PROJECTS}"
           # CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
-          CHUNKS="[]"
+          CHUNKS="[\"dummy\"]"
           echo "Chunks: $CHUNKS"
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
@@ -239,6 +239,7 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.DOCKER_EXPRESS_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
+        if: ${{ matrix.projects != 'dummy' }}
       # - name: Cache for dependencies Docker layer
       #   id: cache-deps
       #   uses: actions/cache@v1
@@ -271,6 +272,7 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.DOCKER_NEXT_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
+        if: ${{ matrix.projects != 'dummy' }}
       # - name: Cache for dependencies Docker layer
       #   id: cache-deps
       #   uses: actions/cache@v1
