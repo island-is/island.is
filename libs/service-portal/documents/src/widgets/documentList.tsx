@@ -99,7 +99,7 @@ const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
         ))}
         <Box marginTop={3} textAlign="right">
           <Link to="/rafraen-skjol">
-            <Box display="flex" alignItems="center" justifyContent="flex-end">
+            <Box display="flex" alignItems="center" justifyContent="flexEnd">
               <Typography variant="tag" color="blue400">
                 Fara í rafræn skjöl
               </Typography>

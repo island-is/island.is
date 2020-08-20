@@ -12,8 +12,9 @@ const useSubjects = () => {
       dispatch({ type: ActionType.FetchSubjectListPending })
 
       try {
-        console.log(userInfo)
-        const res = await fetchWithAuth(`${API_USER_ACCOUNTS}/${userInfo.profile.natreg}`, userInfo)
+        const res = await fetchWithAuth(
+          `${API_USER_ACCOUNTS}/${userInfo.profile.natreg}`,
+        )
         const data = await res.json()
         dispatch({
           type: ActionType.FetchSubjectListFulfilled,
@@ -25,7 +26,7 @@ const useSubjects = () => {
     }
 
     fetchSubjectList()
-  }, [dispatch])
+  }, [dispatch, userInfo])
 
   return {
     subjectList,
