@@ -26,9 +26,9 @@ import {
   Typography,
   Stack,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/web/i18n/I18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import * as styles from './SearchInput.treat'
+import { Locale } from '@island.is/web/i18n/I18n'
 
 const DEBOUNCE_TIMER = 300
 
@@ -137,29 +137,30 @@ const useSubmit = (locale: Locale) => {
 }
 
 interface SearchInputProps {
-  activeLocale: string
+  activeLocale: Locale
   initialInputValue?: string
   size?: AsyncSearchSizes
   autocomplete?: boolean
   openOnFocus?: boolean
   placeholder?: string
   white?: boolean
+  colored?: boolean
 }
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   (
     {
       placeholder = '',
-      activeLocale,
+      activeLocale: locale,
       initialInputValue = '',
       autocomplete = true,
       openOnFocus = false,
       size = 'medium',
       white = false,
+      colored = true,
     },
     ref,
   ) => {
-    const locale = activeLocale as Locale
     const [searchTerm, setSearchTerm] = useState(initialInputValue)
     const search = useSearch(locale, autocomplete ? searchTerm : null)
     const onSubmit = useSubmit(locale)
@@ -201,7 +202,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               inputSize: size,
               onFocus: () => openOnFocus && openMenu(),
               placeholder,
-              colored: true,
+              colored,
               onKeyDown: (e) => {
                 if (e.key === 'Enter' && highlightedIndex == null) {
                   closeMenu()

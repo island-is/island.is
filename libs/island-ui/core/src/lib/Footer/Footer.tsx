@@ -15,13 +15,18 @@ const isLinkInternal = (to) => {
   return false
 }
 
-interface LinkProps {
+export interface LinkProps {
+  title: string
   href: string
   className?: string
 }
 
 // Temporary link component
-const FooterLink: FC<LinkProps> = ({ href, className, children }) => {
+const FooterLink: FC<Omit<LinkProps, 'title'>> = ({
+  href,
+  className,
+  children,
+}) => {
   return isLinkInternal(href) ? (
     <a href={href} className={className}>
       {children}
@@ -94,12 +99,19 @@ const defaultBottomLinks = [
   },
 ]
 
+interface FooterProps {
+  topLinks?: LinkProps[]
+  bottomLinks?: LinkProps[]
+  languageSwitchLink?: LinkProps
+  hideLanguageSwith?: boolean
+}
+
 export const Footer = ({
   topLinks = defaultTopLinks,
   bottomLinks = defaultBottomLinks,
   languageSwitchLink = defaultLanguageSwitchLink,
   hideLanguageSwith = false,
-}) => {
+}: FooterProps) => {
   return (
     <footer className={styles.footer}>
       <Box background="blue400" paddingX="gutter">

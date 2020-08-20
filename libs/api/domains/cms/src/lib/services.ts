@@ -8,6 +8,8 @@ import { AboutPage } from './models/aboutPage.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { LandingPage } from './models/landingPage.model'
+import { FrontpageSlide } from './models/frontpageSlide.model'
+import { FrontpageSliderList } from './models/frontpageSliderList.model'
 import { News } from './models/news.model'
 import { Link } from './models/link.model'
 import { LinkList } from './models/linkList.model'
@@ -35,6 +37,7 @@ import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { Namespace } from './models/namespace.model'
 import { Image } from './models/image.model'
+import { Menu } from './models/menu.model'
 
 type CmsPage = Omit<AboutPage, 'slices'> & {
   slices: Entry<typeof Slice>[]
@@ -265,6 +268,14 @@ const formatLandingPage = ({ fields }): LandingPage => ({
   content: fields.content && JSON.stringify(fields.content),
 })
 
+const formatFrontpageSlide = ({ fields }): FrontpageSlide => ({
+  title: fields.title,
+  subtitle: fields.subtitle,
+  content: fields.content,
+  image: fields.image && formatImage(fields.image),
+  link: fields.link && JSON.stringify(fields.link),
+})
+
 const makePage = (
   page: number,
   perPage: number,
@@ -310,6 +321,28 @@ export const getAdgerdirPages = async (lang = 'is-IS') => {
 
   return {
     items: r.items.map(formatAdgerdirPage),
+  }
+}
+
+export const getFrontpageSliderList = async (lang = 'is-IS') => {
+  const params = {
+    ['content_type']: 'frontpageSliderList',
+    include: 10,
+    limit: 1,
+  }
+
+  const r = await getLocalizedEntries<FrontpageSliderList>(lang, params).catch(
+    errorHandler('getFrontpageSliderList'),
+  )
+
+  let items = []
+
+  if (r.items && r.items[0].fields?.items) {
+    items = r.items && r.items[0].fields?.items
+  }
+
+  return {
+    items: items.map((x) => formatFrontpageSlide(x)),
   }
 }
 
@@ -441,5 +474,29 @@ export const getNamespace = async (
   return {
     namespace,
     fields: JSON.stringify(fields),
+  }
+}
+
+export const getMenu = async (
+  name: string,
+  lang: string,
+): Promise<Menu | null> => {
+  const result = await getLocalizedEntries<Menu>(lang, {
+    ['content_type']: 'menu',
+    'fields.title': name,
+  }).catch(errorHandler('getMenu'))
+
+  // if we have no results
+  if (!result.total) {
+    return null
+  }
+
+  const {
+    fields: { title, links },
+  } = result.items[0]
+
+  return {
+    title: title,
+    links: ((links as any) ?? []).map(formatLink),
   }
 }

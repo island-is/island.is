@@ -12,7 +12,6 @@ import {
   ResponsiveSpace,
   Icon,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/web/i18n/I18n'
 import { useI18n } from '@island.is/web/i18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { SearchInput } from '../'
@@ -63,9 +62,9 @@ const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const { activeLocale, t } = useI18n()
   const Router = useRouter()
-  const { makePath } = useRouteNames(activeLocale as Locale)
+  const { makePath } = useRouteNames(activeLocale)
 
-  const locale = activeLocale as Locale
+  const locale = activeLocale
   const english = activeLocale === 'en'
 
   return (
