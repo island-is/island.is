@@ -27,12 +27,16 @@ export const App = () => {
             reducer={store.reducer}
           >
             <Switch>
-              <Route exact path="/signin-oidc">
-                <OidcSignIn />
-              </Route>
-              <Route exact path="/silent/signin-oidc">
-                <OidcSilentSignIn />
-              </Route>
+              <Route
+                exact
+                path={ServicePortalPath.MinarSidurSignInOidc}
+                component={OidcSignIn}
+              />
+              <Route
+                exact
+                path={ServicePortalPath.MinarSidurSilentSignInOidc}
+                component={OidcSilentSignIn}
+              />
               <Route>
                 <Authenticator>
                   <Layout>
