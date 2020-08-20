@@ -120,7 +120,7 @@ const Layout: NextComponentType<
   )
 }
 
-Layout.getInitialProps = async ({ apolloClient, locale = 'is' }) => {
+Layout.getInitialProps = async ({ apolloClient, locale }) => {
   const [upperMenu, lowerMenu] = await Promise.all([
     apolloClient
       .query<Query, QueryGetMenuArgs>({
