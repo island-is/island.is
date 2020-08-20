@@ -23,15 +23,15 @@ type ApplicationProps = {
   formType: FormType
   applicationId?: string
   initialAnswers?: FormValue
+  onApplicationCreated?(id: string): void
 }
 
 export const ApplicationForm: FC<ApplicationProps> = ({
   formType,
   applicationId,
   initialAnswers,
+  onApplicationCreated,
 }) => {
-  console.log('id...', applicationId)
-  console.log('initialAnswers...', initialAnswers)
   const form = getFormByTypeId(formType)
   const [state, dispatch] = useReducer(
     ApplicationReducer,
@@ -101,9 +101,12 @@ export const ApplicationForm: FC<ApplicationProps> = ({
             nextScreen={() => dispatch({ type: ActionTypes.NEXT_SCREEN })}
             prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
             shouldSubmit={activeScreen === screens.length - 1}
-            setApplicationId={(id) =>
+            setApplicationId={(id) => {
               dispatch({ type: ActionTypes.SET_APPLICATION_ID, payload: id })
-            }
+              if (onApplicationCreated) {
+                onApplicationCreated(id)
+              }
+            }}
             screen={screens[activeScreen]}
             section={sections[activeSection]}
             applicationId={existingApplicationId}

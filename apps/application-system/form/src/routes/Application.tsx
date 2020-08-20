@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useHistory, useRouteMatch } from 'react-router-dom'
 
 import { ApplicationForm } from '@island.is/application/form'
 import { ExampleForm3, FormType } from '@island.is/application/schema'
@@ -8,6 +8,8 @@ import { useQuery } from '@apollo/client'
 
 export const Application = () => {
   const { id } = useParams()
+  //   const history = useHistory()
+  //   const match = useRouteMatch()
 
   const { loading, error, data } = useQuery(GET_APPLICATION, {
     variables: {
@@ -15,6 +17,7 @@ export const Application = () => {
         id: id,
       },
     },
+    skip: !id,
   })
 
   if (loading) return 'Loading...'
@@ -25,6 +28,7 @@ export const Application = () => {
       formType={FormType.EXAMPLE3}
       applicationId={data?.getApplication?.id}
       initialAnswers={data?.getApplication?.answers}
+      //   onApplicationCreated={(id) => history.replace(`${match.url}/${id}`)}
     />
   )
 }
