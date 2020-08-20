@@ -39,6 +39,7 @@ export function buildRepeater(data: {
   condition?: Condition
   name: string
   children: FormLeaf[]
+  labelKey: string
 }): Repeater {
   return { ...data, type: FormItemTypes.REPEATER, repetitions: 0 }
 }

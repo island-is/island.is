@@ -9,21 +9,26 @@ import {
 } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '../../types'
 import { useFormContext, Controller } from 'react-hook-form'
+import { getValueViaPath } from '../../utils'
 
 interface Props extends FieldBaseProps {
   field: RadioField
 }
-const RadioFormField: FC<Props> = ({ showFieldName = false, field, error }) => {
+const RadioFormField: FC<Props> = ({
+  showFieldName = false,
+  field,
+  error,
+  formValue,
+}) => {
   const { id, name, options } = field
-  const { clearErrors, control } = useFormContext()
+  const { clearErrors, setValue } = useFormContext()
   return (
     <div>
       {showFieldName && <Typography variant="p">{name}</Typography>}
       <Box paddingTop={2}>
         <Controller
           name={`${id}`}
-          control={control}
-          defaultValue={false}
+          defaultValue={getValueViaPath(formValue, id)}
           render={({ value, onChange }) => {
             return (
               <Stack space={2}>
@@ -34,6 +39,7 @@ const RadioFormField: FC<Props> = ({ showFieldName = false, field, error }) => {
                       onChange={({ target }) => {
                         clearErrors(id)
                         onChange(target.value)
+                        setValue(id, target.value)
                       }}
                       checked={option.value === value}
                       id={`${id}-${index}`}

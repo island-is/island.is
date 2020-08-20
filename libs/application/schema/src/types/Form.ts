@@ -59,6 +59,7 @@ export interface Repeater extends FormItem {
   repetitions: number
   required?: boolean
   repeaterIndex?: number
+  labelKey: string
   // todo how do we handle presentation of different repeaters? maybe a map to a react component?
   // presentation: RepeaterPresentorsEnum....
 }
