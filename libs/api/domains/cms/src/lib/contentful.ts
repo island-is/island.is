@@ -14,7 +14,7 @@ const client = createClient({
   space,
   accessToken,
   environment: 'master',
-  host: 'preview.contentful.com',
+  host: process.env.CONTENTFUL_HOST || 'preview.contentful.com',
 })
 
 const validLocales = ['is-IS', 'en']
