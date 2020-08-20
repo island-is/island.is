@@ -13,6 +13,7 @@ export const link = style({
   margin: '0 4px',
   padding: '0 8px',
   transition: 'all .1s',
+  border: '1px solid transparent',
   ':hover': {
     color: theme.color.purple400,
     backgroundColor: theme.color.purple100,
@@ -35,7 +36,12 @@ export const edge = style({
 })
 
 export const linkDisabled = style({
+  margin: 0,
   border: `1px solid ${theme.color.purple200}`,
+  backgroundColor: 'transparent',
+  ':hover': {
+    backgroundColor: 'transparent',
+  },
 })
 
 export const gap = style({
