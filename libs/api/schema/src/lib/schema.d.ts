@@ -311,6 +311,12 @@ export type LandingPage = {
   content?: Maybe<Scalars['String']>
 }
 
+export type Menu = {
+  __typename?: 'Menu'
+  title: Scalars['String']
+  links: Array<Link>
+}
+
 export type Application = {
   __typename?: 'Application'
   id: Scalars['ID']
@@ -321,7 +327,7 @@ export type Application = {
   externalId?: Maybe<Scalars['String']>
   state: ApplicationStateEnum
   attachments?: Maybe<Array<Scalars['String']>>
-  typeId: Scalars['String']
+  typeId: ApplicationTypeIdEnum
   answers: Scalars['JSON']
 }
 
@@ -334,6 +340,13 @@ export enum ApplicationStateEnum {
   Manualapproved = 'MANUALAPPROVED',
   Rejected = 'REJECTED',
   Unknown = 'UNKNOWN',
+}
+
+export enum ApplicationTypeIdEnum {
+  ExampleForm = 'ExampleForm',
+  ExampleForm2 = 'ExampleForm2',
+  ExampleForm3 = 'ExampleForm3',
+  FamilyAndPets = 'FamilyAndPets',
 }
 
 export type Query = {
@@ -352,6 +365,7 @@ export type Query = {
   getAdgerdirPage?: Maybe<AdgerdirPage>
   getAdgerdirPages?: Maybe<AdgerdirPages>
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
+  getMenu?: Maybe<Menu>
   getApplication?: Maybe<Application>
 }
 
@@ -409,6 +423,10 @@ export type QueryGetAdgerdirPagesArgs = {
 
 export type QueryGetAdgerdirFrontpageArgs = {
   input: GetAdgerdirFrontpageInput
+}
+
+export type QueryGetMenuArgs = {
+  input: GetMenuInput
 }
 
 export type QueryGetApplicationArgs = {
@@ -499,6 +517,11 @@ export type GetAdgerdirFrontpageInput = {
   lang: Scalars['String']
 }
 
+export type GetMenuInput = {
+  name: Scalars['String']
+  lang: Scalars['String']
+}
+
 export type GetApplicationInput = {
   id: Scalars['String']
 }
@@ -506,20 +529,72 @@ export type GetApplicationInput = {
 export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<Application>
+  updateApplication?: Maybe<Application>
 }
 
 export type MutationCreateApplicationArgs = {
   input: CreateApplicationInput
 }
 
+export type MutationUpdateApplicationArgs = {
+  input: UpdateApplicationInput
+}
+
 export type CreateApplicationInput = {
   applicant: Scalars['String']
   assignee: Scalars['String']
   externalId?: Maybe<Scalars['String']>
-  state: ApplicationStateEnum
+  state: CreateApplicationDtoStateEnum
   attachments?: Maybe<Array<Scalars['String']>>
-  typeId: Scalars['String']
+  typeId: CreateApplicationDtoTypeIdEnum
   answers: Scalars['JSON']
+}
+
+export enum CreateApplicationDtoStateEnum {
+  Draft = 'DRAFT',
+  Beingprocessed = 'BEINGPROCESSED',
+  Needsinformation = 'NEEDSINFORMATION',
+  Pending = 'PENDING',
+  Approved = 'APPROVED',
+  Manualapproved = 'MANUALAPPROVED',
+  Rejected = 'REJECTED',
+  Unknown = 'UNKNOWN',
+}
+
+export enum CreateApplicationDtoTypeIdEnum {
+  ExampleForm = 'ExampleForm',
+  ExampleForm2 = 'ExampleForm2',
+  ExampleForm3 = 'ExampleForm3',
+  FamilyAndPets = 'FamilyAndPets',
+}
+
+export type UpdateApplicationInput = {
+  id: Scalars['String']
+  applicant?: Maybe<Scalars['String']>
+  assignee?: Maybe<Scalars['String']>
+  externalId?: Maybe<Scalars['String']>
+  state?: Maybe<UpdateApplicationDtoStateEnum>
+  attachments?: Maybe<Array<Scalars['String']>>
+  typeId?: Maybe<UpdateApplicationDtoTypeIdEnum>
+  answers?: Maybe<Scalars['JSON']>
+}
+
+export enum UpdateApplicationDtoStateEnum {
+  Draft = 'DRAFT',
+  Beingprocessed = 'BEINGPROCESSED',
+  Needsinformation = 'NEEDSINFORMATION',
+  Pending = 'PENDING',
+  Approved = 'APPROVED',
+  Manualapproved = 'MANUALAPPROVED',
+  Rejected = 'REJECTED',
+  Unknown = 'UNKNOWN',
+}
+
+export enum UpdateApplicationDtoTypeIdEnum {
+  ExampleForm = 'ExampleForm',
+  ExampleForm2 = 'ExampleForm2',
+  ExampleForm3 = 'ExampleForm3',
+  FamilyAndPets = 'FamilyAndPets',
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -694,9 +769,11 @@ export type ResolversTypes = {
   NumberBulletGroup: ResolverTypeWrapper<NumberBulletGroup>
   LinkList: ResolverTypeWrapper<LinkList>
   LandingPage: ResolverTypeWrapper<LandingPage>
+  Menu: ResolverTypeWrapper<Menu>
   Application: ResolverTypeWrapper<Application>
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>
   ApplicationStateEnum: ApplicationStateEnum
+  ApplicationTypeIdEnum: ApplicationTypeIdEnum
   JSON: ResolverTypeWrapper<Scalars['JSON']>
   Query: ResolverTypeWrapper<{}>
   HelloWorldInput: HelloWorldInput
@@ -716,9 +793,15 @@ export type ResolversTypes = {
   GetAdgerdirPageInput: GetAdgerdirPageInput
   GetAdgerdirPagesInput: GetAdgerdirPagesInput
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
+  GetMenuInput: GetMenuInput
   GetApplicationInput: GetApplicationInput
   Mutation: ResolverTypeWrapper<{}>
   CreateApplicationInput: CreateApplicationInput
+  CreateApplicationDtoStateEnum: CreateApplicationDtoStateEnum
+  CreateApplicationDtoTypeIdEnum: CreateApplicationDtoTypeIdEnum
+  UpdateApplicationInput: UpdateApplicationInput
+  UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
+  UpdateApplicationDtoTypeIdEnum: UpdateApplicationDtoTypeIdEnum
 }
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -778,9 +861,11 @@ export type ResolversParentTypes = {
   NumberBulletGroup: NumberBulletGroup
   LinkList: LinkList
   LandingPage: LandingPage
+  Menu: Menu
   Application: Application
   DateTime: Scalars['DateTime']
   ApplicationStateEnum: ApplicationStateEnum
+  ApplicationTypeIdEnum: ApplicationTypeIdEnum
   JSON: Scalars['JSON']
   Query: {}
   HelloWorldInput: HelloWorldInput
@@ -800,9 +885,15 @@ export type ResolversParentTypes = {
   GetAdgerdirPageInput: GetAdgerdirPageInput
   GetAdgerdirPagesInput: GetAdgerdirPagesInput
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
+  GetMenuInput: GetMenuInput
   GetApplicationInput: GetApplicationInput
   Mutation: {}
   CreateApplicationInput: CreateApplicationInput
+  CreateApplicationDtoStateEnum: CreateApplicationDtoStateEnum
+  CreateApplicationDtoTypeIdEnum: CreateApplicationDtoTypeIdEnum
+  UpdateApplicationInput: UpdateApplicationInput
+  UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
+  UpdateApplicationDtoTypeIdEnum: UpdateApplicationDtoTypeIdEnum
 }
 
 export type HelloWorldResolvers<
@@ -1261,6 +1352,15 @@ export type LandingPageResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type MenuResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Menu'] = ResolversParentTypes['Menu']
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type ApplicationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Application'] = ResolversParentTypes['Application']
@@ -1285,7 +1385,11 @@ export type ApplicationResolvers<
     ParentType,
     ContextType
   >
-  typeId?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  typeId?: Resolver<
+    ResolversTypes['ApplicationTypeIdEnum'],
+    ParentType,
+    ContextType
+  >
   answers?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
@@ -1388,6 +1492,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetAdgerdirFrontpageArgs, 'input'>
   >
+  getMenu?: Resolver<
+    Maybe<ResolversTypes['Menu']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetMenuArgs, 'input'>
+  >
   getApplication?: Resolver<
     Maybe<ResolversTypes['Application']>,
     ParentType,
@@ -1405,6 +1515,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationCreateApplicationArgs, 'input'>
+  >
+  updateApplication?: Resolver<
+    Maybe<ResolversTypes['Application']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateApplicationArgs, 'input'>
   >
 }
 
@@ -1444,6 +1560,7 @@ export type Resolvers<ContextType = Context> = {
   NumberBulletGroup?: NumberBulletGroupResolvers<ContextType>
   LinkList?: LinkListResolvers<ContextType>
   LandingPage?: LandingPageResolvers<ContextType>
+  Menu?: MenuResolvers<ContextType>
   Application?: ApplicationResolvers<ContextType>
   DateTime?: GraphQLScalarType
   JSON?: GraphQLScalarType

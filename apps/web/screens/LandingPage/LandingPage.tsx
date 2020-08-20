@@ -8,7 +8,6 @@ import {
   LandingPage,
   QueryGetLandingPageArgs,
 } from '@island.is/api/schema'
-import { withApollo } from '@island.is/web/graphql'
 import { Screen } from '@island.is/web/types'
 import { GET_LANDING_PAGE_QUERY } from '../queries'
 import { CustomNextError } from '../../units/ErrorBoundary'
@@ -121,4 +120,4 @@ LandingPageScreen.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withApollo(LandingPageScreen)
+export default LandingPageScreen

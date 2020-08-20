@@ -35,6 +35,7 @@ import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { Namespace } from './models/namespace.model'
 import { Image } from './models/image.model'
+import { Menu } from './models/menu.model'
 
 type CmsPage = Omit<AboutPage, 'slices'> & {
   slices: Entry<typeof Slice>[]
@@ -441,5 +442,29 @@ export const getNamespace = async (
   return {
     namespace,
     fields: JSON.stringify(fields),
+  }
+}
+
+export const getMenu = async (
+  name: string,
+  lang: string,
+): Promise<Menu | null> => {
+  const result = await getLocalizedEntries<Menu>(lang, {
+    ['content_type']: 'menu',
+    'fields.title': name,
+  }).catch(errorHandler('getMenu'))
+
+  // if we have no results
+  if (!result.total) {
+    return null
+  }
+
+  const {
+    fields: { title, links },
+  } = result.items[0]
+
+  return {
+    title: title,
+    links: ((links as any) ?? []).map(formatLink),
   }
 }
