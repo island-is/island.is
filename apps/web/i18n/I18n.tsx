@@ -1,21 +1,19 @@
 import React, { createContext, useState, useRef, useEffect } from 'react'
 import rosetta, { Rosetta } from 'rosetta'
 
-const i18n = rosetta()
-
 export type Locale = 'is' | 'en'
 export const defaultLanguage = 'is'
 
+const i18n = rosetta()
+i18n.locale(defaultLanguage)
+
 interface I18nContextType {
-  activeLocale: string
+  activeLocale: Locale
   t: any
   locale: (locale: string, dict?: object) => void
 }
 
 export const I18nContext = createContext<I18nContextType | null>(null)
-
-// default language
-i18n.locale(defaultLanguage)
 
 export default function I18n({ children, locale, translations }) {
   const [activeDict, setActiveDict] = useState(() => translations)

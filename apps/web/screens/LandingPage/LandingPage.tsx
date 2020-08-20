@@ -24,7 +24,6 @@ import {
 } from '@island.is/island-ui/core'
 import { Sidebar } from '@island.is/web/components'
 import ArticleLayout from '../Layouts/Layouts'
-import { Locale } from '../../i18n/I18n'
 import useRouteNames from '../../i18n/useRouteNames'
 
 export interface LandingPageProps {
@@ -33,7 +32,7 @@ export interface LandingPageProps {
 
 const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale as Locale)
+  const { makePath } = useRouteNames(activeLocale)
 
   const sidebar = (
     <Stack space={3}>

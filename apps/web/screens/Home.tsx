@@ -23,7 +23,6 @@ import {
 import { GET_NAMESPACE_QUERY, GET_CATEGORIES_QUERY } from './queries'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
-import { Locale } from '../i18n/I18n'
 import useRouteNames from '../i18n/useRouteNames'
 
 interface HomeProps {
@@ -35,7 +34,7 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
   const Router = useRouter()
-  const { makePath } = useRouteNames(activeLocale as Locale)
+  const { makePath } = useRouteNames(activeLocale)
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale

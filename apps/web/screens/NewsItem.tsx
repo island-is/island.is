@@ -12,7 +12,6 @@ import {
 import { Content, Image } from '@island.is/island-ui/contentful'
 import { Screen } from '../types'
 import { useI18n } from '@island.is/web/i18n'
-import { Locale } from '@island.is/web/i18n/I18n'
 import { useDateUtils } from '../i18n/useDateUtils'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { NewsItemLayout } from './Layouts/Layouts'
@@ -25,7 +24,7 @@ interface NewsItemProps {
 
 const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale as Locale)
+  const { makePath } = useRouteNames(activeLocale)
   const { format } = useDateUtils()
 
   const sidebar = (
