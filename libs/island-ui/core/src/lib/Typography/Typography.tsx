@@ -4,7 +4,7 @@ import cn from 'classnames'
 import styles, {
   VariantTypes,
   colors,
-  turnicate as turnicateStyle,
+  truncate as truncateStyle,
   links as linksStyle,
 } from './Typography.treat'
 import { Colors } from '@island.is/island-ui/theme'
@@ -14,7 +14,7 @@ export interface TypographyProps {
   children?: React.ReactNode
   as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p' | 'span' | 'div' | 'label'
   color?: Colors
-  turnicate?: boolean
+  truncate?: boolean
   links?: boolean
 }
 
@@ -23,12 +23,12 @@ export const Typography = ({
   as: Cmp = 'p',
   children,
   color,
-  turnicate,
+  truncate,
   links,
 }: TypographyProps) => (
   <Cmp
     className={cn(styles[variant], colors[color], {
-      [turnicateStyle]: turnicate,
+      [truncateStyle]: truncate,
       [linksStyle]: links,
     })}
   >

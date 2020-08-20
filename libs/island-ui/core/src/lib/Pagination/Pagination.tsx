@@ -2,15 +2,16 @@ import React, { Fragment } from 'react'
 import cn from 'classnames'
 import { uniq } from 'lodash'
 import { Icon } from '../Icon/Icon'
+import { Box } from '../Box/Box'
 import * as styles from './Pagination.treat'
 
-const range = (min, max) =>
+const range = (min: number, max: number) =>
   new Array(max - min + 1).fill(0).map((_, i) => min + i)
 
 export interface PaginationProps {
   page: number
   totalPages: number
-  makeHref: (number) => any
+  makeHref: (page: number) => any
   linkComp?: React.ReactType
 }
 
@@ -40,7 +41,7 @@ export const Pagination = ({ page, totalPages, makeHref, linkComp }) => {
   )
 
   return (
-    <div className={styles.container}>
+    <Box display="flex" justifyContent="spaceBetween">
       <div>
         {renderEdgeLink({
           page: page - 1,
@@ -72,7 +73,7 @@ export const Pagination = ({ page, totalPages, makeHref, linkComp }) => {
           iconType: 'arrowRight',
         })}
       </div>
-    </div>
+    </Box>
   )
 }
 

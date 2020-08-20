@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import Link from 'next/link'
+import { useRouter } from 'next/router'
 import {
   ContentBlock,
   Box,
@@ -13,7 +13,6 @@ import {
   Tag,
 } from '@island.is/island-ui/core'
 import { Categories, Card, SearchInput } from '../components'
-import { withApollo } from '../graphql'
 import { useI18n } from '../i18n'
 import {
   Query,
@@ -35,6 +34,7 @@ interface HomeProps {
 const Home: Screen<HomeProps> = ({ categories, namespace }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
+  const Router = useRouter()
   const { makePath } = useRouteNames(activeLocale as Locale)
 
   if (typeof document === 'object') {
@@ -101,25 +101,30 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
                 >
                   <Column>
                     <Box display="inlineFlex" alignItems="center" width="full">
-                      <SearchInput size="large" activeLocale={activeLocale} />
+                      <SearchInput
+                        openOnFocus
+                        size="large"
+                        activeLocale={activeLocale}
+                        placeholder={n('heroSearchPlaceholder')}
+                      />
                     </Box>
                   </Column>
                   <Column>
                     <Inline space={1}>
                       {n('featuredArticles', []).map(
                         ({ title, url }, index) => {
-                          // TODO: Find a permanent solution to handle this url, currently only supports article urls
                           return (
-                            <Link
+                            <Tag
                               key={index}
-                              href={`${makePath('article')}/[slug]`}
-                              as={url}
-                              passHref
+                              onClick={() => {
+                                Router.push(
+                                  `${makePath('article')}/[slug]`,
+                                  url,
+                                ).then(() => window.scrollTo(0, 0))
+                              }}
                             >
-                              <a>
-                                <Tag>{title}</Tag>
-                              </a>
-                            </Link>
+                              {title}
+                            </Tag>
                           )
                         },
                       )}
@@ -133,7 +138,7 @@ const Home: Screen<HomeProps> = ({ categories, namespace }) => {
       </ContentBlock>
       <Box background="purple100">
         <ContentBlock width="large">
-          <Categories label={n('articlesTitle')} seeMoreText={n('seeMore')}>
+          <Categories label={n('articlesTitle')}>
             {cards.map((card, index) => {
               return <Card key={index} {...card} />
             })}
@@ -193,7 +198,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withApollo(Home)
+export default Home
 
 const DottedBackground = () => (
   <Box position="absolute" top={0} bottom={0} left={0} right={0} padding={3}>

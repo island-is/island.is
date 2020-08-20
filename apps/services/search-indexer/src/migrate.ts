@@ -5,8 +5,8 @@ import * as util from 'util'
 import fetch from 'node-fetch'
 import { DomainPackageDetails, PackageDetails } from 'aws-sdk/clients/es'
 import { ManagedUpload } from 'aws-sdk/clients/s3'
-import { EsClientFactory } from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
+import { ElasticService } from '@island.is/api/content-search'
 
 class Config {
   elasticNode: string
@@ -77,7 +77,7 @@ class PackageStatuses extends Map<string, boolean> {}
 class App {
   private readonly config: Config
   private readonly awsEs: AWS.ES
-  private readonly esClient: Client
+  private esClient: Client
   private readonly lang: string = 'is'
   private readonly templateName: string = 'template-is'
 
@@ -85,7 +85,6 @@ class App {
     this.config = config
     AWS.config.update({ region: config.awsRegion })
     this.awsEs = new AWS.ES()
-    this.esClient = EsClientFactory.create()
   }
 
   run() {
@@ -96,7 +95,8 @@ class App {
   }
 
   private async checkESAccess() {
-    const result = await this.esClient.ping()
+    const client = await this.getEsClient()
+    const result = await client.ping()
     logger.debug('Check ES access', {
       r: result,
     })
@@ -155,7 +155,8 @@ class App {
   }
 
   private async getMainAlias(): Promise<string | null> {
-    return this.esClient.indices
+    const client = await this.getEsClient()
+    return client.indices
       .getAlias({ name: this.config.indexMain })
       .then((response) => {
         const body = response.body
@@ -208,9 +209,10 @@ class App {
         },
       },
     }
-    logger.debug('Reindex to new index', params)
-    const x = await this.esClient.reindex(params)
-    logger.debug('Reindex returned', x)
+    logger.info('Reindex to new index', params)
+    const client = await this.getEsClient()
+    const response = await client.reindex(params)
+    logger.info('Reindex returned', response)
     return this.switchAlias(oldIndex, newIndex)
   }
 
@@ -235,8 +237,10 @@ class App {
         actions: actions,
       },
     }
-    logger.debug('Switch Alias', params)
-    return this.esClient.indices.updateAliases(params)
+    logger.info('Switch Alias', params)
+
+    const client = await this.getEsClient()
+    return client.indices.updateAliases(params)
   }
 
   private async createIndex(codeVersion) {
@@ -244,16 +248,18 @@ class App {
     const params = {
       index: name,
     }
-    logger.debug('Create Index', params)
-    return this.esClient.indices
+    logger.info('Create Index', params)
+    const client = await this.getEsClient()
+    return client.indices
       .create(params)
       .then(() => this.switchAlias(null, name))
   }
 
   private async createTemplate(config: string) {
     const templateName = this.templateName
-    logger.debug('Create template', templateName)
-    return this.esClient.indices.putTemplate({
+    logger.info('Create template', templateName)
+    const client = await this.getEsClient()
+    return client.indices.putTemplate({
       name: templateName,
       body: config,
     })
@@ -607,7 +613,8 @@ class App {
 
   private async esHasVersion(version: number) {
     const indexName = App.getIndexNameForVersion(version)
-    const result = await this.esClient.indices.exists({
+    const client = await this.getEsClient()
+    const result = await client.indices.exists({
       index: indexName,
     })
     logger.debug('Checking if index exists', {
@@ -619,6 +626,14 @@ class App {
 
   private static getIndexNameForVersion(version: number) {
     return util.format('island-is-v%d', version)
+  }
+
+  private async getEsClient(): Promise<Client> {
+    if (this.esClient) {
+      return this.esClient
+    }
+    this.esClient = await new ElasticService().getClient()
+    return this.esClient
   }
 }
 

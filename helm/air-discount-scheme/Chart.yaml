@@ -1,0 +1,18 @@
+apiVersion: v2
+name: air-discount-scheme
+description: Air Discount Scheme umbrella chart
+dependencies:
+    - name: api-template
+      repository: file://../islandis/libs/api-template
+      version: 0.0.1
+      alias: air-discount-scheme-api
+    - name: api-template
+      repository: file://../islandis/libs/api-template
+      version: 0.0.1
+      alias: air-discount-scheme-backend
+    - name: api-template
+      repository: file://../islandis/libs/api-template
+      version: 0.0.1
+      alias: air-discount-scheme-web
+type: application
+version: 0.0.3

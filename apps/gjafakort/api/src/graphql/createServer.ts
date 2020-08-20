@@ -51,13 +51,13 @@ const createServer = async (
       yayApi: new YayAPI(),
       novaApi: new NovaAPI(),
     }),
-    context: ({ req }): GraphQLContext => {
+    context: async ({ req }): Promise<GraphQLContext> => {
       const accessToken = req.cookies[ACCESS_TOKEN_COOKIE.name]
       if (!accessToken) {
         return {}
       }
 
-      const credentials = verifyToken(accessToken)
+      const credentials = await verifyToken(accessToken)
       if (!credentials) {
         logger.error('signature validation failed')
         return {}

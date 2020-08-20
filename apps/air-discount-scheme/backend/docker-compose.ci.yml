@@ -1,0 +1,28 @@
+version: '3.3'
+
+services:
+  sut:
+    image: ${SUT}
+    networks:
+      - local
+    depends_on:
+      - db_ads_backend
+    environment:
+      - TEST_DB_USER=test_db
+      - TEST_DB_PASS=test_db
+      - TEST_DB_NAME=test_db
+      - DB_HOST=db_ads_backend
+    entrypoint:
+      [
+        'scripts/_wait-for.sh',
+        'db_ads_backend:5432',
+        '-t',
+        '5',
+        '--',
+        'yarn',
+        'test',
+        'air-discount-scheme-backend',
+      ]
+
+  db_ads_backend:
+    ports: []

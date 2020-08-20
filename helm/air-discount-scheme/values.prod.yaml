@@ -1,0 +1,65 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+  env:
+    name: 'prod'
+    AWS_REGION: 'eu-west-1'
+  initContainer:
+    env:
+      AWS_REGION: 'eu-west-1'
+
+air-discount-scheme-api:
+  env:
+
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: 'nginx-external'
+      cert-manager.io/cluster-issuer: 'devland-is-letsencrypt-dns01'
+    hosts:
+      - host: 'ads.devland.is'
+        paths:
+          - '/api'
+    tls:
+      - hosts: ['ads.devland.is']
+        secretName: 'air-discount-scheme-web-tls'
+
+air-discount-scheme-web:
+  env:
+
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: 'nginx-external'
+      cert-manager.io/cluster-issuer: 'devland-is-letsencrypt-dns01'
+    hosts:
+      - host: 'ads.devland.is'
+        paths:
+          - '/'
+    tls:
+      - hosts: ['ads.devland.is']
+        secretName: 'air-discount-scheme-web-tls'
+
+air-discount-scheme-backend:
+  env:
+    DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+    DB_NAME: 'air_discount_scheme_backend'
+    DB_USER: 'air_discount_scheme_backend'
+    REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379'
+
+  initContainer:
+    env:
+      DB_HOST: 'prod-vidspyrna-aurora.cluster-cneim47t7wpr.eu-west-1.rds.amazonaws.com'
+      DB_NAME: 'air_discount_scheme_backend'
+      DB_USER: 'air_discount_scheme_backend'
+
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: 'nginx-external'
+      cert-manager.io/cluster-issuer: 'devland-is-letsencrypt-dns01'
+      nginx.ingress.kubernetes.io/rewrite-target: /$1$2
+    hosts:
+      - host: 'ads.devland.is'
+        paths:
+          - '/api/(swagger|public)(.*)'
+    tls:
+      - hosts: ['ads.devland.is']
+        secretName: 'air-discount-scheme-web-tls'

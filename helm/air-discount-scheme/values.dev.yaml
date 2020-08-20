@@ -1,0 +1,66 @@
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+global:
+  env:
+    name: 'dev'
+    AWS_REGION: 'eu-west-1'
+  initContainer:
+    env:
+      AWS_REGION: 'eu-west-1'
+
+air-discount-scheme-api:
+  env:
+    SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=ads.dev'
+    AUTH_AUDIENCE: 'ads.dev01.devland.is'
+
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: 'nginx-external'
+      cert-manager.io/cluster-issuer: 'devland-is-letsencrypt-dns01'
+    hosts:
+      - host: 'ads.dev01.devland.is'
+        paths:
+          - '/api'
+    tls:
+      - hosts: ['ads.dev01.devland.is']
+        secretName: 'air-discount-scheme-web-tls'
+
+air-discount-scheme-web:
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: 'nginx-external'
+      cert-manager.io/cluster-issuer: 'devland-is-letsencrypt-dns01'
+    hosts:
+      - host: 'ads.dev01.devland.is'
+        paths:
+          - '/'
+    tls:
+      - hosts: ['ads.dev01.devland.is']
+        secretName: 'air-discount-scheme-web-tls'
+
+air-discount-scheme-backend:
+  env:
+    DB_HOST: 'dev-vidspyrna-aurora-1.c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+    DB_NAME: 'air_discount_scheme_backend'
+    DB_USER: 'air_discount_scheme_backend'
+    REDIS_URL_NODE_01: 'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379'
+
+  initContainer:
+    env:
+      DB_HOST: 'dev-vidspyrna-aurora-1.c6cxecmrvlpq.eu-west-1.rds.amazonaws.com'
+      DB_NAME: 'air_discount_scheme_backend'
+      DB_USER: 'air_discount_scheme_backend'
+
+  ingress:
+    annotations:
+      kubernetes.io/ingress.class: 'nginx-external'
+      cert-manager.io/cluster-issuer: 'devland-is-letsencrypt-dns01'
+      nginx.ingress.kubernetes.io/rewrite-target: /$1$2
+      nginx.ingress.kubernetes.io/enable-global-auth: "false"
+    hosts:
+      - host: 'ads.dev01.devland.is'
+        paths:
+          - '/api/(swagger|public)(.*)'
+    tls:
+      - hosts: ['ads.dev01.devland.is']
+        secretName: 'air-discount-scheme-web-tls'

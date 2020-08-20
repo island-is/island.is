@@ -10,6 +10,7 @@ import {
   Button,
   Hidden,
   ResponsiveSpace,
+  Icon,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/web/i18n/I18n'
 import { useI18n } from '@island.is/web/i18n'
@@ -22,9 +23,13 @@ interface HeaderProps {
 }
 
 const LanguageToggler: FC<{
-  activeLocale?: Locale
   hideWhenMobile?: boolean
-}> = ({ activeLocale, hideWhenMobile }) => {
+}> = ({ hideWhenMobile }) => {
+  const { activeLocale, locale, t } = useI18n()
+  const otherLanguageUrl = activeLocale === 'en' ? '/' : '/en'
+  const onClick = () => {
+    locale(t.otherLanguageCode)
+  }
   const languageButtonText =
     activeLocale === 'is' ? (
       <span>
@@ -38,11 +43,11 @@ const LanguageToggler: FC<{
       </span>
     )
 
-  const languageButtonLink = activeLocale === 'en' ? '/' : '/en'
-
   const LanguageButton = (
-    <Link href={languageButtonLink}>
-      <Button variant="menu">{languageButtonText}</Button>
+    <Link href={otherLanguageUrl}>
+      <Button variant="menu" onClick={onClick}>
+        {t.otherLanguageName}
+      </Button>
     </Link>
   )
 
@@ -56,7 +61,7 @@ const LanguageToggler: FC<{
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 
 export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
-  const { activeLocale } = useI18n()
+  const { activeLocale, t } = useI18n()
   const Router = useRouter()
   const { makePath } = useRouteNames(activeLocale as Locale)
 
@@ -88,41 +93,45 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                 justifyContent="flexEnd"
                 width="full"
               >
-                <LanguageToggler hideWhenMobile activeLocale={locale} />
-                <Box marginLeft={marginLeft}>
-                  <Link href="https://minarsidur.island.is/" passHref>
-                    <Button variant="menu" leftIcon="user">
-                      Innskráning
-                    </Button>
-                  </Link>
-                </Box>
                 {showSearchInHeader && (
                   <>
                     <Hidden below="lg">
-                      <Box marginLeft={marginLeft}>
-                        <SearchInput
-                          size="medium"
-                          activeLocale={locale}
-                          autocomplete={false}
-                        />
-                      </Box>
+                      <SearchInput
+                        size="medium"
+                        activeLocale={locale}
+                        placeholder="Leitaðu á Ísland.is"
+                        autocomplete={false}
+                      />
                     </Hidden>
                     <Hidden above="md">
-                      <Box marginLeft={marginLeft}>
-                        <Button
-                          variant="menu"
-                          icon="search"
-                          onClick={() => {
-                            Router.push({
-                              pathname: makePath('search'),
-                              query: { focus: true },
-                            })
-                          }}
-                        />
-                      </Box>
+                      <Button
+                        variant="menu"
+                        icon="search"
+                        onClick={() => {
+                          Router.push({
+                            pathname: makePath('search'),
+                            query: { focus: true },
+                          })
+                        }}
+                      />
                     </Hidden>
                   </>
                 )}
+                <Box marginLeft={marginLeft}>
+                  <Link href="https://minarsidur.island.is/" passHref>
+                    <Button variant="menu" leftIcon="user">
+                      {t.login}
+                    </Button>
+                  </Link>
+                </Box>
+                <Box marginLeft={marginLeft}>
+                  <LanguageToggler hideWhenMobile />
+                </Box>
+                <Box marginLeft={marginLeft}>
+                  <Button variant="menu">
+                    <Icon type="logo" />
+                  </Button>
+                </Box>
               </Box>
             </Column>
           </Columns>
