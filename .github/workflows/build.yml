@@ -228,6 +228,7 @@ jobs:
       # #   run: yarn run affected:e2e --base origin/master
   docker-express:
     needs: [prepare, tests]
+    if: join(fromJson(needs.prepare.outputs.TEST_CHUNKS)) == ''
     runs-on: ubuntu-latest
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
