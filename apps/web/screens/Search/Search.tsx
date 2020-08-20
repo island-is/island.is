@@ -35,7 +35,6 @@ import {
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
-import { Locale } from '@island.is/web/i18n/I18n'
 
 interface CategoryProps {
   q: string
@@ -48,7 +47,7 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
   const searchRef = useRef<HTMLInputElement | null>(null)
   const Router = useRouter()
   const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale as Locale)
+  const { makePath } = useRouteNames(activeLocale)
 
   const filters = {
     category: Router.query.category,

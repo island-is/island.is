@@ -30,7 +30,6 @@ import { ArticleLayout } from './Layouts/Layouts'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
-import { Locale } from '../i18n/I18n'
 import useRouteNames from '../i18n/useRouteNames'
 import { CustomNextError } from '../units/ErrorBoundary'
 
@@ -46,7 +45,7 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
   const { activeLocale } = useI18n()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale as Locale)
+  const { makePath } = useRouteNames(activeLocale)
 
   useEffect(() => {
     setContentOverviewOptions(

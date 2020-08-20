@@ -144,7 +144,7 @@ interface SectionProps {
 
 const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale as Locale)
+  const { makePath } = useRouteNames(activeLocale)
 
   switch (slice.__typename) {
     case 'PageHeaderSlice':

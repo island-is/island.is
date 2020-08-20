@@ -10,7 +10,6 @@ import NativeSelect from '../components/Select/Select'
 import Bullet from '../components/Bullet/Bullet'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import { Locale } from '@island.is/web/i18n/I18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import {
   Box,
@@ -57,7 +56,7 @@ const NewsList: Screen<NewsListProps> = ({
 }) => {
   const Router = useRouter()
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale as Locale)
+  const { makePath } = useRouteNames(activeLocale)
   const { format } = useDateUtils()
 
   if ((selectedYear || page.page > 1) && newsList.length === 0) {
@@ -199,7 +198,7 @@ const NewsList: Screen<NewsListProps> = ({
 
 const NewsListItem = ({ newsItem }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale as Locale)
+  const { makePath } = useRouteNames(activeLocale)
   const { format } = useDateUtils()
 
   return (
