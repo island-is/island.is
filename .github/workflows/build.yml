@@ -163,7 +163,7 @@ jobs:
           # PROJECTS=`./scripts/_nx-affected-targets.sh docker-express`
           # echo "Projects: ${PROJECTS}"
           # CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
-          CHUNKS=[]
+          CHUNKS=["dummy"]
           echo "Chunks: $CHUNKS"
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
@@ -206,6 +206,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+    defaults:
+      if: ${{ matrix.projects != 'dummy' }}
     steps:
       - uses: actions/checkout@v2
       # - name: Cache for dependencies Docker layer
