@@ -16,6 +16,7 @@ import * as styles from './App.treat'
 import './App.css'
 import OidcSignIn from '../components/Authenticator/OidcSignIn'
 import { Log } from 'oidc-client'
+import OidcSilentSignIn from '../components/Authenticator/OidcSilentSignIn'
 
 export const App = () => {
   makeServer()
@@ -32,6 +33,9 @@ export const App = () => {
             <Switch>
               <Route path="/signin-oidc">
                 <OidcSignIn />
+              </Route>
+              <Route path="/silent/signin-oidc">
+                <OidcSilentSignIn />
               </Route>
               <Authenticator>
                 <Layout>

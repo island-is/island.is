@@ -49,9 +49,9 @@ const settings = {
   // eslint-disable-next-line @typescript-eslint/camelcase
   client_id: 'island-is-1',
   // eslint-disable-next-line @typescript-eslint/camelcase
-  silent_redirect_uri: `http://localhost:4200/signin-oidc`,
+  silent_redirect_uri: `http://localhost:4200/silent/signin-oidc`,
   // eslint-disable-next-line @typescript-eslint/camelcase
-  redirect_uri: `http://localhost:4200`,
+  redirect_uri: `http://localhost:4200/signin-oidc`,
   // eslint-disable-next-line @typescript-eslint/camelcase
   response_type: 'code',
   revokeAccessTokenOnSignout: true,
