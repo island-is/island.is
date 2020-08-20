@@ -37,7 +37,7 @@ import {
 import { CategoryLayout } from '../Layouts/Layouts'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { Locale } from '@island.is/web/i18n/I18n'
-import {CustomNextError} from '@island.is/web/units/ErrorBoundary'
+import { CustomNextError } from '@island.is/web/units/ErrorBoundary'
 
 const PerPage = 10
 
