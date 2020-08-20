@@ -1,10 +1,11 @@
 import { LazyExoticComponent, FC } from 'react'
 import { IconTypes } from '@island.is/island-ui/core'
 import { User } from 'oidc-client'
-// eslint-disable-next-line
-import { JwtToken } from 'apps/service-portal/src/mirage-server/models/jwt-model'
 import { ServicePortalPath } from './navigation/paths'
 
+/**
+ * A navigational item used by the service portal
+ */
 export interface ServicePortalNavigationItem {
   name: string
   path?: ServicePortalPath
@@ -13,16 +14,28 @@ export interface ServicePortalNavigationItem {
   children?: ServicePortalNavigationItem[]
 }
 
-interface ServicePortalModuleProps {
+/**
+ * The props provided to a service portal module
+ */
+export interface ServicePortalModuleProps {
   userInfo: User
 }
 
+/**
+ * A rendered out by the render value of a service portal route
+ */
 export type ServicePortalModuleComponent = FC<ServicePortalModuleProps>
 
+/**
+ * The render value of a service portal route
+ */
 export type ServicePortalModuleRenderValue = LazyExoticComponent<
   ServicePortalModuleComponent
 >
 
+/**
+ * A route defined by a service portal module
+ */
 export type ServicePortalRoute = {
   /**
    * The title of this route
@@ -44,6 +57,9 @@ export type ServicePortalRoute = {
   render: (userInfo: User) => ServicePortalModuleRenderValue
 }
 
+/**
+ * A widget defined by a service portal module
+ */
 export type ServicePortalWidget = {
   /**
    * Describes the name of this widget, displayed on the dashboard above it fx.
