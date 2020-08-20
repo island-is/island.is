@@ -37,6 +37,7 @@ import {
 import { CategoryLayout } from '../Layouts/Layouts'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { Locale } from '@island.is/web/i18n/I18n'
+import {CustomNextError} from '@island.is/web/units/ErrorBoundary'
 
 const PerPage = 10
 
@@ -294,6 +295,10 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         return JSON.parse(variables.data.getNamespace.fields)
       }),
   ])
+
+  if (searchResults.items.length === 0 && page > 1) {
+    throw new CustomNextError(404)
+  }
 
   return {
     q: queryString,
