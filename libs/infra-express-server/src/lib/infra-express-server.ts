@@ -9,12 +9,18 @@ import { logger } from '@island.is/logging'
 type RunServerParams = {
   routes: Router
   name: string
-  public?: Router
+  publicRoutes?: Router
+  port?: number
 }
 
-export const runServer = (opts: RunServerParams) => {
+export const runServer = ({
+  name,
+  publicRoutes,
+  routes,
+  port = 3000,
+}: RunServerParams) => {
   const app = express()
-  initTracing(opts.name)
+  initTracing(name)
 
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
@@ -48,8 +54,8 @@ export const runServer = (opts: RunServerParams) => {
   })
 
   // additional public routes
-  if (opts.public) {
-    app.use('/public', opts.public)
+  if (publicRoutes) {
+    app.use('/public', publicRoutes)
   }
 
   // security middleware
@@ -60,7 +66,7 @@ export const runServer = (opts: RunServerParams) => {
   })
 
   // secured
-  app.use('/', opts.routes)
+  app.use('/', routes)
 
   app.use(function errorHandler(err, req, res, next) {
     logger.error(`Status code: ${err.status}, msg: ${err.message}`)
@@ -68,7 +74,7 @@ export const runServer = (opts: RunServerParams) => {
     res.send(err.message)
   })
 
-  const servicePort = parseInt(process.env.port || '3000')
+  const servicePort = parseInt(process.env.PORT || `${port}`)
   const metricsPort = servicePort + 1
   metricsApp.listen(metricsPort, () => {
     logger.info(`Metrics listening on port ${metricsPort}`)

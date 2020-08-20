@@ -159,7 +159,7 @@ export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
     <Box
       height="full"
       background="white"
-      borderRadius="standard"
+      borderRadius="large"
       padding={[2, 2, 4]}
       className={cn(styles.card, { [styles.focused]: isFocused })}
     >

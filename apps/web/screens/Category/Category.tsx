@@ -15,7 +15,6 @@ import {
   Option,
 } from '@island.is/island-ui/core'
 import { Card, Sidebar } from '../../components'
-import { withApollo } from '../../graphql'
 import { useI18n } from '@island.is/web/i18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { Screen } from '../../types'
@@ -54,11 +53,11 @@ const Category: Screen<CategoryProps> = ({
   // group articles
   const { groups, cards } = articles.reduce(
     (content, article) => {
-      if (!content.groups[article.groupSlug]) {
+      if (article.groupSlug && !content.groups[article.groupSlug]) {
         // group does not exist create the collection
         content.groups[article.groupSlug] = {
           title: article.group,
-          description: 'Some group description goes here',
+          description: article.groupDescription,
           articles: [article],
         }
       } else if (article.groupSlug) {
@@ -101,7 +100,7 @@ const Category: Screen<CategoryProps> = ({
           <Sidebar
             bullet="right"
             items={sidebarCategoryLinks}
-            title={n('submenuTitle')}
+            title={n('sidebarHeader')}
           />
         }
         belowContent={
@@ -112,7 +111,7 @@ const Category: Screen<CategoryProps> = ({
 
                 return (
                   <AccordionCard
-                    key={index}
+                    key={groupSlug}
                     id={`accordion-${index}`}
                     label={title}
                     visibleContent={
@@ -140,8 +139,16 @@ const Category: Screen<CategoryProps> = ({
               })}
             </Stack>
             <Stack space={2}>
-              {cards.map((article, index) => {
-                return <Card key={index} {...article} tags={false} />
+              {cards.map(({ title, content, slug }, index) => {
+                return (
+                  <Card
+                    key={index}
+                    title={title}
+                    description={content}
+                    href={`${makePath('article')}/[slug]`}
+                    as={makePath('article', slug)}
+                  />
+                )
               })}
             </Stack>
           </Stack>
@@ -189,7 +196,7 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   const [
     {
-      data: { articlesInCategory },
+      data: { articlesInCategory: articles },
     },
     {
       data: { categories },
@@ -218,7 +225,7 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Articles',
+            namespace: 'Categories',
             lang: locale,
           },
         },
@@ -227,10 +234,10 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
   ])
 
   return {
-    articles: articlesInCategory,
+    articles,
     categories,
     namespace,
   }
 }
 
-export default withApollo(Category)
+export default Category

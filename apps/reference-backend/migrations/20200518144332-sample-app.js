@@ -1,21 +1,26 @@
 'use strict'
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface) => {
     return queryInterface.sequelize.query(`
-        CREATE TABLE sample_app (
+      BEGIN;
+
+        CREATE TABLE resource (
           id UUID NOT NULL,
-          ssn VARCHAR UNIQUE NOT NULL,
+          national_id VARCHAR NOT NULL,
           created TIMESTAMP WITH TIME ZONE DEFAULT now(),
           modified TIMESTAMP WITH TIME ZONE,
+          UNIQUE (national_id),
           PRIMARY KEY (id)
         );
+
+      COMMIT;
     `)
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     return queryInterface.sequelize.query(`
-        DROP TABLE sample_app;
+      DROP TABLE resource;
     `)
   },
 }

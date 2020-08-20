@@ -5,6 +5,7 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
     searchResults(query: $query) {
       total
       items {
+        id
         title
         content
         slug
@@ -20,6 +21,7 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
     searchResults(query: $query) {
       total
       items {
+        id
         title
         slug
         tag

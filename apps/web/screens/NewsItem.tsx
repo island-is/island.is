@@ -2,13 +2,6 @@
 import React from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
-import { Screen } from '../types'
-import { withApollo } from '../graphql'
-import { useI18n } from '@island.is/web/i18n'
-import { Locale } from '@island.is/web/i18n/I18n'
-import { useDateUtils } from '../i18n/useDateUtils'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
-import ArticleContent from '../units/Content/ArticleContent'
 import {
   Typography,
   Stack,
@@ -16,6 +9,12 @@ import {
   Box,
   ContentBlock,
 } from '@island.is/island-ui/core'
+import { Content, Image } from '@island.is/island-ui/contentful'
+import { Screen } from '../types'
+import { useI18n } from '@island.is/web/i18n'
+import { Locale } from '@island.is/web/i18n/I18n'
+import { useDateUtils } from '../i18n/useDateUtils'
+import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { NewsItemLayout } from './Layouts/Layouts'
 import { GET_NEWS_ITEM_QUERY } from './queries'
 import { Query, ContentLanguage, QueryGetNewsArgs } from '@island.is/api/schema'
@@ -77,19 +76,13 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
               </Typography>
               {Boolean(newsItem.image) && (
                 <Box paddingY={2}>
-                  <img
-                    src={newsItem.image.url + '?w=774'}
-                    alt={newsItem.image.title}
-                  />
+                  <Image type="apiImage" image={newsItem.image} />
                 </Box>
               )}
             </Stack>
           </ContentBlock>
         </Box>
-        <ArticleContent
-          document={newsItem.content}
-          locale={activeLocale as Locale}
-        />
+        <Content document={newsItem.content} />
       </NewsItemLayout>
     </>
   )
@@ -113,4 +106,4 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withApollo(NewsItem)
+export default NewsItem

@@ -19,10 +19,11 @@
     "paths": {
       "@island.is/island-ui/core": ["libs/island-ui/core/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
-      "@island.is/lol/dir/nested/my-lib": [
-        "libs/lol/dir/nested/my-lib/src/index.ts"
-      ],
+      "@island.is/adgerdir/*": ["apps/adgerdir/*"],
       "@island.is/gjafakort-web/*": ["apps/gjafakort/web/*"],
+      "@island.is/air-discount-scheme-web/*": [
+        "apps/air-discount-scheme/web/*"
+      ],
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
@@ -38,6 +39,7 @@
       "@island.is/infra-express-server": [
         "libs/infra-express-server/src/index.ts"
       ],
+      "@island.is/infra-nest-server": ["libs/infra-nest-server/src/index.ts"],
       "@island.is/api/domains/content-search": [
         "libs/api/domains/content-search/src/index.ts"
       ],
@@ -74,6 +76,17 @@
       ],
       "@island.is/service-portal/education": [
         "libs/service-portal/education/src/index.ts"
+      ],
+      "@island.is/island-ui/contentful": [
+        "libs/island-ui/contentful/src/index.ts"
+      ],
+      "@island.is/air-discount-scheme/consts": [
+        "libs/air-discount-scheme/consts/src/index.ts"
+      ],
+      "@island.is/application/schema": ["libs/application/schema/src/index.ts"],
+      "@island.is/application/form": ["libs/application/form/src/index.ts"],
+      "@island.is/api/domains/application": [
+        "libs/api/domains/application/src/index.ts"
       ]
     }
   },

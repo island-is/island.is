@@ -47,4 +47,15 @@ export class IndexingController {
       acknowledge: true,
     }
   }
+
+  @Get('re-sync')
+  async resync() {
+    logger.debug('IndexReSync')
+
+    // noinspection ES6MissingAwait
+    this.indexingService.initialSync(SearchIndexes.is)
+    return {
+      acknowledge: true,
+    }
+  }
 }

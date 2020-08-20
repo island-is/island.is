@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC } from 'react'
 import cn from 'classnames'
 import Link, { LinkProps } from 'next/link'
@@ -44,7 +45,12 @@ export const Card: FC<CardProps> = ({
   as,
 }) => {
   const Content = (
-    <Box display="flex" height="full" flexDirection="column">
+    <Box
+      display="flex"
+      height="full"
+      borderRadius="large"
+      flexDirection="column"
+    >
       <Box flexGrow={1} height="full">
         <Stack space={1}>
           <Typography variant="cardCategoryTitle" as="h3">
@@ -90,13 +96,12 @@ export const Card: FC<CardProps> = ({
 
   return (
     <Link href={href} as={as} passHref>
-      {/* eslint-disable-next-line */}
       <a className={styles.card}>
         <Box
+          borderRadius="large"
           height="full"
           background="white"
           outline="none"
-          borderRadius="standard"
           padding={[2, 2, 4]}
         >
           {Content}
@@ -113,6 +118,7 @@ interface FrameProps {
 export const Frame: FC<FrameProps> = ({ children, isFocused = false }) => {
   return (
     <Box
+      borderRadius="large"
       height="full"
       background="white"
       outline="none"

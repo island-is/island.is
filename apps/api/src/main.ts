@@ -1,17 +1,9 @@
-import express from 'express'
-import createGraphqlServer from './graphql'
+import '@island.is/infra-tracing'
+import { AppModule } from './app/app.module'
+import { bootstrap } from '@island.is/infra-nest-server'
 
-import { logger } from '@island.is/logging'
-
-const app = express()
-
-createGraphqlServer(app)
-
-// answer health checks
-app.get('/', (req, res) => res.sendStatus(200))
-
-const port = process.env.PORT || 4444
-const server = app.listen(port, () => {
-  logger.info(`Graphql running at http://localhost:${port}/api/graphql`)
+bootstrap({
+  appModule: AppModule,
+  name: 'api',
+  port: 4444,
 })
-server.on('error', logger.error)

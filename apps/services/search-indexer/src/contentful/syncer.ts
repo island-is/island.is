@@ -7,6 +7,7 @@ import {
 } from 'contentful'
 import { environment } from '../environments/environment'
 import { logger } from '@island.is/logging'
+import { Injectable } from '@nestjs/common'
 
 interface SyncerResult {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,7 +26,9 @@ function chunk(arr, len) {
   return chunks
 }
 
+@Injectable()
 export class Syncer {
+  private defaultIncludeDepth = 10
   private contentFulClient: ContentfulClientApi
 
   constructor() {
@@ -51,6 +54,7 @@ export class Syncer {
     }
     for (const ids of idChunks) {
       const { items } = await this.contentFulClient.getEntries({
+        include: this.defaultIncludeDepth,
         'sys.id[in]': ids.join(','),
       })
       result.items = result.items.concat(items)
@@ -59,6 +63,8 @@ export class Syncer {
   }
 
   async getEntry(id: string): Promise<Entry<unknown> | undefined> {
-    return this.contentFulClient.getEntry(id)
+    return this.contentFulClient.getEntry(id, {
+      include: this.defaultIncludeDepth,
+    })
   }
 }

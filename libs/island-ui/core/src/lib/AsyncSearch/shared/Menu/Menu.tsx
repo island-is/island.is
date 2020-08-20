@@ -1,18 +1,21 @@
-import React, { forwardRef, ReactNode } from 'react'
+import React, { forwardRef, ComponentType } from 'react'
 import cn from 'classnames'
 
 import * as styles from './Menu.treat'
 
-interface MenuProps {
+export interface MenuProps {
+  comp?: React.ElementType
   isOpen: boolean
-  shouldShowItems: boolean
-  children: ReactNode
+  shouldShowItems?: boolean
 }
 
 export const Menu = forwardRef<HTMLUListElement, MenuProps>(
-  ({ isOpen, shouldShowItems, children, ...props }, ref) => {
+  (
+    { comp: Comp = 'ul', isOpen, shouldShowItems = isOpen, children, ...props },
+    ref,
+  ) => {
     return (
-      <ul
+      <Comp
         ref={ref}
         {...props}
         className={cn(styles.menu, {
@@ -21,7 +24,7 @@ export const Menu = forwardRef<HTMLUListElement, MenuProps>(
         })}
       >
         {children}
-      </ul>
+      </Comp>
     )
   },
 )

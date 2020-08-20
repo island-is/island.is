@@ -28,7 +28,7 @@ describe('AsyncSearch', () => {
 
   it('should show results', () => {
     const { baseElement, getByText } = render(
-      <AsyncSearch useFilter options={items} />,
+      <AsyncSearch filter options={items} />,
     )
 
     const inputEl = baseElement.querySelector('input')
@@ -38,7 +38,7 @@ describe('AsyncSearch', () => {
   })
 
   it('should show 4 items', () => {
-    const { baseElement } = render(<AsyncSearch useFilter options={items} />)
+    const { baseElement } = render(<AsyncSearch filter options={items} />)
 
     const inputEl = baseElement.querySelector('input')
     fireEvent.change(inputEl, { target: { value: 'ap' } })

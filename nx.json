@@ -85,6 +85,9 @@
     "infra-express-server": {
       "tags": []
     },
+    "infra-nest-server": {
+      "tags": []
+    },
     "api-content-search": {
       "tags": []
     },
@@ -94,10 +97,29 @@
     "api-domains-content-search": {
       "tags": []
     },
+    "contentful-importer": {
+      "tags": []
+    },
     "gjafakort-types": {
       "tags": []
     },
     "gjafakort-consts": {
+      "tags": []
+    },
+    "application-schema": {
+      "tags": []
+    },
+    "application-form": {
+      "tags": []
+    },
+    "application-system-form": {
+      "tags": []
+    },
+    "application-system-form-e2e": {
+      "tags": [],
+      "implicitDependencies": ["application-system-form"]
+    },
+    "application-system-api": {
       "tags": []
     },
     "island-ui-theme": {
@@ -136,6 +158,35 @@
     },
     "service-portal-education": {
       "tags": []
+    },
+    "island-ui-contentful": {
+      "tags": []
+    },
+    "air-discount-scheme-api": {
+      "tags": []
+    },
+    "air-discount-scheme-web": {
+      "tags": []
+    },
+    "air-discount-scheme/web-e2e": {
+      "tags": [],
+      "implicitDependencies": ["air-discount-scheme-web"]
+    },
+    "air-discount-scheme-backend": {
+      "tags": []
+    },
+    "air-discount-scheme-consts": {
+      "tags": []
+    },
+    "api-domains-application": {
+      "tags": []
+    },
+    "adgerdir": {
+      "tags": []
+    },
+    "adgerdir-e2e": {
+      "tags": [],
+      "implicitDependencies": ["adgerdir"]
     }
   }
 }

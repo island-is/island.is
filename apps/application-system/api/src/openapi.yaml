@@ -1,0 +1,239 @@
+openapi: 3.0.0
+info:
+  title: Application backend
+  description: This is provided as a reference to implement other backends.
+  version: '1.0'
+  contact: {}
+tags:
+  - name: application
+    description: ''
+servers: []
+components:
+  schemas:
+    Liveness:
+      type: object
+      properties:
+        ok:
+          type: boolean
+      required:
+        - ok
+    Version:
+      type: object
+      properties:
+        version:
+          type: string
+      required:
+        - version
+    Application:
+      type: object
+      properties:
+        id:
+          type: string
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+        applicant:
+          type: string
+        assignee:
+          type: string
+        externalId:
+          type: string
+        state:
+          type: string
+          enum:
+            - DRAFT
+            - BEING_PROCESSED
+            - NEEDS_INFORMATION
+            - PENDING
+            - APPROVED
+            - MANUAL_APPROVED
+            - REJECTED
+            - UNKNOWN
+        attachments:
+          type: array
+          items:
+            type: string
+        typeId:
+          type: string
+          enum:
+            - ExampleForm
+            - ExampleForm2
+            - ExampleForm3
+            - FamilyAndPets
+        answers:
+          type: object
+      required:
+        - id
+        - created
+        - modified
+        - applicant
+        - assignee
+        - state
+        - typeId
+        - answers
+    CreateApplicationDto:
+      type: object
+      properties:
+        typeId:
+          type: string
+          enum:
+            - ExampleForm
+            - ExampleForm2
+            - ExampleForm3
+            - FamilyAndPets
+        applicant:
+          type: string
+        assignee:
+          type: string
+        externalId:
+          type: string
+        state:
+          type: string
+          enum:
+            - DRAFT
+            - BEING_PROCESSED
+            - NEEDS_INFORMATION
+            - PENDING
+            - APPROVED
+            - MANUAL_APPROVED
+            - REJECTED
+            - UNKNOWN
+        answers:
+          type: object
+        attachments:
+          type: array
+          items:
+            type: string
+      required:
+        - typeId
+        - applicant
+        - assignee
+        - state
+        - answers
+    UpdateApplicationDto:
+      type: object
+      properties:
+        id:
+          type: string
+        typeId:
+          type: string
+          enum:
+            - ExampleForm
+            - ExampleForm2
+            - ExampleForm3
+            - FamilyAndPets
+        applicant:
+          type: string
+        assignee:
+          type: string
+        externalId:
+          type: string
+        state:
+          type: string
+          enum:
+            - DRAFT
+            - BEING_PROCESSED
+            - NEEDS_INFORMATION
+            - PENDING
+            - APPROVED
+            - MANUAL_APPROVED
+            - REJECTED
+            - UNKNOWN
+        answers:
+          type: object
+        attachments:
+          type: array
+          items:
+            type: string
+      required:
+        - id
+paths:
+  /liveness:
+    get:
+      operationId: InfraController_liveness
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Liveness'
+      tags:
+        - internal
+  /version:
+    get:
+      operationId: InfraController_version
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
+      tags:
+        - internal
+  '/application/{id}':
+    get:
+      operationId: ApplicationController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+      tags:
+        - application
+    put:
+      operationId: ApplicationController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateApplicationDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+      tags:
+        - application
+  /application:
+    post:
+      operationId: ApplicationController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateApplicationDto'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+      tags:
+        - application

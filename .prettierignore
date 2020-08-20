@@ -3,3 +3,5 @@
 /dist
 /coverage
 .github/actions/dist
+/libs/api/domains/application/gen
+/tmp

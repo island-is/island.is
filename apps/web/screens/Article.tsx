@@ -2,7 +2,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
-import DefaultErrorPage from 'next/error'
 import slugify from '@sindresorhus/slugify'
 import {
   ContentBlock,
@@ -16,26 +15,27 @@ import {
   ResponsiveSpace,
   Tag,
   Option,
+  Button,
 } from '@island.is/island-ui/core'
+import { Content } from '@island.is/island-ui/contentful'
 import { Sidebar, getHeadingLinkElements } from '@island.is/web/components'
 import {
   Query,
-  QueryGetArticleArgs,
   QueryGetNamespaceArgs,
   ContentLanguage,
+  QuerySingleItemArgs,
 } from '@island.is/api/schema'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
-import { withApollo } from '../graphql'
 import { Screen } from '../types'
-import ArticleContent from '../units/Content/ArticleContent'
 import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
 import { Locale } from '../i18n/I18n'
 import useRouteNames from '../i18n/useRouteNames'
+import { CustomNextError } from '../units/ErrorBoundary'
 
 interface ArticleProps {
-  article: Query['getArticle']
+  article: Query['singleItem']
   namespace: Query['getNamespace']
 }
 
@@ -44,7 +44,6 @@ const simpleSpacing = [2, 2, 3] as ResponsiveSpace
 const Article: Screen<ArticleProps> = ({ article, namespace }) => {
   const [contentOverviewOptions, setContentOverviewOptions] = useState([])
   const { activeLocale } = useI18n()
-  // TODO: get language strings from namespace...
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const n = useNamespace(namespace)
   const { makePath } = useRouteNames(activeLocale as Locale)
@@ -58,12 +57,8 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
     )
   }, [])
 
-  if (!article) {
-    return <DefaultErrorPage statusCode={404} />
-  }
-
-  const { slug: categorySlug, title: categoryTitle } = article.category
-  const groupTitle = article.group?.title
+  const { categorySlug, category: categoryTitle } = article
+  const groupTitle = article.group
 
   const onChangeContentOverview = ({ value }: Option) => {
     const slug = value as string
@@ -77,13 +72,33 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
     }
   }
 
+  const data = JSON.parse(article.content)
+
+  const actionButtonLinks = data.content.map((current) => {
+    return current.data?.target?.fields?.processLink
+  })
+
+  const actionButtonLink =
+    actionButtonLinks.length === 1 ? actionButtonLinks[0] : null
+
   return (
     <>
       <Head>
         <title>{article.title} | Ísland.is</title>
       </Head>
       <ArticleLayout
-        sidebar={<Sidebar title="Efnisyfirlit" bullet="left" headingLinks />}
+        sidebar={
+          <Stack space={3}>
+            {actionButtonLink ? (
+              <Box background="purple100" padding={4} borderRadius="large">
+                <Button href={actionButtonLink} width="fluid">
+                  {n('processLinkButtonText')}
+                </Button>
+              </Box>
+            ) : null}
+            <Sidebar title={n('sidebarHeader')} bullet="left" headingLinks />
+          </Stack>
+        }
       >
         <ContentContainer
           padding="none"
@@ -126,10 +141,7 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
           </Stack>
         </ContentContainer>
 
-        <ArticleContent
-          document={article.content}
-          locale={activeLocale as Locale}
-        />
+        <Content document={article.content} />
       </ArticleLayout>
     </>
   )
@@ -137,22 +149,26 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
 
 Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
-
-  const [
-    {
-      data: { getArticle: article },
-    },
-    namespace,
-  ] = await Promise.all([
-    apolloClient.query<Query, QueryGetArticleArgs>({
-      query: GET_ARTICLE_QUERY,
-      variables: {
-        input: {
-          slug,
-          lang: locale as ContentLanguage,
+  const [article, namespace] = await Promise.all([
+    apolloClient
+      .query<Query, QuerySingleItemArgs>({
+        query: GET_ARTICLE_QUERY,
+        variables: {
+          input: {
+            slug,
+            language: locale as ContentLanguage,
+          },
         },
-      },
-    }),
+      })
+      .then((content) => {
+        // map data here to reduce data processing in component
+        // TODO: Elastic endpoint is returning the article document json nested inside ContentItem, look into flattening this
+        const contentObject = JSON.parse(content.data.singleItem.content)
+        return {
+          ...content.data.singleItem,
+          content: JSON.stringify(contentObject.content),
+        }
+      }),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
@@ -163,11 +179,16 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
           },
         },
       })
-      .then((variables) => {
+      .then((content) => {
         // map data here to reduce data processing in component
-        return JSON.parse(variables.data.getNamespace.fields)
+        return JSON.parse(content.data.getNamespace.fields)
       }),
   ])
+
+  // we assume 404 if no article is found
+  if (!article) {
+    throw new CustomNextError(404, 'Article not found')
+  }
 
   return {
     article,
@@ -175,10 +196,12 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   }
 }
 
-export default withApollo(Article)
+export default Article
 
 const ContentContainer: FC<BoxProps> = ({ children, ...props }) => (
   <Box padding={[3, 3, 6, 0]} {...props}>
     <ContentBlock width="small">{children}</ContentBlock>
   </Box>
 )
+
+// TODO: Add fields for micro strings to article namespace

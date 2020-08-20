@@ -1,10 +1,15 @@
 import React, {
+  FC,
   useState,
   useEffect,
   useCallback,
   useRef,
   forwardRef,
 } from 'react'
+import Link from 'next/link'
+import Downshift from 'downshift'
+import cn from 'classnames'
+import { uniq, sortBy } from 'lodash'
 import { useRouter } from 'next/router'
 import { useApolloClient } from 'react-apollo'
 import { GET_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
@@ -12,220 +17,286 @@ import {
   ContentLanguage,
   QuerySearchResultsArgs,
   Query,
+  SearchResult,
 } from '@island.is/api/schema'
 import {
-  AsyncSearch,
-  AsyncSearchOption,
+  AsyncSearchInput,
   AsyncSearchSizes,
   Box,
+  Typography,
+  Stack,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/web/i18n/I18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import * as styles from './SearchInput.treat'
 
 const DEBOUNCE_TIMER = 300
+
+type SearchState = {
+  term: string
+  results?: SearchResult
+  suggestions: string[]
+  isLoading: boolean
+}
+
+const emptyState: Readonly<SearchState> = {
+  term: '',
+  suggestions: [],
+  isLoading: false,
+}
+
+const isEmpty = ({ results, suggestions }: SearchState): boolean =>
+  suggestions.length === 0 && (results?.total ?? 0) === 0
+
+const useSearch = (locale: Locale, term?: string): SearchState => {
+  const [state, setState] = useState<SearchState>(emptyState)
+  const client = useApolloClient()
+  const timer = useRef(null)
+
+  useEffect(() => {
+    if (term == null) {
+      setState(emptyState)
+      return
+    }
+
+    if (term === '') {
+      setState({
+        isLoading: false,
+        term: '',
+        // hardcoded while not supported by search
+        suggestions: [
+          'Covid-19',
+          'Hlutabætur',
+          'Atvinnuleysisbætur',
+          'Fæðingarorlof',
+          'Mannanafnanefnd',
+          'Rekstrarleyfi',
+          'Heimilisfang',
+        ],
+      })
+      return
+    }
+
+    setState({ ...state, isLoading: true })
+
+    const thisTimerId = (timer.current = setTimeout(async () => {
+      const {
+        data: { searchResults: results },
+      } = await client.query<Query, QuerySearchResultsArgs>({
+        query: GET_SEARCH_RESULTS_QUERY,
+        variables: {
+          query: {
+            queryString: term,
+            language: locale as ContentLanguage,
+          },
+        },
+      })
+
+      if (thisTimerId === timer.current) {
+        // hack while not supported by search service
+        let suggestions = results.items
+          .map((r) => r.title.split(/\s+/g))
+          .reduce((acc, words) => acc.concat(words), [])
+          .map((s) => s.trim().toLowerCase())
+          .filter((s) => s.startsWith(term.trim().toLowerCase()))
+        suggestions = sortBy(uniq(suggestions), (s) => s.length)
+
+        setState({
+          isLoading: false,
+          term,
+          results,
+          suggestions,
+        })
+      }
+    }, DEBOUNCE_TIMER))
+
+    return () => clearTimeout(thisTimerId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [client, locale, term, setState])
+
+  return state
+}
+
+const useSubmit = (locale: Locale) => {
+  const Router = useRouter()
+  const { makePath } = useRouteNames(locale)
+
+  return useCallback(
+    (q: string) => {
+      if (q) {
+        Router.push({
+          pathname: makePath('search'),
+          query: { q },
+        }).then(() => {
+          window.scrollTo({ top: 0 })
+        })
+      }
+    },
+    [Router, makePath],
+  )
+}
 
 interface SearchInputProps {
   activeLocale: string
   initialInputValue?: string
   size?: AsyncSearchSizes
-  label?: string
   autocomplete?: boolean
-  onSubmit?: (inputValue: string, selectedOption: AsyncSearchOption) => void
+  openOnFocus?: boolean
+  placeholder?: string
+  white?: boolean
 }
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
   (
     {
+      placeholder = '',
       activeLocale,
-      label,
-      initialInputValue,
-      size = 'medium',
+      initialInputValue = '',
       autocomplete = true,
-      onSubmit,
+      openOnFocus = false,
+      size = 'medium',
+      white = false,
     },
     ref,
   ) => {
-    const Router = useRouter()
-    const [options, setOptions] = useState([])
-    const [prevOptions, setPrevOptions] = useState([])
-    const [queryString, setQueryString] = useState('')
-    const [inputValue, setInputValue] = useState('')
-    const [loading, setLoading] = useState<boolean>(false)
-    const client = useApolloClient()
-    const isFirstRun = useRef(true)
-    const timer = useRef(null)
-    const { makePath } = useRouteNames(activeLocale as Locale)
-
-    const insert = (mainStr: string, insStr: string, pos: number) => {
-      if (typeof pos == 'undefined') {
-        pos = 0
-      }
-
-      if (typeof insStr == 'undefined') {
-        insStr = ''
-      }
-
-      return mainStr.slice(0, pos) + insStr + mainStr.slice(pos)
-    }
-
-    const defaultOnSubmit = (
-      inputValue: string,
-      selectedOption: AsyncSearchOption,
-    ) => {
-      if (selectedOption) {
-        const cleanLabel = cleanString(selectedOption.label)
-
-        setInputValue(cleanLabel)
-
-        return Router.push({
-          pathname: makePath('search'),
-          query: { q: cleanLabel },
-        })
-      }
-
-      if (!inputValue) {
-        return false
-      }
-
-      const cleanInputValue = cleanString(inputValue)
-
-      setInputValue(cleanInputValue)
-
-      return Router.push({
-        pathname: makePath('search'),
-        query: { q: cleanInputValue },
-      })
-    }
-
-    const cleanString = useCallback((string: string) => {
-      const regex = /[a-zA-Z\u00C0-\u00FF]+/
-      const words = [...string['matchAll'](new RegExp(regex, 'gi'))]
-      return words.join(' ')
-    }, [])
-
-    const fetchData = useCallback(async () => {
-      const cleanedQueryString = cleanString(queryString)
-
-      const {
-        data: { searchResults },
-      } = await client.query<Query, QuerySearchResultsArgs>({
-        query: GET_SEARCH_RESULTS_QUERY,
-        variables: {
-          query: {
-            queryString: cleanedQueryString ? `${cleanedQueryString}*` : '',
-            language: activeLocale as ContentLanguage,
-          },
-        },
-      })
-
-      setOptions(
-        searchResults.items.map((x) => ({
-          label: x.title,
-          value: x.slug,
-          component: (props) => {
-            const qs = cleanedQueryString.toLowerCase()
-            const str = x.title.toLowerCase()
-
-            const indexes = [...str['matchAll'](new RegExp(qs, 'gi'))]
-              .map((a) => a.index)
-              .reverse()
-
-            let newStr = `<strong>${x.title}</strong>`
-
-            indexes.forEach((idx) => {
-              const newIdx = idx + 8
-              newStr = insert(newStr, '</strong>', newIdx)
-              newStr = insert(newStr, '<strong>', newIdx + 9 + qs.length)
-            })
-
-            const optionString = newStr
-
-            return (
-              <ItemContainer {...props}>
-                <span dangerouslySetInnerHTML={{ __html: optionString }} />
-              </ItemContainer>
-            )
-          },
-        })),
-      )
-
-      setLoading(false)
-    }, [cleanString, queryString, activeLocale, client])
-
-    useEffect(() => {
-      if (isFirstRun.current) {
-        isFirstRun.current = false
-        return
-      }
-
-      if (autocomplete) {
-        fetchData()
-      }
-    }, [autocomplete, queryString, fetchData])
-
-    useEffect(() => {
-      if (options.length) {
-        setPrevOptions(options)
-      }
-    }, [options])
+    const locale = activeLocale as Locale
+    const [searchTerm, setSearchTerm] = useState(initialInputValue)
+    const search = useSearch(locale, autocomplete ? searchTerm : null)
+    const onSubmit = useSubmit(locale)
 
     return (
-      <AsyncSearch
-        ref={ref}
-        size={size}
-        label={label}
-        placeholder="Leitaðu á Ísland.is"
-        onChange={(selection: AsyncSearchOption) => {
-          return Router.push({
-            pathname: makePath('search'),
-            query: { q: selection.label },
-          })
-        }}
+      <Downshift<string>
+        id="downshift"
         initialInputValue={initialInputValue}
-        inputValue={inputValue}
-        onInputValueChange={(value) => {
-          setInputValue(value)
-          clearTimeout(timer.current)
-          setLoading(false)
-
-          if (value === '') {
-            setOptions([])
-          } else if (value === queryString) {
-            setOptions(prevOptions)
-          } else {
-            if (autocomplete) {
-              setLoading(true)
-            }
-
-            timer.current = setTimeout(
-              () => setQueryString(value),
-              DEBOUNCE_TIMER,
-            )
-          }
-        }}
-        onSubmit={onSubmit || defaultOnSubmit}
-        options={options}
-        loading={loading}
-        closeMenuOnSubmit
-        colored
-      />
+        onChange={(q) => onSubmit(q)}
+        onInputValueChange={(q) => setSearchTerm(q)}
+        itemToString={(v) => v ?? ''}
+      >
+        {({
+          highlightedIndex,
+          isOpen,
+          getRootProps,
+          getInputProps,
+          getItemProps,
+          getMenuProps,
+          openMenu,
+          closeMenu,
+          inputValue,
+        }) => (
+          <AsyncSearchInput
+            ref={ref}
+            white={white}
+            hasFocus={isOpen}
+            loading={search.isLoading}
+            rootProps={getRootProps()}
+            menuProps={{
+              comp: 'div',
+              ...getMenuProps(),
+            }}
+            buttonProps={{
+              onClick: () => onSubmit(inputValue),
+              onSubmit: () => onSubmit(inputValue),
+            }}
+            inputProps={getInputProps({
+              inputSize: size,
+              onFocus: () => openOnFocus && openMenu(),
+              placeholder,
+              colored: true,
+              onKeyDown: (e) => {
+                if (e.key === 'Enter' && highlightedIndex == null) {
+                  closeMenu()
+                  onSubmit(e.currentTarget.value)
+                }
+              },
+            })}
+          >
+            {!isEmpty(search) && (
+              <Results
+                search={search}
+                highlightedIndex={highlightedIndex}
+                getItemProps={getItemProps}
+                locale={locale}
+              />
+            )}
+          </AsyncSearchInput>
+        )}
+      </Downshift>
     )
   },
 )
 
-const ItemContainer = ({ active, colored, children }) => {
-  const activeColor = colored ? 'white' : 'blue100'
-  const inactiveColor = colored ? 'blue100' : 'white'
+const Results: FC<{
+  locale: Locale
+  search: SearchState
+  highlightedIndex: number
+  getItemProps: any
+}> = ({ locale, search, highlightedIndex, getItemProps }) => {
+  const { makePath } = useRouteNames(locale)
+
+  if (!search.term) {
+    const suggestions = search.suggestions.map((suggestion, i) => (
+      <div key={suggestion} {...getItemProps({ item: suggestion })}>
+        <Typography color={i === highlightedIndex ? 'blue400' : 'dark400'}>
+          {suggestion}
+        </Typography>
+      </div>
+    ))
+
+    const splitAt = Math.min(search.suggestions.length / 2)
+    const left = suggestions.slice(0, splitAt)
+    const right = suggestions.slice(splitAt)
+
+    return (
+      <Box display="flex" background="blue100" paddingY={2} paddingX={3}>
+        <div className={styles.menuColumn}>
+          <Stack space={2}>
+            <Typography variant="eyebrow" color="blue400">
+              Algeng leitarorð
+            </Typography>
+            {left}
+          </Stack>
+        </div>
+        <div className={styles.separator} />
+        <div className={styles.menuColumn}>
+          <Stack space={2}>{right}</Stack>
+        </div>
+      </Box>
+    )
+  }
 
   return (
-    <Box
-      display="flex"
-      background={active ? activeColor : inactiveColor}
-      flexDirection="column"
-      padding={2}
-      paddingY={3}
-    >
-      {children}
+    <Box display="flex" background="blue100" paddingY={2} paddingX={3}>
+      <div className={styles.menuColumn}>
+        <Stack space={1}>
+          {search.suggestions.map((suggestion, i) => (
+            <div key={suggestion} {...getItemProps({ item: suggestion })}>
+              <Typography
+                color={i === highlightedIndex ? 'blue400' : 'dark400'}
+              >
+                {suggestion.slice(0, search.term.length)}
+                <strong>{suggestion.slice(search.term.length)}</strong>
+              </Typography>
+            </div>
+          ))}
+        </Stack>
+      </div>
+      <div className={styles.separator} />
+      <div className={styles.menuColumn}>
+        {search.results && (
+          <Stack space={2}>
+            <Typography variant="eyebrow" color="purple400">
+              Beint að efninu
+            </Typography>
+            {search.results.items.map(({ id, title, slug }) => (
+              <Typography key={id} links variant="h5" color="blue400">
+                <Link href={makePath('article', slug)}>
+                  <a>{title}</a>
+                </Link>
+              </Typography>
+            ))}
+          </Stack>
+        )}
+      </div>
     </Box>
   )
 }
