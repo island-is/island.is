@@ -81,7 +81,7 @@ export const OnSubmit: FC = () => {
     <Box padding={2}>
       <Stack space={2}>
         <AsyncSearch
-          useFilter
+          filter
           onSubmit={(inputValue, selectedOption) =>
             window.alert('Submit ' + inputValue || selectedOption.value + '!')
           }
@@ -179,7 +179,7 @@ export const CustomItem: FC = () => {
           colored={colored}
           size={large ? 'large' : 'medium'}
           options={customItems}
-          useFilter
+          filter
         />
       </Stack>
     </Box>
