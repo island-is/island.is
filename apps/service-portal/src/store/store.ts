@@ -1,17 +1,19 @@
-import Cookies from 'js-cookie'
-
 import { ServicePortalModule } from '@island.is/service-portal/core'
 import { SubjectListDto } from '../mirage-server/models/subject'
-import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
-import jwtDecode from 'jwt-decode'
-import { JwtToken } from '../mirage-server/models/jwt-model'
 import { modules } from './modules'
+import {
+  User,
+  UserManager,
+  WebStorageStateStore,
+  InMemoryWebStorage,
+} from 'oidc-client'
 
 type NotificationSidebarState = 'open' | 'closed'
 
 export type Action =
   | { type: 'setUserPending' }
-  | { type: 'setUserFulfilled'; payload: JwtToken }
+  | { type: 'setuserLoggedOut' }
+  | { type: 'setUserFulfilled'; payload: User }
   | { type: 'fetchSubjectListPending' }
   | { type: 'fetchSubjectListFulfilled'; payload: SubjectListDto[] }
   | { type: 'fetchSubjectListFailed' }
@@ -20,25 +22,42 @@ export type Action =
 export type AsyncActionState = 'passive' | 'pending' | 'fulfilled' | 'failed'
 
 export interface StoreState {
-  userInfo: JwtToken | null
+  userInfo: User
   userInfoState: AsyncActionState
   modules: ServicePortalModule[]
   navigationState: AsyncActionState
   subjectList: SubjectListDto[]
   subjectListState: AsyncActionState
   notificationSidebarState: NotificationSidebarState
+  userManager?: UserManager
 }
 
-const authCookie = Cookies.get(MOCK_AUTH_KEY) as string
+const settings = {
+  authority: 'https://siidentityserverweb20200805020732.azurewebsites.net/',
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  client_id: 'island-is-1',
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  silent_redirect_uri: `http://localhost:4200/silent/signin-oidc`,
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  redirect_uri: `http://localhost:4200/signin-oidc`,
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  response_type: 'code',
+  revokeAccessTokenOnSignout: true,
+  loadUserInfo: true,
+  automaticSilentRenew: true,
+  scope: 'openid profile offline_access',
+  userStore: new WebStorageStateStore({ store: new InMemoryWebStorage() }),
+}
 
 export const initialState: StoreState = {
-  userInfo: authCookie ? jwtDecode(authCookie) : null,
+  userInfo: null,
   userInfoState: 'passive',
   modules: modules,
   navigationState: 'passive',
   subjectList: [],
   subjectListState: 'passive',
   notificationSidebarState: 'open',
+  userManager: new UserManager(settings),
 }
 
 export const reducer = (state: StoreState, action: Action): StoreState => {
@@ -74,6 +93,10 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
       return {
         ...state,
         notificationSidebarState: action.payload,
+      }
+    case 'setuserLoggedOut':
+      return {
+        ...initialState
       }
     default:
       return state

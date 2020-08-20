@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom'
 import * as styles from './UserMenu.treat'
 import { useStore } from '../../store/stateProvider'
 import useSubjects from '../../hooks/useSubjects/useSubjects'
-import useUserInfo from '../../hooks/useUserInfo/useUserInfo'
 import { Box, Icon } from '@island.is/island-ui/core'
 import Menu from './Menu/Menu'
 import useOutsideClick from '../../hooks/useOutsideClick/useOutsideClick'
@@ -14,13 +13,12 @@ const UserMenu: FC<{}> = () => {
   const history = useHistory()
   const [{ userInfo }] = useStore()
   const { subjectList } = useSubjects()
-  const { setUser } = useUserInfo()
 
   useOutsideClick(ref, () => setIsOpen(false))
 
   const handleSelection = async (subjectNationalId: string) => {
     setIsOpen(false)
-    await setUser(userInfo.actor.nationalId, subjectNationalId)
+    //await setUser(userInfo.actor.nationalId, subjectNationalId)
     history.push('/')
   }
 
@@ -31,7 +29,7 @@ const UserMenu: FC<{}> = () => {
         onClick={setIsOpen.bind(null, !isOpen)}
       >
         <div className={styles.avatar} />
-        <div className={styles.username}>{userInfo.sub.name}</div>
+        <div className={styles.username}>{userInfo.profile.name}</div>
         <Box marginLeft={3}>
           <Icon type="cheveron" width="10px" height="12px" />
         </Box>

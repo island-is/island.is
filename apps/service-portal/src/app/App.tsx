@@ -2,8 +2,8 @@ import React from 'react'
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { makeServer } from 'apps/service-portal/mirage-server'
-import { Login } from '../screens/login/login'
+
+import { makeServer } from '../../mirage-server'
 import { StateProvider } from '../store/stateProvider'
 import { ApolloProvider } from '@apollo/react-hooks'
 import * as store from '../store/store'
@@ -14,11 +14,12 @@ import Layout from '../components/Layout/Layout'
 import Modules from '../components/Modules/Modules'
 import * as styles from './App.treat'
 import './App.css'
+import OidcSignIn from '../components/Authenticator/OidcSignIn'
+import OidcSilentSignIn from '../components/Authenticator/OidcSilentSignIn'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 
 export const App = () => {
   makeServer()
-
   return (
     <div className={styles.page}>
       <Router>
@@ -28,8 +29,11 @@ export const App = () => {
             reducer={store.reducer}
           >
             <Switch>
-              <Route path={ServicePortalPath.MinarSidurInnskraning}>
-                <Login />
+              <Route path="/signin-oidc">
+                <OidcSignIn />
+              </Route>
+              <Route path="/silent/signin-oidc">
+                <OidcSilentSignIn />
               </Route>
               <Authenticator>
                 <Layout>

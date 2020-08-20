@@ -1,11 +1,7 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
-
 import * as styles from './Menu.treat'
-// eslint-disable-next-line
-import { JwtToken } from 'apps/service-portal/src/mirage-server/models/jwt-model'
-// eslint-disable-next-line
-import { SubjectListDto } from 'apps/service-portal/src/mirage-server/models/subject'
+import { SubjectListDto } from '../../../mirage-server/models/subject'
 import {
   Box,
   Icon,
@@ -13,15 +9,14 @@ import {
   Divider,
   Button,
 } from '@island.is/island-ui/core'
-import { Link, useHistory } from 'react-router-dom'
-// eslint-disable-next-line
-import { removeToken } from 'apps/service-portal/src/auth/utils'
-import { MOCK_AUTH_KEY } from '@island.is/service-portal/constants'
+import { Link } from 'react-router-dom'
+import { User } from 'oidc-client'
 import { ServicePortalPath } from '@island.is/service-portal/core'
+import useUserInfo from '../../../hooks/useUserInfo/useUserInfo'
 
 interface Props {
   isOpen: boolean
-  userInfo: JwtToken
+  userInfo: User
   subjectList: SubjectListDto[]
   onSubjectSelection: (subjectNationalId: string) => void
   onCloseMenu: () => void
@@ -35,13 +30,10 @@ export const Menu: FC<Props> = ({
 }) => {
   const personSubjects = subjectList.filter((x) => x.subjectType === 'person')
   const companySubjects = subjectList.filter((x) => x.subjectType === 'company')
-  const history = useHistory()
+  const { logoutUser } = useUserInfo()
 
-  const handleLogout = async () => {
-    await removeToken()
-    // TODO: Loading state, Hard reload?
-    localStorage.removeItem(MOCK_AUTH_KEY)
-    history.push('/innskraning')
+  const handleLogout = () => {
+    logoutUser()
   }
 
   return (

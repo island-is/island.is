@@ -1,5 +1,6 @@
 import { LazyExoticComponent, FC } from 'react'
 import { IconTypes } from '@island.is/island-ui/core'
+import { User } from 'oidc-client'
 // eslint-disable-next-line
 import { JwtToken } from 'apps/service-portal/src/mirage-server/models/jwt-model'
 import { ServicePortalPath } from './navigation/paths'
@@ -13,7 +14,7 @@ export interface ServicePortalNavigationItem {
 }
 
 interface ServicePortalModuleProps {
-  userInfo: JwtToken
+  userInfo: User
 }
 
 export type ServicePortalModuleComponent = FC<ServicePortalModuleProps>
@@ -40,7 +41,7 @@ export type ServicePortalRoute = {
   /**
    * The render value of this component
    */
-  render: (userInfo: JwtToken) => ServicePortalModuleRenderValue
+  render: (userInfo: User) => ServicePortalModuleRenderValue
 }
 
 export type ServicePortalWidget = {
@@ -56,7 +57,7 @@ export type ServicePortalWidget = {
   /**
    * The render value of this widget
    */
-  render: (userInfo: JwtToken) => ServicePortalModuleRenderValue
+  render: (userInfo: User) => ServicePortalModuleRenderValue
 }
 
 export interface ServicePortalModule {
@@ -68,13 +69,13 @@ export interface ServicePortalModule {
    * An optional render value of widgets that should
    * be displayed on the dashboard
    */
-  widgets: (userInfo: JwtToken) => ServicePortalWidget[]
+  widgets: (userInfo: User) => ServicePortalWidget[]
   /**
    * The routes defined by this module.
    * The service portal shell will define these as routes
    * within itself and use the provided render function to render out the component
    */
-  routes: (userInfo: JwtToken) => ServicePortalRoute[]
+  routes: (userInfo: User) => ServicePortalRoute[]
   /**
    * Proposal:
    * All paths provided by this module.

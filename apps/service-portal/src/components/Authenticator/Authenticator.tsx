@@ -1,27 +1,33 @@
-import React, { FC } from 'react'
-import { Route, Redirect } from 'react-router-dom'
-import { isAuthenticated } from '../../auth/utils'
+import React, { FC, useEffect } from 'react'
+import { Route } from 'react-router-dom'
+import { useStore } from '../../store/stateProvider'
 
-export interface AuthenticatorProps {
-  something?: string
-}
+export const Authenticator: FC = ({ children, ...rest }) => {
+  const [{ userInfo, userManager }, dispatch] = useStore()
 
-export const Authenticator: FC<AuthenticatorProps> = ({
-  children,
-  ...rest
-}) => {
+  useEffect(() => {
+    async function refresh() {
+      dispatch({
+        type: 'setUserPending',
+      })
+
+      try {
+        const user = await userManager.signinSilent()
+        dispatch({
+          type: 'setUserFulfilled',
+          payload: user,
+        })
+      } catch (exception) {
+        userManager.signinRedirect()
+      }
+    }
+    refresh()
+  }, [])
+
   return (
     <Route
       {...rest}
-      render={({ location }) =>
-        isAuthenticated() ? (
-          children
-        ) : (
-          <Redirect
-            to={{ pathname: '/innskraning', state: { from: location } }}
-          />
-        )
-      }
+      render={({ location }) => (userInfo ? children : <h2>loading..</h2>)}
     />
   )
 }
