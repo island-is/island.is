@@ -3,14 +3,14 @@ import { Image } from './image.model'
 
 @ObjectType()
 export class FrontpageSlide {
-  @Field()
-  subtitle: string
+  @Field({ nullable: true })
+  subtitle?: string
 
-  @Field()
-  title: string
+  @Field({ nullable: true })
+  title?: string
 
-  @Field()
-  content: string
+  @Field({ nullable: true })
+  content?: string
 
   @Field(() => Image, { nullable: true })
   image?: Image

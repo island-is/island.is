@@ -1,9 +1,17 @@
 import { style } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const container = style({
   width: '100%',
-  display: 'inline-block',
+  margin: '0 auto',
+  maxWidth: '1120px',
+  display: 'block',
+})
+
+export const link = style({
+  ':hover': {
+    textDecoration: 'none',
+  },
 })
 
 export const tabWrapper = style({
@@ -18,17 +26,19 @@ export const content = style({
   display: 'flex',
   position: 'relative',
   width: '100%',
-  //outline: '1px solid red',
 })
 
 export const tabPanel = style({
   position: 'absolute',
+  maxWidth: '660px',
+  width: '100%',
   top: 0,
+  left: 0,
+  right: 0,
   opacity: 0,
   pointerEvents: 'none',
-  background: theme.color.blue100,
-  outline: '1px solid green',
-  transition: `opacity 1000ms ease`,
+  outline: 0,
+  transition: `opacity 300ms ease 0ms`,
 })
 
 export const tabPanelVisible = style({
@@ -37,6 +47,19 @@ export const tabPanelVisible = style({
   display: 'inline-block',
   width: '100%',
   pointerEvents: 'initial',
+  transition: `opacity 600ms ease 300ms`,
+})
+
+export const textItem = style({
+  position: 'relative',
+  display: 'inline-block',
+  transform: `translateX(-25%)`,
+  transition: `all 600ms ease`,
+})
+
+export const textItemVisible = style({
+  opacity: 1,
+  transform: `translateY(0)`,
 })
 
 export const tabBullet = style({
@@ -73,9 +96,10 @@ export const dots = style({
 })
 
 export const image = style({
-  position: 'relative',
-  display: 'inline-block',
+  display: 'inline-flex',
   width: '100%',
+  justifyContent: 'center',
+  alignItems: 'center',
 })
 
 export const imageContainer = style({
@@ -83,7 +107,19 @@ export const imageContainer = style({
   display: 'flex',
   overflow: 'hidden',
   width: '100%',
-  maxWidth: '440px',
   alignItems: 'center',
   justifyContent: 'center',
+  ...themeUtils.responsiveStyle({
+    xs: {
+      display: 'none',
+      maxWidth: '220px',
+    },
+    lg: {
+      display: 'flex',
+      maxWidth: '300px',
+    },
+    xl: {
+      maxWidth: '440px',
+    },
+  }),
 })

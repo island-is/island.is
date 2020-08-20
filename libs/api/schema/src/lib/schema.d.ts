@@ -115,23 +115,20 @@ export type Image = {
   height: Scalars['Int']
 }
 
-<<<<<<< HEAD
-=======
 export type FrontpageSlide = {
   __typename?: 'FrontpageSlide'
-  subtitle: Scalars['String']
-  title: Scalars['String']
-  content: Scalars['String']
+  subtitle?: Maybe<Scalars['String']>
+  title?: Maybe<Scalars['String']>
+  content?: Maybe<Scalars['String']>
   image?: Maybe<Image>
   link?: Maybe<Scalars['String']>
 }
 
-export type FrontpageSlides = {
-  __typename?: 'FrontpageSlides'
+export type FrontpageSliderList = {
+  __typename?: 'FrontpageSliderList'
   items: Array<FrontpageSlide>
 }
 
->>>>>>> More work on frontpage slider component
 export type News = {
   __typename?: 'News'
   id: Scalars['String']
@@ -384,6 +381,7 @@ export type Query = {
   getLandingPage?: Maybe<LandingPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
   getAdgerdirPages?: Maybe<AdgerdirPages>
+  getFrontpageSliderList?: Maybe<FrontpageSliderList>
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
   getApplication?: Maybe<Application>
@@ -439,6 +437,10 @@ export type QueryGetAdgerdirPageArgs = {
 
 export type QueryGetAdgerdirPagesArgs = {
   input: GetAdgerdirPagesInput
+}
+
+export type QueryGetFrontpageSliderListArgs = {
+  input: GetFrontpageSliderListInput
 }
 
 export type QueryGetAdgerdirFrontpageArgs = {
@@ -533,8 +535,8 @@ export type GetAdgerdirPagesInput = {
   perPage?: Maybe<Scalars['Int']>
 }
 
-export type GetAdgerdirFrontpageInput = {
-  lang: Scalars['String']
+export type GetFrontpageSliderListInput = {
+  lang?: Maybe<Scalars['String']>
 }
 
 export type GetMenuInput = {
@@ -745,6 +747,8 @@ export type ResolversTypes = {
   AdgerdirPages: ResolverTypeWrapper<AdgerdirPages>
   AdgerdirFrontpage: ResolverTypeWrapper<AdgerdirFrontpage>
   Image: ResolverTypeWrapper<Image>
+  FrontpageSlide: ResolverTypeWrapper<FrontpageSlide>
+  FrontpageSliderList: ResolverTypeWrapper<FrontpageSliderList>
   News: ResolverTypeWrapper<News>
   Pagination: ResolverTypeWrapper<Pagination>
   PaginatedNews: ResolverTypeWrapper<PaginatedNews>
@@ -812,6 +816,7 @@ export type ResolversTypes = {
   GetLandingPageInput: GetLandingPageInput
   GetAdgerdirPageInput: GetAdgerdirPageInput
   GetAdgerdirPagesInput: GetAdgerdirPagesInput
+  GetFrontpageSliderListInput: GetFrontpageSliderListInput
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
   GetApplicationInput: GetApplicationInput
@@ -839,6 +844,8 @@ export type ResolversParentTypes = {
   AdgerdirPages: AdgerdirPages
   AdgerdirFrontpage: AdgerdirFrontpage
   Image: Image
+  FrontpageSlide: FrontpageSlide
+  FrontpageSliderList: FrontpageSliderList
   News: News
   Pagination: Pagination
   PaginatedNews: PaginatedNews
@@ -900,6 +907,7 @@ export type ResolversParentTypes = {
   GetLandingPageInput: GetLandingPageInput
   GetAdgerdirPageInput: GetAdgerdirPageInput
   GetAdgerdirPagesInput: GetAdgerdirPagesInput
+  GetFrontpageSliderListInput: GetFrontpageSliderListInput
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
   GetApplicationInput: GetApplicationInput
@@ -1063,23 +1071,21 @@ export type ImageResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-<<<<<<< HEAD
-=======
 export type FrontpageSlideResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['FrontpageSlide'] = ResolversParentTypes['FrontpageSlide']
 > = {
-  subtitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  subtitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export type FrontpageSlidesResolvers<
+export type FrontpageSliderListResolvers<
   ContextType = Context,
-  ParentType extends ResolversParentTypes['FrontpageSlides'] = ResolversParentTypes['FrontpageSlides']
+  ParentType extends ResolversParentTypes['FrontpageSliderList'] = ResolversParentTypes['FrontpageSliderList']
 > = {
   items?: Resolver<
     Array<ResolversTypes['FrontpageSlide']>,
@@ -1089,7 +1095,6 @@ export type FrontpageSlidesResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
->>>>>>> More work on frontpage slider component
 export type NewsResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['News'] = ResolversParentTypes['News']
@@ -1525,6 +1530,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetAdgerdirPagesArgs, 'input'>
   >
+  getFrontpageSliderList?: Resolver<
+    Maybe<ResolversTypes['FrontpageSliderList']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetFrontpageSliderListArgs, 'input'>
+  >
   getAdgerdirFrontpage?: Resolver<
     Maybe<ResolversTypes['AdgerdirFrontpage']>,
     ParentType,
@@ -1574,6 +1585,8 @@ export type Resolvers<ContextType = Context> = {
   AdgerdirPages?: AdgerdirPagesResolvers<ContextType>
   AdgerdirFrontpage?: AdgerdirFrontpageResolvers<ContextType>
   Image?: ImageResolvers<ContextType>
+  FrontpageSlide?: FrontpageSlideResolvers<ContextType>
+  FrontpageSliderList?: FrontpageSliderListResolvers<ContextType>
   News?: NewsResolvers<ContextType>
   Pagination?: PaginationResolvers<ContextType>
   PaginatedNews?: PaginatedNewsResolvers<ContextType>

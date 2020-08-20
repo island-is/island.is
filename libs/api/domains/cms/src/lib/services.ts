@@ -9,6 +9,7 @@ import { AdgerdirPage } from './models/adgerdirPage.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { LandingPage } from './models/landingPage.model'
 import { FrontpageSlide } from './models/frontpageSlide.model'
+import { FrontpageSliderList } from './models/frontpageSliderList.model'
 import { News } from './models/news.model'
 import { Link } from './models/link.model'
 import { LinkList } from './models/linkList.model'
@@ -323,18 +324,25 @@ export const getAdgerdirPages = async (lang = 'is-IS') => {
   }
 }
 
-export const getFrontpageSlides = async (lang = 'is-IS') => {
+export const getFrontpageSliderList = async (lang = 'is-IS') => {
   const params = {
-    ['content_type']: 'frontpageSlider',
+    ['content_type']: 'frontpageSliderList',
     include: 10,
+    limit: 1,
   }
 
-  const r = await getLocalizedEntries<FrontpageSlide>(lang, params).catch(
-    errorHandler('getFrontpageSlides'),
+  const r = await getLocalizedEntries<FrontpageSliderList>(lang, params).catch(
+    errorHandler('getFrontpageSliderList'),
   )
 
+  let items = []
+
+  if (r.items && r.items[0].fields?.items) {
+    items = r.items && r.items[0].fields?.items
+  }
+
   return {
-    items: r.items.map(formatFrontpageSlide),
+    items: items.map((x) => formatFrontpageSlide(x)),
   }
 }
 
