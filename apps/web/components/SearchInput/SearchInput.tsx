@@ -28,6 +28,7 @@ import {
 } from '@island.is/island-ui/core'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import * as styles from './SearchInput.treat'
+import { Locale } from '@island.is/web/i18n/I18n'
 
 const DEBOUNCE_TIMER = 300
 
