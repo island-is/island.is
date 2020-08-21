@@ -1,8 +1,7 @@
-import React, { FC, useReducer } from 'react'
+import React, { FC, useEffect, useReducer } from 'react'
 
 import {
   FormValue,
-  Form,
   FormType,
   getFormByTypeId,
 } from '@island.is/application/schema'
@@ -30,7 +29,7 @@ export const ApplicationForm: FC<ApplicationProps> = ({
   formType,
   applicationId,
   initialAnswers,
-  onApplicationCreated,
+  onApplicationCreated = () => undefined,
 }) => {
   const form = getFormByTypeId(formType)
   const [state, dispatch] = useReducer(
@@ -45,7 +44,6 @@ export const ApplicationForm: FC<ApplicationProps> = ({
       progress: 0,
       screens: [],
       sections: [],
-      applicationId,
     },
     initializeReducer,
   )
@@ -57,8 +55,14 @@ export const ApplicationForm: FC<ApplicationProps> = ({
     progress,
     sections,
     screens,
-    applicationId: existingApplicationId,
   } = state
+
+  useEffect(() => {
+    dispatch({
+      type: ActionTypes.RE_INITIALIZE,
+      payload: { formValue: initialAnswers },
+    })
+  }, [initialAnswers])
 
   return (
     <Box display="flex" flexGrow={1}>
@@ -102,14 +106,13 @@ export const ApplicationForm: FC<ApplicationProps> = ({
             prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
             shouldSubmit={activeScreen === screens.length - 1}
             setApplicationId={(id) => {
-              dispatch({ type: ActionTypes.SET_APPLICATION_ID, payload: id })
               if (onApplicationCreated) {
                 onApplicationCreated(id)
               }
             }}
             screen={screens[activeScreen]}
             section={sections[activeSection]}
-            applicationId={existingApplicationId}
+            applicationId={applicationId}
           />
         </Box>
       </Box>

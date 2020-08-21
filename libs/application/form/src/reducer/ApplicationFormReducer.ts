@@ -120,8 +120,8 @@ export const ApplicationReducer = (
             : 0) +
           1,
       )
-    case ActionTypes.SET_APPLICATION_ID:
-      return { ...state, applicationId: action.payload }
+    case ActionTypes.RE_INITIALIZE:
+      return initializeReducer({ ...state, ...action.payload })
     default:
       return state
   }

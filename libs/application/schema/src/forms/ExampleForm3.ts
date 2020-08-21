@@ -11,15 +11,12 @@ import {
   buildRadioField,
   buildTextField,
   buildSelectField,
-  buildCustomField,
 } from '../lib/fieldBuilders'
 import { Form } from '../types/Form'
 import { nationalIdRegex } from './formUtils'
-import { CustomFieldComponents } from '../types/Fields'
 import { FormType } from './FormType'
 
 const ExampleSchema = z.object({
-  country: z.string().nonempty(),
   person: z.object({
     age: z.string().refine((x) => {
       const asNumber = parseInt(x)
@@ -133,14 +130,6 @@ export const ExampleForm3: Form = buildForm({
                 },
               ],
             }),
-            buildCustomField(
-              {
-                id: 'country',
-                name: 'Where are you from?',
-                component: CustomFieldComponents.Country,
-              },
-              {},
-            ),
           ],
         }),
         buildSubSection({

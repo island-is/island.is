@@ -47,7 +47,6 @@ const Screen: FC<ScreenProps> = ({
   applicationId,
   setApplicationId,
 }) => {
-  // const [existingApplicationId, setExistingApplicationId] = useState(null) // TODO move to form reducer state
   const hookFormData = useForm<FormValue>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',

@@ -11,6 +11,7 @@ export const ConditionHandler: FC<{
   screen: FormScreen
 }> = ({ answerQuestions, formValue, screen }) => {
   const data = useWatch({ defaultValue: formValue })
+  console.log({ data, formValue, screen })
   useEffect(() => {
     const newScreen = convertLeafToScreen(screen, {
       ...formValue,
