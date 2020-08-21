@@ -1,6 +1,6 @@
 import { withLocale } from '../i18n'
 import { Subsidy } from '../screens'
-import { Screen } from '../types'
 import { withAuth } from '../auth'
+import { withApollo } from '../graphql/withApollo'
 
-export default withLocale('is')(withAuth(Subsidy as Screen))
+export default withApollo(withLocale('is')(withAuth(Subsidy)))

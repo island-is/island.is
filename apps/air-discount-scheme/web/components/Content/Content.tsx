@@ -7,6 +7,7 @@ import {
   Accordion,
   AccordionItem,
   Button,
+  Divider,
 } from '@island.is/island-ui/core'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import Link from 'next/link'
@@ -35,7 +36,6 @@ const embeddedNodes = () => ({
             <Accordion dividerOnTop={false}>
               {items.map((item, index) => {
                 const { answer, question } = item
-
                 return (
                   <AccordionItem
                     key={index}
@@ -80,6 +80,33 @@ const embeddedNodes = () => ({
       )
     },
   },
+  linkList: {
+    component: Box,
+    children: (node) => {
+      const title = node.data?.target?.fields?.title || ''
+      const links = node.data?.target?.fields?.links
+      return (
+        <Box
+          background="purple100"
+          padding={4}
+          marginBottom={3}
+          borderRadius="standard"
+        >
+          <Stack space={2}>
+            <Typography variant="h4">{title}</Typography>
+            <Divider weight="alternate" />
+            {links.map(({ fields: { text, url } }, index) => (
+              <Typography variant="p" color="blue400" key={index}>
+                <Link href={url}>
+                  <a>{text}</a>
+                </Link>
+              </Typography>
+            ))}
+          </Stack>
+        </Box>
+      )
+    },
+  },
 })
 
 const options = {
@@ -99,7 +126,6 @@ const options = {
       if (!embeddedNode) return null
 
       const Component = embeddedNode.component
-      const Wrapper = embeddedNode.wrapper
       const Cmp = () => (
         <Component
           {...(embeddedNode.processContent && {

@@ -99,7 +99,7 @@ export class AuthController {
         ...ACCESS_TOKEN_COOKIE.options,
         maxAge,
       })
-      .redirect('/nidurgreidsla') // TODO: add back cookie
+      .redirect('/min-rettindi') // TODO: add back cookie
   }
 
   @Get('/login')
