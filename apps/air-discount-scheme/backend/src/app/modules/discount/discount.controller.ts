@@ -8,7 +8,7 @@ import { DiscountLimitExceeded } from './discount.error'
 import { FlightService } from '../flight'
 
 @ApiTags('Discounts')
-@Controller('public')
+@Controller('api/public')
 export class PublicDiscountController {
   constructor(
     private readonly discountService: DiscountService,
@@ -33,7 +33,7 @@ export class PublicDiscountController {
   }
 }
 
-@Controller('private')
+@Controller('api/private')
 export class PrivateDiscountController {
   constructor(
     private readonly discountService: DiscountService,

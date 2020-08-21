@@ -7,7 +7,7 @@ import { User } from './user.model'
 import { DiscountService } from '../discount'
 
 @ApiTags('Users')
-@Controller('public')
+@Controller('api/public')
 export class PublicUserController {
   constructor(
     private readonly discountService: DiscountService,
