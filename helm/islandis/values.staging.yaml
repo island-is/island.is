@@ -2,7 +2,7 @@
 # Declare variables to be passed into your templates.
 global:
   env:
-    name: 'dev'
+    name: 'staging'
     AWS_REGION: 'eu-west-1'
   initContainer:
     env:
