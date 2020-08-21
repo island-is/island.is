@@ -51,15 +51,8 @@ const useHeadingLinks = ({
       }
 
       const yPos = Math.abs(currPos.y)
-
-      const idx = offsets.reduce((num, currentOffset, index) => {
-        const nextOffset = offsets[index + 1]
-
-        if (yPos >= currentOffset && yPos <= nextOffset) {
-          num = index
-        }
-
-        return num
+      const idx = offsets.reduce((acc, offset, index) => {
+        return yPos >= offset ? index : acc
       }, 0)
 
       setClickedIndex(null)
