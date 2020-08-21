@@ -15,8 +15,8 @@ export default [
   },
   {
     id: 3,
-    name: 'Ólafur Darri Égmaniggihvaðson',
-    nationalId: '5555555555',
-    subjectIds: [2],
+    name: 'Atli Guðlaugsson',
+    nationalId: '1507922319',
+    subjectIds: [1, 2],
   },
 ] as Actor[]

@@ -1,7 +1,6 @@
 import { Actor, ActorDto } from './actor'
 import { Subject, SubjectDto } from './subject'
 import { addHours, format } from 'date-fns'
-//@ts-ignore
 import * as jwt from 'webcrypto-jwt'
 
 export class JwtToken {

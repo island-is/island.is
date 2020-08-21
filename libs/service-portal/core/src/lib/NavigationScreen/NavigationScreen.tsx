@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { Typography, Box, Tiles } from '@island.is/island-ui/core'
 import * as styles from './NavigationScreen.treat'
 import { Link } from 'react-router-dom'
-import { Card } from '@island.is/web/components/Card/Card'
+import Card from './Card/Card'
 
 export interface NavigationScreenItem {
   name: string
