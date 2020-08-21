@@ -33,12 +33,6 @@ import {
   QueryGetNewsListArgs,
 } from '@island.is/api/schema'
 
-const PageLink = ({ children, href, ...props }) => (
-  <Link href={href}>
-    <a {...props}>{children}</a>
-  </Link>
-)
-
 interface NewsListProps {
   newsList: Query['getNewsList']['news']
   page: Query['getNewsList']['page']
@@ -180,14 +174,16 @@ const NewsList: Screen<NewsListProps> = ({
           <Box paddingTop={8}>
             <Pagination
               {...page}
-              linkComp={PageLink}
-              makeHref={(p: number) => ({
-                pathname: makePath('news'),
-                query: {
-                  ...Router.query,
-                  page: p,
-                },
-              })}
+              renderLink={(page, className, children) => (
+                <Link
+                  href={{
+                    pathname: makePath('news'),
+                    query: { ...Router.query, page },
+                  }}
+                >
+                  <a className={className}>{children}</a>
+                </Link>
+              )}
             />
           </Box>
         </Stack>

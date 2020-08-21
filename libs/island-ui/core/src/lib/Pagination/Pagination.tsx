@@ -1,44 +1,56 @@
-import React, { Fragment } from 'react'
+import React, { ReactNode, Fragment, FC, useMemo } from 'react'
 import cn from 'classnames'
-import { uniq } from 'lodash'
+import uniq from 'lodash/uniq'
 import { Icon } from '../Icon/Icon'
 import { Box } from '../Box/Box'
 import * as styles from './Pagination.treat'
 
-const range = (min: number, max: number) =>
+const range = (min: number, max: number): number[] =>
   new Array(max - min + 1).fill(0).map((_, i) => min + i)
 
 export interface PaginationProps {
   page: number
   totalPages: number
-  makeHref: (page: number) => any
-  linkComp?: React.ReactType
+  renderLink: (
+    page: number,
+    className: string,
+    children: ReactNode,
+  ) => ReactNode
 }
 
-export const Pagination = ({ page, totalPages, makeHref, linkComp }) => {
-  const Link = linkComp ?? 'a'
+export const Pagination: FC<PaginationProps> = ({
+  page,
+  totalPages,
+  renderLink,
+}) => {
+  const ranges = useMemo(() => {
+    return uniq(
+      []
+        .concat(
+          range(1, 3),
+          range(page - 1, page + 1),
+          range(totalPages - 2, totalPages),
+        )
+        .filter((p) => 1 <= p && p <= totalPages)
+        .sort((a, b) => a - b),
+    )
+  }, [page, totalPages])
 
   const renderEdgeLink = ({ page, isActive, iconType }) => {
-    return isActive ? (
-      <Link className={cn(styles.link, styles.edge)} href={makeHref(page)}>
-        <Icon type={iconType} width={16} height={16} color="purple400" />
-      </Link>
-    ) : (
+    if (isActive) {
+      return renderLink(
+        page,
+        cn(styles.link, styles.edge),
+        <Icon type={iconType} width={16} height={16} color="purple400" />,
+      )
+    }
+
+    return (
       <span className={cn(styles.link, styles.linkDisabled)}>
         <Icon type={iconType} width={16} height={16} color="purple300" />
       </span>
     )
   }
-
-  const ranges = uniq(
-    []
-      .concat(
-        range(1, 3),
-        range(page - 1, page + 1),
-        range(totalPages - 2, totalPages),
-      )
-      .filter((i) => 1 <= i && i <= totalPages),
-  )
 
   return (
     <Box display="flex" justifyContent="spaceBetween">
@@ -55,14 +67,11 @@ export const Pagination = ({ page, totalPages, makeHref, linkComp }) => {
             {i > 0 && ranges[i - 1] !== thisPage - 1 && (
               <span className={styles.gap}>&hellip;</span>
             )}
-            <Link
-              className={cn(styles.link, {
-                [styles.linkCurrent]: thisPage === page,
-              })}
-              href={makeHref(thisPage)}
-            >
-              {thisPage}
-            </Link>
+            {renderLink(
+              thisPage,
+              cn(styles.link, { [styles.linkCurrent]: thisPage === page }),
+              <>{thisPage}</>,
+            )}
           </Fragment>
         ))}
       </div>
