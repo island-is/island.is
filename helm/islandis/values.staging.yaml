@@ -15,23 +15,23 @@ web:
       cert-manager.io/cluster-issuer: devland-is-letsencrypt-dns01
 
     hosts:
-      - host: beta.stage01.devland.is
+      - host: beta.staging01.devland.is
         paths: ['/']
     tls:
       - secretName: web-tls
         hosts:
-          - beta.stage01.devland.is
+          - beta.staging01.devland.is
 
 search-indexer-service:
   serviceAccount:
     name: 'search-indexer'
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/search-indexer'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/search-indexer'
   secrets:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/search-indexer/CONTENTFUL_ACCESS_TOKEN'
   env:
     APPLICATION_URL: 'http://search-indexer-service'
-    ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
+    ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/'
     ELASTIC_INDEX: 'island-is'
     CONTENTFUL_SPACE: '8k0h54kbe6bj'
     CONTENTFUL_ENVIRONMENT: 'master'
@@ -44,37 +44,37 @@ search-indexer-service:
       cert-manager.io/cluster-issuer: devland-is-letsencrypt-dns01
       nginx.ingress.kubernetes.io/enable-global-auth: 'false'
     hosts:
-      - host: search-indexer-service.stage01.devland.is
+      - host: search-indexer-service.staging01.devland.is
         paths: ['/']
     tls:
       - secretName: search-indexer-service-tls
         hosts:
-          - search-indexer-service.stage01.devland.is
+          - search-indexer-service.staging01.devland.is
 
   initContainer:
     env:
-      ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
+      ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/'
       APPLICATION_URL: 'http://search-indexer-service'
       ELASTIC_INDEX: 'island-is'
-      S3_BUCKET: 'dev-es-custom-packages'
+      S3_BUCKET: 'staging-es-custom-packages'
 api:
   serviceAccount:
     name: 'api'
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/api'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/api'
   secrets:
     CONTENTFUL_ACCESS_TOKEN: '/k8s/api/CONTENTFUL_ACCESS_TOKEN'
   env:
-    ELASTIC_NODE: 'https://vpc-search-njkekqydiegezhr4vqpkfnw5la.eu-west-1.es.amazonaws.com'
+    ELASTIC_NODE: 'https://vpc-search-q6hdtjcdlhkffyxvrnmzfwphuq.eu-west-1.es.amazonaws.com/'
     CONTENTFUL_HOST: 'cdn.contentful.com'
   ingress:
     annotations:
       kubernetes.io/ingress.class: nginx-external
       cert-manager.io/cluster-issuer: devland-is-letsencrypt-dns01
     hosts:
-      - host: beta.stage01.devland.is
+      - host: beta.staging01.devland.is
         paths: ['/api']
     tls:
       - secretName: web-tls
         hosts:
-          - beta.stage01.devland.is
+          - beta.staging01.devland.is
