@@ -17,11 +17,11 @@ beforeAll(async () => {
 })
 
 describe('Create DiscountCode', () => {
-  it(`POST /private/users/:nationalId/discounts should return data`, async () => {
+  it(`POST /api/private/users/:nationalId/discounts should return data`, async () => {
     const nationalId = '1326487905'
     const spy = jest.spyOn(cacheManager, 'set')
     const response = await request(app.getHttpServer())
-      .post(`/private/users/${nationalId}/discounts`)
+      .post(`/api/private/users/${nationalId}/discounts`)
       .expect(201)
 
     expect(response.body).toEqual({
@@ -32,12 +32,12 @@ describe('Create DiscountCode', () => {
     expect(spy).toHaveBeenCalled()
   })
 
-  it(`POST /private/users/:nationalId/discounts with no flightlegs left should return forbidden`, async () => {
+  it(`POST /api/private/users/:nationalId/discounts with no flightlegs left should return forbidden`, async () => {
     const spy = jest
       .spyOn(flightService, 'countFlightLegsLeftByNationalId')
       .mockImplementation(() => Promise.resolve(0))
     await request(app.getHttpServer())
-      .post('/private/users/1326487905/discounts')
+      .post('/api/private/users/1326487905/discounts')
       .expect(403)
     spy.mockRestore()
   })
