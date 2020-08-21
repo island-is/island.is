@@ -5,7 +5,7 @@ module.exports = {
     return queryInterface.sequelize.query(`
       BEGIN;
 
-        CREATE UNIQUE INDEX national_id_and_invalid_idx ON flight (national_id, invalid);
+        CREATE INDEX national_id_and_invalid_idx ON flight (national_id, invalid);
 
       COMMIT;
     `)
