@@ -309,7 +309,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
-        run: ./scripts/run-in-parallel.sh docker-express
+        run: ./scripts/run-in-parallel.sh docker-next
 
   publish:
     runs-on: ubuntu-latest
