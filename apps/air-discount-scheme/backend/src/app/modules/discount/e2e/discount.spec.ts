@@ -16,69 +16,26 @@ beforeAll(async () => {
   Date.now = jest.fn(() => 1597760782018)
 })
 
-describe('Get Discount By DiscountCode', () => {
-  it(`GET /public/users/:nationalId/discounts/:discountCode should return data`, async () => {
-    const nationalId = '1326487905'
-    const spy = jest
-      .spyOn(cacheManager, 'get')
-      .mockImplementation(() => Promise.resolve({ nationalId }))
-    const response = await request(app.getHttpServer())
-      .get(`/public/users/${nationalId}/discounts/12345678`)
-      .expect(200)
-    spy.mockRestore()
-
-    expect(response.body).toEqual({
-      discountCode: '12345678',
-      flightLegsLeft: 4,
-      nationalId: '1326487905',
-    })
-  })
-
-  it('GET /public/users/:nationalId/discounts/:discountCode with wrong format for discountCode should return bad request', async () => {
-    await request(app.getHttpServer())
-      .get('/public/users/1326487905/discounts/1234567')
-      .expect(400)
-  })
-
-  it('GET /public/users/:nationalId/discount/:discountCode with wrong format on nationalId should return bad request', async () => {
-    await request(app.getHttpServer())
-      .get('/public/users/123456789/discounts/12345678')
-      .expect(400)
-  })
-
-  it('GET /public/users/:nationalId/discount/:discountCode with no flightLegs left should return forbidden', async () => {
-    const nationalId = '1326487905'
-    const cacheSpy = jest
-      .spyOn(cacheManager, 'get')
-      .mockImplementation(() => Promise.resolve({ nationalId }))
-    const flightSpy = jest
-      .spyOn(flightService, 'countFlightLegsByNationalId')
-      .mockImplementation(() => Promise.resolve(4))
-    await request(app.getHttpServer())
-      .get(`/public/users/${nationalId}/discounts/12345678`)
-      .expect(403)
-    cacheSpy.mockRestore()
-    flightSpy.mockRestore()
-  })
-})
-
 describe('Create DiscountCode', () => {
   it(`POST /private/users/:nationalId/discounts should return data`, async () => {
+    const nationalId = '1326487905'
+    const spy = jest.spyOn(cacheManager, 'set')
     const response = await request(app.getHttpServer())
-      .post('/private/users/1326487905/discounts')
+      .post(`/private/users/${nationalId}/discounts`)
       .expect(201)
 
     expect(response.body).toEqual({
       discountCode: expect.any(String),
-      flightLegsLeft: 4,
-      nationalId: '1326487905',
+      expires: '2020-08-19T14:26:22.018Z',
+      nationalId,
     })
+    expect(spy).toHaveBeenCalled()
   })
 
   it(`POST /private/users/:nationalId/discounts with no flightlegs left should return forbidden`, async () => {
     const spy = jest
-      .spyOn(flightService, 'countFlightLegsByNationalId')
-      .mockImplementation(() => Promise.resolve(4))
+      .spyOn(flightService, 'countFlightLegsLeftByNationalId')
+      .mockImplementation(() => Promise.resolve(0))
     await request(app.getHttpServer())
       .post('/private/users/1326487905/discounts')
       .expect(403)

@@ -1,19 +1,24 @@
 import { setup } from '../../../../../test/setup'
 import * as request from 'supertest'
-import { INestApplication } from '@nestjs/common'
+import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
+import CacheManger from 'cache-manager'
 
 let app: INestApplication
+let cacheManager: CacheManger
 
 beforeAll(async () => {
   app = await setup()
+  cacheManager = app.get<CacheManger>(CACHE_MANAGER)
 })
 
 describe('Create Flight', () => {
-  it(`POST /public/flight should create a flight`, async () => {
+  it(`POST /public/discounts/:discountCode/flights should create a flight`, async () => {
+    const spy = jest
+      .spyOn(cacheManager, 'get')
+      .mockImplementation(() => ({ nationalId: '1234567890' }))
     const response = await request(app.getHttpServer())
-      .post('/public/flight')
+      .post('/public/discounts/12345678/flights')
       .send({
-        nationalId: '1234567890',
         bookingDate: '2020-08-17T12:35:50.971Z',
         flightLegs: [
           {
@@ -66,11 +71,13 @@ describe('Create Flight', () => {
         },
       ],
     })
+
+    spy.mockRestore()
   })
 
-  it('POST /public/flight should return bad request when flightLegs are omitted', async () => {
+  it('POST /public/discounts/:discountCode/flights should return bad request when flightLegs are omitted', async () => {
     await request(app.getHttpServer())
-      .post('/public/flight')
+      .post('/public/discounts/12345678/flights')
       .send({
         nationalId: '1234567890',
         bookingDate: '2020-08-17T12:35:50.971Z',
@@ -81,10 +88,12 @@ describe('Create Flight', () => {
 
 describe('Delete Flight', () => {
   it(`DELETE /public/flight/:flightId should delete a flight`, async () => {
+    const spy = jest
+      .spyOn(cacheManager, 'get')
+      .mockImplementation(() => ({ nationalId: '1234567890' }))
     const createRes = await request(app.getHttpServer())
-      .post('/public/flight')
+      .post('/public/discounts/12345678/flights')
       .send({
-        nationalId: '1234567890',
         bookingDate: '2020-08-17T12:35:50.971Z',
         flightLegs: [
           {
@@ -104,13 +113,14 @@ describe('Delete Flight', () => {
         ],
       })
       .expect(201)
+    spy.mockRestore()
 
     await request(app.getHttpServer())
-      .delete(`/public/flight/${createRes.body.id}`)
+      .delete(`/public/flights/${createRes.body.id}`)
       .expect(204)
 
     const getRes = await request(app.getHttpServer())
-      .get(`/private/flight`)
+      .get(`/private/flights`)
       .expect(200)
 
     expect(getRes.body.length).toBe(0)
@@ -118,13 +128,13 @@ describe('Delete Flight', () => {
 
   it(`DELETE /public/flight/:flightId should validate flightId`, async () => {
     await request(app.getHttpServer())
-      .delete('/public/flight/this-is-not-uuid')
+      .delete('/public/flights/this-is-not-uuid')
       .expect(400)
   })
 
   it(`DELETE /public/flight/:flightId should return not found if flight does not exist`, async () => {
     await request(app.getHttpServer())
-      .delete('/public/flight/dfac526d-5dc0-4748-b858-3d9cd2ae45be')
+      .delete('/public/flights/dfac526d-5dc0-4748-b858-3d9cd2ae45be')
       .expect(404)
   })
 })

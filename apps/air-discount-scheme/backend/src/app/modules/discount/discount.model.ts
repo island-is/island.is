@@ -1,14 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 export class Discount {
-  constructor(
-    discountCode: string,
-    nationalId: string,
-    flightLegsLeft: number,
-  ) {
+  constructor(discountCode: string, nationalId: string, ttl: number) {
     this.discountCode = discountCode
     this.nationalId = nationalId
-    this.flightLegsLeft = flightLegsLeft
+    this.expires = new Date(Date.now() + ttl * 1000)
   }
 
   @ApiProperty()
@@ -18,5 +14,5 @@ export class Discount {
   nationalId: string
 
   @ApiProperty()
-  flightLegsLeft: number
+  expires: Date
 }

@@ -1,14 +1,8 @@
 import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
 import CacheManager from 'cache-manager'
-import { Discount } from './discount.model'
-import { FlightService } from '../flight'
-import { DiscountLimitExceeded, DiscountCodeInvalid } from './discount.error'
 
-const DEFAULT_AVAILABLE_LEGS = 6
-const AVAILABLE_FLIGHT_LEGS = {
-  '2020': 4,
-  '2021': 6,
-}
+import { Discount } from './discount.model'
+import { DiscountCodeInvalid } from './discount.error'
 
 const DISCOUNT_CODE_LENGTH = 8
 
@@ -18,42 +12,10 @@ const ONE_DAY = 24 * 60 * 60
 export class DiscountService {
   constructor(
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
-    private readonly flightService: FlightService,
   ) {}
-
-  private async getFlightLegsLeft(nationalId: string) {
-    const noFlightLegs = await this.flightService.countFlightLegsByNationalId(
-      nationalId,
-    )
-
-    const currentYear = new Date(Date.now()).getFullYear().toString()
-    let availableLegsThisYear = DEFAULT_AVAILABLE_LEGS
-    if (Object.keys(AVAILABLE_FLIGHT_LEGS).includes(currentYear)) {
-      availableLegsThisYear = AVAILABLE_FLIGHT_LEGS[currentYear]
-    }
-    const flightLegsLeft = availableLegsThisYear - noFlightLegs
-    if (flightLegsLeft <= 0) {
-      throw new DiscountLimitExceeded()
-    }
-    return flightLegsLeft
-  }
 
   private getDiscountCodeCacheKey(discountCode: string) {
     return `discount_code_${discountCode}`
-  }
-
-  async findByDiscountCodeAndNationalId(
-    discountCode: string,
-    nationalId: string,
-  ): Promise<Discount> {
-    const cacheKey = this.getDiscountCodeCacheKey(discountCode)
-    const cacheValue = await this.cacheManager.get(cacheKey)
-    if (!cacheValue || cacheValue.nationalId !== nationalId) {
-      throw new DiscountCodeInvalid()
-    }
-
-    const flightLegsLeft = await this.getFlightLegsLeft(nationalId)
-    return new Discount(discountCode, nationalId, flightLegsLeft)
   }
 
   private getRandomRange(min: number, max: number) {
@@ -75,8 +37,20 @@ export class DiscountService {
     const discountCode = this.generateDiscountCode()
     const cacheKey = this.getDiscountCodeCacheKey(discountCode)
     this.cacheManager.set(cacheKey, { nationalId }, { ttl: ONE_DAY })
+    return new Discount(discountCode, nationalId, ONE_DAY)
+  }
 
-    const flightLegsLeft = await this.getFlightLegsLeft(nationalId)
-    return new Discount(discountCode, nationalId, flightLegsLeft)
+  async validateDiscount(discountCode: string): Promise<string> {
+    const cacheKey = this.getDiscountCodeCacheKey(discountCode)
+    const cacheValue = await this.cacheManager.get(cacheKey)
+    if (!cacheValue || !cacheValue.nationalId) {
+      throw new DiscountCodeInvalid()
+    }
+    return cacheValue.nationalId
+  }
+
+  async useDiscount(discountCode: string): Promise<void> {
+    const cacheKey = this.getDiscountCodeCacheKey(discountCode)
+    await this.cacheManager.del(cacheKey)
   }
 }
