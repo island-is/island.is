@@ -2,6 +2,242 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Taxonomy {
+  title: String
+  slug: String
+  description: String!
+}
+
+type Article {
+  id: String!
+  slug: String!
+  title: String!
+  content: String
+  group: Taxonomy
+  category: Taxonomy!
+}
+
+type AdgerdirPage {
+  id: String!
+  slug: String!
+  title: String!
+  description: String!
+  content: String
+}
+
+type AdgerdirPages {
+  items: [AdgerdirPage!]!
+}
+
+type AdgerdirFrontpage {
+  id: String!
+  slug: String!
+  title: String!
+  description: String!
+  content: String
+}
+
+type Image {
+  url: String!
+  title: String!
+  contentType: String!
+  width: Int!
+  height: Int!
+}
+
+type FrontpageSlide {
+  subtitle: String
+  title: String
+  content: String
+  image: Image
+  link: String
+}
+
+type FrontpageSliderList {
+  items: [FrontpageSlide!]!
+}
+
+type News {
+  id: String!
+  slug: String!
+  title: String!
+  intro: String!
+  image: Image
+  date: String!
+  content: String
+}
+
+type Pagination {
+  page: Int!
+  perPage: Int!
+  totalResults: Int!
+  totalPages: Int!
+}
+
+type PaginatedNews {
+  page: Pagination!
+  news: [News!]!
+}
+
+type Namespace {
+  namespace: String
+  fields: String
+}
+
+type Link {
+  text: String!
+  url: String!
+}
+
+type TimelineEvent {
+  id: ID!
+  title: String!
+  date: String!
+  numerator: Int
+  denominator: Int
+  label: String!
+  body: String
+  tags: [String!]!
+  link: String!
+}
+
+type Story {
+  label: String!
+  title: String!
+  logo: Image!
+  readMoreText: String!
+  date: String!
+  intro: String!
+  body: String
+}
+
+type LinkCard {
+  title: String!
+  body: String!
+  link: String!
+  linkText: String!
+}
+
+type NumberBullet {
+  id: ID!
+  title: String!
+  body: String!
+}
+
+type AboutPage {
+  title: String!
+  seoDescription: String!
+  theme: String!
+  slices: [Slice!]!
+}
+
+union Slice = PageHeaderSlice | TimelineSlice | HeadingSlice | StorySlice | LinkCardSlice | LatestNewsSlice | MailingListSignupSlice | LogoListSlice | BulletListSlice
+
+type PageHeaderSlice {
+  id: ID!
+  title: String!
+  introduction: String!
+  navigationText: String!
+  links: [Link!]!
+  slices: [Slice!]!
+}
+
+type TimelineSlice {
+  id: ID!
+  title: String!
+  events: [TimelineEvent!]!
+}
+
+type HeadingSlice {
+  id: ID!
+  title: String!
+  body: String!
+}
+
+type StorySlice {
+  id: ID!
+  readMoreText: String!
+  stories: [Story!]!
+}
+
+type LinkCardSlice {
+  id: ID!
+  title: String!
+  cards: [LinkCard!]!
+}
+
+type LatestNewsSlice {
+  id: ID!
+  title: String!
+  news: [News!]!
+}
+
+type MailingListSignupSlice {
+  id: ID!
+  title: String!
+  description: String!
+  inputLabel: String!
+  buttonText: String!
+}
+
+type LogoListSlice {
+  id: ID!
+  title: String!
+  body: String!
+  images: [Image!]!
+}
+
+type BulletListSlice {
+  id: ID!
+  bullets: [BulletEntry!]!
+}
+
+union BulletEntry = IconBullet | NumberBulletGroup
+
+type IconBullet {
+  id: ID!
+  title: String!
+  body: String!
+  icon: Image!
+  url: String
+  linkText: String
+}
+
+type NumberBulletGroup {
+  id: ID!
+  defaultVisible: Int!
+  bullets: [NumberBullet!]!
+}
+
+type LinkList {
+  title: String
+  links: [Link!]!
+}
+
+type LandingPage {
+  title: String!
+  slug: String!
+  introduction: String!
+  image: Image
+  actionButton: Link
+  links: LinkList
+  content: String
+}
+
+type GenericPage {
+  title: String!
+  slug: String!
+  intro: String
+  mainContent: String
+  sidebar: String
+  misc: String
+}
+
+type Menu {
+  title: String!
+  links: [Link!]!
+}
+
 type User {
   ssn: ID!
   name: String!
@@ -10,5 +246,78 @@ type User {
 }
 
 type Query {
+  getArticle(input: GetArticleInput!): Article
+  getNews(input: GetNewsInput!): News
+  getNewsList(input: GetNewsListInput!): PaginatedNews!
+  getNamespace(input: GetNamespaceInput!): Namespace
+  getAboutPage(input: GetAboutPageInput!): AboutPage
+  getLandingPage(input: GetLandingPageInput!): LandingPage
+  getGenericPage(input: GetGenericPageInput!): GenericPage
+  getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
+  getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages
+  getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
+  getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
+  getMenu(input: GetMenuInput!): Menu
   user: User
+}
+
+input GetArticleInput {
+  slug: String
+  lang: String!
+}
+
+input GetNewsInput {
+  slug: String!
+  lang: String
+}
+
+input GetNewsListInput {
+  lang: String
+  year: Int
+  month: Int
+  ascending: Boolean
+  page: Int
+  perPage: Int
+}
+
+input GetNamespaceInput {
+  namespace: String
+  lang: String!
+}
+
+input GetAboutPageInput {
+  lang: String!
+}
+
+input GetLandingPageInput {
+  slug: String!
+  lang: String!
+}
+
+input GetGenericPageInput {
+  slug: String!
+  lang: String!
+}
+
+input GetAdgerdirPageInput {
+  slug: String
+  lang: String!
+}
+
+input GetAdgerdirPagesInput {
+  lang: String
+  perPage: Int
+}
+
+input GetFrontpageSliderListInput {
+  lang: String
+}
+
+input GetAdgerdirFrontpageInput {
+  lang: String!
+}
+
+input GetMenuInput {
+  name: String!
+  lang: String!
 }

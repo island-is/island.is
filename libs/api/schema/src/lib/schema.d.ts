@@ -539,6 +539,10 @@ export type GetFrontpageSliderListInput = {
   lang?: Maybe<Scalars['String']>
 }
 
+export type GetAdgerdirFrontpageInput = {
+  lang: Scalars['String']
+}
+
 export type GetMenuInput = {
   name: Scalars['String']
   lang: Scalars['String']

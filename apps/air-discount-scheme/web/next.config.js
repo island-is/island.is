@@ -3,12 +3,14 @@ const withSourceMaps = require('@zeit/next-source-maps')
 // const SentryWebpackPlugin = require('@sentry/webpack-plugin')
 
 const {
-  API_URL = 'http://localhost:3333/api',
+  API_URL = 'http://localhost:4242',
   WEB_PUBLIC_URL = 'http://localhost:4200',
   SENTRY_DSN,
   // SENTRY_AUTH_TOKEN,
   NODE_ENV,
 } = process.env
+const apiPath = '/api'
+const graphqlPath = '/api/graphql'
 
 module.exports = withSourceMaps(
   withTreat({
@@ -32,12 +34,14 @@ module.exports = withSourceMaps(
     },
     serverRuntimeConfig: {
       // Will only be available on the server side
-      apiUrl: API_URL,
+      apiUrl: API_URL + apiPath,
+      graphqlEndpoint: `${API_URL}${graphqlPath}`,
     },
     publicRuntimeConfig: {
       // Will be available on both server and client
       apiUrl: `${WEB_PUBLIC_URL}/api`,
       SENTRY_DSN,
+      graphqlEndpoint: graphqlPath,
     },
   }),
 )

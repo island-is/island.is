@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
+import { CmsModule } from '@island.is/api/domains/cms'
 
 import { AuthModule, UserModule } from './modules'
 
@@ -17,6 +18,7 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
     }),
     AuthModule,
     UserModule,
+    CmsModule,
   ],
 })
 export class AppModule {}
