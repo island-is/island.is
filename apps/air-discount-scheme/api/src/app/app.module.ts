@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
+import { CmsModule } from '@island.is/api/domains/cms'
 
 import { AuthModule, UserModule, DiscountModule } from './modules'
 import { BackendAPI } from '../services'
@@ -22,6 +23,7 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
     AuthModule,
     UserModule,
     DiscountModule,
+    CmsModule,
   ],
   providers: [BackendAPI],
 })
