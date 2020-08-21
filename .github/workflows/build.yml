@@ -142,8 +142,8 @@ jobs:
       - name: Check formatting
         run: ./scripts/check_formatting.sh
 
-      - name: Linting
-        run: ./scripts/run-affected-in-parallel-native.sh lint
+      # - name: Linting
+      #   run: ./scripts/run-affected-in-parallel-native.sh lint
 
       # - name: Security audit Node modules
       #   run: ./scripts/security-audit.sh
