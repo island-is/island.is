@@ -3,9 +3,8 @@ import {
   FormLeaf,
   getFormLeaves,
   getSectionsInForm,
+  mergeAnswers,
 } from '@island.is/application/schema'
-import mergeWith from 'lodash/mergeWith'
-import isArray from 'lodash/isArray'
 import { Action, ActionTypes, ApplicationUIState } from './ReducerTypes'
 import {
   convertLeavesToScreens,
@@ -13,20 +12,6 @@ import {
   findCurrentScreen,
   moveToScreen,
 } from './reducerUtils'
-
-/*
-  Makes it so that lodash merge only uses the newer array.
-  For example: A user answers a checkbox question: ['VW', 'Tesla'],
-  then they go back and change it to ['Audi']. We want the answer to
-  be the newer version, not ['Audi', 'VW', 'Tesla']
-*/
-const mergeCustomizer = (objValue, srcValue) => {
-  if (isArray(objValue)) {
-    if (typeof objValue[0] !== 'object') {
-      return srcValue
-    }
-  }
-}
 
 export function initializeReducer(
   state: ApplicationUIState,
@@ -86,11 +71,7 @@ export const ApplicationReducer = (
       return moveToScreen(state, state.activeScreen - 1)
     case ActionTypes.ANSWER:
       // eslint-disable-next-line no-case-declarations
-      const newFormValue = mergeWith(
-        state.formValue,
-        action.payload,
-        mergeCustomizer,
-      )
+      const newFormValue = mergeAnswers(state.formValue, action.payload)
       return {
         ...state,
         formValue: newFormValue,

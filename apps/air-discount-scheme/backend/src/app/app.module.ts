@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { DiscountModule } from './modules/discount/discount.module'
-import { FlightModule } from './modules/flight/flight.module'
+
+import { DiscountModule } from './modules/discount'
+import { FlightModule } from './modules/flight'
+import { UserModule } from './modules/user'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 
 @Module({
@@ -11,6 +13,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     }),
     DiscountModule,
     FlightModule,
+    UserModule,
   ],
 })
 export class AppModule {}

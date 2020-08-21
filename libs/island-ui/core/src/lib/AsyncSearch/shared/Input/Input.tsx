@@ -1,24 +1,24 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, InputHTMLAttributes } from 'react'
 import cn from 'classnames'
 import * as styles from './Input.treat'
 
 import { AsyncSearchSizes } from '../../AsyncSearch'
 
-interface InputProps {
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   isOpen?: boolean
   colored?: boolean
   hasLabel?: boolean
   white?: boolean
-  placeholder?: string
-  size: AsyncSearchSizes
+  inputSize: AsyncSearchSizes
 }
+
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ isOpen, colored, hasLabel, size, white, ...props }, ref) => {
+  ({ isOpen, colored, hasLabel, inputSize, white, ...props }, ref) => {
     return (
       <input
-        {...props}
         spellCheck={false}
-        className={cn(styles.input, styles.sizes[size], {
+        {...props}
+        className={cn(styles.input, styles.sizes[inputSize], {
           [styles.open]: isOpen,
           [styles.colored]: colored,
           [styles.hasLabel]: hasLabel,

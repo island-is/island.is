@@ -1,7 +1,14 @@
 import { NotFoundException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+
 import { Flight, FlightLeg } from './flight.model'
 import { FlightDto } from './dto/flight.dto'
+
+const DEFAULT_AVAILABLE_LEGS = 6
+const AVAILABLE_FLIGHT_LEGS = {
+  '2020': 4,
+  '2021': 6,
+}
 
 @Injectable()
 export class FlightService {
@@ -12,19 +19,29 @@ export class FlightService {
     private flightLegModel: typeof FlightLeg,
   ) {}
 
-  async countFlightLegsByNationalId(nationalId: string): Promise<number> {
-    return this.flightModel.count({
+  async countFlightLegsLeftByNationalId(nationalId: string): Promise<number> {
+    const currentYear = new Date(Date.now()).getFullYear().toString()
+    let availableLegsThisYear = DEFAULT_AVAILABLE_LEGS
+    if (Object.keys(AVAILABLE_FLIGHT_LEGS).includes(currentYear)) {
+      availableLegsThisYear = AVAILABLE_FLIGHT_LEGS[currentYear]
+    }
+
+    const noFlightLegs = await this.flightModel.count({
       where: { nationalId, invalid: false },
       include: [this.flightLegModel],
     })
+    return availableLegsThisYear - noFlightLegs
   }
 
   async findAll(): Promise<Flight[]> {
     return this.flightModel.findAll({ where: { invalid: false } })
   }
 
-  async create(flight: FlightDto): Promise<Flight> {
-    return this.flightModel.create(flight, { include: [FlightLeg] })
+  async create(flight: FlightDto, nationalId: string): Promise<Flight> {
+    return this.flightModel.create(
+      { ...flight, nationalId },
+      { include: [FlightLeg] },
+    )
   }
 
   async delete(flightId: string): Promise<Flight> {

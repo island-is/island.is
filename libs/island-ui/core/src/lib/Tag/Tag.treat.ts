@@ -30,6 +30,10 @@ export const variants = styleMap({
     color: theme.color.blue400,
     backgroundColor: theme.color.blue100,
   },
+  darkerBlue: {
+    color: theme.color.blue600,
+    backgroundColor: theme.color.blue200,
+  },
   purple: {
     color: theme.color.purple400,
     backgroundColor: theme.color.purple100,

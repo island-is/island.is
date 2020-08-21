@@ -4,9 +4,11 @@ import * as styles from './FixedNav.treat'
 import { ContentBlock, Box, Icon, Button } from '@island.is/island-ui/core'
 import SearchInput from '../SearchInput/SearchInput'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
+import { useI18n } from '@island.is/web/i18n'
 
 export const FixedNav: FC = () => {
   const [show, setShow] = useState<boolean>(false)
+  const { activeLocale } = useI18n()
 
   useScrollPosition(
     ({ prevPos, currPos }) => {
@@ -50,7 +52,7 @@ export const FixedNav: FC = () => {
               <SearchInput
                 white
                 size="medium"
-                activeLocale="is"
+                activeLocale={activeLocale}
                 placeholder="Leitaðu á Ísland.is"
                 autocomplete={false}
               />

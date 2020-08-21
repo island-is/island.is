@@ -1,4 +1,5 @@
 export * from './Article'
+export * from './FrontpageSlides'
 export * from './Namespace'
 export * from './Category'
 export * from './Search'
