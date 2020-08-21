@@ -10,6 +10,8 @@ global:
 
 air-discount-scheme-api:
   env:
+    SAML_ENTRY_POINT: 'https://innskraning.island.is/?id=ads.prod'
+    AUTH_AUDIENCE: 'loftbru.island.is'
 
   ingress:
     annotations:
