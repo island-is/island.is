@@ -260,6 +260,15 @@ type LandingPage {
   content: String
 }
 
+type GenericPage {
+  title: String!
+  slug: String!
+  intro: String
+  mainContent: String
+  sidebar: String
+  misc: String
+}
+
 type Menu {
   title: String!
   links: [Link!]!
@@ -318,6 +327,7 @@ type Query {
   getNamespace(input: GetNamespaceInput!): Namespace
   getAboutPage(input: GetAboutPageInput!): AboutPage
   getLandingPage(input: GetLandingPageInput!): LandingPage
+  getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
   getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages
   getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
@@ -392,6 +402,11 @@ input GetAboutPageInput {
 }
 
 input GetLandingPageInput {
+  slug: String!
+  lang: String!
+}
+
+input GetGenericPageInput {
   slug: String!
   lang: String!
 }

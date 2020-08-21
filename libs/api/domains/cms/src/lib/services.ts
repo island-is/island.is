@@ -281,7 +281,7 @@ const formatFrontpageSlide = ({ fields }): FrontpageSlide => ({
 const formatGenericPage = ({ fields }): GenericPage => ({
   title: fields.title,
   slug: fields.slug,
-  intro: fields.intro,
+  intro: JSON.stringify(fields?.intro),
   mainContent: fields.mainContent && JSON.stringify(fields.mainContent),
   sidebar: fields.sidebar && JSON.stringify(fields.sidebar),
   misc: fields.misc && JSON.stringify(fields.misc),

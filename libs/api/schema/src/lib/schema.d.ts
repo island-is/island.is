@@ -328,6 +328,16 @@ export type LandingPage = {
   content?: Maybe<Scalars['String']>
 }
 
+export type GenericPage = {
+  __typename?: 'GenericPage'
+  title: Scalars['String']
+  slug: Scalars['String']
+  intro?: Maybe<Scalars['String']>
+  mainContent?: Maybe<Scalars['String']>
+  sidebar?: Maybe<Scalars['String']>
+  misc?: Maybe<Scalars['String']>
+}
+
 export type Menu = {
   __typename?: 'Menu'
   title: Scalars['String']
@@ -379,6 +389,7 @@ export type Query = {
   getNamespace?: Maybe<Namespace>
   getAboutPage?: Maybe<AboutPage>
   getLandingPage?: Maybe<LandingPage>
+  getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
   getAdgerdirPages?: Maybe<AdgerdirPages>
   getFrontpageSliderList?: Maybe<FrontpageSliderList>
@@ -429,6 +440,10 @@ export type QueryGetAboutPageArgs = {
 
 export type QueryGetLandingPageArgs = {
   input: GetLandingPageInput
+}
+
+export type QueryGetGenericPageArgs = {
+  input: GetGenericPageInput
 }
 
 export type QueryGetAdgerdirPageArgs = {
@@ -521,6 +536,11 @@ export type GetAboutPageInput = {
 }
 
 export type GetLandingPageInput = {
+  slug: Scalars['String']
+  lang: Scalars['String']
+}
+
+export type GetGenericPageInput = {
   slug: Scalars['String']
   lang: Scalars['String']
 }
@@ -797,6 +817,7 @@ export type ResolversTypes = {
   NumberBulletGroup: ResolverTypeWrapper<NumberBulletGroup>
   LinkList: ResolverTypeWrapper<LinkList>
   LandingPage: ResolverTypeWrapper<LandingPage>
+  GenericPage: ResolverTypeWrapper<GenericPage>
   Menu: ResolverTypeWrapper<Menu>
   Application: ResolverTypeWrapper<Application>
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>
@@ -818,6 +839,7 @@ export type ResolversTypes = {
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
   GetLandingPageInput: GetLandingPageInput
+  GetGenericPageInput: GetGenericPageInput
   GetAdgerdirPageInput: GetAdgerdirPageInput
   GetAdgerdirPagesInput: GetAdgerdirPagesInput
   GetFrontpageSliderListInput: GetFrontpageSliderListInput
@@ -892,6 +914,7 @@ export type ResolversParentTypes = {
   NumberBulletGroup: NumberBulletGroup
   LinkList: LinkList
   LandingPage: LandingPage
+  GenericPage: GenericPage
   Menu: Menu
   Application: Application
   DateTime: Scalars['DateTime']
@@ -909,6 +932,7 @@ export type ResolversParentTypes = {
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
   GetLandingPageInput: GetLandingPageInput
+  GetGenericPageInput: GetGenericPageInput
   GetAdgerdirPageInput: GetAdgerdirPageInput
   GetAdgerdirPagesInput: GetAdgerdirPagesInput
   GetFrontpageSliderListInput: GetFrontpageSliderListInput
@@ -1400,6 +1424,23 @@ export type LandingPageResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type GenericPageResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['GenericPage'] = ResolversParentTypes['GenericPage']
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  intro?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  mainContent?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  sidebar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  misc?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type MenuResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Menu'] = ResolversParentTypes['Menu']
@@ -1522,6 +1563,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetLandingPageArgs, 'input'>
   >
+  getGenericPage?: Resolver<
+    Maybe<ResolversTypes['GenericPage']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetGenericPageArgs, 'input'>
+  >
   getAdgerdirPage?: Resolver<
     Maybe<ResolversTypes['AdgerdirPage']>,
     ParentType,
@@ -1616,6 +1663,7 @@ export type Resolvers<ContextType = Context> = {
   NumberBulletGroup?: NumberBulletGroupResolvers<ContextType>
   LinkList?: LinkListResolvers<ContextType>
   LandingPage?: LandingPageResolvers<ContextType>
+  GenericPage?: GenericPageResolvers<ContextType>
   Menu?: MenuResolvers<ContextType>
   Application?: ApplicationResolvers<ContextType>
   DateTime?: GraphQLScalarType
