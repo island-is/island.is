@@ -36,6 +36,7 @@ jobs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       DOCKER_EXPRESS_CHUNKS: ${{ steps.docker_express_projects.outputs.CHUNKS }}
       DOCKER_NEXT_CHUNKS: ${{ steps.docker_next_projects.outputs.CHUNKS }}
+      UNAFFECTED: ${{ steps.docker_unaffected_projects.outputs.UNAFFECTED }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -108,12 +109,12 @@ jobs:
       - name: Set publish flag
         id: publish_flag
         run: |
-          if [[ $GITHUB_BASE_REF ]]
-          then
-            export PUBLISH=false
-          else
+          # if [[ $GITHUB_BASE_REF ]]
+          # then
+          #   export PUBLISH=false
+          # else
             export PUBLISH=true
-          fi
+          # fi
           echo "::set-env name=PUBLISH::${PUBLISH}"
           echo "::set-output name=PUBLISH::${PUBLISH}"
 
@@ -173,6 +174,13 @@ jobs:
           CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
           echo "Chunks: $CHUNKS"
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
+
+      - name: Prepare unaffected docker images
+        id: docker_unaffected_projects
+        run: |
+          UNAFFECTED=`./scripts/list-unaffected.sh docker-next docker-express`
+          echo "Unaffected Docker images: ${UNAFFECTED}"
+          echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
   tests:
     services:
