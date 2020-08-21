@@ -2,21 +2,19 @@ import {
   Body,
   Controller,
   Get,
+  Inject,
   Post,
   Query,
   Redirect,
   Req,
   Res,
-  Inject,
 } from '@nestjs/common'
-import { uuid } from 'uuidv4'
 import jwt from 'jsonwebtoken'
 import { Entropy } from 'entropy-string'
 import IslandisLogin from 'islandis-login'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  REDIRECT_COOKIE_NAME,
   CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
 } from '@island.is/air-discount-scheme/consts'
@@ -33,14 +31,6 @@ const defaultCookieOptions: CookieOptions = {
   secure: environment.production,
   httpOnly: true,
   sameSite: 'lax',
-}
-
-export const REDIRECT_COOKIE: Cookie = {
-  name: REDIRECT_COOKIE_NAME,
-  options: {
-    ...defaultCookieOptions,
-    sameSite: 'none',
-  },
 }
 
 export const CSRF_COOKIE: Cookie = {
@@ -75,24 +65,10 @@ export class AuthController {
     }
 
     const { user } = verifyResult
-    const redirectCookie = req.cookies[REDIRECT_COOKIE.name]
-    res.clearCookie(REDIRECT_COOKIE.name, REDIRECT_COOKIE.options)
-    if (!redirectCookie) {
-      this.logger.error('Redirect cookie not sent', {
-        extra: {
-          user,
-        },
-      })
-      return res.redirect('/api/auth/login')
-    }
-
-    const { authId, returnUrl } = redirectCookie
-    if (!user || authId !== user?.authId) {
+    if (!user) {
       this.logger.error('Could not verify user authenticity', {
         extra: {
           user,
-          authId,
-          returnUrl,
         },
       })
       return res.redirect('/error')
@@ -123,18 +99,12 @@ export class AuthController {
         ...ACCESS_TOKEN_COOKIE.options,
         maxAge,
       })
-      .redirect(!returnUrl || returnUrl.charAt(0) !== '/' ? '/' : returnUrl)
+      .redirect('/nidurgreidsla') // TODO: add back cookie
   }
 
   @Get('/login')
-  login(@Query('returnUrl') returnUrl: string, @Res() res) {
-    const { name, options } = REDIRECT_COOKIE
-    res.clearCookie(name, options)
-    const authId = uuid()
-
-    return res
-      .cookie(name, { authId, returnUrl }, { ...options, maxAge: ONE_HOUR })
-      .redirect(`${samlEntryPoint}&authId=${authId}`)
+  login(@Res() res) {
+    return res.redirect(samlEntryPoint)
   }
 
   @Get('/logout')
