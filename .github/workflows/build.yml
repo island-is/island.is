@@ -36,6 +36,7 @@ jobs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       DOCKER_EXPRESS_CHUNKS: ${{ steps.docker_express_projects.outputs.CHUNKS }}
       DOCKER_NEXT_CHUNKS: ${{ steps.docker_next_projects.outputs.CHUNKS }}
+      UNAFFECTED: ${{ steps.docker_unaffected_projects.outputs.UNAFFECTED }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -174,6 +175,13 @@ jobs:
           echo "Chunks: $CHUNKS"
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
+      - name: Prepare unaffected docker images
+        id: docker_unaffected_projects
+        run: |
+          UNAFFECTED=`./scripts/list-unaffected.sh docker-next docker-express`
+          echo "Unaffected Docker images: ${UNAFFECTED}"
+          echo "::set-output name=UNAFFECTED::$UNAFFECTED"
+
   tests:
     services:
       postgres:
@@ -305,12 +313,14 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
-    needs: [docker-express, docker-next]
+    needs: [docker-express, docker-next, prepare]
     env:
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ needs.prepare.outputs.LAST_GOOD_BUILD_DOCKER_TAG}}
       PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
+      UNAFFECTED: ${{ needs.prepare.outputs.UNAFFECTED }}
+
     steps:
       - uses: actions/checkout@v2
       - name: Set Helm chart version
@@ -339,7 +349,7 @@ jobs:
         run: helm dep build helm/air-discount-scheme && helm push helm/air-discount-scheme --version="$HELM_CHART_VERSION" -f chartmuseum
       - name: Retag unaffected Docker images
         if: env.PUBLISH == 'true'
-        run: ./scripts/retag-unaffected.sh
+        run: ./scripts/retag-unaffected.sh "$UNAFFECTED"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
