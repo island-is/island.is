@@ -19,9 +19,11 @@ import { useI18n } from '@island.is/web/i18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { SearchInput } from '../'
 import { useRouter } from 'next/router'
+import { Colors } from '@island.is/island-ui/theme'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
+  white?: boolean
 }
 
 const LanguageToggler: FC<{
@@ -62,13 +64,18 @@ const LanguageToggler: FC<{
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 
-export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
+export const Header: FC<HeaderProps> = ({
+  showSearchInHeader = true,
+  white = false,
+}) => {
   const { activeLocale, t } = useI18n()
   const Router = useRouter()
   const { makePath } = useRouteNames(activeLocale)
 
   const locale = activeLocale
   const english = activeLocale === 'en'
+
+  const logoColor: Colors = white ? 'white' : 'blue400'
 
   return (
     <GridContainer>
@@ -83,7 +90,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                     <Logo width={40} iconOnly />
                   </Hidden>
                   <Hidden below="lg">
-                    <Logo width={160} />
+                    <Logo width={160} solid solidColor={logoColor} />
                   </Hidden>
                 </a>
               </Link>
@@ -103,12 +110,14 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                         activeLocale={locale}
                         placeholder="Leitaðu á Ísland.is"
                         autocomplete={false}
+                        white={white}
                       />
                     </Hidden>
                     <Hidden above="md">
                       <Button
                         variant="menu"
                         icon="search"
+                        white={white}
                         onClick={() => {
                           Router.push({
                             pathname: makePath('search'),
@@ -121,7 +130,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                 )}
                 <Box marginLeft={marginLeft}>
                   <Link href="https://minarsidur.island.is/" passHref>
-                    <Button variant="menu" leftIcon="user">
+                    <Button variant="menu" leftIcon="user" white={white}>
                       {t.login}
                     </Button>
                   </Link>
@@ -130,8 +139,8 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                   <LanguageToggler hideWhenMobile />
                 </Box>
                 <Box marginLeft={marginLeft}>
-                  <Button variant="menu">
-                    <Icon type="logo" />
+                  <Button variant="menu" white={white}>
+                    <Icon type="logo" color={white ? 'white' : 'blue400'} />
                   </Button>
                 </Box>
               </Box>

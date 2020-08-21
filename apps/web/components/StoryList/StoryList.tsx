@@ -50,7 +50,7 @@ const Story: FC<StoryProps> = ({
       <Typography variant="p" color="white">
         {intro}
       </Typography>
-      <Button variant="text" size="medium">
+      <Button variant="text" size="medium" white>
         {readMoreText}
       </Button>
     </Stack>

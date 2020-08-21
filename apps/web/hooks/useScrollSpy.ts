@@ -1,6 +1,22 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import {
+  useRef,
+  useState,
+  useCallback,
+  useLayoutEffect,
+} from 'react'
 import minBy from 'lodash/minBy'
-import useViewport from './useViewport'
+
+const onViewportChange = (listener: () => void) => {
+  listener()
+
+  window.addEventListener('scroll', listener)
+  window.addEventListener('resize', listener)
+
+  return () => {
+    window.removeEventListener('scroll', listener)
+    window.removeEventListener('resize', listener)
+  }
+}
 
 const useScrollSpy = ({
   margin = 0,
@@ -11,9 +27,6 @@ const useScrollSpy = ({
 }): [(id: string) => (e: HTMLElement) => void, string | undefined] => {
   const elements = useRef<{ [key: string]: HTMLElement }>({})
   const [currentId, setCurrentId] = useState(initialId)
-
-  // re-render on scroll or resize
-  useViewport()
 
   // Elements are cleared on each render. After the component that calls this
   // hook has finished rendering, the useEffect hook below runs with
@@ -29,22 +42,24 @@ const useScrollSpy = ({
     [elements],
   )
 
-  useEffect(() => {
-    const candidates = Array.from(
-      Object.entries(elements.current),
-    ).map(([name, elem]) => ({ name, elem }))
+  useLayoutEffect(() => {
+    return onViewportChange(() => {
+      const candidates = Array.from(
+        Object.entries(elements.current),
+      ).map(([name, elem]) => ({ name, elem }))
 
-    const best = minBy(candidates, (c) => {
-      const { top, height } = c.elem.getBoundingClientRect()
-      return Math.min(
-        Math.abs(top - margin),
-        Math.abs(top + height - margin - 1),
-      )
+      const best = minBy(candidates, (c) => {
+        const { top, height } = c.elem.getBoundingClientRect()
+        return Math.min(
+          Math.abs(top - margin),
+          Math.abs(top + height - margin - 1),
+        )
+      })
+
+      if (best && best.name !== currentId) {
+        setCurrentId(best.name)
+      }
     })
-
-    if (best && best.name !== currentId) {
-      setCurrentId(best.name)
-    }
   })
 
   return [spy, currentId]
