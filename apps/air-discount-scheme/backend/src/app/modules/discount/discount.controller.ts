@@ -5,16 +5,11 @@ import { Discount } from './discount.model'
 import { CreateDiscountCodeParams } from './discount.validator'
 import { DiscountService } from './discount.service'
 import { DiscountLimitExceeded } from './discount.error'
-import { FlightService } from '../flight'
 
 @ApiTags('Discounts')
 @Controller('public')
 export class PublicDiscountController {
-  constructor(
-    private readonly discountService: DiscountService,
-    @Inject(forwardRef(() => FlightService))
-    private readonly flightService: FlightService,
-  ) {}
+  constructor(private readonly discountService: DiscountService) {}
 
   // TODO THIS SHOULD NOT GO TO PROD
   // THIS IS ONLY FOR AIRLINES TO TEST THE API
@@ -23,35 +18,20 @@ export class PublicDiscountController {
   async createDiscountCode(
     @Param() params: CreateDiscountCodeParams,
   ): Promise<Discount> {
-    const flightLegsLeft = await this.flightService.countFlightLegsLeftByNationalId(
-      params.nationalId,
-    )
-    if (flightLegsLeft <= 0) {
-      throw new DiscountLimitExceeded()
-    }
     return this.discountService.createDiscountCode(params.nationalId)
   }
 }
 
 @Controller('private')
 export class PrivateDiscountController {
-  constructor(
-    private readonly discountService: DiscountService,
-    @Inject(forwardRef(() => FlightService))
-    private readonly flightService: FlightService,
-  ) {}
+  constructor(private readonly discountService: DiscountService) {}
 
   @Post('users/:nationalId/discounts')
   @ApiExcludeEndpoint()
   async createDiscountCode(
     @Param() params: CreateDiscountCodeParams,
   ): Promise<Discount> {
-    const flightLegsLeft = await this.flightService.countFlightLegsLeftByNationalId(
-      params.nationalId,
-    )
-    if (flightLegsLeft <= 0) {
-      throw new DiscountLimitExceeded()
-    }
+    // TODO check if there are any flight legs left
     return this.discountService.createDiscountCode(params.nationalId)
   }
 }

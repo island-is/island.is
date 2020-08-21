@@ -5,12 +5,10 @@ import { FlightService } from '../../flight'
 import CacheManger from 'cache-manager'
 
 let app: INestApplication
-let flightService: FlightService
 let cacheManager: CacheManger
 
 beforeAll(async () => {
   app = await setup()
-  flightService = app.get<FlightService>(FlightService)
   cacheManager = app.get<CacheManger>(CACHE_MANAGER)
 
   Date.now = jest.fn(() => 1597760782018)
@@ -32,13 +30,14 @@ describe('Create DiscountCode', () => {
     expect(spy).toHaveBeenCalled()
   })
 
-  it(`POST /private/users/:nationalId/discounts with no flightlegs left should return forbidden`, async () => {
-    const spy = jest
-      .spyOn(flightService, 'countFlightLegsLeftByNationalId')
-      .mockImplementation(() => Promise.resolve(0))
-    await request(app.getHttpServer())
-      .post('/private/users/1326487905/discounts')
-      .expect(403)
-    spy.mockRestore()
-  })
+  // TODO enable this test when we add the flightlegs check
+  /* it(`POST /private/users/:nationalId/discounts with no flightlegs left should return forbidden`, async () => { */
+  /*   const spy = jest */
+  /*     .spyOn(flightService, 'countFlightLegsLeftByNationalId') */
+  /*     .mockImplementation(() => Promise.resolve(0)) */
+  /*   await request(app.getHttpServer()) */
+  /*     .post('/private/users/1326487905/discounts') */
+  /*     .expect(403) */
+  /*   spy.mockRestore() */
+  /* }) */
 })
