@@ -1947,6 +1947,64 @@
       }
     }
   },
+  "services-justice-api": {
+    "root": "apps/services/justice-api",
+    "sourceRoot": "apps/services/justice-api/src",
+    "projectType": "application",
+    "prefix": "services-justice-api",
+    "schematics": {},
+    "architect": {
+      "build": {
+        "builder": "@nrwl/node:build",
+        "options": {
+          "outputPath": "dist/apps/services/justice-api",
+          "main": "apps/services/justice-api/src/main.ts",
+          "tsConfig": "apps/services/justice-api/tsconfig.app.json",
+          "assets": ["apps/services/justice-api/src/assets"]
+        },
+        "configurations": {
+          "production": {
+            "optimization": true,
+            "extractLicenses": true,
+            "inspect": false,
+            "fileReplacements": [
+              {
+                "replace": "apps/services/justice-api/src/environments/environment.ts",
+                "with": "apps/services/justice-api/src/environments/environment.prod.ts"
+              }
+            ]
+          }
+        }
+      },
+      "serve": {
+        "builder": "@nrwl/node:execute",
+        "options": {
+          "buildTarget": "services-justice-api:build"
+        }
+      },
+      "lint": {
+        "builder": "@nrwl/linter:lint",
+        "options": {
+          "linter": "eslint",
+          "config": "apps/services/justice-api/.eslintrc",
+          "tsConfig": [
+            "apps/services/justice-api/tsconfig.app.json",
+            "apps/services/justice-api/tsconfig.spec.json"
+          ],
+          "exclude": ["**/node_modules/**", "!apps/services/justice-api/**"]
+        }
+      },
+      "test": {
+        "builder": "@nrwl/jest:jest",
+        "options": {
+          "jestConfig": "apps/services/justice-api/jest.config.js",
+          "tsConfig": "apps/services/justice-api/tsconfig.spec.json",
+          "passWithNoTests": true
+        }
+      },
+      "docker-express": {}
+    }
+  },
   "cli": {
     "defaultCollection": "@nrwl/react"
   },

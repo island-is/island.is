@@ -153,6 +153,9 @@
     "adgerdir-e2e": {
       "tags": [],
       "implicitDependencies": ["adgerdir"]
+    },
+    "services-justice-api": {
+      "tags": []
     }
   }
 }
