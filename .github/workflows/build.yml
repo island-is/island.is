@@ -22,7 +22,6 @@ jobs:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       CHUNK_SIZE: '2'
 
-    # These outputs are not used right now but are here ready when we go for multiple jobs
     outputs:
       GIT_BRANCH: ${{ steps.git_refs.outputs.GIT_BRANCH }}
       GIT_BASE_BRANCH: ${{ steps.git_refs.outputs.GIT_BASE_BRANCH }}
@@ -396,31 +395,24 @@ jobs:
           echo "Helm chart version will be ${HELM_CHART_VERSION}"
           echo "::set-env name=HELM_CHART_VERSION::${HELM_CHART_VERSION}"
       - name: Install Helm push plugin
-        if: env.PUBLISH == 'true'
         run: helm plugin install https://github.com/chartmuseum/helm-push.git --version=0.8.1
       - name: Install Our ChartMuseum
-        if: env.PUBLISH == 'true'
         run: helm repo add chartmuseum https://chartmuseum.shared.devland.is --username=$USERNAME --password=$PASSWORD
         env:
           USERNAME: ${{ secrets.HELM_CHART_USERNAME }}
           PASSWORD: ${{ secrets.HELM_CHART_PASSWORD }}
       - name: Push islandis chart to the museum
-        if: env.PUBLISH == 'true'
         run: helm push helm/islandis --version="$HELM_CHART_VERSION" -f chartmuseum
       - name: Push gjafakort chart to the museum
-        if: env.PUBLISH == 'true'
         run: helm push helm/gjafakort --version="$HELM_CHART_VERSION" -f chartmuseum
       - name: Push air-discount-scheme chart to the museum
-        if: env.PUBLISH == 'true'
         run: helm dep build helm/air-discount-scheme && helm push helm/air-discount-scheme --version="$HELM_CHART_VERSION" -f chartmuseum
       - name: Retag unaffected Docker images
-        if: env.PUBLISH == 'true'
         run: ./scripts/retag-unaffected.sh "$UNAFFECTED"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Trigger Deployment for islandis
-        if: env.PUBLISH == 'true'
         env:
           TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_ISLANDIS_TOKEN }}
           ENDPOINT: https://spinnaker-gate.shared.devland.is/webhooks/webhook/islandis
@@ -452,7 +444,6 @@ jobs:
           }
           BODY
       - name: Trigger Deployment for gjafakort
-        if: env.PUBLISH == 'true'
         env:
           TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_GJAFAKORT_TOKEN }}
           ENDPOINT: https://spinnaker-gate.shared.devland.is/webhooks/webhook/gjafakort
@@ -490,4 +481,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # optional
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-        if: failure() && env.PUBLISH == 'true'
+        if: failure()
