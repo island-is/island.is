@@ -18,6 +18,7 @@ else
   AFFECTED_FLAGS=" --head=$HEAD --base=$BASE "
 fi
 
+# Doing this in the name of speeding up the 'prepare' phase of the CI process until we find a faster process to load the docker cache into a docker image
 exec npx \
   nx print-affected --target=$1 --select=tasks.target.project $AFFECTED_FLAGS
 
@@ -31,7 +32,6 @@ docker image inspect ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} -f ' ' || \
   --build-arg BUILDKIT_INLINE_CACHE=1 \
   -t ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} \
   $PROJECT_ROOT
-
 
 exec docker run \
   --rm \
