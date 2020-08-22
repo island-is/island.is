@@ -28,6 +28,9 @@ docker image inspect ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} -f ' ' || \
   -t ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} \
   $PROJECT_ROOT
 
+exec npx \
+  nx print-affected --target=$1 --select=tasks.target.project $AFFECTED_FLAGS
+
 exec docker run \
   --rm \
   ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} \

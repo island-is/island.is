@@ -34,6 +34,7 @@ jobs:
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       PUBLISH: ${{ steps.publish_flag.outputs.PUBLISH }}
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
+      LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
       DOCKER_EXPRESS_CHUNKS: ${{ steps.docker_express_projects.outputs.CHUNKS }}
       DOCKER_NEXT_CHUNKS: ${{ steps.docker_next_projects.outputs.CHUNKS }}
       UNAFFECTED: ${{ steps.docker_unaffected_projects.outputs.UNAFFECTED }}
@@ -139,14 +140,17 @@ jobs:
       - name: set BRANCH env var
         run: echo "::set-env name=BRANCH::${GIT_BRANCH}"
 
-      - name: Check formatting
-        run: ./scripts/check_formatting.sh
-
-      # - name: Linting
-      #   run: ./scripts/run-affected-in-parallel-native.sh lint
-
       # - name: Security audit Node modules
       #   run: ./scripts/security-audit.sh
+
+      - name: Prepare lint targets
+        id: lint_projects
+        run: |
+          PROJECTS=`./scripts/_nx-affected-targets.sh lint`
+          echo "Projects: ${PROJECTS}"
+          CHUNKS=`CHUNK_SIZE=7 node scripts/_chunk.js "${PROJECTS}"`
+          echo "Chunks: $CHUNKS"
+          echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
       - name: Prepare test targets
         id: test_projects
@@ -235,6 +239,63 @@ jobs:
       # - name: Running E2E tests
       #   run: yarn run affected:e2e --base origin/master
 
+  formatting:
+    needs: prepare
+    runs-on: ubuntu-latest
+    env:
+      GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache for dependencies Docker layer
+        id: cache-deps
+        uses: actions/cache@v1
+        with:
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: v0.4.1
+          qemu-version: latest
+      - name: Check formatting
+        run: ./scripts/check_formatting.sh
+
+  linting:
+    needs: prepare
+    runs-on: ubuntu-latest
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
+    steps:
+      - uses: actions/checkout@v2
+        if: ${{ matrix.projects != 'dummy' }}
+
+      - name: Cache for dependencies Docker layer
+        id: cache-deps
+        if: ${{ matrix.projects != 'dummy' }}
+        uses: actions/cache@v1
+        with:
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
+
+      - name: Set up Docker Buildx
+        id: buildx
+        if: ${{ matrix.projects != 'dummy' }}
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: v0.4.1
+          qemu-version: latest
+
+      - name: Linting
+        if: ${{ matrix.projects != 'dummy' }}
+        run: ./scripts/run-in-parallel.sh lint
+
   docker-express:
     needs: [prepare, tests]
     runs-on: ubuntu-latest
@@ -313,7 +374,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
-    needs: [docker-express, docker-next, prepare]
+    needs: [docker-express, docker-next, prepare, linting, formatting]
     env:
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
