@@ -378,6 +378,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
+    if: needs.prepare.output.PUBLISH == 'true'
     needs: [docker-express, docker-next, prepare, linting, formatting]
     env:
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
