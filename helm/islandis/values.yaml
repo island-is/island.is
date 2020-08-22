@@ -48,4 +48,5 @@ api:
   env:
     PORT: "3333"
   healthCheck:
-    livenessPath: /liveness
+    liveness:
+      path: /liveness
