@@ -126,13 +126,16 @@ jobs:
           path: cache
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
 
-      - name: Set up Docker Buildx
-        id: buildx
-        if: steps.cache-deps.outputs.cache-hit != 'true'
-        uses: crazy-max/ghaction-docker-buildx@v1
+      - name: Cache for node modules
+        id: node-modules
+        uses: actions/cache@v2
         with:
-          buildx-version: v0.4.1
-          qemu-version: latest
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-yarn
+
+      - name: Building dependencies linux
+        if: steps.node-modules.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
 
       - name: Building dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
