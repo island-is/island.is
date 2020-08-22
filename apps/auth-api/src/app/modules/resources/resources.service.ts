@@ -1,0 +1,51 @@
+import { Inject, Injectable, Optional } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Counter } from 'prom-client'
+import { Sequelize } from 'sequelize-typescript'
+import { IdentityResource } from './identity-resource.model'
+import { Op, QueryTypes, WhereOptions } from 'sequelize'
+import { IdentityResourceUserClaim } from './identity-resource-user-claim.model'
+
+@Injectable()
+export class ResourcesService {
+  applicationsRegistered = new Counter({
+    name: 'apps_registered21',
+    labelNames: ['res1'],
+    help: 'Number of applications',
+  }) // TODO: How does this work?
+
+  constructor(
+    private sequelize: Sequelize,
+    @InjectModel(IdentityResource)
+    private identityResourceModel: typeof IdentityResource,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
+  ) {}
+
+  async FindIdentityResourcesByScopeName(scopeNames: string[]): Promise<IdentityResource[]> {
+    this.logger.debug(`Finding identity resources for scope names`, scopeNames)
+
+    let whereOptions: WhereOptions = {
+        name: {
+        [Op.in]: scopeNames
+      }
+    }
+
+    return this.identityResourceModel.findAll({
+      raw: true,
+      where: scopeNames ? whereOptions : null,
+    }).then(resources => {
+        return Promise.all(resources.map(async resource => {
+            const [result, meta] = await this.sequelize.query('SELECT "claim_name" FROM "identity_resource_user_claim" WHERE identity_resource_id=$resourceId',
+            {
+                bind: { resourceId: resource.id},
+                type: QueryTypes.RAW,
+                model: IdentityResourceUserClaim
+            });
+            resource.userClaims = result.map(claim => claim.claim_name)
+            return resource
+        }))
+    })
+  }
+}
