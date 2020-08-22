@@ -17,6 +17,10 @@ then
 else
   AFFECTED_FLAGS=" --head=$HEAD --base=$BASE "
 fi
+
+exec npx \
+  nx print-affected --target=$1 --select=tasks.target.project $AFFECTED_FLAGS
+
 # Build NX runner image if does not exist
 docker image inspect ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} -f ' ' || \
   docker buildx build \
@@ -28,8 +32,6 @@ docker image inspect ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} -f ' ' || \
   -t ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} \
   $PROJECT_ROOT
 
-exec npx \
-  nx print-affected --target=$1 --select=tasks.target.project $AFFECTED_FLAGS
 
 exec docker run \
   --rm \
