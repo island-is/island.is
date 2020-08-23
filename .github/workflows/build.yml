@@ -267,7 +267,6 @@ jobs:
 
   linting:
     needs: prepare
-    if: ${{ !contains(needs.prepare.outputs.LINT_CHUNKS, 'dummy') }}
     runs-on: ubuntu-latest
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -378,7 +377,6 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
-    # if: needs.prepare.output.PUBLISH == 'true'
     needs: [docker-express, docker-next, prepare, linting, formatting]
     env:
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
