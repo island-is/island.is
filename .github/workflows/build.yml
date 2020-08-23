@@ -267,7 +267,7 @@ jobs:
 
   linting:
     needs: prepare
-    if: ${{ matrix.projects != 'dummy' }}
+    if: ${{ needs.prepare.outputs.LINT_CHUNKS != '["dummy"]' }}
     runs-on: ubuntu-latest
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -301,7 +301,6 @@ jobs:
         run: ./scripts/run-in-parallel.sh lint
 
   docker-express:
-    if: ${{ matrix.projects != 'dummy' }}
     needs: [prepare, tests]
     runs-on: ubuntu-latest
     env:
@@ -340,7 +339,6 @@ jobs:
         run: ./scripts/run-in-parallel.sh docker-express
 
   docker-next:
-    if: ${{ matrix.projects != 'dummy' }}
     needs: [prepare, tests]
     runs-on: ubuntu-latest
     env:
