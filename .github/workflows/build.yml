@@ -267,7 +267,7 @@ jobs:
 
   linting:
     needs: prepare
-    if: ${{ needs.prepare.outputs.LINT_CHUNKS != '["dummy"]' }}
+    if: ${{ !contains(needs.prepare.outputs.LINT_CHUNKS, 'dummy') }}
     runs-on: ubuntu-latest
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
