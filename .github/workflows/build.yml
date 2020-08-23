@@ -127,7 +127,7 @@ jobs:
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
-        uses: actions/cache@v2
+        uses: actions/cache@v1
         with:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-yarn
@@ -267,6 +267,7 @@ jobs:
 
   linting:
     needs: prepare
+    if: ${{ matrix.projects != 'dummy' }}
     runs-on: ubuntu-latest
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -300,6 +301,7 @@ jobs:
         run: ./scripts/run-in-parallel.sh lint
 
   docker-express:
+    if: ${{ matrix.projects != 'dummy' }}
     needs: [prepare, tests]
     runs-on: ubuntu-latest
     env:
@@ -338,6 +340,7 @@ jobs:
         run: ./scripts/run-in-parallel.sh docker-express
 
   docker-next:
+    if: ${{ matrix.projects != 'dummy' }}
     needs: [prepare, tests]
     runs-on: ubuntu-latest
     env:
