@@ -154,7 +154,7 @@
       "tags": [],
       "implicitDependencies": ["adgerdir"]
     },
-    "services-justice-api": {
+    "judicial-system-api": {
       "tags": []
     }
   }
