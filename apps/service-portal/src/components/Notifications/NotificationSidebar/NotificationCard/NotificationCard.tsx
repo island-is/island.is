@@ -4,9 +4,7 @@ import { Box, Typography, Icon } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 import * as styles from './Notificationcard.treat'
 import cn from 'classnames'
-import ActionMenu, {
-  ActionMenuItem,
-} from '../../../library/ActionMenu/ActionMenu'
+import ActionMenu, { ActionMenuItem } from '../../../ActionMenu/ActionMenu'
 
 interface Props {
   card: Card

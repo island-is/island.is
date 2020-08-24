@@ -13,6 +13,7 @@ import {
 import { Link } from 'react-router-dom'
 import { User } from 'oidc-client'
 import { ServicePortalPath } from '@island.is/service-portal/core'
+import IconButton from '../../Button/IconButton/IconButton'
 
 interface Props {
   isOpen: boolean
@@ -44,34 +45,20 @@ export const Menu: FC<Props> = ({
       <Box padding={3} background="white">
         {/* TODO: Scope check */}
         <Stack space={1}>
-          <Link
-            to={ServicePortalPath.StillingarRoot}
+          <IconButton
+            url={ServicePortalPath.StillingarRoot}
             onClick={onCloseMenu}
-            className={styles.link}
+            icon="lock"
           >
-            <Box display="flex" alignItems="center">
-              <Box marginRight={2}>
-                <Icon type="lock" color="dark300" />
-              </Box>
-              <Typography variant="p" as="span">
-                Stillingar
-              </Typography>
-            </Box>
-          </Link>
-          <Link
-            to={ServicePortalPath.StillingarUmbod}
+            Stillingar
+          </IconButton>
+          <IconButton
+            url={ServicePortalPath.StillingarUmbod}
             onClick={onCloseMenu}
-            className={styles.link}
+            icon="user"
           >
-            <Box display="flex" alignItems="center">
-              <Box marginRight={2}>
-                <Icon type="user" color="dark300" />
-              </Box>
-              <Typography variant="p" as="span">
-                Umboðsveita
-              </Typography>
-            </Box>
-          </Link>
+            Umboðsveita
+          </IconButton>
         </Stack>
       </Box>
       {personSubjects.length > 0 && (
