@@ -73,7 +73,7 @@ export class DiscountService {
     }
 
     const ttl = await this.cacheManager.ttl(cacheKey)
-    return new Discount(cacheValue.nationalId, discountCode, ttl)
+    return new Discount(discountCode, cacheValue.nationalId, ttl)
   }
 
   async validateDiscount(discountCode: string): Promise<string> {
