@@ -1,8 +1,18 @@
-import { Controller, Param, Post, Inject, forwardRef } from '@nestjs/common'
+import {
+  Controller,
+  Param,
+  Post,
+  Get,
+  Inject,
+  forwardRef,
+} from '@nestjs/common'
 import { ApiExcludeEndpoint, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { Discount } from './discount.model'
-import { CreateDiscountCodeParams } from './discount.validator'
+import {
+  CreateDiscountCodeParams,
+  GetDiscountByNationalIdParams,
+} from './discount.validator'
 import { DiscountService } from './discount.service'
 import { DiscountLimitExceeded } from './discount.error'
 import { FlightService } from '../flight'
@@ -40,6 +50,20 @@ export class PrivateDiscountController {
     @Inject(forwardRef(() => FlightService))
     private readonly flightService: FlightService,
   ) {}
+
+  @Get('users/:nationalId/discounts')
+  @ApiOkResponse({ type: Discount })
+  async getDiscountByNationalId(
+    @Param() params: GetDiscountByNationalIdParams,
+  ): Promise<Discount[]> {
+    const discount = await this.discountService.getDiscountByNationalId(
+      params.nationalId,
+    )
+    if (!discount) {
+      return []
+    }
+    return [discount]
+  }
 
   @Post('users/:nationalId/discounts')
   @ApiExcludeEndpoint()
