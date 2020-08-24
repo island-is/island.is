@@ -406,10 +406,10 @@ jobs:
           PASSWORD: ${{ secrets.HELM_CHART_PASSWORD }}
       - name: Push islandis chart to the museum
         if: env.PUBLISH == 'true'
-        run: helm push helm/islandis --version="$HELM_CHART_VERSION" -f chartmuseum
+        run: helm dep build helm/islandis && helm push helm/islandis --version="$HELM_CHART_VERSION" -f chartmuseum
       - name: Push gjafakort chart to the museum
         if: env.PUBLISH == 'true'
-        run: helm push helm/gjafakort --version="$HELM_CHART_VERSION" -f chartmuseum
+        run: helm dep build helm/gjafakort && helm push helm/gjafakort --version="$HELM_CHART_VERSION" -f chartmuseum
       - name: Push air-discount-scheme chart to the museum
         if: env.PUBLISH == 'true'
         run: helm dep build helm/air-discount-scheme && helm push helm/air-discount-scheme --version="$HELM_CHART_VERSION" -f chartmuseum
