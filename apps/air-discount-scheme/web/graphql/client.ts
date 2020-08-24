@@ -1,50 +1,53 @@
-import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
-import getConfig from 'next/config'
-import { BatchHttpLink } from 'apollo-link-batch-http'
+import { ApolloLink } from 'apollo-link'
+import {
+  InMemoryCache,
+  IntrospectionFragmentMatcher,
+  NormalizedCacheObject,
+} from 'apollo-cache-inmemory'
 import fetch from 'isomorphic-unfetch'
 
-const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
-
-const isBrowser: boolean = process.browser
+import { isBrowser } from '../utils'
+import authLink from './authLink'
+import errorLink from './errorLink'
+import httpLink from './httpLink'
+import retryLink from './retryLink'
+import introspectionQueryResultData from './possibleTypes.json'
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
-// Polyfill fetch() on the server (used by apollo-client)
-if (!isBrowser) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ;(global as any).fetch = fetch
-}
+const createClient = (initialState?: NormalizedCacheObject) => {
+  const link = ApolloLink.from([retryLink, errorLink, authLink, httpLink])
 
-function create(initialState?: any) {
-  const httpLink = new BatchHttpLink({
-    uri:
-      serverRuntimeConfig.graphqlEndpoint ||
-      publicRuntimeConfig.graphqlEndpoint,
-  })
+  const cache = new InMemoryCache({
+    fragmentMatcher: new IntrospectionFragmentMatcher({
+      introspectionQueryResultData,
+    }),
+  }).restore(initialState || {})
 
-  // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
   return new ApolloClient({
-    name: 'cms-web-client',
+    name: 'air-discount-scheme-client',
     version: '0.1',
     connectToDevTools: isBrowser,
     ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
-    link: httpLink,
-    cache: new InMemoryCache().restore(initialState || {}),
+    link,
+    cache,
   })
 }
 
-export default function initApollo(initialState?: any) {
+const initApollo = (initialState?: NormalizedCacheObject) => {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
   if (!isBrowser) {
-    return create(initialState)
+    return createClient(initialState)
   }
 
   // Reuse client on the client-side
   if (!apolloClient) {
-    apolloClient = create(initialState)
+    apolloClient = createClient(initialState)
   }
 
   return apolloClient
 }
+
+export default initApollo

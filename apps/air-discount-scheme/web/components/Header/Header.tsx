@@ -31,7 +31,7 @@ function Header() {
     activeLocale,
     locale,
   } = useI18n()
-  const { data } = useQuery(UserQuery)
+  const { data } = useQuery(UserQuery, { ssr: false })
   const user = data?.user
   useEffect(() => {
     setUser(user)
