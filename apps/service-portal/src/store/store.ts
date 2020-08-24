@@ -110,7 +110,6 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
         userInfoState: 'pending',
       }
     case ActionType.SetUserFulfilled:
-      console.log({ user: action.payload, mockSubjects, mockActors })
       return {
         ...state,
         userInfo: { user: action.payload, mockSubjects, mockActors },

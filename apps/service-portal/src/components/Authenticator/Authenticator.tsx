@@ -6,11 +6,7 @@ export const Authenticator: FC = ({ children }) => {
   const { userInfo, userInfoState, signInUser } = useAuth()
 
   useEffect(() => {
-    if (
-      (userInfo === null || userInfo?.user === null) &&
-      userInfoState === 'passive'
-    )
-      signInUser()
+    if (userInfo.user === null && userInfoState === 'passive') signInUser()
   }, [userInfo, userInfoState, signInUser])
 
   return <>{userInfo?.user ? children : <AuthenticatorLoadingScreen />}</>
