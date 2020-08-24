@@ -1,5 +1,5 @@
 import React from 'react'
-import { render } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 
 import { BrowserRouter } from 'react-router-dom'
 
@@ -16,13 +16,13 @@ describe('App', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should have a greeting as the title', () => {
+  it('should have a greeting as the title', async () => {
     const { getByText } = render(
       <BrowserRouter>
         <App />
       </BrowserRouter>,
     )
-
-    expect(getByText('Welcome to judicial-system-web!')).toBeTruthy()
+    await waitFor(() => getByText('Welcome to api!'))
+    expect(getByText('Welcome to api!')).toBeTruthy()
   })
 })
