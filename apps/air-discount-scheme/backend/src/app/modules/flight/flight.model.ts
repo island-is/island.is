@@ -99,6 +99,13 @@ export class Flight extends Model<Flight> {
   nationalId: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  airline: string
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: false,

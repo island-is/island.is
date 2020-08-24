@@ -61,7 +61,7 @@ export class PrivateDiscountController {
   ) {}
 
   @Get('users/:nationalId/discounts')
-  @ApiOkResponse({ type: Discount })
+  @ApiExcludeEndpoint()
   async getDiscountByNationalId(
     @Param() params: GetDiscountByNationalIdParams,
   ): Promise<Discount[]> {
