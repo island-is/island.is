@@ -10,10 +10,11 @@ import ModuleErrorScreen, { ModuleErrorBoundary } from './ModuleErrorScreen'
 import { Box } from '@island.is/island-ui/core'
 import { User } from 'oidc-client'
 import NotFound from '../../screens/NotFound/NotFound'
+import { UserWithMeta } from '@island.is/service-portal/core'
 
 const RouteComponent: FC<{
   route: ServicePortalRoute
-  userInfo: User
+  userInfo: UserWithMeta
 }> = React.memo(({ route, userInfo }) => {
   const App = route.render(userInfo)
 
@@ -31,7 +32,7 @@ const RouteComponent: FC<{
 
 const RouteLoader: FC<{
   modules: ServicePortalModule[]
-  userInfo: User
+  userInfo: UserWithMeta
 }> = React.memo(({ modules, userInfo }) => (
   <Switch>
     {modules.map((module) =>

@@ -1,7 +1,10 @@
-import { ServicePortalModule } from '@island.is/service-portal/core'
+import {
+  ServicePortalModule,
+  UserWithMeta,
+} from '@island.is/service-portal/core'
 import { SubjectListDto } from '../mirage-server/models/subject'
 import { modules } from './modules'
-import { User } from 'oidc-client'
+import { mockSubjects, mockActors } from './mockData'
 import {
   Action,
   ActionType,
@@ -10,7 +13,7 @@ import {
 } from './actions'
 
 export interface StoreState {
-  userInfo: User | null
+  userInfo: UserWithMeta | null
   userInfoState: AsyncActionState
   modules: ServicePortalModule[]
   navigationState: AsyncActionState
@@ -39,7 +42,7 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
     case ActionType.SetUserFulfilled:
       return {
         ...state,
-        userInfo: action.payload,
+        userInfo: { user: action.payload, mockSubjects, mockActors },
         userInfoState: 'fulfilled',
       }
     case ActionType.FetchSubjectListPending:

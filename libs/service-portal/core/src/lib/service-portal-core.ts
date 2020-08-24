@@ -18,7 +18,7 @@ export interface ServicePortalNavigationItem {
  * The props provided to a service portal module
  */
 export interface ServicePortalModuleProps {
-  userInfo: User
+  userInfo: UserWithMeta
 }
 
 /**
@@ -48,7 +48,7 @@ export type ServicePortalRoute = {
   /**
    * The render value of this component
    */
-  render: (userInfo: User) => ServicePortalModuleRenderValue
+  render: (userInfo: UserWithMeta) => ServicePortalModuleRenderValue
 }
 
 /**
@@ -67,7 +67,7 @@ export type ServicePortalWidget = {
   /**
    * The render value of this widget
    */
-  render: (userInfo: User) => ServicePortalModuleRenderValue
+  render: (userInfo: UserWithMeta) => ServicePortalModuleRenderValue
 }
 
 export interface ServicePortalModule {
@@ -79,11 +79,50 @@ export interface ServicePortalModule {
    * An optional render value of widgets that should
    * be displayed on the dashboard
    */
-  widgets: (userInfo: User) => ServicePortalWidget[]
+  widgets: (userInfo: UserWithMeta) => ServicePortalWidget[]
   /**
    * The routes defined by this module.
    * The service portal shell will define these as routes
    * within itself and use the provided render function to render out the component
    */
-  routes: (userInfo: User) => ServicePortalRoute[]
+  routes: (userInfo: UserWithMeta) => ServicePortalRoute[]
+  /**
+   * Proposal:
+   * All paths provided by this module.
+   * These are used to determine what navigational items will be shown
+   * in the sidebar, what breadcrumbs will be generated etc.
+   */
+  // paths: ServicePortalPath[]
+}
+
+/**
+ * The subject passed to us via the jwt token metadata.
+ */
+export interface Subject {
+  id: number
+  name: string
+  nationalId: string
+  scope: string[]
+  subjectType: 'person' | 'company' | 'institution'
+}
+
+/**
+ * The actor passed to us via the jwt token metadata.
+ */
+export interface Actor {
+  id: number
+  name: string
+  nationalId: string
+  subjectIds: number[]
+}
+
+/**
+ * Currently we are not getting any metadata from the jwt token
+ * in order to fix that issue we padded the data with some mock
+ * subjects and actors.
+ */
+export interface UserWithMeta {
+  user: User
+  mockActors: Actor[]
+  mockSubjects: Subject[]
 }
