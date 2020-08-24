@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import Header from '../Header/Header'
 import Sidebar from '../Sidebar/Sidebar'
-import { Box, Columns, Column } from '@island.is/island-ui/core'
+import { Box, Columns, Column, Hidden } from '@island.is/island-ui/core'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import * as styles from './Layout.treat'
 import UserInfoLoadingOverlay from '../Loaders/UserInfoLoadingOverlay/UserInfoLoadingOverlay'
@@ -23,17 +23,19 @@ const Layout: FC = ({ children }) => {
       >
         <Box
           className={styles.mainWrapper}
-          paddingX={[0, 0, 0, 6]}
+          paddingX={[2, 2, 4, 4, 6]}
           paddingY={[0, 0, 0, 7]}
         >
-          <Columns>
-            <Column width="3/12">
-              <Sidebar />
+          <Columns space={[0, 0, 0, 'gutter', 'containerGutter']}>
+            <Column width="content">
+              <Hidden below="lg">
+                <Sidebar />
+              </Hidden>
             </Column>
-            <Column width="9/12">
+            <Column>
               <Box as="main">
                 <ContentBreadcrumbs />
-                <Box padding={3}>{children}</Box>
+                <div>{children}</div>
               </Box>
             </Column>
           </Columns>

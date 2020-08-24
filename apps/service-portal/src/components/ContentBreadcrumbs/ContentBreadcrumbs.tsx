@@ -39,7 +39,7 @@ const ContentBreadcrumbs: FC<{}> = () => {
   )
 
   return (
-    <Box padding={3}>
+    <Box paddingY={3}>
       <Breadcrumbs>
         {items.map((item, index) => (
           <Link key={index} to={item.path}>

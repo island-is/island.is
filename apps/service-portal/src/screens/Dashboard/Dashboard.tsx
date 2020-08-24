@@ -55,7 +55,7 @@ export const Dashboard: FC<{}> = () => {
   const [{ modules, userInfo }] = useStore()
 
   return (
-    <Box padding={3}>
+    <Box>
       <WidgetLoader modules={modules} userInfo={userInfo} />
     </Box>
   )
