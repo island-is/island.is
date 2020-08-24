@@ -14,11 +14,11 @@ import {
   IntroText,
 } from '@island.is/air-discount-scheme-web/components'
 
-export interface SubsidyProps {
+interface PropTypes {
   page?: GenericPage
 }
 
-const Subsidy: Screen<SubsidyProps> = ({
+const Subsidy: Screen<PropTypes> = ({
   page: { title, intro, mainContent, sidebar, misc },
 }) => {
   const {

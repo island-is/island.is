@@ -14,11 +14,11 @@ import {
   IntroText,
 } from '@island.is/air-discount-scheme-web/components'
 
-export interface HomeProps {
+interface PropTypes {
   page?: GenericPage
 }
 
-const Home: Screen<HomeProps> = ({ page }) => {
+const Home: Screen<PropTypes> = ({ page }) => {
   return (
     <Layout
       left={
@@ -55,7 +55,7 @@ const Home: Screen<HomeProps> = ({ page }) => {
   )
 }
 
-const GET_GENERIC_PAGE_QUERY = gql`
+const GetGenericPageQuery = gql`
   query($input: GetGenericPageInput!) {
     getGenericPage(input: $input) {
       slug
@@ -72,7 +72,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   const {
     data: { getGenericPage: page },
   } = await apolloClient.query<Query, QueryGetGenericPageArgs>({
-    query: GET_GENERIC_PAGE_QUERY,
+    query: GetGenericPageQuery,
     variables: {
       input: {
         lang: 'is-IS',
