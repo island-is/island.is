@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC } from 'react'
+import React from 'react'
 import cn from 'classnames'
 import {
   ContentBlock,
@@ -10,17 +10,34 @@ import {
   Typography,
   Inline,
   Tag,
+  Icon,
 } from '@island.is/island-ui/core'
 
 import * as styles from './Footer.treat'
 import { categories } from '@island.is/web/json'
 
-interface FooterProps {}
+export interface LinkProps {
+  title: string
+  href: string
+  className?: string
+}
 
-export const Footer: FC<FooterProps> = () => {
+interface FooterProps {
+  topLinks?: LinkProps[]
+  bottomLinks?: LinkProps[]
+  languageSwitchLink?: LinkProps
+  hideLanguageSwith?: boolean
+}
+
+export const Footer = ({
+  topLinks = defaultTopLinks,
+  bottomLinks = defaultBottomLinks,
+  languageSwitchLink = defaultLanguageSwitchLink,
+  hideLanguageSwith = false,
+}: FooterProps) => {
   return (
     <>
-      <Box width="full" background="blue100">
+      <Box width="full" background="blue100" className={styles.topWrapper}>
         <ContentBlock>
           <Box padding={[3, 3, 6]}>
             <Box marginBottom={[3, 3, 6]}>
@@ -30,26 +47,50 @@ export const Footer: FC<FooterProps> = () => {
               <div className={cn(styles.column, styles.columnBorder)}>
                 <Stack space={3}>
                   <Stack space={3}>
-                    <Typography variant="h3" color="blue400">
-                      <a href="#">Um Ísland.is</a>
-                    </Typography>
-                    <Typography variant="h3" color="blue400">
-                      <a href="#">Stofnanir</a>
-                    </Typography>
-                    <Typography variant="h3" color="blue400">
-                      <a href="#">Hafa samband</a>
-                    </Typography>
+                    {topLinks.map(({ title, href }, index) => (
+                      <Typography key={index} variant="h3" color="blue400">
+                        <a href={href}>{title}</a>
+                      </Typography>
+                    ))}
                   </Stack>
                   <Stack space={2}>
-                    <Typography variant="h5" color="blue400">
-                      <a href="#">English</a>
-                    </Typography>
-                    <Typography variant="h5" color="blue400">
-                      <a href="#">Facebook</a>
-                    </Typography>
-                    <Typography variant="h5" color="blue400">
-                      <a href="#">Persónuverndarstefna</a>
-                    </Typography>
+                    {!hideLanguageSwith && (
+                      <Inline space={1} alignY="center">
+                        <Icon
+                          height="15"
+                          width="15"
+                          type="globe"
+                          color="blue400"
+                        />
+                        <Typography variant="h5" color="blue400">
+                          <a href={languageSwitchLink.href}>
+                            {languageSwitchLink.title}
+                          </a>
+                        </Typography>
+                      </Inline>
+                    )}
+                    <Inline space={1} alignY="center">
+                      <Icon
+                        height="15"
+                        width="15"
+                        type="facebook"
+                        color="blue400"
+                      />
+                      <Typography variant="h5" color="blue400">
+                        <a href="https://www.facebook.com/islandid">Facebook</a>
+                      </Typography>
+                    </Inline>
+                    <Inline space={1} alignY="center">
+                      <Icon
+                        height="15"
+                        width="15"
+                        type="user"
+                        color="blue400"
+                      />
+                      <Typography variant="h5" color="blue400">
+                        <a href="#">Persónuverndarstefna</a>
+                      </Typography>
+                    </Inline>
                   </Stack>
                 </Stack>
               </div>
@@ -95,7 +136,7 @@ export const Footer: FC<FooterProps> = () => {
           </Box>
         </ContentBlock>
       </Box>
-      <Box width="full" background="blue400">
+      <Box width="full" background="blue400" className={styles.bottomWrapper}>
         <ContentBlock>
           <Box width="full">
             <Box padding={[3, 3, 6]}>
@@ -105,10 +146,13 @@ export const Footer: FC<FooterProps> = () => {
                     Aðrir opinberir vefir
                   </Typography>
                   <Tiles space={2} columns={[1, 1, 2, 3, 4]}>
-                    {categories.map(({ title }) => {
+                    {bottomLinks.map(({ title, href }, index) => {
                       return (
-                        <Typography variant="h5" color="white">
-                          <a href="#">{title}</a>
+                        <Typography key={index} variant="h5" color="white">
+                          <a href={href}>
+                            {title}{' '}
+                            <Icon width="12" type="external" color="white" />
+                          </a>
                         </Typography>
                       )
                     })}
@@ -122,5 +166,64 @@ export const Footer: FC<FooterProps> = () => {
     </>
   )
 }
+
+const defaultTopLinks = [
+  {
+    title: 'Um Stafrænt Ísland',
+    href: 'https://stafraent.island.is/',
+  },
+  {
+    title: 'Stofnanir',
+    href: '#',
+  },
+  {
+    title: 'Hafa samband',
+    href: 'https://island.is/um-island-is/hafa-samband/',
+  },
+]
+
+const defaultLanguageSwitchLink = {
+  title: 'English',
+  href: 'https://island.is/en',
+}
+
+const defaultBottomLinks = [
+  {
+    href: 'https://minarsidur.island.is/',
+    title: 'Mínar síður',
+  },
+  {
+    href: 'https://www.heilsuvera.is/',
+    title: 'Heilsuvera',
+  },
+  {
+    href: 'https://opinbernyskopun.island.is/',
+    title: 'Opinber nýsköpun',
+  },
+  {
+    href: 'https://samradsgatt.island.is/',
+    title: 'Samráðsgátt',
+  },
+  {
+    href: 'https://island.is/mannanofn/',
+    title: 'Mannanöfn',
+  },
+  {
+    href: 'http://vefur.island.is/undirskriftalistar',
+    title: 'Undirskriftarlistar',
+  },
+  {
+    href: 'https://island.is/um-island-is/algengar-spurningar/',
+    title: 'Algengar spurningar',
+  },
+  {
+    href: 'http://www.opnirreikningar.is/',
+    title: 'Opnir reikningar ríkisins',
+  },
+  {
+    href: 'https://tekjusagan.is/',
+    title: 'Tekjusagan',
+  },
+]
 
 export default Footer
