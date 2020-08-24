@@ -23,6 +23,9 @@ export const Footer: FC<FooterProps> = () => {
       <Box width="full" background="blue100">
         <ContentBlock>
           <Box padding={[3, 3, 6]}>
+            <Box marginBottom={[3, 3, 6]}>
+              <Logo iconOnly />
+            </Box>
             <div className={styles.columns}>
               <div className={cn(styles.column, styles.columnBorder)}>
                 <Stack space={3}>
@@ -62,7 +65,7 @@ export const Footer: FC<FooterProps> = () => {
                     <Typography variant="eyebrow" color="purple400">
                       Þjónustuflokkar
                     </Typography>
-                    <Tiles space={2} columns={2}>
+                    <Tiles space={2} columns={[1, 2, 2, 1, 2]}>
                       {categories.map(({ title }) => {
                         return (
                           <Typography variant="h5" color="blue400">
@@ -101,7 +104,7 @@ export const Footer: FC<FooterProps> = () => {
                   <Typography variant="eyebrow" color="white">
                     Aðrir opinberir vefir
                   </Typography>
-                  <Tiles space={2} columns={4}>
+                  <Tiles space={2} columns={[1, 1, 2, 3, 4]}>
                     {categories.map(({ title }) => {
                       return (
                         <Typography variant="h5" color="white">

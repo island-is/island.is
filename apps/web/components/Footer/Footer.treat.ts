@@ -3,17 +3,32 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const columns = style({
   display: 'flex',
-  ...themeUtils.responsiveStyle({
-    md: {
-      right: 43,
-    },
-  }),
+  width: '100%',
+  flexWrap: 'wrap',
 })
 
 export const column = style({
   position: 'relative',
-  width: '25%',
+  marginBottom: 40,
+  width: '100%',
+  ':last-child': {
+    marginBottom: 0,
+  },
+  ...themeUtils.responsiveStyle({
+    lg: {
+      width: '33%',
+      marginBottom: 0,
+    },
+    xl: {
+      width: '25%',
+    },
+  }),
+})
+
+export const columnBorder = style({
   ':after': {
+    content: '""',
+    display: 'none',
     position: 'absolute',
     right: 24,
     top: 0,
@@ -21,14 +36,23 @@ export const column = style({
     width: 1,
     backgroundColor: theme.color.blue200,
   },
-})
-
-export const columnBorder = style({
-  ':after': {
-    content: '""',
-  },
+  ...themeUtils.responsiveStyle({
+    lg: {
+      ':after': {
+        display: 'inline-block',
+      },
+    },
+  }),
 })
 
 export const columnLarge = style({
-  width: '50%',
+  width: '100%',
+  ...themeUtils.responsiveStyle({
+    lg: {
+      width: '33%',
+    },
+    xl: {
+      width: '50%',
+    },
+  }),
 })
