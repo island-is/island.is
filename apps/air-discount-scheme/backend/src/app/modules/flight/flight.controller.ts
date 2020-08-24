@@ -8,8 +8,10 @@ import {
   Delete,
   Inject,
   forwardRef,
+  UseGuards,
 } from '@nestjs/common'
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiExcludeEndpoint,
@@ -22,9 +24,12 @@ import { CreateFlightParams, DeleteFlightParams } from './flight.validator'
 import { FlightLimitExceeded } from './flight.error'
 import { FlightDto } from './dto/flight.dto'
 import { DiscountService } from '../discount'
+import { AuthGuard } from '../common'
 
 @ApiTags('Flights')
 @Controller('api/public')
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class PublicFlightController {
   constructor(
     private readonly flightService: FlightService,

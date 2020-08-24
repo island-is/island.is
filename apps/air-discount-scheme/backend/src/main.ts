@@ -14,5 +14,6 @@ bootstrap({
       'This is documentation is provided for airline booking site for integration purposes.',
     )
     .setVersion('1.0')
+    .addBearerAuth()
     .build(),
 })
