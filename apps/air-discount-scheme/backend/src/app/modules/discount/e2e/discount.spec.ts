@@ -12,6 +12,7 @@ beforeAll(async () => {
   app = await setup()
   flightService = app.get<FlightService>(FlightService)
   cacheManager = app.get<CacheManger>(CACHE_MANAGER)
+  cacheManager.ttl = () => ''
 
   Date.now = jest.fn(() => 1597760782018)
 })

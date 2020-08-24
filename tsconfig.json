@@ -87,6 +87,12 @@
       "@island.is/application/form": ["libs/application/form/src/index.ts"],
       "@island.is/api/domains/application": [
         "libs/api/domains/application/src/index.ts"
+      ],
+      "@island.is/application/graphql": [
+        "libs/application/graphql/src/index.ts"
+      ],
+      "@island.is/air-discount-scheme/types": [
+        "libs/air-discount-scheme/types/src/index.ts"
       ]
     }
   },

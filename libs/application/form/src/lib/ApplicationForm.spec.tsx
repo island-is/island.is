@@ -1,40 +1,36 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import * as z from 'zod'
 
 import { ApplicationForm } from './ApplicationForm'
-import {
-  buildForm,
-  buildTextField,
-  FormType,
-} from '@island.is/application/schema'
+import { FormType } from '@island.is/application/schema'
+import { client } from '@island.is/application/graphql'
+import { ApolloProvider } from '@apollo/client'
 
 describe(' ApplicationForm', () => {
-  const exampleForm = buildForm({
-    schema: z.object({ text: z.string() }),
-    id: FormType.FAMILY_AND_PETS,
-    name: 'Example',
-    ownerId: '222',
-    children: [
-      buildTextField({
-        id: 'text',
-        name: 'what is your name?',
-        required: false,
-      }),
-    ],
-  })
   it('should render successfully', () => {
     const { baseElement } = render(
-      <ApplicationForm form={exampleForm} initialAnswers={{}} />,
+      <ApolloProvider client={client}>
+        <ApplicationForm
+          formType={FormType.EXAMPLE3}
+          initialAnswers={{}}
+          loadingApplication={false}
+        />
+      </ApolloProvider>,
     )
     expect(baseElement).toBeTruthy()
   })
 
   it('should render the application title', () => {
     const { getByText } = render(
-      <ApplicationForm form={exampleForm} initialAnswers={{}} />,
+      <ApolloProvider client={client}>
+        <ApplicationForm
+          formType={FormType.EXAMPLE3}
+          initialAnswers={{}}
+          loadingApplication={false}
+        />
+      </ApolloProvider>,
     )
-    expect(getByText(exampleForm.name)).toBeInTheDocument()
+    expect(getByText(`Driver's license`)).toBeInTheDocument()
   })
 })

@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
@@ -13,6 +14,7 @@ import { CreateApplicationDto } from './dto/createApplication.dto'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { ApplicationValidationPipe } from './application.pipe'
+import { FormType } from '@island.is/application/schema'
 
 @ApiTags('application')
 @Controller('application')
@@ -29,6 +31,16 @@ export class ApplicationController {
     }
 
     return application
+  }
+
+  @Get()
+  @ApiOkResponse({ type: Application, isArray: true })
+  async findAll(@Query('typeId') typeId: string): Promise<Application[]> {
+    if (typeId) {
+      return this.applicationService.findAllByType(typeId as FormType)
+    } else {
+      return this.applicationService.findAll()
+    }
   }
 
   @Post()

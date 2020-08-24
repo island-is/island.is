@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 
-import { AuthModule, UserModule } from './modules'
+import { AuthModule, UserModule, DiscountModule } from './modules'
+import { BackendAPI } from '../services'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -14,9 +15,14 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
       autoSchemaFile: 'apps/air-discount-scheme/api.graphql',
       path: '/api/graphql',
       context: ({ req }) => ({ req }),
+      dataSources: () => ({
+        backendApi: new BackendAPI(),
+      }),
     }),
     AuthModule,
     UserModule,
+    DiscountModule,
   ],
+  providers: [BackendAPI],
 })
 export class AppModule {}

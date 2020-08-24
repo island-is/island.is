@@ -187,6 +187,12 @@
     "adgerdir-e2e": {
       "tags": [],
       "implicitDependencies": ["adgerdir"]
+    },
+    "application-graphql": {
+      "tags": []
+    },
+    "air-discount-scheme-types": {
+      "tags": []
     }
   }
 }

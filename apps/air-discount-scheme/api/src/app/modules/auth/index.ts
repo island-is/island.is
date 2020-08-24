@@ -1,4 +1,5 @@
 export { AuthModule } from './auth.module'
-export { Authorize } from './auth.guard'
 export { AuthService } from './auth.service'
+export { AuthUser } from './auth.types'
+export { Authorize } from './auth.guard'
 export { CurrentUser } from './auth.decorator'

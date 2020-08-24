@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class Discount {
+import { Discount as DiscountType } from '@island.is/air-discount-scheme/types'
+
+export class Discount implements DiscountType {
   constructor(discountCode: string, nationalId: string, ttl: number) {
     this.discountCode = discountCode
     this.nationalId = nationalId

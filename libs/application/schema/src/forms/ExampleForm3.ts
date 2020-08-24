@@ -11,15 +11,12 @@ import {
   buildRadioField,
   buildTextField,
   buildSelectField,
-  buildCustomField,
 } from '../lib/fieldBuilders'
 import { Form } from '../types/Form'
-import { nationalIdRegex } from './formUtils'
-import { CustomFieldComponents } from '../types/Fields'
+import { nationalIdRegex } from './formConstants'
 import { FormType } from './FormType'
 
 const ExampleSchema = z.object({
-  country: z.string().nonempty(),
   person: z.object({
     age: z.string().refine((x) => {
       const asNumber = parseInt(x)
@@ -38,7 +35,6 @@ const ExampleSchema = z.object({
   }),
   historyCars: z
     .array(
-      // TODO checkbox answers are [undefined, 'aranja', undefined] and we need to do something about it...
       z.union([
         z.enum(['VW', 'Audi', 'Porsche', 'Tesla', 'none']),
         z.undefined(),
@@ -94,7 +90,12 @@ export const ExampleForm3: Form = buildForm({
           children: [
             buildTextField({
               id: 'person.name',
-              name: 'Name',
+              name: 'What is your name?',
+              required: true,
+            }),
+            buildTextField({
+              id: 'person.email',
+              name: 'What is your email?',
               required: true,
             }),
             buildCheckboxField({
@@ -133,14 +134,6 @@ export const ExampleForm3: Form = buildForm({
                 },
               ],
             }),
-            buildCustomField(
-              {
-                id: 'country',
-                name: 'Where are you from?',
-                component: CustomFieldComponents.Country,
-              },
-              {},
-            ),
           ],
         }),
         buildSubSection({

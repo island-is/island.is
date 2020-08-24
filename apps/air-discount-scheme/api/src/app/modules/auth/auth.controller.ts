@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  Post,
-  Query,
-  Redirect,
-  Req,
-  Res,
-} from '@nestjs/common'
+import { Body, Controller, Get, Inject, Post, Req, Res } from '@nestjs/common'
 import jwt from 'jsonwebtoken'
 import { Entropy } from 'entropy-string'
 import IslandisLogin from 'islandis-login'
@@ -55,7 +45,7 @@ export class AuthController {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
   @Post('/callback')
-  async callback(@Body('token') token, @Res() res, @Req() req) {
+  async callback(@Body('token') token, @Res() res) {
     let verifyResult: VerifyResult
     try {
       verifyResult = await loginIS.verify(token)

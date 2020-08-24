@@ -9,6 +9,16 @@ type User {
   role: String!
 }
 
+type Discount {
+  discountCode: ID!
+  expires: String!
+  user: User!
+}
+
 type Query {
   user: User
+}
+
+type Mutation {
+  fetchDiscount: Discount
 }

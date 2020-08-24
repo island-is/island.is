@@ -30,7 +30,7 @@ export interface UpdateApplicationDto {
      * @type {string}
      * @memberof UpdateApplicationDto
      */
-    typeId?: UpdateApplicationDtoTypeIdEnum;
+    typeId: UpdateApplicationDtoTypeIdEnum;
     /**
      * 
      * @type {string}
@@ -80,7 +80,7 @@ export function UpdateApplicationDtoFromJSONTyped(json: any, ignoreDiscriminator
     return {
         
         'id': json['id'],
-        'typeId': !exists(json, 'typeId') ? undefined : json['typeId'],
+        'typeId': json['typeId'],
         'applicant': !exists(json, 'applicant') ? undefined : json['applicant'],
         'assignee': !exists(json, 'assignee') ? undefined : json['assignee'],
         'externalId': !exists(json, 'externalId') ? undefined : json['externalId'],

@@ -5,6 +5,7 @@ import { mergeAnswers } from '@island.is/application/schema'
 import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
+import { FormType } from '@island.is/application/schema'
 
 @Injectable()
 export class ApplicationService {
@@ -19,6 +20,16 @@ export class ApplicationService {
     this.logger.debug(`Finding application by id - "${id}"`)
     return this.applicationModel.findOne({
       where: { id },
+    })
+  }
+
+  async findAll(): Promise<Application[]> {
+    return this.applicationModel.findAll()
+  }
+
+  async findAllByType(typeId: FormType): Promise<Application[]> {
+    return this.applicationModel.findAll({
+      where: { typeId },
     })
   }
 
