@@ -6,7 +6,7 @@ import { environment } from '../environments'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
-  baseURL = `${environment.backendUrl}/private`
+  baseURL = `${environment.backendUrl}/api/private`
 
   async getDiscount(nationalId: string): Promise<Discount | null> {
     const discounts = await this.get(`users/${nationalId}/discounts`)
