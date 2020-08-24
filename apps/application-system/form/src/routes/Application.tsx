@@ -11,7 +11,7 @@ export const Application = () => {
   const history = useHistory()
   const match = useRouteMatch()
 
-  const { data } = useQuery(GET_APPLICATION, {
+  const { data, loading } = useQuery(GET_APPLICATION, {
     variables: {
       input: {
         id: id,
@@ -25,6 +25,7 @@ export const Application = () => {
       formType={data?.getApplication?.typeId ?? FormType.EXAMPLE3}
       applicationId={data?.getApplication?.id}
       initialAnswers={data?.getApplication?.answers}
+      loadingApplication={loading}
       onApplicationCreated={(id) => history.replace(`${match.url}/${id}`)}
     />
   )

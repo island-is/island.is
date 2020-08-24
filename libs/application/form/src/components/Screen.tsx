@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useCallback } from 'react'
 import { useMutation } from '@apollo/client'
 import {
   FormValue,
@@ -8,24 +8,24 @@ import {
   FormType,
 } from '@island.is/application/schema'
 import { Typography, Box, Button, Divider } from '@island.is/island-ui/core'
+import { CREATE_APPLICATION } from '@island.is/application/graphql'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import deepmerge from 'deepmerge'
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form'
 import { FormScreen } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
 import { resolver } from '../validation/resolver'
-import ConditionHandler from './ConditionHandler'
 import FormRepeater from './FormRepeater'
-import { CREATE_APPLICATION } from '@island.is/application/graphql'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
 type ScreenProps = {
+  answerAndGoToNextScreen(Answers): void
   formValue: FormValue
   formTypeId: FormType
   answerQuestions(Answers): void
   dataSchema: Schema
   shouldSubmit?: boolean
   expandRepeater(): void
-  nextScreen(): void
   prevScreen(): void
   screen: FormScreen
   section?: Section
@@ -39,7 +39,7 @@ const Screen: FC<ScreenProps> = ({
   answerQuestions,
   dataSchema,
   expandRepeater,
-  nextScreen,
+  answerAndGoToNextScreen,
   prevScreen,
   shouldSubmit = false,
   screen,
@@ -71,10 +71,11 @@ const Screen: FC<ScreenProps> = ({
 
   const { handleSubmit, errors, reset } = hookFormData
 
-  const goBack = () => {
-    reset(formValue)
+  const goBack = useCallback(() => {
+    // using deepmerge to prevent some weird react-hook-form read-only bugs
+    reset(deepmerge({}, formValue))
     prevScreen()
-  }
+  }, [formValue, prevScreen, reset])
 
   const onSubmit: SubmitHandler<FormValue> = async (data) => {
     if (shouldSubmit) {
@@ -107,8 +108,7 @@ const Screen: FC<ScreenProps> = ({
         })
       }
       console.log('these were my answers:', data)
-      answerQuestions(data)
-      nextScreen()
+      answerAndGoToNextScreen(data)
     }
   }
 
@@ -123,11 +123,6 @@ const Screen: FC<ScreenProps> = ({
         height="full"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <ConditionHandler
-          answerQuestions={answerQuestions}
-          formValue={formValue}
-          screen={screen}
-        />
         <Box flexGrow={1}>
           {section && <Typography color="dark300">{section.name}</Typography>}
           <Typography variant="h2">{screen.name}</Typography>
@@ -140,6 +135,7 @@ const Screen: FC<ScreenProps> = ({
               />
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
               <FormMultiField
+                answerQuestions={answerQuestions}
                 errors={errors}
                 multiField={screen}
                 formValue={formValue}

@@ -1,11 +1,17 @@
 import * as z from 'zod'
 import { buildForm, buildRepeater, buildSection } from '../lib/formBuilders'
-import { buildIntroductionField, buildTextField } from '../lib/fieldBuilders'
+import {
+  buildIntroductionField,
+  buildRadioField,
+  buildSelectField,
+  buildTextField,
+} from '../lib/fieldBuilders'
 import { Form } from '../types/Form'
 import { FormType } from './FormType'
 
-const FamilyAndPetsSchema = z.object({
-  person: z
+const PetsSchema = z.object({
+  entrance: z.enum(['yes', 'no']),
+  pets: z
     .array(
       z.object({
         age: z.string().refine((x) => {
@@ -13,20 +19,13 @@ const FamilyAndPetsSchema = z.object({
           if (isNaN(asNumber)) {
             return false
           }
-          return asNumber > 15
+          return asNumber >= 0
         }),
         name: z
           .string()
           .nonempty()
           .max(256), // unique in the repeater hmm?
-        pets: z
-          .array(
-            z.object({
-              name: z.string(),
-              animal: z.enum(['cat', 'dog', 'parrot', 'snake']),
-            }),
-          )
-          .optional(),
+        kind: z.enum(['cat', 'dog', 'parrot', 'snake']),
       }),
     )
     .max(5)
@@ -37,22 +36,32 @@ const FamilyAndPetsSchema = z.object({
 export const FamilyAndPets: Form = buildForm({
   id: FormType.FAMILY_AND_PETS,
   ownerId: 'Aranja',
-  name: 'Family and pets',
-  schema: FamilyAndPetsSchema,
+  name: 'Gæludýr',
+  schema: PetsSchema,
   children: [
     buildSection({
-      id: 'family',
-      name: 'Family',
+      id: 'pets',
+      name: 'Almennt um gæludýr',
       children: [
         buildIntroductionField({
           id: 'welcome',
-          name: 'Welcome to this amazing application form',
-          introduction: 'This will be one hell of a ride',
+          name: 'Velkomin í þessa umsókn um skráningu gæludýra',
+          introduction:
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        }),
+        buildRadioField({
+          id: 'ownPets',
+          name: 'Áttu gæludýr?',
+          options: [
+            { label: 'Já', value: 'yes' },
+            { label: 'Nei', value: 'no' },
+          ],
         }),
         buildRepeater({
-          id: 'person',
-          name: 'Family Member',
+          id: 'pets',
+          name: 'Hvaða gæludýr áttu?',
           labelKey: 'name',
+          condition: (formValue) => formValue?.ownPets === 'yes',
           children: [
             buildTextField({
               id: 'name',
@@ -64,31 +73,42 @@ export const FamilyAndPets: Form = buildForm({
               name: 'Age',
               required: true,
             }),
-            // buildRepeater({
-            //   id: 'person.pets',
-            //   name: 'Pets',
-            //   children: [
-            //     buildTextField({
-            //       id: 'name',
-            //       name: 'Name',
-            //       required: true,
-            //     }),
-            //     buildSelectField({
-            //       id: 'animal',
-            //       name: 'Animal Type',
-            //       required: true,
-            //       options: [
-            //         { value: 'cat', label: 'Cat' },
-            //         { value: 'dog', label: 'Dog' },
-            //         { value: 'parrot', label: 'Parrot' },
-            //         { value: 'snake', label: 'Snake' },
-            //       ],
-            //     }),
-            //   ],
-            // }),
+            buildSelectField({
+              id: 'kind',
+              name: 'Hvaða dýrategund er gæludýrið?',
+              required: true,
+              options: [
+                { value: 'cat', label: 'Köttur' },
+                { value: 'dog', label: 'Hundur' },
+                { value: 'snake', label: 'Snákur' },
+                { value: 'parrot', label: 'Páfagaukur' },
+              ],
+            }),
           ],
         }),
-        buildTextField({ id: 'familyName', name: 'What is the family name?' }),
+      ],
+    }),
+    buildSection({
+      id: 'houseInfo',
+      name: 'Húsnæði',
+      children: [
+        buildRadioField({
+          id: 'entrance',
+          name: 'Eru þið með sérinngang í húsnæði ykkar?',
+          options: [
+            { label: 'Já', value: 'yes' },
+            { label: 'Nei', value: 'no' },
+          ],
+        }),
+        buildTextField({
+          id: 'floor',
+          name: 'Á hvaða hæð er húsnæðið þitt (ef á við)',
+        }),
+        buildIntroductionField({
+          id: 'summary',
+          name: 'Takk fyrir',
+          introduction: 'Við verðum í sambandi síðar',
+        }),
       ],
     }),
   ],

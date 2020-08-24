@@ -2,7 +2,7 @@ import { buildForm, buildMultiField } from '../lib/formBuilders'
 import { buildSelectField, buildTextField } from '../lib/fieldBuilders'
 import { Form } from '../types/Form'
 import * as z from 'zod'
-import { nationalIdRegex } from './formUtils'
+import { nationalIdRegex } from './formConstants'
 import { FormType } from './FormType'
 
 const ExampleSchema2 = z.object({

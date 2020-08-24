@@ -19,16 +19,18 @@ import * as styles from './ApplicationForm.treat'
 import ProgressIndicator from '../components/ProgressIndicator'
 
 type ApplicationProps = {
-  formType: FormType
   applicationId?: string
+  formType: FormType
   initialAnswers?: FormValue
+  loadingApplication: boolean
   onApplicationCreated?(id: string): void
 }
 
 export const ApplicationForm: FC<ApplicationProps> = ({
-  formType,
   applicationId,
+  formType,
   initialAnswers,
+  loadingApplication,
   onApplicationCreated = () => undefined,
 }) => {
   const form = getFormByTypeId(formType)
@@ -57,12 +59,16 @@ export const ApplicationForm: FC<ApplicationProps> = ({
     screens,
   } = state
 
+  // TODO this is not good enough
   useEffect(() => {
-    dispatch({
-      type: ActionTypes.RE_INITIALIZE,
-      payload: { formValue: initialAnswers },
-    })
-  }, [initialAnswers])
+    if (!loadingApplication) {
+      dispatch({
+        type: ActionTypes.RE_INITIALIZE,
+        payload: { formValue: initialAnswers },
+      })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadingApplication])
 
   return (
     <Box display="flex" flexGrow={1}>
@@ -102,7 +108,9 @@ export const ApplicationForm: FC<ApplicationProps> = ({
             expandRepeater={() =>
               dispatch({ type: ActionTypes.EXPAND_REPEATER })
             }
-            nextScreen={() => dispatch({ type: ActionTypes.NEXT_SCREEN })}
+            answerAndGoToNextScreen={(payload) =>
+              dispatch({ type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN, payload })
+            }
             prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
             shouldSubmit={activeScreen === screens.length - 1}
             setApplicationId={(id) => {
