@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { NotificationCard as Card } from '../mockNotifications'
-import { Box, Typography, Icon } from '@island.is/island-ui/core'
+import { Box, Typography, Icon, Stack, Button } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 import * as styles from './Notificationcard.treat'
 import cn from 'classnames'
@@ -14,7 +14,9 @@ const NotificationCard: FC<Props> = ({ card }) => {
   return (
     <Box
       position="relative"
-      padding={4}
+      padding={3}
+      border="standard"
+      borderRadius="standard"
       className={cn(styles.card, {
         [styles.unread]: !card.isRead,
       })}
@@ -25,24 +27,19 @@ const NotificationCard: FC<Props> = ({ card }) => {
           <ActionMenuItem>Eyða tilkynningu</ActionMenuItem>
         </ActionMenu>
       </div>
-      <Box marginBottom={1}>
+      <Stack space={1}>
         <Typography variant="h5">{card.title}</Typography>
-      </Box>
-      <Box marginBottom={2}>
         <Typography variant="pSmall" as="div">
           {card.text}
         </Typography>
-      </Box>
-      <Link to={card.link.url}>
-        <Box display="flex" alignItems="center">
-          <Typography variant="tag" color="blue400">
-            {card.link.title}
-          </Typography>
-          <Box marginLeft={1}>
-            <Icon type="arrowRight" width={10} height={12} />
-          </Box>
+        <Box textAlign="right">
+          <Link to={card.link.url} className={styles.link}>
+            <Button variant="text" size="small" icon="arrowRight">
+              {card.link.title}
+            </Button>
+          </Link>
         </Box>
-      </Link>
+      </Stack>
     </Box>
   )
 }

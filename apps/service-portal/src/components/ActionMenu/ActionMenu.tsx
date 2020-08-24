@@ -1,8 +1,7 @@
 import React, { FC, useState, useRef } from 'react'
-import { Box, Icon, Stack } from '@island.is/island-ui/core'
+import { Box, Icon, Stack, Typography } from '@island.is/island-ui/core'
 import * as styles from './ActionMenu.treat'
-// eslint-disable-next-line
-import useOutsideClick from 'apps/service-portal/src/hooks/useOutsideClick/useOutsideClick'
+import useOutsideClick from '../../hooks/useOutsideClick/useOutsideClick'
 
 interface ActionMenuItemProps {
   onClick?: () => void
@@ -12,8 +11,10 @@ export const ActionMenuItem: FC<ActionMenuItemProps> = ({
   onClick,
   children,
 }) => (
-  <button className={styles.menuItem} onClick={onClick}>
-    {children}
+  <button onClick={onClick}>
+    <Typography variant="pSmall" color="blue600">
+      {children}
+    </Typography>
   </button>
 )
 
@@ -33,11 +34,18 @@ const ActionMenu: FC<{}> = ({ children }) => {
         <Icon type="bullet" width={4} height={4} color="blue300" />
       </button>
       {isOpen && (
-        <div className={styles.menu}>
+        <Box
+          paddingY={2}
+          paddingX={3}
+          background="blue100"
+          border="standard"
+          borderRadius="standard"
+          className={styles.menu}
+        >
           <Stack space={[0, 1]} dividers>
             {children}
           </Stack>
-        </div>
+        </Box>
       )}
     </Box>
   )

@@ -97,6 +97,7 @@ export const Menu: FC<Props> = ({
           </Box>
         </>
       )}
+      <Divider />
       <Box padding={3}>
         {/* TODO: This is a temp solution */}
         <a

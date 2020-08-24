@@ -1,40 +1,39 @@
 import React, { FC } from 'react'
 import * as styles from './NotificationSidebar.treat'
 import cn from 'classnames'
-// eslint-disable-next-line
-import { useStore } from 'apps/service-portal/src/store/stateProvider'
-import { Box, Typography } from '@island.is/island-ui/core'
+import { Box, Typography, Stack } from '@island.is/island-ui/core'
 import { notifications } from './mockNotifications'
 import NotificationCard from './NotificationCard/NotificationCard'
+import { useStore } from '../../../store/stateProvider'
 
 const NotificationSidebar: FC<{}> = () => {
   const [{ notificationSidebarState }] = useStore()
 
   return (
     <>
-      <div
-        className={cn(styles.placeholder, {
-          [styles.active]: notificationSidebarState === 'open',
-        })}
-      />
-      <div
+      <Box
+        padding={4}
+        boxShadow="large"
+        background="white"
         className={cn(styles.wrapper, {
           [styles.active]: notificationSidebarState === 'open',
         })}
       >
         {notifications.sections.map((section, index) => (
-          <div key={index}>
-            <Box textAlign="right" padding={2}>
-              <Typography variant="eyebrow" as="span" color="purple400">
-                Í dag
-              </Typography>
-            </Box>
-            {section.cards.map((card) => (
-              <NotificationCard key={card.id} card={card} />
-            ))}
-          </div>
+          <Box marginBottom={3} key={index}>
+            <Stack space={1}>
+              <Box marginBottom={1} textAlign="right">
+                <Typography variant="eyebrow" as="span" color="purple400">
+                  Í dag
+                </Typography>
+              </Box>
+              {section.cards.map((card) => (
+                <NotificationCard key={card.id} card={card} />
+              ))}
+            </Stack>
+          </Box>
         ))}
-      </div>
+      </Box>
     </>
   )
 }

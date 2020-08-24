@@ -1,21 +1,21 @@
 import { style } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
-import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/service-portal/constants'
+import {
+  SERVICE_PORTAL_HEADER_HEIGHT_LG,
+  zIndex,
+} from '@island.is/service-portal/constants'
 
-const width = 336
-const breakpoint = 914 + width
+const width = 410
+const breakpoint = 1200 + width
 
 export const wrapper = style({
   position: 'fixed',
   top: SERVICE_PORTAL_HEADER_HEIGHT_LG,
   right: 0,
-  zIndex: 2,
+  zIndex: zIndex.notificationSidebar,
   width: width,
   height: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_LG}px)`,
   flex: '0 0 auto',
   marginRight: -width,
-  backgroundColor: theme.color.white,
-  borderLeft: `1px solid ${theme.color.dark100}`,
   transition: 'margin-right 400ms',
   overflowY: 'auto',
 })

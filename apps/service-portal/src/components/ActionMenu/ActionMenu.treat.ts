@@ -21,24 +21,11 @@ export const menu = style({
   top: 0,
   right: 0,
   minWidth: 180,
-  padding: theme.spacing['2'],
-  boxShadow: theme.shadows.subtle,
-  backgroundColor: theme.color.white,
-  borderRadius: 4,
   opacity: 0,
+  zIndex: 2,
   '@keyframes': {
     '0%': { opacity: 0, transform: 'translate3d(10px, -10px, 0)' },
     '100%': { opacity: 1, transform: 'translate3d(0px, 0px, 0)' },
   },
   animation: '@keyframes 150ms ease forwards',
-})
-
-export const menuItem = style({
-  fontSize: 14,
-  fontWeight: 500,
-  textAlign: 'left',
-  ':hover': {
-    color: theme.color.blue400,
-  },
-  transition: 'color 200ms',
 })
