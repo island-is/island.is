@@ -2382,20 +2382,20 @@
       }
     }
   },
-  "services-justice-api": {
-    "root": "apps/services/justice-api",
-    "sourceRoot": "apps/services/justice-api/src",
+  "judicial-system-api": {
+    "root": "apps/judicial-system/api",
+    "sourceRoot": "apps/judicial-system/api/src",
     "projectType": "application",
-    "prefix": "services-justice-api",
+    "prefix": "judicial-system-api",
     "schematics": {},
     "architect": {
       "build": {
         "builder": "@nrwl/node:build",
         "options": {
-          "outputPath": "dist/apps/services/justice-api",
-          "main": "apps/services/justice-api/src/main.ts",
-          "tsConfig": "apps/services/justice-api/tsconfig.app.json",
-          "assets": ["apps/services/justice-api/src/assets"]
+          "outputPath": "dist/apps/judicial-system/api",
+          "main": "apps/judicial-system/api/src/main.ts",
+          "tsConfig": "apps/judicial-system/api/tsconfig.app.json",
+          "assets": ["apps/judicial-system/api/src/assets"]
         },
         "configurations": {
           "production": {
@@ -2404,8 +2404,8 @@
             "inspect": false,
             "fileReplacements": [
               {
-                "replace": "apps/services/justice-api/src/environments/environment.ts",
-                "with": "apps/services/justice-api/src/environments/environment.prod.ts"
+                "replace": "apps/judicial-system/api/src/environments/environment.ts",
+                "with": "apps/judicial-system/api/src/environments/environment.prod.ts"
               }
             ]
           }
@@ -2414,26 +2414,26 @@
       "serve": {
         "builder": "@nrwl/node:execute",
         "options": {
-          "buildTarget": "services-justice-api:build"
+          "buildTarget": "judicial-system-api:build"
         }
       },
       "lint": {
         "builder": "@nrwl/linter:lint",
         "options": {
           "linter": "eslint",
-          "config": "apps/services/justice-api/.eslintrc",
+          "config": "apps/judicial-system/api/.eslintrc",
           "tsConfig": [
-            "apps/services/justice-api/tsconfig.app.json",
-            "apps/services/justice-api/tsconfig.spec.json"
+            "apps/judicial-system/api/tsconfig.app.json",
+            "apps/judicial-system/api/tsconfig.spec.json"
           ],
-          "exclude": ["**/node_modules/**", "!apps/services/justice-api/**"]
+          "exclude": ["**/node_modules/**", "!apps/judicial-system/api/**"]
         }
       },
       "test": {
         "builder": "@nrwl/jest:jest",
         "options": {
-          "jestConfig": "apps/services/justice-api/jest.config.js",
-          "tsConfig": "apps/services/justice-api/tsconfig.spec.json",
+          "jestConfig": "apps/judicial-system/api/jest.config.js",
+          "tsConfig": "apps/judicial-system/api/tsconfig.spec.json",
           "passWithNoTests": true
         }
       },
