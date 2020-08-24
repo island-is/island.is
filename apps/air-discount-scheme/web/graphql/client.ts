@@ -5,7 +5,6 @@ import {
   IntrospectionFragmentMatcher,
   NormalizedCacheObject,
 } from 'apollo-cache-inmemory'
-import fetch from 'isomorphic-unfetch'
 
 import { isBrowser } from '../utils'
 import authLink from './authLink'
