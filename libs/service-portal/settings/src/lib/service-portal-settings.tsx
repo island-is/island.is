@@ -25,6 +25,8 @@ const navScreenItems: NavigationScreenItem[] = [
 
 const SettingsNavScreen = () => <NavigationScreen items={navScreenItems} />
 
+const UmbodMock = () => <h1>Umbod</h1>
+
 export const ServicePortalSettings: ServicePortalModuleComponent = (props) => {
   return (
     <Switch>
@@ -37,6 +39,11 @@ export const ServicePortalSettings: ServicePortalModuleComponent = (props) => {
         exact
         path={ServicePortalPath.StillingarUpplysingar}
         render={() => <SubjectInfo {...props} />}
+      />
+      <Route
+        exact
+        path={ServicePortalPath.StillingarUmbod}
+        render={() => <UmbodMock />}
       />
     </Switch>
   )

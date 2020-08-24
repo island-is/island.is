@@ -42,15 +42,9 @@ export type ServicePortalRoute = {
    */
   name: string
   /**
-   * Describes the path used to route to this component
+   * Describes the path or paths used to route to this component
    */
-  path: ServicePortalPath
-  /**
-   * Routes are defined as exact by default
-   * This flags it as a catch-all parent route that
-   * defines it's own nested routing
-   */
-  catchAll?: boolean
+  path: ServicePortalPath | ServicePortalPath[]
   /**
    * The render value of this component
    */
@@ -92,11 +86,4 @@ export interface ServicePortalModule {
    * within itself and use the provided render function to render out the component
    */
   routes: (userInfo: User) => ServicePortalRoute[]
-  /**
-   * Proposal:
-   * All paths provided by this module.
-   * These are used to determine what navigational items will be shown
-   * in the sidebar, what breadcrumbs will be generated etc.
-   */
-  // paths: ServicePortalPath[]
 }

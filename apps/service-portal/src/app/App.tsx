@@ -38,18 +38,16 @@ export const App = () => {
                 component={OidcSilentSignIn}
               />
               <Route>
-                <Authenticator>
-                  <Layout>
-                    <Switch>
-                      <Route exact path={ServicePortalPath.MinarSidurRoot}>
-                        <Dashboard />
-                      </Route>
-                      <Route>
-                        <Modules />
-                      </Route>
-                    </Switch>
-                  </Layout>
-                </Authenticator>
+                <Layout>
+                  <Switch>
+                    <Route exact path={ServicePortalPath.MinarSidurRoot}>
+                      <Dashboard />
+                    </Route>
+                    <Route>
+                      <Modules />
+                    </Route>
+                  </Switch>
+                </Layout>
               </Route>
             </Switch>
           </StateProvider>
