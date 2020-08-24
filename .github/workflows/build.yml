@@ -17,6 +17,7 @@ jobs:
   prepare:
     #runs-on: self-hosted
     runs-on: ubuntu-latest
+    timeout-minutes: 15 #pulling dependencies potentially twice - host OS and docker layer
 
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
@@ -206,6 +207,7 @@ jobs:
           - 5432:5432
     needs: prepare
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
@@ -245,6 +247,7 @@ jobs:
   formatting:
     needs: prepare
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     env:
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
@@ -268,6 +271,7 @@ jobs:
   linting:
     needs: prepare
     runs-on: ubuntu-latest
+    timeout-minutes: 25 # linting has proven to be quite resource intensive
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
@@ -302,6 +306,7 @@ jobs:
   docker-express:
     needs: [prepare, tests]
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
@@ -340,6 +345,7 @@ jobs:
   docker-next:
     needs: [prepare, tests]
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
@@ -377,6 +383,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     needs: [docker-express, docker-next, prepare, linting, formatting]
     env:
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
