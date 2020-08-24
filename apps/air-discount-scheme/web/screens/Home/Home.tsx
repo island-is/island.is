@@ -56,7 +56,7 @@ const Home: Screen<PropTypes> = ({ page }) => {
 }
 
 const GetGenericPageQuery = gql`
-  query($input: GetGenericPageInput!) {
+  query getGenericPage($input: GetGenericPageInput!) {
     getGenericPage(input: $input) {
       slug
       title

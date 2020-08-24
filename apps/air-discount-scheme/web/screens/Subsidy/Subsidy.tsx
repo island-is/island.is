@@ -62,8 +62,8 @@ const Subsidy: Screen<PropTypes> = ({
 
 export default Subsidy
 
-const GET_GENERIC_PAGE_QUERY = gql`
-  query($input: GetGenericPageInput!) {
+const GetGenericPageQuery = gql`
+  query getGenericPageQuery($input: GetGenericPageInput!) {
     getGenericPage(input: $input) {
       slug
       title
@@ -79,7 +79,7 @@ Subsidy.getInitialProps = async ({ apolloClient, locale }) => {
   const {
     data: { getGenericPage: page },
   } = await apolloClient.query<Query, QueryGetGenericPageArgs>({
-    query: GET_GENERIC_PAGE_QUERY,
+    query: GetGenericPageQuery,
     variables: {
       input: {
         lang: 'is-IS',
