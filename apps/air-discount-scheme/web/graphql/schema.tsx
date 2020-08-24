@@ -2,6 +2,9 @@ import gql from 'graphql-tag'
 import * as ApolloReactCommon from '@apollo/react-common'
 import * as ApolloReactHooks from '@apollo/react-hooks'
 export type Maybe<T> = T | null
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K]
+}
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string
@@ -19,12 +22,24 @@ export type User = {
   role: Scalars['String']
 }
 
+export type Discount = {
+  __typename?: 'Discount'
+  discountCode: Scalars['ID']
+  expires: Scalars['String']
+  user: User
+}
+
 export type Query = {
   __typename?: 'Query'
   user?: Maybe<User>
 }
 
-export type UserQueryQueryVariables = {}
+export type Mutation = {
+  __typename?: 'Mutation'
+  fetchDiscount?: Maybe<Discount>
+}
+
+export type UserQueryQueryVariables = Exact<{ [key: string]: never }>
 
 export type UserQueryQuery = { __typename?: 'Query' } & {
   user?: Maybe<
