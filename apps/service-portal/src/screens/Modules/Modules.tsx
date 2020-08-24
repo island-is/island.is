@@ -1,9 +1,6 @@
 import React, { FC, Suspense } from 'react'
 import { Route, Switch } from 'react-router-dom'
-import {
-  ServicePortalRoute,
-  ServicePortalModule,
-} from '@island.is/service-portal/core'
+import { ServicePortalRoute } from '@island.is/service-portal/core'
 import { useStore } from '../../store/stateProvider'
 import ModuleLoadingScreen from './ModuleLoadingScreen'
 import ModuleErrorScreen, { ModuleErrorBoundary } from './ModuleErrorScreen'
@@ -30,32 +27,28 @@ const RouteComponent: FC<{
 })
 
 const RouteLoader: FC<{
-  modules: ServicePortalModule[]
+  routes: ServicePortalRoute[]
   userInfo: User
-}> = React.memo(({ modules, userInfo }) => (
+}> = React.memo(({ routes, userInfo }) => (
   <Switch>
-    {modules.map((module) =>
-      module
-        .routes(userInfo)
-        .map((route) => (
-          <Route
-            path={route.path}
-            exact
-            key={Array.isArray(route.path) ? route.path[0] : route.path}
-            render={() => <RouteComponent route={route} userInfo={userInfo} />}
-          />
-        )),
-    )}
+    {routes.map((route) => (
+      <Route
+        path={route.path}
+        exact
+        key={Array.isArray(route.path) ? route.path[0] : route.path}
+        render={() => <RouteComponent route={route} userInfo={userInfo} />}
+      />
+    ))}
     <Route component={NotFound} />
   </Switch>
 ))
 
 const Modules: FC<{}> = () => {
-  const [{ modules, userInfo }] = useStore()
+  const [{ routes, userInfo }] = useStore()
 
   return (
     <Box paddingY={4} paddingX={3}>
-      <RouteLoader modules={modules} userInfo={userInfo} />
+      <RouteLoader routes={routes} userInfo={userInfo} />
     </Box>
   )
 }

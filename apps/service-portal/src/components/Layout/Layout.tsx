@@ -1,4 +1,4 @@
-import React, { FC, useRef } from 'react'
+import React, { FC } from 'react'
 import Header from '../Header/Header'
 import Sidebar from '../Sidebar/Sidebar'
 import { Box, Columns, Column } from '@island.is/island-ui/core'
@@ -6,9 +6,10 @@ import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBread
 import * as styles from './Layout.treat'
 import UserInfoLoadingOverlay from '../Loaders/UserInfoLoadingOverlay/UserInfoLoadingOverlay'
 import NotificationSidebar from '../Notifications/NotificationSidebar/NotificationSidebar'
+import useRoutes from '../../hooks/useRoutes/useRoutes'
 
 const Layout: FC = ({ children }) => {
-  const mainRef = useRef()
+  useRoutes()
 
   return (
     <>
@@ -22,8 +23,8 @@ const Layout: FC = ({ children }) => {
       >
         <Box
           className={styles.mainWrapper}
-          ref={mainRef}
           paddingX={[0, 0, 0, 6]}
+          paddingY={[0, 0, 0, 7]}
         >
           <Columns>
             <Column width="3/12">

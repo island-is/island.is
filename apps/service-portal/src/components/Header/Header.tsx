@@ -19,6 +19,7 @@ export const Header: FC<{}> = () => {
           justifyContent="spaceBetween"
           alignItems="center"
           height="full"
+          background="white"
           paddingLeft={[3, 3, 6, 6]}
           paddingRight={[3, 3, 6, 6]}
         >
