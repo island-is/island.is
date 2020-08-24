@@ -1,0 +1,60 @@
+openapi: 3.0.0
+info:
+  title: Judicial System Backend
+  description: This is the backend api for the judicial system.
+  version: '1.0'
+  contact: {}
+tags:
+  - name: judicial-system
+    description: ''
+servers: []
+components:
+  schemas:
+    Liveness:
+      type: object
+      properties:
+        ok:
+          type: boolean
+      required:
+        - ok
+    Version:
+      type: object
+      properties:
+        version:
+          type: string
+      required:
+        - version
+paths:
+  /liveness:
+    get:
+      operationId: InfraController_liveness
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Liveness'
+      tags:
+        - internal
+  /version:
+    get:
+      operationId: InfraController_version
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
+      tags:
+        - internal
+  /:
+    get:
+      operationId: AppController_getData
+      parameters: []
+      responses:
+        '200':
+          description: ''
