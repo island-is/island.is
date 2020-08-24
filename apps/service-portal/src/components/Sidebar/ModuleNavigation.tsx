@@ -25,7 +25,11 @@ const ModuleNavigation: FC<Props> = ({ nav }) => {
             <Box paddingLeft={4} paddingTop={2} paddingBottom={2}>
               <Stack space={1}>
                 {nav.children.map((child, index) => (
-                  <LinkButton url={child.path} key={`child-${index}`}>
+                  <LinkButton
+                    url={child.path}
+                    key={`child-${index}`}
+                    active={location.pathname.includes(child.path)}
+                  >
                     {child.name}
                   </LinkButton>
                 ))}

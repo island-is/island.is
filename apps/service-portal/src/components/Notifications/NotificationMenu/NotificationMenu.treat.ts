@@ -23,8 +23,7 @@ export const active = style({
 
 export const inner = style({
   width: width,
-  height: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_LG}px - ${top}px)`,
-  transform: 'translateX(0px)',
+  maxHeight: `calc(100vh - ${SERVICE_PORTAL_HEADER_HEIGHT_LG}px - ${top}px)`,
   overflowY: 'auto',
 })
 

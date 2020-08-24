@@ -14,3 +14,7 @@ export const link = style({
     textDecoration: 'none',
   },
 })
+
+export const active = style({
+  fontWeight: 600,
+})
