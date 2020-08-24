@@ -483,6 +483,38 @@ jobs:
             ]
           }
           BODY
+      - name: Trigger Deployment for air-discount-scheme
+        if: env.PUBLISH == 'true'
+        env:
+          TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_AIR_DISCOUNT_SCHEME_TOKEN }}
+          ENDPOINT: https://spinnaker-gate.shared.devland.is/webhooks/webhook/air-discount-scheme
+        run: |
+          curl -v $ENDPOINT -X POST -H "content-type: application/json" --data-binary @- <<BODY
+          {
+            "token": "$TOKEN",
+            "branch": "$GIT_BRANCH",
+            "parameters": { "docker_tag": "$DOCKER_TAG" },
+            "artifacts": [
+              {
+                "type": "github/file",
+                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.dev.yaml",
+                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.dev.yaml",
+                "version": "$GITHUB_SHA"
+              },
+              {
+                "type": "github/file",
+                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.prod.yaml",
+                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.prod.yaml",
+                "version": "$GITHUB_SHA"
+              },
+              {
+                "name": "air-discount-scheme",
+                "type": "helm/chart",
+                "version": "$HELM_CHART_VERSION"
+              }
+            ]
+          }
+          BODY
       - uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
