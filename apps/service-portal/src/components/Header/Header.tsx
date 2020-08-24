@@ -1,11 +1,13 @@
 import React, { FC } from 'react'
 import { Link } from 'react-router-dom'
-import { Box, Hidden } from '@island.is/island-ui/core'
+import { Box, Hidden, ResponsiveSpace } from '@island.is/island-ui/core'
 import * as styles from './Header.treat'
 import { Logo } from '../Logo/Logo'
 import UserMenu from '../UserMenu/UserMenu'
 import NotificationMenuTrigger from '../Notifications/NotificationMenuTrigger/NotificationMenuTrigger'
 import { ServicePortalPath } from '@island.is/service-portal/core'
+
+const spacing = [1, 1, 1, 2] as ResponsiveSpace
 
 export const Header: FC<{}> = () => {
   return (
@@ -28,8 +30,14 @@ export const Header: FC<{}> = () => {
               <Logo />
             </Hidden>
           </Link>
-          <UserMenu />
-          <NotificationMenuTrigger />
+          <Box display="flex">
+            <Box marginLeft={spacing}>
+              <UserMenu />
+            </Box>
+            <Box marginLeft={spacing}>
+              <NotificationMenuTrigger />
+            </Box>
+          </Box>
         </Box>
       </header>
     </>
