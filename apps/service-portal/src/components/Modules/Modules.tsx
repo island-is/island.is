@@ -40,9 +40,9 @@ const RouteLoader: FC<{
         .routes(userInfo)
         .map((route) => (
           <Route
-            exact={!route.catchAll}
             path={route.path}
-            key={route.path}
+            exact
+            key={Array.isArray(route.path) ? route.path[0] : route.path}
             render={() => <RouteComponent route={route} userInfo={userInfo} />}
           />
         )),

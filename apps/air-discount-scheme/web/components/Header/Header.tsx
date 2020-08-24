@@ -71,10 +71,7 @@ function Header() {
       userName={user?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {
-        const redirect = router.pathname.startsWith(routes.companies.home)
-          ? routes.companies.home
-          : routes.home
-        api.logout().then(() => router.push(redirect))
+        api.logout().then(() => router.push('/'))
       }}
     />
   )

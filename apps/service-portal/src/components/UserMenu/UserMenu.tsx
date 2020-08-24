@@ -24,7 +24,7 @@ const UserMenu: FC<{}> = () => {
 
   return (
     <Box position="relative" height="full" ref={ref}>
-      <button
+      {/* <button
         className={styles.wrapper}
         onClick={setIsOpen.bind(null, !isOpen)}
       >
@@ -40,7 +40,7 @@ const UserMenu: FC<{}> = () => {
         onSubjectSelection={handleSelection}
         subjectList={subjectList}
         onCloseMenu={setIsOpen.bind(null, false)}
-      />
+      /> */}
     </Box>
   )
 }

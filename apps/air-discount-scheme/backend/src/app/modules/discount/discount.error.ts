@@ -2,7 +2,7 @@ import { HttpException, HttpStatus } from '@nestjs/common'
 
 export class DiscountLimitExceeded extends HttpException {
   constructor() {
-    super('Forbidden, discount limit exceeded', HttpStatus.FORBIDDEN)
+    super('Forbidden, user has no discount quota left', HttpStatus.FORBIDDEN)
   }
 }
 

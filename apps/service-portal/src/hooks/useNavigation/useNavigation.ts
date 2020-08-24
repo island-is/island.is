@@ -18,7 +18,11 @@ const filterNavigationTree = (
   // This should be combined in some way so that we are not calling the same function twice for no reason
   // A solution might be to define a specific navigation hook that takes care of updating the store with correct routes
   const included = modules.find((x) =>
-    x.routes(userInfo).find((route) => route.path === item.path),
+    x
+      .routes(userInfo)
+      .find(
+        (route) => route.path === item.path || route.path.includes(item.path),
+      ),
   )
 
   if (item.children) {

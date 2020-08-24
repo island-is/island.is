@@ -8,6 +8,8 @@ import { AboutPage } from './models/aboutPage.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { LandingPage } from './models/landingPage.model'
+import { FrontpageSlide } from './models/frontpageSlide.model'
+import { FrontpageSliderList } from './models/frontpageSliderList.model'
 import { News } from './models/news.model'
 import { Link } from './models/link.model'
 import { LinkList } from './models/linkList.model'
@@ -266,6 +268,14 @@ const formatLandingPage = ({ fields }): LandingPage => ({
   content: fields.content && JSON.stringify(fields.content),
 })
 
+const formatFrontpageSlide = ({ fields }): FrontpageSlide => ({
+  title: fields.title,
+  subtitle: fields.subtitle,
+  content: fields.content,
+  image: fields.image && formatImage(fields.image),
+  link: fields.link && JSON.stringify(fields.link),
+})
+
 const makePage = (
   page: number,
   perPage: number,
@@ -311,6 +321,28 @@ export const getAdgerdirPages = async (lang = 'is-IS') => {
 
   return {
     items: r.items.map(formatAdgerdirPage),
+  }
+}
+
+export const getFrontpageSliderList = async (lang = 'is-IS') => {
+  const params = {
+    ['content_type']: 'frontpageSliderList',
+    include: 10,
+    limit: 1,
+  }
+
+  const r = await getLocalizedEntries<FrontpageSliderList>(lang, params).catch(
+    errorHandler('getFrontpageSliderList'),
+  )
+
+  let items = []
+
+  if (r.items && r.items[0].fields?.items) {
+    items = r.items && r.items[0].fields?.items
+  }
+
+  return {
+    items: items.map((x) => formatFrontpageSlide(x)),
   }
 }
 

@@ -42,15 +42,9 @@ export type ServicePortalRoute = {
    */
   name: string
   /**
-   * Describes the path used to route to this component
+   * Describes the path or paths used to route to this component
    */
-  path: ServicePortalPath
-  /**
-   * Routes are defined as exact by default
-   * This flags it as a catch-all parent route that
-   * defines it's own nested routing
-   */
-  catchAll?: boolean
+  path: ServicePortalPath | ServicePortalPath[]
   /**
    * The render value of this component
    */

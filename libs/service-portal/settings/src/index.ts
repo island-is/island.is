@@ -10,8 +10,11 @@ export const settingsModule: ServicePortalModule = {
   routes: () => [
     {
       name: 'Stillingar',
-      path: ServicePortalPath.StillingarRoot,
-      catchAll: true,
+      path: [
+        ServicePortalPath.StillingarRoot,
+        ServicePortalPath.StillingarUmbod,
+        ServicePortalPath.StillingarUpplysingar,
+      ],
       render: () => lazy(() => import('./lib/service-portal-settings')),
     },
   ],
