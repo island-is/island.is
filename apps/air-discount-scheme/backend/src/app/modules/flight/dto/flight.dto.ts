@@ -4,7 +4,6 @@ import {
   IsString,
   IsNumber,
   IsISO8601,
-  Length,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
@@ -32,11 +31,6 @@ class FlightLegDto {
 }
 
 export class FlightDto {
-  @IsString()
-  @Length(10)
-  @ApiProperty()
-  readonly nationalId: string
-
   @IsISO8601()
   @ApiProperty()
   readonly bookingDate: Date

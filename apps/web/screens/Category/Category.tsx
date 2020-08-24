@@ -32,7 +32,6 @@ import {
   QueryCategoriesArgs,
 } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { Locale } from '@island.is/web/i18n/I18n'
 
 interface CategoryProps {
   articles: Query['articlesInCategory']
@@ -48,7 +47,7 @@ const Category: Screen<CategoryProps> = ({
   const { activeLocale } = useI18n()
   const Router = useRouter()
   const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale as Locale)
+  const { makePath } = useRouteNames(activeLocale)
 
   // group articles
   const { groups, cards } = articles.reduce(

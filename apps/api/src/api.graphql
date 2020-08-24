@@ -81,6 +81,18 @@ type Image {
   height: Int!
 }
 
+type FrontpageSlide {
+  subtitle: String
+  title: String
+  content: String
+  image: Image
+  link: String
+}
+
+type FrontpageSliderList {
+  items: [FrontpageSlide!]!
+}
+
 type News {
   id: String!
   slug: String!
@@ -308,6 +320,7 @@ type Query {
   getLandingPage(input: GetLandingPageInput!): LandingPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
   getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages
+  getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getMenu(input: GetMenuInput!): Menu
   getApplication(input: GetApplicationInput!): Application
@@ -391,6 +404,10 @@ input GetAdgerdirPageInput {
 input GetAdgerdirPagesInput {
   lang: String
   perPage: Int
+}
+
+input GetFrontpageSliderListInput {
+  lang: String
 }
 
 input GetAdgerdirFrontpageInput {

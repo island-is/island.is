@@ -25,6 +25,11 @@ type RunServerOptions = {
   name: string
 
   /**
+   * The base path of the swagger documentation.
+   */
+  swaggerPath?: string
+
+  /**
    * OpenAPI definition.
    */
   openApi?: Omit<OpenAPIObject, 'paths'>
@@ -61,7 +66,7 @@ const startServer = async (app: INestApplication, port = 3333) => {
 
 function setupOpenApi(app: INestApplication, options: RunServerOptions) {
   const document = SwaggerModule.createDocument(app, options.openApi)
-  SwaggerModule.setup('swagger', app, document)
+  SwaggerModule.setup(options.swaggerPath ?? 'swagger', app, document)
   return document
 }
 

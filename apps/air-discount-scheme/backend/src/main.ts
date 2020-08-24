@@ -7,6 +7,7 @@ bootstrap({
   appModule: AppModule,
   name: 'air-discount-scheme-backend',
   port: 4248,
+  swaggerPath: 'api/swagger',
   openApi: new DocumentBuilder()
     .setTitle('Air Discount Scheme')
     .setDescription(
