@@ -6,11 +6,11 @@ import {
   ServicePortalModule,
 } from '@island.is/service-portal/core'
 import WidgetLoading from './WidgetLoading/WidgetLoading'
-import { User } from 'oidc-client'
+import { UserWithMeta } from '@island.is/service-portal/core'
 
 const Widget: FC<{
   widget: ServicePortalWidget
-  userInfo: User
+  userInfo: UserWithMeta
 }> = React.memo(({ widget, userInfo }) => {
   const Component = widget.render(userInfo)
 
@@ -33,7 +33,7 @@ const Widget: FC<{
 
 const WidgetLoader: FC<{
   modules: ServicePortalModule[]
-  userInfo: User
+  userInfo: UserWithMeta
 }> = React.memo(({ modules, userInfo }) => {
   const widgets = modules
     .reduce(

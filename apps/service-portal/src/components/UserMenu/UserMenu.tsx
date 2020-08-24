@@ -29,7 +29,7 @@ const UserMenu: FC<{}> = () => {
         onClick={setIsOpen.bind(null, !isOpen)}
       >
         <div className={styles.avatar} />
-        <div className={styles.username}>{userInfo.profile.name}</div>
+        <div className={styles.username}>{userInfo?.user.profile.name}</div>
         <Box marginLeft={3}>
           <Icon type="cheveron" width="10px" height="12px" />
         </Box>
