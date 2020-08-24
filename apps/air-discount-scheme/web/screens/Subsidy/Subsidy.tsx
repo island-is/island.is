@@ -7,8 +7,7 @@ import {
   GenericPage,
   QueryGetGenericPageArgs,
 } from '@island.is/api/schema'
-import { Box, Breadcrumbs, Stack, Typography } from '@island.is/island-ui/core'
-import Link from 'next/link'
+import { Box, Stack, Typography } from '@island.is/island-ui/core'
 import {
   Content,
   IntroText,
@@ -21,19 +20,6 @@ interface PropTypes {
 const Subsidy: Screen<PropTypes> = ({
   page: { title, intro, mainContent, sidebar, misc },
 }) => {
-  const {
-    attention,
-    codeDisclaimer,
-    myRights,
-    remaining,
-    copyCode,
-    codeDescription,
-    kidsRights,
-    currentUsage,
-    path,
-    user,
-    date,
-  } = JSON.parse(misc)
   return (
     <Layout
       left={
