@@ -1,19 +1,27 @@
 import React from 'react'
 import Head from 'next/head'
-import { Page, Footer, Box, LinkProps } from '@island.is/island-ui/core'
+import { Page, Box, FooterLinkProps, Footer } from '@island.is/island-ui/core'
 import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import { NextComponentType, NextPageContext } from 'next'
 import { GetInitialPropsContext } from '../types'
-import { Query, ContentLanguage, QueryGetMenuArgs } from '@island.is/api/schema'
+import {
+  Query,
+  QueryGetMenuArgs,
+  QueryCategoriesArgs,
+  ContentLanguage,
+} from '@island.is/api/schema'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
+import { GET_CATEGORIES_QUERY } from '../screens/queries'
 
 interface LayoutProps {
   showSearchInHeader?: boolean
   wrapContent?: boolean
   showHeader?: boolean
   showFooter?: boolean
-  footerUpperMenu?: LinkProps[]
-  footerLowerMenu?: LinkProps[]
+  footerUpperMenu?: FooterLinkProps[]
+  footerLowerMenu?: FooterLinkProps[]
+  footerMiddleMenu?: FooterLinkProps[]
+  footerTagsMenu?: FooterLinkProps[]
 }
 
 const Layout: NextComponentType<
@@ -27,6 +35,8 @@ const Layout: NextComponentType<
   showFooter = true,
   footerUpperMenu,
   footerLowerMenu,
+  footerMiddleMenu,
+  footerTagsMenu,
   children,
 }) => {
   return (
@@ -67,7 +77,14 @@ const Layout: NextComponentType<
         {wrapContent ? <Box width="full">{children}</Box> : children}
       </div>
       {showFooter && (
-        <Footer topLinks={footerUpperMenu} bottomLinks={footerLowerMenu} />
+        <Footer
+          topLinks={footerUpperMenu}
+          bottomLinks={footerLowerMenu}
+          middleLinks={footerMiddleMenu}
+          tagLinks={footerTagsMenu}
+          showMiddleLinks
+          showTagLinks
+        />
       )}
       <style jsx global>{`
         @font-face {
@@ -121,7 +138,7 @@ const Layout: NextComponentType<
 }
 
 Layout.getInitialProps = async ({ apolloClient, locale }) => {
-  const [upperMenu, lowerMenu] = await Promise.all([
+  const [upperMenu, lowerMenu, middleMenu, tagsMenu] = await Promise.all([
     apolloClient
       .query<Query, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
@@ -138,10 +155,49 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
         },
       })
       .then((result) => result.data.getMenu),
+    apolloClient
+      .query<Query, QueryCategoriesArgs>({
+        query: GET_CATEGORIES_QUERY,
+        variables: {
+          input: {
+            language: locale as ContentLanguage,
+          },
+        },
+      })
+      .then((result) => {
+        const categories = result.data.categories
+
+        return {
+          links: categories.map(({ title, slug }) => {
+            return {
+              text: title,
+              url: `${locale === 'en' ? '/en/category' : '/flokkur'}/${slug}`,
+            }
+          }),
+        }
+      }),
+    apolloClient
+      .query<Query, QueryGetMenuArgs>({
+        query: GET_MENU_QUERY,
+        variables: {
+          input: { name: 'Footer middle', lang: locale },
+        },
+      })
+      .then((result) => result.data.getMenu),
+    apolloClient
+      .query<Query, QueryGetMenuArgs>({
+        query: GET_MENU_QUERY,
+        variables: {
+          input: { name: 'Footer tags', lang: locale },
+        },
+      })
+      .then((result) => result.data.getMenu),
   ])
 
   const upperMenuLinks = upperMenu ? upperMenu.links : []
   const lowerMenuLinks = lowerMenu ? lowerMenu.links : []
+  const middleMenuLinks = middleMenu ? middleMenu.links : []
+  const tagsMenuLinks = middleMenu ? middleMenu.links : []
 
   return {
     footerUpperMenu: upperMenuLinks.map(({ text, url }) => ({
@@ -149,6 +205,14 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
       href: url,
     })),
     footerLowerMenu: lowerMenuLinks.map(({ text, url }) => ({
+      title: text,
+      href: url,
+    })),
+    footerTagsMenu: tagsMenuLinks.map(({ text, url }) => ({
+      title: text,
+      href: url,
+    })),
+    footerMiddleMenu: middleMenuLinks.map(({ text, url }) => ({
       title: text,
       href: url,
     })),

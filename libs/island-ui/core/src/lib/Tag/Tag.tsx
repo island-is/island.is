@@ -57,7 +57,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
 
     return href ? (
       <a href={href} {...anchorProps} {...sharedProps} {...props}>
-        {content} anchor
+        {content}
       </a>
     ) : (
       <button
