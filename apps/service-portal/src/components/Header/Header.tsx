@@ -12,25 +12,23 @@ export const Header: FC<{}> = () => {
     <>
       <div className={styles.placeholder} />
       <header className={styles.header}>
-        <Link to={ServicePortalPath.MinarSidurRoot}>
-          <Box display="flex" height="full" alignItems="center">
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="center"
+          height="full"
+          paddingLeft={[3, 3, 6, 6]}
+          paddingRight={[3, 3, 6, 6]}
+        >
+          <Link to={ServicePortalPath.MinarSidurRoot}>
             <Hidden above="md">
               <Logo width={40} iconOnly />
             </Hidden>
             <Hidden below="lg">
               <Logo />
             </Hidden>
-          </Box>
-        </Link>
-        <Box
-          display="flex"
-          justifyContent="flexEnd"
-          height="full"
-          alignItems="center"
-        >
-          <div className={styles.divider} />
+          </Link>
           <UserMenu />
-          <div className={styles.divider} />
           <NotificationMenuTrigger />
         </Box>
       </header>
