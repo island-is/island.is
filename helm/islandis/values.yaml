@@ -50,3 +50,5 @@ api:
   healthCheck:
     liveness:
       path: /liveness
+    readiness:
+      path: /liveness
