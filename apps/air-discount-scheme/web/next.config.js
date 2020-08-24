@@ -34,7 +34,7 @@ module.exports = withSourceMaps(
     },
     serverRuntimeConfig: {
       // Will only be available on the server side
-      apiUrl: API_URL + apiPath,
+      apiUrl: `${API_URL}${apiPath}`,
       graphqlEndpoint: `${API_URL}${graphqlPath}`,
     },
     publicRuntimeConfig: {
