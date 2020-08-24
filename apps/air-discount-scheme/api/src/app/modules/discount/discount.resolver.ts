@@ -1,10 +1,4 @@
-import {
-  Mutation,
-  Query,
-  Resolver,
-  ResolveField,
-  Context,
-} from '@nestjs/graphql'
+import { Mutation, Resolver, ResolveField, Context } from '@nestjs/graphql'
 
 import { Authorize, CurrentUser, AuthService, AuthUser } from '../auth'
 import { Discount } from './discount.model'
