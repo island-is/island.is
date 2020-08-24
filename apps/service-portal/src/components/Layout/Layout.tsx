@@ -5,7 +5,6 @@ import { Box, Columns, Column, Hidden } from '@island.is/island-ui/core'
 import ContentBreadcrumbs from '../../components/ContentBreadcrumbs/ContentBreadcrumbs'
 import * as styles from './Layout.treat'
 import UserInfoLoadingOverlay from '../Loaders/UserInfoLoadingOverlay/UserInfoLoadingOverlay'
-import NotificationSidebar from '../Notifications/NotificationSidebar/NotificationSidebar'
 import useRoutes from '../../hooks/useRoutes/useRoutes'
 
 const Layout: FC = ({ children }) => {
@@ -40,7 +39,6 @@ const Layout: FC = ({ children }) => {
             </Column>
           </Columns>
         </Box>
-        <NotificationSidebar />
       </Box>
     </>
   )

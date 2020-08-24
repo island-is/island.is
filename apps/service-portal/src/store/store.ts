@@ -5,12 +5,12 @@ import {
 } from '@island.is/service-portal/core'
 import { SubjectListDto } from '../mirage-server/models/subject'
 import { modules } from './modules'
-import { mockSubjects, mockActors } from './mockData'
+import { mockSubjects } from './mockData'
 import {
   Action,
   ActionType,
   AsyncActionState,
-  NotificationSidebarState,
+  NotificationMenuState,
 } from './actions'
 
 export interface StoreState {
@@ -20,7 +20,7 @@ export interface StoreState {
   navigationState: AsyncActionState
   subjectList: SubjectListDto[]
   subjectListState: AsyncActionState
-  notificationSidebarState: NotificationSidebarState
+  notificationMenuState: NotificationMenuState
   routes: ServicePortalRoute[]
 }
 
@@ -31,7 +31,7 @@ export const initialState: StoreState = {
   navigationState: 'passive',
   subjectList: [],
   subjectListState: 'passive',
-  notificationSidebarState: 'closed',
+  notificationMenuState: 'closed',
   routes: [],
 }
 
@@ -45,7 +45,7 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
     case ActionType.SetUserFulfilled:
       return {
         ...state,
-        userInfo: { user: action.payload, mockSubjects, mockActors },
+        userInfo: { user: action.payload, mockSubjects },
         userInfoState: 'fulfilled',
       }
     case ActionType.FetchSubjectListPending:
@@ -64,10 +64,10 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
         ...state,
         subjectListState: 'failed',
       }
-    case ActionType.SetNotificationSidebarState:
+    case ActionType.SetNotificationMenuState:
       return {
         ...state,
-        notificationSidebarState: action.payload,
+        notificationMenuState: action.payload,
       }
     case ActionType.SetUserLoggedOut:
       return {

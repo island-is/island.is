@@ -2,7 +2,7 @@ import { User } from 'oidc-client'
 import { SubjectListDto } from '../mirage-server/models/subject'
 import { ServicePortalRoute } from '@island.is/service-portal/core'
 
-export type NotificationSidebarState = 'open' | 'closed'
+export type NotificationMenuState = 'open' | 'closed'
 export type AsyncActionState = 'passive' | 'pending' | 'fulfilled' | 'failed'
 
 export enum ActionType {
@@ -12,7 +12,7 @@ export enum ActionType {
   FetchSubjectListPending = 'fetchSubjectListPending',
   FetchSubjectListFulfilled = 'fetchSubjectListFulfilled',
   FetchSubjectListFailed = 'fetchSubjectListFailed',
-  SetNotificationSidebarState = 'setNotificationSidebarState',
+  SetNotificationMenuState = 'setNotificationMenuState',
   SetRoutesFulfilled = 'setRoutesFulfilled',
 }
 
@@ -24,8 +24,8 @@ export type Action =
   | { type: ActionType.FetchSubjectListFulfilled; payload: SubjectListDto[] }
   | { type: ActionType.FetchSubjectListFailed }
   | {
-      type: ActionType.SetNotificationSidebarState
-      payload: NotificationSidebarState
+      type: ActionType.SetNotificationMenuState
+      payload: NotificationMenuState
     }
   | {
       type: ActionType.SetRoutesFulfilled

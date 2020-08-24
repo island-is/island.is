@@ -98,7 +98,7 @@ export interface ServicePortalModule {
 /**
  * The subject passed to us via the jwt token metadata.
  */
-export interface Subject {
+export interface MockSubject {
   id: number
   name: string
   nationalId: string
@@ -107,22 +107,11 @@ export interface Subject {
 }
 
 /**
- * The actor passed to us via the jwt token metadata.
- */
-export interface Actor {
-  id: number
-  name: string
-  nationalId: string
-  subjectIds: number[]
-}
-
-/**
- * Currently we are not getting any metadata from the jwt token
- * in order to fix that issue we padded the data with some mock
- * subjects and actors.
+ * Currently we are not getting any metadata from the jwt token.
+ * In order to fix that issue we padded the data with some mock
+ * subjects.
  */
 export interface UserWithMeta {
   user: User
-  mockActors: Actor[]
-  mockSubjects: Subject[]
+  mockSubjects: MockSubject[]
 }

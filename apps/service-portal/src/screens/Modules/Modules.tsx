@@ -39,7 +39,7 @@ const RouteLoader: FC<{
         render={() => <RouteComponent route={route} userInfo={userInfo} />}
       />
     ))}
-    <Route component={NotFound} />
+    {routes.length > 0 && <Route component={NotFound} />}
   </Switch>
 ))
 
@@ -47,7 +47,7 @@ const Modules: FC<{}> = () => {
   const [{ routes, userInfo }] = useStore()
 
   return (
-    <Box paddingY={4} paddingX={3}>
+    <Box paddingY={4}>
       <RouteLoader routes={routes} userInfo={userInfo} />
     </Box>
   )

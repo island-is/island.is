@@ -1,25 +1,32 @@
-import React, { FC } from 'react'
+import React, { FC, useRef } from 'react'
 import * as styles from './NotificationMenuTrigger.treat'
 import { Button, Box, Icon } from '@island.is/island-ui/core'
-// eslint-disable-next-line
-import { useStore } from 'apps/service-portal/src/store/stateProvider'
-import { ActionType } from '../../../store/actions'
+import { useStore } from '../../../store/stateProvider'
+import { ActionType, NotificationMenuState } from '../../../store/actions'
+import NotificationMenu from '../NotificationMenu/NotificationMenu'
+import useOutsideClick from '../../../hooks/useOutsideClick/useOutsideClick'
 
 const NotificationMenuTrigger: FC<{}> = () => {
-  const [{ notificationSidebarState }, dispatch] = useStore()
+  const ref = useRef()
+  const [{ notificationMenuState }, dispatch] = useStore()
 
-  const handleClick = () =>
+  const setMenuState = (state: NotificationMenuState) =>
     dispatch({
-      type: ActionType.SetNotificationSidebarState,
-      payload: notificationSidebarState === 'open' ? 'closed' : 'open',
+      type: ActionType.SetNotificationMenuState,
+      payload: state,
     })
 
+  const handleClick = () =>
+    setMenuState(notificationMenuState === 'open' ? 'closed' : 'open')
+  useOutsideClick(ref, () => setMenuState('closed'))
+
   return (
-    <Box position="relative">
+    <Box position="relative" ref={ref}>
       <span className={styles.notificationCount}>5</span>
       <Button variant="menu" onClick={handleClick} size="small">
         <Icon type="lock" width={22} height={24} />
       </Button>
+      <NotificationMenu state={notificationMenuState} />
     </Box>
   )
 }
