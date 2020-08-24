@@ -1,9 +1,9 @@
-import { User } from 'oidc-client'
+import { UserWithMeta } from '@island.is/service-portal/core'
 
-export const fetchWithAuth = (url: string, userInfo: User) =>
+export const fetchWithAuth = (url: string, userInfo: UserWithMeta) =>
   fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `${userInfo.access_token}`,
+      Authorization: `${userInfo.user.access_token}`,
     },
   })

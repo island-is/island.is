@@ -23,7 +23,7 @@ const Row: FC<{ values: string[] }> = ({ values }) => (
 )
 
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
-  // const { profile } = userInfo
+  const { profile } = userInfo.user
 
   return (
     <div>

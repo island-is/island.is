@@ -4,20 +4,17 @@ import * as styles from './Menu.treat'
 import { SubjectListDto } from '../../../mirage-server/models/subject'
 import {
   Box,
-  Icon,
   Typography,
   Divider,
   Button,
   Stack,
 } from '@island.is/island-ui/core'
-import { Link } from 'react-router-dom'
-import { User } from 'oidc-client'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import { UserWithMeta, ServicePortalPath } from '@island.is/service-portal/core'
 import IconButton from '../../Button/IconButton/IconButton'
 
 interface Props {
   isOpen: boolean
-  userInfo: User
+  userInfo: UserWithMeta
   subjectList: SubjectListDto[]
   onSubjectSelection: (subjectNationalId: string) => void
   onCloseMenu: () => void
@@ -25,10 +22,11 @@ interface Props {
 
 export const Menu: FC<Props> = ({
   isOpen,
-  subjectList,
+  userInfo,
   onSubjectSelection,
   onCloseMenu,
 }) => {
+  const subjectList = userInfo.mockSubjects
   const personSubjects = subjectList.filter((x) => x.subjectType === 'person')
   const companySubjects = subjectList.filter((x) => x.subjectType === 'company')
 

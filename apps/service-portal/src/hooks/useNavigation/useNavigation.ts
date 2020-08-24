@@ -3,16 +3,16 @@ import {
   ServicePortalNavigationItem,
   servicePortalMasterNavigation,
   ServicePortalRoute,
+  UserWithMeta,
 } from '@island.is/service-portal/core'
 import { useStore } from '../../store/stateProvider'
-import { User } from 'oidc-client'
 
 const tempClone = (item) => JSON.parse(JSON.stringify(item))
 
 const filterNavigationTree = (
   item: ServicePortalNavigationItem,
   routes: ServicePortalRoute[],
-  userInfo: User,
+  userInfo: UserWithMeta,
 ) => {
   const included = routes.find(
     (route) => route.path === item.path || route.path.includes(item.path),
