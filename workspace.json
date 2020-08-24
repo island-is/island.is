@@ -2001,6 +2001,54 @@
             "passWithNoTests": true
           }
         },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d"
+              }
+            ],
+            "cwd": "apps/judicial-system/api"
+          }
+        },
+        "generate-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "outputPath": "apps/judicial-system/api/src/openapi.yaml",
+            "commands": [
+              {
+                "command": "yarn build judicial-system-api"
+              },
+              {
+                "command": "node dist/apps/judicial-system/api/main --generate-schema apps/judicial-system/api/src/openapi.yaml"
+              }
+            ]
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "../../../node_modules/.bin/sequelize-cli db:migrate"
+              }
+            ],
+            "cwd": "apps/judicial-system/api"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)"
+              }
+            ],
+            "cwd": "apps/judicial-system/api"
+          }
+        },
         "docker-express": {}
       }
     }
