@@ -12,7 +12,7 @@ import {
   buildTextField,
 } from '../lib/fieldBuilders'
 import { Form } from '../types/Form'
-import { nationalIdRegex } from './formUtils'
+import { nationalIdRegex } from './formConstants'
 import { Comparators } from '../types/Condition'
 import { FormType } from './FormType'
 

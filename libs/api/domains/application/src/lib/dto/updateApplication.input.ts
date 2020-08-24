@@ -26,6 +26,10 @@ export class UpdateApplicationInput {
   @IsString()
   id: string
 
+  @Field((type) => UpdateApplicationDtoTypeIdEnum)
+  @IsEnum(UpdateApplicationDtoTypeIdEnum)
+  typeId: UpdateApplicationDtoTypeIdEnum
+
   @Field((type) => String, { nullable: true })
   @IsString()
   @IsOptional()
@@ -50,11 +54,6 @@ export class UpdateApplicationInput {
   @IsArray()
   @IsOptional()
   attachments?: Array<string>
-
-  @Field((type) => UpdateApplicationDtoTypeIdEnum, { nullable: true })
-  @IsEnum(UpdateApplicationDtoTypeIdEnum)
-  @IsOptional()
-  typeId?: UpdateApplicationDtoTypeIdEnum
 
   @Field((type) => graphqlTypeJson, { nullable: true })
   @IsObject()
