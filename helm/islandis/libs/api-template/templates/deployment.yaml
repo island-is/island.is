@@ -96,14 +96,14 @@ spec:
             httpGet:
               path: {{ .Values.healthCheck.liveness.path }}
               port: http
-              initialDelaySeconds: {{ .Values.healthCheck.liveness.initialDelaySeconds }}
-              # timeoutSeconds:  {{ .Values.healthCheck.liveness.timeoutSeconds }}
+            initialDelaySeconds: {{ .Values.healthCheck.liveness.initialDelaySeconds }}
+            timeoutSeconds:  {{ .Values.healthCheck.liveness.timeoutSeconds }}
           readinessProbe:
             httpGet:
               path: {{ .Values.healthCheck.readiness.path }}
               port: http
-              initialDelaySeconds: {{ .Values.healthCheck.readiness.initialDelaySeconds }}
-              # timeoutSeconds:  {{ .Values.healthCheck.readiness.timeoutSeconds }}
+            initialDelaySeconds: {{ .Values.healthCheck.readiness.initialDelaySeconds }}
+            timeoutSeconds:  {{ .Values.healthCheck.readiness.timeoutSeconds }}
           env:
             - name: APP_VERSION
               value: {{ .Values.global.image.tag }}
