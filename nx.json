@@ -156,6 +156,9 @@
     },
     "application-graphql": {
       "tags": []
+    },
+    "air-discount-scheme-types": {
+      "tags": []
     }
   }
 }

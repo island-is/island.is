@@ -60,6 +60,9 @@
       ],
       "@island.is/application/graphql": [
         "libs/application/graphql/src/index.ts"
+      ],
+      "@island.is/air-discount-scheme/types": [
+        "libs/air-discount-scheme/types/src/index.ts"
       ]
     }
   },

@@ -1946,9 +1946,9 @@
         }
       }
     },
-    "application-graphql": {
-      "root": "libs/application/graphql",
-      "sourceRoot": "libs/application/graphql/src",
+    "air-discount-scheme-types": {
+      "root": "libs/air-discount-scheme/types",
+      "sourceRoot": "libs/air-discount-scheme/types/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -1956,19 +1956,22 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/application/graphql/.eslintrc",
+            "config": "libs/air-discount-scheme/types/.eslintrc",
             "tsConfig": [
-              "libs/application/graphql/tsconfig.lib.json",
-              "libs/application/graphql/tsconfig.spec.json"
+              "libs/air-discount-scheme/types/tsconfig.lib.json",
+              "libs/air-discount-scheme/types/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/application/graphql/**"]
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/air-discount-scheme/types/**"
+            ]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/application/graphql/jest.config.js",
-            "tsConfig": "libs/application/graphql/tsconfig.spec.json",
+            "jestConfig": "libs/air-discount-scheme/types/jest.config.js",
+            "tsConfig": "libs/air-discount-scheme/types/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }
