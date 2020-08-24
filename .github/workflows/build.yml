@@ -144,8 +144,8 @@ jobs:
       - name: set BRANCH env var
         run: echo "::set-env name=BRANCH::${GIT_BRANCH}"
 
-      # - name: Security audit Node modules
-      #   run: ./scripts/security-audit.sh
+      - name: Security audit Node modules
+        run: yarn run security-audit
 
       - name: Prepare lint targets
         id: lint_projects
