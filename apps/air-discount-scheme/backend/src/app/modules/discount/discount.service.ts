@@ -37,16 +37,16 @@ export class DiscountService {
       .join('')
   }
 
-  createDiscountCode(nationalId: string): Discount {
+  async createDiscountCode(nationalId: string): Promise<Discount> {
     const discountCode = this.generateDiscountCode()
     const discountCodeCacheKey = this.getDiscountCodeCacheKey(discountCode)
     const nationalIdCacheKey = this.getNationalIdCacheKey(nationalId)
-    this.cacheManager.set(
+    await this.cacheManager.set(
       discountCodeCacheKey,
       { nationalId },
       { ttl: ONE_DAY },
     )
-    this.cacheManager.set(
+    await this.cacheManager.set(
       nationalIdCacheKey,
       { discountCode },
       { ttl: ONE_DAY },
