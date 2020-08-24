@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 
-import { DiscountResolver } from './Discount.resolver'
+import { DiscountResolver } from './discount.resolver'
 import { AuthModule } from '../auth'
 
 @Module({
