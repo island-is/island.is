@@ -12,12 +12,12 @@ beforeAll(async () => {
 })
 
 describe('Create Flight', () => {
-  it(`POST /public/discounts/:discountCode/flights should create a flight`, async () => {
+  it(`POST /api/public/discounts/:discountCode/flights should create a flight`, async () => {
     const spy = jest
       .spyOn(cacheManager, 'get')
       .mockImplementation(() => ({ nationalId: '1234567890' }))
     const response = await request(app.getHttpServer())
-      .post('/public/discounts/12345678/flights')
+      .post('/api/public/discounts/12345678/flights')
       .send({
         bookingDate: '2020-08-17T12:35:50.971Z',
         flightLegs: [
@@ -75,9 +75,9 @@ describe('Create Flight', () => {
     spy.mockRestore()
   })
 
-  it('POST /public/discounts/:discountCode/flights should return bad request when flightLegs are omitted', async () => {
+  it('POST /api/public/discounts/:discountCode/flights should return bad request when flightLegs are omitted', async () => {
     await request(app.getHttpServer())
-      .post('/public/discounts/12345678/flights')
+      .post('/api/public/discounts/12345678/flights')
       .send({
         nationalId: '1234567890',
         bookingDate: '2020-08-17T12:35:50.971Z',
@@ -87,12 +87,12 @@ describe('Create Flight', () => {
 })
 
 describe('Delete Flight', () => {
-  it(`DELETE /public/flight/:flightId should delete a flight`, async () => {
+  it(`DELETE /api/public/flights/:flightId should delete a flight`, async () => {
     const spy = jest
       .spyOn(cacheManager, 'get')
       .mockImplementation(() => ({ nationalId: '1234567890' }))
     const createRes = await request(app.getHttpServer())
-      .post('/public/discounts/12345678/flights')
+      .post('/api/public/discounts/12345678/flights')
       .send({
         bookingDate: '2020-08-17T12:35:50.971Z',
         flightLegs: [
@@ -116,25 +116,25 @@ describe('Delete Flight', () => {
     spy.mockRestore()
 
     await request(app.getHttpServer())
-      .delete(`/public/flights/${createRes.body.id}`)
+      .delete(`/api/public/flights/${createRes.body.id}`)
       .expect(204)
 
     const getRes = await request(app.getHttpServer())
-      .get(`/private/flights`)
+      .get(`/api/private/flights`)
       .expect(200)
 
     expect(getRes.body.length).toBe(0)
   })
 
-  it(`DELETE /public/flight/:flightId should validate flightId`, async () => {
+  it(`DELETE /api/public/flights/:flightId should validate flightId`, async () => {
     await request(app.getHttpServer())
-      .delete('/public/flights/this-is-not-uuid')
+      .delete('/api/public/flights/this-is-not-uuid')
       .expect(400)
   })
 
-  it(`DELETE /public/flight/:flightId should return not found if flight does not exist`, async () => {
+  it(`DELETE /api/public/flights/:flightId should return not found if flight does not exist`, async () => {
     await request(app.getHttpServer())
-      .delete('/public/flights/dfac526d-5dc0-4748-b858-3d9cd2ae45be')
+      .delete('/api/public/flights/dfac526d-5dc0-4748-b858-3d9cd2ae45be')
       .expect(404)
   })
 })

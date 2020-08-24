@@ -117,7 +117,7 @@ const embeddedNodes = () => ({
       } = node.data.target.fields
 
       return {
-        showTopContent: details.content.length,
+        showTopContent: details?.content?.length,
         topContent: (
           <ContentBlock width="small">
             <Stack space={[2, 2]}>

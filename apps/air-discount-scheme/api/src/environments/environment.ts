@@ -4,7 +4,7 @@ export default {
     dsn: '',
   },
   auth: {
-    samlEntryPoint: 'https://innskraning.island.is/?id=ferdagjof.local',
+    samlEntryPoint: 'https://innskraning.island.is/?id=ads.local',
     audience: 'localhost:4200',
     jwtSecret: 'securesecret',
   },

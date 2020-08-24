@@ -128,7 +128,7 @@ const useSubmit = (locale: Locale) => {
           pathname: makePath('search'),
           query: { q },
         }).then(() => {
-          window.scrollTo({ top: 0 })
+          window.scrollTo(0, 0)
         })
       }
     },
@@ -164,6 +164,9 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
     const [searchTerm, setSearchTerm] = useState(initialInputValue)
     const search = useSearch(locale, autocomplete ? searchTerm : null)
     const onSubmit = useSubmit(locale)
+    const [hasFocus, setHasFocus] = useState(false)
+    const onFocus = useCallback(() => setHasFocus(true), [setHasFocus])
+    const onBlur = useCallback(() => setHasFocus(false), [setHasFocus])
 
     return (
       <Downshift<string>
@@ -172,6 +175,15 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         onChange={(q) => onSubmit(q)}
         onInputValueChange={(q) => setSearchTerm(q)}
         itemToString={(v) => v ?? ''}
+        stateReducer={(state, changes) => {
+          // pressing tab when input is not empty should move focus to the
+          // search icon, so we need to prevent downshift from closing on blur
+          const shouldIgnore =
+            changes.type === Downshift.stateChangeTypes.blurInput &&
+            state.inputValue !== ''
+
+          return shouldIgnore ? {} : changes
+        }}
       >
         {({
           highlightedIndex,
@@ -187,7 +199,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           <AsyncSearchInput
             ref={ref}
             white={white}
-            hasFocus={isOpen}
+            hasFocus={hasFocus}
             loading={search.isLoading}
             rootProps={getRootProps()}
             menuProps={{
@@ -195,12 +207,22 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               ...getMenuProps(),
             }}
             buttonProps={{
-              onClick: () => onSubmit(inputValue),
-              onSubmit: () => onSubmit(inputValue),
+              onClick: () => {
+                closeMenu()
+                onSubmit(inputValue)
+              },
+              onFocus,
+              onBlur,
             }}
             inputProps={getInputProps({
               inputSize: size,
-              onFocus: () => openOnFocus && openMenu(),
+              onFocus: () => {
+                onFocus()
+                if (openOnFocus) {
+                  openMenu()
+                }
+              },
+              onBlur,
               placeholder,
               colored,
               onKeyDown: (e) => {
@@ -211,7 +233,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               },
             })}
           >
-            {!isEmpty(search) && (
+            {isOpen && !isEmpty(search) && (
               <Results
                 search={search}
                 highlightedIndex={highlightedIndex}

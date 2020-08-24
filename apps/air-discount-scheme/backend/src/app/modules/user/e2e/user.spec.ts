@@ -12,13 +12,13 @@ beforeAll(async () => {
 })
 
 describe('Get Discount By DiscountCode', () => {
-  it(`GET /public/discounts/:discountCode/user should return data`, async () => {
+  it(`GET /api/public/discounts/:discountCode/user should return data`, async () => {
     const nationalId = '1326487905'
     const spy = jest
       .spyOn(cacheManager, 'get')
       .mockImplementation(() => Promise.resolve({ nationalId }))
     const response = await request(app.getHttpServer())
-      .get(`/public/discounts/12345678/user`)
+      .get(`/api/public/discounts/12345678/user`)
       .expect(200)
     spy.mockRestore()
 

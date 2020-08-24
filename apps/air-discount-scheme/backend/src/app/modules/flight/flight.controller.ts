@@ -24,7 +24,7 @@ import { FlightDto } from './dto/flight.dto'
 import { DiscountService } from '../discount'
 
 @ApiTags('Flights')
-@Controller('public')
+@Controller('api/public')
 export class PublicFlightController {
   constructor(
     private readonly flightService: FlightService,
@@ -59,7 +59,7 @@ export class PublicFlightController {
   }
 }
 
-@Controller('private')
+@Controller('api/private')
 export class PrivateFlightController {
   constructor(private readonly flightService: FlightService) {}
 
