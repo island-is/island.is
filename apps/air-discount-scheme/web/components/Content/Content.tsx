@@ -60,7 +60,7 @@ const embeddedNodes = () => ({
   card: {
     component: Box,
     children: (node) => {
-      const title = node.data?.target?.fields?.title || ''
+      const title = node.data?.target?.fields?.title ?? ''
       const linkText = node.data?.target?.fields?.linkText
       const link = node.data?.target?.fields?.link
       return (
@@ -83,7 +83,7 @@ const embeddedNodes = () => ({
   linkList: {
     component: Box,
     children: (node) => {
-      const title = node.data?.target?.fields?.title || ''
+      const title = node.data?.target?.fields?.title ?? ''
       const links = node.data?.target?.fields?.links
       return (
         <Box
