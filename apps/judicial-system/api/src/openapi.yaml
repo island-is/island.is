@@ -24,6 +24,40 @@ components:
           type: string
       required:
         - version
+    Case:
+      type: object
+      properties:
+        id:
+          type: string
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+        description:
+          type: string
+      required:
+        - id
+        - created
+        - modified
+        - description
+    CreateCaseDto:
+      type: object
+      properties:
+        description:
+          type: string
+      required:
+        - description
+    UpdateCaseDto:
+      type: object
+      properties:
+        id:
+          type: string
+        description:
+          type: string
+      required:
+        - id
 paths:
   /liveness:
     get:
@@ -51,10 +85,63 @@ paths:
                 $ref: '#/components/schemas/Version'
       tags:
         - internal
-  /:
+  '/case/{id}':
     get:
-      operationId: AppController_getData
-      parameters: []
+      operationId: CaseController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Case'
+      tags:
+        - case
+    put:
+      operationId: CaseController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCaseDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Case'
+      tags:
+        - case
+  /case:
+    post:
+      operationId: CaseController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCaseDto'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Case'
+      tags:
+        - case
