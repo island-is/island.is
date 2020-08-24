@@ -1,5 +1,9 @@
 export default {
   production: false,
+  airlineApiKeys: {
+    airIcelandConnect: 'airIcelandConnect',
+    ernir: 'ernir',
+  },
   redis: {
     urls: [
       'localhost:7000',

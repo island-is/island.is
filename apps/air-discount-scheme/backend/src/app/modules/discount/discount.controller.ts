@@ -5,8 +5,14 @@ import {
   Get,
   Inject,
   forwardRef,
+  UseGuards,
 } from '@nestjs/common'
-import { ApiExcludeEndpoint, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBearerAuth,
+  ApiExcludeEndpoint,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 
 import { Discount } from './discount.model'
 import {
@@ -16,9 +22,12 @@ import {
 import { DiscountService } from './discount.service'
 import { DiscountLimitExceeded } from './discount.error'
 import { FlightService } from '../flight'
+import { AuthGuard } from '../common'
 
 @ApiTags('Discounts')
 @Controller('api/public')
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class PublicDiscountController {
   constructor(
     private readonly discountService: DiscountService,
