@@ -4,9 +4,8 @@ import { GqlExecutionContext } from '@nestjs/graphql'
 import { ExecutionContextHost } from '@nestjs/core/helpers/execution-context-host'
 import { AuthGuard } from '@nestjs/passport'
 
-import { Permissions } from './auth.types'
+import { Permissions, AuthUser } from './auth.types'
 import { AuthService } from './auth.service'
-import { User } from '../user'
 
 type AuthorizeOptions = {
   throwOnUnAuthorized?: boolean
@@ -28,10 +27,10 @@ class GraphQLAuthGuard extends AuthGuard('jwt') {
     return super.canActivate(new ExecutionContextHost([req]))
   }
 
-  handleRequest<TUser extends User>(err: Error, user: TUser): TUser {
+  handleRequest<TUser extends AuthUser>(err: Error, user: TUser): TUser {
     const { throwOnUnAuthorized, permissions } = this.options
     if (throwOnUnAuthorized && (err || !user)) {
-      new AuthenticationError((err && err.message) || 'Unauthorized')
+      throw new AuthenticationError((err && err.message) || 'Unauthorized')
     }
 
     if (!authService.checkPermissions(user, permissions)) {
@@ -42,9 +41,11 @@ class GraphQLAuthGuard extends AuthGuard('jwt') {
   }
 }
 
-export const Authorize = ({
-  throwOnUnAuthorized = true,
-  permissions = {},
-}: AuthorizeOptions): MethodDecorator & ClassDecorator => {
+export const Authorize = (
+  { throwOnUnAuthorized = true, permissions = {} }: AuthorizeOptions = {
+    throwOnUnAuthorized: true,
+    permissions: {},
+  },
+): MethodDecorator & ClassDecorator => {
   return UseGuards(new GraphQLAuthGuard({ throwOnUnAuthorized, permissions }))
 }

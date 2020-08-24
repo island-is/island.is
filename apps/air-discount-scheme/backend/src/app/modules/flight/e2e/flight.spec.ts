@@ -9,6 +9,7 @@ let cacheManager: CacheManger
 beforeAll(async () => {
   app = await setup()
   cacheManager = app.get<CacheManger>(CACHE_MANAGER)
+  cacheManager.ttl = () => ''
 })
 
 describe('Create Flight', () => {
