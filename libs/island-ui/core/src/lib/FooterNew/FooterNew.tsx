@@ -1,47 +1,44 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import cn from 'classnames'
-import {
-  ContentBlock,
-  Box,
-  Logo,
-  Stack,
-  Tiles,
-  Typography,
-  Inline,
-  Tag,
-  Icon,
-} from '@island.is/island-ui/core'
+import { ContentBlock } from '../ContentBlock/ContentBlock'
+import { Box } from '../Box/Box'
+import { Logo } from '../Logo/Logo'
+import { Stack } from '../Stack/Stack'
+import { Tiles } from '../Tiles/Tiles'
+import { Typography } from '../Typography/Typography'
+import { Inline } from '../Inline/Inline'
+import { Tag } from '../Tag/Tag'
+import { Icon } from '../Icon/Icon'
 
-import * as styles from './Footer.treat'
-import { categories } from '@island.is/web/json'
+import * as styles from './FooterNew.treat'
 
-export interface LinkProps {
+interface FooterLinkProps {
   title: string
   href: string
   className?: string
 }
 
-interface FooterProps {
-  topLinks?: LinkProps[]
-  bottomLinks?: LinkProps[]
-  languageSwitchLink?: LinkProps
+interface FooterNewProps {
+  topLinks?: FooterLinkProps[]
+  bottomLinks?: FooterLinkProps[]
+  languageSwitchLink?: FooterLinkProps
   hideLanguageSwith?: boolean
 }
 
-export const Footer = ({
+export const FooterNew = ({
   topLinks = defaultTopLinks,
   bottomLinks = defaultBottomLinks,
   languageSwitchLink = defaultLanguageSwitchLink,
   hideLanguageSwith = false,
-}: FooterProps) => {
+}: FooterNewProps) => {
   return (
     <>
       <Box width="full" background="blue100" className={styles.topWrapper}>
         <ContentBlock>
           <Box padding={[3, 3, 6]}>
             <Box marginBottom={[3, 3, 6]}>
-              <Logo iconOnly />
+              <Logo iconOnly id="footer_logo" />
             </Box>
             <div className={styles.columns}>
               <div className={cn(styles.column, styles.columnBorder)}>
@@ -226,4 +223,38 @@ const defaultBottomLinks = [
   },
 ]
 
-export default Footer
+const categories = [
+  {
+    title: 'Fjölskyldumál og velferð',
+    description:
+      'Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður.',
+  },
+  {
+    title: 'Eldri borgarar',
+    description: 'Þjónusta, réttindi og lífeyrismál.',
+  },
+  {
+    title: 'Bætur',
+    description: 'Bótagreiðslur til einstaklinga frá ríki og sveitarfélögum.',
+  },
+  {
+    title: 'Málefni fatlaðra',
+    description: 'Réttindi, bætur, jafnrétti og umönnun.',
+  },
+  {
+    title: 'Menntun',
+    description:
+      'Leikskólar, grunnskólar, framhaldsskólar, háskólar, styrkir og lán.',
+  },
+  {
+    title: 'Ferðalög og búseta erlendis',
+    description: 'Útgáfa vegabréfa, evrópska sjúkrakortið, störf erlendis.',
+  },
+  {
+    title: 'Fjölskyldumál og velferð',
+    description:
+      'Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður.',
+  },
+]
+
+export default FooterNew
