@@ -4,13 +4,13 @@ import * as styles from './Menu.treat'
 import { SubjectListDto } from '../../../mirage-server/models/subject'
 import {
   Box,
-  Icon,
   Typography,
   Divider,
   Button,
+  Stack,
 } from '@island.is/island-ui/core'
-import { Link } from 'react-router-dom'
 import { UserWithMeta, ServicePortalPath } from '@island.is/service-portal/core'
+import IconButton from '../../Button/IconButton/IconButton'
 
 interface Props {
   isOpen: boolean
@@ -31,67 +31,73 @@ export const Menu: FC<Props> = ({
   const companySubjects = subjectList.filter((x) => x.subjectType === 'company')
 
   return (
-    <div
+    <Box
+      position="absolute"
+      left={0}
+      border="standard"
+      width="full"
       className={cn(styles.menu, {
         [styles.open]: isOpen,
       })}
     >
-      <Box display="flex" alignItems="center" padding={3}>
-        <div className={styles.avatar} />
-        <div>
-          <Link to={ServicePortalPath.StillingarRoot} onClick={onCloseMenu}>
-            <Box display="flex" alignItems="center">
-              <Box marginRight={2}>
-                <Icon type="lock" color="dark300" />
-              </Box>
-              <Typography variant="pSmall" as="span">
-                Stillingar
-              </Typography>
-            </Box>
-          </Link>
-          <Link to={ServicePortalPath.StillingarUmbod} onClick={onCloseMenu}>
-            <Box display="flex" alignItems="center">
-              <Box marginRight={2}>
-                <Icon type="user" color="dark300" />
-              </Box>
-              <Typography variant="pSmall" as="span">
-                Umboðsveita
-              </Typography>
-            </Box>
-          </Link>
-        </div>
+      <Box padding={3} background="white">
+        {/* TODO: Scope check */}
+        <Stack space={1}>
+          <IconButton
+            url={ServicePortalPath.StillingarRoot}
+            onClick={onCloseMenu}
+            icon="lock"
+          >
+            Stillingar
+          </IconButton>
+          <IconButton
+            url={ServicePortalPath.StillingarUmbod}
+            onClick={onCloseMenu}
+            icon="user"
+          >
+            Umboðsveita
+          </IconButton>
+        </Stack>
       </Box>
-      <Divider />
-      <Box paddingY={3} paddingX={4}>
-        <Typography variant="h5">Umboð</Typography>
-        <Box marginTop={1}>
-          {personSubjects.map((person) => (
-            <button
-              className={styles.subjectButton}
-              key={person.nationalId}
-              onClick={onSubjectSelection.bind(null, person.nationalId)}
-            >
-              {person.name}
-            </button>
-          ))}
-        </Box>
-      </Box>
-      <Divider />
-      <Box paddingY={3} paddingX={4}>
-        <Typography variant="h5">Fyrirtæki</Typography>
-        <Box marginTop={1}>
-          {companySubjects.map((company) => (
-            <button
-              className={styles.subjectButton}
-              key={company.nationalId}
-              onClick={onSubjectSelection.bind(null, company.nationalId)}
-            >
-              {company.name}
-            </button>
-          ))}
-        </Box>
-      </Box>
-      <Box paddingX={4} paddingBottom={3}>
+      {personSubjects.length > 0 && (
+        <>
+          <Divider />
+          <Box paddingY={2} paddingX={3}>
+            <Stack space={1}>
+              <Typography variant="h5">Umboð</Typography>
+              {personSubjects.map((person) => (
+                <button
+                  className={styles.subjectButton}
+                  key={person.nationalId}
+                  onClick={onSubjectSelection.bind(null, person.nationalId)}
+                >
+                  {person.name}
+                </button>
+              ))}
+            </Stack>
+          </Box>
+        </>
+      )}
+      {companySubjects.length > 0 && (
+        <>
+          <Divider />
+          <Box paddingY={2} paddingX={3}>
+            <Stack space={1}>
+              <Typography variant="h5">Fyrirtæki</Typography>
+              {companySubjects.map((company) => (
+                <button
+                  className={styles.subjectButton}
+                  key={company.nationalId}
+                  onClick={onSubjectSelection.bind(null, company.nationalId)}
+                >
+                  {company.name}
+                </button>
+              ))}
+            </Stack>
+          </Box>
+        </>
+      )}
+      <Box padding={3}>
         {/* TODO: This is a temp solution */}
         <a
           href="https://siidentityserverweb20200805020732.azurewebsites.net/Account/Logout"
@@ -101,7 +107,7 @@ export const Menu: FC<Props> = ({
           <Button width="fluid">Útskráning</Button>
         </a>
       </Box>
-    </div>
+    </Box>
   )
 }
 

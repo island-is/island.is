@@ -20,7 +20,11 @@ const Layout: FC = ({ children }) => {
         overflow="hidden"
         className={styles.layoutWrapper}
       >
-        <div className={styles.mainWrapper} ref={mainRef}>
+        <Box
+          className={styles.mainWrapper}
+          ref={mainRef}
+          paddingX={[0, 0, 0, 6]}
+        >
           <Columns>
             <Column width="3/12">
               <Sidebar />
@@ -32,7 +36,7 @@ const Layout: FC = ({ children }) => {
               </Box>
             </Column>
           </Columns>
-        </div>
+        </Box>
         <NotificationSidebar />
       </Box>
     </>

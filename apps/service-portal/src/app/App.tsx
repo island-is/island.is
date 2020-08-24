@@ -6,9 +6,9 @@ import { ApolloProvider } from '@apollo/react-hooks'
 import * as store from '../store/store'
 import Authenticator from '../components/Authenticator/Authenticator'
 import { client } from '../graphql'
-import Dashboard from '../components/Dashboard/Dashboard'
+import Dashboard from '../screens/Dashboard/Dashboard'
 import Layout from '../components/Layout/Layout'
-import Modules from '../components/Modules/Modules'
+import Modules from '../screens/Modules/Modules'
 import * as styles from './App.treat'
 import OidcSignIn from '../components/Authenticator/OidcSignIn'
 import OidcSilentSignIn from '../components/Authenticator/OidcSilentSignIn'
@@ -38,16 +38,18 @@ export const App = () => {
                 component={OidcSilentSignIn}
               />
               <Route>
-                <Layout>
-                  <Switch>
-                    <Route exact path={ServicePortalPath.MinarSidurRoot}>
-                      <Dashboard />
-                    </Route>
-                    <Route>
-                      <Modules />
-                    </Route>
-                  </Switch>
-                </Layout>
+                <Authenticator>
+                  <Layout>
+                    <Switch>
+                      <Route exact path={ServicePortalPath.MinarSidurRoot}>
+                        <Dashboard />
+                      </Route>
+                      <Route>
+                        <Modules />
+                      </Route>
+                    </Switch>
+                  </Layout>
+                </Authenticator>
               </Route>
             </Switch>
           </StateProvider>

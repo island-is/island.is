@@ -1,9 +1,8 @@
 import React, { FC } from 'react'
 import * as styles from './NotificationMenuTrigger.treat'
-import { Icon, Box } from '@island.is/island-ui/core'
+import { Button, Box, Icon } from '@island.is/island-ui/core'
 // eslint-disable-next-line
 import { useStore } from 'apps/service-portal/src/store/stateProvider'
-import cn from 'classnames'
 import { ActionType } from '../../../store/actions'
 
 const NotificationMenuTrigger: FC<{}> = () => {
@@ -16,27 +15,12 @@ const NotificationMenuTrigger: FC<{}> = () => {
     })
 
   return (
-    <button
-      className={cn(styles.button, {
-        [styles.buttonExpanded]: notificationSidebarState === 'open',
-      })}
-      onClick={handleClick}
-    >
-      <Box position="relative">
-        <span className={styles.notificationCount}>5</span>
-        <Icon type="info" />
-      </Box>
-      <span
-        className={cn(styles.info, {
-          [styles.infoActive]: notificationSidebarState === 'open',
-        })}
-      >
-        <Box className={styles.infoTitle} marginLeft={2}>
-          Skilaboð
-        </Box>
-        <Icon type="cheveron" width={10} height={12} />
-      </span>
-    </button>
+    <Box position="relative">
+      <span className={styles.notificationCount}>5</span>
+      <Button variant="menu" onClick={handleClick} size="small">
+        <Icon type="lock" width={22} height={24} />
+      </Button>
+    </Box>
   )
 }
 
