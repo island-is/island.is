@@ -7,7 +7,6 @@ export const useRoutes = () => {
   const [{ userInfo, modules }, dispatch] = useStore()
 
   useEffect(() => {
-    console.log('routes effect')
     const r = modules.reduce(
       (prev, curr) => [...prev, ...curr.routes(userInfo)],
       [] as ServicePortalRoute[],
