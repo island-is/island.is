@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from 'react'
 import AuthenticatorLoadingScreen from './AuthenticatorLoadingScreen'
 import useAuth from '../../hooks/useAuth/useAuth'
-const MOCK_AUTHENTICATION = true
+const MOCK_AUTHENTICATION = false
 
 export const Authenticator: FC = ({ children }) => {
   const { userInfo, userInfoState, signInUser, mockSignIn } = useAuth()
@@ -11,11 +11,7 @@ export const Authenticator: FC = ({ children }) => {
       (userInfo === null || userInfo.user === null) &&
       userInfoState === 'passive'
     ) {
-      if (MOCK_AUTHENTICATION) {
-        mockSignIn()
-      } else {
-        signInUser()
-      }
+      MOCK_AUTHENTICATION ? mockSignIn() : signInUser()
     }
   }, [userInfo, userInfoState, signInUser, mockSignIn])
 
