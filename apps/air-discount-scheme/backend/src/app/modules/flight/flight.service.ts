@@ -62,12 +62,13 @@ export class FlightService {
     )
   }
 
-  async findOne(flightId: string): Promise<Flight> {
+  async findOne(flightId: string, airline: string): Promise<Flight> {
     const flight = await this.flightModel.findOne({
-      where: { id: flightId, invalid: false },
+      where: { id: flightId, airline, invalid: false },
+      include: [this.flightLegModel],
     })
     if (!flight) {
-      throw new NotFoundException('Unable to find flight')
+      throw new NotFoundException('Flight not found')
     }
     return flight
   }
