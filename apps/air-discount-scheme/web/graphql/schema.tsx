@@ -446,11 +446,11 @@ export type UserQueryQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type Unnamed_1_QueryVariables = Exact<{
+export type GetGenericPageQueryVariables = Exact<{
   input: GetGenericPageInput
 }>
 
-export type Unnamed_1_Query = { __typename?: 'Query' } & {
+export type GetGenericPageQuery = { __typename?: 'Query' } & {
   getGenericPage?: Maybe<
     { __typename?: 'GenericPage' } & Pick<
       GenericPage,
@@ -459,11 +459,11 @@ export type Unnamed_1_Query = { __typename?: 'Query' } & {
   >
 }
 
-export type Unnamed_2_QueryVariables = Exact<{
+export type GetGenericPageQueryQueryVariables = Exact<{
   input: GetGenericPageInput
 }>
 
-export type Unnamed_2_Query = { __typename?: 'Query' } & {
+export type GetGenericPageQueryQuery = { __typename?: 'Query' } & {
   getGenericPage?: Maybe<
     { __typename?: 'GenericPage' } & Pick<
       GenericPage,
@@ -527,4 +527,126 @@ export type UserQueryLazyQueryHookResult = ReturnType<
 export type UserQueryQueryResult = ApolloReactCommon.QueryResult<
   UserQueryQuery,
   UserQueryQueryVariables
+>
+export const GetGenericPageDocument = gql`
+  query getGenericPage($input: GetGenericPageInput!) {
+    getGenericPage(input: $input) {
+      slug
+      title
+      intro
+      mainContent
+      sidebar
+      misc
+    }
+  }
+`
+
+/**
+ * __useGetGenericPageQuery__
+ *
+ * To run a query within a React component, call `useGetGenericPageQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGenericPageQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGenericPageQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetGenericPageQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    GetGenericPageQuery,
+    GetGenericPageQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useQuery<
+    GetGenericPageQuery,
+    GetGenericPageQueryVariables
+  >(GetGenericPageDocument, baseOptions)
+}
+export function useGetGenericPageLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    GetGenericPageQuery,
+    GetGenericPageQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useLazyQuery<
+    GetGenericPageQuery,
+    GetGenericPageQueryVariables
+  >(GetGenericPageDocument, baseOptions)
+}
+export type GetGenericPageQueryHookResult = ReturnType<
+  typeof useGetGenericPageQuery
+>
+export type GetGenericPageLazyQueryHookResult = ReturnType<
+  typeof useGetGenericPageLazyQuery
+>
+export type GetGenericPageQueryResult = ApolloReactCommon.QueryResult<
+  GetGenericPageQuery,
+  GetGenericPageQueryVariables
+>
+export const GetGenericPageQueryDocument = gql`
+  query getGenericPageQuery($input: GetGenericPageInput!) {
+    getGenericPage(input: $input) {
+      slug
+      title
+      intro
+      mainContent
+      sidebar
+      misc
+    }
+  }
+`
+
+/**
+ * __useGetGenericPageQueryQuery__
+ *
+ * To run a query within a React component, call `useGetGenericPageQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetGenericPageQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetGenericPageQueryQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetGenericPageQueryQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    GetGenericPageQueryQuery,
+    GetGenericPageQueryQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useQuery<
+    GetGenericPageQueryQuery,
+    GetGenericPageQueryQueryVariables
+  >(GetGenericPageQueryDocument, baseOptions)
+}
+export function useGetGenericPageQueryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    GetGenericPageQueryQuery,
+    GetGenericPageQueryQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useLazyQuery<
+    GetGenericPageQueryQuery,
+    GetGenericPageQueryQueryVariables
+  >(GetGenericPageQueryDocument, baseOptions)
+}
+export type GetGenericPageQueryQueryHookResult = ReturnType<
+  typeof useGetGenericPageQueryQuery
+>
+export type GetGenericPageQueryLazyQueryHookResult = ReturnType<
+  typeof useGetGenericPageQueryLazyQuery
+>
+export type GetGenericPageQueryQueryResult = ApolloReactCommon.QueryResult<
+  GetGenericPageQueryQuery,
+  GetGenericPageQueryQueryVariables
 >
