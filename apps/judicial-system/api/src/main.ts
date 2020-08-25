@@ -17,4 +17,5 @@ bootstrap({
     .setVersion('1.0')
     .addTag('judicial-system')
     .build(),
+  enableCors: true,
 })

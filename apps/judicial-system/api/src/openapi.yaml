@@ -85,6 +85,21 @@ paths:
                 $ref: '#/components/schemas/Version'
       tags:
         - internal
+  /caess:
+    get:
+      operationId: CaseController_getAll
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Case'
+      tags:
+        - case
   '/case/{id}':
     get:
       operationId: CaseController_findOne

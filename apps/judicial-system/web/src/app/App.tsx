@@ -17,12 +17,12 @@ export const App = () => {
     let isMounted = true
 
     async function getData() {
-      const rawResponse = await fetch('http://localhost:3333/api')
+      const rawResponse = await fetch('http://localhost:3333/cases')
       const jsonResponse = await rawResponse.json()
 
       // Prevent setting state on unmounted component
       if (isMounted) {
-        setMessageFromAPI(jsonResponse.message)
+        setMessageFromAPI(jsonResponse.length)
       }
     }
 
