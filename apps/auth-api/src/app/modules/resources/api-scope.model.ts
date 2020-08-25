@@ -10,14 +10,14 @@ import {
 import { ApiProperty } from '@nestjs/swagger'
   
   @Table({
-    tableName: 'identity_resource',
+    tableName: 'api_scope',
     indexes: [
       {
         fields: ['id'],
       },
     ],
   })
-  export class IdentityResource extends Model<IdentityResource> {
+  export class ApiScope extends Model<ApiScope> {
     @Column({
       type: DataType.UUID,
       primaryKey: true,
