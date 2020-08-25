@@ -67,7 +67,11 @@ export class AuthController {
     const csrfToken = new Entropy({ bits: 128 }).string()
     const jwtToken = jwt.sign(
       {
-        user: { ssn: user.kennitala, name: user.fullname, mobile: user.mobile },
+        user: {
+          nationalId: user.kennitala,
+          name: user.fullname,
+          mobile: user.mobile,
+        },
         csrfToken,
       } as Credentials,
       jwtSecret,

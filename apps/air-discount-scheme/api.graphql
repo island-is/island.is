@@ -238,13 +238,8 @@ type Menu {
   links: [Link!]!
 }
 
-type FlightLegsLeft {
-  unused: Float!
-  total: Float!
-}
-
 type User {
-  ssn: ID!
+  nationalId: ID!
   name: String!
   mobile: String
   role: String!

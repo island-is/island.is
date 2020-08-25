@@ -16,12 +16,12 @@ const FetchDiscountsMutation = gql`
       discountCode
       expires
       nationalId
-      flightLegsLeft {
+      flightLegFund {
         unused
         total
       }
       user {
-        ssn
+        nationalId
         name
       }
     }
@@ -78,7 +78,8 @@ function Benefits({ misc }: PropTypes) {
               >
                 <Box marginBottom={[3, 0]}>
                   <Typography variant="h3">
-                    {user.name} {user.ssn !== authUser.ssn && kidsRights}
+                    {user.name}{' '}
+                    {user.nationalId !== authUser.nationalId && kidsRights}
                   </Typography>
                   <Typography variant="p">
                     {remaining.replace(

@@ -16,7 +16,7 @@ export const UserQuery = gql`
   query UserQuery {
     user {
       name
-      ssn
+      nationalId
       mobile
       role
     }

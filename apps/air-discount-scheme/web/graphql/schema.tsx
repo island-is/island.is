@@ -292,15 +292,9 @@ export type Menu = {
   links: Array<Link>
 }
 
-export type FlightLegsLeft = {
-  __typename?: 'FlightLegsLeft'
-  unused: Scalars['Float']
-  total: Scalars['Float']
-}
-
 export type User = {
   __typename?: 'User'
-  ssn: Scalars['ID']
+  nationalId: Scalars['ID']
   name: Scalars['String']
   mobile?: Maybe<Scalars['String']>
   role: Scalars['String']
@@ -450,7 +444,10 @@ export type UserQueryQueryVariables = Exact<{ [key: string]: never }>
 
 export type UserQueryQuery = { __typename?: 'Query' } & {
   user?: Maybe<
-    { __typename?: 'User' } & Pick<User, 'name' | 'ssn' | 'mobile' | 'role'>
+    { __typename?: 'User' } & Pick<
+      User,
+      'name' | 'nationalId' | 'mobile' | 'role'
+    >
   >
 }
 
@@ -491,11 +488,11 @@ export type FetchDiscountsMutationMutation = { __typename?: 'Mutation' } & {
         Discount,
         'discountCode' | 'expires' | 'nationalId'
       > & {
-          flightLegsLeft: { __typename?: 'FlightLegsLeft' } & Pick<
-            FlightLegsLeft,
+          flightLegFund: { __typename?: 'FlightLegFund' } & Pick<
+            FlightLegFund,
             'unused' | 'total'
           >
-          user: { __typename?: 'User' } & Pick<User, 'ssn' | 'name'>
+          user: { __typename?: 'User' } & Pick<User, 'nationalId' | 'name'>
         }
     >
   >
@@ -505,7 +502,7 @@ export const UserQueryDocument = gql`
   query UserQuery {
     user {
       name
-      ssn
+      nationalId
       mobile
       role
     }
@@ -685,12 +682,12 @@ export const FetchDiscountsMutationDocument = gql`
       discountCode
       expires
       nationalId
-      flightLegsLeft {
+      flightLegFund {
         unused
         total
       }
       user {
-        ssn
+        nationalId
         name
       }
     }
