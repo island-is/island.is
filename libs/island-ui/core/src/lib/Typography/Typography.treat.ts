@@ -158,7 +158,6 @@ export const variants: Variants = {
     },
     fontWeight: theme.typography.headingsFontWeight,
     lineHeight: 1.416667,
-    color: theme.color.blue400,
   },
 }
 

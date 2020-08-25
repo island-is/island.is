@@ -5,7 +5,11 @@ import {
   Button,
   Stack,
   Typography,
+  Tag,
+  Inline,
 } from '@island.is/island-ui/core'
+
+import * as styles from './Categories.treat'
 
 interface CategoriesProps {
   label?: string
@@ -14,18 +18,62 @@ interface CategoriesProps {
 }
 
 export const Categories: FC<CategoriesProps> = ({
-  label = 'Þjónustuflokkar',
   seeMoreText = 'Sjá fleiri',
   children,
 }) => {
+  const tags = [
+    'Styrkir',
+    'Bætur',
+    'Lán',
+    'Skattamál',
+    'Einstaklingar',
+    'Fyrirtæki',
+    'Atvinnulíf',
+    'Ferðaþjónusta',
+    'Tölfræði',
+  ]
+
+  const states = ['Í undirbúningi', 'Í framkvæmd', 'Lokið']
+
   return (
-    <Box background="purple100" padding={[3, 3, 6]}>
-      <Box paddingBottom={2}>
-        <Typography variant="h3" as="h3">
-          {label}
-        </Typography>
-      </Box>
+    <Box padding={[3, 3, 6]}>
       <Stack space={6}>
+        <Box className={styles.filters}>
+          <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            marginRight={[0, 0, 3]}
+            border="standard"
+          >
+            <Stack space={3}>
+              <Inline space={2} alignY="center">
+                <Typography variant="tag" color="red600">
+                  Staða aðgerðar:
+                </Typography>
+                {states.map((tag, index) => {
+                  return <Tag label>{tag}</Tag>
+                })}
+              </Inline>
+              <Inline space={2} alignY="center">
+                <Typography variant="tag" color="red600">
+                  Málefni:
+                </Typography>
+                {tags.map((tag, index) => {
+                  return <Tag label>{tag}</Tag>
+                })}
+              </Inline>
+            </Stack>
+          </Box>
+          <Box
+            display="flex"
+            marginTop={[3, 3, 0]}
+            alignItems="center"
+            border="standard"
+          >
+            <input />
+          </Box>
+        </Box>
         <Tiles space={[2, 2, 3]} columns={[1, 1, 2, 2, 3]}>
           {children}
         </Tiles>

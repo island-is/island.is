@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC } from 'react'
 import { ContentBlock, Box, Typography, Stack } from '@island.is/island-ui/core'
-import { Card } from '../components'
+import { Card, Categories } from '../components'
 import { withApollo } from '../graphql'
 import { useI18n } from '../i18n'
 import {
@@ -40,6 +40,10 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
   console.log('frontpage', frontpage)
   console.log('items', items)
 
+  const { items: cards } = items
+
+  const dummylist = [...cards, ...cards, ...cards, ...cards, ...cards]
+
   return (
     <>
       <Head>
@@ -66,22 +70,25 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
           locale={activeLocale as Locale}
         />
       </Box>
-      <Box background="blue100">
-        <Box paddingX={[3, 3, 6, 0]} paddingY={[3, 3, 9]}>
-          <ContentBlock width="small">
-            <Stack space={3}>
-              {items.items.map(({ title, slug, description }, index) => (
+      <Box background="red100">
+        <ContentBlock width="large">
+          <Categories label={n('articlesTitle')}>
+            {dummylist.map(({ title, slug, description }, index) => {
+              return (
                 <Card
                   key={index}
-                  href="/[slug]"
-                  as={`/${slug}`}
-                  title={title}
                   description={description}
+                  title={title}
+                  tags={[
+                    { title: 'tag1' },
+                    { title: 'tag2' },
+                    { title: 'tag3' },
+                  ]}
                 />
-              ))}
-            </Stack>
-          </ContentBlock>
-        </Box>
+              )
+            })}
+          </Categories>
+        </ContentBlock>
       </Box>
     </>
   )

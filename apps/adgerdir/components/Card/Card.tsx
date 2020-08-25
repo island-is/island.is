@@ -8,19 +8,12 @@ import {
   Tag,
   Inline,
   TagProps,
-  IconTypes,
-  Icon,
-  Columns,
-  Column,
-  Button,
 } from '@island.is/island-ui/core'
 
 import * as styles from './Card.treat'
 
 export type CardTagsProps = {
   tagProps?: Omit<TagProps, 'children'>
-  href?: string
-  as?: string
   title: string
 }
 
@@ -30,7 +23,6 @@ const tagPropsDefaults: Omit<TagProps, 'children'> = {
 
 interface CardProps {
   title: string
-  icon?: IconTypes
   description: string
   tags?: Array<CardTagsProps>
   linkProps?: LinkProps
@@ -40,7 +32,6 @@ interface CardProps {
 
 export const Card: FC<CardProps> = ({
   title,
-  icon,
   description,
   tags = [],
   href,
@@ -50,51 +41,20 @@ export const Card: FC<CardProps> = ({
     <Box display="flex" height="full" flexDirection="column">
       <Box flexGrow={1} height="full">
         <Stack space={1}>
-          <Columns>
-            <Column>
-              <Typography variant="cardCategoryTitle" as="h3">
-                <Box display="flex" flexDirection="row" alignItems="center">
-                  <Box display="inlineFlex" flexGrow={1}>
-                    {title}
-                  </Box>
-                  {icon && (
-                    <Box marginLeft={1} display="inlineFlex">
-                      <Icon type={icon} />
-                    </Box>
-                  )}
-                </Box>
-              </Typography>
-              {description && (
-                <Typography variant="p">{description}</Typography>
-              )}
-            </Column>
-            <Column width="content">
-              <Box
-                display="flex"
-                alignItems="center"
-                flexDirection="row"
-                height="full"
-              >
-                <Button variant="text" icon="arrowRight">
-                  Sjá nánar
-                </Button>
-              </Box>
-            </Column>
-          </Columns>
+          <Typography variant="cardCategoryTitle" as="h3" color="red600">
+            {title}
+          </Typography>
+          {description && <Typography variant="p">{description}</Typography>}
         </Stack>
       </Box>
       {tags.length > 0 && (
         <Box paddingTop={3} flexGrow={0}>
           <Inline space={1}>
-            {tags.map(({ title, href, as, ...props }: CardTagsProps, index) => {
+            {tags.map(({ title, ...props }: CardTagsProps, index) => {
               const tagProps = { ...tagPropsDefaults, ...props.tagProps }
 
-              return href ? (
-                <Link key={index} href={href} as={as}>
-                  <Tag {...tagProps}>{title}</Tag>
-                </Link>
-              ) : (
-                <Tag key={index} {...tagProps}>
+              return (
+                <Tag label {...tagProps}>
                   {title}
                 </Tag>
               )
