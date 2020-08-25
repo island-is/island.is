@@ -7,11 +7,10 @@ import { GetInitialPropsContext } from '../types'
 import {
   Query,
   QueryGetMenuArgs,
-  QueryCategoriesArgs,
-  ContentLanguage,
+  QueryGetNamespaceArgs,
 } from '@island.is/api/schema'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
-import { GET_CATEGORIES_QUERY } from '../screens/queries'
+import { GET_NAMESPACE_QUERY } from '../screens/queries'
 
 interface LayoutProps {
   showSearchInHeader?: boolean
@@ -22,6 +21,7 @@ interface LayoutProps {
   footerLowerMenu?: FooterLinkProps[]
   footerMiddleMenu?: FooterLinkProps[]
   footerTagsMenu?: FooterLinkProps[]
+  namespace: any
 }
 
 const Layout: NextComponentType<
@@ -37,6 +37,7 @@ const Layout: NextComponentType<
   footerLowerMenu,
   footerMiddleMenu,
   footerTagsMenu,
+  namespace,
   children,
 }) => {
   return (
@@ -82,6 +83,8 @@ const Layout: NextComponentType<
           bottomLinks={footerLowerMenu}
           middleLinks={footerMiddleMenu}
           tagLinks={footerTagsMenu}
+          middleLinksTitle={namespace.footerMiddleLabel}
+          tagLinksTitle={namespace.footerRightLabel}
           showMiddleLinks
           showTagLinks
         />
@@ -138,7 +141,13 @@ const Layout: NextComponentType<
 }
 
 Layout.getInitialProps = async ({ apolloClient, locale }) => {
-  const [upperMenu, lowerMenu, middleMenu, tagsMenu] = await Promise.all([
+  const [
+    upperMenu,
+    lowerMenu,
+    middleMenu,
+    tagsMenu,
+    namespace,
+  ] = await Promise.all([
     apolloClient
       .query<Query, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
@@ -156,27 +165,6 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
       })
       .then((result) => result.data.getMenu),
     apolloClient
-      .query<Query, QueryCategoriesArgs>({
-        query: GET_CATEGORIES_QUERY,
-        variables: {
-          input: {
-            language: locale as ContentLanguage,
-          },
-        },
-      })
-      .then((result) => {
-        const categories = result.data.categories
-
-        return {
-          links: categories.map(({ title, slug }) => {
-            return {
-              text: title,
-              url: `${locale === 'en' ? '/en/category' : '/flokkur'}/${slug}`,
-            }
-          }),
-        }
-      }),
-    apolloClient
       .query<Query, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
         variables: {
@@ -192,12 +180,26 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
         },
       })
       .then((result) => result.data.getMenu),
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Global',
+            lang: locale,
+          },
+        },
+      })
+      .then((content) => {
+        // map data here to reduce data processing in component
+        return JSON.parse(content.data.getNamespace.fields)
+      }),
   ])
 
   const upperMenuLinks = upperMenu ? upperMenu.links : []
   const lowerMenuLinks = lowerMenu ? lowerMenu.links : []
   const middleMenuLinks = middleMenu ? middleMenu.links : []
-  const tagsMenuLinks = middleMenu ? middleMenu.links : []
+  const tagsMenuLinks = tagsMenu ? tagsMenu.links : []
 
   return {
     footerUpperMenu: upperMenuLinks.map(({ text, url }) => ({
@@ -216,6 +218,7 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
       title: text,
       href: url,
     })),
+    namespace,
   }
 }
 
