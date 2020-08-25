@@ -9,25 +9,25 @@ import {
     PrimaryKey,
   } from 'sequelize-typescript'
   import { ApiProperty } from '@nestjs/swagger'
-import { ApiScope } from './api-scope.model'
+import { ApiResource } from './api-resource.model'
   
   @Table({
-    tableName: 'api_scope_user_claim',
+    tableName: 'api_resource_user_claim',
     indexes: [
       {
-        fields: ['api_scope_id', 'claim_name'],
+        fields: ['api_resource_id', 'claim_name'],
       },
     ],
   })
-  export class ApiScopeUserClaim extends Model<ApiScopeUserClaim> {
+  export class ApiResourceUserClaim extends Model<ApiResourceUserClaim> {
     @PrimaryKey
     @Column({
         type: DataType.UUID,
         allowNull: false,
       })
-    @ForeignKey(() => ApiScope)
+    @ForeignKey(() => ApiResource)
     @ApiProperty()
-    apiScopeId: string
+    apiResourceId: string
 
     @PrimaryKey
     @Column({

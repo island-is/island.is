@@ -47,6 +47,6 @@ module.exports = {
     var userClaims =  queryInterface.bulkDelete('api_scope_user_claim', null, {});
     var apiScopes =  queryInterface.bulkDelete('api_scope', null, {});
 
-    return Promise.all([identityResources, apiScopes])
+    return Promise.all([apiScopes, userClaims])
   }
 };
