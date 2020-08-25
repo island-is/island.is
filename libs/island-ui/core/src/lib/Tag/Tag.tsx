@@ -4,7 +4,7 @@ import { Typography } from '../Typography/Typography'
 
 import * as styles from './Tag.treat'
 
-export type TagVariant = 'blue' | 'darkerBlue' | 'purple'
+export type TagVariant = 'blue' | 'darkerBlue' | 'purple' | 'white'
 
 export interface TagProps {
   onClick?: () => void
@@ -57,7 +57,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
 
     return href ? (
       <a href={href} {...anchorProps} {...sharedProps} {...props}>
-        {content} anchor
+        {content}
       </a>
     ) : (
       <button
