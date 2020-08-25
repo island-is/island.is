@@ -1,7 +1,8 @@
 import { Mutation, Resolver, ResolveField, Context } from '@nestjs/graphql'
 
+import { Discount as TDiscount } from '@island.is/air-discount-scheme/types'
 import { Authorize, CurrentUser, AuthService, AuthUser } from '../auth'
-import { Discount } from './discount.model'
+import { Discount } from './models'
 import { User } from '../user'
 
 @Resolver(() => Discount)

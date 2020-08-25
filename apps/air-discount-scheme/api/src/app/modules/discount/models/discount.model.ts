@@ -1,6 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-import { User } from '../user'
+import { FlightLegsLeft } from './flightLegsLeft.model'
+import { User } from '../../user'
 
 @ObjectType()
 export class Discount {
@@ -9,6 +10,12 @@ export class Discount {
 
   @Field()
   expires: string
+
+  @Field()
+  nationalId: string
+
+  @Field((_1) => FlightLegsLeft)
+  flightLegsLeft: FlightLegsLeft
 
   @Field((_1) => User)
   user: User

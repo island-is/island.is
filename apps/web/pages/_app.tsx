@@ -1,13 +1,16 @@
 import React from 'react'
 import { AppProps, AppContext, AppInitialProps } from 'next/app'
-import { ApolloProvider } from 'react-apollo'
-import appWithTranslation from '../i18n/appWithTranslation'
-import initApollo from '../graphql/client'
-import Layout from '../layouts/main'
+import {
+  ApolloClient,
+  ApolloProvider,
+  NormalizedCacheObject,
+} from '@apollo/client'
 import { NextComponentType } from 'next'
+
+import appWithTranslation from '../i18n/appWithTranslation'
+import Layout from '../layouts/main'
+import initApollo from '../graphql/client'
 import { withErrorBoundary } from '../units/ErrorBoundary'
-import { ApolloClient } from '@apollo/client'
-import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 
 interface AppCustomProps extends AppProps {
   layoutProps: any

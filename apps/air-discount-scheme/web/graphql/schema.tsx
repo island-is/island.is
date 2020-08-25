@@ -292,6 +292,12 @@ export type Menu = {
   links: Array<Link>
 }
 
+export type FlightLegsLeft = {
+  __typename?: 'FlightLegsLeft'
+  unused: Scalars['Float']
+  total: Scalars['Float']
+}
+
 export type User = {
   __typename?: 'User'
   ssn: Scalars['ID']
@@ -304,6 +310,8 @@ export type Discount = {
   __typename?: 'Discount'
   discountCode: Scalars['ID']
   expires: Scalars['String']
+  nationalId: Scalars['String']
+  flightLegsLeft: FlightLegsLeft
   user: User
 }
 
@@ -435,7 +443,7 @@ export type GetMenuInput = {
 
 export type Mutation = {
   __typename?: 'Mutation'
-  fetchDiscount?: Maybe<Discount>
+  fetchDiscounts?: Maybe<Array<Discount>>
 }
 
 export type UserQueryQueryVariables = Exact<{ [key: string]: never }>
@@ -468,6 +476,27 @@ export type GetGenericPageQueryQuery = { __typename?: 'Query' } & {
     { __typename?: 'GenericPage' } & Pick<
       GenericPage,
       'slug' | 'title' | 'intro' | 'mainContent' | 'sidebar' | 'misc'
+    >
+  >
+}
+
+export type FetchDiscountsMutationMutationVariables = Exact<{
+  [key: string]: never
+}>
+
+export type FetchDiscountsMutationMutation = { __typename?: 'Mutation' } & {
+  fetchDiscounts?: Maybe<
+    Array<
+      { __typename?: 'Discount' } & Pick<
+        Discount,
+        'discountCode' | 'expires' | 'nationalId'
+      > & {
+          flightLegsLeft: { __typename?: 'FlightLegsLeft' } & Pick<
+            FlightLegsLeft,
+            'unused' | 'total'
+          >
+          user: { __typename?: 'User' } & Pick<User, 'ssn' | 'name'>
+        }
     >
   >
 }
@@ -649,4 +678,63 @@ export type GetGenericPageQueryLazyQueryHookResult = ReturnType<
 export type GetGenericPageQueryQueryResult = ApolloReactCommon.QueryResult<
   GetGenericPageQueryQuery,
   GetGenericPageQueryQueryVariables
+>
+export const FetchDiscountsMutationDocument = gql`
+  mutation FetchDiscountsMutation {
+    fetchDiscounts {
+      discountCode
+      expires
+      nationalId
+      flightLegsLeft {
+        unused
+        total
+      }
+      user {
+        ssn
+        name
+      }
+    }
+  }
+`
+export type FetchDiscountsMutationMutationFn = ApolloReactCommon.MutationFunction<
+  FetchDiscountsMutationMutation,
+  FetchDiscountsMutationMutationVariables
+>
+
+/**
+ * __useFetchDiscountsMutationMutation__
+ *
+ * To run a mutation, you first call `useFetchDiscountsMutationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useFetchDiscountsMutationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [fetchDiscountsMutationMutation, { data, loading, error }] = useFetchDiscountsMutationMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFetchDiscountsMutationMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    FetchDiscountsMutationMutation,
+    FetchDiscountsMutationMutationVariables
+  >,
+) {
+  return ApolloReactHooks.useMutation<
+    FetchDiscountsMutationMutation,
+    FetchDiscountsMutationMutationVariables
+  >(FetchDiscountsMutationDocument, baseOptions)
+}
+export type FetchDiscountsMutationMutationHookResult = ReturnType<
+  typeof useFetchDiscountsMutationMutation
+>
+export type FetchDiscountsMutationMutationResult = ApolloReactCommon.MutationResult<
+  FetchDiscountsMutationMutation
+>
+export type FetchDiscountsMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<
+  FetchDiscountsMutationMutation,
+  FetchDiscountsMutationMutationVariables
 >

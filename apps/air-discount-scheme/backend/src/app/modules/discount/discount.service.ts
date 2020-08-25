@@ -3,6 +3,7 @@ import CacheManager from 'cache-manager'
 
 import { Discount } from './discount.model'
 import { DiscountCodeInvalid } from './discount.error'
+import { FlightService } from '../flight'
 
 const DISCOUNT_CODE_LENGTH = 8
 
@@ -12,21 +13,34 @@ const ONE_DAY = 24 * 60 * 60
 export class DiscountService {
   constructor(
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
+    private readonly flightService: FlightService,
   ) {}
 
-  private getNationalIdCacheKey(nationalId: string) {
+  private async generateDiscount(
+    discountCode: string,
+    nationalId: string,
+    expires: number,
+  ): Promise<Discount> {
+    const flightLegsLeft = await this.flightService.countFlightLegsLeftByNationalId(
+      nationalId,
+    )
+
+    return new Discount(discountCode, nationalId, expires, flightLegsLeft)
+  }
+
+  private getNationalIdCacheKey(nationalId: string): string {
     return `national_id_${nationalId}`
   }
 
-  private getDiscountCodeCacheKey(discountCode: string) {
+  private getDiscountCodeCacheKey(discountCode: string): string {
     return `discount_code_${discountCode}`
   }
 
-  private getRandomRange(min: number, max: number) {
+  private getRandomRange(min: number, max: number): number {
     return Math.random() * (max - min) + min
   }
 
-  private generateDiscountCode() {
+  private generateDiscountCode(): string {
     return [...Array(DISCOUNT_CODE_LENGTH)]
       .map(() => {
         const rand = Math.round(Math.random())
@@ -51,7 +65,7 @@ export class DiscountService {
       { discountCode },
       { ttl: ONE_DAY },
     )
-    return new Discount(discountCode, nationalId, ONE_DAY)
+    return this.generateDiscount(discountCode, nationalId, ONE_DAY)
   }
 
   async getDiscountByNationalId(nationalId: string): Promise<Discount> {
@@ -62,7 +76,7 @@ export class DiscountService {
     }
 
     const ttl = await this.cacheManager.ttl(cacheKey)
-    return new Discount(cacheValue.discountCode, nationalId, ttl)
+    return this.generateDiscount(cacheValue.discountCode, nationalId, ttl)
   }
 
   async getDiscountByDiscountCode(discountCode: string): Promise<Discount> {
@@ -73,7 +87,7 @@ export class DiscountService {
     }
 
     const ttl = await this.cacheManager.ttl(cacheKey)
-    return new Discount(discountCode, cacheValue.nationalId, ttl)
+    return this.generateDiscount(discountCode, cacheValue.nationalId, ttl)
   }
 
   async validateDiscount(discountCode: string): Promise<string> {

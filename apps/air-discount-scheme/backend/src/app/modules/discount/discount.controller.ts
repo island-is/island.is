@@ -42,7 +42,9 @@ export class PublicDiscountController {
   async createDiscountCode(
     @Param() params: CreateDiscountCodeParams,
   ): Promise<Discount> {
-    const flightLegsLeft = await this.flightService.countFlightLegsLeftByNationalId(
+    const {
+      unused: flightLegsLeft,
+    } = await this.flightService.countFlightLegsLeftByNationalId(
       params.nationalId,
     )
     if (flightLegsLeft <= 0) {
@@ -79,7 +81,9 @@ export class PrivateDiscountController {
   async createDiscountCode(
     @Param() params: CreateDiscountCodeParams,
   ): Promise<Discount> {
-    const flightLegsLeft = await this.flightService.countFlightLegsLeftByNationalId(
+    const {
+      unused: flightLegsLeft,
+    } = await this.flightService.countFlightLegsLeftByNationalId(
       params.nationalId,
     )
     if (flightLegsLeft <= 0) {

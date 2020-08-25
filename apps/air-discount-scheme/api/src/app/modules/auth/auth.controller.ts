@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Post, Req, Res } from '@nestjs/common'
+import { Body, Controller, Get, Inject, Post, Res } from '@nestjs/common'
 import jwt from 'jsonwebtoken'
 import { Entropy } from 'entropy-string'
 import IslandisLogin from 'islandis-login'

@@ -46,9 +46,9 @@ export class PublicFlightController {
     const nationalId = await this.discountService.validateDiscount(
       params.discountCode,
     )
-    const flightLegsLeft = await this.flightService.countFlightLegsLeftByNationalId(
-      nationalId,
-    )
+    const {
+      unused: flightLegsLeft,
+    } = await this.flightService.countFlightLegsLeftByNationalId(nationalId)
     if (flightLegsLeft < flight.flightLegs.length) {
       throw new FlightLimitExceeded()
     }
