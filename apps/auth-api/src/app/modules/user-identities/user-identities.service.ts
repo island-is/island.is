@@ -29,6 +29,7 @@ export class UserIdentitiesService {
     )
     this.applicationsRegistered.labels('res1').inc()
     try {
+      // TODO: Attach existing profile if exists and is appropriate (based on provider trust)
       return this.sequelize.transaction(t => {
         return this.userIdentityModel.create(userIdentity, {include: [Claim], transaction: t})
       })
