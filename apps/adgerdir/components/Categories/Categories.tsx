@@ -14,6 +14,7 @@ import * as styles from './Categories.treat'
 import { Card } from '..'
 
 const FILTER_TIMER = 1000
+const ITEMS_PER_SHOW = 6
 
 export interface ItemProps {
   title: string
@@ -29,21 +30,24 @@ export const Categories: FC<CategoriesProps> = ({
   seeMoreText = 'Sjá fleiri',
   items,
 }) => {
+  // const cardsRef = useRef<Array<HTMLElement | null>>([])
   const [filterString, setFilterString] = useState<string>('')
+  const [tagIds, setTagIds] = useState<Array<number | string>>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [showCount, setShowCount] = useState<number>(ITEMS_PER_SHOW)
   const [hiddenIndexes, setHiddenIndexes] = useState<Array<number>>([])
   const timerRef = useRef(null)
 
   const tags = [
-    'Styrkir',
-    'Bætur',
-    'Lán',
-    'Skattamál',
-    'Einstaklingar',
-    'Fyrirtæki',
-    'Atvinnulíf',
-    'Ferðaþjónusta',
-    'Tölfræði',
+    { title: 'Styrkir', id: 1 },
+    { title: 'Bætur', id: 2 },
+    { title: 'Lán', id: 3 },
+    { title: 'Skattamál', id: 4 },
+    { title: 'Einstaklingar', id: 5 },
+    { title: 'Fyrirtæki', id: 6 },
+    { title: 'Atvinnulíf', id: 7 },
+    { title: 'Ferðaþjónusta', id: 8 },
+    { title: 'Tölfræði', id: 9 },
   ]
 
   const states = ['Í undirbúningi', 'Í framkvæmd', 'Lokið']
@@ -81,14 +85,27 @@ export const Categories: FC<CategoriesProps> = ({
     }
   }, [filterString, doUpdate])
 
+  const onTagClick = (id: number | string) => {
+    const newTagIds = [...tagIds]
+    const index = tagIds.findIndex((x) => x === id)
+
+    if (index < 0) {
+      newTagIds.push(id)
+    } else {
+      newTagIds.splice(index, 1)
+    }
+
+    setTagIds(newTagIds)
+  }
+
   useEffect(() => {
     onUpdateFilters()
     return () => clearTimeout(timerRef.current)
   }, [onUpdateFilters])
 
-  const filteredItems = items.filter(
-    (_, index) => !hiddenIndexes.includes(index),
-  )
+  const filteredItems = items
+    .filter((_, index) => !hiddenIndexes.includes(index))
+    .splice(0, showCount)
 
   return (
     <Box padding={[3, 3, 6]}>
@@ -112,10 +129,15 @@ export const Categories: FC<CategoriesProps> = ({
                 <Typography variant="tag" color="red600">
                   Málefni:
                 </Typography>
-                {tags.map((tag, index) => {
+                {tags.map(({ title, id }, index) => {
                   return (
-                    <Tag key={index} variant="red">
-                      {tag}
+                    <Tag
+                      key={index}
+                      variant="red"
+                      onClick={() => onTagClick(id)}
+                      active={tagIds.includes(id)}
+                    >
+                      {title}
                     </Tag>
                   )
                 })}
@@ -164,16 +186,18 @@ export const Categories: FC<CategoriesProps> = ({
             )
           })}
         </Tiles>
-        <Box textAlign="center">
-          <Button
-            onClick={() => {
-              console.log('load more cards...')
-            }}
-            variant="ghost"
-          >
-            {seeMoreText}
-          </Button>
-        </Box>
+        {showCount < items.length ? (
+          <Box textAlign="center">
+            <Button
+              onClick={() => {
+                setShowCount(showCount + ITEMS_PER_SHOW)
+              }}
+              variant="ghost"
+            >
+              {seeMoreText}
+            </Button>
+          </Box>
+        ) : null}
       </Stack>
     </Box>
   )

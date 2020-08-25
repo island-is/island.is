@@ -17,9 +17,11 @@ export interface TagProps {
   onClick?: () => void
   variant?: TagVariant
   href?: string
+  id?: string
   active?: boolean
   disabled?: boolean
   label?: boolean
+  dataTagId?: string
   children: string
 }
 
@@ -35,6 +37,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       active = false,
       disabled,
       label,
+      dataTagId,
       ...props
     }: TagProps,
     ref,
@@ -53,6 +56,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
     const sharedProps = {
       className,
       ref,
+      dataTagId,
     }
 
     const content = (

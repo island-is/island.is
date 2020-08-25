@@ -9,11 +9,12 @@ export const card = style({
   borderWidth: 1,
   boxSizing: 'border-box',
   borderStyle: 'solid',
+  opacity: 0,
   borderColor: theme.color.red200,
-  transition: 'border-color 150ms ease',
   borderRadius: theme.border.radius.large,
   textDecoration: 'none',
   position: 'relative',
+  transition: 'opacity 300ms ease, border-color 150ms ease',
   ':hover': {
     borderColor: theme.color.red400,
     textDecoration: 'none',
@@ -49,6 +50,10 @@ export const card = style({
       borderColor: theme.color.white,
     },
   },
+})
+
+export const visible = style({
+  opacity: 1,
 })
 
 export const focused = style({

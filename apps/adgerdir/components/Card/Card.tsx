@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, forwardRef } from 'react'
 import cn from 'classnames'
 import Link, { LinkProps } from 'next/link'
 import {
@@ -28,77 +28,82 @@ interface CardProps {
   linkProps?: LinkProps
   href?: string
   as?: string
+  visible?: boolean
 }
 
-export const Card: FC<CardProps> = ({
-  title,
-  description,
-  tags = [],
-  href,
-  as,
-}) => {
-  const Content = (
-    <Box display="flex" height="full" flexDirection="column">
-      <Box flexGrow={1} height="full">
-        <Stack space={1}>
-          <Typography variant="cardCategoryTitle" as="h3" color="red600">
-            {title}
-          </Typography>
-          {description && <Typography variant="p">{description}</Typography>}
-        </Stack>
+export const Card = forwardRef<HTMLDivElement, CardProps>(
+  ({ title, description, tags = [], href, as, visible = true }, ref) => {
+    const Content = (
+      <Box ref={ref} display="flex" height="full" flexDirection="column">
+        <Box flexGrow={1} height="full">
+          <Stack space={1}>
+            <Typography variant="cardCategoryTitle" as="h3" color="red600">
+              {title}
+            </Typography>
+            {description && <Typography variant="p">{description}</Typography>}
+          </Stack>
+        </Box>
+        {tags.length > 0 && (
+          <Box paddingTop={3} flexGrow={0}>
+            <Inline space={1}>
+              {tags.map(({ title, ...props }: CardTagsProps, index) => {
+                const tagProps = { ...tagPropsDefaults, ...props.tagProps }
+
+                return (
+                  <Tag key={index} {...tagProps}>
+                    {title}
+                  </Tag>
+                )
+              })}
+            </Inline>
+          </Box>
+        )}
       </Box>
-      {tags.length > 0 && (
-        <Box paddingTop={3} flexGrow={0}>
-          <Inline space={1}>
-            {tags.map(({ title, ...props }: CardTagsProps, index) => {
-              const tagProps = { ...tagPropsDefaults, ...props.tagProps }
+    )
 
-              return (
-                <Tag key={index} {...tagProps}>
-                  {title}
-                </Tag>
-              )
-            })}
-          </Inline>
-        </Box>
-      )}
-    </Box>
-  )
+    if (!href) {
+      return <Frame isVisible={visible}>{Content}</Frame>
+    }
 
-  if (!href) {
-    return <Frame>{Content}</Frame>
-  }
-
-  return (
-    <Link href={href} as={as} passHref>
-      {/* eslint-disable-next-line */}
-      <a className={styles.card}>
-        <Box
-          height="full"
-          background="white"
-          outline="none"
-          borderRadius="standard"
-          padding={[2, 2, 4]}
-        >
-          {Content}
-        </Box>
-      </a>
-    </Link>
-  )
-}
+    return (
+      <Link href={href} as={as} passHref>
+        {/* eslint-disable-next-line */}
+        <a className={styles.card}>
+          <Box
+            height="full"
+            background="white"
+            outline="none"
+            borderRadius="standard"
+            padding={[2, 2, 4]}
+          >
+            {Content}
+          </Box>
+        </a>
+      </Link>
+    )
+  },
+)
 
 interface FrameProps {
   isFocused?: boolean
+  isVisible?: boolean
 }
 
-export const Frame: FC<FrameProps> = ({ children, isFocused = false }) => {
+export const Frame: FC<FrameProps> = ({
+  children,
+  isFocused = false,
+  isVisible = true,
+}) => {
   return (
     <Box
       height="full"
       background="white"
       outline="none"
       padding={[2, 2, 4]}
-      className={cn(styles.card, { [styles.focused]: isFocused })}
+      className={cn(styles.card, {
+        [styles.focused]: isFocused,
+        [styles.visible]: isVisible,
+      })}
     >
       {children}
     </Box>

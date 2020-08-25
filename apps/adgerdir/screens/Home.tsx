@@ -37,7 +37,14 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
 
   const { items: cards } = items
 
-  const cardsMany = [...cards, ...cards, ...cards, ...cards, ...cards]
+  const cardsMany = [
+    ...cards,
+    ...cards,
+    ...cards,
+    ...cards,
+    ...cards,
+    { title: 'blabla', description: 'blöblö' },
+  ]
   const cardsFew = [...cards]
 
   return (
