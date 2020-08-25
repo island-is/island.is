@@ -8,12 +8,8 @@ import { environment } from '../environments'
 class BackendAPI extends RESTDataSource {
   baseURL = `${environment.backendUrl}/api/private`
 
-  async getDiscount(nationalId: string): Promise<Discount | null> {
-    const discounts = await this.get(`users/${nationalId}/discounts`)
-    if (discounts.length > 0) {
-      return discounts[0]
-    }
-    return null
+  getDiscounts(nationalId: string): Promise<Discount | null> {
+    return this.get(`users/${nationalId}/discounts`)
   }
 
   createDiscount(nationalId: string): Promise<Discount> {

@@ -1,6 +1,6 @@
 import React from 'react'
 import gql from 'graphql-tag'
-import { Screen } from '../../types'
+
 import { Layout } from '@island.is/air-discount-scheme-web/components/Layout'
 import {
   Query,
@@ -12,62 +12,18 @@ import {
   Content,
   IntroText,
 } from '@island.is/air-discount-scheme-web/components'
+import { Screen } from '../../types'
+import { Benefits, Usage } from './components'
 
-export interface SubsidyProps {
+interface PropTypes {
   page?: GenericPage
 }
 
-const codes: {
-  name: string
-  kid: boolean
-  code: string
-  remainingCodes: number
-  totalCodes: number
-}[] = [
-  {
-    name: 'Jón Jónsson',
-    kid: false,
-    code: 'ASFEWFA',
-    remainingCodes: 3,
-    totalCodes: 6,
-  },
-  {
-    name: 'Jón Jónsson',
-    kid: true,
-    code: 'ASssWFA',
-    remainingCodes: 6,
-    totalCodes: 6,
-  },
-]
-
-const copyToClipboard = (str) => {
-  const el = document.createElement('textarea')
-  el.value = str
-  el.setAttribute('readonly', '')
-  el.style.position = 'absolute'
-  el.style.opacity = '0'
-  document.body.appendChild(el)
-  el.select()
-  document.execCommand('copy')
-  document.body.removeChild(el)
-}
-
-const Subsidy: Screen<SubsidyProps> = ({
+const Subsidy: Screen<PropTypes> = ({
   page: { title, intro, mainContent, sidebar, misc },
 }) => {
-  const {
-    attention,
-    codeDisclaimer,
-    myRights,
-    remaining,
-    copyCode,
-    codeDescription,
-    kidsRights,
-    currentUsage,
-    path,
-    user,
-    date,
-  } = JSON.parse(misc)
+  const { attention, codeDisclaimer } = JSON.parse(misc)
+
   return (
     <Layout
       left={
@@ -97,62 +53,9 @@ const Subsidy: Screen<SubsidyProps> = ({
               </Box>
               <Typography variant="p">{codeDisclaimer}</Typography>
             </Box>
-            <Typography variant="h3">{myRights}</Typography>
-            {codes.map(({ name, kid, code, remainingCodes, totalCodes }) => {
-              const remainingPlaceholders = {
-                remaining: remainingCodes,
-                total: totalCodes,
-              }
-              return (
-                <Box
-                  key={code}
-                  padding={2}
-                  marginBottom={2}
-                  border="standard"
-                  borderRadius="standard"
-                  display={['block', 'flex']}
-                  justifyContent="spaceBetween"
-                  alignItems={['flexStart', 'center']}
-                  background="blue100"
-                  flexDirection={['column', 'row']}
-                >
-                  <Box marginBottom={[3, 0]}>
-                    <Typography variant="h3">
-                      {name} {kid && kidsRights}
-                    </Typography>
-                    <Typography variant="p">
-                      {remaining.replace(
-                        /\{{(.*?)\}}/g,
-                        (m, sub) => remainingPlaceholders[sub],
-                      )}
-                    </Typography>
-                  </Box>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent={['spaceBetween', 'flexStart']}
-                  >
-                    <Box marginRight={[2, 4]}>
-                      <Typography variant="h3" color="roseTinted400">
-                        {code}
-                      </Typography>
-                    </Box>
-                    <Button
-                      noWrap
-                      onClick={() => {
-                        copyToClipboard(code)
-                      }}
-                    >
-                      {copyCode}
-                    </Button>
-                  </Box>
-                </Box>
-              )
-            })}
           </Stack>
-          <Box textAlign="right" marginBottom={4}>
-            <Typography variant="pSmall">{codeDescription}</Typography>
-          </Box>
+          <Benefits misc={misc} />
+          <Usage misc={misc} />
         </Box>
       }
       right={
@@ -165,10 +68,8 @@ const Subsidy: Screen<SubsidyProps> = ({
   )
 }
 
-export default Subsidy
-
-const GET_GENERIC_PAGE_QUERY = gql`
-  query($input: GetGenericPageInput!) {
+const GetGenericPageQuery = gql`
+  query getGenericPageQuery($input: GetGenericPageInput!) {
     getGenericPage(input: $input) {
       slug
       title
@@ -184,7 +85,7 @@ Subsidy.getInitialProps = async ({ apolloClient, locale }) => {
   const {
     data: { getGenericPage: page },
   } = await apolloClient.query<Query, QueryGetGenericPageArgs>({
-    query: GET_GENERIC_PAGE_QUERY,
+    query: GetGenericPageQuery,
     variables: {
       input: {
         lang: 'is-IS',
@@ -196,3 +97,5 @@ Subsidy.getInitialProps = async ({ apolloClient, locale }) => {
     page,
   }
 }
+
+export default Subsidy

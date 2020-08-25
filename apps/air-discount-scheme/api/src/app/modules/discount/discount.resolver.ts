@@ -9,17 +9,23 @@ export class DiscountResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Authorize()
-  @Mutation(() => Discount, { nullable: true })
-  async fetchDiscount(
+  @Mutation(() => [Discount], { nullable: true })
+  async fetchDiscounts(
     @CurrentUser() user,
     @Context('dataSources') { backendApi },
   ): Promise<Discount> {
-    let discount = await backendApi.getDiscount(user.ssn)
-    if (!discount) {
-      discount = await backendApi.createDiscount(user.ssn)
+    const discounts: TDiscount[] = await backendApi.getDiscounts(user.ssn)
+    let userDiscount: TDiscount = discounts.find(
+      (discount) => discount.nationalId === user.ssn,
+    )
+    if (!userDiscount) {
+      userDiscount = await backendApi.createDiscount(user.ssn)
     }
 
-    return discount
+    return [
+      userDiscount,
+      ...discounts.filter((discount) => discount.nationalId !== user.ssn),
+    ]
   }
 
   @Authorize({ throwOnUnAuthorized: false })
