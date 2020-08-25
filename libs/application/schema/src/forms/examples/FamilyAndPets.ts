@@ -1,13 +1,13 @@
 import * as z from 'zod'
-import { buildForm, buildRepeater, buildSection } from '../lib/formBuilders'
+import { buildForm, buildRepeater, buildSection } from '../../lib/formBuilders'
 import {
   buildIntroductionField,
   buildRadioField,
   buildSelectField,
   buildTextField,
-} from '../lib/fieldBuilders'
-import { Form } from '../types/Form'
-import { FormType } from './FormType'
+} from '../../lib/fieldBuilders'
+import { Form } from '../../types/Form'
+import { FormType } from '../FormType'
 
 const PetsSchema = z.object({
   entrance: z.enum(['yes', 'no']),
