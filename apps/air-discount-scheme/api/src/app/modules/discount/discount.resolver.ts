@@ -1,4 +1,4 @@
-import { Mutation, Resolver, ResolveField, Context } from '@nestjs/graphql'
+import { Mutation, Resolver, Context } from '@nestjs/graphql'
 
 import { Discount as TDiscount } from '@island.is/air-discount-scheme/types'
 import { Authorize, CurrentUser, AuthService, AuthUser } from '../auth'
@@ -12,7 +12,7 @@ export class DiscountResolver {
   @Authorize()
   @Mutation(() => [Discount], { nullable: true })
   async fetchDiscounts(
-    @CurrentUser() user,
+    @CurrentUser() user: AuthUser,
     @Context('dataSources') { backendApi },
   ): Promise<Discount> {
     let discounts: TDiscount[] = await backendApi.getDiscounts(user.nationalId)

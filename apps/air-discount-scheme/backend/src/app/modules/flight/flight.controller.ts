@@ -15,7 +15,6 @@ import {
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiExcludeEndpoint,
-  ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger'
 
@@ -28,7 +27,7 @@ import {
   GetFlightLegFundsParams,
 } from './flight.validator'
 import { FlightLimitExceeded } from './flight.error'
-import { FlightDto, FlightLegFundDto } from './dto/flight.dto'
+import { FlightDto } from './dto/flight.dto'
 import { DiscountService } from '../discount'
 import { AuthGuard } from '../common'
 
