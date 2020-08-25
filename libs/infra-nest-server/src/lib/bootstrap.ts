@@ -78,6 +78,10 @@ function setupOpenApi(app: INestApplication, options: RunServerOptions) {
         }
       }
     })
+    .addBasicAuth()
+    .addApiKey()
+    .addCookieAuth()
+    .addBearerAuth()
     .build()
   const document = SwaggerModule.createDocument(app, swaggerOptions)
 
