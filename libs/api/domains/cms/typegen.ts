@@ -50,6 +50,12 @@ export class ${upperFirst(contentType.sys.id)} {
   @Field()
   id: string
 
+  @Field
+  createdAt: string
+
+  @Field
+  updatedAt: string
+
   ${fields.join('\n\n  ')}
 }
   `.trim()
@@ -63,23 +69,31 @@ const generateContentfulType = (contentType: any): string => {
   })
 
   return `
-type ${upperFirst(contentType.sys.id)} {
+interface ${upperFirst(contentType.sys.id)} {
   ${fields.join('\n  ')}
 }
   `.trim()
 }
 
 const validationToMapperFunction = (field): string => {
-  const validations = (field.items?.validations ?? field.validations ?? [])
-    .map((v) => v.linkContentType)
-    .filter(Boolean)[0]
+  if (field.type === 'Array') {
+    field = field.items
+  }
+
+  if (field.linkType === 'Asset') {
+    // only asset type we know how to handle atm is an image
+    return 'mapImage'
+  }
+
+  const validations =
+    (field.validations ?? [])
+      .map((v) => v.linkContentType)
+      .filter(Boolean)[0] ?? []
 
   switch (validations.length) {
+    case undefined:
     case 0:
-      throw new Error(
-        `field ${field.id} has no content type validation. ` +
-          `Add content type validation to this field and try again`,
-      )
+      return
     case 1:
       return 'map' + upperFirst(validations[0])
     default:
@@ -93,27 +107,30 @@ const generateMapperFunction = (contentType: any): string => {
 
   const sysFields = [
     'id: entry.sys.id',
-    // 'createdAt: entry.sys.createdAt',
-    // 'updatedAt: entry.sys.updatedAt',
+    'createdAt: entry.sys.createdAt',
+    'updatedAt: entry.sys.updatedAt',
   ]
 
   const fields = contentType.fields.map((field) => {
-    let value = `entry.field.${field.id}`
+    let value = `entry.fields.${field.id}`
+    const mapperName = validationToMapperFunction(field)
     if (field.type === 'Array' && field.items?.type === 'Link') {
-      value = `${value}.map(${validationToMapperFunction(field)})`
+      value = mapperName && `${value}.map(${mapperName})`
     } else if (field.type === 'Link') {
-      value = `${validationToMapperFunction(field)}(${value})`
+      value = mapperName && `${mapperName}(${value})`
     }
 
-    return `${field.id}: ${value},`
-  })
+    if (value) {
+      return `${field.id}: ${value},`
+    } else {
+      console.warn(`no mapper created for ${contentType.sys.id}.${field.id} since it has no type validation`)
+    }
+  }).filter(Boolean)
 
   return `
-import ${typeName}Model from './model/${contentType.sys.id}.model'
+import ${typeName}Model from './lib/models/${contentType.sys.id}.model'
 
 const map${typeName} = (entry: Entry<${typeName}>): ${typeName}Model => {
-  if (!entry) return null
-
   return {
     ${[].concat(sysFields, fields).join('\n    ')}
   }
@@ -129,30 +146,20 @@ stdin.on('data', (chunk) => {
 })
 
 stdin.on('end', () => {
-  const contentType = JSON.parse(input)
-  const actions = [
-    {
-      action: 'create',
-      path: path.resolve(
-        __dirname,
-        `lib/models/${contentType.sys.id}.model.ts`,
-      ),
-      content: generateModel(contentType),
-    },
-    {
-      action: 'append',
-      path: path.resolve(__dirname, `contentfulTypes.ts`),
-      content: generateContentfulType(contentType),
-    },
-    {
-      action: 'append',
-      path: path.resolve(__dirname, 'mappers.ts'),
-      content: generateMapperFunction(contentType),
-    },
-  ]
+  const data = JSON.parse(input)
+  const contentTypes = data.contentTypes ?? [data]
 
-  actions.map(({ action, path, content }) => {
-    console.log(`\n## ${action} ${path}`)
-    console.log(content)
-  })
+  switch (process.argv[2] ?? 'new-type') {
+    case 'new-type': {
+      console.log('// append to libs/api/domains/cms/src/lib/contentfulTypes.ts')
+      console.log(generateContentfulType(data))
+      console.log(`\n// create file libs/api/domains/cms/src/lib/models/${data.sys.id}.models.ts`)
+      console.log(generateModel(data))
+      console.log(`\n// append to libs/api/domains/cms/src/lib/mappers.ts`)
+      console.log(generateMapperFunction(data))
+    }
+    case 'contentful-types': {
+      console.log(contentTypes.map(generateContentfulType).join('\n\n'))
+    }
+  }
 })
