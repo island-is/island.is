@@ -9,6 +9,8 @@ import {
   Inject,
   forwardRef,
   UseGuards,
+  Req,
+  ForbiddenException,
 } from '@nestjs/common'
 import {
   ApiBearerAuth,
@@ -42,6 +44,7 @@ export class PublicFlightController {
   async create(
     @Param() params: CreateFlightParams,
     @Body() flight: FlightDto,
+    @Req() request,
   ): Promise<Flight> {
     const nationalId = await this.discountService.validateDiscount(
       params.discountCode,
@@ -53,14 +56,21 @@ export class PublicFlightController {
       throw new FlightLimitExceeded()
     }
     await this.discountService.useDiscount(params.discountCode)
-    return this.flightService.create(flight, nationalId)
+    return this.flightService.create(flight, nationalId, request.airline)
   }
 
   @Delete('flights/:flightId')
   @HttpCode(204)
   @ApiNoContentResponse()
-  async delete(@Param() params: DeleteFlightParams): Promise<void> {
-    await this.flightService.delete(params.flightId)
+  async delete(
+    @Param() params: DeleteFlightParams,
+    @Req() request,
+  ): Promise<void> {
+    const flight = await this.flightService.findOne(params.flightId)
+    if (flight.airline !== request.airline) {
+      throw new ForbiddenException('Flight belongs to other airline')
+    }
+    await this.flightService.delete(flight)
   }
 }
 

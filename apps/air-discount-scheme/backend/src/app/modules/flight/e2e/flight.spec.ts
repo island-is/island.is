@@ -48,6 +48,7 @@ describe('Create Flight', () => {
       modified: expect.any(String),
       nationalId: '1234567890',
       bookingDate: '2020-08-17T12:35:50.971Z',
+      airline: 'ernir',
       flightLegs: [
         {
           id: expect.any(String),
@@ -96,7 +97,7 @@ describe('Delete Flight', () => {
       .mockImplementation(() => ({ nationalId: '1234567890' }))
     const createRes = await request(app.getHttpServer())
       .post('/api/public/discounts/12345678/flights')
-      .set('Authorization', 'Bearer ernir')
+      .set('Authorization', 'Bearer airIcelandConnect')
       .send({
         bookingDate: '2020-08-17T12:35:50.971Z',
         flightLegs: [
@@ -121,7 +122,7 @@ describe('Delete Flight', () => {
 
     await request(app.getHttpServer())
       .delete(`/api/public/flights/${createRes.body.id}`)
-      .set('Authorization', 'Bearer ernir')
+      .set('Authorization', 'Bearer airIcelandConnect')
       .expect(204)
 
     const getRes = await request(app.getHttpServer())
