@@ -9,12 +9,13 @@ import { ApiScopeUserClaim } from './api-scope-user-claim.model'
 import { ApiResourceUserClaim } from './api-resource-user-claim.model'
 import { ApiResource } from './api-resource.model'
 import { ApiResourceScope } from './api-resource-scope.model'
+import { ApiResourceSecret } from './api-resource-secret.model'
 
 @Module({
   imports: [SequelizeModule.forFeature([
     IdentityResource, IdentityResourceUserClaim,
     ApiScope, ApiScopeUserClaim,
-    ApiResource, ApiResourceUserClaim, ApiResourceScope
+    ApiResource, ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret
   ])],
   controllers: [ResourcesController],
   providers: [ResourcesService],

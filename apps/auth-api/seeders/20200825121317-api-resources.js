@@ -29,17 +29,23 @@ module.exports = {
       {api_resource_id: apiResources[1].id, scope_name: 'postman_resource.scope'},
     ]
 
+    var secrets = [
+      {api_resource_id: apiResources[1].id, value: '8I04CDGgyV5bddUZfz0ydCTBRuRTmn7frlxVhJy1krc=', type: 'SharedSecret'},
+    ]
+
     return Promise.all([queryInterface.bulkInsert('api_resource', apiResources, {}),
       queryInterface.bulkInsert('api_resource_user_claim', userClaims, {}),
-      queryInterface.bulkInsert('api_resource_scope', scopes, {})])
+      queryInterface.bulkInsert('api_resource_scope', scopes, {}),
+      queryInterface.bulkInsert('api_resource_secret', secrets, {})])
   },
 
   down: (queryInterface, Sequelize) => {
 
+    var secrets =  queryInterface.bulkDelete('api_resource_secret', null, {});
     var scopes =  queryInterface.bulkDelete('api_resource_scope', null, {});
     var userClaims =  queryInterface.bulkDelete('api_resource_user_claim', null, {});
     var apiResources =  queryInterface.bulkDelete('api_resource', null, {});
 
-    return Promise.all([apiResources, userClaims, scopes])
+    return Promise.all([apiResources, userClaims, scopes, secrets])
   }
 };

@@ -11,6 +11,7 @@ import { ApiScopeUserClaim } from './api-scope-user-claim.model'
 import { ApiResourceUserClaim } from './api-resource-user-claim.model'
 import { ApiResource } from './api-resource.model'
 import { ApiResourceScope } from './api-resource-scope.model'
+import { ApiResourceSecret } from './api-resource-secret.model'
 
 @Injectable()
 export class ResourcesService {
@@ -98,6 +99,7 @@ export class ResourcesService {
     return this.apiResourceModel.findAll({
       raw: true,
       where: apiResourceNames ? whereOptions : null,
+      // include: [ApiResourceSecret]
     }).then(apiResources => {
         return Promise.all(apiResources.map(async apiResource => {
             const [claims, meta] = await this.sequelize.query('SELECT "claim_name" FROM "api_resource_user_claim" WHERE api_resource_id=$apiResourceId',
@@ -140,6 +142,7 @@ export class ResourcesService {
     return this.apiResourceModel.findAll({
       raw: true,
       where: whereOptions,
+      // include: [ApiResourceSecret]
     }).then(apiResources => {
         return Promise.all(apiResources.map(async apiResource => {
             const [claims, meta] = await this.sequelize.query('SELECT "claim_name" FROM "api_resource_user_claim" WHERE api_resource_id=$apiResourceId',

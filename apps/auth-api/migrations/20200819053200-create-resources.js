@@ -77,6 +77,17 @@ module.exports = {
         PRIMARY KEY (api_resource_id, scope_name)
       );
 
+      CREATE TABLE api_resource_secret (
+        api_resource_id UUID NOT NULL,
+        value VARCHAR NOT NULL,
+        description VARCHAR,
+        expiration TIMESTAMP WITH TIME ZONE,
+        type VARCHAR NOT NULL,
+        created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        modified TIMESTAMP WITH TIME ZONE,
+        PRIMARY KEY (api_resource_id, value)
+      );
+
       COMMIT;
     `)
   },

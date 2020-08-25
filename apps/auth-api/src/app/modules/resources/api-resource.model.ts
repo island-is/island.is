@@ -8,6 +8,7 @@ import {
     HasMany,
   } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+import { ApiResourceSecret } from './api-resource-secret.model'
   
   @Table({
     tableName: 'api_resource',
@@ -84,8 +85,7 @@ import { ApiProperty } from '@nestjs/swagger'
     // @ApiProperty()
     // public allowedAccessTokenSigningAlgorithms: string[]
 
-    // TODO: Secrets
-    // @HasMany(() => ApiResourceSecret)
-    // @ApiProperty()
-    // readonly claims: ApiResourceSecret[]
+    @HasMany(() => ApiResourceSecret)
+    @ApiProperty()
+    readonly apiSecrets: ApiResourceSecret[]
   }
