@@ -86,6 +86,10 @@ export const theme = {
     subtle: '0px 4px 30px #F2F7FF',
   },
   color,
+  grid: {
+    columns: { desktop: 12, mobile: 6 },
+    gutter: { desktop: 24, mobile: 16 },
+  },
 }
 
 export type Theme = typeof theme
