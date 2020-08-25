@@ -2024,7 +2024,7 @@
             ],
             "styles": ["apps/judicial-system/web/src/styles.scss"],
             "scripts": [],
-            "webpackConfig": "@nrwl/react/plugins/webpack"
+            "webpackConfig": "apps/judicial-system/web/webpack.config.js"
           },
           "configurations": {
             "production": {

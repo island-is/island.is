@@ -4,13 +4,7 @@ import './App.scss'
 
 import fetch from 'isomorphic-fetch'
 
-export const App = () => {
-  /*
-   * Replace the elements below with your own.
-   *
-   * Note: The corresponding styles are in the ./App.scss file.
-   */
-
+export const Login = () => {
   const [messageFromAPI, setMessageFromAPI] = useState('')
 
   useEffect(() => {
@@ -36,4 +30,4 @@ export const App = () => {
   return <div className="app">{messageFromAPI}</div>
 }
 
-export default App
+export default Login

@@ -21,6 +21,7 @@
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/adgerdir/*": ["apps/adgerdir/*"],
       "@island.is/gjafakort-web/*": ["apps/gjafakort/web/*"],
+      "@island.is/judicial-system-web/*": ["apps/judicial-system/web/*"],
       "@island.is/air-discount-scheme-web/*": [
         "apps/air-discount-scheme/web/*"
       ],
