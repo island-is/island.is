@@ -15,13 +15,19 @@ import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CaseValidationPipe } from './case.pipe'
 
 @ApiTags('case')
-@Controller('case')
+@Controller()
 export class CaseController {
   constructor(private readonly caseService: CaseService) {}
 
-  @Get(':id')
+  @Get('cases')
+  @ApiOkResponse({ type: Case, isArray: true })
+  async getAll() {
+    return this.caseService.getAll()
+  }
+
+  @Get('case/:id')
   @ApiOkResponse({ type: Case })
-  async findOne(@Param('id') id: string): Promise<Case> {
+  async findOne(@Param('id') id: string) {
     const existingCase = await this.caseService.findById(id)
 
     if (!existingCase) {
@@ -31,22 +37,22 @@ export class CaseController {
     return existingCase
   }
 
-  @Post()
+  @Post('case')
   @ApiCreatedResponse({ type: Case })
   async create(
     @Body(new CaseValidationPipe(true))
     caseToCreate: CreateCaseDto,
-  ): Promise<Case> {
+  ) {
     return this.caseService.create(caseToCreate)
   }
 
-  @Put(':id')
+  @Put('case/:id')
   @ApiOkResponse({ type: Case })
   async update(
     @Param('id') id: string,
     @Body(new CaseValidationPipe(true))
     caseToUpdate: UpdateCaseDto,
-  ): Promise<Case> {
+  ) {
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
       caseToUpdate,

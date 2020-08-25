@@ -14,18 +14,29 @@ export class CaseService {
     private logger: Logger,
   ) {}
 
-  async findById(id: string): Promise<Case> {
-    this.logger.debug(`Finding case by id - "${id}"`)
+  async getAll() {
+    this.logger.debug('Getting all cases')
+
+    return this.caseModel.findAll()
+  }
+
+  async findById(id: string) {
+    this.logger.debug(`Finding case with id "${id}"`)
+
     return this.caseModel.findOne({
       where: { id },
     })
   }
 
-  async create(caseToCreate: CreateCaseDto): Promise<Case> {
+  async create(caseToCreate: CreateCaseDto) {
+    this.logger.debug(`Creating case ${caseToCreate}`)
+
     return this.caseModel.create(caseToCreate)
   }
 
   async update(id: string, caseToUpdate: UpdateCaseDto) {
+    this.logger.debug(`Updating case whith id "${caseToUpdate.id}"`)
+
     const [numberOfAffectedRows, [updatedCase]] = await this.caseModel.update(
       caseToUpdate,
       {
@@ -38,6 +49,8 @@ export class CaseService {
   }
 
   async delete(id: string) {
+    this.logger.debug(`Deleting case with id "${id}"`)
+
     return this.caseModel.destroy({ where: { id } })
   }
 }
