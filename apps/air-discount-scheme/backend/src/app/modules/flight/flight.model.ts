@@ -9,6 +9,7 @@ import {
   ForeignKey,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+import { environment } from '../../../environments'
 
 @Table({ tableName: 'flight_leg' })
 export class FlightLeg extends Model<FlightLeg> {
@@ -99,7 +100,8 @@ export class Flight extends Model<Flight> {
   nationalId: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
+    values: Object.keys(environment.airlineApiKeys),
     allowNull: false,
   })
   @ApiProperty()
