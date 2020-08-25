@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC } from 'react'
 import { ContentBlock, Box, Typography, Stack } from '@island.is/island-ui/core'
-import { Card, Categories } from '../components'
+import { Card, Categories, Sleeve } from '../components'
 import { withApollo } from '../graphql'
 import { useI18n } from '../i18n'
 import {
@@ -37,12 +37,10 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
     document.documentElement.lang = activeLocale
   }
 
-  console.log('frontpage', frontpage)
-  console.log('items', items)
-
   const { items: cards } = items
 
-  const dummylist = [...cards, ...cards, ...cards, ...cards, ...cards]
+  const dummylistLarge = [...cards, ...cards, ...cards, ...cards, ...cards]
+  const dummylistSmall = [...cards]
 
   return (
     <>
@@ -70,26 +68,28 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
           locale={activeLocale as Locale}
         />
       </Box>
-      <Box background="red100">
-        <ContentBlock width="large">
-          <Categories label={n('articlesTitle')}>
-            {dummylist.map(({ title, slug, description }, index) => {
-              return (
-                <Card
-                  key={index}
-                  description={description}
-                  title={title}
-                  tags={[
-                    { title: 'tag1' },
-                    { title: 'tag2' },
-                    { title: 'tag3' },
-                  ]}
-                />
-              )
-            })}
-          </Categories>
-        </ContentBlock>
-      </Box>
+      <Sleeve>
+        <Box background="red100">
+          <ContentBlock width="large">
+            <Categories label={n('articlesTitle')}>
+              {dummylistSmall.map(({ title, slug, description }, index) => {
+                return (
+                  <Card
+                    key={index}
+                    description={description}
+                    title={title}
+                    tags={[
+                      { title: 'tag1' },
+                      { title: 'tag2' },
+                      { title: 'tag3' },
+                    ]}
+                  />
+                )
+              })}
+            </Categories>
+          </ContentBlock>
+        </Box>
+      </Sleeve>
     </>
   )
 }
