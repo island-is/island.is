@@ -97,25 +97,25 @@ export class ResourcesService {
     }
 
     return this.apiResourceModel.findAll({
-      raw: true,
       where: apiResourceNames ? whereOptions : null,
-      // include: [ApiResourceSecret]
+      include: [ApiResourceSecret]
     }).then(apiResources => {
-        return Promise.all(apiResources.map(async apiResource => {
-            const [claims, meta] = await this.sequelize.query('SELECT "claim_name" FROM "api_resource_user_claim" WHERE api_resource_id=$apiResourceId',
+      return Promise.all(apiResources.map(async apiResource => {
+      this.logger.debug('apiResource', apiResource.get())
+      const [claims, meta] = await this.sequelize.query('SELECT "claim_name" FROM "api_resource_user_claim" WHERE api_resource_id=$apiResourceId',
             {
                 bind: { apiResourceId: apiResource.id},
                 type: QueryTypes.RAW,
                 model: ApiResourceUserClaim
             });
-            apiResource.userClaims = claims.map(claim => claim.claim_name)
+            apiResource.get().userClaims = claims.map(claim => claim.claim_name)
             const [scopes, meta2] = await this.sequelize.query('SELECT "scope_name" FROM "api_resource_scope" WHERE api_resource_id=$apiResourceId',
             {
                 bind: { apiResourceId: apiResource.id},
                 type: QueryTypes.RAW,
                 model: ApiResourceUserClaim
             });
-            apiResource.scopes = scopes.map(scope => scope.scope_name)
+            apiResource.get().scopes = scopes.map(scope => scope.scope_name)
             return apiResource
         }))
     })
@@ -140,9 +140,8 @@ export class ResourcesService {
       }
     }
     return this.apiResourceModel.findAll({
-      raw: true,
       where: whereOptions,
-      // include: [ApiResourceSecret]
+      include: [ApiResourceSecret]
     }).then(apiResources => {
         return Promise.all(apiResources.map(async apiResource => {
             const [claims, meta] = await this.sequelize.query('SELECT "claim_name" FROM "api_resource_user_claim" WHERE api_resource_id=$apiResourceId',
@@ -151,14 +150,14 @@ export class ResourcesService {
                 type: QueryTypes.RAW,
                 model: ApiResourceUserClaim
             });
-            apiResource.userClaims = claims.map(claim => claim.claim_name)
+            apiResource.get().userClaims = claims.map(claim => claim.claim_name)
             const [scopes, meta2] = await this.sequelize.query('SELECT "scope_name" FROM "api_resource_scope" WHERE api_resource_id=$apiResourceId',
             {
                 bind: { apiResourceId: apiResource.id},
                 type: QueryTypes.RAW,
                 model: ApiResourceUserClaim
             });
-            apiResource.scopes = scopes.map(scope => scope.scope_name)
+            apiResource.get().scopes = scopes.map(scope => scope.scope_name)
             return apiResource
         }))
     })
