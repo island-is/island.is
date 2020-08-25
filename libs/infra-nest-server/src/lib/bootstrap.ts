@@ -1,7 +1,7 @@
 import { initTracing } from '@island.is/infra-tracing'
 import { NestFactory } from '@nestjs/core'
 import { INestApplication, Type, ValidationPipe } from '@nestjs/common'
-import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
+import { OpenAPIObject, SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { runMetricServer } from './runMetricServer'
 import { logger, LoggingModule } from '@island.is/logging'
 import { collectDefaultMetrics } from 'prom-client'
@@ -10,6 +10,9 @@ import { InfraModule } from './infra/infra.module'
 import yaml from 'js-yaml'
 import * as yargs from 'yargs'
 import * as fs from 'fs'
+
+const AuthUrl = "https://siidentityserverweb20200805020732.azurewebsites.net/connect/authorize"
+const TokenUrl = "https://siidentityserverweb20200805020732.azurewebsites.net/connect/token"
 
 type RunServerOptions = {
   /**
@@ -58,8 +61,27 @@ const startServer = async (app: INestApplication, port = 3333) => {
 }
 
 function setupOpenApi(app: INestApplication, options: RunServerOptions) {
-  const document = SwaggerModule.createDocument(app, options.openApi)
-  SwaggerModule.setup('swagger', app, document)
+  const swaggerOptions = new DocumentBuilder()
+    .setTitle(options.openApi.info.title)
+    .setDescription(options.openApi.info.description)
+    .setVersion(options.openApi.info.version)
+    .addOAuth2({
+      type: "oauth2",
+      flows: {
+        authorizationCode: {
+          authorizationUrl: AuthUrl,
+          tokenUrl: TokenUrl,
+          scopes: {
+            "openid profile":
+            "Sækir OpenId og Profile claim-ið"
+          }
+        }
+      }
+    })
+    .build()
+  const document = SwaggerModule.createDocument(app, swaggerOptions)
+
+  SwaggerModule.setup('', app, document)
   return document
 }
 
