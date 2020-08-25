@@ -15,7 +15,7 @@ const ModuleNavigation: FC<Props> = ({ nav }) => {
   const isModuleActive = location.pathname.includes(nav.path)
 
   return (
-    <Box marginBottom={2}>
+    <Box>
       <IconButton url={nav.path} icon={nav.icon} active={isModuleActive}>
         {nav.name}
       </IconButton>

@@ -9,13 +9,18 @@ import { useStore } from '../../store/stateProvider'
 
 const tempClone = (item) => JSON.parse(JSON.stringify(item))
 
+// TODO: Handle cases where a parent path might not be found in routes
+// But a child of it might. In that case the parent should still render in the navigation
+// tree but it should not have a path
 const filterNavigationTree = (
   item: ServicePortalNavigationItem,
   routes: ServicePortalRoute[],
   userInfo: UserWithMeta,
 ) => {
   const included = routes.find(
-    (route) => route.path === item.path || route.path.includes(item.path),
+    (route) =>
+      route.path === item.path ||
+      (Array.isArray(route.path) && route.path.includes(item.path)),
   )
 
   if (item.children) {

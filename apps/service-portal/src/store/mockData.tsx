@@ -1,6 +1,6 @@
-import { Subject, Actor } from '@island.is/service-portal/core'
+import { MockSubject } from '@island.is/service-portal/core'
 
-export const mockSubjects: Subject[] = [
+export const mockSubjects: MockSubject[] = [
   {
     id: 1,
     name: 'Ólafur Björn Magnússon',

@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Breadcrumbs, Box } from '@island.is/island-ui/core'
+import { Breadcrumbs, Box, Hidden } from '@island.is/island-ui/core'
 import {
   ServicePortalPath,
   ServicePortalNavigationItem,
@@ -39,15 +39,17 @@ const ContentBreadcrumbs: FC<{}> = () => {
   )
 
   return (
-    <Box paddingY={3}>
-      <Breadcrumbs>
-        {items.map((item, index) => (
-          <Link key={index} to={item.path}>
-            {item.name}
-          </Link>
-        ))}
-      </Breadcrumbs>
-    </Box>
+    <Hidden below="lg">
+      <Box paddingY={2}>
+        <Breadcrumbs>
+          {items.map((item, index) => (
+            <Link key={index} to={item.path}>
+              {item.name}
+            </Link>
+          ))}
+        </Breadcrumbs>
+      </Box>
+    </Hidden>
   )
 }
 

@@ -8,6 +8,7 @@ import {
   Divider,
   Button,
   Stack,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { UserWithMeta, ServicePortalPath } from '@island.is/service-portal/core'
 import IconButton from '../../Button/IconButton/IconButton'
@@ -32,14 +33,24 @@ export const Menu: FC<Props> = ({
 
   return (
     <Box
-      position="absolute"
-      left={0}
       border="standard"
       width="full"
       className={cn(styles.menu, {
         [styles.open]: isOpen,
       })}
     >
+      <Hidden above="sm">
+        <Box display="flex" alignItems="center" padding={2} background="white">
+          <Box
+            className={styles.avatar}
+            style={{
+              backgroundImage: `url(https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png)`,
+            }}
+          />
+          <Typography variant="h4">{userInfo.user.profile.name}</Typography>
+        </Box>
+        <Divider />
+      </Hidden>
       <Box padding={3} background="white">
         {/* TODO: Scope check */}
         <Stack space={1}>

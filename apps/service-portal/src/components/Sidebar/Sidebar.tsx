@@ -22,12 +22,12 @@ export const Sidebar: FC<{}> = () => {
               <Typography variant="h3" as="h3">
                 {rootItem.name}
               </Typography>
-              <Divider />
-              <div>
+              <Divider weight="alternate" />
+              <Stack space={3}>
                 {rootItem.children?.map((navRoot, index) => (
                   <ModuleNavigation key={index} nav={navRoot} />
                 ))}
-              </div>
+              </Stack>
             </Stack>
           </Box>
         ))}

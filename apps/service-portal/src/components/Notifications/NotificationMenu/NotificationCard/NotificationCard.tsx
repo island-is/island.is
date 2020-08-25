@@ -28,8 +28,8 @@ const NotificationCard: FC<Props> = ({ card }) => {
         </ActionMenu>
       </div>
       <Stack space={1}>
-        <Typography variant="h5">{card.title}</Typography>
-        <Typography variant="pSmall" as="div">
+        <Typography variant="h4">{card.title}</Typography>
+        <Typography variant="p" as="div">
           {card.text}
         </Typography>
         <Box textAlign="right">
