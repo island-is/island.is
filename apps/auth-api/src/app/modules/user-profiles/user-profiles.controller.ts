@@ -8,7 +8,7 @@ import { ApiOkResponse, ApiTags, ApiOAuth2 } from '@nestjs/swagger'
 import { UserProfile } from './user-profile.model'
 import { UserProfilesService } from './user-profiles.service'
 
-@ApiOAuth2(['openid:profile']) // add OAuth restriction to this controller
+// @ApiOAuth2(['openid:profile']) // add OAuth restriction to this controller
 @ApiTags('user-profiles')
 @Controller('user-profiles')
 export class UserProfilesController {
