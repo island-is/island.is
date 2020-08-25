@@ -1,7 +1,7 @@
 import { Actor } from './models/actor'
 import Db from 'miragejs/db'
 import { Subject, SubjectListDto } from './models/subject'
-
+import { JwtToken } from './models/jwt-model'
 export class AuthService {
   private db: Db
   constructor(miragedb: Db) {
@@ -18,6 +18,10 @@ export class AuthService {
     return this.db.subjects.findBy(
       (x: { nationalId: string }) => x.nationalId === nId,
     )
+  }
+
+  public mockToken() {
+    return new JwtToken()
   }
 
   public getSubjectListByNationalId(nId: string): SubjectListDto[] {
