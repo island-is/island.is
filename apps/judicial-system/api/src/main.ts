@@ -3,20 +3,19 @@
  * This is only a minimal backend to get started.
  */
 
-import { Logger } from '@nestjs/common'
-import { NestFactory } from '@nestjs/core'
-
+import '@island.is/infra-tracing'
+import { DocumentBuilder } from '@nestjs/swagger'
 import { AppModule } from './app/app.module'
+import { bootstrap } from '@island.is/infra-nest-server'
 
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
-  app.enableCors()
-  const globalPrefix = 'api'
-  app.setGlobalPrefix(globalPrefix)
-  const port = process.env.PORT || 3333
-  await app.listen(port, () => {
-    Logger.log('Listening at http://localhost:' + port + '/' + globalPrefix)
-  })
-}
-
-bootstrap()
+bootstrap({
+  appModule: AppModule,
+  name: 'judicial-system-api',
+  openApi: new DocumentBuilder()
+    .setTitle('Judicial System Backend')
+    .setDescription('This is the backend api for the judicial system.')
+    .setVersion('1.0')
+    .addTag('judicial-system')
+    .build(),
+  enableCors: true,
+})
