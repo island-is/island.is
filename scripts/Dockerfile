@@ -24,7 +24,7 @@ RUN yarn run format:check --all
 
 FROM src as security-audit
 
-RUN yarn audit --level moderate
+RUN yarn run security-audit
 
 FROM src as builder
 ARG APP

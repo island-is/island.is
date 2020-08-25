@@ -4,17 +4,17 @@ import {
   buildMultiField,
   buildSection,
   buildSubSection,
-} from '../lib/formBuilders'
+} from '../../lib/formBuilders'
 import {
   buildCheckboxField,
   buildIntroductionField,
   buildRadioField,
   buildTextField,
-} from '../lib/fieldBuilders'
-import { Form } from '../types/Form'
-import { nationalIdRegex } from './formConstants'
-import { Comparators } from '../types/Condition'
-import { FormType } from './FormType'
+} from '../../lib/fieldBuilders'
+import { Form } from '../../types/Form'
+import { nationalIdRegex } from '../formConstants'
+import { Comparators } from '../../types/Condition'
+import { FormType } from '../FormType'
 
 const ExampleSchema = z.object({
   person: z.object({

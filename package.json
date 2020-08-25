@@ -21,6 +21,7 @@
     "affected:codegen": "nx affected --target=codegen",
     "affected:docker": "nx affected --target=docker",
     "affected": "nx affected",
+    "security-audit": "bash -c 'yarn audit --level moderate ; [[ \"$?\" -lt  \"4\" ]]'",
     "generate": "nx generate",
     "env-secrets": "nx env-secrets",
     "format": "nx format:write",
@@ -231,6 +232,8 @@
     "typescript": "~3.8.3"
   },
   "resolutions": {
-    "webpack": "4.42.0"
+    "webpack": "4.42.0",
+    "serialize-javascript": "4.0.0",
+    "http-proxy": "1.18.1"
   }
 }

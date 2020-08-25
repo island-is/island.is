@@ -19,6 +19,7 @@ describe('Create Flight', () => {
       .mockImplementation(() => ({ nationalId: '1234567890' }))
     const response = await request(app.getHttpServer())
       .post('/api/public/discounts/12345678/flights')
+      .set('Authorization', 'Bearer ernir')
       .send({
         bookingDate: '2020-08-17T12:35:50.971Z',
         flightLegs: [
@@ -47,6 +48,7 @@ describe('Create Flight', () => {
       modified: expect.any(String),
       nationalId: '1234567890',
       bookingDate: '2020-08-17T12:35:50.971Z',
+      airline: 'ernir',
       flightLegs: [
         {
           id: expect.any(String),
@@ -79,6 +81,7 @@ describe('Create Flight', () => {
   it('POST /api/public/discounts/:discountCode/flights should return bad request when flightLegs are omitted', async () => {
     await request(app.getHttpServer())
       .post('/api/public/discounts/12345678/flights')
+      .set('Authorization', 'Bearer ernir')
       .send({
         nationalId: '1234567890',
         bookingDate: '2020-08-17T12:35:50.971Z',
@@ -94,6 +97,7 @@ describe('Delete Flight', () => {
       .mockImplementation(() => ({ nationalId: '1234567890' }))
     const createRes = await request(app.getHttpServer())
       .post('/api/public/discounts/12345678/flights')
+      .set('Authorization', 'Bearer airIcelandConnect')
       .send({
         bookingDate: '2020-08-17T12:35:50.971Z',
         flightLegs: [
@@ -118,6 +122,7 @@ describe('Delete Flight', () => {
 
     await request(app.getHttpServer())
       .delete(`/api/public/flights/${createRes.body.id}`)
+      .set('Authorization', 'Bearer airIcelandConnect')
       .expect(204)
 
     const getRes = await request(app.getHttpServer())
@@ -130,12 +135,14 @@ describe('Delete Flight', () => {
   it(`DELETE /api/public/flights/:flightId should validate flightId`, async () => {
     await request(app.getHttpServer())
       .delete('/api/public/flights/this-is-not-uuid')
+      .set('Authorization', 'Bearer ernir')
       .expect(400)
   })
 
   it(`DELETE /api/public/flights/:flightId should return not found if flight does not exist`, async () => {
     await request(app.getHttpServer())
       .delete('/api/public/flights/dfac526d-5dc0-4748-b858-3d9cd2ae45be')
+      .set('Authorization', 'Bearer ernir')
       .expect(404)
   })
 })

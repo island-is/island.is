@@ -37,20 +37,28 @@ export class FlightService {
     return this.flightModel.findAll({ where: { invalid: false } })
   }
 
-  async create(flight: FlightDto, nationalId: string): Promise<Flight> {
+  async create(
+    flight: FlightDto,
+    nationalId: string,
+    airline: string,
+  ): Promise<Flight> {
     return this.flightModel.create(
-      { ...flight, nationalId },
+      { ...flight, nationalId, airline },
       { include: [FlightLeg] },
     )
   }
 
-  async delete(flightId: string): Promise<Flight> {
+  async findOne(flightId: string): Promise<Flight> {
     const flight = await this.flightModel.findOne({
       where: { id: flightId, invalid: false },
     })
     if (!flight) {
-      throw new NotFoundException()
+      throw new NotFoundException('Unable to find flight')
     }
+    return flight
+  }
+
+  async delete(flight: Flight): Promise<Flight> {
     return flight.update({ invalid: true })
   }
 }

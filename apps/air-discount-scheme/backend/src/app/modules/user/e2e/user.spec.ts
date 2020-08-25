@@ -20,6 +20,7 @@ describe('Get Discount By DiscountCode', () => {
       .mockImplementation(() => Promise.resolve({ nationalId }))
     const response = await request(app.getHttpServer())
       .get(`/api/public/discounts/12345678/user`)
+      .set('Authorization', 'Bearer ernir')
       .expect(200)
     spy.mockRestore()
 

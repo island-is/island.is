@@ -1,5 +1,51 @@
 {
   "__schema": {
-    "types": []
+    "types": [
+      {
+        "kind": "UNION",
+        "name": "Slice",
+        "possibleTypes": [
+          {
+            "name": "PageHeaderSlice"
+          },
+          {
+            "name": "TimelineSlice"
+          },
+          {
+            "name": "HeadingSlice"
+          },
+          {
+            "name": "StorySlice"
+          },
+          {
+            "name": "LinkCardSlice"
+          },
+          {
+            "name": "LatestNewsSlice"
+          },
+          {
+            "name": "MailingListSignupSlice"
+          },
+          {
+            "name": "LogoListSlice"
+          },
+          {
+            "name": "BulletListSlice"
+          }
+        ]
+      },
+      {
+        "kind": "UNION",
+        "name": "BulletEntry",
+        "possibleTypes": [
+          {
+            "name": "IconBullet"
+          },
+          {
+            "name": "NumberBulletGroup"
+          }
+        ]
+      }
+    ]
   }
 }

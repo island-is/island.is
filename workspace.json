@@ -2289,7 +2289,8 @@
             "tsConfig": "apps/adgerdir/tsconfig.spec.json",
             "passWithNoTests": true
           }
-        }
+        },
+        "docker-next": {}
       }
     },
     "adgerdir-e2e": {

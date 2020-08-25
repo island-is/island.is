@@ -109,28 +109,51 @@ const embeddedNodes = () => ({
         processTitle,
         processDescription,
         processLink,
-        processLabel,
+        buttonText,
         type,
         title,
         subtitle,
         details,
       } = node.data.target.fields
 
+      const processTypes = {
+        Digital: {
+          icon: 'external',
+          title: 'Stafræn umsókn',
+        },
+        'Digital w/login': {
+          icon: 'external',
+          title: 'Aðgangsstýrð stafræn umsókn',
+        },
+        'Not digital': {
+          icon: 'info',
+          title: 'Handvirk umsókn',
+        },
+        'Not digital w/login': {
+          icon: 'external',
+          title: 'Handvirk umsókn með innskráningu',
+        },
+        'No type': {
+          icon: 'external',
+          title: '',
+        },
+      }
+
       return {
         showTopContent: details?.content?.length,
         topContent: (
           <ContentBlock width="small">
             <Stack space={[2, 2]}>
-              {title ? (
+              {title && (
                 <Typography variant="h2" as="h3">
                   <span data-sidebar-link={slugify(title)}>{title}</span>
                 </Typography>
-              ) : null}
-              {subtitle ? (
+              )}
+              {subtitle && (
                 <Typography variant="intro" as="p">
                   {subtitle}
                 </Typography>
-              ) : null}
+              )}
               <RichText
                 document={details}
                 renderNode={customProcessEntryRenderNode()}
@@ -141,35 +164,27 @@ const embeddedNodes = () => ({
         bottomContent: (
           <ContentBlock width="small">
             <Stack space={[2, 2]}>
-              {type !== 'Only button' && (
-                <>
-                  <Typography variant="eyebrow" as="h4" color="blue400">
-                    Innskráning og umsókn
-                  </Typography>
-                  {processTitle && (
-                    <Typography variant="h3" as="h3">
-                      {processTitle}
-                    </Typography>
-                  )}
-                  {processDescription && (
-                    <Typography variant="p" as="p">
-                      {processDescription}
-                    </Typography>
-                  )}
-                </>
+              {type !== 'No type' && (
+                <Typography variant="eyebrow" as="h4" color="blue400">
+                  {processTypes[type].title}
+                </Typography>
               )}
-              {processLink ? (
-                <Box paddingTop={[1, 1, 2]}>
-                  <Button
-                    href={processLink}
-                    icon={type === 'Not digital' ? 'info' : 'external'}
-                  >
-                    {type === 'Only button'
-                      ? processTitle
-                      : 'Áfram í innskráningu'}
-                  </Button>
-                </Box>
-              ) : null}
+
+              {processTitle && (
+                <Typography variant="h3" as="h3">
+                  {processTitle}
+                </Typography>
+              )}
+              {processDescription && (
+                <Typography variant="p" as="p">
+                  {processDescription}
+                </Typography>
+              )}
+              <Box paddingTop={[1, 1, 2]}>
+                <Button href={processLink} icon={processTypes[type].icon}>
+                  {buttonText}
+                </Button>
+              </Box>
             </Stack>
           </ContentBlock>
         ),

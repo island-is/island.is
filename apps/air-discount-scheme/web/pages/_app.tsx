@@ -10,7 +10,7 @@ import * as Sentry from '@sentry/node'
 import { Box, ContentBlock, Footer, Page } from '@island.is/island-ui/core'
 
 import { Toast, ErrorBoundary, Header } from '../components'
-import { client } from '../graphql'
+import { client as initApollo } from '../graphql'
 import { appWithTranslation, useI18n } from '../i18n'
 import { isAuthenticated } from '../auth/utils'
 import { UserContext } from '../context'
@@ -199,7 +199,7 @@ class SupportApplication extends App<Props> {
     })
 
     return (
-      <ApolloProvider client={client}>
+      <ApolloProvider client={initApollo(pageProps.apolloState)}>
         <Layout isAuthenticated={isAuthenticated}>
           <ErrorBoundary>
             <Component {...pageProps} />
