@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { ServicePortalNavigationItem } from '@island.is/service-portal/core'
 import { Box, Stack, Divider } from '@island.is/island-ui/core'
 import { useLocation } from 'react-router-dom'
@@ -11,12 +11,20 @@ interface Props {
 }
 
 const ModuleNavigation: FC<Props> = ({ nav }) => {
+  const [expand, setExpand] = useState(false)
   const location = useLocation()
-  const isModuleActive = location.pathname.includes(nav.path)
+  const isModuleActive = location.pathname.includes(nav.path) || expand
+
+  const handleExpand = () => setExpand(!expand)
 
   return (
     <Box>
-      <IconButton url={nav.path} icon={nav.icon} active={isModuleActive}>
+      <IconButton
+        url={nav.path}
+        icon={nav.icon}
+        active={isModuleActive}
+        onClick={nav.path === undefined ? handleExpand : undefined}
+      >
         {nav.name}
       </IconButton>
       {nav.children?.length > 0 && (

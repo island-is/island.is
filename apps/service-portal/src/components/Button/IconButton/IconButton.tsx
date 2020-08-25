@@ -15,6 +15,7 @@ const ButtonContent: FC<Props> = ({ icon, active, onClick, children }) => (
   <Box
     display="flex"
     alignItems="center"
+    cursor="pointer"
     className={cn(styles.wrapper, {
       [styles.active]: active,
     })}
