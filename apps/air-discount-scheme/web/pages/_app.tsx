@@ -4,7 +4,7 @@ import Head from 'next/head'
 import App from 'next/app'
 import NextCookies from 'next-cookies'
 import getConfig from 'next/config'
-import { ApolloProvider } from 'react-apollo'
+import { ApolloProvider } from '@apollo/client'
 import * as Sentry from '@sentry/node'
 
 import { Box, ContentBlock, Footer, Page } from '@island.is/island-ui/core'

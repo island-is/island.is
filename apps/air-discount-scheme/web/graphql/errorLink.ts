@@ -1,7 +1,6 @@
-import { ApolloError } from 'apollo-client'
+import { ApolloError, ServerError } from '@apollo/client'
+import { onError, ErrorResponse } from '@apollo/link-error'
 import Router from 'next/router'
-import { onError, ErrorResponse } from 'apollo-link-error'
-import { ServerError } from 'apollo-link-http-common'
 
 import { NotificationService, api } from '../services'
 
