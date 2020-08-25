@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/camelcase */
-
 export class JwtToken {
   id_token: string
   session_state: string
@@ -22,6 +21,7 @@ export class JwtToken {
   expires_at: number
 
   constructor() {
+    const dateNow = new Date().getTime()
     this.id_token =
       'eyJhbGciOiJSUzI1NiIsImtpZCI6IkY3NUMwMjdENzQyNUU2NzhDMTc3NUVCMDRDRkExMTMzIiwidHlwIjoiSldUIn0.eyJuYmYiOjE1OTgyODMwMDYsImV4cCI6MTU5ODI4MzMwNiwiaXNzIjoiaHR0cHM6Ly9zaWlkZW50aXR5c2VydmVyd2ViMjAyMDA4MDUwMjA3MzIuYXp1cmV3ZWJzaXRlcy5uZXQiLCJhdWQiOiJpc2xhbmQtaXMtMSIsImlhdCI6MTU5ODI4MzAwNiwiYXRfaGFzbCI6ImY5Z19XYnNCU0FzU2lDMk9UdkRpeEEiLCJzX2hhc2giOiIyOVl6UFdkRURMcTNhZk9TeEhJNHpRIiwic2lkIjoiNjExMDk5NDdBMDJGQzQ1MzE5QTcxRjYzRDVDMkE1MTkiLCJzdWIiOiJGNDA0QkQzM0RGQ0E1MDVFNDFFQzM1QjkwMTRFRTNCMzEzREU3MUQ2NkU0QTI1OTdEQzE3MzU5RUVBMTA3Qzc3IiwiYXV0aF90aW1lIjoxNTk4MjgyODQ1LCJpZHAiOiJpc2x5a2lsbCIsImFtciI6WyJleHRlcm5hbCJdfQ.VfjcxEPdZfC703-pRvc_9ciFij4t-ig6Y7g6nXW6ie2tcPr8aOg-TPXz9HVoOf25O3e98p7cbv4688P8DqVk470lsV2nEgCnV_SQ-bLVjwl9JellcoMNuu5XQZuCCaRsU_0VCCP_QPBChxW3A3RZV3pLSmgJV1Z9kMMvuqFEGVT7037uIDuhMK7tzjG3WOCJkN6tnYDozzh4u-_BpjPJBjUPkrHlBc8Tw9Bv-MJTQi9oDIDby2hYwzTMg0C8c2DiedPx2XDyIGihZIYaHfHNTcOlpf9xkCnS1fCncAuPMaO9-MnkDx9SVHINHXLINOcLLJEGSgcpAhzbtHdvdK5uuA'
     this.session_state =
@@ -37,13 +37,13 @@ export class JwtToken {
       s_hash: '29YzPWdEDLq3afOSxHI4zQ',
       sid: '61109947A02FC45319A71F63D5C2A519',
       sub: 'F404BD33DFCA505E41EC35B9014EE3B313DE71D66E4A2597DC17359EEA107C77',
-      auth_time: 1598282845,
+      auth_time: dateNow,
       idp: 'islykill',
       amr: ['external'],
       name: 'Tester Testerson',
       natreg: '1234561234',
       nat: 'IS',
     }
-    this.expires_at = 1598286606
+    this.expires_at = dateNow + 2 * 60 * 60 * 1000
   }
 }
