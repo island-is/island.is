@@ -205,6 +205,7 @@
     "@typescript-eslint/parser": "2.19.2",
     "@zeit/next-source-maps": "^0.0.3",
     "babel-loader": "8.0.6",
+    "contentful-typescript-codegen": "^3.2.1",
     "csstype": "^2.6.10",
     "cypress": "4.1.0",
     "dotenv": "6.2.0",

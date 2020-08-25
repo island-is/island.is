@@ -211,7 +211,7 @@ type LatestNewsSlice {
 type MailingListSignupSlice {
   id: ID!
   title: String!
-  description: String!
+  description: String
   inputLabel: String!
   buttonText: String!
 }
@@ -325,11 +325,11 @@ type Query {
   getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput!): PaginatedNews!
   getNamespace(input: GetNamespaceInput!): Namespace
-  getAboutPage(input: GetAboutPageInput!): AboutPage
+  getAboutPage(input: GetAboutPageInput!): AboutPage!
   getLandingPage(input: GetLandingPageInput!): LandingPage
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
-  getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages
+  getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages!
   getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getMenu(input: GetMenuInput!): Menu

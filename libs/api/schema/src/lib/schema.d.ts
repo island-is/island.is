@@ -273,7 +273,7 @@ export type MailingListSignupSlice = {
   __typename?: 'MailingListSignupSlice'
   id: Scalars['ID']
   title: Scalars['String']
-  description: Scalars['String']
+  description?: Maybe<Scalars['String']>
   inputLabel: Scalars['String']
   buttonText: Scalars['String']
 }
@@ -387,15 +387,16 @@ export type Query = {
   getNews?: Maybe<News>
   getNewsList: PaginatedNews
   getNamespace?: Maybe<Namespace>
-  getAboutPage?: Maybe<AboutPage>
+  getAboutPage: AboutPage
   getLandingPage?: Maybe<LandingPage>
   getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
-  getAdgerdirPages?: Maybe<AdgerdirPages>
+  getAdgerdirPages: AdgerdirPages
   getFrontpageSliderList?: Maybe<FrontpageSliderList>
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
   getApplication?: Maybe<Application>
+  getApplicationsByType?: Maybe<Array<Application>>
 }
 
 export type QueryHelloWorldArgs = {
@@ -468,6 +469,10 @@ export type QueryGetMenuArgs = {
 
 export type QueryGetApplicationArgs = {
   input: GetApplicationInput
+}
+
+export type QueryGetApplicationsByTypeArgs = {
+  input: GetApplicationsByTypeInput
 }
 
 export type HelloWorldInput = {
@@ -572,6 +577,10 @@ export type GetApplicationInput = {
   id: Scalars['String']
 }
 
+export type GetApplicationsByTypeInput = {
+  typeId: ApplicationTypeIdEnum
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<Application>
@@ -616,13 +625,20 @@ export enum CreateApplicationDtoTypeIdEnum {
 
 export type UpdateApplicationInput = {
   id: Scalars['String']
+  typeId: UpdateApplicationDtoTypeIdEnum
   applicant?: Maybe<Scalars['String']>
   assignee?: Maybe<Scalars['String']>
   externalId?: Maybe<Scalars['String']>
   state?: Maybe<UpdateApplicationDtoStateEnum>
   attachments?: Maybe<Array<Scalars['String']>>
-  typeId?: Maybe<UpdateApplicationDtoTypeIdEnum>
   answers?: Maybe<Scalars['JSON']>
+}
+
+export enum UpdateApplicationDtoTypeIdEnum {
+  ExampleForm = 'ExampleForm',
+  ExampleForm2 = 'ExampleForm2',
+  ExampleForm3 = 'ExampleForm3',
+  FamilyAndPets = 'FamilyAndPets',
 }
 
 export enum UpdateApplicationDtoStateEnum {
@@ -634,13 +650,6 @@ export enum UpdateApplicationDtoStateEnum {
   Manualapproved = 'MANUALAPPROVED',
   Rejected = 'REJECTED',
   Unknown = 'UNKNOWN',
-}
-
-export enum UpdateApplicationDtoTypeIdEnum {
-  ExampleForm = 'ExampleForm',
-  ExampleForm2 = 'ExampleForm2',
-  ExampleForm3 = 'ExampleForm3',
-  FamilyAndPets = 'FamilyAndPets',
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -846,13 +855,14 @@ export type ResolversTypes = {
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
   GetApplicationInput: GetApplicationInput
+  GetApplicationsByTypeInput: GetApplicationsByTypeInput
   Mutation: ResolverTypeWrapper<{}>
   CreateApplicationInput: CreateApplicationInput
   CreateApplicationDtoStateEnum: CreateApplicationDtoStateEnum
   CreateApplicationDtoTypeIdEnum: CreateApplicationDtoTypeIdEnum
   UpdateApplicationInput: UpdateApplicationInput
-  UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
   UpdateApplicationDtoTypeIdEnum: UpdateApplicationDtoTypeIdEnum
+  UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
 }
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -939,6 +949,7 @@ export type ResolversParentTypes = {
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
   GetApplicationInput: GetApplicationInput
+  GetApplicationsByTypeInput: GetApplicationsByTypeInput
   Mutation: {}
   CreateApplicationInput: CreateApplicationInput
   UpdateApplicationInput: UpdateApplicationInput
@@ -1329,7 +1340,11 @@ export type MailingListSignupSliceResolvers<
 > = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   inputLabel?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   buttonText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
@@ -1552,7 +1567,7 @@ export type QueryResolvers<
     RequireFields<QueryGetNamespaceArgs, 'input'>
   >
   getAboutPage?: Resolver<
-    Maybe<ResolversTypes['AboutPage']>,
+    ResolversTypes['AboutPage'],
     ParentType,
     ContextType,
     RequireFields<QueryGetAboutPageArgs, 'input'>
@@ -1576,7 +1591,7 @@ export type QueryResolvers<
     RequireFields<QueryGetAdgerdirPageArgs, 'input'>
   >
   getAdgerdirPages?: Resolver<
-    Maybe<ResolversTypes['AdgerdirPages']>,
+    ResolversTypes['AdgerdirPages'],
     ParentType,
     ContextType,
     RequireFields<QueryGetAdgerdirPagesArgs, 'input'>
@@ -1604,6 +1619,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetApplicationArgs, 'input'>
+  >
+  getApplicationsByType?: Resolver<
+    Maybe<Array<ResolversTypes['Application']>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetApplicationsByTypeArgs, 'input'>
   >
 }
 

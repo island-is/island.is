@@ -375,6 +375,17 @@
             }
           }
         },
+        "codegen-cms-types": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "../../../../node_modules/.bin/contentful-typescript-codegen --output src/lib/generated/contentfulTypes.d.ts"
+              }
+            ],
+            "cwd": "libs/api/domains/cms"
+          }
+        },
         "env-secrets": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {

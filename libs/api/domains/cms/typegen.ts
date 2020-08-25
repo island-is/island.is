@@ -1,5 +1,6 @@
 const path = require('path')
 const upperFirst = require('lodash/upperFirst')
+const camelcase = require('lodash/camelcase')
 
 const getLinkContentTypes = (validations): string[] => {
   const types =
@@ -40,37 +41,21 @@ const generateModelField = (field: any): string => {
 }
 
 const generateModel = (contentType: any): string => {
-  const fields = contentType.fields.map(generateModelField)
-
   return `
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class ${upperFirst(contentType.sys.id)} {
-  @Field()
+  @Field(() => ID)
   id: string
 
-  @Field
+  @Field()
   createdAt: string
 
-  @Field
+  @Field()
   updatedAt: string
 
-  ${fields.join('\n\n  ')}
-}
-  `.trim()
-}
-
-const generateContentfulType = (contentType: any): string => {
-  const fields = contentType.fields.map((field) => {
-    return `
-  ${field.id}${field.required ? '' : '?'}: ${contentfulTypeToTsType(field)[0]}
-    `.trim()
-  })
-
-  return `
-interface ${upperFirst(contentType.sys.id)} {
-  ${fields.join('\n  ')}
+  ${contentType.fields.map(generateModelField).join('\n\n  ')}
 }
   `.trim()
 }
@@ -103,38 +88,40 @@ const validationToMapperFunction = (field): string => {
 }
 
 const generateMapperFunction = (contentType: any): string => {
-  const typeName = upperFirst(contentType.sys.id)
+  const typeName = upperFirst(camelcase(contentType.sys.id))
 
   const sysFields = [
-    'id: entry.sys.id',
-    'createdAt: entry.sys.createdAt',
-    'updatedAt: entry.sys.updatedAt',
+    'id: sys.id',
+    'createdAt: sys.createdAt',
+    'updatedAt: sys.updatedAt',
   ]
 
-  const fields = contentType.fields.map((field) => {
-    let value = `entry.fields.${field.id}`
-    const mapperName = validationToMapperFunction(field)
-    if (field.type === 'Array' && field.items?.type === 'Link') {
-      value = mapperName && `${value}.map(${mapperName})`
-    } else if (field.type === 'Link') {
-      value = mapperName && `${mapperName}(${value})`
-    }
+  const fields = contentType.fields
+    .map((field) => {
+      let value = `fields.${field.id}`
+      const mapperName = validationToMapperFunction(field)
+      if (field.type === 'Array' && field.items?.type === 'Link') {
+        value = mapperName && `${value}.map(${mapperName})`
+      } else if (field.type === 'Link') {
+        value = mapperName && `${mapperName}(${value})`
+      }
 
-    if (value) {
-      return `${field.id}: ${value},`
-    } else {
-      console.warn(`no mapper created for ${contentType.sys.id}.${field.id} since it has no type validation`)
-    }
-  }).filter(Boolean)
+      if (value) {
+        return `${field.id}: ${value},`
+      } else {
+        console.warn(
+          `no mapper created for ${contentType.sys.id}.${field.id} since it has no type validation`,
+        )
+      }
+    })
+    .filter(Boolean)
 
   return `
-import ${typeName}Model from './lib/models/${contentType.sys.id}.model'
+import ${typeName} from './lib/models/${contentType.sys.id}.model'
 
-const map${typeName} = (entry: Entry<${typeName}>): ${typeName}Model => {
-  return {
-    ${[].concat(sysFields, fields).join('\n    ')}
-  }
-}
+const map${typeName} = ({ fields, sys }: types.I${typeName}>): ${typeName} => ({
+  ${[].concat(sysFields, fields).join('\n  ')}
+})
   `.trim()
 }
 
@@ -146,20 +133,13 @@ stdin.on('data', (chunk) => {
 })
 
 stdin.on('end', () => {
-  const data = JSON.parse(input)
-  const contentTypes = data.contentTypes ?? [data]
+  const contentType = JSON.parse(input)
 
-  switch (process.argv[2] ?? 'new-type') {
-    case 'new-type': {
-      console.log('// append to libs/api/domains/cms/src/lib/contentfulTypes.ts')
-      console.log(generateContentfulType(data))
-      console.log(`\n// create file libs/api/domains/cms/src/lib/models/${data.sys.id}.models.ts`)
-      console.log(generateModel(data))
-      console.log(`\n// append to libs/api/domains/cms/src/lib/mappers.ts`)
-      console.log(generateMapperFunction(data))
-    }
-    case 'contentful-types': {
-      console.log(contentTypes.map(generateContentfulType).join('\n\n'))
-    }
-  }
+  console.log(
+    `// create file libs/api/domains/cms/src/lib/models/${contentType.sys.id}.models.ts`,
+  )
+  console.log(generateModel(contentType))
+
+  console.log(`\n// append to libs/api/domains/cms/src/lib/mappers.ts`)
+  console.log(generateMapperFunction(contentType))
 })
