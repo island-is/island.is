@@ -1,7 +1,15 @@
 import { Controller, Param, Get, UseGuards } from '@nestjs/common'
-import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiTags,
+  ApiExcludeEndpoint,
+} from '@nestjs/swagger'
 
-import { GetUserByDiscountCodeParams } from './user.validator'
+import {
+  GetUserByDiscountCodeParams,
+  GetUserRelationsParams,
+} from './user.validator'
 import { UserService } from './user.service'
 import { User } from './user.model'
 import { DiscountService } from '../discount'
@@ -24,5 +32,15 @@ export class PublicUserController {
       params.discountCode,
     )
     return this.userService.getUserInfoByNationalId(nationalId)
+  }
+}
+
+@Controller('api/private')
+export class PrivateUserController {
+  @Get('users/:nationalId/relations')
+  @ApiExcludeEndpoint()
+  getUserRelations(@Param() params: GetUserRelationsParams): User[] {
+    // TODO: implement from thjodskra
+    return [{ nationalId: params.nationalId, name: 'Darri Steinn Konráðsson' }]
   }
 }

@@ -15,14 +15,20 @@ import {
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiExcludeEndpoint,
+  ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger'
 
+import { FlightLegFund } from '@island.is/air-discount-scheme/types'
 import { Flight } from './flight.model'
 import { FlightService } from './flight.service'
-import { CreateFlightParams, DeleteFlightParams } from './flight.validator'
+import {
+  CreateFlightParams,
+  DeleteFlightParams,
+  GetFlightLegFundsParams,
+} from './flight.validator'
 import { FlightLimitExceeded } from './flight.error'
-import { FlightDto } from './dto/flight.dto'
+import { FlightDto, FlightLegFundDto } from './dto/flight.dto'
 import { DiscountService } from '../discount'
 import { AuthGuard } from '../common'
 
@@ -48,7 +54,7 @@ export class PublicFlightController {
     )
     const {
       unused: flightLegsLeft,
-    } = await this.flightService.countFlightLegsLeftByNationalId(nationalId)
+    } = await this.flightService.countFlightLegsByNationalId(nationalId)
     if (flightLegsLeft < flight.flightLegs.length) {
       throw new FlightLimitExceeded()
     }
@@ -67,6 +73,17 @@ export class PublicFlightController {
 @Controller('api/private')
 export class PrivateFlightController {
   constructor(private readonly flightService: FlightService) {}
+
+  @Get('users/:nationalId/flights/funds')
+  @ApiExcludeEndpoint()
+  async getFlightLegFunds(
+    @Param() params: GetFlightLegFundsParams,
+  ): Promise<FlightLegFund[]> {
+    const flightLegFunds = await Promise.all([
+      this.flightService.countFlightLegsByNationalId(params.nationalId),
+    ])
+    return flightLegFunds
+  }
 
   @Get('flights')
   @ApiExcludeEndpoint()

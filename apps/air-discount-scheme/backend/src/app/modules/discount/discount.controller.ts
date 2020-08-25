@@ -44,9 +44,7 @@ export class PublicDiscountController {
   ): Promise<Discount> {
     const {
       unused: flightLegsLeft,
-    } = await this.flightService.countFlightLegsLeftByNationalId(
-      params.nationalId,
-    )
+    } = await this.flightService.countFlightLegsByNationalId(params.nationalId)
     if (flightLegsLeft <= 0) {
       throw new DiscountLimitExceeded()
     }
@@ -63,7 +61,7 @@ export class PrivateDiscountController {
   ) {}
 
   @Get('users/:nationalId/discounts')
-  @ApiOkResponse({ type: Discount })
+  @ApiExcludeEndpoint()
   async getDiscountByNationalId(
     @Param() params: GetDiscountByNationalIdParams,
   ): Promise<Discount[]> {
@@ -83,9 +81,7 @@ export class PrivateDiscountController {
   ): Promise<Discount> {
     const {
       unused: flightLegsLeft,
-    } = await this.flightService.countFlightLegsLeftByNationalId(
-      params.nationalId,
-    )
+    } = await this.flightService.countFlightLegsByNationalId(params.nationalId)
     if (flightLegsLeft <= 0) {
       throw new DiscountLimitExceeded()
     }

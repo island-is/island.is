@@ -7,3 +7,10 @@ export class GetUserByDiscountCodeParams {
   @ApiProperty()
   readonly discountCode: string
 }
+
+export class GetUserRelationsParams {
+  @IsString()
+  @Length(10, 10)
+  @ApiProperty()
+  readonly nationalId: string
+}

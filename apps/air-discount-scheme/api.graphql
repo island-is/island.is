@@ -249,8 +249,14 @@ type Discount {
   discountCode: ID!
   expires: String!
   nationalId: String!
-  flightLegsLeft: FlightLegsLeft!
+  flightLegFund: FlightLegFund!
   user: User!
+}
+
+type FlightLegFund {
+  nationalId: ID!
+  unused: Float!
+  total: Float!
 }
 
 type Query {

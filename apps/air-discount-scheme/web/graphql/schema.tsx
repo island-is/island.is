@@ -305,8 +305,15 @@ export type Discount = {
   discountCode: Scalars['ID']
   expires: Scalars['String']
   nationalId: Scalars['String']
-  flightLegsLeft: FlightLegsLeft
+  flightLegFund: FlightLegFund
   user: User
+}
+
+export type FlightLegFund = {
+  __typename?: 'FlightLegFund'
+  nationalId: Scalars['ID']
+  unused: Scalars['Float']
+  total: Scalars['Float']
 }
 
 export type Query = {

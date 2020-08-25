@@ -1,7 +1,7 @@
 import { NotFoundException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { FlightLegsLeft } from '@island.is/air-discount-scheme/types'
+import { FlightLegFund } from '@island.is/air-discount-scheme/types'
 import { Flight, FlightLeg } from './flight.model'
 import { FlightDto } from './dto/flight.dto'
 
@@ -20,9 +20,9 @@ export class FlightService {
     private flightLegModel: typeof FlightLeg,
   ) {}
 
-  async countFlightLegsLeftByNationalId(
+  async countFlightLegsByNationalId(
     nationalId: string,
-  ): Promise<FlightLegsLeft> {
+  ): Promise<FlightLegFund> {
     const currentYear = new Date(Date.now()).getFullYear().toString()
     let availableLegsThisYear = DEFAULT_AVAILABLE_LEGS
     if (Object.keys(AVAILABLE_FLIGHT_LEGS).includes(currentYear)) {
@@ -34,6 +34,7 @@ export class FlightService {
       include: [this.flightLegModel],
     })
     return {
+      nationalId,
       unused: availableLegsThisYear - noFlightLegs,
       total: availableLegsThisYear,
     }

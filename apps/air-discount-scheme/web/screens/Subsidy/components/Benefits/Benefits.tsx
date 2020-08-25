@@ -57,10 +57,10 @@ function Benefits({ misc }: PropTypes) {
       </Box>
       {codes &&
         codes.map(
-          ({ discountCode, expires, nationalId, flightLegsLeft, user }) => {
+          ({ discountCode, expires, nationalId, flightLegFund, user }) => {
             const remainingPlaceholders = {
-              remaining: flightLegsLeft.unused,
-              total: flightLegsLeft.total,
+              remaining: flightLegFund.unused,
+              total: flightLegFund.total,
             }
 
             return (

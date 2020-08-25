@@ -23,7 +23,7 @@ export class UserService {
   async getUserInfoByNationalId(nationalId: string): Promise<User> {
     const {
       unused: flightLegsLeft,
-    } = await this.flightService.countFlightLegsLeftByNationalId(nationalId)
+    } = await this.flightService.countFlightLegsByNationalId(nationalId)
     const user = await this.getUserFromNationalRegistry(nationalId)
     return new User(user, flightLegsLeft)
   }

@@ -41,3 +41,14 @@ export class FlightDto {
   @ApiProperty({ type: [FlightLegDto] })
   readonly flightLegs: FlightLegDto[]
 }
+
+export class FlightLegFundDto {
+  @ApiProperty()
+  readonly nationalId: string
+
+  @ApiProperty()
+  readonly total: number
+
+  @ApiProperty()
+  readonly unused: number
+}

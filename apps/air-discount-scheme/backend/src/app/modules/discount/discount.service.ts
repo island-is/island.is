@@ -3,7 +3,6 @@ import CacheManager from 'cache-manager'
 
 import { Discount } from './discount.model'
 import { DiscountCodeInvalid } from './discount.error'
-import { FlightService } from '../flight'
 
 const DISCOUNT_CODE_LENGTH = 8
 
@@ -13,20 +12,7 @@ const ONE_DAY = 24 * 60 * 60
 export class DiscountService {
   constructor(
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
-    private readonly flightService: FlightService,
   ) {}
-
-  private async generateDiscount(
-    discountCode: string,
-    nationalId: string,
-    expires: number,
-  ): Promise<Discount> {
-    const flightLegsLeft = await this.flightService.countFlightLegsLeftByNationalId(
-      nationalId,
-    )
-
-    return new Discount(discountCode, nationalId, expires, flightLegsLeft)
-  }
 
   private getNationalIdCacheKey(nationalId: string): string {
     return `national_id_${nationalId}`
@@ -65,7 +51,7 @@ export class DiscountService {
       { discountCode },
       { ttl: ONE_DAY },
     )
-    return this.generateDiscount(discountCode, nationalId, ONE_DAY)
+    return new Discount(discountCode, nationalId, ONE_DAY)
   }
 
   async getDiscountByNationalId(nationalId: string): Promise<Discount> {
@@ -76,7 +62,7 @@ export class DiscountService {
     }
 
     const ttl = await this.cacheManager.ttl(cacheKey)
-    return this.generateDiscount(cacheValue.discountCode, nationalId, ttl)
+    return new Discount(cacheValue.discountCode, nationalId, ttl)
   }
 
   async getDiscountByDiscountCode(discountCode: string): Promise<Discount> {
@@ -87,7 +73,7 @@ export class DiscountService {
     }
 
     const ttl = await this.cacheManager.ttl(cacheKey)
-    return this.generateDiscount(discountCode, cacheValue.nationalId, ttl)
+    return new Discount(discountCode, cacheValue.nationalId, ttl)
   }
 
   async validateDiscount(discountCode: string): Promise<string> {

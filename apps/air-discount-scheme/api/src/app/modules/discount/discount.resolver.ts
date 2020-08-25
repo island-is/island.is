@@ -15,23 +15,27 @@ export class DiscountResolver {
     @CurrentUser() user,
     @Context('dataSources') { backendApi },
   ): Promise<Discount> {
-    const discounts: TDiscount[] = await backendApi.getDiscounts(user.ssn)
-    let userDiscount: TDiscount = discounts.find(
-      (discount) => discount.nationalId === user.ssn,
+    let discounts: TDiscount[] = await backendApi.getDiscounts(user.nationalId)
+    const userDiscount: TDiscount = discounts.find(
+      (discount) => discount.nationalId === user.nationalId,
     )
     if (!userDiscount) {
-      userDiscount = await backendApi.createDiscount(user.ssn)
+      discounts = [
+        await backendApi.createDiscount(user.nationalId),
+        ...discounts,
+      ]
     }
 
-    return [
-      userDiscount,
-      ...discounts.filter((discount) => discount.nationalId !== user.ssn),
-    ]
-  }
-
-  @Authorize({ throwOnUnAuthorized: false })
-  @ResolveField('user')
-  resolveUser(@CurrentUser() user: AuthUser): User {
-    return user as User
+    const relations = await backendApi.getUserRelations(user.nationalId)
+    const funds = await backendApi.getFlightLegFunds(user.nationalId)
+    return discounts.map((discount) => ({
+      ...discount,
+      user: relations.find(
+        (relation) => relation.nationalId === discount.nationalId,
+      ),
+      flightLegFund: funds.find(
+        (fund) => fund.nationalId === discount.nationalId,
+      ),
+    }))
   }
 }
