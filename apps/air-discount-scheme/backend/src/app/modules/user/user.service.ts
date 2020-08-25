@@ -15,7 +15,7 @@ export class UserService {
       firstName: 'Jón',
       middleName: 'Gunnar',
       lastName: 'Jónsson',
-      gender: 'Male',
+      gender: 'kk',
       nationalId,
     }
   }

@@ -33,3 +33,13 @@ export class GetUserFlightsParams {
   @ApiProperty()
   readonly nationalId: string
 }
+
+export class DeleteFlightLegParams {
+  @IsUUID()
+  @ApiProperty()
+  readonly flightId: string
+
+  @IsUUID()
+  @ApiProperty()
+  readonly flightLegId: string
+}

@@ -43,7 +43,6 @@ describe('Create Flight', () => {
 
     expect(response.body).toEqual({
       id: expect.any(String),
-      invalid: false,
       created: expect.any(String),
       modified: expect.any(String),
       nationalId: '1234567890',

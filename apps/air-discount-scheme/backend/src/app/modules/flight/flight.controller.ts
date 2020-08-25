@@ -26,9 +26,10 @@ import { FlightService } from './flight.service'
 import {
   GetFlightParams,
   CreateFlightParams,
-  DeleteFlightParams,
   GetFlightLegFundsParams,
   GetUserFlightsParams,
+  DeleteFlightParams,
+  DeleteFlightLegParams,
 } from './flight.validator'
 import { FlightLimitExceeded } from './flight.error'
 import { FlightDto } from './dto/flight.dto'
@@ -87,6 +88,20 @@ export class PublicFlightController {
       request.airline,
     )
     await this.flightService.delete(flight)
+  }
+
+  @Delete('flights/:flightId/flightLegs/:flightLegId')
+  @HttpCode(204)
+  @ApiNoContentResponse()
+  async deleteFlightLeg(
+    @Param() params: DeleteFlightLegParams,
+    @Req() request,
+  ): Promise<void> {
+    const flight = await this.flightService.findOne(
+      params.flightId,
+      request.airline,
+    )
+    await this.flightService.deleteFlightLeg(flight, params.flightLegId)
   }
 }
 
