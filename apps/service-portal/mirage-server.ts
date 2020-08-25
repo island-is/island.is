@@ -23,6 +23,12 @@ export function makeServer({ environment = 'development' } = {}) {
         'https://siidentityserverweb20200805020732.azurewebsites.net/**',
       )
 
+      this.get('/mock/authenticate', () => {
+        const authService = new AuthService(server.db)
+        const t = authService.mockToken()
+        return new Response(200, {}, t)
+      })
+
       this.get('/user/accounts/:nationalId', async (schema, request) => {
         const authService = new AuthService(server.db)
 
