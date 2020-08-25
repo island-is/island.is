@@ -16,7 +16,7 @@ export default {
   },
   rsk: {
     url: process.env.RSK_URL,
-    username: process.env.RSK_USERNAME,
+    username: process.env.RSK_API_USERNAME,
     password: process.env.RSK_API_PASSWORD,
     ttl: process.env.CACHE_TIME_TO_LIVE,
   },

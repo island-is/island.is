@@ -58,8 +58,11 @@ spec:
                   key: YAY_SECRET_KEY
             - name: RSK_URL
               value: {{ .rsk_url }}
-            - name: RSK_USERNAME
-              value: {{ .rsk_username }}
+            - name: RSK_API_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: gjafakort-api
+                  key: RSK_API_USERNAME
             - name: RSK_API_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -92,7 +95,10 @@ spec:
             - name: NOVA_URL
               value: {{ .nova_url }}
             - name: NOVA_USERNAME
-              value: {{ .nova_username }}
+              valueFrom:
+                secretKeyRef:
+                  name: gjafakort-api
+                  key: NOVA_USERNAME
             - name: NOVA_PASSWORD
               valueFrom:
                 secretKeyRef:

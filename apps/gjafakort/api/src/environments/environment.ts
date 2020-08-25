@@ -18,7 +18,7 @@ export default {
   },
   rsk: {
     url: 'https://thjonusta-s.rsk.is/api',
-    username: 'rf_api_island.is',
+    username: process.env.RSK_API_USERNAME,
     password: process.env.RSK_API_PASSWORD,
     ttl: TEN_MINUTES,
   },
@@ -39,7 +39,7 @@ export default {
   },
   nova: {
     url: 'https://smsapi.devnova.is',
-    username: 'IslandIs_User_Development',
+    username: process.env.NOVA_USERNAME,
     password: process.env.NOVA_PASSWORD,
   },
 }

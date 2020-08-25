@@ -18,14 +18,14 @@ gjafakort-api:
     auth_audience:
     auth_jwt_secret: "/k8s/gjafakort/api/AUTH_JWT_SECRET"
     rsk_url:
-    rsk_username: "rf_api_island.is"
+    rsk_api_username_path: "/k8s/shared/api/RSK_API_USERNAME"
     rsk_api_password_path: "/k8s/shared/api/RSK_API_PASSWORD"
     redis_url:
     redis_port: 6379
     cache_time_to_live:
     sentry_dsn:
     nova_url:
-    nova_username:
+    nova_username_path: "/k8s/gjafakort/NOVA_USERNAME"
     nova_password_path: "/k8s/gjafakort/NOVA_PASSWORD"
 
 gjafakort-web:
