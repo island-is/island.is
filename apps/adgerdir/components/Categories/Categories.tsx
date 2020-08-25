@@ -7,6 +7,7 @@ import {
   Typography,
   Tag,
   Inline,
+  Icon,
 } from '@island.is/island-ui/core'
 
 import * as styles from './Categories.treat'
@@ -39,13 +40,7 @@ export const Categories: FC<CategoriesProps> = ({
     <Box padding={[3, 3, 6]}>
       <Stack space={6}>
         <Box className={styles.filters}>
-          <Box
-            display="flex"
-            justifyContent="center"
-            alignItems="center"
-            marginRight={[0, 0, 3]}
-            border="standard"
-          >
+          <Box display="flex" alignItems="center" marginRight={[0, 0, 0, 3]}>
             <Stack space={3}>
               <Inline space={2} alignY="center">
                 <Typography variant="tag" color="red600">
@@ -65,13 +60,16 @@ export const Categories: FC<CategoriesProps> = ({
               </Inline>
             </Stack>
           </Box>
-          <Box
-            display="flex"
-            marginTop={[3, 3, 0]}
-            alignItems="center"
-            border="standard"
-          >
-            <input />
+          <Box display="flex" marginTop={[3, 3, 3, 0]} alignItems="center">
+            <div className={styles.inputWrapper}>
+              <input
+                placeholder="Sía eftir leitarorði"
+                className={styles.input}
+              />
+              <span className={styles.inputIcon}>
+                <Icon width="18" height="18" type="search" color="red600" />
+              </span>
+            </div>
           </Box>
         </Box>
         <Tiles space={[2, 2, 3]} columns={[1, 1, 2, 2, 3]}>
