@@ -54,7 +54,7 @@ export const Card: FC<CardProps> = ({
               const tagProps = { ...tagPropsDefaults, ...props.tagProps }
 
               return (
-                <Tag label {...tagProps}>
+                <Tag key={index} {...tagProps}>
                   {title}
                 </Tag>
               )

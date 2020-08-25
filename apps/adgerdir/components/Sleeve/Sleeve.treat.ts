@@ -1,5 +1,5 @@
 import { style } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
   position: 'relative',
@@ -14,7 +14,7 @@ export const wrapper = style({
     height: 42,
     width: '100%',
     pointerEvents: 'none',
-    boxShadow: '0px -10px 20px rgba(255, 153, 137, 0.25)',
+    boxShadow: '0px -20px 20px rgba(255, 153, 137, 0.15)',
   },
 })
 

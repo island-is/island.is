@@ -45,6 +45,18 @@ export const variants = styleMap({
   red: {
     color: theme.color.red400,
     backgroundColor: theme.color.red100,
+    borderColor: theme.color.red200,
+    borderWidth: 1,
+    borderStyle: 'solid',
+    ':focus': {
+      backgroundColor: theme.color.red200,
+      color: theme.color.red600,
+    },
+    ':hover': {
+      textDecoration: 'none',
+      backgroundColor: theme.color.red200,
+      color: theme.color.red600,
+    },
   },
   mint: {
     color: theme.color.dark400,
@@ -56,6 +68,16 @@ export const variants = styleMap({
   },
   label: {
     backgroundColor: theme.color.transparent,
+  },
+})
+
+export const active = style({
+  selectors: {
+    [`&${variants.red}`]: {
+      borderColor: theme.color.red600,
+      backgroundColor: theme.color.red600,
+      color: theme.color.white,
+    },
   },
 })
 

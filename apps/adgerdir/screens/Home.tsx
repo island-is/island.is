@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC } from 'react'
+import React from 'react'
 import { ContentBlock, Box, Typography, Stack } from '@island.is/island-ui/core'
-import { Card, Categories, Sleeve } from '../components'
+import { Categories, Sleeve } from '../components'
 import { withApollo } from '../graphql'
 import { useI18n } from '../i18n'
 import {
@@ -19,7 +19,6 @@ import { Screen } from '../types'
 import { useNamespace } from '../hooks'
 import ArticleContent from '../units/Content/ArticleContent'
 import { Locale } from '../i18n/I18n'
-import useRouteNames from '../i18n/useRouteNames'
 import Head from 'next/head'
 
 interface HomeProps {
@@ -31,7 +30,6 @@ interface HomeProps {
 const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale as Locale)
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
@@ -39,8 +37,8 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
 
   const { items: cards } = items
 
-  const dummylistLarge = [...cards, ...cards, ...cards, ...cards, ...cards]
-  const dummylistSmall = [...cards]
+  const cardsMany = [...cards, ...cards, ...cards, ...cards, ...cards]
+  const cardsFew = [...cards]
 
   return (
     <>
@@ -71,25 +69,11 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
       <Sleeve>
         <Box background="red100">
           <ContentBlock width="large">
-            <Categories label={n('articlesTitle')}>
-              {dummylistSmall.map(({ title, slug, description }, index) => {
-                return (
-                  <Card
-                    key={index}
-                    description={description}
-                    title={title}
-                    tags={[
-                      { title: 'tag1' },
-                      { title: 'tag2' },
-                      { title: 'tag3' },
-                    ]}
-                  />
-                )
-              })}
-            </Categories>
+            <Categories items={cardsMany} />
           </ContentBlock>
         </Box>
       </Sleeve>
+      <Box style={{ height: '800px' }}></Box>
     </>
   )
 }

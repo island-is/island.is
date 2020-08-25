@@ -17,6 +17,7 @@ export interface TagProps {
   onClick?: () => void
   variant?: TagVariant
   href?: string
+  active?: boolean
   disabled?: boolean
   label?: boolean
   children: string
@@ -31,6 +32,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       href,
       onClick,
       variant = 'blue',
+      active = false,
       disabled,
       label,
       ...props
@@ -39,6 +41,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
   ) => {
     const className = cn(styles.container, styles.variants[variant], {
       [styles.label]: label,
+      [styles.active]: active,
     })
 
     const isExternal = href && isLinkExternal(href)
