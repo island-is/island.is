@@ -85,7 +85,7 @@ paths:
                 $ref: '#/components/schemas/Version'
       tags:
         - internal
-  /caess:
+  /cases:
     get:
       operationId: CaseController_getAll
       parameters: []

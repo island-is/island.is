@@ -2537,7 +2537,8 @@
         "serve": {
           "builder": "@nrwl/web:dev-server",
           "options": {
-            "buildTarget": "judicial-system-web:build"
+            "buildTarget": "judicial-system-web:build",
+            "proxyConfig": "apps/judicial-system/web/proxy.config.json"
           },
           "configurations": {
             "production": {

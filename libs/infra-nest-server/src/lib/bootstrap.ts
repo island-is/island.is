@@ -39,16 +39,6 @@ type RunServerOptions = {
    * The port to start the server on.
    */
   port?: number
-
-  /**
-   * Enable CORS?
-   */
-  enableCors?: boolean
-
-  /**
-   * The CORS options to use if enableCors is true.
-   */
-  corsOptions?: CorsOptions
 }
 
 const createApp = async (options: RunServerOptions) => {
