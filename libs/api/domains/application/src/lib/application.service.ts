@@ -1,11 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import {
-  ApplicationApi,
-  Configuration,
-  UpdateApplicationDto,
-  querystring,
-  ApplicationTypeIdEnum,
-} from '../../gen/fetch'
+import { ApplicationApi, ApplicationTypeIdEnum } from '../../gen/fetch'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { AddAttachmentInput } from './dto/addAttachment.input'
