@@ -26,7 +26,7 @@ export const Sleeve: FC<SleeveProps> = ({
   return (
     <div className={cn(styles.container, { [styles.open]: isOpen })}>
       <div className={styles.wrapper}>
-        <AnimateHeight duration={2000} height={isOpen ? 'auto' : minHeight}>
+        <AnimateHeight duration={1000} height={isOpen ? 'auto' : minHeight}>
           {children}
         </AnimateHeight>
       </div>

@@ -1,4 +1,4 @@
-import { style } from 'treat'
+import { style, styleMap } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const card = style({
@@ -49,6 +49,27 @@ export const card = style({
     },
     [`&:focus:hover`]: {
       borderColor: theme.color.white,
+    },
+  },
+})
+
+export const variants = styleMap({
+  blue: {
+    borderColor: theme.color.blue200,
+    ':hover': {
+      borderColor: theme.color.blue400,
+    },
+  },
+  purple: {
+    borderColor: theme.color.purple200,
+    ':hover': {
+      borderColor: theme.color.purple400,
+    },
+  },
+  red: {
+    borderColor: theme.color.red200,
+    ':hover': {
+      borderColor: theme.color.red400,
     },
   },
 })

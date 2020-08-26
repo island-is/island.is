@@ -36,6 +36,11 @@ const tmp = [
     description:
       'Gistináttaskattur hefur verið afnuminn út næsta ár, til ársloka 2021.',
   },
+  {
+    title: 'Gistináttaskattur afnuminn',
+    description:
+      'Gistináttaskattur hefur verið afnuminn út næsta ár, til ársloka 2021.',
+  },
 ]
 
 interface StagePaddingProps {
@@ -84,7 +89,6 @@ export const CardsSlider = () => {
     return () => window.removeEventListener('resize', handleResize)
   }, [handleResize])
 
-  console.log('height', height)
   return (
     <>
       <div className={styles.wrapper}>
@@ -106,22 +110,24 @@ export const CardsSlider = () => {
         >
           {tmp.map(({ title, description }, index) => {
             return (
-              <div
-                onDragStart={handleOnDragStart}
-                style={{ minHeight: height, display: 'inline-flex' }}
-                className={styles.item}
-              >
-                <Card
-                  key={index}
-                  description={description}
-                  title={title}
-                  tags={[
-                    { title: 'Styrkir', tagProps: { variant: 'red' } },
-                    { title: 'Lán', tagProps: { variant: 'red' } },
-                    { title: 'Atvinnulíf', tagProps: { variant: 'red' } },
-                  ]}
-                />
-              </div>
+              <>
+                <div
+                  onDragStart={handleOnDragStart}
+                  style={{ minHeight: height, display: 'inline-flex' }}
+                  className={styles.item}
+                >
+                  <Card
+                    key={index}
+                    description={description}
+                    title={title}
+                    tags={[
+                      { title: 'Styrkir', tagProps: { variant: 'red' } },
+                      { title: 'Lán', tagProps: { variant: 'red' } },
+                      { title: 'Atvinnulíf', tagProps: { variant: 'red' } },
+                    ]}
+                  />
+                </div>
+              </>
             )
           })}
         </AliceCarousel>

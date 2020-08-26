@@ -19,6 +19,7 @@ import {
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
 import { Locale } from '../i18n/I18n'
+import { ColorSchemeContext } from '@island.is/adgerdir/context'
 import Head from 'next/head'
 
 interface HomeProps {
@@ -70,37 +71,89 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
         </Box>
         <Content document={frontpage.content} />
       </Box>
-      <Box marginBottom={10}>
-        <Sleeve>
-          <Box background="red100">
-            <ContentBlock width="large">
-              <Categories items={cardsMany} />
-            </ContentBlock>
-          </Box>
-        </Sleeve>
-      </Box>
-      <Box width="full" overflow="hidden">
-        <ContentBlock width="large">
-          <Box padding={[3, 3, 6]}>
-            <GroupedPages
-              topContent={
-                <Stack space={3}>
-                  <Typography variant="eyebrow" as="h2" color="roseTinted400">
-                    Viðspyrna
-                  </Typography>
-                  <Typography variant="h2" as="h3">
-                    {frontpage.title}
-                  </Typography>
-                  <Typography variant="p" as="p">
-                    {frontpage.description}
-                  </Typography>
-                </Stack>
-              }
-              bottomContent={<CardsSlider />}
-            />
-          </Box>
-        </ContentBlock>
-      </Box>
+      <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
+        <Box marginBottom={10}>
+          <Sleeve>
+            <Box background="red100">
+              <ContentBlock width="large">
+                <Categories items={cardsMany} />
+              </ContentBlock>
+            </Box>
+          </Sleeve>
+        </Box>
+      </ColorSchemeContext.Provider>
+      <ColorSchemeContext.Provider value={{ colorScheme: 'purple' }}>
+        <Box width="full" overflow="hidden" marginBottom={10}>
+          <ContentBlock width="large">
+            <Box padding={[3, 3, 6]}>
+              <GroupedPages
+                topContent={
+                  <Stack space={3}>
+                    <Typography variant="eyebrow" as="h2" color="roseTinted400">
+                      Viðspyrna
+                    </Typography>
+                    <Typography variant="h2" as="h3">
+                      {frontpage.title}
+                    </Typography>
+                    <Typography variant="p" as="p">
+                      {frontpage.description}
+                    </Typography>
+                  </Stack>
+                }
+                bottomContent={<CardsSlider />}
+              />
+            </Box>
+          </ContentBlock>
+        </Box>
+      </ColorSchemeContext.Provider>
+      <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
+        <Box width="full" overflow="hidden" marginBottom={10}>
+          <ContentBlock width="large">
+            <Box padding={[3, 3, 6]}>
+              <GroupedPages
+                topContent={
+                  <Stack space={3}>
+                    <Typography variant="eyebrow" as="h2" color="roseTinted400">
+                      Viðspyrna
+                    </Typography>
+                    <Typography variant="h2" as="h3">
+                      {frontpage.title}
+                    </Typography>
+                    <Typography variant="p" as="p">
+                      {frontpage.description}
+                    </Typography>
+                  </Stack>
+                }
+                bottomContent={<CardsSlider />}
+              />
+            </Box>
+          </ContentBlock>
+        </Box>
+      </ColorSchemeContext.Provider>
+      <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
+        <Box width="full" overflow="hidden" marginBottom={10}>
+          <ContentBlock width="large">
+            <Box padding={[3, 3, 6]}>
+              <GroupedPages
+                topContent={
+                  <Stack space={3}>
+                    <Typography variant="eyebrow" as="h2" color="roseTinted400">
+                      Viðspyrna
+                    </Typography>
+                    <Typography variant="h2" as="h3">
+                      {frontpage.title}
+                    </Typography>
+                    <Typography variant="p" as="p">
+                      {frontpage.description}
+                    </Typography>
+                  </Stack>
+                }
+                bottomContent={<CardsSlider />}
+              />
+            </Box>
+          </ContentBlock>
+        </Box>
+      </ColorSchemeContext.Provider>
       <Box style={{ height: '800px' }}></Box>
     </>
   )
