@@ -3,7 +3,7 @@ import { render, waitFor } from '@testing-library/react'
 import fetchMock from 'fetch-mock'
 import { BrowserRouter } from 'react-router-dom'
 
-import App from './app'
+import App from './App'
 
 describe('App', () => {
   fetchMock.get('/api/cases', [])
