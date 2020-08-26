@@ -85,7 +85,7 @@ paths:
                 $ref: '#/components/schemas/Version'
       tags:
         - internal
-  /cases:
+  /api/cases:
     get:
       operationId: CaseController_getAll
       parameters: []
@@ -100,7 +100,7 @@ paths:
                   $ref: '#/components/schemas/Case'
       tags:
         - case
-  '/case/{id}':
+  '/api/case/{id}':
     get:
       operationId: CaseController_findOne
       parameters:
@@ -141,7 +141,7 @@ paths:
                 $ref: '#/components/schemas/Case'
       tags:
         - case
-  /case:
+  /api/case:
     post:
       operationId: CaseController_create
       parameters: []

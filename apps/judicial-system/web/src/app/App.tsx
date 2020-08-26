@@ -17,7 +17,7 @@ export const App = () => {
     let isMounted = true
 
     async function getData() {
-      const rawResponse = await fetch('/cases')
+      const rawResponse = await fetch('/api/cases')
       const jsonResponse = await rawResponse.json()
 
       // Prevent setting state on unmounted component
