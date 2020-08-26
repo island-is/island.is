@@ -18,6 +18,8 @@ air-discount-scheme-api:
   healthCheck:
     liveness:
       path: /liveness
+    readiness:
+      path: /liveness
   ingress:
     enabled: true
   service:
@@ -52,6 +54,8 @@ air-discount-scheme-backend:
     ERNIR_API_KEY: "/k8s/air-discount-scheme/backend/ERNIR_API_KEY"
   healthCheck:
     liveness:
+      path: /liveness
+    readiness:
       path: /liveness
   ingress:
     enabled: true
