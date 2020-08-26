@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 
 import './App.scss'
 
-import fetch from 'isomorphic-fetch'
+import 'isomorphic-fetch'
 
 export const App = () => {
   /*
@@ -22,7 +22,7 @@ export const App = () => {
 
       // Prevent setting state on unmounted component
       if (isMounted) {
-        setMessageFromAPI(jsonResponse.length)
+        setMessageFromAPI(`${jsonResponse.length} cases`)
       }
     }
 

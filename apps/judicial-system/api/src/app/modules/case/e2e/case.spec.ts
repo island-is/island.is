@@ -12,7 +12,7 @@ describe('Application', () => {
   it(`POST /case should create a case`, async () => {
     // Act
     const response = await request(app.getHttpServer())
-      .post('/case')
+      .post('/api/case')
       .send({
         description: 'Test Case',
       })
