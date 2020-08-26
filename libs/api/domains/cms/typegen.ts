@@ -1,4 +1,4 @@
-const path = require('path')
+/* eslint-disable @typescript-eslint/no-var-requires */
 const upperFirst = require('lodash/upperFirst')
 const camelcase = require('lodash/camelcase')
 
