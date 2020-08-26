@@ -7,6 +7,8 @@ To add a new service to the umbrella chart you need to
 - add a new top-level entry for the service in [values.dev.yaml](./values.dev.yaml) - here we have settings specific to the Development environment
 - add a new top-level entry for the service in [values.prod.yaml](./values.prod.yaml) - here we have settings specific to the Production environment
 
+When the umbrella charet changes, you need to increment the version at the bottom of [Chart.yaml](./Chart.yaml)
+
 ## Upgrading the Helm chart template
 
 We are trying to stick to as few different templates as possible to avoid duplication and managed helm upgrades in a reasonable way. In [libs](./libs) folder we keep the different helm chart templates source. If you need to make changes in those you need to update the dependencies for the umbrella chart like this
