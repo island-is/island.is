@@ -27,11 +27,9 @@ export const Categories: FC<CategoriesProps> = ({
 }) => {
   return (
     <Box background="purple100" paddingY={8}>
-      <Box paddingBottom={2}>
-        <Typography variant="h3" as="h3">
-          {label}
-        </Typography>
-      </Box>
+      <Typography variant="h3" as="h3" bottom={4}>
+        {label}
+      </Typography>
       <Grid>
         {cards.map((card, index) => {
           return (

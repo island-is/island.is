@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from 'react'
 import cn from 'classnames'
-import { ContentBlock, Box } from '@island.is/island-ui/core'
+import { ContentBlock, Box, Grid, GridItem } from '@island.is/island-ui/core'
 import { Sticky } from '../../components'
 
 import * as styles from './Layouts.treat'
@@ -16,24 +16,16 @@ export const CategoryLayout: FC<CategoryProps> = ({
   children,
 }) => (
   <ContentBlock>
-    <Box padding={[0, 0, 0, 6]}>
-      <div className={styles.layout}>
-        <div className={styles.desktopSide}>
+    <Box paddingBottom={10}>
+      <Grid>
+        <GridItem span={3}>
           <Sticky>{sidebar}</Sticky>
-        </div>
-        <Box paddingLeft={[0, 0, 0, 4]} width="full">
-          <Box padding={[3, 3, 6, 0]}>
-            <ContentBlock width="small">{children}</ContentBlock>
-          </Box>
-          {belowContent && (
-            <div className={styles.bg}>
-              <Box padding={[3, 3, 6, 0]} paddingTop={[3, 3, 6, 6]}>
-                <ContentBlock width="small">{belowContent}</ContentBlock>
-              </Box>
-            </div>
-          )}
-        </Box>
-      </div>
+        </GridItem>
+        <GridItem span={6} offset={1}>
+          <Box paddingBottom={10}>{children}</Box>
+          {belowContent && belowContent}
+        </GridItem>
+      </Grid>
     </Box>
   </ContentBlock>
 )
