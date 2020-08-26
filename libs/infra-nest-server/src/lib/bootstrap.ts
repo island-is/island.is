@@ -11,7 +11,6 @@ import { InfraModule } from './infra/infra.module'
 import yaml from 'js-yaml'
 import * as yargs from 'yargs'
 import * as fs from 'fs'
-import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface'
 
 type RunServerOptions = {
   /**
@@ -50,10 +49,6 @@ const createApp = async (options: RunServerOptions) => {
   )
   app.use(httpRequestDurationMiddleware())
   app.use(cookieParser())
-
-  if (options.enableCors) {
-    app.enableCors(options.corsOptions)
-  }
 
   return app
 }
