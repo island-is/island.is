@@ -2380,6 +2380,34 @@
           }
         }
       }
+    },
+    "service-portal-graphql": {
+      "root": "libs/service-portal/graphql",
+      "sourceRoot": "libs/service-portal/graphql/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/graphql/.eslintrc",
+            "tsConfig": [
+              "libs/service-portal/graphql/tsconfig.lib.json",
+              "libs/service-portal/graphql/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/service-portal/graphql/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/graphql/jest.config.js",
+            "tsConfig": "libs/service-portal/graphql/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

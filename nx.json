@@ -193,6 +193,9 @@
     },
     "air-discount-scheme-types": {
       "tags": []
+    },
+    "service-portal-graphql": {
+      "tags": []
     }
   }
 }
