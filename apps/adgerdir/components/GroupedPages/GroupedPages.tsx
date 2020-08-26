@@ -1,37 +1,36 @@
 import React, { FC, ReactNode } from 'react'
 import { ContentBlock, Box } from '@island.is/island-ui/core'
 
-import * as styles from './BorderedContent.treat'
+import * as styles from './GroupedPages.treat'
 
-interface BorderedContentProps {
+interface GroupedPagesProps {
   topContent: ReactNode
   bottomContent: ReactNode
-  showTopContent?: boolean
 }
 
-export const BorderedContent: FC<BorderedContentProps> = ({
+export const GroupedPages: FC<GroupedPagesProps> = ({
   topContent,
   bottomContent,
-  showTopContent,
 }) => {
   return (
     <div className={styles.container}>
       <ContentBlock width="large">
         <Box width="full">
-          {showTopContent ? (
+          {topContent ? (
             <Box
-              paddingX={[3, 3, 6, 3]}
-              paddingTop={[6, 6, 9]}
-              paddingBottom={[3, 3, 5]}
+              padding={[3, 3, 6, 15]}
+              paddingY={[3, 3, 6, 10]}
+              className={styles.top}
             >
               {topContent}
             </Box>
           ) : null}
           {bottomContent ? (
             <Box
-              paddingX={[3, 3, 6, 3]}
-              paddingY={[3, 3, 6]}
+              padding={[3, 3, 6, 15]}
+              paddingY={[3, 3, 6, 10]}
               background="blue100"
+              className={styles.bottom}
             >
               {bottomContent}
             </Box>
@@ -42,4 +41,4 @@ export const BorderedContent: FC<BorderedContentProps> = ({
   )
 }
 
-export default BorderedContent
+export default GroupedPages

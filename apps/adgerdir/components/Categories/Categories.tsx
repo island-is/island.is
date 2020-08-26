@@ -11,7 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 
 import * as styles from './Categories.treat'
-import { Card } from '..'
+import { Card } from '../Card/Card'
 
 const FILTER_TIMER = 1000
 const ITEMS_PER_SHOW = 6

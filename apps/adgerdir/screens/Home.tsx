@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import { ContentBlock, Box, Typography, Stack } from '@island.is/island-ui/core'
-import { Categories, Sleeve } from '../components'
+import { Content } from '@island.is/island-ui/contentful'
+import { Categories, Sleeve, GroupedPages, CardsSlider } from '../components'
 import { withApollo } from '../graphql'
 import { useI18n } from '../i18n'
 import {
@@ -17,7 +18,6 @@ import {
 } from './queries'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
-import ArticleContent from '../units/Content/ArticleContent'
 import { Locale } from '../i18n/I18n'
 import Head from 'next/head'
 
@@ -68,18 +68,39 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
             </Stack>
           </ContentBlock>
         </Box>
-        <ArticleContent
-          document={frontpage.content}
-          locale={activeLocale as Locale}
-        />
+        <Content document={frontpage.content} />
       </Box>
-      <Sleeve>
-        <Box background="red100">
-          <ContentBlock width="large">
-            <Categories items={cardsMany} />
-          </ContentBlock>
-        </Box>
-      </Sleeve>
+      <Box marginBottom={10}>
+        <Sleeve>
+          <Box background="red100">
+            <ContentBlock width="large">
+              <Categories items={cardsMany} />
+            </ContentBlock>
+          </Box>
+        </Sleeve>
+      </Box>
+      <Box width="full" overflow="hidden">
+        <ContentBlock width="large">
+          <Box padding={[3, 3, 6]}>
+            <GroupedPages
+              topContent={
+                <Stack space={3}>
+                  <Typography variant="eyebrow" as="h2" color="roseTinted400">
+                    Viðspyrna
+                  </Typography>
+                  <Typography variant="h2" as="h3">
+                    {frontpage.title}
+                  </Typography>
+                  <Typography variant="p" as="p">
+                    {frontpage.description}
+                  </Typography>
+                </Stack>
+              }
+              bottomContent={<CardsSlider />}
+            />
+          </Box>
+        </ContentBlock>
+      </Box>
       <Box style={{ height: '800px' }}></Box>
     </>
   )

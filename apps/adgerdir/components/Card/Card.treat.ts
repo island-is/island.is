@@ -5,6 +5,7 @@ export const card = style({
   display: 'flex',
   height: '100%',
   flexDirection: 'column',
+  flexGrow: 1,
   cursor: 'pointer',
   borderWidth: 1,
   boxSizing: 'border-box',
