@@ -125,6 +125,40 @@
     "island-ui-theme": {
       "tags": []
     },
+    "service-portal": {
+      "tags": []
+    },
+    "service-portal-e2e": {
+      "tags": [],
+      "implicitDependencies": ["service-portal"]
+    },
+    "service-portal-constants": {
+      "tags": []
+    },
+    "service-portal-core": {
+      "tags": []
+    },
+    "service-portal-applications": {
+      "tags": []
+    },
+    "service-portal-documents": {
+      "tags": []
+    },
+    "service-portal-settings": {
+      "tags": []
+    },
+    "service-portal-finance": {
+      "tags": []
+    },
+    "service-portal-family": {
+      "tags": []
+    },
+    "service-portal-health": {
+      "tags": []
+    },
+    "service-portal-education": {
+      "tags": []
+    },
     "island-ui-contentful": {
       "tags": []
     },
