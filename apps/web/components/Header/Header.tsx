@@ -70,7 +70,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   return (
     <Box width="full">
       <ContentBlock>
-        <Box width="full" padding={[3, 3, 6]}>
+        <Box width="full" paddingY={5}>
           <Columns alignY="center" space={2}>
             <Column width="content">
               <Link href={english ? '/en' : '/'} passHref>

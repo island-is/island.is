@@ -1,28 +1,46 @@
 import React, { FC, ReactNode } from 'react'
-import { Box, Tiles, Stack, Typography } from '@island.is/island-ui/core'
+import {
+  Box,
+  Tiles,
+  Stack,
+  Typography,
+  Grid,
+  GridItem,
+} from '@island.is/island-ui/core'
+import { Card } from '../Card/Card'
+
+interface Card {
+  title: string
+  description: string
+  href: string
+  as: string
+}
 
 interface CategoriesProps {
   label?: string
-  children: ReactNode
+  cards: Card[]
 }
 
 export const Categories: FC<CategoriesProps> = ({
   label = 'Þjónustuflokkar',
-
-  children,
+  cards,
 }) => {
   return (
-    <Box background="purple100" padding={[3, 3, 6]}>
+    <Box background="purple100" paddingY={8}>
       <Box paddingBottom={2}>
         <Typography variant="h3" as="h3">
           {label}
         </Typography>
       </Box>
-      <Stack space={6}>
-        <Tiles space={[2, 2, 3]} columns={[1, 1, 2, 2, 3]}>
-          {children}
-        </Tiles>
-      </Stack>
+      <Grid>
+        {cards.map((card, index) => {
+          return (
+            <GridItem key={index} span={4} bottom={[3, 3, 6]}>
+              <Card {...card} />
+            </GridItem>
+          )
+        })}
+      </Grid>
     </Box>
   )
 }

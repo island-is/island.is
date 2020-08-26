@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import cn from 'classnames'
+import chunk from 'lodash/chunk'
 import { ContentBlock } from '../ContentBlock/ContentBlock'
 import { Box } from '../Box/Box'
 import { Logo } from '../Logo/Logo'
@@ -10,6 +11,8 @@ import { Typography } from '../Typography/Typography'
 import { Inline } from '../Inline/Inline'
 import { Tag } from '../Tag/Tag'
 import { Icon } from '../Icon/Icon'
+import { Grid } from '../Grid/Grid'
+import { GridItem } from '../Grid/GridItem'
 
 import * as styles from './Footer.treat'
 
@@ -27,7 +30,7 @@ interface FooterProps {
   middleLinksTitle?: string
   tagLinksTitle?: string
   languageSwitchLink?: FooterLinkProps
-  hideLanguageSwith?: boolean
+  hideLanguageSwitch?: boolean
   showMiddleLinks?: boolean
   showTagLinks?: boolean
 }
@@ -42,149 +45,132 @@ export const Footer = ({
   showMiddleLinks = false,
   showTagLinks = false,
   languageSwitchLink = defaultLanguageSwitchLink,
-  hideLanguageSwith = false,
+  hideLanguageSwitch = false,
 }: FooterProps) => {
   return (
-    <>
-      <Box width="full" background="blue100">
+    <Box>
+      <Box width="full" background="blue100" padding={[3, 3, 6]}>
         <ContentBlock>
-          <Box padding={[3, 3, 6]}>
-            <Box marginBottom={[3, 3, 6]}>
-              <Logo iconOnly id="footer_logo" />
-            </Box>
-            <div className={styles.columns}>
-              <div
-                className={cn(styles.column, styles.columnBorder, styles.links)}
-              >
-                <Stack space={3}>
-                  <Stack space={3}>
-                    {topLinks.map(({ title, href }, index) => (
-                      <Typography key={index} variant="h3" color="blue400">
-                        <a href={href}>{title}</a>
-                      </Typography>
-                    ))}
-                  </Stack>
-                  <Stack space={2}>
-                    {!hideLanguageSwith && (
-                      <Inline space={1} alignY="center">
-                        <Icon
-                          height="15"
-                          width="15"
-                          type="globe"
-                          color="blue400"
-                        />
-                        <Typography variant="h5" color="blue400">
-                          <a href={languageSwitchLink.href}>
-                            {languageSwitchLink.title}
-                          </a>
-                        </Typography>
-                      </Inline>
-                    )}
+          <Grid>
+            <GridItem span={12}>
+              <Box paddingBottom={5}>
+                <Logo iconOnly id="footer_logo" />
+              </Box>
+            </GridItem>
+            <GridItem span={3}>
+              <div className={cn(styles.columnBorder)}>
+                {topLinks.map(({ title, href }, index) => (
+                  <Typography
+                    key={index}
+                    variant="h3"
+                    color="blue400"
+                    bottom={3}
+                  >
+                    <a href={href}>{title}</a>
+                  </Typography>
+                ))}
+                {!hideLanguageSwitch && (
+                  <Box paddingBottom={3}>
                     <Inline space={1} alignY="center">
                       <Icon
                         height="15"
                         width="15"
-                        type="facebook"
+                        type="globe"
                         color="blue400"
                       />
                       <Typography variant="h5" color="blue400">
-                        <a href="https://www.facebook.com/islandid">Facebook</a>
+                        <a href={languageSwitchLink.href}>
+                          {languageSwitchLink.title}
+                        </a>
                       </Typography>
                     </Inline>
-                  </Stack>
-                </Stack>
+                  </Box>
+                )}
+                <Box paddingBottom={3}>
+                  <Inline space={1} alignY="center">
+                    <Icon
+                      height="15"
+                      width="15"
+                      type="facebook"
+                      color="blue400"
+                    />
+                    <Typography variant="h5" color="blue400">
+                      <a href="https://www.facebook.com/islandid">Facebook</a>
+                    </Typography>
+                  </Inline>
+                </Box>
               </div>
-              {showMiddleLinks ? (
-                <div
-                  className={cn(
-                    styles.column,
-                    styles.columnLarge,
-                    styles.columnBorder,
-                    styles.links,
-                  )}
-                >
-                  <Stack space={3}>
-                    <Stack space={3}>
-                      {middleLinksTitle ? (
-                        <Typography variant="eyebrow" color="purple400">
-                          {middleLinksTitle}
-                        </Typography>
-                      ) : null}
-                      <Tiles space={2} columns={[1, 2, 2, 1, 2]}>
-                        {middleLinks.map(({ title, href }, index) => {
-                          return (
-                            <Typography
-                              key={index}
-                              variant="h5"
-                              color="blue400"
-                            >
-                              <a href={href}>{title}</a>
-                            </Typography>
-                          )
-                        })}
-                      </Tiles>
-                    </Stack>
-                  </Stack>
-                </div>
-              ) : null}
-              {showTagLinks ? (
-                <div className={styles.column}>
-                  <Stack space={3}>
-                    <Stack space={3}>
-                      {tagLinksTitle ? (
-                        <Typography variant="eyebrow" color="purple400">
-                          {tagLinksTitle}
-                        </Typography>
-                      ) : null}
-                      <Inline space={2}>
-                        {tagLinks.map(({ title, href }, index) => {
-                          return (
-                            <Tag key={index} href={href} variant="white">
-                              {title}
-                            </Tag>
-                          )
-                        })}
-                      </Inline>
-                    </Stack>
-                  </Stack>
-                </div>
-              ) : null}
-            </div>
-          </Box>
-        </ContentBlock>
-      </Box>
-      <Box width="full" background="blue400" className={styles.linksWhite}>
-        <ContentBlock>
-          <Box width="full">
-            <Box padding={[3, 3, 6]}>
-              <Stack space={3}>
-                <Stack space={3}>
-                  <Typography variant="eyebrow" color="white">
-                    Aðrir opinberir vefir
-                  </Typography>
-                  <Tiles space={2} columns={[1, 1, 2, 3, 4]}>
-                    {bottomLinks.map(({ title, href }, index) => {
+            </GridItem>
+            {showMiddleLinks ? (
+              <GridItem span={6}>
+                <div className={cn(styles.columnBorder)}>
+                  {middleLinksTitle ? (
+                    <Typography variant="eyebrow" color="purple400" bottom={3}>
+                      {middleLinksTitle}
+                    </Typography>
+                  ) : null}
+                  <Tiles space={2} columns={[1, 2, 2, 1, 2]}>
+                    {middleLinks.map(({ title, href }, index) => {
                       return (
-                        <Typography key={index} variant="h5" color="white">
-                          <a
-                            href={href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {title}{' '}
-                            <Icon width="12" type="external" color="white" />
-                          </a>
+                        <Typography key={index} variant="h5" color="blue400">
+                          <a href={href}>{title}</a>
                         </Typography>
                       )
                     })}
                   </Tiles>
-                </Stack>
-              </Stack>
-            </Box>
-          </Box>
+                </div>
+              </GridItem>
+            ) : null}
+            {showTagLinks ? (
+              <GridItem span={3}>
+                {tagLinksTitle ? (
+                  <Typography variant="eyebrow" color="purple400" bottom={3}>
+                    {tagLinksTitle}
+                  </Typography>
+                ) : null}
+                <Inline space={2}>
+                  {tagLinks.map(({ title, href }, index) => {
+                    return (
+                      <Tag key={index} href={href} variant="white">
+                        {title}
+                      </Tag>
+                    )
+                  })}
+                </Inline>
+              </GridItem>
+            ) : null}
+          </Grid>
         </ContentBlock>
       </Box>
-    </>
+      <Box background="blue400" paddingY={4}>
+        <ContentBlock>
+          <Typography variant="eyebrow" color="white" bottom={3}>
+            Aðrir opinberir vefir
+          </Typography>
+          <Grid>
+            {chunk(bottomLinks, Math.ceil(bottomLinks.length / 4)).map(
+              (group) =>
+                group.map(({ title, href }) => {
+                  return (
+                    <GridItem key={href} span={3}>
+                      <Typography variant="h5" color="white" bottom={3}>
+                        <a
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {title}{' '}
+                          <Icon width="12" type="external" color="white" />
+                        </a>
+                      </Typography>
+                    </GridItem>
+                  )
+                }),
+            )}
+          </Grid>
+        </ContentBlock>
+      </Box>
+    </Box>
   )
 }
 

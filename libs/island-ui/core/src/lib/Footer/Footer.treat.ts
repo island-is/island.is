@@ -1,35 +1,6 @@
 import { style, globalStyle } from 'treat'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-export const links = style({})
-export const linksWhite = style({})
-
-export const columns = style({
-  display: 'flex',
-  width: '100%',
-  flexWrap: 'wrap',
-})
-
-export const column = style({
-  position: 'relative',
-  marginBottom: 40,
-  paddingRight: 0,
-  width: '100%',
-  ':last-child': {
-    marginBottom: 0,
-  },
-  ...themeUtils.responsiveStyle({
-    lg: {
-      width: '33%',
-      paddingRight: 48,
-      marginBottom: 0,
-    },
-    xl: {
-      width: '25%',
-    },
-  }),
-})
-
 export const columnBorder = style({
   ':after': {
     content: '""',
@@ -46,18 +17,6 @@ export const columnBorder = style({
       ':after': {
         display: 'inline-block',
       },
-    },
-  }),
-})
-
-export const columnLarge = style({
-  width: '100%',
-  ...themeUtils.responsiveStyle({
-    lg: {
-      width: '33%',
-    },
-    xl: {
-      width: '50%',
     },
   }),
 })

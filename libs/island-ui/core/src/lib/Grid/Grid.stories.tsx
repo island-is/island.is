@@ -2,6 +2,7 @@ import React from 'react'
 import { Grid } from './Grid'
 import { GridItem } from './GridItem'
 import { Box } from '../Box/Box'
+import * as styles from './demostyles.treat'
 
 export default {
   title: 'Core/Grid',
@@ -12,13 +13,37 @@ const DemoBox = ({ text = 'Grid item' }) => (
   <Box
     background="blue300"
     width="full"
-    height="full"
     textAlign="center"
     marginY={1}
     paddingY={1}
   >
     {text}
   </Box>
+)
+
+export const Nested = () => (
+  <Grid className={styles.demo}>
+    <GridItem span={4}>
+      <DemoBox text="span 4" />
+    </GridItem>
+    <GridItem span={8}>
+      <Grid className={styles.demo}>
+        <GridItem span={6}>
+          <DemoBox text="span 6" />
+        </GridItem>
+        <GridItem span={6}>
+          <Grid className={styles.demo}>
+            <GridItem span={6}>
+              <DemoBox text="span 6" />
+            </GridItem>
+            <GridItem span={6}>
+              <DemoBox text="span 6" />
+            </GridItem>
+          </Grid>
+        </GridItem>
+      </Grid>
+    </GridItem>
+  </Grid>
 )
 
 export const Default = () => (
