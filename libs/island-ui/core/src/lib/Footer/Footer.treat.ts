@@ -21,6 +21,9 @@ export const columnBorder = style({
   }),
 })
 
+export const links = style({})
+export const linksWhite = style({})
+
 globalStyle(`${links} a`, {
   color: theme.color.blue400,
   transition: 'color .2s, box-shadow .2s',

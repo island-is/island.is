@@ -5,7 +5,6 @@ import chunk from 'lodash/chunk'
 import { ContentBlock } from '../ContentBlock/ContentBlock'
 import { Box } from '../Box/Box'
 import { Logo } from '../Logo/Logo'
-import { Stack } from '../Stack/Stack'
 import { Tiles } from '../Tiles/Tiles'
 import { Typography } from '../Typography/Typography'
 import { Inline } from '../Inline/Inline'
@@ -58,7 +57,7 @@ export const Footer = ({
               </Box>
             </GridItem>
             <GridItem span={3}>
-              <div className={cn(styles.columnBorder)}>
+              <div className={cn(styles.columnBorder, styles.links)}>
                 {topLinks.map(({ title, href }, index) => (
                   <Typography
                     key={index}
@@ -103,7 +102,7 @@ export const Footer = ({
             </GridItem>
             {showMiddleLinks ? (
               <GridItem span={6}>
-                <div className={cn(styles.columnBorder)}>
+                <div className={cn(styles.columnBorder, styles.links)}>
                   {middleLinksTitle ? (
                     <Typography variant="eyebrow" color="purple400" bottom={3}>
                       {middleLinksTitle}
