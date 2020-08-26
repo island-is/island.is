@@ -27,15 +27,17 @@ export class DiscountResolver {
     const relations: ThjodskraUser[] = await backendApi.getUserRelations(
       user.nationalId,
     )
-    const discounts = await relations.reduce(async (acc, relation) => {
-      let discount: TDiscount = await backendApi.getDiscount(
-        relation.nationalId,
-      )
-      if (!discount && relation.flightLegsLeft > 0) {
-        discount = await backendApi.createDiscount(relation.nationalId)
-      }
-      return [...acc, discount]
-    }, [])
+    const discounts = await relations.reduce((promise, relation) => {
+      return promise.then(async (acc) => {
+        let discount: TDiscount = await backendApi.getDiscount(
+          relation.nationalId,
+        )
+        if (!discount && relation.flightLegsLeft > 0) {
+          discount = await backendApi.createDiscount(relation.nationalId)
+        }
+        return [...acc, discount]
+      })
+    }, Promise.resolve([]))
 
     return discounts.map((discount) => ({
       ...discount,
