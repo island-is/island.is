@@ -7,6 +7,8 @@ import {
   Column,
 } from '@island.is/island-ui/core'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import { GET_HELLO_WORLD_GREETING } from '@island.is/service-portal/graphql'
+import { useQuery } from '@apollo/client'
 
 type ColumnWidth = '6/12' | '4/12' | '2/12'
 
@@ -24,6 +26,13 @@ const Row: FC<{ values: string[] }> = ({ values }) => (
 
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { profile } = userInfo.user
+  const { data } = useQuery(GET_HELLO_WORLD_GREETING, {
+    variables: {
+      input: {
+        name: 'Service Portal Settings Module',
+      },
+    },
+  })
 
   return (
     <div>
@@ -36,6 +45,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         <Typography variant="h3">Grunnupplýsingar</Typography>
         <Row values={['Nafn', profile.name]} />
         <Row values={['Kennitala', profile.natreg]} />
+        <Row values={['GraphQL API response:', data?.helloWorld?.message]} />
       </Stack>
     </div>
   )
