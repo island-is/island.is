@@ -110,21 +110,12 @@ export class ClientsService {
 
      this.clients.push( {
       ClientId : "postman",
-     //  ClientSecrets = { new Secret("secret".Sha256()) },
-      Enabled: true,
-      AllowedGrantTypes: [ GrantType.AuthorizationCode ],
-      ClientUri: null,
-      EnableLocalLogin: true,
-      AllowAccessTokensViaBrowser: true,
-      RequirePkce: true,
       RequireClientSecret: false,
+      AllowedGrantTypes: [ GrantType.AuthorizationCode ],
+      RequirePkce: false,
       RedirectUris: [
         "https://localhost:5001/signin-adfs", "https://postman", "https://oauth.pstmn.io/v1/callback"
       ],
-      FrontChannelLogoutUri: null,
-      ClientSecrets: null,
-      PostLogoutRedirectUris: null,
-      AllowOfflineAccess: false,
       AllowedScopes: ["openid", "profile", "email", "saml", "postman_resource.scope"  ],
     } as Client );
 
