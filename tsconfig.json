@@ -57,7 +57,16 @@
       "@island.is/application/form": ["libs/application/form/src/index.ts"],
       "@island.is/api/domains/application": [
         "libs/api/domains/application/src/index.ts"
-      ]
+      ],
+      "@island.is/api/domains/file-upload": [
+        "libs/api/domains/file-upload/src/index.ts"
+      ],
+      "@island.is/libs/api/domains/file-upload": [
+        "libs/libs/api/domains/file-upload/src/index.ts"
+      ],
+      "@island.is/aws-s3": ["libs/aws-s3/src/index.ts"],
+      "@island.is/aws-s3-file-upload": ["libs/aws-s3-file-upload/src/index.ts"],
+      "@island.is/file-storage": ["libs/file-storage/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

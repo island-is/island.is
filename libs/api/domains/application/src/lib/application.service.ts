@@ -4,7 +4,10 @@ import {
   Configuration,
   UpdateApplicationDto,
 } from '../../gen/fetch'
-import { CreateApplicationDto } from '../../gen/fetch/models/CreateApplicationDto'
+import { UpdateApplicationInput } from './dto/updateApplication.input'
+import { CreateApplicationInput } from './dto/createApplication.input'
+import { AddAttachmentInput } from './dto/addAttachment.input'
+import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 
 @Injectable()
 export class ApplicationService {
@@ -16,16 +19,36 @@ export class ApplicationService {
     })
   }
 
-  async create(input: CreateApplicationDto) {
+  async create(input: CreateApplicationInput) {
     return this.applicationApi.applicationControllerCreate({
       createApplicationDto: input,
     })
   }
 
-  async update(input: UpdateApplicationDto) {
+  async update(input: UpdateApplicationInput) {
+    const { id, ...updateApplicationDto } = input
+
     return this.applicationApi.applicationControllerUpdate({
-      id: input.id,
-      updateApplicationDto: input,
+      id,
+      updateApplicationDto,
+    })
+  }
+
+  async addAttachment(input: AddAttachmentInput) {
+    const { id, ...addAttachmentDto } = input
+
+    return this.applicationApi.applicationControllerAddAttachment({
+      id,
+      addAttachmentDto,
+    })
+  }
+
+  async deleteAttachment(input: DeleteAttachmentInput) {
+    const { id, ...deleteAttachmentDto } = input
+
+    return this.applicationApi.applicationControllerDeleteAttachment({
+      id,
+      deleteAttachmentDto,
     })
   }
 }

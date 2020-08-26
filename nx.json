@@ -153,6 +153,12 @@
     "adgerdir-e2e": {
       "tags": [],
       "implicitDependencies": ["adgerdir"]
+    },
+    "api-domains-file-upload": {
+      "tags": []
+    },
+    "file-storage": {
+      "tags": []
     }
   }
 }

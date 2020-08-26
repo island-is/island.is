@@ -13,6 +13,6 @@ export interface Application {
   typeId: string // TODO should this be a specific type on its own?
   modified: Date
   created: Date
-  attachments: string[]
+  attachments: object
   answers: object
 }

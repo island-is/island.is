@@ -273,7 +273,7 @@ type Application {
   assignee: String!
   externalId: String
   state: ApplicationStateEnum!
-  attachments: [String!]
+  attachments: JSON
   typeId: ApplicationTypeIdEnum!
   answers: JSON!
 }
@@ -294,6 +294,11 @@ enum ApplicationStateEnum {
   UNKNOWN
 }
 
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
 enum ApplicationTypeIdEnum {
   ExampleForm
   ExampleForm2
@@ -301,10 +306,10 @@ enum ApplicationTypeIdEnum {
   FamilyAndPets
 }
 
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+type PresignedPost {
+  url: String!
+  fields: JSON!
+}
 
 type Query {
   helloWorld(input: HelloWorldInput!): HelloWorld!
@@ -426,6 +431,9 @@ input GetApplicationInput {
 type Mutation {
   createApplication(input: CreateApplicationInput!): Application
   updateApplication(input: UpdateApplicationInput!): Application
+  addAttachment(input: AddAttachmentInput!): Application
+  deleteAttachment(input: DeleteAttachmentInput!): Application
+  createUploadUrl(filename: String!): PresignedPost!
 }
 
 input CreateApplicationInput {
@@ -433,7 +441,7 @@ input CreateApplicationInput {
   assignee: String!
   externalId: String
   state: CreateApplicationDtoStateEnum!
-  attachments: [String!]
+  attachments: JSON
   typeId: CreateApplicationDtoTypeIdEnum!
   answers: JSON!
 }
@@ -462,7 +470,7 @@ input UpdateApplicationInput {
   assignee: String
   externalId: String
   state: UpdateApplicationDtoStateEnum
-  attachments: [String!]
+  attachments: JSON
   typeId: UpdateApplicationDtoTypeIdEnum
   answers: JSON
 }
@@ -483,4 +491,15 @@ enum UpdateApplicationDtoTypeIdEnum {
   ExampleForm2
   ExampleForm3
   FamilyAndPets
+}
+
+input AddAttachmentInput {
+  id: String!
+  key: String!
+  url: String!
+}
+
+input DeleteAttachmentInput {
+  id: String!
+  key: String!
 }

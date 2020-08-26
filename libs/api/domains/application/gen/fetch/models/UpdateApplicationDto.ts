@@ -24,12 +24,6 @@ export interface UpdateApplicationDto {
      * @type {string}
      * @memberof UpdateApplicationDto
      */
-    id: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateApplicationDto
-     */
     typeId?: UpdateApplicationDtoTypeIdEnum;
     /**
      * 
@@ -63,10 +57,10 @@ export interface UpdateApplicationDto {
     answers?: object;
     /**
      * 
-     * @type {Array<string>}
+     * @type {object}
      * @memberof UpdateApplicationDto
      */
-    attachments?: Array<string>;
+    attachments?: object;
 }
 
 export function UpdateApplicationDtoFromJSON(json: any): UpdateApplicationDto {
@@ -79,7 +73,6 @@ export function UpdateApplicationDtoFromJSONTyped(json: any, ignoreDiscriminator
     }
     return {
         
-        'id': json['id'],
         'typeId': !exists(json, 'typeId') ? undefined : json['typeId'],
         'applicant': !exists(json, 'applicant') ? undefined : json['applicant'],
         'assignee': !exists(json, 'assignee') ? undefined : json['assignee'],
@@ -99,7 +92,6 @@ export function UpdateApplicationDtoToJSON(value?: UpdateApplicationDto | null):
     }
     return {
         
-        'id': value.id,
         'typeId': value.typeId,
         'applicant': value.applicant,
         'assignee': value.assignee,

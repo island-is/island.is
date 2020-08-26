@@ -39,10 +39,10 @@ export class CreateApplicationInput {
   @IsEnum(CreateApplicationDtoStateEnum)
   state: CreateApplicationDtoStateEnum
 
-  @Field((type) => [String], { nullable: true })
-  @IsArray()
+  @Field((type) => graphqlTypeJson, { nullable: true })
+  @IsObject()
   @IsOptional()
-  attachments?: Array<string>
+  attachments?: object
 
   @Field((type) => CreateApplicationDtoTypeIdEnum)
   @IsEnum(CreateApplicationDtoTypeIdEnum)

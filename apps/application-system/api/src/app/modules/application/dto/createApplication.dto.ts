@@ -42,7 +42,7 @@ export class CreateApplicationDto {
   readonly answers: object
 
   @IsOptional()
-  @IsArray()
+  @IsObject()
   @ApiPropertyOptional()
-  readonly attachments: string[]
+  readonly attachments: object
 }

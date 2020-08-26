@@ -10,42 +10,38 @@ import { FormType } from '@island.is/application/schema'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateApplicationDto {
-  @IsString()
-  @ApiProperty()
-  readonly id: string
-
   @IsOptional()
   @IsEnum(FormType)
   @ApiPropertyOptional({ enum: FormType })
-  readonly typeId: FormType
+  readonly typeId?: FormType
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly applicant: string
+  readonly applicant?: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly assignee: string
+  readonly assignee?: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly externalId: string
+  readonly externalId?: string
 
   @IsOptional()
   @IsEnum(ApplicationState)
   @ApiPropertyOptional({ enum: ApplicationState })
-  readonly state: ApplicationState
+  readonly state?: ApplicationState
 
   @IsOptional()
   @IsObject()
   @ApiPropertyOptional()
-  readonly answers: object
+  readonly answers?: object
 
   @IsOptional()
-  @IsArray()
+  @IsObject()
   @ApiPropertyOptional()
-  readonly attachments: string[]
+  readonly attachments?: object
 }

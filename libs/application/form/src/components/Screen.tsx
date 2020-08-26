@@ -17,6 +17,9 @@ import FormRepeater from './FormRepeater'
 import { useMutation } from '@apollo/client'
 import { CREATE_APPLICATION } from '../graphql/mutations/createApplication'
 import { UPDATE_APPLICATION } from '../graphql/mutations/updateApplication'
+import { CREATE_UPLOAD_URL } from '../graphql/mutations/createUploadUrl'
+import { ADD_ATTACHMENT } from '../graphql/mutations/addAttachment'
+import { DELETE_ATTACHMENT } from '../graphql/mutations/deleteAttachment'
 
 type ScreenProps = {
   formValue: FormValue
@@ -61,10 +64,17 @@ const Screen: FC<ScreenProps> = ({
       },
     },
   )
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [updateApplication, { loading, data: updateData }] = useMutation(
     UPDATE_APPLICATION,
   )
+
+  const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
+
+  const [addAttachment] = useMutation(ADD_ATTACHMENT)
+
+  const [deleteAttachment] = useMutation(DELETE_ATTACHMENT)
 
   const { handleSubmit, errors, reset } = hookFormData
 
@@ -73,13 +83,49 @@ const Screen: FC<ScreenProps> = ({
     prevScreen()
   }
 
+  const onFileChange = async (e) => {
+    const file = e.target.files[0]
+    const form = new FormData()
+    console.log('file', file)
+
+    const { data } = await createUploadUrl({
+      variables: {
+        filename: file.name,
+      },
+    })
+
+    const {
+      createUploadUrl: { url, fields },
+    } = data
+    Object.keys(fields).forEach((key) => form.append(key, fields[key]))
+    form.append('file', file)
+
+    // Send the POST request
+    const response = await fetch(url, { method: 'POST', body: form })
+
+    if (!response.ok) return 'Failed to upload via presigned POST'
+
+    addAttachment({
+      variables: {
+        input: {
+          id: existingApplicationId,
+          key: fields.key,
+          url: `${response.url}/${fields.key}`,
+        },
+      },
+    })
+
+    // Done!
+    return `File uploaded via presigned POST with key: `
+  }
+
   const onSubmit: SubmitHandler<FormValue> = async (data) => {
     if (shouldSubmit) {
       // call submit mutation
       console.log('here we will submit', formValue)
     } else {
       if (existingApplicationId) {
-        updateApplication({
+        await updateApplication({
           variables: {
             input: {
               id: existingApplicationId,
@@ -89,12 +135,12 @@ const Screen: FC<ScreenProps> = ({
           },
         })
       } else {
-        createApplication({
+        await createApplication({
           variables: {
             input: {
               applicant: '123456-1234',
               state: 'PENDING',
-              attachments: ['https://island.is'],
+              attachments: {},
               typeId: formTypeId,
               assignee: '123456-1235',
               externalId: 'some_id',
@@ -128,6 +174,11 @@ const Screen: FC<ScreenProps> = ({
         <Box flexGrow={1}>
           {section && <Typography color="dark300">{section.name}</Typography>}
           <Typography variant="h2">{screen.name}</Typography>
+          <div>
+            <strong>Step 3 - Choose a file</strong>
+            <br />
+            <input type="file" id="fileinput" onChange={onFileChange} />
+          </div>
           <Box>
             {screen.type === FormItemTypes.REPEATER ? (
               <FormRepeater
