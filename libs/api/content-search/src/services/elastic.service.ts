@@ -115,7 +115,7 @@ export class ElasticService {
   async fetchItems(index: SearchIndexes, input) {
     const requestBody = new RequestBodySearch().query(
       esb.boolQuery().must([esb.matchQuery('category_slug', input.slug)]),
-    )
+    ).size(1000)
 
     return this.findByQuery(index, requestBody)
   }
