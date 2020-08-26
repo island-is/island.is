@@ -58,7 +58,7 @@ export const Footer = ({
               </Box>
             </GridItem>
             <GridItem span={3}>
-              <div className={cn(styles.columnBorder, styles.links)}>
+              <div className={cn(styles.columnBorder)}>
                 {topLinks.map(({ title, href }, index) => (
                   <Typography
                     key={index}
@@ -103,7 +103,7 @@ export const Footer = ({
             </GridItem>
             {showMiddleLinks ? (
               <GridItem span={6}>
-                <div className={cn(styles.columnBorder, styles.links)}>
+                <div className={cn(styles.columnBorder)}>
                   {middleLinksTitle ? (
                     <Typography variant="eyebrow" color="purple400" bottom={3}>
                       {middleLinksTitle}
@@ -150,7 +150,7 @@ export const Footer = ({
           <Grid>
             {chunk(bottomLinks, Math.ceil(bottomLinks.length / 4)).map(
               (group) =>
-                group.map(({ title, href }, index) => {
+                group.map(({ title, href }) => {
                   return (
                     <GridItem key={href} span={3}>
                       <Typography variant="h5" color="white" bottom={3}>
