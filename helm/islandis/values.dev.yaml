@@ -94,10 +94,6 @@ api:
           - beta.dev01.devland.is
 
 judicial-system-api:
-  serviceAccount:
-    name: 'judicial-system-api'
-    annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/judicial-system-api'
   secrets:
     DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
   env:
