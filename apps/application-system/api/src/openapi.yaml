@@ -63,6 +63,7 @@ components:
             - ExampleForm2
             - ExampleForm3
             - FamilyAndPets
+            - PaternityLeave
         answers:
           type: object
       required:
@@ -84,6 +85,7 @@ components:
             - ExampleForm2
             - ExampleForm3
             - FamilyAndPets
+            - PaternityLeave
         applicant:
           type: string
         assignee:
@@ -125,6 +127,7 @@ components:
             - ExampleForm2
             - ExampleForm3
             - FamilyAndPets
+            - PaternityLeave
         applicant:
           type: string
         assignee:
