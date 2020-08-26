@@ -219,7 +219,7 @@ jobs:
       APPLICATION_DB_HOST: localhost
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+      # matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
 
@@ -274,7 +274,7 @@ jobs:
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
+      # matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
 
