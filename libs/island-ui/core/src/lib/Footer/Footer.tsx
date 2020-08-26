@@ -28,7 +28,7 @@ interface FooterProps {
   middleLinksTitle?: string
   tagLinksTitle?: string
   languageSwitchLink?: FooterLinkProps
-  hideLanguageSwitch?: boolean
+  hideLanguageSwith?: boolean
   showMiddleLinks?: boolean
   showTagLinks?: boolean
 }
@@ -43,7 +43,7 @@ export const Footer = ({
   showMiddleLinks = false,
   showTagLinks = false,
   languageSwitchLink = defaultLanguageSwitchLink,
-  hideLanguageSwitch = false,
+  hideLanguageSwith = false,
 }: FooterProps) => {
   return (
     <>
@@ -67,7 +67,7 @@ export const Footer = ({
                     <a href={href}>{title}</a>
                   </Typography>
                 ))}
-                {!hideLanguageSwitch && (
+                {!hideLanguageSwith && (
                   <Box paddingBottom={3}>
                     <Inline space={1} alignY="center">
                       <Icon
