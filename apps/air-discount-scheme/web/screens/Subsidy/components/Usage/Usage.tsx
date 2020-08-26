@@ -1,6 +1,4 @@
 import React from 'react'
-import { useQuery } from '@apollo/client'
-import gql from 'graphql-tag'
 
 import { Box, Typography } from '@island.is/island-ui/core'
 

@@ -7,7 +7,7 @@ import {
   GenericPage,
   QueryGetGenericPageArgs,
 } from '@island.is/api/schema'
-import { Box, Stack, Typography, Icon, Button } from '@island.is/island-ui/core'
+import { Box, Stack, Typography, Icon } from '@island.is/island-ui/core'
 import {
   Content,
   IntroText,

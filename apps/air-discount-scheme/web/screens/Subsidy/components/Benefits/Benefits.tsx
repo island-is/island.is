@@ -29,13 +29,11 @@ const FetchDiscountsMutation = gql`
 `
 
 function Benefits({ misc }: PropTypes) {
-  const [fetchDiscounts, { data, loading }] = useMutation(
-    FetchDiscountsMutation,
-  )
+  const [fetchDiscounts, { data }] = useMutation(FetchDiscountsMutation)
   const { user: authUser } = useContext(UserContext)
   useEffect(() => {
     fetchDiscounts()
-  }, [])
+  }, [fetchDiscounts])
 
   const { fetchDiscounts: codes } = data || {}
   const {
@@ -44,10 +42,6 @@ function Benefits({ misc }: PropTypes) {
     copyCode,
     codeDescription,
     kidsRights,
-    currentUsage,
-    path,
-    user,
-    date,
   } = JSON.parse(misc)
 
   return (
