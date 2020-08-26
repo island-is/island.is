@@ -311,11 +311,13 @@ const Results: FC<{
               Beint að efninu
             </Typography>
             {search.results.items.map(({ id, title, slug }) => (
-              <Typography key={id} links variant="h5" color="blue400">
-                <Link href={makePath('article', slug)}>
-                  <a>{title}</a>
-                </Link>
-              </Typography>
+              <div key={id} {...getItemProps()}>
+                <Typography links variant="h5" color="blue400">
+                  <Link href={makePath('article', slug)}>
+                    <a>{title}</a>
+                  </Link>
+                </Typography>
+              </div>
             ))}
           </Stack>
         )}
