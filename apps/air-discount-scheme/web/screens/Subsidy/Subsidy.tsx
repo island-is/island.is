@@ -1,17 +1,19 @@
 import React from 'react'
 import gql from 'graphql-tag'
-import { Screen } from '../../types'
+
 import { Layout } from '@island.is/air-discount-scheme-web/components/Layout'
 import {
   Query,
   GenericPage,
   QueryGetGenericPageArgs,
 } from '@island.is/api/schema'
-import { Box, Stack, Typography } from '@island.is/island-ui/core'
+import { Box, Stack, Typography, Icon } from '@island.is/island-ui/core'
 import {
   Content,
   IntroText,
 } from '@island.is/air-discount-scheme-web/components'
+import { Screen } from '../../types'
+import { Benefits, Usage } from './components'
 
 interface PropTypes {
   page?: GenericPage
@@ -20,6 +22,8 @@ interface PropTypes {
 const Subsidy: Screen<PropTypes> = ({
   page: { title, intro, mainContent, sidebar, misc },
 }) => {
+  const { attention, codeDisclaimer } = JSON.parse(misc)
+
   return (
     <Layout
       left={
@@ -33,7 +37,25 @@ const Subsidy: Screen<PropTypes> = ({
               document={mainContent}
               wrapper={(children) => <Stack space={3}>{children}</Stack>}
             />
+            <Box
+              marginBottom={4}
+              background="blue100"
+              borderRadius="standard"
+              display="flex"
+              alignItems="center"
+              padding={3}
+            >
+              <Icon type="alert" color="blue400" />
+              <Box marginLeft={1} marginRight={2}>
+                <Typography variant="p">
+                  <strong>{attention}</strong>
+                </Typography>
+              </Box>
+              <Typography variant="p">{codeDisclaimer}</Typography>
+            </Box>
           </Stack>
+          <Benefits misc={misc} />
+          <Usage misc={misc} />
         </Box>
       }
       right={
@@ -45,8 +67,6 @@ const Subsidy: Screen<PropTypes> = ({
     />
   )
 }
-
-export default Subsidy
 
 const GetGenericPageQuery = gql`
   query getGenericPageQuery($input: GetGenericPageInput!) {
@@ -77,3 +97,5 @@ Subsidy.getInitialProps = async ({ apolloClient, locale }) => {
     page,
   }
 }
+
+export default Subsidy

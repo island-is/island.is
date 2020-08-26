@@ -25,9 +25,7 @@ const Home: Screen<PropTypes> = ({ page }) => {
         <Box>
           <Box marginBottom={4}>
             <Breadcrumbs>
-              <Link href="/">
-                <a>Ísland.is</a>
-              </Link>
+              <Link href="/">Ísland.is</Link>
               <span>Loftbrú</span>
             </Breadcrumbs>
           </Box>
