@@ -1,6 +1,12 @@
 import React, { FC, ReactNode } from 'react'
 import cn from 'classnames'
-import { ContentBlock, Box, GridContainer, GridRow, GridColumn } from '@island.is/island-ui/core'
+import {
+  ContentBlock,
+  Box,
+  GridContainer,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 import { Sticky } from '../../components'
 
 import * as styles from './Layouts.treat'
@@ -35,18 +41,18 @@ interface ArticleProps {
 }
 
 export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
-  <ContentBlock>
-    <Box padding={[0, 0, 0, 6]}>
-      <div className={cn(styles.layout, styles.reversed)}>
-        <div className={styles.desktopSide}>
+  <GridContainer>
+    <Box paddingBottom={10}>
+      <GridRow>
+        <GridColumn span={7} offset={1}>
+          <Box paddingBottom={10}>{children}</Box>
+        </GridColumn>
+        <GridColumn span={3} offset={1}>
           <Sticky>{sidebar}</Sticky>
-        </div>
-        <Box paddingRight={[0, 0, 0, 4]} width="full">
-          {children}
-        </Box>
-      </div>
+        </GridColumn>
+      </GridRow>
     </Box>
-  </ContentBlock>
+  </GridContainer>
 )
 
 interface NewsListProps {
@@ -54,24 +60,22 @@ interface NewsListProps {
 }
 
 export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
-  <ContentBlock>
-    <Box padding={[0, 0, 0, 6]}>
-      <div className={cn(styles.layout)}>
-        <div className={styles.desktopSide}>
+  <GridContainer>
+    <Box paddingTop={6} paddingBottom={10}>
+      <GridRow>
+        <GridColumn span={4}>
           <Sticky>
             <Box background="purple100" padding={4}>
               {sidebar}
             </Box>
           </Sticky>
-        </div>
-        <Box paddingLeft={[0, 0, 0, 4]} width="full">
-          <Box padding={[3, 3, 6, 0]}>
-            <ContentBlock width="small">{children}</ContentBlock>
-          </Box>
-        </Box>
-      </div>
+        </GridColumn>
+        <GridColumn span={6} offset={1}>
+          <Box paddingBottom={10}>{children}</Box>
+        </GridColumn>
+      </GridRow>
     </Box>
-  </ContentBlock>
+  </GridContainer>
 )
 
 interface NewsItemProps {
@@ -79,22 +83,22 @@ interface NewsItemProps {
 }
 
 export const NewsItemLayout: FC<NewsItemProps> = ({ sidebar, children }) => (
-  <ContentBlock>
-    <Box padding={[0, 0, 0, 6]}>
-      <div className={cn(styles.layout)}>
-        <Box paddingRight={[0, 0, 0, 4]} width="full">
+  <GridContainer>
+    <Box paddingTop={6} paddingBottom={10}>
+      <GridRow>
+        <GridColumn span={6} offset={1}>
           {children}
-        </Box>
-        <div className={styles.side}>
+        </GridColumn>
+        <GridColumn span={4}>
           <Sticky>
             <Box background="purple100" padding={4}>
               {sidebar}
             </Box>
           </Sticky>
-        </div>
-      </div>
+        </GridColumn>
+      </GridRow>
     </Box>
-  </ContentBlock>
+  </GridContainer>
 )
 
 export default ArticleLayout
