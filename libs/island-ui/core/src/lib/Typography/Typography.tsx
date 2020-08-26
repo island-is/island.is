@@ -19,8 +19,8 @@ export interface TypographyProps {
   color?: Colors
   truncate?: boolean
   links?: boolean
-  top?: ResponsiveSpace
-  bottom?: ResponsiveSpace
+  paddingTop?: ResponsiveSpace
+  paddingBottom?: ResponsiveSpace
 }
 
 export const Typography = ({
@@ -30,8 +30,8 @@ export const Typography = ({
   color,
   truncate,
   links,
-  top = 0,
-  bottom = 0,
+  paddingTop = 0,
+  paddingBottom = 0,
 }: TypographyProps) => (
   <Cmp
     className={cn(
@@ -42,20 +42,20 @@ export const Typography = ({
         [linksStyle]: links,
       },
       resolveResponsiveProp(
-        bottom,
-        spacing.bottomXs,
-        spacing.bottomSm,
-        spacing.bottomMd,
-        spacing.bottomLg,
-        spacing.bottomXl,
+        paddingBottom,
+        spacing.paddingBottomXs,
+        spacing.paddingBottomSm,
+        spacing.paddingBottomMd,
+        spacing.paddingBottomLg,
+        spacing.paddingBottomXl,
       ),
       resolveResponsiveProp(
-        top,
-        spacing.topXs,
-        spacing.topSm,
-        spacing.topMd,
-        spacing.topLg,
-        spacing.topXl,
+        paddingTop,
+        spacing.paddingTopXs,
+        spacing.paddingTopSm,
+        spacing.paddingTopMd,
+        spacing.paddingTopLg,
+        spacing.paddingTopXl,
       ),
     )}
   >

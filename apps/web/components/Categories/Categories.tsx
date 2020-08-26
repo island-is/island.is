@@ -27,13 +27,13 @@ export const Categories: FC<CategoriesProps> = ({
 }) => {
   return (
     <Box background="purple100" paddingY={8}>
-      <Typography variant="h3" as="h3" bottom={4}>
+      <Typography variant="h3" as="h3" paddingBottom={4}>
         {label}
       </Typography>
       <Grid>
         {cards.map((card, index) => {
           return (
-            <GridItem key={index} span={4} bottom={[3, 3, 6]}>
+            <GridItem key={index} span={4} paddingBottom={[3, 3, 6]}>
               <Card {...card} />
             </GridItem>
           )

@@ -63,7 +63,7 @@ export const Footer = ({
                     key={index}
                     variant="h3"
                     color="blue400"
-                    bottom={3}
+                    paddingBottom={3}
                   >
                     <a href={href}>{title}</a>
                   </Typography>
@@ -104,7 +104,7 @@ export const Footer = ({
               <GridItem span={6}>
                 <div className={cn(styles.columnBorder, styles.links)}>
                   {middleLinksTitle ? (
-                    <Typography variant="eyebrow" color="purple400" bottom={3}>
+                    <Typography variant="eyebrow" color="purple400" paddingBottom={3}>
                       {middleLinksTitle}
                     </Typography>
                   ) : null}
@@ -123,7 +123,7 @@ export const Footer = ({
             {showTagLinks ? (
               <GridItem span={3}>
                 {tagLinksTitle ? (
-                  <Typography variant="eyebrow" color="purple400" bottom={3}>
+                  <Typography variant="eyebrow" color="purple400" paddingBottom={3}>
                     {tagLinksTitle}
                   </Typography>
                 ) : null}
@@ -143,7 +143,7 @@ export const Footer = ({
       </Box>
       <Box background="blue400" paddingY={4}>
         <ContentBlock>
-          <Typography variant="eyebrow" color="white" bottom={3}>
+          <Typography variant="eyebrow" color="white" paddingBottom={3}>
             Aðrir opinberir vefir
           </Typography>
           <Grid>
@@ -152,7 +152,7 @@ export const Footer = ({
                 group.map(({ title, href }) => {
                   return (
                     <GridItem key={href} span={3}>
-                      <Typography variant="h5" color="white" bottom={3}>
+                      <Typography variant="h5" color="white" paddingBottom={3}>
                         <a
                           href={href}
                           target="_blank"

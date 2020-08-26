@@ -35,33 +35,33 @@ type Variants = {
   >
 }
 
-const makeBottom = (breakpoint: Breakpoint) =>
+const makePaddingBottom = (breakpoint: Breakpoint) =>
   styleMap(
     mapValues(theme.spacing, (space) =>
       themeUtils.responsiveStyle({ [breakpoint]: { paddingBottom: space } }),
     ),
-    `bottom_${breakpoint}`,
+    `paddingBottom_${breakpoint}`,
   ) as Spacing
 
-const makeTop = (breakpoint: Breakpoint) =>
+const makePaddingTop = (breakpoint: Breakpoint) =>
   styleMap(
     mapValues(theme.spacing, (space) =>
       themeUtils.responsiveStyle({ [breakpoint]: { paddingTop: space } }),
     ),
-    `top_${breakpoint}`,
+    `paddingTop_${breakpoint}`,
   ) as Spacing
 
 export const spacing = {
-  bottomXs: makeBottom('xs'),
-  bottomSm: makeBottom('sm'),
-  bottomMd: makeBottom('md'),
-  bottomLg: makeBottom('lg'),
-  bottomXl: makeBottom('xl'),
-  topXs: makeTop('xs'),
-  topSm: makeTop('sm'),
-  topMd: makeTop('md'),
-  topLg: makeTop('lg'),
-  topXl: makeTop('xl'),
+  paddingBottomXs: makePaddingBottom('xs'),
+  paddingBottomSm: makePaddingBottom('sm'),
+  paddingBottomMd: makePaddingBottom('md'),
+  paddingBottomLg: makePaddingBottom('lg'),
+  paddingBottomXl: makePaddingBottom('xl'),
+  paddingTopXs: makePaddingTop('xs'),
+  paddingTopSm: makePaddingTop('sm'),
+  paddingTopMd: makePaddingTop('md'),
+  paddingTopLg: makePaddingTop('lg'),
+  paddingTopXl: makePaddingTop('xl'),
 }
 
 export const truncate = style({

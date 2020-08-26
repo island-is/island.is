@@ -13,16 +13,16 @@ type GridColumns = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
 export interface TilesProps {
   span: ResponsiveProp<GridColumns>
   offset?: ResponsiveProp<GridColumns>
-  bottom?: ResponsiveSpace
-  top?: ResponsiveSpace
+  paddingBottom?: ResponsiveSpace
+  paddingTop?: ResponsiveSpace
 }
 
 export const GridItem: FC<TilesProps> = ({
   children,
   span = 1,
   offset = 0,
-  bottom = 0,
-  top = 0,
+  paddingBottom = 0,
+  paddingTop = 0,
 }) => {
   const styles = {
     ...styleRefs,
@@ -49,20 +49,20 @@ export const GridItem: FC<TilesProps> = ({
           styles.offsetXl,
         ),
         resolveResponsiveProp(
-          bottom,
-          styles.bottomXs,
-          styles.bottomSm,
-          styles.bottomMd,
-          styles.bottomLg,
-          styles.bottomXl,
+          paddingBottom,
+          styles.paddingBottomXs,
+          styles.paddingBottomSm,
+          styles.paddingBottomMd,
+          styles.paddingBottomLg,
+          styles.paddingBottomXl,
         ),
         resolveResponsiveProp(
-          top,
-          styles.bottomXs,
-          styles.bottomSm,
-          styles.bottomMd,
-          styles.bottomLg,
-          styles.bottomXl,
+          paddingTop,
+          styles.paddingTopXs,
+          styles.paddingTopSm,
+          styles.paddingTopMd,
+          styles.paddingTopLg,
+          styles.paddingTopXl,
         ),
       )}
     >
