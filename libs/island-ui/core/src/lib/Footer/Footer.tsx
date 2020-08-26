@@ -10,8 +10,7 @@ import { Typography } from '../Typography/Typography'
 import { Inline } from '../Inline/Inline'
 import { Tag } from '../Tag/Tag'
 import { Icon } from '../Icon/Icon'
-import { Grid } from '../Grid/Grid'
-import { GridItem } from '../Grid/GridItem'
+import { GridContainer, GridRow, GridColumn } from '../Grid'
 
 import * as styles from './Footer.treat'
 
@@ -47,17 +46,17 @@ export const Footer = ({
   hideLanguageSwitch = false,
 }: FooterProps) => {
   return (
-    <Box>
-      <Box width="full" background="blue100" padding={[3, 3, 6]}>
-        <ContentBlock>
-          <Grid>
-            <GridItem span={12}>
+    <>
+      <Box width="full" background="blue100" paddingY={[3, 3, 6]}>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span={12}>
               <Box paddingBottom={5}>
                 <Logo iconOnly id="footer_logo" />
               </Box>
-            </GridItem>
-            <GridItem span={3}>
-              <div className={cn(styles.columnBorder, styles.links)}>
+            </GridColumn>
+            <GridColumn span={3}>
+              <div className={cn(styles.links)}>
                 {topLinks.map(({ title, href }, index) => (
                   <Typography
                     key={index}
@@ -99,16 +98,20 @@ export const Footer = ({
                   </Inline>
                 </Box>
               </div>
-            </GridItem>
+            </GridColumn>
             {showMiddleLinks ? (
-              <GridItem span={6}>
-                <div className={cn(styles.columnBorder, styles.links)}>
+              <GridColumn span={6}>
+                <div className={cn(styles.links)}>
                   {middleLinksTitle ? (
-                    <Typography variant="eyebrow" color="purple400" paddingBottom={3}>
+                    <Typography
+                      variant="eyebrow"
+                      color="purple400"
+                      paddingBottom={3}
+                    >
                       {middleLinksTitle}
                     </Typography>
                   ) : null}
-                  <Tiles space={2} columns={[1, 2, 2, 1, 2]}>
+                  <Tiles space={2} columns={[1, 2, 2, 2, 2]}>
                     {middleLinks.map(({ title, href }, index) => {
                       return (
                         <Typography key={index} variant="h5" color="blue400">
@@ -118,12 +121,16 @@ export const Footer = ({
                     })}
                   </Tiles>
                 </div>
-              </GridItem>
+              </GridColumn>
             ) : null}
             {showTagLinks ? (
-              <GridItem span={3}>
+              <GridColumn span={3}>
                 {tagLinksTitle ? (
-                  <Typography variant="eyebrow" color="purple400" paddingBottom={3}>
+                  <Typography
+                    variant="eyebrow"
+                    color="purple400"
+                    paddingBottom={3}
+                  >
                     {tagLinksTitle}
                   </Typography>
                 ) : null}
@@ -136,22 +143,26 @@ export const Footer = ({
                     )
                   })}
                 </Inline>
-              </GridItem>
+              </GridColumn>
             ) : null}
-          </Grid>
-        </ContentBlock>
+          </GridRow>
+        </GridContainer>
       </Box>
       <Box background="blue400" paddingY={4}>
-        <ContentBlock>
-          <Typography variant="eyebrow" color="white" paddingBottom={3}>
-            Aðrir opinberir vefir
-          </Typography>
-          <Grid>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span={12}>
+              <Typography variant="eyebrow" color="white" paddingBottom={3}>
+                Aðrir opinberir vefir
+              </Typography>
+            </GridColumn>
+          </GridRow>
+          <GridRow>
             {chunk(bottomLinks, Math.ceil(bottomLinks.length / 4)).map(
               (group) =>
                 group.map(({ title, href }) => {
                   return (
-                    <GridItem key={href} span={3}>
+                    <GridColumn key={href} span={3}>
                       <Typography variant="h5" color="white" paddingBottom={3}>
                         <a
                           href={href}
@@ -162,14 +173,14 @@ export const Footer = ({
                           <Icon width="12" type="external" color="white" />
                         </a>
                       </Typography>
-                    </GridItem>
+                    </GridColumn>
                   )
                 }),
             )}
-          </Grid>
-        </ContentBlock>
+          </GridRow>
+        </GridContainer>
       </Box>
-    </Box>
+    </>
   )
 }
 

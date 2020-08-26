@@ -1,12 +1,12 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
-import { Box } from '../Box/Box'
+import { Box } from '../../Box/Box'
 import {
   resolveResponsiveProp,
   ResponsiveProp,
-} from '../../utils/responsiveProp'
-import * as styleRefs from './GridItem.treat'
-import { ResponsiveSpace } from '../Box/useBoxStyles'
+} from '../../../utils/responsiveProp'
+import * as styleRefs from './GridColumn.treat'
+import { ResponsiveSpace } from '../../Box/useBoxStyles'
 
 type GridColumns = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
 
@@ -17,7 +17,7 @@ export interface TilesProps {
   paddingTop?: ResponsiveSpace
 }
 
-export const GridItem: FC<TilesProps> = ({
+export const GridColumn: FC<TilesProps> = ({
   children,
   span = 1,
   offset = 0,

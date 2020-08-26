@@ -1,6 +1,6 @@
 import React, { FC, ReactNode } from 'react'
 import cn from 'classnames'
-import { ContentBlock, Box, Grid, GridItem } from '@island.is/island-ui/core'
+import { ContentBlock, Box, GridContainer, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { Sticky } from '../../components'
 
 import * as styles from './Layouts.treat'
@@ -15,19 +15,19 @@ export const CategoryLayout: FC<CategoryProps> = ({
   belowContent,
   children,
 }) => (
-  <ContentBlock>
+  <GridContainer>
     <Box paddingBottom={10}>
-      <Grid>
-        <GridItem span={3}>
+      <GridRow>
+        <GridColumn span={3}>
           <Sticky>{sidebar}</Sticky>
-        </GridItem>
-        <GridItem span={6} offset={1}>
+        </GridColumn>
+        <GridColumn span={6} offset={1}>
           <Box paddingBottom={10}>{children}</Box>
           {belowContent && belowContent}
-        </GridItem>
-      </Grid>
+        </GridColumn>
+      </GridRow>
     </Box>
-  </ContentBlock>
+  </GridContainer>
 )
 
 interface ArticleProps {

@@ -1,11 +1,10 @@
 import React, { FC, ReactNode } from 'react'
 import {
   Box,
-  Tiles,
-  Stack,
   Typography,
-  Grid,
-  GridItem,
+  GridRow,
+  GridColumn,
+  GridContainer,
 } from '@island.is/island-ui/core'
 import { Card } from '../Card/Card'
 
@@ -27,18 +26,25 @@ export const Categories: FC<CategoriesProps> = ({
 }) => {
   return (
     <Box background="purple100" paddingY={8}>
-      <Typography variant="h3" as="h3" paddingBottom={4}>
-        {label}
-      </Typography>
-      <Grid>
-        {cards.map((card, index) => {
-          return (
-            <GridItem key={index} span={4} paddingBottom={[3, 3, 6]}>
-              <Card {...card} />
-            </GridItem>
-          )
-        })}
-      </Grid>
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={12}>
+            <Typography variant="h3" as="h3" paddingBottom={4}>
+              {label}
+            </Typography>
+          </GridColumn>
+        </GridRow>
+
+        <GridRow>
+          {cards.map((card, index) => {
+            return (
+              <GridColumn key={index} span={4} paddingBottom={[3, 3, 6]}>
+                <Card {...card} />
+              </GridColumn>
+            )
+          })}
+        </GridRow>
+      </GridContainer>
     </Box>
   )
 }

@@ -86,15 +86,11 @@ const Home: Screen<HomeProps> = ({
 
   return (
     <>
-      <ContentBlock>
-        <Box paddingY={[2, 2, 3, 3, 6]}>
-          <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
-        </Box>
-      </ContentBlock>
+      <Box paddingY={[2, 2, 3, 3, 6]}>
+        <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
+      </Box>
       <Box background="purple100">
-        <ContentBlock width="large">
-          <Categories label={n('articlesTitle')} cards={cards} />
-        </ContentBlock>
+        <Categories label={n('articlesTitle')} cards={cards} />
       </Box>
     </>
   )

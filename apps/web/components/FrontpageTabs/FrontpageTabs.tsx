@@ -15,8 +15,9 @@ import {
   Stack,
   Box,
   Button,
-  Grid,
-  GridItem,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/web/i18n/I18n'
 import { useRouteNames } from '@island.is/web/i18n/useRouteNames'
@@ -151,9 +152,9 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   }, [selectedIndex, updateImage])
 
   return (
-    <>
-      <Grid>
-        <GridItem span={6} offset={1}>
+    <GridContainer>
+      <GridRow>
+        <GridColumn span={6} offset={1}>
           <TabList {...tab} aria-label="My tabs" className={styles.tabWrapper}>
             {tabs.map(({ subtitle = '' }, index) => {
               return (
@@ -164,10 +165,10 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
               )
             })}
           </TabList>
-        </GridItem>
-      </Grid>
-      <Grid>
-        <GridItem span={6} offset={1}>
+        </GridColumn>
+      </GridRow>
+      <GridRow>
+        <GridColumn span={6} offset={1}>
           {tabs.map(({ title, subtitle, content, link }, index) => {
             let href = null
             let as = null
@@ -247,17 +248,17 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
           >
             {searchContent}
           </Box>
-        </GridItem>
-        <GridItem span={5}>
+        </GridColumn>
+        <GridColumn span={5}>
           <div className={styles.imageContainer}>
             <div className={styles.dots}>
               <Dots />
             </div>
             {image ? <img src={image.url} alt={image.title} /> : <HeartSvg />}
           </div>
-        </GridItem>
-      </Grid>
-    </>
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }
 

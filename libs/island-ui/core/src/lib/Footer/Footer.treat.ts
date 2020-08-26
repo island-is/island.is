@@ -1,26 +1,6 @@
 import { style, globalStyle } from 'treat'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-export const columnBorder = style({
-  ':after': {
-    content: '""',
-    display: 'none',
-    position: 'absolute',
-    right: 24,
-    top: 0,
-    bottom: 0,
-    width: 1,
-    backgroundColor: theme.color.blue200,
-  },
-  ...themeUtils.responsiveStyle({
-    lg: {
-      ':after': {
-        display: 'inline-block',
-      },
-    },
-  }),
-})
-
 export const links = style({})
 export const linksWhite = style({})
 
