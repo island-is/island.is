@@ -14,7 +14,9 @@ import { possibleTypes } from './possibleTypes.json'
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
-const createClient = (initialState?: NormalizedCacheObject) => {
+const createClient = (
+  initialState?: NormalizedCacheObject,
+): ApolloClient<NormalizedCacheObject> => {
   const link = ApolloLink.from([retryLink, errorLink, authLink, httpLink])
 
   const cache = new InMemoryCache({
@@ -31,7 +33,9 @@ const createClient = (initialState?: NormalizedCacheObject) => {
   })
 }
 
-const initApollo = (initialState?: NormalizedCacheObject) => {
+const initApollo = (
+  initialState?: NormalizedCacheObject,
+): ApolloClient<NormalizedCacheObject> => {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
   if (!isBrowser) {
