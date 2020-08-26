@@ -1,5 +1,10 @@
 export default {
   production: true,
+  thjodskra: {
+    url: process.env.THJODSKRA_URL,
+    username: process.env.THJODSKRA_USERNAME,
+    password: process.env.THJODSKRA_PASSWORD,
+  },
   airlineApiKeys: {
     icelandair: process.env.ICELANDAIR_API_KEY,
     ernir: process.env.ERNIR_API_KEY,

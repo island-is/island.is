@@ -1,8 +1,13 @@
 import { Injectable } from '@nestjs/common'
+import fetch from 'isomorphic-fetch'
 
 import { ThjodskraUser, Fund } from '@island.is/air-discount-scheme/types'
 import { User } from './user.model'
+import { SplitName } from './user.types'
 import { FlightService } from '../flight'
+import { environment } from '../../../environments'
+
+const { thjodskra } = environment
 
 const ADS_POSTAL_CODES = {
   Reykhólahreppur: 380,
@@ -35,11 +40,28 @@ export class UserService {
       return true
     }
     return false
+
+  private parseName(name: string): SplitName {
+    const parts = name.split(' ')
+    return {
+      firstName: parts.slice(1).pop() || '',
+      middleName: parts.slice(1, -1).join(' '),
+      lastName: parts.slice(-1).pop() || '',
+    }
   }
 
   private async getUserFromNationalRegistry(
     nationalId: string,
   ): Promise<ThjodskraUser> {
+  // ): Promise<UserType> {
+  //   const url = `${thjodskra.url}/general-lookup`
+  //   const response: NationalRegistryResponse = await fetch(`${url}?ssn=${nationalId}`)
+  //   return {
+  //     ...this.parseName(response.name),
+  //     gender: response.gender,
+  //     nationalId: response.ssn,
+  //   }
+  // }
     // TODO: implement from thjodskra
     const users = [
       {

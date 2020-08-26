@@ -1,5 +1,10 @@
 export default {
   production: false,
+  thjodskra: {
+    url: 'https://skeyti.advania.is/ords/slrv/registry/v1.0',
+    username: process.env.THJODSKRA_USERNAME,
+    password: process.env.THJODSKRA_PASSWORD,
+  },
   airlineApiKeys: {
     icelandair: 'icelandair',
     ernir: 'ernir',
