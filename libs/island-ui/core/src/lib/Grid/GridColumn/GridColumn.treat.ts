@@ -63,31 +63,3 @@ export const offsetSm = makeOffset('sm')
 export const offsetMd = makeOffset('md')
 export const offsetLg = makeOffset('lg')
 export const offsetXl = makeOffset('xl')
-
-const makePaddingBottom = (breakpoint: Breakpoint) =>
-  styleMap(
-    mapValues(theme.spacing, (space) =>
-      themeUtils.responsiveStyle({ [breakpoint]: { paddingBottom: space } }),
-    ),
-    `paddingBottom_${breakpoint}`,
-  ) as Spacing
-
-export const paddingBottomXs = makePaddingBottom('xs')
-export const paddingBottomSm = makePaddingBottom('sm')
-export const paddingBottomMd = makePaddingBottom('md')
-export const paddingBottomLg = makePaddingBottom('lg')
-export const paddingBottomXl = makePaddingBottom('xl')
-
-const makePaddingTop = (breakpoint: Breakpoint) =>
-  styleMap(
-    mapValues(theme.spacing, (space) =>
-      themeUtils.responsiveStyle({ [breakpoint]: { paddingTop: space } }),
-    ),
-    `paddingTop_${breakpoint}`,
-  ) as Spacing
-
-export const paddingTopXs = makePaddingTop('xs')
-export const paddingTopSm = makePaddingTop('sm')
-export const paddingTopMd = makePaddingTop('md')
-export const paddingTopLg = makePaddingTop('lg')
-export const paddingTopXl = makePaddingTop('xl')

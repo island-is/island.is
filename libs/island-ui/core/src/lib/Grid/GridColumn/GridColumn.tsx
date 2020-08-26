@@ -5,7 +5,7 @@ import {
   resolveResponsiveProp,
   ResponsiveProp,
 } from '../../../utils/responsiveProp'
-import * as styleRefs from './GridColumn.treat'
+import * as styles from './GridColumn.treat'
 import { ResponsiveSpace } from '../../Box/useBoxStyles'
 
 type GridColumns = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
@@ -23,50 +23,30 @@ export const GridColumn: FC<TilesProps> = ({
   offset = 0,
   paddingBottom = 0,
   paddingTop = 0,
-}) => {
-  const styles = {
-    ...styleRefs,
-  }
-
-  return (
-    <Box
-      className={cn(
-        styles.base,
-        resolveResponsiveProp(
-          span,
-          styles.spanXs,
-          styles.spanSm,
-          styles.spanMd,
-          styles.spanLg,
-          styles.spanXl,
-        ),
-        resolveResponsiveProp(
-          offset,
-          styles.offsetXs,
-          styles.offsetSm,
-          styles.offsetMd,
-          styles.offsetLg,
-          styles.offsetXl,
-        ),
-        resolveResponsiveProp(
-          paddingBottom,
-          styles.paddingBottomXs,
-          styles.paddingBottomSm,
-          styles.paddingBottomMd,
-          styles.paddingBottomLg,
-          styles.paddingBottomXl,
-        ),
-        resolveResponsiveProp(
-          paddingTop,
-          styles.paddingTopXs,
-          styles.paddingTopSm,
-          styles.paddingTopMd,
-          styles.paddingTopLg,
-          styles.paddingTopXl,
-        ),
-      )}
-    >
-      {children}
-    </Box>
-  )
-}
+}) => (
+  <Box
+    paddingTop={paddingTop}
+    paddingBottom={paddingBottom}
+    className={cn(
+      styles.base,
+      resolveResponsiveProp(
+        span,
+        styles.spanXs,
+        styles.spanSm,
+        styles.spanMd,
+        styles.spanLg,
+        styles.spanXl,
+      ),
+      resolveResponsiveProp(
+        offset,
+        styles.offsetXs,
+        styles.offsetSm,
+        styles.offsetMd,
+        styles.offsetLg,
+        styles.offsetXl,
+      ),
+    )}
+  >
+    {children}
+  </Box>
+)
