@@ -1,5 +1,5 @@
 import { ApolloError, ServerError } from '@apollo/client'
-import { onError, ErrorResponse } from '@apollo/link-error'
+import { onError, ErrorResponse } from '@apollo/client/link/error'
 import Router from 'next/router'
 
 import { NotificationService, api } from '../services'

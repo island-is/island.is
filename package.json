@@ -36,9 +36,6 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "3.1.3",
-    "@apollo/link-context": "2.0.0-beta.3",
-    "@apollo/link-error": "2.0.0-beta.3",
-    "@apollo/link-retry": "2.0.0-beta.3",
     "@contentful/rich-text-from-markdown": "14.1.1",
     "@contentful/rich-text-react-renderer": "13.4.0",
     "@contentful/rich-text-types": "14.1.0",

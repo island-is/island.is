@@ -14,16 +14,14 @@ import { possibleTypes } from './possibleTypes.json'
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
-const createClient = (
-  initialState?: NormalizedCacheObject,
-): ApolloClient<NormalizedCacheObject> => {
+const createClient = (initialState): ApolloClient<NormalizedCacheObject> => {
   const link = ApolloLink.from([retryLink, errorLink, authLink, httpLink])
 
   const cache = new InMemoryCache({
     possibleTypes,
   }).restore(initialState || {})
 
-  return new ApolloClient({
+  return new ApolloClient<NormalizedCacheObject>({
     name: 'air-discount-scheme-client',
     version: '0.1',
     connectToDevTools: isBrowser,
@@ -33,9 +31,7 @@ const createClient = (
   })
 }
 
-const initApollo = (
-  initialState?: NormalizedCacheObject,
-): ApolloClient<NormalizedCacheObject> => {
+const initApollo = (initialState): ApolloClient<NormalizedCacheObject> => {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
   if (!isBrowser) {
