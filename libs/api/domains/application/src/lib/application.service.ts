@@ -3,6 +3,8 @@ import {
   ApplicationApi,
   Configuration,
   UpdateApplicationDto,
+  querystring,
+  ApplicationTypeIdEnum,
 } from '../../gen/fetch'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
@@ -23,6 +25,10 @@ export class ApplicationService {
     return this.applicationApi.applicationControllerCreate({
       createApplicationDto: input,
     })
+  }
+
+  async findAllByType(typeId: ApplicationTypeIdEnum) {
+    return this.applicationApi.applicationControllerFindAll({ typeId })
   }
 
   async update(input: UpdateApplicationInput) {

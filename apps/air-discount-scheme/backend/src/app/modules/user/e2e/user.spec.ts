@@ -9,16 +9,18 @@ let cacheManager: CacheManger
 beforeAll(async () => {
   app = await setup()
   cacheManager = app.get<CacheManger>(CACHE_MANAGER)
+  cacheManager.ttl = () => ''
 })
 
 describe('Get Discount By DiscountCode', () => {
-  it(`GET /public/discounts/:discountCode/user should return data`, async () => {
+  it(`GET /api/public/discounts/:discountCode/user should return data`, async () => {
     const nationalId = '1326487905'
     const spy = jest
       .spyOn(cacheManager, 'get')
       .mockImplementation(() => Promise.resolve({ nationalId }))
     const response = await request(app.getHttpServer())
-      .get(`/public/discounts/12345678/user`)
+      .get(`/api/public/discounts/12345678/user`)
+      .set('Authorization', 'Bearer ernir')
       .expect(200)
     spy.mockRestore()
 

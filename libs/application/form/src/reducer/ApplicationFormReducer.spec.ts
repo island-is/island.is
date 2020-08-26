@@ -149,7 +149,7 @@ describe('ApplicationFormReducer', () => {
     })
   })
   describe('next screen', () => {
-    const action = { type: ActionTypes.NEXT_SCREEN }
+    const action = { type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN, payload: {} }
     it('should go to the next screen', () => {
       const updatedState = ApplicationReducer(initializedState, action)
       expect(updatedState.activeScreen).toBe(1)
@@ -295,7 +295,7 @@ describe('ApplicationFormReducer', () => {
     it('should not do anything if the current screen is not a repeater', () => {
       const stateWhereActiveScreenIsNoRepeater = ApplicationReducer(
         initializedState,
-        { type: ActionTypes.NEXT_SCREEN },
+        { type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN, payload: {} },
       )
       const updatedState = ApplicationReducer(
         stateWhereActiveScreenIsNoRepeater,

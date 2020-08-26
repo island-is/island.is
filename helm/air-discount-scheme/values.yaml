@@ -11,6 +11,7 @@ air-discount-scheme-api:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api
   env:
     BACKEND_URL: "http://web-air-discount-scheme-backend"
+    SENTRY_DSN: 'https://d10d7fc22f18413d97e73fab76910f07@o406638.ingest.sentry.io/5399531'
   secrets:
     AUTH_JWT_SECRET: "/k8s/air-discount-scheme/api/AUTH_JWT_SECRET"
   healthCheck:
@@ -43,6 +44,8 @@ air-discount-scheme-backend:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend
   secrets:
     DB_PASS: '/k8s/air-discount-scheme/backend/DB_PASSWORD'
+    AIR_ICELAND_CONNECT_API_KEY: "/k8s/air-discount-scheme/backend/AIR_ICELAND_CONNECT_API_KEY"
+    ERNIR_API_KEY: "/k8s/air-discount-scheme/backend/ERNIR_API_KEY"
   healthCheck:
     livenessPath: /liveness
   ingress:

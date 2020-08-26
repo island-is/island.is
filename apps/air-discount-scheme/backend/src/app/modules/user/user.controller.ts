@@ -1,13 +1,16 @@
-import { Controller, Param, Get } from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { Controller, Param, Get, UseGuards } from '@nestjs/common'
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { GetUserByDiscountCodeParams } from './user.validator'
 import { UserService } from './user.service'
 import { User } from './user.model'
 import { DiscountService } from '../discount'
+import { AuthGuard } from '../common'
 
 @ApiTags('Users')
-@Controller('public')
+@Controller('api/public')
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class PublicUserController {
   constructor(
     private readonly discountService: DiscountService,

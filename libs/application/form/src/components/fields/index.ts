@@ -6,3 +6,5 @@ export { default as TextFormField } from './TextFormField'
 
 /** Example fields **/
 export { default as ExampleCountryField } from './custom/ExampleCountryField'
+
+export * from './PaternityLeave'

@@ -1,3 +1,5 @@
+import { FormType } from '../forms'
+
 export type ApplicationStatus =
   | 'approved'
   | 'rejected'
@@ -10,7 +12,7 @@ export interface Application {
   externalId: string
   status: ApplicationStatus
   applicant: string
-  typeId: string // TODO should this be a specific type on its own?
+  typeId: FormType
   modified: Date
   created: Date
   attachments: object

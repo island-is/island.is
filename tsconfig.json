@@ -47,6 +47,36 @@
       "@island.is/gjafakort/types": ["libs/gjafakort/types/src/index.ts"],
       "@island.is/gjafakort/consts": ["libs/gjafakort/consts/src/index.ts"],
       "@island.is/island-ui/theme": ["libs/island-ui/theme/src/index.ts"],
+      "@island.is/service-portal/modules": [
+        "libs/service-portal/modules/src/index.ts"
+      ],
+      "@island.is/service-portal/constants": [
+        "libs/service-portal/constants/src/index.ts"
+      ],
+      "@island.is/service-portal/core": [
+        "libs/service-portal/core/src/index.ts"
+      ],
+      "@island.is/service-portal/applications": [
+        "libs/service-portal/applications/src/index.ts"
+      ],
+      "@island.is/service-portal/documents": [
+        "libs/service-portal/documents/src/index.ts"
+      ],
+      "@island.is/service-portal/settings": [
+        "libs/service-portal/settings/src/index.ts"
+      ],
+      "@island.is/service-portal/finance": [
+        "libs/service-portal/finance/src/index.ts"
+      ],
+      "@island.is/service-portal/family": [
+        "libs/service-portal/family/src/index.ts"
+      ],
+      "@island.is/service-portal/health": [
+        "libs/service-portal/health/src/index.ts"
+      ],
+      "@island.is/service-portal/education": [
+        "libs/service-portal/education/src/index.ts"
+      ],
       "@island.is/island-ui/contentful": [
         "libs/island-ui/contentful/src/index.ts"
       ],
@@ -61,12 +91,13 @@
       "@island.is/api/domains/file-upload": [
         "libs/api/domains/file-upload/src/index.ts"
       ],
-      "@island.is/libs/api/domains/file-upload": [
-        "libs/libs/api/domains/file-upload/src/index.ts"
+      "@island.is/file-storage": ["libs/file-storage/src/index.ts"],
+      "@island.is/application/graphql": [
+        "libs/application/graphql/src/index.ts"
       ],
-      "@island.is/aws-s3": ["libs/aws-s3/src/index.ts"],
-      "@island.is/aws-s3-file-upload": ["libs/aws-s3-file-upload/src/index.ts"],
-      "@island.is/file-storage": ["libs/file-storage/src/index.ts"]
+      "@island.is/air-discount-scheme/types": [
+        "libs/air-discount-scheme/types/src/index.ts"
+      ]
     }
   },
   "exclude": ["node_modules", "tmp"]

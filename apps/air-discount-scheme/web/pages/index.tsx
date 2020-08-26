@@ -1,5 +1,5 @@
 import { withLocale } from '../i18n'
 import { Home } from '../screens'
-import { Screen } from '../types'
+import { withApollo } from '../graphql/withApollo'
 
-export default withLocale('is')(Home as Screen)
+export default withApollo(withLocale('is')(Home))

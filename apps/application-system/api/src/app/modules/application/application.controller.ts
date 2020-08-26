@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Delete,
+  Query,
 } from '@nestjs/common'
 import { omit } from 'lodash'
 import { InjectQueue } from '@nestjs/bull'
@@ -20,6 +21,7 @@ import { ApplicationValidationPipe } from './application.pipe'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
 import { mergeAnswers } from '@island.is/application/schema'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
+import { FormType } from '@island.is/application/schema'
 
 @ApiTags('application')
 @Controller('application')
@@ -40,6 +42,16 @@ export class ApplicationController {
     }
 
     return application
+  }
+
+  @Get()
+  @ApiOkResponse({ type: Application, isArray: true })
+  async findAll(@Query('typeId') typeId: string): Promise<Application[]> {
+    if (typeId) {
+      return this.applicationService.findAllByType(typeId as FormType)
+    } else {
+      return this.applicationService.findAll()
+    }
   }
 
   @Post()

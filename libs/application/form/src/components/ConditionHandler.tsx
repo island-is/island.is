@@ -1,16 +1,17 @@
 import { FC, useEffect } from 'react'
 import { FormItemTypes, FormValue } from '@island.is/application/schema'
 import { useWatch } from 'react-hook-form'
-import { FieldDef, FormScreen } from '../types'
+import { FieldDef, MultiFieldScreen } from '../types'
 import { convertLeafToScreen } from '../reducer/reducerUtils'
 
-// Use this component to optimize performance for applying conditions in response to form value changes
+// Use this component to optimize performance for applying conditions in response to form value changes for multifields
 export const ConditionHandler: FC<{
   answerQuestions(Answers): void
   formValue: FormValue
-  screen: FormScreen
+  screen: MultiFieldScreen
 }> = ({ answerQuestions, formValue, screen }) => {
   const data = useWatch({ defaultValue: formValue })
+
   useEffect(() => {
     const newScreen = convertLeafToScreen(screen, {
       ...formValue,

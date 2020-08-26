@@ -1,4 +1,8 @@
-import { User } from '../user'
+export type AuthUser = {
+  ssn: string
+  mobile: string
+  name: string
+}
 
 export type CookieOptions = {
   secure: boolean
@@ -27,6 +31,6 @@ export type Permissions = {
 }
 
 export type Credentials = {
-  user: User
+  user: AuthUser
   csrfToken: string
 }

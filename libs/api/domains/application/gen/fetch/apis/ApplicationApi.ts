@@ -46,6 +46,10 @@ export interface ApplicationControllerDeleteAttachmentRequest {
     deleteAttachmentDto: DeleteAttachmentDto;
 }
 
+export interface ApplicationControllerFindAllRequest {
+    typeId: string;
+}
+
 export interface ApplicationControllerFindOneRequest {
     id: string;
 }
@@ -158,6 +162,38 @@ export class ApplicationApi extends runtime.BaseAPI {
      */
     async applicationControllerDeleteAttachment(requestParameters: ApplicationControllerDeleteAttachmentRequest): Promise<Application> {
         const response = await this.applicationControllerDeleteAttachmentRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     */
+    async applicationControllerFindAllRaw(requestParameters: ApplicationControllerFindAllRequest): Promise<runtime.ApiResponse<Array<Application>>> {
+        if (requestParameters.typeId === null || requestParameters.typeId === undefined) {
+            throw new runtime.RequiredError('typeId','Required parameter requestParameters.typeId was null or undefined when calling applicationControllerFindAll.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        if (requestParameters.typeId !== undefined) {
+            queryParameters['typeId'] = requestParameters.typeId;
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/application`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(ApplicationFromJSON));
+    }
+
+    /**
+     */
+    async applicationControllerFindAll(requestParameters: ApplicationControllerFindAllRequest): Promise<Array<Application>> {
+        const response = await this.applicationControllerFindAllRaw(requestParameters);
         return await response.value();
     }
 

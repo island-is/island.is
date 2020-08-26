@@ -1,14 +1,33 @@
-import { Controller, Param, Post, Inject, forwardRef } from '@nestjs/common'
-import { ApiExcludeEndpoint, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  Controller,
+  Param,
+  Post,
+  Get,
+  Inject,
+  forwardRef,
+  UseGuards,
+} from '@nestjs/common'
+import {
+  ApiBearerAuth,
+  ApiExcludeEndpoint,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 
 import { Discount } from './discount.model'
-import { CreateDiscountCodeParams } from './discount.validator'
+import {
+  CreateDiscountCodeParams,
+  GetDiscountByNationalIdParams,
+} from './discount.validator'
 import { DiscountService } from './discount.service'
 import { DiscountLimitExceeded } from './discount.error'
 import { FlightService } from '../flight'
+import { AuthGuard } from '../common'
 
 @ApiTags('Discounts')
-@Controller('public')
+@Controller('api/public')
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class PublicDiscountController {
   constructor(
     private readonly discountService: DiscountService,
@@ -33,13 +52,27 @@ export class PublicDiscountController {
   }
 }
 
-@Controller('private')
+@Controller('api/private')
 export class PrivateDiscountController {
   constructor(
     private readonly discountService: DiscountService,
     @Inject(forwardRef(() => FlightService))
     private readonly flightService: FlightService,
   ) {}
+
+  @Get('users/:nationalId/discounts')
+  @ApiExcludeEndpoint()
+  async getDiscountByNationalId(
+    @Param() params: GetDiscountByNationalIdParams,
+  ): Promise<Discount[]> {
+    const discount = await this.discountService.getDiscountByNationalId(
+      params.nationalId,
+    )
+    if (!discount) {
+      return []
+    }
+    return [discount]
+  }
 
   @Post('users/:nationalId/discounts')
   @ApiExcludeEndpoint()

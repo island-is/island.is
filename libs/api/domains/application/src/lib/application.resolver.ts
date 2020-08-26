@@ -1,6 +1,7 @@
 import { Args, Query, Resolver, Mutation } from '@nestjs/graphql'
 import { ApplicationService } from './application.service'
 import { Application } from './application.model'
+import { GetApplicationsByTypeInput } from './dto/getApplicationsByType.input'
 import { GetApplicationInput } from './dto/getApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
@@ -16,6 +17,13 @@ export class ApplicationResolver {
     @Args('input') input: GetApplicationInput,
   ): Promise<Application | null> {
     return this.applicationService.findOne(input.id)
+  }
+
+  @Query(() => [Application], { nullable: true })
+  getApplicationsByType(
+    @Args('input') input: GetApplicationsByTypeInput,
+  ): Promise<Application[] | null> {
+    return this.applicationService.findAllByType(input.typeId)
   }
 
   @Mutation(() => Application, { nullable: true })

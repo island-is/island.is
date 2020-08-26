@@ -1,2 +1,2 @@
-export { User } from './user.types'
+export { User } from './user.model'
 export { UserModule } from './user.module'

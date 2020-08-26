@@ -57,7 +57,7 @@ spec:
             - name: {{ $key }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ $fullName }}
+                  name: {{ $fullName }}-initContainer
                   key: {{ $key }}
             {{- end }}
             {{- end }}
@@ -94,12 +94,16 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: {{ .Values.healthCheck.livenessPath }}
+              path: {{ .Values.healthCheck.liveness.path }}
               port: http
+            initialDelaySeconds: {{ .Values.healthCheck.liveness.initialDelaySeconds }}
+            timeoutSeconds:  {{ .Values.healthCheck.liveness.timeoutSeconds }}
           readinessProbe:
             httpGet:
-              path: {{ .Values.healthCheck.livenessPath }}
+              path: {{ .Values.healthCheck.readiness.path }}
               port: http
+            initialDelaySeconds: {{ .Values.healthCheck.readiness.initialDelaySeconds }}
+            timeoutSeconds:  {{ .Values.healthCheck.readiness.timeoutSeconds }}
           env:
             - name: APP_VERSION
               value: {{ .Values.global.image.tag }}

@@ -110,7 +110,8 @@ export enum UpdateApplicationDtoTypeIdEnum {
     ExampleForm = 'ExampleForm',
     ExampleForm2 = 'ExampleForm2',
     ExampleForm3 = 'ExampleForm3',
-    FamilyAndPets = 'FamilyAndPets'
+    FamilyAndPets = 'FamilyAndPets',
+    PaternityLeave = 'PaternityLeave'
 }
 /**
 * @export

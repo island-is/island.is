@@ -1,4 +1,5 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useCallback } from 'react'
+import { useMutation } from '@apollo/client'
 import {
   FormValue,
   FormItemTypes,
@@ -7,31 +8,34 @@ import {
   FormType,
 } from '@island.is/application/schema'
 import { Typography, Box, Button, Divider } from '@island.is/island-ui/core'
+import {
+  CREATE_APPLICATION,
+  UPDATE_APPLICATION,
+  CREATE_UPLOAD_URL,
+  ADD_ATTACHMENT,
+  DELETE_ATTACHMENT,
+} from '@island.is/application/graphql'
+import deepmerge from 'deepmerge'
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form'
 import { FormScreen } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
 import { resolver } from '../validation/resolver'
-import ConditionHandler from './ConditionHandler'
 import FormRepeater from './FormRepeater'
-import { useMutation } from '@apollo/client'
-import { CREATE_APPLICATION } from '../graphql/mutations/createApplication'
-import { UPDATE_APPLICATION } from '../graphql/mutations/updateApplication'
-import { CREATE_UPLOAD_URL } from '../graphql/mutations/createUploadUrl'
-import { ADD_ATTACHMENT } from '../graphql/mutations/addAttachment'
-import { DELETE_ATTACHMENT } from '../graphql/mutations/deleteAttachment'
 
 type ScreenProps = {
+  answerAndGoToNextScreen(Answers): void
   formValue: FormValue
   formTypeId: FormType
   answerQuestions(Answers): void
   dataSchema: Schema
   shouldSubmit?: boolean
   expandRepeater(): void
-  nextScreen(): void
   prevScreen(): void
   screen: FormScreen
   section?: Section
+  applicationId?: string
+  setApplicationId(id: string): void
 }
 
 const Screen: FC<ScreenProps> = ({
@@ -40,13 +44,14 @@ const Screen: FC<ScreenProps> = ({
   answerQuestions,
   dataSchema,
   expandRepeater,
-  nextScreen,
+  answerAndGoToNextScreen,
   prevScreen,
   shouldSubmit = false,
   screen,
   section,
+  applicationId,
+  setApplicationId,
 }) => {
-  const [existingApplicationId, setExistingApplicationId] = useState(null) // TODO move to form reducer state
   const hookFormData = useForm<FormValue>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -60,7 +65,7 @@ const Screen: FC<ScreenProps> = ({
     CREATE_APPLICATION,
     {
       onCompleted({ createApplication }) {
-        setExistingApplicationId(createApplication.id)
+        setApplicationId(createApplication.id)
       },
     },
   )
@@ -78,10 +83,11 @@ const Screen: FC<ScreenProps> = ({
 
   const { handleSubmit, errors, reset } = hookFormData
 
-  const goBack = () => {
-    reset(formValue)
+  const goBack = useCallback(() => {
+    // using deepmerge to prevent some weird react-hook-form read-only bugs
+    reset(deepmerge({}, formValue))
     prevScreen()
-  }
+  }, [formValue, prevScreen, reset])
 
   const onFileChange = async (e) => {
     const file = e.target.files[0]
@@ -108,7 +114,7 @@ const Screen: FC<ScreenProps> = ({
     addAttachment({
       variables: {
         input: {
-          id: existingApplicationId,
+          id: applicationId,
           key: fields.key,
           url: `${response.url}/${fields.key}`,
         },
@@ -124,11 +130,11 @@ const Screen: FC<ScreenProps> = ({
       // call submit mutation
       console.log('here we will submit', formValue)
     } else {
-      if (existingApplicationId) {
+      if (applicationId) {
         await updateApplication({
           variables: {
             input: {
-              id: existingApplicationId,
+              id: applicationId,
               typeId: formTypeId,
               answers: data,
             },
@@ -150,8 +156,7 @@ const Screen: FC<ScreenProps> = ({
         })
       }
       console.log('these were my answers:', data)
-      answerQuestions(data)
-      nextScreen()
+      answerAndGoToNextScreen(data)
     }
   }
 
@@ -166,11 +171,6 @@ const Screen: FC<ScreenProps> = ({
         height="full"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <ConditionHandler
-          answerQuestions={answerQuestions}
-          formValue={formValue}
-          screen={screen}
-        />
         <Box flexGrow={1}>
           {section && <Typography color="dark300">{section.name}</Typography>}
           <Typography variant="h2">{screen.name}</Typography>
@@ -188,6 +188,7 @@ const Screen: FC<ScreenProps> = ({
               />
             ) : screen.type === FormItemTypes.MULTI_FIELD ? (
               <FormMultiField
+                answerQuestions={answerQuestions}
                 errors={errors}
                 multiField={screen}
                 formValue={formValue}

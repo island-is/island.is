@@ -61,6 +61,7 @@ components:
             - ExampleForm2
             - ExampleForm3
             - FamilyAndPets
+            - PaternityLeave
         answers:
           type: object
       required:
@@ -82,6 +83,7 @@ components:
             - ExampleForm2
             - ExampleForm3
             - FamilyAndPets
+            - PaternityLeave
         applicant:
           type: string
         assignee:
@@ -119,6 +121,7 @@ components:
             - ExampleForm2
             - ExampleForm3
             - FamilyAndPets
+            - PaternityLeave
         applicant:
           type: string
         assignee:
@@ -226,6 +229,25 @@ paths:
       tags:
         - application
   /application:
+    get:
+      operationId: ApplicationController_findAll
+      parameters:
+        - name: typeId
+          required: true
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Application'
+      tags:
+        - application
     post:
       operationId: ApplicationController_create
       parameters: []
