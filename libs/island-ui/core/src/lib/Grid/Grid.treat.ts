@@ -1,5 +1,30 @@
-import { style, globalStyle } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { style, styleMap, globalStyle } from 'treat'
+import mapValues from 'lodash/mapValues'
+import { Theme, theme, themeUtils } from '@island.is/island-ui/theme'
+
+
+const bla = {
+  9: `repeat(9, 1fr)`,
+  12: `repeat(12, 1fr)`,
+} as const
+
+type Columns = Record<keyof typeof bla, string>
+
+const makeSpan = (breakpoint: keyof Theme['breakpoints']) =>
+  styleMap(
+    mapValues(bla, (rows) =>
+      themeUtils.responsiveStyle({
+        [breakpoint]: { gridTemplateRows: `${rows}` },
+      }),
+    ),
+    `span_${breakpoint}`,
+  ) as Columns
+
+export const columnsXs = makeSpan('xs')
+export const columnsSm = makeSpan('sm')
+export const columnsMd = makeSpan('md')
+export const columnsLg = makeSpan('lg')
+export const columnsXl = makeSpan('xl')
 
 export const grid = style({
   boxSizing: 'border-box',
