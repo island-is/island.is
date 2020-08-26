@@ -1,15 +1,11 @@
 import React, { FC, ReactNode } from 'react'
-import cn from 'classnames'
 import {
-  ContentBlock,
   Box,
   GridContainer,
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
 import { Sticky } from '../../components'
-
-import * as styles from './Layouts.treat'
 
 interface CategoryProps {
   sidebar: ReactNode
