@@ -21,8 +21,6 @@ export const Sleeve: FC<SleeveProps> = ({
     setIsOpen(!isOpen)
   }
 
-  console.log('isOpen', isOpen)
-
   return (
     <div className={cn(styles.container, { [styles.open]: isOpen })}>
       <div className={styles.wrapper}>

@@ -343,7 +343,6 @@ const embeddedNodes = (locale) => ({
         details,
       } = node.data.target.fields
 
-      console.log('details', details)
       return {
         showTopContent: details.content.length,
         topContent: (

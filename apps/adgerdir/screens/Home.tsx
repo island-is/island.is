@@ -85,7 +85,7 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
       <ColorSchemeContext.Provider value={{ colorScheme: 'purple' }}>
         <Box width="full" overflow="hidden" marginBottom={10}>
           <ContentBlock width="large">
-            <Box padding={[3, 3, 6]}>
+            <Box padding={[0, 3, 6]}>
               <GroupedPages
                 topContent={
                   <Stack space={3}>
@@ -109,7 +109,7 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
         <Box width="full" overflow="hidden" marginBottom={10}>
           <ContentBlock width="large">
-            <Box padding={[3, 3, 6]}>
+            <Box padding={[0, 3, 6]}>
               <GroupedPages
                 topContent={
                   <Stack space={3}>
@@ -120,7 +120,9 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
                       {frontpage.title}
                     </Typography>
                     <Typography variant="p" as="p">
-                      {frontpage.description}
+                      Kapp er lagt á að Ísland verði með fyrstu löndum til að
+                      byggja aftur upp eftirspurn í ferðaþjónustu í kjölfar þess
+                      að ferðatakmörkunum verður aflétt.
                     </Typography>
                   </Stack>
                 }
@@ -133,7 +135,7 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
       <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
         <Box width="full" overflow="hidden" marginBottom={10}>
           <ContentBlock width="large">
-            <Box padding={[3, 3, 6]}>
+            <Box padding={[0, 3, 6]}>
               <GroupedPages
                 topContent={
                   <Stack space={3}>
@@ -154,7 +156,6 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
           </ContentBlock>
         </Box>
       </ColorSchemeContext.Provider>
-      <Box style={{ height: '800px' }}></Box>
     </>
   )
 }

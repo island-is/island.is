@@ -62,8 +62,6 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
         break
     }
 
-    console.log(tagVariant)
-
     const Content = (
       <Box ref={ref} display="flex" height="full" flexDirection="column">
         <Box flexGrow={1} height="full">

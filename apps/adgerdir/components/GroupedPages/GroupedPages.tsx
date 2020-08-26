@@ -37,8 +37,9 @@ export const GroupedPages: FC<GroupedPagesProps> = ({
           ) : null}
           {bottomContent ? (
             <Box
-              padding={[3, 3, 6, 15]}
-              paddingY={[3, 3, 6, 10]}
+              paddingX={[3, 3, 6, 15]}
+              paddingBottom={[3, 3, 6, 10]}
+              paddingTop={0}
               className={styles.bottom}
             >
               {bottomContent}

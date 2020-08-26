@@ -1,10 +1,16 @@
 import { style, styleMap } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const container = style({
-  borderRadius: theme.border.radius.large,
-  borderWidth: 1,
-  borderStyle: 'solid',
+  borderRadius: 0,
+  border: 'none',
+  ...themeUtils.responsiveStyle({
+    sm: {
+      borderRadius: theme.border.radius.large,
+      borderWidth: 1,
+      borderStyle: 'solid',
+    },
+  }),
 })
 
 export const variants = styleMap({

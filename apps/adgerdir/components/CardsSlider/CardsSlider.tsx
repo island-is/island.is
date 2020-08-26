@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
+import cn from 'classnames'
 import AliceCarousel from 'react-alice-carousel'
-// import {} from '@island.is/island-ui/core'
 import { Card } from '../Card/Card'
 
 import * as styles from './CardsSlider.treat'
+import { Icon, Inline } from '@island.is/island-ui/core'
 
-const tmp = [
+const items = [
   {
     title: 'Ferðagjöf',
     description:
@@ -55,6 +56,8 @@ export const CardsSlider = () => {
     paddingRight: 0,
   })
   const ref = useRef(null)
+  const prevRef = useRef(null)
+  const nextRef = useRef(null)
 
   const handleOnDragStart = (e) => e.preventDefault()
 
@@ -89,50 +92,104 @@ export const CardsSlider = () => {
     return () => window.removeEventListener('resize', handleResize)
   }, [handleResize])
 
-  return (
-    <>
-      <div className={styles.wrapper}>
-        <AliceCarousel
-          ref={ref}
-          infinite={false}
-          dotsDisabled
-          buttonsDisabled
-          stagePadding={stagePadding}
-          responsive={{
-            0: {
-              items: 1,
-            },
-            1200: {
-              items: 2,
-            },
-          }}
-          mouseTrackingEnabled
-        >
-          {tmp.map(({ title, description }, index) => {
+  const slideNext = () => {
+    ref.current.slideNext()
+  }
+
+  const slidePrev = () => {
+    ref.current.slidePrev()
+  }
+
+  const Dots = () => {
+    if (ref.current) {
+      const { slides, items } = ref.current.state
+
+      const jump = Math.floor(slides.length / items)
+
+      return (
+        <div className={styles.dotsContainer}>
+          {[...Array(jump).keys()].map((item, index) => {
             return (
-              <>
-                <div
-                  onDragStart={handleOnDragStart}
-                  style={{ minHeight: height, display: 'inline-flex' }}
-                  className={styles.item}
-                >
-                  <Card
-                    key={index}
-                    description={description}
-                    title={title}
-                    tags={[
-                      { title: 'Styrkir', tagProps: { variant: 'red' } },
-                      { title: 'Lán', tagProps: { variant: 'red' } },
-                      { title: 'Atvinnulíf', tagProps: { variant: 'red' } },
-                    ]}
-                  />
-                </div>
-              </>
+              <button
+                key={item}
+                onClick={() => ref.current.slideTo(index * items)}
+                className={styles.dot}
+              />
             )
           })}
-        </AliceCarousel>
+        </div>
+      )
+    }
+
+    return null
+  }
+
+  return (
+    <div className={styles.wrapper}>
+      <AliceCarousel
+        key="this-key-here"
+        controlsStrategy="responsive"
+        ref={ref}
+        infinite={false}
+        stagePadding={stagePadding}
+        responsive={{
+          0: {
+            items: 1,
+          },
+          1200: {
+            items: 2,
+          },
+        }}
+        preservePosition
+        dotsDisabled
+        buttonsDisabled
+        mouseTrackingEnabled
+      >
+        {items.map(({ title, description }, index) => {
+          return (
+            <>
+              <div
+                onDragStart={handleOnDragStart}
+                style={{ minHeight: height, display: 'inline-flex' }}
+                className={styles.item}
+              >
+                <Card
+                  key={index}
+                  description={description}
+                  title={title}
+                  tags={[
+                    { title: 'Styrkir', tagProps: { variant: 'red' } },
+                    { title: 'Lán', tagProps: { variant: 'red' } },
+                    { title: 'Atvinnulíf', tagProps: { variant: 'red' } },
+                  ]}
+                />
+              </div>
+            </>
+          )
+        })}
+      </AliceCarousel>
+
+      <div className={styles.controls}>
+        <Inline space={2}>
+          <button
+            className={cn(styles.arrowButton, {})}
+            ref={prevRef}
+            onClick={slidePrev}
+          >
+            <Icon type="arrowLeft" color="white" width="18" height="18" />
+          </button>
+          <button
+            className={cn(styles.arrowButton, {})}
+            ref={nextRef}
+            onClick={slideNext}
+          >
+            <Icon type="arrowRight" color="white" width="18" height="18" />
+          </button>
+        </Inline>
       </div>
-    </>
+
+      <Dots />
+    </div>
   )
 }
 
