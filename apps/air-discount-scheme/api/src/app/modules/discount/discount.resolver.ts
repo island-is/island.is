@@ -14,6 +14,8 @@ import { Authorize, CurrentUser, AuthService, AuthUser } from '../auth'
 import { Discount, FlightLegFund } from './models'
 import { User } from '../user'
 
+type DiscountWithThjodskraUser = Discount & { user: ThjodskraUser }
+
 @Resolver(() => Discount)
 export class DiscountResolver {
   constructor(private readonly authService: AuthService) {}
@@ -23,32 +25,31 @@ export class DiscountResolver {
   async fetchDiscounts(
     @CurrentUser() user: AuthUser,
     @Context('dataSources') { backendApi },
-  ): Promise<Discount> {
+  ): Promise<DiscountWithThjodskraUser[]> {
     const relations: ThjodskraUser[] = await backendApi.getUserRelations(
       user.nationalId,
     )
-    const discounts = await relations.reduce((promise, relation) => {
-      return promise.then(async (acc) => {
-        let discount: TDiscount = await backendApi.getDiscount(
-          relation.nationalId,
-        )
-        if (!discount && relation.flightLegsLeft > 0) {
-          discount = await backendApi.createDiscount(relation.nationalId)
-        }
-        return [...acc, discount]
-      })
-    }, Promise.resolve([]))
-
-    return discounts.map((discount) => ({
-      ...discount,
-      user: relations.find(
-        (relation) => relation.nationalId === discount.nationalId,
-      ),
-    }))
+    return relations.reduce(
+      (
+        promise: Promise<DiscountWithThjodskraUser[]>,
+        relation: ThjodskraUser,
+      ) => {
+        return promise.then(async (acc) => {
+          let discount: TDiscount = await backendApi.getDiscount(
+            relation.nationalId,
+          )
+          if (!discount && relation.flightLegsLeft > 0) {
+            discount = await backendApi.createDiscount(relation.nationalId)
+          }
+          return [...acc, { ...discount, user: relation }]
+        })
+      },
+      Promise.resolve([]),
+    ) as Promise<DiscountWithThjodskraUser[]>
   }
 
   @ResolveField('user')
-  resolveUser(@Parent() discount: Discount): User {
+  resolveUser(@Parent() discount: DiscountWithThjodskraUser): User {
     const { user } = discount
     return {
       ...user,
