@@ -9,11 +9,13 @@ import { Header } from './shared-components/Header'
 ReactDOM.render(
   <BrowserRouter>
     <Header />
-    <Switch>
-      <Route path="/">
-        <Login />
-      </Route>
-    </Switch>
+    <main>
+      <Switch>
+        <Route path="/">
+          <Login />
+        </Route>
+      </Switch>
+    </main>
   </BrowserRouter>,
   document.getElementById('root'),
 )
