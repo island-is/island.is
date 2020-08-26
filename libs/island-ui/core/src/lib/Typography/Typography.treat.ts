@@ -1,8 +1,12 @@
 import { styleMap, style, globalStyle } from 'treat'
 import * as CSS from 'csstype'
-import { theme } from '@island.is/island-ui/theme'
+import { themeUtils, Theme, theme } from '@island.is/island-ui/theme'
 import { mapToStyleProperty } from '../../utils'
 import { responsiveStyleMap } from '../../utils/responsiveStyleMap'
+import mapValues from 'lodash/mapValues'
+
+type Spacing = Record<keyof typeof theme.spacing, string>
+type Breakpoint = keyof Theme['breakpoints']
 
 export type VariantTypes =
   | 'p'
@@ -29,6 +33,35 @@ type Variants = {
   [Type in VariantTypes]: CSS.Properties<
     string | ResponsiveProps<string | number>
   >
+}
+
+const makeBottom = (breakpoint: Breakpoint) =>
+  styleMap(
+    mapValues(theme.spacing, (space) =>
+      themeUtils.responsiveStyle({ [breakpoint]: { paddingBottom: space } }),
+    ),
+    `bottom_${breakpoint}`,
+  ) as Spacing
+
+const makeTop = (breakpoint: Breakpoint) =>
+  styleMap(
+    mapValues(theme.spacing, (space) =>
+      themeUtils.responsiveStyle({ [breakpoint]: { paddingTop: space } }),
+    ),
+    `top_${breakpoint}`,
+  ) as Spacing
+
+export const spacing = {
+  bottomXs: makeBottom('xs'),
+  bottomSm: makeBottom('sm'),
+  bottomMd: makeBottom('md'),
+  bottomLg: makeBottom('lg'),
+  bottomXl: makeBottom('xl'),
+  topXs: makeTop('xs'),
+  topSm: makeTop('sm'),
+  topMd: makeTop('md'),
+  topLg: makeTop('lg'),
+  topXl: makeTop('xl'),
 }
 
 export const truncate = style({

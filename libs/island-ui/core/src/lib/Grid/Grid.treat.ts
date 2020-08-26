@@ -36,9 +36,9 @@ export const grid = style({
   marginLeft: `-${theme.grid.gutter.mobile}px`,
 
   '@media': {
-    [`screen and min-width(${theme.breakpoints.md}px)`]: {
-      paddingRight: `-${theme.grid.gutter.desktop}px`,
-      paddingLeft: `-${theme.grid.gutter.desktop}px`,
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      marginRight: `-${theme.grid.gutter.desktop}px`,
+      marginLeft: `-${theme.grid.gutter.desktop}px`,
     },
   },
 })
