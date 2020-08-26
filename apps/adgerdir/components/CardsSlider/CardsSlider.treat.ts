@@ -1,4 +1,4 @@
-import { style, globalStyle } from 'treat'
+import { style, styleMap, globalStyle } from 'treat'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const wrapper = style({
@@ -12,6 +12,12 @@ export const item = style({
   flexFlow: 'column',
 })
 
+export const variants = styleMap({
+  blue: {},
+  red: {},
+  purple: {},
+})
+
 export const arrowButton = style({
   display: 'inline-flex',
   justifyContent: 'center',
@@ -19,19 +25,24 @@ export const arrowButton = style({
   boxSizing: 'border-box',
   width: 40,
   height: 40,
-  borderColor: theme.color.purple400,
-  borderWidth: 1,
-  borderStyle: 'solid',
   backgroundColor: theme.color.purple400,
   borderRadius: '50%',
   outline: 0,
   transition: `all 150ms ease`,
+  selectors: {
+    [`${variants.blue} &`]: {
+      backgroundColor: theme.color.blue400,
+    },
+    [`${variants.red} &`]: {
+      backgroundColor: theme.color.red400,
+    },
+    [`${variants.purple} &`]: {
+      backgroundColor: theme.color.purple400,
+    },
+  },
 })
 
-export const arrowButtonDisabled = style({
-  borderColor: theme.color.blue100,
-  backgroundColor: theme.color.white,
-})
+export const arrowButtonDisabled = style({})
 
 export const controls = style({
   position: 'absolute',
@@ -54,6 +65,17 @@ export const dot = style({
   marginRight: 16,
   outline: 0,
   backgroundColor: theme.color.blue400,
+  selectors: {
+    [`${variants.blue} &`]: {
+      backgroundColor: theme.color.blue400,
+    },
+    [`${variants.red} &`]: {
+      backgroundColor: theme.color.red400,
+    },
+    [`${variants.purple} &`]: {
+      backgroundColor: theme.color.purple400,
+    },
+  },
   ':after': {
     content: '""',
     position: 'absolute',

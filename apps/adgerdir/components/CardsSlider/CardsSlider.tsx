@@ -1,10 +1,18 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, {
+  FC,
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useContext,
+} from 'react'
 import cn from 'classnames'
 import AliceCarousel from 'react-alice-carousel'
+import { Icon, Inline } from '@island.is/island-ui/core'
+import { ColorSchemeContext, ColorSchemes } from '@island.is/adgerdir/context'
 import { Card } from '../Card/Card'
 
 import * as styles from './CardsSlider.treat'
-import { Icon, Inline } from '@island.is/island-ui/core'
 
 const items = [
   {
@@ -49,7 +57,14 @@ interface StagePaddingProps {
   paddingRight: number
 }
 
-export const CardsSlider = () => {
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface CardsSliderProps {
+  variant?: ColorSchemes
+}
+
+export const CardsSlider: FC<CardsSliderProps> = ({ variant }) => {
+  const { colorScheme } = useContext(ColorSchemeContext)
+
   const [height, setHeight] = useState<string>('auto')
   const [stagePadding, setStagePadding] = useState<StagePaddingProps>({
     paddingLeft: 0,
@@ -125,7 +140,9 @@ export const CardsSlider = () => {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div
+      className={cn(styles.wrapper, styles.variants[variant || colorScheme])}
+    >
       <AliceCarousel
         key="this-key-here"
         controlsStrategy="responsive"

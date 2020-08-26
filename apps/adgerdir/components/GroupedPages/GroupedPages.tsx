@@ -1,16 +1,14 @@
 import React, { FC, ReactNode, useContext } from 'react'
 import cn from 'classnames'
 import { ContentBlock, Box } from '@island.is/island-ui/core'
-import { ColorSchemeContext } from '@island.is/adgerdir/context'
+import { ColorSchemeContext, ColorSchemes } from '@island.is/adgerdir/context'
 
 import * as styles from './GroupedPages.treat'
-
-export type GroupedPagesVariant = 'blue' | 'purple' | 'red'
 
 interface GroupedPagesProps {
   topContent: ReactNode
   bottomContent: ReactNode
-  variant?: GroupedPagesVariant
+  variant?: ColorSchemes
 }
 
 export const GroupedPages: FC<GroupedPagesProps> = ({
