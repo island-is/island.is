@@ -1,5 +1,5 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
-import { Client } from './client.model'
+import { Client, GrantType } from './client.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Counter } from 'prom-client'
 
@@ -39,7 +39,7 @@ export class ClientsService {
       ClientId : "swagger",
       // ClientSecrets : [{ Value : new Secret("swagger_secret".Sha256()) } as Secret }],
       Enabled: true,
-      AllowedGrantTypes: [ "Code" ],
+      AllowedGrantTypes: [ GrantType.AuthorizationCode ],
       ClientUri: null,
       EnableLocalLogin: true,
       AllowAccessTokensViaBrowser: true,
@@ -57,14 +57,14 @@ export class ClientsService {
       AllowOfflineAccess: true,
       AllowedScopes: [ "openid", "profile", "swagger_api.read" ],
       FrontChannelLogoutUri: null
-    });
+    } as Client );
 
     // interactive client using code flow + pkce
     this.clients.push( {
       ClientId : "interactive",
      //  ClientSecrets : { new Secret("49C1A7E1-0C79-4A89-A3D6-A37998FB86B0".Sha256()) },
       Enabled: true,
-      AllowedGrantTypes: [ "Code" ],
+      AllowedGrantTypes: [ GrantType.AuthorizationCode ],
       ClientUri: null,
       EnableLocalLogin: true,
       AllowAccessTokensViaBrowser: true,
@@ -82,7 +82,7 @@ export class ClientsService {
       PostLogoutRedirectUris: ["https://localhost:5002/signout-callback-oidc", "https://localhost:5001/signin-google", "https://localhost:5002/oauth2-redirect.html" ],
       AllowOfflineAccess: true,
       AllowedScopes: [ "openid", "profile" ],
-    });
+    } as Client);
 
 
      // interactive client using code flow + pkce
@@ -90,7 +90,7 @@ export class ClientsService {
       ClientId : "mvc.code",
      //  ClientSecrets = { new Secret("secret".Sha256()) },
       Enabled: true,
-      AllowedGrantTypes: [ "Code" ],
+      AllowedGrantTypes: [ GrantType.AuthorizationCode ],
       ClientUri: null,
       EnableLocalLogin: true,
       AllowAccessTokensViaBrowser: true,
@@ -105,14 +105,14 @@ export class ClientsService {
       PostLogoutRedirectUris: ["https://localhost:44302/signout-callback-oidc" ],
       AllowOfflineAccess: true,
       AllowedScopes: [ "openid", "profile" ],
-    });
+    } as Client );
 
 
      this.clients.push( {
       ClientId : "postman",
      //  ClientSecrets = { new Secret("secret".Sha256()) },
       Enabled: true,
-      AllowedGrantTypes: [ "Code" ],
+      AllowedGrantTypes: [ GrantType.AuthorizationCode ],
       ClientUri: null,
       EnableLocalLogin: true,
       AllowAccessTokensViaBrowser: true,
@@ -126,14 +126,14 @@ export class ClientsService {
       PostLogoutRedirectUris: null,
       AllowOfflineAccess: false,
       AllowedScopes: ["openid", "profile", "email", "saml", "postman_resource.scope"  ],
-    });
+    } as Client );
 
      // interactive client using clientCredentials
     this.clients.push( {
       ClientId : "postman.client.credentials",
      //  ClientSecrets = { new Secret("secret".Sha256()) },
       Enabled: true,
-      AllowedGrantTypes: [ "ClientCredentials" ],
+      AllowedGrantTypes: [ GrantType.ClientCredentials ],
       ClientUri: null,
       EnableLocalLogin: true,
       AllowAccessTokensViaBrowser: true,
@@ -145,13 +145,13 @@ export class ClientsService {
       PostLogoutRedirectUris: null,
       AllowOfflineAccess: false,
       AllowedScopes: ["api"],
-    });
+    } as Client );
 
     this.clients.push( {
       ClientId : "www.certification.openid.net",
      // ClientSecrets = { new Secret("0F8A81999CA44816A42F7F9055462A3C".Sha256()) },
       Enabled: true,
-      AllowedGrantTypes: [ "Code" ],
+      AllowedGrantTypes: [ GrantType.AuthorizationCode ],
       ClientUri: null,
       EnableLocalLogin: true,
       AllowAccessTokensViaBrowser: true,
@@ -163,13 +163,13 @@ export class ClientsService {
       PostLogoutRedirectUris: null,
       AllowOfflineAccess: true,
       AllowedScopes: [ "openid", "profile", "offline_access" ],
-    });
+    } as Client );
 
     this.clients.push( {
       ClientId : "www.certification.openid.net-2",
      // ClientSecrets = { new Secret("833CAFE79B8441F3B08CB48BBA804D85".Sha256()) }
       Enabled: true,
-      AllowedGrantTypes: [ "Code" ],
+      AllowedGrantTypes: [ GrantType.AuthorizationCode ],
       ClientUri: null,
       EnableLocalLogin: true,
       AllowAccessTokensViaBrowser: true,
@@ -181,13 +181,13 @@ export class ClientsService {
       PostLogoutRedirectUris: null,
       AllowOfflineAccess: true,
       AllowedScopes: [ "openid", "profile", "offline_access" ],
-    });
+    } as Client );
 
     this.clients.push( {
       ClientId : "island-is-1",
      // ClientSecrets = { new Secret("833CAFE79B8441F3B08CB48BBA804D85".Sha256()) }
       Enabled: true,
-      AllowedGrantTypes: [ "Code" ],
+      AllowedGrantTypes: [ GrantType.AuthorizationCode ],
       ClientUri: null,
       EnableLocalLogin: true,
       AllowAccessTokensViaBrowser: true,
@@ -199,13 +199,13 @@ export class ClientsService {
       PostLogoutRedirectUris: null,
       AllowOfflineAccess: true,
       AllowedScopes: [ "openid", "profile", "offline_access" ],
-    });
+    } as Client );
 
     this.clients.push( {
       ClientId : "island-is-client-cred-1",
      // ClientSecrets = { new Secret("secret".Sha256()) },
       Enabled: true,
-      AllowedGrantTypes: [ "ClientCredentials" ],
+      AllowedGrantTypes: [ GrantType.ClientCredentials],
       ClientUri: null,
       EnableLocalLogin: true,
       AllowAccessTokensViaBrowser: true,
@@ -217,7 +217,7 @@ export class ClientsService {
       PostLogoutRedirectUris: null,
       AllowOfflineAccess: true,
       AllowedScopes: [ "api" ],
-    });
+    } as Client );
 
 
   }
