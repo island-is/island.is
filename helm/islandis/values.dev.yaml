@@ -103,6 +103,7 @@ judicial-system-api:
   env:
     DB_USER: judicial-system
     DB_NAME: judicial-system
+    DB_HOST: dev-vidspyrna-aurora-1.c6cxecmrvlpq.eu-west-1.rds.amazonaws.com
 
   ingress:
     enabled: true
