@@ -75,11 +75,6 @@ export class ClientSecret extends Secret
 }
 
 export class Client {
-
-  constructor() {
-    this.ProtocolType = "oidc";
-  }
-
   Enabled?: boolean = true;
   ClientId?: string;
   ProtocolType?: string = "oidc";
