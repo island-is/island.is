@@ -71,6 +71,7 @@ search-indexer-service:
       APPLICATION_URL: 'http://search-indexer-service'
       ELASTIC_INDEX: 'island-is'
       S3_BUCKET: 'dev-es-custom-packages'
+
 api:
   serviceAccount:
     name: 'api'
@@ -91,3 +92,27 @@ api:
       - secretName: web-tls
         hosts:
           - beta.dev01.devland.is
+
+judicial-system-api:
+  serviceAccount:
+    name: 'judicial-system-api'
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/judicial-system-api'
+  secrets:
+    DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
+  env:
+    DB_USER: judicial-system
+    DB_NAME: judicial-system
+
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx-external
+      cert-manager.io/cluster-issuer: devland-is-letsencrypt-dns01
+    hosts:
+      - host: judicial-system.dev01.devland.is
+        paths: ['/']
+    tls:
+      - secretName: judicial-system-tls
+        hosts:
+          - judicial-system.dev01.devland.is
