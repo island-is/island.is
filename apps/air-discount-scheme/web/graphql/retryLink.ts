@@ -1,5 +1,5 @@
-import { RetryLink } from 'apollo-link-retry'
-import { ServerError } from 'apollo-link-http-common'
+import { ServerError } from '@apollo/client'
+import { RetryLink } from '@apollo/link-retry'
 
 export default new RetryLink({
   attempts: {

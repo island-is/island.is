@@ -1,7 +1,17 @@
-import { Mutation, Resolver, ResolveField, Context } from '@nestjs/graphql'
+import {
+  Context,
+  Mutation,
+  Parent,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 
+import {
+  Discount as TDiscount,
+  ThjodskraUser,
+} from '@island.is/air-discount-scheme/types'
 import { Authorize, CurrentUser, AuthService, AuthUser } from '../auth'
-import { Discount } from './discount.model'
+import { Discount, FlightLegFund } from './models'
 import { User } from '../user'
 
 @Resolver(() => Discount)
@@ -9,22 +19,51 @@ export class DiscountResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Authorize()
-  @Mutation(() => Discount, { nullable: true })
-  async fetchDiscount(
-    @CurrentUser() user,
+  @Mutation(() => [Discount], { nullable: true })
+  async fetchDiscounts(
+    @CurrentUser() user: AuthUser,
     @Context('dataSources') { backendApi },
   ): Promise<Discount> {
-    let discount = await backendApi.getDiscount(user.ssn)
-    if (!discount) {
-      discount = await backendApi.createDiscount(user.ssn)
-    }
+    const relations: ThjodskraUser[] = await backendApi.getUserRelations(
+      user.nationalId,
+    )
+    const discounts = await relations.reduce((promise, relation) => {
+      return promise.then(async (acc) => {
+        let discount: TDiscount = await backendApi.getDiscount(
+          relation.nationalId,
+        )
+        if (!discount && relation.flightLegsLeft > 0) {
+          discount = await backendApi.createDiscount(relation.nationalId)
+        }
+        return [...acc, discount]
+      })
+    }, Promise.resolve([]))
 
-    return discount
+    return discounts.map((discount) => ({
+      ...discount,
+      user: relations.find(
+        (relation) => relation.nationalId === discount.nationalId,
+      ),
+    }))
   }
 
-  @Authorize({ throwOnUnAuthorized: false })
   @ResolveField('user')
-  resolveUser(@CurrentUser() user: AuthUser): User {
-    return user as User
+  resolveUser(@Parent() discount: Discount): User {
+    const { user } = discount
+    return {
+      ...user,
+      name: `${user.firstName} ${user.middleName} ${user.lastName}`.replace(
+        /\s\s+/g,
+        ' ',
+      ),
+    }
+  }
+
+  @ResolveField('flightLegFund')
+  resolveFlightLegFund(
+    @Parent() discount: Discount,
+    @Context('dataSources') { backendApi },
+  ): FlightLegFund {
+    return backendApi.getFlightLegFunds(discount.nationalId)
   }
 }

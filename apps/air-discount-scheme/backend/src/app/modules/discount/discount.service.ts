@@ -14,19 +14,19 @@ export class DiscountService {
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
   ) {}
 
-  private getNationalIdCacheKey(nationalId: string) {
+  private getNationalIdCacheKey(nationalId: string): string {
     return `national_id_${nationalId}`
   }
 
-  private getDiscountCodeCacheKey(discountCode: string) {
+  private getDiscountCodeCacheKey(discountCode: string): string {
     return `discount_code_${discountCode}`
   }
 
-  private getRandomRange(min: number, max: number) {
+  private getRandomRange(min: number, max: number): number {
     return Math.random() * (max - min) + min
   }
 
-  private generateDiscountCode() {
+  private generateDiscountCode(): string {
     return [...Array(DISCOUNT_CODE_LENGTH)]
       .map(() => {
         const rand = Math.round(Math.random())

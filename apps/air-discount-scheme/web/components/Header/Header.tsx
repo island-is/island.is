@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useQuery } from 'react-apollo'
+import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 
 import { Header as IslandUIHeader } from '@island.is/island-ui/core'
@@ -16,7 +16,7 @@ export const UserQuery = gql`
   query UserQuery {
     user {
       name
-      ssn
+      nationalId
       mobile
       role
     }

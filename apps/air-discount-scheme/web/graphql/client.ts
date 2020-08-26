@@ -1,17 +1,16 @@
-import { ApolloClient } from 'apollo-client'
-import { ApolloLink } from 'apollo-link'
 import {
+  ApolloClient,
+  ApolloLink,
   InMemoryCache,
-  IntrospectionFragmentMatcher,
   NormalizedCacheObject,
-} from 'apollo-cache-inmemory'
+} from '@apollo/client'
 
 import { isBrowser } from '../utils'
 import authLink from './authLink'
 import errorLink from './errorLink'
 import httpLink from './httpLink'
 import retryLink from './retryLink'
-import introspectionQueryResultData from './possibleTypes.json'
+import { possibleTypes } from './possibleTypes.json'
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
@@ -19,9 +18,7 @@ const createClient = (initialState?: NormalizedCacheObject) => {
   const link = ApolloLink.from([retryLink, errorLink, authLink, httpLink])
 
   const cache = new InMemoryCache({
-    fragmentMatcher: new IntrospectionFragmentMatcher({
-      introspectionQueryResultData,
-    }),
+    possibleTypes,
   }).restore(initialState || {})
 
   return new ApolloClient({
