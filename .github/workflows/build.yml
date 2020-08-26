@@ -222,24 +222,20 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
-        if: ${{ matrix.projects != 'dummy' }}
 
       - name: Cache for dependencies Docker layer
-        if: ${{ matrix.projects != 'dummy' }}
         id: cache-deps
         uses: actions/cache@v1
         with:
           path: cache
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
       - name: Set up Docker Buildx
-        if: ${{ matrix.projects != 'dummy' }}
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1
         with:
           buildx-version: v0.4.1
           qemu-version: latest
       - name: Running tests
-        if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh test
       # - name: Running E2E tests
       #   run: yarn run affected:e2e --base origin/master
@@ -281,11 +277,9 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.LINT_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
-        if: ${{ matrix.projects != 'dummy' }}
 
       - name: Cache for dependencies Docker layer
         id: cache-deps
-        if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v1
         with:
           path: cache
@@ -293,14 +287,12 @@ jobs:
 
       - name: Set up Docker Buildx
         id: buildx
-        if: ${{ matrix.projects != 'dummy' }}
         uses: crazy-max/ghaction-docker-buildx@v1
         with:
           buildx-version: v0.4.1
           qemu-version: latest
 
       - name: Linting
-        if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh lint
 
   docker-express:
@@ -317,29 +309,24 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.DOCKER_EXPRESS_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
-        if: ${{ matrix.projects != 'dummy' }}
       - name: Cache for dependencies Docker layer
-        if: ${{ matrix.projects != 'dummy' }}
         id: cache-deps
         uses: actions/cache@v1
         with:
           path: cache
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
       - name: Set up Docker Buildx
-        if: ${{ matrix.projects != 'dummy' }}
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1
         with:
           buildx-version: v0.4.1
           qemu-version: latest
       - name: Docker login to ECR repo
-        if: ${{ matrix.projects != 'dummy' }}
         run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Building Docker images
-        if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-express
 
   docker-next:
@@ -356,35 +343,31 @@ jobs:
       matrix: ${{ fromJson(needs.prepare.outputs.DOCKER_NEXT_CHUNKS) }}
     steps:
       - uses: actions/checkout@v2
-        if: ${{ matrix.projects != 'dummy' }}
       - name: Cache for dependencies Docker layer
-        if: ${{ matrix.projects != 'dummy' }}
         id: cache-deps
         uses: actions/cache@v1
         with:
           path: cache
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
       - name: Set up Docker Buildx
-        if: ${{ matrix.projects != 'dummy' }}
         id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1
         with:
           buildx-version: v0.4.1
           qemu-version: latest
       - name: Docker login to ECR repo
-        if: ${{ matrix.projects != 'dummy' }}
         run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Building Docker images
-        if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-next
 
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     needs: [docker-express, docker-next, prepare, linting, formatting]
+    if: "!failure()"
     env:
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
