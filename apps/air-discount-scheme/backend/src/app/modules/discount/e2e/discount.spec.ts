@@ -29,18 +29,17 @@ describe('Create DiscountCode', () => {
       discountCode: expect.any(String),
       expires: '2020-08-19T14:26:22.018Z',
       nationalId,
-      flightLegsLeft: {
-        total: 4,
-        unused: 4,
-      },
     })
     expect(spy).toHaveBeenCalled()
   })
 
   it(`POST /api/private/users/:nationalId/discounts with no flightlegs left should return forbidden`, async () => {
+    const nationalId = '1326487905'
     const spy = jest
       .spyOn(flightService, 'countFlightLegsByNationalId')
-      .mockImplementation(() => Promise.resolve({ unused: 0, total: 6 }))
+      .mockImplementation(() =>
+        Promise.resolve({ nationalId, unused: 0, total: 6 }),
+      )
     await request(app.getHttpServer())
       .post('/api/private/users/1326487905/discounts')
       .expect(403)
