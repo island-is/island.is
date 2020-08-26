@@ -1,15 +1,18 @@
 import { Injectable } from '@nestjs/common'
 import { RESTDataSource } from 'apollo-datasource-rest'
 
-import { Discount, FlightLegFund } from '@island.is/air-discount-scheme/types'
+import {
+  Discount,
+  FlightLegFund,
+  ThjodskraUser,
+} from '@island.is/air-discount-scheme/types'
 import { environment } from '../environments'
 
 @Injectable()
 class BackendAPI extends RESTDataSource {
   baseURL = `${environment.backendUrl}/api/private`
 
-  getUserRelations(nationalId: string) {
-    // TODO: type from backend
+  getUserRelations(nationalId: string): Promise<ThjodskraUser[]> {
     return this.get(`users/${nationalId}/relations`)
   }
 
@@ -17,8 +20,8 @@ class BackendAPI extends RESTDataSource {
     return this.get(`users/${nationalId}/flights/funds`)
   }
 
-  getDiscounts(nationalId: string): Promise<Discount | null> {
-    return this.get(`users/${nationalId}/discounts`)
+  getDiscount(nationalId: string): Promise<Discount | null> {
+    return this.get(`users/${nationalId}/discounts/current`)
   }
 
   createDiscount(nationalId: string): Promise<Discount> {

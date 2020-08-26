@@ -75,18 +75,15 @@ export class PrivateFlightController {
 
   @Get('users/:nationalId/flights/funds')
   @ApiExcludeEndpoint()
-  async getFlightLegFunds(
+  getFlightLegFunds(
     @Param() params: GetFlightLegFundsParams,
-  ): Promise<FlightLegFund[]> {
-    const flightLegFunds = await Promise.all([
-      this.flightService.countFlightLegsByNationalId(params.nationalId),
-    ])
-    return flightLegFunds
+  ): Promise<FlightLegFund> {
+    return this.flightService.countFlightLegsByNationalId(params.nationalId)
   }
 
   @Get('flights')
   @ApiExcludeEndpoint()
-  async get(): Promise<Flight[]> {
+  get(): Promise<Flight[]> {
     return this.flightService.findAll()
   }
 }

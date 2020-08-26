@@ -8,7 +8,7 @@ export class CreateDiscountCodeParams {
   readonly nationalId: string
 }
 
-export class GetDiscountByNationalIdParams {
+export class GetCurrentDiscountByNationalIdParams {
   @IsString()
   @Length(10, 10)
   @ApiProperty()

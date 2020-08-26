@@ -1,8 +1,14 @@
-import { Mutation, Resolver, Context } from '@nestjs/graphql'
+import {
+  Context,
+  Mutation,
+  Parent,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 
 import { Discount as TDiscount } from '@island.is/air-discount-scheme/types'
 import { Authorize, CurrentUser, AuthService, AuthUser } from '../auth'
-import { Discount } from './models'
+import { Discount, FlightLegFund } from './models'
 import { User } from '../user'
 
 @Resolver(() => Discount)
@@ -15,27 +21,30 @@ export class DiscountResolver {
     @CurrentUser() user: AuthUser,
     @Context('dataSources') { backendApi },
   ): Promise<Discount> {
-    let discounts: TDiscount[] = await backendApi.getDiscounts(user.nationalId)
-    const userDiscount: TDiscount = discounts.find(
-      (discount) => discount.nationalId === user.nationalId,
-    )
-    if (!userDiscount) {
-      discounts = [
-        await backendApi.createDiscount(user.nationalId),
-        ...discounts,
-      ]
-    }
-
     const relations = await backendApi.getUserRelations(user.nationalId)
-    const funds = await backendApi.getFlightLegFunds(user.nationalId)
+    const discounts = await relations.reduce(async (acc, relation) => {
+      let discount: TDiscount = await backendApi.getDiscount(
+        relation.nationalId,
+      )
+      if (!discount && relation.flightLegsLeft > 0) {
+        discount = await backendApi.createDiscount(relation.nationalId)
+      }
+      return [...acc, discount]
+    }, [])
+
     return discounts.map((discount) => ({
       ...discount,
       user: relations.find(
         (relation) => relation.nationalId === discount.nationalId,
       ),
-      flightLegFund: funds.find(
-        (fund) => fund.nationalId === discount.nationalId,
-      ),
     }))
+  }
+
+  @ResolveField('flightLegFund')
+  resolveFlightLegFund(
+    @Parent() discount: Discount,
+    @Context('dataSources') { backendApi },
+  ): FlightLegFund {
+    return backendApi.getFlightLegFunds(discount.nationalId)
   }
 }

@@ -13,6 +13,7 @@ import {
 import { UserService } from './user.service'
 import { User } from './user.model'
 import { DiscountService } from '../discount'
+import { FlightService } from '../flight'
 import { AuthGuard } from '../common'
 
 @ApiTags('Users')
@@ -37,10 +38,26 @@ export class PublicUserController {
 
 @Controller('api/private')
 export class PrivateUserController {
+  constructor(private readonly flightService: FlightService) {}
+
   @Get('users/:nationalId/relations')
   @ApiExcludeEndpoint()
-  getUserRelations(@Param() params: GetUserRelationsParams): User[] {
+  async getUserRelations(
+    @Param() params: GetUserRelationsParams,
+  ): Promise<User[]> {
     // TODO: implement from thjodskra
-    return [{ nationalId: params.nationalId, name: 'Darri Steinn Konráðsson' }]
+    const {
+      unused: flightLegsLeft,
+    } = await this.flightService.countFlightLegsByNationalId(params.nationalId)
+    return [
+      {
+        nationalId: params.nationalId,
+        firstName: 'Darri',
+        middleName: 'Steinn',
+        lastName: 'Konráðsson',
+        gender: 'm',
+        flightLegsLeft,
+      },
+    ]
   }
 }
