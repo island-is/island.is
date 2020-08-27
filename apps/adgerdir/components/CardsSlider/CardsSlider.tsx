@@ -9,48 +9,11 @@ import React, {
 import cn from 'classnames'
 import AliceCarousel from 'react-alice-carousel'
 import { Icon, Inline } from '@island.is/island-ui/core'
+import { AdgerdirPage } from '@island.is/api/schema'
 import { ColorSchemeContext, ColorSchemes } from '@island.is/adgerdir/context'
 import { Card } from '../Card/Card'
 
 import * as styles from './CardsSlider.treat'
-
-const items = [
-  {
-    title: 'Ferðagjöf',
-    description:
-      'Stafræn gjafabréf að fjárhæð 5.000 kr. til að verja í ferðaþjónustu innanlands.',
-  },
-  {
-    title: 'Alþjóðlegt markaðsátak',
-    description:
-      'Kapp er lagt á að Ísland verði með fyrstu löndum til að byggja aftur upp eftirspurn.',
-  },
-  {
-    title: 'Gistináttaskattur afnuminn',
-    description:
-      'Gistináttaskattur hefur verið afnuminn út næsta ár, til ársloka 2021.',
-  },
-  {
-    title: 'Ferðagjöf',
-    description:
-      'Stafræn gjafabréf að fjárhæð 5.000 kr. til að verja í ferðaþjónustu innanlands.',
-  },
-  {
-    title: 'Alþjóðlegt markaðsátak',
-    description:
-      'Kapp er lagt á að Ísland verði með fyrstu löndum til að byggja aftur upp eftirspurn.',
-  },
-  {
-    title: 'Gistináttaskattur afnuminn',
-    description:
-      'Gistináttaskattur hefur verið afnuminn út næsta ár, til ársloka 2021.',
-  },
-  {
-    title: 'Gistináttaskattur afnuminn',
-    description:
-      'Gistináttaskattur hefur verið afnuminn út næsta ár, til ársloka 2021.',
-  },
-]
 
 interface StagePaddingProps {
   paddingLeft: number
@@ -61,9 +24,10 @@ interface StagePaddingProps {
 interface CardsSliderProps {
   key?: string
   variant?: ColorSchemes
+  items: Array<AdgerdirPage>
 }
 
-export const CardsSlider: FC<CardsSliderProps> = ({ key, variant }) => {
+export const CardsSlider: FC<CardsSliderProps> = ({ items, key, variant }) => {
   const { colorScheme } = useContext(ColorSchemeContext)
 
   const [height, setHeight] = useState<string>('auto')
@@ -163,7 +127,7 @@ export const CardsSlider: FC<CardsSliderProps> = ({ key, variant }) => {
         buttonsDisabled
         mouseTrackingEnabled
       >
-        {items.map(({ title, description }, index) => {
+        {items.map(({ title, description, tags }, index) => {
           return (
             <>
               <div
@@ -175,11 +139,7 @@ export const CardsSlider: FC<CardsSliderProps> = ({ key, variant }) => {
                   key={index}
                   description={description}
                   title={title}
-                  tags={[
-                    { title: 'Styrkir', tagProps: { variant: 'red' } },
-                    { title: 'Lán', tagProps: { variant: 'red' } },
-                    { title: 'Atvinnulíf', tagProps: { variant: 'red' } },
-                  ]}
+                  tags={tags}
                 />
               </div>
             </>

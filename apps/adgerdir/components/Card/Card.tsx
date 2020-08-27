@@ -14,11 +14,7 @@ import { Colors } from '@island.is/island-ui/theme'
 import { ColorSchemeContext, ColorSchemes } from '@island.is/adgerdir/context'
 
 import * as styles from './Card.treat'
-
-export type CardTagsProps = {
-  tagProps?: Omit<TagProps, 'children'>
-  title: string
-}
+import { AdgerdirTag } from '@island.is/api/schema'
 
 const tagPropsDefaults: Omit<TagProps, 'children'> = {
   variant: 'purple',
@@ -27,7 +23,7 @@ const tagPropsDefaults: Omit<TagProps, 'children'> = {
 interface CardProps {
   title: string
   description: string
-  tags?: Array<CardTagsProps>
+  tags?: Array<AdgerdirTag>
   linkProps?: LinkProps
   href?: string
   as?: string
@@ -79,15 +75,9 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
         {tags.length > 0 && (
           <Box paddingTop={3} flexGrow={0}>
             <Inline space={1}>
-              {tags.map(({ title, ...props }: CardTagsProps, index) => {
-                const tagProps = { ...tagPropsDefaults, ...props.tagProps }
-
+              {tags.map(({ title, id }, index) => {
                 return (
-                  <Tag
-                    key={index}
-                    {...tagProps}
-                    variant={tagVariant as TagVariant}
-                  >
+                  <Tag key={index} dataTagId={id}>
                     {title}
                   </Tag>
                 )

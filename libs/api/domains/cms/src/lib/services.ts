@@ -22,7 +22,8 @@ import { StorySlice } from './models/slices/storySlice.model'
 import { MailingListSignupSlice } from './models/slices/mailingListSignupSlice.model'
 import { HeadingSlice } from './models/slices/headingSlice.model'
 import { LinkCard } from './models/linkCard.model'
-import { LinkCardSlice } from './models/slices/linkCardSlice.model'
+import { LinkCardSlice } from './models/adgerdirTag.model'
+import { AdgerdirTag } from './models/slices/AdgerdirTag.model'
 import { LatestNewsSlice } from './models/slices/latestNewsSlice.model'
 import { LogoListSlice } from './models/slices/logoListSlice.model'
 import { IconBullet } from './models/bullets/iconBullet.model'
@@ -49,8 +50,16 @@ const formatAdgerdirPage = ({ sys, fields }): AdgerdirPage => ({
   id: sys.id,
   slug: fields.slug,
   title: fields.title,
-  description: fields.description,
+  description: fields.description && fields.description,
   content: JSON.stringify(fields.content),
+  link: fields.link,
+  tags: fields.tags.map(formatAdgerdirTag),
+  status: fields.status,
+})
+
+const formatAdgerdirTag = ({ sys, fields }): AdgerdirTag => ({
+  id: sys.id,
+  title: fields.title,
 })
 
 const formatAdgerdirFrontpage = ({ sys, fields }): AdgerdirFrontpage => ({
@@ -321,7 +330,7 @@ export const getAdgerdirFrontpage = async (lang = 'is-IS') => {
 
 export const getAdgerdirPages = async (lang = 'is-IS') => {
   const params = {
-    ['content_type']: 'vidspyrna-page',
+    ['content_type']: 'vidspyrnaPage',
     include: 10,
     limit: 100,
   }
@@ -359,7 +368,7 @@ export const getFrontpageSliderList = async (lang = 'is-IS') => {
 
 export const getAdgerdirPage = async (slug: string, lang: string) => {
   const r = await getLocalizedEntries<AdgerdirPage>(lang, {
-    ['content_type']: 'vidspyrna-page',
+    ['content_type']: 'vidspyrnaPage',
     include: 10,
     'fields.slug': slug,
   }).catch(errorHandler('getAdgerdirPage'))

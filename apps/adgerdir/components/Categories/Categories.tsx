@@ -9,6 +9,7 @@ import {
   Inline,
   Icon,
 } from '@island.is/island-ui/core'
+import { AdgerdirPage } from '@island.is/api/schema'
 
 import * as styles from './Categories.treat'
 import { Card } from '../Card/Card'
@@ -16,13 +17,8 @@ import { Card } from '../Card/Card'
 const FILTER_TIMER = 1000
 const ITEMS_PER_SHOW = 6
 
-export interface ItemProps {
-  title: string
-  description: string
-}
-
 interface CategoriesProps {
-  items: Array<ItemProps>
+  items: AdgerdirPage[]
   seeMoreText?: string
 }
 
@@ -171,20 +167,25 @@ export const Categories: FC<CategoriesProps> = ({
           </Box>
         ) : null}
         <Tiles space={[2, 2, 3]} columns={[1, 1, 2, 2, 3]}>
-          {filteredItems.map(({ title, description }: ItemProps, index) => {
-            return (
-              <Card
-                key={index}
-                description={description}
-                title={title}
-                tags={[
-                  { title: 'Styrkir', tagProps: { variant: 'red' } },
-                  { title: 'Lán', tagProps: { variant: 'red' } },
-                  { title: 'Atvinnulíf', tagProps: { variant: 'red' } },
-                ]}
-              />
-            )
-          })}
+          {filteredItems.map(
+            (
+              {
+                title,
+                description,
+                tags,
+              }: Pick<AdgerdirPage, 'tags' | 'title' | 'description'>,
+              index,
+            ) => {
+              return (
+                <Card
+                  key={index}
+                  description={description}
+                  title={title}
+                  tags={tags}
+                />
+              )
+            },
+          )}
         </Tiles>
         {showCount < items.length ? (
           <Box textAlign="center">

@@ -83,13 +83,22 @@ export type Article = {
   category: Taxonomy
 }
 
+export type AdgerdirTag = {
+  __typename?: 'AdgerdirTag'
+  id?: Maybe<Scalars['String']>
+  title?: Maybe<Scalars['String']>
+}
+
 export type AdgerdirPage = {
   __typename?: 'AdgerdirPage'
   id: Scalars['String']
   slug: Scalars['String']
   title: Scalars['String']
-  description: Scalars['String']
+  description?: Maybe<Scalars['String']>
   content?: Maybe<Scalars['String']>
+  tags: Array<AdgerdirTag>
+  link?: Maybe<Scalars['String']>
+  status: Scalars['String']
 }
 
 export type AdgerdirPages = {
@@ -374,6 +383,7 @@ export enum ApplicationTypeIdEnum {
   ExampleForm2 = 'ExampleForm2',
   ExampleForm3 = 'ExampleForm3',
   FamilyAndPets = 'FamilyAndPets',
+  PaternityLeave = 'PaternityLeave',
 }
 
 export type Query = {
@@ -396,6 +406,7 @@ export type Query = {
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
   getApplication?: Maybe<Application>
+  getApplicationsByType?: Maybe<Array<Application>>
 }
 
 export type QueryHelloWorldArgs = {
@@ -468,6 +479,10 @@ export type QueryGetMenuArgs = {
 
 export type QueryGetApplicationArgs = {
   input: GetApplicationInput
+}
+
+export type QueryGetApplicationsByTypeArgs = {
+  input: GetApplicationsByTypeInput
 }
 
 export type HelloWorldInput = {
@@ -572,6 +587,10 @@ export type GetApplicationInput = {
   id: Scalars['String']
 }
 
+export type GetApplicationsByTypeInput = {
+  typeId: ApplicationTypeIdEnum
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<Application>
@@ -612,17 +631,26 @@ export enum CreateApplicationDtoTypeIdEnum {
   ExampleForm2 = 'ExampleForm2',
   ExampleForm3 = 'ExampleForm3',
   FamilyAndPets = 'FamilyAndPets',
+  PaternityLeave = 'PaternityLeave',
 }
 
 export type UpdateApplicationInput = {
   id: Scalars['String']
+  typeId: UpdateApplicationDtoTypeIdEnum
   applicant?: Maybe<Scalars['String']>
   assignee?: Maybe<Scalars['String']>
   externalId?: Maybe<Scalars['String']>
   state?: Maybe<UpdateApplicationDtoStateEnum>
   attachments?: Maybe<Array<Scalars['String']>>
-  typeId?: Maybe<UpdateApplicationDtoTypeIdEnum>
   answers?: Maybe<Scalars['JSON']>
+}
+
+export enum UpdateApplicationDtoTypeIdEnum {
+  ExampleForm = 'ExampleForm',
+  ExampleForm2 = 'ExampleForm2',
+  ExampleForm3 = 'ExampleForm3',
+  FamilyAndPets = 'FamilyAndPets',
+  PaternityLeave = 'PaternityLeave',
 }
 
 export enum UpdateApplicationDtoStateEnum {
@@ -634,13 +662,6 @@ export enum UpdateApplicationDtoStateEnum {
   Manualapproved = 'MANUALAPPROVED',
   Rejected = 'REJECTED',
   Unknown = 'UNKNOWN',
-}
-
-export enum UpdateApplicationDtoTypeIdEnum {
-  ExampleForm = 'ExampleForm',
-  ExampleForm2 = 'ExampleForm2',
-  ExampleForm3 = 'ExampleForm3',
-  FamilyAndPets = 'FamilyAndPets',
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -767,6 +788,7 @@ export type ResolversTypes = {
   ContentCategory: ResolverTypeWrapper<ContentCategory>
   Taxonomy: ResolverTypeWrapper<Taxonomy>
   Article: ResolverTypeWrapper<Article>
+  AdgerdirTag: ResolverTypeWrapper<AdgerdirTag>
   AdgerdirPage: ResolverTypeWrapper<AdgerdirPage>
   AdgerdirPages: ResolverTypeWrapper<AdgerdirPages>
   AdgerdirFrontpage: ResolverTypeWrapper<AdgerdirFrontpage>
@@ -846,13 +868,14 @@ export type ResolversTypes = {
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
   GetApplicationInput: GetApplicationInput
+  GetApplicationsByTypeInput: GetApplicationsByTypeInput
   Mutation: ResolverTypeWrapper<{}>
   CreateApplicationInput: CreateApplicationInput
   CreateApplicationDtoStateEnum: CreateApplicationDtoStateEnum
   CreateApplicationDtoTypeIdEnum: CreateApplicationDtoTypeIdEnum
   UpdateApplicationInput: UpdateApplicationInput
-  UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
   UpdateApplicationDtoTypeIdEnum: UpdateApplicationDtoTypeIdEnum
+  UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
 }
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -866,6 +889,7 @@ export type ResolversParentTypes = {
   ContentCategory: ContentCategory
   Taxonomy: Taxonomy
   Article: Article
+  AdgerdirTag: AdgerdirTag
   AdgerdirPage: AdgerdirPage
   AdgerdirPages: AdgerdirPages
   AdgerdirFrontpage: AdgerdirFrontpage
@@ -939,6 +963,7 @@ export type ResolversParentTypes = {
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
   GetApplicationInput: GetApplicationInput
+  GetApplicationsByTypeInput: GetApplicationsByTypeInput
   Mutation: {}
   CreateApplicationInput: CreateApplicationInput
   UpdateApplicationInput: UpdateApplicationInput
@@ -1051,6 +1076,15 @@ export type ArticleResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type AdgerdirTagResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['AdgerdirTag'] = ResolversParentTypes['AdgerdirTag']
+> = {
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type AdgerdirPageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AdgerdirPage'] = ResolversParentTypes['AdgerdirPage']
@@ -1058,8 +1092,15 @@ export type AdgerdirPageResolvers<
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  tags?: Resolver<Array<ResolversTypes['AdgerdirTag']>, ParentType, ContextType>
+  link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1605,6 +1646,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetApplicationArgs, 'input'>
   >
+  getApplicationsByType?: Resolver<
+    Maybe<Array<ResolversTypes['Application']>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetApplicationsByTypeArgs, 'input'>
+  >
 }
 
 export type MutationResolvers<
@@ -1632,6 +1679,7 @@ export type Resolvers<ContextType = Context> = {
   ContentCategory?: ContentCategoryResolvers<ContextType>
   Taxonomy?: TaxonomyResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
+  AdgerdirTag?: AdgerdirTagResolvers<ContextType>
   AdgerdirPage?: AdgerdirPageResolvers<ContextType>
   AdgerdirPages?: AdgerdirPagesResolvers<ContextType>
   AdgerdirFrontpage?: AdgerdirFrontpageResolvers<ContextType>

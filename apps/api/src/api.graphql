@@ -53,12 +53,20 @@ type Article {
   category: Taxonomy!
 }
 
+type AdgerdirTag {
+  id: String
+  title: String
+}
+
 type AdgerdirPage {
   id: String!
   slug: String!
   title: String!
-  description: String!
+  description: String
   content: String
+  tags: [AdgerdirTag!]!
+  link: String
+  status: String!
 }
 
 type AdgerdirPages {

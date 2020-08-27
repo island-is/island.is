@@ -24,11 +24,11 @@ import Head from 'next/head'
 
 interface HomeProps {
   frontpage: Query['getAdgerdirFrontpage']
-  items: Query['getAdgerdirPages']
+  data: Query['getAdgerdirPages']
   namespace: Query['getNamespace']
 }
 
-const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
+const Home: Screen<HomeProps> = ({ frontpage, data, namespace }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
 
@@ -36,17 +36,7 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
     document.documentElement.lang = activeLocale
   }
 
-  const { items: cards } = items
-
-  const cardsMany = [
-    ...cards,
-    ...cards,
-    ...cards,
-    ...cards,
-    ...cards,
-    { title: 'blabla', description: 'blöblö' },
-  ]
-  const cardsFew = [...cards]
+  const { items } = data
 
   return (
     <>
@@ -76,7 +66,7 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
           <Sleeve>
             <Box background="red100">
               <ContentBlock width="large">
-                <Categories items={cardsMany} />
+                <Categories items={items} />
               </ContentBlock>
             </Box>
           </Sleeve>
@@ -100,7 +90,7 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
                     </Typography>
                   </Stack>
                 }
-                bottomContent={<CardsSlider key="purple" />}
+                bottomContent={<CardsSlider items={items} key="purple" />}
               />
             </Box>
           </ContentBlock>
@@ -126,7 +116,7 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
                     </Typography>
                   </Stack>
                 }
-                bottomContent={<CardsSlider key="red" />}
+                bottomContent={<CardsSlider items={items} key="red" />}
               />
             </Box>
           </ContentBlock>
@@ -150,7 +140,7 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
                     </Typography>
                   </Stack>
                 }
-                bottomContent={<CardsSlider key="blue" />}
+                bottomContent={<CardsSlider items={items} key="blue" />}
               />
             </Box>
           </ContentBlock>
@@ -215,7 +205,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
 
   return {
     frontpage: getAdgerdirFrontpage,
-    items: getAdgerdirPages,
+    data: getAdgerdirPages,
     namespace,
     showSearchInHeader: false,
   }
