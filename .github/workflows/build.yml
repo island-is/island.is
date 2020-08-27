@@ -147,6 +147,9 @@ jobs:
       - name: Security audit Node modules
         run: yarn run security-audit
 
+      - name: License audit Node modules
+        run: yarn run license-audit
+
       - name: Prepare lint targets
         id: lint_projects
         run: |
