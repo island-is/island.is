@@ -1,5 +1,4 @@
-import { ApolloError } from 'apollo-client'
-import { ServerError } from 'apollo-link-http-common'
+import { ApolloError, ServerError } from '@apollo/client'
 import PubSub from 'pubsub-js'
 
 const TYPE = {

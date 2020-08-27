@@ -75,7 +75,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     query: GetGenericPageQuery,
     variables: {
       input: {
-        lang: 'is-IS',
+        lang: locale,
         slug: 'loftbru',
       },
     },

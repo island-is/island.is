@@ -2381,6 +2381,225 @@
         }
       }
     },
+    "judicial-system-api": {
+      "root": "apps/judicial-system/api",
+      "sourceRoot": "apps/judicial-system/api/src",
+      "projectType": "application",
+      "prefix": "judicial-system-api",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/judicial-system/api",
+            "main": "apps/judicial-system/api/src/main.ts",
+            "tsConfig": "apps/judicial-system/api/tsconfig.app.json",
+            "assets": ["apps/judicial-system/api/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/judicial-system/api/src/environments/environment.ts",
+                  "with": "apps/judicial-system/api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "judicial-system-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/judicial-system/api/.eslintrc",
+            "tsConfig": [
+              "apps/judicial-system/api/tsconfig.app.json",
+              "apps/judicial-system/api/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/judicial-system/api/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/judicial-system/api/jest.config.js",
+            "tsConfig": "apps/judicial-system/api/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d"
+              }
+            ],
+            "cwd": "apps/judicial-system/api"
+          }
+        },
+        "generate-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "outputPath": "apps/judicial-system/api/src/openapi.yaml",
+            "commands": [
+              {
+                "command": "yarn build judicial-system-api"
+              },
+              {
+                "command": "node dist/apps/judicial-system/api/main --generate-schema apps/judicial-system/api/src/openapi.yaml"
+              }
+            ]
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "../../../node_modules/.bin/sequelize-cli db:migrate"
+              }
+            ],
+            "cwd": "apps/judicial-system/api"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)"
+              }
+            ],
+            "cwd": "apps/judicial-system/api"
+          }
+        },
+        "docker-express": {}
+      }
+    },
+    "judicial-system-web": {
+      "root": "apps/judicial-system/web",
+      "sourceRoot": "apps/judicial-system/web/src",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/web:build",
+          "options": {
+            "outputPath": "dist/apps/judicial-system/web",
+            "index": "apps/judicial-system/web/src/index.html",
+            "main": "apps/judicial-system/web/src/main.tsx",
+            "polyfills": "apps/judicial-system/web/src/polyfills.ts",
+            "tsConfig": "apps/judicial-system/web/tsconfig.app.json",
+            "assets": [
+              "apps/judicial-system/web/src/favicon.ico",
+              "apps/judicial-system/web/src/assets"
+            ],
+            "styles": ["apps/judicial-system/web/src/styles.scss"],
+            "scripts": [],
+            "webpackConfig": "apps/judicial-system/web/webpack.config.js"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/judicial-system/web/src/environments/environment.ts",
+                  "with": "apps/judicial-system/web/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/web:dev-server",
+          "options": {
+            "buildTarget": "judicial-system-web:build",
+            "proxyConfig": "apps/judicial-system/web/proxy.config.json"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "judicial-system-web:build:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/judicial-system/web/.eslintrc",
+            "tsConfig": [
+              "apps/judicial-system/web/tsconfig.app.json",
+              "apps/judicial-system/web/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/judicial-system/web/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/judicial-system/web/jest.config.js",
+            "tsConfig": "apps/judicial-system/web/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "judicial-system/web-e2e": {
+      "root": "apps/judicial-system/web-e2e",
+      "sourceRoot": "apps/judicial-system/web-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/judicial-system/web-e2e/cypress.json",
+            "tsConfig": "apps/judicial-system/web-e2e/tsconfig.e2e.json",
+            "devServerTarget": "judicial-system-web:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "judicial-system-web:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/judicial-system/web-e2e/.eslintrc",
+            "tsConfig": ["apps/judicial-system/web-e2e/tsconfig.e2e.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/judicial-system/web-e2e/**"
+            ]
+          }
+        }
+      }
+    },
     "service-portal-graphql": {
       "root": "libs/service-portal/graphql",
       "sourceRoot": "libs/service-portal/graphql/src",

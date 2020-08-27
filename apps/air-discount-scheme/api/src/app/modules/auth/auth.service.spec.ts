@@ -6,7 +6,7 @@ describe('AuthService', () => {
   let authService: AuthService
 
   const user = {
-    ssn: '1501933119',
+    nationalId: '1501933119',
     name: 'tester',
     mobile: '',
     role: 'developer',

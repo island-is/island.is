@@ -107,7 +107,7 @@ const embeddedNodes = () => ({
     processContent: (node) => {
       const {
         processTitle,
-        processDescription,
+        processInfo,
         processLink,
         buttonText,
         type,
@@ -175,10 +175,11 @@ const embeddedNodes = () => ({
                   {processTitle}
                 </Typography>
               )}
-              {processDescription && (
-                <Typography variant="p" as="p">
-                  {processDescription}
-                </Typography>
+              {processInfo && (
+                <RichText
+                  document={processInfo}
+                  renderNode={customProcessEntryRenderNode()}
+                />
               )}
               <Box paddingTop={[1, 1, 2]}>
                 <Button href={processLink} icon={processTypes[type].icon}>

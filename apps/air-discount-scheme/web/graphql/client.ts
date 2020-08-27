@@ -1,30 +1,27 @@
-import { ApolloClient } from 'apollo-client'
-import { ApolloLink } from 'apollo-link'
 import {
+  ApolloClient,
+  ApolloLink,
   InMemoryCache,
-  IntrospectionFragmentMatcher,
   NormalizedCacheObject,
-} from 'apollo-cache-inmemory'
+} from '@apollo/client'
 
 import { isBrowser } from '../utils'
 import authLink from './authLink'
 import errorLink from './errorLink'
 import httpLink from './httpLink'
 import retryLink from './retryLink'
-import introspectionQueryResultData from './possibleTypes.json'
+import { possibleTypes } from './possibleTypes.json'
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
-const createClient = (initialState?: NormalizedCacheObject) => {
+const createClient = (initialState): ApolloClient<NormalizedCacheObject> => {
   const link = ApolloLink.from([retryLink, errorLink, authLink, httpLink])
 
   const cache = new InMemoryCache({
-    fragmentMatcher: new IntrospectionFragmentMatcher({
-      introspectionQueryResultData,
-    }),
+    possibleTypes,
   }).restore(initialState || {})
 
-  return new ApolloClient({
+  return new ApolloClient<NormalizedCacheObject>({
     name: 'air-discount-scheme-client',
     version: '0.1',
     connectToDevTools: isBrowser,
@@ -34,7 +31,7 @@ const createClient = (initialState?: NormalizedCacheObject) => {
   })
 }
 
-const initApollo = (initialState?: NormalizedCacheObject) => {
+const initApollo = (initialState): ApolloClient<NormalizedCacheObject> => {
   // Make sure to create a new client for every server-side request so that data
   // isn't shared between connections (which would be bad)
   if (!isBrowser) {
