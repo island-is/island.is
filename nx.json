@@ -196,6 +196,9 @@
     },
     "api-domains-documents": {
       "tags": []
+    },
+    "service-portal-graphql": {
+      "tags": []
     }
   }
 }
