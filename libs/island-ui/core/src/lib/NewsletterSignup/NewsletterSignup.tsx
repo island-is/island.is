@@ -8,6 +8,7 @@ import { Box } from '../Box'
 import { GridContainer, GridColumn, GridRow } from '../Grid'
 
 type ColorVariant = 'white' | 'blue'
+type State = 'default' | 'error'
 
 interface Props {
   heading: string
@@ -18,6 +19,8 @@ interface Props {
   buttonText: string
   variant?: ColorVariant
   onClickSubmit: () => void
+  state?: State
+  errorMessage?: string
 }
 
 export const NewsletterSignup: React.FC<Props> = ({
@@ -28,6 +31,8 @@ export const NewsletterSignup: React.FC<Props> = ({
   label,
   buttonText,
   variant = 'white',
+  state = 'default',
+  errorMessage,
   onClickSubmit = () => null,
 }) => {
   return (
@@ -50,6 +55,8 @@ export const NewsletterSignup: React.FC<Props> = ({
               placeholder={placeholder}
               label={label}
               backgroundColor={variant === 'white' ? 'blue' : 'white'}
+              hasError={state === 'error'}
+              errorMessage={errorMessage}
             />
             <Box className={styles.buttonWrap} paddingTop={1}>
               <Button variant="text" onClick={onClickSubmit}>
