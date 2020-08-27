@@ -40,15 +40,20 @@ class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
           <ContentBlock width="large">
             <Box marginBottom={3}>
               <Typography variant="h1" as="h1">
-                {t.title}
+                Villa kom upp
               </Typography>
             </Box>
             <Box marginBottom={9}>
-              {t.contents.map((content, index) => (
-                <Typography variant="intro" key={index}>
-                  {HtmlParser(content)}
-                </Typography>
-              ))}
+              <Typography variant="intro">
+                Eitthvað hefur farið úrskeiðis.
+              </Typography>
+              <Typography variant="intro">
+                Vinsamlega{' '}
+                <a href="https://island.is/um-island-is/hafa-samband/">
+                  hafðu samband
+                </a>{' '}
+                fyrir frekari hjálp
+              </Typography>
             </Box>
           </ContentBlock>
         </Box>
