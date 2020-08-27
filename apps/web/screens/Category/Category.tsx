@@ -97,7 +97,7 @@ const Category: Screen<CategoryProps> = ({
       <CategoryLayout
         sidebar={
           <Sidebar
-            bullet="right"
+            bullet="none"
             items={sidebarCategoryLinks}
             title={n('sidebarHeader')}
           />

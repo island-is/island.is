@@ -16,3 +16,7 @@ export const bulletRight = style({
   right: -5,
   left: 'initial',
 })
+
+export const hidden = style({
+  display: 'none'
+})
