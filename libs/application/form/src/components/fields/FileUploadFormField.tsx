@@ -134,7 +134,6 @@ const FileUploadFormField: FC<Props> = ({ error, field, formValue }) => {
               type: ActionTypes.REMOVE,
               payload: {
                 fileToRemove,
-                onChange,
               },
             })
           }
