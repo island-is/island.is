@@ -161,7 +161,6 @@ const options = {
       return <List type="ol">{children}</List>
     },
     [BLOCKS.LIST_ITEM]: (node, children) => {
-      console.log(children)
       return (
         <ListItem>
           <Box marginTop={2}>{children}</Box>
