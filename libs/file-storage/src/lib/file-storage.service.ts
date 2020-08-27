@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import * as AWS from 'aws-sdk'
 import { uuid } from 'uuidv4'
 
-const uploadBucket = 'testing-islandis'
+const uploadBucket = 'testing-islandis' // TODO get from env and update to correct bucket
 
 AWS.config.update({ region: 'eu-west-1' })
 

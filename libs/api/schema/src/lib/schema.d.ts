@@ -648,7 +648,7 @@ export enum CreateApplicationDtoTypeIdEnum {
 
 export type UpdateApplicationInput = {
   id: Scalars['String']
-  typeId?: Maybe<UpdateApplicationDtoTypeIdEnum>
+  typeId: UpdateApplicationDtoTypeIdEnum
   applicant?: Maybe<Scalars['String']>
   assignee?: Maybe<Scalars['String']>
   externalId?: Maybe<Scalars['String']>

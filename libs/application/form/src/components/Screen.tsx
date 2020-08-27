@@ -124,7 +124,7 @@ const Screen: FC<ScreenProps> = ({
     console.log('uploaded attachments', addAttachmentData)
 
     // Done!
-    return `File uploaded via presigned POST with key: `
+    return `File uploaded via presigned POST with key: ${fields.key}`
   }
 
   const onSubmit: SubmitHandler<FormValue> = async (data) => {
@@ -176,11 +176,6 @@ const Screen: FC<ScreenProps> = ({
         <Box flexGrow={1}>
           {section && <Typography color="dark300">{section.name}</Typography>}
           <Typography variant="h2">{screen.name}</Typography>
-          <div>
-            <strong>Step 3 - Choose a file</strong>
-            <br />
-            <input type="file" id="fileinput" onChange={onFileChange} />
-          </div>
           <Box>
             {screen.type === FormItemTypes.REPEATER ? (
               <FormRepeater
@@ -204,6 +199,12 @@ const Screen: FC<ScreenProps> = ({
               />
             )}
           </Box>
+          {/* TODO remove */}
+          <div>
+            <strong>Temp file field</strong>
+            <br />
+            <input type="file" id="fileinput" onChange={onFileChange} />
+          </div>
         </Box>
         <Box marginTop={[3, 3, 0]}>
           <Divider weight="regular" />
