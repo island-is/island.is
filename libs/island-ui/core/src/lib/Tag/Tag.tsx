@@ -21,7 +21,6 @@ export interface TagProps {
   active?: boolean
   disabled?: boolean
   label?: boolean
-  dataTagId?: string
   children: string | ReactNode
 }
 
@@ -37,7 +36,6 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       active = false,
       disabled,
       label,
-      dataTagId,
       ...props
     }: TagProps,
     ref,
@@ -56,7 +54,6 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
     const sharedProps = {
       className,
       ref,
-      dataTagId,
     }
 
     const content = (

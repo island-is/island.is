@@ -263,15 +263,7 @@ export const Categories: FC<CategoriesProps> = ({
         <Tiles space={[2, 2, 3]} columns={[1, 1, 2, 2, 3]}>
           {filteredItems.map(
             (
-              {
-                title,
-                description,
-                tags,
-                status,
-              }: Pick<
-                AdgerdirPage,
-                'tags' | 'title' | 'description' | 'status'
-              >,
+              { title, description, tags, status, slug }: AdgerdirPage,
               index,
             ) => {
               return (
@@ -281,6 +273,8 @@ export const Categories: FC<CategoriesProps> = ({
                   title={title}
                   tags={tags}
                   status={status}
+                  as={`/${slug}`}
+                  href={`/[slug]`}
                 />
               )
             },

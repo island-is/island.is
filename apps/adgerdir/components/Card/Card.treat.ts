@@ -6,17 +6,17 @@ export const card = style({
   height: '100%',
   minWidth: '100%',
   flexDirection: 'column',
+  backgroundColor: theme.color.white,
   flexGrow: 1,
   cursor: 'pointer',
   borderWidth: 1,
   boxSizing: 'border-box',
   borderStyle: 'solid',
-  opacity: 0,
   borderColor: theme.color.red200,
   borderRadius: theme.border.radius.large,
   textDecoration: 'none',
   position: 'relative',
-  transition: 'opacity 300ms ease, border-color 150ms ease',
+  transition: 'border-color 150ms ease',
   ':hover': {
     borderColor: theme.color.red400,
     textDecoration: 'none',
@@ -73,10 +73,6 @@ export const variants = styleMap({
       borderColor: theme.color.red400,
     },
   },
-})
-
-export const visible = style({
-  opacity: 1,
 })
 
 export const statusPosition = style({

@@ -1,6 +1,7 @@
-import React, { FC, forwardRef, useContext } from 'react'
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React, { forwardRef, useContext } from 'react'
+import Link from 'next/link'
 import cn from 'classnames'
-import Link, { LinkProps } from 'next/link'
 import {
   Box,
   Stack,
@@ -8,48 +9,29 @@ import {
   Tag,
   TagVariant,
   Inline,
-  TagProps,
 } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 import { ColorSchemeContext, ColorSchemes } from '@island.is/adgerdir/context'
-
-import * as styles from './Card.treat'
 import { AdgerdirTag } from '@island.is/api/schema'
 
-const tagPropsDefaults: Omit<TagProps, 'children'> = {
-  variant: 'purple',
-}
+import * as styles from './Card.treat'
 
 interface CardProps {
   title: string
   description: string
   tags?: Array<AdgerdirTag>
-  linkProps?: LinkProps
   href?: string
   as?: string
-  visible?: boolean
   variant?: ColorSchemes
   status?: string
 }
 
-export const Card = forwardRef<HTMLDivElement, CardProps>(
-  (
-    {
-      title,
-      description,
-      tags = [],
-      href,
-      as,
-      visible = true,
-      variant,
-      status,
-    },
-    ref,
-  ) => {
+export const Card = forwardRef<HTMLAnchorElement, CardProps>(
+  ({ title, description, tags = [], href = '#', as, variant, status }, ref) => {
     const { colorScheme } = useContext(ColorSchemeContext)
 
     let color = 'blue400'
-    let tagVariant = '' as TagVariant
+    let tagVariant = 'blue' as TagVariant
 
     switch (variant || colorScheme) {
       case 'blue':
@@ -68,99 +50,59 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
         break
     }
 
-    const Content = (
-      <Box ref={ref} display="flex" height="full" flexDirection="column">
-        <Box flexGrow={1} height="full">
-          <Stack space={1}>
-            <Typography
-              variant="cardCategoryTitle"
-              as="h3"
-              color={color as Colors}
-            >
-              {title}
-            </Typography>
-            {description && <Typography variant="p">{description}</Typography>}
-          </Stack>
-        </Box>
-        {tags.length > 0 && (
-          <Box paddingTop={3} flexGrow={0}>
-            <Inline space={1}>
-              {tags.map(({ title, id }, index) => {
-                return (
-                  <Tag key={index} dataTagId={id} variant={tagVariant}>
-                    {title}
-                  </Tag>
-                )
-              })}
-            </Inline>
-          </Box>
-        )}
-      </Box>
-    )
-
-    if (!href) {
-      return (
-        <Frame variant={colorScheme} isVisible={visible}>
-          {status ? (
-            <span
-              className={cn(
-                styles.status,
-                styles.statusPosition,
-                styles.statusType[status],
-              )}
-            ></span>
-          ) : null}
-          {Content}
-        </Frame>
-      )
-    }
-
     return (
-      <Link href={href} as={as} passHref>
-        {/* eslint-disable-next-line */}
-        <a className={styles.card}>
+      <Link as={as} href={href} passHref>
+        <a ref={ref} className={cn(styles.card, styles.variants[variant], {})}>
           <Box
             height="full"
-            background="white"
             outline="none"
             borderRadius="standard"
+            position="relative"
             padding={[2, 2, 4]}
           >
-            {Content}
+            {status ? (
+              <span
+                className={cn(
+                  styles.status,
+                  styles.statusPosition,
+                  styles.statusType[status],
+                )}
+              ></span>
+            ) : null}
+            <Box ref={ref} display="flex" height="full" flexDirection="column">
+              <Box flexGrow={1} height="full">
+                <Stack space={1}>
+                  <Typography
+                    variant="cardCategoryTitle"
+                    as="h3"
+                    color={color as Colors}
+                  >
+                    {title}
+                  </Typography>
+                  {description && (
+                    <Typography variant="p">{description}</Typography>
+                  )}
+                </Stack>
+              </Box>
+              {tags.length > 0 && (
+                <Box paddingTop={3} flexGrow={0}>
+                  <Inline space={1}>
+                    {tags.map(({ title, id }, index) => {
+                      return (
+                        <Tag key={index} variant={tagVariant} label>
+                          {title}
+                        </Tag>
+                      )
+                    })}
+                  </Inline>
+                </Box>
+              )}
+            </Box>
           </Box>
         </a>
       </Link>
     )
   },
 )
-
-interface FrameProps {
-  isFocused?: boolean
-  isVisible?: boolean
-  variant: ColorSchemes
-}
-
-export const Frame: FC<FrameProps> = ({
-  children,
-  isFocused = false,
-  isVisible = true,
-  variant,
-}) => {
-  return (
-    <Box
-      height="full"
-      background="white"
-      outline="none"
-      padding={[2, 2, 4]}
-      position="relative"
-      className={cn(styles.card, styles.variants[variant], {
-        [styles.focused]: isFocused,
-        [styles.visible]: isVisible,
-      })}
-    >
-      {children}
-    </Box>
-  )
-}
 
 export default Card

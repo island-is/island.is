@@ -19,8 +19,8 @@ import {
   GET_ADGERDIR_FRONTPAGE_QUERY,
 } from './queries'
 import { Screen } from '../types'
-import { useNamespace } from '../hooks'
-import { Locale } from '../i18n/I18n'
+// import { useNamespace } from '../hooks'
+// import { Locale } from '../i18n/I18n'
 import { ColorSchemeContext } from '@island.is/adgerdir/context'
 import Head from 'next/head'
 
@@ -33,7 +33,7 @@ interface HomeProps {
 
 const Home: Screen<HomeProps> = ({ frontpage, data, tags, namespace }) => {
   const { activeLocale } = useI18n()
-  const n = useNamespace(namespace)
+  // const n = useNamespace(namespace)
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale

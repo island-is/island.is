@@ -22,12 +22,11 @@ interface StagePaddingProps {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface CardsSliderProps {
-  key?: string
   variant?: ColorSchemes
   items: Array<AdgerdirPage>
 }
 
-export const CardsSlider: FC<CardsSliderProps> = ({ items, key, variant }) => {
+export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
   const { colorScheme } = useContext(ColorSchemeContext)
 
   const [height, setHeight] = useState<string>('auto')
@@ -109,7 +108,6 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, key, variant }) => {
       className={cn(styles.wrapper, styles.variants[variant || colorScheme])}
     >
       <AliceCarousel
-        key={key}
         controlsStrategy="responsive"
         ref={ref}
         infinite={false}
@@ -129,20 +127,19 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, key, variant }) => {
       >
         {items.map(({ title, description, tags }, index) => {
           return (
-            <>
-              <div
-                onDragStart={handleOnDragStart}
-                style={{ minHeight: height, display: 'inline-flex' }}
-                className={styles.item}
-              >
-                <Card
-                  key={index}
-                  description={description}
-                  title={title}
-                  tags={tags}
-                />
-              </div>
-            </>
+            <div
+              key={index}
+              onDragStart={handleOnDragStart}
+              style={{ minHeight: height, display: 'inline-flex' }}
+              className={styles.item}
+            >
+              <Card
+                description={description}
+                title={title}
+                tags={tags}
+                variant={colorScheme}
+              />
+            </div>
           )
         })}
       </AliceCarousel>

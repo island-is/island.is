@@ -66,17 +66,14 @@ export const variants = styleMap({
     color: theme.color.dark400,
     backgroundColor: theme.color.mint200,
   },
-  label: {
-    backgroundColor: theme.color.transparent,
-  },
+  label: {},
 })
 
 export const active = style({
   selectors: {
     [`&${variants.red}`]: {
-      borderColor: theme.color.red600,
-      backgroundColor: theme.color.red600,
-      color: theme.color.white,
+      backgroundColor: theme.color.white,
+      color: theme.color.red600,
     },
   },
 })
