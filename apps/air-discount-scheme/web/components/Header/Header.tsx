@@ -8,7 +8,6 @@ import { Header as IslandUIHeader } from '@island.is/island-ui/core'
 
 import { UserContext } from '../../context'
 import { api } from '../../services'
-import { Locale } from '@island.is/air-discount-scheme-web/i18n/I18n'
 
 export const UserQuery = gql`
   query UserQuery {
@@ -30,7 +29,6 @@ function Header({ activeLocale, translatedUrl }) {
     setUser(user)
   }, [user, setUser])
 
-  const switchLanguage = async (toLanguage: Locale) => {}
   const language = activeLocale === 'is' ? 'en' : 'is'
   // TODO: get text from cms and pass down to Header
   const logoutText = activeLocale === 'is' ? 'Útskrá' : 'Logout'
