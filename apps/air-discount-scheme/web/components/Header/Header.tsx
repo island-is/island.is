@@ -54,7 +54,7 @@ function Header({ routeKey }: PropTypes) {
       userName={user?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {
-        api.logout().then(() => router.push('/'))
+        api.logout().then(() => router.push(toRoute('home')))
       }}
     />
   )
