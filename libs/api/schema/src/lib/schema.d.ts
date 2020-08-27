@@ -353,6 +353,11 @@ export type Menu = {
   links: Array<Link>
 }
 
+export type AdgerdirTags = {
+  __typename?: 'AdgerdirTags'
+  items: Array<AdgerdirTag>
+}
+
 export type Application = {
   __typename?: 'Application'
   id: Scalars['ID']
@@ -402,6 +407,7 @@ export type Query = {
   getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
   getAdgerdirPages?: Maybe<AdgerdirPages>
+  getAdgerdirTags?: Maybe<AdgerdirTags>
   getFrontpageSliderList?: Maybe<FrontpageSliderList>
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
@@ -463,6 +469,10 @@ export type QueryGetAdgerdirPageArgs = {
 
 export type QueryGetAdgerdirPagesArgs = {
   input: GetAdgerdirPagesInput
+}
+
+export type QueryGetAdgerdirTagsArgs = {
+  input: GetAdgerdirTagsInput
 }
 
 export type QueryGetFrontpageSliderListArgs = {
@@ -568,6 +578,10 @@ export type GetAdgerdirPageInput = {
 export type GetAdgerdirPagesInput = {
   lang?: Maybe<Scalars['String']>
   perPage?: Maybe<Scalars['Int']>
+}
+
+export type GetAdgerdirTagsInput = {
+  lang?: Maybe<Scalars['String']>
 }
 
 export type GetFrontpageSliderListInput = {
@@ -841,6 +855,7 @@ export type ResolversTypes = {
   LandingPage: ResolverTypeWrapper<LandingPage>
   GenericPage: ResolverTypeWrapper<GenericPage>
   Menu: ResolverTypeWrapper<Menu>
+  AdgerdirTags: ResolverTypeWrapper<AdgerdirTags>
   Application: ResolverTypeWrapper<Application>
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>
   ApplicationStateEnum: ApplicationStateEnum
@@ -864,6 +879,7 @@ export type ResolversTypes = {
   GetGenericPageInput: GetGenericPageInput
   GetAdgerdirPageInput: GetAdgerdirPageInput
   GetAdgerdirPagesInput: GetAdgerdirPagesInput
+  GetAdgerdirTagsInput: GetAdgerdirTagsInput
   GetFrontpageSliderListInput: GetFrontpageSliderListInput
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
@@ -940,6 +956,7 @@ export type ResolversParentTypes = {
   LandingPage: LandingPage
   GenericPage: GenericPage
   Menu: Menu
+  AdgerdirTags: AdgerdirTags
   Application: Application
   DateTime: Scalars['DateTime']
   JSON: Scalars['JSON']
@@ -959,6 +976,7 @@ export type ResolversParentTypes = {
   GetGenericPageInput: GetGenericPageInput
   GetAdgerdirPageInput: GetAdgerdirPageInput
   GetAdgerdirPagesInput: GetAdgerdirPagesInput
+  GetAdgerdirTagsInput: GetAdgerdirTagsInput
   GetFrontpageSliderListInput: GetFrontpageSliderListInput
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
@@ -1491,6 +1509,18 @@ export type MenuResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type AdgerdirTagsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['AdgerdirTags'] = ResolversParentTypes['AdgerdirTags']
+> = {
+  items?: Resolver<
+    Array<ResolversTypes['AdgerdirTag']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type ApplicationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Application'] = ResolversParentTypes['Application']
@@ -1622,6 +1652,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetAdgerdirPagesArgs, 'input'>
   >
+  getAdgerdirTags?: Resolver<
+    Maybe<ResolversTypes['AdgerdirTags']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetAdgerdirTagsArgs, 'input'>
+  >
   getFrontpageSliderList?: Resolver<
     Maybe<ResolversTypes['FrontpageSliderList']>,
     ParentType,
@@ -1713,6 +1749,7 @@ export type Resolvers<ContextType = Context> = {
   LandingPage?: LandingPageResolvers<ContextType>
   GenericPage?: GenericPageResolvers<ContextType>
   Menu?: MenuResolvers<ContextType>
+  AdgerdirTags?: AdgerdirTagsResolvers<ContextType>
   Application?: ApplicationResolvers<ContextType>
   DateTime?: GraphQLScalarType
   JSON?: GraphQLScalarType

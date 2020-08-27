@@ -10,8 +10,10 @@ import {
   QueryGetNamespaceArgs,
   ContentLanguage,
   QueryGetAdgerdirPagesArgs,
+  QueryGetAdgerdirTagsArgs,
 } from '@island.is/api/schema'
 import {
+  GET_ADGERDIR_TAGS_QUERY,
   GET_NAMESPACE_QUERY,
   GET_ADGERDIR_PAGES_QUERY,
   GET_ADGERDIR_FRONTPAGE_QUERY,
@@ -25,10 +27,11 @@ import Head from 'next/head'
 interface HomeProps {
   frontpage: Query['getAdgerdirFrontpage']
   data: Query['getAdgerdirPages']
+  tags: Query['getAdgerdirTags']
   namespace: Query['getNamespace']
 }
 
-const Home: Screen<HomeProps> = ({ frontpage, data, namespace }) => {
+const Home: Screen<HomeProps> = ({ frontpage, data, tags, namespace }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
 
@@ -36,7 +39,8 @@ const Home: Screen<HomeProps> = ({ frontpage, data, namespace }) => {
     document.documentElement.lang = activeLocale
   }
 
-  const { items } = data
+  const { items: pagesItems } = data
+  const { items: tagsItems } = tags
 
   return (
     <>
@@ -66,7 +70,7 @@ const Home: Screen<HomeProps> = ({ frontpage, data, namespace }) => {
           <Sleeve>
             <Box background="red100">
               <ContentBlock width="large">
-                <Categories items={items} />
+                <Categories tags={tagsItems} items={pagesItems} />
               </ContentBlock>
             </Box>
           </Sleeve>
@@ -90,7 +94,7 @@ const Home: Screen<HomeProps> = ({ frontpage, data, namespace }) => {
                     </Typography>
                   </Stack>
                 }
-                bottomContent={<CardsSlider items={items} key="purple" />}
+                bottomContent={<CardsSlider items={pagesItems} key="purple" />}
               />
             </Box>
           </ContentBlock>
@@ -116,7 +120,7 @@ const Home: Screen<HomeProps> = ({ frontpage, data, namespace }) => {
                     </Typography>
                   </Stack>
                 }
-                bottomContent={<CardsSlider items={items} key="red" />}
+                bottomContent={<CardsSlider items={pagesItems} key="red" />}
               />
             </Box>
           </ContentBlock>
@@ -140,7 +144,7 @@ const Home: Screen<HomeProps> = ({ frontpage, data, namespace }) => {
                     </Typography>
                   </Stack>
                 }
-                bottomContent={<CardsSlider items={items} key="blue" />}
+                bottomContent={<CardsSlider items={pagesItems} key="blue" />}
               />
             </Box>
           </ContentBlock>
@@ -156,12 +160,23 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       data: { getAdgerdirFrontpage },
     },
     {
+      data: { getAdgerdirTags },
+    },
+    {
       data: { getAdgerdirPages },
     },
     namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetAdgerdirPagesArgs>({
       query: GET_ADGERDIR_FRONTPAGE_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetAdgerdirTagsArgs>({
+      query: GET_ADGERDIR_TAGS_QUERY,
       variables: {
         input: {
           lang: locale as ContentLanguage,
@@ -205,6 +220,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
 
   return {
     frontpage: getAdgerdirFrontpage,
+    tags: getAdgerdirTags,
     data: getAdgerdirPages,
     namespace,
     showSearchInHeader: false,

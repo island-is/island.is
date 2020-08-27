@@ -29,11 +29,21 @@ interface CardProps {
   as?: string
   visible?: boolean
   variant?: ColorSchemes
+  status?: string
 }
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
   (
-    { title, description, tags = [], href, as, visible = true, variant },
+    {
+      title,
+      description,
+      tags = [],
+      href,
+      as,
+      visible = true,
+      variant,
+      status,
+    },
     ref,
   ) => {
     const { colorScheme } = useContext(ColorSchemeContext)
@@ -77,7 +87,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
             <Inline space={1}>
               {tags.map(({ title, id }, index) => {
                 return (
-                  <Tag key={index} dataTagId={id}>
+                  <Tag key={index} dataTagId={id} variant={tagVariant}>
                     {title}
                   </Tag>
                 )
@@ -91,6 +101,15 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
     if (!href) {
       return (
         <Frame variant={colorScheme} isVisible={visible}>
+          {status ? (
+            <span
+              className={cn(
+                styles.status,
+                styles.statusPosition,
+                styles.statusType[status],
+              )}
+            ></span>
+          ) : null}
           {Content}
         </Frame>
       )
@@ -133,6 +152,7 @@ export const Frame: FC<FrameProps> = ({
       background="white"
       outline="none"
       padding={[2, 2, 4]}
+      position="relative"
       className={cn(styles.card, styles.variants[variant], {
         [styles.focused]: isFocused,
         [styles.visible]: isVisible,

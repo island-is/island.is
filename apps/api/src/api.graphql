@@ -282,6 +282,10 @@ type Menu {
   links: [Link!]!
 }
 
+type AdgerdirTags {
+  items: [AdgerdirTag!]!
+}
+
 type Application {
   id: ID!
   created: DateTime!
@@ -348,6 +352,7 @@ type Query {
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
   getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages
+  getAdgerdirTags(input: GetAdgerdirTagsInput!): AdgerdirTags
   getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getMenu(input: GetMenuInput!): Menu
@@ -439,6 +444,10 @@ input GetAdgerdirPageInput {
 input GetAdgerdirPagesInput {
   lang: String
   perPage: Int
+}
+
+input GetAdgerdirTagsInput {
+  lang: String
 }
 
 input GetFrontpageSliderListInput {

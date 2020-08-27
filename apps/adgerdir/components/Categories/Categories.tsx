@@ -1,4 +1,6 @@
 import React, { FC, useState, useCallback, useEffect, useRef } from 'react'
+import _ from 'lodash'
+import cn from 'classnames'
 import {
   Box,
   Tiles,
@@ -9,70 +11,85 @@ import {
   Inline,
   Icon,
 } from '@island.is/island-ui/core'
-import { AdgerdirPage } from '@island.is/api/schema'
+import Card from '../Card/Card'
+import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
 
+import * as cardStyles from '../Card/Card.treat'
 import * as styles from './Categories.treat'
-import { Card } from '../Card/Card'
 
-const FILTER_TIMER = 1000
+const FILTER_TIMER = 300
 const ITEMS_PER_SHOW = 6
 
 interface CategoriesProps {
   items: AdgerdirPage[]
+  tags: AdgerdirTag[]
   seeMoreText?: string
 }
 
 export const Categories: FC<CategoriesProps> = ({
   seeMoreText = 'Sjá fleiri',
   items,
+  tags,
 }) => {
   // const cardsRef = useRef<Array<HTMLElement | null>>([])
   const [filterString, setFilterString] = useState<string>('')
-  const [tagIds, setTagIds] = useState<Array<number | string>>([])
+  const [tagIds, setTagIds] = useState<Array<string>>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showCount, setShowCount] = useState<number>(ITEMS_PER_SHOW)
-  const [hiddenIndexes, setHiddenIndexes] = useState<Array<number>>([])
+  const [indexesFilteredByString, setIndexesFilteredByString] = useState<
+    Array<number>
+  >([])
+  const [indexesFilteredByTag, setIndexesFilteredByTag] = useState<
+    Array<number>
+  >([])
   const timerRef = useRef(null)
 
-  const tags = [
-    { title: 'Styrkir', id: 1 },
-    { title: 'Bætur', id: 2 },
-    { title: 'Lán', id: 3 },
-    { title: 'Skattamál', id: 4 },
-    { title: 'Einstaklingar', id: 5 },
-    { title: 'Fyrirtæki', id: 6 },
-    { title: 'Atvinnulíf', id: 7 },
-    { title: 'Ferðaþjónusta', id: 8 },
-    { title: 'Tölfræði', id: 9 },
-  ]
-
-  const states = ['Í undirbúningi', 'Í framkvæmd', 'Lokið']
+  const statusNames = {
+    preparing: 'Í undirbúningi',
+    ongoing: 'Í framkvæmd',
+    completed: 'Lokið',
+  }
 
   const handleChange = (e) => {
     e.preventDefault()
     setFilterString(e.target.value)
   }
 
-  const doUpdate = useCallback(() => {
-    const indexesToHide = []
+  const onFilterStringChange = useCallback(() => {
+    const arr = []
 
-    if (items.length) {
-      items.forEach(({ title, description }, index) => {
-        const str = `${title} ${description}`
+    items.forEach(({ title, description }, index) => {
+      const str = `${title} ${description}`
 
-        if (!str.match(new RegExp(filterString.trim(), 'gi'))) {
-          indexesToHide.push(index)
-        }
-      })
-    }
+      if (str.match(new RegExp(filterString.trim(), 'gi'))) {
+        arr.push(index)
+      }
+    })
 
-    setHiddenIndexes(indexesToHide)
-    setIsLoading(false)
+    setIndexesFilteredByString(arr)
   }, [items, filterString])
 
+  const onFilterTagChange = useCallback(() => {
+    const arr = []
+
+    items.forEach(({ title, tags }, index) => {
+      if (tags.some(({ id }) => tagIds.includes(id as string))) {
+        arr.push(index)
+      }
+    })
+
+    setIndexesFilteredByTag(arr)
+  }, [items, tagIds])
+
+  const doUpdate = useCallback(() => {
+    onFilterStringChange()
+    onFilterTagChange()
+    setIsLoading(false)
+  }, [onFilterStringChange, onFilterTagChange])
+
   const onUpdateFilters = useCallback(() => {
-    setIsLoading(true)
     clearTimeout(timerRef.current)
+    setIsLoading(true)
 
     if (!filterString) {
       doUpdate()
@@ -81,7 +98,8 @@ export const Categories: FC<CategoriesProps> = ({
     }
   }, [filterString, doUpdate])
 
-  const onTagClick = (id: number | string) => {
+  const onTagClick = (id: string) => {
+    clearTimeout(timerRef.current)
     const newTagIds = [...tagIds]
     const index = tagIds.findIndex((x) => x === id)
 
@@ -100,8 +118,29 @@ export const Categories: FC<CategoriesProps> = ({
   }, [onUpdateFilters])
 
   const filteredItems = items
-    .filter((_, index) => !hiddenIndexes.includes(index))
+    .filter((item, index) => {
+      if (indexesFilteredByTag.length) {
+        return _.intersection(
+          indexesFilteredByTag,
+          indexesFilteredByString,
+        ).includes(index)
+      }
+
+      return indexesFilteredByString.includes(index)
+    })
     .splice(0, showCount)
+
+  const statusTypes = items.reduce((statuses, cur) => {
+    if (cur.status) {
+      if (!statuses.includes(cur.status)) {
+        statuses.push(cur.status)
+      }
+    }
+
+    return statuses
+  }, [])
+
+  console.log(statusTypes)
 
   return (
     <Box padding={[3, 3, 6]}>
@@ -113,10 +152,20 @@ export const Categories: FC<CategoriesProps> = ({
                 <Typography variant="tag" color="red600">
                   Staða aðgerðar:
                 </Typography>
-                {states.map((tag, index) => {
+                {statusTypes.map((status, index) => {
                   return (
-                    <Tag key={index} variant="red" active>
-                      {tag}
+                    <Tag key={index} variant="red">
+                      <Box position="relative">
+                        <Inline space={1} alignY="center">
+                          <span>{statusNames[status]}</span>
+                          <span
+                            className={cn(
+                              cardStyles.status,
+                              cardStyles.statusType[status],
+                            )}
+                          ></span>
+                        </Inline>
+                      </Box>
                     </Tag>
                   )
                 })}
@@ -161,9 +210,15 @@ export const Categories: FC<CategoriesProps> = ({
         </Box>
         {filterString && filteredItems.length === 0 ? (
           <Box>
-            <Typography variant="h5">
-              Ekkert fannst með leitarorðinu „{filterString}“.
-            </Typography>
+            <Stack space={2}>
+              <Typography variant="intro" color="red600">
+                {`Ekkert fannst með leitarorðinu „${filterString}“${
+                  indexesFilteredByTag.length
+                    ? ' og völdum málefnum/stöðum hér fyrir ofan'
+                    : ''
+                }...`}
+              </Typography>
+            </Stack>
           </Box>
         ) : null}
         <Tiles space={[2, 2, 3]} columns={[1, 1, 2, 2, 3]}>
@@ -173,7 +228,11 @@ export const Categories: FC<CategoriesProps> = ({
                 title,
                 description,
                 tags,
-              }: Pick<AdgerdirPage, 'tags' | 'title' | 'description'>,
+                status,
+              }: Pick<
+                AdgerdirPage,
+                'tags' | 'title' | 'description' | 'status'
+              >,
               index,
             ) => {
               return (
@@ -182,6 +241,7 @@ export const Categories: FC<CategoriesProps> = ({
                   description={description}
                   title={title}
                   tags={tags}
+                  status={status}
                 />
               )
             },

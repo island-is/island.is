@@ -38,6 +38,17 @@ export const GET_ADGERDIR_PAGE_QUERY = gql`
   }
 `
 
+export const GET_ADGERDIR_TAGS_QUERY = gql`
+  query GetAdgerdirTags($input: GetAdgerdirTagsInput!) {
+    getAdgerdirTags(input: $input) {
+      items {
+        id
+        title
+      }
+    }
+  }
+`
+
 export const GET_ADGERDIR_FRONTPAGE_QUERY = gql`
   query GetAdgerdirFrontpage($input: GetAdgerdirFrontpageInput!) {
     getAdgerdirFrontpage(input: $input) {

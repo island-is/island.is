@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
 import { Typography } from '../Typography/Typography'
 
@@ -22,7 +22,7 @@ export interface TagProps {
   disabled?: boolean
   label?: boolean
   dataTagId?: string
-  children: string
+  children: string | ReactNode
 }
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0

@@ -22,8 +22,8 @@ import { StorySlice } from './models/slices/storySlice.model'
 import { MailingListSignupSlice } from './models/slices/mailingListSignupSlice.model'
 import { HeadingSlice } from './models/slices/headingSlice.model'
 import { LinkCard } from './models/linkCard.model'
-import { LinkCardSlice } from './models/adgerdirTag.model'
-import { AdgerdirTag } from './models/slices/AdgerdirTag.model'
+import { LinkCardSlice } from './models/slices/linkCardSlice.model'
+import { AdgerdirTag } from './models/AdgerdirTag.model'
 import { LatestNewsSlice } from './models/slices/latestNewsSlice.model'
 import { LogoListSlice } from './models/slices/logoListSlice.model'
 import { IconBullet } from './models/bullets/iconBullet.model'
@@ -341,6 +341,22 @@ export const getAdgerdirPages = async (lang = 'is-IS') => {
 
   return {
     items: r.items.map(formatAdgerdirPage),
+  }
+}
+
+export const getAdgerdirTags = async (lang = 'is-IS') => {
+  const params = {
+    ['content_type']: 'vidspyrnaTag',
+    include: 10,
+    limit: 100,
+  }
+
+  const r = await getLocalizedEntries<AdgerdirTag>(lang, params).catch(
+    errorHandler('getAdgerdirTags'),
+  )
+
+  return {
+    items: r.items.map(formatAdgerdirTag),
   }
 }
 

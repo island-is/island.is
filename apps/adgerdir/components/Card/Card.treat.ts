@@ -79,6 +79,31 @@ export const visible = style({
   opacity: 1,
 })
 
+export const statusPosition = style({
+  position: 'absolute',
+  top: 16,
+  right: 16,
+})
+
+export const status = style({
+  display: 'inline-block',
+  borderRadius: '50%',
+  width: 8,
+  height: 8,
+})
+
+export const statusType = styleMap({
+  ongoing: {
+    backgroundColor: theme.color.mint600,
+  },
+  preparing: {
+    backgroundColor: theme.color.yellow600,
+  },
+  completed: {
+    backgroundColor: theme.color.purple400,
+  },
+})
+
 export const focused = style({
   ':before': {
     borderWidth: 3,
