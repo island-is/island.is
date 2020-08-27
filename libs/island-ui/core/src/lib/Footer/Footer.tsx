@@ -2,7 +2,6 @@
 import React from 'react'
 import cn from 'classnames'
 import chunk from 'lodash/chunk'
-import { ContentBlock } from '../ContentBlock/ContentBlock'
 import { Box } from '../Box/Box'
 import { Logo } from '../Logo/Logo'
 import { Tiles } from '../Tiles/Tiles'

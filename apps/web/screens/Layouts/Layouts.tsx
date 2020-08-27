@@ -5,10 +5,8 @@ import {
   GridRow,
   GridColumn,
   ContentBlock,
-  Box,
 } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import { STICKY_NAV_HEIGHT } from '@island.is/web/constants'
 import { Sticky } from '../../components'
 
 interface CategoryProps {
