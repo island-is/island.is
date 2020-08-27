@@ -17,14 +17,4 @@ describe('App', () => {
 
     expect(baseElement).toBeTruthy()
   })
-
-  it('should have a count as the title', async () => {
-    const { getByText } = render(
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>,
-    )
-    await waitFor(() => getByText('0 cases'))
-    expect(getByText('0 cases')).toBeTruthy()
-  })
 })
