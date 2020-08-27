@@ -11,6 +11,7 @@ import {
   buildRadioField,
   buildTextField,
   buildSelectField,
+  buildFileUploadField,
 } from '../../lib/fieldBuilders'
 import { Form } from '../../types/Form'
 import { nationalIdRegex } from '../formConstants'
