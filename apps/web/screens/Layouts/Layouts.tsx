@@ -1,6 +1,7 @@
 import React, { FC, ReactNode } from 'react'
 import cn from 'classnames'
 import { ContentBlock, Box } from '@island.is/island-ui/core'
+import { STICKY_NAV_HEIGHT } from '@island.is/web/constants'
 import { Sticky } from '../../components'
 
 import * as styles from './Layouts.treat'
@@ -47,7 +48,7 @@ export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
     <Box padding={[0, 0, 0, 6]}>
       <div className={cn(styles.layout, styles.reversed)}>
         <div className={styles.desktopSide}>
-          <Sticky>{sidebar}</Sticky>
+          <Sticky top={STICKY_NAV_HEIGHT + 24}>{sidebar}</Sticky>
         </div>
         <Box paddingRight={[0, 0, 0, 4]} width="full">
           {children}
