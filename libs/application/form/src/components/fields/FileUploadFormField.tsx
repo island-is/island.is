@@ -21,7 +21,7 @@ type UploadFileAnswer = Pick<UploadFile, 'name' | 'url'>
 
 // Transform a file object to a simple object that's stored
 // as an answer.
-const transFormToAnswer = (f: UploadFileAnswer) => {
+const transformToAnswer = (f: UploadFileAnswer) => {
   return { name: f.name, url: f.url }
 }
 
@@ -73,7 +73,7 @@ const FileUploadFormField: FC<Props> = ({ error, field, formValue }) => {
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
 
   useEffect(() => {
-    const uploadAnswer: UploadFileAnswer[] = state.map(transFormToAnswer)
+    const uploadAnswer: UploadFileAnswer[] = state.map(transformToAnswer)
 
     setValue(id, uploadAnswer)
   }, [state])
