@@ -178,7 +178,7 @@ export const AppLayout: NextComponentType<
   )
 }
 
-const getMenuQuery = gql`
+const GetMenuQuery = gql`
   query GetMenu($input: GetMenuInput!) {
     getMenu(input: $input) {
       title
@@ -189,7 +189,7 @@ const getMenuQuery = gql`
     }
   }
 `
-export const getNamespaceQuery = gql`
+export const GetNamespaceQuery = gql`
   query GetNamespace($input: GetNamespaceInput!) {
     getNamespace(input: $input) {
       fields
@@ -207,7 +207,7 @@ AppLayout.getInitialProps = async ({ apolloClient, locale, translatedUrl }) => {
   ] = await Promise.all([
     apolloClient
       .query<Query, QueryGetMenuArgs>({
-        query: getMenuQuery,
+        query: GetMenuQuery,
         variables: {
           input: { name: 'Footer upper', lang: locale },
         },
@@ -215,7 +215,7 @@ AppLayout.getInitialProps = async ({ apolloClient, locale, translatedUrl }) => {
       .then((result) => result.data.getMenu),
     apolloClient
       .query<Query, QueryGetMenuArgs>({
-        query: getMenuQuery,
+        query: GetMenuQuery,
         variables: {
           input: { name: 'Footer lower', lang: locale },
         },
@@ -223,7 +223,7 @@ AppLayout.getInitialProps = async ({ apolloClient, locale, translatedUrl }) => {
       .then((result) => result.data.getMenu),
     apolloClient
       .query<Query, QueryGetMenuArgs>({
-        query: getMenuQuery,
+        query: GetMenuQuery,
         variables: {
           input: { name: 'Footer middle', lang: locale },
         },
@@ -231,7 +231,7 @@ AppLayout.getInitialProps = async ({ apolloClient, locale, translatedUrl }) => {
       .then((result) => result.data.getMenu),
     apolloClient
       .query<Query, QueryGetMenuArgs>({
-        query: getMenuQuery,
+        query: GetMenuQuery,
         variables: {
           input: { name: 'Footer tags', lang: locale },
         },
@@ -239,7 +239,7 @@ AppLayout.getInitialProps = async ({ apolloClient, locale, translatedUrl }) => {
       .then((result) => result.data.getMenu),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
-        query: getNamespaceQuery,
+        query: GetNamespaceQuery,
         variables: {
           input: {
             namespace: 'Global',
