@@ -29,7 +29,6 @@ export const Logo = forwardRef<SVGSVGElement, LogoProps>(
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width={width ?? 40}
-        height={width ?? 40}
         fill="none"
         viewBox="0 0 40 40"
         className={cn(styles.root)}
@@ -66,7 +65,7 @@ export const Logo = forwardRef<SVGSVGElement, LogoProps>(
         viewBox="0 0 669.51 108.09"
         className={cn(styles.root)}
         width={width ?? 200}
-        style={{ width: width ?? 200, color: solidColor }}
+        style={{ color: solidColor }}
         aria-label="island.is logo"
       >
         <defs>
