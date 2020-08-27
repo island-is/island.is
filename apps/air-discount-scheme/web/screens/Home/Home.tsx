@@ -18,7 +18,7 @@ interface PropTypes {
   page?: GenericPage
 }
 
-const Home: Screen<PropTypes> = ({ page, ...rest }) => {
+const Home: Screen<PropTypes> = ({ page }) => {
   return (
     <Layout
       left={
