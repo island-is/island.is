@@ -7,7 +7,7 @@ import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
 
-export const GET_NAMESPACE_QUERY = gql`
+export const getNamespaceQuery = gql`
   query GetNamespace($input: GetNamespaceInput!) {
     getNamespace(input: $input) {
       fields
@@ -57,7 +57,7 @@ const getGlobalStrings = ({
 }) => {
   return apolloClient
     .query<Query, QueryGetNamespaceArgs>({
-      query: GET_NAMESPACE_QUERY,
+      query: getNamespaceQuery,
       variables: {
         input: {
           namespace: 'Global',
