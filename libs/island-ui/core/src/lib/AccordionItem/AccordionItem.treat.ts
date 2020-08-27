@@ -1,31 +1,7 @@
 import { style, styleMap } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, blue100 } from '@island.is/island-ui/theme'
 
 export const button = style({})
-
-export const icon = style({
-  display: 'inline-flex',
-  alignSelf: 'center',
-  justifySelf: 'center',
-  alignItems: 'center',
-  justifyContent: 'center',
-  borderRadius: '50%',
-  transform: 'rotate(0.000001deg)',
-  transition: 'transform 300ms ease',
-})
-
-export const iconVariants = styleMap({
-  default: {
-    width: 40,
-    height: 40,
-    backgroundColor: theme.color.blue100,
-  },
-  sidebar: {
-    width: 24,
-    height: 24,
-    backgroundColor: theme.color.purple200,
-  },
-})
 
 export const iconTilted = style({
   transform: 'rotate(45deg)',
@@ -68,7 +44,7 @@ export const card = style({
   ':focus': {
     outline: 0,
   },
-  ':before': {
+  '::before': {
     content: "''",
     display: 'inline-block',
     position: 'absolute',
@@ -85,7 +61,7 @@ export const card = style({
     transition: 'border-color 150ms ease, opacity 150ms ease',
   },
   selectors: {
-    [`&:focus:before`]: {
+    [`&:focus::before`]: {
       borderWidth: 3,
       borderStyle: 'solid',
       borderColor: theme.color.mint400,
@@ -99,7 +75,7 @@ export const card = style({
 })
 
 export const focused = style({
-  ':before': {
+  '::before': {
     borderWidth: 3,
     borderStyle: 'solid',
     borderColor: theme.color.mint400,
@@ -109,4 +85,62 @@ export const focused = style({
   ':hover': {
     borderColor: theme.color.white,
   },
+})
+
+export const plusIconWrap = style({
+  backgroundColor: theme.color.blue100,
+  borderRadius: '50%',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  position: 'relative',
+})
+
+export const iconWrapVariants = styleMap({
+  default: {
+    backgroundColor: theme.color.blue100,
+    color: theme.color.blue400,
+    width: 40,
+    height: 40,
+  },
+  sidebar: {
+    backgroundColor: theme.color.purple200,
+    color: theme.color.purple400,
+    width: 20,
+    height: 20,
+  },
+})
+
+export const plusIcon = style({
+  display: 'flex',
+  transform: 'rotateZ(0)',
+  transformOrigin: 'center',
+  transition: 'transform 300ms',
+})
+
+export const iconVariants = styleMap({
+  default: {
+    width: 20,
+    height: 20,
+  },
+  sidebar: {
+    width: 12,
+    height: 12,
+  },
+})
+
+export const plusIconActive = style({
+  transform: 'rotateZ(90deg)',
+})
+
+export const plusIconX = style({
+  fill: 'currentColor',
+})
+
+export const plusIconXActive = style({
+  opacity: 0,
+})
+
+export const plusIconY = style({
+  fill: 'currentColor',
 })
