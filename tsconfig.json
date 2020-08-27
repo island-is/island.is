@@ -93,6 +93,9 @@
       ],
       "@island.is/air-discount-scheme/types": [
         "libs/air-discount-scheme/types/src/index.ts"
+      ],
+      "@island.is/api/domains/documents": [
+        "libs/api/domains/documents/src/index.ts"
       ]
     }
   },

@@ -336,6 +336,7 @@ type Query {
   getMenu(input: GetMenuInput!): Menu
   getApplication(input: GetApplicationInput!): Application
   getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
+  getDocument: String
 }
 
 input HelloWorldInput {
