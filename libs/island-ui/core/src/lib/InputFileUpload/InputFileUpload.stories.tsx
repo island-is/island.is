@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 
-import { InputFileUpload } from './InputFileUpload'
-import { fileToObject } from './InputFileUpload.utils'
-import { UploadFile } from './InputFileUpload.types'
+import { InputFileUpload, fileToObject, UploadFile } from './InputFileUpload'
 
 import { Box } from '../Box'
 import { ContentBlock } from '../ContentBlock'
