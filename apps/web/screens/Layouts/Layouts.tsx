@@ -4,8 +4,8 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
-  ContentBlock
-  Box
+  ContentBlock,
+  Box,
 } from '@island.is/island-ui/core'
 import cn from 'classnames'
 import { STICKY_NAV_HEIGHT } from '@island.is/web/constants'
