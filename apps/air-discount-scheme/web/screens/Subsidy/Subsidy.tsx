@@ -14,14 +14,6 @@ import {
 } from '@island.is/air-discount-scheme-web/components'
 import { Screen } from '../../types'
 import { Benefits, Usage } from './components'
-import {
-  Table,
-  Row,
-  Head,
-  HeadData,
-  Body,
-  Data,
-} from '@island.is/air-discount-scheme-web/components/Table/Table'
 
 interface PropTypes {
   page?: GenericPage
@@ -64,22 +56,6 @@ const Subsidy: Screen<PropTypes> = ({
           </Stack>
           <Benefits misc={misc} />
           <Usage misc={misc} />
-          <Table>
-            <Head>
-              <Row>
-                <HeadData>Notandi</HeadData>
-                <HeadData>Leggur</HeadData>
-                <HeadData>Dagsetning</HeadData>
-              </Row>
-            </Head>
-            <Body>
-              <Row>
-                <Data>The table body</Data>
-                <Data>with two columns</Data>
-                <Data>with two columns</Data>
-              </Row>
-            </Body>
-          </Table>
         </Box>
       }
       right={
