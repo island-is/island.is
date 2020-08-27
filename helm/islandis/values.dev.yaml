@@ -95,7 +95,7 @@ api:
 
 judicial-system-api:
   secrets:
-    DB_PASS: '/k8s/judicial-system/DB_PASSWORD_DEBUG'
+    DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
   env:
     DB_USER: judicial-system
     DB_NAME: judicial-system
