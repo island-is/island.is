@@ -60,22 +60,24 @@ const initialUploadFiles: UploadFile[] = []
 function reducer(state, action) {
   switch (action.type) {
     case ActionTypes.ADD:
-      const updatedFiles = state.concat(action.payload.newFiles)
-      return updatedFiles
+      return state.concat(action.payload.newFiles)
+
     case ActionTypes.REMOVE:
-      const updatedFileList = state.filter(
+      return state.filter(
         (file) => file.name !== action.payload.fileToRemove.name,
       )
-      return [...updatedFileList]
+
     case ActionTypes.UPDATE:
-      const updatedStatusList = state.map((file: UploadFile) => {
-        if (file.name == action.payload.file.name) {
-          file.status = action.payload.status
-          file.percent = action.payload.percent
-        }
-        return file
-      })
-      return [...updatedStatusList]
+      return [
+        ...state.map((file: UploadFile) => {
+          if (file.name === action.payload.file.name) {
+            file.status = action.payload.status
+            file.percent = action.payload.percent
+          }
+          return file
+        }),
+      ]
+
     default:
       throw new Error()
   }

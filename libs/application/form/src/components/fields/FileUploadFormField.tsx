@@ -46,13 +46,15 @@ function reducer(state, action) {
       )
 
     case ActionTypes.UPDATE:
-      return state.map((file: UploadFile) => {
-        if (file.name === action.payload.file.name) {
-          file.status = action.payload.status
-          file.percent = action.payload.percent
-        }
-        return file
-      })
+      return [
+        ...state.map((file: UploadFile) => {
+          if (file.name === action.payload.file.name) {
+            file.status = action.payload.status
+            file.percent = action.payload.percent
+          }
+          return file
+        }),
+      ]
 
     default:
       throw new Error()
