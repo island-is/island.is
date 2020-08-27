@@ -1,15 +1,10 @@
 import React, { PureComponent } from 'react'
-import HtmlParser from 'react-html-parser'
 import * as Sentry from '@sentry/node'
 
 import { Box, ContentBlock, Typography } from '@island.is/island-ui/core'
 
-import { withI18n } from '../../i18n'
-import { Translation } from '../../i18n/locales'
-
 interface PropTypes {
   children: React.ReactNode
-  t?: Translation
 }
 
 interface StateTypes {
@@ -36,10 +31,7 @@ class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
   }
 
   render() {
-    const {
-      children,
-      t: { errorBoundary: t },
-    } = this.props
+    const { children } = this.props
     const { error } = this.state
 
     if (error) {
@@ -71,4 +63,4 @@ class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
   }
 }
 
-export default withI18n(ErrorBoundary)
+export default ErrorBoundary

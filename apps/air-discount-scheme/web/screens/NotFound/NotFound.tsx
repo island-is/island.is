@@ -11,13 +11,7 @@ import {
   Typography,
 } from '@island.is/island-ui/core'
 
-import { useI18n } from '../../i18n'
-
 function NotFound() {
-  const {
-    t: { notFound: t },
-  } = useI18n()
-
   return (
     <ContentBlock width="large">
       <Box paddingX="gutter">

@@ -1,23 +1,22 @@
 import React, { createContext, useState, useRef, useEffect } from 'react'
 import rosetta from 'rosetta'
 
-import { Translation } from './locales/translation'
+import { getRoute } from './routes'
+import { Locale, Routes } from './types'
 
 const i18n = rosetta()
 
-export type Locale = 'is' | 'en'
 export const defaultLanguage = 'is'
 
 interface I18nContextType {
   activeLocale: Locale
-  t: Translation
-  locale: (locale: Locale, dict?: object) => void
+  locale: (locale: Locale) => void
+  toRoute: (route: keyof Routes, locale?: Locale) => string
 }
 
 interface PropTypes {
   children: React.ReactNode
   locale: Locale
-  translations: Translation
 }
 
 export const I18nContext = createContext<I18nContextType | null>(null)
@@ -25,8 +24,7 @@ export const I18nContext = createContext<I18nContextType | null>(null)
 // default language
 i18n.locale(defaultLanguage)
 
-function I18n({ children, locale, translations }: PropTypes) {
-  const [activeDict, setActiveDict] = useState(() => translations)
+function I18n({ children, locale }: PropTypes) {
   const activeLocaleRef = useRef(locale || defaultLanguage)
   const [, setTick] = useState(0)
   const firstRender = useRef(true)
@@ -35,31 +33,27 @@ function I18n({ children, locale, translations }: PropTypes) {
   if (locale && firstRender.current === true) {
     firstRender.current = false
     i18n.locale(locale)
-    i18n.set(locale, activeDict)
   }
 
   useEffect(() => {
     if (locale) {
       i18n.locale(locale)
-      i18n.set(locale, activeDict)
       activeLocaleRef.current = locale
       // force rerender
       setTick((tick) => tick + 1)
     }
-  }, [locale, activeDict])
+  }, [locale])
 
   const i18nWrapper = {
     activeLocale: activeLocaleRef.current,
-    t: translations,
-    locale: (l, dict) => {
+    toRoute: (
+      route: keyof Routes,
+      locale: Locale = activeLocaleRef.current,
+    ): string => getRoute(locale, route),
+    locale: (l) => {
       i18n.locale(l)
       activeLocaleRef.current = l
-      if (dict) {
-        i18n.set(l, dict)
-        setActiveDict(dict)
-      } else {
-        setTick((tick) => tick + 1)
-      }
+      setTick((tick) => tick + 1)
     },
   }
 
