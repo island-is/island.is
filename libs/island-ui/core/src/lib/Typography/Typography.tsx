@@ -12,7 +12,17 @@ import { Colors } from '@island.is/island-ui/theme'
 export interface TypographyProps {
   variant?: VariantTypes
   children?: React.ReactNode
-  as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'p' | 'span' | 'div' | 'label'
+  as?:
+    | 'h1'
+    | 'h2'
+    | 'h3'
+    | 'h4'
+    | 'h5'
+    | 'p'
+    | 'span'
+    | 'div'
+    | 'label'
+    | 'caption'
   color?: Colors
   truncate?: boolean
   links?: boolean

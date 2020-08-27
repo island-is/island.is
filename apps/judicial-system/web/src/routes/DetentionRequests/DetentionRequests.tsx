@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
 import * as styles from './DetentionRequests.treat'
-import { Button, Typography } from '@island.is/island-ui/core'
+import { Button, Typography, Tag } from '@island.is/island-ui/core'
 
 export const DetentionRequests = () => {
   return (
@@ -14,11 +14,9 @@ export const DetentionRequests = () => {
         <Button icon="plus">Stofna nýja kröfu</Button>
       </div>
       <table className={styles.detentionRequestsTable}>
-        <caption>
-          <Typography as="h3" variant="h3">
-            Gæsluvarðhaldskröfur
-          </Typography>
-        </caption>
+        <Typography as="caption" variant="h3">
+          Gæsluvarðhaldskröfur
+        </Typography>
         <thead>
           <tr>
             <th>LÖKE málsnr.</th>
@@ -35,7 +33,9 @@ export const DetentionRequests = () => {
             <td>Róbert Guðni Arnarsson</td>
             <td>-</td>
             <td>03. júní 2020</td>
-            <td>Drög</td>
+            <td>
+              <Tag label>Drög</Tag>
+            </td>
             <td>
               <Button href="/" icon="arrowRight" variant="text">
                 Opna kröfu
