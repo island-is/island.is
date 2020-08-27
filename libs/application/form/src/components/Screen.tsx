@@ -111,7 +111,7 @@ const Screen: FC<ScreenProps> = ({
 
     if (!response.ok) return 'Failed to upload via presigned POST'
 
-    addAttachment({
+    const { data: addAttachmentData } = await addAttachment({
       variables: {
         input: {
           id: applicationId,
@@ -120,6 +120,8 @@ const Screen: FC<ScreenProps> = ({
         },
       },
     })
+
+    console.log('uploaded attachments', addAttachmentData)
 
     // Done!
     return `File uploaded via presigned POST with key: `
