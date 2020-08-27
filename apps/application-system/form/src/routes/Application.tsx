@@ -22,7 +22,7 @@ export const Application = () => {
 
   return (
     <ApplicationForm
-      formType={data?.getApplication?.typeId ?? FormType.EXAMPLE3}
+      formType={data?.getApplication?.typeId ?? FormType.PATERNITY_LEAVE}
       applicationId={data?.getApplication?.id}
       initialAnswers={data?.getApplication?.answers}
       loadingApplication={loading}

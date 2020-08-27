@@ -97,9 +97,7 @@ const embeddedNodes = () => ({
             <Divider weight="alternate" />
             {links.map(({ fields: { text, url } }, index) => (
               <Typography variant="p" color="blue400" key={index}>
-                <Link href={url}>
-                  <a>{text}</a>
-                </Link>
+                <Link href={url}>{text}</Link>
               </Typography>
             ))}
           </Stack>
