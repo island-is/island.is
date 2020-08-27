@@ -95,7 +95,7 @@ api:
 
 judicial-system-api:
   secrets:
-    DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
+    DB_PASS: '/k8s/judicial-system/DB_PASSWORD_DEBUG'
   env:
     DB_USER: judicial-system
     DB_NAME: judicial-system
@@ -108,7 +108,7 @@ judicial-system-api:
       cert-manager.io/cluster-issuer: devland-is-letsencrypt-dns01
     hosts:
       - host: judicial-system.dev01.devland.is
-        paths: ['/api', '/swagger']
+        paths: ['/api', '/liveness', '/version', '/swagger']
     tls:
       - secretName: judicial-system-tls
         hosts:
