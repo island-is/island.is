@@ -108,7 +108,7 @@ judicial-system-api:
       cert-manager.io/cluster-issuer: devland-is-letsencrypt-dns01
     hosts:
       - host: judicial-system.dev01.devland.is
-        paths: ['/api', '/swagger']
+        paths: ['/api', '/liveness', '/version', '/swagger']
     tls:
       - secretName: judicial-system-tls
         hosts:
