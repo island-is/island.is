@@ -10,6 +10,7 @@ import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { LandingPage } from './models/landingPage.model'
 import { FrontpageSlide } from './models/frontpageSlide.model'
 import { FrontpageSliderList } from './models/frontpageSliderList.model'
+import { GenericPage } from './models/genericPage.model'
 import { News } from './models/news.model'
 import { Link } from './models/link.model'
 import { LinkList } from './models/linkList.model'
@@ -35,6 +36,7 @@ import { GetNewsListInput } from './dto/getNewsList.input'
 import { PaginatedNews } from './models/paginatedNews.model'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
+import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { Namespace } from './models/namespace.model'
 import { Image } from './models/image.model'
 import { Menu } from './models/menu.model'
@@ -276,6 +278,15 @@ const formatFrontpageSlide = ({ fields }): FrontpageSlide => ({
   link: fields.link && JSON.stringify(fields.link),
 })
 
+const formatGenericPage = ({ fields }): GenericPage => ({
+  title: fields.title,
+  slug: fields.slug,
+  intro: JSON.stringify(fields?.intro),
+  mainContent: fields.mainContent && JSON.stringify(fields.mainContent),
+  sidebar: fields.sidebar && JSON.stringify(fields.sidebar),
+  misc: fields.misc && JSON.stringify(fields.misc),
+})
+
 const makePage = (
   page: number,
   perPage: number,
@@ -449,6 +460,23 @@ export const getLandingPage = async ({
   }
 
   return formatLandingPage(result.items[0])
+}
+
+export const getGenericPage = async ({
+  lang,
+  slug,
+}: GetGenericPageInput): Promise<GenericPage> => {
+  const result = await getLocalizedEntries<any>(lang, {
+    ['content_type']: 'genericPage',
+    'fields.slug': slug,
+    include: 10,
+  }).catch(errorHandler('getGenericPage'))
+
+  if (!result.total) {
+    return null
+  }
+
+  return formatGenericPage(result.items[0])
 }
 
 export const getNamespace = async (

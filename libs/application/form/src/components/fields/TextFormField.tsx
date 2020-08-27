@@ -7,7 +7,13 @@ import { useFormContext } from 'react-hook-form'
 interface Props extends FieldBaseProps {
   field: TextField
 }
-const TextFormField: FC<Props> = ({ autoFocus, error, field, register }) => {
+const TextFormField: FC<Props> = ({
+  autoFocus,
+  error,
+  field,
+  register,
+  showFieldName,
+}) => {
   const { id, name } = field
   const { clearErrors } = useFormContext()
   return (
@@ -15,7 +21,7 @@ const TextFormField: FC<Props> = ({ autoFocus, error, field, register }) => {
       <Input
         id={id}
         name={id}
-        label={name}
+        label={showFieldName ? name : undefined}
         ref={register}
         autoFocus={autoFocus}
         hasError={error !== undefined}

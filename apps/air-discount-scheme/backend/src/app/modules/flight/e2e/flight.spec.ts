@@ -9,15 +9,17 @@ let cacheManager: CacheManger
 beforeAll(async () => {
   app = await setup()
   cacheManager = app.get<CacheManger>(CACHE_MANAGER)
+  cacheManager.ttl = () => ''
 })
 
 describe('Create Flight', () => {
-  it(`POST /public/discounts/:discountCode/flights should create a flight`, async () => {
+  it(`POST /api/public/discounts/:discountCode/flights should create a flight`, async () => {
     const spy = jest
       .spyOn(cacheManager, 'get')
       .mockImplementation(() => ({ nationalId: '1234567890' }))
     const response = await request(app.getHttpServer())
-      .post('/public/discounts/12345678/flights')
+      .post('/api/public/discounts/12345678/flights')
+      .set('Authorization', 'Bearer ernir')
       .send({
         bookingDate: '2020-08-17T12:35:50.971Z',
         flightLegs: [
@@ -46,6 +48,7 @@ describe('Create Flight', () => {
       modified: expect.any(String),
       nationalId: '1234567890',
       bookingDate: '2020-08-17T12:35:50.971Z',
+      airline: 'ernir',
       flightLegs: [
         {
           id: expect.any(String),
@@ -75,9 +78,10 @@ describe('Create Flight', () => {
     spy.mockRestore()
   })
 
-  it('POST /public/discounts/:discountCode/flights should return bad request when flightLegs are omitted', async () => {
+  it('POST /api/public/discounts/:discountCode/flights should return bad request when flightLegs are omitted', async () => {
     await request(app.getHttpServer())
-      .post('/public/discounts/12345678/flights')
+      .post('/api/public/discounts/12345678/flights')
+      .set('Authorization', 'Bearer ernir')
       .send({
         nationalId: '1234567890',
         bookingDate: '2020-08-17T12:35:50.971Z',
@@ -87,12 +91,13 @@ describe('Create Flight', () => {
 })
 
 describe('Delete Flight', () => {
-  it(`DELETE /public/flight/:flightId should delete a flight`, async () => {
+  it(`DELETE /api/public/flights/:flightId should delete a flight`, async () => {
     const spy = jest
       .spyOn(cacheManager, 'get')
       .mockImplementation(() => ({ nationalId: '1234567890' }))
     const createRes = await request(app.getHttpServer())
-      .post('/public/discounts/12345678/flights')
+      .post('/api/public/discounts/12345678/flights')
+      .set('Authorization', 'Bearer airIcelandConnect')
       .send({
         bookingDate: '2020-08-17T12:35:50.971Z',
         flightLegs: [
@@ -116,25 +121,28 @@ describe('Delete Flight', () => {
     spy.mockRestore()
 
     await request(app.getHttpServer())
-      .delete(`/public/flights/${createRes.body.id}`)
+      .delete(`/api/public/flights/${createRes.body.id}`)
+      .set('Authorization', 'Bearer airIcelandConnect')
       .expect(204)
 
     const getRes = await request(app.getHttpServer())
-      .get(`/private/flights`)
+      .get(`/api/private/flights`)
       .expect(200)
 
     expect(getRes.body.length).toBe(0)
   })
 
-  it(`DELETE /public/flight/:flightId should validate flightId`, async () => {
+  it(`DELETE /api/public/flights/:flightId should validate flightId`, async () => {
     await request(app.getHttpServer())
-      .delete('/public/flights/this-is-not-uuid')
+      .delete('/api/public/flights/this-is-not-uuid')
+      .set('Authorization', 'Bearer ernir')
       .expect(400)
   })
 
-  it(`DELETE /public/flight/:flightId should return not found if flight does not exist`, async () => {
+  it(`DELETE /api/public/flights/:flightId should return not found if flight does not exist`, async () => {
     await request(app.getHttpServer())
-      .delete('/public/flights/dfac526d-5dc0-4748-b858-3d9cd2ae45be')
+      .delete('/api/public/flights/dfac526d-5dc0-4748-b858-3d9cd2ae45be')
+      .set('Authorization', 'Bearer ernir')
       .expect(404)
   })
 })

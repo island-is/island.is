@@ -17,6 +17,11 @@ then
 else
   AFFECTED_FLAGS=" --head=$HEAD --base=$BASE "
 fi
+
+# Doing this in the name of speeding up the 'prepare' phase of the CI process until we find a faster process to load the docker cache into a docker image
+exec npx \
+  nx print-affected --target=$1 --select=tasks.target.project $AFFECTED_FLAGS
+
 # Build NX runner image if does not exist
 docker image inspect ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} -f ' ' || \
   docker buildx build \

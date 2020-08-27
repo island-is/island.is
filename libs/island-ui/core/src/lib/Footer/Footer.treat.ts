@@ -1,47 +1,49 @@
-import { style } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
-import { responsiveStyleMap } from '../../utils/responsiveStyleMap'
+import { style, globalStyle } from 'treat'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-export const footer = style({
-  marginTop: 'auto',
+export const links = style({})
+export const linksWhite = style({})
+
+globalStyle(`${links} a`, {
+  color: theme.color.blue400,
+  transition: 'color .2s, box-shadow .2s',
+  textDecoration: 'none',
+  boxShadow: `inset 0 -1px 0 0 ${theme.color.blue400} 0`,
 })
 
-export const link = responsiveStyleMap({
-  fontSize: {
-    xs: 20,
-    sm: 18,
-  },
-  fontWeight: theme.typography.light,
-  lineHeight: 1.416667,
-  color: theme.color.blue100,
-  ':hover': {
-    textDecorationColor: theme.color.blue100,
-  },
+globalStyle(`${links} a:hover`, {
+  color: theme.color.blueberry400,
+  boxShadow: `inset 0 -2px 0 0 ${theme.color.blueberry400}`,
+  textDecoration: 'none',
 })
 
-export const linkLarge = responsiveStyleMap({
-  fontSize: {
-    xs: 20,
-    xl: 24,
-  },
-  fontWeight: theme.typography.light,
-  lineHeight: 1.416667,
-  color: theme.color.blue100,
-  ':hover': {
-    textDecorationColor: theme.color.blue100,
-  },
+globalStyle(`${links} a svg path`, {
+  transition: 'fill .2s, box-shadow .2s',
+  fill: theme.color.blue400,
 })
 
-export const icon = style({
-  pointerEvents: 'none',
-  opacity: 0,
-  display: 'inline',
-  marginLeft: '8px',
-  overflow: 'visible',
-  transition: 'opacity 150ms ease',
-  selectors: {
-    [`${link}:hover &, ${linkLarge}:hover &`]: {
-      opacity: 1,
-    },
-  },
+globalStyle(`${links} a:hover svg path`, {
+  fill: theme.color.blueberry400,
+})
+
+globalStyle(`${linksWhite} a`, {
+  color: theme.color.white,
+  transition: 'color .2s, box-shadow .2s',
+  textDecoration: 'none',
+  boxShadow: `inset 0 -1px 0 0 ${theme.color.white} 0`,
+})
+
+globalStyle(`${linksWhite} a:hover`, {
+  color: theme.color.white,
+  boxShadow: `inset 0 -2px 0 0 ${theme.color.white}`,
+  textDecoration: 'none',
+})
+
+globalStyle(`${linksWhite} a svg path`, {
+  transition: 'fill .2s, box-shadow .2s',
+  fill: theme.color.white,
+})
+
+globalStyle(`${linksWhite} a:hover svg path`, {
+  fill: theme.color.white,
 })

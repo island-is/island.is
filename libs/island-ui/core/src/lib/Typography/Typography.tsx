@@ -1,13 +1,16 @@
 import React from 'react'
 import cn from 'classnames'
+import { resolveResponsiveProp } from '../../utils/responsiveProp'
 
 import styles, {
   VariantTypes,
   colors,
   truncate as truncateStyle,
   links as linksStyle,
+  spacing,
 } from './Typography.treat'
 import { Colors } from '@island.is/island-ui/theme'
+import { ResponsiveSpace } from '../Box/useBoxStyles'
 
 export interface TypographyProps {
   variant?: VariantTypes
@@ -16,6 +19,8 @@ export interface TypographyProps {
   color?: Colors
   truncate?: boolean
   links?: boolean
+  paddingTop?: ResponsiveSpace
+  paddingBottom?: ResponsiveSpace
 }
 
 export const Typography = ({
@@ -25,12 +30,34 @@ export const Typography = ({
   color,
   truncate,
   links,
+  paddingTop = 0,
+  paddingBottom = 0,
 }: TypographyProps) => (
   <Cmp
-    className={cn(styles[variant], colors[color], {
-      [truncateStyle]: truncate,
-      [linksStyle]: links,
-    })}
+    className={cn(
+      styles[variant],
+      colors[color],
+      {
+        [truncateStyle]: truncate,
+        [linksStyle]: links,
+      },
+      resolveResponsiveProp(
+        paddingBottom,
+        spacing.paddingBottomXs,
+        spacing.paddingBottomSm,
+        spacing.paddingBottomMd,
+        spacing.paddingBottomLg,
+        spacing.paddingBottomXl,
+      ),
+      resolveResponsiveProp(
+        paddingTop,
+        spacing.paddingTopXs,
+        spacing.paddingTopSm,
+        spacing.paddingTopMd,
+        spacing.paddingTopLg,
+        spacing.paddingTopXl,
+      ),
+    )}
   >
     {children}
   </Cmp>

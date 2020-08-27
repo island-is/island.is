@@ -1,14 +1,33 @@
-import { Controller, Param, Post, Inject, forwardRef } from '@nestjs/common'
-import { ApiExcludeEndpoint, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  Controller,
+  Param,
+  Post,
+  Get,
+  Inject,
+  forwardRef,
+  UseGuards,
+} from '@nestjs/common'
+import {
+  ApiBearerAuth,
+  ApiExcludeEndpoint,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger'
 
 import { Discount } from './discount.model'
-import { CreateDiscountCodeParams } from './discount.validator'
+import {
+  CreateDiscountCodeParams,
+  GetCurrentDiscountByNationalIdParams,
+} from './discount.validator'
 import { DiscountService } from './discount.service'
 import { DiscountLimitExceeded } from './discount.error'
 import { FlightService } from '../flight'
+import { AuthGuard } from '../common'
 
 @ApiTags('Discounts')
-@Controller('public')
+@Controller('api/public')
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class PublicDiscountController {
   constructor(
     private readonly discountService: DiscountService,
@@ -23,9 +42,9 @@ export class PublicDiscountController {
   async createDiscountCode(
     @Param() params: CreateDiscountCodeParams,
   ): Promise<Discount> {
-    const flightLegsLeft = await this.flightService.countFlightLegsLeftByNationalId(
-      params.nationalId,
-    )
+    const {
+      unused: flightLegsLeft,
+    } = await this.flightService.countFlightLegsByNationalId(params.nationalId)
     if (flightLegsLeft <= 0) {
       throw new DiscountLimitExceeded()
     }
@@ -33,7 +52,7 @@ export class PublicDiscountController {
   }
 }
 
-@Controller('private')
+@Controller('api/private')
 export class PrivateDiscountController {
   constructor(
     private readonly discountService: DiscountService,
@@ -41,14 +60,22 @@ export class PrivateDiscountController {
     private readonly flightService: FlightService,
   ) {}
 
+  @Get('users/:nationalId/discounts/current')
+  @ApiExcludeEndpoint()
+  getCurrentDiscountByNationalId(
+    @Param() params: GetCurrentDiscountByNationalIdParams,
+  ): Promise<Discount> {
+    return this.discountService.getDiscountByNationalId(params.nationalId)
+  }
+
   @Post('users/:nationalId/discounts')
   @ApiExcludeEndpoint()
   async createDiscountCode(
     @Param() params: CreateDiscountCodeParams,
   ): Promise<Discount> {
-    const flightLegsLeft = await this.flightService.countFlightLegsLeftByNationalId(
-      params.nationalId,
-    )
+    const {
+      unused: flightLegsLeft,
+    } = await this.flightService.countFlightLegsByNationalId(params.nationalId)
     if (flightLegsLeft <= 0) {
       throw new DiscountLimitExceeded()
     }

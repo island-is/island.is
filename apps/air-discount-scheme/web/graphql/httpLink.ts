@@ -1,7 +1,10 @@
-import { createHttpLink } from 'apollo-link-http'
+import { createHttpLink } from '@apollo/client'
+import getConfig from 'next/config'
 import fetch from 'isomorphic-unfetch'
 
-const isBrowser: boolean = process.browser
+import { isBrowser } from '../utils'
+
+const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 
 // Polyfill fetch() on the server (used by apollo-client)
 if (!isBrowser) {
@@ -10,7 +13,8 @@ if (!isBrowser) {
 }
 
 export default createHttpLink({
-  uri: '/api/graphql',
+  uri:
+    serverRuntimeConfig.graphqlEndpoint || publicRuntimeConfig.graphqlEndpoint,
   credentials: 'include',
   fetch,
 })

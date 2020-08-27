@@ -16,9 +16,11 @@ import { PaginatedNews } from './models/paginatedNews.model'
 import { Namespace } from './models/namespace.model'
 import { AboutPage } from './models/aboutPage.model'
 import { LandingPage } from './models/landingPage.model'
+import { GenericPage } from './models/genericPage.model'
 import { GetNamespaceInput } from './dto/getNamespace.input'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
+import { GetGenericPageInput } from './dto/getGenericPage.input'
 import {
   getArticle,
   getNews,
@@ -27,6 +29,7 @@ import {
   getAboutPage,
   getLandingPage,
   getFrontpageSliderList,
+  getGenericPage,
   getAdgerdirPage,
   getAdgerdirPages,
   getAdgerdirFrontpage,
@@ -72,6 +75,13 @@ export class CmsResolver {
     @Args('input') input: GetLandingPageInput,
   ): Promise<LandingPage | null> {
     return getLandingPage(input)
+  }
+
+  @Query(() => GenericPage, { nullable: true })
+  getGenericPage(
+    @Args('input') input: GetGenericPageInput,
+  ): Promise<GenericPage | null> {
+    return getGenericPage(input)
   }
 
   @Query(() => AdgerdirPage, { nullable: true })

@@ -80,9 +80,9 @@ export const findCurrentScreen = (
 export const moveToScreen = (
   state: ApplicationUIState,
   screenIndex: number,
+  isMovingForward: boolean,
 ): ApplicationUIState => {
-  const { activeScreen, form, sections, screens } = state
-  const isMovingForward = screenIndex >= activeScreen
+  const { form, sections, screens } = state
   if (screenIndex < 0) {
     return {
       ...state,
@@ -107,9 +107,9 @@ export const moveToScreen = (
   if (!screen.isNavigable) {
     if (isMovingForward) {
       // skip this screen and go to the next one
-      return moveToScreen(state, screenIndex + 1)
+      return moveToScreen(state, screenIndex + 1, isMovingForward)
     }
-    return moveToScreen(state, screenIndex - 1)
+    return moveToScreen(state, screenIndex - 1, isMovingForward)
   }
   const sectionIndexForScreen = findSectionIndexForScreen(form, screen)
 

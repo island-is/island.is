@@ -1,4 +1,4 @@
-import { setContext } from 'apollo-link-context'
+import { setContext } from '@apollo/client/link/context'
 import Cookie from 'js-cookie'
 
 import { CSRF_COOKIE_NAME } from '@island.is/air-discount-scheme/consts'

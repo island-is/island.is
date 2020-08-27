@@ -1,5 +1,16 @@
 {
-  "__schema": {
-    "types": []
+  "possibleTypes": {
+    "Slice": [
+      "PageHeaderSlice",
+      "TimelineSlice",
+      "HeadingSlice",
+      "StorySlice",
+      "LinkCardSlice",
+      "LatestNewsSlice",
+      "MailingListSignupSlice",
+      "LogoListSlice",
+      "BulletListSlice"
+    ],
+    "BulletEntry": ["IconBullet", "NumberBulletGroup"]
   }
 }

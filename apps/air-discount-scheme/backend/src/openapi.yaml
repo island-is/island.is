@@ -9,6 +9,11 @@ info:
 tags: []
 servers: []
 components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
   schemas:
     Liveness:
       type: object
@@ -31,22 +36,77 @@ components:
           type: string
         nationalId:
           type: string
-        flightLegsLeft:
-          type: number
+        expires:
+          format: date-time
+          type: string
       required:
         - discountCode
         - nationalId
-        - flightLegsLeft
+        - expires
+    FlightLegDto:
+      type: object
+      properties:
+        origin:
+          type: string
+        destination:
+          type: string
+        originalPrice:
+          type: number
+        discountPrice:
+          type: number
+        date:
+          format: date-time
+          type: string
+      required:
+        - origin
+        - destination
+        - originalPrice
+        - discountPrice
+        - date
     FlightDto:
       type: object
       properties:
-        nationalId:
+        bookingDate:
+          format: date-time
           type: string
-        numberOfLegs:
+        flightLegs:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlightLegDto'
+      required:
+        - bookingDate
+        - flightLegs
+    FlightLeg:
+      type: object
+      properties:
+        id:
+          type: string
+        origin:
+          type: string
+        destination:
+          type: string
+        originalPrice:
+          type: number
+        discountPrice:
+          type: number
+        date:
+          format: date-time
+          type: string
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
           type: string
       required:
-        - nationalId
-        - numberOfLegs
+        - id
+        - origin
+        - destination
+        - originalPrice
+        - discountPrice
+        - date
+        - created
+        - modified
     Flight:
       type: object
       properties:
@@ -54,8 +114,15 @@ components:
           type: string
         nationalId:
           type: string
-        numberOfLegs:
-          type: number
+        invalid:
+          type: boolean
+        bookingDate:
+          format: date-time
+          type: string
+        flightLegs:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlightLeg'
         created:
           format: date-time
           type: string
@@ -65,9 +132,33 @@ components:
       required:
         - id
         - nationalId
-        - numberOfLegs
+        - invalid
+        - bookingDate
+        - flightLegs
         - created
         - modified
+    User:
+      type: object
+      properties:
+        firstName:
+          type: string
+        middleName:
+          type: string
+        lastName:
+          type: string
+        gender:
+          type: string
+        nationalId:
+          type: string
+        flightLegsLeft:
+          type: number
+      required:
+        - firstName
+        - middleName
+        - lastName
+        - gender
+        - nationalId
+        - flightLegsLeft
 paths:
   /liveness:
     get:
@@ -95,18 +186,13 @@ paths:
                 $ref: '#/components/schemas/Version'
       tags:
         - internal
-  '/public/discount/{discountCode}':
-    get:
-      operationId: PublicDiscountController_get
+  '/api/public/users/{nationalId}/discounts':
+    post:
+      operationId: PublicDiscountController_createDiscountCode
       parameters:
-        - name: discountCode
-          required: true
-          in: path
-          schema:
-            type: string
         - name: nationalId
           required: true
-          in: query
+          in: path
           schema:
             type: string
       responses:
@@ -117,11 +203,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/Discount'
       tags:
-        - discount
-  /public/flight:
+        - Discounts
+      security:
+        - bearer: []
+  '/api/private/users/{nationalId}/discounts':
+    get:
+      operationId: PrivateDiscountController_getDiscountByNationalId
+      parameters:
+        - name: nationalId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Discount'
+  '/api/public/discounts/{discountCode}/flights':
     post:
       operationId: PublicFlightController_create
-      parameters: []
+      parameters:
+        - name: discountCode
+          required: true
+          in: path
+          schema:
+            type: string
       requestBody:
         required: true
         content:
@@ -136,8 +245,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/Flight'
       tags:
-        - flight
-  '/public/flight/{flightId}':
+        - Flights
+      security:
+        - bearer: []
+  '/api/public/flights/{flightId}':
     delete:
       operationId: PublicFlightController_delete
       parameters:
@@ -147,7 +258,29 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        '204':
           description: ''
       tags:
-        - flight
+        - Flights
+      security:
+        - bearer: []
+  '/api/public/discounts/{discountCode}/user':
+    get:
+      operationId: PublicUserController_get
+      parameters:
+        - name: discountCode
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      tags:
+        - Users
+      security:
+        - bearer: []

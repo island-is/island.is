@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
-import { User } from '../user'
-import { Permissions } from './auth.types'
+import { Permissions, AuthUser } from './auth.types'
 
 const DEVELOPERS = [
   /* Vice Versa */
@@ -24,24 +23,24 @@ const TESTERS = [
 
 @Injectable()
 export class AuthService {
-  getRole(user: User): Permissions['role'] {
-    if (DEVELOPERS.includes(user.ssn)) {
+  getRole(user: AuthUser): Permissions['role'] {
+    if (DEVELOPERS.includes(user.nationalId)) {
       return 'developer'
-    } else if (ADMINS.includes(user.ssn)) {
+    } else if (ADMINS.includes(user.nationalId)) {
       return 'admin'
-    } else if (TESTERS.includes(user.ssn)) {
+    } else if (TESTERS.includes(user.nationalId)) {
       return 'tester'
     } else {
       return 'user'
     }
   }
 
-  checkPermissions(user: User, { role }: Permissions): boolean {
+  checkPermissions(user: AuthUser, { role }: Permissions): boolean {
     switch (role) {
       case 'developer':
-        return DEVELOPERS.includes(user.ssn)
+        return DEVELOPERS.includes(user.nationalId)
       case 'admin':
-        return [...ADMINS, ...DEVELOPERS].includes(user.ssn)
+        return [...ADMINS, ...DEVELOPERS].includes(user.nationalId)
       case 'tester':
         return false
       default: {

@@ -1,6 +1,7 @@
 import {
   FormItemTypes,
   FormLeaf,
+  FormValue,
   getFormLeaves,
   getSectionsInForm,
   mergeAnswers,
@@ -30,7 +31,51 @@ export function initializeReducer(
       sections,
     },
     currentScreen,
+    true,
   )
+}
+
+const addNewAnswersToState = (
+  state: ApplicationUIState,
+  answers: FormValue,
+): ApplicationUIState => {
+  const newFormValue = mergeAnswers(state.formValue, answers)
+  return {
+    ...state,
+    formValue: newFormValue,
+    screens: convertLeavesToScreens(state.formLeaves, newFormValue),
+  }
+}
+
+const answerAndGoNextScreen = (
+  state: ApplicationUIState,
+  answers: FormValue,
+): ApplicationUIState => {
+  const newState = addNewAnswersToState(state, answers)
+  const currentScreen = newState.screens[newState.activeScreen]
+  const nextScreen =
+    newState.screens[
+      Math.min(newState.activeScreen + 1, newState.screens.length)
+    ]
+  if (currentScreen.type === FormItemTypes.REPEATER) {
+    if (!currentScreen.repetitions) {
+      return moveToScreen(newState, newState.activeScreen + 1, true)
+    }
+    return moveToScreen(
+      newState,
+      newState.activeScreen +
+        currentScreen.repetitions * currentScreen.children.length +
+        1,
+      true,
+    )
+  }
+  if (
+    currentScreen.repeaterIndex >= 0 &&
+    nextScreen.repeaterIndex === undefined
+  ) {
+    return moveToScreen(newState, currentScreen.repeaterIndex, true)
+  }
+  return moveToScreen(newState, newState.activeScreen + 1, true)
 }
 
 export const ApplicationReducer = (
@@ -38,45 +83,21 @@ export const ApplicationReducer = (
   action: Action,
 ): ApplicationUIState => {
   const currentScreen = state.screens[state.activeScreen]
-  const nextScreen =
-    state.screens[Math.min(state.activeScreen + 1, state.screens.length)]
   const prevScreen = state.screens[Math.max(state.activeScreen - 1, 0)]
+
   switch (action.type) {
-    case ActionTypes.NEXT_SCREEN:
-      if (currentScreen.type === FormItemTypes.REPEATER) {
-        if (!currentScreen.repetitions) {
-          return moveToScreen(state, state.activeScreen + 1)
-        }
-        return moveToScreen(
-          state,
-          state.activeScreen +
-            currentScreen.repetitions * currentScreen.children.length +
-            1,
-        )
-      }
-      if (
-        currentScreen.repeaterIndex >= 0 &&
-        nextScreen.repeaterIndex === undefined
-      ) {
-        return moveToScreen(state, currentScreen.repeaterIndex)
-      }
-      return moveToScreen(state, state.activeScreen + 1)
+    case ActionTypes.ANSWER_AND_GO_NEXT_SCREEN:
+      return answerAndGoNextScreen(state, action.payload)
     case ActionTypes.PREV_SCREEN:
       if (
         prevScreen.repeaterIndex >= 0 &&
         currentScreen.repeaterIndex === undefined
       ) {
-        return moveToScreen(state, prevScreen.repeaterIndex)
+        return moveToScreen(state, prevScreen.repeaterIndex, false)
       }
-      return moveToScreen(state, state.activeScreen - 1)
+      return moveToScreen(state, state.activeScreen - 1, false)
     case ActionTypes.ANSWER:
-      // eslint-disable-next-line no-case-declarations
-      const newFormValue = mergeAnswers(state.formValue, action.payload)
-      return {
-        ...state,
-        formValue: newFormValue,
-        screens: convertLeavesToScreens(state.formLeaves, newFormValue),
-      }
+      return addNewAnswersToState(state, action.payload)
     case ActionTypes.EXPAND_REPEATER:
       // eslint-disable-next-line no-case-declarations
       const [newFormLeaves, newScreens] = expandRepeater(
@@ -100,7 +121,10 @@ export const ApplicationReducer = (
             ? currentScreen.repetitions * currentScreen.children.length
             : 0) +
           1,
+        false,
       )
+    case ActionTypes.RE_INITIALIZE:
+      return initializeReducer({ ...state, ...action.payload })
     default:
       return state
   }

@@ -1,19 +1,27 @@
 import React from 'react'
 import Head from 'next/head'
-import { Page, Footer, Box, LinkProps } from '@island.is/island-ui/core'
+import { Page, Box, FooterLinkProps, Footer } from '@island.is/island-ui/core'
 import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import { NextComponentType, NextPageContext } from 'next'
 import { GetInitialPropsContext } from '../types'
-import { Query, ContentLanguage, QueryGetMenuArgs } from '@island.is/api/schema'
+import {
+  Query,
+  QueryGetMenuArgs,
+  QueryGetNamespaceArgs,
+} from '@island.is/api/schema'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
+import { GET_NAMESPACE_QUERY } from '../screens/queries'
 
 interface LayoutProps {
   showSearchInHeader?: boolean
   wrapContent?: boolean
   showHeader?: boolean
   showFooter?: boolean
-  footerUpperMenu?: LinkProps[]
-  footerLowerMenu?: LinkProps[]
+  footerUpperMenu?: FooterLinkProps[]
+  footerLowerMenu?: FooterLinkProps[]
+  footerMiddleMenu?: FooterLinkProps[]
+  footerTagsMenu?: FooterLinkProps[]
+  namespace: any
 }
 
 const Layout: NextComponentType<
@@ -27,6 +35,9 @@ const Layout: NextComponentType<
   showFooter = true,
   footerUpperMenu,
   footerLowerMenu,
+  footerMiddleMenu,
+  footerTagsMenu,
+  namespace,
   children,
 }) => {
   return (
@@ -67,7 +78,16 @@ const Layout: NextComponentType<
         {wrapContent ? <Box width="full">{children}</Box> : children}
       </div>
       {showFooter && (
-        <Footer topLinks={footerUpperMenu} bottomLinks={footerLowerMenu} />
+        <Footer
+          topLinks={footerUpperMenu}
+          bottomLinks={footerLowerMenu}
+          middleLinks={footerMiddleMenu}
+          tagLinks={footerTagsMenu}
+          middleLinksTitle={namespace.footerMiddleLabel}
+          tagLinksTitle={namespace.footerRightLabel}
+          showMiddleLinks
+          showTagLinks
+        />
       )}
       <style jsx global>{`
         @font-face {
@@ -121,7 +141,13 @@ const Layout: NextComponentType<
 }
 
 Layout.getInitialProps = async ({ apolloClient, locale }) => {
-  const [upperMenu, lowerMenu] = await Promise.all([
+  const [
+    upperMenu,
+    lowerMenu,
+    middleMenu,
+    tagsMenu,
+    namespace,
+  ] = await Promise.all([
     apolloClient
       .query<Query, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
@@ -138,10 +164,42 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
         },
       })
       .then((result) => result.data.getMenu),
+    apolloClient
+      .query<Query, QueryGetMenuArgs>({
+        query: GET_MENU_QUERY,
+        variables: {
+          input: { name: 'Footer middle', lang: locale },
+        },
+      })
+      .then((result) => result.data.getMenu),
+    apolloClient
+      .query<Query, QueryGetMenuArgs>({
+        query: GET_MENU_QUERY,
+        variables: {
+          input: { name: 'Footer tags', lang: locale },
+        },
+      })
+      .then((result) => result.data.getMenu),
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Global',
+            lang: locale,
+          },
+        },
+      })
+      .then((content) => {
+        // map data here to reduce data processing in component
+        return JSON.parse(content.data.getNamespace.fields)
+      }),
   ])
 
   const upperMenuLinks = upperMenu ? upperMenu.links : []
   const lowerMenuLinks = lowerMenu ? lowerMenu.links : []
+  const middleMenuLinks = middleMenu ? middleMenu.links : []
+  const tagsMenuLinks = tagsMenu ? tagsMenu.links : []
 
   return {
     footerUpperMenu: upperMenuLinks.map(({ text, url }) => ({
@@ -152,6 +210,15 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
       title: text,
       href: url,
     })),
+    footerTagsMenu: tagsMenuLinks.map(({ text, url }) => ({
+      title: text,
+      href: url,
+    })),
+    footerMiddleMenu: middleMenuLinks.map(({ text, url }) => ({
+      title: text,
+      href: url,
+    })),
+    namespace,
   }
 }
 

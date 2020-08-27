@@ -3,6 +3,8 @@ import {
   ApplicationApi,
   Configuration,
   UpdateApplicationDto,
+  querystring,
+  ApplicationTypeIdEnum,
 } from '../../gen/fetch'
 import { CreateApplicationDto } from '../../gen/fetch/models/CreateApplicationDto'
 
@@ -14,6 +16,10 @@ export class ApplicationService {
     return this.applicationApi.applicationControllerFindOne({
       id,
     })
+  }
+
+  async findAllByType(typeId: ApplicationTypeIdEnum) {
+    return this.api.applicationControllerFindAll({ typeId })
   }
 
   async create(input: CreateApplicationDto) {

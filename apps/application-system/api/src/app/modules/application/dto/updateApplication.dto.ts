@@ -14,9 +14,8 @@ export class UpdateApplicationDto {
   @ApiProperty()
   readonly id: string
 
-  @IsOptional()
   @IsEnum(FormType)
-  @ApiPropertyOptional({ enum: FormType })
+  @ApiProperty({ enum: FormType })
   readonly typeId: FormType
 
   @IsOptional()

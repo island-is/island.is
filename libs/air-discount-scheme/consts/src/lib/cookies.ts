@@ -1,7 +1,3 @@
-// XXX: reuse gjafakort login until we setup login for ADS
+export const CSRF_COOKIE_NAME = 'air-discount-scheme.csrf'
 
-export const REDIRECT_COOKIE_NAME = 'gjafakort.redirect'
-
-export const CSRF_COOKIE_NAME = 'gjafakort.csrf'
-
-export const ACCESS_TOKEN_COOKIE_NAME = 'gjafakort.token'
+export const ACCESS_TOKEN_COOKIE_NAME = 'air-discount-scheme.token'

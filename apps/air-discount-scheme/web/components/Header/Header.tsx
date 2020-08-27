@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useQuery } from 'react-apollo'
+import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 
 import { Header as IslandUIHeader } from '@island.is/island-ui/core'
@@ -16,7 +16,7 @@ export const UserQuery = gql`
   query UserQuery {
     user {
       name
-      ssn
+      nationalId
       mobile
       role
     }
@@ -31,7 +31,7 @@ function Header() {
     activeLocale,
     locale,
   } = useI18n()
-  const { data } = useQuery(UserQuery)
+  const { data } = useQuery(UserQuery, { ssr: false })
   const user = data?.user
   useEffect(() => {
     setUser(user)
@@ -71,10 +71,7 @@ function Header() {
       userName={user?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {
-        const redirect = router.pathname.startsWith(routes.companies.home)
-          ? routes.companies.home
-          : routes.home
-        api.logout().then(() => router.push(redirect))
+        api.logout().then(() => router.push('/'))
       }}
     />
   )

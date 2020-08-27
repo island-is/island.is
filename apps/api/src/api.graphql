@@ -260,6 +260,15 @@ type LandingPage {
   content: String
 }
 
+type GenericPage {
+  title: String!
+  slug: String!
+  intro: String
+  mainContent: String
+  sidebar: String
+  misc: String
+}
+
 type Menu {
   title: String!
   links: [Link!]!
@@ -299,6 +308,7 @@ enum ApplicationTypeIdEnum {
   ExampleForm2
   ExampleForm3
   FamilyAndPets
+  PaternityLeave
 }
 
 """
@@ -318,12 +328,14 @@ type Query {
   getNamespace(input: GetNamespaceInput!): Namespace
   getAboutPage(input: GetAboutPageInput!): AboutPage
   getLandingPage(input: GetLandingPageInput!): LandingPage
+  getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
   getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages
   getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getMenu(input: GetMenuInput!): Menu
   getApplication(input: GetApplicationInput!): Application
+  getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
 }
 
 input HelloWorldInput {
@@ -396,6 +408,11 @@ input GetLandingPageInput {
   lang: String!
 }
 
+input GetGenericPageInput {
+  slug: String!
+  lang: String!
+}
+
 input GetAdgerdirPageInput {
   slug: String
   lang: String!
@@ -421,6 +438,10 @@ input GetMenuInput {
 
 input GetApplicationInput {
   id: String!
+}
+
+input GetApplicationsByTypeInput {
+  typeId: ApplicationTypeIdEnum!
 }
 
 type Mutation {
@@ -454,17 +475,26 @@ enum CreateApplicationDtoTypeIdEnum {
   ExampleForm2
   ExampleForm3
   FamilyAndPets
+  PaternityLeave
 }
 
 input UpdateApplicationInput {
   id: String!
+  typeId: UpdateApplicationDtoTypeIdEnum!
   applicant: String
   assignee: String
   externalId: String
   state: UpdateApplicationDtoStateEnum
   attachments: [String!]
-  typeId: UpdateApplicationDtoTypeIdEnum
   answers: JSON
+}
+
+enum UpdateApplicationDtoTypeIdEnum {
+  ExampleForm
+  ExampleForm2
+  ExampleForm3
+  FamilyAndPets
+  PaternityLeave
 }
 
 enum UpdateApplicationDtoStateEnum {
@@ -476,11 +506,4 @@ enum UpdateApplicationDtoStateEnum {
   MANUALAPPROVED
   REJECTED
   UNKNOWN
-}
-
-enum UpdateApplicationDtoTypeIdEnum {
-  ExampleForm
-  ExampleForm2
-  ExampleForm3
-  FamilyAndPets
 }
