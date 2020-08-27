@@ -1,57 +1,35 @@
-import React, { FC, useState, useReducer } from 'react'
+import React, { FC, useState, useReducer, useEffect } from 'react'
 import { FileUploadField } from '@island.is/application/schema'
 import { Box, InputFileUpload, Typography } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '../../types'
 import { useFormContext, Controller } from 'react-hook-form'
 import { UploadFile } from 'libs/island-ui/core/src/lib/InputFileUpload/InputFileUpload.types'
 import { fileToObject } from 'libs/island-ui/core/src/lib/InputFileUpload/InputFileUpload.utils'
+import { getValueViaPath } from '../../utils'
+import { gql, useMutation } from '@apollo/client'
+
+const SINGLE_UPLOAD_MUTATION = gql`
+  mutation singleUpload($file: Upload!) {
+    singleUpload(file: $file) {
+      id
+      url
+    }
+  }
+`
+
+type UploadFileAnswer = Pick<UploadFile, 'name' | 'url'>
+
+// Transform a file object to a simple object that's stored
+// as an answer.
+const transFormToAnswer = (f: UploadFileAnswer) => {
+  return { name: f.name, url: f.url }
+}
 
 enum ActionTypes {
   ADD = 'ADD',
   REMOVE = 'REMOVE',
   UPDATE = 'UPDATE',
 }
-
-const uploadFile = (file: UploadFile, dispatch) => {
-  return new Promise((resolve, reject) => {
-    const req = new XMLHttpRequest()
-
-    req.upload.addEventListener('progress', (event) => {
-      if (event.lengthComputable) {
-        const percent = Math.round((event.loaded / event.total) * 100)
-
-        dispatch({
-          type: ActionTypes.UPDATE,
-          payload: { file, status: 'uploading', percent },
-        })
-      }
-    })
-
-    req.upload.addEventListener('load', (event) => {
-      dispatch({
-        type: ActionTypes.UPDATE,
-        payload: { file, status: 'done', percent: 100 },
-      })
-      resolve(req.response)
-    })
-
-    req.upload.addEventListener('error', (event) => {
-      dispatch({
-        type: ActionTypes.UPDATE,
-        payload: { file, status: 'error', percent: 0 },
-      })
-      reject(req.response)
-    })
-
-    const formData = new FormData()
-    formData.append('file', file.originalFileObj, file.name)
-
-    req.open('POST', 'http://localhost:5000/')
-    req.send(formData)
-  })
-}
-
-const initialUploadFiles: UploadFile[] = []
 
 function reducer(state, action) {
   switch (action.type) {
@@ -62,7 +40,7 @@ function reducer(state, action) {
       const updatedFileList = state.filter(
         (file) => file.name !== action.payload.fileToRemove.name,
       )
-      return [...updatedFileList]
+      return updatedFileList
     case ActionTypes.UPDATE:
       const updatedStatusList = state.map((file: UploadFile) => {
         if (file.name == action.payload.file.name) {
@@ -80,45 +58,83 @@ function reducer(state, action) {
 interface Props extends FieldBaseProps {
   field: FileUploadField
 }
-const FileUploadFormField: FC<Props> = ({ error, field }) => {
-  const { id, name, introduction } = field
-  const { clearErrors, control } = useFormContext()
+const FileUploadFormField: FC<Props> = ({ error, field, formValue }) => {
+  const { id, introduction } = field
+  const { clearErrors, setValue } = useFormContext()
+  const [uploadError, setUploadError] = useState<string | undefined>(undefined)
+  const val = getValueViaPath(formValue, id, [])
+  const [uploadFileMutation] = useMutation(SINGLE_UPLOAD_MUTATION)
+
+  // If there were previously uploaded files set their status to 'done'. For example
+  // if they re-loaded the form or came back to this question).
+  const initialUploadFiles: UploadFile[] =
+    (val && val.map((f) => fileToObject(f, 'done'))) || []
+
+  const [state, dispatch] = useReducer(reducer, initialUploadFiles)
+
+  useEffect(() => {
+    const uploadAnswer: UploadFileAnswer[] = state.map(transFormToAnswer)
+
+    setValue(id, uploadAnswer)
+  }, [state])
 
   return (
     <Box>
       <Typography variant="p">{introduction}</Typography>
       <Controller
         name={`${id}`}
-        control={control}
-        defaultValue={false}
-        render={({ value, onChange }) => {
-          const [state, dispatch] = useReducer(reducer, initialUploadFiles)
-          const [error, setError] = useState<string | undefined>(undefined)
+        defaultValue={initialUploadFiles}
+        render={({ onChange }) => {
+          const onFileChange = async (newFiles: File[]) => {
+            clearErrors(id)
+            setUploadError(undefined)
 
-          const onFileChange = (newFiles: File[]) => {
-            const newUploadFiles = newFiles.map((f) => fileToObject(f))
+            const newUploadFiles = newFiles.map((f) =>
+              fileToObject(f, 'uploading'),
+            )
 
-            setError(undefined)
-
-            newUploadFiles.forEach((f: UploadFile) => {
-              uploadFile(f, dispatch).catch((e) => {
-                setError('An error occurred uploading one or more files')
-              })
-            })
-
+            // Add the files to the list so that the control presents them
+            // with a spinner.
             dispatch({
               type: ActionTypes.ADD,
               payload: {
                 newFiles: newUploadFiles,
               },
             })
+
+            // Upload each file.
+            // Note: Do we want to use a multipleUpload mutation, or
+            // loop with a single upload mutation?
+            // https://github.com/jaydenseric/apollo-upload-examples/blob/master/app/components/UploadFileList.js
+            // https://github.com/jaydenseric/apollo-upload-examples/blob/master/app/components/UploadFile.js
+            newFiles.forEach((f: UploadFile) => {
+              uploadFileMutation({
+                variables: { file: f.originalFileObj },
+              })
+                .then(() => {
+                  dispatch({
+                    type: ActionTypes.UPDATE,
+                    payload: {
+                      payload: { f, status: 'done', percent: 100 },
+                    },
+                  })
+                })
+                .catch((e) => {
+                  setUploadError(
+                    'An error occurred uploading one or more files',
+                  )
+                })
+            })
           }
 
-          const remove = (fileToRemove: UploadFile) => {
+          const onRemoveFile = (fileToRemove: UploadFile) => {
+            // TODO: Remove the uploaded files from the server?
+
             dispatch({
               type: ActionTypes.REMOVE,
               payload: {
                 fileToRemove,
+                onChange,
               },
             })
           }
@@ -131,8 +147,8 @@ const FileUploadFormField: FC<Props> = ({ error, field }) => {
                 description="Documents accepted with extension: .pdf, .docx, .rtf"
                 buttonLabel="Select documents to upload"
                 onChange={onFileChange}
-                onRemove={remove}
-                errorMessage={state.length > 0 && error}
+                onRemove={onRemoveFile}
+                errorMessage={error || uploadError}
               />
             </Box>
           )

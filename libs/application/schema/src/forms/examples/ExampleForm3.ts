@@ -17,7 +17,13 @@ import { nationalIdRegex } from '../formConstants'
 import { FormType } from '../FormType'
 
 const ExampleSchema = z.object({
-  file: z.array(z.object()),
+  fileUpload: z
+    .object({
+      name: z.string(),
+      url: z.string(),
+    })
+    .array()
+    .nonempty(),
   person: z.object({
     age: z.string().refine((x) => {
       const asNumber = parseInt(x)
@@ -81,10 +87,10 @@ export const ExampleForm3: Form = buildForm({
       name: 'Student',
       children: [
         buildFileUploadField({
-          id: 'file',
-          name: "Driver's Permit",
-          introduction: 'Please upload a photo of your permit',
-          required: false,
+          id: 'fileUpload',
+          name: 'Upload permit',
+          introduction:
+            'We need a copy of your permit to verify your eligibility.',
         }),
         buildIntroductionField({
           id: 'field',
