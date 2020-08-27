@@ -100,7 +100,7 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
                     </Typography>
                   </Stack>
                 }
-                bottomContent={<CardsSlider />}
+                bottomContent={<CardsSlider key="purple" />}
               />
             </Box>
           </ContentBlock>
@@ -126,7 +126,7 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
                     </Typography>
                   </Stack>
                 }
-                bottomContent={<CardsSlider />}
+                bottomContent={<CardsSlider key="red" />}
               />
             </Box>
           </ContentBlock>
@@ -150,7 +150,7 @@ const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
                     </Typography>
                   </Stack>
                 }
-                bottomContent={<CardsSlider />}
+                bottomContent={<CardsSlider key="blue" />}
               />
             </Box>
           </ContentBlock>

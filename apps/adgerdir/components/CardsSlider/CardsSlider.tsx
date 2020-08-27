@@ -59,10 +59,11 @@ interface StagePaddingProps {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface CardsSliderProps {
+  key?: string
   variant?: ColorSchemes
 }
 
-export const CardsSlider: FC<CardsSliderProps> = ({ variant }) => {
+export const CardsSlider: FC<CardsSliderProps> = ({ key, variant }) => {
   const { colorScheme } = useContext(ColorSchemeContext)
 
   const [height, setHeight] = useState<string>('auto')
@@ -144,7 +145,7 @@ export const CardsSlider: FC<CardsSliderProps> = ({ variant }) => {
       className={cn(styles.wrapper, styles.variants[variant || colorScheme])}
     >
       <AliceCarousel
-        key="this-key-here"
+        key={key}
         controlsStrategy="responsive"
         ref={ref}
         infinite={false}

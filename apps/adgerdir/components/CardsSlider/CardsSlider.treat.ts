@@ -8,6 +8,7 @@ export const wrapper = style({
 
 export const item = style({
   display: 'flex',
+  minWidth: '100%',
   paddingRight: 24,
   flexFlow: 'column',
 })
