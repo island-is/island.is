@@ -55,7 +55,7 @@ export const Footer = ({
                 <Logo iconOnly id="footer_logo" />
               </Box>
             </GridColumn>
-            <GridColumn span={3}>
+            <GridColumn span={[12, 12, 3]} paddingBottom={[4, 4, 0]}>
               <div className={cn(styles.links)}>
                 {topLinks.map(({ title, href }, index) => (
                   <Typography
@@ -100,7 +100,7 @@ export const Footer = ({
               </div>
             </GridColumn>
             {showMiddleLinks ? (
-              <GridColumn span={6}>
+              <GridColumn span={[12, 12, 6]} paddingBottom={[4, 4, 0]}>
                 <div className={cn(styles.links)}>
                   {middleLinksTitle ? (
                     <Typography
@@ -124,7 +124,7 @@ export const Footer = ({
               </GridColumn>
             ) : null}
             {showTagLinks ? (
-              <GridColumn span={3}>
+              <GridColumn span={12}>
                 {tagLinksTitle ? (
                   <Typography
                     variant="eyebrow"

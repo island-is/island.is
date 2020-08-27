@@ -6,6 +6,7 @@ export const base = style({
   flex: '0 0 auto',
   paddingRight: theme.grid.gutter.mobile,
   paddingLeft: theme.grid.gutter.mobile,
+  position: 'relative',
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
