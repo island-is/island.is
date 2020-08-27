@@ -159,7 +159,6 @@ const options = {
     },
     [BLOCKS.UL_LIST]: (node, children) => <BulletList>{children}</BulletList>,
     [BLOCKS.OL_LIST]: (node, children) => {
-      console.log('ol', node, children)
       return <BulletList type="ol">{children}</BulletList>
     },
     [BLOCKS.LIST_ITEM]: (node, children) => {

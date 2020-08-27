@@ -36,7 +36,7 @@ class SupportApplication extends App<Props> {
     const layoutProps = await AppLayout.getInitialProps({
       ...customContext,
       locale: pageProps.locale,
-      translatedUrl: pageProps.translatedUrl,
+      routeKey: pageProps.route,
     } as any)
 
     const readonlyCookies = NextCookies(appContext)
