@@ -124,7 +124,7 @@ export const Footer = ({
               </GridColumn>
             ) : null}
             {showTagLinks ? (
-              <GridColumn span={12}>
+              <GridColumn span={[12, 12, 3]}>
                 {tagLinksTitle ? (
                   <Typography
                     variant="eyebrow"
