@@ -19,7 +19,7 @@ export class ApplicationService {
   }
 
   async findAllByType(typeId: ApplicationTypeIdEnum) {
-    return this.api.applicationControllerFindAll({ typeId })
+    return this.applicationApi.applicationControllerFindAll({ typeId })
   }
 
   async create(input: CreateApplicationDto) {
