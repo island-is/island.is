@@ -18,5 +18,5 @@ export const bulletRight = style({
 })
 
 export const hidden = style({
-  display: 'none'
+  display: 'none',
 })
