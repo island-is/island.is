@@ -25,7 +25,9 @@ const Home: Screen<PropTypes> = ({ page }) => {
         <Box>
           <Box marginBottom={4}>
             <Breadcrumbs>
-              <Link href="/">Ísland.is</Link>
+              <Link href="/">
+                <a>Ísland.is</a>
+              </Link>
               <span>Loftbrú</span>
             </Breadcrumbs>
           </Box>
@@ -73,7 +75,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     query: GetGenericPageQuery,
     variables: {
       input: {
-        lang: 'is-IS',
+        lang: locale,
         slug: 'loftbru',
       },
     },
