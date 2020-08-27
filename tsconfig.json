@@ -94,6 +94,12 @@
       ],
       "@island.is/air-discount-scheme/types": [
         "libs/air-discount-scheme/types/src/index.ts"
+      ],
+      "@island.is/api/domains/documents": [
+        "libs/api/domains/documents/src/index.ts"
+      ],
+      "@island.is/service-portal/graphql": [
+        "libs/service-portal/graphql/src/index.ts"
       ]
     }
   },

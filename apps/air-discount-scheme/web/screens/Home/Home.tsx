@@ -13,19 +13,22 @@ import {
   Content,
   IntroText,
 } from '@island.is/air-discount-scheme-web/components'
+import { useI18n } from '@island.is/air-discount-scheme-web/i18n'
 
 interface PropTypes {
   page?: GenericPage
 }
 
 const Home: Screen<PropTypes> = ({ page }) => {
+  const { toRoute } = useI18n()
+
   return (
     <Layout
       left={
         <Box>
           <Box marginBottom={4}>
             <Breadcrumbs>
-              <Link href="/">
+              <Link href={toRoute('home')}>
                 <a>Ísland.is</a>
               </Link>
               <span>Loftbrú</span>

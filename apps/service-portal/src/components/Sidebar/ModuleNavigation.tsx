@@ -37,6 +37,7 @@ const ModuleNavigation: FC<Props> = ({ nav }) => {
                     url={child.path}
                     key={`child-${index}`}
                     active={location.pathname.includes(child.path)}
+                    external={child.external}
                   >
                     {child.name}
                   </LinkButton>

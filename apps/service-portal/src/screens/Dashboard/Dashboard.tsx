@@ -7,12 +7,18 @@ import {
 } from '@island.is/service-portal/core'
 import WidgetLoading from './WidgetLoading/WidgetLoading'
 import { UserWithMeta } from '@island.is/service-portal/core'
+import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
 const Widget: FC<{
   widget: ServicePortalWidget
   userInfo: UserWithMeta
-}> = React.memo(({ widget, userInfo }) => {
-  const Component = widget.render(userInfo)
+  client: ApolloClient<NormalizedCacheObject>
+}> = React.memo(({ widget, userInfo, client }) => {
+  const Component = widget.render({
+    userInfo,
+    client,
+  })
 
   if (Component)
     return (
@@ -23,7 +29,7 @@ const Widget: FC<{
           </Typography>
         </Box>
         <Suspense fallback={<WidgetLoading />}>
-          <Component userInfo={userInfo} />
+          <Component userInfo={userInfo} client={client} />
         </Suspense>
       </Box>
     )
@@ -34,10 +40,17 @@ const Widget: FC<{
 const WidgetLoader: FC<{
   modules: ServicePortalModule[]
   userInfo: UserWithMeta
-}> = React.memo(({ modules, userInfo }) => {
+  client: ApolloClient<NormalizedCacheObject>
+}> = React.memo(({ modules, userInfo, client }) => {
   const widgets = modules
     .reduce(
-      (prev, curr) => [...prev, ...curr.widgets(userInfo)],
+      (prev, curr) => [
+        ...prev,
+        ...curr.widgets({
+          userInfo,
+          client,
+        }),
+      ],
       [] as ServicePortalWidget[],
     )
     .sort((a, b) => a.weight - b.weight)
@@ -45,18 +58,24 @@ const WidgetLoader: FC<{
   return (
     <>
       {widgets.map((widget, index) => (
-        <Widget widget={widget} key={index} userInfo={userInfo} />
+        <Widget
+          widget={widget}
+          key={index}
+          userInfo={userInfo}
+          client={client}
+        />
       ))}
     </>
   )
 })
 
 export const Dashboard: FC<{}> = () => {
-  const [{ modules, userInfo }] = useStore()
+  const [{ modules }] = useStore()
+  const moduleProps = useModuleProps()
 
   return (
     <Box>
-      <WidgetLoader modules={modules} userInfo={userInfo} />
+      <WidgetLoader modules={modules} {...moduleProps} />
     </Box>
   )
 }

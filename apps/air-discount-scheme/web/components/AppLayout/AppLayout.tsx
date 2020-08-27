@@ -11,6 +11,7 @@ import {
   FooterLinkProps,
 } from '@island.is/island-ui/core'
 
+import { Routes } from '../../i18n'
 import { ErrorBoundary, Header } from '../../components'
 import { UserContext } from '../../context'
 import { GetInitialPropsContext } from '../../types'
@@ -32,8 +33,7 @@ interface AppLayoutProps {
   footerMiddleMenu?: FooterLinkProps[]
   footerTagsMenu?: FooterLinkProps[]
   namespace: any
-  locale?: string
-  translatedUrl?: string
+  routeKey: keyof Routes
 }
 
 export const AppLayout: NextComponentType<
@@ -48,8 +48,7 @@ export const AppLayout: NextComponentType<
   footerMiddleMenu,
   footerTagsMenu,
   namespace,
-  locale,
-  translatedUrl,
+  routeKey,
 }) => {
   const [user, setUser] = useState(null)
 
@@ -100,7 +99,7 @@ export const AppLayout: NextComponentType<
         </Head>
         <Box paddingX="gutter">
           <ContentBlock>
-            <Header activeLocale={locale} translatedUrl={translatedUrl} />
+            <Header routeKey={routeKey} />
           </ContentBlock>
         </Box>
         <Box paddingTop={[5, 5, 9]} paddingBottom={[7, 7, 12]}>
@@ -197,7 +196,7 @@ export const GetNamespaceQuery = gql`
   }
 `
 
-AppLayout.getInitialProps = async ({ apolloClient, locale, translatedUrl }) => {
+AppLayout.getInitialProps = async ({ apolloClient, locale, routeKey }) => {
   const [
     upperMenu,
     lowerMenu,
@@ -276,8 +275,7 @@ AppLayout.getInitialProps = async ({ apolloClient, locale, translatedUrl }) => {
       href: url,
     })),
     namespace,
-    locale,
-    translatedUrl,
+    routeKey,
   }
 }
 
