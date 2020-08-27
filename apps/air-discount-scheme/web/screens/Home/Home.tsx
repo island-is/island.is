@@ -19,7 +19,6 @@ interface PropTypes {
 }
 
 const Home: Screen<PropTypes> = ({ page, ...rest }) => {
-  console.log(rest)
   return (
     <Layout
       left={
