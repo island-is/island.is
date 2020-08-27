@@ -17,6 +17,7 @@ export const base = style({
 })
 
 const columns = {
+  0: 0,
   1: `${(1 / 12) * 100}%`,
   2: `${(2 / 12) * 100}%`,
   3: `${(3 / 12) * 100}%`,
@@ -32,7 +33,6 @@ const columns = {
 } as const
 
 type Columns = Record<keyof typeof columns, string>
-type Spacing = Record<keyof typeof theme.spacing, string>
 type Breakpoint = keyof Theme['breakpoints']
 
 const makeSpan = (breakpoint: Breakpoint) =>
