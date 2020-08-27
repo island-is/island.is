@@ -57,7 +57,7 @@ spec:
             - name: {{ $key }}
               valueFrom:
                 secretKeyRef:
-                  name: {{ $fullName }}-initContainer
+                  name: {{ $fullName }}-init-container
                   key: {{ $key }}
             {{- end }}
             {{- end }}

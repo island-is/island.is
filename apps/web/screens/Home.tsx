@@ -86,19 +86,11 @@ const Home: Screen<HomeProps> = ({
 
   return (
     <>
-      <ContentBlock>
-        <Box paddingX={[3, 3, 6]} paddingY={[2, 2, 3, 3, 6]}>
-          <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
-        </Box>
-      </ContentBlock>
+      <Box paddingY={[2, 2, 3, 3, 6]}>
+        <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
+      </Box>
       <Box background="purple100">
-        <ContentBlock width="large">
-          <Categories label={n('articlesTitle')}>
-            {cards.map((card, index) => {
-              return <Card key={index} {...card} />
-            })}
-          </Categories>
-        </ContentBlock>
+        <Categories label={n('articlesTitle')} cards={cards} />
       </Box>
     </>
   )

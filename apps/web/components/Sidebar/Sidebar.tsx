@@ -102,7 +102,7 @@ const useHeadingLinks = ({
   }
 }
 
-type Bullet = 'left' | 'right'
+type Bullet = 'none' | 'left' | 'right'
 
 type SidebarLinkItems = {
   title: string
@@ -207,6 +207,7 @@ export const Sidebar: FC<SidebarProps> = ({
                     <span
                       className={cn(styles.bullet, {
                         [styles.bulletRight]: bullet === 'right',
+                        [styles.hidden]: bullet == 'none',
                       })}
                     >
                       <Icon type="bullet" color="red400" />

@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
 
+import { ThjodskraUser } from '@island.is/air-discount-scheme/types'
 import { NationalRegistryResponse } from './user.types'
 
-export class User {
+export class User implements ThjodskraUser {
   constructor(user: NationalRegistryResponse, flightLegsLeft: number) {
     this.firstName = user.firstName
     this.middleName = user.middleName

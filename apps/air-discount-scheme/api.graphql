@@ -239,7 +239,7 @@ type Menu {
 }
 
 type User {
-  ssn: ID!
+  nationalId: ID!
   name: String!
   mobile: String
   role: String!
@@ -248,7 +248,15 @@ type User {
 type Discount {
   discountCode: ID!
   expires: String!
+  nationalId: String!
+  flightLegFund: FlightLegFund!
   user: User!
+}
+
+type FlightLegFund {
+  nationalId: ID!
+  unused: Float!
+  total: Float!
 }
 
 type Query {
@@ -329,5 +337,5 @@ input GetMenuInput {
 }
 
 type Mutation {
-  fetchDiscount: Discount
+  fetchDiscounts: [Discount!]
 }

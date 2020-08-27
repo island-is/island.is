@@ -8,6 +8,8 @@ import {
   AccordionItem,
   Button,
   Divider,
+  Bullet,
+  BulletList,
 } from '@island.is/island-ui/core'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import Link from 'next/link'
@@ -107,6 +109,19 @@ const embeddedNodes = () => ({
       )
     },
   },
+  link: {
+    component: Box,
+    children: (node) => {
+      const { text, url } = node.data?.target?.fields
+      return (
+        <Link href={url}>
+          <Button variant="text" icon="arrowRight">
+            {text}
+          </Button>
+        </Link>
+      )
+    },
+  },
 })
 
 const options = {
@@ -117,6 +132,10 @@ const options = {
           {children}
         </Typography>
       )
+    },
+    [BLOCKS.EMBEDDED_ASSET]: (node, children) => {
+      const { url, title } = node.data.target.fields.file
+      return <img src={url} alt={title} />
     },
     [BLOCKS.EMBEDDED_ENTRY]: (node) => {
       const embeddedNode = embeddedNodes()[
@@ -137,6 +156,14 @@ const options = {
       )
 
       return <Cmp />
+    },
+    [BLOCKS.UL_LIST]: (node, children) => <BulletList>{children}</BulletList>,
+    [BLOCKS.OL_LIST]: (node, children) => {
+      console.log('ol', node, children)
+      return <BulletList type="ol">{children}</BulletList>
+    },
+    [BLOCKS.LIST_ITEM]: (node, children) => {
+      return <Bullet>{children}</Bullet>
     },
   },
 }

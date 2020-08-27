@@ -99,46 +99,40 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
           </Stack>
         }
       >
-        <ContentContainer
-          padding="none"
-          paddingX={[3, 3, 6, 0]}
-          marginBottom={simpleSpacing}
-        >
-          <Stack space={[3, 3, 4]}>
-            <Breadcrumbs>
-              <Link href={makePath()}>
-                <a>Ísland.is</a>
-              </Link>
-              <Link
-                href={`${makePath('category')}/[slug]`}
-                as={makePath('category', categorySlug)}
-              >
-                <a>{categoryTitle}</a>
-              </Link>
-              {groupTitle && (
-                <Tag variant="purple" label>
-                  {groupTitle}
-                </Tag>
-              )}
-            </Breadcrumbs>
-            <Hidden above="md">
-              <Select
-                label="Efnisyfirlit"
-                placeholder="Flokkar"
-                options={contentOverviewOptions}
-                onChange={onChangeContentOverview}
-                name="content-overview"
-              />
-            </Hidden>
-            <Box marginBottom={simpleSpacing}>
-              <Typography variant="h1" as="h1">
-                <span data-sidebar-link={slugify(article.title)}>
-                  {article.title}
-                </span>
-              </Typography>
-            </Box>
-          </Stack>
-        </ContentContainer>
+        <Stack space={[3, 3, 4]}>
+          <Breadcrumbs>
+            <Link href={makePath()}>
+              <a>Ísland.is</a>
+            </Link>
+            <Link
+              href={`${makePath('category')}/[slug]`}
+              as={makePath('category', categorySlug)}
+            >
+              <a>{categoryTitle}</a>
+            </Link>
+            {groupTitle && (
+              <Tag variant="purple" label>
+                {groupTitle}
+              </Tag>
+            )}
+          </Breadcrumbs>
+          <Hidden above="md">
+            <Select
+              label="Efnisyfirlit"
+              placeholder="Flokkar"
+              options={contentOverviewOptions}
+              onChange={onChangeContentOverview}
+              name="content-overview"
+            />
+          </Hidden>
+          <Box marginBottom={simpleSpacing}>
+            <Typography variant="h1" as="h1">
+              <span data-sidebar-link={slugify(article.title)}>
+                {article.title}
+              </span>
+            </Typography>
+          </Box>
+        </Stack>
 
         <Content document={article.content} />
       </ArticleLayout>
@@ -196,11 +190,5 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
 }
 
 export default Article
-
-const ContentContainer: FC<BoxProps> = ({ children, ...props }) => (
-  <Box padding={[3, 3, 6, 0]} {...props}>
-    <ContentBlock width="small">{children}</ContentBlock>
-  </Box>
-)
 
 // TODO: Add fields for micro strings to article namespace
