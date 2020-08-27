@@ -119,15 +119,17 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                 <div
                   className={cn(
                     styles.plusIconWrap,
-                    styles.iconVariants[iconVariant],
+                    styles.iconWrapVariants[iconVariant],
                   )}
                 >
                   <svg
-                    className={cn(styles.plusIcon, {
-                      [styles.plusIconActive]: expanded,
-                    })}
-                    width="20"
-                    height="20"
+                    className={cn(
+                      styles.plusIcon,
+                      styles.iconVariants[iconVariant],
+                      {
+                        [styles.plusIconActive]: expanded,
+                      },
+                    )}
                     viewBox="0 0 20 20"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"

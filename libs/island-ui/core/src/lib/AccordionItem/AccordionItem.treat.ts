@@ -88,8 +88,6 @@ export const focused = style({
 })
 
 export const plusIconWrap = style({
-  width: 40,
-  height: 40,
   backgroundColor: theme.color.blue100,
   borderRadius: '50%',
   display: 'flex',
@@ -98,14 +96,18 @@ export const plusIconWrap = style({
   position: 'relative',
 })
 
-export const iconVariants = styleMap({
+export const iconWrapVariants = styleMap({
   default: {
     backgroundColor: theme.color.blue100,
     color: theme.color.blue400,
+    width: 40,
+    height: 40,
   },
   sidebar: {
     backgroundColor: theme.color.purple200,
     color: theme.color.purple400,
+    width: 20,
+    height: 20,
   },
 })
 
@@ -114,6 +116,17 @@ export const plusIcon = style({
   transform: 'rotateZ(0)',
   transformOrigin: 'center',
   transition: 'transform 300ms',
+})
+
+export const iconVariants = styleMap({
+  default: {
+    width: 20,
+    height: 20,
+  },
+  sidebar: {
+    width: 12,
+    height: 12,
+  },
 })
 
 export const plusIconActive = style({
