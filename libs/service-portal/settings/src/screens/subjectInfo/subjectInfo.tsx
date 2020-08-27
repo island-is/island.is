@@ -9,15 +9,15 @@ import {
   Button,
 } from '@island.is/island-ui/core'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
-import { GET_HELLO_WORLD_GREETING } from '@island.is/service-portal/graphql'
+import { GET_DOCUMENT } from '@island.is/service-portal/graphql'
 import { useQuery } from '@apollo/client'
 
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   const { profile } = userInfo.user
-  const { data } = useQuery(GET_HELLO_WORLD_GREETING, {
+  const { data } = useQuery(GET_DOCUMENT, {
     variables: {
       input: {
-        name: 'Service Portal Settings Module',
+        id: '12456',
       },
     },
   })
@@ -39,7 +39,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
         >
           <Stack space={2}>
             <Box padding={3} border="standard" borderRadius="large">
-              {data?.helloWorld?.message}
+              {data?.getDocument?.subject}
             </Box>
           </Stack>
         </AccordionCard>
