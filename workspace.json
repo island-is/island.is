@@ -2635,8 +2635,10 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/graphql/.eslintrc",
             "tsConfig": [
               "libs/api/domains/documents/tsconfig.lib.json",
               "libs/api/domains/documents/tsconfig.spec.json"

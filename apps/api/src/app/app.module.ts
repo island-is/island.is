@@ -24,4 +24,4 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
     DocumentModule,
   ],
 })
-export class AppModule { }
+export class AppModule {}
