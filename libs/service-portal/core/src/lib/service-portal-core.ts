@@ -50,7 +50,7 @@ export type ServicePortalRoute = {
   /**
    * The render value of this component
    */
-  render: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue
+  render?: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue
 }
 
 /**
