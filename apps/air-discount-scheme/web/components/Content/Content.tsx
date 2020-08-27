@@ -8,11 +8,10 @@ import {
   AccordionItem,
   Button,
   Divider,
-  Bullet,
-  BulletList,
 } from '@island.is/island-ui/core'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import Link from 'next/link'
+import { List, ListItem } from '../List/List'
 
 const embeddedNodes = () => ({
   faqList: {
@@ -157,12 +156,16 @@ const options = {
 
       return <Cmp />
     },
-    [BLOCKS.UL_LIST]: (node, children) => <BulletList>{children}</BulletList>,
+    [BLOCKS.UL_LIST]: (node, children) => <List>{children}</List>,
     [BLOCKS.OL_LIST]: (node, children) => {
-      return <BulletList type="ol">{children}</BulletList>
+      return <List type="ol">{children}</List>
     },
     [BLOCKS.LIST_ITEM]: (node, children) => {
-      return <Bullet>{children}</Bullet>
+      return (
+        <ListItem>
+          <Box marginTop={2}>{children}</Box>
+        </ListItem>
+      )
     },
   },
 }

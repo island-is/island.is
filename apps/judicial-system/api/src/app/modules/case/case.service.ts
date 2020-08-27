@@ -15,9 +15,7 @@ export class CaseService {
   ) {}
 
   async getAll() {
-    this.logger.debug(
-      `Getting all cases ${process.env.DB_HOST} ${process.env.DB_NAME} ${process.env.DB_USER} ${process.env.DB_PASS}`,
-    )
+    this.logger.debug('Getting all cases')
 
     return this.caseModel.findAll()
   }
