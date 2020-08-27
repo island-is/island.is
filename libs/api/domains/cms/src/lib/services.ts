@@ -4,9 +4,16 @@ import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
 import { Entry } from 'contentful'
 import { Article } from './models/article.model'
-import { Page } from './models/page.model'
+import { AboutPage } from './models/aboutPage.model'
+import { AdgerdirPage } from './models/adgerdirPage.model'
+import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
+import { LandingPage } from './models/landingPage.model'
+import { FrontpageSlide } from './models/frontpageSlide.model'
+import { FrontpageSliderList } from './models/frontpageSliderList.model'
+import { GenericPage } from './models/genericPage.model'
 import { News } from './models/news.model'
 import { Link } from './models/link.model'
+import { LinkList } from './models/linkList.model'
 import { PageHeaderSlice } from './models/slices/pageHeaderSlice.model'
 import { TimelineEvent } from './models/timelineEvent.model'
 import { TimelineSlice } from './models/slices/timelineSlice.model'
@@ -27,13 +34,32 @@ import { Slice } from './models/slices/slice.model'
 import { Pagination } from './models/pagination.model'
 import { GetNewsListInput } from './dto/getNewsList.input'
 import { PaginatedNews } from './models/paginatedNews.model'
-import { GetPageInput } from './dto/getPage.input'
+import { GetAboutPageInput } from './dto/getAboutPage.input'
+import { GetLandingPageInput } from './dto/getLandingPage.input'
+import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { Namespace } from './models/namespace.model'
 import { Image } from './models/image.model'
+import { Menu } from './models/menu.model'
 
-type CmsPage = Omit<Page, 'slices'> & {
+type CmsPage = Omit<AboutPage, 'slices'> & {
   slices: Entry<typeof Slice>[]
 }
+
+const formatAdgerdirPage = ({ sys, fields }): AdgerdirPage => ({
+  id: sys.id,
+  slug: fields.slug,
+  title: fields.title,
+  description: fields.description,
+  content: JSON.stringify(fields.content),
+})
+
+const formatAdgerdirFrontpage = ({ sys, fields }): AdgerdirFrontpage => ({
+  id: sys.id,
+  slug: fields.slug,
+  title: fields.title,
+  description: fields.description,
+  content: JSON.stringify(fields.content),
+})
 
 const formatArticle = ({ sys, fields }): Article => ({
   id: sys.id,
@@ -76,6 +102,11 @@ const formatPageHeaderSlice = ({ fields, sys }): PageHeaderSlice =>
     links: fields.links.map(formatLink),
     slices: fields.slices.map(formatSlice),
   })
+
+const formatLinks = ({ fields }): LinkList => ({
+  title: fields.title,
+  links: (fields.links ?? []).map(formatLink),
+})
 
 const formatTimelineEvent = ({ fields, sys }): TimelineEvent => ({
   id: sys.id,
@@ -126,7 +157,7 @@ const formatSectionHeading = ({ fields, sys }): HeadingSlice =>
   new HeadingSlice({
     id: sys.id,
     title: fields.title ?? '',
-    body: fields.description ?? '',
+    body: fields.body ?? '',
   })
 
 const formatLinkCard = ({ fields }): LinkCard => ({
@@ -222,12 +253,38 @@ const formatSlice = (slice: Entry<typeof Slice>): typeof Slice => {
   }
 }
 
-const formatPage = ({ fields }: Entry<CmsPage>): Page => ({
+const formatAboutPage = ({ fields }: Entry<CmsPage>): AboutPage => ({
   slices: fields.slices.map(formatSlice),
   title: fields.title,
-  slug: fields.slug,
   theme: fields.theme.toLowerCase(),
   seoDescription: fields.seoDescription ?? '',
+})
+
+const formatLandingPage = ({ fields }): LandingPage => ({
+  title: fields.title,
+  slug: fields.slug,
+  introduction: fields.introduction,
+  image: fields.image && formatImage(fields.image),
+  actionButton: fields.actionButton && formatLink(fields.actionButton),
+  links: fields.links && formatLinks(fields.links),
+  content: fields.content && JSON.stringify(fields.content),
+})
+
+const formatFrontpageSlide = ({ fields }): FrontpageSlide => ({
+  title: fields.title,
+  subtitle: fields.subtitle,
+  content: fields.content,
+  image: fields.image && formatImage(fields.image),
+  link: fields.link && JSON.stringify(fields.link),
+})
+
+const formatGenericPage = ({ fields }): GenericPage => ({
+  title: fields.title,
+  slug: fields.slug,
+  intro: JSON.stringify(fields?.intro),
+  mainContent: fields.mainContent && JSON.stringify(fields.mainContent),
+  sidebar: fields.sidebar && JSON.stringify(fields.sidebar),
+  misc: fields.misc && JSON.stringify(fields.misc),
 })
 
 const makePage = (
@@ -241,30 +298,73 @@ const makePage = (
   totalPages: Math.ceil(totalResults / perPage),
 })
 
-const loadSlice = async (
-  slice: typeof Slice,
-  lang: string,
-): Promise<typeof Slice> => {
-  if (slice instanceof PageHeaderSlice) {
-    return new PageHeaderSlice({
-      ...slice,
-      slices: await Promise.all(
-        slice.slices.map((slice) => loadSlice(slice, lang)),
-      ),
-    })
-  } else if (slice instanceof LatestNewsSlice) {
-    const { news } = await getNewsList({ lang, perPage: 3 })
-    return new LatestNewsSlice({ ...slice, news })
-  } else {
-    return slice
-  }
-}
-
 const errorHandler = (name: string) => {
   return (error: Error) => {
     logger.error(error)
     throw new ApolloError('Failed to resolve request in ' + name)
   }
+}
+
+export const getAdgerdirFrontpage = async (lang = 'is-IS') => {
+  const result = await getLocalizedEntries<AdgerdirFrontpage>(lang, {
+    ['content_type']: 'vidspyrna-frontpage',
+    include: 1,
+  }).catch(errorHandler('getVidspyrnaFrontpage'))
+
+  // if we have no results
+  if (!result.total) {
+    return null
+  }
+
+  return formatAdgerdirFrontpage(result.items[0])
+}
+
+export const getAdgerdirPages = async (lang = 'is-IS') => {
+  const params = {
+    ['content_type']: 'vidspyrna-page',
+    include: 10,
+    limit: 100,
+  }
+
+  const r = await getLocalizedEntries<AdgerdirPage>(lang, params).catch(
+    errorHandler('getAdgerdirPages'),
+  )
+
+  return {
+    items: r.items.map(formatAdgerdirPage),
+  }
+}
+
+export const getFrontpageSliderList = async (lang = 'is-IS') => {
+  const params = {
+    ['content_type']: 'frontpageSliderList',
+    include: 10,
+    limit: 1,
+  }
+
+  const r = await getLocalizedEntries<FrontpageSliderList>(lang, params).catch(
+    errorHandler('getFrontpageSliderList'),
+  )
+
+  let items = []
+
+  if (r.items && r.items[0].fields?.items) {
+    items = r.items && r.items[0].fields?.items
+  }
+
+  return {
+    items: items.map((x) => formatFrontpageSlide(x)),
+  }
+}
+
+export const getAdgerdirPage = async (slug: string, lang: string) => {
+  const r = await getLocalizedEntries<AdgerdirPage>(lang, {
+    ['content_type']: 'vidspyrna-page',
+    include: 10,
+    'fields.slug': slug,
+  }).catch(errorHandler('getAdgerdirPage'))
+
+  return r.items[0] && formatAdgerdirPage(r.items[0])
 }
 
 export const getArticle = async (
@@ -329,27 +429,54 @@ export const getNewsList = async ({
   }
 }
 
-export const getPage = async ({
+export const getAboutPage = async ({
   lang,
-  slug,
-}: GetPageInput): Promise<Page | null> => {
+}: GetAboutPageInput): Promise<AboutPage | null> => {
   const result = await getLocalizedEntries<CmsPage>(lang, {
     ['content_type']: 'page',
-    'fields.slug': slug,
     include: 10,
+    order: '-sys.createdAt',
   }).catch(errorHandler('getPage'))
 
   if (!result.total) {
     return null
   }
 
-  const page = formatPage(result.items[0])
-  return {
-    ...page,
-    slices: await Promise.all(
-      page.slices.map((slice) => loadSlice(slice, lang)),
-    ),
+  return formatAboutPage(result.items[0])
+}
+
+export const getLandingPage = async ({
+  lang,
+  slug,
+}: GetLandingPageInput): Promise<LandingPage> => {
+  const result = await getLocalizedEntries<any>(lang, {
+    ['content_type']: 'landingPage',
+    'fields.slug': slug,
+    include: 10,
+  }).catch(errorHandler('getLandingPage'))
+
+  if (!result.total) {
+    return null
   }
+
+  return formatLandingPage(result.items[0])
+}
+
+export const getGenericPage = async ({
+  lang,
+  slug,
+}: GetGenericPageInput): Promise<GenericPage> => {
+  const result = await getLocalizedEntries<any>(lang, {
+    ['content_type']: 'genericPage',
+    'fields.slug': slug,
+    include: 10,
+  }).catch(errorHandler('getGenericPage'))
+
+  if (!result.total) {
+    return null
+  }
+
+  return formatGenericPage(result.items[0])
 }
 
 export const getNamespace = async (
@@ -375,5 +502,29 @@ export const getNamespace = async (
   return {
     namespace,
     fields: JSON.stringify(fields),
+  }
+}
+
+export const getMenu = async (
+  name: string,
+  lang: string,
+): Promise<Menu | null> => {
+  const result = await getLocalizedEntries<Menu>(lang, {
+    ['content_type']: 'menu',
+    'fields.title': name,
+  }).catch(errorHandler('getMenu'))
+
+  // if we have no results
+  if (!result.total) {
+    return null
+  }
+
+  const {
+    fields: { title, links },
+  } = result.items[0]
+
+  return {
+    title: title,
+    links: ((links as any) ?? []).map(formatLink),
   }
 }

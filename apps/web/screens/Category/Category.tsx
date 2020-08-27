@@ -15,7 +15,6 @@ import {
   Option,
 } from '@island.is/island-ui/core'
 import { Card, Sidebar } from '../../components'
-import { withApollo } from '../../graphql'
 import { useI18n } from '@island.is/web/i18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { Screen } from '../../types'
@@ -33,7 +32,6 @@ import {
   QueryCategoriesArgs,
 } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { Locale } from '@island.is/web/i18n/I18n'
 
 interface CategoryProps {
   articles: Query['articlesInCategory']
@@ -49,7 +47,7 @@ const Category: Screen<CategoryProps> = ({
   const { activeLocale } = useI18n()
   const Router = useRouter()
   const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale as Locale)
+  const { makePath } = useRouteNames(activeLocale)
 
   // group articles
   const { groups, cards } = articles.reduce(
@@ -112,7 +110,7 @@ const Category: Screen<CategoryProps> = ({
 
                 return (
                   <AccordionCard
-                    key={index}
+                    key={groupSlug}
                     id={`accordion-${index}`}
                     label={title}
                     visibleContent={

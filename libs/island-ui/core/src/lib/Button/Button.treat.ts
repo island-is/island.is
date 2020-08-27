@@ -298,6 +298,38 @@ export const variants = styleMap({
   },
 })
 
+export const white = style({
+  backgroundColor: theme.color.transparent,
+  borderColor: theme.color.white,
+  ':after': {
+    borderColor: theme.color.mint400,
+  },
+  ':disabled': {
+    color: theme.color.white,
+  },
+  ':hover': {
+    borderColor: theme.color.white,
+    backgroundColor: theme.color.transparent,
+  },
+  ':focus': {
+    borderColor: theme.color.transparent,
+    backgroundColor: theme.color.transparent,
+  },
+  selectors: {
+    [`&:hover:focus`]: {
+      borderColor: theme.color.transparent,
+      backgroundColor: theme.color.transparent,
+    },
+    [`&:hover:after`]: {
+      borderColor: theme.color.white,
+    },
+    [`&:focus:after`]: {
+      borderColor: theme.color.mint400,
+      opacity: 1,
+    },
+  },
+})
+
 globalStyle(`${button} path`, {
   transition: `fill ${speed} ease`,
 })
@@ -359,6 +391,20 @@ globalStyle(`${variants.menu}:focus path`, {
 })
 globalStyle(`${variants.menu}:active path`, {
   fill: theme.color.blue400,
+})
+
+// White/transparent icon colors
+globalStyle(`${white} path`, {
+  fill: theme.color.white,
+})
+globalStyle(`${white}:hover path`, {
+  fill: theme.color.white,
+})
+globalStyle(`${white}:focus path`, {
+  fill: theme.color.white,
+})
+globalStyle(`${white}:active path`, {
+  fill: theme.color.white,
 })
 
 export const leftSpacer = style({

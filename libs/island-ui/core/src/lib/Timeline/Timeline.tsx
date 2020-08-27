@@ -1,4 +1,5 @@
 import React, {
+  ReactNode,
   useState,
   useRef,
   useEffect,
@@ -43,7 +44,7 @@ export type TimelineEvent = {
   valueLabel?: string
   data?: {
     labels: string[]
-    text: string
+    text: ReactNode
     link: string
   }
 }
@@ -279,7 +280,7 @@ const EventModal = ({ event, visible, onClose }: EventModalProps) => {
         <button onClick={onClose} className={eventStyles.eventModalClose}>
           <Icon type="close" />
         </button>
-        <Stack space={3}>
+        <Stack space={2}>
           <Typography variant="h2" as="h3" color="purple400">
             {event.title}
           </Typography>
@@ -290,9 +291,7 @@ const EventModal = ({ event, visible, onClose }: EventModalProps) => {
               ))}
             </Inline>
           )}
-          <Typography variant="p" as="p">
-            {event.data.text}
-          </Typography>
+          {event.data.text}
           <Button variant="text" icon="arrowRight">
             Lesa meira
           </Button>

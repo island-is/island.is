@@ -1,10 +1,11 @@
-import React, { FC, useMemo } from 'react'
+import React, { FC, useMemo, ReactNode } from 'react'
 import {
   Box,
   Typography,
   Timeline as UITimeline,
   TimelineEvent,
 } from '@island.is/island-ui/core'
+import * as styles from './Timeline.treat'
 
 export interface TimelineEventProps {
   date: string
@@ -12,7 +13,7 @@ export interface TimelineEventProps {
   numerator?: number
   denominator?: number
   label?: string
-  body?: string
+  body?: ReactNode
   tags?: string[]
   link?: string
 }
@@ -27,7 +28,7 @@ export const Timeline: FC<TimelineProps> = ({ title, events }) => {
 
   return (
     <div>
-      <Box marginLeft={15} paddingY={5}>
+      <Box paddingTop={2} paddingBottom={5} className={styles.indent}>
         <Typography variant="p" as="p" color="white">
           {title}
         </Typography>

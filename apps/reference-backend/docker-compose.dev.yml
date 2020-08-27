@@ -1,6 +1,6 @@
 version: '3.3'
 
 services:
-  db:
-    ports: 
+  db_reference_backend:
+    ports:
       - 5432:5432

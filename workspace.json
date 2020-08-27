@@ -375,6 +375,16 @@
             }
           }
         },
+        "env-secrets": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "./scripts/secrets.sh api --reset"
+              }
+            ]
+          }
+        },
         "docker-express": {}
       }
     },
@@ -1270,6 +1280,1431 @@
           }
         }
       }
+    },
+    "service-portal": {
+      "root": "apps/service-portal",
+      "sourceRoot": "apps/service-portal/src",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/web:build",
+          "options": {
+            "outputPath": "dist/apps/service-portal",
+            "index": "apps/service-portal/src/index.html",
+            "main": "apps/service-portal/src/Main.tsx",
+            "polyfills": "apps/service-portal/src/polyfills.ts",
+            "tsConfig": "apps/service-portal/tsconfig.app.json",
+            "assets": [
+              "apps/service-portal/src/favicon.ico",
+              "apps/service-portal/src/assets"
+            ],
+            "scripts": [],
+            "webpackConfig": "apps/service-portal/webpack.config.js"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/service-portal/src/environments/environment.ts",
+                  "with": "apps/service-portal/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/web:dev-server",
+          "options": {
+            "buildTarget": "service-portal:build"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "service-portal:build:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/service-portal/.eslintrc",
+            "tsConfig": [
+              "apps/service-portal/tsconfig.app.json",
+              "apps/service-portal/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/service-portal/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/service-portal/jest.config.js",
+            "tsConfig": "apps/service-portal/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-e2e": {
+      "root": "apps/service-portal-e2e",
+      "sourceRoot": "apps/service-portal-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/service-portal-e2e/cypress.json",
+            "tsConfig": "apps/service-portal-e2e/tsconfig.e2e.json",
+            "devServerTarget": "service-portal:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "service-portal:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/service-portal-e2e/.eslintrc",
+            "tsConfig": ["apps/service-portal-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/service-portal-e2e/**"]
+          }
+        }
+      }
+    },
+    "service-portal-constants": {
+      "root": "libs/service-portal/constants",
+      "sourceRoot": "libs/service-portal/constants/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/constants/.eslintrc",
+            "tsConfig": [
+              "libs/service-portal/constants/tsconfig.lib.json",
+              "libs/service-portal/constants/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/constants/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/constants/jest.config.js",
+            "tsConfig": "libs/service-portal/constants/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-core": {
+      "root": "libs/service-portal/core",
+      "sourceRoot": "libs/service-portal/core/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/core/.eslintrc",
+            "tsConfig": [
+              "libs/service-portal/core/tsconfig.lib.json",
+              "libs/service-portal/core/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/service-portal/core/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/core/jest.config.js",
+            "tsConfig": "libs/service-portal/core/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-applications": {
+      "root": "libs/service-portal/applications",
+      "sourceRoot": "libs/service-portal/applications/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/applications/.eslintrc",
+            "tsConfig": [
+              "libs/service-portal/applications/tsconfig.lib.json",
+              "libs/service-portal/applications/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/applications/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/applications/jest.config.js",
+            "tsConfig": "libs/service-portal/applications/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-documents": {
+      "root": "libs/service-portal/documents",
+      "sourceRoot": "libs/service-portal/documents/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/documents/.eslintrc",
+            "tsConfig": [
+              "libs/service-portal/documents/tsconfig.lib.json",
+              "libs/service-portal/documents/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/documents/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/documents/jest.config.js",
+            "tsConfig": "libs/service-portal/documents/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-settings": {
+      "root": "libs/service-portal/settings",
+      "sourceRoot": "libs/service-portal/settings/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/settings/.eslintrc",
+            "tsConfig": [
+              "libs/service-portal/settings/tsconfig.lib.json",
+              "libs/service-portal/settings/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/settings/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/settings/jest.config.js",
+            "tsConfig": "libs/service-portal/settings/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-finance": {
+      "root": "libs/service-portal/finance",
+      "sourceRoot": "libs/service-portal/finance/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/finance/.eslintrc",
+            "tsConfig": [
+              "libs/service-portal/finance/tsconfig.lib.json",
+              "libs/service-portal/finance/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/service-portal/finance/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/finance/jest.config.js",
+            "tsConfig": "libs/service-portal/finance/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-family": {
+      "root": "libs/service-portal/family",
+      "sourceRoot": "libs/service-portal/family/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/family/.eslintrc",
+            "tsConfig": [
+              "libs/service-portal/family/tsconfig.lib.json",
+              "libs/service-portal/family/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/service-portal/family/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/family/jest.config.js",
+            "tsConfig": "libs/service-portal/family/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-health": {
+      "root": "libs/service-portal/health",
+      "sourceRoot": "libs/service-portal/health/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/health/.eslintrc",
+            "tsConfig": [
+              "libs/service-portal/health/tsconfig.lib.json",
+              "libs/service-portal/health/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/service-portal/health/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/health/jest.config.js",
+            "tsConfig": "libs/service-portal/health/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "service-portal-education": {
+      "root": "libs/service-portal/education",
+      "sourceRoot": "libs/service-portal/education/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/education/.eslintrc",
+            "tsConfig": [
+              "libs/service-portal/education/tsconfig.lib.json",
+              "libs/service-portal/education/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/service-portal/education/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/education/jest.config.js",
+            "tsConfig": "libs/service-portal/education/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "island-ui-contentful": {
+      "root": "libs/island-ui/contentful",
+      "sourceRoot": "libs/island-ui/contentful/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/island-ui/contentful/.eslintrc",
+            "tsConfig": [
+              "libs/island-ui/contentful/tsconfig.lib.json",
+              "libs/island-ui/contentful/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/island-ui/contentful/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/island-ui/contentful/jest.config.js",
+            "tsConfig": "libs/island-ui/contentful/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "air-discount-scheme-api": {
+      "root": "apps/air-discount-scheme/api",
+      "sourceRoot": "apps/air-discount-scheme/api/src",
+      "projectType": "application",
+      "prefix": "air-discount-scheme-api",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/air-discount-scheme/api",
+            "main": "apps/air-discount-scheme/api/src/main.ts",
+            "tsConfig": "apps/air-discount-scheme/api/tsconfig.app.json",
+            "assets": []
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/air-discount-scheme/api/src/environments/environment.ts",
+                  "with": "apps/air-discount-scheme/api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "air-discount-scheme-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/air-discount-scheme/api/.eslintrc",
+            "tsConfig": [
+              "apps/air-discount-scheme/api/tsconfig.app.json",
+              "apps/air-discount-scheme/api/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/air-discount-scheme/api/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/air-discount-scheme/api/jest.config.js",
+            "tsConfig": "apps/air-discount-scheme/api/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "graphql-codegen --config apps/air-discount-scheme/codegen.yml"
+              }
+            ]
+          }
+        },
+        "env-secrets": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "./scripts/secrets.sh air-discount-scheme --reset"
+              }
+            ]
+          }
+        },
+        "docker-express": {}
+      }
+    },
+    "air-discount-scheme-web": {
+      "root": "apps/air-discount-scheme/web",
+      "sourceRoot": "apps/air-discount-scheme/web",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/air-discount-scheme/web",
+            "outputPath": "dist/apps/air-discount-scheme/web"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/air-discount-scheme/web/environments/environment.ts",
+                  "with": "apps/air-discount-scheme/web/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/next:dev-server",
+          "options": {
+            "buildTarget": "air-discount-scheme-web:build",
+            "dev": true
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "air-discount-scheme-web:build:production",
+              "dev": false
+            }
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "air-discount-scheme-web:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/air-discount-scheme/web/.eslintrc",
+            "tsConfig": [
+              "apps/air-discount-scheme/web/tsconfig.json",
+              "apps/air-discount-scheme/web/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/air-discount-scheme/web/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/air-discount-scheme/web/jest.config.js",
+            "tsConfig": "apps/air-discount-scheme/web/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "docker-next": {}
+      }
+    },
+    "air-discount-scheme/web-e2e": {
+      "root": "apps/air-discount-scheme/web-e2e",
+      "sourceRoot": "apps/air-discount-scheme/web-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/air-discount-scheme/web-e2e/cypress.json",
+            "tsConfig": "apps/air-discount-scheme/web-e2e/tsconfig.e2e.json",
+            "devServerTarget": "air-discount-scheme-web:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "air-discount-scheme-web:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/air-discount-scheme/web-e2e/.eslintrc",
+            "tsConfig": ["apps/air-discount-scheme/web-e2e/tsconfig.e2e.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/air-discount-scheme/web-e2e/**"
+            ]
+          }
+        }
+      }
+    },
+    "air-discount-scheme-backend": {
+      "root": "apps/air-discount-scheme/backend",
+      "sourceRoot": "apps/air-discount-scheme/backend/src",
+      "projectType": "application",
+      "prefix": "air-discount-scheme-backend",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/air-discount-scheme/backend",
+            "main": "apps/air-discount-scheme/backend/src/main.ts",
+            "tsConfig": "apps/air-discount-scheme/backend/tsconfig.app.json",
+            "assets": [
+              {
+                "glob": "*sequelize*",
+                "input": "apps/air-discount-scheme/backend",
+                "output": "./"
+              },
+              {
+                "glob": "migrations",
+                "input": "apps/air-discount-scheme/backend",
+                "output": "./"
+              }
+            ]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/air-discount-scheme/backend/src/environments/environment.ts",
+                  "with": "apps/air-discount-scheme/backend/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "air-discount-scheme-backend:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/air-discount-scheme/backend/.eslintrc",
+            "tsConfig": [
+              "apps/air-discount-scheme/backend/tsconfig.app.json",
+              "apps/air-discount-scheme/backend/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/air-discount-scheme/backend/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/air-discount-scheme/backend/jest.config.js",
+            "tsConfig": "apps/air-discount-scheme/backend/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d"
+              }
+            ],
+            "cwd": "apps/air-discount-scheme/backend"
+          }
+        },
+        "generate-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "outputPath": "apps/air-discount-scheme/backend/src/openapi.yaml",
+            "commands": [
+              {
+                "command": "yarn build air-discount-scheme-backend"
+              },
+              {
+                "command": "node dist/apps/air-discount-scheme/backend/main --generate-schema apps/air-discount-scheme/backend/src/openapi.yaml"
+              }
+            ]
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "sequelize-cli db:migrate"
+              }
+            ],
+            "cwd": "apps/air-discount-scheme/backend"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "sequelize-cli migration:generate --name $(whoami)"
+              }
+            ],
+            "cwd": "apps/air-discount-scheme/backend"
+          }
+        },
+        "docker-express": {}
+      }
+    },
+    "air-discount-scheme-consts": {
+      "root": "libs/air-discount-scheme/consts",
+      "sourceRoot": "libs/air-discount-scheme/consts/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/air-discount-scheme/consts/.eslintrc",
+            "tsConfig": [
+              "libs/air-discount-scheme/consts/tsconfig.lib.json",
+              "libs/air-discount-scheme/consts/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/air-discount-scheme/consts/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/air-discount-scheme/consts/jest.config.js",
+            "tsConfig": "libs/air-discount-scheme/consts/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "application-schema": {
+      "root": "libs/application/schema",
+      "sourceRoot": "libs/application/schema/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/application/schema/.eslintrc",
+            "tsConfig": [
+              "libs/application/schema/tsconfig.lib.json",
+              "libs/application/schema/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/application/schema/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/schema/jest.config.js",
+            "tsConfig": "libs/application/schema/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "application-form": {
+      "root": "libs/application/form",
+      "sourceRoot": "libs/application/form/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/application/form/.eslintrc",
+            "tsConfig": [
+              "libs/application/form/tsconfig.lib.json",
+              "libs/application/form/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/application/form/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/form/jest.config.js",
+            "tsConfig": "libs/application/form/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "application-system-form": {
+      "root": "apps/application-system/form",
+      "sourceRoot": "apps/application-system/form/src",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/web:build",
+          "options": {
+            "outputPath": "dist/apps/application-system/form",
+            "index": "apps/application-system/form/src/index.html",
+            "main": "apps/application-system/form/src/main.tsx",
+            "polyfills": "apps/application-system/form/src/polyfills.ts",
+            "tsConfig": "apps/application-system/form/tsconfig.app.json",
+            "assets": [
+              "apps/application-system/form/src/favicon.ico",
+              "apps/application-system/form/src/assets"
+            ],
+            "styles": [],
+            "scripts": [],
+            "webpackConfig": "apps/application-system/form/webpack.config.js"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/application-system/form/src/environments/environment.ts",
+                  "with": "apps/application-system/form/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/web:dev-server",
+          "options": {
+            "buildTarget": "application-system-form:build"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "application-system-form:build:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/application-system/form/.eslintrc",
+            "tsConfig": [
+              "apps/application-system/form/tsconfig.app.json",
+              "apps/application-system/form/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/application-system/form/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/application-system/form/jest.config.js",
+            "tsConfig": "apps/application-system/form/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "application-system-form-e2e": {
+      "root": "apps/application-system/form-e2e",
+      "sourceRoot": "apps/application-system/form-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/application-system/form-e2e/cypress.json",
+            "tsConfig": "apps/application-system/form-e2e/tsconfig.e2e.json",
+            "devServerTarget": "application-system-form:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "application-system-form:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/application-system/form-e2e/.eslintrc",
+            "tsConfig": ["apps/application-system/form-e2e/tsconfig.e2e.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/application-system/form-e2e/**"
+            ]
+          }
+        }
+      }
+    },
+    "application-system-api": {
+      "root": "apps/application-system/api",
+      "sourceRoot": "apps/application-system/api/src",
+      "projectType": "application",
+      "prefix": "application-system-api",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/application-system/api",
+            "main": "apps/application-system/api/src/main.ts",
+            "tsConfig": "apps/application-system/api/tsconfig.app.json",
+            "assets": ["apps/application-system/api/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/application-system/api/src/environments/environment.ts",
+                  "with": "apps/application-system/api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "application-system-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/application-system/api/.eslintrc",
+            "tsConfig": [
+              "apps/application-system/api/tsconfig.app.json",
+              "apps/application-system/api/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/application-system/api/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/application-system/api/jest.config.js",
+            "tsConfig": "apps/application-system/api/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d"
+              }
+            ],
+            "cwd": "apps/application-system/api"
+          }
+        },
+        "generate-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "outputPath": "apps/application-system/api/src/openapi.yaml",
+            "commands": [
+              {
+                "command": "yarn build application-system-api"
+              },
+              {
+                "command": "node dist/apps/application-system/api/main --generate-schema apps/application-system/api/src/openapi.yaml"
+              }
+            ]
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "../../../node_modules/.bin/sequelize-cli db:migrate"
+              }
+            ],
+            "cwd": "apps/application-system/api"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)"
+              }
+            ],
+            "cwd": "apps/application-system/api"
+          }
+        }
+      }
+    },
+    "api-domains-application": {
+      "root": "libs/api/domains/application",
+      "sourceRoot": "libs/api/domains/application/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/api/domains/application/.eslintrc",
+            "tsConfig": [
+              "libs/api/domains/application/tsconfig.lib.json",
+              "libs/api/domains/application/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/application/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/application/jest.config.js",
+            "tsConfig": "libs/api/domains/application/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o libs/api/domains/application/gen/fetch -i apps/application-system/api/src/openapi.yaml"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "adgerdir": {
+      "root": "apps/adgerdir",
+      "sourceRoot": "apps/adgerdir/src",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/adgerdir",
+            "outputPath": "dist/apps/adgerdir"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/adgerdir/environments/environment.ts",
+                  "with": "apps/adgerdir/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/next:dev-server",
+          "options": {
+            "buildTarget": "adgerdir:build",
+            "dev": true,
+            "proxyConfig": "apps/adgerdir/proxy.config.json"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "adgerdir:build:production",
+              "dev": false
+            }
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "adgerdir:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/adgerdir/.eslintrc",
+            "tsConfig": [
+              "apps/adgerdir/tsconfig.json",
+              "apps/adgerdir/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/adgerdir/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/adgerdir/jest.config.js",
+            "tsConfig": "apps/adgerdir/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "docker-next": {}
+      }
+    },
+    "adgerdir-e2e": {
+      "root": "apps/adgerdir-e2e",
+      "sourceRoot": "apps/adgerdir-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/adgerdir-e2e/cypress.json",
+            "tsConfig": "apps/adgerdir-e2e/tsconfig.e2e.json",
+            "devServerTarget": "adgerdir:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "adgerdir:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/adgerdir-e2e/.eslintrc",
+            "tsConfig": ["apps/adgerdir-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/adgerdir-e2e/**"]
+          }
+        }
+      }
+    },
+    "air-discount-scheme-types": {
+      "root": "libs/air-discount-scheme/types",
+      "sourceRoot": "libs/air-discount-scheme/types/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/air-discount-scheme/types/.eslintrc",
+            "tsConfig": [
+              "libs/air-discount-scheme/types/tsconfig.lib.json",
+              "libs/air-discount-scheme/types/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/air-discount-scheme/types/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/air-discount-scheme/types/jest.config.js",
+            "tsConfig": "libs/air-discount-scheme/types/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "application-graphql": {
+      "root": "libs/application/graphql",
+      "sourceRoot": "libs/application/graphql/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/application/graphql/.eslintrc",
+            "tsConfig": [
+              "libs/application/graphql/tsconfig.lib.json",
+              "libs/application/graphql/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/application/graphql/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/graphql/jest.config.js",
+            "tsConfig": "libs/application/graphql/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "judicial-system-api": {
+      "root": "apps/judicial-system/api",
+      "sourceRoot": "apps/judicial-system/api/src",
+      "projectType": "application",
+      "prefix": "judicial-system-api",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/judicial-system/api",
+            "main": "apps/judicial-system/api/src/main.ts",
+            "tsConfig": "apps/judicial-system/api/tsconfig.app.json",
+            "assets": ["apps/judicial-system/api/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/judicial-system/api/src/environments/environment.ts",
+                  "with": "apps/judicial-system/api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "judicial-system-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/judicial-system/api/.eslintrc",
+            "tsConfig": [
+              "apps/judicial-system/api/tsconfig.app.json",
+              "apps/judicial-system/api/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/judicial-system/api/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/judicial-system/api/jest.config.js",
+            "tsConfig": "apps/judicial-system/api/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "docker-compose -f docker-compose.base.yml -f docker-compose.dev.yml up -d"
+              }
+            ],
+            "cwd": "apps/judicial-system/api"
+          }
+        },
+        "generate-schema": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "outputPath": "apps/judicial-system/api/src/openapi.yaml",
+            "commands": [
+              {
+                "command": "yarn build judicial-system-api"
+              },
+              {
+                "command": "node dist/apps/judicial-system/api/main --generate-schema apps/judicial-system/api/src/openapi.yaml"
+              }
+            ]
+          }
+        },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "../../../node_modules/.bin/sequelize-cli db:migrate"
+              }
+            ],
+            "cwd": "apps/judicial-system/api"
+          }
+        },
+        "migrate/generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)"
+              }
+            ],
+            "cwd": "apps/judicial-system/api"
+          }
+        },
+        "docker-express": {}
+      }
+    },
+    "judicial-system-web": {
+      "root": "apps/judicial-system/web",
+      "sourceRoot": "apps/judicial-system/web/src",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/web:build",
+          "options": {
+            "outputPath": "dist/apps/judicial-system/web",
+            "index": "apps/judicial-system/web/src/index.html",
+            "main": "apps/judicial-system/web/src/main.tsx",
+            "polyfills": "apps/judicial-system/web/src/polyfills.ts",
+            "tsConfig": "apps/judicial-system/web/tsconfig.app.json",
+            "assets": [
+              "apps/judicial-system/web/src/favicon.ico",
+              "apps/judicial-system/web/src/assets"
+            ],
+            "styles": ["apps/judicial-system/web/src/styles.scss"],
+            "scripts": [],
+            "webpackConfig": "@nrwl/react/plugins/webpack"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/judicial-system/web/src/environments/environment.ts",
+                  "with": "apps/judicial-system/web/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/web:dev-server",
+          "options": {
+            "buildTarget": "judicial-system-web:build",
+            "proxyConfig": "apps/judicial-system/web/proxy.config.json"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "judicial-system-web:build:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/judicial-system/web/.eslintrc",
+            "tsConfig": [
+              "apps/judicial-system/web/tsconfig.app.json",
+              "apps/judicial-system/web/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/judicial-system/web/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/judicial-system/web/jest.config.js",
+            "tsConfig": "apps/judicial-system/web/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "judicial-system/web-e2e": {
+      "root": "apps/judicial-system/web-e2e",
+      "sourceRoot": "apps/judicial-system/web-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/judicial-system/web-e2e/cypress.json",
+            "tsConfig": "apps/judicial-system/web-e2e/tsconfig.e2e.json",
+            "devServerTarget": "judicial-system-web:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "judicial-system-web:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/judicial-system/web-e2e/.eslintrc",
+            "tsConfig": ["apps/judicial-system/web-e2e/tsconfig.e2e.json"],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/judicial-system/web-e2e/**"
+            ]
+          }
+        }
+      }
     }
   },
   "cli": {
@@ -1288,15 +2723,17 @@
     },
     "@nrwl/react": {
       "application": {
+        "style": "scss",
         "linter": "eslint",
         "pascalCaseFiles": true,
-        "style": "scss",
         "babel": true
       },
       "component": {
-        "pascalCaseFiles": true,
+        "style": "scss"
+      },
+      "library": {
         "style": "scss",
-        "export": true
+        "linter": "eslint"
       }
     },
     "@nrwl/next": {

@@ -10,4 +10,4 @@ AFFECTED_PROJECTS=`$DIR/_nx-affected-targets.sh $1 | tr '\n,' ' '`
 echo "Affected projects for target $1 are '$AFFECTED_PROJECTS'"
 
 # This is a helper script to run in parallel affected projects for a specific target
-exec parallel --lb -j $MAX_JOBS APP={} $DIR/$1.sh ::: $AFFECTED_PROJECTS
+exec parallel --halt soon,fail=1 --lb -j $MAX_JOBS APP={} $DIR/$1.sh ::: $AFFECTED_PROJECTS

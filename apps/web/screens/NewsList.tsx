@@ -4,16 +4,12 @@ import { groupBy, range, capitalize } from 'lodash'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
-import DefaultErrorPage from 'next/error'
 import { Screen } from '../types'
-import Select from '../components/Select/Select'
+import NativeSelect from '../components/Select/Select'
 import Bullet from '../components/Bullet/Bullet'
-import { withApollo } from '../graphql'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import { Locale } from '@island.is/web/i18n/I18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
-import Image from '../components/Image/Image'
 import {
   Box,
   Typography,
@@ -23,6 +19,10 @@ import {
   Columns,
   Column,
   Pagination,
+  Hidden,
+  Select,
+  Option,
+  Tiles,
 } from '@island.is/island-ui/core'
 import { GET_NEWS_LIST_QUERY } from './queries'
 import { NewsListLayout } from './Layouts/Layouts'
@@ -31,12 +31,7 @@ import {
   ContentLanguage,
   QueryGetNewsListArgs,
 } from '@island.is/api/schema'
-
-const PageLink = ({ children, href, ...props }) => (
-  <Link href={href}>
-    <a {...props}>{children}</a>
-  </Link>
-)
+import { CustomNextError } from '../units/ErrorBoundary'
 
 interface NewsListProps {
   newsList: Query['getNewsList']['news']
@@ -55,12 +50,8 @@ const NewsList: Screen<NewsListProps> = ({
 }) => {
   const Router = useRouter()
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale as Locale)
+  const { makePath } = useRouteNames(activeLocale)
   const { format } = useDateUtils()
-
-  if ((selectedYear || page.page > 1) && newsList.length === 0) {
-    return <DefaultErrorPage statusCode={404} />
-  }
 
   const dates = dateRange.map((s) => new Date(s))
   const datesByYear = groupBy(dates, (d: Date) => d.getFullYear())
@@ -68,10 +59,34 @@ const NewsList: Screen<NewsListProps> = ({
   const years = Object.keys(datesByYear)
   const months = datesByYear[selectedYear] ?? []
 
-  const options = years.map((year) => ({
+  const yearOptions = years.map((year) => ({
     label: year,
     value: year,
   }))
+
+  const monthOptions = [
+    {
+      label: 'Allt árið',
+      value: undefined,
+    },
+  ].concat(
+    months.map((date) => ({
+      label: capitalize(format(date, 'MMMM')),
+      value: date.getMonth(),
+    })),
+  )
+
+  const makeHref = (y: string | number, m?: string | number) => {
+    const query: { [k: string]: number | string } = { y }
+    if (m != null) {
+      query.m = m
+    }
+
+    return {
+      pathname: makePath('news'),
+      query,
+    }
+  }
 
   const sidebar = (
     <Stack space={3}>
@@ -79,42 +94,21 @@ const NewsList: Screen<NewsListProps> = ({
         Fréttir og tilkynningar
       </Typography>
       <Divider weight="alternate" />
-      <Select
+      <NativeSelect
         name="year"
         value={selectedYear.toString()}
-        options={options}
-        onChange={(e) => {
-          Router.push({
-            pathname: makePath('news'),
-            query: { y: e.target.value },
-          })
-        }}
+        options={yearOptions}
+        onChange={(e) => Router.push(makeHref(e.target.value))}
       />
-
       <Typography variant="p" as="p">
-        <Link
-          href={{
-            pathname: makePath('news'),
-            query: {
-              y: selectedYear,
-            },
-          }}
-        >
-          <a>Allt árið {selectedYear}</a>
+        <Link href={makeHref(selectedYear)}>
+          <a>Allt árið</a>
         </Link>
         {selectedMonth === undefined && <Bullet align="right" />}
       </Typography>
       {months.map((date: Date) => (
         <Typography key={date.toISOString()} variant="p" as="p">
-          <Link
-            href={{
-              pathname: makePath('news'),
-              query: {
-                y: date.getFullYear(),
-                m: date.getMonth(),
-              },
-            }}
-          >
+          <Link href={makeHref(date.getFullYear(), date.getMonth())}>
             <a>{capitalize(format(date, 'MMMM'))}</a>
           </Link>
           {selectedMonth === date.getMonth() && <Bullet align="right" />}
@@ -138,9 +132,36 @@ const NewsList: Screen<NewsListProps> = ({
               <a>Fréttir og tilkynningar</a>
             </Link>
           </Breadcrumbs>
-          <Typography variant="h1" as="h1">
-            {selectedYear}
-          </Typography>
+          <Hidden below="lg">
+            <Typography variant="h1" as="h1">
+              {selectedYear}
+            </Typography>
+          </Hidden>
+
+          <Hidden above="md">
+            <Tiles space={3} columns={2}>
+              <Select
+                label="Ár"
+                placeholder="Ár"
+                value={yearOptions.find(
+                  (o) => o.value === selectedYear.toString(),
+                )}
+                options={yearOptions}
+                onChange={({ value }: Option) => Router.push(makeHref(value))}
+                name="year"
+              />
+              <Select
+                label="Mánuður"
+                placeholder="Allt árið"
+                value={monthOptions.find((o) => o.value === selectedMonth)}
+                options={monthOptions}
+                onChange={({ value }: Option) =>
+                  Router.push(makeHref(selectedYear, value))
+                }
+                name="month"
+              />
+            </Tiles>
+          </Hidden>
 
           {newsList.map((newsItem) => (
             <NewsListItem key={newsItem.id} newsItem={newsItem} />
@@ -149,14 +170,16 @@ const NewsList: Screen<NewsListProps> = ({
           <Box paddingTop={8}>
             <Pagination
               {...page}
-              linkComp={PageLink}
-              makeHref={(p: number) => ({
-                pathname: makePath('news'),
-                query: {
-                  ...Router.query,
-                  page: p,
-                },
-              })}
+              renderLink={(page, className, children) => (
+                <Link
+                  href={{
+                    pathname: makePath('news'),
+                    query: { ...Router.query, page },
+                  }}
+                >
+                  <a className={className}>{children}</a>
+                </Link>
+              )}
             />
           </Box>
         </Stack>
@@ -167,7 +190,7 @@ const NewsList: Screen<NewsListProps> = ({
 
 const NewsListItem = ({ newsItem }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale as Locale)
+  const { makePath } = useRouteNames(activeLocale)
   const { format } = useDateUtils()
 
   return (
@@ -192,7 +215,10 @@ const NewsListItem = ({ newsItem }) => {
           <Column width="2/5">
             <Link href={makePath('news', newsItem.slug)}>
               <a>
-                <Image type="apiImage" image={newsItem.image} maxWidth={524} />
+                <img
+                  src={newsItem.image.url + '?w=524'}
+                  alt={`Skoða frétt ${newsItem.title}`}
+                />
               </a>
             </Link>
           </Column>
@@ -205,6 +231,7 @@ const NewsListItem = ({ newsItem }) => {
 NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   let year = getIntParam(query.y)
   const month = year && getIntParam(query.m)
+  const selectedPage = getIntParam(query.page) ?? 1
 
   const [
     {
@@ -245,14 +272,18 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       variables: {
         input: {
           lang: locale as ContentLanguage,
-          page: getIntParam(query.page) ?? 1,
           perPage: 10,
+          page: selectedPage,
           year,
           month,
         },
       },
     }),
   ])
+
+  if ((year || page.page > 1) && newsList.length === 0) {
+    throw new CustomNextError(404)
+  }
 
   // default to year of first result if no year is selected
   if (!year && newsList.length > 0) {

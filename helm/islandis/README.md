@@ -15,7 +15,7 @@ We are trying to stick to as few different templates as possible to avoid duplic
 helm dep update
 ```
 
-Unfortunately we need to commit to git the resulting `.tgz` files in the [charts](./charts) folder since our deployment tool - Spinnaker, does not support building the files on the fly. Hopefully in a future version of Spinnaker, this will be fixed.
+~~Unfortunately we need to commit to git the resulting `.tgz` files in the [charts](./charts) folder since our deployment tool - Spinnaker, does not support building the files on the fly. Hopefully in a future version of Spinnaker, this will be fixed.~~
 
 ## Previewing/Troubleshooting your service's Helm chart
 

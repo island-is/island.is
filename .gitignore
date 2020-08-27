@@ -43,6 +43,8 @@ Thumbs.db
 
 # Used to store local secrets
 .env.secret
+helm/**/*.tgz
+/cache
 
 # Visual Studio local files
 /.vs/island.is/config/applicationhost.config
