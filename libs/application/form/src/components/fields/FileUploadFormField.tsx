@@ -49,7 +49,7 @@ function reducer(state, action) {
         }
         return file
       })
-      return [...updatedStatusList]
+      return updatedStatusList
     default:
       throw new Error()
   }
