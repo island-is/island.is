@@ -17,7 +17,7 @@ export const Logo = forwardRef<SVGSVGElement, LogoProps>(
   (
     {
       id = '',
-      width = 200,
+      width,
       solid = false,
       solidColor = '#fff',
       iconOnly = false,
@@ -28,8 +28,7 @@ export const Logo = forwardRef<SVGSVGElement, LogoProps>(
     iconOnly ? (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width={width ?? '40'}
-        height={width ?? '40'}
+        width={width ?? 40}
         fill="none"
         viewBox="0 0 40 40"
         className={cn(styles.root)}
@@ -65,8 +64,8 @@ export const Logo = forwardRef<SVGSVGElement, LogoProps>(
         xmlnsXlink="http://www.w3.org/1999/xlink"
         viewBox="0 0 669.51 108.09"
         className={cn(styles.root)}
-        width={width}
-        style={{ width, color: solidColor }}
+        width={width ?? 200}
+        style={{ color: solidColor }}
         aria-label="island.is logo"
       >
         <defs>
