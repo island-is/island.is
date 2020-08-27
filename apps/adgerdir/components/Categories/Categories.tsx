@@ -34,12 +34,16 @@ export const Categories: FC<CategoriesProps> = ({
   // const cardsRef = useRef<Array<HTMLElement | null>>([])
   const [filterString, setFilterString] = useState<string>('')
   const [tagIds, setTagIds] = useState<Array<string>>([])
+  const [selectedStatuses, setSelectedStatuses] = useState<Array<string>>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showCount, setShowCount] = useState<number>(ITEMS_PER_SHOW)
   const [indexesFilteredByString, setIndexesFilteredByString] = useState<
     Array<number>
   >([])
   const [indexesFilteredByTag, setIndexesFilteredByTag] = useState<
+    Array<number>
+  >([])
+  const [indexesFilteredByStatus, setIndexesFilteredByStatus] = useState<
     Array<number>
   >([])
   const timerRef = useRef(null)
@@ -72,7 +76,7 @@ export const Categories: FC<CategoriesProps> = ({
   const onFilterTagChange = useCallback(() => {
     const arr = []
 
-    items.forEach(({ title, tags }, index) => {
+    items.forEach(({ tags }, index) => {
       if (tags.some(({ id }) => tagIds.includes(id as string))) {
         arr.push(index)
       }
@@ -81,11 +85,24 @@ export const Categories: FC<CategoriesProps> = ({
     setIndexesFilteredByTag(arr)
   }, [items, tagIds])
 
+  const onFilterStatusChange = useCallback(() => {
+    const arr = []
+
+    items.forEach(({ status }, index) => {
+      if (selectedStatuses.includes(status)) {
+        arr.push(index)
+      }
+    })
+
+    setIndexesFilteredByStatus(arr)
+  }, [items, selectedStatuses])
+
   const doUpdate = useCallback(() => {
     onFilterStringChange()
     onFilterTagChange()
+    onFilterStatusChange()
     setIsLoading(false)
-  }, [onFilterStringChange, onFilterTagChange])
+  }, [onFilterStringChange, onFilterTagChange, onFilterStatusChange])
 
   const onUpdateFilters = useCallback(() => {
     clearTimeout(timerRef.current)
@@ -100,16 +117,30 @@ export const Categories: FC<CategoriesProps> = ({
 
   const onTagClick = (id: string) => {
     clearTimeout(timerRef.current)
-    const newTagIds = [...tagIds]
+    const arr = [...tagIds]
     const index = tagIds.findIndex((x) => x === id)
 
     if (index < 0) {
-      newTagIds.push(id)
+      arr.push(id)
     } else {
-      newTagIds.splice(index, 1)
+      arr.splice(index, 1)
     }
 
-    setTagIds(newTagIds)
+    setTagIds(arr)
+  }
+
+  const onStatusClick = (status: string) => {
+    clearTimeout(timerRef.current)
+    const arr = [...selectedStatuses]
+    const index = selectedStatuses.findIndex((x) => x === status)
+
+    if (index < 0) {
+      arr.push(status)
+    } else {
+      arr.splice(index, 1)
+    }
+
+    setSelectedStatuses(arr)
   }
 
   useEffect(() => {
@@ -119,14 +150,13 @@ export const Categories: FC<CategoriesProps> = ({
 
   const filteredItems = items
     .filter((item, index) => {
-      if (indexesFilteredByTag.length) {
-        return _.intersection(
-          indexesFilteredByTag,
-          indexesFilteredByString,
-        ).includes(index)
-      }
+      const indexList = [
+        indexesFilteredByStatus,
+        indexesFilteredByTag,
+        indexesFilteredByString,
+      ].filter((x) => x.length > 0)
 
-      return indexesFilteredByString.includes(index)
+      return _.intersection(...indexList).includes(index)
     })
     .splice(0, showCount)
 
@@ -140,8 +170,6 @@ export const Categories: FC<CategoriesProps> = ({
     return statuses
   }, [])
 
-  console.log(statusTypes)
-
   return (
     <Box padding={[3, 3, 6]}>
       <Stack space={6}>
@@ -154,7 +182,12 @@ export const Categories: FC<CategoriesProps> = ({
                 </Typography>
                 {statusTypes.map((status, index) => {
                   return (
-                    <Tag key={index} variant="red">
+                    <Tag
+                      key={index}
+                      variant="red"
+                      onClick={() => onStatusClick(status)}
+                      active={selectedStatuses.includes(status)}
+                    >
                       <Box position="relative">
                         <Inline space={1} alignY="center">
                           <span>{statusNames[status]}</span>
@@ -208,15 +241,21 @@ export const Categories: FC<CategoriesProps> = ({
             </div>
           </Box>
         </Box>
-        {filterString && filteredItems.length === 0 ? (
+        {filteredItems.length === 0 ? (
           <Box>
             <Stack space={2}>
               <Typography variant="intro" color="red600">
-                {`Ekkert fannst með leitarorðinu „${filterString}“${
-                  indexesFilteredByTag.length
-                    ? ' og völdum málefnum/stöðum hér fyrir ofan'
-                    : ''
-                }...`}
+                <span>Ekkert fannst með{` `}</span>
+                {filterString
+                  ? `leitarorðinu „${filterString}“${
+                      indexesFilteredByTag.length ||
+                      indexesFilteredByStatus.length
+                        ? ' og völdum málefnum/stöðum hér fyrir ofan'
+                        : ''
+                    }`
+                  : null}
+                {!filterString ? 'völdum málefnum/stöðum hér fyrir ofan' : null}
+                .
               </Typography>
             </Stack>
           </Box>
