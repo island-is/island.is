@@ -391,6 +391,16 @@ export enum ApplicationTypeIdEnum {
   PaternityLeave = 'PaternityLeave',
 }
 
+export type Document = {
+  __typename?: 'Document'
+  id: Scalars['ID']
+  date: Scalars['DateTime']
+  subject: Scalars['String']
+  senderName: Scalars['String']
+  senderNatReg: Scalars['String']
+  opened: Scalars['Boolean']
+}
+
 export type Query = {
   __typename?: 'Query'
   helloWorld: HelloWorld
@@ -413,6 +423,7 @@ export type Query = {
   getMenu?: Maybe<Menu>
   getApplication?: Maybe<Application>
   getApplicationsByType?: Maybe<Array<Application>>
+  getDocument?: Maybe<Document>
 }
 
 export type QueryHelloWorldArgs = {
@@ -493,6 +504,10 @@ export type QueryGetApplicationArgs = {
 
 export type QueryGetApplicationsByTypeArgs = {
   input: GetApplicationsByTypeInput
+}
+
+export type QueryGetDocumentArgs = {
+  input: GetDocumentInput
 }
 
 export type HelloWorldInput = {
@@ -603,6 +618,10 @@ export type GetApplicationInput = {
 
 export type GetApplicationsByTypeInput = {
   typeId: ApplicationTypeIdEnum
+}
+
+export type GetDocumentInput = {
+  id: Scalars['String']
 }
 
 export type Mutation = {
@@ -861,6 +880,8 @@ export type ResolversTypes = {
   ApplicationStateEnum: ApplicationStateEnum
   ApplicationTypeIdEnum: ApplicationTypeIdEnum
   JSON: ResolverTypeWrapper<Scalars['JSON']>
+  Document: ResolverTypeWrapper<Document>
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   Query: ResolverTypeWrapper<{}>
   HelloWorldInput: HelloWorldInput
   SearcherInput: SearcherInput
@@ -872,7 +893,6 @@ export type ResolversTypes = {
   GetArticleInput: GetArticleInput
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
   GetLandingPageInput: GetLandingPageInput
@@ -885,6 +905,7 @@ export type ResolversTypes = {
   GetMenuInput: GetMenuInput
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
+  GetDocumentInput: GetDocumentInput
   Mutation: ResolverTypeWrapper<{}>
   CreateApplicationInput: CreateApplicationInput
   CreateApplicationDtoStateEnum: CreateApplicationDtoStateEnum
@@ -960,6 +981,8 @@ export type ResolversParentTypes = {
   Application: Application
   DateTime: Scalars['DateTime']
   JSON: Scalars['JSON']
+  Document: Document
+  Boolean: Scalars['Boolean']
   Query: {}
   HelloWorldInput: HelloWorldInput
   SearcherInput: SearcherInput
@@ -969,7 +992,6 @@ export type ResolversParentTypes = {
   GetArticleInput: GetArticleInput
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
-  Boolean: Scalars['Boolean']
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
   GetLandingPageInput: GetLandingPageInput
@@ -982,6 +1004,7 @@ export type ResolversParentTypes = {
   GetMenuInput: GetMenuInput
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
+  GetDocumentInput: GetDocumentInput
   Mutation: {}
   CreateApplicationInput: CreateApplicationInput
   UpdateApplicationInput: UpdateApplicationInput
@@ -1564,6 +1587,19 @@ export interface JsonScalarConfig
   name: 'JSON'
 }
 
+export type DocumentResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Document'] = ResolversParentTypes['Document']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>
+  subject?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  senderName?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  senderNatReg?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  opened?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type QueryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
@@ -1688,6 +1724,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetApplicationsByTypeArgs, 'input'>
   >
+  getDocument?: Resolver<
+    Maybe<ResolversTypes['Document']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetDocumentArgs, 'input'>
+  >
 }
 
 export type MutationResolvers<
@@ -1753,6 +1795,7 @@ export type Resolvers<ContextType = Context> = {
   Application?: ApplicationResolvers<ContextType>
   DateTime?: GraphQLScalarType
   JSON?: GraphQLScalarType
+  Document?: DocumentResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
 }

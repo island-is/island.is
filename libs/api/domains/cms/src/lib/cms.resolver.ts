@@ -118,7 +118,7 @@ export class CmsResolver {
   @Query(() => AdgerdirFrontpage, { nullable: true })
   getAdgerdirFrontpage(
     @Args('input') input: GetAdgerdirFrontpageInput,
-  ): Promise<AdgerdirPage | null> {
+  ): Promise<AdgerdirFrontpage | null> {
     return getAdgerdirFrontpage(input?.lang ?? 'is-IS')
   }
 
