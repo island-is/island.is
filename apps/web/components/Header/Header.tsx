@@ -5,12 +5,10 @@ import {
   Logo,
   Columns,
   Column,
-  ContentBlock,
   Box,
   Button,
   Hidden,
   ResponsiveSpace,
-  Icon,
   GridContainer,
   GridColumn,
   GridRow,
@@ -66,6 +64,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const { activeLocale, t } = useI18n()
   const Router = useRouter()
   const { makePath } = useRouteNames(activeLocale)
+  const onClickSideMenu = () => null
 
   const locale = activeLocale
   const english = activeLocale === 'en'
@@ -130,9 +129,11 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                   <LanguageToggler hideWhenMobile />
                 </Box>
                 <Box marginLeft={marginLeft}>
-                  <Button variant="menu">
-                    <Icon type="logo" />
-                  </Button>
+                  <Link href="https://minarsidur.island.is/" passHref>
+                    <Button variant="menu" leftIcon="logo" onClick={onClickSideMenu}>
+                      Valmynd
+                    </Button>
+                  </Link>
                 </Box>
               </Box>
             </Column>
