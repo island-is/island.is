@@ -1,8 +1,17 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { ContentBlock, Box, Typography, Stack } from '@island.is/island-ui/core'
+
+import {
+  Box,
+  GridContainer,
+  GridRow,
+  GridColumn,
+  ContentBlock,
+  Typography,
+  Stack,
+} from '@island.is/island-ui/core'
 import { Content } from '@island.is/island-ui/contentful'
-import { Categories, Sleeve, GroupedPages, CardsSlider } from '../components'
+import { Articles, Sleeve, GroupedPages, CardsSlider } from '../components'
 import { withApollo } from '../graphql'
 import { useI18n } from '../i18n'
 import {
@@ -26,12 +35,12 @@ import Head from 'next/head'
 
 interface HomeProps {
   frontpage: Query['getAdgerdirFrontpage']
-  data: Query['getAdgerdirPages']
+  pages: Query['getAdgerdirPages']
   tags: Query['getAdgerdirTags']
   namespace: Query['getNamespace']
 }
 
-const Home: Screen<HomeProps> = ({ frontpage, data, tags, namespace }) => {
+const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
   const { activeLocale } = useI18n()
   // const n = useNamespace(namespace)
 
@@ -39,7 +48,7 @@ const Home: Screen<HomeProps> = ({ frontpage, data, tags, namespace }) => {
     document.documentElement.lang = activeLocale
   }
 
-  const { items: pagesItems } = data
+  const { items: pagesItems } = pages
   const { items: tagsItems } = tags
 
   return (
@@ -47,30 +56,34 @@ const Home: Screen<HomeProps> = ({ frontpage, data, tags, namespace }) => {
       <Head>
         <title>Viðspyrna fyrir Ísland</title>
       </Head>
-      <Box paddingY={6}>
-        <Box paddingX={[3, 3, 6, 0]}>
-          <ContentBlock width="small">
-            <Stack space={3}>
-              <Typography variant="eyebrow" as="h2" color="roseTinted400">
-                Viðspyrna
-              </Typography>
-              <Typography variant="h1" as="h1">
-                {frontpage.title}
-              </Typography>
-              <Typography variant="intro" as="p">
-                {frontpage.description}
-              </Typography>
-            </Stack>
-          </ContentBlock>
-        </Box>
-        <Content document={frontpage.content} />
+      <Box paddingY={6} paddingX={[1, 2]}>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span={[12, 12, 12, 12, 7]} offset={[0, 0, 0, 0, 1]}>
+              <ContentBlock width="small">
+                <Stack space={3}>
+                  <Typography variant="eyebrow" as="h2" color="roseTinted400">
+                    Viðspyrna
+                  </Typography>
+                  <Typography variant="h1" as="h1">
+                    {frontpage.title}
+                  </Typography>
+                  <Typography variant="intro" as="p">
+                    {frontpage.description}
+                  </Typography>
+                </Stack>
+              </ContentBlock>
+              <Content document={frontpage.content} />
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
       </Box>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
         <Box marginBottom={10}>
           <Sleeve>
             <Box background="red100">
               <ContentBlock width="large">
-                <Categories tags={tagsItems} items={pagesItems} />
+                <Articles tags={tagsItems} items={pagesItems} />
               </ContentBlock>
             </Box>
           </Sleeve>
@@ -221,7 +234,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   return {
     frontpage: getAdgerdirFrontpage,
     tags: getAdgerdirTags,
-    data: getAdgerdirPages,
+    pages: getAdgerdirPages,
     namespace,
     showSearchInHeader: false,
   }

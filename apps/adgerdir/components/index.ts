@@ -1,5 +1,5 @@
 export * from './Card/Card'
-export * from './Categories/Categories'
+export * from './Articles/Articles'
 export * from './Header/Header'
 export * from './Sidebar/Sidebar'
 export * from './GroupedPages/GroupedPages'

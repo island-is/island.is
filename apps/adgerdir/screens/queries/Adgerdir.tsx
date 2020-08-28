@@ -8,12 +8,10 @@ export const GET_ADGERDIR_PAGES_QUERY = gql`
         slug
         title
         description
-        content
         tags {
           id
           title
         }
-        link
         status
       }
     }

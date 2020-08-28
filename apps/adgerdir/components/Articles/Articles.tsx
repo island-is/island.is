@@ -15,25 +15,27 @@ import Card from '../Card/Card'
 import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
 
 import * as cardStyles from '../Card/Card.treat'
-import * as styles from './Categories.treat'
+import * as styles from './Articles.treat'
 
 const FILTER_TIMER = 300
 const ITEMS_PER_SHOW = 6
 
-interface CategoriesProps {
+interface ArticlesProps {
   items: AdgerdirPage[]
   tags: AdgerdirTag[]
   seeMoreText?: string
+  preselectedTagIds?: Array<string>
 }
 
-export const Categories: FC<CategoriesProps> = ({
+export const Articles: FC<ArticlesProps> = ({
   seeMoreText = 'Sjá fleiri',
   items,
   tags,
+  preselectedTagIds = [],
 }) => {
   // const cardsRef = useRef<Array<HTMLElement | null>>([])
   const [filterString, setFilterString] = useState<string>('')
-  const [tagIds, setTagIds] = useState<Array<string>>([])
+  const [tagIds, setTagIds] = useState<Array<string>>(preselectedTagIds)
   const [selectedStatuses, setSelectedStatuses] = useState<Array<string>>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showCount, setShowCount] = useState<number>(ITEMS_PER_SHOW)
@@ -170,6 +172,12 @@ export const Categories: FC<CategoriesProps> = ({
     return statuses
   }, [])
 
+  useEffect(() => {
+    if (preselectedTagIds.length && !_.isEqual(preselectedTagIds, tagIds)) {
+      setTagIds(preselectedTagIds)
+    }
+  }, [preselectedTagIds, tagIds])
+
   return (
     <Box padding={[3, 3, 6]}>
       <Stack space={6}>
@@ -297,4 +305,4 @@ export const Categories: FC<CategoriesProps> = ({
   )
 }
 
-export default Categories
+export default Articles
