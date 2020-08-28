@@ -5,6 +5,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 import { UserProfilesModule } from './modules/user-profiles/user-profiles.module'
 import { ClientsModule } from './modules/clients/clients.module'
 import { ResourcesModule } from './modules/resources/resources.module'
+import { GrantsModule } from './modules/grants/grants.module'
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { ResourcesModule } from './modules/resources/resources.module'
     UserIdentitiesModule,
     UserProfilesModule,
     ClientsModule,
-    ResourcesModule
+    ResourcesModule,
+    GrantsModule
   ],
 })
 export class AppModule {}
