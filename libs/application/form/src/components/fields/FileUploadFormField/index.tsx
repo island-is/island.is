@@ -138,10 +138,22 @@ const FileUploadFormField: FC<Props> = ({
   }
 
   const onFileChange = async (newFiles: File[]) => {
+    const addedUniqueFiles = newFiles.filter((newFile: File) => {
+      let isUnique = true
+      state.forEach((uploadedFile: UploadFile) => {
+        if (uploadedFile.name === newFile.name) isUnique = false
+      })
+      return isUnique
+    })
+
+    if (addedUniqueFiles.length === 0) return
+
     clearErrors(id)
     setUploadError(undefined)
 
-    const newUploadFiles = newFiles.map((f) => fileToObject(f, 'uploading'))
+    const newUploadFiles = addedUniqueFiles.map((f) =>
+      fileToObject(f, 'uploading'),
+    )
 
     // Add the files to the list so that the control presents them
     // with a spinner.
