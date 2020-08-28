@@ -12,6 +12,10 @@ export class UserService {
   private async getUserFromNationalRegistry(
     nationalId: string,
   ): Promise<NationalRegistryResponse> {
+  meetsADSRequirements(postalcode: number): boolean {
+    return ADS_POSTAL_CODES.includes(postalcode)
+  }
+
   async getFund(user: ThjodskraUser): Promise<Fund> {
     const {
       used,

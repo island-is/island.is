@@ -23,4 +23,13 @@ export class UserResolver {
   resolveRole(@CurrentUser() user: AuthUser): string {
     return this.authService.getRole(user)
   }
+
+  @ResolveField('meetsADSRequirements')
+  resolveMeetsADSRequirements(@Parent() user: TUser): boolean {
+    if (user.fund) {
+      return user.fund.credit === user.fund.total - user.fund.used
+    }
+
+    return false
+  }
 }

@@ -306,12 +306,22 @@ export type AdgerdirTags = {
   items: Array<AdgerdirTag>
 }
 
+export type Fund = {
+  __typename?: 'Fund'
+  nationalId: Scalars['ID']
+  credit: Scalars['Float']
+  used: Scalars['Float']
+  total: Scalars['Float']
+}
+
 export type User = {
   __typename?: 'User'
   nationalId: Scalars['ID']
   name: Scalars['String']
   mobile?: Maybe<Scalars['String']>
   role: Scalars['String']
+  fund?: Maybe<Fund>
+  meetsADSRequirements: Scalars['Boolean']
 }
 
 export type Discount = {
