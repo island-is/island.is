@@ -61,7 +61,7 @@ export class PublicFlightController {
     if (flightLegsLeft < flight.flightLegs.length) {
       throw new FlightLimitExceeded()
     }
-    await this.discountService.useDiscount(params.discountCode)
+    await this.discountService.useDiscount(params.discountCode, nationalId)
     return this.flightService.create(flight, nationalId, request.airline)
   }
 
