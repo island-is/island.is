@@ -17,7 +17,7 @@ web:
     API_URL: 'http://web-api'
 
 adgerdir:
-  namespace: islandis
+  namespace: adgerdir
   service:
     targetPort: 4200
   image:
