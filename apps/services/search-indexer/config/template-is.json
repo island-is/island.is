@@ -64,6 +64,9 @@
           "stemmed": {
             "type": "text",
             "analyzer": "title_icelandic"
+          },
+          "completion": {
+            "type": "completion"
           }
         }
       },
@@ -92,6 +95,9 @@
             "type": "text",
             "analyzer": "title_icelandic"
           }
+        },
+        "completion": {
+          "type": "completion"
         }
       },
       "category_slug": {
@@ -106,6 +112,9 @@
           "stemmed": {
             "type": "text",
             "analyzer": "title_icelandic"
+          },
+          "completion": {
+            "type": "completion"
           }
         }
       },
@@ -189,3 +198,6 @@
     }
   }
 }
+// TODO: Add mapping for suggestion fields
+// TODO: Add suggestion
+// TODO: Add endpoint for suggestion

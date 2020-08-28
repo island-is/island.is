@@ -4,12 +4,15 @@ import { RequestBodySearch } from 'elastic-builder'
 import { ContentCategory } from './models/contentCategory.model'
 import { ContentItem } from './models/contentItem.model'
 import { SearchResult } from './models/searchResult.model'
+import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input';
+import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
+import { ContentLanguage } from './enums/contentLanguage.enum'
 
 @Injectable()
 export class ContentSearchService {
   constructor(private repository: ElasticService) {}
 
-  getIndex(lang: string) {
+  getIndex(lang: ContentLanguage) {
     return SearchIndexes[lang] ?? SearchIndexes.is
   }
 
@@ -79,6 +82,15 @@ export class ContentSearchService {
 
   async fetchItems(input): Promise<ContentItem[]> {
     const { body } = await this.repository.fetchItems(
+      this.getIndex(input.language),
+      input,
+    )
+
+    return body?.hits?.hits.map(this.fixCase)
+  }
+
+  async fetchAutocomplete(input: WebSearchAutocompleteInput): Promise<WebSearchAutocomplete[]> {
+    const { body } = await this.repository.fetchAutocomplete(
       this.getIndex(input.language),
       input,
     )

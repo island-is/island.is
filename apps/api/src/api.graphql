@@ -38,6 +38,11 @@ type ContentCategory {
   description: String
 }
 
+type WebSearchAutocomplete {
+  total: Int!
+  completions: [String!]!
+}
+
 type Taxonomy {
   title: String
   slug: String
@@ -382,6 +387,7 @@ type Query {
   singleItem(input: ItemInput!): ContentItem
   categories(input: CategoriesInput!): [ContentCategory!]!
   articlesInCategory(category: ArticlesInCategoryInput!): [ContentItem!]!
+  webSearchAutocomplete(input: WebSearchAutocompleteInput!): [WebSearchAutocomplete!]!
   getArticle(input: GetArticleInput!): Article
   getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput!): PaginatedNews!
@@ -435,6 +441,12 @@ input CategoriesInput {
 input ArticlesInCategoryInput {
   slug: String
   language: ContentLanguage
+}
+
+input WebSearchAutocompleteInput {
+  queryString: String!
+  language: ContentLanguage = is
+  size: Int = 10
 }
 
 input GetArticleInput {

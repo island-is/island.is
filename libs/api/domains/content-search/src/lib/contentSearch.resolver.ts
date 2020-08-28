@@ -40,8 +40,8 @@ export class ContentSearchResolver {
 
   @Query(() => [WebSearchAutocomplete])
   webSearchAutocomplete (
-    @Args('input') category: WebSearchAutocompleteInput,
-  ): Promise<ContentItem[]> {
-    return this.contentSearchService.fetchItems(category)
+    @Args('input') input: WebSearchAutocompleteInput,
+  ): Promise<WebSearchAutocomplete[]> {
+    return Promise.resolve([{ total: 10, completions: ['test1', 'test2'] }])
   }
 }

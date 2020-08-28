@@ -5,6 +5,6 @@ export class WebSearchAutocomplete {
   @Field(() => Int)
   total: number
 
-  @Field()
+  @Field(() => [String])
   completions: string[]
 }
