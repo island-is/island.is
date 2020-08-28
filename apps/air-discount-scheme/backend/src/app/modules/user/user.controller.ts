@@ -58,6 +58,14 @@ export class PrivateUserController {
         gender: 'm',
         flightLegsLeft,
       },
+      {
+        nationalId: '0101303019',
+        firstName: 'Gervimaður',
+        middleName: '',
+        lastName: 'Afríka',
+        gender: 'm',
+        flightLegsLeft: 2,
+      },
     ]
   }
 }

@@ -6,13 +6,19 @@ import {
   Table,
   UpdatedAt,
   HasMany,
+  BelongsTo,
   ForeignKey,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+
+import {
+  Flight as TFlight,
+  FlightLeg as TFlightLeg,
+} from '@island.is/air-discount-scheme/types'
 import { environment } from '../../../environments'
 
 @Table({ tableName: 'flight_leg' })
-export class FlightLeg extends Model<FlightLeg> {
+export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -29,6 +35,10 @@ export class FlightLeg extends Model<FlightLeg> {
     allowNull: false,
   })
   flightId: string
+
+  // eslint-disable-next-line
+  @BelongsTo(() => Flight)
+  flight
 
   @Column({
     type: DataType.STRING,
@@ -82,7 +92,7 @@ export class FlightLeg extends Model<FlightLeg> {
     },
   ],
 })
-export class Flight extends Model<Flight> {
+export class Flight extends Model<Flight> implements TFlight {
   @Column({
     type: DataType.UUID,
     primaryKey: true,

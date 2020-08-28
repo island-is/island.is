@@ -27,6 +27,7 @@ import {
   CreateFlightParams,
   DeleteFlightParams,
   GetFlightLegFundsParams,
+  GetUserFlightsParams,
 } from './flight.validator'
 import { FlightLimitExceeded } from './flight.error'
 import { FlightDto } from './dto/flight.dto'
@@ -60,7 +61,7 @@ export class PublicFlightController {
     if (flightLegsLeft < flight.flightLegs.length) {
       throw new FlightLimitExceeded()
     }
-    await this.discountService.useDiscount(params.discountCode)
+    await this.discountService.useDiscount(params.discountCode, nationalId)
     return this.flightService.create(flight, nationalId, request.airline)
   }
 
@@ -95,5 +96,11 @@ export class PrivateFlightController {
   @ApiExcludeEndpoint()
   get(): Promise<Flight[]> {
     return this.flightService.findAll()
+  }
+
+  @Get('users/:nationalId/flights')
+  @ApiExcludeEndpoint()
+  getUserFlights(@Param() params: GetUserFlightsParams): Promise<Flight[]> {
+    return this.flightService.findAllByNationalId(params.nationalId)
   }
 }
