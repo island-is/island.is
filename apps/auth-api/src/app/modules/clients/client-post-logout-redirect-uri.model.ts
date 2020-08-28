@@ -1,0 +1,37 @@
+import {
+  Column,
+  CreatedAt,
+  DataType,
+  Model,
+  Table,
+  UpdatedAt,
+  ForeignKey,
+  PrimaryKey,
+} from 'sequelize-typescript'
+import { ApiProperty } from '@nestjs/swagger'
+import { Client } from './client.model'
+
+@Table({
+  tableName: 'client_post_logout_redirect_uri',
+  indexes: [
+    {
+      fields: ['client_id'],
+    },
+  ],
+})
+export class ClientPostLogoutRedirectUri extends Model<ClientPostLogoutRedirectUri> {
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ForeignKey(() => Client)
+  @ApiProperty()
+  clientId: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  redirectUri: string
+}
