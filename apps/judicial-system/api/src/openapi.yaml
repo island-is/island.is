@@ -68,14 +68,6 @@ components:
           type: string
         suspectName:
           type: string
-        state:
-          type: string
-          enum:
-            - UNKNOWN
-            - DRAFT
-            - SUBMITTED
-            - ACTIVE
-            - COMPLETED
       required:
         - description
         - policeCaseNumber

@@ -1,6 +1,5 @@
-import { IsNotEmpty, IsString, IsEnum } from 'class-validator'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { CaseState } from '../case.model'
+import { IsNotEmpty, IsString } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class CreateCaseDto {
   @IsNotEmpty()
@@ -22,9 +21,4 @@ export class CreateCaseDto {
   @IsString()
   @ApiProperty()
   readonly suspectName: string
-
-  @IsNotEmpty()
-  @IsEnum(CaseState)
-  @ApiPropertyOptional({ enum: CaseState })
-  readonly state: string
 }
