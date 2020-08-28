@@ -16,13 +16,16 @@ const FetchDiscountsMutation = gql`
       discountCode
       expires
       nationalId
-      flightLegFund {
-        unused
-        total
-      }
       user {
         nationalId
         name
+        fund {
+          nationalId
+          used
+          credit
+          total
+        }
+        meetsADSRequirements
       }
     }
   }
@@ -50,12 +53,11 @@ function Benefits({ misc }: PropTypes) {
         <Typography variant="h3">{myRights}</Typography>
       </Box>
       {codes &&
-        codes.map(
-          ({ discountCode, expires, nationalId, flightLegFund, user }) => {
-            const remainingPlaceholders = {
-              remaining: flightLegFund.unused,
-              total: flightLegFund.total,
-            }
+        codes.map(({ discountCode, expires, nationalId, user }) => {
+          const remainingPlaceholders = {
+            remaining: user.fund.credit,
+            total: user.fund.total,
+          }
 
             return (
               <Box

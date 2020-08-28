@@ -20,13 +20,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 
-import { FlightLegFund } from '@island.is/air-discount-scheme/types'
 import { Flight } from './flight.model'
 import { FlightService } from './flight.service'
 import {
   GetFlightParams,
   CreateFlightParams,
-  GetFlightLegFundsParams,
   GetUserFlightsParams,
   DeleteFlightParams,
   DeleteFlightLegParams,
@@ -108,14 +106,6 @@ export class PublicFlightController {
 @Controller('api/private')
 export class PrivateFlightController {
   constructor(private readonly flightService: FlightService) {}
-
-  @Get('users/:nationalId/flights/funds')
-  @ApiExcludeEndpoint()
-  getFlightLegFunds(
-    @Param() params: GetFlightLegFundsParams,
-  ): Promise<FlightLegFund> {
-    return this.flightService.countFlightLegsByNationalId(params.nationalId)
-  }
 
   @Get('flights')
   @ApiExcludeEndpoint()

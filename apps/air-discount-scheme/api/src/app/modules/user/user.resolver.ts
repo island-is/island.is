@@ -1,7 +1,8 @@
-import { Query, Resolver, ResolveField } from '@nestjs/graphql'
+import { Query, Resolver, ResolveField, Parent } from '@nestjs/graphql'
 
+import { User as TUser } from '@island.is/air-discount-scheme/types'
 import { Authorize, CurrentUser, AuthService, AuthUser } from '../auth'
-import { User } from './user.model'
+import { User } from './models'
 
 @Resolver(() => User)
 export class UserResolver {

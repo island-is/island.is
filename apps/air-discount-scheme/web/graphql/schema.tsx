@@ -230,7 +230,7 @@ export type MailingListSignupSlice = {
   __typename?: 'MailingListSignupSlice'
   id: Scalars['ID']
   title: Scalars['String']
-  description: Scalars['String']
+  description?: Maybe<Scalars['String']>
   inputLabel: Scalars['String']
   buttonText: Scalars['String']
 }

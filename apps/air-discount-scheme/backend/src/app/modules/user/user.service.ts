@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
+import { ThjodskraUser, Fund } from '@island.is/air-discount-scheme/types'
 import { User } from './user.model'
 import { NationalRegistryResponse } from './user.types'
 import { FlightService } from '../flight'
@@ -11,20 +12,24 @@ export class UserService {
   private async getUserFromNationalRegistry(
     nationalId: string,
   ): Promise<NationalRegistryResponse> {
+  async getFund(user: ThjodskraUser): Promise<Fund> {
+    const {
+      used,
+      unused,
+      total,
+    } = await this.flightService.countFlightLegsByNationalId(user.nationalId)
+
     return {
-      firstName: 'Jón',
-      middleName: 'Gunnar',
-      lastName: 'Jónsson',
-      gender: 'kk',
-      nationalId,
+      nationalId: user.nationalId,
+      credit: this.meetsADSRequirements(user.postalcode) ? unused : 0,
+      used: used,
+      total,
     }
   }
 
   async getUserInfoByNationalId(nationalId: string): Promise<User> {
-    const {
-      unused: flightLegsLeft,
-    } = await this.flightService.countFlightLegsByNationalId(nationalId)
     const user = await this.getUserFromNationalRegistry(nationalId)
-    return new User(user, flightLegsLeft)
+    const fund = await this.getFund(user)
+    return new User(user, fund)
   }
 }

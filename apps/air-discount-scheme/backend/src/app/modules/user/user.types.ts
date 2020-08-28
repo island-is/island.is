@@ -1,7 +1,10 @@
 export interface NationalRegistryResponse {
-  firstName: string
-  middleName: string
-  lastName: string
+  ssn: string
+  name: string
+  charged: string
   gender: string
-  nationalId: string
+  address: string
+  postsalcode: string
+  city: string
+  lastmodified: Date
 }
