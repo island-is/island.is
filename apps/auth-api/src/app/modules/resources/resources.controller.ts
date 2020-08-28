@@ -9,13 +9,14 @@ import {
     ValidationPipe,
     UseGuards
   } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags, ApiQuery } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags, ApiQuery, ApiOAuth2 } from '@nestjs/swagger'
 import { IdentityResource } from './identity-resource.model'
 import { ResourcesService } from './resources.service'
 import { ApiScope } from './api-scope.model'
 import { ApiResource } from './api-resource.model'
 import { AuthGuard } from '@nestjs/passport'
   
+@ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('resources')
   @Controller()

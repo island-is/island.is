@@ -24,8 +24,8 @@ module.exports = {
       },
       {
         id: '3872e55c-3137-41c7-a4d9-700760477ce2',//uuidv4(),
-        name: 'postman_resource.scope',
-        display_name: 'postman_resource.scope',
+        name: '@identityserver.api/read',
+        display_name: '@identityserver.api/read',
         required: false,
         emphasize: false,
         enabled: true,
