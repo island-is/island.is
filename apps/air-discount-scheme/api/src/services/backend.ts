@@ -5,6 +5,7 @@ import {
   Discount,
   FlightLegFund,
   ThjodskraUser,
+  Flight,
 } from '@island.is/air-discount-scheme/types'
 import { environment } from '../environments'
 
@@ -14,6 +15,10 @@ class BackendAPI extends RESTDataSource {
 
   getUserRelations(nationalId: string): Promise<ThjodskraUser[]> {
     return this.get(`users/${nationalId}/relations`)
+  }
+
+  getUserFlights(nationalId: string): Promise<Flight[]> {
+    return this.get(`users/${nationalId}/flights`)
   }
 
   getFlightLegFunds(nationalId: string): Promise<FlightLegFund> {
