@@ -44,21 +44,18 @@ import { AuthGuard } from '@nestjs/passport'
     
     @Get('api-resources')
     @ApiQuery({name: 'apiResourceNames', required: false})
-    @ApiOkResponse({ type: ApiResource, isArray: true })
-    async FindApiResourcesByNameAsync(@Query('apiResourceNames') apiResourceNames: string): Promise<ApiResource[]> {
-
-      const apiResources = await this.resourcesService.FindApiResourcesByNameAsync(apiResourceNames ? apiResourceNames.split(',') : null) // TODO: Use ParseArrayPipe from v7
-  
-      return apiResources
-    }
-    
-    @Get('api-resources-by-scopes') // TODO: review naming of all endpoints
     @ApiQuery({name: 'apiScopeNames', required: false})
     @ApiOkResponse({ type: ApiResource, isArray: true })
-    async FindApiResourcesByScopeNameAsync(@Query('apiScopeNames') apiScopeNames: string): Promise<ApiResource[]> {
+    async FindApiResourcesByNameAsync(@Query('apiResourceNames') apiResourceNames: string, @Query('apiScopeNames') apiScopeNames: string): Promise<ApiResource[]> {
 
-      const apiResources = await this.resourcesService.FindApiResourcesByScopeNameAsync(apiScopeNames ? apiScopeNames.split(',') : null) // TODO: Use ParseArrayPipe from v7
-  
-      return apiResources
+      if (apiResourceNames && apiScopeNames) {
+        throw new Error('Specifying both apiResourceNames and apiScopeNames is not supported.')
+      }
+
+      if (apiResourceNames) {
+        return await this.resourcesService.FindApiResourcesByNameAsync(apiResourceNames.split(',')) // TODO: Use ParseArrayPipe from v7
+      } else {
+        return await this.resourcesService.FindApiResourcesByScopeNameAsync(apiScopeNames ? apiScopeNames.split(',') : null) // TODO: Use ParseArrayPipe from v7
+      }
     }
   }
