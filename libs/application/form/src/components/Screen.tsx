@@ -11,9 +11,6 @@ import { Typography, Box, Button, Divider } from '@island.is/island-ui/core'
 import {
   CREATE_APPLICATION,
   UPDATE_APPLICATION,
-  CREATE_UPLOAD_URL,
-  ADD_ATTACHMENT,
-  DELETE_ATTACHMENT,
 } from '@island.is/application/graphql'
 import deepmerge from 'deepmerge'
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form'
@@ -75,12 +72,6 @@ const Screen: FC<ScreenProps> = ({
     UPDATE_APPLICATION,
   )
 
-  const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
-
-  const [addAttachment] = useMutation(ADD_ATTACHMENT)
-
-  const [deleteAttachment] = useMutation(DELETE_ATTACHMENT)
-
   const { handleSubmit, errors, reset } = hookFormData
 
   const goBack = useCallback(() => {
@@ -88,44 +79,6 @@ const Screen: FC<ScreenProps> = ({
     reset(deepmerge({}, formValue))
     prevScreen()
   }, [formValue, prevScreen, reset])
-
-  const onFileChange = async (e) => {
-    const file = e.target.files[0]
-    const form = new FormData()
-    console.log('file', file)
-
-    const { data } = await createUploadUrl({
-      variables: {
-        filename: file.name,
-      },
-    })
-
-    const {
-      createUploadUrl: { url, fields },
-    } = data
-    Object.keys(fields).forEach((key) => form.append(key, fields[key]))
-    form.append('file', file)
-
-    // Send the POST request
-    const response = await fetch(url, { method: 'POST', body: form })
-
-    if (!response.ok) return 'Failed to upload via presigned POST'
-
-    const { data: addAttachmentData } = await addAttachment({
-      variables: {
-        input: {
-          id: applicationId,
-          key: fields.key,
-          url: `${response.url}/${fields.key}`,
-        },
-      },
-    })
-
-    console.log('uploaded attachments', addAttachmentData)
-
-    // Done!
-    return `File uploaded via presigned POST with key: ${fields.key}`
-  }
 
   const onSubmit: SubmitHandler<FormValue> = async (data) => {
     if (shouldSubmit) {
@@ -189,6 +142,7 @@ const Screen: FC<ScreenProps> = ({
                 errors={errors}
                 multiField={screen}
                 formValue={formValue}
+                applicationId={applicationId}
               />
             ) : (
               <FormField
@@ -196,15 +150,10 @@ const Screen: FC<ScreenProps> = ({
                 errors={errors}
                 field={screen}
                 formValue={formValue}
+                applicationId={applicationId}
               />
             )}
           </Box>
-          {/* TODO remove */}
-          <div>
-            <strong>Temp file field</strong>
-            <br />
-            <input type="file" id="fileinput" onChange={onFileChange} />
-          </div>
         </Box>
         <Box marginTop={[3, 3, 0]}>
           <Divider weight="regular" />
