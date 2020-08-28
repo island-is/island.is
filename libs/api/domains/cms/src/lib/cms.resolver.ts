@@ -66,7 +66,7 @@ export class CmsResolver {
     return getNamespace(input?.namespace ?? '', input?.lang ?? 'is-IS')
   }
 
-  @Query(() => AboutPage, { nullable: true })
+  @Query(() => AboutPage)
   getAboutPage(
     @Args('input') input: GetAboutPageInput,
   ): Promise<AboutPage | null> {
@@ -94,10 +94,10 @@ export class CmsResolver {
     return getAdgerdirPage(input?.slug ?? '', input?.lang ?? 'is-IS')
   }
 
-  @Query(() => AdgerdirPages, { nullable: true })
+  @Query(() => AdgerdirPages)
   getAdgerdirPages(
     @Args('input') input: GetAdgerdirPagesInput,
-  ): Promise<AdgerdirPages | null> {
+  ): Promise<AdgerdirPages> {
     return getAdgerdirPages(input?.lang ?? 'is-IS')
   }
 

@@ -7,5 +7,5 @@ export class LinkList {
   title: string
 
   @Field(() => [Link])
-  links: Array<typeof Link>
+  links: Array<Link>
 }
