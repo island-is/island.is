@@ -5,10 +5,7 @@ import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      signOptions: { expiresIn: '60s' }
-    })
+    PassportModule.register({ defaultStrategy: 'jwt' })
   ],
   providers: [JwtStrategy],
 })
