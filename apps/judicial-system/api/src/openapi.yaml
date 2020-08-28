@@ -27,8 +27,6 @@ components:
     Case:
       type: object
       properties:
-        id:
-          type: string
         created:
           format: date-time
           type: string
@@ -37,27 +35,75 @@ components:
           type: string
         description:
           type: string
+        policeCaseNumber:
+          type: string
+        suspectNationalId:
+          type: string
+        suspectName:
+          type: string
+        state:
+          type: string
+          enum:
+            - UNKNOWN
+            - DRAFT
+            - SUBMITTED
+            - ACTIVE
+            - COMPLETED
       required:
-        - id
         - created
         - modified
         - description
+        - policeCaseNumber
+        - suspectNationalId
+        - suspectName
+        - state
     CreateCaseDto:
       type: object
       properties:
         description:
           type: string
+        policeCaseNumber:
+          type: string
+        suspectNationalId:
+          type: string
+        suspectName:
+          type: string
+        state:
+          type: string
+          enum:
+            - UNKNOWN
+            - DRAFT
+            - SUBMITTED
+            - ACTIVE
+            - COMPLETED
       required:
         - description
+        - policeCaseNumber
+        - suspectNationalId
+        - suspectName
     UpdateCaseDto:
       type: object
       properties:
-        id:
-          type: string
         description:
           type: string
+        policeCaseNumber:
+          type: string
+        suspectNationalId:
+          type: string
+        suspectName:
+          type: string
+        state:
+          type: string
+          enum:
+            - UNKNOWN
+            - DRAFT
+            - SUBMITTED
+            - ACTIVE
+            - COMPLETED
       required:
-        - id
+        - policeCaseNumber
+        - suspectNationalId
+        - suspectName
 paths:
   /liveness:
     get:
