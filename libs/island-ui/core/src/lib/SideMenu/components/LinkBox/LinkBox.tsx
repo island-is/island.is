@@ -7,7 +7,9 @@ export const LinkBox = ({ title, url, icon }) => (
     <a href={url}>
       <div className={styles.linkBox}>
         <div className={styles.iconWrap}>O</div>
-        <Typography variant="eyebrow" color="blue400">{title}</Typography>
+        <Typography variant="eyebrow" color="blue400">
+          {title}
+        </Typography>
       </div>
     </a>
   </li>

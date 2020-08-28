@@ -30,7 +30,7 @@ export const linksContent = style({
 })
 
 export const externalLinks = style({
-  display: 'flex',  
+  display: 'flex',
   alignItems: 'center',
   flexDirection: 'column',
 })

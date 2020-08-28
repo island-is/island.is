@@ -130,7 +130,11 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                 </Box>
                 <Box marginLeft={marginLeft}>
                   <Link href="https://minarsidur.island.is/" passHref>
-                    <Button variant="menu" leftIcon="logo" onClick={onClickSideMenu}>
+                    <Button
+                      variant="menu"
+                      leftIcon="logo"
+                      onClick={onClickSideMenu}
+                    >
                       Valmynd
                     </Button>
                   </Link>
