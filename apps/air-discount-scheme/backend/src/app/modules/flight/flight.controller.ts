@@ -100,10 +100,7 @@ export class PrivateFlightController {
 
   @Get('users/:nationalId/flights')
   @ApiExcludeEndpoint()
-  async getUserFlights(
-    @Param() params: GetUserFlightsParams,
-  ): Promise<Flight[]> {
-    const data = await this.flightService.findAllByNationalId(params.nationalId)
-    return data.map((d) => d.dataValues)
+  getUserFlights(@Param() params: GetUserFlightsParams): Promise<Flight[]> {
+    return this.flightService.findAllByNationalId(params.nationalId)
   }
 }
