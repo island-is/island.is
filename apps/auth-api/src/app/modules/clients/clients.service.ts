@@ -29,6 +29,8 @@ export class ClientsService {
       throw new NotFoundException("This client doesn't exist")
     }
 
+    this.logger.debug(client);
+
     return client;
   }
 
