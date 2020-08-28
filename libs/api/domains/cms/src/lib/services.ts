@@ -10,6 +10,9 @@ import { LandingPage } from './models/landingPage.model'
 import { GenericPage } from './models/genericPage.model'
 import { News } from './models/news.model'
 import { Pagination } from './models/pagination.model'
+import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
+import { AdgerdirPages } from './models/adgerdirPages.model'
+import { AdgerdirPage } from './models/adgerdirPage.model'
 import { GetNewsListInput } from './dto/getNewsList.input'
 import { PaginatedNews } from './models/paginatedNews.model'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
@@ -17,8 +20,6 @@ import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { Namespace } from './models/namespace.model'
 import { Menu } from './models/menu.model'
-import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
-import { AdgerdirPages } from './models/adgerdirPages.model'
 
 const makePage = (
   page: number,
@@ -56,7 +57,7 @@ export const getAdgerdirPages = async (
   lang = 'is-IS',
 ): Promise<AdgerdirPages> => {
   const params = {
-    ['content_type']: 'vidspyrna-page',
+    ['content_type']: 'vidspyrnaPage',
     include: 10,
     limit: 100,
   }
@@ -68,6 +69,23 @@ export const getAdgerdirPages = async (
 
   return {
     items: result.items.map(mappers.mapAdgerdirPage),
+  }
+}
+
+export const getAdgerdirTags = async (lang = 'is-IS') => {
+  const params = {
+    ['content_type']: 'vidspyrnaTag',
+    include: 10,
+    limit: 100,
+  }
+
+  const r = await getLocalizedEntries<types.IVidspyrnaTagFields>(
+    lang,
+    params,
+  ).catch(errorHandler('getAdgerdirTags'))
+
+  return {
+    items: r.items.map(mappers.mapAdgerdirTag),
   }
 }
 
@@ -86,14 +104,17 @@ export const getFrontpageSliderList = async (lang = 'is-IS') => {
   return result.items.map(mappers.mapFrontpageSliderList)[0] ?? null
 }
 
-export const getAdgerdirPage = async (slug: string, lang: string) => {
+export const getAdgerdirPage = async (
+  slug: string,
+  lang: string,
+): Promise<AdgerdirPage> => {
   const result = await getLocalizedEntries<types.IVidspyrnaPageFields>(lang, {
-    ['content_type']: 'vidspyrna-page',
+    ['content_type']: 'vidspyrnaPage',
     include: 10,
     'fields.slug': slug,
   }).catch(errorHandler('getAdgerdirPage'))
 
-  return result.items.map(mappers.mapAdgerdirPage)[0]
+  return result.items.map(mappers.mapAdgerdirPage)[0] ?? null
 }
 
 export const getArticle = async (

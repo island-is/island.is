@@ -3,45 +3,6 @@
 import { Asset, Entry } from 'contentful'
 import { Document } from '@contentful/rich-text-types'
 
-export interface IAirDiscountSchemeFields {
-  /** Title */
-  title: string
-
-  /** Slug */
-  slug: string
-
-  /** Into */
-  into?: Document | undefined
-
-  /** Main content */
-  mainContent?: Document | undefined
-
-  /** Sidebar */
-  sidebar?: Entry<{ [fieldId: string]: unknown }>[] | undefined
-
-  /** Misc */
-  misc?: Record<string, any> | undefined
-}
-
-/** Used for air discount scheme information page */
-
-export interface IAirDiscountScheme extends Entry<IAirDiscountSchemeFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'airDiscountScheme'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface IArticleFields {
   /** Content status */
   contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
@@ -843,8 +804,11 @@ export interface IProcessEntryFields {
   /** Process title */
   processTitle: string
 
-  /** Process description */
+  /** Process description (OLD field) */
   processDescription?: string | undefined
+
+  /** Process info */
+  processInfo?: Document | undefined
 
   /** Process link */
   processLink: string
@@ -1232,7 +1196,7 @@ export interface IVidspyrnaPageFields {
   /** Title */
   title: string
 
-  /** description */
+  /** Description */
   description?: string | undefined
 
   /** Slug */
@@ -1240,6 +1204,9 @@ export interface IVidspyrnaPageFields {
 
   /** Content */
   content?: Document | undefined
+
+  /** Tags */
+  tags: IVidspyrnaTag[]
 }
 
 /** A temporary content type that is used for the "Viðspyrna" information page. Once that site is no longer live this can be deleted. */
@@ -1301,8 +1268,133 @@ export interface IVidspyrnaProcessEntry
   }
 }
 
+export interface IVidspyrnaFlokkurFields {
+  /** Subtitle */
+  subtitle: string
+
+  /** Title */
+  title: string
+
+  /** Description */
+  description: string
+
+  /** Image */
+  image?: Asset | undefined
+
+  /** Pages */
+  pages: IVidspyrnaPage[]
+}
+
+/** A group of Viðspyrna pages. */
+
+export interface IVidspyrnaFlokkur extends Entry<IVidspyrnaFlokkurFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'vidspyrnaFlokkur'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IVidspyrnaPageFields {
+  /** Title */
+  title: string
+
+  /** Description */
+  description?: string | undefined
+
+  /** Slug */
+  slug: string
+
+  /** Content */
+  content?: Document | undefined
+
+  /** Tags */
+  tags: IVidspyrnaTag[]
+
+  /** Link */
+  link?: string | undefined
+
+  /** Status */
+  status: 'preparing' | 'ongoing' | 'completed'
+}
+
+/** Page for the adgerdir.island.is website. */
+
+export interface IVidspyrnaPage extends Entry<IVidspyrnaPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'vidspyrnaPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IVidspyrnaStatusFields {
+  /** Title */
+  title?: string | undefined
+}
+
+/** A status for a Viðspyrna action. */
+
+export interface IVidspyrnaStatus extends Entry<IVidspyrnaStatusFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'vidspyrnaStatus'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IVidspyrnaTagFields {
+  /** Title */
+  title: string
+}
+
+/** A tag used to tag Viðspyrna pages. */
+
+export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'vidspyrnaTag'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export type CONTENT_TYPE =
-  | 'airDiscountScheme'
   | 'article'
   | 'articleCategory'
   | 'articleGroup'
@@ -1343,6 +1435,10 @@ export type CONTENT_TYPE =
   | 'vidspyrna-inline-image'
   | 'vidspyrna-page'
   | 'vidspyrna-process-entry'
+  | 'vidspyrnaFlokkur'
+  | 'vidspyrnaPage'
+  | 'vidspyrnaStatus'
+  | 'vidspyrnaTag'
 
 export type LOCALE_CODE = 'en' | 'is-IS'
 

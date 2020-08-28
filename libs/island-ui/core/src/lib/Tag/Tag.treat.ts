@@ -42,14 +42,42 @@ export const variants = styleMap({
     color: theme.color.purple400,
     backgroundColor: theme.color.purple100,
   },
-  label: {
-    backgroundColor: theme.color.transparent,
+  red: {
+    color: theme.color.red400,
+    backgroundColor: theme.color.red100,
+    borderColor: theme.color.red200,
+    borderWidth: 1,
+    borderStyle: 'solid',
+    ':focus': {
+      backgroundColor: theme.color.red200,
+      color: theme.color.red600,
+    },
+    ':hover': {
+      textDecoration: 'none',
+      backgroundColor: theme.color.red200,
+      color: theme.color.red600,
+    },
+  },
+  mint: {
+    color: theme.color.dark400,
+    backgroundColor: theme.color.mint100,
+  },
+  darkerMint: {
+    color: theme.color.dark400,
+    backgroundColor: theme.color.mint200,
+  },
+  label: {},
+})
+
+export const active = style({
+  selectors: {
+    [`&${variants.red}`]: {
+      backgroundColor: theme.color.white,
+      color: theme.color.red600,
+    },
   },
 })
 
 export const label = style({
   pointerEvents: 'none',
-  color: theme.color.purple400,
-  border: `1px solid ${theme.color.purple200}`,
-  backgroundColor: theme.color.transparent,
 })

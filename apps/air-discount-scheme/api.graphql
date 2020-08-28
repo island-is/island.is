@@ -239,7 +239,7 @@ type Menu {
 }
 
 type User {
-  ssn: ID!
+  nationalId: ID!
   name: String!
   mobile: String
   role: String!
@@ -248,6 +248,22 @@ type User {
 type Discount {
   discountCode: ID!
   expires: String!
+  nationalId: String!
+  flightLegFund: FlightLegFund!
+  user: User!
+}
+
+type FlightLegFund {
+  nationalId: ID!
+  unused: Float!
+  total: Float!
+}
+
+type Flight {
+  id: ID!
+  airline: String!
+  bookingDate: String!
+  travel: String!
   user: User!
 }
 
@@ -265,6 +281,7 @@ type Query {
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getMenu(input: GetMenuInput!): Menu
   user: User
+  flights: [Flight!]!
 }
 
 input GetArticleInput {
@@ -329,5 +346,5 @@ input GetMenuInput {
 }
 
 type Mutation {
-  fetchDiscount: Discount
+  fetchDiscounts: [Discount!]
 }

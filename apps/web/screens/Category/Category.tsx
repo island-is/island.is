@@ -97,7 +97,7 @@ const Category: Screen<CategoryProps> = ({
       <CategoryLayout
         sidebar={
           <Sidebar
-            bullet="right"
+            bullet="none"
             items={sidebarCategoryLinks}
             title={n('sidebarHeader')}
           />
@@ -113,11 +113,7 @@ const Category: Screen<CategoryProps> = ({
                     key={groupSlug}
                     id={`accordion-${index}`}
                     label={title}
-                    visibleContent={
-                      <Box paddingY={2} paddingBottom={1}>
-                        {description}
-                      </Box>
-                    }
+                    visibleContent={description}
                   >
                     <Stack space={2}>
                       {articles.map(({ title, slug }, index) => {

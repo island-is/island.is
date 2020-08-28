@@ -17,7 +17,7 @@ import {
 import { Discount } from './discount.model'
 import {
   CreateDiscountCodeParams,
-  GetDiscountByNationalIdParams,
+  GetCurrentDiscountByNationalIdParams,
 } from './discount.validator'
 import { DiscountService } from './discount.service'
 import { DiscountLimitExceeded } from './discount.error'
@@ -42,9 +42,9 @@ export class PublicDiscountController {
   async createDiscountCode(
     @Param() params: CreateDiscountCodeParams,
   ): Promise<Discount> {
-    const flightLegsLeft = await this.flightService.countFlightLegsLeftByNationalId(
-      params.nationalId,
-    )
+    const {
+      unused: flightLegsLeft,
+    } = await this.flightService.countFlightLegsByNationalId(params.nationalId)
     if (flightLegsLeft <= 0) {
       throw new DiscountLimitExceeded()
     }
@@ -60,18 +60,12 @@ export class PrivateDiscountController {
     private readonly flightService: FlightService,
   ) {}
 
-  @Get('users/:nationalId/discounts')
+  @Get('users/:nationalId/discounts/current')
   @ApiExcludeEndpoint()
-  async getDiscountByNationalId(
-    @Param() params: GetDiscountByNationalIdParams,
-  ): Promise<Discount[]> {
-    const discount = await this.discountService.getDiscountByNationalId(
-      params.nationalId,
-    )
-    if (!discount) {
-      return []
-    }
-    return [discount]
+  getCurrentDiscountByNationalId(
+    @Param() params: GetCurrentDiscountByNationalIdParams,
+  ): Promise<Discount> {
+    return this.discountService.getDiscountByNationalId(params.nationalId)
   }
 
   @Post('users/:nationalId/discounts')
@@ -79,9 +73,9 @@ export class PrivateDiscountController {
   async createDiscountCode(
     @Param() params: CreateDiscountCodeParams,
   ): Promise<Discount> {
-    const flightLegsLeft = await this.flightService.countFlightLegsLeftByNationalId(
-      params.nationalId,
-    )
+    const {
+      unused: flightLegsLeft,
+    } = await this.flightService.countFlightLegsByNationalId(params.nationalId)
     if (flightLegsLeft <= 0) {
       throw new DiscountLimitExceeded()
     }

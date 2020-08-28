@@ -33,6 +33,7 @@ import { Namespace } from './models/namespace.model'
 import { Image } from './models/image.model'
 import { Menu } from './models/menu.model'
 import { GenericPage } from './models/genericPage.model'
+import { AdgerdirTag } from './models/adgerdirTag.model'
 
 export const mapAdgerdirPage = ({
   sys,
@@ -42,7 +43,17 @@ export const mapAdgerdirPage = ({
   slug: fields.slug,
   title: fields.title,
   description: fields.description,
+  tags: fields.tags.map(mapAdgerdirTag),
+  status: fields.status,
   content: JSON.stringify(fields.content),
+})
+
+export const mapAdgerdirTag = ({
+  sys,
+  fields,
+}: types.IVidspyrnaTag): AdgerdirTag => ({
+  id: sys.id,
+  title: fields.title,
 })
 
 export const mapAdgerdirFrontpage = ({

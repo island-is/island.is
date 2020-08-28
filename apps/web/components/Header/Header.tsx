@@ -11,6 +11,9 @@ import {
   Hidden,
   ResponsiveSpace,
   Icon,
+  GridContainer,
+  GridColumn,
+  GridRow,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
@@ -68,9 +71,9 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const english = activeLocale === 'en'
 
   return (
-    <Box width="full">
-      <ContentBlock>
-        <Box width="full" padding={[3, 3, 6]}>
+    <GridContainer>
+      <GridRow>
+        <GridColumn span={12} paddingTop={4} paddingBottom={4}>
           <Columns alignY="center" space={2}>
             <Column width="content">
               <Link href={english ? '/en' : '/'} passHref>
@@ -134,9 +137,9 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
               </Box>
             </Column>
           </Columns>
-        </Box>
-      </ContentBlock>
-    </Box>
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }
 

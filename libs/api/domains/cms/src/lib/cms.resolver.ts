@@ -34,10 +34,13 @@ import {
   getAdgerdirPages,
   getAdgerdirFrontpage,
   getMenu,
+  getAdgerdirTags,
 } from './services'
 import { LatestNewsSlice } from './models/slices/latestNewsSlice.model'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
+import { AdgerdirTags } from './models/adgerdirTags.model'
+import { GetAdgerdirTagsInput } from './dto/getAdgerdirTags.input'
 
 @Resolver()
 export class CmsResolver {
@@ -98,6 +101,13 @@ export class CmsResolver {
     return getAdgerdirPages(input?.lang ?? 'is-IS')
   }
 
+  @Query(() => AdgerdirTags, { nullable: true })
+  getAdgerdirTags(
+    @Args('input') input: GetAdgerdirTagsInput,
+  ): Promise<AdgerdirTags | null> {
+    return getAdgerdirTags(input?.lang ?? 'is-IS')
+  }
+
   @Query(() => FrontpageSliderList, { nullable: true })
   getFrontpageSliderList(
     @Args('input') input: GetFrontpageSliderListInput,
@@ -108,7 +118,7 @@ export class CmsResolver {
   @Query(() => AdgerdirFrontpage, { nullable: true })
   getAdgerdirFrontpage(
     @Args('input') input: GetAdgerdirFrontpageInput,
-  ): Promise<AdgerdirPage | null> {
+  ): Promise<AdgerdirFrontpage | null> {
     return getAdgerdirFrontpage(input?.lang ?? 'is-IS')
   }
 

@@ -46,6 +46,8 @@ These are only used for cosmetic reasons. They group fields together so the `app
 
 All forms should be stored in code under `src/forms/**` and exported in `src/forms/index.ts`. The `FormType.ts` file needs to be updated with the new unique type for the form. There are multiple helper functions in `src/lib/formBuilders.ts` that help to build forms faster.
 
+Then run `yarn nx codegen api-domains-application` to update the api layer, so it can create new applications of this type.
+
 ## How to build a new Field
 
 Each Field has to have its own unique `type` which needs to be part of the `FieldTypes` enum inside `src/types/Fields.ts`. Then build a new interface that extends `Question` or `BaseField`, add finally add that to the `Field` type.
