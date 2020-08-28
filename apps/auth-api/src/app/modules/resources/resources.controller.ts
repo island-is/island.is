@@ -6,15 +6,18 @@ import {
     Param,
     Post,
     Query,
-    ValidationPipe
+    ValidationPipe,
+    UseGuards
   } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags, ApiQuery } from '@nestjs/swagger'
 import { IdentityResource } from './identity-resource.model'
 import { ResourcesService } from './resources.service'
 import { ApiScope } from './api-scope.model'
 import { ApiResource } from './api-resource.model'
+import { AuthGuard } from '@nestjs/passport'
   
-  @ApiTags('resources')
+@UseGuards(AuthGuard('jwt'))
+@ApiTags('resources')
   @Controller()
   export class ResourcesController {
     constructor(private readonly resourcesService: ResourcesService) {}
