@@ -35,7 +35,7 @@ export class DiscountResolver {
           let discount: TDiscount = await backendApi.getDiscount(
             relation.nationalId,
           )
-          if (!discount && relation.fund.credit > 0) {
+          if (!discount) {
             discount = await backendApi.createDiscount(relation.nationalId)
           }
           return [...acc, { ...discount, user: relation }]
