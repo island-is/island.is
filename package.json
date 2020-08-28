@@ -8,6 +8,7 @@
     "build": "nx build",
     "test": "nx test",
     "lint": "nx workspace-lint && nx lint",
+    "mock": "nx mock",
     "e2e": "nx e2e",
     "codegen": "nx codegen",
     "translations": "nx translations",
