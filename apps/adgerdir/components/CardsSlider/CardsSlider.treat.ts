@@ -29,8 +29,12 @@ export const arrowButton = style({
   backgroundColor: theme.color.purple400,
   borderRadius: '50%',
   outline: 0,
-  transition: `all 150ms ease`,
+  opacity: 1,
+  transition: `all 300ms ease`,
   selectors: {
+    [`${variants.blue} &`]: {
+      backgroundColor: theme.color.blue400,
+    },
     [`${variants.blue} &`]: {
       backgroundColor: theme.color.blue400,
     },
@@ -43,7 +47,22 @@ export const arrowButton = style({
   },
 })
 
-export const arrowButtonDisabled = style({})
+export const arrowButtonDisabled = style({
+  pointerEvents: 'none',
+  opacity: 0.25,
+  transition: `all 150ms ease`,
+  /* selectors: {
+    [`${variants.blue} &`]: {
+      backgroundColor: theme.color.white,
+    },
+    [`${variants.red} &`]: {
+      backgroundColor: theme.color.white,
+    },
+    [`${variants.purple} &`]: {
+      backgroundColor: theme.color.white,
+    },
+  }, */
+})
 
 export const controls = style({
   position: 'absolute',

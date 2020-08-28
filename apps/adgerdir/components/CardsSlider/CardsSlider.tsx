@@ -7,7 +7,7 @@ import React, {
   useContext,
 } from 'react'
 import cn from 'classnames'
-import AliceCarousel from 'react-alice-carousel'
+import AliceCarousel, { EventObject } from 'react-alice-carousel'
 import { Icon, Inline } from '@island.is/island-ui/core'
 import { AdgerdirPage } from '@island.is/api/schema'
 import { ColorSchemeContext, ColorSchemes } from '@island.is/adgerdir/context'
@@ -26,17 +26,24 @@ interface CardsSliderProps {
   items: Array<AdgerdirPage>
 }
 
+const initialSlideState = {
+  item: 0,
+  slide: 0,
+  itemsInSlide: 0,
+  isPrevSlideDisabled: true,
+  isNextSlideDisabled: false,
+} as EventObject
+
 export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
   const { colorScheme } = useContext(ColorSchemeContext)
 
   const [height, setHeight] = useState<string>('auto')
+  const [slideState, setSlideState] = useState<EventObject>(initialSlideState)
   const [stagePadding, setStagePadding] = useState<StagePaddingProps>({
     paddingLeft: 0,
     paddingRight: 0,
   })
   const ref = useRef(null)
-  const prevRef = useRef(null)
-  const nextRef = useRef(null)
 
   const handleOnDragStart = (e) => e.preventDefault()
 
@@ -59,6 +66,7 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
     if (el) {
       setHeight('auto')
       setHeight(`${el.offsetHeight}px`)
+      setSlideState(initialSlideState)
     }
   }, [ref])
 
@@ -79,28 +87,17 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
     ref.current.slidePrev()
   }
 
-  const Dots = () => {
-    if (ref.current) {
-      const { slides, items } = ref.current.state
+  const onSlideChanged = (e: EventObject) => {
+    setSlideState(e)
+  }
 
-      const jump = Math.floor(slides.length / items)
+  const atEnd = slideState.isNextSlideDisabled
+  const atStart = slideState.isPrevSlideDisabled
 
-      return (
-        <div className={styles.dotsContainer}>
-          {[...Array(jump).keys()].map((item, index) => {
-            return (
-              <button
-                key={item}
-                onClick={() => ref.current.slideTo(index * items)}
-                className={styles.dot}
-              />
-            )
-          })}
-        </div>
-      )
-    }
+  let dotJumps = 0
 
-    return null
+  if (slideState.itemsInSlide) {
+    dotJumps = Math.floor(items.length / slideState.itemsInSlide)
   }
 
   return (
@@ -110,7 +107,11 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
       <AliceCarousel
         ref={ref}
         infinite={false}
+        onInitialized={onSlideChanged}
+        onSlideChanged={onSlideChanged}
         stagePadding={stagePadding}
+        startIndex={slideState.item}
+        slideToIndex={slideState.item}
         responsive={{
           0: {
             items: 1,
@@ -119,42 +120,42 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
             items: 2,
           },
         }}
-        preservePosition
         dotsDisabled
         buttonsDisabled
         mouseTrackingEnabled
-      >
-        {items.map(({ title, description, tags }, index) => {
-          return (
-            <div
-              key={index}
-              onDragStart={handleOnDragStart}
-              style={{ minHeight: height, display: 'inline-flex' }}
-              className={styles.item}
-            >
-              <Card
-                description={description}
-                title={title}
-                tags={tags}
-                variant={colorScheme}
-              />
-            </div>
-          )
-        })}
-      </AliceCarousel>
+        items={items.map(({ title, description, tags }, index) => (
+          <div
+            key={index}
+            onDragStart={handleOnDragStart}
+            style={{ minHeight: height, display: 'inline-flex' }}
+            className={styles.item}
+          >
+            <Card
+              description={description}
+              title={title}
+              tags={tags}
+              variant={colorScheme}
+            />
+          </div>
+        ))}
+      />
 
       <div className={styles.controls}>
         <Inline space={2}>
           <button
-            className={cn(styles.arrowButton, {})}
-            ref={prevRef}
+            className={cn(styles.arrowButton, {
+              [styles.arrowButtonDisabled]: atStart,
+            })}
+            disabled={atStart}
             onClick={slidePrev}
           >
             <Icon type="arrowLeft" color="white" width="18" height="18" />
           </button>
           <button
-            className={cn(styles.arrowButton, {})}
-            ref={nextRef}
+            className={cn(styles.arrowButton, {
+              [styles.arrowButtonDisabled]: atEnd,
+            })}
+            disabled={atEnd}
             onClick={slideNext}
           >
             <Icon type="arrowRight" color="white" width="18" height="18" />
@@ -162,7 +163,19 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
         </Inline>
       </div>
 
-      <Dots />
+      <div className={styles.dotsContainer}>
+        {[...Array(dotJumps).keys()].map((item, index) => {
+          return (
+            <button
+              key={item}
+              onClick={() =>
+                ref.current.slideTo(index * slideState.itemsInSlide)
+              }
+              className={styles.dot}
+            />
+          )
+        })}
+      </div>
     </div>
   )
 }
