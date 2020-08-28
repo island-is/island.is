@@ -12,8 +12,12 @@ import yaml from 'js-yaml'
 import * as yargs from 'yargs'
 import * as fs from 'fs'
 
-const AuthUrl = "https://siidentityserverweb20200805020732.azurewebsites.net/connect/authorize"
-const TokenUrl = "https://siidentityserverweb20200805020732.azurewebsites.net/connect/token"
+// const AuthUrl = "https://siidentityserverweb20200805020732.azurewebsites.net/connect/authorize"
+// const TokenUrl = "https://siidentityserverweb20200805020732.azurewebsites.net/connect/token"
+// const AuthUrl = `${process.env.IDS_ISSUER}/connect/authorize`
+// const TokenUrl = `${process.env.IDS_ISSUER}/connect/token`
+const AuthUrl = `https://localhost:6001/connect/authorize`
+const TokenUrl = `https://localhost:6001/connect/token`
 
 type RunServerOptions = {
   /**
@@ -79,7 +83,7 @@ function setupOpenApi(app: INestApplication, options: RunServerOptions) {
           authorizationUrl: AuthUrl,
           tokenUrl: TokenUrl,
           scopes: {
-            "openid profile":
+            "openid profile @identityserver.api/read":
             "Sækir OpenId og Profile claim-ið"
           }
         }
@@ -92,7 +96,7 @@ function setupOpenApi(app: INestApplication, options: RunServerOptions) {
     .build()
   const document = SwaggerModule.createDocument(app, swaggerOptions)
 
-  SwaggerModule.setup(options.swaggerPath ?? 'swagger', app, document)
+  SwaggerModule.setup(options.swaggerPath ?? '', app, document)
   return document
 }
 

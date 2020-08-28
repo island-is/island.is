@@ -10,7 +10,7 @@ import { UserProfile } from './user-profile.model'
 import { UserProfilesService } from './user-profiles.service'
 import { AuthGuard } from '@nestjs/passport'
 
-// @ApiOAuth2(['openid:profile']) // add OAuth restriction to this controller
+@ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('user-profiles')
 @Controller('user-profiles')
