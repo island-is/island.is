@@ -103,19 +103,18 @@ export class FlightService {
     return flight
   }
 
-  async delete(flight: Flight): Promise<Flight> {
-    await Promise.all(
-      flight.flightLegs.map(async (flightLeg) => {
+  async delete(flight: Flight): Promise<FlightLeg[]> {
+    return Promise.all(
+      flight.flightLegs.map((flightLeg) => {
         const financialState = financialStateMachine
           .transition(flightLeg.financialState, 'REVOKE')
           .value.toString()
-        await flightLeg.update({ financialState })
+        return flightLeg.update({ financialState })
       }),
     )
-    return flight
   }
 
-  async deleteFlightLeg(flight: Flight, flightLegId: string): Promise<Flight> {
+  async deleteFlightLeg(flight: Flight, flightLegId: string): Promise<FlightLeg> {
     const flightLeg = await flight.flightLegs.find(
       (flightLeg) => flightLeg.id === flightLegId,
     )
@@ -125,7 +124,6 @@ export class FlightService {
     const state = financialStateMachine
       .transition(flightLeg.financialState, 'REVOKE')
       .value.toString()
-    flightLeg.update({ state })
-    return flight
+    return flightLeg.update({ state })
   }
 }
