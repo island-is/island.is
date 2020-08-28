@@ -84,8 +84,10 @@ export class DiscountService {
     return discount.nationalId
   }
 
-  useDiscount(discountCode: string): Promise<void> {
-    const cacheKey = this.getDiscountCodeCacheKey(discountCode)
-    return this.cacheManager.del(cacheKey)
+  async useDiscount(discountCode: string, nationalId: string): Promise<void> {
+    const discountCodeCacheKey = this.getDiscountCodeCacheKey(discountCode)
+    const nationalIdCacheKey = this.getNationalIdCacheKey(nationalId)
+    await this.cacheManager.del(discountCodeCacheKey)
+    await this.cacheManager.del(nationalIdCacheKey)
   }
 }

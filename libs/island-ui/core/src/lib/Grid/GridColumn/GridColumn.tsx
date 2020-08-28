@@ -15,6 +15,7 @@ export interface TilesProps {
   offset?: ResponsiveProp<GridColumns>
   paddingBottom?: ResponsiveSpace
   paddingTop?: ResponsiveSpace
+  className?: string
 }
 
 export const GridColumn: FC<TilesProps> = ({
@@ -23,11 +24,13 @@ export const GridColumn: FC<TilesProps> = ({
   offset = 0,
   paddingBottom = 0,
   paddingTop = 0,
+  className,
 }) => (
   <Box
     paddingTop={paddingTop}
     paddingBottom={paddingBottom}
     className={cn(
+      className,
       styles.base,
       resolveResponsiveProp(
         span,

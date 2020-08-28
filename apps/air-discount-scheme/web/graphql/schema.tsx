@@ -31,13 +31,22 @@ export type Article = {
   category: Taxonomy
 }
 
+export type AdgerdirTag = {
+  __typename?: 'AdgerdirTag'
+  id?: Maybe<Scalars['String']>
+  title?: Maybe<Scalars['String']>
+}
+
 export type AdgerdirPage = {
   __typename?: 'AdgerdirPage'
   id: Scalars['String']
   slug: Scalars['String']
   title: Scalars['String']
-  description: Scalars['String']
+  description?: Maybe<Scalars['String']>
   content?: Maybe<Scalars['String']>
+  tags: Array<AdgerdirTag>
+  link?: Maybe<Scalars['String']>
+  status: Scalars['String']
 }
 
 export type AdgerdirPages = {
@@ -292,6 +301,11 @@ export type Menu = {
   links: Array<Link>
 }
 
+export type AdgerdirTags = {
+  __typename?: 'AdgerdirTags'
+  items: Array<AdgerdirTag>
+}
+
 export type User = {
   __typename?: 'User'
   nationalId: Scalars['ID']
@@ -316,6 +330,15 @@ export type FlightLegFund = {
   total: Scalars['Float']
 }
 
+export type Flight = {
+  __typename?: 'Flight'
+  id: Scalars['ID']
+  airline: Scalars['String']
+  bookingDate: Scalars['String']
+  travel: Scalars['String']
+  user: User
+}
+
 export type Query = {
   __typename?: 'Query'
   getArticle?: Maybe<Article>
@@ -327,10 +350,12 @@ export type Query = {
   getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
   getAdgerdirPages?: Maybe<AdgerdirPages>
+  getAdgerdirTags?: Maybe<AdgerdirTags>
   getFrontpageSliderList?: Maybe<FrontpageSliderList>
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
   user?: Maybe<User>
+  flights: Array<Flight>
 }
 
 export type QueryGetArticleArgs = {
@@ -367,6 +392,10 @@ export type QueryGetAdgerdirPageArgs = {
 
 export type QueryGetAdgerdirPagesArgs = {
   input: GetAdgerdirPagesInput
+}
+
+export type QueryGetAdgerdirTagsArgs = {
+  input: GetAdgerdirTagsInput
 }
 
 export type QueryGetFrontpageSliderListArgs = {
@@ -429,6 +458,10 @@ export type GetAdgerdirPagesInput = {
   perPage?: Maybe<Scalars['Int']>
 }
 
+export type GetAdgerdirTagsInput = {
+  lang?: Maybe<Scalars['String']>
+}
+
 export type GetFrontpageSliderListInput = {
   lang?: Maybe<Scalars['String']>
 }
@@ -445,6 +478,26 @@ export type GetMenuInput = {
 export type Mutation = {
   __typename?: 'Mutation'
   fetchDiscounts?: Maybe<Array<Discount>>
+}
+
+export type GetMenuQueryVariables = Exact<{
+  input: GetMenuInput
+}>
+
+export type GetMenuQuery = { __typename?: 'Query' } & {
+  getMenu?: Maybe<
+    { __typename?: 'Menu' } & Pick<Menu, 'title'> & {
+        links: Array<{ __typename?: 'Link' } & Pick<Link, 'text' | 'url'>>
+      }
+  >
+}
+
+export type GetNamespaceQueryVariables = Exact<{
+  input: GetNamespaceInput
+}>
+
+export type GetNamespaceQuery = { __typename?: 'Query' } & {
+  getNamespace?: Maybe<{ __typename?: 'Namespace' } & Pick<Namespace, 'fields'>>
 }
 
 export type UserQueryQueryVariables = Exact<{ [key: string]: never }>
@@ -505,6 +558,129 @@ export type FetchDiscountsMutationMutation = { __typename?: 'Mutation' } & {
   >
 }
 
+export type FlightsQueryQueryVariables = Exact<{ [key: string]: never }>
+
+export type FlightsQueryQuery = { __typename?: 'Query' } & {
+  flights: Array<
+    { __typename?: 'Flight' } & Pick<
+      Flight,
+      'id' | 'bookingDate' | 'travel'
+    > & { user: { __typename?: 'User' } & Pick<User, 'nationalId' | 'name'> }
+  >
+}
+
+export const GetMenuDocument = gql`
+  query GetMenu($input: GetMenuInput!) {
+    getMenu(input: $input) {
+      title
+      links {
+        text
+        url
+      }
+    }
+  }
+`
+
+/**
+ * __useGetMenuQuery__
+ *
+ * To run a query within a React component, call `useGetMenuQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMenuQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMenuQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetMenuQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    GetMenuQuery,
+    GetMenuQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useQuery<GetMenuQuery, GetMenuQueryVariables>(
+    GetMenuDocument,
+    baseOptions,
+  )
+}
+export function useGetMenuLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    GetMenuQuery,
+    GetMenuQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useLazyQuery<GetMenuQuery, GetMenuQueryVariables>(
+    GetMenuDocument,
+    baseOptions,
+  )
+}
+export type GetMenuQueryHookResult = ReturnType<typeof useGetMenuQuery>
+export type GetMenuLazyQueryHookResult = ReturnType<typeof useGetMenuLazyQuery>
+export type GetMenuQueryResult = ApolloReactCommon.QueryResult<
+  GetMenuQuery,
+  GetMenuQueryVariables
+>
+export const GetNamespaceDocument = gql`
+  query GetNamespace($input: GetNamespaceInput!) {
+    getNamespace(input: $input) {
+      fields
+    }
+  }
+`
+
+/**
+ * __useGetNamespaceQuery__
+ *
+ * To run a query within a React component, call `useGetNamespaceQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetNamespaceQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetNamespaceQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useGetNamespaceQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    GetNamespaceQuery,
+    GetNamespaceQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useQuery<
+    GetNamespaceQuery,
+    GetNamespaceQueryVariables
+  >(GetNamespaceDocument, baseOptions)
+}
+export function useGetNamespaceLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    GetNamespaceQuery,
+    GetNamespaceQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useLazyQuery<
+    GetNamespaceQuery,
+    GetNamespaceQueryVariables
+  >(GetNamespaceDocument, baseOptions)
+}
+export type GetNamespaceQueryHookResult = ReturnType<
+  typeof useGetNamespaceQuery
+>
+export type GetNamespaceLazyQueryHookResult = ReturnType<
+  typeof useGetNamespaceLazyQuery
+>
+export type GetNamespaceQueryResult = ApolloReactCommon.QueryResult<
+  GetNamespaceQuery,
+  GetNamespaceQueryVariables
+>
 export const UserQueryDocument = gql`
   query UserQuery {
     user {
@@ -741,4 +917,65 @@ export type FetchDiscountsMutationMutationResult = ApolloReactCommon.MutationRes
 export type FetchDiscountsMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<
   FetchDiscountsMutationMutation,
   FetchDiscountsMutationMutationVariables
+>
+export const FlightsQueryDocument = gql`
+  query FlightsQuery {
+    flights {
+      id
+      bookingDate
+      travel
+      user {
+        nationalId
+        name
+      }
+    }
+  }
+`
+
+/**
+ * __useFlightsQueryQuery__
+ *
+ * To run a query within a React component, call `useFlightsQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFlightsQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFlightsQueryQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFlightsQueryQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    FlightsQueryQuery,
+    FlightsQueryQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useQuery<
+    FlightsQueryQuery,
+    FlightsQueryQueryVariables
+  >(FlightsQueryDocument, baseOptions)
+}
+export function useFlightsQueryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    FlightsQueryQuery,
+    FlightsQueryQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useLazyQuery<
+    FlightsQueryQuery,
+    FlightsQueryQueryVariables
+  >(FlightsQueryDocument, baseOptions)
+}
+export type FlightsQueryQueryHookResult = ReturnType<
+  typeof useFlightsQueryQuery
+>
+export type FlightsQueryLazyQueryHookResult = ReturnType<
+  typeof useFlightsQueryLazyQuery
+>
+export type FlightsQueryQueryResult = ApolloReactCommon.QueryResult<
+  FlightsQueryQuery,
+  FlightsQueryQueryVariables
 >

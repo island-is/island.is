@@ -17,12 +17,20 @@ type Article {
   category: Taxonomy!
 }
 
+type AdgerdirTag {
+  id: String
+  title: String
+}
+
 type AdgerdirPage {
   id: String!
   slug: String!
   title: String!
-  description: String!
+  description: String
   content: String
+  tags: [AdgerdirTag!]!
+  link: String
+  status: String!
 }
 
 type AdgerdirPages {
@@ -238,6 +246,10 @@ type Menu {
   links: [Link!]!
 }
 
+type AdgerdirTags {
+  items: [AdgerdirTag!]!
+}
+
 type User {
   nationalId: ID!
   name: String!
@@ -259,6 +271,14 @@ type FlightLegFund {
   total: Float!
 }
 
+type Flight {
+  id: ID!
+  airline: String!
+  bookingDate: String!
+  travel: String!
+  user: User!
+}
+
 type Query {
   getArticle(input: GetArticleInput!): Article
   getNews(input: GetNewsInput!): News
@@ -269,10 +289,12 @@ type Query {
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
   getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages
+  getAdgerdirTags(input: GetAdgerdirTagsInput!): AdgerdirTags
   getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getMenu(input: GetMenuInput!): Menu
   user: User
+  flights: [Flight!]!
 }
 
 input GetArticleInput {
@@ -321,6 +343,10 @@ input GetAdgerdirPageInput {
 input GetAdgerdirPagesInput {
   lang: String
   perPage: Int
+}
+
+input GetAdgerdirTagsInput {
+  lang: String
 }
 
 input GetFrontpageSliderListInput {

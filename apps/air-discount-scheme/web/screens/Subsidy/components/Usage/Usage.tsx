@@ -1,4 +1,6 @@
 import React from 'react'
+import { useQuery } from '@apollo/client'
+import gql from 'graphql-tag'
 
 import { Box, Typography } from '@island.is/island-ui/core'
 import {
@@ -10,11 +12,28 @@ import {
   Data,
 } from '@island.is/air-discount-scheme-web/components/Table/Table'
 
+const FlightsQuery = gql`
+  query FlightsQuery {
+    flights {
+      id
+      bookingDate
+      travel
+      user {
+        nationalId
+        name
+      }
+    }
+  }
+`
+
 interface PropTypes {
   misc: string
 }
 
 function Usage({ misc }: PropTypes) {
+  const { data } = useQuery(FlightsQuery)
+  const { flights } = data || {}
+
   return (
     <Box marginBottom={6} paddingTop={6}>
       <Box marginBottom={3}>
@@ -29,11 +48,14 @@ function Usage({ misc }: PropTypes) {
           </Row>
         </Head>
         <Body>
-          <Row>
-            <Data>The table body</Data>
-            <Data>with two columns</Data>
-            <Data>with two columns</Data>
-          </Row>
+          {flights &&
+            flights.map((flight) => (
+              <Row key={flight.id}>
+                <Data>{flight.user.name}</Data>
+                <Data>{flight.travel}</Data>
+                <Data>{flight.bookingDate}</Data>
+              </Row>
+            ))}
         </Body>
       </Table>
     </Box>

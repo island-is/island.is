@@ -1,8 +1,23 @@
 import { style, globalStyle } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/theme'
+
+export const withDecorator = style({
+  borderBottom: `1px solid ${theme.color.blue200}`,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      borderBottom: 'none',
+      borderRight: `1px solid ${theme.color.blue200}`,
+    },
+  },
+})
 
 export const links = style({})
 export const linksWhite = style({})
+
+export const withIcon = style({
+  display: 'flex',
+  alignItems: 'center',
+})
 
 globalStyle(`${links} a`, {
   color: theme.color.blue400,
