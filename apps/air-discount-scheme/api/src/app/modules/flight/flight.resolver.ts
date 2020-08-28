@@ -6,7 +6,7 @@ import {
   FlightLeg,
 } from '@island.is/air-discount-scheme/types'
 import { Authorize, CurrentUser, AuthService, AuthUser } from '../auth'
-import { Flight } from './Flight.model'
+import { Flight } from './flight.model'
 import { User } from '../user'
 
 type FlightWithThjodskraUser = TFlight & { user: ThjodskraUser }
