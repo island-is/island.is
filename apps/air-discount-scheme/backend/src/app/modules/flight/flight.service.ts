@@ -103,7 +103,7 @@ export class FlightService {
     return flight
   }
 
-  async delete(flight: Flight): Promise<FlightLeg[]> {
+  delete(flight: Flight): Promise<FlightLeg[]> {
     return Promise.all(
       flight.flightLegs.map((flightLeg) => {
         const financialState = financialStateMachine
@@ -114,16 +114,19 @@ export class FlightService {
     )
   }
 
-  async deleteFlightLeg(flight: Flight, flightLegId: string): Promise<FlightLeg> {
+  async deleteFlightLeg(
+    flight: Flight,
+    flightLegId: string,
+  ): Promise<FlightLeg> {
     const flightLeg = await flight.flightLegs.find(
       (flightLeg) => flightLeg.id === flightLegId,
     )
     if (!flightLeg) {
       throw new NotFoundException('Flight not found')
     }
-    const state = financialStateMachine
+    const financialState = financialStateMachine
       .transition(flightLeg.financialState, 'REVOKE')
       .value.toString()
-    return flightLeg.update({ state })
+    return flightLeg.update({ financialState })
   }
 }
