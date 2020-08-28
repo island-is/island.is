@@ -42,6 +42,18 @@ export const variants = styleMap({
     color: theme.color.purple400,
     backgroundColor: theme.color.purple100,
   },
+  red: {
+    color: theme.color.red400,
+    backgroundColor: theme.color.red100,
+  },
+  mint: {
+    color: theme.color.dark400,
+    backgroundColor: theme.color.mint100,
+  },
+  darkerMint: {
+    color: theme.color.dark400,
+    backgroundColor: theme.color.mint200,
+  },
   label: {
     backgroundColor: theme.color.transparent,
   },
@@ -49,7 +61,4 @@ export const variants = styleMap({
 
 export const label = style({
   pointerEvents: 'none',
-  color: theme.color.purple400,
-  border: `1px solid ${theme.color.purple200}`,
-  backgroundColor: theme.color.transparent,
 })

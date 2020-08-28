@@ -4,6 +4,8 @@ import * as styles from './Input.treat'
 import { Box } from '../Box'
 import Tooltip from '../Tooltip/Tooltip'
 
+type InputBackgroundColor = 'white' | 'blue'
+
 interface InputProps {
   autoFocus?: boolean
   name: string
@@ -15,6 +17,7 @@ interface InputProps {
   errorMessage?: string
   placeholder?: string
   tooltip?: string
+  backgroundColor?: InputBackgroundColor
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
@@ -46,6 +49,7 @@ export const Input = forwardRef(
       onBlur,
       placeholder,
       tooltip,
+      backgroundColor = 'white',
       ...inputProps
     } = props
     const [hasFocus, setHasFocus] = useState(false)
@@ -60,11 +64,15 @@ export const Input = forwardRef(
     return (
       <div>
         <div
-          className={cn(styles.container, {
-            [styles.hasError]: hasError,
-            [styles.hasFocus]: hasFocus,
-            [styles.containerDisabled]: disabled,
-          })}
+          className={cn(
+            styles.container,
+            styles.containerBackgrounds[backgroundColor],
+            {
+              [styles.hasError]: hasError,
+              [styles.hasFocus]: hasFocus,
+              [styles.containerDisabled]: disabled,
+            },
+          )}
           onClick={(e) => {
             e.preventDefault()
             if (inputRef.current) {

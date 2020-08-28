@@ -1,10 +1,14 @@
 import React, { FC, useState, useReducer, useEffect } from 'react'
 import { FileUploadField } from '@island.is/application/schema'
-import { Box, InputFileUpload, Typography } from '@island.is/island-ui/core'
+import {
+  Box,
+  InputFileUpload,
+  UploadFile,
+  fileToObject,
+  Typography,
+} from '@island.is/island-ui/core'
 import { FieldBaseProps } from '../../types'
 import { useFormContext, Controller } from 'react-hook-form'
-import { UploadFile } from 'libs/island-ui/core/src/lib/InputFileUpload/InputFileUpload.types'
-import { fileToObject } from 'libs/island-ui/core/src/lib/InputFileUpload/InputFileUpload.utils'
 import { getValueViaPath } from '../../utils'
 import { gql, useMutation } from '@apollo/client'
 
@@ -34,22 +38,24 @@ enum ActionTypes {
 function reducer(state, action) {
   switch (action.type) {
     case ActionTypes.ADD:
-      const updatedFiles = state.concat(action.payload.newFiles)
-      return updatedFiles
+      return state.concat(action.payload.newFiles)
+
     case ActionTypes.REMOVE:
-      const updatedFileList = state.filter(
+      return state.filter(
         (file) => file.name !== action.payload.fileToRemove.name,
       )
-      return updatedFileList
+
     case ActionTypes.UPDATE:
-      const updatedStatusList = state.map((file: UploadFile) => {
-        if (file.name == action.payload.file.name) {
-          file.status = action.payload.status
-          file.percent = action.payload.percent
-        }
-        return file
-      })
-      return updatedStatusList
+      return [
+        ...state.map((file: UploadFile) => {
+          if (file.name === action.payload.file.name) {
+            file.status = action.payload.status
+            file.percent = action.payload.percent
+          }
+          return file
+        }),
+      ]
+
     default:
       throw new Error()
   }
@@ -76,7 +82,7 @@ const FileUploadFormField: FC<Props> = ({ error, field, formValue }) => {
     const uploadAnswer: UploadFileAnswer[] = state.map(transformToAnswer)
 
     setValue(id, uploadAnswer)
-  }, [state])
+  }, [state, id, setValue])
 
   return (
     <Box>
