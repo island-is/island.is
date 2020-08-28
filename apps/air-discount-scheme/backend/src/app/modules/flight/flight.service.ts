@@ -63,8 +63,13 @@ export class FlightService {
 
   async findAllByNationalId(nationalId: string): Promise<Flight[]> {
     return this.flightModel.findAll({
-      where: { invalid: false, nationalId },
-      include: [this.flightLegModel],
+      where: { nationalId },
+      include: [
+        {
+          model: this.flightLegModel,
+          where: { financialState: availableFinancialStates },
+        },
+      ],
     })
   }
 

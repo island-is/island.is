@@ -7,7 +7,7 @@ module.exports = {
 
         DROP INDEX national_id_and_invalid_idx;
         ALTER TABLE flight DROP COLUMN invalid;
-        ALTER TABLE flight_leg ADD COLUMN financial_state VARCHAR NOT NULL;
+        ALTER TABLE flight_leg ADD COLUMN financial_state VARCHAR DEFAULT 'awaitingDebit' NOT NULL;
 
       COMMIT;
     `)
