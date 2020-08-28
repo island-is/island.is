@@ -16,6 +16,7 @@ export interface CheckboxProps {
   tooltip?: string
   hasError?: boolean
   errorMessage?: string
+  value?: string
 }
 
 export const Checkbox = ({
@@ -28,6 +29,7 @@ export const Checkbox = ({
   tooltip,
   hasError,
   errorMessage,
+  value,
 }: CheckboxProps) => {
   const ariaError = hasError
     ? {
@@ -44,6 +46,7 @@ export const Checkbox = ({
         disabled={disabled}
         id={id}
         onChange={onChange}
+        value={value}
         {...ariaError}
       />
       <label

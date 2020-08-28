@@ -24,6 +24,8 @@ export interface ButtonProps {
   leftIcon?: IconTypes
   leftImage?: string
   noWrap?: boolean
+  target?: string
+  white?: boolean
 }
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
@@ -47,6 +49,8 @@ export const Button = forwardRef<
       leftImage,
       leftIcon,
       noWrap,
+      target = '_blank',
+      white,
     },
     ref,
   ) => {
@@ -57,6 +61,7 @@ export const Button = forwardRef<
       styles.width[width],
       {
         [styles.noWrap]: noWrap,
+        [styles.white]: white,
       },
     )
 
@@ -66,7 +71,7 @@ export const Button = forwardRef<
     const showRightIcon = icon || isExternal || loading
 
     const anchorProps = {
-      ...(isExternal && { rel: 'noreferrer noopener' }),
+      ...(isExternal && { rel: 'noreferrer noopener', target }),
     }
 
     const sharedProps = {

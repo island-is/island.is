@@ -5,6 +5,7 @@ import { Box } from '../Box'
 import Tooltip from '../Tooltip/Tooltip'
 
 interface InputProps {
+  autoFocus?: boolean
   name: string
   label?: string
   id?: string

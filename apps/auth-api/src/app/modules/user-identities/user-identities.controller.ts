@@ -5,13 +5,16 @@ import {
     NotFoundException,
     Param,
     Post,
+    UseGuards,
   } from '@nestjs/common'
   import { UserIdentity } from './user-identity.model'
   import { UserIdentitiesService } from './user-identities.service'
   import { UserIdentityDto } from './dto/user-identity.dto'
   import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { AuthGuard } from '@nestjs/passport'
   
-  @ApiTags('user-identities')
+@UseGuards(AuthGuard('jwt'))
+@ApiTags('user-identities')
   @Controller('user-identities')
   export class UserIdentitiesController {
     constructor(private readonly userIdentityService: UserIdentitiesService) {}

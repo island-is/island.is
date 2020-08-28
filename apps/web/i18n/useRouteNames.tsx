@@ -6,20 +6,30 @@ const routeNames = {
     category: 'flokkur',
     news: 'frett',
     search: 'leit',
+    landingPage: '',
+    page: '',
   },
   en: {
     article: 'article',
     category: 'category',
     news: 'news',
     search: 'search',
+    landingPage: '',
+    page: '',
   },
 }
 
-export type pathTypes = 'article' | 'category' | 'news' | 'search'
+export type PathTypes =
+  | 'article'
+  | 'category'
+  | 'news'
+  | 'search'
+  | 'landingPage'
+  | 'page'
 
-const useRouteNames = (locale: Locale = defaultLanguage) => {
+export const useRouteNames = (locale: Locale = defaultLanguage) => {
   return {
-    makePath: (type?: pathTypes, subfix?: string) => {
+    makePath: (type?: PathTypes, subfix?: string) => {
       let path = ''
 
       const typePath = (type && routeNames[locale][type]) ?? null

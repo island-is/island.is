@@ -4,3 +4,7 @@ apps/gjafakort/codegen.yml
 apps/gjafakort/docker-compose.yml
 apps/gjafakort/Makefile
 apps/gjafakort/README.md
+
+# air-discount-scheme
+apps/air-discount-scheme/codegen.yml
+apps/air-discount-scheme/api.graphql

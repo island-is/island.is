@@ -8,6 +8,7 @@ export const bullet = style({
   pointerEvents: 'none',
   position: 'absolute',
   left: -5,
+  marginTop: 1,
   transition: 'top 150ms ease',
 })
 

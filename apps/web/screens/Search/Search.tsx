@@ -3,7 +3,6 @@ import React, { useRef, useEffect } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { withApollo } from '../../graphql'
 import { Screen } from '../../types'
 import {
   Sidebar,
@@ -21,6 +20,7 @@ import {
   Divider,
   Option,
   SidebarAccordion,
+  Pagination,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
@@ -36,20 +36,28 @@ import {
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
-import { Locale } from '@island.is/web/i18n/I18n'
+import { CustomNextError } from '@island.is/web/units/ErrorBoundary'
+
+const PerPage = 10
 
 interface CategoryProps {
   q: string
+  page: number
   searchResults: Query['searchResults']
   namespace: Query['getNamespace']
 }
 
-const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
+const Search: Screen<CategoryProps> = ({
+  q,
+  page,
+  searchResults,
+  namespace,
+}) => {
   const { activeLocale } = useI18n()
   const searchRef = useRef<HTMLInputElement | null>(null)
   const Router = useRouter()
   const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale as Locale)
+  const { makePath } = useRouteNames(activeLocale)
 
   const filters = {
     category: Router.query.category,
@@ -133,7 +141,7 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
       </Head>
       <CategoryLayout
         sidebar={
-          <Sidebar title={n('submenuTitle')}>
+          <Sidebar title={n('sidebarHeader')}>
             <Filter
               selected={!filters.category}
               onClick={() => onSelectCategory(null)}
@@ -165,7 +173,7 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
         belowContent={
           <Stack space={2}>
             {filteredItems.map((item, index) => {
-              const tags = [] as Array<CardTagsProps>
+              const tags: Array<CardTagsProps> = []
 
               if (item.group) {
                 tags.push({
@@ -178,6 +186,22 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
 
               return <Card key={index} icon="article" tags={tags} {...item} />
             })}
+            <Box paddingTop={8}>
+              <Pagination
+                page={page}
+                totalPages={Math.ceil(searchResults.total / PerPage)}
+                renderLink={(page, className, children) => (
+                  <Link
+                    href={{
+                      pathname: makePath('search'),
+                      query: { ...Router.query, page },
+                    }}
+                  >
+                    <a className={className}>{children}</a>
+                  </Link>
+                )}
+              />
+            </Box>
           </Stack>
         }
       >
@@ -232,8 +256,11 @@ const Search: Screen<CategoryProps> = ({ q, searchResults, namespace }) => {
   )
 }
 
+const single = <T,>(x: T | T[]): T => (Array.isArray(x) ? x[0] : x)
+
 Search.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const queryString = (query.q as string) || ''
+  const queryString = single(query.q) || ''
+  const page = Number(single(query.page)) || 1
 
   const [
     {
@@ -245,8 +272,10 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       query: GET_SEARCH_RESULTS_QUERY_DETAILED,
       variables: {
         query: {
-          queryString: queryString ? `${queryString}*` : '',
           language: locale as ContentLanguage,
+          queryString,
+          size: PerPage,
+          page,
         },
       },
     }),
@@ -255,7 +284,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Articles',
+            namespace: 'Search',
             lang: locale,
           },
         },
@@ -266,11 +295,16 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       }),
   ])
 
+  if (searchResults.items.length === 0 && page > 1) {
+    throw new CustomNextError(404)
+  }
+
   return {
     q: queryString,
     searchResults,
     namespace,
     showSearchInHeader: false,
+    page,
   }
 }
 

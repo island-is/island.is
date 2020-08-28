@@ -1,41 +1,190 @@
-import React, { FC } from 'react'
-import { Logo } from '../Logo/Logo'
-import { Box } from '../Box/Box'
+/* eslint-disable jsx-a11y/anchor-is-valid */
+import React from 'react'
+import cn from 'classnames'
 import { ContentBlock } from '../ContentBlock/ContentBlock'
-import { Columns } from '../Columns/Columns'
-import { Column } from '../Column/Column'
+import { Box } from '../Box/Box'
+import { Logo } from '../Logo/Logo'
+import { Stack } from '../Stack/Stack'
 import { Tiles } from '../Tiles/Tiles'
+import { Typography } from '../Typography/Typography'
+import { Inline } from '../Inline/Inline'
+import { Tag } from '../Tag/Tag'
+import { Icon } from '../Icon/Icon'
+
 import * as styles from './Footer.treat'
-import { Hidden } from '../Hidden/Hidden'
 
-const isLinkInternal = (to) => {
-  // If it's a relative url such as '/path', 'path' and does not contain a protocol we can assume it is internal.
-  if (to.indexOf('://') === -1) return true
-
-  return false
-}
-
-interface LinkProps {
+export interface FooterLinkProps {
+  title: string
   href: string
   className?: string
 }
 
-// Temporary link component
-const FooterLink: FC<LinkProps> = ({ href, className, children }) => {
-  return isLinkInternal(href) ? (
-    <a href={href} className={className}>
-      {children}
-    </a>
-  ) : (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={className}
-    >
-      {children}
-      <LinkIcon />
-    </a>
+interface FooterProps {
+  topLinks?: FooterLinkProps[]
+  bottomLinks?: FooterLinkProps[]
+  middleLinks?: FooterLinkProps[]
+  tagLinks?: FooterLinkProps[]
+  middleLinksTitle?: string
+  tagLinksTitle?: string
+  languageSwitchLink?: FooterLinkProps
+  hideLanguageSwith?: boolean
+  showMiddleLinks?: boolean
+  showTagLinks?: boolean
+}
+
+export const Footer = ({
+  topLinks = defaultTopLinks,
+  bottomLinks = defaultBottomLinks,
+  middleLinks = defaultBottomLinks,
+  tagLinks = defaultBottomLinks,
+  middleLinksTitle = 'Tenglar',
+  tagLinksTitle = 'Flýtileiðir',
+  showMiddleLinks = false,
+  showTagLinks = false,
+  languageSwitchLink = defaultLanguageSwitchLink,
+  hideLanguageSwith = false,
+}: FooterProps) => {
+  return (
+    <>
+      <Box width="full" background="blue100">
+        <ContentBlock>
+          <Box padding={[3, 3, 6]}>
+            <Box marginBottom={[3, 3, 6]}>
+              <Logo iconOnly id="footer_logo" />
+            </Box>
+            <div className={styles.columns}>
+              <div
+                className={cn(styles.column, styles.columnBorder, styles.links)}
+              >
+                <Stack space={3}>
+                  <Stack space={3}>
+                    {topLinks.map(({ title, href }, index) => (
+                      <Typography key={index} variant="h3" color="blue400">
+                        <a href={href}>{title}</a>
+                      </Typography>
+                    ))}
+                  </Stack>
+                  <Stack space={2}>
+                    {!hideLanguageSwith && (
+                      <Inline space={1} alignY="center">
+                        <Icon
+                          height="15"
+                          width="15"
+                          type="globe"
+                          color="blue400"
+                        />
+                        <Typography variant="h5" color="blue400">
+                          <a href={languageSwitchLink.href}>
+                            {languageSwitchLink.title}
+                          </a>
+                        </Typography>
+                      </Inline>
+                    )}
+                    <Inline space={1} alignY="center">
+                      <Icon
+                        height="15"
+                        width="15"
+                        type="facebook"
+                        color="blue400"
+                      />
+                      <Typography variant="h5" color="blue400">
+                        <a href="https://www.facebook.com/islandid">Facebook</a>
+                      </Typography>
+                    </Inline>
+                  </Stack>
+                </Stack>
+              </div>
+              {showMiddleLinks ? (
+                <div
+                  className={cn(
+                    styles.column,
+                    styles.columnLarge,
+                    styles.columnBorder,
+                    styles.links,
+                  )}
+                >
+                  <Stack space={3}>
+                    <Stack space={3}>
+                      {middleLinksTitle ? (
+                        <Typography variant="eyebrow" color="purple400">
+                          {middleLinksTitle}
+                        </Typography>
+                      ) : null}
+                      <Tiles space={2} columns={[1, 2, 2, 1, 2]}>
+                        {middleLinks.map(({ title, href }, index) => {
+                          return (
+                            <Typography
+                              key={index}
+                              variant="h5"
+                              color="blue400"
+                            >
+                              <a href={href}>{title}</a>
+                            </Typography>
+                          )
+                        })}
+                      </Tiles>
+                    </Stack>
+                  </Stack>
+                </div>
+              ) : null}
+              {showTagLinks ? (
+                <div className={styles.column}>
+                  <Stack space={3}>
+                    <Stack space={3}>
+                      {tagLinksTitle ? (
+                        <Typography variant="eyebrow" color="purple400">
+                          {tagLinksTitle}
+                        </Typography>
+                      ) : null}
+                      <Inline space={2}>
+                        {tagLinks.map(({ title, href }, index) => {
+                          return (
+                            <Tag key={index} href={href} variant="white">
+                              {title}
+                            </Tag>
+                          )
+                        })}
+                      </Inline>
+                    </Stack>
+                  </Stack>
+                </div>
+              ) : null}
+            </div>
+          </Box>
+        </ContentBlock>
+      </Box>
+      <Box width="full" background="blue400" className={styles.linksWhite}>
+        <ContentBlock>
+          <Box width="full">
+            <Box padding={[3, 3, 6]}>
+              <Stack space={3}>
+                <Stack space={3}>
+                  <Typography variant="eyebrow" color="white">
+                    Aðrir opinberir vefir
+                  </Typography>
+                  <Tiles space={2} columns={[1, 1, 2, 3, 4]}>
+                    {bottomLinks.map(({ title, href }, index) => {
+                      return (
+                        <Typography key={index} variant="h5" color="white">
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {title}{' '}
+                            <Icon width="12" type="external" color="white" />
+                          </a>
+                        </Typography>
+                      )
+                    })}
+                  </Tiles>
+                </Stack>
+              </Stack>
+            </Box>
+          </Box>
+        </ContentBlock>
+      </Box>
+    </>
   )
 }
 
@@ -43,6 +192,10 @@ const defaultTopLinks = [
   {
     title: 'Um Stafrænt Ísland',
     href: 'https://stafraent.island.is/',
+  },
+  {
+    title: 'Stofnanir',
+    href: '#',
   },
   {
     title: 'Hafa samband',
@@ -93,104 +246,5 @@ const defaultBottomLinks = [
     title: 'Tekjusagan',
   },
 ]
-
-export const Footer = ({
-  topLinks = defaultTopLinks,
-  bottomLinks = defaultBottomLinks,
-  languageSwitchLink = defaultLanguageSwitchLink,
-  hideLanguageSwith = false,
-}) => {
-  return (
-    <footer className={styles.footer}>
-      <Box background="blue400" paddingX="gutter">
-        <ContentBlock>
-          <Box paddingY={6}>
-            <Columns collapseBelow="md" space="gutter">
-              <Column width="1/12">
-                <Box
-                  display="flex"
-                  justifyContent="spaceBetween"
-                  marginBottom="gutter"
-                >
-                  <Logo iconOnly solid />
-                  {!hideLanguageSwith && (
-                    <Hidden above="sm">
-                      <FooterLink
-                        href={languageSwitchLink.href}
-                        className={styles.link}
-                      >
-                        <strong>{languageSwitchLink.title}</strong>
-                      </FooterLink>
-                    </Hidden>
-                  )}
-                </Box>
-              </Column>
-              <Column width="11/12">
-                <Tiles columns={[1, 2, 3]} space="gutter">
-                  {topLinks.map((link, index) => (
-                    <FooterLink
-                      key={index}
-                      href={link.href}
-                      className={styles.linkLarge}
-                    >
-                      {link.title}
-                    </FooterLink>
-                  ))}
-                  {!hideLanguageSwith && (
-                    <Hidden below="md">
-                      <FooterLink
-                        href={languageSwitchLink.href}
-                        className={styles.link}
-                      >
-                        <strong>{languageSwitchLink.title}</strong>
-                      </FooterLink>
-                    </Hidden>
-                  )}
-                </Tiles>
-              </Column>
-            </Columns>
-          </Box>
-        </ContentBlock>
-      </Box>
-      <Box background="blue600" paddingX="gutter">
-        <ContentBlock>
-          <Columns align="right" collapseBelow="md" space="gutter">
-            <Column width="11/12">
-              <Box paddingY={[3, 3, 3, 6]}>
-                <Tiles columns={[1, 2, 3]} space="gutter">
-                  {bottomLinks.map((link, index) => (
-                    <FooterLink
-                      key={index}
-                      className={styles.link}
-                      href={link.href}
-                    >
-                      {link.title}
-                    </FooterLink>
-                  ))}
-                </Tiles>
-              </Box>
-            </Column>
-          </Columns>
-        </ContentBlock>
-      </Box>
-    </footer>
-  )
-}
-
-const LinkIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="18"
-    height="18"
-    fill="none"
-    viewBox="0 0 18 18"
-    className={styles.icon}
-  >
-    <path
-      fill="#FFFFFF"
-      d="M0 10h2V8H0v2zm0 4h2v-2H0v2zm2 4v-2H0a2 2 0 002 2zM0 6h2V4H0v2zm12 12h2v-2h-2v2zm4-18H6a2 2 0 00-2 2v10a2 2 0 002 2h10c1.1 0 2-.9 2-2V2c0-1.1-.9-2-2-2zm-1 12H7c-.55 0-1-.45-1-1V3c0-.55.45-1 1-1h8c.55 0 1 .45 1 1v8c0 .55-.45 1-1 1zm-7 6h2v-2H8v2zm-4 0h2v-2H4v2z"
-    ></path>
-  </svg>
-)
 
 export default Footer

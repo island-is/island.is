@@ -73,6 +73,16 @@ Examples:
 /libs/api/utilities/graphql
 ```
 
+### Fetch development secrets
+
+Run `AWS_PROFILE=<profile> yarn nx env-secrets <project>`
+
+**Example**:
+
+```
+AWS_PROFILE=islandis yarn nx env-secrets api
+```
+
 ### Test requirements
 
 This API has minimal logic and mostly wraps external services. Until we figure out an integration/contract testing strategy, the main focus is on unit tests using mocks for external dependencies.

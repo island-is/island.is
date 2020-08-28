@@ -1,5 +1,6 @@
 import { initTracing } from '@island.is/infra-tracing'
 import { NestFactory } from '@nestjs/core'
+import cookieParser from 'cookie-parser'
 import { INestApplication, Type, ValidationPipe } from '@nestjs/common'
 import { OpenAPIObject, SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { runMetricServer } from './runMetricServer'
@@ -27,6 +28,11 @@ type RunServerOptions = {
   name: string
 
   /**
+   * The base path of the swagger documentation.
+   */
+  swaggerPath?: string
+
+  /**
    * OpenAPI definition.
    */
   openApi?: Omit<OpenAPIObject, 'paths'>
@@ -45,12 +51,13 @@ const createApp = async (options: RunServerOptions) => {
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
   )
   app.use(httpRequestDurationMiddleware())
+  app.use(cookieParser())
 
   return app
 }
 
 const startServer = async (app: INestApplication, port = 3333) => {
-  const servicePort = parseInt(process.env.port) || port
+  const servicePort = parseInt(process.env.PORT) || port
   const metricsPort = servicePort + 1
   await app.listen(servicePort, () => {
     logger.info(`Service listening at http://localhost:${servicePort}`, {
@@ -85,7 +92,7 @@ function setupOpenApi(app: INestApplication, options: RunServerOptions) {
     .build()
   const document = SwaggerModule.createDocument(app, swaggerOptions)
 
-  SwaggerModule.setup('', app, document)
+  SwaggerModule.setup(options.swaggerPath ?? 'swagger', app, document)
   return document
 }
 
