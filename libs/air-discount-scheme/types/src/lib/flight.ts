@@ -11,6 +11,7 @@ export type FlightLeg = {
   origin: string
   originalPrice: number
   discountPrice: number
+  financialState: string
   flight: Flight
   date: Date
   created: Date
@@ -21,7 +22,6 @@ export type Flight = {
   id: string
   nationalId: string
   airline: string
-  invalid: boolean
   bookingDate: Date
   flightLegs: FlightLeg[]
   created: Date

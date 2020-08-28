@@ -31,13 +31,22 @@ export type Article = {
   category: Taxonomy
 }
 
+export type AdgerdirTag = {
+  __typename?: 'AdgerdirTag'
+  id?: Maybe<Scalars['String']>
+  title?: Maybe<Scalars['String']>
+}
+
 export type AdgerdirPage = {
   __typename?: 'AdgerdirPage'
   id: Scalars['String']
   slug: Scalars['String']
   title: Scalars['String']
-  description: Scalars['String']
+  description?: Maybe<Scalars['String']>
   content?: Maybe<Scalars['String']>
+  tags: Array<AdgerdirTag>
+  link?: Maybe<Scalars['String']>
+  status: Scalars['String']
 }
 
 export type AdgerdirPages = {
@@ -292,6 +301,11 @@ export type Menu = {
   links: Array<Link>
 }
 
+export type AdgerdirTags = {
+  __typename?: 'AdgerdirTags'
+  items: Array<AdgerdirTag>
+}
+
 export type User = {
   __typename?: 'User'
   nationalId: Scalars['ID']
@@ -336,6 +350,7 @@ export type Query = {
   getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
   getAdgerdirPages?: Maybe<AdgerdirPages>
+  getAdgerdirTags?: Maybe<AdgerdirTags>
   getFrontpageSliderList?: Maybe<FrontpageSliderList>
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
@@ -377,6 +392,10 @@ export type QueryGetAdgerdirPageArgs = {
 
 export type QueryGetAdgerdirPagesArgs = {
   input: GetAdgerdirPagesInput
+}
+
+export type QueryGetAdgerdirTagsArgs = {
+  input: GetAdgerdirTagsInput
 }
 
 export type QueryGetFrontpageSliderListArgs = {
@@ -437,6 +456,10 @@ export type GetAdgerdirPageInput = {
 export type GetAdgerdirPagesInput = {
   lang?: Maybe<Scalars['String']>
   perPage?: Maybe<Scalars['Int']>
+}
+
+export type GetAdgerdirTagsInput = {
+  lang?: Maybe<Scalars['String']>
 }
 
 export type GetFrontpageSliderListInput = {
