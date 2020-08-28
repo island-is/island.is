@@ -1,4 +1,5 @@
 export * from './Card/Card'
+export * from './PageLoader/PageLoader'
 export * from './Articles/Articles'
 export * from './Header/Header'
 export * from './Sidebar/Sidebar'

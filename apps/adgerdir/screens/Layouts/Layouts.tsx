@@ -16,7 +16,7 @@ interface ArticleProps {
 export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
   <div className={styles.layout}>
     <GridContainer>
-      <Box paddingBottom={10}>
+      <Box paddingY={10}>
         <GridRow>
           <GridColumn span={7} offset={1}>
             <Box paddingBottom={10}>{children}</Box>

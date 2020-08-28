@@ -56,13 +56,13 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
       <Head>
         <title>Viðspyrna fyrir Ísland</title>
       </Head>
-      <Box paddingY={6} paddingX={[1, 2]}>
+      <Box paddingY={10} paddingX={[1, 2]}>
         <GridContainer>
           <GridRow>
             <GridColumn span={[12, 12, 12, 12, 7]} offset={[0, 0, 0, 0, 1]}>
               <ContentBlock width="small">
                 <Stack space={3}>
-                  <Typography variant="eyebrow" as="h2" color="roseTinted400">
+                  <Typography variant="eyebrow" as="h2" color="purple400">
                     Viðspyrna
                   </Typography>
                   <Typography variant="h1" as="h1">

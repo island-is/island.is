@@ -108,7 +108,6 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
       className={cn(styles.wrapper, styles.variants[variant || colorScheme])}
     >
       <AliceCarousel
-        controlsStrategy="responsive"
         ref={ref}
         infinite={false}
         stagePadding={stagePadding}

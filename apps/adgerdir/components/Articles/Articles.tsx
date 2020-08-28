@@ -11,8 +11,8 @@ import {
   Inline,
   Icon,
 } from '@island.is/island-ui/core'
-import Card from '../Card/Card'
 import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
+import Card from '../Card/Card'
 
 import * as cardStyles from '../Card/Card.treat'
 import * as styles from './Articles.treat'
@@ -24,18 +24,18 @@ interface ArticlesProps {
   items: AdgerdirPage[]
   tags: AdgerdirTag[]
   seeMoreText?: string
-  preselectedTagIds?: Array<string>
+  currentArticle?: AdgerdirPage
 }
 
 export const Articles: FC<ArticlesProps> = ({
   seeMoreText = 'Sjá fleiri',
   items,
   tags,
-  preselectedTagIds = [],
+  currentArticle,
 }) => {
   // const cardsRef = useRef<Array<HTMLElement | null>>([])
   const [filterString, setFilterString] = useState<string>('')
-  const [tagIds, setTagIds] = useState<Array<string>>(preselectedTagIds)
+  const [tagIds, setTagIds] = useState<Array<string>>([])
   const [selectedStatuses, setSelectedStatuses] = useState<Array<string>>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showCount, setShowCount] = useState<number>(ITEMS_PER_SHOW)
@@ -173,10 +173,10 @@ export const Articles: FC<ArticlesProps> = ({
   }, [])
 
   useEffect(() => {
-    if (preselectedTagIds.length && !_.isEqual(preselectedTagIds, tagIds)) {
-      setTagIds(preselectedTagIds)
+    if (currentArticle) {
+      setTagIds(currentArticle.tags.map((x) => x.id))
     }
-  }, [preselectedTagIds, tagIds])
+  }, [currentArticle])
 
   return (
     <Box padding={[3, 3, 6]}>

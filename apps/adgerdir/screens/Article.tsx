@@ -88,8 +88,6 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
 
-  const preselectedTagIds = article.tags.map((tag) => tag.id)
-
   return (
     <>
       <Head>
@@ -105,7 +103,7 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
           paddingX={[3, 3, 6, 0]}
           marginBottom={simpleSpacing}
         >
-          <Stack space={[3, 3, 4]}>
+          <Stack space={3}>
             <Breadcrumbs>
               <Link href={makePath()}>
                 <a>Viðspyrna</a>
@@ -140,7 +138,7 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
                 <Articles
                   tags={tagsItems}
                   items={pagesItems}
-                  preselectedTagIds={preselectedTagIds}
+                  currentArticle={article}
                 />
               </ContentBlock>
             </Box>
