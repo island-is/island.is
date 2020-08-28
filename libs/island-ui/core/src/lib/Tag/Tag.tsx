@@ -4,7 +4,14 @@ import { Typography } from '../Typography/Typography'
 
 import * as styles from './Tag.treat'
 
-export type TagVariant = 'blue' | 'darkerBlue' | 'purple' | 'white'
+export type TagVariant =
+  | 'blue'
+  | 'darkerBlue'
+  | 'purple'
+  | 'white'
+  | 'red'
+  | 'mint'
+  | 'darkerMint'
 
 export interface TagProps {
   onClick?: () => void

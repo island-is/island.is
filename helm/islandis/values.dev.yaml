@@ -97,8 +97,8 @@ judicial-system-api:
   secrets:
     DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
   env:
-    DB_USER: judicial-system
-    DB_NAME: judicial-system
+    DB_USER: judicial_system
+    DB_NAME: judicial_system
     DB_HOST: dev-vidspyrna-aurora-1.c6cxecmrvlpq.eu-west-1.rds.amazonaws.com
 
   ingress:
@@ -108,7 +108,7 @@ judicial-system-api:
       cert-manager.io/cluster-issuer: devland-is-letsencrypt-dns01
     hosts:
       - host: judicial-system.dev01.devland.is
-        paths: ['/api']
+        paths: ['/api', '/liveness', '/version', '/swagger']
     tls:
       - secretName: judicial-system-tls
         hosts:

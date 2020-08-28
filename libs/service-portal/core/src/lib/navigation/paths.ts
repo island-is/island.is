@@ -16,10 +16,13 @@ export enum ServicePortalPath {
   FjolskyldanRoot = '/fjolskyldan',
   // Fjarmal
   FjarmalRoot = '/fjarmal',
+  FjarmalOkutaeki = 'https://mitt.samgongustofa.is/',
   // Rafræn skjöl
   RafraenSkjolRoot = '/rafraen-skjol',
   // Heilsa
   HeilsaRoot = '/heilsa',
+  HeilsaHeilsuvera = 'https://minarsidur.heilsuvera.is/heimasvaedi',
+  HeilsaBolusetningar = 'https://minarsidur.heilsuvera.is/bolusetningar/bolusett-gegn/',
   // Menntun
   MenntunRoot = '/menntun',
 }

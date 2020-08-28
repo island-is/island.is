@@ -1,14 +1,16 @@
 import {
   ServicePortalModule,
   ServicePortalPath,
+  userHasAccessToScope,
+  ServicePortalRoute,
 } from '@island.is/service-portal/core'
 import { lazy } from 'react'
 
 export const healthModule: ServicePortalModule = {
   name: 'Heilsa',
   widgets: () => [],
-  routes: () => {
-    const routes = [
+  routes: ({ userInfo }) => {
+    const routes: ServicePortalRoute[] = [
       {
         name: 'Heilsa',
         path: ServicePortalPath.HeilsaRoot,
@@ -20,6 +22,17 @@ export const healthModule: ServicePortalModule = {
         render: () => lazy(() => import('./lib/prescriptionApplications')),
       },
     ]
+
+    if (userHasAccessToScope(userInfo, 'heilsuvera?')) {
+      routes.push({
+        name: 'Heilsuvera',
+        path: ServicePortalPath.HeilsaHeilsuvera,
+      })
+      routes.push({
+        name: 'Bólusetningar',
+        path: ServicePortalPath.HeilsaBolusetningar,
+      })
+    }
 
     return routes
   },
