@@ -6,10 +6,13 @@ import {
   Columns,
   Column,
   SkeletonLoader,
+  Button,
 } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
 import { GET_DOCUMENT } from '@island.is/service-portal/graphql'
 import { Query, QueryGetDocumentArgs } from '@island.is/api/schema'
+import { ActionMenuItem } from '@island.is/service-portal/core'
+import { ActionCard } from '@island.is/service-portal/core'
 
 export const ServicePortalDocuments = () => {
   const { data, loading, error } = useQuery<Query, QueryGetDocumentArgs>(
@@ -23,7 +26,7 @@ export const ServicePortalDocuments = () => {
     },
   )
   const document = data?.getDocument
-  console.log(document?.id)
+
   return (
     <>
       <Stack space={3}>
@@ -44,6 +47,34 @@ export const ServicePortalDocuments = () => {
             <Typography variant="h3">
               Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis
             </Typography>
+          )}
+          {document && (
+            <Stack space={2}>
+              {[...Array(4)].map((_key, index) => (
+                <ActionCard
+                  title={document.subject}
+                  date={new Date(document.date)}
+                  label={document.senderName}
+                  text={
+                    'Vottorð um skuldleysi til þess að gera grein fyrir þinni skuldarstöðu gagnvart ríkinu'
+                  }
+                  url="https://island.is/"
+                  external
+                  key={index}
+                  actionMenuRender={() => (
+                    <>
+                      <ActionMenuItem>Fela skjal</ActionMenuItem>
+                      <ActionMenuItem>Eyða skjali</ActionMenuItem>
+                    </>
+                  )}
+                  buttonRender={() => (
+                    <Button variant="ghost" size="small" leftIcon="file">
+                      Sakavottorð
+                    </Button>
+                  )}
+                />
+              ))}
+            </Stack>
           )}
         </Box>
       </Stack>
