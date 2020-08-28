@@ -25,7 +25,7 @@ adgerdir:
   ingress:
     enabled: true
   env:
-    API_URL: 'http://web-api'
+    API_URL: 'http://web-api.islandis.svc.cluster.local'
 
 search-indexer-service:
   namespace: search-indexer

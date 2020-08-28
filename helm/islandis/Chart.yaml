@@ -18,5 +18,9 @@ dependencies:
     repository: file://libs/api-template
     version: 0.0.1
     alias: judicial-system-api
+  - name: api-template
+    repository: file://libs/api-template
+    version: 0.0.1
+    alias: adgerdir
 type: application
 version: 0.0.9
