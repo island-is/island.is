@@ -2,20 +2,6 @@ import { styleMap, style } from 'treat'
 import mapValues from 'lodash/mapValues'
 import { themeUtils, Theme, theme } from '@island.is/island-ui/theme'
 
-export const base = style({
-  flex: '0 0 auto',
-  paddingRight: theme.grid.gutter.mobile,
-  paddingLeft: theme.grid.gutter.mobile,
-  position: 'relative',
-
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      paddingRight: theme.grid.gutter.desktop,
-      paddingLeft: theme.grid.gutter.desktop,
-    },
-  },
-})
-
 const columns = {
   0: 0,
   1: `${(1 / 12) * 100}%`,
@@ -64,3 +50,19 @@ export const offsetSm = makeOffset('sm')
 export const offsetMd = makeOffset('md')
 export const offsetLg = makeOffset('lg')
 export const offsetXl = makeOffset('xl')
+
+// Treat gotcha:
+// The style order matters.
+// `base` has to be at the bottom because it uses a media query.
+export const base = style({
+  paddingRight: theme.grid.gutter.mobile,
+  paddingLeft: theme.grid.gutter.mobile,
+  position: 'relative',
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      paddingRight: theme.grid.gutter.desktop,
+      paddingLeft: theme.grid.gutter.desktop,
+    },
+  },
+})
