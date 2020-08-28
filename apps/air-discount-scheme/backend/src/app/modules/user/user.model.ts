@@ -13,6 +13,9 @@ export class User implements TUser {
     this.lastName = user.lastName
     this.gender = user.gender
     this.nationalId = user.nationalId
+    this.address = user.address
+    this.postalcode = user.postalcode
+    this.city = user.city
     this.fund = fund
   }
 
@@ -30,6 +33,15 @@ export class User implements TUser {
 
   @ApiProperty()
   nationalId: string
+
+  @ApiProperty()
+  address: string
+
+  @ApiProperty()
+  postalcode: number
+
+  @ApiProperty()
+  city: string
 
   @ApiProperty()
   fund: Fund

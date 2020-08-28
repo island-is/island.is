@@ -18,5 +18,4 @@ export interface Fund {
 
 export interface User extends ThjodskraUser {
   fund: Fund
-  meetsADSRequirement: boolean
 }
