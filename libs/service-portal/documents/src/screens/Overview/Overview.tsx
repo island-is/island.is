@@ -33,7 +33,7 @@ export const ServicePortalDocuments = () => {
             </Typography>
           </Column>
         </Columns>
-        <SkeletonLoader height={147} repeat={4} />
+        <SkeletonLoader height={147} repeat={4} space={2} />
       </Stack>
     </>
   )
