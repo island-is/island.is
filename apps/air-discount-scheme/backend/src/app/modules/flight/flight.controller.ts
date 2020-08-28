@@ -27,6 +27,7 @@ import {
   CreateFlightParams,
   DeleteFlightParams,
   GetFlightLegFundsParams,
+  GetUserFlightsParams,
 } from './flight.validator'
 import { FlightLimitExceeded } from './flight.error'
 import { FlightDto } from './dto/flight.dto'
@@ -95,5 +96,14 @@ export class PrivateFlightController {
   @ApiExcludeEndpoint()
   get(): Promise<Flight[]> {
     return this.flightService.findAll()
+  }
+
+  @Get('users/:nationalId/flights')
+  @ApiExcludeEndpoint()
+  async getUserFlights(
+    @Param() params: GetUserFlightsParams,
+  ): Promise<Flight[]> {
+    const data = await this.flightService.findAllByNationalId(params.nationalId)
+    return data.map((d) => d.dataValues)
   }
 }

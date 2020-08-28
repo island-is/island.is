@@ -20,3 +20,10 @@ export class GetFlightLegFundsParams {
   @ApiProperty()
   readonly nationalId: string
 }
+
+export class GetUserFlightsParams {
+  @IsString()
+  @Length(10, 10)
+  @ApiProperty()
+  readonly nationalId: string
+}
