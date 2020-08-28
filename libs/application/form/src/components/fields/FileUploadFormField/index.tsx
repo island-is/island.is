@@ -200,7 +200,7 @@ const FileUploadFormField: FC<Props> = ({
       <Controller
         name={`${id}`}
         defaultValue={initialUploadFiles}
-        render={({ onChange }) => {
+        render={() => {
           return (
             <Box paddingTop={2}>
               <InputFileUpload
