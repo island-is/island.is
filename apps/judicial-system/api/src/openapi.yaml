@@ -99,7 +99,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Case'
       tags:
-        - case
+        - cases
   '/api/case/{id}':
     get:
       operationId: CaseController_findOne
@@ -117,7 +117,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Case'
       tags:
-        - case
+        - cases
     put:
       operationId: CaseController_update
       parameters:
@@ -140,7 +140,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Case'
       tags:
-        - case
+        - cases
   /api/case:
     post:
       operationId: CaseController_create
@@ -159,4 +159,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/Case'
       tags:
-        - case
+        - cases
+  /auth/login:
+    get:
+      operationId: AuthController_login
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - auth
+  /auth/logout:
+    get:
+      operationId: AuthController_logout
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - auth
