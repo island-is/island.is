@@ -18,7 +18,7 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   return (
     <>
       <Box marginBottom={7}>
-        <Typography variant="h2" as="h2">
+        <Typography variant="h1" as="h1">
           Mínar upplýsingar
         </Typography>
       </Box>
