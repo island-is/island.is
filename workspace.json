@@ -1006,7 +1006,7 @@
             "buildTarget": "services-search-indexer:build"
           }
         },
-        "mock": {
+        "dev-services": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
@@ -1014,7 +1014,7 @@
                 "command": "docker-compose -f docker-compose.yml up -d"
               }
             ],
-            "cwd": "apps/services/search-indexer/mock"
+            "cwd": "apps/services/search-indexer/dev-services"
           }
         },
         "lint": {
