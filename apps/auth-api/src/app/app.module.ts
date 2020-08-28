@@ -5,9 +5,11 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 import { UserProfilesModule } from './modules/user-profiles/user-profiles.module'
 import { ClientsModule } from './modules/clients/clients.module'
 import { ResourcesModule } from './modules/resources/resources.module'
+import { AuthModule } from './modules/auth/auth.module'
 
 @Module({
   imports: [
+    AuthModule,
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
