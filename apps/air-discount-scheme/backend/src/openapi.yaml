@@ -1,0 +1,286 @@
+openapi: 3.0.0
+info:
+  title: Air Discount Scheme
+  description: >-
+    This is documentation is provided for airline booking site for integration
+    purposes.
+  version: '1.0'
+  contact: {}
+tags: []
+servers: []
+components:
+  securitySchemes:
+    bearer:
+      scheme: bearer
+      bearerFormat: JWT
+      type: http
+  schemas:
+    Liveness:
+      type: object
+      properties:
+        ok:
+          type: boolean
+      required:
+        - ok
+    Version:
+      type: object
+      properties:
+        version:
+          type: string
+      required:
+        - version
+    Discount:
+      type: object
+      properties:
+        discountCode:
+          type: string
+        nationalId:
+          type: string
+        expires:
+          format: date-time
+          type: string
+      required:
+        - discountCode
+        - nationalId
+        - expires
+    FlightLegDto:
+      type: object
+      properties:
+        origin:
+          type: string
+        destination:
+          type: string
+        originalPrice:
+          type: number
+        discountPrice:
+          type: number
+        date:
+          format: date-time
+          type: string
+      required:
+        - origin
+        - destination
+        - originalPrice
+        - discountPrice
+        - date
+    FlightDto:
+      type: object
+      properties:
+        bookingDate:
+          format: date-time
+          type: string
+        flightLegs:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlightLegDto'
+      required:
+        - bookingDate
+        - flightLegs
+    FlightLeg:
+      type: object
+      properties:
+        id:
+          type: string
+        origin:
+          type: string
+        destination:
+          type: string
+        originalPrice:
+          type: number
+        discountPrice:
+          type: number
+        date:
+          format: date-time
+          type: string
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+      required:
+        - id
+        - origin
+        - destination
+        - originalPrice
+        - discountPrice
+        - date
+        - created
+        - modified
+    Flight:
+      type: object
+      properties:
+        id:
+          type: string
+        nationalId:
+          type: string
+        invalid:
+          type: boolean
+        bookingDate:
+          format: date-time
+          type: string
+        flightLegs:
+          type: array
+          items:
+            $ref: '#/components/schemas/FlightLeg'
+        created:
+          format: date-time
+          type: string
+        modified:
+          format: date-time
+          type: string
+      required:
+        - id
+        - nationalId
+        - invalid
+        - bookingDate
+        - flightLegs
+        - created
+        - modified
+    User:
+      type: object
+      properties:
+        firstName:
+          type: string
+        middleName:
+          type: string
+        lastName:
+          type: string
+        gender:
+          type: string
+        nationalId:
+          type: string
+        flightLegsLeft:
+          type: number
+      required:
+        - firstName
+        - middleName
+        - lastName
+        - gender
+        - nationalId
+        - flightLegsLeft
+paths:
+  /liveness:
+    get:
+      operationId: InfraController_liveness
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Liveness'
+      tags:
+        - internal
+  /version:
+    get:
+      operationId: InfraController_version
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
+      tags:
+        - internal
+  '/api/public/users/{nationalId}/discounts':
+    post:
+      operationId: PublicDiscountController_createDiscountCode
+      parameters:
+        - name: nationalId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Discount'
+      tags:
+        - Discounts
+      security:
+        - bearer: []
+  '/api/private/users/{nationalId}/discounts':
+    get:
+      operationId: PrivateDiscountController_getDiscountByNationalId
+      parameters:
+        - name: nationalId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Discount'
+  '/api/public/discounts/{discountCode}/flights':
+    post:
+      operationId: PublicFlightController_create
+      parameters:
+        - name: discountCode
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FlightDto'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Flight'
+      tags:
+        - Flights
+      security:
+        - bearer: []
+  '/api/public/flights/{flightId}':
+    delete:
+      operationId: PublicFlightController_delete
+      parameters:
+        - name: flightId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+        - Flights
+      security:
+        - bearer: []
+  '/api/public/discounts/{discountCode}/user':
+    get:
+      operationId: PublicUserController_get
+      parameters:
+        - name: discountCode
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      tags:
+        - Users
+      security:
+        - bearer: []

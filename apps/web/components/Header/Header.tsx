@@ -10,8 +10,8 @@ import {
   Button,
   Hidden,
   ResponsiveSpace,
+  Icon,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/web/i18n/I18n'
 import { useI18n } from '@island.is/web/i18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { SearchInput } from '../'
@@ -62,9 +62,9 @@ const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const { activeLocale, t } = useI18n()
   const Router = useRouter()
-  const { makePath } = useRouteNames(activeLocale as Locale)
+  const { makePath } = useRouteNames(activeLocale)
 
-  const locale = activeLocale as Locale
+  const locale = activeLocale
   const english = activeLocale === 'en'
 
   return (
@@ -92,7 +92,30 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                 justifyContent="flexEnd"
                 width="full"
               >
-                <LanguageToggler hideWhenMobile />
+                {showSearchInHeader && (
+                  <>
+                    <Hidden below="lg">
+                      <SearchInput
+                        size="medium"
+                        activeLocale={locale}
+                        placeholder="Leitaðu á Ísland.is"
+                        autocomplete={false}
+                      />
+                    </Hidden>
+                    <Hidden above="md">
+                      <Button
+                        variant="menu"
+                        icon="search"
+                        onClick={() => {
+                          Router.push({
+                            pathname: makePath('search'),
+                            query: { focus: true },
+                          })
+                        }}
+                      />
+                    </Hidden>
+                  </>
+                )}
                 <Box marginLeft={marginLeft}>
                   <Link href="https://minarsidur.island.is/" passHref>
                     <Button variant="menu" leftIcon="user">
@@ -100,33 +123,14 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                     </Button>
                   </Link>
                 </Box>
-                {showSearchInHeader && (
-                  <>
-                    <Hidden below="lg">
-                      <Box marginLeft={marginLeft}>
-                        <SearchInput
-                          size="medium"
-                          activeLocale={locale}
-                          autocomplete={false}
-                        />
-                      </Box>
-                    </Hidden>
-                    <Hidden above="md">
-                      <Box marginLeft={marginLeft}>
-                        <Button
-                          variant="menu"
-                          icon="search"
-                          onClick={() => {
-                            Router.push({
-                              pathname: makePath('search'),
-                              query: { focus: true },
-                            })
-                          }}
-                        />
-                      </Box>
-                    </Hidden>
-                  </>
-                )}
+                <Box marginLeft={marginLeft}>
+                  <LanguageToggler hideWhenMobile />
+                </Box>
+                <Box marginLeft={marginLeft}>
+                  <Button variant="menu">
+                    <Icon type="logo" />
+                  </Button>
+                </Box>
               </Box>
             </Column>
           </Columns>

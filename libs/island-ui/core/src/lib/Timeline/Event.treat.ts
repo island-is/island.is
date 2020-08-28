@@ -109,7 +109,7 @@ export const eventModalVisible = style({
 
 export const eventModalContent = style({
   textAlign: 'left',
-  padding: 30,
+  padding: '10px 48px 48px',
 })
 
 export const eventModalClose = style({

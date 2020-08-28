@@ -4,17 +4,24 @@ set -euo pipefail
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 source $DIR/_common.sh
-
+export HEAD=${HEAD:-HEAD}
+export BASE=${BASE:-master}
 # This is a helper script to find NX affected projects for a specific target
 
 APP=nx-runner
-AFFECTED_ALL=${AFFECTED_ALL:-} # Could be used for forcing all projects to be affected
-if [[ ! -z "$BRANCH" && ! -z "$AFFECTED_ALL" && "$AFFECTED_ALL" == "$BRANCH" ]] 
+
+AFFECTED_ALL=${AFFECTED_ALL:-} # Could be used for forcing all projects to be affected (set or create `secret` in GitHub with the name of this variable set to the name of the branch that should be affected, prefixed with the magic string `7913-`)
+if [[ ! -z "$BRANCH" && ! -z "$AFFECTED_ALL" && "$AFFECTED_ALL" == "7913-$BRANCH" ]] 
 then
   AFFECTED_FLAGS=" --all "
 else
   AFFECTED_FLAGS=" --head=$HEAD --base=$BASE "
 fi
+
+# Doing this in the name of speeding up the 'prepare' phase of the CI process until we find a faster process to load the docker cache into a docker image
+exec npx \
+  nx print-affected --target=$1 --select=tasks.target.project $AFFECTED_FLAGS
+
 # Build NX runner image if does not exist
 docker image inspect ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} -f ' ' || \
   docker buildx build \

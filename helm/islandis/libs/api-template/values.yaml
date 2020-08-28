@@ -66,4 +66,11 @@ tolerations: []
 affinity: {}
 
 healthCheck:
-  livenessPath: /
+  liveness:
+    path: /
+    timeoutSeconds: 3
+    initialDelaySeconds: 3
+  readiness:
+    path: /
+    timeoutSeconds: 3
+    initialDelaySeconds: 3
