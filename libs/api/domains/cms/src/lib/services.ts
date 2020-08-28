@@ -23,7 +23,7 @@ import { MailingListSignupSlice } from './models/slices/mailingListSignupSlice.m
 import { HeadingSlice } from './models/slices/headingSlice.model'
 import { LinkCard } from './models/linkCard.model'
 import { LinkCardSlice } from './models/slices/linkCardSlice.model'
-import { AdgerdirTag } from './models/AdgerdirTag.model'
+import { AdgerdirTag } from './models/adgerdirTag.model'
 import { LatestNewsSlice } from './models/slices/latestNewsSlice.model'
 import { LogoListSlice } from './models/slices/logoListSlice.model'
 import { IconBullet } from './models/bullets/iconBullet.model'
