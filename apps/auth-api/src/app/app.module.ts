@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize'
 import { UserIdentitiesModule } from './modules/user-identities/user-identities.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
@@ -7,6 +8,7 @@ import { ClientsModule } from './modules/clients/clients.module'
 import { ResourcesModule } from './modules/resources/resources.module'
 import { GrantsModule } from './modules/grants/grants.module'
 import { AuthModule } from './modules/auth/auth.module'
+
 
 @Module({
   imports: [
@@ -18,7 +20,12 @@ import { AuthModule } from './modules/auth/auth.module'
     UserProfilesModule,
     ClientsModule,
     ResourcesModule,
-    GrantsModule
+    GrantsModule,
+    ConfigModule.forRoot(
+      {
+        envFilePath: 'test.env'
+      }
+    )
   ],
 })
 export class AppModule {}

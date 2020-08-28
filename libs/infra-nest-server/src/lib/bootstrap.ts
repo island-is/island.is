@@ -92,7 +92,7 @@ function setupOpenApi(app: INestApplication, options: RunServerOptions) {
     .build()
   const document = SwaggerModule.createDocument(app, swaggerOptions)
 
-  SwaggerModule.setup(options.swaggerPath ?? 'swagger', app, document)
+  SwaggerModule.setup('', app, document)
   return document
 }
 
