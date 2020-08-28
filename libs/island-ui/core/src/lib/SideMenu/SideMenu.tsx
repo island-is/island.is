@@ -1,14 +1,29 @@
-import React, { FC, useState, ReactNode } from 'react'
+import React, { FC, useState } from 'react'
 import cn from 'classnames'
 import { Typography } from '../Typography/Typography'
+import { LinkBox } from './components/LinkBox'
 import * as styles from './SideMenu.treat'
 
-interface Props {
-  tabs: any[]
+interface TabLink {
+  title: string
+  url: string
 }
 
-export const SideMenu: FC<Props> = ({ tabs }) => {
-  const [activeTab, setActiveTab] = useState(0)
+interface ExternalLink {
+  title: string
+  url: string
+  icon?: any
+}
+
+interface Tab {
+  title: string
+  links: TabLink[]
+  externalLinksHeading?: string
+  externalLinks?: ExternalLink[]
+}
+
+export const SideMenu: FC<{ tabs: Tab[] }> = ({ tabs }) => {
+  const [activeTab, setActiveTab] = useState(1)
 
   return (
     <div className={styles.root}>
@@ -29,26 +44,51 @@ export const SideMenu: FC<Props> = ({ tabs }) => {
           </button>
         ))}
       </div>
-      {tabs.map((tab, index) => (
-        <div
-          aria-labelledby={`tab${index}`}
-          role="tabpanel"
-          className={styles.content}
-          hidden={activeTab !== index}
-        >
-          <div className={styles.linksContent}>
-            {tab.links.map((link, index) => (
-              <Typography
-                variant="sideMenu"
-                color="blue400"
-                paddingBottom={index + 1 === tab.links.length ? 0 : 2}
-              >
-                <a href={link.url}>{link.title}</a>
-              </Typography>
-            ))}
+      {tabs.map((tab, index) => {
+        const hasExternalLinks = tab.externalLinks && tab.externalLinks.length
+        return (
+          <div
+            aria-labelledby={`tab${index}`}
+            role="tabpanel"
+            className={styles.content}
+            hidden={activeTab !== index}
+          >
+            <div className={styles.linksContent}>
+              {tab.links.map((link, index) => (
+                <Typography
+                  variant="sideMenu"
+                  color="blue400"
+                  paddingBottom={index + 1 === tab.links.length ? 0 : 2}
+                >
+                  <a href={link.url}>{link.title}</a>
+                </Typography>
+              ))}
+            </div>
+            {hasExternalLinks && (
+              <div className={styles.externalLinks}>
+                <Typography
+                  variant="eyebrow"
+                  color="blue400"
+                  paddingTop={3}
+                  paddingBottom={2}
+                >
+                  {tab.externalLinksHeading || 'Aðrir opinberir vefir'}
+                </Typography>
+                <ul className={styles.externalLinksContent}>
+                  {tab.externalLinks.map((externalLink) => (
+                    <LinkBox
+                      key={externalLink.url}
+                      title={externalLink.title}
+                      url={externalLink.url}
+                      icon={externalLink.icon}
+                    />
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }

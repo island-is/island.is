@@ -28,3 +28,14 @@ export const linksContent = style({
   paddingBottom: theme.spacing[4],
   paddingLeft: theme.spacing[3],
 })
+
+export const externalLinks = style({
+  display: 'flex',  
+  alignItems: 'center',
+  flexDirection: 'column',
+})
+
+export const externalLinksContent = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+})
