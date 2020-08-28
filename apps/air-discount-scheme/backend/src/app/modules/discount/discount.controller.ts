@@ -58,12 +58,6 @@ export class PrivateDiscountController {
   async createDiscountCode(
     @Param() params: CreateDiscountCodeParams,
   ): Promise<Discount> {
-    const {
-      unused: flightLegsLeft,
-    } = await this.flightService.countFlightLegsByNationalId(params.nationalId)
-    if (flightLegsLeft <= 0) {
-      throw new DiscountLimitExceeded()
-    }
     return this.discountService.createDiscountCode(params.nationalId)
   }
 }
