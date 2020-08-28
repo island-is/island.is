@@ -9,16 +9,21 @@ import {
 } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
 import { GET_DOCUMENT } from '@island.is/service-portal/graphql'
+import { Query, QueryGetDocumentArgs } from '@island.is/api/schema'
 
 export const ServicePortalDocuments = () => {
-  const { data } = useQuery(GET_DOCUMENT, {
-    variables: {
-      input: {
-        id: '12456',
+  const { data, loading, error } = useQuery<Query, QueryGetDocumentArgs>(
+    GET_DOCUMENT,
+    {
+      variables: {
+        input: {
+          id: '12456',
+        },
       },
     },
-  })
-
+  )
+  const document = data?.getDocument
+  console.log(document?.id)
   return (
     <>
       <Stack space={3}>
@@ -33,7 +38,14 @@ export const ServicePortalDocuments = () => {
             </Typography>
           </Column>
         </Columns>
-        <SkeletonLoader height={147} repeat={4} space={2} />
+        <Box marginTop={[1, 1, 2, 2, 6]}>
+          {loading && <SkeletonLoader height={147} repeat={4} space={2} />}
+          {error && (
+            <Typography variant="h3">
+              Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis
+            </Typography>
+          )}
+        </Box>
       </Stack>
     </>
   )
