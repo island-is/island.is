@@ -108,14 +108,14 @@ export class ResourcesService {
                 type: QueryTypes.RAW,
                 model: ApiResourceUserClaim
             });
-            apiResource.get().userClaims = claims.map(claim => claim.claim_name)
+            (<ApiResource>apiResource.get()).userClaims = claims.map(claim => claim.claim_name)
             const [scopes, meta2] = await this.sequelize.query('SELECT "scope_name" FROM "api_resource_scope" WHERE api_resource_id=$apiResourceId',
             {
                 bind: { apiResourceId: apiResource.id},
                 type: QueryTypes.RAW,
                 model: ApiResourceUserClaim
             });
-            apiResource.get().scopes = scopes.map(scope => scope.scope_name)
+            (<ApiResource>apiResource.get()).scopes = scopes.map(scope => scope.scope_name)
             return apiResource
         }))
     })
@@ -150,14 +150,14 @@ export class ResourcesService {
                 type: QueryTypes.RAW,
                 model: ApiResourceUserClaim
             });
-            apiResource.get().userClaims = claims.map(claim => claim.claim_name)
+            (<ApiResource>apiResource.get()).userClaims = claims.map(claim => claim.claim_name)
             const [scopes, meta2] = await this.sequelize.query('SELECT "scope_name" FROM "api_resource_scope" WHERE api_resource_id=$apiResourceId',
             {
                 bind: { apiResourceId: apiResource.id},
                 type: QueryTypes.RAW,
                 model: ApiResourceUserClaim
             });
-            apiResource.get().scopes = scopes.map(scope => scope.scope_name)
+            (<ApiResource>apiResource.get()).scopes = scopes.map(scope => scope.scope_name)
             return apiResource
         }))
     })
