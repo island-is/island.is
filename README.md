@@ -8,9 +8,9 @@ These solutions are [FOSS] and open to contributions, but most development
 is performed by teams that win tenders to develop new functionality for
 Digital Iceland.
 
-[Digital Iceland]: http://www.reddit.com
-[Ministry of Finance and Economic Affairs]: https://www.government.is/ministries/ministry-of-finance-and-economic-affairs/
-[FOSS]: https://en.wikipedia.org/wiki/Free_and_open-source_software
+[digital iceland]: http://www.reddit.com
+[ministry of finance and economic affairs]: https://www.government.is/ministries/ministry-of-finance-and-economic-affairs/
+[foss]: https://en.wikipedia.org/wiki/Free_and_open-source_software
 
 ## How to contribute
 
@@ -26,89 +26,89 @@ You can also read up on our development stack and preferred tools:
 
 #### General
 
-| Tool | Description |
-|---|---|
-| [NodeJS] | scripts and server-side framework |
-| [TypeScript] | programming language |
-| [NX] | monorepo tools and code scaffolding |
+| Tool         | Description                         |
+| ------------ | ----------------------------------- |
+| [NodeJS]     | scripts and server-side framework   |
+| [TypeScript] | programming language                |
+| [NX]         | monorepo tools and code scaffolding |
 
 #### Frontend
 
-| Tool | Description |
-|---|---|
-| [React] | UI framework |
-| [NextJS] | front-end framework with routing and server side rendering |
-| [Treat] | css-in-js |
-| [Storybook] | develop and document React components in isolation |
-| [Apollo Client] | graphql client |
-| [GraphQL Code Generator] | generate GraphQL clients and types |
-| [Cypress] | automated browser testing tool |
-| [MirageJS] | API mocking for webapps |
+| Tool                     | Description                                                |
+| ------------------------ | ---------------------------------------------------------- |
+| [React]                  | UI framework                                               |
+| [NextJS]                 | front-end framework with routing and server side rendering |
+| [Treat]                  | css-in-js                                                  |
+| [Storybook]              | develop and document React components in isolation         |
+| [Apollo Client]          | graphql client                                             |
+| [GraphQL Code Generator] | generate GraphQL clients and types                         |
+| [Cypress]                | automated browser testing tool                             |
+| [MirageJS]               | API mocking for webapps                                    |
 
 #### Backend
 
-| Tool | Description |
-|---|---|
-| [NestJS] | server-side framework for NodeJS |
-| [Sequelize] | database object relational mapper |
+| Tool                | Description                                 |
+| ------------------- | ------------------------------------------- |
+| [NestJS]            | server-side framework for NodeJS            |
+| [Sequelize]         | database object relational mapper           |
 | [OpenAPI Generator] | generate clients and types for OpenAPI APIs |
 
 #### Code Quality
 
-| Tool | Description |
-|---|---|
-| [Jest] | automated testing tool |
-| [ESLint] | code checker |
-| [Prettier] | code formatter |
+| Tool       | Description            |
+| ---------- | ---------------------- |
+| [Jest]     | automated testing tool |
+| [ESLint]   | code checker           |
+| [Prettier] | code formatter         |
 
 #### Protocols and specifications
 
-| Tool | Description |
-|---|---|
-| [GraphQL] | api protocol for our frontend projects |
-| [OpenAPI] | specification to describe rest apis |
-| [Open ID Connect] | authentication protocols |
+| Tool              | Description                            |
+| ----------------- | -------------------------------------- |
+| [GraphQL]         | api protocol for our frontend projects |
+| [OpenAPI]         | specification to describe rest apis    |
+| [Open ID Connect] | authentication protocols               |
 
 #### Repositories
 
-| Tool | Description |
-|---|---|
-| [PostgreSQL] | SQL database |
+| Tool         | Description                        |
+| ------------ | ---------------------------------- |
+| [PostgreSQL] | SQL database                       |
 | [Contentful] | headless content management system |
 
 #### Infrastructure
 
-| Tool | Description |
-|---|---|
-| [Docker] | virtual machine containers for continuous integration and deployment |
-| [Kubernetes] | host docker containers in production |
-| [Helm] | kubernetes deployment configuration |
+| Tool         | Description                                                          |
+| ------------ | -------------------------------------------------------------------- |
+| [Docker]     | virtual machine containers for continuous integration and deployment |
+| [Kubernetes] | host docker containers in production                                 |
+| [Helm]       | kubernetes deployment configuration                                  |
 
-[NodeJS]: https://nodejs.org/en/
-[TypeScript]: https://www.typescriptlang.org/
-[NX]: https://nx.dev/react
-[NestJS]: https://nestjs.com/
-[Treat]: https://seek-oss.github.io/treat/
-[React]: https://reactjs.org/
-[NextJS]: https://nextjs.org/
-[GraphQL]: https://graphql.org/
-[Apollo Client]: https://www.apollographql.com/docs/react/
-[GraphQL Code Generator]: https://graphql-code-generator.com/
-[OpenAPI]: https://www.openapis.org/
-[OpenAPI Generator]: https://openapi-generator.tech/
-[Storybook]: https://storybook.js.org/
-[Jest]: https://jestjs.io/
-[Cypress]: https://www.cypress.io/
-[ESLint]: https://eslint.org/
-[Prettier]: https://prettier.io/
-[Sequelize]: https://sequelize.org/
-[Open ID Connect]: https://openid.net/connect/
-[PostgreSQL]: https://www.postgresql.org/
-[MirageJS]: https://miragejs.com/
-[Contentful]: https://www.contentful.com/
-[Docker]: https://www.docker.com/
-[Kubernetes]: https://kubernetes.io/
-[Helm]: https://helm.sh/
+[nodejs]: https://nodejs.org/en/
+[typescript]: https://www.typescriptlang.org/
+[nx]: https://nx.dev/react
+[nestjs]: https://nestjs.com/
+[treat]: https://seek-oss.github.io/treat/
+[react]: https://reactjs.org/
+[nextjs]: https://nextjs.org/
+[graphql]: https://graphql.org/
+[apollo client]: https://www.apollographql.com/docs/react/
+[graphql code generator]: https://graphql-code-generator.com/
+[openapi]: https://www.openapis.org/
+[openapi generator]: https://openapi-generator.tech/
+[storybook]: https://storybook.js.org/
+[jest]: https://jestjs.io/
+[cypress]: https://www.cypress.io/
+[eslint]: https://eslint.org/
+[prettier]: https://prettier.io/
+[sequelize]: https://sequelize.org/
+[open id connect]: https://openid.net/connect/
+[postgresql]: https://www.postgresql.org/
+[miragejs]: https://miragejs.com/
+[contentful]: https://www.contentful.com/
+[docker]: https://www.docker.com/
+[kubernetes]: https://kubernetes.io/
+[helm]: https://helm.sh/
 
 ## Repository structure
 
@@ -118,18 +118,18 @@ Our system architecture generally includes frontend projects, a graphql API gate
 
 Featured projects:
 
-* [Island.is website](./apps/web)
-* [Application system](./apps/application-system)
-* [Service Portal](./apps/service-portal)
-* [Shared GraphQL API](./apps/api)
-* [Island UI design system](./libs/island-ui)
+- [Island.is website](./apps/web)
+- [Application system](./apps/application-system)
+- [Service Portal](./apps/service-portal)
+- [Shared GraphQL API](./apps/api)
+- [Island UI design system](./libs/island-ui)
 
 Other projects:
 
-* [Digital Judicial System](./apps/judicial-system)
-* [Travel Gift](./apps/gjafakort)
-* [Air Discount Scheme](./apps/air-discount-scheme)
-* [COVID Activities](./apps/adgerdir)
+- [Digital Judicial System](./apps/judicial-system)
+- [Travel Gift](./apps/gjafakort)
+- [Air Discount Scheme](./apps/air-discount-scheme)
+- [COVID Activities](./apps/adgerdir)
 
 ## Working in the monorepo
 
@@ -222,4 +222,3 @@ Run `AWS_PROFILE=<profile> yarn nx env-secrets <project>`
 ```
 AWS_PROFILE=islandis yarn nx env-secrets gjafakort-api
 ```
-
