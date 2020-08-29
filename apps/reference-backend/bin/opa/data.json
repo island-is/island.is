@@ -1,0 +1,11 @@
+{
+    "delegations": {
+        "0907704039": {
+            "has_delegation_from": {
+                "1234567890": {
+                    "scope": "read"
+                }
+            }
+        }
+    }
+}
