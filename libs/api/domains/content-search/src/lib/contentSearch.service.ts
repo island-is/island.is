@@ -10,14 +10,14 @@ import { ContentLanguage } from './enums/contentLanguage.enum'
 
 @Injectable()
 export class ContentSearchService {
-  constructor (private repository: ElasticService) {}
+  constructor(private repository: ElasticService) {}
 
-  getIndex (lang: ContentLanguage) {
+  getIndex(lang: ContentLanguage) {
     return SearchIndexes[lang] ?? SearchIndexes.is
   }
 
   // TODO: We might be able to index the fields in camelcase for case consistency but we will allways need mapping
-  private fixCase (doc) {
+  private fixCase(doc) {
     const obj = doc._source
     obj.contentType = obj.content_type
     obj.contentBlob = obj.content_blob
@@ -30,7 +30,7 @@ export class ContentSearchService {
     return obj
   }
 
-  async find (query): Promise<SearchResult> {
+  async find(query): Promise<SearchResult> {
     const { body } = await this.repository.query(
       this.getIndex(query.language),
       query,
@@ -45,7 +45,7 @@ export class ContentSearchService {
   }
 
   // TODO: use aggregation of terms here
-  async fetchCategories (query): Promise<ContentCategory[]> {
+  async fetchCategories(query): Promise<ContentCategory[]> {
     // todo do properly not this awesome hack
     const queryTmp = new RequestBodySearch().size(1000)
     const { body } = await this.repository.deprecatedFindByQuery(
@@ -69,7 +69,7 @@ export class ContentSearchService {
     return Object.values(categories)
   }
 
-  async fetchSingle (input): Promise<ContentItem> {
+  async fetchSingle(input): Promise<ContentItem> {
     const { body } = await this.repository.query(
       this.getIndex(input.language),
       input,
@@ -82,7 +82,7 @@ export class ContentSearchService {
     return this.fixCase(hit)
   }
 
-  async fetchItems (input): Promise<ContentItem[]> {
+  async fetchItems(input): Promise<ContentItem[]> {
     const { body } = await this.repository.fetchItems(
       this.getIndex(input.language),
       input,
@@ -91,7 +91,7 @@ export class ContentSearchService {
     return body?.hits?.hits.map(this.fixCase)
   }
 
-  async fetchAutocompleteTerm (
+  async fetchAutocompleteTerm(
     input: WebSearchAutocompleteInput,
   ): Promise<WebSearchAutocomplete> {
     const {
@@ -100,7 +100,7 @@ export class ContentSearchService {
       this.getIndex(input.language),
       input,
     )
-    
+
     const firstWordSuggestions = searchSuggester[0].options
 
     return {

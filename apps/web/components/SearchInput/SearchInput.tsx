@@ -12,7 +12,10 @@ import cn from 'classnames'
 import { uniq, sortBy } from 'lodash'
 import { useRouter } from 'next/router'
 import { useApolloClient, useQuery } from 'react-apollo'
-import { GET_SEARCH_RESULTS_QUERY, GET_SEARCH_AUTOCOMPLETE_TERM_QUERY } from '@island.is/web/screens/queries'
+import {
+  GET_SEARCH_RESULTS_QUERY,
+  GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
+} from '@island.is/web/screens/queries'
 import {
   ContentLanguage,
   QuerySearchResultsArgs,
@@ -53,7 +56,6 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
   const [state, setState] = useState<SearchState>(emptyState)
   const client = useApolloClient()
   const timer = useRef(null)
-  
 
   useEffect(() => {
     if (term == null) {
@@ -95,7 +97,9 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
       })
 
       const {
-        data: { webSearchAutocomplete: { completions: suggestions} },
+        data: {
+          webSearchAutocomplete: { completions: suggestions },
+        },
       } = await client.query<Query, QueryWebSearchAutocompleteArgs>({
         query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
         variables: {

@@ -25,7 +25,7 @@
         }
       },
       "analyzer": {
-        "title_icelandic": {
+        "base_icelandic": {
           "type": "custom",
           "tokenizer": "standard",
           "filter": [
@@ -36,16 +36,18 @@
             "icelandic_stemmer"
           ]
         },
-        "content_icelandic": {
+        "term_icelandic": {
           "type": "custom",
-          "tokenizer": "standard",
-          "filter": [
-            "lowercase",
-            "icelandic_synonym",
-            "icelandic_stop",
-            "icelandic_keyword",
-            "icelandic_stemmer"
-          ]
+          "tokenizer": "autocomplete_term_tokenizer",
+          "filter": ["lowercase", "icelandic_synonym"]
+        }
+      },
+      "tokenizer": {
+        "autocomplete_term_tokenizer": {
+          "type": "edge_ngram",
+          "min_gram": 2,
+          "max_gram": 20,
+          "token_chars": ["letter", "digit"]
         }
       }
     }
@@ -63,19 +65,20 @@
           },
           "stemmed": {
             "type": "text",
-            "analyzer": "title_icelandic"
+            "analyzer": "base_icelandic"
           },
           "completion": {
             "type": "completion"
           }
-        }
+        },
+        "copy_to": "term_pool"
       },
       "content": {
         "type": "text",
         "fields": {
           "stemmed": {
             "type": "text",
-            "analyzer": "content_icelandic"
+            "analyzer": "base_icelandic"
           }
         }
       },
@@ -93,30 +96,33 @@
         "fields": {
           "stemmed": {
             "type": "text",
-            "analyzer": "title_icelandic"
+            "analyzer": "base_icelandic"
           }
         },
         "completion": {
           "type": "completion"
-        }
+        },
+        "copy_to": "term_pool"
       },
       "category_slug": {
         "type": "keyword"
       },
       "category_description": {
-        "type": "text"
+        "type": "text",
+        "copy_to": "term_pool"
       },
       "group": {
         "type": "keyword",
         "fields": {
           "stemmed": {
             "type": "text",
-            "analyzer": "title_icelandic"
+            "analyzer": "base_icelandic"
           },
           "completion": {
             "type": "completion"
           }
-        }
+        },
+        "copy_to": "term_pool"
       },
       "group_slug": {
         "type": "keyword"
@@ -132,7 +138,7 @@
         "fields": {
           "stemmed": {
             "type": "text",
-            "analyzer": "title_icelandic"
+            "analyzer": "base_icelandic"
           }
         }
       },
@@ -157,7 +163,7 @@
         "fields": {
           "stemmed": {
             "type": "text",
-            "analyzer": "title_icelandic"
+            "analyzer": "base_icelandic"
           }
         }
       },
@@ -181,7 +187,7 @@
         "fields": {
           "stemmed": {
             "type": "text",
-            "analyzer": "content_icelandic"
+            "analyzer": "base_icelandic"
           }
         }
       },
@@ -191,9 +197,13 @@
         "fields": {
           "stemmed": {
             "type": "text",
-            "analyzer": "title_icelandic"
+            "analyzer": "base_icelandic"
           }
         }
+      },
+      "term_pool": {
+        "type": "text",
+        "analyzer": "term_icelandic"
       }
     }
   }
