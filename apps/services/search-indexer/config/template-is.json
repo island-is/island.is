@@ -1,7 +1,9 @@
 {
   "order": 0,
   "version": 2,
-  "index_patterns": ["island-is-v*"],
+  "index_patterns": [
+    "island-is-v*"
+  ],
   "settings": {
     "analysis": {
       "filter": {
@@ -38,16 +40,11 @@
         },
         "term_icelandic": {
           "type": "custom",
-          "tokenizer": "autocomplete_term_tokenizer",
-          "filter": ["lowercase", "icelandic_synonym"]
-        }
-      },
-      "tokenizer": {
-        "autocomplete_term_tokenizer": {
-          "type": "edge_ngram",
-          "min_gram": 2,
-          "max_gram": 20,
-          "token_chars": ["letter", "digit"]
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "icelandic_synonym"
+          ]
         }
       }
     }
@@ -66,12 +63,8 @@
           "stemmed": {
             "type": "text",
             "analyzer": "base_icelandic"
-          },
-          "completion": {
-            "type": "completion"
           }
-        },
-        "copy_to": "term_pool"
+        }
       },
       "content": {
         "type": "text",
@@ -101,15 +94,13 @@
         },
         "completion": {
           "type": "completion"
-        },
-        "copy_to": "term_pool"
+        }
       },
       "category_slug": {
         "type": "keyword"
       },
       "category_description": {
-        "type": "text",
-        "copy_to": "term_pool"
+        "type": "text"
       },
       "group": {
         "type": "keyword",
@@ -117,12 +108,8 @@
           "stemmed": {
             "type": "text",
             "analyzer": "base_icelandic"
-          },
-          "completion": {
-            "type": "completion"
           }
-        },
-        "copy_to": "term_pool"
+        }
       },
       "group_slug": {
         "type": "keyword"
@@ -202,7 +189,7 @@
         }
       },
       "term_pool": {
-        "type": "text",
+        "type": "completion",
         "analyzer": "term_icelandic"
       }
     }

@@ -156,10 +156,6 @@ export class ElasticService {
     return this.deprecatedFindByQuery(index, requestBody)
   }
 
-  // TODO: Create autocomplete request body interface
-  // TODO: Pass types to findByQuery
-  // TODO: Define return type for fetchAutocomplete
-  // TODO: Sort by frequency
   async fetchAutocompleteTerm(
     index: SearchIndexes,
     input: Omit<WebSearchAutocompleteInput, 'language'>,
@@ -170,7 +166,7 @@ export class ElasticService {
         searchSuggester: {
           prefix: singleTerm,
           completion: {
-            field: 'title.completion',
+            field: 'term_pool',
             size,
             skip_duplicates: true,
             fuzzy: {
