@@ -1,9 +1,7 @@
 {
   "order": 0,
   "version": 2,
-  "index_patterns": [
-    "island-is-v*"
-  ],
+  "index_patterns": ["island-is-v*"],
   "settings": {
     "analysis": {
       "filter": {
@@ -41,10 +39,7 @@
         "term_icelandic": {
           "type": "custom",
           "tokenizer": "standard",
-          "filter": [
-            "lowercase",
-            "icelandic_synonym"
-          ]
+          "filter": ["lowercase", "icelandic_synonym"]
         }
       }
     }

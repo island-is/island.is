@@ -26,7 +26,10 @@ export class IndexingService {
       .sort(new Sort('date_updated', 'desc'))
       .size(1)
     try {
-      const result = await this.elasticService.deprecatedFindByQuery(index, query)
+      const result = await this.elasticService.deprecatedFindByQuery(
+        index,
+        query,
+      )
       return result.body?.hits?.hits[0]?._source?.nextSyncToken
     } catch (e) {
       logger.error('Could not fetch last sync token', {
@@ -184,7 +187,10 @@ export class IndexingService {
     }
 
     // provide clean terms for e.g. autocomplete words
-    document.term_pool = `${document.title} ${document.category} ${document.group}`.toLowerCase().replace(/[^a-zA-Z0-9áðéíúýþæö]+/g,' ').split(' ')
+    document.term_pool = `${document.title} ${document.category} ${document.group}`
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9áðéíúýþæö]+/g, ' ')
+      .split(' ')
 
     if (syncToken) {
       document.nextSyncToken = syncToken
