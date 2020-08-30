@@ -1,9 +1,10 @@
-import { Field, ObjectType } from '@nestjs/graphql'
-import { AdgerdirTag } from './adgerdirTag.model'
+import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { AdgerdirTag, mapAdgerdirTag } from './adgerdirTag.model'
+import { IVidspyrnaPage } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class AdgerdirPage {
-  @Field()
+  @Field(() => ID)
   id: string
 
   @Field()
@@ -27,3 +28,16 @@ export class AdgerdirPage {
   @Field()
   status: string
 }
+
+export const mapAdgerdirPage = ({
+  sys,
+  fields,
+}: IVidspyrnaPage): AdgerdirPage => ({
+  id: sys.id,
+  slug: fields.slug,
+  title: fields.title,
+  description: fields.description,
+  tags: fields.tags.map(mapAdgerdirTag),
+  status: fields.status,
+  content: JSON.stringify(fields.content),
+})

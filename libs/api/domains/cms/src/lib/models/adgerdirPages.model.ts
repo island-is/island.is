@@ -6,3 +6,5 @@ export class AdgerdirPages {
   @Field(() => [AdgerdirPage])
   items: AdgerdirPage[]
 }
+
+

@@ -199,7 +199,7 @@ const embeddedNodes = () => ({
         <Background background="dotted" paddingY={[6, 6, 10]} marginTop={5}>
           <ContentContainer marginTop={0}>
             <Statistics
-              items={node.data.target.fields.statistics.map((s) => s.fields)}
+              statistics={node.data.target.fields.statistics.map((s) => s.fields)}
             />
           </ContentContainer>
         </Background>

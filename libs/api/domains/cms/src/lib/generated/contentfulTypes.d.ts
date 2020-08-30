@@ -1145,6 +1145,9 @@ export interface IVidspyrnaFrontpageFields {
 
   /** Organization */
   organization?: IOrganization[] | undefined
+
+  /** Slices */
+  slices: IVidspyrnaFlokkur[]
 }
 
 /** A temporary content type that is used for the "Viðspyrna" information page. Once that site is no longer live this can be deleted. */

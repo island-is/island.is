@@ -3,6 +3,7 @@ import React from 'react'
 import Link from 'next/link'
 import slugify from '@sindresorhus/slugify'
 import { Content, Hyperlink, Image } from '@island.is/island-ui/contentful'
+import { RichTextV2 } from '@island.is/island-ui/contentful'
 import {
   Query,
   LandingPage,
@@ -66,42 +67,37 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
         <title>{page.title}</title>
       </Head>
       <ArticleLayout sidebar={sidebar}>
-        <Box paddingY="none" paddingX={[3, 3, 6, 0]} marginBottom={[2, 2, 3]}>
-          <ContentBlock width="small">
-            <Stack space={[3, 3, 4]}>
-              <Breadcrumbs>
-                <Link href={makePath()}>
-                  <a>Ísland.is</a>
-                </Link>
-                <Link href={'/' + page.slug}>
-                  <a>{page.title}</a>
-                </Link>
-              </Breadcrumbs>
-              <Typography variant="h1" as="h1">
-                <span data-sidebar-link={slugify(page.title)}>
-                  {page.title}
-                </span>
-              </Typography>
-              <Typography variant="intro" as="p">
-                {page.introduction}
-              </Typography>
-              {page.image && (
-                <Image type="apiImage" image={page.image} maxWidth={774} />
-              )}
-            </Stack>
-          </ContentBlock>
-        </Box>
-        <Content document={page.content} />
+        <Stack space={[3, 3, 4]}>
+          <Breadcrumbs>
+            <Link href={makePath()}>
+              <a>Ísland.is</a>
+            </Link>
+            <Link href={'/' + page.slug}>
+              <a>{page.title}</a>
+            </Link>
+          </Breadcrumbs>
+          <Typography variant="h1" as="h1">
+            <span data-sidebar-link={slugify(page.title)}>
+              {page.title}
+            </span>
+          </Typography>
+          <Typography variant="intro" as="p">
+            {page.introduction}
+          </Typography>
+          {page.image && (
+            <Image type="apiImage" image={page.image} maxWidth={774} />
+          )}
+          <RichTextV2 slices={page.content} />
+        </Stack>
       </ArticleLayout>
     </>
   )
 }
 
 LandingPageScreen.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const {
-    data: { getLandingPage: page },
-  } = await apolloClient.query<Query, QueryGetLandingPageArgs>({
+  const result = await apolloClient.query<Query, QueryGetLandingPageArgs>({
     query: GET_LANDING_PAGE_QUERY,
+    fetchPolicy: 'no-cache',
     variables: {
       input: {
         lang: locale,
@@ -110,12 +106,12 @@ LandingPageScreen.getInitialProps = async ({ apolloClient, locale, query }) => {
     },
   })
 
-  if (!page) {
+  if (!result.data.getLandingPage) {
     throw new CustomNextError(404, 'Page not found')
   }
 
   return {
-    page,
+    page: result.data.getLandingPage,
   }
 }
 

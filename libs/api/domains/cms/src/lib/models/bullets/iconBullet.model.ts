@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { Image } from '../image.model'
+import { Image, mapImage } from '../image.model'
+import {IIconBullet} from '../../generated/contentfulTypes'
 
 @ObjectType()
 export class IconBullet {
@@ -25,3 +26,13 @@ export class IconBullet {
   @Field({ nullable: true })
   linkText?: string
 }
+
+export const mapIconBullet = ({ fields, sys }: IIconBullet): IconBullet =>
+  new IconBullet({
+    id: sys.id,
+    title: fields.title,
+    body: fields.body,
+    icon: mapImage(fields.icon),
+    url: fields.url,
+    linkText: fields.linkText,
+  })

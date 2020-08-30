@@ -2,24 +2,32 @@
 import { getLocalizedEntries } from './contentful'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
-import * as mappers from './mappers'
 import * as types from './generated/contentfulTypes'
-import { Article } from './models/article.model'
-import { AboutPage } from './models/aboutPage.model'
-import { LandingPage } from './models/landingPage.model'
-import { GenericPage } from './models/genericPage.model'
-import { News } from './models/news.model'
+import { Article, mapArticle } from './models/article.model'
+import { AboutPage, mapAboutPage } from './models/aboutPage.model'
+import { LandingPage, mapLandingPage } from './models/landingPage.model'
+import { GenericPage, mapGenericPage } from './models/genericPage.model'
+import { News, mapNews } from './models/news.model'
 import { Pagination } from './models/pagination.model'
-import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
+import {
+  AdgerdirFrontpage,
+  mapAdgerdirFrontpage,
+} from './models/adgerdirFrontpage.model'
 import { AdgerdirPages } from './models/adgerdirPages.model'
-import { AdgerdirPage } from './models/adgerdirPage.model'
+import { AdgerdirPage, mapAdgerdirPage } from './models/adgerdirPage.model'
 import { GetNewsListInput } from './dto/getNewsList.input'
 import { PaginatedNews } from './models/paginatedNews.model'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
-import { Namespace } from './models/namespace.model'
-import { Menu } from './models/menu.model'
+import { Namespace, mapNamespace } from './models/namespace.model'
+import { Menu, mapMenu } from './models/menu.model'
+import { AdgerdirTags } from './models/adgerdirTags.model'
+import { mapAdgerdirTag } from './models/adgerdirTag.model'
+import {
+  FrontpageSliderList,
+  mapFrontpageSliderList,
+} from './models/frontpageSliderList.model'
 
 const makePage = (
   page: number,
@@ -50,7 +58,7 @@ export const getAdgerdirFrontpage = async (
     },
   ).catch(errorHandler('getVidspyrnaFrontpage'))
 
-  return result.items.map(mappers.mapAdgerdirFrontpage)[0] ?? null
+  return result.items.map(mapAdgerdirFrontpage)[0] ?? null
 }
 
 export const getAdgerdirPages = async (
@@ -68,11 +76,13 @@ export const getAdgerdirPages = async (
   ).catch(errorHandler('getAdgerdirPages'))
 
   return {
-    items: result.items.map(mappers.mapAdgerdirPage),
+    items: result.items.map(mapAdgerdirPage),
   }
 }
 
-export const getAdgerdirTags = async (lang = 'is-IS') => {
+export const getAdgerdirTags = async (
+  lang = 'is-IS',
+): Promise<AdgerdirTags> => {
   const params = {
     ['content_type']: 'vidspyrnaTag',
     include: 10,
@@ -85,11 +95,13 @@ export const getAdgerdirTags = async (lang = 'is-IS') => {
   ).catch(errorHandler('getAdgerdirTags'))
 
   return {
-    items: r.items.map(mappers.mapAdgerdirTag),
+    items: r.items.map(mapAdgerdirTag),
   }
 }
 
-export const getFrontpageSliderList = async (lang = 'is-IS') => {
+export const getFrontpageSliderList = async (
+  lang = 'is-IS',
+): Promise<FrontpageSliderList> => {
   const params = {
     ['content_type']: 'frontpageSliderList',
     include: 10,
@@ -101,7 +113,7 @@ export const getFrontpageSliderList = async (lang = 'is-IS') => {
     params,
   ).catch(errorHandler('getFrontpageSliderList'))
 
-  return result.items.map(mappers.mapFrontpageSliderList)[0] ?? null
+  return result.items.map(mapFrontpageSliderList)[0] ?? null
 }
 
 export const getAdgerdirPage = async (
@@ -114,7 +126,7 @@ export const getAdgerdirPage = async (
     'fields.slug': slug,
   }).catch(errorHandler('getAdgerdirPage'))
 
-  return result.items.map(mappers.mapAdgerdirPage)[0] ?? null
+  return result.items.map(mapAdgerdirPage)[0] ?? null
 }
 
 export const getArticle = async (
@@ -127,7 +139,7 @@ export const getArticle = async (
     include: 10,
   }).catch(errorHandler('getArticle'))
 
-  return result.items.map(mappers.mapArticle)[0]
+  return result.items.map(mapArticle)[0]
 }
 
 export const getNews = async (
@@ -140,7 +152,7 @@ export const getNews = async (
     'fields.slug': slug,
   }).catch(errorHandler('getNews'))
 
-  return result.items.map(mappers.mapNewsItem)[0] ?? null
+  return result.items.map(mapNews)[0] ?? null
 }
 
 export const getNewsList = async ({
@@ -174,7 +186,7 @@ export const getNewsList = async ({
 
   return {
     page: makePage(page, perPage, result.total),
-    news: result.items.map(mappers.mapNewsItem),
+    news: result.items.map(mapNews),
   }
 }
 
@@ -187,7 +199,7 @@ export const getAboutPage = async ({
     order: '-sys.createdAt',
   }).catch(errorHandler('getPage'))
 
-  return result.items.map(mappers.mapAboutPage)[0] ?? null
+  return result.items.map(mapAboutPage)[0] ?? null
 }
 
 export const getLandingPage = async ({
@@ -200,7 +212,8 @@ export const getLandingPage = async ({
     include: 10,
   }).catch(errorHandler('getLandingPage'))
 
-  return result.items.map(mappers.mapLandingPage)[0] ?? null
+  console.log(JSON.stringify(result.items.map(mapLandingPage), null, 4))
+  return result.items.map(mapLandingPage)[0] ?? null
 }
 
 export const getGenericPage = async ({
@@ -213,7 +226,7 @@ export const getGenericPage = async ({
     include: 10,
   }).catch(errorHandler('getGenericPage'))
 
-  return result.items.map(mappers.mapGenericPage)[0] ?? null
+  return result.items.map(mapGenericPage)[0] ?? null
 }
 
 export const getNamespace = async (
@@ -225,7 +238,7 @@ export const getNamespace = async (
     'fields.namespace': namespace,
   }).catch(errorHandler('getNamespace'))
 
-  return result.items.map(mappers.mapNamespace)[0] ?? null
+  return result.items.map(mapNamespace)[0] ?? null
 }
 
 export const getMenu = async (
@@ -237,5 +250,5 @@ export const getMenu = async (
     'fields.title': name,
   }).catch(errorHandler('getMenu'))
 
-  return result.items.map(mappers.mapMenu)[0] ?? null
+  return result.items.map(mapMenu)[0] ?? null
 }

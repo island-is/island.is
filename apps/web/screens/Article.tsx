@@ -1,18 +1,15 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Head from 'next/head'
 import slugify from '@sindresorhus/slugify'
 import {
-  ContentBlock,
   Box,
   Typography,
   Stack,
   Breadcrumbs,
   Hidden,
   Select,
-  BoxProps,
-  ResponsiveSpace,
   Tag,
   Option,
   Button,
@@ -37,8 +34,6 @@ interface ArticleProps {
   article: Query['singleItem']
   namespace: Query['getNamespace']
 }
-
-const simpleSpacing = [2, 2, 3] as ResponsiveSpace
 
 const Article: Screen<ArticleProps> = ({ article, namespace }) => {
   const [contentOverviewOptions, setContentOverviewOptions] = useState([])
@@ -125,7 +120,7 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
               name="content-overview"
             />
           </Hidden>
-          <Box marginBottom={simpleSpacing}>
+          <Box marginBottom={[2, 2, 3]}>
             <Typography variant="h1" as="h1">
               <span data-sidebar-link={slugify(article.title)}>
                 {article.title}

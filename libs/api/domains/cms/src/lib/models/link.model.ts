@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { ILink } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class Link {
@@ -8,3 +9,5 @@ export class Link {
   @Field()
   url: string
 }
+
+export const mapLink = ({ fields }: ILink): Link => fields

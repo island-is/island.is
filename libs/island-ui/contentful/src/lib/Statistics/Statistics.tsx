@@ -4,15 +4,15 @@ import { Box } from '@island.is/island-ui/core'
 import * as styles from './Statistics.treat'
 
 export interface StatisticsProps {
-  items: StatisticProps[]
+  statistics: StatisticProps[]
 }
 
-export const Statistics: FC<StatisticsProps> = ({ items }) => {
+export const Statistics: FC<StatisticsProps> = ({ statistics, ...props }) => {
   return (
     <div className={styles.container}>
-      {items.map((fields, index) => (
+      {statistics.map((stat, index) => (
         <Box key={index} display="flex" margin={1}>
-          <Statistic {...fields} />
+          <Statistic {...stat} />
         </Box>
       ))}
     </div>

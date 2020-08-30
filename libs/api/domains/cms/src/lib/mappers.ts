@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { ApolloError } from 'apollo-server-express'
 import { Asset } from 'contentful'
+import { Document, BLOCKS, TopLevelBlock } from '@contentful/rich-text-types'
 import * as types from './generated/contentfulTypes'
 import { Article } from './models/article.model'
 import { AboutPage } from './models/aboutPage.model'
@@ -34,6 +35,15 @@ import { Image } from './models/image.model'
 import { Menu } from './models/menu.model'
 import { GenericPage } from './models/genericPage.model'
 import { AdgerdirTag } from './models/adgerdirTag.model'
+import { Statistic } from './models/statistic.model'
+import { Statistics } from './models/slices/statistics.model'
+import { ProcessEntry } from './models/slices/processEntry.model'
+import { Html } from './models/slices/html.model'
+import { FaqList } from './models/slices/faqList.model'
+import { QuestionAndAnswer } from './models/questionAndAnswer.model'
+import { EmbeddedVideo } from './models/slices/embeddedVideo.model'
+
+const isHtml = (x: typeof Slice): x is Html => x instanceof Html
 
 export const mapAdgerdirPage = ({
   sys,
@@ -76,13 +86,15 @@ export const mapArticle = ({ sys, fields }: types.IArticle): Article => ({
   content: JSON.stringify(fields.content),
 })
 
-export const mapImage = ({ fields }: Asset): Image => ({
-  url: fields.file.url,
-  title: fields.title,
-  contentType: fields.file.contentType,
-  width: fields.file.details.image.width,
-  height: fields.file.details.image.height,
-})
+export const mapImage = ({ fields, sys }: Asset): Image =>
+  new Image({
+    id: sys.id,
+    url: fields.file.url,
+    title: fields.title,
+    contentType: fields.file.contentType,
+    width: fields.file.details.image.width,
+    height: fields.file.details.image.height,
+  })
 
 export const mapNewsItem = ({ fields, sys }: types.INews): News => ({
   id: sys.id,
@@ -265,6 +277,10 @@ type SliceTypes =
   | types.ILogoListSlice
   | types.ILatestNewsSlice
   | types.IBigBulletList
+  | types.IStatistics
+  | types.IProcessEntry
+  | types.IFaqList
+  | types.IEmbeddedVideo
 
 export const mapSlice = (slice: SliceTypes): typeof Slice => {
   switch (slice.sys.contentType.sys.id) {
@@ -286,6 +302,14 @@ export const mapSlice = (slice: SliceTypes): typeof Slice => {
       return mapLatestNews(slice as types.ILatestNewsSlice)
     case 'bigBulletList':
       return mapBulletListSlice(slice as types.IBigBulletList)
+    case 'statistics':
+      return mapStatistics(slice as types.IStatistics)
+    case 'processEntry':
+      return mapProcessEntry(slice as types.IProcessEntry)
+    case 'faqList':
+      return mapFaqList(slice as types.IFaqList)
+    case 'EmbeddedVideo':
+      return mapEmbeddedVideo(slice as types.IEmbeddedVideo)
     default:
       throw new ApolloError(
         `Can not convert to slice: ${(slice as any).sys.contentType.sys.id}`,
@@ -293,31 +317,20 @@ export const mapSlice = (slice: SliceTypes): typeof Slice => {
   }
 }
 
-export const mapAboutPage = ({ fields }: types.IPage): AboutPage => ({
-  slices: fields.slices.map(mapSlice),
-  title: fields.title,
-  theme: fields.theme.toLowerCase(),
-  seoDescription: fields.seoDescription ?? '',
-})
-
 export const mapLandingPage = ({
   fields,
 }: types.ILandingPage): LandingPage => ({
-  title: fields.title,
-  slug: fields.slug,
-  introduction: fields.introduction,
+  ...fields,
   image: fields.image && mapImage(fields.image),
   actionButton: fields.actionButton && mapLink(fields.actionButton),
   links: fields.links && mapLinks(fields.links),
-  content: fields.content && JSON.stringify(fields.content),
+  content: fields.content && mapRichText(fields.content),
 })
 
 export const mapFrontpageSlide = ({
   fields,
 }: types.IFrontpageSlider): FrontpageSlide => ({
-  title: fields.title,
-  subtitle: fields.subtitle,
-  content: fields.content,
+  ...fields,
   image: fields.image && mapImage(fields.image),
   link: fields.link && JSON.stringify(fields.link),
 })
@@ -356,10 +369,79 @@ export const mapMenu = ({ fields }: types.IMenu): Menu => ({
 export const mapGenericPage = ({
   fields,
 }: types.IGenericPage): GenericPage => ({
-  title: fields.title,
-  slug: fields.slug,
+  ...fields,
   intro: JSON.stringify(fields?.intro),
   mainContent: fields.mainContent && JSON.stringify(fields.mainContent),
   sidebar: fields.sidebar && JSON.stringify(fields.sidebar),
   misc: fields.misc && JSON.stringify(fields.misc),
 })
+
+export const mapStatistic = ({ fields, sys }: types.IStatistic): Statistic => ({
+  ...fields,
+  id: sys.id,
+})
+
+export const mapStatistics = ({ fields, sys }: types.IStatistics): Statistics =>
+  new Statistics({
+    id: sys.id,
+    title: fields.title,
+    statistics: fields.statistics.map(mapStatistic),
+  })
+
+export const mapProcessEntry = ({
+  fields,
+  sys,
+}: types.IProcessEntry): ProcessEntry =>
+  new ProcessEntry({
+    ...fields,
+    id: sys.id,
+    processInfo: fields.processInfo && mapRichText(fields.processInfo).filter(isHtml),
+    details: fields.details && mapRichText(fields.details).filter(isHtml),
+    buttonText: fields.buttonText ?? '',
+  })
+
+export const mapQuestionAndAnswer = ({
+  fields,
+  sys,
+}: types.IQuestionAndAnswer): QuestionAndAnswer => ({
+  id: sys.id,
+  question: fields.question,
+  answer: fields.answer && mapRichText(fields.answer).filter(isHtml),
+})
+
+export const mapFaqList = ({ fields, sys }: types.IFaqList): FaqList =>
+  new FaqList({
+    id: sys.id,
+    title: fields.title,
+    questions: fields.questions.map(mapQuestionAndAnswer),
+  })
+
+export const mapEmbeddedVideo = ({
+  fields,
+  sys,
+}: types.IEmbeddedVideo): EmbeddedVideo => ({
+  id: sys.id,
+  ...fields,
+})
+
+const mapTopLevelBlock = (
+  block: TopLevelBlock,
+  index: number,
+): typeof Slice => {
+  switch (block.nodeType) {
+    case BLOCKS.EMBEDDED_ENTRY:
+      return mapSlice(block.data.target)
+    case BLOCKS.EMBEDDED_ASSET:
+      // Only asset we can handle at the moment is an image
+      return mapImage(block.data.target)
+    default:
+      return new Html({
+        id: index.toString(),
+        json: JSON.stringify({ nodeType: BLOCKS.DOCUMENT, content: [block] }),
+      })
+  }
+}
+
+export const mapRichText = (document: Document): Array<typeof Slice> => {
+  return document.content.map(mapTopLevelBlock)
+}

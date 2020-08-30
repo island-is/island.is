@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { Story } from '../story.model'
+import { Story, mapStory } from '../story.model'
+import {IStorySection} from '../../generated/contentfulTypes'
 
 @ObjectType()
 export class StorySlice {
@@ -16,3 +17,13 @@ export class StorySlice {
   @Field(() => [Story])
   stories: Story[]
 }
+
+export const mapStorySlice = ({
+  fields,
+  sys,
+}: IStorySection): StorySlice =>
+  new StorySlice({
+    id: sys.id,
+    readMoreText: fields.readMoreText ?? '',
+    stories: fields.stories.map(mapStory),
+  })

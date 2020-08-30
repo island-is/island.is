@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { Image } from '../image.model'
+import { Image, mapImage } from '../image.model'
+import {ILogoListSlice} from '../../generated/contentfulTypes'
 
 @ObjectType()
 export class LogoListSlice {
@@ -19,3 +20,14 @@ export class LogoListSlice {
   @Field(() => [Image])
   images: Image[]
 }
+
+export const mapLogoListSlice = ({
+  fields,
+  sys,
+}: ILogoListSlice): LogoListSlice =>
+  new LogoListSlice({
+    id: sys.id,
+    title: fields.title ?? '',
+    body: fields.body ?? '',
+    images: (fields.images ?? []).map(mapImage),
+  })

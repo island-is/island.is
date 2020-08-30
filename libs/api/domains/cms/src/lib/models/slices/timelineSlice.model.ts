@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { TimelineEvent } from '../timelineEvent.model'
+import { TimelineEvent, mapTimelineEvent } from '../timelineEvent.model'
+import { ITimeline } from '../../generated/contentfulTypes'
 
 @ObjectType()
 export class TimelineSlice {
@@ -16,3 +17,10 @@ export class TimelineSlice {
   @Field(() => [TimelineEvent])
   events: TimelineEvent[]
 }
+
+export const mapTimelineSlice = ({ fields, sys }: ITimeline): TimelineSlice =>
+  new TimelineSlice({
+    id: sys.id,
+    title: fields.title ?? '',
+    events: fields.events.map(mapTimelineEvent),
+  })
