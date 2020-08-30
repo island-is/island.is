@@ -3,10 +3,9 @@ import { Module } from '@nestjs/common'
 import { GrantsService } from './grants.service';
 import { Grant } from './grants.model';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { GrantType } from './dto/grant-type.model';
 
 @Module({
-  imports: [SequelizeModule.forFeature([Grant, GrantType])],
+  imports: [SequelizeModule.forFeature([Grant])],
   controllers: [GrantsController],
   providers: [GrantsService]
 })

@@ -8,6 +8,7 @@ import { ClientsModule } from './modules/clients/clients.module'
 import { ResourcesModule } from './modules/resources/resources.module'
 import { GrantsModule } from './modules/grants/grants.module'
 import { AuthModule } from './modules/auth/auth.module'
+import { GrantTypesModule } from './modules/grant-types/grant-types.module';
 
 
 @Module({
@@ -21,6 +22,7 @@ import { AuthModule } from './modules/auth/auth.module'
     ClientsModule,
     ResourcesModule,
     GrantsModule,
+    GrantTypesModule,
     ConfigModule.forRoot(
       {
         envFilePath: 'test.env'

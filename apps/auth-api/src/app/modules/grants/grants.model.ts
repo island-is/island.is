@@ -6,12 +6,13 @@ import {
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 @Table({
-  tableName: 'grant',
+  tableName: 'grants',
   indexes: [
     {
       fields: ['id'],
     },
   ],
+  timestamps: false
 })
 export class Grant extends Model<Grant> {
   @Column({
@@ -63,7 +64,7 @@ export class Grant extends Model<Grant> {
     allowNull: false,
   })
   @ApiProperty()
-  subjectId: string
+  subject_id: string
 
   @Column({
     type: DataType.STRING,

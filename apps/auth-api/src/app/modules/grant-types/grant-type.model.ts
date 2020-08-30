@@ -13,6 +13,7 @@ import { ApiProperty } from '@nestjs/swagger'
       fields: ['id'],
     },
   ],
+  timestamps: false
 })
 export class GrantType extends Model<GrantType> {
   @Column({
