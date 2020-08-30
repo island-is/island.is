@@ -80,6 +80,7 @@ const typography = (
 ) => (_: Block, children: ReactNode) => (
   <Typography variant={variant} as={variant}>
     {['h2', 'h3'].includes(variant) ? (
+      // TODO: stop this data-sidebar-link madness
       <span data-sidebar-link={String(children)}>{children}</span>
     ) : (
       children
@@ -120,8 +121,14 @@ export const renderHtml = (
 }
 
 export const defaultRenderPadding = (top: Slice, bottom: Slice): ReactNode => {
-  if (top.__typename === bottom.__typename) {
+  const [a, b] = [top, bottom].map((slice) => slice.__typename)
+
+  if (a === b) {
     return <Box paddingTop={3} />
+  }
+
+  if ([a, b].some((s) => s === 'Statistics')) {
+    return <Box paddingTop={6} />
   }
 
   return <Box paddingTop={15} />
