@@ -20,28 +20,6 @@ export class GrantsController {
   @Get(':subjectId')
   @ApiOkResponse({ type: GrantType })
   async getAll(@Param('subjectId') subjectId: string): Promise<Grant[]> {
-    console.log()
-    console.log()
-    console.log()
-    console.log()
-    console.log()
-    console.log()
-    console.log()
-    console.log()
-    console.log("Calling from IS4")
-    console.log()
-    console.log()
-    console.log()
-    console.log()
-    console.log()
-    console.log()
-    console.log()
-    console.log()
-    console.log()
-    console.log()
-    console.log()
-
-
     const grants = await this.grantsService.getAllAsync(subjectId)
 
     if (!grants) {
