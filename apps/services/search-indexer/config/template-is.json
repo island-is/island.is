@@ -86,9 +86,6 @@
             "type": "text",
             "analyzer": "base_icelandic"
           }
-        },
-        "completion": {
-          "type": "completion"
         }
       },
       "category_slug": {
