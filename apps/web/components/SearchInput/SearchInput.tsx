@@ -11,13 +11,14 @@ import Downshift from 'downshift'
 import cn from 'classnames'
 import { uniq, sortBy } from 'lodash'
 import { useRouter } from 'next/router'
-import { useApolloClient } from 'react-apollo'
-import { GET_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
+import { useApolloClient, useQuery } from 'react-apollo'
+import { GET_SEARCH_RESULTS_QUERY, GET_SEARCH_AUTOCOMPLETE_TERM_QUERY } from '@island.is/web/screens/queries'
 import {
   ContentLanguage,
   QuerySearchResultsArgs,
   Query,
   SearchResult,
+  QueryWebSearchAutocompleteArgs,
 } from '@island.is/api/schema'
 import {
   AsyncSearchInput,
@@ -52,6 +53,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
   const [state, setState] = useState<SearchState>(emptyState)
   const client = useApolloClient()
   const timer = useRef(null)
+  
 
   useEffect(() => {
     if (term == null) {
@@ -92,15 +94,20 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
         },
       })
 
-      if (thisTimerId === timer.current) {
-        // hack while not supported by search service
-        let suggestions = results.items
-          .map((r) => r.title.split(/\s+/g))
-          .reduce((acc, words) => acc.concat(words), [])
-          .map((s) => s.trim().toLowerCase())
-          .filter((s) => s.startsWith(term.trim().toLowerCase()))
-        suggestions = sortBy(uniq(suggestions), (s) => s.length)
+      const {
+        data: { webSearchAutocomplete: { completions: suggestions} },
+      } = await client.query<Query, QueryWebSearchAutocompleteArgs>({
+        query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
+        variables: {
+          input: {
+            singleTerm: term,
+            language: locale as ContentLanguage,
+            size: 10, // only show top X completions to prevent long list
+          },
+        },
+      })
 
+      if (thisTimerId === timer.current) {
         setState({
           isLoading: false,
           term,

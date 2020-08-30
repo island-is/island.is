@@ -6,7 +6,7 @@ import { ContentLanguage } from '../enums/contentLanguage.enum'
 export class WebSearchAutocompleteInput {
   @Field()
   @IsString()
-  queryString: string
+  singleTerm: string
 
   @Field(() => ContentLanguage, { nullable: true })
   @IsEnum(ContentLanguage)

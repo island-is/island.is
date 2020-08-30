@@ -387,7 +387,7 @@ type Query {
   singleItem(input: ItemInput!): ContentItem
   categories(input: CategoriesInput!): [ContentCategory!]!
   articlesInCategory(category: ArticlesInCategoryInput!): [ContentItem!]!
-  webSearchAutocomplete(input: WebSearchAutocompleteInput!): [WebSearchAutocomplete!]!
+  webSearchAutocomplete(input: WebSearchAutocompleteInput!): WebSearchAutocomplete!
   getArticle(input: GetArticleInput!): Article
   getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput!): PaginatedNews!
@@ -444,7 +444,7 @@ input ArticlesInCategoryInput {
 }
 
 input WebSearchAutocompleteInput {
-  queryString: String!
+  singleTerm: String!
   language: ContentLanguage = is
   size: Int = 10
 }

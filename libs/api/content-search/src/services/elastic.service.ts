@@ -1,4 +1,4 @@
-import { Client } from '@elastic/elasticsearch'
+import { Client, ApiResponse } from '@elastic/elasticsearch'
 import { Document, SearchIndexes } from '../types'
 import esb, { RequestBodySearch, Sort, TermsAggregation } from 'elastic-builder'
 import { logger } from '@island.is/logging'
@@ -7,17 +7,24 @@ import { environment } from '../environments/environment'
 import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
+import { WebSearchAutocompleteInput } from '../../../domains/content-search/src/lib/dto/webSearchAutocomplete.input'
+import { WebSearchAutocomplete } from '../../../domains/content-search/src/lib/models/webSearchAutocomplete.model'
 
 const { elastic } = environment
+interface AutocompleteTermResponse {
+  suggest: {
+    searchSuggester: [{ options: [{ text: string }] }]
+  }
+}
 
 @Injectable()
 export class ElasticService {
   private client: Client
-  constructor() {
+  constructor () {
     logger.debug('Created ES Service')
   }
 
-  async index(index: SearchIndexes, document: Document) {
+  async index (index: SearchIndexes, document: Document) {
     const _id = document._id
 
     try {
@@ -37,7 +44,33 @@ export class ElasticService {
     }
   }
 
-  async findByQuery(index: SearchIndexes, query) {
+  async findByQuery<ResponseBody, RequestBody = any, Context = any> (
+    index: SearchIndexes,
+    query: RequestBody,
+  ) {
+    try {
+      const client = await this.getClient()
+      return client.search<ResponseBody, RequestBody, Context>({
+        body: query,
+        index,
+      })
+    } catch (e) {
+      ElasticService.handleError(
+        'Error in ElasticService.findByQuery',
+        { query, index },
+        e,
+      )
+    }
+  }
+
+  /*
+  Reason for deprecation:
+  We are runnig elasticsearch 7.4
+  Elastic builder is compatable with 6 alpha as stated on:
+  https://www.npmjs.com/package/elastic-builder (at the time of writing)
+  We are keeping this function until elastic builder has been phased out
+  */
+  async deprecatedFindByQuery (index: SearchIndexes, query) {
     try {
       const client = await this.getClient()
       return client.search({
@@ -46,14 +79,14 @@ export class ElasticService {
       })
     } catch (e) {
       ElasticService.handleError(
-        'Error in ElasticService.findByQuery',
+        'Error in ElasticService.deprecatedFindByQuery',
         { query: query, index: index },
         e,
       )
     }
   }
 
-  async query(index: SearchIndexes, query) {
+  async query (index: SearchIndexes, query) {
     const requestBody = new RequestBodySearch()
     const must = []
 
@@ -97,17 +130,17 @@ export class ElasticService {
       }
     }
 
-    return this.findByQuery(index, requestBody)
+    return this.deprecatedFindByQuery(index, requestBody)
   }
 
-  async fetchCategories(index: SearchIndexes) {
+  async fetchCategories (index: SearchIndexes) {
     const query = new RequestBodySearch()
       .agg(new TermsAggregation('categories', 'category'))
       .agg(new TermsAggregation('catagories_slugs', 'category_slug'))
       .size(0)
 
     try {
-      return this.findByQuery(index, query)
+      return this.deprecatedFindByQuery(index, query)
     } catch (e) {
       console.log(e)
     }
@@ -120,7 +153,41 @@ export class ElasticService {
       )
       .size(1000)
 
-    return this.findByQuery(index, requestBody)
+    return this.deprecatedFindByQuery(index, requestBody)
+  }
+
+  // TODO: Create autocomplete request body interface
+  // TODO: Pass types to findByQuery
+  // TODO: Define return type for fetchAutocomplete
+
+  async fetchAutocompleteTerm (
+    index: SearchIndexes,
+    input: Omit<WebSearchAutocompleteInput, 'language'>,
+  ): Promise<AutocompleteTermResponse> {
+    const { singleTerm, size } = input
+    const requestBody = {
+      suggest: {
+        searchSuggester: {
+          prefix: singleTerm,
+          completion: {
+            field: 'title.completion',
+            size,
+            skip_duplicates: true,
+            fuzzy: {
+              unicode_aware: true,
+              fuzziness: 'auto',
+            },
+          },
+        },
+      },
+    }
+
+    const data = await this.findByQuery<AutocompleteTermResponse>(
+      index,
+      requestBody,
+    )
+
+    return data.body
   }
 
   async deleteByIds(index: SearchIndexes, ids: Array<string>) {
@@ -165,14 +232,15 @@ export class ElasticService {
     })
   }
 
+  // TODO: Handle this normalization more generaly not per request (if able)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static handleError(message: string, context: any, error: any) {
+  static handleError (message: string, context: any, error: any) {
     ElasticService.logError(message, context, error)
     throw new Error(message)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static logError(message: string, context: any, error: any) {
+  static logError (message: string, context: any, error: any) {
     const errorCtx = {
       error: {
         message: error.message,
@@ -185,7 +253,7 @@ export class ElasticService {
     logger.error(message, merge(context, errorCtx))
   }
 
-  async getClient(): Promise<Client> {
+  async getClient (): Promise<Client> {
     if (this.client) {
       return this.client
     }
@@ -193,7 +261,7 @@ export class ElasticService {
     return this.client
   }
 
-  async createEsClient(): Promise<Client> {
+  async createEsClient (): Promise<Client> {
     const hasAWS =
       'AWS_WEB_IDENTITY_TOKEN_FILE' in process.env ||
       'AWS_SECRET_ACCESS_KEY' in process.env
