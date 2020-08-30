@@ -182,7 +182,7 @@ export const slices = gql`
   fragment HtmlFields on Html {
     __typename
     id
-    json
+    document
   }
 
   fragment AllSlices on Slice {

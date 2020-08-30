@@ -9,7 +9,7 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { Html } from '@island.is/api/schema'
-import { renderSlices } from '../richTextRendering'
+import { renderHtml } from '../richTextRendering'
 
 const ProcessTypes = {
   Digital: {
@@ -70,7 +70,7 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
                 {subtitle}
               </Typography>
             )}
-            {details && renderSlices(details)}
+            {details && renderHtml(details.document)}
           </Stack>
         </ContentBlock>
       }
@@ -87,7 +87,7 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
                 {processTitle}
               </Typography>
             )}
-            {processInfo && renderSlices(processInfo)}
+            {processInfo && renderHtml(processInfo.document)}
             <Box paddingTop={[1, 1, 2]}>
               <Button href={processLink} icon={ProcessTypes[type].icon}>
                 {buttonText}

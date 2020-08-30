@@ -93,12 +93,9 @@ export const mapSlice = (slice: SliceTypes): typeof Slice => {
 }
 
 const isEmptyNode = (node: Block): boolean => {
-  return (
-    node.nodeType === BLOCKS.PARAGRAPH &&
-    node.content.length === 1 &&
-    node.content[0].nodeType === 'text' &&
-    node.content[0].value === ''
-  )
+  return node.content.every((child) => {
+    return child.nodeType === 'text' && child.value === ''
+  })
 }
 
 export const mapDocument = (document: Document): Array<typeof Slice> => {
@@ -120,7 +117,7 @@ export const mapDocument = (document: Document): Array<typeof Slice> => {
         // either merge into previous html slice or create a new one
         const prev = slices[slices.length - 1]
         if (prev instanceof Html) {
-          prev.json.content.push(block)
+          prev.document.content.push(block)
         } else {
           slices.push(mapHtml(block, index))
         }

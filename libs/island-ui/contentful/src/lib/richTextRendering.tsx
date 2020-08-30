@@ -7,7 +7,6 @@ import {
   INLINES,
 } from '@contentful/rich-text-types'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
-import slugify from '@sindresorhus/slugify'
 import Image from './Image/Image'
 import FaqList from './FaqList/FaqList'
 import { Slice } from '@island.is/api/schema'
@@ -17,9 +16,11 @@ import {
   Typography,
   Blockquote,
   Box,
+  TypographyProps,
 } from '@island.is/island-ui/core'
 import ProcessEntry from './ProcessEntry/ProcessEntry'
 import EmbeddedVideo from './EmbeddedVideo/EmbeddedVideo'
+import StaticHtml from './StaticHtml/StaticHtml'
 
 export interface RenderNode {
   [k: string]: (node: Block | Inline, children: ReactNode) => ReactNode
@@ -30,15 +31,20 @@ interface RenderConfig {
   renderWrapper?: (slice: Slice, children: ReactNode) => ReactNode
   renderPadding?: (top: Slice, bottom: Slice) => ReactNode
   renderNode?: RenderNode
+  htmlClassName?: string
 }
 
 export const defaultRenderComponent = (
   slice: Slice,
   renderNode: RenderNode,
+  htmlClassName?: string,
 ): ReactNode => {
   switch (slice.__typename) {
     case 'Html':
-      return renderHtml(slice.json, renderNode)
+      return renderHtml(slice.document, {
+        className: htmlClassName,
+        renderNode,
+      })
 
     case 'FaqList':
       return <FaqList {...slice} />
@@ -69,35 +75,48 @@ export const defaultRenderWrapper = (
   return children
 }
 
-export const defaultRenderNode: RenderNode = {
-  [INLINES.HYPERLINK]: (node: Inline, children: ReactNode): ReactNode => (
-    <Hyperlink href={node.data.uri}>{children}</Hyperlink>
-  ),
-  [BLOCKS.HEADING_2]: (_node: Block, children: ReactNode): ReactNode => (
-    <Typography variant="h2" as="h2">
-      <span data-sidebar-link={slugify(children.toString())}>{children}</span>
-    </Typography>
-  ),
-  [BLOCKS.HEADING_3]: (_node: Block, children: ReactNode): ReactNode => (
-    <Typography variant="h3" as="h3">
-      <span data-sidebar-link={slugify(children.toString())}>{children}</span>
-    </Typography>
-  ),
-  [BLOCKS.PARAGRAPH]: (_node: Block, children: ReactNode): ReactNode => (
-    <Typography variant="p" as="p">
-      {children}
-    </Typography>
-  ),
+const typography = (
+  variant: TypographyProps['variant'] & TypographyProps['as'],
+) => (_: Block, children: ReactNode) => (
+  <Typography variant={variant} as={variant}>
+    {['h2', 'h3'].includes(variant) ? (
+      <span data-sidebar-link={String(children)}>{children}</span>
+    ) : (
+      children
+    )}
+  </Typography>
+)
+
+export const defaultRenderNode: Readonly<RenderNode> = {
+  [BLOCKS.HEADING_1]: typography('h1'),
+  [BLOCKS.HEADING_2]: typography('h2'),
+  [BLOCKS.HEADING_3]: typography('h3'),
+  [BLOCKS.HEADING_4]: typography('h4'),
+  [BLOCKS.HEADING_5]: typography('h5'),
+  [BLOCKS.PARAGRAPH]: typography('p'),
   [BLOCKS.QUOTE]: (_node: Block, children: ReactNode): ReactNode => (
     <Blockquote>{children}</Blockquote>
+  ),
+  [INLINES.HYPERLINK]: (node: Inline, children: ReactNode): ReactNode => (
+    <Hyperlink href={node.data.uri}>{children}</Hyperlink>
   ),
 }
 
 export const renderHtml = (
-  doc: Document,
-  renderNode: RenderNode = defaultRenderNode,
+  document: Document,
+  {
+    renderNode = defaultRenderNode,
+    className,
+  }: {
+    renderNode?: RenderNode
+    className?: string
+  } = {},
 ): ReactNode => {
-  return documentToReactComponents(doc, { renderNode })
+  return (
+    <StaticHtml className={className}>
+      {documentToReactComponents(document, { renderNode })}
+    </StaticHtml>
+  )
 }
 
 export const defaultRenderPadding = (top: Slice, bottom: Slice): ReactNode => {

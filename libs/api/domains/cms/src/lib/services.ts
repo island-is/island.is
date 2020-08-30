@@ -212,7 +212,6 @@ export const getLandingPage = async ({
     include: 10,
   }).catch(errorHandler('getLandingPage'))
 
-  console.log(JSON.stringify(result.items.map(mapLandingPage), null, 4))
   return result.items.map(mapLandingPage)[0] ?? null
 }
 

@@ -177,7 +177,7 @@ type Statistic {
 
 type Html {
   id: ID!
-  json: JSON!
+  document: JSON!
 }
 
 """

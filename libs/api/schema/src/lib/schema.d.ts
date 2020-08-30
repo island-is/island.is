@@ -225,7 +225,7 @@ export type Statistic = {
 export type Html = {
   __typename?: 'Html'
   id: Scalars['ID']
-  json: Scalars['JSON']
+  document: Scalars['JSON']
 }
 
 export type QuestionAndAnswer = {
@@ -1428,7 +1428,7 @@ export type HtmlResolvers<
   ParentType extends ResolversParentTypes['Html'] = ResolversParentTypes['Html']
 > = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  json?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
+  document?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 

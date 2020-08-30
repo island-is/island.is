@@ -12,7 +12,7 @@ export class Html {
   id: string
 
   @Field(() => graphqlTypeJson)
-  json: Document
+  document: Document
 }
 
 export const mapHtml = (
@@ -21,11 +21,15 @@ export const mapHtml = (
 ): Html => {
   switch (html.nodeType) {
     case BLOCKS.DOCUMENT:
-      return new Html({ id: String(id), json: html })
+      return new Html({ id: String(id), document: html })
     default:
       return new Html({
         id: String(id),
-        json: { nodeType: BLOCKS.DOCUMENT, content: [html], data: {} },
+        document: {
+          nodeType: BLOCKS.DOCUMENT,
+          content: [html],
+          data: {},
+        },
       })
   }
 }
