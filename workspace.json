@@ -2883,7 +2883,8 @@
             "tsConfig": "apps/skilavottord/ws/tsconfig.spec.json",
             "passWithNoTests": true
           }
-        }
+        },
+        "docker-express": {}
       }
     }
   },
