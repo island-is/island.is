@@ -8,10 +8,11 @@ export enum CaseState {
 
 export interface Case {
   id: string
+  policeCaseNumber: string
   suspectName: string
-  suspectNationalID: string
-  created: Date
-  modified: Date
+  suspectNationalId: string
+  created: string
+  modified: string
   description: string
-  status: CaseState
+  state: CaseState
 }

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import format from 'date-fns/format'
+import { format, parseISO } from 'date-fns'
 import localeIS from 'date-fns/locale/is'
 
 import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
 import { Button, Typography, Tag, TagVariant } from '@island.is/island-ui/core'
-import { Case, CaseState } from '../../types'
+import { Case } from '../../types'
 import * as api from '../../api'
 import * as styles from './DetentionRequests.treat'
 
@@ -20,15 +20,15 @@ export const DetentionRequests: React.FC = () => {
     getCases()
   }, [])
 
-  const mapCaseStateToTagVariant = (status: CaseState): TagVariant => {
-    switch (status) {
-      case CaseState.DRAFT:
+  const mapCaseStateToTagVariant = (state: string): TagVariant => {
+    switch (state) {
+      case 'DRAFT':
         return 'red'
-      case CaseState.SUBMITTED:
+      case 'SUBMITTED':
         return 'purple'
-      case CaseState.ACTIVE:
+      case 'ACTIVE':
         return 'darkerMint'
-      case CaseState.COMPLETED:
+      case 'COMPLETED':
         return 'blue'
       default:
         return 'white'
@@ -60,13 +60,13 @@ export const DetentionRequests: React.FC = () => {
         <tbody>
           {cases.map((c, i) => (
             <tr key={i}>
-              <td>{c.id || '-'}</td>
+              <td>{c.policeCaseNumber || '-'}</td>
               <td>{c.suspectName}</td>
-              <td>{c.suspectNationalID || '-'}</td>
-              <td>{format(c.created, 'PP', { locale: localeIS })}</td>
+              <td>{c.suspectNationalId || '-'}</td>
+              <td>{format(parseISO(c.created), 'PP', { locale: localeIS })}</td>
               <td>
-                <Tag variant={mapCaseStateToTagVariant(c.status)} label>
-                  {c.status}
+                <Tag variant={mapCaseStateToTagVariant(c.state)} label>
+                  {c.state}
                 </Tag>
               </td>
               <td>
