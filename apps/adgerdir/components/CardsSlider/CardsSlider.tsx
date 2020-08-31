@@ -126,7 +126,7 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
         dotsDisabled
         buttonsDisabled
         mouseTrackingEnabled
-        items={items.map(({ title, description, tags }, index) => (
+        items={items.map(({ title, description, slug, tags }, index) => (
           <div
             key={index}
             onDragStart={handleOnDragStart}
@@ -138,6 +138,8 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
               title={title}
               tags={tags}
               variant={colorScheme}
+              as={`/${slug}`}
+              href="/[slug]"
             />
           </div>
         ))}
