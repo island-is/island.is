@@ -98,7 +98,7 @@ describe('Delete Flight', () => {
       .mockImplementation(() => ({ nationalId: '1234567890' }))
     const createRes = await request(app.getHttpServer())
       .post('/api/public/discounts/12345678/flights')
-      .set('Authorization', 'Bearer airIcelandConnect')
+      .set('Authorization', 'Bearer icelandair')
       .send({
         bookingDate: '2020-08-17T12:35:50.971Z',
         flightLegs: [
@@ -123,7 +123,7 @@ describe('Delete Flight', () => {
 
     await request(app.getHttpServer())
       .delete(`/api/public/flights/${createRes.body.id}`)
-      .set('Authorization', 'Bearer airIcelandConnect')
+      .set('Authorization', 'Bearer icelandair')
       .expect(204)
 
     const getRes = await request(app.getHttpServer())
@@ -154,7 +154,7 @@ describe('Delete Flight', () => {
       .mockImplementation(() => ({ nationalId: '1234567890' }))
     const createRes = await request(app.getHttpServer())
       .post('/api/public/discounts/12345678/flights')
-      .set('Authorization', 'Bearer airIcelandConnect')
+      .set('Authorization', 'Bearer icelandair')
       .send({
         bookingDate: '2020-08-17T12:35:50.971Z',
         flightLegs: [
@@ -183,7 +183,7 @@ describe('Delete Flight', () => {
       .delete(
         `/api/public/flights/${createRes.body.id}/flightLegs/${createRes.body.flightLegs[0].id}`,
       )
-      .set('Authorization', 'Bearer airIcelandConnect')
+      .set('Authorization', 'Bearer icelandair')
       .expect(204)
 
     // Assert
