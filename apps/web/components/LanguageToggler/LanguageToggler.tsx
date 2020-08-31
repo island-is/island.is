@@ -26,7 +26,7 @@ export const LanguageToggler: FC<{
 
   const LanguageButton = (
     <Link href={otherLanguageUrl}>
-      <Button variant="menu" onClick={onClick}>
+      <Button variant="menu" onClick={onClick} width="fluid">
         {t.otherLanguageName}
       </Button>
     </Link>

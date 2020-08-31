@@ -8,8 +8,9 @@ import {
   Icon,
   Hidden,
   Button,
-  Columns,
-  Column,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { LinkBox } from './components/LinkBox'
@@ -68,19 +69,29 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
           </button>
         </div>
         <Hidden above="md">
-          <div className={styles.mobileContent}>
-            <SearchInput
-              activeLocale={activeLocale}
-              placeholder="Leitaðu á Ísland.is"
-              size="medium"
-            />
-            <Link href="https://minarsidur.island.is/" passHref>
-              <Button variant="menu" leftIcon="user">
-                {t.login}
-              </Button>
-            </Link>
-            <LanguageToggler />
-          </div>
+          <GridContainer className={styles.mobileContent}>
+            <GridRow>
+              <GridColumn span={12}>
+                <SearchInput
+                  activeLocale={activeLocale}
+                  placeholder="Leitaðu á Ísland.is"
+                  size="medium"
+                />
+              </GridColumn>
+            </GridRow>
+            <GridRow>
+              <GridColumn span={8} paddingTop={3} paddingBottom={3}>
+                <Link href="https://minarsidur.island.is/" passHref>
+                  <Button variant="menu" leftIcon="user" width="fluid">
+                    {t.login}
+                  </Button>
+                </Link>
+              </GridColumn>
+              <GridColumn span={4} paddingTop={3} paddingBottom={3}>
+                <LanguageToggler />
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
         </Hidden>
 
         <div className={styles.tabBar}>
