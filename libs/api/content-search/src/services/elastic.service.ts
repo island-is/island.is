@@ -8,7 +8,11 @@ import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
 import { WebSearchAutocompleteInput } from '../../../domains/content-search/src/lib/dto/webSearchAutocomplete.input'
-import { autocompleteTerm, AutocompleteTermResponse, AutocompleteTermRequestBody } from '../queries/autocomplete';
+import {
+  autocompleteTerm,
+  AutocompleteTermResponse,
+  AutocompleteTermRequestBody,
+} from '../queries/autocomplete'
 
 const { elastic } = environment
 
@@ -156,12 +160,12 @@ export class ElasticService {
     input: Omit<WebSearchAutocompleteInput, 'language'>,
   ): Promise<AutocompleteTermResponse> {
     const { singleTerm: prefix, size } = input
-    const requestBody = autocompleteTerm({prefix, size})
+    const requestBody = autocompleteTerm({ prefix, size })
 
-    const data = await this.findByQuery<AutocompleteTermResponse, AutocompleteTermRequestBody>(
-      index,
-      requestBody,
-    )
+    const data = await this.findByQuery<
+      AutocompleteTermResponse,
+      AutocompleteTermRequestBody
+    >(index, requestBody)
 
     return data.body
   }

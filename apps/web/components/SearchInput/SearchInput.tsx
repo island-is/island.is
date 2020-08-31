@@ -124,7 +124,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
           term,
           results,
           suggestions,
-          prefix
+          prefix,
         })
       }
     }, DEBOUNCE_TIMER))

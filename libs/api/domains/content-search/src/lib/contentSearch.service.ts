@@ -99,10 +99,10 @@ export class ContentSearchService {
       this.getIndex(input.language),
       {
         ...input,
-        singleTerm: input.singleTerm.trim()
+        singleTerm: input.singleTerm.trim(),
       },
     )
-    
+
     // we always handle just one terms at a time so we return results for first term
     const firstWordSuggestions = searchSuggester[0].options
 
@@ -110,7 +110,7 @@ export class ContentSearchService {
       total: firstWordSuggestions.length,
       completions: firstWordSuggestions.map(
         (suggestionObjects) => suggestionObjects.text,
-      )
+      ),
     }
   }
 }

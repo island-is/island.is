@@ -12,17 +12,17 @@ export interface AutocompleteTermResponse {
 export interface AutocompleteTermRequestBody {
   suggest: {
     searchSuggester: {
-      prefix: string,
+      prefix: string
       completion: {
-        field: string,
-        size: number,
-        skip_duplicates: boolean,
+        field: string
+        size: number
+        skip_duplicates: boolean
         fuzzy: {
-          unicode_aware: boolean,
-          fuzziness: string,
-        },
-      },
-    },
+          unicode_aware: boolean
+          fuzziness: string
+        }
+      }
+    }
   }
 }
 
