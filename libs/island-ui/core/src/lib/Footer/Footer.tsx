@@ -179,7 +179,7 @@ export const Footer = ({
                           className={styles.withIcon}
                         >
                           {title}
-                          <Box paddingLeft={1}>
+                          <Box paddingLeft={1} component="span">
                             <Icon width="12" type="external" color="white" />
                           </Box>
                         </a>
