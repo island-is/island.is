@@ -10,6 +10,7 @@ import {
   QueryGetAboutPageArgs,
   AboutPage,
   Slice,
+  PageHeaderSlice,
 } from '@island.is/api/schema'
 import { GET_PAGE_QUERY } from '../queries'
 import { Screen } from '@island.is/web/types'
@@ -35,12 +36,16 @@ import {
   BoxProps,
   Breadcrumbs,
   Stack,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { Content } from '@island.is/island-ui/contentful'
 import Sidebar, { SidebarProps } from './Sidebar'
 import * as styles from './AboutPage.treat'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import Head from 'next/head'
+import { TilesProps } from 'libs/island-ui/core/src/lib/Grid/GridColumn/GridColumn'
 
 const extractSliceTitle = (slice: Slice): [string, string] | null => {
   switch (slice.__typename) {
@@ -124,6 +129,65 @@ const Background = forwardRef<HTMLDivElement, BackgroundProps>(
   },
 )
 
+const SidebarWrapper: FC<{
+  page: AboutPage
+  currentSliceId: string
+  slice: PageHeaderSlice
+}> = ({ page, currentSliceId, slice }) => {
+  return (
+    <Sidebar
+      title={page.title}
+      type={decideSidebarType(
+        page.slices.find(
+          (slice) => !currentSliceId || slice.id === currentSliceId,
+        ),
+      )}
+    >
+      {({ bulletRef, colors }) => (
+        <>
+          {page.slices
+            .map(extractSliceTitle)
+            .filter(Boolean)
+            .map(([id, text], index) => (
+              <Box key={id} paddingBottom={index === 0 ? 2 : 0}>
+                <a
+                  ref={id === currentSliceId ? bulletRef : null}
+                  href={'#' + id}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    document.getElementById(id).scrollIntoView()
+                  }}
+                >
+                  <Typography
+                    variant={index === 0 ? 'p' : 'pSmall'}
+                    as="p"
+                    color={colors.main}
+                  >
+                    {id === currentSliceId ? <b>{text}</b> : text}
+                  </Typography>
+                </a>
+              </Box>
+            ))}
+          {slice.links.map(({ url, text }) => (
+            <>
+              <Box paddingY={2}>
+                <Divider weight={colors.divider} />
+              </Box>
+              <Link href={url}>
+                <a>
+                  <Typography variant="p" as="div" color={colors.secondary}>
+                    {text}
+                  </Typography>
+                </a>
+              </Link>
+            </>
+          ))}
+        </>
+      )}
+    </Sidebar>
+  )
+}
+
 const decideSidebarType = (slice?: Slice): SidebarProps['type'] => {
   switch (slice && slice.__typename) {
     case 'PageHeaderSlice':
@@ -150,99 +214,44 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
     case 'PageHeaderSlice':
       return (
         <Background ref={setRef(slice.id)} id={slice.id} theme={page.theme}>
-          <ContentBlock>
-            <Header white on="purple" />
-            <Box paddingX={[0, 0, 6]} paddingTop={8}>
-              <Columns collapseBelow="lg">
-                <Column width="9/12">
-                  <div className={styles.indent}>
-                    <Stack space={2}>
-                      <Breadcrumbs color="blue300" separatorColor="blue300">
-                        <Link href={makePath()}>
-                          <a>Ísland.is</a>
-                        </Link>
-                        <Link href={''}>
-                          <a>{page.title}</a>
-                        </Link>
-                      </Breadcrumbs>
-                      <Typography variant="h1" as="h1" color="white">
-                        {slice.title}
-                      </Typography>
-                      <Typography variant="p" as="p" color="white">
-                        {slice.introduction}
-                      </Typography>
-                    </Stack>
-                  </div>
-                  {slice.slices.map((slice) => (
-                    <Section
-                      key={slice.id}
-                      slice={slice}
-                      page={page}
-                      currentSliceId={currentSliceId}
-                      setRef={setRef}
-                    />
-                  ))}
-                </Column>
-                <Column width="3/12">
-                  <Sidebar
-                    title={page.title}
-                    type={decideSidebarType(
-                      page.slices.find(
-                        (slice) =>
-                          !currentSliceId || slice.id === currentSliceId,
-                      ),
-                    )}
-                  >
-                    {({ bulletRef, colors }) => (
-                      <>
-                        {page.slices
-                          .map(extractSliceTitle)
-                          .filter(Boolean)
-                          .map(([id, text], index) => (
-                            <Box key={id} paddingBottom={index === 0 ? 2 : 0}>
-                              <a
-                                ref={id === currentSliceId ? bulletRef : null}
-                                href={'#' + id}
-                                onClick={(e) => {
-                                  e.preventDefault()
-                                  document.getElementById(id).scrollIntoView()
-                                }}
-                              >
-                                <Typography
-                                  variant={index === 0 ? 'p' : 'pSmall'}
-                                  as="p"
-                                  color={colors.main}
-                                >
-                                  {id === currentSliceId ? <b>{text}</b> : text}
-                                </Typography>
-                              </a>
-                            </Box>
-                          ))}
-                        {slice.links.map(({ url, text }) => (
-                          <>
-                            <Box paddingY={2}>
-                              <Divider weight={colors.divider} />
-                            </Box>
-                            <Link href={url}>
-                              <a>
-                                <Typography
-                                  variant="p"
-                                  as="div"
-                                  color={colors.secondary}
-                                >
-                                  {text}
-                                </Typography>
-                              </a>
-                            </Link>
-                          </>
-                        ))}
-                      </>
-                    )}
-                  </Sidebar>
-                </Column>
-              </Columns>
-            </Box>
-          </ContentBlock>
+          <GridContainer>
+            <GridRow>
+              <GridColumn span={12}>
+                <Header white on="purple" />
+              </GridColumn>
+            </GridRow>
+            <GridRow>
+              <GridColumn offset={1} span={7}>
+                <Stack space={2}>
+                  <Breadcrumbs color="blue300" separatorColor="blue300">
+                    <Link href={makePath()}>
+                      <a>Ísland.is</a>
+                    </Link>
+                    <Link href={''}>
+                      <a>{page.title}</a>
+                    </Link>
+                  </Breadcrumbs>
+                  <Typography variant="h1" as="h1" color="white">
+                    {slice.title}
+                  </Typography>
+                  <Typography variant="p" as="p" color="white">
+                    {slice.introduction}
+                  </Typography>
+                </Stack>
+              </GridColumn>
+              <GridColumn span={3} offset={1}>
+                {slice.slices.map((slice) => (
+                  <Section
+                    key={slice.id}
+                    slice={slice}
+                    page={page}
+                    currentSliceId={currentSliceId}
+                    setRef={setRef}
+                  />
+                ))}
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
         </Background>
       )
     case 'TimelineSlice':
@@ -258,13 +267,18 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
     case 'HeadingSlice':
       return (
         <div key={slice.id} id={slice.id} ref={setRef(slice.id)}>
-          <Layout
-            indent="1/12"
-            width="7/12"
-            boxProps={{ paddingTop: 15, paddingBottom: 10 }}
-          >
-            <Heading {...slice} />
-          </Layout>
+          <GridContainer>
+            <GridRow>
+              <GridColumn
+                offset={1}
+                span={7}
+                paddingTop={15}
+                paddingBottom={10}
+              >
+                <Heading {...slice} />
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
         </div>
       )
     case 'LinkCardSlice':
@@ -275,9 +289,13 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           ref={setRef(slice.id)}
           background="dotted"
         >
-          <Layout width="8/12" boxProps={{ paddingTop: 8, paddingBottom: 10 }}>
-            <LinkCardList {...slice} />
-          </Layout>
+          <GridContainer>
+            <GridRow>
+              <GridColumn span={8} paddingTop={8} paddingBottom={10}>
+                <LinkCardList {...slice} />
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
         </Box>
       )
     case 'MailingListSignupSlice':
@@ -288,13 +306,13 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           ref={setRef(slice.id)}
           background="blue100"
         >
-          <Layout
-            width="7/12"
-            indent="1/12"
-            boxProps={{ paddingTop: 10, paddingBottom: 7 }}
-          >
-            <EmailSignup {...slice} />
-          </Layout>
+          <GridContainer>
+            <GridRow>
+              <GridColumn offset={1} span={7} paddingTop={10} paddingBottom={7}>
+                <EmailSignup {...slice} />
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
         </Box>
       )
     case 'StorySlice':
@@ -305,23 +323,31 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           ref={setRef(slice.id)}
           className={styles.gradient}
         >
-          <Layout width="7/12" boxProps={{ paddingTop: 12, paddingBottom: 10 }}>
-            <StoryList
-              {...slice}
-              stories={slice.stories.map((story) => ({
-                ...story,
-                logoUrl: story.logo.url,
-              }))}
-            />
-          </Layout>
+          <GridContainer>
+            <GridRow>
+              <GridColumn span={7} paddingTop={12} paddingBottom={10}>
+                <StoryList
+                  {...slice}
+                  stories={slice.stories.map((story) => ({
+                    ...story,
+                    logoUrl: story.logo.url,
+                  }))}
+                />
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
         </div>
       )
     case 'LatestNewsSlice':
       return (
         <div key={slice.id} id={slice.id} ref={setRef(slice.id)}>
-          <Layout width="8/12" boxProps={{ paddingTop: 15, paddingBottom: 12 }}>
-            <LatestNews {...slice} />
-          </Layout>
+          <GridContainer>
+            <GridRow>
+              <GridColumn span={8} paddingTop={15} paddingBottom={12}>
+                <LatestNews {...slice} />
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
         </div>
       )
     case 'LogoListSlice':
@@ -332,32 +358,43 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           ref={setRef(slice.id)}
           className={styles.gradient}
         >
-          <Layout width="7/12" boxProps={{ paddingTop: 12, paddingBottom: 10 }}>
-            <LogoList {...slice} images={slice.images.map((img) => img.url)} />
-          </Layout>
+          <GridContainer>
+            <GridRow>
+              <GridColumn span={7} paddingTop={12} paddingBottom={10}>
+                <LogoList
+                  {...slice}
+                  images={slice.images.map((img) => img.url)}
+                />
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
         </div>
       )
     case 'BulletListSlice':
       return (
         <div key={slice.id} ref={setRef(slice.id)}>
-          <Layout width="7/12" boxProps={{ paddingBottom: 10 }}>
-            <BulletList
-              bullets={slice.bullets.map((bullet) => {
-                switch (bullet.__typename) {
-                  case 'IconBullet':
-                    return {
-                      ...bullet,
-                      type: 'IconBullet',
-                      icon: bullet.icon.url,
+          <GridContainer>
+            <GridRow>
+              <GridColumn span={7} paddingTop={12} paddingBottom={10}>
+                <BulletList
+                  bullets={slice.bullets.map((bullet) => {
+                    switch (bullet.__typename) {
+                      case 'IconBullet':
+                        return {
+                          ...bullet,
+                          type: 'IconBullet',
+                          icon: bullet.icon.url,
+                        }
+                      case 'NumberBulletGroup':
+                        return { ...bullet, type: 'NumberBulletGroup' }
+                      default:
+                        return null
                     }
-                  case 'NumberBulletGroup':
-                    return { ...bullet, type: 'NumberBulletGroup' }
-                  default:
-                    return null
-                }
-              })}
-            />
-          </Layout>
+                  })}
+                />
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
         </div>
       )
   }
