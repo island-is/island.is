@@ -5,7 +5,7 @@ import Icon from '../../../Icon/Icon'
 
 export const LinkBox = ({ title, url, icon }) => {
   const firstLetter = title[0]
-  console.log(firstLetter)
+
   return (
     <li className={styles.root}>
       <a href={url}>
