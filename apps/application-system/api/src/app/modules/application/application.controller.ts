@@ -7,7 +7,7 @@ import {
   Post,
   Put,
   Delete,
-  Query,
+  Query, ParseUUIDPipe,
 } from '@nestjs/common'
 import { omit } from 'lodash'
 import { InjectQueue } from '@nestjs/bull'
@@ -34,7 +34,7 @@ export class ApplicationController {
 
   @Get(':id')
   @ApiOkResponse({ type: Application })
-  async findOne(@Param('id') id: string): Promise<Application> {
+  async findOne(@Param('id',  new ParseUUIDPipe()) id: string): Promise<Application> {
     const application = await this.applicationService.findById(id)
 
     if (!application) {
@@ -66,44 +66,48 @@ export class ApplicationController {
   @Put(':id')
   @ApiOkResponse({ type: Application })
   async update(
-    @Param('id') id: string,
+    @Param('id',  new ParseUUIDPipe()) id: string,
     @Body(new ApplicationValidationPipe(true))
     application: UpdateApplicationDto,
   ): Promise<Application> {
     const existingApplication = await this.applicationService.findById(id)
+
+    if (!existingApplication) {
+      throw new NotFoundException(
+        `An application with the id ${id} does not exist`,
+      )
+    }
 
     const mergedAnswers = mergeAnswers(
       existingApplication.answers,
       application.answers,
     )
     const {
-      numberOfAffectedRows,
       updatedApplication,
     } = await this.applicationService.update(id, {
       ...application,
       answers: mergedAnswers,
     })
 
-    if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(
-        `An application with the id ${id} does not exist`,
-      )
-    }
-
     return updatedApplication
   }
 
-  @Put('attachments/:id')
+  @Put(':id/attachments')
   @ApiOkResponse({ type: Application })
   async addAttachment(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() input: AddAttachmentDto,
   ): Promise<Application> {
     const { key, url } = input
     const existingApplication = await this.applicationService.findById(id)
 
+    if (!existingApplication) {
+      throw new NotFoundException(
+        `An application with the id ${id} does not exist`,
+      )
+    }
+
     const {
-      numberOfAffectedRows,
       updatedApplication,
     } = await this.applicationService.update(id, {
       attachments: {
@@ -111,12 +115,6 @@ export class ApplicationController {
         [key]: url,
       },
     })
-
-    if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(
-        `An application with the id ${id} does not exist`,
-      )
-    }
 
     await this.uploadQueue.add('upload', {
       applicationId: id,
@@ -126,27 +124,26 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Delete('attachments/:id')
+  @Delete(':id/attachments')
   @ApiOkResponse({ type: Application })
   async deleteAttachment(
-    @Param('id') id: string,
+    @Param('id',  new ParseUUIDPipe()) id: string,
     @Body() input: DeleteAttachmentDto,
   ): Promise<Application> {
     const { key } = input
     const existingApplication = await this.applicationService.findById(id)
 
-    const {
-      numberOfAffectedRows,
-      updatedApplication,
-    } = await this.applicationService.update(id, {
-      attachments: omit(existingApplication.attachments, key),
-    })
-
-    if (numberOfAffectedRows === 0) {
+    if (!existingApplication) {
       throw new NotFoundException(
         `An application with the id ${id} does not exist`,
       )
     }
+
+    const {
+      updatedApplication,
+    } = await this.applicationService.update(id, {
+      attachments: omit(existingApplication.attachments, key),
+    })
 
     return updatedApplication
   }
