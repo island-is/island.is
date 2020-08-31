@@ -8,14 +8,9 @@ import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
 import { WebSearchAutocompleteInput } from '../../../domains/content-search/src/lib/dto/webSearchAutocomplete.input'
-import { WebSearchAutocomplete } from '../../../domains/content-search/src/lib/models/webSearchAutocomplete.model'
+import { autocompleteTerm } from '../queries/autocomplete';
 
 const { elastic } = environment
-interface AutocompleteTermResponse {
-  suggest: {
-    searchSuggester: [{ options: [{ text: string }] }]
-  }
-}
 
 @Injectable()
 export class ElasticService {
@@ -160,23 +155,8 @@ export class ElasticService {
     index: SearchIndexes,
     input: Omit<WebSearchAutocompleteInput, 'language'>,
   ): Promise<AutocompleteTermResponse> {
-    const { singleTerm, size } = input
-    const requestBody = {
-      suggest: {
-        searchSuggester: {
-          prefix: singleTerm,
-          completion: {
-            field: 'term_pool',
-            size,
-            skip_duplicates: true,
-            fuzzy: {
-              unicode_aware: true,
-              fuzziness: 'auto',
-            },
-          },
-        },
-      },
-    }
+    const { singleTerm: prefix, size } = input
+    const requestBody = autocompleteTerm({prefix, size})
 
     const data = await this.findByQuery<AutocompleteTermResponse>(
       index,
