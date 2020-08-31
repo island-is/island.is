@@ -4,15 +4,24 @@ import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
+import { logger } from '@island.is/logging'
+import { ApolloError } from 'apollo-server-express'
+
+const handleError = (error) => {
+  logger.error(error)
+  throw new ApolloError('Failed to resolve request', error.status)
+}
 
 @Injectable()
 export class ApplicationService {
   constructor(private applicationApi: ApplicationApi) {}
 
   async findOne(id: string) {
-    return this.applicationApi.applicationControllerFindOne({
-      id,
-    })
+    return await this.applicationApi
+      .applicationControllerFindOne({
+        id,
+      })
+      .catch(handleError)
   }
 
   async create(input: CreateApplicationInput) {
@@ -22,33 +31,41 @@ export class ApplicationService {
   }
 
   async findAllByType(typeId: ApplicationTypeIdEnum) {
-    return this.applicationApi.applicationControllerFindAll({ typeId })
+    return await this.applicationApi
+      .applicationControllerFindAll({ typeId })
+      .catch(handleError)
   }
 
   async update(input: UpdateApplicationInput) {
     const { id, ...updateApplicationDto } = input
 
-    return this.applicationApi.applicationControllerUpdate({
-      id,
-      updateApplicationDto,
-    })
+    return await this.applicationApi
+      .applicationControllerUpdate({
+        id,
+        updateApplicationDto,
+      })
+      .catch(handleError)
   }
 
   async addAttachment(input: AddAttachmentInput) {
     const { id, ...addAttachmentDto } = input
 
-    return this.applicationApi.applicationControllerAddAttachment({
-      id,
-      addAttachmentDto,
-    })
+    return await this.applicationApi
+      .applicationControllerAddAttachment({
+        id,
+        addAttachmentDto,
+      })
+      .catch(handleError)
   }
 
   async deleteAttachment(input: DeleteAttachmentInput) {
     const { id, ...deleteAttachmentDto } = input
 
-    return this.applicationApi.applicationControllerDeleteAttachment({
-      id,
-      deleteAttachmentDto,
-    })
+    return await this.applicationApi
+      .applicationControllerDeleteAttachment({
+        id,
+        deleteAttachmentDto,
+      })
+      .catch(handleError)
   }
 }

@@ -266,7 +266,7 @@ paths:
                 $ref: '#/components/schemas/Application'
       tags:
         - application
-  '/application/attachments/{id}':
+  '/application/{id}/attachments':
     put:
       operationId: ApplicationController_addAttachment
       parameters:

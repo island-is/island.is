@@ -13,42 +13,42 @@ export class ApplicationResolver {
   constructor(private applicationService: ApplicationService) {}
 
   @Query(() => Application, { nullable: true })
-  getApplication(
+  async getApplication(
     @Args('input') input: GetApplicationInput,
   ): Promise<Application | null> {
-    return this.applicationService.findOne(input.id)
+      return this.applicationService.findOne(input.id)
   }
 
   @Query(() => [Application], { nullable: true })
-  getApplicationsByType(
+  async getApplicationsByType(
     @Args('input') input: GetApplicationsByTypeInput,
   ): Promise<Application[] | null> {
     return this.applicationService.findAllByType(input.typeId)
   }
 
   @Mutation(() => Application, { nullable: true })
-  createApplication(
+  async createApplication(
     @Args('input') input: CreateApplicationInput,
   ): Promise<Application> {
     return this.applicationService.create(input)
   }
 
   @Mutation(() => Application, { nullable: true })
-  updateApplication(
+  async updateApplication(
     @Args('input') input: UpdateApplicationInput,
   ): Promise<Application> {
     return this.applicationService.update(input)
   }
 
   @Mutation(() => Application, { nullable: true })
-  addAttachment(
+  async addAttachment(
     @Args('input') input: AddAttachmentInput,
   ): Promise<Application> {
     return this.applicationService.addAttachment(input)
   }
 
   @Mutation(() => Application, { nullable: true })
-  deleteAttachment(
+  async deleteAttachment(
     @Args('input') input: DeleteAttachmentInput,
   ): Promise<Application> {
     return this.applicationService.deleteAttachment(input)

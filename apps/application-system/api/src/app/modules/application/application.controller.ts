@@ -7,7 +7,8 @@ import {
   Post,
   Put,
   Delete,
-  Query, ParseUUIDPipe,
+  Query,
+  ParseUUIDPipe,
 } from '@nestjs/common'
 import { omit } from 'lodash'
 import { InjectQueue } from '@nestjs/bull'
@@ -34,11 +35,17 @@ export class ApplicationController {
 
   @Get(':id')
   @ApiOkResponse({ type: Application })
-  async findOne(@Param('id',  new ParseUUIDPipe()) id: string): Promise<Application> {
+  async findOne(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<Application> {
     const application = await this.applicationService.findById(id)
 
-    if (!application) {
-      throw new NotFoundException("This application doesn't exist")
+    if (application === null) {
+      console.log('NotFoundException')
+
+      throw new NotFoundException(
+        `An application with the id ${id} does not exist`,
+      )
     }
 
     return application
@@ -66,13 +73,13 @@ export class ApplicationController {
   @Put(':id')
   @ApiOkResponse({ type: Application })
   async update(
-    @Param('id',  new ParseUUIDPipe()) id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body(new ApplicationValidationPipe(true))
     application: UpdateApplicationDto,
   ): Promise<Application> {
     const existingApplication = await this.applicationService.findById(id)
 
-    if (!existingApplication) {
+    if (existingApplication === null) {
       throw new NotFoundException(
         `An application with the id ${id} does not exist`,
       )
@@ -82,9 +89,7 @@ export class ApplicationController {
       existingApplication.answers,
       application.answers,
     )
-    const {
-      updatedApplication,
-    } = await this.applicationService.update(id, {
+    const { updatedApplication } = await this.applicationService.update(id, {
       ...application,
       answers: mergedAnswers,
     })
@@ -101,15 +106,13 @@ export class ApplicationController {
     const { key, url } = input
     const existingApplication = await this.applicationService.findById(id)
 
-    if (!existingApplication) {
+    if (existingApplication === null) {
       throw new NotFoundException(
         `An application with the id ${id} does not exist`,
       )
     }
 
-    const {
-      updatedApplication,
-    } = await this.applicationService.update(id, {
+    const { updatedApplication } = await this.applicationService.update(id, {
       attachments: {
         ...existingApplication.attachments,
         [key]: url,
@@ -127,21 +130,19 @@ export class ApplicationController {
   @Delete(':id/attachments')
   @ApiOkResponse({ type: Application })
   async deleteAttachment(
-    @Param('id',  new ParseUUIDPipe()) id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body() input: DeleteAttachmentDto,
   ): Promise<Application> {
     const { key } = input
     const existingApplication = await this.applicationService.findById(id)
 
-    if (!existingApplication) {
+    if (existingApplication === null) {
       throw new NotFoundException(
         `An application with the id ${id} does not exist`,
       )
     }
 
-    const {
-      updatedApplication,
-    } = await this.applicationService.update(id, {
+    const { updatedApplication } = await this.applicationService.update(id, {
       attachments: omit(existingApplication.attachments, key),
     })
 
