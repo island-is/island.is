@@ -12,6 +12,7 @@ import {
 import { Heading, Image } from '@island.is/adgerdir/components'
 
 import * as styles from './FeaturedNews.treat'
+import Link from 'next/link'
 
 interface FeaturedNewsProps {}
 
@@ -51,9 +52,11 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ children }) => {
                   þrautseigja verða leiðarljós þeirrar samvinnu,“ segir m.a. í
                   yfirlýsingunni.
                 </Typography>
-                <Button variant="text" icon="arrowRight">
-                  Lesa meira
-                </Button>
+                <Link href="/[slug]" as="/frestun-skattgreidslna" passHref>
+                  <Button variant="text" icon="arrowRight">
+                    Lesa meira
+                  </Button>
+                </Link>
               </Stack>
             </Box>
           </GridColumn>

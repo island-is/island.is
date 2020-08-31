@@ -195,6 +195,7 @@ export const Articles: FC<ArticlesProps> = ({
                       variant="red"
                       onClick={() => onStatusClick(status)}
                       active={selectedStatuses.includes(status)}
+                      bordered
                     >
                       <Box position="relative">
                         <Inline space={1} alignY="center">
@@ -222,6 +223,7 @@ export const Articles: FC<ArticlesProps> = ({
                       variant="red"
                       onClick={() => onTagClick(id)}
                       active={tagIds.includes(id)}
+                      bordered
                     >
                       {title}
                     </Tag>
