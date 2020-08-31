@@ -19,6 +19,7 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
 export const GET_SEARCH_AUTOCOMPLETE_TERM_QUERY = gql`
   query AutocompleteTermResults($input: WebSearchAutocompleteInput!) {
     webSearchAutocomplete(input: $input) {
+      prefix
       completions
     }
   }

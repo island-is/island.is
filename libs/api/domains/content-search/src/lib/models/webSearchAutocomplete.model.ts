@@ -7,4 +7,7 @@ export class WebSearchAutocomplete {
 
   @Field(() => [String])
   completions: string[]
+
+  @Field(() => String)
+  prefix: string
 }

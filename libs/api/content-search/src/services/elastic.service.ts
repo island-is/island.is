@@ -160,11 +160,11 @@ export class ElasticService {
     index: SearchIndexes,
     input: Omit<WebSearchAutocompleteInput, 'language'>,
   ): Promise<AutocompleteTermResponse> {
-    const { singleTerm, size } = input
+    const { queryString, size } = input
     const requestBody = {
       suggest: {
         searchSuggester: {
-          prefix: singleTerm,
+          prefix: queryString,
           completion: {
             field: 'term_pool',
             size,
@@ -228,7 +228,6 @@ export class ElasticService {
     })
   }
 
-  // TODO: Handle this normalization more generaly not per request (if able)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static handleError(message: string, context: any, error: any) {
     ElasticService.logError(message, context, error)

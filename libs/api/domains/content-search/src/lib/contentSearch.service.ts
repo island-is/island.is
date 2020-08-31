@@ -16,7 +16,6 @@ export class ContentSearchService {
     return SearchIndexes[lang] ?? SearchIndexes.is
   }
 
-  // TODO: We might be able to index the fields in camelcase for case consistency but we will allways need mapping
   private fixCase(doc) {
     const obj = doc._source
     obj.contentType = obj.content_type
@@ -44,7 +43,7 @@ export class ContentSearchService {
     }
   }
 
-  // TODO: use aggregation of terms here
+  // TODO: use aggregation here
   async fetchCategories(query): Promise<ContentCategory[]> {
     // todo do properly not this awesome hack
     const queryTmp = new RequestBodySearch().size(1000)
@@ -94,13 +93,22 @@ export class ContentSearchService {
   async fetchAutocompleteTerm(
     input: WebSearchAutocompleteInput,
   ): Promise<WebSearchAutocomplete> {
+    const cleanQueryString = input.queryString.trim()
+    const indexOfLastWord = cleanQueryString.lastIndexOf(' ')
+    const prefix = indexOfLastWord === -1 ? '' : cleanQueryString.slice(0, indexOfLastWord)
+    const queryString = indexOfLastWord === -1 ? cleanQueryString : cleanQueryString.slice(indexOfLastWord)
+
     const {
       suggest: { searchSuggester },
     } = await this.repository.fetchAutocompleteTerm(
       this.getIndex(input.language),
-      input,
+      {
+        ...input,
+        queryString
+      },
     )
-
+    
+    // we always handle just one terms at a time so we return results for first term
     const firstWordSuggestions = searchSuggester[0].options
 
     return {
@@ -108,6 +116,7 @@ export class ContentSearchService {
       completions: firstWordSuggestions.map(
         (suggestionObjects) => suggestionObjects.text,
       ),
+      prefix
     }
   }
 }

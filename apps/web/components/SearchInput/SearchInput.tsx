@@ -8,10 +8,8 @@ import React, {
 } from 'react'
 import Link from 'next/link'
 import Downshift from 'downshift'
-import cn from 'classnames'
-import { uniq, sortBy } from 'lodash'
 import { useRouter } from 'next/router'
-import { useApolloClient, useQuery } from 'react-apollo'
+import { useApolloClient } from 'react-apollo'
 import {
   GET_SEARCH_RESULTS_QUERY,
   GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
@@ -40,12 +38,14 @@ type SearchState = {
   term: string
   results?: SearchResult
   suggestions: string[]
+  prefix: string
   isLoading: boolean
 }
 
 const emptyState: Readonly<SearchState> = {
   term: '',
   suggestions: [],
+  prefix: '',
   isLoading: false,
 }
 
@@ -67,6 +67,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
       setState({
         isLoading: false,
         term: '',
+        prefix: '',
         // hardcoded while not supported by search
         suggestions: [
           'Covid-19',
@@ -98,13 +99,13 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
 
       const {
         data: {
-          webSearchAutocomplete: { completions: suggestions },
+          webSearchAutocomplete: { completions: suggestions, prefix },
         },
       } = await client.query<Query, QueryWebSearchAutocompleteArgs>({
         query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
         variables: {
           input: {
-            singleTerm: term,
+            queryString: term,
             language: locale as ContentLanguage,
             size: 10, // only show top X completions to prevent long list
           },
@@ -117,6 +118,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
           term,
           results,
           suggestions,
+          prefix
         })
       }
     }, DEBOUNCE_TIMER))
@@ -307,7 +309,7 @@ const Results: FC<{
               <Typography
                 color={i === highlightedIndex ? 'blue400' : 'dark400'}
               >
-                {suggestion.slice(0, search.term.length)}
+                {`${search.prefix} ${suggestion.slice(0, search.term.length)}`}
                 <strong>{suggestion.slice(search.term.length)}</strong>
               </Typography>
             </div>
