@@ -14,19 +14,19 @@ export class DiscountService {
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
   ) {}
 
-  private getNationalIdCacheKey(nationalId: string) {
+  private getNationalIdCacheKey(nationalId: string): string {
     return `national_id_${nationalId}`
   }
 
-  private getDiscountCodeCacheKey(discountCode: string) {
+  private getDiscountCodeCacheKey(discountCode: string): string {
     return `discount_code_${discountCode}`
   }
 
-  private getRandomRange(min: number, max: number) {
+  private getRandomRange(min: number, max: number): number {
     return Math.random() * (max - min) + min
   }
 
-  private generateDiscountCode() {
+  private generateDiscountCode(): string {
     return [...Array(DISCOUNT_CODE_LENGTH)]
       .map(() => {
         const rand = Math.round(Math.random())
@@ -84,8 +84,10 @@ export class DiscountService {
     return discount.nationalId
   }
 
-  useDiscount(discountCode: string): Promise<void> {
-    const cacheKey = this.getDiscountCodeCacheKey(discountCode)
-    return this.cacheManager.del(cacheKey)
+  async useDiscount(discountCode: string, nationalId: string): Promise<void> {
+    const discountCodeCacheKey = this.getDiscountCodeCacheKey(discountCode)
+    const nationalIdCacheKey = this.getNationalIdCacheKey(nationalId)
+    await this.cacheManager.del(discountCodeCacheKey)
+    await this.cacheManager.del(nationalIdCacheKey)
   }
 }

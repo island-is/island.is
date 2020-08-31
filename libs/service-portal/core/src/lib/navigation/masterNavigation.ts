@@ -66,6 +66,13 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: 'Fjármál',
         path: ServicePortalPath.FjarmalRoot,
         icon: 'user',
+        children: [
+          {
+            name: 'Ökutæki',
+            path: ServicePortalPath.FjarmalOkutaeki,
+            external: true,
+          },
+        ],
       },
 
       // Heilsa
@@ -73,6 +80,18 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         name: 'Heilsa',
         path: ServicePortalPath.HeilsaRoot,
         icon: 'plus',
+        children: [
+          {
+            name: 'Heilsuvera',
+            path: ServicePortalPath.HeilsaHeilsuvera,
+            external: true,
+          },
+          {
+            name: 'Bólusetningar',
+            path: ServicePortalPath.HeilsaBolusetningar,
+            external: true,
+          },
+        ],
       },
 
       // Menntun

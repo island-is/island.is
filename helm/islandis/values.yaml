@@ -17,7 +17,7 @@ web:
     API_URL: 'http://web-api'
 
 adgerdir:
-  namespace: islandis
+  namespace: adgerdir
   service:
     targetPort: 4200
   image:
@@ -25,7 +25,7 @@ adgerdir:
   ingress:
     enabled: true
   env:
-    API_URL: 'http://web-api'
+    API_URL: 'http://web-api.islandis.svc.cluster.local'
 
 search-indexer-service:
   namespace: search-indexer
@@ -58,6 +58,26 @@ api:
     enabled: true
   env:
     PORT: '3333'
+  healthCheck:
+    liveness:
+      path: /liveness
+    readiness:
+      path: /liveness
+
+judicial-system-api:
+  namespace: judicial-system
+  image:
+    repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-api
+  initContainer:
+    create: true
+    command: [“npx”]
+    args: [“sequelize-cli”, “db:migrate”]
+    secrets:
+      DB_PASS: “/k8s/judicial-system/DB_PASSWORD”
+  ingress:
+    enabled: true
+  podSecurityContext:
+    fsGroup: 65534
   healthCheck:
     liveness:
       path: /liveness

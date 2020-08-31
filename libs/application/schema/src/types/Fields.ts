@@ -27,10 +27,14 @@ export enum FieldTypes {
   EMAIL = 'EMAIL',
   SELECT = 'SELECT',
   TEXT = 'TEXT',
+  FILEUPLOAD = 'FILEUPLOAD',
 }
 
 export enum CustomFieldComponents {
   Country = 'ExampleCountryField',
+  PATERNITY_LEAVE_CALCULATIONS = 'PaternityLeaveCalculations',
+  PATERNITY_LEAVE_PERIODS = 'PaternityLeavePeriods',
+  PATERNITY_LEAVE_USAGE = 'PaternityLeaveUsage',
 }
 
 export enum FieldComponents {
@@ -39,6 +43,7 @@ export enum FieldComponents {
   INTRO = 'IntroductionFormField',
   RADIO = 'RadioFormField',
   SELECT = 'SelectFormField',
+  FILEUPLOAD = 'FileUploadFormField',
 }
 
 export interface Question extends BaseField {
@@ -86,6 +91,17 @@ export interface TextField extends Question {
   placeholder?: string
 }
 
+export interface FileUploadField extends Question {
+  readonly type: FieldTypes.FILEUPLOAD
+  component: FieldComponents.FILEUPLOAD
+  readonly introduction: string
+  readonly uploadHeader?: string
+  readonly uploadDescription?: string
+  readonly upploadButtonLabel?: string
+  readonly uploadMultiple?: boolean
+  readonly uploadAccept?: string
+}
+
 export interface CustomField extends Question {
   readonly type: FieldTypes.CUSTOM
   readonly component: CustomFieldComponents
@@ -100,3 +116,4 @@ export type Field =
   | RadioField
   | SelectField
   | TextField
+  | FileUploadField

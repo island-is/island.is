@@ -194,6 +194,22 @@
     "air-discount-scheme-types": {
       "tags": []
     },
+    "judicial-system-api": {
+      "tags": []
+    },
+    "judicial-system-web": {
+      "tags": []
+    },
+    "judicial-system/web-e2e": {
+      "tags": [],
+      "implicitDependencies": ["judicial-system-web"]
+    },
+    "api-domains-documents": {
+      "tags": []
+    },
+    "service-portal-graphql": {
+      "tags": []
+    },
     "application-data-provider": {
       "tags": []
     }

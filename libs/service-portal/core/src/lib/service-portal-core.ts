@@ -2,6 +2,7 @@ import { LazyExoticComponent, FC } from 'react'
 import { IconTypes } from '@island.is/island-ui/core'
 import { User } from 'oidc-client'
 import { ServicePortalPath } from './navigation/paths'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
 /**
  * A navigational item used by the service portal
@@ -19,6 +20,7 @@ export interface ServicePortalNavigationItem {
  */
 export interface ServicePortalModuleProps {
   userInfo: UserWithMeta
+  client: ApolloClient<NormalizedCacheObject>
 }
 
 /**
@@ -48,7 +50,7 @@ export type ServicePortalRoute = {
   /**
    * The render value of this component
    */
-  render: (userInfo: UserWithMeta) => ServicePortalModuleRenderValue
+  render?: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue
 }
 
 /**
@@ -67,7 +69,7 @@ export type ServicePortalWidget = {
   /**
    * The render value of this widget
    */
-  render: (userInfo: UserWithMeta) => ServicePortalModuleRenderValue
+  render: (props: ServicePortalModuleProps) => ServicePortalModuleRenderValue
 }
 
 export interface ServicePortalModule {
@@ -79,20 +81,13 @@ export interface ServicePortalModule {
    * An optional render value of widgets that should
    * be displayed on the dashboard
    */
-  widgets: (userInfo: UserWithMeta) => ServicePortalWidget[]
+  widgets: (props: ServicePortalModuleProps) => ServicePortalWidget[]
   /**
    * The routes defined by this module.
    * The service portal shell will define these as routes
    * within itself and use the provided render function to render out the component
    */
-  routes: (userInfo: UserWithMeta) => ServicePortalRoute[]
-  /**
-   * Proposal:
-   * All paths provided by this module.
-   * These are used to determine what navigational items will be shown
-   * in the sidebar, what breadcrumbs will be generated etc.
-   */
-  // paths: ServicePortalPath[]
+  routes: (props: ServicePortalModuleProps) => ServicePortalRoute[]
 }
 
 /**

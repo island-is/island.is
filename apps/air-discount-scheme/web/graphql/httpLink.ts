@@ -1,4 +1,4 @@
-import { createHttpLink } from 'apollo-link-http'
+import { createHttpLink } from '@apollo/client'
 import getConfig from 'next/config'
 import fetch from 'isomorphic-unfetch'
 
