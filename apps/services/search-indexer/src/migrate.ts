@@ -7,6 +7,7 @@ import { DomainPackageDetails, PackageDetails } from 'aws-sdk/clients/es'
 import { ManagedUpload } from 'aws-sdk/clients/s3'
 import { logger } from '@island.is/logging'
 import { ElasticService } from '@island.is/api/content-search'
+import { map } from 'lodash'
 
 class Config {
   elasticNode: string
@@ -198,13 +199,12 @@ class App {
 
   private async reindexToNewIndex(codeVersion: number) {
     logger.info('Reindexing to new index code version is', {codeVersion})
-    const hasOlderVersion = await this.esHasVersion(codeVersion - 1)
-    if (!hasOlderVersion) {
+    const oldIndex = await this.esGetOlderVersionIndex(codeVersion)
+    if (!oldIndex) {
       logger.info('No older version found creating new index for this version')
       return this.createIndex(codeVersion)
     }
 
-    const oldIndex = App.getIndexNameForVersion(codeVersion - 1)
     const newIndex = App.getIndexNameForVersion(codeVersion)
     const params = {
       waitForCompletion: true,
@@ -631,6 +631,22 @@ class App {
       result: result.body,
     })
     return result.body
+  }
+
+  public async esGetOlderVersionIndex(currentVersion: number): Promise<string | null> {
+    logger.info('Finding older indexes')
+    const client = await this.getEsClient()
+
+    for(var i = currentVersion - 1; i > 0 ; i--) {
+      const indexExists = await this.esHasVersion(i)
+      if(indexExists) {
+        // this old version exists, return the name of the index
+        return App.getIndexNameForVersion(i)
+      }
+    }
+
+    // no index found
+    return null
   }
 
   private static getIndexNameForVersion(version: number) {
