@@ -189,8 +189,8 @@ export class IndexingService {
     // provide clean terms for e.g. autocomplete words
     document.term_pool = `${document.title} ${document.category} ${document.group}`
       .toLowerCase()
-      .replace(/[^a-zA-Záðéíúýþæö]+/g, ' ') // remove all non characters
-      .split(' ')
+      .replace(/[^a-záðéíúýþæö]+/g, ' ') // remove all non characters
+      .split(/\s+/)
 
     if (syncToken) {
       document.nextSyncToken = syncToken
