@@ -48,7 +48,11 @@ export const tabActive = style({
   borderColor: theme.color.blue400,
 })
 
-export const content = style({})
+export const content = style({
+  overflowY: 'scroll',
+  maxHeight: 450,
+  paddingBottom: theme.spacing[4],
+})
 
 export const linksContent = style({
   background: theme.color.blue100,
