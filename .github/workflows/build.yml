@@ -396,6 +396,9 @@ jobs:
     env:
       PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
       UNAFFECTED: ${{ needs.prepare.outputs.UNAFFECTED }}
+      GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      LAST_GOOD_BUILD_DOCKER_TAG: ${{ needs.prepare.outputs.LAST_GOOD_BUILD_DOCKER_TAG}}
 
     steps:
       - uses: actions/checkout@v2
