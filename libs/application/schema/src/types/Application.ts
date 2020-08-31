@@ -1,4 +1,5 @@
 import { FormType } from '../forms'
+import { DataProviderResult } from '@island.is/application/data-provider'
 
 export type ApplicationStatus =
   | 'approved'
@@ -6,6 +7,10 @@ export type ApplicationStatus =
   | 'pending'
   | 'draft'
   | 'in_progress'
+
+export interface ExternalData {
+  [key: string]: DataProviderResult
+}
 
 export interface Application {
   id: string
@@ -17,4 +22,5 @@ export interface Application {
   created: Date
   attachments: string[]
   answers: object
+  externalData: ExternalData
 }

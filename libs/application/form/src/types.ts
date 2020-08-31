@@ -2,6 +2,7 @@ import {
   Field,
   FormValue,
   MultiField,
+  ExternalDataProvider,
   Repeater,
 } from '@island.is/application/schema'
 import { Ref } from 'react'
@@ -32,4 +33,13 @@ export type RepeaterScreen = {
 } & Repeater & {
     children: (FieldDef | MultiFieldScreen | RepeaterScreen)[]
   }
-export type FormScreen = FieldDef | MultiFieldScreen | RepeaterScreen
+
+export type ExternalDataProviderScreen = {
+  isNavigable: true
+} & ExternalDataProvider
+
+export type FormScreen =
+  | FieldDef
+  | ExternalDataProviderScreen
+  | MultiFieldScreen
+  | RepeaterScreen

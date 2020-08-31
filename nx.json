@@ -193,6 +193,9 @@
     },
     "air-discount-scheme-types": {
       "tags": []
+    },
+    "application-data-provider": {
+      "tags": []
     }
   }
 }

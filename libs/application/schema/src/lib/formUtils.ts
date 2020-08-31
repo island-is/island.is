@@ -141,7 +141,7 @@ const overwriteMerge = (destinationArray, sourceArray) => {
   return result
 }
 
-export function mergeAnswers(
+export function mergeNestedObjects(
   currentAnswers: object,
   newAnswers: object,
 ): FormValue {

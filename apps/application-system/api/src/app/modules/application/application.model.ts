@@ -95,4 +95,12 @@ export class Application extends Model<Application> {
   })
   @ApiProperty()
   answers: object
+
+  @Column({
+    type: DataType.JSONB,
+    defaultValue: {},
+    allowNull: false,
+  })
+  @ApiProperty()
+  externalData: object
 }

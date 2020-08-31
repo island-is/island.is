@@ -2,6 +2,7 @@ import { ZodObject } from 'zod'
 import { Condition } from './Condition'
 import { Field } from './Fields'
 import { FormType } from '../forms'
+import { DataProviderTypes } from '@island.is/application/data-provider'
 
 export enum FormItemTypes {
   FORM = 'FORM',
@@ -9,6 +10,7 @@ export enum FormItemTypes {
   SUB_SECTION = 'SUB_SECTION',
   REPEATER = 'REPEATER',
   MULTI_FIELD = 'MULTI_FIELD',
+  EXTERNAL_DATA_PROVIDER = 'EXTERNAL_DATA_PROVIDER',
 }
 
 //eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -24,15 +26,9 @@ export interface Form {
   children: FormChildren[]
 }
 
-export type FormNode =
-  | Form
-  | Section
-  | SubSection
-  | Repeater
-  | MultiField
-  | Field
+export type FormLeaf = MultiField | Field | Repeater | ExternalDataProvider
+export type FormNode = Form | Section | SubSection | FormLeaf
 
-export type FormLeaf = MultiField | Field | Repeater
 export type FormChildren = Section | FormLeaf
 export type SectionChildren = SubSection | FormLeaf
 
@@ -69,6 +65,22 @@ export interface MultiField extends FormItem {
   children: Field[]
   condition?: Condition
   repeaterIndex?: number
+}
+
+export interface ExternalDataProvider extends FormItem {
+  readonly type: FormItemTypes.EXTERNAL_DATA_PROVIDER
+  readonly children: undefined
+  condition?: Condition
+  repeaterIndex?: number
+  dataProviders: DataProviderItem[]
+}
+
+export interface DataProviderItem {
+  readonly id: string
+  readonly type: DataProviderTypes
+  readonly title: string
+  readonly subTitle?: string
+  readonly source?: string
 }
 
 export type Answer = string | number | Answer[] | FormValue

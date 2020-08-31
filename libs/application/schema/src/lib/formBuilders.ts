@@ -3,14 +3,16 @@ import { Condition } from '../types/Condition'
 import {
   Form,
   FormChildren,
-  MultiField,
-  SubSection,
-  Section,
   FormItemTypes,
   FormLeaf,
+  MultiField,
+  ExternalDataProvider,
   Repeater,
-  SectionChildren,
   Schema,
+  Section,
+  SectionChildren,
+  SubSection,
+  DataProviderItem,
 } from '../types/Form'
 import { FormType } from '../forms'
 
@@ -60,4 +62,16 @@ export function buildSubSection(data: {
   children: FormLeaf[]
 }): SubSection {
   return { ...data, type: FormItemTypes.SUB_SECTION }
+}
+
+export function buildExternalDataProvider(data: {
+  name: string
+  dataProviders: DataProviderItem[]
+}): ExternalDataProvider {
+  return {
+    ...data,
+    repeaterIndex: undefined,
+    children: undefined,
+    type: FormItemTypes.EXTERNAL_DATA_PROVIDER,
+  }
 }

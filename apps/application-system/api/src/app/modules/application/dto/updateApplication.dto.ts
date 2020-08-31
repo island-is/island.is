@@ -6,7 +6,7 @@ import {
   IsOptional,
 } from 'class-validator'
 import { ApplicationState } from '../application.model'
-import { FormType } from '@island.is/application/schema'
+import { ExternalData, FormType } from '@island.is/application/schema'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateApplicationDto {
@@ -42,6 +42,11 @@ export class UpdateApplicationDto {
   @IsObject()
   @ApiPropertyOptional()
   readonly answers: object
+
+  @IsOptional()
+  @IsObject()
+  @ApiPropertyOptional()
+  readonly externalData: ExternalData
 
   @IsOptional()
   @IsArray()

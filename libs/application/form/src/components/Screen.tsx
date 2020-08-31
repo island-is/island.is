@@ -17,6 +17,7 @@ import FormMultiField from './FormMultiField'
 import FormField from './FormField'
 import { resolver } from '../validation/resolver'
 import FormRepeater from './FormRepeater'
+import FormExternalDataProvider from './FormExternalDataProvider'
 
 type ScreenProps = {
   answerAndGoToNextScreen(Answers): void
@@ -140,6 +141,8 @@ const Screen: FC<ScreenProps> = ({
                 multiField={screen}
                 formValue={formValue}
               />
+            ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
+              <FormExternalDataProvider externalDataProvider={screen} />
             ) : (
               <FormField
                 autoFocus

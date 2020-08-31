@@ -2,6 +2,7 @@ import * as z from 'zod'
 import {
   buildForm,
   buildMultiField,
+  buildExternalDataProvider,
   buildSection,
   buildSubSection,
 } from '../../lib/formBuilders'
@@ -79,6 +80,10 @@ export const ExampleForm3: Form = buildForm({
       id: 'student',
       name: 'Student',
       children: [
+        buildExternalDataProvider({
+          name: 'We have to fetch these files first sorry',
+          dataProviders: [],
+        }),
         buildIntroductionField({
           id: 'field',
           name: 'Welcome',
