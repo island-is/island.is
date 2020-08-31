@@ -389,164 +389,48 @@ jobs:
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-next
 
-  publish:
+  retag-unaffected:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     needs: [docker-express, docker-next, prepare, linting, formatting]
     env:
-      GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
-      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
-      LAST_GOOD_BUILD_DOCKER_TAG: ${{ needs.prepare.outputs.LAST_GOOD_BUILD_DOCKER_TAG}}
       PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
       UNAFFECTED: ${{ needs.prepare.outputs.UNAFFECTED }}
 
     steps:
       - uses: actions/checkout@v2
         if: env.PUBLISH == 'true'
-      - name: Set Helm chart version
-        if: env.PUBLISH == 'true'
-        id: helm-chart-version
-        run: |
-          export HELM_CHART_VERSION=1.0.0+${DOCKER_TAG}
-          echo "Helm chart version will be ${HELM_CHART_VERSION}"
-          echo "::set-env name=HELM_CHART_VERSION::${HELM_CHART_VERSION}"
-      - name: Install Helm push plugin
-        if: env.PUBLISH == 'true'
-        run: helm plugin install https://github.com/chartmuseum/helm-push.git --version=0.8.1
-      - name: Install Our ChartMuseum
-        if: env.PUBLISH == 'true'
-        run: helm repo add chartmuseum https://chartmuseum.shared.devland.is --username=$USERNAME --password=$PASSWORD
-        env:
-          USERNAME: ${{ secrets.HELM_CHART_USERNAME }}
-          PASSWORD: ${{ secrets.HELM_CHART_PASSWORD }}
-      - name: Push islandis chart to the museum
-        if: env.PUBLISH == 'true'
-        run: helm dep build helm/islandis && helm push helm/islandis --version="$HELM_CHART_VERSION" -f chartmuseum
-      - name: Push gjafakort chart to the museum
-        if: env.PUBLISH == 'true'
-        run: helm dep build helm/gjafakort && helm push helm/gjafakort --version="$HELM_CHART_VERSION" -f chartmuseum
-      - name: Push air-discount-scheme chart to the museum
-        if: env.PUBLISH == 'true'
-        run: helm dep build helm/air-discount-scheme && helm push helm/air-discount-scheme --version="$HELM_CHART_VERSION" -f chartmuseum
       - name: Retag unaffected Docker images
         if: env.PUBLISH == 'true'
         run: ./scripts/retag-unaffected.sh "$UNAFFECTED"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      - name: Trigger Deployment for islandis
-        if: env.PUBLISH == 'true'
-        env:
-          TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_ISLANDIS_TOKEN }}
-          ENDPOINT: https://spinnaker-gate.shared.devland.is/webhooks/webhook/islandis
-        run: |
-          curl -v $ENDPOINT -X POST -H "content-type: application/json" --data-binary @- <<BODY
-          {
-            "token": "$TOKEN",
-            "branch": "$GIT_BRANCH",
-            "parameters": { "docker_tag": "$DOCKER_TAG" },
-            "artifacts": [
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.dev.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.dev.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.staging.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.staging.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.prod.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.prod.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "name": "islandis",
-                "type": "helm/chart",
-                "version": "$HELM_CHART_VERSION"
-              }
-            ]
-          }
-          BODY
-      - name: Trigger Deployment for gjafakort
-        if: env.PUBLISH == 'true'
-        env:
-          TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_GJAFAKORT_TOKEN }}
-          ENDPOINT: https://spinnaker-gate.shared.devland.is/webhooks/webhook/gjafakort
-        run: |
-          curl -v $ENDPOINT -X POST -H "content-type: application/json" --data-binary @- <<BODY
-          {
-            "token": "$TOKEN",
-            "branch": "$GIT_BRANCH",
-            "parameters": { "docker_tag": "$DOCKER_TAG" },
-            "artifacts": [
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.dev.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.dev.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.prod.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.prod.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "name": "gjafakort",
-                "type": "helm/chart",
-                "version": "$HELM_CHART_VERSION"
-              }
-            ]
-          }
-          BODY
-      - name: Trigger Deployment for air-discount-scheme
-        if: env.PUBLISH == 'true'
-        env:
-          TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_AIR_DISCOUNT_SCHEME_TOKEN }}
-          ENDPOINT: https://spinnaker-gate.shared.devland.is/webhooks/webhook/air-discount-scheme
-        run: |
-          curl -v $ENDPOINT -X POST -H "content-type: application/json" --data-binary @- <<BODY
-          {
-            "token": "$TOKEN",
-            "branch": "$GIT_BRANCH",
-            "parameters": { "docker_tag": "$DOCKER_TAG" },
-            "artifacts": [
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.dev.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.dev.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.staging.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.staging.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.prod.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.prod.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "name": "air-discount-scheme",
-                "type": "helm/chart",
-                "version": "$HELM_CHART_VERSION"
-              }
-            ]
-          }
-          BODY
 
+  trigger-deployments:
+    runs-on: ubuntu-latest
+    needs: [retag-unaffected, prepare]
+    env:
+      GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
+      HELM_SHA1: f239692
+    strategy:
+      matrix:
+        service: [islandis, gjafakort, air-discount-scheme]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Trigger Deployment for service
+        if: env.PUBLISH == 'true'
+        env:
+          SPINNAKER_WEBHOOK_ISLANDIS_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_ISLANDIS_TOKEN }}
+          SPINNAKER_WEBHOOK_GJAFAKORT_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_GJAFAKORT_TOKEN }}
+          SPINNAKER_WEBHOOK_AIR_DISCOUNT_SCHEME_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_AIR_DISCOUNT_SCHEME_TOKEN }}
+        run: scripts/spin.sh ${{matrix.service}}
   failure-notification:
     runs-on: ubuntu-latest
     if: failure()
-    needs: [docker-express, docker-next, prepare, linting, formatting, publish]
+    needs: [docker-express, docker-next, prepare, linting, formatting, trigger-deployments]
     env:
       PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
     steps:
