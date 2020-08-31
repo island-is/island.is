@@ -121,7 +121,6 @@ jobs:
           else
             export PUBLISH=true
           fi
-          export PUBLISH=true
           echo "::set-env name=PUBLISH::${PUBLISH}"
           echo "::set-output name=PUBLISH::${PUBLISH}"
 
