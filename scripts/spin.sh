@@ -13,7 +13,7 @@ tokens[air-discount-scheme]=$SPINNAKER_WEBHOOK_AIR_DISCOUNT_SCHEME_TOKEN
 
 HELM_SHA1=$(echo $HELM_VERSION | cut -d"_" -f3)
 
-curl -v $https://spinnaker-gate.shared.devland.is/webhooks/webhook/${{matrix.service}} -X POST -H "content-type: application/json" --data-binary @- <<BODY
+curl -v https://spinnaker-gate.shared.devland.is/webhooks/webhook/$SERVICE -X POST -H "content-type: application/json" --data-binary @- <<BODY
 {
 "token": "${tokens[SERVICE]}",
 "branch": "$GIT_BRANCH",
@@ -21,20 +21,20 @@ curl -v $https://spinnaker-gate.shared.devland.is/webhooks/webhook/${{matrix.ser
 "artifacts": [
   {
     "type": "github/file",
-    "name": "https://api.github.com/repos/island-is/helm/contents/charts/${{matrix.service}}/values.dev.yaml",
-    "reference": "https://api.github.com/repos/island-is/helm/contents/charts/${{matrix.service}}/values.dev.yaml",
+    "name": "https://api.github.com/repos/island-is/helm/contents/charts/$SERVICE/values.dev.yaml",
+    "reference": "https://api.github.com/repos/island-is/helm/contents/charts/$SERVICE/values.dev.yaml",
     "version": "$HELM_SHA1"
   },
   {
     "type": "github/file",
-    "name": "https://api.github.com/repos/island-is/helm/contents/charts/${{matrix.service}}/values.staging.yaml",
-    "reference": "https://api.github.com/repos/island-is/helm/contents/charts/${{matrix.service}}/values.staging.yaml",
+    "name": "https://api.github.com/repos/island-is/helm/contents/charts/$SERVICE/values.staging.yaml",
+    "reference": "https://api.github.com/repos/island-is/helm/contents/charts/$SERVICE/values.staging.yaml",
     "version": "$HELM_SHA1"
   },
   {
     "type": "github/file",
-    "name": "https://api.github.com/repos/island-is/helm/contents/charts/${{matrix.service}}/values.prod.yaml",
-    "reference": "https://api.github.com/repos/island-is/helm/contents/charts/${{matrix.service}}/values.prod.yaml",
+    "name": "https://api.github.com/repos/island-is/helm/contents/charts/$SERVICE/values.prod.yaml",
+    "reference": "https://api.github.com/repos/island-is/helm/contents/charts/$SERVICE/values.prod.yaml",
     "version": "$HELM_SHA1"
   },
   {
