@@ -15,31 +15,31 @@ import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '../i18n/useDateUtils'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { NewsItemLayout } from './Layouts/Layouts'
-import { GET_NEWS_ITEM_QUERY } from './queries'
-import { Query, ContentLanguage, QueryGetNewsArgs } from '@island.is/api/schema'
+import { GET_NEWS_ITEM_QUERY, GET_NAMESPACE_QUERY } from './queries'
+import {
+  Query,
+  ContentLanguage,
+  QueryGetNewsArgs,
+  QueryGetNamespaceArgs,
+} from '@island.is/api/schema'
+import { useNamespace } from '../hooks'
 
 interface NewsItemProps {
   newsItem: Query['getNews']
+  namespace: { [K: string]: string }
 }
 
-const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
+const NewsItem: Screen<NewsItemProps> = ({ newsItem, namespace }) => {
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale)
   const { format } = useDateUtils()
+  const n = useNamespace(namespace)
 
   const sidebar = (
     <Stack space={3}>
       <Stack space={1}>
         <Typography variant="eyebrow" as="p" color="blue400">
-          Höfundur
-        </Typography>
-        <Typography variant="h5" as="p">
-          Jón Jónsson
-        </Typography>
-      </Stack>
-      <Stack space={1}>
-        <Typography variant="eyebrow" as="p" color="blue400">
-          Birt
+          {n('published')}
         </Typography>
         <Typography variant="h5" as="p">
           {format(new Date(newsItem.date), 'do MMMM yyyy')}
@@ -62,7 +62,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
                   <a>Ísland.is</a>
                 </Link>
                 <Link href={makePath('news')}>
-                  <a>Fréttir og tilkynningar</a>
+                  <a>{n('listTitle')}</a>
                 </Link>
               </Breadcrumbs>
               <Box paddingTop={1}>
@@ -88,19 +88,38 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
 }
 
 NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const {
-    data: { getNews: newsItem },
-  } = await apolloClient.query<Query, QueryGetNewsArgs>({
-    query: GET_NEWS_ITEM_QUERY,
-    variables: {
-      input: {
-        slug: query.slug as string,
-        lang: locale as ContentLanguage,
-      },
+  const [
+    {
+      data: { getNews: newsItem },
     },
-  })
+    namespace,
+  ] = await Promise.all([
+    apolloClient.query<Query, QueryGetNewsArgs>({
+      query: GET_NEWS_ITEM_QUERY,
+      variables: {
+        input: {
+          slug: query.slug as string,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Newspages',
+            lang: locale,
+          },
+        },
+      })
+      .then((variables) => {
+        return JSON.parse(variables.data.getNamespace.fields)
+      }),
+  ])
 
   return {
+    namespace,
     newsItem,
   }
 }

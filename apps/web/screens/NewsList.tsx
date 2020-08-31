@@ -24,14 +24,17 @@ import {
   Option,
   Tiles,
 } from '@island.is/island-ui/core'
-import { GET_NEWS_LIST_QUERY } from './queries'
+import { GET_NEWS_LIST_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { NewsListLayout } from './Layouts/Layouts'
 import {
   Query,
   ContentLanguage,
   QueryGetNewsListArgs,
+  QueryGetNamespaceArgs,
+  News,
 } from '@island.is/api/schema'
 import { CustomNextError } from '../units/ErrorBoundary'
+import { useNamespace } from '../hooks'
 
 interface NewsListProps {
   newsList: Query['getNewsList']['news']
@@ -39,12 +42,14 @@ interface NewsListProps {
   dateRange: string[]
   selectedYear: number
   selectedMonth: number
+  namespace: { [k: string]: string }
 }
 
 const NewsList: Screen<NewsListProps> = ({
   newsList,
   page,
   dateRange,
+  namespace,
   selectedYear,
   selectedMonth,
 }) => {
@@ -52,6 +57,7 @@ const NewsList: Screen<NewsListProps> = ({
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale)
   const { format } = useDateUtils()
+  const n = useNamespace(namespace)
 
   const dates = dateRange.map((s) => new Date(s))
   const datesByYear = groupBy(dates, (d: Date) => d.getFullYear())
@@ -66,7 +72,7 @@ const NewsList: Screen<NewsListProps> = ({
 
   const monthOptions = [
     {
-      label: 'Allt árið',
+      label: n('entireYear'),
       value: undefined,
     },
   ].concat(
@@ -91,7 +97,7 @@ const NewsList: Screen<NewsListProps> = ({
   const sidebar = (
     <Stack space={3}>
       <Typography variant="h4" as="h4">
-        Fréttir og tilkynningar
+        {n('listTitle')}
       </Typography>
       <Divider weight="alternate" />
       <NativeSelect
@@ -102,7 +108,7 @@ const NewsList: Screen<NewsListProps> = ({
       />
       <Typography variant="p" as="p">
         <Link href={makeHref(selectedYear)}>
-          <a>Allt árið</a>
+          <a>{n('entireYear')}</a>
         </Link>
         {selectedMonth === undefined && <Bullet align="right" />}
       </Typography>
@@ -120,7 +126,7 @@ const NewsList: Screen<NewsListProps> = ({
   return (
     <>
       <Head>
-        <title>Fréttir | Ísland.is</title>
+        <title>{n('listTitle')} | Ísland.is</title>
       </Head>
       <NewsListLayout sidebar={sidebar}>
         <Stack space={[3, 3, 4]}>
@@ -129,7 +135,7 @@ const NewsList: Screen<NewsListProps> = ({
               <a>Ísland.is</a>
             </Link>
             <Link href={makePath('news')}>
-              <a>Fréttir og tilkynningar</a>
+              <a>{n('listTitle')}</a>
             </Link>
           </Breadcrumbs>
           <Hidden below="lg">
@@ -141,8 +147,8 @@ const NewsList: Screen<NewsListProps> = ({
           <Hidden above="md">
             <Tiles space={3} columns={2}>
               <Select
-                label="Ár"
-                placeholder="Ár"
+                label={n('year')}
+                placeholder={n('year')}
                 value={yearOptions.find(
                   (o) => o.value === selectedYear.toString(),
                 )}
@@ -151,8 +157,8 @@ const NewsList: Screen<NewsListProps> = ({
                 name="year"
               />
               <Select
-                label="Mánuður"
-                placeholder="Allt árið"
+                label={n('month')}
+                placeholder={n('entireYear')}
                 value={monthOptions.find((o) => o.value === selectedMonth)}
                 options={monthOptions}
                 onChange={({ value }: Option) =>
@@ -164,7 +170,11 @@ const NewsList: Screen<NewsListProps> = ({
           </Hidden>
 
           {newsList.map((newsItem) => (
-            <NewsListItem key={newsItem.id} newsItem={newsItem} />
+            <NewsListItem
+              key={newsItem.id}
+              newsItem={newsItem}
+              viewMore={n('viewMore')}
+            />
           ))}
 
           <Box paddingTop={8}>
@@ -188,7 +198,13 @@ const NewsList: Screen<NewsListProps> = ({
   )
 }
 
-const NewsListItem = ({ newsItem }) => {
+const NewsListItem = ({
+  newsItem,
+  viewMore,
+}: {
+  newsItem: News
+  viewMore: string
+}) => {
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale)
   const { format } = useDateUtils()
@@ -217,7 +233,7 @@ const NewsListItem = ({ newsItem }) => {
               <a>
                 <img
                   src={newsItem.image.url + '?w=524'}
-                  alt={`Skoða frétt ${newsItem.title}`}
+                  alt={`${viewMore} ${newsItem.title}`}
                 />
               </a>
             </Link>
@@ -249,6 +265,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
         getNewsList: { news: newsList, page },
       },
     },
+    namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetNewsListArgs>({
       query: GET_NEWS_LIST_QUERY,
@@ -279,6 +296,19 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
+    apolloClient
+      .query<Query, QueryGetNamespaceArgs>({
+        query: GET_NAMESPACE_QUERY,
+        variables: {
+          input: {
+            namespace: 'Newspages',
+            lang: locale,
+          },
+        },
+      })
+      .then((variables) => {
+        return JSON.parse(variables.data.getNamespace.fields)
+      }),
   ])
 
   if ((year || page.page > 1) && newsList.length === 0) {
@@ -293,6 +323,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
   return {
     newsList,
     page,
+    namespace,
     selectedYear: year,
     selectedMonth: month,
     dateRange: createDateRange(
