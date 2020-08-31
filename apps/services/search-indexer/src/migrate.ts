@@ -274,6 +274,9 @@ class App {
     return client.indices.putTemplate({
       name: templateName,
       body: config,
+    }).catch((error) => {
+      logger.error('Failed to update template', error)
+      throw error
     })
   }
 
