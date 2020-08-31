@@ -40,7 +40,7 @@ curl -v https://spinnaker-gate.shared.devland.is/webhooks/webhook/$SERVICE -X PO
     "version": "$HELM_SHA1"
   },
   {
-    "name": "islandis",
+    "name": "$SERVICE",
     "type": "helm/chart",
     "version": "$HELM_VERSION"
   }
