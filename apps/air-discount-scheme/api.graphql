@@ -183,7 +183,7 @@ type LatestNewsSlice {
 type MailingListSignupSlice {
   id: ID!
   title: String!
-  description: String!
+  description: String
   inputLabel: String!
   buttonText: String!
 }
@@ -250,25 +250,27 @@ type AdgerdirTags {
   items: [AdgerdirTag!]!
 }
 
+type Fund {
+  nationalId: ID!
+  credit: Float!
+  used: Float!
+  total: Float!
+}
+
 type User {
   nationalId: ID!
   name: String!
   mobile: String
   role: String!
+  fund: Fund
+  meetsADSRequirements: Boolean!
 }
 
 type Discount {
   discountCode: ID!
   expires: String!
   nationalId: String!
-  flightLegFund: FlightLegFund!
   user: User!
-}
-
-type FlightLegFund {
-  nationalId: ID!
-  unused: Float!
-  total: Float!
 }
 
 type Flight {
@@ -284,11 +286,11 @@ type Query {
   getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput!): PaginatedNews!
   getNamespace(input: GetNamespaceInput!): Namespace
-  getAboutPage(input: GetAboutPageInput!): AboutPage
+  getAboutPage(input: GetAboutPageInput!): AboutPage!
   getLandingPage(input: GetLandingPageInput!): LandingPage
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
-  getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages
+  getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages!
   getAdgerdirTags(input: GetAdgerdirTagsInput!): AdgerdirTags
   getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage

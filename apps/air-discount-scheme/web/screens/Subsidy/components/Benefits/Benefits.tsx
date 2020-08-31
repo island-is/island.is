@@ -16,13 +16,16 @@ const FetchDiscountsMutation = gql`
       discountCode
       expires
       nationalId
-      flightLegFund {
-        unused
-        total
-      }
       user {
         nationalId
         name
+        fund {
+          nationalId
+          used
+          credit
+          total
+        }
+        meetsADSRequirements
       }
     }
   }
@@ -50,38 +53,38 @@ function Benefits({ misc }: PropTypes) {
         <Typography variant="h3">{myRights}</Typography>
       </Box>
       {codes &&
-        codes.map(
-          ({ discountCode, expires, nationalId, flightLegFund, user }) => {
-            const remainingPlaceholders = {
-              remaining: flightLegFund.unused,
-              total: flightLegFund.total,
-            }
+        codes.map(({ discountCode, expires, nationalId, user }) => {
+          const remainingPlaceholders = {
+            remaining: user.fund.credit,
+            total: user.fund.total,
+          }
 
-            return (
-              <Box
-                key={discountCode}
-                padding={2}
-                marginBottom={2}
-                border="standard"
-                borderRadius="standard"
-                display={['block', 'flex']}
-                justifyContent="spaceBetween"
-                alignItems={['flexStart', 'center']}
-                background="blue100"
-                flexDirection={['column', 'row']}
-              >
-                <Box marginBottom={[3, 0]}>
-                  <Typography variant="h3">
-                    {user.name}{' '}
-                    {user.nationalId !== authUser.nationalId && kidsRights}
-                  </Typography>
-                  <Typography variant="p">
-                    {remaining.replace(
-                      /\{{(.*?)\}}/g,
-                      (m, sub) => remainingPlaceholders[sub],
-                    )}
-                  </Typography>
-                </Box>
+          return (
+            <Box
+              key={discountCode}
+              padding={2}
+              marginBottom={2}
+              border={user.meetsADSRequirements ? 'standard' : 'focus'}
+              borderRadius="standard"
+              display={['block', 'flex']}
+              justifyContent="spaceBetween"
+              alignItems={['flexStart', 'center']}
+              background={user.meetsADSRequirements ? 'blue100' : 'red100'}
+              flexDirection={['column', 'row']}
+            >
+              <Box marginBottom={[3, 0]}>
+                <Typography variant="h3">
+                  {user.name}{' '}
+                  {user.nationalId !== authUser.nationalId && kidsRights}
+                </Typography>
+                <Typography variant="p">
+                  {remaining.replace(
+                    /\{{(.*?)\}}/g,
+                    (m, sub) => remainingPlaceholders[sub],
+                  )}
+                </Typography>
+              </Box>
+              {user.meetsADSRequirements ? (
                 <Box
                   display="flex"
                   alignItems="center"
@@ -101,10 +104,14 @@ function Benefits({ misc }: PropTypes) {
                     {copyCode}
                   </Button>
                 </Box>
-              </Box>
-            )
-          },
-        )}
+              ) : (
+                <Box display="flex" alignItems="center">
+                  <Typography>Hefur ekki réttindi</Typography>
+                </Box>
+              )}
+            </Box>
+          )
+        })}
       <Box textAlign="right" marginBottom={4}>
         <Typography variant="pSmall">{codeDescription}</Typography>
       </Box>

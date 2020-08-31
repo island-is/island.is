@@ -32,17 +32,4 @@ describe('Create DiscountCode', () => {
     })
     expect(spy).toHaveBeenCalled()
   })
-
-  it(`POST /api/private/users/:nationalId/discounts with no flightlegs left should return forbidden`, async () => {
-    const nationalId = '1326487905'
-    const spy = jest
-      .spyOn(flightService, 'countFlightLegsByNationalId')
-      .mockImplementation(() =>
-        Promise.resolve({ nationalId, unused: 0, total: 6 }),
-      )
-    await request(app.getHttpServer())
-      .post('/api/private/users/1326487905/discounts')
-      .expect(403)
-    spy.mockRestore()
-  })
 })
