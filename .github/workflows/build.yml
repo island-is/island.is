@@ -454,6 +454,12 @@ jobs:
               },
               {
                 "type": "github/file",
+                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.staging.yaml",
+                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.staging.yaml",
+                "version": "$GITHUB_SHA"
+              },
+              {
+                "type": "github/file",
                 "name": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.prod.yaml",
                 "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.prod.yaml",
                 "version": "$GITHUB_SHA"
@@ -514,6 +520,12 @@ jobs:
                 "type": "github/file",
                 "name": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.dev.yaml",
                 "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.dev.yaml",
+                "version": "$GITHUB_SHA"
+              },
+              {
+                "type": "github/file",
+                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.staging.yaml",
+                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.staging.yaml",
                 "version": "$GITHUB_SHA"
               },
               {
