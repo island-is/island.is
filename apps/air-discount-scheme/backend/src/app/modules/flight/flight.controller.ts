@@ -6,8 +6,6 @@ import {
   Param,
   Post,
   Delete,
-  Inject,
-  forwardRef,
   UseGuards,
   Req,
 } from '@nestjs/common'
@@ -41,7 +39,6 @@ import { AuthGuard } from '../common'
 export class PublicFlightController {
   constructor(
     private readonly flightService: FlightService,
-    @Inject(forwardRef(() => DiscountService))
     private readonly discountService: DiscountService,
   ) {}
 
@@ -55,6 +52,7 @@ export class PublicFlightController {
     const nationalId = await this.discountService.validateDiscount(
       params.discountCode,
     )
+    // TODO: meets requirement?
     const {
       unused: flightLegsLeft,
     } = await this.flightService.countFlightLegsByNationalId(nationalId)

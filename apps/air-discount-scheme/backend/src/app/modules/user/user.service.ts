@@ -1,13 +1,9 @@
-import { Injectable } from '@nestjs/common'
-import fetch from 'isomorphic-fetch'
+import { Injectable, NotFoundException } from '@nestjs/common'
 
 import { Fund } from '@island.is/air-discount-scheme/types'
 import { User } from './user.model'
 import { FlightService } from '../flight'
 import { ThjodskraService, ThjodskraUser } from '../thjodskra'
-import { environment } from '../../../environments'
-
-const { thjodskra } = environment
 
 const ADS_POSTAL_CODES = {
   Reykhólahreppur: 380,
@@ -48,7 +44,12 @@ export class UserService {
   private async getUserFromNationalRegistry(
     nationalId: string,
   ): Promise<ThjodskraUser> {
-    return this.thjodskraService.getUser(nationalId)
+    const user = await this.thjodskraService.getUser(nationalId)
+    if (!user) {
+      throw new NotFoundException(`User<${nationalId} not found`)
+    }
+
+    return user
   }
 
   getRelations(nationalId: string): Promise<string[]> {

@@ -1,5 +1,4 @@
 import { Inject, Injectable, CACHE_MANAGER, HttpService } from '@nestjs/common'
-import Observable from 'rxjs'
 import CacheManager from 'cache-manager'
 
 import { ThjodskraUser } from './thjodskra.types'
