@@ -1017,6 +1017,17 @@
             "buildTarget": "services-search-indexer:build"
           }
         },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "docker-compose -f docker-compose.yml up -d"
+              }
+            ],
+            "cwd": "apps/services/search-indexer/dev-services"
+          }
+        },
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {
