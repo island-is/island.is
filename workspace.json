@@ -2416,7 +2416,24 @@
             "outputPath": "dist/apps/judicial-system/api",
             "main": "apps/judicial-system/api/src/main.ts",
             "tsConfig": "apps/judicial-system/api/tsconfig.app.json",
-            "assets": ["apps/judicial-system/api/src/assets"]
+            "assets": [
+              "apps/judicial-system/api/src/assets",
+              {
+                "glob": "*",
+                "input": "apps/judicial-system/api/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/judicial-system/api",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/judicial-system/api",
+                "output": "./"
+              }
+            ]
           },
           "configurations": {
             "production": {
