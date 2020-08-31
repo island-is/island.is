@@ -70,10 +70,10 @@ judicial-system-api:
     repository: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-api
   initContainer:
     create: true
-    command: [“npx”]
-    args: [“sequelize-cli”, “db:migrate”]
+    command: ['npx']
+    args: ['sequelize-cli', 'db:migrate']
     secrets:
-      DB_PASS: “/k8s/judicial-system/DB_PASSWORD”
+      DB_PASS: '/k8s/judicial-system/DB_PASSWORD'
   ingress:
     enabled: true
   podSecurityContext:
