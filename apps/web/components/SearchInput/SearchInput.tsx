@@ -313,16 +313,20 @@ const Results: FC<{
           {search.suggestions.map((suggestion, i) => {
             const suggestionHasTerm = suggestion.startsWith(search.term)
             const startOfString = suggestionHasTerm ? search.term : suggestion
-            const endOfString = suggestionHasTerm ? suggestion.replace(search.term, '') : ''
+            const endOfString = suggestionHasTerm
+              ? suggestion.replace(search.term, '')
+              : ''
             return (
-            <div key={suggestion} {...getItemProps({ item: suggestion })}>
-              <Typography
-                color={i === highlightedIndex ? 'blue400' : 'dark400'}
-              >
-                {`${search.prefix} ${startOfString}`}<strong>{endOfString}</strong>
-              </Typography>
-            </div>
-          )})}
+              <div key={suggestion} {...getItemProps({ item: suggestion })}>
+                <Typography
+                  color={i === highlightedIndex ? 'blue400' : 'dark400'}
+                >
+                  {`${search.prefix} ${startOfString}`}
+                  <strong>{endOfString}</strong>
+                </Typography>
+              </div>
+            )
+          })}
         </Stack>
       </div>
       <div className={styles.separator} />
