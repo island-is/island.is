@@ -21,7 +21,7 @@ export class FileStorageService {
       Fields: {
         key: `${fileId}_${filename}`,
       },
-      conditions: [['content-length-range', 0, 100000]],
+      conditions: [['content-length-range', 0, 10000000]], // Max 10MB
     }
 
     return new Promise((resolve, reject) => {
