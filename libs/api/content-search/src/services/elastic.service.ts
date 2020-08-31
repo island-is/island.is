@@ -160,11 +160,11 @@ export class ElasticService {
     index: SearchIndexes,
     input: Omit<WebSearchAutocompleteInput, 'language'>,
   ): Promise<AutocompleteTermResponse> {
-    const { queryString, size } = input
+    const { singleTerm, size } = input
     const requestBody = {
       suggest: {
         searchSuggester: {
-          prefix: queryString,
+          prefix: singleTerm,
           completion: {
             field: 'term_pool',
             size,

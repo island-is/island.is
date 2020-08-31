@@ -41,7 +41,6 @@ type ContentCategory {
 type WebSearchAutocomplete {
   total: Int!
   completions: [String!]!
-  prefix: String!
 }
 
 type Taxonomy {
@@ -445,7 +444,7 @@ input ArticlesInCategoryInput {
 }
 
 input WebSearchAutocompleteInput {
-  queryString: String!
+  singleTerm: String!
   language: ContentLanguage = is
   size: Int = 10
 }

@@ -70,7 +70,6 @@ export type WebSearchAutocomplete = {
   __typename?: 'WebSearchAutocomplete'
   total: Scalars['Int']
   completions: Array<Scalars['String']>
-  prefix: Scalars['String']
 }
 
 export type Taxonomy = {
@@ -603,7 +602,7 @@ export type ArticlesInCategoryInput = {
 }
 
 export type WebSearchAutocompleteInput = {
-  queryString: Scalars['String']
+  singleTerm: Scalars['String']
   language?: Maybe<ContentLanguage>
   size?: Maybe<Scalars['Int']>
 }
@@ -1220,7 +1219,6 @@ export type SearchResultResolvers<
     ParentType,
     ContextType
   >
-  prefix?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 

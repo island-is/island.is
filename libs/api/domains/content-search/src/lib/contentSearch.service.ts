@@ -93,18 +93,13 @@ export class ContentSearchService {
   async fetchAutocompleteTerm(
     input: WebSearchAutocompleteInput,
   ): Promise<WebSearchAutocomplete> {
-    const cleanQueryString = input.queryString.trim()
-    const indexOfLastWord = cleanQueryString.lastIndexOf(' ')
-    const prefix = indexOfLastWord === -1 ? '' : cleanQueryString.slice(0, indexOfLastWord)
-    const queryString = indexOfLastWord === -1 ? cleanQueryString : cleanQueryString.slice(indexOfLastWord)
-
     const {
       suggest: { searchSuggester },
     } = await this.repository.fetchAutocompleteTerm(
       this.getIndex(input.language),
       {
         ...input,
-        queryString
+        singleTerm: input.singleTerm.trim()
       },
     )
     
@@ -115,8 +110,7 @@ export class ContentSearchService {
       total: firstWordSuggestions.length,
       completions: firstWordSuggestions.map(
         (suggestionObjects) => suggestionObjects.text,
-      ),
-      prefix
+      )
     }
   }
 }

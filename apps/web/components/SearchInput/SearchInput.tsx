@@ -97,15 +97,21 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
         },
       })
 
+      // the api only completes single terms get only single terms
+      const indexOfLastSpace = term.lastIndexOf(' ')
+      const hasSpace = indexOfLastSpace !== -1
+      const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
+      const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
+
       const {
         data: {
-          webSearchAutocomplete: { completions: suggestions, prefix },
+          webSearchAutocomplete: { completions: suggestions },
         },
       } = await client.query<Query, QueryWebSearchAutocompleteArgs>({
         query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
         variables: {
           input: {
-            queryString: term,
+            singleTerm: queryString,
             language: locale as ContentLanguage,
             size: 10, // only show top X completions to prevent long list
           },
