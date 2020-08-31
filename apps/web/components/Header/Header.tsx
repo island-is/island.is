@@ -5,7 +5,6 @@ import {
   Logo,
   Columns,
   Column,
-  ContentBlock,
   Box,
   Button,
   Hidden,
@@ -14,6 +13,7 @@ import {
   GridContainer,
   GridColumn,
   GridRow,
+  ButtonProps,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
@@ -24,12 +24,14 @@ import { Colors } from '@island.is/island-ui/theme'
 interface HeaderProps {
   showSearchInHeader?: boolean
   white?: boolean
+  on?: ButtonProps['on']
 }
 
 const LanguageToggler: FC<{
   hideWhenMobile?: boolean
   white?: boolean
-}> = ({ hideWhenMobile, white }) => {
+  on?: ButtonProps['on'],
+}> = ({ hideWhenMobile, white, on }) => {
   const { activeLocale, locale, t } = useI18n()
   const otherLanguageUrl = activeLocale === 'en' ? '/' : '/en'
   const onClick = () => {
@@ -50,7 +52,7 @@ const LanguageToggler: FC<{
 
   const LanguageButton = (
     <Link href={otherLanguageUrl}>
-      <Button variant="menu" white={white} onClick={onClick}>
+      <Button variant="menu" white={white} on={on} onClick={onClick}>
         {t.otherLanguageName}
       </Button>
     </Link>
@@ -68,6 +70,7 @@ const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 export const Header: FC<HeaderProps> = ({
   showSearchInHeader = true,
   white = false,
+  on = 'white',
 }) => {
   const { activeLocale, t } = useI18n()
   const Router = useRouter()
@@ -112,6 +115,7 @@ export const Header: FC<HeaderProps> = ({
                         placeholder="Leitaðu á Ísland.is"
                         autocomplete={false}
                         white={white}
+                        on={on}
                       />
                     </Hidden>
                     <Hidden above="md">
@@ -119,6 +123,7 @@ export const Header: FC<HeaderProps> = ({
                         variant="menu"
                         icon="search"
                         white={white}
+                        on={on}
                         onClick={() => {
                           Router.push({
                             pathname: makePath('search'),
@@ -131,16 +136,16 @@ export const Header: FC<HeaderProps> = ({
                 )}
                 <Box marginLeft={marginLeft}>
                   <Link href="https://minarsidur.island.is/" passHref>
-                    <Button variant="menu" leftIcon="user" white={white}>
+                    <Button variant="menu" leftIcon="user" white={white} on={on}>
                       {t.login}
                     </Button>
                   </Link>
                 </Box>
                 <Box marginLeft={marginLeft}>
-                  <LanguageToggler white={white} hideWhenMobile />
+                  <LanguageToggler white={white} on={on} hideWhenMobile />
                 </Box>
                 <Box marginLeft={marginLeft}>
-                  <Button variant="menu" white={white}>
+                  <Button variant="menu" white={white} on={on}>
                     <Icon type="logo" color={white ? 'white' : 'blue400'} />
                   </Button>
                 </Box>

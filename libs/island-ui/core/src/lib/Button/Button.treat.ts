@@ -333,6 +333,10 @@ export const white = style({
   },
 })
 
+export const purpleBackground = style({
+  borderColor: 'rgba(195, 171, 217, 0.6)',
+})
+
 globalStyle(`${button} path`, {
   transition: `fill ${speed} ease`,
 })

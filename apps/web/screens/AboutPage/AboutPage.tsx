@@ -151,7 +151,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       return (
         <Background ref={setRef(slice.id)} id={slice.id} theme={page.theme}>
           <ContentBlock>
-            <Header white />
+            <Header white on="purple" />
             <Box paddingX={[0, 0, 6]} paddingTop={8}>
               <Columns collapseBelow="lg">
                 <Column width="9/12">

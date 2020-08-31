@@ -26,6 +26,7 @@ export interface ButtonProps {
   noWrap?: boolean
   target?: string
   white?: boolean
+  on?: 'white' | 'purple'
 }
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
@@ -51,6 +52,7 @@ export const Button = forwardRef<
       noWrap,
       target = '_blank',
       white,
+      on = 'white',
     },
     ref,
   ) => {
@@ -62,6 +64,7 @@ export const Button = forwardRef<
       {
         [styles.noWrap]: noWrap,
         [styles.white]: white,
+        [styles.purpleBackground]: on === 'purple',
       },
     )
 

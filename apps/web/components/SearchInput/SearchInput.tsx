@@ -21,6 +21,7 @@ import {
 } from '@island.is/api/schema'
 import {
   AsyncSearchInput,
+  AsyncSearchInputProps,
   AsyncSearchSizes,
   Box,
   Typography,
@@ -144,6 +145,7 @@ interface SearchInputProps {
   openOnFocus?: boolean
   placeholder?: string
   white?: boolean
+  on?: AsyncSearchInputProps['on']
   colored?: boolean
 }
 
@@ -157,6 +159,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       openOnFocus = false,
       size = 'medium',
       white = false,
+      on = 'white',
       colored = true,
     },
     ref,
@@ -199,6 +202,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           <AsyncSearchInput
             ref={ref}
             white={white}
+            on={on}
             hasFocus={hasFocus}
             loading={search.isLoading}
             rootProps={getRootProps()}

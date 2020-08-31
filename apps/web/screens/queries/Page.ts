@@ -62,6 +62,7 @@ export const GET_PAGE_QUERY = gql`
         ...ImageFields
       }
       body
+      readMoreText
     }
   }
 

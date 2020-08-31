@@ -43,6 +43,7 @@ export interface AsyncSearchProps {
   loading?: boolean
   closeMenuOnSubmit?: boolean
   white?: boolean
+  on?: AsyncSearchInputProps['on']
   onSubmit?: (inputValue: string, selectedOption?: AsyncSearchOption) => void
   onChange?: (selection: object) => void
   onInputValueChange?: (
@@ -66,6 +67,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
       inputValue,
       initialInputValue,
       white,
+      on,
       closeMenuOnSubmit,
       onChange,
       onSubmit,
@@ -178,6 +180,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                 hasLabel,
                 placeholder,
                 white,
+                on,
               }}
               buttonProps={{
                 onFocus,
@@ -231,6 +234,7 @@ export interface AsyncSearchInputProps {
   buttonProps: ButtonHTMLAttributes<HTMLButtonElement>
   menuProps?: Partial<MenuProps>
   white?: boolean
+  on?: InputProps['on']
   label?: string
   labelProps?: LabelHTMLAttributes<HTMLLabelElement>
   loading?: boolean
@@ -249,6 +253,7 @@ export const AsyncSearchInput = forwardRef<
       buttonProps,
       loading = false,
       white = false,
+      on = 'white',
       label,
       labelProps = {},
       menuProps = {},
@@ -269,7 +274,7 @@ export const AsyncSearchInput = forwardRef<
           [styles.white]: white,
         })}
       >
-        <Input {...inputProps} white={white} isOpen={isOpen} ref={ref} />
+        <Input {...inputProps} white={white} on={on} isOpen={isOpen} ref={ref} />
         <button
           className={cn(styles.icon, styles.iconSizes[size], {
             [styles.iconWhite]: value && white,

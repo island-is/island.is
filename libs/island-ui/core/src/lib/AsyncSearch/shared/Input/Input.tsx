@@ -9,11 +9,12 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   colored?: boolean
   hasLabel?: boolean
   white?: boolean
+  on?: 'white' | 'purple'
   inputSize: AsyncSearchSizes
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ isOpen, colored, hasLabel, inputSize, white, ...props }, ref) => {
+  ({ isOpen, colored, hasLabel, inputSize, white, on, ...props }, ref) => {
     return (
       <input
         spellCheck={false}
@@ -23,6 +24,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           [styles.colored]: colored,
           [styles.hasLabel]: hasLabel,
           [styles.white]: white,
+          [styles.purpleBackground]: on === 'purple',
         })}
         ref={ref}
       />
