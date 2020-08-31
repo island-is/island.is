@@ -1,7 +1,7 @@
 export default {
   production: true,
   thjodskra: {
-    url: process.env.THJODSKRA_URL,
+    url: 'https://skeyti.advania.is/ords/slrv/registry/v1.0',
     username: 'si_flugfargjold',
     password: process.env.THJODSKRA_PASSWORD,
   },
