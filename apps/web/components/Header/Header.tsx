@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import Link from 'next/link'
 import {
   Logo,
@@ -12,6 +12,7 @@ import {
   GridContainer,
   GridColumn,
   GridRow,
+  SideMenu,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
@@ -64,7 +65,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const { activeLocale, t } = useI18n()
   const Router = useRouter()
   const { makePath } = useRouteNames(activeLocale)
-  const onClickSideMenu = () => null
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const locale = activeLocale
   const english = activeLocale === 'en'
@@ -128,16 +129,15 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                 <Box marginLeft={marginLeft}>
                   <LanguageToggler hideWhenMobile />
                 </Box>
-                <Box marginLeft={marginLeft}>
-                  <Link href="https://minarsidur.island.is/" passHref>
-                    <Button
-                      variant="menu"
-                      leftIcon="logo"
-                      onClick={onClickSideMenu}
-                    >
-                      Valmynd
-                    </Button>
-                  </Link>
+                <Box marginLeft={marginLeft} position="relative">
+                  <SideMenu
+                    isVisible={menuOpen}
+                    handleClose={() => setMenuOpen(false)}
+                    tabs={tempTabs}
+                  />
+                  <Button variant="menu" onClick={() => setMenuOpen(!menuOpen)}>
+                    Valmynd
+                  </Button>
                 </Box>
               </Box>
             </Column>
@@ -147,5 +147,79 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
     </GridContainer>
   )
 }
+
+const tempTabs = [
+  {
+    title: 'Þjónustuflokkar',
+    links: [
+      { title: 'Fjölskyldumál', url: '/fjolskyldumal' },
+      {
+        title: 'Eldri borgarar',
+        url: '/',
+      },
+      {
+        title: 'Bætur',
+        url: '/',
+      },
+      {
+        title: 'Málefni fatlaðra',
+        url: '/',
+      },
+      {
+        title: 'Menntun',
+        url: '/',
+      },
+      {
+        title: 'Ferðalög og búseta erlendis',
+        url: '/',
+      },
+      {
+        title: 'Innflytjendur',
+        url: '/',
+      },
+      {
+        title: 'Umhverfismál',
+        url: '/',
+      },
+      {
+        title: 'Húsnæðismál',
+        url: '/',
+      },
+    ],
+  },
+  {
+    title: 'Stafrænt Ísland',
+    links: [
+      { title: 'Um Ísland.is', url: '/' },
+      {
+        title: 'Stofnanir',
+        url: '/',
+      },
+    ],
+    externalLinksHeading: 'Aðrir opinberir vefir',
+    externalLinks: [
+      {
+        title: 'Heilsuvera',
+        url: 'https://heilsuvera.is',
+        icon: '',
+      },
+      {
+        title: 'Samráðsgátt',
+        url: 'https://samradsgatt.island.is',
+        icon: '',
+      },
+      {
+        title: 'Mannanöfn',
+        url: 'https://vefur.island.is/mannanofn/',
+        icon: '',
+      },
+      {
+        title: 'Undirskriftalistar',
+        url: 'https://vefur.island.is/undirskriftalistar/',
+        icon: null,
+      },
+    ],
+  },
+]
 
 export default Header

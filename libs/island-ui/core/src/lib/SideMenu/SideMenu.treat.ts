@@ -5,6 +5,23 @@ const SIDE_MENU_WIDTH = 318
 export const root = style({
   width: SIDE_MENU_WIDTH,
   padding: theme.spacing[3],
+  display: 'none',
+  position: 'absolute',
+  background: theme.color.white,
+  zIndex: 1,
+  top: 0,
+  right: 0,
+  boxShadow: `0px 4px 70px rgba(0, 97, 255, 0.1)`
+})
+
+export const isVisible = style({
+  display: 'block',
+})
+
+export const tabHeader = style({
+  display: 'flex',
+  paddingBottom: theme.spacing[3],
+  justifyContent: 'flex-end',
 })
 
 export const tabBar = style({
