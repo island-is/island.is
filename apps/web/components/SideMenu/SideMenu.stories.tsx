@@ -8,6 +8,8 @@ export default {
 
 export const Default = () => (
   <SideMenu
+    isVisible
+    handleClose={() => null}
     tabs={[
       {
         title: 'Þjónustuflokkar',

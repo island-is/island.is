@@ -1,7 +1,6 @@
 import React from 'react'
 import * as styles from './LinkBox.treat'
-import { Typography } from '../../../Typography/Typography'
-import Icon from '../../../Icon/Icon'
+import { Typography, Icon } from '@island.is/island-ui/core'
 
 export const LinkBox = ({ title, url, icon }) => {
   const firstLetter = title[0]

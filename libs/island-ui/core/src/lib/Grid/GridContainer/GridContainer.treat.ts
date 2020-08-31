@@ -8,6 +8,7 @@ export const root = style({
   boxSizing: 'border-box',
   paddingRight: theme.grid.gutter.mobile,
   paddingLeft: theme.grid.gutter.mobile,
+  position: 'relative',
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {

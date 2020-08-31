@@ -1,11 +1,21 @@
 import React, { FC, useState, useRef, useEffect } from 'react'
+import Link from 'next/link'
 import FocusLock from 'react-focus-lock'
 import { useKey, useClickAway } from 'react-use'
 import cn from 'classnames'
-import { Typography } from '../Typography/Typography'
+import {
+  Typography,
+  Icon,
+  Hidden,
+  Button,
+  Columns,
+  Column,
+} from '@island.is/island-ui/core'
+import { useI18n } from '@island.is/web/i18n'
 import { LinkBox } from './components/LinkBox'
 import * as styles from './SideMenu.treat'
-import { Icon } from '../Icon/Icon'
+import { SearchInput } from '../SearchInput/SearchInput'
+import { LanguageToggler } from '../LanguageToggler'
 
 interface TabLink {
   title: string
@@ -35,6 +45,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
   const [activeTab, setActiveTab] = useState(0)
   const ref = useRef(null)
   const buttonsRef = useRef([])
+  const { activeLocale, t } = useI18n()
 
   useKey('Escape', handleClose)
   useClickAway(ref, handleClose)
@@ -45,7 +56,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
     }
   }, [buttonsRef.current])
 
-  return isVisible ? (
+  return (
     <FocusLock>
       <div
         className={cn(styles.root, { [styles.isVisible]: isVisible })}
@@ -56,6 +67,22 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
             <Icon type="close" />
           </button>
         </div>
+        <Hidden above="md">
+          <div className={styles.mobileContent}>
+            <SearchInput
+              activeLocale={activeLocale}
+              placeholder="Leitaðu á Ísland.is"
+              size="medium"
+            />
+            <Link href="https://minarsidur.island.is/" passHref>
+              <Button variant="menu" leftIcon="user">
+                {t.login}
+              </Button>
+            </Link>
+            <LanguageToggler />
+          </div>
+        </Hidden>
+
         <div className={styles.tabBar}>
           {tabs.map((tab, index) => (
             <button
@@ -121,5 +148,5 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
         })}
       </div>
     </FocusLock>
-  ) : null
+  )
 }

@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import {
   Logo,
   Columns,
@@ -12,51 +13,15 @@ import {
   GridContainer,
   GridColumn,
   GridRow,
-  SideMenu,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { SearchInput } from '../'
-import { useRouter } from 'next/router'
-
+import { LanguageToggler } from '../LanguageToggler'
+import { SideMenu } from '../SideMenu'
+import { tempTabs } from '../../json'
 interface HeaderProps {
   showSearchInHeader?: boolean
-}
-
-const LanguageToggler: FC<{
-  hideWhenMobile?: boolean
-}> = ({ hideWhenMobile }) => {
-  const { activeLocale, locale, t } = useI18n()
-  const otherLanguageUrl = activeLocale === 'en' ? '/' : '/en'
-  const onClick = () => {
-    locale(t.otherLanguageCode)
-  }
-  const languageButtonText =
-    activeLocale === 'is' ? (
-      <span>
-        <Hidden above="md">EN</Hidden>
-        <Hidden below="lg">English</Hidden>
-      </span>
-    ) : (
-      <span>
-        <Hidden above="md">IS</Hidden>
-        <Hidden below="lg">Íslenska</Hidden>
-      </span>
-    )
-
-  const LanguageButton = (
-    <Link href={otherLanguageUrl}>
-      <Button variant="menu" onClick={onClick}>
-        {t.otherLanguageName}
-      </Button>
-    </Link>
-  )
-
-  return !hideWhenMobile ? (
-    LanguageButton
-  ) : (
-    <Hidden below="md">{LanguageButton}</Hidden>
-  )
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -65,7 +30,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const { activeLocale, t } = useI18n()
   const Router = useRouter()
   const { makePath } = useRouteNames(activeLocale)
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [sideMenuOpen, setSideMenuOpen] = useState(false)
 
   const locale = activeLocale
   const english = activeLocale === 'en'
@@ -130,12 +95,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                   <LanguageToggler hideWhenMobile />
                 </Box>
                 <Box marginLeft={marginLeft} position="relative">
-                  <SideMenu
-                    isVisible={menuOpen}
-                    handleClose={() => setMenuOpen(false)}
-                    tabs={tempTabs}
-                  />
-                  <Button variant="menu" onClick={() => setMenuOpen(!menuOpen)}>
+                  <Button variant="menu" onClick={() => setSideMenuOpen(true)}>
                     Valmynd
                   </Button>
                 </Box>
@@ -144,82 +104,13 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
           </Columns>
         </GridColumn>
       </GridRow>
+      <SideMenu
+        isVisible={sideMenuOpen}
+        handleClose={() => setSideMenuOpen(false)}
+        tabs={tempTabs}
+      />
     </GridContainer>
   )
 }
-
-const tempTabs = [
-  {
-    title: 'Þjónustuflokkar',
-    links: [
-      { title: 'Fjölskyldumál', url: '/fjolskyldumal' },
-      {
-        title: 'Eldri borgarar',
-        url: '/',
-      },
-      {
-        title: 'Bætur',
-        url: '/',
-      },
-      {
-        title: 'Málefni fatlaðra',
-        url: '/',
-      },
-      {
-        title: 'Menntun',
-        url: '/',
-      },
-      {
-        title: 'Ferðalög og búseta erlendis',
-        url: '/',
-      },
-      {
-        title: 'Innflytjendur',
-        url: '/',
-      },
-      {
-        title: 'Umhverfismál',
-        url: '/',
-      },
-      {
-        title: 'Húsnæðismál',
-        url: '/',
-      },
-    ],
-  },
-  {
-    title: 'Stafrænt Ísland',
-    links: [
-      { title: 'Um Ísland.is', url: '/' },
-      {
-        title: 'Stofnanir',
-        url: '/',
-      },
-    ],
-    externalLinksHeading: 'Aðrir opinberir vefir',
-    externalLinks: [
-      {
-        title: 'Heilsuvera',
-        url: 'https://heilsuvera.is',
-        icon: '',
-      },
-      {
-        title: 'Samráðsgátt',
-        url: 'https://samradsgatt.island.is',
-        icon: '',
-      },
-      {
-        title: 'Mannanöfn',
-        url: 'https://vefur.island.is/mannanofn/',
-        icon: '',
-      },
-      {
-        title: 'Undirskriftalistar',
-        url: 'https://vefur.island.is/undirskriftalistar/',
-        icon: null,
-      },
-    ],
-  },
-]
 
 export default Header

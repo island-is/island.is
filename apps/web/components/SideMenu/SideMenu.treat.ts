@@ -3,15 +3,23 @@ import { theme } from '@island.is/island-ui/theme'
 const SIDE_MENU_WIDTH = 318
 
 export const root = style({
-  width: SIDE_MENU_WIDTH,
-  padding: theme.spacing[3],
-  display: 'none',
-  position: 'absolute',
   background: theme.color.white,
-  zIndex: 1,
-  top: 0,
+  display: 'none',
+  height: '100%',
+  padding: theme.spacing[3],
+  position: 'fixed',
   right: 0,
+  top: 0,
+  zIndex: 1,
   boxShadow: `0px 4px 70px rgba(0, 97, 255, 0.1)`,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      width: SIDE_MENU_WIDTH,
+      position: 'absolute',
+      height: 'auto',
+      top: theme.spacing[3],
+    },
+  },
 })
 
 export const isVisible = style({
@@ -56,3 +64,5 @@ export const externalLinksContent = style({
   display: 'flex',
   flexWrap: 'wrap',
 })
+
+export const mobileContent = style({})
