@@ -40,9 +40,8 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
   useClickAway(ref, handleClose)
 
   useEffect(() => {
-    // Get the first button and focus it.
-    if (buttonsRef.current && buttonsRef.current[0]) {
-      buttonsRef.current[0].focus()
+    if (buttonsRef.current && buttonsRef.current[activeTab]) {
+      buttonsRef.current[activeTab].focus()
     }
   }, [buttonsRef.current])
 
