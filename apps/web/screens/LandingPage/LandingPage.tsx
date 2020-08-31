@@ -77,9 +77,7 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
             </Link>
           </Breadcrumbs>
           <Typography variant="h1" as="h1">
-            <span data-sidebar-link={slugify(page.title)}>
-              {page.title}
-            </span>
+            <span data-sidebar-link={slugify(page.title)}>{page.title}</span>
           </Typography>
           <Typography variant="intro" as="p">
             {page.introduction}

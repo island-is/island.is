@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { Image, mapImage } from './image.model'
-import {IFrontpageSlider} from '../generated/contentfulTypes'
+import { IFrontpageSlider } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class FrontpageSlide {

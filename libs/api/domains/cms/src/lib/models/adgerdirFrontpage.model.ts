@@ -1,5 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
-import {IVidspyrnaFrontpage} from '../generated/contentfulTypes'
+import { IVidspyrnaFrontpage } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class AdgerdirFrontpage {

@@ -6,10 +6,7 @@ export interface HtmlProps {
   className?: string
 }
 
-export const StaticHtml: FC<HtmlProps> = ({
-  className,
-  children,
-}) => {
+export const StaticHtml: FC<HtmlProps> = ({ className, children }) => {
   return <div className={cn(styles.container, className)}>{children}</div>
 }
 

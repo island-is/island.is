@@ -29,9 +29,7 @@ export class LandingPage {
   content: Array<typeof Slice>
 }
 
-export const mapLandingPage = ({
-  fields,
-}: ILandingPage): LandingPage => ({
+export const mapLandingPage = ({ fields }: ILandingPage): LandingPage => ({
   ...fields,
   image: fields.image && mapImage(fields.image),
   actionButton: fields.actionButton && mapLink(fields.actionButton),

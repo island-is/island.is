@@ -1,5 +1,8 @@
 import { createUnionType } from '@nestjs/graphql'
-import { NumberBulletGroup, mapNumberBulletGroup } from './numberBulletGroup.model'
+import {
+  NumberBulletGroup,
+  mapNumberBulletGroup,
+} from './numberBulletGroup.model'
 import { IconBullet, mapIconBullet } from './iconBullet.model'
 import {
   IIconBullet,

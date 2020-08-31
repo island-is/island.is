@@ -395,7 +395,8 @@ export const mapProcessEntry = ({
   new ProcessEntry({
     ...fields,
     id: sys.id,
-    processInfo: fields.processInfo && mapRichText(fields.processInfo).filter(isHtml),
+    processInfo:
+      fields.processInfo && mapRichText(fields.processInfo).filter(isHtml),
     details: fields.details && mapRichText(fields.details).filter(isHtml),
     buttonText: fields.buttonText ?? '',
   })

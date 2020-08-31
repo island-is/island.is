@@ -3,15 +3,18 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({})
 
-globalStyle([
-  `${container} p`,
-  `${container} h2`,
-  `${container} h3`,
-  `${container} h4`,
-  `${container} h5`,
-].join(','), {
-  margin: `${theme.spacing[2]}px 0`,
-})
+globalStyle(
+  [
+    `${container} p`,
+    `${container} h2`,
+    `${container} h3`,
+    `${container} h4`,
+    `${container} h5`,
+  ].join(','),
+  {
+    margin: `${theme.spacing[2]}px 0`,
+  },
+)
 
 globalStyle(`${container} *:first-child`, {
   marginTop: 0,
