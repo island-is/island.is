@@ -16,7 +16,7 @@ describe('AppService', () => {
   describe('getData', () => {
     it('should return "Welcome to skilavottord/ws!"', () => {
       expect(service.getData()).toEqual({
-        message: 'Welcome to skilavottord/ws!',
+        message: 'Welcome to skilavottord/ws Tommi!',
       })
     })
   })

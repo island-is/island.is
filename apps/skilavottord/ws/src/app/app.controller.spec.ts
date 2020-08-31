@@ -17,7 +17,7 @@ describe('AppController', () => {
     it('should return "Welcome to skilavottord/ws!"', () => {
       const appController = app.get<AppController>(AppController)
       expect(appController.getData()).toEqual({
-        message: 'Welcome to skilavottord/ws!',
+        message: 'Welcome to skilavottord/ws Tommi!',
       })
     })
   })
