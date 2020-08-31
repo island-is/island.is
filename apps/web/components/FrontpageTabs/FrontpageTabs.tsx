@@ -8,6 +8,7 @@ import React, {
   useEffect,
 } from 'react'
 import Link from 'next/link'
+import bodymovin from 'lottie-web'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
 import {
@@ -23,7 +24,7 @@ import { Locale } from '@island.is/web/i18n/I18n'
 import { useRouteNames } from '@island.is/web/i18n/useRouteNames'
 import { useI18n } from '../../i18n'
 import Dots from './Dots'
-import HeartSvg from './HeartSvg'
+
 import * as styles from './FrontpageTabs.treat'
 
 const AUTOPLAY_TIMER = 8000
@@ -70,6 +71,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   autoplay = true,
 }) => {
   const timer = useRef(null)
+  const svgContainerRef = useRef(null)
   const [minHeight, setMinHeight] = useState<number>(0)
   const [autoplayOn, setAutoplayOn] = useState<boolean>(autoplay)
   const itemsRef = useRef<Array<HTMLElement | null>>([])
@@ -150,6 +152,17 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
       updateImage()
     }
   }, [selectedIndex, updateImage])
+
+  useEffect(() => {
+    if (svgContainerRef.current) {
+      bodymovin.loadAnimation({
+        container: svgContainerRef.current,
+        loop: true,
+        autoplay: true,
+        animationData: require('./data.json'),
+      })
+    }
+  }, [svgContainerRef])
 
   return (
     <GridContainer>
@@ -254,7 +267,9 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
             <div className={styles.dots}>
               <Dots />
             </div>
-            {image ? <img src={image.url} alt={image.title} /> : <HeartSvg />}
+            <div className={styles.imageContainer}>
+              <div ref={svgContainerRef} />
+            </div>
           </div>
         </GridColumn>
       </GridRow>
