@@ -634,9 +634,9 @@ class App {
   }
 
   public async esGetOlderVersionIndex(currentVersion: number): Promise<string | null> {
-    logger.info('Finding older indexes')
+    logger.info('Trying to find older indexes')
     const client = await this.getEsClient()
-
+    
     for(var i = currentVersion - 1; i > 0 ; i--) {
       const indexExists = await this.esHasVersion(i)
       if(indexExists) {
@@ -644,7 +644,8 @@ class App {
         return App.getIndexNameForVersion(i)
       }
     }
-
+    
+    logger.info('No older indice found')
     // no index found
     return null
   }
