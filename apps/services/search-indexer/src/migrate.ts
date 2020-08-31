@@ -88,16 +88,17 @@ class App {
   }
 
   run() {
-    logger.info('App.run()', this.config)
+    logger.info('Starting migration if needed', this.config)
     this.checkAccess()
       .then(() => this.checkESAccess())
       .then(() => this.migrateIfNeeded())
+      .catch((error) => {throw error})
   }
 
   private async checkESAccess() {
     const client = await this.getEsClient()
     const result = await client.ping()
-    logger.debug('Check ES access', {
+    logger.info('Got elasticsearch ping response', {
       r: result,
     })
   }
@@ -108,7 +109,7 @@ class App {
       .promise()
       .then((domains: AWS.ES.Types.ListDomainNamesResponse) => {
         let domainFound = false
-        logger.debug('CheckAccess found domains', domains)
+        logger.info('Valdating esDomain agains aws domain list', domains)
         domains.DomainNames.forEach((domain) => {
           if (domain.DomainName === this.config.esDomain) {
             domainFound = true
@@ -123,15 +124,16 @@ class App {
 
   private async migrateIfNeeded() {
     const codeVersion = this.getCodeVersion()
-    logger.debug('Found Code Version', { version: codeVersion })
     const hasVersion = await this.esHasVersion(codeVersion)
     if (hasVersion) {
+      logger.info('Found this code version in elasticsearch', { version: codeVersion })
       if (!(await this.aliasIsCorrect(codeVersion))) {
+        logger.info('Alias is not correct')
         await this.fixAlias(codeVersion)
         logger.info('Alias was fixed')
         return
       }
-      logger.info('No need to migrate')
+      logger.info('Version already in elasticsearch no need to migrate')
       return
     }
 
@@ -141,13 +143,14 @@ class App {
   private async fixAlias(codeVersion: number) {
     const wantedIndexName = App.getIndexNameForVersion(codeVersion)
     const oldIndexName = App.getIndexNameForVersion(codeVersion - 1)
+    logger.info('Switching index alias', {oldIndexName, wantedIndexName})
     return this.switchAlias(oldIndexName, wantedIndexName)
   }
 
   private async aliasIsCorrect(codeVersion: number): Promise<boolean> {
     const alias = await this.getMainAlias()
     const wantedIndexName = App.getIndexNameForVersion(codeVersion)
-    logger.debug('Is Alias correct?', {
+    logger.info('Validating alias name', {
       alias: alias,
       wanted: wantedIndexName,
     })
@@ -155,6 +158,7 @@ class App {
   }
 
   private async getMainAlias(): Promise<string | null> {
+    logger.info('Getting main alias')
     const client = await this.getEsClient()
     return client.indices
       .getAlias({ name: this.config.indexMain })
@@ -175,7 +179,7 @@ class App {
     const packageIds: PackageIds = await this.getAllPackageIdsForVersion(
       dictionaryVersion,
     )
-    logger.debug('Migrate Found Package IDS', {
+    logger.info('Migrate Found Package IDS', {
       dictVersion: dictionaryVersion,
       packageIds: packageIds,
     })
@@ -185,6 +189,7 @@ class App {
   }
 
   private async doMigrate(codeVersion: number, packageIds) {
+    logger.info('Updating index template')
     const config = this.createConfig(packageIds)
     return this.createTemplate(config).then(() =>
       this.reindexToNewIndex(codeVersion),
@@ -192,7 +197,10 @@ class App {
   }
 
   private async reindexToNewIndex(codeVersion: number) {
-    if (codeVersion === 1) {
+    logger.info('Reindexing to new index code version is', {codeVersion})
+    const hasOlderVersion = await this.esHasVersion(codeVersion - 1)
+    if (!hasOlderVersion) {
+      logger.info('No older version found creating new index for this version')
       return this.createIndex(codeVersion)
     }
 
@@ -266,18 +274,19 @@ class App {
   }
 
   private createConfig(packageIds: PackageIds): string {
-    logger.debug('Start creating config')
+    logger.info('Creating config file')
     let config = fs.readFileSync(this.config.codeTemplateFile).toString()
     for (const esPackage of packageIds.values()) {
       const key = '{' + esPackage.dictType.toUpperCase() + '}'
       config = config.replace(key, esPackage.packageId)
     }
+    logger.info('Done creating config')
     return config
   }
 
   private async associatePackagesIfNeeded(packageIds: PackageIds) {
     const domainPackages = await this.getDomainPackages()
-    logger.debug('Found domain packages', {
+    logger.info('Found domain packages', {
       d: domainPackages,
       p: packageIds.keys(),
     })
@@ -285,7 +294,7 @@ class App {
       const esPackage = packageIds.get(type)
       const id = esPackage.packageId
       const tmp = domainPackages.get(id)
-      logger.debug('Check if Package domain is available', {
+      logger.info('Check if Package domain is available', {
         id: id,
         isAvailable: tmp,
         type: type,
@@ -617,7 +626,7 @@ class App {
     const result = await client.indices.exists({
       index: indexName,
     })
-    logger.debug('Checking if index exists', {
+    logger.info('Checking if index exists', {
       index: indexName,
       result: result.body,
     })
@@ -650,4 +659,6 @@ async function migrateBootstrap() {
 
 migrateBootstrap().catch((error) => {
   logger.error('ERROR: ', error)
+  // allow critical errors in migration to take down the process
+  throw error
 })
