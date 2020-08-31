@@ -93,9 +93,6 @@ class App {
     this.checkAccess()
       .then(() => this.checkESAccess())
       .then(() => this.migrateIfNeeded())
-      .catch((error) => {
-        throw error
-      })
   }
 
   private async checkESAccess() {
