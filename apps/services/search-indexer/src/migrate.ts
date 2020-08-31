@@ -93,7 +93,9 @@ class App {
     this.checkAccess()
       .then(() => this.checkESAccess())
       .then(() => this.migrateIfNeeded())
-      .catch((error) => {throw error})
+      .catch((error) => {
+        throw error
+      })
   }
 
   private async checkESAccess() {
@@ -127,7 +129,9 @@ class App {
     const codeVersion = this.getCodeVersion()
     const hasVersion = await this.esHasVersion(codeVersion)
     if (hasVersion) {
-      logger.info('Found this code version in elasticsearch', { version: codeVersion })
+      logger.info('Found this code version in elasticsearch', {
+        version: codeVersion,
+      })
       if (!(await this.aliasIsCorrect(codeVersion))) {
         logger.info('Alias is not correct')
         await this.fixAlias(codeVersion)
@@ -144,7 +148,7 @@ class App {
   private async fixAlias(codeVersion: number) {
     const wantedIndexName = App.getIndexNameForVersion(codeVersion)
     const oldIndexName = App.getIndexNameForVersion(codeVersion - 1)
-    logger.info('Switching index alias', {oldIndexName, wantedIndexName})
+    logger.info('Switching index alias', { oldIndexName, wantedIndexName })
     return this.switchAlias(oldIndexName, wantedIndexName)
   }
 
@@ -198,7 +202,7 @@ class App {
   }
 
   private async reindexToNewIndex(codeVersion: number) {
-    logger.info('Reindexing to new index code version is', {codeVersion})
+    logger.info('Reindexing to new index code version is', { codeVersion })
     const oldIndex = await this.esGetOlderVersionIndex(codeVersion)
     if (!oldIndex) {
       logger.info('No older version found creating new index for this version')
@@ -633,18 +637,20 @@ class App {
     return result.body
   }
 
-  public async esGetOlderVersionIndex(currentVersion: number): Promise<string | null> {
+  public async esGetOlderVersionIndex(
+    currentVersion: number,
+  ): Promise<string | null> {
     logger.info('Trying to find older indexes')
     const client = await this.getEsClient()
-    
-    for(var i = currentVersion - 1; i > 0 ; i--) {
+
+    for (var i = currentVersion - 1; i > 0; i--) {
       const indexExists = await this.esHasVersion(i)
-      if(indexExists) {
+      if (indexExists) {
         // this old version exists, return the name of the index
         return App.getIndexNameForVersion(i)
       }
     }
-    
+
     logger.info('No older indice found')
     // no index found
     return null
