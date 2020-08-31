@@ -21,6 +21,7 @@ export interface TagProps {
   active?: boolean
   disabled?: boolean
   label?: boolean
+  bordered?: boolean
   children: string | ReactNode
 }
 
@@ -36,6 +37,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       active = false,
       disabled,
       label,
+      bordered = false,
       ...props
     }: TagProps,
     ref,
@@ -43,6 +45,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
     const className = cn(styles.container, styles.variants[variant], {
       [styles.label]: label,
       [styles.active]: active,
+      [styles.bordered]: bordered,
     })
 
     const isExternal = href && isLinkExternal(href)
