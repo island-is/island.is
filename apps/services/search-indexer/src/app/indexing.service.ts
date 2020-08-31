@@ -68,6 +68,12 @@ export class IndexingService {
       numItems: result.items.length,
     })
 
+    // // Delete everything in ES, except for content we're going to sync (useful in case of re-sync)
+    await this.elasticService.deleteAllExcept(
+      index,
+      result.items.map((entry) => entry.sys.id),
+    )
+
     for (const item of result.items) {
       // one at a time please, else ES will be unhappy
       await this.transformAndIndexEntry(index, result.token, item)
