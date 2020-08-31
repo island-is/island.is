@@ -16,5 +16,5 @@ export class WebSearchAutocompleteInput {
   @Field(() => Int, { nullable: true })
   @IsInt()
   @IsOptional()
-  size: number = 10
+  size = 10
 }

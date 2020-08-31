@@ -1,4 +1,4 @@
-import { Client, ApiResponse } from '@elastic/elasticsearch'
+import { Client } from '@elastic/elasticsearch'
 import { Document, SearchIndexes } from '../types'
 import esb, { RequestBodySearch, Sort, TermsAggregation } from 'elastic-builder'
 import { logger } from '@island.is/logging'
@@ -7,7 +7,9 @@ import { environment } from '../environments/environment'
 import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
-import { WebSearchAutocompleteInput } from '../../../domains/content-search/src/lib/dto/webSearchAutocomplete.input'
+import {
+  WebSearchAutocompleteInput
+} from '@island.is/api/schema'
 import {
   autocompleteTerm,
   AutocompleteTermResponse,
