@@ -57,7 +57,7 @@ export const icon = style({
     position: 'absolute',
     cursor: 'pointer',
     opacity: 0,
-    backgroundColor: theme.color.white,
+    // backgroundColor: theme.color.white,
     borderColor: theme.color.blue200,
     borderStyle: 'solid',
     borderWidth: 1,
@@ -68,6 +68,14 @@ export const icon = style({
       borderColor: theme.color.blue400,
       borderWidth: 1,
       borderStyle: 'solid',
+    },
+  },
+})
+
+export const iconWhite = style({
+  selectors: {
+    '&:focus:before': {
+      borderColor: theme.color.white,
     },
   },
 })

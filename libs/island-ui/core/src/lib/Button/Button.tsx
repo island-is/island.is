@@ -88,6 +88,7 @@ export const Button = forwardRef<
       showRightIcon,
       loading,
       isExternal,
+      white,
     }
 
     return href ? (
@@ -156,11 +157,12 @@ const ButtonContent = ({
   showRightIcon,
   loading,
   isExternal,
+  white,
 }) => {
   return (
     <Inline alignY="center" space={2}>
       {isMenuButton && hasLeftContent ? (
-        <LeftContentContainer>
+        <LeftContentContainer white={white}>
           {leftImage ? (
             <LeftImage leftImage={leftImage} />
           ) : (
@@ -189,7 +191,7 @@ const IconContainer = ({ children }) => (
   </Box>
 )
 
-const LeftContentContainer = ({ children }) => {
+const LeftContentContainer = ({ white, children }) => {
   return (
     <>
       <Box display="inlineBlock" className={styles.leftSpacer} />
@@ -201,8 +203,9 @@ const LeftContentContainer = ({ children }) => {
         bottom={0}
         alignItems="center"
         justifyContent="center"
-        background="blue100"
-        className={styles.leftContentContainer}
+        className={cn(styles.leftContentContainer, {
+          [styles.leftContentContainerWhite]: white,
+        })}
       >
         <Box
           display="flex"

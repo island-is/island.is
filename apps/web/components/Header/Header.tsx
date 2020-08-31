@@ -28,7 +28,8 @@ interface HeaderProps {
 
 const LanguageToggler: FC<{
   hideWhenMobile?: boolean
-}> = ({ hideWhenMobile }) => {
+  white?: boolean
+}> = ({ hideWhenMobile, white }) => {
   const { activeLocale, locale, t } = useI18n()
   const otherLanguageUrl = activeLocale === 'en' ? '/' : '/en'
   const onClick = () => {
@@ -49,7 +50,7 @@ const LanguageToggler: FC<{
 
   const LanguageButton = (
     <Link href={otherLanguageUrl}>
-      <Button variant="menu" onClick={onClick}>
+      <Button variant="menu" white={white} onClick={onClick}>
         {t.otherLanguageName}
       </Button>
     </Link>
@@ -136,7 +137,7 @@ export const Header: FC<HeaderProps> = ({
                   </Link>
                 </Box>
                 <Box marginLeft={marginLeft}>
-                  <LanguageToggler hideWhenMobile />
+                  <LanguageToggler white={white} hideWhenMobile />
                 </Box>
                 <Box marginLeft={marginLeft}>
                   <Button variant="menu" white={white}>

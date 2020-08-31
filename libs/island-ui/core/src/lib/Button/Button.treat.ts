@@ -301,8 +301,9 @@ export const variants = styleMap({
 export const white = style({
   backgroundColor: theme.color.transparent,
   borderColor: theme.color.white,
+  color: theme.color.white,
   ':after': {
-    borderColor: theme.color.mint400,
+    borderColor: theme.color.white,
   },
   ':disabled': {
     color: theme.color.white,
@@ -310,10 +311,12 @@ export const white = style({
   ':hover': {
     borderColor: theme.color.white,
     backgroundColor: theme.color.transparent,
+  color: theme.color.white,
   },
   ':focus': {
     borderColor: theme.color.transparent,
     backgroundColor: theme.color.transparent,
+    color: theme.color.white,
   },
   selectors: {
     [`&:hover:focus`]: {
@@ -419,6 +422,7 @@ export const leftSpacer = style({
 })
 
 export const leftContentContainer = style({
+  backgroundColor: theme.color.blue100,
   borderTopLeftRadius: 5,
   borderBottomLeftRadius: 5,
   ...themeUtils.responsiveStyle({
@@ -429,6 +433,11 @@ export const leftContentContainer = style({
       width: 48,
     },
   }),
+})
+
+export const leftContentContainerWhite = style({
+  // dark400 with opacity
+  backgroundColor: 'rgba(0, 0, 61, 0.1)',
 })
 
 export const leftContent = style({

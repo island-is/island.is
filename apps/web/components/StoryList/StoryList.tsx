@@ -23,7 +23,7 @@ export const StoryList: FC<StoryListProps> = ({ readMoreText, stories }) => (
     ))}
     {stories.length > 0 && (
       <div className={styles.margin}>
-        <Button variant="ghost">{readMoreText}</Button>
+        <Button variant="ghost" white>{readMoreText}</Button>
       </div>
     )}
   </Stack>
