@@ -2,7 +2,7 @@ export default {
   production: true,
   thjodskra: {
     url: process.env.THJODSKRA_URL,
-    username: process.env.THJODSKRA_USERNAME,
+    username: 'si_flugfargjold',
     password: process.env.THJODSKRA_PASSWORD,
   },
   airlineApiKeys: {
