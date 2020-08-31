@@ -28,7 +28,7 @@ export const Categories: FC<CategoriesProps> = ({
     <Box background="purple100" paddingY={8}>
       <GridContainer>
         <GridRow>
-          <GridColumn span={12}>
+          <GridColumn span={[6, 6, 12]}>
             <Typography variant="h3" as="h3" paddingBottom={4}>
               {label}
             </Typography>
