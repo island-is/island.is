@@ -17,4 +17,6 @@ And Kibana running on port `localhost:5601`
 ### Nice to know
 
 Dictionaries for icelandic are pulled into the elastic docker container on build under `analyzers/`  
-The index template is not imported automagically so you must insert them manually...for now
+The index template is not imported automagically so you must insert them manually...for now  
+There is no unseen functionality here, these dockerfiles are **not used in production**,  
+so if you add a plug to this docker file you must make sure it is also added to required deployments
