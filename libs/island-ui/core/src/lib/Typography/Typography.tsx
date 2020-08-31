@@ -40,8 +40,8 @@ export const Typography = ({
   color,
   truncate,
   links,
-  paddingTop = 0,
-  paddingBottom = 0,
+  paddingTop,
+  paddingBottom,
 }: TypographyProps) => (
   <Cmp
     className={cn(
@@ -51,22 +51,24 @@ export const Typography = ({
         [truncateStyle]: truncate,
         [linksStyle]: links,
       },
-      resolveResponsiveProp(
-        paddingBottom,
-        spacing.paddingBottomXs,
-        spacing.paddingBottomSm,
-        spacing.paddingBottomMd,
-        spacing.paddingBottomLg,
-        spacing.paddingBottomXl,
-      ),
-      resolveResponsiveProp(
-        paddingTop,
-        spacing.paddingTopXs,
-        spacing.paddingTopSm,
-        spacing.paddingTopMd,
-        spacing.paddingTopLg,
-        spacing.paddingTopXl,
-      ),
+      paddingBottom !== undefined &&
+        resolveResponsiveProp(
+          paddingBottom,
+          spacing.paddingBottomXs,
+          spacing.paddingBottomSm,
+          spacing.paddingBottomMd,
+          spacing.paddingBottomLg,
+          spacing.paddingBottomXl,
+        ),
+      paddingTop !== undefined &&
+        resolveResponsiveProp(
+          paddingTop,
+          spacing.paddingTopXs,
+          spacing.paddingTopSm,
+          spacing.paddingTopMd,
+          spacing.paddingTopLg,
+          spacing.paddingTopXl,
+        ),
     )}
   >
     {children}

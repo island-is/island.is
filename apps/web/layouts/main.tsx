@@ -1,7 +1,13 @@
 import React from 'react'
 import Head from 'next/head'
 import { Page, Box, FooterLinkProps, Footer } from '@island.is/island-ui/core'
-import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
+import {
+  Header,
+  PageLoader,
+  FixedNav,
+  SkipToMainContent,
+  SideMenu,
+} from '../components'
 import { NextComponentType, NextPageContext } from 'next'
 import { GetInitialPropsContext } from '../types'
 import {
