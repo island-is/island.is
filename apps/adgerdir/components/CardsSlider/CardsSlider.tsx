@@ -66,7 +66,10 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
     if (el) {
       setHeight('auto')
       setHeight(`${el.offsetHeight}px`)
-      setSlideState(initialSlideState)
+      setSlideState({
+        ...initialSlideState,
+        itemsInSlide: ref.current.state.items,
+      })
     }
   }, [ref])
 
