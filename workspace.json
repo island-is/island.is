@@ -2694,6 +2694,64 @@
           }
         }
       }
+    },
+    "skilavottord-ws": {
+      "root": "apps/skilavottord/ws",
+      "sourceRoot": "apps/skilavottord/ws/src",
+      "projectType": "application",
+      "prefix": "skilavottord-ws",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/skilavottord/ws",
+            "main": "apps/skilavottord/ws/src/main.ts",
+            "tsConfig": "apps/skilavottord/ws/tsconfig.app.json",
+            "assets": ["apps/skilavottord/ws/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/skilavottord/ws/src/environments/environment.ts",
+                  "with": "apps/skilavottord/ws/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "skilavottord-ws:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/skilavottord/ws/.eslintrc",
+            "tsConfig": [
+              "apps/skilavottord/ws/tsconfig.app.json",
+              "apps/skilavottord/ws/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/skilavottord/ws/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/skilavottord/ws/jest.config.js",
+            "tsConfig": "apps/skilavottord/ws/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "docker-express": {}
+      }
     }
   },
   "cli": {
