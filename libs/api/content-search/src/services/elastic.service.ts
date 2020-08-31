@@ -7,9 +7,7 @@ import { environment } from '../environments/environment'
 import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
-import {
-  WebSearchAutocompleteInput
-} from '@island.is/api/schema'
+import { WebSearchAutocompleteInput } from '@island.is/api/schema'
 import {
   autocompleteTerm,
   AutocompleteTermResponse,
