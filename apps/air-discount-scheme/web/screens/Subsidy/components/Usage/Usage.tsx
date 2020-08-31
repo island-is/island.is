@@ -31,7 +31,7 @@ interface PropTypes {
 }
 
 function Usage({ misc }: PropTypes) {
-  const { data } = useQuery(FlightsQuery)
+  const { data } = useQuery(FlightsQuery, { ssr: true })
   const { flights } = data || {}
 
   return (
