@@ -39,6 +39,8 @@ export interface UseBoxStylesProps {
   borderRadius?: keyof typeof styleRefs.borderRadius
   background?: keyof typeof styleRefs.background
   borderColor?: keyof typeof styleRefs.borderColor
+  borderWidth?: keyof typeof styleRefs.borderWidth
+  borderStyle?: keyof typeof styleRefs.borderStyle
   boxShadow?: keyof typeof styleRefs.boxShadow
   transform?: keyof typeof styleRefs.transform
   transition?: keyof typeof styleRefs.transition
@@ -85,6 +87,8 @@ export const useBoxStyles = ({
   textAlign,
   border,
   borderColor,
+  borderWidth,
+  borderStyle,
   borderRadius,
   background,
   boxShadow,
@@ -130,6 +134,8 @@ export const useBoxStyles = ({
     styles.background[background!],
     styles.border[border!],
     styles.borderColor[borderColor!],
+    styles.borderWidth[borderWidth!],
+    styles.borderStyle[borderStyle!],
     styles.borderRadius[borderRadius!],
     styles.boxShadow[boxShadow!],
     styles.transition[transition!],
