@@ -11,6 +11,8 @@ tokens[islandis]=$SPINNAKER_WEBHOOK_ISLANDIS_TOKEN
 tokens[gjafakort]=$SPINNAKER_WEBHOOK_GJAFAKORT_TOKEN
 tokens[air-discount-scheme]=$SPINNAKER_WEBHOOK_AIR_DISCOUNT_SCHEME_TOKEN
 
+HELM_SHA1=$(echo $HELM_VERSION | cut -d"_" -f3)
+
 curl -v $https://spinnaker-gate.shared.devland.is/webhooks/webhook/${{matrix.service}} -X POST -H "content-type: application/json" --data-binary @- <<BODY
 {
 "token": "${tokens[SERVICE]}",
@@ -38,7 +40,7 @@ curl -v $https://spinnaker-gate.shared.devland.is/webhooks/webhook/${{matrix.ser
   {
     "name": "islandis",
     "type": "helm/chart",
-    "version": "1.0.0+$HELM_SHA1"
+    "version": "$HELM_VERSION"
   }
 ]
 }

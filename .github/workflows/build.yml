@@ -414,7 +414,7 @@ jobs:
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
-      HELM_SHA1: f239692
+      HELM_VERSION: 1.0.0+19_master_59e62b4
     strategy:
       matrix:
         service: [islandis, gjafakort, air-discount-scheme]
