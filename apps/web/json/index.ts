@@ -120,21 +120,41 @@ export const tempTabs = [
       {
         title: 'Heilsuvera',
         url: 'https://heilsuvera.is',
-        icon: '',
+        icon: null,
       },
       {
         title: 'Samráðsgátt',
         url: 'https://samradsgatt.island.is',
-        icon: '',
+        icon: null,
       },
       {
         title: 'Mannanöfn',
         url: 'https://vefur.island.is/mannanofn/',
-        icon: '',
+        icon: null,
       },
       {
         title: 'Undirskriftalistar',
         url: 'https://vefur.island.is/undirskriftalistar/',
+        icon: null,
+      },
+      {
+        title: 'Opin gögn',
+        url: 'https://opingogn.is/',
+        icon: null,
+      },
+      {
+        title: 'Opinber Nýsköpun',
+        url: 'https://opinbernyskopun.island.is/',
+        icon: null,
+      },
+      {
+        title: 'Opnir reikn. ríkisins',
+        url: 'http://www.opnirreikningar.is/',
+        icon: null,
+      },
+      {
+        title: 'Tekjusagan',
+        url: 'http://www.tekjusagan.is/',
         icon: null,
       },
     ],
