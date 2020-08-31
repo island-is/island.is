@@ -2666,6 +2666,155 @@
           }
         }
       }
+    },
+    "api-catalog-graphql": {
+      "root": "libs/api-catalog/graphql",
+      "sourceRoot": "libs/api-catalog/graphql/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/api-catalog/graphql/.eslintrc",
+            "tsConfig": [
+              "libs/api-catalog/graphql/tsconfig.lib.json",
+              "libs/api-catalog/graphql/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api-catalog/graphql/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api-catalog/graphql/jest.config.js",
+            "tsConfig": "libs/api-catalog/graphql/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "api-catalog": {
+      "root": "apps/api-catalog",
+      "sourceRoot": "apps/api-catalog",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/api-catalog",
+            "outputPath": "dist/apps/api-catalog"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/api-catalog/environments/environment.ts",
+                  "with": "apps/api-catalog/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/next:dev-server",
+          "options": {
+            "buildTarget": "api-catalog:build",
+            "dev": true
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "api-catalog:build:production",
+              "dev": false
+            }
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "api-catalog:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/api-catalog/.eslintrc",
+            "tsConfig": [
+              "apps/api-catalog/tsconfig.json",
+              "apps/api-catalog/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/api-catalog/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/api-catalog/jest.config.js",
+            "tsConfig": "apps/api-catalog/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "api-catalog-e2e": {
+      "root": "apps/api-catalog-e2e",
+      "sourceRoot": "apps/api-catalog-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/api-catalog-e2e/cypress.json",
+            "tsConfig": "apps/api-catalog-e2e/tsconfig.e2e.json",
+            "devServerTarget": "api-catalog:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "api-catalog:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/api-catalog-e2e/.eslintrc",
+            "tsConfig": ["apps/api-catalog-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/api-catalog-e2e/**"]
+          }
+        }
+      }
+    },
+    "api-catalog-x-road": {
+      "root": "libs/api-catalog/x-road",
+      "sourceRoot": "libs/api-catalog/x-road/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/api-catalog/x-road/.eslintrc",
+            "tsConfig": [
+              "libs/api-catalog/x-road/tsconfig.lib.json",
+              "libs/api-catalog/x-road/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api-catalog/x-road/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api-catalog/x-road/jest.config.js",
+            "tsConfig": "libs/api-catalog/x-road/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

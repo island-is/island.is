@@ -100,7 +100,11 @@
       ],
       "@island.is/service-portal/graphql": [
         "libs/service-portal/graphql/src/index.ts"
-      ]
+      ],
+      "@island.is/api-catalog/graphql": [
+        "libs/api-catalog/graphql/src/index.ts"
+      ],
+      "@island.is/api-catalog/x-road": ["libs/api-catalog/x-road/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -209,6 +209,19 @@
     },
     "service-portal-graphql": {
       "tags": []
+    },
+    "api-catalog-graphql": {
+      "tags": []
+    },
+    "api-catalog": {
+      "tags": []
+    },
+    "api-catalog-e2e": {
+      "tags": [],
+      "implicitDependencies": ["api-catalog"]
+    },
+    "api-catalog-x-road": {
+      "tags": []
     }
   }
 }

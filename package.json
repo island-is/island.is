@@ -155,7 +155,8 @@
     "xstate": "4.10.0",
     "yargs": "15.4.1",
     "yup": "0.29.0",
-    "zod": "1.10.2"
+    "zod": "1.10.2",
+    "@zeit/next-sass": "1.0.1"
   },
   "devDependencies": {
     "@babel/core": "7.8.3",
