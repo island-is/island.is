@@ -11,7 +11,13 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { Content } from '@island.is/island-ui/contentful'
-import { Articles, Sleeve, GroupedPages, CardsSlider } from '../components'
+import {
+  Articles,
+  Sleeve,
+  GroupedPages,
+  CardsSlider,
+  FeaturedNews,
+} from '@island.is/adgerdir/components'
 import { withApollo } from '../graphql'
 import { useI18n } from '../i18n'
 import {
@@ -113,6 +119,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
           </ContentBlock>
         </Box>
       </ColorSchemeContext.Provider>
+      <FeaturedNews />
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
         <Box width="full" overflow="hidden" marginBottom={10}>
           <ContentBlock width="large">
