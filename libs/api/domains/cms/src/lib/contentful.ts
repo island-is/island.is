@@ -7,7 +7,6 @@ const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ContentfulQuery = any
 
-
 const validLocales = ['is-IS', 'en']
 const localeMap = {
   is: 'is-IS',
@@ -16,7 +15,9 @@ const localeMap = {
 
 const getClientInstance = once(() => {
   if (!accessToken) {
-    throw new Error('Missing Contentful environment variables: CONTENTFUL_ACCESS_TOKEN')
+    throw new Error(
+      'Missing Contentful environment variables: CONTENTFUL_ACCESS_TOKEN',
+    )
   }
 
   return createClient({
