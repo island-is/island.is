@@ -19,6 +19,7 @@ export const root = style({
       left: 'auto',
       position: 'absolute',
       top: theme.spacing[3],
+      right: theme.spacing[3],
       width: SIDE_MENU_WIDTH,
     },
   },

@@ -170,7 +170,7 @@ export const Footer = ({
               (group) =>
                 group.map(({ title, href }) => {
                   return (
-                    <GridColumn key={href} span={[12, 6, 3]}>
+                    <GridColumn key={href} span={[12, 6, 4, 3]}>
                       <Typography variant="h5" color="white" paddingBottom={3}>
                         <a
                           href={href}
