@@ -10,9 +10,10 @@ import {
   import { UserIdentity } from './user-identity.model'
   import { UserIdentitiesService } from './user-identities.service'
   import { UserIdentityDto } from './dto/user-identity.dto'
-  import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+  import { ApiCreatedResponse, ApiOkResponse, ApiTags, ApiOAuth2 } from '@nestjs/swagger'
 import { AuthGuard } from '@nestjs/passport'
   
+@ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('user-identities')
   @Controller('user-identities')
@@ -29,7 +30,7 @@ import { AuthGuard } from '@nestjs/passport'
     @ApiOkResponse({ type: UserIdentity })
     async findOne(@Param('subjectId') subjectId: string): Promise<UserIdentity> {
       const userIdentity = await this.userIdentityService.findBySubjectId(subjectId)
-  
+
       if (!userIdentity) {
         throw new NotFoundException("This user identity doesn't exist")
       }

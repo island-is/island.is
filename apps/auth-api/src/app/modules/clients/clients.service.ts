@@ -45,13 +45,15 @@ export class ClientsService {
       "https://localhost:5001/signin-adfs",
       "https://localhost:44378/oauth2-redirect.html",
       "https://localhost:5002/oauth2-redirect.html",
-      "https://siidentityserverweb20200731081059.azurewebsites.net/signin-adfs"
+      "https://siidentityserverweb20200731081059.azurewebsites.net/signin-adfs",
+      "http://localhost:3333/oauth2-redirect.html",
     ];
     // ClientSecrets : [{ Value : new Secret("swagger_secret".Sha256()) } as Secret }],
-    swagger.AllowedScopes = [ "openid", "profile", "swagger_api.read" ],
+    swagger.AllowedScopes = [ "openid", "profile", "swagger_api.read", '@identityserver.api/read' ],
     swagger.PostLogoutRedirectUris = ["https://localhost:44378/oauth2-redirect.html"],
     swagger.AllowOfflineAccess = true;
-    swagger.RequirePkce = true;
+    swagger.RequirePkce = false;
+    swagger.RequireClientSecret = false;
     this.clients.push(swagger);
 
     const interactive = new Client();
@@ -72,7 +74,7 @@ export class ClientsService {
     interactive.ClientSecrets = null,
     interactive.PostLogoutRedirectUris = ["https://localhost:5002/signout-callback-oidc", "https://localhost:5001/signin-google", "https://localhost:5002/oauth2-redirect.html" ],
     interactive.AllowOfflineAccess = true,
-    interactive.AllowedScopes = [ "openid", "profile" ],
+    interactive.AllowedScopes = [ "openid", "profile"],
     this.clients.push(interactive);
 
     const postman = new Client();
