@@ -192,7 +192,7 @@ class App {
 
   private async doMigrate(codeVersion: number, packageIds) {
     const config = this.createConfig(packageIds)
-    logger.info('Updating index template', {codeVersion, packageIds, config})
+    logger.info('Updating index template', { codeVersion, packageIds, config })
     return this.createTemplate(config).then(() =>
       this.reindexToNewIndex(codeVersion),
     )
@@ -268,13 +268,19 @@ class App {
     const templateName = this.templateName
     logger.info('Create template', templateName)
     const client = await this.getEsClient()
-    return client.indices.putTemplate({
-      name: templateName,
-      body: config,
-    }).catch((error) => {
-      logger.error('Failed to update template', {error, config, templateName})
-      throw error
-    })
+    return client.indices
+      .putTemplate({
+        name: templateName,
+        body: config,
+      })
+      .catch((error) => {
+        logger.error('Failed to update template', {
+          error,
+          config,
+          templateName,
+        })
+        throw error
+      })
   }
 
   private createConfig(packageIds: PackageIds): string {
