@@ -47,9 +47,14 @@ jobs:
         id: git_refs
         run: |
           export GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
-          GIT_BASE_BRANCH=`git log --first-parent --pretty=format:'%d' --decorate=no | grep -v HEAD | grep "\S" | cut -d '/' -f2 | tr -d ' )' | head -n 1`
-          GIT_BASE_BRANCH=${GITHUB_BASE_REF:-$GIT_BASE_BRANCH}
-          GIT_BASE_BRANCH=${GIT_BASE_BRANCH:-master}
+          if [[ ! -z "$GITHUB_BASE_REF" ]]
+          then
+           # a PR
+           GIT_BASE_BRANCH=$GITHUB_BASE_REF
+          else
+           # on master
+           GIT_BASE_BRANCH=master
+          fi
           echo "::set-env name=GIT_BRANCH::${GIT_BRANCH}"
           echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
           echo "::set-env name=GIT_BASE_BRANCH::${GIT_BASE_BRANCH}"
@@ -78,7 +83,7 @@ jobs:
         id: git_nx_head
         name: Preparing HEAD tag
       - run: |
-          if [[ $GITHUB_BASE_REF ]]
+          if [[ ! -z "$GITHUB_BASE_REF" ]]
           then
             export BRANCH=$GIT_BASE_BRANCH
           else
@@ -146,6 +151,9 @@ jobs:
 
       - name: Security audit Node modules
         run: yarn run security-audit
+
+      - name: License audit Node modules
+        run: yarn run license-audit
 
       - name: Prepare lint targets
         id: lint_projects
@@ -522,11 +530,20 @@ jobs:
             ]
           }
           BODY
-      - uses: 8398a7/action-slack@v3
+
+  failure-notification:
+    runs-on: ubuntu-latest
+    if: failure()
+    needs: [docker-express, docker-next, prepare, linting, formatting, publish]
+    env:
+      PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
+    steps:
+      - name: Send Slack notification
+        uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
           fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # optional
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-        if: failure() && env.PUBLISH == 'true'
+        if: env.PUBLISH == 'true'

@@ -10,9 +10,9 @@ import {
   forwardRef,
   UseGuards,
   Req,
-  ForbiddenException,
 } from '@nestjs/common'
 import {
+  ApiOkResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiNoContentResponse,
@@ -24,9 +24,12 @@ import { FlightLegFund } from '@island.is/air-discount-scheme/types'
 import { Flight } from './flight.model'
 import { FlightService } from './flight.service'
 import {
+  GetFlightParams,
   CreateFlightParams,
-  DeleteFlightParams,
   GetFlightLegFundsParams,
+  GetUserFlightsParams,
+  DeleteFlightParams,
+  DeleteFlightLegParams,
 } from './flight.validator'
 import { FlightLimitExceeded } from './flight.error'
 import { FlightDto } from './dto/flight.dto'
@@ -60,8 +63,17 @@ export class PublicFlightController {
     if (flightLegsLeft < flight.flightLegs.length) {
       throw new FlightLimitExceeded()
     }
-    await this.discountService.useDiscount(params.discountCode)
+    await this.discountService.useDiscount(params.discountCode, nationalId)
     return this.flightService.create(flight, nationalId, request.airline)
+  }
+
+  @Get('flights/:flightId')
+  @ApiOkResponse({ type: Flight })
+  async getFlightById(
+    @Param() params: GetFlightParams,
+    @Req() request,
+  ): Promise<Flight> {
+    return this.flightService.findOne(params.flightId, request.airline)
   }
 
   @Delete('flights/:flightId')
@@ -71,11 +83,25 @@ export class PublicFlightController {
     @Param() params: DeleteFlightParams,
     @Req() request,
   ): Promise<void> {
-    const flight = await this.flightService.findOne(params.flightId)
-    if (flight.airline !== request.airline) {
-      throw new ForbiddenException('Flight belongs to other airline')
-    }
+    const flight = await this.flightService.findOne(
+      params.flightId,
+      request.airline,
+    )
     await this.flightService.delete(flight)
+  }
+
+  @Delete('flights/:flightId/flightLegs/:flightLegId')
+  @HttpCode(204)
+  @ApiNoContentResponse()
+  async deleteFlightLeg(
+    @Param() params: DeleteFlightLegParams,
+    @Req() request,
+  ): Promise<void> {
+    const flight = await this.flightService.findOne(
+      params.flightId,
+      request.airline,
+    )
+    await this.flightService.deleteFlightLeg(flight, params.flightLegId)
   }
 }
 
@@ -95,5 +121,11 @@ export class PrivateFlightController {
   @ApiExcludeEndpoint()
   get(): Promise<Flight[]> {
     return this.flightService.findAll()
+  }
+
+  @Get('users/:nationalId/flights')
+  @ApiExcludeEndpoint()
+  getUserFlights(@Param() params: GetUserFlightsParams): Promise<Flight[]> {
+    return this.flightService.findAllByNationalId(params.nationalId)
   }
 }

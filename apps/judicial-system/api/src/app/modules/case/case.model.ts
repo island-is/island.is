@@ -8,6 +8,14 @@ import {
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 
+export enum CaseState {
+  UNKNOWN = 'UNKNOWN',
+  DRAFT = 'DRAFT',
+  SUBMITTED = 'SUBMITTED',
+  ACTIVE = 'ACTIVE',
+  COMPLETED = 'COMPLETED',
+} // TODO get from somewhere
+
 @Table({
   tableName: 'case',
   timestamps: true,
@@ -19,7 +27,6 @@ export class Case extends Model<Case> {
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
   id: string
 
   @CreatedAt
@@ -36,4 +43,34 @@ export class Case extends Model<Case> {
   })
   @ApiProperty()
   description: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  policeCaseNumber: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  suspectNationalId: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  suspectName: string
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(CaseState),
+    defaultValue: CaseState.DRAFT,
+  })
+  @ApiProperty({ enum: CaseState })
+  state: string
 }

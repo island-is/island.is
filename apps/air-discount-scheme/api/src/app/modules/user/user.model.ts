@@ -1,5 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
+import { Permissions } from '../auth'
+
 @ObjectType()
 export class User {
   @Field((_1) => ID)
@@ -11,6 +13,6 @@ export class User {
   @Field({ nullable: true })
   mobile?: string
 
-  @Field()
-  role: string
+  @Field(() => String, { defaultValue: 'user' })
+  role?: Permissions['role']
 }

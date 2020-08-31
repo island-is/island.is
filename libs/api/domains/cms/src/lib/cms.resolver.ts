@@ -34,10 +34,13 @@ import {
   getAdgerdirPages,
   getAdgerdirFrontpage,
   getMenu,
+  getAdgerdirTags,
 } from './services'
 import { LatestNewsSlice } from './models/slices/latestNewsSlice.model'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
+import { AdgerdirTags } from './models/adgerdirTags.model'
+import { GetAdgerdirTagsInput } from './dto/getAdgerdirTags.input'
 
 @Resolver()
 export class CmsResolver {
@@ -63,7 +66,7 @@ export class CmsResolver {
     return getNamespace(input?.namespace ?? '', input?.lang ?? 'is-IS')
   }
 
-  @Query(() => AboutPage, { nullable: true })
+  @Query(() => AboutPage)
   getAboutPage(
     @Args('input') input: GetAboutPageInput,
   ): Promise<AboutPage | null> {
@@ -91,11 +94,18 @@ export class CmsResolver {
     return getAdgerdirPage(input?.slug ?? '', input?.lang ?? 'is-IS')
   }
 
-  @Query(() => AdgerdirPages, { nullable: true })
+  @Query(() => AdgerdirPages)
   getAdgerdirPages(
     @Args('input') input: GetAdgerdirPagesInput,
-  ): Promise<AdgerdirPages | null> {
+  ): Promise<AdgerdirPages> {
     return getAdgerdirPages(input?.lang ?? 'is-IS')
+  }
+
+  @Query(() => AdgerdirTags, { nullable: true })
+  getAdgerdirTags(
+    @Args('input') input: GetAdgerdirTagsInput,
+  ): Promise<AdgerdirTags | null> {
+    return getAdgerdirTags(input?.lang ?? 'is-IS')
   }
 
   @Query(() => FrontpageSliderList, { nullable: true })
@@ -108,7 +118,7 @@ export class CmsResolver {
   @Query(() => AdgerdirFrontpage, { nullable: true })
   getAdgerdirFrontpage(
     @Args('input') input: GetAdgerdirFrontpageInput,
-  ): Promise<AdgerdirPage | null> {
+  ): Promise<AdgerdirFrontpage | null> {
     return getAdgerdirFrontpage(input?.lang ?? 'is-IS')
   }
 

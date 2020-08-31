@@ -28,7 +28,7 @@ describe('Get Discount By DiscountCode', () => {
       flightLegsLeft: 4,
       nationalId: '1326487905',
       firstName: 'Jón',
-      gender: 'Male',
+      gender: 'kk',
       lastName: 'Jónsson',
       middleName: 'Gunnar',
     })

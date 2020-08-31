@@ -8,6 +8,7 @@ interface Props {
   onClick?: () => void
   url?: string
   active?: boolean
+  external?: boolean
 }
 
 const ButtonContent: FC<Props> = ({ onClick, active, children }) => (
@@ -24,7 +25,16 @@ const ButtonContent: FC<Props> = ({ onClick, active, children }) => (
 )
 
 const LinkButton: FC<Props> = (props) => {
-  return props.url ? (
+  return props.external ? (
+    <a
+      href={props.url}
+      className={styles.link}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <ButtonContent {...props} />
+    </a>
+  ) : props.url ? (
     <Link to={props.url} className={styles.link}>
       <ButtonContent {...props} />
     </Link>

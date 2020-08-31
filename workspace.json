@@ -375,6 +375,17 @@
             }
           }
         },
+        "codegen-cms-types": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "../../../../node_modules/.bin/contentful-typescript-codegen --output src/lib/generated/contentfulTypes.d.ts"
+              }
+            ],
+            "cwd": "libs/api/domains/cms"
+          }
+        },
         "env-secrets": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -2653,6 +2664,62 @@
               "**/node_modules/**",
               "!apps/judicial-system/web-e2e/**"
             ]
+          }
+        }
+      }
+    },
+    "service-portal-graphql": {
+      "root": "libs/service-portal/graphql",
+      "sourceRoot": "libs/service-portal/graphql/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/graphql/.eslintrc",
+            "tsConfig": [
+              "libs/service-portal/graphql/tsconfig.lib.json",
+              "libs/service-portal/graphql/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/service-portal/graphql/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/graphql/jest.config.js",
+            "tsConfig": "libs/service-portal/graphql/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "api-domains-documents": {
+      "root": "libs/api/domains/documents",
+      "sourceRoot": "libs/api/domains/documents/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/graphql/.eslintrc",
+            "tsConfig": [
+              "libs/api/domains/documents/tsconfig.lib.json",
+              "libs/api/domains/documents/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api/domains/documents/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/documents/jest.config.js",
+            "tsConfig": "libs/api/domains/documents/tsconfig.spec.json",
+            "passWithNoTests": true
           }
         }
       }

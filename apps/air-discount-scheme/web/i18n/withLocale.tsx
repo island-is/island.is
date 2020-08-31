@@ -1,11 +1,12 @@
 import React from 'react'
-import { Locale } from './I18n'
 import { NextComponentType } from 'next'
 import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
-import { QueryGetNamespaceArgs, Query } from '@island.is/api/schema'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
+
+import { Locale, Routes } from './types'
+import { QueryGetNamespaceArgs, Query } from '@island.is/api/schema'
 
 export const GetNamespaceQuery = gql`
   query GetNamespace($input: GetNamespaceInput!) {
@@ -21,7 +22,7 @@ export const withLocale = <
   P = {}
 >(
   locale: Locale,
-  translatedUrl?: string,
+  route?: keyof Routes,
 ) => (Component: NextComponentType<C, IP, P>): NextComponentType<C, IP> => {
   const getInitialProps = Component.getInitialProps
   if (!getInitialProps) {
@@ -33,16 +34,15 @@ export const withLocale = <
   )
 
   NewComponent.getInitialProps = async (ctx) => {
-    const newContext = { ...ctx, locale, translatedUrl } as any
-    const [props, translations] = await Promise.all([
+    const newContext = { ...ctx, locale, route } as any
+    const [props] = await Promise.all([
       getInitialProps(newContext),
       getGlobalStrings(newContext),
     ])
     return {
       ...props,
       locale,
-      translations,
-      translatedUrl,
+      route,
     }
   }
   return NewComponent

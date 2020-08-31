@@ -209,6 +209,12 @@
     "judicial-system/web-e2e": {
       "tags": [],
       "implicitDependencies": ["judicial-system-web"]
+    },
+    "api-domains-documents": {
+      "tags": []
+    },
+    "service-portal-graphql": {
+      "tags": []
     }
   }
 }

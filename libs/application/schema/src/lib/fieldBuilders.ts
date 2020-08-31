@@ -11,6 +11,7 @@ import {
   RadioField,
   SelectField,
   TextField,
+  FileUploadField,
 } from '../types/Fields'
 
 export function buildCheckboxField(data: {
@@ -159,5 +160,47 @@ export function buildCustomField(
     type: FieldTypes.CUSTOM,
     component,
     props,
+  }
+}
+
+export function buildFileUploadField(data: {
+  condition?: Condition
+  id: string
+  name: string
+  introduction: string
+  uploadHeader?: string
+  uploadDescription?: string
+  upploadButtonLabel?: string
+  uploadMultiple?: boolean
+  uploadAccept?: string
+  required?: boolean
+}): FileUploadField {
+  const {
+    condition,
+    id,
+    name,
+    introduction,
+    uploadHeader,
+    uploadDescription,
+    upploadButtonLabel,
+    uploadMultiple,
+    uploadAccept,
+    required = false,
+  } = data
+  return {
+    children: undefined,
+    required,
+    isQuestion: true,
+    condition,
+    id,
+    name,
+    introduction,
+    uploadHeader,
+    uploadDescription,
+    upploadButtonLabel,
+    uploadMultiple,
+    uploadAccept,
+    type: FieldTypes.FILEUPLOAD,
+    component: FieldComponents.FILEUPLOAD,
   }
 }
