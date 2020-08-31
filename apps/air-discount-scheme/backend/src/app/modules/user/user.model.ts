@@ -29,7 +29,7 @@ export class User implements TUser {
   lastName: string
 
   @ApiProperty()
-  gender: string
+  gender: TUser['gender']
 
   @ApiProperty()
   nationalId: string

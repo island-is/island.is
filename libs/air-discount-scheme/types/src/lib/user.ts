@@ -2,7 +2,7 @@ export interface ThjodskraUser {
   firstName: string
   middleName: string
   lastName: string
-  gender: string // 'kk' | 'kvk'
+  gender: 'kk' | 'kvk'
   address: string
   postalcode: number
   city: string

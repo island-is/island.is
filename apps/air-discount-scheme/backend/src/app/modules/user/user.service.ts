@@ -121,7 +121,7 @@ export class UserService {
         address: 'Bessastaðir 1',
         postalcode: 225,
         city: 'Álftanes',
-      },
+      } as ThjodskraUser,
       {
         nationalId: '1234567890',
         firstName: 'Gervimaður',
@@ -131,7 +131,7 @@ export class UserService {
         address: 'Ísabessastaðir 1',
         postalcode: 400,
         city: 'Ísafjörður',
-      },
+      } as ThjodskraUser,
     ]
     if (nationalId !== '1234567890') {
       return Promise.resolve(users[0])
