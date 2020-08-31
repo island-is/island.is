@@ -12,12 +12,19 @@ export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<Case[]>([])
 
   useEffect(() => {
+    let isMounted = true
+
     async function getCases() {
       const response = await api.getCases()
-      setCases(response)
+      if (isMounted) {
+        setCases(response)
+      }
     }
 
     getCases()
+    return () => {
+      isMounted = false
+    }
   }, [])
 
   const mapCaseStateToTagVariant = (state: string): TagVariant => {
@@ -59,7 +66,7 @@ export const DetentionRequests: React.FC = () => {
         </thead>
         <tbody>
           {cases.map((c, i) => (
-            <tr key={i}>
+            <tr key={i} data-testid="detention-requests-table-row">
               <td>{c.policeCaseNumber || '-'}</td>
               <td>{c.suspectName}</td>
               <td>{c.suspectNationalId || '-'}</td>
