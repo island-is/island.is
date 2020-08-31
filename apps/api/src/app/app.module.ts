@@ -22,6 +22,7 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
     ContentSearchModule,
     CmsModule,
     ApplicationModule,
+    FileUploadModule,
     DocumentModule,
   ],
 })

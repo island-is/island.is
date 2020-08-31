@@ -391,12 +391,6 @@ export enum ApplicationTypeIdEnum {
   PaternityLeave = 'PaternityLeave',
 }
 
-export type PresignedPost = {
-  __typename?: 'PresignedPost'
-  url: Scalars['String']
-  fields: Scalars['JSON']
-}
-
 export type Document = {
   __typename?: 'Document'
   id: Scalars['ID']
@@ -636,7 +630,6 @@ export type Mutation = {
   updateApplication?: Maybe<Application>
   addAttachment?: Maybe<Application>
   deleteAttachment?: Maybe<Application>
-  createUploadUrl: PresignedPost
 }
 
 export type MutationCreateApplicationArgs = {
@@ -653,10 +646,6 @@ export type MutationAddAttachmentArgs = {
 
 export type MutationDeleteAttachmentArgs = {
   input: DeleteAttachmentInput
-}
-
-export type MutationCreateUploadUrlArgs = {
-  filename: Scalars['String']
 }
 
 export type CreateApplicationInput = {
@@ -912,7 +901,6 @@ export type ResolversTypes = {
   ApplicationStateEnum: ApplicationStateEnum
   JSON: ResolverTypeWrapper<Scalars['JSON']>
   ApplicationTypeIdEnum: ApplicationTypeIdEnum
-  PresignedPost: ResolverTypeWrapper<PresignedPost>
   Document: ResolverTypeWrapper<Document>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   Query: ResolverTypeWrapper<{}>
@@ -1016,7 +1004,6 @@ export type ResolversParentTypes = {
   Application: Application
   DateTime: Scalars['DateTime']
   JSON: Scalars['JSON']
-  PresignedPost: PresignedPost
   Document: Document
   Boolean: Scalars['Boolean']
   Query: {}
@@ -1625,15 +1612,6 @@ export interface JsonScalarConfig
   name: 'JSON'
 }
 
-export type PresignedPostResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['PresignedPost'] = ResolversParentTypes['PresignedPost']
-> = {
-  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  fields?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
 export type DocumentResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Document'] = ResolversParentTypes['Document']
@@ -1807,12 +1785,6 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationDeleteAttachmentArgs, 'input'>
   >
-  createUploadUrl?: Resolver<
-    ResolversTypes['PresignedPost'],
-    ParentType,
-    ContextType,
-    RequireFields<MutationCreateUploadUrlArgs, 'filename'>
-  >
 }
 
 export type Resolvers<ContextType = Context> = {
@@ -1860,7 +1832,6 @@ export type Resolvers<ContextType = Context> = {
   Application?: ApplicationResolvers<ContextType>
   DateTime?: GraphQLScalarType
   JSON?: GraphQLScalarType
-  PresignedPost?: PresignedPostResolvers<ContextType>
   Document?: DocumentResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
