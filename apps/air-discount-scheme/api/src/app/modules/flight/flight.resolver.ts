@@ -1,7 +1,7 @@
 import { Context, Query, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 
 import {
-  ThjodskraUser,
+  User as TUser,
   Flight as TFlight,
   FlightLeg,
 } from '@island.is/air-discount-scheme/types'
@@ -9,7 +9,7 @@ import { Authorize, CurrentUser, AuthService, AuthUser } from '../auth'
 import { Flight } from './flight.model'
 import { User } from '../user'
 
-type FlightWithThjodskraUser = TFlight & { user: ThjodskraUser }
+type FlightWithTUser = TFlight & { user: TUser }
 
 @Resolver(() => Flight)
 export class FlightResolver {
@@ -20,15 +20,12 @@ export class FlightResolver {
   async flights(
     @CurrentUser() user: AuthUser,
     @Context('dataSources') { backendApi },
-  ): Promise<FlightWithThjodskraUser[]> {
-    const relations: ThjodskraUser[] = await backendApi.getUserRelations(
+  ): Promise<FlightWithTUser[]> {
+    const relations: TUser[] = await backendApi.getUserRelations(
       user.nationalId,
     )
     return relations.reduce(
-      (
-        promise: Promise<FlightWithThjodskraUser[]>,
-        relation: ThjodskraUser,
-      ) => {
+      (promise: Promise<FlightWithTUser[]>, relation: TUser) => {
         return promise.then(async (acc) => {
           const flights: TFlight[] = await backendApi.getUserFlights(
             relation.nationalId,
@@ -49,11 +46,11 @@ export class FlightResolver {
         })
       },
       Promise.resolve([]),
-    ) as Promise<FlightWithThjodskraUser[]>
+    ) as Promise<FlightWithTUser[]>
   }
 
   @ResolveField('user')
-  resolveUser(@Parent() flight: FlightWithThjodskraUser): User {
+  resolveUser(@Parent() flight: FlightWithTUser): User {
     const { user } = flight
     return {
       ...user,
@@ -65,7 +62,7 @@ export class FlightResolver {
   }
 
   @ResolveField('travel')
-  resolveFlightLegFund(@Parent() flightLeg: FlightLeg): string {
+  resolveTravel(@Parent() flightLeg: FlightLeg): string {
     return `${flightLeg.origin} - ${flightLeg.destination}`
   }
 }

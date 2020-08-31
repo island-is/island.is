@@ -1,12 +1,15 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 @ObjectType()
-export class FlightLegFund {
+export class Fund {
   @Field((_) => ID)
   nationalId: string
 
   @Field()
-  unused: number
+  credit: number
+
+  @Field()
+  used: number
 
   @Field()
   total: number
