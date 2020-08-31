@@ -3,7 +3,7 @@ export enum CaseState {
   DRAFT = 'Drög',
   SUBMITTED = 'Krafa staðfest',
   ACTIVE = 'Gæsluvarðhald virkt',
-  COMPLETED = 'Gæsluvarðhald lokið',
+  COMPLETED = 'Gæsluvarðhaldi lokið',
 }
 
 export interface Case {

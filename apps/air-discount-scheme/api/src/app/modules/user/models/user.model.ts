@@ -1,6 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-import { Permissions } from '../auth'
+import { Fund } from './fund.model'
+import { Permissions } from '../../auth'
 
 @ObjectType()
 export class User {
@@ -15,4 +16,10 @@ export class User {
 
   @Field(() => String, { defaultValue: 'user' })
   role?: Permissions['role']
+
+  @Field(() => Fund, { nullable: true })
+  fund?: Fund
+
+  @Field(() => Boolean, { defaultValue: false })
+  meetsADSRequirements?: boolean
 }
