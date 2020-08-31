@@ -194,8 +194,8 @@ class App {
   }
 
   private async doMigrate(codeVersion: number, packageIds) {
-    logger.info('Updating index template')
     const config = this.createConfig(packageIds)
+    logger.info('Updating index template', {codeVersion, packageIds, config})
     return this.createTemplate(config).then(() =>
       this.reindexToNewIndex(codeVersion),
     )
@@ -275,7 +275,7 @@ class App {
       name: templateName,
       body: config,
     }).catch((error) => {
-      logger.error('Failed to update template', error)
+      logger.error('Failed to update template', {error, config, templateName})
       throw error
     })
   }
