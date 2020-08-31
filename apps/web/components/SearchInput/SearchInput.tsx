@@ -310,16 +310,19 @@ const Results: FC<{
     <Box display="flex" background="blue100" paddingY={2} paddingX={3}>
       <div className={styles.menuColumn}>
         <Stack space={1}>
-          {search.suggestions.map((suggestion, i) => (
+          {search.suggestions.map((suggestion, i) => {
+            const suggestionHasTerm = suggestion.startsWith(search.term)
+            const startOfString = suggestionHasTerm ? search.term : suggestion
+            const endOfString = suggestionHasTerm ? suggestion.replace(search.term, '') : ''
+            return (
             <div key={suggestion} {...getItemProps({ item: suggestion })}>
               <Typography
                 color={i === highlightedIndex ? 'blue400' : 'dark400'}
               >
-                {`${search.prefix} ${suggestion.slice(0, search.term.length)}`}
-                <strong>{suggestion.slice(search.term.length)}</strong>
+                {`${search.prefix} ${startOfString}`}<strong>{endOfString}</strong>
               </Typography>
             </div>
-          ))}
+          )})}
         </Stack>
       </div>
       <div className={styles.separator} />
