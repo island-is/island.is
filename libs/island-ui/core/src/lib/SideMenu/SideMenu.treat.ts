@@ -11,7 +11,7 @@ export const root = style({
   zIndex: 1,
   top: 0,
   right: 0,
-  boxShadow: `0px 4px 70px rgba(0, 97, 255, 0.1)`
+  boxShadow: `0px 4px 70px rgba(0, 97, 255, 0.1)`,
 })
 
 export const isVisible = style({
