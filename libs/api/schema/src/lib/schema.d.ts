@@ -106,15 +106,6 @@ export type AdgerdirPages = {
   items: Array<AdgerdirPage>
 }
 
-export type AdgerdirFrontpage = {
-  __typename?: 'AdgerdirFrontpage'
-  id: Scalars['String']
-  slug: Scalars['String']
-  title: Scalars['String']
-  description: Scalars['String']
-  content?: Maybe<Scalars['String']>
-}
-
 export type Image = {
   __typename?: 'Image'
   url: Scalars['String']
@@ -122,6 +113,46 @@ export type Image = {
   contentType: Scalars['String']
   width: Scalars['Int']
   height: Scalars['Int']
+}
+
+export type AdgerdirNews = {
+  __typename?: 'AdgerdirNews'
+  id: Scalars['String']
+  slug: Scalars['String']
+  subtitle: Scalars['String']
+  title: Scalars['String']
+  intro: Scalars['String']
+  image?: Maybe<Image>
+  date: Scalars['String']
+  content?: Maybe<Scalars['String']>
+}
+
+export type AdgerdirFrontpage = {
+  __typename?: 'AdgerdirFrontpage'
+  id: Scalars['String']
+  title: Scalars['String']
+  description: Scalars['String']
+  content?: Maybe<Scalars['String']>
+  slices: Array<AdgerdirSlice>
+}
+
+export type AdgerdirSlice = AdgerdirGroupSlice | AdgerdirFeaturedNewsSlice
+
+export type AdgerdirGroupSlice = {
+  __typename?: 'AdgerdirGroupSlice'
+  id: Scalars['ID']
+  subtitle?: Maybe<Scalars['String']>
+  title: Scalars['String']
+  description?: Maybe<Scalars['String']>
+  image?: Maybe<Image>
+  pages: Array<AdgerdirPage>
+}
+
+export type AdgerdirFeaturedNewsSlice = {
+  __typename?: 'AdgerdirFeaturedNewsSlice'
+  id: Scalars['ID']
+  title: Scalars['String']
+  featured: Array<AdgerdirNews>
 }
 
 export type FrontpageSlide = {
@@ -367,7 +398,7 @@ export type Application = {
   assignee: Scalars['String']
   externalId?: Maybe<Scalars['String']>
   state: ApplicationStateEnum
-  attachments?: Maybe<Array<Scalars['String']>>
+  attachments?: Maybe<Scalars['JSON']>
   typeId: ApplicationTypeIdEnum
   answers: Scalars['JSON']
   externalData: Scalars['JSON']
@@ -390,6 +421,12 @@ export enum ApplicationTypeIdEnum {
   ExampleForm3 = 'ExampleForm3',
   FamilyAndPets = 'FamilyAndPets',
   PaternityLeave = 'PaternityLeave',
+}
+
+export type PresignedPost = {
+  __typename?: 'PresignedPost'
+  url: Scalars['String']
+  fields: Scalars['JSON']
 }
 
 export type Document = {
@@ -630,6 +667,9 @@ export type Mutation = {
   createApplication?: Maybe<Application>
   updateApplication?: Maybe<Application>
   updateApplicationExternalData?: Maybe<Application>
+  addAttachment?: Maybe<Application>
+  deleteAttachment?: Maybe<Application>
+  createUploadUrl: PresignedPost
 }
 
 export type MutationCreateApplicationArgs = {
@@ -644,12 +684,24 @@ export type MutationUpdateApplicationExternalDataArgs = {
   input: UpdateApplicationExternalDataInput
 }
 
+export type MutationAddAttachmentArgs = {
+  input: AddAttachmentInput
+}
+
+export type MutationDeleteAttachmentArgs = {
+  input: DeleteAttachmentInput
+}
+
+export type MutationCreateUploadUrlArgs = {
+  filename: Scalars['String']
+}
+
 export type CreateApplicationInput = {
   applicant: Scalars['String']
   assignee: Scalars['String']
   externalId?: Maybe<Scalars['String']>
   state: CreateApplicationDtoStateEnum
-  attachments?: Maybe<Array<Scalars['String']>>
+  attachments?: Maybe<Scalars['JSON']>
   typeId: CreateApplicationDtoTypeIdEnum
   answers: Scalars['JSON']
 }
@@ -680,7 +732,7 @@ export type UpdateApplicationInput = {
   assignee?: Maybe<Scalars['String']>
   externalId?: Maybe<Scalars['String']>
   state?: Maybe<UpdateApplicationDtoStateEnum>
-  attachments?: Maybe<Array<Scalars['String']>>
+  attachments?: Maybe<Scalars['JSON']>
   answers?: Maybe<Scalars['JSON']>
 }
 
@@ -701,6 +753,17 @@ export enum UpdateApplicationDtoStateEnum {
   Manualapproved = 'MANUALAPPROVED',
   Rejected = 'REJECTED',
   Unknown = 'UNKNOWN',
+}
+
+export type AddAttachmentInput = {
+  id: Scalars['String']
+  key: Scalars['String']
+  url: Scalars['String']
+}
+
+export type DeleteAttachmentInput = {
+  id: Scalars['String']
+  key: Scalars['String']
 }
 
 export type UpdateApplicationExternalDataInput = {
@@ -846,8 +909,18 @@ export type ResolversTypes = {
   AdgerdirTag: ResolverTypeWrapper<AdgerdirTag>
   AdgerdirPage: ResolverTypeWrapper<AdgerdirPage>
   AdgerdirPages: ResolverTypeWrapper<AdgerdirPages>
-  AdgerdirFrontpage: ResolverTypeWrapper<AdgerdirFrontpage>
   Image: ResolverTypeWrapper<Image>
+  AdgerdirNews: ResolverTypeWrapper<AdgerdirNews>
+  AdgerdirFrontpage: ResolverTypeWrapper<
+    Omit<AdgerdirFrontpage, 'slices'> & {
+      slices: Array<ResolversTypes['AdgerdirSlice']>
+    }
+  >
+  AdgerdirSlice:
+    | ResolversTypes['AdgerdirGroupSlice']
+    | ResolversTypes['AdgerdirFeaturedNewsSlice']
+  AdgerdirGroupSlice: ResolverTypeWrapper<AdgerdirGroupSlice>
+  AdgerdirFeaturedNewsSlice: ResolverTypeWrapper<AdgerdirFeaturedNewsSlice>
   FrontpageSlide: ResolverTypeWrapper<FrontpageSlide>
   FrontpageSliderList: ResolverTypeWrapper<FrontpageSliderList>
   News: ResolverTypeWrapper<News>
@@ -900,8 +973,9 @@ export type ResolversTypes = {
   Application: ResolverTypeWrapper<Application>
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>
   ApplicationStateEnum: ApplicationStateEnum
-  ApplicationTypeIdEnum: ApplicationTypeIdEnum
   JSON: ResolverTypeWrapper<Scalars['JSON']>
+  ApplicationTypeIdEnum: ApplicationTypeIdEnum
+  PresignedPost: ResolverTypeWrapper<PresignedPost>
   Document: ResolverTypeWrapper<Document>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   Query: ResolverTypeWrapper<{}>
@@ -935,6 +1009,8 @@ export type ResolversTypes = {
   UpdateApplicationInput: UpdateApplicationInput
   UpdateApplicationDtoTypeIdEnum: UpdateApplicationDtoTypeIdEnum
   UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
+  AddAttachmentInput: AddAttachmentInput
+  DeleteAttachmentInput: DeleteAttachmentInput
   UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
   DataProvider: DataProvider
   DataProviderDtoTypeEnum: DataProviderDtoTypeEnum
@@ -954,8 +1030,16 @@ export type ResolversParentTypes = {
   AdgerdirTag: AdgerdirTag
   AdgerdirPage: AdgerdirPage
   AdgerdirPages: AdgerdirPages
-  AdgerdirFrontpage: AdgerdirFrontpage
   Image: Image
+  AdgerdirNews: AdgerdirNews
+  AdgerdirFrontpage: Omit<AdgerdirFrontpage, 'slices'> & {
+    slices: Array<ResolversParentTypes['AdgerdirSlice']>
+  }
+  AdgerdirSlice:
+    | ResolversParentTypes['AdgerdirGroupSlice']
+    | ResolversParentTypes['AdgerdirFeaturedNewsSlice']
+  AdgerdirGroupSlice: AdgerdirGroupSlice
+  AdgerdirFeaturedNewsSlice: AdgerdirFeaturedNewsSlice
   FrontpageSlide: FrontpageSlide
   FrontpageSliderList: FrontpageSliderList
   News: News
@@ -1006,6 +1090,7 @@ export type ResolversParentTypes = {
   Application: Application
   DateTime: Scalars['DateTime']
   JSON: Scalars['JSON']
+  PresignedPost: PresignedPost
   Document: Document
   Boolean: Scalars['Boolean']
   Query: {}
@@ -1035,6 +1120,8 @@ export type ResolversParentTypes = {
   UpdateApplicationInput: UpdateApplicationInput
   UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
   DataProvider: DataProvider
+  AddAttachmentInput: AddAttachmentInput
+  DeleteAttachmentInput: DeleteAttachmentInput
 }
 
 export type HelloWorldResolvers<
@@ -1184,18 +1271,6 @@ export type AdgerdirPagesResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export type AdgerdirFrontpageResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['AdgerdirFrontpage'] = ResolversParentTypes['AdgerdirFrontpage']
-> = {
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
 export type ImageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Image'] = ResolversParentTypes['Image']
@@ -1205,6 +1280,83 @@ export type ImageResolvers<
   contentType?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type AdgerdirNewsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['AdgerdirNews'] = ResolversParentTypes['AdgerdirNews']
+> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  subtitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
+  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type AdgerdirFrontpageResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['AdgerdirFrontpage'] = ResolversParentTypes['AdgerdirFrontpage']
+> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  slices?: Resolver<
+    Array<ResolversTypes['AdgerdirSlice']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type AdgerdirSliceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['AdgerdirSlice'] = ResolversParentTypes['AdgerdirSlice']
+> = {
+  __resolveType: TypeResolveFn<
+    'AdgerdirGroupSlice' | 'AdgerdirFeaturedNewsSlice',
+    ParentType,
+    ContextType
+  >
+}
+
+export type AdgerdirGroupSliceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['AdgerdirGroupSlice'] = ResolversParentTypes['AdgerdirGroupSlice']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  subtitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
+  pages?: Resolver<
+    Array<ResolversTypes['AdgerdirPage']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type AdgerdirFeaturedNewsSliceResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['AdgerdirFeaturedNewsSlice'] = ResolversParentTypes['AdgerdirFeaturedNewsSlice']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  featured?: Resolver<
+    Array<ResolversTypes['AdgerdirNews']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1594,11 +1746,7 @@ export type ApplicationResolvers<
     ParentType,
     ContextType
   >
-  attachments?: Resolver<
-    Maybe<Array<ResolversTypes['String']>>,
-    ParentType,
-    ContextType
-  >
+  attachments?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>
   typeId?: Resolver<
     ResolversTypes['ApplicationTypeIdEnum'],
     ParentType,
@@ -1617,6 +1765,15 @@ export interface DateTimeScalarConfig
 export interface JsonScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
   name: 'JSON'
+}
+
+export type PresignedPostResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['PresignedPost'] = ResolversParentTypes['PresignedPost']
+> = {
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  fields?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
 export type DocumentResolvers<
@@ -1786,6 +1943,24 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationUpdateApplicationExternalDataArgs, 'input'>
   >
+  addAttachment?: Resolver<
+    Maybe<ResolversTypes['Application']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationAddAttachmentArgs, 'input'>
+  >
+  deleteAttachment?: Resolver<
+    Maybe<ResolversTypes['Application']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationDeleteAttachmentArgs, 'input'>
+  >
+  createUploadUrl?: Resolver<
+    ResolversTypes['PresignedPost'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateUploadUrlArgs, 'filename'>
+  >
 }
 
 export type Resolvers<ContextType = Context> = {
@@ -1798,8 +1973,12 @@ export type Resolvers<ContextType = Context> = {
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
   AdgerdirPage?: AdgerdirPageResolvers<ContextType>
   AdgerdirPages?: AdgerdirPagesResolvers<ContextType>
-  AdgerdirFrontpage?: AdgerdirFrontpageResolvers<ContextType>
   Image?: ImageResolvers<ContextType>
+  AdgerdirNews?: AdgerdirNewsResolvers<ContextType>
+  AdgerdirFrontpage?: AdgerdirFrontpageResolvers<ContextType>
+  AdgerdirSlice?: AdgerdirSliceResolvers<ContextType>
+  AdgerdirGroupSlice?: AdgerdirGroupSliceResolvers<ContextType>
+  AdgerdirFeaturedNewsSlice?: AdgerdirFeaturedNewsSliceResolvers<ContextType>
   FrontpageSlide?: FrontpageSlideResolvers<ContextType>
   FrontpageSliderList?: FrontpageSliderListResolvers<ContextType>
   News?: NewsResolvers<ContextType>
@@ -1833,6 +2012,7 @@ export type Resolvers<ContextType = Context> = {
   Application?: ApplicationResolvers<ContextType>
   DateTime?: GraphQLScalarType
   JSON?: GraphQLScalarType
+  PresignedPost?: PresignedPostResolvers<ContextType>
   Document?: DocumentResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
@@ -1843,3 +2023,79 @@ export type Resolvers<ContextType = Context> = {
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
 export type IResolvers<ContextType = Context> = Resolvers<ContextType>
+
+export interface IntrospectionResultData {
+  __schema: {
+    types: {
+      kind: string
+      name: string
+      possibleTypes: {
+        name: string
+      }[]
+    }[]
+  }
+}
+const result: IntrospectionResultData = {
+  __schema: {
+    types: [
+      {
+        kind: 'UNION',
+        name: 'AdgerdirSlice',
+        possibleTypes: [
+          {
+            name: 'AdgerdirGroupSlice',
+          },
+          {
+            name: 'AdgerdirFeaturedNewsSlice',
+          },
+        ],
+      },
+      {
+        kind: 'UNION',
+        name: 'Slice',
+        possibleTypes: [
+          {
+            name: 'PageHeaderSlice',
+          },
+          {
+            name: 'TimelineSlice',
+          },
+          {
+            name: 'HeadingSlice',
+          },
+          {
+            name: 'StorySlice',
+          },
+          {
+            name: 'LinkCardSlice',
+          },
+          {
+            name: 'LatestNewsSlice',
+          },
+          {
+            name: 'MailingListSignupSlice',
+          },
+          {
+            name: 'LogoListSlice',
+          },
+          {
+            name: 'BulletListSlice',
+          },
+        ],
+      },
+      {
+        kind: 'UNION',
+        name: 'BulletEntry',
+        possibleTypes: [
+          {
+            name: 'IconBullet',
+          },
+          {
+            name: 'NumberBulletGroup',
+          },
+        ],
+      },
+    ],
+  },
+}
+export default result

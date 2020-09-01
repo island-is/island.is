@@ -3,7 +3,6 @@ import {
   IsNotEmpty,
   IsObject,
   IsString,
-  IsArray,
   IsOptional,
 } from 'class-validator'
 import { ApplicationState, FormType } from '@island.is/application/schema'
@@ -41,7 +40,7 @@ export class CreateApplicationDto {
   readonly answers: object
 
   @IsOptional()
-  @IsArray()
+  @IsObject()
   @ApiPropertyOptional()
-  readonly attachments: string[]
+  readonly attachments: object
 }

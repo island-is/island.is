@@ -11,25 +11,29 @@ import {
   Inline,
   Icon,
 } from '@island.is/island-ui/core'
-import Card from '../Card/Card'
 import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
+import Card from '../Card/Card'
 
 import * as cardStyles from '../Card/Card.treat'
-import * as styles from './Categories.treat'
+import * as styles from './Articles.treat'
 
 const FILTER_TIMER = 300
 const ITEMS_PER_SHOW = 6
 
-interface CategoriesProps {
+interface ArticlesProps {
   items: AdgerdirPage[]
   tags: AdgerdirTag[]
   seeMoreText?: string
+  currentArticle?: AdgerdirPage
+  showAll?: boolean
 }
 
-export const Categories: FC<CategoriesProps> = ({
+export const Articles: FC<ArticlesProps> = ({
   seeMoreText = 'Sjá fleiri',
   items,
   tags,
+  currentArticle,
+  showAll,
 }) => {
   // const cardsRef = useRef<Array<HTMLElement | null>>([])
   const [filterString, setFilterString] = useState<string>('')
@@ -158,7 +162,7 @@ export const Categories: FC<CategoriesProps> = ({
 
       return _.intersection(...indexList).includes(index)
     })
-    .splice(0, showCount)
+    .splice(0, showAll ? items.length : showCount)
 
   const statusTypes = items.reduce((statuses, cur) => {
     if (cur.status) {
@@ -169,6 +173,12 @@ export const Categories: FC<CategoriesProps> = ({
 
     return statuses
   }, [])
+
+  useEffect(() => {
+    if (currentArticle) {
+      setTagIds(currentArticle.tags.map((x) => x.id))
+    }
+  }, [currentArticle])
 
   return (
     <Box padding={[3, 3, 6]}>
@@ -187,6 +197,7 @@ export const Categories: FC<CategoriesProps> = ({
                       variant="red"
                       onClick={() => onStatusClick(status)}
                       active={selectedStatuses.includes(status)}
+                      bordered
                     >
                       <Box position="relative">
                         <Inline space={1} alignY="center">
@@ -214,6 +225,7 @@ export const Categories: FC<CategoriesProps> = ({
                       variant="red"
                       onClick={() => onTagClick(id)}
                       active={tagIds.includes(id)}
+                      bordered
                     >
                       {title}
                     </Tag>
@@ -297,4 +309,4 @@ export const Categories: FC<CategoriesProps> = ({
   )
 }
 
-export default Categories
+export default Articles

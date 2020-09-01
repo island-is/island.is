@@ -33,8 +33,8 @@ export class Application {
   @Field((type) => ApplicationStateEnum)
   state: ApplicationStateEnum
 
-  @Field((type) => [String], { nullable: true })
-  attachments?: Array<string>
+  @Field((type) => graphqlTypeJson, { nullable: true })
+  attachments?: object
 
   @Field((type) => ApplicationTypeIdEnum)
   typeId: ApplicationTypeIdEnum

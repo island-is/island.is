@@ -16,7 +16,7 @@ describe('Application', () => {
       .send({
         applicant: '123456-4321',
         state: 'PENDING',
-        attachments: ['https://island.is'],
+        attachments: {},
         typeId: 'ExampleForm',
         assignee: '123456-1234',
         externalId: '123',

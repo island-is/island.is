@@ -76,6 +76,7 @@ export const Button = forwardRef<
 
     const sharedProps = {
       className,
+      onClick,
     }
 
     const buttonContent = {
@@ -91,17 +92,11 @@ export const Button = forwardRef<
     }
 
     return href ? (
-      <a href={href} role="button" {...anchorProps} {...sharedProps}>
+      <a ref={ref} href={href} role="button" {...anchorProps} {...sharedProps}>
         <ButtonContent {...buttonContent} />
       </a>
     ) : (
-      <button
-        ref={ref}
-        type={htmlType}
-        disabled={disabled}
-        onClick={onClick}
-        {...sharedProps}
-      >
+      <button ref={ref} type={htmlType} disabled={disabled} {...sharedProps}>
         <ButtonContent {...buttonContent} />
       </button>
     )

@@ -63,10 +63,10 @@ export interface Application {
     state: ApplicationStateEnum;
     /**
      * 
-     * @type {Array<string>}
+     * @type {object}
      * @memberof Application
      */
-    attachments?: Array<string>;
+    attachments?: object;
     /**
      * 
      * @type {string}

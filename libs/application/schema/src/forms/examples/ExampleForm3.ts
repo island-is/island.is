@@ -21,6 +21,7 @@ const ExampleSchema = z.object({
   fileUpload: z
     .object({
       name: z.string(),
+      key: z.string(),
       url: z.string(),
     })
     .array()
@@ -87,16 +88,16 @@ export const ExampleForm3: Form = buildForm({
       id: 'student',
       name: 'Student',
       children: [
+        buildIntroductionField({
+          id: 'field',
+          name: 'Welcome',
+          introduction: "This is a sample driver's license application.",
+        }),
         buildFileUploadField({
           id: 'fileUpload',
           name: 'Upload permit',
           introduction:
             'We need a copy of your permit to verify your eligibility.',
-        }),
-        buildIntroductionField({
-          id: 'field',
-          name: 'Welcome',
-          introduction: "This is a sample driver's license application.",
         }),
         buildSubSection({
           id: 'student',

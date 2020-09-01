@@ -73,20 +73,48 @@ type AdgerdirPages {
   items: [AdgerdirPage!]!
 }
 
-type AdgerdirFrontpage {
-  id: String!
-  slug: String!
-  title: String!
-  description: String!
-  content: String
-}
-
 type Image {
   url: String!
   title: String!
   contentType: String!
   width: Int!
   height: Int!
+}
+
+type AdgerdirNews {
+  id: String!
+  slug: String!
+  subtitle: String!
+  title: String!
+  intro: String!
+  image: Image
+  date: String!
+  content: String
+}
+
+type AdgerdirFrontpage {
+  id: String!
+  title: String!
+  description: String!
+  content: String
+  slices: [AdgerdirSlice!]!
+}
+
+union AdgerdirSlice = AdgerdirGroupSlice | AdgerdirFeaturedNewsSlice
+
+type AdgerdirGroupSlice {
+  id: ID!
+  subtitle: String
+  title: String!
+  description: String
+  image: Image
+  pages: [AdgerdirPage!]!
+}
+
+type AdgerdirFeaturedNewsSlice {
+  id: ID!
+  title: String!
+  featured: [AdgerdirNews!]!
 }
 
 type FrontpageSlide {
@@ -294,7 +322,7 @@ type Application {
   assignee: String!
   externalId: String
   state: ApplicationStateEnum!
-  attachments: [String!]
+  attachments: JSON
   typeId: ApplicationTypeIdEnum!
   answers: JSON!
   externalData: JSON!
@@ -316,6 +344,11 @@ enum ApplicationStateEnum {
   UNKNOWN
 }
 
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
 enum ApplicationTypeIdEnum {
   ExampleForm
   ExampleForm2
@@ -324,10 +357,10 @@ enum ApplicationTypeIdEnum {
   PaternityLeave
 }
 
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+type PresignedPost {
+  url: String!
+  fields: JSON!
+}
 
 type Document {
   id: ID!
@@ -479,6 +512,9 @@ input GetDocumentInput {
 type Mutation {
   createApplication(input: CreateApplicationInput!): Application
   updateApplication(input: UpdateApplicationInput!): Application
+  addAttachment(input: AddAttachmentInput!): Application
+  deleteAttachment(input: DeleteAttachmentInput!): Application
+  createUploadUrl(filename: String!): PresignedPost!
   updateApplicationExternalData(input: UpdateApplicationExternalDataInput!): Application
 }
 
@@ -487,7 +523,7 @@ input CreateApplicationInput {
   assignee: String!
   externalId: String
   state: CreateApplicationDtoStateEnum!
-  attachments: [String!]
+  attachments: JSON
   typeId: CreateApplicationDtoTypeIdEnum!
   answers: JSON!
 }
@@ -518,7 +554,7 @@ input UpdateApplicationInput {
   assignee: String
   externalId: String
   state: UpdateApplicationDtoStateEnum
-  attachments: [String!]
+  attachments: JSON
   answers: JSON
 }
 
@@ -539,6 +575,17 @@ enum UpdateApplicationDtoStateEnum {
   MANUALAPPROVED
   REJECTED
   UNKNOWN
+}
+
+input AddAttachmentInput {
+  id: String!
+  key: String!
+  url: String!
+}
+
+input DeleteAttachmentInput {
+  id: String!
+  key: String!
 }
 
 input UpdateApplicationExternalDataInput {

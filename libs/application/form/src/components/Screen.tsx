@@ -9,8 +9,10 @@ import {
   ExternalData,
 } from '@island.is/application/schema'
 import { Typography, Box, Button, Divider } from '@island.is/island-ui/core'
-import { CREATE_APPLICATION } from '@island.is/application/graphql'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import {
+  CREATE_APPLICATION,
+  UPDATE_APPLICATION,
+} from '@island.is/application/graphql'
 import deepmerge from 'deepmerge'
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form'
 import { FormScreen } from '../types'
@@ -71,6 +73,7 @@ const Screen: FC<ScreenProps> = ({
       },
     },
   )
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [updateApplication, { loading, data: updateData }] = useMutation(
     UPDATE_APPLICATION,
@@ -90,7 +93,7 @@ const Screen: FC<ScreenProps> = ({
       console.log('here we will submit', formValue)
     } else {
       if (applicationId) {
-        updateApplication({
+        await updateApplication({
           variables: {
             input: {
               id: applicationId,
@@ -100,12 +103,12 @@ const Screen: FC<ScreenProps> = ({
           },
         })
       } else {
-        createApplication({
+        await createApplication({
           variables: {
             input: {
               applicant: '123456-1234',
               state: 'PENDING',
-              attachments: ['https://island.is'],
+              attachments: {},
               typeId: formTypeId,
               assignee: '123456-1235',
               externalId: 'some_id',
@@ -157,6 +160,7 @@ const Screen: FC<ScreenProps> = ({
                 errors={errors}
                 multiField={screen}
                 formValue={formValue}
+                applicationId={applicationId}
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
               <FormExternalDataProvider
@@ -172,6 +176,7 @@ const Screen: FC<ScreenProps> = ({
                 errors={errors}
                 field={screen}
                 formValue={formValue}
+                applicationId={applicationId}
               />
             )}
           </Box>

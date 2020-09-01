@@ -38,26 +38,13 @@ export class ApplicationService {
   }
 
   async update(id: string, application: UpdateApplicationDto) {
-    const existingApplication = await this.applicationModel.findOne({
-      where: { id },
-    })
-
-    const mergedAnswers = mergeAnswers(
-      existingApplication.answers,
-      application.answers,
-    )
-
     const [
       numberOfAffectedRows,
       [updatedApplication],
-    ] = await this.applicationModel.update(
-      {
-        ...application,
-        answers: mergedAnswers,
-        externalData: existingApplication.externalData,
-      },
-      { where: { id }, returning: true },
-    )
+    ] = await this.applicationModel.update(application, {
+      where: { id },
+      returning: true,
+    })
 
     return { numberOfAffectedRows, updatedApplication }
   }

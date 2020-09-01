@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 
 import { Fund } from '@island.is/air-discount-scheme/types'
 import { User } from './user.model'
@@ -18,12 +18,7 @@ export class UserService {
   private async getUserFromNationalRegistry(
     nationalId: string,
   ): Promise<NationalRegistryUser> {
-    const user = await this.nationalRegistryService.getUser(nationalId)
-    if (!user) {
-      throw new NotFoundException(`User<${nationalId} not found`)
-    }
-
-    return user
+    return this.nationalRegistryService.getUser(nationalId)
   }
 
   getRelations(nationalId: string): Promise<string[]> {
@@ -52,6 +47,10 @@ export class UserService {
 
   async getUserInfoByNationalId(nationalId: string): Promise<User> {
     const user = await this.getUserFromNationalRegistry(nationalId)
+    if (!user) {
+      return null
+    }
+
     const fund = await this.getFund(user)
     return new User(user, fund)
   }
