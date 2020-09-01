@@ -22,9 +22,12 @@ export const tabContainer = style({
   outline: 0,
 })
 
+export const tabPanelWrapper = style({
+  position: 'relative',
+})
+
 export const tabPanel = style({
   position: 'absolute',
-  maxWidth: '660px',
   width: '100%',
   top: 0,
   left: 0,
