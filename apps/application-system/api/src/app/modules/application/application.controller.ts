@@ -40,9 +40,7 @@ export class ApplicationController {
   ): Promise<Application> {
     const application = await this.applicationService.findById(id)
 
-    if (application === null) {
-      console.log('NotFoundException')
-
+    if (!application) {
       throw new NotFoundException(
         `An application with the id ${id} does not exist`,
       )
@@ -79,7 +77,7 @@ export class ApplicationController {
   ): Promise<Application> {
     const existingApplication = await this.applicationService.findById(id)
 
-    if (existingApplication === null) {
+    if (!existingApplication) {
       throw new NotFoundException(
         `An application with the id ${id} does not exist`,
       )
@@ -106,7 +104,7 @@ export class ApplicationController {
     const { key, url } = input
     const existingApplication = await this.applicationService.findById(id)
 
-    if (existingApplication === null) {
+    if (!existingApplication) {
       throw new NotFoundException(
         `An application with the id ${id} does not exist`,
       )
@@ -136,7 +134,7 @@ export class ApplicationController {
     const { key } = input
     const existingApplication = await this.applicationService.findById(id)
 
-    if (existingApplication === null) {
+    if (!existingApplication) {
       throw new NotFoundException(
         `An application with the id ${id} does not exist`,
       )
