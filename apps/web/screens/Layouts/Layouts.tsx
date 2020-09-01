@@ -23,7 +23,7 @@ export const CategoryLayout: FC<CategoryProps> = ({
         <GridColumn span={[12, 12, 4, 3]}>
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
-        <GridColumn span={[12, 12, 8]} offset={[0, 0, 0, 1]}>
+        <GridColumn span={[12, 12, 8]} offset={[null, null, null, 1]}>
           <Box paddingBottom={10}>{children}</Box>
           {belowContent && belowContent}
         </GridColumn>
