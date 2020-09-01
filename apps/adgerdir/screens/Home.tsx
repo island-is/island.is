@@ -54,7 +54,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
     document.documentElement.lang = activeLocale
   }
 
-  console.log('frontpage', frontpage)
+  // console.log('frontpage', frontpage)
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
 
@@ -98,9 +98,14 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
       </ColorSchemeContext.Provider>
       {frontpage.slices.map((slice, index) => {
         switch (slice.__typename) {
+          case 'AdgerdirFeaturedNewsSlice':
+            return <FeaturedNews key={index} items={slice.featured} />
           case 'AdgerdirGroupSlice':
             return (
-              <ColorSchemeContext.Provider value={{ colorScheme: 'purple' }}>
+              <ColorSchemeContext.Provider
+                key={index}
+                value={{ colorScheme: 'purple' }}
+              >
                 <Box width="full" overflow="hidden" marginBottom={10}>
                   <ContentBlock width="large">
                     <Box padding={[0, 3, 6]}>
@@ -132,9 +137,9 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
               </ColorSchemeContext.Provider>
             )
         }
-        return <div key={index}>{slice.__typename}</div>
+
+        return null
       })}
-      <FeaturedNews />
     </>
   )
 }

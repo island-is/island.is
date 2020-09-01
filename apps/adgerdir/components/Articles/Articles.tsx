@@ -25,6 +25,7 @@ interface ArticlesProps {
   tags: AdgerdirTag[]
   seeMoreText?: string
   currentArticle?: AdgerdirPage
+  showAll?: boolean
 }
 
 export const Articles: FC<ArticlesProps> = ({
@@ -32,6 +33,7 @@ export const Articles: FC<ArticlesProps> = ({
   items,
   tags,
   currentArticle,
+  showAll,
 }) => {
   // const cardsRef = useRef<Array<HTMLElement | null>>([])
   const [filterString, setFilterString] = useState<string>('')
@@ -160,7 +162,7 @@ export const Articles: FC<ArticlesProps> = ({
 
       return _.intersection(...indexList).includes(index)
     })
-    .splice(0, showCount)
+    .splice(0, showAll ? items.length : showCount)
 
   const statusTypes = items.reduce((statuses, cur) => {
     if (cur.status) {

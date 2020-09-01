@@ -75,11 +75,24 @@ export const GET_ADGERDIR_FRONTPAGE_QUERY = gql`
           }
         }
         ... on AdgerdirFeaturedNewsSlice {
+          __typename
           id
           title
           featured {
+            id
+            subtitle
             title
             slug
+            intro
+            image {
+              url
+              title
+              contentType
+              width
+              height
+            }
+            date
+            content
           }
         }
       }

@@ -131,18 +131,15 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
         <Content document={article.content} />
       </ArticleLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
-        <Box marginBottom={10}>
-          <Sleeve>
-            <Box background="red100">
-              <ContentBlock width="large">
-                <Articles
-                  tags={tagsItems}
-                  items={pagesItems}
-                  currentArticle={article}
-                />
-              </ContentBlock>
-            </Box>
-          </Sleeve>
+        <Box background="red100">
+          <ContentBlock width="large">
+            <Articles
+              tags={tagsItems}
+              items={pagesItems}
+              currentArticle={article}
+              showAll
+            />
+          </ContentBlock>
         </Box>
       </ColorSchemeContext.Provider>
     </>
