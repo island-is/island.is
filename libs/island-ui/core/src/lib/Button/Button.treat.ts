@@ -311,7 +311,7 @@ export const white = style({
   ':hover': {
     borderColor: theme.color.white,
     backgroundColor: theme.color.transparent,
-  color: theme.color.white,
+    color: theme.color.white,
   },
   ':focus': {
     borderColor: theme.color.transparent,

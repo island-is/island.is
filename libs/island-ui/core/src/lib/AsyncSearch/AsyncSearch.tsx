@@ -274,7 +274,13 @@ export const AsyncSearchInput = forwardRef<
           [styles.white]: white,
         })}
       >
-        <Input {...inputProps} white={white} on={on} isOpen={isOpen} ref={ref} />
+        <Input
+          {...inputProps}
+          white={white}
+          on={on}
+          isOpen={isOpen}
+          ref={ref}
+        />
         <button
           className={cn(styles.icon, styles.iconSizes[size], {
             [styles.iconWhite]: value && white,

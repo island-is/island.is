@@ -1,9 +1,4 @@
-import {
-  useRef,
-  useState,
-  useCallback,
-  useLayoutEffect,
-} from 'react'
+import { useRef, useState, useCallback, useLayoutEffect } from 'react'
 import minBy from 'lodash/minBy'
 
 const onViewportChange = (listener: () => void) => {

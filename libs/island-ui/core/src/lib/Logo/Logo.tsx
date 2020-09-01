@@ -13,16 +13,7 @@ interface LogoProps {
 }
 
 export const Logo = forwardRef<SVGSVGElement, LogoProps>(
-  (
-    {
-      id = '',
-      width,
-      solidColor,
-      iconOnly = false,
-      title,
-    },
-    ref,
-  ) =>
+  ({ id = '', width, solidColor, iconOnly = false, title }, ref) =>
     iconOnly ? (
       <svg
         xmlns="http://www.w3.org/2000/svg"

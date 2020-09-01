@@ -98,7 +98,12 @@ export const Header: FC<HeaderProps> = ({
                 )}
                 <Box marginLeft={marginLeft}>
                   <Link href="https://minarsidur.island.is/" passHref>
-                    <Button variant="menu" leftIcon="user" white={white} on={on}>
+                    <Button
+                      variant="menu"
+                      leftIcon="user"
+                      white={white}
+                      on={on}
+                    >
                       {t.login}
                     </Button>
                   </Link>
@@ -107,7 +112,12 @@ export const Header: FC<HeaderProps> = ({
                   <LanguageToggler white={white} on={on} hideWhenMobile />
                 </Box>
                 <Box marginLeft={marginLeft} position="relative">
-                  <Button variant="menu" white={white} on={on} onClick={() => setSideMenuOpen(true)}>
+                  <Button
+                    variant="menu"
+                    white={white}
+                    on={on}
+                    onClick={() => setSideMenuOpen(true)}
+                  >
                     Valmynd
                   </Button>
                 </Box>
