@@ -2404,6 +2404,8 @@
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {
+            "linter": "eslint",
+            "config": "libs/file-storage/.eslintrc",
             "tsConfig": [
               "libs/file-storage/tsconfig.lib.json",
               "libs/file-storage/tsconfig.spec.json"

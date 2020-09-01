@@ -1,11 +1,11 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 
 @ObjectType()
 export class PresignedPost {
-  @Field((type) => String)
+  @Field(() => String)
   url: string
 
-  @Field((type) => graphqlTypeJson)
+  @Field(() => graphqlTypeJson)
   fields: object
 }

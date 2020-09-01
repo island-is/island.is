@@ -40,7 +40,7 @@ export class FileStorageService {
     destinationBucket: string,
     region: string,
     sourceBucket: string,
-  ): Promise<String> {
+  ): Promise<string> {
     const params = {
       Key: key,
       Bucket: destinationBucket,
@@ -48,7 +48,7 @@ export class FileStorageService {
     }
 
     return new Promise((resolve, reject) => {
-      this.s3.copyObject(params, (err, data) => {
+      this.s3.copyObject(params, (err) => {
         if (err) {
           reject(err)
         } else {
