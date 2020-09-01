@@ -5,7 +5,7 @@ import { useStore } from '../../store/stateProvider'
 import useSubjects from '../../hooks/useSubjects/useSubjects'
 import { Box, Button, Hidden, Icon } from '@island.is/island-ui/core'
 import Menu from './Menu/Menu'
-import useOutsideClick from '../../hooks/useOutsideClick/useOutsideClick'
+import { useOutsideClick } from '@island.is/service-portal/core'
 
 const UserMenu: FC<{}> = () => {
   const ref = useRef()

@@ -57,7 +57,7 @@ const Modules: FC<{}> = () => {
   const moduleProps = useModuleProps()
 
   return (
-    <Box paddingY={4}>
+    <Box paddingY={1}>
       <RouteLoader routes={routes} {...moduleProps} />
     </Box>
   )
