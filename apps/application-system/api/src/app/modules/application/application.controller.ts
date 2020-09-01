@@ -104,7 +104,7 @@ export class ApplicationController {
   @Put(':id/externalData')
   @ApiOkResponse({ type: Application })
   async updateExternalData(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe()) id: string,
     @Body()
     externalDataDto: PopulateExternalDataDto,
   ): Promise<Application> {
