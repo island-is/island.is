@@ -124,7 +124,7 @@ export class IndexingService {
         if (doc.data && doc.data.target) {
           if (doc.data.target.sys.contentType.sys.id === 'processEntry') {
             response += (doc.data.target.fields.processTitle ?? '') + '\n'
-            response += (doc.data.target.fields.processDescription ?? '') + '\n'
+            response += (doc.data.target.fields.processInfo ?? '') + '\n'
           } else {
             //todo implement more types
           }
