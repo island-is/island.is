@@ -1,9 +1,3 @@
-export type FlightLegFund = {
-  nationalId: string
-  unused: number
-  total: number
-}
-
 export type FlightLeg = {
   id: string
   flightId: string

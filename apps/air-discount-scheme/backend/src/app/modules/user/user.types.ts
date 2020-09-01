@@ -1,7 +1,5 @@
-export interface NationalRegistryResponse {
+export interface SplitName {
   firstName: string
   middleName: string
   lastName: string
-  gender: string
-  nationalId: string
 }

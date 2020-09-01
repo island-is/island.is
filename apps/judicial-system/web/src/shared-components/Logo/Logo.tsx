@@ -1,6 +1,6 @@
-import React, { forwardRef } from 'react'
+import React from 'react'
 
-export const Logo = forwardRef<SVGElement>(() => (
+export const Logo = () => (
   <svg
     width="318"
     height="62"
@@ -34,4 +34,4 @@ export const Logo = forwardRef<SVGElement>(() => (
       />
     </defs>
   </svg>
-))
+)

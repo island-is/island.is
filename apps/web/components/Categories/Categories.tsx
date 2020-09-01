@@ -28,7 +28,7 @@ export const Categories: FC<CategoriesProps> = ({
     <Box background="purple100" paddingY={8}>
       <GridContainer>
         <GridRow>
-          <GridColumn span={12}>
+          <GridColumn span={[6, 6, 12]}>
             <Typography variant="h3" as="h3" paddingBottom={4}>
               {label}
             </Typography>
@@ -38,7 +38,11 @@ export const Categories: FC<CategoriesProps> = ({
         <GridRow>
           {cards.map((card, index) => {
             return (
-              <GridColumn key={index} span={4} paddingBottom={[3, 3, 6]}>
+              <GridColumn
+                key={index}
+                span={[12, 6, 6, 4]}
+                paddingBottom={[3, 3, 6]}
+              >
                 <Card {...card} />
               </GridColumn>
             )

@@ -3,7 +3,6 @@ import mapValues from 'lodash/mapValues'
 import { themeUtils, Theme, theme } from '@island.is/island-ui/theme'
 
 const columns = {
-  0: 0,
   1: `${(1 / 12) * 100}%`,
   2: `${(2 / 12) * 100}%`,
   3: `${(3 / 12) * 100}%`,

@@ -230,7 +230,7 @@ export type MailingListSignupSlice = {
   __typename?: 'MailingListSignupSlice'
   id: Scalars['ID']
   title: Scalars['String']
-  description: Scalars['String']
+  description?: Maybe<Scalars['String']>
   inputLabel: Scalars['String']
   buttonText: Scalars['String']
 }
@@ -306,12 +306,22 @@ export type AdgerdirTags = {
   items: Array<AdgerdirTag>
 }
 
+export type Fund = {
+  __typename?: 'Fund'
+  nationalId: Scalars['ID']
+  credit: Scalars['Float']
+  used: Scalars['Float']
+  total: Scalars['Float']
+}
+
 export type User = {
   __typename?: 'User'
   nationalId: Scalars['ID']
   name: Scalars['String']
   mobile?: Maybe<Scalars['String']>
   role: Scalars['String']
+  fund?: Maybe<Fund>
+  meetsADSRequirements: Scalars['Boolean']
 }
 
 export type Discount = {
@@ -319,15 +329,7 @@ export type Discount = {
   discountCode: Scalars['ID']
   expires: Scalars['String']
   nationalId: Scalars['String']
-  flightLegFund: FlightLegFund
   user: User
-}
-
-export type FlightLegFund = {
-  __typename?: 'FlightLegFund'
-  nationalId: Scalars['ID']
-  unused: Scalars['Float']
-  total: Scalars['Float']
 }
 
 export type Flight = {
@@ -345,11 +347,11 @@ export type Query = {
   getNews?: Maybe<News>
   getNewsList: PaginatedNews
   getNamespace?: Maybe<Namespace>
-  getAboutPage?: Maybe<AboutPage>
+  getAboutPage: AboutPage
   getLandingPage?: Maybe<LandingPage>
   getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
-  getAdgerdirPages?: Maybe<AdgerdirPages>
+  getAdgerdirPages: AdgerdirPages
   getAdgerdirTags?: Maybe<AdgerdirTags>
   getFrontpageSliderList?: Maybe<FrontpageSliderList>
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
@@ -548,11 +550,17 @@ export type FetchDiscountsMutationMutation = { __typename?: 'Mutation' } & {
         Discount,
         'discountCode' | 'expires' | 'nationalId'
       > & {
-          flightLegFund: { __typename?: 'FlightLegFund' } & Pick<
-            FlightLegFund,
-            'unused' | 'total'
-          >
-          user: { __typename?: 'User' } & Pick<User, 'nationalId' | 'name'>
+          user: { __typename?: 'User' } & Pick<
+            User,
+            'nationalId' | 'name' | 'meetsADSRequirements'
+          > & {
+              fund?: Maybe<
+                { __typename?: 'Fund' } & Pick<
+                  Fund,
+                  'nationalId' | 'used' | 'credit' | 'total'
+                >
+              >
+            }
         }
     >
   >
@@ -865,13 +873,16 @@ export const FetchDiscountsMutationDocument = gql`
       discountCode
       expires
       nationalId
-      flightLegFund {
-        unused
-        total
-      }
       user {
         nationalId
         name
+        fund {
+          nationalId
+          used
+          credit
+          total
+        }
+        meetsADSRequirements
       }
     }
   }

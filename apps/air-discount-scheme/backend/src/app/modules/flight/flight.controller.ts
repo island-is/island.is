@@ -6,10 +6,9 @@ import {
   Param,
   Post,
   Delete,
-  Inject,
-  forwardRef,
   UseGuards,
   Req,
+  NotFoundException,
 } from '@nestjs/common'
 import {
   ApiOkResponse,
@@ -20,13 +19,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 
-import { FlightLegFund } from '@island.is/air-discount-scheme/types'
 import { Flight } from './flight.model'
 import { FlightService } from './flight.service'
 import {
   GetFlightParams,
   CreateFlightParams,
-  GetFlightLegFundsParams,
   GetUserFlightsParams,
   DeleteFlightParams,
   DeleteFlightLegParams,
@@ -35,6 +32,7 @@ import { FlightLimitExceeded } from './flight.error'
 import { FlightDto } from './dto/flight.dto'
 import { DiscountService } from '../discount'
 import { AuthGuard } from '../common'
+import { NationalRegistryService } from '../nationalRegistry'
 
 @ApiTags('Flights')
 @Controller('api/public')
@@ -43,8 +41,8 @@ import { AuthGuard } from '../common'
 export class PublicFlightController {
   constructor(
     private readonly flightService: FlightService,
-    @Inject(forwardRef(() => DiscountService))
     private readonly discountService: DiscountService,
+    private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
   @Post('discounts/:discountCode/flights')
@@ -57,10 +55,19 @@ export class PublicFlightController {
     const nationalId = await this.discountService.validateDiscount(
       params.discountCode,
     )
+
+    const user = await this.nationalRegistryService.getUser(nationalId)
+    if (!user) {
+      throw new NotFoundException(`User<${nationalId}> not found`)
+    }
+
+    const meetsADSRequirements = this.flightService.isADSPostalCode(
+      user.postalcode,
+    )
     const {
       unused: flightLegsLeft,
     } = await this.flightService.countFlightLegsByNationalId(nationalId)
-    if (flightLegsLeft < flight.flightLegs.length) {
+    if (!meetsADSRequirements || flightLegsLeft < flight.flightLegs.length) {
       throw new FlightLimitExceeded()
     }
     await this.discountService.useDiscount(params.discountCode, nationalId)
@@ -108,14 +115,6 @@ export class PublicFlightController {
 @Controller('api/private')
 export class PrivateFlightController {
   constructor(private readonly flightService: FlightService) {}
-
-  @Get('users/:nationalId/flights/funds')
-  @ApiExcludeEndpoint()
-  getFlightLegFunds(
-    @Param() params: GetFlightLegFundsParams,
-  ): Promise<FlightLegFund> {
-    return this.flightService.countFlightLegsByNationalId(params.nationalId)
-  }
 
   @Get('flights')
   @ApiExcludeEndpoint()

@@ -1,16 +1,13 @@
 import { setup } from '../../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
-import { FlightService } from '../../flight'
 import CacheManger from 'cache-manager'
 
 let app: INestApplication
-let flightService: FlightService
 let cacheManager: CacheManger
 
 beforeAll(async () => {
   app = await setup()
-  flightService = app.get<FlightService>(FlightService)
   cacheManager = app.get<CacheManger>(CACHE_MANAGER)
   cacheManager.ttl = () => ''
 
@@ -31,18 +28,5 @@ describe('Create DiscountCode', () => {
       nationalId,
     })
     expect(spy).toHaveBeenCalled()
-  })
-
-  it(`POST /api/private/users/:nationalId/discounts with no flightlegs left should return forbidden`, async () => {
-    const nationalId = '1326487905'
-    const spy = jest
-      .spyOn(flightService, 'countFlightLegsByNationalId')
-      .mockImplementation(() =>
-        Promise.resolve({ nationalId, unused: 0, total: 6 }),
-      )
-    await request(app.getHttpServer())
-      .post('/api/private/users/1326487905/discounts')
-      .expect(403)
-    spy.mockRestore()
   })
 })
