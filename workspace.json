@@ -2724,6 +2724,37 @@
         }
       }
     },
+    "application-data-providers": {
+      "root": "libs/application/data-providers",
+      "sourceRoot": "libs/application/data-providers/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/application/data-providers/.eslintrc",
+            "tsConfig": [
+              "libs/application/data-providers/tsconfig.lib.json",
+              "libs/application/data-providers/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/application/data-providers/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/application/data-providers/jest.config.js",
+            "tsConfig": "libs/application/data-providers/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "skilavottord-ws": {
       "root": "apps/skilavottord/ws",
       "sourceRoot": "apps/skilavottord/ws/src",

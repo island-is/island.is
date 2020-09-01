@@ -13,16 +13,22 @@ import {
 import { omit } from 'lodash'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  Application as BaseApplication,
+  callDataProviders,
+  FormType,
+} from '@island.is/application/schema'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
-import { ApplicationValidationPipe } from './application.pipe'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
 import { mergeAnswers } from '@island.is/application/schema'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
-import { FormType } from '@island.is/application/schema'
+import { SchemaValidationPipe } from './pipes/schemaValidation.pipe'
+import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
+import { buildDataProviders, buildExternalData } from './externalDataUtils'
 
 @ApiTags('application')
 @Controller('application')
@@ -62,7 +68,7 @@ export class ApplicationController {
   @Post()
   @ApiCreatedResponse({ type: Application })
   async create(
-    @Body(new ApplicationValidationPipe(true))
+    @Body(new SchemaValidationPipe(true))
     application: CreateApplicationDto,
   ): Promise<Application> {
     return this.applicationService.create(application)
@@ -72,7 +78,7 @@ export class ApplicationController {
   @ApiOkResponse({ type: Application })
   async update(
     @Param('id', new ParseUUIDPipe()) id: string,
-    @Body(new ApplicationValidationPipe(true))
+    @Body(new SchemaValidationPipe(true))
     application: UpdateApplicationDto,
   ): Promise<Application> {
     const existingApplication = await this.applicationService.findById(id)
@@ -91,6 +97,38 @@ export class ApplicationController {
       ...application,
       answers: mergedAnswers,
     })
+
+    return updatedApplication
+  }
+
+  @Put(':id/externalData')
+  @ApiOkResponse({ type: Application })
+  async updateExternalData(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body()
+    externalDataDto: PopulateExternalDataDto,
+  ): Promise<Application> {
+    // TODO how can we know if the requested data-providers are actually associated with this given form?
+    const application = await this.applicationService.findById(id)
+
+    if (!application) {
+      throw new NotFoundException("This application doesn't exist")
+    }
+    const results = await callDataProviders(
+      buildDataProviders(externalDataDto),
+      application as BaseApplication,
+    )
+    const {
+      updatedApplication,
+    } = await this.applicationService.updateExternalData(
+      id,
+      buildExternalData(externalDataDto, results),
+    )
+    if (!updatedApplication) {
+      throw new NotFoundException(
+        `An application with the id ${id} does not exist`,
+      )
+    }
 
     return updatedApplication
   }

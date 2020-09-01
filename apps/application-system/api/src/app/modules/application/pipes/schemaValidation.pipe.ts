@@ -4,11 +4,11 @@ import {
   FormValue,
   getFormByTypeId,
 } from '@island.is/application/schema'
-import { CreateApplicationDto } from './dto/createApplication.dto'
-import { UpdateApplicationDto } from './dto/updateApplication.dto'
+import { CreateApplicationDto } from '../dto/createApplication.dto'
+import { UpdateApplicationDto } from '../dto/updateApplication.dto'
 
 @Injectable()
-export class ApplicationValidationPipe implements PipeTransform {
+export class SchemaValidationPipe implements PipeTransform {
   constructor(private partialValidation: boolean) {}
 
   transform(application: CreateApplicationDto | UpdateApplicationDto) {

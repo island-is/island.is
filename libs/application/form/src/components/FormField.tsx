@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import { useFormContext } from 'react-hook-form'
 import { FieldDef } from '../types'
 import { getValueViaPath } from '../utils'
 import { getComponentByName } from './componentLoader'
@@ -20,7 +19,6 @@ const FormField: FC<{
   formValue,
   showFieldName,
 }) => {
-  const { register } = useFormContext()
   if (!field.isNavigable) {
     return null
   }
@@ -33,7 +31,6 @@ const FormField: FC<{
     field,
     formValue,
     showFieldName,
-    register,
   }
 
   const Component = getComponentByName(field.component)

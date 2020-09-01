@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { ExternalData, mergeAnswers } from '@island.is/application/schema'
 import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
@@ -44,6 +45,25 @@ export class ApplicationService {
       where: { id },
       returning: true,
     })
+
+    return { numberOfAffectedRows, updatedApplication }
+  }
+
+  async updateExternalData(id: string, externalData: ExternalData) {
+    const existingApplication = await this.applicationModel.findOne({
+      where: { id },
+    })
+
+    const [
+      numberOfAffectedRows,
+      [updatedApplication],
+    ] = await this.applicationModel.update(
+      {
+        ...existingApplication,
+        externalData: { ...existingApplication.externalData, ...externalData },
+      },
+      { where: { id }, returning: true },
+    )
 
     return { numberOfAffectedRows, updatedApplication }
   }

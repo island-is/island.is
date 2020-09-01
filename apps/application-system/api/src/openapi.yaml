@@ -64,6 +64,8 @@ components:
             - PaternityLeave
         answers:
           type: object
+        externalData:
+          type: object
       required:
         - id
         - created
@@ -73,6 +75,7 @@ components:
         - state
         - typeId
         - answers
+        - externalData
     CreateApplicationDto:
       type: object
       properties:
@@ -143,6 +146,29 @@ components:
           type: object
         attachments:
           type: object
+    DataProviderDto:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - ExpectedDateOfBirth
+            - ExampleFails
+            - ExampleSucceeds
+      required:
+        - id
+        - type
+    PopulateExternalDataDto:
+      type: object
+      properties:
+        dataProviders:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataProviderDto'
+      required:
+        - dataProviders
     AddAttachmentDto:
       type: object
       properties:
@@ -259,6 +285,30 @@ paths:
               $ref: '#/components/schemas/CreateApplicationDto'
       responses:
         '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+      tags:
+        - application
+  '/application/{id}/externalData':
+    put:
+      operationId: ApplicationController_updateExternalData
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PopulateExternalDataDto'
+      responses:
+        '200':
           description: ''
           content:
             application/json:

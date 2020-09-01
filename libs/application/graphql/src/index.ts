@@ -1,6 +1,7 @@
 export * from './lib/fragments/application'
 export * from './lib/mutations/createApplication'
 export * from './lib/mutations/updateApplication'
+export * from './lib/mutations/updateApplicationExternalData'
 export * from './lib/mutations/addAttachment'
 export * from './lib/mutations/deleteAttachment'
 export * from './lib/mutations/createUploadUrl'

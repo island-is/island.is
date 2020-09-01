@@ -27,6 +27,9 @@ import {
     DeleteAttachmentDto,
     DeleteAttachmentDtoFromJSON,
     DeleteAttachmentDtoToJSON,
+    PopulateExternalDataDto,
+    PopulateExternalDataDtoFromJSON,
+    PopulateExternalDataDtoToJSON,
     UpdateApplicationDto,
     UpdateApplicationDtoFromJSON,
     UpdateApplicationDtoToJSON,
@@ -57,6 +60,11 @@ export interface ApplicationControllerFindOneRequest {
 export interface ApplicationControllerUpdateRequest {
     id: string;
     updateApplicationDto: UpdateApplicationDto;
+}
+
+export interface ApplicationControllerUpdateExternalDataRequest {
+    id: string;
+    populateExternalDataDto: PopulateExternalDataDto;
 }
 
 /**
@@ -257,6 +265,41 @@ export class ApplicationApi extends runtime.BaseAPI {
      */
     async applicationControllerUpdate(requestParameters: ApplicationControllerUpdateRequest): Promise<Application> {
         const response = await this.applicationControllerUpdateRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     */
+    async applicationControllerUpdateExternalDataRaw(requestParameters: ApplicationControllerUpdateExternalDataRequest): Promise<runtime.ApiResponse<Application>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling applicationControllerUpdateExternalData.');
+        }
+
+        if (requestParameters.populateExternalDataDto === null || requestParameters.populateExternalDataDto === undefined) {
+            throw new runtime.RequiredError('populateExternalDataDto','Required parameter requestParameters.populateExternalDataDto was null or undefined when calling applicationControllerUpdateExternalData.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/application/{id}/externalData`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: PopulateExternalDataDtoToJSON(requestParameters.populateExternalDataDto),
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async applicationControllerUpdateExternalData(requestParameters: ApplicationControllerUpdateExternalDataRequest): Promise<Application> {
+        const response = await this.applicationControllerUpdateExternalDataRaw(requestParameters);
         return await response.value();
     }
 

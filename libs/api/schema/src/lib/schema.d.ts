@@ -401,6 +401,7 @@ export type Application = {
   attachments?: Maybe<Scalars['JSON']>
   typeId: ApplicationTypeIdEnum
   answers: Scalars['JSON']
+  externalData: Scalars['JSON']
 }
 
 export enum ApplicationStateEnum {
@@ -668,6 +669,7 @@ export type Mutation = {
   addAttachment?: Maybe<Application>
   deleteAttachment?: Maybe<Application>
   createUploadUrl: PresignedPost
+  updateApplicationExternalData?: Maybe<Application>
 }
 
 export type MutationCreateApplicationArgs = {
@@ -688,6 +690,10 @@ export type MutationDeleteAttachmentArgs = {
 
 export type MutationCreateUploadUrlArgs = {
   filename: Scalars['String']
+}
+
+export type MutationUpdateApplicationExternalDataArgs = {
+  input: UpdateApplicationExternalDataInput
 }
 
 export type CreateApplicationInput = {
@@ -758,6 +764,22 @@ export type AddAttachmentInput = {
 export type DeleteAttachmentInput = {
   id: Scalars['String']
   key: Scalars['String']
+}
+
+export type UpdateApplicationExternalDataInput = {
+  id: Scalars['String']
+  dataProviders: Array<DataProvider>
+}
+
+export type DataProvider = {
+  id: Scalars['String']
+  type: DataProviderDtoTypeEnum
+}
+
+export enum DataProviderDtoTypeEnum {
+  ExpectedDateOfBirth = 'ExpectedDateOfBirth',
+  ExampleFails = 'ExampleFails',
+  ExampleSucceeds = 'ExampleSucceeds',
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -989,6 +1011,9 @@ export type ResolversTypes = {
   UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
   AddAttachmentInput: AddAttachmentInput
   DeleteAttachmentInput: DeleteAttachmentInput
+  UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
+  DataProvider: DataProvider
+  DataProviderDtoTypeEnum: DataProviderDtoTypeEnum
 }
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -1095,6 +1120,8 @@ export type ResolversParentTypes = {
   UpdateApplicationInput: UpdateApplicationInput
   AddAttachmentInput: AddAttachmentInput
   DeleteAttachmentInput: DeleteAttachmentInput
+  UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
+  DataProvider: DataProvider
 }
 
 export type HelloWorldResolvers<
@@ -1726,6 +1753,7 @@ export type ApplicationResolvers<
     ContextType
   >
   answers?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
+  externalData?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1926,6 +1954,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationCreateUploadUrlArgs, 'filename'>
+  >
+  updateApplicationExternalData?: Resolver<
+    Maybe<ResolversTypes['Application']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateApplicationExternalDataArgs, 'input'>
   >
 }
 

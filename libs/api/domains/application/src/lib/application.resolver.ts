@@ -5,6 +5,7 @@ import { GetApplicationsByTypeInput } from './dto/getApplicationsByType.input'
 import { GetApplicationInput } from './dto/getApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
+import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 
@@ -38,6 +39,13 @@ export class ApplicationResolver {
     @Args('input') input: UpdateApplicationInput,
   ): Promise<Application> {
     return this.applicationService.update(input)
+  }
+
+  @Mutation(() => Application, { nullable: true })
+  updateApplicationExternalData(
+    @Args('input') input: UpdateApplicationExternalDataInput,
+  ): Promise<Application | void> {
+    return this.applicationService.updateExternalData(input)
   }
 
   @Mutation(() => Application, { nullable: true })

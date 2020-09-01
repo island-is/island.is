@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common'
-import { ApplicationApi, ApplicationTypeIdEnum } from '../../gen/fetch'
 import { UpdateApplicationInput } from './dto/updateApplication.input'
 import { CreateApplicationInput } from './dto/createApplication.input'
 import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
+import { ApplicationApi, ApplicationTypeIdEnum } from '../../gen/fetch'
+import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 
 const handleError = (error) => {
   logger.error(error)
@@ -67,5 +68,14 @@ export class ApplicationService {
         deleteAttachmentDto,
       })
       .catch(handleError)
+  }
+
+  async updateExternalData(input: UpdateApplicationExternalDataInput) {
+    const { id, ...populateExternalDataDto } = input
+
+    return this.applicationApi.applicationControllerUpdateExternalData({
+      id,
+      populateExternalDataDto,
+    })
   }
 }

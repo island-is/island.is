@@ -1,5 +1,5 @@
 import { AllOrAny, Comparators, Condition } from '../types/Condition'
-import { FormValue } from '../types/Form'
+import { FormValue } from '../types/Application'
 import { buildTextField } from '../lib/fieldBuilders'
 import { shouldShowFormLeaf } from './conditionUtils'
 

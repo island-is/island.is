@@ -2,7 +2,7 @@ import { FC, useEffect } from 'react'
 import { FormItemTypes, FormValue } from '@island.is/application/schema'
 import { useWatch } from 'react-hook-form'
 import { FieldDef, MultiFieldScreen } from '../types'
-import { convertLeafToScreen } from '../reducer/reducerUtils'
+import { convertMultiFieldToScreen } from '../reducer/reducerUtils'
 
 // Use this component to optimize performance for applying conditions in response to form value changes for multifields
 export const ConditionHandler: FC<{
@@ -13,7 +13,7 @@ export const ConditionHandler: FC<{
   const data = useWatch({ defaultValue: formValue })
 
   useEffect(() => {
-    const newScreen = convertLeafToScreen(screen, {
+    const newScreen = convertMultiFieldToScreen(screen, {
       ...formValue,
       ...data,
     })
