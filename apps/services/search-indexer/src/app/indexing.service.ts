@@ -122,7 +122,10 @@ export class IndexingService {
           response += reduceContent(doc.content)
         }
         if (doc.data && doc.data.target) {
-          if (doc.data.target.sys.contentType && doc.data.target.sys.contentType.sys.id === 'processEntry') {
+          if (
+            doc.data.target.sys.contentType &&
+            doc.data.target.sys.contentType.sys.id === 'processEntry'
+          ) {
             response += (doc.data.target.fields.processTitle ?? '') + '\n'
             response += (doc.data.target.fields.processDescription ?? '') + '\n'
           } else {

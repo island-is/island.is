@@ -133,14 +133,16 @@ export class ElasticService {
       },
     }
     const client = await this.getClient()
-    return client.delete_by_query({
-      index: index,
-      body: body,
-    }).catch(error => {
-      // TODO: Improve this cleaning function so it handles no index exists case
-      // we dont want to take down the indexer if there is no index to delete from
-      logger.error('Failed to delete all except', error)
-    })
+    return client
+      .delete_by_query({
+        index: index,
+        body: body,
+      })
+      .catch((error) => {
+        // TODO: Improve this cleaning function so it handles no index exists case
+        // we dont want to take down the indexer if there is no index to delete from
+        logger.error('Failed to delete all except', error)
+      })
   }
 
   async deleteAll(index: SearchIndexes) {
