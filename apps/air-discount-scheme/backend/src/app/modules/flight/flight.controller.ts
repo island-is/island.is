@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  NotFoundException,
 } from '@nestjs/common'
 import {
   ApiOkResponse,
@@ -31,6 +32,7 @@ import { FlightLimitExceeded } from './flight.error'
 import { FlightDto } from './dto/flight.dto'
 import { DiscountService } from '../discount'
 import { AuthGuard } from '../common'
+import { NationalRegistryService } from '../nationalRegistry'
 
 @ApiTags('Flights')
 @Controller('api/public')
@@ -40,6 +42,7 @@ export class PublicFlightController {
   constructor(
     private readonly flightService: FlightService,
     private readonly discountService: DiscountService,
+    private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
   @Post('discounts/:discountCode/flights')
@@ -52,11 +55,19 @@ export class PublicFlightController {
     const nationalId = await this.discountService.validateDiscount(
       params.discountCode,
     )
-    // TODO: meets requirement?
+
+    const user = await this.nationalRegistryService.getUser(nationalId)
+    if (!user) {
+      throw new NotFoundException(`User<${nationalId}> not found`)
+    }
+
+    const meetsADSRequirements = this.flightService.isADSPostalCode(
+      user.postalcode,
+    )
     const {
       unused: flightLegsLeft,
     } = await this.flightService.countFlightLegsByNationalId(nationalId)
-    if (flightLegsLeft < flight.flightLegs.length) {
+    if (!meetsADSRequirements || flightLegsLeft < flight.flightLegs.length) {
       throw new FlightLimitExceeded()
     }
     await this.discountService.useDiscount(params.discountCode, nationalId)
