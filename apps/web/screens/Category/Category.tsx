@@ -150,9 +150,7 @@ const Category: Screen<CategoryProps> = ({
       >
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
-            <Link href={makePath()}>
-              Ísland.is
-            </Link>
+            <Link href={makePath()}>Ísland.is</Link>
           </Breadcrumbs>
           <Hidden above="md">
             <Select

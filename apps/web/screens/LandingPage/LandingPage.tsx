@@ -70,12 +70,8 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
           <ContentBlock width="small">
             <Stack space={[3, 3, 4]}>
               <Breadcrumbs>
-                <Link href={makePath()}>
-                  Ísland.is
-                </Link>
-                <Link href={'/' + page.slug}>
-                  {page.title}
-                </Link>
+                <Link href={makePath()}>Ísland.is</Link>
+                <Link href={'/' + page.slug}>{page.title}</Link>
               </Breadcrumbs>
               <Typography variant="h1" as="h1">
                 <span data-sidebar-link={slugify(page.title)}>

@@ -20,7 +20,7 @@ import {
   Option,
   SidebarAccordion,
   Pagination,
-  Link
+  Link,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'

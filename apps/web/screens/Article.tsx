@@ -99,9 +99,7 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
       >
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
-            <Link href={makePath()}>
-              Ísland.is
-            </Link>
+            <Link href={makePath()}>Ísland.is</Link>
             <Link
               href={`${makePath('category')}/[slug]`}
               as={makePath('category', categorySlug)}
