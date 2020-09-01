@@ -11,6 +11,31 @@ const { nationalRegistry } = environment
 const ONE_MONTH = 2592000 // seconds
 const CACHE_KEY = 'nationalRegistry_user'
 
+const TEST_USERS: NationalRegistryUser[] = [
+  {
+    // Gervimadur Ameríka
+    nationalId: '0101302989',
+    firstName: 'Gervimaður',
+    middleName: '',
+    lastName: 'Ameríka',
+    gender: 'kk',
+    address: 'Bessastaðir 1',
+    postalcode: 900,
+    city: 'Vestmannaeyjar',
+  },
+  {
+    // Gervimadur Afríka
+    nationalId: '0101303019',
+    firstName: 'Gervimaður',
+    middleName: '',
+    lastName: 'Afríka',
+    gender: 'kk',
+    address: 'Bessastaðir 1',
+    postalcode: 900,
+    city: 'Vestmannaeyjar',
+  },
+]
+
 @Injectable()
 export class NationalRegistryService {
   constructor(
@@ -43,6 +68,13 @@ export class NationalRegistryService {
   }
 
   async getUser(nationalId: string): Promise<NationalRegistryUser> {
+    const testUser = TEST_USERS.find(
+      (testUser) => testUser.nationalId === nationalId,
+    )
+    if (testUser) {
+      return testUser
+    }
+
     const cacheKey = this.getCacheKey(nationalId)
     const cacheValue = await this.cacheManager.get(cacheKey)
     if (cacheValue) {
