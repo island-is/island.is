@@ -101,40 +101,38 @@ const FileUploadFormField: FC<Props> = ({
   }, [state, id, setValue])
 
   const uploadFileFlow = async (file: UploadFile) => {
-    // 1. Get the upload URL
-    const { data } = await createUploadUrl({
-      variables: {
-        filename: file.name,
-      },
-    })
-
-    // 2. Upload the file to S3
-    const {
-      createUploadUrl: { url, fields },
-    } = data
-
-    let response
-
     try {
-      response = await uploadFileToS3(file, dispatch, url, fields)
+      // 1. Get the upload URL
+      const { data } = await createUploadUrl({
+        variables: {
+          filename: file.name,
+        },
+      })
+
+      // 2. Upload the file to S3
+      const {
+        createUploadUrl: { url, fields },
+      } = data
+
+      const response = await uploadFileToS3(file, dispatch, url, fields)
+
+      // 3. Add Attachment Data
+      await addAttachment({
+        variables: {
+          input: {
+            id: applicationId,
+            key: fields.key,
+            url: `${response.url}/${fields.key}`,
+          },
+        },
+      })
+
+      // Done!
+      return Promise.resolve({ url: response.url, key: fields.key })
     } catch (e) {
       error = e
       return Promise.reject(e)
     }
-
-    // 3. Add Attachment Data
-    await addAttachment({
-      variables: {
-        input: {
-          id: applicationId,
-          key: fields.key,
-          url: `${response.url}/${fields.key}`,
-        },
-      },
-    })
-
-    // Done!
-    return Promise.resolve({ url: response.url, key: fields.key })
   }
 
   const onFileChange = async (newFiles: File[]) => {
