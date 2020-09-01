@@ -58,7 +58,6 @@ export const content = style({
       paddingBottom: 0,
     },
   },
-
 })
 
 export const linksContent = style({
