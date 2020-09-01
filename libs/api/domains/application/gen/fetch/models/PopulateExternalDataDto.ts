@@ -14,10 +14,10 @@
 
 import { exists, mapValues } from '../runtime';
 import {
-    DataProviderDTO,
-    DataProviderDTOFromJSON,
-    DataProviderDTOFromJSONTyped,
-    DataProviderDTOToJSON,
+    DataProviderDto,
+    DataProviderDtoFromJSON,
+    DataProviderDtoFromJSONTyped,
+    DataProviderDtoToJSON,
 } from './';
 
 /**
@@ -28,10 +28,10 @@ import {
 export interface PopulateExternalDataDto {
     /**
      * 
-     * @type {Array<DataProviderDTO>}
+     * @type {Array<DataProviderDto>}
      * @memberof PopulateExternalDataDto
      */
-    dataProviders: Array<DataProviderDTO>;
+    dataProviders: Array<DataProviderDto>;
 }
 
 export function PopulateExternalDataDtoFromJSON(json: any): PopulateExternalDataDto {
@@ -44,7 +44,7 @@ export function PopulateExternalDataDtoFromJSONTyped(json: any, ignoreDiscrimina
     }
     return {
         
-        'dataProviders': ((json['dataProviders'] as Array<any>).map(DataProviderDTOFromJSON)),
+        'dataProviders': ((json['dataProviders'] as Array<any>).map(DataProviderDtoFromJSON)),
     };
 }
 
@@ -57,7 +57,7 @@ export function PopulateExternalDataDtoToJSON(value?: PopulateExternalDataDto | 
     }
     return {
         
-        'dataProviders': ((value.dataProviders as Array<any>).map(DataProviderDTOToJSON)),
+        'dataProviders': ((value.dataProviders as Array<any>).map(DataProviderDtoToJSON)),
     };
 }
 

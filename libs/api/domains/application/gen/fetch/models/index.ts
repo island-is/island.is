@@ -1,6 +1,6 @@
 export * from './Application';
 export * from './CreateApplicationDto';
-export * from './DataProviderDTO';
+export * from './DataProviderDto';
 export * from './Liveness';
 export * from './PopulateExternalDataDto';
 export * from './UpdateApplicationDto';

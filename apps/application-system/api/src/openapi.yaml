@@ -157,7 +157,7 @@ components:
       required:
         - id
         - typeId
-    DataProviderDTO:
+    DataProviderDto:
       type: object
       properties:
         id:
@@ -177,7 +177,7 @@ components:
         dataProviders:
           type: array
           items:
-            $ref: '#/components/schemas/DataProviderDTO'
+            $ref: '#/components/schemas/DataProviderDto'
       required:
         - dataProviders
 paths:

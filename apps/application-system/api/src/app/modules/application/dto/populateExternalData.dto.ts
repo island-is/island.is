@@ -3,7 +3,7 @@ import { DataProviderTypes } from '@island.is/application/schema'
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 
-class DataProviderDTO {
+class DataProviderDto {
   @IsString()
   @ApiProperty()
   id: string
@@ -15,7 +15,7 @@ class DataProviderDTO {
 
 export class PopulateExternalDataDto {
   @IsArray()
-  @Type(() => DataProviderDTO)
-  @ApiProperty({ type: [DataProviderDTO] })
-  readonly dataProviders: DataProviderDTO[]
+  @Type(() => DataProviderDto)
+  @ApiProperty({ type: [DataProviderDto] })
+  readonly dataProviders: DataProviderDto[]
 }

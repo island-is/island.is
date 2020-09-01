@@ -16,28 +16,28 @@ import { exists, mapValues } from '../runtime';
 /**
  * 
  * @export
- * @interface DataProviderDTO
+ * @interface DataProviderDto
  */
-export interface DataProviderDTO {
+export interface DataProviderDto {
     /**
      * 
      * @type {string}
-     * @memberof DataProviderDTO
+     * @memberof DataProviderDto
      */
     id: string;
     /**
      * 
      * @type {string}
-     * @memberof DataProviderDTO
+     * @memberof DataProviderDto
      */
-    type: DataProviderDTOTypeEnum;
+    type: DataProviderDtoTypeEnum;
 }
 
-export function DataProviderDTOFromJSON(json: any): DataProviderDTO {
-    return DataProviderDTOFromJSONTyped(json, false);
+export function DataProviderDtoFromJSON(json: any): DataProviderDto {
+    return DataProviderDtoFromJSONTyped(json, false);
 }
 
-export function DataProviderDTOFromJSONTyped(json: any, ignoreDiscriminator: boolean): DataProviderDTO {
+export function DataProviderDtoFromJSONTyped(json: any, ignoreDiscriminator: boolean): DataProviderDto {
     if ((json === undefined) || (json === null)) {
         return json;
     }
@@ -48,7 +48,7 @@ export function DataProviderDTOFromJSONTyped(json: any, ignoreDiscriminator: boo
     };
 }
 
-export function DataProviderDTOToJSON(value?: DataProviderDTO | null): any {
+export function DataProviderDtoToJSON(value?: DataProviderDto | null): any {
     if (value === undefined) {
         return undefined;
     }
@@ -66,7 +66,7 @@ export function DataProviderDTOToJSON(value?: DataProviderDTO | null): any {
 * @export
 * @enum {string}
 */
-export enum DataProviderDTOTypeEnum {
+export enum DataProviderDtoTypeEnum {
     ExpectedDateOfBirth = 'ExpectedDateOfBirth',
     ExampleFails = 'ExampleFails',
     ExampleSucceeds = 'ExampleSucceeds'
