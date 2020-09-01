@@ -1,0 +1,99 @@
+openapi: 3.0.1
+info:
+  title: Delegations API
+  version: 1.0.0
+paths:
+  /delegations/{nationalId}:
+    get:
+      summary: Retrieves a list of active delegations.
+      parameters:
+        - in: path
+          name: nationalId
+          description: The nationalId that delegations should be fetched for.
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: direction #TODO: better name?
+          description: Controls if delegations to nationalId (received) 
+            or delegations from nationalId (granted) should be returned.
+          schema:
+            type: string
+            enum: [received, granted]
+          required: true
+        - in: query
+          name: type
+          description: The type of delegations that should be returned.
+          schema:
+            type: string
+            enum: [user, document, application]
+          required: false
+      responses:
+        '200':
+          description: A JSON array of delegation objects.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Delegation'
+components:
+  schemas:
+    Delegation:
+      type: object
+      properties:
+        subject:
+          description: Represents the entity that access is granted to.
+          oneOf:
+            - $ref: '#/components/schemas/User'
+            - $ref: '#/components/schemas/Document'
+            - $ref: '#/components/schemas/Application'
+        scopes:
+          description: Defines the scope of access granted.
+          type: array
+          items:
+              type: string
+              example: '@island.is/documents'
+    User:
+      type: object
+      properties:
+        nationalId:
+          type: string
+          example: '0102034560'
+        name:
+          type: string
+          example: 'Jón Jónsson'
+    Document:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'e576ca31-0ac4-4929-a696-470b93af35bd'
+        title:
+          type: string
+          example: 'Álagningarseðill'
+        owner:
+          $ref: '#/components/schemas/User'
+        subject:
+          $ref: '#/components/schemas/User'
+        scopes:
+          type: array
+          items:
+              type: string
+              example: 'read'
+    Application:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '3cb315b8-33c7-4c14-acc8-f68f75ba81b7'
+        title:
+          type: string
+          example: 'Umsókn um ökuskírteini'
+        owner:
+          $ref: '#/components/schemas/User'
+        subject:
+          $ref: '#/components/schemas/User'
+        scopes:
+          type: array
+          items:
+              type: string
+              example: 'submit'
