@@ -8,9 +8,14 @@ import {
 } from './flight.controller'
 import { FlightService } from './flight.service'
 import { DiscountModule } from '../discount'
+import { NationalRegistryModule } from '../nationalRegistry'
 
 @Module({
-  imports: [SequelizeModule.forFeature([Flight, FlightLeg]), DiscountModule],
+  imports: [
+    SequelizeModule.forFeature([Flight, FlightLeg]),
+    DiscountModule,
+    NationalRegistryModule,
+  ],
   controllers: [PublicFlightController, PrivateFlightController],
   providers: [FlightService],
   exports: [FlightService],
