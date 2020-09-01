@@ -20,6 +20,7 @@ import { Client } from './client.model'
   ],
 })
 export class ClientPostLogoutRedirectUri extends Model<ClientPostLogoutRedirectUri> {
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -28,6 +29,7 @@ export class ClientPostLogoutRedirectUri extends Model<ClientPostLogoutRedirectU
   @ApiProperty()
   clientId: string
 
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,

@@ -20,6 +20,7 @@ import { Client } from './client.model'
   ],
 })
 export class ClientAllowedCorsOrigin extends Model<ClientAllowedCorsOrigin> {
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -27,6 +28,7 @@ export class ClientAllowedCorsOrigin extends Model<ClientAllowedCorsOrigin> {
   @ApiProperty()
   origin: string
 
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,

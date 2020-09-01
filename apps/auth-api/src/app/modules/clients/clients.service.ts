@@ -5,6 +5,7 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Counter } from 'prom-client'
 import { Sequelize } from 'sequelize-typescript'
 import { ClientAllowedScope } from './client-allowed-scope.model'
+import { ClientAllowedCorsOrigin } from './client-allowed-cors-origin.model'
 
 @Injectable()
 export class ClientsService {
@@ -29,7 +30,7 @@ export class ClientsService {
     this.logger.debug(`Finding client for clientId - "${clientId}"`)
     return this.clientModel.findOne({
       where: { clientId },
-      include: [ ClientAllowedScope ]
+      include: [ ClientAllowedScope, ClientAllowedCorsOrigin ]
     });
 
   }

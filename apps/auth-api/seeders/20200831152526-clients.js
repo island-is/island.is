@@ -62,12 +62,24 @@ module.exports = {
       },
     ];
 
-    return Promise.all([queryInterface.bulkInsert('client', clients, {}), queryInterface.bulkInsert('client_allowed_scope', scopes, {})]);
+    var cors = [
+      {
+        client_id: 'postman',
+        origin: 'localhost'
+      }
+    ];
+
+    return Promise.all([
+      queryInterface.bulkInsert('client', clients, {}), 
+      queryInterface.bulkInsert('client_allowed_scope', scopes, {}),
+      queryInterface.bulkInsert('client_allowed_cors_origin', cors, {}),
+    ]);
   },
 
   down: (queryInterface, Sequelize) => {
-
-    var clients = queryInterface.bulkDelete('client', null, {});
-    return Promise.all([clients])
+    var cors = queryInterface.bulkDelete('client_allowed_cors_origin', null, {})
+    var scopes = queryInterface.bulkDelete('client_allowed_scope', null, {})
+    var clients = queryInterface.bulkDelete('client', null, {})
+    return Promise.all([cors, scopes, clients])
   }
 };
