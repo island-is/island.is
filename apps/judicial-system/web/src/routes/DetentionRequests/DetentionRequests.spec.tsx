@@ -28,7 +28,7 @@ const mockDetensionRequests = [
 
 describe('Detention requests route', () => {
   test('should list all cases in a table', async () => {
-    fetchMock.get('/api/cases', mockDetensionRequests)
+    fetchMock.mock('/api/cases', mockDetensionRequests)
     const { getAllByTestId } = render(<DetentionRequests />)
 
     await waitFor(() => getAllByTestId('detention-requests-table-row'))
@@ -36,5 +36,14 @@ describe('Detention requests route', () => {
     expect(getAllByTestId('detention-requests-table-row').length).toEqual(
       mockDetensionRequests.length,
     )
+  })
+
+  test('should display an error alert if the api call fails', () => {
+    fetchMock.mock('/api/cases', 500, { overwriteRoutes: true })
+
+    const { getByTestId, queryByTestId } = render(<DetentionRequests />)
+    expect(queryByTestId('detention-requests-table')).toBeNull()
+    expect(getByTestId('detention-requests-error')).toBeTruthy()
+    fetchMock.restore()
   })
 })
