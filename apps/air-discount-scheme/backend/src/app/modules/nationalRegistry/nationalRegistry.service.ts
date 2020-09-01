@@ -25,7 +25,7 @@ export class NationalRegistryService {
   private createNationalRegistryUser(
     response: NationalRegistryResponse,
   ): NationalRegistryUser {
-    if (!response) {
+    if (response.error) {
       return null
     }
 
