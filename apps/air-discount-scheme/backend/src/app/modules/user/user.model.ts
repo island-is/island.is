@@ -2,10 +2,10 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { User as TUser, Fund } from '@island.is/air-discount-scheme/types'
 import { SplitName } from './user.types'
-import { ThjodskraUser } from '../thjodskra'
+import { NationalRegistryUser } from '../nationalRegistry'
 
 export class User implements TUser {
-  constructor(user: ThjodskraUser, fund: Fund) {
+  constructor(user: NationalRegistryUser, fund: Fund) {
     const { firstName, middleName, lastName } = this.parseName(user)
 
     this.firstName = firstName
@@ -19,7 +19,7 @@ export class User implements TUser {
     this.fund = fund
   }
 
-  private parseName(user: ThjodskraUser): SplitName {
+  private parseName(user: NationalRegistryUser): SplitName {
     const parts = user.name.split(' ')
 
     return {

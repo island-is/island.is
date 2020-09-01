@@ -3,7 +3,10 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { Fund } from '@island.is/air-discount-scheme/types'
 import { User } from './user.model'
 import { FlightService } from '../flight'
-import { ThjodskraService, ThjodskraUser } from '../thjodskra'
+import {
+  NationalRegistryService,
+  NationalRegistryUser,
+} from '../nationalRegistry'
 
 const ADS_POSTAL_CODES = {
   Reykhólahreppur: 380,
@@ -21,7 +24,7 @@ const ADS_POSTAL_CODES = {
 export class UserService {
   constructor(
     private readonly flightService: FlightService,
-    private readonly thjodskraService: ThjodskraService,
+    private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
   private isADSPostalCode(postalcode: number): boolean {
@@ -43,8 +46,8 @@ export class UserService {
 
   private async getUserFromNationalRegistry(
     nationalId: string,
-  ): Promise<ThjodskraUser> {
-    const user = await this.thjodskraService.getUser(nationalId)
+  ): Promise<NationalRegistryUser> {
+    const user = await this.nationalRegistryService.getUser(nationalId)
     if (!user) {
       throw new NotFoundException(`User<${nationalId} not found`)
     }
@@ -53,11 +56,11 @@ export class UserService {
   }
 
   getRelations(nationalId: string): Promise<string[]> {
-    // TODO: implement from thjodskra in "2nd Phase"
+    // TODO: implement from nationalRegistry in "2nd Phase"
     return Promise.resolve([nationalId])
   }
 
-  async getFund(user: ThjodskraUser): Promise<Fund> {
+  async getFund(user: NationalRegistryUser): Promise<Fund> {
     const {
       used,
       unused,

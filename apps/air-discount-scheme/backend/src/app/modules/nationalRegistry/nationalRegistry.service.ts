@@ -1,15 +1,15 @@
 import { Inject, Injectable, CACHE_MANAGER, HttpService } from '@nestjs/common'
 import CacheManager from 'cache-manager'
 
-import { ThjodskraUser } from './thjodskra.types'
+import { NationalRegistryUser } from './nationalRegistry.types'
 import { environment } from '../../../environments'
 
-const { thjodskra } = environment
+const { nationalRegistry } = environment
 const ONE_MONTH = 2592000 // seconds
-const CACHE_KEY = 'thjodskra_user'
+const CACHE_KEY = 'nationalRegistry_user'
 
 @Injectable()
-export class ThjodskraService {
+export class NationalRegistryService {
   constructor(
     private httpService: HttpService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
@@ -19,7 +19,7 @@ export class ThjodskraService {
     return `${CACHE_KEY}_${nationalId}`
   }
 
-  async getUser(nationalId: string): Promise<ThjodskraUser> {
+  async getUser(nationalId: string): Promise<NationalRegistryUser> {
     const cacheKey = this.getCacheKey(nationalId)
     const cacheValue = await this.cacheManager.get(cacheKey)
     if (cacheValue) {
@@ -27,7 +27,7 @@ export class ThjodskraService {
     }
 
     const response = await this.httpService
-      .get(`${thjodskra.url}/general-lookup?ssn=${nationalId}`)
+      .get(`${nationalRegistry.url}/general-lookup?ssn=${nationalId}`)
       .toPromise()
 
     const user = response.data[0]

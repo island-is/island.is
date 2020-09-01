@@ -1,4 +1,4 @@
-export interface ThjodskraUser {
+export interface NationalRegistryUser {
   source: 'Þjóðskrá' | 'Fyrirtækjaskrá'
   ssn: string
   name: string

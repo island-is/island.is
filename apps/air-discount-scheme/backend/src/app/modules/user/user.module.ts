@@ -4,10 +4,10 @@ import { PublicUserController, PrivateUserController } from './user.controller'
 import { UserService } from './user.service'
 import { DiscountModule } from '../discount'
 import { FlightModule } from '../flight'
-import { ThjodskraModule } from '../thjodskra'
+import { NationalRegistryModule } from '../nationalRegistry'
 
 @Module({
-  imports: [DiscountModule, FlightModule, ThjodskraModule],
+  imports: [DiscountModule, FlightModule, NationalRegistryModule],
   controllers: [PublicUserController, PrivateUserController],
   providers: [UserService],
 })

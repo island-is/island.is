@@ -2,10 +2,10 @@ import { Module, HttpModule } from '@nestjs/common'
 import { Base64 } from 'js-base64'
 
 import { environment } from '../../../environments'
-import { ThjodskraService } from './thjodskra.service'
+import { NationalRegistryService } from './nationalRegistry.service'
 import { CacheModule } from '../cache'
 
-const { thjodskra } = environment
+const { nationalRegistry } = environment
 
 @Module({
   imports: [
@@ -15,12 +15,12 @@ const { thjodskra } = environment
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Basic ${Base64.encode(
-          `${thjodskra.username}:${thjodskra.password}`,
+          `${nationalRegistry.username}:${nationalRegistry.password}`,
         )}`,
       },
     }),
   ],
-  providers: [ThjodskraService],
-  exports: [ThjodskraService],
+  providers: [NationalRegistryService],
+  exports: [NationalRegistryService],
 })
-export class ThjodskraModule {}
+export class NationalRegistryModule {}

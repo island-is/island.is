@@ -2,17 +2,19 @@ import { setup } from '../../../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
 import CacheManger from 'cache-manager'
-import { ThjodskraService } from '../../../thjodskra'
+import { NationalRegistryService } from '../../../nationalRegistry'
 
 let app: INestApplication
 let cacheManager: CacheManger
-let thjodskraService: ThjodskraService
+let nationalRegistryService: NationalRegistryService
 
 beforeAll(async () => {
   app = await setup()
   cacheManager = app.get<CacheManger>(CACHE_MANAGER)
   cacheManager.ttl = () => ''
-  thjodskraService = app.get<ThjodskraService>(ThjodskraService)
+  nationalRegistryService = app.get<NationalRegistryService>(
+    NationalRegistryService,
+  )
 })
 
 describe('Get Discount By DiscountCode', () => {
@@ -22,7 +24,7 @@ describe('Get Discount By DiscountCode', () => {
       .spyOn(cacheManager, 'get')
       .mockImplementation(() => Promise.resolve({ nationalId }))
     const spy2 = jest
-      .spyOn(thjodskraService, 'getUser')
+      .spyOn(nationalRegistryService, 'getUser')
       .mockImplementation(() =>
         Promise.resolve({
           source: 'Þjóðskrá',
