@@ -3,7 +3,7 @@ import Link from 'next/link'
 import FocusLock from 'react-focus-lock'
 import { RemoveScroll } from 'react-remove-scroll'
 
-import { useKey, useClickAway } from 'react-use'
+import { useKey, useClickAway, useWindowSize } from 'react-use'
 import cn from 'classnames'
 import {
   Typography,
@@ -19,6 +19,7 @@ import { LinkBox } from './components/LinkBox'
 import * as styles from './SideMenu.treat'
 import { SearchInput } from '../SearchInput/SearchInput'
 import { LanguageToggler } from '../LanguageToggler'
+import { theme } from '@island.is/island-ui/theme'
 
 interface TabLink {
   title: string
@@ -49,6 +50,8 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
   const ref = useRef(null)
   const buttonsRef = useRef([])
   const { activeLocale, t } = useI18n()
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
 
   useKey('Escape', handleClose)
   useClickAway(ref, handleClose)
@@ -60,7 +63,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
   }, [buttonsRef.current])
 
   return isVisible ? (
-    <RemoveScroll>
+    <RemoveScroll enabled={isMobile}>
       <FocusLock>
         <div
           className={cn(styles.root, { [styles.isVisible]: isVisible })}
