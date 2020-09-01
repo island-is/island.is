@@ -24,10 +24,7 @@ export const BorderedContent: FC<BorderedContentProps> = ({
     <div className={styles.container}>
       <Box width="full">
         {showTopContent ? (
-          <Box
-            paddingTop={[6, 6, 9]}
-            paddingBottom={[3, 3, 5]}
-          >
+          <Box paddingTop={[6, 6, 9]} paddingBottom={[3, 3, 5]}>
             {topContent}
           </Box>
         ) : null}
