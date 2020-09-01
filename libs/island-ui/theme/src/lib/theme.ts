@@ -70,10 +70,12 @@ export const theme = {
     width: {
       standard: 1,
       large: 2,
+      xl: 3,
     },
     color: {
       standard: color.blue200,
       focus: color.red200,
+      ...color,
     },
   },
   shadows: {

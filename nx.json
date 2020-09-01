@@ -215,6 +215,9 @@
     },
     "service-portal-graphql": {
       "tags": []
+    },
+    "skilavottord-ws": {
+      "tags": []
     }
   }
 }

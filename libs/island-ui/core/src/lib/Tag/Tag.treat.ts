@@ -14,6 +14,8 @@ export const container = style({
   textOverflow: 'ellipsis',
   textDecoration: 'none',
   maxWidth: '100%',
+  border: '1px solid transparent',
+
   ':focus': {
     backgroundColor: theme.color.mint400,
     color: theme.color.dark400,
@@ -45,9 +47,6 @@ export const variants = styleMap({
   red: {
     color: theme.color.red400,
     backgroundColor: theme.color.red100,
-    borderColor: theme.color.red200,
-    borderWidth: 1,
-    borderStyle: 'solid',
     ':focus': {
       backgroundColor: theme.color.red200,
       color: theme.color.red600,
@@ -67,6 +66,32 @@ export const variants = styleMap({
     backgroundColor: theme.color.mint200,
   },
   label: {},
+})
+
+export const bordered = style({
+  selectors: {
+    [`&${variants.blue}`]: {
+      borderColor: theme.color.blue200,
+    },
+    [`&${variants.darkerBlue}`]: {
+      borderColor: theme.color.blue300,
+    },
+    [`&${variants.white}`]: {
+      borderColor: theme.color.blue400,
+    },
+    [`&${variants.purple}`]: {
+      borderColor: theme.color.purple200,
+    },
+    [`&${variants.red}`]: {
+      borderColor: theme.color.red200,
+    },
+    [`&${variants.mint}`]: {
+      borderColor: theme.color.mint200,
+    },
+    [`&${variants.darkerMint}`]: {
+      borderColor: theme.color.mint300,
+    },
+  },
 })
 
 export const active = style({

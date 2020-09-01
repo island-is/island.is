@@ -6,8 +6,6 @@ import {
   Param,
   Post,
   Delete,
-  Inject,
-  forwardRef,
   UseGuards,
   Req,
 } from '@nestjs/common'
@@ -20,13 +18,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 
-import { FlightLegFund } from '@island.is/air-discount-scheme/types'
 import { Flight } from './flight.model'
 import { FlightService } from './flight.service'
 import {
   GetFlightParams,
   CreateFlightParams,
-  GetFlightLegFundsParams,
   GetUserFlightsParams,
   DeleteFlightParams,
   DeleteFlightLegParams,
@@ -43,7 +39,6 @@ import { AuthGuard } from '../common'
 export class PublicFlightController {
   constructor(
     private readonly flightService: FlightService,
-    @Inject(forwardRef(() => DiscountService))
     private readonly discountService: DiscountService,
   ) {}
 
@@ -57,6 +52,7 @@ export class PublicFlightController {
     const nationalId = await this.discountService.validateDiscount(
       params.discountCode,
     )
+    // TODO: meets requirement?
     const {
       unused: flightLegsLeft,
     } = await this.flightService.countFlightLegsByNationalId(nationalId)
@@ -108,14 +104,6 @@ export class PublicFlightController {
 @Controller('api/private')
 export class PrivateFlightController {
   constructor(private readonly flightService: FlightService) {}
-
-  @Get('users/:nationalId/flights/funds')
-  @ApiExcludeEndpoint()
-  getFlightLegFunds(
-    @Param() params: GetFlightLegFundsParams,
-  ): Promise<FlightLegFund> {
-    return this.flightService.countFlightLegsByNationalId(params.nationalId)
-  }
 
   @Get('flights')
   @ApiExcludeEndpoint()

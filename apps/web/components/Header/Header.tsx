@@ -1,16 +1,15 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import {
   Logo,
   Columns,
   Column,
-  ContentBlock,
   Box,
   Button,
   Hidden,
   ResponsiveSpace,
-  Icon,
   GridContainer,
   GridColumn,
   GridRow,
@@ -18,46 +17,11 @@ import {
 import { useI18n } from '@island.is/web/i18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { SearchInput } from '../'
-import { useRouter } from 'next/router'
-
+import { LanguageToggler } from '../LanguageToggler'
+import { SideMenu } from '../SideMenu'
+import { tempTabs } from '../../json'
 interface HeaderProps {
   showSearchInHeader?: boolean
-}
-
-const LanguageToggler: FC<{
-  hideWhenMobile?: boolean
-}> = ({ hideWhenMobile }) => {
-  const { activeLocale, locale, t } = useI18n()
-  const otherLanguageUrl = activeLocale === 'en' ? '/' : '/en'
-  const onClick = () => {
-    locale(t.otherLanguageCode)
-  }
-  const languageButtonText =
-    activeLocale === 'is' ? (
-      <span>
-        <Hidden above="md">EN</Hidden>
-        <Hidden below="lg">English</Hidden>
-      </span>
-    ) : (
-      <span>
-        <Hidden above="md">IS</Hidden>
-        <Hidden below="lg">Íslenska</Hidden>
-      </span>
-    )
-
-  const LanguageButton = (
-    <Link href={otherLanguageUrl}>
-      <Button variant="menu" onClick={onClick}>
-        {t.otherLanguageName}
-      </Button>
-    </Link>
-  )
-
-  return !hideWhenMobile ? (
-    LanguageButton
-  ) : (
-    <Hidden below="md">{LanguageButton}</Hidden>
-  )
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -66,6 +30,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const { activeLocale, t } = useI18n()
   const Router = useRouter()
   const { makePath } = useRouteNames(activeLocale)
+  const [sideMenuOpen, setSideMenuOpen] = useState(false)
 
   const locale = activeLocale
   const english = activeLocale === 'en'
@@ -129,9 +94,9 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                 <Box marginLeft={marginLeft}>
                   <LanguageToggler hideWhenMobile />
                 </Box>
-                <Box marginLeft={marginLeft}>
-                  <Button variant="menu">
-                    <Icon type="logo" />
+                <Box marginLeft={marginLeft} position="relative">
+                  <Button variant="menu" onClick={() => setSideMenuOpen(true)}>
+                    Valmynd
                   </Button>
                 </Box>
               </Box>
@@ -139,6 +104,11 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
           </Columns>
         </GridColumn>
       </GridRow>
+      <SideMenu
+        isVisible={sideMenuOpen}
+        handleClose={() => setSideMenuOpen(false)}
+        tabs={tempTabs}
+      />
     </GridContainer>
   )
 }
