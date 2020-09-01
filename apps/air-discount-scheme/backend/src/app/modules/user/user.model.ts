@@ -38,7 +38,7 @@ export class User implements TUser {
   @ApiProperty()
   lastName: string
 
-  @ApiProperty()
+  @ApiProperty({ enum: ['kvk', 'kk'] as ValueOf<TUser['gender']>[] })
   gender: TUser['gender']
 
   @ApiProperty()
@@ -53,6 +53,5 @@ export class User implements TUser {
   @ApiProperty()
   city: string
 
-  @ApiProperty()
   fund: Fund
 }
