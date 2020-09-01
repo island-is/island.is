@@ -75,10 +75,11 @@ export class Application extends Model<Application> {
   state: string
 
   @Column({
-    type: DataType.ARRAY(DataType.STRING),
+    type: DataType.JSONB,
+    defaultValue: {},
   })
   @ApiPropertyOptional()
-  attachments: string[]
+  attachments: object
 
   @Column({
     type: DataType.ENUM,

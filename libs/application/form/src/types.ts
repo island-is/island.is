@@ -7,6 +7,7 @@ import {
 import { Ref } from 'react'
 
 export interface FieldBaseProps {
+  applicationId?: string
   autoFocus?: boolean
   error?: string
   field: Field

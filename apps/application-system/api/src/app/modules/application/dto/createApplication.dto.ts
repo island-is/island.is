@@ -3,7 +3,6 @@ import {
   IsNotEmpty,
   IsObject,
   IsString,
-  IsArray,
   IsOptional,
 } from 'class-validator'
 import { ApplicationState } from '../application.model'
@@ -42,7 +41,7 @@ export class CreateApplicationDto {
   readonly answers: object
 
   @IsOptional()
-  @IsArray()
+  @IsObject()
   @ApiPropertyOptional()
-  readonly attachments: string[]
+  readonly attachments: object
 }

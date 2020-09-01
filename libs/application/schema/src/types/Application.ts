@@ -15,6 +15,6 @@ export interface Application {
   typeId: FormType
   modified: Date
   created: Date
-  attachments: string[]
+  attachments: object
   answers: object
 }

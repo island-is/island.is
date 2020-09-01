@@ -44,7 +44,8 @@ module.exports = {
           allowNull: false,
         },
         attachments: {
-          type: Sequelize.ARRAY(Sequelize.STRING),
+          type: Sequelize.JSONB,
+          defaultValue: {},
         },
         ['type_id']: {
           type: Sequelize.STRING,

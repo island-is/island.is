@@ -15,19 +15,35 @@
 
 import * as runtime from '../runtime';
 import {
+    AddAttachmentDto,
+    AddAttachmentDtoFromJSON,
+    AddAttachmentDtoToJSON,
     Application,
     ApplicationFromJSON,
     ApplicationToJSON,
     CreateApplicationDto,
     CreateApplicationDtoFromJSON,
     CreateApplicationDtoToJSON,
+    DeleteAttachmentDto,
+    DeleteAttachmentDtoFromJSON,
+    DeleteAttachmentDtoToJSON,
     UpdateApplicationDto,
     UpdateApplicationDtoFromJSON,
     UpdateApplicationDtoToJSON,
 } from '../models';
 
+export interface ApplicationControllerAddAttachmentRequest {
+    id: string;
+    addAttachmentDto: AddAttachmentDto;
+}
+
 export interface ApplicationControllerCreateRequest {
     createApplicationDto: CreateApplicationDto;
+}
+
+export interface ApplicationControllerDeleteAttachmentRequest {
+    id: string;
+    deleteAttachmentDto: DeleteAttachmentDto;
 }
 
 export interface ApplicationControllerFindAllRequest {
@@ -47,6 +63,41 @@ export interface ApplicationControllerUpdateRequest {
  * 
  */
 export class ApplicationApi extends runtime.BaseAPI {
+
+    /**
+     */
+    async applicationControllerAddAttachmentRaw(requestParameters: ApplicationControllerAddAttachmentRequest): Promise<runtime.ApiResponse<Application>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling applicationControllerAddAttachment.');
+        }
+
+        if (requestParameters.addAttachmentDto === null || requestParameters.addAttachmentDto === undefined) {
+            throw new runtime.RequiredError('addAttachmentDto','Required parameter requestParameters.addAttachmentDto was null or undefined when calling applicationControllerAddAttachment.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/application/{id}/attachments`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: AddAttachmentDtoToJSON(requestParameters.addAttachmentDto),
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async applicationControllerAddAttachment(requestParameters: ApplicationControllerAddAttachmentRequest): Promise<Application> {
+        const response = await this.applicationControllerAddAttachmentRaw(requestParameters);
+        return await response.value();
+    }
 
     /**
      */
@@ -76,6 +127,41 @@ export class ApplicationApi extends runtime.BaseAPI {
      */
     async applicationControllerCreate(requestParameters: ApplicationControllerCreateRequest): Promise<Application> {
         const response = await this.applicationControllerCreateRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     */
+    async applicationControllerDeleteAttachmentRaw(requestParameters: ApplicationControllerDeleteAttachmentRequest): Promise<runtime.ApiResponse<Application>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling applicationControllerDeleteAttachment.');
+        }
+
+        if (requestParameters.deleteAttachmentDto === null || requestParameters.deleteAttachmentDto === undefined) {
+            throw new runtime.RequiredError('deleteAttachmentDto','Required parameter requestParameters.deleteAttachmentDto was null or undefined when calling applicationControllerDeleteAttachment.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/application/{id}/attachments`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+            body: DeleteAttachmentDtoToJSON(requestParameters.deleteAttachmentDto),
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async applicationControllerDeleteAttachment(requestParameters: ApplicationControllerDeleteAttachmentRequest): Promise<Application> {
+        const response = await this.applicationControllerDeleteAttachmentRaw(requestParameters);
         return await response.value();
     }
 
