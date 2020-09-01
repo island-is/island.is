@@ -5,6 +5,17 @@ import { FlightLegSummary } from './flight.types'
 import { Flight, FlightLeg, financialStateMachine } from './flight.model'
 import { FlightDto } from './dto/flight.dto'
 
+const ADS_POSTAL_CODES = {
+  Reykhólahreppur: 380,
+  // from Reykhólahreppur to Þingeyri
+  Þingeyri: 471,
+
+  Hólmavík: 510,
+  // from Hólmavík to Öræfi
+  Öræfi: 785,
+
+  Vestmannaeyjar: 900,
+}
 const DEFAULT_AVAILABLE_LEGS = 6
 const AVAILABLE_FLIGHT_LEGS = {
   '2020': 4,
@@ -24,6 +35,23 @@ export class FlightService {
     @InjectModel(FlightLeg)
     private flightLegModel: typeof FlightLeg,
   ) {}
+
+  isADSPostalCode(postalcode: number): boolean {
+    if (
+      postalcode >= ADS_POSTAL_CODES['Reykhólahreppur'] &&
+      postalcode <= ADS_POSTAL_CODES['Þingeyri']
+    ) {
+      return true
+    } else if (
+      postalcode >= ADS_POSTAL_CODES['Hólmavík'] &&
+      postalcode <= ADS_POSTAL_CODES['Öræfi']
+    ) {
+      return true
+    } else if (postalcode === ADS_POSTAL_CODES['Vestmannaeyjar']) {
+      return true
+    }
+    return false
+  }
 
   async countFlightLegsByNationalId(
     nationalId: string,

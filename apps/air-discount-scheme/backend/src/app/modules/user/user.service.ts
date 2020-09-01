@@ -8,41 +8,12 @@ import {
   NationalRegistryUser,
 } from '../nationalRegistry'
 
-const ADS_POSTAL_CODES = {
-  Reykhólahreppur: 380,
-  // from Reykhólahreppur to Þingeyri
-  Þingeyri: 471,
-
-  Hólmavík: 510,
-  // from Hólmavík to Öræfi
-  Öræfi: 785,
-
-  Vestmannaeyjar: 900,
-}
-
 @Injectable()
 export class UserService {
   constructor(
     private readonly flightService: FlightService,
     private readonly nationalRegistryService: NationalRegistryService,
   ) {}
-
-  private isADSPostalCode(postalcode: number): boolean {
-    if (
-      postalcode >= ADS_POSTAL_CODES['Reykhólahreppur'] &&
-      postalcode <= ADS_POSTAL_CODES['Þingeyri']
-    ) {
-      return true
-    } else if (
-      postalcode >= ADS_POSTAL_CODES['Hólmavík'] &&
-      postalcode <= ADS_POSTAL_CODES['Öræfi']
-    ) {
-      return true
-    } else if (postalcode === ADS_POSTAL_CODES['Vestmannaeyjar']) {
-      return true
-    }
-    return false
-  }
 
   private async getUserFromNationalRegistry(
     nationalId: string,
@@ -67,7 +38,9 @@ export class UserService {
       total,
     } = await this.flightService.countFlightLegsByNationalId(user.nationalId)
 
-    const meetsADSRequirements = this.isADSPostalCode(user.postalcode)
+    const meetsADSRequirements = this.flightService.isADSPostalCode(
+      user.postalcode,
+    )
 
     return {
       nationalId: user.nationalId,

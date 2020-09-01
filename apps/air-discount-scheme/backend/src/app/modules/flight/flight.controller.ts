@@ -60,10 +60,14 @@ export class PublicFlightController {
     if (!user) {
       throw new NotFoundException(`User<${nationalId}> not found`)
     }
+
+    const meetsADSRequirements = this.flightService.isADSPostalCode(
+      user.postalcode,
+    )
     const {
       unused: flightLegsLeft,
     } = await this.flightService.countFlightLegsByNationalId(nationalId)
-    if (flightLegsLeft < flight.flightLegs.length) {
+    if (!meetsADSRequirements || flightLegsLeft < flight.flightLegs.length) {
       throw new FlightLimitExceeded()
     }
     await this.discountService.useDiscount(params.discountCode, nationalId)
