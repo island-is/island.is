@@ -79,8 +79,6 @@ export const Header: FC<HeaderProps> = ({
   const locale = activeLocale
   const english = activeLocale === 'en'
 
-  const logoColor: Colors = white ? 'white' : 'blue400'
-
   return (
     <GridContainer>
       <GridRow>
@@ -91,10 +89,10 @@ export const Header: FC<HeaderProps> = ({
                 {/* eslint-disable-next-line */}
                 <a>
                   <Hidden above="md">
-                    <Logo width={40} iconOnly />
+                    <Logo width={40} iconOnly solidColor={white && 'white'} />
                   </Hidden>
                   <Hidden below="lg">
-                    <Logo width={160} solid solidColor={logoColor} />
+                    <Logo width={160} solidColor={white && 'white'} />
                   </Hidden>
                 </a>
               </Link>

@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState } from 'react'
+import React, { FC, CSSProperties, ReactNode, useState, useEffect } from 'react'
 import cn from 'classnames'
 import {
   Box,
@@ -41,7 +41,14 @@ export interface SidebarProps {
 const Sidebar: FC<SidebarProps> = ({ title, type, children }) => {
   const [container, containerRef] = useState(null)
   const [bullet, bulletRef] = useState(null)
+  const [, setTick] = useState(0)
   const colors = ColorConfig[type]
+
+  useEffect(() => {
+    const onResize = () => setTick((tick) => tick + 1)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   return (
     <div ref={containerRef} className={styles.container}>

@@ -8,3 +8,7 @@ export const gradient = style({
 export const indent = style({
   padding: `0 ${(11 / 96) * 100}%`,
 })
+
+export const sidebarColumn = style({
+  position: 'static',
+})
