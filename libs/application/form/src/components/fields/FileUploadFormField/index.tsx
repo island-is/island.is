@@ -186,24 +186,34 @@ const FileUploadFormField: FC<Props> = ({
   }
 
   const onRemoveFile = async (fileToRemove: UploadFile) => {
-    // If it's previously been uploaded, remove it from the attachement
+    // If it's previously been uploaded, remove it from the application attachment.
     if (fileToRemove.key) {
-      await deleteAttachment({
-        variables: {
-          input: {
-            id: applicationId,
-            key: fileToRemove.key,
+      try {
+        await deleteAttachment({
+          variables: {
+            input: {
+              id: applicationId,
+              key: fileToRemove.key,
+            },
           },
-        },
-      })
+        })
+      } catch (e) {
+        setUploadError('An error occurred removing the file.')
+        return
+      }
     }
 
+    // We remove it from the list if: the delete attachment above succeeded,
+    // or if the user clicked x for a file that failed to upload and is in
+    // an error state.
     dispatch({
       type: ActionTypes.REMOVE,
       payload: {
         fileToRemove,
       },
     })
+
+    setUploadError(undefined)
   }
 
   return (
