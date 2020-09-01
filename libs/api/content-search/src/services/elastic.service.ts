@@ -43,13 +43,13 @@ export class ElasticService {
     }
   }
 
-  async findByQuery<ResponseBody, RequestBody = any, Context = any>(
+  async findByQuery<ResponseBody, RequestBody>(
     index: SearchIndexes,
     query: RequestBody,
   ) {
     try {
       const client = await this.getClient()
-      return client.search<ResponseBody, RequestBody, Context>({
+      return client.search<ResponseBody, RequestBody>({
         body: query,
         index,
       })

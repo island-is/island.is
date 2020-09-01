@@ -4,12 +4,12 @@ import { RequestBodySearch } from 'elastic-builder'
 import { ContentCategory } from './models/contentCategory.model'
 import { ContentItem } from './models/contentItem.model'
 import { SearchResult } from './models/searchResult.model'
-import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 import { ContentLanguage } from './enums/contentLanguage.enum'
+import { SearcherService } from '@island.is/api/schema'
 
 @Injectable()
-export class ContentSearchService {
+export class ContentSearchService implements SearcherService {
   constructor(private repository: ElasticService) {}
 
   getIndex(lang: ContentLanguage) {
@@ -90,9 +90,7 @@ export class ContentSearchService {
     return body?.hits?.hits.map(this.fixCase)
   }
 
-  async fetchAutocompleteTerm(
-    input: WebSearchAutocompleteInput,
-  ): Promise<WebSearchAutocomplete> {
+  async fetchAutocompleteTerm(input): Promise<WebSearchAutocomplete> {
     const {
       suggest: { searchSuggester },
     } = await this.repository.fetchAutocompleteTerm(

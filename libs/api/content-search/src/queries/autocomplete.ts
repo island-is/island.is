@@ -33,8 +33,10 @@ export const autocompleteTerm = ({ prefix, size }: AutocompleteTermInput) => ({
       completion: {
         field: 'term_pool',
         size,
+        // eslint-disable-next-line @typescript-eslint/camelcase
         skip_duplicates: true,
         fuzzy: {
+          // eslint-disable-next-line @typescript-eslint/camelcase
           unicode_aware: true,
           fuzziness: 'auto',
         },
