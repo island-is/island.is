@@ -10,7 +10,6 @@ import {
   SkeletonLoader,
 } from '@island.is/island-ui/core'
 import * as styles from './Hero.treat'
-import Dots from './Dots'
 import { Link } from 'react-router-dom'
 import { ServicePortalPath } from '@island.is/service-portal/core'
 
@@ -67,7 +66,7 @@ const Hero: FC<Props> = ({ content, loading }) => {
             overflow="hidden"
           >
             <div className={styles.dots}>
-              <Dots />
+              <img src="/assets/images/dots.svg" alt="bakgrunnur" />
             </div>
             {loading ? (
               <SkeletonLoader />
