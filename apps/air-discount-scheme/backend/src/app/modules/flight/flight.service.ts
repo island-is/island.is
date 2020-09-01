@@ -126,7 +126,7 @@ export class FlightService {
       ],
     })
     if (!flight) {
-      throw new NotFoundException('Flight not found')
+      throw new NotFoundException(`Flight<${flightId}> not found`)
     }
     return flight
   }
@@ -150,7 +150,9 @@ export class FlightService {
       (flightLeg) => flightLeg.id === flightLegId,
     )
     if (!flightLeg) {
-      throw new NotFoundException('Flight not found')
+      throw new NotFoundException(
+        `FlightLeg<${flightLegId}> not found for Flight<${flight.id}>`,
+      )
     }
     const financialState = financialStateMachine
       .transition(flightLeg.financialState, 'REVOKE')

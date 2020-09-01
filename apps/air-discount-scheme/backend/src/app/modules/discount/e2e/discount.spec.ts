@@ -2,14 +2,35 @@ import { setup } from '../../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
 import CacheManger from 'cache-manager'
+import {
+  NationalRegistryService,
+  NationalRegistryUser,
+} from '../../nationalRegistry'
 
 let app: INestApplication
 let cacheManager: CacheManger
+let nationalRegistryService: NationalRegistryService
+const user: NationalRegistryUser = {
+  nationalId: '1234567890',
+  firstName: 'Jón',
+  gender: 'kk',
+  lastName: 'Jónsson',
+  middleName: 'Gunnar',
+  address: 'Bessastaðir 1',
+  postalcode: 900,
+  city: 'Vestmannaeyjar',
+}
 
 beforeAll(async () => {
   app = await setup()
   cacheManager = app.get<CacheManger>(CACHE_MANAGER)
   cacheManager.ttl = () => ''
+  nationalRegistryService = app.get<NationalRegistryService>(
+    NationalRegistryService,
+  )
+  jest
+    .spyOn(nationalRegistryService, 'getUser')
+    .mockImplementation(() => Promise.resolve(user))
 
   Date.now = jest.fn(() => 1597760782018)
 })

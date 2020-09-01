@@ -8,6 +8,7 @@ export interface NationalRegistryResponse {
   city: string
   lastmodified: string
   charged: boolean
+  error?: string
 }
 
 export interface NationalRegistryUser {
