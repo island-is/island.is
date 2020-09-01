@@ -1,21 +1,19 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, useEffect, useState } from 'react'
-import Link from 'next/link'
 import Head from 'next/head'
 import slugify from '@sindresorhus/slugify'
 import {
-  ContentBlock,
   Box,
   Typography,
   Stack,
   Breadcrumbs,
   Hidden,
   Select,
-  BoxProps,
   ResponsiveSpace,
   Tag,
   Option,
   Button,
+  Link,
 } from '@island.is/island-ui/core'
 import { Content } from '@island.is/island-ui/contentful'
 import { Sidebar, getHeadingLinkElements } from '@island.is/web/components'
@@ -102,13 +100,13 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
             <Link href={makePath()}>
-              <a>Ísland.is</a>
+              Ísland.is
             </Link>
             <Link
               href={`${makePath('category')}/[slug]`}
               as={makePath('category', categorySlug)}
             >
-              <a>{categoryTitle}</a>
+              {categoryTitle}
             </Link>
             {groupTitle && (
               <Tag variant="purple" label>
