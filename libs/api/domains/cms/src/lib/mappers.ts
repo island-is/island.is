@@ -64,19 +64,16 @@ export const mapAdgerdirTag = ({
 export const mapAdgerdirNewsItem = ({
   fields,
   sys,
-}: types.IVidspyrnaNews): AdgerdirNews => {
-  console.log('fields', fields.image.fields.file)
-  return {
-    id: sys.id,
-    slug: fields.slug,
-    title: fields.title,
-    subtitle: fields.subtitle,
-    intro: fields.intro,
-    image: fields.image?.fields?.file && mapImage(fields.image),
-    date: fields.date,
-    content: JSON.stringify(fields.content),
-  }
-}
+}: types.IVidspyrnaNews): AdgerdirNews => ({
+  id: sys.id,
+  slug: fields.slug,
+  title: fields.title,
+  subtitle: fields.subtitle,
+  intro: fields.intro,
+  image: fields.image?.fields?.file && mapImage(fields.image),
+  date: fields.date,
+  content: JSON.stringify(fields.content),
+})
 
 export const mapAdgerdirFeaturedNewsSlice = ({
   fields,
