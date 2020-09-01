@@ -18,15 +18,15 @@ class Cache {
     this.client = client
   }
 
-  get(key: string): string {
+  get(key: string): Promise<string> {
     return this.client.get(key)
   }
 
-  set(key: string, value: string): string {
+  set(key: string, value: string): Promise<string> {
     return this.client.set(key, value)
   }
 
-  expire(key: string, seconds: number): string {
+  expire(key: string, seconds: number): Promise<boolean> {
     return this.client.expire(key, seconds)
   }
 }
@@ -51,7 +51,6 @@ const getRedisClusterOptions = (options: Options): RedisOptions => {
     ...options,
     keyPrefix: `${options.name}:`,
     connectTimeout: 5000,
-    socket_keepalive: false,
     // https://www.npmjs.com/package/ioredis#special-note-aws-elasticache-clusters-with-tls
     dnsLookup: (address, callback) => callback(null, address),
     redisOptions,
