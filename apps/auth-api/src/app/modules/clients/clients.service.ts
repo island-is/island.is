@@ -10,7 +10,7 @@ export class ClientsService {
   private clients: Client[];
 
   applicationsRegistered = new Counter({
-    name: 'apps_auth-api-clients-service',
+    name: 'apps_registered6',
     labelNames: ['res1'],
     help: 'Number of applications',
   })

@@ -88,7 +88,7 @@ export class Client extends Model<Client> {
     allowNull: false,
   })
   @ApiProperty()
-  updateATClaimsOnRefresh: string
+  updateAtClaimsOnRefresh: string
 
   @Column({
     type: DataType.INTEGER,
@@ -158,7 +158,7 @@ export class Client extends Model<Client> {
     allowNull: false,
   })
   @ApiProperty()
-  alwaysIncludeUCInIdToken: string
+  alwaysIncludeUcInIdToken: string
 
   @Column({
     type: DataType.STRING,
@@ -292,4 +292,12 @@ export class Client extends Model<Client> {
   })
   @ApiProperty()
   mobileLoginText: string
+
+  @CreatedAt
+  @ApiProperty()
+  readonly created: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  readonly modified: Date
 }

@@ -44,18 +44,24 @@ module.exports = {
           require_client_secret          VARCHAR NOT NULL DEFAULT 'Y',
           enable_mobile_login            VARCHAR NOT NULL DEFAULT 'N',
           mobile_login_text              VARCHAR,
+          created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+          modified TIMESTAMP WITH TIME ZONE,
           PRIMARY KEY (client_id)
       );
 
       CREATE TABLE client_allowed_cors_origin (
         origin VARCHAR NOT NULL,
         client_id VARCHAR NOT NULL,
+        created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        modified TIMESTAMP WITH TIME ZONE,
         CONSTRAINT FK_client_allowed_cors_origin_client FOREIGN KEY (client_Id) REFERENCES client (client_id)
       );
 
       CREATE TABLE client_allowed_scope (
         scope_name VARCHAR NOT NULL,
         client_id  VARCHAR NOT NULL,
+        created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        modified TIMESTAMP WITH TIME ZONE,
         CONSTRAINT FK_client_allowed_scope_client FOREIGN KEY (client_id) REFERENCES client (client_id)
       );
 
@@ -63,6 +69,8 @@ module.exports = {
         id uuid NOT NULL,
         name VARCHAR NOT NULL,
         client_id VARCHAR NOT NULL,
+        created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        modified TIMESTAMP WITH TIME ZONE,
         CONSTRAINT PK_client_identity_provider_restrictions PRIMARY KEY (id),
         CONSTRAINT FK_client_identity_provider_restrictions_client FOREIGN KEY (client_id) REFERENCES client (client_id)
       );
@@ -70,6 +78,8 @@ module.exports = {
       CREATE TABLE client_post_logout_redirect_uri (
         client_id    VARCHAR NOT NULL,
         redirect_uri VARCHAR NOT NULL,
+        created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        modified TIMESTAMP WITH TIME ZONE,
         CONSTRAINT FK_client_post_redirect_uri_client FOREIGN KEY (client_id) REFERENCES client (client_id)
       );
 
@@ -79,6 +89,8 @@ module.exports = {
         description VARCHAR NULL,
         type VARCHAR NOT NULL,
         expiration TIMESTAMP WITH TIME ZONE NULL,
+        created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        modified TIMESTAMP WITH TIME ZONE,
         CONSTRAINT FK_client_secret_client FOREIGN KEY (client_id) REFERENCES client (client_id)
       );
     COMMIT;
