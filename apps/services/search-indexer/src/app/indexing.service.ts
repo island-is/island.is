@@ -122,7 +122,7 @@ export class IndexingService {
           response += reduceContent(doc.content)
         }
         if (doc.data && doc.data.target) {
-          if (doc.data.target.sys.contentType.sys.id === 'processEntry') {
+          if (doc.data.target.sys.contentType && doc.data.target.sys.contentType.sys.id === 'processEntry') {
             response += (doc.data.target.fields.processTitle ?? '') + '\n'
             response += (doc.data.target.fields.processDescription ?? '') + '\n'
           } else {
@@ -135,12 +135,12 @@ export class IndexingService {
 
     /* eslint-disable @typescript-eslint/camelcase */
     const document: Document = {
-      category: entry.fields?.category?.fields.title,
-      category_slug: entry.fields?.category?.fields.slug,
-      category_description: entry.fields?.category?.fields.description,
-      group: entry.fields?.group?.fields.title,
-      group_slug: entry.fields?.group?.fields.slug,
-      group_description: entry.fields?.group?.fields.description,
+      category: entry.fields?.category?.fields?.title,
+      category_slug: entry.fields?.category?.fields?.slug,
+      category_description: entry.fields?.category?.fields?.description,
+      group: entry.fields?.group?.fields?.title,
+      group_slug: entry.fields?.group?.fields?.slug,
+      group_description: entry.fields?.group?.fields?.description,
       content: reduceContent(entry.fields.content?.content),
       content_blob: JSON.stringify(entry.fields),
       content_id: entry.sys.id,
