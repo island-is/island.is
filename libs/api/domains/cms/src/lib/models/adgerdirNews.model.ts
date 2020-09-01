@@ -1,8 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { AdgerdirSlice } from './adgerdirSlices/adgerdirSlice.model'
+import { Image } from './image.model'
 
 @ObjectType()
-export class AdgerdirFrontpage {
+export class AdgerdirNews {
   @Field()
   id: string
 
@@ -10,14 +10,20 @@ export class AdgerdirFrontpage {
   slug: string
 
   @Field()
+  subtitle: string
+
+  @Field()
   title: string
 
   @Field()
-  description: string
+  intro: string
+
+  @Field(() => Image, { nullable: true })
+  image?: Image
+
+  @Field()
+  date: string
 
   @Field({ nullable: true })
   content?: string
-
-  @Field(() => [AdgerdirSlice])
-  slices: Array<typeof AdgerdirSlice>
 }

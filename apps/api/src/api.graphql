@@ -73,20 +73,49 @@ type AdgerdirPages {
   items: [AdgerdirPage!]!
 }
 
-type AdgerdirFrontpage {
-  id: String!
-  slug: String!
-  title: String!
-  description: String!
-  content: String
-}
-
 type Image {
   url: String!
   title: String!
   contentType: String!
   width: Int!
   height: Int!
+}
+
+type AdgerdirNews {
+  id: String!
+  slug: String!
+  subtitle: String!
+  title: String!
+  intro: String!
+  image: Image
+  date: String!
+  content: String
+}
+
+type AdgerdirFrontpage {
+  id: String!
+  slug: String!
+  title: String!
+  description: String!
+  content: String
+  slices: [AdgerdirSlice!]!
+}
+
+union AdgerdirSlice = AdgerdirGroupSlice | AdgerdirFeaturedNewsSlice
+
+type AdgerdirGroupSlice {
+  id: ID!
+  subtitle: String
+  title: String!
+  description: String
+  image: Image
+  pages: [AdgerdirPage!]!
+}
+
+type AdgerdirFeaturedNewsSlice {
+  id: ID!
+  title: String!
+  featured: [AdgerdirNews!]!
 }
 
 type FrontpageSlide {

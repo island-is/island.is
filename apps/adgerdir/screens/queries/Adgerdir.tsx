@@ -48,6 +48,13 @@ export const GET_ADGERDIR_TAGS_QUERY = gql`
 `
 
 export const GET_ADGERDIR_FRONTPAGE_QUERY = gql`
+  fragment FeaturedNewsFields on AdgerdirFeaturedNewsSlice {
+    __typename
+    id
+    title
+    featured
+  }
+
   query GetAdgerdirFrontpage($input: GetAdgerdirFrontpageInput!) {
     getAdgerdirFrontpage(input: $input) {
       id
@@ -55,6 +62,9 @@ export const GET_ADGERDIR_FRONTPAGE_QUERY = gql`
       title
       description
       content
+      slices {
+        ...FeaturedNewsFields
+      }
     }
   }
 `

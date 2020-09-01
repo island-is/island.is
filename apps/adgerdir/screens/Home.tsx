@@ -54,6 +54,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
     document.documentElement.lang = activeLocale
   }
 
+  console.log('frontpage', frontpage)
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
 
