@@ -1,7 +1,4 @@
 export { Benefits } from './Benefits'
-export { FullyUsed } from './FullyUsed'
-export { HasCredit } from './HasCredit'
-export { NoCredit } from './NoCredit'
 export { UserCredit } from './UserCredit'
 export { NoBenefits } from './NoBenefits'
 export { Usage } from './Usage'

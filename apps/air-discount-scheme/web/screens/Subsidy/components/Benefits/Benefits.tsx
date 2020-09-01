@@ -2,7 +2,13 @@ import React, { useEffect } from 'react'
 import { useMutation } from '@apollo/client'
 import gql from 'graphql-tag'
 
-import { Box, Typography, Stack, Icon } from '@island.is/island-ui/core'
+import {
+  Box,
+  Typography,
+  Stack,
+  Icon,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
 import { UserCredit, NoBenefits } from '../'
 
 interface PropTypes {
@@ -95,16 +101,20 @@ function Benefits({ misc }: PropTypes) {
         <Typography variant="h3">{myRights}</Typography>
         {!noBenefits ? (
           <>
-            {[...activeCodes, ...fundUsed, ...noRights].map((data, index) => {
-              return (
-                <UserCredit
-                  key={index}
-                  misc={misc}
-                  discount={data.discount}
-                  status={data.status}
-                />
-              )
-            })}
+            {loading ? (
+              <SkeletonLoader height={98} />
+            ) : (
+              [...activeCodes, ...fundUsed, ...noRights].map((data, index) => {
+                return (
+                  <UserCredit
+                    key={index}
+                    misc={misc}
+                    discount={data.discount}
+                    status={data.status}
+                  />
+                )
+              })
+            )}
             <Box textAlign="right">
               <Typography variant="pSmall">{codeDescription}</Typography>
             </Box>
