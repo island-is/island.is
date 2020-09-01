@@ -13,7 +13,14 @@ export const root = style({
     ['&:nth-child(even)']: {
       marginRight: 0,
     },
-    ['a:hover &']: {
+  },
+})
+
+export const anchorWrap = style({
+  display: 'flex',
+  flexDirection: 'column',
+  selectors: {
+    [`${root}:hover &`]: {
       textDecoration: 'none',
     },
   },
@@ -24,6 +31,7 @@ export const linkBox = style({
   background: theme.color.blue100,
   border: `1px solid ${theme.color.blue200}`,
   borderRadius: 8,
+  height: '100%',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
