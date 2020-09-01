@@ -1,12 +1,10 @@
 import React, { FC } from 'react'
-import cn from 'classnames'
 import {
   Box,
   GridContainer,
   GridRow,
   GridColumn,
   Stack,
-  Typography,
   Button,
 } from '@island.is/island-ui/core'
 import { AdgerdirNews } from '@island.is/api/schema'
@@ -17,14 +15,6 @@ import Link from 'next/link'
 
 interface FeaturedNewsProps {
   items: Array<AdgerdirNews>
-}
-
-const image = {
-  url: '/img.jpg',
-  title: 'ok',
-  contentType: 'jpeg',
-  width: 800,
-  height: 400,
 }
 
 export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
@@ -43,7 +33,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
           <GridRow>
             <GridColumn span={[12, 12, 12, 12, 10]} offset={[0, 0, 0, 0, 1]}>
               <Box marginBottom={[6, 6, 10]}>
-                {image ? (
+                {first.image ? (
                   <Box marginBottom={[3, 3, 3, 3, 6]}>
                     <BackgroundImage ratio="20:10" image={first.image} />
                   </Box>
@@ -78,7 +68,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
               </GridColumn>
               {second ? (
                 <GridColumn span={[12, 12, 12, 5, 4]} offset={[0, 0, 0, 0, 1]}>
-                  {image ? (
+                  {second.image ? (
                     <Box marginTop={10} marginBottom={3}>
                       <BackgroundImage image={second.image} />
                     </Box>
@@ -106,7 +96,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
               ) : null}
               {third ? (
                 <GridColumn span={[12, 12, 12, 5, 4]} offset={[0, 0, 0, 2, 2]}>
-                  {image ? (
+                  {third.image ? (
                     <Box marginTop={10} marginBottom={3}>
                       <BackgroundImage image={third.image} />
                     </Box>

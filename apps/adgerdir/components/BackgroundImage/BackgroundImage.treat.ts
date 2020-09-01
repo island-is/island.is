@@ -10,6 +10,17 @@ export const container = style({
   backgroundColor: theme.color.dark100,
 })
 
+export const srOnly = style({
+  position: 'absolute',
+  width: '1px',
+  height: '1px',
+  padding: '0',
+  margin: '-1px',
+  overflow: 'hidden',
+  clip: 'rect(0,0,0,0)',
+  border: '0',
+})
+
 export const bgImage = style({
   backgroundPosition: 'center center',
   backgroundRepeat: 'no-repeat',

@@ -26,6 +26,7 @@ export const BackgroundImage: FC<BackgroundImageProps> = ({
 }) => {
   const src = image.url + '?w=1000'
   const thumbnail = image.url + '?w=50'
+  const alt = image.title ?? ''
 
   const imageLoaded = useImageLoader(src)
 
@@ -52,6 +53,8 @@ export const BackgroundImage: FC<BackgroundImageProps> = ({
         }}
       />
       <div
+        role="img"
+        aria-label={alt}
         className={cn(styles.image, styles.bgImage, {
           [styles.imageShow]: imageLoaded,
         })}
