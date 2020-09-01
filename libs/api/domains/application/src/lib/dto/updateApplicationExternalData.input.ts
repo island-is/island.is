@@ -1,8 +1,8 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 import { IsString, IsArray, IsEnum } from 'class-validator'
-import { DataProviderDTOTypeEnum } from '../../../gen/fetch/models'
+import { DataProviderDtoTypeEnum } from '../../../gen/fetch/models'
 
-registerEnumType(DataProviderDTOTypeEnum, { name: 'DataProviderDTOTypeEnum' })
+registerEnumType(DataProviderDtoTypeEnum, { name: 'DataProviderDtoTypeEnum' })
 
 @InputType()
 class DataProvider {
@@ -10,9 +10,9 @@ class DataProvider {
   @IsString()
   id: string
 
-  @Field(() => DataProviderDTOTypeEnum)
-  @IsEnum(DataProviderDTOTypeEnum)
-  type: DataProviderDTOTypeEnum
+  @Field(() => DataProviderDtoTypeEnum)
+  @IsEnum(DataProviderDtoTypeEnum)
+  type: DataProviderDtoTypeEnum
 }
 
 @InputType()

@@ -937,7 +937,7 @@ export type ResolversTypes = {
   UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
   UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
   DataProvider: DataProvider
-  DataProviderDTOTypeEnum: DataProviderDtoTypeEnum
+  DataProviderDtoTypeEnum: DataProviderDtoTypeEnum
 }
 
 /** Mapping between all available schema types and the resolvers parents */

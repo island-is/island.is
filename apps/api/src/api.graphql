@@ -548,10 +548,10 @@ input UpdateApplicationExternalDataInput {
 
 input DataProvider {
   id: String!
-  type: DataProviderDTOTypeEnum!
+  type: DataProviderDtoTypeEnum!
 }
 
-enum DataProviderDTOTypeEnum {
+enum DataProviderDtoTypeEnum {
   ExpectedDateOfBirth
   ExampleFails
   ExampleSucceeds
