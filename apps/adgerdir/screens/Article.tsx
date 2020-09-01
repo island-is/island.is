@@ -63,27 +63,6 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
   const n = useNamespace(namespace)
   const { makePath } = useRouteNames(activeLocale as Locale)
 
-  useEffect(() => {
-    setContentOverviewOptions(
-      getHeadingLinkElements().map((link) => ({
-        label: link.textContent,
-        value: slugify(link.textContent),
-      })) || [],
-    )
-  }, [])
-
-  const onChangeContentOverview = ({ value }: Option) => {
-    const slug = value as string
-
-    const el = document.querySelector(
-      `[data-sidebar-link="${slug}"]`,
-    ) as HTMLElement
-
-    if (el) {
-      window.scrollTo(0, el.offsetTop)
-    }
-  }
-
   // const { fields: articleFields } = article
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
@@ -93,41 +72,19 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
       <Head>
         <title>{article.title} | Ísland.is</title>
       </Head>
-      <ArticleLayout
-        sidebar={
-          <Sidebar title={n('sidebarHeader')} bullet="left" headingLinks />
-        }
-      >
-        <ContentContainer
-          padding="none"
-          paddingX={[3, 3, 6, 0]}
-          marginBottom={simpleSpacing}
-        >
-          <Stack space={3}>
-            <Breadcrumbs>
-              <Link href={makePath()}>
-                <a>Viðspyrna</a>
-              </Link>
-            </Breadcrumbs>
-            <Hidden above="md">
-              <Select
-                label="Efnisyfirlit"
-                placeholder="Flokkar"
-                options={contentOverviewOptions}
-                onChange={onChangeContentOverview}
-                name="content-overview"
-              />
-            </Hidden>
-            <Box marginBottom={simpleSpacing}>
-              <Typography variant="h1" as="h1">
-                <span data-sidebar-link={slugify(article.title)}>
-                  {article.title}
-                </span>
-              </Typography>
-            </Box>
-          </Stack>
-        </ContentContainer>
-
+      <ArticleLayout sidebar={<div>ok</div>}>
+        <Stack space={3}>
+          <Breadcrumbs color="blue400">
+            <Link href={makePath()}>
+              <a>Viðspyrna</a>
+            </Link>
+          </Breadcrumbs>
+          <Box>
+            <Typography variant="h1" as="h1">
+              {article.title}
+            </Typography>
+          </Box>
+        </Stack>
         <Content document={article.content} />
       </ArticleLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>

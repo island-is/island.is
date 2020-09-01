@@ -5,7 +5,6 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import { Sticky } from '../../components'
 
 import * as styles from './Layouts.treat'
 
@@ -16,14 +15,12 @@ interface ArticleProps {
 export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
   <div className={styles.layout}>
     <GridContainer>
-      <Box paddingY={10}>
+      <Box paddingTop={10}>
         <GridRow>
-          <GridColumn span={7} offset={1}>
+          <GridColumn span={8} offset={1}>
             <Box paddingBottom={10}>{children}</Box>
           </GridColumn>
-          <GridColumn span={3} offset={1}>
-            <Sticky>{sidebar}</Sticky>
-          </GridColumn>
+          <GridColumn span={3}>{sidebar}</GridColumn>
         </GridRow>
       </Box>
     </GridContainer>

@@ -8,7 +8,7 @@ import React, {
 } from 'react'
 import cn from 'classnames'
 import AliceCarousel, { EventObject } from 'react-alice-carousel'
-import { Icon, Inline } from '@island.is/island-ui/core'
+import { Icon, Inline, Hidden } from '@island.is/island-ui/core'
 import { AdgerdirPage } from '@island.is/api/schema'
 import { ColorSchemeContext, ColorSchemes } from '@island.is/adgerdir/context'
 import { Card } from '../Card/Card'
@@ -145,42 +145,44 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
         ))}
       />
 
-      <div className={styles.controls}>
-        <Inline space={2}>
-          <button
-            className={cn(styles.arrowButton, {
-              [styles.arrowButtonDisabled]: atStart,
-            })}
-            disabled={atStart}
-            onClick={slidePrev}
-          >
-            <Icon type="arrowLeft" color="white" width="18" height="18" />
-          </button>
-          <button
-            className={cn(styles.arrowButton, {
-              [styles.arrowButtonDisabled]: atEnd,
-            })}
-            disabled={atEnd}
-            onClick={slideNext}
-          >
-            <Icon type="arrowRight" color="white" width="18" height="18" />
-          </button>
-        </Inline>
-      </div>
-
-      <div className={styles.dotsContainer}>
-        {[...Array(dotJumps).keys()].map((item, index) => {
-          return (
+      <Hidden below="sm">
+        <div className={styles.controls}>
+          <Inline space={2}>
             <button
-              key={item}
-              onClick={() =>
-                ref.current.slideTo(index * slideState.itemsInSlide)
-              }
-              className={styles.dot}
-            />
-          )
-        })}
-      </div>
+              className={cn(styles.arrowButton, {
+                [styles.arrowButtonDisabled]: atStart,
+              })}
+              disabled={atStart}
+              onClick={slidePrev}
+            >
+              <Icon type="arrowLeft" color="white" width="18" height="18" />
+            </button>
+            <button
+              className={cn(styles.arrowButton, {
+                [styles.arrowButtonDisabled]: atEnd,
+              })}
+              disabled={atEnd}
+              onClick={slideNext}
+            >
+              <Icon type="arrowRight" color="white" width="18" height="18" />
+            </button>
+          </Inline>
+        </div>
+
+        <div className={styles.dotsContainer}>
+          {[...Array(dotJumps).keys()].map((item, index) => {
+            return (
+              <button
+                key={item}
+                onClick={() =>
+                  ref.current.slideTo(index * slideState.itemsInSlide)
+                }
+                className={styles.dot}
+              />
+            )
+          })}
+        </div>
+      </Hidden>
     </div>
   )
 }

@@ -3,7 +3,12 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const wrapper = style({
   position: 'relative',
-  paddingTop: 77,
+  paddingTop: 24,
+  ...themeUtils.responsiveStyle({
+    sm: {
+      paddingTop: 77,
+    },
+  }),
 })
 
 export const item = style({
@@ -51,17 +56,6 @@ export const arrowButtonDisabled = style({
   pointerEvents: 'none',
   opacity: 0.25,
   transition: `all 150ms ease`,
-  /* selectors: {
-    [`${variants.blue} &`]: {
-      backgroundColor: theme.color.white,
-    },
-    [`${variants.red} &`]: {
-      backgroundColor: theme.color.white,
-    },
-    [`${variants.purple} &`]: {
-      backgroundColor: theme.color.white,
-    },
-  }, */
 })
 
 export const controls = style({
@@ -108,7 +102,4 @@ export const dot = style({
 
 globalStyle(`${wrapper} .alice-carousel__wrapper`, {
   overflow: 'visible',
-  ...themeUtils.responsiveStyle({
-    md: {},
-  }),
 })

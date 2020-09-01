@@ -89,13 +89,11 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
               >
                 <LanguageToggler hideWhenMobile activeLocale={locale} />
                 <Box marginLeft={marginLeft}>
-                  <Button
-                    href="http://minarsidur.island.is/"
-                    variant="menu"
-                    leftIcon="user"
-                  >
-                    Innskráning
-                  </Button>
+                  <Link href="https://minarsidur.island.is/" passHref>
+                    <Button variant="menu" leftIcon="user">
+                      Innskráning
+                    </Button>
+                  </Link>
                 </Box>
               </Box>
             </Column>

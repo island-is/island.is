@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-
+import Head from 'next/head'
 import {
   Box,
   GridContainer,
@@ -9,6 +9,7 @@ import {
   ContentBlock,
   Typography,
   Stack,
+  Breadcrumbs,
 } from '@island.is/island-ui/core'
 import { Content } from '@island.is/island-ui/contentful'
 import {
@@ -37,7 +38,7 @@ import { Screen } from '../types'
 // import { useNamespace } from '../hooks'
 // import { Locale } from '../i18n/I18n'
 import { ColorSchemeContext } from '@island.is/adgerdir/context'
-import Head from 'next/head'
+import { ArticleLayout } from './Layouts/Layouts'
 
 interface HomeProps {
   frontpage: Query['getAdgerdirFrontpage']
@@ -62,28 +63,20 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
       <Head>
         <title>Viðspyrna fyrir Ísland</title>
       </Head>
-      <Box paddingY={10} paddingX={[1, 2]}>
-        <GridContainer>
-          <GridRow>
-            <GridColumn span={[12, 12, 12, 12, 7]} offset={[0, 0, 0, 0, 1]}>
-              <ContentBlock width="small">
-                <Stack space={3}>
-                  <Typography variant="eyebrow" as="h2" color="purple400">
-                    Viðspyrna
-                  </Typography>
-                  <Typography variant="h1" as="h1">
-                    {frontpage.title}
-                  </Typography>
-                  <Typography variant="intro" as="p">
-                    {frontpage.description}
-                  </Typography>
-                </Stack>
-              </ContentBlock>
-              <Content document={frontpage.content} />
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
-      </Box>
+      <ArticleLayout sidebar={<div>stuff</div>}>
+        <Stack space={3}>
+          <Breadcrumbs color="blue400">
+            <span>Viðspyrna</span>
+          </Breadcrumbs>
+          <Typography variant="h1" as="h1">
+            {frontpage.title}
+          </Typography>
+          <Typography variant="intro" as="p">
+            {frontpage.description}
+          </Typography>
+        </Stack>
+        <Content document={frontpage.content} />
+      </ArticleLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
         <Box marginBottom={10}>
           <Sleeve>
