@@ -375,6 +375,17 @@
             }
           }
         },
+        "codegen-cms-types": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "../../../../node_modules/.bin/contentful-typescript-codegen --output src/lib/generated/contentfulTypes.d.ts"
+              }
+            ],
+            "cwd": "libs/api/domains/cms"
+          }
+        },
         "env-secrets": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
@@ -1110,6 +1121,17 @@
           "builder": "@nrwl/node:execute",
           "options": {
             "buildTarget": "services-search-indexer:build"
+          }
+        },
+        "dev-services": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "docker-compose -f docker-compose.yml up -d"
+              }
+            ],
+            "cwd": "apps/services/search-indexer/dev-services"
           }
         },
         "lint": {
@@ -2500,7 +2522,24 @@
             "outputPath": "dist/apps/judicial-system/api",
             "main": "apps/judicial-system/api/src/main.ts",
             "tsConfig": "apps/judicial-system/api/tsconfig.app.json",
-            "assets": ["apps/judicial-system/api/src/assets"]
+            "assets": [
+              "apps/judicial-system/api/src/assets",
+              {
+                "glob": "*",
+                "input": "apps/judicial-system/api/migrations",
+                "output": "./migrations"
+              },
+              {
+                "glob": ".sequelizerc",
+                "input": "apps/judicial-system/api",
+                "output": "./"
+              },
+              {
+                "glob": "sequelize.config.js",
+                "input": "apps/judicial-system/api",
+                "output": "./"
+              }
+            ]
           },
           "configurations": {
             "production": {
@@ -2613,7 +2652,7 @@
             ],
             "styles": ["apps/judicial-system/web/src/styles.scss"],
             "scripts": [],
-            "webpackConfig": "@nrwl/react/plugins/webpack"
+            "webpackConfig": "apps/judicial-system/web/webpack.config.js"
           },
           "configurations": {
             "production": {
@@ -2704,6 +2743,120 @@
             ]
           }
         }
+      }
+    },
+    "service-portal-graphql": {
+      "root": "libs/service-portal/graphql",
+      "sourceRoot": "libs/service-portal/graphql/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/graphql/.eslintrc",
+            "tsConfig": [
+              "libs/service-portal/graphql/tsconfig.lib.json",
+              "libs/service-portal/graphql/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/service-portal/graphql/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/graphql/jest.config.js",
+            "tsConfig": "libs/service-portal/graphql/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "api-domains-documents": {
+      "root": "libs/api/domains/documents",
+      "sourceRoot": "libs/api/domains/documents/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/graphql/.eslintrc",
+            "tsConfig": [
+              "libs/api/domains/documents/tsconfig.lib.json",
+              "libs/api/domains/documents/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/api/domains/documents/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/documents/jest.config.js",
+            "tsConfig": "libs/api/domains/documents/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "skilavottord-ws": {
+      "root": "apps/skilavottord/ws",
+      "sourceRoot": "apps/skilavottord/ws/src",
+      "projectType": "application",
+      "prefix": "skilavottord-ws",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/skilavottord/ws",
+            "main": "apps/skilavottord/ws/src/main.ts",
+            "tsConfig": "apps/skilavottord/ws/tsconfig.app.json",
+            "assets": ["apps/skilavottord/ws/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/skilavottord/ws/src/environments/environment.ts",
+                  "with": "apps/skilavottord/ws/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "skilavottord-ws:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/skilavottord/ws/.eslintrc",
+            "tsConfig": [
+              "apps/skilavottord/ws/tsconfig.app.json",
+              "apps/skilavottord/ws/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/skilavottord/ws/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/skilavottord/ws/jest.config.js",
+            "tsConfig": "apps/skilavottord/ws/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "docker-express": {}
       }
     }
   },

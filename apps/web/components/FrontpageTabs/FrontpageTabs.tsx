@@ -10,13 +10,20 @@ import React, {
 import Link from 'next/link'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
-import { Typography, Stack, Box, Button } from '@island.is/island-ui/core'
+import {
+  Typography,
+  Stack,
+  Box,
+  Button,
+  GridContainer,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 import { Locale } from '@island.is/web/i18n/I18n'
 import { useRouteNames } from '@island.is/web/i18n/useRouteNames'
 import { useI18n } from '../../i18n'
 import Dots from './Dots'
 import HeartSvg from './HeartSvg'
-
 import * as styles from './FrontpageTabs.treat'
 
 const AUTOPLAY_TIMER = 8000
@@ -145,93 +152,92 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   }, [selectedIndex, updateImage])
 
   return (
-    <div className={styles.container}>
-      <TabList {...tab} aria-label="My tabs" className={styles.tabWrapper}>
-        {tabs.map(({ subtitle = '' }, index) => {
-          return (
-            <Tab key={index} {...tab} className={cn(styles.tabContainer)}>
-              <TabBullet selected={selectedIndex === index} />
-              <span className={styles.srOnly}>{subtitle}</span>
-            </Tab>
-          )
-        })}
-      </TabList>
-      <div className={styles.content}>
-        <Box
-          display="flex"
-          flexDirection="column"
-          justifyContent="spaceBetween"
-          marginRight={[0, 0, 0, 3]}
-          width="full"
-          position="relative"
-        >
-          {tabs.map(({ title, subtitle, content, link }, index) => {
-            let href = null
-            let as = null
+    <GridContainer>
+      <GridRow>
+        <GridColumn span={6} offset={1}>
+          <TabList {...tab} aria-label="My tabs" className={styles.tabWrapper}>
+            {tabs.map(({ subtitle = '' }, index) => {
+              return (
+                <Tab key={index} {...tab} className={cn(styles.tabContainer)}>
+                  <TabBullet selected={selectedIndex === index} />
+                  <span className={styles.srOnly}>{subtitle}</span>
+                </Tab>
+              )
+            })}
+          </TabList>
+        </GridColumn>
+      </GridRow>
+      <GridRow>
+        <GridColumn span={6} offset={1}>
+          <div className={styles.tabPanelWrapper}>
+            {tabs.map(({ title, subtitle, content, link }, index) => {
+              let href = null
+              let as = null
 
-            const currentIndex = tab.items.findIndex(
-              (x) => x.id === tab.currentId,
-            )
+              const currentIndex = tab.items.findIndex(
+                (x) => x.id === tab.currentId,
+              )
 
-            const visible = currentIndex === index
+              const visible = currentIndex === index
 
-            if (link) {
-              const linkData = JSON.parse(link)
-              const contentId = linkData.sys?.contentType?.sys?.id
+              if (link) {
+                const linkData = JSON.parse(link)
+                const contentId = linkData.sys?.contentType?.sys?.id
 
-              const slug = linkData.fields?.slug
+                const slug = linkData.fields?.slug
 
-              if (slug && ['article', 'category'].includes(contentId)) {
-                href = `${makePath(contentId)}/[slug]`
-                as = makePath(contentId, slug)
+                if (slug && ['article', 'category'].includes(contentId)) {
+                  href = `${makePath(contentId)}/[slug]`
+                  as = makePath(contentId, slug)
+                }
               }
-            }
 
-            return (
-              <TabPanel
-                key={index}
-                {...tab}
-                style={{
-                  display: 'inline-block',
-                }}
-                className={cn(styles.tabPanel, {
-                  [styles.tabPanelVisible]: visible,
-                })}
-              >
-                <Box
-                  paddingY={3}
-                  ref={(el) => (itemsRef.current[index] = el)}
-                  style={{ minHeight: `${minHeight}px` }}
+              return (
+                <TabPanel
+                  key={index}
+                  {...tab}
+                  style={{
+                    display: 'inline-block',
+                  }}
+                  className={cn(styles.tabPanel, {
+                    [styles.tabPanelVisible]: visible,
+                  })}
                 >
-                  <Stack space={3}>
-                    <Typography variant="eyebrow" as="h2" color="purple400">
-                      <span className={styles.textItem}>{subtitle}</span>
-                    </Typography>
-                    <Typography variant="h1" as="h1">
-                      <span className={styles.textItem}>{title}</span>
-                    </Typography>
-                    <Typography variant="p" as="p">
-                      <span className={styles.textItem}>
-                        {content}
-                        {href ? (
-                          <>
-                            {` `}
-                            <Link as={as} href={href} passHref>
-                              <a className={styles.link}>
-                                <Button variant="text" icon="arrowRight">
-                                  Sjá nánar
-                                </Button>
-                              </a>
-                            </Link>
-                          </>
-                        ) : null}
-                      </span>
-                    </Typography>
-                  </Stack>
-                </Box>
-              </TabPanel>
-            )
-          })}
+                  <Box
+                    paddingY={3}
+                    ref={(el) => (itemsRef.current[index] = el)}
+                    style={{ minHeight: `${minHeight}px` }}
+                  >
+                    <Stack space={3}>
+                      <Typography variant="eyebrow" as="h2" color="purple400">
+                        <span className={styles.textItem}>{subtitle}</span>
+                      </Typography>
+                      <Typography variant="h1" as="h1">
+                        <span className={styles.textItem}>{title}</span>
+                      </Typography>
+                      <Typography variant="p" as="p">
+                        <span className={styles.textItem}>
+                          {content}
+                          {href ? (
+                            <>
+                              {` `}
+                              <Link as={as} href={href} passHref>
+                                <a className={styles.link}>
+                                  <Button variant="text" icon="arrowRight">
+                                    Sjá nánar
+                                  </Button>
+                                </a>
+                              </Link>
+                            </>
+                          ) : null}
+                        </span>
+                      </Typography>
+                    </Stack>
+                  </Box>
+                </TabPanel>
+              )
+            })}
+          </div>
 
           <Box
             display="inlineFlex"
@@ -244,18 +250,17 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
           >
             {searchContent}
           </Box>
-        </Box>
-
-        <div className={styles.imageContainer}>
-          <div className={styles.dots}>
-            <Dots />
-          </div>
-          <div className={styles.image}>
+        </GridColumn>
+        <GridColumn span={5}>
+          <div className={styles.imageContainer}>
+            <div className={styles.dots}>
+              <Dots />
+            </div>
             {image ? <img src={image.url} alt={image.title} /> : <HeartSvg />}
           </div>
-        </div>
-      </div>
-    </div>
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }
 

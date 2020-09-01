@@ -1,15 +1,10 @@
 import React, { PureComponent } from 'react'
-import HtmlParser from 'react-html-parser'
 import * as Sentry from '@sentry/node'
 
 import { Box, ContentBlock, Typography } from '@island.is/island-ui/core'
 
-import { withI18n } from '../../i18n'
-import { Translation } from '../../i18n/locales'
-
 interface PropTypes {
   children: React.ReactNode
-  t?: Translation
 }
 
 interface StateTypes {
@@ -36,10 +31,7 @@ class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
   }
 
   render() {
-    const {
-      children,
-      t: { errorBoundary: t },
-    } = this.props
+    const { children } = this.props
     const { error } = this.state
 
     if (error) {
@@ -48,15 +40,20 @@ class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
           <ContentBlock width="large">
             <Box marginBottom={3}>
               <Typography variant="h1" as="h1">
-                {t.title}
+                Villa kom upp
               </Typography>
             </Box>
             <Box marginBottom={9}>
-              {t.contents.map((content, index) => (
-                <Typography variant="intro" key={index}>
-                  {HtmlParser(content)}
-                </Typography>
-              ))}
+              <Typography variant="intro">
+                Eitthvað hefur farið úrskeiðis.
+              </Typography>
+              <Typography variant="intro">
+                Vinsamlega{' '}
+                <a href="https://island.is/um-island-is/hafa-samband/">
+                  hafðu samband
+                </a>{' '}
+                fyrir frekari hjálp
+              </Typography>
             </Box>
           </ContentBlock>
         </Box>
@@ -71,4 +68,4 @@ class ErrorBoundary extends PureComponent<PropTypes, StateTypes> {
   }
 }
 
-export default withI18n(ErrorBoundary)
+export default ErrorBoundary

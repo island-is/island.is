@@ -35,7 +35,7 @@ export class CaseService {
   }
 
   async update(id: string, caseToUpdate: UpdateCaseDto) {
-    this.logger.debug(`Updating case whith id "${caseToUpdate.id}"`)
+    this.logger.debug(`Updating case whith id "${id}"`)
 
     const [numberOfAffectedRows, [updatedCase]] = await this.caseModel.update(
       caseToUpdate,

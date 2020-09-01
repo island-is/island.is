@@ -1,16 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { ThjodskraUser } from '@island.is/air-discount-scheme/types'
-import { NationalRegistryResponse } from './user.types'
+import {
+  User as TUser,
+  ThjodskraUser,
+  Fund,
+} from '@island.is/air-discount-scheme/types'
 
-export class User implements ThjodskraUser {
-  constructor(user: NationalRegistryResponse, flightLegsLeft: number) {
+export class User implements TUser {
+  constructor(user: ThjodskraUser, fund: Fund) {
     this.firstName = user.firstName
     this.middleName = user.middleName
     this.lastName = user.lastName
     this.gender = user.gender
     this.nationalId = user.nationalId
-    this.flightLegsLeft = flightLegsLeft
+    this.address = user.address
+    this.postalcode = user.postalcode
+    this.city = user.city
+    this.fund = fund
   }
 
   @ApiProperty()
@@ -23,11 +29,20 @@ export class User implements ThjodskraUser {
   lastName: string
 
   @ApiProperty()
-  gender: string
+  gender: TUser['gender']
 
   @ApiProperty()
   nationalId: string
 
   @ApiProperty()
-  flightLegsLeft: number
+  address: string
+
+  @ApiProperty()
+  postalcode: number
+
+  @ApiProperty()
+  city: string
+
+  @ApiProperty()
+  fund: Fund
 }

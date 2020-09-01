@@ -25,12 +25,20 @@ describe('Get Discount By DiscountCode', () => {
     spy.mockRestore()
 
     expect(response.body).toEqual({
-      flightLegsLeft: 4,
       nationalId: '1326487905',
       firstName: 'Jón',
-      gender: 'Male',
+      gender: 'kk',
       lastName: 'Jónsson',
       middleName: 'Gunnar',
+      address: 'Bessastaðir 1',
+      postalcode: 225,
+      city: 'Álftanes',
+      fund: {
+        nationalId: '1326487905',
+        credit: 0,
+        used: 0,
+        total: 4,
+      },
     })
   })
 })

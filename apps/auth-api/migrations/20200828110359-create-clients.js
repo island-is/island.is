@@ -59,15 +59,6 @@ module.exports = {
         CONSTRAINT FK_client_allowed_scope_client FOREIGN KEY (client_id) REFERENCES client (client_id)
       );
 
-      CREATE TABLE client_grant_type (
-        id uuid NOT NULL,
-        client_id  VARCHAR NOT NULL,
-        grant_type_id uuid NOT NULL,
-        CONSTRAINT PK_client_grant_type PRIMARY KEY (id),
-        CONSTRAINT FK_client_grant_type_client FOREIGN KEY (client_id) REFERENCES client (client_id),
-        CONSTRAINT FK_client_grant_type_grant_type FOREIGN KEY (grant_type_id) REFERENCES grant_type (id)
-      );
-
       CREATE TABLE client_idp_restrictions (
         id uuid NOT NULL,
         name VARCHAR NOT NULL,
@@ -99,7 +90,6 @@ module.exports = {
         DROP TABLE client_secret;
         DROP TABLE client_post_logout_redirect_uri;
         DROP TABLE client_idp_restrictions;
-        DROP TABLE client_grant_type;
         DROP TABLE client_allowed_cors_origin;
         DROP TABLE client_allowed_scope;
         DROP TABLE client;
