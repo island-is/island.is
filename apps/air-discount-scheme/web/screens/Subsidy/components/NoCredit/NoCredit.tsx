@@ -27,10 +27,10 @@ function NoCredit({ discount, misc }: PropTypes) {
 
   return (
     <Box
-      key={discountCode}
       padding={2}
-      marginBottom={2}
-      border="focus"
+      borderWidth="standard"
+      borderStyle="solid"
+      borderColor="red200"
       borderRadius="standard"
       display={['block', 'flex']}
       justifyContent="spaceBetween"

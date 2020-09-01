@@ -114,9 +114,6 @@ export const border = styleMap({
   focus: {
     border: `${theme.border.style.solid} ${theme.border.width.standard}px ${theme.border.color.focus}`,
   },
-  success: {
-    border: `${theme.border.style.solid} ${theme.border.width.standard}px ${theme.border.color.success}`,
-  },
 })
 
 export const borderRadius = {

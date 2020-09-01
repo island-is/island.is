@@ -28,10 +28,10 @@ function HasCredit({ discount, misc }: PropTypes) {
 
   return (
     <Box
-      key={discountCode}
       padding={2}
-      marginBottom={2}
-      border="standard"
+      borderColor="blue200"
+      borderWidth="standard"
+      borderStyle="solid"
       borderRadius="standard"
       display={['block', 'flex']}
       justifyContent="spaceBetween"

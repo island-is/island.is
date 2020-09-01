@@ -28,10 +28,11 @@ function FullyUsed({ discount, misc }: PropTypes) {
 
   return (
     <Box
-      key={discountCode}
       padding={2}
-      marginBottom={2}
-      border="success"
+      borderWidth="standard"
+      borderColor="mint400"
+      borderStyle="solid"
+      background="mint100"
       borderRadius="standard"
       display={['block', 'flex']}
       justifyContent="spaceBetween"

@@ -1,10 +1,9 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect } from 'react'
 import { useMutation } from '@apollo/client'
 import gql from 'graphql-tag'
 
-import { UserContext } from '@island.is/air-discount-scheme-web/context'
-import { Box, Typography, Button } from '@island.is/island-ui/core'
-import { HasCredit, NoCredit, FullyUsed } from '../'
+import { Box, Typography, Stack, Icon } from '@island.is/island-ui/core'
+import { UserCredit, NoBenefits } from '../'
 
 interface PropTypes {
   misc: string
@@ -37,35 +36,80 @@ function Benefits({ misc }: PropTypes) {
     fetchDiscounts()
   }, [fetchDiscounts])
 
-  const { fetchDiscounts: discounts } = data || {}
-  const {
-    myRights,
-    remaining,
-    copyCode,
-    codeDescription,
-    kidsRights,
-  } = JSON.parse(misc)
-
+  const { fetchDiscounts: discounts = [] } = data || {}
+  const { myRights, codeDescription, attention, codeDisclaimer } = JSON.parse(
+    misc,
+  )
+  const { activeCodes, fundUsed, noRights } = discounts.reduce(
+    (acc, discount) => {
+      const { user } = discount
+      const fundUsed = user.fund.used === user.fund.total
+      const noRights = !user.meetsADSRequirements
+      const status = fundUsed ? 'success' : noRights ? 'error' : 'default'
+      if (status === 'success') {
+        acc.fundUsed.push({ discount, status })
+      } else if (status === 'error') {
+        acc.noRights.push({ discount, status })
+      } else {
+        //acc.activeCodes.push({ discount, status })
+      }
+      return acc
+    },
+    {
+      activeCodes: [],
+      fundUsed: [],
+      noRights: [],
+    },
+  )
+  const noBenefits = fundUsed.length <= 0 && activeCodes.length <= 0
   return (
     <Box marginBottom={6}>
-      <Box marginBottom={3}>
-        <Typography variant="h3">{myRights}</Typography>
-      </Box>
-      {discounts &&
-        discounts.map((discount) => {
-          const { user } = discount
+      {!noBenefits && (
+        <Box
+          marginBottom={8}
+          background="yellow200"
+          borderColor="yellow400"
+          borderWidth="standard"
+          borderStyle="solid"
+          borderRadius="standard"
+          display="flex"
+          alignItems="center"
+          padding={3}
+        >
+          <Box marginRight={2}>
+            <Icon type="alert" color="yellow600" width={26} />
+          </Box>
+          <Box marginRight={2}>
+            <Typography variant="p">
+              <strong>{attention}</strong>
+            </Typography>
+          </Box>
+          <Typography variant="p">{codeDisclaimer}</Typography>
+        </Box>
+      )}
 
-          if (user.fund.used === user.fund.total) {
-            return <FullyUsed misc={misc} discount={discount} />
-          } else if (!user.meetsADSRequirements) {
-            return <NoCredit misc={misc} discount={discount} />
-          } else {
-            return <HasCredit misc={misc} discount={discount} />
-          }
-        })}
-      <Box textAlign="right" marginBottom={4}>
-        <Typography variant="pSmall">{codeDescription}</Typography>
-      </Box>
+      <Stack space={3}>
+        <Typography variant="h3">{myRights}</Typography>
+        {!noBenefits ? (
+          <>
+            {[...activeCodes, ...fundUsed, ...noRights].map((data) => {
+              return (
+                <UserCredit
+                  key={data.discount.code}
+                  misc={misc}
+                  discount={data.discount}
+                  status={data.status}
+                />
+              )
+            })}
+            <Box textAlign="right">
+              <Typography variant="pSmall">{codeDescription}</Typography>
+            </Box>
+          </>
+        ) : (
+          <NoBenefits misc={misc} />
+        )}
+      </Stack>
     </Box>
   )
 }
