@@ -68,6 +68,12 @@ export class IndexingService {
       numItems: result.items.length,
     })
 
+    // // Delete everything in ES, except for content we're going to sync (useful in case of re-sync)
+    await this.elasticService.deleteAllExcept(
+      index,
+      result.items.map((entry) => entry.sys.id),
+    )
+
     for (const item of result.items) {
       // one at a time please, else ES will be unhappy
       await this.transformAndIndexEntry(index, result.token, item)
@@ -117,8 +123,8 @@ export class IndexingService {
         }
         if (doc.data && doc.data.target) {
           if (doc.data.target.sys.contentType.sys.id === 'processEntry') {
-            response += doc.data.target.fields.processTitle + '\n'
-            response += doc.data.target.fields.processDescription + '\n'
+            response += (doc.data.target.fields.processTitle ?? '') + '\n'
+            response += (doc.data.target.fields.processDescription ?? '') + '\n'
           } else {
             //todo implement more types
           }

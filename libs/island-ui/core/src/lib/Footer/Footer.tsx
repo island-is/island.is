@@ -46,7 +46,7 @@ export const Footer = ({
 }: FooterProps) => {
   return (
     <>
-      <Box width="full" background="blue100" paddingY={[3, 3, 6]}>
+      <Box width="full" background="blue100" paddingY={6}>
         <GridContainer>
           <GridRow>
             <GridColumn span={12}>
@@ -54,7 +54,11 @@ export const Footer = ({
                 <Logo iconOnly id="footer_logo" />
               </Box>
             </GridColumn>
-            <GridColumn span={[12, 12, 3]} paddingBottom={[4, 4, 0]}>
+            <GridColumn
+              span={[12, 12, 3]}
+              paddingBottom={[4, 4, 0]}
+              className={styles.withDecorator}
+            >
               <div className={cn(styles.links)}>
                 {topLinks.map(({ title, href }, index) => (
                   <Typography
@@ -99,7 +103,12 @@ export const Footer = ({
               </div>
             </GridColumn>
             {showMiddleLinks ? (
-              <GridColumn span={[12, 12, 6]} paddingBottom={[4, 4, 0]}>
+              <GridColumn
+                span={[12, 12, 6]}
+                paddingBottom={[4, 4, 0]}
+                paddingTop={[6, 6, 0]}
+                className={styles.withDecorator}
+              >
                 <div className={cn(styles.links)}>
                   {middleLinksTitle ? (
                     <Typography
@@ -123,7 +132,7 @@ export const Footer = ({
               </GridColumn>
             ) : null}
             {showTagLinks ? (
-              <GridColumn span={[12, 12, 3]}>
+              <GridColumn span={[12, 12, 3]} paddingTop={[6, 6, 0]}>
                 {tagLinksTitle ? (
                   <Typography
                     variant="eyebrow"
@@ -161,15 +170,18 @@ export const Footer = ({
               (group) =>
                 group.map(({ title, href }) => {
                   return (
-                    <GridColumn key={href} span={3}>
+                    <GridColumn key={href} span={[12, 6, 4, 3]}>
                       <Typography variant="h5" color="white" paddingBottom={3}>
                         <a
                           href={href}
                           target="_blank"
                           rel="noopener noreferrer"
+                          className={styles.withIcon}
                         >
-                          {title}{' '}
-                          <Icon width="12" type="external" color="white" />
+                          {title}
+                          <Box paddingLeft={1} component="span">
+                            <Icon width="12" type="external" color="white" />
+                          </Box>
                         </a>
                       </Typography>
                     </GridColumn>

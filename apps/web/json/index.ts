@@ -66,3 +66,97 @@ export const selectOptions = categories.map((x) => ({
   label: x.title,
   value: x.title,
 }))
+
+export const tempTabs = [
+  {
+    title: 'Þjónustuflokkar',
+    links: [
+      { title: 'Fjölskyldumál', url: '/fjolskyldumal' },
+      {
+        title: 'Eldri borgarar',
+        url: '/',
+      },
+      {
+        title: 'Bætur',
+        url: '/',
+      },
+      {
+        title: 'Málefni fatlaðra',
+        url: '/',
+      },
+      {
+        title: 'Menntun',
+        url: '/',
+      },
+      {
+        title: 'Ferðalög og búseta erlendis',
+        url: '/',
+      },
+      {
+        title: 'Innflytjendur',
+        url: '/',
+      },
+      {
+        title: 'Umhverfismál',
+        url: '/',
+      },
+      {
+        title: 'Húsnæðismál',
+        url: '/',
+      },
+    ],
+  },
+  {
+    title: 'Stafrænt Ísland',
+    links: [
+      { title: 'Um Ísland.is', url: '/' },
+      {
+        title: 'Stofnanir',
+        url: '/',
+      },
+    ],
+    externalLinksHeading: 'Aðrir opinberir vefir',
+    externalLinks: [
+      {
+        title: 'Heilsuvera',
+        url: 'https://heilsuvera.is',
+        icon: null,
+      },
+      {
+        title: 'Samráðsgátt',
+        url: 'https://samradsgatt.island.is',
+        icon: null,
+      },
+      {
+        title: 'Mannanöfn',
+        url: 'https://vefur.island.is/mannanofn/',
+        icon: null,
+      },
+      {
+        title: 'Undirskriftalistar',
+        url: 'https://vefur.island.is/undirskriftalistar/',
+        icon: null,
+      },
+      {
+        title: 'Opin gögn',
+        url: 'https://opingogn.is/',
+        icon: null,
+      },
+      {
+        title: 'Opinber Nýsköpun',
+        url: 'https://opinbernyskopun.island.is/',
+        icon: null,
+      },
+      {
+        title: 'Opnir reikn. ríkisins',
+        url: 'http://www.opnirreikningar.is/',
+        icon: null,
+      },
+      {
+        title: 'Tekjusagan',
+        url: 'http://www.tekjusagan.is/',
+        icon: null,
+      },
+    ],
+  },
+]

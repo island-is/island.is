@@ -9,6 +9,12 @@ export const GET_ADGERDIR_PAGES_QUERY = gql`
         title
         description
         content
+        tags {
+          id
+          title
+        }
+        link
+        status
       }
     }
   }
@@ -22,6 +28,23 @@ export const GET_ADGERDIR_PAGE_QUERY = gql`
       title
       description
       content
+      tags {
+        id
+        title
+      }
+      link
+      status
+    }
+  }
+`
+
+export const GET_ADGERDIR_TAGS_QUERY = gql`
+  query GetAdgerdirTags($input: GetAdgerdirTagsInput!) {
+    getAdgerdirTags(input: $input) {
+      items {
+        id
+        title
+      }
     }
   }
 `

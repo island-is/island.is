@@ -20,6 +20,7 @@ export type VariantTypes =
   | 'eyebrow'
   | 'tag'
   | 'cardCategoryTitle'
+  | 'sideMenu'
 
 type ResponsiveProps<T> = {
   xs?: T
@@ -140,7 +141,7 @@ export const variants: Variants = {
       xs: 12,
       md: 14,
     },
-    fontWeight: theme.typography.semiBold,
+    fontWeight: theme.typography.medium,
     lineHeight: 1.142857,
   },
   tag: {
@@ -158,7 +159,14 @@ export const variants: Variants = {
     },
     fontWeight: theme.typography.headingsFontWeight,
     lineHeight: 1.416667,
-    color: theme.color.blue400,
+  },
+  sideMenu: {
+    fontSize: {
+      xs: 16,
+      md: 18,
+    },
+    fontWeight: theme.typography.medium,
+    lineHeight: 1.55,
   },
 }
 

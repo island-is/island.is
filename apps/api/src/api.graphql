@@ -53,12 +53,20 @@ type Article {
   category: Taxonomy!
 }
 
+type AdgerdirTag {
+  id: String
+  title: String
+}
+
 type AdgerdirPage {
   id: String!
   slug: String!
   title: String!
-  description: String!
+  description: String
   content: String
+  tags: [AdgerdirTag!]!
+  link: String
+  status: String!
 }
 
 type AdgerdirPages {
@@ -211,7 +219,7 @@ type LatestNewsSlice {
 type MailingListSignupSlice {
   id: ID!
   title: String!
-  description: String!
+  description: String
   inputLabel: String!
   buttonText: String!
 }
@@ -272,6 +280,10 @@ type GenericPage {
 type Menu {
   title: String!
   links: [Link!]!
+}
+
+type AdgerdirTags {
+  items: [AdgerdirTag!]!
 }
 
 type Application {
@@ -335,11 +347,12 @@ type Query {
   getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput!): PaginatedNews!
   getNamespace(input: GetNamespaceInput!): Namespace
-  getAboutPage(input: GetAboutPageInput!): AboutPage
+  getAboutPage(input: GetAboutPageInput!): AboutPage!
   getLandingPage(input: GetLandingPageInput!): LandingPage
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
-  getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages
+  getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages!
+  getAdgerdirTags(input: GetAdgerdirTagsInput!): AdgerdirTags
   getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getMenu(input: GetMenuInput!): Menu
@@ -431,6 +444,10 @@ input GetAdgerdirPageInput {
 input GetAdgerdirPagesInput {
   lang: String
   perPage: Int
+}
+
+input GetAdgerdirTagsInput {
+  lang: String
 }
 
 input GetFrontpageSliderListInput {

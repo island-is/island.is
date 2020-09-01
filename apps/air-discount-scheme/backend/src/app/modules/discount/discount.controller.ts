@@ -21,7 +21,6 @@ import {
 } from './discount.validator'
 import { DiscountService } from './discount.service'
 import { DiscountLimitExceeded } from './discount.error'
-import { FlightService } from '../flight'
 import { AuthGuard } from '../common'
 
 @ApiTags('Discounts')
@@ -29,11 +28,7 @@ import { AuthGuard } from '../common'
 @UseGuards(AuthGuard)
 @ApiBearerAuth()
 export class PublicDiscountController {
-  constructor(
-    private readonly discountService: DiscountService,
-    @Inject(forwardRef(() => FlightService))
-    private readonly flightService: FlightService,
-  ) {}
+  constructor(private readonly discountService: DiscountService) {}
 
   // TODO THIS SHOULD NOT GO TO PROD
   // THIS IS ONLY FOR AIRLINES TO TEST THE API
@@ -42,23 +37,13 @@ export class PublicDiscountController {
   async createDiscountCode(
     @Param() params: CreateDiscountCodeParams,
   ): Promise<Discount> {
-    const {
-      unused: flightLegsLeft,
-    } = await this.flightService.countFlightLegsByNationalId(params.nationalId)
-    if (flightLegsLeft <= 0) {
-      throw new DiscountLimitExceeded()
-    }
     return this.discountService.createDiscountCode(params.nationalId)
   }
 }
 
 @Controller('api/private')
 export class PrivateDiscountController {
-  constructor(
-    private readonly discountService: DiscountService,
-    @Inject(forwardRef(() => FlightService))
-    private readonly flightService: FlightService,
-  ) {}
+  constructor(private readonly discountService: DiscountService) {}
 
   @Get('users/:nationalId/discounts/current')
   @ApiExcludeEndpoint()
@@ -73,12 +58,6 @@ export class PrivateDiscountController {
   async createDiscountCode(
     @Param() params: CreateDiscountCodeParams,
   ): Promise<Discount> {
-    const {
-      unused: flightLegsLeft,
-    } = await this.flightService.countFlightLegsByNationalId(params.nationalId)
-    if (flightLegsLeft <= 0) {
-      throw new DiscountLimitExceeded()
-    }
     return this.discountService.createDiscountCode(params.nationalId)
   }
 }

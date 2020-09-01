@@ -26,7 +26,7 @@ import { GET_ADGERDIR_PAGE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
 import { withApollo } from '../graphql'
 import { Screen } from '../types'
-import ArticleContent from '../units/Content/ArticleContent'
+import { Content } from '@island.is/island-ui/contentful'
 import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
 import { Locale } from '../i18n/I18n'
@@ -109,10 +109,7 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
           </Stack>
         </ContentContainer>
 
-        <ArticleContent
-          document={article.content}
-          locale={activeLocale as Locale}
-        />
+        <Content document={article.content} />
       </ArticleLayout>
     </>
   )

@@ -26,3 +26,31 @@ export const Basic = () => (
     </Box>
   </ContentBlock>
 )
+
+export const Bordered = () => (
+  <ContentBlock>
+    <Box paddingY={[1, 2]}>
+      <Inline space={1}>
+        <Tag bordered>Ferðagjöf</Tag>
+        <Tag variant="darkerBlue" bordered>
+          Gifting
+        </Tag>
+        <Tag variant="darkerMint" bordered>
+          Fæðingarorlof
+        </Tag>
+        <Tag variant="mint" bordered>
+          Skilnaður
+        </Tag>
+        <Tag variant="purple" bordered>
+          Færnimat
+        </Tag>
+        <Tag variant="red" label bordered>
+          Færnimat
+        </Tag>
+        <Tag variant="white" label bordered>
+          Færnimat
+        </Tag>
+      </Inline>
+    </Box>
+  </ContentBlock>
+)

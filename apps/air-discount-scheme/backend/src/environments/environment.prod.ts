@@ -1,7 +1,7 @@
 export default {
   production: true,
   airlineApiKeys: {
-    airIcelandConnect: process.env.AIR_ICELAND_CONNECT_API_KEY,
+    icelandair: process.env.ICELANDAIR_API_KEY,
     ernir: process.env.ERNIR_API_KEY,
   },
   redis: {
