@@ -981,7 +981,7 @@ export interface IStorySectionFields {
   readMoreText?: string | undefined
 
   /** Stories */
-  stories?: IStory[] | undefined
+  stories: IStory[]
 }
 
 export interface IStorySection extends Entry<IStorySectionFields> {
@@ -1145,6 +1145,9 @@ export interface IVidspyrnaFrontpageFields {
 
   /** Organization */
   organization?: IOrganization[] | undefined
+
+  /** Slices */
+  slices: (IVidspyrnaFeaturedNews | IVidspyrnaFlokkur)[]
 }
 
 /** A temporary content type that is used for the "Viðspyrna" information page. Once that site is no longer live this can be deleted. */
@@ -1192,42 +1195,6 @@ export interface IVidspyrnaInlineImage
   }
 }
 
-export interface IVidspyrnaPageFields {
-  /** Title */
-  title: string
-
-  /** Description */
-  description?: string | undefined
-
-  /** Slug */
-  slug: string
-
-  /** Content */
-  content?: Document | undefined
-
-  /** Tags */
-  tags: IVidspyrnaTag[]
-}
-
-/** A temporary content type that is used for the "Viðspyrna" information page. Once that site is no longer live this can be deleted. */
-
-export interface IVidspyrnaPage extends Entry<IVidspyrnaPageFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'vidspyrna-page'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface IVidspyrnaProcessEntryFields {
   /** Title */
   title: string
@@ -1268,6 +1235,32 @@ export interface IVidspyrnaProcessEntry
   }
 }
 
+export interface IVidspyrnaFeaturedNewsFields {
+  /** Title */
+  title?: string | undefined
+
+  /** featured */
+  featured: IVidspyrnaNews[]
+}
+
+export interface IVidspyrnaFeaturedNews
+  extends Entry<IVidspyrnaFeaturedNewsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'vidspyrnaFeaturedNews'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IVidspyrnaFlokkurFields {
   /** Subtitle */
   subtitle: string
@@ -1297,6 +1290,46 @@ export interface IVidspyrnaFlokkur extends Entry<IVidspyrnaFlokkurFields> {
     contentType: {
       sys: {
         id: 'vidspyrnaFlokkur'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IVidspyrnaNewsFields {
+  /** Subtitle */
+  subtitle?: string | undefined
+
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Date */
+  date: string
+
+  /** Introduction */
+  intro: string
+
+  /** Featured image */
+  image?: Asset | undefined
+
+  /** Content */
+  content?: Document | undefined
+}
+
+export interface IVidspyrnaNews extends Entry<IVidspyrnaNewsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'vidspyrnaNews'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1433,9 +1466,10 @@ export type CONTENT_TYPE =
   | 'urls'
   | 'vidspyrna-frontpage'
   | 'vidspyrna-inline-image'
-  | 'vidspyrna-page'
   | 'vidspyrna-process-entry'
+  | 'vidspyrnaFeaturedNews'
   | 'vidspyrnaFlokkur'
+  | 'vidspyrnaNews'
   | 'vidspyrnaPage'
   | 'vidspyrnaStatus'
   | 'vidspyrnaTag'

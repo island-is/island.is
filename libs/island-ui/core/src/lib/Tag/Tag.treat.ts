@@ -45,7 +45,7 @@ export const variants = styleMap({
     backgroundColor: theme.color.purple100,
   },
   red: {
-    color: theme.color.red400,
+    color: theme.color.red600,
     backgroundColor: theme.color.red100,
     ':focus': {
       backgroundColor: theme.color.red200,

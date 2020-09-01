@@ -1,8 +1,14 @@
-import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory'
+import {
+  InMemoryCache,
+  IntrospectionFragmentMatcher,
+  NormalizedCacheObject,
+} from 'apollo-cache-inmemory'
 import { ApolloClient } from 'apollo-client'
 import getConfig from 'next/config'
 import { BatchHttpLink } from 'apollo-link-batch-http'
 import fetch from 'isomorphic-unfetch'
+
+import introspectionQueryResultData from './possibleTypes.json'
 
 const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 
@@ -23,6 +29,12 @@ function create(initialState?: any) {
       publicRuntimeConfig.graphqlEndpoint,
   })
 
+  const cache = new InMemoryCache({
+    fragmentMatcher: new IntrospectionFragmentMatcher({
+      introspectionQueryResultData,
+    }),
+  }).restore(initialState || {})
+
   // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
   return new ApolloClient({
     name: 'cms-web-client',
@@ -30,7 +42,8 @@ function create(initialState?: any) {
     connectToDevTools: isBrowser,
     ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
     link: httpLink,
-    cache: new InMemoryCache().restore(initialState || {}),
+    // cache: new InMemoryCache().restore(initialState || {}),
+    cache,
   })
 }
 
