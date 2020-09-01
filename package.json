@@ -78,7 +78,7 @@
     "aws-sdk": "2.678.0",
     "cache-manager": "3.3.0",
     "cache-manager-ioredis": "2.1.0",
-    "class-transformer": "0.2.3",
+    "class-transformer": "0.3.1",
     "class-validator": "0.12.2",
     "classnames": "2.2.6",
     "contentful": "7.14.4",
