@@ -38,12 +38,36 @@ module.exports = {
         enable_mobile_login: 'N',
       }
     ];
-    return Promise.all([queryInterface.bulkInsert('client', clients, {})]);
+
+    var scopes = [
+      {
+        client_id: 'postman',
+        scope_name: 'openid'
+      },
+      {
+        client_id: 'postman',
+        scope_name: 'profile'
+      },
+      {
+        client_id: 'postman',
+        scope_name: 'email'
+      },
+      {
+        client_id: 'postman',
+        scope_name: 'saml'
+      },
+      {
+        client_id: 'postman',
+        scope_name: 'postman_resource.scope'
+      },
+    ];
+
+    return Promise.all([queryInterface.bulkInsert('client', clients, {}), queryInterface.bulkInsert('client_allowed_scope', scopes, {})]);
   },
 
   down: (queryInterface, Sequelize) => {
 
-    var clients =  queryInterface.bulkDelete('client', null, {});
+    var clients = queryInterface.bulkDelete('client', null, {});
     return Promise.all([clients])
   }
 };

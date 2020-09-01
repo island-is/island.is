@@ -10,6 +10,7 @@ import {
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { Client } from './client.model'
+import { GrantType } from '../grant-types/grant-type.model'
 
 @Table({
   tableName: 'client_grant_type',
@@ -40,8 +41,16 @@ export class ClientGrantType extends Model<ClientGrantType> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    })
-    // TODO: @ForeignKey(() => GrantType)
-    @ApiProperty()
-    grantTypeId: string
+  })
+  @ForeignKey(() => GrantType)
+  @ApiProperty()
+  grantTypeId: string
+
+  @CreatedAt
+  @ApiProperty()
+  readonly created: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  readonly modified: Date
 }

@@ -44,4 +44,12 @@ export class ClientIdpRestrictions extends Model<ClientIdpRestrictions> {
   @ForeignKey(() => Client)
   @ApiProperty()
   clientId: string
+
+  @CreatedAt
+  @ApiProperty()
+  readonly created: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  readonly modified: Date
 }

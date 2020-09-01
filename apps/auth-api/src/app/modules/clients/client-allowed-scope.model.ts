@@ -20,6 +20,7 @@ import { Client } from './client.model'
   ],
 })
 export class ClientAllowedScope extends Model<ClientAllowedScope> {
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -27,6 +28,7 @@ export class ClientAllowedScope extends Model<ClientAllowedScope> {
   @ApiProperty()
   scopeName: string
 
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -34,4 +36,12 @@ export class ClientAllowedScope extends Model<ClientAllowedScope> {
   @ForeignKey(() => Client)
   @ApiProperty()
   clientId: string
+
+  @CreatedAt
+  @ApiProperty()
+  readonly created: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  readonly modified: Date
 }

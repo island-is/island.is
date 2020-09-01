@@ -31,28 +31,36 @@ export class ClientSecret extends Model<ClientSecret> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    })
-    @ApiProperty()
-    value: string
+  })
+  @ApiProperty()
+  value: string
 
-    @Column({
+  @Column({
     type: DataType.STRING,
     allowNull: true,
-    })
-    @ApiProperty()
-    description: string
+  })
+  @ApiProperty()
+  description: string
 
-    @Column({
+  @Column({
     type: DataType.STRING,
     allowNull: false,
-    })
-    @ApiProperty()
-    type: string
+  })
+  @ApiProperty()
+  type: string
 
-    @Column({
+  @Column({
     type: DataType.DATE,
     allowNull: true,
-    })
-    @ApiProperty()
-    expiration: Date
+  })
+  @ApiProperty()
+  expiration: Date
+
+  @CreatedAt
+  @ApiProperty()
+  readonly created: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  readonly modified: Date
 }

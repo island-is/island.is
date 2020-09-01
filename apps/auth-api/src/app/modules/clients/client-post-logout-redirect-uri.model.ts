@@ -34,4 +34,12 @@ export class ClientPostLogoutRedirectUri extends Model<ClientPostLogoutRedirectU
   })
   @ApiProperty()
   redirectUri: string
+
+  @CreatedAt
+  @ApiProperty()
+  readonly created: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  readonly modified: Date
 }

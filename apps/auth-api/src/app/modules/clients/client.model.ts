@@ -7,8 +7,10 @@ import {
   UpdatedAt,
   ForeignKey,
   PrimaryKey,
+  HasMany,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+import { ClientAllowedScope } from './client-allowed-scope.model'
 
 @Table({
   tableName: 'client',
@@ -300,4 +302,8 @@ export class Client extends Model<Client> {
   @UpdatedAt
   @ApiProperty()
   readonly modified: Date
+
+  @HasMany(() => ClientAllowedScope)
+  @ApiProperty()
+  readonly clientAllowedScope: ClientAllowedScope[]
 }

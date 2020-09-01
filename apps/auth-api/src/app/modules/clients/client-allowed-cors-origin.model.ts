@@ -34,4 +34,12 @@ export class ClientAllowedCorsOrigin extends Model<ClientAllowedCorsOrigin> {
   @ForeignKey(() => Client)
   @ApiProperty()
   clientId: string
+
+  @CreatedAt
+  @ApiProperty()
+  readonly created: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  readonly modified: Date
 }
