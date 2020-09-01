@@ -14,7 +14,7 @@ interface Props {
 
 const ExternalLink: React.FC<Props> = ({ href, children, color = 'white' }) => {
   return (
-    <Link href={href} color={color} className={styles.root}>
+    <Link href={href} color={color} className={styles.root} withUnderline>
       {children}
       <span className={styles.iconWrap}>
         <Icon type="external" height="12" color="currentColor" />

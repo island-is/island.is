@@ -14,6 +14,7 @@ const isLinkInternal = (href) => {
 interface Props extends LinkProps {
   color?: Colors
   className?: string
+  withUnderline?: boolean
 }
 
 // Next link that can handle external urls
@@ -28,10 +29,13 @@ const Link: React.FC<Props> = ({
   prefetch,
   color,
   className,
+  withUnderline,
   ...linkProps
 }) => {
   const isInternal = isLinkInternal(href)
-  const classNames = cn(styles.link, styles.colors[color], className)
+  const classNames = cn(styles.link, styles.colors[color], className, {
+    [styles.withUnderline]: withUnderline,
+  })
 
   if (isInternal) {
     return (
