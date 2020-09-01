@@ -24,3 +24,8 @@ export const detentionRequestsTable = style({
   gridRow: '3',
   gridColumn: '1 / -1',
 })
+
+export const detentionRequestsError = style({
+  gridRow: '3',
+  gridColumn: '1 / 5',
+})

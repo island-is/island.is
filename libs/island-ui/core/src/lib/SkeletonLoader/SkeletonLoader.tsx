@@ -1,6 +1,7 @@
 import React from 'react'
 
 import * as styles from './SkeletonLoader.treat'
+import { Stack, StackProps } from '../Stack/Stack'
 
 export interface SkeletonLoaderProps {
   /**
@@ -15,6 +16,10 @@ export interface SkeletonLoaderProps {
    * Adds multiple lines of skeleton loader, usefull for mimicking block of text
    */
   repeat?: number
+  /**
+   * Define a space between each skeleton loader
+   */
+  space?: StackProps['space']
 }
 /**
  * Animated content placeholder to manage user expectations
@@ -23,24 +28,22 @@ export const SkeletonLoader = ({
   width,
   height,
   repeat = 1,
+  space = 0,
 }: SkeletonLoaderProps) => {
-  const loaders: React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLSpanElement>,
-    HTMLSpanElement
-  >[] = []
-  for (let i = 0; i < repeat; i++) {
-    loaders.push(
-      <span
-        key={i}
-        className={styles.loader}
-        style={{
-          ...(height && { height }),
-          ...(width && { width }),
-        }}
-      />,
-    )
-  }
-  return <>{loaders}</>
+  return (
+    <Stack space={space}>
+      {[...Array(repeat)].map((_key, index) => (
+        <span
+          key={index}
+          className={styles.loader}
+          style={{
+            ...(height && { height }),
+            ...(width && { width }),
+          }}
+        />
+      ))}
+    </Stack>
+  )
 }
 
 export default SkeletonLoader

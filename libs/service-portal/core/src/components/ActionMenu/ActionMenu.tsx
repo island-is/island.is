@@ -1,7 +1,7 @@
 import React, { FC, useState, useRef } from 'react'
 import { Box, Icon, Stack, Typography } from '@island.is/island-ui/core'
 import * as styles from './ActionMenu.treat'
-import useOutsideClick from '../../hooks/useOutsideClick/useOutsideClick'
+import { useOutsideClick } from '@island.is/service-portal/core'
 
 interface ActionMenuItemProps {
   onClick?: () => void
@@ -11,14 +11,12 @@ export const ActionMenuItem: FC<ActionMenuItemProps> = ({
   onClick,
   children,
 }) => (
-  <button onClick={onClick}>
-    <Typography variant="pSmall" color="blue600">
-      {children}
-    </Typography>
+  <button className={styles.menuItem} onClick={onClick}>
+    {children}
   </button>
 )
 
-const ActionMenu: FC<{}> = ({ children }) => {
+export const ActionMenu: FC<{}> = ({ children }) => {
   const ref = useRef()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -29,9 +27,9 @@ const ActionMenu: FC<{}> = ({ children }) => {
   return (
     <Box position="relative" ref={ref}>
       <button className={styles.trigger} onClick={handleTriggerClick}>
-        <Icon type="bullet" width={4} height={4} color="blue300" />
-        <Icon type="bullet" width={4} height={4} color="blue300" />
-        <Icon type="bullet" width={4} height={4} color="blue300" />
+        <Icon type="bullet" width={4} height={4} color="blue400" />
+        <Icon type="bullet" width={4} height={4} color="blue400" />
+        <Icon type="bullet" width={4} height={4} color="blue400" />
       </button>
       {isOpen && (
         <Box

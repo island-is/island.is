@@ -1,16 +1,13 @@
 import { setup } from '../../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
-import { FlightService } from '../../flight'
 import CacheManger from 'cache-manager'
 
 let app: INestApplication
-let flightService: FlightService
 let cacheManager: CacheManger
 
 beforeAll(async () => {
   app = await setup()
-  flightService = app.get<FlightService>(FlightService)
   cacheManager = app.get<CacheManger>(CACHE_MANAGER)
   cacheManager.ttl = () => ''
 
