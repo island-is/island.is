@@ -7,7 +7,6 @@ import {
   Typography,
   Box,
   ArrowLink,
-  Icon,
 } from '@island.is/island-ui/core'
 
 // TODO:
@@ -59,7 +58,7 @@ const IntroductionSection: FC<Props> = ({
             <Typography as="h2" variant="h1" paddingBottom={2}>
               {title}
             </Typography>
-            <Typography variant="intro" paddingBottom={!!text ? 2 : 0}>
+            <Typography variant="intro" paddingBottom={text ? 2 : 0}>
               {introText}
             </Typography>
             <Typography variant="p">{text}</Typography>
