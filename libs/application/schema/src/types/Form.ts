@@ -2,7 +2,7 @@ import { ZodObject } from 'zod'
 import { Condition } from './Condition'
 import { Field } from './Fields'
 import { FormType } from '../forms'
-import { DataProviderTypes } from '@island.is/application/data-provider'
+import { DataProviderTypes } from './DataProvider'
 
 export enum FormItemTypes {
   FORM = 'FORM',
@@ -81,10 +81,4 @@ export interface DataProviderItem {
   readonly title: string
   readonly subTitle?: string
   readonly source?: string
-}
-
-export type Answer = string | number | Answer[] | FormValue
-
-export interface FormValue {
-  [key: string]: Answer
 }

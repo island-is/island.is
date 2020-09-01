@@ -6,8 +6,7 @@ import {
   IsArray,
   IsOptional,
 } from 'class-validator'
-import { ApplicationState } from '../application.model'
-import { FormType } from '@island.is/application/schema'
+import { ApplicationState, FormType } from '@island.is/application/schema'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class CreateApplicationDto {

@@ -1,4 +1,4 @@
-import { FormValue } from './Form'
+import { FormValue } from './Application'
 
 export enum Comparators {
   EQUALS = 'eq',

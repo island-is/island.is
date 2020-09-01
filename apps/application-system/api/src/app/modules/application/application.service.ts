@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { ExternalData, mergeNestedObjects } from '@island.is/application/schema'
+import { ExternalData, mergeAnswers } from '@island.is/application/schema'
 import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
@@ -42,7 +42,7 @@ export class ApplicationService {
       where: { id },
     })
 
-    const mergedAnswers = mergeNestedObjects(
+    const mergedAnswers = mergeAnswers(
       existingApplication.answers,
       application.answers,
     )
@@ -51,7 +51,11 @@ export class ApplicationService {
       numberOfAffectedRows,
       [updatedApplication],
     ] = await this.applicationModel.update(
-      { ...application, answers: mergedAnswers },
+      {
+        ...application,
+        answers: mergedAnswers,
+        externalData: existingApplication.externalData,
+      },
       { where: { id }, returning: true },
     )
 
@@ -63,16 +67,14 @@ export class ApplicationService {
       where: { id },
     })
 
-    const mergedExternalData = mergeNestedObjects(
-      existingApplication.externalData,
-      externalData,
-    )
-
     const [
       numberOfAffectedRows,
       [updatedApplication],
     ] = await this.applicationModel.update(
-      { ...existingApplication, externalData: mergedExternalData },
+      {
+        ...existingApplication,
+        externalData: { ...existingApplication.externalData, ...externalData },
+      },
       { where: { id }, returning: true },
     )
 

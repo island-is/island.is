@@ -15,6 +15,7 @@ import {
   DataProviderItem,
 } from '../types/Form'
 import { FormType } from '../forms'
+import { DataProviderTypes } from '../types/DataProvider'
 
 export function buildForm(data: {
   id: FormType
@@ -66,6 +67,7 @@ export function buildSubSection(data: {
 
 export function buildExternalDataProvider(data: {
   name: string
+  id: string
   dataProviders: DataProviderItem[]
 }): ExternalDataProvider {
   return {
@@ -74,4 +76,14 @@ export function buildExternalDataProvider(data: {
     children: undefined,
     type: FormItemTypes.EXTERNAL_DATA_PROVIDER,
   }
+}
+
+export function buildDataProviderItem(data: {
+  id: string
+  type: DataProviderTypes
+  title: string
+  subTitle?: string
+  source?: string
+}): DataProviderItem {
+  return data
 }

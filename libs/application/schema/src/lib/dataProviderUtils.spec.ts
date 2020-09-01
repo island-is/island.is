@@ -1,9 +1,8 @@
 import { callDataProviders } from './dataProviderUtils'
-import { DataProvider, DataProviderTypes } from './DataProvider'
-import { ExpectedDateOfBirth } from '../providers/ExpectedDateOfBirth'
+import { DataProvider, DataProviderTypes } from '../types/DataProvider'
 
 class ExampleProviderThatAlwaysFails extends DataProvider {
-  readonly type: DataProviderTypes.EXAMPLE_FAILS
+  readonly type: DataProviderTypes.ExampleFails
 
   provide(): Promise<unknown> {
     return Promise.reject('this should reject')
@@ -11,7 +10,7 @@ class ExampleProviderThatAlwaysFails extends DataProvider {
 }
 
 class ExampleProviderThatAlwaysSucceeds extends DataProvider {
-  readonly type: DataProviderTypes.EXAMPLE_SUCCEEDS
+  readonly type: DataProviderTypes.ExampleSucceeds
 
   provide(): Promise<string> {
     return Promise.resolve('success')
@@ -21,13 +20,13 @@ class ExampleProviderThatAlwaysSucceeds extends DataProvider {
 describe('dataProviderUtils', () => {
   it('should return results in place', async () => {
     const dataProviders = [
-      new ExpectedDateOfBirth(),
+      new ExampleProviderThatAlwaysSucceeds(),
       new ExampleProviderThatAlwaysSucceeds(),
     ]
-    const result = await callDataProviders(dataProviders)
+    const result = await callDataProviders(dataProviders, undefined)
     expect(result).toEqual([
       expect.objectContaining({
-        data: '2020-12-24',
+        data: true,
         status: 'success',
       }),
       expect.objectContaining({
@@ -38,20 +37,21 @@ describe('dataProviderUtils', () => {
   })
   it('should not fail although only one data provider fails, but still return all data provider results, in place', async () => {
     const dataProviders = [
-      new ExpectedDateOfBirth(),
+      new ExampleProviderThatAlwaysSucceeds(),
       new ExampleProviderThatAlwaysFails(),
       new ExampleProviderThatAlwaysSucceeds(),
     ]
-    const result = await callDataProviders(dataProviders)
+    const result = await callDataProviders(dataProviders, undefined)
     expect(result).toEqual([
       expect.objectContaining({
-        data: '2020-12-24',
+        data: true,
         status: 'success',
       }),
       expect.objectContaining({
         status: 'failure',
       }),
       expect.objectContaining({
+        data: true,
         status: 'success',
       }),
     ])

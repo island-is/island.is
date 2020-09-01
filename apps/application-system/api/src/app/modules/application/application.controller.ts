@@ -9,8 +9,11 @@ import {
   Query,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { callDataProviders } from '@island.is/application/data-provider'
-import { FormType } from '@island.is/application/schema'
+import {
+  Application as BaseApplication,
+  callDataProviders,
+  FormType,
+} from '@island.is/application/schema'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
@@ -83,12 +86,16 @@ export class ApplicationController {
     @Body()
     externalDataDto: PopulateExternalDataDto,
   ): Promise<Application> {
+    // TODO how can we know if the requested data-providers are actually associated with this given form?
     const application = await this.applicationService.findById(id)
 
     if (!application) {
       throw new NotFoundException("This application doesn't exist")
     }
-    const results = await callDataProviders(buildDataProviders(externalDataDto))
+    const results = await callDataProviders(
+      buildDataProviders(externalDataDto),
+      application as BaseApplication,
+    )
     const {
       numberOfAffectedRows,
       updatedApplication,

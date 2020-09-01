@@ -297,6 +297,7 @@ type Application {
   attachments: [String!]
   typeId: ApplicationTypeIdEnum!
   answers: JSON!
+  externalData: JSON!
 }
 
 """
@@ -478,6 +479,7 @@ input GetDocumentInput {
 type Mutation {
   createApplication(input: CreateApplicationInput!): Application
   updateApplication(input: UpdateApplicationInput!): Application
+  updateApplicationExternalData(input: UpdateApplicationExternalDataInput!): Application
 }
 
 input CreateApplicationInput {
@@ -537,4 +539,20 @@ enum UpdateApplicationDtoStateEnum {
   MANUALAPPROVED
   REJECTED
   UNKNOWN
+}
+
+input UpdateApplicationExternalDataInput {
+  id: String!
+  dataProviders: [DataProvider!]!
+}
+
+input DataProvider {
+  id: String!
+  type: DataProviderDTOTypeEnum!
+}
+
+enum DataProviderDTOTypeEnum {
+  ExpectedDateOfBirth
+  ExampleFails
+  ExampleSucceeds
 }

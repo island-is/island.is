@@ -101,8 +101,8 @@
       "@island.is/service-portal/graphql": [
         "libs/service-portal/graphql/src/index.ts"
       ],
-      "@island.is/application/data-provider": [
-        "libs/application/data-provider/src/index.ts"
+      "@island.is/application/data-providers": [
+        "libs/application/data-providers/src/index.ts"
       ]
     }
   },

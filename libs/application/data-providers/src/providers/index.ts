@@ -1,8 +1,10 @@
 import { ExpectedDateOfBirth } from './ExpectedDateOfBirth'
-import { DataProvider, DataProviderTypes } from '../lib/DataProvider'
+import { ExampleSucceeds } from './ExampleSucceeds'
+import { DataProvider, DataProviderTypes } from '@island.is/application/schema'
 
 const typeMap = {
-  [DataProviderTypes.EXPECTED_DATE_OF_BIRTH]: ExpectedDateOfBirth,
+  [DataProviderTypes.ExpectedDateOfBirth]: ExpectedDateOfBirth,
+  [DataProviderTypes.ExampleSucceeds]: ExampleSucceeds,
 }
 
 export function getDataProviderByType(

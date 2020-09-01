@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import {
   ApplicationApi,
-  Configuration,
   UpdateApplicationDto,
-  querystring,
   ApplicationTypeIdEnum,
 } from '../../gen/fetch'
 import { CreateApplicationDto } from '../../gen/fetch/models/CreateApplicationDto'
+import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 
 @Injectable()
 export class ApplicationService {
@@ -32,6 +31,15 @@ export class ApplicationService {
     return this.applicationApi.applicationControllerUpdate({
       id: input.id,
       updateApplicationDto: input,
+    })
+  }
+
+  async updateExternalData(input: UpdateApplicationExternalDataInput) {
+    const { id, ...populateExternalDataDto } = input
+
+    return this.applicationApi.applicationControllerUpdateExternalData({
+      id,
+      populateExternalDataDto,
     })
   }
 }

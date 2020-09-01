@@ -4,7 +4,7 @@ import {
   FormValue,
   getFormLeaves,
   getSectionsInForm,
-  mergeNestedObjects,
+  mergeAnswers,
 } from '@island.is/application/schema'
 import { Action, ActionTypes, ApplicationUIState } from './ReducerTypes'
 import {
@@ -39,7 +39,7 @@ const addNewAnswersToState = (
   state: ApplicationUIState,
   answers: FormValue,
 ): ApplicationUIState => {
-  const newFormValue = mergeNestedObjects(state.formValue, answers)
+  const newFormValue = mergeAnswers(state.formValue, answers)
   return {
     ...state,
     formValue: newFormValue,
@@ -125,6 +125,11 @@ export const ApplicationReducer = (
       )
     case ActionTypes.RE_INITIALIZE:
       return initializeReducer({ ...state, ...action.payload })
+    case ActionTypes.ADD_EXTERNAL_DATA:
+      return {
+        ...state,
+        externalData: { ...state.externalData, ...action.payload },
+      }
     default:
       return state
   }

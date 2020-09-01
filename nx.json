@@ -210,7 +210,7 @@
     "service-portal-graphql": {
       "tags": []
     },
-    "application-data-provider": {
+    "application-data-providers": {
       "tags": []
     }
   }

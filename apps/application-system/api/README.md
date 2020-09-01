@@ -31,3 +31,7 @@ When making changes to the module code, run
 to generate the code needed for openapi and swagger. Then you can visit
 
 `localhost:3333/swagger`
+
+In order to update the graphql schema as well, run
+
+`yarn nx codegen api-domains-application`

@@ -6,6 +6,7 @@ import {
   Schema,
   Section,
   FormType,
+  ExternalData,
 } from '@island.is/application/schema'
 import { Typography, Box, Button, Divider } from '@island.is/island-ui/core'
 import { CREATE_APPLICATION } from '@island.is/application/graphql'
@@ -18,13 +19,16 @@ import FormField from './FormField'
 import { resolver } from '../validation/resolver'
 import FormRepeater from './FormRepeater'
 import FormExternalDataProvider from './FormExternalDataProvider'
+import { verifyExternalData } from '../utils'
 
 type ScreenProps = {
   answerAndGoToNextScreen(Answers): void
   formValue: FormValue
   formTypeId: FormType
+  addExternalData(data: ExternalData): void
   answerQuestions(Answers): void
   dataSchema: Schema
+  externalData: ExternalData
   shouldSubmit?: boolean
   expandRepeater(): void
   prevScreen(): void
@@ -37,9 +41,11 @@ type ScreenProps = {
 const Screen: FC<ScreenProps> = ({
   formValue,
   formTypeId,
+  addExternalData,
   answerQuestions,
   dataSchema,
   expandRepeater,
+  externalData,
   answerAndGoToNextScreen,
   prevScreen,
   shouldSubmit = false,
@@ -113,6 +119,17 @@ const Screen: FC<ScreenProps> = ({
     }
   }
 
+  function canProceed(): boolean {
+    const isLoadingOrPending = loading || createPending
+    if (screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
+      return (
+        !isLoadingOrPending &&
+        verifyExternalData(externalData, screen.dataProviders)
+      )
+    }
+    return !isLoadingOrPending
+  }
+
   return (
     <FormProvider {...hookFormData}>
       <Box
@@ -142,7 +159,13 @@ const Screen: FC<ScreenProps> = ({
                 formValue={formValue}
               />
             ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
-              <FormExternalDataProvider externalDataProvider={screen} />
+              <FormExternalDataProvider
+                addExternalData={addExternalData}
+                applicationId={applicationId}
+                externalData={externalData}
+                externalDataProvider={screen}
+                formValue={formValue}
+              />
             ) : (
               <FormField
                 autoFocus
@@ -171,7 +194,7 @@ const Screen: FC<ScreenProps> = ({
               {shouldSubmit ? (
                 <Button
                   loading={loading || createPending}
-                  disabled={loading || createPending}
+                  disabled={!canProceed()}
                   htmlType="submit"
                 >
                   Submit
@@ -179,7 +202,7 @@ const Screen: FC<ScreenProps> = ({
               ) : (
                 <Button
                   loading={loading || createPending}
-                  disabled={loading || createPending}
+                  disabled={!canProceed()}
                   variant="text"
                   icon="arrowRight"
                   htmlType="submit"

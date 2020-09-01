@@ -41,4 +41,7 @@ export class Application {
 
   @Field((type) => graphqlTypeJson)
   answers: object
+
+  @Field((type) => graphqlTypeJson)
+  externalData: object
 }

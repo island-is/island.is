@@ -370,6 +370,7 @@ export type Application = {
   attachments?: Maybe<Array<Scalars['String']>>
   typeId: ApplicationTypeIdEnum
   answers: Scalars['JSON']
+  externalData: Scalars['JSON']
 }
 
 export enum ApplicationStateEnum {
@@ -628,6 +629,7 @@ export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<Application>
   updateApplication?: Maybe<Application>
+  updateApplicationExternalData?: Maybe<Application>
 }
 
 export type MutationCreateApplicationArgs = {
@@ -636,6 +638,10 @@ export type MutationCreateApplicationArgs = {
 
 export type MutationUpdateApplicationArgs = {
   input: UpdateApplicationInput
+}
+
+export type MutationUpdateApplicationExternalDataArgs = {
+  input: UpdateApplicationExternalDataInput
 }
 
 export type CreateApplicationInput = {
@@ -695,6 +701,22 @@ export enum UpdateApplicationDtoStateEnum {
   Manualapproved = 'MANUALAPPROVED',
   Rejected = 'REJECTED',
   Unknown = 'UNKNOWN',
+}
+
+export type UpdateApplicationExternalDataInput = {
+  id: Scalars['String']
+  dataProviders: Array<DataProvider>
+}
+
+export type DataProvider = {
+  id: Scalars['String']
+  type: DataProviderDtoTypeEnum
+}
+
+export enum DataProviderDtoTypeEnum {
+  ExpectedDateOfBirth = 'ExpectedDateOfBirth',
+  ExampleFails = 'ExampleFails',
+  ExampleSucceeds = 'ExampleSucceeds',
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -913,6 +935,9 @@ export type ResolversTypes = {
   UpdateApplicationInput: UpdateApplicationInput
   UpdateApplicationDtoTypeIdEnum: UpdateApplicationDtoTypeIdEnum
   UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
+  UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
+  DataProvider: DataProvider
+  DataProviderDTOTypeEnum: DataProviderDtoTypeEnum
 }
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -1008,6 +1033,8 @@ export type ResolversParentTypes = {
   Mutation: {}
   CreateApplicationInput: CreateApplicationInput
   UpdateApplicationInput: UpdateApplicationInput
+  UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
+  DataProvider: DataProvider
 }
 
 export type HelloWorldResolvers<
@@ -1578,6 +1605,7 @@ export type ApplicationResolvers<
     ContextType
   >
   answers?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
+  externalData?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1751,6 +1779,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationUpdateApplicationArgs, 'input'>
+  >
+  updateApplicationExternalData?: Resolver<
+    Maybe<ResolversTypes['Application']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateApplicationExternalDataArgs, 'input'>
   >
 }
 

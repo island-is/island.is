@@ -11,11 +11,10 @@ const TextFormField: FC<Props> = ({
   autoFocus,
   error,
   field,
-  register,
   showFieldName,
 }) => {
   const { id, name } = field
-  const { clearErrors } = useFormContext()
+  const { clearErrors, register } = useFormContext()
   return (
     <Box paddingTop={2}>
       <Input
