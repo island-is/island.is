@@ -61,7 +61,8 @@ export class ElasticService {
       requestBody.query(
         esb
           .queryStringQuery(query.queryString)
-          .fields(['title.stemmed^10', 'content.stemmed^2', 'tag.stemmed']),
+          .fields(['title.stemmed^10', 'content.stemmed^2', 'tag.stemmed'])
+          .analyzeWildcard(true),
       )
     }
 
