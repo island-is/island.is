@@ -7,9 +7,6 @@ export class AdgerdirFrontpage {
   id: string
 
   @Field()
-  slug: string
-
-  @Field()
   title: string
 
   @Field()

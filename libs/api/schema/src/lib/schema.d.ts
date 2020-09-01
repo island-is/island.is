@@ -130,7 +130,6 @@ export type AdgerdirNews = {
 export type AdgerdirFrontpage = {
   __typename?: 'AdgerdirFrontpage'
   id: Scalars['String']
-  slug: Scalars['String']
   title: Scalars['String']
   description: Scalars['String']
   content?: Maybe<Scalars['String']>
@@ -1239,7 +1238,6 @@ export type AdgerdirFrontpageResolvers<
   ParentType extends ResolversParentTypes['AdgerdirFrontpage'] = ResolversParentTypes['AdgerdirFrontpage']
 > = {
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
@@ -1929,3 +1927,79 @@ export type Resolvers<ContextType = Context> = {
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
 export type IResolvers<ContextType = Context> = Resolvers<ContextType>
+
+export interface IntrospectionResultData {
+  __schema: {
+    types: {
+      kind: string
+      name: string
+      possibleTypes: {
+        name: string
+      }[]
+    }[]
+  }
+}
+const result: IntrospectionResultData = {
+  __schema: {
+    types: [
+      {
+        kind: 'UNION',
+        name: 'AdgerdirSlice',
+        possibleTypes: [
+          {
+            name: 'AdgerdirGroupSlice',
+          },
+          {
+            name: 'AdgerdirFeaturedNewsSlice',
+          },
+        ],
+      },
+      {
+        kind: 'UNION',
+        name: 'Slice',
+        possibleTypes: [
+          {
+            name: 'PageHeaderSlice',
+          },
+          {
+            name: 'TimelineSlice',
+          },
+          {
+            name: 'HeadingSlice',
+          },
+          {
+            name: 'StorySlice',
+          },
+          {
+            name: 'LinkCardSlice',
+          },
+          {
+            name: 'LatestNewsSlice',
+          },
+          {
+            name: 'MailingListSignupSlice',
+          },
+          {
+            name: 'LogoListSlice',
+          },
+          {
+            name: 'BulletListSlice',
+          },
+        ],
+      },
+      {
+        kind: 'UNION',
+        name: 'BulletEntry',
+        possibleTypes: [
+          {
+            name: 'IconBullet',
+          },
+          {
+            name: 'NumberBulletGroup',
+          },
+        ],
+      },
+    ],
+  },
+}
+export default result

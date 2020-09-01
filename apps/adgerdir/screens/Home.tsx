@@ -96,81 +96,45 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
           </Sleeve>
         </Box>
       </ColorSchemeContext.Provider>
-      <ColorSchemeContext.Provider value={{ colorScheme: 'purple' }}>
-        <Box width="full" overflow="hidden" marginBottom={10}>
-          <ContentBlock width="large">
-            <Box padding={[0, 3, 6]}>
-              <GroupedPages
-                topContent={
-                  <Stack space={3}>
-                    <Typography variant="eyebrow" as="h2" color="roseTinted400">
-                      Viðspyrna
-                    </Typography>
-                    <Typography variant="h2" as="h3">
-                      {frontpage.title}
-                    </Typography>
-                    <Typography variant="p" as="p">
-                      {frontpage.description}
-                    </Typography>
-                  </Stack>
-                }
-                bottomContent={<CardsSlider items={pagesItems} key="purple" />}
-              />
-            </Box>
-          </ContentBlock>
-        </Box>
-      </ColorSchemeContext.Provider>
+      {frontpage.slices.map((slice, index) => {
+        switch (slice.__typename) {
+          case 'AdgerdirGroupSlice':
+            return (
+              <ColorSchemeContext.Provider value={{ colorScheme: 'purple' }}>
+                <Box width="full" overflow="hidden" marginBottom={10}>
+                  <ContentBlock width="large">
+                    <Box padding={[0, 3, 6]}>
+                      <GroupedPages
+                        topContent={
+                          <Stack space={3}>
+                            <Typography
+                              variant="eyebrow"
+                              as="h2"
+                              color="roseTinted400"
+                            >
+                              {slice.subtitle}
+                            </Typography>
+                            <Typography variant="h2" as="h3">
+                              {slice.title}
+                            </Typography>
+                            <Typography variant="p" as="p">
+                              {slice.description}
+                            </Typography>
+                          </Stack>
+                        }
+                        bottomContent={
+                          <CardsSlider items={slice.pages} key="purple" />
+                        }
+                      />
+                    </Box>
+                  </ContentBlock>
+                </Box>
+              </ColorSchemeContext.Provider>
+            )
+        }
+        return <div key={index}>{slice.__typename}</div>
+      })}
       <FeaturedNews />
-      <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
-        <Box width="full" overflow="hidden" marginBottom={10}>
-          <ContentBlock width="large">
-            <Box padding={[0, 3, 6]}>
-              <GroupedPages
-                topContent={
-                  <Stack space={3}>
-                    <Typography variant="eyebrow" as="h2" color="roseTinted400">
-                      Viðspyrna
-                    </Typography>
-                    <Typography variant="h2" as="h3">
-                      {frontpage.title}
-                    </Typography>
-                    <Typography variant="p" as="p">
-                      Kapp er lagt á að Ísland verði með fyrstu löndum til að
-                      byggja aftur upp eftirspurn í ferðaþjónustu í kjölfar þess
-                      að ferðatakmörkunum verður aflétt.
-                    </Typography>
-                  </Stack>
-                }
-                bottomContent={<CardsSlider items={pagesItems} key="red" />}
-              />
-            </Box>
-          </ContentBlock>
-        </Box>
-      </ColorSchemeContext.Provider>
-      <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
-        <Box width="full" overflow="hidden" marginBottom={10}>
-          <ContentBlock width="large">
-            <Box padding={[0, 3, 6]}>
-              <GroupedPages
-                topContent={
-                  <Stack space={3}>
-                    <Typography variant="eyebrow" as="h2" color="roseTinted400">
-                      Viðspyrna
-                    </Typography>
-                    <Typography variant="h2" as="h3">
-                      {frontpage.title}
-                    </Typography>
-                    <Typography variant="p" as="p">
-                      {frontpage.description}
-                    </Typography>
-                  </Stack>
-                }
-                bottomContent={<CardsSlider items={pagesItems} key="blue" />}
-              />
-            </Box>
-          </ContentBlock>
-        </Box>
-      </ColorSchemeContext.Provider>
     </>
   )
 }

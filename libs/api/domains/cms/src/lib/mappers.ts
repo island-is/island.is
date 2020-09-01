@@ -7,6 +7,7 @@ import { AboutPage } from './models/aboutPage.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { AdgerdirTag } from './models/adgerdirTag.model'
+import { AdgerdirGroup } from './models/adgerdirGroup.model'
 import { AdgerdirFeaturedNewsSlice } from './models/adgerdirSlices/adgerdirFeaturedNewsSlice.model'
 import { AdgerdirGroupSlice } from './models/adgerdirSlices/adgerdirGroupSlice.model'
 import { AdgerdirNews } from './models/adgerdirNews.model'
@@ -84,6 +85,19 @@ export const mapAdgerdirFeaturedNewsSlice = ({
     featured: fields.featured.map(mapAdgerdirNewsItem),
   })
 
+export const mapAdgerdirGroupSlice = ({
+  fields,
+  sys,
+}: types.IVidspyrnaFlokkur): AdgerdirGroupSlice =>
+  new AdgerdirGroupSlice({
+    id: sys.id,
+    title: fields.title,
+    subtitle: fields.subtitle,
+    description: fields.description,
+    image: mapImage(fields.image),
+    pages: fields.pages.map(mapAdgerdirPage),
+  })
+
 type AdgerdirSliceTypes = types.IVidspyrnaFeaturedNews | types.IVidspyrnaFlokkur
 
 export const mapAdgerdirSlice = (
@@ -92,6 +106,8 @@ export const mapAdgerdirSlice = (
   switch (slice.sys.contentType.sys.id) {
     case 'vidspyrnaFeaturedNews':
       return mapAdgerdirFeaturedNewsSlice(slice as types.IVidspyrnaFeaturedNews)
+    case 'vidspyrnaFlokkur':
+      return mapAdgerdirGroupSlice(slice as types.IVidspyrnaFlokkur)
     default:
       throw new ApolloError(
         `Can not convert to slice: ${(slice as any).sys.contentType.sys.id}`,
@@ -104,7 +120,6 @@ export const mapAdgerdirFrontpage = ({
   fields,
 }: types.IVidspyrnaFrontpage): AdgerdirFrontpage => ({
   id: sys.id,
-  slug: fields.slug,
   title: fields.title,
   description: fields.description,
   content: JSON.stringify(fields.content),
