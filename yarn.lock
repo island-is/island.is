@@ -2546,7 +2546,7 @@
     call-me-maybe "^1.0.1"
     glob-to-regexp "^0.3.0"
 
-"@nestjs/bull@^0.1.2":
+"@nestjs/bull@0.1.2":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@nestjs/bull/-/bull-0.1.2.tgz#26422a7d97020ba5132f6efc6731b8631480c5e0"
   integrity sha512-mg0CmBLs+tVZAkNkXy8/DJ/O7JdPRyw7QblCoaKw7ndqbJ+wJqioi8BLwSg0nfobd1xcupsozkoEaPM0zTSPJg==
@@ -2561,7 +2561,7 @@
     tslib "1.10.0"
     uuid "3.4.0"
 
-"@nestjs/config@^0.5.0":
+"@nestjs/config@0.5.0":
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/@nestjs/config/-/config-0.5.0.tgz#ad1110d937ec26941b8fce5f575859046f8d7b4b"
   integrity sha512-8vgakV722qNt3YBHbvhfwcNRLlwOv37pr5/1RUn5mYMmUh7JKobVNqHgTRWEuJK4BK3dCrhnjxPMPvHOCaA4LQ==
