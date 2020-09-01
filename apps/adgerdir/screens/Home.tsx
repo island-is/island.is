@@ -3,9 +3,6 @@ import React from 'react'
 import Head from 'next/head'
 import {
   Box,
-  GridContainer,
-  GridRow,
-  GridColumn,
   ContentBlock,
   Typography,
   Stack,
@@ -63,7 +60,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
       <Head>
         <title>Viðspyrna fyrir Ísland</title>
       </Head>
-      <ArticleLayout sidebar={<div>stuff</div>}>
+      <ArticleLayout sidebar={null}>
         <Stack space={3}>
           <Breadcrumbs color="blue400">
             <span>Viðspyrna</span>

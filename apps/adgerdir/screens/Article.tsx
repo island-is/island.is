@@ -1,26 +1,18 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useEffect, useState } from 'react'
+import React from 'react'
+import cn from 'classnames'
 import Link from 'next/link'
 import Head from 'next/head'
-import slugify from '@sindresorhus/slugify'
 import {
   ContentBlock,
   Box,
   Typography,
   Stack,
   Breadcrumbs,
-  Hidden,
-  Select,
-  BoxProps,
-  ResponsiveSpace,
-  Option,
+  Button,
+  Inline,
+  Tag,
 } from '@island.is/island-ui/core'
-import {
-  Sidebar,
-  getHeadingLinkElements,
-  Sleeve,
-  Articles,
-} from '@island.is/adgerdir/components'
 import {
   Query,
   QueryGetNamespaceArgs,
@@ -29,22 +21,21 @@ import {
   QueryGetAdgerdirPagesArgs,
   QueryGetAdgerdirTagsArgs,
 } from '@island.is/api/schema'
+import { Articles, ArticleSidebar } from '@island.is/adgerdir/components'
 import {
   GET_ADGERDIR_PAGE_QUERY,
   GET_NAMESPACE_QUERY,
   GET_ADGERDIR_PAGES_QUERY,
   GET_ADGERDIR_TAGS_QUERY,
 } from './queries'
-import { ArticleLayout } from './Layouts/Layouts'
-import { withApollo } from '../graphql'
-import { Screen } from '../types'
+import { ArticleLayout } from '@island.is/adgerdir/screens/Layouts/Layouts'
+import { withApollo } from '@island.is/adgerdir/graphql'
+import { Screen } from '@island.is/adgerdir/types'
 import { Content } from '@island.is/island-ui/contentful'
-import { useNamespace } from '../hooks'
-import { useI18n } from '../i18n'
-import { Locale } from '../i18n/I18n'
-import useRouteNames from '../i18n/useRouteNames'
-import { CustomNextError } from '../units/ErrorBoundary'
-import { ColorSchemeContext } from '../context'
+import { CustomNextError } from '@island.is/adgerdir/units/ErrorBoundary'
+import { ColorSchemeContext } from '@island.is/adgerdir/context'
+
+import * as cardStyles from '@island.is/adgerdir/components/Card/Card.treat'
 
 interface ArticleProps {
   article: Query['getAdgerdirPage']
@@ -53,29 +44,76 @@ interface ArticleProps {
   namespace: Query['getNamespace']
 }
 
-const simpleSpacing = [2, 2, 3] as ResponsiveSpace
-
 const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
-  const [contentOverviewOptions, setContentOverviewOptions] = useState([])
-  const { activeLocale } = useI18n()
-  // TODO: get language strings from namespace...
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale as Locale)
-
   // const { fields: articleFields } = article
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
 
+  const statusNames = {
+    preparing: 'Í undirbúningi',
+    ongoing: 'Í framkvæmd',
+    completed: 'Lokið',
+  }
+
   return (
     <>
       <Head>
-        <title>{article.title} | Ísland.is</title>
+        <title>{article.title} | Viðspyrna fyrir Ísland</title>
       </Head>
-      <ArticleLayout sidebar={<div>ok</div>}>
+      <ArticleLayout
+        sidebar={
+          <Box>
+            <Stack space={3}>
+              <ArticleSidebar title="Aðgerð">
+                {true || article.link ? (
+                  <Button
+                    icon="external"
+                    width="fluid"
+                    href="https://vidspyrna.island.is"
+                  >
+                    Sjá nánar
+                  </Button>
+                ) : null}
+              </ArticleSidebar>
+              <Stack space={1}>
+                <Typography variant="tag" color="red600">
+                  Staða aðgerðar:
+                </Typography>
+                <Tag variant="red" label>
+                  <Box position="relative">
+                    <Inline space={1} alignY="center">
+                      <span>{statusNames[article.status]}</span>
+                      <span
+                        className={cn(
+                          cardStyles.status,
+                          cardStyles.statusType[article.status],
+                        )}
+                      ></span>
+                    </Inline>
+                  </Box>
+                </Tag>
+              </Stack>
+              <Stack space={1}>
+                <Typography variant="tag" color="red600">
+                  Málefni:
+                </Typography>
+                <Inline space={2} alignY="center">
+                  {article.tags.map(({ title }, index) => {
+                    return (
+                      <Tag key={index} variant="red" label>
+                        {title}
+                      </Tag>
+                    )
+                  })}
+                </Inline>
+              </Stack>
+            </Stack>
+          </Box>
+        }
+      >
         <Stack space={3}>
           <Breadcrumbs color="blue400">
-            <Link href={makePath()}>
+            <Link as="/" href="/">
               <a>Viðspyrna</a>
             </Link>
           </Breadcrumbs>
@@ -172,11 +210,3 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
 }
 
 export default withApollo(Article)
-
-const ContentContainer: FC<BoxProps> = ({ children, ...props }) => (
-  <Box padding={[3, 3, 6, 0]} {...props}>
-    <ContentBlock width="small">{children}</ContentBlock>
-  </Box>
-)
-
-// TODO: Add fields for micro strings to article namespace
