@@ -4,7 +4,7 @@ import * as AmazonS3URI from 'amazon-s3-uri'
 import { ApplicationService } from './application.service'
 import { FileStorageService } from '@island.is/file-storage'
 
-interface IJobData {
+interface JobData {
   applicationId: string
   attachmentUrl: string
 }
@@ -18,7 +18,7 @@ export class UploadProcessor {
 
   @Process('upload')
   async handleUpload(job: Job) {
-    const { attachmentUrl }: IJobData = job.data
+    const { attachmentUrl }: JobData = job.data
     console.log('Start uploading...')
     const { bucket, key } = AmazonS3URI(attachmentUrl)
     const destinationBucket = 'testing-islandis-copy'
@@ -35,14 +35,19 @@ export class UploadProcessor {
   @OnQueueCompleted()
   async onCompleted(job: Job, url: string) {
     console.log('On completed: job ', job.id, ' -> result: ', url)
-    const { applicationId, attachmentUrl }: IJobData = job.data
+    const { applicationId }: JobData = job.data
     const { key } = AmazonS3URI(url)
 
     const existingApplication = await this.applicationService.findById(
       applicationId,
     )
 
-    if (!existingApplication.attachments.hasOwnProperty(key)) {
+    if (
+      !Object.prototype.hasOwnProperty.call(
+        existingApplication.attachments,
+        key,
+      )
+    ) {
       return
     }
 

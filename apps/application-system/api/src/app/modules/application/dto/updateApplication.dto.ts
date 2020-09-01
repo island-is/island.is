@@ -1,13 +1,7 @@
-import {
-  IsEnum,
-  IsObject,
-  IsString,
-  IsArray,
-  IsOptional,
-} from 'class-validator'
+import { IsEnum, IsObject, IsString, IsOptional } from 'class-validator'
 import { ApplicationState } from '../application.model'
 import { FormType } from '@island.is/application/schema'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateApplicationDto {
   @IsOptional()

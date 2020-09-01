@@ -3,7 +3,6 @@ import {
   IsNotEmpty,
   IsObject,
   IsString,
-  IsArray,
   IsOptional,
 } from 'class-validator'
 import { ApplicationState } from '../application.model'

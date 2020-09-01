@@ -1,12 +1,6 @@
 import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
-import {
-  IsString,
-  IsArray,
-  IsOptional,
-  IsEnum,
-  IsObject,
-} from 'class-validator'
+import { IsString, IsOptional, IsEnum, IsObject } from 'class-validator'
 import {
   CreateApplicationDtoTypeIdEnum,
   CreateApplicationDtoStateEnum,
