@@ -23,7 +23,7 @@ export const PageLoader = () => {
       router.events.off('routeChangeComplete', done)
       router.events.off('routeChangeError', done)
     }
-  }, [])
+  }, [router.events])
 
   const colorGradiant = `linear-gradient(90deg,
     ${theme.color.blue400} 0%,
