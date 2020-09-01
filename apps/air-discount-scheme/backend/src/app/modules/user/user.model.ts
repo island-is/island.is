@@ -1,8 +1,27 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { User as TUser, Fund } from '@island.is/air-discount-scheme/types'
+import {
+  User as TUser,
+  Fund as TFund,
+} from '@island.is/air-discount-scheme/types'
 import { SplitName } from './user.types'
 import { NationalRegistryUser } from '../nationalRegistry'
+
+class Fund implements TFund {
+  @ApiProperty()
+  nationalId: string
+
+  @ApiProperty({
+    description: 'Determines if the user has any discount credits left',
+  })
+  credit: number
+
+  @ApiProperty()
+  used: number
+
+  @ApiProperty()
+  total: number
+}
 
 export class User implements TUser {
   constructor(user: NationalRegistryUser, fund: Fund) {
@@ -53,5 +72,6 @@ export class User implements TUser {
   @ApiProperty()
   city: string
 
-  fund: Fund
+  @ApiProperty({ type: Fund })
+  fund: TFund
 }
