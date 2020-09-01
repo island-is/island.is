@@ -20,7 +20,7 @@ export class UserService {
   ): Promise<NationalRegistryUser> {
     const user = await this.nationalRegistryService.getUser(nationalId)
     if (!user) {
-      throw new NotFoundException(`User<${nationalId} not found`)
+      throw new NotFoundException(`User<${nationalId}> not found`)
     }
 
     return user
