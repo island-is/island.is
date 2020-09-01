@@ -15,6 +15,14 @@ export const Default = () => (
   </Box>
 )
 
+export const DefaulUnderline = () => (
+  <Box padding={4}>
+    <Link href="/something" color="blue400" withUnderline>
+      Default
+    </Link>
+  </Box>
+)
+
 export const DefaultBlue = () => (
   <Box padding={4}>
     <Link href="/something" color="blue400">
