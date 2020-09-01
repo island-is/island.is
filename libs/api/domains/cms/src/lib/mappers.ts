@@ -4,7 +4,6 @@ import { Asset } from 'contentful'
 import { Document, BLOCKS, TopLevelBlock } from '@contentful/rich-text-types'
 import * as types from './generated/contentfulTypes'
 import { Article } from './models/article.model'
-import { AboutPage } from './models/aboutPage.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { LandingPage } from './models/landingPage.model'
@@ -308,7 +307,7 @@ export const mapSlice = (slice: SliceTypes): typeof Slice => {
       return mapProcessEntry(slice as types.IProcessEntry)
     case 'faqList':
       return mapFaqList(slice as types.IFaqList)
-    case 'EmbeddedVideo':
+    case 'embeddedVideo':
       return mapEmbeddedVideo(slice as types.IEmbeddedVideo)
     default:
       throw new ApolloError(

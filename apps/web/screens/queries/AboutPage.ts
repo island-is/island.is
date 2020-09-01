@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import { slices } from './fragments'
 
-export const GET_PAGE_QUERY = gql`
+export const GET_ABOUT_PAGE_QUERY = gql`
   query GetAboutPage($input: GetAboutPageInput!) {
     getAboutPage(input: $input) {
       title

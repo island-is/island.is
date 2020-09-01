@@ -17,7 +17,7 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
 `
 
 export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
-  query GetSearchResults($query: SearcherInput!) {
+  query GetSearchResultsDetailed($query: SearcherInput!) {
     searchResults(query: $query) {
       total
       items {

@@ -8,17 +8,10 @@ import React, {
 } from 'react'
 import Link from 'next/link'
 import Downshift from 'downshift'
-import cn from 'classnames'
 import { uniq, sortBy } from 'lodash'
 import { useRouter } from 'next/router'
 import { useApolloClient } from 'react-apollo'
 import { GET_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
-import {
-  ContentLanguage,
-  QuerySearchResultsArgs,
-  Query,
-  SearchResult,
-} from '@island.is/api/schema'
 import {
   AsyncSearchInput,
   AsyncSearchSizes,
@@ -29,6 +22,12 @@ import {
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import * as styles from './SearchInput.treat'
 import { Locale } from '@island.is/web/i18n/I18n'
+import {
+  GetSearchResultsQuery,
+  QuerySearchResultsArgs,
+  ContentLanguage,
+  SearchResult,
+} from '../../graphql/schema'
 
 const DEBOUNCE_TIMER = 300
 
@@ -82,7 +81,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
     const thisTimerId = (timer.current = setTimeout(async () => {
       const {
         data: { searchResults: results },
-      } = await client.query<Query, QuerySearchResultsArgs>({
+      } = await client.query<GetSearchResultsQuery, QuerySearchResultsArgs>({
         query: GET_SEARCH_RESULTS_QUERY,
         variables: {
           query: {

@@ -1,16 +1,24 @@
 import React from 'react'
 import { AppProps, AppContext, AppInitialProps } from 'next/app'
 import { ApolloProvider } from 'react-apollo'
+import { ApolloClient } from '@apollo/client'
+import { NormalizedCacheObject } from 'apollo-cache-inmemory'
+import { FooterLinkProps } from '@island.is/island-ui/core'
+
 import appWithTranslation from '../i18n/appWithTranslation'
 import initApollo from '../graphql/client'
 import Layout from '../layouts/main'
 import { NextComponentType } from 'next'
 import { withErrorBoundary } from '../units/ErrorBoundary'
-import { ApolloClient } from '@apollo/client'
-import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 
 interface AppCustomProps extends AppProps {
-  layoutProps: any
+  layoutProps: {
+    footerUpperMenu: FooterLinkProps[]
+    footerLowerMenu: FooterLinkProps[]
+    footerTagsMenu: FooterLinkProps[]
+    footerMiddleMenu: FooterLinkProps[]
+    namespace: Record<string, string>
+  }
 }
 
 interface AppCustomContext extends AppContext {
@@ -44,12 +52,15 @@ SupportApplication.getInitialProps = async ({ Component, ctx }) => {
   const layoutProps = await Layout.getInitialProps({
     ...customContext,
     locale: pageProps.locale,
-  } as any)
+  })
 
   const apolloState = apolloClient.cache.extract()
 
   return {
-    layoutProps: { ...layoutProps, ...pageProps.layoutConfig },
+    layoutProps: {
+      ...layoutProps,
+      ...pageProps.layoutConfig,
+    },
     pageProps,
     apolloState,
   }
