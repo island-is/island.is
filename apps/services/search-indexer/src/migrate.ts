@@ -686,6 +686,4 @@ async function migrateBootstrap() {
 
 migrateBootstrap().catch((error) => {
   logger.error('ERROR: ', error)
-  // allow critical errors in migration to take down the process
-  throw error
 })
