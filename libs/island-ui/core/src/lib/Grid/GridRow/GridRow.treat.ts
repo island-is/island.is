@@ -1,7 +1,7 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-export const grid = style({
+export const gridRow = style({
   boxSizing: 'border-box',
   display: 'flex',
   flex: '0 1 auto',

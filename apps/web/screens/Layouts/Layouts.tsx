@@ -38,7 +38,7 @@ interface ArticleProps {
 
 export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
   <GridContainer>
-    <Box paddingBottom={10}>
+    <Box paddingY={10}>
       <GridRow>
         <GridColumn span={8}>
           <Box paddingBottom={10}>{children}</Box>
