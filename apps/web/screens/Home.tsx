@@ -96,8 +96,10 @@ const Home: Screen<HomeProps> = ({
       <IntroductionSection
         subtitle="Markmiðið okkar"
         title="Öll opinber þjónusta á einum stað"
-        text="Við vinnum að margvíslegum verkefnum sem öll stuðla að því að gera opinbera þjónustu skilvirkari og notendavænni.
-Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn."
+        introText="Við vinnum að margvíslegum verkefnum sem öll stuðla að því að gera opinbera þjónustu skilvirkari og notendavænni."
+        text="Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn."
+        linkText="Nánar um stafrænt Ísland"
+        linkUrl="/flokkur/fjolskylda-og-velferd"
       />
     </>
   )

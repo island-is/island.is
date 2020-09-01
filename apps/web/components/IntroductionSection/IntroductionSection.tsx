@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import * as styles from './styles'
 import { Illustration } from './TempIllustration'
 import {
   GridContainer,
@@ -7,10 +6,14 @@ import {
   GridColumn,
   Typography,
   Box,
+  ArrowLink,
+  Icon,
 } from '@island.is/island-ui/core'
 
-// TODO: Make this component handle images from Contentful
-// when we get more Content Models quota. :|
+// TODO:
+// This component is just hard coded for now.
+// Needs to handle real content when it gets to go into Contentful
+// and maybe have its content be RichText
 
 type ImageProps = {
   title: string
@@ -23,13 +26,21 @@ type ImageProps = {
 interface Props {
   subtitle: string
   title: string
-  text: string
+  introText: string
+  text?: string
   image?: ImageProps
   linkText: string
   linkUrl: string
 }
 
-const IntroductionSection: FC<Props> = ({ subtitle, title, text }) => {
+const IntroductionSection: FC<Props> = ({
+  subtitle,
+  title,
+  introText,
+  text,
+  linkUrl,
+  linkText,
+}) => {
   return (
     <Box paddingY={8}>
       <GridContainer>
@@ -48,7 +59,15 @@ const IntroductionSection: FC<Props> = ({ subtitle, title, text }) => {
             <Typography as="h2" variant="h1" paddingBottom={2}>
               {title}
             </Typography>
+            <Typography variant="intro" paddingBottom={!!text ? 2 : 0}>
+              {introText}
+            </Typography>
             <Typography variant="p">{text}</Typography>
+            <Box paddingY={2}>
+              <ArrowLink href={linkUrl} passHref color="blue400">
+                {linkText}
+              </ArrowLink>
+            </Box>
           </GridColumn>
         </GridRow>
       </GridContainer>

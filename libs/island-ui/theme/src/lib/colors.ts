@@ -51,3 +51,4 @@ export const yellow300 = '#fff9c2'
 export const yellow100 = '#fffef7'
 
 export const transparent = 'transparent'
+export const currentColor = 'currentColor'
