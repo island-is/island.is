@@ -41,7 +41,9 @@ export const DetentionRequests: React.FC = () => {
         <Logo />
       </div>
       <div className={styles.addDetentionRequestButtonContainer}>
-        <Button icon="plus">Stofna nýja kröfu</Button>
+        <Button icon="plus" href="/stofna-krofu">
+          Stofna nýja kröfu
+        </Button>
       </div>
       <table className={styles.detentionRequestsTable}>
         <Typography as="caption" variant="h3">
