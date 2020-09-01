@@ -1,7 +1,10 @@
 import { Inject, Injectable, CACHE_MANAGER, HttpService } from '@nestjs/common'
 import CacheManager from 'cache-manager'
 
-import { NationalRegistryUser } from './nationalRegistry.types'
+import {
+  NationalRegistryResponse,
+  NationalRegistryUser,
+} from './nationalRegistry.types'
 import { environment } from '../../../environments'
 
 const { nationalRegistry } = environment
@@ -19,6 +22,26 @@ export class NationalRegistryService {
     return `${CACHE_KEY}_${nationalId}`
   }
 
+  private createNationalRegistryUser(
+    response: NationalRegistryResponse,
+  ): NationalRegistryUser {
+    if (!response) {
+      return null
+    }
+
+    const parts = response.name.split(' ')
+    return {
+      nationalId: response.ssn,
+      firstName: parts[0] || '',
+      middleName: parts.slice(1, -1).join(' '),
+      lastName: parts.slice(-1).pop() || '',
+      gender: response.gender,
+      address: response.address,
+      postalcode: response.postalcode,
+      city: response.city,
+    }
+  }
+
   async getUser(nationalId: string): Promise<NationalRegistryUser> {
     const cacheKey = this.getCacheKey(nationalId)
     const cacheValue = await this.cacheManager.get(cacheKey)
@@ -30,7 +53,7 @@ export class NationalRegistryService {
       .get(`${nationalRegistry.url}/general-lookup?ssn=${nationalId}`)
       .toPromise()
 
-    const user = response.data[0]
+    const user = this.createNationalRegistryUser(response.data[0])
     if (user) {
       await this.cacheManager.set(cacheKey, { user }, { ttl: ONE_MONTH })
     }

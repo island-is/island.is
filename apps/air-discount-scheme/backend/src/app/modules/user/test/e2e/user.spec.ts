@@ -27,12 +27,11 @@ describe('Get Discount By DiscountCode', () => {
       .spyOn(nationalRegistryService, 'getUser')
       .mockImplementation(() =>
         Promise.resolve({
-          source: 'Þjóðskrá',
-          lastmodified: '',
-          charged: false,
-          ssn: '1326487905',
-          name: 'Jón Gunnar Jónsson',
+          nationalId: '1326487905',
+          firstName: 'Jón',
           gender: 'kk',
+          lastName: 'Jónsson',
+          middleName: 'Gunnar',
           address: 'Bessastaðir 1',
           postalcode: 225,
           city: 'Álftanes',
