@@ -7,7 +7,6 @@ import { DomainPackageDetails, PackageDetails } from 'aws-sdk/clients/es'
 import { ManagedUpload } from 'aws-sdk/clients/s3'
 import { logger } from '@island.is/logging'
 import { ElasticService } from '@island.is/api/content-search'
-import { map } from 'lodash'
 
 class Config {
   elasticNode: string
@@ -647,9 +646,8 @@ class App {
     currentVersion: number,
   ): Promise<string | null> {
     logger.info('Trying to find older indexes')
-    const client = await this.getEsClient()
 
-    for (var i = currentVersion - 1; i > 0; i--) {
+    for (let i = currentVersion - 1; i > 0; i--) {
       const indexExists = await this.esHasVersion(i)
       if (indexExists) {
         // this old version exists, return the name of the index
