@@ -11,6 +11,8 @@ import appWithTranslation from '../i18n/appWithTranslation'
 
 import initApollo from '../graphql/client'
 
+import 'react-alice-carousel/lib/alice-carousel.css'
+
 interface LayoutProps {
   showSearchInHeader?: boolean
   wrapContent?: boolean

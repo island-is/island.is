@@ -14,7 +14,7 @@ import { CreateCaseDto } from './dto/createCase.dto'
 import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CaseValidationPipe } from './case.pipe'
 
-@ApiTags('case')
+@ApiTags('cases')
 @Controller('api')
 export class CaseController {
   constructor(private readonly caseService: CaseService) {}

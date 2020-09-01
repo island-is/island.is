@@ -3,6 +3,8 @@ import {
   DataType,
   Model,
   Table,
+  CreatedAt,
+  UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 @Table({
@@ -72,4 +74,12 @@ export class Grant extends Model<Grant> {
   })
   @ApiProperty()
   type: string
+
+  @CreatedAt
+  @ApiProperty()
+  readonly created: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  readonly modified: Date
 }

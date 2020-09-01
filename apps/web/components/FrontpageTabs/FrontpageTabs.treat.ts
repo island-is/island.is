@@ -22,15 +22,12 @@ export const tabContainer = style({
   outline: 0,
 })
 
-export const content = style({
-  display: 'flex',
+export const tabPanelWrapper = style({
   position: 'relative',
-  width: '100%',
 })
 
 export const tabPanel = style({
   position: 'absolute',
-  maxWidth: '660px',
   width: '100%',
   top: 0,
   left: 0,
@@ -93,13 +90,6 @@ export const dots = style({
   left: 0,
   bottom: 0,
   right: 0,
-})
-
-export const image = style({
-  display: 'inline-flex',
-  width: '100%',
-  justifyContent: 'center',
-  alignItems: 'center',
 })
 
 export const imageContainer = style({

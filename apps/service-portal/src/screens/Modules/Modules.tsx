@@ -7,18 +7,24 @@ import ModuleErrorScreen, { ModuleErrorBoundary } from './ModuleErrorScreen'
 import { Box } from '@island.is/island-ui/core'
 import NotFound from '../../screens/NotFound/NotFound'
 import { UserWithMeta } from '@island.is/service-portal/core'
+import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
 const RouteComponent: FC<{
   route: ServicePortalRoute
   userInfo: UserWithMeta
-}> = React.memo(({ route, userInfo }) => {
-  const App = route.render(userInfo)
+  client: ApolloClient<NormalizedCacheObject>
+}> = React.memo(({ route, userInfo, client }) => {
+  const App = route.render({
+    userInfo,
+    client,
+  })
 
   if (App)
     return (
       <Suspense fallback={<ModuleLoadingScreen name={route.name} />}>
         <ModuleErrorBoundary name={route.name}>
-          <App userInfo={userInfo} />
+          <App userInfo={userInfo} client={client} />
         </ModuleErrorBoundary>
       </Suspense>
     )
@@ -29,14 +35,17 @@ const RouteComponent: FC<{
 const RouteLoader: FC<{
   routes: ServicePortalRoute[]
   userInfo: UserWithMeta
-}> = React.memo(({ routes, userInfo }) => (
+  client: ApolloClient<NormalizedCacheObject>
+}> = React.memo(({ routes, userInfo, client }) => (
   <Switch>
     {routes.map((route) => (
       <Route
         path={route.path}
         exact
         key={Array.isArray(route.path) ? route.path[0] : route.path}
-        render={() => <RouteComponent route={route} userInfo={userInfo} />}
+        render={() => (
+          <RouteComponent route={route} userInfo={userInfo} client={client} />
+        )}
       />
     ))}
     {routes.length > 0 && <Route component={NotFound} />}
@@ -44,11 +53,12 @@ const RouteLoader: FC<{
 ))
 
 const Modules: FC<{}> = () => {
-  const [{ routes, userInfo }] = useStore()
+  const [{ routes }] = useStore()
+  const moduleProps = useModuleProps()
 
   return (
     <Box paddingY={4}>
-      <RouteLoader routes={routes} userInfo={userInfo} />
+      <RouteLoader routes={routes} {...moduleProps} />
     </Box>
   )
 }
