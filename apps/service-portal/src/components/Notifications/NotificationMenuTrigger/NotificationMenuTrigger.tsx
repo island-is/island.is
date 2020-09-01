@@ -4,7 +4,7 @@ import { Button, Box, Icon } from '@island.is/island-ui/core'
 import { useStore } from '../../../store/stateProvider'
 import { ActionType, NotificationMenuState } from '../../../store/actions'
 import NotificationMenu from '../NotificationMenu/NotificationMenu'
-import useOutsideClick from '../../../hooks/useOutsideClick/useOutsideClick'
+import { useOutsideClick } from '@island.is/service-portal/core'
 
 const NotificationMenuTrigger: FC<{}> = () => {
   const ref = useRef()
