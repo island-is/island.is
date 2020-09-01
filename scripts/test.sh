@@ -43,6 +43,8 @@ else
   # Standalone execution of tests when no external dependencies are needed (DBs, queues, etc.)
   exec yarn run \
     test ${APP}
+
+  # Docker based run, not used at the moment due to severe speed penalty
   exec docker run \
     --rm \
     --net=host \

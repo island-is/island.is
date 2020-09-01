@@ -8,6 +8,7 @@ source $DIR/_common.sh
 exec yarn run \
   format:check --all
 
+# Docker based run, not used at the moment due to severe speed penalty
 exec docker buildx build --platform=linux/amd64 \
  --cache-from=type=local,src=$PROJECT_ROOT/cache \
  -f ${DIR}/Dockerfile \
