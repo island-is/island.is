@@ -64,7 +64,7 @@ const IntroductionSection: FC<Props> = ({
             </Typography>
             <Typography variant="p">{text}</Typography>
             <Box paddingY={2}>
-              <ArrowLink href={linkUrl} passHref color="blue400">
+              <ArrowLink href={linkUrl} color="blue400">
                 {linkText}
               </ArrowLink>
             </Box>

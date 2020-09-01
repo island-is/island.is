@@ -11,7 +11,6 @@ const isLinkInternal = (href) => {
   return false
 }
 
-
 interface Props extends LinkProps {
   color?: Colors
   className?: string
