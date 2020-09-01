@@ -31,7 +31,9 @@ const FetchDiscountsMutation = gql`
 `
 
 function Benefits({ misc }: PropTypes) {
-  const [fetchDiscounts, { data }] = useMutation(FetchDiscountsMutation)
+  const [fetchDiscounts, { data, loading, called }] = useMutation(
+    FetchDiscountsMutation,
+  )
   useEffect(() => {
     fetchDiscounts()
   }, [fetchDiscounts])
@@ -51,7 +53,7 @@ function Benefits({ misc }: PropTypes) {
       } else if (status === 'error') {
         acc.noRights.push({ discount, status })
       } else {
-        //acc.activeCodes.push({ discount, status })
+        acc.activeCodes.push({ discount, status })
       }
       return acc
     },
@@ -61,7 +63,8 @@ function Benefits({ misc }: PropTypes) {
       noRights: [],
     },
   )
-  const noBenefits = fundUsed.length <= 0 && activeCodes.length <= 0
+  const noBenefits =
+    fundUsed.length <= 0 && activeCodes.length <= 0 && !loading && called
   return (
     <Box marginBottom={6}>
       {!noBenefits && (
@@ -92,10 +95,10 @@ function Benefits({ misc }: PropTypes) {
         <Typography variant="h3">{myRights}</Typography>
         {!noBenefits ? (
           <>
-            {[...activeCodes, ...fundUsed, ...noRights].map((data) => {
+            {[...activeCodes, ...fundUsed, ...noRights].map((data, index) => {
               return (
                 <UserCredit
-                  key={data.discount.code}
+                  key={index}
                   misc={misc}
                   discount={data.discount}
                   status={data.status}
