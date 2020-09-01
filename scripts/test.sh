@@ -45,13 +45,13 @@ else
     test ${APP}
 
   # Docker based run, not used at the moment due to severe speed penalty
-  exec docker run \
-    --rm \
-    --net=host \
-    -e APPLICATION_DB_HOST \
-    -e APPLICATION_TEST_DB_USER \
-    -e APPLICATION_TEST_DB_PASS \
-    -e APPLICATION_TEST_DB_NAME \
-    -e APP=$APP \
-    ${DOCKER_REGISTRY}${RUNNER}:${DOCKER_TAG}
+  # exec docker run \
+  #   --rm \
+  #   --net=host \
+  #   -e APPLICATION_DB_HOST \
+  #   -e APPLICATION_TEST_DB_USER \
+  #   -e APPLICATION_TEST_DB_PASS \
+  #   -e APPLICATION_TEST_DB_NAME \
+  #   -e APP=$APP \
+  #   ${DOCKER_REGISTRY}${RUNNER}:${DOCKER_TAG}
 fi

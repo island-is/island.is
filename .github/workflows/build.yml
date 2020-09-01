@@ -424,15 +424,7 @@ jobs:
   failure-notification:
     runs-on: ubuntu-latest
     if: failure()
-    needs:
-      [
-        docker-express,
-        docker-next,
-        prepare,
-        linting,
-        formatting,
-        trigger-deployments,
-      ]
+    needs: [docker-express, docker-next, prepare, linting, formatting, trigger-deployments]
     env:
       PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
     steps:
