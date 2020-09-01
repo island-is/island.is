@@ -666,10 +666,10 @@ export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<Application>
   updateApplication?: Maybe<Application>
-  updateApplicationExternalData?: Maybe<Application>
   addAttachment?: Maybe<Application>
   deleteAttachment?: Maybe<Application>
   createUploadUrl: PresignedPost
+  updateApplicationExternalData?: Maybe<Application>
 }
 
 export type MutationCreateApplicationArgs = {
@@ -678,10 +678,6 @@ export type MutationCreateApplicationArgs = {
 
 export type MutationUpdateApplicationArgs = {
   input: UpdateApplicationInput
-}
-
-export type MutationUpdateApplicationExternalDataArgs = {
-  input: UpdateApplicationExternalDataInput
 }
 
 export type MutationAddAttachmentArgs = {
@@ -694,6 +690,10 @@ export type MutationDeleteAttachmentArgs = {
 
 export type MutationCreateUploadUrlArgs = {
   filename: Scalars['String']
+}
+
+export type MutationUpdateApplicationExternalDataArgs = {
+  input: UpdateApplicationExternalDataInput
 }
 
 export type CreateApplicationInput = {
@@ -1118,10 +1118,10 @@ export type ResolversParentTypes = {
   Mutation: {}
   CreateApplicationInput: CreateApplicationInput
   UpdateApplicationInput: UpdateApplicationInput
-  UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
-  DataProvider: DataProvider
   AddAttachmentInput: AddAttachmentInput
   DeleteAttachmentInput: DeleteAttachmentInput
+  UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
+  DataProvider: DataProvider
 }
 
 export type HelloWorldResolvers<
@@ -1937,12 +1937,6 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationUpdateApplicationArgs, 'input'>
   >
-  updateApplicationExternalData?: Resolver<
-    Maybe<ResolversTypes['Application']>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationUpdateApplicationExternalDataArgs, 'input'>
-  >
   addAttachment?: Resolver<
     Maybe<ResolversTypes['Application']>,
     ParentType,
@@ -1960,6 +1954,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationCreateUploadUrlArgs, 'filename'>
+  >
+  updateApplicationExternalData?: Resolver<
+    Maybe<ResolversTypes['Application']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateApplicationExternalDataArgs, 'input'>
   >
 }
 

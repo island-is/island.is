@@ -146,23 +146,6 @@ components:
           type: object
         attachments:
           type: object
-    AddAttachmentDto:
-      type: object
-      properties:
-        key:
-          type: string
-        url:
-          type: string
-      required:
-        - key
-        - url
-    DeleteAttachmentDto:
-      type: object
-      properties:
-        key:
-          type: string
-      required:
-        - key
     DataProviderDto:
       type: object
       properties:
@@ -186,6 +169,23 @@ components:
             $ref: '#/components/schemas/DataProviderDto'
       required:
         - dataProviders
+    AddAttachmentDto:
+      type: object
+      properties:
+        key:
+          type: string
+        url:
+          type: string
+      required:
+        - key
+        - url
+    DeleteAttachmentDto:
+      type: object
+      properties:
+        key:
+          type: string
+      required:
+        - key
 paths:
   /liveness:
     get:
@@ -292,6 +292,30 @@ paths:
                 $ref: '#/components/schemas/Application'
       tags:
         - application
+  '/application/{id}/externalData':
+    put:
+      operationId: ApplicationController_updateExternalData
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PopulateExternalDataDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+      tags:
+        - application
   '/application/{id}/attachments':
     put:
       operationId: ApplicationController_addAttachment
@@ -330,30 +354,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/DeleteAttachmentDto'
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Application'
-      tags:
-        - application
-  '/application/{id}/externalData':
-    put:
-      operationId: ApplicationController_updateExternalData
-      parameters:
-        - name: id
-          required: true
-          in: path
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PopulateExternalDataDto'
       responses:
         '200':
           description: ''

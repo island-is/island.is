@@ -512,10 +512,10 @@ input GetDocumentInput {
 type Mutation {
   createApplication(input: CreateApplicationInput!): Application
   updateApplication(input: UpdateApplicationInput!): Application
+  updateApplicationExternalData(input: UpdateApplicationExternalDataInput!): Application
   addAttachment(input: AddAttachmentInput!): Application
   deleteAttachment(input: DeleteAttachmentInput!): Application
   createUploadUrl(filename: String!): PresignedPost!
-  updateApplicationExternalData(input: UpdateApplicationExternalDataInput!): Application
 }
 
 input CreateApplicationInput {
@@ -577,17 +577,6 @@ enum UpdateApplicationDtoStateEnum {
   UNKNOWN
 }
 
-input AddAttachmentInput {
-  id: String!
-  key: String!
-  url: String!
-}
-
-input DeleteAttachmentInput {
-  id: String!
-  key: String!
-}
-
 input UpdateApplicationExternalDataInput {
   id: String!
   dataProviders: [DataProvider!]!
@@ -602,4 +591,15 @@ enum DataProviderDtoTypeEnum {
   ExpectedDateOfBirth
   ExampleFails
   ExampleSucceeds
+}
+
+input AddAttachmentInput {
+  id: String!
+  key: String!
+  url: String!
+}
+
+input DeleteAttachmentInput {
+  id: String!
+  key: String!
 }

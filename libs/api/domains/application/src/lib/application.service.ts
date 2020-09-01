@@ -5,10 +5,7 @@ import { AddAttachmentInput } from './dto/addAttachment.input'
 import { DeleteAttachmentInput } from './dto/deleteAttachment.input'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
-import {
-  ApplicationApi,
-  ApplicationTypeIdEnum,
-} from '../../gen/fetch'
+import { ApplicationApi, ApplicationTypeIdEnum } from '../../gen/fetch'
 import { UpdateApplicationExternalDataInput } from './dto/updateApplicationExternalData.input'
 
 const handleError = (error) => {
