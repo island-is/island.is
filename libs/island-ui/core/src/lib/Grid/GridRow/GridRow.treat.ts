@@ -7,13 +7,13 @@ export const grid = style({
   flex: '0 1 auto',
   flexDirection: 'row',
   flexWrap: 'wrap',
-  marginRight: `-${theme.grid.gutter.mobile}px`,
   marginLeft: `-${theme.grid.gutter.mobile}px`,
+  marginRight: `-${theme.grid.gutter.mobile}px`,
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      marginRight: `-${theme.grid.gutter.desktop / 2}px`,
       marginLeft: `-${theme.grid.gutter.desktop / 2}px`,
+      marginRight: `-${theme.grid.gutter.desktop / 2}px`,
     },
   },
 })

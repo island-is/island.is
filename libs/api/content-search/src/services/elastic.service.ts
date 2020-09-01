@@ -61,7 +61,8 @@ export class ElasticService {
       requestBody.query(
         esb
           .queryStringQuery(query.queryString)
-          .fields(['title.stemmed^10', 'content.stemmed^2', 'tag.stemmed']),
+          .fields(['title.stemmed^10', 'content.stemmed^2', 'tag.stemmed'])
+          .analyzeWildcard(true),
       )
     }
 
@@ -120,6 +121,31 @@ export class ElasticService {
       .size(1000)
 
     return this.findByQuery(index, requestBody)
+  }
+
+  async deleteAllExcept(index: SearchIndexes, excludeIds: Array<string>) {
+    const body = {
+      query: {
+        bool: {
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          must_not: excludeIds.map((id) => ({ match: { _id: id } })),
+        },
+      },
+    }
+    const client = await this.getClient()
+    return client.delete_by_query({
+      index: index,
+      body: body,
+    })
+  }
+
+  async deleteAll(index: SearchIndexes) {
+    const client = await this.getClient()
+    return client.delete_by_query({
+      index: index,
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      body: { query: { match_all: {} } },
+    })
   }
 
   async ping() {

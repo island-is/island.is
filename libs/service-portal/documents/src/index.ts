@@ -17,7 +17,7 @@ export const documentsModule: ServicePortalModule = {
     {
       name: 'Rafræn skjöl',
       path: ServicePortalPath.RafraenSkjolRoot,
-      render: () => lazy(() => import('./lib/service-portal-documents')),
+      render: () => lazy(() => import('./screens/Overview/Overview')),
     },
   ],
 }

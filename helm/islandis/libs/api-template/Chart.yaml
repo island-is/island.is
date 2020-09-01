@@ -1,4 +1,0 @@
-apiVersion: v2
-name: api-template
-type: application
-version: 0.0.1

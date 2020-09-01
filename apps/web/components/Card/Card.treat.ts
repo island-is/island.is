@@ -12,6 +12,7 @@ export const card = style({
   borderColor: theme.color.purple200,
   transition: 'border-color 150ms ease',
   borderRadius: theme.border.radius.large,
+  minHeight: 170,
   textDecoration: 'none',
   position: 'relative',
   ':hover': {

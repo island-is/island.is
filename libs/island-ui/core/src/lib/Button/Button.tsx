@@ -12,7 +12,7 @@ export type ButtonWidth = 'normal' | 'fluid' | 'fixed'
 
 export interface ButtonProps {
   disabled?: boolean
-  onClick?: () => void
+  onClick?: any
   variant?: ButtonVariant
   size?: ButtonSize
   width?: ButtonWidth
