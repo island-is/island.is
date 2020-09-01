@@ -1,12 +1,4 @@
-import {
-  Controller,
-  Param,
-  Post,
-  Get,
-  Inject,
-  forwardRef,
-  UseGuards,
-} from '@nestjs/common'
+import { Controller, Param, Post, Get, UseGuards } from '@nestjs/common'
 import {
   ApiBearerAuth,
   ApiExcludeEndpoint,
@@ -20,7 +12,6 @@ import {
   GetCurrentDiscountByNationalIdParams,
 } from './discount.validator'
 import { DiscountService } from './discount.service'
-import { DiscountLimitExceeded } from './discount.error'
 import { AuthGuard } from '../common'
 
 @ApiTags('Discounts')

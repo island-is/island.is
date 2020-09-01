@@ -294,16 +294,6 @@
             ]
           }
         },
-        "env-secrets": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              {
-                "command": "./scripts/secrets.sh gjafakort --reset"
-              }
-            ]
-          }
-        },
         "docker-express": {}
       }
     },
@@ -384,16 +374,6 @@
               }
             ],
             "cwd": "libs/api/domains/cms"
-          }
-        },
-        "env-secrets": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              {
-                "command": "./scripts/secrets.sh api --reset"
-              }
-            ]
           }
         },
         "docker-express": {}
@@ -1664,16 +1644,6 @@
             "commands": [
               {
                 "command": "graphql-codegen --config apps/air-discount-scheme/codegen.yml"
-              }
-            ]
-          }
-        },
-        "env-secrets": {
-          "builder": "@nrwl/workspace:run-commands",
-          "options": {
-            "commands": [
-              {
-                "command": "./scripts/secrets.sh air-discount-scheme --reset"
               }
             ]
           }

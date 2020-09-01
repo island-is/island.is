@@ -1,7 +1,6 @@
 import { NotFoundException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { Fund } from '@island.is/air-discount-scheme/types'
 import { FlightLegSummary } from './flight.types'
 import { Flight, FlightLeg, financialStateMachine } from './flight.model'
 import { FlightDto } from './dto/flight.dto'

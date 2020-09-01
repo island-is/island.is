@@ -1,14 +1,3 @@
-export interface ThjodskraUser {
-  firstName: string
-  middleName: string
-  lastName: string
-  gender: 'kk' | 'kvk'
-  address: string
-  postalcode: number
-  city: string
-  nationalId: string
-}
-
 export interface Fund {
   nationalId: string
   credit: number
@@ -16,6 +5,14 @@ export interface Fund {
   total: number
 }
 
-export interface User extends ThjodskraUser {
+export interface User {
+  nationalId: string
+  firstName: string
+  middleName: string
+  lastName: string
+  gender: 'kk' | 'kvk'
+  address: string
+  postalcode: number
+  city: string
   fund: Fund
 }

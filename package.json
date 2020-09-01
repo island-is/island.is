@@ -25,7 +25,7 @@
     "security-audit": "bash -c 'yarn audit --level moderate ; [[ \"$?\" -lt  \"4\" ]]'",
     "license-audit": "license-checker --failOn 'GPL; AGPL; UNLICENSED' --summary",
     "generate": "nx generate",
-    "env-secrets": "nx env-secrets",
+    "env-secrets": "./scripts/secrets.sh",
     "format": "nx format:write",
     "format:write": "nx format:write",
     "format:check": "nx format:check",
