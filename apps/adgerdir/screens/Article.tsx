@@ -31,7 +31,7 @@ import {
 import { ArticleLayout } from '@island.is/adgerdir/screens/Layouts/Layouts'
 import { withApollo } from '@island.is/adgerdir/graphql'
 import { Screen } from '@island.is/adgerdir/types'
-import { Content } from '@island.is/island-ui/contentful'
+import { Content } from '@island.is/adgerdir/units/Content'
 import { CustomNextError } from '@island.is/adgerdir/units/ErrorBoundary'
 import { ColorSchemeContext } from '@island.is/adgerdir/context'
 
@@ -62,18 +62,16 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
       </Head>
       <ArticleLayout
         sidebar={
-          <Box>
+          <Box marginBottom={10}>
             <Stack space={3}>
               <ArticleSidebar title="Aðgerð">
-                {true || article.link ? (
-                  <Button
-                    icon="external"
-                    width="fluid"
-                    href="https://vidspyrna.island.is"
-                  >
-                    Sjá nánar
-                  </Button>
-                ) : null}
+                <Button
+                  icon="external"
+                  width="fluid"
+                  href="https://vidspyrna.island.is"
+                >
+                  Sjá nánar
+                </Button>
               </ArticleSidebar>
               <Stack space={1}>
                 <Typography variant="tag" color="red600">
@@ -122,8 +120,8 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
               {article.title}
             </Typography>
           </Box>
+          <Content document={article.content} />
         </Stack>
-        <Content document={article.content} />
       </ArticleLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
         <Box background="red100">

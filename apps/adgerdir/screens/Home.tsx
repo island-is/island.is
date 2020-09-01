@@ -8,7 +8,7 @@ import {
   Stack,
   Breadcrumbs,
 } from '@island.is/island-ui/core'
-import { Content } from '@island.is/island-ui/contentful'
+import { Content } from '@island.is/adgerdir/units/Content'
 import {
   Articles,
   Sleeve,
@@ -71,8 +71,8 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
           <Typography variant="intro" as="p">
             {frontpage.description}
           </Typography>
+          <Content document={frontpage.content} />
         </Stack>
-        <Content document={frontpage.content} />
       </ArticleLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
         <Box marginBottom={10}>
