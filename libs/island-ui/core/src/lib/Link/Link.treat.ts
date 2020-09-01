@@ -10,8 +10,9 @@ export const link = style({
 
 export const withUnderline = style({
   textDecoration: 'none',
-  boxShadow: `inset 0 -1px 0 0 currentColor 0`,
+  boxShadow: 'none',
   transition: 'color .2s, box-shadow .2s',
+  paddingBottom: 4,
   ':hover': {
     boxShadow: `inset 0 -2px 0 0 currentColor`,
     textDecoration: 'none',
