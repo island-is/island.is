@@ -138,7 +138,7 @@ export class IndexingService {
             response += (doc.data.target.fields.processTitle ?? '') + '\n'
             response += (doc.data.target.fields.processDescription ?? '') + '\n'
           } else {
-            //todo implement more typesz
+            //todo implement more types
           }
         }
       })
@@ -195,5 +195,3 @@ export class IndexingService {
     })
   }
 }
-
-// TODO: Setup cron to cleanup the dev environment
