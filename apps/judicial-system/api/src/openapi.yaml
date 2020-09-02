@@ -214,6 +214,15 @@ paths:
                 $ref: '#/components/schemas/Case'
       tags:
         - cases
+  /auth/callback:
+    post:
+      operationId: AuthController_callback
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - auth
   /auth/login:
     get:
       operationId: AuthController_login

@@ -5,7 +5,7 @@
 
 import '@island.is/infra-tracing'
 import { DocumentBuilder } from '@nestjs/swagger'
-import { AppModule } from './app/app.module'
+import { AppModule } from './app'
 import { bootstrap } from '@island.is/infra-nest-server'
 
 bootstrap({

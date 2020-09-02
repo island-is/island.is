@@ -1,23 +1,115 @@
-import { Controller, Get, Res } from '@nestjs/common'
-import { ApiTags, ApiOkResponse } from '@nestjs/swagger'
-import { User } from './types'
+import { Body, Controller, Get, Inject, Post, Res } from '@nestjs/common'
+import jwt from 'jsonwebtoken'
+import { Entropy } from 'entropy-string'
+import IslandisLogin from 'islandis-login'
 
-@ApiTags('auth')
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import {
+  CSRF_COOKIE_NAME,
+  ACCESS_TOKEN_COOKIE_NAME,
+} from '@island.is/judicial-system/consts'
+import { environment } from '../../../environments'
+import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
+import { ApiTags } from '@nestjs/swagger'
+
+const { samlEntryPoint, audience: audienceUrl, jwtSecret } = environment.auth
+
+export const JWT_EXPIRES_IN_SECONDS = 1800
+
+export const ONE_HOUR = 60 * 60 * 1000
+
+const defaultCookieOptions: CookieOptions = {
+  secure: environment.production,
+  httpOnly: true,
+  sameSite: 'lax',
+}
+
+export const CSRF_COOKIE: Cookie = {
+  name: CSRF_COOKIE_NAME,
+  options: {
+    ...defaultCookieOptions,
+    httpOnly: false,
+  },
+}
+
+export const ACCESS_TOKEN_COOKIE: Cookie = {
+  name: ACCESS_TOKEN_COOKIE_NAME,
+  options: defaultCookieOptions,
+}
+
+const loginIS = new IslandisLogin({
+  audienceUrl,
+})
+
 @Controller('auth')
+@ApiTags('auth')
 export class AuthController {
-  @Get('login')
-  login(@Res() res) {
-    const user: User = {
-      nationalId: '010101000',
-      name: 'Jón Jónsson',
-      phone: '8888888',
+  constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
+
+  @Post('callback')
+  async callback(@Body('token') token, @Res() res) {
+    let verifyResult: VerifyResult
+    try {
+      verifyResult = await loginIS.verify(token)
+    } catch (err) {
+      this.logger.error(err)
+      return res.redirect('/error')
     }
 
-    return res.json({ user })
+    const { user } = verifyResult
+    if (!user) {
+      this.logger.error('Could not verify user authenticity', {
+        extra: {
+          user,
+        },
+      })
+      return res.redirect('/error')
+    }
+
+    const csrfToken = new Entropy({ bits: 128 }).string()
+    const jwtToken = jwt.sign(
+      {
+        user: {
+          nationalId: user.kennitala,
+          name: user.fullname,
+          mobile: user.mobile,
+        },
+        csrfToken,
+      } as Credentials,
+      jwtSecret,
+      { expiresIn: JWT_EXPIRES_IN_SECONDS },
+    )
+
+    const tokenParts = jwtToken.split('.')
+    if (tokenParts.length !== 3) {
+      return res.redirect('/error')
+    }
+
+    const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
+    return res
+      .cookie(CSRF_COOKIE.name, csrfToken, {
+        ...CSRF_COOKIE.options,
+        maxAge,
+      })
+      .cookie(ACCESS_TOKEN_COOKIE.name, jwtToken, {
+        ...ACCESS_TOKEN_COOKIE.options,
+        maxAge,
+      })
+      .redirect('/min-rettindi') // TODO: add back cookie
+  }
+
+  @Get('login')
+  login(@Res() res) {
+    const electronicIdOnly = '&qaa=4'
+
+    res.redirect(`${samlEntryPoint}${electronicIdOnly}`)
   }
 
   @Get('logout')
   logout(@Res() res) {
+    res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
+    res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
+
     return res.json({ logout: true })
   }
 }

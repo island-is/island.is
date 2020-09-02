@@ -2,8 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Case } from './case.model'
-import { CreateCaseDto } from './dto/createCase.dto'
-import { UpdateCaseDto } from './dto/updateCase.dto'
+import { CreateCaseDto, UpdateCaseDto } from './dto'
 
 @Injectable()
 export class CaseService {

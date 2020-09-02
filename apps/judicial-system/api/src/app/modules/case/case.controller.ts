@@ -10,12 +10,11 @@ import {
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Case } from './case.model'
 import { CaseService } from './case.service'
-import { CreateCaseDto } from './dto/createCase.dto'
-import { UpdateCaseDto } from './dto/updateCase.dto'
+import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { CaseValidationPipe } from './case.pipe'
 
-@ApiTags('cases')
 @Controller('api')
+@ApiTags('cases')
 export class CaseController {
   constructor(private readonly caseService: CaseService) {}
 

@@ -12,13 +12,20 @@ export const Login = () => {
     let isMounted = true
 
     async function getData() {
-      const rawResponse = await fetch('/api/cases')
-      const jsonResponse = await rawResponse.json()
-
-      // Prevent setting state on unmounted component
-      if (isMounted) {
-        setMessageFromAPI(`${jsonResponse.length} cases`)
+      try {
+        // const res = await fetch('/auth/login')
+        // console.log('!!!!!!!!!', res)
+        window.location.assign('/auth/login')
+      } catch (e) {
+        console.log('######', e)
       }
+      // const rawResponse = await fetch('/api/cases')
+      // const jsonResponse = await rawResponse.json()
+
+      // // Prevent setting state on unmounted component
+      // if (isMounted) {
+      //   setMessageFromAPI(`${jsonResponse.length} cases`)
+      // }
     }
 
     getData()

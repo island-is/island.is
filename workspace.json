@@ -2852,6 +2852,34 @@
           }
         }
       }
+    },
+    "judicial-system-consts": {
+      "root": "libs/judicial-system/consts",
+      "sourceRoot": "libs/judicial-system/consts/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/judicial-system/consts/.eslintrc",
+            "tsConfig": [
+              "libs/judicial-system/consts/tsconfig.lib.json",
+              "libs/judicial-system/consts/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/judicial-system/consts/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/judicial-system/consts/jest.config.js",
+            "tsConfig": "libs/judicial-system/consts/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

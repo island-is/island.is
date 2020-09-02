@@ -224,6 +224,9 @@
     },
     "infra-monitoring": {
       "tags": []
+    },
+    "judicial-system-consts": {
+      "tags": []
     }
   }
 }
