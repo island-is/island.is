@@ -1,6 +1,6 @@
 import { Client } from '@elastic/elasticsearch'
 import { Document, SearchIndexes } from '../types'
-import esb, {RequestBodySearch, Sort, TermsAggregation} from 'elastic-builder'
+import esb, { RequestBodySearch, Sort, TermsAggregation } from 'elastic-builder'
 import { logger } from '@island.is/logging'
 import merge from 'lodash/merge'
 import { environment } from '../environments/environment'
@@ -121,6 +121,25 @@ export class ElasticService {
       .size(1000)
 
     return this.findByQuery(index, requestBody)
+  }
+
+  async deleteByIds(index: SearchIndexes, ids: Array<string>) {
+    // In case we get an empty list, ES will match that to all records... which we don't want to delete
+    if (!ids.length) {
+      return
+    }
+    const client = await this.getClient()
+    return client.delete_by_query({
+      index: index,
+      body: {
+        query: {
+          bool: {
+            // eslint-disable-next-line @typescript-eslint/camelcase
+            must: ids.map((id) => ({ match: { _id: id } })),
+          },
+        },
+      },
+    })
   }
 
   async deleteAllExcept(index: SearchIndexes, excludeIds: Array<string>) {

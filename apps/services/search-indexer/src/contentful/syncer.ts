@@ -12,18 +12,8 @@ import { Injectable } from '@nestjs/common'
 interface SyncerResult {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   items: Entry<any>[]
+  deletedItems: string[]
   token: string | undefined
-}
-
-function chunk(arr, len) {
-  let i = 0
-  const chunks = [],
-    n = arr.length
-
-  while (i < n) {
-    chunks.push(arr.slice(i, (i += len)))
-  }
-  return chunks
 }
 
 @Injectable()
@@ -43,25 +33,43 @@ export class Syncer {
   }
 
   async getSyncEntries(opts): Promise<SyncerResult> {
-    const collection: SyncCollection = await this.contentFulClient.sync(opts)
+    const {
+      entries,
+      nextSyncToken,
+      deletedEntries,
+    }: SyncCollection = await this.contentFulClient.sync(opts)
+    const chunkSize = 30
 
-    const idChunks = chunk(
-      collection.entries.map((entry) => entry.sys.id),
-      30,
-    )
-    const result = {
-      items: [],
-      deletedItems: [],
-      token: collection.nextSyncToken,
-    }
-    for (const ids of idChunks) {
+    // get all entries form contentful
+    let alteredItems = []
+    let chunkToProcess = entries.splice(-chunkSize, chunkSize)
+    do {
+      const chunkIds = chunkToProcess.reduce((csvIds, entry) => {
+        // if indexing this type is suported
+        if (environment.indexableTypes.includes(entry.sys.contentType.sys.id)) {
+          return `${csvIds}, ${entry.sys.id}`
+        } else {
+          return csvIds
+        }
+      }, '')
+
+      // TODO: Make this use cms domain endpoints to reduce mapping/typing required?
       const { items } = await this.contentFulClient.getEntries({
         include: this.defaultIncludeDepth,
-        'sys.id[in]': ids.join(','),
+        'sys.id[in]': chunkIds,
       })
-      result.items = result.items.concat(items)
+      alteredItems = alteredItems.concat(items)
+      chunkToProcess = entries.splice(-chunkSize, chunkSize)
+    } while (chunkToProcess.length)
+
+    // extract ids from deletedItems
+    const deletedItems = deletedEntries.map((entry) => entry.sys.id)
+
+    return {
+      items: alteredItems,
+      token: nextSyncToken,
+      deletedItems,
     }
-    return result
   }
 
   async getEntry(id: string): Promise<Entry<unknown> | undefined> {

@@ -39,44 +39,53 @@ export class IndexingService {
   async continueSync(syncToken: string, index: SearchIndexes) {
     await this.needConnection()
     logger.info('Start continue sync')
-    const result = await this.contentFulSyncer.getSyncEntries({
+    const {
+      items,
+      token,
+      deletedItems,
+    } = await this.contentFulSyncer.getSyncEntries({
       nextSyncToken: syncToken,
       // eslint-disable-next-line @typescript-eslint/camelcase
-      content_type: 'article',
       resolveLinks: true,
     })
+
     logger.info('Continue sync found results', {
-      numItems: result.items.length,
+      numItems: items.length,
     })
-    for (const item of result.items) {
+
+    for (const item of items) {
       // one at a time please, else ES will be unhappy
-      await this.transformAndIndexEntry(index, result.token, item)
+      await this.transformAndIndexEntry(index, token, item)
     }
+
+    // delete content that has been unpublished from contentful
+    await this.elasticService.deleteByIds(index, deletedItems)
+
     logger.info('Continue sync done')
   }
 
   async initialSync(index: SearchIndexes) {
     await this.needConnection()
     logger.info('Start initial sync')
-    const result = await this.contentFulSyncer.getSyncEntries({
+    const { items, token } = await this.contentFulSyncer.getSyncEntries({
       initial: true,
       // eslint-disable-next-line @typescript-eslint/camelcase
-      content_type: 'article',
       resolveLinks: true,
     })
     logger.info('Initial sync found result', {
-      numItems: result.items.length,
+      numItems: items.length,
     })
 
-    for (const item of result.items) {
+    // TODO: Use es client batch here
+    for (const item of items) {
       // one at a time please, else ES will be unhappy
-      await this.transformAndIndexEntry(index, result.token, item)
+      await this.transformAndIndexEntry(index, token, item)
     }
 
     // delete everything in ES, except for synced content, to ensure no stale data in index
     await this.elasticService.deleteAllExcept(
       index,
-      result.items.map((entry) => entry.sys.id),
+      items.map((entry) => entry.sys.id),
     )
 
     logger.info('Initial sync done')
@@ -129,7 +138,7 @@ export class IndexingService {
             response += (doc.data.target.fields.processTitle ?? '') + '\n'
             response += (doc.data.target.fields.processDescription ?? '') + '\n'
           } else {
-            //todo implement more types
+            //todo implement more typesz
           }
         }
       })
@@ -138,10 +147,13 @@ export class IndexingService {
 
     // TODO: Fix this when improving mapping
     // related articles has a recursive nesting problem, we prune it for now
-    if(entry.fields?.relatedArticles?.[0]) {
-      logger.info('Removing related articles from related articles')
+    if (entry.fields?.relatedArticles?.[0]?.fields) {
+      logger.info('Removing nested related articles from related articles')
       // remove related articles from nested articles
-      const {relatedArticles, ...prunedRelatedArticlesFields} = entry.fields.relatedArticles[0].fields
+      const {
+        relatedArticles,
+        ...prunedRelatedArticlesFields
+      } = entry.fields.relatedArticles[0].fields
       entry.fields.relatedArticles[0].fields = prunedRelatedArticlesFields
     }
 
@@ -169,6 +181,7 @@ export class IndexingService {
       url: '',
       _id: entry.sys.id,
     }
+
     if (syncToken) {
       document.nextSyncToken = syncToken
     }
@@ -182,3 +195,5 @@ export class IndexingService {
     })
   }
 }
+
+// TODO: Setup cron to cleanup the dev environment
