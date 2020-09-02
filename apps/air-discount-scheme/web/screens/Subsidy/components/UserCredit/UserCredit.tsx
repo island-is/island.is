@@ -11,20 +11,16 @@ type StatusOptions = {
   borderColor: Colors
 }
 
-export type Status = 'success' | 'error' | 'default'
+export type Status = 'fundUsed' | 'default'
 
 type BoxStatus = {
   [Type in Status]: StatusOptions
 }
 
 const boxStatus: BoxStatus = {
-  success: {
-    background: 'mint100',
-    borderColor: 'mint400',
-  },
-  error: {
-    background: 'red100',
-    borderColor: 'red200',
+  fundUsed: {
+    background: 'dark100',
+    borderColor: 'dark200',
   },
   default: {
     background: 'blue100',
@@ -41,13 +37,7 @@ interface PropTypes {
 function UserCredit({ discount, misc, status = 'default' }: PropTypes) {
   const { user: authUser } = useContext(UserContext)
   const { discountCode, user } = discount
-  const {
-    remaining,
-    copyCode,
-    kidsRights,
-    usedFund,
-    noRightsToFund,
-  } = JSON.parse(misc)
+  const { remaining, copyCode, kidsRights, usedFund } = JSON.parse(misc)
 
   const remainingPlaceholders = {
     remaining: user.fund.credit,
@@ -70,19 +60,15 @@ function UserCredit({ discount, misc, status = 'default' }: PropTypes) {
         <Typography variant="h3">
           {user.name} {user.nationalId !== authUser.nationalId && kidsRights}
         </Typography>
-        {status !== 'error' && (
-          <Typography variant="p">
-            {remaining.replace(
-              /\{{(.*?)\}}/g,
-              (m, sub) => remainingPlaceholders[sub],
-            )}
-          </Typography>
-        )}
+        <Typography variant="p">
+          {remaining.replace(
+            /\{{(.*?)\}}/g,
+            (m, sub) => remainingPlaceholders[sub],
+          )}
+        </Typography>
       </Box>
-      {status === 'success' ? (
+      {status === 'fundUsed' ? (
         <Typography variant="h5">{usedFund}</Typography>
-      ) : status === 'error' ? (
-        <Typography variant="h5">{noRightsToFund}</Typography>
       ) : (
         <Box
           display="flex"

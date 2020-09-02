@@ -49,36 +49,11 @@ function Benefits({ misc }: PropTypes) {
   const { myRights, codeDescription, attention, codeDisclaimer } = JSON.parse(
     misc,
   )
-  const { activeCodes, fundUsed, noRights } = discounts.reduce(
-    (acc, discount) => {
-      const { user } = discount
-      const fundUsed = user.fund.used === user.fund.total
-      const noRights = !user.meetsADSRequirements
-      const status: Status = fundUsed
-        ? 'success'
-        : noRights
-        ? 'error'
-        : 'default'
-      if (status === 'success') {
-        acc.fundUsed.push({ discount, status })
-      } else if (status === 'error') {
-        acc.noRights.push({ discount, status })
-      } else {
-        acc.activeCodes.push({ discount, status })
-      }
-      return acc
-    },
-    {
-      activeCodes: [],
-      fundUsed: [],
-      noRights: [],
-    },
-  )
-  const noBenefits =
-    fundUsed.length <= 0 && activeCodes.length <= 0 && !loading && called
+  const benefits = discounts.filter(({ user }) => user.meetsADSRequirements)
+  const hasBenefits = benefits.length > 0 && !loading && called
   return (
     <Box marginBottom={6}>
-      {!noBenefits && (
+      {hasBenefits && (
         <Box
           marginBottom={8}
           background="yellow200"
@@ -104,20 +79,21 @@ function Benefits({ misc }: PropTypes) {
 
       <Stack space={3}>
         <Typography variant="h3">{myRights}</Typography>
-        {noBenefits ? (
-          <NoBenefits misc={misc} />
-        ) : (
+        {hasBenefits ? (
           <>
             {loading ? (
               <SkeletonLoader height={98} />
             ) : (
-              [...activeCodes, ...fundUsed, ...noRights].map((data, index) => {
+              benefits.map((discount, index) => {
+                const { user } = discount
+                const fundUsed = user.fund.used === user.fund.total
+                const status: Status = fundUsed ? 'fundUsed' : 'default'
                 return (
                   <UserCredit
                     key={index}
                     misc={misc}
-                    discount={data.discount}
-                    status={data.status}
+                    discount={discount}
+                    status={status}
                   />
                 )
               })
@@ -126,6 +102,8 @@ function Benefits({ misc }: PropTypes) {
               <Typography variant="pSmall">{codeDescription}</Typography>
             </Box>
           </>
+        ) : (
+          <NoBenefits misc={misc} />
         )}
       </Stack>
     </Box>
