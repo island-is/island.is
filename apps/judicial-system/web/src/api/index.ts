@@ -1,20 +1,6 @@
 import 'isomorphic-fetch'
 import { Case } from '../types'
 
-interface GetCasesResponse {
-  ok: boolean
-  code: number
-  cases?: Case[]
-  message?: string
-}
-
-interface SaveCaseResponse {
-  ok: boolean
-  code: number
-  case: Case
-  message?: string
-}
-
 interface SaveCaseRequest {
   description: string
   policeCaseNumber: string
@@ -22,45 +8,39 @@ interface SaveCaseRequest {
   suspectName: string
 }
 
-export const getCases: () => Promise<GetCasesResponse> = async () => {
-  const response = await fetch('/api/cases')
+export const getCases: () => Promise<Case[]> = async () => {
+  try {
+    const response = await fetch('/api/cases')
 
-  if (response.ok) {
-    const cases = await response.json()
-    return {
-      ok: true,
-      code: response.status,
-      cases,
+    if (response.ok) {
+      const cases = await response.json()
+      return cases
+    } else {
+      throw new Error(response.statusText)
     }
-  } else {
+  } catch (ex) {
     // TODO: Log error
-
-    return {
-      ok: false,
-      code: response.status,
-      message: response.statusText,
-    }
+    console.log(ex)
   }
 }
 
-export const saveCase: (
+export const saveCase: (caseToSave: SaveCaseRequest) => void = async (
   caseToSave: SaveCaseRequest,
-) => Promise<SaveCaseResponse> = async (caseToSave: SaveCaseRequest) => {
-  const response = await fetch('/api/case', {
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(caseToSave),
-  })
+) => {
+  try {
+    const response = await fetch('/api/case', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(caseToSave),
+    })
 
-  if (response.ok) {
-    const savedCase = await response.json()
-
-    return {
-      ok: true,
-      code: response.status,
-      case: savedCase,
+    if (!response.ok) {
+      throw new Error(response.statusText)
     }
+  } catch (ex) {
+    // TODO: log error
+    console.log(ex)
   }
 }

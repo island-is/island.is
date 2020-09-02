@@ -16,14 +16,16 @@ import * as styles from './DetentionRequests.treat'
 
 export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<Case[]>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
     let isMounted = true
 
     async function getCases() {
       const response = await api.getCases()
-      if (isMounted && response.ok) {
-        setCases(response.cases)
+      if (isMounted) {
+        setCases(response)
+        setIsLoading(false)
       }
     }
 
@@ -58,7 +60,7 @@ export const DetentionRequests: React.FC = () => {
           Stofna nýja kröfu
         </Button>
       </div>
-      {cases !== null ? (
+      {isLoading ? null : cases !== null ? (
         <table
           className={styles.detentionRequestsTable}
           data-testid="detention-requests-table"
