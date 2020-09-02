@@ -7,7 +7,7 @@ import React, {
   LabelHTMLAttributes,
   ReactNode,
 } from 'react'
-import Downshift, { StateChangeFunction } from 'downshift'
+import Downshift, { DownshiftProps } from 'downshift'
 import { ControllerStateAndHelpers } from 'downshift/typings'
 import cn from 'classnames'
 import { Input, InputProps, Label, Menu, MenuProps, Item } from './shared'
@@ -43,14 +43,12 @@ export interface AsyncSearchProps {
   loading?: boolean
   closeMenuOnSubmit?: boolean
   white?: boolean
-  onSubmit?: (inputValue: string, selectedOption?: AsyncSearchOption) => void
-  onChange?: (selection: object) => void
-  onInputValueChange?: (
+  onSubmit?: (
     inputValue: string,
-    stateAndHelpers: ControllerStateAndHelpers<
-      StateChangeFunction<AsyncSearchOption>
-    >,
+    selectedOption: AsyncSearchOption | null,
   ) => void
+  onChange?: DownshiftProps<AsyncSearchOption>['onChange']
+  onInputValueChange?: DownshiftProps<AsyncSearchOption>['onInputValueChange']
 }
 
 export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
@@ -100,7 +98,9 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
               ctx.setState({ inputValue })
           }
         }}
-        itemToString={(item: AsyncSearchOption) => (item ? item.label : '')}
+        itemToString={(item: AsyncSearchOption | null) =>
+          item ? item.label : ''
+        }
         {...props}
       >
         {(downshiftProps: ControllerStateAndHelpers<AsyncSearchOption>) => {
@@ -152,7 +152,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                 highlightedIndex !== null ? options[highlightedIndex] : null
 
               closeMenuOnSubmit && closeMenu()
-              onSubmit(inputValue, selectedOption)
+              onSubmit && onSubmit(inputValue || '', selectedOption)
             }
           }
 
@@ -186,7 +186,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                   ? {
                       onClick: () => {
                         closeMenuOnSubmit && closeMenu()
-                        onSubmit(inputValue)
+                        onSubmit && onSubmit(inputValue || '', null)
                       },
                     }
                   : getToggleButtonProps()),
@@ -210,7 +210,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
 
 const createFilterFunction = (
   filter: AsyncSearchProps['filter'],
-  inputValue: string,
+  inputValue: string | null,
 ): ((item: AsyncSearchOption) => boolean) => {
   if (typeof filter === 'function') {
     return filter
@@ -293,11 +293,7 @@ export const AsyncSearchInput = forwardRef<
             />
           </span>
         )}
-        {showLabel && (
-          <Label hasLabel={showLabel} {...labelProps}>
-            {label}
-          </Label>
-        )}
+        {showLabel && <Label {...labelProps}>{label}</Label>}
         <Menu {...{ isOpen, shouldShowItems: isOpen, ...menuProps }}>
           {children}
         </Menu>
