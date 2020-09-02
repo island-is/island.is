@@ -10,7 +10,7 @@ import {
 
 export interface EmailSignupProps {
   title: string
-  description: string
+  description?: string
   inputLabel: string
   buttonText: string
 }
@@ -27,9 +27,11 @@ export const EmailSignup: FC<EmailSignupProps> = ({
         <Typography variant="h3" as="h3" color="blue400">
           {title}
         </Typography>
-        <Typography variant="p" as="p">
-          {description}
-        </Typography>
+        {description && (
+          <Typography variant="p" as="p">
+            {description}
+          </Typography>
+        )}
       </div>
       <Columns alignY="center" space={[2, 2, 8]} collapseBelow="md">
         <Column>

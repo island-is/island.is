@@ -3,9 +3,8 @@ import {
   Param,
   Post,
   Get,
-  Inject,
-  forwardRef,
   UseGuards,
+  NotFoundException,
 } from '@nestjs/common'
 import {
   ApiBearerAuth,
@@ -20,9 +19,8 @@ import {
   GetCurrentDiscountByNationalIdParams,
 } from './discount.validator'
 import { DiscountService } from './discount.service'
-import { DiscountLimitExceeded } from './discount.error'
-import { FlightService } from '../flight'
 import { AuthGuard } from '../common'
+import { NationalRegistryService } from '../nationalRegistry'
 
 @ApiTags('Discounts')
 @Controller('api/public')
@@ -31,8 +29,7 @@ import { AuthGuard } from '../common'
 export class PublicDiscountController {
   constructor(
     private readonly discountService: DiscountService,
-    @Inject(forwardRef(() => FlightService))
-    private readonly flightService: FlightService,
+    private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
   // TODO THIS SHOULD NOT GO TO PROD
@@ -42,12 +39,11 @@ export class PublicDiscountController {
   async createDiscountCode(
     @Param() params: CreateDiscountCodeParams,
   ): Promise<Discount> {
-    const {
-      unused: flightLegsLeft,
-    } = await this.flightService.countFlightLegsByNationalId(params.nationalId)
-    if (flightLegsLeft <= 0) {
-      throw new DiscountLimitExceeded()
+    const user = await this.nationalRegistryService.getUser(params.nationalId)
+    if (!user) {
+      throw new NotFoundException(`User<${params.nationalId}> not found`)
     }
+
     return this.discountService.createDiscountCode(params.nationalId)
   }
 }
@@ -56,8 +52,7 @@ export class PublicDiscountController {
 export class PrivateDiscountController {
   constructor(
     private readonly discountService: DiscountService,
-    @Inject(forwardRef(() => FlightService))
-    private readonly flightService: FlightService,
+    private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
   @Get('users/:nationalId/discounts/current')
@@ -73,12 +68,11 @@ export class PrivateDiscountController {
   async createDiscountCode(
     @Param() params: CreateDiscountCodeParams,
   ): Promise<Discount> {
-    const {
-      unused: flightLegsLeft,
-    } = await this.flightService.countFlightLegsByNationalId(params.nationalId)
-    if (flightLegsLeft <= 0) {
-      throw new DiscountLimitExceeded()
+    const user = await this.nationalRegistryService.getUser(params.nationalId)
+    if (!user) {
+      throw new NotFoundException(`User<${params.nationalId}> not found`)
     }
+
     return this.discountService.createDiscountCode(params.nationalId)
   }
 }

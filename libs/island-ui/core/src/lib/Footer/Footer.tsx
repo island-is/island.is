@@ -12,6 +12,7 @@ import { Icon } from '../Icon/Icon'
 import { GridContainer, GridRow, GridColumn } from '../Grid'
 
 import * as styles from './Footer.treat'
+import { ExternalLink, Link } from '../Link'
 
 export interface FooterLinkProps {
   title: string
@@ -46,7 +47,7 @@ export const Footer = ({
 }: FooterProps) => {
   return (
     <>
-      <Box width="full" background="blue100" paddingY={[3, 3, 6]}>
+      <Box width="full" background="blue100" paddingY={6}>
         <GridContainer>
           <GridRow>
             <GridColumn span={12}>
@@ -54,16 +55,17 @@ export const Footer = ({
                 <Logo iconOnly id="footer_logo" />
               </Box>
             </GridColumn>
-            <GridColumn span={[12, 12, 3]} paddingBottom={[4, 4, 0]}>
-              <div className={cn(styles.links)}>
+            <GridColumn
+              span={[12, 12, 3]}
+              paddingBottom={[4, 4, 0]}
+              className={styles.withDecorator}
+            >
+              <div>
                 {topLinks.map(({ title, href }, index) => (
-                  <Typography
-                    key={index}
-                    variant="h3"
-                    color="blue400"
-                    paddingBottom={3}
-                  >
-                    <a href={href}>{title}</a>
+                  <Typography key={index} variant="h3" paddingBottom={3}>
+                    <Link href={href} color="blue400" withUnderline>
+                      {title}
+                    </Link>
                   </Typography>
                 ))}
                 {!hideLanguageSwith && (
@@ -75,10 +77,10 @@ export const Footer = ({
                         type="globe"
                         color="blue400"
                       />
-                      <Typography variant="h5" color="blue400">
-                        <a href={languageSwitchLink.href}>
+                      <Typography variant="h5">
+                        <Link color="blue400" href={languageSwitchLink.href}>
                           {languageSwitchLink.title}
-                        </a>
+                        </Link>
                       </Typography>
                     </Inline>
                   </Box>
@@ -91,16 +93,26 @@ export const Footer = ({
                       type="facebook"
                       color="blue400"
                     />
-                    <Typography variant="h5" color="blue400">
-                      <a href="https://www.facebook.com/islandid">Facebook</a>
+                    <Typography variant="h5">
+                      <Link
+                        color="blue400"
+                        href="https://www.facebook.com/islandid"
+                      >
+                        Facebook
+                      </Link>
                     </Typography>
                   </Inline>
                 </Box>
               </div>
             </GridColumn>
             {showMiddleLinks ? (
-              <GridColumn span={[12, 12, 6]} paddingBottom={[4, 4, 0]}>
-                <div className={cn(styles.links)}>
+              <GridColumn
+                span={[12, 12, 6]}
+                paddingBottom={[4, 4, 0]}
+                paddingTop={[6, 6, 0]}
+                className={styles.withDecorator}
+              >
+                <div>
                   {middleLinksTitle ? (
                     <Typography
                       variant="eyebrow"
@@ -113,8 +125,10 @@ export const Footer = ({
                   <Tiles space={2} columns={[1, 2, 2, 2, 2]}>
                     {middleLinks.map(({ title, href }, index) => {
                       return (
-                        <Typography key={index} variant="h5" color="blue400">
-                          <a href={href}>{title}</a>
+                        <Typography key={index} variant="h5">
+                          <Link href={href} color="blue400" withUnderline>
+                            {title}
+                          </Link>
                         </Typography>
                       )
                     })}
@@ -123,7 +137,7 @@ export const Footer = ({
               </GridColumn>
             ) : null}
             {showTagLinks ? (
-              <GridColumn span={[12, 12, 3]}>
+              <GridColumn span={[12, 12, 3]} paddingTop={[6, 6, 0]}>
                 {tagLinksTitle ? (
                   <Typography
                     variant="eyebrow"
@@ -161,16 +175,9 @@ export const Footer = ({
               (group) =>
                 group.map(({ title, href }) => {
                   return (
-                    <GridColumn key={href} span={3}>
+                    <GridColumn key={href} span={[12, 6, 4, 3]}>
                       <Typography variant="h5" color="white" paddingBottom={3}>
-                        <a
-                          href={href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {title}{' '}
-                          <Icon width="12" type="external" color="white" />
-                        </a>
+                        <ExternalLink href={href}> {title}</ExternalLink>
                       </Typography>
                     </GridColumn>
                   )

@@ -4,6 +4,7 @@ import {
   FormValue,
   FormType,
   getFormByTypeId,
+  ExternalData,
 } from '@island.is/application/schema'
 import FormProgress from '../components/FormProgress/'
 import ApplicationName from '../components/ApplicationName/'
@@ -22,6 +23,7 @@ type ApplicationProps = {
   applicationId?: string
   formType: FormType
   initialAnswers?: FormValue
+  initialExternalData?: ExternalData
   loadingApplication: boolean
   onApplicationCreated?(id: string): void
 }
@@ -30,6 +32,7 @@ export const ApplicationForm: FC<ApplicationProps> = ({
   applicationId,
   formType,
   initialAnswers,
+  initialExternalData = {},
   loadingApplication,
   onApplicationCreated = () => undefined,
 }) => {
@@ -37,6 +40,7 @@ export const ApplicationForm: FC<ApplicationProps> = ({
   const [state, dispatch] = useReducer(
     ApplicationReducer,
     {
+      externalData: initialExternalData,
       form,
       formLeaves: [],
       formValue: initialAnswers,
@@ -53,6 +57,7 @@ export const ApplicationForm: FC<ApplicationProps> = ({
     activeSection,
     activeSubSection,
     activeScreen,
+    externalData,
     formValue,
     progress,
     sections,
@@ -64,7 +69,10 @@ export const ApplicationForm: FC<ApplicationProps> = ({
     if (!loadingApplication) {
       dispatch({
         type: ActionTypes.RE_INITIALIZE,
-        payload: { formValue: initialAnswers },
+        payload: {
+          formValue: initialAnswers,
+          externalData: initialExternalData,
+        },
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -99,10 +107,14 @@ export const ApplicationForm: FC<ApplicationProps> = ({
           className={styles.screenContainer}
         >
           <Screen
+            addExternalData={(payload) =>
+              dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
+            }
             answerQuestions={(payload) =>
               dispatch({ type: ActionTypes.ANSWER, payload })
             }
             dataSchema={form.schema}
+            externalData={externalData}
             formTypeId={form.id}
             formValue={formValue}
             expandRepeater={() =>

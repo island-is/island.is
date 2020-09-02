@@ -53,7 +53,7 @@ export const Card: FC<CardProps> = ({
     >
       <Box flexGrow={1} height="full">
         <Stack space={1}>
-          <Typography variant="cardCategoryTitle" as="h3">
+          <Typography variant="cardCategoryTitle" as="h3" color="blue400">
             <Box display="flex" flexDirection="row" alignItems="center">
               <Box display="inlineFlex" flexGrow={1}>
                 {title}

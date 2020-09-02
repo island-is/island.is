@@ -1,7 +1,7 @@
 import React from 'react'
 import { ApolloProvider } from '@apollo/client'
 
-import { Route, Switch } from 'react-router-dom'
+import { Redirect, Route, Switch } from 'react-router-dom'
 
 import { Header, Box } from '@island.is/island-ui/core'
 import { client } from '@island.is/application/graphql'
@@ -18,6 +18,9 @@ export const App = () => {
           <Header />
         </Box>
         <Switch>
+          <Route exact path="/">
+            <Redirect to="/application/" />
+          </Route>
           <Route path="/applications/:type">
             <Applications />
           </Route>

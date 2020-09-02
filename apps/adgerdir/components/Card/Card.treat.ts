@@ -1,19 +1,24 @@
-import { style } from 'treat'
+import { style, styleMap } from 'treat'
+import { theme } from '@island.is/island-ui/theme'
 
 export const card = style({
   display: 'flex',
   height: '100%',
+  minWidth: '100%',
   flexDirection: 'column',
+  backgroundColor: theme.color.white,
+  flexGrow: 1,
   cursor: 'pointer',
-  borderWidth: '1px',
+  borderWidth: 1,
+  boxSizing: 'border-box',
   borderStyle: 'solid',
-  borderColor: '#CCDFFF',
-  transition: 'border-color 150ms ease',
-  borderRadius: '5px',
+  borderColor: theme.color.red200,
+  borderRadius: theme.border.radius.large,
   textDecoration: 'none',
   position: 'relative',
+  transition: 'border-color 150ms ease',
   ':hover': {
-    borderColor: '#0061FF',
+    borderColor: theme.color.red400,
     textDecoration: 'none',
   },
   ':focus': {
@@ -25,30 +30,85 @@ export const card = style({
     position: 'absolute',
     pointerEvents: 'none',
     borderStyle: 'solid',
-    borderWidth: '3px',
-    borderColor: '#E1D5EC',
-    borderRadius: '7px',
-    outline: 0,
-    top: '-4px',
-    left: '-4px',
-    bottom: '-4px',
-    right: '-4px',
+    borderWidth: 3,
+    borderColor: theme.color.transparent,
+    borderRadius: 10,
+    top: -3,
+    left: -3,
+    bottom: -3,
+    right: -3,
     opacity: 0,
-    transition: 'opacity 150ms ease',
+    transition: 'border-color 150ms ease, opacity 150ms ease',
   },
   selectors: {
     [`&:focus:before`]: {
-      border: '3px solid #00E4CA',
+      borderWidth: 3,
+      borderStyle: 'solid',
+      borderColor: theme.color.mint400,
       opacity: 1,
       outline: 0,
     },
+    [`&:focus:hover`]: {
+      borderColor: theme.color.white,
+    },
+  },
+})
+
+export const variants = styleMap({
+  blue: {
+    borderColor: theme.color.blue200,
+    ':hover': {
+      borderColor: theme.color.blue400,
+    },
+  },
+  purple: {
+    borderColor: theme.color.purple200,
+    ':hover': {
+      borderColor: theme.color.purple400,
+    },
+  },
+  red: {
+    borderColor: theme.color.red200,
+    ':hover': {
+      borderColor: theme.color.red400,
+    },
+  },
+})
+
+export const statusPosition = style({
+  position: 'absolute',
+  top: 16,
+  right: 16,
+})
+
+export const status = style({
+  display: 'inline-block',
+  borderRadius: '50%',
+  width: 8,
+  height: 8,
+})
+
+export const statusType = styleMap({
+  ongoing: {
+    backgroundColor: theme.color.purple400,
+  },
+  preparing: {
+    backgroundColor: theme.color.yellow600,
+  },
+  completed: {
+    backgroundColor: theme.color.mint600,
   },
 })
 
 export const focused = style({
   ':before': {
-    border: '3px solid #00E4CA',
+    borderWidth: 3,
+    borderStyle: 'solid',
+    borderColor: theme.color.mint400,
     opacity: 1,
     outline: 0,
+  },
+  ':hover': {
+    borderColor: theme.color.white,
   },
 })

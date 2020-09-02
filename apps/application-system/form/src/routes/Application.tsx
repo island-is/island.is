@@ -22,9 +22,10 @@ export const Application = () => {
 
   return (
     <ApplicationForm
-      formType={data?.getApplication?.typeId ?? FormType.PATERNITY_LEAVE}
+      formType={data?.getApplication?.typeId ?? FormType.PARENTAL_LEAVE}
       applicationId={data?.getApplication?.id}
       initialAnswers={data?.getApplication?.answers}
+      initialExternalData={data?.getApplication?.externalData}
       loadingApplication={loading}
       onApplicationCreated={(id) => history.replace(`${match.url}/${id}`)}
     />

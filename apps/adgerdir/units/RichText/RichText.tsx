@@ -9,7 +9,7 @@ export interface RichTextProps extends Options {
   document?: string | Document
 }
 
-const RichText: FC<RichTextProps> = ({
+export const RichText: FC<RichTextProps> = ({
   document,
   renderNode,
   renderMark,

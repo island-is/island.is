@@ -1,7 +1,12 @@
 export default {
   production: true,
+  nationalRegistry: {
+    url: 'https://skeyti.advania.is/ords/slrv/registry/v1.0',
+    username: 'si_flugfargjold',
+    password: process.env.NATIONAL_REGISTRY_PASSWORD,
+  },
   airlineApiKeys: {
-    airIcelandConnect: process.env.AIR_ICELAND_CONNECT_API_KEY,
+    icelandair: process.env.ICELANDAIR_API_KEY,
     ernir: process.env.ERNIR_API_KEY,
   },
   redis: {

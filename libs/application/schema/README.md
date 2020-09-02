@@ -11,7 +11,8 @@ An application includes information about:
 - who the `applicant` is
 - what is (s)he applying for (`typeId`)
 - the needed `answers` to the questions in the application
-- what `status` the application is in
+- the `externalData` attached to the application
+- what `state` the application is in
 - and more
 
 ### Form
@@ -24,7 +25,7 @@ In order to have consistent form validation in the frontend and backend, each `F
 
 #### Form structure
 
-The structure of a form describes how questions and other fields are displayed, in what section or subsection they belong to, and in what order. It is basically a tree where the root is the `Form`, and the leaves are renderable `Fields`. In between there are nodes that describe the structure in more detail, such as `Sections`, `SubSections`, `MultiFields`, and `Repeaters`.
+The structure of a form describes how questions and other fields are displayed, in what section or subsection they belong to, and in what order. It is basically a tree where the root is the `Form`, and the leaves are renderable `Fields`. In between there are nodes that describe the structure in more detail, such as `Sections`, `SubSections`, `MultiFields`, `ExternalDataProviders` and `Repeaters`.
 
 #### Fields
 
@@ -41,6 +42,10 @@ These are only used for cosmetic reasons. They divide the form flow into meaning
 #### Multi-fields
 
 These are only used for cosmetic reasons. They group fields together so the `application-form` UI renders multiple fields on the screen, instead of the default one field per screen behavior.
+
+#### External Data Providers
+
+Many applications rely on external data that should not be editable by any user or consumer of an api. The externalData of an application is only updated by the backend via custom-made `DataProviders`.
 
 ## How to build a new Form
 

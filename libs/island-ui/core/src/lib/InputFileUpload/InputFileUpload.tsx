@@ -9,7 +9,30 @@ import { Button } from '../Button/Button'
 import { theme, Colors } from '@island.is/island-ui/theme'
 import Icon, { IconTypes } from '../Icon/Icon'
 
-import { UploadFile, UploadFileStatus } from './InputFileUpload.types'
+export type UploadFileStatus = 'error' | 'done' | 'uploading'
+
+export interface UploadFile {
+  name: string
+  url?: string
+  key?: string
+  status?: UploadFileStatus
+  percent?: number
+  originalFileObj?: File | Blob
+  error?: string
+}
+
+export const fileToObject = (
+  file: File,
+  status?: UploadFileStatus,
+): UploadFile => {
+  return {
+    name: file.name,
+    percent: 0,
+    originalFileObj: file,
+    url: '',
+    status: status || 'done',
+  }
+}
 
 interface UploadingIndicatorProps {
   percent: number

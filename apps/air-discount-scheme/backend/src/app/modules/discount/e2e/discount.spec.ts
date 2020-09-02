@@ -1,18 +1,36 @@
 import { setup } from '../../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
-import { FlightService } from '../../flight'
 import CacheManger from 'cache-manager'
+import {
+  NationalRegistryService,
+  NationalRegistryUser,
+} from '../../nationalRegistry'
 
 let app: INestApplication
-let flightService: FlightService
 let cacheManager: CacheManger
+let nationalRegistryService: NationalRegistryService
+const user: NationalRegistryUser = {
+  nationalId: '1234567890',
+  firstName: 'Jón',
+  gender: 'kk',
+  lastName: 'Jónsson',
+  middleName: 'Gunnar',
+  address: 'Bessastaðir 1',
+  postalcode: 900,
+  city: 'Vestmannaeyjar',
+}
 
 beforeAll(async () => {
   app = await setup()
-  flightService = app.get<FlightService>(FlightService)
   cacheManager = app.get<CacheManger>(CACHE_MANAGER)
   cacheManager.ttl = () => ''
+  nationalRegistryService = app.get<NationalRegistryService>(
+    NationalRegistryService,
+  )
+  jest
+    .spyOn(nationalRegistryService, 'getUser')
+    .mockImplementation(() => Promise.resolve(user))
 
   Date.now = jest.fn(() => 1597760782018)
 })
@@ -27,22 +45,9 @@ describe('Create DiscountCode', () => {
 
     expect(response.body).toEqual({
       discountCode: expect.any(String),
-      expires: '2020-08-19T14:26:22.018Z',
+      expiresIn: 86400,
       nationalId,
     })
     expect(spy).toHaveBeenCalled()
-  })
-
-  it(`POST /api/private/users/:nationalId/discounts with no flightlegs left should return forbidden`, async () => {
-    const nationalId = '1326487905'
-    const spy = jest
-      .spyOn(flightService, 'countFlightLegsByNationalId')
-      .mockImplementation(() =>
-        Promise.resolve({ nationalId, unused: 0, total: 6 }),
-      )
-    await request(app.getHttpServer())
-      .post('/api/private/users/1326487905/discounts')
-      .expect(403)
-    spy.mockRestore()
   })
 })

@@ -1,7 +1,21 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC } from 'react'
-import { ContentBlock, Box, Typography, Stack } from '@island.is/island-ui/core'
-import { Card } from '../components'
+import React from 'react'
+import Head from 'next/head'
+import {
+  Box,
+  ContentBlock,
+  Typography,
+  Stack,
+  Breadcrumbs,
+} from '@island.is/island-ui/core'
+import { Content } from '@island.is/adgerdir/units/Content'
+import {
+  Articles,
+  Sleeve,
+  GroupedPages,
+  CardsSlider,
+  FeaturedNews,
+} from '@island.is/adgerdir/components'
 import { withApollo } from '../graphql'
 import { useI18n } from '../i18n'
 import {
@@ -9,80 +23,114 @@ import {
   QueryGetNamespaceArgs,
   ContentLanguage,
   QueryGetAdgerdirPagesArgs,
+  QueryGetAdgerdirTagsArgs,
 } from '@island.is/api/schema'
 import {
+  GET_ADGERDIR_TAGS_QUERY,
   GET_NAMESPACE_QUERY,
   GET_ADGERDIR_PAGES_QUERY,
   GET_ADGERDIR_FRONTPAGE_QUERY,
 } from './queries'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
-import ArticleContent from '../units/Content/ArticleContent'
-import { Locale } from '../i18n/I18n'
-import useRouteNames from '../i18n/useRouteNames'
-import Head from 'next/head'
+import { ArticleLayout } from './Layouts/Layouts'
+import { ColorSchemeContext } from '@island.is/adgerdir/context'
 
 interface HomeProps {
   frontpage: Query['getAdgerdirFrontpage']
-  items: Query['getAdgerdirPages']
+  pages: Query['getAdgerdirPages']
+  tags: Query['getAdgerdirTags']
   namespace: Query['getNamespace']
 }
 
-const Home: Screen<HomeProps> = ({ frontpage, items, namespace }) => {
+const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale as Locale)
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
   }
 
-  console.log('frontpage', frontpage)
-  console.log('items', items)
+  const { items: pagesItems } = pages
+  const { items: tagsItems } = tags
 
   return (
     <>
       <Head>
         <title>Viðspyrna fyrir Ísland</title>
       </Head>
-      <Box paddingY={6}>
-        <Box paddingX={[3, 3, 6, 0]}>
-          <ContentBlock width="small">
-            <Stack space={3}>
-              <Typography variant="eyebrow" as="h2" color="roseTinted400">
-                Viðspyrna
-              </Typography>
-              <Typography variant="h1" as="h1">
-                {frontpage.title}
-              </Typography>
-              <Typography variant="intro" as="p">
-                {frontpage.description}
-              </Typography>
-            </Stack>
-          </ContentBlock>
-        </Box>
-        <ArticleContent
-          document={frontpage.content}
-          locale={activeLocale as Locale}
-        />
-      </Box>
-      <Box background="blue100">
-        <Box paddingX={[3, 3, 6, 0]} paddingY={[3, 3, 9]}>
-          <ContentBlock width="small">
-            <Stack space={3}>
-              {items.items.map(({ title, slug, description }, index) => (
-                <Card
-                  key={index}
-                  href="/[slug]"
-                  as={`/${slug}`}
-                  title={title}
-                  description={description}
+      <ArticleLayout sidebar={null}>
+        <Stack space={3}>
+          <Breadcrumbs color="blue400">
+            <span>Viðspyrna</span>
+          </Breadcrumbs>
+          <Typography variant="h1" as="h1">
+            {frontpage.title}
+          </Typography>
+          <Typography variant="intro" as="p">
+            {frontpage.description}
+          </Typography>
+          <Content document={frontpage.content} />
+        </Stack>
+      </ArticleLayout>
+      <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
+        <Box marginBottom={10}>
+          <Sleeve minHeight={400}>
+            <Box background="red100">
+              <ContentBlock width="large">
+                <Articles
+                  tags={tagsItems}
+                  items={pagesItems}
+                  seeMoreText={n('seeMoreItems')}
+                  title={n('adgerdir')}
                 />
-              ))}
-            </Stack>
-          </ContentBlock>
+              </ContentBlock>
+            </Box>
+          </Sleeve>
         </Box>
-      </Box>
+      </ColorSchemeContext.Provider>
+      {frontpage.slices.map((slice, index) => {
+        switch (slice.__typename) {
+          case 'AdgerdirFeaturedNewsSlice':
+            return <FeaturedNews key={index} items={slice.featured} />
+          case 'AdgerdirGroupSlice':
+            return (
+              <ColorSchemeContext.Provider
+                key={index}
+                value={{ colorScheme: 'purple' }}
+              >
+                <Box width="full" overflow="hidden" marginBottom={10}>
+                  <ContentBlock width="large">
+                    <Box padding={[0, 3, 6]}>
+                      <GroupedPages
+                        topContent={
+                          <Stack space={3}>
+                            <Typography
+                              variant="eyebrow"
+                              as="h2"
+                              color="roseTinted400"
+                            >
+                              {slice.subtitle}
+                            </Typography>
+                            <Typography variant="h2" as="h3">
+                              {slice.title}
+                            </Typography>
+                            <Typography variant="p" as="p">
+                              {slice.description}
+                            </Typography>
+                          </Stack>
+                        }
+                        bottomContent={<CardsSlider items={slice.pages} />}
+                      />
+                    </Box>
+                  </ContentBlock>
+                </Box>
+              </ColorSchemeContext.Provider>
+            )
+        }
+
+        return null
+      })}
     </>
   )
 }
@@ -93,12 +141,23 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       data: { getAdgerdirFrontpage },
     },
     {
+      data: { getAdgerdirTags },
+    },
+    {
       data: { getAdgerdirPages },
     },
     namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetAdgerdirPagesArgs>({
       query: GET_ADGERDIR_FRONTPAGE_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetAdgerdirTagsArgs>({
+      query: GET_ADGERDIR_TAGS_QUERY,
       variables: {
         input: {
           lang: locale as ContentLanguage,
@@ -118,31 +177,18 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Homepage',
+            namespace: 'Vidspyrna',
             lang: locale,
           },
         },
       })
-      .then((variables) => {
-        // map data here to reduce data processing in component
-        const namespaceObject = JSON.parse(variables.data.getNamespace.fields)
-
-        // featuredArticles is a csv in contentful seperated by : where the first value is the title and the second is the url
-        return {
-          ...namespaceObject,
-          featuredArticles: namespaceObject['featuredArticles'].map(
-            (featuredArticle) => {
-              const [title = '', url = ''] = featuredArticle.split(':')
-              return { title, url }
-            },
-          ),
-        }
-      }),
+      .then((variables) => JSON.parse(variables.data.getNamespace.fields)),
   ])
 
   return {
     frontpage: getAdgerdirFrontpage,
-    items: getAdgerdirPages,
+    tags: getAdgerdirTags,
+    pages: getAdgerdirPages,
     namespace,
     showSearchInHeader: false,
   }

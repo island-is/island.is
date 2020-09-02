@@ -1,4 +1,5 @@
-import { Answer, FormValue, Schema } from '../types/Form'
+import { Schema } from '../types/Form'
+import { Answer, FormValue } from '../types/Application'
 import * as z from 'zod'
 
 export function extractPartialSchemaForValues(

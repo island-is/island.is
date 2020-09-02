@@ -125,6 +125,11 @@ export const ApplicationReducer = (
       )
     case ActionTypes.RE_INITIALIZE:
       return initializeReducer({ ...state, ...action.payload })
+    case ActionTypes.ADD_EXTERNAL_DATA:
+      return {
+        ...state,
+        externalData: { ...state.externalData, ...action.payload },
+      }
     default:
       return state
   }

@@ -57,10 +57,10 @@ export interface CreateApplicationDto {
     answers: object;
     /**
      * 
-     * @type {Array<string>}
+     * @type {object}
      * @memberof CreateApplicationDto
      */
-    attachments?: Array<string>;
+    attachments?: object;
 }
 
 export function CreateApplicationDtoFromJSON(json: any): CreateApplicationDto {
@@ -111,7 +111,7 @@ export enum CreateApplicationDtoTypeIdEnum {
     ExampleForm2 = 'ExampleForm2',
     ExampleForm3 = 'ExampleForm3',
     FamilyAndPets = 'FamilyAndPets',
-    PaternityLeave = 'PaternityLeave'
+    ParentalLeave = 'ParentalLeave'
 }
 /**
 * @export

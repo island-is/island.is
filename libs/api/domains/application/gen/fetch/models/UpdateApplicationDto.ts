@@ -24,13 +24,7 @@ export interface UpdateApplicationDto {
      * @type {string}
      * @memberof UpdateApplicationDto
      */
-    id: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateApplicationDto
-     */
-    typeId: UpdateApplicationDtoTypeIdEnum;
+    typeId?: UpdateApplicationDtoTypeIdEnum;
     /**
      * 
      * @type {string}
@@ -63,10 +57,10 @@ export interface UpdateApplicationDto {
     answers?: object;
     /**
      * 
-     * @type {Array<string>}
+     * @type {object}
      * @memberof UpdateApplicationDto
      */
-    attachments?: Array<string>;
+    attachments?: object;
 }
 
 export function UpdateApplicationDtoFromJSON(json: any): UpdateApplicationDto {
@@ -79,8 +73,7 @@ export function UpdateApplicationDtoFromJSONTyped(json: any, ignoreDiscriminator
     }
     return {
         
-        'id': json['id'],
-        'typeId': json['typeId'],
+        'typeId': !exists(json, 'typeId') ? undefined : json['typeId'],
         'applicant': !exists(json, 'applicant') ? undefined : json['applicant'],
         'assignee': !exists(json, 'assignee') ? undefined : json['assignee'],
         'externalId': !exists(json, 'externalId') ? undefined : json['externalId'],
@@ -99,7 +92,6 @@ export function UpdateApplicationDtoToJSON(value?: UpdateApplicationDto | null):
     }
     return {
         
-        'id': value.id,
         'typeId': value.typeId,
         'applicant': value.applicant,
         'assignee': value.assignee,
@@ -119,7 +111,7 @@ export enum UpdateApplicationDtoTypeIdEnum {
     ExampleForm2 = 'ExampleForm2',
     ExampleForm3 = 'ExampleForm3',
     FamilyAndPets = 'FamilyAndPets',
-    PaternityLeave = 'PaternityLeave'
+    ParentalLeave = 'ParentalLeave'
 }
 /**
 * @export

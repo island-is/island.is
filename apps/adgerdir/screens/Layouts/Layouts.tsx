@@ -1,27 +1,38 @@
 import React, { FC, ReactNode } from 'react'
-import cn from 'classnames'
-import { ContentBlock, Box } from '@island.is/island-ui/core'
-import { Sticky } from '../../components'
+import {
+  Box,
+  GridContainer,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 
 import * as styles from './Layouts.treat'
 
 interface ArticleProps {
-  sidebar: ReactNode
+  sidebar?: ReactNode
 }
 
 export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
-  <ContentBlock>
-    <Box padding={[0, 0, 0, 6]}>
-      <div className={cn(styles.layout, styles.reversed)}>
-        <div className={styles.desktopSide}>
-          <Sticky>{sidebar}</Sticky>
-        </div>
-        <Box paddingRight={[0, 0, 0, 4]} width="full">
-          {children}
-        </Box>
-      </div>
-    </Box>
-  </ContentBlock>
+  <div className={styles.layout}>
+    <GridContainer>
+      <Box marginX={[1, 1, 1, 1, 2]} paddingTop={10}>
+        <GridRow>
+          <GridColumn
+            span={[12, 12, 12, 8, 7]}
+            offset={[null, null, null, null, 1]}
+          >
+            <Box paddingBottom={10}>{children}</Box>
+          </GridColumn>
+          <GridColumn
+            span={[12, 12, 12, 4, 3]}
+            offset={[null, null, null, null, 1]}
+          >
+            {sidebar}
+          </GridColumn>
+        </GridRow>
+      </Box>
+    </GridContainer>
+  </div>
 )
 
 export default ArticleLayout

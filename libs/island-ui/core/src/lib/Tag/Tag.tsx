@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react'
+import React, { forwardRef, ReactNode } from 'react'
 import cn from 'classnames'
 import { Typography } from '../Typography/Typography'
 
@@ -17,9 +17,12 @@ export interface TagProps {
   onClick?: () => void
   variant?: TagVariant
   href?: string
+  id?: string
+  active?: boolean
   disabled?: boolean
   label?: boolean
-  children: string
+  bordered?: boolean
+  children: string | ReactNode
 }
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
@@ -31,14 +34,18 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       href,
       onClick,
       variant = 'blue',
+      active = false,
       disabled,
       label,
+      bordered = false,
       ...props
     }: TagProps,
     ref,
   ) => {
     const className = cn(styles.container, styles.variants[variant], {
       [styles.label]: label,
+      [styles.active]: active,
+      [styles.bordered]: bordered,
     })
 
     const isExternal = href && isLinkExternal(href)
