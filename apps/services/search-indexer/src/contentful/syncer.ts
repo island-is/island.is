@@ -32,6 +32,25 @@ export class Syncer {
     this.contentFulClient = createClient(params)
   }
 
+  private getChunkIds(chunkToProcess: Entry<any>[]): string {
+    return chunkToProcess.reduce((csvIds, entry) => {
+      // if indexing this type is suported
+      if (environment.indexableTypes.includes(entry.sys.contentType.sys.id)) {
+        csvIds.push(entry.sys.id)
+      }
+      return csvIds
+    }, []).join(',')
+  }
+
+  private getContentfulData(chunkIds: string) {
+    // TODO: Make this use cms domain endpoints to reduce mapping/typing required?
+    return this.contentFulClient.getEntries({
+      include: this.defaultIncludeDepth,
+      'sys.id[in]': chunkIds,
+    }).then(data => data.items)
+  }
+
+  // TODO: Limit this request to content types if able e.g. get content type from webhook request
   async getSyncEntries(opts): Promise<SyncerResult> {
     const {
       entries,
@@ -40,25 +59,16 @@ export class Syncer {
     }: SyncCollection = await this.contentFulClient.sync(opts)
     const chunkSize = 30
 
+    logger.info('Sync found entries', {entries: entries.length, deletedEntries: deletedEntries.length})
+    
     // get all entries form contentful
     let alteredItems = []
     let chunkToProcess = entries.splice(-chunkSize, chunkSize)
     do {
-      const chunkIds = chunkToProcess.reduce((csvIds, entry) => {
-        // if indexing this type is suported
-        if (environment.indexableTypes.includes(entry.sys.contentType.sys.id)) {
-          return `${csvIds}, ${entry.sys.id}`
-        } else {
-          return csvIds
-        }
-      }, '')
-
-      // TODO: Make this use cms domain endpoints to reduce mapping/typing required?
-      const { items } = await this.contentFulClient.getEntries({
-        include: this.defaultIncludeDepth,
-        'sys.id[in]': chunkIds,
-      })
-      alteredItems = alteredItems.concat(items)
+      const chunkIds = this.getChunkIds(chunkToProcess)
+      const items = await this.getContentfulData(chunkIds)
+      
+      alteredItems = [...alteredItems, ...items]
       chunkToProcess = entries.splice(-chunkSize, chunkSize)
     } while (chunkToProcess.length)
 

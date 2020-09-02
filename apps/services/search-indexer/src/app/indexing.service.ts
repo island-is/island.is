@@ -49,8 +49,8 @@ export class IndexingService {
       resolveLinks: true,
     })
 
-    logger.info('Continue sync found results', {
-      numItems: items.length,
+    logger.info('Continue sync is importing', {
+      itemCount: items.length,
     })
 
     for (const item of items) {
@@ -72,8 +72,8 @@ export class IndexingService {
       // eslint-disable-next-line @typescript-eslint/camelcase
       resolveLinks: true,
     })
-    logger.info('Initial sync found result', {
-      numItems: items.length,
+    logger.info('Initial sync is importing', {
+      itemCount: items.length,
     })
 
     // TODO: Use es client batch here
