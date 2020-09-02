@@ -61,7 +61,7 @@ import { Claim } from './claim.model'
     @Column({
       type: DataType.UUID,
       primaryKey: false,
-      allowNull: false,
+      allowNull: true,
     })
     @ApiProperty()
     profile_id: string
