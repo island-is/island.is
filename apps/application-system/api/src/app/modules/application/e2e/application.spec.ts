@@ -16,7 +16,7 @@ describe('Application', () => {
       .send({
         applicant: '123456-4321',
         state: 'PENDING',
-        attachments: ['https://island.is'],
+        attachments: {},
         typeId: 'ExampleForm',
         assignee: '123456-1234',
         externalId: '123',
@@ -29,4 +29,9 @@ describe('Application', () => {
     // Assert
     expect(response.body.id).toBeTruthy()
   })
+
+  // TODO implement test
+  // it('PUT /application/:id should not be able to overwrite external data', () => {
+  //
+  // })
 })

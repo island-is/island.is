@@ -188,6 +188,12 @@
       "tags": [],
       "implicitDependencies": ["adgerdir"]
     },
+    "api-domains-file-upload": {
+      "tags": []
+    },
+    "file-storage": {
+      "tags": []
+    },
     "application-graphql": {
       "tags": []
     },
@@ -208,6 +214,9 @@
       "tags": []
     },
     "service-portal-graphql": {
+      "tags": []
+    },
+    "application-data-providers": {
       "tags": []
     },
     "skilavottord-ws": {

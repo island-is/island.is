@@ -7,6 +7,7 @@ import {
   FormValue,
   getSubSectionsInSection,
   MultiField,
+  ExternalDataProvider,
   Repeater,
   shouldShowFormLeaf,
 } from '@island.is/application/schema'
@@ -15,6 +16,7 @@ import {
   FieldDef,
   FormScreen,
   MultiFieldScreen,
+  ExternalDataProviderScreen,
   RepeaterScreen,
 } from '../types'
 import { getValueViaPath } from '../utils'
@@ -198,7 +200,13 @@ function convertFieldToScreen(field: Field, formValue: FormValue): FieldDef {
   } as FieldDef
 }
 
-function convertMultiFieldToScreen(
+function convertDataProviderToScreen(
+  externalDataProvider: ExternalDataProvider,
+): ExternalDataProviderScreen {
+  return { ...externalDataProvider, isNavigable: true }
+}
+
+export function convertMultiFieldToScreen(
   multiField: MultiField,
   formValue: FormValue,
 ): MultiFieldScreen {
@@ -241,6 +249,8 @@ export function convertLeafToScreen(
     return convertMultiFieldToScreen(leaf, formValue)
   } else if (leaf.type === FormItemTypes.REPEATER) {
     return convertRepeaterToScreen(leaf, formValue)
+  } else if (leaf.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
+    return convertDataProviderToScreen(leaf)
   }
   return convertFieldToScreen(leaf, formValue)
 }

@@ -1,6 +1,13 @@
 import deepmerge from 'deepmerge'
-import { FormNode, FormLeaf, FormValue } from '../types/Form'
-import { Form, FormItemTypes, Section, SubSection } from '../types/Form'
+import { FormValue } from '../types/Application'
+import {
+  Form,
+  FormNode,
+  FormLeaf,
+  FormItemTypes,
+  Section,
+  SubSection,
+} from '../types/Form'
 
 export function findNode(
   id: string,

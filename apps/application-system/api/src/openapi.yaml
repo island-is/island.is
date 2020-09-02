@@ -53,9 +53,7 @@ components:
             - REJECTED
             - UNKNOWN
         attachments:
-          type: array
-          items:
-            type: string
+          type: object
         typeId:
           type: string
           enum:
@@ -66,6 +64,8 @@ components:
             - PaternityLeave
         answers:
           type: object
+        externalData:
+          type: object
       required:
         - id
         - created
@@ -75,6 +75,7 @@ components:
         - state
         - typeId
         - answers
+        - externalData
     CreateApplicationDto:
       type: object
       properties:
@@ -106,9 +107,7 @@ components:
         answers:
           type: object
         attachments:
-          type: array
-          items:
-            type: string
+          type: object
       required:
         - typeId
         - applicant
@@ -118,8 +117,6 @@ components:
     UpdateApplicationDto:
       type: object
       properties:
-        id:
-          type: string
         typeId:
           type: string
           enum:
@@ -148,12 +145,47 @@ components:
         answers:
           type: object
         attachments:
-          type: array
-          items:
-            type: string
+          type: object
+    DataProviderDto:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - ExpectedDateOfBirth
+            - ExampleFails
+            - ExampleSucceeds
       required:
         - id
-        - typeId
+        - type
+    PopulateExternalDataDto:
+      type: object
+      properties:
+        dataProviders:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataProviderDto'
+      required:
+        - dataProviders
+    AddAttachmentDto:
+      type: object
+      properties:
+        key:
+          type: string
+        url:
+          type: string
+      required:
+        - key
+        - url
+    DeleteAttachmentDto:
+      type: object
+      properties:
+        key:
+          type: string
+      required:
+        - key
 paths:
   /liveness:
     get:
@@ -253,6 +285,77 @@ paths:
               $ref: '#/components/schemas/CreateApplicationDto'
       responses:
         '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+      tags:
+        - application
+  '/application/{id}/externalData':
+    put:
+      operationId: ApplicationController_updateExternalData
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PopulateExternalDataDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+      tags:
+        - application
+  '/application/{id}/attachments':
+    put:
+      operationId: ApplicationController_addAttachment
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddAttachmentDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+      tags:
+        - application
+    delete:
+      operationId: ApplicationController_deleteAttachment
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteAttachmentDto'
+      responses:
+        '200':
           description: ''
           content:
             application/json:
