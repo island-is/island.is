@@ -28,5 +28,5 @@ export const iconContainer = style({
 })
 
 export const messageContainer = style({
-  marginLeft: 46,
+  marginLeft: 50,
 })

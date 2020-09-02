@@ -6,9 +6,10 @@ import {
 } from './discount.controller'
 import { DiscountService } from './discount.service'
 import { CacheModule } from '../cache'
+import { NationalRegistryModule } from '../nationalRegistry'
 
 @Module({
-  imports: [CacheModule],
+  imports: [CacheModule, NationalRegistryModule],
   controllers: [PublicDiscountController, PrivateDiscountController],
   providers: [DiscountService],
   exports: [DiscountService],

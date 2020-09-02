@@ -11,7 +11,7 @@ function main {
     > $env_secret_file
   fi
 
-  secrets=$(aws ssm get-parameters-by-path \
+  secrets=$(aws ssm --region eu-west-1 get-parameters-by-path \
     --path "/k8s/$1/" --with-decryption --recursive \
     --parameter-filters Key=Label,Option=Equals,Values=dev \
     | npx jq -r '.Parameters | map(.Name |= split("/")) | .[] | [.Name[-1], .Value] | join("=")')

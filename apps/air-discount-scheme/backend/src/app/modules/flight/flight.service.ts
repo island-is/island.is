@@ -1,11 +1,21 @@
 import { NotFoundException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { Fund } from '@island.is/air-discount-scheme/types'
 import { FlightLegSummary } from './flight.types'
 import { Flight, FlightLeg, financialStateMachine } from './flight.model'
 import { FlightDto } from './dto/flight.dto'
 
+const ADS_POSTAL_CODES = {
+  Reykhólahreppur: 380,
+  // from Reykhólahreppur to Þingeyri
+  Þingeyri: 471,
+
+  Hólmavík: 510,
+  // from Hólmavík to Öræfi
+  Öræfi: 785,
+
+  Vestmannaeyjar: 900,
+}
 const DEFAULT_AVAILABLE_LEGS = 6
 const AVAILABLE_FLIGHT_LEGS = {
   '2020': 4,
@@ -25,6 +35,23 @@ export class FlightService {
     @InjectModel(FlightLeg)
     private flightLegModel: typeof FlightLeg,
   ) {}
+
+  isADSPostalCode(postalcode: number): boolean {
+    if (
+      postalcode >= ADS_POSTAL_CODES['Reykhólahreppur'] &&
+      postalcode <= ADS_POSTAL_CODES['Þingeyri']
+    ) {
+      return true
+    } else if (
+      postalcode >= ADS_POSTAL_CODES['Hólmavík'] &&
+      postalcode <= ADS_POSTAL_CODES['Öræfi']
+    ) {
+      return true
+    } else if (postalcode === ADS_POSTAL_CODES['Vestmannaeyjar']) {
+      return true
+    }
+    return false
+  }
 
   async countFlightLegsByNationalId(
     nationalId: string,
@@ -99,7 +126,7 @@ export class FlightService {
       ],
     })
     if (!flight) {
-      throw new NotFoundException('Flight not found')
+      throw new NotFoundException(`Flight<${flightId}> not found`)
     }
     return flight
   }
@@ -123,7 +150,9 @@ export class FlightService {
       (flightLeg) => flightLeg.id === flightLegId,
     )
     if (!flightLeg) {
-      throw new NotFoundException('Flight not found')
+      throw new NotFoundException(
+        `FlightLeg<${flightLegId}> not found for Flight<${flight.id}>`,
+      )
     }
     const financialState = financialStateMachine
       .transition(flightLeg.financialState, 'REVOKE')

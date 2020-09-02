@@ -3,16 +3,19 @@ import { Condition } from '../types/Condition'
 import {
   Form,
   FormChildren,
-  MultiField,
-  SubSection,
-  Section,
   FormItemTypes,
   FormLeaf,
+  MultiField,
+  ExternalDataProvider,
   Repeater,
-  SectionChildren,
   Schema,
+  Section,
+  SectionChildren,
+  SubSection,
+  DataProviderItem,
 } from '../types/Form'
 import { FormType } from '../forms'
+import { DataProviderTypes } from '../types/DataProvider'
 
 export function buildForm(data: {
   id: FormType
@@ -60,4 +63,27 @@ export function buildSubSection(data: {
   children: FormLeaf[]
 }): SubSection {
   return { ...data, type: FormItemTypes.SUB_SECTION }
+}
+
+export function buildExternalDataProvider(data: {
+  name: string
+  id: string
+  dataProviders: DataProviderItem[]
+}): ExternalDataProvider {
+  return {
+    ...data,
+    repeaterIndex: undefined,
+    children: undefined,
+    type: FormItemTypes.EXTERNAL_DATA_PROVIDER,
+  }
+}
+
+export function buildDataProviderItem(data: {
+  id: string
+  type: DataProviderTypes
+  title: string
+  subTitle?: string
+  source?: string
+}): DataProviderItem {
+  return data
 }

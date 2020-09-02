@@ -215,10 +215,10 @@ Run `yarn nx dep-graph` to see a diagram of the dependencies of your projects.
 
 ### Fetch development secrets for your project
 
-Run `AWS_PROFILE=<profile> yarn nx env-secrets <project>`
+Run `yarn env-secrets <project> [options]`
 
 **Example**:
 
 ```
-AWS_PROFILE=islandis yarn nx env-secrets gjafakort-api
+yarn env-secrets gjafakort --reset
 ```

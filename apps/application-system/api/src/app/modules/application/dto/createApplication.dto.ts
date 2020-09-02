@@ -3,11 +3,9 @@ import {
   IsNotEmpty,
   IsObject,
   IsString,
-  IsArray,
   IsOptional,
 } from 'class-validator'
-import { ApplicationState } from '../application.model'
-import { FormType } from '@island.is/application/schema'
+import { ApplicationState, FormType } from '@island.is/application/schema'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class CreateApplicationDto {
@@ -42,7 +40,7 @@ export class CreateApplicationDto {
   readonly answers: object
 
   @IsOptional()
-  @IsArray()
+  @IsObject()
   @ApiPropertyOptional()
-  readonly attachments: string[]
+  readonly attachments: object
 }

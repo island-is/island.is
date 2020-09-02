@@ -46,7 +46,7 @@ export const getAdgerdirFrontpage = async (
     lang,
     {
       ['content_type']: 'vidspyrna-frontpage',
-      include: 1,
+      include: 10,
     },
   ).catch(errorHandler('getVidspyrnaFrontpage'))
 
