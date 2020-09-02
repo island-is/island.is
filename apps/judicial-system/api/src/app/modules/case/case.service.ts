@@ -17,7 +17,7 @@ export class CaseService {
   async getAll() {
     this.logger.debug('Getting all cases')
 
-    return this.caseModel.findAll()
+    return this.caseModel.findAll({ order: [['modified', 'DESC']] })
   }
 
   async findById(id: string) {
