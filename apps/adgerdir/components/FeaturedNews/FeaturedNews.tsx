@@ -27,7 +27,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
   const parsed = items.map((x, index) => {
     return {
       ...x,
-      dateFormatted: format(new Date(x.date), 'M. LLLL, uuuu', {
+      dateFormatted: format(new Date(x.date), 'd. LLLL, uuuu', {
         locale: is,
       }).toLowerCase(),
     }
