@@ -18,13 +18,13 @@ export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
       <Box marginX={[1, 1, 1, 1, 2]} paddingTop={10}>
         <GridRow>
           <GridColumn
-            span={[8, 8, 8, 8, 7]}
+            span={[12, 12, 12, 8, 7]}
             offset={[null, null, null, null, 1]}
           >
             <Box paddingBottom={10}>{children}</Box>
           </GridColumn>
           <GridColumn
-            span={[4, 4, 4, 4, 3]}
+            span={[12, 12, 12, 4, 3]}
             offset={[null, null, null, null, 1]}
           >
             {sidebar}

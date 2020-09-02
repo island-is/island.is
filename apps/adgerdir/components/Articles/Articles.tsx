@@ -21,6 +21,7 @@ const FILTER_TIMER = 300
 const ITEMS_PER_SHOW = 6
 
 interface ArticlesProps {
+  title?: string
   items: AdgerdirPage[]
   tags: AdgerdirTag[]
   seeMoreText?: string
@@ -29,6 +30,7 @@ interface ArticlesProps {
 }
 
 export const Articles: FC<ArticlesProps> = ({
+  title = '',
   seeMoreText = 'Sjá fleiri',
   items,
   tags,
@@ -164,25 +166,40 @@ export const Articles: FC<ArticlesProps> = ({
     })
     .splice(0, showAll ? items.length : showCount)
 
-  const statusTypes = items.reduce((statuses, cur) => {
-    if (cur.status) {
-      if (!statuses.includes(cur.status)) {
-        statuses.push(cur.status)
-      }
-    }
-
-    return statuses
-  }, [])
-
   useEffect(() => {
     if (currentArticle) {
       setTagIds(currentArticle.tags.map((x) => x.id))
     }
   }, [currentArticle])
 
+  const filtersToggled = false
+
   return (
     <Box padding={[3, 3, 6]}>
       <Stack space={6}>
+        <Tiles space={0} columns={2}>
+          <div>
+            {title ? (
+              <Typography variant="h3" as="h3" paddingBottom={4} color="red600">
+                {title}
+              </Typography>
+            ) : null}
+          </div>
+          <Box display="flex" justifyContent="flexEnd">
+            <button className={styles.filtersToggler}>
+              <Inline space={1}>
+                <span>Sía</span>
+                <span
+                  className={cn(styles.filtersIcon, {
+                    [styles.filtersIconToggled]: filtersToggled,
+                  })}
+                >
+                  <Icon type="caret" color="red600" width={12} height={12} />
+                </span>
+              </Inline>
+            </button>
+          </Box>
+        </Tiles>
         <Box className={styles.filters}>
           <Box display="flex" alignItems="center" marginRight={[0, 0, 0, 3]}>
             <Stack space={3}>
@@ -190,7 +207,7 @@ export const Articles: FC<ArticlesProps> = ({
                 <Typography variant="tag" color="red600">
                   Staða aðgerðar:
                 </Typography>
-                {statusTypes.map((status, index) => {
+                {Object.keys(statusNames).map((status, index) => {
                   return (
                     <Tag
                       key={index}

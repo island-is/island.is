@@ -183,15 +183,12 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Articles',
+            namespace: 'Vidspyrna',
             lang: locale,
           },
         },
       })
-      .then((content) => {
-        // map data here to reduce data processing in component
-        return JSON.parse(content.data.getNamespace.fields)
-      }),
+      .then((content) => JSON.parse(content.data.getNamespace.fields)),
   ])
 
   // we assume 404 if no article is found

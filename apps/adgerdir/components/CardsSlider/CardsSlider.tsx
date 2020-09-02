@@ -20,7 +20,6 @@ interface StagePaddingProps {
   paddingRight: number
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface CardsSliderProps {
   variant?: ColorSchemes
   items: Array<AdgerdirPage>

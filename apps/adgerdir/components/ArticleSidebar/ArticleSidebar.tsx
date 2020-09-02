@@ -11,7 +11,7 @@ export const ArticleSidebar: FC<ArticleSidebarProps> = ({
   children,
 }) => {
   return (
-    <Box background="red100" borderRadius="standard" padding={4}>
+    <Box background="red100" borderRadius="large" padding={4}>
       <Stack space={[1, 1, 2]}>
         <Typography variant="h4" as="h4" color="red600">
           {title}

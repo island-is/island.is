@@ -32,10 +32,9 @@ import {
   GET_ADGERDIR_FRONTPAGE_QUERY,
 } from './queries'
 import { Screen } from '../types'
-// import { useNamespace } from '../hooks'
-// import { Locale } from '../i18n/I18n'
-import { ColorSchemeContext } from '@island.is/adgerdir/context'
+import { useNamespace } from '../hooks'
 import { ArticleLayout } from './Layouts/Layouts'
+import { ColorSchemeContext } from '@island.is/adgerdir/context'
 
 interface HomeProps {
   frontpage: Query['getAdgerdirFrontpage']
@@ -46,7 +45,7 @@ interface HomeProps {
 
 const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
   const { activeLocale } = useI18n()
-  // const n = useNamespace(namespace)
+  const n = useNamespace(namespace)
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
@@ -54,7 +53,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
 
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
-
+  console.log('namespace', namespace)
   return (
     <>
       <Head>
@@ -79,7 +78,12 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
           <Sleeve>
             <Box background="red100">
               <ContentBlock width="large">
-                <Articles tags={tagsItems} items={pagesItems} />
+                <Articles
+                  tags={tagsItems}
+                  items={pagesItems}
+                  seeMoreText={n('seeMoreItems')}
+                  title={n('adgerdir')}
+                />
               </ContentBlock>
             </Box>
           </Sleeve>
@@ -175,26 +179,12 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Homepage',
+            namespace: 'Vidspyrna',
             lang: locale,
           },
         },
       })
-      .then((variables) => {
-        // map data here to reduce data processing in component
-        const namespaceObject = JSON.parse(variables.data.getNamespace.fields)
-
-        // featuredArticles is a csv in contentful seperated by : where the first value is the title and the second is the url
-        return {
-          ...namespaceObject,
-          featuredArticles: namespaceObject['featuredArticles'].map(
-            (featuredArticle) => {
-              const [title = '', url = ''] = featuredArticle.split(':')
-              return { title, url }
-            },
-          ),
-        }
-      }),
+      .then((variables) => JSON.parse(variables.data.getNamespace.fields)),
   ])
 
   return {
