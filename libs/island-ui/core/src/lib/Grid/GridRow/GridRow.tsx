@@ -8,5 +8,5 @@ interface Props {
 }
 
 export const GridRow: FC<Props> = ({ children, className }) => {
-  return <Box className={cn(className, styles.grid)}>{children}</Box>
+  return <Box className={cn(className, styles.gridRow)}>{children}</Box>
 }

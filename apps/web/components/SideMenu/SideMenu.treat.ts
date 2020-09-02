@@ -52,6 +52,12 @@ export const content = style({
   overflowY: 'scroll',
   maxHeight: 450,
   paddingBottom: theme.spacing[4],
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      maxHeight: 'none',
+      paddingBottom: 0,
+    },
+  },
 })
 
 export const linksContent = style({

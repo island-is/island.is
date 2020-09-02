@@ -23,7 +23,7 @@ export const CategoryLayout: FC<CategoryProps> = ({
         <GridColumn span={[12, 12, 4, 3]}>
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
-        <GridColumn span={[12, 12, 8]} offset={[0, 0, 0, 1]}>
+        <GridColumn span={[12, 12, 8]} offset={[null, null, null, 1]}>
           <Box paddingBottom={10}>{children}</Box>
           {belowContent && belowContent}
         </GridColumn>
@@ -38,12 +38,12 @@ interface ArticleProps {
 
 export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
   <GridContainer>
-    <Box paddingBottom={10}>
+    <Box paddingY={10}>
       <GridRow>
-        <GridColumn span={7} offset={1}>
+        <GridColumn span={8}>
           <Box paddingBottom={10}>{children}</Box>
         </GridColumn>
-        <GridColumn span={3} offset={1}>
+        <GridColumn span={4}>
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
       </GridRow>

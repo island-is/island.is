@@ -3,6 +3,7 @@ import {
   buildRepeater,
   buildSection,
   buildTextField,
+  ExternalData,
   Form,
   FormType,
 } from '@island.is/application/schema'
@@ -96,6 +97,7 @@ const FamilyAndPets: Form = buildForm({
 
 describe('ApplicationFormReducer', () => {
   const initialState: ApplicationUIState = {
+    externalData: {},
     form: FamilyAndPets,
     screens: [],
     activeScreen: 0,
@@ -272,6 +274,7 @@ describe('ApplicationFormReducer', () => {
           ownerId: '222',
           children: [],
         }),
+        externalData: {},
         formLeaves: [],
         formValue: { historyCars: ['VW', 'Tesla'] },
         activeSection: 0,
@@ -337,6 +340,42 @@ describe('ApplicationFormReducer', () => {
         action,
       )
       expect(updatedState.activeScreen).toBe(3)
+    })
+  })
+  describe('add external data', () => {
+    const action = (payload) => ({
+      type: ActionTypes.ADD_EXTERNAL_DATA,
+      payload,
+    })
+    it('should be able to set external data', () => {
+      const newExternalData = { a: 1, b: 'asdf', c: true }
+      const updatedState = ApplicationReducer(
+        initialState,
+        action(newExternalData),
+      )
+      expect(updatedState.externalData).toEqual(newExternalData)
+    })
+    it('should only partially overwrite external data when called repeatedly', () => {
+      const externalData: ExternalData = {
+        a: { status: 'success', data: 1, date: new Date() },
+        b: { status: 'failure', reason: 'fail', date: new Date() },
+      }
+      const newExternalData: ExternalData = {
+        b: { status: 'success', data: 'nice', date: new Date() },
+        c: { status: 'failure', reason: 'fail', date: new Date() },
+      }
+      const updatedState = ApplicationReducer(
+        {
+          ...initialState,
+          externalData,
+        },
+        action(newExternalData),
+      )
+      expect(updatedState.externalData).toEqual({
+        a: expect.objectContaining({ status: 'success', data: 1 }),
+        b: expect.objectContaining({ status: 'success', data: 'nice' }),
+        c: expect.objectContaining({ status: 'failure', reason: 'fail' }),
+      })
     })
   })
 })

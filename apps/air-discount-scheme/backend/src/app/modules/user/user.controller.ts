@@ -1,4 +1,10 @@
-import { Controller, Param, Get, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Param,
+  Get,
+  UseGuards,
+  NotFoundException,
+} from '@nestjs/common'
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -32,7 +38,12 @@ export class PublicUserController {
     const nationalId = await this.discountService.validateDiscount(
       params.discountCode,
     )
-    return this.userService.getUserInfoByNationalId(nationalId)
+
+    const user = await this.userService.getUserInfoByNationalId(nationalId)
+    if (!user) {
+      throw new NotFoundException(`User<${nationalId}> not found`)
+    }
+    return user
   }
 }
 

@@ -4,9 +4,9 @@ import { AppProps } from 'next/app'
 import { ApolloProvider } from 'react-apollo'
 import { ApolloClient } from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
+import { Header, PageLoader } from '@island.is/adgerdir/components'
 
 import { Page, Footer, Box } from '@island.is/island-ui/core'
-import { Header } from '../components'
 import appWithTranslation from '../i18n/appWithTranslation'
 
 import initApollo from '../graphql/client'
@@ -57,7 +57,8 @@ const Layout: FC<LayoutProps> = ({
         />
         <title>Ísland.is</title>
       </Head>
-      {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
+      <PageLoader />
+      {showHeader && <Header showSearchInHeader={false} />}
       {wrapContent ? <Box width="full">{children}</Box> : children}
       {showFooter && <Footer />}
       <style jsx global>{`

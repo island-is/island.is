@@ -7,7 +7,7 @@ export const LinkBox = ({ title, url, icon }) => {
 
   return (
     <li className={styles.root}>
-      <a href={url}>
+      <a href={url} className={styles.anchorWrap}>
         <div className={styles.linkBox}>
           <div className={styles.hoverIcon}>
             <Icon type="external" height={16} />

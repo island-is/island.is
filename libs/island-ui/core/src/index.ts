@@ -35,6 +35,7 @@ export * from './lib/Tag/Tag'
 export * from './lib/AsyncSelect/AsyncSelect'
 export * from './lib/SkeletonLoader/SkeletonLoader'
 export * from './lib/Blockquote/Blockquote'
+export * from './lib/Alert/Alert'
 
 // Layout
 export * from './lib/Box/Box'

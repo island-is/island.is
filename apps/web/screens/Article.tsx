@@ -10,6 +10,9 @@ import {
   Hidden,
   Select,
   ResponsiveSpace,
+  GridColumn,
+  GridRow,
+  GridContainer,
   Tag,
   Option,
   Button,
@@ -97,39 +100,46 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
           </Stack>
         }
       >
-        <Stack space={[3, 3, 4]}>
-          <Breadcrumbs>
-            <Link href={makePath()}>Ísland.is</Link>
-            <Link
-              href={`${makePath('category')}/[slug]`}
-              as={makePath('category', categorySlug)}
-            >
-              {categoryTitle}
-            </Link>
-            {groupTitle && (
-              <Tag variant="purple" label>
-                {groupTitle}
-              </Tag>
-            )}
-          </Breadcrumbs>
-          <Hidden above="md">
-            <Select
-              label="Efnisyfirlit"
-              placeholder="Flokkar"
-              options={contentOverviewOptions}
-              onChange={onChangeContentOverview}
-              name="content-overview"
-            />
-          </Hidden>
-          <Box marginBottom={simpleSpacing}>
-            <Typography variant="h1" as="h1">
-              <span data-sidebar-link={slugify(article.title)}>
-                {article.title}
-              </span>
-            </Typography>
-          </Box>
-        </Stack>
-
+        <GridRow>
+          <GridColumn offset={1} span={11} paddingBottom={2}>
+            <Breadcrumbs>
+              <Link href={makePath()}>
+                <a>Ísland.is</a>
+              </Link>
+              <Link
+                href={`${makePath('category')}/[slug]`}
+                as={makePath('category', categorySlug)}
+              >
+                {categoryTitle}
+              </Link>
+              {groupTitle && (
+                <Tag variant="purple" label>
+                  {groupTitle}
+                </Tag>
+              )}
+            </Breadcrumbs>
+          </GridColumn>
+        </GridRow>
+        <Hidden above="md">
+          <Select
+            label="Efnisyfirlit"
+            placeholder="Flokkar"
+            options={contentOverviewOptions}
+            onChange={onChangeContentOverview}
+            name="content-overview"
+          />
+        </Hidden>
+        <GridRow>
+          <GridColumn offset={1} span={11}>
+            <Box marginBottom={simpleSpacing}>
+              <Typography variant="h1" as="h1" paddingBottom={2}>
+                <span data-sidebar-link={slugify(article.title)}>
+                  {article.title}
+                </span>
+              </Typography>
+            </Box>
+          </GridColumn>
+        </GridRow>
         <Content document={article.content} />
       </ArticleLayout>
     </>

@@ -1,11 +1,19 @@
 import * as z from 'zod'
-import { buildForm, buildSection, buildSubSection } from '../lib/formBuilders'
+import {
+  buildDataProviderItem,
+  buildExternalDataProvider,
+  buildForm,
+  buildSection,
+  buildSubSection,
+} from '../lib/formBuilders'
 import { buildCustomField, buildIntroductionField } from '../lib/fieldBuilders'
 import { Form } from '../types/Form'
 import { FormType } from './FormType'
 import { CustomFieldComponents } from '../types/Fields'
+import { DataProviderTypes } from '../types/DataProvider'
 
 const schema = z.object({
+  approveExternalData: z.boolean().refine((v) => v === true),
   usage: z
     .number()
     .min(0)
@@ -29,6 +37,44 @@ export const PaternityLeave: Form = buildForm({
   name: 'Fæðingarorlof',
   schema: schema,
   children: [
+    buildSection({
+      id: 'introduction',
+      name: 'Intro',
+      children: [
+        buildIntroductionField({
+          id: 'welcome',
+          name: 'welcome indeed',
+          introduction: 'sick',
+        }),
+        buildExternalDataProvider({
+          name: 'Sækja gögn',
+          id: 'approveExternalData',
+          dataProviders: [
+            buildDataProviderItem({
+              id: 'expectedBirthDate',
+              type: DataProviderTypes.ExpectedDateOfBirth,
+              source: 'Landlækni',
+              subTitle: 'Staðfesting á að það sé yfir höfuð barn á leiðinni',
+              title: 'Áætlaður fæðingardagur',
+            }),
+            // buildDataProviderItem({
+            //   id: 'willFail',
+            //   type: DataProviderTypes.ExampleFails,
+            //   source: 'Failure',
+            //   subTitle: 'what is happening',
+            //   title: 'Fail me please',
+            // }),
+            buildDataProviderItem({
+              id: 'willSucceed',
+              type: DataProviderTypes.ExampleSucceeds,
+              source: 'Success indeed',
+              subTitle: 'what is happening',
+              title: 'This should wokr me please',
+            }),
+          ],
+        }),
+      ],
+    }),
     buildSection({
       id: 'calculator',
       name: 'Reiknivél',

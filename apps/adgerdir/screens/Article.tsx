@@ -15,14 +15,26 @@ import {
   ResponsiveSpace,
   Option,
 } from '@island.is/island-ui/core'
-import { Sidebar, getHeadingLinkElements } from '@island.is/adgerdir/components'
+import {
+  Sidebar,
+  getHeadingLinkElements,
+  Sleeve,
+  Articles,
+} from '@island.is/adgerdir/components'
 import {
   Query,
   QueryGetNamespaceArgs,
   ContentLanguage,
   QueryGetAdgerdirPageArgs,
+  QueryGetAdgerdirPagesArgs,
+  QueryGetAdgerdirTagsArgs,
 } from '@island.is/api/schema'
-import { GET_ADGERDIR_PAGE_QUERY, GET_NAMESPACE_QUERY } from './queries'
+import {
+  GET_ADGERDIR_PAGE_QUERY,
+  GET_NAMESPACE_QUERY,
+  GET_ADGERDIR_PAGES_QUERY,
+  GET_ADGERDIR_TAGS_QUERY,
+} from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
 import { withApollo } from '../graphql'
 import { Screen } from '../types'
@@ -32,15 +44,18 @@ import { useI18n } from '../i18n'
 import { Locale } from '../i18n/I18n'
 import useRouteNames from '../i18n/useRouteNames'
 import { CustomNextError } from '../units/ErrorBoundary'
+import { ColorSchemeContext } from '../context'
 
 interface ArticleProps {
   article: Query['getAdgerdirPage']
+  pages: Query['getAdgerdirPages']
+  tags: Query['getAdgerdirTags']
   namespace: Query['getNamespace']
 }
 
 const simpleSpacing = [2, 2, 3] as ResponsiveSpace
 
-const Article: Screen<ArticleProps> = ({ article, namespace }) => {
+const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
   const [contentOverviewOptions, setContentOverviewOptions] = useState([])
   const { activeLocale } = useI18n()
   // TODO: get language strings from namespace...
@@ -48,69 +63,42 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
   const n = useNamespace(namespace)
   const { makePath } = useRouteNames(activeLocale as Locale)
 
-  useEffect(() => {
-    setContentOverviewOptions(
-      getHeadingLinkElements().map((link) => ({
-        label: link.textContent,
-        value: slugify(link.textContent),
-      })) || [],
-    )
-  }, [])
-
-  const onChangeContentOverview = ({ value }: Option) => {
-    const slug = value as string
-
-    const el = document.querySelector(
-      `[data-sidebar-link="${slug}"]`,
-    ) as HTMLElement
-
-    if (el) {
-      window.scrollTo(0, el.offsetTop)
-    }
-  }
+  // const { fields: articleFields } = article
+  const { items: pagesItems } = pages
+  const { items: tagsItems } = tags
 
   return (
     <>
       <Head>
         <title>{article.title} | Ísland.is</title>
       </Head>
-      <ArticleLayout
-        sidebar={
-          <Sidebar title={n('sidebarHeader')} bullet="left" headingLinks />
-        }
-      >
-        <ContentContainer
-          padding="none"
-          paddingX={[3, 3, 6, 0]}
-          marginBottom={simpleSpacing}
-        >
-          <Stack space={[3, 3, 4]}>
-            <Breadcrumbs>
-              <Link href={makePath()}>
-                <a>Viðspyrna</a>
-              </Link>
-            </Breadcrumbs>
-            <Hidden above="md">
-              <Select
-                label="Efnisyfirlit"
-                placeholder="Flokkar"
-                options={contentOverviewOptions}
-                onChange={onChangeContentOverview}
-                name="content-overview"
-              />
-            </Hidden>
-            <Box marginBottom={simpleSpacing}>
-              <Typography variant="h1" as="h1">
-                <span data-sidebar-link={slugify(article.title)}>
-                  {article.title}
-                </span>
-              </Typography>
-            </Box>
-          </Stack>
-        </ContentContainer>
-
+      <ArticleLayout sidebar={<div>ok</div>}>
+        <Stack space={3}>
+          <Breadcrumbs color="blue400">
+            <Link href={makePath()}>
+              <a>Viðspyrna</a>
+            </Link>
+          </Breadcrumbs>
+          <Box>
+            <Typography variant="h1" as="h1">
+              {article.title}
+            </Typography>
+          </Box>
+        </Stack>
         <Content document={article.content} />
       </ArticleLayout>
+      <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
+        <Box background="red100">
+          <ContentBlock width="large">
+            <Articles
+              tags={tagsItems}
+              items={pagesItems}
+              currentArticle={article}
+              showAll
+            />
+          </ContentBlock>
+        </Box>
+      </ColorSchemeContext.Provider>
     </>
   )
 }
@@ -121,6 +109,12 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
     {
       data: { getAdgerdirPage },
     },
+    {
+      data: { getAdgerdirPages },
+    },
+    {
+      data: { getAdgerdirTags },
+    },
     namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetAdgerdirPageArgs>({
@@ -128,6 +122,22 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
       variables: {
         input: {
           slug,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetAdgerdirPagesArgs>({
+      query: GET_ADGERDIR_PAGES_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetAdgerdirTagsArgs>({
+      query: GET_ADGERDIR_TAGS_QUERY,
+      variables: {
+        input: {
           lang: locale as ContentLanguage,
         },
       },
@@ -155,6 +165,8 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
 
   return {
     article: getAdgerdirPage,
+    pages: getAdgerdirPages,
+    tags: getAdgerdirTags,
     namespace,
   }
 }
