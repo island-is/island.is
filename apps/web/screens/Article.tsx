@@ -1,17 +1,14 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, useEffect, useState } from 'react'
-import Link from 'next/link'
 import Head from 'next/head'
 import slugify from '@sindresorhus/slugify'
 import {
-  ContentBlock,
   Box,
   Typography,
   Stack,
   Breadcrumbs,
   Hidden,
   Select,
-  BoxProps,
   ResponsiveSpace,
   GridColumn,
   GridRow,
@@ -19,6 +16,7 @@ import {
   Tag,
   Option,
   Button,
+  Link,
 } from '@island.is/island-ui/core'
 import { Content } from '@island.is/island-ui/contentful'
 import { Sidebar, getHeadingLinkElements } from '@island.is/web/components'
@@ -112,7 +110,7 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
                 href={`${makePath('category')}/[slug]`}
                 as={makePath('category', categorySlug)}
               >
-                <a>{categoryTitle}</a>
+                {categoryTitle}
               </Link>
               {groupTitle && (
                 <Tag variant="purple" label>
@@ -142,7 +140,6 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
             </Box>
           </GridColumn>
         </GridRow>
-
         <Content document={article.content} />
       </ArticleLayout>
     </>

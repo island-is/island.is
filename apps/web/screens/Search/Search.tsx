@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useRef, useEffect } from 'react'
 import Head from 'next/head'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Screen } from '../../types'
 import {
@@ -21,6 +20,7 @@ import {
   Option,
   SidebarAccordion,
   Pagination,
+  Link,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
@@ -197,7 +197,7 @@ const Search: Screen<CategoryProps> = ({
                       query: { ...Router.query, page },
                     }}
                   >
-                    <a className={className}>{children}</a>
+                    <span className={className}>{children}</span>
                   </Link>
                 )}
               />
@@ -207,9 +207,7 @@ const Search: Screen<CategoryProps> = ({
       >
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
-            <Link href="/">
-              <a>Ísland.is</a>
-            </Link>
+            <Link href="/">Ísland.is</Link>
           </Breadcrumbs>
           <SearchInput
             ref={searchRef}

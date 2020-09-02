@@ -26,6 +26,7 @@ import { Screen } from '../types'
 import { useNamespace } from '../hooks'
 import useRouteNames from '../i18n/useRouteNames'
 import FrontpageTabs from '../components/FrontpageTabs/FrontpageTabs'
+import { IntroductionSection } from '../components/IntroductionSection'
 
 interface HomeProps {
   categories: Query['categories']
@@ -92,6 +93,14 @@ const Home: Screen<HomeProps> = ({
       <Box background="purple100">
         <Categories label={n('articlesTitle')} cards={cards} />
       </Box>
+      <IntroductionSection
+        subtitle="Markmiðið okkar"
+        title="Öll opinber þjónusta á einum stað"
+        introText="Við vinnum að margvíslegum verkefnum sem öll stuðla að því að gera opinbera þjónustu skilvirkari og notendavænni."
+        text="Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn."
+        linkText="Nánar um stafrænt Ísland"
+        linkUrl="/flokkur/fjolskylda-og-velferd"
+      />
     </>
   )
 }

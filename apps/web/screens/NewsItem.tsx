@@ -1,13 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import Head from 'next/head'
-import Link from 'next/link'
 import {
   Typography,
   Stack,
   Breadcrumbs,
   Box,
   ContentBlock,
+  Link,
 } from '@island.is/island-ui/core'
 import { Content, Image } from '@island.is/island-ui/contentful'
 import { Screen } from '../types'
@@ -58,12 +58,8 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
           <ContentBlock width="small">
             <Stack space={3}>
               <Breadcrumbs>
-                <Link href={makePath()}>
-                  <a>Ísland.is</a>
-                </Link>
-                <Link href={makePath('news')}>
-                  <a>Fréttir og tilkynningar</a>
-                </Link>
+                <Link href={makePath()}>Ísland.is</Link>
+                <Link href={makePath('news')}>Fréttir og tilkynningar</Link>
               </Breadcrumbs>
               <Box paddingTop={1}>
                 <Typography variant="h1" as="h1">
