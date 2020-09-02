@@ -18,11 +18,15 @@ interface Props {
   loading: boolean
 }
 
+// TODO: On smaller screen sizes, a natural overflow of the content starts to happen
+// This is fine but currently the image can overlap the content, we would want to set a higher
+// z-index for the left column but that is not available in the current design system
+
 const Hero: FC<Props> = ({ content, loading }) => {
   const slide = content?.items[1]
 
   return (
-    <Box marginBottom={1}>
+    <Box marginBottom={[3, 3, 1]}>
       <Columns space={[1, 4, 4, 4, 12]}>
         <Column width="1/2">
           <Box marginY={[0, 0, 4, 8]}>
