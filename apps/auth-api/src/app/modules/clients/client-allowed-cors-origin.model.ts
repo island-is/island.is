@@ -15,11 +15,12 @@ import { Client } from './client.model'
   tableName: 'client_allowed_cors_origin',
   indexes: [
     {
-      fields: ['client_id'],
+      fields: ['client_id', 'origin'],
     },
   ],
 })
 export class ClientAllowedCorsOrigin extends Model<ClientAllowedCorsOrigin> {
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -27,6 +28,7 @@ export class ClientAllowedCorsOrigin extends Model<ClientAllowedCorsOrigin> {
   @ApiProperty()
   origin: string
 
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,

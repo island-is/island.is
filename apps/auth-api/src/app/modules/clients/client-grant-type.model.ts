@@ -16,20 +16,13 @@ import { GrantType } from '../grant-types/grant-type.model'
   tableName: 'client_grant_type',
   indexes: [
     {
-      fields: ['id', 'client_id', 'grant_type_id'],
+      fields: ['client_id', 'grant_type_id'],
     },
   ],
 })
 export class ClientGrantType extends Model<ClientGrantType> {
-  @Column({
-    type: DataType.UUID,
-    primaryKey: true,
-    allowNull: false,
-    defaultValue: DataType.UUIDV4,
-  })
-  @ApiProperty()
-  id: string
-
+  
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -38,6 +31,7 @@ export class ClientGrantType extends Model<ClientGrantType> {
   @ApiProperty()
   clientId: string
 
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,
