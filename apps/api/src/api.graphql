@@ -354,7 +354,7 @@ enum ApplicationTypeIdEnum {
   ExampleForm2
   ExampleForm3
   FamilyAndPets
-  PaternityLeave
+  ParentalLeave
 }
 
 type PresignedPost {
@@ -544,7 +544,7 @@ enum CreateApplicationDtoTypeIdEnum {
   ExampleForm2
   ExampleForm3
   FamilyAndPets
-  PaternityLeave
+  ParentalLeave
 }
 
 input UpdateApplicationInput {
@@ -563,7 +563,7 @@ enum UpdateApplicationDtoTypeIdEnum {
   ExampleForm2
   ExampleForm3
   FamilyAndPets
-  PaternityLeave
+  ParentalLeave
 }
 
 enum UpdateApplicationDtoStateEnum {

@@ -31,8 +31,8 @@ const schema = z.object({
   ),
 })
 
-export const PaternityLeave: Form = buildForm({
-  id: FormType.PATERNITY_LEAVE,
+export const ParentalLeave: Form = buildForm({
+  id: FormType.PARENTAL_LEAVE,
   ownerId: 'DOL',
   name: 'Fæðingarorlof',
   schema: schema,
@@ -88,7 +88,7 @@ export const PaternityLeave: Form = buildForm({
                 id: 'usage',
                 name: 'Hvað ætlar þú að nýta þér marga mánuði í fæðingarorlof?',
                 required: true,
-                component: CustomFieldComponents.PATERNITY_LEAVE_USAGE,
+                component: CustomFieldComponents.PARENTAL_LEAVE_USAGE,
               },
               {},
             ),
@@ -103,7 +103,7 @@ export const PaternityLeave: Form = buildForm({
                 id: 'spread',
                 name: '',
                 required: true,
-                component: CustomFieldComponents.PATERNITY_LEAVE_CALCULATIONS,
+                component: CustomFieldComponents.PARENTAL_LEAVE_CALCULATIONS,
               },
               {},
             ),
@@ -111,7 +111,7 @@ export const PaternityLeave: Form = buildForm({
               {
                 id: 'periods',
                 name: 'Viltu breyta eða skipta upp tímabilinu?',
-                component: CustomFieldComponents.PATERNITY_LEAVE_CALCULATIONS,
+                component: CustomFieldComponents.PARENTAL_LEAVE_CALCULATIONS,
               },
               {},
             ),
