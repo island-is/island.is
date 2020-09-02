@@ -50,7 +50,7 @@ function Benefits({ misc }: PropTypes) {
     misc,
   )
   const benefits = discounts.filter(({ user }) => user.meetsADSRequirements)
-  const hasBenefits = benefits.length > 0 && !loading && called
+  const hasBenefits = !(benefits.length <= 0 && !loading && called)
   return (
     <Box marginBottom={6}>
       {hasBenefits && (
