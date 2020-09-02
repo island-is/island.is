@@ -16,3 +16,15 @@ export interface Case {
   description: string
   state: CaseState
 }
+
+export interface CreateCaseRequest {
+  description: string
+  policeCaseNumber: string
+  suspectNationalId: string
+  suspectName: string
+}
+
+export interface WorkingCase {
+  id: string
+  case: CreateCaseRequest
+}

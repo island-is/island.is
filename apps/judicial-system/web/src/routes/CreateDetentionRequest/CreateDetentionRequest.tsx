@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 
 import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
 import {
@@ -9,26 +9,55 @@ import {
   Input,
   Box,
 } from '@island.is/island-ui/core'
+import { WorkingCase } from '../../types'
 import * as api from '../../api'
 
 export const CreateDetentionRequest: React.FC = () => {
+  const [workingCase, setWorkingCase] = useState<WorkingCase>({
+    id: '',
+    case: {
+      description: '',
+      policeCaseNumber: '',
+      suspectName: '',
+      suspectNationalId: '',
+    },
+  })
+
   const policeCaseNumberRef = useRef<HTMLInputElement>()
   const suspectNationalIdRef = useRef<HTMLInputElement>()
   const suspectNameRef = useRef<HTMLInputElement>()
 
-  const saveCaseIfPossible = async () => {
+  const createCaseIfPossible = async () => {
     const isPossibleToSave =
       policeCaseNumberRef.current.value !== '' &&
-      suspectNationalIdRef.current.value !== '' &&
-      suspectNameRef.current.value !== ''
+      suspectNationalIdRef.current.value !== ''
 
     if (isPossibleToSave) {
-      await api.saveCase({
+      const caseId = await api.createCase({
         description: 'test', // TODO: fix this
         policeCaseNumber: policeCaseNumberRef.current.value,
         suspectNationalId: suspectNationalIdRef.current.value,
-        suspectName: suspectNameRef.current.value,
+        suspectName: 'test', // TODO: fix this
       })
+
+      setWorkingCase({ id: caseId, case: workingCase.case })
+    }
+  }
+
+  const autoSave = (caseField: string, caseFieldValue: string) => {
+    // Only save if the field has changes
+    if (workingCase.case[caseField] !== caseFieldValue) {
+      // Copy the working case
+      let copyOfWorkingCase = Object.assign({}, workingCase)
+
+      // Save the case
+      api.saveCase(workingCase.id, caseField, caseFieldValue)
+
+      // Assign new value to the field the user is changing
+      copyOfWorkingCase.case[caseField] = caseFieldValue
+
+      // Update the working case
+      setWorkingCase(copyOfWorkingCase)
     }
   }
 
@@ -59,7 +88,7 @@ export const CreateDetentionRequest: React.FC = () => {
                 name="policeCaseNumber"
                 label="Slá inn LÖKE málsnúmer"
                 ref={policeCaseNumberRef}
-                onBlur={() => saveCaseIfPossible()}
+                onBlur={() => createCaseIfPossible()}
               />
             </Box>
             <Box component="section" marginBottom={7}>
@@ -73,7 +102,7 @@ export const CreateDetentionRequest: React.FC = () => {
                   name="nationalId"
                   label="Kennitala"
                   ref={suspectNationalIdRef}
-                  onBlur={() => saveCaseIfPossible()}
+                  onBlur={() => createCaseIfPossible()}
                 />
               </Box>
               <Box marginBottom={3}>
@@ -81,7 +110,7 @@ export const CreateDetentionRequest: React.FC = () => {
                   name="suspectName"
                   label="Fullt nafn kærða"
                   ref={suspectNameRef}
-                  onBlur={() => saveCaseIfPossible()}
+                  onBlur={(evt) => autoSave('suspectName', evt.target.value)}
                 />
               </Box>
               <Box marginBottom={3}>
