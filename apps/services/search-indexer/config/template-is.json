@@ -39,7 +39,7 @@
         "term_icelandic": {
           "type": "custom",
           "tokenizer": "standard",
-          "filter": ["lowercase", "icelandic_synonym"]
+          "filter": ["lowercase"]
         }
       }
     }
