@@ -93,6 +93,13 @@ module.exports = {
         modified TIMESTAMP WITH TIME ZONE,
         CONSTRAINT FK_client_secret_client FOREIGN KEY (client_id) REFERENCES client (client_id)
       );
+
+      CREATE TABLE client_redirect_uri ( 
+        client_id VARCHAR NOT NULL,
+        redirect_uri VARCHAR NULL
+      );
+
+
     COMMIT;
     `)
   },

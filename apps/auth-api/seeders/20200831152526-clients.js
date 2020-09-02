@@ -69,17 +69,32 @@ module.exports = {
       }
     ];
 
+    var clientIdbRestrictions = [
+      {
+      name: "islykill", 
+      client_id: "postman",
+      },
+      {
+        name: "dockobit", 
+        client_id: "postman",
+      }
+    ];
+
+
     return Promise.all([
       queryInterface.bulkInsert('client', clients, {}), 
       queryInterface.bulkInsert('client_allowed_scope', scopes, {}),
       queryInterface.bulkInsert('client_allowed_cors_origin', cors, {}),
+      queryInterface.bulkInsert('client_idp_restrictions', clientIdbRestrictions, {}),
+      
     ]);
   },
 
   down: (queryInterface, Sequelize) => {
+    var idpRestrictions = queryInterface.bulkDelete('client_idp_restrictions', clientIdbRestrictions, {})
     var cors = queryInterface.bulkDelete('client_allowed_cors_origin', null, {})
     var scopes = queryInterface.bulkDelete('client_allowed_scope', null, {})
     var clients = queryInterface.bulkDelete('client', null, {})
-    return Promise.all([cors, scopes, clients])
+    return Promise.all([cors, scopes, clients, idpRestrictions])
   }
 };
