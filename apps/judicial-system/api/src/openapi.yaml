@@ -33,8 +33,6 @@ components:
         modified:
           format: date-time
           type: string
-        description:
-          type: string
         policeCaseNumber:
           type: string
         suspectNationalId:
@@ -52,32 +50,22 @@ components:
       required:
         - created
         - modified
-        - description
         - policeCaseNumber
         - suspectNationalId
-        - suspectName
         - state
     CreateCaseDto:
       type: object
       properties:
-        description:
-          type: string
         policeCaseNumber:
           type: string
         suspectNationalId:
           type: string
-        suspectName:
-          type: string
       required:
-        - description
         - policeCaseNumber
         - suspectNationalId
-        - suspectName
     UpdateCaseDto:
       type: object
       properties:
-        description:
-          type: string
         policeCaseNumber:
           type: string
         suspectNationalId:
@@ -92,10 +80,6 @@ components:
             - SUBMITTED
             - ACTIVE
             - COMPLETED
-      required:
-        - policeCaseNumber
-        - suspectNationalId
-        - suspectName
 paths:
   /liveness:
     get:

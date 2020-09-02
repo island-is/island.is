@@ -50,7 +50,7 @@ export class CaseController {
   @ApiOkResponse({ type: Case })
   async update(
     @Param('id') id: string,
-    @Body(new CaseValidationPipe(true))
+    @Body()
     caseToUpdate: UpdateCaseDto,
   ) {
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
