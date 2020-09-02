@@ -1,10 +1,16 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect } from 'react'
 import { useMutation } from '@apollo/client'
 import gql from 'graphql-tag'
 
-import { UserContext } from '@island.is/air-discount-scheme-web/context'
-import { copyToClipboard } from '@island.is/air-discount-scheme-web/utils'
-import { Box, Typography, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Typography,
+  Stack,
+  Icon,
+  SkeletonLoader,
+} from '@island.is/island-ui/core'
+import { UserCredit, NoBenefits } from '../'
+import { Status } from '../UserCredit/UserCredit'
 
 interface PropTypes {
   misc: string
@@ -32,89 +38,74 @@ const FetchDiscountsMutation = gql`
 `
 
 function Benefits({ misc }: PropTypes) {
-  const [fetchDiscounts, { data }] = useMutation(FetchDiscountsMutation)
-  const { user: authUser } = useContext(UserContext)
+  const [fetchDiscounts, { data, loading, called }] = useMutation(
+    FetchDiscountsMutation,
+  )
   useEffect(() => {
     fetchDiscounts()
   }, [fetchDiscounts])
 
-  const { fetchDiscounts: codes } = data || {}
-  const {
-    myRights,
-    remaining,
-    copyCode,
-    codeDescription,
-    kidsRights,
-  } = JSON.parse(misc)
-
+  const { fetchDiscounts: discounts = [] } = data || {}
+  const { myRights, codeDescription, attention, codeDisclaimer } = JSON.parse(
+    misc,
+  )
+  const benefits = discounts.filter(({ user }) => user.meetsADSRequirements)
+  const hasBenefits = !(benefits.length <= 0 && !loading && called)
   return (
     <Box marginBottom={6}>
-      <Box marginBottom={3}>
-        <Typography variant="h3">{myRights}</Typography>
-      </Box>
-      {codes &&
-        codes.map(({ discountCode, expires, nationalId, user }) => {
-          const remainingPlaceholders = {
-            remaining: user.fund.credit,
-            total: user.fund.total,
-          }
+      {hasBenefits && (
+        <Box
+          marginBottom={8}
+          background="yellow200"
+          borderColor="yellow400"
+          borderWidth="standard"
+          borderStyle="solid"
+          borderRadius="standard"
+          display="flex"
+          alignItems="center"
+          padding={3}
+        >
+          <Box marginRight={2}>
+            <Icon type="alert" color="yellow600" width={26} />
+          </Box>
+          <Box marginRight={2}>
+            <Typography variant="p">
+              <strong>{attention}</strong>
+            </Typography>
+          </Box>
+          <Typography variant="p">{codeDisclaimer}</Typography>
+        </Box>
+      )}
 
-          return (
-            <Box
-              key={discountCode}
-              padding={2}
-              marginBottom={2}
-              border={user.meetsADSRequirements ? 'standard' : 'focus'}
-              borderRadius="standard"
-              display={['block', 'flex']}
-              justifyContent="spaceBetween"
-              alignItems={['flexStart', 'center']}
-              background={user.meetsADSRequirements ? 'blue100' : 'red100'}
-              flexDirection={['column', 'row']}
-            >
-              <Box marginBottom={[3, 0]}>
-                <Typography variant="h3">
-                  {user.name}{' '}
-                  {user.nationalId !== authUser.nationalId && kidsRights}
-                </Typography>
-                <Typography variant="p">
-                  {remaining.replace(
-                    /\{{(.*?)\}}/g,
-                    (m, sub) => remainingPlaceholders[sub],
-                  )}
-                </Typography>
-              </Box>
-              {user.meetsADSRequirements ? (
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  justifyContent={['spaceBetween', 'flexStart']}
-                >
-                  <Box marginRight={[2, 4]}>
-                    <Typography variant="h3" color="roseTinted400">
-                      {discountCode}
-                    </Typography>
-                  </Box>
-                  <Button
-                    noWrap
-                    onClick={() => {
-                      copyToClipboard(discountCode)
-                    }}
-                  >
-                    {copyCode}
-                  </Button>
-                </Box>
-              ) : (
-                <Box display="flex" alignItems="center">
-                  <Typography>Hefur ekki réttindi</Typography>
-                </Box>
-              )}
+      <Stack space={3}>
+        <Typography variant="h3">{myRights}</Typography>
+        {hasBenefits ? (
+          <>
+            {loading ? (
+              <SkeletonLoader height={98} />
+            ) : (
+              benefits.map((discount, index) => {
+                const { user } = discount
+                const fundUsed = user.fund.used === user.fund.total
+                const status: Status = fundUsed ? 'fundUsed' : 'default'
+                return (
+                  <UserCredit
+                    key={index}
+                    misc={misc}
+                    discount={discount}
+                    status={status}
+                  />
+                )
+              })
+            )}
+            <Box textAlign="right">
+              <Typography variant="pSmall">{codeDescription}</Typography>
             </Box>
-          )
-        })}
-      <Box textAlign="right" marginBottom={4}>
-        <Typography variant="pSmall">{codeDescription}</Typography>
-      </Box>
+          </>
+        ) : (
+          <NoBenefits misc={misc} />
+        )}
+      </Stack>
     </Box>
   )
 }
