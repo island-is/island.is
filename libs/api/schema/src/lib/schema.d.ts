@@ -374,6 +374,25 @@ export enum ApplicationTypeIdEnum {
   ExampleForm2 = 'ExampleForm2',
   ExampleForm3 = 'ExampleForm3',
   FamilyAndPets = 'FamilyAndPets',
+  PaternityLeave = 'PaternityLeave',
+}
+
+export type Document = {
+  __typename?: 'Document'
+  id: Scalars['ID']
+  date: Scalars['DateTime']
+  subject: Scalars['String']
+  senderName: Scalars['String']
+  senderNatReg: Scalars['String']
+  opened: Scalars['Boolean']
+}
+
+export type DocumentDetails = {
+  __typename?: 'DocumentDetails'
+  fileType: Scalars['ID']
+  content: Scalars['String']
+  html: Scalars['String']
+  url: Scalars['String']
 }
 
 export type Query = {
@@ -396,6 +415,9 @@ export type Query = {
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
   getApplication?: Maybe<Application>
+  getApplicationsByType?: Maybe<Array<Application>>
+  getDocument?: Maybe<DocumentDetails>
+  listDocuments?: Maybe<Array<Document>>
 }
 
 export type QueryHelloWorldArgs = {
@@ -468,6 +490,18 @@ export type QueryGetMenuArgs = {
 
 export type QueryGetApplicationArgs = {
   input: GetApplicationInput
+}
+
+export type QueryGetApplicationsByTypeArgs = {
+  input: GetApplicationsByTypeInput
+}
+
+export type QueryGetDocumentArgs = {
+  input: GetDocumentInput
+}
+
+export type QueryListDocumentsArgs = {
+  input: ListDocumentsInput
 }
 
 export type HelloWorldInput = {
@@ -572,6 +606,21 @@ export type GetApplicationInput = {
   id: Scalars['String']
 }
 
+export type GetApplicationsByTypeInput = {
+  typeId: ApplicationTypeIdEnum
+}
+
+export type GetDocumentInput = {
+  id: Scalars['String']
+}
+
+export type ListDocumentsInput = {
+  natReg: Scalars['String']
+  dateFrom: Scalars['DateTime']
+  dateTo: Scalars['DateTime']
+  category: Scalars['String']
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<Application>
@@ -612,17 +661,26 @@ export enum CreateApplicationDtoTypeIdEnum {
   ExampleForm2 = 'ExampleForm2',
   ExampleForm3 = 'ExampleForm3',
   FamilyAndPets = 'FamilyAndPets',
+  PaternityLeave = 'PaternityLeave',
 }
 
 export type UpdateApplicationInput = {
   id: Scalars['String']
+  typeId: UpdateApplicationDtoTypeIdEnum
   applicant?: Maybe<Scalars['String']>
   assignee?: Maybe<Scalars['String']>
   externalId?: Maybe<Scalars['String']>
   state?: Maybe<UpdateApplicationDtoStateEnum>
   attachments?: Maybe<Array<Scalars['String']>>
-  typeId?: Maybe<UpdateApplicationDtoTypeIdEnum>
   answers?: Maybe<Scalars['JSON']>
+}
+
+export enum UpdateApplicationDtoTypeIdEnum {
+  ExampleForm = 'ExampleForm',
+  ExampleForm2 = 'ExampleForm2',
+  ExampleForm3 = 'ExampleForm3',
+  FamilyAndPets = 'FamilyAndPets',
+  PaternityLeave = 'PaternityLeave',
 }
 
 export enum UpdateApplicationDtoStateEnum {
@@ -634,13 +692,6 @@ export enum UpdateApplicationDtoStateEnum {
   Manualapproved = 'MANUALAPPROVED',
   Rejected = 'REJECTED',
   Unknown = 'UNKNOWN',
-}
-
-export enum UpdateApplicationDtoTypeIdEnum {
-  ExampleForm = 'ExampleForm',
-  ExampleForm2 = 'ExampleForm2',
-  ExampleForm3 = 'ExampleForm3',
-  FamilyAndPets = 'FamilyAndPets',
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -824,6 +875,9 @@ export type ResolversTypes = {
   ApplicationStateEnum: ApplicationStateEnum
   ApplicationTypeIdEnum: ApplicationTypeIdEnum
   JSON: ResolverTypeWrapper<Scalars['JSON']>
+  Document: ResolverTypeWrapper<Document>
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
+  DocumentDetails: ResolverTypeWrapper<DocumentDetails>
   Query: ResolverTypeWrapper<{}>
   HelloWorldInput: HelloWorldInput
   SearcherInput: SearcherInput
@@ -835,7 +889,6 @@ export type ResolversTypes = {
   GetArticleInput: GetArticleInput
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
   GetLandingPageInput: GetLandingPageInput
@@ -846,13 +899,16 @@ export type ResolversTypes = {
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
   GetApplicationInput: GetApplicationInput
+  GetApplicationsByTypeInput: GetApplicationsByTypeInput
+  GetDocumentInput: GetDocumentInput
+  ListDocumentsInput: ListDocumentsInput
   Mutation: ResolverTypeWrapper<{}>
   CreateApplicationInput: CreateApplicationInput
   CreateApplicationDtoStateEnum: CreateApplicationDtoStateEnum
   CreateApplicationDtoTypeIdEnum: CreateApplicationDtoTypeIdEnum
   UpdateApplicationInput: UpdateApplicationInput
-  UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
   UpdateApplicationDtoTypeIdEnum: UpdateApplicationDtoTypeIdEnum
+  UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
 }
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -919,6 +975,9 @@ export type ResolversParentTypes = {
   Application: Application
   DateTime: Scalars['DateTime']
   JSON: Scalars['JSON']
+  Document: Document
+  Boolean: Scalars['Boolean']
+  DocumentDetails: DocumentDetails
   Query: {}
   HelloWorldInput: HelloWorldInput
   SearcherInput: SearcherInput
@@ -928,7 +987,6 @@ export type ResolversParentTypes = {
   GetArticleInput: GetArticleInput
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
-  Boolean: Scalars['Boolean']
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
   GetLandingPageInput: GetLandingPageInput
@@ -939,6 +997,9 @@ export type ResolversParentTypes = {
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
   GetApplicationInput: GetApplicationInput
+  GetApplicationsByTypeInput: GetApplicationsByTypeInput
+  GetDocumentInput: GetDocumentInput
+  ListDocumentsInput: ListDocumentsInput
   Mutation: {}
   CreateApplicationInput: CreateApplicationInput
   UpdateApplicationInput: UpdateApplicationInput
@@ -1493,6 +1554,30 @@ export interface JsonScalarConfig
   name: 'JSON'
 }
 
+export type DocumentResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Document'] = ResolversParentTypes['Document']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>
+  subject?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  senderName?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  senderNatReg?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  opened?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type DocumentDetailsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['DocumentDetails'] = ResolversParentTypes['DocumentDetails']
+> = {
+  fileType?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  html?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type QueryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
@@ -1605,6 +1690,24 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetApplicationArgs, 'input'>
   >
+  getApplicationsByType?: Resolver<
+    Maybe<Array<ResolversTypes['Application']>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetApplicationsByTypeArgs, 'input'>
+  >
+  getDocument?: Resolver<
+    Maybe<ResolversTypes['DocumentDetails']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetDocumentArgs, 'input'>
+  >
+  listDocuments?: Resolver<
+    Maybe<Array<ResolversTypes['Document']>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryListDocumentsArgs, 'input'>
+  >
 }
 
 export type MutationResolvers<
@@ -1668,6 +1771,8 @@ export type Resolvers<ContextType = Context> = {
   Application?: ApplicationResolvers<ContextType>
   DateTime?: GraphQLScalarType
   JSON?: GraphQLScalarType
+  Document?: DocumentResolvers<ContextType>
+  DocumentDetails?: DocumentDetailsResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
 }

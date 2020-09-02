@@ -325,6 +325,18 @@ type Document {
   opened: Boolean!
 }
 
+type DocumentDetails {
+  fileType: String!
+  content: String!
+  html: String!
+  url: String!
+}
+
+type DocumentCategory {
+  id: ID!
+  name: String!
+}
+
 type Query {
   helloWorld(input: HelloWorldInput!): HelloWorld!
   searchResults(query: SearcherInput!): SearchResult!
@@ -345,7 +357,9 @@ type Query {
   getMenu(input: GetMenuInput!): Menu
   getApplication(input: GetApplicationInput!): Application
   getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
-  getDocument(input: GetDocumentInput!): Document
+  getDocument(input: GetDocumentInput!): DocumentDetails
+  listDocuments(input: ListDocumentsInput!): [Document!]
+  getCategories: [DocumentCategory!]
 }
 
 input HelloWorldInput {
@@ -456,6 +470,13 @@ input GetApplicationsByTypeInput {
 
 input GetDocumentInput {
   id: String!
+}
+
+input ListDocumentsInput {
+  natReg: String!
+  dateFrom: DateTime!
+  dateTo: DateTime!
+  category: String!
 }
 
 type Mutation {
