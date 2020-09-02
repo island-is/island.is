@@ -23,20 +23,18 @@ const useImageLoader = (url: string): boolean => {
   return loaded
 }
 
-const defaultBoxProps = {
-  alignItems: 'center',
-  width: 'full',
-  height: 'full',
-  display: 'inlineFlex',
-  overflow: 'hidden',
-  borderRadius: 'large',
-} as BoxProps
-
 export const BackgroundImage: FC<BackgroundImageProps> = ({
   image = null,
   ratio = '16:9',
   width = 1000,
-  boxProps = defaultBoxProps,
+  boxProps = {
+    alignItems: 'center',
+    width: 'full',
+    height: 'full',
+    display: 'inlineFlex',
+    overflow: 'hidden',
+    borderRadius: 'large',
+  },
 }) => {
   const src = `${image.url}?w=${width}`
   const thumbnail = image.url + '?w=50'

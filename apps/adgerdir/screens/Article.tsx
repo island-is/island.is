@@ -208,7 +208,6 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
 
 Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
-  console.log(locale, slug)
   const [
     {
       data: { getAdgerdirPage },

@@ -70,10 +70,8 @@ export const Articles: FC<ArticlesProps> = ({
   }, [])
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      window.addEventListener('resize', handleResize)
-      handleResize()
-    }
+    window.addEventListener('resize', handleResize)
+    handleResize()
 
     return () => window.removeEventListener('resize', handleResize)
   }, [handleResize])
