@@ -15,21 +15,36 @@ const FormProgressSection: FC<{
   sectionIndex: number
   isActive: boolean
   isComplete: boolean
+  isLastSection: boolean
   activeSubSection: number
-}> = ({ section, sectionIndex, isActive, isComplete, activeSubSection }) => {
+}> = ({
+  section,
+  sectionIndex,
+  isActive,
+  isComplete,
+  isLastSection,
+  activeSubSection,
+}) => {
   const subSections = getSubSectionsInSection(section)
   const hasSubSections = subSections.length > 0
   const containerRef = useRef<HTMLDivElement>(null)
-  const [width, setWidth] = useState(0)
+  const [containerHeight, setContainerHeight] = useState(0)
   const [isSmallScreen, setIsSmallScreen] = useState(false)
   const isClient = typeof window === 'object'
 
   useEffect(() => {
     if (!isClient) return
 
+    if (containerRef.current) {
+      setContainerHeight(containerRef.current.clientHeight)
+    }
+  }, [isActive])
+
+  useEffect(() => {
+    if (!isClient) return
+
     const handleResize = () => {
       setIsSmallScreen(window.innerWidth <= theme.breakpoints.md)
-      setWidth(containerRef?.current?.offsetWidth || 0)
     }
 
     handleResize()
@@ -42,40 +57,30 @@ const FormProgressSection: FC<{
   }, [isClient])
 
   return (
-    <Box
-      ref={containerRef}
-      marginBottom={[0, 0, 2]}
-      paddingRight={[3, 3, 0]}
-      className={styles.root}
-      style={{
-        marginLeft: isSmallScreen && isComplete ? `-${width}px` : '0',
-      }}
-    >
+    <Box ref={containerRef} marginBottom={[0, 0, 2]} className={styles.root}>
       <Box
         display="flex"
         alignItems="flexStart"
         marginBottom={1}
         style={{ whiteSpace: 'nowrap' }}
       >
-        <Box padding={1} background="blue100" marginRight={3}>
+        <Box paddingTop={2}>
           <SectionNumber
+            lineHeight={isLastSection ? 0 : containerHeight + 16}
             currentState={
               isActive ? 'active' : isComplete ? 'previous' : 'next'
             }
             number={sectionIndex + 1}
           />
         </Box>
-        <Box className={styles.sectionName}>
-          <Typography
-            variant="h4"
-            color={isActive || isComplete ? 'blue400' : 'dark200'}
-          >
+        <Box paddingTop={2} width="full" className={styles.sectionName}>
+          <Typography variant={isActive ? 'h4' : 'p'} color="dark400">
             {section.name}
           </Typography>
         </Box>
       </Box>
       {isActive && hasSubSections && (
-        <Box display={['none', 'none', 'block']} paddingLeft={1}>
+        <Box>
           <BulletList>
             {subSections.map((subSection, i) => (
               <SubSectionItem

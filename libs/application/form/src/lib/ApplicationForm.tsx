@@ -11,7 +11,6 @@ import {
 import { ActionTypes } from '../reducer/ReducerTypes'
 import { Box } from '@island.is/island-ui/core'
 import * as styles from './ApplicationForm.treat'
-import ProgressIndicator from '../components/ProgressIndicator'
 
 export const ApplicationForm: FC<{ application: Application }> = ({
   application,
@@ -43,11 +42,19 @@ export const ApplicationForm: FC<{ application: Application }> = ({
   } = state
 
   return (
-    <Box display="flex" flexGrow={1}>
+    <Box
+      display="flex"
+      flexGrow={1}
+      paddingX={[0, 5]}
+      paddingTop={[0, 1]}
+      paddingBottom={[0, 5]}
+    >
       <Box
         display="flex"
         flexGrow={1}
         flexDirection="row"
+        background="white"
+        borderRadius="large"
         className={styles.applicationContainer}
       >
         <Box className={styles.sidebarContainer}>
@@ -59,14 +66,13 @@ export const ApplicationForm: FC<{ application: Application }> = ({
                 activeSection={activeSection}
                 activeSubSection={activeSubSection}
               />
-              <ProgressIndicator progress={progress} />
             </Box>
           </Sidebar>
         </Box>
 
         <Box
           paddingX={[3, 3, 12]}
-          paddingTop={4}
+          paddingTop={8}
           height="full"
           className={styles.screenContainer}
         >

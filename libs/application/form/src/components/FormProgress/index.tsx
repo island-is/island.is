@@ -17,13 +17,14 @@ const FormProgress: FC<{
       width="full"
       className={styles.root}
     >
-      <Box display={['flex', 'flex', 'block']} paddingLeft={[3, 3, 5]}>
+      <Box display={['flex', 'flex', 'block']}>
         {sections.map((section, index) => (
           <FormProgressSection
             key={`${section.name}-${index}`}
             section={section}
             isActive={index === activeSection}
             isComplete={index < activeSection}
+            isLastSection={index === sections.length - 1}
             sectionIndex={index}
             activeSubSection={activeSubSection}
           />
