@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useMutation } from '@apollo/client'
+import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 
 import {
@@ -12,13 +12,15 @@ import {
 import { UserCredit, NoBenefits } from '../'
 import { Status } from '../UserCredit/UserCredit'
 
+const TEN_SECONDS = 10000 // milli-seconds
+
 interface PropTypes {
   misc: string
 }
 
-const FetchDiscountsMutation = gql`
-  mutation FetchDiscountsMutation {
-    fetchDiscounts {
+const DiscountsQuery = gql`
+  query DiscountsQuery {
+    discounts {
       discountCode
       expiresIn
       nationalId
@@ -38,14 +40,15 @@ const FetchDiscountsMutation = gql`
 `
 
 function Benefits({ misc }: PropTypes) {
-  const [fetchDiscounts, { data, loading, called }] = useMutation(
-    FetchDiscountsMutation,
-  )
+  const { data, loading, called, refetch } = useQuery(DiscountsQuery)
   useEffect(() => {
-    fetchDiscounts()
-  }, [fetchDiscounts])
+    const interval = setInterval(() => {
+      refetch()
+    }, TEN_SECONDS)
+    return () => clearInterval(interval)
+  }, [refetch])
 
-  const { fetchDiscounts: discounts = [] } = data || {}
+  const { discounts = [] } = data || {}
   const { myRights, codeDescription, attention, codeDisclaimer } = JSON.parse(
     misc,
   )
@@ -81,7 +84,7 @@ function Benefits({ misc }: PropTypes) {
         <Typography variant="h3">{myRights}</Typography>
         {hasBenefits ? (
           <>
-            {loading ? (
+            {loading && !called ? (
               <SkeletonLoader height={98} />
             ) : (
               benefits.map((discount, index) => {
