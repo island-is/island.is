@@ -15,6 +15,8 @@ const RouteComponent: FC<{
   userInfo: UserWithMeta
   client: ApolloClient<NormalizedCacheObject>
 }> = React.memo(({ route, userInfo, client }) => {
+  if (route.render === undefined) return null
+
   const App = route.render({
     userInfo,
     client,
@@ -54,11 +56,13 @@ const RouteLoader: FC<{
 
 const Modules: FC<{}> = () => {
   const [{ routes }] = useStore()
-  const moduleProps = useModuleProps()
+  const { userInfo, client } = useModuleProps()
 
   return (
     <Box paddingY={1}>
-      <RouteLoader routes={routes} {...moduleProps} />
+      {userInfo && (
+        <RouteLoader routes={routes} userInfo={userInfo} client={client} />
+      )}
     </Box>
   )
 }
