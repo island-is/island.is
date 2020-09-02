@@ -1,4 +1,6 @@
 import React, { FC } from 'react'
+import { format } from 'date-fns'
+import { is } from 'date-fns/locale'
 import {
   Box,
   GridContainer,
@@ -22,9 +24,18 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
     return null
   }
 
-  const first = items[0]
-  const second = items[1]
-  const third = items[2]
+  const parsed = items.map((x, index) => {
+    return {
+      ...x,
+      dateFormatted: format(new Date(x.date), 'M. LLLL, uuuu', {
+        locale: is,
+      }).toLowerCase(),
+    }
+  })
+
+  const first = parsed[0]
+  const second = parsed[1]
+  const third = parsed[2]
 
   return (
     <Box paddingX={[1, 1, 1, 1, 6]}>
@@ -43,7 +54,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                 ) : null}
                 <Stack space={3}>
                   <Heading
-                    subtitle={first.subtitle}
+                    subtitle={first.dateFormatted}
                     title={first.title}
                     intro={first.intro}
                   />
@@ -85,7 +96,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                   <Stack space={3}>
                     <Heading
                       main={false}
-                      subtitle={second.subtitle}
+                      subtitle={second.dateFormatted}
                       title={second.title}
                       intro={second.intro}
                       variant="h3"
@@ -116,7 +127,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                   <Stack space={3}>
                     <Heading
                       main={false}
-                      subtitle={third.subtitle}
+                      subtitle={third.dateFormatted}
                       title={third.title}
                       intro={third.intro}
                       variant="h3"
