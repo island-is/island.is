@@ -81,8 +81,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
                 <Articles
                   tags={tagsItems}
                   items={pagesItems}
-                  seeMoreText={n('seeMoreItems')}
-                  title={n('adgerdir')}
+                  namespace={namespace}
                 />
               </ContentBlock>
             </Box>

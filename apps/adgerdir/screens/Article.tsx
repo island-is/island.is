@@ -194,8 +194,7 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
             <Articles
               tags={tagsItems}
               items={pagesItems}
-              seeMoreText={n('seeMoreItems')}
-              title={n('adgerdir')}
+              namespace={namespace}
               currentArticle={article}
               showAll
             />

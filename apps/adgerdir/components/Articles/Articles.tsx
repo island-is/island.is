@@ -15,6 +15,7 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
+import { useNamespace } from '@island.is/adgerdir/hooks'
 import { useI18n } from '@island.is/adgerdir/i18n'
 import { Card } from '@island.is/adgerdir/components'
 
@@ -25,23 +26,22 @@ const FILTER_TIMER = 300
 const ITEMS_PER_SHOW = 6
 
 interface ArticlesProps {
-  title?: string
   items: AdgerdirPage[]
   tags: AdgerdirTag[]
-  seeMoreText?: string
   currentArticle?: AdgerdirPage
   showAll?: boolean
+  namespace?: object
 }
 
 export const Articles: FC<ArticlesProps> = ({
-  title = '',
-  seeMoreText = 'Sjá fleiri',
   items,
   tags,
   currentArticle,
   showAll,
+  namespace,
 }) => {
   const { activeLocale } = useI18n()
+  const n = useNamespace(namespace)
   const [filterString, setFilterString] = useState<string>('')
   const [filtersToggled, setFiltersToggled] = useState<boolean>(true)
   const [tagIds, setTagIds] = useState<Array<string>>([])
@@ -197,17 +197,15 @@ export const Articles: FC<ArticlesProps> = ({
       <Stack space={[3, 3, 3, 6]}>
         <Tiles space={0} columns={2}>
           <div>
-            {title ? (
-              <Typography variant="h3" as="h3" color="red600">
-                {title}
-              </Typography>
-            ) : null}
+            <Typography variant="h3" as="h3" color="red600">
+              {n('adgerdir')}
+            </Typography>
           </div>
           <Hidden above="md">
             <Box display="flex" justifyContent="flexEnd">
               <button onClick={toggleFilters} className={styles.filtersToggler}>
                 <Inline space={1}>
-                  <span>Sía</span>
+                  <span>{n('filter', 'Sía')}</span>
                   <div
                     className={cn(styles.filtersIcon, {
                       [styles.filtersIconToggled]: filtersToggled,
@@ -343,7 +341,7 @@ export const Articles: FC<ArticlesProps> = ({
               }}
               variant="ghost"
             >
-              {seeMoreText}
+              {n('seeMoreItems')}
             </Button>
           </Box>
         ) : null}
