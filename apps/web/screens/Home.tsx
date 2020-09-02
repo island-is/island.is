@@ -1,14 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import { useRouter } from 'next/router'
-import {
-  ContentBlock,
-  Box,
-  Stack,
-  Inline,
-  Tag,
-} from '@island.is/island-ui/core'
-import { Categories, Card, SearchInput } from '../components'
+import { Box, Stack, Inline, Tag } from '@island.is/island-ui/core'
+import { Categories, SearchInput, LatestNewsSection } from '../components'
 import { useI18n } from '../i18n'
 import {
   Query,
@@ -16,11 +10,13 @@ import {
   ContentLanguage,
   QueryCategoriesArgs,
   QueryGetFrontpageSliderListArgs,
+  QueryGetNewsListArgs,
 } from '@island.is/api/schema'
 import {
   GET_NAMESPACE_QUERY,
   GET_CATEGORIES_QUERY,
   GET_FRONTPAGE_SLIDES_QUERY,
+  GET_NEWS_LIST_QUERY,
 } from './queries'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
@@ -32,13 +28,16 @@ interface HomeProps {
   categories: Query['categories']
   frontpageSlides: Query['getFrontpageSliderList']['items']
   namespace: Query['getNamespace']
+  news: Query['getNewsList']['news']
 }
 
 const Home: Screen<HomeProps> = ({
   categories,
   frontpageSlides,
   namespace,
+  news,
 }) => {
+  console.log(news)
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
   const Router = useRouter()
@@ -93,6 +92,9 @@ const Home: Screen<HomeProps> = ({
       <Box background="purple100">
         <Categories label={n('articlesTitle')} cards={cards} />
       </Box>
+      <Box paddingY={[2, 2, 3, 3, 6]}>
+        <LatestNewsSection label="Fréttir og tilkynningar" items={news} />
+      </Box>
       <IntroductionSection
         subtitle="Markmiðið okkar"
         title="Öll opinber þjónusta á einum stað"
@@ -115,6 +117,11 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     {
       data: { categories },
     },
+    {
+      data: {
+        getNewsList: { news },
+      },
+    },
     namespace,
   ] = await Promise.all([
     apolloClient.query<Query, QueryGetFrontpageSliderListArgs>({
@@ -130,6 +137,15 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       variables: {
         input: {
           language: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetNewsListArgs>({
+      query: GET_NEWS_LIST_QUERY,
+      variables: {
+        input: {
+          perPage: 3,
+          ascending: true,
         },
       },
     }),
@@ -161,6 +177,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   ])
 
   return {
+    news,
     frontpageSlides: items,
     categories,
     namespace,

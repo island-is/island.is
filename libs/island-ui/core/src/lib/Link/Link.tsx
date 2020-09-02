@@ -5,8 +5,9 @@ import cn from 'classnames'
 import * as styles from './Link.treat'
 
 const isLinkInternal = (href) => {
+  const url = href.pathname || href
   // If it's a relative url such as '/path', 'path' and does not contain a protocol we can assume it is internal.
-  if (href.indexOf('://') === -1) return true
+  if (url.indexOf('://') === -1) return true
 
   return false
 }

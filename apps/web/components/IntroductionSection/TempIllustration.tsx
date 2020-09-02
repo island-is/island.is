@@ -91,9 +91,9 @@ export const Illustration = () => (
         d="M138.21 159.5h-15.56v24h15.56v-24zM138.21 206.59h-15.56v24h15.56v-24zM265.76 191.25s2.18 18.25 29.89 34.26M275.12 183.96l-2.6 7.29M271.65 174.74l-5.89 16.51M280.68 189.52l-4.36 12.21M286.24 195.09l-4.35 12.21M327.97 189.49s6.4 17.37 8.47 36.08M315.67 219.17s-10.08-7.03-26.49-9.67M328.76 117.98s-.99 10.73-.68 13.52c.32 2.85 3.36 2.27 5.77 0M350.45 79.87l18.49 10.56M337.65 134.8s6.12-.75 6.85-6.69M335.14 149.88s12.64 19.59 40.25-5.42"
         stroke="#6A2EA0"
         strokeWidth="3"
-        stroke-miterlimit="10"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeMiterlimit="10"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <path
         d="M249.74 99.06c6.49 0 11.75-5.26 11.75-11.75s-5.26-11.75-11.75-11.75c-6.489 0-11.75 5.26-11.75 11.75s5.261 11.75 11.75 11.75z"
@@ -127,9 +127,9 @@ export const Illustration = () => (
         gradientUnits="userSpaceOnUse"
       >
         <stop stopColor="#FF4C84" />
-        <stop offset=".254" stop-color="#D65CA1" />
-        <stop offset=".823" stop-color="#6E84E8" />
-        <stop offset="1" stop-color="#4C90FF" />
+        <stop offset=".254" stopColor="#D65CA1" />
+        <stop offset=".823" stopColor="#6E84E8" />
+        <stop offset="1" stopColor="#4C90FF" />
       </linearGradient>
       <clipPath id="clip0">
         <path fill="#fff" d="M0 0h437.79v425H0z" />

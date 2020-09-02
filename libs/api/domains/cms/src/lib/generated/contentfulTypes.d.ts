@@ -588,6 +588,9 @@ export interface INewsFields {
   /** Title */
   title: string
 
+  /** Subtitle */
+  subtitle: string
+
   /** Slug */
   slug: string
 
