@@ -95,7 +95,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                   <LanguageToggler hideWhenMobile />
                 </Box>
                 <Box marginLeft={marginLeft} position="relative">
-                  <Button variant="menu" onClick={() => setSideMenuOpen(true)}>
+                  <Button variant="menu" onClick={() => setSideMenuOpen(true)} icon="burger">
                     Valmynd
                   </Button>
                 </Box>
