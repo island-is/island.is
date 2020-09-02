@@ -37,7 +37,6 @@ const Home: Screen<HomeProps> = ({
   namespace,
   news,
 }) => {
-  console.log(news)
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
   const Router = useRouter()
