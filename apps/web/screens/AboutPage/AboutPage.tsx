@@ -21,7 +21,6 @@ import {
   EmailSignup,
   LogoList,
   BulletList,
-  Link,
 } from '@island.is/web/components'
 import {
   Typography,
@@ -34,6 +33,7 @@ import {
   BoxProps,
   Breadcrumbs,
   Stack,
+  Link,
 } from '@island.is/island-ui/core'
 import { Content } from '@island.is/island-ui/contentful'
 import Sidebar, { SidebarProps } from './Sidebar'
