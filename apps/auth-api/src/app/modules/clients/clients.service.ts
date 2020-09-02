@@ -6,6 +6,10 @@ import { Counter } from 'prom-client'
 import { Sequelize } from 'sequelize-typescript'
 import { ClientAllowedScope } from './client-allowed-scope.model'
 import { ClientAllowedCorsOrigin } from './client-allowed-cors-origin.model'
+import { ClientRedirectUri } from './client-redirect-uri.model'
+import { ClientIdpRestrictions } from './client-idp-restrictions.model'
+import { ClientSecret } from './client-secret.model'
+import { ClientPostLogoutRedirectUri } from './client-post-logout-redirect-uri.model'
 
 @Injectable()
 export class ClientsService {
@@ -30,7 +34,7 @@ export class ClientsService {
     this.logger.debug(`Finding client for clientId - "${clientId}"`)
     return this.clientModel.findOne({
       where: { clientId },
-      include: [ ClientAllowedScope, ClientAllowedCorsOrigin ]
+      include: [ ClientAllowedScope, ClientAllowedCorsOrigin, ClientRedirectUri, ClientIdpRestrictions, ClientSecret, ClientPostLogoutRedirectUri, ClientPostLogoutRedirectUri ]
     });
 
   }

@@ -15,7 +15,7 @@ import { Client } from './client.model'
   tableName: 'client_allowed_cors_origin',
   indexes: [
     {
-      fields: ['client_id'],
+      fields: ['client_id', 'origin'],
     },
   ],
 })

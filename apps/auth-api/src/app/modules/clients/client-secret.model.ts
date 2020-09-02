@@ -15,11 +15,13 @@ import { Client } from './client.model'
   tableName: 'client_secret',
   indexes: [
     {
-      fields: ['client_id'],
+      fields: ['client_id', 'value'],
     },
   ],
 })
 export class ClientSecret extends Model<ClientSecret> {
+  
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -28,6 +30,7 @@ export class ClientSecret extends Model<ClientSecret> {
   @ApiProperty()
   clientId: string
 
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,

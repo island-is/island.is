@@ -15,21 +15,12 @@ import { Client } from './client.model'
   tableName: 'client_idp_restrictions',
   indexes: [
     {
-      fields: ['id', 'client_id'],
+      fields: ['client_id', 'name'],
     },
   ],
 })
 export class ClientIdpRestrictions extends Model<ClientIdpRestrictions> {
   @PrimaryKey
-  @Column({
-    type: DataType.UUID,
-    primaryKey: true,
-    allowNull: false,
-    defaultValue: DataType.UUIDV4,
-  })
-  @ApiProperty()
-  id: string
-
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -37,6 +28,7 @@ export class ClientIdpRestrictions extends Model<ClientIdpRestrictions> {
   @ApiProperty()
   name: string
 
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,

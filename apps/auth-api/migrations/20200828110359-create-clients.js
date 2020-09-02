@@ -53,7 +53,8 @@ module.exports = {
         client_id VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
-        CONSTRAINT FK_client_allowed_cors_origin_client FOREIGN KEY (client_Id) REFERENCES client (client_id)
+        CONSTRAINT FK_client_allowed_cors_origin_client FOREIGN KEY (client_Id) REFERENCES client (client_id),
+        PRIMARY KEY (origin, client_id)
       );
 
       CREATE TABLE client_allowed_scope (
@@ -61,17 +62,17 @@ module.exports = {
         client_id  VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
-        CONSTRAINT FK_client_allowed_scope_client FOREIGN KEY (client_id) REFERENCES client (client_id)
+        CONSTRAINT FK_client_allowed_scope_client FOREIGN KEY (client_id) REFERENCES client (client_id),
+        PRIMARY KEY (client_id, scope_name)
       );
 
       CREATE TABLE client_idp_restrictions (
-        id uuid NOT NULL,
         name VARCHAR NOT NULL,
         client_id VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
-        CONSTRAINT PK_client_identity_provider_restrictions PRIMARY KEY (id),
-        CONSTRAINT FK_client_identity_provider_restrictions_client FOREIGN KEY (client_id) REFERENCES client (client_id)
+        CONSTRAINT FK_client_identity_provider_restrictions_client FOREIGN KEY (client_id) REFERENCES client (client_id),
+        PRIMARY KEY (client_id, name)
       );
 
       CREATE TABLE client_post_logout_redirect_uri (
@@ -79,7 +80,8 @@ module.exports = {
         redirect_uri VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
-        CONSTRAINT FK_client_post_redirect_uri_client FOREIGN KEY (client_id) REFERENCES client (client_id)
+        CONSTRAINT FK_client_post_redirect_uri_client FOREIGN KEY (client_id) REFERENCES client (client_id),
+        PRIMARY KEY (client_id, redirect_uri)
       );
 
       CREATE TABLE client_secret (
@@ -90,15 +92,17 @@ module.exports = {
         expiration TIMESTAMP WITH TIME ZONE NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
-        CONSTRAINT FK_client_secret_client FOREIGN KEY (client_id) REFERENCES client (client_id)
+        CONSTRAINT FK_client_secret_client FOREIGN KEY (client_id) REFERENCES client (client_id),
+        PRIMARY KEY (client_id, value)
       );
 
       CREATE TABLE client_redirect_uri ( 
         client_id VARCHAR NOT NULL,
-        redirect_uri VARCHAR NULL
+        redirect_uri VARCHAR NOT NULL,
+        created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        modified TIMESTAMP WITH TIME ZONE,
+        PRIMARY KEY (client_id, redirect_uri)
       );
-
-
     COMMIT;
     `)
   },
@@ -110,6 +114,7 @@ module.exports = {
         DROP TABLE client_idp_restrictions;
         DROP TABLE client_allowed_cors_origin;
         DROP TABLE client_allowed_scope;
+        DROP TABLE client_redirect_uri;
         DROP TABLE client;
       COMMIT;
     `)
