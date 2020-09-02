@@ -133,6 +133,7 @@ export const mapArticle = ({ sys, fields }: types.IArticle): Article => ({
   group: fields.group?.fields,
   category: fields.category?.fields,
   content: JSON.stringify(fields.content),
+  relatedArticles: [] // populated by resolver
 })
 
 export const mapImage = ({ fields }: Asset): Image => ({

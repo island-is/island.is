@@ -8,6 +8,6 @@ export class Taxonomy {
   @Field({ nullable: true })
   slug?: string
 
-  @Field()
+  @Field({ nullable: true })
   description?: string
 }

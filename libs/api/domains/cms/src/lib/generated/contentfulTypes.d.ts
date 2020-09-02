@@ -24,6 +24,9 @@ export interface IArticleFields {
 
   /** Organization */
   organization?: IOrganization[] | undefined
+
+  /** Related Articles */
+  relatedArticles?: IArticle[] | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {

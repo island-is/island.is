@@ -41,6 +41,7 @@ const Link: React.FC<Props> = ({
     return (
       <NextLink
         href={href}
+        as={as}
         shallow={shallow}
         scroll={scroll}
         passHref={passHref}

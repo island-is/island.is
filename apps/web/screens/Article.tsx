@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import slugify from '@sindresorhus/slugify'
 import {
@@ -12,10 +12,10 @@ import {
   ResponsiveSpace,
   GridColumn,
   GridRow,
-  GridContainer,
   Tag,
   Option,
   Button,
+  Divider,
   Link,
 } from '@island.is/island-ui/core'
 import { Content } from '@island.is/island-ui/contentful'
@@ -23,8 +23,7 @@ import { Sidebar, getHeadingLinkElements } from '@island.is/web/components'
 import {
   Query,
   QueryGetNamespaceArgs,
-  ContentLanguage,
-  QuerySingleItemArgs,
+  QueryGetArticleArgs,
 } from '@island.is/api/schema'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
@@ -35,7 +34,7 @@ import useRouteNames from '../i18n/useRouteNames'
 import { CustomNextError } from '../units/ErrorBoundary'
 
 interface ArticleProps {
-  article: Query['singleItem']
+  article: Query['getArticle']
   namespace: Query['getNamespace']
 }
 
@@ -56,9 +55,6 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
       })) || [],
     )
   }, [])
-
-  const { categorySlug, category: categoryTitle } = article
-  const groupTitle = article.group
 
   const onChangeContentOverview = ({ value }: Option) => {
     const slug = value as string
@@ -97,6 +93,28 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
               </Box>
             ) : null}
             <Sidebar title={n('sidebarHeader')} bullet="left" headingLinks />
+            {article.relatedArticles.length > 0 && (
+              <Box background="purple100" padding={4} borderRadius="large">
+                <Stack space={[1, 1, 2]}>
+                  <Typography variant="h4" as="h4">
+                    {n('relatedMaterial')}
+                  </Typography>
+                  <Divider weight="alternate" />
+                  {article.relatedArticles.map((related) => (
+                    <Typography variant="p" as="span">
+                      <Link
+                        key={related.slug}
+                        href={makePath('article', '[slug]')}
+                        as={makePath('article', related.slug)}
+                        withUnderline
+                      >
+                        {related.title}
+                      </Link>
+                    </Typography>
+                  ))}
+                </Stack>
+              </Box>
+            )}
           </Stack>
         }
       >
@@ -108,13 +126,13 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
               </Link>
               <Link
                 href={`${makePath('category')}/[slug]`}
-                as={makePath('category', categorySlug)}
+                as={makePath('category', article.category.slug)}
               >
-                {categoryTitle}
+                <a>{article.category.title}</a>
               </Link>
-              {groupTitle && (
+              {article.group && (
                 <Tag variant="purple" label>
-                  {groupTitle}
+                  {article.group.title}
                 </Tag>
               )}
             </Breadcrumbs>
@@ -150,24 +168,16 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
   const [article, namespace] = await Promise.all([
     apolloClient
-      .query<Query, QuerySingleItemArgs>({
+      .query<Query, QueryGetArticleArgs>({
         query: GET_ARTICLE_QUERY,
         variables: {
           input: {
             slug,
-            language: locale as ContentLanguage,
+            lang: locale as string,
           },
         },
       })
-      .then((content) => {
-        // map data here to reduce data processing in component
-        // TODO: Elastic endpoint is returning the article document json nested inside ContentItem, look into flattening this
-        const contentObject = JSON.parse(content.data.singleItem.content)
-        return {
-          ...content.data.singleItem,
-          content: JSON.stringify(contentObject.content),
-        }
-      }),
+      .then((r) => r.data.getArticle),
     apolloClient
       .query<Query, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
