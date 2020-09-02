@@ -16,26 +16,25 @@ module.exports = {
         absolute_refresh_token_lifetime: 2592000,
         sliding_refresh_token_lifetime: 1296000,
         refresh_token_usage: 1,
-        update_at_claims_on_refresh: 'Y',
+        update_access_token_claims_on_refresh: true,
         refresh_token_expiration: 0,
         access_token_type: 0,
-        enable_local_login: 'Y',
-        include_jwt_id: 'Y',
-        always_send_client_claims: 'N',
+        enable_local_login: true,
+        include_jwt_id: true,
+        always_send_client_claims: false,
         device_code_lifetime: 300,
-        always_include_uc_in_id_token: 'N',
-        back_channel_logout_session_rq: 'Y',
-        enabled: 'Y',
-        require_consent: 'N',
-        require_pkce: 'N',
-        allow_plain_text_pkce: 'N',
-        allow_access_token_via_browser: 'N',
-        front_channel_logout_session_rq: 'Y',
-        allow_remember_consent: 'Y',
+        always_include_user_claims_in_id_token: false,
+        back_channel_logout_session_required: true,
+        enabled: true,
+        require_consent: false,
+        require_pkce: true,
+        allow_plain_text_pkce: false,
+        allow_access_token_via_browser: true,
+        front_channel_logout_session_required: true,
+        allow_remember_consent: true,
         client_claims_prefix: 'client_',
         protocol_type: 'oidc',
-        require_client_secret: 'Y',
-        enable_mobile_login: 'N',
+        require_client_secret: true,
       }
     ];
 
@@ -96,5 +95,12 @@ module.exports = {
     var scopes = queryInterface.bulkDelete('client_allowed_scope', null, {})
     var clients = queryInterface.bulkDelete('client', null, {})
     return Promise.all([cors, scopes, clients, idpRestrictions])
+    return Promise.all([queryInterface.bulkInsert('client', clients, {}), queryInterface.bulkInsert('client_allowed_scope', scopes, {})]);
+  },
+
+  down: (queryInterface, Sequelize) => {
+
+    var clients = queryInterface.bulkDelete('client', null, {});
+    return Promise.all([clients])
   }
 };
