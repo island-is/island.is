@@ -62,8 +62,8 @@ const embeddedNodes = () => ({
     component: Box,
     children: (node) => {
       const title = node.data?.target?.fields?.title ?? ''
-      const linkText = node.data?.target?.fields?.linkText
-      const link = node.data?.target?.fields?.link
+      const linkText = node.data?.target?.fields?.linkText ?? ''
+      const link = node.data?.target?.fields?.link ?? ''
       return (
         <Box
           background="purple100"
@@ -72,10 +72,10 @@ const embeddedNodes = () => ({
           borderRadius="standard"
         >
           <Box marginBottom={2}>
-            <Typography variant="h4">{linkText}</Typography>
+            <Typography variant="h4">{title}</Typography>
           </Box>
           <Link href={link}>
-            <Button width="fluid">{title}</Button>
+            <Button width="fluid">{linkText}</Button>
           </Link>
         </Box>
       )
