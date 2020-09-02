@@ -59,7 +59,13 @@ const Layout: FC<LayoutProps> = ({
       </Head>
       <PageLoader />
       {showHeader && <Header showSearchInHeader={false} />}
-      {wrapContent ? <Box width="full">{children}</Box> : children}
+      {wrapContent ? (
+        <Box flexGrow={1} width="full">
+          {children}
+        </Box>
+      ) : (
+        children
+      )}
       {showFooter && <Footer />}
       <style jsx global>{`
         @font-face {
