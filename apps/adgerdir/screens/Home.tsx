@@ -53,7 +53,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
 
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
-  console.log('namespace', namespace)
+
   return (
     <>
       <Head>
@@ -75,7 +75,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
       </ArticleLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
         <Box marginBottom={10}>
-          <Sleeve>
+          <Sleeve minHeight={400}>
             <Box background="red100">
               <ContentBlock width="large">
                 <Articles

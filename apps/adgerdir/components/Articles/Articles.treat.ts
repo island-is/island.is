@@ -15,6 +15,7 @@ export const filters = style({
 export const filtersToggler = style({
   position: 'relative',
   display: 'inline-block',
+  outline: 0,
   color: theme.color.red600,
   lineHeight: 1.466666,
   fontWeight: theme.typography.medium,
@@ -30,9 +31,10 @@ export const filtersToggler = style({
 })
 
 export const filtersIcon = style({
+  position: 'relative',
   display: 'inline-block',
   transform: `rotate(-90deg)`,
-  transition: `transform 150s ease`,
+  transition: `transform 300ms ease`,
 })
 
 export const filtersIconToggled = style({

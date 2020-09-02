@@ -1,5 +1,6 @@
 import React, { FC, useState, useCallback, useEffect, useRef } from 'react'
 import _ from 'lodash'
+import AnimateHeight from 'react-animate-height'
 import cn from 'classnames'
 import {
   Box,
@@ -10,7 +11,9 @@ import {
   Tag,
   Inline,
   Icon,
+  Hidden,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
 import Card from '../Card/Card'
 
@@ -39,6 +42,7 @@ export const Articles: FC<ArticlesProps> = ({
 }) => {
   // const cardsRef = useRef<Array<HTMLElement | null>>([])
   const [filterString, setFilterString] = useState<string>('')
+  const [filtersToggled, setFiltersToggled] = useState<boolean>(true)
   const [tagIds, setTagIds] = useState<Array<string>>([])
   const [selectedStatuses, setSelectedStatuses] = useState<Array<string>>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -59,6 +63,19 @@ export const Articles: FC<ArticlesProps> = ({
     ongoing: 'Í framkvæmd',
     completed: 'Lokið',
   }
+
+  const handleResize = useCallback(() => {
+    setFiltersToggled(window.innerWidth >= theme.breakpoints.lg)
+  }, [])
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.addEventListener('resize', handleResize)
+      handleResize()
+    }
+
+    return () => window.removeEventListener('resize', handleResize)
+  }, [handleResize])
 
   const handleChange = (e) => {
     e.preventDefault()
@@ -172,104 +189,110 @@ export const Articles: FC<ArticlesProps> = ({
     }
   }, [currentArticle])
 
-  const filtersToggled = false
+  const toggleFilters = () => {
+    setFiltersToggled(!filtersToggled)
+  }
 
   return (
     <Box padding={[3, 3, 6]}>
-      <Stack space={6}>
+      <Stack space={[3, 3, 3, 6]}>
         <Tiles space={0} columns={2}>
           <div>
             {title ? (
-              <Typography variant="h3" as="h3" paddingBottom={4} color="red600">
+              <Typography variant="h3" as="h3" color="red600">
                 {title}
               </Typography>
             ) : null}
           </div>
-          <Box display="flex" justifyContent="flexEnd">
-            <button className={styles.filtersToggler}>
-              <Inline space={1}>
-                <span>Sía</span>
-                <span
-                  className={cn(styles.filtersIcon, {
-                    [styles.filtersIconToggled]: filtersToggled,
-                  })}
-                >
-                  <Icon type="caret" color="red600" width={12} height={12} />
-                </span>
-              </Inline>
-            </button>
-          </Box>
+          <Hidden above="md">
+            <Box display="flex" justifyContent="flexEnd">
+              <button onClick={toggleFilters} className={styles.filtersToggler}>
+                <Inline space={1}>
+                  <span>Sía</span>
+                  <div
+                    className={cn(styles.filtersIcon, {
+                      [styles.filtersIconToggled]: filtersToggled,
+                    })}
+                  >
+                    <Icon type="caret" color="red600" width={12} height={12} />
+                  </div>
+                </Inline>
+              </button>
+            </Box>
+          </Hidden>
         </Tiles>
-        <Box className={styles.filters}>
-          <Box display="flex" alignItems="center" marginRight={[0, 0, 0, 3]}>
-            <Stack space={3}>
-              <Inline space={2} alignY="center">
-                <Typography variant="tag" color="red600">
-                  Staða aðgerðar:
-                </Typography>
-                {Object.keys(statusNames).map((status, index) => {
-                  return (
-                    <Tag
-                      key={index}
-                      variant="red"
-                      onClick={() => onStatusClick(status)}
-                      active={selectedStatuses.includes(status)}
-                      bordered
-                    >
-                      <Box position="relative">
-                        <Inline space={1} alignY="center">
-                          <span>{statusNames[status]}</span>
-                          <span
-                            className={cn(
-                              cardStyles.status,
-                              cardStyles.statusType[status],
-                            )}
-                          ></span>
-                        </Inline>
-                      </Box>
-                    </Tag>
-                  )
-                })}
-              </Inline>
-              <Inline space={2} alignY="center">
-                <Typography variant="tag" color="red600">
-                  Málefni:
-                </Typography>
-                {tags.map(({ title, id }, index) => {
-                  return (
-                    <Tag
-                      key={index}
-                      variant="red"
-                      onClick={() => onTagClick(id)}
-                      active={tagIds.includes(id)}
-                      bordered
-                    >
-                      {title}
-                    </Tag>
-                  )
-                })}
-              </Inline>
-            </Stack>
-          </Box>
-          <Box display="flex" marginTop={[3, 3, 3, 0]} alignItems="center">
-            <div className={styles.inputWrapper}>
-              <input
-                onChange={handleChange}
-                placeholder="Sía eftir leitarorði"
-                className={styles.input}
-              />
-              <span className={styles.inputIcon}>
-                <Icon
-                  width="18"
-                  height="18"
-                  spin={isLoading}
-                  type={isLoading ? 'loading' : 'search'}
-                  color="red600"
+        <AnimateHeight duration={1000} height={filtersToggled ? 'auto' : 0}>
+          <Box className={styles.filters}>
+            <Box display="flex" alignItems="center" marginRight={[0, 0, 0, 3]}>
+              <Stack space={3}>
+                <Inline space={2} alignY="center">
+                  <Typography variant="tag" color="red600">
+                    Staða aðgerðar:
+                  </Typography>
+                  {Object.keys(statusNames).map((status, index) => {
+                    return (
+                      <Tag
+                        key={index}
+                        variant="red"
+                        onClick={() => onStatusClick(status)}
+                        active={selectedStatuses.includes(status)}
+                        bordered
+                      >
+                        <Box position="relative">
+                          <Inline space={1} alignY="center">
+                            <span>{statusNames[status]}</span>
+                            <span
+                              className={cn(
+                                cardStyles.status,
+                                cardStyles.statusType[status],
+                              )}
+                            ></span>
+                          </Inline>
+                        </Box>
+                      </Tag>
+                    )
+                  })}
+                </Inline>
+                <Inline space={2} alignY="center">
+                  <Typography variant="tag" color="red600">
+                    Málefni:
+                  </Typography>
+                  {tags.map(({ title, id }, index) => {
+                    return (
+                      <Tag
+                        key={index}
+                        variant="red"
+                        onClick={() => onTagClick(id)}
+                        active={tagIds.includes(id)}
+                        bordered
+                      >
+                        {title}
+                      </Tag>
+                    )
+                  })}
+                </Inline>
+              </Stack>
+            </Box>
+            <Box display="flex" marginTop={[3, 3, 3, 0]} alignItems="center">
+              <div className={styles.inputWrapper}>
+                <input
+                  onChange={handleChange}
+                  placeholder="Sía eftir leitarorði"
+                  className={styles.input}
                 />
-              </span>
-            </div>
+                <span className={styles.inputIcon}>
+                  <Icon
+                    width="18"
+                    height="18"
+                    spin={isLoading}
+                    type={isLoading ? 'loading' : 'search'}
+                    color="red600"
+                  />
+                </span>
+              </div>
+            </Box>
           </Box>
-        </Box>
+        </AnimateHeight>
         {filteredItems.length === 0 ? (
           <Box>
             <Stack space={2}>
