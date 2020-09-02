@@ -10,6 +10,10 @@ const AUTH_TYPE = 'bearer'
 export class AuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
+    return this.hasValidApiKey(request)
+  }
+
+  hasValidApiKey(request): boolean {
     const { authorization } = request.headers
     if (!authorization || !authorization.toLowerCase().startsWith(AUTH_TYPE)) {
       return false
