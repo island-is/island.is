@@ -13,6 +13,7 @@ import { Pagination } from './models/pagination.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
+import { AdgerdirNews } from './models/adgerdirNews.model'
 import { GetNewsListInput } from './dto/getNewsList.input'
 import { PaginatedNews } from './models/paginatedNews.model'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
@@ -129,6 +130,19 @@ const ArticleFields = [
   'fields.group',
   'fields.category',
 ].join(',')
+
+export const getAdgerdirNews = async (
+  slug: string,
+  lang: string,
+): Promise<AdgerdirNews> => {
+  const result = await getLocalizedEntries<types.IVidspyrnaNewsFields>(lang, {
+    ['content_type']: 'vidspyrnaNews',
+    include: 10,
+    'fields.slug': slug,
+  }).catch(errorHandler('getAdgerdirNews'))
+
+  return result.items.map(mappers.mapAdgerdirNewsItem)[0] ?? null
+}
 
 export const getArticle = async (
   slug: string,
