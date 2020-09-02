@@ -12,7 +12,8 @@ import {
   Data,
 } from '@island.is/air-discount-scheme-web/components/Table/Table'
 import { format } from 'date-fns'
-import { is } from 'date-fns/locale'
+import { is, enGB } from 'date-fns/locale'
+import { useI18n } from '@island.is/air-discount-scheme-web/i18n'
 
 const FlightsQuery = gql`
   query FlightsQuery {
@@ -36,6 +37,7 @@ function Usage({ misc }: PropTypes) {
   const { data } = useQuery(FlightsQuery, { ssr: true })
   const { flights = [] } = data ?? {}
   const { currentUsage, user, path, date } = JSON.parse(misc)
+  const { activeLocale } = useI18n()
 
   if (flights.length <= 0) {
     return null
@@ -60,8 +62,8 @@ function Usage({ misc }: PropTypes) {
               <Data>{flight.user.name}</Data>
               <Data>{flight.travel}</Data>
               <Data>
-                {format(new Date(flight.bookingDate), "dd. MMMM 'kl.' k:mm", {
-                  locale: is,
+                {format(new Date(flight.bookingDate), 'dd. MMMM - k:mm', {
+                  locale: activeLocale === 'is' ? is : enGB,
                 })}
               </Data>
             </Row>
