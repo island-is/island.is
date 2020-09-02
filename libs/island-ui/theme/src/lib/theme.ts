@@ -32,7 +32,7 @@ export const theme = {
     sm: 576,
     md: 768,
     lg: 992,
-    xl: 1200,
+    xl: 1440,
   },
   contentWidth: {
     small: 774,
@@ -70,10 +70,12 @@ export const theme = {
     width: {
       standard: 1,
       large: 2,
+      xl: 3,
     },
     color: {
       standard: color.blue200,
       focus: color.red200,
+      ...color,
     },
   },
   shadows: {
@@ -86,6 +88,10 @@ export const theme = {
     subtle: '0px 4px 30px #F2F7FF',
   },
   color,
+  grid: {
+    columns: { desktop: 12, mobile: 6 },
+    gutter: { desktop: 24, mobile: 16 },
+  },
 }
 
 export type Theme = typeof theme

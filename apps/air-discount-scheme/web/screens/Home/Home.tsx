@@ -13,19 +13,24 @@ import {
   Content,
   IntroText,
 } from '@island.is/air-discount-scheme-web/components'
+import { useI18n } from '@island.is/air-discount-scheme-web/i18n'
 
 interface PropTypes {
   page?: GenericPage
 }
 
 const Home: Screen<PropTypes> = ({ page }) => {
+  const { toRoute } = useI18n()
+
   return (
     <Layout
       left={
         <Box>
           <Box marginBottom={4}>
             <Breadcrumbs>
-              <Link href="/">Ísland.is</Link>
+              <Link href={toRoute('home')}>
+                <a>Ísland.is</a>
+              </Link>
               <span>Loftbrú</span>
             </Breadcrumbs>
           </Box>
@@ -73,7 +78,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     query: GetGenericPageQuery,
     variables: {
       input: {
-        lang: 'is-IS',
+        lang: locale,
         slug: 'loftbru',
       },
     },

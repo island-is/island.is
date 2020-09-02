@@ -1,7 +1,7 @@
 export default {
   production: false,
   airlineApiKeys: {
-    airIcelandConnect: 'airIcelandConnect',
+    icelandair: 'icelandair',
     ernir: 'ernir',
   },
   redis: {

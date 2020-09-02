@@ -11,12 +11,20 @@ import {
   buildRadioField,
   buildTextField,
   buildSelectField,
+  buildFileUploadField,
 } from '../../lib/fieldBuilders'
 import { Form } from '../../types/Form'
 import { nationalIdRegex } from '../formConstants'
 import { FormType } from '../FormType'
 
 const ExampleSchema = z.object({
+  fileUpload: z
+    .object({
+      name: z.string(),
+      url: z.string(),
+    })
+    .array()
+    .nonempty(),
   person: z.object({
     age: z.string().refine((x) => {
       const asNumber = parseInt(x)
@@ -79,6 +87,12 @@ export const ExampleForm3: Form = buildForm({
       id: 'student',
       name: 'Student',
       children: [
+        buildFileUploadField({
+          id: 'fileUpload',
+          name: 'Upload permit',
+          introduction:
+            'We need a copy of your permit to verify your eligibility.',
+        }),
         buildIntroductionField({
           id: 'field',
           name: 'Welcome',

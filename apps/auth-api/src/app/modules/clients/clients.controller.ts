@@ -17,7 +17,7 @@ import { AuthGuard } from '@nestjs/passport'
 import { LOGGER_PROVIDER } from '@island.is/logging';
 
 @ApiOAuth2(['@identityserver.api/read'])
-@UseGuards(AuthGuard('jwt'))
+//@UseGuards(AuthGuard('jwt'))
 @ApiTags('clients')
 @Controller('clients')
 export class ClientsController {

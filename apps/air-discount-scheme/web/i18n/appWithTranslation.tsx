@@ -5,10 +5,7 @@ import I18n from './I18n'
 const appWithTranslation = (WrappedComponent) => {
   const AppWithTranslation = (props) => {
     return (
-      <I18n
-        translations={props.pageProps?.translations || {}}
-        locale={props.pageProps?.locale || 'is'}
-      >
+      <I18n locale={props.pageProps?.locale || 'is'}>
         <WrappedComponent {...props} />
       </I18n>
     )

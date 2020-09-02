@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
 import Link from 'next/link'
+import { List, ListItem } from '../List/List'
 
 const embeddedNodes = () => ({
   faqList: {
@@ -97,11 +98,26 @@ const embeddedNodes = () => ({
             <Divider weight="alternate" />
             {links.map(({ fields: { text, url } }, index) => (
               <Typography variant="p" color="blue400" key={index}>
-                <Link href={url}>{text}</Link>
+                <Link href={url}>
+                  <a>{text}</a>
+                </Link>
               </Typography>
             ))}
           </Stack>
         </Box>
+      )
+    },
+  },
+  link: {
+    component: Box,
+    children: (node) => {
+      const { text, url } = node.data?.target?.fields
+      return (
+        <Link href={url}>
+          <Button variant="text" icon="arrowRight">
+            {text}
+          </Button>
+        </Link>
       )
     },
   },
@@ -115,6 +131,10 @@ const options = {
           {children}
         </Typography>
       )
+    },
+    [BLOCKS.EMBEDDED_ASSET]: (node, children) => {
+      const { url, title } = node.data.target.fields.file
+      return <img src={url} alt={title} />
     },
     [BLOCKS.EMBEDDED_ENTRY]: (node) => {
       const embeddedNode = embeddedNodes()[
@@ -135,6 +155,17 @@ const options = {
       )
 
       return <Cmp />
+    },
+    [BLOCKS.UL_LIST]: (node, children) => <List>{children}</List>,
+    [BLOCKS.OL_LIST]: (node, children) => {
+      return <List type="ol">{children}</List>
+    },
+    [BLOCKS.LIST_ITEM]: (node, children) => {
+      return (
+        <ListItem>
+          <Box marginTop={2}>{children}</Box>
+        </ListItem>
+      )
     },
   },
 }

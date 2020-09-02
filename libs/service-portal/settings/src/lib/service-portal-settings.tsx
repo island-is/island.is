@@ -6,7 +6,6 @@ import {
   ServicePortalModuleComponent,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import SubjectInfo from '../screens/subjectInfo/subjectInfo'
 
 const navScreenItems: NavigationScreenItem[] = [
   {
@@ -27,18 +26,13 @@ const SettingsNavScreen = () => <NavigationScreen items={navScreenItems} />
 
 const UmbodMock = () => <h1>Umbod</h1>
 
-export const ServicePortalSettings: ServicePortalModuleComponent = (props) => {
+export const ServicePortalSettings: ServicePortalModuleComponent = () => {
   return (
     <Switch>
       <Route
         exact
         path={ServicePortalPath.StillingarRoot}
         component={SettingsNavScreen}
-      />
-      <Route
-        exact
-        path={ServicePortalPath.StillingarUpplysingar}
-        render={() => <SubjectInfo {...props} />}
       />
       <Route
         exact

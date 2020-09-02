@@ -6,4 +6,19 @@ export class CreateCaseDto {
   @IsString()
   @ApiProperty()
   readonly description: string
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  readonly policeCaseNumber: string
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  readonly suspectNationalId: string
+
+  @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  readonly suspectName: string
 }

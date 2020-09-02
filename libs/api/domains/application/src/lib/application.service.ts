@@ -6,36 +6,30 @@ import {
   querystring,
   ApplicationTypeIdEnum,
 } from '../../gen/fetch'
-import fetch from 'isomorphic-fetch'
 import { CreateApplicationDto } from '../../gen/fetch/models/CreateApplicationDto'
 
 @Injectable()
 export class ApplicationService {
-  api = new ApplicationApi(
-    new Configuration({
-      fetchApi: fetch,
-      basePath: 'http://localhost:3333',
-    }),
-  )
+  constructor(private applicationApi: ApplicationApi) {}
 
   async findOne(id: string) {
-    return this.api.applicationControllerFindOne({
+    return this.applicationApi.applicationControllerFindOne({
       id,
     })
   }
 
   async findAllByType(typeId: ApplicationTypeIdEnum) {
-    return this.api.applicationControllerFindAll({ typeId })
+    return this.applicationApi.applicationControllerFindAll({ typeId })
   }
 
   async create(input: CreateApplicationDto) {
-    return this.api.applicationControllerCreate({
+    return this.applicationApi.applicationControllerCreate({
       createApplicationDto: input,
     })
   }
 
   async update(input: UpdateApplicationDto) {
-    return this.api.applicationControllerUpdate({
+    return this.applicationApi.applicationControllerUpdate({
       id: input.id,
       updateApplicationDto: input,
     })

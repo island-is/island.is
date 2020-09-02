@@ -13,7 +13,7 @@ export const Solid = () => (
   <Logo width={200} solid solidColor={color('Logo color', '#fff')} />
 )
 
-export const IconOnly = () => <Logo width={200} iconOnly />
+export const IconOnly = () => <Logo width={30} iconOnly />
 
 export const SolidIconOnly = () => (
   <Logo width={200} iconOnly solid solidColor={color('Logo color', '#fff')} />

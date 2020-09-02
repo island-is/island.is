@@ -99,6 +99,14 @@ module.exports = {
       DROP TABLE identity_resource_user_claim;
       DROP TABLE identity_resource;
 
+      DROP TABLE api_scope_user_claim;
+      DROP TABLE api_scope;
+
+      DROP TABLE api_resource_user_claim;
+      DROP TABLE api_resource_scope;
+      DROP TABLE api_resource_secret;
+      DROP TABLE api_resource;
+
       COMMIT;
     `)
   },

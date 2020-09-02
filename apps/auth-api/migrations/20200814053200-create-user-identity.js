@@ -51,7 +51,9 @@ module.exports = {
 
   down: (queryInterface) => {
     return queryInterface.sequelize.query(`
-      DROP TABLE user_identities;
+      DROP TABLE user_identity;
+      DROP TABLE claim;
+      DROP TABLE user_profile;
     `)
   },
 }

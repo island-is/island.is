@@ -204,6 +204,15 @@
       "tags": [],
       "implicitDependencies": ["judicial-system-web"]
     },
+    "api-domains-documents": {
+      "tags": []
+    },
+    "service-portal-graphql": {
+      "tags": []
+    },
+    "skilavottord-ws": {
+      "tags": []
+    },
     "auth-api": {
       "tags": []
     }

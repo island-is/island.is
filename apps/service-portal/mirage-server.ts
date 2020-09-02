@@ -19,9 +19,7 @@ export function makeServer({ environment = 'development' } = {}) {
       server.loadFixtures('actors', 'subjects')
     },
     routes() {
-      this.passthrough(
-        'https://siidentityserverweb20200805020732.azurewebsites.net/**',
-      )
+      this.passthrough('http://localhost:4444/api/graphql')
 
       this.get('/mock/authenticate', () => {
         const authService = new AuthService(server.db)

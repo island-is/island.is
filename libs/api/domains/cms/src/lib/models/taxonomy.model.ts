@@ -9,5 +9,5 @@ export class Taxonomy {
   slug?: string
 
   @Field()
-  description: string
+  description?: string
 }

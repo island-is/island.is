@@ -1,130 +1,295 @@
-/* eslint-disable @typescript-eslint/no-inferrable-types */
-export enum TokenExpiration
-{
-    /// <summary>
-    /// Sliding token expiration
-    /// </summary>
-    Sliding = 0,
+import {
+  Column,
+  CreatedAt,
+  DataType,
+  Model,
+  Table,
+  UpdatedAt,
+  ForeignKey,
+  PrimaryKey,
+  HasMany,
+} from 'sequelize-typescript'
+import { ApiProperty } from '@nestjs/swagger'
+import { ClientAllowedScope } from './client-allowed-scope.model'
 
-    /// <summary>
-    /// Absolute token expiration
-    /// </summary>
-    Absolute = 1
+@Table({
+  tableName: 'client',
+  indexes: [
+    {
+      fields: ['client_id'],
+    },
+  ],
+})
+export class Client extends Model<Client> {
+  @PrimaryKey
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  clientId: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  allowOfflineAccess: boolean
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  @ApiProperty()
+  identityTokenLifetime: number
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  @ApiProperty()
+  accessTokenLifetime: number
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  @ApiProperty()
+  authorizationCodeLifetime: number
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  @ApiProperty()
+  absoluteRefreshTokenLifetime: number
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  @ApiProperty()
+  slidingRefreshTokenLifetime: number
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  @ApiProperty()
+  consentLifetime: number
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  @ApiProperty()
+  refreshTokenUsage: number
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  updateAccessTokenClaimsOnRefresh: string
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  @ApiProperty()
+  refreshTokenExpiration: number
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  @ApiProperty()
+  accessTokenType: number
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  enableLocalLogin: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  includeJwtId: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  alwaysSendClientClaims: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  pairWiseSubjectSalt: string
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  @ApiProperty()
+  userSsoLifetime: number
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  userCodeType: string
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  @ApiProperty()
+  deviceCodeLifetime: number
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  alwaysIncludeUserClaimsInIdToken: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  backChannelLogoutSessionRequired: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  enabled: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  logoUri: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
+  @ApiProperty()
+  requireConsent: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  requirePkce: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  allowPlainTextPkce: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  allowAccessTokenViaBrowser: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  frontChannelLogoutUri: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  frontChannelLogoutSessionRequired: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  backChannelLogoutUri: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  allowRememberConsent: boolean
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  clientClaimsPrefix: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  clientName: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  clientUri: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty()
+  description: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  protocolType: string
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+  })
+  @ApiProperty()
+  requireClientSecret: boolean
+
+  @CreatedAt
+  @ApiProperty()
+  readonly created: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  readonly modified: Date
+
+  @HasMany(() => ClientAllowedScope)
+  @ApiProperty()
+  readonly clientAllowedScope: ClientAllowedScope[]
 }
-
-export enum TokenUsage
-{
-    /// <summary>
-    /// Re-use the refresh token handle
-    /// </summary>
-    ReUse = 0,
-
-    /// <summary>
-    /// Issue a new refresh token handle every time
-    /// </summary>
-    OneTimeOnly = 1
-}
-
-
-/// <summary>
-/// Access token types.
-/// </summary>
-export enum AccessTokenType
-{
-    /// <summary>
-    /// Self-contained Json Web Token
-    /// </summary>
-    Jwt = 0,
-
-    /// <summary>
-    /// Reference token
-    /// </summary>
-    Reference = 1
-}
-
-export interface ClientClaim {
-	Id: number;
-	Type: string;
-	Value: string;
-	ClientId: number;
-	Client: Client;
-}
-
-export class GrantType
-{
-    static Implicit: string = "implicit";
-    static Hybrid: string = "hybrid";
-    static AuthorizationCode: string = "authorization_code";
-    static ClientCredentials: string = "client_credentials";
-    static ResourceOwnerPassword: string = "password";
-    static DeviceFlow: string = "urn:ietf:params:oauth:grant-type:device_code";
-}
-
-export class Secret {
-  id: number;
-  Description : string;
-	Value : string;
-	Expiration : Date;
-	Type: string = "SharedSecret";
-}
-
-export class ClientSecret extends Secret
-{
-    ClientId: number;
-    Client: Client;
-}
-
-export class Client {
-  Enabled?: boolean = true;
-  ClientId?: string;
-  ProtocolType?: string = "oidc";
-  ClientSecrets?: ClientSecret[] = [];
-  RequireClientSecret?: boolean = true;
-  ClientName?: string;
-  Description?: string;
-  ClientUri?: string;
-  LogoUri?: string;
-  RequireConsent?: boolean = false;
-  AllowRememberConsent?: boolean = true;
-  AllowedGrantTypes?: string[];
-  RequirePkce?: boolean = true;
-  AllowPlainTextPkce?: boolean = false;
-  RequireRequestObject?: boolean = false;
-  AllowAccessTokensViaBrowser?: boolean = false;
-  RedirectUris?: string[] = [];
-  PostLogoutRedirectUris?: string[] = [];
-  FrontChannelLogoutUri?: string;
-  FrontChannelLogoutSessionRequired?: boolean = true;
-  BackChannelLogoutUri?: string;
-  BackChannelLogoutSessionRequired?: boolean = true;
-  AllowOfflineAccess?: boolean = false;
-  AllowedScopes?: string[] = [];
-  AlwaysIncludeUserClaimsInIdToken?: boolean = false;
-  IdentityTokenLifetime?: number = 300;
-  AllowedIdentityTokenSigningAlgorithms?: string[] = [];
-  AccessTokenLifetime?: number = 3600;
-  AuthorizationCodeLifetime?: number = 300;
-  AbsoluteRefreshTokenLifetime?: number = 2592000;
-  SlidingRefreshTokenLifetime?: number = 1296000;
-  ConsentLifetime?: number = null;
-  RefreshTokenUsage?: TokenUsage.OneTimeOnly;
-  UpdateAccessTokenClaimsOnRefresh?: boolean = false;
-  RefreshTokenExpiration?: TokenExpiration = TokenExpiration.Absolute;
-  AccessTokenType?: AccessTokenType = AccessTokenType.Jwt;
-  EnableLocalLogin?: boolean = true;
-  IdentityProviderRestrictions?: string[] = [];
-  IncludeJwtId?: boolean = true;
-  Claims?: ClientClaim;
-  AlwaysSendClientClaims?: boolean = false;
-  ClientClaimsPrefix?: string = "client_";
-  PairWiseSubjectSalt?: string;
-  UserSsoLifetime?: number;
-  UserCodeType?: string;
-  DeviceCodeLifetime?: number = 300;
-  AllowedCorsOrigins?: string[] = [];
-  Properties?: unknown; // TODO: Dictionary
-}
-
-
-
-

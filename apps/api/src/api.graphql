@@ -53,12 +53,20 @@ type Article {
   category: Taxonomy!
 }
 
+type AdgerdirTag {
+  id: String
+  title: String
+}
+
 type AdgerdirPage {
   id: String!
   slug: String!
   title: String!
-  description: String!
+  description: String
   content: String
+  tags: [AdgerdirTag!]!
+  link: String
+  status: String!
 }
 
 type AdgerdirPages {
@@ -211,7 +219,7 @@ type LatestNewsSlice {
 type MailingListSignupSlice {
   id: ID!
   title: String!
-  description: String!
+  description: String
   inputLabel: String!
   buttonText: String!
 }
@@ -274,6 +282,10 @@ type Menu {
   links: [Link!]!
 }
 
+type AdgerdirTags {
+  items: [AdgerdirTag!]!
+}
+
 type Application {
   id: ID!
   created: DateTime!
@@ -316,6 +328,15 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
+type Document {
+  id: ID!
+  date: DateTime!
+  subject: String!
+  senderName: String!
+  senderNatReg: String!
+  opened: Boolean!
+}
+
 type Query {
   helloWorld(input: HelloWorldInput!): HelloWorld!
   searchResults(query: SearcherInput!): SearchResult!
@@ -326,16 +347,18 @@ type Query {
   getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput!): PaginatedNews!
   getNamespace(input: GetNamespaceInput!): Namespace
-  getAboutPage(input: GetAboutPageInput!): AboutPage
+  getAboutPage(input: GetAboutPageInput!): AboutPage!
   getLandingPage(input: GetLandingPageInput!): LandingPage
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
-  getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages
+  getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages!
+  getAdgerdirTags(input: GetAdgerdirTagsInput!): AdgerdirTags
   getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getMenu(input: GetMenuInput!): Menu
   getApplication(input: GetApplicationInput!): Application
   getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
+  getDocument(input: GetDocumentInput!): Document
 }
 
 input HelloWorldInput {
@@ -423,6 +446,10 @@ input GetAdgerdirPagesInput {
   perPage: Int
 }
 
+input GetAdgerdirTagsInput {
+  lang: String
+}
+
 input GetFrontpageSliderListInput {
   lang: String
 }
@@ -442,6 +469,10 @@ input GetApplicationInput {
 
 input GetApplicationsByTypeInput {
   typeId: ApplicationTypeIdEnum!
+}
+
+input GetDocumentInput {
+  id: String!
 }
 
 type Mutation {

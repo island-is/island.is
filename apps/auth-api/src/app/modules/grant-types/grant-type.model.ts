@@ -3,6 +3,9 @@ import {
   DataType,
   Model,
   Table,
+  CreatedAt,
+  UpdatedAt
+
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -38,5 +41,13 @@ export class GrantType extends Model<GrantType> {
   })
   @ApiProperty()
   description: string
+
+  @CreatedAt
+  @ApiProperty()
+  readonly created: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  readonly modified: Date
 
 }
