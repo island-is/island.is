@@ -158,7 +158,7 @@ const Screen: FC<ScreenProps> = ({
             paddingBottom={[1, 5]}
           >
             <Box display="inlineFlex" padding={2} paddingLeft="none">
-              <Button variant="text" leftIcon="arrowLeft" onClick={goBack}>
+              <Button variant="ghost" onClick={goBack}>
                 Til baka
               </Button>
             </Box>
@@ -175,7 +175,6 @@ const Screen: FC<ScreenProps> = ({
                 <Button
                   loading={loading}
                   disabled={!canProceed()}
-                  variant="text"
                   icon="arrowRight"
                   htmlType="submit"
                 >
