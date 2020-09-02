@@ -104,11 +104,7 @@ const defaultRenderNode = (overrides = {}) => {
         return null
       }
 
-      return (
-        <Box marginBottom={2}>
-          <Typography variant="p">{children}</Typography>
-        </Box>
-      )
+      return <Typography variant="p">{children}</Typography>
     },
     [BLOCKS.HEADING_2]: (node, children) => (
       <Typography variant="h2" as="h2">

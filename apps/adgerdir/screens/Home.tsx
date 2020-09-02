@@ -120,9 +120,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
                             </Typography>
                           </Stack>
                         }
-                        bottomContent={
-                          <CardsSlider items={slice.pages} key="purple" />
-                        }
+                        bottomContent={<CardsSlider items={slice.pages} />}
                       />
                     </Box>
                   </ContentBlock>

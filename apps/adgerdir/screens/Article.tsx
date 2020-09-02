@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
+// import cn from 'classnames'
 import Link from 'next/link'
 import Head from 'next/head'
 import {
@@ -50,6 +51,12 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
 
+  /* const statusNames = {
+    preparing: 'Í undirbúningi',
+    ongoing: 'Í framkvæmd',
+    completed: 'Lokið',
+  } */
+
   if (!article) {
     return (
       <>
@@ -74,6 +81,14 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
     )
   }
 
+  const { estimatedCostIsk, finalCostIsk } = article
+
+  const estimatedCostFormatted =
+    estimatedCostIsk && formatNumberToKr(estimatedCostIsk)
+  const finalCostFormatted = finalCostIsk && formatNumberToKr(finalCostIsk)
+
+  const description = article.longDescription || article.description
+
   return (
     <>
       <Head>
@@ -83,22 +98,11 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
         sidebar={
           <Box marginBottom={10}>
             <Stack space={3}>
-              <Button
-                icon="external"
-                width="fluid"
-                href="https://vidspyrna.island.is"
-              >
-                Sjá nánar
-              </Button>
-              {/* <ArticleSidebar background="purple100">
-                <Button
-                  icon="external"
-                  width="fluid"
-                  href="https://vidspyrna.island.is"
-                >
-                  Sjá nánar
+              {article.link ? (
+                <Button icon="external" width="fluid" href={article.link}>
+                  {article.linkButtonText ?? n('seeMoreDetails')}
                 </Button>
-              </ArticleSidebar> */}
+              ) : null}
               {/* <Stack space={1}>
                 <Typography variant="tag" color="red600">
                   Staða aðgerðar:
@@ -142,12 +146,46 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
             </Link>
             <span>Aðgerð</span>
           </Breadcrumbs>
-          <Box>
-            <Typography variant="h1" as="h1">
-              {article.title}
+          <Typography variant="h1" as="h1">
+            {article.title}
+          </Typography>
+          {description ? (
+            <Typography variant="intro" as="p">
+              {description}
             </Typography>
-          </Box>
-          <Content document={article.content} />
+          ) : null}
+          {article.objective ? (
+            <Stack space={1}>
+              <Typography variant="h3" as="h3">
+                Markmið
+              </Typography>
+              <Content document={article.objective} />
+            </Stack>
+          ) : null}
+          {estimatedCostFormatted || finalCostFormatted ? (
+            <Stack space={1}>
+              <Typography variant="h3" as="h3">
+                Kostnaður ríkissjóðs
+              </Typography>
+              {estimatedCostFormatted ? (
+                <Typography variant="p">
+                  Áætlaður kostnaður: <strong>{estimatedCostFormatted}</strong>
+                </Typography>
+              ) : null}
+              {finalCostFormatted ? (
+                <Typography variant="p">
+                  Endanlegur kostnaður: <strong>{finalCostFormatted}</strong>
+                </Typography>
+              ) : null}
+            </Stack>
+          ) : null}
+          <Stack space={1}>
+            <Typography variant="h3" as="h3">
+              Staða
+            </Typography>
+            <Typography variant="p">{n(article.status)}</Typography>
+          </Stack>
+          {article.content ? <Content document={article.content} /> : null}
         </Stack>
       </ArticleLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
@@ -233,5 +271,15 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
     namespace,
   }
 }
+
+const formatNumberToKr = (number: number) =>
+  number
+    .toLocaleString('is-IS', {
+      style: 'currency',
+      currency: 'ISK',
+    })
+    .replace('ISK', '')
+    .split(',')
+    .join('.') + ',- kr.'
 
 export default withApollo(Article)

@@ -7,6 +7,7 @@ import * as styles from './BackgroundImage.treat'
 export type BackgroundImageProps = {
   image: ApiImage
   ratio?: string
+  width?: number
   boxProps?: BoxProps
 }
 
@@ -34,9 +35,10 @@ const defaultBoxProps = {
 export const BackgroundImage: FC<BackgroundImageProps> = ({
   image = null,
   ratio = '16:9',
+  width = 1000,
   boxProps = defaultBoxProps,
 }) => {
-  const src = image.url + '?w=1000'
+  const src = `${image.url}?w=${width}`
   const thumbnail = image.url + '?w=50'
   const alt = image.title ?? ''
 

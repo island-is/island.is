@@ -60,13 +60,18 @@ type AdgerdirTag {
 
 type AdgerdirPage {
   id: String!
-  slug: String!
   title: String!
-  description: String
+  description: String!
+  longDescription: String
   content: String
+  objective: String
+  slug: String!
   tags: [AdgerdirTag!]!
   link: String
+  linkButtonText: String
   status: String!
+  estimatedCostIsk: Float
+  finalCostIsk: Float
 }
 
 type AdgerdirPages {
