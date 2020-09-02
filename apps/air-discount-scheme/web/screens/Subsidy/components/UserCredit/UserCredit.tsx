@@ -6,12 +6,18 @@ import { Discount } from '@island.is/air-discount-scheme-web/graphql/schema'
 import { Box, Typography, Button } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
 
-type Status = {
+type StatusOptions = {
   background: Colors
   borderColor: Colors
 }
 
-const boxStatus: { [key: string]: Status } = {
+export type Status = 'success' | 'error' | 'default'
+
+type BoxStatus = {
+  [Type in Status]: StatusOptions
+}
+
+const boxStatus: BoxStatus = {
   success: {
     background: 'mint100',
     borderColor: 'mint400',
@@ -29,7 +35,7 @@ const boxStatus: { [key: string]: Status } = {
 interface PropTypes {
   discount: Discount
   misc: string
-  status?: keyof typeof boxStatus
+  status?: Status
 }
 
 function UserCredit({ discount, misc, status = 'default' }: PropTypes) {

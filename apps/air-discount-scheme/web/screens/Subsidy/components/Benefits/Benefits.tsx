@@ -10,6 +10,7 @@ import {
   SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { UserCredit, NoBenefits } from '../'
+import { Status } from '../UserCredit/UserCredit'
 
 interface PropTypes {
   misc: string
@@ -53,7 +54,11 @@ function Benefits({ misc }: PropTypes) {
       const { user } = discount
       const fundUsed = user.fund.used === user.fund.total
       const noRights = !user.meetsADSRequirements
-      const status = fundUsed ? 'success' : noRights ? 'error' : 'default'
+      const status: Status = fundUsed
+        ? 'success'
+        : noRights
+        ? 'error'
+        : 'default'
       if (status === 'success') {
         acc.fundUsed.push({ discount, status })
       } else if (status === 'error') {
@@ -99,7 +104,9 @@ function Benefits({ misc }: PropTypes) {
 
       <Stack space={3}>
         <Typography variant="h3">{myRights}</Typography>
-        {!noBenefits ? (
+        {noBenefits ? (
+          <NoBenefits misc={misc} />
+        ) : (
           <>
             {loading ? (
               <SkeletonLoader height={98} />
@@ -119,8 +126,6 @@ function Benefits({ misc }: PropTypes) {
               <Typography variant="pSmall">{codeDescription}</Typography>
             </Box>
           </>
-        ) : (
-          <NoBenefits misc={misc} />
         )}
       </Stack>
     </Box>
