@@ -20,7 +20,7 @@ const FetchDiscountsMutation = gql`
   mutation FetchDiscountsMutation {
     fetchDiscounts {
       discountCode
-      expires
+      expiresIn
       nationalId
       user {
         nationalId
