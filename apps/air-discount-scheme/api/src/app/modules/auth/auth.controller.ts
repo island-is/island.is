@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Inject, Post, Res } from '@nestjs/common'
 import jwt from 'jsonwebtoken'
 import { Entropy } from 'entropy-string'
+import { uuid } from 'uuidv4'
 import IslandisLogin from 'islandis-login'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -98,7 +99,8 @@ export class AuthController {
 
   @Get('/login')
   login(@Res() res) {
-    return res.redirect(samlEntryPoint)
+    const authId = uuid()
+    return res.redirect(`${samlEntryPoint}&authId=${authId}`)
   }
 
   @Get('/logout')
