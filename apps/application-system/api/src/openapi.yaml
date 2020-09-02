@@ -61,7 +61,7 @@ components:
             - ExampleForm2
             - ExampleForm3
             - FamilyAndPets
-            - PaternityLeave
+            - ParentalLeave
         answers:
           type: object
         externalData:
@@ -86,7 +86,7 @@ components:
             - ExampleForm2
             - ExampleForm3
             - FamilyAndPets
-            - PaternityLeave
+            - ParentalLeave
         applicant:
           type: string
         assignee:
@@ -124,7 +124,7 @@ components:
             - ExampleForm2
             - ExampleForm3
             - FamilyAndPets
-            - PaternityLeave
+            - ParentalLeave
         applicant:
           type: string
         assignee:

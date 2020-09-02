@@ -420,7 +420,7 @@ export enum ApplicationTypeIdEnum {
   ExampleForm2 = 'ExampleForm2',
   ExampleForm3 = 'ExampleForm3',
   FamilyAndPets = 'FamilyAndPets',
-  PaternityLeave = 'PaternityLeave',
+  ParentalLeave = 'ParentalLeave',
 }
 
 export type PresignedPost = {
@@ -666,10 +666,10 @@ export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<Application>
   updateApplication?: Maybe<Application>
+  updateApplicationExternalData?: Maybe<Application>
   addAttachment?: Maybe<Application>
   deleteAttachment?: Maybe<Application>
   createUploadUrl: PresignedPost
-  updateApplicationExternalData?: Maybe<Application>
 }
 
 export type MutationCreateApplicationArgs = {
@@ -678,6 +678,10 @@ export type MutationCreateApplicationArgs = {
 
 export type MutationUpdateApplicationArgs = {
   input: UpdateApplicationInput
+}
+
+export type MutationUpdateApplicationExternalDataArgs = {
+  input: UpdateApplicationExternalDataInput
 }
 
 export type MutationAddAttachmentArgs = {
@@ -690,10 +694,6 @@ export type MutationDeleteAttachmentArgs = {
 
 export type MutationCreateUploadUrlArgs = {
   filename: Scalars['String']
-}
-
-export type MutationUpdateApplicationExternalDataArgs = {
-  input: UpdateApplicationExternalDataInput
 }
 
 export type CreateApplicationInput = {
@@ -722,7 +722,7 @@ export enum CreateApplicationDtoTypeIdEnum {
   ExampleForm2 = 'ExampleForm2',
   ExampleForm3 = 'ExampleForm3',
   FamilyAndPets = 'FamilyAndPets',
-  PaternityLeave = 'PaternityLeave',
+  ParentalLeave = 'ParentalLeave',
 }
 
 export type UpdateApplicationInput = {
@@ -741,7 +741,7 @@ export enum UpdateApplicationDtoTypeIdEnum {
   ExampleForm2 = 'ExampleForm2',
   ExampleForm3 = 'ExampleForm3',
   FamilyAndPets = 'FamilyAndPets',
-  PaternityLeave = 'PaternityLeave',
+  ParentalLeave = 'ParentalLeave',
 }
 
 export enum UpdateApplicationDtoStateEnum {
@@ -753,17 +753,6 @@ export enum UpdateApplicationDtoStateEnum {
   Manualapproved = 'MANUALAPPROVED',
   Rejected = 'REJECTED',
   Unknown = 'UNKNOWN',
-}
-
-export type AddAttachmentInput = {
-  id: Scalars['String']
-  key: Scalars['String']
-  url: Scalars['String']
-}
-
-export type DeleteAttachmentInput = {
-  id: Scalars['String']
-  key: Scalars['String']
 }
 
 export type UpdateApplicationExternalDataInput = {
@@ -780,6 +769,17 @@ export enum DataProviderDtoTypeEnum {
   ExpectedDateOfBirth = 'ExpectedDateOfBirth',
   ExampleFails = 'ExampleFails',
   ExampleSucceeds = 'ExampleSucceeds',
+}
+
+export type AddAttachmentInput = {
+  id: Scalars['String']
+  key: Scalars['String']
+  url: Scalars['String']
+}
+
+export type DeleteAttachmentInput = {
+  id: Scalars['String']
+  key: Scalars['String']
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -1009,11 +1009,11 @@ export type ResolversTypes = {
   UpdateApplicationInput: UpdateApplicationInput
   UpdateApplicationDtoTypeIdEnum: UpdateApplicationDtoTypeIdEnum
   UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
-  AddAttachmentInput: AddAttachmentInput
-  DeleteAttachmentInput: DeleteAttachmentInput
   UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
   DataProvider: DataProvider
   DataProviderDtoTypeEnum: DataProviderDtoTypeEnum
+  AddAttachmentInput: AddAttachmentInput
+  DeleteAttachmentInput: DeleteAttachmentInput
 }
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -1118,10 +1118,10 @@ export type ResolversParentTypes = {
   Mutation: {}
   CreateApplicationInput: CreateApplicationInput
   UpdateApplicationInput: UpdateApplicationInput
-  AddAttachmentInput: AddAttachmentInput
-  DeleteAttachmentInput: DeleteAttachmentInput
   UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
   DataProvider: DataProvider
+  AddAttachmentInput: AddAttachmentInput
+  DeleteAttachmentInput: DeleteAttachmentInput
 }
 
 export type HelloWorldResolvers<
@@ -1937,6 +1937,12 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationUpdateApplicationArgs, 'input'>
   >
+  updateApplicationExternalData?: Resolver<
+    Maybe<ResolversTypes['Application']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateApplicationExternalDataArgs, 'input'>
+  >
   addAttachment?: Resolver<
     Maybe<ResolversTypes['Application']>,
     ParentType,
@@ -1954,12 +1960,6 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationCreateUploadUrlArgs, 'filename'>
-  >
-  updateApplicationExternalData?: Resolver<
-    Maybe<ResolversTypes['Application']>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationUpdateApplicationExternalDataArgs, 'input'>
   >
 }
 

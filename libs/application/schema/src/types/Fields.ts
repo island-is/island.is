@@ -32,9 +32,9 @@ export enum FieldTypes {
 
 export enum CustomFieldComponents {
   Country = 'ExampleCountryField',
-  PATERNITY_LEAVE_CALCULATIONS = 'PaternityLeaveCalculations',
-  PATERNITY_LEAVE_PERIODS = 'PaternityLeavePeriods',
-  PATERNITY_LEAVE_USAGE = 'PaternityLeaveUsage',
+  PARENTAL_LEAVE_CALCULATIONS = 'ParentalLeaveCalculations',
+  PARENTAL_LEAVE_PERIODS = 'ParentalLeavePeriods',
+  PARENTAL_LEAVE_USAGE = 'ParentalLeaveUsage',
 }
 
 export enum FieldComponents {

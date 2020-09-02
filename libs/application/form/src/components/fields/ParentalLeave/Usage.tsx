@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { FieldBaseProps } from '../../../types'
 
-const PaternityLeaveUsage: FC<FieldBaseProps> = ({
+const ParentalLeaveUsage: FC<FieldBaseProps> = ({
   error,
   field,
   formValue,
@@ -9,4 +9,4 @@ const PaternityLeaveUsage: FC<FieldBaseProps> = ({
   return <p>Usage component comes here</p>
 }
 
-export default PaternityLeaveUsage
+export default ParentalLeaveUsage
