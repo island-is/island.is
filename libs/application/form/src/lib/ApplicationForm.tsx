@@ -46,15 +46,16 @@ export const ApplicationForm: FC<{ application: Application }> = ({
       display="flex"
       flexGrow={1}
       paddingX={[0, 5]}
-      paddingTop={[0, 1]}
+      paddingTop={[0, 4]}
       paddingBottom={[0, 5]}
+      background="purple200"
     >
       <Box
         display="flex"
         flexGrow={1}
         flexDirection="row"
-        background="white"
         borderRadius="large"
+        background="white"
         className={styles.applicationContainer}
       >
         <Box className={styles.sidebarContainer}>
@@ -74,6 +75,8 @@ export const ApplicationForm: FC<{ application: Application }> = ({
           paddingX={[3, 3, 12]}
           paddingTop={8}
           height="full"
+          borderRadius="large"
+          background="white"
           className={styles.screenContainer}
         >
           <Screen
