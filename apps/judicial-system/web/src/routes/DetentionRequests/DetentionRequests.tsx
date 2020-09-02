@@ -10,7 +10,7 @@ import {
   Tag,
   TagVariant,
 } from '@island.is/island-ui/core'
-import { Case } from '../../types'
+import { Case, CaseState } from '../../types'
 import * as api from '../../api'
 import * as styles from './DetentionRequests.treat'
 
@@ -87,7 +87,7 @@ export const DetentionRequests: React.FC = () => {
                 </td>
                 <td>
                   <Tag variant={mapCaseStateToTagVariant(c.state)} label>
-                    {c.state}
+                    {CaseState[c.state]}
                   </Tag>
                 </td>
                 <td>
