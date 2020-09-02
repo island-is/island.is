@@ -30,11 +30,11 @@ export class Client extends Model<Client> {
   clientId: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: false,
   })
   @ApiProperty()
-  allowOfflineAccess: string
+  allowOfflineAccess: boolean
 
   @Column({
     type: DataType.INTEGER,
@@ -69,7 +69,7 @@ export class Client extends Model<Client> {
     allowNull: false,
   })
   @ApiProperty()
-  sliding_refresh_token_lifetime: number
+  slidingRefreshTokenLifetime: number
 
   @Column({
     type: DataType.INTEGER,
@@ -90,7 +90,7 @@ export class Client extends Model<Client> {
     allowNull: false,
   })
   @ApiProperty()
-  updateAtClaimsOnRefresh: string
+  updateAccessTokenClaimsOnRefresh: string
 
   @Column({
     type: DataType.INTEGER,
@@ -107,25 +107,25 @@ export class Client extends Model<Client> {
   accessTokenType: number
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: false,
   })
   @ApiProperty()
-  enableLocalLogin: string
+  enableLocalLogin: boolean
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: false,
   })
   @ApiProperty()
-  includeJwtId: string
+  includeJwtId: boolean
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: false,
   })
   @ApiProperty()
-  alwaysSendClientClaims: string
+  alwaysSendClientClaims: boolean
 
   @Column({
     type: DataType.STRING,
@@ -156,25 +156,25 @@ export class Client extends Model<Client> {
   deviceCodeLifetime: number
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: false,
   })
   @ApiProperty()
-  alwaysIncludeUcInIdToken: string
+  alwaysIncludeUserClaimsInIdToken: boolean
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  backChannelLogoutSessionRq: string
+  backChannelLogoutSessionRequired: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: false,
   })
   @ApiProperty()
-  enabled: string
+  enabled: boolean
 
   @Column({
     type: DataType.STRING,
@@ -184,32 +184,32 @@ export class Client extends Model<Client> {
   logoUri: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: true,
   })
   @ApiProperty()
-  requireConsent: string
+  requireConsent: boolean
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: false,
   })
   @ApiProperty()
-  requirePkce: string
+  requirePkce: boolean
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: false,
   })
   @ApiProperty()
-  allowPlainTextPkce: string
+  allowPlainTextPkce: boolean
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: false,
   })
   @ApiProperty()
-  allowAccessTokenViaBrowser: string
+  allowAccessTokenViaBrowser: boolean
 
   @Column({
     type: DataType.STRING,
@@ -223,7 +223,7 @@ export class Client extends Model<Client> {
     allowNull: false,
   })
   @ApiProperty()
-  frontChannelLogoutSessionRq: string
+  frontChannelLogoutSessionRequired: string
 
   @Column({
     type: DataType.STRING,
@@ -237,7 +237,7 @@ export class Client extends Model<Client> {
     allowNull: false,
   })
   @ApiProperty()
-  allowRememberConsent: string
+  allowRememberConsent: boolean
 
   @Column({
     type: DataType.STRING,
@@ -275,25 +275,11 @@ export class Client extends Model<Client> {
   protocolType: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: false,
   })
   @ApiProperty()
-  requireClientSecret: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
-  enableMobileLogin: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  mobileLoginText: string
+  requireClientSecret: boolean
 
   @CreatedAt
   @ApiProperty()
