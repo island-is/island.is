@@ -68,16 +68,16 @@ export class IndexingService {
       numItems: result.items.length,
     })
 
-    // // Delete everything in ES, except for content we're going to sync (useful in case of re-sync)
-    await this.elasticService.deleteAllExcept(
-      index,
-      result.items.map((entry) => entry.sys.id),
-    )
-
     for (const item of result.items) {
       // one at a time please, else ES will be unhappy
       await this.transformAndIndexEntry(index, result.token, item)
     }
+
+    // delete everything in ES, except for synced content, to ensure no stale data in index
+    await this.elasticService.deleteAllExcept(
+      index,
+      result.items.map((entry) => entry.sys.id),
+    )
 
     logger.info('Initial sync done')
   }
@@ -134,6 +134,15 @@ export class IndexingService {
         }
       })
       return response
+    }
+
+    // TODO: Fix this when improving mapping
+    // related articles has a recursive nesting problem, we prune it for now
+    if(entry.fields?.relatedArticles?.[0]) {
+      logger.info('Removing related articles from related articles')
+      // remove related articles from nested articles
+      const {relatedArticles, ...prunedRelatedArticlesFields} = entry.fields.relatedArticles[0].fields
+      entry.fields.relatedArticles[0].fields = prunedRelatedArticlesFields
     }
 
     /* eslint-disable @typescript-eslint/camelcase */

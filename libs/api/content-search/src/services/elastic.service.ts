@@ -123,25 +123,6 @@ export class ElasticService {
     return this.findByQuery(index, requestBody)
   }
 
-  async deleteByIds(index: SearchIndexes, ids: Array<string>) {
-    // In case we get an empty list, ES will match that to all records... which we don't want to delete
-    if (!ids.length) {
-      return
-    }
-    const client = await this.getClient()
-    return client.delete_by_query({
-      index: index,
-      body: {
-        query: {
-          bool: {
-            // eslint-disable-next-line @typescript-eslint/camelcase
-            must: ids.map((id) => ({ match: { _id: id } })),
-          },
-        },
-      },
-    })
-  }
-
   async deleteAllExcept(index: SearchIndexes, excludeIds: Array<string>) {
     const client = await this.getClient()
 
@@ -155,15 +136,6 @@ export class ElasticService {
           },
         },
       },
-    })
-  }
-
-  async deleteAll(index: SearchIndexes) {
-    const client = await this.getClient()
-    return client.delete_by_query({
-      index: index,
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      body: { query: { match_all: {} } },
     })
   }
 

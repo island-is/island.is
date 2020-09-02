@@ -45,8 +45,6 @@ export class Syncer {
   async getSyncEntries(opts): Promise<SyncerResult> {
     const collection: SyncCollection = await this.contentFulClient.sync(opts)
 
-    logger.info('Entire collection', { collection: collection })
-    logger.info('Deleted entries', { deleted: collection.deletedEntries })
     const idChunks = chunk(
       collection.entries.map((entry) => entry.sys.id),
       30,
