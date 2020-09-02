@@ -9,7 +9,7 @@ import {
 import * as styles from './Layouts.treat'
 
 interface ArticleProps {
-  sidebar: ReactNode
+  sidebar?: ReactNode
 }
 
 export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (

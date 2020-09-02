@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import cn from 'classnames'
 import Link from 'next/link'
 import Head from 'next/head'
 import {
@@ -21,7 +20,7 @@ import {
   QueryGetAdgerdirPagesArgs,
   QueryGetAdgerdirTagsArgs,
 } from '@island.is/api/schema'
-import { Articles, ArticleSidebar } from '@island.is/adgerdir/components'
+import { Articles } from '@island.is/adgerdir/components'
 import {
   GET_ADGERDIR_PAGE_QUERY,
   GET_NAMESPACE_QUERY,
@@ -32,10 +31,11 @@ import { ArticleLayout } from '@island.is/adgerdir/screens/Layouts/Layouts'
 import { withApollo } from '@island.is/adgerdir/graphql'
 import { Screen } from '@island.is/adgerdir/types'
 import { Content } from '@island.is/adgerdir/units/Content'
-import { CustomNextError } from '@island.is/adgerdir/units/ErrorBoundary'
+// import { CustomNextError } from '@island.is/adgerdir/units/ErrorBoundary'
 import { ColorSchemeContext } from '@island.is/adgerdir/context'
+import { useNamespace } from '@island.is/adgerdir/hooks'
 
-import * as cardStyles from '@island.is/adgerdir/components/Card/Card.treat'
+// import * as cardStyles from '@island.is/adgerdir/components/Card/Card.treat'
 
 interface ArticleProps {
   article: Query['getAdgerdirPage']
@@ -45,14 +45,33 @@ interface ArticleProps {
 }
 
 const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
-  // const { fields: articleFields } = article
+  const n = useNamespace(namespace)
+
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
 
-  const statusNames = {
-    preparing: 'Í undirbúningi',
-    ongoing: 'Í framkvæmd',
-    completed: 'Lokið',
+  if (!article) {
+    return (
+      <>
+        <Head>
+          <title>404 | Viðspyrna fyrir Ísland</title>
+        </Head>
+        <ArticleLayout>
+          <Stack space={3}>
+            <Breadcrumbs color="blue400">
+              <Link as="/" href="/">
+                <a>404</a>
+              </Link>
+            </Breadcrumbs>
+            <Box>
+              <Typography variant="h1" as="h1">
+                Síða fannst ekki!
+              </Typography>
+            </Box>
+          </Stack>
+        </ArticleLayout>
+      </>
+    )
   }
 
   return (
@@ -64,7 +83,14 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
         sidebar={
           <Box marginBottom={10}>
             <Stack space={3}>
-              <ArticleSidebar title="Aðgerð">
+              <Button
+                icon="external"
+                width="fluid"
+                href="https://vidspyrna.island.is"
+              >
+                Sjá nánar
+              </Button>
+              {/* <ArticleSidebar background="purple100">
                 <Button
                   icon="external"
                   width="fluid"
@@ -72,8 +98,8 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
                 >
                   Sjá nánar
                 </Button>
-              </ArticleSidebar>
-              <Stack space={1}>
+              </ArticleSidebar> */}
+              {/* <Stack space={1}>
                 <Typography variant="tag" color="red600">
                   Staða aðgerðar:
                 </Typography>
@@ -90,7 +116,7 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
                     </Inline>
                   </Box>
                 </Tag>
-              </Stack>
+              </Stack> */}
               <Stack space={1}>
                 <Typography variant="tag" color="red600">
                   Málefni:
@@ -114,6 +140,7 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
             <Link as="/" href="/">
               <a>Viðspyrna</a>
             </Link>
+            <span>Aðgerð</span>
           </Breadcrumbs>
           <Box>
             <Typography variant="h1" as="h1">
@@ -129,6 +156,8 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
             <Articles
               tags={tagsItems}
               items={pagesItems}
+              seeMoreText={n('seeMoreItems')}
+              title={n('adgerdir')}
               currentArticle={article}
               showAll
             />
@@ -141,6 +170,7 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
 
 Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
+  console.log(locale, slug)
   const [
     {
       data: { getAdgerdirPage },
@@ -192,9 +222,9 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   ])
 
   // we assume 404 if no article is found
-  if (!getAdgerdirPage) {
+  /* if (!getAdgerdirPage) {
     throw new CustomNextError(404, 'Article not found')
-  }
+  } */
 
   return {
     article: getAdgerdirPage,

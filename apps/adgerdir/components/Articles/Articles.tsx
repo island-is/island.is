@@ -15,7 +15,8 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
-import Card from '../Card/Card'
+import { useI18n } from '@island.is/adgerdir/i18n'
+import { Card } from '@island.is/adgerdir/components'
 
 import * as cardStyles from '../Card/Card.treat'
 import * as styles from './Articles.treat'
@@ -40,7 +41,7 @@ export const Articles: FC<ArticlesProps> = ({
   currentArticle,
   showAll,
 }) => {
-  // const cardsRef = useRef<Array<HTMLElement | null>>([])
+  const { activeLocale } = useI18n()
   const [filterString, setFilterString] = useState<string>('')
   const [filtersToggled, setFiltersToggled] = useState<boolean>(true)
   const [tagIds, setTagIds] = useState<Array<string>>([])
@@ -325,8 +326,12 @@ export const Articles: FC<ArticlesProps> = ({
                   title={title}
                   tags={tags}
                   status={status}
-                  as={`/${slug}`}
-                  href={`/[slug]`}
+                  as={`/${
+                    activeLocale !== 'is' ? `${activeLocale}/` : ''
+                  }${slug}`}
+                  href={`/${
+                    activeLocale !== 'is' ? `${activeLocale}/` : ''
+                  }[slug]`}
                 />
               )
             },
