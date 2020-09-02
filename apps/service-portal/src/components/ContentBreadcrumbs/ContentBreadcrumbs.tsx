@@ -38,6 +38,8 @@ const ContentBreadcrumbs: FC<{}> = () => {
     [] as ServicePortalNavigationItem[],
   )
 
+  if (items.length < 2) return null
+
   return (
     <Hidden below="lg">
       <Box paddingY={2}>
