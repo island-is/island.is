@@ -79,7 +79,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                 >
                   {second.image ? (
                     <Box marginTop={10} marginBottom={3}>
-                      <BackgroundImage image={second.image} />
+                      <BackgroundImage ratio="20:10" image={second.image} />
                     </Box>
                   ) : null}
                   <Stack space={3}>
@@ -110,7 +110,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                 >
                   {third.image ? (
                     <Box marginTop={10} marginBottom={3}>
-                      <BackgroundImage image={third.image} />
+                      <BackgroundImage ratio="20:10" image={third.image} />
                     </Box>
                   ) : null}
                   <Stack space={3}>

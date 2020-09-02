@@ -25,12 +25,17 @@ export const GET_ADGERDIR_PAGE_QUERY = gql`
       slug
       title
       description
+      longDescription
       content
+      objective
+      estimatedCostIsk
+      finalCostIsk
       tags {
         id
         title
       }
       link
+      linkButtonText
       status
     }
   }
