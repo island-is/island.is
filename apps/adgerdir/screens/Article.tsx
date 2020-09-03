@@ -32,7 +32,7 @@ import { ArticleLayout } from '@island.is/adgerdir/screens/Layouts/Layouts'
 import { withApollo } from '@island.is/adgerdir/graphql'
 import { Screen } from '@island.is/adgerdir/types'
 import { Content } from '@island.is/adgerdir/units/Content'
-// import { CustomNextError } from '@island.is/adgerdir/units/ErrorBoundary'
+import { CustomNextError } from '@island.is/adgerdir/units/ErrorBoundary'
 import { ColorSchemeContext } from '@island.is/adgerdir/context'
 import { useNamespace } from '@island.is/adgerdir/hooks'
 
@@ -56,30 +56,6 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
     ongoing: 'Í framkvæmd',
     completed: 'Lokið',
   } */
-
-  if (!article) {
-    return (
-      <>
-        <Head>
-          <title>404 | Viðspyrna fyrir Ísland</title>
-        </Head>
-        <ArticleLayout>
-          <Stack space={3}>
-            <Breadcrumbs color="blue400">
-              <Link as="/" href="/">
-                <a>404</a>
-              </Link>
-            </Breadcrumbs>
-            <Box>
-              <Typography variant="h1" as="h1">
-                Síða fannst ekki!
-              </Typography>
-            </Box>
-          </Stack>
-        </ArticleLayout>
-      </>
-    )
-  }
 
   const { estimatedCostIsk, finalCostIsk } = article
 
@@ -258,9 +234,9 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   ])
 
   // we assume 404 if no article is found
-  /* if (!getAdgerdirPage) {
-    throw new CustomNextError(404, 'Article not found')
-  } */
+  if (!getAdgerdirPage) {
+    throw new CustomNextError(404, 'Þessi síða fannst ekki!')
+  }
 
   return {
     article: getAdgerdirPage,
