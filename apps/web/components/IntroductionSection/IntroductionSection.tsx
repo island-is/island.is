@@ -44,7 +44,10 @@ const IntroductionSection: FC<Props> = ({
     <Box paddingY={8}>
       <GridContainer>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '4/12']} offset={[null, null, '1/12']}>
+          <GridColumn
+            span={['12/12', '12/12', '4/12']}
+            offset={[null, null, '1/12']}
+          >
             <Illustration />
           </GridColumn>
           <GridColumn
