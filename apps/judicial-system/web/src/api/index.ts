@@ -1,12 +1,5 @@
 import 'isomorphic-fetch'
-import { Case } from '../types'
-
-interface CreateCaseRequest {
-  description: string
-  policeCaseNumber: string
-  suspectNationalId: string
-  suspectName: string
-}
+import { Case, CreateCaseRequest } from '../types'
 
 export const getCases: () => Promise<Case[]> = async () => {
   try {
@@ -53,26 +46,23 @@ export const saveCase: (
   caseId: string,
   caseField: string,
   caseFieldValue: string,
-) => Promise<void> = async (
+) => Promise<number> = async (
   caseId: string,
   caseField: string,
   caseFieldValue: string,
 ) => {
-  try {
-    const propertyChange = JSON.parse(`{"${caseField}": "${caseFieldValue}"}`)
-    const response = await fetch(`/api/case/${caseId}`, {
-      method: 'put',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(propertyChange),
-    })
+  const propertyChange = JSON.parse(`{"${caseField}": "${caseFieldValue}"}`)
+  const response = await fetch(`/api/case/${caseId}`, {
+    method: 'put',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(propertyChange),
+  })
 
-    if (!response.ok) {
-      throw new Error(response.statusText)
-    }
-  } catch (ex) {
+  if (!response.ok) {
     // TODO: log error
-    console.log(ex)
   }
+
+  return response.status
 }

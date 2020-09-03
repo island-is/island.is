@@ -22,6 +22,7 @@ export const CreateDetentionRequest: React.FC = () => {
       suspectNationalId: '',
     },
   })
+  const [autoSaveSucceded, setAutoSaveSucceded] = useState<boolean>(true)
 
   const policeCaseNumberRef = useRef<HTMLInputElement>()
   const suspectNationalIdRef = useRef<HTMLInputElement>()
@@ -44,20 +45,28 @@ export const CreateDetentionRequest: React.FC = () => {
     }
   }
 
-  const autoSave = (caseField: string, caseFieldValue: string) => {
+  const autoSave = async (caseField: string, caseFieldValue: string) => {
     // Only save if the field has changes
     if (workingCase.case[caseField] !== caseFieldValue) {
       // Copy the working case
       let copyOfWorkingCase = Object.assign({}, workingCase)
 
       // Save the case
-      api.saveCase(workingCase.id, caseField, caseFieldValue)
+      const response = await api.saveCase(
+        workingCase.id,
+        caseField,
+        caseFieldValue,
+      )
 
-      // Assign new value to the field the user is changing
-      copyOfWorkingCase.case[caseField] = caseFieldValue
+      if (response === 200) {
+        // Assign new value to the field the user is changing
+        copyOfWorkingCase.case[caseField] = caseFieldValue
 
-      // Update the working case
-      setWorkingCase(copyOfWorkingCase)
+        // Update the working case
+        setWorkingCase(copyOfWorkingCase)
+      } else {
+        setAutoSaveSucceded(false)
+      }
     }
   }
 
