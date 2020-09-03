@@ -416,10 +416,16 @@ jobs:
       - name: Trigger Deployment for service
         if: env.PUBLISH == 'true'
         env:
-          SPINNAKER_WEBHOOK_ISLANDIS_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_ISLANDIS_TOKEN }}
-          SPINNAKER_WEBHOOK_GJAFAKORT_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_GJAFAKORT_TOKEN }}
-          SPINNAKER_WEBHOOK_AIR_DISCOUNT_SCHEME_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_AIR_DISCOUNT_SCHEME_TOKEN }}
-        run: scripts/spin.sh ${{matrix.service}}
+          SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
+          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
+        run: |
+          curl -v $SPINNAKER_URL/webhooks/webhook/${{matrix.service}} -H "content-type: application/json" --data-binary @- <<BODY
+          {
+          "token": "$SPINNAKER_WEBHOOK_TOKEN",
+          "branch": "$GIT_BRANCH",
+          "parameters": { "docker_tag": "$DOCKER_TAG" }
+          }
+BODY
   failure-notification:
     runs-on: ubuntu-latest
     if: failure()
