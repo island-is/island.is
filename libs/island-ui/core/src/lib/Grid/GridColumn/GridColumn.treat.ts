@@ -2,29 +2,21 @@ import { styleMap, style } from 'treat'
 import mapValues from 'lodash/mapValues'
 import { themeUtils, Theme, theme } from '@island.is/island-ui/theme'
 
-const columns = {
-  '1/12': `${(1 / 12) * 100}%`,
-  '2/12': `${(2 / 12) * 100}%`,
-  '3/12': `${(3 / 12) * 100}%`,
-  '4/12': `${(4 / 12) * 100}%`,
-  '5/12': `${(5 / 12) * 100}%`,
-  '6/12': `${(6 / 12) * 100}%`,
-  '7/12': `${(7 / 12) * 100}%`,
-  '8/12': `${(8 / 12) * 100}%`,
-  '9/12': `${(9 / 12) * 100}%`,
-  '10/12': `${(10 / 12) * 100}%`,
-  '11/12': `${(11 / 12) * 100}%`,
-  '12/12': `${(11 / 12) * 100}%`,
-  '1/9': `${(1 / 9) * 100}%`,
-  '2/9': `${(2 / 9) * 100}%`,
-  '3/9': `${(3 / 9) * 100}%`,
-  '4/9': `${(4 / 9) * 100}%`,
-  '5/9': `${(5 / 9) * 100}%`,
-  '6/9': `${(6 / 9) * 100}%`,
-  '7/9': `${(7 / 9) * 100}%`,
-  '8/9': `${(8 / 9) * 100}%`,
-  '9/9': `${(9 / 9) * 100}%`,
-} as const
+function makeColumns() {
+  const bucket = {}
+
+  for (let i = 12; i > 0; i--) {
+    for (let x = i; x > 0; x--) {
+      Object.assign(bucket, {
+        [`${x}/${i}`]: `(${x} / ${i}) * ${100}%`,
+      })
+    }
+  }
+
+  return bucket
+}
+
+const columns = makeColumns()
 
 export type GridColumns = keyof typeof columns
 type Columns = Record<GridColumns, string>
