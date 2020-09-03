@@ -4,7 +4,6 @@ import {
   User as TUser,
   Fund as TFund,
 } from '@island.is/air-discount-scheme/types'
-import { SplitName } from './user.types'
 import { NationalRegistryUser } from '../nationalRegistry'
 
 class Fund implements TFund {
