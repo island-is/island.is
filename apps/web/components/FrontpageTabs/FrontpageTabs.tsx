@@ -154,7 +154,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   return (
     <GridContainer>
       <GridRow>
-        <GridColumn span={6} offset={1}>
+        <GridColumn span="6/12" offset="1/12">
           <TabList {...tab} aria-label="My tabs" className={styles.tabWrapper}>
             {tabs.map(({ subtitle = '' }, index) => {
               return (
@@ -168,7 +168,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
         </GridColumn>
       </GridRow>
       <GridRow>
-        <GridColumn span={6} offset={1}>
+        <GridColumn span="6/12" offset="1/12">
           <div className={styles.tabPanelWrapper}>
             {tabs.map(({ title, subtitle, content, link }, index) => {
               let href = null
@@ -251,7 +251,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
             {searchContent}
           </Box>
         </GridColumn>
-        <GridColumn span={5}>
+        <GridColumn span="5/12">
           <div className={styles.imageContainer}>
             <div className={styles.dots}>
               <Dots />

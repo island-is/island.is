@@ -150,7 +150,7 @@ const embeddedNodes = () => ({
         showTopContent: details?.content?.length,
         topContent: (
           <GridRow>
-            <GridColumn span={10} offset={1}>
+            <GridColumn span="10/12" offset="1/12">
               {title && (
                 <Typography variant="h2" as="h3">
                   <span data-sidebar-link={slugify(title)}>{title}</span>
@@ -170,7 +170,7 @@ const embeddedNodes = () => ({
         ),
         bottomContent: (
           <GridRow>
-            <GridColumn span={10} offset={1}>
+            <GridColumn span="10/12" offset="1/12">
               {type !== 'No type' && (
                 <Typography variant="eyebrow" as="h4" color="blue400">
                   {processTypes[type].title}

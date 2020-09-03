@@ -71,7 +71,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
           <Hidden above="sm">
             <GridContainer className={styles.mobileContent}>
               <GridRow>
-                <GridColumn span={12}>
+                <GridColumn span="12/12">
                   <SearchInput
                     activeLocale={activeLocale}
                     placeholder="Leitaðu á Ísland.is"
@@ -80,14 +80,14 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
                 </GridColumn>
               </GridRow>
               <GridRow>
-                <GridColumn span={8} paddingTop={3} paddingBottom={3}>
+                <GridColumn span="8/12" paddingTop={3} paddingBottom={3}>
                   <Link href="https://minarsidur.island.is/" passHref>
                     <Button variant="menu" leftIcon="user" width="fluid">
                       {t.login}
                     </Button>
                   </Link>
                 </GridColumn>
-                <GridColumn span={4} paddingTop={3} paddingBottom={3}>
+                <GridColumn span="4/12" paddingTop={3} paddingBottom={3}>
                   <LanguageToggler />
                 </GridColumn>
               </GridRow>
