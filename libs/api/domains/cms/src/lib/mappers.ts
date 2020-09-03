@@ -432,7 +432,6 @@ export const mapGenericPage = ({
 })
 
 export const mapLifeEventPage = ({
-  sys,
   fields,
 }: types.ILifeEventPage): LifeEventPage => ({
   title: fields.title,

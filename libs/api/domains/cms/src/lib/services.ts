@@ -282,7 +282,7 @@ export const getLifeEventPage = async (
   slug: string,
   lang: string,
 ): Promise<LifeEventPage | null> => {
-  const result = await getLocalizedEntries<types.IMenuFields>(lang, {
+  const result = await getLocalizedEntries<types.ILifeEventPageFields>(lang, {
     ['content_type']: 'lifeEventPage',
     'fields.slug': slug,
   }).catch(errorHandler('getLifeEventPage'))
