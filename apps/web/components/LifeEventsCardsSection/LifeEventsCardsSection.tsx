@@ -70,7 +70,7 @@ const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
     <Box paddingTop={8}>
       <GridContainer>
         <GridRow>
-          <GridColumn span={[6, 6, 12]}>
+          <GridColumn span={['6/12', '6/12', '12/12']}>
             <Typography variant="h3" as="h3" paddingBottom={4}>
               {title}
             </Typography>
@@ -78,7 +78,10 @@ const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
         </GridRow>
         <GridRow>
           {demoData.map((lifeEvent) => (
-            <GridColumn span={[12, 12, 6, 6, 4]} paddingBottom={3}>
+            <GridColumn
+              span={['12/12', '12/12', '6/12', '6/12', '4/12']}
+              paddingBottom={3}
+            >
               <LifeEventCard
                 title={lifeEvent.title}
                 intro={lifeEvent.intro}

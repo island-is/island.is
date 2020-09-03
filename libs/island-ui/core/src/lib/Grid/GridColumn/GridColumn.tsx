@@ -7,10 +7,9 @@ import {
 } from '../../../utils/responsiveProp'
 import * as styles from './GridColumn.treat'
 import { ResponsiveSpace } from '../../Box/useBoxStyles'
+import { GridColumns } from './GridColumn.treat'
 
-type GridColumns = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12
-
-export interface TilesProps {
+export interface GridColumnProps {
   span?: ResponsiveProp<GridColumns>
   offset?: ResponsiveProp<GridColumns>
   paddingBottom?: ResponsiveSpace
@@ -18,7 +17,7 @@ export interface TilesProps {
   className?: string
 }
 
-export const GridColumn: FC<TilesProps> = ({
+export const GridColumn: FC<GridColumnProps> = ({
   children,
   span,
   offset,

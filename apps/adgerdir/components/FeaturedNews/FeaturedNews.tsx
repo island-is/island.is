@@ -43,8 +43,8 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
         <GridContainer>
           <GridRow>
             <GridColumn
-              span={[12, 12, 12, 12, 10]}
-              offset={[null, null, null, null, 1]}
+              span={['12/12', '12/12', '12/12', '12/12', '10/12']}
+              offset={[null, null, null, null, '1/12']}
             >
               <Box marginBottom={[6, 6, 10]}>
                 {first.image ? (
@@ -78,15 +78,15 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
           <GridContainer>
             <GridRow>
               <GridColumn
-                span={[12, 12, 12, 12, 10]}
-                offset={[null, null, null, null, 1]}
+                span={['12/12', '12/12', '12/12', '12/12', '10/12']}
+                offset={[null, null, null, null, '1/12']}
               >
                 <Box className={styles.topBorder}></Box>
               </GridColumn>
               {second ? (
                 <GridColumn
-                  span={[12, 12, 12, 5, 4]}
-                  offset={[null, null, null, null, 1]}
+                  span={['12/12', '12/12', '12/12', '5/12', '4/12']}
+                  offset={[null, null, null, null, '1/12']}
                 >
                   {second.image ? (
                     <Box marginTop={10} marginBottom={2}>
@@ -116,8 +116,8 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
               ) : null}
               {third ? (
                 <GridColumn
-                  span={[12, 12, 12, 5, 4]}
-                  offset={[null, null, null, 2, 2]}
+                  span={['12/12', '12/12', '12/12', '5/12', '4/12']}
+                  offset={[null, null, null, '2/12', '2/12']}
                 >
                   {third.image ? (
                     <Box marginTop={10} marginBottom={2}>

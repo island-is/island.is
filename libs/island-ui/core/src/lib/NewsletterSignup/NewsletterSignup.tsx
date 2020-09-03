@@ -40,8 +40,8 @@ export const NewsletterSignup: React.FC<Props> = ({
       <GridContainer>
         <GridRow>
           <GridColumn
-            offset={[0, 0, 1]}
-            span={[12, 12, 4]}
+            offset={[null, null, '1/12']}
+            span={['12/12', '12/12', '4/12']}
             paddingBottom={[2, 2, 0]}
           >
             <Typography variant="h3" as="h3">
@@ -49,7 +49,7 @@ export const NewsletterSignup: React.FC<Props> = ({
             </Typography>
             <Typography variant="p">{text}</Typography>
           </GridColumn>
-          <GridColumn span={[12, 12, 5]}>
+          <GridColumn span={['12/12', '12/12', '5/12']}>
             <Input
               name={id}
               placeholder={placeholder}

@@ -151,7 +151,7 @@ const embeddedNodes = () => ({
         showTopContent: details?.content?.length,
         topContent: (
           <GridRow>
-            <GridColumn span={10} offset={1}>
+            <GridColumn span="10/12" offset="1/12">
               {title && (
                 <Typography variant="h2" as="h3">
                   <span data-sidebar-link={slugify(title)}>{title}</span>
@@ -171,7 +171,7 @@ const embeddedNodes = () => ({
         ),
         bottomContent: (
           <GridRow>
-            <GridColumn span={10} offset={1}>
+            <GridColumn span="10/12" offset="1/12">
               {type !== 'No type' && (
                 <Typography variant="eyebrow" as="h4" color="blue400">
                   {processTypes[type].title}
@@ -237,10 +237,10 @@ const embeddedNodes = () => ({
         <Box paddingTop={15}>
           <GridContainer>
             <GridRow>
-              <GridColumn span={4}>
+              <GridColumn span="4/12">
                 <img src={fields.image.fields.file.url + '?w=320'} alt="" />
               </GridColumn>
-              <GridColumn span={8}>
+              <GridColumn span="8/12">
                 <Typography variant="h2" as="h2">
                   <span data-sidebar-link={slugify(fields.title)}>
                     {fields.title}
