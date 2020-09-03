@@ -431,7 +431,10 @@ export const mapGenericPage = ({
   misc: fields.misc && JSON.stringify(fields.misc),
 })
 
-export const mapLifeEventPage = ({ sys, fields }: types.ILifeEventPage): LifeEventPage => ({
+export const mapLifeEventPage = ({
+  sys,
+  fields,
+}: types.ILifeEventPage): LifeEventPage => ({
   title: fields.title,
   slug: fields.slug,
   intro: fields.intro,

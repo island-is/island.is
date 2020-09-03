@@ -66,9 +66,11 @@ const useHeadingLinks = ({
 
   const updateOffsets = useCallback(() => {
     setElements(getElements())
-    setOffsets(getElements().map((x) => {
-      return x.getBoundingClientRect().top + window.scrollY
-    }))
+    setOffsets(
+      getElements().map((x) => {
+        return x.getBoundingClientRect().top + window.scrollY
+      }),
+    )
   }, [getElements])
 
   useEffect(() => {

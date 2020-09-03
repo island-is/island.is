@@ -44,7 +44,7 @@ import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
 import { AdgerdirTags } from './models/adgerdirTags.model'
 import { GetAdgerdirTagsInput } from './dto/getAdgerdirTags.input'
-import {LifeEventPage} from './models/lifeEventPage.model'
+import { LifeEventPage } from './models/lifeEventPage.model'
 
 @Resolver()
 export class CmsResolver {
