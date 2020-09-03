@@ -22,7 +22,7 @@ export const CreateDetentionRequest: React.FC = () => {
       suspectAddress: '',
     },
   })
-  const [autoSaveSucceded, setAutoSaveSucceded] = useState<boolean>(true)
+  const [, setAutoSaveSucceded] = useState<boolean>(true)
   const [isRequiredFieldValid, setIsRequiredFieldValid] = useState<boolean>(
     true,
   )
@@ -57,7 +57,7 @@ export const CreateDetentionRequest: React.FC = () => {
       workingCase.id !== ''
     ) {
       // Copy the working case
-      let copyOfWorkingCase = Object.assign({}, workingCase)
+      const copyOfWorkingCase = Object.assign({}, workingCase)
 
       // Save the case
       const response = await api.saveCase(
