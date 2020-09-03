@@ -27,6 +27,7 @@ import { useNamespace } from '../hooks'
 import useRouteNames from '../i18n/useRouteNames'
 import FrontpageTabs from '../components/FrontpageTabs/FrontpageTabs'
 import { IntroductionSection } from '../components/IntroductionSection'
+import { LifeEventsCardsSection } from '../components/LifeEventsCardsSection'
 
 interface HomeProps {
   categories: Query['categories']
@@ -90,8 +91,9 @@ const Home: Screen<HomeProps> = ({
       <Box paddingY={[2, 2, 3, 3, 6]}>
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
       </Box>
+      <LifeEventsCardsSection title={n('lifeEventsTitle')} />
       <Box background="purple100">
-        <Categories label={n('articlesTitle')} cards={cards} />
+        <Categories title={n('articlesTitle')} cards={cards} />
       </Box>
       <IntroductionSection
         subtitle="Markmiðið okkar"

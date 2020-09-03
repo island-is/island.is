@@ -16,12 +16,12 @@ interface Card {
 }
 
 interface CategoriesProps {
-  label?: string
+  title?: string
   cards: Card[]
 }
 
 export const Categories: FC<CategoriesProps> = ({
-  label = 'Þjónustuflokkar',
+  title = 'Þjónustuflokkar',
   cards,
 }) => {
   return (
@@ -30,7 +30,7 @@ export const Categories: FC<CategoriesProps> = ({
         <GridRow>
           <GridColumn span={[6, 6, 12]}>
             <Typography variant="h3" as="h3" paddingBottom={4}>
-              {label}
+              {title}
             </Typography>
           </GridColumn>
         </GridRow>
@@ -41,7 +41,7 @@ export const Categories: FC<CategoriesProps> = ({
               <GridColumn
                 key={index}
                 span={[12, 6, 6, 4]}
-                paddingBottom={[3, 3, 6]}
+                paddingBottom={3}
               >
                 <Card {...card} />
               </GridColumn>
