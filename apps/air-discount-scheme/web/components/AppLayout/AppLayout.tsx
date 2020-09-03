@@ -11,10 +11,9 @@ import {
   FooterLinkProps,
 } from '@island.is/island-ui/core'
 
-import { Routes } from '../../i18n'
 import { ErrorBoundary, Header } from '../../components'
 import { UserContext } from '../../context'
-import { GetInitialPropsContext } from '../../types'
+import { GetInitialPropsContext, Routes } from '../../types'
 import {
   Query,
   QueryGetMenuArgs,

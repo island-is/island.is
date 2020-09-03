@@ -1,11 +1,5 @@
-import React, { FC, useEffect, useReducer } from 'react'
-
-import {
-  FormValue,
-  FormType,
-  getFormByTypeId,
-  ExternalData,
-} from '@island.is/application/schema'
+import React, { FC, useReducer } from 'react'
+import { Application } from '@island.is/application/schema'
 import FormProgress from '../components/FormProgress/'
 import ApplicationName from '../components/ApplicationName/'
 import Sidebar from '../components/Sidebar'
@@ -19,31 +13,15 @@ import { Box } from '@island.is/island-ui/core'
 import * as styles from './ApplicationForm.treat'
 import ProgressIndicator from '../components/ProgressIndicator'
 
-type ApplicationProps = {
-  applicationId?: string
-  formType: FormType
-  initialAnswers?: FormValue
-  initialExternalData?: ExternalData
-  loadingApplication: boolean
-  onApplicationCreated?(id: string): void
-}
-
-export const ApplicationForm: FC<ApplicationProps> = ({
-  applicationId,
-  formType,
-  initialAnswers,
-  initialExternalData = {},
-  loadingApplication,
-  onApplicationCreated = () => undefined,
+export const ApplicationForm: FC<{ application: Application }> = ({
+  application,
 }) => {
-  const form = getFormByTypeId(formType)
   const [state, dispatch] = useReducer(
     ApplicationReducer,
     {
-      externalData: initialExternalData,
-      form,
+      application,
+      form: undefined,
       formLeaves: [],
-      formValue: initialAnswers,
       activeSection: 0,
       activeSubSection: 0,
       activeScreen: 0,
@@ -57,26 +35,12 @@ export const ApplicationForm: FC<ApplicationProps> = ({
     activeSection,
     activeSubSection,
     activeScreen,
-    externalData,
-    formValue,
+    application: storedApplication,
+    form,
     progress,
     sections,
     screens,
   } = state
-
-  // TODO this is not good enough
-  useEffect(() => {
-    if (!loadingApplication) {
-      dispatch({
-        type: ActionTypes.RE_INITIALIZE,
-        payload: {
-          formValue: initialAnswers,
-          externalData: initialExternalData,
-        },
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadingApplication])
 
   return (
     <Box display="flex" flexGrow={1}>
@@ -114,9 +78,9 @@ export const ApplicationForm: FC<ApplicationProps> = ({
               dispatch({ type: ActionTypes.ANSWER, payload })
             }
             dataSchema={form.schema}
-            externalData={externalData}
+            externalData={storedApplication.externalData}
             formTypeId={form.id}
-            formValue={formValue}
+            formValue={storedApplication.answers}
             expandRepeater={() =>
               dispatch({ type: ActionTypes.EXPAND_REPEATER })
             }
@@ -125,14 +89,9 @@ export const ApplicationForm: FC<ApplicationProps> = ({
             }
             prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
             shouldSubmit={activeScreen === screens.length - 1}
-            setApplicationId={(id) => {
-              if (onApplicationCreated) {
-                onApplicationCreated(id)
-              }
-            }}
             screen={screens[activeScreen]}
             section={sections[activeSection]}
-            applicationId={applicationId}
+            applicationId={storedApplication.id}
           />
         </Box>
       </Box>

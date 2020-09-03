@@ -83,13 +83,13 @@ export const ActionCard: FC<Props> = ({
           <Column>
             <Typography variant="p">{text}</Typography>
           </Column>
-          {buttonRender && (
+          {buttonRender ? (
             <Column width="content">
               <Box display="flex" justifyContent="flexEnd" flexShrink={0}>
                 {buttonRender()}
               </Box>
             </Column>
-          )}
+          ) : null}
         </Columns>
       </Stack>
     </Box>
