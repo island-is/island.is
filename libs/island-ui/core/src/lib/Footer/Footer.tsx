@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import cn from 'classnames'
 import chunk from 'lodash/chunk'
 import { Box } from '../Box/Box'
 import { Logo } from '../Logo/Logo'
