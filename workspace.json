@@ -2915,7 +2915,8 @@
             "tsConfig": "apps/my-app/tsconfig.spec.json",
             "passWithNoTests": true
           }
-        }
+        },
+        "docker-static": {}
       }
     },
     "my-app-e2e": {
@@ -2944,8 +2945,7 @@
             "tsConfig": ["apps/my-app-e2e/tsconfig.e2e.json"],
             "exclude": ["**/node_modules/**", "!apps/my-app-e2e/**"]
           }
-        },
-        "docker-static": {}
+        }
       }
     }
   },
