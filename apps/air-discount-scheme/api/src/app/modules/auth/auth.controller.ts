@@ -1,5 +1,15 @@
-import { Body, Controller, Get, Inject, Post, Res } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Post,
+  Query,
+  Req,
+  Res,
+} from '@nestjs/common'
 import jwt from 'jsonwebtoken'
+import { uuid } from 'uuidv4'
 import { Entropy } from 'entropy-string'
 import IslandisLogin from 'islandis-login'
 
@@ -13,9 +23,9 @@ import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
 
 const { samlEntryPoint, audience: audienceUrl, jwtSecret } = environment.auth
 
-export const JWT_EXPIRES_IN_SECONDS = 1800
-
-export const ONE_HOUR = 60 * 60 * 1000
+const JWT_EXPIRES_IN_SECONDS = 1800
+const ONE_HOUR = 60 * 60 * 1000
+const REDIRECT_COOKIE_NAME = 'ads.redirect'
 
 const defaultCookieOptions: CookieOptions = {
   secure: environment.production,
@@ -23,7 +33,7 @@ const defaultCookieOptions: CookieOptions = {
   sameSite: 'lax',
 }
 
-export const CSRF_COOKIE: Cookie = {
+const CSRF_COOKIE: Cookie = {
   name: CSRF_COOKIE_NAME,
   options: {
     ...defaultCookieOptions,
@@ -31,9 +41,17 @@ export const CSRF_COOKIE: Cookie = {
   },
 }
 
-export const ACCESS_TOKEN_COOKIE: Cookie = {
+const ACCESS_TOKEN_COOKIE: Cookie = {
   name: ACCESS_TOKEN_COOKIE_NAME,
   options: defaultCookieOptions,
+}
+
+const REDIRECT_COOKIE: Cookie = {
+  name: REDIRECT_COOKIE_NAME,
+  options: {
+    ...defaultCookieOptions,
+    sameSite: 'none',
+  },
 }
 
 const loginIS = new IslandisLogin({
@@ -45,7 +63,7 @@ export class AuthController {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
   @Post('/callback')
-  async callback(@Body('token') token, @Res() res) {
+  async callback(@Body('token') token, @Res() res, @Req() req) {
     let verifyResult: VerifyResult
     try {
       verifyResult = await loginIS.verify(token)
@@ -54,11 +72,13 @@ export class AuthController {
       return res.redirect('/error')
     }
 
+    const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
     const { user } = verifyResult
-    if (!user) {
+    if (!user || (authId && user.authId !== authId)) {
       this.logger.error('Could not verify user authenticity', {
         extra: {
-          user,
+          authId,
+          userAuthId: user.authId,
         },
       })
       return res.redirect('/error')
@@ -93,12 +113,19 @@ export class AuthController {
         ...ACCESS_TOKEN_COOKIE.options,
         maxAge,
       })
-      .redirect('/min-rettindi') // TODO: add back cookie
+      .redirect(returnUrl ?? '/_')
   }
 
   @Get('/login')
-  login(@Res() res) {
-    return res.redirect(samlEntryPoint)
+  login(@Res() res, @Query() query) {
+    const { returnUrl } = query
+    const { name, options } = REDIRECT_COOKIE
+    res.clearCookie(name, options)
+    const authId = uuid()
+
+    return res
+      .cookie(name, { authId, returnUrl }, { ...options, maxAge: ONE_HOUR })
+      .redirect(`${samlEntryPoint}&authId=${authId}`)
   }
 
   @Get('/logout')

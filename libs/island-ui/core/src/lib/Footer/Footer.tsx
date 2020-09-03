@@ -164,7 +164,7 @@ export const Footer = ({
           </GridRow>
         </GridContainer>
       </Box>
-      <Box background="blue400" paddingY={4}>
+      <Box background="blue400" paddingTop={6} paddingBottom={4}>
         <GridContainer>
           <GridRow>
             <GridColumn span="12/12">

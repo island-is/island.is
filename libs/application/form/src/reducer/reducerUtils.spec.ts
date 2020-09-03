@@ -11,7 +11,7 @@ import {
   buildTextField,
   FormLeaf,
   Repeater,
-} from '@island.is/application/schema'
+} from '@island.is/application/template'
 import { FormScreen, RepeaterScreen } from '../types'
 
 describe('reducerUtils', () => {

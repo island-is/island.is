@@ -34,7 +34,7 @@ interface PropTypes {
 }
 
 function Usage({ misc }: PropTypes) {
-  const { data } = useQuery(FlightsQuery, { ssr: true })
+  const { data } = useQuery(FlightsQuery, { ssr: false })
   const { flights = [] } = data ?? {}
   const { currentUsage, user, path, date } = JSON.parse(misc)
   const { activeLocale } = useI18n()

@@ -85,7 +85,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                   </>
                 )}
                 <Box marginLeft={marginLeft}>
-                  <Link href="https://minarsidur.island.is/" passHref>
+                  <Link href="//minarsidur.island.is/">
                     <Button variant="menu" leftIcon="user">
                       {t.login}
                     </Button>

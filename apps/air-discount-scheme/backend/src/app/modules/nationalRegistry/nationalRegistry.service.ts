@@ -8,8 +8,8 @@ import {
 import { environment } from '../../../environments'
 
 const { nationalRegistry } = environment
-const ONE_MONTH = 2592000 // seconds
-const CACHE_KEY = 'nationalRegistry_user'
+export const ONE_MONTH = 2592000 // seconds
+export const CACHE_KEY = 'nationalRegistry_user'
 
 const TEST_USERS: NationalRegistryUser[] = [
   {

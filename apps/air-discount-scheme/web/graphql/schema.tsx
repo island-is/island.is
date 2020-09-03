@@ -18,7 +18,7 @@ export type Taxonomy = {
   __typename?: 'Taxonomy'
   title?: Maybe<Scalars['String']>
   slug?: Maybe<Scalars['String']>
-  description: Scalars['String']
+  description?: Maybe<Scalars['String']>
 }
 
 export type Article = {
@@ -28,7 +28,8 @@ export type Article = {
   title: Scalars['String']
   content?: Maybe<Scalars['String']>
   group?: Maybe<Taxonomy>
-  category: Taxonomy
+  category?: Maybe<Taxonomy>
+  relatedArticles: Array<Article>
 }
 
 export type AdgerdirTag = {
@@ -40,13 +41,18 @@ export type AdgerdirTag = {
 export type AdgerdirPage = {
   __typename?: 'AdgerdirPage'
   id: Scalars['String']
-  slug: Scalars['String']
   title: Scalars['String']
-  description?: Maybe<Scalars['String']>
+  description: Scalars['String']
+  longDescription?: Maybe<Scalars['String']>
   content?: Maybe<Scalars['String']>
+  objective?: Maybe<Scalars['String']>
+  slug: Scalars['String']
   tags: Array<AdgerdirTag>
   link?: Maybe<Scalars['String']>
+  linkButtonText?: Maybe<Scalars['String']>
   status: Scalars['String']
+  estimatedCostIsk?: Maybe<Scalars['Float']>
+  finalCostIsk?: Maybe<Scalars['Float']>
 }
 
 export type AdgerdirPages = {

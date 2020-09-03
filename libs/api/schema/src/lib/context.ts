@@ -1,9 +1,11 @@
 import { Request, Response } from 'express'
 import {
+  ContentCategory,
   SearchResult,
-  Document as ContentDocument,
-} from '@island.is/api/content-search'
-import { ContentCategory } from './schema'
+  ContentItem,
+  WebSearchAutocompleteInput,
+  WebSearchAutocomplete,
+} from './schema'
 
 export interface HelloWorldService {
   getMessage(name: string): string
@@ -11,9 +13,10 @@ export interface HelloWorldService {
 
 export interface SearcherService {
   find(query): Promise<SearchResult>
-  fetchSingle(input): Promise<ContentDocument>
-  fetchCategories(input): Promise<ContentCategory>
-  fetchItems(input): Promise<ContentDocument>
+  fetchSingle(input): Promise<ContentItem>
+  fetchCategories(input): Promise<ContentCategory[]>
+  fetchItems(input): Promise<ContentItem[]>
+  fetchAutocompleteTerm(input): Promise<WebSearchAutocomplete>
 }
 
 export interface Context {

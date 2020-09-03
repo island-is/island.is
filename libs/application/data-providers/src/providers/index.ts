@@ -1,6 +1,9 @@
 import { ExpectedDateOfBirth } from './ExpectedDateOfBirth'
 import { ExampleSucceeds } from './ExampleSucceeds'
-import { DataProvider, DataProviderTypes } from '@island.is/application/schema'
+import {
+  DataProvider,
+  DataProviderTypes,
+} from '@island.is/application/template'
 
 const typeMap = {
   [DataProviderTypes.ExpectedDateOfBirth]: ExpectedDateOfBirth,

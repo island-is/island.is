@@ -8,7 +8,9 @@ import { Header as IslandUIHeader } from '@island.is/island-ui/core'
 
 import { UserContext } from '../../context'
 import { api } from '../../services'
-import { useI18n, Routes } from '../../i18n'
+import { REDIRECT_KEY } from '../../consts'
+import { useI18n } from '../../i18n'
+import { Routes } from '../../types'
 
 interface PropTypes {
   routeKey: keyof Routes
@@ -54,7 +56,10 @@ function Header({ routeKey }: PropTypes) {
       userName={user?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {
-        api.logout().then(() => router.push(toRoute('home')))
+        api.logout().then(() => {
+          localStorage.removeItem(REDIRECT_KEY)
+          router.push(toRoute('home'))
+        })
       }}
     />
   )

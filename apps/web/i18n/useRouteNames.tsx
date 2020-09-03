@@ -7,6 +7,7 @@ const routeNames = {
     news: 'frett',
     search: 'leit',
     landingPage: '',
+    lifeEvent: 'lifsvidburdur',
     page: '',
   },
   en: {
@@ -15,6 +16,7 @@ const routeNames = {
     news: 'news',
     search: 'search',
     landingPage: '',
+    lifeEvent: 'life-event',
     page: '',
   },
 }
@@ -26,6 +28,7 @@ export type PathTypes =
   | 'search'
   | 'landingPage'
   | 'page'
+  | 'lifeEvent'
 
 export const useRouteNames = (locale: Locale = defaultLanguage) => {
   return {
