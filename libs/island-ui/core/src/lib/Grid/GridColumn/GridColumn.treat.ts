@@ -3,21 +3,31 @@ import mapValues from 'lodash/mapValues'
 import { themeUtils, Theme, theme } from '@island.is/island-ui/theme'
 
 const columns = {
-  1: `${(1 / 12) * 100}%`,
-  2: `${(2 / 12) * 100}%`,
-  3: `${(3 / 12) * 100}%`,
-  4: `${(4 / 12) * 100}%`,
-  5: `${(5 / 12) * 100}%`,
-  6: `${(6 / 12) * 100}%`,
-  7: `${(7 / 12) * 100}%`,
-  8: `${(8 / 12) * 100}%`,
-  9: `${(9 / 12) * 100}%`,
-  10: `${(10 / 12) * 100}%`,
-  11: `${(11 / 12) * 100}%`,
-  12: `${(12 / 12) * 100}%`,
+  '1/12': `${(1 / 12) * 100}%`,
+  '2/12': `${(2 / 12) * 100}%`,
+  '3/12': `${(3 / 12) * 100}%`,
+  '4/12': `${(4 / 12) * 100}%`,
+  '5/12': `${(5 / 12) * 100}%`,
+  '6/12': `${(6 / 12) * 100}%`,
+  '7/12': `${(7 / 12) * 100}%`,
+  '8/12': `${(8 / 12) * 100}%`,
+  '9/12': `${(9 / 12) * 100}%`,
+  '10/12': `${(10 / 12) * 100}%`,
+  '11/12': `${(11 / 12) * 100}%`,
+  '12/12': `${(11 / 12) * 100}%`,
+  '1/9': `${(1 / 9) * 100}%`,
+  '2/9': `${(2 / 9) * 100}%`,
+  '3/9': `${(3 / 9) * 100}%`,
+  '4/9': `${(4 / 9) * 100}%`,
+  '5/9': `${(5 / 9) * 100}%`,
+  '6/9': `${(6 / 9) * 100}%`,
+  '7/9': `${(7 / 9) * 100}%`,
+  '8/9': `${(8 / 9) * 100}%`,
+  '9/9': `${(9 / 9) * 100}%`,
 } as const
 
-type Columns = Record<keyof typeof columns, string>
+export type GridColumns = keyof typeof columns
+type Columns = Record<GridColumns, string>
 type Breakpoint = keyof Theme['breakpoints']
 
 const makeSpan = (breakpoint: Breakpoint) =>
@@ -54,14 +64,14 @@ export const offsetXl = makeOffset('xl')
 // The style order matters.
 // `base` has to be at the bottom because it uses a media query.
 export const base = style({
-  paddingRight: theme.grid.gutter.mobile,
-  paddingLeft: theme.grid.gutter.mobile,
+  paddingRight: theme.grid.gutter.mobile / 2,
+  paddingLeft: theme.grid.gutter.mobile / 2,
   position: 'relative',
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      paddingRight: theme.grid.gutter.desktop,
-      paddingLeft: theme.grid.gutter.desktop,
+      paddingRight: theme.grid.gutter.desktop / 2,
+      paddingLeft: theme.grid.gutter.desktop / 2,
     },
   },
 })
