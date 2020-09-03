@@ -8,6 +8,7 @@ source $DIR/_common.sh
 # Build the node_modules Docker layer and store it in the shared cache so it can be reused later
 
 mkdir -p $PROJECT_ROOT/cache
+docker buildx create --driver docker-container --use
 exec docker buildx build \
   --platform=linux/amd64 \
   --cache-from=type=local,src=$PROJECT_ROOT/cache \
