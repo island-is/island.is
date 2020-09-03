@@ -10,20 +10,19 @@ import { DocumentCategory } from './models/documentCategory.model'
 export class DocumentService {
 
   constructor(private customersApi: CustomersApi) {
-    logger.debug('Document Service init')
   }
 
   async findByDocumentId(natReg: string, documentId: string): Promise<DocumentDetails> {
     try {
-      console.log('gettin')
       const documentDTO = await this.customersApi.customersDocument({
         kennitala: natReg,
         messageId: documentId,
         authenticationType: 'LOW'
       })
-      console.log(documentDTO)
+
       return DocumentDetails.fromDocumentDTO(documentDTO)
     } catch (exception) {
+      logger.error(exception)
       throw new NotFoundException('Error fetching document')
     }
   }
@@ -36,12 +35,13 @@ export class DocumentService {
         dateTo: input.dateTo,
         categoryId: input.category
       })
-      return body.messages.reduce(function (result: Document[], message: DocumentInfoDTO) {
-        if (message) result.push(Document.fromDocumentInfo(message))
+      return body.messages.reduce(function (result: Document[], documentMessage: DocumentInfoDTO) {
+        if (documentMessage) result.push(Document.fromDocumentInfo(documentMessage))
         return result
       }, [])
 
     } catch (exception) {
+      logger.error(exception)
       return []
     }
   }
@@ -50,7 +50,7 @@ export class DocumentService {
     try {
       const body = await this.customersApi.customersCategories({ kennitala: natReg })
       return body.categories.reduce(function (result: DocumentCategory[], category: CategoryDTO) {
-        if (category) result.push(DocumentCategory.fromDocumentDTO(category))
+        if (category) result.push(DocumentCategory.fromCategoryDTO(category))
         return result
       }, [])
     } catch (exception) {
@@ -59,5 +59,3 @@ export class DocumentService {
     }
   }
 }
-
-

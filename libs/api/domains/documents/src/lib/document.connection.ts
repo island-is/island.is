@@ -21,6 +21,7 @@ export class DocumentOauthConnection {
       axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
       const result = await axios.post(token_url, qs.stringify(postData))
+      logger.debug(result.data)
       return result.data.access_token
     } catch (exception) {
       logger.error('Token fetch failed with , ', exception)

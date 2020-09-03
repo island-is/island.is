@@ -9,7 +9,7 @@ export class DocumentCategory {
   @Field((type) => String)
   name?: string
 
-  static fromDocumentDTO(dto: CategoryDTO) {
+  static fromCategoryDTO(dto: CategoryDTO) {
     const category = new DocumentCategory()
     category.id = dto.id
     category.name = dto.name
