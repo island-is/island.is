@@ -5,10 +5,9 @@ import cn from 'classnames'
 import * as styles from './Link.treat'
 
 const isLinkInternal = (href) => {
-  // If it's a relative url such as '/path', 'path' and does not contain a protocol we can assume it is internal.
-  if (href.indexOf('://') === -1) return true
+  if (typeof href === 'string' && href.indexOf('://') !== -1) return false
 
-  return false
+  return true
 }
 
 interface Props extends LinkProps {
@@ -46,6 +45,7 @@ const Link: React.FC<Props> = ({
         scroll={scroll}
         passHref={passHref}
         prefetch={prefetch}
+        as={as}
       >
         <a className={classNames} {...linkProps}>
           {children}
