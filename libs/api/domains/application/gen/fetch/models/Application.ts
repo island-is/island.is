@@ -157,7 +157,7 @@ export enum ApplicationTypeIdEnum {
     ExampleForm2 = 'ExampleForm2',
     ExampleForm3 = 'ExampleForm3',
     FamilyAndPets = 'FamilyAndPets',
-    PaternityLeave = 'PaternityLeave'
+    ParentalLeave = 'ParentalLeave'
 }
 
 

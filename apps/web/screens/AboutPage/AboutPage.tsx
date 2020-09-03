@@ -1,9 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, ReactNode, useRef, useMemo, Ref, forwardRef } from 'react'
 import fromPairs from 'lodash/fromPairs'
-import Link from 'next/link'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
-import { Locale } from '@island.is/web/i18n/I18n'
 import { useI18n } from '@island.is/web/i18n'
 import {
   Query,
@@ -35,6 +33,7 @@ import {
   BoxProps,
   Breadcrumbs,
   Stack,
+  Link,
 } from '@island.is/island-ui/core'
 import { Content } from '@island.is/island-ui/contentful'
 import Sidebar, { SidebarProps } from './Sidebar'
@@ -158,12 +157,8 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                   <div className={styles.indent}>
                     <Stack space={2}>
                       <Breadcrumbs color="blue300" separatorColor="blue300">
-                        <Link href={makePath()}>
-                          <a>Ísland.is</a>
-                        </Link>
-                        <Link href={''}>
-                          <a>{page.title}</a>
-                        </Link>
+                        <Link href={makePath()}>Ísland.is</Link>
+                        <Link href="">{page.title}</Link>
                       </Breadcrumbs>
                       <Typography variant="h1" as="h1" color="white">
                         {slice.title}
@@ -224,15 +219,13 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                               <Divider weight={colors.divider} />
                             </Box>
                             <Link href={url}>
-                              <a>
-                                <Typography
-                                  variant="p"
-                                  as="div"
-                                  color={colors.secondary}
-                                >
-                                  {text}
-                                </Typography>
-                              </a>
+                              <Typography
+                                variant="p"
+                                as="div"
+                                color={colors.secondary}
+                              >
+                                {text}
+                              </Typography>
                             </Link>
                           </>
                         ))}

@@ -100,7 +100,7 @@ export const ServicePortalDocuments = () => {
                     icon={searchOpen ? 'close' : 'search'}
                     onClick={handleExtendSearchClick}
                   >
-                    {searchOpen ? 'Loka ýtarleit' : 'Ýtarleit'}
+                    {searchOpen ? 'Loka ítarleit' : 'Ítarleit'}
                   </Button>
                 </Column>
               </Columns>

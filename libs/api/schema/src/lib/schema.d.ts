@@ -92,13 +92,18 @@ export type AdgerdirTag = {
 export type AdgerdirPage = {
   __typename?: 'AdgerdirPage'
   id: Scalars['String']
-  slug: Scalars['String']
   title: Scalars['String']
-  description?: Maybe<Scalars['String']>
+  description: Scalars['String']
+  longDescription?: Maybe<Scalars['String']>
   content?: Maybe<Scalars['String']>
+  objective?: Maybe<Scalars['String']>
+  slug: Scalars['String']
   tags: Array<AdgerdirTag>
   link?: Maybe<Scalars['String']>
+  linkButtonText?: Maybe<Scalars['String']>
   status: Scalars['String']
+  estimatedCostIsk?: Maybe<Scalars['Float']>
+  finalCostIsk?: Maybe<Scalars['Float']>
 }
 
 export type AdgerdirPages = {
@@ -420,7 +425,7 @@ export enum ApplicationTypeIdEnum {
   ExampleForm2 = 'ExampleForm2',
   ExampleForm3 = 'ExampleForm3',
   FamilyAndPets = 'FamilyAndPets',
-  PaternityLeave = 'PaternityLeave',
+  ParentalLeave = 'ParentalLeave',
 }
 
 export type PresignedPost = {
@@ -666,10 +671,10 @@ export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<Application>
   updateApplication?: Maybe<Application>
+  updateApplicationExternalData?: Maybe<Application>
   addAttachment?: Maybe<Application>
   deleteAttachment?: Maybe<Application>
   createUploadUrl: PresignedPost
-  updateApplicationExternalData?: Maybe<Application>
 }
 
 export type MutationCreateApplicationArgs = {
@@ -678,6 +683,10 @@ export type MutationCreateApplicationArgs = {
 
 export type MutationUpdateApplicationArgs = {
   input: UpdateApplicationInput
+}
+
+export type MutationUpdateApplicationExternalDataArgs = {
+  input: UpdateApplicationExternalDataInput
 }
 
 export type MutationAddAttachmentArgs = {
@@ -690,10 +699,6 @@ export type MutationDeleteAttachmentArgs = {
 
 export type MutationCreateUploadUrlArgs = {
   filename: Scalars['String']
-}
-
-export type MutationUpdateApplicationExternalDataArgs = {
-  input: UpdateApplicationExternalDataInput
 }
 
 export type CreateApplicationInput = {
@@ -722,7 +727,7 @@ export enum CreateApplicationDtoTypeIdEnum {
   ExampleForm2 = 'ExampleForm2',
   ExampleForm3 = 'ExampleForm3',
   FamilyAndPets = 'FamilyAndPets',
-  PaternityLeave = 'PaternityLeave',
+  ParentalLeave = 'ParentalLeave',
 }
 
 export type UpdateApplicationInput = {
@@ -741,7 +746,7 @@ export enum UpdateApplicationDtoTypeIdEnum {
   ExampleForm2 = 'ExampleForm2',
   ExampleForm3 = 'ExampleForm3',
   FamilyAndPets = 'FamilyAndPets',
-  PaternityLeave = 'PaternityLeave',
+  ParentalLeave = 'ParentalLeave',
 }
 
 export enum UpdateApplicationDtoStateEnum {
@@ -753,17 +758,6 @@ export enum UpdateApplicationDtoStateEnum {
   Manualapproved = 'MANUALAPPROVED',
   Rejected = 'REJECTED',
   Unknown = 'UNKNOWN',
-}
-
-export type AddAttachmentInput = {
-  id: Scalars['String']
-  key: Scalars['String']
-  url: Scalars['String']
-}
-
-export type DeleteAttachmentInput = {
-  id: Scalars['String']
-  key: Scalars['String']
 }
 
 export type UpdateApplicationExternalDataInput = {
@@ -780,6 +774,17 @@ export enum DataProviderDtoTypeEnum {
   ExpectedDateOfBirth = 'ExpectedDateOfBirth',
   ExampleFails = 'ExampleFails',
   ExampleSucceeds = 'ExampleSucceeds',
+}
+
+export type AddAttachmentInput = {
+  id: Scalars['String']
+  key: Scalars['String']
+  url: Scalars['String']
+}
+
+export type DeleteAttachmentInput = {
+  id: Scalars['String']
+  key: Scalars['String']
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -908,6 +913,7 @@ export type ResolversTypes = {
   Article: ResolverTypeWrapper<Article>
   AdgerdirTag: ResolverTypeWrapper<AdgerdirTag>
   AdgerdirPage: ResolverTypeWrapper<AdgerdirPage>
+  Float: ResolverTypeWrapper<Scalars['Float']>
   AdgerdirPages: ResolverTypeWrapper<AdgerdirPages>
   Image: ResolverTypeWrapper<Image>
   AdgerdirNews: ResolverTypeWrapper<AdgerdirNews>
@@ -1009,11 +1015,11 @@ export type ResolversTypes = {
   UpdateApplicationInput: UpdateApplicationInput
   UpdateApplicationDtoTypeIdEnum: UpdateApplicationDtoTypeIdEnum
   UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
-  AddAttachmentInput: AddAttachmentInput
-  DeleteAttachmentInput: DeleteAttachmentInput
   UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
   DataProvider: DataProvider
   DataProviderDtoTypeEnum: DataProviderDtoTypeEnum
+  AddAttachmentInput: AddAttachmentInput
+  DeleteAttachmentInput: DeleteAttachmentInput
 }
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -1029,6 +1035,7 @@ export type ResolversParentTypes = {
   Article: Article
   AdgerdirTag: AdgerdirTag
   AdgerdirPage: AdgerdirPage
+  Float: Scalars['Float']
   AdgerdirPages: AdgerdirPages
   Image: Image
   AdgerdirNews: AdgerdirNews
@@ -1118,10 +1125,10 @@ export type ResolversParentTypes = {
   Mutation: {}
   CreateApplicationInput: CreateApplicationInput
   UpdateApplicationInput: UpdateApplicationInput
-  AddAttachmentInput: AddAttachmentInput
-  DeleteAttachmentInput: DeleteAttachmentInput
   UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
   DataProvider: DataProvider
+  AddAttachmentInput: AddAttachmentInput
+  DeleteAttachmentInput: DeleteAttachmentInput
 }
 
 export type HelloWorldResolvers<
@@ -1245,17 +1252,34 @@ export type AdgerdirPageResolvers<
   ParentType extends ResolversParentTypes['AdgerdirPage'] = ResolversParentTypes['AdgerdirPage']
 > = {
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  description?: Resolver<
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  longDescription?: Resolver<
     Maybe<ResolversTypes['String']>,
     ParentType,
     ContextType
   >
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  objective?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   tags?: Resolver<Array<ResolversTypes['AdgerdirTag']>, ParentType, ContextType>
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  linkButtonText?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   status?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  estimatedCostIsk?: Resolver<
+    Maybe<ResolversTypes['Float']>,
+    ParentType,
+    ContextType
+  >
+  finalCostIsk?: Resolver<
+    Maybe<ResolversTypes['Float']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1937,6 +1961,12 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationUpdateApplicationArgs, 'input'>
   >
+  updateApplicationExternalData?: Resolver<
+    Maybe<ResolversTypes['Application']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateApplicationExternalDataArgs, 'input'>
+  >
   addAttachment?: Resolver<
     Maybe<ResolversTypes['Application']>,
     ParentType,
@@ -1954,12 +1984,6 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationCreateUploadUrlArgs, 'filename'>
-  >
-  updateApplicationExternalData?: Resolver<
-    Maybe<ResolversTypes['Application']>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationUpdateApplicationExternalDataArgs, 'input'>
   >
 }
 

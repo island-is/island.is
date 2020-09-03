@@ -45,7 +45,7 @@ describe('Create DiscountCode', () => {
 
     expect(response.body).toEqual({
       discountCode: expect.any(String),
-      expires: '2020-08-19T14:26:22.018Z',
+      expiresIn: 86400,
       nationalId,
     })
     expect(spy).toHaveBeenCalled()

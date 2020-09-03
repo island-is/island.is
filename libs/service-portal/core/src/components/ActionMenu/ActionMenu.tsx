@@ -1,7 +1,7 @@
 import React, { FC, useState, useRef } from 'react'
 import { Box, Icon, Stack, Typography } from '@island.is/island-ui/core'
 import * as styles from './ActionMenu.treat'
-import { useOutsideClick } from '@island.is/service-portal/core'
+import useOutsideClick from '../../hooks/useOutsideClick/useOutsideClick'
 
 interface ActionMenuItemProps {
   onClick?: () => void
