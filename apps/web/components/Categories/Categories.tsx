@@ -1,6 +1,5 @@
-import React, { FC, ReactNode } from 'react'
+import React, { FC } from 'react'
 import {
-  Box,
   Typography,
   GridRow,
   GridColumn,
@@ -25,27 +24,25 @@ export const Categories: FC<CategoriesProps> = ({
   cards,
 }) => {
   return (
-    <Box background="purple100" paddingY={8}>
-      <GridContainer>
-        <GridRow>
-          <GridColumn span={[6, 6, 12]}>
-            <Typography variant="h3" as="h3" paddingBottom={4}>
-              {title}
-            </Typography>
-          </GridColumn>
-        </GridRow>
+    <GridContainer>
+      <GridRow>
+        <GridColumn span={[6, 6, 12]}>
+          <Typography variant="h3" as="h3" paddingBottom={4}>
+            {title}
+          </Typography>
+        </GridColumn>
+      </GridRow>
 
-        <GridRow>
-          {cards.map((card, index) => {
-            return (
-              <GridColumn key={index} span={[12, 6, 6, 4]} paddingBottom={3}>
-                <Card {...card} />
-              </GridColumn>
-            )
-          })}
-        </GridRow>
-      </GridContainer>
-    </Box>
+      <GridRow>
+        {cards.map((card, index) => {
+          return (
+            <GridColumn key={index} span={[12, 6, 6, 4]} paddingBottom={3}>
+              <Card {...card} />
+            </GridColumn>
+          )
+        })}
+      </GridRow>
+    </GridContainer>
   )
 }
 

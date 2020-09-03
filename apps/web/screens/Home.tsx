@@ -28,6 +28,7 @@ import useRouteNames from '../i18n/useRouteNames'
 import FrontpageTabs from '../components/FrontpageTabs/FrontpageTabs'
 import { IntroductionSection } from '../components/IntroductionSection'
 import { LifeEventsCardsSection } from '../components/LifeEventsCardsSection'
+import { Section } from '../components/Section'
 
 interface HomeProps {
   categories: Query['categories']
@@ -88,21 +89,33 @@ const Home: Screen<HomeProps> = ({
 
   return (
     <>
-      <Box paddingY={[2, 2, 3, 3, 6]}>
+      <Section paddingY={[2, 2, 3, 3, 6]}>
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
-      </Box>
-      <LifeEventsCardsSection title={n('lifeEventsTitle')} />
-      <Box background="purple100">
+      </Section>
+      <Section
+        paddingTop={4}
+        backgroundBleed={{
+          bleedAmount: 100,
+          bleedDirection: 'bottom',
+          fromColor: 'white',
+          toColor: 'blue100',
+        }}
+      >
+        <LifeEventsCardsSection title={n('lifeEventsTitle')} />
+      </Section>
+      <Section background="purple100" paddingY={8}>
         <Categories title={n('articlesTitle')} cards={cards} />
-      </Box>
-      <IntroductionSection
-        subtitle="Markmiðið okkar"
-        title="Öll opinber þjónusta á einum stað"
-        introText="Við vinnum að margvíslegum verkefnum sem öll stuðla að því að gera opinbera þjónustu skilvirkari og notendavænni."
-        text="Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn."
-        linkText="Nánar um stafrænt Ísland"
-        linkUrl="/flokkur/fjolskylda-og-velferd"
-      />
+      </Section>
+      <Section paddingY={8}>
+        <IntroductionSection
+          subtitle="Markmiðið okkar"
+          title="Öll opinber þjónusta á einum stað"
+          introText="Við vinnum að margvíslegum verkefnum sem öll stuðla að því að gera opinbera þjónustu skilvirkari og notendavænni."
+          text="Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn."
+          linkText="Nánar um stafrænt Ísland"
+          linkUrl="/flokkur/fjolskylda-og-velferd"
+        />
+      </Section>
     </>
   )
 }

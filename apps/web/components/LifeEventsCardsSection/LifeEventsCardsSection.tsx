@@ -67,7 +67,7 @@ const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   title = 'Lífsviðburðir',
 }) => {
   return (
-    <Box paddingY={8}>
+    <Box paddingTop={8}>
       <GridContainer>
         <GridRow>
           <GridColumn span={[6, 6, 12]}>
