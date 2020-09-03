@@ -87,20 +87,6 @@ components:
           type: string
       required:
         - version
-    Discount:
-      type: object
-      properties:
-        discountCode:
-          type: string
-        nationalId:
-          type: string
-        expires:
-          format: date-time
-          type: string
-      required:
-        - discountCode
-        - nationalId
-        - expires
     FlightLegDto:
       type: object
       properties:
@@ -198,6 +184,23 @@ components:
         - flightLegs
         - created
         - modified
+    Fund:
+      type: object
+      properties:
+        nationalId:
+          type: string
+        credit:
+          type: number
+          description: Determines if the user has any discount credits left
+        used:
+          type: number
+        total:
+          type: number
+      required:
+        - nationalId
+        - credit
+        - used
+        - total
     User:
       type: object
       properties:
@@ -208,7 +211,10 @@ components:
         lastName:
           type: string
         gender:
-          type: object
+          type: string
+          enum:
+            - kvk
+            - kk
         nationalId:
           type: string
         address:
@@ -218,7 +224,7 @@ components:
         city:
           type: string
         fund:
-          type: object
+          $ref: '#/components/schemas/Fund'
       required:
         - firstName
         - middleName
@@ -256,26 +262,6 @@ paths:
                 $ref: '#/components/schemas/Version'
       tags:
         - internal
-  '/api/public/users/{nationalId}/discounts':
-    post:
-      operationId: PublicDiscountController_createDiscountCode
-      parameters:
-        - name: nationalId
-          required: true
-          in: path
-          schema:
-            type: string
-      responses:
-        '200':
-          description: ''
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Discount'
-      tags:
-        - Discounts
-      security:
-        - bearer: []
   '/api/public/discounts/{discountCode}/flights':
     post:
       operationId: PublicFlightController_create
@@ -360,7 +346,7 @@ paths:
         - bearer: []
   '/api/public/discounts/{discountCode}/user':
     get:
-      operationId: PublicUserController_get
+      operationId: PublicUserController_getUserByDiscountCode
       parameters:
         - name: discountCode
           required: true
