@@ -224,6 +224,13 @@
     },
     "infra-monitoring": {
       "tags": []
+    },
+    "my-app": {
+      "tags": []
+    },
+    "my-app-e2e": {
+      "tags": [],
+      "implicitDependencies": ["my-app"]
     }
   }
 }
