@@ -20,10 +20,10 @@ export type Scalars = {
   Boolean: boolean
   Int: number
   Float: number
-  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
-  DateTime: any
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: any
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
+  DateTime: any
 }
 
 export type HelloWorld = {
@@ -389,6 +389,15 @@ export type AdgerdirTags = {
   items: Array<AdgerdirTag>
 }
 
+export type LifeEventPage = {
+  __typename?: 'LifeEventPage'
+  title: Scalars['String']
+  slug: Scalars['String']
+  intro: Scalars['String']
+  image: Image
+  body: Scalars['JSON']
+}
+
 export type Application = {
   __typename?: 'Application'
   id: Scalars['ID']
@@ -459,6 +468,7 @@ export type Query = {
   getFrontpageSliderList?: Maybe<FrontpageSliderList>
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
+  getLifeEventPage?: Maybe<LifeEventPage>
   getApplication?: Maybe<Application>
   getApplicationsByType?: Maybe<Array<Application>>
   getDocument?: Maybe<Document>
@@ -534,6 +544,10 @@ export type QueryGetAdgerdirFrontpageArgs = {
 
 export type QueryGetMenuArgs = {
   input: GetMenuInput
+}
+
+export type QueryGetLifeEventPageArgs = {
+  input: GetLifeEventPageInput
 }
 
 export type QueryGetApplicationArgs = {
@@ -647,6 +661,11 @@ export type GetAdgerdirFrontpageInput = {
 
 export type GetMenuInput = {
   name: Scalars['String']
+  lang: Scalars['String']
+}
+
+export type GetLifeEventPageInput = {
+  slug: Scalars['String']
   lang: Scalars['String']
 }
 
@@ -970,10 +989,11 @@ export type ResolversTypes = {
   GenericPage: ResolverTypeWrapper<GenericPage>
   Menu: ResolverTypeWrapper<Menu>
   AdgerdirTags: ResolverTypeWrapper<AdgerdirTags>
+  LifeEventPage: ResolverTypeWrapper<LifeEventPage>
+  JSON: ResolverTypeWrapper<Scalars['JSON']>
   Application: ResolverTypeWrapper<Application>
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>
   ApplicationStateEnum: ApplicationStateEnum
-  JSON: ResolverTypeWrapper<Scalars['JSON']>
   ApplicationTypeIdEnum: ApplicationTypeIdEnum
   PresignedPost: ResolverTypeWrapper<PresignedPost>
   Document: ResolverTypeWrapper<Document>
@@ -999,6 +1019,7 @@ export type ResolversTypes = {
   GetFrontpageSliderListInput: GetFrontpageSliderListInput
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
+  GetLifeEventPageInput: GetLifeEventPageInput
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
@@ -1087,9 +1108,10 @@ export type ResolversParentTypes = {
   GenericPage: GenericPage
   Menu: Menu
   AdgerdirTags: AdgerdirTags
+  LifeEventPage: LifeEventPage
+  JSON: Scalars['JSON']
   Application: Application
   DateTime: Scalars['DateTime']
-  JSON: Scalars['JSON']
   PresignedPost: PresignedPost
   Document: Document
   Boolean: Scalars['Boolean']
@@ -1112,6 +1134,7 @@ export type ResolversParentTypes = {
   GetFrontpageSliderListInput: GetFrontpageSliderListInput
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
+  GetLifeEventPageInput: GetLifeEventPageInput
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
@@ -1727,6 +1750,23 @@ export type AdgerdirTagsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type LifeEventPageResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['LifeEventPage'] = ResolversParentTypes['LifeEventPage']
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  image?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
+  body?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export interface JsonScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
+  name: 'JSON'
+}
+
 export type ApplicationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Application'] = ResolversParentTypes['Application']
@@ -1760,11 +1800,6 @@ export type ApplicationResolvers<
 export interface DateTimeScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime'
-}
-
-export interface JsonScalarConfig
-  extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
-  name: 'JSON'
 }
 
 export type PresignedPostResolvers<
@@ -1901,6 +1936,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetMenuArgs, 'input'>
   >
+  getLifeEventPage?: Resolver<
+    Maybe<ResolversTypes['LifeEventPage']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetLifeEventPageArgs, 'input'>
+  >
   getApplication?: Resolver<
     Maybe<ResolversTypes['Application']>,
     ParentType,
@@ -2009,9 +2050,10 @@ export type Resolvers<ContextType = Context> = {
   GenericPage?: GenericPageResolvers<ContextType>
   Menu?: MenuResolvers<ContextType>
   AdgerdirTags?: AdgerdirTagsResolvers<ContextType>
+  LifeEventPage?: LifeEventPageResolvers<ContextType>
+  JSON?: GraphQLScalarType
   Application?: ApplicationResolvers<ContextType>
   DateTime?: GraphQLScalarType
-  JSON?: GraphQLScalarType
   PresignedPost?: PresignedPostResolvers<ContextType>
   Document?: DocumentResolvers<ContextType>
   Query?: QueryResolvers<ContextType>

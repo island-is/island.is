@@ -21,6 +21,7 @@ import { GetNamespaceInput } from './dto/getNamespace.input'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
+import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
 import {
   getArticle,
   getNews,
@@ -35,12 +36,14 @@ import {
   getAdgerdirFrontpage,
   getMenu,
   getAdgerdirTags,
+  getLifeEventPage,
 } from './services'
 import { LatestNewsSlice } from './models/slices/latestNewsSlice.model'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
 import { AdgerdirTags } from './models/adgerdirTags.model'
 import { GetAdgerdirTagsInput } from './dto/getAdgerdirTags.input'
+import {LifeEventPage} from './models/lifeEventPage.model'
 
 @Resolver()
 export class CmsResolver {
@@ -125,6 +128,13 @@ export class CmsResolver {
   @Query(() => Menu, { nullable: true })
   getMenu(@Args('input') input: GetMenuInput): Promise<Menu | null> {
     return getMenu(input?.name ?? '', input?.lang ?? 'is-IS')
+  }
+
+  @Query(() => LifeEventPage, { nullable: true })
+  getLifeEventPage(
+    @Args('input') input: GetLifeEventPageInput,
+  ): Promise<LifeEventPage | null> {
+    return getLifeEventPage(input.slug, input.lang)
   }
 }
 
