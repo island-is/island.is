@@ -3,3 +3,5 @@ declare module '*.svg' {
   export const ReactComponent: any
   export default content
 }
+
+type ValueOf<T> = T[keyof T]

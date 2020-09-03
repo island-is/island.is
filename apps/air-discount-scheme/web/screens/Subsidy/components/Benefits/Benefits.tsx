@@ -40,7 +40,9 @@ const DiscountsQuery = gql`
 `
 
 function Benefits({ misc }: PropTypes) {
-  const { data, loading, called, refetch } = useQuery(DiscountsQuery)
+  const { data, loading, called, refetch } = useQuery(DiscountsQuery, {
+    ssr: false,
+  })
   useEffect(() => {
     const interval = setInterval(() => {
       refetch()

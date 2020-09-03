@@ -5,7 +5,7 @@ import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
 
-import { Locale, Routes } from './types'
+import { Locale, Routes } from '../types'
 import { QueryGetNamespaceArgs, Query } from '@island.is/api/schema'
 
 export const GetNamespaceQuery = gql`

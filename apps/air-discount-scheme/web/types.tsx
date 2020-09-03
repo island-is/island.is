@@ -2,7 +2,16 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 import { NextComponentType } from 'next'
 import { NextPageContext } from 'next/dist/next-server/lib/utils'
 
-import { Routes } from './i18n'
+export type Locale = 'is' | 'en'
+
+export interface Routes {
+  auth: string
+  home: string
+  myBenefits: string
+  termsOfUse: string
+  error: string
+  notFound: string
+}
 
 export type GetInitialPropsContext<Context> = Context & {
   apolloClient: ApolloClient<NormalizedCacheObject>
