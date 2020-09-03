@@ -13,25 +13,21 @@ export const Badge: FC<BadgeProps> = ({ number, children }) => {
     return null
   }
 
-  const Number = ({ className, ...props }) => (
-    <Box
-      display="flex"
-      alignItems="center"
-      textAlign="center"
-      background="red400"
-      justifyContent="center"
-      pointerEvents="none"
-      className={cn(styles.badge, className)}
-      {...props}
-    >
-      {number}
-    </Box>
-  )
-
   return (
     <Box position="relative">
       {children}
-      <Number position="absolute" className={styles.position} />
+      <Box
+        position="absolute"
+        display="flex"
+        alignItems="center"
+        textAlign="center"
+        background="red400"
+        justifyContent="center"
+        pointerEvents="none"
+        className={cn(styles.badge, styles.position)}
+      >
+        {number}
+      </Box>
     </Box>
   )
 }
