@@ -76,7 +76,7 @@ export type Taxonomy = {
   __typename?: 'Taxonomy'
   title?: Maybe<Scalars['String']>
   slug?: Maybe<Scalars['String']>
-  description: Scalars['String']
+  description?: Maybe<Scalars['String']>
 }
 
 export type Article = {
@@ -86,7 +86,7 @@ export type Article = {
   title: Scalars['String']
   content?: Maybe<Scalars['String']>
   group?: Maybe<Taxonomy>
-  category: Taxonomy
+  category?: Maybe<Taxonomy>
   relatedArticles: Array<Article>
 }
 
@@ -113,11 +113,6 @@ export type AdgerdirPage = {
   finalCostIsk?: Maybe<Scalars['Float']>
 }
 
-export type AdgerdirPages = {
-  __typename?: 'AdgerdirPages'
-  items: Array<AdgerdirPage>
-}
-
 export type Image = {
   __typename?: 'Image'
   url: Scalars['String']
@@ -137,6 +132,12 @@ export type AdgerdirNews = {
   image?: Maybe<Image>
   date: Scalars['String']
   content?: Maybe<Scalars['String']>
+  pages?: Maybe<Array<AdgerdirPage>>
+}
+
+export type AdgerdirPages = {
+  __typename?: 'AdgerdirPages'
+  items: Array<AdgerdirPage>
 }
 
 export type AdgerdirFrontpage = {
@@ -477,6 +478,7 @@ export type Query = {
   getLandingPage?: Maybe<LandingPage>
   getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
+  getAdgerdirNews?: Maybe<AdgerdirNews>
   getAdgerdirPages: AdgerdirPages
   getAdgerdirTags?: Maybe<AdgerdirTags>
   getFrontpageSliderList?: Maybe<FrontpageSliderList>
@@ -542,6 +544,10 @@ export type QueryGetGenericPageArgs = {
 
 export type QueryGetAdgerdirPageArgs = {
   input: GetAdgerdirPageInput
+}
+
+export type QueryGetAdgerdirNewsArgs = {
+  input: GetAdgerdirNewsInput
 }
 
 export type QueryGetAdgerdirPagesArgs = {
@@ -662,6 +668,11 @@ export type GetGenericPageInput = {
 }
 
 export type GetAdgerdirPageInput = {
+  slug?: Maybe<Scalars['String']>
+  lang: Scalars['String']
+}
+
+export type GetAdgerdirNewsInput = {
   slug?: Maybe<Scalars['String']>
   lang: Scalars['String']
 }
@@ -953,9 +964,9 @@ export type ResolversTypes = {
   AdgerdirTag: ResolverTypeWrapper<AdgerdirTag>
   AdgerdirPage: ResolverTypeWrapper<AdgerdirPage>
   Float: ResolverTypeWrapper<Scalars['Float']>
-  AdgerdirPages: ResolverTypeWrapper<AdgerdirPages>
   Image: ResolverTypeWrapper<Image>
   AdgerdirNews: ResolverTypeWrapper<AdgerdirNews>
+  AdgerdirPages: ResolverTypeWrapper<AdgerdirPages>
   AdgerdirFrontpage: ResolverTypeWrapper<
     Omit<AdgerdirFrontpage, 'slices'> & {
       slices: Array<ResolversTypes['AdgerdirSlice']>
@@ -1041,6 +1052,7 @@ export type ResolversTypes = {
   GetLandingPageInput: GetLandingPageInput
   GetGenericPageInput: GetGenericPageInput
   GetAdgerdirPageInput: GetAdgerdirPageInput
+  GetAdgerdirNewsInput: GetAdgerdirNewsInput
   GetAdgerdirPagesInput: GetAdgerdirPagesInput
   GetAdgerdirTagsInput: GetAdgerdirTagsInput
   GetFrontpageSliderListInput: GetFrontpageSliderListInput
@@ -1079,9 +1091,9 @@ export type ResolversParentTypes = {
   AdgerdirTag: AdgerdirTag
   AdgerdirPage: AdgerdirPage
   Float: Scalars['Float']
-  AdgerdirPages: AdgerdirPages
   Image: Image
   AdgerdirNews: AdgerdirNews
+  AdgerdirPages: AdgerdirPages
   AdgerdirFrontpage: Omit<AdgerdirFrontpage, 'slices'> & {
     slices: Array<ResolversParentTypes['AdgerdirSlice']>
   }
@@ -1159,6 +1171,7 @@ export type ResolversParentTypes = {
   GetLandingPageInput: GetLandingPageInput
   GetGenericPageInput: GetGenericPageInput
   GetAdgerdirPageInput: GetAdgerdirPageInput
+  GetAdgerdirNewsInput: GetAdgerdirNewsInput
   GetAdgerdirPagesInput: GetAdgerdirPagesInput
   GetAdgerdirTagsInput: GetAdgerdirTagsInput
   GetFrontpageSliderListInput: GetFrontpageSliderListInput
@@ -1280,7 +1293,11 @@ export type TaxonomyResolvers<
 > = {
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1293,7 +1310,11 @@ export type ArticleResolvers<
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   group?: Resolver<Maybe<ResolversTypes['Taxonomy']>, ParentType, ContextType>
-  category?: Resolver<ResolversTypes['Taxonomy'], ParentType, ContextType>
+  category?: Resolver<
+    Maybe<ResolversTypes['Taxonomy']>,
+    ParentType,
+    ContextType
+  >
   relatedArticles?: Resolver<
     Array<ResolversTypes['Article']>,
     ParentType,
@@ -1347,18 +1368,6 @@ export type AdgerdirPageResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export type AdgerdirPagesResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['AdgerdirPages'] = ResolversParentTypes['AdgerdirPages']
-> = {
-  items?: Resolver<
-    Array<ResolversTypes['AdgerdirPage']>,
-    ParentType,
-    ContextType
-  >
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
 export type ImageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Image'] = ResolversParentTypes['Image']
@@ -1383,6 +1392,23 @@ export type AdgerdirNewsResolvers<
   image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  pages?: Resolver<
+    Maybe<Array<ResolversTypes['AdgerdirPage']>>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type AdgerdirPagesResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['AdgerdirPages'] = ResolversParentTypes['AdgerdirPages']
+> = {
+  items?: Resolver<
+    Array<ResolversTypes['AdgerdirPage']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1479,6 +1505,7 @@ export type NewsResolvers<
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  subtitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
@@ -1977,6 +2004,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetAdgerdirPageArgs, 'input'>
   >
+  getAdgerdirNews?: Resolver<
+    Maybe<ResolversTypes['AdgerdirNews']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetAdgerdirNewsArgs, 'input'>
+  >
   getAdgerdirPages?: Resolver<
     ResolversTypes['AdgerdirPages'],
     ParentType,
@@ -2085,9 +2118,9 @@ export type Resolvers<ContextType = Context> = {
   Article?: ArticleResolvers<ContextType>
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
   AdgerdirPage?: AdgerdirPageResolvers<ContextType>
-  AdgerdirPages?: AdgerdirPagesResolvers<ContextType>
   Image?: ImageResolvers<ContextType>
   AdgerdirNews?: AdgerdirNewsResolvers<ContextType>
+  AdgerdirPages?: AdgerdirPagesResolvers<ContextType>
   AdgerdirFrontpage?: AdgerdirFrontpageResolvers<ContextType>
   AdgerdirSlice?: AdgerdirSliceResolvers<ContextType>
   AdgerdirGroupSlice?: AdgerdirGroupSliceResolvers<ContextType>

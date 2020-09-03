@@ -1,4 +1,6 @@
 import React, { FC } from 'react'
+import { format } from 'date-fns'
+import { is } from 'date-fns/locale'
 import {
   Box,
   GridContainer,
@@ -22,9 +24,18 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
     return null
   }
 
-  const first = items[0]
-  const second = items[1]
-  const third = items[2]
+  const parsed = items.map((x, index) => {
+    return {
+      ...x,
+      dateFormatted: format(new Date(x.date), 'd. LLLL, uuuu', {
+        locale: is,
+      }).toLowerCase(),
+    }
+  })
+
+  const first = parsed[0]
+  const second = parsed[1]
+  const third = parsed[2]
 
   return (
     <Box paddingX={[1, 1, 1, 1, 6]}>
@@ -41,9 +52,9 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                     <BackgroundImage ratio="20:10" image={first.image} />
                   </Box>
                 ) : null}
-                <Stack space={3}>
+                <Stack space={2}>
                   <Heading
-                    subtitle={first.subtitle}
+                    subtitle={first.dateFormatted}
                     title={first.title}
                     intro={first.intro}
                   />
@@ -78,14 +89,14 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                   offset={[null, null, null, null, 1]}
                 >
                   {second.image ? (
-                    <Box marginTop={10} marginBottom={3}>
+                    <Box marginTop={10} marginBottom={2}>
                       <BackgroundImage ratio="20:10" image={second.image} />
                     </Box>
                   ) : null}
-                  <Stack space={3}>
+                  <Stack space={2}>
                     <Heading
                       main={false}
-                      subtitle={second.subtitle}
+                      subtitle={second.dateFormatted}
                       title={second.title}
                       intro={second.intro}
                       variant="h3"
@@ -109,14 +120,14 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                   offset={[null, null, null, 2, 2]}
                 >
                   {third.image ? (
-                    <Box marginTop={10} marginBottom={3}>
+                    <Box marginTop={10} marginBottom={2}>
                       <BackgroundImage ratio="20:10" image={third.image} />
                     </Box>
                   ) : null}
-                  <Stack space={3}>
+                  <Stack space={2}>
                     <Heading
                       main={false}
-                      subtitle={third.subtitle}
+                      subtitle={third.dateFormatted}
                       title={third.title}
                       intro={third.intro}
                       variant="h3"

@@ -7,7 +7,6 @@ import { AboutPage } from './models/aboutPage.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { AdgerdirTag } from './models/adgerdirTag.model'
-import { AdgerdirGroup } from './models/adgerdirGroup.model'
 import { AdgerdirFeaturedNewsSlice } from './models/adgerdirSlices/adgerdirFeaturedNewsSlice.model'
 import { AdgerdirGroupSlice } from './models/adgerdirSlices/adgerdirGroupSlice.model'
 import { AdgerdirNews } from './models/adgerdirNews.model'
@@ -80,6 +79,7 @@ export const mapAdgerdirNewsItem = ({
   image: fields.image?.fields?.file && mapImage(fields.image),
   date: fields.date,
   content: JSON.stringify(fields.content),
+  pages: fields.pages && fields.pages.map(mapAdgerdirPage),
 })
 
 export const mapAdgerdirFeaturedNewsSlice = ({

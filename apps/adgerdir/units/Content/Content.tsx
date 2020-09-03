@@ -12,6 +12,8 @@ import {
 import RichText from '../RichText/RichText'
 import EmbeddedVideo from '../EmbeddedVideo/EmbeddedVideo'
 import Hyperlink from '../Hyperlink/Hyperlink'
+import Paragraph from '../Paragraph/Paragraph'
+import Heading from '../Heading/Heading'
 
 const embeddedNodes = () => ({
   faqList: {
@@ -104,17 +106,32 @@ const defaultRenderNode = (overrides = {}) => {
         return null
       }
 
-      return <Typography variant="p">{children}</Typography>
+      return <Paragraph>{children}</Paragraph>
     },
-    [BLOCKS.HEADING_2]: (node, children) => (
-      <Typography variant="h2" as="h2">
+    [BLOCKS.HEADING_1]: (node, children) => (
+      <Heading as="h2" variant="h1">
         {children}
-      </Typography>
+      </Heading>
+    ),
+    [BLOCKS.HEADING_2]: (node, children) => (
+      <Heading as="h2" variant="h2">
+        {children}
+      </Heading>
     ),
     [BLOCKS.HEADING_3]: (node, children) => (
-      <Typography variant="h3" as="h3">
+      <Heading as="h3" variant="h3">
         {children}
-      </Typography>
+      </Heading>
+    ),
+    [BLOCKS.HEADING_4]: (node, children) => (
+      <Heading as="h4" variant="h4">
+        {children}
+      </Heading>
+    ),
+    [BLOCKS.HEADING_5]: (node, children) => (
+      <Heading as="h5" variant="h5">
+        {children}
+      </Heading>
     ),
     [BLOCKS.UL_LIST]: (node, children) => <BulletList>{children}</BulletList>,
     [BLOCKS.LIST_ITEM]: (node, children) => {

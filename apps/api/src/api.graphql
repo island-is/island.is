@@ -80,10 +80,6 @@ type AdgerdirPage {
   finalCostIsk: Float
 }
 
-type AdgerdirPages {
-  items: [AdgerdirPage!]!
-}
-
 type Image {
   url: String!
   title: String!
@@ -101,6 +97,11 @@ type AdgerdirNews {
   image: Image
   date: String!
   content: String
+  pages: [AdgerdirPage!]
+}
+
+type AdgerdirPages {
+  items: [AdgerdirPage!]!
 }
 
 type AdgerdirFrontpage {
@@ -406,6 +407,7 @@ type Query {
   getLandingPage(input: GetLandingPageInput!): LandingPage
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
+  getAdgerdirNews(input: GetAdgerdirNewsInput!): AdgerdirNews
   getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages!
   getAdgerdirTags(input: GetAdgerdirTagsInput!): AdgerdirTags
   getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
@@ -499,6 +501,11 @@ input GetGenericPageInput {
 }
 
 input GetAdgerdirPageInput {
+  slug: String
+  lang: String!
+}
+
+input GetAdgerdirNewsInput {
   slug: String
   lang: String!
 }
