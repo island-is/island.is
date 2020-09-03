@@ -365,6 +365,7 @@ export const Articles: FC<ArticlesProps> = ({
               setShowCount(showCount + ITEMS_PER_SHOW)
             }}
             variant="ghost"
+            width="fixed"
           >
             {n('seeMoreItems')}
           </Button>
