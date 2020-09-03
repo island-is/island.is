@@ -37,20 +37,48 @@ type AdgerdirPages {
   items: [AdgerdirPage!]!
 }
 
-type AdgerdirFrontpage {
-  id: String!
-  slug: String!
-  title: String!
-  description: String!
-  content: String
-}
-
 type Image {
   url: String!
   title: String!
   contentType: String!
   width: Int!
   height: Int!
+}
+
+type AdgerdirNews {
+  id: String!
+  slug: String!
+  subtitle: String!
+  title: String!
+  intro: String!
+  image: Image
+  date: String!
+  content: String
+}
+
+type AdgerdirFrontpage {
+  id: String!
+  title: String!
+  description: String!
+  content: String
+  slices: [AdgerdirSlice!]!
+}
+
+union AdgerdirSlice = AdgerdirGroupSlice | AdgerdirFeaturedNewsSlice
+
+type AdgerdirGroupSlice {
+  id: ID!
+  subtitle: String
+  title: String!
+  description: String
+  image: Image
+  pages: [AdgerdirPage!]!
+}
+
+type AdgerdirFeaturedNewsSlice {
+  id: ID!
+  title: String!
+  featured: [AdgerdirNews!]!
 }
 
 type FrontpageSlide {
@@ -183,7 +211,7 @@ type LatestNewsSlice {
 type MailingListSignupSlice {
   id: ID!
   title: String!
-  description: String!
+  description: String
   inputLabel: String!
   buttonText: String!
 }
@@ -250,25 +278,27 @@ type AdgerdirTags {
   items: [AdgerdirTag!]!
 }
 
+type Fund {
+  nationalId: ID!
+  credit: Float!
+  used: Float!
+  total: Float!
+}
+
 type User {
   nationalId: ID!
   name: String!
   mobile: String
   role: String!
+  fund: Fund
+  meetsADSRequirements: Boolean!
 }
 
 type Discount {
-  discountCode: ID!
-  expires: String!
-  nationalId: String!
-  flightLegFund: FlightLegFund!
-  user: User!
-}
-
-type FlightLegFund {
   nationalId: ID!
-  unused: Float!
-  total: Float!
+  discountCode: String!
+  expiresIn: Float!
+  user: User!
 }
 
 type Flight {
@@ -284,16 +314,17 @@ type Query {
   getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput!): PaginatedNews!
   getNamespace(input: GetNamespaceInput!): Namespace
-  getAboutPage(input: GetAboutPageInput!): AboutPage
+  getAboutPage(input: GetAboutPageInput!): AboutPage!
   getLandingPage(input: GetLandingPageInput!): LandingPage
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
-  getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages
+  getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages!
   getAdgerdirTags(input: GetAdgerdirTagsInput!): AdgerdirTags
   getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getMenu(input: GetMenuInput!): Menu
   user: User
+  discounts: [Discount!]
   flights: [Flight!]!
 }
 
@@ -360,8 +391,4 @@ input GetAdgerdirFrontpageInput {
 input GetMenuInput {
   name: String!
   lang: String!
-}
-
-type Mutation {
-  fetchDiscounts: [Discount!]
 }

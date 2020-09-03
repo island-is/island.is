@@ -1,4 +1,5 @@
-import { FormLeaf, FormValue } from '../types/Form'
+import { FormLeaf } from '../types/Form'
+import { FormValue } from '../types/Application'
 import {
   AllOrAny,
   Comparators,

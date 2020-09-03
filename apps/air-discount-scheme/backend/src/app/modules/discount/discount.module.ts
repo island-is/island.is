@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 
 import {
   PublicDiscountController,
@@ -6,10 +6,10 @@ import {
 } from './discount.controller'
 import { DiscountService } from './discount.service'
 import { CacheModule } from '../cache'
-import { FlightModule } from '../flight'
+import { NationalRegistryModule } from '../nationalRegistry'
 
 @Module({
-  imports: [forwardRef(() => FlightModule), CacheModule],
+  imports: [CacheModule, NationalRegistryModule],
   controllers: [PublicDiscountController, PrivateDiscountController],
   providers: [DiscountService],
   exports: [DiscountService],

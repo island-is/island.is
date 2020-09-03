@@ -169,73 +169,75 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
       </GridRow>
       <GridRow>
         <GridColumn span={6} offset={1}>
-          {tabs.map(({ title, subtitle, content, link }, index) => {
-            let href = null
-            let as = null
+          <div className={styles.tabPanelWrapper}>
+            {tabs.map(({ title, subtitle, content, link }, index) => {
+              let href = null
+              let as = null
 
-            const currentIndex = tab.items.findIndex(
-              (x) => x.id === tab.currentId,
-            )
+              const currentIndex = tab.items.findIndex(
+                (x) => x.id === tab.currentId,
+              )
 
-            const visible = currentIndex === index
+              const visible = currentIndex === index
 
-            if (link) {
-              const linkData = JSON.parse(link)
-              const contentId = linkData.sys?.contentType?.sys?.id
+              if (link) {
+                const linkData = JSON.parse(link)
+                const contentId = linkData.sys?.contentType?.sys?.id
 
-              const slug = linkData.fields?.slug
+                const slug = linkData.fields?.slug
 
-              if (slug && ['article', 'category'].includes(contentId)) {
-                href = `${makePath(contentId)}/[slug]`
-                as = makePath(contentId, slug)
+                if (slug && ['article', 'category'].includes(contentId)) {
+                  href = `${makePath(contentId)}/[slug]`
+                  as = makePath(contentId, slug)
+                }
               }
-            }
 
-            return (
-              <TabPanel
-                key={index}
-                {...tab}
-                style={{
-                  display: 'inline-block',
-                }}
-                className={cn(styles.tabPanel, {
-                  [styles.tabPanelVisible]: visible,
-                })}
-              >
-                <Box
-                  paddingY={3}
-                  ref={(el) => (itemsRef.current[index] = el)}
-                  style={{ minHeight: `${minHeight}px` }}
+              return (
+                <TabPanel
+                  key={index}
+                  {...tab}
+                  style={{
+                    display: 'inline-block',
+                  }}
+                  className={cn(styles.tabPanel, {
+                    [styles.tabPanelVisible]: visible,
+                  })}
                 >
-                  <Stack space={3}>
-                    <Typography variant="eyebrow" as="h2" color="purple400">
-                      <span className={styles.textItem}>{subtitle}</span>
-                    </Typography>
-                    <Typography variant="h1" as="h1">
-                      <span className={styles.textItem}>{title}</span>
-                    </Typography>
-                    <Typography variant="p" as="p">
-                      <span className={styles.textItem}>
-                        {content}
-                        {href ? (
-                          <>
-                            {` `}
-                            <Link as={as} href={href} passHref>
-                              <a className={styles.link}>
-                                <Button variant="text" icon="arrowRight">
-                                  Sjá nánar
-                                </Button>
-                              </a>
-                            </Link>
-                          </>
-                        ) : null}
-                      </span>
-                    </Typography>
-                  </Stack>
-                </Box>
-              </TabPanel>
-            )
-          })}
+                  <Box
+                    paddingY={3}
+                    ref={(el) => (itemsRef.current[index] = el)}
+                    style={{ minHeight: `${minHeight}px` }}
+                  >
+                    <Stack space={3}>
+                      <Typography variant="eyebrow" as="h2" color="purple400">
+                        <span className={styles.textItem}>{subtitle}</span>
+                      </Typography>
+                      <Typography variant="h1" as="h1">
+                        <span className={styles.textItem}>{title}</span>
+                      </Typography>
+                      <Typography variant="p" as="p">
+                        <span className={styles.textItem}>
+                          {content}
+                          {href ? (
+                            <>
+                              {` `}
+                              <Link as={as} href={href} passHref>
+                                <a className={styles.link}>
+                                  <Button variant="text" icon="arrowRight">
+                                    Sjá nánar
+                                  </Button>
+                                </a>
+                              </Link>
+                            </>
+                          ) : null}
+                        </span>
+                      </Typography>
+                    </Stack>
+                  </Box>
+                </TabPanel>
+              )
+            })}
+          </div>
 
           <Box
             display="inlineFlex"

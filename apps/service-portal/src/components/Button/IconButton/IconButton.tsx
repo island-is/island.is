@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import cn from 'classnames'
 
 interface Props {
-  icon: IconTypes
+  icon: IconTypes | undefined
   onClick?: () => void
   url?: string
   active?: boolean
@@ -22,7 +22,9 @@ const ButtonContent: FC<Props> = ({ icon, active, onClick, children }) => (
     onClick={onClick}
   >
     <Box marginRight={2}>
-      <Icon type={icon} color={active ? 'purple400' : 'dark300'} />
+      {icon ? (
+        <Icon type={icon} color={active ? 'purple400' : 'dark300'} />
+      ) : null}
     </Box>
     <Typography variant={active ? 'h5' : 'p'} as="span">
       {children}

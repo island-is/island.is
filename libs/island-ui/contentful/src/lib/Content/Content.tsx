@@ -12,6 +12,9 @@ import {
   Accordion,
   AccordionItem,
   Blockquote,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import RichText from '../RichText/RichText'
 import EmbeddedVideo from '../EmbeddedVideo/EmbeddedVideo'
@@ -103,7 +106,11 @@ const embeddedNodes = () => ({
   },
   processEntry: {
     component: BorderedContent,
-    wrapper: ({ children }) => <Box paddingY={[0, 0, 0, 6]}>{children}</Box>,
+    wrapper: ({ children }) => (
+      <Box paddingBottom={10}>
+        <GridContainer>{children}</GridContainer>
+      </Box>
+    ),
     processContent: (node) => {
       const {
         processTitle,
@@ -142,8 +149,8 @@ const embeddedNodes = () => ({
       return {
         showTopContent: details?.content?.length,
         topContent: (
-          <ContentBlock width="small">
-            <Stack space={[2, 2]}>
+          <GridRow>
+            <GridColumn span={10} offset={1}>
               {title && (
                 <Typography variant="h2" as="h3">
                   <span data-sidebar-link={slugify(title)}>{title}</span>
@@ -158,12 +165,12 @@ const embeddedNodes = () => ({
                 document={details}
                 renderNode={customProcessEntryRenderNode()}
               />
-            </Stack>
-          </ContentBlock>
+            </GridColumn>
+          </GridRow>
         ),
         bottomContent: (
-          <ContentBlock width="small">
-            <Stack space={[2, 2]}>
+          <GridRow>
+            <GridColumn span={10} offset={1}>
               {type !== 'No type' && (
                 <Typography variant="eyebrow" as="h4" color="blue400">
                   {processTypes[type].title}
@@ -186,8 +193,8 @@ const embeddedNodes = () => ({
                   {buttonText}
                 </Button>
               </Box>
-            </Stack>
-          </ContentBlock>
+            </GridColumn>
+          </GridRow>
         ),
       }
     },

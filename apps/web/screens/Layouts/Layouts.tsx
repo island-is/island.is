@@ -4,9 +4,7 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
-  ContentBlock,
 } from '@island.is/island-ui/core'
-import cn from 'classnames'
 import { Sticky } from '../../components'
 
 interface CategoryProps {
@@ -22,10 +20,10 @@ export const CategoryLayout: FC<CategoryProps> = ({
   <GridContainer>
     <Box paddingBottom={10}>
       <GridRow>
-        <GridColumn span={3}>
+        <GridColumn span={[12, 12, 4, 3]}>
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
-        <GridColumn span={6} offset={1}>
+        <GridColumn span={[12, 12, 8]} offset={[null, null, null, 1]}>
           <Box paddingBottom={10}>{children}</Box>
           {belowContent && belowContent}
         </GridColumn>
@@ -40,12 +38,12 @@ interface ArticleProps {
 
 export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
   <GridContainer>
-    <Box paddingBottom={10}>
+    <Box paddingY={10}>
       <GridRow>
-        <GridColumn span={7} offset={1}>
-          <Box paddingBottom={10}>{children}</Box>
+        <GridColumn span={8}>
+          <Box>{children}</Box>
         </GridColumn>
-        <GridColumn span={3} offset={1}>
+        <GridColumn span={4}>
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
       </GridRow>

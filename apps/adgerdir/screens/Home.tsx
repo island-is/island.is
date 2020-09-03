@@ -1,8 +1,21 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { ContentBlock, Box, Typography, Stack } from '@island.is/island-ui/core'
-import { Content } from '@island.is/island-ui/contentful'
-import { Categories, Sleeve, GroupedPages, CardsSlider } from '../components'
+import Head from 'next/head'
+import {
+  Box,
+  ContentBlock,
+  Typography,
+  Stack,
+  Breadcrumbs,
+} from '@island.is/island-ui/core'
+import { Content } from '@island.is/adgerdir/units/Content'
+import {
+  Articles,
+  Sleeve,
+  GroupedPages,
+  CardsSlider,
+  FeaturedNews,
+} from '@island.is/adgerdir/components'
 import { withApollo } from '../graphql'
 import { useI18n } from '../i18n'
 import {
@@ -19,27 +32,26 @@ import {
   GET_ADGERDIR_FRONTPAGE_QUERY,
 } from './queries'
 import { Screen } from '../types'
-// import { useNamespace } from '../hooks'
-// import { Locale } from '../i18n/I18n'
+import { useNamespace } from '../hooks'
+import { ArticleLayout } from './Layouts/Layouts'
 import { ColorSchemeContext } from '@island.is/adgerdir/context'
-import Head from 'next/head'
 
 interface HomeProps {
   frontpage: Query['getAdgerdirFrontpage']
-  data: Query['getAdgerdirPages']
+  pages: Query['getAdgerdirPages']
   tags: Query['getAdgerdirTags']
   namespace: Query['getNamespace']
 }
 
-const Home: Screen<HomeProps> = ({ frontpage, data, tags, namespace }) => {
+const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
   const { activeLocale } = useI18n()
-  // const n = useNamespace(namespace)
+  const n = useNamespace(namespace)
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
   }
 
-  const { items: pagesItems } = data
+  const { items: pagesItems } = pages
   const { items: tagsItems } = tags
 
   return (
@@ -47,109 +59,78 @@ const Home: Screen<HomeProps> = ({ frontpage, data, tags, namespace }) => {
       <Head>
         <title>Viðspyrna fyrir Ísland</title>
       </Head>
-      <Box paddingY={6}>
-        <Box paddingX={[3, 3, 6, 0]}>
-          <ContentBlock width="small">
-            <Stack space={3}>
-              <Typography variant="eyebrow" as="h2" color="roseTinted400">
-                Viðspyrna
-              </Typography>
-              <Typography variant="h1" as="h1">
-                {frontpage.title}
-              </Typography>
-              <Typography variant="intro" as="p">
-                {frontpage.description}
-              </Typography>
-            </Stack>
-          </ContentBlock>
-        </Box>
-        <Content document={frontpage.content} />
-      </Box>
+      <ArticleLayout sidebar={null}>
+        <Stack space={3}>
+          <Breadcrumbs color="blue400">
+            <span>Viðspyrna</span>
+          </Breadcrumbs>
+          <Typography variant="h1" as="h1">
+            {frontpage.title}
+          </Typography>
+          <Typography variant="intro" as="p">
+            {frontpage.description}
+          </Typography>
+          <Content document={frontpage.content} />
+        </Stack>
+      </ArticleLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
         <Box marginBottom={10}>
-          <Sleeve>
+          <Sleeve minHeight={400}>
             <Box background="red100">
               <ContentBlock width="large">
-                <Categories tags={tagsItems} items={pagesItems} />
+                <Articles
+                  tags={tagsItems}
+                  items={pagesItems}
+                  seeMoreText={n('seeMoreItems')}
+                  title={n('adgerdir')}
+                />
               </ContentBlock>
             </Box>
           </Sleeve>
         </Box>
       </ColorSchemeContext.Provider>
-      <ColorSchemeContext.Provider value={{ colorScheme: 'purple' }}>
-        <Box width="full" overflow="hidden" marginBottom={10}>
-          <ContentBlock width="large">
-            <Box padding={[0, 3, 6]}>
-              <GroupedPages
-                topContent={
-                  <Stack space={3}>
-                    <Typography variant="eyebrow" as="h2" color="roseTinted400">
-                      Viðspyrna
-                    </Typography>
-                    <Typography variant="h2" as="h3">
-                      {frontpage.title}
-                    </Typography>
-                    <Typography variant="p" as="p">
-                      {frontpage.description}
-                    </Typography>
-                  </Stack>
-                }
-                bottomContent={<CardsSlider items={pagesItems} key="purple" />}
-              />
-            </Box>
-          </ContentBlock>
-        </Box>
-      </ColorSchemeContext.Provider>
-      <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
-        <Box width="full" overflow="hidden" marginBottom={10}>
-          <ContentBlock width="large">
-            <Box padding={[0, 3, 6]}>
-              <GroupedPages
-                topContent={
-                  <Stack space={3}>
-                    <Typography variant="eyebrow" as="h2" color="roseTinted400">
-                      Viðspyrna
-                    </Typography>
-                    <Typography variant="h2" as="h3">
-                      {frontpage.title}
-                    </Typography>
-                    <Typography variant="p" as="p">
-                      Kapp er lagt á að Ísland verði með fyrstu löndum til að
-                      byggja aftur upp eftirspurn í ferðaþjónustu í kjölfar þess
-                      að ferðatakmörkunum verður aflétt.
-                    </Typography>
-                  </Stack>
-                }
-                bottomContent={<CardsSlider items={pagesItems} key="red" />}
-              />
-            </Box>
-          </ContentBlock>
-        </Box>
-      </ColorSchemeContext.Provider>
-      <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
-        <Box width="full" overflow="hidden" marginBottom={10}>
-          <ContentBlock width="large">
-            <Box padding={[0, 3, 6]}>
-              <GroupedPages
-                topContent={
-                  <Stack space={3}>
-                    <Typography variant="eyebrow" as="h2" color="roseTinted400">
-                      Viðspyrna
-                    </Typography>
-                    <Typography variant="h2" as="h3">
-                      {frontpage.title}
-                    </Typography>
-                    <Typography variant="p" as="p">
-                      {frontpage.description}
-                    </Typography>
-                  </Stack>
-                }
-                bottomContent={<CardsSlider items={pagesItems} key="blue" />}
-              />
-            </Box>
-          </ContentBlock>
-        </Box>
-      </ColorSchemeContext.Provider>
+      {frontpage.slices.map((slice, index) => {
+        switch (slice.__typename) {
+          case 'AdgerdirFeaturedNewsSlice':
+            return <FeaturedNews key={index} items={slice.featured} />
+          case 'AdgerdirGroupSlice':
+            return (
+              <ColorSchemeContext.Provider
+                key={index}
+                value={{ colorScheme: 'purple' }}
+              >
+                <Box width="full" overflow="hidden" marginBottom={10}>
+                  <ContentBlock width="large">
+                    <Box padding={[0, 3, 6]}>
+                      <GroupedPages
+                        topContent={
+                          <Stack space={3}>
+                            <Typography
+                              variant="eyebrow"
+                              as="h2"
+                              color="roseTinted400"
+                            >
+                              {slice.subtitle}
+                            </Typography>
+                            <Typography variant="h2" as="h3">
+                              {slice.title}
+                            </Typography>
+                            <Typography variant="p" as="p">
+                              {slice.description}
+                            </Typography>
+                          </Stack>
+                        }
+                        bottomContent={<CardsSlider items={slice.pages} />}
+                      />
+                    </Box>
+                  </ContentBlock>
+                </Box>
+              </ColorSchemeContext.Provider>
+            )
+        }
+
+        return null
+      })}
     </>
   )
 }
@@ -196,32 +177,18 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Homepage',
+            namespace: 'Vidspyrna',
             lang: locale,
           },
         },
       })
-      .then((variables) => {
-        // map data here to reduce data processing in component
-        const namespaceObject = JSON.parse(variables.data.getNamespace.fields)
-
-        // featuredArticles is a csv in contentful seperated by : where the first value is the title and the second is the url
-        return {
-          ...namespaceObject,
-          featuredArticles: namespaceObject['featuredArticles'].map(
-            (featuredArticle) => {
-              const [title = '', url = ''] = featuredArticle.split(':')
-              return { title, url }
-            },
-          ),
-        }
-      }),
+      .then((variables) => JSON.parse(variables.data.getNamespace.fields)),
   ])
 
   return {
     frontpage: getAdgerdirFrontpage,
     tags: getAdgerdirTags,
-    data: getAdgerdirPages,
+    pages: getAdgerdirPages,
     namespace,
     showSearchInHeader: false,
   }

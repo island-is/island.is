@@ -1,4 +1,10 @@
-import { Controller, Param, Get, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Param,
+  Get,
+  UseGuards,
+  NotFoundException,
+} from '@nestjs/common'
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -28,44 +34,38 @@ export class PublicUserController {
 
   @Get('discounts/:discountCode/user')
   @ApiOkResponse({ type: User })
-  async get(@Param() params: GetUserByDiscountCodeParams): Promise<User> {
+  async getUserByDiscountCode(
+    @Param() params: GetUserByDiscountCodeParams,
+  ): Promise<User> {
     const nationalId = await this.discountService.validateDiscount(
       params.discountCode,
     )
-    return this.userService.getUserInfoByNationalId(nationalId)
+
+    const user = await this.userService.getUserInfoByNationalId(nationalId)
+    if (!user) {
+      throw new NotFoundException(`User<${nationalId}> not found`)
+    }
+    return user
   }
 }
 
 @Controller('api/private')
 export class PrivateUserController {
-  constructor(private readonly flightService: FlightService) {}
+  constructor(
+    private readonly flightService: FlightService,
+    private readonly userService: UserService,
+  ) {}
 
   @Get('users/:nationalId/relations')
   @ApiExcludeEndpoint()
   async getUserRelations(
     @Param() params: GetUserRelationsParams,
   ): Promise<User[]> {
-    // TODO: implement from thjodskra
-    const {
-      unused: flightLegsLeft,
-    } = await this.flightService.countFlightLegsByNationalId(params.nationalId)
-    return [
-      {
-        nationalId: params.nationalId,
-        firstName: 'Darri',
-        middleName: 'Steinn',
-        lastName: 'Konráðsson',
-        gender: 'm',
-        flightLegsLeft,
-      },
-      {
-        nationalId: '0101303019',
-        firstName: 'Gervimaður',
-        middleName: '',
-        lastName: 'Afríka',
-        gender: 'm',
-        flightLegsLeft: 2,
-      },
-    ]
+    const relations = await this.userService.getRelations(params.nationalId)
+    return Promise.all(
+      relations.map((nationalId) =>
+        this.userService.getUserInfoByNationalId(nationalId),
+      ),
+    )
   }
 }

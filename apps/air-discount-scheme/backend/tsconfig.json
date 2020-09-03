@@ -2,7 +2,7 @@
   "extends": "../../../tsconfig.json",
   "compilerOptions": {
     "allowJs": true,
-    "types": ["node", "jest"]
+    "types": ["node", "jest", "./types"]
   },
   "include": ["**/*.ts"]
 }

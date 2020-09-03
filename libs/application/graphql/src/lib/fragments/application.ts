@@ -12,5 +12,6 @@ export const ApplicationFragment = gql`
     attachments
     typeId
     answers
+    externalData
   }
 `

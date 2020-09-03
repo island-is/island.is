@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import { groupBy, range, capitalize } from 'lodash'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { Screen } from '../types'
@@ -23,6 +22,7 @@ import {
   Select,
   Option,
   Tiles,
+  Link,
 } from '@island.is/island-ui/core'
 import { GET_NEWS_LIST_QUERY } from './queries'
 import { NewsListLayout } from './Layouts/Layouts'
@@ -101,15 +101,13 @@ const NewsList: Screen<NewsListProps> = ({
         onChange={(e) => Router.push(makeHref(e.target.value))}
       />
       <Typography variant="p" as="p">
-        <Link href={makeHref(selectedYear)}>
-          <a>Allt árið</a>
-        </Link>
+        <Link href={makeHref(selectedYear)}>Allt árið</Link>
         {selectedMonth === undefined && <Bullet align="right" />}
       </Typography>
       {months.map((date: Date) => (
         <Typography key={date.toISOString()} variant="p" as="p">
           <Link href={makeHref(date.getFullYear(), date.getMonth())}>
-            <a>{capitalize(format(date, 'MMMM'))}</a>
+            {capitalize(format(date, 'MMMM'))}
           </Link>
           {selectedMonth === date.getMonth() && <Bullet align="right" />}
         </Typography>
@@ -125,12 +123,8 @@ const NewsList: Screen<NewsListProps> = ({
       <NewsListLayout sidebar={sidebar}>
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
-            <Link href={makePath()}>
-              <a>Ísland.is</a>
-            </Link>
-            <Link href={makePath('news')}>
-              <a>Fréttir og tilkynningar</a>
-            </Link>
+            <Link href={makePath()}>Ísland.is</Link>
+            <Link href={makePath('news')}>Fréttir og tilkynningar</Link>
           </Breadcrumbs>
           <Hidden below="lg">
             <Typography variant="h1" as="h1">
@@ -177,7 +171,7 @@ const NewsList: Screen<NewsListProps> = ({
                     query: { ...Router.query, page },
                   }}
                 >
-                  <a className={className}>{children}</a>
+                  <span className={className}>{children}</span>
                 </Link>
               )}
             />
@@ -203,7 +197,7 @@ const NewsListItem = ({ newsItem }) => {
             </Typography>
             <Typography variant="h3" as="h3" color="blue400">
               <Link href={makePath('news', newsItem.slug)}>
-                <a>{newsItem.title}</a>
+                {newsItem.title}
               </Link>
             </Typography>
             <Typography variant="p" as="p">
@@ -214,12 +208,10 @@ const NewsListItem = ({ newsItem }) => {
         {newsItem.image && (
           <Column width="2/5">
             <Link href={makePath('news', newsItem.slug)}>
-              <a>
-                <img
-                  src={newsItem.image.url + '?w=524'}
-                  alt={`Skoða frétt ${newsItem.title}`}
-                />
-              </a>
+              <img
+                src={newsItem.image.url + '?w=524'}
+                alt={`Skoða frétt ${newsItem.title}`}
+              />
             </Link>
           </Column>
         )}

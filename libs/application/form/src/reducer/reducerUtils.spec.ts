@@ -12,7 +12,7 @@ import {
   FormLeaf,
   Repeater,
 } from '@island.is/application/schema'
-import { FormScreen } from '../types'
+import { FormScreen, RepeaterScreen } from '../types'
 
 describe('reducerUtils', () => {
   describe('calculate progress', () => {
@@ -248,7 +248,7 @@ describe('reducerUtils', () => {
           labelKey: 'a',
           children: [buildTextScreen('a'), buildTextScreen('b')],
           name: 'This is a great screen',
-        }),
+        }) as RepeaterScreen,
         buildTextScreen('c'),
       ]
       expect(findCurrentScreen(screens, { person: [{ a: '1', b: '2' }] })).toBe(

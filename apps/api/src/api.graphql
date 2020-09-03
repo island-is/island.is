@@ -41,7 +41,7 @@ type ContentCategory {
 type Taxonomy {
   title: String
   slug: String
-  description: String!
+  description: String
 }
 
 type Article {
@@ -50,7 +50,8 @@ type Article {
   title: String!
   content: String
   group: Taxonomy
-  category: Taxonomy!
+  category: Taxonomy
+  relatedArticles: [Article!]!
 }
 
 type AdgerdirTag {
@@ -60,25 +61,22 @@ type AdgerdirTag {
 
 type AdgerdirPage {
   id: String!
-  slug: String!
   title: String!
-  description: String
+  description: String!
+  longDescription: String
   content: String
+  objective: String
+  slug: String!
   tags: [AdgerdirTag!]!
   link: String
+  linkButtonText: String
   status: String!
+  estimatedCostIsk: Float
+  finalCostIsk: Float
 }
 
 type AdgerdirPages {
   items: [AdgerdirPage!]!
-}
-
-type AdgerdirFrontpage {
-  id: String!
-  slug: String!
-  title: String!
-  description: String!
-  content: String
 }
 
 type Image {
@@ -87,6 +85,42 @@ type Image {
   contentType: String!
   width: Int!
   height: Int!
+}
+
+type AdgerdirNews {
+  id: String!
+  slug: String!
+  subtitle: String!
+  title: String!
+  intro: String!
+  image: Image
+  date: String!
+  content: String
+}
+
+type AdgerdirFrontpage {
+  id: String!
+  title: String!
+  description: String!
+  content: String
+  slices: [AdgerdirSlice!]!
+}
+
+union AdgerdirSlice = AdgerdirGroupSlice | AdgerdirFeaturedNewsSlice
+
+type AdgerdirGroupSlice {
+  id: ID!
+  subtitle: String
+  title: String!
+  description: String
+  image: Image
+  pages: [AdgerdirPage!]!
+}
+
+type AdgerdirFeaturedNewsSlice {
+  id: ID!
+  title: String!
+  featured: [AdgerdirNews!]!
 }
 
 type FrontpageSlide {
@@ -294,9 +328,10 @@ type Application {
   assignee: String!
   externalId: String
   state: ApplicationStateEnum!
-  attachments: [String!]
+  attachments: JSON
   typeId: ApplicationTypeIdEnum!
   answers: JSON!
+  externalData: JSON!
 }
 
 """
@@ -315,18 +350,23 @@ enum ApplicationStateEnum {
   UNKNOWN
 }
 
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
 enum ApplicationTypeIdEnum {
   ExampleForm
   ExampleForm2
   ExampleForm3
   FamilyAndPets
-  PaternityLeave
+  ParentalLeave
 }
 
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+type PresignedPost {
+  url: String!
+  fields: JSON!
+}
 
 type Document {
   id: ID!
@@ -478,6 +518,10 @@ input GetDocumentInput {
 type Mutation {
   createApplication(input: CreateApplicationInput!): Application
   updateApplication(input: UpdateApplicationInput!): Application
+  updateApplicationExternalData(input: UpdateApplicationExternalDataInput!): Application
+  addAttachment(input: AddAttachmentInput!): Application
+  deleteAttachment(input: DeleteAttachmentInput!): Application
+  createUploadUrl(filename: String!): PresignedPost!
 }
 
 input CreateApplicationInput {
@@ -485,7 +529,7 @@ input CreateApplicationInput {
   assignee: String!
   externalId: String
   state: CreateApplicationDtoStateEnum!
-  attachments: [String!]
+  attachments: JSON
   typeId: CreateApplicationDtoTypeIdEnum!
   answers: JSON!
 }
@@ -506,7 +550,7 @@ enum CreateApplicationDtoTypeIdEnum {
   ExampleForm2
   ExampleForm3
   FamilyAndPets
-  PaternityLeave
+  ParentalLeave
 }
 
 input UpdateApplicationInput {
@@ -516,7 +560,7 @@ input UpdateApplicationInput {
   assignee: String
   externalId: String
   state: UpdateApplicationDtoStateEnum
-  attachments: [String!]
+  attachments: JSON
   answers: JSON
 }
 
@@ -525,7 +569,7 @@ enum UpdateApplicationDtoTypeIdEnum {
   ExampleForm2
   ExampleForm3
   FamilyAndPets
-  PaternityLeave
+  ParentalLeave
 }
 
 enum UpdateApplicationDtoStateEnum {
@@ -537,4 +581,31 @@ enum UpdateApplicationDtoStateEnum {
   MANUALAPPROVED
   REJECTED
   UNKNOWN
+}
+
+input UpdateApplicationExternalDataInput {
+  id: String!
+  dataProviders: [DataProvider!]!
+}
+
+input DataProvider {
+  id: String!
+  type: DataProviderDtoTypeEnum!
+}
+
+enum DataProviderDtoTypeEnum {
+  ExpectedDateOfBirth
+  ExampleFails
+  ExampleSucceeds
+}
+
+input AddAttachmentInput {
+  id: String!
+  key: String!
+  url: String!
+}
+
+input DeleteAttachmentInput {
+  id: String!
+  key: String!
 }

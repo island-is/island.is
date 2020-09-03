@@ -13,7 +13,8 @@ interface Props {
 const ModuleNavigation: FC<Props> = ({ nav }) => {
   const [expand, setExpand] = useState(false)
   const location = useLocation()
-  const isModuleActive = location.pathname.includes(nav.path) || expand
+  const isModuleActive =
+    (nav.path && location.pathname.includes(nav.path)) || expand
 
   const handleExpand = () => setExpand(!expand)
 
@@ -27,7 +28,7 @@ const ModuleNavigation: FC<Props> = ({ nav }) => {
       >
         {nav.name}
       </IconButton>
-      {nav.children?.length > 0 && (
+      {Array.isArray(nav.children) && nav.children.length > 0 && (
         <AnimateHeight duration={300} height={isModuleActive ? 'auto' : 0}>
           <div>
             <Box paddingLeft={4} paddingTop={2} paddingBottom={2}>
@@ -36,7 +37,9 @@ const ModuleNavigation: FC<Props> = ({ nav }) => {
                   <LinkButton
                     url={child.path}
                     key={`child-${index}`}
-                    active={location.pathname.includes(child.path)}
+                    active={
+                      child.path && location.pathname.includes(child.path)
+                    }
                     external={child.external}
                   >
                     {child.name}

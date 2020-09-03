@@ -1,30 +1,51 @@
 import { Injectable } from '@nestjs/common'
 
+import { Fund } from '@island.is/air-discount-scheme/types'
 import { User } from './user.model'
-import { NationalRegistryResponse } from './user.types'
 import { FlightService } from '../flight'
+import {
+  NationalRegistryService,
+  NationalRegistryUser,
+} from '../nationalRegistry'
 
 @Injectable()
 export class UserService {
-  constructor(private readonly flightService: FlightService) {}
+  constructor(
+    private readonly flightService: FlightService,
+    private readonly nationalRegistryService: NationalRegistryService,
+  ) {}
 
-  private async getUserFromNationalRegistry(
-    nationalId: string,
-  ): Promise<NationalRegistryResponse> {
+  getRelations(nationalId: string): Promise<string[]> {
+    // TODO: implement from nationalRegistry in "2nd Phase"
+    return Promise.resolve([nationalId])
+  }
+
+  private async getFund(user: NationalRegistryUser): Promise<Fund> {
+    const {
+      used,
+      unused,
+      total,
+    } = await this.flightService.countFlightLegsByNationalId(user.nationalId)
+
+    const meetsADSRequirements = this.flightService.isADSPostalCode(
+      user.postalcode,
+    )
+
     return {
-      firstName: 'Jón',
-      middleName: 'Gunnar',
-      lastName: 'Jónsson',
-      gender: 'kk',
-      nationalId,
+      nationalId: user.nationalId,
+      credit: meetsADSRequirements ? unused : 0,
+      used: used,
+      total,
     }
   }
 
   async getUserInfoByNationalId(nationalId: string): Promise<User> {
-    const {
-      unused: flightLegsLeft,
-    } = await this.flightService.countFlightLegsByNationalId(nationalId)
-    const user = await this.getUserFromNationalRegistry(nationalId)
-    return new User(user, flightLegsLeft)
+    const user = await this.nationalRegistryService.getUser(nationalId)
+    if (!user) {
+      return null
+    }
+
+    const fund = await this.getFund(user)
+    return new User(user, fund)
   }
 }

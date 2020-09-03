@@ -39,39 +39,54 @@ export class IndexingService {
   async continueSync(syncToken: string, index: SearchIndexes) {
     await this.needConnection()
     logger.info('Start continue sync')
-    const result = await this.contentFulSyncer.getSyncEntries({
+    const {
+      items,
+      token,
+      deletedItems,
+    } = await this.contentFulSyncer.getSyncEntries({
       nextSyncToken: syncToken,
       // eslint-disable-next-line @typescript-eslint/camelcase
-      content_type: 'article',
       resolveLinks: true,
     })
-    logger.info('Continue sync found results', {
-      numItems: result.items.length,
+
+    logger.info('Continue sync is importing', {
+      itemCount: items.length,
     })
-    for (const item of result.items) {
+
+    for (const item of items) {
       // one at a time please, else ES will be unhappy
-      await this.transformAndIndexEntry(index, result.token, item)
+      await this.transformAndIndexEntry(index, token, item)
     }
+
+    // delete content that has been unpublished from contentful
+    await this.elasticService.deleteByIds(index, deletedItems)
+
     logger.info('Continue sync done')
   }
 
   async initialSync(index: SearchIndexes) {
     await this.needConnection()
     logger.info('Start initial sync')
-    const result = await this.contentFulSyncer.getSyncEntries({
+    const { items, token } = await this.contentFulSyncer.getSyncEntries({
       initial: true,
       // eslint-disable-next-line @typescript-eslint/camelcase
-      content_type: 'article',
       resolveLinks: true,
     })
-    logger.info('Initial sync found result', {
-      numItems: result.items.length,
+    logger.info('Initial sync is importing', {
+      itemCount: items.length,
     })
 
-    for (const item of result.items) {
+    // TODO: Use es client batch here
+    for (const item of items) {
       // one at a time please, else ES will be unhappy
-      await this.transformAndIndexEntry(index, result.token, item)
+      await this.transformAndIndexEntry(index, token, item)
     }
+
+    // delete everything in ES, except for synced content, to ensure no stale data in index
+    await this.elasticService.deleteAllExcept(
+      index,
+      items.map((entry) => entry.sys.id),
+    )
 
     logger.info('Initial sync done')
   }
@@ -116,9 +131,12 @@ export class IndexingService {
           response += reduceContent(doc.content)
         }
         if (doc.data && doc.data.target) {
-          if (doc.data.target.sys.contentType.sys.id === 'processEntry') {
-            response += doc.data.target.fields.processTitle + '\n'
-            response += doc.data.target.fields.processDescription + '\n'
+          if (
+            doc.data.target.sys.contentType &&
+            doc.data.target.sys.contentType.sys.id === 'processEntry'
+          ) {
+            response += (doc.data.target.fields.processTitle ?? '') + '\n'
+            response += (doc.data.target.fields.processInfo ?? '') + '\n'
           } else {
             //todo implement more types
           }
@@ -127,14 +145,26 @@ export class IndexingService {
       return response
     }
 
+    // TODO: Fix this when improving mapping
+    // related articles has a recursive nesting problem, we prune it for now
+    if (entry.fields?.relatedArticles?.[0]?.fields) {
+      logger.info('Removing nested related articles from related articles')
+      // remove related articles from nested articles
+      const {
+        relatedArticles,
+        ...prunedRelatedArticlesFields
+      } = entry.fields.relatedArticles[0].fields
+      entry.fields.relatedArticles[0].fields = prunedRelatedArticlesFields
+    }
+
     /* eslint-disable @typescript-eslint/camelcase */
     const document: Document = {
-      category: entry.fields?.category?.fields.title,
-      category_slug: entry.fields?.category?.fields.slug,
-      category_description: entry.fields?.category?.fields.description,
-      group: entry.fields?.group?.fields.title,
-      group_slug: entry.fields?.group?.fields.slug,
-      group_description: entry.fields?.group?.fields.description,
+      category: entry.fields?.category?.fields?.title,
+      category_slug: entry.fields?.category?.fields?.slug,
+      category_description: entry.fields?.category?.fields?.description,
+      group: entry.fields?.group?.fields?.title,
+      group_slug: entry.fields?.group?.fields?.slug,
+      group_description: entry.fields?.group?.fields?.description,
       content: reduceContent(entry.fields.content?.content),
       content_blob: JSON.stringify(entry.fields),
       content_id: entry.sys.id,
@@ -151,6 +181,7 @@ export class IndexingService {
       url: '',
       _id: entry.sys.id,
     }
+
     if (syncToken) {
       document.nextSyncToken = syncToken
     }
