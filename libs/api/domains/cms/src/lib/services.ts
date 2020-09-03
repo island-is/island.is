@@ -20,6 +20,7 @@ import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { Namespace } from './models/namespace.model'
 import { Menu } from './models/menu.model'
+import { LifeEventPage } from './models/lifeEventPage.model'
 
 const makePage = (
   page: number,
@@ -275,4 +276,16 @@ export const getMenu = async (
   }).catch(errorHandler('getMenu'))
 
   return result.items.map(mappers.mapMenu)[0] ?? null
+}
+
+export const getLifeEventPage = async (
+  slug: string,
+  lang: string,
+): Promise<LifeEventPage | null> => {
+  const result = await getLocalizedEntries<types.ILifeEventPageFields>(lang, {
+    ['content_type']: 'lifeEventPage',
+    'fields.slug': slug,
+  }).catch(errorHandler('getLifeEventPage'))
+
+  return result.items.map(mappers.mapLifeEventPage)[0] ?? null
 }
