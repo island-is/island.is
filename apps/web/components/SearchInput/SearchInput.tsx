@@ -8,16 +8,18 @@ import React, {
 } from 'react'
 import Link from 'next/link'
 import Downshift from 'downshift'
-import cn from 'classnames'
-import { uniq, sortBy } from 'lodash'
 import { useRouter } from 'next/router'
 import { useApolloClient } from 'react-apollo'
-import { GET_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
+import {
+  GET_SEARCH_RESULTS_QUERY,
+  GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
+} from '@island.is/web/screens/queries'
 import {
   ContentLanguage,
   QuerySearchResultsArgs,
   Query,
   SearchResult,
+  QueryWebSearchAutocompleteArgs,
 } from '@island.is/api/schema'
 import {
   AsyncSearchInput,
@@ -36,12 +38,14 @@ type SearchState = {
   term: string
   results?: SearchResult
   suggestions: string[]
+  prefix: string
   isLoading: boolean
 }
 
 const emptyState: Readonly<SearchState> = {
   term: '',
   suggestions: [],
+  prefix: '',
   isLoading: false,
 }
 
@@ -63,6 +67,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
       setState({
         isLoading: false,
         term: '',
+        prefix: '',
         // hardcoded while not supported by search
         suggestions: [
           'Covid-19',
@@ -92,20 +97,34 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
         },
       })
 
-      if (thisTimerId === timer.current) {
-        // hack while not supported by search service
-        let suggestions = results.items
-          .map((r) => r.title.split(/\s+/g))
-          .reduce((acc, words) => acc.concat(words), [])
-          .map((s) => s.trim().toLowerCase())
-          .filter((s) => s.startsWith(term.trim().toLowerCase()))
-        suggestions = sortBy(uniq(suggestions), (s) => s.length)
+      // the api only completes single terms get only single terms
+      const indexOfLastSpace = term.lastIndexOf(' ')
+      const hasSpace = indexOfLastSpace !== -1
+      const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
+      const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
 
+      const {
+        data: {
+          webSearchAutocomplete: { completions: suggestions },
+        },
+      } = await client.query<Query, QueryWebSearchAutocompleteArgs>({
+        query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
+        variables: {
+          input: {
+            singleTerm: queryString,
+            language: locale as ContentLanguage,
+            size: 10, // only show top X completions to prevent long list
+          },
+        },
+      })
+
+      if (thisTimerId === timer.current) {
         setState({
           isLoading: false,
           term,
           results,
           suggestions,
+          prefix,
         })
       }
     }, DEBOUNCE_TIMER))
@@ -291,16 +310,23 @@ const Results: FC<{
     <Box display="flex" background="blue100" paddingY={2} paddingX={3}>
       <div className={styles.menuColumn}>
         <Stack space={1}>
-          {search.suggestions.map((suggestion, i) => (
-            <div key={suggestion} {...getItemProps({ item: suggestion })}>
-              <Typography
-                color={i === highlightedIndex ? 'blue400' : 'dark400'}
-              >
-                {suggestion.slice(0, search.term.length)}
-                <strong>{suggestion.slice(search.term.length)}</strong>
-              </Typography>
-            </div>
-          ))}
+          {search.suggestions.map((suggestion, i) => {
+            const suggestionHasTerm = suggestion.startsWith(search.term)
+            const startOfString = suggestionHasTerm ? search.term : suggestion
+            const endOfString = suggestionHasTerm
+              ? suggestion.replace(search.term, '')
+              : ''
+            return (
+              <div key={suggestion} {...getItemProps({ item: suggestion })}>
+                <Typography
+                  color={i === highlightedIndex ? 'blue400' : 'dark400'}
+                >
+                  {`${search.prefix} ${startOfString}`}
+                  <strong>{endOfString}</strong>
+                </Typography>
+              </div>
+            )
+          })}
         </Stack>
       </div>
       <div className={styles.separator} />

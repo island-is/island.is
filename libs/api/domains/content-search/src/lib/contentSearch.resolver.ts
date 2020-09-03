@@ -7,6 +7,8 @@ import { ItemInput } from './dto/item.input'
 import { ContentCategory } from './models/contentCategory.model'
 import { CategoriesInput } from './dto/categories.input'
 import { ArticlesInCategoryInput } from './dto/articlesInCategory.input'
+import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
+import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
 
 @Resolver()
 export class ContentSearchResolver {
@@ -34,5 +36,12 @@ export class ContentSearchResolver {
     @Args('category') category: ArticlesInCategoryInput,
   ): Promise<ContentItem[]> {
     return this.contentSearchService.fetchItems(category)
+  }
+
+  @Query(() => WebSearchAutocomplete)
+  webSearchAutocomplete(
+    @Args('input') input: WebSearchAutocompleteInput,
+  ): Promise<WebSearchAutocomplete> {
+    return this.contentSearchService.fetchAutocompleteTerm(input)
   }
 }

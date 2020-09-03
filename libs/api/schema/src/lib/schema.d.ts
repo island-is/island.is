@@ -66,6 +66,12 @@ export type ContentCategory = {
   description?: Maybe<Scalars['String']>
 }
 
+export type WebSearchAutocomplete = {
+  __typename?: 'WebSearchAutocomplete'
+  total: Scalars['Int']
+  completions: Array<Scalars['String']>
+}
+
 export type Taxonomy = {
   __typename?: 'Taxonomy'
   title?: Maybe<Scalars['String']>
@@ -461,6 +467,7 @@ export type Query = {
   singleItem?: Maybe<ContentItem>
   categories: Array<ContentCategory>
   articlesInCategory: Array<ContentItem>
+  webSearchAutocomplete: WebSearchAutocomplete
   getArticle?: Maybe<Article>
   getNews?: Maybe<News>
   getNewsList: PaginatedNews
@@ -498,6 +505,10 @@ export type QueryCategoriesArgs = {
 
 export type QueryArticlesInCategoryArgs = {
   category: ArticlesInCategoryInput
+}
+
+export type QueryWebSearchAutocompleteArgs = {
+  input: WebSearchAutocompleteInput
 }
 
 export type QueryGetArticleArgs = {
@@ -603,6 +614,12 @@ export type CategoriesInput = {
 export type ArticlesInCategoryInput = {
   slug?: Maybe<Scalars['String']>
   language?: Maybe<ContentLanguage>
+}
+
+export type WebSearchAutocompleteInput = {
+  singleTerm: Scalars['String']
+  language?: Maybe<ContentLanguage>
+  size?: Maybe<Scalars['Int']>
 }
 
 export type GetArticleInput = {
@@ -929,6 +946,7 @@ export type ResolversTypes = {
   SearchResult: ResolverTypeWrapper<SearchResult>
   Int: ResolverTypeWrapper<Scalars['Int']>
   ContentCategory: ResolverTypeWrapper<ContentCategory>
+  WebSearchAutocomplete: ResolverTypeWrapper<WebSearchAutocomplete>
   Taxonomy: ResolverTypeWrapper<Taxonomy>
   Article: ResolverTypeWrapper<Article>
   AdgerdirTag: ResolverTypeWrapper<AdgerdirTag>
@@ -1013,6 +1031,7 @@ export type ResolversTypes = {
   ItemType: ItemType
   CategoriesInput: CategoriesInput
   ArticlesInCategoryInput: ArticlesInCategoryInput
+  WebSearchAutocompleteInput: WebSearchAutocompleteInput
   GetArticleInput: GetArticleInput
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
@@ -1053,6 +1072,7 @@ export type ResolversParentTypes = {
   SearchResult: SearchResult
   Int: Scalars['Int']
   ContentCategory: ContentCategory
+  WebSearchAutocomplete: WebSearchAutocomplete
   Taxonomy: Taxonomy
   Article: Article
   AdgerdirTag: AdgerdirTag
@@ -1129,6 +1149,7 @@ export type ResolversParentTypes = {
   ItemInput: ItemInput
   CategoriesInput: CategoriesInput
   ArticlesInCategoryInput: ArticlesInCategoryInput
+  WebSearchAutocompleteInput: WebSearchAutocompleteInput
   GetArticleInput: GetArticleInput
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
@@ -1233,6 +1254,19 @@ export type ContentCategoryResolvers<
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   description?: Resolver<
     Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type WebSearchAutocompleteResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['WebSearchAutocomplete'] = ResolversParentTypes['WebSearchAutocomplete']
+> = {
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  completions?: Resolver<
+    Array<ResolversTypes['String']>,
     ParentType,
     ContextType
   >
@@ -1888,6 +1922,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryArticlesInCategoryArgs, 'category'>
   >
+  webSearchAutocomplete?: Resolver<
+    ResolversTypes['WebSearchAutocomplete'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryWebSearchAutocompleteArgs, 'input'>
+  >
   getArticle?: Resolver<
     Maybe<ResolversTypes['Article']>,
     ParentType,
@@ -2039,6 +2079,7 @@ export type Resolvers<ContextType = Context> = {
   ContentItem?: ContentItemResolvers<ContextType>
   SearchResult?: SearchResultResolvers<ContextType>
   ContentCategory?: ContentCategoryResolvers<ContextType>
+  WebSearchAutocomplete?: WebSearchAutocompleteResolvers<ContextType>
   Taxonomy?: TaxonomyResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
