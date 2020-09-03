@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing'
 import { User } from '../../user.model'
 import { PublicUserController } from '../../user.controller'
 import { UserService } from '../../user.service'
-import { DiscountService } from '../../../discount'
+import { DiscountService, Discount } from '../../../discount'
 
 const user: User = {
   nationalId: '1326487905',
@@ -40,7 +40,7 @@ describe('PublicUserController', () => {
         {
           provide: DiscountService,
           useClass: jest.fn(() => ({
-            validateDiscount: () => ({}),
+            getDiscountByDiscountCode: () => ({}),
           })),
         },
       ],
@@ -57,10 +57,11 @@ describe('PublicUserController', () => {
     it('should return a user', async () => {
       const nationalId = '1326487905'
       const discountCode = 'ABCDEFG'
+      const discount = new Discount(discountCode, nationalId, 0)
 
-      const validateDiscountSpy = jest
-        .spyOn(discountService, 'validateDiscount')
-        .mockImplementation(() => Promise.resolve(nationalId))
+      const getDiscountByDiscountCodeSpy = jest
+        .spyOn(discountService, 'getDiscountByDiscountCode')
+        .mockImplementation(() => Promise.resolve(discount))
       const getUserInfoByNationalIdSpy = jest
         .spyOn(userService, 'getUserInfoByNationalId')
         .mockImplementation(() => Promise.resolve(user))
@@ -69,7 +70,7 @@ describe('PublicUserController', () => {
         discountCode,
       })
 
-      expect(validateDiscountSpy).toHaveBeenCalledWith(discountCode)
+      expect(getDiscountByDiscountCodeSpy).toHaveBeenCalledWith(discountCode)
       expect(getUserInfoByNationalIdSpy).toHaveBeenCalledWith(nationalId)
       expect(result).toBe(user)
     })
@@ -77,10 +78,11 @@ describe('PublicUserController', () => {
     it('should return not found error when user does not exist', async () => {
       const nationalId = '1326487905'
       const discountCode = 'ABCDEFG'
+      const discount = new Discount(discountCode, nationalId, 0)
 
       jest
-        .spyOn(discountService, 'validateDiscount')
-        .mockImplementation(() => Promise.resolve(nationalId))
+        .spyOn(discountService, 'getDiscountByDiscountCode')
+        .mockImplementation(() => Promise.resolve(discount))
       jest
         .spyOn(userService, 'getUserInfoByNationalId')
         .mockImplementation(() => Promise.resolve(null))
