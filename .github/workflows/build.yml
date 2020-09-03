@@ -425,7 +425,8 @@ jobs:
           "branch": "$GIT_BRANCH",
           "parameters": { "docker_tag": "$DOCKER_TAG" }
           }
-BODY
+          BODY
+
   failure-notification:
     runs-on: ubuntu-latest
     if: failure()
