@@ -50,14 +50,14 @@ export function calculateProgress(
 
 export const findCurrentScreen = (
   screens: FormScreen[],
-  formValue: FormValue,
+  answers: FormValue,
 ): number => {
   let currentScreen = 0
   screens.forEach((screen, index) => {
     if (screen.type === FormItemTypes.MULTI_FIELD) {
       let numberOfAnsweredQuestionsInScreen = 0
       screen.children.forEach((field) => {
-        if (getValueViaPath(formValue, field.id) !== undefined) {
+        if (getValueViaPath(answers, field.id) !== undefined) {
           numberOfAnsweredQuestionsInScreen++
         }
       })
@@ -67,11 +67,11 @@ export const findCurrentScreen = (
         currentScreen = index
       }
     } else if (screen.type === FormItemTypes.REPEATER) {
-      if (getValueViaPath(formValue, screen.id) !== undefined) {
+      if (getValueViaPath(answers, screen.id) !== undefined) {
         currentScreen = index
       }
     } else {
-      if (getValueViaPath(formValue, screen.id) !== undefined) {
+      if (getValueViaPath(answers, screen.id) !== undefined) {
         currentScreen = index + 1
       }
     }
@@ -142,7 +142,7 @@ export function expandRepeater(
   repeaterIndex: number,
   formLeaves: FormLeaf[],
   screens: FormScreen[],
-  formValue: FormValue,
+  answers: FormValue,
 ): [FormLeaf[], FormScreen[]] {
   const repeater = formLeaves[repeaterIndex]
   if (!repeater || repeater.type !== FormItemTypes.REPEATER) {
@@ -162,7 +162,7 @@ export function expandRepeater(
         ...repeater,
         repetitions: repetitions + 1,
       },
-      formValue,
+      answers,
     ),
   )
   const improvedFormLeaves: FormLeaf[] = []
@@ -175,7 +175,7 @@ export function expandRepeater(
       id: `${id}[${repetitions}].${child.id}`,
     }
     improvedFormLeaves[k] = improvedChild
-    improvedFormScreens[k] = convertLeafToScreen(improvedChild, formValue)
+    improvedFormScreens[k] = convertLeafToScreen(improvedChild, answers)
   }
   newFormLeaves = immutableSplice(
     newFormLeaves,
@@ -193,10 +193,10 @@ export function expandRepeater(
   return [newFormLeaves, newFormScreens]
 }
 
-function convertFieldToScreen(field: Field, formValue: FormValue): FieldDef {
+function convertFieldToScreen(field: Field, answers: FormValue): FieldDef {
   return {
     ...field,
-    isNavigable: shouldShowFormLeaf(field as Field, formValue),
+    isNavigable: shouldShowFormLeaf(field as Field, answers),
   } as FieldDef
 }
 
@@ -208,12 +208,12 @@ function convertDataProviderToScreen(
 
 export function convertMultiFieldToScreen(
   multiField: MultiField,
-  formValue: FormValue,
+  answers: FormValue,
 ): MultiFieldScreen {
   let isMultiFieldVisible = false
   const children = []
   multiField.children.forEach((field) => {
-    const isFieldVisible = shouldShowFormLeaf(field, formValue)
+    const isFieldVisible = shouldShowFormLeaf(field, answers)
     if (isFieldVisible) {
       isMultiFieldVisible = true
     }
@@ -228,36 +228,36 @@ export function convertMultiFieldToScreen(
 
 function convertRepeaterToScreen(
   repeater: Repeater,
-  formValue: FormValue,
+  answers: FormValue,
 ): RepeaterScreen {
   const children = []
   repeater.children.forEach((field) => {
-    children.push(convertLeafToScreen(field, formValue))
+    children.push(convertLeafToScreen(field, answers))
   })
   return {
     ...repeater,
-    isNavigable: shouldShowFormLeaf(repeater, formValue),
+    isNavigable: shouldShowFormLeaf(repeater, answers),
     children,
   } as RepeaterScreen
 }
 
 export function convertLeafToScreen(
   leaf: FormLeaf,
-  formValue: FormValue,
+  answers: FormValue,
 ): FormScreen {
   if (leaf.type === FormItemTypes.MULTI_FIELD) {
-    return convertMultiFieldToScreen(leaf, formValue)
+    return convertMultiFieldToScreen(leaf, answers)
   } else if (leaf.type === FormItemTypes.REPEATER) {
-    return convertRepeaterToScreen(leaf, formValue)
+    return convertRepeaterToScreen(leaf, answers)
   } else if (leaf.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
     return convertDataProviderToScreen(leaf)
   }
-  return convertFieldToScreen(leaf, formValue)
+  return convertFieldToScreen(leaf, answers)
 }
 
 export function convertLeavesToScreens(
   formLeaves: FormLeaf[],
-  formValue: FormValue,
+  answers: FormValue,
 ): FormScreen[] {
-  return formLeaves.map((leaf) => convertLeafToScreen(leaf, formValue))
+  return formLeaves.map((leaf) => convertLeafToScreen(leaf, answers))
 }
