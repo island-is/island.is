@@ -6,43 +6,9 @@ import fetch from 'node-fetch'
 import { DomainPackageDetails, PackageDetails } from 'aws-sdk/clients/es'
 import { ManagedUpload } from 'aws-sdk/clients/s3'
 import { logger } from '@island.is/logging'
-import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
-
-class Config {
-  elasticNode: string
-  indexMain: string
-  esDomain: string
-  codeTemplateFile: string
-  dictRepo: string
-  s3Bucket: string
-  s3Folder: string
-  awsRegion: string
-  packagePrefix: string
-
-  static createFromEnv(env) {
-    const ret: Config = new Config()
-    ret.elasticNode = env['ELASTIC_NODE'] || ''
-    ret.indexMain = SearchIndexes.is //hard code this to is (so everything listens to same index string)
-    ret.esDomain = env['ES_DOMAIN'] || 'search'
-    ret.codeTemplateFile =
-      env['CODE_TEMPLATE'] || '/webapp/config/template-is.json'
-    ret.dictRepo =
-      env['GITHUB_DICT_REPO'] ||
-      'https://api.github.com/repos/island-is/elasticsearch-dictionaries'
-    ret.s3Bucket = env['S3_BUCKET'] || 'prod-es-custom-packages'
-    ret.s3Folder = env['S3_FOLDER'] || ''
-    ret.awsRegion = env['AWS_REGION'] || 'eu-west-1'
-    ret.packagePrefix = env['ES_PACKAGE_PREFIX'] || ''
-    if (ret.packagePrefix.slice(-1) === '-') {
-      ret.packagePrefix = ret.packagePrefix.slice(0, -1)
-    }
-    return ret
-  }
-
-  isValid(): boolean {
-    return this.elasticNode !== ''
-  }
-}
+import { ElasticService } from '@island.is/api/content-search'
+import { environment, Environment } from '../environments/environment'
+import { checkAWSAccess, awsEs } from './aws'
 
 class EsPackage {
   packageId: string
@@ -71,54 +37,38 @@ class EsPackage {
 }
 
 class PackageIds extends Map<string, EsPackage> {}
-
 class PackageStatuses extends Map<string, boolean> {}
 
 class App {
-  private readonly config: Config
-  private readonly awsEs: AWS.ES
+  private readonly config: Environment['migrate']
+  private esService: ElasticService
   private esClient: Client
   private readonly lang: string = 'is'
   private readonly templateName: string = 'template-is'
 
-  constructor(config: Config) {
+  constructor(config: Environment['migrate']) {
     this.config = config
-    AWS.config.update({ region: config.awsRegion })
-    this.awsEs = new AWS.ES()
+    this.esService = new ElasticService()
   }
 
-  run() {
+  // TODO: Make this work without AWS as well
+  async run() {
     logger.info('Starting migration if needed', this.config)
-    this.checkAccess()
-      .then(() => this.checkESAccess())
-      .then(() => this.migrateIfNeeded())
+    if(!this.config.isRunningLocally) {
+      await checkAWSAccess()
+    }
+    throw new Error('STOP!')
+    await this.checkESAccess()
+    await this.migrateIfNeeded()
   }
 
+  // TODO: Use es service ping check here 
   private async checkESAccess() {
     const client = await this.getEsClient()
     const result = await client.ping()
     logger.info('Got elasticsearch ping response', {
       r: result,
     })
-  }
-
-  private async checkAccess() {
-    return this.awsEs
-      .listDomainNames()
-      .promise()
-      .then((domains: AWS.ES.Types.ListDomainNamesResponse) => {
-        let domainFound = false
-        logger.info('Valdating esDomain agains aws domain list', domains)
-        domains.DomainNames.forEach((domain) => {
-          if (domain.DomainName === this.config.esDomain) {
-            domainFound = true
-          }
-        })
-
-        if (!domainFound) {
-          throw new Error('Domain not found')
-        }
-      })
   }
 
   private async migrateIfNeeded() {
@@ -322,7 +272,7 @@ class App {
 
   private async getDomainPackages(): Promise<PackageStatuses> {
     logger.debug('GetDomainPackages')
-    return this.awsEs
+    return awsEs
       .listPackagesForDomain({
         DomainName: this.config.esDomain,
       })
@@ -368,7 +318,7 @@ class App {
       PackageID: esPackage.packageId,
     }
     logger.info('DisAssociate Package', params)
-    const response = await this.awsEs.dissociatePackage(params).promise()
+    const response = await awsEs.dissociatePackage(params).promise()
     await this.waitForPackageStatus(
       response.DomainPackageDetails,
       null,
@@ -386,7 +336,7 @@ class App {
   private async getDomainPackage(
     packageId: string,
   ): Promise<DomainPackageDetails> {
-    return this.awsEs
+    return awsEs
       .listPackagesForDomain({
         DomainName: this.config.esDomain,
       })
@@ -409,7 +359,7 @@ class App {
         },
       ],
     }
-    return this.awsEs
+    return awsEs
       .describePackages(params)
       .promise()
       .then((res) => {
@@ -423,7 +373,7 @@ class App {
       PackageID: esPackage.packageId,
     }
     logger.info('Associate Package', params)
-    const response = await this.awsEs.associatePackage(params).promise()
+    const response = await awsEs.associatePackage(params).promise()
     await this.waitForPackageStatus(
       response.DomainPackageDetails,
       'ACTIVE',
@@ -460,7 +410,7 @@ class App {
       },
     }
     logger.info('Create Package', params)
-    return this.awsEs
+    return awsEs
       .createPackage(params)
       .promise()
       .then((packageResponse: AWS.ES.CreatePackageResponse) =>
@@ -568,7 +518,7 @@ class App {
   private async getAllPackageIdsForVersion(
     version: string,
   ): Promise<PackageIds> {
-    return this.awsEs
+    return awsEs
       .describePackages()
       .promise()
       .then((list) => {
@@ -674,16 +624,18 @@ class App {
 }
 
 async function migrateBootstrap() {
-  const config = Config.createFromEnv(process.env)
-  if (!config.isValid()) {
-    logger.error('Config not valid', config)
+  console.log(environment.migrate.elasticNode)
+  if (environment.migrate.elasticNode === '') {
+    logger.error('Config not valid', environment.migrate)
     return
   }
 
-  const app = new App(config)
-  app.run()
+  const app = new App(environment.migrate)
+  await app.run()
 }
 
 migrateBootstrap().catch((error) => {
   logger.error('ERROR: ', error)
+  // take down container on error
+  throw error
 })
