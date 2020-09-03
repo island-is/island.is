@@ -8,7 +8,7 @@ import {
   ExternalData,
   Form,
   FormType,
-} from '@island.is/application/schema'
+} from '@island.is/application/template'
 import * as z from 'zod'
 import { ApplicationReducer, initializeReducer } from './ApplicationFormReducer'
 import { ActionTypes, ApplicationUIState } from './ReducerTypes'

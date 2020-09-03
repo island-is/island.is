@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { TextField } from '@island.is/application/schema'
+import { TextField } from '@island.is/application/template'
 import { Box, Input } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '../../types'
 import { useFormContext } from 'react-hook-form'

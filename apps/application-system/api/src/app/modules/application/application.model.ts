@@ -7,7 +7,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { ApplicationState, FormType } from '@island.is/application/schema'
+import { ApplicationState, FormType } from '@island.is/application/template'
 
 @Table({
   tableName: 'application',

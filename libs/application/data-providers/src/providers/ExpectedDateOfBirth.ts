@@ -2,7 +2,7 @@ import {
   DataProvider,
   DataProviderTypes,
   SuccessfulDataProviderResult,
-} from '@island.is/application/schema'
+} from '@island.is/application/template'
 
 export class ExpectedDateOfBirth extends DataProvider {
   readonly type: DataProviderTypes.ExpectedDateOfBirth

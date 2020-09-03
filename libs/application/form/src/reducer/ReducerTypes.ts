@@ -3,7 +3,7 @@ import {
   Form,
   FormLeaf,
   Section,
-} from '@island.is/application/schema'
+} from '@island.is/application/template'
 import { FormScreen } from '../types'
 
 export interface ApplicationUIState {

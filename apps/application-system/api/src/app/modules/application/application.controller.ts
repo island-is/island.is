@@ -18,13 +18,13 @@ import {
   Application as BaseApplication,
   callDataProviders,
   FormType,
-} from '@island.is/application/schema'
+} from '@island.is/application/template'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
-import { mergeAnswers } from '@island.is/application/schema'
+import { mergeAnswers } from '@island.is/application/template'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
 import { SchemaValidationPipe } from './pipes/schemaValidation.pipe'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'

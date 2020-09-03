@@ -1,5 +1,5 @@
 import React, { FC, useReducer } from 'react'
-import { Application } from '@island.is/application/schema'
+import { Application } from '@island.is/application/template'
 import FormProgress from '../components/FormProgress/'
 import ApplicationName from '../components/ApplicationName/'
 import Sidebar from '../components/Sidebar'

@@ -1,4 +1,4 @@
-# application-schema
+# application-template
 
 This library contains all types, and utilities needed to build applications, forms, and schemas that are the main base for the whole application system.
 
@@ -59,8 +59,8 @@ Each Field has to have its own unique `type` which needs to be part of the `Fiel
 
 ## Running unit tests
 
-Run `yarn nx test application-schema` to execute the unit tests via [Jest](https://jestjs.io).
+Run `yarn nx test application-template` to execute the unit tests via [Jest](https://jestjs.io).
 
 ## Running lint
 
-Run `yarn nx lint application-schema` to lint
+Run `yarn nx lint application-template` to lint

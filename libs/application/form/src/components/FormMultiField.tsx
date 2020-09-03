@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import FormField from './FormField'
 import { MultiFieldScreen } from '../types'
 import { Box } from '@island.is/island-ui/core'
-import { FormValue } from '@island.is/application/schema'
+import { FormValue } from '@island.is/application/template'
 import ConditionHandler from './ConditionHandler'
 
 const FormMultiField: FC<{
