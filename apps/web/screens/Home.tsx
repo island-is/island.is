@@ -44,8 +44,6 @@ const Home: Screen<HomeProps> = ({
   const Router = useRouter()
   const { makePath } = useRouteNames(activeLocale)
 
-  console.log(news)
-
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
   }
