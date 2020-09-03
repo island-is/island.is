@@ -107,7 +107,7 @@ const Home: Screen<HomeProps> = ({
       <Section paddingY={[2, 2, 3, 3, 6]}>
         <LatestNewsSection label="Fréttir og tilkynningar" items={news} />
       </Section>
-      <Section paddingY={[2, 4, 6, 8, 12]}>
+      <Section paddingTop={[2, 4, 6, 8, 10]} paddingBottom={[2, 4, 6, 10, 15]}>
         <IntroductionSection
           subtitle="Markmiðið okkar"
           title="Öll opinber þjónusta á einum stað"
