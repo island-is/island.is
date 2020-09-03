@@ -56,7 +56,10 @@ function Header({ routeKey }: PropTypes) {
       userName={user?.name ?? ''}
       authenticated={isAuthenticated}
       onLogout={() => {
-        api.logout().then(() => router.push(toRoute('home')))
+        api.logout().then(() => {
+          localStorage.removeItem(REDIRECT_KEY)
+          router.push(toRoute('home'))
+        })
       }}
     />
   )

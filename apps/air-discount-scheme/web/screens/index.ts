@@ -1,3 +1,4 @@
+export { Auth } from './Auth'
 export { ErrorPage } from './ErrorPage'
 export { Home } from './Home'
 export { NotFound } from './NotFound'
