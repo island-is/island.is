@@ -13,6 +13,5 @@ export interface Case {
   suspectNationalId: string
   created: string
   modified: string
-  description: string
   state: CaseState
 }
