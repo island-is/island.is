@@ -1,7 +1,7 @@
 import React, { ReactNode, Fragment, FC, useMemo } from 'react'
 import cn from 'classnames'
 import uniq from 'lodash/uniq'
-import { Icon } from '../Icon/Icon'
+import { Icon, IconTypes } from '../Icon/Icon'
 import { Box } from '../Box/Box'
 import * as styles from './Pagination.treat'
 
@@ -25,7 +25,7 @@ export const Pagination: FC<PaginationProps> = ({
 }) => {
   const ranges = useMemo(() => {
     return uniq(
-      []
+      ([] as number[])
         .concat(
           range(1, 3),
           range(page - 1, page + 1),
@@ -36,7 +36,15 @@ export const Pagination: FC<PaginationProps> = ({
     )
   }, [page, totalPages])
 
-  const renderEdgeLink = ({ page, isActive, iconType }) => {
+  const renderEdgeLink = ({
+    page,
+    isActive,
+    iconType,
+  }: {
+    page: number
+    isActive: boolean
+    iconType: IconTypes
+  }) => {
     if (isActive) {
       return renderLink(
         page,

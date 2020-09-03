@@ -1,5 +1,18 @@
 import React from 'react'
-import ReactSelect, { components, ValueType, ActionMeta } from 'react-select'
+import ReactSelect, {
+  components,
+  ValueType,
+  ActionMeta,
+  MenuProps,
+  OptionProps,
+  IndicatorContainerProps,
+  IndicatorProps,
+  SingleValueProps,
+  ValueContainerProps,
+  PlaceholderProps,
+  InputProps,
+  ControlProps,
+} from 'react-select'
 import cn from 'classnames'
 import * as styles from './Select.treat'
 import Icon from '../Icon/Icon'
@@ -49,7 +62,7 @@ export const Select = ({
     <div className={styles.wrapper}>
       <ReactSelect
         instanceId={id}
-        noOptionsMessage={() => noOptionsMessage}
+        noOptionsMessage={() => noOptionsMessage || null}
         id={id}
         name={name}
         isDisabled={disabled}
@@ -62,7 +75,7 @@ export const Select = ({
         icon={icon}
         placeholder={placeholder}
         defaultValue={defaultValue}
-        isOptionDisabled={(option) => option.disabled}
+        isOptionDisabled={(option) => !!option.disabled}
         hasError={hasError}
         components={{
           Control,
@@ -89,19 +102,21 @@ const customStyles = {
   indicatorSeparator: () => ({}),
 }
 
-const Menu = (props) => <components.Menu className={styles.menu} {...props} />
-const Option = (props) => (
+const Menu = (props: MenuProps<Option>) => (
+  <components.Menu className={styles.menu} {...props} />
+)
+const Option = (props: OptionProps<Option>) => (
   <components.Option className={styles.option} {...props} />
 )
 
-const IndicatorsContainer = (props) => (
+const IndicatorsContainer = (props: IndicatorContainerProps<Option>) => (
   <components.IndicatorsContainer
     className={styles.indicatorsContainer}
     {...props}
   />
 )
 
-const DropdownIndicator = (props) => {
+const DropdownIndicator = (props: IndicatorProps<Option>) => {
   const { icon, hasError } = props.selectProps
 
   return (
@@ -114,23 +129,23 @@ const DropdownIndicator = (props) => {
   )
 }
 
-const SingleValue = (props) => (
+const SingleValue = (props: SingleValueProps<Option>) => (
   <components.SingleValue className={styles.singleValue} {...props} />
 )
 
-const ValueContainer = (props) => (
+const ValueContainer = (props: ValueContainerProps<Option>) => (
   <components.ValueContainer className={styles.valueContainer} {...props} />
 )
 
-const Placeholder = (props) => (
+const Placeholder = (props: PlaceholderProps<Option>) => (
   <components.Placeholder className={styles.placeholder} {...props} />
 )
 
-const Input = (props) => (
+const Input = (props: InputProps) => (
   <components.Input className={styles.input} {...props} />
 )
 
-const Control = (props) => {
+const Control = (props: ControlProps<Option>) => {
   return (
     <components.Control
       className={cn(styles.container, {
@@ -139,7 +154,7 @@ const Control = (props) => {
       })}
       {...props}
     >
-      <label htmlFor={props.name} className={styles.label}>
+      <label htmlFor={props.selectProps.name} className={styles.label}>
         {props.selectProps.label}
       </label>
       {props.children}
