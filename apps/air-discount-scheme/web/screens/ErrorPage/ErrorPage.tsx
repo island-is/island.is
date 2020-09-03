@@ -32,4 +32,6 @@ function ErrorPage() {
   )
 }
 
+ErrorPage.getInitialProps = () => ({})
+
 export default ErrorPage
