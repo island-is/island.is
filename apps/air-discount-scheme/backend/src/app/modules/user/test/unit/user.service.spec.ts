@@ -42,6 +42,7 @@ describe('UserService', () => {
           provide: NationalRegistryService,
           useClass: jest.fn(() => ({
             getUser: () => ({}),
+            getFamily: (nationalId: string) => [nationalId],
           })),
         },
       ],

@@ -10,7 +10,7 @@ import { environment } from '../../../environments'
 
 const { nationalRegistry } = environment
 export const ONE_MONTH = 2592000 // seconds
-export const CACHE_KEY = 'nationalRegistry_user'
+export const CACHE_KEY = 'nationalRegistry'
 
 const TEST_USERS: NationalRegistryUser[] = [
   {
