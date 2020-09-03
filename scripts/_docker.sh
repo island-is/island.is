@@ -9,12 +9,19 @@ APP_HOME=`cat $PROJECT_ROOT/workspace.json | jq ".projects[\"$APP\"].root" -r`
 APP_DIST_HOME=`cat $PROJECT_ROOT/workspace.json | jq ".projects[\"$APP\"].architect.build.options.outputPath" -r`
 TARGET=$1
 
-if [ "$PUBLISH" = "true" ]; then
-    PUBLISH_TO_REGISTRY="--push"
-else
-    # Just build the container but do not publish it to the registry
-    PUBLISH_TO_REGISTRY=""
-fi
+case $PUBLISH in
+    true)
+        PUBLISH_TO_REGISTRY="--push"
+        ;;
+    local)
+        PUBLISH_TO_REGISTRY="--load"
+        ;;
+    *)
+        # Just build the container but do not publish it to the registry
+        PUBLISH_TO_REGISTRY=""
+        ;;
+
+esac
 
 exec docker buildx build \
   --platform=linux/amd64 \
