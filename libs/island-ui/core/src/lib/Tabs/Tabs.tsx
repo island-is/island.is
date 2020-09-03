@@ -2,9 +2,10 @@ import React, { FC, useState, ReactNode } from 'react'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
 import { Box } from '../Box/Box'
-import { Select } from '../Select/Select'
+import { Select, SelectProps, Option } from '../Select/Select'
 
 import * as styles from './Tabs.treat'
+import { ValueType } from 'react-select'
 
 const TAB_ID_PREFIX = 'tab'
 
@@ -27,9 +28,10 @@ export const Tabs: FC<TabInterface> = ({ label, selected = 0, tabs }) => {
     selectedId: `${TAB_ID_PREFIX}-${selectedIndex}`,
   })
 
-  const onChange = (e) => {
-    setSelectedIndex(parseInt(e.value, 10))
-    const id = `${TAB_ID_PREFIX}-${e.value}`
+  const onChange = (value: ValueType<Option>) => {
+    const e = value as Option
+    setSelectedIndex(parseInt(e?.value?.toString() || '', 10))
+    const id = `${TAB_ID_PREFIX}-${e?.value}`
     tab.move(id)
   }
 
