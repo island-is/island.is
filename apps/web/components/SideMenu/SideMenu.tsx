@@ -138,7 +138,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
                       variant="eyebrow"
                       color="blue400"
                       paddingTop={3}
-                      paddingBottom={2}
+                      paddingBottom={3}
                     >
                       {tab.externalLinksHeading || 'Aðrir opinberir vefir'}
                     </Typography>

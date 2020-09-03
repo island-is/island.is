@@ -63,11 +63,6 @@ export const linksContent = style({
   paddingBottom: theme.spacing[4],
   paddingLeft: theme.spacing[3],
   width: '100%',
-  selectors: {
-    ['& + &']: {
-      marginTop: 10,
-    },
-  },
 })
 
 export const mobileContent = style({})
