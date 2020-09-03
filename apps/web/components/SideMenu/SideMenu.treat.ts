@@ -1,6 +1,7 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
-const SIDE_MENU_WIDTH = 318
+
+const SIDE_MENU_WIDTH = 345
 
 export const root = style({
   display: 'none',
