@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import kennitala from 'kennitala'
+import * as kennitala from 'kennitala'
 
 import { Fund } from '@island.is/air-discount-scheme/types'
 import { User } from './user.model'
@@ -10,7 +10,6 @@ import {
 } from '../nationalRegistry'
 
 const MAX_AGE_LIMIT = 18
-const ONE_YEAR = 24 * 3600 * 365.25 * 1000
 
 @Injectable()
 export class UserService {
