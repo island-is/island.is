@@ -76,7 +76,7 @@ export type Taxonomy = {
   __typename?: 'Taxonomy'
   title?: Maybe<Scalars['String']>
   slug?: Maybe<Scalars['String']>
-  description: Scalars['String']
+  description?: Maybe<Scalars['String']>
 }
 
 export type Article = {
@@ -86,7 +86,7 @@ export type Article = {
   title: Scalars['String']
   content?: Maybe<Scalars['String']>
   group?: Maybe<Taxonomy>
-  category: Taxonomy
+  category?: Maybe<Taxonomy>
   relatedArticles: Array<Article>
 }
 
@@ -1293,7 +1293,11 @@ export type TaxonomyResolvers<
 > = {
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1306,7 +1310,11 @@ export type ArticleResolvers<
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   group?: Resolver<Maybe<ResolversTypes['Taxonomy']>, ParentType, ContextType>
-  category?: Resolver<ResolversTypes['Taxonomy'], ParentType, ContextType>
+  category?: Resolver<
+    Maybe<ResolversTypes['Taxonomy']>,
+    ParentType,
+    ContextType
+  >
   relatedArticles?: Resolver<
     Array<ResolversTypes['Article']>,
     ParentType,
@@ -1497,6 +1505,7 @@ export type NewsResolvers<
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  subtitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
