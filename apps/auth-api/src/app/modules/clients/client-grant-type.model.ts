@@ -24,6 +24,13 @@ export class ClientGrantType extends Model<ClientGrantType> {
   
   @PrimaryKey
   @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  @ApiProperty()
+  Id: string
+
+  @Column({
     type: DataType.STRING,
     allowNull: false,
   })
@@ -38,7 +45,7 @@ export class ClientGrantType extends Model<ClientGrantType> {
   })
   @ForeignKey(() => GrantType)
   @ApiProperty()
-  grantTypeId: string
+  grantType: string
 
   @CreatedAt
   @ApiProperty()
