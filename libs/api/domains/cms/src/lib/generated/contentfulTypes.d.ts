@@ -461,6 +461,9 @@ export interface ILifeEventPageFields {
   /** image */
   image?: Asset | undefined
 
+  /** thumbnail */
+  thumbnail?: Asset | undefined
+
   /** content */
   content: Document
 }
@@ -1413,10 +1416,10 @@ export interface IVidspyrnaPageFields {
   title: string
 
   /** Short description */
-  description?: string | undefined
+  description: string
 
   /** Long description */
-  content?: Document | undefined
+  longDescription?: string | undefined
 
   /** Objective */
   objective?: Document | undefined
@@ -1441,6 +1444,9 @@ export interface IVidspyrnaPageFields {
 
   /** Final cost (ISK) */
   finalCostIsk?: number | undefined
+
+  /** Content */
+  content?: Document | undefined
 }
 
 /** Page for the adgerdir.island.is website. */
