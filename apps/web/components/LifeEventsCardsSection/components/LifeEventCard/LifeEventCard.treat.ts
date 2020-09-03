@@ -1,7 +1,5 @@
 import { style } from 'treat'
 
-export const root = style({})
-
 export const thumbnail = style({
   backgroundSize: 'contain',
   backgroundPosition: 'center',

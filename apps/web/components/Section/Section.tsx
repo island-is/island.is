@@ -28,8 +28,9 @@ const Section: React.FC<SectionProps> = ({
   background,
   backgroundBleed,
 }) => {
+  const { width } = useWindowSize()
+
   const generateBackgroundBleed = (backgroundBleed: BackgroundBleed) => {
-    const { width } = useWindowSize()
     //Background bleed is not available on mobile.
     if (width < theme.breakpoints.md) {
       return null
