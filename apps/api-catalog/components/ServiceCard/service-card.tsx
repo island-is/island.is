@@ -1,6 +1,6 @@
 import React from 'react'
 
-import './service-card.scss'
+//import './service-card.scss'
 
 export interface ServiceCardInformation {
     name: string;

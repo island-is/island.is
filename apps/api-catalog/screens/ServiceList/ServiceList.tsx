@@ -43,8 +43,8 @@ function ServiceList() {
               </Stack>
               <Stack space={3}>
                 {
-                  services.map( (item) => {
-                    return <ServiceCard service={item} />
+                  services.map( (item, index) => {
+                    return <ServiceCard key={index} service={item} />
                   })
                 }
               </Stack>
