@@ -25,17 +25,11 @@ interface TabLink {
   url: string
 }
 
-interface ExternalLink {
-  title: string
-  url: string
-  icon?: any
-}
-
 interface Tab {
   title: string
   links: TabLink[]
   externalLinksHeading?: string
-  externalLinks?: ExternalLink[]
+  externalLinks?: TabLink[]
 }
 
 interface Props {
