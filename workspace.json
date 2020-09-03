@@ -2812,6 +2812,34 @@
         },
         "docker-express": {}
       }
+    },
+    "infra-monitoring": {
+      "root": "libs/infra-monitoring",
+      "sourceRoot": "libs/infra-monitoring/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/infra-monitoring/.eslintrc",
+            "tsConfig": [
+              "libs/infra-monitoring/tsconfig.lib.json",
+              "libs/infra-monitoring/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/infra-monitoring/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/infra-monitoring/jest.config.js",
+            "tsConfig": "libs/infra-monitoring/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

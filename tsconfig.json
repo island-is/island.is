@@ -109,7 +109,8 @@
       ],
       "@island.is/application/data-providers": [
         "libs/application/data-providers/src/index.ts"
-      ]
+      ],
+      "@island.is/infra-monitoring": ["libs/infra-monitoring/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -221,6 +221,9 @@
     },
     "skilavottord-ws": {
       "tags": []
+    },
+    "infra-monitoring": {
+      "tags": []
     }
   }
 }
