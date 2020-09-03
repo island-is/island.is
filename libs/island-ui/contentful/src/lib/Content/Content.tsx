@@ -237,10 +237,10 @@ const embeddedNodes = () => ({
         <Box paddingTop={15}>
           <GridContainer>
             <GridRow>
-              <GridColumn span={4}>
+              <GridColumn span="4/12">
                 <img src={fields.image.fields.file.url + '?w=320'} alt="" />
               </GridColumn>
-              <GridColumn span={8}>
+              <GridColumn span="8/12">
                 <Typography variant="h2" as="h2">
                   <span data-sidebar-link={slugify(fields.title)}>
                     {fields.title}

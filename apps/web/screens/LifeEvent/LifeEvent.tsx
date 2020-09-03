@@ -42,7 +42,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
     <Box paddingBottom={10}>
       <GridContainer>
         <GridRow>
-          <GridColumn span={9}>
+          <GridColumn span="9/12">
             <Box paddingX={[0, 0, 8]}>
               <Image type="apiImage" image={image} />
             </Box>
@@ -64,7 +64,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
               <Content document={body} />
             </div>
           </GridColumn>
-          <GridColumn span={3} paddingTop={10}>
+          <GridColumn span="3/12" paddingTop={10}>
             <Sticky>
               <Sidebar headingLinks bullet="left" title="Efnisyfirlit" />
             </Sticky>
