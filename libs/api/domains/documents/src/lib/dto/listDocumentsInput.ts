@@ -1,5 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsString, IsDate } from 'class-validator'
+import { IsString, IsDate, IsNumber } from 'class-validator'
 
 @InputType()
 export class ListDocumentsInput {
@@ -19,4 +19,12 @@ export class ListDocumentsInput {
   @Field()
   @IsString()
   category: string
+
+  @Field()
+  @IsNumber()
+  page: number
+
+  @Field()
+  @IsNumber()
+  pageSize: number
 }

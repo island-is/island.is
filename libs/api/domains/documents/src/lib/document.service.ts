@@ -33,7 +33,9 @@ export class DocumentService {
         kennitala: input.natReg,
         dateFrom: input.dateFrom,
         dateTo: input.dateTo,
-        categoryId: input.category
+        categoryId: input.category,
+        page: input.page,
+        pageSize: input.pageSize
       })
       return body.messages.reduce(function (result: Document[], documentMessage: DocumentInfoDTO) {
         if (documentMessage) result.push(Document.fromDocumentInfo(documentMessage))
