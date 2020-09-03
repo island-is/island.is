@@ -93,7 +93,6 @@ const Home: Screen<HomeProps> = ({
       <Section paddingY={[2, 2, 3, 3, 6]}>
         <LatestNewsSection label="Fréttir og tilkynningar" items={news} />
       </Section>
-      </Section>
       <Section
         paddingTop={4}
         backgroundBleed={{
