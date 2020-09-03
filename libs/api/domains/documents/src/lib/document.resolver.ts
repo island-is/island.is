@@ -13,6 +13,7 @@ export class DocumentResolver {
   @Query(() => DocumentDetails, { nullable: true })
   async getDocument(@Args('input') input: GetDocumentInput): Promise<DocumentDetails> {
     const kennitala = '2606862759' // Pending proper authentication
+    console.log('getting ', input)
     const result = await this.documentService.findByDocumentId(kennitala, input.id)
 
     return result
@@ -25,7 +26,7 @@ export class DocumentResolver {
   }
 
   @Query(() => [DocumentCategory], { nullable: true })
-  getCategories(): Promise<DocumentCategory[]> {
+  getDocumentCategories(): Promise<DocumentCategory[]> {
     const natReg = '2606862759'  // Pending proper authentication
     return this.documentService.getCategories(natReg)
   }

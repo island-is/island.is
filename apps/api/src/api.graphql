@@ -411,7 +411,7 @@ type Query {
   getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
   getDocument(input: GetDocumentInput!): DocumentDetails
   listDocuments(input: ListDocumentsInput!): [Document!]
-  getCategories: [DocumentCategory!]
+  getDocumentCategories: [DocumentCategory!]
 }
 
 input HelloWorldInput {

@@ -446,10 +446,16 @@ export type Document = {
 
 export type DocumentDetails = {
   __typename?: 'DocumentDetails'
-  fileType: Scalars['ID']
+  fileType: Scalars['String']
   content: Scalars['String']
   html: Scalars['String']
   url: Scalars['String']
+}
+
+export type DocumentCategory = {
+  __typename?: 'DocumentCategory'
+  id: Scalars['ID']
+  name: Scalars['String']
 }
 
 export type Query = {
@@ -476,6 +482,7 @@ export type Query = {
   getApplicationsByType?: Maybe<Array<Application>>
   getDocument?: Maybe<DocumentDetails>
   listDocuments?: Maybe<Array<Document>>
+  getDocumentCategories?: Maybe<Array<DocumentCategory>>
 }
 
 export type QueryHelloWorldArgs = {
@@ -852,7 +859,7 @@ export interface SubscriptionSubscriberObject<
   TParent,
   TContext,
   TArgs
-  > {
+> {
   subscribe: SubscriptionSubscribeFn<
     { [key in TKey]: TResult },
     TParent,
@@ -878,7 +885,7 @@ export type SubscriptionObject<
   TParent,
   TContext,
   TArgs
-  > =
+> =
   | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
   | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>
 
@@ -888,10 +895,10 @@ export type SubscriptionResolver<
   TParent = {},
   TContext = {},
   TArgs = {}
-  > =
+> =
   | ((
-    ...args: any[]
-  ) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
+      ...args: any[]
+    ) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
   | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>
 
 export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
@@ -912,13 +919,13 @@ export type DirectiveResolverFn<
   TParent = {},
   TContext = {},
   TArgs = {}
-  > = (
-    next: NextResolverFn<TResult>,
-    parent: TParent,
-    args: TArgs,
-    context: TContext,
-    info: GraphQLResolveInfo,
-  ) => TResult | Promise<TResult>
+> = (
+  next: NextResolverFn<TResult>,
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo,
+) => TResult | Promise<TResult>
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
@@ -943,8 +950,8 @@ export type ResolversTypes = {
     }
   >
   AdgerdirSlice:
-  | ResolversTypes['AdgerdirGroupSlice']
-  | ResolversTypes['AdgerdirFeaturedNewsSlice']
+    | ResolversTypes['AdgerdirGroupSlice']
+    | ResolversTypes['AdgerdirFeaturedNewsSlice']
   AdgerdirGroupSlice: ResolverTypeWrapper<AdgerdirGroupSlice>
   AdgerdirFeaturedNewsSlice: ResolverTypeWrapper<AdgerdirFeaturedNewsSlice>
   FrontpageSlide: ResolverTypeWrapper<FrontpageSlide>
@@ -962,15 +969,15 @@ export type ResolversTypes = {
     Omit<AboutPage, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
   >
   Slice:
-  | ResolversTypes['PageHeaderSlice']
-  | ResolversTypes['TimelineSlice']
-  | ResolversTypes['HeadingSlice']
-  | ResolversTypes['StorySlice']
-  | ResolversTypes['LinkCardSlice']
-  | ResolversTypes['LatestNewsSlice']
-  | ResolversTypes['MailingListSignupSlice']
-  | ResolversTypes['LogoListSlice']
-  | ResolversTypes['BulletListSlice']
+    | ResolversTypes['PageHeaderSlice']
+    | ResolversTypes['TimelineSlice']
+    | ResolversTypes['HeadingSlice']
+    | ResolversTypes['StorySlice']
+    | ResolversTypes['LinkCardSlice']
+    | ResolversTypes['LatestNewsSlice']
+    | ResolversTypes['MailingListSignupSlice']
+    | ResolversTypes['LogoListSlice']
+    | ResolversTypes['BulletListSlice']
   PageHeaderSlice: ResolverTypeWrapper<
     Omit<PageHeaderSlice, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
   >
@@ -987,8 +994,8 @@ export type ResolversTypes = {
     }
   >
   BulletEntry:
-  | ResolversTypes['IconBullet']
-  | ResolversTypes['NumberBulletGroup']
+    | ResolversTypes['IconBullet']
+    | ResolversTypes['NumberBulletGroup']
   IconBullet: ResolverTypeWrapper<IconBullet>
   NumberBulletGroup: ResolverTypeWrapper<NumberBulletGroup>
   LinkList: ResolverTypeWrapper<LinkList>
@@ -1004,6 +1011,8 @@ export type ResolversTypes = {
   PresignedPost: ResolverTypeWrapper<PresignedPost>
   Document: ResolverTypeWrapper<Document>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
+  DocumentDetails: ResolverTypeWrapper<DocumentDetails>
+  DocumentCategory: ResolverTypeWrapper<DocumentCategory>
   Query: ResolverTypeWrapper<{}>
   HelloWorldInput: HelloWorldInput
   SearcherInput: SearcherInput
@@ -1064,8 +1073,8 @@ export type ResolversParentTypes = {
     slices: Array<ResolversParentTypes['AdgerdirSlice']>
   }
   AdgerdirSlice:
-  | ResolversParentTypes['AdgerdirGroupSlice']
-  | ResolversParentTypes['AdgerdirFeaturedNewsSlice']
+    | ResolversParentTypes['AdgerdirGroupSlice']
+    | ResolversParentTypes['AdgerdirFeaturedNewsSlice']
   AdgerdirGroupSlice: AdgerdirGroupSlice
   AdgerdirFeaturedNewsSlice: AdgerdirFeaturedNewsSlice
   FrontpageSlide: FrontpageSlide
@@ -1083,15 +1092,15 @@ export type ResolversParentTypes = {
     slices: Array<ResolversParentTypes['Slice']>
   }
   Slice:
-  | ResolversParentTypes['PageHeaderSlice']
-  | ResolversParentTypes['TimelineSlice']
-  | ResolversParentTypes['HeadingSlice']
-  | ResolversParentTypes['StorySlice']
-  | ResolversParentTypes['LinkCardSlice']
-  | ResolversParentTypes['LatestNewsSlice']
-  | ResolversParentTypes['MailingListSignupSlice']
-  | ResolversParentTypes['LogoListSlice']
-  | ResolversParentTypes['BulletListSlice']
+    | ResolversParentTypes['PageHeaderSlice']
+    | ResolversParentTypes['TimelineSlice']
+    | ResolversParentTypes['HeadingSlice']
+    | ResolversParentTypes['StorySlice']
+    | ResolversParentTypes['LinkCardSlice']
+    | ResolversParentTypes['LatestNewsSlice']
+    | ResolversParentTypes['MailingListSignupSlice']
+    | ResolversParentTypes['LogoListSlice']
+    | ResolversParentTypes['BulletListSlice']
   PageHeaderSlice: Omit<PageHeaderSlice, 'slices'> & {
     slices: Array<ResolversParentTypes['Slice']>
   }
@@ -1106,8 +1115,8 @@ export type ResolversParentTypes = {
     bullets: Array<ResolversParentTypes['BulletEntry']>
   }
   BulletEntry:
-  | ResolversParentTypes['IconBullet']
-  | ResolversParentTypes['NumberBulletGroup']
+    | ResolversParentTypes['IconBullet']
+    | ResolversParentTypes['NumberBulletGroup']
   IconBullet: IconBullet
   NumberBulletGroup: NumberBulletGroup
   LinkList: LinkList
@@ -1121,6 +1130,8 @@ export type ResolversParentTypes = {
   PresignedPost: PresignedPost
   Document: Document
   Boolean: Scalars['Boolean']
+  DocumentDetails: DocumentDetails
+  DocumentCategory: DocumentCategory
   Query: {}
   HelloWorldInput: HelloWorldInput
   SearcherInput: SearcherInput
@@ -1156,652 +1167,652 @@ export type ResolversParentTypes = {
 export type HelloWorldResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['HelloWorld'] = ResolversParentTypes['HelloWorld']
-  > = {
-    message?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type ContentItemResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['ContentItem'] = ResolversParentTypes['ContentItem']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    tag?: Resolver<
-      Maybe<Array<ResolversTypes['String']>>,
-      ParentType,
-      ContextType
-    >
-    category?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    categorySlug?: Resolver<
-      Maybe<ResolversTypes['String']>,
-      ParentType,
-      ContextType
-    >
-    categoryDescription?: Resolver<
-      Maybe<ResolversTypes['String']>,
-      ParentType,
-      ContextType
-    >
-    group?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    groupSlug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    groupDescription?: Resolver<
-      Maybe<ResolversTypes['String']>,
-      ParentType,
-      ContextType
-    >
-    contentBlob?: Resolver<
-      Maybe<ResolversTypes['String']>,
-      ParentType,
-      ContextType
-    >
-    contentId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    contentType?: Resolver<
-      Maybe<ResolversTypes['String']>,
-      ParentType,
-      ContextType
-    >
-    date?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    imageText?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    lang?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  tag?: Resolver<
+    Maybe<Array<ResolversTypes['String']>>,
+    ParentType,
+    ContextType
+  >
+  category?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  categorySlug?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  categoryDescription?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  group?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  groupSlug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  groupDescription?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  contentBlob?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  contentId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  contentType?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  date?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  imageText?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  lang?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type SearchResultResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['SearchResult'] = ResolversParentTypes['SearchResult']
-  > = {
-    total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
-    items?: Resolver<
-      Array<ResolversTypes['ContentItem']>,
-      ParentType,
-      ContextType
-    >
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  items?: Resolver<
+    Array<ResolversTypes['ContentItem']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type ContentCategoryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['ContentCategory'] = ResolversParentTypes['ContentCategory']
-  > = {
-    title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    description?: Resolver<
-      Maybe<ResolversTypes['String']>,
-      ParentType,
-      ContextType
-    >
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type TaxonomyResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Taxonomy'] = ResolversParentTypes['Taxonomy']
-  > = {
-    title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type ArticleResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']
-  > = {
-    id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    group?: Resolver<Maybe<ResolversTypes['Taxonomy']>, ParentType, ContextType>
-    category?: Resolver<ResolversTypes['Taxonomy'], ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  group?: Resolver<Maybe<ResolversTypes['Taxonomy']>, ParentType, ContextType>
+  category?: Resolver<ResolversTypes['Taxonomy'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type AdgerdirTagResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AdgerdirTag'] = ResolversParentTypes['AdgerdirTag']
-  > = {
-    id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type AdgerdirPageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AdgerdirPage'] = ResolversParentTypes['AdgerdirPage']
-  > = {
-    id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    longDescription?: Resolver<
-      Maybe<ResolversTypes['String']>,
-      ParentType,
-      ContextType
-    >
-    content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    objective?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    tags?: Resolver<Array<ResolversTypes['AdgerdirTag']>, ParentType, ContextType>
-    link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    linkButtonText?: Resolver<
-      Maybe<ResolversTypes['String']>,
-      ParentType,
-      ContextType
-    >
-    status?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    estimatedCostIsk?: Resolver<
-      Maybe<ResolversTypes['Float']>,
-      ParentType,
-      ContextType
-    >
-    finalCostIsk?: Resolver<
-      Maybe<ResolversTypes['Float']>,
-      ParentType,
-      ContextType
-    >
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  longDescription?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  objective?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  tags?: Resolver<Array<ResolversTypes['AdgerdirTag']>, ParentType, ContextType>
+  link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  linkButtonText?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  status?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  estimatedCostIsk?: Resolver<
+    Maybe<ResolversTypes['Float']>,
+    ParentType,
+    ContextType
+  >
+  finalCostIsk?: Resolver<
+    Maybe<ResolversTypes['Float']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type AdgerdirPagesResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AdgerdirPages'] = ResolversParentTypes['AdgerdirPages']
-  > = {
-    items?: Resolver<
-      Array<ResolversTypes['AdgerdirPage']>,
-      ParentType,
-      ContextType
-    >
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  items?: Resolver<
+    Array<ResolversTypes['AdgerdirPage']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type ImageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Image'] = ResolversParentTypes['Image']
-  > = {
-    url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    contentType?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
-    height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  contentType?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  width?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  height?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type AdgerdirNewsResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AdgerdirNews'] = ResolversParentTypes['AdgerdirNews']
-  > = {
-    id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    subtitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
-    date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  subtitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
+  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type AdgerdirFrontpageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AdgerdirFrontpage'] = ResolversParentTypes['AdgerdirFrontpage']
-  > = {
-    id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    slices?: Resolver<
-      Array<ResolversTypes['AdgerdirSlice']>,
-      ParentType,
-      ContextType
-    >
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  slices?: Resolver<
+    Array<ResolversTypes['AdgerdirSlice']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type AdgerdirSliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AdgerdirSlice'] = ResolversParentTypes['AdgerdirSlice']
-  > = {
-    __resolveType: TypeResolveFn<
-      'AdgerdirGroupSlice' | 'AdgerdirFeaturedNewsSlice',
-      ParentType,
-      ContextType
-    >
-  }
+> = {
+  __resolveType: TypeResolveFn<
+    'AdgerdirGroupSlice' | 'AdgerdirFeaturedNewsSlice',
+    ParentType,
+    ContextType
+  >
+}
 
 export type AdgerdirGroupSliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AdgerdirGroupSlice'] = ResolversParentTypes['AdgerdirGroupSlice']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    subtitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    description?: Resolver<
-      Maybe<ResolversTypes['String']>,
-      ParentType,
-      ContextType
-    >
-    image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
-    pages?: Resolver<
-      Array<ResolversTypes['AdgerdirPage']>,
-      ParentType,
-      ContextType
-    >
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  subtitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
+  pages?: Resolver<
+    Array<ResolversTypes['AdgerdirPage']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type AdgerdirFeaturedNewsSliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AdgerdirFeaturedNewsSlice'] = ResolversParentTypes['AdgerdirFeaturedNewsSlice']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    featured?: Resolver<
-      Array<ResolversTypes['AdgerdirNews']>,
-      ParentType,
-      ContextType
-    >
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  featured?: Resolver<
+    Array<ResolversTypes['AdgerdirNews']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type FrontpageSlideResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['FrontpageSlide'] = ResolversParentTypes['FrontpageSlide']
-  > = {
-    subtitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
-    link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  subtitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
+  link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type FrontpageSliderListResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['FrontpageSliderList'] = ResolversParentTypes['FrontpageSliderList']
-  > = {
-    items?: Resolver<
-      Array<ResolversTypes['FrontpageSlide']>,
-      ParentType,
-      ContextType
-    >
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  items?: Resolver<
+    Array<ResolversTypes['FrontpageSlide']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type NewsResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['News'] = ResolversParentTypes['News']
-  > = {
-    id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
-    date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
+  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type PaginationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Pagination'] = ResolversParentTypes['Pagination']
-  > = {
-    page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
-    perPage?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
-    totalResults?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
-    totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  page?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  perPage?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  totalResults?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  totalPages?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type PaginatedNewsResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['PaginatedNews'] = ResolversParentTypes['PaginatedNews']
-  > = {
-    page?: Resolver<ResolversTypes['Pagination'], ParentType, ContextType>
-    news?: Resolver<Array<ResolversTypes['News']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  page?: Resolver<ResolversTypes['Pagination'], ParentType, ContextType>
+  news?: Resolver<Array<ResolversTypes['News']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type NamespaceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Namespace'] = ResolversParentTypes['Namespace']
-  > = {
-    namespace?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    fields?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  namespace?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  fields?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type LinkResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Link'] = ResolversParentTypes['Link']
-  > = {
-    text?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  text?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type TimelineEventResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['TimelineEvent'] = ResolversParentTypes['TimelineEvent']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    numerator?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
-    denominator?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
-    label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    tags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>
-    link?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  numerator?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
+  denominator?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
+  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  tags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>
+  link?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type StoryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Story'] = ResolversParentTypes['Story']
-  > = {
-    label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    logo?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
-    readMoreText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  logo?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
+  readMoreText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type LinkCardResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['LinkCard'] = ResolversParentTypes['LinkCard']
-  > = {
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    link?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    linkText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  link?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  linkText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type NumberBulletResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['NumberBullet'] = ResolversParentTypes['NumberBullet']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type AboutPageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AboutPage'] = ResolversParentTypes['AboutPage']
-  > = {
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    seoDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    theme?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    slices?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  seoDescription?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  theme?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slices?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type SliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Slice'] = ResolversParentTypes['Slice']
-  > = {
-    __resolveType: TypeResolveFn<
-      | 'PageHeaderSlice'
-      | 'TimelineSlice'
-      | 'HeadingSlice'
-      | 'StorySlice'
-      | 'LinkCardSlice'
-      | 'LatestNewsSlice'
-      | 'MailingListSignupSlice'
-      | 'LogoListSlice'
-      | 'BulletListSlice',
-      ParentType,
-      ContextType
-    >
-  }
+> = {
+  __resolveType: TypeResolveFn<
+    | 'PageHeaderSlice'
+    | 'TimelineSlice'
+    | 'HeadingSlice'
+    | 'StorySlice'
+    | 'LinkCardSlice'
+    | 'LatestNewsSlice'
+    | 'MailingListSignupSlice'
+    | 'LogoListSlice'
+    | 'BulletListSlice',
+    ParentType,
+    ContextType
+  >
+}
 
 export type PageHeaderSliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['PageHeaderSlice'] = ResolversParentTypes['PageHeaderSlice']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    introduction?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    navigationText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>
-    slices?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  introduction?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  navigationText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>
+  slices?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type TimelineSliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['TimelineSlice'] = ResolversParentTypes['TimelineSlice']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    events?: Resolver<
-      Array<ResolversTypes['TimelineEvent']>,
-      ParentType,
-      ContextType
-    >
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  events?: Resolver<
+    Array<ResolversTypes['TimelineEvent']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type HeadingSliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['HeadingSlice'] = ResolversParentTypes['HeadingSlice']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type StorySliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['StorySlice'] = ResolversParentTypes['StorySlice']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    readMoreText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    stories?: Resolver<Array<ResolversTypes['Story']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  readMoreText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  stories?: Resolver<Array<ResolversTypes['Story']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type LinkCardSliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['LinkCardSlice'] = ResolversParentTypes['LinkCardSlice']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    cards?: Resolver<Array<ResolversTypes['LinkCard']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  cards?: Resolver<Array<ResolversTypes['LinkCard']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type LatestNewsSliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['LatestNewsSlice'] = ResolversParentTypes['LatestNewsSlice']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    news?: Resolver<Array<ResolversTypes['News']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  news?: Resolver<Array<ResolversTypes['News']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type MailingListSignupSliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['MailingListSignupSlice'] = ResolversParentTypes['MailingListSignupSlice']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    description?: Resolver<
-      Maybe<ResolversTypes['String']>,
-      ParentType,
-      ContextType
-    >
-    inputLabel?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    buttonText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  inputLabel?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  buttonText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type LogoListSliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['LogoListSlice'] = ResolversParentTypes['LogoListSlice']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  images?: Resolver<Array<ResolversTypes['Image']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type BulletListSliceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['BulletListSlice'] = ResolversParentTypes['BulletListSlice']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    bullets?: Resolver<
-      Array<ResolversTypes['BulletEntry']>,
-      ParentType,
-      ContextType
-    >
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  bullets?: Resolver<
+    Array<ResolversTypes['BulletEntry']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type BulletEntryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['BulletEntry'] = ResolversParentTypes['BulletEntry']
-  > = {
-    __resolveType: TypeResolveFn<
-      'IconBullet' | 'NumberBulletGroup',
-      ParentType,
-      ContextType
-    >
-  }
+> = {
+  __resolveType: TypeResolveFn<
+    'IconBullet' | 'NumberBulletGroup',
+    ParentType,
+    ContextType
+  >
+}
 
 export type IconBulletResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['IconBullet'] = ResolversParentTypes['IconBullet']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    icon?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
-    url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    linkText?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  body?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  icon?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
+  url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  linkText?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type NumberBulletGroupResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['NumberBulletGroup'] = ResolversParentTypes['NumberBulletGroup']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    defaultVisible?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
-    bullets?: Resolver<
-      Array<ResolversTypes['NumberBullet']>,
-      ParentType,
-      ContextType
-    >
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  defaultVisible?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  bullets?: Resolver<
+    Array<ResolversTypes['NumberBullet']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type LinkListResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['LinkList'] = ResolversParentTypes['LinkList']
-  > = {
-    title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type LandingPageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['LandingPage'] = ResolversParentTypes['LandingPage']
-  > = {
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    introduction?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
-    actionButton?: Resolver<
-      Maybe<ResolversTypes['Link']>,
-      ParentType,
-      ContextType
-    >
-    links?: Resolver<Maybe<ResolversTypes['LinkList']>, ParentType, ContextType>
-    content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  introduction?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
+  actionButton?: Resolver<
+    Maybe<ResolversTypes['Link']>,
+    ParentType,
+    ContextType
+  >
+  links?: Resolver<Maybe<ResolversTypes['LinkList']>, ParentType, ContextType>
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type GenericPageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['GenericPage'] = ResolversParentTypes['GenericPage']
-  > = {
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    intro?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    mainContent?: Resolver<
-      Maybe<ResolversTypes['String']>,
-      ParentType,
-      ContextType
-    >
-    sidebar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    misc?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  intro?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  mainContent?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  sidebar?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  misc?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type MenuResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Menu'] = ResolversParentTypes['Menu']
-  > = {
-    title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type AdgerdirTagsResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AdgerdirTags'] = ResolversParentTypes['AdgerdirTags']
-  > = {
-    items?: Resolver<
-      Array<ResolversTypes['AdgerdirTag']>,
-      ParentType,
-      ContextType
-    >
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  items?: Resolver<
+    Array<ResolversTypes['AdgerdirTag']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type ApplicationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Application'] = ResolversParentTypes['Application']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    created?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>
-    modified?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>
-    applicant?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    assignee?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    externalId?: Resolver<
-      Maybe<ResolversTypes['String']>,
-      ParentType,
-      ContextType
-    >
-    state?: Resolver<
-      ResolversTypes['ApplicationStateEnum'],
-      ParentType,
-      ContextType
-    >
-    attachments?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>
-    typeId?: Resolver<
-      ResolversTypes['ApplicationTypeIdEnum'],
-      ParentType,
-      ContextType
-    >
-    answers?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
-    externalData?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  created?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>
+  modified?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>
+  applicant?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  assignee?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  externalId?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  state?: Resolver<
+    ResolversTypes['ApplicationStateEnum'],
+    ParentType,
+    ContextType
+  >
+  attachments?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>
+  typeId?: Resolver<
+    ResolversTypes['ApplicationTypeIdEnum'],
+    ParentType,
+    ContextType
+  >
+  answers?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
+  externalData?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export interface DateTimeScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
@@ -1816,215 +1827,229 @@ export interface JsonScalarConfig
 export type PresignedPostResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['PresignedPost'] = ResolversParentTypes['PresignedPost']
-  > = {
-    url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    fields?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  fields?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type DocumentResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Document'] = ResolversParentTypes['Document']
-  > = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>
-    subject?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    senderName?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    senderNatReg?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    opened?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  date?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>
+  subject?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  senderName?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  senderNatReg?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  opened?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type DocumentDetailsResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['DocumentDetails'] = ResolversParentTypes['DocumentDetails']
-  > = {
-    fileType?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-    content?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    html?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-    __isTypeOf?: IsTypeOfResolverFn<ParentType>
-  }
+> = {
+  fileType?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  html?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type DocumentCategoryResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['DocumentCategory'] = ResolversParentTypes['DocumentCategory']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
 
 export type QueryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
-  > = {
-    helloWorld?: Resolver<
-      ResolversTypes['HelloWorld'],
-      ParentType,
-      ContextType,
-      RequireFields<QueryHelloWorldArgs, 'input'>
-    >
-    searchResults?: Resolver<
-      ResolversTypes['SearchResult'],
-      ParentType,
-      ContextType,
-      RequireFields<QuerySearchResultsArgs, 'query'>
-    >
-    singleItem?: Resolver<
-      Maybe<ResolversTypes['ContentItem']>,
-      ParentType,
-      ContextType,
-      RequireFields<QuerySingleItemArgs, 'input'>
-    >
-    categories?: Resolver<
-      Array<ResolversTypes['ContentCategory']>,
-      ParentType,
-      ContextType,
-      RequireFields<QueryCategoriesArgs, 'input'>
-    >
-    articlesInCategory?: Resolver<
-      Array<ResolversTypes['ContentItem']>,
-      ParentType,
-      ContextType,
-      RequireFields<QueryArticlesInCategoryArgs, 'category'>
-    >
-    getArticle?: Resolver<
-      Maybe<ResolversTypes['Article']>,
-      ParentType,
-      ContextType,
-      RequireFields<QueryGetArticleArgs, 'input'>
-    >
-    getNews?: Resolver<
-      Maybe<ResolversTypes['News']>,
-      ParentType,
-      ContextType,
-      RequireFields<QueryGetNewsArgs, 'input'>
-    >
-    getNewsList?: Resolver<
-      ResolversTypes['PaginatedNews'],
-      ParentType,
-      ContextType,
-      RequireFields<QueryGetNewsListArgs, 'input'>
-    >
-    getNamespace?: Resolver<
-      Maybe<ResolversTypes['Namespace']>,
-      ParentType,
-      ContextType,
-      RequireFields<QueryGetNamespaceArgs, 'input'>
-    >
-    getAboutPage?: Resolver<
-      ResolversTypes['AboutPage'],
-      ParentType,
-      ContextType,
-      RequireFields<QueryGetAboutPageArgs, 'input'>
-    >
-    getLandingPage?: Resolver<
-      Maybe<ResolversTypes['LandingPage']>,
-      ParentType,
-      ContextType,
-      RequireFields<QueryGetLandingPageArgs, 'input'>
-    >
-    getGenericPage?: Resolver<
-      Maybe<ResolversTypes['GenericPage']>,
-      ParentType,
-      ContextType,
-      RequireFields<QueryGetGenericPageArgs, 'input'>
-    >
-    getAdgerdirPage?: Resolver<
-      Maybe<ResolversTypes['AdgerdirPage']>,
-      ParentType,
-      ContextType,
-      RequireFields<QueryGetAdgerdirPageArgs, 'input'>
-    >
-    getAdgerdirPages?: Resolver<
-      ResolversTypes['AdgerdirPages'],
-      ParentType,
-      ContextType,
-      RequireFields<QueryGetAdgerdirPagesArgs, 'input'>
-    >
-    getAdgerdirTags?: Resolver<
-      Maybe<ResolversTypes['AdgerdirTags']>,
-      ParentType,
-      ContextType,
-      RequireFields<QueryGetAdgerdirTagsArgs, 'input'>
-    >
-    getFrontpageSliderList?: Resolver<
-      Maybe<ResolversTypes['FrontpageSliderList']>,
-      ParentType,
-      ContextType,
-      RequireFields<QueryGetFrontpageSliderListArgs, 'input'>
-    >
-    getAdgerdirFrontpage?: Resolver<
-      Maybe<ResolversTypes['AdgerdirFrontpage']>,
-      ParentType,
-      ContextType,
-      RequireFields<QueryGetAdgerdirFrontpageArgs, 'input'>
-    >
-    getMenu?: Resolver<
-      Maybe<ResolversTypes['Menu']>,
-      ParentType,
-      ContextType,
-      RequireFields<QueryGetMenuArgs, 'input'>
-    >
-    getApplication?: Resolver<
-      Maybe<ResolversTypes['Application']>,
-      ParentType,
-      ContextType,
-      RequireFields<QueryGetApplicationArgs, 'input'>
-    >
-    getApplicationsByType?: Resolver<
-      Maybe<Array<ResolversTypes['Application']>>,
-      ParentType,
-      ContextType,
-      RequireFields<QueryGetApplicationsByTypeArgs, 'input'>
-    >
-    getDocument?: Resolver<
-      Maybe<ResolversTypes['DocumentDetails']>,
-      ParentType,
-      ContextType,
-      RequireFields<QueryGetDocumentArgs, 'input'>
-    >
-    listDocuments?: Resolver<
-      Maybe<Array<ResolversTypes['Document']>>,
-      ParentType,
-      ContextType,
-      RequireFields<QueryListDocumentsArgs, 'input'>
-    >
-  }
+> = {
+  helloWorld?: Resolver<
+    ResolversTypes['HelloWorld'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryHelloWorldArgs, 'input'>
+  >
+  searchResults?: Resolver<
+    ResolversTypes['SearchResult'],
+    ParentType,
+    ContextType,
+    RequireFields<QuerySearchResultsArgs, 'query'>
+  >
+  singleItem?: Resolver<
+    Maybe<ResolversTypes['ContentItem']>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerySingleItemArgs, 'input'>
+  >
+  categories?: Resolver<
+    Array<ResolversTypes['ContentCategory']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryCategoriesArgs, 'input'>
+  >
+  articlesInCategory?: Resolver<
+    Array<ResolversTypes['ContentItem']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryArticlesInCategoryArgs, 'category'>
+  >
+  getArticle?: Resolver<
+    Maybe<ResolversTypes['Article']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetArticleArgs, 'input'>
+  >
+  getNews?: Resolver<
+    Maybe<ResolversTypes['News']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetNewsArgs, 'input'>
+  >
+  getNewsList?: Resolver<
+    ResolversTypes['PaginatedNews'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetNewsListArgs, 'input'>
+  >
+  getNamespace?: Resolver<
+    Maybe<ResolversTypes['Namespace']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetNamespaceArgs, 'input'>
+  >
+  getAboutPage?: Resolver<
+    ResolversTypes['AboutPage'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetAboutPageArgs, 'input'>
+  >
+  getLandingPage?: Resolver<
+    Maybe<ResolversTypes['LandingPage']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetLandingPageArgs, 'input'>
+  >
+  getGenericPage?: Resolver<
+    Maybe<ResolversTypes['GenericPage']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetGenericPageArgs, 'input'>
+  >
+  getAdgerdirPage?: Resolver<
+    Maybe<ResolversTypes['AdgerdirPage']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetAdgerdirPageArgs, 'input'>
+  >
+  getAdgerdirPages?: Resolver<
+    ResolversTypes['AdgerdirPages'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetAdgerdirPagesArgs, 'input'>
+  >
+  getAdgerdirTags?: Resolver<
+    Maybe<ResolversTypes['AdgerdirTags']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetAdgerdirTagsArgs, 'input'>
+  >
+  getFrontpageSliderList?: Resolver<
+    Maybe<ResolversTypes['FrontpageSliderList']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetFrontpageSliderListArgs, 'input'>
+  >
+  getAdgerdirFrontpage?: Resolver<
+    Maybe<ResolversTypes['AdgerdirFrontpage']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetAdgerdirFrontpageArgs, 'input'>
+  >
+  getMenu?: Resolver<
+    Maybe<ResolversTypes['Menu']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetMenuArgs, 'input'>
+  >
+  getApplication?: Resolver<
+    Maybe<ResolversTypes['Application']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetApplicationArgs, 'input'>
+  >
+  getApplicationsByType?: Resolver<
+    Maybe<Array<ResolversTypes['Application']>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetApplicationsByTypeArgs, 'input'>
+  >
+  getDocument?: Resolver<
+    Maybe<ResolversTypes['DocumentDetails']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetDocumentArgs, 'input'>
+  >
+  listDocuments?: Resolver<
+    Maybe<Array<ResolversTypes['Document']>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryListDocumentsArgs, 'input'>
+  >
+  getDocumentCategories?: Resolver<
+    Maybe<Array<ResolversTypes['DocumentCategory']>>,
+    ParentType,
+    ContextType
+  >
+}
 
 export type MutationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
-  > = {
-    createApplication?: Resolver<
-      Maybe<ResolversTypes['Application']>,
-      ParentType,
-      ContextType,
-      RequireFields<MutationCreateApplicationArgs, 'input'>
-    >
-    updateApplication?: Resolver<
-      Maybe<ResolversTypes['Application']>,
-      ParentType,
-      ContextType,
-      RequireFields<MutationUpdateApplicationArgs, 'input'>
-    >
-    updateApplicationExternalData?: Resolver<
-      Maybe<ResolversTypes['Application']>,
-      ParentType,
-      ContextType,
-      RequireFields<MutationUpdateApplicationExternalDataArgs, 'input'>
-    >
-    addAttachment?: Resolver<
-      Maybe<ResolversTypes['Application']>,
-      ParentType,
-      ContextType,
-      RequireFields<MutationAddAttachmentArgs, 'input'>
-    >
-    deleteAttachment?: Resolver<
-      Maybe<ResolversTypes['Application']>,
-      ParentType,
-      ContextType,
-      RequireFields<MutationDeleteAttachmentArgs, 'input'>
-    >
-    createUploadUrl?: Resolver<
-      ResolversTypes['PresignedPost'],
-      ParentType,
-      ContextType,
-      RequireFields<MutationCreateUploadUrlArgs, 'filename'>
-    >
-  }
+> = {
+  createApplication?: Resolver<
+    Maybe<ResolversTypes['Application']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateApplicationArgs, 'input'>
+  >
+  updateApplication?: Resolver<
+    Maybe<ResolversTypes['Application']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateApplicationArgs, 'input'>
+  >
+  updateApplicationExternalData?: Resolver<
+    Maybe<ResolversTypes['Application']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationUpdateApplicationExternalDataArgs, 'input'>
+  >
+  addAttachment?: Resolver<
+    Maybe<ResolversTypes['Application']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationAddAttachmentArgs, 'input'>
+  >
+  deleteAttachment?: Resolver<
+    Maybe<ResolversTypes['Application']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationDeleteAttachmentArgs, 'input'>
+  >
+  createUploadUrl?: Resolver<
+    ResolversTypes['PresignedPost'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateUploadUrlArgs, 'filename'>
+  >
+}
 
 export type Resolvers<ContextType = Context> = {
   HelloWorld?: HelloWorldResolvers<ContextType>
@@ -2075,9 +2100,10 @@ export type Resolvers<ContextType = Context> = {
   Application?: ApplicationResolvers<ContextType>
   DateTime?: GraphQLScalarType
   JSON?: GraphQLScalarType
-  DocumentDetails?: DocumentDetailsResolvers<ContextType>
   PresignedPost?: PresignedPostResolvers<ContextType>
   Document?: DocumentResolvers<ContextType>
+  DocumentDetails?: DocumentDetailsResolvers<ContextType>
+  DocumentCategory?: DocumentCategoryResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
 }

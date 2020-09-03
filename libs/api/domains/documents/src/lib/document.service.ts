@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { Document } from './models/document.model'
-import { CustomersApi } from '../../gen/fetch/'
+import { CustomersApi, CategoryDTO, DocumentInfoDTO } from '../../gen/fetch/'
 import { ListDocumentsInput } from './dto/listDocumentsInput'
 import { logger } from '@island.is/logging'
 import { DocumentDetails } from './models/documentDetails.model'
+import { DocumentCategory } from './models/documentCategory.model'
 
 @Injectable()
 export class DocumentService {
@@ -14,15 +15,16 @@ export class DocumentService {
 
   async findByDocumentId(natReg: string, documentId: string): Promise<DocumentDetails> {
     try {
+      console.log('gettin')
       const documentDTO = await this.customersApi.customersDocument({
         kennitala: natReg,
         messageId: documentId,
         authenticationType: 'LOW'
       })
-
+      console.log(documentDTO)
       return DocumentDetails.fromDocumentDTO(documentDTO)
     } catch (exception) {
-      throw exception
+      throw new NotFoundException('Error fetching document')
     }
   }
 
@@ -34,7 +36,7 @@ export class DocumentService {
         dateTo: input.dateTo,
         categoryId: input.category
       })
-      return body.messages.reduce(function (result, message) {
+      return body.messages.reduce(function (result: Document[], message: DocumentInfoDTO) {
         if (message) result.push(Document.fromDocumentInfo(message))
         return result
       }, [])
@@ -44,11 +46,15 @@ export class DocumentService {
     }
   }
 
-  async getCategories(natReg: string) {
+  async getCategories(natReg: string): Promise<DocumentCategory[]> {
     try {
       const body = await this.customersApi.customersCategories({ kennitala: natReg })
-      body.categories
+      return body.categories.reduce(function (result: DocumentCategory[], category: CategoryDTO) {
+        if (category) result.push(DocumentCategory.fromDocumentDTO(category))
+        return result
+      }, [])
     } catch (exception) {
+      logger.error(exception)
       return []
     }
   }
