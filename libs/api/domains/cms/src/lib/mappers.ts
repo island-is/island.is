@@ -79,6 +79,7 @@ export const mapAdgerdirNewsItem = ({
   image: fields.image?.fields?.file && mapImage(fields.image),
   date: fields.date,
   content: JSON.stringify(fields.content),
+  pages: fields.pages && fields.pages.map(mapAdgerdirPage),
 })
 
 export const mapAdgerdirFeaturedNewsSlice = ({

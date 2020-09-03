@@ -97,6 +97,7 @@ type AdgerdirNews {
   image: Image
   date: String!
   content: String
+  pages: [AdgerdirPage!]
 }
 
 type AdgerdirPages {

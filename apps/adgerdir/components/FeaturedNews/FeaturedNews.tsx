@@ -52,7 +52,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                     <BackgroundImage ratio="20:10" image={first.image} />
                   </Box>
                 ) : null}
-                <Stack space={3}>
+                <Stack space={2}>
                   <Heading
                     subtitle={first.dateFormatted}
                     title={first.title}
@@ -89,11 +89,11 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                   offset={[null, null, null, null, 1]}
                 >
                   {second.image ? (
-                    <Box marginTop={10} marginBottom={3}>
+                    <Box marginTop={10} marginBottom={2}>
                       <BackgroundImage ratio="20:10" image={second.image} />
                     </Box>
                   ) : null}
-                  <Stack space={3}>
+                  <Stack space={2}>
                     <Heading
                       main={false}
                       subtitle={second.dateFormatted}
@@ -120,11 +120,11 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                   offset={[null, null, null, 2, 2]}
                 >
                   {third.image ? (
-                    <Box marginTop={10} marginBottom={3}>
+                    <Box marginTop={10} marginBottom={2}>
                       <BackgroundImage ratio="20:10" image={third.image} />
                     </Box>
                   ) : null}
-                  <Stack space={3}>
+                  <Stack space={2}>
                     <Heading
                       main={false}
                       subtitle={third.dateFormatted}

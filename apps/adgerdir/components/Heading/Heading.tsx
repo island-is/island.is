@@ -23,7 +23,7 @@ export const Heading: FC<HeadingProps> = ({
   }
 
   return (
-    <Stack space={3}>
+    <Stack space={2}>
       {subtitle ? (
         <Typography variant="eyebrow" as="div" color="purple400">
           {subtitle}

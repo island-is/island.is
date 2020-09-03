@@ -31,8 +31,13 @@ import {
 import { ArticleLayout } from '@island.is/adgerdir/screens/Layouts/Layouts'
 import { withApollo } from '@island.is/adgerdir/graphql'
 import { Screen } from '@island.is/adgerdir/types'
-import { Content } from '@island.is/adgerdir/units/Content'
-import { CustomNextError } from '@island.is/adgerdir/units/ErrorBoundary'
+import {
+  Content,
+  CustomNextError,
+  Paragraph,
+  Intro,
+  Heading,
+} from '@island.is/adgerdir/units'
 import { ColorSchemeContext } from '@island.is/adgerdir/context'
 import { useNamespace } from '@island.is/adgerdir/hooks'
 
@@ -115,54 +120,56 @@ const Article: Screen<ArticleProps> = ({ article, pages, tags, namespace }) => {
           </Box>
         }
       >
-        <Stack space={3}>
-          <Breadcrumbs color="blue400">
-            <Link as="/" href="/">
-              <a>Viðspyrna</a>
-            </Link>
-            <span>Aðgerð</span>
-          </Breadcrumbs>
-          <Typography variant="h1" as="h1">
-            {article.title}
-          </Typography>
-          {description ? (
-            <Typography variant="intro" as="p">
-              {description}
+        <Box marginBottom={2}>
+          <Stack space={2}>
+            <Breadcrumbs color="blue400">
+              <Link as="/" href="/">
+                <a>Viðspyrna</a>
+              </Link>
+              <span>Aðgerð</span>
+            </Breadcrumbs>
+            <Typography variant="h1" as="h1">
+              {article.title}
             </Typography>
-          ) : null}
-          {article.objective ? (
-            <Stack space={1}>
-              <Typography variant="h3" as="h3">
-                Markmið
-              </Typography>
-              <Content document={article.objective} />
-            </Stack>
-          ) : null}
-          {estimatedCostFormatted || finalCostFormatted ? (
-            <Stack space={1}>
-              <Typography variant="h3" as="h3">
-                Kostnaður ríkissjóðs
-              </Typography>
+          </Stack>
+        </Box>
+        {description ? <Intro>{description}</Intro> : null}
+        {article.objective ? (
+          <>
+            <Heading variant="h3" as="h3">
+              Markmið
+            </Heading>
+            <Content document={article.objective} />
+          </>
+        ) : null}
+        {estimatedCostFormatted || finalCostFormatted ? (
+          <>
+            <Heading variant="h3" as="h3">
+              Kostnaður ríkissjóðs
+            </Heading>
+            <Paragraph>
               {estimatedCostFormatted ? (
-                <Typography variant="p">
-                  Áætlaður kostnaður: <strong>{estimatedCostFormatted}</strong>
-                </Typography>
+                <>
+                  <span>
+                    Áætlaður kostnaður:{' '}
+                    <strong>{estimatedCostFormatted}</strong>
+                  </span>
+                  <br />
+                </>
               ) : null}
               {finalCostFormatted ? (
-                <Typography variant="p">
+                <span>
                   Endanlegur kostnaður: <strong>{finalCostFormatted}</strong>
-                </Typography>
+                </span>
               ) : null}
-            </Stack>
-          ) : null}
-          <Stack space={1}>
-            <Typography variant="h3" as="h3">
-              Staða
-            </Typography>
-            <Typography variant="p">{n(article.status)}</Typography>
-          </Stack>
-          {article.content ? <Content document={article.content} /> : null}
-        </Stack>
+            </Paragraph>
+          </>
+        ) : null}
+        <Heading variant="h3" as="h3">
+          Staða
+        </Heading>
+        <Paragraph>{n(article.status)}</Paragraph>
+        {article.content ? <Content document={article.content} /> : null}
       </ArticleLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
         <Box background="red100">

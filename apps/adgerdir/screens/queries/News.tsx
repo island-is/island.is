@@ -17,6 +17,9 @@ export const GET_NEWS_QUERY = gql`
       }
       date
       content
+      pages {
+        id
+      }
     }
   }
 `

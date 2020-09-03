@@ -14,7 +14,7 @@ function CustomError({ statusCode, title = '', ...props }: ErrorProps) {
         <title>{statusCode} | Viðspyrna fyrir Ísland</title>
       </Head>
       <ArticleLayout>
-        <Stack space={3}>
+        <Stack space={2}>
           <Breadcrumbs color="blue400">
             <Link as="/" href="/">
               <a>Viðspyrna</a>

@@ -3,6 +3,8 @@ import React from 'react'
 // import cn from 'classnames'
 import Link from 'next/link'
 import Head from 'next/head'
+import { format } from 'date-fns'
+import { is } from 'date-fns/locale'
 import {
   ContentBlock,
   Box,
@@ -28,8 +30,7 @@ import {
 import { ArticleLayout } from '@island.is/adgerdir/screens/Layouts/Layouts'
 import { withApollo } from '@island.is/adgerdir/graphql'
 import { Screen } from '@island.is/adgerdir/types'
-import { Content } from '@island.is/adgerdir/units/Content'
-import { CustomNextError } from '@island.is/adgerdir/units/ErrorBoundary'
+import { Content, CustomNextError } from '@island.is/adgerdir/units'
 import { ColorSchemeContext } from '@island.is/adgerdir/context'
 import { useNamespace } from '@island.is/adgerdir/hooks'
 
@@ -59,32 +60,48 @@ const NewsArticle: Screen<NewsArticleProps> = ({
     completed: 'Lokið',
   } */
 
+  const dateFormatted = format(new Date(article.date), 'd. LLLL, uuuu', {
+    locale: is,
+  }).toLowerCase()
+
+  const pageIds = article.pages ? article.pages.map((x) => x.id) : []
+
   return (
     <>
       <Head>
         <title>{article.title} | Viðspyrna fyrir Ísland</title>
       </Head>
       <ArticleLayout>
-        <Stack space={3}>
-          <Breadcrumbs color="blue400">
-            <Link as="/" href="/">
-              <a>Viðspyrna</a>
-            </Link>
-            <span>Aðgerð</span>
-          </Breadcrumbs>
-          <Typography variant="h1" as="h1">
-            {article.title}
-          </Typography>
-          {article.content ? <Content document={article.content} /> : null}
-        </Stack>
+        <Box marginBottom={2}>
+          <Stack space={2}>
+            <Breadcrumbs color="blue400">
+              <Link as="/" href="/">
+                <a>Viðspyrna</a>
+              </Link>
+              <span>Fréttir</span>
+            </Breadcrumbs>
+            <Typography variant="eyebrow" as="div" color="purple400">
+              {dateFormatted}
+            </Typography>
+            <Typography variant="h1" as="h1">
+              {article.title}
+            </Typography>
+          </Stack>
+        </Box>
+        {article.content ? <Content document={article.content} /> : null}
       </ArticleLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
         <Box background="red100">
           <ContentBlock width="large">
             <Articles
+              title={
+                pageIds.length &&
+                n('newsArticleOperations', 'Aðgerðir tengdar frétt')
+              }
               tags={tagsItems}
               items={pagesItems}
               namespace={namespace}
+              startingIds={pageIds}
               showAll
             />
           </ContentBlock>

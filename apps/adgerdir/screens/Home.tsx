@@ -8,7 +8,7 @@ import {
   Stack,
   Breadcrumbs,
 } from '@island.is/island-ui/core'
-import { Content } from '@island.is/adgerdir/units/Content'
+import { Content } from '@island.is/adgerdir/units'
 import {
   Articles,
   Sleeve,
@@ -54,13 +54,15 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
 
+  let groupSliceCount = 0
+
   return (
     <>
       <Head>
         <title>Viðspyrna fyrir Ísland</title>
       </Head>
       <ArticleLayout sidebar={null}>
-        <Stack space={3}>
+        <Stack space={2}>
           <Breadcrumbs color="blue400">
             <span>Viðspyrna</span>
           </Breadcrumbs>
@@ -93,17 +95,21 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
           case 'AdgerdirFeaturedNewsSlice':
             return <FeaturedNews key={index} items={slice.featured} />
           case 'AdgerdirGroupSlice':
+            groupSliceCount++
+
             return (
               <ColorSchemeContext.Provider
                 key={index}
-                value={{ colorScheme: 'purple' }}
+                value={{
+                  colorScheme: groupSliceCount % 2 ? 'blue' : 'purple',
+                }}
               >
                 <Box width="full" overflow="hidden" marginBottom={10}>
                   <ContentBlock width="large">
                     <Box padding={[0, 3, 6]}>
                       <GroupedPages
                         topContent={
-                          <Stack space={3}>
+                          <Stack space={2}>
                             <Typography
                               variant="eyebrow"
                               as="h2"

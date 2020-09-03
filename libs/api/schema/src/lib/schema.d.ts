@@ -132,6 +132,7 @@ export type AdgerdirNews = {
   image?: Maybe<Image>
   date: Scalars['String']
   content?: Maybe<Scalars['String']>
+  pages?: Maybe<Array<AdgerdirPage>>
 }
 
 export type AdgerdirPages = {
@@ -1383,6 +1384,11 @@ export type AdgerdirNewsResolvers<
   image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   date?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  pages?: Resolver<
+    Maybe<Array<ResolversTypes['AdgerdirPage']>>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
