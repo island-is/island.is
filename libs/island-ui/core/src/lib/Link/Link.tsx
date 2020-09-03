@@ -44,6 +44,7 @@ const Link: React.FC<Props> = ({
         scroll={scroll}
         passHref={passHref}
         prefetch={prefetch}
+        as={as}
       >
         <a className={classNames} {...linkProps}>
           {children}
