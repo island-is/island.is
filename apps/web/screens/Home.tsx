@@ -90,24 +90,24 @@ const Home: Screen<HomeProps> = ({
       <Section paddingY={[2, 2, 3, 3, 6]}>
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
       </Section>
-      <Section paddingY={[2, 2, 3, 3, 6]}>
-        <LatestNewsSection label="Fréttir og tilkynningar" items={news} />
+      <Section background="purple100" paddingY={[2, 2, 3, 3, 6]}>
+        <Categories title={n('articlesTitle')} cards={cards} />
       </Section>
       <Section
-        paddingTop={4}
+        paddingY={[2, 2, 3, 3, 6]}
         backgroundBleed={{
-          bleedAmount: 100,
-          bleedDirection: 'bottom',
+          bleedAmount: 160,
+          bleedDirection: 'top',
           fromColor: 'white',
-          toColor: 'blue100',
+          toColor: 'purple100',
         }}
       >
         <LifeEventsCardsSection title={n('lifeEventsTitle')} />
       </Section>
-      <Section background="purple100" paddingY={8}>
-        <Categories title={n('articlesTitle')} cards={cards} />
+      <Section paddingY={[2, 2, 3, 3, 6]}>
+        <LatestNewsSection label="Fréttir og tilkynningar" items={news} />
       </Section>
-      <Section paddingY={8}>
+      <Section paddingY={[2, 4, 6, 8, 12]}>
         <IntroductionSection
           subtitle="Markmiðið okkar"
           title="Öll opinber þjónusta á einum stað"
@@ -159,7 +159,6 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       variables: {
         input: {
           perPage: 3,
-          ascending: true,
         },
       },
     }),
