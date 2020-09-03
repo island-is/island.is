@@ -16,14 +16,24 @@ export interface Case {
   state: CaseState
 }
 
+export interface GetCaseByIdResponse {
+  httpStatusCode: number
+  case?: Case
+}
+
 export interface CreateCaseRequest {
-  description: string
+  policeCaseNumber: string
+  suspectNationalId: string
+}
+
+export interface WorkingCaseFields {
   policeCaseNumber: string
   suspectNationalId: string
   suspectName: string
+  suspectAddress: string
 }
 
 export interface WorkingCase {
   id: string
-  case: CreateCaseRequest
+  case: WorkingCaseFields
 }

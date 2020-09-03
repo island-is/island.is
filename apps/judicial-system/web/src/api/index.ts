@@ -1,6 +1,24 @@
 import 'isomorphic-fetch'
 import { Case, CreateCaseRequest } from '../types'
 
+// const getCaseById: (caseId: string) => Promise<GetCaseByIdResponse> = async (
+//   caseId: string,
+// ) => {
+//   const response = await fetch(`/api/case/${caseId}`)
+
+//   if (response.ok) {
+//     const theCase: Case = await response.json()
+//     return {
+//       httpStatusCode: response.status,
+//       case: theCase,
+//     }
+//   } else {
+//     return {
+//       httpStatusCode: response.status,
+//     }
+//   }
+// }
+
 export const getCases: () => Promise<Case[]> = async () => {
   try {
     const response = await fetch('/api/cases')
@@ -21,7 +39,6 @@ export const createCase: (
   caseToCreate: CreateCaseRequest,
 ) => Promise<string> = async (caseToCreate: CreateCaseRequest) => {
   try {
-    console.log(caseToCreate)
     const response = await fetch('/api/case', {
       method: 'post',
       headers: {
@@ -51,18 +68,19 @@ export const saveCase: (
   caseField: string,
   caseFieldValue: string,
 ) => {
-  const propertyChange = JSON.parse(`{"${caseField}": "${caseFieldValue}"}`)
-  const response = await fetch(`/api/case/${caseId}`, {
-    method: 'put',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(propertyChange),
-  })
+  if (caseId !== '') {
+    const propertyChange = JSON.parse(`{"${caseField}": "${caseFieldValue}"}`)
+    const response = await fetch(`/api/case/${caseId}`, {
+      method: 'put',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(propertyChange),
+    })
 
-  if (!response.ok) {
-    // TODO: log error
+    if (!response.ok) {
+      // TODO: log error
+    }
+    return response.status
   }
-
-  return response.status
 }

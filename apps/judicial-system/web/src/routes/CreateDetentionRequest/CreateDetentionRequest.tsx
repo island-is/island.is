@@ -16,10 +16,10 @@ export const CreateDetentionRequest: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<WorkingCase>({
     id: '',
     case: {
-      description: '',
       policeCaseNumber: '',
-      suspectName: '',
       suspectNationalId: '',
+      suspectName: '',
+      suspectAddress: '',
     },
   })
   const [autoSaveSucceded, setAutoSaveSucceded] = useState<boolean>(true)
@@ -29,20 +29,19 @@ export const CreateDetentionRequest: React.FC = () => {
 
   const policeCaseNumberRef = useRef<HTMLInputElement>()
   const suspectNationalIdRef = useRef<HTMLInputElement>()
-  const suspectNameRef = useRef<HTMLInputElement>()
 
   const createCaseIfPossible = async () => {
     setIsRequiredFieldValid(policeCaseNumberRef.current.value !== '')
+
     const isPossibleToSave =
+      workingCase.id === '' &&
       policeCaseNumberRef.current.value !== '' &&
       suspectNationalIdRef.current.value !== ''
 
     if (isPossibleToSave) {
       const caseId = await api.createCase({
-        description: 'test', // TODO: fix this
         policeCaseNumber: policeCaseNumberRef.current.value,
         suspectNationalId: suspectNationalIdRef.current.value,
-        suspectName: 'test', // TODO: fix this
       })
 
       setWorkingCase({ id: caseId, case: workingCase.case })
@@ -50,8 +49,13 @@ export const CreateDetentionRequest: React.FC = () => {
   }
 
   const autoSave = async (caseField: string, caseFieldValue: string) => {
-    // Only save if the field has changes
-    if (workingCase.case[caseField] !== caseFieldValue) {
+    console.log('existing value' + workingCase.case[caseField])
+    console.log('new value' + caseFieldValue)
+    // Only save if the field has changes and the case exists
+    if (
+      workingCase.case[caseField] !== caseFieldValue &&
+      workingCase.id !== ''
+    ) {
       // Copy the working case
       let copyOfWorkingCase = Object.assign({}, workingCase)
 
@@ -121,14 +125,13 @@ export const CreateDetentionRequest: React.FC = () => {
                   name="nationalId"
                   label="Kennitala"
                   ref={suspectNationalIdRef}
-                  onBlur={(evt) => autoSave('nationalId', evt.target.value)}
+                  onBlur={() => createCaseIfPossible()}
                 />
               </Box>
               <Box marginBottom={3}>
                 <Input
                   name="suspectName"
                   label="Fullt nafn kærða"
-                  ref={suspectNameRef}
                   onBlur={(evt) => autoSave('suspectName', evt.target.value)}
                 />
               </Box>
