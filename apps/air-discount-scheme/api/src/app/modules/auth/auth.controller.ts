@@ -77,7 +77,8 @@ export class AuthController {
     if (!user || (authId && user.authId !== authId)) {
       this.logger.error('Could not verify user authenticity', {
         extra: {
-          user,
+          authId,
+          userAuthId: user.authId,
         },
       })
       return res.redirect('/error')
@@ -124,7 +125,7 @@ export class AuthController {
 
     return res
       .cookie(name, { authId, returnUrl }, { ...options, maxAge: ONE_HOUR })
-      .redirect(samlEntryPoint)
+      .redirect(`${samlEntryPoint}&authId=${authId}`)
   }
 
   @Get('/logout')
