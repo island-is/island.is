@@ -19,10 +19,13 @@ export class UserService {
     private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
-  private getAge(birthday: string): number {
-    return Math.floor(
-      (new Date().getTime() - new Date(birthday).getTime()) / ONE_YEAR,
+  private isChild(birthday: string): boolean {
+    const now = new Date()
+    const maxAgeYearsFromNow = new Date().setFullYear(
+      now.getFullYear() - MAX_AGE_LIMIT,
     )
+
+    return new Date(birthday).getTime() > maxAgeYearsFromNow
   }
 
   async getRelations(nationalId: string): Promise<string[]> {
@@ -30,9 +33,7 @@ export class UserService {
     return family.reduce((acc, memberNationalId) => {
       if (memberNationalId === nationalId) {
         return [memberNationalId, ...acc]
-      } else if (
-        this.getAge(kennitala.info(memberNationalId).birthday) < MAX_AGE_LIMIT
-      ) {
+      } else if (this.isChild(kennitala.info(memberNationalId).birthday)) {
         return [...acc, memberNationalId]
       }
       return acc
