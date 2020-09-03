@@ -1,5 +1,5 @@
 import React, { FC, useState, useReducer, useEffect } from 'react'
-import { FileUploadField } from '@island.is/application/schema'
+import { FileUploadField } from '@island.is/application/template'
 import {
   Box,
   InputFileUpload,

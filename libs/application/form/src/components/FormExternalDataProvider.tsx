@@ -13,7 +13,7 @@ import {
   DataProviderResult,
   ExternalData,
   FormValue,
-} from '@island.is/application/schema'
+} from '@island.is/application/template'
 import { useMutation } from '@apollo/client'
 import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql'
 import { Controller, useFormContext } from 'react-hook-form'

@@ -2,7 +2,7 @@ import React, { FC } from 'react'
 import { FieldDef } from '../types'
 import { getValueViaPath } from '../utils'
 import { getComponentByName } from './componentLoader'
-import { FormValue } from '@island.is/application/schema'
+import { FormValue } from '@island.is/application/template'
 
 const FormField: FC<{
   applicationId: string

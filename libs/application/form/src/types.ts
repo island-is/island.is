@@ -4,7 +4,7 @@ import {
   MultiField,
   ExternalDataProvider,
   Repeater,
-} from '@island.is/application/schema'
+} from '@island.is/application/template'
 
 export interface FieldBaseProps {
   applicationId?: string

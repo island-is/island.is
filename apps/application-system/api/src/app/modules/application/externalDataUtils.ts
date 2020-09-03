@@ -1,7 +1,10 @@
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
-import { DataProvider, DataProviderResult } from '@island.is/application/schema'
+import {
+  DataProvider,
+  DataProviderResult,
+} from '@island.is/application/template'
 import { getDataProviderByType } from '@island.is/application/data-providers'
-import { ExternalData } from '@island.is/application/schema'
+import { ExternalData } from '@island.is/application/template'
 
 export function buildDataProviders(
   externalDataDTO: PopulateExternalDataDto,

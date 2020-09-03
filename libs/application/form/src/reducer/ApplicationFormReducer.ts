@@ -6,7 +6,7 @@ import {
   getFormLeaves,
   getSectionsInForm,
   mergeAnswers,
-} from '@island.is/application/schema'
+} from '@island.is/application/template'
 import { Action, ActionTypes, ApplicationUIState } from './ReducerTypes'
 import {
   convertLeavesToScreens,

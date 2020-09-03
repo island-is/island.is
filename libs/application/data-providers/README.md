@@ -8,7 +8,7 @@ Many applications need to store external data that cannot be manipulated, but sh
 
 ## How to create a new data provider
 
-Add a unique type for the data provider to `@island.is/application/schema/src/types/DataProvider.ts`. Then create a new class inside `data-providers/src/providers/` which extends the abstract class `DataProvider`.
+Add a unique type for the data provider to `@island.is/application/template/src/types/DataProvider.ts`. Then create a new class inside `data-providers/src/providers/` which extends the abstract class `DataProvider`.
 
 ## Running unit tests
 

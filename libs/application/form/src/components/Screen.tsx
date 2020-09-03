@@ -7,7 +7,7 @@ import {
   Section,
   FormType,
   ExternalData,
-} from '@island.is/application/schema'
+} from '@island.is/application/template'
 import { Typography, Box, Button, Divider } from '@island.is/island-ui/core'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import deepmerge from 'deepmerge'

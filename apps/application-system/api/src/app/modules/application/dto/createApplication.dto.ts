@@ -5,7 +5,7 @@ import {
   IsString,
   IsOptional,
 } from 'class-validator'
-import { ApplicationState, FormType } from '@island.is/application/schema'
+import { ApplicationState, FormType } from '@island.is/application/template'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class CreateApplicationDto {
