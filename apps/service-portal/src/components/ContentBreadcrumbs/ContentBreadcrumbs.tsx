@@ -14,7 +14,7 @@ const reduce = (
   ) => ServicePortalNavigationItem[],
   tree: ServicePortalNavigationItem,
   acc: ServicePortalNavigationItem[],
-) => {
+): ServicePortalNavigationItem[] => {
   const { children } = tree
   const newAcc = f(acc, tree)
 
@@ -27,7 +27,7 @@ const ContentBreadcrumbs: FC<{}> = () => {
   const location = useLocation()
   const items: ServicePortalNavigationItem[] = reduce(
     (acc, n) => {
-      if (location.pathname.includes(n.path)) return [...acc, n]
+      if (n.path && location.pathname.includes(n.path)) return [...acc, n]
       else return acc
     },
     {
@@ -44,11 +44,14 @@ const ContentBreadcrumbs: FC<{}> = () => {
     <Hidden below="lg">
       <Box paddingY={2}>
         <Breadcrumbs>
-          {items.map((item, index) => (
-            <Link key={index} to={item.path}>
-              {item.name}
-            </Link>
-          ))}
+          {items.map(
+            (item, index) =>
+              item.path !== undefined && (
+                <Link key={index} to={item.path}>
+                  {item.name}
+                </Link>
+              ),
+          )}
         </Breadcrumbs>
       </Box>
     </Hidden>

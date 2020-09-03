@@ -41,7 +41,7 @@ type ContentCategory {
 type Taxonomy {
   title: String
   slug: String
-  description: String!
+  description: String
 }
 
 type Article {
@@ -50,7 +50,8 @@ type Article {
   title: String!
   content: String
   group: Taxonomy
-  category: Taxonomy!
+  category: Taxonomy
+  relatedArticles: [Article!]!
 }
 
 type AdgerdirTag {
@@ -60,13 +61,18 @@ type AdgerdirTag {
 
 type AdgerdirPage {
   id: String!
-  slug: String!
   title: String!
-  description: String
+  description: String!
+  longDescription: String
   content: String
+  objective: String
+  slug: String!
   tags: [AdgerdirTag!]!
   link: String
+  linkButtonText: String
   status: String!
+  estimatedCostIsk: Float
+  finalCostIsk: Float
 }
 
 type AdgerdirPages {

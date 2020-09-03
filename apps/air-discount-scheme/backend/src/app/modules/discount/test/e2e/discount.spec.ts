@@ -1,11 +1,11 @@
-import { setup } from '../../../../../test/setup'
+import { setup } from '../../../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
 import CacheManger from 'cache-manager'
 import {
   NationalRegistryService,
   NationalRegistryUser,
-} from '../../nationalRegistry'
+} from '../../../nationalRegistry'
 
 let app: INestApplication
 let cacheManager: CacheManger
@@ -45,7 +45,7 @@ describe('Create DiscountCode', () => {
 
     expect(response.body).toEqual({
       discountCode: expect.any(String),
-      expires: '2020-08-19T14:26:22.018Z',
+      expiresIn: 86400,
       nationalId,
     })
     expect(spy).toHaveBeenCalled()

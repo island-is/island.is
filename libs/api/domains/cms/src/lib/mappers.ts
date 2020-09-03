@@ -49,8 +49,14 @@ export const mapAdgerdirPage = ({
   slug: fields.slug,
   title: fields.title,
   description: fields.description,
+  longDescription: fields.longDescription,
+  objective: JSON.stringify(fields.objective),
   tags: fields.tags.map(mapAdgerdirTag),
   status: fields.status,
+  link: fields.link,
+  linkButtonText: fields.linkButtonText,
+  estimatedCostIsk: fields.estimatedCostIsk,
+  finalCostIsk: fields.finalCostIsk,
   content: JSON.stringify(fields.content),
 })
 
@@ -134,6 +140,7 @@ export const mapArticle = ({ sys, fields }: types.IArticle): Article => ({
   group: fields.group?.fields,
   category: fields.category?.fields,
   content: JSON.stringify(fields.content),
+  relatedArticles: [], // populated by resolver
 })
 
 export const mapImage = ({ fields }: Asset): Image => ({

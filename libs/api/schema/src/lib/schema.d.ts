@@ -81,6 +81,7 @@ export type Article = {
   content?: Maybe<Scalars['String']>
   group?: Maybe<Taxonomy>
   category: Taxonomy
+  relatedArticles: Array<Article>
 }
 
 export type AdgerdirTag = {
@@ -92,13 +93,18 @@ export type AdgerdirTag = {
 export type AdgerdirPage = {
   __typename?: 'AdgerdirPage'
   id: Scalars['String']
-  slug: Scalars['String']
   title: Scalars['String']
-  description?: Maybe<Scalars['String']>
+  description: Scalars['String']
+  longDescription?: Maybe<Scalars['String']>
   content?: Maybe<Scalars['String']>
+  objective?: Maybe<Scalars['String']>
+  slug: Scalars['String']
   tags: Array<AdgerdirTag>
   link?: Maybe<Scalars['String']>
+  linkButtonText?: Maybe<Scalars['String']>
   status: Scalars['String']
+  estimatedCostIsk?: Maybe<Scalars['Float']>
+  finalCostIsk?: Maybe<Scalars['Float']>
 }
 
 export type AdgerdirPages = {
@@ -927,6 +933,7 @@ export type ResolversTypes = {
   Article: ResolverTypeWrapper<Article>
   AdgerdirTag: ResolverTypeWrapper<AdgerdirTag>
   AdgerdirPage: ResolverTypeWrapper<AdgerdirPage>
+  Float: ResolverTypeWrapper<Scalars['Float']>
   AdgerdirPages: ResolverTypeWrapper<AdgerdirPages>
   Image: ResolverTypeWrapper<Image>
   AdgerdirNews: ResolverTypeWrapper<AdgerdirNews>
@@ -1050,6 +1057,7 @@ export type ResolversParentTypes = {
   Article: Article
   AdgerdirTag: AdgerdirTag
   AdgerdirPage: AdgerdirPage
+  Float: Scalars['Float']
   AdgerdirPages: AdgerdirPages
   Image: Image
   AdgerdirNews: AdgerdirNews
@@ -1251,6 +1259,11 @@ export type ArticleResolvers<
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   group?: Resolver<Maybe<ResolversTypes['Taxonomy']>, ParentType, ContextType>
   category?: Resolver<ResolversTypes['Taxonomy'], ParentType, ContextType>
+  relatedArticles?: Resolver<
+    Array<ResolversTypes['Article']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1268,17 +1281,34 @@ export type AdgerdirPageResolvers<
   ParentType extends ResolversParentTypes['AdgerdirPage'] = ResolversParentTypes['AdgerdirPage']
 > = {
   id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  description?: Resolver<
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  longDescription?: Resolver<
     Maybe<ResolversTypes['String']>,
     ParentType,
     ContextType
   >
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  objective?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   tags?: Resolver<Array<ResolversTypes['AdgerdirTag']>, ParentType, ContextType>
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  linkButtonText?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   status?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  estimatedCostIsk?: Resolver<
+    Maybe<ResolversTypes['Float']>,
+    ParentType,
+    ContextType
+  >
+  finalCostIsk?: Resolver<
+    Maybe<ResolversTypes['Float']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 

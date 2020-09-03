@@ -74,7 +74,7 @@ const WidgetLoader: FC<{
 
 export const Dashboard: FC<{}> = () => {
   const [{ modules }] = useStore()
-  const moduleProps = useModuleProps()
+  const { userInfo, client } = useModuleProps()
   const { data, loading } = useQuery<Query, QueryGetFrontpageSliderListArgs>(
     GET_FRONTPAGE_SLIDES,
     {
@@ -89,7 +89,9 @@ export const Dashboard: FC<{}> = () => {
   return (
     <Box>
       <Hero content={data?.getFrontpageSliderList} loading={loading} />
-      <WidgetLoader modules={modules} {...moduleProps} />
+      {userInfo !== null && (
+        <WidgetLoader modules={modules} userInfo={userInfo} client={client} />
+      )}
     </Box>
   )
 }

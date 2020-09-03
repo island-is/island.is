@@ -7,17 +7,18 @@ import Tooltip from '../Tooltip/Tooltip'
 type InputBackgroundColor = 'white' | 'blue'
 
 interface InputProps {
-  autoFocus?: boolean
   name: string
   label?: string
-  id?: string
-  value?: string | number
-  disabled?: boolean
   hasError?: boolean
+  value?: string | number
   errorMessage?: string
+  id?: string
+  disabled?: boolean
+  required?: boolean
   placeholder?: string
   tooltip?: string
   backgroundColor?: InputBackgroundColor
+  autoFocus?: boolean
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
@@ -38,18 +39,19 @@ function mergeRefs(refs) {
 export const Input = forwardRef(
   (props: InputProps, ref?: React.Ref<HTMLInputElement>) => {
     const {
-      label,
       name,
+      label,
       hasError = false,
       value,
       errorMessage = '',
       id = name,
       disabled,
-      onFocus,
-      onBlur,
+      required,
       placeholder,
       tooltip,
       backgroundColor = 'white',
+      onFocus,
+      onBlur,
       ...inputProps
     } = props
     const [hasFocus, setHasFocus] = useState(false)
@@ -87,6 +89,7 @@ export const Input = forwardRef(
             })}
           >
             {label}
+            {required && <span className={styles.isRequiredStar}> *</span>}
             {tooltip && (
               <Box marginLeft={1} display="inlineBlock">
                 <Tooltip text={tooltip} />

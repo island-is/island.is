@@ -5,13 +5,13 @@ import { User } from '../user'
 @ObjectType()
 export class Discount {
   @Field((_1) => ID)
+  nationalId: string
+
+  @Field()
   discountCode: string
 
   @Field()
-  expires: string
-
-  @Field()
-  nationalId: string
+  expiresIn: number
 
   @Field((_1) => User)
   user: User

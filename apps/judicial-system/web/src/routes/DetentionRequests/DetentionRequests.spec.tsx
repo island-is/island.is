@@ -7,7 +7,6 @@ const mockDetensionRequests = [
   {
     id: 'fbad84cc-9cab-4145-bf8e-ac58cc9c2790',
     state: 'DRAFT',
-    description: 'Test case',
     policeCaseNumber: '007-2020-X',
     suspectNationalId: '150689-5989',
     suspectName: 'Katrín Erlingsdóttir',
@@ -17,7 +16,6 @@ const mockDetensionRequests = [
   {
     id: 'fbad84cc-9cab-4145-bf8e-ac58cc9c2790',
     state: 'SUBMITTED',
-    description: 'Test case 2',
     policeCaseNumber: '008-2020-X',
     suspectNationalId: '012345-6789',
     suspectName: 'Erlingur Kristinsson',

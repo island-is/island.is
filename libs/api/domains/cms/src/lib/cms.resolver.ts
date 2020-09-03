@@ -1,4 +1,4 @@
-import { Args, Query, Resolver, ResolveField } from '@nestjs/graphql'
+import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql'
 import { Article } from './models/article.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
 import { AdgerdirPages } from './models/adgerdirPages.model'
@@ -24,6 +24,7 @@ import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
 import {
   getArticle,
+  getRelatedArticles,
   getNews,
   getNewsList,
   getNamespace,
@@ -138,11 +139,19 @@ export class CmsResolver {
   }
 }
 
-@Resolver((of) => LatestNewsSlice)
+@Resolver(() => LatestNewsSlice)
 export class LatestNewsSliceResolver {
   @ResolveField(() => [News])
   async news() {
     const { news } = await getNewsList({ lang: 'is', perPage: 3 })
     return news
+  }
+}
+
+@Resolver(() => Article)
+export class ArticleResolver {
+  @ResolveField(() => [Article])
+  async relatedArticles(@Parent() article: Article) {
+    return getRelatedArticles(article.slug, 'is')
   }
 }

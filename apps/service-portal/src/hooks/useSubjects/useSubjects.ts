@@ -9,6 +9,7 @@ const useSubjects = () => {
 
   useEffect(() => {
     async function fetchSubjectList() {
+      if (userInfo === null) return
       dispatch({ type: ActionType.FetchSubjectListPending })
 
       try {

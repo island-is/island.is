@@ -22,8 +22,6 @@ interface PropTypes {
 const Subsidy: Screen<PropTypes> = ({
   page: { title, intro, mainContent, sidebar, misc },
 }) => {
-  const { attention, codeDisclaimer } = JSON.parse(misc)
-
   return (
     <Layout
       left={
@@ -37,24 +35,8 @@ const Subsidy: Screen<PropTypes> = ({
               document={mainContent}
               wrapper={(children) => <Stack space={3}>{children}</Stack>}
             />
-            <Box
-              marginBottom={4}
-              background="blue100"
-              borderRadius="standard"
-              display="flex"
-              alignItems="center"
-              padding={3}
-            >
-              <Icon type="alert" color="blue400" />
-              <Box marginLeft={1} marginRight={2}>
-                <Typography variant="p">
-                  <strong>{attention}</strong>
-                </Typography>
-              </Box>
-              <Typography variant="p">{codeDisclaimer}</Typography>
-            </Box>
+            <Benefits misc={misc} />
           </Stack>
-          <Benefits misc={misc} />
           <Usage misc={misc} />
         </Box>
       }

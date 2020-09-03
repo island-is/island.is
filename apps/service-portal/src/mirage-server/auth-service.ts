@@ -38,7 +38,7 @@ export class AuthService {
     })
   }
 
-  public getSubjectForActor(actor: Actor): Subject {
+  public getSubjectForActor(actor: Actor): Subject | null {
     const availableSubjectEntities: Subject[] = actor.subjectIds.map(
       (x: number) => {
         return this.db.subjects.find(x) as Subject
@@ -48,6 +48,6 @@ export class AuthService {
       (x) => x.nationalId === actor.nationalId,
     )
 
-    return subjectEntity
+    return subjectEntity || null
   }
 }
