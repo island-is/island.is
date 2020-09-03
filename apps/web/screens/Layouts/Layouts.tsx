@@ -41,7 +41,7 @@ export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
     <Box paddingY={10}>
       <GridRow>
         <GridColumn span={8}>
-          <Box paddingBottom={10}>{children}</Box>
+          <Box>{children}</Box>
         </GridColumn>
         <GridColumn span={4}>
           <Sticky>{sidebar}</Sticky>

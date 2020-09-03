@@ -81,6 +81,7 @@ export type Article = {
   content?: Maybe<Scalars['String']>
   group?: Maybe<Taxonomy>
   category: Taxonomy
+  relatedArticles: Array<Article>
 }
 
 export type AdgerdirTag = {
@@ -1235,6 +1236,11 @@ export type ArticleResolvers<
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   group?: Resolver<Maybe<ResolversTypes['Taxonomy']>, ParentType, ContextType>
   category?: Resolver<ResolversTypes['Taxonomy'], ParentType, ContextType>
+  relatedArticles?: Resolver<
+    Array<ResolversTypes['Article']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
