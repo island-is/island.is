@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  Box,
   Typography,
   GridContainer,
   GridRow,
@@ -67,32 +66,30 @@ const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   title = 'Lífsviðburðir',
 }) => {
   return (
-    <Box paddingTop={8}>
-      <GridContainer>
-        <GridRow>
-          <GridColumn span={['6/12', '6/12', '12/12']}>
-            <Typography variant="h3" as="h3" paddingBottom={4}>
-              {title}
-            </Typography>
+    <GridContainer>
+      <GridRow>
+        <GridColumn span={['6/12', '6/12', '12/12']}>
+          <Typography variant="h3" as="h3" paddingBottom={4}>
+            {title}
+          </Typography>
+        </GridColumn>
+      </GridRow>
+      <GridRow>
+        {demoData.map((lifeEvent) => (
+          <GridColumn
+            span={['12/12', '12/12', '6/12', '6/12', '4/12']}
+            paddingBottom={3}
+          >
+            <LifeEventCard
+              title={lifeEvent.title}
+              intro={lifeEvent.intro}
+              url={lifeEvent.url}
+              thumbnail={lifeEvent.thumbnail}
+            />
           </GridColumn>
-        </GridRow>
-        <GridRow>
-          {demoData.map((lifeEvent) => (
-            <GridColumn
-              span={['12/12', '12/12', '6/12', '6/12', '4/12']}
-              paddingBottom={3}
-            >
-              <LifeEventCard
-                title={lifeEvent.title}
-                intro={lifeEvent.intro}
-                url={lifeEvent.url}
-                thumbnail={lifeEvent.thumbnail}
-              />
-            </GridColumn>
-          ))}
-        </GridRow>
-      </GridContainer>
-    </Box>
+        ))}
+      </GridRow>
+    </GridContainer>
   )
 }
 
