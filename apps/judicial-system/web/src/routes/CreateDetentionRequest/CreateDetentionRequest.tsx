@@ -23,12 +23,16 @@ export const CreateDetentionRequest: React.FC = () => {
     },
   })
   const [autoSaveSucceded, setAutoSaveSucceded] = useState<boolean>(true)
+  const [isRequiredFieldValid, setIsRequiredFieldValid] = useState<boolean>(
+    true,
+  )
 
   const policeCaseNumberRef = useRef<HTMLInputElement>()
   const suspectNationalIdRef = useRef<HTMLInputElement>()
   const suspectNameRef = useRef<HTMLInputElement>()
 
   const createCaseIfPossible = async () => {
+    setIsRequiredFieldValid(policeCaseNumberRef.current.value !== '')
     const isPossibleToSave =
       policeCaseNumberRef.current.value !== '' &&
       suspectNationalIdRef.current.value !== ''
@@ -66,6 +70,8 @@ export const CreateDetentionRequest: React.FC = () => {
         setWorkingCase(copyOfWorkingCase)
       } else {
         setAutoSaveSucceded(false)
+
+        // TODO: Do something when autosave fails
       }
     }
   }
@@ -94,10 +100,14 @@ export const CreateDetentionRequest: React.FC = () => {
               </Box>
               <Input
                 autoFocus
+                required
                 name="policeCaseNumber"
                 label="Slá inn LÖKE málsnúmer"
                 ref={policeCaseNumberRef}
+                errorMessage="Reitur má ekki vera tómur"
+                hasError={!isRequiredFieldValid}
                 onBlur={() => createCaseIfPossible()}
+                onFocus={() => setIsRequiredFieldValid(true)}
               />
             </Box>
             <Box component="section" marginBottom={7}>
@@ -111,7 +121,7 @@ export const CreateDetentionRequest: React.FC = () => {
                   name="nationalId"
                   label="Kennitala"
                   ref={suspectNationalIdRef}
-                  onBlur={() => createCaseIfPossible()}
+                  onBlur={(evt) => autoSave('nationalId', evt.target.value)}
                 />
               </Box>
               <Box marginBottom={3}>
