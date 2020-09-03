@@ -9,6 +9,7 @@ import {
   UseGuards,
   Req,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common'
 import {
   ApiOkResponse,
@@ -52,13 +53,16 @@ export class PublicFlightController {
     @Body() flight: FlightDto,
     @Req() request,
   ): Promise<Flight> {
-    const nationalId = await this.discountService.validateDiscount(
+    const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
     )
+    if (!discount) {
+      throw new BadRequestException('Discount code is invalid')
+    }
 
-    const user = await this.nationalRegistryService.getUser(nationalId)
+    const user = await this.nationalRegistryService.getUser(discount.nationalId)
     if (!user) {
-      throw new NotFoundException(`User<${nationalId}> not found`)
+      throw new NotFoundException(`User<${discount.nationalId}> not found`)
     }
 
     const meetsADSRequirements = this.flightService.isADSPostalCode(
@@ -66,12 +70,21 @@ export class PublicFlightController {
     )
     const {
       unused: flightLegsLeft,
-    } = await this.flightService.countFlightLegsByNationalId(nationalId)
+    } = await this.flightService.countFlightLegsByNationalId(
+      discount.nationalId,
+    )
     if (!meetsADSRequirements || flightLegsLeft < flight.flightLegs.length) {
       throw new FlightLimitExceeded()
     }
-    await this.discountService.useDiscount(params.discountCode, nationalId)
-    return this.flightService.create(flight, nationalId, request.airline)
+    await this.discountService.useDiscount(
+      params.discountCode,
+      discount.nationalId,
+    )
+    return this.flightService.create(
+      flight,
+      discount.nationalId,
+      request.airline,
+    )
   }
 
   @Get('flights/:flightId')
