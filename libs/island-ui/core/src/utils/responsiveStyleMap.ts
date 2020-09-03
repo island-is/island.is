@@ -1,8 +1,12 @@
 import { style } from 'treat'
 import { isObject } from 'lodash'
 import { theme } from '@island.is/island-ui/theme'
+import * as CSS from 'csstype'
 
 type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+type ResponsiveProps<T> = {
+  [Type in Breakpoint]?: T
+}
 
 export const resolveBreakpoints = (variant: any, attr: any, acc: any) => {
   if (isObject(variant[attr])) {
@@ -50,7 +54,9 @@ export const resolveBreakpoints = (variant: any, attr: any, acc: any) => {
   return acc
 }
 
-export const responsiveStyleMap = (styleObj: any) =>
+export const responsiveStyleMap = (
+  styleObj: CSS.Properties<string | ResponsiveProps<string | number>>,
+) =>
   style(
     Object.keys(styleObj).reduce(
       (acc, attr) => resolveBreakpoints(styleObj, attr, acc),

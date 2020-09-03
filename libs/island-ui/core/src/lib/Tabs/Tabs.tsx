@@ -2,7 +2,7 @@ import React, { FC, useState, ReactNode } from 'react'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
 import { Box } from '../Box/Box'
-import { Select, SelectProps, Option } from '../Select/Select'
+import { Select, Option } from '../Select/Select'
 
 import * as styles from './Tabs.treat'
 import { ValueType } from 'react-select'
