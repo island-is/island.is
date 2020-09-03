@@ -9,10 +9,7 @@ import {
   ExternalData,
 } from '@island.is/application/schema'
 import { Typography, Box, Button, Divider } from '@island.is/island-ui/core'
-import {
-  CREATE_APPLICATION,
-  UPDATE_APPLICATION,
-} from '@island.is/application/graphql'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import deepmerge from 'deepmerge'
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form'
 import { FormScreen } from '../types'
@@ -37,7 +34,6 @@ type ScreenProps = {
   screen: FormScreen
   section?: Section
   applicationId?: string
-  setApplicationId(id: string): void
 }
 
 const Screen: FC<ScreenProps> = ({
@@ -54,7 +50,6 @@ const Screen: FC<ScreenProps> = ({
   screen,
   section,
   applicationId,
-  setApplicationId,
 }) => {
   const hookFormData = useForm<FormValue>({
     mode: 'onBlur',
@@ -65,19 +60,8 @@ const Screen: FC<ScreenProps> = ({
     context: { dataSchema, formNode: screen },
   })
 
-  const [createApplication, { loading: createPending }] = useMutation(
-    CREATE_APPLICATION,
-    {
-      onCompleted({ createApplication }) {
-        setApplicationId(createApplication.id)
-      },
-    },
-  )
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [updateApplication, { loading, data: updateData }] = useMutation(
-    UPDATE_APPLICATION,
-  )
+  const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION)
 
   const { handleSubmit, errors, reset } = hookFormData
 
@@ -92,38 +76,22 @@ const Screen: FC<ScreenProps> = ({
       // call submit mutation
       console.log('here we will submit', formValue)
     } else {
-      if (applicationId) {
-        await updateApplication({
-          variables: {
-            input: {
-              id: applicationId,
-              typeId: formTypeId,
-              answers: data,
-            },
+      await updateApplication({
+        variables: {
+          input: {
+            id: applicationId,
+            typeId: formTypeId,
+            answers: data,
           },
-        })
-      } else {
-        await createApplication({
-          variables: {
-            input: {
-              applicant: '123456-1234',
-              state: 'PENDING',
-              attachments: {},
-              typeId: formTypeId,
-              assignee: '123456-1235',
-              externalId: 'some_id',
-              answers: data,
-            },
-          },
-        })
-      }
+        },
+      })
       console.log('these were my answers:', data)
       answerAndGoToNextScreen(data)
     }
   }
 
   function canProceed(): boolean {
-    const isLoadingOrPending = loading || createPending
+    const isLoadingOrPending = loading
     if (screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
       return (
         !isLoadingOrPending &&
@@ -198,7 +166,7 @@ const Screen: FC<ScreenProps> = ({
             <Box display="inlineFlex" padding={2} paddingRight="none">
               {shouldSubmit ? (
                 <Button
-                  loading={loading || createPending}
+                  loading={loading}
                   disabled={!canProceed()}
                   htmlType="submit"
                 >
@@ -206,7 +174,7 @@ const Screen: FC<ScreenProps> = ({
                 </Button>
               ) : (
                 <Button
-                  loading={loading || createPending}
+                  loading={loading}
                   disabled={!canProceed()}
                   variant="text"
                   icon="arrowRight"

@@ -16,16 +16,6 @@ export const root = style({
   },
 })
 
-export const anchorWrap = style({
-  display: 'flex',
-  flexDirection: 'column',
-  selectors: {
-    [`${root}:hover &`]: {
-      textDecoration: 'none',
-    },
-  },
-})
-
 export const linkBox = style({
   alignItems: 'center',
   background: theme.color.blue100,

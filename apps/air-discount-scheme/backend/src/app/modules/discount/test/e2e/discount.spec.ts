@@ -1,11 +1,11 @@
-import { setup } from '../../../../../test/setup'
+import { setup } from '../../../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
 import CacheManger from 'cache-manager'
 import {
   NationalRegistryService,
   NationalRegistryUser,
-} from '../../nationalRegistry'
+} from '../../../nationalRegistry'
 
 let app: INestApplication
 let cacheManager: CacheManger

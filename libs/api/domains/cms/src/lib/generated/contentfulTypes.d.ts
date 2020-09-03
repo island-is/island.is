@@ -461,6 +461,9 @@ export interface ILifeEventPageFields {
   /** image */
   image?: Asset | undefined
 
+  /** thumbnail */
+  thumbnail?: Asset | undefined
+
   /** content */
   content: Document
 }

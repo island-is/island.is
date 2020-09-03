@@ -1,17 +1,14 @@
 import React from 'react'
-import { useParams, useHistory, useRouteMatch } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 import { ApplicationForm } from '@island.is/application/form'
-import { FormType } from '@island.is/application/schema'
 import { GET_APPLICATION } from '@island.is/application/graphql'
 import { useQuery } from '@apollo/client'
 
 export const Application = () => {
   const { id } = useParams()
-  const history = useHistory()
-  const match = useRouteMatch()
 
-  const { data, loading } = useQuery(GET_APPLICATION, {
+  const { data, error, loading } = useQuery(GET_APPLICATION, {
     variables: {
       input: {
         id: id,
@@ -20,14 +17,14 @@ export const Application = () => {
     skip: !id,
   })
 
-  return (
-    <ApplicationForm
-      formType={data?.getApplication?.typeId ?? FormType.PARENTAL_LEAVE}
-      applicationId={data?.getApplication?.id}
-      initialAnswers={data?.getApplication?.answers}
-      initialExternalData={data?.getApplication?.externalData}
-      loadingApplication={loading}
-      onApplicationCreated={(id) => history.replace(`${match.url}/${id}`)}
-    />
-  )
+  if (!id) {
+    return <p>Error there is no id</p>
+  }
+  if (error) {
+    return <p>{error}</p>
+  }
+  if (loading) {
+    return <p>Loading</p>
+  }
+  return <ApplicationForm application={data.getApplication} />
 }

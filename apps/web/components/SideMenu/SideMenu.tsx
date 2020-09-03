@@ -2,8 +2,7 @@ import React, { FC, useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import FocusLock from 'react-focus-lock'
 import { RemoveScroll } from 'react-remove-scroll'
-
-import { useKey, useClickAway, useWindowSize } from 'react-use'
+import { useKey, useWindowSize } from 'react-use'
 import cn from 'classnames'
 import {
   Typography,
@@ -47,14 +46,12 @@ interface Props {
 
 export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
   const [activeTab, setActiveTab] = useState(0)
-  const ref = useRef(null)
   const buttonsRef = useRef([])
   const { activeLocale, t } = useI18n()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
 
   useKey('Escape', handleClose)
-  useClickAway(ref, handleClose)
 
   useEffect(() => {
     if (buttonsRef.current && buttonsRef.current[activeTab]) {
@@ -65,10 +62,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
   return isVisible ? (
     <RemoveScroll enabled={isMobile}>
       <FocusLock>
-        <div
-          className={cn(styles.root, { [styles.isVisible]: isVisible })}
-          ref={ref}
-        >
+        <div className={cn(styles.root, { [styles.isVisible]: isVisible })}>
           <div className={styles.tabHeader}>
             <button onClick={handleClose} tabIndex={-1}>
               <Icon type="close" />

@@ -20,6 +20,7 @@ import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { Namespace } from './models/namespace.model'
 import { Menu } from './models/menu.model'
+import { LifeEventPage } from './models/lifeEventPage.model'
 
 const makePage = (
   page: number,
@@ -117,6 +118,18 @@ export const getAdgerdirPage = async (
   return result.items.map(mappers.mapAdgerdirPage)[0] ?? null
 }
 
+const ArticleFields = [
+  // we want to exclude relatedArticles because it's a self-referencing
+  // relation and selecting related articles to a depth of 10 would make the
+  // response huge
+  'sys',
+  'fields.slug',
+  'fields.title',
+  'fields.content',
+  'fields.group',
+  'fields.category',
+].join(',')
+
 export const getArticle = async (
   slug: string,
   lang: string,
@@ -124,10 +137,35 @@ export const getArticle = async (
   const result = await getLocalizedEntries<types.IArticleFields>(lang, {
     ['content_type']: 'article',
     'fields.slug': slug,
+    select: ArticleFields,
     include: 10,
   }).catch(errorHandler('getArticle'))
 
-  return result.items.map(mappers.mapArticle)[0]
+  return result.items.map(mappers.mapArticle)[0] ?? null
+}
+
+export const getRelatedArticles = async (
+  slug: string,
+  lang: string,
+): Promise<Article[]> => {
+  const articleResult = await getLocalizedEntries<types.IArticleFields>(lang, {
+    ['content_type']: 'article',
+    'fields.slug': slug,
+    select: 'fields.relatedArticles',
+    include: 1,
+  }).catch(errorHandler('getRelatedArticles'))
+
+  const articles = articleResult.items[0]?.fields?.relatedArticles ?? []
+  if (articles.length === 0) return []
+
+  const relatedResult = await getLocalizedEntries<types.IArticleFields>(lang, {
+    ['content_type']: 'article',
+    'sys.id[in]': articles.map((a) => a.sys.id).join(','),
+    select: ArticleFields,
+    include: 10,
+  }).catch(errorHandler('getRelatedArticles'))
+
+  return relatedResult.items.map(mappers.mapArticle)
 }
 
 export const getNews = async (
@@ -238,4 +276,16 @@ export const getMenu = async (
   }).catch(errorHandler('getMenu'))
 
   return result.items.map(mappers.mapMenu)[0] ?? null
+}
+
+export const getLifeEventPage = async (
+  slug: string,
+  lang: string,
+): Promise<LifeEventPage | null> => {
+  const result = await getLocalizedEntries<types.ILifeEventPageFields>(lang, {
+    ['content_type']: 'lifeEventPage',
+    'fields.slug': slug,
+  }).catch(errorHandler('getLifeEventPage'))
+
+  return result.items.map(mappers.mapLifeEventPage)[0] ?? null
 }

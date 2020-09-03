@@ -1,4 +1,4 @@
-export class Subject {
+export interface Subject {
   id: number
   name: string
   nationalId: string

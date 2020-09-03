@@ -1,4 +1,4 @@
-import { Locale, Routes } from '../types'
+import { Locale, Routes } from '../../types'
 import icelandicRoutes from './is'
 import englishRoutes from './en'
 

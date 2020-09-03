@@ -54,14 +54,14 @@ export const offsetXl = makeOffset('xl')
 // The style order matters.
 // `base` has to be at the bottom because it uses a media query.
 export const base = style({
-  paddingRight: theme.grid.gutter.mobile,
-  paddingLeft: theme.grid.gutter.mobile,
+  paddingRight: theme.grid.gutter.mobile / 2,
+  paddingLeft: theme.grid.gutter.mobile / 2,
   position: 'relative',
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      paddingRight: theme.grid.gutter.desktop,
-      paddingLeft: theme.grid.gutter.desktop,
+      paddingRight: theme.grid.gutter.desktop / 2,
+      paddingLeft: theme.grid.gutter.desktop / 2,
     },
   },
 })

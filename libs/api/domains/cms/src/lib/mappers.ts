@@ -39,6 +39,7 @@ import { Namespace } from './models/namespace.model'
 import { Image } from './models/image.model'
 import { Menu } from './models/menu.model'
 import { GenericPage } from './models/genericPage.model'
+import { LifeEventPage } from './models/lifeEventPage.model'
 
 export const mapAdgerdirPage = ({
   sys,
@@ -139,6 +140,7 @@ export const mapArticle = ({ sys, fields }: types.IArticle): Article => ({
   group: fields.group?.fields,
   category: fields.category?.fields,
   content: JSON.stringify(fields.content),
+  relatedArticles: [], // populated by resolver
 })
 
 export const mapImage = ({ fields }: Asset): Image => ({
@@ -428,4 +430,14 @@ export const mapGenericPage = ({
   mainContent: fields.mainContent && JSON.stringify(fields.mainContent),
   sidebar: fields.sidebar && JSON.stringify(fields.sidebar),
   misc: fields.misc && JSON.stringify(fields.misc),
+})
+
+export const mapLifeEventPage = ({
+  fields,
+}: types.ILifeEventPage): LifeEventPage => ({
+  title: fields.title,
+  slug: fields.slug,
+  intro: fields.intro,
+  image: mapImage(fields.image),
+  body: fields.content,
 })

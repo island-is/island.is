@@ -8,7 +8,9 @@ export const root = style({
   display: 'none',
   height: '100%',
   left: 0,
-  padding: theme.spacing[3],
+  paddingTop: theme.spacing[3],
+  paddingLeft: theme.spacing[3],
+  paddingRight: theme.spacing[3],
   position: 'fixed',
   right: 0,
   top: 0,
@@ -20,13 +22,15 @@ export const root = style({
       position: 'absolute',
       top: theme.spacing[3],
       right: theme.spacing[3],
+      paddingBottom: theme.spacing[3],
       width: SIDE_MENU_WIDTH,
     },
   },
 })
 
 export const isVisible = style({
-  display: 'block',
+  display: 'flex',
+  flexDirection: 'column',
 })
 
 export const tabHeader = style({
@@ -49,12 +53,13 @@ export const tabActive = style({
 })
 
 export const content = style({
-  overflowY: 'scroll',
-  maxHeight: 450,
-  paddingBottom: theme.spacing[4],
+  flex: 1,
+  overflow: 'auto',
+  paddingBottom: theme.spacing[2],
+  // for Firefox
+  minHeight: 0,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      maxHeight: 'none',
       paddingBottom: 0,
     },
   },

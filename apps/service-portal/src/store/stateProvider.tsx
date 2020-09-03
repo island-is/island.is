@@ -1,7 +1,10 @@
-import React, { createContext, useContext, useReducer } from 'react'
-import { StoreState } from './store'
+import React, { createContext, useContext, useReducer, Dispatch } from 'react'
+import { StoreState, initialState } from './store'
 import { Action } from './actions'
-export const StateContext = createContext(null)
+export const StateContext = createContext<[StoreState, Dispatch<Action>]>([
+  initialState,
+  () => null,
+])
 
 type StateProviderTypes = {
   reducer: React.Reducer<StoreState, Action>

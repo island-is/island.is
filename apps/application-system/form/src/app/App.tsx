@@ -24,7 +24,7 @@ export const App = () => {
           <Route path="/applications/:type">
             <Applications />
           </Route>
-          <Route path="/application/:id?">
+          <Route path="/application/:id">
             <Application />
           </Route>
         </Switch>

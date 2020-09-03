@@ -2,7 +2,7 @@ import React, { createContext, useState, useRef, useEffect } from 'react'
 import rosetta from 'rosetta'
 
 import { getRoute } from './routes'
-import { Locale, Routes } from './types'
+import { Locale, Routes } from '../types'
 
 const i18n = rosetta()
 

@@ -14,10 +14,8 @@ describe('Application', () => {
     const response = await request(app.getHttpServer())
       .post('/api/case')
       .send({
-        description: 'Test Case',
         policeCaseNumber: 'Case Number',
         suspectNationalId: '0101010000',
-        suspectName: 'Jón Jónsson',
       })
       .expect(201)
 

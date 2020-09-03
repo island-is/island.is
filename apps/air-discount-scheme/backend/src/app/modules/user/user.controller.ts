@@ -34,7 +34,9 @@ export class PublicUserController {
 
   @Get('discounts/:discountCode/user')
   @ApiOkResponse({ type: User })
-  async get(@Param() params: GetUserByDiscountCodeParams): Promise<User> {
+  async getUserByDiscountCode(
+    @Param() params: GetUserByDiscountCodeParams,
+  ): Promise<User> {
     const nationalId = await this.discountService.validateDiscount(
       params.discountCode,
     )

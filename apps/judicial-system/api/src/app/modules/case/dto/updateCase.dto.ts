@@ -1,26 +1,21 @@
 import { IsString, IsOptional, IsEnum } from 'class-validator'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 import { CaseState } from '../case.model'
 
 export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly description: string
-
-  @IsOptional()
-  @IsString()
-  @ApiProperty()
   readonly policeCaseNumber: string
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly suspectNationalId: string
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly suspectName: string
 
   @IsOptional()
