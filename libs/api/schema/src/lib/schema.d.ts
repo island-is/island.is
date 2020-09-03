@@ -186,6 +186,7 @@ export type News = {
   id: Scalars['String']
   slug: Scalars['String']
   title: Scalars['String']
+  subtitle: Scalars['String']
   intro: Scalars['String']
   image?: Maybe<Image>
   date: Scalars['String']

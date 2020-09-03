@@ -144,6 +144,7 @@ type News {
   id: String!
   slug: String!
   title: String!
+  subtitle: String!
   intro: String!
   image: Image
   date: String!

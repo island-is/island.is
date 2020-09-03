@@ -93,6 +93,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
           <div className={styles.tabBar}>
             {tabs.map((tab, index) => (
               <button
+                key={tab.title}
                 role="tab"
                 aria-controls={`tab-content-${index}`}
                 className={cn(styles.tab, {
