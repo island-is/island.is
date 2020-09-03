@@ -63,29 +63,33 @@ interface LifeEventsSectionProps {
   title?: string
 }
 
-const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({ title = 'Lífsviðburðir' }) => {
+const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
+  title = 'Lífsviðburðir',
+}) => {
   return (
-    <GridContainer>
-      <GridRow>
-        <GridColumn span={[6, 6, 12]}>
-          <Typography variant="h3" as="h3" paddingBottom={4}>
-            {title}
-          </Typography>
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        {demoData.map((lifeEvent) => (
-          <GridColumn span={[12, 12, 6, 6, 4]} paddingBottom={3}>
-            <LifeEventCard
-              title={lifeEvent.title}
-              intro={lifeEvent.intro}
-              url={lifeEvent.url}
-              thumbnail={lifeEvent.thumbnail}
-            />
+    <Box paddingY={8}>
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={[6, 6, 12]}>
+            <Typography variant="h3" as="h3" paddingBottom={4}>
+              {title}
+            </Typography>
           </GridColumn>
-        ))}
-      </GridRow>
-    </GridContainer>
+        </GridRow>
+        <GridRow>
+          {demoData.map((lifeEvent) => (
+            <GridColumn span={[12, 12, 6, 6, 4]} paddingBottom={3}>
+              <LifeEventCard
+                title={lifeEvent.title}
+                intro={lifeEvent.intro}
+                url={lifeEvent.url}
+                thumbnail={lifeEvent.thumbnail}
+              />
+            </GridColumn>
+          ))}
+        </GridRow>
+      </GridContainer>
+    </Box>
   )
 }
 

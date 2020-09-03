@@ -13,17 +13,22 @@ const LifeEventCard: React.FC<Props> = ({ title, intro, thumbnail, url }) => {
   return (
     <Link href={url}>
       <Box
-        display="flex"
         alignItems="flexStart"
-        borderRadius="large"
+        background="white"
         borderColor="purple200"
-        borderWidth="standard"
+        borderRadius="large"
         borderStyle="solid"
+        borderWidth="standard"
+        display="flex"
+        height="full"
         paddingX={4}
         paddingY={3}
-        height="full"
       >
-        <Box display="flex" flexDirection="column" flexGrow={1}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          marginRight={[2, 2, 2, 2, 1]}
+        >
           <Typography variant="h3" as="h3" paddingBottom={1} color="blue400">
             {title}
           </Typography>
@@ -32,7 +37,6 @@ const LifeEventCard: React.FC<Props> = ({ title, intro, thumbnail, url }) => {
 
         <Box
           className={styles.thumbnail}
-          marginLeft={[2, 2, 2, 2, 1]}
           style={{ backgroundImage: `url(${thumbnail})` }}
         />
       </Box>
