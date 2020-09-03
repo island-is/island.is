@@ -46,6 +46,13 @@ function Home({cards}) {
                   }
                 </Tiles>
               </Stack>
+              <Stack space={3}>
+                <Link href="/services">
+                  <Button variant="text" icon="arrowRight">
+                    Services
+                  </Button>
+                </Link>
+              </Stack>
             </Stack>
           </Box>
         </Box>
