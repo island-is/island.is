@@ -1,6 +1,7 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '../../../../types'
 import Slider from './components/Slider'
+import { Box } from '@island.is/island-ui/core'
 
 const ParentalLeaveUsage: FC<FieldBaseProps> = ({
   error,
@@ -15,14 +16,14 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({
   }
 
   return (
-    <div>
+    <Box marginTop={4}>
       <Slider
         totalCells={6}
         sharedCells={2}
         currentIndex={months}
         onChange={updateMonths}
       />
-    </div>
+    </Box>
   )
 }
 

@@ -1,5 +1,6 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
+import { background } from 'libs/island-ui/core/src/lib/Box/useBoxStyles.treat'
 
 export const TooltipContainer = style({
   filter: 'drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.15))',
@@ -41,10 +42,11 @@ export const Thumb = style({
   height: 64,
   borderRadius: '50%',
   marginLeft: -32,
-  top: '100%',
+  top: 'calc(100% + 2px)',
   position: 'absolute',
   transition: 'transform 0.3s',
   WebkitTapHighlightColor: 'transparent',
+  outline: 'none', // TODO: temp
 
   ':before': {
     content: '""',
@@ -79,14 +81,29 @@ export const Thumb = style({
 })
 
 export const TrackGrid = style({
+  position: 'relative',
   display: 'grid',
   gridTemplateRows: 40,
   gridGap: 2,
-  position: 'relative',
-  margin: '64px 10px',
 })
 
 export const TrackCell = style({
-  // background: ${({ isShared }) => (isShared ? '#00E4CA' : '#0061FF')};
-  // opacity: ${({ isActive }) => (isActive ? 1 : 0.3)};
+  cursor: 'pointer',
+})
+
+export const remainderBar = style({
+  position: 'absolute',
+  top: 0,
+  bottom: 0,
+  left: -1,
+  right: 0,
+  width: '100%',
+  height: '100%',
+  pointerEvents: 'none',
+  background: `repeating-linear-gradient(-45deg, #fff, #fff 5%, rgba(255, 255, 255, 0.5) 5%, rgba(255, 255, 255, 0.5) 50%, #fff 50%) top left fixed`,
+  backgroundSize: '15px 15px',
+  borderLeftWidth: 2,
+  borderLeftStyle: 'solid',
+  borderLeftColor: theme.color.white,
+  transition: 'transform 0.3s',
 })
