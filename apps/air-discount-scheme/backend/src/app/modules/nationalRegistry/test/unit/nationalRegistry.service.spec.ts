@@ -11,13 +11,14 @@ import {
   ONE_MONTH,
 } from '../../nationalRegistry.service'
 import {
-  NationalRegistryResponse,
+  NationalRegistryGeneralLookupResponse,
+  NationalRegistryFamilyLookupResponse,
   NationalRegistryUser,
 } from '../../nationalRegistry.types'
 
 const { nationalRegistry } = environment
 
-const nationalRegistryResponse: NationalRegistryResponse = {
+const nationalRegistryGeneralLookupResponse: NationalRegistryGeneralLookupResponse = {
   source: 'Þjóðskrá',
   ssn: '1326487905',
   name: 'Jón Gunnar Jónsson',
@@ -30,8 +31,31 @@ const nationalRegistryResponse: NationalRegistryResponse = {
   error: '',
 }
 
-const axiosResponse: AxiosResponse = {
-  data: [nationalRegistryResponse],
+const nationalRegistryFamilyLookupResponse: NationalRegistryFamilyLookupResponse = {
+  source: 'Þjóðskrá',
+  familyssn: '1326487905',
+  results: [
+    {
+      name: 'Jón Gunnar Jónsson',
+      ssn: '1326487905',
+      address: 'Bessastaðir 1',
+      postalcode: 225,
+      towncode: 1300,
+      city: 'Álftanes',
+    },
+  ],
+}
+
+const axiosGeneralLookupResponse: AxiosResponse = {
+  data: [nationalRegistryGeneralLookupResponse],
+  status: 200,
+  statusText: 'OK',
+  headers: {},
+  config: {},
+}
+
+const axiosFamilyLookupResponse: AxiosResponse = {
+  data: [nationalRegistryFamilyLookupResponse],
   status: 200,
   statusText: 'OK',
   headers: {},
@@ -48,6 +72,8 @@ const user: NationalRegistryUser = {
   postalcode: 225,
   city: 'Álftanes',
 }
+
+const family: string[] = [user.nationalId]
 
 describe('NationalRegistryService', () => {
   let nationalRegistryService: NationalRegistryService
@@ -83,7 +109,7 @@ describe('NationalRegistryService', () => {
         .mockImplementation(() => Promise.resolve(null))
       const httpServiceSpy = jest
         .spyOn(httpService, 'get')
-        .mockImplementation(() => of(axiosResponse))
+        .mockImplementation(() => of(axiosGeneralLookupResponse))
       const cacheManagerSetSpy = jest
         .spyOn(cacheManager, 'set')
         .mockImplementation(() => Promise.resolve(null))
@@ -91,13 +117,13 @@ describe('NationalRegistryService', () => {
       const result = await nationalRegistryService.getUser(user.nationalId)
 
       expect(cacheManagerGetSpy).toHaveBeenCalledWith(
-        `${CACHE_KEY}_${user.nationalId}`,
+        `${CACHE_KEY}_${user.nationalId}_user`,
       )
       expect(httpServiceSpy).toHaveBeenCalledWith(
         `${nationalRegistry.url}/general-lookup?ssn=${user.nationalId}`,
       )
       expect(cacheManagerSetSpy).toHaveBeenCalledWith(
-        `${CACHE_KEY}_${user.nationalId}`,
+        `${CACHE_KEY}_${user.nationalId}_user`,
         { user },
         { ttl: ONE_MONTH },
       )
@@ -114,7 +140,7 @@ describe('NationalRegistryService', () => {
       const result = await nationalRegistryService.getUser(user.nationalId)
 
       expect(cacheManagerGetSpy).toHaveBeenCalledWith(
-        `${CACHE_KEY}_${user.nationalId}`,
+        `${CACHE_KEY}_${user.nationalId}_user`,
       )
       expect(httpServiceSpy).not.toHaveBeenCalled()
       expect(cacheManagerSetSpy).not.toHaveBeenCalled()
@@ -126,10 +152,10 @@ describe('NationalRegistryService', () => {
         .spyOn(httpService, 'get')
         .mockImplementation(() =>
           of({
-            ...axiosResponse,
+            ...axiosGeneralLookupResponse,
             data: [
               {
-                ...axiosResponse.data[0],
+                ...axiosGeneralLookupResponse.data[0],
                 error: 'Wow an error occurred',
               },
             ],
@@ -143,13 +169,59 @@ describe('NationalRegistryService', () => {
       const result = await nationalRegistryService.getUser(user.nationalId)
 
       expect(cacheManagerGetSpy).toHaveBeenCalledWith(
-        `${CACHE_KEY}_${user.nationalId}`,
+        `${CACHE_KEY}_${user.nationalId}_user`,
       )
       expect(httpServiceSpy).toHaveBeenCalledWith(
         `${nationalRegistry.url}/general-lookup?ssn=${user.nationalId}`,
       )
       expect(cacheManagerSetSpy).not.toHaveBeenCalled()
       expect(result).toEqual(null)
+    })
+  })
+
+  describe('getFamily', () => {
+    it('should fetch family from the nationalregistry and cache it', async () => {
+      const cacheManagerGetSpy = jest
+        .spyOn(cacheManager, 'get')
+        .mockImplementation(() => Promise.resolve(null))
+      const httpServiceSpy = jest
+        .spyOn(httpService, 'get')
+        .mockImplementation(() => of(axiosFamilyLookupResponse))
+      const cacheManagerSetSpy = jest
+        .spyOn(cacheManager, 'set')
+        .mockImplementation(() => Promise.resolve(null))
+
+      const result = await nationalRegistryService.getFamily(user.nationalId)
+
+      expect(cacheManagerGetSpy).toHaveBeenCalledWith(
+        `${CACHE_KEY}_${user.nationalId}_family`,
+      )
+      expect(httpServiceSpy).toHaveBeenCalledWith(
+        `${nationalRegistry.url}/family-lookup?ssn=${user.nationalId}`,
+      )
+      expect(cacheManagerSetSpy).toHaveBeenCalledWith(
+        `${CACHE_KEY}_${user.nationalId}_family`,
+        { family },
+        { ttl: ONE_MONTH },
+      )
+      expect(result).toEqual(family)
+    })
+
+    it('should fetch family from cache', async () => {
+      const cacheManagerGetSpy = jest
+        .spyOn(cacheManager, 'get')
+        .mockImplementation(() => Promise.resolve({ family }))
+      const httpServiceSpy = jest.spyOn(httpService, 'get')
+      const cacheManagerSetSpy = jest.spyOn(cacheManager, 'set')
+
+      const result = await nationalRegistryService.getFamily(user.nationalId)
+
+      expect(cacheManagerGetSpy).toHaveBeenCalledWith(
+        `${CACHE_KEY}_${user.nationalId}_family`,
+      )
+      expect(httpServiceSpy).not.toHaveBeenCalled()
+      expect(cacheManagerSetSpy).not.toHaveBeenCalled()
+      expect(result).toEqual(family)
     })
   })
 })
