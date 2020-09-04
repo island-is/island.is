@@ -14,14 +14,14 @@ interface ArticleProps {
 }
 
 export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
-  <Box paddingTop={[3, 3, 6]}>
+  <Box paddingY={[3, 3, 6]}>
     <GridContainer>
       <GridRow>
         <GridColumn
           span={['12/12', '12/12', '12/12', '7/12']}
           offset={[null, null, null, null, '1/12']}
         >
-          <Box paddingBottom={10}>{children}</Box>
+          {children}
         </GridColumn>
         <GridColumn
           span={['12/12', '12/12', '12/12', '4/12', '3/12']}
@@ -39,7 +39,7 @@ interface NewsListProps {
 }
 
 export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
-  <Box paddingTop={[3, 3, 6]}>
+  <Box paddingY={[3, 3, 6]}>
     <GridContainer>
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '4/12', '3/12']}>
@@ -51,7 +51,7 @@ export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
           span={['12/12', '12/12', '12/12', '7/12']}
           offset={[null, null, null, '1/12']}
         >
-          <Box paddingBottom={10}>{children}</Box>
+          {children}
         </GridColumn>
       </GridRow>
     </GridContainer>

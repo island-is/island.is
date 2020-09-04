@@ -90,50 +90,54 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
           </Sleeve>
         </Box>
       </ColorSchemeContext.Provider>
-      {frontpage.slices.map((slice, index) => {
-        switch (slice.__typename) {
-          case 'AdgerdirFeaturedNewsSlice':
-            return <FeaturedNews key={index} items={slice.featured} />
-          case 'AdgerdirGroupSlice':
-            groupSliceCount++
+      <Box marginBottom={[6, 6, 15]}>
+        <Stack space={[6, 6, 12]}>
+          {frontpage.slices.map((slice, index) => {
+            switch (slice.__typename) {
+              case 'AdgerdirFeaturedNewsSlice':
+                return <FeaturedNews key={index} items={slice.featured} />
+              case 'AdgerdirGroupSlice':
+                groupSliceCount++
 
-            return (
-              <ColorSchemeContext.Provider
-                key={index}
-                value={{
-                  colorScheme: groupSliceCount % 2 ? 'blue' : 'purple',
-                }}
-              >
-                <Box width="full" overflow="hidden" marginBottom={10}>
-                  <ContentBlock width="large">
-                    <GroupedPages
-                      topContent={
-                        <Stack space={2}>
-                          <Typography
-                            variant="eyebrow"
-                            as="h2"
-                            color="roseTinted400"
-                          >
-                            {slice.subtitle}
-                          </Typography>
-                          <Typography variant="h2" as="h3">
-                            {slice.title}
-                          </Typography>
-                          <Typography variant="p" as="p">
-                            {slice.description}
-                          </Typography>
-                        </Stack>
-                      }
-                      bottomContent={<CardsSlider items={slice.pages} />}
-                    />
-                  </ContentBlock>
-                </Box>
-              </ColorSchemeContext.Provider>
-            )
-        }
+                return (
+                  <ColorSchemeContext.Provider
+                    key={index}
+                    value={{
+                      colorScheme: groupSliceCount % 2 ? 'blue' : 'purple',
+                    }}
+                  >
+                    <Box width="full" overflow="hidden">
+                      <ContentBlock width="large">
+                        <GroupedPages
+                          topContent={
+                            <Stack space={2}>
+                              <Typography
+                                variant="eyebrow"
+                                as="h2"
+                                color="roseTinted400"
+                              >
+                                {slice.subtitle}
+                              </Typography>
+                              <Typography variant="h2" as="h3">
+                                {slice.title}
+                              </Typography>
+                              <Typography variant="p" as="p">
+                                {slice.description}
+                              </Typography>
+                            </Stack>
+                          }
+                          bottomContent={<CardsSlider items={slice.pages} />}
+                        />
+                      </ContentBlock>
+                    </Box>
+                  </ColorSchemeContext.Provider>
+                )
+            }
 
-        return null
-      })}
+            return null
+          })}
+        </Stack>
+      </Box>
     </>
   )
 }

@@ -38,7 +38,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
   const third = parsed[2]
 
   return (
-    <Box paddingX={[1, 1, 1, 1, 6]}>
+    <>
       {first ? (
         <GridContainer>
           <GridRow>
@@ -46,7 +46,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
               span={['12/12', '12/12', '12/12', '12/12', '10/12']}
               offset={[null, null, null, null, '1/12']}
             >
-              <Box marginBottom={[6, 6, 10]}>
+              <Box marginBottom={[3, 3, 5]}>
                 {first.image ? (
                   <Box marginBottom={6}>
                     <BackgroundImage ratio="20:10" image={first.image} />
@@ -74,95 +74,91 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
         </GridContainer>
       ) : null}
       {second || third ? (
-        <Box className={styles.centeredBorder} marginBottom={[6, 6, 10]}>
-          <GridContainer>
-            <GridRow>
-              <GridColumn
-                span={['12/12', '12/12', '12/12', '12/12', '10/12']}
-                offset={[null, null, null, null, '1/12']}
-              >
-                <Box className={styles.topBorder}></Box>
-              </GridColumn>
-              {second ? (
+        <>
+          <Box className={styles.centeredBorder} marginBottom={[3, 3, 5]}>
+            <GridContainer>
+              <GridRow>
                 <GridColumn
-                  span={['12/12', '12/12', '12/12', '5/12', '4/12']}
+                  span={['12/12', '12/12', '12/12', '12/12', '10/12']}
                   offset={[null, null, null, null, '1/12']}
                 >
-                  {second.image ? (
-                    <Box marginTop={10} marginBottom={6}>
-                      <BackgroundImage ratio="20:10" image={second.image} />
-                    </Box>
-                  ) : null}
-                  <Stack space={2}>
-                    <Heading
-                      main={false}
-                      subtitle={second.dateFormatted}
-                      title={second.title}
-                      intro={second.intro}
-                      variant="h3"
-                      as="h3"
-                    />
-                    <Link
-                      href="/frettir/[slug]"
-                      as={`/frettir/${second.slug}`}
-                      passHref
-                    >
-                      <Button variant="text" icon="arrowRight">
-                        Lesa meira
-                      </Button>
-                    </Link>
-                  </Stack>
+                  <Box className={styles.topBorder}></Box>
                 </GridColumn>
-              ) : null}
-              {third ? (
-                <GridColumn
-                  span={['12/12', '12/12', '12/12', '5/12', '4/12']}
-                  offset={[null, null, null, '2/12', '2/12']}
-                >
-                  {third.image ? (
-                    <Box marginTop={10} marginBottom={6}>
-                      <BackgroundImage ratio="20:10" image={third.image} />
+                {second ? (
+                  <GridColumn
+                    span={['12/12', '12/12', '12/12', '5/12', '4/12']}
+                    offset={[null, null, null, null, '1/12']}
+                  >
+                    <Box marginY={[3, 3, 5]}>
+                      <Stack space={2}>
+                        <Heading
+                          main={false}
+                          subtitle={second.dateFormatted}
+                          title={second.title}
+                          intro={second.intro}
+                          variant="h3"
+                          as="h3"
+                        />
+                        <Link
+                          href="/frettir/[slug]"
+                          as={`/frettir/${second.slug}`}
+                          passHref
+                        >
+                          <Button variant="text" icon="arrowRight">
+                            Lesa meira
+                          </Button>
+                        </Link>
+                      </Stack>
                     </Box>
-                  ) : null}
-                  <Stack space={2}>
-                    <Heading
-                      main={false}
-                      subtitle={third.dateFormatted}
-                      title={third.title}
-                      intro={third.intro}
-                      variant="h3"
-                      as="h3"
-                    />
-                    <Link
-                      href="/frettir/[slug]"
-                      as={`/frettir/${third.slug}`}
-                      passHref
-                    >
-                      <Button variant="text" icon="arrowRight">
-                        Lesa meira
-                      </Button>
-                    </Link>
-                  </Stack>
-                </GridColumn>
-              ) : null}
-            </GridRow>
-          </GridContainer>
-        </Box>
+                  </GridColumn>
+                ) : null}
+                {third ? (
+                  <GridColumn
+                    span={['12/12', '12/12', '12/12', '5/12', '4/12']}
+                    offset={[null, null, null, '2/12', '2/12']}
+                  >
+                    <Box marginY={[3, 3, 5]}>
+                      <Stack space={2}>
+                        <Heading
+                          main={false}
+                          subtitle={third.dateFormatted}
+                          title={third.title}
+                          intro={third.intro}
+                          variant="h3"
+                          as="h3"
+                        />
+                        <Link
+                          href="/frettir/[slug]"
+                          as={`/frettir/${third.slug}`}
+                          passHref
+                        >
+                          <Button variant="text" icon="arrowRight">
+                            Lesa meira
+                          </Button>
+                        </Link>
+                      </Stack>
+                    </Box>
+                  </GridColumn>
+                ) : null}
+              </GridRow>
+            </GridContainer>
+          </Box>
+          <Box
+            marginTop={3}
+            display="flex"
+            width="full"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Link href="/frettir" as="/frettir" passHref>
+              <Button width="fixed" variant="ghost" icon="arrowRight">
+                Sjá allar fréttir
+              </Button>
+            </Link>
+          </Box>
+        </>
       ) : null}
-      <Box
-        marginY={[6, 6, 10]}
-        display="flex"
-        width="full"
-        alignItems="center"
-        justifyContent="center"
-      >
-        <Link href="/frettir" as="/frettir" passHref>
-          <Button width="fixed" variant="ghost" icon="arrowRight">
-            Sjá allar fréttir
-          </Button>
-        </Link>
-      </Box>
-    </Box>
+    </>
   )
 }
 
