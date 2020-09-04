@@ -7,7 +7,6 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 
-import * as styles from './Layouts.treat'
 import { Sticky } from '@island.is/adgerdir/components'
 
 interface ArticleProps {

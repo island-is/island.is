@@ -45,7 +45,7 @@ interface HomeProps {
 
 const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
   const { activeLocale } = useI18n()
-  const n = useNamespace(namespace)
+  // const n = useNamespace(namespace)
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale

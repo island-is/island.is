@@ -16,14 +16,16 @@ import {
   Typography,
   Stack,
   Breadcrumbs,
-  Columns,
-  Column,
   Pagination,
   Hidden,
   Select,
   Option,
   Tiles,
   Link,
+  GridContainer,
+  GridRow,
+  GridColumn,
+  Button,
 } from '@island.is/island-ui/core'
 import { GET_NEWS_LIST_QUERY } from './queries'
 import { NewsListLayout } from './Layouts/Layouts'
@@ -118,12 +120,12 @@ const NewsList: Screen<NewsListProps> = ({
   return (
     <>
       <Head>
-        <title>Fréttir | Ísland.is</title>
+        <title>Fréttir og tilkynningar | Viðspyrna fyrir Ísland</title>
       </Head>
       <NewsListLayout sidebar={sidebar}>
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs color="blue400">
-            <Link href={makePath()}>Ísland.is</Link>
+            <Link href={makePath()}>Viðspyrna</Link>
             <Link href={makePath('news')}>Fréttir og tilkynningar</Link>
           </Breadcrumbs>
           <Hidden below="lg">
@@ -188,32 +190,54 @@ const NewsListItem = ({ newsItem }) => {
   const { format } = useDateUtils()
 
   return (
-    <Box key={newsItem.id} boxShadow="subtle" padding={6} paddingRight={3}>
-      <Columns space={4} collapseBelow="xl">
-        <Column>
-          <Stack space={2}>
-            <Typography variant="eyebrow" as="p" color="purple400">
-              {format(new Date(newsItem.date), 'do MMMM yyyy')}
-            </Typography>
-            <Typography variant="h3" as="h3" color="blue400">
-              <Link
-                href={makePath('news', '[slug]')}
-                as={makePath('news', newsItem.slug)}
-              >
-                {newsItem.title}
-              </Link>
-            </Typography>
-            <Typography variant="p" as="p">
-              {newsItem.intro}
-            </Typography>
-          </Stack>
-        </Column>
-        {newsItem.image && (
-          <Column width="5/12">
-            <BackgroundImage image={newsItem.image} width={600} />
-          </Column>
-        )}
-      </Columns>
+    <Box
+      key={newsItem.id}
+      boxShadow="subtle"
+      borderRadius="large"
+      padding={3}
+      paddingBottom={[3, 3, 6]}
+    >
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '6/12', '12/12', '7/12']}>
+            <Box padding={[0, 0, 3]}>
+              <Stack space={2}>
+                <Typography variant="eyebrow" as="p" color="purple400">
+                  {format(new Date(newsItem.date), 'do MMMM yyyy')}
+                </Typography>
+                <Typography variant="h3" as="h3" color="blue400">
+                  <Link
+                    href={makePath('news', '[slug]')}
+                    as={makePath('news', newsItem.slug)}
+                  >
+                    {newsItem.title}
+                  </Link>
+                </Typography>
+                <Typography variant="p" as="p">
+                  {newsItem.intro}
+                </Typography>
+                <Typography variant="p" as="p">
+                  <Link
+                    href={makePath('news', '[slug]')}
+                    as={makePath('news', newsItem.slug)}
+                  >
+                    <Button variant="text" icon="arrowRight">
+                      Lesa nánar
+                    </Button>
+                  </Link>
+                </Typography>
+              </Stack>
+            </Box>
+          </GridColumn>
+          <GridColumn span={['12/12', '12/12', '6/12', '12/12', '5/12']}>
+            <Box paddingX={[0, 0, 0, 3, 0]} paddingTop={3}>
+              {newsItem.image && (
+                <BackgroundImage image={newsItem.image} width={600} />
+              )}
+            </Box>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
     </Box>
   )
 }
