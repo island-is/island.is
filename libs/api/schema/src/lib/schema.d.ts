@@ -412,6 +412,12 @@ export type LifeEventPage = {
   body: Scalars['JSON']
 }
 
+export type PaginatedAdgerdirNews = {
+  __typename?: 'PaginatedAdgerdirNews'
+  page: Pagination
+  news: Array<AdgerdirNews>
+}
+
 export type Application = {
   __typename?: 'Application'
   id: Scalars['ID']
@@ -473,6 +479,7 @@ export type Query = {
   getArticle?: Maybe<Article>
   getNews?: Maybe<News>
   getNewsList: PaginatedNews
+  getAdgerdirNewsList: PaginatedAdgerdirNews
   getNamespace?: Maybe<Namespace>
   getAboutPage: AboutPage
   getLandingPage?: Maybe<LandingPage>
@@ -524,6 +531,10 @@ export type QueryGetNewsArgs = {
 
 export type QueryGetNewsListArgs = {
   input: GetNewsListInput
+}
+
+export type QueryGetAdgerdirNewsListArgs = {
+  input: GetAdgerdirNewsListInput
 }
 
 export type QueryGetNamespaceArgs = {
@@ -640,6 +651,15 @@ export type GetNewsInput = {
 }
 
 export type GetNewsListInput = {
+  lang?: Maybe<Scalars['String']>
+  year?: Maybe<Scalars['Int']>
+  month?: Maybe<Scalars['Int']>
+  ascending?: Maybe<Scalars['Boolean']>
+  page?: Maybe<Scalars['Int']>
+  perPage?: Maybe<Scalars['Int']>
+}
+
+export type GetAdgerdirNewsListInput = {
   lang?: Maybe<Scalars['String']>
   year?: Maybe<Scalars['Int']>
   month?: Maybe<Scalars['Int']>
@@ -1028,6 +1048,7 @@ export type ResolversTypes = {
   AdgerdirTags: ResolverTypeWrapper<AdgerdirTags>
   LifeEventPage: ResolverTypeWrapper<LifeEventPage>
   JSON: ResolverTypeWrapper<Scalars['JSON']>
+  PaginatedAdgerdirNews: ResolverTypeWrapper<PaginatedAdgerdirNews>
   Application: ResolverTypeWrapper<Application>
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>
   ApplicationStateEnum: ApplicationStateEnum
@@ -1047,6 +1068,7 @@ export type ResolversTypes = {
   GetArticleInput: GetArticleInput
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
+  GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
   GetLandingPageInput: GetLandingPageInput
@@ -1151,6 +1173,7 @@ export type ResolversParentTypes = {
   AdgerdirTags: AdgerdirTags
   LifeEventPage: LifeEventPage
   JSON: Scalars['JSON']
+  PaginatedAdgerdirNews: PaginatedAdgerdirNews
   Application: Application
   DateTime: Scalars['DateTime']
   PresignedPost: PresignedPost
@@ -1166,6 +1189,7 @@ export type ResolversParentTypes = {
   GetArticleInput: GetArticleInput
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
+  GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
   GetLandingPageInput: GetLandingPageInput
@@ -1859,6 +1883,19 @@ export interface JsonScalarConfig
   name: 'JSON'
 }
 
+export type PaginatedAdgerdirNewsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['PaginatedAdgerdirNews'] = ResolversParentTypes['PaginatedAdgerdirNews']
+> = {
+  page?: Resolver<ResolversTypes['Pagination'], ParentType, ContextType>
+  news?: Resolver<
+    Array<ResolversTypes['AdgerdirNews']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type ApplicationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Application'] = ResolversParentTypes['Application']
@@ -1973,6 +2010,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetNewsListArgs, 'input'>
+  >
+  getAdgerdirNewsList?: Resolver<
+    ResolversTypes['PaginatedAdgerdirNews'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetAdgerdirNewsListArgs, 'input'>
   >
   getNamespace?: Resolver<
     Maybe<ResolversTypes['Namespace']>,
@@ -2157,6 +2200,7 @@ export type Resolvers<ContextType = Context> = {
   AdgerdirTags?: AdgerdirTagsResolvers<ContextType>
   LifeEventPage?: LifeEventPageResolvers<ContextType>
   JSON?: GraphQLScalarType
+  PaginatedAdgerdirNews?: PaginatedAdgerdirNewsResolvers<ContextType>
   Application?: ApplicationResolvers<ContextType>
   DateTime?: GraphQLScalarType
   PresignedPost?: PresignedPostResolvers<ContextType>

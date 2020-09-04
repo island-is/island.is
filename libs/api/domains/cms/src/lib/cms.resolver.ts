@@ -9,6 +9,7 @@ import { GetArticleInput } from './dto/getArticle.input'
 import { News } from './models/news.model'
 import { GetNewsInput } from './dto/getNews.input'
 import { GetNewsListInput } from './dto/getNewsList.input'
+import { GetAdgerdirNewsListInput } from './dto/getAdgerdirNewsList.input'
 import { GetAdgerdirPageInput } from './dto/getAdgerdirPage.input'
 import { GetAdgerdirNewsInput } from './dto/getAdgerdirNews.input'
 import { GetAdgerdirPagesInput } from './dto/getAdgerdirPages.input'
@@ -36,6 +37,7 @@ import {
   getGenericPage,
   getAdgerdirPage,
   getAdgerdirNews,
+  getAdgerdirNewsList,
   getAdgerdirPages,
   getAdgerdirFrontpage,
   getMenu,
@@ -48,6 +50,7 @@ import { GetMenuInput } from './dto/getMenu.input'
 import { AdgerdirTags } from './models/adgerdirTags.model'
 import { GetAdgerdirTagsInput } from './dto/getAdgerdirTags.input'
 import { LifeEventPage } from './models/lifeEventPage.model'
+import { PaginatedAdgerdirNews } from './models/paginatedAdgerdirNews.model'
 
 @Resolver()
 export class CmsResolver {
@@ -64,6 +67,13 @@ export class CmsResolver {
   @Query(() => PaginatedNews)
   getNewsList(@Args('input') input: GetNewsListInput): Promise<PaginatedNews> {
     return getNewsList(input)
+  }
+
+  @Query(() => PaginatedAdgerdirNews)
+  getAdgerdirNewsList(
+    @Args('input') input: GetAdgerdirNewsListInput,
+  ): Promise<PaginatedAdgerdirNews> {
+    return getAdgerdirNewsList(input)
   }
 
   @Query(() => Namespace, { nullable: true })
