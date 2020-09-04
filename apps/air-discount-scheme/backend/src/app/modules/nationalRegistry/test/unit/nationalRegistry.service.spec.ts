@@ -20,7 +20,7 @@ const { nationalRegistry } = environment
 
 const nationalRegistryGeneralLookupResponse: NationalRegistryGeneralLookupResponse = {
   source: 'Þjóðskrá',
-  ssn: '1326487905',
+  ssn: '1306886513',
   name: 'Jón Gunnar Jónsson',
   gender: 'kk',
   address: 'Bessastaðir 1',
@@ -33,11 +33,27 @@ const nationalRegistryGeneralLookupResponse: NationalRegistryGeneralLookupRespon
 
 const nationalRegistryFamilyLookupResponse: NationalRegistryFamilyLookupResponse = {
   source: 'Þjóðskrá',
-  familyssn: '1326487905',
+  familyssn: '1306886513',
   results: [
     {
       name: 'Jón Gunnar Jónsson',
-      ssn: '1326487905',
+      ssn: '1306886513',
+      address: 'Bessastaðir 1',
+      postalcode: 225,
+      towncode: 1300,
+      city: 'Álftanes',
+    },
+    {
+      name: 'Guðrún Jónsdóttir',
+      ssn: '0409084390',
+      address: 'Bessastaðir 1',
+      postalcode: 225,
+      towncode: 1300,
+      city: 'Álftanes',
+    },
+    {
+      name: 'Friðrik Jónsson',
+      ssn: '0101932149',
       address: 'Bessastaðir 1',
       postalcode: 225,
       towncode: 1300,
@@ -63,7 +79,7 @@ const axiosFamilyLookupResponse: AxiosResponse = {
 }
 
 const user: NationalRegistryUser = {
-  nationalId: '1326487905',
+  nationalId: '1306886513',
   firstName: 'Jón',
   gender: 'kk',
   lastName: 'Jónsson',
@@ -73,7 +89,7 @@ const user: NationalRegistryUser = {
   city: 'Álftanes',
 }
 
-const family: string[] = [user.nationalId]
+const children: string[] = [nationalRegistryFamilyLookupResponse.results[1].ssn]
 
 describe('NationalRegistryService', () => {
   let nationalRegistryService: NationalRegistryService
@@ -179,8 +195,8 @@ describe('NationalRegistryService', () => {
     })
   })
 
-  describe('getFamily', () => {
-    it('should fetch family from the nationalregistry and cache it', async () => {
+  describe('getRelatedChildren', () => {
+    it('should fetch family from the nationalregistry, filter for children and cache them', async () => {
       const cacheManagerGetSpy = jest
         .spyOn(cacheManager, 'get')
         .mockImplementation(() => Promise.resolve(null))
@@ -191,37 +207,41 @@ describe('NationalRegistryService', () => {
         .spyOn(cacheManager, 'set')
         .mockImplementation(() => Promise.resolve(null))
 
-      const result = await nationalRegistryService.getFamily(user.nationalId)
+      const result = await nationalRegistryService.getRelatedChildren(
+        user.nationalId,
+      )
 
       expect(cacheManagerGetSpy).toHaveBeenCalledWith(
-        `${CACHE_KEY}_${user.nationalId}_family`,
+        `${CACHE_KEY}_${user.nationalId}_children`,
       )
       expect(httpServiceSpy).toHaveBeenCalledWith(
         `${nationalRegistry.url}/family-lookup?ssn=${user.nationalId}`,
       )
       expect(cacheManagerSetSpy).toHaveBeenCalledWith(
-        `${CACHE_KEY}_${user.nationalId}_family`,
-        { family },
+        `${CACHE_KEY}_${user.nationalId}_children`,
+        { children },
         { ttl: ONE_MONTH },
       )
-      expect(result).toEqual(family)
+      expect(result).toEqual(children)
     })
 
     it('should fetch family from cache', async () => {
       const cacheManagerGetSpy = jest
         .spyOn(cacheManager, 'get')
-        .mockImplementation(() => Promise.resolve({ family }))
+        .mockImplementation(() => Promise.resolve({ children }))
       const httpServiceSpy = jest.spyOn(httpService, 'get')
       const cacheManagerSetSpy = jest.spyOn(cacheManager, 'set')
 
-      const result = await nationalRegistryService.getFamily(user.nationalId)
+      const result = await nationalRegistryService.getRelatedChildren(
+        user.nationalId,
+      )
 
       expect(cacheManagerGetSpy).toHaveBeenCalledWith(
-        `${CACHE_KEY}_${user.nationalId}_family`,
+        `${CACHE_KEY}_${user.nationalId}_children`,
       )
       expect(httpServiceSpy).not.toHaveBeenCalled()
       expect(cacheManagerSetSpy).not.toHaveBeenCalled()
-      expect(result).toEqual(family)
+      expect(result).toEqual(children)
     })
   })
 })

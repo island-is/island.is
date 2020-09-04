@@ -22,10 +22,6 @@ const user: User = {
   },
 }
 
-const child1 = '1201173359'
-const adult1 = '1201013319'
-const family: string[] = [child1, adult1, user.nationalId]
-
 describe('UserService', () => {
   let userService: UserService
   let flightService: FlightService
@@ -46,7 +42,6 @@ describe('UserService', () => {
           provide: NationalRegistryService,
           useClass: jest.fn(() => ({
             getUser: () => ({}),
-            getFamily: (nationalId: string) => family,
           })),
         },
       ],
@@ -57,26 +52,6 @@ describe('UserService', () => {
     nationalRegistryService = moduleRef.get<NationalRegistryService>(
       NationalRegistryService,
     )
-  })
-
-  describe('getRelations', () => {
-    it('should return only childs and the user itself in front', async () => {
-      const isChildSpy = jest
-        .spyOn(UserService.prototype as any, 'isChild')
-        .mockImplementation((birthday: string): boolean => {
-          if (
-            new Date(birthday).getFullYear() ===
-            1900 + parseInt(child1.slice(4, 6))
-          ) {
-            return true
-          }
-          return false
-        })
-
-      const result = await userService.getRelations(user.nationalId)
-
-      expect(result).toEqual([user.nationalId, child1])
-    })
   })
 
   describe('getUserInfoByNationalId', () => {
