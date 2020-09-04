@@ -5,16 +5,16 @@ import {
   Logo,
   Columns,
   Column,
-  ContentBlock,
   Box,
   Button,
   Hidden,
   ResponsiveSpace,
+  GridContainer,
+  GridColumn,
+  GridRow,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/adgerdir/i18n/I18n'
 import { useI18n } from '@island.is/adgerdir/i18n'
-import useRouteNames from '@island.is/adgerdir/i18n/useRouteNames'
-import { useRouter } from 'next/router'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
@@ -56,16 +56,18 @@ const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 
 export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const { activeLocale } = useI18n()
-  const Router = useRouter()
-  const { makePath } = useRouteNames(activeLocale as Locale)
 
   const locale = activeLocale as Locale
   const english = activeLocale === 'en'
 
   return (
-    <Box width="full">
-      <ContentBlock>
-        <Box width="full" padding={[3, 3, 6]}>
+    <GridContainer>
+      <GridRow>
+        <GridColumn
+          span="12/12"
+          paddingTop={[3, 3, 6]}
+          paddingBottom={[3, 3, 6]}
+        >
           <Columns alignY="center" space={2}>
             <Column width="content">
               <Link href={english ? '/en' : '/'} passHref>
@@ -87,7 +89,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                 justifyContent="flexEnd"
                 width="full"
               >
-                <LanguageToggler hideWhenMobile activeLocale={locale} />
+                {/* <LanguageToggler hideWhenMobile activeLocale={locale} /> */}
                 <Box marginLeft={marginLeft}>
                   <Button
                     href="https://minarsidur.island.is/"
@@ -100,9 +102,9 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
               </Box>
             </Column>
           </Columns>
-        </Box>
-      </ContentBlock>
-    </Box>
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }
 

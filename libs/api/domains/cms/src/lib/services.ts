@@ -15,6 +15,7 @@ import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
 import { AdgerdirNews } from './models/adgerdirNews.model'
 import { GetNewsListInput } from './dto/getNewsList.input'
+import { GetAdgerdirNewsListInput } from './dto/getAdgerdirNewsList.input'
 import { PaginatedNews } from './models/paginatedNews.model'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
@@ -22,6 +23,7 @@ import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { Namespace } from './models/namespace.model'
 import { Menu } from './models/menu.model'
 import { LifeEventPage } from './models/lifeEventPage.model'
+import { PaginatedAdgerdirNews } from './models/paginatedAdgerdirNews.model'
 
 const makePage = (
   page: number,
@@ -227,6 +229,41 @@ export const getNewsList = async ({
   return {
     page: makePage(page, perPage, result.total),
     news: result.items.map(mappers.mapNewsItem),
+  }
+}
+
+export const getAdgerdirNewsList = async ({
+  lang = 'is-IS',
+  year,
+  month,
+  ascending = false,
+  page = 1,
+  perPage = 10,
+}: GetAdgerdirNewsListInput): Promise<PaginatedAdgerdirNews> => {
+  const params = {
+    ['content_type']: 'vidspyrnaNews',
+    include: 10,
+    order: (ascending ? '' : '-') + 'fields.date',
+    skip: (page - 1) * perPage,
+    limit: perPage,
+  }
+
+  if (year) {
+    params['fields.date[gte]'] = new Date(year, month ?? 0, 1)
+    params['fields.date[lt]'] =
+      month != undefined
+        ? new Date(year, month + 1, 1)
+        : new Date(year + 1, 0, 1)
+  }
+
+  const result = await getLocalizedEntries<types.IVidspyrnaNewsFields>(
+    lang,
+    params,
+  ).catch(errorHandler('getAdgerdirNewsList'))
+
+  return {
+    page: makePage(page, perPage, result.total),
+    news: result.items.map(mappers.mapAdgerdirNewsItem),
   }
 }
 

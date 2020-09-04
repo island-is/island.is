@@ -146,7 +146,7 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
         ))}
       />
 
-      <Hidden below="sm">
+      <Hidden below="md">
         <div className={styles.controls}>
           <Inline space={2}>
             <button
