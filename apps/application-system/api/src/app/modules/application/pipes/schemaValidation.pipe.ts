@@ -3,7 +3,7 @@ import {
   validateAnswers,
   FormValue,
   getFormByTypeId,
-} from '@island.is/application/schema'
+} from '@island.is/application/template'
 import { CreateApplicationDto } from '../dto/createApplication.dto'
 import { UpdateApplicationDto } from '../dto/updateApplication.dto'
 

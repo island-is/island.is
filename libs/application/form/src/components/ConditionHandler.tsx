@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react'
-import { FormItemTypes, FormValue } from '@island.is/application/schema'
+import { FormItemTypes, FormValue } from '@island.is/application/template'
 import { useWatch } from 'react-hook-form'
 import { FieldDef, MultiFieldScreen } from '../types'
 import { convertMultiFieldToScreen } from '../reducer/reducerUtils'

@@ -4,14 +4,15 @@ import cn from 'classnames'
 import * as styles from './Link.treat'
 
 const isLinkInternal = (href: string) => {
-  // If it's a relative url such as '/path', 'path' and does not contain a protocol we can assume it is internal.
-  if (href.indexOf('://') === -1) return true
+  if (typeof href === 'string' && href.indexOf('://') !== -1) return false
 
-  return false
+  return true
 }
 
+export type LinkColor = 'white' | 'blue400'
+
 interface Props extends LinkProps {
-  color?: 'white' | 'blue400'
+  color?: LinkColor
   className?: string
   withUnderline?: boolean
 }
@@ -45,6 +46,7 @@ const Link: React.FC<Props> = ({
     return (
       <NextLink
         href={href}
+        as={as}
         shallow={shallow}
         scroll={scroll}
         passHref={passHref}

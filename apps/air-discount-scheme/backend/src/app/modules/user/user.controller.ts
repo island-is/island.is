@@ -4,6 +4,7 @@ import {
   Get,
   UseGuards,
   NotFoundException,
+  BadRequestException,
 } from '@nestjs/common'
 import {
   ApiBearerAuth,
@@ -34,14 +35,21 @@ export class PublicUserController {
 
   @Get('discounts/:discountCode/user')
   @ApiOkResponse({ type: User })
-  async get(@Param() params: GetUserByDiscountCodeParams): Promise<User> {
-    const nationalId = await this.discountService.validateDiscount(
+  async getUserByDiscountCode(
+    @Param() params: GetUserByDiscountCodeParams,
+  ): Promise<User> {
+    const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
     )
+    if (!discount) {
+      throw new BadRequestException('Discount code is invalid')
+    }
 
-    const user = await this.userService.getUserInfoByNationalId(nationalId)
+    const user = await this.userService.getUserInfoByNationalId(
+      discount.nationalId,
+    )
     if (!user) {
-      throw new NotFoundException(`User<${nationalId}> not found`)
+      throw new NotFoundException(`User<${discount.nationalId}> not found`)
     }
     return user
   }

@@ -6,16 +6,18 @@ interface Props {
 }
 
 export class ModuleErrorBoundary extends React.Component<
-  { name: string },
+  Props,
   { hasError: boolean }
 > {
-  constructor(props) {
+  constructor(props: Props) {
     super(props)
     this.state = { hasError: false }
   }
-  static getDerivedStateFromError(error) {
+
+  static getDerivedStateFromError() {
     return { hasError: true }
   }
+
   componentDidCatch() {
     // TODO: Log error
   }

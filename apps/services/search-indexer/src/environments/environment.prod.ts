@@ -6,4 +6,5 @@ export const environment = {
     environment: process.env.CONTENTFUL_ENVIRONMENT,
     host: process.env.CONTENTFUL_HOST,
   },
+  indexableTypes: ['article'],
 }

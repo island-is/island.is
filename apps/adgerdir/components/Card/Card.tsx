@@ -85,7 +85,7 @@ export const Card = forwardRef<HTMLAnchorElement, CardProps>(
                 </Stack>
               </Box>
               {tags.length > 0 && (
-                <Box paddingTop={3} flexGrow={0}>
+                <Box paddingTop={2} flexGrow={0}>
                   <Inline space={1}>
                     {tags.map(({ title, id }, index) => {
                       return (

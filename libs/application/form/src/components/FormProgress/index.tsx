@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Section } from '@island.is/application/schema'
+import { Section } from '@island.is/application/template'
 import FormProgressSection from './FormProgressSection'
 import { Box } from '@island.is/island-ui/core'
 

@@ -12,7 +12,7 @@ export const Info = () => (
   <GridContainer>
     <ContentBlock>
       <GridRow>
-        <GridColumn span={5}>
+        <GridColumn span="5/12">
           <Alert
             type="info"
             title="Vissir þú að þú getur gert eitthvað sniðugt og þetta eru lengri skilaboð?"

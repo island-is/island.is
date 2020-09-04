@@ -9,6 +9,7 @@ export const useRoutes = () => {
   const { userInfo, client } = useModuleProps()
 
   useEffect(() => {
+    if (userInfo === null) return
     const r = modules.reduce(
       (prev, curr) => [
         ...prev,

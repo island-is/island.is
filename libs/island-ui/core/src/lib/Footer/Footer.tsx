@@ -49,13 +49,13 @@ export const Footer = ({
       <Box width="full" background="blue100" paddingY={6}>
         <GridContainer>
           <GridRow>
-            <GridColumn span={12}>
+            <GridColumn span="12/12">
               <Box paddingBottom={5}>
                 <Logo iconOnly id="footer_logo" />
               </Box>
             </GridColumn>
             <GridColumn
-              span={[12, 12, 3]}
+              span={['12/12', '12/12', '3/12']}
               paddingBottom={[4, 4, 0]}
               className={styles.withDecorator}
             >
@@ -106,7 +106,7 @@ export const Footer = ({
             </GridColumn>
             {showMiddleLinks ? (
               <GridColumn
-                span={[12, 12, 6]}
+                span={['12/12', '12/12', '6/12']}
                 paddingBottom={[4, 4, 0]}
                 paddingTop={[6, 6, 0]}
                 className={styles.withDecorator}
@@ -136,7 +136,10 @@ export const Footer = ({
               </GridColumn>
             ) : null}
             {showTagLinks ? (
-              <GridColumn span={[12, 12, 3]} paddingTop={[6, 6, 0]}>
+              <GridColumn
+                span={['12/12', '12/12', '3/12']}
+                paddingTop={[6, 6, 0]}
+              >
                 {tagLinksTitle ? (
                   <Typography
                     variant="eyebrow"
@@ -160,10 +163,10 @@ export const Footer = ({
           </GridRow>
         </GridContainer>
       </Box>
-      <Box background="blue400" paddingY={4}>
+      <Box background="blue400" paddingTop={6} paddingBottom={4}>
         <GridContainer>
           <GridRow>
-            <GridColumn span={12}>
+            <GridColumn span="12/12">
               <Typography variant="eyebrow" color="white" paddingBottom={3}>
                 Aðrir opinberir vefir
               </Typography>
@@ -174,7 +177,10 @@ export const Footer = ({
               (group) =>
                 group.map(({ title, href }) => {
                   return (
-                    <GridColumn key={href} span={[12, 6, 4, 3]}>
+                    <GridColumn
+                      key={href}
+                      span={['12/12', '6/12', '4/12', '3/12']}
+                    >
                       <Typography variant="h5" color="white" paddingBottom={3}>
                         <ExternalLink href={href}> {title}</ExternalLink>
                       </Typography>

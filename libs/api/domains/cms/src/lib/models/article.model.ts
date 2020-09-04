@@ -18,6 +18,9 @@ export class Article {
   @Field(() => Taxonomy, { nullable: true })
   group?: Taxonomy
 
-  @Field()
-  category: Taxonomy
+  @Field(() => Taxonomy, { nullable: true })
+  category?: Taxonomy
+
+  @Field(() => [Article])
+  relatedArticles: Article[]
 }

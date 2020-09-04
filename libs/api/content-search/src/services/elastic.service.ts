@@ -1,12 +1,18 @@
 import { Client } from '@elastic/elasticsearch'
 import { Document, SearchIndexes } from '../types'
-import esb, { RequestBodySearch, TermsAggregation } from 'elastic-builder'
+import esb, { RequestBodySearch, Sort, TermsAggregation } from 'elastic-builder'
 import { logger } from '@island.is/logging'
 import merge from 'lodash/merge'
 import { environment } from '../environments/environment'
 import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
+import { WebSearchAutocompleteInput } from '@island.is/api/schema'
+import {
+  autocompleteTerm,
+  AutocompleteTermResponse,
+  AutocompleteTermRequestBody,
+} from '../queries/autocomplete'
 
 const { elastic } = environment
 
@@ -37,7 +43,33 @@ export class ElasticService {
     }
   }
 
-  async findByQuery(index: SearchIndexes, query) {
+  async findByQuery<ResponseBody, RequestBody>(
+    index: SearchIndexes,
+    query: RequestBody,
+  ) {
+    try {
+      const client = await this.getClient()
+      return client.search<ResponseBody, RequestBody>({
+        body: query,
+        index,
+      })
+    } catch (e) {
+      ElasticService.handleError(
+        'Error in ElasticService.findByQuery',
+        { query, index },
+        e,
+      )
+    }
+  }
+
+  /*
+  Reason for deprecation:
+  We are runnig elasticsearch 7.4
+  Elastic builder is compatable with 6 alpha as stated on:
+  https://www.npmjs.com/package/elastic-builder (at the time of writing)
+  We are keeping this function until elastic builder has been phased out
+  */
+  async deprecatedFindByQuery(index: SearchIndexes, query) {
     try {
       const client = await this.getClient()
       return client.search({
@@ -46,7 +78,7 @@ export class ElasticService {
       })
     } catch (e) {
       ElasticService.handleError(
-        'Error in ElasticService.findByQuery',
+        'Error in ElasticService.deprecatedFindByQuery',
         { query: query, index: index },
         e,
       )
@@ -97,7 +129,7 @@ export class ElasticService {
       }
     }
 
-    return this.findByQuery(index, requestBody)
+    return this.deprecatedFindByQuery(index, requestBody)
   }
 
   async fetchCategories(index: SearchIndexes) {
@@ -107,7 +139,7 @@ export class ElasticService {
       .size(0)
 
     try {
-      return this.findByQuery(index, query)
+      return this.deprecatedFindByQuery(index, query)
     } catch (e) {
       console.log(e)
     }
@@ -120,37 +152,56 @@ export class ElasticService {
       )
       .size(1000)
 
-    return this.findByQuery(index, requestBody)
+    return this.deprecatedFindByQuery(index, requestBody)
   }
 
-  async deleteAllExcept(index: SearchIndexes, excludeIds: Array<string>) {
-    const body = {
-      query: {
-        bool: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          must_not: excludeIds.map((id) => ({ match: { _id: id } })),
-        },
-      },
+  async fetchAutocompleteTerm(
+    index: SearchIndexes,
+    input: Omit<WebSearchAutocompleteInput, 'language'>,
+  ): Promise<AutocompleteTermResponse> {
+    const { singleTerm: prefix, size } = input
+    const requestBody = autocompleteTerm({ prefix, size })
+
+    const data = await this.findByQuery<
+      AutocompleteTermResponse,
+      AutocompleteTermRequestBody
+    >(index, requestBody)
+
+    return data.body
+  }
+
+  async deleteByIds(index: SearchIndexes, ids: Array<string>) {
+    // In case we get an empty list, ES will match that to all records... which we don't want to delete
+    if (!ids.length) {
+      return
     }
-    const client = await this.getClient()
-    return client
-      .delete_by_query({
-        index: index,
-        body: body,
-      })
-      .catch((error) => {
-        // TODO: Improve this cleaning function so it handles no index exists case
-        // we dont want to take down the indexer if there is no index to delete from
-        logger.error('Failed to delete all except', error)
-      })
-  }
-
-  async deleteAll(index: SearchIndexes) {
     const client = await this.getClient()
     return client.delete_by_query({
       index: index,
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      body: { query: { match_all: {} } },
+      body: {
+        query: {
+          bool: {
+            // eslint-disable-next-line @typescript-eslint/camelcase
+            must: ids.map((id) => ({ match: { _id: id } })),
+          },
+        },
+      },
+    })
+  }
+
+  async deleteAllExcept(index: SearchIndexes, excludeIds: Array<string>) {
+    const client = await this.getClient()
+
+    return client.delete_by_query({
+      index: index,
+      body: {
+        query: {
+          bool: {
+            // eslint-disable-next-line @typescript-eslint/camelcase
+            must_not: excludeIds.map((id) => ({ match: { _id: id } })),
+          },
+        },
+      },
     })
   }
 

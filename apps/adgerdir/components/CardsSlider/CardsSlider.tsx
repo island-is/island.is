@@ -11,7 +11,8 @@ import AliceCarousel, { EventObject } from 'react-alice-carousel'
 import { Icon, Inline, Hidden } from '@island.is/island-ui/core'
 import { AdgerdirPage } from '@island.is/api/schema'
 import { ColorSchemeContext, ColorSchemes } from '@island.is/adgerdir/context'
-import { Card } from '../Card/Card'
+import { useI18n } from '@island.is/adgerdir/i18n'
+import { Card } from '@island.is/adgerdir/components'
 
 import * as styles from './CardsSlider.treat'
 
@@ -20,7 +21,6 @@ interface StagePaddingProps {
   paddingRight: number
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface CardsSliderProps {
   variant?: ColorSchemes
   items: Array<AdgerdirPage>
@@ -35,6 +35,7 @@ const initialSlideState = {
 } as EventObject
 
 export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
+  const { activeLocale } = useI18n()
   const { colorScheme } = useContext(ColorSchemeContext)
 
   const [height, setHeight] = useState<string>('auto')
@@ -138,8 +139,8 @@ export const CardsSlider: FC<CardsSliderProps> = ({ items, variant }) => {
               title={title}
               tags={tags}
               variant={colorScheme}
-              as={`/${slug}`}
-              href="/[slug]"
+              as={`/${activeLocale !== 'is' ? `${activeLocale}/` : ''}${slug}`}
+              href={`/${activeLocale !== 'is' ? `${activeLocale}/` : ''}[slug]`}
             />
           </div>
         ))}

@@ -3,15 +3,12 @@ import React from 'react'
 import Head from 'next/head'
 import {
   Box,
-  GridContainer,
-  GridRow,
-  GridColumn,
   ContentBlock,
   Typography,
   Stack,
   Breadcrumbs,
 } from '@island.is/island-ui/core'
-import { Content } from '@island.is/island-ui/contentful'
+import { Content } from '@island.is/adgerdir/units'
 import {
   Articles,
   Sleeve,
@@ -35,10 +32,9 @@ import {
   GET_ADGERDIR_FRONTPAGE_QUERY,
 } from './queries'
 import { Screen } from '../types'
-// import { useNamespace } from '../hooks'
-// import { Locale } from '../i18n/I18n'
-import { ColorSchemeContext } from '@island.is/adgerdir/context'
+import { useNamespace } from '../hooks'
 import { ArticleLayout } from './Layouts/Layouts'
+import { ColorSchemeContext } from '@island.is/adgerdir/context'
 
 interface HomeProps {
   frontpage: Query['getAdgerdirFrontpage']
@@ -49,7 +45,7 @@ interface HomeProps {
 
 const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
   const { activeLocale } = useI18n()
-  // const n = useNamespace(namespace)
+  const n = useNamespace(namespace)
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
@@ -58,13 +54,15 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
 
+  let groupSliceCount = 0
+
   return (
     <>
       <Head>
         <title>Viðspyrna fyrir Ísland</title>
       </Head>
-      <ArticleLayout sidebar={<div>stuff</div>}>
-        <Stack space={3}>
+      <ArticleLayout sidebar={null}>
+        <Stack space={2}>
           <Breadcrumbs color="blue400">
             <span>Viðspyrna</span>
           </Breadcrumbs>
@@ -74,15 +72,19 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
           <Typography variant="intro" as="p">
             {frontpage.description}
           </Typography>
+          <Content document={frontpage.content} />
         </Stack>
-        <Content document={frontpage.content} />
       </ArticleLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
         <Box marginBottom={10}>
-          <Sleeve>
+          <Sleeve minHeight={400}>
             <Box background="red100">
               <ContentBlock width="large">
-                <Articles tags={tagsItems} items={pagesItems} />
+                <Articles
+                  tags={tagsItems}
+                  items={pagesItems}
+                  namespace={namespace}
+                />
               </ContentBlock>
             </Box>
           </Sleeve>
@@ -93,17 +95,21 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
           case 'AdgerdirFeaturedNewsSlice':
             return <FeaturedNews key={index} items={slice.featured} />
           case 'AdgerdirGroupSlice':
+            groupSliceCount++
+
             return (
               <ColorSchemeContext.Provider
                 key={index}
-                value={{ colorScheme: 'purple' }}
+                value={{
+                  colorScheme: groupSliceCount % 2 ? 'blue' : 'purple',
+                }}
               >
                 <Box width="full" overflow="hidden" marginBottom={10}>
                   <ContentBlock width="large">
                     <Box padding={[0, 3, 6]}>
                       <GroupedPages
                         topContent={
-                          <Stack space={3}>
+                          <Stack space={2}>
                             <Typography
                               variant="eyebrow"
                               as="h2"
@@ -119,9 +125,7 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
                             </Typography>
                           </Stack>
                         }
-                        bottomContent={
-                          <CardsSlider items={slice.pages} key="purple" />
-                        }
+                        bottomContent={<CardsSlider items={slice.pages} />}
                       />
                     </Box>
                   </ContentBlock>
@@ -178,26 +182,12 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
-            namespace: 'Homepage',
+            namespace: 'Vidspyrna',
             lang: locale,
           },
         },
       })
-      .then((variables) => {
-        // map data here to reduce data processing in component
-        const namespaceObject = JSON.parse(variables.data.getNamespace.fields)
-
-        // featuredArticles is a csv in contentful seperated by : where the first value is the title and the second is the url
-        return {
-          ...namespaceObject,
-          featuredArticles: namespaceObject['featuredArticles'].map(
-            (featuredArticle) => {
-              const [title = '', url = ''] = featuredArticle.split(':')
-              return { title, url }
-            },
-          ),
-        }
-      }),
+      .then((variables) => JSON.parse(variables.data.getNamespace.fields)),
   ])
 
   return {

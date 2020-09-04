@@ -24,6 +24,9 @@ export interface IArticleFields {
 
   /** Organization */
   organization?: IOrganization[] | undefined
+
+  /** Related Articles */
+  relatedArticles?: IArticle[] | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -445,6 +448,43 @@ export interface ILatestNewsSlice extends Entry<ILatestNewsSliceFields> {
   }
 }
 
+export interface ILifeEventPageFields {
+  /** title */
+  title: string
+
+  /** slug */
+  slug: string
+
+  /** intro */
+  intro: string
+
+  /** image */
+  image?: Asset | undefined
+
+  /** thumbnail */
+  thumbnail?: Asset | undefined
+
+  /** content */
+  content: Document
+}
+
+export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'lifeEventPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ILinkFields {
   /** Text */
   text: string
@@ -588,6 +628,9 @@ export interface INewsFields {
   /** Title */
   title: string
 
+  /** Subtitle */
+  subtitle?: string | undefined
+
   /** Slug */
   slug: string
 
@@ -602,6 +645,9 @@ export interface INewsFields {
 
   /** Content */
   content?: Document | undefined
+
+  /** Read More Text */
+  readMoreText?: string | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -879,6 +925,34 @@ export interface ISectionHeading extends Entry<ISectionHeadingFields> {
     contentType: {
       sys: {
         id: 'sectionHeading'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ISectionWithImageFields {
+  /** title */
+  title?: string | undefined
+
+  /** image */
+  image?: Asset | undefined
+
+  /** body */
+  body: Document
+}
+
+export interface ISectionWithImage extends Entry<ISectionWithImageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sectionWithImage'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1318,6 +1392,9 @@ export interface IVidspyrnaNewsFields {
 
   /** Content */
   content?: Document | undefined
+
+  /** Pages */
+  pages?: IVidspyrnaPage[] | undefined
 }
 
 export interface IVidspyrnaNews extends Entry<IVidspyrnaNewsFields> {
@@ -1341,14 +1418,17 @@ export interface IVidspyrnaPageFields {
   /** Title */
   title: string
 
-  /** Description */
-  description?: string | undefined
+  /** Short description */
+  description: string
+
+  /** Long description */
+  longDescription?: string | undefined
+
+  /** Objective */
+  objective?: Document | undefined
 
   /** Slug */
   slug: string
-
-  /** Content */
-  content?: Document | undefined
 
   /** Tags */
   tags: IVidspyrnaTag[]
@@ -1356,8 +1436,20 @@ export interface IVidspyrnaPageFields {
   /** Link */
   link?: string | undefined
 
+  /** Link button text */
+  linkButtonText?: string | undefined
+
   /** Status */
   status: 'preparing' | 'ongoing' | 'completed'
+
+  /** Estimated cost (ISK) */
+  estimatedCostIsk?: number | undefined
+
+  /** Final cost (ISK) */
+  finalCostIsk?: number | undefined
+
+  /** Content */
+  content?: Document | undefined
 }
 
 /** Page for the adgerdir.island.is website. */
@@ -1372,30 +1464,6 @@ export interface IVidspyrnaPage extends Entry<IVidspyrnaPageFields> {
     contentType: {
       sys: {
         id: 'vidspyrnaPage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IVidspyrnaStatusFields {
-  /** Title */
-  title?: string | undefined
-}
-
-/** A status for a Viðspyrna action. */
-
-export interface IVidspyrnaStatus extends Entry<IVidspyrnaStatusFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'vidspyrnaStatus'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1442,6 +1510,7 @@ export type CONTENT_TYPE =
   | 'iconBullet'
   | 'landingPage'
   | 'latestNewsSlice'
+  | 'lifeEventPage'
   | 'link'
   | 'linkList'
   | 'logoListSlice'
@@ -1456,6 +1525,7 @@ export type CONTENT_TYPE =
   | 'processEntry'
   | 'questionAndAnswer'
   | 'sectionHeading'
+  | 'sectionWithImage'
   | 'statistic'
   | 'statistics'
   | 'story'
@@ -1471,7 +1541,6 @@ export type CONTENT_TYPE =
   | 'vidspyrnaFlokkur'
   | 'vidspyrnaNews'
   | 'vidspyrnaPage'
-  | 'vidspyrnaStatus'
   | 'vidspyrnaTag'
 
 export type LOCALE_CODE = 'en' | 'is-IS'

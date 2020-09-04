@@ -41,36 +41,37 @@ const IntroductionSection: FC<Props> = ({
   linkText,
 }) => {
   return (
-    <Box paddingY={8}>
-      <GridContainer>
-        <GridRow>
-          <GridColumn span={[12, 12, 4]} offset={[null, null, 1]}>
-            <Illustration />
-          </GridColumn>
-          <GridColumn
-            span={[12, 12, 5]}
-            offset={[null, null, 1]}
-            paddingTop={4}
-          >
-            <Typography variant="eyebrow" color="purple400" paddingBottom={2}>
-              {subtitle}
-            </Typography>
-            <Typography as="h2" variant="h1" paddingBottom={2}>
-              {title}
-            </Typography>
-            <Typography variant="intro" paddingBottom={text ? 2 : 0}>
-              {introText}
-            </Typography>
-            <Typography variant="p">{text}</Typography>
-            <Box paddingY={2}>
-              <ArrowLink href={linkUrl} color="blue400">
-                {linkText}
-              </ArrowLink>
-            </Box>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
-    </Box>
+    <GridContainer>
+      <GridRow>
+        <GridColumn
+          span={['12/12', '12/12', '4/12']}
+          offset={[null, null, '1/12']}
+        >
+          <Illustration />
+        </GridColumn>
+        <GridColumn
+          span={['12/12', '12/12', '5/12']}
+          offset={[null, null, '1/12']}
+          paddingTop={4}
+        >
+          <Typography variant="eyebrow" color="purple400" paddingBottom={2}>
+            {subtitle}
+          </Typography>
+          <Typography as="h2" variant="h1" paddingBottom={2}>
+            {title}
+          </Typography>
+          <Typography variant="intro" paddingBottom={text ? 2 : 0}>
+            {introText}
+          </Typography>
+          <Typography variant="p">{text}</Typography>
+          <Box paddingY={2}>
+            <ArrowLink href={linkUrl} color="blue400">
+              {linkText}
+            </ArrowLink>
+          </Box>
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }
 

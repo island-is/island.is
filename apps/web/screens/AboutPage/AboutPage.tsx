@@ -17,7 +17,7 @@ import {
   Heading,
   Timeline,
   StoryList,
-  LatestNews,
+  AboutLatestNews,
   EmailSignup,
   LogoList,
   BulletList,
@@ -313,7 +313,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       return (
         <div key={slice.id} id={slice.id} ref={setRef(slice.id)}>
           <Layout width="8/12" boxProps={{ paddingTop: 15, paddingBottom: 12 }}>
-            <LatestNews {...slice} />
+            <AboutLatestNews {...slice} />
           </Layout>
         </div>
       )
