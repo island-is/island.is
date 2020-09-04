@@ -1,9 +1,8 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-export const root = style({})
-
-export const escapeGrid = style({
+export const root = style({
+  // Escape grid
   marginLeft: -theme.grid.gutter.mobile * 2,
   marginRight: -theme.grid.gutter.mobile * 2,
 })
@@ -26,12 +25,17 @@ export const slides = style({
 
 export const slide = style({
   width: '100%',
-  height: '100%',
   position: 'relative',
   display: 'flex',
   scrollSnapAlign: 'center',
   flexShrink: 0,
+  //Space between each slide
+  marginLeft: theme.spacing[4],
+  // Breathing space for box-shadow etc
+  marginTop: theme.spacing[2],
+  marginBottom: theme.spacing[2],
   selectors: {
+    // First and last slides fake the horizontal grid margin
     ['&:last-child::after']: {
       content: "''",
       display: 'block',

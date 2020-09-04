@@ -6,29 +6,40 @@ interface Props {
   title: string
   intro: string
   thumbnail: string
+  image: string
   url: string
 }
 
-const LifeEventCard: React.FC<Props> = ({ title, intro, thumbnail, url }) => {
+const LifeEventCard: React.FC<Props> = ({
+  title,
+  intro,
+  image,
+  thumbnail,
+  url,
+}) => {
   return (
     <Link href={url}>
       <Box
         className={styles.card}
         alignItems="flexStart"
         background="white"
-        borderColor="purple200"
-        borderRadius="large"
-        borderStyle="solid"
-        borderWidth="standard"
         display="flex"
+        boxShadow="subtle"
+        flexDirection={['column', 'column', 'row']}
         height="full"
-        paddingX={4}
-        paddingY={3}
+        paddingX={[2, 2, 4]}
+        paddingY={[1, 1, 3]}
         overflow="hidden"
       >
+        <div
+          className={styles.image}
+          style={{ backgroundImage: `url(${image})` }}
+        />
         <Box
           display="flex"
           flexDirection="column"
+          paddingTop={[2, 2, null]}
+          paddingBottom={[4, 4, null]}
           marginRight={[2, 2, 2, 2, 1]}
         >
           <Typography variant="h3" as="h3" paddingBottom={1} color="blue400">
@@ -37,7 +48,7 @@ const LifeEventCard: React.FC<Props> = ({ title, intro, thumbnail, url }) => {
           <Typography variant="p">{intro}</Typography>
         </Box>
 
-        <Box
+        <div
           className={styles.thumbnail}
           style={{ backgroundImage: `url(${thumbnail})` }}
         />

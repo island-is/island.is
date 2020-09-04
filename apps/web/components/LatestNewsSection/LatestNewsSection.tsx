@@ -40,6 +40,13 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
     <GridContainer>
       <GridRow>
         <GridColumn span="12/12">
+          <Typography variant="h3" as="h3" paddingBottom={4}>
+            {label}
+          </Typography>
+        </GridColumn>
+      </GridRow>
+      <GridRow>
+        <GridColumn span="12/12">
           <Swiper>
             {newsItems.map((newsItem) => (
               <NewsCard

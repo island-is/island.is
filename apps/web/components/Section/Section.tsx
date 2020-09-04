@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { ElementType, useState } from 'react'
 import { Box, ResponsiveSpace } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { useWindowSize } from 'react-use'
+import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 
 type BackgroundBleed = {
   fromColor: keyof typeof theme.color
@@ -11,7 +11,7 @@ type BackgroundBleed = {
 }
 
 interface SectionProps {
-  as?: string
+  as?: ElementType
   paddingY?: ResponsiveSpace
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
@@ -29,10 +29,18 @@ const Section: React.FC<SectionProps> = ({
   backgroundBleed,
 }) => {
   const { width } = useWindowSize()
+  const [isMobile, setIsMobile] = useState(false)
+
+  useIsomorphicLayoutEffect(() => {
+    if (width < theme.breakpoints.md) {
+      return setIsMobile(true)
+    }
+    setIsMobile(false)
+  }, [width])
 
   const generateBackgroundBleed = () => {
     //Background bleed is not available on mobile.
-    if (!backgroundBleed || width < theme.breakpoints.md) {
+    if (!backgroundBleed || isMobile) {
       return null
     }
 
@@ -47,7 +55,7 @@ const Section: React.FC<SectionProps> = ({
 
   return (
     <Box
-      as={as}
+      component={as as ElementType}
       paddingY={paddingY}
       paddingTop={paddingTop}
       paddingBottom={paddingBottom}
