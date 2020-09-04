@@ -26,7 +26,7 @@ export type ItemCmpProps = {
 
 export type AsyncSearchOption = {
   label: string
-  value: string | number
+  value: string
   component?: (props: ItemCmpProps) => ReactElement
   disabled?: boolean
 }

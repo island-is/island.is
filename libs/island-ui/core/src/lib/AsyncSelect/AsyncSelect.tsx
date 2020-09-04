@@ -21,7 +21,7 @@ import Icon from '../Icon/Icon'
 
 export type AsyncSelectOption = {
   label: string
-  value: string | number
+  value: string
   disabled?: boolean
 }
 
