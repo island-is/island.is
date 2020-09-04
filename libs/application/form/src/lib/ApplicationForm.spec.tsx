@@ -7,7 +7,7 @@ import {
   Application,
   ApplicationState,
   FormType,
-} from '@island.is/application/schema'
+} from '@island.is/application/template'
 import { client } from '@island.is/application/graphql'
 import { ApolloProvider } from '@apollo/client'
 

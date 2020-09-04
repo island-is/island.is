@@ -4,12 +4,15 @@ import { RequestBodySearch } from 'elastic-builder'
 import { ContentCategory } from './models/contentCategory.model'
 import { ContentItem } from './models/contentItem.model'
 import { SearchResult } from './models/searchResult.model'
+import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
+import { ContentLanguage } from './enums/contentLanguage.enum'
+import { SearcherService } from '@island.is/api/schema'
 
 @Injectable()
-export class ContentSearchService {
+export class ContentSearchService implements SearcherService {
   constructor(private repository: ElasticService) {}
 
-  getIndex(lang: string) {
+  getIndex(lang: ContentLanguage) {
     return SearchIndexes[lang] ?? SearchIndexes.is
   }
 
@@ -40,10 +43,11 @@ export class ContentSearchService {
     }
   }
 
+  // TODO: use aggregation here
   async fetchCategories(query): Promise<ContentCategory[]> {
     // todo do properly not this awesome hack
     const queryTmp = new RequestBodySearch().size(1000)
-    const { body } = await this.repository.findByQuery(
+    const { body } = await this.repository.deprecatedFindByQuery(
       this.getIndex(query.language),
       queryTmp,
     )
@@ -84,5 +88,27 @@ export class ContentSearchService {
     )
 
     return body?.hits?.hits.map(this.fixCase)
+  }
+
+  async fetchAutocompleteTerm(input): Promise<WebSearchAutocomplete> {
+    const {
+      suggest: { searchSuggester },
+    } = await this.repository.fetchAutocompleteTerm(
+      this.getIndex(input.language),
+      {
+        ...input,
+        singleTerm: input.singleTerm.trim(),
+      },
+    )
+
+    // we always handle just one terms at a time so we return results for first term
+    const firstWordSuggestions = searchSuggester[0].options
+
+    return {
+      total: firstWordSuggestions.length,
+      completions: firstWordSuggestions.map(
+        (suggestionObjects) => suggestionObjects.text,
+      ),
+    }
   }
 }

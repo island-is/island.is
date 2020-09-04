@@ -1,4 +1,4 @@
-import { DataProviderItem, ExternalData } from '@island.is/application/schema'
+import { DataProviderItem, ExternalData } from '@island.is/application/template'
 
 export const getValueViaPath = (obj, path, defaultValue = undefined) => {
   try {

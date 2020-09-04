@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { CheckboxField, Option } from '@island.is/application/schema'
+import { CheckboxField, Option } from '@island.is/application/template'
 import {
   Checkbox,
   Typography,

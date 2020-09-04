@@ -1,4 +1,4 @@
-import React, { forwardRef, ComponentType } from 'react'
+import React, { forwardRef } from 'react'
 import cn from 'classnames'
 
 import * as styles from './Menu.treat'

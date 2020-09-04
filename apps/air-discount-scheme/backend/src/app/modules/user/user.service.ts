@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import * as kennitala from 'kennitala'
 
 import { Fund } from '@island.is/air-discount-scheme/types'
 import { User } from './user.model'
@@ -8,6 +9,8 @@ import {
   NationalRegistryUser,
 } from '../nationalRegistry'
 
+const MAX_AGE_LIMIT = 18
+
 @Injectable()
 export class UserService {
   constructor(
@@ -15,9 +18,25 @@ export class UserService {
     private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
-  getRelations(nationalId: string): Promise<string[]> {
-    // TODO: implement from nationalRegistry in "2nd Phase"
-    return Promise.resolve([nationalId])
+  private isChild(birthday: string): boolean {
+    const now = new Date()
+    const maxAgeYearsFromNow = new Date().setFullYear(
+      now.getFullYear() - MAX_AGE_LIMIT,
+    )
+
+    return new Date(birthday).getTime() > maxAgeYearsFromNow
+  }
+
+  async getRelations(nationalId: string): Promise<string[]> {
+    const family = await this.nationalRegistryService.getFamily(nationalId)
+    return family.reduce((acc, memberNationalId) => {
+      if (memberNationalId === nationalId) {
+        return [memberNationalId, ...acc]
+      } else if (this.isChild(kennitala.info(memberNationalId).birthday)) {
+        return [...acc, memberNationalId]
+      }
+      return acc
+    }, [])
   }
 
   private async getFund(user: NationalRegistryUser): Promise<Fund> {

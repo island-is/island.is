@@ -5,7 +5,20 @@ import * as styles from './Item.treat'
 
 import { AsyncSearchOption } from '../../AsyncSearch'
 
-export const Item = ({
+interface Props {
+  isSelected: boolean
+  isActive: boolean
+  highlightedIndex: number
+  index: number
+  colored: boolean
+  size: 'medium' | 'large'
+  item: {
+    component: AsyncSearchOption['component']
+    label: string
+  }
+}
+
+export const Item: React.FC<Props> = ({
   children,
   isSelected,
   isActive,
@@ -21,7 +34,7 @@ export const Item = ({
   const isPrev = index === highlightedIndex - 1
 
   if (item.component) {
-    const Cmp = item.component as AsyncSearchOption['component']
+    const Cmp = item.component
 
     return (
       <li className={styles.customItem} {...props}>

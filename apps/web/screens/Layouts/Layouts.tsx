@@ -20,10 +20,13 @@ export const CategoryLayout: FC<CategoryProps> = ({
   <GridContainer>
     <Box paddingBottom={10}>
       <GridRow>
-        <GridColumn span={[12, 12, 4, 3]}>
+        <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
-        <GridColumn span={[12, 12, 8]} offset={[null, null, null, 1]}>
+        <GridColumn
+          span={['12/12', '12/12', '8/12']}
+          offset={[null, null, null, '1/12']}
+        >
           <Box paddingBottom={10}>{children}</Box>
           {belowContent && belowContent}
         </GridColumn>
@@ -40,10 +43,10 @@ export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
   <GridContainer>
     <Box paddingY={10}>
       <GridRow>
-        <GridColumn span={8}>
+        <GridColumn span="8/12">
           <Box>{children}</Box>
         </GridColumn>
-        <GridColumn span={4}>
+        <GridColumn span="4/12">
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
       </GridRow>
@@ -59,14 +62,14 @@ export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
   <GridContainer>
     <Box paddingTop={6} paddingBottom={10}>
       <GridRow>
-        <GridColumn span={4}>
+        <GridColumn span="4/12">
           <Sticky>
             <Box background="purple100" padding={4}>
               {sidebar}
             </Box>
           </Sticky>
         </GridColumn>
-        <GridColumn span={6} offset={1}>
+        <GridColumn span="6/12" offset="1/12">
           <Box paddingBottom={10}>{children}</Box>
         </GridColumn>
       </GridRow>
@@ -82,10 +85,10 @@ export const NewsItemLayout: FC<NewsItemProps> = ({ sidebar, children }) => (
   <GridContainer>
     <Box paddingTop={6} paddingBottom={10}>
       <GridRow>
-        <GridColumn span={6} offset={1}>
+        <GridColumn span="6/12" offset="1/12">
           {children}
         </GridColumn>
-        <GridColumn span={4}>
+        <GridColumn span="4/12">
           <Sticky>
             <Box background="purple100" padding={4}>
               {sidebar}

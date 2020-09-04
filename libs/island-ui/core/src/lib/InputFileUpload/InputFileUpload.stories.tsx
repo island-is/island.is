@@ -16,7 +16,12 @@ enum ActionTypes {
   UPDATE = 'UPDATE',
 }
 
-const uploadFile = (file: UploadFile, dispatch) => {
+type Action = {
+  type: ActionTypes
+  payload: any
+}
+
+const uploadFile = (file: UploadFile, dispatch: (action: Action) => void) => {
   return new Promise((resolve, reject) => {
     const req = new XMLHttpRequest()
 
@@ -48,7 +53,7 @@ const uploadFile = (file: UploadFile, dispatch) => {
     })
 
     const formData = new FormData()
-    formData.append('file', file.originalFileObj, file.name)
+    formData.append('file', file.originalFileObj || '', file.name)
 
     req.open('POST', 'http://localhost:5000/')
     req.send(formData)
@@ -57,7 +62,7 @@ const uploadFile = (file: UploadFile, dispatch) => {
 
 const initialUploadFiles: UploadFile[] = []
 
-function reducer(state, action) {
+function reducer(state: UploadFile[], action: Action) {
   switch (action.type) {
     case ActionTypes.ADD:
       return state.concat(action.payload.newFiles)
@@ -125,7 +130,7 @@ export const Default = () => {
           buttonLabel="Select documents to upload"
           onChange={onChange}
           onRemove={remove}
-          errorMessage={state.length > 0 && error}
+          errorMessage={state.length > 0 ? error : undefined}
         />
       </Box>
     </ContentBlock>

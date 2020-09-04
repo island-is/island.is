@@ -38,6 +38,11 @@ type ContentCategory {
   description: String
 }
 
+type WebSearchAutocomplete {
+  total: Int!
+  completions: [String!]!
+}
+
 type Taxonomy {
   title: String
   slug: String
@@ -75,10 +80,6 @@ type AdgerdirPage {
   finalCostIsk: Float
 }
 
-type AdgerdirPages {
-  items: [AdgerdirPage!]!
-}
-
 type Image {
   url: String!
   title: String!
@@ -96,6 +97,11 @@ type AdgerdirNews {
   image: Image
   date: String!
   content: String
+  pages: [AdgerdirPage!]
+}
+
+type AdgerdirPages {
+  items: [AdgerdirPage!]!
 }
 
 type AdgerdirFrontpage {
@@ -139,6 +145,7 @@ type News {
   id: String!
   slug: String!
   title: String!
+  subtitle: String!
   intro: String!
   image: Image
   date: String!
@@ -320,6 +327,19 @@ type AdgerdirTags {
   items: [AdgerdirTag!]!
 }
 
+type LifeEventPage {
+  title: String!
+  slug: String!
+  intro: String!
+  image: Image!
+  body: JSON!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
 type Application {
   id: ID!
   created: DateTime!
@@ -350,11 +370,6 @@ enum ApplicationStateEnum {
   UNKNOWN
 }
 
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
-
 enum ApplicationTypeIdEnum {
   ExampleForm
   ExampleForm2
@@ -383,6 +398,7 @@ type Query {
   singleItem(input: ItemInput!): ContentItem
   categories(input: CategoriesInput!): [ContentCategory!]!
   articlesInCategory(category: ArticlesInCategoryInput!): [ContentItem!]!
+  webSearchAutocomplete(input: WebSearchAutocompleteInput!): WebSearchAutocomplete!
   getArticle(input: GetArticleInput!): Article
   getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput!): PaginatedNews!
@@ -391,11 +407,13 @@ type Query {
   getLandingPage(input: GetLandingPageInput!): LandingPage
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
+  getAdgerdirNews(input: GetAdgerdirNewsInput!): AdgerdirNews
   getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages!
   getAdgerdirTags(input: GetAdgerdirTagsInput!): AdgerdirTags
   getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getMenu(input: GetMenuInput!): Menu
+  getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
   getApplication(input: GetApplicationInput!): Application
   getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
   getDocument(input: GetDocumentInput!): Document
@@ -436,6 +454,12 @@ input CategoriesInput {
 input ArticlesInCategoryInput {
   slug: String
   language: ContentLanguage
+}
+
+input WebSearchAutocompleteInput {
+  singleTerm: String!
+  language: ContentLanguage = is
+  size: Int = 10
 }
 
 input GetArticleInput {
@@ -481,6 +505,11 @@ input GetAdgerdirPageInput {
   lang: String!
 }
 
+input GetAdgerdirNewsInput {
+  slug: String
+  lang: String!
+}
+
 input GetAdgerdirPagesInput {
   lang: String
   perPage: Int
@@ -500,6 +529,11 @@ input GetAdgerdirFrontpageInput {
 
 input GetMenuInput {
   name: String!
+  lang: String!
+}
+
+input GetLifeEventPageInput {
+  slug: String!
   lang: String!
 }
 

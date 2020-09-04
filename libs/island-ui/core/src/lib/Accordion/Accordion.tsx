@@ -11,7 +11,7 @@ interface AccordionContextValue {
 
 export const AccordionContext = createContext<AccordionContextValue>({
   toggledId: '',
-  setToggledId: null,
+  setToggledId: () => null,
 })
 
 export interface AccordionProps {

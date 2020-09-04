@@ -10,7 +10,7 @@ import {
   ExternalDataProvider,
   Repeater,
   shouldShowFormLeaf,
-} from '@island.is/application/schema'
+} from '@island.is/application/template'
 import { ApplicationUIState } from './ReducerTypes'
 import {
   FieldDef,

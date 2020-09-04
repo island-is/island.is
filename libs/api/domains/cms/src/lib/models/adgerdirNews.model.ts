@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { AdgerdirPage } from './adgerdirPage.model'
 import { Image } from './image.model'
 
 @ObjectType()
@@ -26,4 +27,7 @@ export class AdgerdirNews {
 
   @Field({ nullable: true })
   content?: string
+
+  @Field(() => [AdgerdirPage], { nullable: true })
+  pages?: AdgerdirPage[]
 }

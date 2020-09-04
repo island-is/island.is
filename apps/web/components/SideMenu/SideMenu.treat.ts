@@ -1,12 +1,10 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
-const SIDE_MENU_WIDTH = 318
+
+const SIDE_MENU_WIDTH = 345
 
 export const root = style({
-  background: theme.color.white,
-  boxShadow: `0px 4px 70px rgba(0, 97, 255, 0.1)`,
   display: 'none',
-  height: '100%',
   left: 0,
   paddingTop: theme.spacing[3],
   paddingLeft: theme.spacing[3],
@@ -31,12 +29,6 @@ export const root = style({
 export const isVisible = style({
   display: 'flex',
   flexDirection: 'column',
-})
-
-export const tabHeader = style({
-  display: 'flex',
-  paddingBottom: theme.spacing[3],
-  justifyContent: 'flex-end',
 })
 
 export const tabBar = style({
@@ -71,17 +63,5 @@ export const linksContent = style({
   paddingRight: theme.spacing[3],
   paddingBottom: theme.spacing[4],
   paddingLeft: theme.spacing[3],
+  width: '100%',
 })
-
-export const externalLinks = style({
-  display: 'flex',
-  alignItems: 'center',
-  flexDirection: 'column',
-})
-
-export const externalLinksContent = style({
-  display: 'flex',
-  flexWrap: 'wrap',
-})
-
-export const mobileContent = style({})

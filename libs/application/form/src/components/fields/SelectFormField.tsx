@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { SelectField } from '@island.is/application/schema'
+import { SelectField } from '@island.is/application/template'
 import { Typography, Select, Option, Box } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '../../types'
 

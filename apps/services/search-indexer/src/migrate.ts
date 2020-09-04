@@ -6,7 +6,7 @@ import fetch from 'node-fetch'
 import { DomainPackageDetails, PackageDetails } from 'aws-sdk/clients/es'
 import { ManagedUpload } from 'aws-sdk/clients/s3'
 import { logger } from '@island.is/logging'
-import { ElasticService } from '@island.is/api/content-search'
+import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
 
 class Config {
   elasticNode: string
@@ -22,7 +22,7 @@ class Config {
   static createFromEnv(env) {
     const ret: Config = new Config()
     ret.elasticNode = env['ELASTIC_NODE'] || ''
-    ret.indexMain = env['ES_INDEX_MAIN'] || 'island-is'
+    ret.indexMain = SearchIndexes.is //hard code this to is (so everything listens to same index string)
     ret.esDomain = env['ES_DOMAIN'] || 'search'
     ret.codeTemplateFile =
       env['CODE_TEMPLATE'] || '/webapp/config/template-is.json'

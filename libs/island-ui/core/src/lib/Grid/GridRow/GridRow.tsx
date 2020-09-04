@@ -4,7 +4,7 @@ import { Box } from '../../Box'
 import * as styles from './GridRow.treat'
 
 interface Props {
-  className?: any
+  className?: string
 }
 
 export const GridRow: FC<Props> = ({ children, className }) => {

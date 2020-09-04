@@ -1,7 +1,7 @@
 export default {
   production: false,
   sentry: {
-    dsn: '',
+    dsn: process.env.SENTRY_DSN,
   },
   auth: {
     samlEntryPoint: 'https://innskraning.island.is/?id=ads.local',

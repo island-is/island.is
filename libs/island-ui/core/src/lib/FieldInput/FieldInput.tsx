@@ -4,8 +4,8 @@ import get from 'lodash/get'
 import { Input } from '../Input/Input'
 
 interface FieldNumberInputProps {
-  form?: FormikState<string | number>
-  field?: FieldInputProps<string | number>
+  form: FormikState<string | number>
+  field: FieldInputProps<string | number>
 }
 
 export const FieldInput = ({

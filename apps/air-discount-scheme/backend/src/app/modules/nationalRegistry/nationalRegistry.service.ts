@@ -2,14 +2,15 @@ import { Inject, Injectable, CACHE_MANAGER, HttpService } from '@nestjs/common'
 import CacheManager from 'cache-manager'
 
 import {
-  NationalRegistryResponse,
+  NationalRegistryGeneralLookupResponse,
+  NationalRegistryFamilyLookupResponse,
   NationalRegistryUser,
 } from './nationalRegistry.types'
 import { environment } from '../../../environments'
 
 const { nationalRegistry } = environment
-const ONE_MONTH = 2592000 // seconds
-const CACHE_KEY = 'nationalRegistry_user'
+export const ONE_MONTH = 2592000 // seconds
+export const CACHE_KEY = 'nationalRegistry'
 
 const TEST_USERS: NationalRegistryUser[] = [
   {
@@ -43,12 +44,12 @@ export class NationalRegistryService {
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
   ) {}
 
-  private getCacheKey(nationalId: string): string {
-    return `${CACHE_KEY}_${nationalId}`
+  private getCacheKey(nationalId: string, suffix: 'user' | 'family'): string {
+    return `${CACHE_KEY}_${nationalId}_${suffix}`
   }
 
   private createNationalRegistryUser(
-    response: NationalRegistryResponse,
+    response: NationalRegistryGeneralLookupResponse,
   ): NationalRegistryUser {
     if (response.error) {
       return null
@@ -75,13 +76,15 @@ export class NationalRegistryService {
       return testUser
     }
 
-    const cacheKey = this.getCacheKey(nationalId)
+    const cacheKey = this.getCacheKey(nationalId, 'user')
     const cacheValue = await this.cacheManager.get(cacheKey)
     if (cacheValue) {
       return cacheValue.user
     }
 
-    const response = await this.httpService
+    const response: {
+      data: [NationalRegistryGeneralLookupResponse]
+    } = await this.httpService
       .get(`${nationalRegistry.url}/general-lookup?ssn=${nationalId}`)
       .toPromise()
 
@@ -91,5 +94,26 @@ export class NationalRegistryService {
     }
 
     return user
+  }
+
+  async getFamily(nationalId: string): Promise<string[]> {
+    const cacheKey = this.getCacheKey(nationalId, 'family')
+    const cacheValue = await this.cacheManager.get(cacheKey)
+    if (cacheValue) {
+      return cacheValue.family
+    }
+
+    const response: {
+      data: [NationalRegistryFamilyLookupResponse]
+    } = await this.httpService
+      .get(`${nationalRegistry.url}/family-lookup?ssn=${nationalId}`)
+      .toPromise()
+
+    const family = response.data[0].results.map((res) => res.ssn)
+    if (family) {
+      await this.cacheManager.set(cacheKey, { family }, { ttl: ONE_MONTH })
+    }
+
+    return family
   }
 }

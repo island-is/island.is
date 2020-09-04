@@ -49,7 +49,7 @@ const BigNewsItem = ({ news }: { news: LatestNewsItem }) => {
   const { format } = useDateUtils()
 
   return (
-    <Stack space={3}>
+    <Stack space={2}>
       <Typography variant="eyebrow" color="purple400">
         {format(new Date(news.date), 'do MMMM yyyy')}
       </Typography>
