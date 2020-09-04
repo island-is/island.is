@@ -21,7 +21,7 @@ export const SolidIconOnly = () => (
 
 Solid.story = {
   decorators: [
-    (story) => (
+    (story: any) => (
       <div
         style={{
           backgroundColor: color('Background color', '#000'),

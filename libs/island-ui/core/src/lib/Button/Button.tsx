@@ -1,4 +1,4 @@
-import React, { forwardRef, ReactNode } from 'react'
+import React, { forwardRef, ReactNode, FC } from 'react'
 import cn from 'classnames'
 import { Box } from '../Box'
 import { Inline } from '../Inline/Inline'
@@ -12,7 +12,14 @@ export type ButtonWidth = 'normal' | 'fluid' | 'fixed'
 
 export interface ButtonProps {
   disabled?: boolean
-  onClick?: any
+  onClick?:
+    | ((
+        event: React.MouseEvent<
+          HTMLButtonElement | HTMLAnchorElement,
+          MouseEvent
+        >,
+      ) => void)
+    | undefined
   variant?: ButtonVariant
   size?: ButtonSize
   width?: ButtonWidth
@@ -65,10 +72,10 @@ export const Button = forwardRef<
       },
     )
 
-    const isExternal = href && isLinkExternal(href)
+    const isExternal = !!(href && isLinkExternal(href))
     const isMenuButton = variant === 'menu'
-    const hasLeftContent = leftImage || leftIcon
-    const showRightIcon = icon || isExternal || loading
+    const hasLeftContent = !!(leftImage || leftIcon)
+    const showRightIcon = !!(icon || isExternal || loading)
 
     const anchorProps = {
       ...(isExternal && { rel: 'noreferrer noopener', target }),
@@ -103,18 +110,22 @@ export const Button = forwardRef<
   },
 )
 
-const Icon = ({ showRightIcon, icon, loading, isExternal }) => {
+const Icon = ({
+  showRightIcon,
+  icon,
+  loading,
+  isExternal,
+}: {
+  showRightIcon: boolean
+  icon: IconTypes
+  loading: boolean
+  isExternal: boolean
+}) => {
   if (!showRightIcon) {
     return null
   }
 
-  let type = icon
-
-  if (loading) {
-    type = 'loading'
-  } else if (isExternal) {
-    type = 'external'
-  }
+  const type = loading ? 'loading' : isExternal ? 'external' : icon
 
   const iconProps = {
     spin: loading,
@@ -129,19 +140,31 @@ const Icon = ({ showRightIcon, icon, loading, isExternal }) => {
   )
 }
 
-const LeftImage = ({ leftImage }) =>
-  leftImage && (
+const LeftImage = ({ leftImage }: { leftImage: string }) =>
+  leftImage ? (
     <div
       style={{
         backgroundImage: `url(${leftImage})`,
       }}
       className={styles.image}
     />
-  )
+  ) : null
 
-const LeftIcon = ({ leftIcon }) => leftIcon && <IconComponent type={leftIcon} />
+const LeftIcon = ({ leftIcon }: { leftIcon: IconTypes }) =>
+  leftIcon ? <IconComponent type={leftIcon} /> : null
 
-const ButtonContent = ({
+interface ButtonContentProps {
+  leftImage?: string
+  isMenuButton: boolean
+  hasLeftContent: boolean
+  icon?: IconTypes
+  leftIcon?: IconTypes
+  showRightIcon: boolean
+  loading?: boolean
+  isExternal?: boolean
+}
+
+const ButtonContent: FC<ButtonContentProps> = ({
   leftImage,
   isMenuButton,
   hasLeftContent,
@@ -158,9 +181,9 @@ const ButtonContent = ({
         <LeftContentContainer>
           {leftImage ? (
             <LeftImage leftImage={leftImage} />
-          ) : (
+          ) : leftIcon ? (
             <LeftIcon leftIcon={leftIcon} />
-          )}
+          ) : null}
         </LeftContentContainer>
       ) : leftIcon ? (
         <LeftIcon leftIcon={leftIcon} />
@@ -170,21 +193,21 @@ const ButtonContent = ({
         <Icon
           showRightIcon={showRightIcon}
           icon={icon}
-          loading={loading}
-          isExternal={isExternal}
+          loading={!!loading}
+          isExternal={!!isExternal}
         />
       ) : null}
     </Inline>
   )
 }
 
-const IconContainer = ({ children }) => (
+const IconContainer: FC = ({ children }) => (
   <Box display="flex" height="full" alignItems="center">
     {children}
   </Box>
 )
 
-const LeftContentContainer = ({ children }) => {
+const LeftContentContainer: FC = ({ children }) => {
   return (
     <>
       <Box display="inlineBlock" className={styles.leftSpacer} />

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, ButtonSize, ButtonVariant } from './Button'
+import { Button, ButtonSize, ButtonVariant, ButtonProps } from './Button'
 import { Box, Inline } from '../..'
 import { IconTypes } from '../Icon/Icon'
 import { boolean, select } from '@storybook/addon-knobs'
@@ -44,7 +44,7 @@ const makeButton = (variant: ButtonVariant = 'normal', text = '') => {
   )
 }
 
-const makeMenuButton = (text = '', props) => {
+const makeMenuButton = (text = '', props: Partial<ButtonProps>) => {
   const iconLabel = 'Icon'
   const iconOptions = ['', 'cheveron', 'loading', 'external', 'arrowRight']
   const iconDefaultValue = 'cheveron'

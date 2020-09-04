@@ -7,28 +7,27 @@ const negativeMarginLeft = (grid: number, rows: number) => ({
 })
 
 export const xs = styleMap({
-  none: {},
   ...mapToStyleProperty(theme.spacing, 'marginLeft', (rows) =>
     negativeMarginLeft(1, rows),
   ),
 })
 export const sm = styleMap(
-  mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginLeft', (rows) =>
+  mapToStyleProperty({ ...theme.spacing }, 'marginLeft', (rows) =>
     themeUtils.responsiveStyle({ sm: negativeMarginLeft(1, rows) }),
   ),
 )
 export const md = styleMap(
-  mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginLeft', (rows) =>
+  mapToStyleProperty({ ...theme.spacing }, 'marginLeft', (rows) =>
     themeUtils.responsiveStyle({ md: negativeMarginLeft(1, rows) }),
   ),
 )
 export const lg = styleMap(
-  mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginLeft', (rows) =>
+  mapToStyleProperty({ ...theme.spacing }, 'marginLeft', (rows) =>
     themeUtils.responsiveStyle({ lg: negativeMarginLeft(1, rows) }),
   ),
 )
 export const xl = styleMap(
-  mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginLeft', (rows) =>
+  mapToStyleProperty({ ...theme.spacing }, 'marginLeft', (rows) =>
     themeUtils.responsiveStyle({ xl: negativeMarginLeft(1, rows) }),
   ),
 )
