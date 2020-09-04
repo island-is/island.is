@@ -44,7 +44,7 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
           </Box>
         </GridColumn>
       </GridRow>
-      <Hidden above="md">
+      <Hidden below="md">
         <GridRow>
           {newsItems.map((newsItem) => (
             <GridColumn
@@ -63,22 +63,18 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
         </GridRow>
       </Hidden>
       <Hidden above="md">
-        <GridRow>
-          <GridColumn span="12/12">
-            <Swiper>
-              {newsItems.map((newsItem) => (
-                <NewsCard
-                  key={newsItem.slug}
-                  title={newsItem.title}
-                  subtitle={newsItem.subtitle}
-                  introduction={newsItem.intro}
-                  slug={newsItem.slug}
-                  image={newsItem.image}
-                />
-              ))}
-            </Swiper>
-          </GridColumn>
-        </GridRow>
+        <Swiper>
+          {newsItems.map((newsItem) => (
+            <NewsCard
+              key={newsItem.slug}
+              title={newsItem.title}
+              subtitle={newsItem.subtitle}
+              introduction={newsItem.intro}
+              slug={newsItem.slug}
+              image={newsItem.image}
+            />
+          ))}
+        </Swiper>
       </Hidden>
     </GridContainer>
   )

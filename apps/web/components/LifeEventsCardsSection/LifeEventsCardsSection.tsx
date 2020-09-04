@@ -107,22 +107,18 @@ const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
       </GridRow>
     </Hidden>
     <Hidden above="md">
-      <GridRow>
-        <GridColumn span="12/12">
-          <Swiper>
-            {demoData.map((lifeEvent) => (
-              <LifeEventCard
-                key={lifeEvent.title}
-                title={lifeEvent.title}
-                intro={lifeEvent.intro}
-                url={lifeEvent.url}
-                image={lifeEvent.image}
-                thumbnail={lifeEvent.thumbnail}
-              />
-            ))}
-          </Swiper>
-        </GridColumn>
-      </GridRow>
+      <Swiper>
+        {demoData.map((lifeEvent) => (
+          <LifeEventCard
+            key={lifeEvent.title}
+            title={lifeEvent.title}
+            intro={lifeEvent.intro}
+            url={lifeEvent.url}
+            image={lifeEvent.image}
+            thumbnail={lifeEvent.thumbnail}
+          />
+        ))}
+      </Swiper>
     </Hidden>
   </GridContainer>
 )
