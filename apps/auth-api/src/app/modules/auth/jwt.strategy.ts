@@ -14,12 +14,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         // cacheMaxAge: ms('10m'), // Default value
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: environment.IDS_JWKS_URI
+        jwksUri: 'http://localhost:6002/.well-known/openid-configuration/jwks'
         }),
       
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      audience: environment.IDS_AUDIENCE,
-      issuer: environment.IDS_ISSUER,
+      audience: '@identityserver.api',
+      issuer: 'https://localhost:6001',
       algorithms: ['RS256'],
       ignoreExpiration: false,
     });

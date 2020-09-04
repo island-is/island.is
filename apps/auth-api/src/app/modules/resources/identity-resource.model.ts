@@ -8,6 +8,7 @@ import {
     HasMany,
   } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+import { IdentityResourceUserClaim } from './identity-resource-user-claim.model'
   
   @Table({
     tableName: 'identity_resource',
@@ -88,7 +89,8 @@ import { ApiProperty } from '@nestjs/swagger'
     @ApiProperty()
     readonly modified: Date
 
+    @HasMany(() => IdentityResourceUserClaim)
     @ApiProperty()
-    public userClaims: string[]
+    public userClaims: IdentityResourceUserClaim[]
 
   }
