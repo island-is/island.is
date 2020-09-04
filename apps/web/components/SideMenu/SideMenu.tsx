@@ -65,7 +65,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
             </button>
           </Box>
           <Hidden above="sm">
-            <GridContainer className={styles.mobileContent}>
+            <GridContainer>
               <GridRow>
                 <GridColumn span="12/12">
                   <SearchInput
