@@ -38,40 +38,18 @@ import {
   GetAboutPageQuery,
   QueryGetAboutPageArgs,
   AllSlicesFragment,
-  AllSlicesPageHeaderSliceFragment,
-  AllSlicesTimelineSliceFragment,
-  AllSlicesHeadingSliceFragment,
-  AllSlicesStorySliceFragment,
-  AllSlicesLinkCardSliceFragment,
-  AllSlicesLatestNewsSliceFragment,
-  AllSlicesMailingListSignupSliceFragment,
-  AllSlicesLogoListSliceFragment,
-  AllSlicesBulletListSliceFragment,
-  AllSlicesHtmlFragment,
-  AllSlicesStatisticsFragment,
-  AllSlicesProcessEntryFragment,
-  AllSlicesFaqListFragment,
+  AllSlicesEmbeddedVideoFragment,
+  AllSlicesImageFragment,
 } from '../../graphql/schema'
 
 /**
  * TODO: temporary? Both fragments Image and EmbeddedVideo aren't used inside
  * queries, so no fields are retrieve, which mean `id` is undefined
- * Need something better than that
  */
-type AvailableSlices =
-  | AllSlicesPageHeaderSliceFragment
-  | AllSlicesTimelineSliceFragment
-  | AllSlicesHeadingSliceFragment
-  | AllSlicesStorySliceFragment
-  | AllSlicesLinkCardSliceFragment
-  | AllSlicesLatestNewsSliceFragment
-  | AllSlicesMailingListSignupSliceFragment
-  | AllSlicesLogoListSliceFragment
-  | AllSlicesBulletListSliceFragment
-  | AllSlicesHtmlFragment
-  | AllSlicesStatisticsFragment
-  | AllSlicesProcessEntryFragment
-  | AllSlicesFaqListFragment
+type AvailableSlices = Exclude<
+  AllSlicesFragment,
+  AllSlicesEmbeddedVideoFragment | AllSlicesImageFragment
+>
 
 const extractSliceTitle = (slice: AvailableSlices): [string, string] | null => {
   switch (slice.__typename) {
@@ -212,7 +190,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                   </div>
                   {(slice.slices as AvailableSlices[]).map((slice) => (
                     <Section
-                      key={slice.__typename}
+                      key={slice.id}
                       slice={slice}
                       page={page}
                       currentSliceId={currentSliceId}
