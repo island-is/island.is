@@ -48,6 +48,8 @@ export class AuthController {
 
   @Post('callback')
   async callback(@Body('token') token, @Res() res) {
+    this.logger.debug('Received callback request')
+
     let verifyResult: VerifyResult
     try {
       verifyResult = await loginIS.verify(token)
@@ -100,6 +102,8 @@ export class AuthController {
 
   @Get('login')
   login(@Res() res) {
+    this.logger.debug('Received login request')
+
     const electronicIdOnly = '&qaa=4'
 
     res.redirect(`${samlEntryPoint}${electronicIdOnly}`)
@@ -107,6 +111,8 @@ export class AuthController {
 
   @Get('logout')
   logout(@Res() res) {
+    this.logger.debug('Received logout request')
+
     res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
     res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
 
