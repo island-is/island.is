@@ -1,6 +1,5 @@
 import React from 'react'
 import Head from 'next/head'
-import Link from 'next/link'
 import { Layout, Header } from '../../components'
 import {
   Page,
@@ -8,8 +7,11 @@ import {
   ContentBlock,
   Stack,
   Typography,
+  Link,
+  LinkCard,
   Button,
-  Footer
+  Footer,
+  Tiles
 } from '@island.is/island-ui/core'
 
 function Home() {
@@ -39,11 +41,17 @@ function Home() {
                 </Typography>
               </Stack>
               <Stack space={3}>
-                <Link href="/design-guide">
-                  <Button variant="text" icon="arrowRight">
+                <Tiles space={3} columns={3}>
+                  <LinkCard href="/">
+                    Test Card
+                  </LinkCard>
+                  <LinkCard href="/">
+                    Test Card 2
+                  </LinkCard>
+                  <LinkCard href="/design-guide">
                     API Design Guide
-                  </Button>
-                </Link>
+                  </LinkCard>
+                </Tiles>
               </Stack>
             </Stack>
           </Box>
