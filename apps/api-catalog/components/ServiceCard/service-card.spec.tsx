@@ -10,10 +10,10 @@ describe(' ServiceCard', () => {
       owner: "owner of service 1", 
       pricing   :null, 
       categories:null, 
-      type      :null
+      type      :null,
+      access    :null
     };
     const { baseElement } = render(<ServiceCard service={service}/>)
     expect(baseElement).toBeTruthy()
-    console.log()
   })
 })
