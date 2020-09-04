@@ -44,7 +44,10 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
       </GridRow>
       <GridRow>
         {newsItems.map((newsItem) => (
-          <GridColumn span="4/12" key={newsItem.slug}>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '4/12']}
+            key={newsItem.slug}
+          >
             <NewsCard
               title={newsItem.title}
               subtitle={newsItem.subtitle}

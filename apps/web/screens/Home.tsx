@@ -107,14 +107,14 @@ const Home: Screen<HomeProps> = ({
       <Section paddingY={[2, 2, 3, 3, 6]}>
         <LatestNewsSection label="Fréttir og tilkynningar" items={news} />
       </Section>
-      <Section paddingY={[2, 4, 6, 8, 12]}>
+      <Section paddingTop={[2, 4, 6, 8, 10]} paddingBottom={[2, 4, 6, 10, 15]}>
         <IntroductionSection
           subtitle="Markmiðið okkar"
           title="Öll opinber þjónusta á einum stað"
           introText="Við vinnum að margvíslegum verkefnum sem öll stuðla að því að gera opinbera þjónustu skilvirkari og notendavænni."
           text="Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn."
           linkText="Nánar um stafrænt Ísland"
-          linkUrl="/flokkur/fjolskylda-og-velferd"
+          linkUrl="/um-island-is"
         />
       </Section>
     </>

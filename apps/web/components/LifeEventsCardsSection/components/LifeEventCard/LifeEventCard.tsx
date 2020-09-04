@@ -13,6 +13,7 @@ const LifeEventCard: React.FC<Props> = ({ title, intro, thumbnail, url }) => {
   return (
     <Link href={url}>
       <Box
+        className={styles.card}
         alignItems="flexStart"
         background="white"
         borderColor="purple200"
@@ -23,6 +24,7 @@ const LifeEventCard: React.FC<Props> = ({ title, intro, thumbnail, url }) => {
         height="full"
         paddingX={4}
         paddingY={3}
+        overflow="hidden"
       >
         <Box
           display="flex"

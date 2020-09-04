@@ -79,6 +79,7 @@ const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
           <GridColumn
             span={['12/12', '12/12', '6/12', '6/12', '4/12']}
             paddingBottom={3}
+            key={lifeEvent.title}
           >
             <LifeEventCard
               title={lifeEvent.title}
