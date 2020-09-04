@@ -4,7 +4,7 @@ const routeNames = {
   is: {
     article: 'grein',
     category: 'flokkur',
-    news: 'frett',
+    news: 'frettir',
     search: 'leit',
   },
   en: {

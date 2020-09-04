@@ -11,6 +11,7 @@ import {
   Typography,
   Stack,
   Breadcrumbs,
+  Button,
 } from '@island.is/island-ui/core'
 import {
   Query,
@@ -79,7 +80,7 @@ const NewsArticle: Screen<NewsArticleProps> = ({
                 <a>Viðspyrna</a>
               </Link>
               <Link as="/frettir" href="/frettir">
-                <a>Fréttir</a>
+                <a>Fréttir og tilkynningar</a>
               </Link>
             </Breadcrumbs>
             <Typography variant="eyebrow" as="div" color="purple400">
@@ -91,6 +92,13 @@ const NewsArticle: Screen<NewsArticleProps> = ({
           </Stack>
         </Box>
         {article.content ? <Content document={article.content} /> : null}
+        <Box marginTop={[6, 6, 10]} width="full">
+          <Link href="/frettir" as="/frettir" passHref>
+            <Button width="fixed" variant="ghost" icon="arrowRight">
+              Sjá allar fréttir
+            </Button>
+          </Link>
+        </Box>
       </ArticleLayout>
       <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
         <Box background="red100">

@@ -3,19 +3,19 @@ import React from 'react'
 import { groupBy, range, capitalize } from 'lodash'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
-import { Screen } from '../types'
+import { Screen } from '@island.is/adgerdir/types'
+import { withApollo } from '@island.is/adgerdir/graphql'
 import NativeSelect from '@island.is/adgerdir/components/Select/Select'
 import Bullet from '@island.is/adgerdir/components/Bullet/Bullet'
+import { Locale } from '@island.is/adgerdir/i18n/I18n'
 import { useI18n } from '@island.is/adgerdir/i18n'
 import { useDateUtils } from '@island.is/adgerdir/i18n/useDateUtils'
 import useRouteNames from '@island.is/adgerdir/i18n/useRouteNames'
-import { Locale } from '@island.is/adgerdir/i18n/I18n'
 import {
   Box,
   Typography,
   Stack,
   Breadcrumbs,
-  Divider,
   Columns,
   Column,
   Pagination,
@@ -33,6 +33,7 @@ import {
   QueryGetAdgerdirNewsListArgs,
 } from '@island.is/api/schema'
 import { CustomNextError } from '@island.is/adgerdir/units'
+import { ArticleSidebar, BackgroundImage } from '../components'
 
 interface NewsListProps {
   newsList: Query['getAdgerdirNewsList']['news']
@@ -90,40 +91,38 @@ const NewsList: Screen<NewsListProps> = ({
   }
 
   const sidebar = (
-    <Stack space={3}>
-      <Typography variant="h4" as="h4">
-        Fréttir og tilkynningar
-      </Typography>
-      <Divider weight="alternate" />
-      <NativeSelect
-        name="year"
-        value={selectedYear.toString()}
-        options={yearOptions}
-        onChange={(e) => Router.push(makeHref(e.target.value))}
-      />
-      <Typography variant="p" as="p">
-        <Link href={makeHref(selectedYear)}>Allt árið</Link>
-        {selectedMonth === undefined && <Bullet align="right" />}
-      </Typography>
-      {months.map((date: Date) => (
-        <Typography key={date.toISOString()} variant="p" as="p">
-          <Link href={makeHref(date.getFullYear(), date.getMonth())}>
-            {capitalize(format(date, 'MMMM'))}
-          </Link>
-          {selectedMonth === date.getMonth() && <Bullet align="right" />}
+    <ArticleSidebar title="Fréttir og tilkynningar">
+      <Stack space={3}>
+        <NativeSelect
+          name="year"
+          value={selectedYear.toString()}
+          options={yearOptions}
+          onChange={(e) => Router.push(makeHref(e.target.value))}
+        />
+        <Typography variant="p" as="p">
+          <Link href={makeHref(selectedYear)}>Allt árið</Link>
+          {selectedMonth === undefined && <Bullet align="right" />}
         </Typography>
-      ))}
-    </Stack>
+        {months.map((date: Date) => (
+          <Typography key={date.toISOString()} variant="p" as="p">
+            <Link href={makeHref(date.getFullYear(), date.getMonth())}>
+              {capitalize(format(date, 'MMMM'))}
+            </Link>
+            {selectedMonth === date.getMonth() && <Bullet align="right" />}
+          </Typography>
+        ))}
+      </Stack>
+    </ArticleSidebar>
   )
 
   return (
     <>
       <Head>
-        <title>Fréttir | Viðspyrna fyrir Ísland</title>
+        <title>Fréttir | Ísland.is</title>
       </Head>
       <NewsListLayout sidebar={sidebar}>
         <Stack space={[3, 3, 4]}>
-          <Breadcrumbs>
+          <Breadcrumbs color="blue400">
             <Link href={makePath()}>Ísland.is</Link>
             <Link href={makePath('news')}>Fréttir og tilkynningar</Link>
           </Breadcrumbs>
@@ -134,7 +133,7 @@ const NewsList: Screen<NewsListProps> = ({
           </Hidden>
 
           <Hidden above="md">
-            <Tiles space={3} columns={2}>
+            <Tiles space={3} columns={[1, 2]}>
               <Select
                 label="Ár"
                 placeholder="Ár"
@@ -197,7 +196,10 @@ const NewsListItem = ({ newsItem }) => {
               {format(new Date(newsItem.date), 'do MMMM yyyy')}
             </Typography>
             <Typography variant="h3" as="h3" color="blue400">
-              <Link href={makePath('news', newsItem.slug)}>
+              <Link
+                href={makePath('news', '[slug]')}
+                as={makePath('news', newsItem.slug)}
+              >
                 {newsItem.title}
               </Link>
             </Typography>
@@ -207,13 +209,8 @@ const NewsListItem = ({ newsItem }) => {
           </Stack>
         </Column>
         {newsItem.image && (
-          <Column width="2/5">
-            <Link href={makePath('news', newsItem.slug)}>
-              <img
-                src={newsItem.image.url + '?w=524'}
-                alt={`Skoða frétt ${newsItem.title}`}
-              />
-            </Link>
+          <Column width="5/12">
+            <BackgroundImage image={newsItem.image} width={600} />
           </Column>
         )}
       </Columns>
@@ -310,4 +307,4 @@ const createDateRange = (min: Date, max: Date): string[] => {
   ).map((i: number) => new Date(Math.floor(i / 12), i % 12).toISOString())
 }
 
-export default NewsList
+export default withApollo(NewsList)

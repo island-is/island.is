@@ -48,7 +48,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
             >
               <Box marginBottom={[6, 6, 10]}>
                 {first.image ? (
-                  <Box marginBottom={[3, 3, 3, 3, 6]}>
+                  <Box marginBottom={6}>
                     <BackgroundImage ratio="20:10" image={first.image} />
                   </Box>
                 ) : null}
@@ -89,7 +89,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                   offset={[null, null, null, null, '1/12']}
                 >
                   {second.image ? (
-                    <Box marginTop={10} marginBottom={2}>
+                    <Box marginTop={10} marginBottom={6}>
                       <BackgroundImage ratio="20:10" image={second.image} />
                     </Box>
                   ) : null}
@@ -120,7 +120,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
                   offset={[null, null, null, '2/12', '2/12']}
                 >
                   {third.image ? (
-                    <Box marginTop={10} marginBottom={2}>
+                    <Box marginTop={10} marginBottom={6}>
                       <BackgroundImage ratio="20:10" image={third.image} />
                     </Box>
                   ) : null}
@@ -149,6 +149,19 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
           </GridContainer>
         </Box>
       ) : null}
+      <Box
+        marginY={[6, 6, 10]}
+        display="flex"
+        width="full"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Link href="/frettir" as="/frettir" passHref>
+          <Button width="fixed" variant="ghost" icon="arrowRight">
+            Sjá allar fréttir
+          </Button>
+        </Link>
+      </Box>
     </Box>
   )
 }

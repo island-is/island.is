@@ -4,35 +4,33 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
+  Hidden,
 } from '@island.is/island-ui/core'
 
 import * as styles from './Layouts.treat'
+import { Sticky } from '@island.is/adgerdir/components'
 
 interface ArticleProps {
   sidebar?: ReactNode
 }
 
 export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
-  <div className={styles.layout}>
-    <GridContainer>
-      <Box marginX={[1, 1, 1, 1, 2]} paddingTop={10}>
-        <GridRow>
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '8/12', '7/12']}
-            offset={[null, null, null, null, '1/12']}
-          >
-            <Box paddingBottom={10}>{children}</Box>
-          </GridColumn>
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '4/12', '3/12']}
-            offset={[null, null, null, null, '1/12']}
-          >
-            {sidebar}
-          </GridColumn>
-        </GridRow>
-      </Box>
-    </GridContainer>
-  </div>
+  <GridContainer>
+    <GridRow>
+      <GridColumn
+        span={['12/12', '12/12', '12/12', '8/12', '7/12']}
+        offset={[null, null, null, null, '1/12']}
+      >
+        <Box paddingBottom={10}>{children}</Box>
+      </GridColumn>
+      <GridColumn
+        span={['12/12', '12/12', '12/12', '4/12', '3/12']}
+        offset={[null, null, null, null, '1/12']}
+      >
+        {sidebar}
+      </GridColumn>
+    </GridRow>
+  </GridContainer>
 )
 
 interface NewsListProps {
@@ -41,17 +39,18 @@ interface NewsListProps {
 
 export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
   <GridContainer>
-    <Box paddingTop={6} paddingBottom={10}>
-      <GridRow>
-        <GridColumn span="4/12">
-          <Box background="purple100" padding={4}>
-            {sidebar}
-          </Box>
-        </GridColumn>
-        <GridColumn span="6/12" offset="1/12">
-          <Box paddingBottom={10}>{children}</Box>
-        </GridColumn>
-      </GridRow>
-    </Box>
+    <GridRow>
+      <GridColumn span={['12/12', '12/12', '12/12', '4/12', '3/12']}>
+        <Sticky>
+          <Hidden below="lg">{sidebar}</Hidden>
+        </Sticky>
+      </GridColumn>
+      <GridColumn
+        span={['12/12', '12/12', '12/12', '7/12']}
+        offset={[null, null, null, '1/12']}
+      >
+        <Box paddingBottom={10}>{children}</Box>
+      </GridColumn>
+    </GridRow>
   </GridContainer>
 )
