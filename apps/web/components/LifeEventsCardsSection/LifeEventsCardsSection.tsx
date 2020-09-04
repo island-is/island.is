@@ -5,9 +5,9 @@ import {
   GridRow,
   GridColumn,
   Swiper,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { LifeEventCard } from './components/LifeEventCard'
-import { useIsomorphicIsMobile } from '@island.is/web/utils/hooks'
 
 const demoData = [
   {
@@ -78,46 +78,16 @@ interface LifeEventsSectionProps {
 
 const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   title = 'Lífsviðburðir',
-}) => {
-  const isMobile = useIsomorphicIsMobile()
-
-  const renderMobile = () => (
-    <GridContainer>
-      <GridRow>
-        <GridColumn span="12/12">
-          <Typography variant="h3" as="h3" paddingBottom={[2, 2, 4]}>
-            {title}
-          </Typography>
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        <GridColumn span="12/12">
-          <Swiper>
-            {demoData.map((lifeEvent) => (
-              <LifeEventCard
-                key={lifeEvent.title}
-                title={lifeEvent.title}
-                intro={lifeEvent.intro}
-                url={lifeEvent.url}
-                image={lifeEvent.image}
-                thumbnail={lifeEvent.thumbnail}
-              />
-            ))}
-          </Swiper>
-        </GridColumn>
-      </GridRow>
-    </GridContainer>
-  )
-
-  const renderDesktop = () => (
-    <GridContainer>
-      <GridRow>
-        <GridColumn span={['6/12', '6/12', '12/12']}>
-          <Typography variant="h3" as="h3" paddingBottom={4}>
-            {title}
-          </Typography>
-        </GridColumn>
-      </GridRow>
+}) => (
+  <GridContainer>
+    <GridRow>
+      <GridColumn span={['6/12', '6/12', '12/12']}>
+        <Typography variant="h3" as="h3" paddingBottom={4}>
+          {title}
+        </Typography>
+      </GridColumn>
+    </GridRow>
+    <Hidden below="md">
       <GridRow>
         {demoData.map((lifeEvent) => (
           <GridColumn
@@ -135,10 +105,26 @@ const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
           </GridColumn>
         ))}
       </GridRow>
-    </GridContainer>
-  )
-
-  return isMobile ? renderMobile() : renderDesktop()
-}
+    </Hidden>
+    <Hidden above="md">
+      <GridRow>
+        <GridColumn span="12/12">
+          <Swiper>
+            {demoData.map((lifeEvent) => (
+              <LifeEventCard
+                key={lifeEvent.title}
+                title={lifeEvent.title}
+                intro={lifeEvent.intro}
+                url={lifeEvent.url}
+                image={lifeEvent.image}
+                thumbnail={lifeEvent.thumbnail}
+              />
+            ))}
+          </Swiper>
+        </GridColumn>
+      </GridRow>
+    </Hidden>
+  </GridContainer>
+)
 
 export default LifeEventsCardsSection

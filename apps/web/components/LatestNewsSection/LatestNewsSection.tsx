@@ -7,10 +7,10 @@ import {
   ArrowLink,
   Box,
   Swiper,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { News } from '@island.is/api/schema'
 import { NewsCard } from '../NewsCard'
-import { useIsomorphicIsMobile } from '@island.is/web/utils/hooks'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
 // On mobile it displays 3 news cards in a Swiper.
@@ -25,37 +25,8 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
   label,
 }) => {
   const newsItems = items.slice(0, 3)
-  const isMobile = useIsomorphicIsMobile()
 
-  const renderMobile = () => (
-    <GridContainer>
-      <GridRow>
-        <GridColumn span="12/12">
-          <Typography variant="h3" as="h3" paddingBottom={4}>
-            {label}
-          </Typography>
-        </GridColumn>
-      </GridRow>
-      <GridRow>
-        <GridColumn span="12/12">
-          <Swiper>
-            {newsItems.map((newsItem) => (
-              <NewsCard
-                key={newsItem.slug}
-                title={newsItem.title}
-                subtitle={newsItem.subtitle}
-                introduction={newsItem.intro}
-                slug={newsItem.slug}
-                image={newsItem.image}
-              />
-            ))}
-          </Swiper>
-        </GridColumn>
-      </GridRow>
-    </GridContainer>
-  )
-
-  const renderDesktop = () => (
+  return (
     <GridContainer>
       <GridRow>
         <GridColumn span="6/12">
@@ -73,26 +44,44 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
           </Box>
         </GridColumn>
       </GridRow>
-      <GridRow>
-        {newsItems.map((newsItem) => (
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '4/12']}
-            key={newsItem.slug}
-          >
-            <NewsCard
-              title={newsItem.title}
-              subtitle={newsItem.subtitle}
-              introduction={newsItem.intro}
-              slug={newsItem.slug}
-              image={newsItem.image}
-            />
+      <Hidden above="md">
+        <GridRow>
+          {newsItems.map((newsItem) => (
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '4/12']}
+              key={newsItem.slug}
+            >
+              <NewsCard
+                title={newsItem.title}
+                subtitle={newsItem.subtitle}
+                introduction={newsItem.intro}
+                slug={newsItem.slug}
+                image={newsItem.image}
+              />
+            </GridColumn>
+          ))}
+        </GridRow>
+      </Hidden>
+      <Hidden above="md">
+        <GridRow>
+          <GridColumn span="12/12">
+            <Swiper>
+              {newsItems.map((newsItem) => (
+                <NewsCard
+                  key={newsItem.slug}
+                  title={newsItem.title}
+                  subtitle={newsItem.subtitle}
+                  introduction={newsItem.intro}
+                  slug={newsItem.slug}
+                  image={newsItem.image}
+                />
+              ))}
+            </Swiper>
           </GridColumn>
-        ))}
-      </GridRow>
+        </GridRow>
+      </Hidden>
     </GridContainer>
   )
-
-  return isMobile ? renderMobile() : renderDesktop()
 }
 
 export default LatestNewsSection
