@@ -4,7 +4,7 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Counter } from 'prom-client'
 import { Sequelize } from 'sequelize-typescript'
 import { IdentityResource } from './identity-resource.model'
-import { Op, QueryTypes, WhereOptions } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
 import { IdentityResourceUserClaim } from './identity-resource-user-claim.model'
 import { ApiScope } from './api-scope.model'
 import { ApiScopeUserClaim } from './api-scope-user-claim.model'
@@ -45,19 +45,8 @@ export class ResourcesService {
     }
 
     return this.identityResourceModel.findAll({
-      raw: true,
       where: scopeNames ? whereOptions : null,
-    }).then(resources => {
-        return Promise.all(resources.map(async resource => {
-            const [result, meta] = await this.sequelize.query('SELECT "claim_name" FROM "identity_resource_user_claim" WHERE identity_resource_id=$resourceId',
-            {
-                bind: { resourceId: resource.id},
-                type: QueryTypes.RAW,
-                model: IdentityResourceUserClaim
-            });
-            resource.userClaims = result.map(claim => claim.claim_name)
-            return resource
-        }))
+      include: [IdentityResourceUserClaim]
     })
   }
 
@@ -71,19 +60,8 @@ export class ResourcesService {
     }
 
     return this.apiScopeModel.findAll({
-      raw: true,
       where: scopeNames ? whereOptions : null,
-    }).then(scopes => {
-        return Promise.all(scopes.map(async scope => {
-            const [result, meta] = await this.sequelize.query('SELECT "claim_name" FROM "api_scope_user_claim" WHERE api_scope_id=$scopeId',
-            {
-                bind: { scopeId: scope.id},
-                type: QueryTypes.RAW,
-                model: ApiScopeUserClaim
-            });
-            scope.userClaims = result.map(claim => claim.claim_name)
-            return scope
-        }))
+      include: [ApiScopeUserClaim]
     })
   }
 
@@ -98,26 +76,7 @@ export class ResourcesService {
 
     return this.apiResourceModel.findAll({
       where: apiResourceNames ? whereOptions : null,
-      include: [ApiResourceSecret]
-    }).then(apiResources => {
-      return Promise.all(apiResources.map(async apiResource => {
-      this.logger.debug('apiResource', apiResource.get())
-      const [claims, meta] = await this.sequelize.query('SELECT "claim_name" FROM "api_resource_user_claim" WHERE api_resource_id=$apiResourceId',
-            {
-                bind: { apiResourceId: apiResource.id},
-                type: QueryTypes.RAW,
-                model: ApiResourceUserClaim
-            });
-            (<ApiResource>apiResource.get()).userClaims = claims.map(claim => claim.claim_name)
-            const [scopes, meta2] = await this.sequelize.query('SELECT "scope_name" FROM "api_resource_scope" WHERE api_resource_id=$apiResourceId',
-            {
-                bind: { apiResourceId: apiResource.id},
-                type: QueryTypes.RAW,
-                model: ApiResourceUserClaim
-            });
-            (<ApiResource>apiResource.get()).scopes = scopes.map(scope => scope.scope_name)
-            return apiResource
-        }))
+      include: [ApiResourceSecret, ApiResourceScope, ApiResourceUserClaim]
     })
   }
 
@@ -141,25 +100,7 @@ export class ResourcesService {
     }
     return this.apiResourceModel.findAll({
       where: whereOptions,
-      include: [ApiResourceSecret]
-    }).then(apiResources => {
-        return Promise.all(apiResources.map(async apiResource => {
-            const [claims, meta] = await this.sequelize.query('SELECT "claim_name" FROM "api_resource_user_claim" WHERE api_resource_id=$apiResourceId',
-            {
-                bind: { apiResourceId: apiResource.id},
-                type: QueryTypes.RAW,
-                model: ApiResourceUserClaim
-            });
-            (<ApiResource>apiResource.get()).userClaims = claims.map(claim => claim.claim_name)
-            const [scopes, meta2] = await this.sequelize.query('SELECT "scope_name" FROM "api_resource_scope" WHERE api_resource_id=$apiResourceId',
-            {
-                bind: { apiResourceId: apiResource.id},
-                type: QueryTypes.RAW,
-                model: ApiResourceUserClaim
-            });
-            (<ApiResource>apiResource.get()).scopes = scopes.map(scope => scope.scope_name)
-            return apiResource
-        }))
+      include: [ApiResourceSecret, ApiResourceScope, ApiResourceUserClaim]
     })
   }
 }

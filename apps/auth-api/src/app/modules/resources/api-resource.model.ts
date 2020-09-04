@@ -9,6 +9,8 @@ import {
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { ApiResourceSecret } from './api-resource-secret.model'
+import { ApiResourceUserClaim } from './api-resource-user-claim.model'
+import { ApiResourceScope } from './api-resource-scope.model'
 
 @Table({
   tableName: 'api_resource',
@@ -75,11 +77,13 @@ export class ApiResource extends Model<ApiResource> {
   @ApiProperty()
   readonly modified: Date
 
+  @HasMany(() => ApiResourceUserClaim)
   @ApiProperty()
-  public userClaims: string[]
+  public userClaims: ApiResourceUserClaim[]
 
+  @HasMany(() => ApiResourceScope)
   @ApiProperty()
-  public scopes: string[]
+  public scopes: ApiResourceScope[]
 
   // TODO: Do we need to configure access token signing algoritms per api resource?
   // @ApiProperty()
