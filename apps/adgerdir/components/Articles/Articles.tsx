@@ -362,7 +362,7 @@ export const Articles: FC<ArticlesProps> = ({
           )}
         </Tiles>
       </Box>
-      {showCount < filteredItems.length ? (
+      {showCount < visibleItems.length ? (
         <Box marginY={3} textAlign="center">
           <Button
             onClick={() => {

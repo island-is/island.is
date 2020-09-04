@@ -7,6 +7,7 @@ import {
   Typography,
   Stack,
   Breadcrumbs,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { Content } from '@island.is/adgerdir/units'
 import {
@@ -15,6 +16,7 @@ import {
   GroupedPages,
   CardsSlider,
   FeaturedNews,
+  FrontpageSvg,
 } from '@island.is/adgerdir/components'
 import { withApollo } from '../graphql'
 import { useI18n } from '../i18n'
@@ -61,7 +63,20 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
       <Head>
         <title>Viðspyrna fyrir Ísland</title>
       </Head>
-      <ArticleLayout sidebar={null}>
+      <ArticleLayout
+        sidebar={
+          <Hidden below="lg">
+            <Box
+              height="full"
+              width="full"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <FrontpageSvg />
+            </Box>
+          </Hidden>
+        }
+      >
         <Stack space={2}>
           <Breadcrumbs color="blue400">
             <span>Viðspyrna</span>
