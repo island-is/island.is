@@ -183,20 +183,21 @@ const Slider = ({
       style={{ gridTemplateColumns: `repeat(${totalCells || 12}, 1fr)` }}
       ref={ref}
     >
-      {Array.from({ length: totalCells }).map((_, index) => (
-        <Box
-          className={styles.TrackCell}
-          key={index}
-          // isShared={index >= totalCells - sharedCells}
-          // isActive={index < currentIndex}
-          style={{
-            background:
-              index >= totalCells - sharedCells ? '#00E4CA' : '#0061FF',
-            opacity: index < currentIndex ? 1 : 0.3,
-          }}
-          onClick={() => onChange && onChange(index + 1)}
-        />
-      ))}
+      {Array.from({ length: totalCells }).map((_, index) => {
+        const isShared = index >= totalCells - sharedCells
+        const isActive = index < currentIndex
+        return (
+          <Box
+            className={styles.TrackCell}
+            key={index}
+            style={{
+              background: isShared ? '#00E4CA' : '#0061FF',
+              opacity: isActive ? 1 : 0.3,
+            }}
+            onClick={() => onChange && onChange(index + 1)}
+          />
+        )
+      })}
       <Tooltip style={tooltipStyle} atEnd={currentIndex === totalCells}>
         {formatTooltip(currentIndex)}
       </Tooltip>
