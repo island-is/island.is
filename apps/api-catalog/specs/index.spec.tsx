@@ -11,6 +11,7 @@ describe('Index', () => {
 
   it('should have a greeting as the title', () => {
     const { getByText } = render(<Index />)
-    expect(getByText('Welcome to api-catalog! [DEV]')).toBeTruthy()
+    expect(getByText('Viskuausan')).toBeTruthy() 
+    
   })
 })
