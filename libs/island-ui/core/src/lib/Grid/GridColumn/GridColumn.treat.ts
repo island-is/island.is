@@ -81,6 +81,7 @@ const ColumnRange = [
   '2/2',
   '1/2',
   '1/1',
+  '0',
 ] as const
 export type GridColumns = typeof ColumnRange[number]
 type Columns = Record<GridColumns, string>

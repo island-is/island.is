@@ -1,7 +1,6 @@
 import React from 'react'
 import { number } from '@storybook/addon-knobs'
 import { SkeletonLoader as SL } from './SkeletonLoader'
-import { Stack } from '../Stack/Stack'
 import { Box } from '../Box/Box'
 import { Columns } from '../Columns/Columns'
 import { Column } from '../Column/Column'
@@ -30,3 +29,9 @@ export const DefaultSkeletonLoader = () => {
     </Box>
   )
 }
+
+export const StackedSkeletonLoader = () => (
+  <Box padding={5}>
+    <SL space={2} repeat={number('repeat', 4)} />
+  </Box>
+)

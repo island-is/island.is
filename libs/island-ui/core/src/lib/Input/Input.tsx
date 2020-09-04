@@ -24,16 +24,26 @@ interface InputProps {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-function mergeRefs(refs) {
-  return (value) => {
-    refs.forEach((ref) => {
-      if (typeof ref === 'function') {
-        ref(value)
-      } else if (ref != null) {
-        ref.current = value
-      }
-    })
+function setRefs<T>(ref: React.Ref<T>, value: T) {
+  if (typeof ref === 'function') {
+    ref(value)
+  } else if (ref) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ;(ref as any).current = value
   }
+}
+
+function useMergeRefs<ForwardRef, LocalRef extends ForwardRef>(
+  forwardedRef: React.Ref<ForwardRef>,
+  localRef: React.Ref<LocalRef>,
+): (instance: LocalRef | null) => void {
+  return React.useCallback(
+    (value) => {
+      setRefs(forwardedRef, value)
+      setRefs(localRef, value)
+    },
+    [forwardedRef, localRef],
+  )
 }
 
 export const Input = forwardRef(
@@ -55,13 +65,14 @@ export const Input = forwardRef(
       ...inputProps
     } = props
     const [hasFocus, setHasFocus] = useState(false)
-    const inputRef = useRef(null)
+    const inputRef = useRef<HTMLInputElement>(null)
     const ariaError = hasError
       ? {
           'aria-invalid': true,
           'aria-describedby': id,
         }
       : {}
+    const mergedRefs = useMergeRefs(inputRef, ref || null)
 
     return (
       <div>
@@ -101,7 +112,7 @@ export const Input = forwardRef(
             id={id}
             disabled={disabled}
             name={name}
-            ref={mergeRefs([inputRef, ref])}
+            ref={mergedRefs}
             placeholder={placeholder}
             value={value}
             onFocus={(e) => {

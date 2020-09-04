@@ -9,8 +9,8 @@ type valueType = 'floatValue' | 'formattedValue' | 'value'
 
 interface FieldNumberInputProps {
   valueType?: valueType
-  form?: FormikState<string | number>
-  field?: FieldInputProps<string | number>
+  form: FormikState<string | number>
+  field: FieldInputProps<string | number>
 }
 
 export const FieldNumberInput = ({

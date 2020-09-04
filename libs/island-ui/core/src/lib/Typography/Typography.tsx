@@ -45,8 +45,8 @@ export const Typography = ({
 }: TypographyProps) => (
   <Cmp
     className={cn(
-      styles[variant],
-      colors[color],
+      variant ? styles[variant] : null,
+      color ? colors[color] : null,
       {
         [truncateStyle]: truncate,
         [linksStyle]: links,

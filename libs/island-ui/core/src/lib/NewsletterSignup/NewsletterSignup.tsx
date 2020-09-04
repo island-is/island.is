@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Typography from '../Typography/Typography'
 import Input from '../Input/Input'
 import { Button } from '../Button/Button'
@@ -40,7 +40,7 @@ export const NewsletterSignup: React.FC<Props> = ({
       <GridContainer>
         <GridRow>
           <GridColumn
-            offset={[null, null, '1/12']}
+            offset={['0', '0', '1/12']}
             span={['12/12', '12/12', '4/12']}
             paddingBottom={[2, 2, 0]}
           >
