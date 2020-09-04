@@ -60,6 +60,16 @@ components:
           type: string
         suspectNationalId:
           type: string
+        suspectName:
+          type: string
+        state:
+          type: string
+          enum:
+            - UNKNOWN
+            - DRAFT
+            - SUBMITTED
+            - ACTIVE
+            - COMPLETED
       required:
         - policeCaseNumber
         - suspectNationalId
