@@ -1,5 +1,6 @@
 export default {
   production: true,
+  environment: process.env.ENVIRONMENT,
   sentry: {
     dsn: process.env.SENTRY_DSN,
   },
