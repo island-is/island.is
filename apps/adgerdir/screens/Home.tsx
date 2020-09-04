@@ -106,28 +106,26 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
               >
                 <Box width="full" overflow="hidden" marginBottom={10}>
                   <ContentBlock width="large">
-                    <Box padding={[0, 3, 6]}>
-                      <GroupedPages
-                        topContent={
-                          <Stack space={2}>
-                            <Typography
-                              variant="eyebrow"
-                              as="h2"
-                              color="roseTinted400"
-                            >
-                              {slice.subtitle}
-                            </Typography>
-                            <Typography variant="h2" as="h3">
-                              {slice.title}
-                            </Typography>
-                            <Typography variant="p" as="p">
-                              {slice.description}
-                            </Typography>
-                          </Stack>
-                        }
-                        bottomContent={<CardsSlider items={slice.pages} />}
-                      />
-                    </Box>
+                    <GroupedPages
+                      topContent={
+                        <Stack space={2}>
+                          <Typography
+                            variant="eyebrow"
+                            as="h2"
+                            color="roseTinted400"
+                          >
+                            {slice.subtitle}
+                          </Typography>
+                          <Typography variant="h2" as="h3">
+                            {slice.title}
+                          </Typography>
+                          <Typography variant="p" as="p">
+                            {slice.description}
+                          </Typography>
+                        </Stack>
+                      }
+                      bottomContent={<CardsSlider items={slice.pages} />}
+                    />
                   </ContentBlock>
                 </Box>
               </ColorSchemeContext.Provider>
