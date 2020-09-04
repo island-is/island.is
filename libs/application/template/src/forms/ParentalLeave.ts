@@ -37,44 +37,44 @@ export const ParentalLeave: Form = buildForm({
   name: 'Fæðingarorlof',
   schema: schema,
   children: [
-    buildSection({
-      id: 'introduction',
-      name: 'Intro',
-      children: [
-        buildIntroductionField({
-          id: 'welcome',
-          name: 'welcome indeed',
-          introduction: 'sick',
-        }),
-        buildExternalDataProvider({
-          name: 'Sækja gögn',
-          id: 'approveExternalData',
-          dataProviders: [
-            buildDataProviderItem({
-              id: 'expectedBirthDate',
-              type: DataProviderTypes.ExpectedDateOfBirth,
-              source: 'Landlækni',
-              subTitle: 'Staðfesting á að það sé yfir höfuð barn á leiðinni',
-              title: 'Áætlaður fæðingardagur',
-            }),
-            // buildDataProviderItem({
-            //   id: 'willFail',
-            //   type: DataProviderTypes.ExampleFails,
-            //   source: 'Failure',
-            //   subTitle: 'what is happening',
-            //   title: 'Fail me please',
-            // }),
-            buildDataProviderItem({
-              id: 'willSucceed',
-              type: DataProviderTypes.ExampleSucceeds,
-              source: 'Success indeed',
-              subTitle: 'what is happening',
-              title: 'This should wokr me please',
-            }),
-          ],
-        }),
-      ],
-    }),
+    // buildSection({
+    //   id: 'introduction',
+    //   name: 'Intro',
+    //   children: [
+    //     buildIntroductionField({
+    //       id: 'welcome',
+    //       name: 'welcome indeed',
+    //       introduction: 'sick',
+    //     }),
+    //     buildExternalDataProvider({
+    //       name: 'Sækja gögn',
+    //       id: 'approveExternalData',
+    //       dataProviders: [
+    //         buildDataProviderItem({
+    //           id: 'expectedBirthDate',
+    //           type: DataProviderTypes.ExpectedDateOfBirth,
+    //           source: 'Landlækni',
+    //           subTitle: 'Staðfesting á að það sé yfir höfuð barn á leiðinni',
+    //           title: 'Áætlaður fæðingardagur',
+    //         }),
+    //         // buildDataProviderItem({
+    //         //   id: 'willFail',
+    //         //   type: DataProviderTypes.ExampleFails,
+    //         //   source: 'Failure',
+    //         //   subTitle: 'what is happening',
+    //         //   title: 'Fail me please',
+    //         // }),
+    //         buildDataProviderItem({
+    //           id: 'willSucceed',
+    //           type: DataProviderTypes.ExampleSucceeds,
+    //           source: 'Success indeed',
+    //           subTitle: 'what is happening',
+    //           title: 'This should wokr me please',
+    //         }),
+    //       ],
+    //     }),
+    //   ],
+    // }),
     buildSection({
       id: 'calculator',
       name: 'Reiknivél',

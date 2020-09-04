@@ -59,6 +59,7 @@
     "@opentelemetry/plugin-https": "0.8.3",
     "@opentelemetry/plugin-ioredis": "^0.9.0",
     "@opentelemetry/tracing": "0.8.3",
+    "@rehooks/component-size": "^1.0.3",
     "@sentry/browser": "5.17.0",
     "@sentry/node": "5.17.0",
     "@sentry/react": "^5.22.3",
