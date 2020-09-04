@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
   Typography,
   GridContainer,
@@ -7,8 +7,7 @@ import {
   Swiper,
 } from '@island.is/island-ui/core'
 import { LifeEventCard } from './components/LifeEventCard'
-import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
+import { useIsomorphicIsMobile } from '@island.is/web/utils/hooks'
 
 const demoData = [
   {
@@ -80,15 +79,7 @@ interface LifeEventsSectionProps {
 const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   title = 'Lífsviðburðir',
 }) => {
-  const { width } = useWindowSize()
-  const [isMobile, setIsMobile] = useState(false)
-
-  useIsomorphicLayoutEffect(() => {
-    if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
-    }
-    setIsMobile(false)
-  }, [width])
+  const isMobile = useIsomorphicIsMobile()
 
   const renderMobile = () => (
     <GridContainer>

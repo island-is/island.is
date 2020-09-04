@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
   GridContainer,
   GridColumn,
@@ -8,13 +8,12 @@ import {
   Box,
   Swiper,
 } from '@island.is/island-ui/core'
-import { useWindowSize, useIsomorphicLayoutEffect } from 'react-use'
 import { News } from '@island.is/api/schema'
 import { NewsCard } from '../NewsCard'
-import { theme } from '@island.is/island-ui/theme'
+import { useIsomorphicIsMobile } from '@island.is/web/utils/hooks'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
-// On mobile it displays 3 news cards in a slider. (TODO)
+// On mobile it displays 3 news cards in a Swiper.
 
 interface LatestNewsProps {
   label: string
@@ -26,15 +25,7 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
   label,
 }) => {
   const newsItems = items.slice(0, 3)
-  const { width } = useWindowSize()
-  const [isMobile, setIsMobile] = useState(false)
-
-  useIsomorphicLayoutEffect(() => {
-    if (width < theme.breakpoints.md) {
-      return setIsMobile(true)
-    }
-    setIsMobile(false)
-  }, [width])
+  const isMobile = useIsomorphicIsMobile()
 
   const renderMobile = () => (
     <GridContainer>

@@ -19,10 +19,8 @@ export const thumbnail = style({
 export const card = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      borderColor: theme.color.purple200,
+      border: `1px solid ${theme.color.purple200}`,
       borderRadius: 8,
-      borderStyle: 'solid',
-      borderWidth: 1,
       ':hover': {
         borderColor: theme.color.purple400,
       },

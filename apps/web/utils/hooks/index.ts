@@ -1,0 +1,1 @@
+export { useIsomorphicIsMobile } from './useIsomorphicIsMobile'

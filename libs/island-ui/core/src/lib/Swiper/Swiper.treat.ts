@@ -29,7 +29,7 @@ export const slide = style({
   display: 'flex',
   scrollSnapAlign: 'center',
   flexShrink: 0,
-  //Space between each slide
+  // Space between each slide
   marginLeft: theme.spacing[4],
   // Breathing space for box-shadow etc
   marginTop: theme.spacing[2],
