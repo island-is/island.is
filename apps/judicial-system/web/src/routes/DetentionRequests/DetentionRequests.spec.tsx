@@ -36,10 +36,12 @@ describe('Detention requests route', () => {
     )
   })
 
-  test('should display an error alert if the api call fails', () => {
+  test('should display an error alert if the api call fails', async () => {
     fetchMock.mock('/api/cases', 500, { overwriteRoutes: true })
 
     const { getByTestId, queryByTestId } = render(<DetentionRequests />)
+    await waitFor(() => getByTestId('detention-requests-error'))
+
     expect(queryByTestId('detention-requests-table')).toBeNull()
     expect(getByTestId('detention-requests-error')).toBeTruthy()
     fetchMock.restore()

@@ -60,7 +60,7 @@ export const DetentionRequests: React.FC = () => {
           Stofna nýja kröfu
         </Button>
       </div>
-      {isLoading ? null : cases !== null ? (
+      {isLoading ? null : cases ? (
         <table
           className={styles.detentionRequestsTable}
           data-testid="detention-requests-table"

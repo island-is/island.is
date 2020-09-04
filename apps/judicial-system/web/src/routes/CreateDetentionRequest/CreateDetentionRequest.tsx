@@ -84,18 +84,18 @@ export const CreateDetentionRequest: React.FC = () => {
     <Box marginTop={7}>
       <GridContainer>
         <GridRow>
-          <GridColumn span={3}>
+          <GridColumn span={'3/12'}>
             <Logo />
           </GridColumn>
-          <GridColumn span={8} offset={1}>
+          <GridColumn span={'8/12'} offset={'1/12'}>
             <Typography as="h1">Krafa um gæsluvarðhald</Typography>
           </GridColumn>
         </GridRow>
         <GridRow>
-          <GridColumn span={3}>
+          <GridColumn span={'3/12'}>
             <Typography>Hliðarstika</Typography>
           </GridColumn>
-          <GridColumn span={7} offset={1}>
+          <GridColumn span={'7/12'} offset={'1/12'}>
             <Box component="section" marginBottom={7}>
               <Box marginBottom={2}>
                 <Typography as="h3" variant="h3">
