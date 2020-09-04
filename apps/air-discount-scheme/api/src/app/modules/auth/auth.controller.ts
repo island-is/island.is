@@ -9,7 +9,6 @@ import {
   Res,
 } from '@nestjs/common'
 import jwt from 'jsonwebtoken'
-import { uuid } from 'uuidv4'
 import { Entropy } from 'entropy-string'
 import IslandisLogin from 'islandis-login'
 
@@ -72,15 +71,10 @@ export class AuthController {
       return res.redirect('/error')
     }
 
-    const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
+    const { returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
     const { user } = verifyResult
-    if (!user || (authId && user.authId !== authId)) {
-      this.logger.error('Could not verify user authenticity', {
-        extra: {
-          authId,
-          userAuthId: user.authId,
-        },
-      })
+    if (!user) {
+      this.logger.error('Could not verify user authenticity')
       return res.redirect('/error')
     }
 
@@ -121,11 +115,10 @@ export class AuthController {
     const { returnUrl } = query
     const { name, options } = REDIRECT_COOKIE
     res.clearCookie(name, options)
-    const authId = uuid()
 
     return res
-      .cookie(name, { authId, returnUrl }, { ...options, maxAge: ONE_HOUR })
-      .redirect(`${samlEntryPoint}&authId=${authId}`)
+      .cookie(name, { returnUrl }, { ...options, maxAge: ONE_HOUR })
+      .redirect(samlEntryPoint)
   }
 
   @Get('/logout')
