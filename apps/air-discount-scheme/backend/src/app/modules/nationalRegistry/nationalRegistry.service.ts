@@ -1,5 +1,6 @@
 import { Inject, Injectable, CACHE_MANAGER, HttpService } from '@nestjs/common'
 import CacheManager from 'cache-manager'
+import * as kennitala from 'kennitala'
 
 import {
   NationalRegistryGeneralLookupResponse,
@@ -8,9 +9,9 @@ import {
 } from './nationalRegistry.types'
 import { environment } from '../../../environments'
 
-const { nationalRegistry } = environment
 export const ONE_MONTH = 2592000 // seconds
 export const CACHE_KEY = 'nationalRegistry'
+const MAX_AGE_LIMIT = 18
 
 const TEST_USERS: NationalRegistryUser[] = [
   {
@@ -44,7 +45,9 @@ export class NationalRegistryService {
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
   ) {}
 
-  private getCacheKey(nationalId: string, suffix: 'user' | 'family'): string {
+  baseUrl = environment.nationalRegistry.url
+
+  private getCacheKey(nationalId: string, suffix: 'user' | 'children'): string {
     return `${CACHE_KEY}_${nationalId}_${suffix}`
   }
 
@@ -69,11 +72,13 @@ export class NationalRegistryService {
   }
 
   async getUser(nationalId: string): Promise<NationalRegistryUser> {
-    const testUser = TEST_USERS.find(
-      (testUser) => testUser.nationalId === nationalId,
-    )
-    if (testUser) {
-      return testUser
+    if (environment.environment !== 'prod') {
+      const testUser = TEST_USERS.find(
+        (testUser) => testUser.nationalId === nationalId,
+      )
+      if (testUser) {
+        return testUser
+      }
     }
 
     const cacheKey = this.getCacheKey(nationalId, 'user')
@@ -85,7 +90,7 @@ export class NationalRegistryService {
     const response: {
       data: [NationalRegistryGeneralLookupResponse]
     } = await this.httpService
-      .get(`${nationalRegistry.url}/general-lookup?ssn=${nationalId}`)
+      .get(`${this.baseUrl}/general-lookup?ssn=${nationalId}`)
       .toPromise()
 
     const user = this.createNationalRegistryUser(response.data[0])
@@ -96,24 +101,41 @@ export class NationalRegistryService {
     return user
   }
 
-  async getFamily(nationalId: string): Promise<string[]> {
-    const cacheKey = this.getCacheKey(nationalId, 'family')
+  private isChild(nationalId: string): boolean {
+    return kennitala.info(nationalId).age < MAX_AGE_LIMIT
+  }
+
+  async getRelatedChildren(nationalId: string): Promise<string[]> {
+    if (environment.environment !== 'prod') {
+      const testUser = TEST_USERS.find(
+        (testUser) => testUser.nationalId === nationalId,
+      )
+      if (testUser) {
+        return TEST_USERS.filter(
+          (testUser) => testUser.nationalId !== nationalId,
+        ).map((testUser) => testUser.nationalId)
+      }
+    }
+
+    const cacheKey = this.getCacheKey(nationalId, 'children')
     const cacheValue = await this.cacheManager.get(cacheKey)
     if (cacheValue) {
-      return cacheValue.family
+      return cacheValue.children
     }
 
     const response: {
       data: [NationalRegistryFamilyLookupResponse]
     } = await this.httpService
-      .get(`${nationalRegistry.url}/family-lookup?ssn=${nationalId}`)
+      .get(`${this.baseUrl}/family-lookup?ssn=${nationalId}`)
       .toPromise()
 
-    const family = response.data[0].results.map((res) => res.ssn)
-    if (family) {
-      await this.cacheManager.set(cacheKey, { family }, { ttl: ONE_MONTH })
+    const children = response.data[0].results
+      .filter((person) => person.ssn !== nationalId && this.isChild(person.ssn))
+      .map((person) => person.ssn)
+    if (children) {
+      await this.cacheManager.set(cacheKey, { children }, { ttl: ONE_MONTH })
     }
 
-    return family
+    return children
   }
 }
