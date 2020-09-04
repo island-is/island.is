@@ -41,8 +41,8 @@ const loginIS = new IslandisLogin({
   audienceUrl,
 })
 
-@Controller('auth')
-@ApiTags('auth')
+@Controller('api/auth')
+@ApiTags('api/auth')
 export class AuthController {
   constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
 
@@ -87,6 +87,7 @@ export class AuthController {
       return res.redirect('/error')
     }
 
+    this.logger.debug('Redirecting to gaesluvardhaldskrofur')
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
     return res
       .cookie(CSRF_COOKIE.name, csrfToken, {
@@ -97,7 +98,7 @@ export class AuthController {
         ...ACCESS_TOKEN_COOKIE.options,
         maxAge,
       })
-      .redirect('/min-rettindi') // TODO: add back cookie
+      .redirect('/gaesluvardhaldskrofur') // TODO: add back cookie
   }
 
   @Get('login')

@@ -13,9 +13,9 @@ export const Login = () => {
 
     async function getData() {
       try {
-        // const res = await fetch('/auth/login')
+        // const res = await fetch('/api/auth/login')
         // console.log('!!!!!!!!!', res)
-        window.location.assign('/auth/login')
+        window.location.assign('/api/auth/login')
       } catch (e) {
         console.log('######', e)
       }
