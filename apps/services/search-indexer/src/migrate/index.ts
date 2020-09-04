@@ -1,14 +1,13 @@
 import * as AWS from 'aws-sdk'
-import { Client } from '@elastic/elasticsearch'
 import * as fs from 'fs'
 import * as util from 'util'
 import fetch from 'node-fetch'
 import { DomainPackageDetails, PackageDetails } from 'aws-sdk/clients/es'
 import { ManagedUpload } from 'aws-sdk/clients/s3'
 import { logger } from '@island.is/logging'
-import { ElasticService } from '@island.is/api/content-search'
 import { environment, Environment } from '../environments/environment'
 import { checkAWSAccess, awsEs } from './aws'
+import * as elastic from './elastic'
 
 class EsPackage {
   packageId: string
@@ -41,39 +40,25 @@ class PackageStatuses extends Map<string, boolean> {}
 
 class App {
   private readonly config: Environment['migrate']
-  private esService: ElasticService
-  private esClient: Client
   private readonly lang: string = 'is'
-  private readonly templateName: string = 'template-is'
 
   constructor(config: Environment['migrate']) {
     this.config = config
-    this.esService = new ElasticService()
   }
 
   // TODO: Make this work without AWS as well
   async run() {
     logger.info('Starting migration if needed', this.config)
-    if(!this.config.isRunningLocally) {
+    if (!this.config.isRunningLocally) {
       await checkAWSAccess()
     }
-    throw new Error('STOP!')
-    await this.checkESAccess()
+    await elastic.ping()
     await this.migrateIfNeeded()
   }
 
-  // TODO: Use es service ping check here 
-  private async checkESAccess() {
-    const client = await this.getEsClient()
-    const result = await client.ping()
-    logger.info('Got elasticsearch ping response', {
-      r: result,
-    })
-  }
-
   private async migrateIfNeeded() {
-    const codeVersion = this.getCodeVersion()
-    const hasVersion = await this.esHasVersion(codeVersion)
+    const codeVersion = elastic.getCodeVersion()
+    const hasVersion = await elastic.esHasVersion(codeVersion)
     if (hasVersion) {
       logger.info('Found this code version in elasticsearch', {
         version: codeVersion,
@@ -92,15 +77,15 @@ class App {
   }
 
   private async fixAlias(codeVersion: number) {
-    const wantedIndexName = App.getIndexNameForVersion(codeVersion)
-    const oldIndexName = App.getIndexNameForVersion(codeVersion - 1)
+    const wantedIndexName = elastic.getIndexNameForVersion(codeVersion)
+    const oldIndexName = elastic.getIndexNameForVersion(codeVersion - 1)
     logger.info('Switching index alias', { oldIndexName, wantedIndexName })
-    return this.switchAlias(oldIndexName, wantedIndexName)
+    return elastic.switchAlias(oldIndexName, wantedIndexName)
   }
 
   private async aliasIsCorrect(codeVersion: number): Promise<boolean> {
-    const alias = await this.getMainAlias()
-    const wantedIndexName = App.getIndexNameForVersion(codeVersion)
+    const alias = await elastic.getMainAlias()
+    const wantedIndexName = elastic.getIndexNameForVersion(codeVersion)
     logger.info('Validating alias name', {
       alias: alias,
       wanted: wantedIndexName,
@@ -108,23 +93,7 @@ class App {
     return alias === wantedIndexName
   }
 
-  private async getMainAlias(): Promise<string | null> {
-    logger.info('Getting main alias')
-    const client = await this.getEsClient()
-    return client.indices
-      .getAlias({ name: this.config.indexMain })
-      .then((response) => {
-        const body = response.body
-        for (const index in body) {
-          const aliases = body[index]['aliases']
-          if (aliases[this.config.indexMain] ?? null) {
-            return index
-          }
-        }
-        return null
-      })
-  }
-
+  // HERE <-
   private async migrate(codeVersion: number) {
     const dictionaryVersion = await this.getDictionaryVersion()
     const packageIds: PackageIds = await this.getAllPackageIdsForVersion(
@@ -134,102 +103,17 @@ class App {
       dictVersion: dictionaryVersion,
       packageIds: packageIds,
     })
-    return this.createPackagesIfNeeded(dictionaryVersion, packageIds)
-      .then((newPackageIds) => this.associatePackagesIfNeeded(newPackageIds))
-      .then((newPackageIds) => this.doMigrate(codeVersion, newPackageIds))
+    const newPackageIds = await this.createPackagesIfNeeded(dictionaryVersion, packageIds)
+    await this.associatePackagesIfNeeded(newPackageIds)
+    return this.doMigrate(codeVersion, newPackageIds)
   }
 
   private async doMigrate(codeVersion: number, packageIds) {
     const config = this.createConfig(packageIds)
     logger.info('Updating index template', { codeVersion, packageIds, config })
-    return this.createTemplate(config).then(() =>
-      this.reindexToNewIndex(codeVersion),
+    return elastic.createTemplate(config).then(() =>
+      elastic.reindexToNewIndex(codeVersion),
     )
-  }
-
-  private async reindexToNewIndex(codeVersion: number) {
-    logger.info('Reindexing to new index code version is', { codeVersion })
-    const oldIndex = await this.esGetOlderVersionIndex(codeVersion)
-    if (!oldIndex) {
-      logger.info('No older version found creating new index for this version')
-      return this.createIndex(codeVersion)
-    }
-
-    const newIndex = App.getIndexNameForVersion(codeVersion)
-    const params = {
-      waitForCompletion: true,
-      body: {
-        source: {
-          index: oldIndex,
-        },
-        dest: {
-          index: newIndex,
-        },
-      },
-    }
-    logger.info('Reindex to new index', params)
-    const client = await this.getEsClient()
-    const response = await client.reindex(params)
-    logger.info('Reindex returned', response)
-    return this.switchAlias(oldIndex, newIndex)
-  }
-
-  private async switchAlias(oldIndex: string | null, newIndex: string) {
-    const actions = []
-    if (oldIndex) {
-      actions.push({
-        remove: {
-          index: oldIndex,
-          alias: this.config.indexMain,
-        },
-      })
-    }
-    actions.push({
-      add: {
-        index: newIndex,
-        alias: this.config.indexMain,
-      },
-    })
-    const params = {
-      body: {
-        actions: actions,
-      },
-    }
-    logger.info('Switch Alias', params)
-
-    const client = await this.getEsClient()
-    return client.indices.updateAliases(params)
-  }
-
-  private async createIndex(codeVersion) {
-    const name = App.getIndexNameForVersion(codeVersion)
-    const params = {
-      index: name,
-    }
-    logger.info('Create Index', params)
-    const client = await this.getEsClient()
-    return client.indices
-      .create(params)
-      .then(() => this.switchAlias(null, name))
-  }
-
-  private async createTemplate(config: string) {
-    const templateName = this.templateName
-    logger.info('Create template', templateName)
-    const client = await this.getEsClient()
-    return client.indices
-      .putTemplate({
-        name: templateName,
-        body: config,
-      })
-      .catch((error) => {
-        logger.error('Failed to update template', {
-          error,
-          config,
-          templateName,
-        })
-        throw error
-      })
   }
 
   private createConfig(packageIds: PackageIds): string {
@@ -515,33 +399,6 @@ class App {
     })
   }
 
-  private async getAllPackageIdsForVersion(
-    version: string,
-  ): Promise<PackageIds> {
-    return awsEs
-      .describePackages()
-      .promise()
-      .then((list) => {
-        const ret: PackageIds = new PackageIds()
-        list.PackageDetailsList.forEach((element) => {
-          const t = EsPackage.create(element)
-          logger.debug('Should add Version package?', {
-            t: t,
-            v: version,
-            p: this.config.packagePrefix,
-          })
-          if (
-            t &&
-            t.dictVersion === version &&
-            t.packagePrefix === this.config.packagePrefix
-          ) {
-            ret.set(t.dictType, t)
-          }
-        })
-        return ret
-      })
-  }
-
   private getDictFileName(name: string, version: string) {
     let prefix = this.config.packagePrefix
     if (prefix) {
@@ -571,55 +428,6 @@ class App {
       .then((data) => {
         return data.tag_name
       })
-  }
-
-  private getCodeVersion() {
-    const raw = fs.readFileSync(this.config.codeTemplateFile)
-    const json = JSON.parse(raw.toString())
-    return json.version
-  }
-
-  private async esHasVersion(version: number) {
-    const indexName = App.getIndexNameForVersion(version)
-    const client = await this.getEsClient()
-    const result = await client.indices.exists({
-      index: indexName,
-    })
-    logger.info('Checking if index exists', {
-      index: indexName,
-      result: result.body,
-    })
-    return result.body
-  }
-
-  public async esGetOlderVersionIndex(
-    currentVersion: number,
-  ): Promise<string | null> {
-    logger.info('Trying to find older indexes')
-
-    for (let i = currentVersion - 1; i > 0; i--) {
-      const indexExists = await this.esHasVersion(i)
-      if (indexExists) {
-        // this old version exists, return the name of the index
-        return App.getIndexNameForVersion(i)
-      }
-    }
-
-    logger.info('No older indice found')
-    // no index found
-    return null
-  }
-
-  private static getIndexNameForVersion(version: number) {
-    return util.format('island-is-v%d', version)
-  }
-
-  private async getEsClient(): Promise<Client> {
-    if (this.esClient) {
-      return this.esClient
-    }
-    this.esClient = await new ElasticService().getClient()
-    return this.esClient
   }
 }
 

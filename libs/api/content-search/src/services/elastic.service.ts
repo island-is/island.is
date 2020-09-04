@@ -212,9 +212,13 @@ export class ElasticService {
 
   async ping() {
     const client = await this.getClient()
-    return client.ping().catch((e) => {
+    const result = await client.ping().catch((e) => {
       ElasticService.handleError('Error in ping', {}, e)
     })
+    logger.info('Got elasticsearch ping response', {
+      r: result,
+    })
+    return result
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

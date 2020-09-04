@@ -37,9 +37,10 @@ export const environment: Environment = {
     awsRegion: process.env.AWS_REGION || 'eu-west-1',
     indexMain: 'island-is',
     esDomain: 'search',
-    codeTemplateFile: '/webapp/config/template-is.json',
-    dictRepo: 'https://api.github.com/repos/island-is/elasticsearch-dictionaries',
+    codeTemplateFile: './config/template-is.json',
+    dictRepo:
+      'https://api.github.com/repos/island-is/elasticsearch-dictionaries',
     s3Folder: '',
-    packagePrefix: ''
-  }
+    packagePrefix: '',
+  },
 }

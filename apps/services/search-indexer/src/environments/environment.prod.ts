@@ -1,4 +1,4 @@
-import { Environment } from './environment';
+import { Environment } from './environment'
 
 export const environment: Environment = {
   production: true,
@@ -17,8 +17,9 @@ export const environment: Environment = {
     indexMain: 'island-is',
     esDomain: 'search',
     codeTemplateFile: '/webapp/config/template-is.json',
-    dictRepo: 'https://api.github.com/repos/island-is/elasticsearch-dictionaries',
+    dictRepo:
+      'https://api.github.com/repos/island-is/elasticsearch-dictionaries',
     s3Folder: '',
-    packagePrefix: ''
-  }
+    packagePrefix: '',
+  },
 }
