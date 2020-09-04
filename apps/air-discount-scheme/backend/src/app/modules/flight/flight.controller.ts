@@ -10,6 +10,7 @@ import {
   Req,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common'
 import {
   ApiOkResponse,
@@ -29,7 +30,6 @@ import {
   DeleteFlightParams,
   DeleteFlightLegParams,
 } from './flight.validator'
-import { FlightLimitExceeded } from './flight.error'
 import { FlightDto } from './dto/flight.dto'
 import { DiscountService } from '../discount'
 import { AuthGuard } from '../common'
@@ -68,13 +68,17 @@ export class PublicFlightController {
     const meetsADSRequirements = this.flightService.isADSPostalCode(
       user.postalcode,
     )
+    if (!meetsADSRequirements) {
+      throw new ForbiddenException('User postalcode does not meet conditions')
+    }
+
     const {
       unused: flightLegsLeft,
     } = await this.flightService.countFlightLegsByNationalId(
       discount.nationalId,
     )
-    if (!meetsADSRequirements || flightLegsLeft < flight.flightLegs.length) {
-      throw new FlightLimitExceeded()
+    if (flightLegsLeft < flight.flightLegs.length) {
+      throw new ForbiddenException('Flight leg quota is exceeded')
     }
     await this.discountService.useDiscount(
       params.discountCode,
@@ -107,6 +111,9 @@ export class PublicFlightController {
       params.flightId,
       request.airline,
     )
+    if (!flight) {
+      throw new NotFoundException(`Flight<${params.flightId}> not found`)
+    }
     await this.flightService.delete(flight)
   }
 
@@ -121,7 +128,19 @@ export class PublicFlightController {
       params.flightId,
       request.airline,
     )
-    await this.flightService.deleteFlightLeg(flight, params.flightLegId)
+    if (!flight) {
+      throw new NotFoundException(`Flight<${params.flightId}> not found`)
+    }
+
+    const flightLeg = await flight.flightLegs.find(
+      (flightLeg) => flightLeg.id === params.flightLegId,
+    )
+    if (!flightLeg) {
+      throw new NotFoundException(
+        `FlightLeg<${params.flightLegId}> not found for Flight<${flight.id}>`,
+      )
+    }
+    await this.flightService.deleteFlightLeg(flightLeg)
   }
 }
 

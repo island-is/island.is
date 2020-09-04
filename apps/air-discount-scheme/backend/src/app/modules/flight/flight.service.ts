@@ -1,11 +1,11 @@
-import { NotFoundException, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { FlightLegSummary } from './flight.types'
 import { Flight, FlightLeg, financialStateMachine } from './flight.model'
 import { FlightDto } from './dto/flight.dto'
 
-const ADS_POSTAL_CODES = {
+export const ADS_POSTAL_CODES = {
   Reykhólahreppur: 380,
   // from Reykhólahreppur to Þingeyri
   Þingeyri: 471,
@@ -113,7 +113,7 @@ export class FlightService {
   }
 
   async findOne(flightId: string, airline: string): Promise<Flight> {
-    const flight = await this.flightModel.findOne({
+    return this.flightModel.findOne({
       where: {
         id: flightId,
         airline,
@@ -125,10 +125,6 @@ export class FlightService {
         },
       ],
     })
-    if (!flight) {
-      throw new NotFoundException(`Flight<${flightId}> not found`)
-    }
-    return flight
   }
 
   delete(flight: Flight): Promise<FlightLeg[]> {
@@ -142,18 +138,7 @@ export class FlightService {
     )
   }
 
-  async deleteFlightLeg(
-    flight: Flight,
-    flightLegId: string,
-  ): Promise<FlightLeg> {
-    const flightLeg = await flight.flightLegs.find(
-      (flightLeg) => flightLeg.id === flightLegId,
-    )
-    if (!flightLeg) {
-      throw new NotFoundException(
-        `FlightLeg<${flightLegId}> not found for Flight<${flight.id}>`,
-      )
-    }
+  async deleteFlightLeg(flightLeg: FlightLeg): Promise<FlightLeg> {
     const financialState = financialStateMachine
       .transition(flightLeg.financialState, 'REVOKE')
       .value.toString()
