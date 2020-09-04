@@ -14,7 +14,7 @@ const demoData = [
     title: 'Að eignast barn',
     intro:
       'Allt frá meðgöngu að fæðingu, nafngjöf og fyrstu mánuðunum í lífi barnsins.',
-    url: '/',
+    url: '/lifsvidburdur/ad-eignast-barn',
     image:
       'https://images.ctfassets.net/8k0h54kbe6bj/3lNpEzR0oURCX7tYIQjJTa/835f6bc23172615d221e6a6e3a135284/man_with_stroller.png',
     thumbnail:
