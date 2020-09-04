@@ -6,12 +6,14 @@ import {
   Typography,
   ArrowLink,
   Box,
+  Swiper,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { News } from '@island.is/api/schema'
 import { NewsCard } from '../NewsCard'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
-// On mobile it displays 3 news cards in a slider. (TODO)
+// On mobile it displays 3 news cards in a Swiper.
 
 interface LatestNewsProps {
   label: string
@@ -42,22 +44,38 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
           </Box>
         </GridColumn>
       </GridRow>
-      <GridRow>
-        {newsItems.map((newsItem) => (
-          <GridColumn
-            span={['12/12', '12/12', '12/12', '4/12']}
-            key={newsItem.slug}
-          >
+      <Hidden below="md">
+        <GridRow>
+          {newsItems.map((newsItem) => (
+            <GridColumn
+              span={['12/12', '12/12', '12/12', '4/12']}
+              key={newsItem.slug}
+            >
+              <NewsCard
+                title={newsItem.title}
+                subtitle={newsItem.subtitle}
+                introduction={newsItem.intro}
+                slug={newsItem.slug}
+                image={newsItem.image}
+              />
+            </GridColumn>
+          ))}
+        </GridRow>
+      </Hidden>
+      <Hidden above="md">
+        <Swiper>
+          {newsItems.map((newsItem) => (
             <NewsCard
+              key={newsItem.slug}
               title={newsItem.title}
               subtitle={newsItem.subtitle}
               introduction={newsItem.intro}
               slug={newsItem.slug}
               image={newsItem.image}
             />
-          </GridColumn>
-        ))}
-      </GridRow>
+          ))}
+        </Swiper>
+      </Hidden>
     </GridContainer>
   )
 }

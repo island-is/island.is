@@ -36,6 +36,7 @@ export * from './lib/AsyncSelect/AsyncSelect'
 export * from './lib/SkeletonLoader/SkeletonLoader'
 export * from './lib/Blockquote/Blockquote'
 export * from './lib/Alert/Alert'
+export { Swiper } from './lib/Swiper'
 
 // Layout
 export * from './lib/Box/Box'

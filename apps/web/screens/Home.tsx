@@ -90,11 +90,11 @@ const Home: Screen<HomeProps> = ({
       <Section paddingY={[2, 2, 3, 3, 6]}>
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
       </Section>
-      <Section background="purple100" paddingY={[2, 2, 3, 3, 6]}>
+      <Section background="purple100" paddingY={[4, 4, 4, 6]}>
         <Categories title={n('articlesTitle')} cards={cards} />
       </Section>
       <Section
-        paddingY={[2, 2, 3, 3, 6]}
+        paddingTop={[8, 8, 3, 3, 6]}
         backgroundBleed={{
           bleedAmount: 160,
           bleedDirection: 'top',
@@ -104,10 +104,10 @@ const Home: Screen<HomeProps> = ({
       >
         <LifeEventsCardsSection title={n('lifeEventsTitle')} />
       </Section>
-      <Section paddingY={[2, 2, 3, 3, 6]}>
+      <Section paddingTop={[8, 8, 6]}>
         <LatestNewsSection label="Fréttir og tilkynningar" items={news} />
       </Section>
-      <Section paddingTop={[2, 4, 6, 8, 10]} paddingBottom={[2, 4, 6, 10, 15]}>
+      <Section paddingY={[8, 8, 8, 10, 15]}>
         <IntroductionSection
           subtitle="Markmiðið okkar"
           title="Öll opinber þjónusta á einum stað"
