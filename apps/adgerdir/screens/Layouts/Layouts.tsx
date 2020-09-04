@@ -35,4 +35,23 @@ export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
   </div>
 )
 
-export default ArticleLayout
+interface NewsListProps {
+  sidebar: ReactNode
+}
+
+export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
+  <GridContainer>
+    <Box paddingTop={6} paddingBottom={10}>
+      <GridRow>
+        <GridColumn span="4/12">
+          <Box background="purple100" padding={4}>
+            {sidebar}
+          </Box>
+        </GridColumn>
+        <GridColumn span="6/12" offset="1/12">
+          <Box paddingBottom={10}>{children}</Box>
+        </GridColumn>
+      </GridRow>
+    </Box>
+  </GridContainer>
+)

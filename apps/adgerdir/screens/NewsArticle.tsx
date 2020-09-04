@@ -78,7 +78,9 @@ const NewsArticle: Screen<NewsArticleProps> = ({
               <Link as="/" href="/">
                 <a>Viðspyrna</a>
               </Link>
-              <span>Fréttir</span>
+              <Link as="/frettir" href="/frettir">
+                <a>Fréttir</a>
+              </Link>
             </Breadcrumbs>
             <Typography variant="eyebrow" as="div" color="purple400">
               {dateFormatted}
