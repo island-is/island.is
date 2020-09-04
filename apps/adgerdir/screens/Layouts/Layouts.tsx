@@ -14,22 +14,24 @@ interface ArticleProps {
 }
 
 export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
-  <GridContainer>
-    <GridRow>
-      <GridColumn
-        span={['12/12', '12/12', '12/12', '8/12', '7/12']}
-        offset={[null, null, null, null, '1/12']}
-      >
-        <Box paddingBottom={10}>{children}</Box>
-      </GridColumn>
-      <GridColumn
-        span={['12/12', '12/12', '12/12', '4/12', '3/12']}
-        offset={[null, null, null, null, '1/12']}
-      >
-        {sidebar}
-      </GridColumn>
-    </GridRow>
-  </GridContainer>
+  <Box paddingTop={[3, 3, 6]}>
+    <GridContainer>
+      <GridRow>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '7/12']}
+          offset={[null, null, null, null, '1/12']}
+        >
+          <Box paddingBottom={10}>{children}</Box>
+        </GridColumn>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '4/12', '3/12']}
+          offset={[null, null, null, '1/12']}
+        >
+          {sidebar}
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
+  </Box>
 )
 
 interface NewsListProps {
@@ -37,19 +39,21 @@ interface NewsListProps {
 }
 
 export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
-  <GridContainer>
-    <GridRow>
-      <GridColumn span={['12/12', '12/12', '12/12', '4/12', '3/12']}>
-        <Sticky>
-          <Hidden below="lg">{sidebar}</Hidden>
-        </Sticky>
-      </GridColumn>
-      <GridColumn
-        span={['12/12', '12/12', '12/12', '7/12']}
-        offset={[null, null, null, '1/12']}
-      >
-        <Box paddingBottom={10}>{children}</Box>
-      </GridColumn>
-    </GridRow>
-  </GridContainer>
+  <Box paddingTop={[3, 3, 6]}>
+    <GridContainer>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '4/12', '3/12']}>
+          <Sticky>
+            <Hidden below="lg">{sidebar}</Hidden>
+          </Sticky>
+        </GridColumn>
+        <GridColumn
+          span={['12/12', '12/12', '12/12', '7/12']}
+          offset={[null, null, null, '1/12']}
+        >
+          <Box paddingBottom={10}>{children}</Box>
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
+  </Box>
 )

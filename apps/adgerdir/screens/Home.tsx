@@ -32,7 +32,7 @@ import {
   GET_ADGERDIR_FRONTPAGE_QUERY,
 } from './queries'
 import { Screen } from '../types'
-import { useNamespace } from '../hooks'
+// import { useNamespace } from '../hooks'
 import { ArticleLayout } from './Layouts/Layouts'
 import { ColorSchemeContext } from '@island.is/adgerdir/context'
 
