@@ -4,6 +4,8 @@ import { theme } from '@island.is/island-ui/theme'
 export const root = style({
   display: 'flex',
   flexDirection: 'column',
+  width: `calc(100% - ${theme.spacing[6]}px)`,
+  margin: '0 auto',
 })
 
 export const top = style({
