@@ -10,7 +10,6 @@ export const environment: Environment = {
   },
   indexableTypes: ['article'],
   migrate: {
-    isRunningLocally: !!process.env.ELASTIC_NODE,
     elasticNode: process.env.ELASTIC_NODE,
     s3Bucket: process.env.S3_BUCKET,
     awsRegion: process.env.AWS_REGION,

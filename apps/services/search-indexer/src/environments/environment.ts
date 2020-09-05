@@ -12,12 +12,11 @@ export interface Environment {
     indexMain: string
     esDomain: string
     codeTemplateFile: string
-    dictRepo: string
     s3Bucket: string
     s3Folder: string
     awsRegion: string
     packagePrefix: string
-    isRunningLocally: boolean
+    dictRepo: string
   }
 }
 
@@ -31,16 +30,14 @@ export const environment: Environment = {
   },
   indexableTypes: ['article'],
   migrate: {
-    isRunningLocally: !!process.env.ELASTIC_NODE,
     elasticNode: process.env.ELASTIC_NODE || '',
-    s3Bucket: process.env.S3_BUCKET || 'prod-es-custom-packages',
+    s3Bucket: process.env.S3_BUCKET || 'dev-es-custom-packages', // TODO: Make sure migrate uses these env variables in aws cluster
     awsRegion: process.env.AWS_REGION || 'eu-west-1',
     indexMain: 'island-is',
     esDomain: 'search',
     codeTemplateFile: './config/template-is.json',
-    dictRepo:
-      'https://api.github.com/repos/island-is/elasticsearch-dictionaries',
     s3Folder: '',
     packagePrefix: '',
+    dictRepo: 'https://api.github.com/repos/island-is/elasticsearch-dictionaries',
   },
 }
