@@ -21,7 +21,29 @@ const TEST_USERS: NationalRegistryUser[] = [
     middleName: '',
     lastName: 'Ameríka',
     gender: 'kk',
-    address: 'Bessastaðir 1',
+    address: 'Vallargata 1',
+    postalcode: 900,
+    city: 'Vestmannaeyjar',
+  },
+  {
+    // Gervibarn Friðrik
+    nationalId: '1204209090',
+    firstName: 'Friðrik',
+    middleName: 'Ari',
+    lastName: 'Baldursson',
+    gender: 'kk',
+    address: 'Vallargata 1',
+    postalcode: 900,
+    city: 'Vestmannaeyjar',
+  },
+  {
+    // Gervibarn Eyjólfur
+    nationalId: '0711196370',
+    firstName: 'Eyjólfur',
+    middleName: '',
+    lastName: 'Baldursson',
+    gender: 'kk',
+    address: 'Vallargata 1',
     postalcode: 900,
     city: 'Vestmannaeyjar',
   },
@@ -32,9 +54,42 @@ const TEST_USERS: NationalRegistryUser[] = [
     middleName: '',
     lastName: 'Afríka',
     gender: 'kk',
-    address: 'Bessastaðir 1',
-    postalcode: 900,
-    city: 'Vestmannaeyjar',
+    address: 'Urðarbraut 1',
+    postalcode: 540,
+    city: 'Blönduós',
+  },
+  {
+    // Gervibarn Stefán
+    nationalId: '2508107410',
+    firstName: 'Stefán',
+    middleName: 'Eysteinn',
+    lastName: 'Júlíusson',
+    gender: 'kk',
+    address: 'Urðarbraut 1',
+    postalcode: 540,
+    city: 'Blönduós',
+  },
+  {
+    // Gervibarn Embla
+    nationalId: '2508105630',
+    firstName: 'Embla',
+    middleName: '',
+    lastName: 'Asksdóttir',
+    gender: 'kvk',
+    address: 'Urðarbraut 1',
+    postalcode: 540,
+    city: 'Blönduós',
+  },
+  {
+    // Gervibarn Sunna
+    nationalId: '1110199320',
+    firstName: 'Sunna',
+    middleName: 'Hlín',
+    lastName: 'Júlíusdóttir',
+    gender: 'kvk',
+    address: 'Urðarbraut 1',
+    postalcode: 540,
+    city: 'Blönduós',
   },
 ]
 
@@ -107,13 +162,12 @@ export class NationalRegistryService {
 
   async getRelatedChildren(nationalId: string): Promise<string[]> {
     if (environment.environment !== 'prod') {
-      const testUser = TEST_USERS.find(
-        (testUser) => testUser.nationalId === nationalId,
-      )
+      const testUser = TEST_USERS.find((user) => user.nationalId === nationalId)
       if (testUser) {
         return TEST_USERS.filter(
-          (testUser) => testUser.nationalId !== nationalId,
-        ).map((testUser) => testUser.nationalId)
+          (user) =>
+            user.nationalId !== nationalId && user.address === testUser.address,
+        ).map((user) => user.nationalId)
       }
     }
 
