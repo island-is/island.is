@@ -14,7 +14,7 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ error, field }) => {
   const { clearErrors } = useFormContext()
 
   return (
-    <Box marginTop={4}>
+    <Box marginTop={4} marginBottom={6}>
       <Box display="flex" flexDirection="row" alignItems="center">
         <Box
           className={styles.key}
