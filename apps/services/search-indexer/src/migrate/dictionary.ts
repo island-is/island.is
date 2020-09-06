@@ -2,6 +2,9 @@ import fetch from 'node-fetch'
 import { environment } from '../environments/environment'
 import { logger } from '@island.is/logging'
 import _ from 'lodash'
+import { AwsEsPackage } from './aws'
+
+const analyzers = ['stemmer', 'keywords', 'synonyms', 'stopwords']
 
 const getDictUrl = (type: string, lang: string): string => {
   const url = environment.migrate.dictRepo
@@ -30,8 +33,7 @@ export interface Dictionary {
   file: NodeJS.ReadableStream
 }
 export const getDictionaryFiles = async (): Promise<Dictionary[]> => {
-  const locales = ['is', 'en']
-  const analyzers = ['stemmer', 'keywords', 'synonyms', 'stopwords']
+  const locales = environment.migrate.locales
 
   const dictionaries = locales.map((locale) => {
     return analyzers.map(async (analyzerType) => {
@@ -53,4 +55,16 @@ export const getDictionaryFiles = async (): Promise<Dictionary[]> => {
 
   const allDictionaryResponses = await Promise.all(_.flatten(dictionaries))
   return allDictionaryResponses.filter((response): response is Dictionary => response !== false)
+}
+
+export const getFakePackageIds = (): AwsEsPackage[] => {
+  const locales = environment.migrate.locales
+  const fakePackages = locales.map((locale) => {
+    return analyzers.map((analyzer) => ({
+      packageId: `${analyzer}.txt`,
+      analyzerType: analyzer,
+      locale
+    }))
+  })
+  return _.flatten(fakePackages)
 }

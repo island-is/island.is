@@ -16,6 +16,7 @@ export interface Environment {
     s3Folder: string
     awsRegion: string
     dictRepo: string
+    locales: string[]
   }
 }
 
@@ -37,5 +38,6 @@ export const environment: Environment = {
     codeTemplateFile: './config/template-is.json',
     s3Folder: '',
     dictRepo: 'https://api.github.com/repos/island-is/elasticsearch-dictionaries',
+    locales: ['is', 'en']
   },
 }
