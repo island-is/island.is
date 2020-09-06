@@ -109,6 +109,10 @@ interface TrackProps {
   showLabel?: boolean
   showRemainderOverlay?: boolean
   fadeRemainderCells?: boolean
+  label: {
+    singular: string
+    plural: string
+  }
 }
 
 const Slider = ({
@@ -121,6 +125,7 @@ const Slider = ({
   showLabel = true,
   showRemainderOverlay = true,
   fadeRemainderCells = false,
+  label,
 }: TrackProps) => {
   const [isDragging, setIsDragging] = useState(false)
   const ref = useRef(null)
@@ -177,7 +182,7 @@ const Slider = ({
   })
 
   const formatTooltip = (count: number) =>
-    count === 1 ? '1 mánuður' : `${count} mánuðir`
+    count <= 1 ? `1 ${label.singular}` : `${count} ${label.plural}`
 
   const onKeyDown = (event: React.KeyboardEvent) => {
     if (onChange == null) {
