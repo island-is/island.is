@@ -2,8 +2,10 @@ import { logger } from '@island.is/logging'
 import AWS from 'aws-sdk'
 import { DomainPackageDetails, PackageDetails } from 'aws-sdk/clients/es'
 import fetch from 'node-fetch'
-import { ManagedUpload } from 'aws-sdk/clients/s3'
+import { PutObjectRequest } from 'aws-sdk/clients/s3'
 import { environment } from '../environments/environment'
+import _ from 'lodash'
+import { Dictionary } from './dictionary'
 
 class EsPackage {
   packageId: string
@@ -69,42 +71,103 @@ export const getDictionaryVersion = (): Promise<string> => {
     })
 }
 
-const uploadFileToS3 = (options) => {
+// TODO: Handle error on upload here
+const uploadFileToS3 = (options: Omit<PutObjectRequest, 'Bucket'>) => {
   const params = {
     Bucket: environment.migrate.s3Bucket,
     ...options
   }
-  logger.info('uploading file to s3', { params })
+  logger.info('uploading file to s3', { Bucket: params.Bucket, Key: params.Key })
   return s3.upload(params).promise()
 }
 
-export const updateDictionaryFiles = async (dictionaryUrl) => {
-  // loop through locales
-  /*return Object.entries(dictionaryUrl).reduce(async (localePackages, [locale, dictionaryUrls]) => {
-    // loop through each analyzer for locale
-    localePackages[locale] = await Promise.all(Object.entries(dictionaryUrls).map(async ([analyzer, analyzerUrl]) => {
-      const fileStream = await getFile(analyzerUrl)
-      const s3Key = createS3Key(analyzer, locale)
-      return uploadFileToS3({ key: s3Key, Body: fileStream })
-    }))
+interface S3DictionaryFile {
+  locale: string
+  analyzerType: string
+}
+export const updateS3DictionaryFiles = async (dictionaries: Dictionary[]): Promise<S3DictionaryFile[]> => {
+  const uploads = dictionaries.map(async (dictionary) => {
+    const { analyzerType, locale, file } = dictionary
+    const s3Key = createS3Key(analyzerType, locale)
+    await uploadFileToS3({ Key: s3Key, Body: file })
+    return {
+      locale,
+      analyzerType
+    }
+  })
 
-    return localePackages
-  }, {})*/
+  return Promise.all(uploads)
+}
 
+export const createAwsEsPackagesIfNeeded = (uploadedDictionaryFiles: S3DictionaryFile[]) => {
+  // create a new package for each uploaded s3 file
+  const createdPackages = uploadedDictionaryFiles.map(async (uploadedFile) => {
+    const { analyzerType, locale } = uploadedFile
 
-  // TODO: Upload repo files to s3
-  // TODO: Assosiate  ed files with ES
-  // TODO: Return packageIds list for ES config
+    const params = {
+      PackageName: `${locale}-${analyzerType}`,
+      PackageType: 'TXT-DICTIONARY',
+      PackageSource: {
+        S3BucketName: environment.migrate.s3Bucket,
+        S3Key: createS3Key(analyzerType, locale),
+      },
+    }
+
+    logger.info('Creating AWS ES package', params)
+
+    const esPackage = await awsEs
+      .createPackage(params)
+      .promise()
+
+    logger.info('Created AWS ES package', { esPackage })
+
+    return 'id text goes here'
+  })
+
+  return Promise.all(createdPackages)
 }
 
 export const updateDictionaryVersion = async (newDictionaryVersion: string) => {
   const params = {
-    Bucket: environment.migrate.s3Bucket,
     Key: createS3Key('dictionaryVersion'),
     Body: 'sometext'//newDictionaryVersion,
   }
-  await s3.upload(params).promise()
+  await uploadFileToS3(params)
   logger.info('updated dictionary version to', { version: newDictionaryVersion })
+}
+
+
+const createPackage = (version: string, type: string): Promise<EsPackage> => {
+  const packageName = getDictFileName(type, version)
+  const packageType = 'TXT-DICTIONARY'
+  const key = createS3Key(type)
+
+  const params = {
+    PackageName: packageName,
+    PackageType: packageType,
+    PackageSource: {
+      S3BucketName: environment.migrate.s3Bucket,
+      S3Key: key,
+    },
+  }
+  logger.info('Create Package', params)
+  return awsEs
+    .createPackage(params)
+    .promise()
+    .then((packageResponse: AWS.ES.CreatePackageResponse) =>
+      waitForPackageStatus(
+        packageResponse.PackageDetails,
+        'AVAILABLE',
+        'COPYING',
+        3,
+        (packageId: string) => {
+          return getPackage(packageId)
+        },
+      ),
+    )
+    .then((packageResponse) => {
+      return EsPackage.create(packageResponse)
+    })
 }
 
 const pushToS3 = async (type: string): Promise<any> => {
@@ -281,39 +344,6 @@ const getPackage = (packageId: string): Promise<PackageDetails> => {
     .promise()
     .then((res) => {
       return res.PackageDetailsList[0] ?? null
-    })
-}
-
-const createPackage = (version: string, type: string): Promise<EsPackage> => {
-  const packageName = getDictFileName(type, version)
-  const packageType = 'TXT-DICTIONARY'
-  const key = createS3Key(type)
-
-  const params = {
-    PackageName: packageName,
-    PackageType: packageType,
-    PackageSource: {
-      S3BucketName: environment.migrate.s3Bucket,
-      S3Key: key,
-    },
-  }
-  logger.info('Create Package', params)
-  return awsEs
-    .createPackage(params)
-    .promise()
-    .then((packageResponse: AWS.ES.CreatePackageResponse) =>
-      waitForPackageStatus(
-        packageResponse.PackageDetails,
-        'AVAILABLE',
-        'COPYING',
-        3,
-        (packageId: string) => {
-          return getPackage(packageId)
-        },
-      ),
-    )
-    .then((packageResponse) => {
-      return EsPackage.create(packageResponse)
     })
 }
 

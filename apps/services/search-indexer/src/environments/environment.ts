@@ -15,7 +15,6 @@ export interface Environment {
     s3Bucket: string
     s3Folder: string
     awsRegion: string
-    packagePrefix: string
     dictRepo: string
   }
 }
@@ -37,7 +36,6 @@ export const environment: Environment = {
     esDomain: 'search',
     codeTemplateFile: './config/template-is.json',
     s3Folder: '',
-    packagePrefix: '',
     dictRepo: 'https://api.github.com/repos/island-is/elasticsearch-dictionaries',
   },
 }

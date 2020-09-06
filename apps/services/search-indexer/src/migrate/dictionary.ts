@@ -15,10 +15,6 @@ const getFile = (url: string) => {
   return fetch(url)
 }
 
-const promiseAll = async (object) => {
-  return _.zipObject(_.keys(object), await Promise.all(_.values(object)))
-}
-
 type dictionaryVersion = { tag_name: string }
 export const getDictionaryVersion = async (): Promise<string> => {
   const url = environment.migrate.dictRepo + '/releases/latest'
@@ -28,16 +24,33 @@ export const getDictionaryVersion = async (): Promise<string> => {
   return data.tag_name
 }
 
-export const getDictionaryFiles = async () => {
+export interface Dictionary {
+  analyzerType: string
+  locale: string
+  file: NodeJS.ReadableStream
+}
+export const getDictionaryFiles = async (): Promise<Dictionary[]> => {
   const locales = ['is', 'en']
   const analyzers = ['stemmer', 'keywords', 'synonyms', 'stopwords']
-  const dictionaries = {}
-  for (const locale of locales) {
-    dictionaries[locale] = await promiseAll(analyzers.reduce((dictionaryFiles, analyzerType) => {
+
+  const dictionaries = locales.map((locale) => {
+    return analyzers.map(async (analyzerType) => {
       const fileUrl = getDictUrl(analyzerType, locale)
-      dictionaryFiles[analyzerType] = getFile(fileUrl).then(response => response.body)
-      return dictionaryFiles
-    }, {}))
-  }
-  return dictionaries
+      const response = await getFile(fileUrl)
+      // only add found dictionaries to list, this tackles no dictionary provided for lang problem
+      if (response.status === 200) {
+        return {
+          analyzerType,
+          locale,
+          file: response.body
+        }
+      } else {
+        // we will filter this from the dictionaries later
+        return false
+      }
+    })
+  })
+
+  const allDictionaryResponses = await Promise.all(_.flatten(dictionaries))
+  return allDictionaryResponses.filter((response): response is Dictionary => response !== false)
 }

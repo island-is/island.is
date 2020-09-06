@@ -18,8 +18,15 @@ class App {
     const awsDictionaryVersion = await aws.getDictionaryVersion()
     if (repoDictionaryVersion !== awsDictionaryVersion) {
       logger.info('Dictionary version missmatch, updating dictionary', { repoVersion: repoDictionaryVersion, awsVersion: awsDictionaryVersion })
-      const dictionaryFiles = await dictionary.getDictionaryFiles()
-      logger.info('Got files', dictionaryFiles)
+      const dictionaries = await dictionary.getDictionaryFiles() // get files form dictionary repo
+      const uploadedS3Files = await aws.updateS3DictionaryFiles(dictionaries) // upload files to s3 with predictable names
+      const packageIds = await aws.createAwsEsPackages(uploadedS3Files)
+      // TOOD: Assosiate packages with AWS ES instance
+      // TODO: Pass generated package id to ES config
+
+      // TODO: Disassosiate old packages from AWS ES
+      logger.info('Got files from repo', { fileCount: dictionaries.length })
+      logger.info('Got ids', packageIds)
     }
   }
 }
