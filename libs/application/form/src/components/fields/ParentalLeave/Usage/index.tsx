@@ -1,4 +1,6 @@
 import React, { FC, useState } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
+
 import { FieldBaseProps } from '../../../../types'
 import Slider from './components/Slider'
 import { Box, Typography } from '@island.is/island-ui/core'
@@ -6,17 +8,10 @@ import { Box, Typography } from '@island.is/island-ui/core'
 import * as styles from './Usage.treat'
 import { theme } from '@island.is/island-ui/theme'
 
-const ParentalLeaveUsage: FC<FieldBaseProps> = ({
-  error,
-  field,
-  formValue,
-}) => {
-  // const [months, setMonths] = useState(monthsToUse || 4)
-  const [months, setMonths] = useState(4)
-
-  const updateMonths = (months: number) => {
-    setMonths(months)
-  }
+const ParentalLeaveUsage: FC<FieldBaseProps> = ({ error, field }) => {
+  const defaultUsage = 4
+  const { id } = field
+  const { clearErrors } = useFormContext()
 
   return (
     <Box marginTop={4}>
@@ -39,12 +34,21 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({
         </Typography>
       </Box>
       <Box marginTop={6}>
-        <Slider
-          totalCells={6}
-          sharedCells={3}
-          currentIndex={months}
-          onChange={updateMonths}
-          label={{ singular: 'mánuður', plural: 'mánuðir' }}
+        <Controller
+          defaultValue=""
+          name={id}
+          render={({ onChange, value }) => (
+            <Slider
+              totalCells={6}
+              sharedCells={3}
+              currentIndex={value || defaultUsage}
+              onChange={(selectedMonths: number) => {
+                clearErrors(id)
+                onChange(selectedMonths)
+              }}
+              label={{ singular: 'mánuður', plural: 'mánuðir' }}
+            />
+          )}
         />
       </Box>
     </Box>
