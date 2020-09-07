@@ -27,29 +27,24 @@ interface DrawerMenuCategoryProps extends Category {
   isExpanded?: boolean
 }
 
-const MainCategoryHeader = ({ title, onClick, isExpanded }) => {
-  const [ref, { width }] = useMeasure()
-
-  return (
-    <Box
-      display="flex"
-      component="button"
-      alignItems="center"
-      justifyContent="spaceBetween"
-      className={cn(styles.top, styles.mainHeader)}
-      paddingBottom={3}
-      marginBottom={3}
-      width="full"
-      background="purple100"
-      ref={ref}
-      padding={3}
-      onClick={onClick}
-    >
-      <Typography variant="h4">{title}</Typography>
-      <ToggleButton isActive={isExpanded} onClick={onClick} />
-    </Box>
-  )
-}
+const MainCategoryHeader = ({ title, onClick, isExpanded }) => (
+  <Box
+    display="flex"
+    component="button"
+    alignItems="center"
+    justifyContent="spaceBetween"
+    className={cn(styles.top, styles.mainHeader)}
+    paddingBottom={3}
+    marginBottom={3}
+    width="full"
+    background="purple100"
+    padding={3}
+    onClick={onClick}
+  >
+    <Typography variant="h4">{title}</Typography>
+    <ToggleButton isActive={isExpanded} onClick={onClick} />
+  </Box>
+)
 
 const DrawerMenuCategory: React.FC<DrawerMenuCategoryProps> = ({
   main,
@@ -57,60 +52,56 @@ const DrawerMenuCategory: React.FC<DrawerMenuCategoryProps> = ({
   items,
   onClick,
   isExpanded,
-}) => {
-  return (
-    <Box
-      className={styles.category}
-      boxShadow="subtle"
-      background="purple100"
-      borderRadius="large"
-    >
-      {main ? (
-        <MainCategoryHeader
-          title={title}
-          onClick={onClick}
-          isExpanded={isExpanded}
-        />
-      ) : (
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="spaceBetween"
-          className={styles.top}
-          paddingBottom={3}
-          marginBottom={3}
-          padding={3}
-        >
-          <Typography variant="h4">{title}</Typography>
-        </Box>
-      )}
-      <Box component="ul" padding={3} position="relative">
-        {items.map((item) => (
-          <Box component="li">
-            <Typography as="p" paddingBottom={2}>
-              <Link href={item.url}>{item.title}</Link>
-            </Typography>
-          </Box>
-        ))}
+}) => (
+  <Box
+    className={styles.category}
+    boxShadow="subtle"
+    background="purple100"
+    borderRadius="large"
+  >
+    {main ? (
+      <MainCategoryHeader
+        title={title}
+        onClick={onClick}
+        isExpanded={isExpanded}
+      />
+    ) : (
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="spaceBetween"
+        className={styles.top}
+        paddingBottom={3}
+        marginBottom={3}
+        padding={3}
+      >
+        <Typography variant="h4">{title}</Typography>
       </Box>
+    )}
+    <Box component="ul" padding={3} position="relative">
+      {items.map((item) => (
+        <Box component="li">
+          <Typography as="p" paddingBottom={2}>
+            <Link href={item.url}>{item.title}</Link>
+          </Typography>
+        </Box>
+      ))}
     </Box>
-  )
-}
+  </Box>
+)
 
 const DRAWER_HEADING_HEIGHT = 77
 const DRAWER_EXPANDED_PADDING_TOP = 44
 
 const DrawerMenu: React.FC<DrawerMenuProps> = ({ categories }) => {
   const [isExpanded, setIsExpanded] = useState(false)
-  const [mainCategory, ...rest] = categories
-  const [ref, { height }] = useMeasure()
   const { height: viewportHeight } = useWindowSize()
+  const [mainCategory, ...rest] = categories
   const offsetY = viewportHeight - DRAWER_HEADING_HEIGHT
-  console.log(isExpanded)
+
   return (
     <div
       className={styles.root}
-      ref={ref}
       style={{
         top: offsetY,
         transform: `translateY(${
