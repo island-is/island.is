@@ -1,15 +1,15 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Client } from './client.model'
+import { Client } from './models/client.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Counter } from 'prom-client'
 import { Sequelize } from 'sequelize-typescript'
-import { ClientAllowedScope } from './client-allowed-scope.model'
-import { ClientAllowedCorsOrigin } from './client-allowed-cors-origin.model'
-import { ClientRedirectUri } from './client-redirect-uri.model'
-import { ClientIdpRestrictions } from './client-idp-restrictions.model'
-import { ClientSecret } from './client-secret.model'
-import { ClientPostLogoutRedirectUri } from './client-post-logout-redirect-uri.model'
+import { ClientAllowedScope } from './models/client-allowed-scope.model'
+import { ClientAllowedCorsOrigin } from './models/client-allowed-cors-origin.model'
+import { ClientRedirectUri } from './models/client-redirect-uri.model'
+import { ClientIdpRestrictions } from './models/client-idp-restrictions.model'
+import { ClientSecret } from './models/client-secret.model'
+import { ClientPostLogoutRedirectUri } from './models/client-post-logout-redirect-uri.model'
 
 @Injectable()
 export class ClientsService {

@@ -22,7 +22,7 @@ module.exports = {
       creation_time TIMESTAMP WITH TIME ZONE DEFAULT now(),
       data  VARCHAR NOT NULL,
       expiration TIMESTAMP WITH TIME ZONE DEFAULT now(),
-      subject_id TIMESTAMP WITH TIME ZONE DEFAULT now(),
+      subject_id VARCHAR NOT NULL,
       type TIMESTAMP WITH TIME ZONE DEFAULT now(),
       created TIMESTAMP WITH TIME ZONE DEFAULT now(),
       modified TIMESTAMP WITH TIME ZONE,

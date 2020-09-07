@@ -113,7 +113,6 @@ module.exports = {
     var postRedirects = [{
       client_id: "postman",
       redirect_uri: "localhost:8080"
-
     }];
 
 

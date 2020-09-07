@@ -36,7 +36,7 @@ export class GrantsService {
 
   async removeAllAsync(subjectId: string, clientId: string): Promise<number> {
     this.logger.debug(
-      `Removing grants with subjectId - "${subjectId}"    and clientId - "${clientId}"`,
+      `Removing grants with subjectId - "${subjectId}" and clientId - "${clientId}"`,
     )
 
     return await this.grantModel.destroy({
