@@ -1,15 +1,17 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
+
+import { AuthModule, UserModule, CaseModule } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
-import { AuthModule, CaseModule } from './modules'
 
 @Module({
   imports: [
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
-    CaseModule,
     AuthModule,
+    UserModule,
+    CaseModule,
   ],
 })
 export class AppModule {}

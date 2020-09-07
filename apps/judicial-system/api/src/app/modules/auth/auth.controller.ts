@@ -1,22 +1,35 @@
-import { Body, Controller, Get, Inject, Post, Res } from '@nestjs/common'
 import jwt from 'jsonwebtoken'
-import { Entropy } from 'entropy-string'
 import IslandisLogin from 'islandis-login'
+import { Entropy } from 'entropy-string'
+import { uuid } from 'uuidv4'
+
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Post,
+  Res,
+  Query,
+  Req,
+} from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
 } from '@island.is/judicial-system/consts'
+
 import { environment } from '../../../environments'
 import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
-import { ApiTags } from '@nestjs/swagger'
+import { AuthService } from './auth.service'
 
 const { samlEntryPoint, audience: audienceUrl, jwtSecret } = environment.auth
 
 export const JWT_EXPIRES_IN_SECONDS = 1800
-
 export const ONE_HOUR = 60 * 60 * 1000
+const REDIRECT_COOKIE_NAME = 'judicial-system.redirect'
 
 const defaultCookieOptions: CookieOptions = {
   secure: environment.production,
@@ -24,7 +37,7 @@ const defaultCookieOptions: CookieOptions = {
   sameSite: 'lax',
 }
 
-export const CSRF_COOKIE: Cookie = {
+const CSRF_COOKIE: Cookie = {
   name: CSRF_COOKIE_NAME,
   options: {
     ...defaultCookieOptions,
@@ -32,9 +45,17 @@ export const CSRF_COOKIE: Cookie = {
   },
 }
 
-export const ACCESS_TOKEN_COOKIE: Cookie = {
+const ACCESS_TOKEN_COOKIE: Cookie = {
   name: ACCESS_TOKEN_COOKIE_NAME,
   options: defaultCookieOptions,
+}
+
+const REDIRECT_COOKIE: Cookie = {
+  name: REDIRECT_COOKIE_NAME,
+  options: {
+    ...defaultCookieOptions,
+    sameSite: 'none',
+  },
 }
 
 const loginIS = new IslandisLogin({
@@ -44,10 +65,13 @@ const loginIS = new IslandisLogin({
 @Controller('api/auth')
 @ApiTags('api/auth')
 export class AuthController {
-  constructor(@Inject(LOGGER_PROVIDER) private logger: Logger) {}
+  constructor(
+    private readonly authService: AuthService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
+  ) {}
 
   @Post('callback')
-  async callback(@Body('token') token, @Res() res) {
+  async callback(@Body('token') token, @Res() res, @Req() req) {
     this.logger.debug('Received callback request')
 
     let verifyResult: VerifyResult
@@ -55,27 +79,39 @@ export class AuthController {
       verifyResult = await loginIS.verify(token)
     } catch (err) {
       this.logger.error(err)
-      return res.redirect('/error')
+      return res.redirect('/')
     }
 
+    const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
     const { user } = verifyResult
-    if (!user) {
+    if (!user || (authId && user.authId !== authId)) {
       this.logger.error('Could not verify user authenticity', {
+        extra: {
+          authId,
+          userAuthId: user.authId,
+        },
+      })
+      return res.redirect('/')
+    }
+
+    const authUser = {
+      nationalId: user.kennitala,
+      name: user.fullname,
+      mobile: user.mobile,
+    }
+    if (!this.authService.validateUser(authUser)) {
+      this.logger.error('Unknown user', {
         extra: {
           user,
         },
       })
-      return res.redirect('/error')
+      return res.redirect('/')
     }
 
     const csrfToken = new Entropy({ bits: 128 }).string()
     const jwtToken = jwt.sign(
       {
-        user: {
-          nationalId: user.kennitala,
-          name: user.fullname,
-          mobile: user.mobile,
-        },
+        user: authUser,
         csrfToken,
       } as Credentials,
       jwtSecret,
@@ -84,10 +120,9 @@ export class AuthController {
 
     const tokenParts = jwtToken.split('.')
     if (tokenParts.length !== 3) {
-      return res.redirect('/error')
+      return res.redirect('/')
     }
 
-    this.logger.debug('Redirecting to gaesluvardhaldskrofur')
     const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
     return res
       .cookie(CSRF_COOKIE.name, csrfToken, {
@@ -98,16 +133,24 @@ export class AuthController {
         ...ACCESS_TOKEN_COOKIE.options,
         maxAge,
       })
-      .redirect('/gaesluvardhaldskrofur') // TODO: add back cookie
+      .redirect(returnUrl ?? '/gaesluvardhaldskrofur')
   }
 
   @Get('login')
-  login(@Res() res) {
+  login(@Res() res, @Query() query) {
     this.logger.debug('Received login request')
 
+    const { returnUrl } = query
+    const { name, options } = REDIRECT_COOKIE
+
+    res.clearCookie(name, options)
+
+    const authId = `&authId=${uuid()}`
     const electronicIdOnly = '&qaa=4'
 
-    res.redirect(`${samlEntryPoint}${electronicIdOnly}`)
+    return res
+      .cookie(name, { authId, returnUrl }, { ...options, maxAge: ONE_HOUR })
+      .redirect(`${samlEntryPoint}${authId}${electronicIdOnly}`)
   }
 
   @Get('logout')

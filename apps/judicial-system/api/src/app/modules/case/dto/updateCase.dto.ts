@@ -1,5 +1,6 @@
 import { IsString, IsOptional, IsEnum, IsDate } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
+
 import { CaseState } from '../case.model'
 
 export class UpdateCaseDto {

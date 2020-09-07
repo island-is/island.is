@@ -1,7 +1,7 @@
 export type AuthUser = {
   nationalId: string
-  mobile: string
   name: string
+  mobile: string
 }
 
 export type CookieOptions = {
@@ -24,10 +24,6 @@ export type VerifiedUser = {
   fullname: string
   mobile: string
   authId: string
-}
-
-export type Permissions = {
-  role?: 'developer' | 'admin' | 'tester' | 'user'
 }
 
 export type Credentials = {

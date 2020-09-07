@@ -1,9 +1,11 @@
+import { Strategy } from 'passport-jwt'
+
 import { Injectable, Inject } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
-import { Strategy } from 'passport-jwt'
 
 import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+
 import { environment } from '../../../environments'
 import { Credentials } from './auth.types'
 
@@ -25,10 +27,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   validate(req: Request, { csrfToken, user }: Credentials) {
-    if (csrfToken && `Bearer ${csrfToken}` !== req.headers['authorization']) {
-      this.logger.error('invalid csrf token')
-      return null
-    }
+    // if (csrfToken && `Bearer ${csrfToken}` !== req.headers['authorization']) {
+    //   this.logger.error('invalid csrf token')
+    //   return null
+    // }
 
     return user
   }

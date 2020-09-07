@@ -214,7 +214,7 @@ paths:
                 $ref: '#/components/schemas/Case'
       tags:
         - cases
-  /auth/callback:
+  /api/auth/callback:
     post:
       operationId: AuthController_callback
       parameters: []
@@ -222,8 +222,8 @@ paths:
         '201':
           description: ''
       tags:
-        - auth
-  /auth/login:
+        - api/auth
+  /api/auth/login:
     get:
       operationId: AuthController_login
       parameters: []
@@ -231,8 +231,8 @@ paths:
         '200':
           description: ''
       tags:
-        - auth
-  /auth/logout:
+        - api/auth
+  /api/auth/logout:
     get:
       operationId: AuthController_logout
       parameters: []
@@ -240,4 +240,4 @@ paths:
         '200':
           description: ''
       tags:
-        - auth
+        - api/auth

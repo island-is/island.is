@@ -20,25 +20,13 @@ describe('AuthService', () => {
     authService = moduleRef.get(AuthService)
   })
 
-  describe('getRole', () => {
-    it('should return a correct role', () => {
+  describe('validateUser', () => {
+    it('should be an unknown user', () => {
       // Arrange & Act
-      const role = authService.getRole(user)
+      const role = authService.validateUser(user)
 
       // Assert
-      expect(role).toBe('developer')
-    })
-  })
-
-  describe('checkPermissions', () => {
-    it('should return true for valid permission', () => {
-      // Arrange & Act
-      const hasPermission = authService.checkPermissions(user, {
-        role: 'admin',
-      })
-
-      // Assert
-      expect(hasPermission).toBeTruthy()
+      expect(role).toBeNull()
     })
   })
 })
