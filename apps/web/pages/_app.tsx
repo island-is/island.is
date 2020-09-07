@@ -8,6 +8,8 @@ import { NextComponentType } from 'next'
 import { withErrorBoundary } from '../units/ErrorBoundary'
 import { ApolloClient } from '@apollo/client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
+import fetch from 'isomorphic-unfetch'
+import getConfig from 'next/config'
 
 interface AppCustomProps extends AppProps {
   layoutProps: any
@@ -35,6 +37,30 @@ const SupportApplication: NextComponentType<
 
 SupportApplication.getInitialProps = async ({ Component, ctx }) => {
   const apolloClient = initApollo({})
+
+  // healthchecks
+  if (ctx.req.url === '/readiness') {
+    // check if we have contact with api
+    const { serverRuntimeConfig } = getConfig()
+    const { graphqlUrl } = serverRuntimeConfig
+
+    // this will throw when it cant connect, we dont need to know why we cant connect here
+    const { status } = await fetch(
+      `${graphqlUrl}/.well-known/apollo/server-health`,
+    ).catch(() => ({ status: 500 }))
+
+    // forward the api status code as readiness status code
+    ctx.res.statusCode = status
+    ctx.res.end('')
+    return null
+  }
+
+  if (ctx.req.url === '/lifeliness') {
+    ctx.res.statusCode = 200
+    ctx.res.end('')
+    return null
+  }
+
   const customContext = {
     ...ctx,
     apolloClient,
