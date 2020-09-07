@@ -2,7 +2,7 @@ import { logger } from '@island.is/logging'
 import { environment, } from '../environments/environment'
 import * as aws from './aws'
 import * as dictionary from './dictionary'
-import * as elastic from './elastic'
+//import * as elastic from './elastic'
 
 
 class App {
@@ -49,7 +49,7 @@ class App {
   }
 
   private async migrateES(packageIds: aws.AwsEsPackage[]) {
-    await elastic.checkAccess() // this throws if there is no connection
+    // await elastic.checkAccess() // this throws if there is no connection an hence ensures we dont continue
 
     logger.info('starting ES migration', { packageIds })
     logger.info('Ran!')

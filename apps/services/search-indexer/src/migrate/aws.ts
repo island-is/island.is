@@ -185,19 +185,19 @@ export const updateS3DictionaryFiles = async (dictionaries: Dictionary[]): Promi
   return Promise.all(uploads)
 }
 
-const getDomainPackagesDetails = async () => {
+const getAwsEsPackagesDetails = async () => {
   logger.info('geting all domain packages', { domain: environment.migrate.esDomain })
-  const domainPackagesList = await awsEs
-    .listPackagesForDomain({
-      DomainName: environment.migrate.esDomain,
-    }).promise()
+  const packages = await awsEs
+    .describePackages()
+    .promise()
 
-  return domainPackagesList.DomainPackageDetailsList
+  return packages.PackageDetailsList
 }
 
 const removePackagesIfExist = async (uploadedDictionaryFiles: S3DictionaryFile[], version: string) => {
-  const domainPackages = await getDomainPackagesDetails()
+  const domainPackages = await getAwsEsPackagesDetails()
 
+  logger.info('checking if we have conflicting packages')
   // search domainPackages to check of any package exist
   const responses = uploadedDictionaryFiles.map(async (uploadedFile) => {
     const { analyzerType, locale } = uploadedFile
