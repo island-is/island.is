@@ -17,11 +17,18 @@ if (!isBrowser) {
 }
 
 function create(initialState?: any) {
-  const httpLink = new BatchHttpLink({
-    uri:
-      serverRuntimeConfig.graphqlEndpoint ||
-      publicRuntimeConfig.graphqlEndpoint,
-  })
+  // handle server vs client side calls
+  const {
+    graphqlUrl: graphqlServerUrl,
+    graphqlEndpoint: graphqlServerEndpoint,
+  } = serverRuntimeConfig
+  const {
+    graphqlUrl: graphqlClientUrl,
+    graphqlEndpoint: graphqlClientEndpoint,
+  } = publicRuntimeConfig
+  const graphqlUrl = graphqlServerUrl || graphqlClientUrl
+  const graphqlEndpoint = graphqlServerEndpoint || graphqlClientEndpoint
+  const httpLink = new BatchHttpLink({ uri: `${graphqlUrl}${graphqlEndpoint}` })
 
   // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
   return new ApolloClient({
