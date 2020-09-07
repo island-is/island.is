@@ -5,10 +5,10 @@ import { NextComponentType, NextPageContext } from 'next'
 
 import {
   Box,
-  ContentBlock,
   Footer,
   Page,
   FooterLinkProps,
+  GridContainer,
 } from '@island.is/island-ui/core'
 
 import { ErrorBoundary, Header } from '../../components'
@@ -96,11 +96,9 @@ export const AppLayout: NextComponentType<
           />
           <title>Ísland.is</title>
         </Head>
-        <Box paddingX="gutter">
-          <ContentBlock>
-            <Header routeKey={routeKey} />
-          </ContentBlock>
-        </Box>
+        <GridContainer>
+          <Header routeKey={routeKey} />
+        </GridContainer>
         <Box paddingTop={[5, 5, 9]} paddingBottom={[7, 7, 12]}>
           <ErrorBoundary>{children}</ErrorBoundary>
         </Box>

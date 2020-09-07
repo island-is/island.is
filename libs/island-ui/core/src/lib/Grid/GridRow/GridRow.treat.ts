@@ -7,8 +7,8 @@ export const gridRow = style({
   flex: '0 1 auto',
   flexDirection: 'row',
   flexWrap: 'wrap',
-  marginLeft: `-${theme.grid.gutter.mobile}px`,
-  marginRight: `-${theme.grid.gutter.mobile}px`,
+  marginLeft: `-${theme.grid.gutter.mobile / 2}px`,
+  marginRight: `-${theme.grid.gutter.mobile / 2}px`,
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
