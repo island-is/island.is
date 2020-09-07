@@ -1,5 +1,4 @@
 import React from 'react'
-import Link from 'next/link'
 import Head from 'next/head'
 import { Layout, Header } from '../../components'
 import { 
@@ -7,6 +6,7 @@ import {
   ContentBlock, 
   Box, 
   Breadcrumbs, 
+  Link,
   Stack, 
   Typography, 
   Button, 
@@ -60,11 +60,11 @@ function DesignGuide() {
                 </Typography>
               </Stack>
               <Stack space={3}>
-                <a href="https://github.com/island-is/handbook/tree/feature/add-api-design-guide-structure/docs/api-design-guide">
+                <Link href="https://github.com/island-is/handbook/tree/feature/add-api-design-guide-structure/docs/api-design-guide">
                   <Button variant="normal" icon="external">
                     View the API Design Guide on GitHub
                   </Button>
-                </a>
+                </Link>
               </Stack>
             </Stack>
           </Box>
