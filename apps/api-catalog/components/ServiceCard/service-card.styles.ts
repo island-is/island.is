@@ -1,3 +1,8 @@
+//import { blue100 } from '@island.is/island-ui/theme';
+//import { relative } from 'path';
+//import { CSSProperties } from 'treat/lib/types';
+
+//import { right } from 'libs/island-ui/core/src/lib/Timeline/Timeline.treat';
 
 const sharedStyles = {
   item:{
@@ -14,16 +19,17 @@ const sharedStyles = {
 const styles = {
     card:{
         paddingLeft:40,
-        paddingTop:40,
+        paddingTop:0,
         paddingBottom:40
     },
     owner:{
         fontSize:32,
-        marginBottom:20
+        marginTop:20
     },
     name:{
         fontSize:16,
-        marginBottom:20
+        marginTop:20,
+        marginBottom:20,
 
     },
     category:{
@@ -69,6 +75,20 @@ const styles = {
         paddingRight:sharedStyles.item.paddingRight,
         marginRight:sharedStyles.item.marginRight,
         fontSize:sharedStyles.item.fontSize
+    },
+    serviceTexts: {
+        
+    },
+    serviceStatusContainer: {
+        display:'flex',
+        justifyContent:'space-between',
+    },
+    serviceStatus: {
+        width:50,
+        height:50,
+        borderBottomLeftRadius:50,
+        borderTopRightRadius:8,
+        background:'gray'
     }
 };
 
