@@ -23,7 +23,7 @@ interface DatePickerProps {
   locale?: Locale
   value?: ReactDatePickerProps['value']
   minDate?: ReactDatePickerProps['minDate']
-  handleChange?: () => void
+  handleChange?: (date: Date) => void
   onInputClick?: ReactDatePickerProps['onInputClick']
 }
 
@@ -104,7 +104,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         onCalendarClose={() => setDatePickerState('closed')}
         onChange={(date: Date) => {
           setStartDate(date)
-          handleChange()
+          handleChange(date)
         }}
         customInput={
           <CustomInput

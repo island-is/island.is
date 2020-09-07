@@ -12,7 +12,7 @@ export const Basic = () => {
       label="Date"
       placeholderText="Pick a date"
       minDate={new Date()}
-      handleChange={() => console.log('change')}
+      handleChange={(date: Date) => console.log(date)}
     />
   )
 }
@@ -32,7 +32,7 @@ export const Locales = () => {
           label="Dagsetning"
           placeholderText="Veldu dagsetningu"
           locale="is"
-          handleChange={() => console.log('change')}
+          handleChange={(date: Date) => console.log(date)}
         />
       </div>
       <div>
@@ -40,7 +40,7 @@ export const Locales = () => {
           label="Data"
           placeholderText="Wybierz datę"
           locale="pl"
-          handleChange={() => console.log('change')}
+          handleChange={(date: Date) => console.log(date)}
         />
       </div>
     </>
