@@ -1,9 +1,14 @@
 import { useQuery } from '@apollo/client'
 import { Query, QueryListDocumentsArgs } from '@island.is/api/schema'
-import { LIST_DOCUMENTS } from '..'
+import { LIST_DOCUMENTS } from '../..'
 import { useState } from 'react'
 
-export const useListDocuments = (natReg: string, page = 1, pageSize = 10) => {
+export const useListDocuments = (
+  natReg: string,
+  page = 1,
+  pageSize = 10,
+  category = '',
+) => {
   const [dateFrom] = useState(new Date(2010))
   const [dateTo] = useState(new Date())
   const { data, loading, error } = useQuery<Query, QueryListDocumentsArgs>(
@@ -16,7 +21,7 @@ export const useListDocuments = (natReg: string, page = 1, pageSize = 10) => {
           natReg,
           dateFrom,
           dateTo,
-          category: '',
+          category,
         },
       },
     },

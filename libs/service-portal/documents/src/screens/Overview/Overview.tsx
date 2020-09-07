@@ -9,8 +9,12 @@ import {
   Select,
   Input,
   Pagination,
+  Option,
 } from '@island.is/island-ui/core'
-import { useListDocuments } from '@island.is/service-portal/graphql'
+import {
+  useListDocuments,
+  useDocumentCategories,
+} from '@island.is/service-portal/graphql'
 import {
   ActionMenuItem,
   useScrollTopOnUpdate,
@@ -19,6 +23,8 @@ import {
 import { ActionCard, ActionCardLoader } from '@island.is/service-portal/core'
 import AnimateHeight from 'react-animate-height'
 import * as styles from './Overview.treat'
+
+const defaultCategory = { label: 'Allir flokkar', value: '' }
 
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
@@ -30,19 +36,22 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     dateFrom: '',
     dateTo: '',
   })
+  const [activeCategory, setActiveCategory] = useState<Option>(defaultCategory)
   const { data, loading, error } = useListDocuments(
     userInfo.user.profile.natreg,
     page,
     4,
+    activeCategory?.value.toString() || '',
   )
+  const { data: cats } = useDocumentCategories()
   useScrollTopOnUpdate([page])
 
-  const categories = [
-    { label: 'Allir flokkar', value: '' },
-    { label: 'Fjármál', value: 'Fjármál' },
-    { label: 'Húsnæði og eignir', value: 'Húsnæði og eignir' },
-    { label: 'Starfsleyfi', value: 'Starfsleyfi' },
-  ]
+  const categories = [defaultCategory].concat(
+    cats?.map((x) => ({
+      label: x.name,
+      value: x.id,
+    })),
+  )
 
   const handleExtendSearchClick = () => {
     if (searchOpen) {
@@ -65,6 +74,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   }
 
   const handlePageChange = (page: number) => setPage(page)
+  const handleCategoryChange = (cat: Option) => setActiveCategory(cat)
 
   return (
     <>
@@ -89,6 +99,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                     name="categories"
                     defaultValue={categories[0]}
                     options={categories}
+                    value={activeCategory}
+                    onChange={handleCategoryChange}
                   />
                 </div>
                 <Column width="content">
@@ -139,16 +151,24 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             </div>
             {loading && <ActionCardLoader repeat={3} />}
             {error && (
-              <Typography variant="h3">
-                Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis
-              </Typography>
+              <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
+                <Typography variant="h3">
+                  Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis
+                </Typography>
+              </Box>
+            )}
+            {!loading && !error && data?.length === 0 && (
+              <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
+                <Typography variant="h3">
+                  Engin skjöl fundust fyrir gefin leitarskilyrði
+                </Typography>
+              </Box>
             )}
             {data?.map((document) => (
               <ActionCard
                 title={document.subject}
                 date={new Date(document.date)}
                 label={document.senderName}
-                text={'Hérna gæti komið texti um skjalið ef hann væri í boði'}
                 url="https://island.is/"
                 external
                 key={document.id}
@@ -157,11 +177,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                     <ActionMenuItem>Fela skjal</ActionMenuItem>
                     <ActionMenuItem>Eyða skjali</ActionMenuItem>
                   </>
-                )}
-                buttonRender={() => (
-                  <Button variant="ghost" size="small" leftIcon="file">
-                    Sakavottorð
-                  </Button>
                 )}
               />
             ))}

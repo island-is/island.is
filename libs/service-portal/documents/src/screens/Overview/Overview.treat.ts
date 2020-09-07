@@ -8,7 +8,7 @@ export const selectWrapper = style({
       width: '50%',
     },
     lg: {
-      width: '30%',
+      width: '35%',
     },
   }),
 })
