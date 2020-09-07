@@ -11,9 +11,9 @@ interface TooltipProps {
 
 const Tooltip: FC<TooltipProps> = ({ style, atEnd = false, children }) => (
   <Box
-    style={style}
     data-test="slider-tooltip"
     className={styles.TooltipContainer}
+    style={style}
   >
     <Box
       className={styles.TooltipBox}
