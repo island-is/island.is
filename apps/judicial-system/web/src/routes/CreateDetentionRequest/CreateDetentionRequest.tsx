@@ -8,6 +8,9 @@ import {
   GridColumn,
   Input,
   Box,
+  Select,
+  Option,
+  Button,
 } from '@island.is/island-ui/core'
 import { WorkingCase } from '../../types'
 import * as api from '../../api'
@@ -49,8 +52,6 @@ export const CreateDetentionRequest: React.FC = () => {
   }
 
   const autoSave = async (caseField: string, caseFieldValue: string) => {
-    console.log('existing value' + workingCase.case[caseField])
-    console.log('new value' + caseFieldValue)
     // Only save if the field has changes and the case exists
     if (
       workingCase.case[caseField] !== caseFieldValue &&
@@ -138,6 +139,74 @@ export const CreateDetentionRequest: React.FC = () => {
               <Box marginBottom={3}>
                 <Input name="suspectAddress" label="Lögheimili/dvalarstaður" />
               </Box>
+            </Box>
+            <Box component="section" marginBottom={7}>
+              <Box marginBottom={2}>
+                <Typography as="h3" variant="h3">
+                  Dómstóll
+                </Typography>
+              </Box>
+              <Select
+                name="court"
+                label="Veldu dómstól"
+                defaultValue={{
+                  label: 'Héraðsdómur Reykjavíkur',
+                  value: 0,
+                }}
+                options={[
+                  {
+                    label: 'Héraðsdómur Reykjavíkur',
+                    value: 0,
+                  },
+                  {
+                    label: 'Héraðsdómur Vesturlands',
+                    value: 1,
+                  },
+                  {
+                    label: 'Héraðsdómur Vestfjarða',
+                    value: 2,
+                  },
+                  {
+                    label: 'Héraðsdómur Norðurlands vestra',
+                    value: 3,
+                  },
+                  {
+                    label: 'Héraðsdómur Norðurlands eystra',
+                    value: 4,
+                  },
+                  {
+                    label: 'Héraðsdómur Austurlands',
+                    value: 5,
+                  },
+                  {
+                    label: 'Héraðsdómur Reykjaness',
+                    value: 6,
+                  },
+                ]}
+                onChange={({ label }: Option) => {
+                  autoSave('court', label)
+                }}
+              />
+            </Box>
+            <Box component="section" marginBottom={7}>
+              <Box marginBottom={2}>
+                <Typography as="h3" variant="h3">
+                  Tími handtöku
+                </Typography>
+              </Box>
+            </Box>
+            <Box component="section" marginBottom={7}>
+              <Box marginBottom={2}>
+                <Typography as="h3" variant="h3">
+                  Ósk um fyrirtökudag og tíma
+                </Typography>
+              </Box>
+            </Box>
+            <Box display="flex" justifyContent="spaceBetween">
+              <Button variant="ghost" href="/">
+                Til baka
+              </Button>
+              <Button icon="arrowRight">Halda áfram</Button>
             </Box>
           </GridColumn>
         </GridRow>
