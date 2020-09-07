@@ -36,17 +36,18 @@ class App {
       logger.info('Dictionary version missmatch, updating dictionary', { repoVersion: repoDictionaryVersion, awsVersion: awsDictionaryVersion })
       const dictionaries = await dictionary.getDictionaryFiles() // get files form dictionary repo
       const uploadedS3Files = await aws.updateS3DictionaryFiles(dictionaries) // upload repo files to s3
-      const packageIds = await aws.createAwsEsPackages(uploadedS3Files, repoDictionaryVersion) // create packages for the new files in AWS ES
-      await aws.associatePackagesWithAwsEs(packageIds) // attach the new packages to our AWS ES instance
+      const esPackages = await aws.createAwsEsPackages(uploadedS3Files, repoDictionaryVersion) // create packages for the new files in AWS ES
+      await aws.associatePackagesWithAwsEs(esPackages) // attach the new packages to our AWS ES instance
       await aws.updateDictionaryVersion(repoDictionaryVersion) // update version file last to ensure process runs again on failure
-      return packageIds // es config needs the package ids when generating the index template
+      return esPackages // es config needs the package ids when generating the index template
     } else {
       logger.info('no need to update dictionary, getting current package ids')
-      // TODO: Get all package ids here and return <- next
+      return aws.getAllDomainEsPackages()
     }
   }
 
   private async migrateES(packageIds: AwsEsPackage[]) {
+    logger.info('starting ES migration', { packageIds })
     logger.info('Ran!')
     return true
   }

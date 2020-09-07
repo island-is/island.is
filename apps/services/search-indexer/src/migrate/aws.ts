@@ -4,6 +4,7 @@ import { PutObjectRequest } from 'aws-sdk/clients/s3'
 import { environment } from '../environments/environment'
 import _ from 'lodash'
 import { Dictionary } from './dictionary'
+import { localeIS } from 'date-fns/locale/is';
 
 AWS.config.update({ region: environment.migrate.awsRegion })
 const awsEs = new AWS.ES()
@@ -13,6 +14,21 @@ const sleep = (sec: number) => {
   return new Promise((resolve) => {
     setTimeout(resolve, sec * 1000)
   })
+}
+
+// construct the name used for packages in AWS ES
+const createPackageName = (locale: string, analyzerType: string, version: string) => {
+  return `${locale}-${analyzerType}-${version}`
+}
+
+// break down the name used for packages in AWS ES
+const parsePackageName = (packageName: string) => {
+  const [locale, analyzerType, version] = packageName.split('-')
+  return {
+    locale,
+    analyzerType,
+    version
+  }
 }
 
 interface PackageStatus {
@@ -45,6 +61,22 @@ const getPackageStatuses = async (packageId: string): Promise<PackageStatus> => 
     packageStatus: packages.PackageDetailsList[0].PackageStatus,
     domainStatus: foundPackage?.DomainPackageStatus ?? 'NONE'
   }
+}
+
+export const getAllDomainEsPackages = async (): Promise<AwsEsPackage[]> => {
+  const domainPackageList = await awsEs
+    .listPackagesForDomain({
+      DomainName: environment.migrate.esDomain,
+    })
+    .promise()
+  return domainPackageList.DomainPackageDetailsList.map((esPackage) => {
+    const { locale, analyzerType } = parsePackageName(esPackage.PackageName)
+    return {
+      packageId: esPackage.PackageID,
+      locale,
+      analyzerType
+    }
+  })
 }
 
 // AWS ES wont let us make multiple requests at once so we wait
@@ -123,14 +155,16 @@ export const getDictionaryVersion = (): Promise<string> => {
     })
 }
 
-// TODO: Handle error on upload here
 const uploadFileToS3 = (options: Omit<PutObjectRequest, 'Bucket'>) => {
   const params = {
     Bucket: environment.migrate.s3Bucket,
     ...options
   }
   logger.info('uploading file to s3', { Bucket: params.Bucket, Key: params.Key })
-  return s3.upload(params).promise()
+  return s3.upload(params).promise().catch((error) => {
+    logger.error('failed to upload s3 package', error)
+    throw error
+  })
 }
 
 interface S3DictionaryFile {
@@ -159,11 +193,6 @@ const getDomainPackagesDetails = async () => {
     }).promise()
 
   return domainPackagesList.DomainPackageDetailsList
-}
-
-// the name used for packages in AWS ES
-const createPackageName = (locale: string, analyzerType: string, version: string) => {
-  return `${locale}-${analyzerType}-${version}-test1`
 }
 
 const removePackagesIfExist = async (uploadedDictionaryFiles: S3DictionaryFile[], version: string) => {
