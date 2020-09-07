@@ -5,8 +5,9 @@ import {
   ServicePortalModuleComponent,
   ServicePortalPath,
 } from '@island.is/service-portal/core'
-import { ActionCard, ActionCardLoader } from '@island.is/service-portal/core'
+import { ActionCardLoader } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
+import DocumentCard from '../components/DocumentCard/DocumentCard'
 
 const pageSize = 2
 
@@ -36,14 +37,7 @@ export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
           </Box>
         )}
         {data?.map((document) => (
-          <ActionCard
-            title={document.subject}
-            date={new Date(document.date)}
-            label={document.senderName}
-            url="https://island.is/"
-            external
-            key={document.id}
-          />
+          <DocumentCard key={document.id} document={document} />
         ))}
       </Stack>
       <Box display="flex" justifyContent="flexEnd" marginTop={3}>

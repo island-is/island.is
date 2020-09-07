@@ -10,6 +10,7 @@ export const OidcSignIn: FC = () => {
   const [, dispatch] = useStore()
 
   useEffect(() => {
+    console.log(window.location.href)
     userManager
       .signinCallback(window.location.href)
       .then(function(user) {

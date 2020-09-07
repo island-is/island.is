@@ -16,13 +16,13 @@ import {
   useDocumentCategories,
 } from '@island.is/service-portal/graphql'
 import {
-  ActionMenuItem,
   useScrollTopOnUpdate,
   ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import { ActionCard, ActionCardLoader } from '@island.is/service-portal/core'
+import { ActionCardLoader } from '@island.is/service-portal/core'
 import AnimateHeight from 'react-animate-height'
 import * as styles from './Overview.treat'
+import DocumentCard from '../../components/DocumentCard/DocumentCard'
 
 const defaultCategory = { label: 'Allir flokkar', value: '' }
 const pageSize = 4
@@ -121,7 +121,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   borderRadius="large"
                   marginTop={2}
                 >
-                  <Columns space={2}>
+                  <Columns space={2} collapseBelow="sm">
                     <Column>
                       <Input
                         name="search"
@@ -166,20 +166,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
               </Box>
             )}
             {data?.map((document) => (
-              <ActionCard
-                title={document.subject}
-                date={new Date(document.date)}
-                label={document.senderName}
-                url="https://island.is/"
-                external
-                key={document.id}
-                actionMenuRender={() => (
-                  <>
-                    <ActionMenuItem>Fela skjal</ActionMenuItem>
-                    <ActionMenuItem>Eyða skjali</ActionMenuItem>
-                  </>
-                )}
-              />
+              <DocumentCard key={document.id} document={document} />
             ))}
             <Pagination
               page={page}
