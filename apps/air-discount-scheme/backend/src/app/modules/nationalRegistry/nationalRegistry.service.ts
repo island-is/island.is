@@ -48,6 +48,17 @@ const TEST_USERS: NationalRegistryUser[] = [
     city: 'Vestmannaeyjar',
   },
   {
+    // Gervibarn Arnar
+    nationalId: '1508154790',
+    firstName: 'Arnar',
+    middleName: '',
+    lastName: 'Sigurðarson',
+    gender: 'kk',
+    address: 'Vallargata 1',
+    postalcode: 900,
+    city: 'Vestmannaeyjar',
+  },
+  {
     // Gervimadur Afríka
     nationalId: '0101303019',
     firstName: 'Gervimaður',
