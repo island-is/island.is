@@ -25,6 +25,7 @@ import AnimateHeight from 'react-animate-height'
 import * as styles from './Overview.treat'
 
 const defaultCategory = { label: 'Allir flokkar', value: '' }
+const pageSize = 4
 
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
@@ -40,7 +41,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   const { data, loading, error } = useListDocuments(
     userInfo.user.profile.natreg,
     page,
-    4,
+    pageSize,
     activeCategory?.value.toString() || '',
   )
   const { data: cats } = useDocumentCategories()
@@ -182,7 +183,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             ))}
             <Pagination
               page={page}
-              totalPages={10}
+              totalPages={data?.length === pageSize ? page + 1 : page}
               renderLink={(page, className, children) => (
                 <button
                   className={className}
