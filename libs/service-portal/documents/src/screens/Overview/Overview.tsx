@@ -5,23 +5,31 @@ import {
   Stack,
   Columns,
   Column,
-  SkeletonLoader,
   Button,
   Select,
   Input,
   Pagination,
+  Option,
 } from '@island.is/island-ui/core'
-import { useQuery } from '@apollo/client'
-import { GET_DOCUMENT } from '@island.is/service-portal/graphql'
-import { Query, QueryGetDocumentArgs } from '@island.is/api/schema'
 import {
-  ActionMenuItem,
+  useListDocuments,
+  useDocumentCategories,
+} from '@island.is/service-portal/graphql'
+import {
   useScrollTopOnUpdate,
+  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import { ActionCard } from '@island.is/service-portal/core'
+import { ActionCardLoader } from '@island.is/service-portal/core'
 import AnimateHeight from 'react-animate-height'
+import * as styles from './Overview.treat'
+import DocumentCard from '../../components/DocumentCard/DocumentCard'
 
-export const ServicePortalDocuments = () => {
+const defaultCategory = { label: 'Allir flokkar', value: '' }
+const pageSize = 4
+
+export const ServicePortalDocuments: ServicePortalModuleComponent = ({
+  userInfo,
+}) => {
   const [page, setPage] = useState(1)
   const [searchOpen, setSearchOpen] = useState(false)
   const [filterValue, setFilterValue] = useState({
@@ -29,24 +37,22 @@ export const ServicePortalDocuments = () => {
     dateFrom: '',
     dateTo: '',
   })
-  const { data, loading, error } = useQuery<Query, QueryGetDocumentArgs>(
-    GET_DOCUMENT,
-    {
-      variables: {
-        input: {
-          id: '12456',
-        },
-      },
-    },
+  const [activeCategory, setActiveCategory] = useState<Option>(defaultCategory)
+  const { data, loading, error } = useListDocuments(
+    userInfo.user.profile.natreg,
+    page,
+    pageSize,
+    activeCategory?.value.toString() || '',
   )
-  const document = data?.getDocument
+  const { data: cats } = useDocumentCategories()
   useScrollTopOnUpdate([page])
 
-  const categories = [
-    { label: 'Fjármál', value: 'Fjármál' },
-    { label: 'Húsnæði og eignir', value: 'Húsnæði og eignir' },
-    { label: 'Starfsleyfi', value: 'Starfsleyfi' },
-  ]
+  const categories = [defaultCategory].concat(
+    cats?.map((x) => ({
+      label: x.name,
+      value: x.id,
+    })),
+  )
 
   const handleExtendSearchClick = () => {
     if (searchOpen) {
@@ -69,6 +75,7 @@ export const ServicePortalDocuments = () => {
   }
 
   const handlePageChange = (page: number) => setPage(page)
+  const handleCategoryChange = (cat: Option) => setActiveCategory(cat)
 
   return (
     <>
@@ -87,14 +94,16 @@ export const ServicePortalDocuments = () => {
         <Box marginTop={[1, 1, 2, 2, 6]}>
           <Stack space={2}>
             <div>
-              <Columns align="right" space={1}>
-                <Column width="1/3">
+              <Columns align="right" space={1} collapseBelow="sm">
+                <div className={styles.selectWrapper}>
                   <Select
                     name="categories"
                     defaultValue={categories[0]}
                     options={categories}
+                    value={activeCategory}
+                    onChange={handleCategoryChange}
                   />
-                </Column>
+                </div>
                 <Column width="content">
                   <Button
                     icon={searchOpen ? 'close' : 'search'}
@@ -112,7 +121,7 @@ export const ServicePortalDocuments = () => {
                   borderRadius="large"
                   marginTop={2}
                 >
-                  <Columns space={2}>
+                  <Columns space={2} collapseBelow="sm">
                     <Column>
                       <Input
                         name="search"
@@ -141,43 +150,27 @@ export const ServicePortalDocuments = () => {
                 </Box>
               </AnimateHeight>
             </div>
-            {loading && <SkeletonLoader height={147} repeat={4} space={2} />}
+            {loading && <ActionCardLoader repeat={3} />}
             {error && (
-              <Typography variant="h3">
-                Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis
-              </Typography>
+              <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
+                <Typography variant="h3">
+                  Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis
+                </Typography>
+              </Box>
             )}
-            {document && (
-              <>
-                {[...Array(4)].map((_key, index) => (
-                  <ActionCard
-                    title={document.subject}
-                    date={new Date(document.date)}
-                    label={document.senderName}
-                    text={
-                      'Vottorð um skuldleysi til þess að gera grein fyrir þinni skuldarstöðu gagnvart ríkinu'
-                    }
-                    url="https://island.is/"
-                    external
-                    key={index}
-                    actionMenuRender={() => (
-                      <>
-                        <ActionMenuItem>Fela skjal</ActionMenuItem>
-                        <ActionMenuItem>Eyða skjali</ActionMenuItem>
-                      </>
-                    )}
-                    buttonRender={() => (
-                      <Button variant="ghost" size="small" leftIcon="file">
-                        Sakavottorð
-                      </Button>
-                    )}
-                  />
-                ))}
-              </>
+            {!loading && !error && data?.length === 0 && (
+              <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
+                <Typography variant="h3">
+                  Engin skjöl fundust fyrir gefin leitarskilyrði
+                </Typography>
+              </Box>
             )}
+            {data?.map((document) => (
+              <DocumentCard key={document.id} document={document} />
+            ))}
             <Pagination
               page={page}
-              totalPages={10}
+              totalPages={data?.length === pageSize ? page + 1 : page}
               renderLink={(page, className, children) => (
                 <button
                   className={className}

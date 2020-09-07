@@ -1717,6 +1717,17 @@
             "passWithNoTests": true
           }
         },
+        "translations": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "quicktype is.json -o translation.d.ts --top-level Translation"
+              }
+            ],
+            "cwd": "apps/air-discount-scheme/web/i18n/locales"
+          }
+        },
         "docker-next": {}
       }
     },
