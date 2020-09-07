@@ -11,6 +11,11 @@ import {
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { ClientAllowedScope } from './client-allowed-scope.model'
+import { ClientAllowedCorsOrigin } from './client-allowed-cors-origin.model'
+import { ClientPostLogoutRedirectUri } from './client-post-logout-redirect-uri.model'
+import { ClientRedirectUri } from './client-redirect-uri.model'
+import { ClientIdpRestrictions } from './client-idp-restrictions.model'
+import { ClientSecret } from './client-secret.model'
 
 @Table({
   tableName: 'client',
@@ -291,5 +296,22 @@ export class Client extends Model<Client> {
 
   @HasMany(() => ClientAllowedScope)
   @ApiProperty()
-  readonly clientAllowedScope: ClientAllowedScope[]
+  readonly allowedScopes: ClientAllowedScope[]
+
+  @HasMany(() => ClientAllowedCorsOrigin)
+  @ApiProperty()
+  readonly allowedCorsOrigin: ClientAllowedCorsOrigin[]
+
+  @HasMany(() => ClientPostLogoutRedirectUri)
+  @ApiProperty()
+  readonly postLogoutRedirectUri
+
+  @HasMany( () => ClientRedirectUri)
+  readonly redirectUris: ClientRedirectUri
+
+  @HasMany( () => ClientIdpRestrictions)
+  readonly identityProviderRestrictions: ClientIdpRestrictions
+
+  @HasMany( () => ClientSecret)
+  readonly clientSecrets: ClientSecret
 }

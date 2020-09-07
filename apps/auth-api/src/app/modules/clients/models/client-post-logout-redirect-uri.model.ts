@@ -15,11 +15,12 @@ import { Client } from './client.model'
   tableName: 'client_post_logout_redirect_uri',
   indexes: [
     {
-      fields: ['client_id'],
+      fields: ['client_id', 'redirectUri'],
     },
   ],
 })
 export class ClientPostLogoutRedirectUri extends Model<ClientPostLogoutRedirectUri> {
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -28,6 +29,7 @@ export class ClientPostLogoutRedirectUri extends Model<ClientPostLogoutRedirectU
   @ApiProperty()
   clientId: string
 
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,

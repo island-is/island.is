@@ -61,12 +61,92 @@ module.exports = {
       },
     ];
 
-    return Promise.all([queryInterface.bulkInsert('client', clients, {}), queryInterface.bulkInsert('client_allowed_scope', scopes, {})]);
+    var cors = [
+      {
+        client_id: 'postman',
+        origin: 'localhost'
+      }
+    ];
+
+    var clientIdbRestrictions = [
+      {
+        name: "islykill",
+        client_id: "postman",
+      },
+      {
+        name: "dockobit",
+        client_id: "postman",
+      }
+    ];
+
+    var redirectUri = [
+      {
+        client_id: 'postman',
+        redirect_uri: 'https://localhost:5001/signin-adfs'
+      },
+      {
+        client_id: 'postman',
+        redirect_uri: 'https://postman'
+      },
+      {
+        client_id: 'postman',
+        redirect_uri: 'https://oauth.pstmn.io/v1/callback'
+      },
+    ];
+
+    var secrets = [{
+      client_id: 'postman',
+      value: 'postman-secret',
+      description: "secret for postman",
+      expiration: new Date(),
+      type: "Mobile app"
+    },
+    {
+      client_id: 'postman',
+      value: 'postman-secret-2',
+      description: "second secret for postman",
+      expiration: new Date(),
+      type: "Native app"
+    },
+    ];
+
+    var postRedirects = [{
+      client_id: "postman",
+      redirect_uri: "localhost:8080"
+    }];
+
+
+    return new Promise((resolve, reject) => {
+      queryInterface.bulkInsert('client', clients, {}).then(result => {
+        Promise.all([
+          queryInterface.bulkInsert('client_allowed_scope', scopes, {}),
+          queryInterface.bulkInsert('client_allowed_cors_origin', cors, {}),
+          queryInterface.bulkInsert('client_idp_restrictions', clientIdbRestrictions, {}),
+          queryInterface.bulkInsert('client_redirect_uri', redirectUri, {}),
+          queryInterface.bulkInsert('client_secret', secrets, {}),
+          queryInterface.bulkInsert('client_post_logout_redirect_uri', postRedirects, {})
+        ]).then(result => {
+          resolve("done");
+        })
+      })
+    })
   },
 
   down: (queryInterface, Sequelize) => {
+    var redirectUris = queryInterface.bulkDelete('client_redirect_uri', null, {})
+    var idpRestrictions = queryInterface.bulkDelete('client_idp_restrictions', null, {})
+    var cors = queryInterface.bulkDelete('client_allowed_cors_origin', null, {})
+    var scopes = queryInterface.bulkDelete('client_allowed_scope', null, {})
+    var secrets = queryInterface.bulkDelete('client_secret', null, {})
+    var postLogoutUris = queryInterface.bulkDelete('client_post_logout_redirect_uri', null, {})
+    var clients = queryInterface.bulkDelete('client', null, {})
 
-    var clients = queryInterface.bulkDelete('client', null, {});
-    return Promise.all([clients])
-  }
+    return new Promise((resolve, reject) => {
+      Promise.all([cors, scopes, idpRestrictions, redirectUris, secrets, postLogoutUris]).then(result => {
+        clients.then(result => {
+          resolve("done");
+        })
+      })
+    })
+  },
 };

@@ -1,23 +1,21 @@
 import {
-  Body,
   Controller,
   Get,
   NotFoundException,
   Param,
-  Post,
   UseGuards,
   Req,
   Inject,
   Logger,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags, ApiOAuth2 } from '@nestjs/swagger'
-import { Client } from './client.model';
+import { Client } from './models/client.model';
 import { ClientsService } from './clients.service'
 import { AuthGuard } from '@nestjs/passport'
 import { LOGGER_PROVIDER } from '@island.is/logging';
 
 @ApiOAuth2(['@identityserver.api/read'])
-//@UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('clients')
 @Controller('clients')
 export class ClientsController {

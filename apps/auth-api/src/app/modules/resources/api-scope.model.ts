@@ -8,6 +8,7 @@ import {
     HasMany,
   } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+import { ApiScopeUserClaim } from './api-scope-user-claim.model'
   
   @Table({
     tableName: 'api_scope',
@@ -88,7 +89,8 @@ import { ApiProperty } from '@nestjs/swagger'
     @ApiProperty()
     readonly modified: Date
 
+    @HasMany(() => ApiScopeUserClaim)
     @ApiProperty()
-    public userClaims: string[]
+    public userClaims: ApiScopeUserClaim[]
 
   }

@@ -12,14 +12,23 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Client } from './client.model'
 
 @Table({
-  tableName: 'client_secret',
+  tableName: 'client_idp_restrictions',
   indexes: [
     {
-      fields: ['client_id'],
+      fields: ['client_id', 'name'],
     },
   ],
 })
-export class ClientSecret extends Model<ClientSecret> {
+export class ClientIdpRestrictions extends Model<ClientIdpRestrictions> {
+  @PrimaryKey
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  name: string
+
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -27,34 +36,6 @@ export class ClientSecret extends Model<ClientSecret> {
   @ForeignKey(() => Client)
   @ApiProperty()
   clientId: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
-  value: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  description: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
-  type: string
-
-  @Column({
-    type: DataType.DATE,
-    allowNull: true,
-  })
-  @ApiProperty()
-  expiration: Date
 
   @CreatedAt
   @ApiProperty()
