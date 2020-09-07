@@ -38,7 +38,7 @@ export class ContentSearchService implements SearcherService {
     const items = body?.hits?.hits.map(this.fixCase)
 
     return {
-      total: items.length,
+      total: body?.hits?.total?.value ?? items.length,
       items: items,
     }
   }
