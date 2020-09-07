@@ -18,13 +18,6 @@ module.exports = {
         enabled: true,
         show_in_discovery_document: true
       },
-      {
-        id: '4ba03dff-6bf4-45d7-a479-d171a7d21f2c',//uuidv4(),
-        name: '@identityserver.api',
-        display_name: '@identityserver.api',
-        enabled: true,
-        show_in_discovery_document: true
-      }
     ]
 
     var userClaims = [
@@ -34,7 +27,6 @@ module.exports = {
     var scopes = [
       {api_resource_id: apiResources[0].id, scope_name: 'swagger_api.read'},
       {api_resource_id: apiResources[1].id, scope_name: 'postman_resource.scope'},
-      {api_resource_id: apiResources[2].id, scope_name: '@identityserver.api/read'},
     ]
 
     var secrets = [
