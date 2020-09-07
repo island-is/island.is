@@ -1,7 +1,6 @@
 import React from 'react'
 import { Box, Link } from '@island.is/island-ui/core'
 import cn from 'classnames'
-import * as styles from './Card.treat'
 
 //import './service-card.scss'
 
@@ -24,7 +23,6 @@ function Card(props: CardProps) {
       height="touchable"
       justifyContent="center"
       alignItems="center"
-      className={cn(styles.card)}
       >
         {props.card.title}
       </Box>
