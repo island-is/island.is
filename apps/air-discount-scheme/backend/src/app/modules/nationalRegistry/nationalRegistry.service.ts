@@ -127,14 +127,15 @@ export class NationalRegistryService {
   }
 
   async getUser(nationalId: string): Promise<NationalRegistryUser> {
-    if (environment.environment !== 'prod') {
-      const testUser = TEST_USERS.find(
-        (testUser) => testUser.nationalId === nationalId,
-      )
-      if (testUser) {
-        return testUser
-      }
+    // TOOD this needs to be added again when we go live
+    //if (environment.environment !== 'prod') {
+    const testUser = TEST_USERS.find(
+      (testUser) => testUser.nationalId === nationalId,
+    )
+    if (testUser) {
+      return testUser
     }
+    //}
 
     const cacheKey = this.getCacheKey(nationalId, 'user')
     const cacheValue = await this.cacheManager.get(cacheKey)
@@ -161,15 +162,16 @@ export class NationalRegistryService {
   }
 
   async getRelatedChildren(nationalId: string): Promise<string[]> {
-    if (environment.environment !== 'prod') {
-      const testUser = TEST_USERS.find((user) => user.nationalId === nationalId)
-      if (testUser) {
-        return TEST_USERS.filter(
-          (user) =>
-            user.nationalId !== nationalId && user.address === testUser.address,
-        ).map((user) => user.nationalId)
-      }
+    // TOOD this needs to be added again when we go live
+    // if (environment.environment !== 'prod') {
+    const testUser = TEST_USERS.find((user) => user.nationalId === nationalId)
+    if (testUser) {
+      return TEST_USERS.filter(
+        (user) =>
+          user.nationalId !== nationalId && user.address === testUser.address,
+      ).map((user) => user.nationalId)
     }
+    // }
 
     const cacheKey = this.getCacheKey(nationalId, 'children')
     const cacheValue = await this.cacheManager.get(cacheKey)
