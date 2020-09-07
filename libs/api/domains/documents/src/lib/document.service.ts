@@ -8,16 +8,17 @@ import { DocumentCategory } from './models/documentCategory.model'
 
 @Injectable()
 export class DocumentService {
+  constructor(private customersApi: CustomersApi) {}
 
-  constructor(private customersApi: CustomersApi) {
-  }
-
-  async findByDocumentId(natReg: string, documentId: string): Promise<DocumentDetails> {
+  async findByDocumentId(
+    natReg: string,
+    documentId: string,
+  ): Promise<DocumentDetails> {
     try {
       const documentDTO = await this.customersApi.customersDocument({
         kennitala: natReg,
         messageId: documentId,
-        authenticationType: 'LOW'
+        authenticationType: 'LOW',
       })
 
       return DocumentDetails.fromDocumentDTO(documentDTO)
@@ -35,13 +36,17 @@ export class DocumentService {
         dateTo: input.dateTo,
         categoryId: input.category,
         page: input.page,
-        pageSize: input.pageSize
+        pageSize: input.pageSize,
       })
-      return body.messages.reduce(function (result: Document[], documentMessage: DocumentInfoDTO) {
-        if (documentMessage) result.push(Document.fromDocumentInfo(documentMessage))
+      return body.messages.reduce(function(
+        result: Document[],
+        documentMessage: DocumentInfoDTO,
+      ) {
+        if (documentMessage)
+          result.push(Document.fromDocumentInfo(documentMessage))
         return result
-      }, [])
-
+      },
+      [])
     } catch (exception) {
       logger.error(exception)
       return []
@@ -50,11 +55,17 @@ export class DocumentService {
 
   async getCategories(natReg: string): Promise<DocumentCategory[]> {
     try {
-      const body = await this.customersApi.customersCategories({ kennitala: natReg })
-      return body.categories.reduce(function (result: DocumentCategory[], category: CategoryDTO) {
+      const body = await this.customersApi.customersCategories({
+        kennitala: natReg,
+      })
+      return body.categories.reduce(function(
+        result: DocumentCategory[],
+        category: CategoryDTO,
+      ) {
         if (category) result.push(DocumentCategory.fromCategoryDTO(category))
         return result
-      }, [])
+      },
+      [])
     } catch (exception) {
       logger.error(exception)
       return []
