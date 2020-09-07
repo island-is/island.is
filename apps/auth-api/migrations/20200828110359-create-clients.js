@@ -103,6 +103,16 @@ module.exports = {
         modified TIMESTAMP WITH TIME ZONE,
         PRIMARY KEY (client_id, redirect_uri)
       );
+
+      CREATE TABLE client_grant_type (
+        client_id  VARCHAR NOT NULL,
+        grant_type VARCHAR NOT NULL,
+        created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        modified TIMESTAMP WITH TIME ZONE,
+        CONSTRAINT FK_client_grant_type_client FOREIGN KEY (client_id) REFERENCES client (client_id),
+        PRIMARY KEY (client_id, grant_type)
+      );
+
     COMMIT;
     `)
   },
@@ -115,6 +125,7 @@ module.exports = {
         DROP TABLE client_allowed_cors_origin;
         DROP TABLE client_allowed_scope;
         DROP TABLE client_redirect_uri;
+        DROP TABLE client_grant_type;
         DROP TABLE client;
       COMMIT;
     `)

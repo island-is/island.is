@@ -10,6 +10,7 @@ import { ClientRedirectUri } from './client-redirect-uri.model'
 import { ClientIdpRestrictions } from './client-idp-restrictions.model'
 import { ClientSecret } from './client-secret.model'
 import { ClientPostLogoutRedirectUri } from './client-post-logout-redirect-uri.model'
+import { ClientGrantType } from './client-grant-type.model'
 
 @Injectable()
 export class ClientsService {
@@ -34,7 +35,7 @@ export class ClientsService {
     this.logger.debug(`Finding client for clientId - "${clientId}"`)
     return this.clientModel.findOne({
       where: { clientId },
-      include: [ ClientAllowedScope, ClientAllowedCorsOrigin, ClientRedirectUri, ClientIdpRestrictions, ClientSecret, ClientPostLogoutRedirectUri, ClientPostLogoutRedirectUri ]
+      include: [ ClientAllowedScope, ClientAllowedCorsOrigin, ClientRedirectUri, ClientIdpRestrictions, ClientSecret, ClientPostLogoutRedirectUri, ClientPostLogoutRedirectUri, ClientGrantType ]
     });
 
   }
