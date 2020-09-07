@@ -8,12 +8,13 @@ import { Header as IslandUIHeader } from '@island.is/island-ui/core'
 
 import { UserContext } from '../../context'
 import { api } from '../../services'
-import { REDIRECT_KEY } from '../../consts'
+import { REDIRECT_KEY, LOCALE_KEY } from '../../consts'
 import { useI18n } from '../../i18n'
-import { Routes } from '../../types'
+import { Routes, Locale } from '../../types'
 
 interface PropTypes {
   routeKey: keyof Routes
+  localeKey: string
 }
 
 export const UserQuery = gql`
@@ -27,7 +28,7 @@ export const UserQuery = gql`
   }
 `
 
-function Header({ routeKey }: PropTypes) {
+function Header({ routeKey, localeKey }: PropTypes) {
   const router = useRouter()
   const { setUser, isAuthenticated } = useContext(UserContext)
   const { data } = useQuery(UserQuery, { ssr: false })
@@ -35,11 +36,12 @@ function Header({ routeKey }: PropTypes) {
   useEffect(() => {
     setUser(user)
   }, [user, setUser])
-  const { toRoute, activeLocale } = useI18n()
+  const { toRoute, activeLocale, switchLanguage } = useI18n()
 
-  const language = activeLocale === 'is' ? 'en' : 'is'
+  const nextLanguage = activeLocale === 'is' ? 'en' : 'is'
   // TODO: get text from cms and pass down to Header
   const logoutText = activeLocale === 'is' ? 'Útskrá' : 'Logout'
+
   return (
     <IslandUIHeader
       logoRender={(logo) => (
@@ -49,9 +51,10 @@ function Header({ routeKey }: PropTypes) {
       )}
       logoutText={logoutText}
       userLogo={user?.role === 'developer' ? '👑' : undefined}
-      language={language.toUpperCase()}
+      language={nextLanguage.toUpperCase()}
       switchLanguage={() => {
-        router.push(toRoute(routeKey, language))
+        const route = localeKey && toRoute(routeKey, nextLanguage)
+        switchLanguage(route, nextLanguage)
       }}
       userName={user?.name ?? ''}
       authenticated={isAuthenticated}
