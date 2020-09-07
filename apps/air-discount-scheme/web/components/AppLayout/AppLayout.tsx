@@ -33,6 +33,7 @@ interface AppLayoutProps {
   footerTagsMenu?: FooterLinkProps[]
   namespace: any
   routeKey: keyof Routes
+  localeKey: string
 }
 
 export const AppLayout: NextComponentType<
@@ -48,6 +49,7 @@ export const AppLayout: NextComponentType<
   footerTagsMenu,
   namespace,
   routeKey,
+  localeKey,
 }) => {
   const [user, setUser] = useState(null)
 
@@ -97,7 +99,7 @@ export const AppLayout: NextComponentType<
           <title>Ísland.is</title>
         </Head>
         <GridContainer>
-          <Header routeKey={routeKey} />
+          <Header routeKey={routeKey} localeKey={localeKey} />
         </GridContainer>
         <Box paddingTop={[5, 5, 9]} paddingBottom={[7, 7, 12]}>
           <ErrorBoundary>{children}</ErrorBoundary>
@@ -193,7 +195,12 @@ export const GetNamespaceQuery = gql`
   }
 `
 
-AppLayout.getInitialProps = async ({ apolloClient, locale, routeKey }) => {
+AppLayout.getInitialProps = async ({
+  apolloClient,
+  locale,
+  routeKey,
+  localeKey,
+}) => {
   const [
     upperMenu,
     lowerMenu,
@@ -273,6 +280,7 @@ AppLayout.getInitialProps = async ({ apolloClient, locale, routeKey }) => {
     })),
     namespace,
     routeKey,
+    localeKey,
   }
 }
 

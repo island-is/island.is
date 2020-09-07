@@ -1,0 +1,20 @@
+{
+  "notFound": {
+    "title": "Resource could not be found",
+    "content": "Something went wrong, please try again",
+    "button": "Back"
+  },
+  "error": {
+    "title": "An error occurred",
+    "intro": "Something went wrong, please try again",
+    "introKennitalaIsNotAPerson": "The SSN used for identification does not match a person. Please login with your own SSN, not a company SSN.",
+    "button": "Go home"
+  },
+  "errorBoundary": {
+    "title": "An error occurred",
+    "contents": [
+      "Something went wrong.",
+      "Please <a href='https://island.is/um-island-is/hafa-samband/'>contact</a> for further help"
+    ]
+  }
+}

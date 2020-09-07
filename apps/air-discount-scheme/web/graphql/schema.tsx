@@ -12,6 +12,8 @@ export type Scalars = {
   Boolean: boolean
   Int: number
   Float: number
+  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSON: any
 }
 
 export type Taxonomy = {
@@ -55,11 +57,6 @@ export type AdgerdirPage = {
   finalCostIsk?: Maybe<Scalars['Float']>
 }
 
-export type AdgerdirPages = {
-  __typename?: 'AdgerdirPages'
-  items: Array<AdgerdirPage>
-}
-
 export type Image = {
   __typename?: 'Image'
   url: Scalars['String']
@@ -79,6 +76,12 @@ export type AdgerdirNews = {
   image?: Maybe<Image>
   date: Scalars['String']
   content?: Maybe<Scalars['String']>
+  pages?: Maybe<Array<AdgerdirPage>>
+}
+
+export type AdgerdirPages = {
+  __typename?: 'AdgerdirPages'
+  items: Array<AdgerdirPage>
 }
 
 export type AdgerdirFrontpage = {
@@ -128,6 +131,7 @@ export type News = {
   id: Scalars['String']
   slug: Scalars['String']
   title: Scalars['String']
+  subtitle: Scalars['String']
   intro: Scalars['String']
   image?: Maybe<Image>
   date: Scalars['String']
@@ -343,6 +347,21 @@ export type AdgerdirTags = {
   items: Array<AdgerdirTag>
 }
 
+export type LifeEventPage = {
+  __typename?: 'LifeEventPage'
+  title: Scalars['String']
+  slug: Scalars['String']
+  intro: Scalars['String']
+  image: Image
+  body: Scalars['JSON']
+}
+
+export type PaginatedAdgerdirNews = {
+  __typename?: 'PaginatedAdgerdirNews'
+  page: Pagination
+  news: Array<AdgerdirNews>
+}
+
 export type Fund = {
   __typename?: 'Fund'
   nationalId: Scalars['ID']
@@ -383,16 +402,19 @@ export type Query = {
   getArticle?: Maybe<Article>
   getNews?: Maybe<News>
   getNewsList: PaginatedNews
+  getAdgerdirNewsList: PaginatedAdgerdirNews
   getNamespace?: Maybe<Namespace>
   getAboutPage: AboutPage
   getLandingPage?: Maybe<LandingPage>
   getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
+  getAdgerdirNews?: Maybe<AdgerdirNews>
   getAdgerdirPages: AdgerdirPages
   getAdgerdirTags?: Maybe<AdgerdirTags>
   getFrontpageSliderList?: Maybe<FrontpageSliderList>
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
+  getLifeEventPage?: Maybe<LifeEventPage>
   user?: Maybe<User>
   discounts?: Maybe<Array<Discount>>
   flights: Array<Flight>
@@ -408,6 +430,10 @@ export type QueryGetNewsArgs = {
 
 export type QueryGetNewsListArgs = {
   input: GetNewsListInput
+}
+
+export type QueryGetAdgerdirNewsListArgs = {
+  input: GetAdgerdirNewsListInput
 }
 
 export type QueryGetNamespaceArgs = {
@@ -430,6 +456,10 @@ export type QueryGetAdgerdirPageArgs = {
   input: GetAdgerdirPageInput
 }
 
+export type QueryGetAdgerdirNewsArgs = {
+  input: GetAdgerdirNewsInput
+}
+
 export type QueryGetAdgerdirPagesArgs = {
   input: GetAdgerdirPagesInput
 }
@@ -450,6 +480,10 @@ export type QueryGetMenuArgs = {
   input: GetMenuInput
 }
 
+export type QueryGetLifeEventPageArgs = {
+  input: GetLifeEventPageInput
+}
+
 export type GetArticleInput = {
   slug?: Maybe<Scalars['String']>
   lang: Scalars['String']
@@ -461,6 +495,15 @@ export type GetNewsInput = {
 }
 
 export type GetNewsListInput = {
+  lang?: Maybe<Scalars['String']>
+  year?: Maybe<Scalars['Int']>
+  month?: Maybe<Scalars['Int']>
+  ascending?: Maybe<Scalars['Boolean']>
+  page?: Maybe<Scalars['Int']>
+  perPage?: Maybe<Scalars['Int']>
+}
+
+export type GetAdgerdirNewsListInput = {
   lang?: Maybe<Scalars['String']>
   year?: Maybe<Scalars['Int']>
   month?: Maybe<Scalars['Int']>
@@ -493,6 +536,11 @@ export type GetAdgerdirPageInput = {
   lang: Scalars['String']
 }
 
+export type GetAdgerdirNewsInput = {
+  slug?: Maybe<Scalars['String']>
+  lang: Scalars['String']
+}
+
 export type GetAdgerdirPagesInput = {
   lang?: Maybe<Scalars['String']>
   perPage?: Maybe<Scalars['Int']>
@@ -512,6 +560,11 @@ export type GetAdgerdirFrontpageInput = {
 
 export type GetMenuInput = {
   name: Scalars['String']
+  lang: Scalars['String']
+}
+
+export type GetLifeEventPageInput = {
+  slug: Scalars['String']
   lang: Scalars['String']
 }
 
