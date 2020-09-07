@@ -15,7 +15,6 @@ import Typography from '../Typography/Typography'
 
 import * as styles from './DatePicker.treat'
 import 'react-datepicker/dist/react-datepicker.css'
-import './overwriteStyles.css'
 
 type Locale = 'is' | 'pl'
 interface DatePickerProps {
@@ -85,7 +84,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   }
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div className={styles.root}>
       <ReactDatePicker
         selected={startDate}
         locale={locale}

@@ -22,7 +22,7 @@ export const Locales = () => {
     <>
       <div
         style={{
-          width: 430,
+          width: 530,
           marginBottom: 32,
           marginTop: 200,
           marginLeft: 200,
