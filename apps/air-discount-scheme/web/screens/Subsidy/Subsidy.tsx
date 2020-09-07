@@ -83,7 +83,7 @@ Subsidy.getInitialProps = async ({ apolloClient }) => {
     query: GetGenericPageQuery,
     variables: {
       input: {
-        lang: 'is-IS',
+        lang: locale,
         slug: 'min-rettindi',
       },
     },
