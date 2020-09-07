@@ -83,7 +83,7 @@ export const increaseButton = style({
 })
 
 // Overwrite default ReactDatepicker styles
-globalStyle(`${root} .react-datepicker`, {
+globalStyle(`${root}.island-ui-datepicker .react-datepicker`, {
   display: 'block',
   borderTopRightRadius: '0',
   borderTopLeftRadius: '0',
@@ -94,56 +94,71 @@ globalStyle(`${root} .react-datepicker`, {
   padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
 })
 
-globalStyle(`${root} .react-datepicker-wrapper`, { display: 'block' })
+globalStyle(`${root}.island-ui-datepicker .react-datepicker-wrapper`, {
+  display: 'block',
+})
 
-globalStyle(`${root} .react-datepicker__header`, {
+globalStyle(`${root}.island-ui-datepicker .react-datepicker__header`, {
   backgroundColor: `${theme.color.white}`,
   borderBottom: 'none',
 })
 
-globalStyle(`${root} .react-datepicker-popper[data-placement^='bottom']`, {
-  marginTop: '0',
-  right: '0',
-  top: '68px !important',
-  transform: 'none !important',
-})
+globalStyle(
+  `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^='bottom']`,
+  {
+    marginTop: '0',
+    right: '0',
+    top: '68px !important',
+    transform: 'none !important',
+  },
+)
 
-globalStyle(`${root} .react-datepicker__month-container`, { float: 'none' })
-globalStyle(`${root} .react-datepicker__month`, {
+globalStyle(`${root}.island-ui-datepicker .react-datepicker__month-container`, {
+  float: 'none',
+})
+globalStyle(`${root}.island-ui-datepicker .react-datepicker__month`, {
   margin: `0 0 ${theme.spacing[2]}px 0`,
 })
-globalStyle(`${root} .react-datepicker__day-names`, { marginBottom: '4px' })
-globalStyle(`${root} .react-datepicker__day-name, .react-datepicker__day`, {
-  fontFamily: 'IBM Plex Sans',
-  fontStyle: 'normal',
-  fontWeight: 600,
-  fontSize: `${theme.typography.baseFontSize}px`,
-  lineHeight: `${theme.typography.baseLineHeight}px`,
-  textAlign: 'center',
-  color: `${theme.color.dark400}`,
-  margin: `0 ${theme.spacing[4]}px 0 0`,
+globalStyle(`${root}.island-ui-datepicker .react-datepicker__day-names`, {
+  marginBottom: '4px',
 })
+globalStyle(
+  `${root}.island-ui-datepicker .react-datepicker__day-name, .react-datepicker__day`,
+  {
+    fontFamily: 'IBM Plex Sans',
+    fontStyle: 'normal',
+    fontWeight: 600,
+    fontSize: `${theme.typography.baseFontSize}px`,
+    lineHeight: `${theme.typography.baseLineHeight}px`,
+    textAlign: 'center',
+    color: `${theme.color.dark400}`,
+    margin: `0 ${theme.spacing[4]}px 0 0`,
+  },
+)
 
 globalStyle(
-  `${root} .react-datepicker__day-name:last-child, .react-datepicker__day:last-child`,
+  `${root}.island-ui-datepicker .react-datepicker__day-name:last-child, .react-datepicker__day:last-child`,
   {
     margin: '0',
   },
 )
 
-globalStyle(`${root} .react-datepicker__day--disabled`, {
+globalStyle(`${root}.island-ui-datepicker .react-datepicker__day--disabled`, {
   color: `${theme.color.dark400} !important`,
 })
 
-globalStyle(`${root} .react-datepicker__day--disabled:hover`, {
-  borderColor: 'transparent !important',
-})
+globalStyle(
+  `${root}.island-ui-datepicker .react-datepicker__day--disabled:hover`,
+  {
+    borderColor: 'transparent !important',
+  },
+)
 
-globalStyle(`${root} .react-datepicker__day`, {
+globalStyle(`${root}.island-ui-datepicker .react-datepicker__day`, {
   fontFamily: 'IBM Plex Sans',
   fontStyle: 'normal',
   fontWeight: 300,
-  fontSize: `${theme.typography.baseFontSize}`,
+  fontSize: `${theme.typography.baseFontSize}px`,
   lineHeight: `${theme.typography.baseLineHeight}`,
   textAlign: 'center',
   color: `${theme.color.dark400}`,
@@ -153,13 +168,13 @@ globalStyle(`${root} .react-datepicker__day`, {
   transition: 'border-color 0.3s, color 0.3s',
 })
 
-globalStyle(`${root} .react-datepicker__day:hover`, {
+globalStyle(`${root}.island-ui-datepicker .react-datepicker__day:hover`, {
   background: `${theme.color.blue100}`,
   borderColor: `${theme.color.blue400}`,
 })
 
 globalStyle(
-  `${root} .react-datepicker__day--selected, .react-datepicker__day--selected:hover, .react-datepicker__month-text:hover, .react-datepicker__quarter-text:hover, .react-datepicker__year-text:hover, .react-datepicker__day--keyboard-selected`,
+  `${root}.island-ui-datepicker .react-datepicker__day--selected, .react-datepicker__day--selected:hover, .react-datepicker__month-text:hover, .react-datepicker__quarter-text:hover, .react-datepicker__year-text:hover, .react-datepicker__day--keyboard-selected`,
   {
     background: `${theme.color.blue400} !important`,
     color: `${theme.color.white} !important`,

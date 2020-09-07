@@ -13,8 +13,8 @@ import en from 'date-fns/locale/en-US'
 import Icon from '../Icon/Icon'
 import Typography from '../Typography/Typography'
 
-import * as coreStyles from './react-datepicker.treat'
 import * as styles from './DatePicker.treat'
+import * as coreStyles from './react-datepicker.treat'
 
 type Locale = 'is' | 'pl'
 interface DatePickerProps {
@@ -84,57 +84,64 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   }
 
   return (
-    <div className={styles.root}>
-      <ReactDatePicker
-        className={coreStyles.root}
-        selected={startDate}
-        locale={locale}
-        minDate={minDate}
-        showPopperArrow={false}
-        popperPlacement="bottom-start"
-        popperModifiers={{
-          flip: {
-            enabled: false,
-          },
-          preventOverflow: {
-            enabled: true,
-            escapeWithReference: false,
-          },
-        }}
-        onCalendarOpen={() => setDatePickerState('open')}
-        onCalendarClose={() => setDatePickerState('closed')}
-        onChange={(date: Date) => {
-          setStartDate(date)
-          handleChange(date)
-        }}
-        customInput={
-          <CustomInput
-            value={value}
-            onClick={onInputClick}
-            placeholderText={placeholderText}
-          />
-        }
-        renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => {
-          const month = format(date, 'MMMM', { locale: getLocale(locale) })
-          const capitalizedMonth = `${month
-            .charAt(0)
-            .toUpperCase()}${month.slice(1)}`
+    <div className={coreStyles.root}>
+      <div className={cn(styles.root, 'island-ui-datepicker')}>
+        <ReactDatePicker
+          selected={startDate}
+          locale={locale}
+          minDate={minDate}
+          showPopperArrow={false}
+          popperPlacement="bottom-start"
+          popperModifiers={{
+            flip: {
+              enabled: false,
+            },
+            preventOverflow: {
+              enabled: true,
+              escapeWithReference: false,
+            },
+          }}
+          onCalendarOpen={() => setDatePickerState('open')}
+          onCalendarClose={() => setDatePickerState('closed')}
+          onChange={(date: Date) => {
+            setStartDate(date)
+            handleChange(date)
+          }}
+          customInput={
+            <CustomInput
+              value={value}
+              onClick={onInputClick}
+              placeholderText={placeholderText}
+            />
+          }
+          renderCustomHeader={({ date, decreaseMonth, increaseMonth }) => {
+            const month = format(date, 'MMMM', { locale: getLocale(locale) })
+            const capitalizedMonth = `${month
+              .charAt(0)
+              .toUpperCase()}${month.slice(1)}`
 
-          return (
-            <div className={styles.customHeaderContainer}>
-              <button onClick={decreaseMonth} className={styles.decreaseButton}>
-                <Icon type="cheveron" width="16" height="16" />
-              </button>
-              <Typography variant="datepickerHeaderText">
-                {`${capitalizedMonth} ${getYear(date)}`}
-              </Typography>
-              <button onClick={increaseMonth} className={styles.increaseButton}>
-                <Icon type="cheveron" width="16" height="16" />
-              </button>
-            </div>
-          )
-        }}
-      />
+            return (
+              <div className={styles.customHeaderContainer}>
+                <button
+                  onClick={decreaseMonth}
+                  className={styles.decreaseButton}
+                >
+                  <Icon type="cheveron" width="16" height="16" />
+                </button>
+                <Typography variant="datepickerHeaderText">
+                  {`${capitalizedMonth} ${getYear(date)}`}
+                </Typography>
+                <button
+                  onClick={increaseMonth}
+                  className={styles.increaseButton}
+                >
+                  <Icon type="cheveron" width="16" height="16" />
+                </button>
+              </div>
+            )
+          }}
+        />
+      </div>
     </div>
   )
 }
