@@ -2,12 +2,12 @@ import { logger } from '@island.is/logging'
 import { environment, } from '../environments/environment'
 import * as aws from './aws'
 import * as dictionary from './dictionary'
-//import * as elastic from './elastic'
+import * as elastic from './elastic'
 
 
 class App {
   async run() {
-    logger.info('starting migration of dictionaries and ES config', environment.migrate)
+    logger.info('Starting migration of dictionaries and ES config', environment.migrate)
 
     const hasAwsAccess = await aws.checkAWSAccess()
 
@@ -15,7 +15,7 @@ class App {
     if (hasAwsAccess) {
       packageIds = await this.migrateAws()
     } else {
-      logger.info('no aws access found running in local development mode')
+      logger.info('No aws access found running in local development mode')
       // get packageId list for local development packages have package ids matching filenames in the dictionary repo
       packageIds = dictionary.getFakePackageIds()
     }
@@ -23,7 +23,7 @@ class App {
     await this.migrateES(packageIds)
 
     if (hasAwsAccess) {
-      logger.info('cleaning up unused packages')
+      logger.info('Cleaning up unused packages')
       // TODO: Get permission in AWS to do this
       // await aws.disassociatePackagesFromAwsEs(packageIds) // we disassociate all but the files in packageIds
       // await aws.deletePackagesFromAwsEs(packageIds) // we delete all but the files in packageIds
@@ -34,6 +34,7 @@ class App {
   private async migrateAws() {
     const repoDictionaryVersion = await dictionary.getDictionaryVersion()
     const awsDictionaryVersion = await aws.getDictionaryVersion()
+    // we only try to update teh dictionary files if we find a missmatch in version numbers
     if (repoDictionaryVersion !== awsDictionaryVersion) {
       logger.info('Dictionary version missmatch, updating dictionary', { repoVersion: repoDictionaryVersion, awsVersion: awsDictionaryVersion })
       const dictionaries = await dictionary.getDictionaryFiles() // get files form dictionary repo
@@ -43,15 +44,33 @@ class App {
       await aws.updateDictionaryVersion(repoDictionaryVersion) // update version file last to ensure process runs again on failure
       return esPackages // es config needs the package ids when generating the index template
     } else {
-      logger.info('no need to update dictionary, getting current package ids')
+      logger.info('No need to update dictionary, getting current package ids')
       return aws.getAllDomainEsPackages()
     }
   }
 
   private async migrateES(packageIds: aws.AwsEsPackage[]) {
-    // await elastic.checkAccess() // this throws if there is no connection an hence ensures we dont continue
+    await elastic.checkAccess() // this throws if there is no connection hence ensuring we dont continue
+    // TODO: Do we need to update index templates?
+    // TODO: Do we need to update index alias?
 
-    logger.info('starting ES migration', { packageIds })
+    // const hasVersion = await this.esHasVersion(codeVersion)
+    /* if(hasVersion)
+      if (!(await this.aliasIsCorrect(codeVersion))) {
+        logger.info('Alias is not correct')
+        await this.fixAlias(codeVersion)
+        logger.info('Alias was fixed')
+        return
+      }
+    */
+    /*
+      const config = this.createConfig(packageIds)
+      logger.info('Updating index template', { codeVersion, packageIds, config })
+      return this.createTemplate(config).then(() =>
+        this.reindexToNewIndex(codeVersion),
+      )
+    */
+    logger.info('Starting ES migration', { packageIds })
     logger.info('Ran!')
     return true
   }

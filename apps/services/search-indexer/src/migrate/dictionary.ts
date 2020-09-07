@@ -14,7 +14,7 @@ const getDictUrl = (type: string, lang: string): string => {
 }
 
 const getFile = (url: string) => {
-  logger.info('getting file from', { url })
+  logger.info('Getting file from', { url })
   return fetch(url)
 }
 

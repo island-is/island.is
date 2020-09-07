@@ -12,6 +12,7 @@ export const getCodeVersion = () => {
 }
 
 export const checkAccess = () => {
+  logger.info('Testing elasticsearch connection')
   return esService.ping().catch((error) => {
     logger.error('could not connect to elasticsearch server', { error })
     throw error

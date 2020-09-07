@@ -4,7 +4,6 @@ import { PutObjectRequest } from 'aws-sdk/clients/s3'
 import { environment } from '../environments/environment'
 import _ from 'lodash'
 import { Dictionary } from './dictionary'
-import { localeIS } from 'date-fns/locale/is';
 
 AWS.config.update({ region: environment.migrate.awsRegion })
 const awsEs = new AWS.ES()
@@ -98,7 +97,7 @@ const waitForPackageStatus = async (
     return true
   }
 
-  logger.info('waiting for correct package status', {
+  logger.info('Waiting for correct package status', {
     packageId,
     desiredStatus,
     currentPackageStatus: packageStatus,
@@ -122,12 +121,12 @@ export const checkAWSAccess = async (): Promise<boolean> => {
   const domains = await awsEs.listDomainNames().promise()
     .then((domains) => domains.DomainNames)
     .catch((error) => {
-      logger.error('failed to check aws access', { error })
+      logger.error('Failed to check aws access', { error })
       // return empty list to indicate no access
       return []
     })
 
-  logger.info('validating esDomain agains aws domain list', { domains })
+  logger.info('Validating esDomain agains aws domain list', { domains })
   return !!domains.find(
     (domain) => domain.DomainName === environment.migrate.esDomain,
   )
@@ -149,7 +148,7 @@ export const getDictionaryVersion = (): Promise<string> => {
     .promise()
     .then(data => data.Body.toString())
     .catch((error) => {
-      logger.error('version file not found', { error })
+      logger.error('Version file not found', { error })
       // return empty string to indicate no version set
       return ''
     })
@@ -160,9 +159,9 @@ const uploadFileToS3 = (options: Omit<PutObjectRequest, 'Bucket'>) => {
     Bucket: environment.migrate.s3Bucket,
     ...options
   }
-  logger.info('uploading file to s3', { Bucket: params.Bucket, Key: params.Key })
+  logger.info('Uploading file to s3', { Bucket: params.Bucket, Key: params.Key })
   return s3.upload(params).promise().catch((error) => {
-    logger.error('failed to upload s3 package', error)
+    logger.error('Failed to upload s3 package', error)
     throw error
   })
 }
@@ -186,7 +185,7 @@ export const updateS3DictionaryFiles = async (dictionaries: Dictionary[]): Promi
 }
 
 const getAwsEsPackagesDetails = async () => {
-  logger.info('geting all domain packages', { domain: environment.migrate.esDomain })
+  logger.info('Geting all domain packages', { domain: environment.migrate.esDomain })
   const packages = await awsEs
     .describePackages()
     .promise()
@@ -197,7 +196,7 @@ const getAwsEsPackagesDetails = async () => {
 const removePackagesIfExist = async (uploadedDictionaryFiles: S3DictionaryFile[], version: string) => {
   const domainPackages = await getAwsEsPackagesDetails()
 
-  logger.info('checking if we have conflicting packages')
+  logger.info('Checking if we have conflicting packages')
   // search domainPackages to check of any package exist
   const responses = uploadedDictionaryFiles.map(async (uploadedFile) => {
     const { analyzerType, locale } = uploadedFile
@@ -205,7 +204,7 @@ const removePackagesIfExist = async (uploadedDictionaryFiles: S3DictionaryFile[]
     const existingPackage = domainPackages.find((domainPackage) => domainPackage.PackageName === packageName)
 
     if (existingPackage) {
-      logger.info('found conflicting AWS ES package, removing existing package to prevent conflict', { existingPackage, packageName })
+      logger.info('Found conflicting AWS ES package, removing existing package to prevent conflict', { existingPackage, packageName })
       const params = {
         PackageID: existingPackage.PackageID
       }
@@ -281,7 +280,7 @@ export const associatePackagesWithAwsEs = async (packages: AwsEsPackage[]) => {
       PackageID: awsEsPackage.packageId,
     }
 
-    logger.info('associating package with AWS ES instance', params)
+    logger.info('Associating package with AWS ES instance', params)
     const esPackage = await awsEs.associatePackage(params).promise()
 
     // we have to wait for package to be ready cause AWS ES can only process one request at a time
@@ -291,7 +290,7 @@ export const associatePackagesWithAwsEs = async (packages: AwsEsPackage[]) => {
     )
   }
 
-  logger.info('successfully associated all packages with AWS ES instance')
+  logger.info('Successfully associated all packages with AWS ES instance')
   return true
 }
 
@@ -301,5 +300,5 @@ export const updateDictionaryVersion = async (newDictionaryVersion: string) => {
     Body: newDictionaryVersion,
   }
   await uploadFileToS3(params)
-  logger.info('updated dictionary version to', { version: newDictionaryVersion })
+  logger.info('Updated dictionary version to', { version: newDictionaryVersion })
 }
