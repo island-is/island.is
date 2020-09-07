@@ -7,7 +7,6 @@ import { AboutPage } from './models/aboutPage.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { AdgerdirTag } from './models/adgerdirTag.model'
-import { AdgerdirGroup } from './models/adgerdirGroup.model'
 import { AdgerdirFeaturedNewsSlice } from './models/adgerdirSlices/adgerdirFeaturedNewsSlice.model'
 import { AdgerdirGroupSlice } from './models/adgerdirSlices/adgerdirGroupSlice.model'
 import { AdgerdirNews } from './models/adgerdirNews.model'
@@ -39,6 +38,7 @@ import { Namespace } from './models/namespace.model'
 import { Image } from './models/image.model'
 import { Menu } from './models/menu.model'
 import { GenericPage } from './models/genericPage.model'
+import { LifeEventPage } from './models/lifeEventPage.model'
 
 export const mapAdgerdirPage = ({
   sys,
@@ -79,6 +79,7 @@ export const mapAdgerdirNewsItem = ({
   image: fields.image?.fields?.file && mapImage(fields.image),
   date: fields.date,
   content: JSON.stringify(fields.content),
+  pages: fields.pages && fields.pages.map(mapAdgerdirPage),
 })
 
 export const mapAdgerdirFeaturedNewsSlice = ({
@@ -139,6 +140,7 @@ export const mapArticle = ({ sys, fields }: types.IArticle): Article => ({
   group: fields.group?.fields,
   category: fields.category?.fields,
   content: JSON.stringify(fields.content),
+  relatedArticles: [], // populated by resolver
 })
 
 export const mapImage = ({ fields }: Asset): Image => ({
@@ -153,6 +155,7 @@ export const mapNewsItem = ({ fields, sys }: types.INews): News => ({
   id: sys.id,
   slug: fields.slug,
   title: fields.title,
+  subtitle: fields.subtitle,
   intro: fields.intro,
   image: mapImage(fields.image),
   date: fields.date,
@@ -427,4 +430,14 @@ export const mapGenericPage = ({
   mainContent: fields.mainContent && JSON.stringify(fields.mainContent),
   sidebar: fields.sidebar && JSON.stringify(fields.sidebar),
   misc: fields.misc && JSON.stringify(fields.misc),
+})
+
+export const mapLifeEventPage = ({
+  fields,
+}: types.ILifeEventPage): LifeEventPage => ({
+  title: fields.title,
+  slug: fields.slug,
+  intro: fields.intro,
+  image: mapImage(fields.image),
+  body: fields.content,
 })

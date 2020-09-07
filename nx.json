@@ -106,7 +106,7 @@
     "gjafakort-consts": {
       "tags": []
     },
-    "application-schema": {
+    "application-template": {
       "tags": []
     },
     "application-form": {
@@ -220,6 +220,9 @@
       "tags": []
     },
     "skilavottord-ws": {
+      "tags": []
+    },
+    "infra-monitoring": {
       "tags": []
     }
   }

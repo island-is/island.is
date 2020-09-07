@@ -1,4 +1,5 @@
 import {
+  AllowNull,
   Column,
   CreatedAt,
   DataType,
@@ -6,7 +7,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export enum CaseState {
   UNKNOWN = 'UNKNOWN',
@@ -42,13 +43,6 @@ export class Case extends Model<Case> {
     allowNull: false,
   })
   @ApiProperty()
-  description: string
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
   policeCaseNumber: string
 
   @Column({
@@ -58,11 +52,12 @@ export class Case extends Model<Case> {
   @ApiProperty()
   suspectNationalId: string
 
+  @AllowNull(true)
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   suspectName: string
 
   @Column({

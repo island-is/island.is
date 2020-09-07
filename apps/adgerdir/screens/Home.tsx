@@ -7,14 +7,16 @@ import {
   Typography,
   Stack,
   Breadcrumbs,
+  Hidden,
 } from '@island.is/island-ui/core'
-import { Content } from '@island.is/adgerdir/units/Content'
+import { Content } from '@island.is/adgerdir/units'
 import {
   Articles,
   Sleeve,
   GroupedPages,
   CardsSlider,
   FeaturedNews,
+  FrontpageSvg,
 } from '@island.is/adgerdir/components'
 import { withApollo } from '../graphql'
 import { useI18n } from '../i18n'
@@ -32,7 +34,7 @@ import {
   GET_ADGERDIR_FRONTPAGE_QUERY,
 } from './queries'
 import { Screen } from '../types'
-import { useNamespace } from '../hooks'
+// import { useNamespace } from '../hooks'
 import { ArticleLayout } from './Layouts/Layouts'
 import { ColorSchemeContext } from '@island.is/adgerdir/context'
 
@@ -45,7 +47,7 @@ interface HomeProps {
 
 const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
   const { activeLocale } = useI18n()
-  const n = useNamespace(namespace)
+  // const n = useNamespace(namespace)
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale
@@ -54,13 +56,28 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
   const { items: pagesItems } = pages
   const { items: tagsItems } = tags
 
+  let groupSliceCount = 0
+
   return (
     <>
       <Head>
         <title>Viðspyrna fyrir Ísland</title>
       </Head>
-      <ArticleLayout sidebar={null}>
-        <Stack space={3}>
+      <ArticleLayout
+        sidebar={
+          <Hidden below="lg">
+            <Box
+              height="full"
+              width="full"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <FrontpageSvg />
+            </Box>
+          </Hidden>
+        }
+      >
+        <Stack space={2}>
           <Breadcrumbs color="blue400">
             <span>Viðspyrna</span>
           </Breadcrumbs>
@@ -81,56 +98,61 @@ const Home: Screen<HomeProps> = ({ frontpage, pages, tags, namespace }) => {
                 <Articles
                   tags={tagsItems}
                   items={pagesItems}
-                  seeMoreText={n('seeMoreItems')}
-                  title={n('adgerdir')}
+                  namespace={namespace}
                 />
               </ContentBlock>
             </Box>
           </Sleeve>
         </Box>
       </ColorSchemeContext.Provider>
-      {frontpage.slices.map((slice, index) => {
-        switch (slice.__typename) {
-          case 'AdgerdirFeaturedNewsSlice':
-            return <FeaturedNews key={index} items={slice.featured} />
-          case 'AdgerdirGroupSlice':
-            return (
-              <ColorSchemeContext.Provider
-                key={index}
-                value={{ colorScheme: 'purple' }}
-              >
-                <Box width="full" overflow="hidden" marginBottom={10}>
-                  <ContentBlock width="large">
-                    <Box padding={[0, 3, 6]}>
-                      <GroupedPages
-                        topContent={
-                          <Stack space={3}>
-                            <Typography
-                              variant="eyebrow"
-                              as="h2"
-                              color="roseTinted400"
-                            >
-                              {slice.subtitle}
-                            </Typography>
-                            <Typography variant="h2" as="h3">
-                              {slice.title}
-                            </Typography>
-                            <Typography variant="p" as="p">
-                              {slice.description}
-                            </Typography>
-                          </Stack>
-                        }
-                        bottomContent={<CardsSlider items={slice.pages} />}
-                      />
-                    </Box>
-                  </ContentBlock>
-                </Box>
-              </ColorSchemeContext.Provider>
-            )
-        }
+      <Box marginBottom={[6, 6, 15]}>
+        <Stack space={[6, 6, 12]}>
+          {frontpage.slices.map((slice, index) => {
+            switch (slice.__typename) {
+              case 'AdgerdirFeaturedNewsSlice':
+                return <FeaturedNews key={index} items={slice.featured} />
+              case 'AdgerdirGroupSlice':
+                groupSliceCount++
 
-        return null
-      })}
+                return (
+                  <ColorSchemeContext.Provider
+                    key={index}
+                    value={{
+                      colorScheme: groupSliceCount % 2 ? 'blue' : 'purple',
+                    }}
+                  >
+                    <Box width="full" overflow="hidden">
+                      <ContentBlock width="large">
+                        <GroupedPages
+                          topContent={
+                            <Stack space={2}>
+                              <Typography
+                                variant="eyebrow"
+                                as="h2"
+                                color="roseTinted400"
+                              >
+                                {slice.subtitle}
+                              </Typography>
+                              <Typography variant="h2" as="h3">
+                                {slice.title}
+                              </Typography>
+                              <Typography variant="p" as="p">
+                                {slice.description}
+                              </Typography>
+                            </Stack>
+                          }
+                          bottomContent={<CardsSlider items={slice.pages} />}
+                        />
+                      </ContentBlock>
+                    </Box>
+                  </ColorSchemeContext.Provider>
+                )
+            }
+
+            return null
+          })}
+        </Stack>
+      </Box>
     </>
   )
 }

@@ -461,6 +461,9 @@ export interface ILifeEventPageFields {
   /** image */
   image?: Asset | undefined
 
+  /** thumbnail */
+  thumbnail?: Asset | undefined
+
   /** content */
   content: Document
 }
@@ -1389,6 +1392,9 @@ export interface IVidspyrnaNewsFields {
 
   /** Content */
   content?: Document | undefined
+
+  /** Pages */
+  pages?: IVidspyrnaPage[] | undefined
 }
 
 export interface IVidspyrnaNews extends Entry<IVidspyrnaNewsFields> {

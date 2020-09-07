@@ -21,10 +21,10 @@ export const App = () => {
           <Route exact path="/">
             <Redirect to="/application/" />
           </Route>
-          <Route path="/applications/:type">
+          <Route strict exact path="/applications/:type">
             <Applications />
           </Route>
-          <Route path="/application/:id?">
+          <Route path="/application/:id">
             <Application />
           </Route>
         </Switch>

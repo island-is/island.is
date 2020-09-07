@@ -71,17 +71,37 @@ export const tempTabs = [
   {
     title: 'Þjónustuflokkar',
     links: [
-      { title: 'Fjölskyldumál', url: '/fjolskyldumal' },
+      { title: 'Fjölskylda og velferð', url: '/flokkur/fjolskylda-og-velferd' },
       {
-        title: 'Eldri borgarar',
+        title: 'Launþegi, réttindi og lífeyrir',
+        url: '/flokkur/launthegi-rettindi-og-lifeyrir',
+      },
+      {
+        title: 'Atvinnurekstur og sjálfstætt starfandi',
         url: '/',
       },
       {
-        title: 'Bætur',
+        title: 'Heilbrigðismál',
         url: '/',
       },
       {
-        title: 'Málefni fatlaðra',
+        title: 'Samgöngur',
+        url: '/',
+      },
+      {
+        title: 'Akstur og bifreiðar',
+        url: '/',
+      },
+      {
+        title: 'Fjármál og skattar',
+        url: '/',
+      },
+      {
+        title: 'Iðnaður',
+        url: '/',
+      },
+      {
+        title: 'Vegabréf, ferðalög og búseta erlendis',
         url: '/',
       },
       {
@@ -89,19 +109,27 @@ export const tempTabs = [
         url: '/',
       },
       {
-        title: 'Ferðalög og búseta erlendis',
-        url: '/',
-      },
-      {
-        title: 'Innflytjendur',
-        url: '/',
-      },
-      {
-        title: 'Umhverfismál',
+        title: 'Innflytjendamál',
         url: '/',
       },
       {
         title: 'Húsnæðismál',
+        url: '/',
+      },
+      {
+        title: 'Samfélag og réttindi',
+        url: '/',
+      },
+      {
+        title: 'Málefni fatlaðra',
+        url: '/',
+      },
+      {
+        title: 'Dómstólar og réttarfar',
+        url: '/',
+      },
+      {
+        title: 'Umhverfismál',
         url: '/',
       },
     ],
@@ -109,7 +137,7 @@ export const tempTabs = [
   {
     title: 'Stafrænt Ísland',
     links: [
-      { title: 'Um Ísland.is', url: '/' },
+      { title: 'Um Ísland.is', url: '/um-island-is' },
       {
         title: 'Stofnanir',
         url: '/',

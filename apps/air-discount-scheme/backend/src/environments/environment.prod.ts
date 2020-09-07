@@ -1,5 +1,9 @@
 export default {
   production: true,
+  environment: process.env.ENVIRONMENT,
+  sentry: {
+    dsn: process.env.SENTRY_DSN,
+  },
   nationalRegistry: {
     url: 'https://skeyti.advania.is/ords/slrv/registry/v1.0',
     username: 'si_flugfargjold',

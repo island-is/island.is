@@ -1,18 +1,18 @@
 import React from 'react'
 import NextLink, { LinkProps } from 'next/link'
-import { Colors } from '@island.is/island-ui/theme'
 import cn from 'classnames'
 import * as styles from './Link.treat'
 
-const isLinkInternal = (href) => {
-  // If it's a relative url such as '/path', 'path' and does not contain a protocol we can assume it is internal.
-  if (href.indexOf('://') === -1) return true
+const isLinkInternal = (href: string) => {
+  if (typeof href === 'string' && href.indexOf('://') !== -1) return false
 
-  return false
+  return true
 }
 
+export type LinkColor = 'white' | 'blue400'
+
 interface Props extends LinkProps {
-  color?: Colors
+  color?: LinkColor
   className?: string
   withUnderline?: boolean
 }
@@ -32,15 +32,21 @@ const Link: React.FC<Props> = ({
   withUnderline,
   ...linkProps
 }) => {
-  const isInternal = isLinkInternal(href)
-  const classNames = cn(styles.link, styles.colors[color], className, {
-    [styles.withUnderline]: withUnderline,
-  })
+  const isInternal = isLinkInternal(href as string)
+  const classNames = cn(
+    styles.link,
+    color ? styles.colors[color] : undefined,
+    className,
+    {
+      [styles.withUnderline]: withUnderline,
+    },
+  )
 
   if (isInternal) {
     return (
       <NextLink
         href={href}
+        as={as}
         shallow={shallow}
         scroll={scroll}
         passHref={passHref}
@@ -56,7 +62,7 @@ const Link: React.FC<Props> = ({
       <a
         href={href as string}
         target="_blank"
-        rel="noopener"
+        rel="noopener noreferrer"
         className={classNames}
         {...linkProps}
       >

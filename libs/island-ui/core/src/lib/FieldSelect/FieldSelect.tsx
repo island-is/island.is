@@ -5,8 +5,8 @@ import get from 'lodash/get'
 import { Select, SelectProps, Option } from '../Select/Select'
 
 export interface FieldSelectProps extends SelectProps {
-  form?: FormikState<string | number>
-  field?: FieldInputProps<ValueType<Option>>
+  form: FormikState<string | number>
+  field: FieldInputProps<ValueType<Option>>
 }
 
 export const FieldSelect = ({

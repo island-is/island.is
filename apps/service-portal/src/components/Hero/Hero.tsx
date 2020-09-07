@@ -25,6 +25,8 @@ interface Props {
 const Hero: FC<Props> = ({ content, loading }) => {
   const slide = content?.items[1]
 
+  if (!loading && !slide) return null
+
   return (
     <Box marginBottom={[3, 3, 1]}>
       <Columns space={[1, 4, 4, 4, 12]}>
@@ -43,8 +45,8 @@ const Hero: FC<Props> = ({ content, loading }) => {
                 </>
               ) : (
                 <Stack space={2}>
-                  <Typography variant="h1">{slide.title}</Typography>
-                  <Typography variant="p">{slide.content}</Typography>
+                  <Typography variant="h1">{slide?.title}</Typography>
+                  <Typography variant="p">{slide?.content}</Typography>
                 </Stack>
               )}
               {loading ? (
@@ -75,7 +77,7 @@ const Hero: FC<Props> = ({ content, loading }) => {
             {loading ? (
               <SkeletonLoader />
             ) : (
-              <img src={slide.image.url} alt={slide.image.title} />
+              <img src={slide?.image?.url} alt={slide?.image?.title} />
             )}
           </Box>
         </Column>

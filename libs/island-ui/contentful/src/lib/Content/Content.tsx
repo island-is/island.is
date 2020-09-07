@@ -24,6 +24,7 @@ import Background from '../Background/Background'
 import BorderedContent from '../BorderedContent/BorderedContent'
 import Hyperlink from '../Hyperlink/Hyperlink'
 import { ContentContainer } from '../ContentContainer/ContentContainer'
+import Image from '../Image/Image'
 
 const mappedContentfulTypes = {
   article: 'article',
@@ -150,7 +151,7 @@ const embeddedNodes = () => ({
         showTopContent: details?.content?.length,
         topContent: (
           <GridRow>
-            <GridColumn span={10} offset={1}>
+            <GridColumn span="10/12" offset="1/12">
               {title && (
                 <Typography variant="h2" as="h3">
                   <span data-sidebar-link={slugify(title)}>{title}</span>
@@ -170,7 +171,7 @@ const embeddedNodes = () => ({
         ),
         bottomContent: (
           <GridRow>
-            <GridColumn span={10} offset={1}>
+            <GridColumn span="10/12" offset="1/12">
               {type !== 'No type' && (
                 <Typography variant="eyebrow" as="h4" color="blue400">
                   {processTypes[type].title}
@@ -213,28 +214,52 @@ const embeddedNodes = () => ({
       )
     },
   },
+  sectionWithImage: {
+    component: Box,
+    children: (node) => {
+      const fields = node.data.target.fields
+      if (!fields.image) {
+        return (
+          <>
+            <ContentContainer>
+              <Typography variant="h2" as="h2">
+                <span data-sidebar-link={slugify(fields.title)}>
+                  {fields.title}
+                </span>
+              </Typography>
+            </ContentContainer>
+            <Content document={fields.body} />
+          </>
+        )
+      }
+
+      return (
+        <Box paddingTop={15}>
+          <GridContainer>
+            <GridRow>
+              <GridColumn span="4/12">
+                <img src={fields.image.fields.file.url + '?w=320'} alt="" />
+              </GridColumn>
+              <GridColumn span="8/12">
+                <Typography variant="h2" as="h2">
+                  <span data-sidebar-link={slugify(fields.title)}>
+                    {fields.title}
+                  </span>
+                </Typography>
+                <Content document={fields.body} />
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
+        </Box>
+      )
+    },
+  },
 })
 
 const defaultRenderNode = (overrides = {}) => {
   const settings = {
     [INLINES.HYPERLINK]: (node, children) => {
-      const {
-        data: { uri: href },
-      } = node
-
-      if (
-        !['http://', 'https://'].reduce((hasProtocol, protocol) => {
-          if (hasProtocol || href.startsWith(protocol)) {
-            return true
-          }
-
-          return false
-        }, false)
-      ) {
-        return children
-      }
-
-      return <Hyperlink href={href}>{children}</Hyperlink>
+      return <Hyperlink href={node.data.uri}>{children}</Hyperlink>
     },
     [INLINES.ENTRY_HYPERLINK]: (node, children) => {
       const {

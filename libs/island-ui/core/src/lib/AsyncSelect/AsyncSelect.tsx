@@ -1,13 +1,27 @@
 import React from 'react'
-import { components, ValueType, ActionMeta } from 'react-select'
-import Async, { makeAsyncSelect } from 'react-select/async'
+import {
+  components,
+  ValueType,
+  ActionMeta,
+  MenuProps,
+  OptionProps,
+  IndicatorContainerProps,
+  IndicatorProps,
+  SingleValueProps,
+  ValueContainerProps,
+  PlaceholderProps,
+  InputProps,
+  ControlProps,
+  OptionsType,
+} from 'react-select'
+import Async from 'react-select/async'
 import cn from 'classnames'
 import * as styles from './AsyncSelect.treat'
 import Icon from '../Icon/Icon'
 
 export type AsyncSelectOption = {
   label: string
-  value: string | number
+  value: string
   disabled?: boolean
 }
 
@@ -19,8 +33,11 @@ export interface AsyncSelectProps {
   hasError?: boolean
   errorMessage?: string
   noOptionsMessage?: string
-  onInputChange: (str: string) => void
-  loadOptions: any
+  onInputChange?: (str: string) => void
+  loadOptions: (
+    inputValue: string,
+    callback: (options: OptionsType<AsyncSelectOption>) => void,
+  ) => void | Promise<AsyncSelectOption[]>
   onChange?: ((
     value: ValueType<AsyncSelectOption>,
     actionMeta: ActionMeta<AsyncSelectOption>,
@@ -57,7 +74,7 @@ export const AsyncSelect = ({
     <div className={styles.wrapper}>
       <Async
         instanceId={id}
-        noOptionsMessage={() => noOptionsMessage}
+        noOptionsMessage={() => noOptionsMessage || null}
         id={id}
         name={name}
         isDisabled={disabled}
@@ -70,7 +87,7 @@ export const AsyncSelect = ({
         icon={icon}
         placeholder={placeholder}
         defaultValue={defaultValue}
-        isOptionDisabled={(option) => option.disabled}
+        isOptionDisabled={(option) => !!option.disabled}
         loadOptions={loadOptions}
         onInputChange={onInputChange}
         hasError={hasError}
@@ -99,19 +116,23 @@ const customStyles = {
   indicatorSeparator: () => ({}),
 }
 
-const Menu = (props) => <components.Menu className={styles.menu} {...props} />
-const Option = (props) => (
+const Menu = (props: MenuProps<AsyncSelectOption>) => (
+  <components.Menu className={styles.menu} {...props} />
+)
+const Option = (props: OptionProps<AsyncSelectOption>) => (
   <components.Option className={styles.option} {...props} />
 )
 
-const IndicatorsContainer = (props) => (
+const IndicatorsContainer = (
+  props: IndicatorContainerProps<AsyncSelectOption>,
+) => (
   <components.IndicatorsContainer
     className={styles.indicatorsContainer}
     {...props}
   />
 )
 
-const DropdownIndicator = (props) => {
+const DropdownIndicator = (props: IndicatorProps<AsyncSelectOption>) => {
   const { icon, hasError } = props.selectProps
 
   return (
@@ -124,23 +145,23 @@ const DropdownIndicator = (props) => {
   )
 }
 
-const SingleValue = (props) => (
+const SingleValue = (props: SingleValueProps<AsyncSelectOption>) => (
   <components.SingleValue className={styles.singleValue} {...props} />
 )
 
-const ValueContainer = (props) => (
+const ValueContainer = (props: ValueContainerProps<AsyncSelectOption>) => (
   <components.ValueContainer className={styles.valueContainer} {...props} />
 )
 
-const Placeholder = (props) => (
+const Placeholder = (props: PlaceholderProps<AsyncSelectOption>) => (
   <components.Placeholder className={styles.placeholder} {...props} />
 )
 
-const Input = (props) => (
+const Input = (props: InputProps) => (
   <components.Input className={styles.input} {...props} />
 )
 
-const Control = (props) => {
+const Control = (props: ControlProps<AsyncSelectOption>) => {
   return (
     <components.Control
       className={cn(styles.container, {
@@ -149,7 +170,7 @@ const Control = (props) => {
       })}
       {...props}
     >
-      <label htmlFor={props.name} className={styles.label}>
+      <label htmlFor={props.selectProps.name} className={styles.label}>
         {props.selectProps.label}
       </label>
       {props.children}

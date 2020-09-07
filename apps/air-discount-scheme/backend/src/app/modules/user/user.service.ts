@@ -15,18 +15,11 @@ export class UserService {
     private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
-  private async getUserFromNationalRegistry(
-    nationalId: string,
-  ): Promise<NationalRegistryUser> {
-    return this.nationalRegistryService.getUser(nationalId)
+  async getRelations(nationalId: string): Promise<string[]> {
+    return this.nationalRegistryService.getRelatedChildren(nationalId)
   }
 
-  getRelations(nationalId: string): Promise<string[]> {
-    // TODO: implement from nationalRegistry in "2nd Phase"
-    return Promise.resolve([nationalId])
-  }
-
-  async getFund(user: NationalRegistryUser): Promise<Fund> {
+  private async getFund(user: NationalRegistryUser): Promise<Fund> {
     const {
       used,
       unused,
@@ -46,7 +39,7 @@ export class UserService {
   }
 
   async getUserInfoByNationalId(nationalId: string): Promise<User> {
-    const user = await this.getUserFromNationalRegistry(nationalId)
+    const user = await this.nationalRegistryService.getUser(nationalId)
     if (!user) {
       return null
     }

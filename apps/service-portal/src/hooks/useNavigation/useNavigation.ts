@@ -7,17 +7,19 @@ import {
 } from '@island.is/service-portal/core'
 import { useStore } from '../../store/stateProvider'
 
-const tempClone = (item) => JSON.parse(JSON.stringify(item))
+const tempClone = (item: object) => JSON.parse(JSON.stringify(item))
 
 const filterNavigationTree = (
   item: ServicePortalNavigationItem,
   routes: ServicePortalRoute[],
   userInfo: UserWithMeta,
-) => {
+): boolean => {
   const included = routes.find(
     (route) =>
       route.path === item.path ||
-      (Array.isArray(route.path) && route.path.includes(item.path)),
+      (Array.isArray(route.path) &&
+        item.path &&
+        route.path.includes(item.path)),
   )
 
   // Filters out any children that do not have a module route defined
@@ -27,10 +29,11 @@ const filterNavigationTree = (
 
   // If the item is not included but one or more of it's descendants are
   // We remove the item's path but include it in the tree
-  const onlyDescendantsIncluded = !included && item.children
+  const onlyDescendantsIncluded =
+    !included && Array.isArray(item.children) && item.children.length > 0
   if (onlyDescendantsIncluded) item.path = undefined
 
-  return included || onlyDescendantsIncluded
+  return included !== undefined || onlyDescendantsIncluded
 }
 
 /**
@@ -43,6 +46,7 @@ const useNavigation = () => {
   >([])
 
   useEffect(() => {
+    if (userInfo === null) return
     // TODO: This has to be cloned better
     const masterNav: ServicePortalNavigationItem[] = tempClone(
       servicePortalMasterNavigation,

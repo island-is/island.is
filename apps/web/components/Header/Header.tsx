@@ -38,7 +38,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   return (
     <GridContainer>
       <GridRow>
-        <GridColumn span={12} paddingTop={4} paddingBottom={4}>
+        <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
           <Columns alignY="center" space={2}>
             <Column width="content">
               <Link href={english ? '/en' : '/'} passHref>
@@ -85,7 +85,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                   </>
                 )}
                 <Box marginLeft={marginLeft}>
-                  <Link href="https://minarsidur.island.is/" passHref>
+                  <Link href="//minarsidur.island.is/">
                     <Button variant="menu" leftIcon="user">
                       {t.login}
                     </Button>

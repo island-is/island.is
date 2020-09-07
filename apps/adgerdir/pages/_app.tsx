@@ -66,7 +66,17 @@ const Layout: FC<LayoutProps> = ({
       ) : (
         children
       )}
-      {showFooter && <Footer />}
+      {showFooter && (
+        <Footer
+          topLinks={topLinks}
+          middleLinks={links}
+          tagLinks={links}
+          languageSwitchLink={languageSwitchLink}
+          middleLinksTitle={'Tenglar'}
+          showMiddleLinks
+          showTagLinks
+        />
+      )}
       <style jsx global>{`
         @font-face {
           font-family: 'IBM Plex Sans';
@@ -133,5 +143,24 @@ const SupportApplication: FC<{
     </ApolloProvider>
   )
 }
+
+const topLinks = [
+  {
+    title: 'Um Stafrænt Ísland',
+    href: 'https://stafraent.island.is/',
+  },
+]
+
+const languageSwitchLink = {
+  title: 'English',
+  href: 'https://island.is/en',
+}
+
+const links = [
+  {
+    title: 'Hafa samband',
+    href: 'https://island.is/um-island-is/hafa-samband/',
+  },
+]
 
 export default appWithTranslation(SupportApplication)

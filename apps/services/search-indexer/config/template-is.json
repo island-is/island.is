@@ -1,6 +1,6 @@
 {
   "order": 0,
-  "version": 2,
+  "version": 3,
   "index_patterns": ["island-is-v*"],
   "settings": {
     "analysis": {
@@ -25,7 +25,7 @@
         }
       },
       "analyzer": {
-        "title_icelandic": {
+        "base_icelandic": {
           "type": "custom",
           "tokenizer": "standard",
           "filter": [
@@ -36,16 +36,10 @@
             "icelandic_stemmer"
           ]
         },
-        "content_icelandic": {
+        "term_icelandic": {
           "type": "custom",
           "tokenizer": "standard",
-          "filter": [
-            "lowercase",
-            "icelandic_synonym",
-            "icelandic_stop",
-            "icelandic_keyword",
-            "icelandic_stemmer"
-          ]
+          "filter": ["lowercase"]
         }
       }
     }
@@ -63,7 +57,7 @@
           },
           "stemmed": {
             "type": "text",
-            "analyzer": "title_icelandic"
+            "analyzer": "base_icelandic"
           }
         }
       },
@@ -72,7 +66,7 @@
         "fields": {
           "stemmed": {
             "type": "text",
-            "analyzer": "content_icelandic"
+            "analyzer": "base_icelandic"
           }
         }
       },
@@ -90,7 +84,7 @@
         "fields": {
           "stemmed": {
             "type": "text",
-            "analyzer": "title_icelandic"
+            "analyzer": "base_icelandic"
           }
         }
       },
@@ -105,7 +99,7 @@
         "fields": {
           "stemmed": {
             "type": "text",
-            "analyzer": "title_icelandic"
+            "analyzer": "base_icelandic"
           }
         }
       },
@@ -123,7 +117,7 @@
         "fields": {
           "stemmed": {
             "type": "text",
-            "analyzer": "title_icelandic"
+            "analyzer": "base_icelandic"
           }
         }
       },
@@ -148,7 +142,7 @@
         "fields": {
           "stemmed": {
             "type": "text",
-            "analyzer": "title_icelandic"
+            "analyzer": "base_icelandic"
           }
         }
       },
@@ -172,7 +166,7 @@
         "fields": {
           "stemmed": {
             "type": "text",
-            "analyzer": "content_icelandic"
+            "analyzer": "base_icelandic"
           }
         }
       },
@@ -182,9 +176,13 @@
         "fields": {
           "stemmed": {
             "type": "text",
-            "analyzer": "title_icelandic"
+            "analyzer": "base_icelandic"
           }
         }
+      },
+      "term_pool": {
+        "type": "completion",
+        "analyzer": "term_icelandic"
       }
     }
   }

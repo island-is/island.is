@@ -7,7 +7,6 @@ const mockDetensionRequests = [
   {
     id: 'fbad84cc-9cab-4145-bf8e-ac58cc9c2790',
     state: 'DRAFT',
-    description: 'Test case',
     policeCaseNumber: '007-2020-X',
     suspectNationalId: '150689-5989',
     suspectName: 'Katrín Erlingsdóttir',
@@ -17,7 +16,6 @@ const mockDetensionRequests = [
   {
     id: 'fbad84cc-9cab-4145-bf8e-ac58cc9c2790',
     state: 'SUBMITTED',
-    description: 'Test case 2',
     policeCaseNumber: '008-2020-X',
     suspectNationalId: '012345-6789',
     suspectName: 'Erlingur Kristinsson',
@@ -38,10 +36,12 @@ describe('Detention requests route', () => {
     )
   })
 
-  test('should display an error alert if the api call fails', () => {
+  test('should display an error alert if the api call fails', async () => {
     fetchMock.mock('/api/cases', 500, { overwriteRoutes: true })
 
     const { getByTestId, queryByTestId } = render(<DetentionRequests />)
+    await waitFor(() => getByTestId('detention-requests-error'))
+
     expect(queryByTestId('detention-requests-table')).toBeNull()
     expect(getByTestId('detention-requests-error')).toBeTruthy()
     fetchMock.restore()
