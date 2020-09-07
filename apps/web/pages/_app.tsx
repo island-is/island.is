@@ -39,7 +39,7 @@ SupportApplication.getInitialProps = async ({ Component, ctx }) => {
   const apolloClient = initApollo({})
 
   // healthchecks
-  if (ctx.req.url === '/readiness') {
+  if (ctx.req?.url === '/readiness') {
     // check if we have contact with api
     const { serverRuntimeConfig } = getConfig()
     const { graphqlUrl } = serverRuntimeConfig
@@ -55,7 +55,7 @@ SupportApplication.getInitialProps = async ({ Component, ctx }) => {
     return null
   }
 
-  if (ctx.req.url === '/lifeliness') {
+  if (ctx.req?.url === '/lifeliness') {
     ctx.res.statusCode = 200
     ctx.res.end('')
     return null

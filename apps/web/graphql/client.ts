@@ -26,9 +26,9 @@ function create(initialState?: any) {
     graphqlUrl: graphqlClientUrl,
     graphqlEndpoint: graphqlClientEndpoint,
   } = publicRuntimeConfig
-  const uri = `${graphqlServerUrl || graphqlClientUrl}${graphqlServerEndpoint ||
-    graphqlClientEndpoint}`
-  const httpLink = new BatchHttpLink({ uri })
+  const graphqlUrl = graphqlServerUrl || graphqlClientUrl
+  const graphqlEndpoint = graphqlServerEndpoint || graphqlClientEndpoint
+  const httpLink = new BatchHttpLink({ uri: `${graphqlUrl}${graphqlEndpoint}` })
 
   // Check out https://github.com/zeit/next.js/pull/4611 if you want to use the AWSAppSyncClient
   return new ApolloClient({
