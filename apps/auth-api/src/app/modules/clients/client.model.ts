@@ -296,7 +296,7 @@ export class Client extends Model<Client> {
 
   @HasMany(() => ClientAllowedScope)
   @ApiProperty()
-  readonly clientAllowedScope: ClientAllowedScope[]
+  readonly allowedScopes: ClientAllowedScope[]
 
   @HasMany(() => ClientAllowedCorsOrigin)
   @ApiProperty()
@@ -310,8 +310,8 @@ export class Client extends Model<Client> {
   readonly redirectUris: ClientRedirectUri
 
   @HasMany( () => ClientIdpRestrictions)
-  identityProviderRestrictions: ClientIdpRestrictions
+  readonly identityProviderRestrictions: ClientIdpRestrictions
 
   @HasMany( () => ClientSecret)
-  clientSecrets: ClientSecret
+  readonly clientSecrets: ClientSecret
 }
