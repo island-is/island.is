@@ -149,13 +149,11 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
         </Hidden>
         <GridRow>
           <GridColumn offset="1/8" span="7/8">
-            <Box marginBottom={simpleSpacing}>
-              <Typography variant="h1" as="h1" paddingBottom={2}>
-                <span data-sidebar-link={slugify(article.title)}>
-                  {article.title}
-                </span>
-              </Typography>
-            </Box>
+            <Typography variant="h1" as="h1" paddingBottom={2}>
+              <span data-sidebar-link={slugify(article.title)}>
+                {article.title}
+              </span>
+            </Typography>
           </GridColumn>
         </GridRow>
         <Content document={article.content} />

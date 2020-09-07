@@ -144,9 +144,9 @@ const embeddedNodes = () => ({
         showTopContent: details?.content?.length,
         topContent: (
           <GridRow>
-            <GridColumn span="7/8" offset="1/8">
+            <GridColumn span="6/8" offset="1/8">
               {title && (
-                <Typography variant="h2" as="h3">
+                <Typography variant="h2" as="h3" paddingBottom={2}>
                   <span data-sidebar-link={slugify(title)}>{title}</span>
                 </Typography>
               )}
@@ -164,7 +164,7 @@ const embeddedNodes = () => ({
         ),
         bottomContent: (
           <GridRow>
-            <GridColumn span="7/8" offset="1/8">
+            <GridColumn span="6/8" offset="1/8">
               {type !== 'No type' && (
                 <Typography
                   variant="eyebrow"
