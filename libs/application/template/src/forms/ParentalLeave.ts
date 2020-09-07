@@ -41,11 +41,6 @@ export const ParentalLeave: Form = buildForm({
       id: 'introduction',
       name: 'Intro',
       children: [
-        buildIntroductionField({
-          id: 'welcome',
-          name: 'welcome indeed',
-          introduction: 'sick',
-        }),
         buildExternalDataProvider({
           name: 'Sækja gögn',
           id: 'approveExternalData',
