@@ -11,8 +11,11 @@ export const getCodeVersion = () => {
   return json.version
 }
 
-export const ping = () => {
-  return esService.ping()
+export const checkAccess = () => {
+  return esService.ping().catch((error) => {
+    logger.error('could not connect to elasticsearch server', { error })
+    throw error
+  })
 }
 
 export const getIndexNameForVersion = (version: number) => {

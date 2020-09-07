@@ -2,14 +2,16 @@ import { logger } from '@island.is/logging'
 import { environment, } from '../environments/environment'
 import * as aws from './aws'
 import * as dictionary from './dictionary'
-import { AwsEsPackage } from './aws'
+import * as elastic from './elastic'
+
 
 class App {
   async run() {
     logger.info('starting migration of dictionaries and ES config', environment.migrate)
+
     const hasAwsAccess = await aws.checkAWSAccess()
 
-    let packageIds: AwsEsPackage[]
+    let packageIds: aws.AwsEsPackage[]
     if (hasAwsAccess) {
       packageIds = await this.migrateAws()
     } else {
@@ -46,7 +48,9 @@ class App {
     }
   }
 
-  private async migrateES(packageIds: AwsEsPackage[]) {
+  private async migrateES(packageIds: aws.AwsEsPackage[]) {
+    await elastic.checkAccess() // this throws if there is no connection
+
     logger.info('starting ES migration', { packageIds })
     logger.info('Ran!')
     return true

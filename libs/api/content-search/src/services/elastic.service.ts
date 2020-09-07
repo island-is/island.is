@@ -212,12 +212,8 @@ export class ElasticService {
 
   async ping() {
     const client = await this.getClient()
-    const result = await client.ping().catch((e) => {
-      ElasticService.handleError('Error in ping', {}, e)
-    })
-    logger.info('Got elasticsearch ping response', {
-      r: result,
-    })
+    const result = await client.ping()
+    logger.info('Got elasticsearch ping response', { result })
     return result
   }
 
