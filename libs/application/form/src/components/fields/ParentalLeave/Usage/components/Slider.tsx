@@ -26,7 +26,7 @@ const Tooltip: FC<TooltipProps> = ({ style, atEnd = false, children }) => (
   </Box>
 )
 
-const useLatest = <T extends any>(value: T) => {
+const useLatest = <T extends number>(value: T) => {
   const ref = useRef<T>()
   ref.current = value
   return ref
@@ -43,7 +43,7 @@ const roundByNum = (num: number, rounder: number) => {
   return Math.round(num * multiplier) / multiplier
 }
 
-const isMouseEvent = <T extends any>(
+const isMouseEvent = <T extends HTMLElement>(
   event: React.MouseEvent<T, MouseEvent> | React.TouchEvent<T>,
 ): event is React.MouseEvent<T, MouseEvent> => {
   return event.nativeEvent instanceof MouseEvent
@@ -78,7 +78,9 @@ const useDrag = ({ onDragStart, onDragEnd, onDragMove }: UseDragOptions) => {
   }
 
   const handleDragStart = (
-    event: React.MouseEvent<any, MouseEvent> | React.TouchEvent<any>,
+    event:
+      | React.MouseEvent<HTMLElement, MouseEvent>
+      | React.TouchEvent<HTMLElement>,
   ) => {
     start.current = isMouseEvent(event)
       ? event.clientX
