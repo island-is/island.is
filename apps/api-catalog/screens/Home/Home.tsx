@@ -1,20 +1,17 @@
 import React from 'react'
 import Head from 'next/head'
-import { Layout, Header } from '../../components'
+import { Layout, Header, Card } from '../../components'
 import {
   Page,
   Box,
   ContentBlock,
   Stack,
   Typography,
-  Link,
-  LinkCard,
-  Button,
   Footer,
   Tiles
 } from '@island.is/island-ui/core'
 
-function Home() {
+function Home({cards}) {
   return (
     <Page>
       <Head>
@@ -42,23 +39,12 @@ function Home() {
               </Stack>
               <Stack space={3}>
                 <Tiles space={3} columns={3}>
-                  <LinkCard href="/">
-                    Test Card
-                  </LinkCard>
-                  <LinkCard href="/">
-                    Test Card 2
-                  </LinkCard>
-                  <LinkCard href="/design-guide">
-                    API Design Guide
-                  </LinkCard>
+                  {
+                    cards.map((item, index) => {
+                      return <Card key={index} card={item} />
+                    }) 
+                  }
                 </Tiles>
-              </Stack>
-              <Stack space={3}>
-                <Link href="/services">
-                  <Button variant="text" icon="arrowRight">
-                    Services
-                  </Button>
-                </Link>
               </Stack>
             </Stack>
           </Box>
@@ -69,6 +55,16 @@ function Home() {
       />
     </Page>
   )
+}
+
+Home.getInitialProps = () => {
+  const cards = [
+    { title: "Services", slug: "/services" },
+    { title: "Data Models", slug: "/data-models" },
+    { title: "API Design Guide", slug: "/design-guide" }
+  ]
+
+  return {cards:cards}
 }
 
 export default Home
