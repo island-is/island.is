@@ -15,7 +15,8 @@ export interface Routes {
 
 export type GetInitialPropsContext<Context> = Context & {
   apolloClient: ApolloClient<NormalizedCacheObject>
-  locale: string
+  locale: Locale
+  localeKey: Locale
   routeKey?: keyof Routes
 }
 
