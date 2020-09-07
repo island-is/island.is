@@ -15,14 +15,14 @@ function ErrorPage() {
   const {
     t: { error: t },
   } = useTranslations()
-  if (!t.title) {
-    return null
-  }
-
   const { toRoute } = useI18n()
 
   const router = useRouter()
   const { errorType } = router.query
+
+  if (!t.title) {
+    return null
+  }
 
   let intro = t.intro
   if (errorType === SSN_IS_NOT_A_PERSON) {

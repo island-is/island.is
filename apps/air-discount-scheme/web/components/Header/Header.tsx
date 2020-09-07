@@ -8,9 +8,9 @@ import { Header as IslandUIHeader } from '@island.is/island-ui/core'
 
 import { UserContext } from '../../context'
 import { api } from '../../services'
-import { REDIRECT_KEY, LOCALE_KEY } from '../../consts'
+import { REDIRECT_KEY } from '../../consts'
 import { useI18n } from '../../i18n'
-import { Routes, Locale } from '../../types'
+import { Routes } from '../../types'
 
 interface PropTypes {
   routeKey: keyof Routes
