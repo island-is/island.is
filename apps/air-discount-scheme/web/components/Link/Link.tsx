@@ -45,7 +45,7 @@ export const Link: FC<LinkProps> = ({
           </span>
         </a>
       ) : (
-        <NextLink href={href} as="a">
+        <NextLink href={href}>
           {childIsString ? <a>{children}</a> : children}
         </NextLink>
       )}
