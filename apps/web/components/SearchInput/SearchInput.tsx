@@ -162,6 +162,7 @@ interface SearchInputProps {
   placeholder?: string
   white?: boolean
   colored?: boolean
+  id?: string
 }
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
@@ -175,6 +176,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       size = 'medium',
       white = false,
       colored = true,
+      id = 'downshift',
     },
     ref,
   ) => {
@@ -187,7 +189,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
     return (
       <Downshift<string>
-        id="downshift"
+        id={id}
         initialInputValue={initialInputValue}
         onChange={(q) => onSubmit(q)}
         onInputValueChange={(q) => setSearchTerm(q)}
