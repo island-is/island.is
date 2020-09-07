@@ -117,7 +117,6 @@ module.exports = {
     }];
 
     var clientGrantTypes = [{
-      id: '74b1b5fa-a559-44cc-b939-3fa560813a97',
       client_id: 'postman',
       grant_type: 'authorization_code',
     }];

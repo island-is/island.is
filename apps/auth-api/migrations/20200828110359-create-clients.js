@@ -105,13 +105,12 @@ module.exports = {
       );
 
       CREATE TABLE client_grant_type (
-        id uuid NOT NULL,
         client_id  VARCHAR NOT NULL,
         grant_type VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
-        CONSTRAINT PK_client_grant_type PRIMARY KEY (id),
-        CONSTRAINT FK_client_grant_type_client FOREIGN KEY (client_id) REFERENCES client (client_id)
+        CONSTRAINT FK_client_grant_type_client FOREIGN KEY (client_id) REFERENCES client (client_id),
+        PRIMARY KEY (client_id, grant_type)
       );
 
     COMMIT;

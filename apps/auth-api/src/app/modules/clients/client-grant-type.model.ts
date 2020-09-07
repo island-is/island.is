@@ -21,15 +21,7 @@ import { GrantType } from '../grant-types/grant-type.model'
   ],
 })
 export class ClientGrantType extends Model<ClientGrantType> {
-  
   @PrimaryKey
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  @ApiProperty()
-  Id: string
-
   @Column({
     type: DataType.STRING,
     allowNull: false,
