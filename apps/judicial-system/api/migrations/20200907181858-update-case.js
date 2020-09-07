@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
@@ -29,5 +29,5 @@ module.exports = {
       queryInterface.removeColumn('case', 'arrest_date'),
       queryInterface.removeColumn('case', 'requested_court_date'),
     ])
-  }
-};
+  },
+}
