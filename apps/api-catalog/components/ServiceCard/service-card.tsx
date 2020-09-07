@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box } from '@island.is/island-ui/core'
-import { getQueryParser } from 'next/dist/next-server/server/api-utils';
+//import { getQueryParser } from 'next/dist/next-server/server/api-utils';
 import styles from './service-card.styles'
 
 //import './service-card.scss'
@@ -25,10 +25,14 @@ export const ServiceCard = (props: ServiceCardProps) => {
       borderRadius="large"
       style={styles.card}
     >
-    <p style={styles.owner}>{props.service.owner}</p>
-    <p style={styles.name}>{props.service.name}</p>
-    
-    
+    <div style={styles.serviceStatusContainer}>
+      <p style={styles.owner}>{props.service.owner}</p>
+      <div className="service-status" style={styles.serviceStatus}></div>
+    </div>
+    <div style={styles.serviceTexts}>
+    <div>
+      <div style={styles.name}>{props.service.name}</div>
+    </div>
         <div className="prices" style={styles.category} >
           {	props.service.pricing?.map((item, index) => (
                 <div style={styles.priceItem} className="card-item" key={index}>{item + ''} </div>
@@ -53,6 +57,7 @@ export const ServiceCard = (props: ServiceCardProps) => {
             ))
           }
         </div>
+    </div>
 </Box>
   )
 }
