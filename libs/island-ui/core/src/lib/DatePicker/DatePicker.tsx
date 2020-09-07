@@ -13,8 +13,8 @@ import en from 'date-fns/locale/en-US'
 import Icon from '../Icon/Icon'
 import Typography from '../Typography/Typography'
 
+import * as coreStyles from './react-datepicker.treat'
 import * as styles from './DatePicker.treat'
-import 'react-datepicker/dist/react-datepicker.css'
 
 type Locale = 'is' | 'pl'
 interface DatePickerProps {
@@ -86,6 +86,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   return (
     <div className={styles.root}>
       <ReactDatePicker
+        className={coreStyles.root}
         selected={startDate}
         locale={locale}
         minDate={minDate}
