@@ -55,7 +55,7 @@ SupportApplication.getInitialProps = async ({ Component, ctx }) => {
     return null
   }
 
-  if (ctx.req?.url === '/lifeliness') {
+  if (ctx.req?.url === '/liveness') {
     ctx.res.statusCode = 200
     ctx.res.end('')
     return null
