@@ -7,7 +7,13 @@ import {
   GenericPage,
   QueryGetGenericPageArgs,
 } from '@island.is/api/schema'
-import { Box, Stack, Typography, Icon } from '@island.is/island-ui/core'
+import {
+  Box,
+  Stack,
+  Typography,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 import {
   Content,
   IntroText,
@@ -24,23 +30,30 @@ const Subsidy: Screen<PropTypes> = ({
 }) => {
   return (
     <Layout
-      left={
-        <Box marginBottom={[3, 3, 3, 12]}>
-          <Stack space={3}>
-            <Typography variant="h1" as="h1">
-              {title}
-            </Typography>
-            <IntroText document={intro} />
-            <Content
-              document={mainContent}
-              wrapper={(children) => <Stack space={3}>{children}</Stack>}
-            />
-            <Benefits misc={misc} />
-          </Stack>
-          <Usage misc={misc} />
-        </Box>
+      main={
+        <GridRow>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '12/12', '7/9']}
+            offset={[null, null, null, null, '1/9']}
+          >
+            <Box marginBottom={[3, 3, 3, 12]}>
+              <Stack space={3}>
+                <Typography variant="h1" as="h1">
+                  {title}
+                </Typography>
+                <IntroText document={intro} />
+                <Content
+                  document={mainContent}
+                  wrapper={(children) => <Stack space={3}>{children}</Stack>}
+                />
+                <Benefits misc={misc} />
+              </Stack>
+              <Usage misc={misc} />
+            </Box>
+          </GridColumn>
+        </GridRow>
       }
-      right={
+      aside={
         <Content
           document={sidebar}
           wrapper={(children) => <Stack space={3}>{children}</Stack>}
@@ -63,7 +76,7 @@ const GetGenericPageQuery = gql`
   }
 `
 
-Subsidy.getInitialProps = async ({ apolloClient, locale }) => {
+Subsidy.getInitialProps = async ({ apolloClient }) => {
   const {
     data: { getGenericPage: page },
   } = await apolloClient.query<Query, QueryGetGenericPageArgs>({
