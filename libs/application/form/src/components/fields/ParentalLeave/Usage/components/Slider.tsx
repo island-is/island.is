@@ -39,7 +39,7 @@ interface UseDragOptions {
 }
 
 const roundByNum = (num: number, rounder: number) => {
-  var multiplier = 1 / (rounder || 0.5)
+  const multiplier = 1 / (rounder || 0.5)
   return Math.round(num * multiplier) / multiplier
 }
 
