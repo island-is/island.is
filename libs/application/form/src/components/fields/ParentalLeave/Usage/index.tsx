@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 
 import { FieldBaseProps } from '../../../../types'
@@ -8,7 +8,7 @@ import { Box, Typography } from '@island.is/island-ui/core'
 import * as styles from './Usage.treat'
 import { theme } from '@island.is/island-ui/theme'
 
-const ParentalLeaveUsage: FC<FieldBaseProps> = ({ error, field }) => {
+const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field }) => {
   const defaultUsage = 4
   const { id } = field
   const { clearErrors } = useFormContext()
