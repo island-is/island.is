@@ -688,6 +688,8 @@ export type GetDocumentInput = {
 }
 
 export type ListDocumentsInput = {
+  page: Scalars['Float']
+  pageSize: Scalars['Float']
   natReg: Scalars['String']
   dateFrom: Scalars['DateTime']
   dateTo: Scalars['DateTime']

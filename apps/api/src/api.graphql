@@ -533,6 +533,8 @@ input ListDocumentsInput {
   dateFrom: DateTime!
   dateTo: DateTime!
   category: String!
+  page: Float!
+  pageSize: Float!
 }
 
 type Mutation {

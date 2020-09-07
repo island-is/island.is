@@ -5,23 +5,24 @@ import {
   Stack,
   Columns,
   Column,
-  SkeletonLoader,
   Button,
   Select,
   Input,
   Pagination,
 } from '@island.is/island-ui/core'
-import { useQuery } from '@apollo/client'
-import { GET_DOCUMENT } from '@island.is/service-portal/graphql'
-import { Query, QueryGetDocumentArgs } from '@island.is/api/schema'
+import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
   ActionMenuItem,
   useScrollTopOnUpdate,
+  ServicePortalModuleComponent,
 } from '@island.is/service-portal/core'
-import { ActionCard } from '@island.is/service-portal/core'
+import { ActionCard, ActionCardLoader } from '@island.is/service-portal/core'
 import AnimateHeight from 'react-animate-height'
+import * as styles from './Overview.treat'
 
-export const ServicePortalDocuments = () => {
+export const ServicePortalDocuments: ServicePortalModuleComponent = ({
+  userInfo,
+}) => {
   const [page, setPage] = useState(1)
   const [searchOpen, setSearchOpen] = useState(false)
   const [filterValue, setFilterValue] = useState({
@@ -29,20 +30,15 @@ export const ServicePortalDocuments = () => {
     dateFrom: '',
     dateTo: '',
   })
-  const { data, loading, error } = useQuery<Query, QueryGetDocumentArgs>(
-    GET_DOCUMENT,
-    {
-      variables: {
-        input: {
-          id: '12456',
-        },
-      },
-    },
+  const { data, loading, error } = useListDocuments(
+    userInfo.user.profile.natreg,
+    page,
+    4,
   )
-  const document = data?.getDocument
   useScrollTopOnUpdate([page])
 
   const categories = [
+    { label: 'Allir flokkar', value: '' },
     { label: 'Fjármál', value: 'Fjármál' },
     { label: 'Húsnæði og eignir', value: 'Húsnæði og eignir' },
     { label: 'Starfsleyfi', value: 'Starfsleyfi' },
@@ -87,14 +83,14 @@ export const ServicePortalDocuments = () => {
         <Box marginTop={[1, 1, 2, 2, 6]}>
           <Stack space={2}>
             <div>
-              <Columns align="right" space={1}>
-                <Column width="1/3">
+              <Columns align="right" space={1} collapseBelow="sm">
+                <div className={styles.selectWrapper}>
                   <Select
                     name="categories"
                     defaultValue={categories[0]}
                     options={categories}
                   />
-                </Column>
+                </div>
                 <Column width="content">
                   <Button
                     icon={searchOpen ? 'close' : 'search'}
@@ -141,40 +137,34 @@ export const ServicePortalDocuments = () => {
                 </Box>
               </AnimateHeight>
             </div>
-            {loading && <SkeletonLoader height={147} repeat={4} space={2} />}
+            {loading && <ActionCardLoader repeat={3} />}
             {error && (
               <Typography variant="h3">
                 Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis
               </Typography>
             )}
-            {document && (
-              <>
-                {[...Array(4)].map((_key, index) => (
-                  <ActionCard
-                    title={document.subject}
-                    date={new Date(document.date)}
-                    label={document.senderName}
-                    text={
-                      'Vottorð um skuldleysi til þess að gera grein fyrir þinni skuldarstöðu gagnvart ríkinu'
-                    }
-                    url="https://island.is/"
-                    external
-                    key={index}
-                    actionMenuRender={() => (
-                      <>
-                        <ActionMenuItem>Fela skjal</ActionMenuItem>
-                        <ActionMenuItem>Eyða skjali</ActionMenuItem>
-                      </>
-                    )}
-                    buttonRender={() => (
-                      <Button variant="ghost" size="small" leftIcon="file">
-                        Sakavottorð
-                      </Button>
-                    )}
-                  />
-                ))}
-              </>
-            )}
+            {data?.map((document) => (
+              <ActionCard
+                title={document.subject}
+                date={new Date(document.date)}
+                label={document.senderName}
+                text={'Hérna gæti komið texti um skjalið ef hann væri í boði'}
+                url="https://island.is/"
+                external
+                key={document.id}
+                actionMenuRender={() => (
+                  <>
+                    <ActionMenuItem>Fela skjal</ActionMenuItem>
+                    <ActionMenuItem>Eyða skjali</ActionMenuItem>
+                  </>
+                )}
+                buttonRender={() => (
+                  <Button variant="ghost" size="small" leftIcon="file">
+                    Sakavottorð
+                  </Button>
+                )}
+              />
+            ))}
             <Pagination
               page={page}
               totalPages={10}

@@ -1,4 +1,6 @@
 export * from './lib/queries/getHelloWorldGreeting'
 export * from './lib/queries/getDocument'
 export * from './lib/queries/getFrontpageSlides'
+export * from './lib/queries/listDocuments'
 export * from './lib/client'
+export * from './hooks/useListDocuments'
