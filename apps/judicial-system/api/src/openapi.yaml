@@ -33,12 +33,6 @@ components:
         modified:
           format: date-time
           type: string
-        policeCaseNumber:
-          type: string
-        suspectNationalId:
-          type: string
-        suspectName:
-          type: string
         state:
           type: string
           enum:
@@ -47,12 +41,28 @@ components:
             - SUBMITTED
             - ACTIVE
             - COMPLETED
+        policeCaseNumber:
+          type: string
+        suspectNationalId:
+          type: string
+        suspectName:
+          type: string
+        suspectAddress:
+          type: string
+        court:
+          type: string
+        arrestDate:
+          format: date-time
+          type: string
+        requestedCourtDate:
+          format: date-time
+          type: string
       required:
         - created
         - modified
+        - state
         - policeCaseNumber
         - suspectNationalId
-        - state
     CreateCaseDto:
       type: object
       properties:
@@ -62,26 +72,22 @@ components:
           type: string
         suspectName:
           type: string
-        state:
+        suspectAddress:
           type: string
-          enum:
-            - UNKNOWN
-            - DRAFT
-            - SUBMITTED
-            - ACTIVE
-            - COMPLETED
+        court:
+          type: string
+        arrestDate:
+          format: date-time
+          type: string
+        requestedCourtDate:
+          format: date-time
+          type: string
       required:
         - policeCaseNumber
         - suspectNationalId
     UpdateCaseDto:
       type: object
       properties:
-        policeCaseNumber:
-          type: string
-        suspectNationalId:
-          type: string
-        suspectName:
-          type: string
         state:
           type: string
           enum:
@@ -90,6 +96,22 @@ components:
             - SUBMITTED
             - ACTIVE
             - COMPLETED
+        policeCaseNumber:
+          type: string
+        suspectNationalId:
+          type: string
+        suspectName:
+          type: string
+        suspectAddress:
+          type: string
+        court:
+          type: string
+        arrestDate:
+          format: date-time
+          type: string
+        requestedCourtDate:
+          format: date-time
+          type: string
 paths:
   /liveness:
     get:
