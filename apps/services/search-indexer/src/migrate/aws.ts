@@ -88,9 +88,15 @@ const waitForPackageStatus = async (
 // checks connection and valdiates that we have access to requested domain
 export const checkAWSAccess = async (): Promise<boolean> => {
   const domains = await awsEs.listDomainNames().promise()
+    .then((domains) => domains.DomainNames)
+    .catch((error) => {
+      logger.error('failed to check aws access', { error })
+      // return empty list to indicate no access
+      return []
+    })
 
-  logger.info('Validating esDomain agains aws domain list', { domains })
-  return !!domains.DomainNames.find(
+  logger.info('validating esDomain agains aws domain list', { domains })
+  return !!domains.find(
     (domain) => domain.DomainName === environment.migrate.esDomain,
   )
 }

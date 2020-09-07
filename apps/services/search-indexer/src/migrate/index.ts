@@ -6,20 +6,22 @@ import { AwsEsPackage } from './aws'
 
 class App {
   async run() {
-    logger.info('Starting migration if needed', environment.migrate)
+    logger.info('starting migration of dictionaries and ES config', environment.migrate)
     const hasAwsAccess = await aws.checkAWSAccess()
 
     let packageIds: AwsEsPackage[]
     if (hasAwsAccess) {
       packageIds = await this.migrateAws()
     } else {
-      // get "fake" packageId list for local development
+      logger.info('no aws access found running in local development mode')
+      // get packageId list for local development packages have package ids matching filenames in the dictionary repo
       packageIds = dictionary.getFakePackageIds()
     }
 
     await this.migrateES(packageIds)
 
     if (hasAwsAccess) {
+      logger.info('cleaning up unused packages')
       // TODO: Get permission in AWS to do this
       // await aws.disassociatePackagesFromAwsEs(packageIds) // we disassociate all but the files in packageIds
       // await aws.deletePackagesFromAwsEs(packageIds) // we delete all but the files in packageIds
@@ -45,6 +47,7 @@ class App {
   }
 
   private async migrateES(packageIds: AwsEsPackage[]) {
+    logger.info('Ran!')
     return true
   }
 }
