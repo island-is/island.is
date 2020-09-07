@@ -61,6 +61,8 @@
     "@opentelemetry/tracing": "0.8.3",
     "@sentry/browser": "5.17.0",
     "@sentry/node": "5.17.0",
+    "@sentry/react": "^5.22.3",
+    "@sentry/tracing": "^5.22.3",
     "@sindresorhus/slugify": "1.0.0",
     "@xstate/react": "0.8.1",
     "amazon-s3-uri": "^0.0.3",
