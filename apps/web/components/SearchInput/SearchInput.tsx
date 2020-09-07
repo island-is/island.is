@@ -6,8 +6,10 @@ import React, {
   useCallback,
   useRef,
   forwardRef,
+  useContext,
 } from 'react'
 import Link from 'next/link'
+import { withResizeDetector } from 'react-resize-detector'
 import Downshift from 'downshift'
 import { useRouter } from 'next/router'
 import { useApolloClient } from 'react-apollo'
@@ -32,8 +34,10 @@ import {
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import * as styles from './SearchInput.treat'
 import { Locale } from '@island.is/web/i18n/I18n'
+import { GlobalNamespaceContext } from '@island.is/web/context/GlobalNamespaceContext/GlobalNamespaceContext'
 
 const DEBOUNCE_TIMER = 300
+const STACK_WIDTH = 400
 
 type SearchState = {
   term: string
@@ -54,6 +58,7 @@ const isEmpty = ({ results, suggestions }: SearchState): boolean =>
   suggestions.length === 0 && (results?.total ?? 0) === 0
 
 const useSearch = (locale: Locale, term?: string): SearchState => {
+  const { globalNamespace } = useContext(GlobalNamespaceContext)
   const [state, setState] = useState<SearchState>(emptyState)
   const client = useApolloClient()
   const timer = useRef(null)
@@ -70,15 +75,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
         term: '',
         prefix: '',
         // hardcoded while not supported by search
-        suggestions: [
-          'Covid-19',
-          'Hlutabætur',
-          'Atvinnuleysisbætur',
-          'Fæðingarorlof',
-          'Mannanafnanefnd',
-          'Rekstrarleyfi',
-          'Heimilisfang',
-        ],
+        suggestions: globalNamespace.searchSuggestions ?? [],
       })
       return
     }
@@ -286,26 +283,7 @@ const Results: FC<{
       </div>
     ))
 
-    const splitAt = Math.min(search.suggestions.length / 2)
-    const left = suggestions.slice(0, splitAt)
-    const right = suggestions.slice(splitAt)
-
-    return (
-      <Box display="flex" background="blue100" paddingY={2} paddingX={3}>
-        <div className={styles.menuColumn}>
-          <Stack space={2}>
-            <Typography variant="eyebrow" color="blue400">
-              Algeng leitarorð
-            </Typography>
-            {left}
-          </Stack>
-        </div>
-        <div className={styles.separator} />
-        <div className={styles.menuColumn}>
-          <Stack space={2}>{right}</Stack>
-        </div>
-      </Box>
-    )
+    return <CommonSearchTerms suggestions={suggestions} />
   }
 
   return (
@@ -353,5 +331,41 @@ const Results: FC<{
     </Box>
   )
 }
+
+const CommonSearchTerms = withResizeDetector(
+  ({ width, suggestions }: { width: number; suggestions: string[] }) => {
+    if (!suggestions.length) {
+      return null
+    }
+
+    const splitAt = Math.min(suggestions.length / 2)
+
+    const left = suggestions.slice(0, splitAt)
+    const right = suggestions.slice(splitAt)
+
+    return (
+      <Box display="flex" background="blue100" paddingY={2} paddingX={3}>
+        <div className={styles.menuColumn}>
+          <Stack space={2}>
+            <Box marginBottom={1}>
+              <Typography variant="eyebrow" color="blue400">
+                Algeng leitarorð
+              </Typography>
+            </Box>
+            {width < STACK_WIDTH ? suggestions : left}
+          </Stack>
+        </div>
+        {width > STACK_WIDTH - 1 ? (
+          <>
+            <div className={styles.separator} />
+            <div className={styles.menuColumn}>
+              <Stack space={2}>{right}</Stack>
+            </div>
+          </>
+        ) : null}
+      </Box>
+    )
+  },
+)
 
 export default SearchInput
