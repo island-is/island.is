@@ -5,7 +5,6 @@ import {
   Typography,
   BulletList,
   Bullet,
-  ContentBlock,
   Button,
   Box,
   Stack,
@@ -23,7 +22,6 @@ import Paragraph from '../Paragraph/Paragraph'
 import Background from '../Background/Background'
 import BorderedContent from '../BorderedContent/BorderedContent'
 import Hyperlink from '../Hyperlink/Hyperlink'
-import { ContentContainer } from '../ContentContainer/ContentContainer'
 import Image from '../Image/Image'
 
 const mappedContentfulTypes = {
@@ -31,13 +29,17 @@ const mappedContentfulTypes = {
   articleCategory: 'category',
 }
 
+const ContentWrap = ({ children }) => (
+  <GridRow>
+    <GridColumn span="7/8" offset="1/8">
+      {children}
+    </GridColumn>
+  </GridRow>
+)
+
 const customBlockquoteRenderNode = () => ({
   [BLOCKS.QUOTE]: (node, children) => {
-    return (
-      <ContentContainer>
-        <Blockquote>{children}</Blockquote>
-      </ContentContainer>
-    )
+    return <Blockquote>{children}</Blockquote>
   },
   [BLOCKS.PARAGRAPH]: (node, children) => children,
 })
@@ -46,11 +48,7 @@ const embeddedNodes = () => ({
   faqList: {
     component: Box,
     wrapper: ({ children }) => {
-      return (
-        <Box paddingBottom={20} paddingTop={15}>
-          {children}
-        </Box>
-      )
+      return <Box paddingY={10}>{children}</Box>
     },
     children: (node) => {
       const title = node.data?.target?.fields?.title || ''
@@ -65,37 +63,36 @@ const embeddedNodes = () => ({
         .filter((question) => question)
 
       return (
-        <ContentContainer>
-          <Stack space={6}>
-            <Typography variant="h2" as="h2" data-sidebar-scollable>
-              <span data-sidebar-link={slugify(title)}>{title}</span>
-            </Typography>
-            <Accordion>
-              {items.map((item, index) => {
-                const { answer, question } = item
+        <ContentWrap>
+          <Typography
+            variant="h2"
+            as="h2"
+            data-sidebar-scollable
+            paddingBottom={4}
+          >
+            <span data-sidebar-link={slugify(title)}>{title}</span>
+          </Typography>
+          <Accordion>
+            {items.map((item, index) => {
+              const { answer, question } = item
 
-                return (
-                  <AccordionItem
-                    key={index}
-                    id={`faq_${index}`}
-                    label={question}
-                  >
-                    <RichText
-                      document={answer}
-                      renderNode={customProcessEntryRenderNode()}
-                    />
-                  </AccordionItem>
-                )
-              })}
-            </Accordion>
-          </Stack>
-        </ContentContainer>
+              return (
+                <AccordionItem key={index} id={`faq_${index}`} label={question}>
+                  <RichText
+                    document={answer}
+                    renderNode={customProcessEntryRenderNode()}
+                  />
+                </AccordionItem>
+              )
+            })}
+          </Accordion>
+        </ContentWrap>
       )
     },
   },
   embeddedVideo: {
     component: EmbeddedVideo,
-    wrapper: ({ children }) => <ContentContainer>{children}</ContentContainer>,
+    wrapper: ({ children }) => children,
     processContent: (node) => {
       const { url, title } = node.data.target.fields
 
@@ -107,11 +104,7 @@ const embeddedNodes = () => ({
   },
   processEntry: {
     component: BorderedContent,
-    wrapper: ({ children }) => (
-      <Box paddingBottom={10}>
-        <GridContainer>{children}</GridContainer>
-      </Box>
-    ),
+    wrapper: ({ children }) => <Box paddingY={6}>{children}</Box>,
     processContent: (node) => {
       const {
         processTitle,
@@ -151,7 +144,7 @@ const embeddedNodes = () => ({
         showTopContent: details?.content?.length,
         topContent: (
           <GridRow>
-            <GridColumn span="10/12" offset="1/12">
+            <GridColumn span="7/8" offset="1/8">
               {title && (
                 <Typography variant="h2" as="h3">
                   <span data-sidebar-link={slugify(title)}>{title}</span>
@@ -171,15 +164,20 @@ const embeddedNodes = () => ({
         ),
         bottomContent: (
           <GridRow>
-            <GridColumn span="10/12" offset="1/12">
+            <GridColumn span="7/8" offset="1/8">
               {type !== 'No type' && (
-                <Typography variant="eyebrow" as="h4" color="blue400">
+                <Typography
+                  variant="eyebrow"
+                  as="h4"
+                  color="blue400"
+                  paddingBottom={1}
+                >
                   {processTypes[type].title}
                 </Typography>
               )}
 
               {processTitle && (
-                <Typography variant="h3" as="h3">
+                <Typography variant="h3" as="h3" paddingBottom={1}>
                   {processTitle}
                 </Typography>
               )}
@@ -205,11 +203,9 @@ const embeddedNodes = () => ({
     children: (node) => {
       return (
         <Background background="dotted" paddingY={[6, 6, 10]} marginTop={5}>
-          <ContentContainer marginTop={0}>
-            <Statistics
-              items={node.data.target.fields.statistics.map((s) => s.fields)}
-            />
-          </ContentContainer>
+          <Statistics
+            items={node.data.target.fields.statistics.map((s) => s.fields)}
+          />
         </Background>
       )
     },
@@ -221,13 +217,11 @@ const embeddedNodes = () => ({
       if (!fields.image) {
         return (
           <>
-            <ContentContainer>
-              <Typography variant="h2" as="h2">
-                <span data-sidebar-link={slugify(fields.title)}>
-                  {fields.title}
-                </span>
-              </Typography>
-            </ContentContainer>
+            <Typography variant="h2" as="h2" paddingTop={2} paddingBottom={2}>
+              <span data-sidebar-link={slugify(fields.title)}>
+                {fields.title}
+              </span>
+            </Typography>
             <Content document={fields.body} />
           </>
         )
@@ -241,7 +235,7 @@ const embeddedNodes = () => ({
                 <img src={fields.image.fields.file.url + '?w=320'} alt="" />
               </GridColumn>
               <GridColumn span="8/12">
-                <Typography variant="h2" as="h2">
+                <Typography variant="h2" as="h2" paddingBottom={2}>
                   <span data-sidebar-link={slugify(fields.title)}>
                     {fields.title}
                   </span>
@@ -282,35 +276,39 @@ const defaultRenderNode = (overrides = {}) => {
         return null
       }
 
-      return <Paragraph>{children}</Paragraph>
+      return (
+        <ContentWrap>
+          <Paragraph>{children}</Paragraph>
+        </ContentWrap>
+      )
     },
     [BLOCKS.QUOTE]: (node, children) => {
       return (
-        <RichText document={node} renderNode={customBlockquoteRenderNode()} />
+        <ContentWrap>
+          <RichText document={node} renderNode={customBlockquoteRenderNode()} />
+        </ContentWrap>
       )
     },
     [BLOCKS.HEADING_2]: (node, children) => (
-      <ContentContainer>
-        <Typography variant="h2" as="h2">
+      <ContentWrap>
+        <Typography variant="h2" as="h2" paddingBottom={2} paddingTop={2}>
           <span data-sidebar-link={slugify(children.join(''))}>{children}</span>
         </Typography>
-      </ContentContainer>
+      </ContentWrap>
     ),
     [BLOCKS.HEADING_3]: (node, children) => (
-      <ContentContainer>
+      <ContentWrap>
         <Typography variant="h3" as="h3">
           <span data-sidebar-link={slugify(children.join(''))}>{children}</span>
         </Typography>
-      </ContentContainer>
+      </ContentWrap>
     ),
-    [BLOCKS.UL_LIST]: (node, children) => (
-      <ContentContainer>
-        <BulletList>{children}</BulletList>
-      </ContentContainer>
-    ),
+    [BLOCKS.UL_LIST]: (node, children) => <BulletList>{children}</BulletList>,
     [BLOCKS.LIST_ITEM]: (node, children) => {
       return (
-        <RichText document={node} renderNode={customListItemRenderNode()} />
+        <ContentWrap>
+          <RichText document={node} renderNode={customListItemRenderNode()} />
+        </ContentWrap>
       )
     },
     [BLOCKS.EMBEDDED_ENTRY]: (node) => {
@@ -366,24 +364,16 @@ const customProcessEntryRenderNode = () => ({
     return <Paragraph>{children}</Paragraph>
   },
   [BLOCKS.HEADING_2]: (node, children) => (
-    <ContentContainer paddingX="none">
-      <Typography variant="h2" as="h2">
-        <span data-sidebar-link={slugify(children.join(''))}>{children}</span>
-      </Typography>
-    </ContentContainer>
+    <Typography variant="h2" as="h2">
+      <span data-sidebar-link={slugify(children.join(''))}>{children}</span>
+    </Typography>
   ),
   [BLOCKS.HEADING_3]: (node, children) => (
-    <ContentContainer paddingX="none">
-      <Typography variant="h3" as="h3">
-        {children}
-      </Typography>
-    </ContentContainer>
+    <Typography variant="h3" as="h3">
+      {children}
+    </Typography>
   ),
-  [BLOCKS.UL_LIST]: (node, children) => (
-    <ContentContainer paddingX="none">
-      <BulletList>{children}</BulletList>
-    </ContentContainer>
-  ),
+  [BLOCKS.UL_LIST]: (node, children) => <BulletList>{children}</BulletList>,
   [BLOCKS.LIST_ITEM]: (node, children) => {
     return <RichText document={node} renderNode={customListItemRenderNode()} />
   },

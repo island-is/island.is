@@ -119,7 +119,7 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
         }
       >
         <GridRow>
-          <GridColumn offset="1/12" span="11/12" paddingBottom={2}>
+          <GridColumn offset="1/8" span="7/8" paddingBottom={2}>
             <Breadcrumbs>
               <Link href={makePath()}>
                 <a>Ísland.is</a>
@@ -148,7 +148,7 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
           />
         </Hidden>
         <GridRow>
-          <GridColumn offset="1/12" span="11/12">
+          <GridColumn offset="1/8" span="7/8">
             <Box marginBottom={simpleSpacing}>
               <Typography variant="h1" as="h1" paddingBottom={2}>
                 <span data-sidebar-link={slugify(article.title)}>
