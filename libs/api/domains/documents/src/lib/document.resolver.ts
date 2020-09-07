@@ -15,7 +15,6 @@ export class DocumentResolver {
     @Args('input') input: GetDocumentInput,
   ): Promise<DocumentDetails> {
     const kennitala = '2606862759' // Pending proper authentication
-    console.log('getting ', input)
     const result = await this.documentService.findByDocumentId(
       kennitala,
       input.id,
