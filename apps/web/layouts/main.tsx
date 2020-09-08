@@ -9,14 +9,12 @@ import {
   QueryGetMenuArgs,
   QueryGetNamespaceArgs,
 } from '@island.is/api/schema'
-import { GlobalNamespaceContext } from '../context/GlobalNamespaceContext/GlobalNamespaceContext'
+import {
+  GlobalNamespaceContext,
+  NamespaceType,
+} from '../context/GlobalNamespaceContext/GlobalNamespaceContext'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_NAMESPACE_QUERY } from '../screens/queries'
-
-type NamespaceType = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  [key: string]: any
-}
 
 interface LayoutProps {
   showSearchInHeader?: boolean

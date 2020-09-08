@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext } from 'react'
 
-type NamespaceType = {
+export type NamespaceType = {
   [key: string]: any
 }
 
