@@ -210,6 +210,7 @@ const Search: Screen<CategoryProps> = ({
             <Link href="/">Ísland.is</Link>
           </Breadcrumbs>
           <SearchInput
+            id="search_input_search_page"
             ref={searchRef}
             size="large"
             activeLocale={activeLocale}

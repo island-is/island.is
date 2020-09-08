@@ -65,6 +65,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                   <>
                     <Hidden below="lg">
                       <SearchInput
+                        id="search_input_header"
                         size="medium"
                         activeLocale={locale}
                         placeholder="Leitaðu á Ísland.is"

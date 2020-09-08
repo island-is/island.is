@@ -60,6 +60,7 @@ const Home: Screen<HomeProps> = ({
       <Stack space={[1, 1, 3]}>
         <Box display="inlineFlex" alignItems="center" width="full">
           <SearchInput
+            id="search_input_home"
             openOnFocus
             size="medium"
             colored={false}
@@ -68,9 +69,10 @@ const Home: Screen<HomeProps> = ({
           />
         </Box>
         <Inline space={1}>
-          {n('featuredArticles', []).map(({ title, url }) => {
+          {n('featuredArticles', []).map(({ title, url }, index) => {
             return (
               <Tag
+                key={index}
                 variant="darkerBlue"
                 onClick={() => {
                   Router.push(`${makePath('article')}/[slug]`, url)

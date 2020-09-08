@@ -50,6 +50,7 @@ export const FixedNav: FC = () => {
           >
             <Box>
               <SearchInput
+                id="search_input_fixed_nav"
                 white
                 size="medium"
                 activeLocale={activeLocale}
