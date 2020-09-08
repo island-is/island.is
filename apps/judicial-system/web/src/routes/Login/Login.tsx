@@ -24,13 +24,6 @@ export const Login = () => {
           sé kveikt á símanum eða hann sé ólæstur.
         </Typography>
       </div>
-      <div className={styles.inputContainer}>
-        <Input
-          name="phoneNr"
-          placeholder="7 stafa símanúmer"
-          label="Símanúmer"
-        />
-      </div>
       <div className={styles.buttonContainer}>
         <Button
           href={`${apiUrl}/api/auth/login?returnUrl=gaesluvardhaldskrofur`}

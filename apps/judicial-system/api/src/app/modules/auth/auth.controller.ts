@@ -79,7 +79,7 @@ export class AuthController {
       verifyResult = await loginIS.verify(token)
     } catch (err) {
       this.logger.error(err)
-      return res.redirect('/')
+      return res.redirect('/?error=true')
     }
 
     const { authId, returnUrl } = req.cookies[REDIRECT_COOKIE_NAME] || {}
@@ -91,7 +91,7 @@ export class AuthController {
           userAuthId: user.authId,
         },
       })
-      return res.redirect('/')
+      return res.redirect('/?error=true')
     }
 
     const authUser = {
@@ -105,7 +105,7 @@ export class AuthController {
           user,
         },
       })
-      return res.redirect('/')
+      return res.redirect('/?error=true')
     }
 
     const csrfToken = new Entropy({ bits: 128 }).string()

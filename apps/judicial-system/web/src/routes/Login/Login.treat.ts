@@ -26,12 +26,6 @@ export const subTitleContainer = style({
   marginBottom: 40,
 })
 
-export const inputContainer = style({
-  gridRow: '4',
-  gridColumn: '2 / span 4',
-  marginBottom: 40,
-})
-
 export const buttonContainer = style({
   gridRow: '5',
   gridColumn: '2 / span 2',
