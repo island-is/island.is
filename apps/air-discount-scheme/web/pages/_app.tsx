@@ -10,6 +10,7 @@ import { Toast, ErrorBoundary, AppLayout } from '../components'
 import { client as initApollo } from '../graphql'
 import { appWithTranslation } from '../i18n'
 import { isAuthenticated } from '../auth/utils'
+import { withHealthchecks } from '../utils/Healthchecks/withHealthchecks'
 
 const {
   publicRuntimeConfig: { SENTRY_DSN },
@@ -25,7 +26,7 @@ interface Props {
 }
 
 class SupportApplication extends App<Props> {
-  static async getInitialProps(appContext) {
+  static async getInitialProps (appContext) {
     const { Component, ctx } = appContext
     const apolloClient = initApollo({})
     const customContext = {
@@ -62,7 +63,7 @@ class SupportApplication extends App<Props> {
     return 'is'
   }
 
-  render() {
+  render () {
     const {
       Component,
       pageProps,
@@ -104,4 +105,10 @@ class SupportApplication extends App<Props> {
   }
 }
 
-export default appWithTranslation(SupportApplication)
+const { serverRuntimeConfig } = getConfig()
+const { graphqlEndpoint, apiUrl } = serverRuntimeConfig
+const externalEndpointDependencies = [graphqlEndpoint, apiUrl]
+
+export default appWithTranslation(
+  withHealthchecks(externalEndpointDependencies)(SupportApplication),
+)

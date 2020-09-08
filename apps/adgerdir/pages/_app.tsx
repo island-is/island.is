@@ -31,36 +31,36 @@ const Layout: FC<LayoutProps> = ({
     <Page>
       <Head>
         <link
-          rel="apple-touch-icon"
-          sizes="180x180"
-          href="/apple-touch-icon.png"
+          rel='apple-touch-icon'
+          sizes='180x180'
+          href='/apple-touch-icon.png'
         />
         <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
-          href="/favicon-32x32.png"
+          rel='icon'
+          type='image/png'
+          sizes='32x32'
+          href='/favicon-32x32.png'
         />
         <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
-          href="/favicon-16x16.png"
+          rel='icon'
+          type='image/png'
+          sizes='16x16'
+          href='/favicon-16x16.png'
         />
-        <link rel="manifest" href="/site.webmanifest" />
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
-        <meta name="msapplication-TileColor" content="#da532c" />
-        <meta name="theme-color" content="#ffffff" />
+        <link rel='manifest' href='/site.webmanifest' />
+        <link rel='mask-icon' href='/safari-pinned-tab.svg' color='#5bbad5' />
+        <meta name='msapplication-TileColor' content='#da532c' />
+        <meta name='theme-color' content='#ffffff' />
         <meta
-          name="description"
-          content="Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt."
+          name='description'
+          content='Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt.'
         />
         <title>Ísland.is</title>
       </Head>
       <PageLoader />
       {showHeader && <Header showSearchInHeader={false} />}
       {wrapContent ? (
-        <Box flexGrow={1} width="full">
+        <Box flexGrow={1} width='full'>
           {children}
         </Box>
       ) : (
