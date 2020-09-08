@@ -364,7 +364,6 @@ export type PaginatedAdgerdirNews = {
 
 export type Fund = {
   __typename?: 'Fund'
-  nationalId: Scalars['ID']
   credit: Scalars['Float']
   used: Scalars['Float']
   total: Scalars['Float']
@@ -641,7 +640,7 @@ export type DiscountsQueryQuery = { __typename?: 'Query' } & {
               fund?: Maybe<
                 { __typename?: 'Fund' } & Pick<
                   Fund,
-                  'nationalId' | 'used' | 'credit' | 'total'
+                  'used' | 'credit' | 'total'
                 >
               >
             }
@@ -961,7 +960,6 @@ export const DiscountsQueryDocument = gql`
         nationalId
         name
         fund {
-          nationalId
           used
           credit
           total

@@ -87,6 +87,19 @@ components:
           type: string
       required:
         - version
+    Discount:
+      type: object
+      properties:
+        discountCode:
+          type: string
+        nationalId:
+          type: string
+        expiresIn:
+          type: number
+      required:
+        - discountCode
+        - nationalId
+        - expiresIn
     FlightLegDto:
       type: object
       properties:
@@ -187,8 +200,6 @@ components:
     Fund:
       type: object
       properties:
-        nationalId:
-          type: string
         credit:
           type: number
           description: Determines if the user has any discount credits left
@@ -197,11 +208,10 @@ components:
         total:
           type: number
       required:
-        - nationalId
         - credit
         - used
         - total
-    User:
+    AirlineUser:
       type: object
       properties:
         firstName:
@@ -217,12 +227,6 @@ components:
             - kk
         nationalId:
           type: string
-        address:
-          type: string
-        postalcode:
-          type: number
-        city:
-          type: string
         fund:
           $ref: '#/components/schemas/Fund'
       required:
@@ -231,9 +235,6 @@ components:
         - lastName
         - gender
         - nationalId
-        - address
-        - postalcode
-        - city
         - fund
 paths:
   /liveness:
@@ -262,6 +263,26 @@ paths:
                 $ref: '#/components/schemas/Version'
       tags:
         - internal
+  '/api/public/users/{nationalId}/discounts':
+    post:
+      operationId: PublicDiscountController_createDiscountCode
+      parameters:
+        - name: nationalId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Discount'
+      tags:
+        - Discounts
+      security:
+        - bearer: []
   '/api/public/discounts/{discountCode}/flights':
     post:
       operationId: PublicFlightController_create
@@ -359,7 +380,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/AirlineUser'
       tags:
         - Users
       security:
