@@ -2,8 +2,8 @@
 module.exports = {
   development: {
     username: 'postgres',
-    password: 'dev_db',
-    database: 'postgres',
+    password: 'asdfasdf',
+    database: 'dev_db',
     host: 'localhost',
     dialect: 'postgres',
   },

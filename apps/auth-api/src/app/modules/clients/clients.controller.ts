@@ -26,8 +26,9 @@ export class ClientsController {
   @Get(':clientId')
   @ApiOkResponse({ type: Client })
   async findOne(@Param('clientId') clientId: string, @Req() request: Request): Promise<Client> {
+    this.logger.log("Fetching client with clientId: ", clientId)
+
     const clientProfile = await this.clientsService.findClientById(clientId)
-    console.log(request.headers)
     if (!clientProfile) {
       throw new NotFoundException("This client doesn't exist")
     }
