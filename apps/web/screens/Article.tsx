@@ -120,7 +120,11 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
         }
       >
         <GridRow>
-          <GridColumn offset="1/8" span="7/8" paddingBottom={2}>
+          <GridColumn
+            offset={['0', '0', '1/8']}
+            span={['0', '0', '7/8']}
+            paddingBottom={2}
+          >
             <Breadcrumbs>
               <Link href={makePath()}>
                 <a>Ísland.is</a>
@@ -139,17 +143,21 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
             </Breadcrumbs>
           </GridColumn>
         </GridRow>
-        <Hidden above="md">
-          <Select
-            label="Efnisyfirlit"
-            placeholder="Flokkar"
-            options={contentOverviewOptions}
-            onChange={onChangeContentOverview}
-            name="content-overview"
-          />
-        </Hidden>
         <GridRow>
-          <GridColumn offset="1/8" span="7/8">
+          <GridColumn span="8/8" paddingBottom={4}>
+            <Hidden above="sm">
+              <Select
+                label="Efnisyfirlit"
+                placeholder="Flokkar"
+                options={contentOverviewOptions}
+                onChange={onChangeContentOverview}
+                name="content-overview"
+              />
+            </Hidden>
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn offset={['0', '0', '1/8']} span={['8/8', '8/8', '7/8']}>
             <Typography variant="h1" as="h1" paddingBottom={2}>
               <span data-sidebar-link={slugify(article.title)}>
                 {article.title}

@@ -31,7 +31,15 @@ const mappedContentfulTypes = {
 
 const ContentWrap = ({ children }) => (
   <GridRow>
-    <GridColumn span="7/8" offset="1/8">
+    <GridColumn span={['8/8', '8/8', '7/8']} offset={['0', '0', '1/8']}>
+      {children}
+    </GridColumn>
+  </GridRow>
+)
+
+const ProcessEntryWrap = ({ children }) => (
+  <GridRow>
+    <GridColumn span={['8/8', '8/8', '6/8']} offset={['0', '0', '1/8']}>
       {children}
     </GridColumn>
   </GridRow>
@@ -104,7 +112,7 @@ const embeddedNodes = () => ({
   },
   processEntry: {
     component: BorderedContent,
-    wrapper: ({ children }) => <Box paddingY={6}>{children}</Box>,
+    wrapper: ({ children }) => <Box paddingY={[2, 3, 6]}>{children}</Box>,
     processContent: (node) => {
       const {
         processTitle,
@@ -143,57 +151,53 @@ const embeddedNodes = () => ({
       return {
         showTopContent: details?.content?.length,
         topContent: (
-          <GridRow>
-            <GridColumn span="6/8" offset="1/8">
-              {title && (
-                <Typography variant="h2" as="h3" paddingBottom={2}>
-                  <span data-sidebar-link={slugify(title)}>{title}</span>
-                </Typography>
-              )}
-              {subtitle && (
-                <Typography variant="intro" as="p">
-                  {subtitle}
-                </Typography>
-              )}
-              <RichText
-                document={details}
-                renderNode={customProcessEntryRenderNode()}
-              />
-            </GridColumn>
-          </GridRow>
+          <ProcessEntryWrap>
+            {title && (
+              <Typography variant="h2" as="h3" paddingBottom={2}>
+                <span data-sidebar-link={slugify(title)}>{title}</span>
+              </Typography>
+            )}
+            {subtitle && (
+              <Typography variant="intro" as="p">
+                {subtitle}
+              </Typography>
+            )}
+            <RichText
+              document={details}
+              renderNode={customProcessEntryRenderNode()}
+            />
+          </ProcessEntryWrap>
         ),
         bottomContent: (
-          <GridRow>
-            <GridColumn span="6/8" offset="1/8">
-              {type !== 'No type' && (
-                <Typography
-                  variant="eyebrow"
-                  as="h4"
-                  color="blue400"
-                  paddingBottom={1}
-                >
-                  {processTypes[type].title}
-                </Typography>
-              )}
+          <ProcessEntryWrap>
+            {type !== 'No type' && (
+              <Typography
+                variant="eyebrow"
+                as="h4"
+                color="blue400"
+                paddingBottom={1}
+              >
+                {processTypes[type].title}
+              </Typography>
+            )}
 
-              {processTitle && (
-                <Typography variant="h3" as="h3" paddingBottom={1}>
-                  {processTitle}
-                </Typography>
-              )}
-              {processInfo && (
-                <RichText
-                  document={processInfo}
-                  renderNode={customProcessEntryRenderNode()}
-                />
-              )}
-              <Box paddingTop={[1, 1, 2]}>
-                <Button href={processLink} icon={processTypes[type].icon}>
-                  {buttonText}
-                </Button>
-              </Box>
-            </GridColumn>
-          </GridRow>
+            {processTitle && (
+              <Typography variant="h3" as="h3" paddingBottom={1}>
+                {processTitle}
+              </Typography>
+            )}
+            {processInfo && (
+              <RichText
+                document={processInfo}
+                renderNode={customProcessEntryRenderNode()}
+              />
+            )}
+            <Box paddingTop={[1, 1, 2]}>
+              <Button href={processLink} icon={processTypes[type].icon}>
+                {buttonText}
+              </Button>
+            </Box>
+          </ProcessEntryWrap>
         ),
       }
     },
