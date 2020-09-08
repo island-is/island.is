@@ -310,20 +310,10 @@ type Fund {
   total: Float!
 }
 
-type User {
-  nationalId: ID!
-  name: String!
-  mobile: String
-  role: String!
-  fund: Fund
-  meetsADSRequirements: Boolean!
-}
-
-type Discount {
-  nationalId: ID!
-  discountCode: String!
-  expiresIn: Float!
-  user: User!
+type UserInfo {
+  gender: String!
+  age: Float!
+  postalCode: Float!
 }
 
 type Flight {
@@ -331,6 +321,24 @@ type Flight {
   airline: String!
   bookingDate: String!
   travel: String!
+  user: User!
+  userInfo: UserInfo!
+}
+
+type User {
+  nationalId: ID!
+  name: String!
+  mobile: String
+  role: String!
+  fund: Fund
+  meetsADSRequirements: Boolean!
+  flights: [Flight!]!
+}
+
+type Discount {
+  nationalId: ID!
+  discountCode: String!
+  expiresIn: Float!
   user: User!
 }
 
@@ -351,9 +359,9 @@ type Query {
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getMenu(input: GetMenuInput!): Menu
   getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
+  flights(input: FlightsInput!): [Flight!]!
   user: User
   discounts: [Discount!]
-  flights: [Flight!]!
 }
 
 input GetArticleInput {
@@ -438,4 +446,34 @@ input GetMenuInput {
 input GetLifeEventPageInput {
   slug: String!
   lang: String!
+}
+
+input FlightsInput {
+  airline: String
+  flightLeg: FlightLeg
+  period: Period
+  state: String
+  age: Range
+  gender: String
+  postalCode: Float
+}
+
+input FlightLeg {
+  from: String!
+  to: String!
+}
+
+input Period {
+  from: DateTime!
+  to: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input Range {
+  from: Float!
+  to: Float!
 }

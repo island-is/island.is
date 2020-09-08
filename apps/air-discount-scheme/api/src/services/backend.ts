@@ -16,6 +16,10 @@ class BackendAPI extends RESTDataSource {
     return this.get(`users/${nationalId}/flights`)
   }
 
+  getFlights(body: {}): Promise<Flight[]> {
+    return this.post('flights', body)
+  }
+
   getDiscount(nationalId: string): Promise<Discount | null> {
     return this.get(`users/${nationalId}/discounts/current`)
   }
