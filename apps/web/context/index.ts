@@ -1,1 +1,1 @@
-export * from './ColorSchemeContext/ColorSchemeContext'
+export * from './GlobalNamespaceContext/GlobalNamespaceContext'
