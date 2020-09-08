@@ -29,7 +29,7 @@ const mappedContentfulTypes = {
   articleCategory: 'category',
 }
 
-const ContentWrap = ({ children }) => (
+const ContentWrap: React.FC = ({ children }) => (
   <GridRow>
     <GridColumn span={['8/8', '8/8', '7/8']} offset={['0', '0', '1/8']}>
       {children}
@@ -37,7 +37,7 @@ const ContentWrap = ({ children }) => (
   </GridRow>
 )
 
-const ProcessEntryWrap = ({ children }) => (
+const ProcessEntryWrap: React.FC = ({ children }) => (
   <GridRow>
     <GridColumn span={['8/8', '8/8', '6/8']} offset={['0', '0', '1/8']}>
       {children}

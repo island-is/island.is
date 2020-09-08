@@ -9,7 +9,6 @@ import {
   Breadcrumbs,
   Hidden,
   Select,
-  ResponsiveSpace,
   GridColumn,
   GridRow,
   Tag,
@@ -37,8 +36,6 @@ interface ArticleProps {
   article: Query['getArticle']
   namespace: Query['getNamespace']
 }
-
-const simpleSpacing = [2, 2, 3] as ResponsiveSpace
 
 const Article: Screen<ArticleProps> = ({ article, namespace }) => {
   const [contentOverviewOptions, setContentOverviewOptions] = useState([])
