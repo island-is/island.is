@@ -305,7 +305,7 @@ export class Client extends Model<Client> {
 
   @HasMany(() => ClientPostLogoutRedirectUri)
   @ApiProperty()
-  readonly postLogoutRedirectUri
+  readonly postLogoutRedirectUris
 
   @HasMany( () => ClientRedirectUri)
   readonly redirectUris: ClientRedirectUri
