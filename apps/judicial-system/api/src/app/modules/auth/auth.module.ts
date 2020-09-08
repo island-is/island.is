@@ -32,7 +32,7 @@ const ONE_HOUR = 3600
     JwtStrategy,
     {
       provide: 'IslandisLogin',
-      useValue: () => new (require('islandis-login'))({ audienceUrl }),
+      useFactory: () => new (require('islandis-login'))({ audienceUrl }),
     },
   ],
   exports: [AuthService],
