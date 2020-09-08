@@ -6,7 +6,7 @@ export default {
   component: DrawerMenu,
 }
 
-const categories = [
+const bunchOfContent = [
   {
     title: 'Efnisyfirlit',
     items: [
@@ -26,12 +26,45 @@ const categories = [
       { title: 'InnFæðingarorlof fyrir foreldra í fullu námigangur', url: '/' },
       { title: 'Réttindi starfsmanns í fæðingarorlofi', url: '/' },
       { title: 'Kæruréttur', url: '/' },
+      { title: 'Kæruréttur', url: '/' },
+      { title: 'Kæruréttur', url: '/' },
+      { title: 'Kæruréttur', url: '/' },
+      { title: 'Kæruréttur', url: '/' },
+    ],
+  },
+  {
+    title: 'Meira tengt efni',
+    items: [
+      { title: 'Fæðingarorlof fyrir foreldra utan vinnumarkaðar', url: '/' },
+      { title: 'InnFæðingarorlof fyrir foreldra í fullu námigangur', url: '/' },
+      { title: 'Réttindi starfsmanns í fæðingarorlofi', url: '/' },
+      { title: 'Kæruréttur', url: '/' },
+      { title: 'Kæruréttur', url: '/' },
+      { title: 'Kæruréttur', url: '/' },
+      { title: 'Kæruréttur', url: '/' },
+      { title: 'Kæruréttur', url: '/' },
+    ],
+  },
+]
+
+const littleContent = [
+  {
+    title: 'Efnisyfirlit',
+    items: [
+      { title: 'Inngangur', url: '/' },
+      { title: 'Orlofstími', url: '/' },
     ],
   },
 ]
 
 export const Default = () => (
-  <div style={{ maxWidth: 360 }}>
-    <DrawerMenu categories={categories} />
+  <div style={{ maxWidth: 360, margin: '0 auto' }}>
+    <DrawerMenu categories={bunchOfContent} />
+  </div>
+)
+
+export const LittleContent = () => (
+  <div style={{ maxWidth: 360, margin: '0 auto' }}>
+    <DrawerMenu categories={littleContent} />
   </div>
 )

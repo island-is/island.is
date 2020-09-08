@@ -9,7 +9,11 @@ interface ToggleButtonProps {
 
 const ToggleButton: React.FC<ToggleButtonProps> = ({ isActive, onClick }) => {
   return (
-    <button className={styles.button}>
+    <button
+      className={styles.button}
+      style={{ transform: isActive ? 'rotateZ(0)' : 'rotateZ(180deg)' }}
+      onClick={onClick}
+    >
       <Icon type="cheveron" color="purple400" width={14} />
     </button>
   )
