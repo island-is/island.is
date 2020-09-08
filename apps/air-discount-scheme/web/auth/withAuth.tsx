@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 import Router from 'next/router'
-import { NextComponentType } from 'next'
-import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
 
 import { isAuthenticated } from './utils'
 import { REDIRECT_KEY } from '../consts'

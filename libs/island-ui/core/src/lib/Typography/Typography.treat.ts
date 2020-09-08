@@ -21,6 +21,8 @@ export type VariantTypes =
   | 'tag'
   | 'cardCategoryTitle'
   | 'sideMenu'
+  | 'placeholderText'
+  | 'datepickerHeaderText'
 
 type ResponsiveProps<T> = {
   xs?: T
@@ -167,6 +169,22 @@ export const variants: Variants = {
     },
     fontWeight: theme.typography.medium,
     lineHeight: 1.55,
+  },
+  placeholderText: {
+    fontSize: {
+      xs: 20,
+      md: 24,
+    },
+    fontWeight: theme.typography.light,
+    lineHeight: 1.416667,
+  },
+  datepickerHeaderText: {
+    fontSize: {
+      xs: 18,
+      md: 20,
+    },
+    fontWeight: theme.typography.semiBold,
+    lineHeight: 1.666,
   },
 }
 

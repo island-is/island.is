@@ -3,9 +3,9 @@ import { useRouter } from 'next/router'
 
 import {
   Box,
-  ContentBlock,
   SkeletonLoader,
-  Stack,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/air-discount-scheme-web/i18n'
 import { REDIRECT_KEY } from '@island.is/air-discount-scheme-web/consts'
@@ -17,23 +17,30 @@ function Auth() {
   useEffect(() => {
     const redirectUrl =
       localStorage.getItem(REDIRECT_KEY) ?? toRoute('myBenefits', 'is')
-    router.push(redirectUrl)
-  }, [])
+    router.replace(redirectUrl)
+  }, [router, toRoute])
 
   return (
     <Layout
-      left={
-        <Box marginBottom={[3, 3, 3, 12]}>
-          <Box marginBottom={6}>
-            <SkeletonLoader height={300} />
-          </Box>
-          <Box marginBottom={10}>
-            <SkeletonLoader height={250} />
-          </Box>
-          <SkeletonLoader height={300} />
-        </Box>
+      main={
+        <GridRow>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '12/12', '7/9']}
+            offset={[null, null, null, null, '1/9']}
+          >
+            <Box marginBottom={[3, 3, 3, 12]}>
+              <Box marginBottom={6}>
+                <SkeletonLoader height={300} />
+              </Box>
+              <Box marginBottom={10}>
+                <SkeletonLoader height={250} />
+              </Box>
+              <SkeletonLoader height={300} />
+            </Box>
+          </GridColumn>
+        </GridRow>
       }
-      right={
+      aside={
         <Box>
           <Box marginBottom={6}>
             <SkeletonLoader height={200} />

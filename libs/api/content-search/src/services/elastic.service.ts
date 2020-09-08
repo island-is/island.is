@@ -130,7 +130,7 @@ export class ElasticService {
       requestBody.size(query.size)
 
       if (query?.page > 1) {
-        requestBody.from(query.page * query.size - query.page)
+        requestBody.from((query.page - 1) * query.size)
       }
     }
 

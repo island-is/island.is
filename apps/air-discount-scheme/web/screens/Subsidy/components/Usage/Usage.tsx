@@ -15,6 +15,8 @@ import { format } from 'date-fns'
 import { is, enGB } from 'date-fns/locale'
 import { useI18n } from '@island.is/air-discount-scheme-web/i18n'
 
+const THIRTY_SECONDS = 30000 // milli-seconds
+
 const FlightsQuery = gql`
   query FlightsQuery {
     flights {
@@ -34,7 +36,10 @@ interface PropTypes {
 }
 
 function Usage({ misc }: PropTypes) {
-  const { data } = useQuery(FlightsQuery, { ssr: false })
+  const { data } = useQuery(FlightsQuery, {
+    ssr: false,
+    pollInterval: THIRTY_SECONDS,
+  })
   const { flights = [] } = data ?? {}
   const { currentUsage, user, path, date } = JSON.parse(misc)
   const { activeLocale } = useI18n()
