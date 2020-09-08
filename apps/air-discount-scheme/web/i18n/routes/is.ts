@@ -5,6 +5,7 @@ export default {
   home: '/',
   myBenefits: '/min-rettindi',
   termsOfUse: '/notendaskilmalar',
+  personalInfoUsage: '/medferd-personuupplysinga',
   error: '/error',
   notFound: '/*',
 } as Routes

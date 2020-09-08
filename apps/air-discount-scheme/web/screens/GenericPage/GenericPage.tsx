@@ -4,7 +4,7 @@ import { Screen } from '../../types'
 import { Layout } from '@island.is/air-discount-scheme-web/components/Layout'
 import {
   Query,
-  GenericPage,
+  GenericPage as GenericPageSchema,
   QueryGetGenericPageArgs,
 } from '@island.is/api/schema'
 import {
@@ -17,10 +17,10 @@ import {
 import { Content } from '@island.is/air-discount-scheme-web/components'
 
 interface PropTypes {
-  page?: GenericPage
+  page?: GenericPageSchema
 }
 
-const TermsOfUse: Screen<PropTypes> = ({ page }) => {
+const GenericPage: Screen<PropTypes> = ({ page }) => {
   const { mainContent } = page
   return (
     <Layout
@@ -68,7 +68,7 @@ const GetGenericPageQuery = gql`
   }
 `
 
-TermsOfUse.getInitialProps = async ({ apolloClient, locale }) => {
+GenericPage.getInitialProps = async ({ apolloClient, locale, route }) => {
   const {
     data: { getGenericPage: page },
   } = await apolloClient.query<Query, QueryGetGenericPageArgs>({
@@ -76,7 +76,7 @@ TermsOfUse.getInitialProps = async ({ apolloClient, locale }) => {
     variables: {
       input: {
         lang: locale,
-        slug: 'notendaskilmalar',
+        slug: route,
       },
     },
   })
@@ -85,4 +85,4 @@ TermsOfUse.getInitialProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default TermsOfUse
+export default GenericPage

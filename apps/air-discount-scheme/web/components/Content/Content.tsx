@@ -1,5 +1,5 @@
 import React, { useMemo, ReactNode } from 'react'
-import { BLOCKS } from '@contentful/rich-text-types'
+import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 import {
   Typography,
   Box,
@@ -122,6 +122,8 @@ const embeddedNodes = () => ({
 })
 
 const options = (type) => ({
+  renderText: (text) =>
+    text.split('\n').flatMap((text, i) => [i > 0 && <br key={i} />, text]),
   renderNode: {
     [BLOCKS.PARAGRAPH]: (node, children) => {
       return (
@@ -149,7 +151,11 @@ const options = (type) => ({
           </Box>
         )
       }
-      return <img src={url} alt={title} />
+      return (
+        <Box marginTop={5}>
+          <img src={url} alt={title} />
+        </Box>
+      )
     },
     [BLOCKS.EMBEDDED_ENTRY]: (node) => {
       const embeddedNode = embeddedNodes()[
@@ -181,6 +187,9 @@ const options = (type) => ({
           <Box marginTop={2}>{children}</Box>
         </ListItem>
       )
+    },
+    [INLINES.HYPERLINK]: (node, children) => {
+      return <Link href={node.data.uri}>{children}</Link>
     },
   },
 })
