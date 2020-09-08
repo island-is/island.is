@@ -5,12 +5,12 @@ import { useState } from 'react'
 
 export const useListDocuments = (
   natReg: string,
+  dateFrom: Date,
+  dateTo: Date,
   page = 1,
   pageSize = 10,
   category = '',
 ) => {
-  const [dateFrom] = useState(new Date(2010))
-  const [dateTo] = useState(new Date())
   const { data, loading, error } = useQuery<Query, QueryListDocumentsArgs>(
     LIST_DOCUMENTS,
     {
