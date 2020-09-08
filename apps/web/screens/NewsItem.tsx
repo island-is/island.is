@@ -54,28 +54,26 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
         <title>{newsItem.title} | Ísland.is</title>
       </Head>
       <NewsItemLayout sidebar={sidebar}>
-        <Box padding={[3, 3, 6, 0]} paddingBottom={0}>
-          <ContentBlock width="small">
-            <Stack space={3}>
-              <Breadcrumbs>
-                <Link href={makePath()}>Ísland.is</Link>
-                <Link href={makePath('news')}>Fréttir og tilkynningar</Link>
-              </Breadcrumbs>
-              <Box paddingTop={1}>
-                <Typography variant="h1" as="h1">
-                  {newsItem.title}
-                </Typography>
-              </Box>
-              <Typography variant="intro" as="p">
-                {newsItem.intro}
+        <Box paddingTop={[3, 3, 6, 0]}>
+          <Stack space={3}>
+            <Breadcrumbs>
+              <Link href={makePath()}>Ísland.is</Link>
+              <Link href={makePath('news')}>Fréttir og tilkynningar</Link>
+            </Breadcrumbs>
+            <Box paddingTop={1}>
+              <Typography variant="h1" as="h1">
+                {newsItem.title}
               </Typography>
-              {Boolean(newsItem.image) && (
-                <Box paddingY={2}>
-                  <Image type="apiImage" image={newsItem.image} />
-                </Box>
-              )}
-            </Stack>
-          </ContentBlock>
+            </Box>
+            <Typography variant="intro" as="p">
+              {newsItem.intro}
+            </Typography>
+            {Boolean(newsItem.image) && (
+              <Box paddingY={2}>
+                <Image type="apiImage" image={newsItem.image} />
+              </Box>
+            )}
+          </Stack>
         </Box>
         <Content document={newsItem.content} />
       </NewsItemLayout>

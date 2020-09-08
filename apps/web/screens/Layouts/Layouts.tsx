@@ -67,14 +67,20 @@ export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
   <GridContainer>
     <Box paddingTop={6} paddingBottom={10}>
       <GridRow>
-        <GridColumn span="4/12">
+        <GridColumn
+          span={['12/12', '12/12', '4/12', '3/12']}
+          className={sidebarWrapper}
+        >
           <Sticky>
             <Box background="purple100" padding={4}>
               {sidebar}
             </Box>
           </Sticky>
         </GridColumn>
-        <GridColumn span="6/12" offset="1/12">
+        <GridColumn
+          span={['12/12', '12/12', '8/12', '6/12']}
+          offset={['0', '0', '0', '1/12']}
+        >
           <Box paddingBottom={10}>{children}</Box>
         </GridColumn>
       </GridRow>
@@ -88,12 +94,18 @@ interface NewsItemProps {
 
 export const NewsItemLayout: FC<NewsItemProps> = ({ sidebar, children }) => (
   <GridContainer>
-    <Box paddingTop={6} paddingBottom={10}>
+    <Box paddingY={10}>
       <GridRow>
-        <GridColumn span="6/12" offset="1/12">
+        <GridColumn
+          span={['12/12', '12/12', '8/12', '7/12']}
+          offset={['0', '0', '0', '1/12']}
+        >
           {children}
         </GridColumn>
-        <GridColumn span="4/12">
+        <GridColumn
+          span={['0', '0', '4/12', '3/12']}
+          offset={['0', '0', '0', '1/12']}
+        >
           <Sticky>
             <Box background="purple100" padding={4}>
               {sidebar}
