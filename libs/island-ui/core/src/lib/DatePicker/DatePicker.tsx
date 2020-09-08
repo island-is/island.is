@@ -15,26 +15,37 @@ import Typography from '../Typography/Typography'
 
 import * as styles from './DatePicker.treat'
 import * as coreStyles from './react-datepicker.treat'
+import { theme } from '@island.is/island-ui/theme'
 
 type Locale = 'is' | 'pl'
 interface DatePickerProps {
   label: string
   placeholderText: ReactDatePickerProps['placeholderText']
+  name: string
   locale?: Locale
   value?: ReactDatePickerProps['value']
   minDate?: ReactDatePickerProps['minDate']
+  hasError?: boolean
   handleChange?: (date: Date) => void
   onInputClick?: ReactDatePickerProps['onInputClick']
+  handleCloseCalander?: (date: Date) => void
+  handleOpenCalander?: () => void
+  required?: boolean
 }
 
 export const DatePicker: React.FC<DatePickerProps> = ({
   label,
   placeholderText,
+  name,
   locale,
   value,
   minDate,
+  hasError = false,
   handleChange,
   onInputClick,
+  handleCloseCalander,
+  handleOpenCalander,
+  required,
 }) => {
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
@@ -43,6 +54,9 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   const className = cn(
     styles.inputContainer,
     styles.inputContainerVariants[datePickerState],
+    {
+      [styles.hasError]: hasError,
+    },
   )
 
   useEffect(() => {
@@ -57,13 +71,26 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     return locale === 'is' ? is : locale === 'pl' ? pl : en
   }
 
-  const CustomInput = ({ value, onClick, placeholderText }) => {
+  const ariaError = hasError
+    ? {
+        'aria-invalid': true,
+        'aria-describedby': name,
+      }
+    : {}
+
+  const CustomInput = React.forwardRef<
+    HTMLButtonElement,
+    { value: string; onClick: () => void; placeholderText: string }
+  >(({ value, onClick, placeholderText }, ref) => {
     const valueAsDate = new Date(value)
 
     return (
       <button className={className} onClick={onClick}>
         <div className={styles.labelAndPlaceholderContainer}>
-          <p className={styles.label}>{label}</p>
+          <p className={cn(styles.label, { [styles.labelError]: hasError })}>
+            {label}
+            {required && <span className={styles.requiredStar}> *</span>}
+          </p>
           <div className={styles.value}>
             {value ? (
               <Typography variant="h3">
@@ -81,7 +108,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         <Icon type="calendar" width="32" height="32" />
       </button>
     )
-  }
+  })
 
   return (
     <div className={coreStyles.root}>
@@ -101,11 +128,17 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               escapeWithReference: false,
             },
           }}
-          onCalendarOpen={() => setDatePickerState('open')}
-          onCalendarClose={() => setDatePickerState('closed')}
+          onCalendarOpen={() => {
+            setDatePickerState('open')
+            handleOpenCalander && handleOpenCalander()
+          }}
+          onCalendarClose={() => {
+            setDatePickerState('closed')
+            handleCloseCalander && handleCloseCalander(startDate)
+          }}
           onChange={(date: Date) => {
             setStartDate(date)
-            handleChange(date)
+            handleChange && handleChange(date)
           }}
           customInput={
             <CustomInput
@@ -140,6 +173,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               </div>
             )
           }}
+          {...ariaError}
         />
       </div>
     </div>

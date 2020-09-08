@@ -31,6 +31,9 @@ export interface WorkingCaseFields {
   suspectNationalId: string
   suspectName: string
   suspectAddress: string
+  court: string
+  arrestDate: Date
+  requestedCourtDate: Date
 }
 
 export interface WorkingCase {

@@ -1,5 +1,6 @@
 import 'isomorphic-fetch'
 import { Case, CreateCaseRequest } from '../types'
+import { isObject } from 'lodash'
 
 // const getCaseById: (caseId: string) => Promise<GetCaseByIdResponse> = async (
 //   caseId: string,
@@ -62,11 +63,11 @@ export const createCase: (
 export const saveCase: (
   caseId: string,
   caseField: string,
-  caseFieldValue: string,
+  caseFieldValue: string | Date,
 ) => Promise<number> = async (
   caseId: string,
   caseField: string,
-  caseFieldValue: string,
+  caseFieldValue: string | Date,
 ) => {
   if (caseId !== '') {
     const propertyChange = JSON.parse(`{"${caseField}": "${caseFieldValue}"}`)
