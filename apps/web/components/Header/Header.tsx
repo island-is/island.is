@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useState } from 'react'
+import React, { FC, useState, useContext } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import {
@@ -13,6 +13,7 @@ import {
   GridContainer,
   GridColumn,
   GridRow,
+  ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
@@ -32,6 +33,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const Router = useRouter()
   const { makePath } = useRouteNames(activeLocale)
   const [sideMenuOpen, setSideMenuOpen] = useState(false)
+  const { colorScheme } = useContext(ColorSchemeContext)
 
   const locale = activeLocale
   const english = activeLocale === 'en'
@@ -49,7 +51,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                     <Logo width={40} iconOnly />
                   </Hidden>
                   <Hidden below="lg">
-                    <Logo width={160} />
+                    <Logo width={160} solid={colorScheme === 'white'} />
                   </Hidden>
                 </a>
               </Link>

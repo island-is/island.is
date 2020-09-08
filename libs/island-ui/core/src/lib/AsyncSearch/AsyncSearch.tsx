@@ -284,12 +284,17 @@ export const AsyncSearchInput = forwardRef<
         />
         <button
           className={cn(styles.icon, styles.iconSizes[size], {
+            [styles.iconWhite]: whiteColorScheme,
             [styles.focusable]: value,
           })}
           tabIndex={value ? 0 : -1}
           {...buttonProps}
         >
-          <Icon type="search" width={20} color="blue400" />
+          <Icon
+            type="search"
+            width={20}
+            color={whiteColorScheme ? 'white' : 'blue400'}
+          />
         </button>
         {loading && (
           <span
