@@ -4,9 +4,17 @@ import {
   IsString,
   IsNumber,
   IsISO8601,
+  IsEnum,
+  IsObject,
+  IsOptional,
+  IsUUID,
+  Length,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
+
+import { environment } from '../../../../environments'
+import { States } from '@island.is/air-discount-scheme/consts'
 
 class FlightLegDto {
   @IsString()
