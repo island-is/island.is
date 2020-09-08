@@ -301,11 +301,11 @@ export class Client extends Model<Client> {
 
   @HasMany(() => ClientAllowedCorsOrigin)
   @ApiProperty()
-  readonly allowedCorsOrigin: ClientAllowedCorsOrigin[]
+  readonly allowedCorsOrigins: ClientAllowedCorsOrigin[]
 
   @HasMany(() => ClientPostLogoutRedirectUri)
   @ApiProperty()
-  readonly postLogoutRedirectUri
+  readonly postLogoutRedirectUris
 
   @HasMany( () => ClientRedirectUri)
   readonly redirectUris: ClientRedirectUri
