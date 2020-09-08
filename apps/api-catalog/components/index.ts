@@ -1,4 +1,4 @@
 export { Layout } from './Layout'
 export { Header } from './Header'
-export { ServiceCard } from './ServiceCard/service-card'
+export { ServiceCard, ServiceStatusValue } from './ServiceCard/service-card'
 export { Card } from './Card'

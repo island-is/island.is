@@ -1,7 +1,7 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 
-import {ServiceCard, ServiceCardInformation} from './service-card'
+import {ServiceCard, ServiceCardInformation, ServiceStatusValue} from './service-card'
 
 describe(' ServiceCard ', () => {
   const service:ServiceCardInformation = {
@@ -10,7 +10,8 @@ describe(' ServiceCard ', () => {
       pricing   :["free", "custom"], 
       categories:["personal"], 
       type      :["GraphQÆ", "REST"],
-      access    :null
+      access    :null,
+      status    :ServiceStatusValue.OK
     };
   
   it('should render successfully', () => {
