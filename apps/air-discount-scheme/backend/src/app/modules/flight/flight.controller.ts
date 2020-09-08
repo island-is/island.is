@@ -30,7 +30,7 @@ import {
   DeleteFlightParams,
   DeleteFlightLegParams,
 } from './flight.validator'
-import { FlightDto } from './dto/flight.dto'
+import { FlightDto } from './dto'
 import { DiscountService } from '../discount'
 import { AuthGuard } from '../common'
 import { NationalRegistryService } from '../nationalRegistry'
@@ -84,11 +84,13 @@ export class PublicFlightController {
       params.discountCode,
       discount.nationalId,
     )
-    return this.flightService.create(
+    const newFlight = await this.flightService.create(
       flight,
-      discount.nationalId,
+      user,
       request.airline,
     )
+    newFlight.userInfo = undefined
+    return newFlight
   }
 
   @Get('flights/:flightId')

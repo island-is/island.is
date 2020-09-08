@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import * as kennitala from 'kennitala'
 
+import { States } from '@island.is/air-discount-scheme/consts'
 import { FlightLegSummary } from './flight.types'
 import { Flight, FlightLeg, financialStateMachine } from './flight.model'
-import { FlightDto } from './dto/flight.dto'
+import { FlightDto } from './dto'
+import { NationalRegistryUser } from '../nationalRegistry'
 
 export const ADS_POSTAL_CODES = {
   Reykhólahreppur: 380,
@@ -23,8 +26,8 @@ const AVAILABLE_FLIGHT_LEGS = {
 }
 
 const availableFinancialStates = [
-  financialStateMachine.states.awaitingDebit.key,
-  financialStateMachine.states.sentDebit.key,
+  financialStateMachine.states[States.awaitingDebit].key,
+  financialStateMachine.states[States.sentDebit].key,
 ]
 
 @Injectable()
@@ -78,7 +81,7 @@ export class FlightService {
     }
   }
 
-  async findAll(): Promise<Flight[]> {
+  findAll(): Promise<Flight[]> {
     return this.flightModel.findAll({
       include: [
         {
@@ -103,11 +106,21 @@ export class FlightService {
 
   async create(
     flight: FlightDto,
-    nationalId: string,
+    user: NationalRegistryUser,
     airline: string,
   ): Promise<Flight> {
+    const nationalId = user.nationalId
     return this.flightModel.create(
-      { ...flight, nationalId, airline },
+      {
+        ...flight,
+        nationalId,
+        airline,
+        userInfo: {
+          age: kennitala.info(nationalId).age,
+          gender: user.gender,
+          postalCode: user.postalcode,
+        },
+      },
       { include: [this.flightLegModel] },
     )
   }

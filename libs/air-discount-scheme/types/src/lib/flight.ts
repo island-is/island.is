@@ -12,9 +12,16 @@ export type FlightLeg = {
   modified: Date
 }
 
+export type UserInfo = {
+  age: number
+  gender: 'kk' | 'kvk'
+  postalCode: number
+}
+
 export type Flight = {
   id: string
   nationalId: string
+  userInfo: UserInfo
   airline: string
   bookingDate: Date
   flightLegs: FlightLeg[]
