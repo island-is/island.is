@@ -7,10 +7,11 @@ import React, {
   useRef,
   forwardRef,
   useContext,
+  ReactElement,
 } from 'react'
 import Link from 'next/link'
-import { withResizeDetector } from 'react-resize-detector'
 import Downshift from 'downshift'
+import { useMeasure } from 'react-use'
 import { useRouter } from 'next/router'
 import { useApolloClient } from 'react-apollo'
 import {
@@ -334,40 +335,50 @@ const Results: FC<{
   )
 }
 
-const CommonSearchTerms = withResizeDetector(
-  ({ width, suggestions }: { width: number; suggestions: string[] }) => {
-    if (!suggestions.length) {
-      return null
-    }
+const CommonSearchTerms = ({
+  suggestions,
+}: {
+  suggestions: ReactElement[]
+}) => {
+  const [ref, { width }] = useMeasure()
 
-    const splitAt = Math.min(suggestions.length / 2)
+  if (!suggestions.length) {
+    return null
+  }
 
-    const left = suggestions.slice(0, splitAt)
-    const right = suggestions.slice(splitAt)
+  const splitAt = Math.min(suggestions.length / 2)
 
-    return (
-      <Box display="flex" background="blue100" paddingY={2} paddingX={3}>
-        <div className={styles.menuColumn}>
-          <Stack space={2}>
-            <Box marginBottom={1}>
-              <Typography variant="eyebrow" color="blue400">
-                Algeng leitarorð
-              </Typography>
-            </Box>
-            {width < STACK_WIDTH ? suggestions : left}
-          </Stack>
-        </div>
-        {width > STACK_WIDTH - 1 ? (
-          <>
-            <div className={styles.separator} />
-            <div className={styles.menuColumn}>
-              <Stack space={2}>{right}</Stack>
-            </div>
-          </>
-        ) : null}
-      </Box>
-    )
-  },
-)
+  const left = suggestions.slice(0, splitAt)
+  const right = suggestions.slice(splitAt)
+
+  return (
+    <Box
+      ref={ref}
+      display="flex"
+      background="blue100"
+      paddingY={2}
+      paddingX={3}
+    >
+      <div className={styles.menuColumn}>
+        <Stack space={2}>
+          <Box marginBottom={1}>
+            <Typography variant="eyebrow" color="blue400">
+              Algeng leitarorð
+            </Typography>
+          </Box>
+          {width < STACK_WIDTH ? suggestions : left}
+        </Stack>
+      </div>
+      {width > STACK_WIDTH - 1 ? (
+        <>
+          <div className={styles.separator} />
+          <div className={styles.menuColumn}>
+            <Stack space={2}>{right}</Stack>
+          </div>
+        </>
+      ) : null}
+    </Box>
+  )
+}
 
 export default SearchInput
