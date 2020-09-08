@@ -8,4 +8,6 @@ const { serverRuntimeConfig } = getConfig()
 const { graphqlEndpoint } = serverRuntimeConfig
 const externalEndpointDependencies = [graphqlEndpoint]
 
-export default withHealthchecks(externalEndpointDependencies)(withLocale('is')(withErrorBoundary(articlePage)))
+export default withHealthchecks(externalEndpointDependencies)(
+  withLocale('is')(withErrorBoundary(articlePage)),
+)
