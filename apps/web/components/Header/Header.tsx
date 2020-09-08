@@ -1,9 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, useState, useContext } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import {
   Logo,
+  Link,
   Columns,
   Column,
   Box,
@@ -37,6 +37,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
 
   const locale = activeLocale
   const english = activeLocale === 'en'
+  const isWhite = colorScheme === 'white'
 
   return (
     <GridContainer>
@@ -44,16 +45,13 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
         <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
           <Columns alignY="center" space={2}>
             <Column width="content">
-              <Link href={english ? '/en' : '/'} passHref>
-                {/* eslint-disable-next-line */}
-                <a>
-                  <Hidden above="md">
-                    <Logo width={40} iconOnly />
-                  </Hidden>
-                  <Hidden below="lg">
-                    <Logo width={160} solid={colorScheme === 'white'} />
-                  </Hidden>
-                </a>
+              <Link href={english ? '/en' : '/'}>
+                <Hidden above="md">
+                  <Logo width={40} iconOnly solid={isWhite} />
+                </Hidden>
+                <Hidden below="lg">
+                  <Logo width={160} solid={isWhite} />
+                </Hidden>
               </Link>
             </Column>
             <Column>
