@@ -44,6 +44,7 @@ export const close = style({
   position: 'absolute',
   top: 15,
   right: 15,
+  zIndex: 2,
   ...themeUtils.responsiveStyle({
     md: {
       top: 0,
