@@ -16,7 +16,7 @@ interface PropTypes {
 export default (WrappedComponent) =>
   class extends Component<PropTypes> {
     /*
-     * NOTE!
+     * !NOTE!
      * This is hopefully temporarily since the current
      * Island.is login service every now and then loses
      * cookies when calling the callback endpoint.
