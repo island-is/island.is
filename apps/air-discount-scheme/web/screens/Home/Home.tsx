@@ -62,6 +62,7 @@ const Home: Screen<PropTypes> = ({ page }) => {
       }
       aside={
         <Content
+          type="sidebar"
           document={page.sidebar}
           wrapper={(children) => <Stack space={3}>{children}</Stack>}
         />
