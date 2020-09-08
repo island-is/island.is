@@ -11,6 +11,7 @@ export interface Routes {
   termsOfUse: string
   error: string
   notFound: string
+  personalInfoUsage: string
 }
 
 export type GetInitialPropsContext<Context> = Context & {
@@ -18,6 +19,7 @@ export type GetInitialPropsContext<Context> = Context & {
   locale: Locale
   localeKey: Locale
   routeKey?: keyof Routes
+  route?: keyof Routes
 }
 
 export type Screen<Props = {}> = NextComponentType<
