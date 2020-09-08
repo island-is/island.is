@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useQuery } from '@apollo/client'
 import { is } from 'date-fns/locale'
 import { format } from 'date-fns'
 import gql from 'graphql-tag'
 
-import { Layout } from '@island.is/air-discount-scheme-web/components/Layout'
+import { Layout } from '@island.is/air-discount-scheme-web/components'
+import { NotFound } from '@island.is/air-discount-scheme-web/screens'
+import { UserContext } from '@island.is/air-discount-scheme-web/context'
 import {
   Table,
   Row,
@@ -37,6 +39,11 @@ const FlightsQuery = gql`
   }
 `
 const Admin: Screen = ({}) => {
+  const { user } = useContext(UserContext)
+  if (!['admin', 'developer'].includes(user?.role)) {
+    return <NotFound />
+  }
+
   const { data } = useQuery(FlightsQuery, {
     ssr: false,
     variables: {
