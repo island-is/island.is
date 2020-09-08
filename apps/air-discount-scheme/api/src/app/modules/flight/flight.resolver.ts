@@ -20,37 +20,10 @@ export class FlightResolver {
   async flights(
     @CurrentUser() user: AuthUser,
     @Context('dataSources') { backendApi },
-  ): Promise<FlightWithTUser[]> {
-    const relations: TUser[] = await backendApi.getUserRelations(
-      user.nationalId,
-    )
-    return relations.reduce(
-      (promise: Promise<FlightWithTUser[]>, relation: TUser) => {
-        return promise.then(async (acc) => {
-          const flights: TFlight[] = await backendApi.getUserFlights(
-            relation.nationalId,
-          )
-          const flightLegs = flights.reduce((acc, flight) => {
-            const legs = flight.flightLegs.map(
-              ({ id, origin, destination }) => ({
-                ...flight,
-                id,
-                origin,
-                destination,
-                user: relation,
-              }),
-            )
-            return [...acc, ...legs]
-          }, [])
-          return [...acc, ...flightLegs]
-        })
-      },
-      Promise.resolve([]),
-    ) as Promise<FlightWithTUser[]>
   }
 
-  @ResolveField('user')
-  resolveUser(@Parent() flight: FlightWithTUser): User {
+  @ResolveField('user', () => User)
+  resolveUser(@Parent() flight: FlightWithUser): User {
     const { user } = flight
     return {
       ...user,

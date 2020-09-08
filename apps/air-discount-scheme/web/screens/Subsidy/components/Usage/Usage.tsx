@@ -19,13 +19,16 @@ const THIRTY_SECONDS = 30000 // milli-seconds
 
 const FlightsQuery = gql`
   query FlightsQuery {
-    flights {
-      id
-      bookingDate
-      travel
-      user {
-        nationalId
-        name
+    user {
+      nationalId
+      flights {
+        id
+        bookingDate
+        travel
+        user {
+          nationalId
+          name
+        }
       }
     }
   }
@@ -40,7 +43,9 @@ function Usage({ misc }: PropTypes) {
     ssr: false,
     pollInterval: THIRTY_SECONDS,
   })
-  const { flights = [] } = data ?? {}
+  const {
+    user: { flights },
+  } = data ?? { user: { flights: [] } }
   const { currentUsage, user, path, date } = JSON.parse(misc)
   const { activeLocale } = useI18n()
 
