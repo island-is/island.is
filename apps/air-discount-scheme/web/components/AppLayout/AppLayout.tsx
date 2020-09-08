@@ -59,7 +59,7 @@ export const AppLayout: NextComponentType<
 
   const languageRoute: FooterLinkProps = {
     title: nextLanguage === 'en' ? 'English' : 'Íslenska',
-    href: languageRouteHref,
+    href: languageRouteHref ?? nextLanguage === 'en' ? '/en' : '/',
   }
 
   const footerUpperMenuFiltered = footerUpperMenu.filter(
