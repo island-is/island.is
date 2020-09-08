@@ -23,4 +23,7 @@ export class User {
 
   @Field(() => Boolean, { defaultValue: false })
   meetsADSRequirements?: boolean
+
+  @Field(() => [Flight], { nullable: true })
+  flights?: Flight[]
 }

@@ -1,4 +1,11 @@
-import { Context, Query, Parent, ResolveField, Resolver } from '@nestjs/graphql'
+import {
+  Context,
+  Query,
+  Parent,
+  ResolveField,
+  Resolver,
+  Args,
+} from '@nestjs/graphql'
 
 import {
   User as TUser,
@@ -7,6 +14,8 @@ import {
 } from '@island.is/air-discount-scheme/types'
 import { Authorize, CurrentUser, AuthService, AuthUser } from '../auth'
 import { Flight } from './flight.model'
+import { FlightsInput } from './dto'
+import { FlightWithUser } from './flight.types'
 import { User } from '../user'
 
 type FlightWithTUser = TFlight & { user: TUser }
@@ -15,11 +24,13 @@ type FlightWithTUser = TFlight & { user: TUser }
 export class FlightResolver {
   constructor(private readonly authService: AuthService) {}
 
-  @Authorize()
+  @Authorize({ role: 'admin' })
   @Query(() => [Flight])
-  async flights(
-    @CurrentUser() user: AuthUser,
+  flights(
     @Context('dataSources') { backendApi },
+    @Args('input', { type: () => FlightsInput }) input,
+  ): Promise<Flight[]> {
+    return backendApi.getFlights(input)
   }
 
   @ResolveField('user', () => User)
