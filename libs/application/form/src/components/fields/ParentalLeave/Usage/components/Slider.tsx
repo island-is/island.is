@@ -154,7 +154,7 @@ const Slider = ({
     transform: `translateX(${dragX.current == null ? x : dragX.current}px)`,
     transition: isDragging ? 'none' : '',
   }
-  const remiainderStyle = {
+  const remainderStyle = {
     left: `${dragX.current == null ? x : dragX.current}px`,
     transition: isDragging ? 'none' : '',
   }
@@ -270,7 +270,7 @@ const Slider = ({
         {showRemainderOverlay && (
           <Box
             className={styles.remainderBar}
-            style={remiainderStyle}
+            style={remainderStyle}
             ref={remainderRef}
           />
         )}
