@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Layout, ServiceCard, ServiceStatusValue } from '../../components'
 import {
   Box,
@@ -7,14 +7,31 @@ import {
   BulletList,
   Bullet
 } from '@island.is/island-ui/core'
+import { getServices } from '../../components/ServiceRepository/service-repository'
+import { useRouter } from 'next/dist/client/router'
 
-export default function ServiceList({services}) {
-  return (
-   
-      <Layout left={
-        <Box className="service-list">
 
-<BulletList type='ul'>
+const getQueryParams = function (query) {
+
+  if (query === undefined || query === null) {
+    return {cursor:null, limit:null, owner:null, name:null};  
+  }
+  return {
+    cursor: query.cursor !== undefined && !isNaN(Number(query.cursor))? Number(query.cursor) : null, 
+    limit : query.limit  !== undefined && !isNaN(Number(query.limit ))? Number(query.limit ) : null, 
+    owner : query.owner  !== undefined && query.owner.length > 0 ? query.owner : null, 
+    name  : query.name   !== undefined && query.name.length  > 0 ? query.name  : null
+  };
+}
+
+
+export default function ServiceList({nextCursor,servicesList}) {
+  
+  const router = useRouter();
+
+  function bullets(){
+    return (
+    <BulletList type='ul'>
       <Bullet> 
         Þjónusta að virka eins og búist er við
       </Bullet>
@@ -27,17 +44,40 @@ export default function ServiceList({services}) {
       <Bullet>
         Staða þjónustu er ekki þekkt
       </Bullet>
-    </BulletList>
+  </BulletList>)
+  }
+
+
+  const [services, setServices] = useState(servicesList);
+  useEffect(() => {
+    
+    const query = router !== undefined && router !== null? getQueryParams(router.query) : {cursor:null, limit:null, owner:null, name:null}; 
+    async function loadData(nextCursor) {
+      const response = await getServices(query.cursor, query.limit, query.owner, query.name);
+      console.log('called if getInitialProps returns response.result === null ');
+      setServices({servicesList:response.result});
+    }
+
+    if(servicesList === null || servicesList.length === 0) {
+      loadData(nextCursor);
+    }
+
+  }, [nextCursor, router, servicesList]);
+
+  if(!services || !services[0]) {
+    return <div>Nothing found</div>
+  }
+
+  return (
+   
+      <Layout left={
+        <Box className="service-list">
+          {bullets()}
           <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
             <Stack space={5}>
               <Stack space={3}>
-                <Typography variant="h1">
-                  Viskuausan
-                </Typography>
-              </Stack>
-              <Stack space={3}>
                 <Typography variant="intro">
-                  Vefþjónustur
+                  Vefþjónustur, nextCursor:{nextCursor}
                 </Typography>
               </Stack>
               <Stack space={3}>
@@ -50,21 +90,24 @@ export default function ServiceList({services}) {
             </Stack>
           </Box>
         </Box>
-        
       } />
   )
 }
 
-ServiceList.getInitialProps = () => {
-  const services = [
-    { owner:"Þjóðskrá",         name:"Fasteignaskrá",       pricing:null,                          categories:null,                   type:["REST"],  access:["API GW"], status:ServiceStatusValue.OK},
-    { owner:"Þjóðskrá",         name:"Einstaklingsskrá",    pricing:["free", "custom"],            categories:null,                   type:null,      access:["X-Road"], status:ServiceStatusValue.WARNING},
-    { owner:"Þjóðskrá",         name:"Staðfangaskrá",       pricing:null,                          categories:["personal", "public"], type:["react"], access:["API GW"], status:ServiceStatusValue.ERROR},
-    { owner:"Skatturinn",       name:"Virðisaukaskattur",   pricing:["daily","monthly", "yearly"], categories:["personal", "public"], type:["SOAP"],  access:["API GW"], status:ServiceStatusValue.WARNING},
-    { owner:"Skatturinn",       name:"Staðgreiðsla",        pricing:["daily","monthly", "yearly"], categories:["personal", "public"], type:["SOAP"],  access:["API GW"], status:ServiceStatusValue.OK},
-    { owner:"Vinnumálastofnun", name:"Fæðingarorlofssjóður",pricing:null,                          categories:["personal", "public"], type:["react"], access:["API GW"], status:ServiceStatusValue.ERROR},
-    { owner:"Samgöngujstofa",   name:"Ökutækjaskrá",        pricing:["daily","monthly", "yearly"], categories:["personal", "public"], type:["SOAP"],  access:["API GW"], status:ServiceStatusValue.UNKNOWN},
-  ];
-  return {services:services};
+ServiceList.getInitialProps = async (ctx) => {
+ 
+  /*
+  if(!ctx.req) {
+    return { serviceList: [] } ;
+}*/
+  const { query } = ctx;
+ 
+  const queryParams = getQueryParams(query);
+  
+  const response = await getServices(queryParams.cursor, queryParams.limit, queryParams.owner, queryParams.name);
+  const result = response.result;
+  const nextCursor = response.nextCursor;
 
+  return { nextCursor:nextCursor, servicesList: result };
 }
+

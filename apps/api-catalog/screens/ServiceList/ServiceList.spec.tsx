@@ -12,11 +12,11 @@ describe(' ServiceList ', () => {
   ];
   
   it('should render successfully', () => {
-    const { baseElement } = render(<ServiceList services={services}/>);
+    const { baseElement } = render(<ServiceList nextCursor={0} servicesList={services}/>);
     expect(baseElement).toBeTruthy();
   })
   it('Service names should all be visible', () => {
-    const { getByText } = render(<ServiceList services={services}/>);
+    const { getByText } = render(<ServiceList nextCursor={0} servicesList={services}/>);
     expect(getByText(services[0].name)).toBeTruthy();
     expect(getByText(services[1].name)).toBeTruthy();
     expect(getByText(services[2].name)).toBeTruthy();
@@ -24,7 +24,7 @@ describe(' ServiceList ', () => {
   })
 
   it('Service owners should all be visible', () => {
-    const { getByText } = render(<ServiceList services={services}/>);
+    const { getByText } = render(<ServiceList nextCursor={0} servicesList={services}/>);
     expect(getByText(services[0].owner)).toBeTruthy();
     expect(getByText(services[1].owner)).toBeTruthy();
     expect(getByText(services[2].owner)).toBeTruthy();

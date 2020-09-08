@@ -4,6 +4,7 @@ import { Box } from '@island.is/island-ui/core'
 import styles from './service-card.styles'
 
 export interface ServiceCardInformation {
+    id:number
     name: string;
     owner:string;
     pricing:Array<string>;
