@@ -70,9 +70,10 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
 
   const data = JSON.parse(article.content)
 
-  const actionButtonLinks = data.content
-    .map((current) => current.data?.target?.fields?.processLink)
-    .filter(Boolean)
+  const actionButtonLinks =
+    data?.content
+      .map((current) => current.data?.target?.fields?.processLink)
+      .filter(Boolean) || []
 
   const actionButtonLink =
     actionButtonLinks.length === 1 ? actionButtonLinks[0] : null
