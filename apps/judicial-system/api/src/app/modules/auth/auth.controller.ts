@@ -25,7 +25,7 @@ import { environment } from '../../../environments'
 import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
 import { AuthService } from './auth.service'
 
-const { samlEntryPoint, audience: audienceUrl, jwtSecret } = environment.auth
+const { samlEntryPoint, jwtSecret } = environment.auth
 
 export const JWT_EXPIRES_IN_SECONDS = 1800
 export const ONE_HOUR = 60 * 60 * 1000
@@ -58,15 +58,12 @@ const REDIRECT_COOKIE: Cookie = {
   },
 }
 
-const loginIS = new IslandisLogin({
-  audienceUrl,
-})
-
 @Controller('api/auth')
 @ApiTags('api/auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
+    @Inject('IslandisLogin') private loginIS: IslandisLogin,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
@@ -76,7 +73,7 @@ export class AuthController {
 
     let verifyResult: VerifyResult
     try {
-      verifyResult = await loginIS.verify(token)
+      verifyResult = await this.loginIS.verify(token)
     } catch (err) {
       this.logger.error(err)
       return res.redirect('/?error=true')

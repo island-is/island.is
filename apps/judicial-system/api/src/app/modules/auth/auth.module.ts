@@ -8,6 +8,8 @@ import { AuthService } from './auth.service'
 import { AuthController } from './auth.controller'
 import { JwtStrategy } from './jwt.strategy'
 
+const { audience: audienceUrl } = environment.auth
+
 const ONE_HOUR = 3600
 
 @Module({
@@ -25,7 +27,14 @@ const ONE_HOUR = 3600
     UserModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    {
+      provide: 'IslandisLogin',
+      useValue: () => new (require('islandis-login'))({ audienceUrl }),
+    },
+  ],
   exports: [AuthService],
 })
 export class AuthModule {}

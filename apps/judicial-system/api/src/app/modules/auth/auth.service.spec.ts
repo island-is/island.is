@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing'
 
 import { AuthService } from './auth.service'
+import { UserService } from '../user'
 
 describe('AuthService', () => {
   let authService: AuthService
@@ -9,21 +10,20 @@ describe('AuthService', () => {
     nationalId: '1501933119',
     name: 'tester',
     mobile: '',
-    role: 'developer',
   }
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
-      providers: [AuthService],
+      providers: [AuthService, UserService],
     }).compile()
 
     authService = moduleRef.get(AuthService)
   })
 
   describe('validateUser', () => {
-    it('should be an unknown user', () => {
+    it('should be an unknown user', async () => {
       // Arrange & Act
-      const role = authService.validateUser(user)
+      const role = await authService.validateUser(user)
 
       // Assert
       expect(role).toBeNull()
