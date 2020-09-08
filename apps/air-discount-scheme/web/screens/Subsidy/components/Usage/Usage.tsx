@@ -10,7 +10,7 @@ import {
   HeadData,
   Body,
   Data,
-} from '@island.is/air-discount-scheme-web/components/Table/Table'
+} from '@island.is/air-discount-scheme-web/components/Table'
 import { format } from 'date-fns'
 import { is, enGB } from 'date-fns/locale'
 import { useI18n } from '@island.is/air-discount-scheme-web/i18n'
