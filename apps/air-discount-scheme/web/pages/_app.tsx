@@ -26,7 +26,7 @@ interface Props {
 }
 
 class SupportApplication extends App<Props> {
-  static async getInitialProps (appContext) {
+  static async getInitialProps(appContext) {
     const { Component, ctx } = appContext
     const apolloClient = initApollo({})
     const customContext = {
@@ -63,7 +63,7 @@ class SupportApplication extends App<Props> {
     return 'is'
   }
 
-  render () {
+  render() {
     const {
       Component,
       pageProps,
