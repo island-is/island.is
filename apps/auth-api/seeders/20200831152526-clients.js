@@ -115,6 +115,11 @@ module.exports = {
       redirect_uri: "localhost:8080"
     }];
 
+    var clientGrantTypes = [{
+      client_id: 'postman',
+      grant_type: 'authorization_code',
+    }];
+
 
     return new Promise((resolve, reject) => {
       queryInterface.bulkInsert('client', clients, {}).then(result => {
@@ -124,7 +129,8 @@ module.exports = {
           queryInterface.bulkInsert('client_idp_restrictions', clientIdbRestrictions, {}),
           queryInterface.bulkInsert('client_redirect_uri', redirectUri, {}),
           queryInterface.bulkInsert('client_secret', secrets, {}),
-          queryInterface.bulkInsert('client_post_logout_redirect_uri', postRedirects, {})
+          queryInterface.bulkInsert('client_post_logout_redirect_uri', postRedirects, {}),
+          queryInterface.bulkInsert('client_grant_type', clientGrantTypes, {})
         ]).then(result => {
           resolve("done");
         })
@@ -140,9 +146,10 @@ module.exports = {
     var secrets = queryInterface.bulkDelete('client_secret', null, {})
     var postLogoutUris = queryInterface.bulkDelete('client_post_logout_redirect_uri', null, {})
     var clients = queryInterface.bulkDelete('client', null, {})
+    var grantTypes = queryInterface.bulkDelete('client_grant_type', null, {})
 
     return new Promise((resolve, reject) => {
-      Promise.all([cors, scopes, idpRestrictions, redirectUris, secrets, postLogoutUris]).then(result => {
+      Promise.all([cors, scopes, idpRestrictions, redirectUris, secrets, postLogoutUris, grantTypes]).then(result => {
         clients.then(result => {
           resolve("done");
         })

@@ -16,6 +16,7 @@ import { ClientPostLogoutRedirectUri } from './client-post-logout-redirect-uri.m
 import { ClientRedirectUri } from './client-redirect-uri.model'
 import { ClientIdpRestrictions } from './client-idp-restrictions.model'
 import { ClientSecret } from './client-secret.model'
+import { ClientGrantType } from './client-grant-type.model'
 
 @Table({
   tableName: 'client',
@@ -314,4 +315,7 @@ export class Client extends Model<Client> {
 
   @HasMany( () => ClientSecret)
   readonly clientSecrets: ClientSecret
+
+  @HasMany( () => ClientGrantType )
+  readonly allowedGrantTypes
 }

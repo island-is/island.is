@@ -9,9 +9,10 @@ import { ClientPostLogoutRedirectUri } from './models/client-post-logout-redirec
 import { ClientRedirectUri } from './models/client-redirect-uri.model'
 import { ClientIdpRestrictions } from './models/client-idp-restrictions.model'
 import { ClientSecret } from './models/client-secret.model'
+import { ClientGrantType } from './models/client-grant-type.model'
 
 @Module({
-  imports: [SequelizeModule.forFeature([Client, ClientAllowedScope, ClientAllowedCorsOrigin, ClientPostLogoutRedirectUri, ClientRedirectUri, ClientIdpRestrictions, ClientSecret, ClientPostLogoutRedirectUri])],
+  imports: [SequelizeModule.forFeature([Client, ClientAllowedScope, ClientAllowedCorsOrigin, ClientPostLogoutRedirectUri, ClientRedirectUri, ClientIdpRestrictions, ClientSecret, ClientPostLogoutRedirectUri, ClientGrantType])],
   controllers: [ClientsController],
   providers: [ClientsService],
 })
