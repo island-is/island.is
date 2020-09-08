@@ -21,7 +21,6 @@ import { GrantType } from '../grant-types/grant-type.model'
   ],
 })
 export class ClientGrantType extends Model<ClientGrantType> {
-  
   @PrimaryKey
   @Column({
     type: DataType.STRING,
@@ -38,7 +37,7 @@ export class ClientGrantType extends Model<ClientGrantType> {
   })
   @ForeignKey(() => GrantType)
   @ApiProperty()
-  grantTypeId: string
+  grantType: string
 
   @CreatedAt
   @ApiProperty()
