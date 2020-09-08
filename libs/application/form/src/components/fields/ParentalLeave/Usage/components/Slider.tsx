@@ -106,6 +106,7 @@ interface TrackProps {
   sharedCells: number
   currentIndex: number
   onChange?: (index: number) => void
+  snap?: boolean
   min?: number
   step?: number
   showToolTip?: boolean
@@ -123,6 +124,7 @@ const Slider = ({
   sharedCells,
   currentIndex,
   onChange,
+  snap = true,
   min = 0,
   step = 0.5,
   showToolTip = false,
@@ -180,7 +182,7 @@ const Slider = ({
       }
 
       if (remainderRef.current && dragX.current != null) {
-        remainderRef.current.style.left = `${dragX.current}px`
+        if (!snap) remainderRef.current.style.left = `${dragX.current}px`
       }
     },
     onDragStart() {
