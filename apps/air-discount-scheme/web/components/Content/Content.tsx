@@ -121,7 +121,7 @@ const embeddedNodes = () => ({
   },
 })
 
-const options = {
+const options = (type) => ({
   renderNode: {
     [BLOCKS.PARAGRAPH]: (node, children) => {
       return (
@@ -135,6 +135,20 @@ const options = {
         file: { url },
         title,
       } = node.data.target.fields
+      if (type === 'sidebar') {
+        return (
+          <Box
+            textAlign="center"
+            padding={3}
+            borderStyle="solid"
+            borderWidth="standard"
+            borderRadius="standard"
+            borderColor="dark100"
+          >
+            <img src={url} alt={title} />
+          </Box>
+        )
+      }
       return <img src={url} alt={title} />
     },
     [BLOCKS.EMBEDDED_ENTRY]: (node) => {
@@ -169,14 +183,15 @@ const options = {
       )
     },
   },
-}
+})
 
 type Props = {
   document: string
+  type?: string
   wrapper?: ReactNode
 }
 
-export const Content: React.FC<Props> = ({ document, wrapper }) => {
+export const Content: React.FC<Props> = ({ document, wrapper, type }) => {
   const parsed = useMemo(() => {
     if (typeof document === 'object') {
       return document
@@ -187,7 +202,7 @@ export const Content: React.FC<Props> = ({ document, wrapper }) => {
   }, [document])
   return (
     <ConditionalWrapper cmp={wrapper}>
-      {documentToReactComponents(parsed, options)}
+      {documentToReactComponents(parsed, options(type))}
     </ConditionalWrapper>
   )
 }
