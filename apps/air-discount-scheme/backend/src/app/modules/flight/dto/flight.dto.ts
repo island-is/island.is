@@ -100,3 +100,33 @@ type Range = {
   from: number
   to: number
 }
+
+export class GetFlightsBody {
+  @IsOptional()
+  @IsEnum(Object.keys(environment.airlineApiKeys))
+  airline: string
+
+  @IsOptional()
+  @IsObject()
+  flightLeg: FlightLeg
+
+  @IsOptional()
+  @IsObject()
+  period: Period
+
+  @IsOptional()
+  @IsEnum(Object.values(States))
+  state: string
+
+  @IsOptional()
+  @IsObject()
+  age: Range
+
+  @IsOptional()
+  @IsEnum(['kk', 'kvk'])
+  gender: string
+
+  @IsOptional()
+  @IsNumber()
+  postalCode: number
+}

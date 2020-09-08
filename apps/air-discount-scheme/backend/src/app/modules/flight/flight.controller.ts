@@ -155,6 +155,12 @@ export class PrivateFlightController {
     return this.flightService.findAll()
   }
 
+  @Post('flights')
+  @ApiExcludeEndpoint()
+  getFlights(@Body() body: GetFlightsBody | {}): Promise<Flight[]> {
+    return this.flightService.findAllByFilter(body)
+  }
+
   @Get('users/:nationalId/flights')
   @ApiExcludeEndpoint()
   getUserFlights(@Param() params: GetUserFlightsParams): Promise<Flight[]> {

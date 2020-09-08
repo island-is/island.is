@@ -81,12 +81,42 @@ export class FlightService {
     }
   }
 
-  async findAll(): Promise<Flight[]> {
+  findAll(): Promise<Flight[]> {
     return this.flightModel.findAll({
       include: [
         {
           model: this.flightLegModel,
           where: { financialState: availableFinancialStates },
+        },
+      ],
+    })
+  }
+
+  findAllByFilter(body: GetFlightsBody): Promise<Flight[]> {
+    return this.flightModel.findAll({
+      where: {
+        ...(body.airline ? { airline: body.airline } : {}),
+        ...(body.period
+          ? {
+              bookingDate: { '&gte': body.period.from, '&lte': body.period.to },
+            }
+          : {}),
+        ...(body.age
+          ? {
+              'userInfo.age': { '&gte': body.age.from, '&lte': body.age.to },
+            }
+          : {}),
+        ...(body.gender ? { 'userInfo.gender': body.gender } : {}),
+        ...(body.postalCode ? { 'userInfo.postalCode': body.postalCode } : {}),
+      },
+      include: [
+        {
+          model: this.flightLegModel,
+          where: {
+            ...(body.state ? { financialState: body.state } : {}),
+            ...(body.flightLeg ? { origin: body.flightLeg.from } : {}),
+            ...(body.flightLeg ? { destination: body.flightLeg.to } : {}),
+          },
         },
       ],
     })
