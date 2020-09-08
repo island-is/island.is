@@ -1,8 +1,8 @@
 import React from 'react'
-import 'isomorphic-fetch'
 
 import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
 import { Typography, Input, Button, Box } from '@island.is/island-ui/core'
+import { apiUrl } from '../../api'
 import * as styles from './Login.treat'
 
 export const Login = () => {
@@ -33,7 +33,7 @@ export const Login = () => {
       </div>
       <div className={styles.buttonContainer}>
         <Button
-          href="/api/auth/login?returnUrl=gaesluvardhaldskrofur"
+          href={`${apiUrl}/api/auth/login?returnUrl=gaesluvardhaldskrofur`}
           width="fluid"
         >
           Innskráning
