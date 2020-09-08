@@ -32,6 +32,7 @@ import {
   QueryGetNewsListArgs,
 } from '@island.is/api/schema'
 import { CustomNextError } from '../units/ErrorBoundary'
+import { NewsCard } from '../components/NewsCard'
 
 interface NewsListProps {
   newsList: Query['getNewsList']['news']
@@ -132,7 +133,7 @@ const NewsList: Screen<NewsListProps> = ({
             </Typography>
           </Hidden>
 
-          <Hidden above="md">
+          <Hidden above="sm">
             <Tiles space={3} columns={2}>
               <Select
                 label="Ár"
@@ -156,11 +157,16 @@ const NewsList: Screen<NewsListProps> = ({
               />
             </Tiles>
           </Hidden>
-
           {newsList.map((newsItem) => (
-            <NewsListItem key={newsItem.id} newsItem={newsItem} />
+            <NewsCard
+              title={newsItem.title}
+              introduction={newsItem.intro}
+              slug={newsItem.slug}
+              image={newsItem.image}
+              url={makePath('news', newsItem.slug)}
+              date={newsItem.date}
+            />
           ))}
-
           <Box paddingTop={8}>
             <Pagination
               {...page}
@@ -179,44 +185,6 @@ const NewsList: Screen<NewsListProps> = ({
         </Stack>
       </NewsListLayout>
     </>
-  )
-}
-
-const NewsListItem = ({ newsItem }) => {
-  const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
-  const { format } = useDateUtils()
-
-  return (
-    <Box key={newsItem.id} boxShadow="subtle" padding={6} paddingRight={3}>
-      <Columns space={4} collapseBelow="xl">
-        <Column>
-          <Stack space={2}>
-            <Typography variant="eyebrow" as="p" color="purple400">
-              {format(new Date(newsItem.date), 'do MMMM yyyy')}
-            </Typography>
-            <Typography variant="h3" as="h3" color="blue400">
-              <Link href={makePath('news', newsItem.slug)}>
-                {newsItem.title}
-              </Link>
-            </Typography>
-            <Typography variant="p" as="p">
-              {newsItem.intro}
-            </Typography>
-          </Stack>
-        </Column>
-        {newsItem.image && (
-          <Column width="2/5">
-            <Link href={makePath('news', newsItem.slug)}>
-              <img
-                src={newsItem.image.url + '?w=524'}
-                alt={`Skoða frétt ${newsItem.title}`}
-              />
-            </Link>
-          </Column>
-        )}
-      </Columns>
-    </Box>
   )
 }
 

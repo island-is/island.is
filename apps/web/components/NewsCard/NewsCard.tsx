@@ -1,6 +1,7 @@
 import React from 'react'
 import * as styles from './NewsCard.treat'
 import { Typography, Link, Box, ArrowLink } from '@island.is/island-ui/core'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 export type NewsImage = {
   url: string
@@ -17,6 +18,9 @@ interface NewsCardProps {
   slug: string
   image?: NewsImage
   readMoreText?: string
+  url: string
+  date?: string
+  imagePosition?: 'top' | 'right'
 }
 
 const NewsCard: React.FC<NewsCardProps> = ({
@@ -26,44 +30,61 @@ const NewsCard: React.FC<NewsCardProps> = ({
   slug,
   image,
   readMoreText = 'Lesa nánar',
+  url,
+  date,
 }) => {
+  const { format } = useDateUtils()
   return (
-    <Box
-      className={styles.root}
-      boxShadow="subtle"
-      overflow="hidden"
-      borderRadius="large"
-      display="flex"
-      flexDirection="column"
-      height="full"
-      background="white"
-    >
-      <div
-        className={styles.image}
-        style={{ backgroundImage: `url(${image.url})` }}
-      />
+    <Link href={url}>
       <Box
-        className={styles.content}
+        className={styles.root}
+        boxShadow="subtle"
+        overflow="hidden"
+        borderRadius="large"
         display="flex"
         flexDirection="column"
-        padding={3}
-        paddingBottom={5}
         height="full"
+        background="white"
       >
-        <Typography variant="eyebrow" color="purple400" paddingBottom={2}>
-          {subtitle}
-        </Typography>
-        <Typography variant="h3" as="h2" paddingBottom={1}>
-          {title}
-        </Typography>
-        <Typography variant="p" paddingBottom={3}>
-          {introduction}
-        </Typography>
-        <div className={styles.readMore}>
-          <ArrowLink href={`/frett/${slug}`}>{readMoreText}</ArrowLink>
-        </div>
+        <div
+          className={styles.image}
+          role="img"
+          aria-label={image.title}
+          style={{ backgroundImage: `url(${image.url})` }}
+        />
+        <Box
+          className={styles.content}
+          display="flex"
+          flexDirection="column"
+          padding={3}
+          paddingBottom={5}
+          height="full"
+        >
+          <Typography variant="eyebrow" color="purple400" paddingBottom={2}>
+            {subtitle}
+          </Typography>
+          {date && (
+            <Typography
+              variant="eyebrow"
+              as="p"
+              color="purple400"
+              paddingBottom={2}
+            >
+              {format(new Date(date), 'do MMMM yyyy')}
+            </Typography>
+          )}
+          <Typography variant="h3" as="h2" paddingBottom={1}>
+            {title}
+          </Typography>
+          <Typography variant="p" paddingBottom={3}>
+            {introduction}
+          </Typography>
+          <div className={styles.readMore}>
+            <ArrowLink href={`/frett/${slug}`}>{readMoreText}</ArrowLink>
+          </div>
+        </Box>
       </Box>
-    </Box>
+    </Link>
   )
 }
 
