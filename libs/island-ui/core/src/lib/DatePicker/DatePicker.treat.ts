@@ -1,5 +1,6 @@
 import { style, styleMap, globalStyle } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
+import * as mixins from '../Input/Input.mixins'
 
 export const root = style({
   position: 'relative',
@@ -40,7 +41,13 @@ export const inputContainerVariants = styleMap({
 
 export const hasError = style({
   border: `1px solid ${theme.color.red400}`,
+
+  ':hover': {
+    borderColor: theme.color.blue400,
+  },
 })
+
+export const errorMessage = style(mixins.errorMessage)
 
 export const labelAndPlaceholderContainer = style({
   textAlign: 'left',

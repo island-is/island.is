@@ -1,6 +1,5 @@
 import 'isomorphic-fetch'
 import { Case, CreateCaseRequest } from '../types'
-import { isObject } from 'lodash'
 
 // const getCaseById: (caseId: string) => Promise<GetCaseByIdResponse> = async (
 //   caseId: string,

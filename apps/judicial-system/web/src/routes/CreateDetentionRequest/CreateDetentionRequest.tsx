@@ -15,7 +15,7 @@ import {
 } from '@island.is/island-ui/core'
 import { WorkingCase } from '../../types'
 import * as api from '../../api'
-import { isValid as isValidField } from '../../utils/validate'
+import { validate } from '../../utils/validate'
 import { setHours, setMinutes, isValid } from 'date-fns'
 import { isNull } from 'lodash'
 
@@ -29,28 +29,48 @@ export const CreateDetentionRequest: React.FC = () => {
       suspectAddress: '',
       court: '',
       arrestDate: null,
+      arrestTime: '',
       requestedCourtDate: null,
     },
   })
   const [, setAutoSaveSucceded] = useState<boolean>(true)
-  const [isPoliceCaseNumberValid, setIsPoliceCaseNumberValid] = useState<
-    boolean
-  >(true)
-  const [isNationalIdValid, setIsNationalIdValid] = useState<boolean>(true)
-  const [isSuspectNameValid, setIsSuspectNameValid] = useState<boolean>(true)
-  const [isSuspectAddressValid, setIsSuspectAddressValid] = useState<boolean>(
-    true,
+  const [
+    policeCaseNumberErrorMessage,
+    setPoliceCaseNumberErrorMessage,
+  ] = useState<string>('')
+  const [nationalIdErrorMessage, setNationalIdErrorMessage] = useState<string>(
+    '',
   )
-  const [isArrestDateValid, setIsArrestDateValid] = useState<boolean>(true)
-  const [isArrestTimeValid, setIsArrestTimeValid] = useState<boolean>(true)
-
-  const [stepIsValid, setStepIsValid] = useState<boolean>(false)
-
+  const [suspectNameErrorMessage, setSuspectNameErrorMessage] = useState<
+    string
+  >('')
+  const [suspectAddressErrorMessage, setSuspectAddressErrorMessage] = useState<
+    string
+  >('')
+  const [arrestDateErrorMessage, setArrestDateErrorMessage] = useState<string>(
+    '',
+  )
+  const [arrestTimeErrorMessage, setArrestTimeErrorMessage] = useState<string>(
+    '',
+  )
+  const [someInputIsDirty, setSomeInputIsDirty] = useState<boolean>(false)
   const policeCaseNumberRef = useRef<HTMLInputElement>()
   const suspectNationalIdRef = useRef<HTMLInputElement>()
 
+  const requiredFields = [
+    workingCase.case.policeCaseNumber,
+    workingCase.case.suspectNationalId,
+    workingCase.case.suspectName,
+    workingCase.case.suspectAddress,
+    workingCase.case.arrestDate,
+    workingCase.case.arrestTime,
+  ]
+
+  const filledRequiredFields = requiredFields.filter(
+    (requiredField) => requiredField !== '' && !isNull(requiredField),
+  )
+
   const createCaseIfPossible = async () => {
-    setStepIsValid(policeCaseNumberRef.current.value !== '')
     const isPossibleToSave =
       workingCase.id === '' &&
       policeCaseNumberRef.current.value !== '' &&
@@ -72,9 +92,6 @@ export const CreateDetentionRequest: React.FC = () => {
       workingCase.case[caseField] !== caseFieldValue &&
       workingCase.id !== ''
     ) {
-      // Copy the working case
-      const copyOfWorkingCase = Object.assign({}, workingCase)
-
       // Save the case
       const response = await api.saveCase(
         workingCase.id,
@@ -83,17 +100,21 @@ export const CreateDetentionRequest: React.FC = () => {
       )
 
       if (response === 200) {
-        // Assign new value to the field the user is changing
-        copyOfWorkingCase.case[caseField] = caseFieldValue
-
         // Update the working case
-        setWorkingCase(copyOfWorkingCase)
+        updateState(caseField, caseFieldValue)
       } else {
         setAutoSaveSucceded(false)
 
         // TODO: Do something when autosave fails
       }
     }
+  }
+
+  const updateState = (caseField: string, caseFieldValue: string | Date) => {
+    const copyOfWorkingCase = Object.assign({}, workingCase)
+    copyOfWorkingCase.case[caseField] = caseFieldValue
+
+    setWorkingCase(copyOfWorkingCase)
   }
 
   return (
@@ -122,17 +143,21 @@ export const CreateDetentionRequest: React.FC = () => {
                 name="policeCaseNumber"
                 label="Slá inn LÖKE málsnúmer"
                 ref={policeCaseNumberRef}
-                errorMessage="Reitur má ekki vera tómur"
-                hasError={!isPoliceCaseNumberValid}
+                errorMessage={policeCaseNumberErrorMessage}
+                hasError={policeCaseNumberErrorMessage !== ''}
                 onBlur={(evt) => {
-                  if (isValidField(evt.target.value, 'empty')) {
+                  setSomeInputIsDirty(true)
+                  const validateField = validate(evt.target.value, 'empty')
+                  if (validateField.isValid) {
                     createCaseIfPossible()
+                    updateState('policeCaseNumber', evt.target.value)
                   } else {
-                    setIsPoliceCaseNumberValid(false)
+                    setPoliceCaseNumberErrorMessage(validateField.errorMessage)
                   }
                 }}
-                onFocus={() => setIsPoliceCaseNumberValid(true)}
+                onFocus={() => setPoliceCaseNumberErrorMessage('')}
                 required
+                autoFocus
               />
             </Box>
             <Box component="section" marginBottom={7}>
@@ -146,15 +171,19 @@ export const CreateDetentionRequest: React.FC = () => {
                   name="nationalId"
                   label="Kennitala"
                   ref={suspectNationalIdRef}
-                  hasError={!isNationalIdValid}
+                  errorMessage={nationalIdErrorMessage}
+                  hasError={nationalIdErrorMessage !== ''}
                   onBlur={(evt) => {
-                    if (isValidField(evt.target.value, 'empty')) {
+                    const validateField = validate(evt.target.value, 'empty')
+
+                    if (validateField.isValid) {
                       createCaseIfPossible()
+                      updateState('suspectNationalId', evt.target.value)
                     } else {
-                      setIsNationalIdValid(false)
+                      setNationalIdErrorMessage(validateField.errorMessage)
                     }
                   }}
-                  onFocus={() => setIsNationalIdValid(true)}
+                  onFocus={() => setNationalIdErrorMessage('')}
                   required
                 />
               </Box>
@@ -162,15 +191,18 @@ export const CreateDetentionRequest: React.FC = () => {
                 <Input
                   name="suspectName"
                   label="Fullt nafn kærða"
-                  hasError={!isSuspectNameValid}
+                  errorMessage={suspectNameErrorMessage}
+                  hasError={suspectNameErrorMessage !== ''}
                   onBlur={(evt) => {
-                    if (isValidField(evt.target.value, 'empty')) {
+                    const validateField = validate(evt.target.value, 'empty')
+
+                    if (validateField.isValid) {
                       autoSave('suspectName', evt.target.value)
                     } else {
-                      setIsSuspectNameValid(false)
+                      setSuspectNameErrorMessage(validateField.errorMessage)
                     }
                   }}
-                  onFocus={() => setIsSuspectNameValid(true)}
+                  onFocus={() => setSuspectNameErrorMessage('')}
                   required
                 />
               </Box>
@@ -178,15 +210,18 @@ export const CreateDetentionRequest: React.FC = () => {
                 <Input
                   name="suspectAddress"
                   label="Lögheimili/dvalarstaður"
-                  hasError={!isSuspectAddressValid}
+                  errorMessage={suspectAddressErrorMessage}
+                  hasError={suspectAddressErrorMessage !== ''}
                   onBlur={(evt) => {
-                    if (isValidField(evt.target.value, 'empty')) {
+                    const validateField = validate(evt.target.value, 'empty')
+
+                    if (validateField.isValid) {
                       autoSave('suspectAddress', evt.target.value)
                     } else {
-                      setIsSuspectAddressValid(false)
+                      setSuspectAddressErrorMessage(validateField.errorMessage)
                     }
                   }}
-                  onFocus={() => setIsSuspectAddressValid(true)}
+                  onFocus={() => setSuspectAddressErrorMessage('')}
                   required
                 />
               </Box>
@@ -250,23 +285,19 @@ export const CreateDetentionRequest: React.FC = () => {
                   <DatePicker
                     label="Veldu dagsetningu"
                     placeholderText="Veldu dagsetningu"
-                    name="arrestDate"
                     locale="is"
                     minDate={new Date()}
-                    hasError={!isArrestDateValid}
+                    errorMessage={arrestDateErrorMessage}
+                    hasError={arrestDateErrorMessage !== ''}
                     handleChange={(date) => {
-                      const copyOfWorkingCase = Object.assign({}, workingCase)
-                      copyOfWorkingCase.case.arrestDate = date
-
-                      setWorkingCase(copyOfWorkingCase)
+                      updateState('arrestDate', date)
                     }}
                     handleCloseCalander={(date: Date) => {
-                      console.log(isNull(date))
                       if (isNull(date) || !isValid(date)) {
-                        setIsArrestDateValid(false)
+                        setArrestDateErrorMessage('Reitur má ekki vera tómur')
                       }
                     }}
-                    handleOpenCalander={() => setIsArrestDateValid(true)}
+                    handleOpenCalander={() => setArrestDateErrorMessage('')}
                     required
                   />
                 </GridColumn>
@@ -276,13 +307,22 @@ export const CreateDetentionRequest: React.FC = () => {
                     label="Tímasetning"
                     placeholder="Settu inn tíma"
                     disabled={!workingCase.case.arrestDate}
-                    hasError={!isArrestTimeValid}
+                    errorMessage={arrestTimeErrorMessage}
+                    hasError={arrestTimeErrorMessage !== ''}
                     onBlur={(evt) => {
-                      const passesValidation =
-                        isValidField(evt.target.value, 'empty') &&
-                        isValidField(evt.target.value, 'time')
+                      const validateTimeEmpty = validate(
+                        evt.target.value,
+                        'empty',
+                      )
+                      const validateTimeFormat = validate(
+                        evt.target.value,
+                        'time',
+                      )
 
-                      if (passesValidation) {
+                      if (
+                        validateTimeEmpty.isValid &&
+                        validateTimeFormat.isValid
+                      ) {
                         const timeWithoutColon = evt.target.value.replace(
                           ':',
                           '',
@@ -298,12 +338,16 @@ export const CreateDetentionRequest: React.FC = () => {
                           parseInt(timeWithoutColon.substr(2, 4)),
                         )
 
-                        autoSave('requestedCourtDate', arrestDateMinutes)
+                        autoSave('arrestDate', arrestDateMinutes)
+                        updateState('arrestTime', evt.target.value)
                       } else {
-                        setIsArrestTimeValid(false)
+                        setArrestTimeErrorMessage(
+                          validateTimeEmpty.errorMessage ||
+                            validateTimeFormat.errorMessage,
+                        )
                       }
                     }}
-                    onFocus={() => setIsArrestTimeValid(true)}
+                    onFocus={() => setArrestTimeErrorMessage('')}
                     required
                   />
                 </GridColumn>
@@ -320,14 +364,10 @@ export const CreateDetentionRequest: React.FC = () => {
                   <DatePicker
                     label="Veldu dagsetningu"
                     placeholderText="Veldu dagsetningu"
-                    name="requestedCourtDate"
                     locale="is"
                     minDate={new Date()}
                     handleChange={(date) => {
-                      const copyOfWorkingCase = Object.assign({}, workingCase)
-                      copyOfWorkingCase.case.requestedCourtDate = date
-
-                      setWorkingCase(copyOfWorkingCase)
+                      updateState('requestedCourtDate', date)
                     }}
                   />
                 </GridColumn>
@@ -360,7 +400,13 @@ export const CreateDetentionRequest: React.FC = () => {
               <Button variant="ghost" href="/">
                 Til baka
               </Button>
-              <Button icon="arrowRight" disabled={!stepIsValid}>
+              <Button
+                icon="arrowRight"
+                disabled={
+                  !someInputIsDirty ||
+                  filledRequiredFields.length !== requiredFields.length
+                }
+              >
                 Halda áfram
               </Button>
             </Box>

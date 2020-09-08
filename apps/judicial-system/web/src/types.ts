@@ -33,6 +33,7 @@ export interface WorkingCaseFields {
   suspectAddress: string
   court: string
   arrestDate: Date
+  arrestTime: string
   requestedCourtDate: Date
 }
 

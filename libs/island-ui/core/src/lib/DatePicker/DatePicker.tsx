@@ -15,17 +15,16 @@ import Typography from '../Typography/Typography'
 
 import * as styles from './DatePicker.treat'
 import * as coreStyles from './react-datepicker.treat'
-import { theme } from '@island.is/island-ui/theme'
 
 type Locale = 'is' | 'pl'
 interface DatePickerProps {
   label: string
   placeholderText: ReactDatePickerProps['placeholderText']
-  name: string
   locale?: Locale
   value?: ReactDatePickerProps['value']
   minDate?: ReactDatePickerProps['minDate']
   hasError?: boolean
+  errorMessage?: string
   handleChange?: (date: Date) => void
   onInputClick?: ReactDatePickerProps['onInputClick']
   handleCloseCalander?: (date: Date) => void
@@ -36,11 +35,11 @@ interface DatePickerProps {
 export const DatePicker: React.FC<DatePickerProps> = ({
   label,
   placeholderText,
-  name,
   locale,
   value,
   minDate,
   hasError = false,
+  errorMessage,
   handleChange,
   onInputClick,
   handleCloseCalander,
@@ -70,13 +69,6 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   const getLocale = (locale: Locale) => {
     return locale === 'is' ? is : locale === 'pl' ? pl : en
   }
-
-  const ariaError = hasError
-    ? {
-        'aria-invalid': true,
-        'aria-describedby': name,
-      }
-    : {}
 
   const CustomInput = React.forwardRef<
     HTMLButtonElement,
@@ -173,9 +165,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               </div>
             )
           }}
-          {...ariaError}
         />
       </div>
+      {hasError && errorMessage && (
+        <div className={styles.errorMessage}>{errorMessage}</div>
+      )}
     </div>
   )
 }
