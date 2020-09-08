@@ -1,0 +1,20 @@
+{
+  "notFound": {
+    "title": "Umbeðin slóð fannst ekki",
+    "content": "Eitthvað hefur farið úrskeiðis, vinsamlegast reynið aftur",
+    "button": "Til baka"
+  },
+  "error": {
+    "title": "Villa kom upp",
+    "intro": "Eitthvað hefur farið úrskeiðis, vinsamlega reyndu aftur",
+    "introKennitalaIsNotAPerson": "Kennitala sem var notuð við innskráningu passar ekki við einstakling. Nauðsynlegt er að skrá sig inn með kennitölu einstaklings en ekki fyrirtækis.",
+    "button": "Aftur heim"
+  },
+  "errorBoundary": {
+    "title": "Villa kom upp",
+    "contents": [
+      "Eitthvað hefur farið úrskeiðis.",
+      "Vinsamlega <a href='https://island.is/um-island-is/hafa-samband/'>hafðu samband</a> fyrir frekari hjálp"
+    ]
+  }
+}

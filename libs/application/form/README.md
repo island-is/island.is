@@ -12,6 +12,10 @@ First, follow the steps listed in the README for application-template for creati
 
 If the field should update some state in the form (such as store answers by the user), it needs to have components that are wrapped in react-hook-form's `Controller` component, or inputs that are `register`-ed to the react-hook-form. An example of these can be viewed in `src/components/fields/custom/ExampleCountryField.tsx`.
 
+## Running
+
+After running the api project, run `yarn nx serve application-system-form`
+
 ## Running unit tests
 
 Run `yarn nx test application-form` to execute the unit tests via [Jest](https://jestjs.io).

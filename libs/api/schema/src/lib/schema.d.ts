@@ -468,6 +468,20 @@ export type Document = {
   opened: Scalars['Boolean']
 }
 
+export type DocumentDetails = {
+  __typename?: 'DocumentDetails'
+  fileType: Scalars['String']
+  content: Scalars['String']
+  html: Scalars['String']
+  url: Scalars['String']
+}
+
+export type DocumentCategory = {
+  __typename?: 'DocumentCategory'
+  id: Scalars['ID']
+  name: Scalars['String']
+}
+
 export type Query = {
   __typename?: 'Query'
   helloWorld: HelloWorld
@@ -494,7 +508,9 @@ export type Query = {
   getLifeEventPage?: Maybe<LifeEventPage>
   getApplication?: Maybe<Application>
   getApplicationsByType?: Maybe<Array<Application>>
-  getDocument?: Maybe<Document>
+  getDocument?: Maybe<DocumentDetails>
+  listDocuments?: Maybe<Array<Document>>
+  getDocumentCategories?: Maybe<Array<DocumentCategory>>
 }
 
 export type QueryHelloWorldArgs = {
@@ -595,6 +611,10 @@ export type QueryGetApplicationsByTypeArgs = {
 
 export type QueryGetDocumentArgs = {
   input: GetDocumentInput
+}
+
+export type QueryListDocumentsArgs = {
+  input: ListDocumentsInput
 }
 
 export type HelloWorldInput = {
@@ -734,6 +754,15 @@ export type GetApplicationsByTypeInput = {
 
 export type GetDocumentInput = {
   id: Scalars['String']
+}
+
+export type ListDocumentsInput = {
+  page: Scalars['Float']
+  pageSize: Scalars['Float']
+  natReg: Scalars['String']
+  dateFrom: Scalars['DateTime']
+  dateTo: Scalars['DateTime']
+  category: Scalars['String']
 }
 
 export type Mutation = {
@@ -1056,6 +1085,8 @@ export type ResolversTypes = {
   PresignedPost: ResolverTypeWrapper<PresignedPost>
   Document: ResolverTypeWrapper<Document>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
+  DocumentDetails: ResolverTypeWrapper<DocumentDetails>
+  DocumentCategory: ResolverTypeWrapper<DocumentCategory>
   Query: ResolverTypeWrapper<{}>
   HelloWorldInput: HelloWorldInput
   SearcherInput: SearcherInput
@@ -1084,6 +1115,7 @@ export type ResolversTypes = {
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
+  ListDocumentsInput: ListDocumentsInput
   Mutation: ResolverTypeWrapper<{}>
   CreateApplicationInput: CreateApplicationInput
   CreateApplicationDtoStateEnum: CreateApplicationDtoStateEnum
@@ -1179,6 +1211,8 @@ export type ResolversParentTypes = {
   PresignedPost: PresignedPost
   Document: Document
   Boolean: Scalars['Boolean']
+  DocumentDetails: DocumentDetails
+  DocumentCategory: DocumentCategory
   Query: {}
   HelloWorldInput: HelloWorldInput
   SearcherInput: SearcherInput
@@ -1205,6 +1239,7 @@ export type ResolversParentTypes = {
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
+  ListDocumentsInput: ListDocumentsInput
   Mutation: {}
   CreateApplicationInput: CreateApplicationInput
   UpdateApplicationInput: UpdateApplicationInput
@@ -1953,6 +1988,26 @@ export type DocumentResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type DocumentDetailsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['DocumentDetails'] = ResolversParentTypes['DocumentDetails']
+> = {
+  fileType?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  html?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type DocumentCategoryResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['DocumentCategory'] = ResolversParentTypes['DocumentCategory']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type QueryResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
@@ -2102,10 +2157,21 @@ export type QueryResolvers<
     RequireFields<QueryGetApplicationsByTypeArgs, 'input'>
   >
   getDocument?: Resolver<
-    Maybe<ResolversTypes['Document']>,
+    Maybe<ResolversTypes['DocumentDetails']>,
     ParentType,
     ContextType,
     RequireFields<QueryGetDocumentArgs, 'input'>
+  >
+  listDocuments?: Resolver<
+    Maybe<Array<ResolversTypes['Document']>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryListDocumentsArgs, 'input'>
+  >
+  getDocumentCategories?: Resolver<
+    Maybe<Array<ResolversTypes['DocumentCategory']>>,
+    ParentType,
+    ContextType
   >
 }
 
@@ -2205,6 +2271,8 @@ export type Resolvers<ContextType = Context> = {
   DateTime?: GraphQLScalarType
   PresignedPost?: PresignedPostResolvers<ContextType>
   Document?: DocumentResolvers<ContextType>
+  DocumentDetails?: DocumentDetailsResolvers<ContextType>
+  DocumentCategory?: DocumentCategoryResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
 }

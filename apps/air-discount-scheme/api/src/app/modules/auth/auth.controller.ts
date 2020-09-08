@@ -10,12 +10,14 @@ import {
 } from '@nestjs/common'
 import jwt from 'jsonwebtoken'
 import { Entropy } from 'entropy-string'
+import * as kennitala from 'kennitala'
 import IslandisLogin from 'islandis-login'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CSRF_COOKIE_NAME,
   ACCESS_TOKEN_COOKIE_NAME,
+  SSN_IS_NOT_A_PERSON,
 } from '@island.is/air-discount-scheme/consts'
 import { environment } from '../../../environments'
 import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
@@ -76,6 +78,11 @@ export class AuthController {
     if (!user) {
       this.logger.error('Could not verify user authenticity')
       return res.redirect('/error')
+    }
+
+    if (!kennitala.isPerson(user.kennitala)) {
+      this.logger.warn('User used company kennitala to log in')
+      return res.redirect(`/error?errorType=${SSN_IS_NOT_A_PERSON}`)
     }
 
     const csrfToken = new Entropy({ bits: 128 }).string()
