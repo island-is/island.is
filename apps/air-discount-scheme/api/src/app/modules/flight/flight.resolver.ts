@@ -12,7 +12,7 @@ import {
   Flight as TFlight,
   FlightLeg,
 } from '@island.is/air-discount-scheme/types'
-import { Authorize, CurrentUser, AuthService, AuthUser } from '../auth'
+import { Authorize, AuthService } from '../auth'
 import { Flight } from './flight.model'
 import { FlightsInput } from './dto'
 import { FlightWithUser } from './flight.types'

@@ -92,7 +92,7 @@ export class FlightService {
     })
   }
 
-  findAllByFilter(body: GetFlightsBody): Promise<Flight[]> {
+  findAllByFilter(body: GetFlightsBody | any): Promise<Flight[]> {
     return this.flightModel.findAll({
       where: {
         ...(body.airline ? { airline: body.airline } : {}),

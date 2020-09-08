@@ -1,11 +1,11 @@
-import { Field, InputType, Int } from '@nestjs/graphql'
+import { Field, InputType } from '@nestjs/graphql'
 import {
   IsEnum,
-  IsInt,
   IsString,
   IsOptional,
   IsObject,
   IsNumber,
+  IsDate,
 } from 'class-validator'
 
 import { States } from '@island.is/air-discount-scheme/consts'
@@ -13,27 +13,33 @@ import { States } from '@island.is/air-discount-scheme/consts'
 @InputType()
 class FlightLeg {
   @Field()
+  @IsString()
   from: string
 
   @Field()
+  @IsString()
   to: string
 }
 
 @InputType()
 class Period {
   @Field()
+  @IsDate()
   from: Date
 
   @Field()
+  @IsDate()
   to: Date
 }
 
 @InputType()
 class Range {
   @Field()
+  @IsNumber()
   from: number
 
   @Field()
+  @IsNumber()
   to: number
 }
 

@@ -14,11 +14,6 @@ import {
   Data,
 } from '@island.is/air-discount-scheme-web/components/Table'
 import {
-  Query,
-  GenericPage,
-  QueryGetGenericPageArgs,
-} from '@island.is/api/schema'
-import {
   Box,
   Stack,
   Typography,
@@ -42,7 +37,7 @@ const FlightsQuery = gql`
   }
 `
 const Admin: Screen = ({}) => {
-  const { data, loading, called } = useQuery(FlightsQuery, {
+  const { data } = useQuery(FlightsQuery, {
     ssr: false,
     variables: {
       input: { gender: 'kvk' },
