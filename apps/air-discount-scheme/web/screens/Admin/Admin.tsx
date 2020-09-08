@@ -40,10 +40,6 @@ const FlightsQuery = gql`
 `
 const Admin: Screen = ({}) => {
   const { user } = useContext(UserContext)
-  if (!['admin', 'developer'].includes(user?.role)) {
-    return <NotFound />
-  }
-
   const { data } = useQuery(FlightsQuery, {
     ssr: false,
     variables: {
@@ -51,6 +47,10 @@ const Admin: Screen = ({}) => {
     },
   })
   const { flights = [] } = data ?? {}
+
+  if (!['admin', 'developer'].includes(user?.role)) {
+    return <NotFound />
+  }
 
   return (
     <Layout

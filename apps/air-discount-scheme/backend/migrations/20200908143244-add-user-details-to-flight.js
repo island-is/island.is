@@ -6,6 +6,8 @@ module.exports = {
       BEGIN;
 
         ALTER TABLE flight ADD COLUMN user_info JSONB DEFAULT '{}' NOT NULL;
+        DELETE FROM flight_leg;
+        DELETE FROM flight;
 
       COMMIT;
     `)

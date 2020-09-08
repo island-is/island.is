@@ -67,10 +67,6 @@ describe('Create Flight', () => {
       created: expect.any(String),
       modified: expect.any(String),
       nationalId: user.nationalId,
-      userInfo: {
-        gender: 'kk',
-        postalCode: 900,
-      },
       bookingDate: '2020-08-17T12:35:50.971Z',
       airline: 'ernir',
       flightLegs: [

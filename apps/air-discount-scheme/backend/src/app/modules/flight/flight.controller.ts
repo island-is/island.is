@@ -85,7 +85,13 @@ export class PublicFlightController {
       params.discountCode,
       discount.nationalId,
     )
-    return this.flightService.create(flight, user, request.airline)
+    const newFlight = await this.flightService.create(
+      flight,
+      user,
+      request.airline,
+    )
+    newFlight.userInfo = undefined
+    return newFlight
   }
 
   @Get('flights/:flightId')
