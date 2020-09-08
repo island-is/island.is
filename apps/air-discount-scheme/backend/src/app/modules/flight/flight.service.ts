@@ -18,7 +18,7 @@ export const ADS_POSTAL_CODES = {
 }
 const DEFAULT_AVAILABLE_LEGS = 6
 const AVAILABLE_FLIGHT_LEGS = {
-  '2020': 4,
+  '2020': 2,
   '2021': 6,
 }
 
