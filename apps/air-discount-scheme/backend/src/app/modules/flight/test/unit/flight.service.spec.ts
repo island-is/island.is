@@ -115,7 +115,7 @@ describe('PublicFlightController', () => {
   describe('countFlightLegsByNationalId', () => {
     const nationalId = '1234567890'
 
-    it('should return 4 unused flights for 2020', async () => {
+    it('should return 2 unused flights for 2020', async () => {
       Date.now = () => 1577836800000 // 2020
       jest
         .spyOn(flightModel as any, 'count')
@@ -125,8 +125,8 @@ describe('PublicFlightController', () => {
 
       expect(result).toEqual({
         used: 0,
-        unused: 4,
-        total: 4,
+        unused: 2,
+        total: 2,
       })
     })
 
