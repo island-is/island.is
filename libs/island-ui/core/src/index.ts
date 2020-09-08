@@ -52,5 +52,8 @@ export * from './lib/ContentBlock/ContentBlock'
 export * from './lib/Accordion/Accordion'
 export * from './lib/AccordionItem/AccordionItem'
 
+// Context
+export * from './lib/context'
+
 // Global reset
 export * from './global/global.treat'

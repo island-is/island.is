@@ -290,8 +290,10 @@ const EventModal = ({ event, visible, onClose }: EventModalProps) => {
           </Typography>
           {event.data?.labels && (
             <Inline space={2}>
-              {event.data.labels.map((label) => (
-                <Tag label>{label}</Tag>
+              {event.data.labels.map((label, index) => (
+                <Tag key={index} label>
+                  {label}
+                </Tag>
               ))}
             </Inline>
           )}
