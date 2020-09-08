@@ -53,6 +53,45 @@ describe('UserService', () => {
     )
   })
 
+  describe('getAirlineUserInfoByNationalId', () => {
+    it('should return user with masked nationalId', async () => {
+      const flightLegs = {
+        unused: user.fund.credit,
+        used: user.fund.used,
+        total: user.fund.total,
+      }
+      const isValidPostalCode = true
+
+      const getUserSpy = jest
+        .spyOn(nationalRegistryService, 'getUser')
+        .mockImplementation(() => Promise.resolve(user))
+      const countFlightLegsByNationalIdSpy = jest
+        .spyOn(flightService, 'countFlightLegsByNationalId')
+        .mockImplementation(() => Promise.resolve(flightLegs))
+      const isADSPostalCodeSpy = jest
+        .spyOn(flightService, 'isADSPostalCode')
+        .mockImplementation(() => isValidPostalCode)
+
+      const result = await userService.getAirlineUserInfoByNationalId(
+        user.nationalId,
+      )
+
+      expect(getUserSpy).toHaveBeenCalledWith(user.nationalId)
+      expect(countFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
+        user.nationalId,
+      )
+      expect(isADSPostalCodeSpy).toHaveBeenCalledWith(user.postalcode)
+      expect(result).toEqual({
+        nationalId: '132648xxx5',
+        firstName: user.firstName,
+        gender: user.gender,
+        lastName: user.lastName,
+        middleName: user.middleName,
+        fund: user.fund,
+      })
+    })
+  })
+
   describe('getUserInfoByNationalId', () => {
     it('should return user with correct postal code with credit', async () => {
       const flightLegs = {
@@ -79,10 +118,7 @@ describe('UserService', () => {
         user.nationalId,
       )
       expect(isADSPostalCodeSpy).toHaveBeenCalledWith(user.postalcode)
-      expect(result).toEqual({
-        ...user,
-        nationalId: '132648xxx5',
-      })
+      expect(result).toEqual(user)
     })
 
     it('should return user with incorrect postal code with no credit', async () => {
@@ -112,7 +148,6 @@ describe('UserService', () => {
       expect(isADSPostalCodeSpy).toHaveBeenCalledWith(user.postalcode)
       expect(result).toEqual({
         ...user,
-        nationalId: '132648xxx5',
         fund: {
           ...user.fund,
           credit: 0,

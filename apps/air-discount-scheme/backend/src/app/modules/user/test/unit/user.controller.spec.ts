@@ -12,7 +12,6 @@ const airlineUser: AirlineUser = {
   lastName: 'Jónsson',
   middleName: 'Gunnar',
   fund: {
-    nationalId: '1326487905',
     credit: 0,
     used: 0,
     total: 4,
