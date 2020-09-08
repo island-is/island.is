@@ -5,6 +5,7 @@ import {ServiceCard, ServiceCardInformation, ServiceStatusValue} from './service
 
 describe(' ServiceCard ', () => {
   const service:ServiceCardInformation = {
+      id:0,
       name :"service 1", 
       owner: "owner of service 1", 
       pricing   :["free", "custom"], 

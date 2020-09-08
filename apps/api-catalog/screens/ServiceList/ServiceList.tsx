@@ -7,6 +7,7 @@ import {
   BulletList,
   Bullet
 } from '@island.is/island-ui/core'
+import { getAllServices } from '../../components/ServiceRepository/service-repository'
 
 export default function ServiceList({services}) {
   return (
@@ -55,8 +56,8 @@ export default function ServiceList({services}) {
   )
 }
 
-ServiceList.getInitialProps = () => {
-  const services = [
+ServiceList.getInitialProps = async () => {
+  /*const services = [
     { owner:"Þjóðskrá",         name:"Fasteignaskrá",       pricing:null,                          categories:null,                   type:["REST"],  access:["API GW"], status:ServiceStatusValue.OK},
     { owner:"Þjóðskrá",         name:"Einstaklingsskrá",    pricing:["free", "custom"],            categories:null,                   type:null,      access:["X-Road"], status:ServiceStatusValue.WARNING},
     { owner:"Þjóðskrá",         name:"Staðfangaskrá",       pricing:null,                          categories:["personal", "public"], type:["react"], access:["API GW"], status:ServiceStatusValue.ERROR},
@@ -64,7 +65,8 @@ ServiceList.getInitialProps = () => {
     { owner:"Skatturinn",       name:"Staðgreiðsla",        pricing:["daily","monthly", "yearly"], categories:["personal", "public"], type:["SOAP"],  access:["API GW"], status:ServiceStatusValue.OK},
     { owner:"Vinnumálastofnun", name:"Fæðingarorlofssjóður",pricing:null,                          categories:["personal", "public"], type:["react"], access:["API GW"], status:ServiceStatusValue.ERROR},
     { owner:"Samgöngujstofa",   name:"Ökutækjaskrá",        pricing:["daily","monthly", "yearly"], categories:["personal", "public"], type:["SOAP"],  access:["API GW"], status:ServiceStatusValue.UNKNOWN},
-  ];
-  return {services:services};
+  ];*/
+  //const services = await fetch('http://localhost:3333/api')
+  return {services:getAllServices().result};
 
 }
