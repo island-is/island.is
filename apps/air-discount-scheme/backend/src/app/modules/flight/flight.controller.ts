@@ -24,13 +24,14 @@ import {
 import { Flight } from './flight.model'
 import { FlightService } from './flight.service'
 import {
+  FlightDto,
   GetFlightParams,
+  GetFlightsBody,
   CreateFlightParams,
   GetUserFlightsParams,
   DeleteFlightParams,
   DeleteFlightLegParams,
-} from './flight.validator'
-import { FlightDto } from './dto/flight.dto'
+} from './dto'
 import { DiscountService } from '../discount'
 import { AuthGuard } from '../common'
 import { NationalRegistryService } from '../nationalRegistry'
