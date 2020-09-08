@@ -19,6 +19,7 @@ import {
   QueryGetMenuArgs,
   QueryGetNamespaceArgs,
 } from '@island.is/api/schema'
+import { useI18n } from '../../i18n'
 
 interface AppLayoutProps {
   children?: React.ReactNode
@@ -52,6 +53,27 @@ export const AppLayout: NextComponentType<
   localeKey,
 }) => {
   const [user, setUser] = useState(null)
+  const { toRoute } = useI18n()
+  const nextLanguage = localeKey === 'is' ? 'en' : 'is'
+  const languageRouteHref = localeKey && toRoute(routeKey, nextLanguage)
+
+  const languageRoute: FooterLinkProps = {
+    title: nextLanguage === 'en' ? 'English' : 'Íslenska',
+    href: languageRouteHref,
+  }
+
+  const footerUpperMenuFiltered = footerUpperMenu.filter(
+    ({ href }) => href && href !== '#',
+  )
+  const footerLowerMenuFiltered = footerLowerMenu.filter(
+    ({ href }) => href && href !== '#',
+  )
+  const footerMiddleMenuFiltered = footerMiddleMenu.filter(
+    ({ href }) => href && href !== '#',
+  )
+  const footerTagsMenuFiltered = footerTagsMenu.filter(
+    ({ href }) => href && href !== '#',
+  )
 
   return (
     <UserContext.Provider value={{ isAuthenticated, user, setUser }}>
@@ -105,14 +127,15 @@ export const AppLayout: NextComponentType<
           <ErrorBoundary>{children}</ErrorBoundary>
         </Box>
         <Footer
-          topLinks={footerUpperMenu}
-          bottomLinks={footerLowerMenu}
-          middleLinks={footerMiddleMenu}
-          tagLinks={footerTagsMenu}
+          topLinks={footerUpperMenuFiltered}
+          bottomLinks={footerLowerMenuFiltered}
+          middleLinks={footerMiddleMenuFiltered}
+          tagLinks={footerTagsMenuFiltered}
           middleLinksTitle={namespace.footerMiddleLabel}
           tagLinksTitle={namespace.footerRightLabel}
-          showMiddleLinks
-          showTagLinks
+          showMiddleLinks={footerMiddleMenuFiltered.length > 0}
+          showTagLinks={footerTagsMenuFiltered.length > 0}
+          languageSwitchLink={languageRoute}
         />
         <style jsx global>{`
           @font-face {
