@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 
@@ -36,17 +36,13 @@ interface PropTypes {
 }
 
 function Usage({ misc }: PropTypes) {
-  const { data, refetch } = useQuery(FlightsQuery, { ssr: false })
+  const { data } = useQuery(FlightsQuery, {
+    ssr: false,
+    pollInterval: THIRTY_SECONDS,
+  })
   const { flights = [] } = data ?? {}
   const { currentUsage, user, path, date } = JSON.parse(misc)
   const { activeLocale } = useI18n()
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      refetch()
-    }, THIRTY_SECONDS)
-    return () => clearInterval(interval)
-  }, [refetch])
 
   if (flights.length <= 0) {
     return null
