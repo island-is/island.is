@@ -87,7 +87,7 @@ const Home: Screen<HomeProps> = ({
 
   return (
     <>
-      <Section paddingY={[2, 2, 3, 3, 6]}>
+      <Section paddingY={[0, 0, 3, 3, 6]}>
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
       </Section>
       <Section background="purple100" paddingY={[4, 4, 4, 6]}>

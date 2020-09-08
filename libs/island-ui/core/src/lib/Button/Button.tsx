@@ -33,6 +33,7 @@ export interface ButtonProps {
   noWrap?: boolean
   target?: string
   white?: boolean
+  tabIndex?: number
 }
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
@@ -58,6 +59,7 @@ export const Button = forwardRef<
       noWrap,
       target = '_blank',
       white,
+      tabIndex,
     },
     ref,
   ) => {
@@ -82,6 +84,7 @@ export const Button = forwardRef<
     }
 
     const sharedProps = {
+      tabIndex,
       className,
       onClick,
     }
