@@ -81,7 +81,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
 
     return (
       <Downshift
-        id="downshift"
+        id='downshift'
         onChange={onChange}
         initialInputValue={initialInputValue}
         onInputValueChange={onInputValueChange}
@@ -270,28 +270,29 @@ export const AsyncSearchInput = forwardRef<
         })}
       >
         <Input {...inputProps} white={white} isOpen={isOpen} ref={ref} />
-        <button
-          className={cn(styles.icon, styles.iconSizes[size], {
-            [styles.focusable]: value,
-          })}
-          tabIndex={value ? 0 : -1}
-          {...buttonProps}
-        >
-          <Icon type="search" width={20} color="blue400" />
-        </button>
-        {loading && (
+        {loading ? (
           <span
             className={cn(styles.loadingIcon, styles.loadingIconSizes[size])}
-            aria-hidden="false"
-            aria-label="Loading"
+            aria-hidden='false'
+            aria-label='Loading'
           >
             <Icon
               spin
-              type="loading"
+              type='loading'
               width={24}
               color={white ? 'white' : 'blue400'}
             />
           </span>
+        ) : (
+          <button
+            className={cn(styles.icon, styles.iconSizes[size], {
+              [styles.focusable]: value,
+            })}
+            tabIndex={value ? 0 : -1}
+            {...buttonProps}
+          >
+            <Icon type='search' width={20} color='blue400' />
+          </button>
         )}
         {showLabel && <Label {...labelProps}>{label}</Label>}
         <Menu {...{ isOpen, shouldShowItems: isOpen, ...menuProps }}>
