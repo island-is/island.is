@@ -7,11 +7,15 @@ import {
   Delete,
   Post,
   Body,
+  UseGuards,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOkResponse, ApiTags, ApiOAuth2 } from '@nestjs/swagger'
 import { GrantType } from '../grant-types/grant-type.model'
 import { Grant } from './grants.model'
+import { AuthGuard } from '@nestjs/passport'
 
+@ApiOAuth2(['openid:profile']) // add OAuth restriction to this controller
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('grants')
 @Controller('grants')
 export class GrantsController {
