@@ -1,14 +1,17 @@
 import fs from 'fs'
-import { environment } from '../environments/environment'
 import { logger } from '@island.is/logging'
 import { ElasticService } from '@island.is/api/content-search'
+import { AwsEsPackage } from './aws'
 
 const esService = new ElasticService()
 
-export const getCodeVersion = () => {
-  const raw = fs.readFileSync(environment.migrate.codeTemplateFile)
-  const json = JSON.parse(raw.toString())
-  return json.version
+const getIndexBaseName = (locale: string) => {
+  return `island-${locale}`
+}
+
+const getIndexNameForVersion = (locale: string, version: number) => {
+  const indexPrefix = getIndexBaseName(locale)
+  return `${indexPrefix}-v${version}`
 }
 
 export const checkAccess = () => {
@@ -19,137 +22,169 @@ export const checkAccess = () => {
   })
 }
 
-export const getIndexNameForVersion = (version: number) => {
-  return `island-is-v${version}`
+// elasticsearch does not provide all return variants in its documentation, we only type a sensible subset of the return object
+interface EsIndex {
+  health: 'green' | 'yellow' | 'red'
+  index: string
+  status: string
+  ['docs.count']: string
+  ['docs.deleted']: string
 }
-
-export const esHasVersion = async (version: number) => {
-  const indexName = getIndexNameForVersion(version)
+const getAllIndice = async () => {
   const client = await esService.getClient()
-  const result = await client.indices.exists({
-    index: indexName,
-  })
-  logger.info('Checking if index exists', {
-    index: indexName,
-    result: result.body,
-  })
-  return result.body
+  const indice = await client.cat.indices<EsIndex[]>({ format: 'json' })
+  return indice.body
 }
 
-export const getMainAlias = async (): Promise<string | null> => {
-  logger.info('Getting main alias')
+export const getVersionFromIndices = async (locale: string): Promise<number> => {
+  logger.info('Getting index version from elasticsearch', { locale })
+  const indice = await getAllIndice()
+  const indicePrefix = getIndexBaseName(locale)
+
+  // find the highest version matching our index prefix using our custom index naming convention
+  return indice.reduce((higherstVersion, { index }) => {
+    if (index.includes(indicePrefix)) {
+      const versionPrefixLocation = index.lastIndexOf('-v') + 2
+      const version = parseInt(index.substring(versionPrefixLocation, index.length))
+      if (version > higherstVersion) {
+        return version
+      }
+    }
+    return higherstVersion
+  }, 0)
+}
+
+const getTemplateName = (locale: string) => `template-${locale}`
+
+const getTemplateFilePath = (locale: string) => {
+  const templateName = getTemplateName(locale)
+  return `./config/${templateName}.json`
+}
+
+export const getVersionFromConfig = (locale: string): number => {
+  logger.info('Getting index version from config', { locale })
+  const templateFilePath = getTemplateFilePath(locale)
+  const raw = fs.readFileSync(templateFilePath)
+  const json = JSON.parse(raw.toString())
+  return json.version
+}
+
+interface PackageMap {
+  [key: string]: {
+    [key: string]: string
+  }
+}
+const parseEsPackages = (esPackages: AwsEsPackage[]): PackageMap => {
+  return esPackages.reduce((packageMap, esPackage) => {
+    const { locale, analyzerType, packageId } = esPackage
+    packageMap[locale] = { ...packageMap[locale], [analyzerType]: packageId }
+    return packageMap
+  }, {})
+}
+
+// TODO: Make this handle empty locales as in locales with no aditional analyzers
+// we inject aws es packages for analyzers here if needed
+const createTemplateBody = (locale: string, packageMap: PackageMap): string => {
+  logger.info('Creating template body', { locale })
+  const templateFilePath = getTemplateFilePath(locale)
+  let config = fs.readFileSync(templateFilePath).toString()
+
+  // replace placeholders in config e.g. {STEMMER}
+  const keys = Object.keys(packageMap[locale])
+  for (const key of keys) {
+    const packageId = packageMap[locale][key]
+    config = config.replace(`{${key}}`, packageId)
+  }
+
+  logger.info('Created template config', { locale })
+  return config
+}
+
+const updateEsTemplate = async (locale: string, templateBody: string) => {
+  const templateName = getTemplateName(locale)
+  logger.info('Updating template', { templateName })
   const client = await esService.getClient()
   return client.indices
-    .getAlias({ name: environment.migrate.indexMain })
-    .then((response) => {
-      const body = response.body
-      for (const index in body) {
-        const aliases = body[index]['aliases']
-        if (aliases[environment.migrate.indexMain] ?? null) {
-          return index
-        }
-      }
-      return null
+    .putTemplate({
+      name: templateName,
+      body: templateBody,
     })
 }
 
-export const reindexToNewIndex = async (codeVersion: number) => {
-  logger.info('Reindexing to new index code version is', { codeVersion })
-  const oldIndex = await esGetOlderVersionIndex(codeVersion)
-  if (!oldIndex) {
-    logger.info('No older version found creating new index for this version')
-    return createIndex(codeVersion)
-  }
+export const updateIndexTemplate = (locale: string, esPackages: AwsEsPackage[]) => {
+  const packageMap = parseEsPackages(esPackages)
+  const templateBody = createTemplateBody(locale, packageMap)
+  return updateEsTemplate(locale, templateBody)
+}
 
-  const newIndex = getIndexNameForVersion(codeVersion)
+export const createNewIndexVersion = async (locale: string, version: number) => {
+  const newIndexName = getIndexNameForVersion(locale, version)
+  logger.info('Creating new index', { newIndexName })
+  const client = await esService.getClient()
+  await client.indices.create({
+    index: newIndexName
+  })
+  return newIndexName
+}
+
+export const moveOldContentToNewIndex = async (locale: string, oldIndexVersion: number, newIndexVersion: number) => {
+  // if we found no older index there is nothing to move
+  if (oldIndexVersion === 0) {
+    return false
+  }
+  const oldIndexName = getIndexNameForVersion(locale, oldIndexVersion)
+  const newIndexName = getIndexNameForVersion(locale, newIndexVersion)
+
+  logger.info('Moving content from old index to new index', { oldIndexName, newIndexName })
+
   const params = {
     waitForCompletion: true,
     body: {
       source: {
-        index: oldIndex,
+        index: oldIndexName,
       },
       dest: {
-        index: newIndex,
+        index: newIndexName,
       },
-    },
+    }
   }
-  logger.info('Reindex to new index', params)
   const client = await esService.getClient()
-  const response = await client.reindex(params)
-  logger.info('Reindex returned', response)
-  return switchAlias(oldIndex, newIndex)
+  await client.reindex(params)
+  logger.info('Moved all content to new index')
+  return true
 }
 
-export const switchAlias = async (oldIndex: string | null, newIndex: string) => {
+export const moveAliasToNewIndex = async (locale: string, oldIndexVersion: number, newIndexVersion: number) => {
+  logger.info('Moving alias to new version')
+  const aliasName = getIndexBaseName(locale)
+  const oldIndexName = getIndexNameForVersion(locale, oldIndexVersion)
+  const newIndexName = getIndexNameForVersion(locale, newIndexVersion)
+
+  // this is the recomented way to rename an alias, this operation is atomic when executed in a single api request
   const actions = []
-  if (oldIndex) {
+  if (oldIndexVersion > 0) {
     actions.push({
       remove: {
-        index: oldIndex,
-        alias: environment.migrate.indexMain,
+        index: oldIndexName,
+        alias: aliasName,
       },
     })
   }
+
   actions.push({
     add: {
-      index: newIndex,
-      alias: environment.migrate.indexMain,
+      index: newIndexName,
+      alias: aliasName,
     },
   })
+
   const params = {
     body: {
       actions: actions,
     },
   }
-  logger.info('Switch Alias', params)
 
   const client = await esService.getClient()
-  return client.indices.updateAliases(params)
-}
-
-const createIndex = async (codeVersion) => {
-  const name = getIndexNameForVersion(codeVersion)
-  const params = {
-    index: name,
-  }
-  logger.info('Create Index', params)
-  const client = await esService.getClient()
-  return client.indices.create(params).then(() => switchAlias(null, name))
-}
-
-export const createTemplate = async (config: string) => {
-  const templateName = 'template-is'
-  logger.info('Create template', templateName)
-  const client = await esService.getClient()
-  return client.indices
-    .putTemplate({
-      name: templateName,
-      body: config,
-    })
-    .catch((error) => {
-      logger.error('Failed to update template', {
-        error,
-        config,
-        templateName,
-      })
-      throw error
-    })
-}
-
-const esGetOlderVersionIndex = async (
-  currentVersion: number,
-): Promise<string | null> => {
-  logger.info('Trying to find older indexes')
-
-  for (let i = currentVersion - 1; i > 0; i--) {
-    const indexExists = await esHasVersion(i)
-    if (indexExists) {
-      // this old version exists, return the name of the index
-      return getIndexNameForVersion(i)
-    }
-  }
-
-  logger.info('No older indice found')
-  // no index found
-  return null
+  await client.indices.updateAliases(params)
+  logger.info('Moved alias to new index', { newIndexName, oldIndexName })
 }

@@ -32,46 +32,56 @@ class App {
   }
 
   private async migrateAws() {
+    logger.info('Starting aws migration')
     const repoDictionaryVersion = await dictionary.getDictionaryVersion()
     const awsDictionaryVersion = await aws.getDictionaryVersion()
+    let esPackages: aws.AwsEsPackage[]
     // we only try to update teh dictionary files if we find a missmatch in version numbers
     if (repoDictionaryVersion !== awsDictionaryVersion) {
       logger.info('Dictionary version missmatch, updating dictionary', { repoVersion: repoDictionaryVersion, awsVersion: awsDictionaryVersion })
       const dictionaries = await dictionary.getDictionaryFiles() // get files form dictionary repo
       const uploadedS3Files = await aws.updateS3DictionaryFiles(dictionaries) // upload repo files to s3
-      const esPackages = await aws.createAwsEsPackages(uploadedS3Files, repoDictionaryVersion) // create packages for the new files in AWS ES
+      esPackages = await aws.createAwsEsPackages(uploadedS3Files, repoDictionaryVersion) // create packages for the new files in AWS ES
       await aws.associatePackagesWithAwsEs(esPackages) // attach the new packages to our AWS ES instance
       await aws.updateDictionaryVersion(repoDictionaryVersion) // update version file last to ensure process runs again on failure
-      return esPackages // es config needs the package ids when generating the index template
     } else {
-      logger.info('No need to update dictionary, getting current package ids')
-      return aws.getAllDomainEsPackages()
+      logger.info('No need to update dictionary, getting current package ids for elasticsearch migration')
+      esPackages = await aws.getAllDomainEsPackages()
     }
+    logger.info('Aws migration completed')
+    return esPackages // es config needs the package ids when generating the index template
   }
 
-  private async migrateES(packageIds: aws.AwsEsPackage[]) {
+  private async migrateES(esPackages: aws.AwsEsPackage[]) {
+    logger.info('Starting elasticsearch migration')
     await elastic.checkAccess() // this throws if there is no connection hence ensuring we dont continue
-    // TODO: Do we need to update index templates?
-    // TODO: Do we need to update index alias?
+    const locales = environment.migrate.locales
+    const requests = locales.map(async (locale) => {
+      const oldIndexVersion = await elastic.getVersionFromIndices(locale)
+      const newIndexVersion = await elastic.getVersionFromConfig(locale)
 
-    // const hasVersion = await this.esHasVersion(codeVersion)
-    /* if(hasVersion)
-      if (!(await this.aliasIsCorrect(codeVersion))) {
-        logger.info('Alias is not correct')
-        await this.fixAlias(codeVersion)
-        logger.info('Alias was fixed')
-        return
+      if (oldIndexVersion !== newIndexVersion) {
+        logger.info('Elasticsearch index version does not match code index version, updating elasticsearch config', { locale, esIndexVersion: oldIndexVersion, codeIndexVersion: newIndexVersion })
+
+        try {
+          // TODO: Get old template to roll back
+          await elastic.updateIndexTemplate(locale, esPackages)
+          await elastic.createNewIndexVersion(locale, newIndexVersion)
+          await elastic.moveOldContentToNewIndex(locale, newIndexVersion, oldIndexVersion)
+          await elastic.moveAliasToNewIndex(locale, newIndexVersion, oldIndexVersion)
+        } catch (error) {
+          logger.error('Failed to migrate to new index', { locale, newIndexVersion, oldIndexVersion, error })
+          await elastic.revertToOldTemplate(newIndexVersion)
+          await elastic.removeIndexVersion(newIndexVersion)
+        }
+      } else {
+        logger.info('Elasticsearch index version matches code index version, no need to update index', { locale, esIndexVersion: oldIndexVersion, codeIndexVersion: newIndexVersion })
       }
-    */
-    /*
-      const config = this.createConfig(packageIds)
-      logger.info('Updating index template', { codeVersion, packageIds, config })
-      return this.createTemplate(config).then(() =>
-        this.reindexToNewIndex(codeVersion),
-      )
-    */
-    logger.info('Starting ES migration', { packageIds })
-    logger.info('Ran!')
+      return true
+    })
+
+    await Promise.all(requests) // TODO: Revert all and crash
+    logger.info('Elasticsearch migration completed')
     return true
   }
 }

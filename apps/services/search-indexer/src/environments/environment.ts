@@ -9,9 +9,7 @@ export interface Environment {
   indexableTypes: string[]
   migrate: {
     elasticNode: string
-    indexMain: string
     esDomain: string
-    codeTemplateFile: string
     s3Bucket: string
     s3Folder: string
     awsRegion: string
@@ -33,9 +31,7 @@ export const environment: Environment = {
     elasticNode: process.env.ELASTIC_NODE || '',
     s3Bucket: process.env.S3_BUCKET || 'dev-es-custom-packages', // TODO: Make sure migrate uses these env variables in aws cluster
     awsRegion: process.env.AWS_REGION || 'eu-west-1',
-    indexMain: 'island-is',
     esDomain: 'search',
-    codeTemplateFile: './config/template-is.json',
     s3Folder: '',
     dictRepo: 'https://api.github.com/repos/island-is/elasticsearch-dictionaries',
     locales: ['is', 'en']

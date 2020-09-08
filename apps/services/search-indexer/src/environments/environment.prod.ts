@@ -13,9 +13,7 @@ export const environment: Environment = {
     elasticNode: process.env.ELASTIC_NODE,
     s3Bucket: process.env.S3_BUCKET,
     awsRegion: process.env.AWS_REGION,
-    indexMain: 'island-is',
     esDomain: 'search',
-    codeTemplateFile: '/webapp/config/template-is.json',
     dictRepo:
       'https://api.github.com/repos/island-is/elasticsearch-dictionaries',
     s3Folder: '',
