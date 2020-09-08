@@ -50,9 +50,6 @@ describe('Get Discount By DiscountCode', () => {
       gender: 'kk',
       lastName: 'Jónsson',
       middleName: 'Gunnar',
-      address: 'Bessastaðir 1',
-      postalcode: 225,
-      city: 'Álftanes',
       fund: {
         nationalId: '1326487905',
         credit: 0,
