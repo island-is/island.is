@@ -1,5 +1,4 @@
 export interface Fund {
-  nationalId: string
   credit: number
   used: number
   total: number

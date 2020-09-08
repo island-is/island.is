@@ -8,9 +8,6 @@ import {
 import { NationalRegistryUser } from '../nationalRegistry'
 
 class Fund implements TFund {
-  @ApiProperty()
-  nationalId: string
-
   @ApiProperty({
     description: 'Determines if the user has any discount credits left',
   })
@@ -29,8 +26,12 @@ export class AirlineUser implements TAirlineUser {
     this.middleName = user.middleName
     this.lastName = user.lastName
     this.gender = user.gender
-    this.nationalId = user.nationalId
+    this.nationalId = AirlineUser.maskNationalId(user.nationalId)
     this.fund = fund
+  }
+
+  private static maskNationalId(nationalId: string): string {
+    return `${nationalId.slice(0, 6)}xxx${nationalId.slice(-1)}`
   }
 
   @ApiProperty()

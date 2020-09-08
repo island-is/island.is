@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing'
 
-import { User } from '../../user.model'
+import { AirlineUser, User } from '../../user.model'
 import { UserService } from '../../user.service'
 import { FlightService } from '../../../flight'
 import { NationalRegistryService } from '../../../nationalRegistry'
@@ -15,7 +15,6 @@ const user: User = {
   postalcode: 225,
   city: 'Álftanes',
   fund: {
-    nationalId: '1326487905',
     credit: 2,
     used: 2,
     total: 2,
@@ -80,7 +79,10 @@ describe('UserService', () => {
         user.nationalId,
       )
       expect(isADSPostalCodeSpy).toHaveBeenCalledWith(user.postalcode)
-      expect(result).toEqual(user)
+      expect(result).toEqual({
+        ...user,
+        nationalId: '132648xxx5',
+      })
     })
 
     it('should return user with incorrect postal code with no credit', async () => {
@@ -110,6 +112,7 @@ describe('UserService', () => {
       expect(isADSPostalCodeSpy).toHaveBeenCalledWith(user.postalcode)
       expect(result).toEqual({
         ...user,
+        nationalId: '132648xxx5',
         fund: {
           ...user.fund,
           credit: 0,
