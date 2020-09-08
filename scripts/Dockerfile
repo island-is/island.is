@@ -103,5 +103,5 @@ ENV APP=${APP}
 
 # the default port we target in the Helm setup
 ENV NGINX_PORT=3333
-
+ADD scripts/dockerfile-config/static-nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
