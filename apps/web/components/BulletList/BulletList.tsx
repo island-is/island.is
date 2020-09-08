@@ -33,9 +33,10 @@ export interface BulletListProps {
 
 export const BulletList: FC<BulletListProps> = ({ bullets }) => (
   <div>
-    {bullets.map((bullet) => {
+    {bullets.map((bullet, index) => {
       return bullet.type === 'IconBullet' ? (
         <Row
+          key={index}
           left={<IconBullet variant="blue" size="large" image={bullet.icon} />}
         >
           <Stack space={1}>
@@ -53,7 +54,7 @@ export const BulletList: FC<BulletListProps> = ({ bullets }) => (
           </Stack>
         </Row>
       ) : (
-        <NumberSection group={bullet} />
+        <NumberSection key={index} group={bullet} />
       )
     })}
   </div>

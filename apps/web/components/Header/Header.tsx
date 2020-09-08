@@ -20,6 +20,7 @@ import { SearchInput } from '../'
 import { LanguageToggler } from '../LanguageToggler'
 import { SideMenu } from '../SideMenu'
 import { tempTabs } from '../../json'
+
 interface HeaderProps {
   showSearchInHeader?: boolean
 }

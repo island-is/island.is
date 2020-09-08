@@ -6,12 +6,14 @@ import React, {
   ButtonHTMLAttributes,
   LabelHTMLAttributes,
   ReactNode,
+  useContext,
 } from 'react'
 import Downshift, { DownshiftProps } from 'downshift'
 import { ControllerStateAndHelpers } from 'downshift/typings'
 import cn from 'classnames'
 import { Input, InputProps, Label, Menu, MenuProps, Item } from './shared'
 import { Icon } from '../Icon/Icon'
+import { ColorSchemeContext } from '../context'
 
 import * as styles from './AsyncSearch.treat'
 
@@ -73,11 +75,14 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
     ref,
   ) => {
     const [focused, setFocused] = useState<boolean>(false)
+    const { colorScheme } = useContext(ColorSchemeContext)
 
     const onFocus = () => setFocused(true)
     const onBlur = () => setFocused(false)
 
     const hasLabel = Boolean(size === 'large' && label)
+
+    const whiteColorScheme = colorScheme === 'white' || white
 
     return (
       <Downshift
@@ -177,7 +182,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                 colored,
                 hasLabel,
                 placeholder,
-                white,
+                white: whiteColorScheme,
               }}
               buttonProps={{
                 onFocus,
@@ -256,9 +261,11 @@ export const AsyncSearchInput = forwardRef<
     },
     ref,
   ) => {
+    const { colorScheme } = useContext(ColorSchemeContext)
     const { value, inputSize: size } = inputProps
     const showLabel = Boolean(size === 'large' && label)
     const isOpen = hasFocus && !!children && React.Children.count(children) > 0
+    const whiteColorScheme = colorScheme === 'white' || white
 
     return (
       <div
@@ -266,10 +273,15 @@ export const AsyncSearchInput = forwardRef<
         className={cn(styles.wrapper, {
           [styles.focused]: hasFocus || isOpen,
           [styles.open]: isOpen,
-          [styles.white]: white,
+          [styles.white]: whiteColorScheme,
         })}
       >
-        <Input {...inputProps} white={white} isOpen={isOpen} ref={ref} />
+        <Input
+          {...inputProps}
+          white={whiteColorScheme}
+          isOpen={isOpen}
+          ref={ref}
+        />
         <button
           className={cn(styles.icon, styles.iconSizes[size], {
             [styles.focusable]: value,
@@ -289,7 +301,7 @@ export const AsyncSearchInput = forwardRef<
               spin
               type="loading"
               width={24}
-              color={white ? 'white' : 'blue400'}
+              color={whiteColorScheme ? 'white' : 'blue400'}
             />
           </span>
         )}

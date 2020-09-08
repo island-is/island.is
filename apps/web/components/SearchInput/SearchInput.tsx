@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {
   FC,
   useState,
@@ -271,6 +272,7 @@ const Results: FC<{
   locale: Locale
   search: SearchState
   highlightedIndex: number
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getItemProps: any
 }> = ({ locale, search, highlightedIndex, getItemProps }) => {
   const { makePath } = useRouteNames(locale)
