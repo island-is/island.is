@@ -51,7 +51,7 @@ export default function ServiceList({nextCursor,servicesList}) {
   const [services, setServices] = useState(servicesList);
   useEffect(() => {
     
-    const query = router !== undefined? getQueryParams(router.query) : {cursor:null, limit:null, owner:null, name:null}; 
+    const query = router !== undefined && router !== null? getQueryParams(router.query) : {cursor:null, limit:null, owner:null, name:null}; 
     async function loadData(nextCursor) {
       const response = await getServices(query.cursor, query.limit, query.owner, query.name);
       console.log('called if getInitialProps returns response.result === null ');
