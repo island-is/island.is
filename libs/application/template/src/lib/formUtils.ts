@@ -1,4 +1,6 @@
-import deepmerge from 'deepmerge'
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const merge = require('deepmerge')
+
 import { FormValue } from '../types/Application'
 import {
   Form,
@@ -140,7 +142,7 @@ const overwriteMerge = (destinationArray, sourceArray) => {
     i < Math.max(destinationArray.length, sourceArray.length);
     i++
   ) {
-    result[i] = deepmerge(sourceArray[i] ?? {}, destinationArray[i] ?? {}, {
+    result[i] = merge(sourceArray[i] ?? {}, destinationArray[i] ?? {}, {
       arrayMerge: overwriteMerge,
     })
   }
@@ -152,7 +154,7 @@ export function mergeAnswers(
   currentAnswers: object,
   newAnswers: object,
 ): FormValue {
-  return deepmerge(currentAnswers, newAnswers, {
+  return merge(currentAnswers, newAnswers, {
     arrayMerge: overwriteMerge,
   })
 }

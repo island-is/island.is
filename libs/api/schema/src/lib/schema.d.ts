@@ -801,21 +801,12 @@ export enum CreateApplicationDtoTypeIdEnum {
 
 export type UpdateApplicationInput = {
   id: Scalars['String']
-  typeId: UpdateApplicationDtoTypeIdEnum
   applicant?: Maybe<Scalars['String']>
   assignee?: Maybe<Scalars['String']>
   externalId?: Maybe<Scalars['String']>
   state?: Maybe<UpdateApplicationDtoStateEnum>
   attachments?: Maybe<Scalars['JSON']>
   answers?: Maybe<Scalars['JSON']>
-}
-
-export enum UpdateApplicationDtoTypeIdEnum {
-  ExampleForm = 'ExampleForm',
-  ExampleForm2 = 'ExampleForm2',
-  ExampleForm3 = 'ExampleForm3',
-  FamilyAndPets = 'FamilyAndPets',
-  ParentalLeave = 'ParentalLeave',
 }
 
 export enum UpdateApplicationDtoStateEnum {
@@ -1089,7 +1080,6 @@ export type ResolversTypes = {
   CreateApplicationDtoStateEnum: CreateApplicationDtoStateEnum
   CreateApplicationDtoTypeIdEnum: CreateApplicationDtoTypeIdEnum
   UpdateApplicationInput: UpdateApplicationInput
-  UpdateApplicationDtoTypeIdEnum: UpdateApplicationDtoTypeIdEnum
   UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
   UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
   DataProvider: DataProvider

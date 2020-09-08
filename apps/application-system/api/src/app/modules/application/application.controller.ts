@@ -13,11 +13,17 @@ import {
 import { omit } from 'lodash'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger'
 import {
   Application as BaseApplication,
   callDataProviders,
   FormType,
+  FormValue,
 } from '@island.is/application/template'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
@@ -26,9 +32,10 @@ import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
 import { mergeAnswers } from '@island.is/application/template'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
-import { SchemaValidationPipe } from './pipes/schemaValidation.pipe'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import { buildDataProviders, buildExternalData } from './externalDataUtils'
+import { ApplicationByIdPipe } from './pipes/applicationById.pipe'
+import { validateApplicationSchema } from './schemaValidationUtils'
 
 @ApiTags('application')
 @Controller('application')
@@ -68,65 +75,81 @@ export class ApplicationController {
   @Post()
   @ApiCreatedResponse({ type: Application })
   async create(
-    @Body(new SchemaValidationPipe(true))
+    @Body()
     application: CreateApplicationDto,
   ): Promise<Application> {
+    validateApplicationSchema(
+      application.typeId,
+      application.answers as FormValue,
+      true,
+    )
     return this.applicationService.create(application)
   }
 
   @Put(':id')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application to update.',
+    allowEmptyValue: false,
+  })
   @ApiOkResponse({ type: Application })
   async update(
-    @Param('id', new ParseUUIDPipe()) id: string,
-    @Body(new SchemaValidationPipe(true))
+    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
+    existingApplication: Application,
+    @Body()
     application: UpdateApplicationDto,
   ): Promise<Application> {
-    const existingApplication = await this.applicationService.findById(id)
-
-    if (!existingApplication) {
-      throw new NotFoundException(
-        `An application with the id ${id} does not exist`,
-      )
-    }
-
+    validateApplicationSchema(
+      existingApplication.typeId as FormType,
+      application.answers as FormValue,
+      true,
+    )
     const mergedAnswers = mergeAnswers(
       existingApplication.answers,
       application.answers,
     )
-    const { updatedApplication } = await this.applicationService.update(id, {
-      ...application,
-      answers: mergedAnswers,
-    })
+    const { updatedApplication } = await this.applicationService.update(
+      existingApplication.id,
+      {
+        ...application,
+        answers: mergedAnswers,
+      },
+    )
 
     return updatedApplication
   }
 
   @Put(':id/externalData')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application to update the external data for.',
+    allowEmptyValue: false,
+  })
   @ApiOkResponse({ type: Application })
   async updateExternalData(
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
+    existingApplication: Application,
     @Body()
     externalDataDto: PopulateExternalDataDto,
   ): Promise<Application> {
     // TODO how can we know if the requested data-providers are actually associated with this given form?
-    const application = await this.applicationService.findById(id)
-
-    if (!application) {
-      throw new NotFoundException("This application doesn't exist")
-    }
     const results = await callDataProviders(
       buildDataProviders(externalDataDto),
-      application as BaseApplication,
+      existingApplication as BaseApplication,
     )
     const {
       updatedApplication,
     } = await this.applicationService.updateExternalData(
-      id,
+      existingApplication.id,
       buildExternalData(externalDataDto, results),
     )
     if (!updatedApplication) {
       throw new NotFoundException(
-        `An application with the id ${id} does not exist`,
+        `An application with the id ${existingApplication.id} does not exist`,
       )
     }
 
@@ -134,29 +157,33 @@ export class ApplicationController {
   }
 
   @Put(':id/attachments')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application to update the attachments for.',
+    allowEmptyValue: false,
+  })
   @ApiOkResponse({ type: Application })
   async addAttachment(
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
+    existingApplication: Application,
     @Body() input: AddAttachmentDto,
   ): Promise<Application> {
     const { key, url } = input
-    const existingApplication = await this.applicationService.findById(id)
 
-    if (!existingApplication) {
-      throw new NotFoundException(
-        `An application with the id ${id} does not exist`,
-      )
-    }
-
-    const { updatedApplication } = await this.applicationService.update(id, {
-      attachments: {
-        ...existingApplication.attachments,
-        [key]: url,
+    const { updatedApplication } = await this.applicationService.update(
+      existingApplication.id,
+      {
+        attachments: {
+          ...existingApplication.attachments,
+          [key]: url,
+        },
       },
-    })
+    )
 
     await this.uploadQueue.add('upload', {
-      applicationId: id,
+      applicationId: existingApplication.id,
       attachmentUrl: url,
     })
 
@@ -164,23 +191,27 @@ export class ApplicationController {
   }
 
   @Delete(':id/attachments')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application to delete attachment(s) from.',
+    allowEmptyValue: false,
+  })
   @ApiOkResponse({ type: Application })
   async deleteAttachment(
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
+    existingApplication: Application,
     @Body() input: DeleteAttachmentDto,
   ): Promise<Application> {
     const { key } = input
-    const existingApplication = await this.applicationService.findById(id)
 
-    if (!existingApplication) {
-      throw new NotFoundException(
-        `An application with the id ${id} does not exist`,
-      )
-    }
-
-    const { updatedApplication } = await this.applicationService.update(id, {
-      attachments: omit(existingApplication.attachments, key),
-    })
+    const { updatedApplication } = await this.applicationService.update(
+      existingApplication.id,
+      {
+        attachments: omit(existingApplication.attachments, key),
+      },
+    )
 
     return updatedApplication
   }

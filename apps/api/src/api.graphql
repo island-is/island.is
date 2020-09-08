@@ -604,21 +604,12 @@ enum CreateApplicationDtoTypeIdEnum {
 
 input UpdateApplicationInput {
   id: String!
-  typeId: UpdateApplicationDtoTypeIdEnum!
   applicant: String
   assignee: String
   externalId: String
   state: UpdateApplicationDtoStateEnum
   attachments: JSON
   answers: JSON
-}
-
-enum UpdateApplicationDtoTypeIdEnum {
-  ExampleForm
-  ExampleForm2
-  ExampleForm3
-  FamilyAndPets
-  ParentalLeave
 }
 
 enum UpdateApplicationDtoStateEnum {
