@@ -8,8 +8,6 @@ export const sidebar = style({
   zIndex: zIndex.notificationSidebar,
   minWidth: 300,
   maxWidth: '100%',
-  maxHeight: '100%',
-  overflowY: 'auto',
   '@keyframes': {
     '0%': { transform: 'translate3d(120%, 0, 0)' },
     '100%': { transform: 'translate3d(0%, 0, 0)' },
@@ -53,4 +51,11 @@ export const close = style({
       left: -64,
     },
   }),
+})
+
+export const scrollWrapper = style({
+  position: 'relative',
+  height: '100%',
+  maxHeight: '100vh',
+  overflowY: 'auto',
 })

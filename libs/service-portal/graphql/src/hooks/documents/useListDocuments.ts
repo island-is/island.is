@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client'
 import { Query, QueryListDocumentsArgs } from '@island.is/api/schema'
-import { LIST_DOCUMENTS } from '../..'
+import { LIST_DOCUMENTS } from '../../lib/queries/listDocuments'
 import { useState } from 'react'
 
 export const useListDocuments = (

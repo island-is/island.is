@@ -46,7 +46,7 @@ export const ActionSidebar: FC<Props> = ({ isActive, onClose, children }) => {
           <Box className={styles.close}>
             <Button variant="menu" icon="close" onClick={onClose} />
           </Box>
-          {children}
+          <div className={styles.scrollWrapper}>{children}</div>
         </Box>
       </Box>
     </>
