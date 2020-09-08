@@ -1,11 +1,10 @@
 export interface Fund {
-  nationalId: string
   credit: number
   used: number
   total: number
 }
 
-export interface AirlineUser {
+export interface BaseUser {
   nationalId: string
   firstName: string
   middleName: string
@@ -14,7 +13,7 @@ export interface AirlineUser {
   fund: Fund
 }
 
-export interface User extends AirlineUser {
+export interface User extends BaseUser {
   address: string
   postalcode: number
   city: string

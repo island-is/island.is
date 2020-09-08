@@ -305,7 +305,6 @@ type PaginatedAdgerdirNews {
 }
 
 type Fund {
-  nationalId: ID!
   credit: Float!
   used: Float!
   total: Float!

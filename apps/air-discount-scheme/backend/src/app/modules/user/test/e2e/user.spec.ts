@@ -46,13 +46,12 @@ describe('Get Discount By DiscountCode', () => {
     spy2.mockRestore()
 
     expect(response.body).toEqual({
-      nationalId: '1326487905',
+      nationalId: '132648xxx5',
       firstName: 'Jón',
       gender: 'kk',
       lastName: 'Jónsson',
       middleName: 'Gunnar',
       fund: {
-        nationalId: '1326487905',
         credit: 0,
         used: 0,
         total: 6,

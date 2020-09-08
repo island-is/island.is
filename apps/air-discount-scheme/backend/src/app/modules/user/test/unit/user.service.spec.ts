@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing'
 
-import { User } from '../../user.model'
+import { AirlineUser, User } from '../../user.model'
 import { UserService } from '../../user.service'
 import { FlightService } from '../../../flight'
 import { NationalRegistryService } from '../../../nationalRegistry'
@@ -15,7 +15,6 @@ const user: User = {
   postalcode: 225,
   city: 'Álftanes',
   fund: {
-    nationalId: '1326487905',
     credit: 2,
     used: 2,
     total: 2,
@@ -52,6 +51,45 @@ describe('UserService', () => {
     nationalRegistryService = moduleRef.get<NationalRegistryService>(
       NationalRegistryService,
     )
+  })
+
+  describe('getAirlineUserInfoByNationalId', () => {
+    it('should return user with masked nationalId', async () => {
+      const flightLegs = {
+        unused: user.fund.credit,
+        used: user.fund.used,
+        total: user.fund.total,
+      }
+      const isValidPostalCode = true
+
+      const getUserSpy = jest
+        .spyOn(nationalRegistryService, 'getUser')
+        .mockImplementation(() => Promise.resolve(user))
+      const countFlightLegsByNationalIdSpy = jest
+        .spyOn(flightService, 'countFlightLegsByNationalId')
+        .mockImplementation(() => Promise.resolve(flightLegs))
+      const isADSPostalCodeSpy = jest
+        .spyOn(flightService, 'isADSPostalCode')
+        .mockImplementation(() => isValidPostalCode)
+
+      const result = await userService.getAirlineUserInfoByNationalId(
+        user.nationalId,
+      )
+
+      expect(getUserSpy).toHaveBeenCalledWith(user.nationalId)
+      expect(countFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
+        user.nationalId,
+      )
+      expect(isADSPostalCodeSpy).toHaveBeenCalledWith(user.postalcode)
+      expect(result).toEqual({
+        nationalId: '132648xxx5',
+        firstName: user.firstName,
+        gender: user.gender,
+        lastName: user.lastName,
+        middleName: user.middleName,
+        fund: user.fund,
+      })
+    })
   })
 
   describe('getUserInfoByNationalId', () => {
