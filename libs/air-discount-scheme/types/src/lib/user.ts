@@ -5,14 +5,17 @@ export interface Fund {
   total: number
 }
 
-export interface User {
+export interface AirlineUser {
   nationalId: string
   firstName: string
   middleName: string
   lastName: string
   gender: 'kk' | 'kvk'
+  fund: Fund
+}
+
+export interface User extends AirlineUser {
   address: string
   postalcode: number
   city: string
-  fund: Fund
 }
