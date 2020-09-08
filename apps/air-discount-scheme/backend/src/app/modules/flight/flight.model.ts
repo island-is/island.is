@@ -128,6 +128,12 @@ export class Flight extends Model<Flight> implements TFlight {
   id: string
 
   @Column({
+    type: DataType.JSONB,
+    allowNull: false,
+  })
+  userInfo: UserInfo
+
+  @Column({
     type: DataType.STRING,
     allowNull: false,
   })
