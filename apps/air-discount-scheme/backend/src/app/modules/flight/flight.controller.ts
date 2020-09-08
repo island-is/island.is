@@ -85,11 +85,7 @@ export class PublicFlightController {
       params.discountCode,
       discount.nationalId,
     )
-    return this.flightService.create(
-      flight,
-      discount.nationalId,
-      request.airline,
-    )
+    return this.flightService.create(flight, user, request.airline)
   }
 
   @Get('flights/:flightId')

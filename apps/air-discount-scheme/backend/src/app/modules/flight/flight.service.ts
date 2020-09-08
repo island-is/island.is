@@ -136,11 +136,21 @@ export class FlightService {
 
   async create(
     flight: FlightDto,
-    nationalId: string,
+    user: NationalRegistryUser,
     airline: string,
   ): Promise<Flight> {
+    const nationalId = user.nationalId
     return this.flightModel.create(
-      { ...flight, nationalId, airline },
+      {
+        ...flight,
+        nationalId,
+        airline,
+        userInfo: {
+          age: kennitala.info(nationalId).age,
+          gender: user.gender,
+          postalCode: user.postalcode,
+        },
+      },
       { include: [this.flightLegModel] },
     )
   }
