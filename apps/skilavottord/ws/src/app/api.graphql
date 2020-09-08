@@ -1,0 +1,23 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Fund {
+  nationalId: ID!
+  credit: Float!
+  used: Float!
+  total: Float!
+}
+
+type User {
+  nationalId: ID!
+  name: String!
+  mobile: String
+  fund: Fund
+  meetsADSRequirements: Boolean!
+  role: String!
+}
+
+type Query {
+  getUser(id: Float!): User
+}
