@@ -317,26 +317,28 @@ const Results: FC<{
             )
           })}
         </Stack>
-      </div>
-      <div className={styles.separatorHorizontal} />
-      <div className={styles.menuRow}>
-        {search.results && (
-          <Stack space={2}>
-            <Typography variant="eyebrow" color="purple400">
-              Beint að efninu
-            </Typography>
-            {search.results.items.slice(0, 5).map(({ id, title, slug }) => (
-              <div key={id} {...getItemProps()}>
-                <Typography links variant="h5" color="blue400">
-                  <Link href={makePath('article', slug)}>
-                    <a>{title}</a>
-                  </Link>
-                </Typography>
-              </div>
-            ))}
-          </Stack>
-        )}
-      </div>
+      </div>{' '}
+      {search.results.items.length > 0 && (
+        <>
+          <div className={styles.separatorHorizontal} />
+          <div className={styles.menuRow}>
+            <Stack space={2}>
+              <Typography variant="eyebrow" color="purple400">
+                Beint að efninu
+              </Typography>
+              {search.results.items.slice(0, 5).map(({ id, title, slug }) => (
+                <div key={id} {...getItemProps()}>
+                  <Typography links variant="h5" color="blue400">
+                    <Link href={makePath('article', slug)}>
+                      <a>{title}</a>
+                    </Link>
+                  </Typography>
+                </div>
+              ))}
+            </Stack>
+          </div>
+        </>
+      )}
     </Box>
   )
 }
