@@ -24,6 +24,9 @@ module.exports = {
             (origin = 'VPN' OR origin = 'THO' OR origin = 'GRY')
           );
 
+        /* set not null for airline */
+        ALTER TABLE flight_leg ALTER COLUMN airline SET NOT NULL;
+
       COMMIT;
     `)
   },
