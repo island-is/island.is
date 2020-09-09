@@ -9,7 +9,7 @@ import {
   initializeReducer,
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
-import { Box } from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import * as styles from './ApplicationForm.treat'
 
 export const ApplicationForm: FC<{ application: Application }> = ({
@@ -36,7 +36,7 @@ export const ApplicationForm: FC<{ application: Application }> = ({
     activeScreen,
     application: storedApplication,
     form,
-    progress,
+
     sections,
     screens,
   } = state
@@ -48,61 +48,66 @@ export const ApplicationForm: FC<{ application: Application }> = ({
       paddingX={[0, 5]}
       paddingTop={[0, 4]}
       paddingBottom={[0, 5]}
-      background="purple200"
+      background="purple100"
     >
-      <Box
-        display="flex"
-        flexGrow={1}
-        flexDirection="row"
-        borderRadius="large"
-        background="white"
-        className={styles.applicationContainer}
-      >
-        <Box className={styles.sidebarContainer}>
-          <Sidebar>
-            <ApplicationName name={form.name} icon={form.icon} />
-            <Box display="flex" flexDirection={['column', 'columnReverse']}>
-              <FormProgress
-                sections={sections}
-                activeSection={activeSection}
-                activeSubSection={activeSubSection}
-              />
+      <Box width="full">
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
+            <Box
+              paddingTop={8}
+              height="full"
+              borderRadius="large"
+              background="white"
+              className={styles.screenContainer}
+            >
+              <GridColumn
+                span={['12/12', '12/12', '7/9', '7/9']}
+                offset={[null, '1/9']}
+              >
+                <Screen
+                  addExternalData={(payload) =>
+                    dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
+                  }
+                  answerQuestions={(payload) =>
+                    dispatch({ type: ActionTypes.ANSWER, payload })
+                  }
+                  dataSchema={form.schema}
+                  externalData={storedApplication.externalData}
+                  formTypeId={form.id}
+                  formValue={storedApplication.answers}
+                  expandRepeater={() =>
+                    dispatch({ type: ActionTypes.EXPAND_REPEATER })
+                  }
+                  answerAndGoToNextScreen={(payload) =>
+                    dispatch({
+                      type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN,
+                      payload,
+                    })
+                  }
+                  prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
+                  shouldSubmit={activeScreen === screens.length - 1}
+                  screen={screens[activeScreen]}
+                  section={sections[activeSection]}
+                  applicationId={storedApplication.id}
+                />
+              </GridColumn>
             </Box>
-          </Sidebar>
-        </Box>
-
-        <Box
-          paddingX={[3, 3, 12]}
-          paddingTop={8}
-          height="full"
-          borderRadius="large"
-          background="white"
-          className={styles.screenContainer}
-        >
-          <Screen
-            addExternalData={(payload) =>
-              dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
-            }
-            answerQuestions={(payload) =>
-              dispatch({ type: ActionTypes.ANSWER, payload })
-            }
-            dataSchema={form.schema}
-            externalData={storedApplication.externalData}
-            formTypeId={form.id}
-            formValue={storedApplication.answers}
-            expandRepeater={() =>
-              dispatch({ type: ActionTypes.EXPAND_REPEATER })
-            }
-            answerAndGoToNextScreen={(payload) =>
-              dispatch({ type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN, payload })
-            }
-            prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
-            shouldSubmit={activeScreen === screens.length - 1}
-            screen={screens[activeScreen]}
-            section={sections[activeSection]}
-            applicationId={storedApplication.id}
-          />
-        </Box>
+          </GridColumn>
+          <GridColumn span={['12/12', '12/12', '3/12', '3/12']}>
+            <Box className={styles.sidebarContainer}>
+              <Sidebar>
+                <ApplicationName name={form.name} icon={form.icon} />
+                <Box display="flex" flexDirection={['column', 'columnReverse']}>
+                  <FormProgress
+                    sections={sections}
+                    activeSection={activeSection}
+                    activeSubSection={activeSubSection}
+                  />
+                </Box>
+              </Sidebar>
+            </Box>
+          </GridColumn>
+        </GridRow>
       </Box>
     </Box>
   )
