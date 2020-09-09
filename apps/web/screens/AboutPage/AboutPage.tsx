@@ -40,6 +40,7 @@ import Sidebar, { SidebarProps } from './Sidebar'
 import * as styles from './AboutPage.treat'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import Head from 'next/head'
+import { withMainLayout } from '@island.is/web/layouts/main'
 
 const extractSliceTitle = (slice: Slice): [string, string] | null => {
   switch (slice.__typename) {
@@ -408,10 +409,7 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
 
   return {
     page,
-    layoutConfig: {
-      showHeader: false,
-    },
   }
 }
 
-export default AboutPageScreen
+export default withMainLayout(AboutPageScreen, { showHeader: false })

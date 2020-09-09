@@ -1,4 +1,6 @@
-import { withLocale } from '../i18n'
-import homeScreen from '../screens/Home'
+import { withErrorBoundary } from '@island.is/web/units/ErrorBoundary'
+import withLocale from '@island.is/web/i18n/withLocale'
+import withApollo from '@island.is/web/graphql/withApollo'
+import homeScreen from '@island.is/web/screens/Home'
 
-export default withLocale('is')(homeScreen)
+export default withErrorBoundary(withApollo(withLocale('is')(homeScreen)))

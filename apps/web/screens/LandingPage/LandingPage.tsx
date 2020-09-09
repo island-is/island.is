@@ -24,6 +24,7 @@ import {
 import { Sidebar } from '@island.is/web/components'
 import ArticleLayout from '../Layouts/Layouts'
 import useRouteNames from '../../i18n/useRouteNames'
+import { withMainLayout } from '../../layouts/main'
 
 export interface LandingPageProps {
   page?: LandingPage
@@ -115,4 +116,4 @@ LandingPageScreen.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default LandingPageScreen
+export default withMainLayout(LandingPageScreen)

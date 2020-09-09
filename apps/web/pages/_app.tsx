@@ -3,14 +3,12 @@ import { AppProps, AppContext, AppInitialProps } from 'next/app'
 import { ApolloProvider } from 'react-apollo'
 import appWithTranslation from '../i18n/appWithTranslation'
 import initApollo from '../graphql/client'
-import Layout from '../layouts/main'
 import { NextComponentType } from 'next'
-import { withErrorBoundary } from '../units/ErrorBoundary'
 import { ApolloClient } from '@apollo/client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 
 interface AppCustomProps extends AppProps {
-  layoutProps: any
+  apolloState?: any
 }
 
 interface AppCustomContext extends AppContext {
@@ -21,38 +19,12 @@ const SupportApplication: NextComponentType<
   AppCustomContext,
   AppInitialProps,
   AppCustomProps
-> = ({ Component, pageProps, layoutProps }) => {
-  const { showSearchInHeader } = pageProps
-
+> = ({ Component, apolloState, pageProps }) => {
   return (
-    <ApolloProvider client={initApollo(pageProps.apolloState)}>
-      <Layout showSearchInHeader={showSearchInHeader} {...layoutProps}>
-        <Component {...pageProps} />
-      </Layout>
+    <ApolloProvider client={initApollo(apolloState)}>
+      <Component {...pageProps} />
     </ApolloProvider>
   )
 }
 
-SupportApplication.getInitialProps = async ({ Component, ctx }) => {
-  const apolloClient = initApollo({})
-  const customContext = {
-    ...ctx,
-    apolloClient,
-  }
-
-  const pageProps = (await Component.getInitialProps(customContext)) as any
-  const layoutProps = await Layout.getInitialProps({
-    ...customContext,
-    locale: pageProps.locale,
-  } as any)
-
-  const apolloState = apolloClient.cache.extract()
-
-  return {
-    layoutProps: { ...layoutProps, ...pageProps.layoutConfig },
-    pageProps,
-    apolloState,
-  }
-}
-
-export default appWithTranslation(withErrorBoundary(SupportApplication))
+export default appWithTranslation(SupportApplication)

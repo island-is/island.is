@@ -1,15 +1,10 @@
 import React from 'react'
 import Head from 'next/head'
 import { Page, Box, FooterLinkProps, Footer } from '@island.is/island-ui/core'
-import {
-  Header,
-  PageLoader,
-  FixedNav,
-  SkipToMainContent,
-  SideMenu,
-} from '../components'
+import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import { NextComponentType, NextPageContext } from 'next'
-import { GetInitialPropsContext } from '../types'
+import { BaseContext } from 'next/dist/next-server/lib/utils'
+import { Screen, GetInitialPropsContext } from '../types'
 import {
   Query,
   QueryGetMenuArgs,
@@ -18,7 +13,7 @@ import {
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_NAMESPACE_QUERY } from '../screens/queries'
 
-interface LayoutProps {
+export interface LayoutProps {
   showSearchInHeader?: boolean
   wrapContent?: boolean
   showHeader?: boolean
@@ -226,6 +221,39 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
     })),
     namespace,
   }
+}
+
+type LayoutWrapper<T> = NextComponentType<
+  GetInitialPropsContext<NextPageContext>,
+  { layoutProps: LayoutProps; componentProps: T },
+  { layoutProps: LayoutProps; componentProps: T }
+>
+
+export const withMainLayout = <T,>(
+  Component: Screen<T>,
+  layoutConfig: Partial<LayoutProps> = {},
+): LayoutWrapper<T> => {
+  const WithMainLayout: LayoutWrapper<T> = ({
+    layoutProps,
+    componentProps,
+  }) => {
+    return (
+      <Layout {...layoutProps}>
+        <Component {...componentProps} />
+      </Layout>
+    )
+  }
+
+  WithMainLayout.getInitialProps = async (ctx) => {
+    const [layoutProps, componentProps] = await Promise.all([
+      Layout.getInitialProps(ctx),
+      Component.getInitialProps(ctx),
+    ])
+
+    return { layoutProps: { ...layoutProps, ...layoutConfig }, componentProps }
+  }
+
+  return WithMainLayout
 }
 
 export default Layout

@@ -32,6 +32,7 @@ import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
 import useRouteNames from '../i18n/useRouteNames'
 import { CustomNextError } from '../units/ErrorBoundary'
+import { withMainLayout } from '../layouts/main'
 
 interface ArticleProps {
   article: Query['getArticle']
@@ -205,6 +206,6 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   }
 }
 
-export default Article
+export default withMainLayout(Article)
 
 // TODO: Add fields for micro strings to article namespace

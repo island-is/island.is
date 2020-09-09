@@ -25,6 +25,7 @@ import FrontpageTabs from '../components/FrontpageTabs/FrontpageTabs'
 import { IntroductionSection } from '../components/IntroductionSection'
 import { LifeEventsCardsSection } from '../components/LifeEventsCardsSection'
 import { Section } from '../components/Section'
+import { withMainLayout } from '../layouts/main'
 
 interface HomeProps {
   categories: Query['categories']
@@ -198,4 +199,4 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default Home
+export default withMainLayout(Home)

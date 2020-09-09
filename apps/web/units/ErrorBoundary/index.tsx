@@ -28,7 +28,7 @@ export const withErrorBoundary = (Component) => {
 
       if (statusCode) {
         // Display error page for all client side errors during render
-        return <ErrorPage statusCode={statusCode} title={title} />
+        return <ErrorPage statusCode={statusCode} />
       } else {
         return children
       }
@@ -57,6 +57,10 @@ export const withErrorBoundary = (Component) => {
         try {
           return await Component.getInitialProps(ctx)
         } catch ({ statusCode = 500, title, ...error }) {
+          // set correct http response code if rendering server side
+          if (ctx.res) {
+            ctx.res.statusCode = statusCode
+          }
           // TODO: Add central logging here
           console.error(error)
           // Let ErrorBoundary handle error display for getInitialProps

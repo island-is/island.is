@@ -32,6 +32,7 @@ import {
   QueryGetNewsListArgs,
 } from '@island.is/api/schema'
 import { CustomNextError } from '../units/ErrorBoundary'
+import { withMainLayout } from '../layouts/main'
 
 interface NewsListProps {
   newsList: Query['getNewsList']['news']
@@ -309,4 +310,4 @@ const createDateRange = (min: Date, max: Date): string[] => {
   ).map((i: number) => new Date(Math.floor(i / 12), i % 12).toISOString())
 }
 
-export default NewsList
+export default withMainLayout(NewsList)

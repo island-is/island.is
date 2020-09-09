@@ -37,6 +37,7 @@ import {
 import { CategoryLayout } from '../Layouts/Layouts'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { CustomNextError } from '@island.is/web/units/ErrorBoundary'
+import { withMainLayout } from '@island.is/web/layouts/main'
 
 const PerPage = 10
 
@@ -322,4 +323,5 @@ const Filter = ({ selected, text, onClick, ...props }) => {
     </Box>
   )
 }
-export default Search
+
+export default withMainLayout(Search)

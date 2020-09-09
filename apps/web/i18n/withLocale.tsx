@@ -1,5 +1,5 @@
 import React from 'react'
-import { Locale } from './I18n'
+import { Locale, isLocale, defaultLanguage } from './I18n'
 import { NextComponentType } from 'next'
 import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
 import { QueryGetNamespaceArgs, Query } from '@island.is/api/schema'
@@ -7,12 +7,17 @@ import { GET_NAMESPACE_QUERY } from '../screens/queries'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 
+export const getLocaleFromPath = (path: string): Locale => {
+  const maybeLocale = path.split('/').find(Boolean)
+  return isLocale(maybeLocale) ? maybeLocale : defaultLanguage
+}
+
 export const withLocale = <
   C extends BaseContext = NextPageContext,
   IP = {},
   P = {}
 >(
-  locale: Locale,
+  locale?: Locale,
 ) => (Component: NextComponentType<C, IP, P>): NextComponentType<C, IP> => {
   const getInitialProps = Component.getInitialProps
   if (!getInitialProps) {
@@ -24,7 +29,10 @@ export const withLocale = <
   )
 
   NewComponent.getInitialProps = async (ctx) => {
-    const newContext = { ...ctx, locale } as any
+    const newContext = {
+      ...ctx,
+      locale: locale ?? getLocaleFromPath(ctx.asPath),
+    } as any
     const [props, translations] = await Promise.all([
       getInitialProps(newContext),
       getGlobalStrings(newContext),

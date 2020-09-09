@@ -31,6 +31,7 @@ import {
   QueryCategoriesArgs,
 } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import { withMainLayout } from '@island.is/web/layouts/main'
 
 interface CategoryProps {
   articles: Query['articlesInCategory']
@@ -232,4 +233,4 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default Category
+export default withMainLayout(Category)

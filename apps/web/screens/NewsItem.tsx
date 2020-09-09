@@ -17,6 +17,7 @@ import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { NewsItemLayout } from './Layouts/Layouts'
 import { GET_NEWS_ITEM_QUERY } from './queries'
 import { Query, ContentLanguage, QueryGetNewsArgs } from '@island.is/api/schema'
+import { withMainLayout } from '../layouts/main'
 
 interface NewsItemProps {
   newsItem: Query['getNews']
@@ -101,4 +102,4 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default NewsItem
+export default withMainLayout(NewsItem)

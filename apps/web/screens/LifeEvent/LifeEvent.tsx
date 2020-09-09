@@ -27,6 +27,7 @@ import useRouteNames from '../../i18n/useRouteNames'
 import { Sidebar, Sticky } from '../../components'
 import * as styles from './LifeEvent.treat'
 import slugify from '@sindresorhus/slugify'
+import { withMainLayout } from '@island.is/web/layouts/main'
 
 interface LifeEventProps {
   lifeEvent: LifeEventPage
@@ -108,4 +109,4 @@ LifeEvent.getInitialProps = async ({ apolloClient, locale, query }) => {
   return { lifeEvent }
 }
 
-export default LifeEvent
+export default withMainLayout(LifeEvent)

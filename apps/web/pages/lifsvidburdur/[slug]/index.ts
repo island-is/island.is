@@ -1,4 +1,6 @@
+import { withErrorBoundary } from '@island.is/web/units/ErrorBoundary'
+import withApollo from '@island.is/web/graphql/withApollo'
 import { withLocale } from '@island.is/web/i18n'
 import lifeEventScreen from '../../../screens/LifeEvent/LifeEvent'
 
-export default withLocale('is')(lifeEventScreen)
+export default withErrorBoundary(withApollo(withLocale('is')(lifeEventScreen)))

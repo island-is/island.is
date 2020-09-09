@@ -1,4 +1,6 @@
-import { withLocale } from '@island.is/web/i18n'
+import { withErrorBoundary } from '@island.is/web/units/ErrorBoundary'
+import withLocale from '@island.is/web/i18n/withLocale'
+import withApollo from '@island.is/web/graphql/withApollo'
 import searchScreen from '../../screens/Search/Search'
 
-export default withLocale('is')(searchScreen)
+export default withErrorBoundary(withApollo(withLocale('is')(searchScreen)))
