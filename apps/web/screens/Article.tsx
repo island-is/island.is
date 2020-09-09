@@ -27,15 +27,14 @@ import { useI18n } from '../i18n'
 import useRouteNames from '../i18n/useRouteNames'
 import { CustomNextError } from '../units/ErrorBoundary'
 import {
-  GetSingleItemQuery,
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
-  QuerySingleItemArgs,
-  ContentLanguage,
+  QueryGetArticleArgs,
+  GetArticleQuery,
 } from '../graphql/schema'
 
 interface ArticleProps {
-  article: GetSingleItemQuery['singleItem']
+  article: GetArticleQuery['getArticle']
   namespace: GetNamespaceQuery['getNamespace']
 }
 
@@ -174,7 +173,7 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
 
   const [article, namespace] = await Promise.all([
     apolloClient
-      .query<Query, QueryGetArticleArgs>({
+      .query<GetArticleQuery, QueryGetArticleArgs>({
         query: GET_ARTICLE_QUERY,
         variables: {
           input: {

@@ -16,6 +16,8 @@ import {
   GetCategoriesQuery,
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
+  GetNewsListQuery,
+  QueryGetNewsListArgs,
 } from '../graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
@@ -31,6 +33,7 @@ interface HomeProps {
   categories: GetCategoriesQuery['categories']
   frontpageSlides: GetFrontpageSliderListQuery['getFrontpageSliderList']['items']
   namespace: GetNamespaceQuery['getNamespace']
+  news: GetNewsListQuery['getNewsList']['news']
 }
 
 const Home: Screen<HomeProps> = ({
@@ -159,7 +162,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetNewsListArgs>({
+    apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
       query: GET_NEWS_LIST_QUERY,
       variables: {
         input: {

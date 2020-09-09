@@ -38,6 +38,11 @@ type ContentCategory {
   description: String
 }
 
+type WebSearchAutocomplete {
+  total: Int!
+  completions: [String!]!
+}
+
 type Taxonomy {
   title: String
   slug: String
@@ -51,6 +56,7 @@ type Article {
   content: String
   group: Taxonomy
   category: Taxonomy
+  relatedArticles: [Article!]!
 }
 
 type AdgerdirTag {
@@ -60,13 +66,39 @@ type AdgerdirTag {
 
 type AdgerdirPage {
   id: ID!
-  slug: String!
   title: String!
-  description: String
+  description: String!
+  longDescription: String
   content: String
+  objective: String
+  slug: String!
   tags: [AdgerdirTag!]!
   link: String
+  linkButtonText: String
   status: String!
+  estimatedCostIsk: Float
+  finalCostIsk: Float
+}
+
+type Image {
+  id: ID!
+  url: String!
+  title: String!
+  contentType: String!
+  width: Int!
+  height: Int!
+}
+
+type AdgerdirNews {
+  id: String!
+  slug: String!
+  subtitle: String!
+  title: String!
+  intro: String!
+  image: Image
+  date: String!
+  content: String
+  pages: [AdgerdirPage!]
 }
 
 type AdgerdirPages {
@@ -79,15 +111,24 @@ type AdgerdirFrontpage {
   title: String!
   description: String
   content: String
+  slices: [AdgerdirSlice!]!
 }
 
-type Image {
+union AdgerdirSlice = AdgerdirGroupSlice | AdgerdirFeaturedNewsSlice
+
+type AdgerdirGroupSlice {
   id: ID!
-  url: String!
+  subtitle: String
   title: String!
-  contentType: String!
-  width: Int!
-  height: Int!
+  description: String
+  image: Image
+  pages: [AdgerdirPage!]!
+}
+
+type AdgerdirFeaturedNewsSlice {
+  id: ID!
+  title: String!
+  featured: [AdgerdirNews!]!
 }
 
 type FrontpageSlide {
@@ -106,6 +147,7 @@ type News {
   id: String!
   slug: String!
   title: String!
+  subtitle: String!
   intro: String!
   image: Image
   date: String!
@@ -336,8 +378,21 @@ type Menu {
   links: [Link!]!
 }
 
+type LifeEventPage {
+  title: String!
+  slug: String!
+  intro: String!
+  image: Image!
+  body: JSON!
+}
+
 type AdgerdirTags {
   items: [AdgerdirTag!]!
+}
+
+type PaginatedAdgerdirNews {
+  page: Pagination!
+  news: [AdgerdirNews!]!
 }
 
 type Application {
@@ -348,9 +403,10 @@ type Application {
   assignee: String!
   externalId: String
   state: ApplicationStateEnum!
-  attachments: [String!]
+  attachments: JSON
   typeId: ApplicationTypeIdEnum!
   answers: JSON!
+  externalData: JSON!
 }
 
 """
@@ -374,7 +430,12 @@ enum ApplicationTypeIdEnum {
   ExampleForm2
   ExampleForm3
   FamilyAndPets
-  PaternityLeave
+  ParentalLeave
+}
+
+type PresignedPost {
+  url: String!
+  fields: JSON!
 }
 
 type Document {
@@ -386,28 +447,46 @@ type Document {
   opened: Boolean!
 }
 
+type DocumentDetails {
+  fileType: String!
+  content: String!
+  html: String!
+  url: String!
+}
+
+type DocumentCategory {
+  id: ID!
+  name: String!
+}
+
 type Query {
   helloWorld(input: HelloWorldInput!): HelloWorld!
   searchResults(query: SearcherInput!): SearchResult!
   singleItem(input: ItemInput!): ContentItem
   categories(input: CategoriesInput!): [ContentCategory!]!
   articlesInCategory(category: ArticlesInCategoryInput!): [ContentItem!]!
+  webSearchAutocomplete(input: WebSearchAutocompleteInput!): WebSearchAutocomplete!
   getArticle(input: GetArticleInput!): Article
   getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput!): PaginatedNews!
+  getAdgerdirNewsList(input: GetAdgerdirNewsListInput!): PaginatedAdgerdirNews!
   getNamespace(input: GetNamespaceInput!): Namespace
   getAboutPage(input: GetAboutPageInput!): AboutPage!
   getLandingPage(input: GetLandingPageInput!): LandingPage
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
+  getAdgerdirNews(input: GetAdgerdirNewsInput!): AdgerdirNews
   getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages!
   getAdgerdirTags(input: GetAdgerdirTagsInput!): AdgerdirTags
   getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getMenu(input: GetMenuInput!): Menu
+  getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
   getApplication(input: GetApplicationInput!): Application
   getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
-  getDocument(input: GetDocumentInput!): Document
+  getDocument(input: GetDocumentInput!): DocumentDetails
+  listDocuments(input: ListDocumentsInput!): [Document!]
+  getDocumentCategories: [DocumentCategory!]
 }
 
 input HelloWorldInput {
@@ -447,6 +526,12 @@ input ArticlesInCategoryInput {
   language: ContentLanguage
 }
 
+input WebSearchAutocompleteInput {
+  singleTerm: String!
+  language: ContentLanguage = is
+  size: Int = 10
+}
+
 input GetArticleInput {
   slug: String
   lang: String!
@@ -458,6 +543,15 @@ input GetNewsInput {
 }
 
 input GetNewsListInput {
+  lang: String
+  year: Int
+  month: Int
+  ascending: Boolean
+  page: Int
+  perPage: Int
+}
+
+input GetAdgerdirNewsListInput {
   lang: String
   year: Int
   month: Int
@@ -490,6 +584,11 @@ input GetAdgerdirPageInput {
   lang: String!
 }
 
+input GetAdgerdirNewsInput {
+  slug: String
+  lang: String!
+}
+
 input GetAdgerdirPagesInput {
   lang: String
   perPage: Int
@@ -512,6 +611,11 @@ input GetMenuInput {
   lang: String!
 }
 
+input GetLifeEventPageInput {
+  slug: String!
+  lang: String!
+}
+
 input GetApplicationInput {
   id: String!
 }
@@ -524,9 +628,22 @@ input GetDocumentInput {
   id: String!
 }
 
+input ListDocumentsInput {
+  natReg: String!
+  dateFrom: DateTime!
+  dateTo: DateTime!
+  category: String!
+  page: Float!
+  pageSize: Float!
+}
+
 type Mutation {
   createApplication(input: CreateApplicationInput!): Application
   updateApplication(input: UpdateApplicationInput!): Application
+  updateApplicationExternalData(input: UpdateApplicationExternalDataInput!): Application
+  addAttachment(input: AddAttachmentInput!): Application
+  deleteAttachment(input: DeleteAttachmentInput!): Application
+  createUploadUrl(filename: String!): PresignedPost!
 }
 
 input CreateApplicationInput {
@@ -534,7 +651,7 @@ input CreateApplicationInput {
   assignee: String!
   externalId: String
   state: CreateApplicationDtoStateEnum!
-  attachments: [String!]
+  attachments: JSON
   typeId: CreateApplicationDtoTypeIdEnum!
   answers: JSON!
 }
@@ -555,26 +672,17 @@ enum CreateApplicationDtoTypeIdEnum {
   ExampleForm2
   ExampleForm3
   FamilyAndPets
-  PaternityLeave
+  ParentalLeave
 }
 
 input UpdateApplicationInput {
   id: String!
-  typeId: UpdateApplicationDtoTypeIdEnum!
   applicant: String
   assignee: String
   externalId: String
   state: UpdateApplicationDtoStateEnum
-  attachments: [String!]
+  attachments: JSON
   answers: JSON
-}
-
-enum UpdateApplicationDtoTypeIdEnum {
-  ExampleForm
-  ExampleForm2
-  ExampleForm3
-  FamilyAndPets
-  PaternityLeave
 }
 
 enum UpdateApplicationDtoStateEnum {
@@ -586,4 +694,31 @@ enum UpdateApplicationDtoStateEnum {
   MANUALAPPROVED
   REJECTED
   UNKNOWN
+}
+
+input UpdateApplicationExternalDataInput {
+  id: String!
+  dataProviders: [DataProvider!]!
+}
+
+input DataProvider {
+  id: String!
+  type: DataProviderDtoTypeEnum!
+}
+
+enum DataProviderDtoTypeEnum {
+  ExpectedDateOfBirth
+  ExampleFails
+  ExampleSucceeds
+}
+
+input AddAttachmentInput {
+  id: String!
+  key: String!
+  url: String!
+}
+
+input DeleteAttachmentInput {
+  id: String!
+  key: String!
 }

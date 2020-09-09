@@ -55,6 +55,12 @@ export type ContentCategory = {
   description?: Maybe<Scalars['String']>
 }
 
+export type WebSearchAutocomplete = {
+  __typename?: 'WebSearchAutocomplete'
+  total: Scalars['Int']
+  completions: Array<Scalars['String']>
+}
+
 export type Taxonomy = {
   __typename?: 'Taxonomy'
   title?: Maybe<Scalars['String']>
@@ -70,6 +76,7 @@ export type Article = {
   content?: Maybe<Scalars['String']>
   group?: Maybe<Taxonomy>
   category?: Maybe<Taxonomy>
+  relatedArticles: Array<Article>
 }
 
 export type AdgerdirTag = {
@@ -81,13 +88,41 @@ export type AdgerdirTag = {
 export type AdgerdirPage = {
   __typename?: 'AdgerdirPage'
   id: Scalars['ID']
-  slug: Scalars['String']
   title: Scalars['String']
-  description?: Maybe<Scalars['String']>
+  description: Scalars['String']
+  longDescription?: Maybe<Scalars['String']>
   content?: Maybe<Scalars['String']>
+  objective?: Maybe<Scalars['String']>
+  slug: Scalars['String']
   tags: Array<AdgerdirTag>
   link?: Maybe<Scalars['String']>
+  linkButtonText?: Maybe<Scalars['String']>
   status: Scalars['String']
+  estimatedCostIsk?: Maybe<Scalars['Float']>
+  finalCostIsk?: Maybe<Scalars['Float']>
+}
+
+export type Image = {
+  __typename?: 'Image'
+  id: Scalars['ID']
+  url: Scalars['String']
+  title: Scalars['String']
+  contentType: Scalars['String']
+  width: Scalars['Int']
+  height: Scalars['Int']
+}
+
+export type AdgerdirNews = {
+  __typename?: 'AdgerdirNews'
+  id: Scalars['String']
+  slug: Scalars['String']
+  subtitle: Scalars['String']
+  title: Scalars['String']
+  intro: Scalars['String']
+  image?: Maybe<Image>
+  date: Scalars['String']
+  content?: Maybe<Scalars['String']>
+  pages?: Maybe<Array<AdgerdirPage>>
 }
 
 export type AdgerdirPages = {
@@ -102,16 +137,26 @@ export type AdgerdirFrontpage = {
   title: Scalars['String']
   description?: Maybe<Scalars['String']>
   content?: Maybe<Scalars['String']>
+  slices: Array<AdgerdirSlice>
 }
 
-export type Image = {
-  __typename?: 'Image'
+export type AdgerdirSlice = AdgerdirGroupSlice | AdgerdirFeaturedNewsSlice
+
+export type AdgerdirGroupSlice = {
+  __typename?: 'AdgerdirGroupSlice'
   id: Scalars['ID']
-  url: Scalars['String']
+  subtitle?: Maybe<Scalars['String']>
   title: Scalars['String']
-  contentType: Scalars['String']
-  width: Scalars['Int']
-  height: Scalars['Int']
+  description?: Maybe<Scalars['String']>
+  image?: Maybe<Image>
+  pages: Array<AdgerdirPage>
+}
+
+export type AdgerdirFeaturedNewsSlice = {
+  __typename?: 'AdgerdirFeaturedNewsSlice'
+  id: Scalars['ID']
+  title: Scalars['String']
+  featured: Array<AdgerdirNews>
 }
 
 export type FrontpageSlide = {
@@ -133,6 +178,7 @@ export type News = {
   id: Scalars['String']
   slug: Scalars['String']
   title: Scalars['String']
+  subtitle: Scalars['String']
   intro: Scalars['String']
   image?: Maybe<Image>
   date: Scalars['String']
@@ -404,9 +450,24 @@ export type Menu = {
   links: Array<Link>
 }
 
+export type LifeEventPage = {
+  __typename?: 'LifeEventPage'
+  title: Scalars['String']
+  slug: Scalars['String']
+  intro: Scalars['String']
+  image: Image
+  body: Scalars['JSON']
+}
+
 export type AdgerdirTags = {
   __typename?: 'AdgerdirTags'
   items: Array<AdgerdirTag>
+}
+
+export type PaginatedAdgerdirNews = {
+  __typename?: 'PaginatedAdgerdirNews'
+  page: Pagination
+  news: Array<AdgerdirNews>
 }
 
 export type Application = {
@@ -418,9 +479,10 @@ export type Application = {
   assignee: Scalars['String']
   externalId?: Maybe<Scalars['String']>
   state: ApplicationStateEnum
-  attachments?: Maybe<Array<Scalars['String']>>
+  attachments?: Maybe<Scalars['JSON']>
   typeId: ApplicationTypeIdEnum
   answers: Scalars['JSON']
+  externalData: Scalars['JSON']
 }
 
 export enum ApplicationStateEnum {
@@ -439,7 +501,13 @@ export enum ApplicationTypeIdEnum {
   ExampleForm2 = 'ExampleForm2',
   ExampleForm3 = 'ExampleForm3',
   FamilyAndPets = 'FamilyAndPets',
-  PaternityLeave = 'PaternityLeave',
+  ParentalLeave = 'ParentalLeave',
+}
+
+export type PresignedPost = {
+  __typename?: 'PresignedPost'
+  url: Scalars['String']
+  fields: Scalars['JSON']
 }
 
 export type Document = {
@@ -452,6 +520,20 @@ export type Document = {
   opened: Scalars['Boolean']
 }
 
+export type DocumentDetails = {
+  __typename?: 'DocumentDetails'
+  fileType: Scalars['String']
+  content: Scalars['String']
+  html: Scalars['String']
+  url: Scalars['String']
+}
+
+export type DocumentCategory = {
+  __typename?: 'DocumentCategory'
+  id: Scalars['ID']
+  name: Scalars['String']
+}
+
 export type Query = {
   __typename?: 'Query'
   helloWorld: HelloWorld
@@ -459,22 +541,28 @@ export type Query = {
   singleItem?: Maybe<ContentItem>
   categories: Array<ContentCategory>
   articlesInCategory: Array<ContentItem>
+  webSearchAutocomplete: WebSearchAutocomplete
   getArticle?: Maybe<Article>
   getNews?: Maybe<News>
   getNewsList: PaginatedNews
+  getAdgerdirNewsList: PaginatedAdgerdirNews
   getNamespace?: Maybe<Namespace>
   getAboutPage: AboutPage
   getLandingPage?: Maybe<LandingPage>
   getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
+  getAdgerdirNews?: Maybe<AdgerdirNews>
   getAdgerdirPages: AdgerdirPages
   getAdgerdirTags?: Maybe<AdgerdirTags>
   getFrontpageSliderList?: Maybe<FrontpageSliderList>
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
+  getLifeEventPage?: Maybe<LifeEventPage>
   getApplication?: Maybe<Application>
   getApplicationsByType?: Maybe<Array<Application>>
-  getDocument?: Maybe<Document>
+  getDocument?: Maybe<DocumentDetails>
+  listDocuments?: Maybe<Array<Document>>
+  getDocumentCategories?: Maybe<Array<DocumentCategory>>
 }
 
 export type QueryHelloWorldArgs = {
@@ -497,6 +585,10 @@ export type QueryArticlesInCategoryArgs = {
   category: ArticlesInCategoryInput
 }
 
+export type QueryWebSearchAutocompleteArgs = {
+  input: WebSearchAutocompleteInput
+}
+
 export type QueryGetArticleArgs = {
   input: GetArticleInput
 }
@@ -507,6 +599,10 @@ export type QueryGetNewsArgs = {
 
 export type QueryGetNewsListArgs = {
   input: GetNewsListInput
+}
+
+export type QueryGetAdgerdirNewsListArgs = {
+  input: GetAdgerdirNewsListInput
 }
 
 export type QueryGetNamespaceArgs = {
@@ -529,6 +625,10 @@ export type QueryGetAdgerdirPageArgs = {
   input: GetAdgerdirPageInput
 }
 
+export type QueryGetAdgerdirNewsArgs = {
+  input: GetAdgerdirNewsInput
+}
+
 export type QueryGetAdgerdirPagesArgs = {
   input: GetAdgerdirPagesInput
 }
@@ -549,6 +649,10 @@ export type QueryGetMenuArgs = {
   input: GetMenuInput
 }
 
+export type QueryGetLifeEventPageArgs = {
+  input: GetLifeEventPageInput
+}
+
 export type QueryGetApplicationArgs = {
   input: GetApplicationInput
 }
@@ -559,6 +663,10 @@ export type QueryGetApplicationsByTypeArgs = {
 
 export type QueryGetDocumentArgs = {
   input: GetDocumentInput
+}
+
+export type QueryListDocumentsArgs = {
+  input: ListDocumentsInput
 }
 
 export type HelloWorldInput = {
@@ -598,6 +706,12 @@ export type ArticlesInCategoryInput = {
   language?: Maybe<ContentLanguage>
 }
 
+export type WebSearchAutocompleteInput = {
+  singleTerm: Scalars['String']
+  language?: Maybe<ContentLanguage>
+  size?: Maybe<Scalars['Int']>
+}
+
 export type GetArticleInput = {
   slug?: Maybe<Scalars['String']>
   lang: Scalars['String']
@@ -609,6 +723,15 @@ export type GetNewsInput = {
 }
 
 export type GetNewsListInput = {
+  lang?: Maybe<Scalars['String']>
+  year?: Maybe<Scalars['Int']>
+  month?: Maybe<Scalars['Int']>
+  ascending?: Maybe<Scalars['Boolean']>
+  page?: Maybe<Scalars['Int']>
+  perPage?: Maybe<Scalars['Int']>
+}
+
+export type GetAdgerdirNewsListInput = {
   lang?: Maybe<Scalars['String']>
   year?: Maybe<Scalars['Int']>
   month?: Maybe<Scalars['Int']>
@@ -641,6 +764,11 @@ export type GetAdgerdirPageInput = {
   lang: Scalars['String']
 }
 
+export type GetAdgerdirNewsInput = {
+  slug?: Maybe<Scalars['String']>
+  lang: Scalars['String']
+}
+
 export type GetAdgerdirPagesInput = {
   lang?: Maybe<Scalars['String']>
   perPage?: Maybe<Scalars['Int']>
@@ -663,6 +791,11 @@ export type GetMenuInput = {
   lang: Scalars['String']
 }
 
+export type GetLifeEventPageInput = {
+  slug: Scalars['String']
+  lang: Scalars['String']
+}
+
 export type GetApplicationInput = {
   id: Scalars['String']
 }
@@ -675,10 +808,23 @@ export type GetDocumentInput = {
   id: Scalars['String']
 }
 
+export type ListDocumentsInput = {
+  natReg: Scalars['String']
+  dateFrom: Scalars['DateTime']
+  dateTo: Scalars['DateTime']
+  category: Scalars['String']
+  page: Scalars['Float']
+  pageSize: Scalars['Float']
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<Application>
   updateApplication?: Maybe<Application>
+  updateApplicationExternalData?: Maybe<Application>
+  addAttachment?: Maybe<Application>
+  deleteAttachment?: Maybe<Application>
+  createUploadUrl: PresignedPost
 }
 
 export type MutationCreateApplicationArgs = {
@@ -689,12 +835,28 @@ export type MutationUpdateApplicationArgs = {
   input: UpdateApplicationInput
 }
 
+export type MutationUpdateApplicationExternalDataArgs = {
+  input: UpdateApplicationExternalDataInput
+}
+
+export type MutationAddAttachmentArgs = {
+  input: AddAttachmentInput
+}
+
+export type MutationDeleteAttachmentArgs = {
+  input: DeleteAttachmentInput
+}
+
+export type MutationCreateUploadUrlArgs = {
+  filename: Scalars['String']
+}
+
 export type CreateApplicationInput = {
   applicant: Scalars['String']
   assignee: Scalars['String']
   externalId?: Maybe<Scalars['String']>
   state: CreateApplicationDtoStateEnum
-  attachments?: Maybe<Array<Scalars['String']>>
+  attachments?: Maybe<Scalars['JSON']>
   typeId: CreateApplicationDtoTypeIdEnum
   answers: Scalars['JSON']
 }
@@ -715,26 +877,17 @@ export enum CreateApplicationDtoTypeIdEnum {
   ExampleForm2 = 'ExampleForm2',
   ExampleForm3 = 'ExampleForm3',
   FamilyAndPets = 'FamilyAndPets',
-  PaternityLeave = 'PaternityLeave',
+  ParentalLeave = 'ParentalLeave',
 }
 
 export type UpdateApplicationInput = {
   id: Scalars['String']
-  typeId: UpdateApplicationDtoTypeIdEnum
   applicant?: Maybe<Scalars['String']>
   assignee?: Maybe<Scalars['String']>
   externalId?: Maybe<Scalars['String']>
   state?: Maybe<UpdateApplicationDtoStateEnum>
-  attachments?: Maybe<Array<Scalars['String']>>
+  attachments?: Maybe<Scalars['JSON']>
   answers?: Maybe<Scalars['JSON']>
-}
-
-export enum UpdateApplicationDtoTypeIdEnum {
-  ExampleForm = 'ExampleForm',
-  ExampleForm2 = 'ExampleForm2',
-  ExampleForm3 = 'ExampleForm3',
-  FamilyAndPets = 'FamilyAndPets',
-  PaternityLeave = 'PaternityLeave',
 }
 
 export enum UpdateApplicationDtoStateEnum {
@@ -746,6 +899,33 @@ export enum UpdateApplicationDtoStateEnum {
   Manualapproved = 'MANUALAPPROVED',
   Rejected = 'REJECTED',
   Unknown = 'UNKNOWN',
+}
+
+export type UpdateApplicationExternalDataInput = {
+  id: Scalars['String']
+  dataProviders: Array<DataProvider>
+}
+
+export type DataProvider = {
+  id: Scalars['String']
+  type: DataProviderDtoTypeEnum
+}
+
+export enum DataProviderDtoTypeEnum {
+  ExpectedDateOfBirth = 'ExpectedDateOfBirth',
+  ExampleFails = 'ExampleFails',
+  ExampleSucceeds = 'ExampleSucceeds',
+}
+
+export type AddAttachmentInput = {
+  id: Scalars['String']
+  key: Scalars['String']
+  url: Scalars['String']
+}
+
+export type DeleteAttachmentInput = {
+  id: Scalars['String']
+  key: Scalars['String']
 }
 
 export type GetAboutPageQueryVariables = Exact<{
@@ -785,16 +965,32 @@ export type GetAboutPageQuery = { __typename?: 'Query' } & {
     }
 }
 
-export type GetSingleItemQueryVariables = Exact<{
-  input: ItemInput
+export type GetArticleQueryVariables = Exact<{
+  input: GetArticleInput
 }>
 
-export type GetSingleItemQuery = { __typename?: 'Query' } & {
-  singleItem?: Maybe<
-    { __typename?: 'ContentItem' } & Pick<
-      ContentItem,
-      'id' | 'slug' | 'title' | 'group' | 'category' | 'categorySlug'
-    > & { content: ContentItem['contentBlob'] }
+export type GetArticleQuery = { __typename?: 'Query' } & {
+  getArticle?: Maybe<
+    { __typename?: 'Article' } & Pick<
+      Article,
+      'id' | 'slug' | 'title' | 'content'
+    > & {
+        group?: Maybe<
+          { __typename?: 'Taxonomy' } & Pick<
+            Taxonomy,
+            'title' | 'slug' | 'description'
+          >
+        >
+        category?: Maybe<
+          { __typename?: 'Taxonomy' } & Pick<
+            Taxonomy,
+            'title' | 'slug' | 'description'
+          >
+        >
+        relatedArticles: Array<
+          { __typename?: 'Article' } & Pick<Article, 'title' | 'slug'>
+        >
+      }
   >
 }
 
@@ -935,7 +1131,7 @@ export type GetNewsListQuery = { __typename?: 'Query' } & {
     news: Array<
       { __typename?: 'News' } & Pick<
         News,
-        'id' | 'title' | 'date' | 'slug' | 'intro'
+        'id' | 'title' | 'subtitle' | 'date' | 'slug' | 'intro'
       > & {
           image?: Maybe<
             { __typename?: 'Image' } & Pick<
@@ -956,7 +1152,7 @@ export type GetNewsItemQuery = { __typename?: 'Query' } & {
   getNews?: Maybe<
     { __typename?: 'News' } & Pick<
       News,
-      'id' | 'title' | 'date' | 'slug' | 'intro' | 'content'
+      'id' | 'title' | 'subtitle' | 'date' | 'slug' | 'intro' | 'content'
     > & {
         image?: Maybe<
           { __typename?: 'Image' } & Pick<
@@ -984,6 +1180,17 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
         >
       >
     }
+}
+
+export type AutocompleteTermResultsQueryVariables = Exact<{
+  input: WebSearchAutocompleteInput
+}>
+
+export type AutocompleteTermResultsQuery = { __typename?: 'Query' } & {
+  webSearchAutocomplete: { __typename?: 'WebSearchAutocomplete' } & Pick<
+    WebSearchAutocomplete,
+    'completions'
+  >
 }
 
 export type GetSearchResultsDetailedQueryVariables = Exact<{

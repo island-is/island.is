@@ -22,7 +22,10 @@ export const mapHtml = (
 ): Html => {
   switch (html.nodeType) {
     case BLOCKS.DOCUMENT:
-      return new Html({ id: String(id), document: html })
+      return new Html({
+        id: String(id),
+        document: html,
+      })
 
     default:
       return new Html({

@@ -1,6 +1,14 @@
 import { createUnionType } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
+import {
+  Document,
+  BLOCKS,
+  Block,
+  TopLevelBlock,
+} from '@contentful/rich-text-types'
+
 import * as types from '../../generated/contentfulTypes'
+import { Image, mapImage } from '../image.model'
 import {
   MailingListSignupSlice,
   mapMailingListSignup,
@@ -15,11 +23,9 @@ import { LogoListSlice, mapLogoListSlice } from './logoListSlice.model'
 import { BulletListSlice, mapBulletListSlice } from './bulletListSlice.model'
 import { Statistics, mapStatistics } from './statistics.model'
 import { Html, mapHtml } from './html.model'
-import { Image, mapImage } from '../image.model'
 import { ProcessEntry, mapProcessEntry } from './processEntry.model'
 import { FaqList, mapFaqList } from './faqList.model'
 import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
-import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
 
 type SliceTypes =
   | types.IPageHeader
@@ -126,4 +132,34 @@ export const mapDocument = (document: Document): Array<typeof Slice> => {
   })
 
   return slices
+}
+
+// Not used yet?
+const mapTopLevelBlock = (
+  block: TopLevelBlock,
+  index: number,
+): typeof Slice | Html => {
+  switch (block.nodeType) {
+    case BLOCKS.EMBEDDED_ENTRY:
+      return mapSlice(block.data.target)
+
+    case BLOCKS.EMBEDDED_ASSET:
+      // Only asset we can handle at the moment is an image
+      return mapImage(block.data.target)
+
+    // TODO
+    default:
+      return new Html({
+        id: index.toString(),
+        document: {
+          nodeType: block.nodeType,
+          content: block.content,
+          data: block.data,
+        },
+      })
+  }
+}
+
+export const mapRichText = (document: Document): Array<typeof Slice | Html> => {
+  return document.content.map(mapTopLevelBlock)
 }

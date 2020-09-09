@@ -33,6 +33,8 @@ import {
   QuerySearchResultsArgs,
   ContentLanguage,
   SearchResult,
+  QueryWebSearchAutocompleteArgs,
+  AutocompleteTermResultsQuery,
 } from '../../graphql/schema'
 import { GlobalNamespaceContext } from '@island.is/web/context/GlobalNamespaceContext/GlobalNamespaceContext'
 
@@ -105,7 +107,10 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
         data: {
           webSearchAutocomplete: { completions: suggestions },
         },
-      } = await client.query<Query, QueryWebSearchAutocompleteArgs>({
+      } = await client.query<
+        AutocompleteTermResultsQuery,
+        QueryWebSearchAutocompleteArgs
+      >({
         query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
         variables: {
           input: {
@@ -346,7 +351,6 @@ const CommonSearchTerms = ({
   }
 
   const splitAt = Math.min(suggestions.length / 2)
-
   const left = suggestions.slice(0, splitAt)
   const right = suggestions.slice(splitAt)
 

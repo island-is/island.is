@@ -35,7 +35,7 @@ export const mapNews = ({ fields, sys }: INews): News => ({
   id: sys.id,
   slug: fields.slug,
   title: fields.title,
-  subtitle: fields.subtitle
+  subtitle: fields.subtitle,
   intro: fields.intro,
   image: mapImage(fields.image),
   date: fields.date,

@@ -9,17 +9,17 @@ import {
   Swiper,
   Hidden,
 } from '@island.is/island-ui/core'
-import { News } from '@island.is/api/schema'
 import { NewsCard } from '../NewsCard'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { useI18n } from '@island.is/web/i18n'
+import { GetNewsListQuery } from '../../graphql/schema'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
 // On mobile it displays 3 news cards in a Swiper.
 
 interface LatestNewsProps {
   label: string
-  items: News[]
+  items: GetNewsListQuery['getNewsList']['news']
 }
 
 const LatestNewsSection: React.FC<LatestNewsProps> = ({
