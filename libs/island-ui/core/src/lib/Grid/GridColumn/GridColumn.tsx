@@ -37,7 +37,6 @@ export const GridColumn: FC<GridColumnProps> = ({
   hideAbove: above,
   hideBelow: below,
 }) => {
-
   const [
     hiddenOnXs,
     hiddenOnSm,
