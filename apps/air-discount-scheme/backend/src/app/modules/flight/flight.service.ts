@@ -1,11 +1,14 @@
-import { NotFoundException, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import * as kennitala from 'kennitala'
 
+import { States } from '@island.is/air-discount-scheme/consts'
 import { FlightLegSummary } from './flight.types'
 import { Flight, FlightLeg, financialStateMachine } from './flight.model'
-import { FlightDto } from './dto/flight.dto'
+import { FlightDto, GetFlightsBody } from './dto'
+import { NationalRegistryUser } from '../nationalRegistry'
 
-const ADS_POSTAL_CODES = {
+export const ADS_POSTAL_CODES = {
   Reykhólahreppur: 380,
   // from Reykhólahreppur to Þingeyri
   Þingeyri: 471,
@@ -18,13 +21,13 @@ const ADS_POSTAL_CODES = {
 }
 const DEFAULT_AVAILABLE_LEGS = 6
 const AVAILABLE_FLIGHT_LEGS = {
-  '2020': 4,
+  '2020': 2,
   '2021': 6,
 }
 
 const availableFinancialStates = [
-  financialStateMachine.states.awaitingDebit.key,
-  financialStateMachine.states.sentDebit.key,
+  financialStateMachine.states[States.awaitingDebit].key,
+  financialStateMachine.states[States.sentDebit].key,
 ]
 
 @Injectable()
@@ -78,12 +81,42 @@ export class FlightService {
     }
   }
 
-  async findAll(): Promise<Flight[]> {
+  findAll(): Promise<Flight[]> {
     return this.flightModel.findAll({
       include: [
         {
           model: this.flightLegModel,
           where: { financialState: availableFinancialStates },
+        },
+      ],
+    })
+  }
+
+  findAllByFilter(body: GetFlightsBody | any): Promise<Flight[]> {
+    return this.flightModel.findAll({
+      where: {
+        ...(body.airline ? { airline: body.airline } : {}),
+        ...(body.period
+          ? {
+              bookingDate: { '&gte': body.period.from, '&lte': body.period.to },
+            }
+          : {}),
+        ...(body.age
+          ? {
+              'userInfo.age': { '&gte': body.age.from, '&lte': body.age.to },
+            }
+          : {}),
+        ...(body.gender ? { 'userInfo.gender': body.gender } : {}),
+        ...(body.postalCode ? { 'userInfo.postalCode': body.postalCode } : {}),
+      },
+      include: [
+        {
+          model: this.flightLegModel,
+          where: {
+            ...(body.state ? { financialState: body.state } : {}),
+            ...(body.flightLeg ? { origin: body.flightLeg.from } : {}),
+            ...(body.flightLeg ? { destination: body.flightLeg.to } : {}),
+          },
         },
       ],
     })
@@ -103,17 +136,27 @@ export class FlightService {
 
   async create(
     flight: FlightDto,
-    nationalId: string,
+    user: NationalRegistryUser,
     airline: string,
   ): Promise<Flight> {
+    const nationalId = user.nationalId
     return this.flightModel.create(
-      { ...flight, nationalId, airline },
+      {
+        ...flight,
+        nationalId,
+        airline,
+        userInfo: {
+          age: kennitala.info(nationalId).age,
+          gender: user.gender,
+          postalCode: user.postalcode,
+        },
+      },
       { include: [this.flightLegModel] },
     )
   }
 
   async findOne(flightId: string, airline: string): Promise<Flight> {
-    const flight = await this.flightModel.findOne({
+    return this.flightModel.findOne({
       where: {
         id: flightId,
         airline,
@@ -125,10 +168,6 @@ export class FlightService {
         },
       ],
     })
-    if (!flight) {
-      throw new NotFoundException('Flight not found')
-    }
-    return flight
   }
 
   delete(flight: Flight): Promise<FlightLeg[]> {
@@ -142,16 +181,7 @@ export class FlightService {
     )
   }
 
-  async deleteFlightLeg(
-    flight: Flight,
-    flightLegId: string,
-  ): Promise<FlightLeg> {
-    const flightLeg = await flight.flightLegs.find(
-      (flightLeg) => flightLeg.id === flightLegId,
-    )
-    if (!flightLeg) {
-      throw new NotFoundException('Flight not found')
-    }
+  async deleteFlightLeg(flightLeg: FlightLeg): Promise<FlightLeg> {
     const financialState = financialStateMachine
       .transition(flightLeg.financialState, 'REVOKE')
       .value.toString()

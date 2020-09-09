@@ -90,13 +90,13 @@ export const status = style({
 
 export const statusType = styleMap({
   ongoing: {
-    backgroundColor: theme.color.mint600,
+    backgroundColor: theme.color.purple400,
   },
   preparing: {
     backgroundColor: theme.color.yellow600,
   },
   completed: {
-    backgroundColor: theme.color.purple400,
+    backgroundColor: theme.color.mint600,
   },
 })
 

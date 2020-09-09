@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 
+import { AirlineUser, User } from './user.model'
 import { Fund } from '@island.is/air-discount-scheme/types'
-import { User } from './user.model'
 import { FlightService } from '../flight'
 import {
   NationalRegistryService,
@@ -15,23 +15,11 @@ export class UserService {
     private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
-  private async getUserFromNationalRegistry(
-    nationalId: string,
-  ): Promise<NationalRegistryUser> {
-    const user = await this.nationalRegistryService.getUser(nationalId)
-    if (!user) {
-      throw new NotFoundException(`User<${nationalId} not found`)
-    }
-
-    return user
+  async getRelations(nationalId: string): Promise<string[]> {
+    return this.nationalRegistryService.getRelatedChildren(nationalId)
   }
 
-  getRelations(nationalId: string): Promise<string[]> {
-    // TODO: implement from nationalRegistry in "2nd Phase"
-    return Promise.resolve([nationalId])
-  }
-
-  async getFund(user: NationalRegistryUser): Promise<Fund> {
+  private async getFund(user: NationalRegistryUser): Promise<Fund> {
     const {
       used,
       unused,
@@ -43,16 +31,32 @@ export class UserService {
     )
 
     return {
-      nationalId: user.nationalId,
       credit: meetsADSRequirements ? unused : 0,
       used: used,
       total,
     }
   }
 
-  async getUserInfoByNationalId(nationalId: string): Promise<User> {
-    const user = await this.getUserFromNationalRegistry(nationalId)
+  private async getUserByNationalId<T>(
+    nationalId: string,
+    model: new (fund, user) => T,
+  ): Promise<T> {
+    const user = await this.nationalRegistryService.getUser(nationalId)
+    if (!user) {
+      return null
+    }
+
     const fund = await this.getFund(user)
-    return new User(user, fund)
+    return new model(user, fund)
+  }
+
+  async getAirlineUserInfoByNationalId(
+    nationalId: string,
+  ): Promise<AirlineUser> {
+    return this.getUserByNationalId<AirlineUser>(nationalId, AirlineUser)
+  }
+
+  async getUserInfoByNationalId(nationalId: string): Promise<User> {
+    return this.getUserByNationalId<User>(nationalId, User)
   }
 }

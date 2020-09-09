@@ -34,6 +34,7 @@ export const Default = () => (
           },
         ]}
         noOptionsMessage="Enginn valmöguleiki"
+        loadOptions={() => undefined}
       />
     </Box>
   </ContentBlock>

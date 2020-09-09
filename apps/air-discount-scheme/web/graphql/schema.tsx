@@ -12,13 +12,15 @@ export type Scalars = {
   Boolean: boolean
   Int: number
   Float: number
+  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSON: any
 }
 
 export type Taxonomy = {
   __typename?: 'Taxonomy'
   title?: Maybe<Scalars['String']>
   slug?: Maybe<Scalars['String']>
-  description: Scalars['String']
+  description?: Maybe<Scalars['String']>
 }
 
 export type Article = {
@@ -28,7 +30,8 @@ export type Article = {
   title: Scalars['String']
   content?: Maybe<Scalars['String']>
   group?: Maybe<Taxonomy>
-  category: Taxonomy
+  category?: Maybe<Taxonomy>
+  relatedArticles: Array<Article>
 }
 
 export type AdgerdirTag = {
@@ -40,13 +43,40 @@ export type AdgerdirTag = {
 export type AdgerdirPage = {
   __typename?: 'AdgerdirPage'
   id: Scalars['String']
-  slug: Scalars['String']
   title: Scalars['String']
-  description?: Maybe<Scalars['String']>
+  description: Scalars['String']
+  longDescription?: Maybe<Scalars['String']>
   content?: Maybe<Scalars['String']>
+  objective?: Maybe<Scalars['String']>
+  slug: Scalars['String']
   tags: Array<AdgerdirTag>
   link?: Maybe<Scalars['String']>
+  linkButtonText?: Maybe<Scalars['String']>
   status: Scalars['String']
+  estimatedCostIsk?: Maybe<Scalars['Float']>
+  finalCostIsk?: Maybe<Scalars['Float']>
+}
+
+export type Image = {
+  __typename?: 'Image'
+  url: Scalars['String']
+  title: Scalars['String']
+  contentType: Scalars['String']
+  width: Scalars['Int']
+  height: Scalars['Int']
+}
+
+export type AdgerdirNews = {
+  __typename?: 'AdgerdirNews'
+  id: Scalars['String']
+  slug: Scalars['String']
+  subtitle: Scalars['String']
+  title: Scalars['String']
+  intro: Scalars['String']
+  image?: Maybe<Image>
+  date: Scalars['String']
+  content?: Maybe<Scalars['String']>
+  pages?: Maybe<Array<AdgerdirPage>>
 }
 
 export type AdgerdirPages = {
@@ -57,19 +87,29 @@ export type AdgerdirPages = {
 export type AdgerdirFrontpage = {
   __typename?: 'AdgerdirFrontpage'
   id: Scalars['String']
-  slug: Scalars['String']
   title: Scalars['String']
   description: Scalars['String']
   content?: Maybe<Scalars['String']>
+  slices: Array<AdgerdirSlice>
 }
 
-export type Image = {
-  __typename?: 'Image'
-  url: Scalars['String']
+export type AdgerdirSlice = AdgerdirGroupSlice | AdgerdirFeaturedNewsSlice
+
+export type AdgerdirGroupSlice = {
+  __typename?: 'AdgerdirGroupSlice'
+  id: Scalars['ID']
+  subtitle?: Maybe<Scalars['String']>
   title: Scalars['String']
-  contentType: Scalars['String']
-  width: Scalars['Int']
-  height: Scalars['Int']
+  description?: Maybe<Scalars['String']>
+  image?: Maybe<Image>
+  pages: Array<AdgerdirPage>
+}
+
+export type AdgerdirFeaturedNewsSlice = {
+  __typename?: 'AdgerdirFeaturedNewsSlice'
+  id: Scalars['ID']
+  title: Scalars['String']
+  featured: Array<AdgerdirNews>
 }
 
 export type FrontpageSlide = {
@@ -91,6 +131,7 @@ export type News = {
   id: Scalars['String']
   slug: Scalars['String']
   title: Scalars['String']
+  subtitle: Scalars['String']
   intro: Scalars['String']
   image?: Maybe<Image>
   date: Scalars['String']
@@ -306,9 +347,23 @@ export type AdgerdirTags = {
   items: Array<AdgerdirTag>
 }
 
+export type LifeEventPage = {
+  __typename?: 'LifeEventPage'
+  title: Scalars['String']
+  slug: Scalars['String']
+  intro: Scalars['String']
+  image: Image
+  body: Scalars['JSON']
+}
+
+export type PaginatedAdgerdirNews = {
+  __typename?: 'PaginatedAdgerdirNews'
+  page: Pagination
+  news: Array<AdgerdirNews>
+}
+
 export type Fund = {
   __typename?: 'Fund'
-  nationalId: Scalars['ID']
   credit: Scalars['Float']
   used: Scalars['Float']
   total: Scalars['Float']
@@ -326,9 +381,9 @@ export type User = {
 
 export type Discount = {
   __typename?: 'Discount'
-  discountCode: Scalars['ID']
-  expires: Scalars['String']
-  nationalId: Scalars['String']
+  nationalId: Scalars['ID']
+  discountCode: Scalars['String']
+  expiresIn: Scalars['Float']
   user: User
 }
 
@@ -346,17 +401,21 @@ export type Query = {
   getArticle?: Maybe<Article>
   getNews?: Maybe<News>
   getNewsList: PaginatedNews
+  getAdgerdirNewsList: PaginatedAdgerdirNews
   getNamespace?: Maybe<Namespace>
   getAboutPage: AboutPage
   getLandingPage?: Maybe<LandingPage>
   getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
+  getAdgerdirNews?: Maybe<AdgerdirNews>
   getAdgerdirPages: AdgerdirPages
   getAdgerdirTags?: Maybe<AdgerdirTags>
   getFrontpageSliderList?: Maybe<FrontpageSliderList>
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
+  getLifeEventPage?: Maybe<LifeEventPage>
   user?: Maybe<User>
+  discounts?: Maybe<Array<Discount>>
   flights: Array<Flight>
 }
 
@@ -370,6 +429,10 @@ export type QueryGetNewsArgs = {
 
 export type QueryGetNewsListArgs = {
   input: GetNewsListInput
+}
+
+export type QueryGetAdgerdirNewsListArgs = {
+  input: GetAdgerdirNewsListInput
 }
 
 export type QueryGetNamespaceArgs = {
@@ -392,6 +455,10 @@ export type QueryGetAdgerdirPageArgs = {
   input: GetAdgerdirPageInput
 }
 
+export type QueryGetAdgerdirNewsArgs = {
+  input: GetAdgerdirNewsInput
+}
+
 export type QueryGetAdgerdirPagesArgs = {
   input: GetAdgerdirPagesInput
 }
@@ -412,6 +479,10 @@ export type QueryGetMenuArgs = {
   input: GetMenuInput
 }
 
+export type QueryGetLifeEventPageArgs = {
+  input: GetLifeEventPageInput
+}
+
 export type GetArticleInput = {
   slug?: Maybe<Scalars['String']>
   lang: Scalars['String']
@@ -423,6 +494,15 @@ export type GetNewsInput = {
 }
 
 export type GetNewsListInput = {
+  lang?: Maybe<Scalars['String']>
+  year?: Maybe<Scalars['Int']>
+  month?: Maybe<Scalars['Int']>
+  ascending?: Maybe<Scalars['Boolean']>
+  page?: Maybe<Scalars['Int']>
+  perPage?: Maybe<Scalars['Int']>
+}
+
+export type GetAdgerdirNewsListInput = {
   lang?: Maybe<Scalars['String']>
   year?: Maybe<Scalars['Int']>
   month?: Maybe<Scalars['Int']>
@@ -455,6 +535,11 @@ export type GetAdgerdirPageInput = {
   lang: Scalars['String']
 }
 
+export type GetAdgerdirNewsInput = {
+  slug?: Maybe<Scalars['String']>
+  lang: Scalars['String']
+}
+
 export type GetAdgerdirPagesInput = {
   lang?: Maybe<Scalars['String']>
   perPage?: Maybe<Scalars['Int']>
@@ -477,9 +562,9 @@ export type GetMenuInput = {
   lang: Scalars['String']
 }
 
-export type Mutation = {
-  __typename?: 'Mutation'
-  fetchDiscounts?: Maybe<Array<Discount>>
+export type GetLifeEventPageInput = {
+  slug: Scalars['String']
+  lang: Scalars['String']
 }
 
 export type GetMenuQueryVariables = Exact<{
@@ -539,16 +624,14 @@ export type GetGenericPageQueryQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type FetchDiscountsMutationMutationVariables = Exact<{
-  [key: string]: never
-}>
+export type DiscountsQueryQueryVariables = Exact<{ [key: string]: never }>
 
-export type FetchDiscountsMutationMutation = { __typename?: 'Mutation' } & {
-  fetchDiscounts?: Maybe<
+export type DiscountsQueryQuery = { __typename?: 'Query' } & {
+  discounts?: Maybe<
     Array<
       { __typename?: 'Discount' } & Pick<
         Discount,
-        'discountCode' | 'expires' | 'nationalId'
+        'discountCode' | 'expiresIn' | 'nationalId'
       > & {
           user: { __typename?: 'User' } & Pick<
             User,
@@ -557,7 +640,7 @@ export type FetchDiscountsMutationMutation = { __typename?: 'Mutation' } & {
               fund?: Maybe<
                 { __typename?: 'Fund' } & Pick<
                   Fund,
-                  'nationalId' | 'used' | 'credit' | 'total'
+                  'used' | 'credit' | 'total'
                 >
               >
             }
@@ -867,17 +950,16 @@ export type GetGenericPageQueryQueryResult = ApolloReactCommon.QueryResult<
   GetGenericPageQueryQuery,
   GetGenericPageQueryQueryVariables
 >
-export const FetchDiscountsMutationDocument = gql`
-  mutation FetchDiscountsMutation {
-    fetchDiscounts {
+export const DiscountsQueryDocument = gql`
+  query DiscountsQuery {
+    discounts {
       discountCode
-      expires
+      expiresIn
       nationalId
       user {
         nationalId
         name
         fund {
-          nationalId
           used
           credit
           total
@@ -887,47 +969,53 @@ export const FetchDiscountsMutationDocument = gql`
     }
   }
 `
-export type FetchDiscountsMutationMutationFn = ApolloReactCommon.MutationFunction<
-  FetchDiscountsMutationMutation,
-  FetchDiscountsMutationMutationVariables
->
 
 /**
- * __useFetchDiscountsMutationMutation__
+ * __useDiscountsQueryQuery__
  *
- * To run a mutation, you first call `useFetchDiscountsMutationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useFetchDiscountsMutationMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
+ * To run a query within a React component, call `useDiscountsQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDiscountsQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const [fetchDiscountsMutationMutation, { data, loading, error }] = useFetchDiscountsMutationMutation({
+ * const { data, loading, error } = useDiscountsQueryQuery({
  *   variables: {
  *   },
  * });
  */
-export function useFetchDiscountsMutationMutation(
-  baseOptions?: ApolloReactHooks.MutationHookOptions<
-    FetchDiscountsMutationMutation,
-    FetchDiscountsMutationMutationVariables
+export function useDiscountsQueryQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    DiscountsQueryQuery,
+    DiscountsQueryQueryVariables
   >,
 ) {
-  return ApolloReactHooks.useMutation<
-    FetchDiscountsMutationMutation,
-    FetchDiscountsMutationMutationVariables
-  >(FetchDiscountsMutationDocument, baseOptions)
+  return ApolloReactHooks.useQuery<
+    DiscountsQueryQuery,
+    DiscountsQueryQueryVariables
+  >(DiscountsQueryDocument, baseOptions)
 }
-export type FetchDiscountsMutationMutationHookResult = ReturnType<
-  typeof useFetchDiscountsMutationMutation
+export function useDiscountsQueryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    DiscountsQueryQuery,
+    DiscountsQueryQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useLazyQuery<
+    DiscountsQueryQuery,
+    DiscountsQueryQueryVariables
+  >(DiscountsQueryDocument, baseOptions)
+}
+export type DiscountsQueryQueryHookResult = ReturnType<
+  typeof useDiscountsQueryQuery
 >
-export type FetchDiscountsMutationMutationResult = ApolloReactCommon.MutationResult<
-  FetchDiscountsMutationMutation
+export type DiscountsQueryLazyQueryHookResult = ReturnType<
+  typeof useDiscountsQueryLazyQuery
 >
-export type FetchDiscountsMutationMutationOptions = ApolloReactCommon.BaseMutationOptions<
-  FetchDiscountsMutationMutation,
-  FetchDiscountsMutationMutationVariables
+export type DiscountsQueryQueryResult = ApolloReactCommon.QueryResult<
+  DiscountsQueryQuery,
+  DiscountsQueryQueryVariables
 >
 export const FlightsQueryDocument = gql`
   query FlightsQuery {

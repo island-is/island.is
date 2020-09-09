@@ -1,6 +1,7 @@
-import { Args, Query, Resolver, ResolveField } from '@nestjs/graphql'
+import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql'
 import { Article } from './models/article.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
+import { AdgerdirNews } from './models/adgerdirNews.model'
 import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { FrontpageSliderList } from './models/frontpageSliderList.model'
@@ -8,7 +9,9 @@ import { GetArticleInput } from './dto/getArticle.input'
 import { News } from './models/news.model'
 import { GetNewsInput } from './dto/getNews.input'
 import { GetNewsListInput } from './dto/getNewsList.input'
+import { GetAdgerdirNewsListInput } from './dto/getAdgerdirNewsList.input'
 import { GetAdgerdirPageInput } from './dto/getAdgerdirPage.input'
+import { GetAdgerdirNewsInput } from './dto/getAdgerdirNews.input'
 import { GetAdgerdirPagesInput } from './dto/getAdgerdirPages.input'
 import { GetAdgerdirFrontpageInput } from './dto/getAdgerdirFrontpage.input'
 import { GetFrontpageSliderListInput } from './dto/getFrontpageSliderList.input'
@@ -21,8 +24,10 @@ import { GetNamespaceInput } from './dto/getNamespace.input'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
+import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
 import {
   getArticle,
+  getRelatedArticles,
   getNews,
   getNewsList,
   getNamespace,
@@ -31,16 +36,21 @@ import {
   getFrontpageSliderList,
   getGenericPage,
   getAdgerdirPage,
+  getAdgerdirNews,
+  getAdgerdirNewsList,
   getAdgerdirPages,
   getAdgerdirFrontpage,
   getMenu,
   getAdgerdirTags,
+  getLifeEventPage,
 } from './services'
 import { LatestNewsSlice } from './models/slices/latestNewsSlice.model'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
 import { AdgerdirTags } from './models/adgerdirTags.model'
 import { GetAdgerdirTagsInput } from './dto/getAdgerdirTags.input'
+import { LifeEventPage } from './models/lifeEventPage.model'
+import { PaginatedAdgerdirNews } from './models/paginatedAdgerdirNews.model'
 
 @Resolver()
 export class CmsResolver {
@@ -57,6 +67,13 @@ export class CmsResolver {
   @Query(() => PaginatedNews)
   getNewsList(@Args('input') input: GetNewsListInput): Promise<PaginatedNews> {
     return getNewsList(input)
+  }
+
+  @Query(() => PaginatedAdgerdirNews)
+  getAdgerdirNewsList(
+    @Args('input') input: GetAdgerdirNewsListInput,
+  ): Promise<PaginatedAdgerdirNews> {
+    return getAdgerdirNewsList(input)
   }
 
   @Query(() => Namespace, { nullable: true })
@@ -94,6 +111,13 @@ export class CmsResolver {
     return getAdgerdirPage(input?.slug ?? '', input?.lang ?? 'is-IS')
   }
 
+  @Query(() => AdgerdirNews, { nullable: true })
+  getAdgerdirNews(
+    @Args('input') input: GetAdgerdirNewsInput,
+  ): Promise<AdgerdirNews | null> {
+    return getAdgerdirNews(input?.slug ?? '', input?.lang ?? 'is-IS')
+  }
+
   @Query(() => AdgerdirPages)
   getAdgerdirPages(
     @Args('input') input: GetAdgerdirPagesInput,
@@ -126,13 +150,28 @@ export class CmsResolver {
   getMenu(@Args('input') input: GetMenuInput): Promise<Menu | null> {
     return getMenu(input?.name ?? '', input?.lang ?? 'is-IS')
   }
+
+  @Query(() => LifeEventPage, { nullable: true })
+  getLifeEventPage(
+    @Args('input') input: GetLifeEventPageInput,
+  ): Promise<LifeEventPage | null> {
+    return getLifeEventPage(input.slug, input.lang)
+  }
 }
 
-@Resolver((of) => LatestNewsSlice)
+@Resolver(() => LatestNewsSlice)
 export class LatestNewsSliceResolver {
   @ResolveField(() => [News])
   async news() {
     const { news } = await getNewsList({ lang: 'is', perPage: 3 })
     return news
+  }
+}
+
+@Resolver(() => Article)
+export class ArticleResolver {
+  @ResolveField(() => [Article])
+  async relatedArticles(@Parent() article: Article) {
+    return getRelatedArticles(article.slug, 'is')
   }
 }

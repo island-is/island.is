@@ -1827,3 +1827,67 @@ export type Resolvers<ContextType = Context> = {
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
  */
 export type IResolvers<ContextType = Context> = Resolvers<ContextType>
+
+export interface IntrospectionResultData {
+  __schema: {
+    types: {
+      kind: string
+      name: string
+      possibleTypes: {
+        name: string
+      }[]
+    }[]
+  }
+}
+const result: IntrospectionResultData = {
+  __schema: {
+    types: [
+      {
+        kind: 'UNION',
+        name: 'Slice',
+        possibleTypes: [
+          {
+            name: 'PageHeaderSlice',
+          },
+          {
+            name: 'TimelineSlice',
+          },
+          {
+            name: 'HeadingSlice',
+          },
+          {
+            name: 'StorySlice',
+          },
+          {
+            name: 'LinkCardSlice',
+          },
+          {
+            name: 'LatestNewsSlice',
+          },
+          {
+            name: 'MailingListSignupSlice',
+          },
+          {
+            name: 'LogoListSlice',
+          },
+          {
+            name: 'BulletListSlice',
+          },
+        ],
+      },
+      {
+        kind: 'UNION',
+        name: 'BulletEntry',
+        possibleTypes: [
+          {
+            name: 'IconBullet',
+          },
+          {
+            name: 'NumberBulletGroup',
+          },
+        ],
+      },
+    ],
+  },
+}
+export default result

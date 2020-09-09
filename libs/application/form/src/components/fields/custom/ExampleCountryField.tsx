@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { CustomField } from '@island.is/application/schema'
+import { CustomField } from '@island.is/application/template'
 import {
   AsyncSearch,
   AsyncSearchOption,

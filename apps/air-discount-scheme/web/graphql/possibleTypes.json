@@ -1,5 +1,6 @@
 {
   "possibleTypes": {
+    "AdgerdirSlice": ["AdgerdirGroupSlice", "AdgerdirFeaturedNewsSlice"],
     "Slice": [
       "PageHeaderSlice",
       "TimelineSlice",

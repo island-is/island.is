@@ -1,5 +1,9 @@
 export default {
   production: false,
+  environment: 'local',
+  sentry: {
+    dsn: process.env.SENTRY_DSN,
+  },
   nationalRegistry: {
     url: 'https://skeyti.advania.is/ords/slrv/registry/v1.0',
     username: 'si_flugfargjold',
@@ -7,6 +11,7 @@ export default {
   },
   airlineApiKeys: {
     icelandair: 'icelandair',
+    norlandair: 'icelandair',
     ernir: 'ernir',
   },
   redis: {

@@ -8,4 +8,4 @@ export { default as FileUploadFormField } from './FileUploadFormField'
 /** Example fields **/
 export { default as ExampleCountryField } from './custom/ExampleCountryField'
 
-export * from './PaternityLeave'
+export * from './ParentalLeave'

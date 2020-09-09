@@ -1,18 +1,18 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
-const SIDE_MENU_WIDTH = 318
+
+const SIDE_MENU_WIDTH = 345
 
 export const root = style({
-  background: theme.color.white,
-  boxShadow: `0px 4px 70px rgba(0, 97, 255, 0.1)`,
   display: 'none',
-  height: '100%',
   left: 0,
-  padding: theme.spacing[3],
+  paddingTop: theme.spacing[3],
+  paddingLeft: theme.spacing[3],
+  paddingRight: theme.spacing[3],
   position: 'fixed',
   right: 0,
   top: 0,
-  zIndex: 1,
+  zIndex: 10,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       height: 'auto',
@@ -20,19 +20,15 @@ export const root = style({
       position: 'absolute',
       top: theme.spacing[3],
       right: theme.spacing[3],
+      paddingBottom: theme.spacing[3],
       width: SIDE_MENU_WIDTH,
     },
   },
 })
 
 export const isVisible = style({
-  display: 'block',
-})
-
-export const tabHeader = style({
   display: 'flex',
-  paddingBottom: theme.spacing[3],
-  justifyContent: 'flex-end',
+  flexDirection: 'column',
 })
 
 export const tabBar = style({
@@ -49,9 +45,16 @@ export const tabActive = style({
 })
 
 export const content = style({
-  overflowY: 'scroll',
-  maxHeight: 450,
-  paddingBottom: theme.spacing[4],
+  flex: 1,
+  overflow: 'auto',
+  paddingBottom: theme.spacing[2],
+  // for Firefox
+  minHeight: 0,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      paddingBottom: 0,
+    },
+  },
 })
 
 export const linksContent = style({
@@ -60,17 +63,5 @@ export const linksContent = style({
   paddingRight: theme.spacing[3],
   paddingBottom: theme.spacing[4],
   paddingLeft: theme.spacing[3],
+  width: '100%',
 })
-
-export const externalLinks = style({
-  display: 'flex',
-  alignItems: 'center',
-  flexDirection: 'column',
-})
-
-export const externalLinksContent = style({
-  display: 'flex',
-  flexWrap: 'wrap',
-})
-
-export const mobileContent = style({})

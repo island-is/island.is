@@ -1,7 +1,7 @@
 import React, { FC, useState, useRef } from 'react'
-import { Box, Icon, Stack, Typography } from '@island.is/island-ui/core'
+import { useClickAway } from 'react-use'
+import { Box, Icon, Stack } from '@island.is/island-ui/core'
 import * as styles from './ActionMenu.treat'
-import { useOutsideClick } from '@island.is/service-portal/core'
 
 interface ActionMenuItemProps {
   onClick?: () => void
@@ -17,12 +17,12 @@ export const ActionMenuItem: FC<ActionMenuItemProps> = ({
 )
 
 export const ActionMenu: FC<{}> = ({ children }) => {
-  const ref = useRef()
+  const ref = useRef<HTMLElement>(null)
   const [isOpen, setIsOpen] = useState(false)
 
   const handleTriggerClick = () => setIsOpen(!isOpen)
 
-  useOutsideClick(ref, () => setIsOpen(false))
+  useClickAway(ref, () => setIsOpen(false))
 
   return (
     <Box position="relative" ref={ref}>

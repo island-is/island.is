@@ -94,13 +94,12 @@ components:
           type: string
         nationalId:
           type: string
-        expires:
-          format: date-time
-          type: string
+        expiresIn:
+          type: number
       required:
         - discountCode
         - nationalId
-        - expires
+        - expiresIn
     FlightLegDto:
       type: object
       properties:
@@ -198,7 +197,21 @@ components:
         - flightLegs
         - created
         - modified
-    User:
+    Fund:
+      type: object
+      properties:
+        credit:
+          type: number
+          description: Determines if the user has any discount credits left
+        used:
+          type: number
+        total:
+          type: number
+      required:
+        - credit
+        - used
+        - total
+    AirlineUser:
       type: object
       properties:
         firstName:
@@ -208,26 +221,20 @@ components:
         lastName:
           type: string
         gender:
-          type: object
+          type: string
+          enum:
+            - kvk
+            - kk
         nationalId:
           type: string
-        address:
-          type: string
-        postalcode:
-          type: number
-        city:
-          type: string
         fund:
-          type: object
+          $ref: '#/components/schemas/Fund'
       required:
         - firstName
         - middleName
         - lastName
         - gender
         - nationalId
-        - address
-        - postalcode
-        - city
         - fund
 paths:
   /liveness:
@@ -360,7 +367,7 @@ paths:
         - bearer: []
   '/api/public/discounts/{discountCode}/user':
     get:
-      operationId: PublicUserController_get
+      operationId: PublicUserController_getUserByDiscountCode
       parameters:
         - name: discountCode
           required: true
@@ -373,7 +380,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/AirlineUser'
       tags:
         - Users
       security:

@@ -1,9 +1,14 @@
 import { Module } from '@nestjs/common'
-import { CmsResolver, LatestNewsSliceResolver } from './cms.resolver'
+import {
+  CmsResolver,
+  ArticleResolver,
+  LatestNewsSliceResolver,
+} from './cms.resolver'
 import { ContentfulRepository } from './contentful.repository'
 
 @Module({
-  providers: [CmsResolver, LatestNewsSliceResolver, ContentfulRepository],
+  providers: [CmsResolver, ArticleResolver, LatestNewsSliceResolver, ContentfulRepository],
   exports: [ContentfulRepository],
 })
+
 export class CmsModule {}

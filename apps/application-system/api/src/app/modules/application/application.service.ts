@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { mergeAnswers } from '@island.is/application/schema'
+import { ExternalData, mergeAnswers } from '@island.is/application/template'
 import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
-import { FormType } from '@island.is/application/schema'
+import { FormType } from '@island.is/application/template'
 
 @Injectable()
 export class ApplicationService {
@@ -38,20 +38,30 @@ export class ApplicationService {
   }
 
   async update(id: string, application: UpdateApplicationDto) {
+    const [
+      numberOfAffectedRows,
+      [updatedApplication],
+    ] = await this.applicationModel.update(application, {
+      where: { id },
+      returning: true,
+    })
+
+    return { numberOfAffectedRows, updatedApplication }
+  }
+
+  async updateExternalData(id: string, externalData: ExternalData) {
     const existingApplication = await this.applicationModel.findOne({
       where: { id },
     })
-
-    const mergedAnswers = mergeAnswers(
-      existingApplication.answers,
-      application.answers,
-    )
 
     const [
       numberOfAffectedRows,
       [updatedApplication],
     ] = await this.applicationModel.update(
-      { ...application, answers: mergedAnswers },
+      {
+        ...existingApplication,
+        externalData: { ...existingApplication.externalData, ...externalData },
+      },
       { where: { id }, returning: true },
     )
 

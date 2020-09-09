@@ -2,7 +2,6 @@ import React from 'react'
 import cn from 'classnames'
 
 import * as styles from './RadioButton.treat'
-import Icon from '../Icon/Icon'
 import Tooltip from '../Tooltip/Tooltip'
 import { Box } from '../Box'
 

@@ -44,13 +44,19 @@ module.exports = {
           allowNull: false,
         },
         attachments: {
-          type: Sequelize.ARRAY(Sequelize.STRING),
+          type: Sequelize.JSONB,
+          defaultValue: {},
         },
-        ['type_id']: {
+        type_id: {
           type: Sequelize.STRING,
           allowNull: false,
         },
         answers: {
+          type: Sequelize.JSONB,
+          defaultValue: {},
+          allowNull: false,
+        },
+        external_data: {
           type: Sequelize.JSONB,
           defaultValue: {},
           allowNull: false,

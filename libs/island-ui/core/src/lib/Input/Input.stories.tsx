@@ -33,3 +33,16 @@ export const Error = () => (
     </Box>
   </ContentBlock>
 )
+
+export const Required = () => (
+  <ContentBlock>
+    <Box padding={['gutter', 2, 3, 4]}>
+      <Input
+        label="This is the label"
+        placeholder="This is the placeholder"
+        name="Test"
+        required
+      />
+    </Box>
+  </ContentBlock>
+)

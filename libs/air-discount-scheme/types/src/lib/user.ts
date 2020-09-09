@@ -1,18 +1,20 @@
 export interface Fund {
-  nationalId: string
   credit: number
   used: number
   total: number
 }
 
-export interface User {
+export interface BaseUser {
   nationalId: string
   firstName: string
   middleName: string
   lastName: string
   gender: 'kk' | 'kvk'
+  fund: Fund
+}
+
+export interface User extends BaseUser {
   address: string
   postalcode: number
   city: string
-  fund: Fund
 }

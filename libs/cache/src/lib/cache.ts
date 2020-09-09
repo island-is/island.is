@@ -1,4 +1,4 @@
-import Redis, { ClusterNode, RedisOptions } from 'ioredis'
+import Redis, { ClusterNode, RedisOptions, ClusterOptions } from 'ioredis'
 import { RedisClusterCache } from 'apollo-server-cache-redis'
 
 import { logger } from '@island.is/logging'
@@ -18,15 +18,15 @@ class Cache {
     this.client = client
   }
 
-  get(key: string): string {
+  get(key: string): Promise<string> {
     return this.client.get(key)
   }
 
-  set(key: string, value: string): string {
+  set(key: string, value: string): Promise<string> {
     return this.client.set(key, value)
   }
 
-  expire(key: string, seconds: number): string {
+  expire(key: string, seconds: number): Promise<Redis.BooleanResponse> {
     return this.client.expire(key, seconds)
   }
 }
@@ -42,7 +42,9 @@ const parseNodes = (nodes: string[]): ClusterNode[] =>
       }
     })
 
-const getRedisClusterOptions = (options: Options): RedisOptions => {
+const getRedisClusterOptions = (
+  options: Options,
+): RedisOptions | ClusterOptions => {
   const redisOptions = {}
   if (options.ssl) {
     redisOptions['tls'] = {}
@@ -51,9 +53,8 @@ const getRedisClusterOptions = (options: Options): RedisOptions => {
     ...options,
     keyPrefix: `${options.name}:`,
     connectTimeout: 5000,
-    socket_keepalive: false,
     // https://www.npmjs.com/package/ioredis#special-note-aws-elasticache-clusters-with-tls
-    dnsLookup: (address, callback) => callback(null, address),
+    dnsLookup: (address, callback) => callback(null, address, null),
     redisOptions,
     reconnectOnError: (err) => {
       logger.error(`Reconnect on error: ${err}`)

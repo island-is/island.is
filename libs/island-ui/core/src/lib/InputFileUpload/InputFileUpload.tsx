@@ -14,6 +14,7 @@ export type UploadFileStatus = 'error' | 'done' | 'uploading'
 export interface UploadFile {
   name: string
   url?: string
+  key?: string
   status?: UploadFileStatus
   percent?: number
   originalFileObj?: File | Blob
@@ -34,10 +35,12 @@ export const fileToObject = (
 }
 
 interface UploadingIndicatorProps {
-  percent: number
+  percent?: number
 }
 
-const UploadingIndicator = ({ percent }: UploadingIndicatorProps) => {
+const UploadingIndicator = (
+  { percent }: UploadingIndicatorProps = { percent: 0 },
+) => {
   const isDoneUploading = percent === 100
   return (
     <Box
@@ -58,7 +61,7 @@ interface UploadedFileProps {
 }
 
 const UploadedFile = ({ file, onRemoveClick }: UploadedFileProps) => {
-  const statusColor = (status: UploadFileStatus): Colors => {
+  const statusColor = (status?: UploadFileStatus): Colors => {
     switch (status) {
       case 'error':
         return 'red100'
@@ -69,7 +72,7 @@ const UploadedFile = ({ file, onRemoveClick }: UploadedFileProps) => {
     }
   }
 
-  const statusIcon = (status: UploadFileStatus): IconTypes => {
+  const statusIcon = (status?: UploadFileStatus): IconTypes => {
     switch (status) {
       case 'error':
         return 'close'
@@ -80,7 +83,8 @@ const UploadedFile = ({ file, onRemoveClick }: UploadedFileProps) => {
     }
   }
 
-  const isUploading = file.percent < 100 && file.status === 'uploading'
+  const isUploading =
+    file.percent && file.percent < 100 && file.status === 'uploading'
 
   return (
     <Box
@@ -126,7 +130,7 @@ export interface InputFileUploadProps {
   multiple?: boolean
   fileList: UploadFile[]
   maxSize?: number
-  onRemove?: (file: any) => void
+  onRemove: (file: any) => void
   onChange?: (files: File[]) => void
   errorMessage?: string
 }
@@ -147,7 +151,7 @@ export const InputFileUpload = ({
   errorMessage,
 }: InputFileUploadProps) => {
   const onDrop = (acceptedFiles: File[]) => {
-    if (acceptedFiles.length === 0) return
+    if (acceptedFiles.length === 0 || !onChange) return
 
     if (!multiple) {
       onChange(acceptedFiles.slice(0, 1))

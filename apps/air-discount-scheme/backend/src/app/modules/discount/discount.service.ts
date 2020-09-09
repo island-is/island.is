@@ -2,9 +2,8 @@ import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
 import CacheManager from 'cache-manager'
 
 import { Discount } from './discount.model'
-import { DiscountCodeInvalid } from './discount.error'
 
-const DISCOUNT_CODE_LENGTH = 8
+export const DISCOUNT_CODE_LENGTH = 8
 
 const ONE_DAY = 24 * 60 * 60
 
@@ -74,14 +73,6 @@ export class DiscountService {
 
     const ttl = await this.cacheManager.ttl(cacheKey)
     return new Discount(discountCode, cacheValue.nationalId, ttl)
-  }
-
-  async validateDiscount(discountCode: string): Promise<string> {
-    const discount = await this.getDiscountByDiscountCode(discountCode)
-    if (!discount) {
-      throw new DiscountCodeInvalid()
-    }
-    return discount.nationalId
   }
 
   async useDiscount(discountCode: string, nationalId: string): Promise<void> {

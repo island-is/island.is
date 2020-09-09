@@ -63,22 +63,18 @@ export const Default = () => (
           {
             title: 'Heilsuvera',
             url: 'https://heilsuvera.is',
-            icon: '',
           },
           {
             title: 'Samráðsgátt',
             url: 'https://samradsgatt.island.is',
-            icon: '',
           },
           {
             title: 'Mannanöfn',
             url: 'https://vefur.island.is/mannanofn/',
-            icon: '',
           },
           {
             title: 'Undirskriftalistar',
             url: 'https://vefur.island.is/undirskriftalistar/',
-            icon: null,
           },
         ],
       },

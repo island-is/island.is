@@ -24,6 +24,9 @@ export interface IArticleFields {
 
   /** Organization */
   organization?: IOrganization[] | undefined
+
+  /** Related Articles */
+  relatedArticles?: IArticle[] | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -445,6 +448,43 @@ export interface ILatestNewsSlice extends Entry<ILatestNewsSliceFields> {
   }
 }
 
+export interface ILifeEventPageFields {
+  /** title */
+  title: string
+
+  /** slug */
+  slug: string
+
+  /** intro */
+  intro: string
+
+  /** image */
+  image?: Asset | undefined
+
+  /** thumbnail */
+  thumbnail?: Asset | undefined
+
+  /** content */
+  content: Document
+}
+
+export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'lifeEventPage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ILinkFields {
   /** Text */
   text: string
@@ -588,6 +628,9 @@ export interface INewsFields {
   /** Title */
   title: string
 
+  /** Subtitle */
+  subtitle?: string | undefined
+
   /** Slug */
   slug: string
 
@@ -602,6 +645,9 @@ export interface INewsFields {
 
   /** Content */
   content?: Document | undefined
+
+  /** Read More Text */
+  readMoreText?: string | undefined
 }
 
 export interface INews extends Entry<INewsFields> {
@@ -886,6 +932,34 @@ export interface ISectionHeading extends Entry<ISectionHeadingFields> {
   }
 }
 
+export interface ISectionWithImageFields {
+  /** title */
+  title?: string | undefined
+
+  /** image */
+  image?: Asset | undefined
+
+  /** body */
+  body: Document
+}
+
+export interface ISectionWithImage extends Entry<ISectionWithImageFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sectionWithImage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IStatisticFields {
   /** Value */
   value: string
@@ -981,7 +1055,7 @@ export interface IStorySectionFields {
   readMoreText?: string | undefined
 
   /** Stories */
-  stories?: IStory[] | undefined
+  stories: IStory[]
 }
 
 export interface IStorySection extends Entry<IStorySectionFields> {
@@ -1145,6 +1219,9 @@ export interface IVidspyrnaFrontpageFields {
 
   /** Organization */
   organization?: IOrganization[] | undefined
+
+  /** Slices */
+  slices: (IVidspyrnaFeaturedNews | IVidspyrnaFlokkur)[]
 }
 
 /** A temporary content type that is used for the "Viðspyrna" information page. Once that site is no longer live this can be deleted. */
@@ -1192,42 +1269,6 @@ export interface IVidspyrnaInlineImage
   }
 }
 
-export interface IVidspyrnaPageFields {
-  /** Title */
-  title: string
-
-  /** Description */
-  description?: string | undefined
-
-  /** Slug */
-  slug: string
-
-  /** Content */
-  content?: Document | undefined
-
-  /** Tags */
-  tags: IVidspyrnaTag[]
-}
-
-/** A temporary content type that is used for the "Viðspyrna" information page. Once that site is no longer live this can be deleted. */
-
-export interface IVidspyrnaPage extends Entry<IVidspyrnaPageFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'vidspyrna-page'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface IVidspyrnaProcessEntryFields {
   /** Title */
   title: string
@@ -1261,6 +1302,32 @@ export interface IVidspyrnaProcessEntry
     contentType: {
       sys: {
         id: 'vidspyrna-process-entry'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IVidspyrnaFeaturedNewsFields {
+  /** Title */
+  title?: string | undefined
+
+  /** featured */
+  featured: IVidspyrnaNews[]
+}
+
+export interface IVidspyrnaFeaturedNews
+  extends Entry<IVidspyrnaFeaturedNewsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'vidspyrnaFeaturedNews'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1304,18 +1371,64 @@ export interface IVidspyrnaFlokkur extends Entry<IVidspyrnaFlokkurFields> {
   }
 }
 
-export interface IVidspyrnaPageFields {
+export interface IVidspyrnaNewsFields {
+  /** Subtitle */
+  subtitle?: string | undefined
+
   /** Title */
   title: string
-
-  /** Description */
-  description?: string | undefined
 
   /** Slug */
   slug: string
 
+  /** Date */
+  date: string
+
+  /** Introduction */
+  intro: string
+
+  /** Featured image */
+  image?: Asset | undefined
+
   /** Content */
   content?: Document | undefined
+
+  /** Pages */
+  pages?: IVidspyrnaPage[] | undefined
+}
+
+export interface IVidspyrnaNews extends Entry<IVidspyrnaNewsFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'vidspyrnaNews'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IVidspyrnaPageFields {
+  /** Title */
+  title: string
+
+  /** Short description */
+  description: string
+
+  /** Long description */
+  longDescription?: string | undefined
+
+  /** Objective */
+  objective?: Document | undefined
+
+  /** Slug */
+  slug: string
 
   /** Tags */
   tags: IVidspyrnaTag[]
@@ -1323,8 +1436,20 @@ export interface IVidspyrnaPageFields {
   /** Link */
   link?: string | undefined
 
+  /** Link button text */
+  linkButtonText?: string | undefined
+
   /** Status */
   status: 'preparing' | 'ongoing' | 'completed'
+
+  /** Estimated cost (ISK) */
+  estimatedCostIsk?: number | undefined
+
+  /** Final cost (ISK) */
+  finalCostIsk?: number | undefined
+
+  /** Content */
+  content?: Document | undefined
 }
 
 /** Page for the adgerdir.island.is website. */
@@ -1339,30 +1464,6 @@ export interface IVidspyrnaPage extends Entry<IVidspyrnaPageFields> {
     contentType: {
       sys: {
         id: 'vidspyrnaPage'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IVidspyrnaStatusFields {
-  /** Title */
-  title?: string | undefined
-}
-
-/** A status for a Viðspyrna action. */
-
-export interface IVidspyrnaStatus extends Entry<IVidspyrnaStatusFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'vidspyrnaStatus'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1409,6 +1510,7 @@ export type CONTENT_TYPE =
   | 'iconBullet'
   | 'landingPage'
   | 'latestNewsSlice'
+  | 'lifeEventPage'
   | 'link'
   | 'linkList'
   | 'logoListSlice'
@@ -1423,6 +1525,7 @@ export type CONTENT_TYPE =
   | 'processEntry'
   | 'questionAndAnswer'
   | 'sectionHeading'
+  | 'sectionWithImage'
   | 'statistic'
   | 'statistics'
   | 'story'
@@ -1433,11 +1536,11 @@ export type CONTENT_TYPE =
   | 'urls'
   | 'vidspyrna-frontpage'
   | 'vidspyrna-inline-image'
-  | 'vidspyrna-page'
   | 'vidspyrna-process-entry'
+  | 'vidspyrnaFeaturedNews'
   | 'vidspyrnaFlokkur'
+  | 'vidspyrnaNews'
   | 'vidspyrnaPage'
-  | 'vidspyrnaStatus'
   | 'vidspyrnaTag'
 
 export type LOCALE_CODE = 'en' | 'is-IS'

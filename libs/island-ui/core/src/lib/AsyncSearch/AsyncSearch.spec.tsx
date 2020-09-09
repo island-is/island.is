@@ -32,18 +32,27 @@ describe('AsyncSearch', () => {
     )
 
     const inputEl = baseElement.querySelector('input')
-    fireEvent.change(inputEl, { target: { value: 'ap' } })
-    expect(inputEl.value).toBe('ap')
-    expect(getByText('Apple')).toBeInTheDocument()
+    expect(inputEl).not.toBeNull()
+
+    if (inputEl !== null) {
+      fireEvent.change(inputEl, { target: { value: 'ap' } })
+      expect(inputEl.value).toBe('ap')
+      expect(getByText('Apple')).toBeInTheDocument()
+    }
   })
 
   it('should show 4 items', () => {
     const { baseElement } = render(<AsyncSearch filter options={items} />)
 
     const inputEl = baseElement.querySelector('input')
-    fireEvent.change(inputEl, { target: { value: 'ap' } })
+    expect(inputEl).not.toBeNull()
+
+    if (inputEl !== null) {
+      fireEvent.change(inputEl, { target: { value: 'ap' } })
+    }
 
     const listEl = baseElement.querySelector('ul')
-    expect(Object.keys(listEl.children)).toHaveLength(4)
+    expect(listEl).not.toBeNull()
+    if (listEl !== null) expect(Object.keys(listEl.children)).toHaveLength(4)
   })
 })

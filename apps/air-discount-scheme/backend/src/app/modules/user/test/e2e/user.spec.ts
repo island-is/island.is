@@ -19,6 +19,7 @@ beforeAll(async () => {
 
 describe('Get Discount By DiscountCode', () => {
   it(`GET /api/public/discounts/:discountCode/user should return data`, async () => {
+    Date.now = () => 1640995200000 // 2022
     const nationalId = '1326487905'
     const spy1 = jest
       .spyOn(cacheManager, 'get')
@@ -45,19 +46,15 @@ describe('Get Discount By DiscountCode', () => {
     spy2.mockRestore()
 
     expect(response.body).toEqual({
-      nationalId: '1326487905',
+      nationalId: '132648xxx5',
       firstName: 'Jón',
       gender: 'kk',
       lastName: 'Jónsson',
       middleName: 'Gunnar',
-      address: 'Bessastaðir 1',
-      postalcode: 225,
-      city: 'Álftanes',
       fund: {
-        nationalId: '1326487905',
         credit: 0,
         used: 0,
-        total: 4,
+        total: 6,
       },
     })
   })

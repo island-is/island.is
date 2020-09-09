@@ -1,35 +1,49 @@
-import { Module } from '@nestjs/common'
+/*import { Module } from '@nestjs/common'
 
 import { AppController } from './app.controller'
 import { AppService } from './app.service'
 import { GraphQLModule } from '@nestjs/graphql'
-import { join } from 'path'
+//import { join } from 'path'
 import { ItemModule } from '../item/item.module'
 
 @Module({
   imports: [
     GraphQLModule.forRoot({
       definitions: {
-        path: join(process.cwd(), '/src/app/graphql.schema.d.ts'),
+        path: 'apps/skilavottord/ws/src/graphql.schema.d.ts',
         outputAs: 'class',
-      },
-      typePaths: ['../**/*.graphql'],
-      resolverValidationOptions: {
+      },*/
+//      typePaths: ['../**/*.graphql'],
+/*      resolverValidationOptions: {
         requireResolversForResolveType: false,
       },
     }),
     ItemModule,
   ],
-})
-/*@Module({
-  imports: [GraphQLModule.forRoot({debug: false, playground: false, }), ],
-  controllers: [AppController],
-  providers: [AppService],
 })*/
 
-//export class AppModule {}
+import { Module } from '@nestjs/common'
+import { GraphQLModule } from '@nestjs/graphql'
+//import { CmsModule } from '@island.is/api/domains/cms'
 
-//import { Module } from '@nestjs/common';
-//import { GraphQLModule } from '@nestjs/graphql';
-//imports: [GraphQLModule.forRoot({debug: false, playground: false, }), ],
+//import { AuthModule, UserModule, DiscountModule, FlightModule } from './modules'
+//import { BackendAPI } from '../services'
+import { UserModule } from './modules'
+
+const debug = process.env.NODE_ENV === 'development'
+const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
+
+@Module({
+  imports: [
+    GraphQLModule.forRoot({
+      debug,
+      playground,
+      autoSchemaFile: 'apps/skilavottord/ws/src/app/api.graphql',
+      //     path: '/api/graphql',
+      //     context: ({ req }) => ({ req })
+    }),
+    UserModule,
+  ],
+  //providers: [BackendAPI],
+})
 export class AppModule {}

@@ -1,9 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, ReactNode, useRef, useMemo, Ref, forwardRef } from 'react'
 import fromPairs from 'lodash/fromPairs'
-import Link from 'next/link'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
-import { Locale } from '@island.is/web/i18n/I18n'
 import { useI18n } from '@island.is/web/i18n'
 import {
   Query,
@@ -19,7 +17,7 @@ import {
   Heading,
   Timeline,
   StoryList,
-  LatestNews,
+  AboutLatestNews,
   EmailSignup,
   LogoList,
   BulletList,
@@ -35,6 +33,8 @@ import {
   BoxProps,
   Breadcrumbs,
   Stack,
+  Link,
+  ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import { Content } from '@island.is/island-ui/contentful'
 import Sidebar, { SidebarProps } from './Sidebar'
@@ -151,19 +151,17 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       return (
         <Background ref={setRef(slice.id)} id={slice.id} theme={page.theme}>
           <ContentBlock>
-            <Header />
+            <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
+              <Header />
+            </ColorSchemeContext.Provider>
             <Box paddingX={[0, 0, 6]} paddingTop={8}>
               <Columns collapseBelow="lg">
                 <Column width="9/12">
                   <div className={styles.indent}>
                     <Stack space={2}>
                       <Breadcrumbs color="blue300" separatorColor="blue300">
-                        <Link href={makePath()}>
-                          <a>Ísland.is</a>
-                        </Link>
-                        <Link href={''}>
-                          <a>{page.title}</a>
-                        </Link>
+                        <Link href={makePath()}>Ísland.is</Link>
+                        <Link href="">{page.title}</Link>
                       </Breadcrumbs>
                       <Typography variant="h1" as="h1" color="white">
                         {slice.title}
@@ -173,9 +171,9 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                       </Typography>
                     </Stack>
                   </div>
-                  {slice.slices.map((slice) => (
+                  {slice.slices.map((slice, index) => (
                     <Section
-                      key={slice.id}
+                      key={index}
                       slice={slice}
                       page={page}
                       currentSliceId={currentSliceId}
@@ -199,7 +197,10 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                           .map(extractSliceTitle)
                           .filter(Boolean)
                           .map(([id, text], index) => (
-                            <Box key={id} paddingBottom={index === 0 ? 2 : 0}>
+                            <Box
+                              key={index}
+                              paddingBottom={index === 0 ? 2 : 0}
+                            >
                               <a
                                 ref={id === currentSliceId ? bulletRef : null}
                                 href={'#' + id}
@@ -218,23 +219,21 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                               </a>
                             </Box>
                           ))}
-                        {slice.links.map(({ url, text }) => (
-                          <>
+                        {slice.links.map(({ url, text }, index) => (
+                          <span key={index}>
                             <Box paddingY={2}>
                               <Divider weight={colors.divider} />
                             </Box>
                             <Link href={url}>
-                              <a>
-                                <Typography
-                                  variant="p"
-                                  as="div"
-                                  color={colors.secondary}
-                                >
-                                  {text}
-                                </Typography>
-                              </a>
+                              <Typography
+                                variant="p"
+                                as="div"
+                                color={colors.secondary}
+                              >
+                                {text}
+                              </Typography>
                             </Link>
-                          </>
+                          </span>
                         ))}
                       </>
                     )}
@@ -249,9 +248,9 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       return (
         <Timeline
           {...slice}
-          events={slice.events.map((event) => ({
+          events={slice.events.map((event, index) => ({
             ...event,
-            body: event.body && <Content document={event.body} />,
+            body: event.body && <Content key={index} document={event.body} />,
           }))}
         />
       )
@@ -320,7 +319,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       return (
         <div key={slice.id} id={slice.id} ref={setRef(slice.id)}>
           <Layout width="8/12" boxProps={{ paddingTop: 15, paddingBottom: 12 }}>
-            <LatestNews {...slice} />
+            <AboutLatestNews {...slice} />
           </Layout>
         </div>
       )
@@ -386,9 +385,9 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
         <meta name="description" content={page.seoDescription} />
       </Head>
       <Box position="relative">
-        {page.slices.map((slice) => (
+        {page.slices.map((slice, index) => (
           <Section
-            key={slice.id}
+            key={index}
             slice={slice}
             page={page}
             currentSliceId={sliceMap[sliceId]}

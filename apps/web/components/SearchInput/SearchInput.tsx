@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {
   FC,
   useState,
@@ -5,19 +6,24 @@ import React, {
   useCallback,
   useRef,
   forwardRef,
+  useContext,
+  ReactElement,
 } from 'react'
 import Link from 'next/link'
 import Downshift from 'downshift'
-import cn from 'classnames'
-import { uniq, sortBy } from 'lodash'
+import { useMeasure } from 'react-use'
 import { useRouter } from 'next/router'
 import { useApolloClient } from 'react-apollo'
-import { GET_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
+import {
+  GET_SEARCH_RESULTS_QUERY,
+  GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
+} from '@island.is/web/screens/queries'
 import {
   ContentLanguage,
   QuerySearchResultsArgs,
   Query,
   SearchResult,
+  QueryWebSearchAutocompleteArgs,
 } from '@island.is/api/schema'
 import {
   AsyncSearchInput,
@@ -29,19 +35,23 @@ import {
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import * as styles from './SearchInput.treat'
 import { Locale } from '@island.is/web/i18n/I18n'
+import { GlobalNamespaceContext } from '@island.is/web/context/GlobalNamespaceContext/GlobalNamespaceContext'
 
 const DEBOUNCE_TIMER = 300
+const STACK_WIDTH = 400
 
 type SearchState = {
   term: string
   results?: SearchResult
   suggestions: string[]
+  prefix: string
   isLoading: boolean
 }
 
 const emptyState: Readonly<SearchState> = {
   term: '',
   suggestions: [],
+  prefix: '',
   isLoading: false,
 }
 
@@ -49,6 +59,7 @@ const isEmpty = ({ results, suggestions }: SearchState): boolean =>
   suggestions.length === 0 && (results?.total ?? 0) === 0
 
 const useSearch = (locale: Locale, term?: string): SearchState => {
+  const { globalNamespace } = useContext(GlobalNamespaceContext)
   const [state, setState] = useState<SearchState>(emptyState)
   const client = useApolloClient()
   const timer = useRef(null)
@@ -63,16 +74,9 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
       setState({
         isLoading: false,
         term: '',
+        prefix: '',
         // hardcoded while not supported by search
-        suggestions: [
-          'Covid-19',
-          'Hlutabætur',
-          'Atvinnuleysisbætur',
-          'Fæðingarorlof',
-          'Mannanafnanefnd',
-          'Rekstrarleyfi',
-          'Heimilisfang',
-        ],
+        suggestions: globalNamespace.searchSuggestions ?? [],
       })
       return
     }
@@ -92,20 +96,34 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
         },
       })
 
-      if (thisTimerId === timer.current) {
-        // hack while not supported by search service
-        let suggestions = results.items
-          .map((r) => r.title.split(/\s+/g))
-          .reduce((acc, words) => acc.concat(words), [])
-          .map((s) => s.trim().toLowerCase())
-          .filter((s) => s.startsWith(term.trim().toLowerCase()))
-        suggestions = sortBy(uniq(suggestions), (s) => s.length)
+      // the api only completes single terms get only single terms
+      const indexOfLastSpace = term.lastIndexOf(' ')
+      const hasSpace = indexOfLastSpace !== -1
+      const prefix = hasSpace ? term.slice(0, indexOfLastSpace) : ''
+      const queryString = hasSpace ? term.slice(indexOfLastSpace) : term
 
+      const {
+        data: {
+          webSearchAutocomplete: { completions: suggestions },
+        },
+      } = await client.query<Query, QueryWebSearchAutocompleteArgs>({
+        query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
+        variables: {
+          input: {
+            singleTerm: queryString,
+            language: locale as ContentLanguage,
+            size: 10, // only show top X completions to prevent long list
+          },
+        },
+      })
+
+      if (thisTimerId === timer.current) {
         setState({
           isLoading: false,
           term,
           results,
           suggestions,
+          prefix,
         })
       }
     }, DEBOUNCE_TIMER))
@@ -145,6 +163,7 @@ interface SearchInputProps {
   placeholder?: string
   white?: boolean
   colored?: boolean
+  id?: string
 }
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
@@ -158,6 +177,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       size = 'medium',
       white = false,
       colored = true,
+      id = 'downshift',
     },
     ref,
   ) => {
@@ -170,7 +190,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
     return (
       <Downshift<string>
-        id="downshift"
+        id={id}
         initialInputValue={initialInputValue}
         onChange={(q) => onSubmit(q)}
         onInputValueChange={(q) => setSearchTerm(q)}
@@ -252,6 +272,7 @@ const Results: FC<{
   locale: Locale
   search: SearchState
   highlightedIndex: number
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getItemProps: any
 }> = ({ locale, search, highlightedIndex, getItemProps }) => {
   const { makePath } = useRouteNames(locale)
@@ -265,42 +286,30 @@ const Results: FC<{
       </div>
     ))
 
-    const splitAt = Math.min(search.suggestions.length / 2)
-    const left = suggestions.slice(0, splitAt)
-    const right = suggestions.slice(splitAt)
-
-    return (
-      <Box display="flex" background="blue100" paddingY={2} paddingX={3}>
-        <div className={styles.menuColumn}>
-          <Stack space={2}>
-            <Typography variant="eyebrow" color="blue400">
-              Algeng leitarorð
-            </Typography>
-            {left}
-          </Stack>
-        </div>
-        <div className={styles.separator} />
-        <div className={styles.menuColumn}>
-          <Stack space={2}>{right}</Stack>
-        </div>
-      </Box>
-    )
+    return <CommonSearchTerms suggestions={suggestions} />
   }
 
   return (
     <Box display="flex" background="blue100" paddingY={2} paddingX={3}>
       <div className={styles.menuColumn}>
         <Stack space={1}>
-          {search.suggestions.map((suggestion, i) => (
-            <div key={suggestion} {...getItemProps({ item: suggestion })}>
-              <Typography
-                color={i === highlightedIndex ? 'blue400' : 'dark400'}
-              >
-                {suggestion.slice(0, search.term.length)}
-                <strong>{suggestion.slice(search.term.length)}</strong>
-              </Typography>
-            </div>
-          ))}
+          {search.suggestions.map((suggestion, i) => {
+            const suggestionHasTerm = suggestion.startsWith(search.term)
+            const startOfString = suggestionHasTerm ? search.term : suggestion
+            const endOfString = suggestionHasTerm
+              ? suggestion.replace(search.term, '')
+              : ''
+            return (
+              <div key={suggestion} {...getItemProps({ item: suggestion })}>
+                <Typography
+                  color={i === highlightedIndex ? 'blue400' : 'dark400'}
+                >
+                  {`${search.prefix} ${startOfString}`}
+                  <strong>{endOfString}</strong>
+                </Typography>
+              </div>
+            )
+          })}
         </Stack>
       </div>
       <div className={styles.separator} />
@@ -322,6 +331,52 @@ const Results: FC<{
           </Stack>
         )}
       </div>
+    </Box>
+  )
+}
+
+const CommonSearchTerms = ({
+  suggestions,
+}: {
+  suggestions: ReactElement[]
+}) => {
+  const [ref, { width }] = useMeasure()
+
+  if (!suggestions.length) {
+    return null
+  }
+
+  const splitAt = Math.min(suggestions.length / 2)
+
+  const left = suggestions.slice(0, splitAt)
+  const right = suggestions.slice(splitAt)
+
+  return (
+    <Box
+      ref={ref}
+      display="flex"
+      background="blue100"
+      paddingY={2}
+      paddingX={3}
+    >
+      <div className={styles.menuColumn}>
+        <Stack space={2}>
+          <Box marginBottom={1}>
+            <Typography variant="eyebrow" color="blue400">
+              Algeng leitarorð
+            </Typography>
+          </Box>
+          {width < STACK_WIDTH ? suggestions : left}
+        </Stack>
+      </div>
+      {width > STACK_WIDTH - 1 ? (
+        <>
+          <div className={styles.separator} />
+          <div className={styles.menuColumn}>
+            <Stack space={2}>{right}</Stack>
+          </div>
+        </>
+      ) : null}
     </Box>
   )
 }

@@ -2,17 +2,16 @@ import {
   Field,
   FormValue,
   MultiField,
+  ExternalDataProvider,
   Repeater,
-} from '@island.is/application/schema'
-import { Ref } from 'react'
+} from '@island.is/application/template'
 
 export interface FieldBaseProps {
+  applicationId?: string
   autoFocus?: boolean
   error?: string
   field: Field
   formValue: FormValue
-  //eslint-disable-next-line @typescript-eslint/no-explicit-any
-  register: () => Ref<any> | null
   showFieldName?: boolean
 }
 
@@ -32,4 +31,13 @@ export type RepeaterScreen = {
 } & Repeater & {
     children: (FieldDef | MultiFieldScreen | RepeaterScreen)[]
   }
-export type FormScreen = FieldDef | MultiFieldScreen | RepeaterScreen
+
+export type ExternalDataProviderScreen = {
+  isNavigable: true
+} & ExternalDataProvider
+
+export type FormScreen =
+  | FieldDef
+  | ExternalDataProviderScreen
+  | MultiFieldScreen
+  | RepeaterScreen

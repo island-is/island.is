@@ -4,6 +4,7 @@ import { HelloWorldModule } from '@island.is/api/domains/hello-world'
 import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/api/domains/cms'
 import { ApplicationModule } from '@island.is/api/domains/application'
+import { FileUploadModule } from '@island.is/api/domains/file-upload'
 import { DocumentModule } from '@island.is/api/domains/documents'
 import { TranslationsModule } from '@island.is/api/domains/translations'
 
@@ -22,6 +23,7 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
     ContentSearchModule,
     CmsModule,
     ApplicationModule,
+    FileUploadModule,
     DocumentModule,
     TranslationsModule,
   ],

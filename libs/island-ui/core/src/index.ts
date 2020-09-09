@@ -24,6 +24,7 @@ export * from './lib/Breadcrumbs/Breadcrumbs'
 export * from './lib/BulletList/BulletList'
 export * from './lib/VideoIframe/VideoIframe'
 export * from './lib/Footer/Footer'
+export * from './lib/Link'
 export * from './lib/Tooltip/Tooltip'
 export * from './lib/InputError/InputError'
 export * from './lib/FieldPolarQuestion/FieldPolarQuestion'
@@ -35,6 +36,8 @@ export * from './lib/AsyncSelect/AsyncSelect'
 export * from './lib/SkeletonLoader/SkeletonLoader'
 export * from './lib/Blockquote/Blockquote'
 export * from './lib/Alert/Alert'
+export { Swiper } from './lib/Swiper'
+export * from './lib/DatePicker/DatePicker'
 
 // Layout
 export * from './lib/Box/Box'
@@ -48,6 +51,9 @@ export * from './lib/Column/Column'
 export * from './lib/ContentBlock/ContentBlock'
 export * from './lib/Accordion/Accordion'
 export * from './lib/AccordionItem/AccordionItem'
+
+// Context
+export * from './lib/context'
 
 // Global reset
 export * from './global/global.treat'

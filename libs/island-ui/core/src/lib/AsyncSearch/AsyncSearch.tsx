@@ -6,12 +6,14 @@ import React, {
   ButtonHTMLAttributes,
   LabelHTMLAttributes,
   ReactNode,
+  useContext,
 } from 'react'
-import Downshift, { StateChangeFunction } from 'downshift'
+import Downshift, { DownshiftProps } from 'downshift'
 import { ControllerStateAndHelpers } from 'downshift/typings'
 import cn from 'classnames'
 import { Input, InputProps, Label, Menu, MenuProps, Item } from './shared'
 import { Icon } from '../Icon/Icon'
+import { ColorSchemeContext } from '../context'
 
 import * as styles from './AsyncSearch.treat'
 
@@ -26,7 +28,7 @@ export type ItemCmpProps = {
 
 export type AsyncSearchOption = {
   label: string
-  value: string | number
+  value: string
   component?: (props: ItemCmpProps) => ReactElement
   disabled?: boolean
 }
@@ -43,14 +45,12 @@ export interface AsyncSearchProps {
   loading?: boolean
   closeMenuOnSubmit?: boolean
   white?: boolean
-  onSubmit?: (inputValue: string, selectedOption?: AsyncSearchOption) => void
-  onChange?: (selection: object) => void
-  onInputValueChange?: (
+  onSubmit?: (
     inputValue: string,
-    stateAndHelpers: ControllerStateAndHelpers<
-      StateChangeFunction<AsyncSearchOption>
-    >,
+    selectedOption: AsyncSearchOption | null,
   ) => void
+  onChange?: DownshiftProps<AsyncSearchOption>['onChange']
+  onInputValueChange?: DownshiftProps<AsyncSearchOption>['onInputValueChange']
 }
 
 export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
@@ -75,11 +75,14 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
     ref,
   ) => {
     const [focused, setFocused] = useState<boolean>(false)
+    const { colorScheme } = useContext(ColorSchemeContext)
 
     const onFocus = () => setFocused(true)
     const onBlur = () => setFocused(false)
 
     const hasLabel = Boolean(size === 'large' && label)
+
+    const whiteColorScheme = colorScheme === 'white' || white
 
     return (
       <Downshift
@@ -100,7 +103,9 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
               ctx.setState({ inputValue })
           }
         }}
-        itemToString={(item: AsyncSearchOption) => (item ? item.label : '')}
+        itemToString={(item: AsyncSearchOption | null) =>
+          item ? item.label : ''
+        }
         {...props}
       >
         {(downshiftProps: ControllerStateAndHelpers<AsyncSearchOption>) => {
@@ -152,7 +157,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                 highlightedIndex !== null ? options[highlightedIndex] : null
 
               closeMenuOnSubmit && closeMenu()
-              onSubmit(inputValue, selectedOption)
+              onSubmit && onSubmit(inputValue || '', selectedOption)
             }
           }
 
@@ -177,7 +182,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                 colored,
                 hasLabel,
                 placeholder,
-                white,
+                white: whiteColorScheme,
               }}
               buttonProps={{
                 onFocus,
@@ -186,7 +191,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
                   ? {
                       onClick: () => {
                         closeMenuOnSubmit && closeMenu()
-                        onSubmit(inputValue)
+                        onSubmit && onSubmit(inputValue || '', null)
                       },
                     }
                   : getToggleButtonProps()),
@@ -210,7 +215,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
 
 const createFilterFunction = (
   filter: AsyncSearchProps['filter'],
-  inputValue: string,
+  inputValue: string | null,
 ): ((item: AsyncSearchOption) => boolean) => {
   if (typeof filter === 'function') {
     return filter
@@ -256,9 +261,11 @@ export const AsyncSearchInput = forwardRef<
     },
     ref,
   ) => {
+    const { colorScheme } = useContext(ColorSchemeContext)
     const { value, inputSize: size } = inputProps
     const showLabel = Boolean(size === 'large' && label)
     const isOpen = hasFocus && !!children && React.Children.count(children) > 0
+    const whiteColorScheme = colorScheme === 'white' || white
 
     return (
       <div
@@ -266,18 +273,28 @@ export const AsyncSearchInput = forwardRef<
         className={cn(styles.wrapper, {
           [styles.focused]: hasFocus || isOpen,
           [styles.open]: isOpen,
-          [styles.white]: white,
+          [styles.white]: whiteColorScheme,
         })}
       >
-        <Input {...inputProps} white={white} isOpen={isOpen} ref={ref} />
+        <Input
+          {...inputProps}
+          white={whiteColorScheme}
+          isOpen={isOpen}
+          ref={ref}
+        />
         <button
           className={cn(styles.icon, styles.iconSizes[size], {
+            [styles.iconWhite]: whiteColorScheme,
             [styles.focusable]: value,
           })}
           tabIndex={value ? 0 : -1}
           {...buttonProps}
         >
-          <Icon type="search" width={20} color="blue400" />
+          <Icon
+            type="search"
+            width={20}
+            color={whiteColorScheme ? 'white' : 'blue400'}
+          />
         </button>
         {loading && (
           <span
@@ -289,15 +306,11 @@ export const AsyncSearchInput = forwardRef<
               spin
               type="loading"
               width={24}
-              color={white ? 'white' : 'blue400'}
+              color={whiteColorScheme ? 'white' : 'blue400'}
             />
           </span>
         )}
-        {showLabel && (
-          <Label hasLabel={showLabel} {...labelProps}>
-            {label}
-          </Label>
-        )}
+        {showLabel && <Label {...labelProps}>{label}</Label>}
         <Menu {...{ isOpen, shouldShowItems: isOpen, ...menuProps }}>
           {children}
         </Menu>
