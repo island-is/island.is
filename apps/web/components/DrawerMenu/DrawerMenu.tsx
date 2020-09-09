@@ -97,11 +97,6 @@ const DrawerMenu: React.FC<DrawerMenuProps> = ({ categories }) => {
   const offsetY = viewportHeight - DRAWER_HEADING_HEIGHT
   const router = useRouter()
 
-  if (viewportHeight === Infinity) {
-    // We're on the server, try again later.
-    return null
-  }
-
   const handleClose = () => {
     setOpen(false)
   }
@@ -116,6 +111,11 @@ const DrawerMenu: React.FC<DrawerMenuProps> = ({ categories }) => {
       router.events.off('hashChangeStart', handleClose)
     }
   }, [])
+
+  if (viewportHeight === Infinity) {
+    // We're on the server, try again later.
+    return null
+  }
 
   return (
     <div
