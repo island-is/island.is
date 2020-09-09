@@ -5,7 +5,6 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import { sidebarWrapper } from './Layouts.treat'
 import { Sticky } from '../../components'
 
 interface CategoryProps {
@@ -21,7 +20,7 @@ export const CategoryLayout: FC<CategoryProps> = ({
   <GridContainer>
     <Box paddingBottom={10}>
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
+        <GridColumn span={['12/12', '12/12', '4/12', '3/12']} hideBelow="md">
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
         <GridColumn
@@ -48,9 +47,9 @@ export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
           <Box>{children}</Box>
         </GridColumn>
         <GridColumn
+          hideBelow="md"
           span={['0', '0', '4/12', '3/12']}
           offset={['0', '0', '0', '1/12']}
-          className={sidebarWrapper}
         >
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
@@ -67,10 +66,7 @@ export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
   <GridContainer>
     <Box paddingTop={6} paddingBottom={10}>
       <GridRow>
-        <GridColumn
-          span={['12/12', '12/12', '4/12', '3/12']}
-          className={sidebarWrapper}
-        >
+        <GridColumn span={['12/12', '12/12', '4/12', '3/12']} hideBelow="md">
           <Sticky>
             <Box background="purple100" padding={4}>
               {sidebar}
