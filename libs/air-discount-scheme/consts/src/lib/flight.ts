@@ -5,3 +5,9 @@ export const States = {
   sentCredit: 'SENT_CREDIT',
   cancelled: 'CANCELLED',
 }
+
+export const Airlines = {
+  ernir: 'ernir',
+  icelandAir: 'icelandair',
+  norlandAir: 'norlandair',
+}
