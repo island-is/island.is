@@ -2656,7 +2656,8 @@
             "tsConfig": "apps/judicial-system/web/tsconfig.spec.json",
             "passWithNoTests": true
           }
-        }
+        },
+        "docker-static": {}
       }
     },
     "judicial-system/web-e2e": {
