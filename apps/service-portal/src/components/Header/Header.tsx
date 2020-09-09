@@ -5,16 +5,28 @@ import {
   Hidden,
   ResponsiveSpace,
   ContentBlock,
+  Button,
 } from '@island.is/island-ui/core'
 import * as styles from './Header.treat'
 import { Logo } from '../Logo/Logo'
 import UserMenu from '../UserMenu/UserMenu'
 import NotificationMenuTrigger from '../Notifications/NotificationMenuTrigger/NotificationMenuTrigger'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import { ServicePortalPath, LanguageCode } from '@island.is/service-portal/core'
+import { useStore } from '../../store/stateProvider'
+import { ActionType } from '../../store/actions'
 
 const spacing = [1, 1, 1, 2] as ResponsiveSpace
 
 export const Header: FC<{}> = () => {
+  const [{ lang }, dispatch] = useStore()
+
+  const handleLangClick = (value: LanguageCode) => {
+    dispatch({
+      type: ActionType.SetLanguage,
+      payload: value,
+    })
+  }
+
   return (
     <>
       <div className={styles.placeholder} />
@@ -38,6 +50,17 @@ export const Header: FC<{}> = () => {
                 </Hidden>
               </Link>
               <Box display="flex">
+                <Box marginLeft={spacing}>
+                  <Button
+                    variant="menu"
+                    onClick={handleLangClick.bind(
+                      null,
+                      lang === 'is' ? 'en' : 'is',
+                    )}
+                  >
+                    {lang === 'is' ? 'EN' : 'IS'}
+                  </Button>
+                </Box>
                 <Box marginLeft={spacing}>
                   <UserMenu />
                 </Box>

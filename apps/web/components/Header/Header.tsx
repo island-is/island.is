@@ -86,13 +86,15 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                     </Hidden>
                   </>
                 )}
-                <Box marginLeft={marginLeft}>
-                  <Link href="//minarsidur.island.is/">
-                    <Button variant="menu" leftIcon="user">
-                      {t.login}
-                    </Button>
-                  </Link>
-                </Box>
+                <Hidden below="md">
+                  <Box marginLeft={marginLeft}>
+                    <Link href="//minarsidur.island.is/">
+                      <Button variant="menu" leftIcon="user">
+                        {t.login}
+                      </Button>
+                    </Link>
+                  </Box>
+                </Hidden>
                 <Box marginLeft={marginLeft}>
                   <LanguageToggler hideWhenMobile />
                 </Box>

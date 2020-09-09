@@ -33,12 +33,12 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
   return (
     <GridContainer>
       <GridRow>
-        <GridColumn span="6/12">
+        <GridColumn span={['12/12', '12/12', '6/12']}>
           <Typography variant="h3" as="h3" paddingBottom={4}>
             {label}
           </Typography>
         </GridColumn>
-        <GridColumn span="6/12">
+        <GridColumn span="6/12" hideBelow="md">
           <Box display="flex" justifyContent="flexEnd" paddingBottom={4}>
             <Typography variant="h3" as="h3" paddingBottom={4}>
               <ArrowLink href="/frett" arrowHeight={16}>

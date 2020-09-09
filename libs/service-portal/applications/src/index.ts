@@ -23,11 +23,28 @@ export const applicationsModule: ServicePortalModule = {
       },
       {
         name: 'Umsóknir',
-        path: [
-          ServicePortalPath.UmsoknirNyUmsokn,
-          ServicePortalPath.UmsoknirOpnarUmsoknir,
-        ],
+        path: [ServicePortalPath.UmsoknirOpnarUmsoknir],
         render: () => lazy(() => import('./lib/service-portal-applications')),
+      },
+      {
+        name: 'Detention Request POC',
+        path: ServicePortalPath.JudicialCreateDetentionPoc,
+        render: () =>
+          lazy(() =>
+            import(
+              '../../../../apps/judicial-system/web/src/routes/CreateDetentionRequest/CreateDetentionRequest'
+            ),
+          ),
+      },
+      {
+        name: 'Detention Request POC',
+        path: ServicePortalPath.JudicialDetentionRequestsPoc,
+        render: () =>
+          lazy(() =>
+            import(
+              '../../../../apps/judicial-system/web/src/routes/DetentionRequests/DetentionRequests'
+            ),
+          ),
       },
     ]
 
