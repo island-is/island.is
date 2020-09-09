@@ -183,5 +183,3 @@ migrateBootstrap().catch((error) => {
   // take down container on error
   throw error
 })
-
-// TODO: Make this listen to changes in template directory
