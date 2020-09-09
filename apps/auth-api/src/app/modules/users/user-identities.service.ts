@@ -50,7 +50,7 @@ export class UserIdentitiesService {
 
   private async findLinkableProfileId(userIdentity: UserIdentityDto) : Promise<string> {
     // For now we assume that if an identity exists with a 'natreg' claim, we want
-    // to link that its profile to the new identity.
+    // to link its profile to the new identity.
     // TODO: Also check 'nat' claim.
     // TODO: We may want to consider which external providers were used, and only allow
     // profile linking for providers with a certain trust level.
