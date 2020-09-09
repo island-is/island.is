@@ -133,33 +133,3 @@ export const mapDocument = (document: Document): Array<typeof Slice> => {
 
   return slices
 }
-
-// Not used yet?
-const mapTopLevelBlock = (
-  block: TopLevelBlock,
-  index: number,
-): typeof Slice | Html => {
-  switch (block.nodeType) {
-    case BLOCKS.EMBEDDED_ENTRY:
-      return mapSlice(block.data.target)
-
-    case BLOCKS.EMBEDDED_ASSET:
-      // Only asset we can handle at the moment is an image
-      return mapImage(block.data.target)
-
-    // TODO
-    default:
-      return new Html({
-        id: index.toString(),
-        document: {
-          nodeType: block.nodeType,
-          content: block.content,
-          data: block.data,
-        },
-      })
-  }
-}
-
-export const mapRichText = (document: Document): Array<typeof Slice | Html> => {
-  return document.content.map(mapTopLevelBlock)
-}
