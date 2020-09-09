@@ -67,13 +67,17 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
 
   const data = JSON.parse(article.content)
 
-  const actionButtonLinks =
+  const actionButtons =
     data?.content
-      .map((current) => current.data?.target?.fields?.processLink)
-      .filter(Boolean) || []
+      .map((current) => {
+        return {
+          link: current.data?.target?.fields?.processLink,
+          text: current.data?.target?.fields?.buttonText,
+        }
+      })
+      .filter((x) => x.link) || []
 
-  const actionButtonLink =
-    actionButtonLinks.length === 1 ? actionButtonLinks[0] : null
+  const actionButton = actionButtons.length === 1 ? actionButtons[0] : null
 
   return (
     <>
@@ -83,10 +87,10 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
       <ArticleLayout
         sidebar={
           <Stack space={3}>
-            {actionButtonLink ? (
+            {actionButton ? (
               <Box background="purple100" padding={4} borderRadius="large">
-                <Button href={actionButtonLink} width="fluid">
-                  {n('processLinkButtonText')}
+                <Button href={actionButton.link} width="fluid">
+                  {actionButton.text || n('processLinkButtonText')}
                 </Button>
               </Box>
             ) : null}
