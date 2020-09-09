@@ -43,10 +43,9 @@ function Usage({ misc }: PropTypes) {
     ssr: false,
     pollInterval: THIRTY_SECONDS,
   })
-  const {
-    user: { flights },
-  } = data ?? { user: { flights: [] } }
-  const { currentUsage, user, path, date } = JSON.parse(misc)
+  const { user } = data || {}
+  const flights = user?.flights || []
+  const { currentUsage, user: userTitle, path, date } = JSON.parse(misc)
   const { activeLocale } = useI18n()
 
   if (flights.length <= 0) {
@@ -61,7 +60,7 @@ function Usage({ misc }: PropTypes) {
       <Table>
         <Head>
           <Row>
-            <HeadData>{user}</HeadData>
+            <HeadData>{userTitle}</HeadData>
             <HeadData>{path}</HeadData>
             <HeadData>{date}</HeadData>
           </Row>
