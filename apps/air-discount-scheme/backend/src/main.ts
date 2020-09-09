@@ -1,6 +1,7 @@
 import '@island.is/infra-tracing'
 import { DocumentBuilder } from '@nestjs/swagger'
 import * as Sentry from '@sentry/node'
+import { NotFoundException } from '@nestjs/common'
 
 import { bootstrap } from '@island.is/infra-nest-server'
 import { SentryInterceptor } from '@island.is/infra-monitoring'
@@ -16,7 +17,7 @@ bootstrap({
   appModule: AppModule,
   name: 'air-discount-scheme-backend',
   port: 4248,
-  interceptors: [new SentryInterceptor()],
+  interceptors: [new SentryInterceptor({filterExceptions: [NotFoundException]})],
   swaggerPath: 'api/swagger',
   openApi: new DocumentBuilder()
     .setTitle('Air Discount Scheme')
