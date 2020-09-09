@@ -23,7 +23,7 @@ export const NavigationScreen: FC<Props> = ({ items }) => {
           Stillingar
         </Typography>
       </Box>
-      <Tiles space="gutter" columns={2}>
+      <Tiles space="gutter" columns={[1, 2]}>
         {items.map((item, index) => (
           <Link to={item.url} key={index} className={styles.link}>
             <Card
