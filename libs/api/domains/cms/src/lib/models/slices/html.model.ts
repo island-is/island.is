@@ -2,6 +2,7 @@ import { ObjectType, Field, ID } from '@nestjs/graphql'
 import { Document, BLOCKS, TopLevelBlock } from '@contentful/rich-text-types'
 import graphqlTypeJson from 'graphql-type-json'
 
+import { Slice } from './slice.model'
 @ObjectType()
 export class Html {
   constructor(initializer: Html) {
@@ -22,6 +23,7 @@ export const mapHtml = (
   switch (html.nodeType) {
     case BLOCKS.DOCUMENT:
       return new Html({ id: String(id), document: html })
+
     default:
       return new Html({
         id: String(id),
@@ -33,3 +35,5 @@ export const mapHtml = (
       })
   }
 }
+
+export const isHtml = (x: typeof Slice): x is Html => x instanceof Html

@@ -14,18 +14,24 @@ import {
   mapAdgerdirFrontpage,
 } from './models/adgerdirFrontpage.model'
 import { AdgerdirPages } from './models/adgerdirPages.model'
-import { AdgerdirPage } from './models/adgerdirPage.model'
-import { AdgerdirNews } from './models/adgerdirNews.model'
+import { AdgerdirPage, mapAdgerdirPage } from './models/adgerdirPage.model'
+import { AdgerdirNews, mapAdgerdirNewsItem } from './models/adgerdirNews.model'
 import { GetNewsListInput } from './dto/getNewsList.input'
 import { GetAdgerdirNewsListInput } from './dto/getAdgerdirNewsList.input'
 import { PaginatedNews } from './models/paginatedNews.model'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
-import { Namespace } from './models/namespace.model'
-import { Menu } from './models/menu.model'
-import { LifeEventPage } from './models/lifeEventPage.model'
+import { Namespace, mapNamespace } from './models/namespace.model'
+import { Menu, mapMenu } from './models/menu.model'
+import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
 import { PaginatedAdgerdirNews } from './models/paginatedAdgerdirNews.model'
+import { AdgerdirTags } from './models/adgerdirTags.model'
+import { mapAdgerdirTag } from './models/adgerdirTag.model'
+import {
+  FrontpageSliderList,
+  mapFrontpageSliderList,
+} from './models/frontpageSliderList.model'
 
 const makePage = (
   page: number,
@@ -149,7 +155,7 @@ export const getAdgerdirNews = async (
     'fields.slug': slug,
   }).catch(errorHandler('getAdgerdirNews'))
 
-  return result.items.map(mappers.mapAdgerdirNewsItem)[0] ?? null
+  return result.items.map(mapAdgerdirNewsItem)[0] ?? null
 }
 
 export const getArticle = async (
@@ -163,7 +169,7 @@ export const getArticle = async (
     include: 10,
   }).catch(errorHandler('getArticle'))
 
-  return result.items.map(mappers.mapArticle)[0] ?? null
+  return result.items.map(mapArticle)[0] ?? null
 }
 
 export const getRelatedArticles = async (
@@ -187,7 +193,7 @@ export const getRelatedArticles = async (
     include: 10,
   }).catch(errorHandler('getRelatedArticles'))
 
-  return relatedResult.items.map(mappers.mapArticle)
+  return relatedResult.items.map(mapArticle)
 }
 
 export const getNews = async (
@@ -269,7 +275,7 @@ export const getAdgerdirNewsList = async ({
 
   return {
     page: makePage(page, perPage, result.total),
-    news: result.items.map(mappers.mapAdgerdirNewsItem),
+    news: result.items.map(mapAdgerdirNewsItem),
   }
 }
 
@@ -344,5 +350,5 @@ export const getLifeEventPage = async (
     'fields.slug': slug,
   }).catch(errorHandler('getLifeEventPage'))
 
-  return result.items.map(mappers.mapLifeEventPage)[0] ?? null
+  return result.items.map(mapLifeEventPage)[0] ?? null
 }

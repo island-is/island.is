@@ -20,6 +20,7 @@ export const mapBulletEntry = (
   switch (e.sys.contentType.sys.id) {
     case 'iconBullet':
       return mapIconBullet(e as IIconBullet)
+
     case 'numberBulletSection':
       return mapNumberBulletGroup(e as INumberBulletSection)
   }

@@ -1,6 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Image, mapImage } from './image.model'
+
 import { INews } from '../generated/contentfulTypes'
+
+import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class News {
@@ -33,6 +35,7 @@ export const mapNews = ({ fields, sys }: INews): News => ({
   id: sys.id,
   slug: fields.slug,
   title: fields.title,
+  subtitle: fields.subtitle
   intro: fields.intro,
   image: mapImage(fields.image),
   date: fields.date,

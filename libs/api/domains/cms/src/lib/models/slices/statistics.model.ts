@@ -1,6 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { Statistic, mapStatistic } from '../statistic.model'
+
 import { IStatistics } from '../../generated/contentfulTypes'
+
+import { Statistic, mapStatistic } from '../statistic.model'
 
 @ObjectType()
 export class Statistics {

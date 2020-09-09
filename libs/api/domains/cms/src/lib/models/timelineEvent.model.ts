@@ -1,4 +1,5 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
+
 import { ITimelineEvent } from '../generated/contentfulTypes'
 
 @ObjectType()

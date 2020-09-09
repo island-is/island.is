@@ -1,9 +1,11 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+
+import { ILandingPage } from '../generated/contentfulTypes'
+
 import { Image, mapImage } from './image.model'
 import { Link, mapLink } from './link.model'
 import { LinkList, mapLinkList } from './linkList.model'
 import { Slice, mapDocument } from './slices/slice.model'
-import { ILandingPage } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class LandingPage {
