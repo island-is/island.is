@@ -22,11 +22,6 @@ import {
   getHeadingLinkElements,
   DrawerMenu,
 } from '@island.is/web/components'
-import {
-  Query,
-  QueryGetNamespaceArgs,
-  QueryGetArticleArgs,
-} from '@island.is/api/schema'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
 import { Screen } from '../types'
@@ -35,6 +30,7 @@ import { useI18n } from '../i18n'
 import useRouteNames from '../i18n/useRouteNames'
 import { CustomNextError } from '../units/ErrorBoundary'
 import {
+  Query,
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
   QueryGetArticleArgs,
