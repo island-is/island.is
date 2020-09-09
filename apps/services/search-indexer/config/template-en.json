@@ -21,8 +21,8 @@
           "sort": {
             "type": "icu_collation_keyword",
             "index": false,
-            "language": "is",
-            "country": "is"
+            "language": "en",
+            "country": "en"
           },
           "stemmed": {
             "type": "text",
