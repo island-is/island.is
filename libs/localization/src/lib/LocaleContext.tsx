@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { IntlProvider } from 'react-intl'
 import { shouldPolyfill } from '@formatjs/intl-datetimeformat/should-polyfill'
-import dynamic from 'next/dynamic'
 
 export type Locale = 'is' | 'en'
 
@@ -17,7 +16,7 @@ interface LocaleContextType {
   messages: MessagesDict
 }
 
-interface TranslationsProviderProps {
+interface LocaleProviderProps {
   locale: Locale
   messages: MessagesDict
   children: React.ReactElement
@@ -53,11 +52,11 @@ export async function polyfill(locale: string) {
 
 const LocaleContext = createContext<LocaleContextType | null>(null)
 
-export const TranslationsProvider = ({
+export const LocaleProvider = ({
   children,
   locale = defaultLanguage,
   messages = {},
-}: TranslationsProviderProps) => {
+}: LocaleProviderProps) => {
   const [messagesDict, setMessagesDict] = useState(messages)
   const [activeLocale, setActiveLocale] = useState<Locale>(
     locale || defaultLanguage,

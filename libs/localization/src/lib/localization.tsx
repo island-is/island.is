@@ -1,18 +1,16 @@
 import React, { useEffect } from 'react'
-import { TranslationsProvider } from './LocaleContext'
-import dynamic from 'next/dynamic'
+import { LocaleProvider } from './LocaleContext'
 
 const appWithTranslation = (WrappedComponent) => {
   const AppWithTranslation = (props) => {
-    console.log('AppWithTranslation', props)
     return (
       <>
-        <TranslationsProvider
+        <LocaleProvider
           locale={props.pageProps.locale}
           messages={props.pageProps.messages}
         >
           <WrappedComponent {...props} />
-        </TranslationsProvider>
+        </LocaleProvider>
       </>
     )
   }
