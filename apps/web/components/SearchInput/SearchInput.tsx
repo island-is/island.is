@@ -280,7 +280,10 @@ const Results: FC<{
   if (!search.term) {
     const suggestions = search.suggestions.map((suggestion, i) => (
       <div key={suggestion} {...getItemProps({ item: suggestion })}>
-        <Typography color={i === highlightedIndex ? 'blue400' : 'dark400'}>
+        <Typography
+          links
+          color={i === highlightedIndex ? 'blue400' : 'dark400'}
+        >
           {suggestion}
         </Typography>
       </div>
@@ -308,6 +311,7 @@ const Results: FC<{
             return (
               <div key={suggestion} {...getItemProps({ item: suggestion })}>
                 <Typography
+                  links
                   color={i === highlightedIndex ? 'blue400' : 'dark400'}
                 >
                   {`${search.prefix} ${startOfString}`}
