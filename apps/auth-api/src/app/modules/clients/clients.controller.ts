@@ -1,15 +1,17 @@
 import {
-  Body,
   Controller,
   Get,
   NotFoundException,
   Param,
-  Post,
   UseGuards,
   Req,
+  Logger,
+  Post,
+  Body,
+  BadRequestException,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiTags, ApiOAuth2 } from '@nestjs/swagger'
-import { Client } from './client.model';
+import { ApiOkResponse, ApiTags, ApiOAuth2, ApiCreatedResponse } from '@nestjs/swagger'
+import { Client } from './models/client.model'
 import { ClientsService } from './clients.service'
 import { AuthGuard } from '@nestjs/passport'
 
@@ -18,13 +20,17 @@ import { AuthGuard } from '@nestjs/passport'
 @ApiTags('clients')
 @Controller('clients')
 export class ClientsController {
-  constructor(private readonly clientsService: ClientsService) {}
-
+  constructor(
+    private readonly clientsService: ClientsService,
+  ) {}
+  
+  
   @Get(':clientId')
   @ApiOkResponse({ type: Client })
-  async findOne(@Param('clientId') clientId: string, @Req() request: Request): Promise<Client> {
+  async findOne(
+    @Param('clientId') clientId: string
+  ): Promise<Client> {
     const clientProfile = await this.clientsService.findClientById(clientId)
-    console.log(request.headers)
     if (!clientProfile) {
       throw new NotFoundException("This client doesn't exist")
     }
@@ -32,4 +38,9 @@ export class ClientsController {
     return clientProfile
   }
 
+  // @Post()
+  // @ApiCreatedResponse({ type: Client })
+  // async create(@Body() client: Client): Promise<Client> {
+  //   return await this.clientsService.createAsync(client)
+  // }
 }

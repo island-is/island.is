@@ -1,20 +1,25 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Client } from './client.model'
+import { Client } from './models/client.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Counter } from 'prom-client'
 import { Sequelize } from 'sequelize-typescript'
-import { ClientAllowedScope } from './client-allowed-scope.model'
-import { ClientAllowedCorsOrigin } from './client-allowed-cors-origin.model'
-import { ClientRedirectUri } from './client-redirect-uri.model'
-import { ClientIdpRestrictions } from './client-idp-restrictions.model'
-import { ClientSecret } from './client-secret.model'
-import { ClientPostLogoutRedirectUri } from './client-post-logout-redirect-uri.model'
-import { ClientGrantType } from './client-grant-type.model'
+import { ClientAllowedScope } from './models/client-allowed-scope.model'
+import { ClientAllowedCorsOrigin } from './models/client-allowed-cors-origin.model'
+import { ClientRedirectUri } from './models/client-redirect-uri.model'
+import { ClientIdpRestrictions } from './models/client-idp-restrictions.model'
+import { ClientSecret } from './models/client-secret.model'
+import { ClientPostLogoutRedirectUri } from './models/client-post-logout-redirect-uri.model'
+import { ClientGrantType } from './models/client-grant-type.model'
 
 @Injectable()
 export class ClientsService {
-  private clients: Client[];
+  private clients: Client[]
 
   applicationsRegistered = new Counter({
     name: 'apps_registered6',
@@ -28,15 +33,33 @@ export class ClientsService {
     private clientModel: typeof Client,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) {
-  }
+  ) {}
 
   async findClientById(clientId: string): Promise<Client> {
     this.logger.debug(`Finding client for clientId - "${clientId}"`)
     return this.clientModel.findOne({
       where: { clientId },
-      include: [ ClientAllowedScope, ClientAllowedCorsOrigin, ClientRedirectUri, ClientIdpRestrictions, ClientSecret, ClientPostLogoutRedirectUri, ClientPostLogoutRedirectUri, ClientGrantType ]
-    });
+      include: [
+        ClientAllowedScope,
+        ClientAllowedCorsOrigin,
+        ClientRedirectUri,
+        ClientIdpRestrictions,
+        ClientSecret,
+        ClientPostLogoutRedirectUri,
+        ClientPostLogoutRedirectUri,
+        ClientGrantType,
+      ],
+    })
+  }
 
+  async createAsync(client: Client): Promise<Client> {
+    this.logger.debug('Creating a new client')
+
+    try {
+      return await this.clientModel.create(client)
+    } catch (exception) {
+      this.logger.error('Error creating a new client: ', exception)
+      throw new BadRequestException(exception)
+    }
   }
 }

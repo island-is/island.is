@@ -1,12 +1,7 @@
-import {
-  Column,
-  DataType,
-  Model,
-  Table,
-  CreatedAt,
-  UpdatedAt,
-} from 'sequelize-typescript'
+import { Column, DataType, Model, Table } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+const { v4: uuidv4 } = require('uuid')
+
 @Table({
   tableName: 'grants',
   indexes: [
@@ -14,7 +9,6 @@ import { ApiProperty } from '@nestjs/swagger'
       fields: ['id'],
     },
   ],
-  timestamps: false
 })
 export class Grant extends Model<Grant> {
   @Column({
@@ -23,63 +17,63 @@ export class Grant extends Model<Grant> {
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: uuidv4(),
+  })
   id: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: 'key',
+  })
   key: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  @ApiProperty()
-  clientId: string
-
-  @Column({
-    type: DataType.DATE,
-    allowNull: false,
+  @ApiProperty({
+    example: 'postman',
   })
-  @ApiProperty()
-  creationTime: string
+  clientId: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: 'data',
+  })
   data: string
 
   @Column({
     type: DataType.DATE,
     allowNull: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    // add one day as an expiration example
+    example: new Date(new Date().setTime(new Date().getTime() + 86400000)),
+  })
   expiration: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: 'subject_id',
+  })
   subject_id: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: 'type',
+  })
   type: string
-
-  @CreatedAt
-  @ApiProperty()
-  readonly created: Date
-
-  @UpdatedAt
-  @ApiProperty()
-  readonly modified: Date
 }
