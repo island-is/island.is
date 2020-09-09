@@ -1,3 +1,4 @@
+import { AuthenticationError } from 'apollo-server-express'
 import { bootstrap } from '@island.is/infra-nest-server'
 import * as Sentry from '@sentry/node'
 
@@ -15,5 +16,7 @@ bootstrap({
   appModule: AppModule,
   name: 'ads-api',
   port: 4242,
-  interceptors: [new SentryInterceptor()],
+  interceptors: [
+    new SentryInterceptor({ filterExceptions: [AuthenticationError] }),
+  ],
 })
