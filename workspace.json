@@ -2657,7 +2657,7 @@
             "passWithNoTests": true
           }
         },
-        "docker-express": {}
+        "docker-static": {}
       }
     },
     "judicial-system/web-e2e": {
