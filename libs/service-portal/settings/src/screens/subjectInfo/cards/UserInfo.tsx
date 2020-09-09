@@ -1,5 +1,6 @@
 import React, { FC, useState } from 'react'
 import { UserWithMeta, ActionSidebar } from '@island.is/service-portal/core'
+import { useNatRegGeneralLookup } from '@island.is/service-portal/graphql'
 import { Box, Button } from '@island.is/island-ui/core'
 import InfoAccordionCard from '../../../components/InfoAccordionCard/InfoAccordionCard'
 import ExternalFormDirect from '../../../components/forms/ExternalFormDirect/ExternalFormDirect'
@@ -12,12 +13,12 @@ type SidebarType =
   | null
   | 'name'
   | 'religiousOrg'
-  | 'legalDomicile'
   | 'islandInfo'
   | 'islandAuthInfo'
 
 const UserInfoCard: FC<Props> = ({ userInfo }) => {
   const [activeSidebar, setActiveSidebar] = useState<SidebarType>(null)
+  const { data: userNatReg } = useNatRegGeneralLookup(userInfo)
 
   const handleSetActiveSidebar = (value: SidebarType) => setActiveSidebar(value)
 
@@ -55,6 +56,18 @@ const UserInfoCard: FC<Props> = ({ userInfo }) => {
           },
           {
             columns: [
+              { content: 'Fæðingarstaður N/A' },
+              { content: userNatReg?.city || '' },
+            ],
+          },
+          {
+            columns: [
+              { content: 'Kyn N/A' },
+              { content: userNatReg?.gender || '' },
+            ],
+          },
+          {
+            columns: [
               { content: 'Ríkisfang' },
               {
                 content:
@@ -76,24 +89,6 @@ const UserInfoCard: FC<Props> = ({ userInfo }) => {
                   >
                     <Button variant="menu" size="small">
                       Breyta um trúfélag
-                    </Button>
-                  </Box>
-                ),
-              },
-            ],
-          },
-          {
-            columns: [
-              { content: 'Lögheimili' },
-              { content: 'RSK?' },
-              {
-                render: () => (
-                  <Box
-                    textAlign="right"
-                    onClick={handleSetActiveSidebar.bind(null, 'legalDomicile')}
-                  >
-                    <Button variant="menu" size="small">
-                      Flytja lögheimili
                     </Button>
                   </Box>
                 ),
@@ -167,20 +162,6 @@ const UserInfoCard: FC<Props> = ({ userInfo }) => {
           föður (beggja eða annars), kenninafnsbreyting, ættarnafn o.fl.`}
           url="https://www.skra.is/umsoknir/eydublod-umsoknir-og-vottord/stok-vara/?productid=5c55d7a6-089b-11e6-943d-005056851dd2"
           buttonText="Breyta nafni"
-        />
-      </ActionSidebar>
-      <ActionSidebar
-        isActive={activeSidebar === 'legalDomicile'}
-        onClose={handleSetActiveSidebar.bind(null, null)}
-      >
-        <ExternalFormDirect
-          label="Lögheimili"
-          tag="Gjaldfrjálst"
-          title="Flytja lögheimili"
-          description={`Ertu að flytja? Hér getur þú tilkynnt flutning einstaklinga
-        innanlands og frá Íslandi (utan Norðurlandanna).`}
-          url="https://www.skra.is/umsoknir/rafraen-skil/flutningstilkynning/"
-          buttonText="Flytja lögheimili"
         />
       </ActionSidebar>
       <ActionSidebar
