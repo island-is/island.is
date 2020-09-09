@@ -26,16 +26,16 @@ import {
 } from '@island.is/island-ui/core'
 import { GET_NEWS_LIST_QUERY } from './queries'
 import { NewsListLayout } from './Layouts/Layouts'
-import {
-  Query,
-  ContentLanguage,
-  QueryGetNewsListArgs,
-} from '@island.is/api/schema'
 import { CustomNextError } from '../units/ErrorBoundary'
+import {
+  GetNewsListQuery,
+  QueryGetNewsListArgs,
+  ContentLanguage,
+} from '../graphql/schema'
 
 interface NewsListProps {
-  newsList: Query['getNewsList']['news']
-  page: Query['getNewsList']['page']
+  newsList: GetNewsListQuery['getNewsList']['news']
+  page: GetNewsListQuery['getNewsList']['page']
   dateRange: string[]
   selectedYear: number
   selectedMonth: number
@@ -250,7 +250,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       },
     },
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetNewsListArgs>({
+    apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
       query: GET_NEWS_LIST_QUERY,
       variables: {
         input: {
@@ -259,7 +259,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetNewsListArgs>({
+    apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
       query: GET_NEWS_LIST_QUERY,
       variables: {
         input: {
@@ -267,7 +267,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetNewsListArgs>({
+    apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
       query: GET_NEWS_LIST_QUERY,
       variables: {
         input: {

@@ -1,16 +1,18 @@
 import React from 'react'
 import Head from 'next/head'
 import { Page, Box, FooterLinkProps, Footer } from '@island.is/island-ui/core'
-import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import { NextComponentType, NextPageContext } from 'next'
+
 import { GetInitialPropsContext } from '../types'
-import {
-  Query,
-  QueryGetMenuArgs,
-  QueryGetNamespaceArgs,
-} from '@island.is/api/schema'
+import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_NAMESPACE_QUERY } from '../screens/queries'
+import {
+  QueryGetMenuArgs,
+  GetMenuQuery,
+  GetNamespaceQuery,
+  QueryGetNamespaceArgs,
+} from '../graphql/schema'
 
 interface LayoutProps {
   showSearchInHeader?: boolean
@@ -21,7 +23,7 @@ interface LayoutProps {
   footerLowerMenu?: FooterLinkProps[]
   footerMiddleMenu?: FooterLinkProps[]
   footerTagsMenu?: FooterLinkProps[]
-  namespace: any
+  namespace: Record<string, string>
 }
 
 const Layout: NextComponentType<
@@ -141,6 +143,8 @@ const Layout: NextComponentType<
 }
 
 Layout.getInitialProps = async ({ apolloClient, locale }) => {
+  const lang = locale ?? 'is' // Defaulting to is when locale is undefined
+
   const [
     upperMenu,
     lowerMenu,
@@ -149,72 +153,67 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
     namespace,
   ] = await Promise.all([
     apolloClient
-      .query<Query, QueryGetMenuArgs>({
+      .query<GetMenuQuery, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
         variables: {
-          input: { name: 'Footer upper', lang: locale },
+          input: { name: 'Footer upper', lang },
         },
       })
-      .then((result) => result.data.getMenu),
+      .then((res) => res.data.getMenu),
     apolloClient
-      .query<Query, QueryGetMenuArgs>({
+      .query<GetMenuQuery, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
         variables: {
-          input: { name: 'Footer lower', lang: locale },
+          input: { name: 'Footer lower', lang },
         },
       })
-      .then((result) => result.data.getMenu),
+      .then((res) => res.data.getMenu),
     apolloClient
-      .query<Query, QueryGetMenuArgs>({
+      .query<GetMenuQuery, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
         variables: {
-          input: { name: 'Footer middle', lang: locale },
+          input: { name: 'Footer middle', lang },
         },
       })
-      .then((result) => result.data.getMenu),
+      .then((res) => res.data.getMenu),
     apolloClient
-      .query<Query, QueryGetMenuArgs>({
+      .query<GetMenuQuery, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
         variables: {
-          input: { name: 'Footer tags', lang: locale },
+          input: { name: 'Footer tags', lang },
         },
       })
-      .then((result) => result.data.getMenu),
+      .then((res) => res.data.getMenu),
     apolloClient
-      .query<Query, QueryGetNamespaceArgs>({
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
             namespace: 'Global',
-            lang: locale,
+            lang,
           },
         },
       })
-      .then((content) => {
+      .then((res) => {
         // map data here to reduce data processing in component
-        return JSON.parse(content.data.getNamespace.fields)
+        return JSON.parse(res.data.getNamespace.fields)
       }),
   ])
 
-  const upperMenuLinks = upperMenu ? upperMenu.links : []
-  const lowerMenuLinks = lowerMenu ? lowerMenu.links : []
-  const middleMenuLinks = middleMenu ? middleMenu.links : []
-  const tagsMenuLinks = tagsMenu ? tagsMenu.links : []
-
   return {
-    footerUpperMenu: upperMenuLinks.map(({ text, url }) => ({
+    footerUpperMenu: (upperMenu.links ?? []).map(({ text, url }) => ({
       title: text,
       href: url,
     })),
-    footerLowerMenu: lowerMenuLinks.map(({ text, url }) => ({
+    footerLowerMenu: (lowerMenu.links ?? []).map(({ text, url }) => ({
       title: text,
       href: url,
     })),
-    footerTagsMenu: tagsMenuLinks.map(({ text, url }) => ({
+    footerTagsMenu: (tagsMenu.links ?? []).map(({ text, url }) => ({
       title: text,
       href: url,
     })),
-    footerMiddleMenu: middleMenuLinks.map(({ text, url }) => ({
+    footerMiddleMenu: (middleMenu.links ?? []).map(({ text, url }) => ({
       title: text,
       href: url,
     })),

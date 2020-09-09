@@ -1,11 +1,12 @@
 import React from 'react'
-import { Locale } from './I18n'
 import { NextComponentType } from 'next'
 import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
-import { QueryGetNamespaceArgs, Query } from '@island.is/api/schema'
-import { GET_NAMESPACE_QUERY } from '../screens/queries'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
+
+import { GET_NAMESPACE_QUERY } from '../screens/queries'
+import { GetNamespaceQuery, QueryGetNamespaceArgs } from '../graphql/schema'
+import { Locale } from './I18n'
 
 export const withLocale = <
   C extends BaseContext = NextPageContext,
@@ -46,7 +47,7 @@ const getGlobalStrings = ({
   locale: Locale
 }) => {
   return apolloClient
-    .query<Query, QueryGetNamespaceArgs>({
+    .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
       query: GET_NAMESPACE_QUERY,
       variables: {
         input: {

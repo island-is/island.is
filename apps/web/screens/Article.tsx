@@ -16,29 +16,30 @@ import {
 } from '@island.is/island-ui/core'
 import { Content } from '@island.is/island-ui/contentful'
 import { Sidebar, getHeadingLinkElements } from '@island.is/web/components'
-import {
-  Query,
-  QueryGetNamespaceArgs,
-  ContentLanguage,
-  QuerySingleItemArgs,
-} from '@island.is/api/schema'
-import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
+
+import { GET_SINGLE_ITEM, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
 import useRouteNames from '../i18n/useRouteNames'
 import { CustomNextError } from '../units/ErrorBoundary'
+import {
+  GetSingleItemQuery,
+  QueryGetNamespaceArgs,
+  GetNamespaceQuery,
+  QuerySingleItemArgs,
+  ContentLanguage,
+} from '../graphql/schema'
 
 interface ArticleProps {
-  article: Query['singleItem']
-  namespace: Query['getNamespace']
+  article: GetSingleItemQuery['singleItem']
+  namespace: GetNamespaceQuery['getNamespace']
 }
 
 const Article: Screen<ArticleProps> = ({ article, namespace }) => {
   const [contentOverviewOptions, setContentOverviewOptions] = useState([])
   const { activeLocale } = useI18n()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const n = useNamespace(namespace)
   const { makePath } = useRouteNames(activeLocale)
 
@@ -137,10 +138,11 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
 
 Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
+
   const [article, namespace] = await Promise.all([
     apolloClient
-      .query<Query, QuerySingleItemArgs>({
-        query: GET_ARTICLE_QUERY,
+      .query<GetSingleItemQuery, QuerySingleItemArgs>({
+        query: GET_SINGLE_ITEM,
         variables: {
           input: {
             slug,
@@ -152,13 +154,14 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
         // map data here to reduce data processing in component
         // TODO: Elastic endpoint is returning the article document json nested inside ContentItem, look into flattening this
         const contentObject = JSON.parse(content.data.singleItem.content)
+
         return {
           ...content.data.singleItem,
           content: JSON.stringify(contentObject.content),
         }
       }),
     apolloClient
-      .query<Query, QueryGetNamespaceArgs>({
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {

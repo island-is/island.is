@@ -23,19 +23,21 @@ import {
   GET_CATEGORIES_QUERY,
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
-import {
-  QueryGetNamespaceArgs,
-  Query,
-  ContentLanguage,
-  QueryArticlesInCategoryArgs,
-  QueryCategoriesArgs,
-} from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import {
+  GetArticlesInCategoryQuery,
+  GetCategoriesQuery,
+  GetNamespaceQuery,
+  QueryArticlesInCategoryArgs,
+  ContentLanguage,
+  QueryCategoriesArgs,
+  QueryGetNamespaceArgs,
+} from '../../graphql/schema'
 
 interface CategoryProps {
-  articles: Query['articlesInCategory']
-  categories: Query['categories']
-  namespace: Query['getNamespace']
+  articles: GetArticlesInCategoryQuery['articlesInCategory']
+  categories: GetCategoriesQuery['categories']
+  namespace: GetNamespaceQuery['getNamespace']
 }
 
 const Category: Screen<CategoryProps> = ({
@@ -197,16 +199,18 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryArticlesInCategoryArgs>({
-      query: GET_ARTICLES_IN_CATEGORY_QUERY,
-      variables: {
-        category: {
-          slug,
-          language: locale as ContentLanguage,
+    apolloClient.query<GetArticlesInCategoryQuery, QueryArticlesInCategoryArgs>(
+      {
+        query: GET_ARTICLES_IN_CATEGORY_QUERY,
+        variables: {
+          category: {
+            slug,
+            language: locale as ContentLanguage,
+          },
         },
       },
-    }),
-    apolloClient.query<Query, QueryCategoriesArgs>({
+    ),
+    apolloClient.query<GetCategoriesQuery, QueryCategoriesArgs>({
       query: GET_CATEGORIES_QUERY,
       variables: {
         input: {
@@ -215,7 +219,7 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
       },
     }),
     apolloClient
-      .query<Query, QueryGetNamespaceArgs>({
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
@@ -224,7 +228,7 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
           },
         },
       })
-      .then((variables) => JSON.parse(variables.data.getNamespace.fields)),
+      .then((res) => JSON.parse(res.data.getNamespace.fields)),
   ])
 
   return {

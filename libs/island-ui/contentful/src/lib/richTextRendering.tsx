@@ -168,7 +168,7 @@ export const renderSlices = (
   return <>{components.filter(Boolean)}</>
 }
 
-export const RichTextV2: FC<{ slices: Slice[]; config?: RenderConfig }> = ({
-  slices,
-  config,
-}) => <>{renderSlices(slices, config)}</>
+export const RichTextV2: FC<{
+  slices: Slice | Slice[]
+  config?: RenderConfig
+}> = ({ slices, config }) => <>{renderSlices(slices, config)}</>

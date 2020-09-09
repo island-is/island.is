@@ -1,36 +1,33 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import { useRouter } from 'next/router'
-import {
-  ContentBlock,
-  Box,
-  Stack,
-  Inline,
-  Tag,
-} from '@island.is/island-ui/core'
-import { Categories, Card, SearchInput } from '../components'
+import { Box, Stack, Inline, Tag } from '@island.is/island-ui/core'
+
+import { Categories, SearchInput } from '../components'
 import { useI18n } from '../i18n'
+import { Screen } from '../types'
+import { useNamespace } from '../hooks'
+import useRouteNames from '../i18n/useRouteNames'
+import FrontpageTabs from '../components/FrontpageTabs/FrontpageTabs'
 import {
-  Query,
-  QueryGetNamespaceArgs,
-  ContentLanguage,
-  QueryCategoriesArgs,
   QueryGetFrontpageSliderListArgs,
-} from '@island.is/api/schema'
+  ContentLanguage,
+  GetFrontpageSliderListQuery,
+  QueryCategoriesArgs,
+  GetCategoriesQuery,
+  QueryGetNamespaceArgs,
+  GetNamespaceQuery,
+} from '../graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
   GET_CATEGORIES_QUERY,
   GET_FRONTPAGE_SLIDES_QUERY,
 } from './queries'
-import { Screen } from '../types'
-import { useNamespace } from '../hooks'
-import useRouteNames from '../i18n/useRouteNames'
-import FrontpageTabs from '../components/FrontpageTabs/FrontpageTabs'
 
 interface HomeProps {
-  categories: Query['categories']
-  frontpageSlides: Query['getFrontpageSliderList']['items']
-  namespace: Query['getNamespace']
+  categories: GetCategoriesQuery['categories']
+  frontpageSlides: GetFrontpageSliderListQuery['getFrontpageSliderList']['items']
+  namespace: GetNamespaceQuery['getNamespace']
 }
 
 const Home: Screen<HomeProps> = ({
@@ -108,7 +105,10 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetFrontpageSliderListArgs>({
+    apolloClient.query<
+      GetFrontpageSliderListQuery,
+      QueryGetFrontpageSliderListArgs
+    >({
       query: GET_FRONTPAGE_SLIDES_QUERY,
       variables: {
         input: {
@@ -116,7 +116,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryCategoriesArgs>({
+    apolloClient.query<GetCategoriesQuery, QueryCategoriesArgs>({
       query: GET_CATEGORIES_QUERY,
       variables: {
         input: {
@@ -125,7 +125,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       },
     }),
     apolloClient
-      .query<Query, QueryGetNamespaceArgs>({
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
@@ -134,14 +134,14 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((variables) => {
+      .then((res) => {
         // map data here to reduce data processing in component
-        const namespaceObject = JSON.parse(variables.data.getNamespace.fields)
+        const namespaceObject = JSON.parse(res.data.getNamespace.fields)
 
         // featuredArticles is a csv in contentful seperated by : where the first value is the title and the second is the url
         return {
           ...namespaceObject,
-          featuredArticles: namespaceObject['featuredArticles'].map(
+          featuredArticles: namespaceObject.featuredArticles.map(
             (featuredArticle) => {
               const [title = '', url = ''] = featuredArticle.split(':')
               return { title, url }
