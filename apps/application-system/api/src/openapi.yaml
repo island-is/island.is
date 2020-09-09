@@ -117,14 +117,6 @@ components:
     UpdateApplicationDto:
       type: object
       properties:
-        typeId:
-          type: string
-          enum:
-            - ExampleForm
-            - ExampleForm2
-            - ExampleForm3
-            - FamilyAndPets
-            - ParentalLeave
         applicant:
           type: string
         assignee:
@@ -237,6 +229,8 @@ paths:
         - name: id
           required: true
           in: path
+          description: The id of the application to update.
+          allowEmptyValue: false
           schema:
             type: string
       requestBody:
@@ -299,6 +293,8 @@ paths:
         - name: id
           required: true
           in: path
+          description: The id of the application to update the external data for.
+          allowEmptyValue: false
           schema:
             type: string
       requestBody:
@@ -323,6 +319,8 @@ paths:
         - name: id
           required: true
           in: path
+          description: The id of the application to update the attachments for.
+          allowEmptyValue: false
           schema:
             type: string
       requestBody:
@@ -346,6 +344,8 @@ paths:
         - name: id
           required: true
           in: path
+          description: The id of the application to delete attachment(s) from.
+          allowEmptyValue: false
           schema:
             type: string
       requestBody:

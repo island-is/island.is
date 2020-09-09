@@ -50,7 +50,7 @@ export const icon = style({
   right: 26,
   transform: 'translateY(-50%)',
   outline: 0,
-  ':before': {
+  '::before': {
     zIndex: -1,
     content: '""',
     borderRadius: 5,
@@ -64,11 +64,17 @@ export const icon = style({
     transition: `opacity 150ms ease`,
   },
   selectors: {
-    '&:focus:before': {
+    '&:focus::before': {
       borderColor: theme.color.blue400,
       borderWidth: 1,
       borderStyle: 'solid',
     },
+  },
+})
+
+export const iconWhite = style({
+  '::before': {
+    backgroundColor: 'transparent',
   },
 })
 

@@ -16,7 +16,7 @@ You can serve this service locally by running:
 
 `yarn nx serve judicial-system-api`
 
-## Graphql
+## Graphql - not yet implemented
 
 Make sure you are serving the graphql client as well in order for you to make graphql calls to this service:
 

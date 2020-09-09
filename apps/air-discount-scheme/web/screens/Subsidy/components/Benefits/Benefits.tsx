@@ -28,7 +28,6 @@ const DiscountsQuery = gql`
         nationalId
         name
         fund {
-          nationalId
           used
           credit
           total

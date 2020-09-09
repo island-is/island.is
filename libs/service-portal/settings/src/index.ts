@@ -13,11 +13,14 @@ export const settingsModule: ServicePortalModule = {
     const routes: ServicePortalRoute[] = [
       {
         name: 'Stillingar',
-        path: [
-          ServicePortalPath.StillingarRoot,
-          ServicePortalPath.StillingarUmbod,
-        ],
+        path: ServicePortalPath.StillingarRoot,
         render: () => lazy(() => import('./lib/service-portal-settings')),
+      },
+      {
+        name: 'Umboð',
+        path: ServicePortalPath.StillingarUmbod,
+        render: () =>
+          lazy(() => import('./screens/delegation/DelegationGreeting')),
       },
     ]
 

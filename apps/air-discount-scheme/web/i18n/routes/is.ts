@@ -1,10 +1,12 @@
 import { Routes } from '../../types'
 
 export default {
+  admin: '/admin',
   auth: '/authorize',
+  error: '/error',
   home: '/',
   myBenefits: '/min-rettindi',
-  termsOfUse: '/notendaskilmalar',
-  error: '/error',
   notFound: '/*',
+  personalInfoUsage: '/medferd-personuupplysinga',
+  termsOfUse: '/notendaskilmalar',
 } as Routes

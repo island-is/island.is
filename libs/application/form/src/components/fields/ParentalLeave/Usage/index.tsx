@@ -41,6 +41,7 @@ const ParentalLeaveUsage: FC<FieldBaseProps> = ({ field }) => {
             <Slider
               totalCells={6}
               sharedCells={3}
+              min={1}
               currentIndex={value || defaultUsage}
               onChange={(selectedMonths: number) => {
                 clearErrors(id)

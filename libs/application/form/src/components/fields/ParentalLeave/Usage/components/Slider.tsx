@@ -106,6 +106,8 @@ interface TrackProps {
   sharedCells: number
   currentIndex: number
   onChange?: (index: number) => void
+  snap?: boolean
+  min?: number
   step?: number
   showToolTip?: boolean
   showLabel?: boolean
@@ -122,6 +124,8 @@ const Slider = ({
   sharedCells,
   currentIndex,
   onChange,
+  snap = true,
+  min = 0,
   step = 0.5,
   showToolTip = false,
   showLabel = true,
@@ -143,13 +147,17 @@ const Slider = ({
     }
 
     if (remainderRef.current != null) {
-      remainderRef.current.style.transform = `translateX(${x}px)`
+      remainderRef.current.style.left = `${x}px`
     }
   }, [isDragging, x])
 
   const tooltipStyle = { transform: `translateX(${x}px)` }
   const thumbStyle = {
     transform: `translateX(${dragX.current == null ? x : dragX.current}px)`,
+    transition: isDragging ? 'none' : '',
+  }
+  const remainderStyle = {
+    left: `${dragX.current == null ? x : dragX.current}px`,
     transition: isDragging ? 'none' : '',
   }
 
@@ -159,7 +167,10 @@ const Slider = ({
   const dragBind = useDrag({
     onDragMove(deltaX) {
       const currentX = x + deltaX
-      dragX.current = Math.max(1 * sizePerCell, Math.min(size.width, currentX))
+      dragX.current = Math.max(
+        min * sizePerCell,
+        Math.min(size.width, currentX),
+      )
       const index = roundByNum(dragX.current / sizePerCell, step)
 
       if (onChange && index !== indexRef.current) {
@@ -171,7 +182,7 @@ const Slider = ({
       }
 
       if (remainderRef.current && dragX.current != null) {
-        remainderRef.current.style.transform = `translateX(${dragX.current}px)`
+        if (!snap) remainderRef.current.style.left = `${dragX.current}px`
       }
     },
     onDragStart() {
@@ -184,7 +195,9 @@ const Slider = ({
   })
 
   const formatTooltip = (count: number) =>
-    count <= 1 ? `1 ${label.singular}` : `${count} ${label.plural}`
+    count <= 1
+      ? `${currentIndex} ${label.singular}`
+      : `${count} ${label.plural}`
 
   const onKeyDown = (event: React.KeyboardEvent) => {
     if (onChange == null) {
@@ -192,7 +205,7 @@ const Slider = ({
     }
     switch (event.key) {
       case 'ArrowLeft':
-        if (currentIndex > 1) {
+        if (currentIndex > min) {
           onChange(currentIndex - step)
         }
         break
@@ -210,7 +223,8 @@ const Slider = ({
   ) => {
     const rect = event.currentTarget.getBoundingClientRect()
     const percentClicked = event.nativeEvent.offsetX / rect.width
-    onChange && onChange(index + roundByNum(percentClicked, step))
+    const newIndex = Math.max(min, index + roundByNum(percentClicked, step))
+    onChange && onChange(newIndex)
   }
 
   return (
@@ -258,7 +272,7 @@ const Slider = ({
         {showRemainderOverlay && (
           <Box
             className={styles.remainderBar}
-            style={thumbStyle}
+            style={remainderStyle}
             ref={remainderRef}
           />
         )}

@@ -9,7 +9,6 @@ import {
   Breadcrumbs,
   Hidden,
   Select,
-  ResponsiveSpace,
   GridColumn,
   GridRow,
   Tag,
@@ -37,8 +36,6 @@ interface ArticleProps {
   article: Query['getArticle']
   namespace: Query['getNamespace']
 }
-
-const simpleSpacing = [2, 2, 3] as ResponsiveSpace
 
 const Article: Screen<ArticleProps> = ({ article, namespace }) => {
   const [contentOverviewOptions, setContentOverviewOptions] = useState([])
@@ -70,9 +67,10 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
 
   const data = JSON.parse(article.content)
 
-  const actionButtonLinks = data.content
-    .map((current) => current.data?.target?.fields?.processLink)
-    .filter(Boolean)
+  const actionButtonLinks =
+    data?.content
+      .map((current) => current.data?.target?.fields?.processLink)
+      .filter(Boolean) || []
 
   const actionButtonLink =
     actionButtonLinks.length === 1 ? actionButtonLinks[0] : null
@@ -119,7 +117,11 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
         }
       >
         <GridRow>
-          <GridColumn offset="1/12" span="11/12" paddingBottom={2}>
+          <GridColumn
+            offset={['0', '0', '1/8']}
+            span={['0', '0', '7/8']}
+            paddingBottom={2}
+          >
             <Breadcrumbs>
               <Link href={makePath()}>
                 <a>Ísland.is</a>
@@ -138,24 +140,26 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
             </Breadcrumbs>
           </GridColumn>
         </GridRow>
-        <Hidden above="md">
-          <Select
-            label="Efnisyfirlit"
-            placeholder="Flokkar"
-            options={contentOverviewOptions}
-            onChange={onChangeContentOverview}
-            name="content-overview"
-          />
-        </Hidden>
         <GridRow>
-          <GridColumn offset="1/12" span="11/12">
-            <Box marginBottom={simpleSpacing}>
-              <Typography variant="h1" as="h1" paddingBottom={2}>
-                <span data-sidebar-link={slugify(article.title)}>
-                  {article.title}
-                </span>
-              </Typography>
-            </Box>
+          <GridColumn span="8/8" paddingBottom={4}>
+            <Hidden above="sm">
+              <Select
+                label="Efnisyfirlit"
+                placeholder="Flokkar"
+                options={contentOverviewOptions}
+                onChange={onChangeContentOverview}
+                name="content-overview"
+              />
+            </Hidden>
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn offset={['0', '0', '1/8']} span={['8/8', '8/8', '7/8']}>
+            <Typography variant="h1" as="h1" paddingBottom={2}>
+              <span data-sidebar-link={slugify(article.title)}>
+                {article.title}
+              </span>
+            </Typography>
           </GridColumn>
         </GridRow>
         <Content document={article.content} />

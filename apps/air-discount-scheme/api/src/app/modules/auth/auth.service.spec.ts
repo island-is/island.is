@@ -30,12 +30,10 @@ describe('AuthService', () => {
     })
   })
 
-  describe('checkPermissions', () => {
+  describe('checkRole', () => {
     it('should return true for valid permission', () => {
       // Arrange & Act
-      const hasPermission = authService.checkPermissions(user, {
-        role: 'admin',
-      })
+      const hasPermission = authService.checkRole(user, 'admin')
 
       // Assert
       expect(hasPermission).toBeTruthy()

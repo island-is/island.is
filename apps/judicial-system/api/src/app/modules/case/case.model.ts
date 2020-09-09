@@ -7,6 +7,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export enum CaseState {

@@ -69,6 +69,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
               <GridRow>
                 <GridColumn span="12/12">
                   <SearchInput
+                    id="search_input_side_menu"
                     activeLocale={activeLocale}
                     placeholder="Leitaðu á Ísland.is"
                     size="medium"

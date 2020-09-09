@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
+import { AirlineUser, User } from './user.model'
 import { Fund } from '@island.is/air-discount-scheme/types'
-import { User } from './user.model'
 import { FlightService } from '../flight'
 import {
   NationalRegistryService,
@@ -31,20 +31,32 @@ export class UserService {
     )
 
     return {
-      nationalId: user.nationalId,
       credit: meetsADSRequirements ? unused : 0,
       used: used,
       total,
     }
   }
 
-  async getUserInfoByNationalId(nationalId: string): Promise<User> {
+  private async getUserByNationalId<T>(
+    nationalId: string,
+    model: new (fund, user) => T,
+  ): Promise<T> {
     const user = await this.nationalRegistryService.getUser(nationalId)
     if (!user) {
       return null
     }
 
     const fund = await this.getFund(user)
-    return new User(user, fund)
+    return new model(user, fund)
+  }
+
+  async getAirlineUserInfoByNationalId(
+    nationalId: string,
+  ): Promise<AirlineUser> {
+    return this.getUserByNationalId<AirlineUser>(nationalId, AirlineUser)
+  }
+
+  async getUserInfoByNationalId(nationalId: string): Promise<User> {
+    return this.getUserByNationalId<User>(nationalId, User)
   }
 }

@@ -1,8 +1,9 @@
-import React, { forwardRef, ReactNode, FC } from 'react'
+import React, { forwardRef, ReactNode, FC, useContext } from 'react'
 import cn from 'classnames'
 import { Box } from '../Box'
 import { Inline } from '../Inline/Inline'
 import { IconTypes, Icon as IconComponent } from '../Icon/Icon'
+import { ColorSchemeContext } from '../context'
 
 import * as styles from './Button.treat'
 
@@ -33,6 +34,7 @@ export interface ButtonProps {
   noWrap?: boolean
   target?: string
   white?: boolean
+  tabIndex?: number
 }
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
@@ -58,9 +60,12 @@ export const Button = forwardRef<
       noWrap,
       target = '_blank',
       white,
+      tabIndex,
     },
     ref,
   ) => {
+    const { colorScheme } = useContext(ColorSchemeContext)
+
     const className = cn(
       styles.button,
       styles.variants[variant],
@@ -68,7 +73,7 @@ export const Button = forwardRef<
       styles.width[width],
       {
         [styles.noWrap]: noWrap,
-        [styles.white]: white,
+        [styles.white]: colorScheme === 'white' || white,
       },
     )
 
@@ -82,6 +87,7 @@ export const Button = forwardRef<
     }
 
     const sharedProps = {
+      tabIndex,
       className,
       onClick,
     }
@@ -219,7 +225,6 @@ const LeftContentContainer: FC = ({ children }) => {
         bottom={0}
         alignItems="center"
         justifyContent="center"
-        background="blue100"
         className={styles.leftContentContainer}
       >
         <Box

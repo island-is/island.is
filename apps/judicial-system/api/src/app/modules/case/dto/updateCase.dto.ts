@@ -1,5 +1,6 @@
-import { IsString, IsOptional, IsEnum, IsDate } from 'class-validator'
+import { IsString, IsOptional, IsEnum } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
+
 import { CaseState } from '../case.model'
 
 export class UpdateCaseDto {
@@ -34,12 +35,12 @@ export class UpdateCaseDto {
   readonly court: string
 
   @IsOptional()
-  @IsDate()
+  @IsString()
   @ApiPropertyOptional()
   readonly arrestDate: Date
 
   @IsOptional()
-  @IsDate()
+  @IsString()
   @ApiPropertyOptional()
   readonly requestedCourtDate: Date
 }
