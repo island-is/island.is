@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { Icon } from '@island.is/island-ui/core'
 import * as styles from './ToggleButton.treat'
-import Icon from '../../../Icon/Icon'
 
 interface ToggleButtonProps {
   isActive: boolean

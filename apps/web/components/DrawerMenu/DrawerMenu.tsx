@@ -1,11 +1,9 @@
 import React, { useState } from 'react'
 import { useMeasure, useWindowSize } from 'react-use'
 import cn from 'classnames'
-import * as styles from './DrawerMenu.treat'
-import Typography from '../Typography/Typography'
 import ToggleButton from './components/ToggleButton/ToggleButton'
-import { Box } from '../Box'
-import { Link } from '../Link'
+import { Typography, Box, Link } from '@island.is/island-ui/core'
+import * as styles from './DrawerMenu.treat'
 
 type CategoryItem = {
   title: string
