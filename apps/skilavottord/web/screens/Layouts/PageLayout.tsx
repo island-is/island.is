@@ -6,7 +6,6 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import { Card } from '../../components'
 
 interface PageProps {
   children: ReactNode
@@ -14,14 +13,12 @@ interface PageProps {
 
 export const PageLayout: FC<PageProps> = ({ children }) => (
   <GridContainer>
-    <Box paddingY={10}>
+    <Box padding={10}>
       <GridRow>
         <GridColumn span="8/12">
           <Box>{children}</Box>
         </GridColumn>
-        <GridColumn span="4/12">
-          {/* <Card title="Sticky" description="Placeholder" /> */}
-        </GridColumn>
+        <GridColumn span="4/12"></GridColumn>
       </GridRow>
     </Box>
   </GridContainer>
