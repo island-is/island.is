@@ -119,8 +119,8 @@ const Category: Screen<CategoryProps> = ({
                     key={groupSlug}
                     id={`accordion-${index}`}
                     label={title}
+                    startExpanded={expanded}
                     visibleContent={description}
-                    expanded={expanded}
                   >
                     <Stack space={2}>
                       {articles.map(({ title, slug }, index) => {
