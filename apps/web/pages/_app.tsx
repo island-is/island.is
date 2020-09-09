@@ -12,7 +12,6 @@ import Layout from '../layouts/main'
 import { withErrorBoundary } from '../units/ErrorBoundary'
 import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
 
-
 interface AppCustomProps extends AppProps {
   layoutProps: {
     footerUpperMenu: FooterLinkProps[]
