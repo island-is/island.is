@@ -1,6 +1,6 @@
 {
   "order": 0,
-  "version": 1,
+  "version": 2,
   "index_patterns": [
     "island-en-v*"
   ],

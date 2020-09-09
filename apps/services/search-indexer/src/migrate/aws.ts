@@ -17,7 +17,7 @@ const sleep = (sec: number) => {
 
 // construct the name used for packages in AWS ES
 const createPackageName = (locale: string, analyzerType: string, version: string) => {
-  return `${locale}-${analyzerType}-${version}`
+  return `${locale}-${analyzerType}-${version}-test1`
 }
 
 // break down the name used for packages in AWS ES
@@ -58,7 +58,7 @@ const getPackageStatuses = async (packageId: string): Promise<PackageStatus> => 
 
   return {
     packageStatus: packages.PackageDetailsList[0].PackageStatus,
-    domainStatus: foundPackage?.DomainPackageStatus ?? 'NONE'
+    domainStatus: foundPackage?.DomainPackageStatus ?? 'DISSOCIATED'
   }
 }
 
@@ -185,7 +185,7 @@ export const updateS3DictionaryFiles = async (dictionaries: Dictionary[]): Promi
 }
 
 const getAwsEsPackagesDetails = async () => {
-  logger.info('Geting all domain packages', { domain: environment.migrate.esDomain })
+  logger.info('Getting all AWS ES packages')
   const packages = await awsEs
     .describePackages()
     .promise()
@@ -291,6 +291,49 @@ export const associatePackagesWithAwsEs = async (packages: AwsEsPackage[]) => {
   }
 
   logger.info('Successfully associated all packages with AWS ES instance')
+  return true
+}
+
+export const getUnusedPackages = async (inUseEsPackages: AwsEsPackage[]): Promise<string[]> => {
+  const allAwsEsPackages = await getAwsEsPackagesDetails()
+  const allAwsEsPackageIds = allAwsEsPackages.map((awsEsPackage) => awsEsPackage.PackageID)
+  const inUseEsPackageIds = inUseEsPackages.map((inUseEsPackage) => inUseEsPackage.packageId)
+
+  // we remove packages that are in use from allAwsEsPackageIds and return
+  return allAwsEsPackageIds.filter((awsEsPackageId) => !inUseEsPackageIds.includes(awsEsPackageId))
+}
+
+export const disassociateUnusedPackagesFromAwsEs = async (esPackageIds: string[]) => {
+  logger.info('Disassociating old packages from AWS ES')
+  for (const esPackageId of esPackageIds) {
+    logger.info('Disassociating package', { packageId: esPackageId })
+    const params = {
+      DomainName: environment.migrate.esDomain,
+      PackageID: esPackageId,
+    }
+    await awsEs.dissociatePackage(params).promise()
+
+    // we have to wait for package to be ready cause AWS ES can only process one request at a time
+    await waitForPackageStatus(
+      esPackageId,
+      'DISSOCIATED'
+    )
+  }
+  logger.info('Disassociated all old packages')
+  return true
+}
+
+export const deleteUnusedPackagesFromAwsEs = async (esPackageIds: string[]) => {
+  logger.info('Deleting old packages from AWS ES')
+  esPackageIds.map((esPackageId) => {
+    logger.info('Deleting package', { packageId: esPackageId })
+    const params = {
+      PackageID: esPackageId
+    }
+
+    return awsEs.deletePackage(params).promise()
+  })
+  logger.info('Deleted all old packages')
   return true
 }
 

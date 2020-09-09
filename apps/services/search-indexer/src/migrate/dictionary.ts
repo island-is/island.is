@@ -59,7 +59,7 @@ export const getDictionaryFiles = async (): Promise<Dictionary[]> => {
 
 export const getFakeEsPackages = (): AwsEsPackage[] => {
   const locales = environment.migrate.locales
-  const fakePackages = ['is'].map((locale) => {
+  const fakePackages = locales.map((locale) => {
     return analyzers.map((analyzer) => ({
       packageId: `${analyzer}.txt`,
       analyzerType: analyzer,

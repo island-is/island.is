@@ -33,11 +33,12 @@ class App {
 
     await this.migrateES(esPackages)
 
+    // we remove unused AWS ES packages after ES migrate cause we cant/should not remove packages already in use
     if (hasAwsAccess) {
       logger.info('Cleaning up unused packages')
-      // TODO: Get permission in AWS to do this
-      // await aws.disassociatePackagesFromAwsEs(esPackages) // we disassociate all but the files in esPackages
-      // await aws.deletePackagesFromAwsEs(esPackages) // we delete all but the files in esPackages
+      const unusedPackages = await aws.getUnusedPackages(esPackages)
+      await aws.disassociateUnusedPackagesFromAwsEs(unusedPackages) // we disassociate all but the files in unusedPackages
+      await aws.deleteUnusedPackagesFromAwsEs(unusedPackages) // we delete all but the files in esPackages
     }
     logger.info('Done!')
   }
@@ -137,4 +138,3 @@ migrateBootstrap().catch((error) => {
 })
 
 // TODO: Make this listen to changes in template directory
-// TODO: Impliment AWS cleanup
