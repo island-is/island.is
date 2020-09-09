@@ -24,13 +24,14 @@ import {
 import { Flight } from './flight.model'
 import { FlightService } from './flight.service'
 import {
+  FlightDto,
   GetFlightParams,
+  GetFlightsBody,
   CreateFlightParams,
   GetUserFlightsParams,
   DeleteFlightParams,
   DeleteFlightLegParams,
-} from './flight.validator'
-import { FlightDto } from './dto/flight.dto'
+} from './dto'
 import { DiscountService } from '../discount'
 import { AuthGuard } from '../common'
 import { NationalRegistryService } from '../nationalRegistry'
@@ -84,11 +85,13 @@ export class PublicFlightController {
       params.discountCode,
       discount.nationalId,
     )
-    return this.flightService.create(
+    const newFlight = await this.flightService.create(
       flight,
-      discount.nationalId,
+      user,
       request.airline,
     )
+    newFlight.userInfo = undefined
+    return newFlight
   }
 
   @Get('flights/:flightId')
@@ -152,6 +155,12 @@ export class PrivateFlightController {
   @ApiExcludeEndpoint()
   get(): Promise<Flight[]> {
     return this.flightService.findAll()
+  }
+
+  @Post('flights')
+  @ApiExcludeEndpoint()
+  getFlights(@Body() body: GetFlightsBody | {}): Promise<Flight[]> {
+    return this.flightService.findAllByFilter(body)
   }
 
   @Get('users/:nationalId/flights')

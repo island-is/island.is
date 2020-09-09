@@ -11,6 +11,7 @@ export default {
   },
   airlineApiKeys: {
     icelandair: process.env.ICELANDAIR_API_KEY,
+    norlandair: process.env.ICELANDAIR_API_KEY,
     ernir: process.env.ERNIR_API_KEY,
   },
   redis: {

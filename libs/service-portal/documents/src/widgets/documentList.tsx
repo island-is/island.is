@@ -10,10 +10,14 @@ import { Link } from 'react-router-dom'
 import DocumentCard from '../components/DocumentCard/DocumentCard'
 
 const pageSize = 2
+const dateFrom = new Date('2000-01-01T00:00:00.000')
+const dateTo = new Date()
 
 export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
   const { data, loading, error } = useListDocuments(
     userInfo.user.profile.natreg,
+    dateFrom,
+    dateTo,
     1,
     pageSize,
   )

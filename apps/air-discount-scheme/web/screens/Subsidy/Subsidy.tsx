@@ -55,6 +55,7 @@ const Subsidy: Screen<PropTypes> = ({
       }
       aside={
         <Content
+          type="sidebar"
           document={sidebar}
           wrapper={(children) => <Stack space={3}>{children}</Stack>}
         />

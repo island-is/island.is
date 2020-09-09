@@ -10,6 +10,7 @@ import {
   Input,
   Pagination,
   Option,
+  DatePicker,
 } from '@island.is/island-ui/core'
 import {
   useListDocuments,
@@ -23,23 +24,33 @@ import { ActionCardLoader } from '@island.is/service-portal/core'
 import AnimateHeight from 'react-animate-height'
 import * as styles from './Overview.treat'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
+import { ValueType } from 'react-select'
 
 const defaultCategory = { label: 'Allir flokkar', value: '' }
 const pageSize = 4
+const defaultStartDate = '2000-01-01T00:00:00.000'
+
+type FilterValues = {
+  search: string
+  dateFrom: Date
+  dateTo: Date
+}
 
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
 }) => {
   const [page, setPage] = useState(1)
   const [searchOpen, setSearchOpen] = useState(false)
-  const [filterValue, setFilterValue] = useState({
+  const [filterValue, setFilterValue] = useState<FilterValues>({
     search: '',
-    dateFrom: '',
-    dateTo: '',
+    dateFrom: new Date(defaultStartDate),
+    dateTo: new Date(),
   })
   const [activeCategory, setActiveCategory] = useState<Option>(defaultCategory)
   const { data, loading, error } = useListDocuments(
     userInfo.user.profile.natreg,
+    filterValue.dateFrom,
+    filterValue.dateTo,
     page,
     pageSize,
     activeCategory?.value.toString() || '',
@@ -51,7 +62,7 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     cats?.map((x) => ({
       label: x.name,
       value: x.id,
-    })),
+    })) || [],
   )
 
   const handleExtendSearchClick = () => {
@@ -59,8 +70,8 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
       setSearchOpen(false)
       setFilterValue({
         search: '',
-        dateFrom: '',
-        dateTo: '',
+        dateFrom: new Date(defaultStartDate),
+        dateTo: new Date(),
       })
     } else {
       setSearchOpen(true)
@@ -74,8 +85,21 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     })
   }
 
+  const handleDateFromInput = (value: Date) =>
+    setFilterValue({
+      ...filterValue,
+      dateFrom: value,
+    })
+
+  const handleDateToInput = (value: Date) =>
+    setFilterValue({
+      ...filterValue,
+      dateTo: value,
+    })
+
   const handlePageChange = (page: number) => setPage(page)
-  const handleCategoryChange = (cat: Option) => setActiveCategory(cat)
+  const handleCategoryChange = (cat: ValueType<Option>) =>
+    setActiveCategory(cat as Option)
 
   return (
     <>
@@ -121,32 +145,34 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   borderRadius="large"
                   marginTop={2}
                 >
-                  <Columns space={2} collapseBelow="sm">
-                    <Column>
-                      <Input
-                        name="search"
-                        value={filterValue.search}
-                        onChange={handleInput}
-                        placeholder="Leita í skjölum..."
-                      />
-                    </Column>
-                    <Column width="1/4">
-                      <Input
-                        placeholder="Frá"
-                        name="dateFrom"
-                        value={filterValue.dateFrom}
-                        onChange={handleInput}
-                      />
-                    </Column>
-                    <Column width="1/4">
-                      <Input
-                        placeholder="Til"
-                        name="dateTo"
-                        value={filterValue.dateTo}
-                        onChange={handleInput}
-                      />
-                    </Column>
-                  </Columns>
+                  <Stack space={2}>
+                    <Input
+                      name="search"
+                      value={filterValue.search}
+                      onChange={handleInput}
+                      placeholder="Leita í skjölum... (Óvirkt)"
+                    />
+                    <Columns space={2} collapseBelow="sm">
+                      <Column width="1/2">
+                        <DatePicker
+                          label="Frá"
+                          placeholderText="Veldu dagsetningu"
+                          locale="is"
+                          value={filterValue.dateFrom?.toString() || undefined}
+                          handleChange={handleDateFromInput}
+                        />
+                      </Column>
+                      <Column width="1/2">
+                        <DatePicker
+                          label="Til"
+                          placeholderText="Veldu dagsetningu"
+                          locale="is"
+                          value={filterValue.dateTo?.toString() || undefined}
+                          handleChange={handleDateToInput}
+                        />
+                      </Column>
+                    </Columns>
+                  </Stack>
                 </Box>
               </AnimateHeight>
             </div>

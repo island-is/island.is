@@ -4,6 +4,8 @@ import { theme } from '@island.is/island-ui/theme'
 export const root = style({
   position: 'relative',
   paddingBottom: theme.spacing[1],
+  display: 'inline-block',
+  color: theme.color.blue400,
   '::before': {
     content: "''",
     position: 'absolute',

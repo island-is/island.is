@@ -62,11 +62,11 @@ export const createCase: (
 export const saveCase: (
   caseId: string,
   caseField: string,
-  caseFieldValue: string,
+  caseFieldValue: string | Date,
 ) => Promise<number> = async (
   caseId: string,
   caseField: string,
-  caseFieldValue: string,
+  caseFieldValue: string | Date,
 ) => {
   if (caseId !== '') {
     const propertyChange = JSON.parse(`{"${caseField}": "${caseFieldValue}"}`)

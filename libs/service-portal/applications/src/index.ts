@@ -17,8 +17,13 @@ export const applicationsModule: ServicePortalModule = {
     const applicationRoutes = [
       {
         name: 'Umsóknir',
+        path: ServicePortalPath.UmsoknirRoot,
+        render: () =>
+          lazy(() => import('./screens/ApplicationList/ApplicationList')),
+      },
+      {
+        name: 'Umsóknir',
         path: [
-          ServicePortalPath.UmsoknirRoot,
           ServicePortalPath.UmsoknirNyUmsokn,
           ServicePortalPath.UmsoknirOpnarUmsoknir,
         ],

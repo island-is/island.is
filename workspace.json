@@ -1880,6 +1880,17 @@
             "cwd": "apps/air-discount-scheme/backend"
           }
         },
+        "migrate/undo": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "sequelize-cli db:migrate:undo"
+              }
+            ],
+            "cwd": "apps/air-discount-scheme/backend"
+          }
+        },
         "docker-express": {}
       }
     },

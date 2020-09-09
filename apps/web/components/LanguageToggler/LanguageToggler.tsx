@@ -11,18 +11,6 @@ export const LanguageToggler: FC<{
   const onClick = () => {
     locale(t.otherLanguageCode)
   }
-  const languageButtonText =
-    activeLocale === 'is' ? (
-      <span>
-        <Hidden above="md">EN</Hidden>
-        <Hidden below="lg">English</Hidden>
-      </span>
-    ) : (
-      <span>
-        <Hidden above="md">IS</Hidden>
-        <Hidden below="lg">Íslenska</Hidden>
-      </span>
-    )
 
   const LanguageButton = (
     <Link href={otherLanguageUrl}>

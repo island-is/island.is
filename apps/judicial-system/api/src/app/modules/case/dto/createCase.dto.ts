@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsOptional, IsDate } from 'class-validator'
+import { IsNotEmpty, IsString, IsOptional } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class CreateCaseDto {
@@ -28,12 +28,12 @@ export class CreateCaseDto {
   readonly court: string
 
   @IsOptional()
-  @IsDate()
+  @IsString()
   @ApiPropertyOptional()
   readonly arrestDate: Date
 
   @IsOptional()
-  @IsDate()
+  @IsString()
   @ApiPropertyOptional()
   readonly requestedCourtDate: Date
 }
