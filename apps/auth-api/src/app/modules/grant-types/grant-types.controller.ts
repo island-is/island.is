@@ -10,8 +10,8 @@ import { AuthGuard } from '@nestjs/passport'
 import { GrantTypeService } from './grant-types.service'
 import { GrantType } from './grant-type.model'
 
-  @ApiOAuth2(['openid:profile']) // add OAuth restriction to this controller
-  @UseGuards(AuthGuard('jwt'))
+@ApiOAuth2(['openid:profile'])
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('grants')
 @Controller('grants')
 export class GrantTypeController {
