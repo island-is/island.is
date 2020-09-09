@@ -44,7 +44,7 @@ export const getDictionaryFiles = async (): Promise<Dictionary[]> => {
         return {
           analyzerType,
           locale,
-          file: response.body
+          file: response.body,
         }
       } else {
         // we will filter this from the dictionaries later
@@ -54,7 +54,9 @@ export const getDictionaryFiles = async (): Promise<Dictionary[]> => {
   })
 
   const allDictionaryResponses = await Promise.all(_.flatten(dictionaries))
-  return allDictionaryResponses.filter((response): response is Dictionary => response !== false)
+  return allDictionaryResponses.filter(
+    (response): response is Dictionary => response !== false,
+  )
 }
 
 export const getFakeEsPackages = (): AwsEsPackage[] => {
@@ -63,7 +65,7 @@ export const getFakeEsPackages = (): AwsEsPackage[] => {
     return analyzers.map((analyzer) => ({
       packageId: `${analyzer}.txt`,
       analyzerType: analyzer,
-      locale
+      locale,
     }))
   })
   return _.flatten(fakePackages)

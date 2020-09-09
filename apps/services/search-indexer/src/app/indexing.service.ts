@@ -14,7 +14,7 @@ export class IndexingService {
   constructor(
     private readonly elasticService: ElasticService,
     private readonly contentFulSyncer: Syncer,
-  ) { }
+  ) {}
 
   async indexDocument(index: SearchIndexes, document) {
     return this.elasticService.index(index, document)

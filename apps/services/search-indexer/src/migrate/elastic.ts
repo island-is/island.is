@@ -36,7 +36,9 @@ const getAllIndice = async () => {
   return indice.body
 }
 
-export const getCurrentVersionFromIndices = async (locale: string): Promise<number> => {
+export const getCurrentVersionFromIndices = async (
+  locale: string,
+): Promise<number> => {
   logger.info('Getting index version from elasticsearch indexes', { locale })
   const indice = await getAllIndice()
   const indicePrefix = getIndexBaseName(locale)
@@ -45,7 +47,9 @@ export const getCurrentVersionFromIndices = async (locale: string): Promise<numb
   return indice.reduce((higherstVersion, { index }) => {
     if (index.includes(indicePrefix)) {
       const versionPrefixLocation = index.lastIndexOf('-v') + 2
-      const version = parseInt(index.substring(versionPrefixLocation, index.length))
+      const version = parseInt(
+        index.substring(versionPrefixLocation, index.length),
+      )
       if (version > higherstVersion) {
         return version
       }
@@ -108,7 +112,7 @@ export const getEsTemplate = async (locale: string) => {
   const client = await esService.getClient()
   const templateBody = await client.indices
     .getTemplate<string>({
-      name: templateName
+      name: templateName,
     })
     .then((response) => response.body[templateName])
     .catch((error) => {
@@ -122,29 +126,37 @@ export const getEsTemplate = async (locale: string) => {
   return templateBody
 }
 
-export const updateEsTemplate = async (locale: string, templateBody: string) => {
+export const updateEsTemplate = async (
+  locale: string,
+  templateBody: string,
+) => {
   const templateName = getTemplateName(locale)
   logger.info('Updating template', { templateName })
   const client = await esService.getClient()
-  return client.indices
-    .putTemplate({
-      name: templateName,
-      body: templateBody,
-    })
+  return client.indices.putTemplate({
+    name: templateName,
+    body: templateBody,
+  })
 }
 
-export const updateIndexTemplate = (locale: string, esPackages: AwsEsPackage[]) => {
+export const updateIndexTemplate = (
+  locale: string,
+  esPackages: AwsEsPackage[],
+) => {
   const packageMap = parseEsPackages(esPackages)
   const templateBody = createTemplateBody(locale, packageMap)
   return updateEsTemplate(locale, templateBody)
 }
 
-export const createNewIndexVersion = async (locale: string, version: number) => {
+export const createNewIndexVersion = async (
+  locale: string,
+  version: number,
+) => {
   const newIndexName = getIndexNameForVersion(locale, version)
   logger.info('Creating new index', { newIndexName })
   const client = await esService.getClient()
   await client.indices.create({
-    index: newIndexName
+    index: newIndexName,
   })
   return newIndexName
 }
@@ -152,7 +164,7 @@ export const createNewIndexVersion = async (locale: string, version: number) => 
 const removeIndexName = async (indexName: string) => {
   const client = await esService.getClient()
   await client.indices.delete({
-    index: indexName
+    index: indexName,
   })
   return indexName
 }
@@ -164,10 +176,15 @@ export const removeIndexVersion = (locale: string, version: number) => {
 
 const getExistingIndice = async (indice: string[]): Promise<string[]> => {
   const allIndice = await getAllIndice()
-  return allIndice.filter(({ index }) => indice.includes(index)).map(({ index }) => index)
+  return allIndice
+    .filter(({ index }) => indice.includes(index))
+    .map(({ index }) => index)
 }
 
-export const removeIndexesBelowVersion = async (locale: string, indexVersion: number) => {
+export const removeIndexesBelowVersion = async (
+  locale: string,
+  indexVersion: number,
+) => {
   logger.info('Removing all indice below', { indexVersion })
   const potentialIndice = []
   for (let i = 0; i < indexVersion; i++) {
@@ -184,7 +201,11 @@ export const removeIndexesBelowVersion = async (locale: string, indexVersion: nu
   return true
 }
 
-export const moveOldContentToNewIndex = async (locale: string, newIndexVersion: number, oldIndexVersion: number) => {
+export const moveOldContentToNewIndex = async (
+  locale: string,
+  newIndexVersion: number,
+  oldIndexVersion: number,
+) => {
   // if we found no older index there is nothing to move
   if (oldIndexVersion === 0) {
     return false
@@ -192,7 +213,10 @@ export const moveOldContentToNewIndex = async (locale: string, newIndexVersion: 
   const oldIndexName = getIndexNameForVersion(locale, oldIndexVersion)
   const newIndexName = getIndexNameForVersion(locale, newIndexVersion)
 
-  logger.info('Moving content from old index to new index', { oldIndexName, newIndexName })
+  logger.info('Moving content from old index to new index', {
+    oldIndexName,
+    newIndexName,
+  })
 
   const params = {
     waitForCompletion: true,
@@ -203,7 +227,7 @@ export const moveOldContentToNewIndex = async (locale: string, newIndexVersion: 
       dest: {
         index: newIndexName,
       },
-    }
+    },
   }
   const client = await esService.getClient()
   await client.reindex(params)
@@ -211,8 +235,15 @@ export const moveOldContentToNewIndex = async (locale: string, newIndexVersion: 
   return true
 }
 
-export const moveAliasToNewIndex = async (locale: string, newIndexVersion: number, oldIndexVersion: number) => {
-  logger.info('Moving alias to new version', { newIndexVersion, oldIndexVersion })
+export const moveAliasToNewIndex = async (
+  locale: string,
+  newIndexVersion: number,
+  oldIndexVersion: number,
+) => {
+  logger.info('Moving alias to new version', {
+    newIndexVersion,
+    oldIndexVersion,
+  })
   const aliasName = getIndexBaseName(locale)
   const oldIndexName = getIndexNameForVersion(locale, oldIndexVersion)
   const newIndexName = getIndexNameForVersion(locale, newIndexVersion)

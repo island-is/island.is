@@ -16,7 +16,11 @@ const sleep = (sec: number) => {
 }
 
 // construct the name used for packages in AWS ES
-const createPackageName = (locale: string, analyzerType: string, version: string) => {
+const createPackageName = (
+  locale: string,
+  analyzerType: string,
+  version: string,
+) => {
   return `${locale}-${analyzerType}-${version}-test1`
 }
 
@@ -26,7 +30,7 @@ const parsePackageName = (packageName: string) => {
   return {
     locale,
     analyzerType,
-    version
+    version,
   }
 }
 
@@ -35,7 +39,9 @@ interface PackageStatus {
   domainStatus: string
 }
 
-const getPackageStatuses = async (packageId: string): Promise<PackageStatus> => {
+const getPackageStatuses = async (
+  packageId: string,
+): Promise<PackageStatus> => {
   const params = {
     Filters: [
       {
@@ -44,9 +50,7 @@ const getPackageStatuses = async (packageId: string): Promise<PackageStatus> => 
       },
     ],
   }
-  const packages = await awsEs
-    .describePackages(params)
-    .promise()
+  const packages = await awsEs.describePackages(params).promise()
 
   const domainPackageList = await awsEs
     .listPackagesForDomain({
@@ -54,11 +58,13 @@ const getPackageStatuses = async (packageId: string): Promise<PackageStatus> => 
     })
     .promise()
 
-  const foundPackage = domainPackageList.DomainPackageDetailsList.find((listItem) => listItem.PackageID === packageId)
+  const foundPackage = domainPackageList.DomainPackageDetailsList.find(
+    (listItem) => listItem.PackageID === packageId,
+  )
 
   return {
     packageStatus: packages.PackageDetailsList[0].PackageStatus,
-    domainStatus: foundPackage?.DomainPackageStatus ?? 'DISSOCIATED'
+    domainStatus: foundPackage?.DomainPackageStatus ?? 'DISSOCIATED',
   }
 }
 
@@ -73,7 +79,7 @@ export const getAllDomainEsPackages = async (): Promise<AwsEsPackage[]> => {
     return {
       packageId: esPackage.PackageID,
       locale,
-      analyzerType
+      analyzerType,
     }
   })
 }
@@ -82,7 +88,7 @@ export const getAllDomainEsPackages = async (): Promise<AwsEsPackage[]> => {
 const waitForPackageStatus = async (
   packageId: string,
   desiredStatus: string,
-  totalSecondsWaited = 0
+  totalSecondsWaited = 0,
 ) => {
   const secondsBetweenRequests = 5
   const timeoutSeconds = 300
@@ -103,7 +109,7 @@ const waitForPackageStatus = async (
     currentPackageStatus: packageStatus,
     currentDomainStatus: domainStatus,
     secondsBetweenRequests,
-    totalSecondsWaited
+    totalSecondsWaited,
   })
 
   // wait X seconds to make next status request
@@ -112,13 +118,15 @@ const waitForPackageStatus = async (
   return await waitForPackageStatus(
     packageId,
     desiredStatus,
-    totalSecondsWaited = totalSecondsWaited + secondsBetweenRequests
+    (totalSecondsWaited = totalSecondsWaited + secondsBetweenRequests),
   )
 }
 
 // checks connection and valdiates that we have access to requested domain
 export const checkAWSAccess = async (): Promise<boolean> => {
-  const domains = await awsEs.listDomainNames().promise()
+  const domains = await awsEs
+    .listDomainNames()
+    .promise()
     .then((domains) => domains.DomainNames)
     .catch((error) => {
       logger.error('Failed to check aws access', { error })
@@ -140,13 +148,14 @@ const createS3Key = (type: string, prefix = ''): string => {
 export const getDictionaryVersion = (): Promise<string> => {
   const params = {
     Bucket: environment.migrate.s3Bucket,
-    Key: createS3Key('dictionaryVersion')
+    Key: createS3Key('dictionaryVersion'),
   }
 
   // we don't want to stop here even if file is not found
-  return s3.getObject(params)
+  return s3
+    .getObject(params)
     .promise()
-    .then(data => data.Body.toString())
+    .then((data) => data.Body.toString())
     .catch((error) => {
       logger.error('Version file not found', { error })
       // return empty string to indicate no version set
@@ -157,27 +166,35 @@ export const getDictionaryVersion = (): Promise<string> => {
 const uploadFileToS3 = (options: Omit<PutObjectRequest, 'Bucket'>) => {
   const params = {
     Bucket: environment.migrate.s3Bucket,
-    ...options
+    ...options,
   }
-  logger.info('Uploading file to s3', { Bucket: params.Bucket, Key: params.Key })
-  return s3.upload(params).promise().catch((error) => {
-    logger.error('Failed to upload s3 package', error)
-    throw error
+  logger.info('Uploading file to s3', {
+    Bucket: params.Bucket,
+    Key: params.Key,
   })
+  return s3
+    .upload(params)
+    .promise()
+    .catch((error) => {
+      logger.error('Failed to upload s3 package', error)
+      throw error
+    })
 }
 
 interface S3DictionaryFile {
   locale: string
   analyzerType: string
 }
-export const updateS3DictionaryFiles = async (dictionaries: Dictionary[]): Promise<S3DictionaryFile[]> => {
+export const updateS3DictionaryFiles = async (
+  dictionaries: Dictionary[],
+): Promise<S3DictionaryFile[]> => {
   const uploads = dictionaries.map(async (dictionary) => {
     const { analyzerType, locale, file } = dictionary
     const s3Key = createS3Key(analyzerType, locale)
     await uploadFileToS3({ Key: s3Key, Body: file })
     return {
       locale,
-      analyzerType
+      analyzerType,
     }
   })
 
@@ -186,14 +203,15 @@ export const updateS3DictionaryFiles = async (dictionaries: Dictionary[]): Promi
 
 const getAwsEsPackagesDetails = async () => {
   logger.info('Getting all AWS ES packages')
-  const packages = await awsEs
-    .describePackages()
-    .promise()
+  const packages = await awsEs.describePackages().promise()
 
   return packages.PackageDetailsList
 }
 
-const removePackagesIfExist = async (uploadedDictionaryFiles: S3DictionaryFile[], version: string) => {
+const removePackagesIfExist = async (
+  uploadedDictionaryFiles: S3DictionaryFile[],
+  version: string,
+) => {
   const esPackages = await getAwsEsPackagesDetails()
 
   logger.info('Checking if we have conflicting packages')
@@ -201,12 +219,17 @@ const removePackagesIfExist = async (uploadedDictionaryFiles: S3DictionaryFile[]
   const responses = uploadedDictionaryFiles.map(async (uploadedFile) => {
     const { analyzerType, locale } = uploadedFile
     const packageName = createPackageName(locale, analyzerType, version)
-    const existingPackage = esPackages.find((esPackage) => esPackage.PackageName === packageName)
+    const existingPackage = esPackages.find(
+      (esPackage) => esPackage.PackageName === packageName,
+    )
 
     if (existingPackage) {
-      logger.info('Found conflicting AWS ES package, removing existing package to prevent conflict', { existingPackage, packageName })
+      logger.info(
+        'Found conflicting AWS ES package, removing existing package to prevent conflict',
+        { existingPackage, packageName },
+      )
       const params = {
-        PackageID: existingPackage.PackageID
+        PackageID: existingPackage.PackageID,
       }
 
       // this package should never be in use so we can delete it
@@ -231,7 +254,10 @@ export interface AwsEsPackage {
   locale: string
   analyzerType: string
 }
-export const createAwsEsPackages = async (uploadedDictionaryFiles: S3DictionaryFile[], version: string): Promise<AwsEsPackage[]> => {
+export const createAwsEsPackages = async (
+  uploadedDictionaryFiles: S3DictionaryFile[],
+  version: string,
+): Promise<AwsEsPackage[]> => {
   // this handles failed updates, if everything works this should never remove packages
   await removePackagesIfExist(uploadedDictionaryFiles, version) // TODO: Get access for this in AWS ES
 
@@ -250,22 +276,17 @@ export const createAwsEsPackages = async (uploadedDictionaryFiles: S3DictionaryF
 
     logger.info('Creating AWS ES package', params)
 
-    const esPackage = await awsEs
-      .createPackage(params)
-      .promise()
+    const esPackage = await awsEs.createPackage(params).promise()
 
     // we have to wait for package to be ready cause AWS ES can only process one request at a time
-    await waitForPackageStatus(
-      esPackage.PackageDetails.PackageID,
-      'AVAILABLE'
-    )
+    await waitForPackageStatus(esPackage.PackageDetails.PackageID, 'AVAILABLE')
 
     logger.info('Created AWS ES package', { esPackage })
 
     return {
       packageId: esPackage.PackageDetails.PackageID,
       locale,
-      analyzerType
+      analyzerType,
     }
   })
 
@@ -286,7 +307,7 @@ export const associatePackagesWithAwsEs = async (packages: AwsEsPackage[]) => {
     // we have to wait for package to be ready cause AWS ES can only process one request at a time
     await waitForPackageStatus(
       esPackage.DomainPackageDetails.PackageID,
-      'ACTIVE'
+      'ACTIVE',
     )
   }
 
@@ -294,23 +315,41 @@ export const associatePackagesWithAwsEs = async (packages: AwsEsPackage[]) => {
   return true
 }
 
-export const getUnusedEsPackages = async (inuseEsPackages: AwsEsPackage[]): Promise<string[]> => {
+export const getUnusedEsPackages = async (
+  inuseEsPackages: AwsEsPackage[],
+): Promise<string[]> => {
   const allAwsEsPackages = await getAwsEsPackagesDetails()
-  const allAwsEsPackageIds = allAwsEsPackages.map((awsEsPackage) => awsEsPackage.PackageID)
-  const inUseEsPackageIds = inuseEsPackages.map((inUseEsPackage) => inUseEsPackage.packageId)
+  const allAwsEsPackageIds = allAwsEsPackages.map(
+    (awsEsPackage) => awsEsPackage.PackageID,
+  )
+  const inUseEsPackageIds = inuseEsPackages.map(
+    (inUseEsPackage) => inUseEsPackage.packageId,
+  )
 
   // we remove packages that are in use from allAwsEsPackageIds and return
-  return allAwsEsPackageIds.filter((awsEsPackageId) => !inUseEsPackageIds.includes(awsEsPackageId))
+  return allAwsEsPackageIds.filter(
+    (awsEsPackageId) => !inUseEsPackageIds.includes(awsEsPackageId),
+  )
 }
 
-export const getUnusedAwsEsPackages = async (inuseEsPackages: AwsEsPackage[]): Promise<string[]> => {
+export const getUnusedAwsEsPackages = async (
+  inuseEsPackages: AwsEsPackage[],
+): Promise<string[]> => {
   const allAwsEsDomainPackages = await getAllDomainEsPackages()
-  const inuseEsPackageIds = inuseEsPackages.map((esPackage) => esPackage.packageId)
-  const inuseAwsEsPackageIds = allAwsEsDomainPackages.map((awsEsPackage) => awsEsPackage.packageId)
-  return inuseAwsEsPackageIds.filter((awsEsDomainPackageId) => !inuseEsPackageIds.includes(awsEsDomainPackageId))
+  const inuseEsPackageIds = inuseEsPackages.map(
+    (esPackage) => esPackage.packageId,
+  )
+  const inuseAwsEsPackageIds = allAwsEsDomainPackages.map(
+    (awsEsPackage) => awsEsPackage.packageId,
+  )
+  return inuseAwsEsPackageIds.filter(
+    (awsEsDomainPackageId) => !inuseEsPackageIds.includes(awsEsDomainPackageId),
+  )
 }
 
-export const disassociateUnusedPackagesFromAwsEs = async (inuseEsPackages: AwsEsPackage[]) => {
+export const disassociateUnusedPackagesFromAwsEs = async (
+  inuseEsPackages: AwsEsPackage[],
+) => {
   logger.info('Disassociating old packages from AWS ES')
   const packagesToRemove = await getUnusedAwsEsPackages(inuseEsPackages)
   for (const esAwsPackageId of packagesToRemove) {
@@ -322,22 +361,21 @@ export const disassociateUnusedPackagesFromAwsEs = async (inuseEsPackages: AwsEs
     await awsEs.dissociatePackage(params).promise()
 
     // we have to wait for package to be ready cause AWS ES can only process one request at a time
-    await waitForPackageStatus(
-      esAwsPackageId,
-      'DISSOCIATED'
-    )
+    await waitForPackageStatus(esAwsPackageId, 'DISSOCIATED')
   }
   logger.info('Disassociated all old packages')
   return true
 }
 
-export const deleteUnusedPackagesFromAwsEs = async (inuseEsPackages: AwsEsPackage[]) => {
+export const deleteUnusedPackagesFromAwsEs = async (
+  inuseEsPackages: AwsEsPackage[],
+) => {
   logger.info('Deleting old packages from AWS ES')
   const unusedEsPackageIds = await getUnusedEsPackages(inuseEsPackages)
   unusedEsPackageIds.map((esPackageId) => {
     logger.info('Deleting package', { packageId: esPackageId })
     const params = {
-      PackageID: esPackageId
+      PackageID: esPackageId,
     }
 
     return awsEs.deletePackage(params).promise()
@@ -352,5 +390,7 @@ export const updateDictionaryVersion = async (newDictionaryVersion: string) => {
     Body: newDictionaryVersion,
   }
   await uploadFileToS3(params)
-  logger.info('Updated dictionary version to', { version: newDictionaryVersion })
+  logger.info('Updated dictionary version to', {
+    version: newDictionaryVersion,
+  })
 }
