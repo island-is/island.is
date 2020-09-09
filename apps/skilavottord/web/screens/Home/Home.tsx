@@ -18,7 +18,7 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 import { useRouter } from 'next/router'
 
-export const Home: FC = () => {
+const Home: FC = () => {
   const Router = useRouter()
   const { activeLocale, t: { home: t } } = useI18n()
   const { makePath } = useRouteNames(activeLocale)

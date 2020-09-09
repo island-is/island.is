@@ -1,5 +1,34 @@
 {
   "home": {
     "title": "Recycle your car"
+  },
+  "myCars": {
+    "title": "Recycle your car",
+    "subTitles": {
+      "pending": "Pending recycle",
+      "active": "Your cars",
+      "done": "Recycled cars"
+    },
+    "actions": {
+      "recycle": "Recycle car",
+      "loan": "Cannot be recycled as car still has loans"
+    },
+    "status": {
+      "coOwned": "Co-owned"
+    }
+  },
+  "confirm": {
+    "title": "Confirm car",
+    "subTitles": {
+      "confirm": "Do you want select this car for recycling?"
+    },
+    "info": "Adding your car for recycling which will allow you to recycle it at any of our connected recycling companies. This is not binding and the car will only be recyled if you hand over the car to a recycling company.",
+    "buttons": {
+      "cancel": "Cancel",
+      "sign": "Login again to sign"
+    },
+    "checkbox": {
+      "label": "I agree to the Terms and conditions"
+    }
   }
 }

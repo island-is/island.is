@@ -14,17 +14,14 @@ import {
   GridColumn,
   GridRow,
 } from '@island.is/island-ui/core'
-import { LanguageToggler } from '../LanguageToggler'
+
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
-
-interface HeaderProps {
-  showSearchInHeader?: boolean
-}
+import { LanguageToggler } from '../'
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
 
-export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
+export const Header: FC = () => {
   const Router = useRouter()
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale)

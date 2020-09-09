@@ -9,6 +9,7 @@ import {
   GridColumn,
   Stack,
 } from '@island.is/island-ui/core'
+import OutlinedBox from '@island.is/skilavottord-web/components/OutlinedBox/OutlinedBox'
 
 //TODO: Move to graphql schema (see air-discount-scheme)
 type Car = {
@@ -30,21 +31,19 @@ export const ActionCard: FC<ActionCardProps> = ({
   car: { id, brand, model, year, status, hasCoOwner = false },
 }: ActionCardProps) => {
   return (
-    <Box className={styles.container}>
+    <OutlinedBox backgroundColor="white">
       <GridContainer>
         <GridRow>
           <GridColumn span={hasCoOwner ? '7/12' : '9/12'}>
             <Box padding={4}>
-              <Box>
-                <Stack space={1}>
-                  <Typography variant="h5" color="blue400">
-                    {id}
-                  </Typography>
-                  <Typography variant="p">
-                    {`${brand} ${model}, ${year}`}
-                  </Typography>
-                </Stack>
-              </Box>
+              <Stack space={1}>
+                <Typography variant="h5" color="blue400">
+                  {id}
+                </Typography>
+                <Typography variant="p">
+                  {`${brand} ${model}, ${year}`}
+                </Typography>
+              </Stack>
             </Box>
           </GridColumn>
           {hasCoOwner && (
@@ -57,7 +56,7 @@ export const ActionCard: FC<ActionCardProps> = ({
           <GridColumn span="3/12">
             {status === 'enabled' ? (
               <ColumnBox
-                className={`${styles.rightContainer} ${styles.enabled}`}
+                className={`${styles.rightContainer} ${styles.buttonContainer}`}
                 width="full"
                 textAlign="center"
               >
@@ -67,7 +66,7 @@ export const ActionCard: FC<ActionCardProps> = ({
               </ColumnBox>
             ) : (
               <ColumnBox
-                className={`${styles.rightContainer} ${styles.disabled}`}
+                className={`${styles.rightContainer} ${styles.textContainer}`}
                 padding={4}
                 width="full"
                 textAlign="center"
@@ -80,7 +79,7 @@ export const ActionCard: FC<ActionCardProps> = ({
           </GridColumn>
         </GridRow>
       </GridContainer>
-    </Box>
+    </OutlinedBox>
   )
 }
 

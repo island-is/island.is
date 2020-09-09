@@ -4,17 +4,20 @@ import { Box, Stack, Typography, Breadcrumbs } from '@island.is/island-ui/core'
 import { PageLayout } from '../Layouts'
 import { ActionCard, ProgressCard } from './components'
 import { useRouter } from 'next/router'
-import { useI18n } from '@island.is/skilavottord-web/i18n'
+
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 
 import { cars } from './cars.json'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 
-const CarsOverView: FC = () => {
+const Overview: FC = () => {
   const Router = useRouter()
+  const { makePath } = useRouteNames();
+  const { t: { myCars: t } } = useI18n();
 
   const onClick = (id) => {
     Router.push({
-      pathname: `/${id}`,
+      pathname: makePath('myCars', id)
     })
   }
 
@@ -26,15 +29,15 @@ const CarsOverView: FC = () => {
             <a>Ísland.is</a>
           </Link>
           <span>Content information</span>
-          <span>Recycle your car</span>
+          <span>{t.title}</span>
         </Breadcrumbs>
       </Box>
       <Box paddingBottom={4}>
-        <Typography variant="h1">Recycle your car</Typography>
+        <Typography variant="h1">{t.title}</Typography>
       </Box>
       <Box paddingBottom={10}>
         <Stack space={[2, 2]}>
-          <Typography variant="h3">Pending recycling</Typography>
+          <Typography variant="h3">{t.subTitles.pending}</Typography>
           {cars
             .filter((car) => {
               if (car.status === 'pending') {
@@ -52,7 +55,7 @@ const CarsOverView: FC = () => {
       </Box>
       <Box paddingBottom={10}>
         <Stack space={[2, 2]}>
-          <Typography variant="h3">Your cars</Typography>
+          <Typography variant="h3">{t.subTitles.active}</Typography>
           {cars
             .filter((car) => {
               if (car.status === 'enabled' || car.status === 'disabled') {
@@ -70,7 +73,7 @@ const CarsOverView: FC = () => {
       </Box>
       <Box paddingBottom={10}>
         <Stack space={[2, 2]}>
-          <Typography variant="h3">Recycled cars</Typography>
+          <Typography variant="h3">{t.subTitles.done}</Typography>
           {cars
             .filter((car) => {
               if (car.status === 'recycled') {
@@ -86,4 +89,4 @@ const CarsOverView: FC = () => {
   )
 }
 
-export default CarsOverView
+export default Overview

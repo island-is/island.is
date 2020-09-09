@@ -9,10 +9,55 @@
 
 export interface Translation {
   home: Home
+  myCars: MyCars
+  confirm: Confirm
 }
 
 export interface Home {
   title: string
+}
+
+export interface MyCars {
+  title: string
+  subTitles: MyCarsSubtitles
+  actions: MyCarsActions
+  status: CarSttaus
+}
+
+export interface Confirm {
+  title: string
+  subTitles: ConfirmSubTitles
+  info: string
+  buttons: ConfirmButtons
+  checkbox: CheckBox
+}
+
+export interface MyCarsSubtitles {
+  pending: string
+  active: string
+  done: string
+}
+
+export interface CarActions {
+  recycle: string
+  loan: string
+}
+
+export interface CarStatus {
+  coOwned: string
+}
+
+export interface ConfirmSubTitles {
+  confirm: string
+}
+
+export interface ConfirmButtons {
+  cancel: string
+  sign: string
+}
+
+export interface CheckBox {
+  label: string
 }
 
 // Converts JSON strings to/from your types

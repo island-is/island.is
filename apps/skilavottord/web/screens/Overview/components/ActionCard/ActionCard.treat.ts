@@ -1,15 +1,6 @@
 import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
-export const container = style({
-  width: '100%',
-  backgroundColor: theme.color.white,
-  borderStyle: 'solid',
-  borderWidth: 1,
-  borderRadius: theme.border.radius.large,
-  borderColor: theme.color.blue200,
-})
-
 export const rightContainer = style({
   backgroundColor: theme.color.blue100,
   borderTopRightRadius: theme.border.radius.large,
@@ -18,12 +9,12 @@ export const rightContainer = style({
   borderBottomLeftRadius: theme.border.radius.large
 })
 
-export const enabled = style({
+export const buttonContainer = style({
   backgroundColor: theme.color.blue100,
   color: theme.color.white,
 })
 
-export const disabled = style({
+export const textContainer = style({
   backgroundColor: theme.color.white,
   borderColor: theme.color.blue200,
   borderLeftWidth: 1,
