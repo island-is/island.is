@@ -27,10 +27,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   validate(req: Request, { csrfToken, user }: Credentials) {
-    // if (csrfToken && `Bearer ${csrfToken}` !== req.headers['authorization']) {
-    //   this.logger.error('invalid csrf token')
-    //   return null
-    // }
+    if (csrfToken && `Bearer ${csrfToken}` !== req.headers['authorization']) {
+      this.logger.error('invalid csrf token')
+      return null
+    }
 
     return user
   }
