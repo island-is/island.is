@@ -16,7 +16,7 @@ type SentryInterceptorOptions = {
 export class SentryInterceptor implements NestInterceptor {
   options: SentryInterceptorOptions
 
-  constructor(options: SentryInterceptorOptions) {
+  constructor(options?: SentryInterceptorOptions) {
     this.options = options
   }
 
