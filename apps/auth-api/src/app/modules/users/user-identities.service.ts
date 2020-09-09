@@ -46,6 +46,8 @@ export class UserIdentitiesService {
     })
   }
 
+  // private async findExistingProfile()
+
   async findByProviderSubjectId(provider: string, subjectId: string): Promise<UserIdentity> {
     this.logger.debug(`Finding user identity for provider "$(provider)" and subjectId - "${subjectId}"`)
     return this.userIdentityModel.findOne({
