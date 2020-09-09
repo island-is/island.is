@@ -5,6 +5,8 @@ export const root = style({
   bottom: 0,
   display: 'flex',
   flexDirection: 'column',
+  position: 'fixed',
+  zIndex: 9,
   left: 0,
   margin: '0 auto',
   right: 0,

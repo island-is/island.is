@@ -1,9 +1,12 @@
-import React, { useState } from 'react'
-import { useMeasure, useWindowSize } from 'react-use'
+import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
+import { useWindowSize } from 'react-use'
 import cn from 'classnames'
 import ToggleButton from './components/ToggleButton/ToggleButton'
 import { Typography, Box, Link } from '@island.is/island-ui/core'
 import * as styles from './DrawerMenu.treat'
+import { STICKY_NAV_HEIGHT } from '@island.is/web/constants'
+import { theme } from '@island.is/island-ui/theme'
 
 type CategoryItem = {
   title: string
@@ -22,10 +25,10 @@ interface DrawerMenuProps {
 interface DrawerMenuCategoryProps extends Category {
   main?: boolean
   onClick?: () => void
-  isExpanded?: boolean
+  isOpen?: boolean
 }
 
-const MainCategoryHeader = ({ title, onClick, isExpanded }) => (
+const MainCategoryHeader = ({ title, onClick, isOpen }) => (
   <Box
     display="flex"
     component="button"
@@ -40,7 +43,7 @@ const MainCategoryHeader = ({ title, onClick, isExpanded }) => (
     onClick={onClick}
   >
     <Typography variant="h4">{title}</Typography>
-    <ToggleButton isActive={isExpanded} onClick={onClick} />
+    <ToggleButton isActive={isOpen} onClick={onClick} />
   </Box>
 )
 
@@ -49,7 +52,7 @@ const DrawerMenuCategory: React.FC<DrawerMenuCategoryProps> = ({
   title,
   items,
   onClick,
-  isExpanded,
+  isOpen,
 }) => (
   <Box
     className={styles.category}
@@ -58,11 +61,7 @@ const DrawerMenuCategory: React.FC<DrawerMenuCategoryProps> = ({
     borderRadius="large"
   >
     {main ? (
-      <MainCategoryHeader
-        title={title}
-        onClick={onClick}
-        isExpanded={isExpanded}
-      />
+      <MainCategoryHeader title={title} onClick={onClick} isOpen={isOpen} />
     ) : (
       <Box
         display="flex"
@@ -89,13 +88,34 @@ const DrawerMenuCategory: React.FC<DrawerMenuCategoryProps> = ({
 )
 
 const DRAWER_HEADING_HEIGHT = 77
-const DRAWER_EXPANDED_PADDING_TOP = 44
+const DRAWER_EXPANDED_PADDING_TOP = STICKY_NAV_HEIGHT + theme.spacing[4]
 
 const DrawerMenu: React.FC<DrawerMenuProps> = ({ categories }) => {
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isOpen, setOpen] = useState(false)
   const { height: viewportHeight } = useWindowSize()
   const [mainCategory, ...rest] = categories
   const offsetY = viewportHeight - DRAWER_HEADING_HEIGHT
+  const router = useRouter()
+
+  if (viewportHeight === Infinity) {
+    // We're on the server, try again later.
+    return null
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
+
+  // Close on route change
+  useEffect(() => {
+    router.events.on('routeChangeStart', handleClose)
+    router.events.on('hashChangeStart', handleClose)
+
+    return () => {
+      router.events.off('routeChangeStart', handleClose)
+      router.events.off('hashChangeStart', handleClose)
+    }
+  }, [])
 
   return (
     <div
@@ -103,18 +123,17 @@ const DrawerMenu: React.FC<DrawerMenuProps> = ({ categories }) => {
       style={{
         top: offsetY,
         transform: `translateY(${
-          isExpanded ? `${-offsetY + DRAWER_EXPANDED_PADDING_TOP}px` : 0
+          isOpen ? `${-offsetY + DRAWER_EXPANDED_PADDING_TOP}px` : 0
         })`,
         minHeight: viewportHeight - DRAWER_EXPANDED_PADDING_TOP,
-        position: isExpanded ? 'absolute' : 'fixed',
       }}
     >
       <DrawerMenuCategory
         main
         title={mainCategory.title}
         items={mainCategory.items}
-        onClick={() => setIsExpanded(!isExpanded)}
-        isExpanded={isExpanded}
+        onClick={() => setOpen(!isOpen)}
+        isOpen={isOpen}
       />
       {rest.map((category) => (
         <DrawerMenuCategory

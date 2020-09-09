@@ -21,6 +21,7 @@ globalStyle('body, h1, h2, h3, h4, h5, h6, p, ol, ul, blockquote', {
   fontWeight: 'normal',
   fontFamily: theme.typography.fontFamily,
   color: theme.color.dark400,
+  scrollMarginTop: 64,
 })
 
 globalStyle('strong', {
