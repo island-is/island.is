@@ -38,7 +38,6 @@ type ScreenProps = {
 
 const Screen: FC<ScreenProps> = ({
   formValue,
-  formTypeId,
   addExternalData,
   answerQuestions,
   dataSchema,
@@ -110,6 +109,7 @@ const Screen: FC<ScreenProps> = ({
         key={screen.id}
         height="full"
         onSubmit={handleSubmit(onSubmit)}
+        style={{ minHeight: '65vh' }}
       >
         <Box flexGrow={1}>
           {section && <Typography color="dark300">{section.name}</Typography>}

@@ -10,6 +10,8 @@ import { BulletList, Box, Typography } from '@island.is/island-ui/core'
 import SectionNumber from './components/SectionNumber'
 import SubSectionItem from './components/SubSectionItem'
 
+import * as styles from './FormProgressSection.treat'
+
 const SubSections: FC<{
   isActive: boolean
   subSections: SubSection[]
@@ -30,17 +32,16 @@ const SubSections: FC<{
 
   return (
     <Box
+      className={styles.subSectionContainer}
       style={{
-        transition: 'height .5s ease-in-out',
         height: containerHeight,
-        overflowY: 'hidden',
       }}
     >
       <Box
         ref={containerRef}
+        className={styles.subSectionInnerContainer}
         style={{
           opacity: isActive ? 1 : 0,
-          transition: 'opacity .3s ease-in-out',
         }}
       >
         <BulletList>
