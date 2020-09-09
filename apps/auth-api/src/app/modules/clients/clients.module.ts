@@ -12,7 +12,19 @@ import { ClientSecret } from './models/client-secret.model'
 import { ClientGrantType } from './models/client-grant-type.model'
 
 @Module({
-  imports: [SequelizeModule.forFeature([Client, ClientAllowedScope, ClientAllowedCorsOrigin, ClientPostLogoutRedirectUri, ClientRedirectUri, ClientIdpRestrictions, ClientSecret, ClientPostLogoutRedirectUri, ClientGrantType])],
+  imports: [
+    SequelizeModule.forFeature([
+      Client,
+      ClientAllowedScope,
+      ClientAllowedCorsOrigin,
+      ClientPostLogoutRedirectUri,
+      ClientRedirectUri,
+      ClientIdpRestrictions,
+      ClientSecret,
+      ClientPostLogoutRedirectUri,
+      ClientGrantType,
+    ]),
+  ],
   controllers: [ClientsController],
   providers: [ClientsService],
 })

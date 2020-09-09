@@ -75,7 +75,7 @@ export class GrantsService {
     })
   }
 
-  async storeAsync(grant: Grant): Promise<Grant> {
+  async createAsync(grant: Grant): Promise<Grant> {
     this.logger.debug(`Creating a new grant`)
 
     return await this.grantModel.create(grant)

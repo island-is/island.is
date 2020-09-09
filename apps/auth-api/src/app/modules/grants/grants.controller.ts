@@ -72,9 +72,9 @@ export class GrantsController {
     return await this.grantsService.removeAsync(key)
   }
 
-  @Post()
-  @ApiOkResponse({ type: Grant })
-  async store(@Body() grant: Grant): Promise<Grant> {
-    return await this.grantsService.storeAsync(grant)
-  }
+  // @Post()
+  // @ApiCreatedResponse({ type: Grant })
+  // async create(@Body() grant: Grant): Promise<Grant> {
+  //   return await this.grantsService.createAsync(grant)
+  // }
 }
