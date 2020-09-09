@@ -28,13 +28,15 @@ export class UserIdentitiesService {
       `Creating user identity with subjectIdId - ${userIdentity.subjectId}`,
     )
     this.applicationsRegistered.labels('res1').inc()
+
+    userIdentity.profileId = await this.findLinkableProfileId(userIdentity);
+
     try {
-      // TODO: Attach existing profile if exists and is appropriate (based on provider trust)
       return this.sequelize.transaction(t => {
         return this.userIdentityModel.create(userIdentity, {include: [Claim], transaction: t})
       })
     } catch {
-      // rollbacked
+      this.logger.warn('Error when executing transaction, rollbacked.');
     }
   }
 
@@ -46,10 +48,28 @@ export class UserIdentitiesService {
     })
   }
 
-  // private async findExistingProfile()
+  private async findLinkableProfileId(userIdentity: UserIdentityDto) : Promise<string> {
+    // For now we assume that if an identity exists with a 'natreg' claim, we want
+    // to link that its profile to the new identity.
+    // TODO: Also check 'nat' claim.
+    // TODO: We may want to consider which external providers were used, and only allow
+    // profile linking for providers with a certain trust level.
+    const natreg = userIdentity.claims.find(c => c.type == 'natreg') // TODO: Claim name in environment?
+
+    if (natreg) {
+        const linkedIdentity = await this.userIdentityModel.findOne({
+          include: [{
+            model: Claim,
+            where: { type: 'natreg', value: natreg.value} // TODO: Claim name in environment?
+          }]
+        })
+
+        return linkedIdentity.profileId;
+    }
+  }
 
   async findByProviderSubjectId(provider: string, subjectId: string): Promise<UserIdentity> {
-    this.logger.debug(`Finding user identity for provider "$(provider)" and subjectId - "${subjectId}"`)
+    this.logger.debug(`Finding user identity for provider "${provider}" and subjectId - "${subjectId}"`)
     return this.userIdentityModel.findOne({
       where: { providerName: provider, providerSubjectId: subjectId },
       include: [Claim]
