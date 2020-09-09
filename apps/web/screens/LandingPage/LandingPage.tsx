@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import slugify from '@sindresorhus/slugify'
-import { Hyperlink, Image, Content } from '@island.is/island-ui/contentful'
+import { Hyperlink, Image, RichTextV2 } from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
 import { GET_LANDING_PAGE_QUERY } from '../queries'
 import { CustomNextError } from '../../units/ErrorBoundary'
@@ -22,6 +22,7 @@ import useRouteNames from '../../i18n/useRouteNames'
 import {
   QueryGetLandingPageArgs,
   GetLandingPageQuery,
+  Slice,
 } from '../../graphql/schema'
 
 export interface LandingPageProps {
@@ -86,7 +87,8 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
             </Stack>
           </ContentBlock>
         </Box>
-        <Content document={page.content} />
+
+        <RichTextV2 slices={page.content as Slice[]} />
       </ArticleLayout>
     </>
   )

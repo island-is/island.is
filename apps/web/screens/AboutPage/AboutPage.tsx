@@ -44,7 +44,7 @@ import {
 } from '../../graphql/schema'
 
 /**
- * TODO: temporary? Both fragments Image and EmbeddedVideo aren't used inside
+ * TODO: Both fragments Image and EmbeddedVideo aren't used inside
  * queries, so no fields are retrieve, which mean `id` is undefined
  */
 type AvailableSlices = Exclude<
