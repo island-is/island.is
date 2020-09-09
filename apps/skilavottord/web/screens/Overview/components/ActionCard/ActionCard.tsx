@@ -34,7 +34,7 @@ export const ActionCard: FC<ActionCardProps> = ({
     <OutlinedBox backgroundColor="white">
       <GridContainer>
         <GridRow>
-          <GridColumn span={hasCoOwner ? '7/12' : '9/12'}>
+          <GridColumn span={hasCoOwner ? '5/10' : '7/10'}>
             <Box padding={4}>
               <Stack space={1}>
                 <Typography variant="h5" color="blue400">
@@ -47,13 +47,13 @@ export const ActionCard: FC<ActionCardProps> = ({
             </Box>
           </GridColumn>
           {hasCoOwner && (
-            <GridColumn span="2/12">
+            <GridColumn span="2/10">
               <ColumnBox width="full">
                 <Typography variant="h5">Co-owned</Typography>
               </ColumnBox>
             </GridColumn>
           )}
-          <GridColumn span="3/12">
+          <GridColumn span="3/10">
             {status === 'enabled' ? (
               <ColumnBox
                 className={`${styles.rightContainer} ${styles.buttonContainer}`}

@@ -12,14 +12,14 @@ interface PageProps {
 }
 
 export const PageLayout: FC<PageProps> = ({ children }) => (
-  <GridContainer>
-    <Box padding={10}>
+  <Box paddingY={10}>
+    <GridContainer>
       <GridRow>
-        <GridColumn span="8/12">
+        <GridColumn span="7/12" offset="1/12">
           <Box>{children}</Box>
         </GridColumn>
-        <GridColumn span="4/12"></GridColumn>
+        <GridColumn span="3/12" offset="1/12"></GridColumn>
       </GridRow>
-    </Box>
-  </GridContainer>
+    </GridContainer>
+  </Box>
 )

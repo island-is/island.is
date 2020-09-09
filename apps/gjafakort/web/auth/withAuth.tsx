@@ -10,7 +10,6 @@ export default (WrappedComponent: NextComponentType) =>
   class extends Component {
     static async getInitialProps(ctx) {
       if (!isAuthenticated(ctx)) {
-        console.log(ctx.asPath)
         const authUrl = `${AUTH_URL}?returnUrl=${ctx.asPath}`
         const { res } = ctx
         if (res) {
