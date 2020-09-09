@@ -259,7 +259,7 @@ export const createAwsEsPackages = async (
   version: string,
 ): Promise<AwsEsPackage[]> => {
   // this handles failed updates, if everything works this should never remove packages
-  await removePackagesIfExist(uploadedDictionaryFiles, version) // TODO: Get access for this in AWS ES
+  await removePackagesIfExist(uploadedDictionaryFiles, version)
 
   // create a new package for each uploaded s3 file
   const createdPackages = uploadedDictionaryFiles.map(async (uploadedFile) => {

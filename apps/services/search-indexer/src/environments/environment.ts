@@ -29,7 +29,7 @@ export const environment: Environment = {
   indexableTypes: ['article'],
   migrate: {
     elasticNode: process.env.ELASTIC_NODE || '',
-    s3Bucket: process.env.S3_BUCKET || 'dev-es-custom-packages', // TODO: Make sure migrate uses these env variables in aws cluster
+    s3Bucket: process.env.S3_BUCKET || 'prod-es-custom-packages',
     awsRegion: process.env.AWS_REGION || 'eu-west-1',
     esDomain: 'search',
     s3Folder: '',
