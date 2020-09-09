@@ -4,7 +4,8 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Counter } from 'prom-client'
 import { Sequelize } from 'sequelize-typescript'
 import { UserProfile } from './user-profile.model'
-import { Profile } from './user-profile-sql-commands'
+import { UserIdentity } from './user-identity.model'
+import { UserIdentitiesService } from './user-identities.service'
 
 @Injectable()
 export class UserProfilesService {
@@ -18,25 +19,22 @@ export class UserProfilesService {
     private sequelize: Sequelize,
     @InjectModel(UserProfile)
     private userProfileModel: typeof UserProfile,
+    private userIdentitiesService: UserIdentitiesService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-  ) {
-    this.sequelize.addModels([Profile])
-  }
+  ) { }
 
   async findBySubjectId(subjectId: string): Promise<UserProfile> {
     this.logger.debug(`Finding user profile for subjectId - "${subjectId}"`)
 
-    const [result, meta] = await this.sequelize.query('SELECT "profile_id" FROM "user_identity" WHERE subject_id=$subjectId',
-    {
-        bind: { subjectId: subjectId},
-        model: Profile,
-    });
+    const identity = await this.userIdentitiesService.findBySubjectId(subjectId)
 
-    this.logger.debug(`Found profileId - "${result.profile_id}"`)
-
-    return this.userProfileModel.findOne({
-      where: { id: result.profile_id },
-    })
+    if (identity) {
+      this.logger.debug(`Found profileId - "${identity.profileId}"`)
+  
+      return this.userProfileModel.findOne({
+        where: { id: identity.profileId },
+      })
+    }
   }
 }

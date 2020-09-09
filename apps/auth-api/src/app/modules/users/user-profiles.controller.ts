@@ -18,7 +18,7 @@ import { ConfigService } from '@nestjs/config'
 export class UserProfilesController {
   constructor(
     private readonly userProfilesService: UserProfilesService,
-    private readonly config: ConfigService
+    // private readonly config: ConfigService
   ) {}
 
   @Get(':subjectId')

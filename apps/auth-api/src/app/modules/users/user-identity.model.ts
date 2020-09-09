@@ -64,7 +64,7 @@ import { Claim } from './claim.model'
       allowNull: true,
     })
     @ApiProperty()
-    profile_id: string
+    profileId: string
   
     @CreatedAt
     @ApiProperty()
