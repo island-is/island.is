@@ -2,8 +2,6 @@ import fs from 'fs'
 import { logger } from '@island.is/logging'
 import { ElasticService } from '@island.is/api/content-search'
 import { AwsEsPackage } from './aws'
-import { String } from 'aws-sdk/clients/acm'
-import { createNewIndexVersion } from './elastic';
 
 const esService = new ElasticService()
 
@@ -38,7 +36,7 @@ const getAllIndice = async () => {
   return indice.body
 }
 
-export const getVersionFromIndices = async (locale: string): Promise<number> => {
+export const getCurrentVersionFromIndices = async (locale: string): Promise<number> => {
   logger.info('Getting index version from elasticsearch indexes', { locale })
   const indice = await getAllIndice()
   const indicePrefix = getIndexBaseName(locale)
@@ -63,7 +61,7 @@ const getTemplateFilePath = (locale: string) => {
   return `./config/${templateName}.json`
 }
 
-export const getVersionFromConfig = (locale: string): number => {
+export const getCurrentVersionFromConfig = (locale: string): number => {
   logger.info('Getting index version from config', { locale })
   const templateFilePath = getTemplateFilePath(locale)
   const raw = fs.readFileSync(templateFilePath)
@@ -84,18 +82,20 @@ const parseEsPackages = (esPackages: AwsEsPackage[]): PackageMap => {
   }, {})
 }
 
-// TODO: Make this handle empty locales as in locales with no aditional analyzers
 // we inject aws es packages for analyzers here if needed
 const createTemplateBody = (locale: string, packageMap: PackageMap): string => {
   logger.info('Creating template body', { locale })
   const templateFilePath = getTemplateFilePath(locale)
   let config = fs.readFileSync(templateFilePath).toString()
 
-  // replace placeholders in config e.g. {STEMMER}
-  const keys = Object.keys(packageMap[locale])
-  for (const key of keys) {
-    const packageId = packageMap[locale][key]
-    config = config.replace(`{${key.toUpperCase()}}`, packageId)
+  // locale might have no additional analyzers
+  if (packageMap[locale]) {
+    // replace placeholders in config e.g. {STEMMER}
+    const keys = Object.keys(packageMap[locale])
+    for (const key of keys) {
+      const packageId = packageMap[locale][key]
+      config = config.replace(`{${key.toUpperCase()}}`, packageId)
+    }
   }
 
   logger.info('Created template config', { locale })
@@ -149,9 +149,7 @@ export const createNewIndexVersion = async (locale: string, version: number) => 
   return newIndexName
 }
 
-export const removeIndexVersion = async (locale: string, version: number) => {
-  const indexName = getIndexNameForVersion(locale, version)
-  logger.info('Removing index', { indexName })
+const removeIndexName = async (indexName: string) => {
   const client = await esService.getClient()
   await client.indices.delete({
     index: indexName
@@ -159,7 +157,34 @@ export const removeIndexVersion = async (locale: string, version: number) => {
   return indexName
 }
 
-export const moveOldContentToNewIndex = async (locale: string, oldIndexVersion: number, newIndexVersion: number) => {
+export const removeIndexVersion = (locale: string, version: number) => {
+  const indexName = getIndexNameForVersion(locale, version)
+  return removeIndexName(indexName)
+}
+
+const getExistingIndice = async (indice: string[]): Promise<string[]> => {
+  const allIndice = await getAllIndice()
+  return allIndice.filter(({ index }) => indice.includes(index)).map(({ index }) => index)
+}
+
+export const removeIndexesBelowVersion = async (locale: string, indexVersion: number) => {
+  logger.info('Removing all indice below', { indexVersion })
+  const potentialIndice = []
+  for (let i = 0; i < indexVersion; i++) {
+    potentialIndice.push(getIndexNameForVersion(locale, i))
+  }
+  const existingOldIndice = await getExistingIndice(potentialIndice)
+
+  const deleteRequests = existingOldIndice.map(async (indexName) => {
+    return removeIndexName(indexName)
+  })
+
+  await Promise.all(deleteRequests)
+  logger.info('Removed old indice', { existingOldIndice })
+  return true
+}
+
+export const moveOldContentToNewIndex = async (locale: string, newIndexVersion: number, oldIndexVersion: number) => {
   // if we found no older index there is nothing to move
   if (oldIndexVersion === 0) {
     return false
