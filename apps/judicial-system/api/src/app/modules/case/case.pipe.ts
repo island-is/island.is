@@ -1,6 +1,6 @@
 import { PipeTransform, Injectable, BadRequestException } from '@nestjs/common'
-import { CreateCaseDto } from './dto/createCase.dto'
-import { UpdateCaseDto } from './dto/updateCase.dto'
+
+import { CreateCaseDto, UpdateCaseDto } from './dto'
 
 @Injectable()
 export class CaseValidationPipe implements PipeTransform {

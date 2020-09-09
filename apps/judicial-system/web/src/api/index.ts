@@ -19,9 +19,13 @@ import { Case, CreateCaseRequest } from '../types'
 //   }
 // }
 
+const { API_URL = '' } = process.env
+
+export const apiUrl = API_URL
+
 export const getCases: () => Promise<Case[]> = async () => {
   try {
-    const response = await fetch('/api/cases')
+    const response = await fetch(`${apiUrl}/api/cases`)
 
     if (response.ok) {
       const cases = await response.json()
