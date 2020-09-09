@@ -14,20 +14,20 @@ export class IndexingService {
   constructor(
     private readonly elasticService: ElasticService,
     private readonly contentFulSyncer: Syncer,
-  ) {}
+  ) { }
 
   async indexDocument(index: SearchIndexes, document) {
     return this.elasticService.index(index, document)
   }
 
-  async getLastSyncToken(index: SearchIndexes): Promise<string | undefined> {
+  async getLastSyncToken(language): Promise<string | undefined> {
     const query = new RequestBodySearch()
       .query(new ExistsQuery('nextSyncToken'))
       .sort(new Sort('date_updated', 'desc'))
       .size(1)
     try {
       const result = await this.elasticService.deprecatedFindByQuery(
-        index,
+        SearchIndexes[language],
         query,
       )
       return result.body?.hits?.hits[0]?._source?.nextSyncToken
@@ -39,7 +39,7 @@ export class IndexingService {
     }
   }
 
-  async continueSync(syncToken: string, index: SearchIndexes) {
+  async continueSync(syncToken: string, language: string) {
     await this.needConnection()
     logger.info('Start continue sync')
     const {
@@ -47,6 +47,7 @@ export class IndexingService {
       token,
       deletedItems,
     } = await this.contentFulSyncer.getSyncEntries({
+      language,
       nextSyncToken: syncToken,
       // eslint-disable-next-line @typescript-eslint/camelcase
       resolveLinks: true,
@@ -58,19 +59,21 @@ export class IndexingService {
 
     for (const item of items) {
       // one at a time please, else ES will be unhappy
-      await this.transformAndIndexEntry(index, token, item)
+      await this.transformAndIndexEntry(SearchIndexes[language], token, item)
     }
 
     // delete content that has been unpublished from contentful
-    await this.elasticService.deleteByIds(index, deletedItems)
+    await this.elasticService.deleteByIds(SearchIndexes[language], deletedItems)
 
     logger.info('Continue sync done')
   }
 
-  async initialSync(index: SearchIndexes) {
+  async initialSync(language) {
     await this.needConnection()
     logger.info('Start initial sync')
+    // this returns data in all languages, handle language in second query
     const { items, token } = await this.contentFulSyncer.getSyncEntries({
+      language,
       initial: true,
       // eslint-disable-next-line @typescript-eslint/camelcase
       resolveLinks: true,
@@ -82,12 +85,12 @@ export class IndexingService {
     // TODO: Use es client batch here
     for (const item of items) {
       // one at a time please, else ES will be unhappy
-      await this.transformAndIndexEntry(index, token, item)
+      await this.transformAndIndexEntry(SearchIndexes[language], token, item)
     }
 
     // delete everything in ES, except for synced content, to ensure no stale data in index
     await this.elasticService.deleteAllExcept(
-      index,
+      SearchIndexes[language],
       items.map((entry) => entry.sys.id),
     )
 

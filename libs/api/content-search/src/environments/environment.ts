@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
   elastic: {
-    node: process.env.ELASTIC_NODE || 'https://test01es.stefna.is',
+    node: process.env.ELASTIC_NODE || 'http://localhost:9200',
   },
 }

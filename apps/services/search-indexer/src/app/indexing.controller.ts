@@ -1,11 +1,11 @@
-import { Controller, Get, Param } from '@nestjs/common'
+import { Controller, Get, Param, Query } from '@nestjs/common'
 import { IndexingService } from './indexing.service'
 import { SearchIndexes } from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
 
 @Controller('')
 export class IndexingController {
-  constructor(private readonly indexingService: IndexingService) {}
+  constructor(private readonly indexingService: IndexingService) { }
 
   @Get('/')
   async hello() {
@@ -20,18 +20,16 @@ export class IndexingController {
   }
 
   @Get('sync')
-  async sync() {
-    const syncToken = await this.indexingService.getLastSyncToken(
-      SearchIndexes.is,
-    )
-    logger.debug('IndexSync', { token: syncToken })
+  async sync(@Query('language') language: keyof typeof SearchIndexes = 'is') {
+    const syncToken = await this.indexingService.getLastSyncToken(language)
+    logger.info('Continuing indexing from last sync', { language, token: syncToken })
 
     if (syncToken) {
       // noinspection ES6MissingAwait
-      this.indexingService.continueSync(syncToken, SearchIndexes.is)
+      this.indexingService.continueSync(syncToken, language)
     } else {
       // noinspection ES6MissingAwait
-      this.indexingService.initialSync(SearchIndexes.is)
+      this.indexingService.initialSync(language)
     }
     return {
       acknowledge: true,
@@ -48,12 +46,13 @@ export class IndexingController {
     }
   }
 
+  // TODO: Block this from being called from outside
   @Get('re-sync')
-  async resync() {
-    logger.debug('IndexReSync')
+  async resync(@Query('language') language: keyof typeof SearchIndexes = 'is') {
+    logger.info('Reindexing all data', { language })
 
     // noinspection ES6MissingAwait
-    this.indexingService.initialSync(SearchIndexes.is)
+    this.indexingService.initialSync(language)
     return {
       acknowledge: true,
     }

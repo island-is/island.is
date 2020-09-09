@@ -44,18 +44,23 @@ export class Syncer {
       .join(',')
   }
 
-  private getContentfulData(chunkIds: string) {
+  private getContentfulData(chunkIds: string, language: string) {
+    const languageMap = {
+      'is': 'is-IS',
+      'en': 'en'
+    }
     // TODO: Make this use cms domain endpoints to reduce mapping/typing required?
     return this.contentFulClient
       .getEntries({
         include: this.defaultIncludeDepth,
         'sys.id[in]': chunkIds,
+        locale: languageMap[language]
       })
       .then((data) => data.items)
   }
 
   // TODO: Limit this request to content types if able e.g. get content type from webhook request
-  async getSyncEntries(opts): Promise<SyncerResult> {
+  async getSyncEntries({language, ...opts}): Promise<SyncerResult> {
     const {
       entries,
       nextSyncToken,
@@ -73,7 +78,7 @@ export class Syncer {
     let chunkToProcess = entries.splice(-chunkSize, chunkSize)
     do {
       const chunkIds = this.getChunkIds(chunkToProcess)
-      const items = await this.getContentfulData(chunkIds)
+      const items = await this.getContentfulData(chunkIds, language)
 
       alteredItems = [...alteredItems, ...items]
       chunkToProcess = entries.splice(-chunkSize, chunkSize)
