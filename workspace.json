@@ -380,7 +380,7 @@
           "options": {
             "commands": [
               {
-                "command": "npx ts-node -O '{\"module\":\"commonjs\"}' ./libs/api/domains/cms/scripts/contentType.ts {args.id}"
+                "command": "npx ts-node -O '{\"module\":\"commonjs\"}' ./libs/api/domains/cms/scripts/contentType.ts {args.id} {args.sys} {args.overwrite}"
               }
             ]
           }

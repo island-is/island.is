@@ -1,9 +1,10 @@
 import { ContentType } from 'contentful'
 import { upperFirst } from 'lodash'
-import { writeFileSync } from 'fs'
+import { writeFileSync, existsSync } from 'fs'
 
 import { getModel } from './generateModel'
 import { getMapper } from './generateMapper'
+import { Args } from './contentType'
 
 export interface Imports {
   nestjs: string[]
@@ -13,7 +14,11 @@ export interface Imports {
   slices: string[]
 }
 
-export const generateFile = (contentType: ContentType) => {
+export const generateFile = (
+  contentType: ContentType,
+  args: Args,
+  array: string[],
+) => {
   const { id } = contentType.sys
   const imports: Imports = {
     nestjs: [],
@@ -26,15 +31,16 @@ export const generateFile = (contentType: ContentType) => {
     graphqlImports,
     contentfulImports,
     linkContentTypes,
+    sysFields,
     fields,
-  } = getModel(contentType, imports)
+  } = getModel(contentType, args, imports)
   const {
     contentfulTypesImports,
     apolloImports,
     mapperImports,
     mapper,
     mapperSlice,
-  } = getMapper(contentType, imports)
+  } = getMapper(contentType, args, imports)
 
   const genericImports = mapperImports
     .filter((name) => name === 'mapImage')
@@ -66,6 +72,7 @@ export const generateFile = (contentType: ContentType) => {
 
     @ObjectType()
     export class ${upperFirst(id)} {
+      ${sysFields}
       ${fields}
     }
 
@@ -73,5 +80,14 @@ export const generateFile = (contentType: ContentType) => {
     ${mapper}
   `
 
-  writeFileSync(`libs/api/domains/cms/src/lib/models/${id}.model.ts`, data)
+  const path = `libs/api/domains/cms/src/lib/models/${id}.model.ts`
+
+  if (!args.overwrite && existsSync(path)) {
+    // We don't overwrite models that already exists unless we specify the overwrite boolean as true
+    return
+  }
+
+  array.push(id)
+
+  writeFileSync(path, data)
 }

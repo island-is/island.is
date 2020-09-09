@@ -2,7 +2,7 @@ import { ContentType, Field } from 'contentful'
 import { upperFirst } from 'lodash'
 
 import { Imports } from './generateFile'
-import { getFirstLevelContentType } from './contentType'
+import { getFirstLevelContentType, Args } from './contentType'
 
 const validationsToMapperFunction = (validations?: string[]): string => {
   switch (validations.length) {
@@ -141,9 +141,14 @@ const getFields = (contentType: ContentType, imports: Imports) => {
     .filter(Boolean)
 }
 
-export const getMapper = (contentType: ContentType, imports: Imports) => {
+export const getMapper = (
+  contentType: ContentType,
+  args: Args,
+  imports: Imports,
+) => {
   const type = upperFirst(contentType.sys.id)
   const fields = getFields(contentType, imports)
+  const sysImport = args.sys.length > 0 || fields.some((f) => f.includes('id:'))
 
   const contentfulTypesImports = `import { I${type}, ${imports.slices
     .map((name) => `I${upperFirst(name)}`)
@@ -183,8 +188,9 @@ export const getMapper = (contentType: ContentType, imports: Imports) => {
 
   const mapper = `
       export const map${type} = ({ fields ${
-    fields.some((f) => f.includes('id:')) ? ', sys' : ''
+    sysImport ? ', sys' : ''
   } }: I${type}): ${type} => ({
+        ${args.sys.map((item) => `${item}: sys.${item},`).join('\n  ')}
         ${fields.join('\n  ')}
       })
     `

@@ -7,9 +7,14 @@ import { flattenDeep } from 'lodash'
 import { execShellCommand } from './execShellCommand'
 import { generateFile } from './generateFile'
 
-interface LinkContentType {
+export interface LinkContentType {
   id: string
   contentType: ContentType
+}
+
+export interface Args {
+  sys: string[]
+  overwrite: boolean
 }
 
 const client = createClient({
@@ -86,13 +91,46 @@ async function getContentTypes(
 
 async function main() {
   const id = process.argv?.[2]
+  const sysRaw = process.argv?.[3]
+  const sys = sysRaw
+    ?.replace(/\s/g, '')
+    ?.split(',')
+    .filter((v) => v !== 'undefined')
+  const overwriteRaw = process.argv?.[4]
 
   if (id === 'undefined' || !id) {
     console.error('No id defined for the contentType.')
     process.exit()
   }
 
+  if (
+    sysRaw !== 'undefined' &&
+    sys.find(
+      (value) =>
+        value !== 'id' && value !== 'createdAt' && value !== 'updatedAt',
+    )
+  ) {
+    console.error(
+      'You can only use "id", "createdAt" or "updatedAt" as the value of the `sys` argument.',
+    )
+    process.exit()
+  }
+
+  if (
+    overwriteRaw !== 'undefined' &&
+    overwriteRaw !== 'true' &&
+    overwriteRaw !== 'false'
+  ) {
+    console.error(
+      'You can only use "true" or "false" as value of the `overwrite` argument.',
+    )
+    process.exit()
+  }
+
   const linkContentTypes: LinkContentType[] = []
+  const generatedFiles: string[] = []
+  const overwrite = Boolean(overwriteRaw === 'true')
+  const args: Args = { sys, overwrite }
 
   // 1. Create contentful management client
   const space = await client.getSpace('8k0h54kbe6bj') // prod: 8k0h54kbe6bj, jeremy's dev: 49dl8o4zlggm
@@ -109,7 +147,9 @@ async function main() {
 
   // 5. Create model/mapper and linkContentTypes models/mappers
   const items = [{ id: contentType.sys.id, contentType }, ...linkContentTypes]
-  items.map(async (item) => generateFile(item.contentType))
+  items.map(async (item) =>
+    generateFile(item.contentType, args, generatedFiles),
+  )
 
   // 6. Re-generate the api codegen
   await execShellCommand(`yarn nx run api:codegen`)
@@ -119,22 +159,29 @@ async function main() {
     'prettier --write ./libs/api/domains/cms/src/lib/models/**.ts',
   )
 
-  console.log(
-    `\n
-    • We created the model libs/api/domains/cms/src/lib/models/${
-      contentType.sys.id
-    }.models.ts for your contentType.
+  // We don't want the main contentType to appear in the logs for the linkContentType
+  const linkTypes = generatedFiles.filter((type) => type !== contentType.sys.id)
 
+  console.log(`
     ${
-      linkContentTypes.length > 0
+      generatedFiles.length <= 0
+        ? `• We couldn't generate any contentTypes. All files already existed and you are using --overwrite=false. Try again using --overwrite=true to re-generate existing models.`
+        : ''
+    }
+    ${
+      generatedFiles.find((type) => type === contentType.sys.id)
+        ? `• We created the model libs/api/domains/cms/src/lib/models/${contentType.sys.id}.models.ts for your contentType.`
+        : ''
+    }
+    ${
+      linkTypes.length > 0
         ? `• We also had to create ${
-            linkContentTypes.length
-          } linkContentTypes. Make sure to check ${linkContentTypes
-            .map((v) => `"${v.id}"`)
+            linkTypes.length
+          } linkContentTypes. Make sure to check ${linkTypes
+            .map((type) => `"${type}"`)
             .join(', ')} to see if it's correct.\n`
         : ''
-    }`,
-  )
+    }`)
 }
 
 main()

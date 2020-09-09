@@ -1,7 +1,11 @@
 import { ContentType, Field } from 'contentful'
 import { upperFirst } from 'lodash'
 
-import { getLinkContentTypes, getFirstLevelContentType } from './contentType'
+import {
+  getLinkContentTypes,
+  getFirstLevelContentType,
+  Args,
+} from './contentType'
 import { Imports } from './generateFile'
 
 const pushIfPossible = (key: string, array: string[]) => {
@@ -116,9 +120,30 @@ const generateFields = (fields: Field[], imports: Imports): string => {
     .join('\n\n  ')}`
 }
 
-export const getModel = (contentType: ContentType, imports: Imports) => {
+export const getModel = (
+  contentType: ContentType,
+  args: Args,
+  imports: Imports,
+) => {
+  if (args.sys.some((item) => item === 'id')) {
+    imports.nestjs.push('ID')
+  }
+
   const linkTypes = getLinkContentTypes(contentType)
   const fields = generateFields(contentType.fields, imports)
+
+  const sysFields =
+    args.sys.length > 0
+      ? `
+    ${args.sys
+      .map(
+        (item) => `
+    @Field(${item === 'id' ? '() => ID' : ''})
+      ${item}: string
+    `,
+      )
+      .join('\n')}`
+      : ''
 
   const graphqlImports = `
     import { Field, ObjectType${imports.nestjs
@@ -138,6 +163,7 @@ export const getModel = (contentType: ContentType, imports: Imports) => {
   )
 
   return {
+    sysFields,
     fields,
     graphqlImports,
     contentfulImports,
