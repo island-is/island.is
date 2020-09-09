@@ -290,8 +290,14 @@ const Results: FC<{
   }
 
   return (
-    <Box display="flex" background="blue100" paddingY={2} paddingX={3}>
-      <div className={styles.menuColumn}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      background="blue100"
+      paddingY={2}
+      paddingX={3}
+    >
+      <div className={styles.menuRow}>
         <Stack space={1}>
           {search.suggestions.map((suggestion, i) => {
             const suggestionHasTerm = suggestion.startsWith(search.term)
@@ -312,14 +318,14 @@ const Results: FC<{
           })}
         </Stack>
       </div>
-      <div className={styles.separator} />
-      <div className={styles.menuColumn}>
+      <div className={styles.separatorHorizontal} />
+      <div className={styles.menuRow}>
         {search.results && (
           <Stack space={2}>
             <Typography variant="eyebrow" color="purple400">
               Beint að efninu
             </Typography>
-            {search.results.items.map(({ id, title, slug }) => (
+            {search.results.items.slice(0, 5).map(({ id, title, slug }) => (
               <div key={id} {...getItemProps()}>
                 <Typography links variant="h5" color="blue400">
                   <Link href={makePath('article', slug)}>
@@ -371,7 +377,7 @@ const CommonSearchTerms = ({
       </div>
       {width > STACK_WIDTH - 1 ? (
         <>
-          <div className={styles.separator} />
+          <div className={styles.separatorVertical} />
           <div className={styles.menuColumn}>
             <Stack space={2}>{right}</Stack>
           </div>
