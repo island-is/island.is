@@ -2,6 +2,8 @@ import fs from 'fs'
 import { logger } from '@island.is/logging'
 import { ElasticService } from '@island.is/api/content-search'
 import { AwsEsPackage } from './aws'
+import { String } from 'aws-sdk/clients/acm'
+import { createNewIndexVersion } from './elastic';
 
 const esService = new ElasticService()
 
@@ -37,7 +39,7 @@ const getAllIndice = async () => {
 }
 
 export const getVersionFromIndices = async (locale: string): Promise<number> => {
-  logger.info('Getting index version from elasticsearch', { locale })
+  logger.info('Getting index version from elasticsearch indexes', { locale })
   const indice = await getAllIndice()
   const indicePrefix = getIndexBaseName(locale)
 
@@ -93,14 +95,34 @@ const createTemplateBody = (locale: string, packageMap: PackageMap): string => {
   const keys = Object.keys(packageMap[locale])
   for (const key of keys) {
     const packageId = packageMap[locale][key]
-    config = config.replace(`{${key}}`, packageId)
+    config = config.replace(`{${key.toUpperCase()}}`, packageId)
   }
 
   logger.info('Created template config', { locale })
   return config
 }
 
-const updateEsTemplate = async (locale: string, templateBody: string) => {
+export const getEsTemplate = async (locale: string) => {
+  const templateName = getTemplateName(locale)
+  logger.info('Geting old template', { templateName })
+  const client = await esService.getClient()
+  const templateBody = await client.indices
+    .getTemplate<string>({
+      name: templateName
+    })
+    .then((response) => response.body[templateName])
+    .catch((error) => {
+      // template can not exist on initial run, handle it else throw
+      if (error.statusCode === 404) {
+        return ''
+      } else {
+        throw error
+      }
+    })
+  return templateBody
+}
+
+export const updateEsTemplate = async (locale: string, templateBody: string) => {
   const templateName = getTemplateName(locale)
   logger.info('Updating template', { templateName })
   const client = await esService.getClient()
@@ -125,6 +147,16 @@ export const createNewIndexVersion = async (locale: string, version: number) => 
     index: newIndexName
   })
   return newIndexName
+}
+
+export const removeIndexVersion = async (locale: string, version: number) => {
+  const indexName = getIndexNameForVersion(locale, version)
+  logger.info('Removing index', { indexName })
+  const client = await esService.getClient()
+  await client.indices.delete({
+    index: indexName
+  })
+  return indexName
 }
 
 export const moveOldContentToNewIndex = async (locale: string, oldIndexVersion: number, newIndexVersion: number) => {
@@ -154,8 +186,8 @@ export const moveOldContentToNewIndex = async (locale: string, oldIndexVersion: 
   return true
 }
 
-export const moveAliasToNewIndex = async (locale: string, oldIndexVersion: number, newIndexVersion: number) => {
-  logger.info('Moving alias to new version')
+export const moveAliasToNewIndex = async (locale: string, newIndexVersion: number, oldIndexVersion: number) => {
+  logger.info('Moving alias to new version', { newIndexVersion, oldIndexVersion })
   const aliasName = getIndexBaseName(locale)
   const oldIndexName = getIndexNameForVersion(locale, oldIndexVersion)
   const newIndexName = getIndexNameForVersion(locale, newIndexVersion)

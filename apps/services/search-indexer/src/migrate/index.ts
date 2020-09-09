@@ -4,6 +4,12 @@ import * as aws from './aws'
 import * as dictionary from './dictionary'
 import * as elastic from './elastic'
 
+interface RollbackInfo {
+  [key: string]: {
+    oldTemplate: string
+    newIndexVersion?: number
+  }
+}
 
 class App {
   async run() {
@@ -55,6 +61,7 @@ class App {
   private async migrateES(esPackages: aws.AwsEsPackage[]) {
     logger.info('Starting elasticsearch migration')
     await elastic.checkAccess() // this throws if there is no connection hence ensuring we dont continue
+    const processedMigrations: RollbackInfo = {} // to rollback changes on failure
     const locales = environment.migrate.locales
     const requests = locales.map(async (locale) => {
       const oldIndexVersion = await elastic.getVersionFromIndices(locale)
@@ -64,15 +71,15 @@ class App {
         logger.info('Elasticsearch index version does not match code index version, updating elasticsearch config', { locale, esIndexVersion: oldIndexVersion, codeIndexVersion: newIndexVersion })
 
         try {
-          // TODO: Get old template to roll back
+          processedMigrations[locale] = { oldTemplate: await elastic.getEsTemplate(locale) }
           await elastic.updateIndexTemplate(locale, esPackages)
           await elastic.createNewIndexVersion(locale, newIndexVersion)
+          processedMigrations[locale].newIndexVersion = newIndexVersion
           await elastic.moveOldContentToNewIndex(locale, newIndexVersion, oldIndexVersion)
-          await elastic.moveAliasToNewIndex(locale, newIndexVersion, oldIndexVersion)
+          await elastic.moveAliasToNewIndex(locale, newIndexVersion, oldIndexVersion) // we assume we dont have to rollback on failure here
         } catch (error) {
           logger.error('Failed to migrate to new index', { locale, newIndexVersion, oldIndexVersion, error })
-          await elastic.revertToOldTemplate(newIndexVersion)
-          await elastic.removeIndexVersion(newIndexVersion)
+          return false  // pass this to promise all where we revert all changes if we have any false value
         }
       } else {
         logger.info('Elasticsearch index version matches code index version, no need to update index', { locale, esIndexVersion: oldIndexVersion, codeIndexVersion: newIndexVersion })
@@ -80,7 +87,30 @@ class App {
       return true
     })
 
-    await Promise.all(requests) // TODO: Revert all and crash
+    try {
+      const results = await Promise.all(requests)
+      results.forEach((result) => {
+        if (!result) throw new Error('Failed to migrate')
+      })
+    } catch (error) {
+      logger.error('Failed to migrate ES, rolling back to earlier version')
+      const locales = Object.keys(processedMigrations)
+      const reverts = locales.map(async (locale) => {
+        const { oldTemplate, newIndexVersion } = processedMigrations[locale]
+
+        if (oldTemplate) {
+          logger.info('Rolling back to earlier template', { locale })
+          await elastic.updateEsTemplate(locale, oldTemplate)
+        }
+
+        if (newIndexVersion) {
+          logger.info('Removing new index version', { locale })
+          await elastic.removeIndexVersion(locale, newIndexVersion)
+        }
+      })
+      await Promise.all(reverts)
+      logger.info('Done rolling back to earlier version')
+    }
     logger.info('Elasticsearch migration completed')
     return true
   }
