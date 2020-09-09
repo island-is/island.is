@@ -103,16 +103,16 @@ export const AppLayout: NextComponentType<
           <meta
             name="url"
             property="og:url"
-            content="https://ferdagjof.island.is"
+            content="https://loftbru.island.is"
           />
           <meta name="title" property="og:title" content="Ísland.is" />
           <meta
             name="image"
             property="og:image"
-            content="https://ferdagjof.island.is/og-img.png"
+            content="https://loftbru.island.is/og-img.png"
           />
-          <meta name="image-width" property="og:image:width" content="1080" />
-          <meta name="image-height" property="og:image:height" content="1203" />
+          <meta name="image-width" property="og:image:width" content="1001" />
+          <meta name="image-height" property="og:image:height" content="381" />
           <meta
             name="description"
             property="og:description"
