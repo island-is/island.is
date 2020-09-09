@@ -17,6 +17,7 @@ const {
 
 Sentry.init({
   dsn: SENTRY_DSN,
+  environment: 'web',
 })
 
 interface Props {
