@@ -1,17 +1,14 @@
 import gql from 'graphql-tag'
+import { slices } from './fragments'
 
 export const GET_LANDING_PAGE_QUERY = gql`
-  query($input: GetLandingPageInput!) {
+  query GetLandingPage($input: GetLandingPageInput!) {
     getLandingPage(input: $input) {
       title
       slug
       introduction
       image {
-        title
-        url
-        contentType
-        width
-        height
+        ...ImageFields
       }
       actionButton {
         text
@@ -24,7 +21,10 @@ export const GET_LANDING_PAGE_QUERY = gql`
           url
         }
       }
-      content
+      content {
+        ...AllSlices
+      }
     }
   }
+  ${slices}
 `

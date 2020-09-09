@@ -1,6 +1,6 @@
 import { Client } from '@elastic/elasticsearch'
 import { Document, SearchIndexes } from '../types'
-import esb, { RequestBodySearch, Sort, TermsAggregation } from 'elastic-builder'
+import esb, { RequestBodySearch, TermsAggregation } from 'elastic-builder'
 import { logger } from '@island.is/logging'
 import merge from 'lodash/merge'
 import { environment } from '../environments/environment'

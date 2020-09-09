@@ -64,6 +64,25 @@
             "passWithNoTests": true
           }
         },
+        "codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "graphql-codegen --config apps/web/codegen.yml"
+              }
+            ]
+          },
+          "configurations": {
+            "watch": {
+              "commands": [
+                {
+                  "command": "graphql-codegen --config apps/web/codegen.yml --watch"
+                }
+              ]
+            }
+          }
+        },
         "docker-next": {}
       }
     },

@@ -34,16 +34,21 @@ import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
 import useRouteNames from '../i18n/useRouteNames'
 import { CustomNextError } from '../units/ErrorBoundary'
+import {
+  QueryGetNamespaceArgs,
+  GetNamespaceQuery,
+  QueryGetArticleArgs,
+  GetArticleQuery,
+} from '../graphql/schema'
 
 interface ArticleProps {
-  article: Query['getArticle']
-  namespace: Query['getNamespace']
+  article: GetArticleQuery['getArticle']
+  namespace: GetNamespaceQuery['getNamespace']
 }
 
 const Article: Screen<ArticleProps> = ({ article, namespace }) => {
   const [contentOverviewOptions, setContentOverviewOptions] = useState([])
   const { activeLocale } = useI18n()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const n = useNamespace(namespace)
   const { makePath } = useRouteNames(activeLocale)
 
@@ -174,9 +179,10 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
 
 Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
+
   const [article, namespace] = await Promise.all([
     apolloClient
-      .query<Query, QueryGetArticleArgs>({
+      .query<GetArticleQuery, QueryGetArticleArgs>({
         query: GET_ARTICLE_QUERY,
         variables: {
           input: {
@@ -187,7 +193,7 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
       })
       .then((r) => r.data.getArticle),
     apolloClient
-      .query<Query, QueryGetNamespaceArgs>({
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {

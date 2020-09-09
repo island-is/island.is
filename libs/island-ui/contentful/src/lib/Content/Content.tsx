@@ -7,7 +7,6 @@ import {
   Bullet,
   Button,
   Box,
-  Stack,
   Accordion,
   AccordionItem,
   Blockquote,
@@ -22,12 +21,6 @@ import Paragraph from '../Paragraph/Paragraph'
 import Background from '../Background/Background'
 import BorderedContent from '../BorderedContent/BorderedContent'
 import Hyperlink from '../Hyperlink/Hyperlink'
-import Image from '../Image/Image'
-
-const mappedContentfulTypes = {
-  article: 'article',
-  articleCategory: 'category',
-}
 
 const ContentWrap: React.FC = ({ children }) => (
   <GridRow>
@@ -214,7 +207,7 @@ const embeddedNodes = () => ({
       return (
         <Background background="dotted" paddingY={[6, 6, 10]} marginTop={5}>
           <Statistics
-            items={node.data.target.fields.statistics.map((s) => s.fields)}
+            statistics={node.data.target.fields.statistics.map((s) => s.fields)}
           />
         </Background>
       )

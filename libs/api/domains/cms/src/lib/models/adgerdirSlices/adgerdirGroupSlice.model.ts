@@ -1,6 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { Image } from '../image.model'
-import { AdgerdirPage } from '../adgerdirPage.model'
+
+import { IVidspyrnaFlokkur } from '../../generated/contentfulTypes'
+import { Image, mapImage } from '../image.model'
+import { AdgerdirPage, mapAdgerdirPage } from '../adgerdirPage.model'
 
 @ObjectType()
 export class AdgerdirGroupSlice {
@@ -26,3 +28,16 @@ export class AdgerdirGroupSlice {
   @Field(() => [AdgerdirPage])
   pages: AdgerdirPage[]
 }
+
+export const mapAdgerdirGroupSlice = ({
+  fields,
+  sys,
+}: IVidspyrnaFlokkur): AdgerdirGroupSlice =>
+  new AdgerdirGroupSlice({
+    id: sys.id,
+    title: fields.title,
+    subtitle: fields.subtitle,
+    description: fields.description,
+    image: fields.image?.fields?.file && mapImage(fields.image),
+    pages: fields.pages.map(mapAdgerdirPage),
+  })

@@ -16,10 +16,14 @@ import { useDateUtils } from '../i18n/useDateUtils'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { NewsItemLayout } from './Layouts/Layouts'
 import { GET_NEWS_ITEM_QUERY } from './queries'
-import { Query, ContentLanguage, QueryGetNewsArgs } from '@island.is/api/schema'
+import {
+  GetNewsItemQuery,
+  QueryGetNewsArgs,
+  ContentLanguage,
+} from '../graphql/schema'
 
 interface NewsItemProps {
-  newsItem: Query['getNews']
+  newsItem: GetNewsItemQuery['getNews']
 }
 
 const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
@@ -74,7 +78,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
 NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
   const {
     data: { getNews: newsItem },
-  } = await apolloClient.query<Query, QueryGetNewsArgs>({
+  } = await apolloClient.query<GetNewsItemQuery, QueryGetNewsArgs>({
     query: GET_NEWS_ITEM_QUERY,
     variables: {
       input: {

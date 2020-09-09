@@ -1,7 +1,9 @@
 import gql from 'graphql-tag'
 
-export const GET_PAGE_QUERY = gql`
+export const slices = gql`
   fragment ImageFields on Image {
+    __typename
+    id
     title
     url
     contentType
@@ -137,22 +139,65 @@ export const GET_PAGE_QUERY = gql`
     }
   }
 
-  query($input: GetAboutPageInput!) {
-    getAboutPage(input: $input) {
-      title
-      seoDescription
-      theme
-      slices {
-        ...PageHeaderFields
-        ...TimelineFields
-        ...MailingListSignupFields
-        ...StoryFields
-        ...LatestNewsFields
-        ...LinkCardFields
-        ...HeadingFields
-        ...LogoListFields
-        ...BulletListFields
+  fragment FaqListFields on FaqList {
+    __typename
+    id
+    title
+    questions {
+      question
+      answer {
+        ...HtmlFields
       }
     }
+  }
+
+  fragment StatisticsFields on Statistics {
+    __typename
+    id
+    title
+    statistics {
+      id
+      value
+      label
+    }
+  }
+
+  fragment ProcessEntryFields on ProcessEntry {
+    id
+    title
+    subtitle
+    details {
+      ...HtmlFields
+    }
+    type
+    processTitle
+    processDescription
+    processInfo {
+      ...HtmlFields
+    }
+    processLink
+    buttonText
+  }
+
+  fragment HtmlFields on Html {
+    __typename
+    id
+    document
+  }
+
+  fragment AllSlices on Slice {
+    ...PageHeaderFields
+    ...TimelineFields
+    ...MailingListSignupFields
+    ...StoryFields
+    ...LatestNewsFields
+    ...LinkCardFields
+    ...HeadingFields
+    ...LogoListFields
+    ...BulletListFields
+    ...FaqListFields
+    ...StatisticsFields
+    ...ProcessEntryFields
+    ...HtmlFields
   }
 `
