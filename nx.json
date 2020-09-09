@@ -219,12 +219,8 @@
     "localization": {
       "tags": []
     },
-    "test-next": {
+    "referance-next-app": {
       "tags": []
-    },
-    "test-next-e2e": {
-      "tags": [],
-      "implicitDependencies": ["test-next"]
     }
   }
 }

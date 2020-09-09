@@ -2780,24 +2780,24 @@
         }
       }
     },
-    "test-next": {
-      "root": "apps/test-next",
-      "sourceRoot": "apps/test-next",
+    "referance-next-app": {
+      "root": "apps/referance-next-app",
+      "sourceRoot": "apps/referance-next-app",
       "projectType": "application",
       "schematics": {},
       "architect": {
         "build": {
           "builder": "@nrwl/next:build",
           "options": {
-            "root": "apps/test-next",
-            "outputPath": "dist/apps/test-next"
+            "root": "apps/referance-next-app",
+            "outputPath": "dist/apps/referance-next-app"
           },
           "configurations": {
             "production": {
               "fileReplacements": [
                 {
-                  "replace": "apps/test-next/environments/environment.ts",
-                  "with": "apps/test-next/environments/environment.prod.ts"
+                  "replace": "apps/referance-next-app/environments/environment.ts",
+                  "with": "apps/referance-next-app/environments/environment.prod.ts"
                 }
               ]
             }
@@ -2806,12 +2806,12 @@
         "serve": {
           "builder": "@nrwl/next:dev-server",
           "options": {
-            "buildTarget": "test-next:build",
+            "buildTarget": "referance-next-app:build",
             "dev": true
           },
           "configurations": {
             "production": {
-              "buildTarget": "test-next:build:production",
+              "buildTarget": "referance-next-app:build:production",
               "dev": false
             }
           }
@@ -2819,26 +2819,26 @@
         "export": {
           "builder": "@nrwl/next:export",
           "options": {
-            "buildTarget": "test-next:build:production"
+            "buildTarget": "referance-next-app:build:production"
           }
         },
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "apps/test-next/.eslintrc",
+            "config": "apps/referance-next-app/.eslintrc",
             "tsConfig": [
-              "apps/test-next/tsconfig.json",
-              "apps/test-next/tsconfig.spec.json"
+              "apps/referance-next-app/tsconfig.json",
+              "apps/referance-next-app/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/test-next/**"]
+            "exclude": ["**/node_modules/**", "!apps/referance-next-app/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/test-next/jest.config.js",
-            "tsConfig": "apps/test-next/tsconfig.spec.json",
+            "jestConfig": "apps/referance-next-app/jest.config.js",
+            "tsConfig": "apps/referance-next-app/tsconfig.spec.json",
             "passWithNoTests": true
           }
         },
@@ -2848,38 +2848,9 @@
             "parallel": false,
             "commands": [
               {
-                "command": "node libs/localization/scripts/extract 'apps/test-next/{screens, pages,components}/*.{js,ts,tsx}'"
+                "command": "node libs/localization/scripts/extract 'apps/referance-next-app/{screens,pages,components}/*.{js,ts,tsx}'"
               }
             ]
-          }
-        }
-      }
-    },
-    "test-next-e2e": {
-      "root": "apps/test-next-e2e",
-      "sourceRoot": "apps/test-next-e2e/src",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@nrwl/cypress:cypress",
-          "options": {
-            "cypressConfig": "apps/test-next-e2e/cypress.json",
-            "tsConfig": "apps/test-next-e2e/tsconfig.e2e.json",
-            "devServerTarget": "test-next:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "test-next:serve:production"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "config": "apps/test-next-e2e/.eslintrc",
-            "tsConfig": ["apps/test-next-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/test-next-e2e/**"]
           }
         }
       }
