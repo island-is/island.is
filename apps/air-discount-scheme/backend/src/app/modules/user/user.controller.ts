@@ -1,4 +1,11 @@
-import { Controller, Param, Get, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Param,
+  Get,
+  UseGuards,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common'
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -11,7 +18,7 @@ import {
   GetUserRelationsParams,
 } from './user.validator'
 import { UserService } from './user.service'
-import { User } from './user.model'
+import { AirlineUser, User } from './user.model'
 import { DiscountService } from '../discount'
 import { FlightService } from '../flight'
 import { AuthGuard } from '../common'
@@ -27,45 +34,45 @@ export class PublicUserController {
   ) {}
 
   @Get('discounts/:discountCode/user')
-  @ApiOkResponse({ type: User })
-  async get(@Param() params: GetUserByDiscountCodeParams): Promise<User> {
-    const nationalId = await this.discountService.validateDiscount(
+  @ApiOkResponse({ type: AirlineUser })
+  async getUserByDiscountCode(
+    @Param() params: GetUserByDiscountCodeParams,
+  ): Promise<AirlineUser> {
+    const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
     )
-    return this.userService.getUserInfoByNationalId(nationalId)
+    if (!discount) {
+      throw new BadRequestException('Discount code is invalid')
+    }
+
+    const user = await this.userService.getAirlineUserInfoByNationalId(
+      discount.nationalId,
+    )
+    if (!user) {
+      throw new NotFoundException(`User<${discount.nationalId}> not found`)
+    }
+    return user
   }
 }
 
 @Controller('api/private')
 export class PrivateUserController {
-  constructor(private readonly flightService: FlightService) {}
+  constructor(
+    private readonly flightService: FlightService,
+    private readonly userService: UserService,
+  ) {}
 
   @Get('users/:nationalId/relations')
   @ApiExcludeEndpoint()
   async getUserRelations(
     @Param() params: GetUserRelationsParams,
   ): Promise<User[]> {
-    // TODO: implement from thjodskra
-    const {
-      unused: flightLegsLeft,
-    } = await this.flightService.countFlightLegsByNationalId(params.nationalId)
-    return [
-      {
-        nationalId: params.nationalId,
-        firstName: 'Darri',
-        middleName: 'Steinn',
-        lastName: 'Konráðsson',
-        gender: 'm',
-        flightLegsLeft,
-      },
-      {
-        nationalId: '0101303019',
-        firstName: 'Gervimaður',
-        middleName: '',
-        lastName: 'Afríka',
-        gender: 'm',
-        flightLegsLeft: 2,
-      },
-    ]
+    const relations = await this.userService.getRelations(params.nationalId)
+    return Promise.all([
+      this.userService.getUserInfoByNationalId(params.nationalId),
+      ...relations.map((nationalId) =>
+        this.userService.getUserInfoByNationalId(nationalId),
+      ),
+    ])
   }
 }

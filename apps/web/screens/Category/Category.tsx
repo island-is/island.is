@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import {
@@ -12,6 +11,7 @@ import {
   AccordionCard,
   LinkCard,
   Option,
+  Link,
 } from '@island.is/island-ui/core'
 import { Card, Sidebar } from '../../components'
 import { useI18n } from '@island.is/web/i18n'
@@ -152,9 +152,7 @@ const Category: Screen<CategoryProps> = ({
       >
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
-            <Link href={makePath()}>
-              <a>Ísland.is</a>
-            </Link>
+            <Link href={makePath()}>Ísland.is</Link>
           </Breadcrumbs>
           <Hidden above="md">
             <Select

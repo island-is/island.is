@@ -1,15 +1,26 @@
 import gql from 'graphql-tag'
 
-export const GET_SINGLE_ITEM = gql`
-  query GetSingleItem($input: ItemInput!) {
-    singleItem(input: $input) {
+export const GET_ARTICLE_QUERY = gql`
+  query GetArticle($input: GetArticleInput!) {
+    getArticle(input: $input) {
       id
       slug
       title
-      content: contentBlob
-      group
-      category
-      categorySlug
+      content
+      group {
+        title
+        slug
+        description
+      }
+      category {
+        title
+        slug
+        description
+      }
+      relatedArticles {
+        title
+        slug
+      }
     }
   }
 `

@@ -8,7 +8,10 @@ import {
 import WidgetLoading from './WidgetLoading/WidgetLoading'
 import { UserWithMeta } from '@island.is/service-portal/core'
 import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import { ApolloClient, NormalizedCacheObject, useQuery } from '@apollo/client'
+import { GET_FRONTPAGE_SLIDES } from '@island.is/service-portal/graphql'
+import { Query, QueryGetFrontpageSliderListArgs } from '@island.is/api/schema'
+import Hero from '../../components/Hero/Hero'
 
 const Widget: FC<{
   widget: ServicePortalWidget
@@ -71,11 +74,24 @@ const WidgetLoader: FC<{
 
 export const Dashboard: FC<{}> = () => {
   const [{ modules }] = useStore()
-  const moduleProps = useModuleProps()
+  const { userInfo, client } = useModuleProps()
+  const { data, loading } = useQuery<Query, QueryGetFrontpageSliderListArgs>(
+    GET_FRONTPAGE_SLIDES,
+    {
+      variables: {
+        input: {
+          lang: 'is',
+        },
+      },
+    },
+  )
 
   return (
     <Box>
-      <WidgetLoader modules={modules} {...moduleProps} />
+      <Hero content={data?.getFrontpageSliderList} loading={loading} />
+      {userInfo !== null && (
+        <WidgetLoader modules={modules} userInfo={userInfo} client={client} />
+      )}
     </Box>
   )
 }

@@ -14,6 +14,9 @@ export class News {
   title: string
 
   @Field()
+  subtitle: string
+
+  @Field()
   intro: string
 
   @Field(() => Image, { nullable: true })

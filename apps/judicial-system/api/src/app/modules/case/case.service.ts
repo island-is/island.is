@@ -1,9 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+
+import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case } from './case.model'
-import { CreateCaseDto } from './dto/createCase.dto'
-import { UpdateCaseDto } from './dto/updateCase.dto'
 
 @Injectable()
 export class CaseService {
@@ -17,7 +18,7 @@ export class CaseService {
   async getAll() {
     this.logger.debug('Getting all cases')
 
-    return this.caseModel.findAll()
+    return this.caseModel.findAll({ order: [['modified', 'DESC']] })
   }
 
   async findById(id: string) {
@@ -35,7 +36,7 @@ export class CaseService {
   }
 
   async update(id: string, caseToUpdate: UpdateCaseDto) {
-    this.logger.debug(`Updating case whith id "${caseToUpdate.id}"`)
+    this.logger.debug(`Updating case whith id "${id}"`)
 
     const [numberOfAffectedRows, [updatedCase]] = await this.caseModel.update(
       caseToUpdate,

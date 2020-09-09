@@ -11,6 +11,7 @@ export const GET_NEWS_LIST_QUERY = gql`
       news {
         id
         title
+        subtitle
         date
         slug
         intro
@@ -30,6 +31,7 @@ export const GET_NEWS_ITEM_QUERY = gql`
     getNews(input: $input) {
       id
       title
+      subtitle
       date
       slug
       intro

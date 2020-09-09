@@ -37,6 +37,7 @@ jobs:
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
       DOCKER_EXPRESS_CHUNKS: ${{ steps.docker_express_projects.outputs.CHUNKS }}
       DOCKER_NEXT_CHUNKS: ${{ steps.docker_next_projects.outputs.CHUNKS }}
+      DOCKER_STATIC_CHUNKS: ${{ steps.docker_static_projects.outputs.CHUNKS }}
       UNAFFECTED: ${{ steps.docker_unaffected_projects.outputs.UNAFFECTED }}
     steps:
       - uses: actions/checkout@v2
@@ -191,10 +192,19 @@ jobs:
           echo "Chunks: $CHUNKS"
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
+      - name: Prepare docker-static targets
+        id: docker_static_projects
+        run: |
+          PROJECTS=`./scripts/_nx-affected-targets.sh docker-static`
+          echo "Projects: ${PROJECTS}"
+          CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
+          echo "Chunks: $CHUNKS"
+          echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
+
       - name: Prepare unaffected docker images
         id: docker_unaffected_projects
         run: |
-          UNAFFECTED=`./scripts/list-unaffected.sh docker-next docker-express`
+          UNAFFECTED=`./scripts/list-unaffected.sh docker-next docker-express docker-static`
           echo "Unaffected Docker images: ${UNAFFECTED}"
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
@@ -239,6 +249,12 @@ jobs:
         with:
           path: cache
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
+      - name: Cache for NodeJS dependencies - host OS
+        if: ${{ matrix.projects != 'dummy' }}
+        uses: actions/cache@v1
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-yarn
       - name: Set up Docker Buildx
         if: ${{ matrix.projects != 'dummy' }}
         id: buildx
@@ -261,18 +277,12 @@ jobs:
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
     steps:
       - uses: actions/checkout@v2
-      - name: Cache for dependencies Docker layer
-        id: cache-deps
+      - name: Cache for NodeJS dependencies - host OS
+        id: node-modules
         uses: actions/cache@v1
         with:
-          path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          buildx-version: v0.4.1
-          qemu-version: latest
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-yarn
       - name: Check formatting
         run: ./scripts/check_formatting.sh
 
@@ -291,21 +301,12 @@ jobs:
       - uses: actions/checkout@v2
         if: ${{ matrix.projects != 'dummy' }}
 
-      - name: Cache for dependencies Docker layer
-        id: cache-deps
+      - name: Cache for NodeJS dependencies - host OS
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v1
         with:
-          path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
-
-      - name: Set up Docker Buildx
-        id: buildx
-        if: ${{ matrix.projects != 'dummy' }}
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          buildx-version: v0.4.1
-          qemu-version: latest
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-yarn
 
       - name: Linting
         if: ${{ matrix.projects != 'dummy' }}
@@ -350,6 +351,45 @@ jobs:
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-express
 
+  docker-static:
+    needs: [prepare, tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.DOCKER_STATIC_CHUNKS) }}
+    steps:
+      - uses: actions/checkout@v2
+        if: ${{ matrix.projects != 'dummy' }}
+      - name: Cache for dependencies Docker layer
+        if: ${{ matrix.projects != 'dummy' }}
+        id: cache-deps
+        uses: actions/cache@v1
+        with:
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
+      - name: Set up Docker Buildx
+        if: ${{ matrix.projects != 'dummy' }}
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: v0.4.1
+          qemu-version: latest
+      - name: Docker login to ECR repo
+        if: ${{ matrix.projects != 'dummy' }}
+        run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Building Docker images
+        if: ${{ matrix.projects != 'dummy' }}
+        run: ./scripts/run-in-parallel.sh docker-static
+
   docker-next:
     needs: [prepare, tests]
     runs-on: ubuntu-latest
@@ -389,152 +429,66 @@ jobs:
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-next
 
-  publish:
+  retag-unaffected:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [docker-express, docker-next, prepare, linting, formatting]
+    needs: [docker-express, docker-next, docker-static, prepare, linting, formatting]
     env:
+      PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
+      UNAFFECTED: ${{ needs.prepare.outputs.UNAFFECTED }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ needs.prepare.outputs.LAST_GOOD_BUILD_DOCKER_TAG}}
-      PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
-      UNAFFECTED: ${{ needs.prepare.outputs.UNAFFECTED }}
 
     steps:
       - uses: actions/checkout@v2
         if: env.PUBLISH == 'true'
-      - name: Set Helm chart version
-        if: env.PUBLISH == 'true'
-        id: helm-chart-version
-        run: |
-          export HELM_CHART_VERSION=1.0.0+${DOCKER_TAG}
-          echo "Helm chart version will be ${HELM_CHART_VERSION}"
-          echo "::set-env name=HELM_CHART_VERSION::${HELM_CHART_VERSION}"
-      - name: Install Helm push plugin
-        if: env.PUBLISH == 'true'
-        run: helm plugin install https://github.com/chartmuseum/helm-push.git --version=0.8.1
-      - name: Install Our ChartMuseum
-        if: env.PUBLISH == 'true'
-        run: helm repo add chartmuseum https://chartmuseum.shared.devland.is --username=$USERNAME --password=$PASSWORD
-        env:
-          USERNAME: ${{ secrets.HELM_CHART_USERNAME }}
-          PASSWORD: ${{ secrets.HELM_CHART_PASSWORD }}
-      - name: Push islandis chart to the museum
-        if: env.PUBLISH == 'true'
-        run: helm dep build helm/islandis && helm push helm/islandis --version="$HELM_CHART_VERSION" -f chartmuseum
-      - name: Push gjafakort chart to the museum
-        if: env.PUBLISH == 'true'
-        run: helm dep build helm/gjafakort && helm push helm/gjafakort --version="$HELM_CHART_VERSION" -f chartmuseum
-      - name: Push air-discount-scheme chart to the museum
-        if: env.PUBLISH == 'true'
-        run: helm dep build helm/air-discount-scheme && helm push helm/air-discount-scheme --version="$HELM_CHART_VERSION" -f chartmuseum
       - name: Retag unaffected Docker images
         if: env.PUBLISH == 'true'
         run: ./scripts/retag-unaffected.sh "$UNAFFECTED"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      - name: Trigger Deployment for islandis
+
+  trigger-deployments:
+    runs-on: ubuntu-latest
+    needs: [retag-unaffected, prepare]
+    env:
+      GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
+    strategy:
+      matrix:
+        service: [islandis, gjafakort, air-discount-scheme]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Trigger Deployment for service
         if: env.PUBLISH == 'true'
         env:
-          TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_ISLANDIS_TOKEN }}
-          ENDPOINT: https://spinnaker-gate.shared.devland.is/webhooks/webhook/islandis
+          SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
+          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
-          curl -v $ENDPOINT -X POST -H "content-type: application/json" --data-binary @- <<BODY
+          curl -v $SPINNAKER_URL/webhooks/webhook/${{matrix.service}} -H "content-type: application/json" --data-binary @- <<BODY
           {
-            "token": "$TOKEN",
-            "branch": "$GIT_BRANCH",
-            "parameters": { "docker_tag": "$DOCKER_TAG" },
-            "artifacts": [
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.dev.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.dev.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.prod.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/islandis/values.prod.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "name": "islandis",
-                "type": "helm/chart",
-                "version": "$HELM_CHART_VERSION"
-              }
-            ]
+          "token": "$SPINNAKER_WEBHOOK_TOKEN",
+          "branch": "$GIT_BRANCH",
+          "parameters": { "docker_tag": "$DOCKER_TAG" }
           }
           BODY
-      - name: Trigger Deployment for gjafakort
-        if: env.PUBLISH == 'true'
-        env:
-          TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_GJAFAKORT_TOKEN }}
-          ENDPOINT: https://spinnaker-gate.shared.devland.is/webhooks/webhook/gjafakort
-        run: |
-          curl -v $ENDPOINT -X POST -H "content-type: application/json" --data-binary @- <<BODY
-          {
-            "token": "$TOKEN",
-            "branch": "$GIT_BRANCH",
-            "parameters": { "docker_tag": "$DOCKER_TAG" },
-            "artifacts": [
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.dev.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.dev.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.prod.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/gjafakort/values.prod.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "name": "gjafakort",
-                "type": "helm/chart",
-                "version": "$HELM_CHART_VERSION"
-              }
-            ]
-          }
-          BODY
-      - name: Trigger Deployment for air-discount-scheme
-        if: env.PUBLISH == 'true'
-        env:
-          TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_AIR_DISCOUNT_SCHEME_TOKEN }}
-          ENDPOINT: https://spinnaker-gate.shared.devland.is/webhooks/webhook/air-discount-scheme
-        run: |
-          curl -v $ENDPOINT -X POST -H "content-type: application/json" --data-binary @- <<BODY
-          {
-            "token": "$TOKEN",
-            "branch": "$GIT_BRANCH",
-            "parameters": { "docker_tag": "$DOCKER_TAG" },
-            "artifacts": [
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.dev.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.dev.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "type": "github/file",
-                "name": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.prod.yaml",
-                "reference": "https://api.github.com/repos/island-is/island.is/contents/helm/air-discount-scheme/values.prod.yaml",
-                "version": "$GITHUB_SHA"
-              },
-              {
-                "name": "air-discount-scheme",
-                "type": "helm/chart",
-                "version": "$HELM_CHART_VERSION"
-              }
-            ]
-          }
-          BODY
-      - uses: 8398a7/action-slack@v3
+
+  failure-notification:
+    runs-on: ubuntu-latest
+    if: failure()
+    needs: [docker-express, docker-next, docker-static, prepare, linting, formatting, trigger-deployments]
+    env:
+      PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
+    steps:
+      - name: Send Slack notification
+        uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
           fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # optional
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
-        if: failure() && env.PUBLISH == 'true'
+        if: env.PUBLISH == 'true'

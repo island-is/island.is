@@ -1,12 +1,9 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
+import { DocumentBuilder } from '@nestjs/swagger'
 
 import '@island.is/infra-tracing'
-import { DocumentBuilder } from '@nestjs/swagger'
-import { AppModule } from './app/app.module'
 import { bootstrap } from '@island.is/infra-nest-server'
+
+import { AppModule } from './app'
 
 bootstrap({
   appModule: AppModule,

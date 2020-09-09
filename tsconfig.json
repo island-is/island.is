@@ -84,11 +84,17 @@
       "@island.is/air-discount-scheme/consts": [
         "libs/air-discount-scheme/consts/src/index.ts"
       ],
-      "@island.is/application/schema": ["libs/application/schema/src/index.ts"],
+      "@island.is/application/template": [
+        "libs/application/template/src/index.ts"
+      ],
       "@island.is/application/form": ["libs/application/form/src/index.ts"],
       "@island.is/api/domains/application": [
         "libs/api/domains/application/src/index.ts"
       ],
+      "@island.is/api/domains/file-upload": [
+        "libs/api/domains/file-upload/src/index.ts"
+      ],
+      "@island.is/file-storage": ["libs/file-storage/src/index.ts"],
       "@island.is/application/graphql": [
         "libs/application/graphql/src/index.ts"
       ],
@@ -100,6 +106,13 @@
       ],
       "@island.is/service-portal/graphql": [
         "libs/service-portal/graphql/src/index.ts"
+      ],
+      "@island.is/application/data-providers": [
+        "libs/application/data-providers/src/index.ts"
+      ],
+      "@island.is/infra-monitoring": ["libs/infra-monitoring/src/index.ts"],
+      "@island.is/judicial-system/consts": [
+        "libs/judicial-system/consts/src/index.ts"
       ]
     }
   },

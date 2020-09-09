@@ -51,5 +51,4 @@ CustomError.getInitialProps = async (
   return { ...errorInitialProps, isSSRReadyToRender: true }
 }
 
-// TODO locale is vs. en
-export default withLocale('is', 'notFound')(CustomError as Screen)
+export default withLocale(null, 'notFound')(CustomError as Screen)

@@ -4,7 +4,7 @@ import { Box } from '../../Box'
 import * as styles from './GridContainer.treat'
 
 interface Props {
-  className?: any
+  className?: string
   id?: string
 }
 

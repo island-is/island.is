@@ -1,5 +1,5 @@
 import React, { useMemo, ReactNode } from 'react'
-import { BLOCKS } from '@contentful/rich-text-types'
+import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 import {
   Typography,
   Box,
@@ -10,8 +10,8 @@ import {
   Divider,
 } from '@island.is/island-ui/core'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
-import Link from 'next/link'
 import { List, ListItem } from '../List/List'
+import { Link } from '..'
 
 const embeddedNodes = () => ({
   faqList: {
@@ -62,8 +62,8 @@ const embeddedNodes = () => ({
     component: Box,
     children: (node) => {
       const title = node.data?.target?.fields?.title ?? ''
-      const linkText = node.data?.target?.fields?.linkText
-      const link = node.data?.target?.fields?.link
+      const linkText = node.data?.target?.fields?.linkText ?? ''
+      const link = node.data?.target?.fields?.link ?? ''
       return (
         <Box
           background="purple100"
@@ -72,10 +72,10 @@ const embeddedNodes = () => ({
           borderRadius="standard"
         >
           <Box marginBottom={2}>
-            <Typography variant="h4">{linkText}</Typography>
+            <Typography variant="h4">{title}</Typography>
           </Box>
           <Link href={link}>
-            <Button width="fluid">{title}</Button>
+            <Button width="fluid">{linkText}</Button>
           </Link>
         </Box>
       )
@@ -98,9 +98,7 @@ const embeddedNodes = () => ({
             <Divider weight="alternate" />
             {links.map(({ fields: { text, url } }, index) => (
               <Typography variant="p" color="blue400" key={index}>
-                <Link href={url}>
-                  <a>{text}</a>
-                </Link>
+                <Link href={url}>{text}</Link>
               </Typography>
             ))}
           </Stack>
@@ -123,7 +121,9 @@ const embeddedNodes = () => ({
   },
 })
 
-const options = {
+const options = (type) => ({
+  renderText: (text) =>
+    text.split('\n').flatMap((text, i) => [i > 0 && <br key={i} />, text]),
   renderNode: {
     [BLOCKS.PARAGRAPH]: (node, children) => {
       return (
@@ -132,9 +132,30 @@ const options = {
         </Typography>
       )
     },
-    [BLOCKS.EMBEDDED_ASSET]: (node, children) => {
-      const { url, title } = node.data.target.fields.file
-      return <img src={url} alt={title} />
+    [BLOCKS.EMBEDDED_ASSET]: (node) => {
+      const {
+        file: { url },
+        title,
+      } = node.data.target.fields
+      if (type === 'sidebar') {
+        return (
+          <Box
+            textAlign="center"
+            padding={3}
+            borderStyle="solid"
+            borderWidth="standard"
+            borderRadius="standard"
+            borderColor="dark100"
+          >
+            <img src={url} alt={title} />
+          </Box>
+        )
+      }
+      return (
+        <Box marginTop={5}>
+          <img src={url} alt={title} />
+        </Box>
+      )
     },
     [BLOCKS.EMBEDDED_ENTRY]: (node) => {
       const embeddedNode = embeddedNodes()[
@@ -167,15 +188,19 @@ const options = {
         </ListItem>
       )
     },
+    [INLINES.HYPERLINK]: (node, children) => {
+      return <Link href={node.data.uri}>{children}</Link>
+    },
   },
-}
+})
 
 type Props = {
   document: string
+  type?: string
   wrapper?: ReactNode
 }
 
-export const Content: React.FC<Props> = ({ document, wrapper }) => {
+export const Content: React.FC<Props> = ({ document, wrapper, type }) => {
   const parsed = useMemo(() => {
     if (typeof document === 'object') {
       return document
@@ -186,7 +211,7 @@ export const Content: React.FC<Props> = ({ document, wrapper }) => {
   }, [document])
   return (
     <ConditionalWrapper cmp={wrapper}>
-      {documentToReactComponents(parsed, options)}
+      {documentToReactComponents(parsed, options(type))}
     </ConditionalWrapper>
   )
 }

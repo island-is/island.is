@@ -6,9 +6,9 @@ import {
   Schema,
   Section,
   FormType,
-} from '@island.is/application/schema'
+  ExternalData,
+} from '@island.is/application/template'
 import { Typography, Box, Button, Divider } from '@island.is/island-ui/core'
-import { CREATE_APPLICATION } from '@island.is/application/graphql'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import deepmerge from 'deepmerge'
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form'
@@ -17,35 +17,39 @@ import FormMultiField from './FormMultiField'
 import FormField from './FormField'
 import { resolver } from '../validation/resolver'
 import FormRepeater from './FormRepeater'
+import FormExternalDataProvider from './FormExternalDataProvider'
+import { verifyExternalData } from '../utils'
 
 type ScreenProps = {
   answerAndGoToNextScreen(Answers): void
   formValue: FormValue
   formTypeId: FormType
+  addExternalData(data: ExternalData): void
   answerQuestions(Answers): void
   dataSchema: Schema
+  externalData: ExternalData
   shouldSubmit?: boolean
   expandRepeater(): void
   prevScreen(): void
   screen: FormScreen
   section?: Section
   applicationId?: string
-  setApplicationId(id: string): void
 }
 
 const Screen: FC<ScreenProps> = ({
   formValue,
   formTypeId,
+  addExternalData,
   answerQuestions,
   dataSchema,
   expandRepeater,
+  externalData,
   answerAndGoToNextScreen,
   prevScreen,
   shouldSubmit = false,
   screen,
   section,
   applicationId,
-  setApplicationId,
 }) => {
   const hookFormData = useForm<FormValue>({
     mode: 'onBlur',
@@ -56,18 +60,8 @@ const Screen: FC<ScreenProps> = ({
     context: { dataSchema, formNode: screen },
   })
 
-  const [createApplication, { loading: createPending }] = useMutation(
-    CREATE_APPLICATION,
-    {
-      onCompleted({ createApplication }) {
-        setApplicationId(createApplication.id)
-      },
-    },
-  )
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [updateApplication, { loading, data: updateData }] = useMutation(
-    UPDATE_APPLICATION,
-  )
+  const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION)
 
   const { handleSubmit, errors, reset } = hookFormData
 
@@ -82,34 +76,28 @@ const Screen: FC<ScreenProps> = ({
       // call submit mutation
       console.log('here we will submit', formValue)
     } else {
-      if (applicationId) {
-        updateApplication({
-          variables: {
-            input: {
-              id: applicationId,
-              typeId: formTypeId,
-              answers: data,
-            },
+      await updateApplication({
+        variables: {
+          input: {
+            id: applicationId,
+            answers: data,
           },
-        })
-      } else {
-        createApplication({
-          variables: {
-            input: {
-              applicant: '123456-1234',
-              state: 'PENDING',
-              attachments: ['https://island.is'],
-              typeId: formTypeId,
-              assignee: '123456-1235',
-              externalId: 'some_id',
-              answers: data,
-            },
-          },
-        })
-      }
+        },
+      })
       console.log('these were my answers:', data)
       answerAndGoToNextScreen(data)
     }
+  }
+
+  function canProceed(): boolean {
+    const isLoadingOrPending = loading
+    if (screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
+      return (
+        !isLoadingOrPending &&
+        verifyExternalData(externalData, screen.dataProviders)
+      )
+    }
+    return !isLoadingOrPending
   }
 
   return (
@@ -139,6 +127,15 @@ const Screen: FC<ScreenProps> = ({
                 errors={errors}
                 multiField={screen}
                 formValue={formValue}
+                applicationId={applicationId}
+              />
+            ) : screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER ? (
+              <FormExternalDataProvider
+                addExternalData={addExternalData}
+                applicationId={applicationId}
+                externalData={externalData}
+                externalDataProvider={screen}
+                formValue={formValue}
               />
             ) : (
               <FormField
@@ -146,6 +143,7 @@ const Screen: FC<ScreenProps> = ({
                 errors={errors}
                 field={screen}
                 formValue={formValue}
+                applicationId={applicationId}
               />
             )}
           </Box>
@@ -167,16 +165,16 @@ const Screen: FC<ScreenProps> = ({
             <Box display="inlineFlex" padding={2} paddingRight="none">
               {shouldSubmit ? (
                 <Button
-                  loading={loading || createPending}
-                  disabled={loading || createPending}
+                  loading={loading}
+                  disabled={!canProceed()}
                   htmlType="submit"
                 >
                   Submit
                 </Button>
               ) : (
                 <Button
-                  loading={loading || createPending}
-                  disabled={loading || createPending}
+                  loading={loading}
+                  disabled={!canProceed()}
                   variant="text"
                   icon="arrowRight"
                   htmlType="submit"

@@ -6,22 +6,37 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
+  Inject,
+  Req,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+
+import { JwtAuthGuard } from '../auth'
+import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case } from './case.model'
 import { CaseService } from './case.service'
-import { CreateCaseDto } from './dto/createCase.dto'
-import { UpdateCaseDto } from './dto/updateCase.dto'
 import { CaseValidationPipe } from './case.pipe'
 
-@ApiTags('case')
+@UseGuards(JwtAuthGuard)
 @Controller('api')
+@ApiTags('cases')
 export class CaseController {
-  constructor(private readonly caseService: CaseService) {}
+  constructor(
+    private readonly caseService: CaseService,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
+  ) {}
 
   @Get('cases')
   @ApiOkResponse({ type: Case, isArray: true })
-  async getAll() {
+  async getAll(@Req() req) {
+    this.logger.debug('Received request from user', {
+      extra: { user: req.user },
+    })
+
     return this.caseService.getAll()
   }
 
@@ -31,7 +46,7 @@ export class CaseController {
     const existingCase = await this.caseService.findById(id)
 
     if (!existingCase) {
-      throw new NotFoundException(`An case with the id ${id} does not exist`)
+      throw new NotFoundException(`A case with the id ${id} does not exist`)
     }
 
     return existingCase
@@ -50,7 +65,7 @@ export class CaseController {
   @ApiOkResponse({ type: Case })
   async update(
     @Param('id') id: string,
-    @Body(new CaseValidationPipe(true))
+    @Body()
     caseToUpdate: UpdateCaseDto,
   ) {
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(

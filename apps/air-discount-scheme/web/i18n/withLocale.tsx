@@ -5,7 +5,8 @@ import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import gql from 'graphql-tag'
 
-import { Locale, Routes } from './types'
+import { defaultLanguage } from './I18n'
+import { Locale, Routes } from '../types'
 import { QueryGetNamespaceArgs, Query } from '@island.is/api/schema'
 
 export const GetNamespaceQuery = gql`
@@ -24,6 +25,7 @@ export const withLocale = <
   locale: Locale,
   route?: keyof Routes,
 ) => (Component: NextComponentType<C, IP, P>): NextComponentType<C, IP> => {
+  const activeLocale = locale ?? defaultLanguage
   const getInitialProps = Component.getInitialProps
   if (!getInitialProps) {
     return Component
@@ -34,14 +36,15 @@ export const withLocale = <
   )
 
   NewComponent.getInitialProps = async (ctx) => {
-    const newContext = { ...ctx, locale, route } as any
+    const newContext = { ...ctx, locale: activeLocale, route } as any
     const [props] = await Promise.all([
       getInitialProps(newContext),
       getGlobalStrings(newContext),
     ])
     return {
       ...props,
-      locale,
+      locale: activeLocale,
+      localeKey: locale,
       route,
     }
   }

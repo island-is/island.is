@@ -20,6 +20,9 @@ export type VariantTypes =
   | 'eyebrow'
   | 'tag'
   | 'cardCategoryTitle'
+  | 'sideMenu'
+  | 'placeholderText'
+  | 'datepickerHeaderText'
 
 type ResponsiveProps<T> = {
   xs?: T
@@ -140,7 +143,7 @@ export const variants: Variants = {
       xs: 12,
       md: 14,
     },
-    fontWeight: theme.typography.semiBold,
+    fontWeight: theme.typography.medium,
     lineHeight: 1.142857,
   },
   tag: {
@@ -158,6 +161,30 @@ export const variants: Variants = {
     },
     fontWeight: theme.typography.headingsFontWeight,
     lineHeight: 1.416667,
+  },
+  sideMenu: {
+    fontSize: {
+      xs: 16,
+      md: 18,
+    },
+    fontWeight: theme.typography.medium,
+    lineHeight: 1.55,
+  },
+  placeholderText: {
+    fontSize: {
+      xs: 20,
+      md: 24,
+    },
+    fontWeight: theme.typography.light,
+    lineHeight: 1.416667,
+  },
+  datepickerHeaderText: {
+    fontSize: {
+      xs: 18,
+      md: 20,
+    },
+    fontWeight: theme.typography.semiBold,
+    lineHeight: 1.666,
   },
 }
 
@@ -187,7 +214,12 @@ globalStyle(`${links} a:hover svg path`, {
 
 export const colors = styleMap(mapToStyleProperty(theme.color, 'color'))
 
-export default Object.keys(variants).reduce((acc, variantKey) => {
-  acc[variantKey] = responsiveStyleMap(variants[variantKey])
-  return acc
-}, {})
+export default (Object.keys(variants) as VariantTypes[]).reduce(
+  (acc, variantKey) => {
+    acc[variantKey] = responsiveStyleMap(variants[variantKey])
+    return acc
+  },
+  {} as {
+    [Type in VariantTypes]: string
+  },
+)

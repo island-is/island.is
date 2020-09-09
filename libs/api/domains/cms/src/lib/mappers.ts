@@ -6,6 +6,11 @@ import * as types from './generated/contentfulTypes'
 import { Article } from './models/article.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
+import { AdgerdirTag } from './models/adgerdirTag.model'
+import { AdgerdirFeaturedNewsSlice } from './models/adgerdirSlices/adgerdirFeaturedNewsSlice.model'
+import { AdgerdirGroupSlice } from './models/adgerdirSlices/adgerdirGroupSlice.model'
+import { AdgerdirNews } from './models/adgerdirNews.model'
+import { AdgerdirSlice } from './models/adgerdirSlices/adgerdirSlice.model'
 import { LandingPage } from './models/landingPage.model'
 import { FrontpageSlide } from './models/frontpageSlide.model'
 import { FrontpageSliderList } from './models/frontpageSliderList.model'
@@ -33,7 +38,6 @@ import { Namespace } from './models/namespace.model'
 import { Image } from './models/image.model'
 import { Menu } from './models/menu.model'
 import { GenericPage } from './models/genericPage.model'
-import { AdgerdirTag } from './models/adgerdirTag.model'
 import { Statistic } from './models/statistic.model'
 import { Statistics } from './models/slices/statistics.model'
 import { ProcessEntry } from './models/slices/processEntry.model'
@@ -52,8 +56,14 @@ export const mapAdgerdirPage = ({
   slug: fields.slug,
   title: fields.title,
   description: fields.description,
+  longDescription: fields.longDescription,
+  objective: JSON.stringify(fields.objective),
   tags: fields.tags.map(mapAdgerdirTag),
   status: fields.status,
+  link: fields.link,
+  linkButtonText: fields.linkButtonText,
+  estimatedCostIsk: fields.estimatedCostIsk,
+  finalCostIsk: fields.finalCostIsk,
   content: JSON.stringify(fields.content),
 })
 
@@ -65,24 +75,70 @@ export const mapAdgerdirTag = ({
   title: fields.title,
 })
 
+export const mapAdgerdirNewsItem = ({
+  fields,
+  sys,
+}: types.IVidspyrnaNews): AdgerdirNews => ({
+  id: sys.id,
+  slug: fields.slug,
+  title: fields.title,
+  subtitle: fields.subtitle,
+  intro: fields.intro,
+  image: fields.image?.fields?.file && mapImage(fields.image),
+  date: fields.date,
+  content: JSON.stringify(fields.content),
+  pages: fields.pages && fields.pages.map(mapAdgerdirPage),
+})
+
+export const mapAdgerdirFeaturedNewsSlice = ({
+  fields,
+  sys,
+}: types.IVidspyrnaFeaturedNews): AdgerdirFeaturedNewsSlice =>
+  new AdgerdirFeaturedNewsSlice({
+    id: sys.id,
+    title: fields.title,
+    featured: fields.featured.map(mapAdgerdirNewsItem),
+  })
+
+export const mapAdgerdirGroupSlice = ({
+  fields,
+  sys,
+}: types.IVidspyrnaFlokkur): AdgerdirGroupSlice =>
+  new AdgerdirGroupSlice({
+    id: sys.id,
+    title: fields.title,
+    subtitle: fields.subtitle,
+    description: fields.description,
+    image: fields.image?.fields?.file && mapImage(fields.image),
+    pages: fields.pages.map(mapAdgerdirPage),
+  })
+
+type AdgerdirSliceTypes = types.IVidspyrnaFeaturedNews | types.IVidspyrnaFlokkur
+
+export const mapAdgerdirSlice = (
+  slice: AdgerdirSliceTypes,
+): typeof AdgerdirSlice => {
+  switch (slice.sys.contentType.sys.id) {
+    case 'vidspyrnaFeaturedNews':
+      return mapAdgerdirFeaturedNewsSlice(slice as types.IVidspyrnaFeaturedNews)
+    case 'vidspyrnaFlokkur':
+      return mapAdgerdirGroupSlice(slice as types.IVidspyrnaFlokkur)
+    default:
+      throw new ApolloError(
+        `Can not convert to slice: ${(slice as any).sys.contentType.sys.id}`,
+      )
+  }
+}
+
 export const mapAdgerdirFrontpage = ({
   sys,
   fields,
 }: types.IVidspyrnaFrontpage): AdgerdirFrontpage => ({
   id: sys.id,
-  slug: fields.slug,
   title: fields.title,
   description: fields.description,
   content: JSON.stringify(fields.content),
-})
-
-export const mapArticle = ({ sys, fields }: types.IArticle): Article => ({
-  id: sys.id,
-  slug: fields.slug,
-  title: fields.title,
-  group: fields.group?.fields,
-  category: fields.category?.fields,
-  content: JSON.stringify(fields.content),
+  slices: fields.slices.map(mapAdgerdirSlice),
 })
 
 export const mapImage = ({ fields, sys }: Asset): Image =>
@@ -99,6 +155,7 @@ export const mapNewsItem = ({ fields, sys }: types.INews): News => ({
   id: sys.id,
   slug: fields.slug,
   title: fields.title,
+  subtitle: fields.subtitle,
   intro: fields.intro,
   image: mapImage(fields.image),
   date: fields.date,

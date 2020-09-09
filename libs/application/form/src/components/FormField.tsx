@@ -1,30 +1,36 @@
 import React, { FC } from 'react'
-import { useFormContext } from 'react-hook-form'
 import { FieldDef } from '../types'
 import { getValueViaPath } from '../utils'
 import { getComponentByName } from './componentLoader'
-import { FormValue } from '@island.is/application/schema'
+import { FormValue } from '@island.is/application/template'
 
 const FormField: FC<{
+  applicationId: string
   autoFocus?: boolean
   field: FieldDef
   formValue: FormValue
   showFieldName?: boolean
   errors: object
-}> = ({ autoFocus, errors, field, formValue, showFieldName }) => {
-  const { register } = useFormContext()
+}> = ({
+  applicationId,
+  autoFocus,
+  errors,
+  field,
+  formValue,
+  showFieldName,
+}) => {
   if (!field.isNavigable) {
     return null
   }
 
   const error = getValueViaPath(errors, field.id, undefined)
   const fieldProps = {
+    applicationId,
     autoFocus,
     error,
     field,
     formValue,
     showFieldName,
-    register,
   }
 
   const Component = getComponentByName(field.component)

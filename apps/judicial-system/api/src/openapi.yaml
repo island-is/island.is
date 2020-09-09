@@ -27,37 +27,91 @@ components:
     Case:
       type: object
       properties:
-        id:
-          type: string
         created:
           format: date-time
           type: string
         modified:
           format: date-time
           type: string
-        description:
+        state:
+          type: string
+          enum:
+            - UNKNOWN
+            - DRAFT
+            - SUBMITTED
+            - ACTIVE
+            - COMPLETED
+        policeCaseNumber:
+          type: string
+        suspectNationalId:
+          type: string
+        suspectName:
+          type: string
+        suspectAddress:
+          type: string
+        court:
+          type: string
+        arrestDate:
+          format: date-time
+          type: string
+        requestedCourtDate:
+          format: date-time
           type: string
       required:
-        - id
         - created
         - modified
-        - description
+        - state
+        - policeCaseNumber
+        - suspectNationalId
     CreateCaseDto:
       type: object
       properties:
-        description:
+        policeCaseNumber:
+          type: string
+        suspectNationalId:
+          type: string
+        suspectName:
+          type: string
+        suspectAddress:
+          type: string
+        court:
+          type: string
+        arrestDate:
+          format: date-time
+          type: string
+        requestedCourtDate:
+          format: date-time
           type: string
       required:
-        - description
+        - policeCaseNumber
+        - suspectNationalId
     UpdateCaseDto:
       type: object
       properties:
-        id:
+        state:
           type: string
-        description:
+          enum:
+            - UNKNOWN
+            - DRAFT
+            - SUBMITTED
+            - ACTIVE
+            - COMPLETED
+        policeCaseNumber:
           type: string
-      required:
-        - id
+        suspectNationalId:
+          type: string
+        suspectName:
+          type: string
+        suspectAddress:
+          type: string
+        court:
+          type: string
+        arrestDate:
+          format: date-time
+          type: string
+        requestedCourtDate:
+          format: date-time
+          type: string
 paths:
   /liveness:
     get:
@@ -99,7 +153,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Case'
       tags:
-        - case
+        - cases
   '/api/case/{id}':
     get:
       operationId: CaseController_findOne
@@ -117,7 +171,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Case'
       tags:
-        - case
+        - cases
     put:
       operationId: CaseController_update
       parameters:
@@ -140,7 +194,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Case'
       tags:
-        - case
+        - cases
   /api/case:
     post:
       operationId: CaseController_create
@@ -159,4 +213,31 @@ paths:
               schema:
                 $ref: '#/components/schemas/Case'
       tags:
-        - case
+        - cases
+  /api/auth/callback:
+    post:
+      operationId: AuthController_callback
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - api/auth
+  /api/auth/login:
+    get:
+      operationId: AuthController_login
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - api/auth
+  /api/auth/logout:
+    get:
+      operationId: AuthController_logout
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - api/auth

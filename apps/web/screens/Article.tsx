@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useEffect, useState } from 'react'
-import Link from 'next/link'
 import Head from 'next/head'
 import slugify from '@sindresorhus/slugify'
 import {
@@ -10,14 +9,17 @@ import {
   Breadcrumbs,
   Hidden,
   Select,
+  GridColumn,
+  GridRow,
   Tag,
   Option,
   Button,
+  Divider,
+  Link,
 } from '@island.is/island-ui/core'
 import { Content } from '@island.is/island-ui/contentful'
 import { Sidebar, getHeadingLinkElements } from '@island.is/web/components'
-
-import { GET_SINGLE_ITEM, GET_NAMESPACE_QUERY } from './queries'
+import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
@@ -52,9 +54,6 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
     )
   }, [])
 
-  const { categorySlug, category: categoryTitle } = article
-  const groupTitle = article.group
-
   const onChangeContentOverview = ({ value }: Option) => {
     const slug = value as string
 
@@ -69,9 +68,10 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
 
   const data = JSON.parse(article.content)
 
-  const actionButtonLinks = data.content
-    .map((current) => current.data?.target?.fields?.processLink)
-    .filter(Boolean)
+  const actionButtonLinks =
+    data?.content
+      .map((current) => current.data?.target?.fields?.processLink)
+      .filter(Boolean) || []
 
   const actionButtonLink =
     actionButtonLinks.length === 1 ? actionButtonLinks[0] : null
@@ -92,44 +92,77 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
               </Box>
             ) : null}
             <Sidebar title={n('sidebarHeader')} bullet="left" headingLinks />
+            {article.relatedArticles.length > 0 && (
+              <Box background="purple100" padding={4} borderRadius="large">
+                <Stack space={[1, 1, 2]}>
+                  <Typography variant="h4" as="h4">
+                    {n('relatedMaterial')}
+                  </Typography>
+                  <Divider weight="alternate" />
+                  {article.relatedArticles.map((related) => (
+                    <Typography variant="p" as="span">
+                      <Link
+                        key={related.slug}
+                        href={makePath('article', '[slug]')}
+                        as={makePath('article', related.slug)}
+                        withUnderline
+                      >
+                        {related.title}
+                      </Link>
+                    </Typography>
+                  ))}
+                </Stack>
+              </Box>
+            )}
           </Stack>
         }
       >
-        <Stack space={[3, 3, 4]}>
-          <Breadcrumbs>
-            <Link href={makePath()}>
-              <a>Ísland.is</a>
-            </Link>
-            <Link
-              href={`${makePath('category')}/[slug]`}
-              as={makePath('category', categorySlug)}
-            >
-              <a>{categoryTitle}</a>
-            </Link>
-            {groupTitle && (
-              <Tag variant="purple" label>
-                {groupTitle}
-              </Tag>
-            )}
-          </Breadcrumbs>
-          <Hidden above="md">
-            <Select
-              label="Efnisyfirlit"
-              placeholder="Flokkar"
-              options={contentOverviewOptions}
-              onChange={onChangeContentOverview}
-              name="content-overview"
-            />
-          </Hidden>
-          <Box marginBottom={[2, 2, 3]}>
-            <Typography variant="h1" as="h1">
+        <GridRow>
+          <GridColumn
+            offset={['0', '0', '1/8']}
+            span={['0', '0', '7/8']}
+            paddingBottom={2}
+          >
+            <Breadcrumbs>
+              <Link href={makePath()}>
+                <a>Ísland.is</a>
+              </Link>
+              <Link
+                href={`${makePath('category')}/[slug]`}
+                as={makePath('category', article.category.slug)}
+              >
+                <a>{article.category.title}</a>
+              </Link>
+              {article.group && (
+                <Tag variant="purple" label>
+                  {article.group.title}
+                </Tag>
+              )}
+            </Breadcrumbs>
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn span="8/8" paddingBottom={4}>
+            <Hidden above="sm">
+              <Select
+                label="Efnisyfirlit"
+                placeholder="Flokkar"
+                options={contentOverviewOptions}
+                onChange={onChangeContentOverview}
+                name="content-overview"
+              />
+            </Hidden>
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn offset={['0', '0', '1/8']} span={['8/8', '8/8', '7/8']}>
+            <Typography variant="h1" as="h1" paddingBottom={2}>
               <span data-sidebar-link={slugify(article.title)}>
                 {article.title}
               </span>
             </Typography>
-          </Box>
-        </Stack>
-
+          </GridColumn>
+        </GridRow>
         <Content document={article.content} />
       </ArticleLayout>
     </>
@@ -141,25 +174,16 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
 
   const [article, namespace] = await Promise.all([
     apolloClient
-      .query<GetSingleItemQuery, QuerySingleItemArgs>({
-        query: GET_SINGLE_ITEM,
+      .query<Query, QueryGetArticleArgs>({
+        query: GET_ARTICLE_QUERY,
         variables: {
           input: {
             slug,
-            language: locale as ContentLanguage,
+            lang: locale as string,
           },
         },
       })
-      .then((content) => {
-        // map data here to reduce data processing in component
-        // TODO: Elastic endpoint is returning the article document json nested inside ContentItem, look into flattening this
-        const contentObject = JSON.parse(content.data.singleItem.content)
-
-        return {
-          ...content.data.singleItem,
-          content: JSON.stringify(contentObject.content),
-        }
-      }),
+      .then((r) => r.data.getArticle),
     apolloClient
       .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,

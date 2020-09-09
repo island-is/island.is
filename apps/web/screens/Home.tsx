@@ -2,8 +2,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { Box, Stack, Inline, Tag } from '@island.is/island-ui/core'
-
-import { Categories, SearchInput } from '../components'
+import { Categories, SearchInput, LatestNewsSection } from '../components'
 import { useI18n } from '../i18n'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
@@ -22,7 +21,11 @@ import {
   GET_NAMESPACE_QUERY,
   GET_CATEGORIES_QUERY,
   GET_FRONTPAGE_SLIDES_QUERY,
+  GET_NEWS_LIST_QUERY,
 } from './queries'
+import { IntroductionSection } from '../components/IntroductionSection'
+import { LifeEventsCardsSection } from '../components/LifeEventsCardsSection'
+import { Section } from '../components/Section'
 
 interface HomeProps {
   categories: GetCategoriesQuery['categories']
@@ -34,6 +37,7 @@ const Home: Screen<HomeProps> = ({
   categories,
   frontpageSlides,
   namespace,
+  news,
 }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
@@ -56,6 +60,7 @@ const Home: Screen<HomeProps> = ({
       <Stack space={[1, 1, 3]}>
         <Box display="inlineFlex" alignItems="center" width="full">
           <SearchInput
+            id="search_input_home"
             openOnFocus
             size="medium"
             colored={false}
@@ -64,9 +69,10 @@ const Home: Screen<HomeProps> = ({
           />
         </Box>
         <Inline space={1}>
-          {n('featuredArticles', []).map(({ title, url }) => {
+          {n('featuredArticles', []).map(({ title, url }, index) => {
             return (
               <Tag
+                key={index}
                 variant="darkerBlue"
                 onClick={() => {
                   Router.push(`${makePath('article')}/[slug]`, url)
@@ -83,12 +89,36 @@ const Home: Screen<HomeProps> = ({
 
   return (
     <>
-      <Box paddingY={[2, 2, 3, 3, 6]}>
+      <Section paddingY={[0, 0, 3, 3, 6]}>
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
-      </Box>
-      <Box background="purple100">
-        <Categories label={n('articlesTitle')} cards={cards} />
-      </Box>
+      </Section>
+      <Section background="purple100" paddingY={[4, 4, 4, 6]}>
+        <Categories title={n('articlesTitle')} cards={cards} />
+      </Section>
+      <Section
+        paddingTop={[8, 8, 3, 3, 6]}
+        backgroundBleed={{
+          bleedAmount: 160,
+          bleedDirection: 'top',
+          fromColor: 'white',
+          toColor: 'purple100',
+        }}
+      >
+        <LifeEventsCardsSection title={n('lifeEventsTitle')} />
+      </Section>
+      <Section paddingTop={[8, 8, 6]}>
+        <LatestNewsSection label="Fréttir og tilkynningar" items={news} />
+      </Section>
+      <Section paddingY={[8, 8, 8, 10, 15]}>
+        <IntroductionSection
+          subtitle="Markmiðið okkar"
+          title="Öll opinber þjónusta á einum stað"
+          introText="Við vinnum að margvíslegum verkefnum sem öll stuðla að því að gera opinbera þjónustu skilvirkari og notendavænni."
+          text="Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn."
+          linkText="Nánar um stafrænt Ísland"
+          linkUrl="/um-island-is"
+        />
+      </Section>
     </>
   )
 }
@@ -102,6 +132,11 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     },
     {
       data: { categories },
+    },
+    {
+      data: {
+        getNewsList: { news },
+      },
     },
     namespace,
   ] = await Promise.all([
@@ -121,6 +156,14 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       variables: {
         input: {
           language: locale as ContentLanguage,
+        },
+      },
+    }),
+    apolloClient.query<Query, QueryGetNewsListArgs>({
+      query: GET_NEWS_LIST_QUERY,
+      variables: {
+        input: {
+          perPage: 3,
         },
       },
     }),
@@ -152,6 +195,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   ])
 
   return {
+    news,
     frontpageSlides: items,
     categories,
     namespace,

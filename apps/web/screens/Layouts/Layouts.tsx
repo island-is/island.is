@@ -5,7 +5,7 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
-import cn from 'classnames'
+import { sidebarWrapper } from './Layouts.treat'
 import { Sticky } from '../../components'
 
 interface CategoryProps {
@@ -21,10 +21,13 @@ export const CategoryLayout: FC<CategoryProps> = ({
   <GridContainer>
     <Box paddingBottom={10}>
       <GridRow>
-        <GridColumn span={3}>
+        <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
-        <GridColumn span={6} offset={1}>
+        <GridColumn
+          span={['12/12', '12/12', '8/12']}
+          offset={[null, null, null, '1/12']}
+        >
           <Box paddingBottom={10}>{children}</Box>
           {belowContent && belowContent}
         </GridColumn>
@@ -39,12 +42,16 @@ interface ArticleProps {
 
 export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
   <GridContainer>
-    <Box paddingBottom={10}>
+    <Box paddingY={10}>
       <GridRow>
-        <GridColumn span={7} offset={1}>
+        <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
           <Box>{children}</Box>
         </GridColumn>
-        <GridColumn span={3} offset={1}>
+        <GridColumn
+          span={['0', '0', '4/12', '3/12']}
+          offset={['0', '0', '0', '1/12']}
+          className={sidebarWrapper}
+        >
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
       </GridRow>
@@ -60,14 +67,20 @@ export const NewsListLayout: FC<NewsListProps> = ({ sidebar, children }) => (
   <GridContainer>
     <Box paddingTop={6} paddingBottom={10}>
       <GridRow>
-        <GridColumn span={4}>
+        <GridColumn
+          span={['12/12', '12/12', '4/12', '3/12']}
+          className={sidebarWrapper}
+        >
           <Sticky>
             <Box background="purple100" padding={4}>
               {sidebar}
             </Box>
           </Sticky>
         </GridColumn>
-        <GridColumn span={6} offset={1}>
+        <GridColumn
+          span={['12/12', '12/12', '8/12', '6/12']}
+          offset={['0', '0', '0', '1/12']}
+        >
           <Box paddingBottom={10}>{children}</Box>
         </GridColumn>
       </GridRow>
@@ -81,12 +94,18 @@ interface NewsItemProps {
 
 export const NewsItemLayout: FC<NewsItemProps> = ({ sidebar, children }) => (
   <GridContainer>
-    <Box paddingTop={6} paddingBottom={10}>
+    <Box paddingY={10}>
       <GridRow>
-        <GridColumn span={6} offset={1}>
+        <GridColumn
+          span={['12/12', '12/12', '8/12', '7/12']}
+          offset={['0', '0', '0', '1/12']}
+        >
           {children}
         </GridColumn>
-        <GridColumn span={4}>
+        <GridColumn
+          span={['0', '0', '4/12', '3/12']}
+          offset={['0', '0', '0', '1/12']}
+        >
           <Sticky>
             <Box background="purple100" padding={4}>
               {sidebar}

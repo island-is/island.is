@@ -7,7 +7,14 @@ import {
   GenericPage,
   QueryGetGenericPageArgs,
 } from '@island.is/api/schema'
-import { Box, Breadcrumbs, Stack, Typography } from '@island.is/island-ui/core'
+import {
+  Box,
+  Breadcrumbs,
+  Stack,
+  Typography,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 import Link from 'next/link'
 import {
   Content,
@@ -24,32 +31,38 @@ const Home: Screen<PropTypes> = ({ page }) => {
 
   return (
     <Layout
-      left={
-        <Box>
-          <Box marginBottom={4}>
-            <Breadcrumbs>
-              <Link href={toRoute('home')}>
-                <a>Ísland.is</a>
-              </Link>
-              <span>Loftbrú</span>
-            </Breadcrumbs>
-          </Box>
-          <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
-            <Stack space={3}>
-              <Typography variant="h1" as="h1">
-                {page.title}
-              </Typography>
-              <IntroText document={page.intro} />
-              <Content
-                document={page.mainContent}
-                wrapper={(children) => <Stack space={3}>{children}</Stack>}
-              />
-            </Stack>
-          </Box>
-        </Box>
+      main={
+        <GridRow>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '12/12', '7/9']}
+            offset={[null, null, null, null, '1/9']}
+          >
+            <Box marginBottom={4}>
+              <Breadcrumbs>
+                <Link href={toRoute('home')}>
+                  <a>Ísland.is</a>
+                </Link>
+                <span>Loftbrú</span>
+              </Breadcrumbs>
+            </Box>
+            <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
+              <Stack space={3}>
+                <Typography variant="h1" as="h1">
+                  {page.title}
+                </Typography>
+                <IntroText document={page.intro} />
+                <Content
+                  document={page.mainContent}
+                  wrapper={(children) => <Stack space={3}>{children}</Stack>}
+                />
+              </Stack>
+            </Box>
+          </GridColumn>
+        </GridRow>
       }
-      right={
+      aside={
         <Content
+          type="sidebar"
           document={page.sidebar}
           wrapper={(children) => <Stack space={3}>{children}</Stack>}
         />

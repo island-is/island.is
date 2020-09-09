@@ -10,3 +10,4 @@ apps/gjafakort/README.md
 # air-discount-scheme
 apps/air-discount-scheme/codegen.yml
 apps/air-discount-scheme/api.graphql
+apps/air-discount-scheme/Makefile

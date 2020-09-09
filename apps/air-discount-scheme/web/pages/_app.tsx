@@ -36,6 +36,7 @@ class SupportApplication extends App<Props> {
     const layoutProps = await AppLayout.getInitialProps({
       ...customContext,
       locale: pageProps.locale,
+      localeKey: pageProps.localeKey,
       routeKey: pageProps.route,
     } as any)
 

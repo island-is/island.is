@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+
 import { Taxonomy } from './taxonomy.model'
 import { IArticle } from '../generated/contentfulTypes'
 
@@ -20,7 +21,10 @@ export class Article {
   group?: Taxonomy
 
   @Field(() => Taxonomy, { nullable: true })
-  category: Taxonomy
+  category?: Taxonomy
+
+  @Field(() => [Article])
+  relatedArticles: Article[]
 }
 
 export const mapArticle = ({ sys, fields }: IArticle): Article => ({
@@ -30,4 +34,5 @@ export const mapArticle = ({ sys, fields }: IArticle): Article => ({
   group: fields.group?.fields,
   category: fields.category?.fields,
   content: fields.content && JSON.stringify(fields.content),
+  relatedArticles: [], // populated by resolver
 })

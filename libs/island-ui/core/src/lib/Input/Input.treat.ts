@@ -41,7 +41,12 @@ export const label = style({
     [`${hasError} &`]: mixins.labelErrorState,
   },
 })
+
 export const labelDisabledEmptyInput = style(mixins.labelDisabledEmptyInput)
+
+export const isRequiredStar = style({
+  color: theme.color.red400,
+})
 
 export const hasFocus = style({
   selectors: {
