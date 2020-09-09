@@ -1,7 +1,6 @@
 import React, { FC, useReducer } from 'react'
 import { Application } from '@island.is/application/template'
 import FormProgress from '../components/FormProgress/'
-import ApplicationName from '../components/ApplicationName/'
 import Sidebar from '../components/Sidebar'
 import Screen from '../components/Screen'
 import {
@@ -10,7 +9,6 @@ import {
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
-import * as styles from './ApplicationForm.treat'
 
 export const ApplicationForm: FC<{ application: Application }> = ({
   application,
@@ -58,7 +56,6 @@ export const ApplicationForm: FC<{ application: Application }> = ({
               height="full"
               borderRadius="large"
               background="white"
-              className={styles.screenContainer}
             >
               <GridColumn
                 span={['12/12', '12/12', '7/9', '7/9']}
@@ -94,18 +91,15 @@ export const ApplicationForm: FC<{ application: Application }> = ({
             </Box>
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '3/12', '3/12']}>
-            <Box className={styles.sidebarContainer}>
-              <Sidebar>
-                <ApplicationName name={form.name} icon={form.icon} />
-                <Box display="flex" flexDirection={['column', 'columnReverse']}>
-                  <FormProgress
-                    sections={sections}
-                    activeSection={activeSection}
-                    activeSubSection={activeSubSection}
-                  />
-                </Box>
-              </Sidebar>
-            </Box>
+            <Sidebar>
+              <FormProgress
+                formName={form.name}
+                formIcon={form.icon}
+                sections={sections}
+                activeSection={activeSection}
+                activeSubSection={activeSubSection}
+              />
+            </Sidebar>
           </GridColumn>
         </GridRow>
       </Box>

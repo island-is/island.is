@@ -3,8 +3,8 @@ import { style } from 'treat'
 export const icon = style({
   position: 'relative',
   display: 'inline-block',
-  top: '-2px',
-  left: '2px',
+  top: '-4px',
+  left: 'calc(50% - 4px)',
 })
 
 export const bullet = style({

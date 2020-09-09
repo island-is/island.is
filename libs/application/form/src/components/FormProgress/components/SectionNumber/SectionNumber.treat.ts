@@ -14,7 +14,8 @@ export const number = style({
 })
 
 export const progressLine = style({
-  width: 4,
-  left: '45%',
+  width: 2,
+  left: '50%',
+  marginLeft: '-1px',
   top: '50%',
 })
