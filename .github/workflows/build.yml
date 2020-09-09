@@ -25,12 +25,7 @@ jobs:
 
     outputs:
       GIT_BRANCH: ${{ steps.git_refs.outputs.GIT_BRANCH }}
-      GIT_BASE_BRANCH: ${{ steps.git_refs.outputs.GIT_BASE_BRANCH }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
-      DOCKER_LATEST_TAG: ${{ steps.docker_tags.outputs.DOCKER_LATEST_TAG }}
-      DOCKER_BRANCH_TAG: ${{ steps.docker_tags.outputs.DOCKER_BRANCH_TAG }}
-      BASE: ${{ steps.git_nx_base.outputs.BASE }}
-      HEAD: ${{ steps.git_nx_head.outputs.HEAD }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       PUBLISH: ${{ steps.publish_flag.outputs.PUBLISH }}
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
@@ -59,7 +54,6 @@ jobs:
           echo "::set-env name=GIT_BRANCH::${GIT_BRANCH}"
           echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
           echo "::set-env name=GIT_BASE_BRANCH::${GIT_BASE_BRANCH}"
-          echo "::set-output name=GIT_BASE_BRANCH::${GIT_BASE_BRANCH}"
           echo "Base branch is '${GIT_BASE_BRANCH}'"
           echo "Branch is '${GIT_BRANCH}'"
 
@@ -69,18 +63,14 @@ jobs:
           export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH} | tr "/." "-" )
           export DOCKER_TAG=${GITHUB_RUN_NUMBER}_${DOCKER_BRANCH_TAG}_${GITHUB_SHA:0:7}
           echo "Docker tag will be ${DOCKER_TAG}"
-          echo "::set-env name=DOCKER_BRANCH_TAG::${DOCKER_BRANCH_TAG}"
-          echo "::set-output name=DOCKER_BRANCH_TAG::${DOCKER_BRANCH_TAG}"
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "::set-env name=DOCKER_TAG::${DOCKER_TAG}"
-          echo "::set-output name=DOCKER_LATEST_TAG::latest_${DOCKER_BRANCH_TAG}"
 
       - run: git checkout "$GIT_BRANCH"
       - run: git checkout "$GIT_BASE_BRANCH"
       - run: git checkout $GITHUB_SHA
       - run: |
           echo "::set-env name=HEAD::${GITHUB_SHA}"
-          echo "::set-output name=HEAD::${GITHUB_SHA}"
         id: git_nx_head
         name: Preparing HEAD tag
       - run: |
@@ -97,7 +87,6 @@ jobs:
           LAST_GOOD_BUILD_RUN_NUMBER=`echo $LAST_GOOD_BUILD | jq -r '.run_number'`
           echo "Last successful build on $BRANCH is with SHA '$LAST_GOOD_BUILD_SHA', branch '$LAST_GOOD_BUILD_BRANCH' and number '$LAST_GOOD_BUILD_RUN_NUMBER'"
           echo "::set-env name=BASE::$LAST_GOOD_BUILD_SHA"
-          echo "::set-output name=BASE::$LAST_GOOD_BUILD_SHA"
           LAST_GOOD_BUILD_DOCKER_BRANCH_TAG=$(echo ${LAST_GOOD_BUILD_BRANCH} | tr "/." "-" )
           export LAST_GOOD_BUILD_DOCKER_TAG=${LAST_GOOD_BUILD_RUN_NUMBER}_${LAST_GOOD_BUILD_DOCKER_BRANCH_TAG}_${LAST_GOOD_BUILD_SHA:0:7}
           echo "Last successful docker tag '$LAST_GOOD_BUILD_DOCKER_TAG'"
