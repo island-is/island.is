@@ -124,7 +124,7 @@ const DropdownIndicator = (props: IndicatorProps<Option>) => {
       className={styles.dropdownIndicator}
       {...props}
     >
-      <Icon type={icon} width="25" color={hasError ? 'red400' : 'blue400'} />
+      <Icon type={icon} width="22" color={hasError ? 'red400' : 'blue400'} />
     </components.DropdownIndicator>
   )
 }
