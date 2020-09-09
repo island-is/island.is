@@ -38,9 +38,9 @@ export class ClientsController {
     return clientProfile
   }
 
-  @Post()
-  @ApiCreatedResponse({ type: Client })
-  async create(@Body() client: Client): Promise<Client> {
-    return await this.clientsService.createAsync(client)
-  }
+  // @Post()
+  // @ApiCreatedResponse({ type: Client })
+  // async create(@Body() client: Client): Promise<Client> {
+  //   return await this.clientsService.createAsync(client)
+  // }
 }

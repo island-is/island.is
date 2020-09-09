@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Sequelize } from 'sequelize-typescript'
 import { InjectModel } from '@nestjs/sequelize'
+import { GrantDTO } from './dto/grant-dto'
 
 @Injectable()
 export class GrantsService {
@@ -75,9 +76,11 @@ export class GrantsService {
     })
   }
 
-  async createAsync(grant: Grant): Promise<Grant> {
+  async createAsync(grant: GrantDTO): Promise<Grant> {
     this.logger.debug(`Creating a new grant`)
 
-    return await this.grantModel.create(grant)
+    return await this.grantModel.create(
+      { ...grant }
+    )
   }
 }

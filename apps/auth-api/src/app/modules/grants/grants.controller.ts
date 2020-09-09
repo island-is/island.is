@@ -9,10 +9,10 @@ import {
   Body,
   UseGuards,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiTags, ApiOAuth2 } from '@nestjs/swagger'
-import { GrantType } from '../grant-types/grant-type.model'
+import { ApiOkResponse, ApiTags, ApiOAuth2, ApiCreatedResponse } from '@nestjs/swagger'
 import { Grant } from './grants.model'
 import { AuthGuard } from '@nestjs/passport'
+import { GrantDTO } from './dto/grant-dto'
 
 @ApiOAuth2(['openid:profile']) // add OAuth restriction to this controller
 @UseGuards(AuthGuard('jwt'))
@@ -22,7 +22,7 @@ export class GrantsController {
   constructor(private readonly grantsService: GrantsService) {}
 
   @Get(':subjectId')
-  @ApiOkResponse({ type: GrantType })
+  @ApiOkResponse({ type: Grant })
   async getAll(@Param('subjectId') subjectId: string): Promise<Grant[]> {
     const grants = await this.grantsService.getAllAsync(subjectId)
 
@@ -34,7 +34,7 @@ export class GrantsController {
   }
 
   @Get(':key')
-  @ApiOkResponse({ type: GrantType })
+  @ApiOkResponse({ type: Grant })
   async getAsync(@Param('key') key: string): Promise<Grant> {
     const grants = await this.grantsService.getAsync(key)
 
@@ -72,9 +72,9 @@ export class GrantsController {
     return await this.grantsService.removeAsync(key)
   }
 
-  // @Post()
-  // @ApiCreatedResponse({ type: Grant })
-  // async create(@Body() grant: Grant): Promise<Grant> {
-  //   return await this.grantsService.createAsync(grant)
-  // }
+  @Post()
+  @ApiCreatedResponse({ type: Grant })
+  async create(@Body() grant: GrantDTO): Promise<Grant> {
+    return await this.grantsService.createAsync(grant)
+  }
 }
