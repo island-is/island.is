@@ -30,7 +30,6 @@ export const BackgroundImage: FC<BackgroundImageProps> = ({
   boxProps = {
     alignItems: 'center',
     width: 'full',
-    height: 'full',
     display: 'inlineFlex',
     overflow: 'hidden',
     borderRadius: 'large',

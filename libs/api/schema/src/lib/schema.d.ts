@@ -412,6 +412,12 @@ export type LifeEventPage = {
   body: Scalars['JSON']
 }
 
+export type PaginatedAdgerdirNews = {
+  __typename?: 'PaginatedAdgerdirNews'
+  page: Pagination
+  news: Array<AdgerdirNews>
+}
+
 export type Application = {
   __typename?: 'Application'
   id: Scalars['ID']
@@ -462,6 +468,20 @@ export type Document = {
   opened: Scalars['Boolean']
 }
 
+export type DocumentDetails = {
+  __typename?: 'DocumentDetails'
+  fileType: Scalars['String']
+  content: Scalars['String']
+  html: Scalars['String']
+  url: Scalars['String']
+}
+
+export type DocumentCategory = {
+  __typename?: 'DocumentCategory'
+  id: Scalars['ID']
+  name: Scalars['String']
+}
+
 export type Query = {
   __typename?: 'Query'
   helloWorld: HelloWorld
@@ -473,6 +493,7 @@ export type Query = {
   getArticle?: Maybe<Article>
   getNews?: Maybe<News>
   getNewsList: PaginatedNews
+  getAdgerdirNewsList: PaginatedAdgerdirNews
   getNamespace?: Maybe<Namespace>
   getAboutPage: AboutPage
   getLandingPage?: Maybe<LandingPage>
@@ -487,7 +508,9 @@ export type Query = {
   getLifeEventPage?: Maybe<LifeEventPage>
   getApplication?: Maybe<Application>
   getApplicationsByType?: Maybe<Array<Application>>
-  getDocument?: Maybe<Document>
+  getDocument?: Maybe<DocumentDetails>
+  listDocuments?: Maybe<Array<Document>>
+  getDocumentCategories?: Maybe<Array<DocumentCategory>>
 }
 
 export type QueryHelloWorldArgs = {
@@ -524,6 +547,10 @@ export type QueryGetNewsArgs = {
 
 export type QueryGetNewsListArgs = {
   input: GetNewsListInput
+}
+
+export type QueryGetAdgerdirNewsListArgs = {
+  input: GetAdgerdirNewsListInput
 }
 
 export type QueryGetNamespaceArgs = {
@@ -586,6 +613,10 @@ export type QueryGetDocumentArgs = {
   input: GetDocumentInput
 }
 
+export type QueryListDocumentsArgs = {
+  input: ListDocumentsInput
+}
+
 export type HelloWorldInput = {
   name?: Maybe<Scalars['String']>
 }
@@ -640,6 +671,15 @@ export type GetNewsInput = {
 }
 
 export type GetNewsListInput = {
+  lang?: Maybe<Scalars['String']>
+  year?: Maybe<Scalars['Int']>
+  month?: Maybe<Scalars['Int']>
+  ascending?: Maybe<Scalars['Boolean']>
+  page?: Maybe<Scalars['Int']>
+  perPage?: Maybe<Scalars['Int']>
+}
+
+export type GetAdgerdirNewsListInput = {
   lang?: Maybe<Scalars['String']>
   year?: Maybe<Scalars['Int']>
   month?: Maybe<Scalars['Int']>
@@ -716,6 +756,15 @@ export type GetDocumentInput = {
   id: Scalars['String']
 }
 
+export type ListDocumentsInput = {
+  page: Scalars['Float']
+  pageSize: Scalars['Float']
+  natReg: Scalars['String']
+  dateFrom: Scalars['DateTime']
+  dateTo: Scalars['DateTime']
+  category: Scalars['String']
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<Application>
@@ -781,21 +830,12 @@ export enum CreateApplicationDtoTypeIdEnum {
 
 export type UpdateApplicationInput = {
   id: Scalars['String']
-  typeId: UpdateApplicationDtoTypeIdEnum
   applicant?: Maybe<Scalars['String']>
   assignee?: Maybe<Scalars['String']>
   externalId?: Maybe<Scalars['String']>
   state?: Maybe<UpdateApplicationDtoStateEnum>
   attachments?: Maybe<Scalars['JSON']>
   answers?: Maybe<Scalars['JSON']>
-}
-
-export enum UpdateApplicationDtoTypeIdEnum {
-  ExampleForm = 'ExampleForm',
-  ExampleForm2 = 'ExampleForm2',
-  ExampleForm3 = 'ExampleForm3',
-  FamilyAndPets = 'FamilyAndPets',
-  ParentalLeave = 'ParentalLeave',
 }
 
 export enum UpdateApplicationDtoStateEnum {
@@ -1028,6 +1068,7 @@ export type ResolversTypes = {
   AdgerdirTags: ResolverTypeWrapper<AdgerdirTags>
   LifeEventPage: ResolverTypeWrapper<LifeEventPage>
   JSON: ResolverTypeWrapper<Scalars['JSON']>
+  PaginatedAdgerdirNews: ResolverTypeWrapper<PaginatedAdgerdirNews>
   Application: ResolverTypeWrapper<Application>
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>
   ApplicationStateEnum: ApplicationStateEnum
@@ -1035,6 +1076,8 @@ export type ResolversTypes = {
   PresignedPost: ResolverTypeWrapper<PresignedPost>
   Document: ResolverTypeWrapper<Document>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
+  DocumentDetails: ResolverTypeWrapper<DocumentDetails>
+  DocumentCategory: ResolverTypeWrapper<DocumentCategory>
   Query: ResolverTypeWrapper<{}>
   HelloWorldInput: HelloWorldInput
   SearcherInput: SearcherInput
@@ -1047,6 +1090,7 @@ export type ResolversTypes = {
   GetArticleInput: GetArticleInput
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
+  GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
   GetLandingPageInput: GetLandingPageInput
@@ -1062,12 +1106,12 @@ export type ResolversTypes = {
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
+  ListDocumentsInput: ListDocumentsInput
   Mutation: ResolverTypeWrapper<{}>
   CreateApplicationInput: CreateApplicationInput
   CreateApplicationDtoStateEnum: CreateApplicationDtoStateEnum
   CreateApplicationDtoTypeIdEnum: CreateApplicationDtoTypeIdEnum
   UpdateApplicationInput: UpdateApplicationInput
-  UpdateApplicationDtoTypeIdEnum: UpdateApplicationDtoTypeIdEnum
   UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
   UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
   DataProvider: DataProvider
@@ -1151,11 +1195,14 @@ export type ResolversParentTypes = {
   AdgerdirTags: AdgerdirTags
   LifeEventPage: LifeEventPage
   JSON: Scalars['JSON']
+  PaginatedAdgerdirNews: PaginatedAdgerdirNews
   Application: Application
   DateTime: Scalars['DateTime']
   PresignedPost: PresignedPost
   Document: Document
   Boolean: Scalars['Boolean']
+  DocumentDetails: DocumentDetails
+  DocumentCategory: DocumentCategory
   Query: {}
   HelloWorldInput: HelloWorldInput
   SearcherInput: SearcherInput
@@ -1166,6 +1213,7 @@ export type ResolversParentTypes = {
   GetArticleInput: GetArticleInput
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
+  GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
   GetLandingPageInput: GetLandingPageInput
@@ -1181,6 +1229,7 @@ export type ResolversParentTypes = {
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
+  ListDocumentsInput: ListDocumentsInput
   Mutation: {}
   CreateApplicationInput: CreateApplicationInput
   UpdateApplicationInput: UpdateApplicationInput
@@ -1859,6 +1908,19 @@ export interface JsonScalarConfig
   name: 'JSON'
 }
 
+export type PaginatedAdgerdirNewsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['PaginatedAdgerdirNews'] = ResolversParentTypes['PaginatedAdgerdirNews']
+> = {
+  page?: Resolver<ResolversTypes['Pagination'], ParentType, ContextType>
+  news?: Resolver<
+    Array<ResolversTypes['AdgerdirNews']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type ApplicationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Application'] = ResolversParentTypes['Application']
@@ -1913,6 +1975,26 @@ export type DocumentResolvers<
   senderName?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   senderNatReg?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   opened?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type DocumentDetailsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['DocumentDetails'] = ResolversParentTypes['DocumentDetails']
+> = {
+  fileType?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  html?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type DocumentCategoryResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['DocumentCategory'] = ResolversParentTypes['DocumentCategory']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1973,6 +2055,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetNewsListArgs, 'input'>
+  >
+  getAdgerdirNewsList?: Resolver<
+    ResolversTypes['PaginatedAdgerdirNews'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetAdgerdirNewsListArgs, 'input'>
   >
   getNamespace?: Resolver<
     Maybe<ResolversTypes['Namespace']>,
@@ -2059,10 +2147,21 @@ export type QueryResolvers<
     RequireFields<QueryGetApplicationsByTypeArgs, 'input'>
   >
   getDocument?: Resolver<
-    Maybe<ResolversTypes['Document']>,
+    Maybe<ResolversTypes['DocumentDetails']>,
     ParentType,
     ContextType,
     RequireFields<QueryGetDocumentArgs, 'input'>
+  >
+  listDocuments?: Resolver<
+    Maybe<Array<ResolversTypes['Document']>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryListDocumentsArgs, 'input'>
+  >
+  getDocumentCategories?: Resolver<
+    Maybe<Array<ResolversTypes['DocumentCategory']>>,
+    ParentType,
+    ContextType
   >
 }
 
@@ -2157,10 +2256,13 @@ export type Resolvers<ContextType = Context> = {
   AdgerdirTags?: AdgerdirTagsResolvers<ContextType>
   LifeEventPage?: LifeEventPageResolvers<ContextType>
   JSON?: GraphQLScalarType
+  PaginatedAdgerdirNews?: PaginatedAdgerdirNewsResolvers<ContextType>
   Application?: ApplicationResolvers<ContextType>
   DateTime?: GraphQLScalarType
   PresignedPost?: PresignedPostResolvers<ContextType>
   Document?: DocumentResolvers<ContextType>
+  DocumentDetails?: DocumentDetailsResolvers<ContextType>
+  DocumentCategory?: DocumentCategoryResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
 }

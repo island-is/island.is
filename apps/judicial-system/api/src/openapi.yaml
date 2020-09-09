@@ -33,12 +33,6 @@ components:
         modified:
           format: date-time
           type: string
-        policeCaseNumber:
-          type: string
-        suspectNationalId:
-          type: string
-        suspectName:
-          type: string
         state:
           type: string
           enum:
@@ -47,12 +41,28 @@ components:
             - SUBMITTED
             - ACTIVE
             - COMPLETED
+        policeCaseNumber:
+          type: string
+        suspectNationalId:
+          type: string
+        suspectName:
+          type: string
+        suspectAddress:
+          type: string
+        court:
+          type: string
+        arrestDate:
+          format: date-time
+          type: string
+        requestedCourtDate:
+          format: date-time
+          type: string
       required:
         - created
         - modified
+        - state
         - policeCaseNumber
         - suspectNationalId
-        - state
     CreateCaseDto:
       type: object
       properties:
@@ -60,18 +70,24 @@ components:
           type: string
         suspectNationalId:
           type: string
+        suspectName:
+          type: string
+        suspectAddress:
+          type: string
+        court:
+          type: string
+        arrestDate:
+          format: date-time
+          type: string
+        requestedCourtDate:
+          format: date-time
+          type: string
       required:
         - policeCaseNumber
         - suspectNationalId
     UpdateCaseDto:
       type: object
       properties:
-        policeCaseNumber:
-          type: string
-        suspectNationalId:
-          type: string
-        suspectName:
-          type: string
         state:
           type: string
           enum:
@@ -80,6 +96,22 @@ components:
             - SUBMITTED
             - ACTIVE
             - COMPLETED
+        policeCaseNumber:
+          type: string
+        suspectNationalId:
+          type: string
+        suspectName:
+          type: string
+        suspectAddress:
+          type: string
+        court:
+          type: string
+        arrestDate:
+          format: date-time
+          type: string
+        requestedCourtDate:
+          format: date-time
+          type: string
 paths:
   /liveness:
     get:
@@ -182,7 +214,16 @@ paths:
                 $ref: '#/components/schemas/Case'
       tags:
         - cases
-  /auth/login:
+  /api/auth/callback:
+    post:
+      operationId: AuthController_callback
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - api/auth
+  /api/auth/login:
     get:
       operationId: AuthController_login
       parameters: []
@@ -190,8 +231,8 @@ paths:
         '200':
           description: ''
       tags:
-        - auth
-  /auth/logout:
+        - api/auth
+  /api/auth/logout:
     get:
       operationId: AuthController_logout
       parameters: []
@@ -199,4 +240,4 @@ paths:
         '200':
           description: ''
       tags:
-        - auth
+        - api/auth

@@ -1,11 +1,5 @@
 import React, { FC, ReactNode } from 'react'
-import {
-  ContentBlock,
-  Box,
-  GridContainer,
-  GridRow,
-  GridColumn,
-} from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 
 import * as styles from './BorderedContent.treat'
 
@@ -23,12 +17,8 @@ export const BorderedContent: FC<BorderedContentProps> = ({
   return (
     <div className={styles.container}>
       <Box width="full">
-        {showTopContent ? (
-          <Box paddingTop={[6, 6, 9]} paddingBottom={[3, 3, 5]}>
-            {topContent}
-          </Box>
-        ) : null}
-        <Box paddingY={[3, 3, 6]} background="blue100">
+        {showTopContent ? <Box paddingY={[3, 3, 5]}>{topContent}</Box> : null}
+        <Box paddingY={[3, 3, 6]} className={styles.bottomContent}>
           {bottomContent}
         </Box>
       </Box>

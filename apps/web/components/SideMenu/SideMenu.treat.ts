@@ -12,7 +12,7 @@ export const root = style({
   position: 'fixed',
   right: 0,
   top: 0,
-  zIndex: 1,
+  zIndex: 10,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       height: 'auto',

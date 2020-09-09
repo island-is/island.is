@@ -14,27 +14,29 @@ import { ApiProperty } from '@nestjs/swagger'
 import {
   Flight as TFlight,
   FlightLeg as TFlightLeg,
+  UserInfo,
 } from '@island.is/air-discount-scheme/types'
+import { States } from '@island.is/air-discount-scheme/consts'
 import { environment } from '../../../environments'
 import { createMachine } from 'xstate'
 
 export const financialStateMachine = createMachine({
   id: 'flight_leg_financial_state_machine',
-  initial: 'awaitingDebit',
+  initial: States.awaitingDebit,
   states: {
-    awaitingDebit: {
-      on: { REVOKE: 'cancelled', SEND: 'sentDebit' },
+    [States.awaitingDebit]: {
+      on: { REVOKE: States.cancelled, SEND: States.sentDebit },
     },
-    sentDebit: {
-      on: { REVOKE: 'awaitingCredit' },
+    [States.sentDebit]: {
+      on: { REVOKE: States.awaitingCredit },
     },
-    awaitingCredit: {
-      on: { SEND: 'sentCredit' },
+    [States.awaitingCredit]: {
+      on: { SEND: States.sentCredit },
     },
-    sentCredit: {
+    [States.sentCredit]: {
       type: 'final',
     },
-    cancelled: {
+    [States.cancelled]: {
       type: 'final',
     },
   },
@@ -126,6 +128,12 @@ export class Flight extends Model<Flight> implements TFlight {
   })
   @ApiProperty()
   id: string
+
+  @Column({
+    type: DataType.JSONB,
+    allowNull: false,
+  })
+  userInfo: UserInfo
 
   @Column({
     type: DataType.STRING,

@@ -18,7 +18,7 @@ import {
   GetUserRelationsParams,
 } from './user.validator'
 import { UserService } from './user.service'
-import { User } from './user.model'
+import { AirlineUser, User } from './user.model'
 import { DiscountService } from '../discount'
 import { FlightService } from '../flight'
 import { AuthGuard } from '../common'
@@ -34,10 +34,10 @@ export class PublicUserController {
   ) {}
 
   @Get('discounts/:discountCode/user')
-  @ApiOkResponse({ type: User })
+  @ApiOkResponse({ type: AirlineUser })
   async getUserByDiscountCode(
     @Param() params: GetUserByDiscountCodeParams,
-  ): Promise<User> {
+  ): Promise<AirlineUser> {
     const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
     )
@@ -45,7 +45,7 @@ export class PublicUserController {
       throw new BadRequestException('Discount code is invalid')
     }
 
-    const user = await this.userService.getUserInfoByNationalId(
+    const user = await this.userService.getAirlineUserInfoByNationalId(
       discount.nationalId,
     )
     if (!user) {
@@ -68,10 +68,11 @@ export class PrivateUserController {
     @Param() params: GetUserRelationsParams,
   ): Promise<User[]> {
     const relations = await this.userService.getRelations(params.nationalId)
-    return Promise.all(
-      relations.map((nationalId) =>
+    return Promise.all([
+      this.userService.getUserInfoByNationalId(params.nationalId),
+      ...relations.map((nationalId) =>
         this.userService.getUserInfoByNationalId(nationalId),
       ),
-    )
+    ])
   }
 }
