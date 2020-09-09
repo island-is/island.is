@@ -133,9 +133,16 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
                 <a>{article.category.title}</a>
               </Link>
               {article.group && (
-                <Tag variant="purple" label>
-                  {article.group.title}
-                </Tag>
+                <Link
+                  as={makePath(
+                    'category',
+                    article.category.slug +
+                      (article.group?.slug ? `#${article.group.slug}` : ''),
+                  )}
+                  href={makePath('category', '[slug]')}
+                >
+                  <Tag variant="purple">{article.group.title}</Tag>
+                </Link>
               )}
             </Breadcrumbs>
           </GridColumn>

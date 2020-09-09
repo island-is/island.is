@@ -23,6 +23,7 @@ export type AccordionItemBaseProps = {
   iconVariant?: IconVariantTypes
   visibleContent?: ReactNode
   children: ReactNode
+  expanded?: boolean
   onClick?: () => void
   onBlur?: () => void
   onFocus?: () => void
@@ -30,7 +31,7 @@ export type AccordionItemBaseProps = {
 
 export type AccordionItemStateProps = AllOrNone<{
   expanded?: boolean
-  onToggle: (expanded: boolean) => void
+  onToggle?: (expanded: boolean) => void
 }>
 
 export type AccordionItemProps = AccordionItemBaseProps &

@@ -78,6 +78,9 @@ const Category: Screen<CategoryProps> = ({
   // find current category in categories list
   const category = categories.find((x) => x.slug === Router.query.slug)
 
+  const hashMatch = Router.asPath.match(/#([a-z0-9_-]+)/gi)
+  const hash = (hashMatch && hashMatch[0]) ?? ''
+
   const sidebarCategoryLinks = categories.map((c) => ({
     title: c.title,
     active: c.slug === Router.query.slug,
@@ -109,12 +112,15 @@ const Category: Screen<CategoryProps> = ({
               {Object.keys(groups).map((groupSlug, index) => {
                 const { title, description, articles } = groups[groupSlug]
 
+                const expanded = groupSlug === hash.replace('#', '')
+
                 return (
                   <AccordionCard
                     key={groupSlug}
                     id={`accordion-${index}`}
                     label={title}
                     visibleContent={description}
+                    expanded={expanded}
                   >
                     <Stack space={2}>
                       {articles.map(({ title, slug }, index) => {
