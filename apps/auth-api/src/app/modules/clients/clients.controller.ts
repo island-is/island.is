@@ -14,6 +14,7 @@ import { ApiOkResponse, ApiTags, ApiOAuth2, ApiCreatedResponse } from '@nestjs/s
 import { Client } from './models/client.model'
 import { ClientsService } from './clients.service'
 import { AuthGuard } from '@nestjs/passport'
+import { ClientDTO } from './dto/client-dto'
 
 @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(AuthGuard('jwt'))
@@ -38,9 +39,9 @@ export class ClientsController {
     return clientProfile
   }
 
-  // @Post()
-  // @ApiCreatedResponse({ type: Client })
-  // async create(@Body() client: Client): Promise<Client> {
-  //   return await this.clientsService.createAsync(client)
-  // }
+  @Post()
+  @ApiCreatedResponse({ type: Client })
+  async create(@Body() client: ClientDTO): Promise<Client> {
+    return await this.clientsService.createAsync(client)
+  }
 }

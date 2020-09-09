@@ -1,3 +1,4 @@
+import { ClientDTO } from './dto/client-dto';
 import {
   Inject,
   Injectable,
@@ -52,14 +53,11 @@ export class ClientsService {
     })
   }
 
-  async createAsync(client: Client): Promise<Client> {
+  async createAsync(client: ClientDTO): Promise<Client> {
     this.logger.debug('Creating a new client')
 
-    try {
-      return await this.clientModel.create(client)
-    } catch (exception) {
-      this.logger.error('Error creating a new client: ', exception)
-      throw new BadRequestException(exception)
-    }
+    return await this.clientModel.create(
+      { ...client }
+    )
   }
 }
