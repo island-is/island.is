@@ -110,3 +110,5 @@ export interface UserWithMeta {
   user: User
   mockSubjects: MockSubject[]
 }
+
+export type LanguageCode = 'is' | 'en'
