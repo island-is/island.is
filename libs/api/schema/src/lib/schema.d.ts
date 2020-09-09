@@ -424,6 +424,7 @@ export type Query = {
   getApplication?: Maybe<Application>
   getApplicationsByType?: Maybe<Array<Application>>
   getDocument?: Maybe<Document>
+  getTranslations?: Maybe<Scalars['JSON']>
 }
 
 export type QueryHelloWorldArgs = {
@@ -508,6 +509,10 @@ export type QueryGetApplicationsByTypeArgs = {
 
 export type QueryGetDocumentArgs = {
   input: GetDocumentInput
+}
+
+export type QueryGetTranslationsArgs = {
+  input: GetTranslationsInput
 }
 
 export type HelloWorldInput = {
@@ -622,6 +627,11 @@ export type GetApplicationsByTypeInput = {
 
 export type GetDocumentInput = {
   id: Scalars['String']
+}
+
+export type GetTranslationsInput = {
+  namespaces?: Maybe<Array<Scalars['String']>>
+  lang: Scalars['String']
 }
 
 export type Mutation = {
@@ -906,6 +916,7 @@ export type ResolversTypes = {
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
+  GetTranslationsInput: GetTranslationsInput
   Mutation: ResolverTypeWrapper<{}>
   CreateApplicationInput: CreateApplicationInput
   CreateApplicationDtoStateEnum: CreateApplicationDtoStateEnum
@@ -1005,6 +1016,7 @@ export type ResolversParentTypes = {
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
+  GetTranslationsInput: GetTranslationsInput
   Mutation: {}
   CreateApplicationInput: CreateApplicationInput
   UpdateApplicationInput: UpdateApplicationInput
@@ -1733,6 +1745,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetDocumentArgs, 'input'>
+  >
+  getTranslations?: Resolver<
+    Maybe<ResolversTypes['JSON']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetTranslationsArgs, 'input'>
   >
 }
 

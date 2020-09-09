@@ -100,7 +100,11 @@
       ],
       "@island.is/service-portal/graphql": [
         "libs/service-portal/graphql/src/index.ts"
-      ]
+      ],
+      "@island.is/api/domains/translations": [
+        "libs/api/domains/translations/src/index.ts"
+      ],
+      "@island.is/localization": ["libs/localization/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

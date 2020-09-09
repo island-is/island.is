@@ -5,6 +5,7 @@ import { ContentSearchModule } from '@island.is/api/domains/content-search'
 import { CmsModule } from '@island.is/api/domains/cms'
 import { ApplicationModule } from '@island.is/api/domains/application'
 import { DocumentModule } from '@island.is/api/domains/documents'
+import { TranslationsModule } from '@island.is/api/domains/translations'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -22,6 +23,7 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
     CmsModule,
     ApplicationModule,
     DocumentModule,
+    TranslationsModule,
   ],
 })
 export class AppModule {}

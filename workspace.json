@@ -2722,6 +2722,167 @@
         },
         "docker-express": {}
       }
+    },
+    "api-domains-translations": {
+      "root": "libs/api/domains/translations",
+      "sourceRoot": "libs/api/domains/translations/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/api/domains/translations/tsconfig.lib.json",
+              "libs/api/domains/translations/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/api/domains/translations/**"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/api/domains/translations/jest.config.js",
+            "tsConfig": "libs/api/domains/translations/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "localization": {
+      "root": "libs/localization",
+      "sourceRoot": "libs/localization/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/localization/.eslintrc",
+            "tsConfig": [
+              "libs/localization/tsconfig.lib.json",
+              "libs/localization/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/localization/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/localization/jest.config.js",
+            "tsConfig": "libs/localization/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "test-next": {
+      "root": "apps/test-next",
+      "sourceRoot": "apps/test-next",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/next:build",
+          "options": {
+            "root": "apps/test-next",
+            "outputPath": "dist/apps/test-next"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/test-next/environments/environment.ts",
+                  "with": "apps/test-next/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/next:dev-server",
+          "options": {
+            "buildTarget": "test-next:build",
+            "dev": true
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "test-next:build:production",
+              "dev": false
+            }
+          }
+        },
+        "export": {
+          "builder": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "test-next:build:production"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/test-next/.eslintrc",
+            "tsConfig": [
+              "apps/test-next/tsconfig.json",
+              "apps/test-next/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/test-next/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/test-next/jest.config.js",
+            "tsConfig": "apps/test-next/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "node libs/localization/scripts/extract 'apps/test-next/{screens, pages,components}/*.{js,ts,tsx}'"
+              }
+            ]
+          }
+        }
+      }
+    },
+    "test-next-e2e": {
+      "root": "apps/test-next-e2e",
+      "sourceRoot": "apps/test-next-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/test-next-e2e/cypress.json",
+            "tsConfig": "apps/test-next-e2e/tsconfig.e2e.json",
+            "devServerTarget": "test-next:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "test-next:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/test-next-e2e/.eslintrc",
+            "tsConfig": ["apps/test-next-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/test-next-e2e/**"]
+          }
+        }
+      }
     }
   },
   "cli": {

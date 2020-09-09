@@ -212,6 +212,19 @@
     },
     "skilavottord-ws": {
       "tags": []
+    },
+    "api-domains-translations": {
+      "tags": []
+    },
+    "localization": {
+      "tags": []
+    },
+    "test-next": {
+      "tags": []
+    },
+    "test-next-e2e": {
+      "tags": [],
+      "implicitDependencies": ["test-next"]
     }
   }
 }

@@ -359,6 +359,7 @@ type Query {
   getApplication(input: GetApplicationInput!): Application
   getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
   getDocument(input: GetDocumentInput!): Document
+  getTranslations(input: GetTranslationsInput!): JSON
 }
 
 input HelloWorldInput {
@@ -473,6 +474,11 @@ input GetApplicationsByTypeInput {
 
 input GetDocumentInput {
   id: String!
+}
+
+input GetTranslationsInput {
+  namespaces: [String!]
+  lang: String!
 }
 
 type Mutation {
