@@ -112,7 +112,6 @@ const Screen: FC<ScreenProps> = ({
         style={{ minHeight: '65vh' }}
       >
         <Box flexGrow={1}>
-          {section && <Typography color="dark300">{section.name}</Typography>}
           <Typography variant="h2">{screen.name}</Typography>
           <Box>
             {screen.type === FormItemTypes.REPEATER ? (
