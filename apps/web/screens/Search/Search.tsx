@@ -25,26 +25,27 @@ import {
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
 import {
-  ContentLanguage,
-  QueryGetNamespaceArgs,
-  Query,
-  QuerySearchResultsArgs,
-} from '@island.is/api/schema'
-import {
   GET_NAMESPACE_QUERY,
   GET_SEARCH_RESULTS_QUERY_DETAILED,
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { CustomNextError } from '@island.is/web/units/ErrorBoundary'
+import {
+  GetSearchResultsDetailedQuery,
+  QuerySearchResultsArgs,
+  ContentLanguage,
+  QueryGetNamespaceArgs,
+  GetNamespaceQuery,
+} from '../../graphql/schema'
 
 const PerPage = 10
 
 interface CategoryProps {
   q: string
   page: number
-  searchResults: Query['searchResults']
-  namespace: Query['getNamespace']
+  searchResults: GetSearchResultsDetailedQuery['searchResults']
+  namespace: GetNamespaceQuery['getNamespace']
 }
 
 const Search: Screen<CategoryProps> = ({
@@ -267,7 +268,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QuerySearchResultsArgs>({
+    apolloClient.query<GetSearchResultsDetailedQuery, QuerySearchResultsArgs>({
       query: GET_SEARCH_RESULTS_QUERY_DETAILED,
       variables: {
         query: {
@@ -279,7 +280,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       },
     }),
     apolloClient
-      .query<Query, QueryGetNamespaceArgs>({
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
@@ -323,4 +324,5 @@ const Filter = ({ selected, text, onClick, ...props }) => {
     </Box>
   )
 }
+
 export default Search

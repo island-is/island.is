@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { INumberBullet } from '../../generated/contentfulTypes'
 
 @ObjectType()
 export class NumberBullet {
@@ -11,3 +12,12 @@ export class NumberBullet {
   @Field()
   body: string
 }
+
+export const mapNumberBullet = ({
+  fields,
+  sys,
+}: INumberBullet): NumberBullet => ({
+  id: sys.id,
+  title: fields.title,
+  body: fields.body,
+})
