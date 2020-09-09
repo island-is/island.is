@@ -1,47 +1,72 @@
 import {ServiceStatusValue } from  '..'
+import { ServiceCardInformation } from '../ServiceCard/service-card';
 const MAX_LIMIT = 5;
-const OrgServices =[
-    { id:0, owner:"Þjóðskrá",         name:"0 Fasteignaskrá",       pricing:null,                          categories:null,                   type:["REST"],  access:["API GW"], status:ServiceStatusValue.OK},
-    { id:1, owner:"Þjóðskrá",         name:"01 Einstaklingsskrá",    pricing:["free", "custom"],            categories:null,                   type:null,      access:["X-Road"], status:ServiceStatusValue.WARNING},
-    { id:2, owner:"Þjóðskrá",         name:"02 Staðfangaskrá",       pricing:null,                          categories:["personal", "public"], type:["react"], access:["API GW"], status:ServiceStatusValue.ERROR},
-    { id:3, owner:"Skatturinn",       name:"03 Virðisaukaskattur",   pricing:["daily","monthly", "yearly"], categories:["personal", "public"], type:["SOAP"],  access:["API GW"], status:ServiceStatusValue.WARNING},
-    { id:4, owner:"Skatturinn",       name:"4 Staðgreiðsla",        pricing:["daily","monthly", "yearly"], categories:["personal", "public"], type:["SOAP"],  access:["API GW"], status:ServiceStatusValue.OK},
-    { id:5, owner:"Vinnumálastofnun", name:"5 Fæðingarorlofssjóður",pricing:null,                          categories:["personal", "public"], type:["react"], access:["API GW"], status:ServiceStatusValue.ERROR},
-    { id:6, owner:"Samgöngujstofa",   name:"06 Ökutækjaskrá",        pricing:["daily","monthly", "yearly"], categories:["personal", "public"], type:["SOAP"],  access:["API GW"], status:ServiceStatusValue.UNKNOWN},
+const OrgServices:Array<ServiceCardInformation> =[
+    { id:0, owner:"Þjóðskrá",         name:"Fasteignaskrá",       pricing:null,                          categories:null,                   type:["REST"],  access:["API GW"], url:"http://fasteignaskra.thodskra.is:4700",     status:ServiceStatusValue.OK},
+    { id:1, owner:"Þjóðskrá",         name:"Einstaklingsskrá",    pricing:["free", "custom"],            categories:null,                   type:null,      access:["X-Road"], url:"http://einstaklingskra.thodskra.is:4700",   status:ServiceStatusValue.WARNING},
+    { id:2, owner:"Þjóðskrá",         name:"Staðfangaskrá",       pricing:null,                          categories:["personal", "public"], type:["react"], access:["API GW"], url:"http://stadfangaskra.thodskra.is:4700",     status:ServiceStatusValue.ERROR},
+    { id:3, owner:"Skatturinn",       name:"Virðisaukaskattur",   pricing:["daily","monthly", "yearly"], categories:["personal", "public"], type:["SOAP"],  access:["API GW"], url:"http://vsk.skattur.is/:2100",               status:ServiceStatusValue.WARNING},
+    { id:4, owner:"Skatturinn",       name:"Staðgreiðsla",        pricing:["daily","monthly", "yearly"], categories:["personal", "public"], type:["SOAP"],  access:["API GW"], url:"http://stadgreidsla.skattur.is:2100",       status:ServiceStatusValue.OK},
+    { id:5, owner:"Vinnumálastofnun", name:"Fæðingarorlofssjóður",pricing:null,                          categories:["personal", "public"], type:["react"], access:["API GW"], url:"http://faedingarorlofssjodur.vms.is:74200", status:ServiceStatusValue.ERROR},
+    { id:6, owner:"Samgöngujstofa",   name:"Ökutækjaskrá",        pricing:["daily","monthly", "yearly"], categories:["personal", "public"], type:["SOAP"],  access:["API GW"], url:"http://okutaeki.samgongustofa.is:74200",    status:ServiceStatusValue.UNKNOWN},
   ];
 
+export interface ServicesResult {
+  result:Array<ServiceCardInformation>,
+  nextCursor:number;
+}
+
+export interface GetServicesParameters {
+  cursor:number, 
+  limit:number, 
+  owner:string, 
+  name:string
+}
+
+const isValidNumber = (value:unknown):boolean => {
+  return value !== undefined && value !==null && !isNaN(Number(value)) && value !== 'null';
+}
+
+const isValidString = (value:unknown):boolean => {
+  return value !== undefined && value !==null && typeof value === "string" && String(value).length > 0 && value !== 'null';
+}
+export async function getServices(params:GetServicesParameters):Promise<ServicesResult> {
+  let filtered = OrgServices;
+  if (isValidString(params.name)) {
+    filtered = filtered.filter(e => e.name.includes(params.name));
+  }
+  if (isValidString(params.owner)) {
+    filtered = filtered.filter(e => e.owner.includes(params.owner));
+  }
+  if (!isValidNumber(params.cursor)) {
+    params.cursor = null;
+  }
+  if (!isValidNumber(params.limit)) {
+    params.limit = null;
+  }
+  return await limitServices(filtered, params.cursor, params.limit);
+}
 
 function timeout(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export async function getServices(cursor:number, limit:number, ownerFilter:string, nameFilter:string) {
-  
-  let filtered = OrgServices;
-  if (nameFilter !==undefined && nameFilter !== null) {
-    filtered = filtered.filter(e => e.name.includes(nameFilter));
-  }
-  if (ownerFilter !==undefined && ownerFilter !== null) {
-    filtered = filtered.filter(e => e.owner.includes(ownerFilter));
-  }
+async function limitServices(services, cursor:number, limit:number): Promise<ServicesResult> {
 
-  return await limitServices(filtered, cursor, limit);
-}
-
-async function limitServices(services, cursor:number, limit:number) {
   await timeout(2000);
-
+  const errorResult:ServicesResult = { result: null, nextCursor:null };
   const len = services.length;
   const searchCursor = cursor === null? 0 : cursor;
-  let lastIndex = (limit === null || limit > MAX_LIMIT) ? MAX_LIMIT : limit;
-  if (len < 1) {
-    return { result: null, nextCursor:null }
-  }
+  let lastIndex = (limit === null || limit < 0 || limit > MAX_LIMIT)? MAX_LIMIT : limit;
 
+  if (len < 1) {
+    return errorResult;
+  }
   
   const startIndex = ( cursor === null || cursor < 0 )? 0 : services.map(function(x) {return x.id; }).indexOf(searchCursor);
+
   if (startIndex < 0) {
-    return { result: null, nextCursor:null };
+    return errorResult;
   }
 
   lastIndex+=startIndex;
@@ -54,7 +79,7 @@ async function limitServices(services, cursor:number, limit:number) {
     nextCursor = services[lastIndex].id;
   }
 
-  const ret ={
+  const ret:ServicesResult ={
     result: services.slice(startIndex, lastIndex),
     nextCursor:nextCursor
   }

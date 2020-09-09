@@ -7,6 +7,7 @@ export interface ServiceCardInformation {
     id:number
     name: string;
     owner:string;
+    url:string;
     pricing:Array<string>;
     categories:Array<string>
     type:Array<string>;
