@@ -1,5 +1,7 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { AdgerdirNews } from '../adgerdirNews.model'
+
+import { IVidspyrnaFeaturedNews } from '../../generated/contentfulTypes'
+import { AdgerdirNews, mapAdgerdirNewsItem } from '../adgerdirNews.model'
 
 @ObjectType()
 export class AdgerdirFeaturedNewsSlice {
@@ -16,3 +18,13 @@ export class AdgerdirFeaturedNewsSlice {
   @Field(() => [AdgerdirNews])
   featured: AdgerdirNews[]
 }
+
+export const mapAdgerdirFeaturedNewsSlice = ({
+  fields,
+  sys,
+}: IVidspyrnaFeaturedNews): AdgerdirFeaturedNewsSlice =>
+  new AdgerdirFeaturedNewsSlice({
+    id: sys.id,
+    title: fields.title,
+    featured: fields.featured.map(mapAdgerdirNewsItem),
+  })

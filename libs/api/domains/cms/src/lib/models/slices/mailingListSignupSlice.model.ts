@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { IMailingListSignup } from '../../generated/contentfulTypes'
 
 @ObjectType()
 export class MailingListSignupSlice {
@@ -21,3 +22,15 @@ export class MailingListSignupSlice {
   @Field()
   buttonText: string
 }
+
+export const mapMailingListSignup = ({
+  fields,
+  sys,
+}: IMailingListSignup): MailingListSignupSlice =>
+  new MailingListSignupSlice({
+    id: sys.id,
+    title: fields.title,
+    description: fields.description,
+    inputLabel: fields.inputLabel,
+    buttonText: fields.buttonText,
+  })

@@ -1,5 +1,7 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 
+import { ITimelineEvent } from '../generated/contentfulTypes'
+
 @ObjectType()
 export class TimelineEvent {
   @Field(() => ID)
@@ -29,3 +31,18 @@ export class TimelineEvent {
   @Field()
   link: string
 }
+
+export const mapTimelineEvent = ({
+  fields,
+  sys,
+}: ITimelineEvent): TimelineEvent => ({
+  id: sys.id,
+  title: fields.title,
+  date: fields.date,
+  numerator: fields.numerator,
+  denominator: fields.denominator,
+  label: fields.label ?? '',
+  body: fields.body && JSON.stringify(fields.body),
+  tags: fields.tags ?? [],
+  link: fields.link ?? '',
+})

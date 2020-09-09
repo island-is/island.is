@@ -1,12 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import slugify from '@sindresorhus/slugify'
-import { Content, Hyperlink, Image } from '@island.is/island-ui/contentful'
-import {
-  Query,
-  LandingPage,
-  QueryGetLandingPageArgs,
-} from '@island.is/api/schema'
+import { Hyperlink, Image, RichTextV2 } from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
 import { GET_LANDING_PAGE_QUERY } from '../queries'
 import { CustomNextError } from '../../units/ErrorBoundary'
@@ -17,16 +12,21 @@ import {
   Button,
   Typography,
   Box,
-  ContentBlock,
   Breadcrumbs,
   Link,
+  ContentBlock,
 } from '@island.is/island-ui/core'
 import { Sidebar } from '@island.is/web/components'
 import ArticleLayout from '../Layouts/Layouts'
 import useRouteNames from '../../i18n/useRouteNames'
+import {
+  QueryGetLandingPageArgs,
+  GetLandingPageQuery,
+  Slice,
+} from '../../graphql/schema'
 
 export interface LandingPageProps {
-  page?: LandingPage
+  page?: GetLandingPageQuery['getLandingPage']
 }
 
 const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
@@ -87,17 +87,20 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
             </Stack>
           </ContentBlock>
         </Box>
-        <Content document={page.content} />
+
+        <RichTextV2 slices={page.content as Slice[]} />
       </ArticleLayout>
     </>
   )
 }
 
 LandingPageScreen.getInitialProps = async ({ apolloClient, locale, query }) => {
-  const {
-    data: { getLandingPage: page },
-  } = await apolloClient.query<Query, QueryGetLandingPageArgs>({
+  const result = await apolloClient.query<
+    GetLandingPageQuery,
+    QueryGetLandingPageArgs
+  >({
     query: GET_LANDING_PAGE_QUERY,
+    fetchPolicy: 'no-cache',
     variables: {
       input: {
         lang: locale,
@@ -106,12 +109,12 @@ LandingPageScreen.getInitialProps = async ({ apolloClient, locale, query }) => {
     },
   })
 
-  if (!page) {
+  if (!result.data.getLandingPage) {
     throw new CustomNextError(404, 'Page not found')
   }
 
   return {
-    page,
+    page: result.data.getLandingPage,
   }
 }
 

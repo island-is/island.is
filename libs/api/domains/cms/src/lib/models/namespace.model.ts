@@ -1,10 +1,16 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { IUiConfiguration } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class Namespace {
-  @Field({ nullable: true })
-  namespace?: string
+  @Field()
+  namespace: string
 
-  @Field({ nullable: true })
-  fields?: string
+  @Field()
+  fields: string
 }
+
+export const mapNamespace = ({ fields }: IUiConfiguration): Namespace => ({
+  namespace: fields.namespace,
+  fields: JSON.stringify(fields.fields),
+})

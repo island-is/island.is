@@ -1,22 +1,16 @@
 import React from 'react'
-import * as styles from './NewsCard.treat'
 import { Typography, Link, Box, ArrowLink } from '@island.is/island-ui/core'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
-export type NewsImage = {
-  url: string
-  title: string
-  contentType: string
-  width: number
-  height: number
-}
+import { Image } from '../../graphql/schema'
+import * as styles from './NewsCard.treat'
 
 interface NewsCardProps {
   title: string
   subtitle?: string
   introduction: string
   slug: string
-  image?: NewsImage
+  image?: Partial<Image>
   readMoreText?: string
   url: string
   date?: string

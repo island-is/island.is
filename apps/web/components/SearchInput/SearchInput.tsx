@@ -19,13 +19,6 @@ import {
   GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
 } from '@island.is/web/screens/queries'
 import {
-  ContentLanguage,
-  QuerySearchResultsArgs,
-  Query,
-  SearchResult,
-  QueryWebSearchAutocompleteArgs,
-} from '@island.is/api/schema'
-import {
   AsyncSearchInput,
   AsyncSearchSizes,
   Box,
@@ -35,6 +28,14 @@ import {
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import * as styles from './SearchInput.treat'
 import { Locale } from '@island.is/web/i18n/I18n'
+import {
+  GetSearchResultsQuery,
+  QuerySearchResultsArgs,
+  ContentLanguage,
+  SearchResult,
+  QueryWebSearchAutocompleteArgs,
+  AutocompleteTermResultsQuery,
+} from '../../graphql/schema'
 import { GlobalNamespaceContext } from '@island.is/web/context/GlobalNamespaceContext/GlobalNamespaceContext'
 
 const DEBOUNCE_TIMER = 300
@@ -86,7 +87,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
     const thisTimerId = (timer.current = setTimeout(async () => {
       const {
         data: { searchResults: results },
-      } = await client.query<Query, QuerySearchResultsArgs>({
+      } = await client.query<GetSearchResultsQuery, QuerySearchResultsArgs>({
         query: GET_SEARCH_RESULTS_QUERY,
         variables: {
           query: {
@@ -106,7 +107,10 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
         data: {
           webSearchAutocomplete: { completions: suggestions },
         },
-      } = await client.query<Query, QueryWebSearchAutocompleteArgs>({
+      } = await client.query<
+        AutocompleteTermResultsQuery,
+        QueryWebSearchAutocompleteArgs
+      >({
         query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
         variables: {
           input: {
@@ -347,7 +351,6 @@ const CommonSearchTerms = ({
   }
 
   const splitAt = Math.min(suggestions.length / 2)
-
   const left = suggestions.slice(0, splitAt)
   const right = suggestions.slice(splitAt)
 

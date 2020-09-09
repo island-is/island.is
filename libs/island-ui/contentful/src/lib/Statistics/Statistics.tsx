@@ -1,21 +1,24 @@
 import React, { FC } from 'react'
+import Background from '../Background/Background'
 import { Statistic, StatisticProps } from '../Statistic/Statistic'
 import { Box } from '@island.is/island-ui/core'
 import * as styles from './Statistics.treat'
 
 export interface StatisticsProps {
-  items: StatisticProps[]
+  statistics: StatisticProps[]
 }
 
-export const Statistics: FC<StatisticsProps> = ({ items }) => {
+export const Statistics: FC<StatisticsProps> = ({ statistics, ...props }) => {
   return (
-    <div className={styles.container}>
-      {items.map((fields, index) => (
-        <Box key={index} display="flex" margin={1}>
-          <Statistic {...fields} />
-        </Box>
-      ))}
-    </div>
+    <Background background="dotted" paddingY={10}>
+      <div className={styles.container}>
+        {statistics.map((stat, index) => (
+          <Box key={index} display="flex" margin={1}>
+            <Statistic {...stat} />
+          </Box>
+        ))}
+      </div>
+    </Background>
   )
 }
 
