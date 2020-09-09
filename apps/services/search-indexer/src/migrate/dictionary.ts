@@ -57,7 +57,7 @@ export const getDictionaryFiles = async (): Promise<Dictionary[]> => {
   return allDictionaryResponses.filter((response): response is Dictionary => response !== false)
 }
 
-export const getFakePackageIds = (): AwsEsPackage[] => {
+export const getFakeEsPackages = (): AwsEsPackage[] => {
   const locales = environment.migrate.locales
   const fakePackages = locales.map((locale) => {
     return analyzers.map((analyzer) => ({

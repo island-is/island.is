@@ -17,22 +17,22 @@ class App {
 
     const hasAwsAccess = await aws.checkAWSAccess()
 
-    let packageIds: aws.AwsEsPackage[]
+    let esPackages: aws.AwsEsPackage[]
     if (hasAwsAccess) {
-      packageIds = await this.migrateAws()
+      esPackages = await this.migrateAws()
     } else {
       logger.info('No aws access found running in local development mode')
       // get packageId list for local development packages have package ids matching filenames in the dictionary repo
-      packageIds = dictionary.getFakePackageIds()
+      esPackages = dictionary.getFakeEsPackages()
     }
 
-    await this.migrateES(packageIds)
+    await this.migrateES(esPackages)
 
     if (hasAwsAccess) {
       logger.info('Cleaning up unused packages')
       // TODO: Get permission in AWS to do this
-      // await aws.disassociatePackagesFromAwsEs(packageIds) // we disassociate all but the files in packageIds
-      // await aws.deletePackagesFromAwsEs(packageIds) // we delete all but the files in packageIds
+      // await aws.disassociatePackagesFromAwsEs(esPackages) // we disassociate all but the files in esPackages
+      // await aws.deletePackagesFromAwsEs(esPackages) // we delete all but the files in esPackages
     }
     logger.info('Done!')
   }
@@ -42,7 +42,7 @@ class App {
     const repoDictionaryVersion = await dictionary.getDictionaryVersion()
     const awsDictionaryVersion = await aws.getDictionaryVersion()
     let esPackages: aws.AwsEsPackage[]
-    // we only try to update teh dictionary files if we find a missmatch in version numbers
+    // we only try to update the dictionary files if we find a missmatch in version numbers
     if (repoDictionaryVersion !== awsDictionaryVersion) {
       logger.info('Dictionary version missmatch, updating dictionary', { repoVersion: repoDictionaryVersion, awsVersion: awsDictionaryVersion })
       const dictionaries = await dictionary.getDictionaryFiles() // get files form dictionary repo
@@ -79,7 +79,7 @@ class App {
           await elastic.moveAliasToNewIndex(locale, newIndexVersion, oldIndexVersion) // we assume we dont have to rollback on failure here
         } catch (error) {
           logger.error('Failed to migrate to new index', { locale, newIndexVersion, oldIndexVersion, error })
-          return false  // pass this to promise all where we revert all changes if we have any false value
+          return false  // pass this to promise all where we revert all changes if we have any false values
         }
       } else {
         logger.info('Elasticsearch index version matches code index version, no need to update index', { locale, esIndexVersion: oldIndexVersion, codeIndexVersion: newIndexVersion })
@@ -126,3 +126,6 @@ migrateBootstrap().catch((error) => {
   // take down container on error
   throw error
 })
+
+// TODO: Make this listen to changes in template directory
+// TODO: Impliment AWS cleanup
