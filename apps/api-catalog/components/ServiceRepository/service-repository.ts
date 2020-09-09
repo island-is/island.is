@@ -30,7 +30,8 @@ const isValidNumber = (value:unknown):boolean => {
 const isValidString = (value:unknown):boolean => {
   return value !== undefined && value !==null && typeof value === "string" && String(value).length > 0 && value !== 'null';
 }
-export async function getServices(params:GetServicesParameters):Promise<ServicesResult> {
+export async function getServices(parameters:GetServicesParameters):Promise<ServicesResult> {
+  const params = parameters !== null? parameters : {cursor:null, limit:null, owner:null, name:null};
   let filtered = OrgServices;
   if (isValidString(params.name)) {
     filtered = filtered.filter(e => e.name.includes(params.name));
