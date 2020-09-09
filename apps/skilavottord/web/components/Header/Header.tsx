@@ -59,8 +59,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                     leftIcon="user"
                     onClick={() => {
                       Router.push({
-                        pathname: makePath('myPage'),
-                        query: { focus: true },
+                        pathname: makePath('myCars')
                       })
                     }}
                   >

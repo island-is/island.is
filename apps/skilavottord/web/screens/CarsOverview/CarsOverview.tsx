@@ -1,0 +1,89 @@
+import React, { FC } from 'react'
+import Link from 'next/link'
+import { Box, Stack, Typography, Breadcrumbs } from '@island.is/island-ui/core'
+import { PageLayout } from '../Layouts'
+import { ActionCard, ProgressCard } from './components'
+import { useRouter } from 'next/router'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
+import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
+
+import { cars } from './cars.json'
+
+const CarsOverView: FC = () => {
+  const Router = useRouter()
+
+  const onClick = (id) => {
+    Router.push({
+      pathname: `/${id}`,
+    })
+  }
+
+  return (
+    <PageLayout>
+      <Box paddingBottom={6}>
+        <Breadcrumbs>
+          <Link href={'./'}>
+            <a>Ísland.is</a>
+          </Link>
+          <span>Content information</span>
+          <span>Recycle your car</span>
+        </Breadcrumbs>
+      </Box>
+      <Box paddingBottom={4}>
+        <Typography variant="h1">Recycle your car</Typography>
+      </Box>
+      <Box paddingBottom={10}>
+        <Stack space={[2, 2]}>
+          <Typography variant="h3">Pending recycling</Typography>
+          {cars
+            .filter((car) => {
+              if (car.status === 'pending') {
+                return car
+              }
+            })
+            .map((car) => (
+              <ProgressCard
+                key={car.id}
+                title="BVZ655"
+                description="Volvo V70, 2006"
+              />
+            ))}
+        </Stack>
+      </Box>
+      <Box paddingBottom={10}>
+        <Stack space={[2, 2]}>
+          <Typography variant="h3">Your cars</Typography>
+          {cars
+            .filter((car) => {
+              if (car.status === 'enabled' || car.status === 'disabled') {
+                return car
+              }
+            })
+            .map((car) => (
+              <ActionCard
+                key={car.id}
+                onClick={() => onClick(car.id)}
+                car={car}
+              />
+            ))}
+        </Stack>
+      </Box>
+      <Box paddingBottom={10}>
+        <Stack space={[2, 2]}>
+          <Typography variant="h3">Recycled cars</Typography>
+          {cars
+            .filter((car) => {
+              if (car.status === 'recycled') {
+                return car
+              }
+            })
+            .map((car) => (
+              <ActionCard key={car.id} car={car} />
+            ))}
+        </Stack>
+      </Box>
+    </PageLayout>
+  )
+}
+
+export default CarsOverView

@@ -4,19 +4,19 @@ const routeNames = {
   is: {
     home: '',
     companies: 'recycling-companies',
-    myPage: 'my-page',
+    myCars: 'my-cars',
   },
   en: {
     home: '',
     companies: 'recycling-companies',
-    myPage: 'my-page',
+    myCars: 'my-cars',
   },
 }
 
 export type PathTypes =
   | 'home'
   | 'companies'
-  | 'myPage'
+  | 'myCars'
 
 export const useRouteNames = (locale: Locale = defaultLanguage) => {
   return {

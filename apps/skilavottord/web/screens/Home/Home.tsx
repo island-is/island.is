@@ -67,8 +67,7 @@ export const Home: FC = () => {
               <Button
                 onClick={() => {
                   Router.push({
-                    pathname: makePath('myPage'),
-                    query: { focus: true },
+                    pathname: makePath('myCars')
                   })
                 }}
               >
@@ -101,8 +100,7 @@ export const Home: FC = () => {
                 variant="text"
                 onClick={() => {
                   Router.push({
-                    pathname: makePath('companies'),
-                    query: { focus: true },
+                    pathname: makePath('companies')
                   })
                 }}
               >
