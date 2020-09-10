@@ -98,7 +98,6 @@ const Category: Screen<CategoryProps> = ({
       )
 
       if (el) {
-        console.log('el.offsetTop', el, el.getBoundingClientRect())
         window.scrollTo(0, el.offsetTop)
       }
     }
