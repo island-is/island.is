@@ -2,6 +2,7 @@ import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const focusable = style({
+  position: 'relative',
   ':focus': {
     outline: 0,
   },
@@ -13,7 +14,7 @@ export const focusable = style({
     borderStyle: 'solid',
     borderWidth: 3,
     borderColor: theme.color.transparent,
-    borderRadius: 10,
+    borderRadius: 'inherit',
     top: -3,
     left: -3,
     bottom: -3,

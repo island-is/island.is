@@ -19,6 +19,7 @@ import { useI18n } from '@island.is/web/i18n'
 import * as styles from './SideMenu.treat'
 import { SearchInput } from '../SearchInput/SearchInput'
 import { LanguageToggler } from '../LanguageToggler'
+import { FocusableBox } from '../FocusableBox'
 
 interface TabLink {
   title: string
@@ -126,7 +127,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
                       color="blue400"
                       paddingBottom={index + 1 === tab.links.length ? 0 : 2}
                     >
-                      <a href={link.url}>{link.title}</a>
+                      <FocusableBox href={link.url}>{link.title}</FocusableBox>
                     </Typography>
                   ))}
                 </div>

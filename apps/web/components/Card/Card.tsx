@@ -14,6 +14,7 @@ import {
 } from '@island.is/island-ui/core'
 
 import * as styles from './Card.treat'
+import { FocusableBox } from '../FocusableBox'
 
 export type CardTagsProps = {
   tagProps?: Omit<TagProps, 'children'>
@@ -90,40 +91,26 @@ export const Card: FC<CardProps> = ({
     </Box>
   )
 
-  if (!href) {
-    return <Frame>{Content}</Frame>
+  if (href) {
+    return (
+      <FocusableBox href={href} as={as} flexDirection="column" height="full">
+        <Frame>{Content}</Frame>
+      </FocusableBox>
+    )
   }
 
-  return (
-    <Link href={href} as={as} passHref>
-      <a className={styles.card}>
-        <Box
-          borderRadius="large"
-          height="full"
-          background="white"
-          outline="none"
-          padding={[2, 2, 4]}
-        >
-          {Content}
-        </Box>
-      </a>
-    </Link>
-  )
+  return <Frame>{Content}</Frame>
 }
 
-interface FrameProps {
-  isFocused?: boolean
-}
-
-export const Frame: FC<FrameProps> = ({ children, isFocused = false }) => {
+export const Frame = ({ children }) => {
   return (
     <Box
+      className={cn(styles.card)}
       borderRadius="large"
       height="full"
       background="white"
       outline="none"
       padding={[2, 2, 4]}
-      className={cn(styles.card, { [styles.focused]: isFocused })}
     >
       {children}
     </Box>

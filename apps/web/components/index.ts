@@ -1,6 +1,6 @@
 export * from './Card/Card'
 export { DrawerMenu } from './DrawerMenu'
-export { Focusable } from './Focusable'
+export { FocusableBox } from './FocusableBox'
 export * from './Categories/Categories'
 export * from './Header/Header'
 export * from './Sidebar/Sidebar'
