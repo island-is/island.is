@@ -25,9 +25,7 @@ const InfoAccordionCard: FC<Props> = ({ id, label, description, rows }) => {
     <AccordionCard
       id={id}
       label={label}
-      visibleContent={
-        description ? <Box marginTop={1}>{description}</Box> : null
-      }
+      visibleContent={description ? description : null}
     >
       <Stack space={2}>
         {rows.map((row, index) => (

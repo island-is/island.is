@@ -7,8 +7,11 @@ import {
   Typography,
   Tag,
   Button,
+  Columns,
+  Column,
 } from '@island.is/island-ui/core'
 import * as styles from './ApplicationCard.treat'
+import ProgressBar from '../ProgressBar/ProgressBar'
 
 export interface MockApplication {
   name: string
@@ -30,8 +33,13 @@ const ApplicationCard: FC<Props> = ({ application }) => {
       border="standard"
       borderRadius="large"
     >
-      <Stack space={2}>
-        <Box display="flex" justifyContent="spaceBetween" alignItems="center">
+      <Stack space={1}>
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          alignItems="center"
+          marginBottom={1}
+        >
           <Inline space={2} alignY="bottom">
             <Icon type="article" width={24} height={24} />
             <Typography variant="h3">{application.name}</Typography>
@@ -40,18 +48,29 @@ const ApplicationCard: FC<Props> = ({ application }) => {
             {application.status ? 'Lokið' : 'Í ferli'}
           </Tag>
         </Box>
-        <Box display="flex" justifyContent="spaceBetween" alignItems="center">
-          <Typography variant="p">
-            {`Þú hefur ${
-              !application.status ? 'ekki ' : ''
-            } lokið umsóknarferli fyrir ${application.name}`}
-          </Typography>
-          <a href={application.url} target="_blank" rel="noopener noreferrer">
-            <Button variant="text">
-              {application.status ? 'Skoða umsókn' : 'Halda áfram'}
-            </Button>
-          </a>
-        </Box>
+        <Typography variant="p">
+          {`Þú hefur ${
+            !application.status ? 'ekki ' : ''
+          } lokið umsóknarferli fyrir ${application.name}`}
+        </Typography>
+        <Columns space={8} alignY="center">
+          <Column width="8/12">
+            <ProgressBar progress={50} />
+          </Column>
+          <Column width="4/12">
+            <Box display="flex" justifyContent="flexEnd">
+              <a
+                href={application.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button variant="text">
+                  {application.status ? 'Skoða umsókn' : 'Halda áfram'}
+                </Button>
+              </a>
+            </Box>
+          </Column>
+        </Columns>
       </Stack>
     </Box>
   )
