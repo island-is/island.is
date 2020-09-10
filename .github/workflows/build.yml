@@ -27,7 +27,7 @@ jobs:
       GIT_BRANCH: ${{ steps.git_refs.outputs.GIT_BRANCH }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
-      PUBLISH: local
+      PUBLISH: ${{ steps.publish_flag.outputs.PUBLISH }}
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
       DOCKER_EXPRESS_CHUNKS: ${{ steps.docker_express_projects.outputs.CHUNKS }}
@@ -339,6 +339,8 @@ jobs:
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-express
+        env:
+          PUBLISH: local
 
   docker-static:
     needs: [prepare, tests]
@@ -378,6 +380,8 @@ jobs:
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-static
+        env:
+          PUBLISH: local
 
   docker-next:
     needs: [prepare, tests]
@@ -417,6 +421,8 @@ jobs:
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-next
+        env:
+          PUBLISH: local
 
   retag-unaffected:
     runs-on: ubuntu-latest
