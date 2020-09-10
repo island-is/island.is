@@ -1618,6 +1618,6 @@ export type CONTENT_TYPE =
   | 'vidspyrnaPage'
   | 'vidspyrnaTag'
 
-export type LOCALE_CODE = 'en' | 'is-IS'
+export type LOCALE_CODE = 'en' | 'is'
 
-export type CONTENTFUL_DEFAULT_LOCALE_CODE = 'is-IS'
+export type CONTENTFUL_DEFAULT_LOCALE_CODE = 'is'

@@ -14,13 +14,11 @@ export class IndexingService {
   constructor(
     private readonly elasticService: ElasticService,
     private readonly contentFulSyncer: Syncer,
-  ) { }
+  ) {}
 
-  async indexDocument(index: SearchIndexes, document) {
-    return this.elasticService.index(index, document)
-  }
-
-  async getLastSyncToken(language): Promise<string | undefined> {
+  async getLastSyncToken(
+    language: keyof typeof SearchIndexes,
+  ): Promise<string | undefined> {
     const query = new RequestBodySearch()
       .query(new ExistsQuery('nextSyncToken'))
       .sort(new Sort('date_updated', 'desc'))
@@ -39,7 +37,7 @@ export class IndexingService {
     }
   }
 
-  async continueSync(syncToken: string, language: string) {
+  async continueSync(syncToken: string, language: keyof typeof SearchIndexes) {
     await this.needConnection()
     logger.info('Start continue sync')
     const {
@@ -68,7 +66,7 @@ export class IndexingService {
     logger.info('Continue sync done')
   }
 
-  async initialSync(language) {
+  async initialSync(language: keyof typeof SearchIndexes) {
     await this.needConnection()
     logger.info('Start initial sync')
     // this returns data in all languages, handle language in second query
@@ -97,7 +95,7 @@ export class IndexingService {
     logger.info('Initial sync done')
   }
 
-  async syncById(index: SearchIndexes, id: string) {
+  async syncById(id: string, language: keyof typeof SearchIndexes) {
     await this.needConnection()
     logger.info('Sync by ID', { id: id })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -112,7 +110,7 @@ export class IndexingService {
       resultID: result.sys.id,
     })
     if (result) {
-      await this.transformAndIndexEntry(index, null, result)
+      await this.transformAndIndexEntry(SearchIndexes[language], null, result)
     }
     logger.info('Sync by ID done')
   }

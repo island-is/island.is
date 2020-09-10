@@ -5,7 +5,7 @@ import { logger } from '@island.is/logging'
 
 @Controller('')
 export class IndexingController {
-  constructor(private readonly indexingService: IndexingService) { }
+  constructor(private readonly indexingService: IndexingService) {}
 
   @Get('/')
   async hello() {
@@ -22,7 +22,10 @@ export class IndexingController {
   @Get('sync')
   async sync(@Query('language') language: keyof typeof SearchIndexes = 'is') {
     const syncToken = await this.indexingService.getLastSyncToken(language)
-    logger.info('Continuing indexing from last sync', { language, token: syncToken })
+    logger.info('Continuing indexing from last sync', {
+      language,
+      token: syncToken,
+    })
 
     if (syncToken) {
       // noinspection ES6MissingAwait
@@ -37,16 +40,19 @@ export class IndexingController {
   }
 
   @Get('sync-one/:id')
-  async syncOne(@Param('id') id: string) {
+  async syncOne(
+    @Param('id') id: string,
+    @Query('language') language: keyof typeof SearchIndexes = 'is',
+  ) {
     logger.debug('Sync one', { id: id })
     // noinspection ES6MissingAwait
-    this.indexingService.syncById(SearchIndexes.is, id)
+    this.indexingService.syncById(id, language)
     return {
       acknowledge: true,
     }
   }
 
-  // TODO: Block this from being called from outside
+  // TODO: Block this from being called from outside, maybe in helm?
   @Get('re-sync')
   async resync(@Query('language') language: keyof typeof SearchIndexes = 'is') {
     logger.info('Reindexing all data', { language })

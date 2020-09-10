@@ -8,6 +8,7 @@ import {
 import { environment } from '../environments/environment'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
+import { SearchIndexes } from '@island.is/api/content-search'
 
 interface SyncerResult {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,23 +45,22 @@ export class Syncer {
       .join(',')
   }
 
-  private getContentfulData(chunkIds: string, language: string) {
-    const languageMap = {
-      'is': 'is-IS',
-      'en': 'en'
-    }
+  private getContentfulData(
+    chunkIds: string,
+    language: keyof typeof SearchIndexes,
+  ) {
     // TODO: Make this use cms domain endpoints to reduce mapping/typing required?
     return this.contentFulClient
       .getEntries({
         include: this.defaultIncludeDepth,
         'sys.id[in]': chunkIds,
-        locale: languageMap[language]
+        locale: language,
       })
       .then((data) => data.items)
   }
 
   // TODO: Limit this request to content types if able e.g. get content type from webhook request
-  async getSyncEntries({language, ...opts}): Promise<SyncerResult> {
+  async getSyncEntries({ language, ...opts }): Promise<SyncerResult> {
     const {
       entries,
       nextSyncToken,

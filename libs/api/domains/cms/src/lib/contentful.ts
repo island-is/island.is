@@ -7,9 +7,9 @@ const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ContentfulQuery = any
 
-const validLocales = ['is-IS', 'en']
+const validLocales = ['is', 'en']
 const localeMap = {
-  is: 'is-IS',
+  is: 'is',
   en: 'en',
 }
 
@@ -42,13 +42,13 @@ export async function getLocalizedEntries<Fields>(
   languageCode: undefined | null | string,
   query: ContentfulQuery,
 ): Result<Fields> {
-  let code = languageCode ?? 'is-IS'
+  let code = languageCode ?? 'is'
   if (localeMap[code]) {
     code = localeMap[code]
   }
 
   return getClientInstance().getEntries({
-    locale: validLocales.includes(code) ? code : 'is-IS',
+    locale: validLocales.includes(code) ? code : 'is',
     include: 4,
     ...query,
   })

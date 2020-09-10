@@ -57,7 +57,7 @@ const errorHandler = (name: string) => {
 }
 
 export const getAdgerdirFrontpage = async (
-  lang = 'is-IS',
+  lang = 'is',
 ): Promise<AdgerdirFrontpage> => {
   const result = await getLocalizedEntries<types.IVidspyrnaFrontpageFields>(
     lang,
@@ -70,9 +70,7 @@ export const getAdgerdirFrontpage = async (
   return result.items.map(mapAdgerdirFrontpage)[0] ?? null
 }
 
-export const getAdgerdirPages = async (
-  lang = 'is-IS',
-): Promise<AdgerdirPages> => {
+export const getAdgerdirPages = async (lang = 'is'): Promise<AdgerdirPages> => {
   const params = {
     ['content_type']: 'vidspyrnaPage',
     include: 10,
@@ -90,7 +88,7 @@ export const getAdgerdirPages = async (
 }
 
 export const getOrganizations = async (
-  lang = 'is-IS',
+  lang = 'is',
 ): Promise<Organizations> => {
   const params = {
     ['content_type']: 'organization',
@@ -108,15 +106,13 @@ export const getOrganizations = async (
   }
 }
 
-export const getAdgerdirTags = async (
-  lang = 'is-IS',
-): Promise<AdgerdirTags> => {
+export const getAdgerdirTags = async (lang = 'is'): Promise<AdgerdirTags> => {
   const params = {
     ['content_type']: 'vidspyrnaTag',
     include: 10,
     limit: 100,
   }
-
+  
   const r = await getLocalizedEntries<types.IVidspyrnaTagFields>(
     lang,
     params,
@@ -147,7 +143,7 @@ export const getOrganizationTags = async (
 }
 
 export const getFrontpageSliderList = async (
-  lang = 'is-IS',
+  lang = 'is',
 ): Promise<FrontpageSliderList> => {
   const params = {
     ['content_type']: 'frontpageSliderList',
@@ -267,7 +263,7 @@ export const getNews = async (
 }
 
 export const getNewsList = async ({
-  lang = 'is-IS',
+  lang = 'is',
   year,
   month,
   ascending = false,
@@ -302,7 +298,7 @@ export const getNewsList = async ({
 }
 
 export const getAdgerdirNewsList = async ({
-  lang = 'is-IS',
+  lang = 'is',
   year,
   month,
   ascending = false,

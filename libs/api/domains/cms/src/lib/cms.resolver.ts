@@ -81,13 +81,13 @@ export class CmsResolver {
   @Directive(cacheControlDirective())
   @Query(() => Article, { nullable: true })
   getArticle(@Args('input') input: GetArticleInput): Promise<Article | null> {
-    return getArticle(input?.slug ?? '', input?.lang ?? 'is-IS')
+    return getArticle(input?.slug ?? '', input?.lang ?? 'is')
   }
 
   @Directive(cacheControlDirective())
   @Query(() => News, { nullable: true })
   getNews(@Args('input') input: GetNewsInput): Promise<News | null> {
-    return getNews(input.lang ?? 'is-IS', input.slug)
+    return getNews(input.lang ?? 'is', input.slug)
   }
 
   @Directive(cacheControlDirective())
@@ -109,7 +109,7 @@ export class CmsResolver {
   getNamespace(
     @Args('input') input: GetNamespaceInput,
   ): Promise<Namespace | null> {
-    return getNamespace(input?.namespace ?? '', input?.lang ?? 'is-IS')
+    return getNamespace(input?.namespace ?? '', input?.lang ?? 'is')
   }
 
   @Directive(cacheControlDirective())
@@ -141,7 +141,7 @@ export class CmsResolver {
   getAdgerdirPage(
     @Args('input') input: GetAdgerdirPageInput,
   ): Promise<AdgerdirPage | null> {
-    return getAdgerdirPage(input?.slug ?? '', input?.lang ?? 'is-IS')
+    return getAdgerdirPage(input?.slug ?? '', input?.lang ?? 'is')
   }
 
   @Directive(cacheControlDirective())
@@ -157,7 +157,7 @@ export class CmsResolver {
   getAdgerdirNews(
     @Args('input') input: GetAdgerdirNewsInput,
   ): Promise<AdgerdirNews | null> {
-    return getAdgerdirNews(input?.slug ?? '', input?.lang ?? 'is-IS')
+    return getAdgerdirNews(input?.slug ?? '', input?.lang ?? 'is')
   }
 
   @Directive(cacheControlDirective())
@@ -165,7 +165,7 @@ export class CmsResolver {
   getAdgerdirPages(
     @Args('input') input: GetAdgerdirPagesInput,
   ): Promise<AdgerdirPages> {
-    return getAdgerdirPages(input?.lang ?? 'is-IS')
+    return getAdgerdirPages(input?.lang ?? 'is')
   }
 
   @Directive(cacheControlDirective())
@@ -181,7 +181,7 @@ export class CmsResolver {
   getAdgerdirTags(
     @Args('input') input: GetAdgerdirTagsInput,
   ): Promise<AdgerdirTags | null> {
-    return getAdgerdirTags(input?.lang ?? 'is-IS')
+    return getAdgerdirTags(input?.lang ?? 'is')
   }
 
   @Directive(cacheControlDirective())
@@ -197,7 +197,7 @@ export class CmsResolver {
   getFrontpageSliderList(
     @Args('input') input: GetFrontpageSliderListInput,
   ): Promise<FrontpageSliderList | null> {
-    return getFrontpageSliderList(input?.lang ?? 'is-IS')
+    return getFrontpageSliderList(input?.lang ?? 'is')
   }
 
   @Directive(cacheControlDirective())
@@ -205,13 +205,13 @@ export class CmsResolver {
   getAdgerdirFrontpage(
     @Args('input') input: GetAdgerdirFrontpageInput,
   ): Promise<AdgerdirFrontpage | null> {
-    return getAdgerdirFrontpage(input?.lang ?? 'is-IS')
+    return getAdgerdirFrontpage(input?.lang ?? 'is')
   }
 
   @Directive(cacheControlDirective())
   @Query(() => Menu, { nullable: true })
   getMenu(@Args('input') input: GetMenuInput): Promise<Menu | null> {
-    return getMenu(input?.name ?? '', input?.lang ?? 'is-IS')
+    return getMenu(input?.name ?? '', input?.lang ?? 'is')
   }
 
   @Directive(cacheControlDirective())
