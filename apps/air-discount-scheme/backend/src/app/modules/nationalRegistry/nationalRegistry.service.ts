@@ -7,6 +7,7 @@ import {
   NationalRegistryGeneralLookupResponse,
   NationalRegistryFamilyLookupResponse,
   NationalRegistryUser,
+  FamilyMember,
 } from './nationalRegistry.types'
 import { environment } from '../../../environments'
 
@@ -169,8 +170,14 @@ export class NationalRegistryService {
     return user
   }
 
-  private isChild(nationalId: string): boolean {
-    return kennitala.info(nationalId).age < MAX_AGE_LIMIT
+  private isParent(person: FamilyMember): boolean {
+    return [1, 2].includes(person.gender)
+  }
+
+  private isChild(person: FamilyMember): boolean {
+    return (
+      !this.isParent(person) && kennitala.info(person.ssn).age < MAX_AGE_LIMIT
+    )
   }
 
   async getRelatedChildren(nationalId: string): Promise<string[]> {
@@ -198,18 +205,18 @@ export class NationalRegistryService {
 
     const data = response.data[0]
     if (data.error) {
-      this.logger.error(`Could not find family members for User<${nationalId}>`)
+      this.logger.error(
+        `Could not find family members for User<${nationalId}> due to: ${data.error}`,
+      )
       return []
     }
 
     const family = data.results
     const user = family.find((person) => person.ssn === nationalId)
     let children = []
-    if ([1, 2].includes(user.gender)) {
+    if (this.isParent(user)) {
       children = family
-        .filter(
-          (person) => person.ssn !== nationalId && this.isChild(person.ssn),
-        )
+        .filter((person) => person.ssn !== nationalId && this.isChild(person))
         .map((person) => person.ssn)
     }
 

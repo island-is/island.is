@@ -55,6 +55,15 @@ const nationalRegistryFamilyLookupResponse: NationalRegistryFamilyLookupResponse
       city: 'Álftanes',
     },
     {
+      name: 'Atli Jónsson',
+      ssn: '1201204330',
+      gender: 4,
+      address: 'Bessastaðir 1',
+      postalcode: 225,
+      towncode: 1300,
+      city: 'Álftanes',
+    },
+    {
       name: 'Friðrik Jónsson',
       ssn: '0101932149',
       gender: 2,
@@ -93,7 +102,10 @@ const user: NationalRegistryUser = {
   city: 'Álftanes',
 }
 
-const children: string[] = [nationalRegistryFamilyLookupResponse.results[1].ssn]
+const children: string[] = [
+  nationalRegistryFamilyLookupResponse.results[1].ssn,
+  nationalRegistryFamilyLookupResponse.results[2].ssn,
+]
 
 describe('NationalRegistryService', () => {
   let nationalRegistryService: NationalRegistryService
@@ -214,6 +226,9 @@ describe('NationalRegistryService', () => {
       const httpServiceSpy = jest
         .spyOn(httpService, 'get')
         .mockImplementation(() => of(axiosFamilyLookupResponse))
+      const cacheManagerSetSpy = jest
+        .spyOn(cacheManager, 'set')
+        .mockImplementation(() => Promise.resolve(null))
 
       const result = await nationalRegistryService.getRelatedChildren(
         user.nationalId,
@@ -223,6 +238,11 @@ describe('NationalRegistryService', () => {
       )
       expect(httpServiceSpy).toHaveBeenCalledWith(
         `${nationalRegistry.url}/family-lookup?ssn=${user.nationalId}`,
+      )
+      expect(cacheManagerSetSpy).toHaveBeenCalledWith(
+        `${CACHE_KEY}_${user.nationalId}_children`,
+        { children },
+        { ttl: ONE_MONTH },
       )
       expect(result).toEqual(children)
     })
@@ -289,9 +309,7 @@ describe('NationalRegistryService', () => {
       const httpServiceSpy = jest
         .spyOn(httpService, 'get')
         .mockImplementation(() => of(axiosFamilyLookupResponse))
-      const cacheManagerSetSpy = jest
-        .spyOn(cacheManager, 'set')
-        .mockImplementation(() => Promise.resolve(null))
+      const cacheManagerSetSpy = jest.spyOn(cacheManager, 'set')
 
       const result = await nationalRegistryService.getRelatedChildren(
         user.nationalId,
