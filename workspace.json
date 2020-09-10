@@ -394,6 +394,16 @@
             ]
           }
         },
+        "contentful-types": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "npx ts-node -O '{\"module\":\"commonjs\"}' ./libs/api/domains/cms/scripts/generateContentfulTypes.ts"
+              }
+            ]
+          }
+        },
         "contentType": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
