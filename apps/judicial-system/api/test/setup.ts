@@ -1,4 +1,5 @@
 import { Sequelize } from 'sequelize-typescript'
+import { execSync } from 'child_process'
 
 import { getConnectionToken } from '@nestjs/sequelize'
 import { INestApplication, Type, CanActivate } from '@nestjs/common'
@@ -43,7 +44,9 @@ export const setup = async (options?: Partial<TestServerOptions>) => {
   })
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
 
-  await sequelize.sync()
+  // Need to use sequelize-cli becuase sequelize.sync does not work for our models
+  execSync('yarn nx run judicial-system-api:migrate')
+  // await sequelize.sync()
 
   return app
 }
