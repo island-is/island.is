@@ -1,4 +1,4 @@
-import React, { useRef, useState, useContext } from 'react'
+import React, { useRef, useState } from 'react'
 
 import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
 import {
@@ -84,7 +84,7 @@ export const StepOne: React.FC = () => {
         policeCaseNumber: policeCaseNumberRef.current.value,
         suspectNationalId: suspectNationalIdRef.current.value,
       })
-
+      window.localStorage.setItem('caseId', caseId)
       setWorkingCase({ id: caseId, case: workingCase.case })
     }
   }

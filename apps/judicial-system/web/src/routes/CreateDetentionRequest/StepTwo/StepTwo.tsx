@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, useContext } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
 import {
@@ -13,7 +13,8 @@ import {
 import { CreateDetentionReqStepTwoCase } from '@island.is/judicial-system-web/src/types'
 import { updateState, autoSave } from '../../../utils/stepHelper'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import { setHours, setMinutes } from 'date-fns'
+import { setHours, setMinutes, isValid } from 'date-fns'
+import { isNull } from 'lodash'
 
 export const StepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<CreateDetentionReqStepTwoCase>(
@@ -27,10 +28,22 @@ export const StepTwo: React.FC = () => {
       },
     },
   )
-
+  const [courtClaimDateErrorMessage, setCourtClaimDateErrorMessage] = useState<
+    string
+  >('')
   const [courtClaimTimeErrorMessage, setCourtClaimTimeErrorMessage] = useState<
     string
   >('')
+  const [offenceErrorMessage, setOffenceErrorMessage] = useState<string>('')
+
+  useEffect(() => {
+    updateState(
+      workingCase,
+      'id',
+      window.localStorage.getItem('caseId'),
+      setWorkingCase,
+    )
+  }, [])
 
   return (
     <Box marginTop={7}>
@@ -61,6 +74,8 @@ export const StepTwo: React.FC = () => {
                     placeholderText="Veldu dagsetningu"
                     locale="is"
                     minDate={new Date()}
+                    hasError={courtClaimDateErrorMessage !== ''}
+                    errorMessage={courtClaimDateErrorMessage}
                     handleChange={(date) => {
                       updateState(
                         workingCase,
@@ -69,6 +84,14 @@ export const StepTwo: React.FC = () => {
                         setWorkingCase,
                       )
                     }}
+                    handleCloseCalander={(date: Date) => {
+                      if (isNull(date) || !isValid(date)) {
+                        setCourtClaimDateErrorMessage(
+                          'Reitur má ekki vera tómur',
+                        )
+                      }
+                    }}
+                    handleOpenCalander={() => setCourtClaimDateErrorMessage('')}
                   />
                 </GridColumn>
                 <GridColumn span="3/8">
@@ -131,6 +154,34 @@ export const StepTwo: React.FC = () => {
                   />
                 </GridColumn>
               </GridRow>
+            </Box>
+            <Box component="section" marginBottom={7}>
+              <Box marginBottom={2}>
+                <Typography as="h3" variant="h3">
+                  Lagaákvæði sem brot varða við
+                </Typography>
+              </Box>
+              <Input
+                name="offence"
+                label="Lagaákvæði sem ætluð brot kærða þykja varða við"
+                errorMessage={offenceErrorMessage}
+                hasError={offenceErrorMessage !== ''}
+                onBlur={(evt) => {
+                  const validateField = validate(evt.target.value, 'empty')
+                  if (validateField.isValid) {
+                    updateState(
+                      workingCase,
+                      'offence',
+                      evt.target.value,
+                      setWorkingCase,
+                    )
+                  } else {
+                    setOffenceErrorMessage(validateField.errorMessage)
+                  }
+                }}
+                onFocus={() => setOffenceErrorMessage('')}
+                required
+              />
             </Box>
           </GridColumn>
         </GridRow>

@@ -14,7 +14,11 @@ export const updateState = (
   const copyOfState = Object.assign({}, state)
 
   // Update the copy of the state
-  copyOfState.case[fieldToUpdate] = fieldValue
+  if (fieldToUpdate === 'id') {
+    copyOfState.id = fieldValue.toString()
+  } else {
+    copyOfState.case[fieldToUpdate] = fieldValue
+  }
 
   // Set the copy of the state as the state
   stateSetter(copyOfState)
