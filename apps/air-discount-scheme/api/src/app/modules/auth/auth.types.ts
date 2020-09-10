@@ -26,9 +26,7 @@ export type VerifiedUser = {
   authId: string
 }
 
-export type Permissions = {
-  role?: 'developer' | 'admin' | 'tester' | 'user'
-}
+export type Role = 'developer' | 'admin' | 'tester' | 'user'
 
 export type Credentials = {
   user: AuthUser

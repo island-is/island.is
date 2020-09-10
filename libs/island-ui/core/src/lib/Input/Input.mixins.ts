@@ -33,7 +33,7 @@ export const input = {
   caretColor: theme.color.blue400,
   fontFamily: theme.typography.fontFamily,
   fontWeight: theme.typography.medium,
-  fontSize: 24,
+  fontSize: theme.typography.baseFontSize,
   padding: inputPadding,
   border: 'none',
   width: '100%',
@@ -49,7 +49,7 @@ export const inputPlaceholder = {
 export const placeholder = {
   color: theme.color.dark300,
   fontWeight: theme.typography.light,
-  fontSize: 24,
+  fontSize: theme.typography.baseFontSize,
   padding: inputPadding,
   width: '100%',
 }

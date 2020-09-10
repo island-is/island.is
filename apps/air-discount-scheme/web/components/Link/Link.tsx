@@ -11,11 +11,8 @@ interface LinkProps {
   as?: TypographyProps['as']
 }
 
-const isLinkExternal = (href: string): boolean => {
-  const link = document.createElement('a')
-  link.href = href
-  return link.hostname !== window.location.hostname
-}
+const isLinkExternal = (href: string): boolean =>
+  typeof href === 'string' && href.indexOf('://') !== -1
 
 export const Link: FC<LinkProps> = ({
   href,
@@ -23,11 +20,13 @@ export const Link: FC<LinkProps> = ({
   as = 'span',
   children,
 }) => {
-  const isExternalLink = isLinkExternal(href)
-
   const props = {
     variant,
     as,
+  }
+
+  if (!href) {
+    return <Typography {...props}>{children}</Typography>
   }
 
   const childIsString =
@@ -35,7 +34,7 @@ export const Link: FC<LinkProps> = ({
 
   return (
     <Typography links {...props}>
-      {isExternalLink ? (
+      {isLinkExternal(href) ? (
         <a
           href={href}
           className={styles.link}
@@ -48,7 +47,7 @@ export const Link: FC<LinkProps> = ({
           </span>
         </a>
       ) : (
-        <NextLink href={href} as="a">
+        <NextLink href={href}>
           {childIsString ? <a>{children}</a> : children}
         </NextLink>
       )}

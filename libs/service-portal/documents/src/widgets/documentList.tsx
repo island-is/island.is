@@ -1,119 +1,58 @@
-import React, { FC, useState, useEffect } from 'react'
+import React from 'react'
+import { Typography, Box, Stack, Button } from '@island.is/island-ui/core'
+import { useListDocuments } from '@island.is/service-portal/graphql'
 import {
-  Box,
-  Typography,
-  Columns,
-  Column,
-  Divider,
-  Icon,
-} from '@island.is/island-ui/core'
+  ServicePortalModuleComponent,
+  ServicePortalPath,
+} from '@island.is/service-portal/core'
+import { ActionCardLoader } from '@island.is/service-portal/core'
 import { Link } from 'react-router-dom'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
+import DocumentCard from '../components/DocumentCard/DocumentCard'
 
-const sleep = (ms = 0) => {
-  return new Promise((r) => setTimeout(r, ms))
-}
+const pageSize = 2
+const dateFrom = new Date('2000-01-01T00:00:00.000')
+const dateTo = new Date()
 
-const userDocuments = [
-  { date: '19.03.2020', title: 'Þjóðskrá', document: 'Skuldleysisvottorð' },
-  { date: '25.05.2020', title: 'Þjóðskrá', document: 'Skuldleysisvottorð' },
-  { date: '07.08.2020', title: 'Þjóðskrá', document: 'Skuldleysisvottorð' },
-  { date: '19.11.2020', title: 'Þjóðskrá', document: 'Skuldleysisvottorð' },
-]
+export const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
+  const { data, loading, error } = useListDocuments(
+    userInfo.user.profile.natreg,
+    dateFrom,
+    dateTo,
+    1,
+    pageSize,
+  )
 
-const companyDocuments = [
-  { date: '19.03.2020', title: 'Ríkisskattstjóri', document: 'Launaseðill' },
-  { date: '25.05.2020', title: 'Ríkisskattstjóri', document: 'Launaseðill' },
-]
-
-const DocumentList: ServicePortalModuleComponent = ({ userInfo }) => {
-  const [mockState, setMockState] = useState<'passive' | 'render'>('passive')
-
-  useEffect(() => {
-    setMockState('passive')
-    async function checkSomething() {
-      await sleep(500)
-      // setMockState('do-not-render')
-      setMockState('render')
-    }
-    checkSomething()
-  }, [userInfo])
-
-  const documents = userDocuments
-
-  if (mockState === 'render') {
-    return (
-      <>
-        <Box background="dark100" boxShadow="small">
-          <Columns>
-            <Column width="3/12">
-              <Box padding={2}>
-                <Typography variant="pSmall" as="p">
-                  Dagsetning
-                </Typography>
-              </Box>
-            </Column>
-            <Column width="4/12">
-              <Box padding={2}>
-                <Typography variant="pSmall" as="p">
-                  Útgefandi
-                </Typography>
-              </Box>
-            </Column>
-            <Column width="5/12">
-              <Box padding={2}>
-                <Typography variant="pSmall" as="p">
-                  Skjal
-                </Typography>
-              </Box>
-            </Column>
-          </Columns>
-        </Box>
-        {documents.map((document, index) => (
-          <div key={index}>
-            <Columns>
-              <Column width="3/12">
-                <Box padding={2}>
-                  <Typography variant="pSmall" as="p">
-                    {document.date}
-                  </Typography>
-                </Box>
-              </Column>
-              <Column width="4/12">
-                <Box padding={2}>
-                  <Typography variant="pSmall" as="p">
-                    {document.title}
-                  </Typography>
-                </Box>
-              </Column>
-              <Column width="5/12">
-                <Box padding={2}>
-                  <Typography variant="pSmall" as="p">
-                    {document.document}
-                  </Typography>
-                </Box>
-              </Column>
-            </Columns>
-            <Divider />
-          </div>
+  return (
+    <>
+      <Stack space={2}>
+        {loading && <ActionCardLoader repeat={3} />}
+        {error && (
+          <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
+            <Typography variant="h3">
+              Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis
+            </Typography>
+          </Box>
+        )}
+        {!loading && !error && data?.length === 0 && (
+          <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
+            <Typography variant="h3">
+              Engin skjöl fundust fyrir gefin leitarskilyrði
+            </Typography>
+          </Box>
+        )}
+        {data?.map((document) => (
+          <DocumentCard key={document.id} document={document} />
         ))}
-        <Box marginTop={3} textAlign="right">
-          <Link to="/rafraen-skjol">
-            <Box display="flex" alignItems="center" justifyContent="flexEnd">
-              <Typography variant="tag" color="blue400">
-                Fara í rafræn skjöl
-              </Typography>
-              <Box marginLeft={1}>
-                <Icon type="arrowRight" width="10" height="10" fill="blue400" />
-              </Box>
-            </Box>
-          </Link>
-        </Box>
-      </>
-    )
-  }
-
-  return null
+      </Stack>
+      <Box display="flex" justifyContent="flexEnd" marginTop={3}>
+        <Link to={ServicePortalPath.RafraenSkjolRoot}>
+          <Button variant="text" icon="arrowRight">
+            Fara í rafræn skjöl
+          </Button>
+        </Link>
+      </Box>
+    </>
+  )
 }
 
 export default DocumentList

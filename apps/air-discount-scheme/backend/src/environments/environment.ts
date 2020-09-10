@@ -1,5 +1,6 @@
 export default {
   production: false,
+  environment: 'local',
   sentry: {
     dsn: process.env.SENTRY_DSN,
   },
@@ -10,6 +11,7 @@ export default {
   },
   airlineApiKeys: {
     icelandair: 'icelandair',
+    norlandair: 'icelandair',
     ernir: 'ernir',
   },
   redis: {

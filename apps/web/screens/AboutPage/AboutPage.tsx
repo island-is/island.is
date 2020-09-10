@@ -3,13 +3,7 @@ import React, { FC, ReactNode, useRef, useMemo, Ref, forwardRef } from 'react'
 import fromPairs from 'lodash/fromPairs'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { useI18n } from '@island.is/web/i18n'
-import {
-  Query,
-  QueryGetAboutPageArgs,
-  AboutPage,
-  Slice,
-} from '@island.is/api/schema'
-import { GET_PAGE_QUERY } from '../queries'
+import { GET_ABOUT_PAGE_QUERY } from '../queries'
 import { Screen } from '@island.is/web/types'
 import {
   Header,
@@ -34,36 +28,58 @@ import {
   Breadcrumbs,
   Stack,
   Link,
+  ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import { Content } from '@island.is/island-ui/contentful'
 import Sidebar, { SidebarProps } from './Sidebar'
 import * as styles from './AboutPage.treat'
 import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import Head from 'next/head'
+import {
+  GetAboutPageQuery,
+  QueryGetAboutPageArgs,
+  AllSlicesFragment,
+  AllSlicesEmbeddedVideoFragment,
+  AllSlicesImageFragment,
+} from '../../graphql/schema'
 
-const extractSliceTitle = (slice: Slice): [string, string] | null => {
+/**
+ * TODO: Both fragments Image and EmbeddedVideo aren't used inside
+ * queries, so no fields are retrieve, which mean `id` is undefined
+ */
+type AvailableSlices = Exclude<
+  AllSlicesFragment,
+  AllSlicesEmbeddedVideoFragment | AllSlicesImageFragment
+>
+
+const extractSliceTitle = (slice: AvailableSlices): [string, string] | null => {
   switch (slice.__typename) {
     case 'PageHeaderSlice':
       return [slice.id, slice.navigationText]
+
     case 'HeadingSlice':
     case 'LinkCardSlice':
     case 'MailingListSignupSlice':
     case 'LatestNewsSlice':
     case 'LogoListSlice':
       return [slice.id, slice.title]
+
     default:
       return null
   }
 }
 
-const connectSlices = (slices: Slice[]): { [k: string]: string } => {
+const connectSlices = (slices: AvailableSlices[]): { [k: string]: string } => {
   let head = slices.find(extractSliceTitle) ?? slices[0]
+
   const pairs = slices.map((slice) => {
     if (extractSliceTitle(slice)) {
       head = slice
     }
+
     return [slice.id, head.id]
   })
+
   return fromPairs(pairs)
 }
 
@@ -123,20 +139,21 @@ const Background = forwardRef<HTMLDivElement, BackgroundProps>(
   },
 )
 
-const decideSidebarType = (slice?: Slice): SidebarProps['type'] => {
+const decideSidebarType = (slice?: AllSlicesFragment): SidebarProps['type'] => {
   switch (slice && slice.__typename) {
     case 'PageHeaderSlice':
     case 'MailingListSignupSlice':
     case 'LogoListSlice':
       return 'gradient'
+
     default:
       return 'standard'
   }
 }
 
 interface SectionProps {
-  slice: Slice
-  page: AboutPage
+  slice: AvailableSlices
+  page: GetAboutPageQuery['getAboutPage']
   currentSliceId: string
   setRef: (k: string) => (e: HTMLDivElement) => void
 }
@@ -150,7 +167,9 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       return (
         <Background ref={setRef(slice.id)} id={slice.id} theme={page.theme}>
           <ContentBlock>
-            <Header />
+            <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
+              <Header />
+            </ColorSchemeContext.Provider>
             <Box paddingX={[0, 0, 6]} paddingTop={8}>
               <Columns collapseBelow="lg">
                 <Column width="9/12">
@@ -168,7 +187,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                       </Typography>
                     </Stack>
                   </div>
-                  {slice.slices.map((slice) => (
+                  {(slice.slices as AvailableSlices[]).map((slice) => (
                     <Section
                       key={slice.id}
                       slice={slice}
@@ -182,7 +201,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                   <Sidebar
                     title={page.title}
                     type={decideSidebarType(
-                      page.slices.find(
+                      (page.slices as AvailableSlices[]).find(
                         (slice) =>
                           !currentSliceId || slice.id === currentSliceId,
                       ),
@@ -194,7 +213,10 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                           .map(extractSliceTitle)
                           .filter(Boolean)
                           .map(([id, text], index) => (
-                            <Box key={id} paddingBottom={index === 0 ? 2 : 0}>
+                            <Box
+                              key={index}
+                              paddingBottom={index === 0 ? 2 : 0}
+                            >
                               <a
                                 ref={id === currentSliceId ? bulletRef : null}
                                 href={'#' + id}
@@ -213,8 +235,8 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                               </a>
                             </Box>
                           ))}
-                        {slice.links.map(({ url, text }) => (
-                          <>
+                        {slice.links.map(({ url, text }, index) => (
+                          <span key={index}>
                             <Box paddingY={2}>
                               <Divider weight={colors.divider} />
                             </Box>
@@ -227,7 +249,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                                 {text}
                               </Typography>
                             </Link>
-                          </>
+                          </span>
                         ))}
                       </>
                     )}
@@ -242,9 +264,9 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       return (
         <Timeline
           {...slice}
-          events={slice.events.map((event) => ({
+          events={slice.events.map((event, index) => ({
             ...event,
-            body: event.body && <Content document={event.body} />,
+            body: event.body && <Content key={index} document={event.body} />,
           }))}
         />
       )
@@ -301,7 +323,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           <Layout width="7/12" boxProps={{ paddingTop: 12, paddingBottom: 10 }}>
             <StoryList
               {...slice}
-              stories={slice.stories.map((story) => ({
+              stories={(slice.stories as any[]).map((story) => ({
                 ...story,
                 logoUrl: story.logo.url,
               }))}
@@ -357,13 +379,16 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
 }
 
 export interface AboutPageProps {
-  page?: AboutPage
+  page?: GetAboutPageQuery['getAboutPage']
 }
 
 const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
   const refs: Ref<{ [k: string]: HTMLDivElement }> = useRef({})
   const [spy, sliceId] = useScrollSpy({ margin: 200 })
-  const sliceMap = useMemo(() => connectSlices(page.slices), [page.slices])
+  const sliceMap = useMemo(
+    () => connectSlices(page.slices as AvailableSlices[]),
+    [page.slices],
+  )
 
   const setRef = (id: string) => {
     return (e: HTMLDivElement) => {
@@ -379,7 +404,7 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
         <meta name="description" content={page.seoDescription} />
       </Head>
       <Box position="relative">
-        {page.slices.map((slice) => (
+        {(page.slices as AvailableSlices[]).map((slice) => (
           <Section
             key={slice.id}
             slice={slice}
@@ -396,8 +421,8 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
 AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
   const {
     data: { getAboutPage: page },
-  } = await apolloClient.query<Query, QueryGetAboutPageArgs>({
-    query: GET_PAGE_QUERY,
+  } = await apolloClient.query<GetAboutPageQuery, QueryGetAboutPageArgs>({
+    query: GET_ABOUT_PAGE_QUERY,
     fetchPolicy: 'no-cache',
     variables: {
       input: {

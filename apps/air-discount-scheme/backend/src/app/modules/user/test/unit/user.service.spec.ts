@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing'
 
-import { User } from '../../user.model'
+import { AirlineUser, User } from '../../user.model'
 import { UserService } from '../../user.service'
 import { FlightService } from '../../../flight'
 import { NationalRegistryService } from '../../../nationalRegistry'
@@ -15,16 +15,11 @@ const user: User = {
   postalcode: 225,
   city: 'Álftanes',
   fund: {
-    nationalId: '1326487905',
     credit: 2,
     used: 2,
     total: 2,
   },
 }
-
-const child1 = '1201173359'
-const adult1 = '1201013319'
-const family: string[] = [child1, adult1, user.nationalId]
 
 describe('UserService', () => {
   let userService: UserService
@@ -46,7 +41,6 @@ describe('UserService', () => {
           provide: NationalRegistryService,
           useClass: jest.fn(() => ({
             getUser: () => ({}),
-            getFamily: (nationalId: string) => family,
           })),
         },
       ],
@@ -59,23 +53,42 @@ describe('UserService', () => {
     )
   })
 
-  describe('getRelations', () => {
-    it('should return only childs and the user itself in front', async () => {
-      const isChildSpy = jest
-        .spyOn(UserService.prototype as any, 'isChild')
-        .mockImplementation((birthday: string): boolean => {
-          if (
-            new Date(birthday).getFullYear() ===
-            1900 + parseInt(child1.slice(4, 6))
-          ) {
-            return true
-          }
-          return false
-        })
+  describe('getAirlineUserInfoByNationalId', () => {
+    it('should return user with masked nationalId', async () => {
+      const flightLegs = {
+        unused: user.fund.credit,
+        used: user.fund.used,
+        total: user.fund.total,
+      }
+      const isValidPostalCode = true
 
-      const result = await userService.getRelations(user.nationalId)
+      const getUserSpy = jest
+        .spyOn(nationalRegistryService, 'getUser')
+        .mockImplementation(() => Promise.resolve(user))
+      const countFlightLegsByNationalIdSpy = jest
+        .spyOn(flightService, 'countFlightLegsByNationalId')
+        .mockImplementation(() => Promise.resolve(flightLegs))
+      const isADSPostalCodeSpy = jest
+        .spyOn(flightService, 'isADSPostalCode')
+        .mockImplementation(() => isValidPostalCode)
 
-      expect(result).toEqual([user.nationalId, child1])
+      const result = await userService.getAirlineUserInfoByNationalId(
+        user.nationalId,
+      )
+
+      expect(getUserSpy).toHaveBeenCalledWith(user.nationalId)
+      expect(countFlightLegsByNationalIdSpy).toHaveBeenCalledWith(
+        user.nationalId,
+      )
+      expect(isADSPostalCodeSpy).toHaveBeenCalledWith(user.postalcode)
+      expect(result).toEqual({
+        nationalId: '132648xxx5',
+        firstName: user.firstName,
+        gender: user.gender,
+        lastName: user.lastName,
+        middleName: user.middleName,
+        fund: user.fund,
+      })
     })
   })
 

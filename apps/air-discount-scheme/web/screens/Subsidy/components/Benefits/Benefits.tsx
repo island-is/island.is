@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useQuery } from '@apollo/client'
 import gql from 'graphql-tag'
 
@@ -28,7 +28,6 @@ const DiscountsQuery = gql`
         nationalId
         name
         fund {
-          nationalId
           used
           credit
           total
@@ -40,15 +39,10 @@ const DiscountsQuery = gql`
 `
 
 function Benefits({ misc }: PropTypes) {
-  const { data, loading, called, refetch } = useQuery(DiscountsQuery, {
+  const { data, loading, called } = useQuery(DiscountsQuery, {
     ssr: false,
+    pollInterval: TEN_SECONDS,
   })
-  useEffect(() => {
-    const interval = setInterval(() => {
-      refetch()
-    }, TEN_SECONDS)
-    return () => clearInterval(interval)
-  }, [refetch])
 
   const { discounts = [] } = data || {}
   const { myRights, codeDescription, attention, codeDisclaimer } = JSON.parse(

@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import { Query } from '@island.is/api/schema'
 import {
   Box,
   Columns,
@@ -10,19 +9,24 @@ import {
   SkeletonLoader,
 } from '@island.is/island-ui/core'
 import * as styles from './Hero.treat'
-import { Link } from 'react-router-dom'
-import { ServicePortalPath } from '@island.is/service-portal/core'
+import { useQuery } from '@apollo/client'
+import { GET_FRONTPAGE_SLIDES } from '@island.is/service-portal/graphql'
+import { Query, QueryGetFrontpageSliderListArgs } from '@island.is/api/schema'
+import { useStore } from '../../store/stateProvider'
 
-interface Props {
-  content: Query['getFrontpageSliderList']
-  loading: boolean
-}
-
-// TODO: On smaller screen sizes, a natural overflow of the content starts to happen
-// This is fine but currently the image can overlap the content, we would want to set a higher
-// z-index for the left column but that is not available in the current design system
-
-const Hero: FC<Props> = ({ content, loading }) => {
+const Hero: FC<{}> = () => {
+  const [{ lang }] = useStore()
+  const { data, loading } = useQuery<Query, QueryGetFrontpageSliderListArgs>(
+    GET_FRONTPAGE_SLIDES,
+    {
+      variables: {
+        input: {
+          lang,
+        },
+      },
+    },
+  )
+  const content = data?.getFrontpageSliderList
   const slide = content?.items[1]
 
   if (!loading && !slide) return null
@@ -52,11 +56,11 @@ const Hero: FC<Props> = ({ content, loading }) => {
               {loading ? (
                 <SkeletonLoader width={150} height={40} />
               ) : (
-                <Link to={ServicePortalPath.MenntunRoot}>
+                <a href="https://island.is/">
                   <Button variant="text" icon="arrowRight">
                     Sjá nánar
                   </Button>
-                </Link>
+                </a>
               )}
             </Stack>
           </Box>

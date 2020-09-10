@@ -25,18 +25,14 @@ jobs:
 
     outputs:
       GIT_BRANCH: ${{ steps.git_refs.outputs.GIT_BRANCH }}
-      GIT_BASE_BRANCH: ${{ steps.git_refs.outputs.GIT_BASE_BRANCH }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
-      DOCKER_LATEST_TAG: ${{ steps.docker_tags.outputs.DOCKER_LATEST_TAG }}
-      DOCKER_BRANCH_TAG: ${{ steps.docker_tags.outputs.DOCKER_BRANCH_TAG }}
-      BASE: ${{ steps.git_nx_base.outputs.BASE }}
-      HEAD: ${{ steps.git_nx_head.outputs.HEAD }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       PUBLISH: ${{ steps.publish_flag.outputs.PUBLISH }}
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
       DOCKER_EXPRESS_CHUNKS: ${{ steps.docker_express_projects.outputs.CHUNKS }}
       DOCKER_NEXT_CHUNKS: ${{ steps.docker_next_projects.outputs.CHUNKS }}
+      DOCKER_STATIC_CHUNKS: ${{ steps.docker_static_projects.outputs.CHUNKS }}
       UNAFFECTED: ${{ steps.docker_unaffected_projects.outputs.UNAFFECTED }}
     steps:
       - uses: actions/checkout@v2
@@ -58,7 +54,6 @@ jobs:
           echo "::set-env name=GIT_BRANCH::${GIT_BRANCH}"
           echo "::set-output name=GIT_BRANCH::${GIT_BRANCH}"
           echo "::set-env name=GIT_BASE_BRANCH::${GIT_BASE_BRANCH}"
-          echo "::set-output name=GIT_BASE_BRANCH::${GIT_BASE_BRANCH}"
           echo "Base branch is '${GIT_BASE_BRANCH}'"
           echo "Branch is '${GIT_BRANCH}'"
 
@@ -68,18 +63,14 @@ jobs:
           export DOCKER_BRANCH_TAG=$(echo ${GIT_BRANCH} | tr "/." "-" )
           export DOCKER_TAG=${GITHUB_RUN_NUMBER}_${DOCKER_BRANCH_TAG}_${GITHUB_SHA:0:7}
           echo "Docker tag will be ${DOCKER_TAG}"
-          echo "::set-env name=DOCKER_BRANCH_TAG::${DOCKER_BRANCH_TAG}"
-          echo "::set-output name=DOCKER_BRANCH_TAG::${DOCKER_BRANCH_TAG}"
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "::set-env name=DOCKER_TAG::${DOCKER_TAG}"
-          echo "::set-output name=DOCKER_LATEST_TAG::latest_${DOCKER_BRANCH_TAG}"
 
       - run: git checkout "$GIT_BRANCH"
       - run: git checkout "$GIT_BASE_BRANCH"
       - run: git checkout $GITHUB_SHA
       - run: |
           echo "::set-env name=HEAD::${GITHUB_SHA}"
-          echo "::set-output name=HEAD::${GITHUB_SHA}"
         id: git_nx_head
         name: Preparing HEAD tag
       - run: |
@@ -96,7 +87,6 @@ jobs:
           LAST_GOOD_BUILD_RUN_NUMBER=`echo $LAST_GOOD_BUILD | jq -r '.run_number'`
           echo "Last successful build on $BRANCH is with SHA '$LAST_GOOD_BUILD_SHA', branch '$LAST_GOOD_BUILD_BRANCH' and number '$LAST_GOOD_BUILD_RUN_NUMBER'"
           echo "::set-env name=BASE::$LAST_GOOD_BUILD_SHA"
-          echo "::set-output name=BASE::$LAST_GOOD_BUILD_SHA"
           LAST_GOOD_BUILD_DOCKER_BRANCH_TAG=$(echo ${LAST_GOOD_BUILD_BRANCH} | tr "/." "-" )
           export LAST_GOOD_BUILD_DOCKER_TAG=${LAST_GOOD_BUILD_RUN_NUMBER}_${LAST_GOOD_BUILD_DOCKER_BRANCH_TAG}_${LAST_GOOD_BUILD_SHA:0:7}
           echo "Last successful docker tag '$LAST_GOOD_BUILD_DOCKER_TAG'"
@@ -191,10 +181,19 @@ jobs:
           echo "Chunks: $CHUNKS"
           echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
 
+      - name: Prepare docker-static targets
+        id: docker_static_projects
+        run: |
+          PROJECTS=`./scripts/_nx-affected-targets.sh docker-static`
+          echo "Projects: ${PROJECTS}"
+          CHUNKS=`node scripts/_chunk.js "${PROJECTS}"`
+          echo "Chunks: $CHUNKS"
+          echo "::set-output name=CHUNKS::{\"projects\":$CHUNKS}"
+
       - name: Prepare unaffected docker images
         id: docker_unaffected_projects
         run: |
-          UNAFFECTED=`./scripts/list-unaffected.sh docker-next docker-express`
+          UNAFFECTED=`./scripts/list-unaffected.sh docker-next docker-express docker-static`
           echo "Unaffected Docker images: ${UNAFFECTED}"
           echo "::set-output name=UNAFFECTED::$UNAFFECTED"
 
@@ -341,6 +340,45 @@ jobs:
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-express
 
+  docker-static:
+    needs: [prepare, tests]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
+      DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.DOCKER_STATIC_CHUNKS) }}
+    steps:
+      - uses: actions/checkout@v2
+        if: ${{ matrix.projects != 'dummy' }}
+      - name: Cache for dependencies Docker layer
+        if: ${{ matrix.projects != 'dummy' }}
+        id: cache-deps
+        uses: actions/cache@v1
+        with:
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
+      - name: Set up Docker Buildx
+        if: ${{ matrix.projects != 'dummy' }}
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: v0.4.1
+          qemu-version: latest
+      - name: Docker login to ECR repo
+        if: ${{ matrix.projects != 'dummy' }}
+        run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Building Docker images
+        if: ${{ matrix.projects != 'dummy' }}
+        run: ./scripts/run-in-parallel.sh docker-static
+
   docker-next:
     needs: [prepare, tests]
     runs-on: ubuntu-latest
@@ -383,7 +421,7 @@ jobs:
   retag-unaffected:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [docker-express, docker-next, prepare, linting, formatting]
+    needs: [docker-express, docker-next, docker-static, prepare, linting, formatting]
     env:
       PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
       UNAFFECTED: ${{ needs.prepare.outputs.UNAFFECTED }}
@@ -430,7 +468,7 @@ jobs:
   failure-notification:
     runs-on: ubuntu-latest
     if: failure()
-    needs: [docker-express, docker-next, prepare, linting, formatting, trigger-deployments]
+    needs: [docker-express, docker-next, docker-static, prepare, linting, formatting, trigger-deployments]
     env:
       PUBLISH: ${{ needs.prepare.outputs.PUBLISH}}
     steps:

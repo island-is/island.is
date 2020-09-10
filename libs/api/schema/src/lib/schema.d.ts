@@ -92,13 +92,13 @@ export type Article = {
 
 export type AdgerdirTag = {
   __typename?: 'AdgerdirTag'
-  id?: Maybe<Scalars['String']>
-  title?: Maybe<Scalars['String']>
+  id: Scalars['ID']
+  title: Scalars['String']
 }
 
 export type AdgerdirPage = {
   __typename?: 'AdgerdirPage'
-  id: Scalars['String']
+  id: Scalars['ID']
   title: Scalars['String']
   description: Scalars['String']
   longDescription?: Maybe<Scalars['String']>
@@ -115,6 +115,7 @@ export type AdgerdirPage = {
 
 export type Image = {
   __typename?: 'Image'
+  id: Scalars['ID']
   url: Scalars['String']
   title: Scalars['String']
   contentType: Scalars['String']
@@ -142,9 +143,10 @@ export type AdgerdirPages = {
 
 export type AdgerdirFrontpage = {
   __typename?: 'AdgerdirFrontpage'
-  id: Scalars['String']
+  id: Scalars['ID']
+  slug: Scalars['String']
   title: Scalars['String']
-  description: Scalars['String']
+  description?: Maybe<Scalars['String']>
   content?: Maybe<Scalars['String']>
   slices: Array<AdgerdirSlice>
 }
@@ -170,9 +172,9 @@ export type AdgerdirFeaturedNewsSlice = {
 
 export type FrontpageSlide = {
   __typename?: 'FrontpageSlide'
-  subtitle?: Maybe<Scalars['String']>
-  title?: Maybe<Scalars['String']>
-  content?: Maybe<Scalars['String']>
+  title: Scalars['String']
+  subtitle: Scalars['String']
+  content: Scalars['String']
   image?: Maybe<Image>
   link?: Maybe<Scalars['String']>
 }
@@ -210,8 +212,8 @@ export type PaginatedNews = {
 
 export type Namespace = {
   __typename?: 'Namespace'
-  namespace?: Maybe<Scalars['String']>
-  fields?: Maybe<Scalars['String']>
+  namespace: Scalars['String']
+  fields: Scalars['String']
 }
 
 export type Link = {
@@ -259,6 +261,26 @@ export type NumberBullet = {
   body: Scalars['String']
 }
 
+export type Statistic = {
+  __typename?: 'Statistic'
+  id: Scalars['ID']
+  value: Scalars['String']
+  label: Scalars['String']
+}
+
+export type Html = {
+  __typename?: 'Html'
+  id: Scalars['ID']
+  document: Scalars['JSON']
+}
+
+export type QuestionAndAnswer = {
+  __typename?: 'QuestionAndAnswer'
+  id: Scalars['ID']
+  question: Scalars['String']
+  answer: Html
+}
+
 export type AboutPage = {
   __typename?: 'AboutPage'
   title: Scalars['String']
@@ -277,6 +299,12 @@ export type Slice =
   | MailingListSignupSlice
   | LogoListSlice
   | BulletListSlice
+  | Html
+  | Image
+  | Statistics
+  | ProcessEntry
+  | FaqList
+  | EmbeddedVideo
 
 export type PageHeaderSlice = {
   __typename?: 'PageHeaderSlice'
@@ -365,9 +393,44 @@ export type NumberBulletGroup = {
   bullets: Array<NumberBullet>
 }
 
+export type Statistics = {
+  __typename?: 'Statistics'
+  id: Scalars['ID']
+  title: Scalars['String']
+  statistics: Array<Statistic>
+}
+
+export type ProcessEntry = {
+  __typename?: 'ProcessEntry'
+  id: Scalars['ID']
+  title: Scalars['String']
+  subtitle?: Maybe<Scalars['String']>
+  details?: Maybe<Html>
+  type: Scalars['String']
+  processTitle: Scalars['String']
+  processDescription?: Maybe<Scalars['String']>
+  processInfo?: Maybe<Html>
+  processLink: Scalars['String']
+  buttonText: Scalars['String']
+}
+
+export type FaqList = {
+  __typename?: 'FaqList'
+  id: Scalars['ID']
+  title: Scalars['String']
+  questions: Array<QuestionAndAnswer>
+}
+
+export type EmbeddedVideo = {
+  __typename?: 'EmbeddedVideo'
+  id: Scalars['ID']
+  title: Scalars['String']
+  url: Scalars['String']
+}
+
 export type LinkList = {
   __typename?: 'LinkList'
-  title?: Maybe<Scalars['String']>
+  title: Scalars['String']
   links: Array<Link>
 }
 
@@ -379,7 +442,7 @@ export type LandingPage = {
   image?: Maybe<Image>
   actionButton?: Maybe<Link>
   links?: Maybe<LinkList>
-  content?: Maybe<Scalars['String']>
+  content: Array<Slice>
 }
 
 export type GenericPage = {
@@ -398,11 +461,6 @@ export type Menu = {
   links: Array<Link>
 }
 
-export type AdgerdirTags = {
-  __typename?: 'AdgerdirTags'
-  items: Array<AdgerdirTag>
-}
-
 export type LifeEventPage = {
   __typename?: 'LifeEventPage'
   title: Scalars['String']
@@ -410,6 +468,17 @@ export type LifeEventPage = {
   intro: Scalars['String']
   image: Image
   body: Scalars['JSON']
+}
+
+export type AdgerdirTags = {
+  __typename?: 'AdgerdirTags'
+  items: Array<AdgerdirTag>
+}
+
+export type PaginatedAdgerdirNews = {
+  __typename?: 'PaginatedAdgerdirNews'
+  page: Pagination
+  news: Array<AdgerdirNews>
 }
 
 export type Application = {
@@ -462,6 +531,20 @@ export type Document = {
   opened: Scalars['Boolean']
 }
 
+export type DocumentDetails = {
+  __typename?: 'DocumentDetails'
+  fileType: Scalars['String']
+  content: Scalars['String']
+  html: Scalars['String']
+  url: Scalars['String']
+}
+
+export type DocumentCategory = {
+  __typename?: 'DocumentCategory'
+  id: Scalars['ID']
+  name: Scalars['String']
+}
+
 export type Query = {
   __typename?: 'Query'
   helloWorld: HelloWorld
@@ -473,6 +556,7 @@ export type Query = {
   getArticle?: Maybe<Article>
   getNews?: Maybe<News>
   getNewsList: PaginatedNews
+  getAdgerdirNewsList: PaginatedAdgerdirNews
   getNamespace?: Maybe<Namespace>
   getAboutPage: AboutPage
   getLandingPage?: Maybe<LandingPage>
@@ -487,7 +571,9 @@ export type Query = {
   getLifeEventPage?: Maybe<LifeEventPage>
   getApplication?: Maybe<Application>
   getApplicationsByType?: Maybe<Array<Application>>
-  getDocument?: Maybe<Document>
+  getDocument?: Maybe<DocumentDetails>
+  listDocuments?: Maybe<Array<Document>>
+  getDocumentCategories?: Maybe<Array<DocumentCategory>>
 }
 
 export type QueryHelloWorldArgs = {
@@ -524,6 +610,10 @@ export type QueryGetNewsArgs = {
 
 export type QueryGetNewsListArgs = {
   input: GetNewsListInput
+}
+
+export type QueryGetAdgerdirNewsListArgs = {
+  input: GetAdgerdirNewsListInput
 }
 
 export type QueryGetNamespaceArgs = {
@@ -586,6 +676,10 @@ export type QueryGetDocumentArgs = {
   input: GetDocumentInput
 }
 
+export type QueryListDocumentsArgs = {
+  input: ListDocumentsInput
+}
+
 export type HelloWorldInput = {
   name?: Maybe<Scalars['String']>
 }
@@ -640,6 +734,15 @@ export type GetNewsInput = {
 }
 
 export type GetNewsListInput = {
+  lang?: Maybe<Scalars['String']>
+  year?: Maybe<Scalars['Int']>
+  month?: Maybe<Scalars['Int']>
+  ascending?: Maybe<Scalars['Boolean']>
+  page?: Maybe<Scalars['Int']>
+  perPage?: Maybe<Scalars['Int']>
+}
+
+export type GetAdgerdirNewsListInput = {
   lang?: Maybe<Scalars['String']>
   year?: Maybe<Scalars['Int']>
   month?: Maybe<Scalars['Int']>
@@ -716,6 +819,15 @@ export type GetDocumentInput = {
   id: Scalars['String']
 }
 
+export type ListDocumentsInput = {
+  natReg: Scalars['String']
+  dateFrom: Scalars['DateTime']
+  dateTo: Scalars['DateTime']
+  category: Scalars['String']
+  page: Scalars['Float']
+  pageSize: Scalars['Float']
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<Application>
@@ -781,21 +893,12 @@ export enum CreateApplicationDtoTypeIdEnum {
 
 export type UpdateApplicationInput = {
   id: Scalars['String']
-  typeId: UpdateApplicationDtoTypeIdEnum
   applicant?: Maybe<Scalars['String']>
   assignee?: Maybe<Scalars['String']>
   externalId?: Maybe<Scalars['String']>
   state?: Maybe<UpdateApplicationDtoStateEnum>
   attachments?: Maybe<Scalars['JSON']>
   answers?: Maybe<Scalars['JSON']>
-}
-
-export enum UpdateApplicationDtoTypeIdEnum {
-  ExampleForm = 'ExampleForm',
-  ExampleForm2 = 'ExampleForm2',
-  ExampleForm3 = 'ExampleForm3',
-  FamilyAndPets = 'FamilyAndPets',
-  ParentalLeave = 'ParentalLeave',
 }
 
 export enum UpdateApplicationDtoStateEnum {
@@ -988,6 +1091,10 @@ export type ResolversTypes = {
   Story: ResolverTypeWrapper<Story>
   LinkCard: ResolverTypeWrapper<LinkCard>
   NumberBullet: ResolverTypeWrapper<NumberBullet>
+  Statistic: ResolverTypeWrapper<Statistic>
+  Html: ResolverTypeWrapper<Html>
+  JSON: ResolverTypeWrapper<Scalars['JSON']>
+  QuestionAndAnswer: ResolverTypeWrapper<QuestionAndAnswer>
   AboutPage: ResolverTypeWrapper<
     Omit<AboutPage, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
   >
@@ -1001,6 +1108,12 @@ export type ResolversTypes = {
     | ResolversTypes['MailingListSignupSlice']
     | ResolversTypes['LogoListSlice']
     | ResolversTypes['BulletListSlice']
+    | ResolversTypes['Html']
+    | ResolversTypes['Image']
+    | ResolversTypes['Statistics']
+    | ResolversTypes['ProcessEntry']
+    | ResolversTypes['FaqList']
+    | ResolversTypes['EmbeddedVideo']
   PageHeaderSlice: ResolverTypeWrapper<
     Omit<PageHeaderSlice, 'slices'> & { slices: Array<ResolversTypes['Slice']> }
   >
@@ -1021,13 +1134,19 @@ export type ResolversTypes = {
     | ResolversTypes['NumberBulletGroup']
   IconBullet: ResolverTypeWrapper<IconBullet>
   NumberBulletGroup: ResolverTypeWrapper<NumberBulletGroup>
+  Statistics: ResolverTypeWrapper<Statistics>
+  ProcessEntry: ResolverTypeWrapper<ProcessEntry>
+  FaqList: ResolverTypeWrapper<FaqList>
+  EmbeddedVideo: ResolverTypeWrapper<EmbeddedVideo>
   LinkList: ResolverTypeWrapper<LinkList>
-  LandingPage: ResolverTypeWrapper<LandingPage>
+  LandingPage: ResolverTypeWrapper<
+    Omit<LandingPage, 'content'> & { content: Array<ResolversTypes['Slice']> }
+  >
   GenericPage: ResolverTypeWrapper<GenericPage>
   Menu: ResolverTypeWrapper<Menu>
-  AdgerdirTags: ResolverTypeWrapper<AdgerdirTags>
   LifeEventPage: ResolverTypeWrapper<LifeEventPage>
-  JSON: ResolverTypeWrapper<Scalars['JSON']>
+  AdgerdirTags: ResolverTypeWrapper<AdgerdirTags>
+  PaginatedAdgerdirNews: ResolverTypeWrapper<PaginatedAdgerdirNews>
   Application: ResolverTypeWrapper<Application>
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>
   ApplicationStateEnum: ApplicationStateEnum
@@ -1035,6 +1154,8 @@ export type ResolversTypes = {
   PresignedPost: ResolverTypeWrapper<PresignedPost>
   Document: ResolverTypeWrapper<Document>
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
+  DocumentDetails: ResolverTypeWrapper<DocumentDetails>
+  DocumentCategory: ResolverTypeWrapper<DocumentCategory>
   Query: ResolverTypeWrapper<{}>
   HelloWorldInput: HelloWorldInput
   SearcherInput: SearcherInput
@@ -1047,6 +1168,7 @@ export type ResolversTypes = {
   GetArticleInput: GetArticleInput
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
+  GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
   GetLandingPageInput: GetLandingPageInput
@@ -1062,12 +1184,12 @@ export type ResolversTypes = {
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
+  ListDocumentsInput: ListDocumentsInput
   Mutation: ResolverTypeWrapper<{}>
   CreateApplicationInput: CreateApplicationInput
   CreateApplicationDtoStateEnum: CreateApplicationDtoStateEnum
   CreateApplicationDtoTypeIdEnum: CreateApplicationDtoTypeIdEnum
   UpdateApplicationInput: UpdateApplicationInput
-  UpdateApplicationDtoTypeIdEnum: UpdateApplicationDtoTypeIdEnum
   UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
   UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
   DataProvider: DataProvider
@@ -1113,6 +1235,10 @@ export type ResolversParentTypes = {
   Story: Story
   LinkCard: LinkCard
   NumberBullet: NumberBullet
+  Statistic: Statistic
+  Html: Html
+  JSON: Scalars['JSON']
+  QuestionAndAnswer: QuestionAndAnswer
   AboutPage: Omit<AboutPage, 'slices'> & {
     slices: Array<ResolversParentTypes['Slice']>
   }
@@ -1126,6 +1252,12 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['MailingListSignupSlice']
     | ResolversParentTypes['LogoListSlice']
     | ResolversParentTypes['BulletListSlice']
+    | ResolversParentTypes['Html']
+    | ResolversParentTypes['Image']
+    | ResolversParentTypes['Statistics']
+    | ResolversParentTypes['ProcessEntry']
+    | ResolversParentTypes['FaqList']
+    | ResolversParentTypes['EmbeddedVideo']
   PageHeaderSlice: Omit<PageHeaderSlice, 'slices'> & {
     slices: Array<ResolversParentTypes['Slice']>
   }
@@ -1144,18 +1276,26 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['NumberBulletGroup']
   IconBullet: IconBullet
   NumberBulletGroup: NumberBulletGroup
+  Statistics: Statistics
+  ProcessEntry: ProcessEntry
+  FaqList: FaqList
+  EmbeddedVideo: EmbeddedVideo
   LinkList: LinkList
-  LandingPage: LandingPage
+  LandingPage: Omit<LandingPage, 'content'> & {
+    content: Array<ResolversParentTypes['Slice']>
+  }
   GenericPage: GenericPage
   Menu: Menu
-  AdgerdirTags: AdgerdirTags
   LifeEventPage: LifeEventPage
-  JSON: Scalars['JSON']
+  AdgerdirTags: AdgerdirTags
+  PaginatedAdgerdirNews: PaginatedAdgerdirNews
   Application: Application
   DateTime: Scalars['DateTime']
   PresignedPost: PresignedPost
   Document: Document
   Boolean: Scalars['Boolean']
+  DocumentDetails: DocumentDetails
+  DocumentCategory: DocumentCategory
   Query: {}
   HelloWorldInput: HelloWorldInput
   SearcherInput: SearcherInput
@@ -1166,6 +1306,7 @@ export type ResolversParentTypes = {
   GetArticleInput: GetArticleInput
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
+  GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
   GetLandingPageInput: GetLandingPageInput
@@ -1181,6 +1322,7 @@ export type ResolversParentTypes = {
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
+  ListDocumentsInput: ListDocumentsInput
   Mutation: {}
   CreateApplicationInput: CreateApplicationInput
   UpdateApplicationInput: UpdateApplicationInput
@@ -1327,8 +1469,8 @@ export type AdgerdirTagResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AdgerdirTag'] = ResolversParentTypes['AdgerdirTag']
 > = {
-  id?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1336,7 +1478,7 @@ export type AdgerdirPageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AdgerdirPage'] = ResolversParentTypes['AdgerdirPage']
 > = {
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   longDescription?: Resolver<
@@ -1372,6 +1514,7 @@ export type ImageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Image'] = ResolversParentTypes['Image']
 > = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   contentType?: Resolver<ResolversTypes['String'], ParentType, ContextType>
@@ -1416,9 +1559,14 @@ export type AdgerdirFrontpageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AdgerdirFrontpage'] = ResolversParentTypes['AdgerdirFrontpage']
 > = {
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   slices?: Resolver<
     Array<ResolversTypes['AdgerdirSlice']>,
@@ -1478,9 +1626,9 @@ export type FrontpageSlideResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['FrontpageSlide'] = ResolversParentTypes['FrontpageSlide']
 > = {
-  subtitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  subtitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
@@ -1537,8 +1685,8 @@ export type NamespaceResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Namespace'] = ResolversParentTypes['Namespace']
 > = {
-  namespace?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  fields?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  namespace?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  fields?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1602,6 +1750,40 @@ export type NumberBulletResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type StatisticResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Statistic'] = ResolversParentTypes['Statistic']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  value?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type HtmlResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Html'] = ResolversParentTypes['Html']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  document?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export interface JsonScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
+  name: 'JSON'
+}
+
+export type QuestionAndAnswerResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['QuestionAndAnswer'] = ResolversParentTypes['QuestionAndAnswer']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  question?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  answer?: Resolver<ResolversTypes['Html'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type AboutPageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AboutPage'] = ResolversParentTypes['AboutPage']
@@ -1626,7 +1808,13 @@ export type SliceResolvers<
     | 'LatestNewsSlice'
     | 'MailingListSignupSlice'
     | 'LogoListSlice'
-    | 'BulletListSlice',
+    | 'BulletListSlice'
+    | 'Html'
+    | 'Image'
+    | 'Statistics'
+    | 'ProcessEntry'
+    | 'FaqList'
+    | 'EmbeddedVideo',
     ParentType,
     ContextType
   >
@@ -1777,11 +1965,70 @@ export type NumberBulletGroupResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type StatisticsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Statistics'] = ResolversParentTypes['Statistics']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  statistics?: Resolver<
+    Array<ResolversTypes['Statistic']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type ProcessEntryResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['ProcessEntry'] = ResolversParentTypes['ProcessEntry']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  subtitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  details?: Resolver<Maybe<ResolversTypes['Html']>, ParentType, ContextType>
+  type?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  processTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  processDescription?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  processInfo?: Resolver<Maybe<ResolversTypes['Html']>, ParentType, ContextType>
+  processLink?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  buttonText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type FaqListResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['FaqList'] = ResolversParentTypes['FaqList']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  questions?: Resolver<
+    Array<ResolversTypes['QuestionAndAnswer']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type EmbeddedVideoResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['EmbeddedVideo'] = ResolversParentTypes['EmbeddedVideo']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type LinkListResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['LinkList'] = ResolversParentTypes['LinkList']
 > = {
-  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   links?: Resolver<Array<ResolversTypes['Link']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
@@ -1800,7 +2047,7 @@ export type LandingPageResolvers<
     ContextType
   >
   links?: Resolver<Maybe<ResolversTypes['LinkList']>, ParentType, ContextType>
-  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  content?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1830,18 +2077,6 @@ export type MenuResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export type AdgerdirTagsResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['AdgerdirTags'] = ResolversParentTypes['AdgerdirTags']
-> = {
-  items?: Resolver<
-    Array<ResolversTypes['AdgerdirTag']>,
-    ParentType,
-    ContextType
-  >
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
 export type LifeEventPageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['LifeEventPage'] = ResolversParentTypes['LifeEventPage']
@@ -1854,9 +2089,29 @@ export type LifeEventPageResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export interface JsonScalarConfig
-  extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
-  name: 'JSON'
+export type AdgerdirTagsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['AdgerdirTags'] = ResolversParentTypes['AdgerdirTags']
+> = {
+  items?: Resolver<
+    Array<ResolversTypes['AdgerdirTag']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type PaginatedAdgerdirNewsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['PaginatedAdgerdirNews'] = ResolversParentTypes['PaginatedAdgerdirNews']
+> = {
+  page?: Resolver<ResolversTypes['Pagination'], ParentType, ContextType>
+  news?: Resolver<
+    Array<ResolversTypes['AdgerdirNews']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
 export type ApplicationResolvers<
@@ -1913,6 +2168,26 @@ export type DocumentResolvers<
   senderName?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   senderNatReg?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   opened?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type DocumentDetailsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['DocumentDetails'] = ResolversParentTypes['DocumentDetails']
+> = {
+  fileType?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  html?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type DocumentCategoryResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['DocumentCategory'] = ResolversParentTypes['DocumentCategory']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1973,6 +2248,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetNewsListArgs, 'input'>
+  >
+  getAdgerdirNewsList?: Resolver<
+    ResolversTypes['PaginatedAdgerdirNews'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetAdgerdirNewsListArgs, 'input'>
   >
   getNamespace?: Resolver<
     Maybe<ResolversTypes['Namespace']>,
@@ -2059,10 +2340,21 @@ export type QueryResolvers<
     RequireFields<QueryGetApplicationsByTypeArgs, 'input'>
   >
   getDocument?: Resolver<
-    Maybe<ResolversTypes['Document']>,
+    Maybe<ResolversTypes['DocumentDetails']>,
     ParentType,
     ContextType,
     RequireFields<QueryGetDocumentArgs, 'input'>
+  >
+  listDocuments?: Resolver<
+    Maybe<Array<ResolversTypes['Document']>>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryListDocumentsArgs, 'input'>
+  >
+  getDocumentCategories?: Resolver<
+    Maybe<Array<ResolversTypes['DocumentCategory']>>,
+    ParentType,
+    ContextType
   >
 }
 
@@ -2136,6 +2428,10 @@ export type Resolvers<ContextType = Context> = {
   Story?: StoryResolvers<ContextType>
   LinkCard?: LinkCardResolvers<ContextType>
   NumberBullet?: NumberBulletResolvers<ContextType>
+  Statistic?: StatisticResolvers<ContextType>
+  Html?: HtmlResolvers<ContextType>
+  JSON?: GraphQLScalarType
+  QuestionAndAnswer?: QuestionAndAnswerResolvers<ContextType>
   AboutPage?: AboutPageResolvers<ContextType>
   Slice?: SliceResolvers<ContextType>
   PageHeaderSlice?: PageHeaderSliceResolvers<ContextType>
@@ -2150,17 +2446,23 @@ export type Resolvers<ContextType = Context> = {
   BulletEntry?: BulletEntryResolvers<ContextType>
   IconBullet?: IconBulletResolvers<ContextType>
   NumberBulletGroup?: NumberBulletGroupResolvers<ContextType>
+  Statistics?: StatisticsResolvers<ContextType>
+  ProcessEntry?: ProcessEntryResolvers<ContextType>
+  FaqList?: FaqListResolvers<ContextType>
+  EmbeddedVideo?: EmbeddedVideoResolvers<ContextType>
   LinkList?: LinkListResolvers<ContextType>
   LandingPage?: LandingPageResolvers<ContextType>
   GenericPage?: GenericPageResolvers<ContextType>
   Menu?: MenuResolvers<ContextType>
-  AdgerdirTags?: AdgerdirTagsResolvers<ContextType>
   LifeEventPage?: LifeEventPageResolvers<ContextType>
-  JSON?: GraphQLScalarType
+  AdgerdirTags?: AdgerdirTagsResolvers<ContextType>
+  PaginatedAdgerdirNews?: PaginatedAdgerdirNewsResolvers<ContextType>
   Application?: ApplicationResolvers<ContextType>
   DateTime?: GraphQLScalarType
   PresignedPost?: PresignedPostResolvers<ContextType>
   Document?: DocumentResolvers<ContextType>
+  DocumentDetails?: DocumentDetailsResolvers<ContextType>
+  DocumentCategory?: DocumentCategoryResolvers<ContextType>
   Query?: QueryResolvers<ContextType>
   Mutation?: MutationResolvers<ContextType>
 }
@@ -2227,6 +2529,24 @@ const result: IntrospectionResultData = {
           },
           {
             name: 'BulletListSlice',
+          },
+          {
+            name: 'Html',
+          },
+          {
+            name: 'Image',
+          },
+          {
+            name: 'Statistics',
+          },
+          {
+            name: 'ProcessEntry',
+          },
+          {
+            name: 'FaqList',
+          },
+          {
+            name: 'EmbeddedVideo',
           },
         ],
       },

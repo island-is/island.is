@@ -4,9 +4,11 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 export const wrapper = style({
   position: 'relative',
   paddingTop: 24,
+  marginLeft: -10,
   ...themeUtils.responsiveStyle({
-    sm: {
+    md: {
       paddingTop: 77,
+      marginLeft: 0,
     },
   }),
 })

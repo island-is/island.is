@@ -1,6 +1,6 @@
 import { Client } from '@elastic/elasticsearch'
 import { Document, SearchIndexes } from '../types'
-import esb, { RequestBodySearch, Sort, TermsAggregation } from 'elastic-builder'
+import esb, { RequestBodySearch, TermsAggregation } from 'elastic-builder'
 import { logger } from '@island.is/logging'
 import merge from 'lodash/merge'
 import { environment } from '../environments/environment'
@@ -93,7 +93,12 @@ export class ElasticService {
       requestBody.query(
         esb
           .queryStringQuery(`*${query.queryString}*`)
-          .fields(['title.stemmed^10', 'content.stemmed^2', 'tag.stemmed'])
+          .fields([
+            'title.stemmed^10',
+            'content.stemmed^2',
+            'tag.stemmed',
+            'group.stemmed',
+          ])
           .analyzeWildcard(true),
       )
     }
@@ -125,7 +130,7 @@ export class ElasticService {
       requestBody.size(query.size)
 
       if (query?.page > 1) {
-        requestBody.from(query.page * query.size - query.page)
+        requestBody.from((query.page - 1) * query.size)
       }
     }
 

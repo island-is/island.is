@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 import Router from 'next/router'
-import { NextComponentType } from 'next'
-import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
 
 import { isAuthenticated } from './utils'
 import { REDIRECT_KEY } from '../consts'
@@ -18,7 +16,7 @@ interface PropTypes {
 export default (WrappedComponent) =>
   class extends Component<PropTypes> {
     /*
-     * NOTE!
+     * !NOTE!
      * This is hopefully temporarily since the current
      * Island.is login service every now and then loses
      * cookies when calling the callback endpoint.

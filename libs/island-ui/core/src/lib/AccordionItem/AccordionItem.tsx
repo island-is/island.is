@@ -41,7 +41,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
     {
       id,
       label,
-      labelVariant = 'h3',
+      labelVariant = 'h5',
       iconVariant = 'default',
       visibleContent,
       expanded: expandedProp,
@@ -151,7 +151,11 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
           </Box>
           <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
         </Box>
-        {visibleContent && visibleContent}
+        {visibleContent && (
+          <div className={styles.visibleContent}>
+            <Typography variant="pSmall">{visibleContent}</Typography>
+          </div>
+        )}
         <AnimateHeight duration={300} height={height}>
           <Box paddingTop={2} id={id}>
             {children}
@@ -178,7 +182,8 @@ export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
       height="full"
       background="white"
       borderRadius="large"
-      padding={[2, 2, 4]}
+      paddingX={[2, 2, 4]}
+      paddingY={2}
       className={cn(styles.card, { [styles.focused]: isFocused })}
     >
       <AccordionItem {...props} onFocus={handleFocus} onBlur={handleBlur}>

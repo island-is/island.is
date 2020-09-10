@@ -8,8 +8,6 @@ import {
   Stack,
   Breadcrumbs,
   Hidden,
-  Select,
-  ResponsiveSpace,
   GridColumn,
   GridRow,
   Tag,
@@ -19,12 +17,11 @@ import {
   Link,
 } from '@island.is/island-ui/core'
 import { Content } from '@island.is/island-ui/contentful'
-import { Sidebar, getHeadingLinkElements } from '@island.is/web/components'
 import {
-  Query,
-  QueryGetNamespaceArgs,
-  QueryGetArticleArgs,
-} from '@island.is/api/schema'
+  Sidebar,
+  getHeadingLinkElements,
+  DrawerMenu,
+} from '@island.is/web/components'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
 import { Screen } from '../types'
@@ -32,26 +29,30 @@ import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
 import useRouteNames from '../i18n/useRouteNames'
 import { CustomNextError } from '../units/ErrorBoundary'
+import {
+  Query,
+  QueryGetNamespaceArgs,
+  GetNamespaceQuery,
+  QueryGetArticleArgs,
+  GetArticleQuery,
+} from '../graphql/schema'
 
 interface ArticleProps {
-  article: Query['getArticle']
-  namespace: Query['getNamespace']
+  article: GetArticleQuery['getArticle']
+  namespace: GetNamespaceQuery['getNamespace']
 }
-
-const simpleSpacing = [2, 2, 3] as ResponsiveSpace
 
 const Article: Screen<ArticleProps> = ({ article, namespace }) => {
   const [contentOverviewOptions, setContentOverviewOptions] = useState([])
   const { activeLocale } = useI18n()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const n = useNamespace(namespace)
   const { makePath } = useRouteNames(activeLocale)
 
   useEffect(() => {
     setContentOverviewOptions(
       getHeadingLinkElements().map((link) => ({
-        label: link.textContent,
-        value: slugify(link.textContent),
+        title: link.textContent,
+        url: `#${slugify(link.textContent)}`,
       })) || [],
     )
   }, [])
@@ -70,9 +71,10 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
 
   const data = JSON.parse(article.content)
 
-  const actionButtonLinks = data.content
-    .map((current) => current.data?.target?.fields?.processLink)
-    .filter(Boolean)
+  const actionButtonLinks =
+    data?.content
+      .map((current) => current.data?.target?.fields?.processLink)
+      .filter(Boolean) || []
 
   const actionButtonLink =
     actionButtonLinks.length === 1 ? actionButtonLinks[0] : null
@@ -119,7 +121,11 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
         }
       >
         <GridRow>
-          <GridColumn offset="1/12" span="11/12" paddingBottom={2}>
+          <GridColumn
+            offset={['0', '0', '1/8']}
+            span={['0', '0', '7/8']}
+            paddingBottom={2}
+          >
             <Breadcrumbs>
               <Link href={makePath()}>
                 <a>Ísland.is</a>
@@ -138,24 +144,27 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
             </Breadcrumbs>
           </GridColumn>
         </GridRow>
-        <Hidden above="md">
-          <Select
-            label="Efnisyfirlit"
-            placeholder="Flokkar"
-            options={contentOverviewOptions}
-            onChange={onChangeContentOverview}
-            name="content-overview"
-          />
-        </Hidden>
         <GridRow>
-          <GridColumn offset="1/12" span="11/12">
-            <Box marginBottom={simpleSpacing}>
-              <Typography variant="h1" as="h1" paddingBottom={2}>
-                <span data-sidebar-link={slugify(article.title)}>
-                  {article.title}
-                </span>
-              </Typography>
-            </Box>
+          <GridColumn span="8/8" paddingBottom={4}>
+            <Hidden above="sm">
+              <DrawerMenu
+                categories={[
+                  { title: 'Efnisyfirlit', items: contentOverviewOptions },
+                ]}
+              />
+            </Hidden>
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn offset={['0', '0', '1/8']} span={['8/8', '8/8', '7/8']}>
+            <Typography variant="h1" as="h1" paddingBottom={2}>
+              <span
+                data-sidebar-link={slugify(article.title)}
+                id={`${slugify(article.title)}`}
+              >
+                {article.title}
+              </span>
+            </Typography>
           </GridColumn>
         </GridRow>
         <Content document={article.content} />
@@ -166,9 +175,10 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
 
 Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
+
   const [article, namespace] = await Promise.all([
     apolloClient
-      .query<Query, QueryGetArticleArgs>({
+      .query<GetArticleQuery, QueryGetArticleArgs>({
         query: GET_ARTICLE_QUERY,
         variables: {
           input: {
@@ -179,7 +189,7 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
       })
       .then((r) => r.data.getArticle),
     apolloClient
-      .query<Query, QueryGetNamespaceArgs>({
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {

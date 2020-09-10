@@ -1,7 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Image } from './image.model'
 import jsonContentType from 'graphql-type-json'
 import { Document } from '@contentful/rich-text-types'
+
+import { ILifeEventPage } from '../generated/contentfulTypes'
+import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class LifeEventPage {
@@ -20,3 +22,13 @@ export class LifeEventPage {
   @Field(() => jsonContentType)
   body: Document
 }
+
+export const mapLifeEventPage = ({
+  fields,
+}: ILifeEventPage): LifeEventPage => ({
+  title: fields.title,
+  slug: fields.slug,
+  intro: fields.intro,
+  image: mapImage(fields.image),
+  body: fields.content,
+})

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import React, {
   FC,
   useState,
@@ -5,22 +6,18 @@ import React, {
   useCallback,
   useRef,
   forwardRef,
+  useContext,
+  ReactElement,
 } from 'react'
 import Link from 'next/link'
 import Downshift from 'downshift'
+import { useMeasure } from 'react-use'
 import { useRouter } from 'next/router'
 import { useApolloClient } from 'react-apollo'
 import {
   GET_SEARCH_RESULTS_QUERY,
   GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
 } from '@island.is/web/screens/queries'
-import {
-  ContentLanguage,
-  QuerySearchResultsArgs,
-  Query,
-  SearchResult,
-  QueryWebSearchAutocompleteArgs,
-} from '@island.is/api/schema'
 import {
   AsyncSearchInput,
   AsyncSearchSizes,
@@ -31,8 +28,18 @@ import {
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import * as styles from './SearchInput.treat'
 import { Locale } from '@island.is/web/i18n/I18n'
+import {
+  GetSearchResultsQuery,
+  QuerySearchResultsArgs,
+  ContentLanguage,
+  SearchResult,
+  QueryWebSearchAutocompleteArgs,
+  AutocompleteTermResultsQuery,
+} from '../../graphql/schema'
+import { GlobalNamespaceContext } from '@island.is/web/context/GlobalNamespaceContext/GlobalNamespaceContext'
 
 const DEBOUNCE_TIMER = 300
+const STACK_WIDTH = 400
 
 type SearchState = {
   term: string
@@ -53,6 +60,7 @@ const isEmpty = ({ results, suggestions }: SearchState): boolean =>
   suggestions.length === 0 && (results?.total ?? 0) === 0
 
 const useSearch = (locale: Locale, term?: string): SearchState => {
+  const { globalNamespace } = useContext(GlobalNamespaceContext)
   const [state, setState] = useState<SearchState>(emptyState)
   const client = useApolloClient()
   const timer = useRef(null)
@@ -69,15 +77,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
         term: '',
         prefix: '',
         // hardcoded while not supported by search
-        suggestions: [
-          'Covid-19',
-          'Hlutabætur',
-          'Atvinnuleysisbætur',
-          'Fæðingarorlof',
-          'Mannanafnanefnd',
-          'Rekstrarleyfi',
-          'Heimilisfang',
-        ],
+        suggestions: globalNamespace.searchSuggestions ?? [],
       })
       return
     }
@@ -87,7 +87,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
     const thisTimerId = (timer.current = setTimeout(async () => {
       const {
         data: { searchResults: results },
-      } = await client.query<Query, QuerySearchResultsArgs>({
+      } = await client.query<GetSearchResultsQuery, QuerySearchResultsArgs>({
         query: GET_SEARCH_RESULTS_QUERY,
         variables: {
           query: {
@@ -107,7 +107,10 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
         data: {
           webSearchAutocomplete: { completions: suggestions },
         },
-      } = await client.query<Query, QueryWebSearchAutocompleteArgs>({
+      } = await client.query<
+        AutocompleteTermResultsQuery,
+        QueryWebSearchAutocompleteArgs
+      >({
         query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
         variables: {
           input: {
@@ -164,6 +167,7 @@ interface SearchInputProps {
   placeholder?: string
   white?: boolean
   colored?: boolean
+  id?: string
 }
 
 export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
@@ -177,6 +181,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       size = 'medium',
       white = false,
       colored = true,
+      id = 'downshift',
     },
     ref,
   ) => {
@@ -189,7 +194,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
 
     return (
       <Downshift<string>
-        id="downshift"
+        id={id}
         initialInputValue={initialInputValue}
         onChange={(q) => onSubmit(q)}
         onInputValueChange={(q) => setSearchTerm(q)}
@@ -271,6 +276,7 @@ const Results: FC<{
   locale: Locale
   search: SearchState
   highlightedIndex: number
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getItemProps: any
 }> = ({ locale, search, highlightedIndex, getItemProps }) => {
   const { makePath } = useRouteNames(locale)
@@ -284,26 +290,7 @@ const Results: FC<{
       </div>
     ))
 
-    const splitAt = Math.min(search.suggestions.length / 2)
-    const left = suggestions.slice(0, splitAt)
-    const right = suggestions.slice(splitAt)
-
-    return (
-      <Box display="flex" background="blue100" paddingY={2} paddingX={3}>
-        <div className={styles.menuColumn}>
-          <Stack space={2}>
-            <Typography variant="eyebrow" color="blue400">
-              Algeng leitarorð
-            </Typography>
-            {left}
-          </Stack>
-        </div>
-        <div className={styles.separator} />
-        <div className={styles.menuColumn}>
-          <Stack space={2}>{right}</Stack>
-        </div>
-      </Box>
-    )
+    return <CommonSearchTerms suggestions={suggestions} />
   }
 
   return (
@@ -348,6 +335,51 @@ const Results: FC<{
           </Stack>
         )}
       </div>
+    </Box>
+  )
+}
+
+const CommonSearchTerms = ({
+  suggestions,
+}: {
+  suggestions: ReactElement[]
+}) => {
+  const [ref, { width }] = useMeasure()
+
+  if (!suggestions.length) {
+    return null
+  }
+
+  const splitAt = Math.min(suggestions.length / 2)
+  const left = suggestions.slice(0, splitAt)
+  const right = suggestions.slice(splitAt)
+
+  return (
+    <Box
+      ref={ref}
+      display="flex"
+      background="blue100"
+      paddingY={2}
+      paddingX={3}
+    >
+      <div className={styles.menuColumn}>
+        <Stack space={2}>
+          <Box marginBottom={1}>
+            <Typography variant="eyebrow" color="blue400">
+              Algeng leitarorð
+            </Typography>
+          </Box>
+          {width < STACK_WIDTH ? suggestions : left}
+        </Stack>
+      </div>
+      {width > STACK_WIDTH - 1 ? (
+        <>
+          <div className={styles.separator} />
+          <div className={styles.menuColumn}>
+            <Stack space={2}>{right}</Stack>
+          </div>
+        </>
+      ) : null}
     </Box>
   )
 }

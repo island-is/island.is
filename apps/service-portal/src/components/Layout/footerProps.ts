@@ -1,42 +1,52 @@
 export const footerProps = {
   hideLanguageSwith: true,
+  topLinks: [
+    {
+      title: 'Um Stafrænt Ísland',
+      href: 'https://stafraent.island.is/',
+    },
+    {
+      title: 'Hafa samband',
+      href: 'https://island.is/um-island-is/hafa-samband/',
+    },
+  ],
   showMiddleLinks: true,
   middleLinksTitle: 'Þjónustuflokkar',
   middleLinks: [
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'Fjölskyldumál og velferð',
     },
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'Ferðalög og búseta erlendis',
     },
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'Eldri borgarar',
     },
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'Innflytjendur',
     },
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'Bætur',
     },
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'Umhverfismál',
     },
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'Málefni fatlaðra',
     },
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'Húsnæðismál',
     },
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'Menntun',
     },
   ],
@@ -44,39 +54,39 @@ export const footerProps = {
   tagLinksTitle: 'Flýtileiðir',
   tagLinks: [
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'Atvinnuleysisbætur',
     },
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'Allir vinna',
     },
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'COVID-19',
     },
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'Ferðagjöf',
     },
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'Fæðingarorlof',
     },
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'Nafngjöf',
     },
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'Sakavottorð',
     },
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'Stafrænt ökuskírteini',
     },
     {
-      href: '#',
+      href: 'https://island.is/',
       title: 'Stuðningslán',
     },
   ],

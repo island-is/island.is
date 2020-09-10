@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom'
 interface Props {
   label: string
   title: string
-  text: string
+  text?: string
   date: Date
   url?: string
   external?: boolean
@@ -80,9 +80,7 @@ export const ActionCard: FC<Props> = ({
           )}
         </Typography>
         <Columns alignY="center" collapseBelow="sm" space={3}>
-          <Column>
-            <Typography variant="p">{text}</Typography>
-          </Column>
+          <Column>{text && <Typography variant="p">{text}</Typography>}</Column>
           {buttonRender ? (
             <Column width="content">
               <Box display="flex" justifyContent="flexEnd" flexShrink={0}>

@@ -4,33 +4,36 @@ import { useRouter } from 'next/router'
 import { Box, Stack, Inline, Tag } from '@island.is/island-ui/core'
 import { Categories, SearchInput, LatestNewsSection } from '../components'
 import { useI18n } from '../i18n'
+import { Screen } from '../types'
+import { useNamespace } from '../hooks'
+import useRouteNames from '../i18n/useRouteNames'
+import FrontpageTabs from '../components/FrontpageTabs/FrontpageTabs'
 import {
-  Query,
-  QueryGetNamespaceArgs,
-  ContentLanguage,
-  QueryCategoriesArgs,
   QueryGetFrontpageSliderListArgs,
+  ContentLanguage,
+  GetFrontpageSliderListQuery,
+  QueryCategoriesArgs,
+  GetCategoriesQuery,
+  QueryGetNamespaceArgs,
+  GetNamespaceQuery,
+  GetNewsListQuery,
   QueryGetNewsListArgs,
-} from '@island.is/api/schema'
+} from '../graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
   GET_CATEGORIES_QUERY,
   GET_FRONTPAGE_SLIDES_QUERY,
   GET_NEWS_LIST_QUERY,
 } from './queries'
-import { Screen } from '../types'
-import { useNamespace } from '../hooks'
-import useRouteNames from '../i18n/useRouteNames'
-import FrontpageTabs from '../components/FrontpageTabs/FrontpageTabs'
 import { IntroductionSection } from '../components/IntroductionSection'
 import { LifeEventsCardsSection } from '../components/LifeEventsCardsSection'
 import { Section } from '../components/Section'
 
 interface HomeProps {
-  categories: Query['categories']
-  frontpageSlides: Query['getFrontpageSliderList']['items']
-  namespace: Query['getNamespace']
-  news: Query['getNewsList']['news']
+  categories: GetCategoriesQuery['categories']
+  frontpageSlides: GetFrontpageSliderListQuery['getFrontpageSliderList']['items']
+  namespace: GetNamespaceQuery['getNamespace']
+  news: GetNewsListQuery['getNewsList']['news']
 }
 
 const Home: Screen<HomeProps> = ({
@@ -60,6 +63,7 @@ const Home: Screen<HomeProps> = ({
       <Stack space={[1, 1, 3]}>
         <Box display="inlineFlex" alignItems="center" width="full">
           <SearchInput
+            id="search_input_home"
             openOnFocus
             size="medium"
             colored={false}
@@ -68,9 +72,10 @@ const Home: Screen<HomeProps> = ({
           />
         </Box>
         <Inline space={1}>
-          {n('featuredArticles', []).map(({ title, url }) => {
+          {n('featuredArticles', []).map(({ title, url }, index) => {
             return (
               <Tag
+                key={index}
                 variant="darkerBlue"
                 onClick={() => {
                   Router.push(`${makePath('article')}/[slug]`, url)
@@ -87,7 +92,7 @@ const Home: Screen<HomeProps> = ({
 
   return (
     <>
-      <Section paddingY={[2, 2, 3, 3, 6]}>
+      <Section paddingY={[0, 0, 3, 3, 6]}>
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
       </Section>
       <Section background="purple100" paddingY={[4, 4, 4, 6]}>
@@ -138,7 +143,10 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetFrontpageSliderListArgs>({
+    apolloClient.query<
+      GetFrontpageSliderListQuery,
+      QueryGetFrontpageSliderListArgs
+    >({
       query: GET_FRONTPAGE_SLIDES_QUERY,
       variables: {
         input: {
@@ -146,7 +154,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryCategoriesArgs>({
+    apolloClient.query<GetCategoriesQuery, QueryCategoriesArgs>({
       query: GET_CATEGORIES_QUERY,
       variables: {
         input: {
@@ -154,7 +162,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetNewsListArgs>({
+    apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
       query: GET_NEWS_LIST_QUERY,
       variables: {
         input: {
@@ -163,7 +171,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       },
     }),
     apolloClient
-      .query<Query, QueryGetNamespaceArgs>({
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
@@ -172,14 +180,14 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
           },
         },
       })
-      .then((variables) => {
+      .then((res) => {
         // map data here to reduce data processing in component
-        const namespaceObject = JSON.parse(variables.data.getNamespace.fields)
+        const namespaceObject = JSON.parse(res.data.getNamespace.fields)
 
         // featuredArticles is a csv in contentful seperated by : where the first value is the title and the second is the url
         return {
           ...namespaceObject,
-          featuredArticles: namespaceObject['featuredArticles'].map(
+          featuredArticles: namespaceObject.featuredArticles.map(
             (featuredArticle) => {
               const [title = '', url = ''] = featuredArticle.split(':')
               return { title, url }

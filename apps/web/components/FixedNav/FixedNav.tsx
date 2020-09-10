@@ -28,7 +28,7 @@ export const FixedNav: FC = () => {
     <Box className={cn(styles.container, { [styles.show]: show })}>
       <ContentBlock>
         <Box
-          paddingX={[3, 3, 6]}
+          paddingX={[2, 2, 6]}
           paddingY={1}
           width="full"
           display="flex"
@@ -37,8 +37,8 @@ export const FixedNav: FC = () => {
           alignItems="center"
           justifyContent="spaceBetween"
         >
-          <Box>
-            <Icon type="logo" color="white" width="30" />
+          <Box marginRight={2}>
+            <Icon type="logo" color="white" height="40" />
           </Box>
           <Box
             display="flex"
@@ -50,6 +50,7 @@ export const FixedNav: FC = () => {
           >
             <Box>
               <SearchInput
+                id="search_input_fixed_nav"
                 white
                 size="medium"
                 activeLocale={activeLocale}

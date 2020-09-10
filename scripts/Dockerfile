@@ -88,3 +88,18 @@ COPY --from=builder --chown=runner:runners /build/${APP_HOME}/public /webapp/pub
 COPY --from=builder --chown=runner:runners /build/${APP_DIST_HOME} /webapp/.next
 
 ENTRYPOINT [ "npx", "next", "start", "-p", "4200" ]
+
+FROM nginx:1.19.2-alpine as output-static
+
+ARG APP
+ARG APP_DIST_HOME
+ARG GIT_BRANCH
+ARG GIT_SHA
+LABEL branch=${GIT_BRANCH}
+LABEL commit=${GIT_SHA}
+ENV GIT_BRANCH=${GIT_BRANCH}
+ENV GIT_SHA=${GIT_SHA}
+ENV APP=${APP}
+
+ADD scripts/dockerfile-config/static-nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html

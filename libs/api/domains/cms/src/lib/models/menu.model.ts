@@ -1,5 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Link } from './link.model'
+
+import { IMenu } from '../generated/contentfulTypes'
+
+import { Link, mapLink } from './link.model'
 
 @ObjectType()
 export class Menu {
@@ -9,3 +12,8 @@ export class Menu {
   @Field(() => [Link])
   links: Link[]
 }
+
+export const mapMenu = ({ fields }: IMenu): Menu => ({
+  title: fields.title ?? '',
+  links: fields.links.map(mapLink),
+})

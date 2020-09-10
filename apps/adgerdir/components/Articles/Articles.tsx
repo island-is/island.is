@@ -240,57 +240,61 @@ export const Articles: FC<ArticlesProps> = ({
         <Box marginTop={3} className={styles.filters}>
           <Box display="flex" alignItems="center" marginRight={[0, 0, 0, 3]}>
             <Stack space={2}>
-              <Inline space={2} alignY="center">
+              <Inline space={2} alignY="center" collapseBelow="sm">
                 <Typography variant="tag" color="red600">
                   Staða aðgerðar:
                 </Typography>
-                {Object.keys(statusNames).map((status, index) => {
-                  return (
-                    <Tag
-                      key={index}
-                      variant="red"
-                      onClick={() => {
-                        setstartingItems([])
-                        onStatusClick(status)
-                      }}
-                      active={selectedStatuses.includes(status)}
-                      bordered
-                    >
-                      <Box position="relative">
-                        <Inline space={1} alignY="center">
-                          <span>{statusNames[status]}</span>
-                          <span
-                            className={cn(
-                              cardStyles.status,
-                              cardStyles.statusType[status],
-                            )}
-                          ></span>
-                        </Inline>
-                      </Box>
-                    </Tag>
-                  )
-                })}
+                <Inline space={2} alignY="center">
+                  {Object.keys(statusNames).map((status, index) => {
+                    return (
+                      <Tag
+                        key={index}
+                        variant="red"
+                        onClick={() => {
+                          setstartingItems([])
+                          onStatusClick(status)
+                        }}
+                        active={selectedStatuses.includes(status)}
+                        bordered
+                      >
+                        <Box position="relative">
+                          <Inline space={1} alignY="center">
+                            <span>{statusNames[status]}</span>
+                            <span
+                              className={cn(
+                                cardStyles.status,
+                                cardStyles.statusType[status],
+                              )}
+                            ></span>
+                          </Inline>
+                        </Box>
+                      </Tag>
+                    )
+                  })}
+                </Inline>
               </Inline>
-              <Inline space={2} alignY="center">
+              <Inline space={2} alignY="center" collapseBelow="sm">
                 <Typography variant="tag" color="red600">
                   Málefni:
                 </Typography>
-                {tags.map(({ title, id }, index) => {
-                  return (
-                    <Tag
-                      key={index}
-                      variant="red"
-                      onClick={() => {
-                        setstartingItems([])
-                        onTagClick(id)
-                      }}
-                      active={tagIds.includes(id)}
-                      bordered
-                    >
-                      {title}
-                    </Tag>
-                  )
-                })}
+                <Inline space={2} alignY="center">
+                  {tags.map(({ title, id }, index) => {
+                    return (
+                      <Tag
+                        key={index}
+                        variant="red"
+                        onClick={() => {
+                          setstartingItems([])
+                          onTagClick(id)
+                        }}
+                        active={tagIds.includes(id)}
+                        bordered
+                      >
+                        {title}
+                      </Tag>
+                    )
+                  })}
+                </Inline>
               </Inline>
             </Stack>
           </Box>
@@ -298,7 +302,7 @@ export const Articles: FC<ArticlesProps> = ({
             <div className={styles.inputWrapper}>
               <input
                 onChange={handleChange}
-                placeholder="Sía eftir leitarorði"
+                placeholder={n('filterBySearchQuery', 'Sía eftir leitarorði')}
                 className={styles.input}
               />
               <span className={styles.inputIcon}>
@@ -359,12 +363,12 @@ export const Articles: FC<ArticlesProps> = ({
         </Tiles>
       </Box>
       {showCount < visibleItems.length ? (
-        <Box textAlign="center">
+        <Box marginY={3} textAlign="center">
           <Button
             onClick={() => {
               setShowCount(showCount + ITEMS_PER_SHOW)
             }}
-            variant="ghost"
+            width="fixed"
           >
             {n('seeMoreItems')}
           </Button>

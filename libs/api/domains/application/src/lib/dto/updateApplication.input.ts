@@ -7,17 +7,10 @@ import {
   IsEnum,
   IsObject,
 } from 'class-validator'
-import {
-  UpdateApplicationDtoTypeIdEnum,
-  UpdateApplicationDtoStateEnum,
-} from '../../../gen/fetch'
+import { UpdateApplicationDtoStateEnum } from '../../../gen/fetch'
 
 registerEnumType(UpdateApplicationDtoStateEnum, {
   name: 'UpdateApplicationDtoStateEnum',
-})
-
-registerEnumType(UpdateApplicationDtoTypeIdEnum, {
-  name: 'UpdateApplicationDtoTypeIdEnum',
 })
 
 @InputType()
@@ -25,10 +18,6 @@ export class UpdateApplicationInput {
   @Field((type) => String)
   @IsString()
   id: string
-
-  @Field((type) => UpdateApplicationDtoTypeIdEnum)
-  @IsEnum(UpdateApplicationDtoTypeIdEnum)
-  typeId: UpdateApplicationDtoTypeIdEnum
 
   @Field((type) => String, { nullable: true })
   @IsString()

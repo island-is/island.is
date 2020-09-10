@@ -24,12 +24,6 @@ export interface UpdateApplicationDto {
      * @type {string}
      * @memberof UpdateApplicationDto
      */
-    typeId?: UpdateApplicationDtoTypeIdEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateApplicationDto
-     */
     applicant?: string;
     /**
      * 
@@ -73,7 +67,6 @@ export function UpdateApplicationDtoFromJSONTyped(json: any, ignoreDiscriminator
     }
     return {
         
-        'typeId': !exists(json, 'typeId') ? undefined : json['typeId'],
         'applicant': !exists(json, 'applicant') ? undefined : json['applicant'],
         'assignee': !exists(json, 'assignee') ? undefined : json['assignee'],
         'externalId': !exists(json, 'externalId') ? undefined : json['externalId'],
@@ -92,7 +85,6 @@ export function UpdateApplicationDtoToJSON(value?: UpdateApplicationDto | null):
     }
     return {
         
-        'typeId': value.typeId,
         'applicant': value.applicant,
         'assignee': value.assignee,
         'externalId': value.externalId,
@@ -102,17 +94,6 @@ export function UpdateApplicationDtoToJSON(value?: UpdateApplicationDto | null):
     };
 }
 
-/**
-* @export
-* @enum {string}
-*/
-export enum UpdateApplicationDtoTypeIdEnum {
-    ExampleForm = 'ExampleForm',
-    ExampleForm2 = 'ExampleForm2',
-    ExampleForm3 = 'ExampleForm3',
-    FamilyAndPets = 'FamilyAndPets',
-    ParentalLeave = 'ParentalLeave'
-}
 /**
 * @export
 * @enum {string}

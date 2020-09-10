@@ -80,7 +80,6 @@ const Screen: FC<ScreenProps> = ({
         variables: {
           input: {
             id: applicationId,
-            typeId: formTypeId,
             answers: data,
           },
         },

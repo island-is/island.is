@@ -96,18 +96,28 @@ export const plusIconWrap = style({
   position: 'relative',
 })
 
+const iconWrapSizes = {
+  default: 40,
+  sidebar: 20,
+}
+
+const iconSizes = {
+  default: 20,
+  sidebar: 12,
+}
+
 export const iconWrapVariants = styleMap({
   default: {
     backgroundColor: theme.color.blue100,
     color: theme.color.blue400,
-    width: 40,
-    height: 40,
+    width: iconWrapSizes.default,
+    height: iconWrapSizes.default,
   },
   sidebar: {
     backgroundColor: theme.color.purple200,
     color: theme.color.purple400,
-    width: 20,
-    height: 20,
+    width: iconWrapSizes.sidebar,
+    height: iconWrapSizes.sidebar,
   },
 })
 
@@ -120,12 +130,12 @@ export const plusIcon = style({
 
 export const iconVariants = styleMap({
   default: {
-    width: 20,
-    height: 20,
+    width: iconSizes.default,
+    height: iconSizes.default,
   },
   sidebar: {
-    width: 12,
-    height: 12,
+    width: iconSizes.sidebar,
+    height: iconSizes.sidebar,
   },
 })
 
@@ -143,4 +153,9 @@ export const plusIconXActive = style({
 
 export const plusIconY = style({
   fill: 'currentColor',
+})
+
+export const visibleContent = style({
+  // Offset text content by the wrap size + 1 unit of spacing
+  paddingRight: iconWrapSizes.default + theme.spacing[1],
 })

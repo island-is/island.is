@@ -9,15 +9,17 @@ import {
   Swiper,
   Hidden,
 } from '@island.is/island-ui/core'
-import { News } from '@island.is/api/schema'
 import { NewsCard } from '../NewsCard'
+import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import { useI18n } from '@island.is/web/i18n'
+import { GetNewsListQuery } from '../../graphql/schema'
 
 // LatestNewsSection on desktop displays latest 3 news cards in grid.
 // On mobile it displays 3 news cards in a Swiper.
 
 interface LatestNewsProps {
   label: string
-  items: News[]
+  items: GetNewsListQuery['getNewsList']['news']
 }
 
 const LatestNewsSection: React.FC<LatestNewsProps> = ({
@@ -25,16 +27,18 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
   label,
 }) => {
   const newsItems = items.slice(0, 3)
+  const { activeLocale } = useI18n()
+  const { makePath } = useRouteNames(activeLocale)
 
   return (
     <GridContainer>
       <GridRow>
-        <GridColumn span="6/12">
+        <GridColumn span={['12/12', '12/12', '6/12']}>
           <Typography variant="h3" as="h3" paddingBottom={4}>
             {label}
           </Typography>
         </GridColumn>
-        <GridColumn span="6/12">
+        <GridColumn span="6/12" hideBelow="md">
           <Box display="flex" justifyContent="flexEnd" paddingBottom={4}>
             <Typography variant="h3" as="h3" paddingBottom={4}>
               <ArrowLink href="/frett" arrowHeight={16}>
@@ -57,6 +61,7 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
                 introduction={newsItem.intro}
                 slug={newsItem.slug}
                 image={newsItem.image}
+                url={makePath('news', newsItem.slug)}
               />
             </GridColumn>
           ))}
@@ -72,6 +77,7 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
               introduction={newsItem.intro}
               slug={newsItem.slug}
               image={newsItem.image}
+              url={makePath('news', newsItem.slug)}
             />
           ))}
         </Swiper>
