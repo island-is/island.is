@@ -51,7 +51,7 @@ export const card = style({
   },
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      border: `1px solid ${theme.color.purple200}`,
+      border: `1px solid ${theme.color.blue200}`,
       borderRadius: theme.border.radius.large,
       ':hover': {
         borderColor: theme.color.purple400,
