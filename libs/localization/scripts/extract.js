@@ -7,10 +7,6 @@ const client = contentful.createClient({
   accessToken: 'CFPAT-BihGg69ZoLSobW76wolYFAFZ8sebTUcdDib1IMAlhn8',
 })
 
-// formatjs cli doesn't currently support globbing, so we perform it ourselves
-// as a workaround. see https://github.com/formatjs/formatjs/issues/383
-const sourceFiles = glob.sync(process.argv[2])
-
 execFileSync('npx', [
   'formatjs',
   'extract',
@@ -18,7 +14,7 @@ execFileSync('npx', [
   'libs/localization/lang/messages/messages.json',
   '--format',
   'libs/localization/scripts/formatter.js',
-  ...sourceFiles,
+  process.argv[2],
 ])
 
 function createNamespace(id, messages, locales) {
@@ -34,12 +30,13 @@ function createNamespace(id, messages, locales) {
           defaults: {
             en: messages,
           },
-          strings: locales.reduce((arr, curr) => {
-            return {
+          strings: locales.reduce(
+            (arr, curr) => ({
               ...arr,
               [curr.code]: {},
-            }
-          }, {}),
+            }),
+            {},
+          ),
         },
       }),
     )
@@ -47,28 +44,22 @@ function createNamespace(id, messages, locales) {
 }
 
 function updateNamespace(namespace, messages) {
-  namespace.fields.defaults['en'] = messages
+  namespace.fields.defaults['en'] = Object.assign(
+    {},
+    namespace.fields.defaults['en'],
+    messages,
+  )
 
-  console.log('fields strings', namespace.fields.strings)
+  const newStrings = Object.keys(messages).reduce(
+    (arr, cur) => ({ ...arr, [cur]: '' }),
+    {},
+  )
 
   namespace.fields.strings = Object.keys(namespace.fields.strings).reduce(
-    (arr, curr) => {
-      return {
-        ...arr,
-        [curr]: Object.keys(messages).reduce(
-          (arr, id) => {
-            if (arr.hasOwnProperty(id)) {
-              return arr
-            }
-            return {
-              ...arr,
-              [id]: '',
-            }
-          },
-          { ...namespace.fields.strings[curr] },
-        ),
-      }
-    },
+    (arr, cur) => ({
+      ...arr,
+      [cur]: Object.assign({}, newStrings, namespace.fields.strings[cur]),
+    }),
     {},
   )
 

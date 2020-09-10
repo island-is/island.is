@@ -29,14 +29,6 @@ export class TranslationsService {
       })
       .catch(errorHandler('getNamespace'))
 
-    return (
-      result?.items?.reduce(
-        (arr, { fields }) => ({
-          ...arr,
-          ...fields.strings,
-        }),
-        {},
-      ) ?? {}
-    )
+    return result?.items?.map(({ fields }) => fields.strings)[0] ?? {}
   }
 }
