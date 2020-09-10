@@ -16,6 +16,7 @@ export const AccordionContext = createContext<AccordionContextValue>({
 
 export interface AccordionProps {
   children: ReactNodeNoStrings
+  dividers?: boolean
   dividerOnTop?: boolean
   dividerOnBottom?: boolean
   singleExpand?: boolean
@@ -23,6 +24,8 @@ export interface AccordionProps {
 
 export const Accordion = ({
   children,
+  boolean,
+  dividers = true,
   dividerOnTop = true,
   dividerOnBottom = true,
   singleExpand = true,
@@ -36,7 +39,7 @@ export const Accordion = ({
         setToggledId,
       }}
     >
-      <Stack space={2} dividers>
+      <Stack space={2} dividers={dividers}>
         {children}
       </Stack>
     </AccordionContext.Provider>

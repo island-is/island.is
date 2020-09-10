@@ -12,6 +12,7 @@ import {
   LinkCard,
   Option,
   Link,
+  Accordion,
 } from '@island.is/island-ui/core'
 import { Card, Sidebar } from '../../components'
 import { useI18n } from '@island.is/web/i18n'
@@ -109,36 +110,43 @@ const Category: Screen<CategoryProps> = ({
         belowContent={
           <Stack space={2}>
             <Stack space={2}>
-              {Object.keys(groups).map((groupSlug, index) => {
-                const { title, description, articles } = groups[groupSlug]
+              <Accordion
+                key="id"
+                dividerOnBottom={false}
+                dividerOnTop={false}
+                dividers={false}
+              >
+                {Object.keys(groups).map((groupSlug, index) => {
+                  const { title, description, articles } = groups[groupSlug]
 
-                const expanded = groupSlug === hash.replace('#', '')
+                  const expanded = groupSlug === hash.replace('#', '')
 
-                return (
-                  <AccordionCard
-                    key={groupSlug}
-                    id={`accordion-${index}`}
-                    label={title}
-                    startExpanded={expanded}
-                    visibleContent={description}
-                  >
-                    <Stack space={2}>
-                      {articles.map(({ title, slug }, index) => {
-                        return (
-                          <Link
-                            key={index}
-                            href={`${makePath('article')}/[slug]`}
-                            as={makePath('article', slug)}
-                            passHref
-                          >
-                            <LinkCard>{title}</LinkCard>
-                          </Link>
-                        )
-                      })}
-                    </Stack>
-                  </AccordionCard>
-                )
-              })}
+                  return (
+                    <AccordionCard
+                      key={groupSlug}
+                      id={`accordion-${index}`}
+                      label={title}
+                      startExpanded={expanded}
+                      visibleContent={description}
+                    >
+                      <Stack space={2}>
+                        {articles.map(({ title, slug }, index) => {
+                          return (
+                            <Link
+                              key={index}
+                              href={`${makePath('article')}/[slug]`}
+                              as={makePath('article', slug)}
+                              passHref
+                            >
+                              <LinkCard>{title}</LinkCard>
+                            </Link>
+                          )
+                        })}
+                      </Stack>
+                    </AccordionCard>
+                  )
+                })}
+              </Accordion>
             </Stack>
             <Stack space={2}>
               {cards.map(({ title, content, slug }, index) => {
