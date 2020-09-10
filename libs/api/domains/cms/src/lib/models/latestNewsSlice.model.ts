@@ -1,6 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { News } from '../news.model'
-import { ILatestNewsSlice } from '../../generated/contentfulTypes'
+
+import { ILatestNewsSlice } from '../generated/contentfulTypes'
+
+import { News } from './news.model'
 
 @ObjectType()
 export class LatestNewsSlice {

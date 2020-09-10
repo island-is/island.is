@@ -1,9 +1,11 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+
+import { IFaqList } from '../generated/contentfulTypes'
+
 import {
   QuestionAndAnswer,
   mapQuestionAndAnswer,
-} from '../questionAndAnswer.model'
-import { IFaqList } from '../../generated/contentfulTypes'
+} from './questionAndAnswer.model'
 
 @ObjectType()
 export class FaqList {

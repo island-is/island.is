@@ -7,9 +7,9 @@ import {
   IVidspyrnaFlokkur,
 } from '../generated/contentfulTypes'
 
-import { AdgerdirSlice } from './adgerdirSlices/adgerdirSlice.model'
-import { mapAdgerdirFeaturedNewsSlice } from './adgerdirSlices/adgerdirFeaturedNewsSlice.model'
-import { mapAdgerdirGroupSlice } from './adgerdirSlices/adgerdirGroupSlice.model'
+import { AdgerdirSlice } from './adgerdirSlice.model'
+import { mapAdgerdirFeaturedNewsSlice } from './adgerdirFeaturedNewsSlice.model'
+import { mapAdgerdirGroupSlice } from './adgerdirGroupSlice.model'
 
 @ObjectType()
 export class AdgerdirFrontpage {

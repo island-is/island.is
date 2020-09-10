@@ -1,14 +1,24 @@
 import { createUnionType } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
-import {
-  Document,
-  BLOCKS,
-  Block,
-  TopLevelBlock,
-} from '@contentful/rich-text-types'
+import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
 
-import * as types from '../../generated/contentfulTypes'
-import { Image, mapImage } from '../image.model'
+import {
+  IPageHeader,
+  ITimeline,
+  IMailingListSignup,
+  ISectionHeading,
+  ICardSection,
+  IStorySection,
+  ILogoListSlice,
+  ILatestNewsSlice,
+  IBigBulletList,
+  IStatistics,
+  IProcessEntry,
+  IFaqList,
+  IEmbeddedVideo,
+} from '../generated/contentfulTypes'
+
+import { Image, mapImage } from './image.model'
 import {
   MailingListSignupSlice,
   mapMailingListSignup,
@@ -28,19 +38,19 @@ import { FaqList, mapFaqList } from './faqList.model'
 import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
 
 type SliceTypes =
-  | types.IPageHeader
-  | types.ITimeline
-  | types.IMailingListSignup
-  | types.ISectionHeading
-  | types.ICardSection
-  | types.IStorySection
-  | types.ILogoListSlice
-  | types.ILatestNewsSlice
-  | types.IBigBulletList
-  | types.IStatistics
-  | types.IProcessEntry
-  | types.IFaqList
-  | types.IEmbeddedVideo
+  | IPageHeader
+  | ITimeline
+  | IMailingListSignup
+  | ISectionHeading
+  | ICardSection
+  | IStorySection
+  | ILogoListSlice
+  | ILatestNewsSlice
+  | IBigBulletList
+  | IStatistics
+  | IProcessEntry
+  | IFaqList
+  | IEmbeddedVideo
 
 export const Slice = createUnionType({
   name: 'Slice',
@@ -66,31 +76,31 @@ export const Slice = createUnionType({
 export const mapSlice = (slice: SliceTypes): typeof Slice => {
   switch (slice.sys.contentType.sys.id) {
     case 'pageHeader':
-      return mapPageHeaderSlice(slice as types.IPageHeader)
+      return mapPageHeaderSlice(slice as IPageHeader)
     case 'timeline':
-      return mapTimelineSlice(slice as types.ITimeline)
+      return mapTimelineSlice(slice as ITimeline)
     case 'mailingListSignup':
-      return mapMailingListSignup(slice as types.IMailingListSignup)
+      return mapMailingListSignup(slice as IMailingListSignup)
     case 'sectionHeading':
-      return mapHeadingSlice(slice as types.ISectionHeading)
+      return mapHeadingSlice(slice as ISectionHeading)
     case 'cardSection':
-      return mapLinkCardSlice(slice as types.ICardSection)
+      return mapLinkCardSlice(slice as ICardSection)
     case 'storySection':
-      return mapStorySlice(slice as types.IStorySection)
+      return mapStorySlice(slice as IStorySection)
     case 'logoListSlice':
-      return mapLogoListSlice(slice as types.ILogoListSlice)
+      return mapLogoListSlice(slice as ILogoListSlice)
     case 'latestNewsSlice':
-      return mapLatestNewsSlice(slice as types.ILatestNewsSlice)
+      return mapLatestNewsSlice(slice as ILatestNewsSlice)
     case 'bigBulletList':
-      return mapBulletListSlice(slice as types.IBigBulletList)
+      return mapBulletListSlice(slice as IBigBulletList)
     case 'statistics':
-      return mapStatistics(slice as types.IStatistics)
+      return mapStatistics(slice as IStatistics)
     case 'processEntry':
-      return mapProcessEntry(slice as types.IProcessEntry)
+      return mapProcessEntry(slice as IProcessEntry)
     case 'faqList':
-      return mapFaqList(slice as types.IFaqList)
+      return mapFaqList(slice as IFaqList)
     case 'embeddedVideo':
-      return mapEmbeddedVideo(slice as types.IEmbeddedVideo)
+      return mapEmbeddedVideo(slice as IEmbeddedVideo)
     default:
       throw new ApolloError(
         `Can not convert to slice: ${(slice as any).sys.contentType.sys.id}`,

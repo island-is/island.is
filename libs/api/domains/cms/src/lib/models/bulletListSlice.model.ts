@@ -1,6 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { BulletEntry, mapBulletEntry } from '../bullets/bulletEntry.model'
-import { IBigBulletList } from '../../generated/contentfulTypes'
+
+import { IBigBulletList } from '../generated/contentfulTypes'
+
+import { BulletEntry, mapBulletEntry } from './bulletEntry.model'
 
 @ObjectType()
 export class BulletListSlice {

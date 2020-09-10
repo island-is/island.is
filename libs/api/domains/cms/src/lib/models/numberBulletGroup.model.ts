@@ -1,6 +1,8 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
+
+import { INumberBulletSection } from '../generated/contentfulTypes'
+
 import { NumberBullet, mapNumberBullet } from './numberBullet.model'
-import { INumberBulletSection } from '../../generated/contentfulTypes'
 
 @ObjectType()
 export class NumberBulletGroup {

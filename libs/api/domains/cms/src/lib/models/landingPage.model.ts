@@ -5,7 +5,7 @@ import { ILandingPage } from '../generated/contentfulTypes'
 import { Image, mapImage } from './image.model'
 import { Link, mapLink } from './link.model'
 import { LinkList, mapLinkList } from './linkList.model'
-import { Slice, mapDocument } from './slices/slice.model'
+import { Slice, mapDocument } from './slice.model'
 
 @ObjectType()
 export class LandingPage {

@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IEmbeddedVideo } from '../../generated/contentfulTypes'
+
+import { IEmbeddedVideo } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class EmbeddedVideo {
