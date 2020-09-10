@@ -20,6 +20,7 @@ import { useI18n } from '@island.is/web/i18n'
 import * as styles from './SideMenu.treat'
 import { SearchInput } from '../SearchInput/SearchInput'
 import { LanguageToggler } from '../LanguageToggler'
+import { useVirtualTouchable } from 'libs/island-ui/core/src/lib/private/touchable/useVirtualTouchable'
 
 interface TabLink {
   title: string
@@ -61,9 +62,15 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
           height="full"
         >
           <Box display="flex" paddingBottom={3} justifyContent="flexEnd">
-            <button onClick={handleClose} tabIndex={-1}>
+            <FocusableBox
+              component="button"
+              onClick={handleClose}
+              tabIndex={-1}
+              className={useVirtualTouchable()}
+              padding={1}
+            >
               <Icon type="close" />
-            </button>
+            </FocusableBox>
           </Box>
           <Hidden above="sm">
             <GridContainer>
