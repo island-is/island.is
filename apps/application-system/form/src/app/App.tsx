@@ -3,7 +3,17 @@ import { ApolloProvider } from '@apollo/client'
 
 import { Redirect, Route, Switch } from 'react-router-dom'
 
-import { Header, Box } from '@island.is/island-ui/core'
+import {
+  Header,
+  Box,
+  GridContainer,
+  GridRow,
+  GridColumn,
+  Columns,
+  Column,
+  Hidden,
+  Logo,
+} from '@island.is/island-ui/core'
 import { client } from '@island.is/application/graphql'
 import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
@@ -14,9 +24,9 @@ export const App = () => {
   return (
     <ApolloProvider client={client}>
       <Box className={styles.root}>
-        <Box paddingLeft={[3, 3, 5]}>
+        <GridContainer>
           <Header />
-        </Box>
+        </GridContainer>
         <Switch>
           <Route exact path="/">
             <Redirect to="/application/" />
