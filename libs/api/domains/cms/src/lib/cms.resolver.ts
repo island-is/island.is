@@ -25,6 +25,7 @@ import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
+import { GetLifeEventsInput } from './dto/getLifeEvents.input'
 import {
   getArticle,
   getRelatedArticles,
@@ -43,6 +44,7 @@ import {
   getMenu,
   getAdgerdirTags,
   getLifeEventPage,
+  getLifeEvents,
 } from './services'
 import { LatestNewsSlice } from './models/slices/latestNewsSlice.model'
 import { Menu } from './models/menu.model'
@@ -156,6 +158,13 @@ export class CmsResolver {
     @Args('input') input: GetLifeEventPageInput,
   ): Promise<LifeEventPage | null> {
     return getLifeEventPage(input.slug, input.lang)
+  }
+
+  @Query(() => [LifeEventPage])
+  getLifeEvents(
+    @Args('input') input: GetLifeEventsInput,
+  ): Promise<LifeEventPage[]> {
+    return getLifeEvents(input.lang)
   }
 }
 

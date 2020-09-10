@@ -383,6 +383,7 @@ type LifeEventPage {
   slug: String!
   intro: String!
   image: Image!
+  thumbnail: Image
   body: JSON!
 }
 
@@ -482,6 +483,7 @@ type Query {
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getMenu(input: GetMenuInput!): Menu
   getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
+  getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
   getApplication(input: GetApplicationInput!): Application
   getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
   getDocument(input: GetDocumentInput!): DocumentDetails
@@ -613,6 +615,10 @@ input GetMenuInput {
 
 input GetLifeEventPageInput {
   slug: String!
+  lang: String!
+}
+
+input GetLifeEventsInput {
   lang: String!
 }
 

@@ -456,6 +456,7 @@ export type LifeEventPage = {
   slug: Scalars['String']
   intro: Scalars['String']
   image: Image
+  thumbnail?: Maybe<Image>
   body: Scalars['JSON']
 }
 
@@ -558,6 +559,7 @@ export type Query = {
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
   getLifeEventPage?: Maybe<LifeEventPage>
+  getLifeEvents: Array<LifeEventPage>
   getApplication?: Maybe<Application>
   getApplicationsByType?: Maybe<Array<Application>>
   getDocument?: Maybe<DocumentDetails>
@@ -651,6 +653,10 @@ export type QueryGetMenuArgs = {
 
 export type QueryGetLifeEventPageArgs = {
   input: GetLifeEventPageInput
+}
+
+export type QueryGetLifeEventsArgs = {
+  input: GetLifeEventsInput
 }
 
 export type QueryGetApplicationArgs = {
@@ -793,6 +799,10 @@ export type GetMenuInput = {
 
 export type GetLifeEventPageInput = {
   slug: Scalars['String']
+  lang: Scalars['String']
+}
+
+export type GetLifeEventsInput = {
   lang: Scalars['String']
 }
 
@@ -1094,6 +1104,22 @@ export type GetLandingPageQuery = { __typename?: 'Query' } & {
           | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
           | ({ __typename?: 'EmbeddedVideo' } & AllSlicesEmbeddedVideoFragment)
         >
+      }
+  >
+}
+
+export type GetLifeEventsQueryVariables = Exact<{
+  input: GetLifeEventsInput
+}>
+
+export type GetLifeEventsQuery = { __typename?: 'Query' } & {
+  getLifeEvents: Array<
+    { __typename?: 'LifeEventPage' } & Pick<
+      LifeEventPage,
+      'title' | 'slug' | 'intro' | 'body'
+    > & {
+        thumbnail?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
+        image: { __typename?: 'Image' } & Pick<Image, 'url'>
       }
   >
 }

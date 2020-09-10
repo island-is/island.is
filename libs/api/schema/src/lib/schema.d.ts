@@ -467,6 +467,7 @@ export type LifeEventPage = {
   slug: Scalars['String']
   intro: Scalars['String']
   image: Image
+  thumbnail?: Maybe<Image>
   body: Scalars['JSON']
 }
 
@@ -569,6 +570,7 @@ export type Query = {
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
   getLifeEventPage?: Maybe<LifeEventPage>
+  getLifeEvents: Array<LifeEventPage>
   getApplication?: Maybe<Application>
   getApplicationsByType?: Maybe<Array<Application>>
   getDocument?: Maybe<DocumentDetails>
@@ -662,6 +664,10 @@ export type QueryGetMenuArgs = {
 
 export type QueryGetLifeEventPageArgs = {
   input: GetLifeEventPageInput
+}
+
+export type QueryGetLifeEventsArgs = {
+  input: GetLifeEventsInput
 }
 
 export type QueryGetApplicationArgs = {
@@ -804,6 +810,10 @@ export type GetMenuInput = {
 
 export type GetLifeEventPageInput = {
   slug: Scalars['String']
+  lang: Scalars['String']
+}
+
+export type GetLifeEventsInput = {
   lang: Scalars['String']
 }
 
@@ -1181,6 +1191,7 @@ export type ResolversTypes = {
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
   GetLifeEventPageInput: GetLifeEventPageInput
+  GetLifeEventsInput: GetLifeEventsInput
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
@@ -1319,6 +1330,7 @@ export type ResolversParentTypes = {
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
   GetLifeEventPageInput: GetLifeEventPageInput
+  GetLifeEventsInput: GetLifeEventsInput
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
@@ -2085,6 +2097,7 @@ export type LifeEventPageResolvers<
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   image?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
+  thumbnail?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   body?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
@@ -2326,6 +2339,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetLifeEventPageArgs, 'input'>
+  >
+  getLifeEvents?: Resolver<
+    Array<ResolversTypes['LifeEventPage']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetLifeEventsArgs, 'input'>
   >
   getApplication?: Resolver<
     Maybe<ResolversTypes['Application']>,
