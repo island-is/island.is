@@ -23,7 +23,7 @@ case $PUBLISH in
 
 esac
 
-exec docker buildx build \
+docker buildx build \
   --platform=linux/amd64 \
   --cache-from=type=local,src=$PROJECT_ROOT/cache \
   -f ${DIR}/Dockerfile \
@@ -34,3 +34,5 @@ exec docker buildx build \
   --build-arg APP_DIST_HOME=${APP_DIST_HOME} \
   -t ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} \
   $PROJECT_ROOT
+
+docker inspect ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} | jq ".[].RootFS" 
