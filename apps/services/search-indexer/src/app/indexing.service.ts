@@ -152,12 +152,17 @@ export class IndexingService {
     // related articles has a recursive nesting problem, we prune it for now
     if (entry.fields?.relatedArticles?.[0]?.fields) {
       logger.info('Removing nested related articles from related articles')
-      // remove related articles from nested articles
-      const {
-        relatedArticles,
-        ...prunedRelatedArticlesFields
-      } = entry.fields.relatedArticles[0].fields
-      entry.fields.relatedArticles[0].fields = prunedRelatedArticlesFields
+      entry.fields.relatedArticles = entry.fields.relatedArticles.map(
+        (relatedArticle) => {
+          // remove related articles from nested articles
+          const {
+            relatedArticles,
+            ...prunedRelatedArticlesFields
+          } = relatedArticle.fields
+
+          return { fields: prunedRelatedArticlesFields }
+        },
+      )
     }
 
     /* eslint-disable @typescript-eslint/camelcase */
@@ -168,6 +173,7 @@ export class IndexingService {
       group: entry.fields?.group?.fields?.title,
       group_slug: entry.fields?.group?.fields?.slug,
       group_description: entry.fields?.group?.fields?.description,
+      subgroup: entry.fields?.subgroup?.fields?.title,
       content: reduceContent(entry.fields.content?.content),
       content_blob: JSON.stringify(entry.fields),
       content_id: entry.sys.id,
