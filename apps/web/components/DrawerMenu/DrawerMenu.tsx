@@ -110,7 +110,7 @@ const DrawerMenu: React.FC<DrawerMenuProps> = ({ categories }) => {
       router.events.off('routeChangeStart', handleClose)
       router.events.off('hashChangeStart', handleClose)
     }
-  }, [])
+  }, [router.events])
 
   if (viewportHeight === Infinity) {
     // We're on the server, try again later.
