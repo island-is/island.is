@@ -54,7 +54,6 @@ const Category: Screen<CategoryProps> = ({
   const Router = useRouter()
   const n = useNamespace(namespace)
   const { makePath } = useRouteNames(activeLocale)
-  const OTHER = 'Annað' // TODO translate
 
   // group articles
   const { groups, cards } = articles.reduce(
@@ -119,7 +118,7 @@ const Category: Screen<CategoryProps> = ({
 
   const subgroupSorting = (a, b) => {
     // Make items with 'Annað' subgroup appear last.
-    if (b === OTHER) {
+    if (b === n('other')) {
       return -1
     }
     // Otherwise sort them alphabetically.
@@ -133,7 +132,10 @@ const Category: Screen<CategoryProps> = ({
       items.reduce(
         (result, item) => ({
           ...result,
-          [item[key] || OTHER]: [...(result[item[key]] || []), item],
+          [item[key] || n('other')]: [
+            ...(result[item[key]] || []),
+            item,
+          ],
         }),
         {},
       )
