@@ -1046,6 +1046,17 @@
             "cwd": "apps/services/search-indexer/dev-services"
           }
         },
+        "migrate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "node migrate.js"
+              }
+            ],
+            "cwd": "dist/apps/services/search-indexer"
+          }
+        },
         "lint": {
           "builder": "@nrwl/linter:lint",
           "options": {
