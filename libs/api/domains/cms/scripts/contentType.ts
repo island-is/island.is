@@ -146,9 +146,11 @@ async function main() {
   await getContentTypes(contentType, environment, linkContentTypes)
 
   // 5. Create model/mapper and linkContentTypes models/mappers
-  const items = [{ id: contentType.sys.id, contentType }, ...linkContentTypes]
-  items.map(async (item) =>
-    generateFile(item.contentType, args, generatedFiles),
+  generateFile(contentType, args, generatedFiles)
+
+  // We only pass the sys argument to the root contentType
+  linkContentTypes.map(async (item) =>
+    generateFile(item.contentType, { ...args, sys: [] }, generatedFiles),
   )
 
   // 6. Re-generate the api codegen
