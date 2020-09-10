@@ -9,14 +9,14 @@ module.exports = {
         name: 'authorization_code',
         description: 'Authentication for users who have access to the system',
         created: new Date(),
-        modified: new Date(),
+        modified: new Date()
       },
       {
         id: '99a94b84-e95b-4ed6-a326-9fc9a13921dc',//uuidv4(),
         name: 'client_credentials',
         description: 'Authentication for services independent from uses who have access to the system. Requires client_secret',
         created: new Date(),
-        modified: new Date(),
+        modified: new Date()
       }
     ]
 
