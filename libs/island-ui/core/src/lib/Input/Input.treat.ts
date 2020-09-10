@@ -30,7 +30,7 @@ export const input = style({
 })
 
 export const textarea = style({
-  ...mixins.textarea,
+  resize: 'vertical',
 })
 
 export const errorMessage = style(mixins.errorMessage)
