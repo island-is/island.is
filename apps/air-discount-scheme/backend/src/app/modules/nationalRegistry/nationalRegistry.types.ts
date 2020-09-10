@@ -14,6 +14,7 @@ export interface NationalRegistryGeneralLookupResponse {
 type FamilyMember = {
   banlabel?: string
   ssn: string
+  gender: 1 | 2 | 3 | 4
   name: string
   address: string
   towncode: number

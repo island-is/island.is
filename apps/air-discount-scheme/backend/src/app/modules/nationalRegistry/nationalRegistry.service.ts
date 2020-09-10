@@ -195,7 +195,12 @@ export class NationalRegistryService {
       .toPromise()
 
     const children = response.data[0].results
-      .filter((person) => person.ssn !== nationalId && this.isChild(person.ssn))
+      .filter(
+        (person) =>
+          person.ssn !== nationalId &&
+          [1, 2].includes(person.gender) &&
+          this.isChild(person.ssn),
+      )
       .map((person) => person.ssn)
     if (children) {
       await this.cacheManager.set(cacheKey, { children }, { ttl: ONE_MONTH })
