@@ -8,6 +8,6 @@ export const States = {
 
 export const Airlines = {
   ernir: 'ernir',
-  icelandAir: 'icelandair',
-  norlandAir: 'norlandair',
+  icelandair: 'icelandair',
+  norlandair: 'norlandair',
 }

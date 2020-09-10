@@ -12,7 +12,7 @@ export default {
     password: process.env.NATIONAL_REGISTRY_PASSWORD,
   },
   airlineApiKeys: {
-    [Airlines.icelandAir]: process.env.ICELANDAIR_API_KEY,
+    [Airlines.icelandair]: process.env.ICELANDAIR_API_KEY,
     [Airlines.ernir]: process.env.ERNIR_API_KEY,
   },
   redis: {

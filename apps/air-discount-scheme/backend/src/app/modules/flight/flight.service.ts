@@ -61,12 +61,12 @@ export class FlightService {
     flightLeg: FlightLegDto,
     airline: ValueOf<typeof Airlines>,
   ): ValueOf<typeof Airlines> {
-    if (airline === Airlines.icelandAir) {
+    if (airline === Airlines.icelandair) {
       if (
         NORLANDAIR_FLIGHTS.includes(flightLeg.destination) ||
         NORLANDAIR_FLIGHTS.includes(flightLeg.origin)
       ) {
-        return Airlines.norlandAir
+        return Airlines.norlandair
       }
     }
 
@@ -186,8 +186,8 @@ export class FlightService {
           where: {
             financialState: availableFinancialStates,
             airline:
-              airline === Airlines.icelandAir
-                ? [Airlines.icelandAir, Airlines.norlandAir]
+              airline === Airlines.icelandair
+                ? [Airlines.icelandair, Airlines.norlandair]
                 : airline,
           },
         },
