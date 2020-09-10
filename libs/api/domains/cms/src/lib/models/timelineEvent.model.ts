@@ -1,4 +1,4 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, ID, Int } from '@nestjs/graphql'
 
 import { ITimelineEvent } from '../generated/contentfulTypes'
 
@@ -14,19 +14,19 @@ export class TimelineEvent {
   date: string
 
   @Field(() => Int, { nullable: true })
-  numerator: number
+  numerator?: number
 
   @Field(() => Int, { nullable: true })
-  denominator: number
+  denominator?: number
 
   @Field()
   label: string
 
   @Field({ nullable: true })
-  body: string
+  body?: string
 
   @Field(() => [String])
-  tags: string[]
+  tags?: Array<string>
 
   @Field()
   link: string
@@ -39,10 +39,10 @@ export const mapTimelineEvent = ({
   id: sys.id,
   title: fields.title,
   date: fields.date,
-  numerator: fields.numerator,
-  denominator: fields.denominator,
+  numerator: fields.numerator ?? 0,
+  denominator: fields.denominator ?? 0,
   label: fields.label ?? '',
-  body: fields.body && JSON.stringify(fields.body),
+  body: (fields.body && JSON.stringify(fields.body)) ?? null,
   tags: fields.tags ?? [],
   link: fields.link ?? '',
 })
