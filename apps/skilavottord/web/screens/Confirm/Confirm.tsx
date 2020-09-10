@@ -11,6 +11,7 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 import { useRouter } from 'next/router'
 import { DetailsBox } from './components'
+import OutlinedBox from '@island.is/skilavottord-web/components/OutlinedBox/OutlinedBox'
 
 const mock = {
   id: 'BVZ655',
@@ -48,16 +49,21 @@ const Confirm: FC = () => {
           <Typography variant="h3">{t.subTitles.confirm}</Typography>
           <Typography variant="intro">{t.info}</Typography>
         </Stack>
-        <DetailsBox car={mock} />
-        <Checkbox
-          name="agree"
-          label={t.checkbox.label}
-          onChange={({ target }) => {
-            setCheckbox(target.checked)
-          }}
-          checked={checkbox}
-        />
-
+        <Stack space={2}>
+          <DetailsBox car={mock} />
+          <OutlinedBox backgroundColor="blue100">
+            <Box padding={4}>
+              <Checkbox
+                name="agree"
+                label={t.checkbox.label}
+                onChange={({ target }) => {
+                  setCheckbox(target.checked)
+                }}
+                checked={checkbox}
+              />
+            </Box>
+          </OutlinedBox>
+        </Stack>
         <Box width="full" display="inlineFlex" justifyContent="spaceBetween">
           <Button variant="ghost" onClick={onCancel}>
             {t.buttons.cancel}

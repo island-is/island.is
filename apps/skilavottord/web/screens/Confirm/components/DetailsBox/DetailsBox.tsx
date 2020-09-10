@@ -27,7 +27,7 @@ export const DetailsBox: FC<BoxProps> = ({
   car: { id, brand, model, year, status, hasCoOwner = false },
 }: BoxProps) => {
   return (
-    <OutlinedBox backgroundColor="blue100">
+    <OutlinedBox>
       <GridContainer>
         <GridRow>
           <GridColumn span={'9/12'}>
