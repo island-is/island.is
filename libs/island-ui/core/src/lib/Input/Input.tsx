@@ -48,8 +48,12 @@ function useMergeRefs<ForwardRef, LocalRef extends ForwardRef>(
   )
 }
 
-const InputHOC = (props) => <input {...props} />
-const TextareaHOC = (props) => <textarea {...props} />
+const InputHOC = forwardRef((props, ref: React.Ref<HTMLInputElement>) => (
+  <input ref={ref} {...props} />
+))
+const TextareaHOC = forwardRef((props, ref: React.Ref<HTMLTextAreaElement>) => (
+  <textarea ref={ref} {...props} />
+))
 
 export const Input = forwardRef(
   (

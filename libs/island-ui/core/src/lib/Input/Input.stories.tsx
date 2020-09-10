@@ -14,7 +14,7 @@ export const Default = () => (
       <Input
         label="This is the label"
         placeholder="This is the placeholder"
-        name="Test"
+        name="Test1"
       />
     </Box>
   </ContentBlock>
@@ -26,7 +26,7 @@ export const Tooltip = () => (
       <Input
         label="This is the label"
         placeholder="This is the placeholder"
-        name="Test"
+        name="Test2"
         tooltip="Bacon ipsum dolor amet ball tip leberkas pork belly pork chop, meatloaf swine jerky doner andouille tenderloin"
       />
     </Box>
@@ -39,7 +39,7 @@ export const Error = () => (
       <Input
         label="This is the label"
         placeholder="This is the placeholder"
-        name="Test"
+        name="Test3"
         hasError
         errorMessage="This is the error message"
       />
@@ -53,7 +53,7 @@ export const Required = () => (
       <Input
         label="This is the label"
         placeholder="This is the placeholder"
-        name="Test"
+        name="Test4"
         required
       />
     </Box>
@@ -66,7 +66,7 @@ export const Textarea = () => (
       <Input
         label="Textarea label"
         placeholder="This is the placeholder"
-        name="Test"
+        name="Test5"
         textarea
         rows={4}
       />
@@ -80,7 +80,7 @@ export const Textarea10Rows = () => (
       <Input
         label="Textarea label"
         placeholder="This is the placeholder"
-        name="Test"
+        name="Test6"
         textarea
         rows={10}
       />
@@ -94,7 +94,7 @@ export const TextareaError = () => (
       <Input
         label="Textarea label"
         placeholder="This is the placeholder"
-        name="Test"
+        name="Test7"
         hasError
         errorMessage="This is the error message"
         textarea
@@ -110,7 +110,7 @@ export const TextareaRequired = () => (
       <Input
         label="Textarea label"
         placeholder="This is the placeholder"
-        name="Test"
+        name="Test8"
         required
         textarea
         rows={4}
