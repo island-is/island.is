@@ -50,7 +50,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
     {
       id,
       label,
-      labelVariant = 'h5',
+      labelVariant = 'h4',
       iconVariant = 'default',
       visibleContent,
       expanded: expandedProp,

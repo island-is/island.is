@@ -41,6 +41,7 @@ export type ContentItem = {
   categorySlug?: Maybe<Scalars['String']>
   categoryDescription?: Maybe<Scalars['String']>
   group?: Maybe<Scalars['String']>
+  subgroup?: Maybe<Scalars['String']>
   groupSlug?: Maybe<Scalars['String']>
   groupDescription?: Maybe<Scalars['String']>
   contentBlob?: Maybe<Scalars['String']>
@@ -1404,6 +1405,7 @@ export type ContentItemResolvers<
     ContextType
   >
   group?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  subgroup?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   groupSlug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   groupDescription?: Resolver<
     Maybe<ResolversTypes['String']>,

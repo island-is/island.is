@@ -1,5 +1,5 @@
 export * from './Card/Card'
-export * from './DrawerMenu'
+export { DrawerMenu } from './DrawerMenu'
 export * from './Categories/Categories'
 export * from './Header/Header'
 export * from './Sidebar/Sidebar'

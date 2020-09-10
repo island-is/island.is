@@ -30,6 +30,7 @@ export type ContentItem = {
   categorySlug?: Maybe<Scalars['String']>
   categoryDescription?: Maybe<Scalars['String']>
   group?: Maybe<Scalars['String']>
+  subgroup?: Maybe<Scalars['String']>
   groupSlug?: Maybe<Scalars['String']>
   groupDescription?: Maybe<Scalars['String']>
   contentBlob?: Maybe<Scalars['String']>
@@ -1051,6 +1052,7 @@ export type GetArticlesInCategoryQuery = { __typename?: 'Query' } & {
       | 'category'
       | 'slug'
       | 'title'
+      | 'subgroup'
       | 'group'
       | 'groupDescription'
       | 'groupSlug'

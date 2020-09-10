@@ -14,6 +14,7 @@ import {
   Option,
   Link,
   Accordion,
+  Box,
 } from '@island.is/island-ui/core'
 import { Card, Sidebar } from '../../components'
 import { useI18n } from '@island.is/web/i18n'
@@ -115,6 +116,29 @@ const Category: Screen<CategoryProps> = ({
     value: c.slug,
   }))
 
+  const subgroupSorting = (a, b) => {
+    // Make items with 'Annað' subgroup appear last.
+    if (b === n('other')) {
+      return -1
+    }
+    // Otherwise sort them alphabetically.
+    return a - b
+  }
+
+  const groupArticlesBySubgroup = (
+    articles: GetArticlesInCategoryQuery['articlesInCategory'],
+  ) => {
+    const groupBy = (items, key) =>
+      items.reduce(
+        (result, item) => ({
+          ...result,
+          [item[key] || n('other')]: [...(result[item[key]] || []), item],
+        }),
+        {},
+      )
+    return groupBy(articles, 'subgroup')
+  }
+
   return (
     <>
       <Head>
@@ -141,6 +165,11 @@ const Category: Screen<CategoryProps> = ({
 
                   const expanded = groupSlug === hash.replace('#', '')
 
+                  const articlesBySubgroup = groupArticlesBySubgroup(articles)
+                  const sortedSubgroups = Object.keys(articlesBySubgroup).sort(
+                    subgroupSorting,
+                  )
+
                   return (
                     <div
                       key={index}
@@ -153,20 +182,40 @@ const Category: Screen<CategoryProps> = ({
                         startExpanded={expanded}
                         visibleContent={description}
                       >
-                        <Stack space={2}>
-                          {articles.map(({ title, slug }, index) => {
+                        <Box paddingY={2}>
+                          {sortedSubgroups.map((subgroup, index) => {
+                            const hasSubgroups = sortedSubgroups.length > 1
                             return (
-                              <NextLink
-                                key={index}
-                                href={`${makePath('article')}/[slug]`}
-                                as={makePath('article', slug)}
-                                passHref
-                              >
-                                <LinkCard>{title}</LinkCard>
-                              </NextLink>
+                              <React.Fragment key={subgroup}>
+                                {hasSubgroups && (
+                                  <Typography
+                                    variant="h5"
+                                    paddingBottom={3}
+                                    paddingTop={index === 0 ? 0 : 3}
+                                  >
+                                    {subgroup}
+                                  </Typography>
+                                )}
+                                <Stack space={2}>
+                                  {articlesBySubgroup[subgroup].map(
+                                    ({ title, slug }) => {
+                                      return (
+                                        <NextLink
+                                          key={slug}
+                                          href={`${makePath('article')}/[slug]`}
+                                          as={makePath('article', slug)}
+                                          passHref
+                                        >
+                                          <LinkCard>{title}</LinkCard>
+                                        </NextLink>
+                                      )
+                                    },
+                                  )}
+                                </Stack>
+                              </React.Fragment>
                             )
                           })}
-                        </Stack>
+                        </Box>
                       </AccordionCard>
                     </div>
                   )

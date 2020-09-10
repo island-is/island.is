@@ -15,6 +15,7 @@ type ContentItem {
   categorySlug: String
   categoryDescription: String
   group: String
+  subgroup: String
   groupSlug: String
   groupDescription: String
   contentBlob: String
