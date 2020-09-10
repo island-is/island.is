@@ -17,7 +17,7 @@ export class UserService {
     ]
   }
 
-  async findOne(nationalId: string): Promise<User | undefined> {
+  async findByNationalId(nationalId: string): Promise<User | undefined> {
     return this.users.find((user) => user.nationalId === nationalId)
   }
 }

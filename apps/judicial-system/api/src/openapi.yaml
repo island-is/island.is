@@ -139,6 +139,42 @@ paths:
                 $ref: '#/components/schemas/Version'
       tags:
         - internal
+  /api/auth/callback:
+    post:
+      operationId: AuthController_callback
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - api/auth
+  /api/auth/login:
+    get:
+      operationId: AuthController_login
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - api/auth
+  /api/auth/logout:
+    get:
+      operationId: AuthController_logout
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - api/auth
+  /api/user:
+    get:
+      operationId: UserController_getAll
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - users
   /api/cases:
     get:
       operationId: CaseController_getAll
@@ -214,30 +250,3 @@ paths:
                 $ref: '#/components/schemas/Case'
       tags:
         - cases
-  /api/auth/callback:
-    post:
-      operationId: AuthController_callback
-      parameters: []
-      responses:
-        '201':
-          description: ''
-      tags:
-        - api/auth
-  /api/auth/login:
-    get:
-      operationId: AuthController_login
-      parameters: []
-      responses:
-        '200':
-          description: ''
-      tags:
-        - api/auth
-  /api/auth/logout:
-    get:
-      operationId: AuthController_logout
-      parameters: []
-      responses:
-        '200':
-          description: ''
-      tags:
-        - api/auth
