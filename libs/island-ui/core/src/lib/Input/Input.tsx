@@ -6,24 +6,34 @@ import Tooltip from '../Tooltip/Tooltip'
 
 type InputBackgroundColor = 'white' | 'blue'
 
-interface InputProps {
+interface InputComponentProps {
   name: string
-  label?: string
-  hasError?: boolean
   value?: string | number
-  errorMessage?: string
   id?: string
+  className?: string
   disabled?: boolean
   required?: boolean
   placeholder?: string
+  autoFocus?: boolean
+  onFocus?: (
+    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void
+  onBlur?: (
+    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void
+  onChange?: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void
+  rows?: number
+}
+
+interface InputProps extends InputComponentProps {
+  label?: string
+  hasError?: boolean
+  errorMessage?: string
   tooltip?: string
   backgroundColor?: InputBackgroundColor
-  autoFocus?: boolean
-  onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void
-  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
   textarea?: boolean
-  rows?: number
 }
 
 function setRefs<T>(ref: React.Ref<T>, value: T) {
@@ -48,12 +58,16 @@ function useMergeRefs<ForwardRef, LocalRef extends ForwardRef>(
   )
 }
 
-const InputHOC = forwardRef((props, ref: React.Ref<HTMLInputElement>) => (
-  <input ref={ref} {...props} />
-))
-const TextareaHOC = forwardRef((props, ref: React.Ref<HTMLTextAreaElement>) => (
-  <textarea ref={ref} {...props} />
-))
+const InputHOC = forwardRef(
+  (props: InputComponentProps, ref: React.Ref<HTMLInputElement>) => (
+    <input ref={ref} {...props} />
+  ),
+)
+const TextareaHOC = forwardRef(
+  (props: InputComponentProps, ref: React.Ref<HTMLTextAreaElement>) => (
+    <textarea ref={ref} {...props} />
+  ),
+)
 
 export const Input = forwardRef(
   (
