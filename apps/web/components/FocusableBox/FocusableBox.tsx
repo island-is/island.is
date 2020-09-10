@@ -1,7 +1,8 @@
 import React, { FC, ElementType, AllHTMLAttributes } from 'react'
 import cn from 'classnames'
-import * as styles from './FocusableBox.treat'
+import { useToggle } from 'react-use'
 import { Box, Link, UseBoxStylesProps } from '@island.is/island-ui/core'
+import * as styles from './FocusableBox.treat'
 
 interface Props
   extends Omit<UseBoxStylesProps, 'component'>,
@@ -14,17 +15,26 @@ const FocusableBox: FC<Props> = ({
   display = 'flex',
   borderRadius = 'large',
   children,
+  className,
+  onFocus,
+  onBlur,
   ...rest
-}) => (
-  <Box
-    component={component}
-    display={display}
-    borderRadius={borderRadius}
-    className={cn(styles.focusable)}
-    {...rest}
-  >
-    {children}
-  </Box>
-)
+}) => {
+  const [isFocused, toggle] = useToggle(false)
+
+  return (
+    <Box
+      component={component}
+      display={display}
+      borderRadius={borderRadius}
+      className={cn(styles.focusable, className)}
+      onFocus={toggle}
+      onBlur={toggle}
+      {...rest}
+    >
+      {typeof children === 'function' ? children({ isFocused }) : children}
+    </Box>
+  )
+}
 
 export default FocusableBox

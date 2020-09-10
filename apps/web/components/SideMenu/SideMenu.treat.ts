@@ -36,21 +36,17 @@ export const tabBar = style({
 })
 
 export const tab = style({
-  border: `2px solid transparent`,
+  borderBottom: '2px solid transparent',
   flex: 1,
   padding: theme.spacing[2],
-  outline: 0,
-  ':focus': {
-    borderColor: theme.color.mint400,
-  },
 })
 
 export const tabActive = style({
   borderBottomColor: theme.color.blue400,
-  ':focus': {
-    borderColor: 'transparent',
-    borderBottomColor: theme.color.blue400,
-  },
+})
+
+export const tabFocused = style({
+  borderBottomColor: 'transparent',
 })
 
 export const content = style({

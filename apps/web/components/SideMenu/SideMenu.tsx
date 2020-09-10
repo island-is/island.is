@@ -94,20 +94,27 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
 
           <div className={styles.tabBar}>
             {tabs.map((tab, index) => (
-              <button
+              <FocusableBox
+                component="button"
                 key={tab.title}
                 role="tab"
                 aria-controls={`tab-content-${index}`}
-                className={cn(styles.tab, {
-                  [styles.tabActive]: activeTab === index,
-                })}
                 aria-selected={activeTab === index}
                 onClick={() => setActiveTab(index)}
               >
-                <Typography variant="eyebrow" color="blue400">
-                  {tab.title}
-                </Typography>
-              </button>
+                {({ isFocused }) => (
+                  <div
+                    className={cn(styles.tab, {
+                      [styles.tabActive]: activeTab === index,
+                      [styles.tabFocused]: isFocused,
+                    })}
+                  >
+                    <Typography variant="eyebrow" color="blue400">
+                      {tab.title}
+                    </Typography>
+                  </div>
+                )}
+              </FocusableBox>
             ))}
           </div>
           {tabs.map((tab, index) => {
