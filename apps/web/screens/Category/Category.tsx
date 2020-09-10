@@ -132,10 +132,7 @@ const Category: Screen<CategoryProps> = ({
       items.reduce(
         (result, item) => ({
           ...result,
-          [item[key] || n('other')]: [
-            ...(result[item[key]] || []),
-            item,
-          ],
+          [item[key] || n('other')]: [...(result[item[key]] || []), item],
         }),
         {},
       )
