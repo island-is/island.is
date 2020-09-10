@@ -2,10 +2,12 @@ import { Inject, Injectable, CACHE_MANAGER, HttpService } from '@nestjs/common'
 import CacheManager from 'cache-manager'
 import * as kennitala from 'kennitala'
 
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   NationalRegistryGeneralLookupResponse,
   NationalRegistryFamilyLookupResponse,
   NationalRegistryUser,
+  FamilyMember,
 } from './nationalRegistry.types'
 import { environment } from '../../../environments'
 
@@ -108,6 +110,7 @@ const TEST_USERS: NationalRegistryUser[] = [
 export class NationalRegistryService {
   constructor(
     private httpService: HttpService,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
   ) {}
 
@@ -167,8 +170,14 @@ export class NationalRegistryService {
     return user
   }
 
-  private isChild(nationalId: string): boolean {
-    return kennitala.info(nationalId).age < MAX_AGE_LIMIT
+  private isParent(person: FamilyMember): boolean {
+    return [1, 2].includes(person.gender)
+  }
+
+  private isChild(person: FamilyMember): boolean {
+    return (
+      !this.isParent(person) && kennitala.info(person.ssn).age < MAX_AGE_LIMIT
+    )
   }
 
   async getRelatedChildren(nationalId: string): Promise<string[]> {
@@ -194,12 +203,24 @@ export class NationalRegistryService {
       .get(`${this.baseUrl}/family-lookup?ssn=${nationalId}`)
       .toPromise()
 
-    const children = response.data[0].results
-      .filter((person) => person.ssn !== nationalId && this.isChild(person.ssn))
-      .map((person) => person.ssn)
-    if (children) {
-      await this.cacheManager.set(cacheKey, { children }, { ttl: ONE_MONTH })
+    const data = response.data[0]
+    if (data.error) {
+      this.logger.error(
+        `Could not find family members for User<${nationalId}> due to: ${data.error}`,
+      )
+      return []
     }
+
+    const family = data.results
+    const user = family.find((person) => person.ssn === nationalId)
+    let children = []
+    if (this.isParent(user)) {
+      children = family
+        .filter((person) => person.ssn !== nationalId && this.isChild(person))
+        .map((person) => person.ssn)
+    }
+
+    await this.cacheManager.set(cacheKey, { children }, { ttl: ONE_MONTH })
 
     return children
   }
