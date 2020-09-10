@@ -247,7 +247,7 @@ export const moveAliasToNewIndex = async (
   const oldIndexName = getIndexNameForVersion(locale, oldIndexVersion)
   const newIndexName = getIndexNameForVersion(locale, newIndexVersion)
 
-  // this is the recomented way to rename an alias, this operation is atomic when executed in a single api request
+  // this is the recommended way to rename an alias, this operation is atomic when executed in a single api request
   const actions = []
   if (oldIndexVersion > 0) {
     actions.push({
