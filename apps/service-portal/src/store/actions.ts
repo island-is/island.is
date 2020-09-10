@@ -12,6 +12,7 @@ export enum ActionType {
   SetUserPending = 'setUserPending',
   SetUserLoggedOut = 'setUserLoggedOut',
   SetUserFulfilled = 'setUserFulfilled',
+  SetUserLoggingOut = 'setUserLoggingOut',
   FetchSubjectListPending = 'fetchSubjectListPending',
   FetchSubjectListFulfilled = 'fetchSubjectListFulfilled',
   FetchSubjectListFailed = 'fetchSubjectListFailed',
@@ -38,4 +39,7 @@ export type Action =
   | {
       type: ActionType.SetLanguage
       payload: LanguageCode
+    }
+  | {
+      type: ActionType.SetUserLoggingOut
     }

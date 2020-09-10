@@ -17,7 +17,7 @@ import { determineInitialLocale, setLangInLocalStore } from '../utils/locale'
 
 export interface StoreState {
   userInfo: UserWithMeta | null
-  userInfoState: AsyncActionState
+  userInfoState: AsyncActionState | 'logging-out'
   modules: ServicePortalModule[]
   navigationState: AsyncActionState
   subjectList: SubjectListDto[]
@@ -88,6 +88,11 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
       return {
         ...state,
         lang: action.payload,
+      }
+    case ActionType.SetUserLoggingOut:
+      return {
+        ...state,
+        userInfoState: 'logging-out',
       }
     default:
       return state

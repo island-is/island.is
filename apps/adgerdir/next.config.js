@@ -1,5 +1,5 @@
 const withTreat = require('next-treat')()
-const withHealthcheckConfig = require('./units/Healthchecks/withHealthcheckConfig')
+const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 

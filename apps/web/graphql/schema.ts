@@ -30,6 +30,7 @@ export type ContentItem = {
   categorySlug?: Maybe<Scalars['String']>
   categoryDescription?: Maybe<Scalars['String']>
   group?: Maybe<Scalars['String']>
+  subgroup?: Maybe<Scalars['String']>
   groupSlug?: Maybe<Scalars['String']>
   groupDescription?: Maybe<Scalars['String']>
   contentBlob?: Maybe<Scalars['String']>
@@ -61,22 +62,54 @@ export type WebSearchAutocomplete = {
   completions: Array<Scalars['String']>
 }
 
-export type Taxonomy = {
-  __typename?: 'Taxonomy'
-  title?: Maybe<Scalars['String']>
-  slug?: Maybe<Scalars['String']>
+export type ArticleCategory = {
+  __typename?: 'ArticleCategory'
+  title: Scalars['String']
+  slug: Scalars['String']
   description?: Maybe<Scalars['String']>
+}
+
+export type ArticleGroup = {
+  __typename?: 'ArticleGroup'
+  title: Scalars['String']
+  slug: Scalars['String']
+  description?: Maybe<Scalars['String']>
+  sortBy?: Maybe<Scalars['String']>
+}
+
+export type ArticleSubgroup = {
+  __typename?: 'ArticleSubgroup'
+  title: Scalars['String']
+  slug: Scalars['String']
+}
+
+export type Organization = {
+  __typename?: 'Organization'
+  title: Scalars['String']
+  slug: Scalars['String']
+}
+
+export type SubArticle = {
+  __typename?: 'SubArticle'
+  title: Scalars['String']
+  slug: Scalars['String']
+  content: Scalars['String']
 }
 
 export type Article = {
   __typename?: 'Article'
-  id: Scalars['String']
-  slug: Scalars['String']
+  id: Scalars['ID']
+  contentStatus: Scalars['String']
   title: Scalars['String']
+  shortTitle?: Maybe<Scalars['String']>
+  slug: Scalars['String']
   content?: Maybe<Scalars['String']>
-  group?: Maybe<Taxonomy>
-  category?: Maybe<Taxonomy>
+  category?: Maybe<ArticleCategory>
+  group?: Maybe<ArticleGroup>
+  subgroup?: Maybe<ArticleSubgroup>
+  organization: Array<Organization>
   relatedArticles: Array<Article>
+  subArticles: Array<SubArticle>
 }
 
 export type AdgerdirTag = {
@@ -976,14 +1009,14 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
       'id' | 'slug' | 'title' | 'content'
     > & {
         group?: Maybe<
-          { __typename?: 'Taxonomy' } & Pick<
-            Taxonomy,
+          { __typename?: 'ArticleGroup' } & Pick<
+            ArticleGroup,
             'title' | 'slug' | 'description'
           >
         >
         category?: Maybe<
-          { __typename?: 'Taxonomy' } & Pick<
-            Taxonomy,
+          { __typename?: 'ArticleCategory' } & Pick<
+            ArticleCategory,
             'title' | 'slug' | 'description'
           >
         >
@@ -1019,6 +1052,7 @@ export type GetArticlesInCategoryQuery = { __typename?: 'Query' } & {
       | 'category'
       | 'slug'
       | 'title'
+      | 'subgroup'
       | 'group'
       | 'groupDescription'
       | 'groupSlug'

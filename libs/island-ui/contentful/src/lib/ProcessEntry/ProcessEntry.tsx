@@ -11,7 +11,7 @@ import {
 import { Html } from '@island.is/api/schema'
 import { renderHtml } from '../richTextRendering'
 
-const ProcessTypes = {
+export const ProcessTypes = {
   Digital: {
     icon: 'external',
     title: 'Stafræn umsókn',
@@ -89,7 +89,11 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
             )}
             {processInfo && renderHtml(processInfo.document)}
             <Box paddingTop={[1, 1, 2]}>
-              <Button href={processLink} icon={ProcessTypes[type].icon}>
+              <Button
+                width="fixed"
+                href={processLink}
+                icon={ProcessTypes[type].icon}
+              >
                 {buttonText}
               </Button>
             </Box>
