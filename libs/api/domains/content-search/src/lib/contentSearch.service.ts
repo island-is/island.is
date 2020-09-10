@@ -25,6 +25,7 @@ export class ContentSearchService implements SearcherService {
     obj.categoryDescription = obj.category_description
     obj.groupSlug = obj.group_slug
     obj.groupDescription = obj.group_description
+    obj.subgroup = obj.subgroup
     obj.id = doc._id
     return obj
   }

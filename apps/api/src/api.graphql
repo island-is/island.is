@@ -15,6 +15,7 @@ type ContentItem {
   categorySlug: String
   categoryDescription: String
   group: String
+  subgroup: String
   groupSlug: String
   groupDescription: String
   contentBlob: String
@@ -55,6 +56,7 @@ type Article {
   title: String!
   content: String
   group: Taxonomy
+  subgroup: Taxonomy
   category: Taxonomy
   relatedArticles: [Article!]!
 }

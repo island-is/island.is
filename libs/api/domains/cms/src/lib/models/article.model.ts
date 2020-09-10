@@ -21,6 +21,9 @@ export class Article {
   group?: Taxonomy
 
   @Field(() => Taxonomy, { nullable: true })
+  subgroup?: Taxonomy
+
+  @Field(() => Taxonomy, { nullable: true })
   category?: Taxonomy
 
   @Field(() => [Article])
@@ -32,6 +35,7 @@ export const mapArticle = ({ sys, fields }: IArticle): Article => ({
   slug: fields.slug,
   title: fields.title,
   group: fields.group?.fields,
+  subgroup: fields.subgroup?.fields,
   category: fields.category?.fields,
   content: fields.content && JSON.stringify(fields.content),
   relatedArticles: [], // populated by resolver

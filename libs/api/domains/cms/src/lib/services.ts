@@ -141,6 +141,7 @@ const ArticleFields = [
   'fields.slug',
   'fields.title',
   'fields.content',
+  'fields.subgroup',
   'fields.group',
   'fields.category',
 ].join(',')

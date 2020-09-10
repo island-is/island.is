@@ -12,6 +12,7 @@ import {
   LinkCard,
   Option,
   Link,
+  Box,
 } from '@island.is/island-ui/core'
 import { Card, Sidebar } from '../../components'
 import { useI18n } from '@island.is/web/i18n'
@@ -116,20 +117,23 @@ const Category: Screen<CategoryProps> = ({
                     label={title}
                     visibleContent={description}
                   >
-                    <Stack space={2}>
-                      {articles.map(({ title, slug }, index) => {
-                        return (
-                          <Link
-                            key={index}
-                            href={`${makePath('article')}/[slug]`}
-                            as={makePath('article', slug)}
-                            passHref
-                          >
-                            <LinkCard>{title}</LinkCard>
-                          </Link>
-                        )
-                      })}
-                    </Stack>
+                    <Box paddingY={2}>
+                      <Typography>Some controls</Typography>
+                      <Stack space={2}>
+                        {articles.map(({ title, slug }, index) => {
+                          return (
+                            <Link
+                              key={index}
+                              href={`${makePath('article')}/[slug]`}
+                              as={makePath('article', slug)}
+                              passHref
+                            >
+                              <LinkCard>{title}</LinkCard>
+                            </Link>
+                          )
+                        })}
+                      </Stack>
+                    </Box>
                   </AccordionCard>
                 )
               })}
