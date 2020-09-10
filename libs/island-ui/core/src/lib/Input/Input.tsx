@@ -22,6 +22,8 @@ interface InputProps {
   onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
+  textarea?: boolean
+  rows?: number
 }
 
 function setRefs<T>(ref: React.Ref<T>, value: T) {
@@ -46,8 +48,14 @@ function useMergeRefs<ForwardRef, LocalRef extends ForwardRef>(
   )
 }
 
+const InputHOC = (props) => <input {...props} />
+const TextareaHOC = (props) => <textarea {...props} />
+
 export const Input = forwardRef(
-  (props: InputProps, ref?: React.Ref<HTMLInputElement>) => {
+  (
+    props: InputProps,
+    ref?: React.Ref<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const {
       name,
       label,
@@ -62,10 +70,11 @@ export const Input = forwardRef(
       backgroundColor = 'white',
       onFocus,
       onBlur,
+      textarea,
       ...inputProps
     } = props
     const [hasFocus, setHasFocus] = useState(false)
-    const inputRef = useRef<HTMLInputElement>(null)
+    const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
     const ariaError = hasError
       ? {
           'aria-invalid': true,
@@ -73,6 +82,8 @@ export const Input = forwardRef(
         }
       : {}
     const mergedRefs = useMergeRefs(inputRef, ref || null)
+
+    const InputComponent = textarea ? TextareaHOC : InputHOC
 
     return (
       <div>
@@ -107,8 +118,10 @@ export const Input = forwardRef(
               </Box>
             )}
           </label>
-          <input
-            className={styles.input}
+          <InputComponent
+            className={cn(styles.input, {
+              [styles.textarea]: textarea,
+            })}
             id={id}
             disabled={disabled}
             name={name}

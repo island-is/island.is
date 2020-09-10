@@ -41,6 +41,10 @@ export const input = {
   boxShadow: 'none',
 }
 
+export const textarea = {
+  resize: 'vertical',
+}
+
 export const inputPlaceholder = {
   color: theme.color.dark300,
   fontWeight: theme.typography.light,
