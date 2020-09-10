@@ -54,6 +54,7 @@ const Category: Screen<CategoryProps> = ({
   const Router = useRouter()
   const n = useNamespace(namespace)
   const { makePath } = useRouteNames(activeLocale)
+  const OTHER = 'Annað' // TODO translate
 
   // group articles
   const { groups, cards } = articles.reduce(
@@ -116,6 +117,29 @@ const Category: Screen<CategoryProps> = ({
     value: c.slug,
   }))
 
+  const subgroupSorting = (a, b) => {
+    // Make items with 'Annað' subgroup appear last.
+    if (b === OTHER) {
+      return -1
+    }
+    // Otherwise sort them alphabetically.
+    return a - b
+  }
+
+  const groupArticlesBySubgroup = (
+    articles: GetArticlesInCategoryQuery['articlesInCategory'],
+  ) => {
+    const groupBy = (items, key) =>
+      items.reduce(
+        (result, item) => ({
+          ...result,
+          [item[key] || OTHER]: [...(result[item[key]] || []), item],
+        }),
+        {},
+      )
+    return groupBy(articles, 'subgroup')
+  }
+
   return (
     <>
       <Head>
@@ -139,9 +163,13 @@ const Category: Screen<CategoryProps> = ({
               >
                 {Object.keys(groups).map((groupSlug, index) => {
                   const { title, description, articles } = groups[groupSlug]
-                  articles.map((article) => console.log(article.subgroup))
 
                   const expanded = groupSlug === hash.replace('#', '')
+
+                  const articlesBySubgroup = groupArticlesBySubgroup(articles)
+                  const sortedSubgroups = Object.keys(articlesBySubgroup).sort(
+                    subgroupSorting,
+                  )
 
                   return (
                     <div
@@ -156,23 +184,38 @@ const Category: Screen<CategoryProps> = ({
                         visibleContent={description}
                       >
                         <Box paddingY={2}>
-                          <Typography variant="h4" paddingBottom={2}>
-                            Subgroup thing
-                          </Typography>
-                          <Stack space={2}>
-                            {articles.map(({ title, slug }, index) => {
-                              return (
-                                <NextLink
-                                  key={index}
-                                  href={`${makePath('article')}/[slug]`}
-                                  as={makePath('article', slug)}
-                                  passHref
-                                >
-                                  <LinkCard>{title}</LinkCard>
-                                </NextLink>
-                              )
-                            })}
-                          </Stack>
+                          {sortedSubgroups.map((subgroup, index) => {
+                            const hasSubgroups = sortedSubgroups.length > 1
+                            return (
+                              <React.Fragment key={subgroup}>
+                                {hasSubgroups && (
+                                  <Typography
+                                    variant="h5"
+                                    paddingBottom={3}
+                                    paddingTop={index === 0 ? 0 : 3}
+                                  >
+                                    {subgroup}
+                                  </Typography>
+                                )}
+                                <Stack space={2}>
+                                  {articlesBySubgroup[subgroup].map(
+                                    ({ title, slug }) => {
+                                      return (
+                                        <NextLink
+                                          key={slug}
+                                          href={`${makePath('article')}/[slug]`}
+                                          as={makePath('article', slug)}
+                                          passHref
+                                        >
+                                          <LinkCard>{title}</LinkCard>
+                                        </NextLink>
+                                      )
+                                    },
+                                  )}
+                                </Stack>
+                              </React.Fragment>
+                            )
+                          })}
                         </Box>
                       </AccordionCard>
                     </div>
