@@ -57,37 +57,37 @@ export const ApplicationForm: FC<{ application: Application }> = ({
               borderRadius="large"
               background="white"
             >
-              <GridColumn
+              {/* <GridColumn
                 span={['12/12', '12/12', '7/9', '7/9']}
                 offset={[null, '1/9']}
-              >
-                <Screen
-                  addExternalData={(payload) =>
-                    dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
-                  }
-                  answerQuestions={(payload) =>
-                    dispatch({ type: ActionTypes.ANSWER, payload })
-                  }
-                  dataSchema={form.schema}
-                  externalData={storedApplication.externalData}
-                  formTypeId={form.id}
-                  formValue={storedApplication.answers}
-                  expandRepeater={() =>
-                    dispatch({ type: ActionTypes.EXPAND_REPEATER })
-                  }
-                  answerAndGoToNextScreen={(payload) =>
-                    dispatch({
-                      type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN,
-                      payload,
-                    })
-                  }
-                  prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
-                  shouldSubmit={activeScreen === screens.length - 1}
-                  screen={screens[activeScreen]}
-                  section={sections[activeSection]}
-                  applicationId={storedApplication.id}
-                />
-              </GridColumn>
+              > */}
+              <Screen
+                addExternalData={(payload) =>
+                  dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
+                }
+                answerQuestions={(payload) =>
+                  dispatch({ type: ActionTypes.ANSWER, payload })
+                }
+                dataSchema={form.schema}
+                externalData={storedApplication.externalData}
+                formTypeId={form.id}
+                formValue={storedApplication.answers}
+                expandRepeater={() =>
+                  dispatch({ type: ActionTypes.EXPAND_REPEATER })
+                }
+                answerAndGoToNextScreen={(payload) =>
+                  dispatch({
+                    type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN,
+                    payload,
+                  })
+                }
+                prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
+                shouldSubmit={activeScreen === screens.length - 1}
+                screen={screens[activeScreen]}
+                section={sections[activeSection]}
+                applicationId={storedApplication.id}
+              />
+              {/* </GridColumn> */}
             </Box>
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '3/12', '3/12']}>
