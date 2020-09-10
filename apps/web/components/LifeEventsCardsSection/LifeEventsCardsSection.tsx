@@ -23,6 +23,7 @@ const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
 }) => {
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale)
+
   return (
     <GridContainer>
       <GridRow>
