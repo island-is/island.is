@@ -3,17 +3,7 @@ import { ApolloProvider } from '@apollo/client'
 
 import { Redirect, Route, Switch } from 'react-router-dom'
 
-import {
-  Header,
-  Box,
-  GridContainer,
-  GridRow,
-  GridColumn,
-  Columns,
-  Column,
-  Hidden,
-  Logo,
-} from '@island.is/island-ui/core'
+import { Header, Box, GridContainer } from '@island.is/island-ui/core'
 import { client } from '@island.is/application/graphql'
 import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
