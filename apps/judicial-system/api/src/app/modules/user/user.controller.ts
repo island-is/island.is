@@ -26,7 +26,7 @@ export class UserController {
   ) {}
 
   @Get('user')
-  @ApiOkResponse()
+  @ApiOkResponse({ type: User })
   async getAll(@Req() req) {
     this.logger.debug('Received request from user', {
       extra: { user: req.user },

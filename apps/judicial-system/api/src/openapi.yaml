@@ -24,6 +24,18 @@ components:
           type: string
       required:
         - version
+    User:
+      type: object
+      properties:
+        nationalId:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+      required:
+        - nationalId
+        - roles
     Case:
       type: object
       properties:
@@ -173,6 +185,10 @@ paths:
       responses:
         '200':
           description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
       tags:
         - users
   /api/cases:
