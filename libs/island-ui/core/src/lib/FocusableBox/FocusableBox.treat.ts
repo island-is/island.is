@@ -19,7 +19,7 @@ export const focusable = style({
   ':focus': {
     outline: 0,
   },
-  ':before': {
+  '::before': {
     content: "''",
     display: 'inline-block',
     position: 'absolute',
@@ -36,7 +36,7 @@ export const focusable = style({
     transition: 'border-color 150ms ease, opacity 150ms ease',
   },
   selectors: {
-    [`&:focus:before`]: {
+    [`&:focus::before`]: {
       borderWidth: 3,
       borderStyle: 'solid',
       borderColor: theme.color.mint400,
@@ -50,7 +50,7 @@ export const focusable = style({
 })
 
 export const focused = style({
-  ':before': {
+  '::before': {
     borderWidth: 3,
     borderStyle: 'solid',
     borderColor: theme.color.mint400,
