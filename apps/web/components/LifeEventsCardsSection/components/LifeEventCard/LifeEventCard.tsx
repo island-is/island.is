@@ -22,7 +22,6 @@ const LifeEventCard: React.FC<Props> = ({
       component={Link}
       href={url}
       borderColor="blue200"
-      borderStyle="solid"
       borderWidth="standard"
     >
       <Box
@@ -30,7 +29,6 @@ const LifeEventCard: React.FC<Props> = ({
         alignItems="flexStart"
         background="white"
         display="flex"
-        boxShadow="subtle"
         flexDirection={['column', 'column', 'row']}
         height="full"
         paddingX={[2, 2, 4]}

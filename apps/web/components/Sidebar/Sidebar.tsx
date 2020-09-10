@@ -7,6 +7,7 @@ import {
   Icon,
   Stack,
   Divider,
+  FocusableBox,
 } from '@island.is/island-ui/core'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 
@@ -178,13 +179,12 @@ export const Sidebar: FC<SidebarProps> = ({
             <Divider weight="alternate" />
             {links.map(({ title, selected, onClick }, index) => {
               return (
-                <Box
+                <FocusableBox
                   key={index}
                   ref={(el) => (itemsRef.current[index] = el)}
                   component="button"
                   type="button"
                   textAlign="left"
-                  outline="none"
                   onClick={onClick}
                 >
                   <Typography variant="p" as="span">
@@ -196,7 +196,7 @@ export const Sidebar: FC<SidebarProps> = ({
                       {title}
                     </span>
                   </Typography>
-                </Box>
+                </FocusableBox>
               )
             })}
           </Stack>
@@ -205,23 +205,21 @@ export const Sidebar: FC<SidebarProps> = ({
         {items &&
           items.map(({ title, active, href, as }, index) => {
             return (
-              <Link key={index} href={href} as={as}>
-                <a>
-                  {active && (
-                    <span
-                      className={cn(styles.bullet, {
-                        [styles.bulletRight]: bullet === 'right',
-                        [styles.hidden]: bullet == 'none',
-                      })}
-                    >
-                      <Icon type="bullet" color="red400" />
-                    </span>
-                  )}
-                  <Typography variant="p" as="span">
-                    {active ? <strong>{title}</strong> : title}
-                  </Typography>
-                </a>
-              </Link>
+              <FocusableBox key={index} href={href} as={as}>
+                {active && (
+                  <span
+                    className={cn(styles.bullet, {
+                      [styles.bulletRight]: bullet === 'right',
+                      [styles.hidden]: bullet == 'none',
+                    })}
+                  >
+                    <Icon type="bullet" color="red400" />
+                  </span>
+                )}
+                <Typography variant="p" as="span">
+                  {active ? <strong>{title}</strong> : title}
+                </Typography>
+              </FocusableBox>
             )
           })}
         {children && <Divider weight="alternate" />}

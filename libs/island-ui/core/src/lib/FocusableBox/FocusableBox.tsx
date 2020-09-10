@@ -1,4 +1,4 @@
-import React, { FC, ElementType, AllHTMLAttributes } from 'react'
+import React, { ElementType, AllHTMLAttributes, forwardRef } from 'react'
 import cn from 'classnames'
 import { useToggle } from 'react-use'
 import { Link } from '../Link'
@@ -12,31 +12,33 @@ interface Props
   component?: ElementType
 }
 
-const FocusableBox: FC<Props> = ({
-  component = Link,
-  display = 'flex',
-  borderRadius = 'large',
-  children,
-  className,
-  onFocus,
-  onBlur,
-  ...rest
-}) => {
-  const [isFocused, toggle] = useToggle(false)
+const FocusableBox = forwardRef<HTMLElement, Props>(
+  ({
+    component = Link,
+    display = 'flex',
+    borderRadius = 'large',
+    children,
+    className,
+    onFocus,
+    onBlur,
+    ...rest
+  }) => {
+    const [isFocused, toggle] = useToggle(false)
 
-  return (
-    <Box
-      component={component}
-      display={display}
-      borderRadius={borderRadius}
-      className={cn(styles.focusable, className)}
-      onFocus={toggle}
-      onBlur={toggle}
-      {...rest}
-    >
-      {typeof children === 'function' ? children({ isFocused }) : children}
-    </Box>
-  )
-}
+    return (
+      <Box
+        component={component}
+        display={display}
+        borderRadius={borderRadius}
+        className={cn(styles.focusable, className)}
+        onFocus={toggle}
+        onBlur={toggle}
+        {...rest}
+      >
+        {typeof children === 'function' ? children({ isFocused }) : children}
+      </Box>
+    )
+  },
+)
 
 export default FocusableBox

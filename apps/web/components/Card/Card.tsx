@@ -100,7 +100,6 @@ export const Card: FC<CardProps> = ({
         height="full"
         borderColor="purple200"
         borderWidth="standard"
-        borderStyle="solid"
       >
         <Frame>{Content}</Frame>
       </FocusableBox>
