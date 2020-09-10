@@ -25,7 +25,7 @@ const useAuth = () => {
 
   async function signOutUser() {
     dispatch({
-      type: ActionType.SetUserPending,
+      type: ActionType.SetUserLoggingOut,
     })
 
     userManager.signoutRedirect()
