@@ -15,6 +15,7 @@ interface Props extends LinkProps {
   color?: LinkColor
   className?: string
   withUnderline?: boolean
+  onClick?: () => void
 }
 
 // Next link that can handle external urls

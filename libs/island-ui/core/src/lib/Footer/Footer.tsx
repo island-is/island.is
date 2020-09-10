@@ -30,6 +30,7 @@ interface FooterProps {
   hideLanguageSwith?: boolean
   showMiddleLinks?: boolean
   showTagLinks?: boolean
+  languageSwitchOnClick?: () => void
 }
 
 export const Footer = ({
@@ -43,6 +44,7 @@ export const Footer = ({
   showTagLinks = false,
   languageSwitchLink = defaultLanguageSwitchLink,
   hideLanguageSwith = false,
+  languageSwitchOnClick,
 }: FooterProps) => {
   return (
     <>
@@ -77,7 +79,11 @@ export const Footer = ({
                         color="blue400"
                       />
                       <Typography variant="h5">
-                        <Link color="blue400" href={languageSwitchLink.href}>
+                        <Link
+                          color="blue400"
+                          href={languageSwitchLink.href}
+                          onClick={languageSwitchOnClick}
+                        >
                           {languageSwitchLink.title}
                         </Link>
                       </Typography>
