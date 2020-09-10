@@ -1,12 +1,16 @@
 import { Query, Resolver, Args } from '@nestjs/graphql'
 import { User } from './models'
+import { userService } from './models/userService'
 @Resolver(() => User)
 export class UserResolver {
-  @Query(() => User, { nullable: true })
-  getUser(@Args('id') id: number): User {
-    const U: User = new User()
-    U.name = 'Maur'
-    U.mobile = '8926309'
-    return U
+  userService: userService
+
+  constructor() {
+    this.userService = new userService()
+  }
+
+  @Query(() => User)
+  getUserByNationalId(@Args('nationalId') nid: string): User {
+    return this.userService.getUserBynationalId(nid)
   }
 }

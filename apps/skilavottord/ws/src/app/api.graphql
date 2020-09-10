@@ -2,21 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Fund {
-  nationalId: ID!
-  credit: Float!
-  used: Float!
-  total: Float!
-}
-
 type User {
   nationalId: ID!
   name: String!
   mobile: String
-  fund: Fund
-  meetsADSRequirements: Boolean!
 }
 
 type Query {
-  getUser(id: Float!): User
+  getUserByNationalId(nationalId: String!): User!
 }
