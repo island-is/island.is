@@ -156,7 +156,10 @@ async function main() {
   // 6. Re-generate the api codegen
   await execShellCommand(`yarn nx run api:codegen`)
 
-  // 7. We run prettier on all new files so it looks good
+  // 7. Re-generate the web codegen
+  await execShellCommand(`yarn nx run web:codegen`)
+
+  // 8. We run prettier on all new files so it looks good
   await execShellCommand(
     'prettier --write ./libs/api/domains/cms/src/lib/models/**.ts',
   )
