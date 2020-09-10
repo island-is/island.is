@@ -24,7 +24,6 @@ export interface AccordionProps {
 
 export const Accordion = ({
   children,
-  boolean,
   dividers = true,
   dividerOnTop = true,
   dividerOnBottom = true,

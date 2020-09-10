@@ -5,6 +5,7 @@ import React, {
   forwardRef,
   FC,
   useEffect,
+  useCallback,
 } from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
@@ -99,11 +100,13 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       }
     }
 
+    const onHandleOpen = useCallback(handleOpen, [])
+
     useEffect(() => {
       if (startExpanded) {
-        handleOpen()
+        onHandleOpen()
       }
-    }, [startExpanded])
+    }, [onHandleOpen, startExpanded])
 
     return (
       <Box>

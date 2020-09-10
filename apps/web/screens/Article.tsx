@@ -127,14 +127,12 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
             paddingBottom={2}
           >
             <Breadcrumbs>
-              <Link href={makePath()}>
-                <a>Ísland.is</a>
-              </Link>
+              <Link href={makePath()}>Ísland.is</Link>
               <Link
                 href={`${makePath('category')}/[slug]`}
                 as={makePath('category', article.category.slug)}
               >
-                <a>{article.category.title}</a>
+                {article.category.title}
               </Link>
               {article.group && (
                 <Link
