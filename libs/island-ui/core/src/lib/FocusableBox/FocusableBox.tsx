@@ -12,6 +12,10 @@ interface Props
   component?: ElementType
 }
 
+// FocusableBox is a wrapper component that handles focus styles.
+// Most props are forwarded to Box.
+// By default it renders as a Link component.
+
 const FocusableBox = forwardRef<HTMLElement, Props>(
   ({
     component = Link,
