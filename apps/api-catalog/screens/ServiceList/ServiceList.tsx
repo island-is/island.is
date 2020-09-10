@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import { Layout, ServiceCard } from '../../components'
-import {  Box,  Stack,  BulletList,  Bullet,  Button, Checkbox } from '@island.is/island-ui/core'
-import { getServices, GetServicesParameters, getAllPriceCategories, getAllDataCategories } from '../../components/ServiceRepository/service-repository'
-import { useRouter } from 'next/dist/client/router'
-import { ServiceCardInformation } from 'apps/api-catalog/components/ServiceCard/service-card'
-import { ParsedUrlQuery } from 'querystring'
+import { Box,  Stack,  BulletList,  Bullet,  Button, Checkbox 
+} from '@island.is/island-ui/core'
+
+import { Layout, 
+         ServiceCard,
+         ServiceCardInformation, 
+         CategoryCheckBox
+       } from '../../components'
+       
+import { getServices, 
+         GetServicesParameters, 
+         getAllPriceCategories, 
+         getAllDataCategories 
+       } from '../../components/ServiceRepository/service-repository'
+
 
 export interface ServiceListProps {
   servicesList:Array<ServiceCardInformation>
@@ -86,7 +95,7 @@ export default function ServiceList(props:ServiceListProps) {
           <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
             <Stack space={5}>
               <Stack space={3}>
-
+              <CategoryCheckBox />
               <Checkbox name="checkboxFree" label="Free"
                   onChange={({ target }) => {
                     props.parameters.cursor = null;
