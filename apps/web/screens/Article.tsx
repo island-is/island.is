@@ -147,7 +147,7 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
                   )}
                   href={makePath('category', '[slug]')}
                 >
-                  <Tag variant="purple">{article.group.title}</Tag>
+                  <Tag variant="blue">{article.group.title}</Tag>
                 </Link>
               )}
             </Breadcrumbs>

@@ -49,7 +49,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
             <ContentContainer>
               <Breadcrumbs>
                 <Link href={makePath()}>Ísland.is</Link>
-                <Tag variant="purple" label>
+                <Tag variant="blue" label>
                   Lífsviðburður
                 </Tag>
               </Breadcrumbs>

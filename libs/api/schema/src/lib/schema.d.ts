@@ -41,6 +41,7 @@ export type ContentItem = {
   categorySlug?: Maybe<Scalars['String']>
   categoryDescription?: Maybe<Scalars['String']>
   group?: Maybe<Scalars['String']>
+  subgroup?: Maybe<Scalars['String']>
   groupSlug?: Maybe<Scalars['String']>
   groupDescription?: Maybe<Scalars['String']>
   contentBlob?: Maybe<Scalars['String']>
@@ -72,22 +73,54 @@ export type WebSearchAutocomplete = {
   completions: Array<Scalars['String']>
 }
 
-export type Taxonomy = {
-  __typename?: 'Taxonomy'
-  title?: Maybe<Scalars['String']>
-  slug?: Maybe<Scalars['String']>
+export type ArticleCategory = {
+  __typename?: 'ArticleCategory'
+  title: Scalars['String']
+  slug: Scalars['String']
   description?: Maybe<Scalars['String']>
+}
+
+export type ArticleGroup = {
+  __typename?: 'ArticleGroup'
+  title: Scalars['String']
+  slug: Scalars['String']
+  description?: Maybe<Scalars['String']>
+  sortBy?: Maybe<Scalars['String']>
+}
+
+export type ArticleSubgroup = {
+  __typename?: 'ArticleSubgroup'
+  title: Scalars['String']
+  slug: Scalars['String']
+}
+
+export type Organization = {
+  __typename?: 'Organization'
+  title: Scalars['String']
+  slug: Scalars['String']
+}
+
+export type SubArticle = {
+  __typename?: 'SubArticle'
+  title: Scalars['String']
+  slug: Scalars['String']
+  content: Scalars['String']
 }
 
 export type Article = {
   __typename?: 'Article'
-  id: Scalars['String']
-  slug: Scalars['String']
+  id: Scalars['ID']
+  contentStatus: Scalars['String']
   title: Scalars['String']
+  shortTitle?: Maybe<Scalars['String']>
+  slug: Scalars['String']
   content?: Maybe<Scalars['String']>
-  group?: Maybe<Taxonomy>
-  category?: Maybe<Taxonomy>
+  category?: Maybe<ArticleCategory>
+  group?: Maybe<ArticleGroup>
+  subgroup?: Maybe<ArticleSubgroup>
+  organization: Array<Organization>
   relatedArticles: Array<Article>
+  subArticles: Array<SubArticle>
 }
 
 export type AdgerdirTag = {
@@ -1062,7 +1095,11 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>
   ContentCategory: ResolverTypeWrapper<ContentCategory>
   WebSearchAutocomplete: ResolverTypeWrapper<WebSearchAutocomplete>
-  Taxonomy: ResolverTypeWrapper<Taxonomy>
+  ArticleCategory: ResolverTypeWrapper<ArticleCategory>
+  ArticleGroup: ResolverTypeWrapper<ArticleGroup>
+  ArticleSubgroup: ResolverTypeWrapper<ArticleSubgroup>
+  Organization: ResolverTypeWrapper<Organization>
+  SubArticle: ResolverTypeWrapper<SubArticle>
   Article: ResolverTypeWrapper<Article>
   AdgerdirTag: ResolverTypeWrapper<AdgerdirTag>
   AdgerdirPage: ResolverTypeWrapper<AdgerdirPage>
@@ -1208,7 +1245,11 @@ export type ResolversParentTypes = {
   Int: Scalars['Int']
   ContentCategory: ContentCategory
   WebSearchAutocomplete: WebSearchAutocomplete
-  Taxonomy: Taxonomy
+  ArticleCategory: ArticleCategory
+  ArticleGroup: ArticleGroup
+  ArticleSubgroup: ArticleSubgroup
+  Organization: Organization
+  SubArticle: SubArticle
   Article: Article
   AdgerdirTag: AdgerdirTag
   AdgerdirPage: AdgerdirPage
@@ -1364,6 +1405,7 @@ export type ContentItemResolvers<
     ContextType
   >
   group?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  subgroup?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   groupSlug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   groupDescription?: Resolver<
     Maybe<ResolversTypes['String']>,
@@ -1429,12 +1471,12 @@ export type WebSearchAutocompleteResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export type TaxonomyResolvers<
+export type ArticleCategoryResolvers<
   ContextType = Context,
-  ParentType extends ResolversParentTypes['Taxonomy'] = ResolversParentTypes['Taxonomy']
+  ParentType extends ResolversParentTypes['ArticleCategory'] = ResolversParentTypes['ArticleCategory']
 > = {
-  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   description?: Resolver<
     Maybe<ResolversTypes['String']>,
     ParentType,
@@ -1443,22 +1485,90 @@ export type TaxonomyResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type ArticleGroupResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['ArticleGroup'] = ResolversParentTypes['ArticleGroup']
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  sortBy?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type ArticleSubgroupResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['ArticleSubgroup'] = ResolversParentTypes['ArticleSubgroup']
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type OrganizationResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type SubArticleResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['SubArticle'] = ResolversParentTypes['SubArticle']
+> = {
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type ArticleResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Article'] = ResolversParentTypes['Article']
 > = {
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  contentStatus?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  shortTitle?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  group?: Resolver<Maybe<ResolversTypes['Taxonomy']>, ParentType, ContextType>
   category?: Resolver<
-    Maybe<ResolversTypes['Taxonomy']>,
+    Maybe<ResolversTypes['ArticleCategory']>,
+    ParentType,
+    ContextType
+  >
+  group?: Resolver<
+    Maybe<ResolversTypes['ArticleGroup']>,
+    ParentType,
+    ContextType
+  >
+  subgroup?: Resolver<
+    Maybe<ResolversTypes['ArticleSubgroup']>,
+    ParentType,
+    ContextType
+  >
+  organization?: Resolver<
+    Array<ResolversTypes['Organization']>,
     ParentType,
     ContextType
   >
   relatedArticles?: Resolver<
     Array<ResolversTypes['Article']>,
+    ParentType,
+    ContextType
+  >
+  subArticles?: Resolver<
+    Array<ResolversTypes['SubArticle']>,
     ParentType,
     ContextType
   >
@@ -2406,7 +2516,11 @@ export type Resolvers<ContextType = Context> = {
   SearchResult?: SearchResultResolvers<ContextType>
   ContentCategory?: ContentCategoryResolvers<ContextType>
   WebSearchAutocomplete?: WebSearchAutocompleteResolvers<ContextType>
-  Taxonomy?: TaxonomyResolvers<ContextType>
+  ArticleCategory?: ArticleCategoryResolvers<ContextType>
+  ArticleGroup?: ArticleGroupResolvers<ContextType>
+  ArticleSubgroup?: ArticleSubgroupResolvers<ContextType>
+  Organization?: OrganizationResolvers<ContextType>
+  SubArticle?: SubArticleResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
   AdgerdirPage?: AdgerdirPageResolvers<ContextType>

@@ -1,6 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Slice, mapSlice } from './slices/slice.model'
+
 import * as types from '../generated/contentfulTypes'
+
+import { Slice, mapSlice } from './slice.model'
 
 @ObjectType()
 export class AboutPage {

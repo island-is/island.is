@@ -3,6 +3,7 @@ import jsonContentType from 'graphql-type-json'
 import { Document } from '@contentful/rich-text-types'
 
 import { ILifeEventPage } from '../generated/contentfulTypes'
+
 import { Image, mapImage } from './image.model'
 
 @ObjectType()

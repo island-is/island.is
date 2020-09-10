@@ -116,6 +116,29 @@ const Category: Screen<CategoryProps> = ({
     value: c.slug,
   }))
 
+  const subgroupSorting = (a, b) => {
+    // Make items with 'Annað' subgroup appear last.
+    if (b === n('other')) {
+      return -1
+    }
+    // Otherwise sort them alphabetically.
+    return a - b
+  }
+
+  const groupArticlesBySubgroup = (
+    articles: GetArticlesInCategoryQuery['articlesInCategory'],
+  ) => {
+    const groupBy = (items, key) =>
+      items.reduce(
+        (result, item) => ({
+          ...result,
+          [item[key] || n('other')]: [...(result[item[key]] || []), item],
+        }),
+        {},
+      )
+    return groupBy(articles, 'subgroup')
+  }
+
   return (
     <>
       <Head>
@@ -142,6 +165,11 @@ const Category: Screen<CategoryProps> = ({
 
                   const expanded = groupSlug === hash.replace('#', '')
 
+                  const articlesBySubgroup = groupArticlesBySubgroup(articles)
+                  const sortedSubgroups = Object.keys(articlesBySubgroup).sort(
+                    subgroupSorting,
+                  )
+
                   return (
                     <div
                       key={index}
@@ -154,21 +182,41 @@ const Category: Screen<CategoryProps> = ({
                         startExpanded={expanded}
                         visibleContent={description}
                       >
-                        <Stack space={2}>
-                          {articles.map(({ title, slug }, index) => {
+                        <Box paddingY={2}>
+                          {sortedSubgroups.map((subgroup, index) => {
+                            const hasSubgroups = sortedSubgroups.length > 1
                             return (
-                              <FocusableBox
-                                key={index}
-                                href={`${makePath('article')}/[slug]`}
-                                as={makePath('article', slug)}
-                                borderWidth="standard"
-                                borderColor="blue200"
-                              >
-                                <LinkCard>{title}</LinkCard>
-                              </FocusableBox>
+                              <React.Fragment key={subgroup}>
+                                {hasSubgroups && (
+                                  <Typography
+                                    variant="h5"
+                                    paddingBottom={3}
+                                    paddingTop={index === 0 ? 0 : 3}
+                                  >
+                                    {subgroup}
+                                  </Typography>
+                                )}
+                                <Stack space={2}>
+                                  {articlesBySubgroup[subgroup].map(
+                                    ({ title, slug }) => {
+                                      return (
+                                        <FocusableBox
+                                          key={index}
+                                          href={`${makePath('article')}/[slug]`}
+                                          as={makePath('article', slug)}
+                                          borderWidth="standard"
+                                          borderColor="blue200"
+                                        >
+                                          <LinkCard>{title}</LinkCard>
+                                        </FocusableBox>
+                                      )
+                                    },
+                                  )}
+                                </Stack>
+                              </React.Fragment>
                             )
                           })}
-                        </Stack>
+                        </Box>
                       </AccordionCard>
                     </div>
                   )

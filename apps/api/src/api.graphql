@@ -15,6 +15,7 @@ type ContentItem {
   categorySlug: String
   categoryDescription: String
   group: String
+  subgroup: String
   groupSlug: String
   groupDescription: String
   contentBlob: String
@@ -43,20 +44,48 @@ type WebSearchAutocomplete {
   completions: [String!]!
 }
 
-type Taxonomy {
-  title: String
-  slug: String
+type ArticleCategory {
+  title: String!
+  slug: String!
   description: String
 }
 
-type Article {
-  id: String!
-  slug: String!
+type ArticleGroup {
   title: String!
+  slug: String!
+  description: String
+  sortBy: String
+}
+
+type ArticleSubgroup {
+  title: String!
+  slug: String!
+}
+
+type Organization {
+  title: String!
+  slug: String!
+}
+
+type SubArticle {
+  title: String!
+  slug: String!
+  content: String!
+}
+
+type Article {
+  id: ID!
+  contentStatus: String!
+  title: String!
+  shortTitle: String
+  slug: String!
   content: String
-  group: Taxonomy
-  category: Taxonomy
+  category: ArticleCategory
+  group: ArticleGroup
+  subgroup: ArticleSubgroup
+  organization: [Organization!]!
   relatedArticles: [Article!]!
+  subArticles: [SubArticle!]!
 }
 
 type AdgerdirTag {

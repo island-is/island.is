@@ -27,6 +27,9 @@ export class ContentItem {
   group: string
 
   @Field({ nullable: true })
+  subgroup: string
+
+  @Field({ nullable: true })
   groupSlug: string
 
   @Field({ nullable: true })

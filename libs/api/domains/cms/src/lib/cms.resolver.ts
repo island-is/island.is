@@ -51,7 +51,7 @@ import {
   getAdgerdirTags,
   getLifeEventPage,
 } from './services'
-import { LatestNewsSlice } from './models/slices/latestNewsSlice.model'
+import { LatestNewsSlice } from './models/latestNewsSlice.model'
 import { Menu } from './models/menu.model'
 import { GetMenuInput } from './dto/getMenu.input'
 import { AdgerdirTags } from './models/adgerdirTags.model'

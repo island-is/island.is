@@ -10,6 +10,9 @@ export interface IArticleFields {
   /** Title */
   title: string
 
+  /** Short title */
+  shortTitle?: string | undefined
+
   /** Slug */
   slug: string
 
@@ -22,11 +25,17 @@ export interface IArticleFields {
   /** Group */
   group?: IArticleGroup | undefined
 
+  /** Subgroup */
+  subgroup?: IArticleSubgroup | undefined
+
   /** Organization */
   organization?: IOrganization[] | undefined
 
   /** Related Articles */
   relatedArticles?: IArticle[] | undefined
+
+  /** Baby Articles */
+  subArticles?: ISubArticle[] | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -83,6 +92,9 @@ export interface IArticleGroupFields {
 
   /** Description */
   description?: string | undefined
+
+  /** Sort by */
+  sortBy?: 'A to Z' | 'Subgroups' | undefined
 }
 
 export interface IArticleGroup extends Entry<IArticleGroupFields> {
@@ -95,6 +107,33 @@ export interface IArticleGroup extends Entry<IArticleGroupFields> {
     contentType: {
       sys: {
         id: 'articleGroup'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IArticleSubgroupFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+}
+
+/** Used inside groups to further categorize articles by subject */
+
+export interface IArticleSubgroup extends Entry<IArticleSubgroupFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'articleSubgroup'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1075,6 +1114,36 @@ export interface IStorySection extends Entry<IStorySectionFields> {
   }
 }
 
+export interface ISubArticleFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Content */
+  content: Document
+}
+
+/** A sub article that's a part of another main article */
+
+export interface ISubArticle extends Entry<ISubArticleFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'subArticle'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ITimelineFields {
   /** Title */
   title?: string | undefined
@@ -1499,6 +1568,7 @@ export type CONTENT_TYPE =
   | 'article'
   | 'articleCategory'
   | 'articleGroup'
+  | 'articleSubgroup'
   | 'bigBulletList'
   | 'card'
   | 'cardSection'
@@ -1530,6 +1600,7 @@ export type CONTENT_TYPE =
   | 'statistics'
   | 'story'
   | 'storySection'
+  | 'subArticle'
   | 'timeline'
   | 'timelineEvent'
   | 'uiConfiguration'
