@@ -71,13 +71,17 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
 
   const data = JSON.parse(article.content)
 
-  const actionButtonLinks =
+  const actionButtons =
     data?.content
-      .map((current) => current.data?.target?.fields?.processLink)
-      .filter(Boolean) || []
+      .map((current) => {
+        return {
+          link: current.data?.target?.fields?.processLink,
+          text: current.data?.target?.fields?.buttonText,
+        }
+      })
+      .filter((x) => x.link) || []
 
-  const actionButtonLink =
-    actionButtonLinks.length === 1 ? actionButtonLinks[0] : null
+  const actionButton = actionButtons.length === 1 ? actionButtons[0] : null
 
   return (
     <>
@@ -87,10 +91,10 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
       <ArticleLayout
         sidebar={
           <Stack space={3}>
-            {actionButtonLink ? (
+            {actionButton ? (
               <Box background="purple100" padding={4} borderRadius="large">
-                <Button href={actionButtonLink} width="fluid">
-                  {n('processLinkButtonText')}
+                <Button href={actionButton.link} width="fluid">
+                  {actionButton.text || n('processLinkButtonText')}
                 </Button>
               </Box>
             ) : null}
@@ -127,19 +131,24 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
             paddingBottom={2}
           >
             <Breadcrumbs>
-              <Link href={makePath()}>
-                <a>Ísland.is</a>
-              </Link>
+              <Link href={makePath()}>Ísland.is</Link>
               <Link
                 href={`${makePath('category')}/[slug]`}
                 as={makePath('category', article.category.slug)}
               >
-                <a>{article.category.title}</a>
+                {article.category.title}
               </Link>
               {article.group && (
-                <Tag variant="purple" label>
-                  {article.group.title}
-                </Tag>
+                <Link
+                  as={makePath(
+                    'category',
+                    article.category.slug +
+                      (article.group?.slug ? `#${article.group.slug}` : ''),
+                  )}
+                  href={makePath('category', '[slug]')}
+                >
+                  <Tag variant="purple">{article.group.title}</Tag>
+                </Link>
               )}
             </Breadcrumbs>
           </GridColumn>

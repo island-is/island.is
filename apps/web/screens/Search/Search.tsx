@@ -138,7 +138,7 @@ const Search: Screen<CategoryProps> = ({
   return (
     <>
       <Head>
-        <title>Leitarniðurstöður | Ísland.is</title>
+        <title>{n('searchResults', 'Leitarniðurstöður')} | Ísland.is</title>
       </Head>
       <CategoryLayout
         sidebar={
@@ -146,12 +146,14 @@ const Search: Screen<CategoryProps> = ({
             <Filter
               selected={!filters.category}
               onClick={() => onSelectCategory(null)}
-              text={`Allir flokkar (${searchResults.total})`}
+              text={`${n('allCategories', 'Allir flokkar')} (${
+                searchResults.total
+              })`}
             />
             <Divider weight="alternate" />
             <SidebarAccordion
               id="sidebar_accordion_categories"
-              label="Sjá flokka"
+              label={n('seeCategories', 'Sjá flokka')}
             >
               <Stack space={[1, 1, 2]}>
                 {sidebarCategories.map((c, index) => {
@@ -219,8 +221,8 @@ const Search: Screen<CategoryProps> = ({
           />
           <Hidden above="md">
             <Select
-              label="Leitarflokkar"
-              placeholder="Flokkar"
+              label={n('searchResult', 'Leitarflokkar')}
+              placeholder={n('categories', 'Flokkar')}
               defaultValue={defaultSelectedCategory}
               options={categorySelectOptions}
               onChange={onChangeSelectCategoryOptions}
@@ -230,14 +232,19 @@ const Search: Screen<CategoryProps> = ({
           <Typography variant="intro" as="p">
             {filteredItems.length === 0 ? (
               <span>
-                Ekkert fannst við leit á <strong>{q}</strong>
+                {n('nothingFoundWhenSearchingFor', 'Ekkert fannst við leit á')}{' '}
+                <strong>{q}</strong>
               </span>
             ) : (
               <span>
-                {filteredItems.length} leitarniðurstöður{' '}
+                {filteredItems.length}{' '}
+                {filteredItems.length === 1
+                  ? n('searchResult', 'leitarniðurstaða')
+                  : n('searchResults', 'leitarniðurstöður')}
                 {filters.category && (
                   <>
-                    í flokki
+                    {' '}
+                    {n('inCategory', 'í flokki')}
                     {categoryTitle ? (
                       <>
                         : <strong>{categoryTitle}</strong>
