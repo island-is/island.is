@@ -1,6 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { LinkCard, mapLinkCard } from '../linkCard.model'
-import { ICardSection } from '../../generated/contentfulTypes'
+
+import { ICardSection } from '../generated/contentfulTypes'
+
+import { LinkCard, mapLinkCard } from './linkCard.model'
 
 @ObjectType()
 export class LinkCardSlice {

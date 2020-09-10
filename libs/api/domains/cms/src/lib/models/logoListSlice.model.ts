@@ -1,6 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { Image, mapImage } from '../image.model'
-import { ILogoListSlice } from '../../generated/contentfulTypes'
+
+import { ILogoListSlice } from '../generated/contentfulTypes'
+
+import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class LogoListSlice {

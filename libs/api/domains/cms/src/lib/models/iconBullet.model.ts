@@ -1,6 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { Image, mapImage } from '../image.model'
-import { IIconBullet } from '../../generated/contentfulTypes'
+
+import { IIconBullet } from '../generated/contentfulTypes'
+
+import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class IconBullet {

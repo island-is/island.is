@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { ISectionHeading } from '../../generated/contentfulTypes'
+
+import { ISectionHeading } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class HeadingSlice {

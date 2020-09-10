@@ -1,13 +1,12 @@
 import { createUnionType } from '@nestjs/graphql'
+
+import { IIconBullet, INumberBulletSection } from '../generated/contentfulTypes'
+
 import {
   NumberBulletGroup,
   mapNumberBulletGroup,
 } from './numberBulletGroup.model'
 import { IconBullet, mapIconBullet } from './iconBullet.model'
-import {
-  IIconBullet,
-  INumberBulletSection,
-} from '../../generated/contentfulTypes'
 
 export const BulletEntry = createUnionType({
   name: 'BulletEntry',

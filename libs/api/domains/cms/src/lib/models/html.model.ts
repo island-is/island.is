@@ -3,6 +3,7 @@ import { Document, BLOCKS, TopLevelBlock } from '@contentful/rich-text-types'
 import graphqlTypeJson from 'graphql-type-json'
 
 import { Slice } from './slice.model'
+
 @ObjectType()
 export class Html {
   constructor(initializer: Html) {

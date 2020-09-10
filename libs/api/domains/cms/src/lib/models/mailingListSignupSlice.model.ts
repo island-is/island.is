@@ -1,5 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IMailingListSignup } from '../../generated/contentfulTypes'
+
+import { IMailingListSignup } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class MailingListSignupSlice {

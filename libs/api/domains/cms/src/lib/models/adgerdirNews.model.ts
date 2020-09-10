@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 import { IVidspyrnaNews } from '../generated/contentfulTypes'
+
 import { AdgerdirPage, mapAdgerdirPage } from './adgerdirPage.model'
 import { Image, mapImage } from './image.model'
 

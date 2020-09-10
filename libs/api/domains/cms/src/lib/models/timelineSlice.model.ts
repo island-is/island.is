@@ -1,6 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { TimelineEvent, mapTimelineEvent } from '../timelineEvent.model'
-import { ITimeline } from '../../generated/contentfulTypes'
+
+import { ITimeline } from '../generated/contentfulTypes'
+
+import { TimelineEvent, mapTimelineEvent } from './timelineEvent.model'
 
 @ObjectType()
 export class TimelineSlice {

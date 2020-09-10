@@ -1,7 +1,8 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
-import { IVidspyrnaFeaturedNews } from '../../generated/contentfulTypes'
-import { AdgerdirNews, mapAdgerdirNewsItem } from '../adgerdirNews.model'
+import { IVidspyrnaFeaturedNews } from '../generated/contentfulTypes'
+
+import { AdgerdirNews, mapAdgerdirNewsItem } from './adgerdirNews.model'
 
 @ObjectType()
 export class AdgerdirFeaturedNewsSlice {

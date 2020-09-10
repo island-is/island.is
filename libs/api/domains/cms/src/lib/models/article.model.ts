@@ -1,7 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-import { Taxonomy } from './taxonomy.model'
 import { IArticle } from '../generated/contentfulTypes'
+
+import { Taxonomy } from './taxonomy.model'
 
 @ObjectType()
 export class Article {
