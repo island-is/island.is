@@ -8,7 +8,6 @@ import {
   Stack,
   Breadcrumbs,
   Hidden,
-  Select,
   GridColumn,
   GridRow,
   Tag,
@@ -18,7 +17,11 @@ import {
   Link,
 } from '@island.is/island-ui/core'
 import { Content } from '@island.is/island-ui/contentful'
-import { Sidebar, getHeadingLinkElements } from '@island.is/web/components'
+import {
+  Sidebar,
+  getHeadingLinkElements,
+  DrawerMenu,
+} from '@island.is/web/components'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
 import { Screen } from '../types'
@@ -27,6 +30,7 @@ import { useI18n } from '../i18n'
 import useRouteNames from '../i18n/useRouteNames'
 import { CustomNextError } from '../units/ErrorBoundary'
 import {
+  Query,
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
   QueryGetArticleArgs,
@@ -47,8 +51,8 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
   useEffect(() => {
     setContentOverviewOptions(
       getHeadingLinkElements().map((link) => ({
-        label: link.textContent,
-        value: slugify(link.textContent),
+        title: link.textContent,
+        url: `#${slugify(link.textContent)}`,
       })) || [],
     )
   }, [])
@@ -143,12 +147,10 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
         <GridRow>
           <GridColumn span="8/8" paddingBottom={4}>
             <Hidden above="sm">
-              <Select
-                label="Efnisyfirlit"
-                placeholder="Flokkar"
-                options={contentOverviewOptions}
-                onChange={onChangeContentOverview}
-                name="content-overview"
+              <DrawerMenu
+                categories={[
+                  { title: 'Efnisyfirlit', items: contentOverviewOptions },
+                ]}
               />
             </Hidden>
           </GridColumn>
@@ -156,7 +158,10 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
         <GridRow>
           <GridColumn offset={['0', '0', '1/8']} span={['8/8', '8/8', '7/8']}>
             <Typography variant="h1" as="h1" paddingBottom={2}>
-              <span data-sidebar-link={slugify(article.title)}>
+              <span
+                data-sidebar-link={slugify(article.title)}
+                id={`${slugify(article.title)}`}
+              >
                 {article.title}
               </span>
             </Typography>

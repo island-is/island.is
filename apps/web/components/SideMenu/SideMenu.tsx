@@ -78,7 +78,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
               </GridRow>
               <GridRow>
                 <GridColumn span="8/12" paddingTop={3} paddingBottom={3}>
-                  <Link href="https://minarsidur.island.is/" passHref>
+                  <Link href="https://minarsidur.island.is/">
                     <Button variant="menu" leftIcon="user" width="fluid">
                       {t.login}
                     </Button>
