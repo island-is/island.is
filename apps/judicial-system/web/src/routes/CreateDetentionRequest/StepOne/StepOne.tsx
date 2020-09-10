@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useContext } from 'react'
 
 import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
 import {
@@ -13,27 +13,29 @@ import {
   Button,
   DatePicker,
 } from '@island.is/island-ui/core'
-import { WorkingCase } from '../../types'
-import * as api from '../../api'
-import { validate } from '../../utils/validate'
+import { CreateDetentionReqStepOneCase } from '../../../types'
+import * as api from '../../../api'
+import { validate } from '../../../utils/validate'
+import { updateState, autoSave } from '../../../utils/stepHelper'
 import { setHours, setMinutes, isValid } from 'date-fns'
 import { isNull } from 'lodash'
 
-export const CreateDetentionRequest: React.FC = () => {
-  const [workingCase, setWorkingCase] = useState<WorkingCase>({
-    id: '',
-    case: {
-      policeCaseNumber: '',
-      suspectNationalId: '',
-      suspectName: '',
-      suspectAddress: '',
-      court: '',
-      arrestDate: null,
-      arrestTime: '',
-      requestedCourtDate: null,
+export const StepOne: React.FC = () => {
+  const [workingCase, setWorkingCase] = useState<CreateDetentionReqStepOneCase>(
+    {
+      id: '',
+      case: {
+        policeCaseNumber: '',
+        suspectNationalId: '',
+        suspectName: '',
+        suspectAddress: '',
+        court: '',
+        arrestDate: null,
+        arrestTime: '',
+        requestedCourtDate: null,
+      },
     },
-  })
-  const [, setAutoSaveSucceded] = useState<boolean>(true)
+  )
   const [
     policeCaseNumberErrorMessage,
     setPoliceCaseNumberErrorMessage,
@@ -54,6 +56,7 @@ export const CreateDetentionRequest: React.FC = () => {
     '',
   )
   const [someInputIsDirty, setSomeInputIsDirty] = useState<boolean>(false)
+
   const policeCaseNumberRef = useRef<HTMLInputElement>()
   const suspectNationalIdRef = useRef<HTMLInputElement>()
 
@@ -84,37 +87,6 @@ export const CreateDetentionRequest: React.FC = () => {
 
       setWorkingCase({ id: caseId, case: workingCase.case })
     }
-  }
-
-  const autoSave = async (caseField: string, caseFieldValue: string | Date) => {
-    // Only save if the field has changes and the case exists
-    if (
-      workingCase.case[caseField] !== caseFieldValue &&
-      workingCase.id !== ''
-    ) {
-      // Save the case
-      const response = await api.saveCase(
-        workingCase.id,
-        caseField,
-        caseFieldValue,
-      )
-
-      if (response === 200) {
-        // Update the working case
-        updateState(caseField, caseFieldValue)
-      } else {
-        setAutoSaveSucceded(false)
-
-        // TODO: Do something when autosave fails
-      }
-    }
-  }
-
-  const updateState = (caseField: string, caseFieldValue: string | Date) => {
-    const copyOfWorkingCase = Object.assign({}, workingCase)
-    copyOfWorkingCase.case[caseField] = caseFieldValue
-
-    setWorkingCase(copyOfWorkingCase)
   }
 
   return (
@@ -150,7 +122,12 @@ export const CreateDetentionRequest: React.FC = () => {
                   const validateField = validate(evt.target.value, 'empty')
                   if (validateField.isValid) {
                     createCaseIfPossible()
-                    updateState('policeCaseNumber', evt.target.value)
+                    updateState(
+                      workingCase,
+                      'policeCaseNumber',
+                      evt.target.value,
+                      setWorkingCase,
+                    )
                   } else {
                     setPoliceCaseNumberErrorMessage(validateField.errorMessage)
                   }
@@ -178,7 +155,12 @@ export const CreateDetentionRequest: React.FC = () => {
 
                     if (validateField.isValid) {
                       createCaseIfPossible()
-                      updateState('suspectNationalId', evt.target.value)
+                      updateState(
+                        workingCase,
+                        'suspectNationalId',
+                        evt.target.value,
+                        setWorkingCase,
+                      )
                     } else {
                       setNationalIdErrorMessage(validateField.errorMessage)
                     }
@@ -197,7 +179,12 @@ export const CreateDetentionRequest: React.FC = () => {
                     const validateField = validate(evt.target.value, 'empty')
 
                     if (validateField.isValid) {
-                      autoSave('suspectName', evt.target.value)
+                      autoSave(
+                        workingCase,
+                        'suspectName',
+                        evt.target.value,
+                        setWorkingCase,
+                      )
                     } else {
                       setSuspectNameErrorMessage(validateField.errorMessage)
                     }
@@ -216,7 +203,12 @@ export const CreateDetentionRequest: React.FC = () => {
                     const validateField = validate(evt.target.value, 'empty')
 
                     if (validateField.isValid) {
-                      autoSave('suspectAddress', evt.target.value)
+                      autoSave(
+                        workingCase,
+                        'suspectAddress',
+                        evt.target.value,
+                        setWorkingCase,
+                      )
                     } else {
                       setSuspectAddressErrorMessage(validateField.errorMessage)
                     }
@@ -270,7 +262,7 @@ export const CreateDetentionRequest: React.FC = () => {
                   },
                 ]}
                 onChange={({ label }: Option) => {
-                  autoSave('court', label)
+                  autoSave(workingCase, 'court', label, setWorkingCase)
                 }}
               />
             </Box>
@@ -290,7 +282,12 @@ export const CreateDetentionRequest: React.FC = () => {
                     errorMessage={arrestDateErrorMessage}
                     hasError={arrestDateErrorMessage !== ''}
                     handleChange={(date) => {
-                      updateState('arrestDate', date)
+                      updateState(
+                        workingCase,
+                        'arrestDate',
+                        date,
+                        setWorkingCase,
+                      )
                     }}
                     handleCloseCalander={(date: Date) => {
                       if (isNull(date) || !isValid(date)) {
@@ -316,7 +313,7 @@ export const CreateDetentionRequest: React.FC = () => {
                       )
                       const validateTimeFormat = validate(
                         evt.target.value,
-                        'time',
+                        'time-format',
                       )
 
                       if (
@@ -338,8 +335,18 @@ export const CreateDetentionRequest: React.FC = () => {
                           parseInt(timeWithoutColon.substr(2, 4)),
                         )
 
-                        autoSave('arrestDate', arrestDateMinutes)
-                        updateState('arrestTime', evt.target.value)
+                        autoSave(
+                          workingCase,
+                          'arrestDate',
+                          arrestDateMinutes,
+                          setWorkingCase,
+                        )
+                        updateState(
+                          workingCase,
+                          'arrestTime',
+                          evt.target.value,
+                          setWorkingCase,
+                        )
                       } else {
                         setArrestTimeErrorMessage(
                           validateTimeEmpty.errorMessage ||
@@ -367,7 +374,12 @@ export const CreateDetentionRequest: React.FC = () => {
                     locale="is"
                     minDate={new Date()}
                     handleChange={(date) => {
-                      updateState('requestedCourtDate', date)
+                      updateState(
+                        workingCase,
+                        'requestedCourtDate',
+                        date,
+                        setWorkingCase,
+                      )
                     }}
                   />
                 </GridColumn>
@@ -390,7 +402,12 @@ export const CreateDetentionRequest: React.FC = () => {
                         parseInt(timeWithoutColon.substr(2, 4)),
                       )
 
-                      autoSave('requestedCourtDate', requestedCourtDateMinutes)
+                      autoSave(
+                        workingCase,
+                        'requestedCourtDate',
+                        requestedCourtDateMinutes,
+                        setWorkingCase,
+                      )
                     }}
                   />
                 </GridColumn>
@@ -406,6 +423,7 @@ export const CreateDetentionRequest: React.FC = () => {
                   !someInputIsDirty ||
                   filledRequiredFields.length !== requiredFields.length
                 }
+                href="/stofna-krofu/lagaakvaedi"
               >
                 Halda áfram
               </Button>
@@ -417,4 +435,4 @@ export const CreateDetentionRequest: React.FC = () => {
   )
 }
 
-export default CreateDetentionRequest
+export default StepOne
