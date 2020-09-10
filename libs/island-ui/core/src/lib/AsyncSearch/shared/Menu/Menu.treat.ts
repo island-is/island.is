@@ -7,7 +7,7 @@ export const menu = style({
   width: '100%',
   position: 'absolute',
   backgroundColor: theme.color.white,
-  maxHeight: 425,
+  maxHeight: 455,
   overflowY: 'auto',
   outline: 0,
   opacity: 0,

@@ -188,7 +188,9 @@ export const variants: Variants = {
   },
 }
 
-export const links = style({})
+export const links = style({
+  cursor: 'pointer',
+})
 
 globalStyle(`${links} a`, {
   color: theme.color.blue400,

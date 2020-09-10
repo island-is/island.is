@@ -120,15 +120,15 @@ export const loadingIcon = style({
 
 export const loadingIconSizes = styleMap({
   medium: {
-    right: 36,
+    right: 8,
     ...themeUtils.responsiveStyle({
       md: {
-        right: 43,
+        right: 13,
       },
     }),
   },
   large: {
-    right: 66,
+    right: 26,
   },
 })
 

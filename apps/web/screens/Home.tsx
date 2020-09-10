@@ -75,6 +75,7 @@ const Home: Screen<HomeProps> = ({
           {n('featuredArticles', []).map(({ title, url }, index) => {
             return (
               <Tag
+                href={url}
                 key={index}
                 variant="darkerBlue"
                 onClick={() => {
