@@ -170,12 +170,12 @@ async function main() {
     }
     ${
       generatedFiles.find((type) => type === contentType.sys.id)
-        ? `• We created the model libs/api/domains/cms/src/lib/models/${contentType.sys.id}.models.ts for your contentType.`
+        ? `• We created/updated the model libs/api/domains/cms/src/lib/models/${contentType.sys.id}.models.ts for your contentType.`
         : ''
     }
     ${
       linkTypes.length > 0
-        ? `• We also had to create ${
+        ? `• We also had to create/update ${
             linkTypes.length
           } linkContentTypes. Make sure to check ${linkTypes
             .map((type) => `"${type}"`)

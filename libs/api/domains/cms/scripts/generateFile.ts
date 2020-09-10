@@ -44,10 +44,7 @@ export const generateFile = (
 
   const genericImports = mapperImports
     .filter((name) => name === 'mapImage')
-    .map(
-      (name) => `import { ${name} } from '../mappers'
-      import { Image } from './image.model'`,
-    )
+    .map(() => `import { Image, mapImage } from './image.model'`)
 
   const linkContentTypesImports = linkContentTypes
     .map((type) => {
