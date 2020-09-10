@@ -284,7 +284,10 @@ const Results: FC<{
   if (!search.term) {
     const suggestions = search.suggestions.map((suggestion, i) => (
       <div key={suggestion} {...getItemProps({ item: suggestion })}>
-        <Typography color={i === highlightedIndex ? 'blue400' : 'dark400'}>
+        <Typography
+          links
+          color={i === highlightedIndex ? 'blue400' : 'dark400'}
+        >
           {suggestion}
         </Typography>
       </div>
@@ -294,8 +297,14 @@ const Results: FC<{
   }
 
   return (
-    <Box display="flex" background="blue100" paddingY={2} paddingX={3}>
-      <div className={styles.menuColumn}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      background="blue100"
+      paddingY={2}
+      paddingX={3}
+    >
+      <div className={styles.menuRow}>
         <Stack space={1}>
           {search.suggestions.map((suggestion, i) => {
             const suggestionHasTerm = suggestion.startsWith(search.term)
@@ -306,6 +315,7 @@ const Results: FC<{
             return (
               <div key={suggestion} {...getItemProps({ item: suggestion })}>
                 <Typography
+                  links
                   color={i === highlightedIndex ? 'blue400' : 'dark400'}
                 >
                   {`${search.prefix} ${startOfString}`}
@@ -315,26 +325,28 @@ const Results: FC<{
             )
           })}
         </Stack>
-      </div>
-      <div className={styles.separator} />
-      <div className={styles.menuColumn}>
-        {search.results && (
-          <Stack space={2}>
-            <Typography variant="eyebrow" color="purple400">
-              Beint að efninu
-            </Typography>
-            {search.results.items.map(({ id, title, slug }) => (
-              <div key={id} {...getItemProps()}>
-                <Typography links variant="h5" color="blue400">
-                  <Link href={makePath('article', slug)}>
-                    <a>{title}</a>
-                  </Link>
-                </Typography>
-              </div>
-            ))}
-          </Stack>
-        )}
-      </div>
+      </div>{' '}
+      {search.results.items.length > 0 && (
+        <>
+          <div className={styles.separatorHorizontal} />
+          <div className={styles.menuRow}>
+            <Stack space={2}>
+              <Typography variant="eyebrow" color="purple400">
+                Beint að efninu
+              </Typography>
+              {search.results.items.slice(0, 5).map(({ id, title, slug }) => (
+                <div key={id} {...getItemProps()}>
+                  <Typography links variant="h5" color="blue400">
+                    <Link href={makePath('article', slug)}>
+                      <a>{title}</a>
+                    </Link>
+                  </Typography>
+                </div>
+              ))}
+            </Stack>
+          </div>
+        </>
+      )}
     </Box>
   )
 }
@@ -374,7 +386,7 @@ const CommonSearchTerms = ({
       </div>
       {width > STACK_WIDTH - 1 ? (
         <>
-          <div className={styles.separator} />
+          <div className={styles.separatorVertical} />
           <div className={styles.menuColumn}>
             <Stack space={2}>{right}</Stack>
           </div>

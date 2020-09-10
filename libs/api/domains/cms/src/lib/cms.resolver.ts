@@ -1,4 +1,11 @@
-import { Args, Query, Resolver, ResolveField, Parent } from '@nestjs/graphql'
+import {
+  Args,
+  Query,
+  Resolver,
+  ResolveField,
+  Parent,
+  Directive,
+} from '@nestjs/graphql'
 import { Article } from './models/article.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
 import { AdgerdirNews } from './models/adgerdirNews.model'
@@ -51,24 +58,34 @@ import { AdgerdirTags } from './models/adgerdirTags.model'
 import { GetAdgerdirTagsInput } from './dto/getAdgerdirTags.input'
 import { LifeEventPage } from './models/lifeEventPage.model'
 import { PaginatedAdgerdirNews } from './models/paginatedAdgerdirNews.model'
+import { environment } from './environments'
+
+const { cacheTime } = environment
+
+const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
 
 @Resolver()
+@Directive(cacheControlDirective())
 export class CmsResolver {
+  @Directive(cacheControlDirective())
   @Query(() => Article, { nullable: true })
   getArticle(@Args('input') input: GetArticleInput): Promise<Article | null> {
     return getArticle(input?.slug ?? '', input?.lang ?? 'is-IS')
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => News, { nullable: true })
   getNews(@Args('input') input: GetNewsInput): Promise<News | null> {
     return getNews(input.lang ?? 'is-IS', input.slug)
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => PaginatedNews)
   getNewsList(@Args('input') input: GetNewsListInput): Promise<PaginatedNews> {
     return getNewsList(input)
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => PaginatedAdgerdirNews)
   getAdgerdirNewsList(
     @Args('input') input: GetAdgerdirNewsListInput,
@@ -76,6 +93,7 @@ export class CmsResolver {
     return getAdgerdirNewsList(input)
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => Namespace, { nullable: true })
   getNamespace(
     @Args('input') input: GetNamespaceInput,
@@ -83,6 +101,7 @@ export class CmsResolver {
     return getNamespace(input?.namespace ?? '', input?.lang ?? 'is-IS')
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => AboutPage)
   getAboutPage(
     @Args('input') input: GetAboutPageInput,
@@ -90,6 +109,7 @@ export class CmsResolver {
     return getAboutPage(input)
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => LandingPage, { nullable: true })
   getLandingPage(
     @Args('input') input: GetLandingPageInput,
@@ -97,6 +117,7 @@ export class CmsResolver {
     return getLandingPage(input)
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => GenericPage, { nullable: true })
   getGenericPage(
     @Args('input') input: GetGenericPageInput,
@@ -104,6 +125,7 @@ export class CmsResolver {
     return getGenericPage(input)
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => AdgerdirPage, { nullable: true })
   getAdgerdirPage(
     @Args('input') input: GetAdgerdirPageInput,
@@ -111,6 +133,7 @@ export class CmsResolver {
     return getAdgerdirPage(input?.slug ?? '', input?.lang ?? 'is-IS')
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => AdgerdirNews, { nullable: true })
   getAdgerdirNews(
     @Args('input') input: GetAdgerdirNewsInput,
@@ -118,6 +141,7 @@ export class CmsResolver {
     return getAdgerdirNews(input?.slug ?? '', input?.lang ?? 'is-IS')
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => AdgerdirPages)
   getAdgerdirPages(
     @Args('input') input: GetAdgerdirPagesInput,
@@ -125,6 +149,7 @@ export class CmsResolver {
     return getAdgerdirPages(input?.lang ?? 'is-IS')
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => AdgerdirTags, { nullable: true })
   getAdgerdirTags(
     @Args('input') input: GetAdgerdirTagsInput,
@@ -132,6 +157,7 @@ export class CmsResolver {
     return getAdgerdirTags(input?.lang ?? 'is-IS')
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => FrontpageSliderList, { nullable: true })
   getFrontpageSliderList(
     @Args('input') input: GetFrontpageSliderListInput,
@@ -139,6 +165,7 @@ export class CmsResolver {
     return getFrontpageSliderList(input?.lang ?? 'is-IS')
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => AdgerdirFrontpage, { nullable: true })
   getAdgerdirFrontpage(
     @Args('input') input: GetAdgerdirFrontpageInput,
@@ -146,11 +173,13 @@ export class CmsResolver {
     return getAdgerdirFrontpage(input?.lang ?? 'is-IS')
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => Menu, { nullable: true })
   getMenu(@Args('input') input: GetMenuInput): Promise<Menu | null> {
     return getMenu(input?.name ?? '', input?.lang ?? 'is-IS')
   }
 
+  @Directive(cacheControlDirective())
   @Query(() => LifeEventPage, { nullable: true })
   getLifeEventPage(
     @Args('input') input: GetLifeEventPageInput,
