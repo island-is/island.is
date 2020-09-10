@@ -10,4 +10,9 @@ export const container = style({
   borderColor: theme.color.blue200,
 })
 
-export const colors = styleMap(mapToStyleProperty(theme.color, 'backgroundColor'))
+export const backgroundColors = styleMap(
+  mapToStyleProperty(theme.color, 'backgroundColor'),
+)
+export const borderColors = styleMap(
+  mapToStyleProperty(theme.color, 'borderColor'),
+)
