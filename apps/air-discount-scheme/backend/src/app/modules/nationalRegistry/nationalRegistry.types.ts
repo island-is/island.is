@@ -26,6 +26,7 @@ export interface NationalRegistryFamilyLookupResponse {
   source: 'Þjóðskrá' | 'Fyrirtækjaskrá'
   familyssn: string
   results: FamilyMember[]
+  error?: string
 }
 
 export interface NationalRegistryUser {

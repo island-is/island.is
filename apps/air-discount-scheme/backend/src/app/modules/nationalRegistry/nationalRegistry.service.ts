@@ -2,6 +2,7 @@ import { Inject, Injectable, CACHE_MANAGER, HttpService } from '@nestjs/common'
 import CacheManager from 'cache-manager'
 import * as kennitala from 'kennitala'
 
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
   NationalRegistryGeneralLookupResponse,
   NationalRegistryFamilyLookupResponse,
@@ -109,6 +110,7 @@ export class NationalRegistryService {
   constructor(
     private httpService: HttpService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
   baseUrl = environment.nationalRegistry.url
@@ -194,13 +196,20 @@ export class NationalRegistryService {
       .get(`${this.baseUrl}/family-lookup?ssn=${nationalId}`)
       .toPromise()
 
-    const children = response.data[0].results
-      .filter(
-        (person) =>
-          person.ssn !== nationalId &&
-          [1, 2].includes(person.gender) &&
-          this.isChild(person.ssn),
-      )
+    const data = response.data[0]
+    if (data.error) {
+      this.logger.error(`Could not find family members for User<${nationalId}>`)
+      return []
+    }
+
+    const family = data.results
+    const user = family.find((person) => person.ssn === nationalId)
+    if (![1, 2].includes(user.gender)) {
+      return []
+    }
+
+    const children = family
+      .filter((person) => person.ssn !== nationalId && this.isChild(person.ssn))
       .map((person) => person.ssn)
     if (children) {
       await this.cacheManager.set(cacheKey, { children }, { ttl: ONE_MONTH })
