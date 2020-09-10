@@ -17,8 +17,18 @@ const useAuth = () => {
         payload: user,
       })
     } catch (exception) {
-      userManager.signinRedirect()
+      userManager.signinRedirect({
+        state: window.location.pathname,
+      })
     }
+  }
+
+  async function signOutUser() {
+    dispatch({
+      type: ActionType.SetUserLoggingOut,
+    })
+
+    userManager.signoutRedirect()
   }
 
   async function mockSignIn() {
@@ -41,6 +51,7 @@ const useAuth = () => {
     userInfo,
     userInfoState,
     signInUser,
+    signOutUser,
     mockSignIn,
   }
 }
