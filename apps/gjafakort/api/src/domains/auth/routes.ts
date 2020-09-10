@@ -54,7 +54,7 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
   if (!redirectCookie) {
     logger.error('Redirect cookie not sent', {
       extra: {
-        user,
+        userAuthId: user.authId,
       },
     })
     return res.redirect('/api/auth/login')
@@ -64,7 +64,7 @@ router.post('/callback', [body('token').notEmpty()], async (req, res) => {
   if (!user || authId !== user?.authId) {
     logger.error('Could not verify user authenticity', {
       extra: {
-        user,
+        userAuthId: user.authId,
         authId,
         returnUrl,
       },
