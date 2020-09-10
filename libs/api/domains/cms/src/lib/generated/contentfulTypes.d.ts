@@ -10,6 +10,9 @@ export interface IArticleFields {
   /** Title */
   title: string
 
+  /** Short title */
+  shortTitle?: string | undefined
+
   /** Slug */
   slug: string
 
@@ -89,6 +92,9 @@ export interface IArticleGroupFields {
 
   /** Description */
   description?: string | undefined
+
+  /** Sort by */
+  sortBy?: 'A to Z' | 'Subgroups' | undefined
 }
 
 export interface IArticleGroup extends Entry<IArticleGroupFields> {

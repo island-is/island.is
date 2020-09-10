@@ -1,6 +1,6 @@
 import 'isomorphic-fetch'
 import { Case, CreateCaseRequest } from '../types'
-import { getCookie } from '../utils/cookies'
+import { getCookie, deleteCookie } from '../utils/cookies'
 
 // const getCaseById: (caseId: string) => Promise<GetCaseByIdResponse> = async (
 //   caseId: string,
@@ -102,5 +102,20 @@ export const saveCase: (
       }
     }
     return response.status
+  }
+}
+
+export const logOut = async () => {
+  const response = await fetch('/api/auth/logout', {
+    headers: {
+      Authorization: `Bearer ${csrfToken}`,
+    },
+  })
+
+  if (response.ok) {
+    deleteCookie('judicial-system.csrf')
+    window.location.assign('/')
+  } else {
+    // TODO: Handle error
   }
 }

@@ -384,15 +384,34 @@
             }
           }
         },
-        "codegen-cms-types": {
+        "env-secrets": {
           "builder": "@nrwl/workspace:run-commands",
           "options": {
             "commands": [
               {
-                "command": "../../../../node_modules/.bin/contentful-typescript-codegen --output src/lib/generated/contentfulTypes.d.ts"
+                "command": "./scripts/secrets.sh api --reset"
               }
-            ],
-            "cwd": "libs/api/domains/cms"
+            ]
+          }
+        },
+        "contentful-types": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "npx ts-node -O '{\"module\":\"commonjs\"}' ./libs/api/domains/cms/scripts/generateContentfulTypes.ts"
+              }
+            ]
+          }
+        },
+        "contentType": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "npx ts-node -O '{\"module\":\"commonjs\"}' ./libs/api/domains/cms/scripts/contentType.ts {args.id} {args.sys} {args.overwrite}"
+              }
+            ]
           }
         },
         "docker-express": {}
