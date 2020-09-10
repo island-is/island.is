@@ -10,7 +10,9 @@ describe('ServiceRepository', ()=>{
         cursor:null, 
         limit:null,
         name:null,
-        owner:null
+        owner:null,
+        pricing:null,
+        data:null
       }
       const ret = await getServices(params);
       expect(ret.result[0].id).toBe(0);
