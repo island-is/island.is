@@ -1,13 +1,16 @@
 import { Sequelize } from 'sequelize-typescript'
 
 import { getConnectionToken } from '@nestjs/sequelize'
-import { INestApplication, Type } from '@nestjs/common'
+import { INestApplication, Type, CanActivate } from '@nestjs/common'
 
 import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
 
-import { AppModule } from '../src/app/app.module'
+import { JwtAuthGuard } from '../src/app/modules/auth'
+import { AppModule } from '../src/app'
 
-export let app: INestApplication
+const noGuard: CanActivate = { canActivate: jest.fn(() => true) }
+
+let app: INestApplication
 let sequelize: Sequelize
 
 export const truncate = () => {
@@ -34,6 +37,8 @@ export const truncate = () => {
 export const setup = async (options?: Partial<TestServerOptions>) => {
   app = await testServer({
     appModule: AppModule,
+    override: (builder) =>
+      builder.overrideGuard(JwtAuthGuard).useValue(noGuard),
     ...options,
   })
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)

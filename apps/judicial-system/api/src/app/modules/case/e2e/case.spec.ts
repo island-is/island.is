@@ -11,16 +11,14 @@ beforeAll(async () => {
 
 describe('Application', () => {
   it(`POST /case should create a case`, async () => {
-    // Act
     const response = await request(app.getHttpServer())
       .post('/api/case')
       .send({
         policeCaseNumber: 'Case Number',
         suspectNationalId: '0101010000',
       })
-      .expect(401)
+      .expect(201)
 
-    // Assert
-    // expect(response.body.id).toBeTruthy()
+    expect(response.body.id).toBeTruthy()
   })
 })
