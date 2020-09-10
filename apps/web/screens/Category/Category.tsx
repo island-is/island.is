@@ -139,6 +139,7 @@ const Category: Screen<CategoryProps> = ({
               >
                 {Object.keys(groups).map((groupSlug, index) => {
                   const { title, description, articles } = groups[groupSlug]
+                  articles.map((article) => console.log(article.subgroup))
 
                   const expanded = groupSlug === hash.replace('#', '')
 
@@ -155,7 +156,9 @@ const Category: Screen<CategoryProps> = ({
                         visibleContent={description}
                       >
                         <Box paddingY={2}>
-                          <Typography variant="h4" paddingBottom={2}>Subgroup</Typography>
+                          <Typography variant="h4" paddingBottom={2}>
+                            Subgroup thing
+                          </Typography>
                           <Stack space={2}>
                             {articles.map(({ title, slug }, index) => {
                               return (
