@@ -1,8 +1,3 @@
-//import { blue100 } from '@island.is/island-ui/theme';
-//import { relative } from 'path';
-//import { CSSProperties } from 'treat/lib/types';
-
-//import { right } from 'libs/island-ui/core/src/lib/Timeline/Timeline.treat';
 
 const sharedStyles = {
     item:{

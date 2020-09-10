@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Layout, ServiceCard } from '../../components'
-import {  Box,  Stack,  BulletList,  Bullet,  Button } from '@island.is/island-ui/core'
-import { getServices, GetServicesParameters } from '../../components/ServiceRepository/service-repository'
+import {  Box,  Stack,  BulletList,  Bullet,  Button, Checkbox } from '@island.is/island-ui/core'
+import { getServices, GetServicesParameters, getAllPriceCategories, getAllDataCategories } from '../../components/ServiceRepository/service-repository'
 import { useRouter } from 'next/dist/client/router'
 import { ServiceCardInformation } from 'apps/api-catalog/components/ServiceCard/service-card'
 import { ParsedUrlQuery } from 'querystring'
@@ -9,12 +9,16 @@ import { ParsedUrlQuery } from 'querystring'
 export interface ServiceListProps {
   servicesList:Array<ServiceCardInformation>
   nextCursor: number,
+  prevCursor: number,
   parameters: GetServicesParameters
 }
 
 
 export default function ServiceList(props:ServiceListProps) {
   
+  if (!props.parameters === null) {
+    props.parameters = { cursor:0, limit:null, owner:null, name:null, pricing:null, data:null };
+  }
   function bullets() {
     return (
     <BulletList type='ul'>
@@ -32,77 +36,46 @@ export default function ServiceList(props:ServiceListProps) {
       </Bullet>
   </BulletList>)
   }
-
-  function makeNextButton(nextCursor) {
-    
-    return (
-      <Button variant="text" onClick={() => onNextButtonClick(nextCursor)} leftIcon="arrowRight">
-         Next
-      </Button>
-      );
-      /*return (
-        <Button variant="text" href={makeQueryLink(params, nextCursor)} leftIcon="arrowRight">
-        Next
-        </Button>
-        );*/
-      }
-      
-      function makeQueryLink(query, nextCursor:number) {
-        const params:Array<string> = [];
-        console.log(query)
-        params.push(`cursor=${nextCursor}`)
-        if (query.limit !== undefined && !isNaN(Number(query.limit))) {
-          params.push(`limit=${query.limit}`)
-        }
-    if (query.owner !== undefined && !isNaN(Number(query.owner))) {
-      params.push(`owner=${query.owner}`)
-    }
-    if (query.name !== undefined && !isNaN(Number(query.name))) {
-      console.log(query.name)
-      params.push(`name=${query.name}`)
-    }
-    console.log(params);
-    let link = 'services';
-    params.forEach ( (e, index) =>{
-      link+= index === 0? '?' : '&'
-      link+=e
-    });
-    console.log(link)
-    return link;
-    
-  }
-  const [paramChange, setParamChange] = useState<number>(0);
   
-  const onNextButtonClick = (nextC) => {
-    props.parameters.cursor = nextC;
-    setParamChange(paramChange+1);
+  const makeNavigation = () => {
+    return (
+      <div className="navigation">
+        <Button disabled={prevCursor === null} variant="text" onClick={() => onPageButtonClick(prevCursor)} leftIcon="arrowLeft">
+          Fyrri
+        </Button>
+        <Button disabled={nextCursor === null} variant="text" onClick={() => onPageButtonClick(nextCursor)} icon="arrowRight">
+          Næsta
+        </Button>     
+      </div>
+    )
   }
+        
+  const onPageButtonClick = (nextC) => {
+    props.parameters.cursor = nextC;
+    setParamCursor(props.parameters.cursor);
+  }
+  
   
   const [services, setServices] = useState<Array<ServiceCardInformation>>(props.servicesList);
+  const [prevCursor, setPrevCursor] = useState<number>(props.prevCursor);
   const [nextCursor, setNextCursor] = useState<number>(props.nextCursor);
-  //const [params, setState] = useState<GetServicesParameters>(props.parameters);
-  /*useEffect(() => {
-    const loadData = async () => {
-      console.log('Mounting')
-      const response = await getServices(params);
-      setServices(response.result);
-      setNextCursor(response.nextCursor);
-      //setParameters({cursor:null, limit:null, owner:null, name:null})
-    }
-    
-    loadData();
-  }, []);*/
+  const [paramCursor, setParamCursor] = useState<number>(null);
+  //const [paramPricing, setParamPricing] = useState<Array<string>>(props.parameters.pricing);
+  //const [paramData,    setParamData] = useState<Array<string>>(props.parameters.data);
+  const [checkPricingFree, setCheckPricingFree] = useState(props.parameters.pricing === null || props.parameters.pricing.includes('free'));
+  const [checkDataPersonal, setCheckDataPersonal] = useState(props.parameters.data === null || props.parameters.data.includes('personal'));
+  
+  
 
   useEffect(() => {
     const loadData = async () => {
-      console.log('updating')
       const response = await getServices(props.parameters);
       setServices(response.result);
+      setPrevCursor(response.prevCursor);
       setNextCursor(response.nextCursor);
     }
-    
-    loadData();
-  }, [paramChange, props.parameters]);
+      loadData();
+  }, [checkDataPersonal,checkPricingFree, paramCursor, props.parameters]);
 
 
   return (
@@ -113,11 +86,46 @@ export default function ServiceList(props:ServiceListProps) {
           <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
             <Stack space={5}>
               <Stack space={3}>
-                <div>
-                  Vefþjónustur, nextCursor:{nextCursor}
-                  {makeNextButton(nextCursor)}
-                  
-                </div>
+
+              <Checkbox name="checkboxFree" label="Free"
+                  onChange={({ target }) => {
+                    props.parameters.cursor = null;
+                    if (props.parameters.pricing === null) {
+                      props.parameters.pricing = [];
+                    }
+                    if (target.checked) {
+                        if (!props.parameters.pricing.includes('free')){
+                          props.parameters.pricing.push('free')
+                        }
+                    } else {
+                      props.parameters.pricing.splice(props.parameters.pricing.indexOf('free'), 1);
+                    }
+                    setParamCursor(props.parameters.cursor);
+                    setCheckPricingFree(target.checked)
+                  }}
+                  checked={checkPricingFree}
+                /> 
+
+                <Checkbox name="checkboxPersonal" label="Personal"
+                  onChange={({ target }) => {
+                    props.parameters.cursor = null;
+                    if (props.parameters.data === null) {
+                      props.parameters.data = [];
+                    }
+                    if (target.checked) {
+                        if (!props.parameters.data.includes('personal')){
+                          props.parameters.data.push('personal')
+                        }
+                    } else {
+                      props.parameters.data.splice(props.parameters.data.indexOf('personal'), 1);
+                    }
+                    setParamCursor(props.parameters.cursor);
+                    setCheckDataPersonal(target.checked)
+                  }}
+                  checked={checkDataPersonal}
+                /> 
+
+                {makeNavigation()}
               </Stack>
               <Stack space={3}>
                 {
@@ -126,6 +134,7 @@ export default function ServiceList(props:ServiceListProps) {
                   })
                 }
               </Stack>
+              {makeNavigation()}
             </Stack>
           </Box>
         </Box>
@@ -133,10 +142,9 @@ export default function ServiceList(props:ServiceListProps) {
   )
 }
 ServiceList.getInitialProps = async ():Promise<ServiceListProps> => {
-  const params = { cursor:0, limit:null, owner:null, name:null };
+  const params:GetServicesParameters = { cursor:null, limit:null, owner:null, name:null, pricing:getAllPriceCategories(), data:getAllDataCategories() };
   const response = await getServices(params);
-  const result = response.result;
-  const nextCursor = response.nextCursor;
+  const result = await response.result;
 
-  return { parameters:params, nextCursor:nextCursor, servicesList: result };
+  return { parameters:params, prevCursor:response.prevCursor, nextCursor:response.nextCursor, servicesList: result };
 }
