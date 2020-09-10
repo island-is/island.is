@@ -1,7 +1,6 @@
 import React from 'react'
 import * as styles from './LifeEventCard.treat'
-import { Box, Typography, Link } from '@island.is/island-ui/core'
-import { FocusableBox } from '../../../FocusableBox'
+import { Box, Typography, Link, FocusableBox } from '@island.is/island-ui/core'
 
 interface Props {
   title: string
@@ -19,7 +18,13 @@ const LifeEventCard: React.FC<Props> = ({
   url,
 }) => {
   return (
-    <FocusableBox component={Link} href={url}>
+    <FocusableBox
+      component={Link}
+      href={url}
+      borderColor="blue200"
+      borderStyle="solid"
+      borderWidth="standard"
+    >
       <Box
         className={styles.card}
         alignItems="flexStart"

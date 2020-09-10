@@ -13,13 +13,13 @@ import {
   GridRow,
   GridColumn,
   Box,
+  FocusableBox,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useI18n } from '@island.is/web/i18n'
 import * as styles from './SideMenu.treat'
 import { SearchInput } from '../SearchInput/SearchInput'
 import { LanguageToggler } from '../LanguageToggler'
-import { FocusableBox } from '../FocusableBox'
 
 interface TabLink {
   title: string

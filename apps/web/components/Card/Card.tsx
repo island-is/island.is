@@ -11,10 +11,10 @@ import {
   TagProps,
   IconTypes,
   Icon,
+  FocusableBox,
 } from '@island.is/island-ui/core'
 
 import * as styles from './Card.treat'
-import { FocusableBox } from '../FocusableBox'
 
 export type CardTagsProps = {
   tagProps?: Omit<TagProps, 'children'>
@@ -93,7 +93,15 @@ export const Card: FC<CardProps> = ({
 
   if (href) {
     return (
-      <FocusableBox href={href} as={as} flexDirection="column" height="full">
+      <FocusableBox
+        href={href}
+        as={as}
+        flexDirection="column"
+        height="full"
+        borderColor="purple200"
+        borderWidth="standard"
+        borderStyle="solid"
+      >
         <Frame>{Content}</Frame>
       </FocusableBox>
     )

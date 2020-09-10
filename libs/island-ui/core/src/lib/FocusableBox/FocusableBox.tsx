@@ -1,7 +1,9 @@
 import React, { FC, ElementType, AllHTMLAttributes } from 'react'
 import cn from 'classnames'
 import { useToggle } from 'react-use'
-import { Box, Link, UseBoxStylesProps } from '@island.is/island-ui/core'
+import { Link } from '../Link'
+import { Box } from '../Box'
+import { UseBoxStylesProps } from '../Box/useBoxStyles'
 import * as styles from './FocusableBox.treat'
 
 interface Props
