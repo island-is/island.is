@@ -151,7 +151,6 @@ export class IndexingService {
     // TODO: Fix this when improving mapping
     // related articles has a recursive nesting problem, we prune it for now
     if (entry.fields?.relatedArticles?.[0]?.fields) {
-      logger.info('Removing nested related articles from related articles')
       entry.fields.relatedArticles = entry.fields.relatedArticles.map(
         (relatedArticle) => {
           // remove related articles from nested articles

@@ -2,8 +2,8 @@ import { logger } from '@island.is/logging'
 import AWS from 'aws-sdk'
 import { PutObjectRequest } from 'aws-sdk/clients/s3'
 import { environment } from '../environments/environment'
-import _ from 'lodash'
 import { Dictionary } from './dictionary'
+import { PackageStatus, DomainPackageStatus } from 'aws-sdk/clients/es'
 
 AWS.config.update({ region: environment.migrate.awsRegion })
 const awsEs = new AWS.ES()
@@ -21,7 +21,7 @@ const createPackageName = (
   analyzerType: string,
   version: string,
 ) => {
-  return `${locale}-${analyzerType}-${version}-test1`
+  return `${locale}-${analyzerType}-${version}`
 }
 
 // break down the name used for packages in AWS ES
@@ -34,14 +34,14 @@ const parsePackageName = (packageName: string) => {
   }
 }
 
-interface PackageStatus {
-  packageStatus: string
-  domainStatus: string
+interface PackageStatuses {
+  packageStatus: PackageStatus
+  domainStatus: DomainPackageStatus
 }
 
 const getPackageStatuses = async (
   packageId: string,
-): Promise<PackageStatus> => {
+): Promise<PackageStatuses> => {
   const params = {
     Filters: [
       {
@@ -58,13 +58,13 @@ const getPackageStatuses = async (
     })
     .promise()
 
-  const foundPackage = domainPackageList.DomainPackageDetailsList.find(
+  const domainPackage = domainPackageList.DomainPackageDetailsList.find(
     (listItem) => listItem.PackageID === packageId,
   )
 
   return {
     packageStatus: packages.PackageDetailsList[0].PackageStatus,
-    domainStatus: foundPackage?.DomainPackageStatus ?? 'DISSOCIATED',
+    domainStatus: domainPackage?.DomainPackageStatus ?? 'DISSOCIATED',
   }
 }
 
@@ -87,7 +87,7 @@ export const getAllDomainEsPackages = async (): Promise<AwsEsPackage[]> => {
 // AWS ES wont let us make multiple requests at once so we wait
 const waitForPackageStatus = async (
   packageId: string,
-  desiredStatus: string,
+  desiredStatus: PackageStatus | DomainPackageStatus,
   totalSecondsWaited = 0,
 ) => {
   const secondsBetweenRequests = 5
@@ -97,7 +97,7 @@ const waitForPackageStatus = async (
     throw new Error(`Failed to get status for package ${packageId}`)
   }
 
-  // if we find the desired status in eather the domain package list or the unassigned package list we assume success
+  // if we find the desired status in either the domain package list or the unassigned package list we assume success
   const { packageStatus, domainStatus } = await getPackageStatuses(packageId)
   if (packageStatus === desiredStatus || domainStatus === desiredStatus) {
     return true
@@ -122,7 +122,7 @@ const waitForPackageStatus = async (
   )
 }
 
-// checks connection and valdiates that we have access to requested domain
+// checks connection and validates that we have access to requested domain
 export const checkAWSAccess = async (): Promise<boolean> => {
   const domains = await awsEs
     .listDomainNames()
@@ -247,7 +247,7 @@ const removePackagesIfExist = async (
 
 /*
 createAwsEsPackagesshould only run when we are updating, we can therefore assume no assigned packages exist in AWS ES for this version
-We run a remove packages for this verson function to handle failed partial updates
+We run a remove packages for this version function to handle failed partial updates
 */
 export interface AwsEsPackage {
   packageId: string
@@ -316,13 +316,13 @@ export const associatePackagesWithAwsEs = async (packages: AwsEsPackage[]) => {
 }
 
 export const getUnusedEsPackages = async (
-  inuseEsPackages: AwsEsPackage[],
+  inUseEsPackages: AwsEsPackage[],
 ): Promise<string[]> => {
   const allAwsEsPackages = await getAwsEsPackagesDetails()
   const allAwsEsPackageIds = allAwsEsPackages.map(
     (awsEsPackage) => awsEsPackage.PackageID,
   )
-  const inUseEsPackageIds = inuseEsPackages.map(
+  const inUseEsPackageIds = inUseEsPackages.map(
     (inUseEsPackage) => inUseEsPackage.packageId,
   )
 
@@ -333,10 +333,10 @@ export const getUnusedEsPackages = async (
 }
 
 export const getUnusedAwsEsPackages = async (
-  inuseEsPackages: AwsEsPackage[],
+  inUseEsPackages: AwsEsPackage[],
 ): Promise<string[]> => {
   const allAwsEsDomainPackages = await getAllDomainEsPackages()
-  const inuseEsPackageIds = inuseEsPackages.map(
+  const inuseEsPackageIds = inUseEsPackages.map(
     (esPackage) => esPackage.packageId,
   )
   const inuseAwsEsPackageIds = allAwsEsDomainPackages.map(
@@ -348,10 +348,10 @@ export const getUnusedAwsEsPackages = async (
 }
 
 export const disassociateUnusedPackagesFromAwsEs = async (
-  inuseEsPackages: AwsEsPackage[],
+  inUseEsPackages: AwsEsPackage[],
 ) => {
   logger.info('Disassociating old packages from AWS ES')
-  const packagesToRemove = await getUnusedAwsEsPackages(inuseEsPackages)
+  const packagesToRemove = await getUnusedAwsEsPackages(inUseEsPackages)
   for (const esAwsPackageId of packagesToRemove) {
     logger.info('Disassociating package', { packageId: esAwsPackageId })
     const params = {
@@ -368,10 +368,10 @@ export const disassociateUnusedPackagesFromAwsEs = async (
 }
 
 export const deleteUnusedPackagesFromAwsEs = async (
-  inuseEsPackages: AwsEsPackage[],
+  inUseEsPackages: AwsEsPackage[],
 ) => {
   logger.info('Deleting old packages from AWS ES')
-  const unusedEsPackageIds = await getUnusedEsPackages(inuseEsPackages)
+  const unusedEsPackageIds = await getUnusedEsPackages(inUseEsPackages)
   unusedEsPackageIds.map((esPackageId) => {
     logger.info('Deleting package', { packageId: esPackageId })
     const params = {

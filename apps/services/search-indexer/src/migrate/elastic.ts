@@ -30,7 +30,7 @@ interface EsIndex {
   ['docs.count']: string
   ['docs.deleted']: string
 }
-const getAllIndice = async () => {
+const getAllIndices = async () => {
   const client = await esService.getClient()
   const indice = await client.cat.indices<EsIndex[]>({ format: 'json' })
   return indice.body
@@ -40,21 +40,21 @@ export const getCurrentVersionFromIndices = async (
   locale: string,
 ): Promise<number> => {
   logger.info('Getting index version from elasticsearch indexes', { locale })
-  const indice = await getAllIndice()
+  const indice = await getAllIndices()
   const indicePrefix = getIndexBaseName(locale)
 
   // find the highest version matching our index prefix using our custom index naming convention
-  return indice.reduce((higherstVersion, { index }) => {
+  return indice.reduce((highestVersion, { index }) => {
     if (index.includes(indicePrefix)) {
       const versionPrefixLocation = index.lastIndexOf('-v') + 2
       const version = parseInt(
         index.substring(versionPrefixLocation, index.length),
       )
-      if (version > higherstVersion) {
+      if (version > highestVersion) {
         return version
       }
     }
-    return higherstVersion
+    return highestVersion
   }, 0)
 }
 
@@ -110,7 +110,7 @@ export const getEsTemplate = async (locale: string) => {
   const templateName = getTemplateName(locale)
   logger.info('Geting old template', { templateName })
   const client = await esService.getClient()
-  const templateBody = await client.indices
+  return client.indices
     .getTemplate<string>({
       name: templateName,
     })
@@ -123,7 +123,6 @@ export const getEsTemplate = async (locale: string) => {
         throw error
       }
     })
-  return templateBody
 }
 
 export const updateEsTemplate = async (
@@ -175,7 +174,7 @@ export const removeIndexVersion = (locale: string, version: number) => {
 }
 
 const getExistingIndice = async (indice: string[]): Promise<string[]> => {
-  const allIndice = await getAllIndice()
+  const allIndice = await getAllIndices()
   return allIndice
     .filter(({ index }) => indice.includes(index))
     .map(({ index }) => index)

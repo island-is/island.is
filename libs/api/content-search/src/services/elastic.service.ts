@@ -213,7 +213,7 @@ export class ElasticService {
   async ping() {
     const client = await this.getClient()
     const result = await client.ping()
-    logger.info('Got elasticsearch ping response', { result })
+    logger.info('Got elasticsearch ping response')
     return result
   }
 

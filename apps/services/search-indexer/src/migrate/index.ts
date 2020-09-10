@@ -50,9 +50,9 @@ class App {
     const repoDictionaryVersion = await dictionary.getDictionaryVersion()
     const awsDictionaryVersion = await aws.getDictionaryVersion()
     let esPackages: aws.AwsEsPackage[]
-    // we only try to update the dictionary files if we find a missmatch in version numbers
+    // we only try to update the dictionary files if we find a mismatch in version numbers
     if (repoDictionaryVersion !== awsDictionaryVersion) {
-      logger.info('Dictionary version missmatch, updating dictionary', {
+      logger.info('Dictionary version mismatch, updating dictionary', {
         repoVersion: repoDictionaryVersion,
         awsVersion: awsDictionaryVersion,
       })
