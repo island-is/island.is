@@ -111,8 +111,8 @@ export const AppLayout: NextComponentType<
             property="og:image"
             content="https://loftbru.island.is/og-img.png"
           />
-          <meta name="image-width" property="og:image:width" content="1001" />
-          <meta name="image-height" property="og:image:height" content="381" />
+          <meta name="image-width" property="og:image:width" content="1200" />
+          <meta name="image-height" property="og:image:height" content="630" />
           <meta
             name="description"
             property="og:description"
