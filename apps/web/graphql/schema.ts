@@ -83,10 +83,18 @@ export type ArticleSubgroup = {
   slug: Scalars['String']
 }
 
+export type OrganizationTag = {
+  __typename?: 'OrganizationTag'
+  id: Scalars['ID']
+  title: Scalars['String']
+}
+
 export type Organization = {
   __typename?: 'Organization'
+  id: Scalars['ID']
   title: Scalars['String']
   slug: Scalars['String']
+  tag: Array<OrganizationTag>
 }
 
 export type SubArticle = {

@@ -62,9 +62,16 @@ type ArticleSubgroup {
   slug: String!
 }
 
+type OrganizationTag {
+  id: ID!
+  title: String!
+}
+
 type Organization {
+  id: ID!
   title: String!
   slug: String!
+  tag: [OrganizationTag!]!
 }
 
 type SubArticle {

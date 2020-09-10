@@ -94,10 +94,18 @@ export type ArticleSubgroup = {
   slug: Scalars['String']
 }
 
+export type OrganizationTag = {
+  __typename?: 'OrganizationTag'
+  id: Scalars['ID']
+  title: Scalars['String']
+}
+
 export type Organization = {
   __typename?: 'Organization'
+  id: Scalars['ID']
   title: Scalars['String']
   slug: Scalars['String']
+  tag: Array<OrganizationTag>
 }
 
 export type SubArticle = {
@@ -1108,6 +1116,7 @@ export type ResolversTypes = {
   ArticleCategory: ResolverTypeWrapper<ArticleCategory>
   ArticleGroup: ResolverTypeWrapper<ArticleGroup>
   ArticleSubgroup: ResolverTypeWrapper<ArticleSubgroup>
+  OrganizationTag: ResolverTypeWrapper<OrganizationTag>
   Organization: ResolverTypeWrapper<Organization>
   SubArticle: ResolverTypeWrapper<SubArticle>
   Article: ResolverTypeWrapper<Article>
@@ -1259,6 +1268,7 @@ export type ResolversParentTypes = {
   ArticleCategory: ArticleCategory
   ArticleGroup: ArticleGroup
   ArticleSubgroup: ArticleSubgroup
+  OrganizationTag: OrganizationTag
   Organization: Organization
   SubArticle: SubArticle
   Article: Article
@@ -1521,12 +1531,27 @@ export type ArticleSubgroupResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type OrganizationTagResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['OrganizationTag'] = ResolversParentTypes['OrganizationTag']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type OrganizationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Organization'] = ResolversParentTypes['Organization']
 > = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  tag?: Resolver<
+    Array<ResolversTypes['OrganizationTag']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2538,6 +2563,7 @@ export type Resolvers<ContextType = Context> = {
   ArticleCategory?: ArticleCategoryResolvers<ContextType>
   ArticleGroup?: ArticleGroupResolvers<ContextType>
   ArticleSubgroup?: ArticleSubgroupResolvers<ContextType>
+  OrganizationTag?: OrganizationTagResolvers<ContextType>
   Organization?: OrganizationResolvers<ContextType>
   SubArticle?: SubArticleResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
