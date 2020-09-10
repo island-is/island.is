@@ -38,6 +38,7 @@ const nationalRegistryFamilyLookupResponse: NationalRegistryFamilyLookupResponse
     {
       name: 'Jón Gunnar Jónsson',
       ssn: '1306886513',
+      gender: 1,
       address: 'Bessastaðir 1',
       postalcode: 225,
       towncode: 1300,
@@ -46,6 +47,7 @@ const nationalRegistryFamilyLookupResponse: NationalRegistryFamilyLookupResponse
     {
       name: 'Guðrún Jónsdóttir',
       ssn: '0409084390',
+      gender: 2,
       address: 'Bessastaðir 1',
       postalcode: 225,
       towncode: 1300,
@@ -54,6 +56,7 @@ const nationalRegistryFamilyLookupResponse: NationalRegistryFamilyLookupResponse
     {
       name: 'Friðrik Jónsson',
       ssn: '0101932149',
+      gender: 3,
       address: 'Bessastaðir 1',
       postalcode: 225,
       towncode: 1300,
@@ -242,6 +245,38 @@ describe('NationalRegistryService', () => {
       expect(httpServiceSpy).not.toHaveBeenCalled()
       expect(cacheManagerSetSpy).not.toHaveBeenCalled()
       expect(result).toEqual(children)
+    })
+
+    it('should not fetch children of a child', async () => {
+      const childNationalId =
+        nationalRegistryFamilyLookupResponse.results[2].ssn
+      const cacheManagerGetSpy = jest
+        .spyOn(cacheManager, 'get')
+        .mockImplementation(() => Promise.resolve(null))
+      const httpServiceSpy = jest
+        .spyOn(httpService, 'get')
+        .mockImplementation(() => of(axiosFamilyLookupResponse))
+      const cacheManagerSetSpy = jest
+        .spyOn(cacheManager, 'set')
+        .mockImplementation(() => Promise.resolve(null))
+
+      const result = await nationalRegistryService.getRelatedChildren(
+        childNationalId,
+      )
+
+      expect(cacheManagerGetSpy).toHaveBeenCalledWith(
+        `${CACHE_KEY}_${childNationalId}_children`,
+      )
+      expect(httpServiceSpy).toHaveBeenCalledWith(
+        `${nationalRegistry.url}/family-lookup?ssn=${childNationalId}`,
+      )
+      expect(cacheManagerSetSpy).toHaveBeenCalledWith(
+        `${CACHE_KEY}_${childNationalId}_children`,
+        { children },
+        { ttl: ONE_MONTH },
+      )
+
+      expect(result).toEqual([])
     })
   })
 })
