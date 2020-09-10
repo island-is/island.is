@@ -1,7 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
+import NextLink from 'next/link'
 import {
   Typography,
   Stack,
@@ -12,6 +13,7 @@ import {
   LinkCard,
   Option,
   Link,
+  Accordion,
 } from '@island.is/island-ui/core'
 import { Card, Sidebar } from '../../components'
 import { useI18n } from '@island.is/web/i18n'
@@ -45,6 +47,8 @@ const Category: Screen<CategoryProps> = ({
   categories,
   namespace,
 }) => {
+  const itemsRef = useRef<Array<HTMLElement | null>>([])
+  const [hash, setHash] = useState<string>('')
   const { activeLocale } = useI18n()
   const Router = useRouter()
   const n = useNamespace(namespace)
@@ -78,6 +82,27 @@ const Category: Screen<CategoryProps> = ({
   // find current category in categories list
   const category = categories.find((x) => x.slug === Router.query.slug)
 
+  useEffect(() => {
+    const hashMatch = Router.asPath.match(/#([a-z0-9_-]+)/gi)
+    setHash((hashMatch && hashMatch[0]) ?? '')
+  }, [Router])
+
+  useEffect(() => {
+    const groupSlug = Object.keys(groups).find(
+      (x) => x === hash.replace('#', ''),
+    )
+
+    if (groupSlug) {
+      const el = itemsRef.current.find(
+        (x) => x.getAttribute('data-slug') === groupSlug,
+      )
+
+      if (el) {
+        window.scrollTo(0, el.offsetTop)
+      }
+    }
+  }, [itemsRef, groups, hash])
+
   const sidebarCategoryLinks = categories.map((c) => ({
     title: c.title,
     active: c.slug === Router.query.slug,
@@ -106,33 +131,47 @@ const Category: Screen<CategoryProps> = ({
         belowContent={
           <Stack space={2}>
             <Stack space={2}>
-              {Object.keys(groups).map((groupSlug, index) => {
-                const { title, description, articles } = groups[groupSlug]
+              <Accordion
+                dividerOnBottom={false}
+                dividerOnTop={false}
+                dividers={false}
+              >
+                {Object.keys(groups).map((groupSlug, index) => {
+                  const { title, description, articles } = groups[groupSlug]
 
-                return (
-                  <AccordionCard
-                    key={groupSlug}
-                    id={`accordion-${index}`}
-                    label={title}
-                    visibleContent={description}
-                  >
-                    <Stack space={2}>
-                      {articles.map(({ title, slug }, index) => {
-                        return (
-                          <Link
-                            key={index}
-                            href={`${makePath('article')}/[slug]`}
-                            as={makePath('article', slug)}
-                            passHref
-                          >
-                            <LinkCard>{title}</LinkCard>
-                          </Link>
-                        )
-                      })}
-                    </Stack>
-                  </AccordionCard>
-                )
-              })}
+                  const expanded = groupSlug === hash.replace('#', '')
+
+                  return (
+                    <div
+                      key={index}
+                      data-slug={groupSlug}
+                      ref={(el) => (itemsRef.current[index] = el)}
+                    >
+                      <AccordionCard
+                        id={`accordion-item-${groupSlug}`}
+                        label={title}
+                        startExpanded={expanded}
+                        visibleContent={description}
+                      >
+                        <Stack space={2}>
+                          {articles.map(({ title, slug }, index) => {
+                            return (
+                              <NextLink
+                                key={index}
+                                href={`${makePath('article')}/[slug]`}
+                                as={makePath('article', slug)}
+                                passHref
+                              >
+                                <LinkCard>{title}</LinkCard>
+                              </NextLink>
+                            )
+                          })}
+                        </Stack>
+                      </AccordionCard>
+                    </div>
+                  )
+                })}
+              </Accordion>
             </Stack>
             <Stack space={2}>
               {cards.map(({ title, content, slug }, index) => {
