@@ -109,8 +109,8 @@ const TEST_USERS: NationalRegistryUser[] = [
 export class NationalRegistryService {
   constructor(
     private httpService: HttpService,
-    @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
     @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: CacheManager,
   ) {}
 
   baseUrl = environment.nationalRegistry.url
@@ -204,16 +204,16 @@ export class NationalRegistryService {
 
     const family = data.results
     const user = family.find((person) => person.ssn === nationalId)
-    if (![1, 2].includes(user.gender)) {
-      return []
+    let children = []
+    if ([1, 2].includes(user.gender)) {
+      children = family
+        .filter(
+          (person) => person.ssn !== nationalId && this.isChild(person.ssn),
+        )
+        .map((person) => person.ssn)
     }
 
-    const children = family
-      .filter((person) => person.ssn !== nationalId && this.isChild(person.ssn))
-      .map((person) => person.ssn)
-    if (children) {
-      await this.cacheManager.set(cacheKey, { children }, { ttl: ONE_MONTH })
-    }
+    await this.cacheManager.set(cacheKey, { children }, { ttl: ONE_MONTH })
 
     return children
   }
