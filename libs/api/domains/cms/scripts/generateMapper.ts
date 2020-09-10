@@ -40,7 +40,7 @@ const contentfulTypeToMap = (field: Field, imports: Imports) => {
 
       return {
         value: field.required ? `${base}` : `${value} && ${base}`,
-        fallback: `''`,
+        fallback: 'null',
       }
     }
 

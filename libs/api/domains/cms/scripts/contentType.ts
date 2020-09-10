@@ -133,7 +133,7 @@ async function main() {
   const args: Args = { sys, overwrite }
 
   // 1. Create contentful management client
-  const space = await client.getSpace('8k0h54kbe6bj') // prod: 8k0h54kbe6bj, jeremy's dev: 49dl8o4zlggm
+  const space = await client.getSpace('8k0h54kbe6bj')
   const environment = await space.getEnvironment('master')
 
   // 2. We generate new contentful types

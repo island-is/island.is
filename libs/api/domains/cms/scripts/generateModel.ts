@@ -88,7 +88,7 @@ const contentfulTypeToTsType = (
       }
 
       if (field.items.linkType === 'Asset') {
-        return ['Array<Image>', 'Image']
+        return ['Array<Image>', '[Image]']
       }
 
       return [
@@ -110,7 +110,9 @@ const generateFields = (fields: Field[], imports: Imports): string => {
 
       const fieldsArgs = [
         typeRet && `() => ${typeRet}`,
-        !field.required && '{ nullable: true }',
+        !typeDef.includes('Array<')
+          ? !field.required && '{ nullable: true }'
+          : '',
       ].filter(Boolean)
 
       return `
