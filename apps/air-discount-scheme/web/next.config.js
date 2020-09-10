@@ -1,6 +1,6 @@
 const withTreat = require('next-treat')()
 const withSourceMaps = require('@zeit/next-source-maps')
-const withHealthcheckConfig = require('./utils/Healthchecks/withHealthcheckConfig')
+const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 // const SentryWebpackPlugin = require('@sentry/webpack-plugin')
 
 const {

@@ -84,6 +84,7 @@ FROM output-base as output-next
 # image with build of an Next.js app
 
 COPY --from=builder --chown=runner:runners /build/${APP_HOME}/next.config.js /webapp
+COPY --from=builder --chown=runner:runners /build/${APP_HOME}/next-modules/ /webapp/next-modules/
 COPY --from=builder --chown=runner:runners /build/${APP_HOME}/public /webapp/public
 COPY --from=builder --chown=runner:runners /build/${APP_DIST_HOME} /webapp/.next
 
