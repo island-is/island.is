@@ -310,6 +310,9 @@
     },
     "api-catalogue-elastic": {
       "tags": []
+    },
+    "services-xroad-collector": {
+      "tags": []
     }
   },
   "affected": {
