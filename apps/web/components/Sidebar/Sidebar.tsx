@@ -151,6 +151,8 @@ export const Sidebar: FC<SidebarProps> = ({
     updateBulletPlacement()
   }, [updateBulletPlacement])
 
+  const sortedItems = items.sort((a, b) => (a.title > b.title ? 1 : -1))
+
   return (
     <Box
       ref={parentRef}
@@ -202,8 +204,8 @@ export const Sidebar: FC<SidebarProps> = ({
           </Stack>
         ) : null}
         {items && <Divider weight="alternate" />}
-        {items &&
-          items.map(({ title, active, href, as }, index) => {
+        {sortedItems &&
+          sortedItems.map(({ title, active, href, as }, index) => {
             return (
               <Link key={index} href={href} as={as}>
                 <a>
