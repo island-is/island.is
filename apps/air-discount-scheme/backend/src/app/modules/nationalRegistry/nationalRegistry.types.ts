@@ -4,7 +4,7 @@ export interface NationalRegistryGeneralLookupResponse {
   name: string
   gender: 'kk' | 'kvk'
   address: string
-  postalcode: number
+  postalcode: string
   city: string
   lastmodified: string
   charged: boolean
@@ -18,7 +18,7 @@ export type FamilyMember = {
   name: string
   address: string
   towncode: number
-  postalcode: number
+  postalcode: string
   city: string
 }
 
