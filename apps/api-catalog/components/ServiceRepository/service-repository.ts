@@ -35,49 +35,50 @@ export enum TYPE_CATEGORY {
 }
 
 export enum ACCESS_CATEGORY {
-    REACT  ='X-Road',
-    SOAP   ='API GW',
+    X_ROAD  ='X-Road',
+    API_GW  ='API GW',
 }
 
 const OrgServices:Array<ServiceCardInformation> =[
     { id:0, owner:"Þjóðskrá", name:"Fasteignaskrá", url:"http://fasteignaskra.thodskra.is:4700", status:ServiceStatusValue.OK,      
         pricing:[PRICING_CATEGORY.FREE],
         data:   [DATA_CATEGORY.PUBLIC],
-        type:   ["REST"], 
-        access: ["API GW"] },
+        type:   [TYPE_CATEGORY.REACT], 
+        access: [ACCESS_CATEGORY.X_ROAD] },
     { id:1, owner:"Þjóðskrá", name:"Einstaklingsskrá", url:"http://einstaklingskra.thodskra.is:4700", status:ServiceStatusValue.WARNING,
         pricing:[PRICING_CATEGORY.FREE, PRICING_CATEGORY.CUSTOM],                           
         data:   [DATA_CATEGORY.PERSONAL],                         
-        type:   ["REACT"],
-        access: ["X-Road"] },
+        type:   [TYPE_CATEGORY.REACT],
+        access: [ACCESS_CATEGORY.X_ROAD] },
     { id:2, owner:"Þjóðskrá", name:"Staðfangaskrá", url:"http://stadfangaskra.thodskra.is:4700", status:ServiceStatusValue.ERROR, 
         pricing:[PRICING_CATEGORY.USAGE],                                                   
         data:   [DATA_CATEGORY.PUBLIC],                           
-        type:["REACT"],access:["API GW"]},
+        type:[TYPE_CATEGORY.REACT],
+        access:[ACCESS_CATEGORY.X_ROAD]},
     { id:3, owner:"Skatturinn", name:"Virðisaukaskattur", url:"http://vsk.skattur.is/:2100",              status:ServiceStatusValue.WARNING, 
         pricing:[PRICING_CATEGORY.DAILY,PRICING_CATEGORY.MONTHLY, PRICING_CATEGORY.YEARLY], 
         data:   [DATA_CATEGORY.PERSONAL, DATA_CATEGORY.PUBLIC],   
-        type:   ["SOAP"], 
-        access: ["API GW"]},
+        type:   [TYPE_CATEGORY.SOAP], 
+        access: [ACCESS_CATEGORY.API_GW]},
     { id:4, owner:"Skatturinn", name:"Staðgreiðsla", url:"http://stadgreidsla.skattur.is:2100", status:ServiceStatusValue.OK ,      
         pricing:[PRICING_CATEGORY.FREE,PRICING_CATEGORY.MONTHLY, PRICING_CATEGORY.YEARLY],  
         data:   [  DATA_CATEGORY.PERSONAL, DATA_CATEGORY.FINANCIAL],
-        type:   ["SOAP"], access:["API GW"]},
+        type:   [TYPE_CATEGORY.SOAP], access:[ACCESS_CATEGORY.API_GW]},
     { id:5, owner:"Vinnumálastofnun",name:"Fæðingarorlofssjóður",url:"http://faedingarorlofssjodur.vms.is:74200",status:ServiceStatusValue.ERROR, 
         pricing:[PRICING_CATEGORY.YEARLY],                                                  
         data:   [DATA_CATEGORY.PERSONAL, DATA_CATEGORY.PUBLIC],   
-        type:   ["REACT"],
-        access: ["API GW"]},
+        type:   [TYPE_CATEGORY.REACT],
+        access: [ACCESS_CATEGORY.API_GW]},
     { id:6, owner:"Samgöngustofa", name:"Ökutækjaskrá", url:"http://okutaeki.samgongustofa.is:74200", status:ServiceStatusValue.UNKNOWN,     
         pricing:[PRICING_CATEGORY.FREE,PRICING_CATEGORY.MONTHLY, PRICING_CATEGORY.YEARLY],  
         data:   [DATA_CATEGORY.PERSONAL, DATA_CATEGORY.PUBLIC],   
-        type:   ["SOAP"], 
-        access: ["API GW"]},
+        type:   [TYPE_CATEGORY.SOAP], 
+        access: [ACCESS_CATEGORY.API_GW]},
     { id:7, owner:"Dúddi í bæ", name:"Monthly free service", url:"http://asdf.asdf:74200", status:ServiceStatusValue.UNKNOWN, 
         pricing:[PRICING_CATEGORY.FREE,PRICING_CATEGORY.MONTHLY],                           
         data:   [DATA_CATEGORY.PUBLIC, DATA_CATEGORY.OFFICIAL, DATA_CATEGORY.PERSONAL,DATA_CATEGORY.HEALTH, DATA_CATEGORY.PUBLIC], 
-        type:   ["SOAP"], 
-        access: ["API GW"]}
+        type:   [TYPE_CATEGORY.SOAP], 
+        access: [ACCESS_CATEGORY.API_GW]}
 ];
 
 export interface ServicesResult {
@@ -87,12 +88,14 @@ export interface ServicesResult {
 }
 
 export interface GetServicesParameters {
-    cursor:number, 
-    limit:number, 
-    owner:string, 
-    name:string,
-    pricing:Array<string>,
+    cursor:number
+    limit:number
+    owner:string
+    name:string
+    pricing:Array<string>
     data:Array<string>
+    type:Array<string>
+    access:Array<string>
 }
 
 export const getAllPriceCategories = ():Array<string>  => {
@@ -129,7 +132,7 @@ const ArrayContainsOneOrMoreOf = (checkMe:Array<string>, shouldContainOneOf:Arra
 }
 
 export async function getServices(parameters:GetServicesParameters):Promise<ServicesResult> {
-    const params:GetServicesParameters = parameters !== null? parameters : {cursor:null, limit:null, owner:null, name:null, pricing:null, data:null};
+    const params:GetServicesParameters = parameters !== null? parameters : {cursor:null, limit:null, owner:null, name:null, pricing:null, data:null, type:null, access:null};
     let filtered = OrgServices;
     if (isValidString(params.name)) {
         filtered = filtered.filter(e => e.name.includes(params.name));
@@ -138,6 +141,7 @@ export async function getServices(parameters:GetServicesParameters):Promise<Serv
         filtered = filtered.filter(e => e.owner.includes(params.owner));
     }
 
+    //data filter
     if ( params.data !== null) {
             filtered = filtered.filter(function (e) { 
                 return ArrayContainsOneOrMoreOf(e.data, params.data)
@@ -145,9 +149,28 @@ export async function getServices(parameters:GetServicesParameters):Promise<Serv
         );
     }
 
+    //pricing filter
     if ( params.pricing !== null) {
         filtered = filtered.filter(function (e) { 
             return ArrayContainsOneOrMoreOf(e.pricing, params.pricing)
+        }
+        );
+    }
+
+
+    //type filter
+    if ( params.type !== null) {
+        filtered = filtered.filter(function (e) { 
+            return ArrayContainsOneOrMoreOf(e.type, params.type)
+        }
+        );
+    }
+
+
+    //access filter
+    if ( params.access !== null) {
+        filtered = filtered.filter(function (e) { 
+            return ArrayContainsOneOrMoreOf(e.access, params.access)
         }
         );
     }
