@@ -39,7 +39,7 @@ const nationalRegistryFamilyLookupResponse: NationalRegistryFamilyLookupResponse
     {
       name: 'Jón Gunnar Jónsson',
       ssn: '1306886513',
-      gender: 1,
+      gender: '1',
       address: 'Bessastaðir 1',
       postalcode: 225,
       towncode: 1300,
@@ -48,7 +48,7 @@ const nationalRegistryFamilyLookupResponse: NationalRegistryFamilyLookupResponse
     {
       name: 'Guðrún Jónsdóttir',
       ssn: '0409084390',
-      gender: 3,
+      gender: '3',
       address: 'Bessastaðir 1',
       postalcode: 225,
       towncode: 1300,
@@ -57,7 +57,7 @@ const nationalRegistryFamilyLookupResponse: NationalRegistryFamilyLookupResponse
     {
       name: 'Atli Jónsson',
       ssn: '1201204330',
-      gender: 4,
+      gender: '4',
       address: 'Bessastaðir 1',
       postalcode: 225,
       towncode: 1300,
@@ -66,7 +66,7 @@ const nationalRegistryFamilyLookupResponse: NationalRegistryFamilyLookupResponse
     {
       name: 'Friðrik Jónsson',
       ssn: '0101932149',
-      gender: 2,
+      gender: '2',
       address: 'Bessastaðir 1',
       postalcode: 225,
       towncode: 1300,
