@@ -8,6 +8,7 @@ export const GET_ORGANIZATIONS_QUERY = gql`
         slug
         title
         description
+        link
         tag {
           id
           title
@@ -23,6 +24,7 @@ export const GET_ORGANIZATION_QUERY = gql`
       id
       slug
       title
+      link
       tag {
         id
         title

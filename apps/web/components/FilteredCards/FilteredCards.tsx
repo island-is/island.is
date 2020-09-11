@@ -16,7 +16,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { Organization, OrganizationTag } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
-import { Card } from './Card'
+import { Card } from '../Card/Card'
 
 import * as styles from './FilteredCards.treat'
 
@@ -142,15 +142,13 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
     return () => clearTimeout(timerRef.current)
   }, [onUpdateFilters])
 
-  const filteredItems = visibleItems
-    .filter((item, index) => {
-      const indexList = [indexesFilteredByTag, indexesFilteredByString].filter(
-        (x) => x.length > 0,
-      )
+  const filteredItems = visibleItems.filter((item, index) => {
+    const indexList = [indexesFilteredByTag, indexesFilteredByString].filter(
+      (x) => x.length > 0,
+    )
 
-      return _.intersection(...indexList).includes(index)
-    })
-    .splice(0, showAll ? visibleItems.length : showCount)
+    return _.intersection(...indexList).includes(index)
+  })
 
   const toggleFilters = () => {
     if (filtersDisabled) {
@@ -161,12 +159,22 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
     }
   }
 
+  const isFiltering = Boolean(
+    tagIds.length ||
+      (filterString.length && filteredItems.length !== visibleItems.length),
+  )
+
+  const batches = filteredItems.splice(
+    0,
+    showAll ? visibleItems.length : showCount,
+  )
+
   return (
     <Box padding={[3, 3, 6]}>
       <Tiles space={0} columns={2}>
         <div>
           <Typography variant="h3" as="h3">
-            {title || n('adgerdir')}
+            {title || n('organizations', 'Stofnanir')}
           </Typography>
         </div>
         <Box display="flex" justifyContent="flexEnd">
@@ -234,7 +242,7 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
           </Box>
         </Box>
       </AnimateHeight>
-      {filteredItems.length === 0 ? (
+      {batches.length === 0 ? (
         <Box>
           <Stack space={2}>
             <Typography variant="intro">
@@ -253,14 +261,25 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
       ) : null}
       <Box marginTop={3}>
         <Tiles space={[2, 2, 3]} columns={[1, 1, 2, 2, 3]}>
-          {filteredItems.map(
-            ({ title, description, tag, slug }: Organization, index) => {
+          {batches.map(
+            ({ title, description, tag, link }: Organization, index) => {
+              const tags =
+                (tag &&
+                  tag.map((x) => ({
+                    title: x.title,
+                    tagProps: {
+                      label: true,
+                    },
+                  }))) ||
+                []
+
               return (
                 <Card
+                  href={link}
                   key={index}
                   description={description}
                   title={title}
-                  tags={tag}
+                  tags={tags}
                 />
               )
             },

@@ -1305,7 +1305,7 @@ export type GetOrganizationQuery = { __typename?: 'Query' } & {
   getOrganization?: Maybe<
     { __typename?: 'Organization' } & Pick<
       Organization,
-      'id' | 'slug' | 'title' | 'description'
+      'id' | 'slug' | 'title' | 'link' | 'description'
     > & {
         tag?: Maybe<
           Array<

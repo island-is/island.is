@@ -8,6 +8,7 @@ import {
   Typography,
   Stack,
   Breadcrumbs,
+  ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import {
   Query,
@@ -62,11 +63,13 @@ const OrganizationPage: Screen<OrganizationProps> = ({
       </ArticleLayout>
       <Box background="blue100">
         <ContentBlock width="large">
-          <FilteredCards
-            tags={tagsItems}
-            items={organizationsItems}
-            namespace={namespace}
-          />
+          <ColorSchemeContext.Provider value={{ colorScheme: 'blue' }}>
+            <FilteredCards
+              tags={tagsItems}
+              items={organizationsItems}
+              namespace={namespace}
+            />
+          </ColorSchemeContext.Provider>
         </ContentBlock>
       </Box>
     </>
