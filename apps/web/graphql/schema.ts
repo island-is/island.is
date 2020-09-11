@@ -74,7 +74,6 @@ export type ArticleGroup = {
   title: Scalars['String']
   slug: Scalars['String']
   description?: Maybe<Scalars['String']>
-  sortBy?: Maybe<Scalars['String']>
 }
 
 export type ArticleSubgroup = {

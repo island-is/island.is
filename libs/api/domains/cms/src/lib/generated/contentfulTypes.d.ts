@@ -665,7 +665,7 @@ export interface INewsFields {
   title: string
 
   /** Subtitle */
-  subtitle?: string | undefined
+  subtitle: string
 
   /** Slug */
   slug: string

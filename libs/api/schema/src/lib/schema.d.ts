@@ -85,7 +85,6 @@ export type ArticleGroup = {
   title: Scalars['String']
   slug: Scalars['String']
   description?: Maybe<Scalars['String']>
-  sortBy?: Maybe<Scalars['String']>
 }
 
 export type ArticleSubgroup = {
@@ -1569,7 +1568,6 @@ export type ArticleGroupResolvers<
     ParentType,
     ContextType
   >
-  sortBy?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 

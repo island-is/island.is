@@ -54,7 +54,6 @@ type ArticleGroup {
   title: String!
   slug: String!
   description: String
-  sortBy: String
 }
 
 type ArticleSubgroup {
