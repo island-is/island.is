@@ -5,18 +5,11 @@ import { Box, Typography, Link } from '@island.is/island-ui/core'
 interface Props {
   title: string
   intro: string
-  thumbnail: string
   image: string
   url: string
 }
 
-const LifeEventCard: React.FC<Props> = ({
-  title,
-  intro,
-  image,
-  thumbnail,
-  url,
-}) => {
+const LifeEventCard: React.FC<Props> = ({ title, intro, image, url }) => {
   return (
     <Box
       component={Link}
@@ -50,7 +43,7 @@ const LifeEventCard: React.FC<Props> = ({
 
       <div
         className={styles.thumbnail}
-        style={{ backgroundImage: `url(${thumbnail})` }}
+        style={{ backgroundImage: `url(${image})` }}
       />
     </Box>
   )

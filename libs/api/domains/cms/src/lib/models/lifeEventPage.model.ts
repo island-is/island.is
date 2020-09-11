@@ -20,6 +20,9 @@ export class LifeEventPage {
   @Field()
   image: Image
 
+  @Field({ nullable: true })
+  thumbnail?: Image
+
   @Field(() => jsonContentType)
   body: Document
 }
@@ -31,5 +34,6 @@ export const mapLifeEventPage = ({
   slug: fields.slug,
   intro: fields.intro,
   image: mapImage(fields.image),
+  thumbnail: fields.thumbnail && mapImage(fields.thumbnail),
   body: fields.content,
 })
