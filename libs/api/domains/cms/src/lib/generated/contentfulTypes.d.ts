@@ -92,9 +92,6 @@ export interface IArticleGroupFields {
 
   /** Description */
   description?: string | undefined
-
-  /** Sort by */
-  sortBy?: 'A to Z' | 'Subgroups' | undefined
 }
 
 export interface IArticleGroup extends Entry<IArticleGroupFields> {
@@ -764,11 +761,17 @@ export interface IOrganizationFields {
   /** Title */
   title: string
 
+  /** Description */
+  description?: string | undefined
+
   /** Slug */
   slug: string
 
   /** Tag */
   tag?: IOrganizationTag[] | undefined
+
+  /** Link */
+  link?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {

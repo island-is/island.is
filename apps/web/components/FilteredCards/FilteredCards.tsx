@@ -13,12 +13,11 @@ import {
   Icon,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
+import { Organization, OrganizationTag } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { Card } from './Card'
 
-import * as cardStyles from './Card.treat'
 import * as styles from './FilteredCards.treat'
 
 const FILTER_TIMER = 300
@@ -26,9 +25,8 @@ const ITEMS_PER_SHOW = 6
 
 interface FilteredCardsProps {
   title?: string
-  items: AdgerdirPage[]
-  tags: AdgerdirTag[]
-  currentArticle?: AdgerdirPage
+  items: Organization[]
+  tags: OrganizationTag[]
   showAll?: boolean
   namespace?: object
   startingIds?: Array<string>
@@ -38,7 +36,6 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
   title,
   items,
   tags,
-  currentArticle,
   showAll,
   namespace,
   startingIds = [],
@@ -50,11 +47,10 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
   const [filtersDisabled, setFiltersDisabled] = useState<boolean>(
     Boolean(startingIds.length),
   )
-  const [startingItems, setstartingItems] = useState<Array<AdgerdirPage>>(
+  const [startingItems, setstartingItems] = useState<Array<Organization>>(
     items.filter((x) => startingIds.includes(x.id)),
   )
   const [tagIds, setTagIds] = useState<Array<string>>([])
-  const [selectedStatuses, setSelectedStatuses] = useState<Array<string>>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [showCount, setShowCount] = useState<number>(ITEMS_PER_SHOW)
   const [indexesFilteredByString, setIndexesFilteredByString] = useState<
@@ -63,18 +59,9 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
   const [indexesFilteredByTag, setIndexesFilteredByTag] = useState<
     Array<number>
   >([])
-  const [indexesFilteredByStatus, setIndexesFilteredByStatus] = useState<
-    Array<number>
-  >([])
   const timerRef = useRef(null)
 
   const visibleItems = startingItems.length ? startingItems : items
-
-  const statusNames = {
-    preparing: 'Í undirbúningi',
-    ongoing: 'Í framkvæmd',
-    completed: 'Lokið',
-  }
 
   const handleResize = useCallback(() => {
     setFiltersToggled(window.innerWidth >= theme.breakpoints.lg)
@@ -109,8 +96,8 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
   const onFilterTagChange = useCallback(() => {
     const arr = []
 
-    visibleItems.forEach(({ tags }, index) => {
-      if (tags.some(({ id }) => tagIds.includes(id as string))) {
+    visibleItems.forEach(({ tag }, index) => {
+      if (tag && tag.some(({ id }) => tagIds.includes(id as string))) {
         arr.push(index)
       }
     })
@@ -118,24 +105,11 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
     setIndexesFilteredByTag(arr)
   }, [visibleItems, tagIds])
 
-  const onFilterStatusChange = useCallback(() => {
-    const arr = []
-
-    visibleItems.forEach(({ status }, index) => {
-      if (selectedStatuses.includes(status)) {
-        arr.push(index)
-      }
-    })
-
-    setIndexesFilteredByStatus(arr)
-  }, [visibleItems, selectedStatuses])
-
   const doUpdate = useCallback(() => {
     onFilterStringChange()
     onFilterTagChange()
-    onFilterStatusChange()
     setIsLoading(false)
-  }, [onFilterStringChange, onFilterTagChange, onFilterStatusChange])
+  }, [onFilterStringChange, onFilterTagChange])
 
   const onUpdateFilters = useCallback(() => {
     clearTimeout(timerRef.current)
@@ -163,20 +137,6 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
     setTagIds(arr)
   }
 
-  const onStatusClick = (status: string) => {
-    clearTimeout(timerRef.current)
-    const arr = [...selectedStatuses]
-    const index = selectedStatuses.findIndex((x) => x === status)
-
-    if (index < 0) {
-      arr.push(status)
-    } else {
-      arr.splice(index, 1)
-    }
-
-    setSelectedStatuses(arr)
-  }
-
   useEffect(() => {
     onUpdateFilters()
     return () => clearTimeout(timerRef.current)
@@ -184,21 +144,13 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
 
   const filteredItems = visibleItems
     .filter((item, index) => {
-      const indexList = [
-        indexesFilteredByStatus,
-        indexesFilteredByTag,
-        indexesFilteredByString,
-      ].filter((x) => x.length > 0)
+      const indexList = [indexesFilteredByTag, indexesFilteredByString].filter(
+        (x) => x.length > 0,
+      )
 
       return _.intersection(...indexList).includes(index)
     })
     .splice(0, showAll ? visibleItems.length : showCount)
-
-  useEffect(() => {
-    if (currentArticle) {
-      setTagIds(currentArticle.tags.map((x) => x.id))
-    }
-  }, [currentArticle])
 
   const toggleFilters = () => {
     if (filtersDisabled) {
@@ -213,7 +165,7 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
     <Box padding={[3, 3, 6]}>
       <Tiles space={0} columns={2}>
         <div>
-          <Typography variant="h3" as="h3" color="red600">
+          <Typography variant="h3" as="h3">
             {title || n('adgerdir')}
           </Typography>
         </div>
@@ -227,7 +179,7 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
                     !filtersDisabled && filtersToggled,
                 })}
               >
-                <Icon type="caret" color="red600" width={12} height={12} />
+                <Icon type="caret" width={12} height={12} />
               </div>
             </Inline>
           </button>
@@ -241,48 +193,13 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
           <Box display="flex" alignItems="center" marginRight={[0, 0, 0, 3]}>
             <Stack space={2}>
               <Inline space={2} alignY="center" collapseBelow="sm">
-                <Typography variant="tag" color="red600">
-                  Staða aðgerðar:
-                </Typography>
-                <Inline space={2} alignY="center">
-                  {Object.keys(statusNames).map((status, index) => {
-                    return (
-                      <Tag
-                        key={index}
-                        variant="red"
-                        onClick={() => {
-                          setstartingItems([])
-                          onStatusClick(status)
-                        }}
-                        active={selectedStatuses.includes(status)}
-                        bordered
-                      >
-                        <Box position="relative">
-                          <Inline space={1} alignY="center">
-                            <span>{statusNames[status]}</span>
-                            <span
-                              className={cn(
-                                cardStyles.status,
-                                cardStyles.statusType[status],
-                              )}
-                            ></span>
-                          </Inline>
-                        </Box>
-                      </Tag>
-                    )
-                  })}
-                </Inline>
-              </Inline>
-              <Inline space={2} alignY="center" collapseBelow="sm">
-                <Typography variant="tag" color="red600">
-                  Málefni:
-                </Typography>
+                <Typography variant="tag">Tags:</Typography>
                 <Inline space={2} alignY="center">
                   {tags.map(({ title, id }, index) => {
                     return (
                       <Tag
                         key={index}
-                        variant="red"
+                        variant="blue"
                         onClick={() => {
                           setstartingItems([])
                           onTagClick(id)
@@ -311,7 +228,6 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
                   height="18"
                   spin={isLoading}
                   type={isLoading ? 'loading' : 'search'}
-                  color="red600"
                 />
               </span>
             </div>
@@ -321,45 +237,38 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
       {filteredItems.length === 0 ? (
         <Box>
           <Stack space={2}>
-            <Typography variant="intro" color="red600">
+            <Typography variant="intro">
               <span>Ekkert fannst með{` `}</span>
               {filterString
                 ? `leitarorðinu „${filterString}“${
-                    indexesFilteredByTag.length ||
-                    indexesFilteredByStatus.length
-                      ? ' og völdum málefnum/stöðum hér fyrir ofan'
+                    indexesFilteredByTag.length
+                      ? ' og völdum tögum hér fyrir ofan'
                       : ''
                   }`
                 : null}
-              {!filterString ? 'völdum málefnum/stöðum hér fyrir ofan' : null}.
+              {!filterString ? 'völdum tögum hér fyrir ofan' : null}.
             </Typography>
           </Stack>
         </Box>
       ) : null}
       <Box marginTop={3}>
         <Tiles space={[2, 2, 3]} columns={[1, 1, 2, 2, 3]}>
-          {filteredItems.map(
-            (
-              { title, description, tags, status, slug }: AdgerdirPage,
-              index,
-            ) => {
-              return (
-                <Card
-                  key={index}
-                  description={description}
-                  title={title}
-                  tags={tags}
-                  status={status}
-                  as={`/${
-                    activeLocale !== 'is' ? `${activeLocale}/` : ''
-                  }${slug}`}
-                  href={`/${
-                    activeLocale !== 'is' ? `${activeLocale}/` : ''
-                  }[slug]`}
-                />
-              )
-            },
-          )}
+          {filteredItems.map(({ title, tag, slug }: Organization, index) => {
+            return (
+              <Card
+                key={index}
+                description="bla"
+                title={title}
+                tags={tag}
+                as={`/${
+                  activeLocale !== 'is' ? `${activeLocale}/` : ''
+                }${slug}`}
+                href={`/${
+                  activeLocale !== 'is' ? `${activeLocale}/` : ''
+                }[slug]`}
+              />
+            )
+          })}
         </Tiles>
       </Box>
       {showCount < visibleItems.length ? (

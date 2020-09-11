@@ -104,8 +104,10 @@ export type Organization = {
   __typename?: 'Organization'
   id: Scalars['ID']
   title: Scalars['String']
+  description?: Maybe<Scalars['String']>
   slug: Scalars['String']
-  tag: Array<OrganizationTag>
+  tag?: Maybe<Array<OrganizationTag>>
+  link?: Maybe<Scalars['String']>
 }
 
 export type SubArticle = {
@@ -152,6 +154,11 @@ export type AdgerdirPage = {
   status: Scalars['String']
   estimatedCostIsk?: Maybe<Scalars['Float']>
   finalCostIsk?: Maybe<Scalars['Float']>
+}
+
+export type Organizations = {
+  __typename?: 'Organizations'
+  items: Array<Organization>
 }
 
 export type Image = {
@@ -523,6 +530,11 @@ export type PaginatedAdgerdirNews = {
   news: Array<AdgerdirNews>
 }
 
+export type OrganizationTags = {
+  __typename?: 'OrganizationTags'
+  items: Array<OrganizationTag>
+}
+
 export type Application = {
   __typename?: 'Application'
   id: Scalars['ID']
@@ -604,9 +616,12 @@ export type Query = {
   getLandingPage?: Maybe<LandingPage>
   getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
+  getOrganization?: Maybe<Organization>
   getAdgerdirNews?: Maybe<AdgerdirNews>
   getAdgerdirPages: AdgerdirPages
+  getOrganizations: Organizations
   getAdgerdirTags?: Maybe<AdgerdirTags>
+  getOrganizationTags?: Maybe<OrganizationTags>
   getFrontpageSliderList?: Maybe<FrontpageSliderList>
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
@@ -679,6 +694,10 @@ export type QueryGetAdgerdirPageArgs = {
   input: GetAdgerdirPageInput
 }
 
+export type QueryGetOrganizationArgs = {
+  input: GetOrganizationInput
+}
+
 export type QueryGetAdgerdirNewsArgs = {
   input: GetAdgerdirNewsInput
 }
@@ -687,8 +706,16 @@ export type QueryGetAdgerdirPagesArgs = {
   input: GetAdgerdirPagesInput
 }
 
+export type QueryGetOrganizationsArgs = {
+  input: GetOrganizationsInput
+}
+
 export type QueryGetAdgerdirTagsArgs = {
   input: GetAdgerdirTagsInput
+}
+
+export type QueryGetOrganizationTagsArgs = {
+  input: GetOrganizationTagsInput
 }
 
 export type QueryGetFrontpageSliderListArgs = {
@@ -822,6 +849,11 @@ export type GetAdgerdirPageInput = {
   lang: Scalars['String']
 }
 
+export type GetOrganizationInput = {
+  slug?: Maybe<Scalars['String']>
+  lang: Scalars['String']
+}
+
 export type GetAdgerdirNewsInput = {
   slug?: Maybe<Scalars['String']>
   lang: Scalars['String']
@@ -832,7 +864,16 @@ export type GetAdgerdirPagesInput = {
   perPage?: Maybe<Scalars['Int']>
 }
 
+export type GetOrganizationsInput = {
+  lang?: Maybe<Scalars['String']>
+  perPage?: Maybe<Scalars['Int']>
+}
+
 export type GetAdgerdirTagsInput = {
+  lang?: Maybe<Scalars['String']>
+}
+
+export type GetOrganizationTagsInput = {
   lang?: Maybe<Scalars['String']>
 }
 
@@ -1123,6 +1164,7 @@ export type ResolversTypes = {
   AdgerdirTag: ResolverTypeWrapper<AdgerdirTag>
   AdgerdirPage: ResolverTypeWrapper<AdgerdirPage>
   Float: ResolverTypeWrapper<Scalars['Float']>
+  Organizations: ResolverTypeWrapper<Organizations>
   Image: ResolverTypeWrapper<Image>
   AdgerdirNews: ResolverTypeWrapper<AdgerdirNews>
   AdgerdirPages: ResolverTypeWrapper<AdgerdirPages>
@@ -1203,6 +1245,7 @@ export type ResolversTypes = {
   LifeEventPage: ResolverTypeWrapper<LifeEventPage>
   AdgerdirTags: ResolverTypeWrapper<AdgerdirTags>
   PaginatedAdgerdirNews: ResolverTypeWrapper<PaginatedAdgerdirNews>
+  OrganizationTags: ResolverTypeWrapper<OrganizationTags>
   Application: ResolverTypeWrapper<Application>
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>
   ApplicationStateEnum: ApplicationStateEnum
@@ -1230,9 +1273,12 @@ export type ResolversTypes = {
   GetLandingPageInput: GetLandingPageInput
   GetGenericPageInput: GetGenericPageInput
   GetAdgerdirPageInput: GetAdgerdirPageInput
+  GetOrganizationInput: GetOrganizationInput
   GetAdgerdirNewsInput: GetAdgerdirNewsInput
   GetAdgerdirPagesInput: GetAdgerdirPagesInput
+  GetOrganizationsInput: GetOrganizationsInput
   GetAdgerdirTagsInput: GetAdgerdirTagsInput
+  GetOrganizationTagsInput: GetOrganizationTagsInput
   GetFrontpageSliderListInput: GetFrontpageSliderListInput
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
@@ -1275,6 +1321,7 @@ export type ResolversParentTypes = {
   AdgerdirTag: AdgerdirTag
   AdgerdirPage: AdgerdirPage
   Float: Scalars['Float']
+  Organizations: Organizations
   Image: Image
   AdgerdirNews: AdgerdirNews
   AdgerdirPages: AdgerdirPages
@@ -1351,6 +1398,7 @@ export type ResolversParentTypes = {
   LifeEventPage: LifeEventPage
   AdgerdirTags: AdgerdirTags
   PaginatedAdgerdirNews: PaginatedAdgerdirNews
+  OrganizationTags: OrganizationTags
   Application: Application
   DateTime: Scalars['DateTime']
   PresignedPost: PresignedPost
@@ -1374,9 +1422,12 @@ export type ResolversParentTypes = {
   GetLandingPageInput: GetLandingPageInput
   GetGenericPageInput: GetGenericPageInput
   GetAdgerdirPageInput: GetAdgerdirPageInput
+  GetOrganizationInput: GetOrganizationInput
   GetAdgerdirNewsInput: GetAdgerdirNewsInput
   GetAdgerdirPagesInput: GetAdgerdirPagesInput
+  GetOrganizationsInput: GetOrganizationsInput
   GetAdgerdirTagsInput: GetAdgerdirTagsInput
+  GetOrganizationTagsInput: GetOrganizationTagsInput
   GetFrontpageSliderListInput: GetFrontpageSliderListInput
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
@@ -1546,12 +1597,18 @@ export type OrganizationResolvers<
 > = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  tag?: Resolver<
-    Array<ResolversTypes['OrganizationTag']>,
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
     ParentType,
     ContextType
   >
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  tag?: Resolver<
+    Maybe<Array<ResolversTypes['OrganizationTag']>>,
+    ParentType,
+    ContextType
+  >
+  link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1651,6 +1708,18 @@ export type AdgerdirPageResolvers<
   >
   finalCostIsk?: Resolver<
     Maybe<ResolversTypes['Float']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type OrganizationsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Organizations'] = ResolversParentTypes['Organizations']
+> = {
+  items?: Resolver<
+    Array<ResolversTypes['Organization']>,
     ParentType,
     ContextType
   >
@@ -2262,6 +2331,18 @@ export type PaginatedAdgerdirNewsResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type OrganizationTagsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['OrganizationTags'] = ResolversParentTypes['OrganizationTags']
+> = {
+  items?: Resolver<
+    Array<ResolversTypes['OrganizationTag']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type ApplicationResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['Application'] = ResolversParentTypes['Application']
@@ -2433,6 +2514,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetAdgerdirPageArgs, 'input'>
   >
+  getOrganization?: Resolver<
+    Maybe<ResolversTypes['Organization']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetOrganizationArgs, 'input'>
+  >
   getAdgerdirNews?: Resolver<
     Maybe<ResolversTypes['AdgerdirNews']>,
     ParentType,
@@ -2445,11 +2532,23 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetAdgerdirPagesArgs, 'input'>
   >
+  getOrganizations?: Resolver<
+    ResolversTypes['Organizations'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetOrganizationsArgs, 'input'>
+  >
   getAdgerdirTags?: Resolver<
     Maybe<ResolversTypes['AdgerdirTags']>,
     ParentType,
     ContextType,
     RequireFields<QueryGetAdgerdirTagsArgs, 'input'>
+  >
+  getOrganizationTags?: Resolver<
+    Maybe<ResolversTypes['OrganizationTags']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetOrganizationTagsArgs, 'input'>
   >
   getFrontpageSliderList?: Resolver<
     Maybe<ResolversTypes['FrontpageSliderList']>,
@@ -2569,6 +2668,7 @@ export type Resolvers<ContextType = Context> = {
   Article?: ArticleResolvers<ContextType>
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
   AdgerdirPage?: AdgerdirPageResolvers<ContextType>
+  Organizations?: OrganizationsResolvers<ContextType>
   Image?: ImageResolvers<ContextType>
   AdgerdirNews?: AdgerdirNewsResolvers<ContextType>
   AdgerdirPages?: AdgerdirPagesResolvers<ContextType>
@@ -2616,6 +2716,7 @@ export type Resolvers<ContextType = Context> = {
   LifeEventPage?: LifeEventPageResolvers<ContextType>
   AdgerdirTags?: AdgerdirTagsResolvers<ContextType>
   PaginatedAdgerdirNews?: PaginatedAdgerdirNewsResolvers<ContextType>
+  OrganizationTags?: OrganizationTagsResolvers<ContextType>
   Application?: ApplicationResolvers<ContextType>
   DateTime?: GraphQLScalarType
   PresignedPost?: PresignedPostResolvers<ContextType>

@@ -13,14 +13,14 @@ import {
   ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
-import { AdgerdirTag } from '@island.is/api/schema'
+import { OrganizationTag } from '@island.is/api/schema'
 
 import * as styles from './Card.treat'
 
 interface CardProps {
   title: string
   description: string
-  tags?: Array<AdgerdirTag>
+  tags?: Array<OrganizationTag>
   href?: string
   as?: string
   variant?: ColorSchemes
@@ -85,7 +85,7 @@ export const Card = forwardRef<HTMLAnchorElement, CardProps>(
                   )}
                 </Stack>
               </Box>
-              {tags.length > 0 && (
+              {tags && tags.length > 0 && (
                 <Box paddingTop={2} flexGrow={0}>
                   <Inline space={1}>
                     {tags.map(({ title, id }, index) => {
