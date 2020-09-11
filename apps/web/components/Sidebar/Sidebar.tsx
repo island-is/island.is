@@ -151,7 +151,9 @@ export const Sidebar: FC<SidebarProps> = ({
     updateBulletPlacement()
   }, [updateBulletPlacement])
 
-  const sortedItems = items.sort((a, b) => a.title.localeCompare(b.title, 'is'))
+  const sortedItems = Array.isArray(items)
+    ? items.sort((a, b) => a.title.localeCompare(b.title, 'is'))
+    : []
 
   return (
     <Box
@@ -204,28 +206,27 @@ export const Sidebar: FC<SidebarProps> = ({
           </Stack>
         ) : null}
         {items && <Divider weight="alternate" />}
-        {sortedItems &&
-          sortedItems.map(({ title, active, href, as }, index) => {
-            return (
-              <Link key={index} href={href} as={as}>
-                <a>
-                  {active && (
-                    <span
-                      className={cn(styles.bullet, {
-                        [styles.bulletRight]: bullet === 'right',
-                        [styles.hidden]: bullet == 'none',
-                      })}
-                    >
-                      <Icon type="bullet" color="red400" />
-                    </span>
-                  )}
-                  <Typography variant="p" as="span">
-                    {active ? <strong>{title}</strong> : title}
-                  </Typography>
-                </a>
-              </Link>
-            )
-          })}
+        {sortedItems.map(({ title, active, href, as }, index) => {
+          return (
+            <Link key={index} href={href} as={as}>
+              <a>
+                {active && (
+                  <span
+                    className={cn(styles.bullet, {
+                      [styles.bulletRight]: bullet === 'right',
+                      [styles.hidden]: bullet == 'none',
+                    })}
+                  >
+                    <Icon type="bullet" color="red400" />
+                  </span>
+                )}
+                <Typography variant="p" as="span">
+                  {active ? <strong>{title}</strong> : title}
+                </Typography>
+              </a>
+            </Link>
+          )
+        })}
         {children && <Divider weight="alternate" />}
         {children && children}
       </Stack>
