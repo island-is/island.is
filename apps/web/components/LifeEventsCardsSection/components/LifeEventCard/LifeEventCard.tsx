@@ -31,8 +31,6 @@ const LifeEventCard: React.FC<Props> = ({ title, intro, image, url }) => {
       <Box
         display="flex"
         flexDirection="column"
-        paddingTop={[2, 2, null]}
-        paddingBottom={[4, 4, null]}
         marginRight={[2, 2, 2, 2, 1]}
         className={styles.content}
       >
