@@ -23,6 +23,7 @@ const LifeEventCard: React.FC<Props> = ({
       href={url}
       borderColor="blue200"
       borderWidth="standard"
+      height="full"
     >
       <Box
         className={styles.card}
