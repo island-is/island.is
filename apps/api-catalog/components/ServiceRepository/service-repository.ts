@@ -75,7 +75,7 @@ function timeout(ms) {
 }
 
 async function limitServices(services, cursor:number, limit:number): Promise<ServicesResult> {
-    //await timeout(1000);
+    await timeout(1000);
     const errorResult:ServicesResult = { result: null, prevCursor:null, nextCursor:null };
     const len = services.length;
     const searchCursor = cursor === null? 0 : cursor;
