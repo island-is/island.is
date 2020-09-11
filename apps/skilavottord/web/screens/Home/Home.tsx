@@ -49,7 +49,6 @@ const Home: FC = () => {
       </Box>
       <Box paddingBottom={10}>
         <BorderedContent
-          showTopContent={true}
           topContent={
             <Box padding={3}>
               <Stack space={[2, 2]}>
@@ -79,7 +78,6 @@ const Home: FC = () => {
       </Box>
       <Box paddingBottom={10}>
         <BorderedContent
-          showTopContent={true}
           topContent={
             <Box padding={3}>
               <Stack space={[2, 2]}>

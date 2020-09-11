@@ -28,7 +28,8 @@
       "sign": "Login again to sign"
     },
     "checkbox": {
-      "label": "I agree to the Terms and conditions"
+      "label": "I agree to the",
+      "linkLabel": "Terms and conditions"
     }
   }
 }

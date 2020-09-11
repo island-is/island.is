@@ -2,7 +2,7 @@ import React, { FC, ReactNode } from 'react'
 import Head from 'next/head'
 import { Header } from '../../components'
 
-import { Page, Footer } from '@island.is/island-ui/core'
+import { Page } from '@island.is/island-ui/core'
 
 interface LayoutProps {
   children: ReactNode
@@ -40,6 +40,5 @@ export const MainLayout: FC<LayoutProps> = ({ children }) => (
     </Head>
     <Header />
     {children}
-    <Footer />
   </Page>
 )

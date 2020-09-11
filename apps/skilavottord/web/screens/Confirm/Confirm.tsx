@@ -5,13 +5,15 @@ import {
   Typography,
   Button,
   Checkbox,
+  Link,
 } from '@island.is/island-ui/core'
-import { PageLayout } from '../Layouts'
+import { ProcessPageLayout } from '../Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 import { useRouter } from 'next/router'
 import { DetailsBox } from './components'
 import OutlinedBox from '@island.is/skilavottord-web/components/OutlinedBox/OutlinedBox'
+import * as styles from './Confirm.treat'
 
 const mock = {
   id: 'BVZ655',
@@ -41,8 +43,22 @@ const Confirm: FC = () => {
     console.log('Sign in...')
   }
 
+  const checkboxLabel = (
+    <div>
+      {t.checkbox.label}{' '}
+      <Link
+        href=""
+        className={
+          checkbox ? styles.checkboxLabelLinkChecked : styles.checkboxLabelLink
+        }
+      >
+        {t.checkbox.linkLabel}
+      </Link>
+    </div>
+  )
+
   return (
-    <PageLayout>
+    <ProcessPageLayout isProcess>
       <Stack space={4}>
         <Typography variant="h1">{t.title}</Typography>
         <Stack space={2}>
@@ -54,8 +70,8 @@ const Confirm: FC = () => {
           <OutlinedBox backgroundColor="blue100">
             <Box padding={4}>
               <Checkbox
-                name="agree"
-                label={t.checkbox.label}
+                name="confirm"
+                label={checkboxLabel.props.children}
                 onChange={({ target }) => {
                   setCheckbox(target.checked)
                 }}
@@ -68,10 +84,12 @@ const Confirm: FC = () => {
           <Button variant="ghost" onClick={onCancel}>
             {t.buttons.cancel}
           </Button>
-          <Button variant="normal">{t.buttons.sign}</Button>
+          <Button variant="normal" disabled={!checkbox}>
+            {t.buttons.sign}
+          </Button>
         </Box>
       </Stack>
-    </PageLayout>
+    </ProcessPageLayout>
   )
 }
 

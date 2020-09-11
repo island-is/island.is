@@ -58,6 +58,7 @@ export interface ConfirmButtons {
 
 export interface CheckBox {
   label: string
+  linkLabel: string
 }
 
 // Converts JSON strings to/from your types
