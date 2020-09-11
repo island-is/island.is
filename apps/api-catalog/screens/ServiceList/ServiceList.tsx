@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { Box,  Stack,  BulletList,  Bullet,  Button, Checkbox 
+import {  Box,  
+          Stack,  
+          BulletList,  
+          Bullet,  
+          Button, 
+          Checkbox, 
+          GridContainer, 
+          GridRow, 
+          GridColumn, 
+          SidebarAccordion 
 } from '@island.is/island-ui/core'
 
 import { Layout, 
@@ -89,10 +98,10 @@ export default function ServiceList(props:ServiceListProps) {
   }, [checkDataPersonal,checkPricingFree, paramCursor, props.parameters]);
 
   const updatePricingFree = event => {
-    console.log(event.target.checked);
+    console.log(event.target.value, event.target.checked);
     
     props.parameters.cursor = null;
-
+    
     if (props.parameters.pricing === null) {
       props.parameters.pricing = [];
     }
@@ -108,47 +117,55 @@ export default function ServiceList(props:ServiceListProps) {
     setParamCursor(props.parameters.cursor);
     console.log(event.target.value);
   }
-  return (
-   
+  return (   
       <Layout left={
         <Box className="service-list">
           {bullets()}
           <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
-            <Stack space={5}>
-              <Stack space={3}>
-              <CategoryCheckBox label="Free" value="free" onChange={updatePricingFree} checkValue={checkPricingFree}/>
-
-
-                <Checkbox name="checkboxPersonal" label="Personal"
-                  onChange={({ target }) => {
-                    props.parameters.cursor = null;
-                    if (props.parameters.data === null) {
-                      props.parameters.data = [];
+            <GridContainer>
+              <GridRow className="service-items">
+                <GridColumn span={9}>
+                  {makeNavigation()}
+                  <Stack space={3}>
+                    {
+                      services?.map( (item, index) => {
+                        return <ServiceCard key={index} service={item} />
+                      })
                     }
-                    if (target.checked) {
-                        if (!props.parameters.data.includes('personal')){
-                          props.parameters.data.push('personal')
-                        }
-                    } else {
-                      props.parameters.data.splice(props.parameters.data.indexOf('personal'), 1);
-                    }
-                    setParamCursor(props.parameters.cursor);
-                    setCheckDataPersonal(target.checked)
-                  }}
-                  checked={checkDataPersonal}
-                /> 
-
-                {makeNavigation()}
-              </Stack>
-              <Stack space={3}>
-                {
-                  services?.map( (item, index) => {
-                    return <ServiceCard key={index} service={item} />
-                  })
-                }
-              </Stack>
-              {makeNavigation()}
-            </Stack>
+                  </Stack>
+                    {makeNavigation()}
+                </GridColumn>
+                <GridColumn span={3} className="filter">
+                    <SidebarAccordion id="pricing" label="Verð">
+                      <Stack space="gutter">
+                        <CategoryCheckBox label="Frítt" value="free" onChange={updatePricingFree} checkValue={checkPricingFree}/>
+                      </Stack>
+                    </SidebarAccordion>
+                    <SidebarAccordion id="data" label="Gögn" >
+                      <Stack space={[1, 1, 1]}>
+                        <Checkbox name="checkboxPersonal" label="Personal"
+                          onChange={({ target }) => {
+                            props.parameters.cursor = null;
+                            if (props.parameters.data === null) {
+                              props.parameters.data = [];
+                            }
+                            if (target.checked) {
+                              if (!props.parameters.data.includes('personal')){
+                                props.parameters.data.push('personal')
+                              }
+                            } else {
+                              props.parameters.data.splice(props.parameters.data.indexOf('personal'), 1);
+                            }
+                            setParamCursor(props.parameters.cursor);
+                            setCheckDataPersonal(target.checked)
+                          }}
+                          checked={checkDataPersonal}
+                          />
+                      </Stack>
+                    </SidebarAccordion>
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
           </Box>
         </Box>
       } />

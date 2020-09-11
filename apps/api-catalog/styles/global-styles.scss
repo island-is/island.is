@@ -61,6 +61,7 @@
       $color-service-status-error: #ff0250;
       .service-list {
           ul {
+            /*Bullet legends*/
               li:first-child circle {
                   fill: $color-service-status-ok !important;
               }
@@ -74,8 +75,12 @@
                   fill: $color-service-status-unknown !important;
               }
           }
-          .navigation button {
-            padding:8px;
+          .navigation {
+            button {
+              padding:8px;
+            }
+            padding:50px;
+            text-align: center;
           }
       }
       .service-card{
@@ -93,4 +98,17 @@
               background:$color-service-status-error;
           }
       }
+
+      .service-items {
+        padding-top:50px;
+      }
+      .filter {
+        margin-top:40px;
+        min-width: 80px;
+      }
+      .filter button {
+        margin-top: 8px;
+      }
   }
+
+  

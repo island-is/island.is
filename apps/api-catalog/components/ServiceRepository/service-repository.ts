@@ -3,13 +3,13 @@ import { ServiceCardInformation } from '../ServiceCard/service-card';
 
 const MAX_LIMIT = 4;
 const OrgServices:Array<ServiceCardInformation> =[
-    { id:0, owner:"Þjóðskrá",         name:"Fasteignaskrá",       pricing:["free"],                      categories:["open"],                   type:["REST"],  access:["API GW"], url:"http://fasteignaskra.thodskra.is:4700",     status:ServiceStatusValue.OK},
-    { id:1, owner:"Þjóðskrá",         name:"Einstaklingsskrá",    pricing:["free", "custom"],            categories:["personal"],                   type:null,      access:["X-Road"], url:"http://einstaklingskra.thodskra.is:4700",   status:ServiceStatusValue.WARNING},
-    { id:2, owner:"Þjóðskrá",         name:"Staðfangaskrá",       pricing:["usage"],                          categories:["personal", "public"], type:["react"], access:["API GW"], url:"http://stadfangaskra.thodskra.is:4700",     status:ServiceStatusValue.ERROR},
-    { id:3, owner:"Skatturinn",       name:"Virðisaukaskattur",   pricing:["daily","monthly", "yearly"], categories:["personal", "public"], type:["SOAP"],  access:["API GW"], url:"http://vsk.skattur.is/:2100",               status:ServiceStatusValue.WARNING},
-    { id:4, owner:"Skatturinn",       name:"Staðgreiðsla",        pricing:["daily","monthly", "yearly"], categories:["personal", "financial"], type:["SOAP"],  access:["API GW"], url:"http://stadgreidsla.skattur.is:2100",       status:ServiceStatusValue.OK},
-    { id:5, owner:"Vinnumálastofnun", name:"Fæðingarorlofssjóður",pricing:["yearly"],                          categories:["personal", "public"], type:["react"], access:["API GW"], url:"http://faedingarorlofssjodur.vms.is:74200", status:ServiceStatusValue.ERROR},
-    { id:6, owner:"Samgöngujstofa",   name:"Ökutækjaskrá",        pricing:["daily","monthly", "yearly"], categories:["personal", "public"], type:["SOAP"],  access:["API GW"], url:"http://okutaeki.samgongustofa.is:74200",    status:ServiceStatusValue.UNKNOWN}
+    { id:0, owner:"Þjóðskrá",        name:"Fasteignaskrá",       pricing:["free"],                      categories:["open"],                 type:["REST"], access:["API GW"], url:"http://fasteignaskra.thodskra.is:4700",    status:ServiceStatusValue.OK},
+    { id:1, owner:"Þjóðskrá",        name:"Einstaklingsskrá",    pricing:["free", "custom"],            categories:["personal"],             type:["REACT"],access:["X-Road"], url:"http://einstaklingskra.thodskra.is:4700",  status:ServiceStatusValue.WARNING},
+    { id:2, owner:"Þjóðskrá",        name:"Staðfangaskrá",       pricing:["usage"],                     categories:["personal", "public"],   type:["REACT"],access:["API GW"], url:"http://stadfangaskra.thodskra.is:4700",    status:ServiceStatusValue.ERROR},
+    { id:3, owner:"Skatturinn",      name:"Virðisaukaskattur",   pricing:["daily","monthly", "yearly"], categories:["personal", "public"],   type:["SOAP"], access:["API GW"], url:"http://vsk.skattur.is/:2100",              status:ServiceStatusValue.WARNING},
+    { id:4, owner:"Skatturinn",      name:"Staðgreiðsla",        pricing:["daily","monthly", "yearly"], categories:["personal", "financial"],type:["SOAP"], access:["API GW"], url:"http://stadgreidsla.skattur.is:2100",      status:ServiceStatusValue.OK},
+    { id:5, owner:"Vinnumálastofnun",name:"Fæðingarorlofssjóður",pricing:["yearly"],                    categories:["personal", "public"],   type:["REACT"],access:["API GW"], url:"http://faedingarorlofssjodur.vms.is:74200",status:ServiceStatusValue.ERROR},
+    { id:6, owner:"Samgöngustofa",   name:"Ökutækjaskrá",        pricing:["daily","monthly", "yearly"], categories:["personal", "public"],   type:["SOAP"], access:["API GW"], url:"http://okutaeki.samgongustofa.is:74200",  status:ServiceStatusValue.UNKNOWN}
 ];
 
 export interface ServicesResult {
