@@ -26,6 +26,7 @@ module.exports = {
 
         /* set not null for airline */
         ALTER TABLE flight_leg ALTER COLUMN airline SET NOT NULL;
+        ALTER TABLE flight ALTER COLUMN airline DROP NOT NULL;
 
       COMMIT;
     `)
