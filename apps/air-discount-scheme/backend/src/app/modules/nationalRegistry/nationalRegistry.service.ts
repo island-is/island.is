@@ -171,7 +171,7 @@ export class NationalRegistryService {
   }
 
   private isParent(person: FamilyMember): boolean {
-    return [1, 2].includes(person.gender)
+    return ['1', '2'].includes(person.gender)
   }
 
   private isChild(person: FamilyMember): boolean {
