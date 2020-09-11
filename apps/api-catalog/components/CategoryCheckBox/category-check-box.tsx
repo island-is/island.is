@@ -1,5 +1,5 @@
 import React from 'react'
-import { Checkbox } from '@island.is/island-ui/core'
+import { Checkbox, Stack } from '@island.is/island-ui/core'
 
 export interface CategoryCheckBoxCategoryCheckBox  {  
   checkValue:boolean, 
@@ -10,13 +10,13 @@ export interface CategoryCheckBoxCategoryCheckBox  {
 
 export const CategoryCheckBox = (props:CategoryCheckBoxCategoryCheckBox) => {
   return (
-    <div>
-      <Checkbox name="checkboxFree" label={props.label}
+    <Stack space="gutter">
+      <Checkbox name={props.label+props.value} label={props.label}
                   onChange={props.onChange}
                   checked={props.checkValue}
                   value={props.value}
         /> 
-    </div>
+    </Stack>
   )
 }
 

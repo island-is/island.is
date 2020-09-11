@@ -97,25 +97,38 @@ export default function ServiceList(props:ServiceListProps) {
       loadData();
   }, [checkDataPersonal,checkPricingFree, paramCursor, props.parameters]);
 
-  const updatePricingFree = event => {
+  const updateCategoryCheckBox = event => {
     console.log(event.target.value, event.target.checked);
     
     props.parameters.cursor = null;
-    
-    if (props.parameters.pricing === null) {
-      props.parameters.pricing = [];
-    }
-    if (event.target.checked) {
-        if (!props.parameters.pricing.includes('free')){
-          props.parameters.pricing.push('free')
-        }
-    } else {
-      props.parameters.pricing.splice(props.parameters.pricing.indexOf('free'), 1);
+    let filter:Array<string>;
+    switch(event.target.value){
+      case 'free'    : filter = props.parameters.pricing; break;
+      case 'personal': filter = props.parameters.data; break;
+      default:
+        console.error('Invalid checkbox value')
+        return;
     }
 
-    setCheckPricingFree(event.target.checked);
+    if (filter === null) {
+      filter = [];
+    }
+    if (event.target.checked) {
+        if (!filter.includes(event.target.value)) {
+          filter.push(event.target.value)
+        }
+    } else {
+      filter.splice(filter.indexOf(event.target.value), 1);
+    }
+
+    
+    switch(event.target.value){
+      case 'free'    : setCheckPricingFree(event.target.checked); break;
+      case 'personal': setCheckDataPersonal(event.target.checked); break;
+    }
+
     setParamCursor(props.parameters.cursor);
-    console.log(event.target.value);
+    console.log(event.target.value, event.target.checked);
   }
   return (   
       <Layout left={
@@ -137,31 +150,10 @@ export default function ServiceList(props:ServiceListProps) {
                 </GridColumn>
                 <GridColumn span={3} className="filter">
                     <SidebarAccordion id="pricing" label="Verð">
-                      <Stack space="gutter">
-                        <CategoryCheckBox label="Frítt" value="free" onChange={updatePricingFree} checkValue={checkPricingFree}/>
-                      </Stack>
+                      <CategoryCheckBox label="Frítt" value="free" onChange={updateCategoryCheckBox} checkValue={checkPricingFree}/>
                     </SidebarAccordion>
-                    <SidebarAccordion id="data" label="Gögn" >
-                      <Stack space={[1, 1, 1]}>
-                        <Checkbox name="checkboxPersonal" label="Personal"
-                          onChange={({ target }) => {
-                            props.parameters.cursor = null;
-                            if (props.parameters.data === null) {
-                              props.parameters.data = [];
-                            }
-                            if (target.checked) {
-                              if (!props.parameters.data.includes('personal')){
-                                props.parameters.data.push('personal')
-                              }
-                            } else {
-                              props.parameters.data.splice(props.parameters.data.indexOf('personal'), 1);
-                            }
-                            setParamCursor(props.parameters.cursor);
-                            setCheckDataPersonal(target.checked)
-                          }}
-                          checked={checkDataPersonal}
-                          />
-                      </Stack>
+                    <SidebarAccordion id="data" label="Gögn">
+                      <CategoryCheckBox label="Persónuleg" value="personal" onChange={updateCategoryCheckBox} checkValue={checkDataPersonal}/>
                     </SidebarAccordion>
                 </GridColumn>
               </GridRow>
