@@ -26,15 +26,22 @@ interface AppCustomContext extends AppContext {
   apolloClient: ApolloClient<NormalizedCacheObject>
 }
 
-const SupportApplication: NextComponentType<
+type SupportApplicationProps = NextComponentType<
   AppCustomContext,
   AppInitialProps,
-  AppCustomProps
-> = ({ Component, pageProps, layoutProps }) => {
+  AppCustomProps & { apolloState: NormalizedCacheObject }
+>
+
+const SupportApplication: SupportApplicationProps = ({
+  Component,
+  pageProps,
+  layoutProps,
+  apolloState,
+}) => {
   const { showSearchInHeader } = pageProps
 
   return (
-    <ApolloProvider client={initApollo(pageProps.apolloState)}>
+    <ApolloProvider client={initApollo(apolloState)}>
       <Layout showSearchInHeader={showSearchInHeader} {...layoutProps}>
         <Component {...pageProps} />
       </Layout>
