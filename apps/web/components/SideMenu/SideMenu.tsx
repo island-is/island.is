@@ -13,6 +13,7 @@ import {
   GridRow,
   GridColumn,
   Box,
+  FocusableBox,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useI18n } from '@island.is/web/i18n'
@@ -60,9 +61,14 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
           height="full"
         >
           <Box display="flex" paddingBottom={3} justifyContent="flexEnd">
-            <button onClick={handleClose} tabIndex={-1}>
+            <FocusableBox
+              component="button"
+              onClick={handleClose}
+              tabIndex={-1}
+              padding={1}
+            >
               <Icon type="close" />
-            </button>
+            </FocusableBox>
           </Box>
           <Hidden above="sm">
             <GridContainer>
@@ -93,20 +99,27 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
 
           <div className={styles.tabBar}>
             {tabs.map((tab, index) => (
-              <button
+              <FocusableBox
+                component="button"
                 key={tab.title}
                 role="tab"
                 aria-controls={`tab-content-${index}`}
-                className={cn(styles.tab, {
-                  [styles.tabActive]: activeTab === index,
-                })}
                 aria-selected={activeTab === index}
                 onClick={() => setActiveTab(index)}
               >
-                <Typography variant="eyebrow" color="blue400">
-                  {tab.title}
-                </Typography>
-              </button>
+                {({ isFocused }) => (
+                  <div
+                    className={cn(styles.tab, {
+                      [styles.tabActive]: activeTab === index,
+                      [styles.tabFocused]: isFocused,
+                    })}
+                  >
+                    <Typography variant="eyebrow" color="blue400">
+                      {tab.title}
+                    </Typography>
+                  </div>
+                )}
+              </FocusableBox>
             ))}
           </div>
           {tabs.map((tab, index) => {
@@ -126,7 +139,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
                       color="blue400"
                       paddingBottom={index + 1 === tab.links.length ? 0 : 2}
                     >
-                      <a href={link.url}>{link.title}</a>
+                      <FocusableBox href={link.url}>{link.title}</FocusableBox>
                     </Typography>
                   ))}
                 </div>

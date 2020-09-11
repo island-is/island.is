@@ -88,7 +88,7 @@ export const useBoxStyles = ({
   border,
   borderColor,
   borderWidth,
-  borderStyle,
+  borderStyle = 'solid',
   borderRadius,
   background,
   boxShadow,

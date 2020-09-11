@@ -2,10 +2,10 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
-import NextLink from 'next/link'
 import {
   Typography,
   Stack,
+  Box,
   Breadcrumbs,
   Hidden,
   Select,
@@ -14,7 +14,7 @@ import {
   Option,
   Link,
   Accordion,
-  Box,
+  FocusableBox,
 } from '@island.is/island-ui/core'
 import { Card, Sidebar } from '../../components'
 import { useI18n } from '@island.is/web/i18n'
@@ -208,14 +208,13 @@ const Category: Screen<CategoryProps> = ({
                                     articlesBySubgroup[subgroup],
                                   ).map(({ title, slug }) => {
                                     return (
-                                      <NextLink
+                                      <FocusableBox
                                         key={slug}
                                         href={`${makePath('article')}/[slug]`}
                                         as={makePath('article', slug)}
-                                        passHref
                                       >
                                         <LinkCard>{title}</LinkCard>
-                                      </NextLink>
+                                      </FocusableBox>
                                     )
                                   })}
                                 </Stack>
@@ -245,36 +244,42 @@ const Category: Screen<CategoryProps> = ({
           </Stack>
         }
       >
-        <Stack space={[3, 3, 4]}>
+        <Box paddingBottom={2}>
           <Breadcrumbs>
             <Link href={makePath()}>Ísland.is</Link>
           </Breadcrumbs>
-          <Hidden above="md">
-            <Select
-              label="Þjónustuflokkar"
-              defaultValue={{
-                label: category.title,
-                value: category.slug,
-              }}
-              onChange={({ value }: Option) => {
-                const slug = value as string
+        </Box>
 
-                Router.push(
-                  `${makePath('category')}/[slug]`,
-                  makePath('category', slug),
-                )
-              }}
-              options={categoryOptions}
-              name="categories"
-            />
-          </Hidden>
-          <Typography variant="h1" as="h1">
-            {category.title}
-          </Typography>
-          <Typography variant="intro" as="p">
-            {category.description}
-          </Typography>
-        </Stack>
+        <Hidden above="sm">
+          <Select
+            label="Þjónustuflokkar"
+            defaultValue={{
+              label: category.title,
+              value: category.slug,
+            }}
+            onChange={({ value }: Option) => {
+              const slug = value as string
+
+              Router.push(
+                `${makePath('category')}/[slug]`,
+                makePath('category', slug),
+              )
+            }}
+            options={categoryOptions}
+            name="categories"
+          />
+        </Hidden>
+        <Typography
+          variant="h1"
+          as="h1"
+          paddingTop={[4, 4, 0]}
+          paddingBottom={2}
+        >
+          {category.title}
+        </Typography>
+        <Typography variant="intro" as="p">
+          {category.description}
+        </Typography>
       </CategoryLayout>
     </>
   )
