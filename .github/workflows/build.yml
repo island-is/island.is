@@ -12,7 +12,6 @@ on:
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
-  MAX_JOBS: 1
 jobs:
   prepare:
     #runs-on: self-hosted
@@ -119,7 +118,13 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
+
+      - name: Cache for NodeJS dependencies - Docker layer
+        uses: actions/cache@v1
+        with:
+          path: cache_output
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-2
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -237,7 +242,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
       - name: Cache for NodeJS dependencies - host OS
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v1
@@ -321,8 +326,8 @@ jobs:
         id: cache-deps
         uses: actions/cache@v1
         with:
-          path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output
+          path: cache_output
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-2
       - name: Set up Docker Buildx
         if: ${{ matrix.projects != 'dummy' }}
         id: buildx
@@ -362,8 +367,8 @@ jobs:
         id: cache-deps
         uses: actions/cache@v1
         with:
-          path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output
+          path: cache_output
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-2
       - name: Set up Docker Buildx
         if: ${{ matrix.projects != 'dummy' }}
         id: buildx
@@ -403,8 +408,8 @@ jobs:
         id: cache-deps
         uses: actions/cache@v1
         with:
-          path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output
+          path: cache_output
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-2
       - name: Set up Docker Buildx
         if: ${{ matrix.projects != 'dummy' }}
         id: buildx

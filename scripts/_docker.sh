@@ -25,7 +25,7 @@ esac
 
 docker buildx build \
   --platform=linux/amd64 \
-  --cache-from=type=local,src=$PROJECT_ROOT/cache \
+  --cache-from=type=local,src=$PROJECT_ROOT/cache_output \
   -f ${DIR}/Dockerfile \
   --target=$TARGET $PUBLISH_TO_REGISTRY \
   --build-arg APP=${APP} \
