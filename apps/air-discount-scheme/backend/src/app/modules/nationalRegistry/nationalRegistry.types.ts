@@ -4,20 +4,21 @@ export interface NationalRegistryGeneralLookupResponse {
   name: string
   gender: 'kk' | 'kvk'
   address: string
-  postalcode: number
+  postalcode: string
   city: string
   lastmodified: string
   charged: boolean
   error?: string
 }
 
-type FamilyMember = {
+export type FamilyMember = {
   banlabel?: string
   ssn: string
+  gender: '1' | '2' | '3' | '4'
   name: string
   address: string
   towncode: number
-  postalcode: number
+  postalcode: string
   city: string
 }
 
@@ -25,6 +26,7 @@ export interface NationalRegistryFamilyLookupResponse {
   source: 'Þjóðskrá' | 'Fyrirtækjaskrá'
   familyssn: string
   results: FamilyMember[]
+  error?: string
 }
 
 export interface NationalRegistryUser {

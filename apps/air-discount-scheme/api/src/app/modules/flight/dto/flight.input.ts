@@ -8,7 +8,7 @@ import {
   IsDate,
 } from 'class-validator'
 
-import { States } from '@island.is/air-discount-scheme/consts'
+import { States, Airlines } from '@island.is/air-discount-scheme/consts'
 
 @InputType()
 class FlightLeg {
@@ -47,7 +47,7 @@ class Range {
 export class FlightsInput {
   @Field((_) => String, { nullable: true })
   @IsOptional()
-  @IsEnum(['ernir', 'norlandair', 'icelandair'])
+  @IsEnum(Object.values(Airlines))
   airline: string
 
   @Field((_) => FlightLeg, { nullable: true })
