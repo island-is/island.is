@@ -54,7 +54,6 @@ type ArticleGroup {
   title: String!
   slug: String!
   description: String
-  sortBy: String
 }
 
 type ArticleSubgroup {
@@ -62,9 +61,18 @@ type ArticleSubgroup {
   slug: String!
 }
 
-type Organization {
+type OrganizationTag {
+  id: ID!
   title: String!
+}
+
+type Organization {
+  id: ID!
+  title: String!
+  description: String
   slug: String!
+  tag: [OrganizationTag!]
+  link: String
 }
 
 type SubArticle {
@@ -107,6 +115,10 @@ type AdgerdirPage {
   status: String!
   estimatedCostIsk: Float
   finalCostIsk: Float
+}
+
+type Organizations {
+  items: [Organization!]!
 }
 
 type Image {
@@ -425,6 +437,10 @@ type PaginatedAdgerdirNews {
   news: [AdgerdirNews!]!
 }
 
+type OrganizationTags {
+  items: [OrganizationTag!]!
+}
+
 type Application {
   id: ID!
   created: DateTime!
@@ -505,9 +521,12 @@ type Query {
   getLandingPage(input: GetLandingPageInput!): LandingPage
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
+  getOrganization(input: GetOrganizationInput!): Organization
   getAdgerdirNews(input: GetAdgerdirNewsInput!): AdgerdirNews
   getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages!
+  getOrganizations(input: GetOrganizationsInput!): Organizations!
   getAdgerdirTags(input: GetAdgerdirTagsInput!): AdgerdirTags
+  getOrganizationTags(input: GetOrganizationTagsInput!): OrganizationTags
   getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getMenu(input: GetMenuInput!): Menu
@@ -615,6 +634,11 @@ input GetAdgerdirPageInput {
   lang: String!
 }
 
+input GetOrganizationInput {
+  slug: String
+  lang: String!
+}
+
 input GetAdgerdirNewsInput {
   slug: String
   lang: String!
@@ -625,7 +649,16 @@ input GetAdgerdirPagesInput {
   perPage: Int
 }
 
+input GetOrganizationsInput {
+  lang: String
+  perPage: Int
+}
+
 input GetAdgerdirTagsInput {
+  lang: String
+}
+
+input GetOrganizationTagsInput {
   lang: String
 }
 
