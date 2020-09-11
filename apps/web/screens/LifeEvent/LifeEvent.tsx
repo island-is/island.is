@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React from 'react'
 import gql from 'graphql-tag'
 import { Screen } from '../../types'
 import {

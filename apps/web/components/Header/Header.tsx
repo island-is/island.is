@@ -3,7 +3,6 @@ import React, { FC, useState, useContext } from 'react'
 import { useRouter } from 'next/router'
 import {
   Logo,
-  Link,
   Columns,
   Column,
   Box,

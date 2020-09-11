@@ -54,9 +54,9 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
 
   useEffect(() => {
     if (tabRefs.current) {
-      tabRefs.current[0]?.focus()
+      tabRefs.current[0] && tabRefs.current[0].focus()
     }
-  }, [tabRefs.current, isVisible])
+  }, [isVisible])
 
   return isVisible ? (
     <RemoveScroll enabled={isMobile}>
