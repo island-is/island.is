@@ -119,13 +119,13 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-2
 
       - name: Cache for NodeJS dependencies - Docker layer
         uses: actions/cache@v1
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-2
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-3
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -243,7 +243,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-2
       - name: Cache for NodeJS dependencies - host OS
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v1
@@ -328,7 +328,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-2
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-3
       - name: Set up Docker Buildx
         if: ${{ matrix.projects != 'dummy' }}
         id: buildx
@@ -369,7 +369,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-2
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-3
       - name: Set up Docker Buildx
         if: ${{ matrix.projects != 'dummy' }}
         id: buildx
@@ -410,7 +410,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-2
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-3
       - name: Set up Docker Buildx
         if: ${{ matrix.projects != 'dummy' }}
         id: buildx

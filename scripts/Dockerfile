@@ -65,13 +65,13 @@ WORKDIR /webapp
 # Adding user for running the app
 RUN addgroup runners && adduser -D runner -G runners
 RUN chown -R runner:runners /webapp
-USER runner
 
 COPY --from=deps --chown=runner:runners /build/node_modules /webapp/node_modules
 
 RUN apk add bash python py-pip jq curl -U \
     && rm -rf /var/cache/apk/*
 RUN pip install awscli
+USER runner
 
 FROM output-base as output-express
 # image with build of an Express.js app
