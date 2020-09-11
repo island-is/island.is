@@ -37,7 +37,7 @@ interface HomeProps {
   frontpageSlides: GetFrontpageSliderListQuery['getFrontpageSliderList']['items']
   namespace: GetNamespaceQuery['getNamespace']
   news: GetNewsListQuery['getNewsList']['news']
-  getLifeEvents: GetLifeEventsQuery['getLifeEvents']
+  lifeEvents: GetLifeEventsQuery['getLifeEvents']
 }
 
 const Home: Screen<HomeProps> = ({
@@ -45,7 +45,7 @@ const Home: Screen<HomeProps> = ({
   frontpageSlides,
   namespace,
   news,
-  getLifeEvents,
+  lifeEvents,
 }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
@@ -115,7 +115,7 @@ const Home: Screen<HomeProps> = ({
       >
         <LifeEventsCardsSection
           title={n('lifeEventsTitle')}
-          lifeEvents={getLifeEvents}
+          lifeEvents={lifeEvents}
         />
       </Section>
       <Section paddingTop={[8, 8, 6]}>
@@ -219,7 +219,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
 
   return {
     news,
-    getLifeEvents,
+    lifeEvents: getLifeEvents,
     frontpageSlides: items,
     categories,
     namespace,

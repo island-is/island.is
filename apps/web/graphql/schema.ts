@@ -1062,10 +1062,10 @@ export type GetArticlesInCategoryQuery = { __typename?: 'Query' } & {
       | 'category'
       | 'slug'
       | 'title'
-      | 'subgroup'
       | 'group'
       | 'groupDescription'
       | 'groupSlug'
+      | 'subgroup'
     >
   >
 }
