@@ -100,7 +100,14 @@ export class PublicFlightController {
     @Param() params: GetFlightParams,
     @Req() request,
   ): Promise<Flight> {
-    return this.flightService.findOne(params.flightId, request.airline)
+    const flight = await this.flightService.findOne(
+      params.flightId,
+      request.airline,
+    )
+    if (!flight) {
+      throw new NotFoundException(`Flight<${params.flightId}> not found`)
+    }
+    return flight
   }
 
   @Delete('flights/:flightId')

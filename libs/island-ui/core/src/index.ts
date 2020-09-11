@@ -37,6 +37,7 @@ export * from './lib/SkeletonLoader/SkeletonLoader'
 export * from './lib/Blockquote/Blockquote'
 export * from './lib/Alert/Alert'
 export { Swiper } from './lib/Swiper'
+export { FocusableBox } from './lib/FocusableBox'
 export * from './lib/DatePicker/DatePicker'
 
 // Layout

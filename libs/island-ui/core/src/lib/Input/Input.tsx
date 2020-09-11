@@ -6,22 +6,34 @@ import Tooltip from '../Tooltip/Tooltip'
 
 type InputBackgroundColor = 'white' | 'blue'
 
-interface InputProps {
+interface InputComponentProps {
   name: string
-  label?: string
-  hasError?: boolean
   value?: string | number
-  errorMessage?: string
   id?: string
+  className?: string
   disabled?: boolean
   required?: boolean
   placeholder?: string
+  autoFocus?: boolean
+  onFocus?: (
+    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void
+  onBlur?: (
+    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void
+  onChange?: (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => void
+  rows?: number
+}
+
+interface InputProps extends InputComponentProps {
+  label?: string
+  hasError?: boolean
+  errorMessage?: string
   tooltip?: string
   backgroundColor?: InputBackgroundColor
-  autoFocus?: boolean
-  onFocus?: (event: React.FocusEvent<HTMLInputElement>) => void
-  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
+  textarea?: boolean
 }
 
 function setRefs<T>(ref: React.Ref<T>, value: T) {
@@ -46,8 +58,22 @@ function useMergeRefs<ForwardRef, LocalRef extends ForwardRef>(
   )
 }
 
+const InputHOC = forwardRef(
+  (props: InputComponentProps, ref: React.Ref<HTMLInputElement>) => (
+    <input ref={ref} {...props} />
+  ),
+)
+const TextareaHOC = forwardRef(
+  (props: InputComponentProps, ref: React.Ref<HTMLTextAreaElement>) => (
+    <textarea ref={ref} {...props} />
+  ),
+)
+
 export const Input = forwardRef(
-  (props: InputProps, ref?: React.Ref<HTMLInputElement>) => {
+  (
+    props: InputProps,
+    ref?: React.Ref<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const {
       name,
       label,
@@ -62,10 +88,11 @@ export const Input = forwardRef(
       backgroundColor = 'white',
       onFocus,
       onBlur,
+      textarea,
       ...inputProps
     } = props
     const [hasFocus, setHasFocus] = useState(false)
-    const inputRef = useRef<HTMLInputElement>(null)
+    const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
     const ariaError = hasError
       ? {
           'aria-invalid': true,
@@ -73,6 +100,8 @@ export const Input = forwardRef(
         }
       : {}
     const mergedRefs = useMergeRefs(inputRef, ref || null)
+
+    const InputComponent = textarea ? TextareaHOC : InputHOC
 
     return (
       <div>
@@ -107,8 +136,10 @@ export const Input = forwardRef(
               </Box>
             )}
           </label>
-          <input
-            className={styles.input}
+          <InputComponent
+            className={cn(styles.input, {
+              [styles.textarea]: textarea,
+            })}
             id={id}
             disabled={disabled}
             name={name}

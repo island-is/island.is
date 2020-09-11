@@ -18,7 +18,7 @@ export const CategoryLayout: FC<CategoryProps> = ({
   children,
 }) => (
   <GridContainer>
-    <Box paddingBottom={[5, 5, 10]}>
+    <Box paddingY={[2, 2, 10]}>
       <GridRow>
         <GridColumn span={['12/12', '12/12', '4/12', '3/12']} hideBelow="md">
           <Sticky>{sidebar}</Sticky>

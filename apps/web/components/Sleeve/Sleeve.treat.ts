@@ -1,5 +1,18 @@
-import { style } from 'treat'
+import { style, styleMap } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
+
+export const sleeveBoxShadow = styleMap({
+  normal: {
+    ':after': {
+      boxShadow: '0px -20px 20px rgba(255, 153, 137, 0.15)',
+    },
+  },
+  purple: {
+    ':after': {
+      boxShadow: '0px -20px 20px rgba(106, 46, 160, 0.13)',
+    },
+  },
+})
 
 export const container = style({
   position: 'relative',
@@ -14,7 +27,6 @@ export const wrapper = style({
     height: 42,
     width: '100%',
     pointerEvents: 'none',
-    boxShadow: '0px -20px 20px rgba(255, 153, 137, 0.15)',
   },
 })
 

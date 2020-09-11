@@ -4,7 +4,7 @@ export interface NationalRegistryGeneralLookupResponse {
   name: string
   gender: 'kk' | 'kvk'
   address: string
-  postalcode: number
+  postalcode: string
   city: string
   lastmodified: string
   charged: boolean
@@ -14,11 +14,11 @@ export interface NationalRegistryGeneralLookupResponse {
 export type FamilyMember = {
   banlabel?: string
   ssn: string
-  gender: 1 | 2 | 3 | 4
+  gender: '1' | '2' | '3' | '4'
   name: string
   address: string
   towncode: number
-  postalcode: number
+  postalcode: string
   city: string
 }
 
