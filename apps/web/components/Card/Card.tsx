@@ -96,6 +96,7 @@ export const Card: FC<CardProps> = ({
       <FocusableBox
         href={href}
         as={as}
+        borderRadius="large"
         flexDirection="column"
         height="full"
         borderColor="purple200"

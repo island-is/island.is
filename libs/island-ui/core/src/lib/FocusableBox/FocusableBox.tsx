@@ -20,7 +20,6 @@ const FocusableBox = forwardRef<HTMLElement, Props>(
   ({
     component = Link,
     display = 'flex',
-    borderRadius = 'large',
     children,
     className,
     onFocus,
@@ -33,7 +32,6 @@ const FocusableBox = forwardRef<HTMLElement, Props>(
       <Box
         component={component}
         display={display}
-        borderRadius={borderRadius}
         className={cn(styles.focusable, className)}
         onFocus={toggle}
         onBlur={toggle}

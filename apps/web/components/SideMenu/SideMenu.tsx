@@ -160,12 +160,13 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
                     <div className={styles.linksContent}>
                       {tab.externalLinks.map((link) => (
                         <Typography
-                          key={link.url}
                           variant="sideMenu"
                           color="blue400"
                           paddingBottom={2}
                         >
-                          <a href={link.url}>{link.title}</a>
+                          <FocusableBox key={link.url} href={link.url}>
+                            {link.title}
+                          </FocusableBox>
                         </Typography>
                       ))}
                     </div>

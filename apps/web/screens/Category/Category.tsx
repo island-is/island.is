@@ -212,6 +212,7 @@ const Category: Screen<CategoryProps> = ({
                                         key={slug}
                                         href={`${makePath('article')}/[slug]`}
                                         as={makePath('article', slug)}
+                                        borderRadius="large"
                                       >
                                         <LinkCard>{title}</LinkCard>
                                       </FocusableBox>

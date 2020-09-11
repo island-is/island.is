@@ -91,6 +91,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                   <FocusableBox
                     href="//minarsidur.island.is/"
                     marginLeft={marginLeft}
+                    borderRadius="large"
                   >
                     <Button variant="menu" leftIcon="user" tabIndex={-1}>
                       {t.login}
