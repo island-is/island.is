@@ -6,9 +6,11 @@ import {
   ContentBlock,
   Box,
   Typography,
-  Stack,
   Breadcrumbs,
   ColorSchemeContext,
+  Link,
+  GridColumn,
+  GridRow,
 } from '@island.is/island-ui/core'
 import {
   Query,
@@ -24,8 +26,10 @@ import {
   GET_ORGANIZATION_TAGS_QUERY,
 } from '../queries'
 import { ArticleLayout } from '@island.is/web/screens/Layouts/Layouts'
+import { useNamespace } from '@island.is/web/hooks'
+import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { Screen } from '@island.is/web/types'
-//import { useNamespace } from '@island.is/web/hooks'
+import { useI18n } from '@island.is/web/i18n'
 import { CustomNextError } from '../../units/ErrorBoundary'
 
 interface OrganizationProps {
@@ -39,7 +43,9 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   tags,
   namespace,
 }) => {
-  //const n = useNamespace(namespace)
+  const { activeLocale } = useI18n()
+  const n = useNamespace(namespace)
+  const { makePath } = useRouteNames(activeLocale)
 
   const { items: organizationsItems } = organizations
   const { items: tagsItems } = tags
@@ -47,19 +53,30 @@ const OrganizationPage: Screen<OrganizationProps> = ({
   return (
     <>
       <Head>
-        <title>Stofnanir | Viðspyrna fyrir Ísland</title>
+        <title>
+          {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')} | Ísland.is
+        </title>
       </Head>
-      <ArticleLayout sidebar={<Box marginBottom={10}>bla</Box>}>
-        <Box marginBottom={2}>
-          <Stack space={2}>
+      <ArticleLayout sidebar={null}>
+        <GridRow>
+          <GridColumn
+            offset={['0', '0', '1/8']}
+            span={['0', '0', '7/8']}
+            paddingBottom={2}
+          >
             <Breadcrumbs>
-              <a>Ísland.is</a>
+              <Link href={makePath()}>Ísland.is</Link>
+              <span>{n('organizations', 'Stofnanir')}</span>
             </Breadcrumbs>
-            <Typography variant="h1" as="h1">
-              bla
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn offset={['0', '0', '1/8']} span={['8/8', '8/8', '7/8']}>
+            <Typography variant="h1" as="h1" paddingBottom={2}>
+              {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')}
             </Typography>
-          </Stack>
-        </Box>
+          </GridColumn>
+        </GridRow>
       </ArticleLayout>
       <Box background="blue100">
         <ContentBlock width="large">

@@ -15,7 +15,6 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import { Organization, OrganizationTag } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { useI18n } from '@island.is/web/i18n'
 import { Card } from '../Card/Card'
 
 import * as styles from './FilteredCards.treat'
@@ -40,7 +39,6 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
   namespace,
   startingIds = [],
 }) => {
-  const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
   const [filterString, setFilterString] = useState<string>('')
   const [filtersToggled, setFiltersToggled] = useState<boolean>(true)
@@ -142,14 +140,6 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
     return () => clearTimeout(timerRef.current)
   }, [onUpdateFilters])
 
-  const filteredItems = visibleItems.filter((item, index) => {
-    const indexList = [indexesFilteredByTag, indexesFilteredByString].filter(
-      (x) => x.length > 0,
-    )
-
-    return _.intersection(...indexList).includes(index)
-  })
-
   const toggleFilters = () => {
     if (filtersDisabled) {
       setFiltersDisabled(false)
@@ -159,21 +149,26 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
     }
   }
 
-  const isFiltering = Boolean(
-    tagIds.length ||
-      (filterString.length && filteredItems.length !== visibleItems.length),
-  )
+  const filteredItems = [...visibleItems].filter((item, index) => {
+    const indexList = [indexesFilteredByTag, indexesFilteredByString].filter(
+      (x) => x.length > 0,
+    )
 
-  const batches = filteredItems.splice(
+    return _.intersection(...indexList).includes(index)
+  })
+
+  const batches = [...filteredItems].splice(
     0,
     showAll ? visibleItems.length : showCount,
   )
+
+  const showMoreButton = batches.length < filteredItems.length
 
   return (
     <Box padding={[3, 3, 6]}>
       <Tiles space={0} columns={2}>
         <div>
-          <Typography variant="h3" as="h3">
+          <Typography variant="h3" as="h3" color="blue400">
             {title || n('organizations', 'Stofnanir')}
           </Typography>
         </div>
@@ -201,7 +196,9 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
           <Box display="flex" alignItems="center" marginRight={[0, 0, 0, 3]}>
             <Stack space={2}>
               <Inline space={2} alignY="center" collapseBelow="sm">
-                <Typography variant="tag">Tags:</Typography>
+                <Typography variant="tag" color="blue400">
+                  {n('tag', 'Sía')}:
+                </Typography>
                 <Inline space={2} alignY="center">
                   {tags.map(({ title, id }, index) => {
                     return (
@@ -286,7 +283,7 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
           )}
         </Tiles>
       </Box>
-      {!showAll && showCount < visibleItems.length ? (
+      {!showAll && showMoreButton ? (
         <Box marginY={3} textAlign="center">
           <Button
             onClick={() => {
@@ -295,6 +292,7 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
             width="fixed"
           >
             {n('seeMoreItems')}
+            {`(${filteredItems.length - showCount})`}
           </Button>
         </Box>
       ) : null}
