@@ -11,9 +11,10 @@ export interface NationalRegistryGeneralLookupResponse {
   error?: string
 }
 
-type FamilyMember = {
+export type FamilyMember = {
   banlabel?: string
   ssn: string
+  gender: '1' | '2' | '3' | '4'
   name: string
   address: string
   towncode: number
@@ -25,6 +26,7 @@ export interface NationalRegistryFamilyLookupResponse {
   source: 'Þjóðskrá' | 'Fyrirtækjaskrá'
   familyssn: string
   results: FamilyMember[]
+  error?: string
 }
 
 export interface NationalRegistryUser {

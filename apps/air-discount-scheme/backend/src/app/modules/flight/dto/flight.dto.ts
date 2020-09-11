@@ -13,10 +13,9 @@ import {
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
-import { environment } from '../../../../environments'
-import { States } from '@island.is/air-discount-scheme/consts'
+import { States, Airlines } from '@island.is/air-discount-scheme/consts'
 
-class FlightLegDto {
+export class FlightLegDto {
   @IsString()
   @ApiProperty()
   readonly origin: string
@@ -103,7 +102,7 @@ type Range = {
 
 export class GetFlightsBody {
   @IsOptional()
-  @IsEnum(Object.keys(environment.airlineApiKeys))
+  @IsEnum(Object.keys(Airlines))
   airline: string
 
   @IsOptional()

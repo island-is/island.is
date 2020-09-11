@@ -12,7 +12,6 @@ import {
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 
 import * as styles from './Sidebar.treat'
-import Link from 'next/link'
 
 interface UseHeadingLinksProps {
   selector?: string
@@ -152,6 +151,10 @@ export const Sidebar: FC<SidebarProps> = ({
     updateBulletPlacement()
   }, [updateBulletPlacement])
 
+  const sortedItems = Array.isArray(items)
+    ? items.sort((a, b) => a.title.localeCompare(b.title, 'is'))
+    : []
+
   return (
     <Box
       ref={parentRef}
@@ -202,26 +205,23 @@ export const Sidebar: FC<SidebarProps> = ({
           </Stack>
         ) : null}
         {items && <Divider weight="alternate" />}
-        {items &&
-          items.map(({ title, active, href, as }, index) => {
-            return (
-              <FocusableBox key={index} href={href} as={as}>
-                {active && (
-                  <span
-                    className={cn(styles.bullet, {
-                      [styles.bulletRight]: bullet === 'right',
-                      [styles.hidden]: bullet == 'none',
-                    })}
-                  >
-                    <Icon type="bullet" color="red400" />
-                  </span>
-                )}
-                <Typography variant="p" as="span">
-                  {active ? <strong>{title}</strong> : title}
-                </Typography>
-              </FocusableBox>
-            )
-          })}
+        {sortedItems.map(({ title, active, href, as }, index) => (
+          <FocusableBox key={index} href={href} as={as}>
+            {active && (
+              <span
+                className={cn(styles.bullet, {
+                  [styles.bulletRight]: bullet === 'right',
+                  [styles.hidden]: bullet == 'none',
+                })}
+              >
+                <Icon type="bullet" color="red400" />
+              </span>
+            )}
+            <Typography variant="p" as="span">
+              {active ? <strong>{title}</strong> : title}
+            </Typography>
+          </FocusableBox>
+        ))}
         {children && <Divider weight="alternate" />}
         {children && children}
       </Stack>

@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import * as kennitala from 'kennitala'
 
-import { States } from '@island.is/air-discount-scheme/consts'
+import { Airlines, States } from '@island.is/air-discount-scheme/consts'
 import { FlightLegSummary } from './flight.types'
 import { Flight, FlightLeg, financialStateMachine } from './flight.model'
-import { FlightDto, GetFlightsBody } from './dto'
+import { FlightDto, FlightLegDto, GetFlightsBody } from './dto'
 import { NationalRegistryUser } from '../nationalRegistry'
 
 export const ADS_POSTAL_CODES = {
@@ -24,6 +24,7 @@ const AVAILABLE_FLIGHT_LEGS = {
   '2020': 2,
   '2021': 6,
 }
+export const NORLANDAIR_FLIGHTS = ['VPN', 'THO', 'GRY']
 
 const availableFinancialStates = [
   financialStateMachine.states[States.awaitingDebit].key,
@@ -54,6 +55,22 @@ export class FlightService {
       return true
     }
     return false
+  }
+
+  private getAirline(
+    flightLeg: FlightLegDto,
+    airline: ValueOf<typeof Airlines>,
+  ): ValueOf<typeof Airlines> {
+    if (airline === Airlines.icelandair) {
+      if (
+        NORLANDAIR_FLIGHTS.includes(flightLeg.destination) ||
+        NORLANDAIR_FLIGHTS.includes(flightLeg.origin)
+      ) {
+        return Airlines.norlandair
+      }
+    }
+
+    return airline
   }
 
   async countFlightLegsByNationalId(
@@ -95,7 +112,6 @@ export class FlightService {
   findAllByFilter(body: GetFlightsBody | any): Promise<Flight[]> {
     return this.flightModel.findAll({
       where: {
-        ...(body.airline ? { airline: body.airline } : {}),
         ...(body.period
           ? {
               bookingDate: { '&gte': body.period.from, '&lte': body.period.to },
@@ -113,6 +129,7 @@ export class FlightService {
         {
           model: this.flightLegModel,
           where: {
+            ...(body.airline ? { airline: body.airline } : {}),
             ...(body.state ? { financialState: body.state } : {}),
             ...(body.flightLeg ? { origin: body.flightLeg.from } : {}),
             ...(body.flightLeg ? { destination: body.flightLeg.to } : {}),
@@ -143,8 +160,11 @@ export class FlightService {
     return this.flightModel.create(
       {
         ...flight,
+        flightLegs: flight.flightLegs.map((flightLeg) => ({
+          ...flightLeg,
+          airline: this.getAirline(flightLeg, airline),
+        })),
         nationalId,
-        airline,
         userInfo: {
           age: kennitala.info(nationalId).age,
           gender: user.gender,
@@ -159,12 +179,17 @@ export class FlightService {
     return this.flightModel.findOne({
       where: {
         id: flightId,
-        airline,
       },
       include: [
         {
           model: this.flightLegModel,
-          where: { financialState: availableFinancialStates },
+          where: {
+            financialState: availableFinancialStates,
+            airline:
+              airline === Airlines.icelandair
+                ? [Airlines.icelandair, Airlines.norlandair]
+                : airline,
+          },
         },
       ],
     })

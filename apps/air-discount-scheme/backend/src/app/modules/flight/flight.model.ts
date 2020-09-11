@@ -16,8 +16,7 @@ import {
   FlightLeg as TFlightLeg,
   UserInfo,
 } from '@island.is/air-discount-scheme/types'
-import { States } from '@island.is/air-discount-scheme/consts'
-import { environment } from '../../../environments'
+import { States, Airlines } from '@island.is/air-discount-scheme/consts'
 import { createMachine } from 'xstate'
 
 export const financialStateMachine = createMachine({
@@ -60,6 +59,14 @@ export class FlightLeg extends Model<FlightLeg> implements TFlightLeg {
     allowNull: false,
   })
   flightId: string
+
+  @Column({
+    type: DataType.ENUM,
+    values: Object.values(Airlines),
+    allowNull: false,
+  })
+  @ApiProperty()
+  airline: string
 
   // eslint-disable-next-line
   @BelongsTo(() => Flight)
@@ -141,14 +148,6 @@ export class Flight extends Model<Flight> implements TFlight {
   })
   @ApiProperty()
   nationalId: string
-
-  @Column({
-    type: DataType.ENUM,
-    values: Object.keys(environment.airlineApiKeys),
-    allowNull: false,
-  })
-  @ApiProperty()
-  airline: string
 
   @Column({
     type: DataType.DATE,

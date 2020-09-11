@@ -5,18 +5,11 @@ import { Box, Typography, Link, FocusableBox } from '@island.is/island-ui/core'
 interface Props {
   title: string
   intro: string
-  thumbnail: string
   image: string
   url: string
 }
 
-const LifeEventCard: React.FC<Props> = ({
-  title,
-  intro,
-  image,
-  thumbnail,
-  url,
-}) => {
+const LifeEventCard: React.FC<Props> = ({ title, intro, image, url }) => {
   return (
     <FocusableBox
       component={Link}
@@ -43,8 +36,7 @@ const LifeEventCard: React.FC<Props> = ({
         <Box
           display="flex"
           flexDirection="column"
-          paddingTop={[2, 2, null]}
-          paddingBottom={[4, 4, null]}
+          className={styles.content}
           marginRight={[2, 2, 2, 2, 1]}
         >
           <Typography variant="h3" as="h3" paddingBottom={1} color="blue400">
@@ -55,7 +47,7 @@ const LifeEventCard: React.FC<Props> = ({
 
         <div
           className={styles.thumbnail}
-          style={{ backgroundImage: `url(${thumbnail})` }}
+          style={{ backgroundImage: `url(${image})` }}
         />
       </Box>
     </FocusableBox>

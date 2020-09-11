@@ -68,13 +68,13 @@ describe('Create Flight', () => {
       modified: expect.any(String),
       nationalId: user.nationalId,
       bookingDate: '2020-08-17T12:35:50.971Z',
-      airline: 'ernir',
       flightLegs: [
         {
           id: expect.any(String),
           flightId: expect.any(String),
           date: '2021-03-12T12:35:50.971Z',
           destination: 'AK',
+          airline: 'ernir',
           discountPrice: 30000,
           financialState: 'AWAITING_DEBIT',
           origin: 'REK',
@@ -87,6 +87,7 @@ describe('Create Flight', () => {
           flightId: expect.any(String),
           date: '2021-03-15T12:35:50.971Z',
           destination: 'REK',
+          airline: 'ernir',
           discountPrice: 60000,
           financialState: 'AWAITING_DEBIT',
           origin: 'AK',
