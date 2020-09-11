@@ -74,7 +74,6 @@ export type ArticleGroup = {
   title: Scalars['String']
   slug: Scalars['String']
   description?: Maybe<Scalars['String']>
-  sortBy?: Maybe<Scalars['String']>
 }
 
 export type ArticleSubgroup = {
@@ -83,10 +82,20 @@ export type ArticleSubgroup = {
   slug: Scalars['String']
 }
 
+export type OrganizationTag = {
+  __typename?: 'OrganizationTag'
+  id: Scalars['ID']
+  title: Scalars['String']
+}
+
 export type Organization = {
   __typename?: 'Organization'
+  id: Scalars['ID']
   title: Scalars['String']
+  description?: Maybe<Scalars['String']>
   slug: Scalars['String']
+  tag?: Maybe<Array<OrganizationTag>>
+  link?: Maybe<Scalars['String']>
 }
 
 export type SubArticle = {
@@ -133,6 +142,11 @@ export type AdgerdirPage = {
   status: Scalars['String']
   estimatedCostIsk?: Maybe<Scalars['Float']>
   finalCostIsk?: Maybe<Scalars['Float']>
+}
+
+export type Organizations = {
+  __typename?: 'Organizations'
+  items: Array<Organization>
 }
 
 export type Image = {
@@ -504,6 +518,11 @@ export type PaginatedAdgerdirNews = {
   news: Array<AdgerdirNews>
 }
 
+export type OrganizationTags = {
+  __typename?: 'OrganizationTags'
+  items: Array<OrganizationTag>
+}
+
 export type Application = {
   __typename?: 'Application'
   id: Scalars['ID']
@@ -585,9 +604,12 @@ export type Query = {
   getLandingPage?: Maybe<LandingPage>
   getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
+  getOrganization?: Maybe<Organization>
   getAdgerdirNews?: Maybe<AdgerdirNews>
   getAdgerdirPages: AdgerdirPages
+  getOrganizations: Organizations
   getAdgerdirTags?: Maybe<AdgerdirTags>
+  getOrganizationTags?: Maybe<OrganizationTags>
   getFrontpageSliderList?: Maybe<FrontpageSliderList>
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
@@ -660,6 +682,10 @@ export type QueryGetAdgerdirPageArgs = {
   input: GetAdgerdirPageInput
 }
 
+export type QueryGetOrganizationArgs = {
+  input: GetOrganizationInput
+}
+
 export type QueryGetAdgerdirNewsArgs = {
   input: GetAdgerdirNewsInput
 }
@@ -668,8 +694,16 @@ export type QueryGetAdgerdirPagesArgs = {
   input: GetAdgerdirPagesInput
 }
 
+export type QueryGetOrganizationsArgs = {
+  input: GetOrganizationsInput
+}
+
 export type QueryGetAdgerdirTagsArgs = {
   input: GetAdgerdirTagsInput
+}
+
+export type QueryGetOrganizationTagsArgs = {
+  input: GetOrganizationTagsInput
 }
 
 export type QueryGetFrontpageSliderListArgs = {
@@ -803,6 +837,11 @@ export type GetAdgerdirPageInput = {
   lang: Scalars['String']
 }
 
+export type GetOrganizationInput = {
+  slug?: Maybe<Scalars['String']>
+  lang: Scalars['String']
+}
+
 export type GetAdgerdirNewsInput = {
   slug?: Maybe<Scalars['String']>
   lang: Scalars['String']
@@ -813,7 +852,16 @@ export type GetAdgerdirPagesInput = {
   perPage?: Maybe<Scalars['Int']>
 }
 
+export type GetOrganizationsInput = {
+  lang?: Maybe<Scalars['String']>
+  perPage?: Maybe<Scalars['Int']>
+}
+
 export type GetAdgerdirTagsInput = {
+  lang?: Maybe<Scalars['String']>
+}
+
+export type GetOrganizationTagsInput = {
   lang?: Maybe<Scalars['String']>
 }
 
@@ -1221,6 +1269,69 @@ export type GetNewsItemQuery = { __typename?: 'Query' } & {
           >
         >
       }
+  >
+}
+
+export type GetOrganizationsQueryVariables = Exact<{
+  input: GetOrganizationsInput
+}>
+
+export type GetOrganizationsQuery = { __typename?: 'Query' } & {
+  getOrganizations: { __typename?: 'Organizations' } & {
+    items: Array<
+      { __typename?: 'Organization' } & Pick<
+        Organization,
+        'id' | 'slug' | 'title' | 'description' | 'link'
+      > & {
+          tag?: Maybe<
+            Array<
+              { __typename?: 'OrganizationTag' } & Pick<
+                OrganizationTag,
+                'id' | 'title'
+              >
+            >
+          >
+        }
+    >
+  }
+}
+
+export type GetOrganizationQueryVariables = Exact<{
+  input: GetOrganizationInput
+}>
+
+export type GetOrganizationQuery = { __typename?: 'Query' } & {
+  getOrganization?: Maybe<
+    { __typename?: 'Organization' } & Pick<
+      Organization,
+      'id' | 'slug' | 'title' | 'link' | 'description'
+    > & {
+        tag?: Maybe<
+          Array<
+            { __typename?: 'OrganizationTag' } & Pick<
+              OrganizationTag,
+              'id' | 'title'
+            >
+          >
+        >
+      }
+  >
+}
+
+export type GetOrganizationTagsQueryVariables = Exact<{
+  input: GetOrganizationTagsInput
+}>
+
+export type GetOrganizationTagsQuery = { __typename?: 'Query' } & {
+  getOrganizationTags?: Maybe<
+    { __typename?: 'OrganizationTags' } & {
+      items: Array<
+        { __typename?: 'OrganizationTag' } & Pick<
+          OrganizationTag,
+          'id' | 'title'
+        >
+      >
+    }
   >
 }
 
