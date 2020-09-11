@@ -1282,7 +1282,7 @@ export type GetOrganizationsQuery = { __typename?: 'Query' } & {
     items: Array<
       { __typename?: 'Organization' } & Pick<
         Organization,
-        'id' | 'slug' | 'title' | 'description'
+        'id' | 'slug' | 'title' | 'description' | 'link'
       > & {
           tag?: Maybe<
             Array<
