@@ -37,8 +37,10 @@ import {
   QueryGetNamespaceArgs,
 } from '../../graphql/schema'
 
+type Article = GetArticlesInCategoryQuery['articlesInCategory']
+
 interface CategoryProps {
-  articles: GetArticlesInCategoryQuery['articlesInCategory']
+  articles: Article
   categories: GetCategoriesQuery['categories']
   namespace: GetNamespaceQuery['getNamespace']
 }
@@ -125,19 +127,21 @@ const Category: Screen<CategoryProps> = ({
     return a - b
   }
 
-  const groupArticlesBySubgroup = (
-    articles: GetArticlesInCategoryQuery['articlesInCategory'],
-  ) => {
-    const groupBy = (items, key) =>
-      items.reduce(
-        (result, item) => ({
-          ...result,
-          [item[key]]: [...(result[item[key]] || []), item],
-        }),
-        {},
-      )
-    return groupBy(articles, 'subgroup')
-  }
+  const groupArticlesBySubgroup = (articles: Article) =>
+    articles.reduce(
+      (result, item) => ({
+        ...result,
+        [item['subgroup']]: [...(result[item['subgroup']] || []), item],
+      }),
+      {},
+    )
+
+  const sortArticlesByTitle = (articles: Article) =>
+    articles.sort((a, b) => a.title.localeCompare(b.title, 'is'))
+
+  const sortedGroups = Object.keys(groups).sort((a, b) =>
+    a.localeCompare(b, 'is'),
+  )
 
   return (
     <>
@@ -160,15 +164,16 @@ const Category: Screen<CategoryProps> = ({
                 dividerOnTop={false}
                 dividers={false}
               >
-                {Object.keys(groups).map((groupSlug, index) => {
+                {sortedGroups.map((groupSlug, index) => {
                   const { title, description, articles } = groups[groupSlug]
 
                   const expanded = groupSlug === hash.replace('#', '')
 
                   const articlesBySubgroup = groupArticlesBySubgroup(articles)
-                  const sortedSubgroups = Object.keys(articlesBySubgroup).sort(
-                    subgroupSorting,
-                  )
+
+                  const sortedSubgroupKeys = Object.keys(
+                    articlesBySubgroup,
+                  ).sort(subgroupSorting)
 
                   return (
                     <div
@@ -183,8 +188,8 @@ const Category: Screen<CategoryProps> = ({
                         visibleContent={description}
                       >
                         <Box paddingY={2}>
-                          {sortedSubgroups.map((subgroup, index) => {
-                            const hasSubgroups = sortedSubgroups.length > 1
+                          {sortedSubgroupKeys.map((subgroup, index) => {
+                            const hasSubgroups = sortedSubgroupKeys.length > 1
                             const subgroupName =
                               subgroup === 'null' ? n('other') : subgroup
                             return (
@@ -199,20 +204,20 @@ const Category: Screen<CategoryProps> = ({
                                   </Typography>
                                 )}
                                 <Stack space={2}>
-                                  {articlesBySubgroup[subgroup].map(
-                                    ({ title, slug }) => {
-                                      return (
-                                        <NextLink
-                                          key={slug}
-                                          href={`${makePath('article')}/[slug]`}
-                                          as={makePath('article', slug)}
-                                          passHref
-                                        >
-                                          <LinkCard>{title}</LinkCard>
-                                        </NextLink>
-                                      )
-                                    },
-                                  )}
+                                  {sortArticlesByTitle(
+                                    articlesBySubgroup[subgroup],
+                                  ).map(({ title, slug }) => {
+                                    return (
+                                      <NextLink
+                                        key={slug}
+                                        href={`${makePath('article')}/[slug]`}
+                                        as={makePath('article', slug)}
+                                        passHref
+                                      >
+                                        <LinkCard>{title}</LinkCard>
+                                      </NextLink>
+                                    )
+                                  })}
                                 </Stack>
                               </React.Fragment>
                             )
