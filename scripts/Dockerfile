@@ -60,9 +60,6 @@ ARG APP_DIST_HOME
 ENV APP=${APP}
 ENV NODE_ENV=production
 
-RUN apk add bash python py-pip jq curl -U \
-    && rm -rf /var/cache/apk/*
-RUN pip install awscli
 WORKDIR /webapp
 
 # Adding user for running the app
@@ -71,6 +68,10 @@ RUN chown -R runner:runners /webapp
 USER runner
 
 COPY --from=deps --chown=runner:runners /build/node_modules /webapp/node_modules
+
+RUN apk add bash python py-pip jq curl -U \
+    && rm -rf /var/cache/apk/*
+RUN pip install awscli
 
 FROM output-base as output-express
 # image with build of an Express.js app
