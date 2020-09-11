@@ -135,7 +135,7 @@ export class NationalRegistryService {
       lastName: parts.slice(-1).pop() || '',
       gender: response.gender,
       address: response.address,
-      postalcode: response.postalcode,
+      postalcode: parseInt(response.postalcode),
       city: response.city,
     }
   }
