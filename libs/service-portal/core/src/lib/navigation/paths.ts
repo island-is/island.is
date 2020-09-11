@@ -27,4 +27,6 @@ export enum ServicePortalPath {
   HeilsaBolusetningar = 'https://minarsidur.heilsuvera.is/bolusetningar/bolusett-gegn/',
   // Menntun
   MenntunRoot = '/menntun',
+  // Eignir
+  EignirRoot = '/eignir',
 }

@@ -61,6 +61,13 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: 'user',
       },
 
+      // Eignir
+      {
+        name: 'Eignir',
+        path: ServicePortalPath.EignirRoot,
+        icon: 'calendar',
+      },
+
       // Fjarmal
       {
         name: 'Fjármál',
