@@ -99,22 +99,22 @@ const Home: Screen<HomeProps> = ({
       <Section paddingY={[0, 0, 3, 3, 6]}>
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
       </Section>
-      <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
-        <Box marginBottom={10}>
-          <Sleeve minHeight={400}>
-            <Box background="red100">
-              <ContentBlock width="large">
-                <Section paddingTop={[8, 8, 6]}>
-                  <LifeEventsCardsSection title={n('lifeEventsTitle')} />
-                </Section>
-              </ContentBlock>
-            </Box>
-          </Sleeve>
-        </Box>
-      </ColorSchemeContext.Provider>
-      <Section paddingTop={[8, 8, 6]}>
-        <Categories title={n('articlesTitle')} cards={cards} />
-      </Section>
+      <Box>
+        <Sleeve minHeight={400}>
+          <Box>
+            <ContentBlock width="large">
+              <Section paddingTop={[8, 8, 6]}>
+                <LifeEventsCardsSection title={n('lifeEventsTitle')} />
+              </Section>
+            </ContentBlock>
+          </Box>
+        </Sleeve>
+      </Box>
+      <Box marginTop={0} background="purple100">
+        <Section paddingTop={[8, 8, 6]}>
+          <Categories title={n('articlesTitle')} cards={cards} />
+        </Section>
+      </Box>
       <Section paddingTop={[8, 8, 6]}>
         <LatestNewsSection label="Fréttir og tilkynningar" items={news} />
       </Section>
