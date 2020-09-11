@@ -117,8 +117,8 @@ const Category: Screen<CategoryProps> = ({
   }))
 
   const subgroupSorting = (a, b) => {
-    // Make items with 'Annað' subgroup appear last.
-    if (b === n('other')) {
+    // Make items with no subgroup appear last.
+    if (b === 'null') {
       return -1
     }
     // Otherwise sort them alphabetically.
@@ -132,7 +132,7 @@ const Category: Screen<CategoryProps> = ({
       items.reduce(
         (result, item) => ({
           ...result,
-          [item[key] || n('other')]: [...(result[item[key]] || []), item],
+          [item[key]]: [...(result[item[key]] || []), item],
         }),
         {},
       )
@@ -185,6 +185,8 @@ const Category: Screen<CategoryProps> = ({
                         <Box paddingY={2}>
                           {sortedSubgroups.map((subgroup, index) => {
                             const hasSubgroups = sortedSubgroups.length > 1
+                            const subgroupName =
+                              subgroup === 'null' ? n('other') : subgroup
                             return (
                               <React.Fragment key={subgroup}>
                                 {hasSubgroups && (
@@ -193,7 +195,7 @@ const Category: Screen<CategoryProps> = ({
                                     paddingBottom={3}
                                     paddingTop={index === 0 ? 0 : 3}
                                   >
-                                    {subgroup}
+                                    {subgroupName}
                                   </Typography>
                                 )}
                                 <Stack space={2}>
