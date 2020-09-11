@@ -28,6 +28,9 @@ import {
 import { IntroductionSection } from '../components/IntroductionSection'
 import { LifeEventsCardsSection } from '../components/LifeEventsCardsSection'
 import { Section } from '../components/Section'
+import { ColorSchemeContext } from '@island.is/adgerdir/context'
+import { Sleeve } from '@island.is/web/components'
+import { ContentBlock } from '@island.is/island-ui/core'
 
 interface HomeProps {
   categories: GetCategoriesQuery['categories']
@@ -96,19 +99,21 @@ const Home: Screen<HomeProps> = ({
       <Section paddingY={[0, 0, 3, 3, 6]}>
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
       </Section>
-      <Section background="purple100" paddingY={[4, 4, 4, 6]}>
+      <ColorSchemeContext.Provider value={{ colorScheme: 'red' }}>
+        <Box marginBottom={10}>
+          <Sleeve minHeight={400}>
+            <Box background="red100">
+              <ContentBlock width="large">
+                <Section paddingTop={[8, 8, 6]}>
+                  <LifeEventsCardsSection title={n('lifeEventsTitle')} />
+                </Section>
+              </ContentBlock>
+            </Box>
+          </Sleeve>
+        </Box>
+      </ColorSchemeContext.Provider>
+      <Section paddingTop={[8, 8, 6]}>
         <Categories title={n('articlesTitle')} cards={cards} />
-      </Section>
-      <Section
-        paddingTop={[8, 8, 3, 3, 6]}
-        backgroundBleed={{
-          bleedAmount: 160,
-          bleedDirection: 'top',
-          fromColor: 'white',
-          toColor: 'purple100',
-        }}
-      >
-        <LifeEventsCardsSection title={n('lifeEventsTitle')} />
       </Section>
       <Section paddingTop={[8, 8, 6]}>
         <LatestNewsSection label="Fréttir og tilkynningar" items={news} />
