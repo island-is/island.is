@@ -8,6 +8,15 @@ type User {
   mobile: String
 }
 
+type Car {
+  id: ID!
+  ownerId: String!
+  name: String!
+  model: String!
+  color: String!
+}
+
 type Query {
   getUserByNationalId(nationalId: String!): User!
+  getCarById(id: String!): Car!
 }
