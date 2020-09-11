@@ -12,13 +12,13 @@ export const card = style({
   borderWidth: 1,
   boxSizing: 'border-box',
   borderStyle: 'solid',
-  borderColor: theme.color.red200,
+  borderColor: theme.color.blue200,
   borderRadius: theme.border.radius.large,
   textDecoration: 'none',
   position: 'relative',
   transition: 'border-color 150ms ease',
   ':hover': {
-    borderColor: theme.color.red400,
+    borderColor: theme.color.blue400,
     textDecoration: 'none',
   },
   ':focus': {
@@ -68,9 +68,9 @@ export const variants = styleMap({
     },
   },
   red: {
-    borderColor: theme.color.red200,
+    borderColor: theme.color.blue200,
     ':hover': {
-      borderColor: theme.color.red400,
+      borderColor: theme.color.blue400,
     },
   },
 })

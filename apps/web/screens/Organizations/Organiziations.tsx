@@ -66,7 +66,6 @@ const OrganizationPage: Screen<OrganizationProps> = ({
             tags={tagsItems}
             items={organizationsItems}
             namespace={namespace}
-            showAll
           />
         </ContentBlock>
       </Box>

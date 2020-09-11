@@ -253,25 +253,21 @@ export const FilteredCards: FC<FilteredCardsProps> = ({
       ) : null}
       <Box marginTop={3}>
         <Tiles space={[2, 2, 3]} columns={[1, 1, 2, 2, 3]}>
-          {filteredItems.map(({ title, tag, slug }: Organization, index) => {
-            return (
-              <Card
-                key={index}
-                description="bla"
-                title={title}
-                tags={tag}
-                as={`/${
-                  activeLocale !== 'is' ? `${activeLocale}/` : ''
-                }${slug}`}
-                href={`/${
-                  activeLocale !== 'is' ? `${activeLocale}/` : ''
-                }[slug]`}
-              />
-            )
-          })}
+          {filteredItems.map(
+            ({ title, description, tag, slug }: Organization, index) => {
+              return (
+                <Card
+                  key={index}
+                  description={description}
+                  title={title}
+                  tags={tag}
+                />
+              )
+            },
+          )}
         </Tiles>
       </Box>
-      {showCount < visibleItems.length ? (
+      {!showAll && showCount < visibleItems.length ? (
         <Box marginY={3} textAlign="center">
           <Button
             onClick={() => {

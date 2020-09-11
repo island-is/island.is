@@ -16,10 +16,10 @@ export const filtersToggler = style({
   position: 'relative',
   display: 'inline-block',
   outline: 0,
-  color: theme.color.red600,
+  color: theme.color.blue600,
   lineHeight: 1.466666,
   fontWeight: theme.typography.medium,
-  boxShadow: `inset 0 -1px 0 0 ${theme.color.red600}`,
+  boxShadow: `inset 0 -1px 0 0 ${theme.color.blue600}`,
   ':after': {
     content: '""',
     position: 'absolute',
@@ -42,9 +42,9 @@ export const filtersIconToggled = style({
 })
 
 export const input = style({
-  borderColor: theme.color.red200,
+  borderColor: theme.color.blue200,
   boxSizing: 'border-box',
-  color: theme.color.red600,
+  color: theme.color.blue600,
   borderWidth: 1,
   borderStyle: 'solid',
   backgroundColor: theme.color.transparent,
@@ -58,7 +58,7 @@ export const input = style({
   borderRadius: 8,
   outline: 0,
   '::placeholder': {
-    color: theme.color.red600,
+    color: theme.color.blue600,
     fontWeight: theme.typography.light,
   },
 })
