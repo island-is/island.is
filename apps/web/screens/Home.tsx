@@ -77,20 +77,11 @@ const Home: Screen<HomeProps> = ({
           />
         </Box>
         <Inline space={1}>
-          {n('featuredArticles', []).map(({ title, url }, index) => {
-            return (
-              <Tag
-                href={url}
-                key={index}
-                variant="darkerBlue"
-                onClick={() => {
-                  Router.push(`${makePath('article')}/[slug]`, url)
-                }}
-              >
-                {title}
-              </Tag>
-            )
-          })}
+          {n('featuredArticles', []).map(({ title, url }, index) => (
+            <Tag href={url} key={url} variant="darkerBlue">
+              {title}
+            </Tag>
+          ))}
         </Inline>
       </Stack>
     </Box>
