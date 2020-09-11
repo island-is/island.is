@@ -12,10 +12,10 @@ export enum ServicePortalPath {
   JudicialDetentionRequestsPoc = '/gaesluvardhaldskrofur',
   // Stillingar
   StillingarRoot = '/stillingar',
-  StillingarUpplysingar = '/stillingar/upplysingar',
   StillingarUmbod = '/stillingar/umbod',
   // Fjolskyldan
   FjolskyldanRoot = '/fjolskyldan',
+  MinarUpplysingar = '/minar-upplysingar',
   // Fjarmal
   FjarmalRoot = '/fjarmal',
   FjarmalOkutaeki = 'https://mitt.samgongustofa.is/',
