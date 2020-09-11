@@ -358,7 +358,7 @@ export const getLifeEvents = async (lang: string): Promise<LifeEventPage[]> => {
   const result = await getLocalizedEntries<types.ILifeEventPageFields>(lang, {
     ['content_type']: 'lifeEventPage',
     order: '-sys.createdAt',
-  }).catch(errorHandler('getLifeEventPage'))
+  }).catch(errorHandler('getLifeEvents'))
 
   return result.items.map(mapLifeEventPage)
 }
