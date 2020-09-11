@@ -28,7 +28,6 @@ docker buildx build \
   --cache-from=type=local,src=$PROJECT_ROOT/cache \
   -f ${DIR}/Dockerfile \
   --target=$TARGET $PUBLISH_TO_REGISTRY \
-  --build-arg BUILDKIT_INLINE_CACHE=1  \
   --build-arg APP=${APP} \
   --build-arg APP_HOME=${APP_HOME} \
   --build-arg APP_DIST_HOME=${APP_DIST_HOME} \

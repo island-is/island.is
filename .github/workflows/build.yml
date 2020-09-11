@@ -119,7 +119,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -237,7 +237,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output
       - name: Cache for NodeJS dependencies - host OS
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v1
@@ -322,7 +322,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output
       - name: Set up Docker Buildx
         if: ${{ matrix.projects != 'dummy' }}
         id: buildx
@@ -363,7 +363,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output
       - name: Set up Docker Buildx
         if: ${{ matrix.projects != 'dummy' }}
         id: buildx
@@ -404,7 +404,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output
       - name: Set up Docker Buildx
         if: ${{ matrix.projects != 'dummy' }}
         id: buildx
