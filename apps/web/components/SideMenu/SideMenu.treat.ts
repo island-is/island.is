@@ -46,7 +46,11 @@ export const tabActive = style({
 })
 
 export const tabFocused = style({
-  borderBottomColor: 'transparent',
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      borderBottomColor: 'transparent',
+    },
+  },
 })
 
 export const content = style({
