@@ -77,3 +77,7 @@ export const image = style({
     },
   },
 })
+
+export const content = style({
+  flex: 1
+})

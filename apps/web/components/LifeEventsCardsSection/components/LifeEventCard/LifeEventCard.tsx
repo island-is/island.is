@@ -34,13 +34,13 @@ const LifeEventCard: React.FC<Props> = ({ title, intro, image, url }) => {
         paddingTop={[2, 2, null]}
         paddingBottom={[4, 4, null]}
         marginRight={[2, 2, 2, 2, 1]}
+        className={styles.content}
       >
         <Typography variant="h3" as="h3" paddingBottom={1} color="blue400">
           {title}
         </Typography>
         <Typography variant="p">{intro}</Typography>
       </Box>
-
       <div
         className={styles.thumbnail}
         style={{ backgroundImage: `url(${image})` }}
