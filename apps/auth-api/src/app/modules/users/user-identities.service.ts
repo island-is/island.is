@@ -64,7 +64,9 @@ export class UserIdentitiesService {
           }]
         })
 
-        return linkedIdentity.profileId;
+        if (linkedIdentity) {
+          return linkedIdentity.profileId;
+        }
     }
   }
 
