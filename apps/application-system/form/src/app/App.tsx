@@ -14,9 +14,9 @@ export const App = () => {
   return (
     <ApolloProvider client={client}>
       <Box className={styles.root}>
-        <GridContainer>
+        <Box paddingLeft={[3, 3, 5]}>
           <Header />
-        </GridContainer>
+        </Box>
         <Switch>
           <Route exact path="/">
             <Redirect to="/application/" />
