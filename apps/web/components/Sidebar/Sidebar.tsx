@@ -151,7 +151,7 @@ export const Sidebar: FC<SidebarProps> = ({
     updateBulletPlacement()
   }, [updateBulletPlacement])
 
-  const sortedItems = items.sort((a, b) => (a.title > b.title ? 1 : -1))
+  const sortedItems = items.sort((a, b) => a.title.localeCompare(b.title, 'is'))
 
   return (
     <Box
