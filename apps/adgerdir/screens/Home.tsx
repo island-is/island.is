@@ -12,12 +12,12 @@ import {
 import { Content } from '@island.is/adgerdir/units'
 import {
   Articles,
-  Sleeve,
   GroupedPages,
   CardsSlider,
   FeaturedNews,
   FrontpageSvg,
 } from '@island.is/adgerdir/components'
+import { Sleeve } from '@island.is/web/components'
 import { withApollo } from '../graphql'
 import { useI18n } from '../i18n'
 import {
