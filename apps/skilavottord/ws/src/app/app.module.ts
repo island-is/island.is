@@ -28,7 +28,7 @@ import { GraphQLModule } from '@nestjs/graphql'
 
 //import { AuthModule, UserModule, DiscountModule, FlightModule } from './modules'
 //import { BackendAPI } from '../services'
-import { UserModule } from './modules'
+import { UserModule, CarModule } from './modules'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -43,6 +43,7 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
       //     context: ({ req }) => ({ req })
     }),
     UserModule,
+    CarModule,
   ],
   //providers: [BackendAPI],
 })
