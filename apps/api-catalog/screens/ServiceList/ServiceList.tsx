@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { Box,  Stack,  BulletList,  Bullet,  Button, Checkbox 
+import { Box,  Stack,  BulletList,  Bullet,  Button, Checkbox
 } from '@island.is/island-ui/core'
 
-import { Layout, 
+import { Layout,
          ServiceCard,
-         ServiceCardInformation, 
+         ServiceCardInformation,
          CategoryCheckBox
        } from '../../components'
-       
-import { getServices, 
-         GetServicesParameters, 
-         getAllPriceCategories, 
-         getAllDataCategories 
+
+import { getServices,
+         GetServicesParameters,
+         getAllPriceCategories,
+         getAllDataCategories
        } from '../../components/ServiceRepository/service-repository'
 
 
@@ -86,7 +86,26 @@ export default function ServiceList(props:ServiceListProps) {
       loadData();
   }, [checkDataPersonal,checkPricingFree, paramCursor, props.parameters]);
 
+  const updatePricingFree = event => {
+    console.log(event.target.checked);
 
+    props.parameters.cursor = null;
+
+    if (props.parameters.pricing === null) {
+      props.parameters.pricing = [];
+    }
+    if (event.target.checked) {
+        if (!props.parameters.pricing.includes('free')){
+          props.parameters.pricing.push('free')
+        }
+    } else {
+      props.parameters.pricing.splice(props.parameters.pricing.indexOf('free'), 1);
+    }
+
+    setCheckPricingFree(event.target.checked);
+    setParamCursor(props.parameters.cursor);
+    console.log(event.target.value);
+  }
   return (
 
       <Layout left={
@@ -95,25 +114,8 @@ export default function ServiceList(props:ServiceListProps) {
           <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
             <Stack space={5}>
               <Stack space={3}>
-              <CategoryCheckBox />
-              <Checkbox name="checkboxFree" label="Free"
-                  onChange={({ target }) => {
-                    props.parameters.cursor = null;
-                    if (props.parameters.pricing === null) {
-                      props.parameters.pricing = [];
-                    }
-                    if (target.checked) {
-                        if (!props.parameters.pricing.includes('free')){
-                          props.parameters.pricing.push('free')
-                        }
-                    } else {
-                      props.parameters.pricing.splice(props.parameters.pricing.indexOf('free'), 1);
-                    }
-                    setParamCursor(props.parameters.cursor);
-                    setCheckPricingFree(target.checked)
-                  }}
-                  checked={checkPricingFree}
-                />
+              <CategoryCheckBox label="Free" value="free" onChange={updatePricingFree} checkValue={checkPricingFree}/>
+
 
                 <Checkbox name="checkboxPersonal" label="Personal"
                   onChange={({ target }) => {
