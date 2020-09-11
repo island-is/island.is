@@ -11,7 +11,7 @@ export interface CategoryCheckBoxCategoryCheckBox  {
 export const CategoryCheckBox = (props:CategoryCheckBoxCategoryCheckBox) => {
   return (
     <Stack space="gutter">
-      <Checkbox name={props.label+props.value} label={props.label}
+      <Checkbox name={'check-category-'+props.value} label={props.label}
                   onChange={props.onChange}
                   checked={props.checkValue}
                   value={props.value}

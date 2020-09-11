@@ -60,21 +60,7 @@
       $color-service-status-warning: #fff066;
       $color-service-status-error: #ff0250;
       .service-list {
-          ul {
-            /*Bullet legends*/
-              li:first-child circle {
-                  fill: $color-service-status-ok !important;
-              }
-              li:nth-child(2) circle {
-                  fill: $color-service-status-warning !important;
-              }
-              li:nth-child(3) circle {
-                  fill: $color-service-status-error !important;
-              }
-              li:nth-child(4) circle {
-                  fill: $color-service-status-unknown !important;
-              }
-          }
+
           .navigation {
             button {
               padding:8px;

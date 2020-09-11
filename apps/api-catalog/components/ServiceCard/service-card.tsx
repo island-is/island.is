@@ -9,7 +9,7 @@ export interface ServiceCardInformation {
     owner:string;
     url:string;
     pricing:Array<string>;
-    categories:Array<string>
+    data:Array<string>
     type:Array<string>;
     access:Array<string>;
     status:ServiceStatusValue;
@@ -62,7 +62,7 @@ export const ServiceCard = (props: ServiceCardProps) => {
           }
         </div>
         <div className="categories" style={styles.category} >
-          {	props.service.categories?.map((item, index) => (
+          {	props.service.data?.map((item, index) => (
                 <div style={styles.categories} className="card-item" key={index}>{item + ''} </div>
             ))
           }

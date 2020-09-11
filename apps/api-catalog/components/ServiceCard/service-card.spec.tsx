@@ -9,7 +9,7 @@ describe(' ServiceCard ', () => {
       name      :"service 1", 
       owner     : "owner of service 1", 
       pricing   :["free", "custom"], 
-      categories:["personal"], 
+      data      :["personal"], 
       type      :["GraphQÆ", "REST"],
       access    :null,
       status    :ServiceStatusValue.OK,
@@ -39,7 +39,7 @@ describe(' ServiceCard ', () => {
     })
     it('should contain all categories values', () => {
       const { getByText } = render(<ServiceCard service={service}/>)
-      expect(getByText(service.categories[0])).toBeTruthy()
+      expect(getByText(service.data[0])).toBeTruthy()
     })
     it('should contain all types values', () => {
       const { getByText } = render(<ServiceCard service={service}/>)
