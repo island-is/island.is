@@ -22,7 +22,7 @@ import { GrantTypesModule } from './modules/grant-types/grant-types.module';
     GrantTypesModule,
     ConfigModule.forRoot(
       {
-        envFilePath: 'test.env'
+        envFilePath: ['.envrc', '.env.secret']
       }
     )
   ],
