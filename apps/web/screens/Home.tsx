@@ -31,7 +31,7 @@ import {
 import { IntroductionSection } from '../components/IntroductionSection'
 import { LifeEventsCardsSection } from '../components/LifeEventsCardsSection'
 import { Section } from '../components/Section'
-import { Sleeve } from '@island.is/web/components'
+import { Sleeve } from '@island.is/island-ui/core'
 import { ContentBlock } from '@island.is/island-ui/core'
 
 interface HomeProps {

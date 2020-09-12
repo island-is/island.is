@@ -17,7 +17,7 @@ import {
   FeaturedNews,
   FrontpageSvg,
 } from '@island.is/adgerdir/components'
-import { Sleeve } from '@island.is/web/components'
+import { Sleeve } from '@island.is/island-ui/core'
 import { withApollo } from '../graphql'
 import { useI18n } from '../i18n'
 import {
