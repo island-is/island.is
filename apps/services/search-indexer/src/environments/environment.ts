@@ -6,6 +6,7 @@ export interface Environment {
     environment: string
     host: string
   }
+  domains: string[]
   indexableTypes: string[]
   migrate: {
     elasticNode: string
@@ -26,6 +27,7 @@ export const environment: Environment = {
     environment: process.env.CONTENTFUL_ENVIRONMENT || 'master',
     host: process.env.CONTENTFUL_HOST || 'preview.contentful.com',
   },
+  domains: ['cms'],
   indexableTypes: ['article'],
   migrate: {
     elasticNode: process.env.ELASTIC_NODE || '',

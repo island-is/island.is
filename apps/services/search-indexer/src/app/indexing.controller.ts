@@ -5,7 +5,8 @@ import { logger } from '@island.is/logging'
 
 @Controller('')
 export class IndexingController {
-  constructor(private readonly indexingService: IndexingService) {}
+  constructor(
+    private readonly indexingService: IndexingService) { }
 
   @Get('/')
   async hello() {
@@ -21,18 +22,8 @@ export class IndexingController {
 
   @Get('sync')
   async sync() {
-    const syncToken = await this.indexingService.getLastSyncToken(
-      SearchIndexes.is,
-    )
-    logger.debug('IndexSync', { token: syncToken })
-
-    if (syncToken) {
-      // noinspection ES6MissingAwait
-      this.indexingService.continueSync(syncToken, SearchIndexes.is)
-    } else {
-      // noinspection ES6MissingAwait
-      this.indexingService.initialSync(SearchIndexes.is)
-    }
+    logger.info('Doing sync')
+    await this.indexingService.doSync({fullSync: false, locale: 'is'})
     return {
       acknowledge: true,
     }
@@ -50,10 +41,8 @@ export class IndexingController {
 
   @Get('re-sync')
   async resync() {
-    logger.debug('IndexReSync')
-
-    // noinspection ES6MissingAwait
-    this.indexingService.initialSync(SearchIndexes.is)
+    logger.info('Doing re-sync')
+    await this.indexingService.doSync({fullSync: true, locale: 'is'})
     return {
       acknowledge: true,
     }

@@ -8,6 +8,7 @@ export const environment: Environment = {
     environment: process.env.CONTENTFUL_ENVIRONMENT,
     host: process.env.CONTENTFUL_HOST,
   },
+  domains: ['cms'],
   indexableTypes: ['article'],
   migrate: {
     elasticNode: process.env.ELASTIC_NODE,

@@ -23,7 +23,7 @@ export class ElasticService {
     logger.debug('Created ES Service')
   }
 
-  async index(index: SearchIndexes, document: Document) {
+  async index(index: SearchIndexes, document: any) {
     const _id = document._id
 
     try {
@@ -42,6 +42,30 @@ export class ElasticService {
       )
     }
   }
+
+  async bulk(index: SearchIndexes, documents: any) {
+    try {
+      const client = await this.getClient()
+      const payload = []
+      documents.forEach(({_id, ...document}) => {
+        payload.push({
+          index: { _index: index, _id }
+        })
+        payload.push(document)
+      })
+      return await client.bulk({
+        index: index,
+        body: payload,
+      })
+    } catch (e) {
+      ElasticService.handleError(
+        'Error indexing ES documents',
+        { index: index },
+        e,
+      )
+    }
+  }
+
 
   async findByQuery<ResponseBody, RequestBody>(
     index: SearchIndexes,

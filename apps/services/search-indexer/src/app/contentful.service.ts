@@ -17,9 +17,9 @@ interface SyncerResult {
 }
 
 @Injectable()
-export class Syncer {
+export class ContentfulService {
   private defaultIncludeDepth = 10
-  private contentFulClient: ContentfulClientApi
+  private contentfulClient: ContentfulClientApi
 
   constructor() {
     const params: CreateClientParams = {
@@ -29,14 +29,14 @@ export class Syncer {
       host: environment.contentful.host,
     }
     logger.debug('Syncer created', params)
-    this.contentFulClient = createClient(params)
+    this.contentfulClient = createClient(params)
   }
 
-  private getChunkIds(chunkToProcess: Entry<any>[]): string {
+  private getChunkIds(chunkToProcess: Entry<any>[], indexableContentTypes: string[]): string {
     return chunkToProcess
       .reduce((csvIds, entry) => {
         // if indexing this type is suported
-        if (environment.indexableTypes.includes(entry.sys.contentType.sys.id)) {
+        if (indexableContentTypes.includes(entry.sys.contentType.sys.id)) {
           csvIds.push(entry.sys.id)
         }
         return csvIds
@@ -44,40 +44,41 @@ export class Syncer {
       .join(',')
   }
 
-  private getContentfulData(chunkIds: string) {
-    // TODO: Make this use cms domain endpoints to reduce mapping/typing required?
-    return this.contentFulClient
+  private async getContentfulData(chunkIds: string) {
+    logger.info('Getting contentful data')
+    const data = await this.contentfulClient
       .getEntries({
         include: this.defaultIncludeDepth,
         'sys.id[in]': chunkIds,
       })
-      .then((data) => data.items)
+    return data.items
   }
 
   // TODO: Limit this request to content types if able e.g. get content type from webhook request
-  async getSyncEntries(opts): Promise<SyncerResult> {
+  async getSyncEntries({contentTypes, ...opts}): Promise<SyncerResult> {
     const {
       entries,
       nextSyncToken,
       deletedEntries,
-    }: SyncCollection = await this.contentFulClient.sync(opts)
-    const chunkSize = 30
+    }: SyncCollection = await this.contentfulClient.sync(opts)
+    const chunkSize = 100
 
     logger.info('Sync found entries', {
       entries: entries.length,
       deletedEntries: deletedEntries.length,
     })
 
-    // get all entries form contentful
+    // get all entries from contentful
     let alteredItems = []
     let chunkToProcess = entries.splice(-chunkSize, chunkSize)
     do {
-      const chunkIds = this.getChunkIds(chunkToProcess)
+      const chunkIds = this.getChunkIds(chunkToProcess, contentTypes)
       const items = await this.getContentfulData(chunkIds)
 
       alteredItems = [...alteredItems, ...items]
       chunkToProcess = entries.splice(-chunkSize, chunkSize)
     } while (chunkToProcess.length)
+    
 
     // extract ids from deletedItems
     const deletedItems = deletedEntries.map((entry) => entry.sys.id)
@@ -90,7 +91,7 @@ export class Syncer {
   }
 
   async getEntry(id: string): Promise<Entry<unknown> | undefined> {
-    return this.contentFulClient.getEntry(id, {
+    return this.contentfulClient.getEntry(id, {
       include: this.defaultIncludeDepth,
     })
   }
