@@ -3,6 +3,29 @@ import { ServiceCardInformation } from '../ServiceCard/service-card';
 
 const MAX_LIMIT = 4;
 
+export interface ServicesResult {
+    result:Array<ServiceCardInformation>,
+    prevCursor:number;
+    nextCursor:number;
+}
+
+export enum SERVICE_SEARCH_METHOD {
+    MUST_CONTAIN_ONE_OF_CATEGORY,
+    MUST_CONTAIN_ONE_OF_EACH_CATEGORY
+}
+
+export interface GetServicesParameters {
+    cursor:number
+    limit:number
+    owner:string
+    name:string
+    pricing:Array<string>
+    data:Array<string>
+    type:Array<string>
+    access:Array<string>,
+    searchMethod:SERVICE_SEARCH_METHOD
+}
+
 const enumToArray = (enumObject) => {
     const all = [];
     for(const key in enumObject){
@@ -81,22 +104,6 @@ const OrgServices:Array<ServiceCardInformation> =[
         access: [ACCESS_CATEGORY.API_GW]}
 ];
 
-export interface ServicesResult {
-    result:Array<ServiceCardInformation>,
-    prevCursor:number;
-    nextCursor:number;
-}
-
-export interface GetServicesParameters {
-    cursor:number
-    limit:number
-    owner:string
-    name:string
-    pricing:Array<string>
-    data:Array<string>
-    type:Array<string>
-    access:Array<string>
-}
 
 export const getAllPriceCategories = ():Array<string>  => {
     return enumToArray(PRICING_CATEGORY);
@@ -135,8 +142,25 @@ const ArrayContainsOneOrMoreOf = (checkMe:Array<string>, shouldContainOneOf:Arra
     return false;
 }
 
+const ParameterArraysContainsOneOrMoreOf = (service:ServiceCardInformation, parameters:GetServicesParameters):boolean => {
+
+    if (parameters.searchMethod === SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY)
+    {
+        return ( ArrayContainsOneOrMoreOf(service.pricing, parameters.pricing) ||
+                 ArrayContainsOneOrMoreOf(service.data, parameters.data)       ||
+                 ArrayContainsOneOrMoreOf(service.type, parameters.type)       ||
+                 ArrayContainsOneOrMoreOf(service.access, parameters.access)    );
+    } else {
+        return ( ArrayContainsOneOrMoreOf(service.pricing, parameters.pricing) &&
+                 ArrayContainsOneOrMoreOf(service.data, parameters.data)       &&
+                 ArrayContainsOneOrMoreOf(service.type, parameters.type)       &&
+                 ArrayContainsOneOrMoreOf(service.access, parameters.access)    )
+    }
+}
+
+
 export async function getServices(parameters:GetServicesParameters):Promise<ServicesResult> {
-    const params:GetServicesParameters = parameters !== null? parameters : {cursor:null, limit:null, owner:null, name:null, pricing:null, data:null, type:null, access:null};
+    const params:GetServicesParameters = parameters !== null? parameters : {cursor:null, limit:null, owner:null, name:null, pricing:null, data:null, type:null, access:null, searchMethod:SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY};
     let filtered = OrgServices;
     if (isValidString(params.name)) {
         filtered = filtered.filter(e => e.name.includes(params.name));
@@ -144,7 +168,24 @@ export async function getServices(parameters:GetServicesParameters):Promise<Serv
     if (isValidString(params.owner)) {
         filtered = filtered.filter(e => e.owner.includes(params.owner));
     }
+    console.log('beginning', JSON.parse(JSON.stringify(filtered)))
 
+    if ( params.pricing !== null) {
+        filtered = JSON.parse(JSON.stringify(filtered.filter(function (e) {
+            return ParameterArraysContainsOneOrMoreOf(e, params)
+        }))
+        );
+    }
+
+    console.log('filtered', JSON.parse(JSON.stringify(filtered)))
+    /*//pricing filter
+    if ( params.pricing !== null) {
+        filtered = filtered.filter(function (e) {
+            return ArrayContainsOneOrMoreOf(e.pricing, params.pricing)
+        }
+        );
+    }
+    console.log('pricing filter', JSON.parse(JSON.stringify(filtered)))
     //data filter
     if ( params.data !== null) {
             filtered = filtered.filter(function (e) {
@@ -152,14 +193,8 @@ export async function getServices(parameters:GetServicesParameters):Promise<Serv
             }
         );
     }
+    console.log('data filter', JSON.parse(JSON.stringify(filtered)))
 
-    //pricing filter
-    if ( params.pricing !== null) {
-        filtered = filtered.filter(function (e) {
-            return ArrayContainsOneOrMoreOf(e.pricing, params.pricing)
-        }
-        );
-    }
 
 
     //type filter
@@ -170,6 +205,8 @@ export async function getServices(parameters:GetServicesParameters):Promise<Serv
         );
     }
 
+    console.log('type filter', JSON.parse(JSON.stringify(filtered)))
+
 
     //access filter
     if ( params.access !== null) {
@@ -179,12 +216,16 @@ export async function getServices(parameters:GetServicesParameters):Promise<Serv
         );
     }
 
+    console.log('access filter', JSON.parse(JSON.stringify(filtered)))
+    */
     if (!isValidNumber(params.cursor)) {
         params.cursor = null;
     }
     if (!isValidNumber(params.limit)) {
         params.limit = null;
     }
+
+    console.log("params pricing,data,type,access", params.pricing, params.data, params.type, params.access);
     return await limitServices(filtered, params.cursor, params.limit);
 }
 
