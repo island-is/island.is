@@ -96,7 +96,7 @@ module.exports = {
         PRIMARY KEY (client_id, value)
       );
 
-      CREATE TABLE client_redirect_uri ( 
+      CREATE TABLE client_redirect_uri (
         client_id VARCHAR NOT NULL,
         redirect_uri VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
@@ -113,6 +113,20 @@ module.exports = {
         PRIMARY KEY (client_id, grant_type)
       );
 
+      CREATE TABLE grants (
+        id uuid NOT NULL,
+        key VARCHAR NOT NULL,
+        client_id  VARCHAR NOT NULL,
+        data  VARCHAR NOT NULL,
+        expiration TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        subject_id VARCHAR NOT NULL,
+        type VARCHAR NOT NULL,
+        created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        modified TIMESTAMP WITH TIME ZONE,
+        PRIMARY KEY (id),
+        CONSTRAINT FK_grant_client FOREIGN KEY (client_id) REFERENCES client (client_id)
+      );
+
     COMMIT;
     `)
   },
@@ -126,6 +140,7 @@ module.exports = {
         DROP TABLE client_allowed_scope;
         DROP TABLE client_redirect_uri;
         DROP TABLE client_grant_type;
+        DROP TABLE grants;
         DROP TABLE client;
       COMMIT;
     `)

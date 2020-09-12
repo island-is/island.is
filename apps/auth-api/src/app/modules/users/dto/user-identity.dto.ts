@@ -27,14 +27,9 @@ export class UserIdentityDto {
   })
   readonly providerSubjectId: string
 
-  @IsOptional()
-  @IsString()
-  @ApiProperty({
-    example: null
-  })
-  readonly profileId: string
-
   @IsArray()
   @ApiProperty({ type: [ClaimDto]})
   readonly claims: ClaimDto[]
+
+  profileId: string
 }

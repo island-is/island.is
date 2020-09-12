@@ -1,5 +1,7 @@
 'use strict';
 
+var SHA256 = require("crypto-js/sha256");
+
 module.exports = {
   up: (queryInterface, Sequelize) => {
     var clients = [
@@ -211,7 +213,7 @@ module.exports = {
 
     var secrets = [{
       client_id: 'island-is-client-cred-1',
-      value: 'secret',
+      value: SHA256('secret').toString(),
       description: "secret for island-is-client-cred-1",
       expiration: new Date(),
       type: "General"
