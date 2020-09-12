@@ -28,7 +28,6 @@ const LifeEventCard: React.FC<Props> = ({ title, intro, image, url }) => {
         paddingY={[1, 1, 3]}
         overflow="hidden"
       >
-
         <Box
           display="flex"
           flexDirection="column"
