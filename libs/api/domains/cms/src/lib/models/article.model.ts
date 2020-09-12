@@ -1,6 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import { IArticle } from '../generated/contentfulTypes'
+import { Slice, mapDocument } from './slice.model'
 
 import { ArticleCategory } from './articleCategory.model'
 import { ArticleGroup } from './articleGroup.model'
@@ -19,14 +20,17 @@ export class Article {
   @Field()
   title: string
 
-  @Field({ nullable: true })
-  shortTitle?: string
-
   @Field()
   slug: string
 
-  @Field({ nullable: true })
-  content?: string
+  @Field()
+  shortTitle: string
+
+  @Field()
+  intro: string
+
+  @Field(() => [Slice])
+  body: Array<typeof Slice>
 
   @Field(() => ArticleCategory, { nullable: true })
   category?: ArticleCategory
@@ -40,11 +44,11 @@ export class Article {
   @Field(() => [Organization])
   organization?: Array<Organization>
 
+  @Field(() => [SubArticle])
+  subArticles: Array<SubArticle>
+
   @Field(() => [Article])
   relatedArticles?: Array<Article>
-
-  @Field(() => [SubArticle])
-  subArticles?: Array<SubArticle>
 }
 
 export const mapArticle = ({ fields, sys }: IArticle): Article => ({
@@ -53,12 +57,12 @@ export const mapArticle = ({ fields, sys }: IArticle): Article => ({
   title: fields.title,
   shortTitle: fields.shortTitle ?? '',
   slug: fields.slug,
-  content: (fields.content && JSON.stringify(fields.content)) ?? null,
+  intro: fields.intro ?? '',
+  body: fields.content ? mapDocument(fields.content) : [],
   category: fields.category?.fields,
   group: fields.group?.fields,
   subgroup: fields.subgroup?.fields,
   organization: fields.organization && fields.organization.map(mapOrganization),
-  relatedArticles:
-    fields.relatedArticles && fields.relatedArticles.map(mapArticle),
   subArticles: fields.subArticles && fields.subArticles.map(mapSubArticle),
+  relatedArticles: (fields.relatedArticles ?? []).map(mapArticle),
 })

@@ -8,9 +8,10 @@ import * as styles from './DrawerMenu.treat'
 import { STICKY_NAV_HEIGHT } from '@island.is/web/constants'
 import { theme } from '@island.is/island-ui/theme'
 
-type CategoryItem = {
+export type CategoryItem = {
   title: string
   url: string
+  as?: string
 }
 
 type Category = {
@@ -18,7 +19,7 @@ type Category = {
   items: CategoryItem[]
 }
 
-interface DrawerMenuProps {
+export interface DrawerMenuProps {
   categories: Category[]
 }
 
@@ -79,7 +80,9 @@ const DrawerMenuCategory: React.FC<DrawerMenuCategoryProps> = ({
       {items.map((item) => (
         <Box component="li">
           <Typography as="p" paddingBottom={2}>
-            <Link href={item.url}>{item.title}</Link>
+            <Link href={item.url} as={item.as}>
+              {item.title}
+            </Link>
           </Typography>
         </Box>
       ))}
