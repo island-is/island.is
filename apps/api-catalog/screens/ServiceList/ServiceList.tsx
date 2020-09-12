@@ -73,16 +73,34 @@ export default function ServiceList(props:ServiceListProps) {
     setParamCursor(props.parameters.cursor);
   }
 
-
-  const [services, setServices] = useState<Array<ServiceCardInformation>>(props.servicesList);
-  const [prevCursor, setPrevCursor] = useState<number>(props.prevCursor);
-  const [nextCursor, setNextCursor] = useState<number>(props.nextCursor);
-  const [paramCursor, setParamCursor] = useState<number>(null);
-  //const [paramPricing, setParamPricing] = useState<Array<string>>(props.parameters.pricing);
-  //const [paramData,    setParamData] = useState<Array<string>>(props.parameters.data);
-  const [checkPricingFree, setCheckPricingFree] = useState(props.parameters.pricing === null || props.parameters.pricing.includes('free'));
-  const [checkDataPersonal, setCheckDataPersonal] = useState(props.parameters.data === null || props.parameters.data.includes('personal'));
-
+  const [services,    setServices]   = useState<Array<ServiceCardInformation>>(props.servicesList);
+  const [pricing,     setPricing]    = useState<Array<string>>(props.parameters.pricing);
+  const [data,        setData]       = useState<Array<string>>(props.parameters.data);
+  const [type,        setType]       = useState<Array<string>>(props.parameters.type);
+  const [access,      setAccess]       = useState<Array<string>>(props.parameters.access);
+  const [prevCursor,  setPrevCursor] = useState<number>(props.prevCursor);
+  const [nextCursor,  setNextCursor] = useState<number>(props.nextCursor);
+  const [paramCursor, setParamCursor]= useState<number>(null);
+  //pricing
+  const [checkPricingFree,   setCheckPricingFree]   = useState<boolean>(true);
+  const [checkPricingUsage,  setCheckPricingUsage]  = useState<boolean>(true);
+  const [checkPricingDaily,  setCheckPricingDaily]  = useState<boolean>(true);
+  const [checkPricingMonthly,setCheckPricingMonthly]= useState<boolean>(true);
+  const [checkPricingYearly, setCheckPricingYearly] = useState<boolean>(true);
+  const [checkPricingCustom, setCheckPricingCustom] = useState<boolean>(true);
+  //data
+  const [checkDataPublic,      setCheckDataPublic]  = useState<boolean>(true);
+  const [checkDataOfficial,  setCheckDataOfficial]  = useState<boolean>(true);
+  const [checkDataPersonal,  setCheckDataPersonal]  = useState<boolean>(true);
+  const [checkDataHealth,    setCheckDataHealth]    = useState<boolean>(true);
+  const [checkDataFinancial, setCheckDataFinancial] = useState<boolean>(true);
+  //type
+  const [checkTypeReact,      setCheckTypeReact]  = useState<boolean>(true);
+  const [checkTypeSoap,       setCheckTypeSoap]  = useState<boolean>(true);
+  const [checkTypeGraphQl,    setCheckTypeGraphQl]  = useState<boolean>(true);
+  //access
+  const [checkAccessApiXRoad, setCheckAccessXRoad]  = useState<boolean>(true);
+  const [checkAccessApiGw,    setCheckAccessApiGw]  = useState<boolean>(true);
 
 
   useEffect(() => {
@@ -96,7 +114,6 @@ export default function ServiceList(props:ServiceListProps) {
   }, [checkDataPersonal,checkPricingFree, paramCursor, props.parameters]);
 
   const updateCategoryCheckBox = event => {
-    console.log(event.target.value, event.target.checked);
 
     props.parameters.cursor = null;
     if (props.parameters.pricing === null) {
@@ -130,7 +147,6 @@ export default function ServiceList(props:ServiceListProps) {
     }
 
     setParamCursor(props.parameters.cursor);
-    console.log(event.target.value, event.target.checked);
   }
   return (
       <Layout left={
@@ -166,7 +182,16 @@ export default function ServiceList(props:ServiceListProps) {
   )
 }
 ServiceList.getInitialProps = async ():Promise<ServiceListProps> => {
-  const params:GetServicesParameters = { cursor:null, limit:null, owner:null, name:null, pricing:getAllPriceCategories(), data:getAllDataCategories() };
+  const params:GetServicesParameters = { cursor:null,
+    limit:null,
+    owner:null,
+    name:null,
+    pricing:getAllPriceCategories(),
+    data:getAllDataCategories(),
+    type:getAllTypeCategories(),
+    access:getAllAccessCategories()
+  };
+
   const response = await getServices(params);
   const result = await response.result;
 
