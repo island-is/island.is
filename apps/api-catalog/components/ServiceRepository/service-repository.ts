@@ -168,7 +168,6 @@ export async function getServices(parameters:GetServicesParameters):Promise<Serv
     if (isValidString(params.owner)) {
         filtered = filtered.filter(e => e.owner.includes(params.owner));
     }
-    console.log('beginning', JSON.parse(JSON.stringify(filtered)))
 
     if ( params.pricing !== null) {
         filtered = JSON.parse(JSON.stringify(filtered.filter(function (e) {
@@ -178,46 +177,6 @@ export async function getServices(parameters:GetServicesParameters):Promise<Serv
     }
 
     console.log('filtered', JSON.parse(JSON.stringify(filtered)))
-    /*//pricing filter
-    if ( params.pricing !== null) {
-        filtered = filtered.filter(function (e) {
-            return ArrayContainsOneOrMoreOf(e.pricing, params.pricing)
-        }
-        );
-    }
-    console.log('pricing filter', JSON.parse(JSON.stringify(filtered)))
-    //data filter
-    if ( params.data !== null) {
-            filtered = filtered.filter(function (e) {
-                return ArrayContainsOneOrMoreOf(e.data, params.data)
-            }
-        );
-    }
-    console.log('data filter', JSON.parse(JSON.stringify(filtered)))
-
-
-
-    //type filter
-    if ( params.type !== null) {
-        filtered = filtered.filter(function (e) {
-            return ArrayContainsOneOrMoreOf(e.type, params.type)
-        }
-        );
-    }
-
-    console.log('type filter', JSON.parse(JSON.stringify(filtered)))
-
-
-    //access filter
-    if ( params.access !== null) {
-        filtered = filtered.filter(function (e) {
-            return ArrayContainsOneOrMoreOf(e.access, params.access)
-        }
-        );
-    }
-
-    console.log('access filter', JSON.parse(JSON.stringify(filtered)))
-    */
     if (!isValidNumber(params.cursor)) {
         params.cursor = null;
     }

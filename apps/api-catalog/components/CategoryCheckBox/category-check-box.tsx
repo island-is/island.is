@@ -5,7 +5,8 @@ export interface CategoryCheckBoxCategoryCheckBox  {
   checkValue:boolean,
   onChange:(event: React.ChangeEvent<HTMLInputElement>) => void
   label:string,
-  value:string
+  value:string,
+  tooltip?:string
 }
 
 export const CategoryCheckBox = (props:CategoryCheckBoxCategoryCheckBox) => {
@@ -16,6 +17,7 @@ export const CategoryCheckBox = (props:CategoryCheckBoxCategoryCheckBox) => {
                   onChange={props.onChange}
                   checked={props.checkValue}
                   value={props.value}
+                  tooltip={props?.tooltip}
         />
         </div>
     </Stack>
