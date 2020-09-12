@@ -2,8 +2,6 @@ import { ClientDTO } from './dto/client-dto';
 import {
   Inject,
   Injectable,
-  NotFoundException,
-  BadRequestException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Client } from './models/client.model'
@@ -17,6 +15,7 @@ import { ClientIdpRestrictions } from './models/client-idp-restrictions.model'
 import { ClientSecret } from './models/client-secret.model'
 import { ClientPostLogoutRedirectUri } from './models/client-post-logout-redirect-uri.model'
 import { ClientGrantType } from './models/client-grant-type.model'
+import { ClientUpdateDTO } from './dto/client-update-dto';
 
 @Injectable()
 export class ClientsService {
@@ -36,10 +35,10 @@ export class ClientsService {
     private logger: Logger,
   ) {}
 
-  async findClientById(clientId: string): Promise<Client> {
-    this.logger.debug(`Finding client for clientId - "${clientId}"`)
+  async findClientById(id: string): Promise<Client> {
+    this.logger.debug(`Finding client for id - "${id}"`)
     return this.clientModel.findOne({
-      where: { clientId },
+      where: { clientId: id },
       include: [
         ClientAllowedScope,
         ClientAllowedCorsOrigin,
@@ -53,11 +52,32 @@ export class ClientsService {
     })
   }
 
-  async createAsync(client: ClientDTO): Promise<Client> {
+  async create(client: ClientDTO): Promise<Client> {
     this.logger.debug('Creating a new client')
 
     return await this.clientModel.create(
       { ...client }
     )
+  }
+
+  async update(client: ClientUpdateDTO, id: string): Promise<Client> {
+    this.logger.debug('Updating client with id: ', id)
+
+    await this.clientModel.update(
+      { ...client },
+      {
+        where: { clientId: id}
+      }
+    )
+
+    return await this.findClientById(id)
+  }
+
+  async delete(id: string): Promise<number> {
+    this.logger.debug('Deleting client with id: ', id)
+
+    return await this.clientModel.destroy({
+      where: { clientId: id }
+    })
   }
 }

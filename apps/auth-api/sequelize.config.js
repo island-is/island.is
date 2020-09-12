@@ -1,8 +1,8 @@
 /* eslint-env node */
 module.exports = {
   development: {
-    username: 'dev_db',
-    password: 'dev_db',
+    username: 'postgres',
+    password: 'asdfasdf',
     database: 'dev_db',
     host: 'localhost',
     dialect: 'postgres',

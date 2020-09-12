@@ -4,20 +4,20 @@ import {
   NotFoundException,
   Param,
   UseGuards,
-  Req,
-  Logger,
   Post,
   Body,
-  BadRequestException,
+  Put,
+  Delete,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags, ApiOAuth2, ApiCreatedResponse } from '@nestjs/swagger'
 import { Client } from './models/client.model'
 import { ClientsService } from './clients.service'
 import { AuthGuard } from '@nestjs/passport'
 import { ClientDTO } from './dto/client-dto'
+import { ClientUpdateDTO } from './dto/client-update-dto'
 
-@ApiOAuth2(['@identityserver.api/read'])
-@UseGuards(AuthGuard('jwt'))
+// @ApiOAuth2(['@identityserver.api/read'])
+// @UseGuards(AuthGuard('jwt'))
 @ApiTags('clients')
 @Controller('clients')
 export class ClientsController {
@@ -26,12 +26,12 @@ export class ClientsController {
   ) {}
   
   
-  @Get(':clientId')
+  @Get(':id')
   @ApiOkResponse({ type: Client })
   async findOne(
-    @Param('clientId') clientId: string
+    @Param('id') id: string
   ): Promise<Client> {
-    const clientProfile = await this.clientsService.findClientById(clientId)
+    const clientProfile = await this.clientsService.findClientById(id)
     if (!clientProfile) {
       throw new NotFoundException("This client doesn't exist")
     }
@@ -42,6 +42,18 @@ export class ClientsController {
   @Post()
   @ApiCreatedResponse({ type: Client })
   async create(@Body() client: ClientDTO): Promise<Client> {
-    return await this.clientsService.createAsync(client)
+    return await this.clientsService.create(client)
+  }
+
+  @Put(':id')
+  @ApiCreatedResponse({ type: Client})
+  async update(@Body() client: ClientUpdateDTO, @Param('id') id: string): Promise<Client> {
+    return await this.clientsService.update(client, id)
+  }
+
+  @Delete(':id')
+  @ApiCreatedResponse()
+  async delete(@Param('id')id: string): Promise<number> {
+    return await this.clientsService.delete(id)
   }
 }
