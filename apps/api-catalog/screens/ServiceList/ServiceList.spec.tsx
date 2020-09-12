@@ -2,15 +2,15 @@ import React from 'react'
 import { render } from '@testing-library/react'
 
 import ServiceList from './ServiceList'
-import { ServiceCardInformation, ServiceStatusValue } from 'apps/api-catalog/components/ServiceCard/service-card';
-import { getAllPriceCategories, GetServicesParameters, getAllDataCategories } from 'apps/api-catalog/components/ServiceRepository/service-repository';
+import { ServiceCardInformation, ServiceStatusValue } from '../../components';
+import { getAllPriceCategories, GetServicesParameters, getAllDataCategories } from '../../components/ServiceRepository/service-repository';
 
 describe(' ServiceList ', () => {
   const services:Array<ServiceCardInformation> = [
-    { id:0, name:"service one Name",   owner:"Owner of service 1", pricing:["free", "custom"],            categories:["personal"],                   type:null,      access:["X-Road"], url:"", status:ServiceStatusValue.OK},
-    { id:1, name:"service two Name",   owner:"Owner of service 2", pricing:null,                          categories:["personal", "public"], type:["react"], access:["API GW"], url:"", status:ServiceStatusValue.OK},
-    { id:2, name:"service three Name", owner:"Owner of service 3", pricing:["daily","monthly", "yearly"], categories:["personal", "public"], type:["SOAP"],  access:["API GW"], url:"", status:ServiceStatusValue.OK},
-    { id:3, name:"Þjóðskrá",           owner:"Fasteignaskrá",      pricing:null,                          categories:["personal"],                   type:["REST"],  access:["API GW"], url:"", status:ServiceStatusValue.OK},
+    { id:0, name:"service one Name",   owner:"Owner of service 1", pricing:["free", "custom"],            data:["personal"],                   type:null,      access:["X-Road"], url:"", status:ServiceStatusValue.OK},
+    { id:1, name:"service two Name",   owner:"Owner of service 2", pricing:null,                          data:["personal", "public"], type:["react"], access:["API GW"], url:"", status:ServiceStatusValue.OK},
+    { id:2, name:"service three Name", owner:"Owner of service 3", pricing:["daily","monthly", "yearly"], data:["personal", "public"], type:["SOAP"],  access:["API GW"], url:"", status:ServiceStatusValue.OK},
+    { id:3, name:"Þjóðskrá",           owner:"Fasteignaskrá",      pricing:null,                          data:["personal"],                   type:["REST"],  access:["API GW"], url:"", status:ServiceStatusValue.OK},
   ];
 
   const params:GetServicesParameters = { cursor:null, limit:null, owner:null, name:null, pricing:getAllPriceCategories(), data:getAllDataCategories() };
