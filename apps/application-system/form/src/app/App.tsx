@@ -1,16 +1,22 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ApolloProvider } from '@apollo/client'
 
 import { Redirect, Route, Switch } from 'react-router-dom'
 
-import { Header, Box, GridContainer } from '@island.is/island-ui/core'
+import { Header, Box } from '@island.is/island-ui/core'
 import { client } from '@island.is/application/graphql'
 import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
 
+import { fixSvgUrls } from '../utils'
+
 import * as styles from './App.treat'
 
 export const App = () => {
+  useEffect(() => {
+    fixSvgUrls()
+  }, [])
+
   return (
     <ApolloProvider client={client}>
       <Box className={styles.root}>
