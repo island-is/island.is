@@ -87,9 +87,7 @@ export const getAdgerdirPages = async (lang = 'is'): Promise<AdgerdirPages> => {
   }
 }
 
-export const getOrganizations = async (
-  lang = 'is',
-): Promise<Organizations> => {
+export const getOrganizations = async (lang = 'is'): Promise<Organizations> => {
   const params = {
     ['content_type']: 'organization',
     include: 10,
@@ -112,7 +110,7 @@ export const getAdgerdirTags = async (lang = 'is'): Promise<AdgerdirTags> => {
     include: 10,
     limit: 100,
   }
-  
+
   const r = await getLocalizedEntries<types.IVidspyrnaTagFields>(
     lang,
     params,
