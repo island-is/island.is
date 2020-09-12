@@ -21,7 +21,6 @@ export const card = style({
   },
 })
 
-
 export const content = style({
   flex: 1,
 })
