@@ -20,6 +20,20 @@ const graphqlPath = '/api/graphql'
 module.exports = withTreat(
   withTM(
     withHealthcheckConfig({
+      webpack: (
+        config,
+        { buildId, dev, isServer, defaultLoaders, webpack },
+      ) => {
+        config.module.rules = [
+          ...config.module.rules,
+          {
+            test: /\.(zip|svg)$/i,
+            loader: 'url-loader',
+          },
+        ]
+
+        return config
+      },
       cssModules: false,
       serverRuntimeConfig: {
         // Will only be available on the server side

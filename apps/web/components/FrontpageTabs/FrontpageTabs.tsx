@@ -24,6 +24,10 @@ import {
 import { Locale } from '@island.is/web/i18n/I18n'
 import { useRouteNames } from '@island.is/web/i18n/useRouteNames'
 import { useI18n } from '../../i18n'
+import JSZip from 'jszip'
+import JSZipUtils from 'jszip-utils'
+
+import mynd1 from './Archive.zip'
 
 import * as styles from './FrontpageTabs.treat'
 
@@ -83,6 +87,22 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   })
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale as Locale)
+
+  useEffect(() => {
+    JSZipUtils.getBinaryContent(mynd1, function(err, data) {
+      if (err) {
+        throw err
+      }
+
+      JSZip.loadAsync(data)
+        .then(function(contents) {
+          console.log(contents)
+        })
+        .catch((err) => {
+          throw err
+        })
+    })
+  }, [])
 
   const updateImage = useCallback(() => {
     if (selectedIndex >= 0) {

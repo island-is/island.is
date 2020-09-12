@@ -117,6 +117,8 @@
     "js-cookie": "2.2.1",
     "js-yaml": "3.14.0",
     "jsbarcode": "3.11.0",
+    "jszip": "^3.5.0",
+    "jszip-utils": "^0.1.0",
     "jwt-decode": "2.2.0",
     "kennitala": "1.2.3",
     "libphonenumber-js": "1.7.53",
