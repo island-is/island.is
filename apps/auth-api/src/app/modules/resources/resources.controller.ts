@@ -1,5 +1,5 @@
 import { IdentityResourcesDTO } from './dto/identity-resources-dto';
-import { Controller, Get, Query, Post, Body, Put, Param, Delete } from '@nestjs/common'
+import { Controller, Get, Query, Post, Body, Put, Param, Delete, UseGuards } from '@nestjs/common'
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -13,10 +13,9 @@ import { ApiScope } from './model/api-scope.model'
 import { ApiResource } from './model/api-resource.model'
 import { AuthGuard } from '@nestjs/passport'
 import { ApiScopesDTO } from './dto/api-scopes-dto';
-import { UpdatedAt } from 'sequelize-typescript';
 
-// @ApiOAuth2(['@identityserver.api/read'])
-// @UseGuards(AuthGuard('jwt'))
+@ApiOAuth2(['@identityserver.api/read'])
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('resources')
 @Controller()
 export class ResourcesController {
