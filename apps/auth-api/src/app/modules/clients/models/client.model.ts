@@ -33,7 +33,7 @@ export class Client extends Model<Client> {
     allowNull: false,
   })
   @ApiProperty({
-    example: 'set_client_id',
+    example: 'client_id',
   })
   clientId: string
 
@@ -129,9 +129,10 @@ export class Client extends Model<Client> {
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    defaultValue: 0,
   })
   @ApiProperty({
-    example: false,
+    example: 0,
   })
   refreshTokenExpiration: number
 
@@ -334,7 +335,7 @@ export class Client extends Model<Client> {
     allowNull: false,
   })
   @ApiProperty({
-    example: 'set_client_claims_prefix',
+    example: 'client_claims_prefix',
   })
   clientClaimsPrefix: string
 
@@ -370,7 +371,7 @@ export class Client extends Model<Client> {
     allowNull: false,
   })
   @ApiProperty({
-    example: 'set_protocol_type',
+    example: 'protocol_type',
   })
   protocolType: string
 

@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { UserIdentity } from './user-identity.model'
+import { UserIdentity } from './models/user-identity.model'
 import { UserIdentityDto } from './dto/user-identity.dto'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Counter } from 'prom-client'
-import { Claim } from './claim.model'
+import { Claim } from './models/claim.model'
 import { Sequelize } from 'sequelize-typescript'
 
 @Injectable()
@@ -40,9 +40,17 @@ export class UserIdentitiesService {
     }
   }
 
+  async getById(id: string): Promise<UserIdentity> {
+    this.logger.debug('Getting user identity data for id: ', id)
+
+    return this.userIdentityModel.findOne({
+      where: { id: id },
+    })
+  }
+
   async findBySubjectId(subjectId: string): Promise<UserIdentity> {
     this.logger.debug(`Finding user identity for subjectId - "${subjectId}"`)
-    return this.userIdentityModel.findOne({
+    return await this.userIdentityModel.findOne({
       where: { subjectId },
       include: [Claim]
     })
@@ -75,6 +83,32 @@ export class UserIdentitiesService {
     return this.userIdentityModel.findOne({
       where: { providerName: provider, providerSubjectId: subjectId },
       include: [Claim]
+    })
+  }
+
+  async update(
+    userIdentity: UserIdentityDto,
+    id: string,
+  ): Promise<UserIdentity> {
+    this.logger.debug('Updating the user identity with id: ', id)
+
+    await this.userIdentityModel.update(
+      { ...userIdentity },
+      {
+        where: { id: id },
+      },
+    )
+
+    return await this.getById(id)
+  }
+
+  async delete(
+    id: string,
+  ): Promise<number> {
+    this.logger.debug('Deleting user identity with id: ', id)
+
+    return await this.userIdentityModel.destroy({
+      where: { id: id}
     })
   }
 }
