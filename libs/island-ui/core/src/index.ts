@@ -52,6 +52,7 @@ export * from './lib/Column/Column'
 export * from './lib/ContentBlock/ContentBlock'
 export * from './lib/Accordion/Accordion'
 export * from './lib/AccordionItem/AccordionItem'
+export * from './lib/Sleeve/Sleeve'
 
 // Context
 export * from './lib/context'

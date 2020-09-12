@@ -4,8 +4,6 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
-  Swiper,
-  Hidden,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
@@ -33,45 +31,26 @@ const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
           </Typography>
         </GridColumn>
       </GridRow>
-      <Hidden below="md">
-        <GridRow>
-          {lifeEvents.map((lifeEvent) => (
-            <GridColumn
-              span={['12/12', '12/12', '6/12', '6/12', '4/12']}
-              paddingBottom={3}
-              key={lifeEvent.title}
-            >
-              <LifeEventCard
-                title={lifeEvent.title}
-                intro={lifeEvent.intro}
-                url={makePath('lifeEvent', lifeEvent.slug)}
-                image={
-                  lifeEvent.thumbnail
-                    ? lifeEvent.thumbnail.url
-                    : lifeEvent.image.url
-                }
-              />
-            </GridColumn>
-          ))}
-        </GridRow>
-      </Hidden>
-      <Hidden above="md">
-        <Swiper>
-          {lifeEvents.map((lifeEvent) => (
+      <GridRow>
+        {lifeEvents.map((lifeEvent) => (
+          <GridColumn
+            span={['12/12', '12/12', '6/12', '6/12', '4/12']}
+            paddingBottom={3}
+            key={lifeEvent.title}
+          >
             <LifeEventCard
-              key={lifeEvent.title}
               title={lifeEvent.title}
               intro={lifeEvent.intro}
-              url={lifeEvent.slug}
+              url={makePath('lifeEvent', lifeEvent.slug)}
               image={
                 lifeEvent.thumbnail
                   ? lifeEvent.thumbnail.url
                   : lifeEvent.image.url
               }
             />
-          ))}
-        </Swiper>
-      </Hidden>
+          </GridColumn>
+        ))}
+      </GridRow>
     </GridContainer>
   )
 }
