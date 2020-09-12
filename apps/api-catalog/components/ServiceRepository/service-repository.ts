@@ -123,6 +123,10 @@ const isValidString = (value:unknown):boolean => {
 }
 
 const ArrayContainsOneOrMoreOf = (checkMe:Array<string>, shouldContainOneOf:Array<string>):boolean => {
+    
+    if (shouldContainOneOf === undefined || shouldContainOneOf === null){
+        return false;
+    }
     for(let i = 0; i<checkMe.length; i++) {
         if (shouldContainOneOf.includes(checkMe[i])) {
             return true;

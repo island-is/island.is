@@ -52,7 +52,6 @@ export default function ServiceList(props:ServiceListProps) {
     setParamCursor(props.parameters.cursor);
   }
   
-  
   const [services,    setServices]   = useState<Array<ServiceCardInformation>>(props.servicesList);
   const [pricing,     setPricing]    = useState<Array<string>>(props.parameters.pricing);
   const [data,        setData]       = useState<Array<string>>(props.parameters.data);
@@ -82,21 +81,8 @@ export default function ServiceList(props:ServiceListProps) {
   const [checkAccessApiXRoad, setCheckAccessXRoad]  = useState<boolean>(true);
   const [checkAccessApiGw,    setCheckAccessApiGw]  = useState<boolean>(true);
 
- 
-  
-  /*useEffect(() => {
-   console.log('useEffect Initial run')
-    const loadData = async () => {
-        const response = await getServices(props.parameters);
-        setServices(response.result);
-        setPrevCursor(response.prevCursor);
-        setNextCursor(response.nextCursor);
-    }
-      loadData();
-  }, [props.parameters]);*/
   
   useEffect(() => {
-    console.log('useEffect on every change')
     const loadData = async () => {
       const response = await getServices(props.parameters);
       setServices(response.result);
@@ -128,7 +114,6 @@ export default function ServiceList(props:ServiceListProps) {
       props.parameters]);
 
   const updateCategoryCheckBox = event => {
-    console.log(event.target.value, event.target.checked);
     
     props.parameters.cursor = null;
     let filter:Array<string>;
@@ -218,7 +203,6 @@ export default function ServiceList(props:ServiceListProps) {
     }
 
     setParamCursor(props.parameters.cursor);
-    console.log(event.target.value, event.target.checked);
   }
   return (   
       <Layout left={
@@ -276,13 +260,15 @@ export default function ServiceList(props:ServiceListProps) {
 
 ServiceList.getInitialProps = async ():Promise<ServiceListProps> => {
   const params:GetServicesParameters = { cursor:null, 
-                                         limit:null, 
-                                         owner:null,
-                                         name:null, 
-                                         pricing:getAllPriceCategories(), 
-                                         data:getAllDataCategories(),
-                                         type:getAllTypeCategories(),    
-                                         access:getAllAccessCategories() };
+    limit:null, 
+    owner:null,
+    name:null, 
+    pricing:getAllPriceCategories(), 
+    data:getAllDataCategories(),
+    type:getAllTypeCategories(),    
+    access:getAllAccessCategories()
+  };
+  
   const response = await getServices(params);
   const result = await response.result;
 
