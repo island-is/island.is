@@ -170,10 +170,26 @@ const Screen: FC<ScreenProps> = ({
               paddingTop={[1, 4]}
               paddingBottom={[1, 5]}
             >
-              <Box display="inlineFlex" padding={2} paddingLeft="none">
+              <Box
+                display={['none', 'inlineFlex']}
+                padding={2}
+                paddingLeft="none"
+              >
                 <Button variant="ghost" onClick={goBack}>
                   Til baka
                 </Button>
+              </Box>
+              <Box
+                display={['inlineFlex', 'none']}
+                padding={2}
+                paddingLeft="none"
+              >
+                <Button
+                  variant="ghost"
+                  rounded={true}
+                  icon="arrowLeft"
+                  onClick={goBack}
+                ></Button>
               </Box>
               <Box display="inlineFlex" padding={2} paddingRight="none">
                 {shouldSubmit ? (
@@ -185,14 +201,27 @@ const Screen: FC<ScreenProps> = ({
                     Submit
                   </Button>
                 ) : (
-                  <Button
-                    loading={loading}
-                    disabled={!canProceed()}
-                    icon="arrowRight"
-                    htmlType="submit"
-                  >
-                    Halda áfram
-                  </Button>
+                  <>
+                    <Box display={['none', 'inlineFlex']}>
+                      <Button
+                        loading={loading}
+                        disabled={!canProceed()}
+                        icon="arrowRight"
+                        htmlType="submit"
+                      >
+                        Halda áfram
+                      </Button>
+                    </Box>
+                    <Box display={['inlineFlex', 'none']}>
+                      <Button
+                        loading={loading}
+                        disabled={!canProceed()}
+                        icon="arrowRight"
+                        htmlType="submit"
+                        rounded
+                      ></Button>
+                    </Box>
+                  </>
                 )}
               </Box>
             </Box>
