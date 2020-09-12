@@ -9,6 +9,7 @@ import React, {
 } from 'react'
 import Link from 'next/link'
 import cn from 'classnames'
+import bodymovin from 'lottie-web'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
 import {
   Typography,
@@ -28,6 +29,7 @@ import JSZip from 'jszip'
 import JSZipUtils from 'jszip-utils'
 
 import mynd1 from './Archive.zip'
+import test from './test.png'
 
 import * as styles from './FrontpageTabs.treat'
 
@@ -74,9 +76,11 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   searchContent,
   autoplay = true,
 }) => {
+  const svgContainerRef = useRef(null)
   const contentRef = useRef(null)
   const timer = useRef(null)
   const [minHeight, setMinHeight] = useState<number>(0)
+  const [json, setJson] = useState(null)
   const [maxContainerHeight, setMaxContainerHeight] = useState<number>(0)
   const [autoplayOn, setAutoplayOn] = useState<boolean>(autoplay)
   const itemsRef = useRef<Array<HTMLElement | null>>([])
@@ -96,13 +100,67 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
       JSZip.loadAsync(data)
         .then(function(contents) {
-          console.log(contents)
+          contents
+            .file('mynd1.json')
+            .async('string')
+            .then((str) => {
+              const obj = JSON.parse(str)
+
+              const images = obj.assets.map((x) => ({
+                path: x.u + x.p,
+                file: x.p,
+              }))
+
+              images.forEach((x) => {
+                if (contents.file(x.path)) {
+                  contents
+                    .file(x.path)
+                    .async('blob')
+                    .then((img) => {
+                      const index = obj.assets.findIndex((y) => y.p === x.file)
+
+                      const reader = new FileReader()
+
+                      reader.onload = () => {
+                        const str = reader.result.toString()
+
+                        if (index > -1) {
+                          obj.assets[index].u = ''
+                          obj.assets[index].p = str.replace(
+                            'application/octet-stream',
+                            'image/png',
+                          )
+                        }
+
+                        setJson(obj)
+                      }
+
+                      reader.readAsDataURL(img)
+                    })
+                }
+              })
+            })
         })
         .catch((err) => {
           throw err
         })
     })
   }, [])
+
+  useEffect(() => {
+    if (json && svgContainerRef.current) {
+      setTimeout(() => {
+        console.log('json', json)
+
+        bodymovin.loadAnimation({
+          container: svgContainerRef.current,
+          loop: true,
+          autoplay: true,
+          animationData: json,
+        })
+      }, 2000)
+    }
+  }, [json, svgContainerRef])
 
   const updateImage = useCallback(() => {
     if (selectedIndex >= 0) {
@@ -198,6 +256,13 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
   return (
     <GridContainer className={styles.removeMobileSpacing}>
+      <GridRow>
+        <GridColumn span="12/12">
+          <div className={styles.imageContainer}>
+            <div ref={svgContainerRef} />
+          </div>
+        </GridColumn>
+      </GridRow>
       <GridRow>
         <GridColumn span={[null, null, null, '1/12']}>
           <Box

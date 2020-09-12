@@ -27,7 +27,7 @@ module.exports = withTreat(
         config.module.rules = [
           ...config.module.rules,
           {
-            test: /\.(zip|svg)$/i,
+            test: /\.(zip|svg|png)$/i,
             loader: 'url-loader',
           },
         ]
