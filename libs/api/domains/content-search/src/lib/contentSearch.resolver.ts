@@ -45,3 +45,4 @@ export class ContentSearchResolver {
     return this.contentSearchService.fetchAutocompleteTerm(input)
   }
 }
+// TODO: Make this return article

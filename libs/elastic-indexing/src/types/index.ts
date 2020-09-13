@@ -16,7 +16,7 @@ type tag = {
   type: string
 }
 export interface MappedData {
-  id: string
+  _id: string
   title: string
   content: string
   type: string

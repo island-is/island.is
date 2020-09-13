@@ -2,6 +2,7 @@ import { MappedData } from '@island.is/elastic-indexing';
 import { logger } from '@island.is/logging';
 import { Injectable } from '@nestjs/common';
 import _ from 'lodash';
+import { IArticle } from '../../generated/contentfulTypes';
 import { mapArticle } from '../../models/article.model';
 
 @Injectable()
@@ -38,9 +39,9 @@ export class ArticleSyncService {
     return _.flatten(singleWords)
   }
 
-  doMapping(entries, nextSyncToken): MappedData[] {
+  doMapping(entries: IArticle[], nextSyncToken: string): MappedData[] {
     logger.info('Mapping articles')
-    return entries.map((entry) => {
+    return entries.map<MappedData | boolean>((entry) => {
       let mapped
       try {
         mapped = mapArticle(entry)
@@ -48,6 +49,7 @@ export class ArticleSyncService {
         logger.error('Failed to import', error)
         return false
       }
+
       return {
         _id: mapped.id,
         title: mapped.title,
@@ -58,7 +60,7 @@ export class ArticleSyncService {
           mapped.category?.title,
           mapped .group?.title
         ]),
-        response: typeof mapped === 'string' ? mapped : JSON.stringify(mapped), // response is allways a json string...for now
+        response: JSON.stringify(mapped),
         tags: [{
           key: entry.fields?.group?.fields?.slug,
           value: entry.fields?.group?.fields?.title,
@@ -70,9 +72,9 @@ export class ArticleSyncService {
           type: 'category'
         }],
         dateCreated: entry.sys.createdAt,
-        dateUpdated: new Date(),
+        dateUpdated: new Date().toString(),
         nextSyncToken
       }
-    }).filter((value) => Boolean(value))
+    }).filter((value): value is MappedData => Boolean(value))
   }
 }
