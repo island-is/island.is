@@ -266,9 +266,9 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
   )
 }
 
-const ActionButton: FC<{ content: Slice[]; defaultTitle: string }> = ({
+const ActionButton: FC<{ content: Slice[]; defaultText: string }> = ({
   content,
-  defaultTitle,
+  defaultText,
 }) => {
   const processEntries = content.filter((slice): slice is ProcessEntry => {
     return slice.__typename === 'ProcessEntry' && Boolean(slice.processLink)
@@ -277,12 +277,12 @@ const ActionButton: FC<{ content: Slice[]; defaultTitle: string }> = ({
   // we'll only show the button if there is exactly one process entry on the page
   if (processEntries.length !== 1) return null
 
-  const { title, processLink } = processEntries[0]
+  const { buttonText, processLink } = processEntries[0]
 
   return (
     <SidebarBox>
       <Button href={processLink} width="fluid">
-        {title || defaultTitle}
+        {buttonText || defaultText}
       </Button>
     </SidebarBox>
   )
@@ -303,7 +303,7 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
     <Stack space={3}>
       <ActionButton
         content={article.body}
-        defaultTitle={n('processLinkButtonText')}
+        defaultText={n('processLinkButtonText')}
       />
       {article.subArticles.length === 0 ? (
         <ArticleNavigation title="Efnisyfirlit" article={article} />
