@@ -1,17 +1,17 @@
 import { MappedData } from '@island.is/elastic-indexing';
 import { logger } from '@island.is/logging';
 import { Injectable } from '@nestjs/common';
-import _ from 'lodash';
 import { IArticle } from '../../generated/contentfulTypes';
-import { mapArticle } from '../../models/article.model';
+import { mapArticle, Article } from '../../models/article.model';
+import { createTerms } from './utils';
 
 @Injectable()
 export class ArticleSyncService {
   processSyncData(items) {
-    logger.info('Processing sync data')
+    logger.info('Processing sync data for articles')
     // return all articles
-    const rawArticles = items.filter((item) => item.sys.contentType.sys.id === 'article')
-    return rawArticles.map((article) => {
+    return items.filter((item) => item.sys.contentType.sys.id === 'article')
+    /* return rawArticles.map((article) => {
       if (article.fields?.relatedArticles?.[0]?.fields) {
         article.fields.relatedArticles = article.fields.relatedArticles.map(
           (relatedArticle) => {
@@ -26,27 +26,18 @@ export class ArticleSyncService {
         )
       }
       return article
-    })
-  }
-
-  private createTerms(termStrings: string[]): string[] {
-    const singleWords = termStrings.map((termString = '') => {
-      const words = termString.toLowerCase()
-        .replace(/[^a-záðéíóúýþæö]+/g, ' ') // remove all non characters
-        .split(/\s+/)
-      return words
-    })
-    return _.flatten(singleWords).filter(word => word.length > 1) // fitler out 1 letter words and empty string
+    })*/
   }
 
   doMapping(entries: IArticle[], nextSyncToken: string): MappedData[] {
     logger.info('Mapping articles')
     return entries.map<MappedData | boolean>((entry) => {
-      let mapped
+      let mapped: Article
       try {
+        logger.info(entry)
         mapped = mapArticle(entry)
       } catch(error) {
-        logger.error('Failed to import', error)
+        logger.error('Failed to import article', error)
         return false
       }
 
@@ -55,10 +46,10 @@ export class ArticleSyncService {
         title: mapped.title,
         content: mapped.content,
         type: 'article',
-        termPool: this.createTerms([
+        termPool: createTerms([
           mapped.title,
           mapped.category?.title,
-          mapped .group?.title
+          mapped.group?.title
         ]),
         response: JSON.stringify(mapped),
         tags: [{
@@ -72,7 +63,7 @@ export class ArticleSyncService {
           type: 'category'
         }],
         dateCreated: entry.sys.createdAt,
-        dateUpdated: new Date().toString(),
+        dateUpdated: new Date().getTime().toString(),
         nextSyncToken // TODO: Insert this as a tag or find a better place to store it (handle get next sync token)
       }
     }).filter((value): value is MappedData => Boolean(value))

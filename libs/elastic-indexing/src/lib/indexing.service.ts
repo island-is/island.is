@@ -22,8 +22,15 @@ export class IndexingService {
   async doSync(options: SyncOptions) {
     const cmsData = await this.cmsSyncService.doSync(options)
     await this.elasticService.bulk(SearchIndexes[options.locale], cmsData)
+
+    // clear index of stale data by deleteing all ids but those added
+    if (options.fullSync) {
+      logger.info('Removing stale data')
+      const allAddedIds = cmsData.add.map(({_id}) => _id)
+      await this.elasticService.deleteAllExcept(SearchIndexes[options.locale], allAddedIds)
+    }
+
     logger.info('Done with sync')
     return true
   }
-  // TODO: Remove orphan entries on re-sync
 }

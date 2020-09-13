@@ -47,12 +47,13 @@ export class ElasticService {
   }
 
   async bulk(index: SearchIndexes, documents: SyncRequest) {
-    logger.info('Processing documents', {added: documents.add.length, removed: documents.remove.length})
+    logger.info('Processing documents', {index, added: documents.add.length, removed: documents.remove.length})
     
     const requests = []
     // if we have any documents to add add them to the request
     if (documents.add.length) {
-      const addedDocuments = documents.add.forEach(({_id, ...document}) => {
+      documents.add.forEach(({_id, ...document}) => {
+        logger.info('Adding document to request', {_id})
         requests.push({
           index: { _index: index, _id }
         })
@@ -63,8 +64,8 @@ export class ElasticService {
 
     // if we have any documents to remove add them to the request
     if (documents.remove.length) {
-      const removedDocuments = documents.remove.forEach((_id) => {
-          requests.push({
+      documents.remove.forEach((_id) => {
+        requests.push({
           delete: { _index: index, _id }
         })
       })
@@ -72,13 +73,13 @@ export class ElasticService {
 
     // if we have any requests execute them
     if (requests.length) {
-      logger.info({added: documents.add[0]})
       try {
         const client = await this.getClient()
-        return await client.bulk({
+        const reaponse = await client.bulk({
           index: index,
           body: requests,
         })
+        // TODO: Errors on index might not throw, log those errors here
       } catch (e) {
         ElasticService.handleError(
           'Error indexing ES documents',

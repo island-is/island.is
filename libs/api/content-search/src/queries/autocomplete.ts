@@ -31,7 +31,7 @@ export const autocompleteTerm = ({ prefix, size }: AutocompleteTermInput) => ({
     searchSuggester: {
       prefix,
       completion: {
-        field: 'term_pool',
+        field: 'termPool',
         size,
         // eslint-disable-next-line @typescript-eslint/camelcase
         skip_duplicates: true,

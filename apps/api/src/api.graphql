@@ -420,6 +420,7 @@ type Menu {
 }
 
 type LifeEventPage {
+  id: ID!
   title: String!
   slug: String!
   intro: String!
