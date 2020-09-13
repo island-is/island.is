@@ -44,7 +44,7 @@ export class ContentSearchService implements SearcherService {
     }
   }
 
-  // TODO: use aggregation here
+  // TODO: Move this to CMS domain, index categories as own type?
   async fetchCategories(query): Promise<ContentCategory[]> {
     // todo do properly not this awesome hack
     const queryTmp = new RequestBodySearch().size(1000)

@@ -53,7 +53,6 @@ export class ElasticService {
     // if we have any documents to add add them to the request
     if (documents.add.length) {
       documents.add.forEach(({_id, ...document}) => {
-        logger.info('Adding document to request', {_id})
         requests.push({
           index: { _index: index, _id }
         })
