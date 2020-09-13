@@ -1,13 +1,10 @@
 import { useEffect, useState, useCallback } from 'react'
 import { throttle, debounce } from 'lodash'
-import { useWindowSize, useEvent } from 'react-use'
+import { useEvent } from 'react-use'
 
 const TOP_MARGIN = 100
 
-const guessVisibleSection = (
-  ids: string[],
-  windowHeight: number,
-): string | null => {
+const guessVisibleSection = (ids: string[]): string | null => {
   if (ids.length === 0) return null
 
   // top of the page is a special case because otherwise we might match the
@@ -24,7 +21,6 @@ const guessVisibleSection = (
 const useScrollSpy = (
   ids: string[],
 ): [string | undefined, (id: string) => void] => {
-  const { height: windowHeight } = useWindowSize()
   const [current, setCurrent] = useState(ids[0])
 
   // flag to ignore scroll event when user navigates manually
@@ -45,17 +41,17 @@ const useScrollSpy = (
       const rect = document.getElementById(id).getBoundingClientRect()
       window.scrollTo(0, rect.top + window.scrollY - TOP_MARGIN)
     },
-    [setCurrent, setIgnore, windowHeight],
+    [setCurrent, setIgnore],
   )
 
   // throttled function to update the active section id
   const updateCurrent = useCallback(
     throttle(() => {
       if (!ignore) {
-        setCurrent(guessVisibleSection(ids, windowHeight))
+        setCurrent(guessVisibleSection(ids))
       }
     }, 100),
-    [ids, ignore, setCurrent, windowHeight],
+    [ids, ignore, setCurrent],
   )
 
   // update if id list changes
