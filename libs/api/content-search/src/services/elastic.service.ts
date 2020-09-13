@@ -137,16 +137,16 @@ export class ElasticService {
   async query(index: SearchIndexes, query) {
     const requestBody = new RequestBodySearch()
     const must = []
-
+    // TODO: Seperate search functionality and basic content actions e.g. get by slug/id 
+    // TODO: Make this use the new query format
+    // TODO: Make this search tags and types
     if (query?.queryString) {
       requestBody.query(
         esb
           .queryStringQuery(`*${query.queryString}*`)
           .fields([
             'title.stemmed^10',
-            'content.stemmed^2',
-            'tag.stemmed',
-            'group.stemmed',
+            'content.stemmed^2'
           ])
           .analyzeWildcard(true),
       )

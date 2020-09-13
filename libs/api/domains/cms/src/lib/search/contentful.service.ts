@@ -54,7 +54,6 @@ export class ContentfulService {
     return data.items
   }
 
-  // TODO: Limit this request to content types if able e.g. get content type from webhook request
   async getSyncEntries({contentTypes, ...opts}): Promise<SyncerResult> {
     const {
       entries,

@@ -36,7 +36,7 @@ export class ArticleSyncService {
         .split(/\s+/)
       return words
     })
-    return _.flatten(singleWords)
+    return _.flatten(singleWords).filter(word => word.length > 1) // fitler out 1 letter words and empty string
   }
 
   doMapping(entries: IArticle[], nextSyncToken: string): MappedData[] {
@@ -73,7 +73,7 @@ export class ArticleSyncService {
         }],
         dateCreated: entry.sys.createdAt,
         dateUpdated: new Date().toString(),
-        nextSyncToken
+        nextSyncToken // TODO: Insert this as a tag or find a better place to store it (handle get next sync token)
       }
     }).filter((value): value is MappedData => Boolean(value))
   }

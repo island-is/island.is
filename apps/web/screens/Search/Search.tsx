@@ -281,6 +281,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
+          types: ['article'],
           size: PerPage,
           page,
         },

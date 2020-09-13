@@ -93,6 +93,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
           query: {
             queryString: term,
             language: locale as ContentLanguage,
+            types: ['article']
           },
         },
       })
