@@ -145,7 +145,7 @@ export const searchContentContainer = style({
 export const animationContainer = style({
   opacity: 1,
   transform: `translateX(0)`,
-  transition: `opacity 1000ms ease, transform 1000ms ease`,
+  transition: `opacity 400ms ease, transform 400ms ease`,
 })
 
 export const animationContainerHidden = style({

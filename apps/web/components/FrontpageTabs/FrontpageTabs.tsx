@@ -208,8 +208,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
   useEffect(() => {
     if (animationContainerRef.current) {
-      setAnimationContainerTransitioning(true)
-
+      setAnimationContainerTransitioning(false)
       clearTimeout(animationTimer.current)
 
       animationTimer.current = setTimeout(() => {
@@ -223,7 +222,9 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
         })
 
         setAnimationContainerTransitioning(false)
-      }, 1000)
+      }, 400)
+
+      setAnimationContainerTransitioning(true)
     }
   }, [animationData, animationContainerRef, selectedIndex])
 
