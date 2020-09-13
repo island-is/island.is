@@ -38,6 +38,7 @@ import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
 import { GetLifeEventsInput } from './dto/getLifeEvents.input'
+import { GetContentfulAssetBlobInput } from './dto/getContentfulAssetBlob.input'
 import {
   getArticle,
   getRelatedArticles,
@@ -60,6 +61,7 @@ import {
   getOrganizationTags,
   getLifeEventPage,
   getLifeEvents,
+  fetchContentfulAssetBlob,
 } from './services'
 import { LatestNewsSlice } from './models/latestNewsSlice.model'
 import { Menu } from './models/menu.model'
@@ -70,6 +72,7 @@ import { LifeEventPage } from './models/lifeEventPage.model'
 import { PaginatedAdgerdirNews } from './models/paginatedAdgerdirNews.model'
 import { environment } from './environments'
 import { OrganizationTags } from './models/organizationTags.model'
+import { ContentfulAssetBlob } from './models/contentfulAssetBlob.model'
 
 const { cacheTime } = environment
 
@@ -198,6 +201,14 @@ export class CmsResolver {
     @Args('input') input: GetFrontpageSliderListInput,
   ): Promise<FrontpageSliderList | null> {
     return getFrontpageSliderList(input?.lang ?? 'is-IS')
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => ContentfulAssetBlob)
+  getContentfulAssetBlob(
+    @Args('input') input: GetContentfulAssetBlobInput,
+  ): Promise<ContentfulAssetBlob> {
+    return fetchContentfulAssetBlob(input?.url ?? '', input?.type ?? '')
   }
 
   @Directive(cacheControlDirective())

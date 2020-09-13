@@ -362,12 +362,20 @@ type AdgerdirFeaturedNewsSlice {
   featured: [AdgerdirNews!]!
 }
 
+type File {
+  id: ID!
+  url: String!
+  title: String!
+  contentType: String!
+}
+
 type FrontpageSlide {
   title: String!
   subtitle: String!
   content: String!
   image: Image
   link: String
+  animationZip: File
 }
 
 type FrontpageSliderList {
@@ -447,6 +455,10 @@ type PaginatedAdgerdirNews {
 
 type OrganizationTags {
   items: [OrganizationTag!]!
+}
+
+type ContentfulAssetBlob {
+  blob: String!
 }
 
 type Application {
@@ -536,6 +548,7 @@ type Query {
   getAdgerdirTags(input: GetAdgerdirTagsInput!): AdgerdirTags
   getOrganizationTags(input: GetOrganizationTagsInput!): OrganizationTags
   getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
+  getContentfulAssetBlob(input: GetContentfulAssetBlobInput!): ContentfulAssetBlob!
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getMenu(input: GetMenuInput!): Menu
   getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
@@ -672,6 +685,11 @@ input GetOrganizationTagsInput {
 
 input GetFrontpageSliderListInput {
   lang: String
+}
+
+input GetContentfulAssetBlobInput {
+  url: String!
+  type: String
 }
 
 input GetAdgerdirFrontpageInput {

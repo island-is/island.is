@@ -443,6 +443,14 @@ export type AdgerdirFeaturedNewsSlice = {
   featured: Array<AdgerdirNews>
 }
 
+export type File = {
+  __typename?: 'File'
+  id: Scalars['ID']
+  url: Scalars['String']
+  title: Scalars['String']
+  contentType: Scalars['String']
+}
+
 export type FrontpageSlide = {
   __typename?: 'FrontpageSlide'
   title: Scalars['String']
@@ -450,6 +458,7 @@ export type FrontpageSlide = {
   content: Scalars['String']
   image?: Maybe<Image>
   link?: Maybe<Scalars['String']>
+  animationZip?: Maybe<File>
 }
 
 export type FrontpageSliderList = {
@@ -544,6 +553,11 @@ export type OrganizationTags = {
   items: Array<OrganizationTag>
 }
 
+export type ContentfulAssetBlob = {
+  __typename?: 'ContentfulAssetBlob'
+  blob: Scalars['String']
+}
+
 export type Application = {
   __typename?: 'Application'
   id: Scalars['ID']
@@ -632,6 +646,7 @@ export type Query = {
   getAdgerdirTags?: Maybe<AdgerdirTags>
   getOrganizationTags?: Maybe<OrganizationTags>
   getFrontpageSliderList?: Maybe<FrontpageSliderList>
+  getContentfulAssetBlob: ContentfulAssetBlob
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
   getLifeEventPage?: Maybe<LifeEventPage>
@@ -729,6 +744,10 @@ export type QueryGetOrganizationTagsArgs = {
 
 export type QueryGetFrontpageSliderListArgs = {
   input: GetFrontpageSliderListInput
+}
+
+export type QueryGetContentfulAssetBlobArgs = {
+  input: GetContentfulAssetBlobInput
 }
 
 export type QueryGetAdgerdirFrontpageArgs = {
@@ -888,6 +907,11 @@ export type GetOrganizationTagsInput = {
 
 export type GetFrontpageSliderListInput = {
   lang?: Maybe<Scalars['String']>
+}
+
+export type GetContentfulAssetBlobInput = {
+  url: Scalars['String']
+  type?: Maybe<Scalars['String']>
 }
 
 export type GetAdgerdirFrontpageInput = {
@@ -1241,6 +1265,7 @@ export type ResolversTypes = {
     | ResolversTypes['AdgerdirFeaturedNewsSlice']
   AdgerdirGroupSlice: ResolverTypeWrapper<AdgerdirGroupSlice>
   AdgerdirFeaturedNewsSlice: ResolverTypeWrapper<AdgerdirFeaturedNewsSlice>
+  File: ResolverTypeWrapper<File>
   FrontpageSlide: ResolverTypeWrapper<FrontpageSlide>
   FrontpageSliderList: ResolverTypeWrapper<FrontpageSliderList>
   Pagination: ResolverTypeWrapper<Pagination>
@@ -1261,6 +1286,7 @@ export type ResolversTypes = {
   AdgerdirTags: ResolverTypeWrapper<AdgerdirTags>
   PaginatedAdgerdirNews: ResolverTypeWrapper<PaginatedAdgerdirNews>
   OrganizationTags: ResolverTypeWrapper<OrganizationTags>
+  ContentfulAssetBlob: ResolverTypeWrapper<ContentfulAssetBlob>
   Application: ResolverTypeWrapper<Application>
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>
   ApplicationStateEnum: ApplicationStateEnum
@@ -1295,6 +1321,7 @@ export type ResolversTypes = {
   GetAdgerdirTagsInput: GetAdgerdirTagsInput
   GetOrganizationTagsInput: GetOrganizationTagsInput
   GetFrontpageSliderListInput: GetFrontpageSliderListInput
+  GetContentfulAssetBlobInput: GetContentfulAssetBlobInput
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
   GetLifeEventPageInput: GetLifeEventPageInput
@@ -1400,6 +1427,7 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['AdgerdirFeaturedNewsSlice']
   AdgerdirGroupSlice: AdgerdirGroupSlice
   AdgerdirFeaturedNewsSlice: AdgerdirFeaturedNewsSlice
+  File: File
   FrontpageSlide: FrontpageSlide
   FrontpageSliderList: FrontpageSliderList
   Pagination: Pagination
@@ -1420,6 +1448,7 @@ export type ResolversParentTypes = {
   AdgerdirTags: AdgerdirTags
   PaginatedAdgerdirNews: PaginatedAdgerdirNews
   OrganizationTags: OrganizationTags
+  ContentfulAssetBlob: ContentfulAssetBlob
   Application: Application
   DateTime: Scalars['DateTime']
   PresignedPost: PresignedPost
@@ -1450,6 +1479,7 @@ export type ResolversParentTypes = {
   GetAdgerdirTagsInput: GetAdgerdirTagsInput
   GetOrganizationTagsInput: GetOrganizationTagsInput
   GetFrontpageSliderListInput: GetFrontpageSliderListInput
+  GetContentfulAssetBlobInput: GetContentfulAssetBlobInput
   GetAdgerdirFrontpageInput: GetAdgerdirFrontpageInput
   GetMenuInput: GetMenuInput
   GetLifeEventPageInput: GetLifeEventPageInput
@@ -2209,6 +2239,17 @@ export type AdgerdirFeaturedNewsSliceResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type FileResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['File'] = ResolversParentTypes['File']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  contentType?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type FrontpageSlideResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['FrontpageSlide'] = ResolversParentTypes['FrontpageSlide']
@@ -2218,6 +2259,11 @@ export type FrontpageSlideResolvers<
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  animationZip?: Resolver<
+    Maybe<ResolversTypes['File']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2373,6 +2419,14 @@ export type OrganizationTagsResolvers<
     ParentType,
     ContextType
   >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type ContentfulAssetBlobResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['ContentfulAssetBlob'] = ResolversParentTypes['ContentfulAssetBlob']
+> = {
+  blob?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2589,6 +2643,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetFrontpageSliderListArgs, 'input'>
   >
+  getContentfulAssetBlob?: Resolver<
+    ResolversTypes['ContentfulAssetBlob'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetContentfulAssetBlobArgs, 'input'>
+  >
   getAdgerdirFrontpage?: Resolver<
     Maybe<ResolversTypes['AdgerdirFrontpage']>,
     ParentType,
@@ -2737,6 +2797,7 @@ export type Resolvers<ContextType = Context> = {
   AdgerdirSlice?: AdgerdirSliceResolvers<ContextType>
   AdgerdirGroupSlice?: AdgerdirGroupSliceResolvers<ContextType>
   AdgerdirFeaturedNewsSlice?: AdgerdirFeaturedNewsSliceResolvers<ContextType>
+  File?: FileResolvers<ContextType>
   FrontpageSlide?: FrontpageSlideResolvers<ContextType>
   FrontpageSliderList?: FrontpageSliderListResolvers<ContextType>
   Pagination?: PaginationResolvers<ContextType>
@@ -2751,6 +2812,7 @@ export type Resolvers<ContextType = Context> = {
   AdgerdirTags?: AdgerdirTagsResolvers<ContextType>
   PaginatedAdgerdirNews?: PaginatedAdgerdirNewsResolvers<ContextType>
   OrganizationTags?: OrganizationTagsResolvers<ContextType>
+  ContentfulAssetBlob?: ContentfulAssetBlobResolvers<ContextType>
   Application?: ApplicationResolvers<ContextType>
   DateTime?: GraphQLScalarType
   PresignedPost?: PresignedPostResolvers<ContextType>

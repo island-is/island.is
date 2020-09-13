@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
+import fetch from 'isomorphic-unfetch'
 import { getLocalizedEntries } from './contentful'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
@@ -37,6 +38,7 @@ import {
   FrontpageSliderList,
   mapFrontpageSliderList,
 } from './models/frontpageSliderList.model'
+import { ContentfulAssetBlob } from './models/contentfulAssetBlob.model'
 
 const makePage = (
   page: number,
@@ -161,6 +163,22 @@ export const getFrontpageSliderList = async (
   ).catch(errorHandler('getFrontpageSliderList'))
 
   return result.items.map(mapFrontpageSliderList)[0] ?? null
+}
+
+export const fetchContentfulAssetBlob = async (
+  url: string,
+  type: string,
+): Promise<ContentfulAssetBlob> => {
+  const response = await fetch(url).then((res) => res.arrayBuffer())
+
+  const buffer = new Buffer(response)
+  const blob = buffer.toString('base64')
+
+  const contentType = type ?? 'application/zip'
+
+  return {
+    blob: `data:${contentType};base64,${blob}`,
+  }
 }
 
 export const getAdgerdirPage = async (

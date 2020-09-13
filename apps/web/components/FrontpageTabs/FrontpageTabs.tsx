@@ -7,6 +7,7 @@ import React, {
   useCallback,
   useEffect,
 } from 'react'
+import JSZip from 'jszip'
 import Link from 'next/link'
 import cn from 'classnames'
 import bodymovin from 'lottie-web'
@@ -25,13 +26,12 @@ import {
 import { Locale } from '@island.is/web/i18n/I18n'
 import { useRouteNames } from '@island.is/web/i18n/useRouteNames'
 import { useI18n } from '../../i18n'
-import JSZip from 'jszip'
-import JSZipUtils from 'jszip-utils'
-
-import mynd1 from './Archive.zip'
+import { useApolloClient } from 'react-apollo'
+import { GetContentfulAssetBlobQuery } from '@island.is/web/graphql/schema'
+import { QueryGetContentfulAssetBlobArgs } from '@island.is/api/schema'
+import { GET_CONTENTFUL_ASSET_BLOB_QUERY } from '@island.is/web/screens/queries'
 
 import * as styles from './FrontpageTabs.treat'
-
 const AUTOPLAY_TIMER = 8000
 
 type ImageProps = {
@@ -42,11 +42,17 @@ type ImageProps = {
   height: number
 }
 
+type FileProps = {
+  url: string
+  contentType: string
+}
+
 type TabsProps = {
   subtitle?: string
   title?: string
   content?: string
   image?: ImageProps
+  animationZip?: FileProps
   link?: string
 }
 
@@ -75,11 +81,14 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   searchContent,
   autoplay = true,
 }) => {
+  const client = useApolloClient()
   const svgContainerRef = useRef(null)
+  const zipsLoaded = useRef(null)
   const contentRef = useRef(null)
   const timer = useRef(null)
   const [minHeight, setMinHeight] = useState<number>(0)
   const [json, setJson] = useState(null)
+  const [animationData, setAnimationData] = useState([])
   const [maxContainerHeight, setMaxContainerHeight] = useState<number>(0)
   const [autoplayOn, setAutoplayOn] = useState<boolean>(autoplay)
   const itemsRef = useRef<Array<HTMLElement | null>>([])
@@ -92,62 +101,8 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   const { makePath } = useRouteNames(activeLocale as Locale)
 
   useEffect(() => {
-    JSZipUtils.getBinaryContent(mynd1, function(err, data) {
-      if (err) {
-        throw err
-      }
-
-      JSZip.loadAsync(data)
-        .then(function(contents) {
-          contents
-            .file('mynd1.json')
-            .async('string')
-            .then((str) => {
-              const obj = JSON.parse(str)
-
-              const images = obj.assets.map((x) => ({
-                path: x.u + x.p,
-                file: x.p,
-              }))
-
-              images.forEach((x) => {
-                if (contents.file(x.path)) {
-                  contents
-                    .file(x.path)
-                    .async('blob')
-                    .then((img) => {
-                      const index = obj.assets.findIndex((y) => y.p === x.file)
-
-                      const reader = new FileReader()
-
-                      reader.onload = () => {
-                        const str = reader.result.toString()
-
-                        if (index > -1) {
-                          obj.assets[index].u = ''
-                          obj.assets[index].p = str
-                        }
-
-                        setJson(obj)
-                      }
-
-                      reader.readAsDataURL(img)
-                    })
-                }
-              })
-            })
-        })
-        .catch((err) => {
-          throw err
-        })
-    })
-  }, [])
-
-  useEffect(() => {
     if (json && svgContainerRef.current) {
       setTimeout(() => {
-        console.log('json', json)
-
         bodymovin.loadAnimation({
           container: svgContainerRef.current,
           loop: true,
@@ -208,10 +163,60 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   }, [onResize])
 
   useEffect(() => {
+    if (!zipsLoaded.current && tabs) {
+      const urls = tabs.map((x) =>
+        x.animationZip && x.animationZip.contentType === 'application/zip'
+          ? x.animationZip.url
+          : null,
+      )
+
+      const fetchZip = async (url) => {
+        const {
+          data: {
+            getContentfulAssetBlob: { blob },
+          },
+        } = await client.query<
+          GetContentfulAssetBlobQuery,
+          QueryGetContentfulAssetBlobArgs
+        >({
+          query: GET_CONTENTFUL_ASSET_BLOB_QUERY,
+          variables: {
+            input: {
+              url,
+              type: 'application/zip',
+            },
+          },
+        })
+
+        return blob
+      }
+
+      const loadZips = async (urls) => {
+        return Promise.all(
+          urls.map(async (url) => {
+            const zip = await fetchZip(url)
+            const test = await loadZip(zip)
+
+            return Promise.resolve(test)
+          }),
+        )
+      }
+
+      loadZips(urls).then((arr) => {
+        setAnimationData(arr)
+      })
+
+      zipsLoaded.current = true
+    }
+
     const newSelectedIndex = tab.items.findIndex((x) => x.id === tab.currentId)
     setSelectedIndex(newSelectedIndex)
     setAutoplayOn(false)
-  }, [tab])
+  }, [tab, zipsLoaded, client, tabs])
+
+  useEffect(() => {
+    console.log('animationData', animationData)
+  }, [animationData])
 
   useEffect(() => {
     itemsRef.current.forEach((x) => {
@@ -316,75 +321,86 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                 })}
               </TabList>
               <div className={styles.tabPanelWrapper}>
-                {tabs.map(({ title, subtitle, content, link }, index) => {
-                  let href = null
-                  let as = null
+                {tabs.map(
+                  ({ title, subtitle, content, link, animationZip }, index) => {
+                    let href = null
+                    let as = null
 
-                  const currentIndex = tab.items.findIndex(
-                    (x) => x.id === tab.currentId,
-                  )
+                    const currentIndex = tab.items.findIndex(
+                      (x) => x.id === tab.currentId,
+                    )
 
-                  const visible = currentIndex === index
-
-                  if (link) {
-                    const linkData = JSON.parse(link)
-                    const contentId = linkData.sys?.contentType?.sys?.id
-
-                    const slug = linkData.fields?.slug
-
-                    if (slug && ['article', 'category'].includes(contentId)) {
-                      href = `${makePath(contentId)}/[slug]`
-                      as = makePath(contentId, slug)
+                    if (
+                      animationZip &&
+                      animationZip.contentType === 'application/zip'
+                    ) {
+                      // console.log('found zip:', animationZip.url)
                     }
-                  }
 
-                  return (
-                    <TabPanel
-                      key={index}
-                      {...tab}
-                      style={{
-                        display: 'inline-block',
-                      }}
-                      tabIndex={visible ? 0 : -1}
-                      className={cn(styles.tabPanel, {
-                        [styles.tabPanelVisible]: visible,
-                      })}
-                    >
-                      <Box
-                        paddingY={3}
-                        ref={(el) => (itemsRef.current[index] = el)}
-                        style={{ minHeight: `${minHeight}px` }}
+                    const visible = currentIndex === index
+
+                    if (link) {
+                      const linkData = JSON.parse(link)
+                      const contentId = linkData.sys?.contentType?.sys?.id
+
+                      const slug = linkData.fields?.slug
+
+                      if (slug && ['article', 'category'].includes(contentId)) {
+                        href = `${makePath(contentId)}/[slug]`
+                        as = makePath(contentId, slug)
+                      }
+                    }
+
+                    return (
+                      <TabPanel
+                        key={index}
+                        {...tab}
+                        style={{
+                          display: 'inline-block',
+                        }}
+                        tabIndex={visible ? 0 : -1}
+                        className={cn(styles.tabPanel, {
+                          [styles.tabPanelVisible]: visible,
+                        })}
                       >
-                        <Stack space={3}>
-                          <Typography
-                            variant="eyebrow"
-                            as="h2"
-                            color="purple400"
-                          >
-                            <span className={styles.textItem}>{subtitle}</span>
-                          </Typography>
-                          <Typography variant="h1" as="h1">
-                            <span className={styles.textItem}>{title}</span>
-                          </Typography>
-                          <Typography variant="p" as="p">
-                            <span className={styles.textItem}>{content}</span>
-                          </Typography>
-                          {href ? (
-                            <Link as={as} href={href} passHref>
-                              <Button
-                                variant="text"
-                                icon="arrowRight"
-                                tabIndex={visible ? 0 : -1}
-                              >
-                                Sjá nánar
-                              </Button>
-                            </Link>
-                          ) : null}
-                        </Stack>
-                      </Box>
-                    </TabPanel>
-                  )
-                })}
+                        <Box
+                          paddingY={3}
+                          ref={(el) => (itemsRef.current[index] = el)}
+                          style={{ minHeight: `${minHeight}px` }}
+                        >
+                          <Stack space={3}>
+                            <Typography
+                              variant="eyebrow"
+                              as="h2"
+                              color="purple400"
+                            >
+                              <span className={styles.textItem}>
+                                {subtitle}
+                              </span>
+                            </Typography>
+                            <Typography variant="h1" as="h1">
+                              <span className={styles.textItem}>{title}</span>
+                            </Typography>
+                            <Typography variant="p" as="p">
+                              <span className={styles.textItem}>{content}</span>
+                            </Typography>
+                            {href ? (
+                              <Link as={as} href={href} passHref>
+                                <Button
+                                  variant="text"
+                                  icon="arrowRight"
+                                  tabIndex={visible ? 0 : -1}
+                                >
+                                  Sjá nánar
+                                </Button>
+                              </Link>
+                            ) : null}
+                          </Stack>
+                        </Box>
+                      </TabPanel>
+                    )
+                  },
+                )}
               </div>
             </Box>
             <Box
@@ -438,6 +454,104 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
       </GridRow>
     </GridContainer>
   )
+}
+
+const convertDataURIToBinary = (dataURI) => {
+  const BASE64_MARKER = ';base64,'
+  const base64Index = dataURI.indexOf(BASE64_MARKER) + BASE64_MARKER.length
+  const base64 = dataURI.substring(base64Index)
+  const raw = window.atob(base64)
+  const rawLength = raw.length
+  const array = new Uint8Array(new ArrayBuffer(rawLength))
+
+  for (let i = 0; i < rawLength; i++) {
+    array[i] = raw.charCodeAt(i)
+  }
+
+  return array
+}
+
+const loadZip = async (dataURI) => {
+  const data = convertDataURIToBinary(dataURI)
+
+  return new Promise((resolve) => {
+    JSZip.loadAsync(data).then(async (contents) => {
+      const arr = contents.file(/\.json$/i)
+
+      let jsonFileName = null
+
+      if (arr.length) {
+        jsonFileName = arr[0].name
+      }
+
+      if (!jsonFileName) {
+        return null
+      }
+
+      const getImageBlob = async (image) =>
+        new Promise((resolve) => {
+          if (contents.file(image.path)) {
+            return contents
+              .file(image.path)
+              .async('blob')
+              .then((img) => {
+                const reader = new FileReader()
+
+                reader.onload = () => {
+                  resolve(reader.result.toString())
+                }
+
+                reader.onerror = () => resolve(null)
+
+                reader.readAsDataURL(img)
+              })
+          }
+
+          resolve(null)
+        })
+
+      const getObj = async () =>
+        new Promise((resolve) => {
+          return contents
+            .file(jsonFileName)
+            .async('string')
+            .then(async (str) => {
+              const obj = JSON.parse(str)
+
+              const images = obj.assets.map((x) => ({
+                path: x.u + x.p,
+                file: x.p,
+              }))
+
+              const updateImages = async () =>
+                new Promise((resolve) => {
+                  images.forEach(async (x, i) => {
+                    if (contents.file(x.path)) {
+                      const index = obj.assets.findIndex((y) => y.p === x.file)
+
+                      const blob = await getImageBlob(x)
+
+                      if (index > -1) {
+                        obj.assets[index].u = ''
+                        obj.assets[index].p = blob
+                      }
+                    }
+
+                    if (i === images.length - 1) {
+                      resolve()
+                    }
+                  })
+                })
+
+              await updateImages()
+
+              resolve(obj)
+            })
+        })
+
+      resolve(await getObj())
+    })
+  })
 }
 
 const Image = ({ image = null }: { image?: ImageProps }) => {

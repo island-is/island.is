@@ -15,7 +15,19 @@ export const GET_FRONTPAGE_SLIDES_QUERY = gql`
           width
           height
         }
+        animationZip {
+          url
+          contentType
+        }
       }
+    }
+  }
+`
+
+export const GET_CONTENTFUL_ASSET_BLOB_QUERY = gql`
+  query GetContentfulAssetBlob($input: GetContentfulAssetBlobInput!) {
+    getContentfulAssetBlob(input: $input) {
+      blob
     }
   }
 `

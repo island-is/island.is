@@ -432,6 +432,14 @@ export type AdgerdirFeaturedNewsSlice = {
   featured: Array<AdgerdirNews>
 }
 
+export type File = {
+  __typename?: 'File'
+  id: Scalars['ID']
+  url: Scalars['String']
+  title: Scalars['String']
+  contentType: Scalars['String']
+}
+
 export type FrontpageSlide = {
   __typename?: 'FrontpageSlide'
   title: Scalars['String']
@@ -439,6 +447,7 @@ export type FrontpageSlide = {
   content: Scalars['String']
   image?: Maybe<Image>
   link?: Maybe<Scalars['String']>
+  animationZip?: Maybe<File>
 }
 
 export type FrontpageSliderList = {
@@ -533,6 +542,11 @@ export type OrganizationTags = {
   items: Array<OrganizationTag>
 }
 
+export type ContentfulAssetBlob = {
+  __typename?: 'ContentfulAssetBlob'
+  blob: Scalars['String']
+}
+
 export type Application = {
   __typename?: 'Application'
   id: Scalars['ID']
@@ -621,6 +635,7 @@ export type Query = {
   getAdgerdirTags?: Maybe<AdgerdirTags>
   getOrganizationTags?: Maybe<OrganizationTags>
   getFrontpageSliderList?: Maybe<FrontpageSliderList>
+  getContentfulAssetBlob: ContentfulAssetBlob
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
   getLifeEventPage?: Maybe<LifeEventPage>
@@ -718,6 +733,10 @@ export type QueryGetOrganizationTagsArgs = {
 
 export type QueryGetFrontpageSliderListArgs = {
   input: GetFrontpageSliderListInput
+}
+
+export type QueryGetContentfulAssetBlobArgs = {
+  input: GetContentfulAssetBlobInput
 }
 
 export type QueryGetAdgerdirFrontpageArgs = {
@@ -877,6 +896,11 @@ export type GetOrganizationTagsInput = {
 
 export type GetFrontpageSliderListInput = {
   lang?: Maybe<Scalars['String']>
+}
+
+export type GetContentfulAssetBlobInput = {
+  url: Scalars['String']
+  type?: Maybe<Scalars['String']>
 }
 
 export type GetAdgerdirFrontpageInput = {
@@ -1221,9 +1245,23 @@ export type GetFrontpageSliderListQuery = { __typename?: 'Query' } & {
                 'url' | 'title' | 'contentType' | 'width' | 'height'
               >
             >
+            animationZip?: Maybe<
+              { __typename?: 'File' } & Pick<File, 'url' | 'contentType'>
+            >
           }
       >
     }
+  >
+}
+
+export type GetContentfulAssetBlobQueryVariables = Exact<{
+  input: GetContentfulAssetBlobInput
+}>
+
+export type GetContentfulAssetBlobQuery = { __typename?: 'Query' } & {
+  getContentfulAssetBlob: { __typename?: 'ContentfulAssetBlob' } & Pick<
+    ContentfulAssetBlob,
+    'blob'
   >
 }
 
