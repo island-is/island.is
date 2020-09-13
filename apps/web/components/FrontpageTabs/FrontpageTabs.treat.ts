@@ -141,3 +141,14 @@ export const searchContentContainer = style({
     borderRadius: 0,
   }),
 })
+
+export const animationContainer = style({
+  opacity: 1,
+  transform: `translateX(0)`,
+  transition: `opacity 1000ms ease, transform 1000ms ease`,
+})
+
+export const animationContainerHidden = style({
+  opacity: 0,
+  transform: `translateX(25px)`,
+})

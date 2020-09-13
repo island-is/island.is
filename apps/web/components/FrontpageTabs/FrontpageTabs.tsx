@@ -32,6 +32,7 @@ import { QueryGetContentfulAssetBlobArgs } from '@island.is/api/schema'
 import { GET_CONTENTFUL_ASSET_BLOB_QUERY } from '@island.is/web/screens/queries'
 
 import * as styles from './FrontpageTabs.treat'
+
 const AUTOPLAY_TIMER = 8000
 
 type ImageProps = {
@@ -82,15 +83,19 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   autoplay = true,
 }) => {
   const client = useApolloClient()
-  const svgContainerRef = useRef(null)
+  const animationContainerRef = useRef(null)
   const zipsLoaded = useRef(null)
   const contentRef = useRef(null)
   const timer = useRef(null)
+  const animationTimer = useRef(null)
   const [minHeight, setMinHeight] = useState<number>(0)
-  const [json, setJson] = useState(null)
   const [animationData, setAnimationData] = useState([])
   const [maxContainerHeight, setMaxContainerHeight] = useState<number>(0)
   const [autoplayOn, setAutoplayOn] = useState<boolean>(autoplay)
+  const [
+    animationContainerTransitioning,
+    setAnimationContainerTransitioning,
+  ] = useState<boolean>(true)
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [selectedIndex, setSelectedIndex] = useState<number>(0)
   const [image, setImage] = useState<ImageProps | null>(null)
@@ -99,19 +104,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   })
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale as Locale)
-
-  useEffect(() => {
-    if (json && svgContainerRef.current) {
-      setTimeout(() => {
-        bodymovin.loadAnimation({
-          container: svgContainerRef.current,
-          loop: true,
-          autoplay: true,
-          animationData: json,
-        })
-      }, 2000)
-    }
-  }, [json, svgContainerRef])
 
   const updateImage = useCallback(() => {
     if (selectedIndex >= 0) {
@@ -215,8 +207,25 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   }, [tab, zipsLoaded, client, tabs])
 
   useEffect(() => {
-    console.log('animationData', animationData)
-  }, [animationData])
+    if (animationContainerRef.current) {
+      setAnimationContainerTransitioning(true)
+
+      clearTimeout(animationTimer.current)
+
+      animationTimer.current = setTimeout(() => {
+        bodymovin.destroy()
+
+        bodymovin.loadAnimation({
+          container: animationContainerRef.current,
+          loop: true,
+          autoplay: true,
+          animationData: animationData[selectedIndex],
+        })
+
+        setAnimationContainerTransitioning(false)
+      }, 1000)
+    }
+  }, [animationData, animationContainerRef, selectedIndex])
 
   useEffect(() => {
     itemsRef.current.forEach((x) => {
@@ -257,13 +266,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
   return (
     <GridContainer className={styles.removeMobileSpacing}>
-      <GridRow>
-        <GridColumn span="12/12">
-          <div className={styles.imageContainer}>
-            <div ref={svgContainerRef} />
-          </div>
-        </GridColumn>
-      </GridRow>
       <GridRow>
         <GridColumn span={[null, null, null, '1/12']}>
           <Box
@@ -329,13 +331,6 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                     const currentIndex = tab.items.findIndex(
                       (x) => x.id === tab.currentId,
                     )
-
-                    if (
-                      animationZip &&
-                      animationZip.contentType === 'application/zip'
-                    ) {
-                      // console.log('found zip:', animationZip.url)
-                    }
 
                     const visible = currentIndex === index
 
@@ -426,9 +421,14 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
             overflow="hidden"
             style={{ maxHeight: `${maxContainerHeight}px` }}
           >
-            <Hidden below="lg">
-              <Image image={image} />
-            </Hidden>
+            <div className={styles.imageContainer}>
+              <div
+                ref={animationContainerRef}
+                className={cn(styles.animationContainer, {
+                  [styles.animationContainerHidden]: animationContainerTransitioning,
+                })}
+              />
+            </div>
           </Box>
         </GridColumn>
         <GridColumn span={[null, null, null, '1/12']}>
