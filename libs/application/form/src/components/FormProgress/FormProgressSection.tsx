@@ -28,7 +28,7 @@ const SubSections: FC<{
   useEffect(() => {
     if (!isClient) return
     setContainerHeight((isActive && activeHeight) || 0)
-  }, [activeHeight, isActive])
+  }, [activeHeight, isActive, isClient])
 
   return (
     <Box
@@ -94,7 +94,6 @@ const FormProgressSection: FC<{
     if (!isClient) return
 
     if (containerRef.current) {
-      // setContainerHeight(containerRef.current.clientHeight)
       setContainerHeight(activeHeight)
     }
   }, [isActive, isClient, activeHeight])
