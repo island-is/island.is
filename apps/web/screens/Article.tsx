@@ -228,8 +228,8 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
   const [bullet, setBullet] = useState<HTMLElement>(null)
 
   const navigation = useMemo(() => {
-    return createNavigation(article.body, { title })
-  }, [article.body, title])
+    return createNavigation(article.body, { title: article.title })
+  }, [article])
 
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
   const [activeId, navigate] = useScrollSpy(ids)
