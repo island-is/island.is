@@ -18,18 +18,15 @@ import { UPDATE_APPLICATION_EXTERNAL_DATA } from '@island.is/application/graphql
 import { Controller, useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '../utils'
 
-// TODO make pretty
 const ProviderItem: FC<{
   dataProviderResult: DataProviderResult
   provider: DataProviderItem
 }> = ({ dataProviderResult = {}, provider }) => {
-  const { subTitle, title, source } = provider
-  const { status } = dataProviderResult
+  const { subTitle, title } = provider
   return (
     <Box marginBottom={3}>
       <Typography variant="h4" color="blue400">
         {title}
-        {/* {source ? ` frá ${source}` : ''} */}
       </Typography>
       <Typography variant="p">{subTitle}</Typography>
       {dataProviderResult?.status === 'failure' && (
@@ -56,14 +53,11 @@ const FormExternalDataProvider: FC<{
   formValue,
 }) => {
   const { setValue } = useFormContext()
-  const [updateExternalData, { loading }] = useMutation(
-    UPDATE_APPLICATION_EXTERNAL_DATA,
-    {
-      onCompleted({ updateApplicationExternalData }) {
-        addExternalData(updateApplicationExternalData.externalData)
-      },
+  const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA, {
+    onCompleted({ updateApplicationExternalData }) {
+      addExternalData(updateApplicationExternalData.externalData)
     },
-  )
+  })
 
   const { id, dataProviders } = externalDataProvider
   const label = 'Ég samþykki'
@@ -135,29 +129,6 @@ const FormExternalDataProvider: FC<{
                   value={id}
                 />
               </Box>
-              {/* <Button
-                icon="search"
-                loading={loading}
-                disabled={!value || loading}
-                onClick={() => {
-                  if (!value) {
-                    return
-                  }
-                  updateExternalData({
-                    variables: {
-                      input: {
-                        id: applicationId,
-                        dataProviders: dataProviders.map(({ id, type }) => ({
-                          id,
-                          type,
-                        })),
-                      },
-                    },
-                  })
-                }}
-              >
-                Sækja gögn
-              </Button> */}
             </>
           )
         }}
