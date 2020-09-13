@@ -121,7 +121,7 @@ const Screen: FC<ScreenProps> = ({
       >
         <GridColumn
           span={['12/12', '12/12', '7/9', '7/9']}
-          offset={[null, '1/9']}
+          offset={[null, null, '1/9']}
         >
           <Typography variant="h2">{screen.name}</Typography>
           <Box>
@@ -161,7 +161,7 @@ const Screen: FC<ScreenProps> = ({
         <Box marginTop={[3, 3, 0]} className={styles.buttonContainer}>
           <GridColumn
             span={['12/12', '12/12', '7/9', '7/9']}
-            offset={[null, '1/9']}
+            offset={[null, null, '1/9']}
           >
             <Box
               display="flex"

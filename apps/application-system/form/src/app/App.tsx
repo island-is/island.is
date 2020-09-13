@@ -14,6 +14,8 @@ import * as styles from './App.treat'
 
 export const App = () => {
   useEffect(() => {
+    // Fixes the island.is logo and other SVGs not appearing on
+    // Mobile Safari, when a <base> tag exists in index.html.
     fixSvgUrls()
   }, [])
 

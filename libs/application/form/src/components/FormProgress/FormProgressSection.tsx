@@ -102,12 +102,7 @@ const FormProgressSection: FC<{
   return (
     <Box>
       <Box ref={containerRef}>
-        <Box
-          display="flex"
-          alignItems="flexStart"
-          marginBottom={1}
-          style={{ whiteSpace: 'nowrap' }}
-        >
+        <Box display="flex" alignItems="flexStart" marginBottom={1}>
           <Box paddingTop={2}>
             <SectionNumber
               lineHeight={isLastSection ? 0 : containerHeight}
