@@ -22,7 +22,13 @@ import {
 } from '@island.is/judicial-system/consts'
 
 import { environment } from '../../../environments'
-import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
+import {
+  Cookie,
+  CookieOptions,
+  Credentials,
+  VerifyResult,
+  AuthUser,
+} from './auth.types'
 import { AuthService } from './auth.service'
 
 const { samlEntryPoint, jwtSecret } = environment.auth
@@ -56,6 +62,39 @@ const REDIRECT_COOKIE: Cookie = {
     ...defaultCookieOptions,
     sameSite: 'none',
   },
+}
+
+function redirectAuthenticatedUser(
+  authUser: AuthUser,
+  redirectUrl: string,
+  res: any,
+) {
+  const csrfToken = new Entropy({ bits: 128 }).string()
+  const jwtToken = jwt.sign(
+    {
+      user: authUser,
+      csrfToken,
+    } as Credentials,
+    jwtSecret,
+    { expiresIn: JWT_EXPIRES_IN_SECONDS },
+  )
+
+  const tokenParts = jwtToken.split('.')
+  if (tokenParts.length !== 3) {
+    return res.redirect('/error=true')
+  }
+
+  const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
+  return res
+    .cookie(CSRF_COOKIE.name, csrfToken, {
+      ...CSRF_COOKIE.options,
+      maxAge,
+    })
+    .cookie(ACCESS_TOKEN_COOKIE.name, jwtToken, {
+      ...ACCESS_TOKEN_COOKIE.options,
+      maxAge,
+    })
+    .redirect(redirectUrl)
 }
 
 @Controller('api/auth')
@@ -105,32 +144,11 @@ export class AuthController {
       return res.redirect('/?error=true')
     }
 
-    const csrfToken = new Entropy({ bits: 128 }).string()
-    const jwtToken = jwt.sign(
-      {
-        user: authUser,
-        csrfToken,
-      } as Credentials,
-      jwtSecret,
-      { expiresIn: JWT_EXPIRES_IN_SECONDS },
+    return redirectAuthenticatedUser(
+      authUser,
+      returnUrl ?? '/gaesluvardhaldskrofur',
+      res,
     )
-
-    const tokenParts = jwtToken.split('.')
-    if (tokenParts.length !== 3) {
-      return res.redirect('/')
-    }
-
-    const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
-    return res
-      .cookie(CSRF_COOKIE.name, csrfToken, {
-        ...CSRF_COOKIE.options,
-        maxAge,
-      })
-      .cookie(ACCESS_TOKEN_COOKIE.name, jwtToken, {
-        ...ACCESS_TOKEN_COOKIE.options,
-        maxAge,
-      })
-      .redirect(returnUrl ?? '/gaesluvardhaldskrofur')
   }
 
   @Get('login')
