@@ -17,10 +17,14 @@ import {
   Blockquote,
   Box,
   TypographyProps,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import ProcessEntry from './ProcessEntry/ProcessEntry'
 import EmbeddedVideo from './EmbeddedVideo/EmbeddedVideo'
 import StaticHtml from './StaticHtml/StaticHtml'
+import slugify from '@sindresorhus/slugify'
 
 export interface RenderNode {
   [k: string]: (node: Block | Inline, children: ReactNode) => ReactNode
@@ -67,12 +71,24 @@ export const defaultRenderComponent = (
 }
 
 export const defaultRenderWrapper = (
-  _slice: Slice,
+  slice: Slice,
   children: ReactNode,
 ): ReactNode => {
-  // TODO: when the grid supports it, we'll create a wrapper here to indent
-  // left and/or right side when needed
-  return children
+  switch (slice.__typename) {
+    case 'ProcessEntry':
+      return children
+
+    default:
+      return (
+        <GridContainer>
+          <GridRow>
+            <GridColumn offset={'1/9'} span={'7/9'}>
+              {children}
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      )
+  }
 }
 
 const typography = (
@@ -81,7 +97,12 @@ const typography = (
   <Typography variant={variant} as={variant}>
     {['h2', 'h3'].includes(variant) ? (
       // TODO: stop this data-sidebar-link madness
-      <span data-sidebar-link={String(children)}>{children}</span>
+      <span
+        id={slugify(String(children))}
+        data-sidebar-link={slugify(String(children))}
+      >
+        {children}
+      </span>
     ) : (
       children
     )}
