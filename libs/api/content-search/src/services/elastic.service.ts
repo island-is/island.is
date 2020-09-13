@@ -15,7 +15,10 @@ import {
 } from '../queries/autocomplete'
 
 const { elastic } = environment
-
+interface SyncRequest {
+  add: any[]
+  remove: string[]
+}
 @Injectable()
 export class ElasticService {
   private client: Client
@@ -43,26 +46,47 @@ export class ElasticService {
     }
   }
 
-  async bulk(index: SearchIndexes, documents: any) {
-    try {
-      const client = await this.getClient()
-      const payload = []
-      documents.forEach(({_id, ...document}) => {
-        payload.push({
+  async bulk(index: SearchIndexes, documents: SyncRequest) {
+    logger.info('Processing documents', {added: documents.add.length, removed: documents.remove.length})
+    
+    const requests = []
+    // if we have any documents to add add them to the request
+    if (documents.add.length) {
+      const addedDocuments = documents.add.forEach(({_id, ...document}) => {
+        requests.push({
           index: { _index: index, _id }
         })
-        payload.push(document)
+        requests.push(document)
+        return requests
       })
-      return await client.bulk({
-        index: index,
-        body: payload,
+    }
+
+    // if we have any documents to remove add them to the request
+    if (documents.remove.length) {
+      const removedDocuments = documents.remove.forEach((_id) => {
+          requests.push({
+          delete: { _index: index, _id }
+        })
       })
-    } catch (e) {
-      ElasticService.handleError(
-        'Error indexing ES documents',
-        { index: index },
-        e,
-      )
+    }
+
+    // if we have any requests execute them
+    if (requests.length) {
+      try {
+        const client = await this.getClient()
+        return await client.bulk({
+          index: index,
+          body: requests,
+        })
+      } catch (e) {
+        ElasticService.handleError(
+          'Error indexing ES documents',
+          { index: index },
+          e,
+        )
+      }
+    } else {
+      logger.info('No requests to execute')
     }
   }
 

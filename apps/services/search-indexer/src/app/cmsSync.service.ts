@@ -79,35 +79,3 @@ export class CmsSyncService {
     }
   }
 }
-
-/*
-await this.needConnection()
-logger.info('Start continue sync')
-const {
-  items,
-  token,
-  deletedItems,
-} = await this.contentFulSyncer.getSyncEntries({
-  nextSyncToken: syncToken,
-  // eslint-disable-next-line @typescript-eslint/camelcase
-  resolveLinks: true,
-})
-
-logger.info('Continue sync is importing', {
-  itemCount: items.length,
-})
-
-for (const item of items) {
-  // one at a time please, else ES will be unhappy
-  await this.transformAndIndexEntry(index, token, item)
-}
-
-// delete content that has been unpublished from contentful
-await this.elasticService.deleteByIds(index, deletedItems)
-
-logger.info('Continue sync done')
-*/
-
-// Make sync return all data
-// Make article sync process data so it can be imported
-// Import data into ES

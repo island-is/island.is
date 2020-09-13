@@ -29,16 +29,6 @@ export class IndexingController {
     }
   }
 
-  @Get('sync-one/:id')
-  async syncOne(@Param('id') id: string) {
-    logger.debug('Sync one', { id: id })
-    // noinspection ES6MissingAwait
-    this.indexingService.syncById(SearchIndexes.is, id)
-    return {
-      acknowledge: true,
-    }
-  }
-
   @Get('re-sync')
   async resync() {
     logger.info('Doing re-sync')

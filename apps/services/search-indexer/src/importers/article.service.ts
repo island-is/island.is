@@ -86,14 +86,10 @@ export class ArticleSyncService {
           value: entry.fields?.category?.fields?.title,
           type: 'category'
         }],
+        dateCreated: entry.sys.createdAt,
+        dateUpdated: new Date(),
         nextSyncToken
       }
     }).filter((value) => Boolean(value))
   }
 }
-
-
-// TODO: ES importer calls function on CMS importer on sync
-// TODO: Each importer has doINeedToSync check
-// TODO: Each importer has getData and map data
-// TODO: CMS importer returns array of importable data to ES importer

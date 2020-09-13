@@ -95,6 +95,12 @@
         "index": false,
         "store": true
       },
+      "dateCreated": {
+        "type": "date"
+      },
+      "dateUpdated": {
+        "type": "date"
+      },
       "nextSyncToken": {
         "type": "text"
       }
