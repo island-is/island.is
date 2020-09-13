@@ -5,7 +5,7 @@ import { environment } from '../environments/environment'
 import { Dictionary } from './dictionary'
 import { PackageStatus, DomainPackageStatus } from 'aws-sdk/clients/es'
 
-AWS.config.update({ region: environment.migrate.awsRegion })
+AWS.config.update({ region: environment.awsRegion })
 const awsEs = new AWS.ES()
 const s3 = new AWS.S3()
 
@@ -54,7 +54,7 @@ const getPackageStatuses = async (
 
   const domainPackageList = await awsEs
     .listPackagesForDomain({
-      DomainName: environment.migrate.esDomain,
+      DomainName: environment.esDomain,
     })
     .promise()
 
@@ -71,7 +71,7 @@ const getPackageStatuses = async (
 export const getAllDomainEsPackages = async (): Promise<AwsEsPackage[]> => {
   const domainPackageList = await awsEs
     .listPackagesForDomain({
-      DomainName: environment.migrate.esDomain,
+      DomainName: environment.esDomain,
     })
     .promise()
   return domainPackageList.DomainPackageDetailsList.map((esPackage) => {
@@ -136,18 +136,18 @@ export const checkAWSAccess = async (): Promise<boolean> => {
 
   logger.info('Validating esDomain agains aws domain list', { domains })
   return !!domains.find(
-    (domain) => domain.DomainName === environment.migrate.esDomain,
+    (domain) => domain.DomainName === environment.esDomain,
   )
 }
 
 const createS3Key = (type: string, prefix = ''): string => {
   const prefixString = prefix ? `${prefix}/` : ''
-  return `${environment.migrate.s3Folder}${prefixString}${type}.txt`
+  return `${environment.s3Folder}${prefixString}${type}.txt`
 }
 
 export const getDictionaryVersion = (): Promise<string> => {
   const params = {
-    Bucket: environment.migrate.s3Bucket,
+    Bucket: environment.s3Bucket,
     Key: createS3Key('dictionaryVersion'),
   }
 
@@ -165,7 +165,7 @@ export const getDictionaryVersion = (): Promise<string> => {
 
 const uploadFileToS3 = (options: Omit<PutObjectRequest, 'Bucket'>) => {
   const params = {
-    Bucket: environment.migrate.s3Bucket,
+    Bucket: environment.s3Bucket,
     ...options,
   }
   logger.info('Uploading file to s3', {
@@ -269,7 +269,7 @@ export const createAwsEsPackages = async (
       PackageName: createPackageName(locale, analyzerType, version), // version is here so we dont conflict with older packages
       PackageType: 'TXT-DICTIONARY',
       PackageSource: {
-        S3BucketName: environment.migrate.s3Bucket,
+        S3BucketName: environment.s3Bucket,
         S3Key: createS3Key(analyzerType, locale),
       },
     }
@@ -297,7 +297,7 @@ export const associatePackagesWithAwsEs = async (packages: AwsEsPackage[]) => {
   // do one at a time
   for (const awsEsPackage of packages) {
     const params = {
-      DomainName: environment.migrate.esDomain,
+      DomainName: environment.esDomain,
       PackageID: awsEsPackage.packageId,
     }
 
@@ -355,7 +355,7 @@ export const disassociateUnusedPackagesFromAwsEs = async (
   for (const esAwsPackageId of packagesToRemove) {
     logger.info('Disassociating package', { packageId: esAwsPackageId })
     const params = {
-      DomainName: environment.migrate.esDomain,
+      DomainName: environment.esDomain,
       PackageID: esAwsPackageId,
     }
     await awsEs.dissociatePackage(params).promise()

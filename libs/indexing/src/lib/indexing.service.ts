@@ -53,4 +53,5 @@ export class IndexingService {
     logger.info('Done with sync')
     return true
   }
+  // TODO: Remove orphan entries on full sync
 }

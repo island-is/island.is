@@ -1,7 +1,7 @@
 import { logger } from '@island.is/logging';
 import { Injectable } from '@nestjs/common';
 import _ from 'lodash';
-import { MappedData } from '../app/indexing.service';
+import { MappedData } from '../indexing.service';
 
 @Injectable()
 export class ArticleSyncService {
@@ -30,7 +30,7 @@ export class ArticleSyncService {
   private createTerms(termStrings: string[]): string[] {
     const singleWords = termStrings.map((termString = '') => {
       const words = termString.toLowerCase()
-        .replace(/[^a-záðéíúýþæö]+/g, ' ') // remove all non characters
+        .replace(/[^a-záðéíóúýþæö]+/g, ' ') // remove all non characters
         .split(/\s+/)
       return words
     })

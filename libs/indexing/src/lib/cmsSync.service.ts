@@ -1,7 +1,7 @@
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
-import { ArticleSyncService } from '../importers/article.service'
+import { ArticleSyncService } from './importers/article.service'
 import { RequestBodySearch, ExistsQuery, Sort } from 'elastic-builder'
 import { MappedData, SyncOptions, SyncResponse } from './indexing.service'
 import { ContentfulService } from './contentful.service'
