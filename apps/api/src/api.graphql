@@ -727,6 +727,7 @@ type Query {
   getDocumentCategories: [DocumentCategory!]
   getTranslations(input: GetTranslationsInput!): JSON
   catalogues: [ApiCatalogue!]!
+  getCatalogueById(input: GetApiCatalogueInput!): ApiCatalogue!
 }
 
 input GetAdgerdirNewsListInput {
@@ -954,6 +955,10 @@ input ListDocumentsInput {
 input GetTranslationsInput {
   namespaces: [String!]
   lang: String!
+}
+
+input GetApiCatalogueInput {
+  id: ID!
 }
 
 type Mutation {

@@ -37,4 +37,8 @@ export class ApiCatalogueService {
   getCatalogues(): ApiCatalogue[] {
     return this.catalogues
   }
+
+  getCatalogueById(id: string): ApiCatalogue {
+    return this.catalogues.find((c) => c.id === id)
+  }
 }

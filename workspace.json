@@ -3607,34 +3607,6 @@
         }
       }
     },
-    "api-catalog-x-road": {
-      "root": "libs/api-catalog/x-road",
-      "sourceRoot": "libs/api-catalog/x-road/src",
-      "projectType": "library",
-      "schematics": {},
-      "architect": {
-        "lint": {
-          "builder": "@nrwl/linter:lint",
-          "options": {
-            "linter": "eslint",
-            "config": "libs/api-catalog/x-road/.eslintrc",
-            "tsConfig": [
-              "libs/api-catalog/x-road/tsconfig.lib.json",
-              "libs/api-catalog/x-road/tsconfig.spec.json"
-            ],
-            "exclude": ["**/node_modules/**", "!libs/api-catalog/x-road/**"]
-          }
-        },
-        "test": {
-          "builder": "@nrwl/jest:jest",
-          "options": {
-            "jestConfig": "libs/api-catalog/x-road/jest.config.js",
-            "tsConfig": "libs/api-catalog/x-road/tsconfig.spec.json",
-            "passWithNoTests": true
-          }
-        }
-      }
-    },
     "api-domains-api-catalogue": {
       "root": "libs/api/domains/api-catalogue",
       "sourceRoot": "libs/api/domains/api-catalogue/src",
