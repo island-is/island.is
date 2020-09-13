@@ -32,7 +32,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale)
   const navigation = useMemo(() => {
-      return createNavigation(content, { title })
+    return createNavigation(content, { title })
   }, [content, title])
 
   return (
