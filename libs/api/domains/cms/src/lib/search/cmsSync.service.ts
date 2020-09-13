@@ -63,6 +63,3 @@ export class CmsSyncService {
     }
   }
 }
-
-// This should be the only thing accessable outside of cms domain
-// We need to export this in a module so we export module and this from the cms domain

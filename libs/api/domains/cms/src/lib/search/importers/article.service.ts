@@ -2,6 +2,7 @@ import { MappedData } from '@island.is/elastic-indexing';
 import { logger } from '@island.is/logging';
 import { Injectable } from '@nestjs/common';
 import _ from 'lodash';
+import { mapArticle } from '../../models/article.model';
 
 @Injectable()
 export class ArticleSyncService {
@@ -37,30 +38,12 @@ export class ArticleSyncService {
     return _.flatten(singleWords)
   }
 
-  mapArticle({ fields, sys }) {
-    return {
-      id: sys.id,
-      contentStatus: fields.contentStatus,
-      title: fields.title,
-      shortTitle: fields.shortTitle ?? '',
-      slug: fields.slug,
-      content: (fields.content && JSON.stringify(fields.content)) ?? null,
-      category: fields.category?.fields,
-      group: fields.group?.fields,
-      subgroup: fields.subgroup?.fields,
-      organization: '',
-      relatedArticles: null,
-      subArticles: null,
-    }
-  }
-
   doMapping(entries, nextSyncToken): MappedData[] {
     logger.info('Mapping articles')
     return entries.map((entry) => {
-      logger.info(entry.sys.id)
       let mapped
       try {
-        mapped = this.mapArticle(entry)
+        mapped = mapArticle(entry)
       } catch(error) {
         logger.error('Failed to import', error)
         return false
@@ -75,8 +58,8 @@ export class ArticleSyncService {
           mapped.category?.title,
           mapped .group?.title
         ]),
-        response: JSON.stringify(mapped),
-        tags: [{ // Maybe this?
+        response: typeof mapped === 'string' ? mapped : JSON.stringify(mapped), // response is allways a json string...for now
+        tags: [{
           key: entry.fields?.group?.fields?.slug,
           value: entry.fields?.group?.fields?.title,
           type: 'group'

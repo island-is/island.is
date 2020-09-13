@@ -72,6 +72,7 @@ export class ElasticService {
 
     // if we have any requests execute them
     if (requests.length) {
+      logger.info({added: documents.add[0]})
       try {
         const client = await this.getClient()
         return await client.bulk({
