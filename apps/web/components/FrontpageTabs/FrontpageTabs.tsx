@@ -29,7 +29,6 @@ import JSZip from 'jszip'
 import JSZipUtils from 'jszip-utils'
 
 import mynd1 from './Archive.zip'
-import test from './test.png'
 
 import * as styles from './FrontpageTabs.treat'
 
@@ -126,10 +125,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
                         if (index > -1) {
                           obj.assets[index].u = ''
-                          obj.assets[index].p = str.replace(
-                            'application/octet-stream',
-                            'image/png',
-                          )
+                          obj.assets[index].p = str
                         }
 
                         setJson(obj)
