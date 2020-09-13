@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { IndexingModule } from '@island.is/indexing'
+import { IndexingModule } from 'libs/elastic-indexing/src'
 
 @Module({
   imports: [IndexingModule]

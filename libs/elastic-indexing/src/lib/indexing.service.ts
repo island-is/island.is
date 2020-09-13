@@ -46,12 +46,11 @@ export class IndexingService {
     return this.elasticService.ping()
   }
 
-  // await this.elasticService.deleteByIds(index, deletedItems)
   async doSync(options: SyncOptions) {
     const cmsData = await this.cmsSyncService.doSync(options)
     await this.elasticService.bulk(SearchIndexes[options.locale], cmsData)
     logger.info('Done with sync')
     return true
   }
-  // TODO: Remove orphan entries on full sync
+  // TODO: Remove orphan entries on re-sync
 }

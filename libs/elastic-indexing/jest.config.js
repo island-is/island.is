@@ -1,9 +1,9 @@
 module.exports = {
-  name: 'indexing',
+  name: 'elastic-indexing',
   preset: '../../jest.config.js',
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
-  coverageDirectory: '../../coverage/libs/indexing',
+  coverageDirectory: '../../coverage/libs/elastic-indexing',
 }

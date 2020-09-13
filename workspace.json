@@ -2942,9 +2942,9 @@
         }
       }
     },
-    "indexing": {
-      "root": "libs/indexing",
-      "sourceRoot": "libs/indexing/src",
+    "elastic-indexing": {
+      "root": "libs/elastic-indexing",
+      "sourceRoot": "libs/elastic-indexing/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -2952,19 +2952,19 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/indexing/.eslintrc",
+            "config": "libs/elastic-indexing/.eslintrc",
             "tsConfig": [
-              "libs/indexing/tsconfig.lib.json",
-              "libs/indexing/tsconfig.spec.json"
+              "libs/elastic-indexing/tsconfig.lib.json",
+              "libs/elastic-indexing/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/indexing/**"]
+            "exclude": ["**/node_modules/**", "!libs/elastic-indexing/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/indexing/jest.config.js",
-            "tsConfig": "libs/indexing/tsconfig.spec.json",
+            "jestConfig": "libs/elastic-indexing/jest.config.js",
+            "tsConfig": "libs/elastic-indexing/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }
