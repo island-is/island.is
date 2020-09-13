@@ -51,7 +51,7 @@ export const setup = async (options?: Partial<TestServerOptions>) => {
   return app
 }
 
-beforeEach(() => truncate())
+beforeAll(() => truncate())
 
 afterAll(async () => {
   if (app && sequelize) {
