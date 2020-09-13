@@ -5,7 +5,7 @@ import {
   Entry,
   SyncCollection,
 } from 'contentful'
-import { environment } from '../environments/environment'
+import environment from '../environments/environment'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 

@@ -5,35 +5,8 @@ import {
 } from '@island.is/api/content-search'
 import _ from 'lodash'
 import { logger } from '@island.is/logging'
-import { CmsSyncService } from './cmsSync.service'
-
-export interface SyncOptions {
-  locale: keyof typeof SearchIndexes
-  fullSync: boolean
-}
-
-export interface SyncResponse<T> {
-  add: T[]
-  remove: string[]
-}
-
-type tag = {
-  key: string
-  value: string
-  type: string
-}
-export interface MappedData {
-  id: string
-  title: string
-  content: string
-  type: string
-  termPool: string[]
-  response: string
-  tags: tag[]
-  dateUpdated: string
-  dateCreated: string
-  nextSyncToken: string
-}
+import { CmsSyncService } from '@island.is/api/domains/cms'
+import { SyncOptions } from '../types'
 
 @Injectable()
 export class IndexingService {

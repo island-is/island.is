@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common'
 import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
 import { ArticleSyncService } from './importers/article.service'
 import { RequestBodySearch, ExistsQuery, Sort } from 'elastic-builder'
-import { MappedData, SyncOptions, SyncResponse } from './indexing.service'
+import { MappedData, SyncOptions, SyncResponse } from '@island.is/elastic-indexing'
 import { ContentfulService } from './contentful.service'
-import { environment } from '../environments/environment'
+import environment from '../environments/environment'
 
 @Injectable()
 export class CmsSyncService {

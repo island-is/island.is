@@ -1,7 +1,7 @@
+import { MappedData } from '@island.is/elastic-indexing';
 import { logger } from '@island.is/logging';
 import { Injectable } from '@nestjs/common';
 import _ from 'lodash';
-import { MappedData } from '../indexing.service';
 
 @Injectable()
 export class ArticleSyncService {
