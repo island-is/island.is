@@ -180,7 +180,7 @@ paths:
         - api/auth
   /api/user:
     get:
-      operationId: UserController_getAll
+      operationId: UserController_getCurrentUser
       parameters: []
       responses:
         '200':
