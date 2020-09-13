@@ -22,7 +22,6 @@ import {
   SidebarBox,
   Bullet,
   SidebarSubNav,
-  CategoryItem,
   RichText,
 } from '@island.is/web/components'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
@@ -63,7 +62,7 @@ const createArticleNavigation = (
   article: Article,
   selectedSubArticle: SubArticle,
   makePath: (t: string, p: string) => string,
-): CategoryItem[] => {
+): Array<{ url: string; title: string }> => {
   if (article.subArticles.length === 0) {
     return createNavigation(article.body).map(({ id, text }) => ({
       title: text,
@@ -71,7 +70,7 @@ const createArticleNavigation = (
     }))
   }
 
-  let nav: CategoryItem[] = []
+  let nav = []
   nav.push({ url: slugify(article.title), title: article.title })
 
   for (const subArticle of article.subArticles) {
