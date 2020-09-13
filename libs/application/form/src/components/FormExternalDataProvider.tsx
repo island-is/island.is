@@ -2,7 +2,6 @@ import React, { FC } from 'react'
 import { ExternalDataProviderScreen } from '../types'
 import {
   Box,
-  Button,
   Checkbox,
   Icon,
   InputError,
@@ -27,22 +26,12 @@ const ProviderItem: FC<{
   const { subTitle, title, source } = provider
   const { status } = dataProviderResult
   return (
-    <Box border="standard" borderRadius="standard" padding={4}>
-      <Typography variant="h4">
-        <Icon
-          type="external"
-          color={
-            status === 'failure'
-              ? 'red400'
-              : status === 'success'
-              ? 'blue600'
-              : 'dark200'
-          }
-        />
+    <Box marginBottom={3}>
+      <Typography variant="h4" color="blue400">
         {title}
-        {source ? ` frá ${source}` : ''}
+        {/* {source ? ` frá ${source}` : ''} */}
       </Typography>
-      <Typography variant="h5">{subTitle}</Typography>
+      <Typography variant="p">{subTitle}</Typography>
       {dataProviderResult?.status === 'failure' && (
         <InputError
           errorMessage={dataProviderResult?.reason}
@@ -80,13 +69,29 @@ const FormExternalDataProvider: FC<{
   const label = 'Ég samþykki'
   return (
     <Box>
-      {dataProviders.map((provider) => (
-        <ProviderItem
-          provider={provider}
-          key={provider.id}
-          dataProviderResult={externalData[provider.id]}
-        />
-      ))}
+      <Box
+        marginTop={2}
+        marginBottom={5}
+        display="flex"
+        alignItems="center"
+        justifyContent="flexStart"
+      >
+        <Box marginRight={1}>
+          <Icon type="download" width={24} height={24} />
+        </Box>
+        <Typography variant="h4">
+          Eftirfarandi gögn verða sótt rafrænt með þínu samþykki
+        </Typography>
+      </Box>
+      <Box marginBottom={5}>
+        {dataProviders.map((provider) => (
+          <ProviderItem
+            provider={provider}
+            key={provider.id}
+            dataProviderResult={externalData[provider.id]}
+          />
+        ))}
+      </Box>
       <Controller
         name={`${id}`}
         defaultValue={getValueViaPath(formValue, id, false)}
@@ -94,11 +99,35 @@ const FormExternalDataProvider: FC<{
         render={({ value, onChange }) => {
           return (
             <>
-              <Box display="flex" key={`${id}`}>
+              <Box
+                background="blue100"
+                display="flex"
+                padding={4}
+                borderRadius="large"
+                marginTop={1}
+                key={`${id}`}
+              >
                 <Checkbox
                   onChange={(e) => {
                     onChange(e.target.checked)
                     setValue(id, e.target.checked)
+
+                    // TODO: Move this to the continue button click
+                    if (e.target.checked) {
+                      updateExternalData({
+                        variables: {
+                          input: {
+                            id: applicationId,
+                            dataProviders: dataProviders.map(
+                              ({ id, type }) => ({
+                                id,
+                                type,
+                              }),
+                            ),
+                          },
+                        },
+                      })
+                    }
                   }}
                   checked={value}
                   name={`${id}`}
@@ -106,7 +135,7 @@ const FormExternalDataProvider: FC<{
                   value={id}
                 />
               </Box>
-              <Button
+              {/* <Button
                 icon="search"
                 loading={loading}
                 disabled={!value || loading}
@@ -128,7 +157,7 @@ const FormExternalDataProvider: FC<{
                 }}
               >
                 Sækja gögn
-              </Button>
+              </Button> */}
             </>
           )
         }}
