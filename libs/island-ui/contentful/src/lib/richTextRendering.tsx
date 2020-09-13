@@ -7,10 +7,9 @@ import {
   INLINES,
 } from '@contentful/rich-text-types'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
-import Image from './Image/Image'
-import FaqList from './FaqList/FaqList'
-import { Slice } from '@island.is/api/schema'
-import { Statistics } from './Statistics/Statistics'
+import Image, { ApiImageSource } from './Image/Image'
+import FaqList, { FaqListProps } from './FaqList/FaqList'
+import { Statistics, StatisticsProps } from './Statistics/Statistics'
 import Hyperlink from './Hyperlink/Hyperlink'
 import {
   Typography,
@@ -19,18 +18,58 @@ import {
   TypographyProps,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
-import ProcessEntry from './ProcessEntry/ProcessEntry'
-import EmbeddedVideo from './EmbeddedVideo/EmbeddedVideo'
+import ProcessEntry, { ProcessEntryProps } from './ProcessEntry/ProcessEntry'
+import EmbeddedVideo, {
+  EmbeddedVideoProps,
+} from './EmbeddedVideo/EmbeddedVideo'
 import StaticHtml from './StaticHtml/StaticHtml'
 import slugify from '@sindresorhus/slugify'
-import { SectionWithImage } from './SectionWithImage/SectionWithImage'
+import {
+  SectionWithImage,
+  SectionWithImageProps,
+} from './SectionWithImage/SectionWithImage'
 
 export interface RenderNode {
   [k: string]: (node: Block | Inline, children: ReactNode) => ReactNode
 }
 
+type HtmlSlice = { __typename: 'Html'; document: any }
+type FaqListSlice = { __typename: 'FaqList' } & FaqListProps
+type StatisticsSlice = { __typename: 'Statistics' } & StatisticsProps
+type ProcessEntrySlice = { __typename: 'ProcessEntry' } & ProcessEntryProps
+type EmbeddedVideoSlice = { __typename: 'EmbeddedVideo' } & EmbeddedVideoProps
+type ImageSlice = { __typename: 'Image' } & ApiImageSource['image']
+type SectionWithImageSlice = {
+  __typename: 'SectionWithImage'
+} & SectionWithImageProps
+
+// TODO: This should be a 1-to-1 mapping to the api types, but some slice
+// types are only used on certain types of pages that are not using this
+// renderer at the moment (e.g. the AboutPage)
+type OtherSlices = {
+  __typename:
+    | 'PageHeaderSlice'
+    | 'TimelineSlice'
+    | 'MailingListSignupSlice'
+    | 'StorySlice'
+    | 'LatestNewsSlice'
+    | 'LinkCardSlice'
+    | 'HeadingSlice'
+    | 'BulletListSlice'
+    | 'LogoListSlice'
+}
+
+type Slice =
+  | HtmlSlice
+  | FaqListSlice
+  | StatisticsSlice
+  | ImageSlice
+  | ProcessEntrySlice
+  | EmbeddedVideoSlice
+  | SectionWithImageSlice
+  | OtherSlices
+
 type SliceType = Slice['__typename']
-type Ordered = 'ordered' | 'unordered'
 
 export interface RenderConfig {
   renderComponent: (slice: Slice, config: RenderConfig) => ReactNode
@@ -38,7 +77,7 @@ export interface RenderConfig {
   renderNode: RenderNode
   htmlClassName?: string
   defaultPadding: ResponsiveSpace
-  padding: Readonly<Array<[SliceType, SliceType, ResponsiveSpace, Ordered?]>>
+  padding: Readonly<Array<[SliceType, SliceType, ResponsiveSpace]>>
 }
 
 export const defaultRenderComponent = (
@@ -71,9 +110,6 @@ export const defaultRenderComponent = (
       return <SectionWithImage {...slice} />
 
     default:
-      // TODO: this should be an exhaustive list of slice types, but some slice
-      // types are only used on certain types of pages that are not using this
-      // renderer at the moment (e.g. the AboutPage)
       return null
   }
 }
@@ -123,18 +159,13 @@ export const renderHtml = (
   )
 }
 
-const matches = (name: string, type: string) => name === '*' || name === type
-
 export const defaultRenderPadding = (
   { __typename: above }: Slice,
   { __typename: below }: Slice,
   config: RenderConfig,
 ): ReactNode => {
-  for (const [a, b, space, order = 'unordered'] of config.padding) {
-    if (
-      (matches(a, above) && matches(b, below)) ||
-      (order === 'unordered' && matches(a, below) && matches(b, above))
-    ) {
+  for (const [a, b, space] of config.padding) {
+    if ((a === above && b === below) || (a === below && b === above)) {
       return <Box paddingTop={space} />
     }
   }
@@ -174,7 +205,7 @@ export const renderSlices = (
     }
 
     return (
-      <Fragment key={slice.id}>
+      <Fragment key={index}>
         {index > 0 && config.renderPadding(slices[index - 1], slice, config)}
         {comp}
       </Fragment>

@@ -4,9 +4,7 @@ export const slices = gql`
   fragment ImageFields on Image {
     __typename
     id
-    title
     url
-    contentType
     width
     height
   }

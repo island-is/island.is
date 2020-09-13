@@ -14,7 +14,7 @@ const guessVisibleSection = (ids: string[]): string | null => {
   return ids.reduce((match, id) => {
     const el = document.getElementById(id)
     const elPosY = el.getBoundingClientRect().top + window.scrollY
-    return window.scrollY + TOP_MARGIN >= elPosY ? id : match
+    return window.scrollY + TOP_MARGIN + 1 >= elPosY ? id : match
   }, ids[0])
 }
 

@@ -15,7 +15,7 @@ export type CustomImage = {
 export type ApiImageSource = {
   type: 'apiImage'
   maxWidth?: number
-  image: Partial<ApiImage>
+  image: Pick<ApiImage, 'url' | 'title' | 'width' | 'height'>
 }
 
 type AnyImageType = CustomImage | ApiImageSource

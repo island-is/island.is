@@ -1,5 +1,5 @@
 import React, { FC, memo } from 'react'
-import { Slice } from '@island.is/web/graphql/schema'
+import { AllSlicesFragment } from '@island.is/web/graphql/schema'
 import {
   renderSlices,
   defaultRenderComponent,
@@ -7,12 +7,12 @@ import {
 } from '@island.is/island-ui/contentful'
 import { GridContainer, GridRow, GridColumn } from '@island.is/island-ui/core'
 
-const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
+const FULL_WIDTH_SLICE_TYPES: Array<AllSlicesFragment['__typename']> = [
   'ProcessEntry',
   'SectionWithImage',
 ]
 
-const renderComponent = (slice: Slice, config: RenderConfig) => {
+const renderComponent = (slice: AllSlicesFragment, config: RenderConfig) => {
   let children = defaultRenderComponent(slice, config)
 
   if (!FULL_WIDTH_SLICE_TYPES.includes(slice.__typename)) {
@@ -40,7 +40,7 @@ const renderComponent = (slice: Slice, config: RenderConfig) => {
 }
 
 export const RichText: FC<{
-  body: Slice[]
+  body: AllSlicesFragment[]
   config?: Partial<RenderConfig>
 }> = memo(({ body, config = {} }) => {
   return <>{renderSlices(body, { renderComponent, ...config })}</>

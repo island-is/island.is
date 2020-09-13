@@ -34,7 +34,7 @@ export const ProcessTypes = {
   },
 }
 
-interface ProcessEntryProps {
+export interface ProcessEntryProps {
   processTitle: string
   processInfo?: Html
   processLink: string
