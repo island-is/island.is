@@ -10,7 +10,7 @@ describe(' ServiceCard ', () => {
       owner     : "owner of service 1",
       pricing   :["free", "custom"],
       data      :["personal"],
-      type      :["GraphQÆ", "REST"],
+      type      :["GraphQL", "REST"],
       access    :null,
       status    :ServiceStatusValue.OK,
       url       :""

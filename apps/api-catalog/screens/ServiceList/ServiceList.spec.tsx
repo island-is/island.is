@@ -3,7 +3,7 @@ import { render } from '@testing-library/react'
 
 import ServiceList from './ServiceList'
 import { ServiceCardInformation, ServiceStatusValue } from '../../components';
-import { getAllPriceCategories, GetServicesParameters, getAllDataCategories } from '../../components/ServiceRepository/service-repository';
+import { getAllPriceCategories, GetServicesParameters, getAllDataCategories, SERVICE_SEARCH_METHOD } from '../../components/ServiceRepository/service-repository';
 
 describe(' ServiceList ', () => {
   const services:Array<ServiceCardInformation> = [
@@ -13,7 +13,17 @@ describe(' ServiceList ', () => {
     { id:3, name:"Þjóðskrá",           owner:"Fasteignaskrá",      pricing:null,                          data:["personal"],                   type:["REST"],  access:["API GW"], url:"", status:ServiceStatusValue.OK},
   ];
 
-  const params:GetServicesParameters = { cursor:null, limit:null, owner:null, name:null, pricing:getAllPriceCategories(), data:getAllDataCategories() };
+  const params:GetServicesParameters = { 
+    cursor:null, 
+    limit:null, 
+    owner:null, 
+    name:null, 
+    pricing:getAllPriceCategories(), 
+    data:[],
+    access:[],
+    type:[],
+    searchMethod:SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY
+  };
   
   it('should render successfully', () => {
     const { baseElement } = render(<ServiceList parameters={params} prevCursor={null} nextCursor={0} servicesList={services}/>);
