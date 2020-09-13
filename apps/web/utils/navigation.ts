@@ -7,22 +7,22 @@ export interface NavLink {
   text: string
 }
 
-export interface NavGenOptions {
-  htmlTags?: BLOCKS[]
+interface Navigatable {
+  id: string
+  title: string
+}
+
+const isNavigatable = (slice: any): slice is Navigatable => {
+  return typeof slice === 'object' && slice.id && slice.title
 }
 
 export const createNavigation = (
   slices: Slice[],
   { htmlTags = [BLOCKS.HEADING_2] }: { htmlTags?: BLOCKS[] } = {},
 ): NavLink[] => {
-  const nav: NavLink[] = []
-
-  for (const slice of slices) {
-    const n = sliceToNavLinks(slice, htmlTags)
-    Array.isArray(n) ? nav.push(...n) : nav.push(n)
-  }
-
-  return nav
+  return slices
+    .map((slice) => sliceToNavLinks(slice, htmlTags))
+    .reduce((acc, links) => acc.concat(links), [])
 }
 
 const extractNodeText = (block: Block): string => {
@@ -32,24 +32,21 @@ const extractNodeText = (block: Block): string => {
     .join('')
 }
 
-const sliceToNavLinks = (
-  slice: Slice,
-  htmlTags: BLOCKS[],
-): NavLink | NavLink[] => {
-  switch (slice.__typename) {
-    case 'ProcessEntry':
-    case 'FaqList':
-      return {
-        id: slice.id,
-        text: slice.title,
-      }
-    case 'Html':
-      return (slice.document as Document).content
-        .filter((node) => htmlTags.includes(node.nodeType))
-        .map(extractNodeText)
-        .map((text) => ({
-          id: slugify(text),
-          text,
-        }))
+const sliceToNavLinks = (slice: Slice, htmlTags: BLOCKS[]): NavLink[] => {
+  if (slice.__typename === 'Html') {
+    return (slice.document as Document).content
+      .filter((node) => htmlTags.includes(node.nodeType))
+      .map(extractNodeText)
+      .map((text) => ({
+        id: slugify(text),
+        text,
+      }))
   }
+
+  if (isNavigatable(slice)) {
+    const { id, title: text } = slice
+    return [{ id, text }]
+  }
+
+  return []
 }
