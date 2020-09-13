@@ -11,22 +11,6 @@ export class ArticleSyncService {
     logger.info('Processing sync data for articles')
     // return all articles
     return items.filter((item) => item.sys.contentType.sys.id === 'article')
-    /* return rawArticles.map((article) => {
-      if (article.fields?.relatedArticles?.[0]?.fields) {
-        article.fields.relatedArticles = article.fields.relatedArticles.map(
-          (relatedArticle) => {
-            // remove related articles from nested articles
-            const {
-              relatedArticles,
-              ...prunedRelatedArticlesFields
-            } = relatedArticle.fields
-  
-            return { fields: prunedRelatedArticlesFields }
-          },
-        )
-      }
-      return article
-    })*/
   }
 
   doMapping(entries: IArticle[], nextSyncToken: string): MappedData[] {
