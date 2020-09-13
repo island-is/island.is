@@ -2,7 +2,7 @@ import { Slice } from '@island.is/web/graphql/schema'
 import { Document, BLOCKS, Block, Text } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
 
-export interface NavLink {
+interface NavLink {
   id: string
   text: string
 }
@@ -16,13 +16,25 @@ const isNavigatable = (slice: any): slice is Navigatable => {
   return typeof slice === 'object' && slice.id && slice.title
 }
 
+// hide the implementation rather than have everyone import slugify themselfes
+export const makeId = (s: string) => slugify(s)
+
 export const createNavigation = (
   slices: Slice[],
-  { htmlTags = [BLOCKS.HEADING_2] }: { htmlTags?: BLOCKS[] } = {},
+  {
+    htmlTags = [BLOCKS.HEADING_2],
+    title,
+  }: { htmlTags?: BLOCKS[]; title?: string } = {},
 ): NavLink[] => {
-  return slices
+  let nav = slices
     .map((slice) => sliceToNavLinks(slice, htmlTags))
     .reduce((acc, links) => acc.concat(links), [])
+
+  if (title) {
+    nav = [{ id: makeId(title), text: title }].concat(nav)
+  }
+
+  return nav
 }
 
 const extractNodeText = (block: Block): string => {

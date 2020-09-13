@@ -226,6 +226,7 @@ export type Slice =
   | ProcessEntry
   | FaqList
   | EmbeddedVideo
+  | SectionWithImage
 
 export type PageHeaderSlice = {
   __typename?: 'PageHeaderSlice'
@@ -340,6 +341,14 @@ export type EmbeddedVideo = {
   id: Scalars['ID']
   title: Scalars['String']
   url: Scalars['String']
+}
+
+export type SectionWithImage = {
+  __typename?: 'SectionWithImage'
+  id: Scalars['ID']
+  title: Scalars['String']
+  image?: Maybe<Image>
+  html: Html
 }
 
 export type Article = {
@@ -516,7 +525,7 @@ export type LifeEventPage = {
   intro: Scalars['String']
   image: Image
   thumbnail?: Maybe<Image>
-  body: Scalars['JSON']
+  content: Array<Slice>
 }
 
 export type AdgerdirTags = {
@@ -1190,6 +1199,7 @@ export type ResolversTypes = {
     | ResolversTypes['ProcessEntry']
     | ResolversTypes['FaqList']
     | ResolversTypes['EmbeddedVideo']
+    | ResolversTypes['SectionWithImage']
   PageHeaderSlice: ResolverTypeWrapper<PageHeaderSlice>
   HeadingSlice: ResolverTypeWrapper<HeadingSlice>
   StorySlice: ResolverTypeWrapper<StorySlice>
@@ -1211,6 +1221,7 @@ export type ResolversTypes = {
   ProcessEntry: ResolverTypeWrapper<ProcessEntry>
   FaqList: ResolverTypeWrapper<FaqList>
   EmbeddedVideo: ResolverTypeWrapper<EmbeddedVideo>
+  SectionWithImage: ResolverTypeWrapper<SectionWithImage>
   Article: ResolverTypeWrapper<
     Omit<Article, 'body'> & { body: Array<ResolversTypes['Slice']> }
   >
@@ -1244,7 +1255,9 @@ export type ResolversTypes = {
   >
   GenericPage: ResolverTypeWrapper<GenericPage>
   Menu: ResolverTypeWrapper<Menu>
-  LifeEventPage: ResolverTypeWrapper<LifeEventPage>
+  LifeEventPage: ResolverTypeWrapper<
+    Omit<LifeEventPage, 'content'> & { content: Array<ResolversTypes['Slice']> }
+  >
   AdgerdirTags: ResolverTypeWrapper<AdgerdirTags>
   PaginatedAdgerdirNews: ResolverTypeWrapper<PaginatedAdgerdirNews>
   OrganizationTags: ResolverTypeWrapper<OrganizationTags>
@@ -1349,6 +1362,7 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['ProcessEntry']
     | ResolversParentTypes['FaqList']
     | ResolversParentTypes['EmbeddedVideo']
+    | ResolversParentTypes['SectionWithImage']
   PageHeaderSlice: PageHeaderSlice
   HeadingSlice: HeadingSlice
   StorySlice: StorySlice
@@ -1368,6 +1382,7 @@ export type ResolversParentTypes = {
   ProcessEntry: ProcessEntry
   FaqList: FaqList
   EmbeddedVideo: EmbeddedVideo
+  SectionWithImage: SectionWithImage
   Article: Omit<Article, 'body'> & {
     body: Array<ResolversParentTypes['Slice']>
   }
@@ -1399,7 +1414,9 @@ export type ResolversParentTypes = {
   }
   GenericPage: GenericPage
   Menu: Menu
-  LifeEventPage: LifeEventPage
+  LifeEventPage: Omit<LifeEventPage, 'content'> & {
+    content: Array<ResolversParentTypes['Slice']>
+  }
   AdgerdirTags: AdgerdirTags
   PaginatedAdgerdirNews: PaginatedAdgerdirNews
   OrganizationTags: OrganizationTags
@@ -1780,7 +1797,8 @@ export type SliceResolvers<
     | 'Statistics'
     | 'ProcessEntry'
     | 'FaqList'
-    | 'EmbeddedVideo',
+    | 'EmbeddedVideo'
+    | 'SectionWithImage',
     ParentType,
     ContextType
   >
@@ -1977,6 +1995,17 @@ export type EmbeddedVideoResolvers<
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   url?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type SectionWithImageResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['SectionWithImage'] = ResolversParentTypes['SectionWithImage']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
+  html?: Resolver<ResolversTypes['Html'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2306,7 +2335,7 @@ export type LifeEventPageResolvers<
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   image?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
   thumbnail?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
-  body?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
+  content?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2697,6 +2726,7 @@ export type Resolvers<ContextType = Context> = {
   ProcessEntry?: ProcessEntryResolvers<ContextType>
   FaqList?: FaqListResolvers<ContextType>
   EmbeddedVideo?: EmbeddedVideoResolvers<ContextType>
+  SectionWithImage?: SectionWithImageResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
   AdgerdirPage?: AdgerdirPageResolvers<ContextType>
@@ -2799,6 +2829,9 @@ const result: IntrospectionResultData = {
           },
           {
             name: 'EmbeddedVideo',
+          },
+          {
+            name: 'SectionWithImage',
           },
         ],
       },
