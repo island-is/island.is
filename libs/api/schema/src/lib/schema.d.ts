@@ -510,6 +510,7 @@ export type Menu = {
 
 export type LifeEventPage = {
   __typename?: 'LifeEventPage'
+  id: Scalars['ID']
   title: Scalars['String']
   slug: Scalars['String']
   intro: Scalars['String']
@@ -2296,6 +2297,7 @@ export type LifeEventPageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['LifeEventPage'] = ResolversParentTypes['LifeEventPage']
 > = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>

@@ -7,12 +7,13 @@ import { environment } from '../environments/environment'
 import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
-import { WebSearchAutocompleteInput } from '@island.is/api/schema'
+import { SearcherInput, WebSearchAutocompleteInput } from '@island.is/api/schema'
 import {
-  autocompleteTerm,
+  autocompleteTermQuery,
   AutocompleteTermResponse,
   AutocompleteTermRequestBody,
 } from '../queries/autocomplete'
+import { searchQuery, SearchRequestBody } from '../queries/search'
 
 const { elastic } = environment
 interface SyncRequest {
@@ -134,56 +135,17 @@ export class ElasticService {
     }
   }
 
-  async query(index: SearchIndexes, query) {
-    const requestBody = new RequestBodySearch()
-    const must = []
-    // TODO: Seperate search functionality and basic content actions e.g. get by slug/id 
-    // TODO: Make this use the new query format
-    // TODO: Make this search tags and types
-    if (query?.queryString) {
-      requestBody.query(
-        esb
-          .queryStringQuery(`*${query.queryString}*`)
-          .fields([
-            'title.stemmed^10',
-            'content.stemmed^2'
-          ])
-          .analyzeWildcard(true),
-      )
-    }
+  async search(index: SearchIndexes, query: SearcherInput) {
+    const {queryString, size, page} = query
+    
+    const requestBody = searchQuery({queryString, size, page})
+    logger.info('requestBody', requestBody)
+    const data = await this.findByQuery<
+      any,
+      SearchRequestBody
+    >(index, requestBody)
 
-    if (query?._id) {
-      must.push(esb.matchQuery('_id', query.id))
-    }
-    if (query?.slug) {
-      must.push(esb.matchQuery('slug', query.slug))
-    }
-    if (query?.type) {
-      must.push(esb.matchQuery('content_type', query.type))
-    }
-    if (query?.tag) {
-      must.push(esb.termQuery('tag', query.tag))
-    }
-    if (query?.content) {
-      must.push(esb.matchQuery('content', query.content))
-    }
-    if (query?.title) {
-      must.push(esb.matchQuery('title', query.title))
-    }
-
-    if (must.length) {
-      requestBody.query(esb.boolQuery().must(must))
-    }
-
-    if (query?.size) {
-      requestBody.size(query.size)
-
-      if (query?.page > 1) {
-        requestBody.from((query.page - 1) * query.size)
-      }
-    }
-
-    return this.deprecatedFindByQuery(index, requestBody)
+    return data
   }
 
   async fetchCategories(index: SearchIndexes) {
@@ -214,7 +176,7 @@ export class ElasticService {
     input: Omit<WebSearchAutocompleteInput, 'language'>,
   ): Promise<AutocompleteTermResponse> {
     const { singleTerm: prefix, size } = input
-    const requestBody = autocompleteTerm({ prefix, size })
+    const requestBody = autocompleteTermQuery({ prefix, size })
 
     const data = await this.findByQuery<
       AutocompleteTermResponse,
@@ -318,3 +280,5 @@ export class ElasticService {
     })
   }
 }
+
+// TODO: We need to provide get data from ES for each domain, abstract that logic to another package and move search logic to content-search domain

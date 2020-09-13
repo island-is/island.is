@@ -8,6 +8,7 @@ import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 import { ContentLanguage } from './enums/contentLanguage.enum'
 import { SearcherService } from '@island.is/api/schema'
 import { logger } from '@island.is/logging'
+import { SearcherInput } from './dto/searcher.input'
 
 @Injectable()
 export class ContentSearchService implements SearcherService {
@@ -31,8 +32,7 @@ export class ContentSearchService implements SearcherService {
   }
 
   async find(query): Promise<SearchResult> {
-    // TODO: Make this returns search results by type e.g. [article]
-    const { body } = await this.elasticService.query(
+    const { body } = await this.elasticService.search(
       this.getIndex(query.language),
       query,
     )
@@ -70,7 +70,7 @@ export class ContentSearchService implements SearcherService {
   }
 
   async fetchSingle(input): Promise<ContentItem> {
-    const { body } = await this.elasticService.query(
+    const { body } = await this.elasticService.search(
       this.getIndex(input.language),
       input,
     )

@@ -6,7 +6,7 @@ export class SearchResult {
   @Field(() => Int)
   total: number
 
-  // TODO: Change this to slice of all types
+  // TODO: Change this to slices of all indexed types
   @Field(() => [ContentItem])
   items: ContentItem[]
 }

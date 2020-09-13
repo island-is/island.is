@@ -26,7 +26,7 @@ export interface AutocompleteTermRequestBody {
   }
 }
 
-export const autocompleteTerm = ({ prefix, size }: AutocompleteTermInput) => ({
+export const autocompleteTermQuery = ({ prefix, size }: AutocompleteTermInput): AutocompleteTermRequestBody => ({
   suggest: {
     searchSuggester: {
       prefix,
