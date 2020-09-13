@@ -3,25 +3,9 @@ import { Injectable } from '@nestjs/common'
 import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
 import { ArticleSyncService } from '../importers/article.service'
 import { RequestBodySearch, ExistsQuery, Sort } from 'elastic-builder'
-import { SyncOptions, SyncResponse } from './indexing.service'
+import { MappedData, SyncOptions, SyncResponse } from './indexing.service'
 import { ContentfulService } from './contentful.service'
 import { environment } from '../environments/environment'
-
-type tag = {
-  id: string
-  value: string
-  type: string
-}
-export interface MappedData {
-  id: string
-  title: string
-  content: string
-  type: string
-  termPool: string[]
-  response: string
-  tags: tag[]
-  nextSyncToken: string
-}
 
 @Injectable()
 export class CmsSyncService {
@@ -79,3 +63,6 @@ export class CmsSyncService {
     }
   }
 }
+
+// This should be the only thing accessable outside of cms domain
+// We need to export this in a module so we export module and this from the cms domain

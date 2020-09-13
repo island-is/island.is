@@ -1,7 +1,7 @@
 import { logger } from '@island.is/logging';
 import { Injectable } from '@nestjs/common';
 import _ from 'lodash';
-import { MappedData } from '../app/cmsSync.service';
+import { MappedData } from '../app/indexing.service';
 
 @Injectable()
 export class ArticleSyncService {
