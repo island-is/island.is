@@ -46,10 +46,7 @@ export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
         <GridColumn span={['12/12', '12/12', '9/12']}>
           <Box>{children}</Box>
         </GridColumn>
-        <GridColumn
-          hideBelow="md"
-          span={['0', '0', '3/12']}
-        >
+        <GridColumn hideBelow="md" span={['0', '0', '3/12']}>
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
       </GridRow>
