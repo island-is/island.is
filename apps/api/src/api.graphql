@@ -169,7 +169,7 @@ type SubArticle {
   body: [Slice!]!
 }
 
-union Slice = PageHeaderSlice | TimelineSlice | HeadingSlice | StorySlice | LinkCardSlice | LatestNewsSlice | MailingListSignupSlice | LogoListSlice | BulletListSlice | Html | Image | Statistics | ProcessEntry | FaqList | EmbeddedVideo
+union Slice = PageHeaderSlice | TimelineSlice | HeadingSlice | StorySlice | LinkCardSlice | LatestNewsSlice | MailingListSignupSlice | LogoListSlice | BulletListSlice | Html | Image | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage
 
 type PageHeaderSlice {
   id: ID!
@@ -270,6 +270,13 @@ type EmbeddedVideo {
   id: ID!
   title: String!
   url: String!
+}
+
+type SectionWithImage {
+  id: ID!
+  title: String!
+  image: Image
+  html: Html!
 }
 
 type Article {
@@ -426,7 +433,7 @@ type LifeEventPage {
   intro: String!
   image: Image!
   thumbnail: Image
-  body: JSON!
+  content: [Slice!]!
 }
 
 type AdgerdirTags {

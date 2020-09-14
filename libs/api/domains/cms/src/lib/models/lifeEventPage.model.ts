@@ -1,9 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import jsonContentType from 'graphql-type-json'
-import { Document } from '@contentful/rich-text-types'
 
 import { ILifeEventPage } from '../generated/contentfulTypes'
 
+import { Slice, mapDocument } from './slice.model'
 import { Image, mapImage } from './image.model'
 
 @ObjectType()
@@ -23,8 +22,8 @@ export class LifeEventPage {
   @Field({ nullable: true })
   thumbnail?: Image
 
-  @Field(() => jsonContentType)
-  body: Document
+  @Field(() => [Slice])
+  content: Array<typeof Slice>
 }
 
 export const mapLifeEventPage = ({
@@ -35,5 +34,5 @@ export const mapLifeEventPage = ({
   intro: fields.intro,
   image: mapImage(fields.image),
   thumbnail: fields.thumbnail && mapImage(fields.thumbnail),
-  body: fields.content,
+  content: mapDocument(fields.content),
 })
