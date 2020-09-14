@@ -6,6 +6,7 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Counter } from 'prom-client'
 import { Claim } from './models/claim.model'
 import { Sequelize } from 'sequelize-typescript'
+import { config } from './users-config'
 
 @Injectable()
 export class UserIdentitiesService {
@@ -62,13 +63,13 @@ export class UserIdentitiesService {
     // TODO: Also check 'nat' claim.
     // TODO: We may want to consider which external providers were used, and only allow
     // profile linking for providers with a certain trust level.
-    const natreg = userIdentity.claims.find(c => c.type == 'natreg') // TODO: Claim name in environment?
+    const natreg = userIdentity.claims.find(c => c.type == config.nationalIdClaimName)
 
     if (natreg) {
         const linkedIdentity = await this.userIdentityModel.findOne({
           include: [{
             model: Claim,
-            where: { type: 'natreg', value: natreg.value} // TODO: Claim name in environment?
+            where: { type: config.nationalIdClaimName, value: natreg.value}
           }]
         })
 
