@@ -13,7 +13,9 @@ There are certain precondition to be eligible for a discount. They are:
 ## Project entrypoints
 
 Dev: [https://loftbru.dev01.devland.is](https://loftbru.dev01.devland.is)
+
 Staging: [https://loftbru.staging01.devland.is](https://loftbru.staging01.devland.is)
+
 Production: [https://loftbru.island.is](https://loftbru.island.is)
 
 ### User Frontend
@@ -52,13 +54,13 @@ URL: [https://loftbru.dev01.devland.is/api/swagger/](https://loftbru.dev01.devla
 To get started developing this project, go ahead and:
 
 1. Fetch the environment secrets: `yarn env-secrets air-discount-scheme --reset`
-2. Start the resources with docker-compose: `docker-compose -f backend/docker-compose.base.yml -f backend/docker-compose.dev.yml up`
+2. Start the resources with docker-compose: `docker-compose -f apps/air-discount-scheme/backend/docker-compose.base.yml -f apps/air-discount-scheme/backend/docker-compose.dev.yml up`
 3. Start the front end: `yarn start air-discount-scheme-web`
 4. Start the graphql api: `yarn start air-discount-scheme-api`
 5. Start the backend api: `yarn start air-discount-scheme-backend`
 
-Navigate to [localhost:4200](localhost:4200) for the website or
-[localhost:4248/api/swagger/](localhost:4248/api/swagger/) for the airline api.
+Navigate to [localhost:4200](http://localhost:4200) for the website or
+[localhost:4248/api/swagger/](http://localhost:4248/api/swagger/) for the airline api.
 
 ## Shortcuts
 
@@ -77,5 +79,7 @@ Vegagerðin owns this system.
 ## Maintainers
 
 barabrian - Brian
+
 dabbeg - Davíð Guðni
+
 darrikonn - Darri Steinn
