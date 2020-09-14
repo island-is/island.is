@@ -18,6 +18,13 @@ import * as yargs from 'yargs'
 import * as fs from 'fs'
 import * as Sentry from '@sentry/node'
 
+// const AuthUrl = "https://siidentityserverweb20200805020732.azurewebsites.net/connect/authorize"
+// const TokenUrl = "https://siidentityserverweb20200805020732.azurewebsites.net/connect/token"
+// const AuthUrl = `${process.env.IDS_ISSUER}/connect/authorize`
+// const TokenUrl = `${process.env.IDS_ISSUER}/connect/token`
+const AuthUrl = `https://localhost:6001/connect/authorize`
+const TokenUrl = `https://localhost:6001/connect/token`
+
 type RunServerOptions = {
   /**
    * Main nest module.
@@ -76,8 +83,31 @@ const startServer = async (app: INestApplication, port = 3333) => {
 }
 
 function setupOpenApi(app: INestApplication, options: RunServerOptions) {
-  const document = SwaggerModule.createDocument(app, options.openApi)
-  SwaggerModule.setup(options.swaggerPath ?? 'swagger', app, document)
+  const swaggerOptions = new DocumentBuilder()
+    .setTitle(options.openApi.info.title)
+    .setDescription(options.openApi.info.description)
+    .setVersion(options.openApi.info.version)
+    .addOAuth2({
+      type: "oauth2",
+      flows: {
+        authorizationCode: {
+          authorizationUrl: AuthUrl,
+          tokenUrl: TokenUrl,
+          scopes: {
+            "openid profile @identityserver.api/read":
+            "Sækir OpenId og Profile claim-ið"
+          }
+        }
+      }
+    })
+    .addBasicAuth()
+    .addApiKey()
+    .addCookieAuth()
+    .addBearerAuth()
+    .build()
+  const document = SwaggerModule.createDocument(app, swaggerOptions)
+
+  SwaggerModule.setup('', app, document)
   return document
 }
 

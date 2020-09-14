@@ -118,6 +118,7 @@
     "js-yaml": "3.14.0",
     "jsbarcode": "3.11.0",
     "jwt-decode": "2.2.0",
+    "jwks-rsa": "1.9.0",
     "kennitala": "1.2.3",
     "libphonenumber-js": "1.7.53",
     "lodash": "4.17.19",
