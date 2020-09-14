@@ -1,7 +1,11 @@
 import { IsString, IsOptional, IsEnum } from 'class-validator'
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import { CaseState } from '../case.model'
+import {
+  CaseState,
+  CaseCustodyRestrictions,
+  CaseCustodyProvisions,
+} from '../case.types'
 
 export class UpdateCaseDto {
   @IsOptional()
@@ -43,4 +47,49 @@ export class UpdateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly requestedCourtDate: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly requestedCustodyEndDate: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly lawsBroken: string
+
+  @IsOptional()
+  @IsEnum(CaseCustodyProvisions, { each: true })
+  @ApiPropertyOptional({ enum: CaseCustodyProvisions, isArray: true })
+  readonly custodyProvisions: CaseCustodyProvisions[]
+
+  @IsOptional()
+  @IsEnum(CaseCustodyRestrictions, { each: true })
+  @ApiPropertyOptional({ enum: CaseCustodyRestrictions, isArray: true })
+  readonly custodyRestrictions: CaseCustodyRestrictions[]
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly caseFacts: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly witnessAccounts: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly investigationProgress: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly legalArguments: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly comments: string
 }
