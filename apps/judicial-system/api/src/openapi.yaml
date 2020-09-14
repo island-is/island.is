@@ -127,6 +127,9 @@ components:
         requestedCourtDate:
           format: date-time
           type: string
+        requestedCustodyEndDate:
+          format: date-time
+          type: string
       required:
         - policeCaseNumber
         - suspectNationalId
@@ -155,6 +158,9 @@ components:
           format: date-time
           type: string
         requestedCourtDate:
+          format: date-time
+          type: string
+        requestedCustodyEndDate:
           format: date-time
           type: string
         lawsBroken:
@@ -222,7 +228,12 @@ paths:
   /api/auth/login:
     get:
       operationId: AuthController_login
-      parameters: []
+      parameters:
+        - name: returnUrl
+          required: true
+          in: query
+          schema:
+            type: ''
       responses:
         '200':
           description: ''

@@ -105,6 +105,7 @@ export class AuthController {
       },
       returnUrl ?? '/gaesluvardhaldskrofur',
       res,
+      new Entropy({ bits: 128 }).string(),
     )
   }
 
@@ -154,6 +155,7 @@ export class AuthController {
     authUser: AuthUser,
     returnUrl: string,
     res: any,
+    csrfToken?: string,
   ) {
     if (!this.authService.validateUser(authUser)) {
       this.logger.error('Unknown user', {
@@ -164,7 +166,6 @@ export class AuthController {
       return res.redirect('/?error=true')
     }
 
-    const csrfToken = new Entropy({ bits: 128 }).string()
     const jwtToken = jwt.sign(
       {
         user: authUser,
