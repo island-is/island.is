@@ -16,7 +16,7 @@ env:
 jobs:
   prepare:
     #runs-on: self-hosted
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     timeout-minutes: 15 #pulling dependencies potentially twice - host OS and docker layer
 
     env:
@@ -119,13 +119,13 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-2
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-3
 
       - name: Cache for NodeJS dependencies - Docker layer
         uses: actions/cache@v1
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-3
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-4
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -219,7 +219,7 @@ jobs:
         ports:
           - 5432:5432
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     timeout-minutes: 10
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -243,7 +243,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-2
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-3
       - name: Cache for NodeJS dependencies - host OS
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v1
@@ -265,7 +265,7 @@ jobs:
 
   formatting:
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     timeout-minutes: 5
     env:
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
@@ -283,7 +283,7 @@ jobs:
 
   linting:
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     timeout-minutes: 25 # linting has proven to be quite resource intensive
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -309,7 +309,7 @@ jobs:
 
   docker-express:
     needs: [prepare, tests]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -328,7 +328,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-3
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-4
       - name: Set up Docker Buildx
         if: ${{ matrix.projects != 'dummy' }}
         id: buildx
@@ -350,7 +350,7 @@ jobs:
 
   docker-static:
     needs: [prepare, tests]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -369,7 +369,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-3
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-4
       - name: Set up Docker Buildx
         if: ${{ matrix.projects != 'dummy' }}
         id: buildx
@@ -391,7 +391,7 @@ jobs:
 
   docker-next:
     needs: [prepare, tests]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -410,7 +410,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-3
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-4
       - name: Set up Docker Buildx
         if: ${{ matrix.projects != 'dummy' }}
         id: buildx
@@ -431,7 +431,7 @@ jobs:
           PUBLISH: local
 
   retag-unaffected:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     timeout-minutes: 5
     needs:
       [docker-express, docker-next, docker-static, prepare, linting, formatting]
@@ -453,7 +453,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   trigger-deployments:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: [retag-unaffected, prepare]
     env:
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
@@ -479,7 +479,7 @@ jobs:
           BODY
 
   failure-notification:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     if: failure()
     needs:
       [
