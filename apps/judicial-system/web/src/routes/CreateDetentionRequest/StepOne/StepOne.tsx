@@ -10,7 +10,6 @@ import {
   Box,
   Select,
   Option,
-  Button,
   DatePicker,
 } from '@island.is/island-ui/core'
 import { CreateDetentionReqStepOneCase } from '../../../types'
@@ -19,6 +18,7 @@ import { validate } from '../../../utils/validate'
 import { updateState, autoSave } from '../../../utils/stepHelper'
 import { setHours, setMinutes, isValid } from 'date-fns'
 import { isNull } from 'lodash'
+import { FormFooter } from '../../../shared-components/FormFooter'
 
 export const StepOne: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<CreateDetentionReqStepOneCase>(
@@ -55,7 +55,6 @@ export const StepOne: React.FC = () => {
   const [arrestTimeErrorMessage, setArrestTimeErrorMessage] = useState<string>(
     '',
   )
-  const [someInputIsDirty, setSomeInputIsDirty] = useState<boolean>(false)
 
   const policeCaseNumberRef = useRef<HTMLInputElement>()
   const suspectNationalIdRef = useRef<HTMLInputElement>()
@@ -118,7 +117,6 @@ export const StepOne: React.FC = () => {
                 errorMessage={policeCaseNumberErrorMessage}
                 hasError={policeCaseNumberErrorMessage !== ''}
                 onBlur={(evt) => {
-                  setSomeInputIsDirty(true)
                   const validateField = validate(evt.target.value, 'empty')
                   if (validateField.isValid) {
                     createCaseIfPossible()
@@ -413,21 +411,14 @@ export const StepOne: React.FC = () => {
                 </GridColumn>
               </GridRow>
             </Box>
-            <Box display="flex" justifyContent="spaceBetween" marginBottom={30}>
-              <Button variant="ghost" href="/">
-                Til baka
-              </Button>
-              <Button
-                icon="arrowRight"
-                disabled={
-                  !someInputIsDirty ||
-                  filledRequiredFields.length !== requiredFields.length
-                }
-                href="/stofna-krofu/lagaakvaedi"
-              >
-                Halda áfram
-              </Button>
-            </Box>
+            <FormFooter
+              previousUrl="/"
+              nextUrl="/stofna-krofu/lagaakvaedi"
+              nextIsDisabled={
+                filledRequiredFields.length !== requiredFields.length
+              }
+              previousIsDisabled
+            />
           </GridColumn>
         </GridRow>
       </GridContainer>

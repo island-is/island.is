@@ -16,6 +16,7 @@ import { updateState, autoSave } from '../../../utils/stepHelper'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { setHours, setMinutes, isValid } from 'date-fns'
 import { isNull } from 'lodash'
+import { FormFooter } from '../../../shared-components/FormFooter'
 
 export const StepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<CreateDetentionReqStepTwoCase>(
@@ -27,6 +28,12 @@ export const StepTwo: React.FC = () => {
         offense: '',
         offenseParagraph: '',
         brokenLaws: [],
+        restrictions: [],
+        whatHappened: '',
+        testimony: '',
+        investigationStatus: '',
+        legalReasoning: '',
+        additionalInfo: '',
       },
     },
   )
@@ -44,6 +51,12 @@ export const StepTwo: React.FC = () => {
   const [checkboxFour, setCheckboxFour] = useState(false)
   const [checkboxFive, setCheckboxFive] = useState(false)
   const [checkboxSix, setCheckboxSix] = useState(false)
+  const [restrictionCheckboxOne, setRestrictionCheckboxOne] = useState(false)
+  const [restrictionCheckboxTwo, setRestrictionCheckboxTwo] = useState(false)
+  const [restrictionCheckboxThree, setRestrictionCheckboxThree] = useState(
+    false,
+  )
+  const [restrictionCheckboxFour, setRestrictionCheckboxFour] = useState(false)
 
   const brokenLaws = [
     {
@@ -87,6 +100,37 @@ export const StepTwo: React.FC = () => {
       setCheckbox: setCheckboxSix,
       explination:
         'Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum.',
+    },
+  ]
+
+  const restrictions = [
+    {
+      restriction: 'B - Einangrun',
+      getCheckbox: restrictionCheckboxOne,
+      setCheckbox: setRestrictionCheckboxOne,
+      explination:
+        'Gæslufangar skulu aðeins látnir vera í einrúmi samkvæmt úrskurði dómara en þó skulu þeir ekki gegn vilja sínum hafðir með öðrum föngum.',
+    },
+    {
+      restriction: 'C - Heimsóknarbann',
+      getCheckbox: restrictionCheckboxTwo,
+      setCheckbox: setRestrictionCheckboxTwo,
+      explination:
+        'Gæslufangar eiga rétt á heimsóknum. Þó getur sá sem rannsókn stýrir bannað heimsóknir ef nauðsyn ber til í þágu hennar en skylt er að verða við óskum gæslufanga um að hafa samband við verjanda og ræða við hann einslega, sbr. 1. mgr. 36. gr., og rétt að verða við óskum hans um að hafa samband við lækni eða prest, ef þess er kostur.',
+    },
+    {
+      restriction: 'D - Bréfskoðun, símabann',
+      getCheckbox: restrictionCheckboxThree,
+      setCheckbox: setRestrictionCheckboxThree,
+      explination:
+        'Gæslufangar mega nota síma eða önnur fjarskiptatæki og senda og taka við bréfum og öðrum skjölum. Þó getur sá sem rannsókn stýrir bannað notkun síma eða annarra fjarskiptatækja og látið athuga efni bréfa eða annarra skjala og kyrrsett þau ef nauðsyn ber til í þágu hennar en gera skal sendanda viðvart um kyrrsetningu, ef því er að skipta.',
+    },
+    {
+      restriction: 'E - Fjölmiðlabanns',
+      getCheckbox: restrictionCheckboxFour,
+      setCheckbox: setRestrictionCheckboxFour,
+      explination:
+        'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
     },
   ]
 
@@ -287,6 +331,157 @@ export const StepTwo: React.FC = () => {
                 </GridRow>
               </GridContainer>
             </Box>
+            <Box component="section" marginBottom={7}>
+              <Box marginBottom={2}>
+                <Typography as="h3" variant="h3">
+                  Takmarkanir á gæslu
+                </Typography>
+                <Typography>
+                  Ef ekkert er valið, er viðkomandi í lausagæslu
+                </Typography>
+              </Box>
+              <GridContainer>
+                <GridRow>
+                  {restrictions.map((restriction, index) => (
+                    <GridColumn span="3/7" key={index}>
+                      <Box marginBottom={3}>
+                        <Checkbox
+                          name={restriction.restriction}
+                          label={restriction.restriction}
+                          value={restriction.restriction}
+                          checked={restriction.getCheckbox}
+                          tooltip={restriction.explination}
+                          onChange={({ target }) => {
+                            // Toggle the checkbox on or off
+                            restriction.setCheckbox(target.checked)
+
+                            // Create a copy of the state
+                            const copyOfState = Object.assign(workingCase, {})
+
+                            // If the user is checking the box, add the restriction to the state
+                            if (target.checked) {
+                              copyOfState.case.restrictions.push(target.value)
+                            }
+                            // If the user is unchecking the box, remove the restriction from the state
+                            else {
+                              const restrictions = copyOfState.case.restrictions
+                              restrictions.splice(
+                                restrictions.indexOf(target.value),
+                                1,
+                              )
+                            }
+
+                            // Set the updated state as the state
+                            setWorkingCase(copyOfState)
+                          }}
+                          large
+                        />
+                      </Box>
+                    </GridColumn>
+                  ))}
+                </GridRow>
+              </GridContainer>
+            </Box>
+            <Box component="section" marginBottom={7}>
+              <Box marginBottom={2}>
+                <Typography as="h3" variant="h3">
+                  Greinargerð um málsatvik og lagarök
+                </Typography>
+              </Box>
+              <Box marginBottom={3}>
+                <Input
+                  textarea
+                  rows={2}
+                  name="whatHappened"
+                  label="Málsatvik rakin"
+                  placeholder="Skrifa hér..."
+                  onBlur={(evt) => {
+                    autoSave(
+                      workingCase,
+                      'whatHappened',
+                      evt.target.value,
+                      setWorkingCase,
+                    )
+                  }}
+                />
+              </Box>
+              <Box marginBottom={3}>
+                <Input
+                  textarea
+                  rows={2}
+                  name="testimony"
+                  label="Framburðir"
+                  placeholder="Skrifa hér..."
+                  onBlur={(evt) => {
+                    autoSave(
+                      workingCase,
+                      'testimony',
+                      evt.target.value,
+                      setWorkingCase,
+                    )
+                  }}
+                />
+              </Box>
+              <Box marginBottom={3}>
+                <Input
+                  textarea
+                  rows={2}
+                  name="investigationStatus"
+                  label="Staða rannsóknar og næstu skref"
+                  placeholder="Skrifa hér..."
+                  onBlur={(evt) => {
+                    autoSave(
+                      workingCase,
+                      'investigationStatus',
+                      evt.target.value,
+                      setWorkingCase,
+                    )
+                  }}
+                />
+              </Box>
+              <Box marginBottom={3}>
+                <Input
+                  textarea
+                  rows={2}
+                  name="legalReasoning"
+                  label="Lagarök"
+                  placeholder="Skrifa hér..."
+                  onBlur={(evt) => {
+                    autoSave(
+                      workingCase,
+                      'legalReasoning',
+                      evt.target.value,
+                      setWorkingCase,
+                    )
+                  }}
+                />
+              </Box>
+              <Box marginBottom={3}>
+                <Input
+                  textarea
+                  rows={2}
+                  name="additionalInfo"
+                  label="Athugasemdir til dómara"
+                  placeholder="Skrifa hér..."
+                  onBlur={(evt) => {
+                    autoSave(
+                      workingCase,
+                      'additionalInfo',
+                      evt.target.value,
+                      setWorkingCase,
+                    )
+                  }}
+                />
+              </Box>
+            </Box>
+            <FormFooter
+              previousUrl="/stofna-krofu/grunnupplysingar"
+              nextUrl="/"
+              nextIsDisabled={
+                workingCase.case.offense === '' &&
+                workingCase.case.brokenLaws.length === 0
+              }
+            />
           </GridColumn>
         </GridRow>
       </GridContainer>
