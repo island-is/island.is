@@ -39,7 +39,7 @@ export const Login = () => {
       </div>
       <div className={styles.buttonContainer}>
         <Button
-          href={`${apiUrl}/api/auth/login?returnUrl=gaesluvardhaldskrofur`}
+          href={`${apiUrl}/api/auth/login?returnUrl=/gaesluvardhaldskrofur`}
           width="fluid"
         >
           Innskráning

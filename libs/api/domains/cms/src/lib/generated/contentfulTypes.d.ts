@@ -13,6 +13,9 @@ export interface IArticleFields {
   /** Short title */
   shortTitle?: string | undefined
 
+  /** Introduction */
+  intro?: string | undefined
+
   /** Slug */
   slug: string
 
@@ -92,9 +95,6 @@ export interface IArticleGroupFields {
 
   /** Description */
   description?: string | undefined
-
-  /** Sort by */
-  sortBy?: 'A to Z' | 'Subgroups' | undefined
 }
 
 export interface IArticleGroup extends Entry<IArticleGroupFields> {
@@ -298,6 +298,9 @@ export interface IFrontpageSliderFields {
     | IOrganization
     | IPage
     | undefined
+
+  /** Animation (zip) */
+  animationZip?: Asset | undefined
 }
 
 /** Efni í haus á forsíðu */
@@ -668,7 +671,7 @@ export interface INewsFields {
   title: string
 
   /** Subtitle */
-  subtitle?: string | undefined
+  subtitle: string
 
   /** Slug */
   slug: string
@@ -764,8 +767,17 @@ export interface IOrganizationFields {
   /** Title */
   title: string
 
+  /** Description */
+  description?: string | undefined
+
   /** Slug */
   slug: string
+
+  /** Tag */
+  tag?: IOrganizationTag[] | undefined
+
+  /** Link */
+  link?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -778,6 +790,28 @@ export interface IOrganization extends Entry<IOrganizationFields> {
     contentType: {
       sys: {
         id: 'organization'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IOrganizationTagFields {
+  /** Title */
+  title: string
+}
+
+export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'organizationTag'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1243,30 +1277,6 @@ export interface IUiConfiguration extends Entry<IUiConfigurationFields> {
   }
 }
 
-export interface IUrlsFields {
-  /** slug */
-  slug?: string | undefined
-}
-
-/** List of urls */
-
-export interface IUrls extends Entry<IUrlsFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'urls'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
 export interface IVidspyrnaFrontpageFields {
   /** Title */
   title: string
@@ -1590,6 +1600,7 @@ export type CONTENT_TYPE =
   | 'numberBullet'
   | 'numberBulletSection'
   | 'organization'
+  | 'organizationTag'
   | 'page'
   | 'pageHeader'
   | 'processEntry'
@@ -1604,7 +1615,6 @@ export type CONTENT_TYPE =
   | 'timeline'
   | 'timelineEvent'
   | 'uiConfiguration'
-  | 'urls'
   | 'vidspyrna-frontpage'
   | 'vidspyrna-inline-image'
   | 'vidspyrna-process-entry'

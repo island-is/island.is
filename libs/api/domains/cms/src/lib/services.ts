@@ -27,7 +27,12 @@ import { Menu, mapMenu } from './models/menu.model'
 import { LifeEventPage, mapLifeEventPage } from './models/lifeEventPage.model'
 import { PaginatedAdgerdirNews } from './models/paginatedAdgerdirNews.model'
 import { AdgerdirTags } from './models/adgerdirTags.model'
+import { Organization } from './models/organization.model'
+import { Organizations } from './models/organizations.model'
 import { mapAdgerdirTag } from './models/adgerdirTag.model'
+import { mapOrganization } from './models/organization.model'
+import { OrganizationTags } from './models/organizationTags.model'
+import { mapOrganizationTag } from './models/organizationTag.model'
 import {
   FrontpageSliderList,
   mapFrontpageSliderList,
@@ -84,6 +89,25 @@ export const getAdgerdirPages = async (
   }
 }
 
+export const getOrganizations = async (
+  lang = 'is-IS',
+): Promise<Organizations> => {
+  const params = {
+    ['content_type']: 'organization',
+    include: 10,
+    limit: 100,
+  }
+
+  const result = await getLocalizedEntries<types.IOrganizationFields>(
+    lang,
+    params,
+  ).catch(errorHandler('getOrganizations'))
+
+  return {
+    items: result.items.map(mapOrganization),
+  }
+}
+
 export const getAdgerdirTags = async (
   lang = 'is-IS',
 ): Promise<AdgerdirTags> => {
@@ -100,6 +124,25 @@ export const getAdgerdirTags = async (
 
   return {
     items: r.items.map(mapAdgerdirTag),
+  }
+}
+
+export const getOrganizationTags = async (
+  lang = 'is-IS',
+): Promise<OrganizationTags> => {
+  const params = {
+    ['content_type']: 'organizationTag',
+    include: 10,
+    limit: 100,
+  }
+
+  const r = await getLocalizedEntries<types.IOrganizationTagFields>(
+    lang,
+    params,
+  ).catch(errorHandler('getOrganizationTags'))
+
+  return {
+    items: r.items.map(mapOrganizationTag),
   }
 }
 
@@ -133,6 +176,19 @@ export const getAdgerdirPage = async (
   return result.items.map(mapAdgerdirPage)[0] ?? null
 }
 
+export const getOrganization = async (
+  slug: string,
+  lang: string,
+): Promise<Organization> => {
+  const result = await getLocalizedEntries<types.IOrganizationFields>(lang, {
+    ['content_type']: 'organization',
+    include: 10,
+    'fields.slug': slug,
+  }).catch(errorHandler('getOrganization'))
+
+  return result.items.map(mapOrganization)[0] ?? null
+}
+
 const ArticleFields = [
   // we want to exclude relatedArticles because it's a self-referencing
   // relation and selecting related articles to a depth of 10 would make the
@@ -144,6 +200,7 @@ const ArticleFields = [
   'fields.subgroup',
   'fields.group',
   'fields.category',
+  'fields.subArticles',
 ].join(',')
 
 export const getAdgerdirNews = async (

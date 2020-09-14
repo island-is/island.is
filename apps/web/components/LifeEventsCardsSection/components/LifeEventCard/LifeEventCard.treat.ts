@@ -8,12 +8,7 @@ export const thumbnail = style({
   width: 137,
   height: 156,
   flex: 'none',
-  display: 'none',
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      display: 'block',
-    },
-  },
+  display: 'block',
 })
 
 export const card = style({
@@ -24,21 +19,6 @@ export const card = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       boxShadow: 'none',
-    },
-  },
-})
-
-export const image = style({
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
-  backgroundSize: 'contain',
-  flex: 'none',
-  paddingBottom: '100%',
-  width: '100%',
-
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      display: 'none',
     },
   },
 })

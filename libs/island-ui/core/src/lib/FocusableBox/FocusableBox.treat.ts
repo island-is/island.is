@@ -1,23 +1,9 @@
-import { style } from 'treat'
+import { style, styleMap } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const focusable = style({
   position: 'relative',
   transition: 'border-color 150ms ease',
-
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      cursor: 'pointer',
-      ':hover': {
-        borderColor: theme.color.blue400,
-      },
-      selectors: {
-        [`&:focus:hover`]: {
-          borderColor: theme.color.white,
-        },
-      },
-    },
-  },
 
   '::before': {
     content: "''",
@@ -60,6 +46,45 @@ export const focused = style({
       },
       ':focus': {
         borderColor: 'transparent',
+      },
+    },
+  },
+})
+
+export const colorSchemes = styleMap({
+  purple: {
+    '@media': {
+      [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+        ':hover': {
+          borderColor: theme.color.purple400,
+        },
+        ':focus': {
+          borderColor: 'transparent',
+        },
+      },
+    },
+  },
+  blue: {
+    '@media': {
+      [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+        ':hover': {
+          borderColor: theme.color.blue400,
+        },
+        ':focus': {
+          borderColor: 'transparent',
+        },
+      },
+    },
+  },
+  red: {
+    '@media': {
+      [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+        ':hover': {
+          borderColor: theme.color.red400,
+        },
+        ':focus': {
+          borderColor: 'transparent',
+        },
       },
     },
   },

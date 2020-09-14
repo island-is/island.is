@@ -140,7 +140,7 @@ export const tempTabs = [
       { title: 'Um Ísland.is', url: '/um-island-is' },
       {
         title: 'Stofnanir',
-        url: '/',
+        url: '/stofnanir',
       },
     ],
     externalLinksHeading: 'Aðrir opinberir vefir',
