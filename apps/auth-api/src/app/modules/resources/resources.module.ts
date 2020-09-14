@@ -12,11 +12,18 @@ import { ApiResourceScope } from './model/api-resource-scope.model'
 import { ApiResourceSecret } from './model/api-resource-secret.model'
 
 @Module({
-  imports: [SequelizeModule.forFeature([
-    IdentityResource, IdentityResourceUserClaim,
-    ApiScope, ApiScopeUserClaim,
-    ApiResource, ApiResourceUserClaim, ApiResourceScope, ApiResourceSecret
-  ])],
+  imports: [
+    SequelizeModule.forFeature([
+      IdentityResource,
+      IdentityResourceUserClaim,
+      ApiScope,
+      ApiScopeUserClaim,
+      ApiResource,
+      ApiResourceUserClaim,
+      ApiResourceScope,
+      ApiResourceSecret,
+    ]),
+  ],
   controllers: [ResourcesController],
   providers: [ResourcesService],
 })

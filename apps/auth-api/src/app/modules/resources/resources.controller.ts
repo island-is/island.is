@@ -1,5 +1,15 @@
-import { IdentityResourcesDTO } from './dto/identity-resources-dto';
-import { Controller, Get, Query, Post, Body, Put, Param, Delete, UseGuards } from '@nestjs/common'
+import { IdentityResourcesDTO } from './dto/identity-resources-dto'
+import {
+  Controller,
+  Get,
+  Query,
+  Post,
+  Body,
+  Put,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common'
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -12,7 +22,7 @@ import { ResourcesService } from './resources.service'
 import { ApiScope } from './model/api-scope.model'
 import { ApiResource } from './model/api-resource.model'
 import { AuthGuard } from '@nestjs/passport'
-import { ApiScopesDTO } from './dto/api-scopes-dto';
+import { ApiScopesDTO } from './dto/api-scopes-dto'
 
 @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(AuthGuard('jwt'))
@@ -73,15 +83,23 @@ export class ResourcesController {
   }
 
   @Post('identity-resource')
-  @ApiCreatedResponse({ type: IdentityResource})
-  async createIdentityResource(@Body() identityResource: IdentityResourcesDTO): Promise<IdentityResource> {
+  @ApiCreatedResponse({ type: IdentityResource })
+  async createIdentityResource(
+    @Body() identityResource: IdentityResourcesDTO,
+  ): Promise<IdentityResource> {
     return await this.resourcesService.createIdentityResource(identityResource)
   }
 
   @Put('identity-resource/:id')
-  @ApiOkResponse({ type: IdentityResource})
-  async updateIdentityResource(@Body() identityResource: IdentityResourcesDTO, @Param('id') id: string): Promise<IdentityResource> {
-    return await this.resourcesService.updateIdentityResource(identityResource, id)
+  @ApiOkResponse({ type: IdentityResource })
+  async updateIdentityResource(
+    @Body() identityResource: IdentityResourcesDTO,
+    @Param('id') id: string,
+  ): Promise<IdentityResource> {
+    return await this.resourcesService.updateIdentityResource(
+      identityResource,
+      id,
+    )
   }
 
   @Delete('identity-resource/:id')
@@ -91,14 +109,17 @@ export class ResourcesController {
   }
 
   @Post('api-scope')
-  @ApiCreatedResponse({ type: ApiScope})
+  @ApiCreatedResponse({ type: ApiScope })
   async createApiScope(@Body() apiScope: ApiScopesDTO): Promise<ApiScope> {
     return await this.resourcesService.createApiScope(apiScope)
   }
 
   @Put('api-scope/:id')
   @ApiOkResponse({ type: ApiScope })
-  async updateApiScope(@Body() apiScope: ApiScopesDTO, @Param('id') id: string): Promise<ApiScope> {
+  async updateApiScope(
+    @Body() apiScope: ApiScopesDTO,
+    @Param('id') id: string,
+  ): Promise<ApiScope> {
     return await this.resourcesService.updateApiScope(apiScope, id)
   }
 

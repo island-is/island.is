@@ -9,7 +9,12 @@ import {
   Body,
   UseGuards,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiTags, ApiOAuth2, ApiCreatedResponse } from '@nestjs/swagger'
+import {
+  ApiOkResponse,
+  ApiTags,
+  ApiOAuth2,
+  ApiCreatedResponse,
+} from '@nestjs/swagger'
 import { Grant } from './grants.model'
 import { AuthGuard } from '@nestjs/passport'
 import { GrantDTO } from './dto/grant-dto'
@@ -66,9 +71,7 @@ export class GrantsController {
 
   @Delete(':key')
   @ApiOkResponse()
-  async removeAsync(
-    @Param('key') key: string,
-  ): Promise<number> {
+  async removeAsync(@Param('key') key: string): Promise<number> {
     return await this.grantsService.removeAsync(key)
   }
 

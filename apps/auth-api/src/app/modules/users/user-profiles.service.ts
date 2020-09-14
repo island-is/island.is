@@ -73,7 +73,7 @@ export class UserProfilesService {
     this.logger.debug('Deleting the user profile with id: ', id)
 
     return await this.userProfileModel.destroy({
-      where: { id: id}
+      where: { id: id },
     })
   }
 }

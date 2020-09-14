@@ -179,6 +179,6 @@ export class ResourcesService {
   async deleteApiScope(id: string): Promise<number> {
     this.logger.debug('Deleting api scope with id: ', id)
 
-    return await this.apiScopeModel.destroy({ where: { id: id }})
+    return await this.apiScopeModel.destroy({ where: { id: id } })
   }
 }
