@@ -170,19 +170,23 @@ components:
         lawsBroken:
           type: string
         custodyProvisions:
-          type: string
-          enum:
-            - ISOLATION
-            - VISITAION
-            - COMMUNICATION
-            - MEDIA
+          type: array
+          items:
+            type: string
+            enum:
+              - ISOLATION
+              - VISITAION
+              - COMMUNICATION
+              - MEDIA
         custodyRestrictions:
-          type: string
-          enum:
-            - ISOLATION
-            - VISITAION
-            - COMMUNICATION
-            - MEDIA
+          type: array
+          items:
+            type: string
+            enum:
+              - ISOLATION
+              - VISITAION
+              - COMMUNICATION
+              - MEDIA
         caseFacts:
           type: string
         witnessAccounts:
