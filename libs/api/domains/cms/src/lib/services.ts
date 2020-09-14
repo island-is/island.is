@@ -419,3 +419,16 @@ export const getLifeEvents = async (lang: string): Promise<LifeEventPage[]> => {
 
   return result.items.map(mapLifeEventPage)
 }
+
+export const getLifeEventsInCategory = async (
+  lang: string,
+  slug: string,
+): Promise<LifeEventPage[]> => {
+  const result = await getLocalizedEntries<types.ILifeEventPageFields>(lang, {
+    ['content_type']: 'lifeEventPage',
+    'fields.category.sys.contentType.sys.id': 'articleCategory',
+    'fields.category.fields.slug': slug,
+  }).catch(errorHandler('getLifeEventsInCategory'))
+
+  return result.items.map(mapLifeEventPage)
+}

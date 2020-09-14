@@ -508,6 +508,10 @@ export interface ILifeEventPageFields {
 
   /** content */
   content: Document
+
+  /** Category */
+  category?: IArticleCategory | undefined
+
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {

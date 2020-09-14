@@ -33,3 +33,23 @@ export const GET_LIFE_EVENTS_QUERY = gql`
     }
   }
 `
+
+export const GET_LIFE_EVENTS_IN_CATEGORY_QUERY = gql`
+  query GetLifeEventsInCategory($input: GetLifeEventsInput!) {
+    getLifeEventsInCategory(input: $input) {
+      title
+      slug
+      intro
+      category {
+        title
+        slug
+      }
+      thumbnail {
+        url
+      }
+      image {
+        url
+      }
+    }
+  }
+`

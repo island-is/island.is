@@ -526,6 +526,7 @@ export type LifeEventPage = {
   image: Image
   thumbnail?: Maybe<Image>
   content: Array<Slice>
+  category?: Maybe<ArticleCategory>
 }
 
 export type AdgerdirTags = {
@@ -636,6 +637,7 @@ export type Query = {
   getMenu?: Maybe<Menu>
   getLifeEventPage?: Maybe<LifeEventPage>
   getLifeEvents: Array<LifeEventPage>
+  getLifeEventsInCategory: Array<LifeEventPage>
   getApplication?: Maybe<Application>
   getApplicationsByType?: Maybe<Array<Application>>
   getDocument?: Maybe<DocumentDetails>
@@ -744,6 +746,10 @@ export type QueryGetLifeEventPageArgs = {
 }
 
 export type QueryGetLifeEventsArgs = {
+  input: GetLifeEventsInput
+}
+
+export type QueryGetLifeEventsInCategoryArgs = {
   input: GetLifeEventsInput
 }
 
@@ -905,6 +911,7 @@ export type GetLifeEventPageInput = {
 }
 
 export type GetLifeEventsInput = {
+  slug?: Maybe<Scalars['String']>
   lang: Scalars['String']
 }
 
@@ -2336,6 +2343,11 @@ export type LifeEventPageResolvers<
   image?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
   thumbnail?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   content?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
+  category?: Resolver<
+    Maybe<ResolversTypes['ArticleCategory']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2612,6 +2624,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetLifeEventsArgs, 'input'>
+  >
+  getLifeEventsInCategory?: Resolver<
+    Array<ResolversTypes['LifeEventPage']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetLifeEventsInCategoryArgs, 'input'>
   >
   getApplication?: Resolver<
     Maybe<ResolversTypes['Application']>,

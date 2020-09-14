@@ -60,6 +60,7 @@ import {
   getOrganizationTags,
   getLifeEventPage,
   getLifeEvents,
+  getLifeEventsInCategory,
 } from './services'
 import { LatestNewsSlice } from './models/latestNewsSlice.model'
 import { Menu } from './models/menu.model'
@@ -227,6 +228,13 @@ export class CmsResolver {
     @Args('input') input: GetLifeEventsInput,
   ): Promise<LifeEventPage[]> {
     return getLifeEvents(input.lang)
+  }
+
+  @Query(() => [LifeEventPage])
+  getLifeEventsInCategory(
+    @Args('input') input: GetLifeEventsInput,
+  ): Promise<LifeEventPage[]> {
+    return getLifeEventsInCategory(input.lang, input.slug)
   }
 }
 
