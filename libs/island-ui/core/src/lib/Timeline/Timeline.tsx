@@ -312,13 +312,12 @@ const EventBar = forwardRef(
 
 interface EventModalProps {
   event: TimelineEvent
-  visible: boolean
   onClose: () => void
 }
 
 const EventModal = forwardRef(
   (
-    { event, visible, onClose }: EventModalProps,
+    { event, onClose }: EventModalProps,
     ref: React.LegacyRef<HTMLDivElement>,
   ) => {
     if (!event) {
@@ -326,12 +325,7 @@ const EventModal = forwardRef(
     }
 
     return (
-      <div
-        ref={ref}
-        className={cn(eventStyles.eventModal, {
-          [eventStyles.eventModalVisible]: visible,
-        })}
-      >
+      <div ref={ref} className={eventStyles.eventModal}>
         <div className={eventStyles.eventBarIcon}>
           <Icon type="user" color="purple400" width="24" />
         </div>

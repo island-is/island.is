@@ -106,12 +106,6 @@ export const eventModal = style({
   animationDuration: '0.25s',
 })
 
-export const eventModalVisible = style({
-  opacity: 1,
-  visibility: 'initial',
-  zIndex: 1,
-})
-
 export const eventModalContent = style({
   textAlign: 'left',
   padding: '10px 48px 48px',
