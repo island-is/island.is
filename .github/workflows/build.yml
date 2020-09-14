@@ -220,7 +220,7 @@ jobs:
           - 5432:5432
     needs: prepare
     runs-on: ubuntu-20.04
-    timeout-minutes: 10
+    timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
