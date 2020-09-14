@@ -167,7 +167,7 @@
     "webcrypto-jwt": "^0.2.2",
     "winston": "3.2.1",
     "winston-transport": "4.4.0",
-    "xstate": "4.10.0",
+    "xstate": "4.13.0",
     "yargs": "15.4.1",
     "yup": "0.29.0",
     "zod": "1.10.2"

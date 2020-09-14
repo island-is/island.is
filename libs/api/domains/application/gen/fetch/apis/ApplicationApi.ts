@@ -33,6 +33,9 @@ import {
     UpdateApplicationDto,
     UpdateApplicationDtoFromJSON,
     UpdateApplicationDtoToJSON,
+    UpdateApplicationStateDto,
+    UpdateApplicationStateDtoFromJSON,
+    UpdateApplicationStateDtoToJSON,
 } from '../models';
 
 export interface ApplicationControllerAddAttachmentRequest {
@@ -55,6 +58,11 @@ export interface ApplicationControllerFindAllRequest {
 
 export interface ApplicationControllerFindOneRequest {
     id: string;
+}
+
+export interface ApplicationControllerSubmitApplicationRequest {
+    id: string;
+    updateApplicationStateDto: UpdateApplicationStateDto;
 }
 
 export interface ApplicationControllerUpdateRequest {
@@ -230,6 +238,41 @@ export class ApplicationApi extends runtime.BaseAPI {
      */
     async applicationControllerFindOne(requestParameters: ApplicationControllerFindOneRequest): Promise<Application> {
         const response = await this.applicationControllerFindOneRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     */
+    async applicationControllerSubmitApplicationRaw(requestParameters: ApplicationControllerSubmitApplicationRequest): Promise<runtime.ApiResponse<Application>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling applicationControllerSubmitApplication.');
+        }
+
+        if (requestParameters.updateApplicationStateDto === null || requestParameters.updateApplicationStateDto === undefined) {
+            throw new runtime.RequiredError('updateApplicationStateDto','Required parameter requestParameters.updateApplicationStateDto was null or undefined when calling applicationControllerSubmitApplication.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/application/{id}/submit`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: UpdateApplicationStateDtoToJSON(requestParameters.updateApplicationStateDto),
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async applicationControllerSubmitApplication(requestParameters: ApplicationControllerSubmitApplicationRequest): Promise<Application> {
+        const response = await this.applicationControllerSubmitApplicationRaw(requestParameters);
         return await response.value();
     }
 

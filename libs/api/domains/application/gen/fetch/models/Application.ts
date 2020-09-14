@@ -60,7 +60,7 @@ export interface Application {
      * @type {string}
      * @memberof Application
      */
-    state: ApplicationStateEnum;
+    state: string;
     /**
      * 
      * @type {object}
@@ -134,20 +134,6 @@ export function ApplicationToJSON(value?: Application | null): any {
     };
 }
 
-/**
-* @export
-* @enum {string}
-*/
-export enum ApplicationStateEnum {
-    DRAFT = 'DRAFT',
-    BEINGPROCESSED = 'BEING_PROCESSED',
-    NEEDSINFORMATION = 'NEEDS_INFORMATION',
-    PENDING = 'PENDING',
-    APPROVED = 'APPROVED',
-    MANUALAPPROVED = 'MANUAL_APPROVED',
-    REJECTED = 'REJECTED',
-    UNKNOWN = 'UNKNOWN'
-}
 /**
 * @export
 * @enum {string}

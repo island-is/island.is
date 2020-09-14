@@ -3,24 +3,20 @@ import { render } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
 import { ApplicationForm } from './ApplicationForm'
-import {
-  Application,
-  ApplicationState,
-  FormType,
-} from '@island.is/application/template'
+import { Application, ApplicationTypes } from '@island.is/application/template'
 import { client } from '@island.is/application/graphql'
 import { ApolloProvider } from '@apollo/client'
 
 describe(' ApplicationForm', () => {
   const application: Application = {
     id: '12315151515',
-    typeId: FormType.EXAMPLE3,
+    typeId: ApplicationTypes.PARENTAL_LEAVE,
     attachments: {},
     externalData: {},
     answers: {},
     applicant: '123123',
     externalId: '123123123',
-    state: ApplicationState.DRAFT,
+    state: 'draft',
     modified: null,
     created: null,
   }
@@ -40,6 +36,6 @@ describe(' ApplicationForm', () => {
         <ApplicationForm application={application} />
       </ApolloProvider>,
     )
-    expect(getByText(`Driver's license`)).toBeInTheDocument()
+    expect(getByText(`Fæðingarorlof`)).toBeInTheDocument()
   })
 })

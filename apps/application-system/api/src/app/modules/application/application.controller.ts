@@ -9,6 +9,8 @@ import {
   Delete,
   Query,
   ParseUUIDPipe,
+  BadRequestException,
+  UseInterceptors,
 } from '@nestjs/common'
 import { omit } from 'lodash'
 import { InjectQueue } from '@nestjs/bull'
@@ -22,8 +24,10 @@ import {
 import {
   Application as BaseApplication,
   callDataProviders,
-  FormType,
+  ApplicationTypes,
   FormValue,
+  getApplicationTemplateByTypeId,
+  ApplicationTemplateHelper,
 } from '@island.is/application/template'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
@@ -34,8 +38,10 @@ import { mergeAnswers } from '@island.is/application/template'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
 import { buildDataProviders, buildExternalData } from './externalDataUtils'
-import { ApplicationByIdPipe } from './pipes/applicationById.pipe'
+import { ApplicationByIdPipe } from './tools/applicationById.pipe'
 import { validateApplicationSchema } from './schemaValidationUtils'
+import { ApplicationSerializer } from './tools/application.serializer'
+import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 
 @ApiTags('application')
 @Controller('application')
@@ -48,6 +54,7 @@ export class ApplicationController {
 
   @Get(':id')
   @ApiOkResponse({ type: Application })
+  @UseInterceptors(ApplicationSerializer)
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<Application> {
@@ -61,12 +68,12 @@ export class ApplicationController {
 
     return application
   }
-
+  // TODO REMOVE
   @Get()
   @ApiOkResponse({ type: Application, isArray: true })
   async findAll(@Query('typeId') typeId: string): Promise<Application[]> {
     if (typeId) {
-      return this.applicationService.findAllByType(typeId as FormType)
+      return this.applicationService.findAllByType(typeId as ApplicationTypes)
     } else {
       return this.applicationService.findAll()
     }
@@ -74,15 +81,23 @@ export class ApplicationController {
 
   @Post()
   @ApiCreatedResponse({ type: Application })
+  @UseInterceptors(ApplicationSerializer)
   async create(
     @Body()
     application: CreateApplicationDto,
   ): Promise<Application> {
+    // TODO not post the state, it should follow the initialstate of the machine
     validateApplicationSchema(
-      application.typeId,
+      {
+        ...application,
+        externalData: {},
+        id: undefined,
+        modified: new Date(),
+        created: new Date(),
+      } as BaseApplication,
       application.answers as FormValue,
-      true,
     )
+
     return this.applicationService.create(application)
   }
 
@@ -95,6 +110,7 @@ export class ApplicationController {
     allowEmptyValue: false,
   })
   @ApiOkResponse({ type: Application })
+  @UseInterceptors(ApplicationSerializer)
   async update(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     existingApplication: Application,
@@ -102,9 +118,8 @@ export class ApplicationController {
     application: UpdateApplicationDto,
   ): Promise<Application> {
     validateApplicationSchema(
-      existingApplication.typeId as FormType,
+      existingApplication as BaseApplication,
       application.answers as FormValue,
-      true,
     )
     const mergedAnswers = mergeAnswers(
       existingApplication.answers,
@@ -130,6 +145,7 @@ export class ApplicationController {
     allowEmptyValue: false,
   })
   @ApiOkResponse({ type: Application })
+  @UseInterceptors(ApplicationSerializer)
   async updateExternalData(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     existingApplication: Application,
@@ -156,6 +172,53 @@ export class ApplicationController {
     return updatedApplication
   }
 
+  @Put(':id/submit')
+  @ApiParam({
+    name: 'id',
+    type: String,
+    required: true,
+    description: 'The id of the application to update the state for.',
+    allowEmptyValue: false,
+  })
+  @ApiOkResponse({ type: Application })
+  @UseInterceptors(ApplicationSerializer)
+  async submitApplication(
+    @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
+    existingApplication: Application,
+    @Body() updateApplicationStateDto: UpdateApplicationStateDto,
+  ): Promise<Application> {
+    const template = getApplicationTemplateByTypeId(
+      existingApplication.typeId as ApplicationTypes,
+    )
+    if (template === null) {
+      throw new BadRequestException(
+        `No application template exists for type: ${existingApplication.typeId}`,
+      )
+    }
+
+    const helper = new ApplicationTemplateHelper(
+      existingApplication as BaseApplication,
+      template,
+    )
+
+    // todo update the answers
+
+    const newState = helper.changeState(updateApplicationStateDto.event)
+
+    if (newState.changed) {
+      const {
+        updatedApplication,
+      } = await this.applicationService.updateApplicationState(
+        existingApplication.id,
+        newState.value.toString(), // TODO maybe ban more complicated states....
+      )
+
+      return updatedApplication
+    }
+
+    return existingApplication
+  }
+
   @Put(':id/attachments')
   @ApiParam({
     name: 'id',
@@ -165,6 +228,7 @@ export class ApplicationController {
     allowEmptyValue: false,
   })
   @ApiOkResponse({ type: Application })
+  @UseInterceptors(ApplicationSerializer)
   async addAttachment(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     existingApplication: Application,
@@ -199,6 +263,7 @@ export class ApplicationController {
     allowEmptyValue: false,
   })
   @ApiOkResponse({ type: Application })
+  @UseInterceptors(ApplicationSerializer)
   async deleteAttachment(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     existingApplication: Application,

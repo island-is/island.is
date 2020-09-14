@@ -456,7 +456,7 @@ type Application {
   applicant: String!
   assignee: String!
   externalId: String
-  state: ApplicationStateEnum!
+  state: String!
   attachments: JSON
   typeId: ApplicationTypeIdEnum!
   answers: JSON!
@@ -467,17 +467,6 @@ type Application {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
-
-enum ApplicationStateEnum {
-  DRAFT
-  BEINGPROCESSED
-  NEEDSINFORMATION
-  PENDING
-  APPROVED
-  MANUALAPPROVED
-  REJECTED
-  UNKNOWN
-}
 
 enum ApplicationTypeIdEnum {
   ExampleForm
@@ -719,6 +708,7 @@ type Mutation {
   updateApplicationExternalData(input: UpdateApplicationExternalDataInput!): Application
   addAttachment(input: AddAttachmentInput!): Application
   deleteAttachment(input: DeleteAttachmentInput!): Application
+  submitApplication(input: SubmitApplicationInput!): Application
   createUploadUrl(filename: String!): PresignedPost!
 }
 
@@ -726,21 +716,10 @@ input CreateApplicationInput {
   applicant: String!
   assignee: String!
   externalId: String
-  state: CreateApplicationDtoStateEnum!
+  state: String!
   attachments: JSON
   typeId: CreateApplicationDtoTypeIdEnum!
   answers: JSON!
-}
-
-enum CreateApplicationDtoStateEnum {
-  DRAFT
-  BEINGPROCESSED
-  NEEDSINFORMATION
-  PENDING
-  APPROVED
-  MANUALAPPROVED
-  REJECTED
-  UNKNOWN
 }
 
 enum CreateApplicationDtoTypeIdEnum {
@@ -756,20 +735,8 @@ input UpdateApplicationInput {
   applicant: String
   assignee: String
   externalId: String
-  state: UpdateApplicationDtoStateEnum
   attachments: JSON
   answers: JSON
-}
-
-enum UpdateApplicationDtoStateEnum {
-  DRAFT
-  BEINGPROCESSED
-  NEEDSINFORMATION
-  PENDING
-  APPROVED
-  MANUALAPPROVED
-  REJECTED
-  UNKNOWN
 }
 
 input UpdateApplicationExternalDataInput {
@@ -797,4 +764,10 @@ input AddAttachmentInput {
 input DeleteAttachmentInput {
   id: String!
   key: String!
+}
+
+input SubmitApplicationInput {
+  id: String!
+  event: String!
+  answers: JSON
 }

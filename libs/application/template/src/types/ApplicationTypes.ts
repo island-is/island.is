@@ -1,4 +1,4 @@
-export enum FormType {
+export enum ApplicationTypes {
   EXAMPLE = 'ExampleForm',
   EXAMPLE2 = 'ExampleForm2',
   EXAMPLE3 = 'ExampleForm3',
