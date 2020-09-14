@@ -23,27 +23,30 @@ export const StepTwo: React.FC = () => {
     {
       id: '',
       case: {
-        courtClaimDate: null,
-        courtClaimTime: 'string',
-        offense: '',
-        offenseParagraph: '',
-        brokenLaws: [],
+        requestedCustodyEndDate: null,
+        requestedCustodyEndTime: 'string',
+        lawsBroken: '',
+        caseCustodyProvisions: [],
         restrictions: [],
-        whatHappened: '',
-        testimony: '',
-        investigationStatus: '',
-        legalReasoning: '',
-        additionalInfo: '',
+        caseFacts: '',
+        witnessAccounts: '',
+        investigationProgress: '',
+        legalArguments: '',
+        comments: '',
       },
     },
   )
-  const [courtClaimDateErrorMessage, setCourtClaimDateErrorMessage] = useState<
-    string
-  >('')
-  const [courtClaimTimeErrorMessage, setCourtClaimTimeErrorMessage] = useState<
-    string
-  >('')
-  const [offenceErrorMessage, setOffenceErrorMessage] = useState<string>('')
+  const [
+    requestedCustodyEndDateErrorMessage,
+    setRequestedCustodyEndDateErrorMessage,
+  ] = useState<string>('')
+  const [
+    requestedCustodyEndTimeErrorMessage,
+    setRequestedCustodyEndTimeErrorMessage,
+  ] = useState<string>('')
+  const [lawsBrokenErrorMessage, setLawsBrokenErrorMessage] = useState<string>(
+    '',
+  )
 
   const [checkboxOne, setCheckboxOne] = useState(false)
   const [checkboxTwo, setCheckboxTwo] = useState(false)
@@ -58,7 +61,7 @@ export const StepTwo: React.FC = () => {
   )
   const [restrictionCheckboxFour, setRestrictionCheckboxFour] = useState(false)
 
-  const brokenLaws = [
+  const caseCustodyProvisions = [
     {
       brokenLaw: 'a-lið 1. mgr. 95. gr.',
       getCheckbox: checkboxOne,
@@ -172,34 +175,36 @@ export const StepTwo: React.FC = () => {
                     placeholderText="Veldu dagsetningu"
                     locale="is"
                     minDate={new Date()}
-                    hasError={courtClaimDateErrorMessage !== ''}
-                    errorMessage={courtClaimDateErrorMessage}
+                    hasError={requestedCustodyEndDateErrorMessage !== ''}
+                    errorMessage={requestedCustodyEndDateErrorMessage}
                     handleChange={(date) => {
                       updateState(
                         workingCase,
-                        'courtClaimDate',
+                        'requestedCustodyEndDate',
                         date,
                         setWorkingCase,
                       )
                     }}
                     handleCloseCalander={(date: Date) => {
                       if (isNull(date) || !isValid(date)) {
-                        setCourtClaimDateErrorMessage(
+                        setRequestedCustodyEndDateErrorMessage(
                           'Reitur má ekki vera tómur',
                         )
                       }
                     }}
-                    handleOpenCalander={() => setCourtClaimDateErrorMessage('')}
+                    handleOpenCalander={() =>
+                      setRequestedCustodyEndDateErrorMessage('')
+                    }
                   />
                 </GridColumn>
                 <GridColumn span="3/8">
                   <Input
-                    name="courtClaimTime"
+                    name="requestedCustodyEndTime"
                     label="Tímasetning"
                     placeholder="Settu inn tíma"
-                    disabled={!workingCase.case.courtClaimDate}
-                    errorMessage={courtClaimTimeErrorMessage}
-                    hasError={courtClaimTimeErrorMessage !== ''}
+                    disabled={!workingCase.case.requestedCustodyEndDate}
+                    errorMessage={requestedCustodyEndTimeErrorMessage}
+                    hasError={requestedCustodyEndTimeErrorMessage !== ''}
                     onBlur={(evt) => {
                       const validateTimeEmpty = validate(
                         evt.target.value,
@@ -219,36 +224,36 @@ export const StepTwo: React.FC = () => {
                           '',
                         )
 
-                        const courtClaimtDateHours = setHours(
-                          workingCase.case.courtClaimDate,
+                        const requestedCustodyEndDateHours = setHours(
+                          workingCase.case.requestedCustodyEndDate,
                           parseInt(timeWithoutColon.substr(0, 2)),
                         )
 
-                        const courtClaimDateMinutes = setMinutes(
-                          courtClaimtDateHours,
+                        const requestedCustodyEndDateMinutes = setMinutes(
+                          requestedCustodyEndDateHours,
                           parseInt(timeWithoutColon.substr(2, 4)),
                         )
 
                         autoSave(
                           workingCase,
-                          'courtClaimDate',
-                          courtClaimDateMinutes,
+                          'requestedCustodyEndDate',
+                          requestedCustodyEndDateMinutes,
                           setWorkingCase,
                         )
                         updateState(
                           workingCase,
-                          'courtClaimTime',
+                          'requestedCustodyEndDate',
                           evt.target.value,
                           setWorkingCase,
                         )
                       } else {
-                        setCourtClaimTimeErrorMessage(
+                        setRequestedCustodyEndTimeErrorMessage(
                           validateTimeEmpty.errorMessage ||
                             validateTimeFormat.errorMessage,
                         )
                       }
                     }}
-                    onFocus={() => setCourtClaimTimeErrorMessage('')}
+                    onFocus={() => setRequestedCustodyEndTimeErrorMessage('')}
                   />
                 </GridColumn>
               </GridRow>
@@ -260,24 +265,24 @@ export const StepTwo: React.FC = () => {
                 </Typography>
               </Box>
               <Input
-                name="offence"
+                name="lawsBroken"
                 label="Lagaákvæði sem ætluð brot kærða þykja varða við"
-                errorMessage={offenceErrorMessage}
-                hasError={offenceErrorMessage !== ''}
+                errorMessage={lawsBrokenErrorMessage}
+                hasError={lawsBrokenErrorMessage !== ''}
                 onBlur={(evt) => {
                   const validateField = validate(evt.target.value, 'empty')
                   if (validateField.isValid) {
                     updateState(
                       workingCase,
-                      'offence',
+                      'lawsBroken',
                       evt.target.value,
                       setWorkingCase,
                     )
                   } else {
-                    setOffenceErrorMessage(validateField.errorMessage)
+                    setLawsBrokenErrorMessage(validateField.errorMessage)
                   }
                 }}
-                onFocus={() => setOffenceErrorMessage('')}
+                onFocus={() => setLawsBrokenErrorMessage('')}
                 required
                 textarea
                 rows={3}
@@ -291,31 +296,35 @@ export const StepTwo: React.FC = () => {
               </Box>
               <GridContainer>
                 <GridRow>
-                  {brokenLaws.map((brokenLaw, index) => (
+                  {caseCustodyProvisions.map((provision, index) => (
                     <GridColumn span="3/7" key={index}>
                       <Box marginBottom={3}>
                         <Checkbox
-                          name={brokenLaw.brokenLaw}
-                          label={brokenLaw.brokenLaw}
-                          value={brokenLaw.brokenLaw}
-                          checked={brokenLaw.getCheckbox}
-                          tooltip={brokenLaw.explination}
+                          name={provision.brokenLaw}
+                          label={provision.brokenLaw}
+                          value={provision.brokenLaw}
+                          checked={provision.getCheckbox}
+                          tooltip={provision.explination}
                           onChange={({ target }) => {
                             // Toggle the checkbox on or off
-                            brokenLaw.setCheckbox(target.checked)
+                            provision.setCheckbox(target.checked)
 
                             // Create a copy of the state
                             const copyOfState = Object.assign(workingCase, {})
 
                             // If the user is checking the box, add the broken law to the state
                             if (target.checked) {
-                              copyOfState.case.brokenLaws.push(target.value)
+                              copyOfState.case.caseCustodyProvisions.push(
+                                target.value,
+                              )
                             }
                             // If the user is unchecking the box, remove the broken law from the state
                             else {
-                              const brokenLaws = copyOfState.case.brokenLaws
-                              brokenLaws.splice(
-                                brokenLaws.indexOf(target.value),
+                              const provisions =
+                                copyOfState.case.caseCustodyProvisions
+
+                              provisions.splice(
+                                provisions.indexOf(target.value),
                                 1,
                               )
                             }
@@ -392,13 +401,13 @@ export const StepTwo: React.FC = () => {
                 <Input
                   textarea
                   rows={2}
-                  name="whatHappened"
+                  name="caseFacts"
                   label="Málsatvik rakin"
                   placeholder="Skrifa hér..."
                   onBlur={(evt) => {
                     autoSave(
                       workingCase,
-                      'whatHappened',
+                      'caseFacts',
                       evt.target.value,
                       setWorkingCase,
                     )
@@ -409,13 +418,13 @@ export const StepTwo: React.FC = () => {
                 <Input
                   textarea
                   rows={2}
-                  name="testimony"
+                  name="witnessAccounts"
                   label="Framburðir"
                   placeholder="Skrifa hér..."
                   onBlur={(evt) => {
                     autoSave(
                       workingCase,
-                      'testimony',
+                      'witnessAccounts',
                       evt.target.value,
                       setWorkingCase,
                     )
@@ -426,13 +435,13 @@ export const StepTwo: React.FC = () => {
                 <Input
                   textarea
                   rows={2}
-                  name="investigationStatus"
+                  name="investigationProgress"
                   label="Staða rannsóknar og næstu skref"
                   placeholder="Skrifa hér..."
                   onBlur={(evt) => {
                     autoSave(
                       workingCase,
-                      'investigationStatus',
+                      'investigationProgress',
                       evt.target.value,
                       setWorkingCase,
                     )
@@ -443,13 +452,13 @@ export const StepTwo: React.FC = () => {
                 <Input
                   textarea
                   rows={2}
-                  name="legalReasoning"
+                  name="legalArguments"
                   label="Lagarök"
                   placeholder="Skrifa hér..."
                   onBlur={(evt) => {
                     autoSave(
                       workingCase,
-                      'legalReasoning',
+                      'legalArguments',
                       evt.target.value,
                       setWorkingCase,
                     )
@@ -460,13 +469,13 @@ export const StepTwo: React.FC = () => {
                 <Input
                   textarea
                   rows={2}
-                  name="additionalInfo"
+                  name="comments"
                   label="Athugasemdir til dómara"
                   placeholder="Skrifa hér..."
                   onBlur={(evt) => {
                     autoSave(
                       workingCase,
-                      'additionalInfo',
+                      'comments',
                       evt.target.value,
                       setWorkingCase,
                     )
@@ -478,8 +487,8 @@ export const StepTwo: React.FC = () => {
               previousUrl="/stofna-krofu/grunnupplysingar"
               nextUrl="/"
               nextIsDisabled={
-                workingCase.case.offense === '' &&
-                workingCase.case.brokenLaws.length === 0
+                workingCase.case.lawsBroken === '' &&
+                workingCase.case.caseCustodyProvisions.length === 0
               }
             />
           </GridColumn>

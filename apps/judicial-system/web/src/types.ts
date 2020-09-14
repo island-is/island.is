@@ -43,17 +43,16 @@ export interface CreateDetentionReqStepOneFields {
 }
 
 export interface CreateDetentionReqStepTwoFields {
-  courtClaimDate: Date
-  courtClaimTime: string
-  offense: string
-  offenseParagraph: string
-  brokenLaws: string[]
+  requestedCustodyEndDate: Date
+  requestedCustodyEndTime: string
+  lawsBroken: string
+  caseCustodyProvisions: string[]
   restrictions: string[]
-  whatHappened: string
-  testimony: string
-  investigationStatus: string
-  legalReasoning: string
-  additionalInfo: string
+  caseFacts: string
+  witnessAccounts: string
+  investigationProgress: string
+  legalArguments: string
+  comments: string
 }
 
 export interface CreateDetentionReqStepOneCase {
