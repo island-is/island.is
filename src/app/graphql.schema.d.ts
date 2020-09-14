@@ -3,19 +3,6 @@
  * -------------------------------------------------------
  */
 
-/* tslint:disable */
-/* eslint-disable */
-export enum ApplicationStateEnum {
-  DRAFT = 'DRAFT',
-  BEINGPROCESSED = 'BEINGPROCESSED',
-  NEEDSINFORMATION = 'NEEDSINFORMATION',
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  MANUALAPPROVED = 'MANUALAPPROVED',
-  REJECTED = 'REJECTED',
-  UNKNOWN = 'UNKNOWN',
-}
-
 export enum ApplicationTypeIdEnum {
   ExampleForm = 'ExampleForm',
   ExampleForm2 = 'ExampleForm2',
@@ -34,17 +21,6 @@ export enum ItemType {
   category = 'category',
 }
 
-export enum CreateApplicationDtoStateEnum {
-  DRAFT = 'DRAFT',
-  BEINGPROCESSED = 'BEINGPROCESSED',
-  NEEDSINFORMATION = 'NEEDSINFORMATION',
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  MANUALAPPROVED = 'MANUALAPPROVED',
-  REJECTED = 'REJECTED',
-  UNKNOWN = 'UNKNOWN',
-}
-
 export enum CreateApplicationDtoTypeIdEnum {
   ExampleForm = 'ExampleForm',
   ExampleForm2 = 'ExampleForm2',
@@ -59,17 +35,6 @@ export enum UpdateApplicationDtoTypeIdEnum {
   ExampleForm3 = 'ExampleForm3',
   FamilyAndPets = 'FamilyAndPets',
   ParentalLeave = 'ParentalLeave',
-}
-
-export enum UpdateApplicationDtoStateEnum {
-  DRAFT = 'DRAFT',
-  BEINGPROCESSED = 'BEINGPROCESSED',
-  NEEDSINFORMATION = 'NEEDSINFORMATION',
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  MANUALAPPROVED = 'MANUALAPPROVED',
-  REJECTED = 'REJECTED',
-  UNKNOWN = 'UNKNOWN',
 }
 
 export class GetArticleInput {
@@ -180,7 +145,7 @@ export class CreateApplicationInput {
   applicant: string
   assignee: string
   externalId?: string
-  state: CreateApplicationDtoStateEnum
+  state: string
   attachments?: string[]
   typeId: CreateApplicationDtoTypeIdEnum
   answers: JSON
@@ -192,7 +157,7 @@ export class UpdateApplicationInput {
   applicant?: string
   assignee?: string
   externalId?: string
-  state?: UpdateApplicationDtoStateEnum
+  state?: string
   attachments?: string[]
   answers?: JSON
 }
@@ -592,7 +557,7 @@ export class Application {
   applicant: string
   assignee: string
   externalId?: string
-  state: ApplicationStateEnum
+  state: string
   attachments?: string[]
   typeId: ApplicationTypeIdEnum
   answers: JSON

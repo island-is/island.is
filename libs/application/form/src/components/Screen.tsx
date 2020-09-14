@@ -5,11 +5,13 @@ import {
   FormItemTypes,
   Schema,
   Section,
-  FormType,
   ExternalData,
 } from '@island.is/application/template'
 import { Typography, Box, Button, Divider } from '@island.is/island-ui/core'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import {
+  UPDATE_APPLICATION,
+  SUBMIT_APPLICATION,
+} from '@island.is/application/graphql'
 import deepmerge from 'deepmerge'
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form'
 import { FormScreen } from '../types'
@@ -23,7 +25,6 @@ import { verifyExternalData } from '../utils'
 type ScreenProps = {
   answerAndGoToNextScreen(Answers): void
   formValue: FormValue
-  formTypeId: FormType
   addExternalData(data: ExternalData): void
   answerQuestions(Answers): void
   dataSchema: Schema
@@ -38,7 +39,6 @@ type ScreenProps = {
 
 const Screen: FC<ScreenProps> = ({
   formValue,
-  formTypeId,
   addExternalData,
   answerQuestions,
   dataSchema,
@@ -62,7 +62,9 @@ const Screen: FC<ScreenProps> = ({
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [updateApplication, { loading }] = useMutation(UPDATE_APPLICATION)
-
+  const [submitApplication, { loading: loadingSubmit }] = useMutation(
+    SUBMIT_APPLICATION,
+  )
   const { handleSubmit, errors, reset } = hookFormData
 
   const goBack = useCallback(() => {
@@ -73,8 +75,16 @@ const Screen: FC<ScreenProps> = ({
 
   const onSubmit: SubmitHandler<FormValue> = async (data) => {
     if (shouldSubmit) {
+      await submitApplication({
+        variables: {
+          input: {
+            id: applicationId,
+            answers: { ...formValue, ...data },
+          },
+        },
+      })
       // call submit mutation
-      console.log('here we will submit', formValue)
+      console.log('here we will submit', { ...formValue, ...data })
     } else {
       await updateApplication({
         variables: {
@@ -90,7 +100,7 @@ const Screen: FC<ScreenProps> = ({
   }
 
   function canProceed(): boolean {
-    const isLoadingOrPending = loading
+    const isLoadingOrPending = loading || loadingSubmit
     if (screen.type === FormItemTypes.EXTERNAL_DATA_PROVIDER) {
       return (
         !isLoadingOrPending &&

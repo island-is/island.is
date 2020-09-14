@@ -1,41 +1,23 @@
-import * as z from 'zod'
 import {
   buildDataProviderItem,
   buildExternalDataProvider,
   buildForm,
   buildSection,
   buildSubSection,
-} from '../lib/formBuilders'
-import { buildCustomField, buildIntroductionField } from '../lib/fieldBuilders'
-import { Form } from '../types/Form'
-import { FormType } from './FormType'
-import { CustomFieldComponents } from '../types/Fields'
-import { DataProviderTypes } from '../types/DataProvider'
+} from '../../lib/formBuilders'
+import {
+  buildCustomField,
+  buildIntroductionField,
+} from '../../lib/fieldBuilders'
+import { Form } from '../../types/Form'
+import { ApplicationTypes } from '../../types/ApplicationTypes'
+import { CustomFieldComponents } from '../../types/Fields'
+import { DataProviderTypes } from '../../types/DataProvider'
 
-const schema = z.object({
-  approveExternalData: z.boolean().refine((v) => v === true),
-  usage: z
-    .number()
-    .min(0)
-    .max(6),
-  spread: z.number().max(24),
-  periods: z.array(
-    z.object({
-      start: z.date(),
-      end: z.date(),
-      ratio: z
-        .number()
-        .min(1)
-        .max(100),
-    }),
-  ),
-})
-
-export const ParentalLeave: Form = buildForm({
-  id: FormType.PARENTAL_LEAVE,
+export const ParentalLeaveForm: Form = buildForm({
+  id: ApplicationTypes.PARENTAL_LEAVE,
   ownerId: 'DOL',
   name: 'Fæðingarorlof',
-  schema: schema,
   children: [
     buildSection({
       id: 'introduction',

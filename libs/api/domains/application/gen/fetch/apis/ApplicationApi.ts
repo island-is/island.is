@@ -57,6 +57,10 @@ export interface ApplicationControllerFindOneRequest {
     id: string;
 }
 
+export interface ApplicationControllerSubmitApplicationRequest {
+    id: string;
+}
+
 export interface ApplicationControllerUpdateRequest {
     id: string;
     updateApplicationDto: UpdateApplicationDto;
@@ -230,6 +234,34 @@ export class ApplicationApi extends runtime.BaseAPI {
      */
     async applicationControllerFindOne(requestParameters: ApplicationControllerFindOneRequest): Promise<Application> {
         const response = await this.applicationControllerFindOneRaw(requestParameters);
+        return await response.value();
+    }
+
+    /**
+     */
+    async applicationControllerSubmitApplicationRaw(requestParameters: ApplicationControllerSubmitApplicationRequest): Promise<runtime.ApiResponse<Application>> {
+        if (requestParameters.id === null || requestParameters.id === undefined) {
+            throw new runtime.RequiredError('id','Required parameter requestParameters.id was null or undefined when calling applicationControllerSubmitApplication.');
+        }
+
+        const queryParameters: runtime.HTTPQuery = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/application/{id}/submit`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters.id))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+        });
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ApplicationFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async applicationControllerSubmitApplication(requestParameters: ApplicationControllerSubmitApplicationRequest): Promise<Application> {
+        const response = await this.applicationControllerSubmitApplicationRaw(requestParameters);
         return await response.value();
     }
 
