@@ -135,6 +135,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
               tab.externalLinks && tab.externalLinks.length
             return (
               <div
+                key={index}
                 aria-labelledby={`tab${index}`}
                 role="tabpanel"
                 className={styles.content}
@@ -143,6 +144,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
                 <div className={styles.linksContent}>
                   {tab.links.map((link, index) => (
                     <Typography
+                      key={index}
                       variant="sideMenu"
                       color="blue400"
                       paddingBottom={index + 1 === tab.links.length ? 0 : 2}
@@ -166,8 +168,9 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
                       {tab.externalLinksHeading || 'Aðrir opinberir vefir'}
                     </Typography>
                     <div className={styles.linksContent}>
-                      {tab.externalLinks.map((link) => (
+                      {tab.externalLinks.map((link, index) => (
                         <Typography
+                          key={index}
                           variant="sideMenu"
                           color="blue400"
                           paddingBottom={2}
