@@ -59,9 +59,13 @@ module.exports = {
       queryInterface.removeColumn('case', 'requested_custody_end_date'),
       queryInterface.removeColumn('case', 'laws_broken'),
       queryInterface.removeColumn('case', 'custody_provisions'),
-      queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_case_custody_provisions";'),
+      queryInterface.sequelize.query(
+        'DROP TYPE IF EXISTS "enum_case_custody_provisions";',
+      ),
       queryInterface.removeColumn('case', 'custody_restrictions'),
-      queryInterface.sequelize.query('DROP TYPE IF EXISTS "enum_case_custody_restrictions";'),
+      queryInterface.sequelize.query(
+        'DROP TYPE IF EXISTS "enum_case_custody_restrictions";',
+      ),
       queryInterface.removeColumn('case', 'case_facts'),
       queryInterface.removeColumn('case', 'witness_accounts'),
       queryInterface.removeColumn('case', 'investigation_progress'),
