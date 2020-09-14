@@ -72,9 +72,9 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
   const CustomInput = React.forwardRef<
     HTMLButtonElement,
-    { value: string; onClick: () => void; placeholderText: string }
-  >(({ value, onClick, placeholderText }, ref) => {
-    const valueAsDate = new Date(value)
+    { inputValue: string; onClick: () => void; placeholderText: string }
+  >(({ inputValue, onClick, placeholderText }, ref) => {
+    const valueAsDate = new Date(inputValue)
 
     return (
       <button className={className} onClick={onClick}>
@@ -84,7 +84,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             {required && <span className={styles.requiredStar}> *</span>}
           </p>
           <div className={styles.value}>
-            {value ? (
+            {inputValue ? (
               <Typography variant="h3">
                 {format(valueAsDate, 'P', {
                   locale: getLocale(locale),
@@ -134,7 +134,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           }}
           customInput={
             <CustomInput
-              value={value}
+              inputValue={value}
               onClick={onInputClick}
               placeholderText={placeholderText}
             />
