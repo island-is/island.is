@@ -174,7 +174,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
               <Checkbox
                 name="gender"
                 options={[
-                  { value: 'kk', label: 'kvk' },
+                  { value: 'kk', label: 'kk' },
                   { value: 'kvk', label: 'kvk' },
                 ]}
               />

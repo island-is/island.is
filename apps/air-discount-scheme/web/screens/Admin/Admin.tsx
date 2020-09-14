@@ -53,6 +53,7 @@ export type FilterInput = FlightsInput & {
 const Admin: Screen = ({}) => {
   const { user } = useContext(UserContext)
   const [filters, setFilters] = useState<FilterInput>({
+    state: [],
     period: {
       from: new Date(TODAY.getFullYear(), TODAY.getMonth(), 1, 0, 0, 0),
       to: TODAY,
