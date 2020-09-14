@@ -71,7 +71,6 @@ jobs:
       - run: git fetch --prune --all
       - run: git branch
       - run: git remote -v
-      - run: env
       - run: |
           echo "::set-env name=HEAD::${GITHUB_SHA}"
         id: git_nx_head
@@ -84,6 +83,9 @@ jobs:
             export BRANCH=$GIT_BRANCH
           fi
           echo "git log --format=%H --first-parent "$BRANCH"  $GITHUB_SHA... $BRANCH | wc -l | tr -d '[:space:]'"
+          echo 'base' $GIT_BASE_BRANCH
+          echo 'gbranch $GIT_BRANCH
+          echo 'kk' $BRANCH
           NUMBER_NEWER_COMMITS_THEN_ME=`git log --format=%H --first-parent "$BRANCH"  $GITHUB_SHA... $BRANCH | wc -l | tr -d '[:space:]'`
           LAST_GOOD_BUILD=`git log --format=%H --first-parent "$BRANCH" | tail -n +$((NUMBER_NEWER_COMMITS_THEN_ME+1)) | node .github/actions/dist/index.js`
           LAST_GOOD_BUILD_SHA=`echo $LAST_GOOD_BUILD | jq -r '.sha'`
