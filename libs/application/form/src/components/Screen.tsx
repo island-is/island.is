@@ -8,7 +8,7 @@ import {
   FormType,
   ExternalData,
 } from '@island.is/application/template'
-import { Typography, Box, Button, Divider } from '@island.is/island-ui/core'
+import { Typography, Box, Button, GridColumn } from '@island.is/island-ui/core'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import deepmerge from 'deepmerge'
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form'
@@ -19,6 +19,8 @@ import { resolver } from '../validation/resolver'
 import FormRepeater from './FormRepeater'
 import FormExternalDataProvider from './FormExternalDataProvider'
 import { verifyExternalData } from '../utils'
+
+import * as styles from './Screen.treat'
 
 type ScreenProps = {
   answerAndGoToNextScreen(Answers): void
@@ -38,7 +40,6 @@ type ScreenProps = {
 
 const Screen: FC<ScreenProps> = ({
   formValue,
-  formTypeId,
   addExternalData,
   answerQuestions,
   dataSchema,
@@ -110,9 +111,12 @@ const Screen: FC<ScreenProps> = ({
         key={screen.id}
         height="full"
         onSubmit={handleSubmit(onSubmit)}
+        style={{ minHeight: '65vh' }}
       >
-        <Box flexGrow={1}>
-          {section && <Typography color="dark300">{section.name}</Typography>}
+        <GridColumn
+          span={['12/12', '12/12', '7/9', '7/9']}
+          offset={[null, null, '1/9']}
+        >
           <Typography variant="h2">{screen.name}</Typography>
           <Box>
             {screen.type === FormItemTypes.REPEATER ? (
@@ -147,43 +151,75 @@ const Screen: FC<ScreenProps> = ({
               />
             )}
           </Box>
-        </Box>
-        <Box marginTop={[3, 3, 0]}>
-          <Divider weight="regular" />
-          <Box
-            display="flex"
-            flexDirection="row"
-            justifyContent="spaceBetween"
-            paddingTop={[1, 4]}
-            paddingBottom={[1, 5]}
+        </GridColumn>
+        <Box marginTop={[3, 3, 0]} className={styles.buttonContainer}>
+          <GridColumn
+            span={['12/12', '12/12', '7/9', '7/9']}
+            offset={[null, null, '1/9']}
           >
-            <Box display="inlineFlex" padding={2} paddingLeft="none">
-              <Button variant="text" leftIcon="arrowLeft" onClick={goBack}>
-                Til baka
-              </Button>
-            </Box>
-            <Box display="inlineFlex" padding={2} paddingRight="none">
-              {shouldSubmit ? (
-                <Button
-                  loading={loading}
-                  disabled={!canProceed()}
-                  htmlType="submit"
-                >
-                  Submit
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="spaceBetween"
+              paddingTop={[1, 4]}
+              paddingBottom={[1, 5]}
+            >
+              <Box
+                display={['none', 'inlineFlex']}
+                padding={2}
+                paddingLeft="none"
+              >
+                <Button variant="ghost" onClick={goBack}>
+                  Til baka
                 </Button>
-              ) : (
+              </Box>
+              <Box
+                display={['inlineFlex', 'none']}
+                padding={2}
+                paddingLeft="none"
+              >
                 <Button
-                  loading={loading}
-                  disabled={!canProceed()}
-                  variant="text"
-                  icon="arrowRight"
-                  htmlType="submit"
-                >
-                  Halda áfram
-                </Button>
-              )}
+                  variant="ghost"
+                  rounded={true}
+                  icon="arrowLeft"
+                  onClick={goBack}
+                ></Button>
+              </Box>
+              <Box display="inlineFlex" padding={2} paddingRight="none">
+                {shouldSubmit ? (
+                  <Button
+                    loading={loading}
+                    disabled={!canProceed()}
+                    htmlType="submit"
+                  >
+                    Submit
+                  </Button>
+                ) : (
+                  <>
+                    <Box display={['none', 'inlineFlex']}>
+                      <Button
+                        loading={loading}
+                        disabled={!canProceed()}
+                        icon="arrowRight"
+                        htmlType="submit"
+                      >
+                        Halda áfram
+                      </Button>
+                    </Box>
+                    <Box display={['inlineFlex', 'none']}>
+                      <Button
+                        loading={loading}
+                        disabled={!canProceed()}
+                        icon="arrowRight"
+                        htmlType="submit"
+                        rounded
+                      ></Button>
+                    </Box>
+                  </>
+                )}
+              </Box>
             </Box>
-          </Box>
+          </GridColumn>
         </Box>
       </Box>
     </FormProvider>

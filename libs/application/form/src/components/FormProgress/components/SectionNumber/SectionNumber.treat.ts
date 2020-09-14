@@ -9,6 +9,13 @@ export const number = style({
   fontSize: 18,
   lineHeight: 0,
   borderRadius: '50%',
-  top: -9,
-  left: -9,
+  top: -1,
+  left: 0,
+})
+
+export const progressLine = style({
+  width: 2,
+  left: '50%',
+  marginLeft: '-1px',
+  top: '50%',
 })
