@@ -38,11 +38,6 @@ export class ClientsService {
   async findClientById(id: string): Promise<Client> {
     this.logger.debug(`Finding client for id - "${id}"`)
     return this.clientModel.findOne({
-<<<<<<< HEAD
-      where: { clientId },
-      include: [ ClientAllowedScope, ClientAllowedCorsOrigin, ClientRedirectUri, ClientIdpRestrictions, ClientSecret, ClientPostLogoutRedirectUri, ClientPostLogoutRedirectUri, ClientGrantType ]
-    });
-=======
       where: { clientId: id },
       include: [
         ClientAllowedScope,
@@ -80,7 +75,6 @@ export class ClientsService {
 
   async delete(id: string): Promise<number> {
     this.logger.debug('Deleting client with id: ', id)
->>>>>>> f7e1e8d6357d8c2706c9ee3ce6d190beeb4520fe
 
     return await this.clientModel.destroy({
       where: { clientId: id }

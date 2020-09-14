@@ -225,12 +225,6 @@ module.exports = {
       redirect_uri: 'localhost:8080'
     }];
 
-<<<<<<< HEAD
-    var clientGrantTypes = [{
-      client_id: 'postman',
-      grant_type: 'authorization_code',
-    }];
-=======
     var clientGrantTypes = [
     {
       client_id: 'postman',
@@ -245,7 +239,6 @@ module.exports = {
       grant_type: 'client_credentials'
     }
   ];
->>>>>>> f7e1e8d6357d8c2706c9ee3ce6d190beeb4520fe
 
 
     return new Promise((resolve, reject) => {

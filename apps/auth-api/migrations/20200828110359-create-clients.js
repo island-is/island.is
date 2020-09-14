@@ -113,8 +113,6 @@ module.exports = {
         PRIMARY KEY (client_id, grant_type)
       );
 
-<<<<<<< HEAD
-=======
       CREATE TABLE grants (
         id uuid NOT NULL,
         key VARCHAR NOT NULL,
@@ -129,7 +127,6 @@ module.exports = {
         CONSTRAINT FK_grant_client FOREIGN KEY (client_id) REFERENCES client (client_id)
       );
 
->>>>>>> f7e1e8d6357d8c2706c9ee3ce6d190beeb4520fe
     COMMIT;
     `)
   },
@@ -143,10 +140,7 @@ module.exports = {
         DROP TABLE client_allowed_scope;
         DROP TABLE client_redirect_uri;
         DROP TABLE client_grant_type;
-<<<<<<< HEAD
-=======
         DROP TABLE grants;
->>>>>>> f7e1e8d6357d8c2706c9ee3ce6d190beeb4520fe
         DROP TABLE client;
       COMMIT;
     `)
