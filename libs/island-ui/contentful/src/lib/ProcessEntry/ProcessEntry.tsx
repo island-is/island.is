@@ -3,13 +3,22 @@ import slugify from '@sindresorhus/slugify'
 import BorderedContent from '../BorderedContent/BorderedContent'
 import {
   Typography,
-  ContentBlock,
   Button,
   Box,
   Stack,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { Html } from '@island.is/api/schema'
 import { renderHtml } from '../richTextRendering'
+
+const Content: React.FC = ({ children }) => (
+  <GridRow>
+    <GridColumn span={['8/8', '8/8', '6/8']} offset={['0', '0', '1/8']}>
+      {children}
+    </GridColumn>
+  </GridRow>
+)
 
 export const ProcessTypes = {
   Digital: {
@@ -58,24 +67,27 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
   return (
     <BorderedContent
       topContent={
-        <ContentBlock width="small">
-          <Stack space={[2, 2]}>
-            {title && (
-              <Typography variant="h2" as="h3">
-                <span data-sidebar-link={slugify(title)}>{title}</span>
-              </Typography>
-            )}
-            {subtitle && (
-              <Typography variant="intro" as="p">
-                {subtitle}
-              </Typography>
-            )}
-            {details && renderHtml(details.document)}
-          </Stack>
-        </ContentBlock>
+        // top part should not be visible unless there's text content (details) to show
+        Boolean(details) && (
+          <Content>
+            <Stack space={[2, 2]}>
+              {title && (
+                <Typography variant="h2" as="h3">
+                  {title}
+                </Typography>
+              )}
+              {subtitle && (
+                <Typography variant="intro" as="p">
+                  {subtitle}
+                </Typography>
+              )}
+              {renderHtml(details.document)}
+            </Stack>
+          </Content>
+        )
       }
       bottomContent={
-        <ContentBlock width="small">
+        <Content>
           <Stack space={[2, 2]}>
             {type !== 'No type' && (
               <Typography variant="eyebrow" as="h4" color="blue400">
@@ -98,7 +110,7 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
               </Button>
             </Box>
           </Stack>
-        </ContentBlock>
+        </Content>
       }
     />
   )
