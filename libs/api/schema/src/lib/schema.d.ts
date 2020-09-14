@@ -760,7 +760,7 @@ export type HelloWorldInput = {
 
 export type SearcherInput = {
   queryString: Scalars['String']
-  types: Array<Scalars['String']>
+  types?: Maybe<Array<Scalars['String']>>
   language?: Maybe<ContentLanguage>
   size?: Maybe<Scalars['Int']>
   page?: Maybe<Scalars['Int']>

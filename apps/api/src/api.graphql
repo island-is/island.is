@@ -546,7 +546,7 @@ input HelloWorldInput {
 
 input SearcherInput {
   queryString: String!
-  types: [String!]!
+  types: [String!]
   language: ContentLanguage
   size: Int
   page: Int

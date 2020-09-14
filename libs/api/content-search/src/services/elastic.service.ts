@@ -136,9 +136,9 @@ export class ElasticService {
   }
 
   async search(index: SearchIndexes, query: SearcherInput) {
-    const {queryString, size, page} = query
+    const {queryString, size, page, types} = query
     
-    const requestBody = searchQuery({queryString, size, page})
+    const requestBody = searchQuery({queryString, size, page, types})
     logger.info('requestBody', requestBody)
     const data = await this.findByQuery<
       any,

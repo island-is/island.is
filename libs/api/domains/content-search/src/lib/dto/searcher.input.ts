@@ -8,9 +8,10 @@ export class SearcherInput {
   @IsString()
   queryString: string
 
-  @Field(() => [String])
+  @Field(() => [String], { nullable: true })
   @IsArray()
-  types: string[]
+  @IsOptional()
+  types?: string[]
 
   @Field(() => ContentLanguage, { nullable: true })
   @IsEnum(ContentLanguage)
