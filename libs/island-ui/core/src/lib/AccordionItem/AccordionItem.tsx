@@ -164,14 +164,15 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                 </div>
               </Column>
             </Columns>
+
+            {visibleContent && (
+              <div className={styles.visibleContent}>
+                <Typography variant="pSmall">{visibleContent}</Typography>
+              </div>
+            )}
           </Box>
           <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
         </Box>
-        {visibleContent && (
-          <div className={styles.visibleContent}>
-            <Typography variant="pSmall">{visibleContent}</Typography>
-          </div>
-        )}
         <AnimateHeight duration={300} height={height}>
           <Box paddingTop={2} id={id}>
             {children}
