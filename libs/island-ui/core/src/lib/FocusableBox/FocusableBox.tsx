@@ -30,17 +30,20 @@ interface Props
 // By default it renders as a Link component.
 
 const FocusableBox = forwardRef<HTMLElement, Props>(
-  ({
-    component = Link,
-    display = 'flex',
-    borderRadius = 'large',
-    color = 'purple',
-    children,
-    className,
-    onFocus,
-    onBlur,
-    ...rest
-  }, ref) => {
+  (
+    {
+      component = Link,
+      display = 'flex',
+      borderRadius = 'large',
+      color = 'purple',
+      children,
+      className,
+      onFocus,
+      onBlur,
+      ...rest
+    },
+    ref,
+  ) => {
     const { colorScheme } = useContext(ColorSchemeContext)
     const [isFocused, toggle] = useToggle(false)
 
