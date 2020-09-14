@@ -222,11 +222,13 @@
     "skilavottord-ws": {
       "tags": []
     },
-    "auth-api": {
     "infra-monitoring": {
       "tags": []
     },
     "judicial-system-consts": {
+      "tags": []
+    },
+    "auth-api": {
       "tags": []
     }
   }
