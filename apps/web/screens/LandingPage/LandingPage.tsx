@@ -100,7 +100,6 @@ LandingPageScreen.getInitialProps = async ({ apolloClient, locale, query }) => {
     QueryGetLandingPageArgs
   >({
     query: GET_LANDING_PAGE_QUERY,
-    fetchPolicy: 'no-cache',
     variables: {
       input: {
         lang: locale,

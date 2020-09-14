@@ -62,7 +62,7 @@ export const mapArticle = ({ fields, sys }: IArticle): Article => ({
   category: fields.category?.fields,
   group: fields.group?.fields,
   subgroup: fields.subgroup?.fields,
-  organization: fields.organization && fields.organization.map(mapOrganization),
-  subArticles: fields.subArticles && fields.subArticles.map(mapSubArticle),
+  organization: (fields.organization ?? []).map(mapOrganization),
+  subArticles: (fields.subArticles ?? []).map(mapSubArticle),
   relatedArticles: (fields.relatedArticles ?? []).map(mapArticle),
 })

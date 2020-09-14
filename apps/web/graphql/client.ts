@@ -8,8 +8,9 @@ import getConfig from 'next/config'
 import { BatchHttpLink } from 'apollo-link-batch-http'
 import fetch from 'isomorphic-unfetch'
 
-const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
+import introspectionQueryResultData from './fragmentTypes.json'
 
+const { publicRuntimeConfig, serverRuntimeConfig } = getConfig()
 const isBrowser: boolean = process.browser
 
 let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
@@ -42,15 +43,8 @@ function create(initialState?: any) {
     ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
     link: httpLink,
     cache: new InMemoryCache({
-      // TODO:
-      // https://github.com/apollographql/apollo-client/issues/3397
-      // https://medium.com/commutatus/whats-going-on-with-the-heuristic-fragment-matcher-in-graphql-apollo-client-e721075e92be
       fragmentMatcher: new IntrospectionFragmentMatcher({
-        introspectionQueryResultData: {
-          __schema: {
-            types: [],
-          },
-        },
+        introspectionQueryResultData,
       }),
     }).restore(initialState || {}),
   })

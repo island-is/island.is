@@ -414,6 +414,16 @@
             ]
           }
         },
+        "fragmentTypes": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "graphql-codegen "
+              }
+            ]
+          }
+        },
         "docker-express": {}
       }
     },

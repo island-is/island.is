@@ -423,8 +423,6 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
     apolloClient
       .query<GetArticleQuery, QueryGetArticleArgs>({
         query: GET_ARTICLE_QUERY,
-        // TODO: remove next line
-        fetchPolicy: 'no-cache',
         variables: {
           input: {
             slug,

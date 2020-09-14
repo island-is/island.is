@@ -481,7 +481,6 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
     data: { getAboutPage: page },
   } = await apolloClient.query<GetAboutPageQuery, QueryGetAboutPageArgs>({
     query: GET_ABOUT_PAGE_QUERY,
-    fetchPolicy: 'no-cache',
     variables: {
       input: {
         lang: locale,
