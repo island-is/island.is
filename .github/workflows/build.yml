@@ -8,7 +8,9 @@ on:
     paths-ignore:
       - '**/*.md'
   pull_request:
-    branches: [master]
+    branches:
+      - master
+      - ci-fork-fix
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
@@ -80,6 +82,7 @@ jobs:
           else
             export BRANCH=$GIT_BRANCH
           fi
+          echo "git log --format=%H --first-parent "$BRANCH"  $GITHUB_SHA... $BRANCH | wc -l | tr -d '[:space:]'"
           NUMBER_NEWER_COMMITS_THEN_ME=`git log --format=%H --first-parent "$BRANCH"  $GITHUB_SHA... $BRANCH | wc -l | tr -d '[:space:]'`
           LAST_GOOD_BUILD=`git log --format=%H --first-parent "$BRANCH" | tail -n +$((NUMBER_NEWER_COMMITS_THEN_ME+1)) | node .github/actions/dist/index.js`
           LAST_GOOD_BUILD_SHA=`echo $LAST_GOOD_BUILD | jq -r '.sha'`
