@@ -9,6 +9,7 @@ import { ContentLanguage } from './enums/contentLanguage.enum'
 import { SearcherService } from '@island.is/api/schema'
 import { logger } from '@island.is/logging'
 import { SearcherInput } from './dto/searcher.input'
+import { CategoriesInput } from './dto/categories.input'
 
 @Injectable()
 export class ContentSearchService implements SearcherService {
@@ -31,7 +32,7 @@ export class ContentSearchService implements SearcherService {
     return obj
   }
 
-  async find(query): Promise<SearchResult> {
+  async find(query: SearcherInput): Promise<SearchResult> {
     const { body } = await this.elasticService.search(
       this.getIndex(query.language),
       query,
@@ -45,7 +46,7 @@ export class ContentSearchService implements SearcherService {
   }
 
   // TODO: Move this to CMS domain, index categories as own type?
-  async fetchCategories(query): Promise<ContentCategory[]> {
+  async fetchCategories(query: CategoriesInput): Promise<ContentCategory[]> {
     // todo do properly not this awesome hack
     const queryTmp = new RequestBodySearch().size(1000)
     const { body } = await this.elasticService.deprecatedFindByQuery(

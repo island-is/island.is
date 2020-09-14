@@ -551,14 +551,14 @@ export type Application = {
 }
 
 export enum ApplicationStateEnum {
-  Draft = 'DRAFT',
-  Beingprocessed = 'BEINGPROCESSED',
-  Needsinformation = 'NEEDSINFORMATION',
-  Pending = 'PENDING',
-  Approved = 'APPROVED',
-  Manualapproved = 'MANUALAPPROVED',
-  Rejected = 'REJECTED',
-  Unknown = 'UNKNOWN',
+  DRAFT = 'DRAFT',
+  BEINGPROCESSED = 'BEINGPROCESSED',
+  NEEDSINFORMATION = 'NEEDSINFORMATION',
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  MANUALAPPROVED = 'MANUALAPPROVED',
+  REJECTED = 'REJECTED',
+  UNKNOWN = 'UNKNOWN',
 }
 
 export enum ApplicationTypeIdEnum {
@@ -767,8 +767,8 @@ export type SearcherInput = {
 }
 
 export enum ContentLanguage {
-  Is = 'is',
-  En = 'en',
+  is = 'is',
+  en = 'en',
 }
 
 export type ItemInput = {
@@ -779,8 +779,8 @@ export type ItemInput = {
 }
 
 export enum ItemType {
-  Article = 'article',
-  Category = 'category',
+  article = 'article',
+  category = 'category',
 }
 
 export type CategoriesInput = {
@@ -966,14 +966,14 @@ export type CreateApplicationInput = {
 }
 
 export enum CreateApplicationDtoStateEnum {
-  Draft = 'DRAFT',
-  Beingprocessed = 'BEINGPROCESSED',
-  Needsinformation = 'NEEDSINFORMATION',
-  Pending = 'PENDING',
-  Approved = 'APPROVED',
-  Manualapproved = 'MANUALAPPROVED',
-  Rejected = 'REJECTED',
-  Unknown = 'UNKNOWN',
+  DRAFT = 'DRAFT',
+  BEINGPROCESSED = 'BEINGPROCESSED',
+  NEEDSINFORMATION = 'NEEDSINFORMATION',
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  MANUALAPPROVED = 'MANUALAPPROVED',
+  REJECTED = 'REJECTED',
+  UNKNOWN = 'UNKNOWN',
 }
 
 export enum CreateApplicationDtoTypeIdEnum {
@@ -995,14 +995,14 @@ export type UpdateApplicationInput = {
 }
 
 export enum UpdateApplicationDtoStateEnum {
-  Draft = 'DRAFT',
-  Beingprocessed = 'BEINGPROCESSED',
-  Needsinformation = 'NEEDSINFORMATION',
-  Pending = 'PENDING',
-  Approved = 'APPROVED',
-  Manualapproved = 'MANUALAPPROVED',
-  Rejected = 'REJECTED',
-  Unknown = 'UNKNOWN',
+  DRAFT = 'DRAFT',
+  BEINGPROCESSED = 'BEINGPROCESSED',
+  NEEDSINFORMATION = 'NEEDSINFORMATION',
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  MANUALAPPROVED = 'MANUALAPPROVED',
+  REJECTED = 'REJECTED',
+  UNKNOWN = 'UNKNOWN',
 }
 
 export type UpdateApplicationExternalDataInput = {

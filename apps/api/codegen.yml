@@ -8,6 +8,8 @@ generates:
       - fragment-matcher
     config:
       contextType: ./context#Context
+      namingConvention:
+        enumValues: keep
 hooks:
   afterAllFileWrite:
     - prettier --write
