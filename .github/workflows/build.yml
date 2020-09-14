@@ -68,7 +68,7 @@ jobs:
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "::set-env name=DOCKER_TAG::${DOCKER_TAG}"
 
-      - run: git fetch --prune --unshallow
+      - run: git fetch --prune --all
       - run: |
           echo "::set-env name=HEAD::${GITHUB_SHA}"
         id: git_nx_head
