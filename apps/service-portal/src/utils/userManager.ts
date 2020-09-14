@@ -2,9 +2,10 @@ import {
   UserManager,
   WebStorageStateStore,
   InMemoryWebStorage,
+  UserManagerSettings,
 } from 'oidc-client'
 
-const settings = {
+const settings: UserManagerSettings = {
   authority: 'https://siidentityserverweb20200805020732.azurewebsites.net/',
   // eslint-disable-next-line @typescript-eslint/camelcase
   client_id: 'island-is-1',

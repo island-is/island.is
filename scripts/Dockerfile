@@ -84,6 +84,7 @@ FROM output-base as output-next
 # image with build of an Next.js app
 
 COPY --from=builder --chown=runner:runners /build/${APP_HOME}/next.config.js /webapp
+COPY --from=builder --chown=runner:runners /build/${APP_HOME}/next-modules/ /webapp/next-modules/
 COPY --from=builder --chown=runner:runners /build/${APP_HOME}/public /webapp/public
 COPY --from=builder --chown=runner:runners /build/${APP_DIST_HOME} /webapp/.next
 
@@ -101,7 +102,5 @@ ENV GIT_BRANCH=${GIT_BRANCH}
 ENV GIT_SHA=${GIT_SHA}
 ENV APP=${APP}
 
-# the default port we target in the Helm setup
-ENV NGINX_PORT=3333
-
+ADD scripts/dockerfile-config/static-nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html

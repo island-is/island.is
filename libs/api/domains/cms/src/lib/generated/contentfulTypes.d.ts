@@ -10,6 +10,12 @@ export interface IArticleFields {
   /** Title */
   title: string
 
+  /** Short title */
+  shortTitle?: string | undefined
+
+  /** Introduction */
+  intro?: string | undefined
+
   /** Slug */
   slug: string
 
@@ -22,11 +28,17 @@ export interface IArticleFields {
   /** Group */
   group?: IArticleGroup | undefined
 
+  /** Subgroup */
+  subgroup?: IArticleSubgroup | undefined
+
   /** Organization */
   organization?: IOrganization[] | undefined
 
   /** Related Articles */
   relatedArticles?: IArticle[] | undefined
+
+  /** Baby Articles */
+  subArticles?: ISubArticle[] | undefined
 }
 
 export interface IArticle extends Entry<IArticleFields> {
@@ -95,6 +107,33 @@ export interface IArticleGroup extends Entry<IArticleGroupFields> {
     contentType: {
       sys: {
         id: 'articleGroup'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IArticleSubgroupFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+}
+
+/** Used inside groups to further categorize articles by subject */
+
+export interface IArticleSubgroup extends Entry<IArticleSubgroupFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'articleSubgroup'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -259,6 +298,9 @@ export interface IFrontpageSliderFields {
     | IOrganization
     | IPage
     | undefined
+
+  /** Animation (zip) */
+  animationZip?: Asset | undefined
 }
 
 /** Efni í haus á forsíðu */
@@ -629,7 +671,7 @@ export interface INewsFields {
   title: string
 
   /** Subtitle */
-  subtitle?: string | undefined
+  subtitle: string
 
   /** Slug */
   slug: string
@@ -725,8 +767,17 @@ export interface IOrganizationFields {
   /** Title */
   title: string
 
+  /** Description */
+  description?: string | undefined
+
   /** Slug */
   slug: string
+
+  /** Tag */
+  tag?: IOrganizationTag[] | undefined
+
+  /** Link */
+  link?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -739,6 +790,28 @@ export interface IOrganization extends Entry<IOrganizationFields> {
     contentType: {
       sys: {
         id: 'organization'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IOrganizationTagFields {
+  /** Title */
+  title: string
+}
+
+export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'organizationTag'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1075,6 +1148,36 @@ export interface IStorySection extends Entry<IStorySectionFields> {
   }
 }
 
+export interface ISubArticleFields {
+  /** Title */
+  title: string
+
+  /** Slug */
+  slug: string
+
+  /** Content */
+  content: Document
+}
+
+/** A sub article that's a part of another main article */
+
+export interface ISubArticle extends Entry<ISubArticleFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'subArticle'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface ITimelineFields {
   /** Title */
   title?: string | undefined
@@ -1167,30 +1270,6 @@ export interface IUiConfiguration extends Entry<IUiConfigurationFields> {
     contentType: {
       sys: {
         id: 'uiConfiguration'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IUrlsFields {
-  /** slug */
-  slug?: string | undefined
-}
-
-/** List of urls */
-
-export interface IUrls extends Entry<IUrlsFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'urls'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1499,6 +1578,7 @@ export type CONTENT_TYPE =
   | 'article'
   | 'articleCategory'
   | 'articleGroup'
+  | 'articleSubgroup'
   | 'bigBulletList'
   | 'card'
   | 'cardSection'
@@ -1520,6 +1600,7 @@ export type CONTENT_TYPE =
   | 'numberBullet'
   | 'numberBulletSection'
   | 'organization'
+  | 'organizationTag'
   | 'page'
   | 'pageHeader'
   | 'processEntry'
@@ -1530,10 +1611,10 @@ export type CONTENT_TYPE =
   | 'statistics'
   | 'story'
   | 'storySection'
+  | 'subArticle'
   | 'timeline'
   | 'timelineEvent'
   | 'uiConfiguration'
-  | 'urls'
   | 'vidspyrna-frontpage'
   | 'vidspyrna-inline-image'
   | 'vidspyrna-process-entry'

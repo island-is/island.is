@@ -29,6 +29,10 @@ export const input = style({
   ':disabled': mixins.inputDisabled,
 })
 
+export const textarea = style({
+  resize: 'vertical',
+})
+
 export const errorMessage = style(mixins.errorMessage)
 
 export const hasError = style({

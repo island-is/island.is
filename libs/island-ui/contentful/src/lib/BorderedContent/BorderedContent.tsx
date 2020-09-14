@@ -6,18 +6,16 @@ import * as styles from './BorderedContent.treat'
 interface BorderedContentProps {
   topContent: ReactNode
   bottomContent: ReactNode
-  showTopContent?: boolean
 }
 
 export const BorderedContent: FC<BorderedContentProps> = ({
   topContent,
   bottomContent,
-  showTopContent,
 }) => {
   return (
     <div className={styles.container}>
       <Box width="full">
-        {showTopContent ? <Box paddingY={[3, 3, 5]}>{topContent}</Box> : null}
+        {topContent && <Box paddingY={[3, 3, 5]}>{topContent}</Box>}
         <Box paddingY={[3, 3, 6]} className={styles.bottomContent}>
           {bottomContent}
         </Box>

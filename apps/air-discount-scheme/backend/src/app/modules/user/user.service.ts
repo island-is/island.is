@@ -31,7 +31,6 @@ export class UserService {
     )
 
     return {
-      nationalId: user.nationalId,
       credit: meetsADSRequirements ? unused : 0,
       used: used,
       total,

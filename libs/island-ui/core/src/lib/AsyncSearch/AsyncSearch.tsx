@@ -282,21 +282,22 @@ export const AsyncSearchInput = forwardRef<
           isOpen={isOpen}
           ref={ref}
         />
-        <button
-          className={cn(styles.icon, styles.iconSizes[size], {
-            [styles.iconWhite]: whiteColorScheme,
-            [styles.focusable]: value,
-          })}
-          tabIndex={value ? 0 : -1}
-          {...buttonProps}
-        >
-          <Icon
-            type="search"
-            width={20}
-            color={whiteColorScheme ? 'white' : 'blue400'}
-          />
-        </button>
-        {loading && (
+        {!loading ? (
+          <button
+            className={cn(styles.icon, styles.iconSizes[size], {
+              [styles.iconWhite]: whiteColorScheme,
+              [styles.focusable]: value,
+            })}
+            tabIndex={value ? 0 : -1}
+            {...buttonProps}
+          >
+            <Icon
+              type="search"
+              width={20}
+              color={whiteColorScheme ? 'white' : 'blue400'}
+            />
+          </button>
+        ) : (
           <span
             className={cn(styles.loadingIcon, styles.loadingIconSizes[size])}
             aria-hidden="false"

@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import * as kennitala from 'kennitala'
 
+import { Airlines, States } from '@island.is/air-discount-scheme/consts'
 import { FlightLegSummary } from './flight.types'
 import { Flight, FlightLeg, financialStateMachine } from './flight.model'
-import { FlightDto } from './dto/flight.dto'
+import { FlightDto, FlightLegDto, GetFlightsBody } from './dto'
+import { NationalRegistryUser } from '../nationalRegistry'
 
 export const ADS_POSTAL_CODES = {
   Reykhólahreppur: 380,
@@ -18,13 +21,14 @@ export const ADS_POSTAL_CODES = {
 }
 const DEFAULT_AVAILABLE_LEGS = 6
 const AVAILABLE_FLIGHT_LEGS = {
-  '2020': 4,
+  '2020': 2,
   '2021': 6,
 }
+export const NORLANDAIR_FLIGHTS = ['VPN', 'THO', 'GRY']
 
 const availableFinancialStates = [
-  financialStateMachine.states.awaitingDebit.key,
-  financialStateMachine.states.sentDebit.key,
+  financialStateMachine.states[States.awaitingDebit].key,
+  financialStateMachine.states[States.sentDebit].key,
 ]
 
 @Injectable()
@@ -53,6 +57,22 @@ export class FlightService {
     return false
   }
 
+  private getAirline(
+    flightLeg: FlightLegDto,
+    airline: ValueOf<typeof Airlines>,
+  ): ValueOf<typeof Airlines> {
+    if (airline === Airlines.icelandair) {
+      if (
+        NORLANDAIR_FLIGHTS.includes(flightLeg.destination) ||
+        NORLANDAIR_FLIGHTS.includes(flightLeg.origin)
+      ) {
+        return Airlines.norlandair
+      }
+    }
+
+    return airline
+  }
+
   async countFlightLegsByNationalId(
     nationalId: string,
   ): Promise<FlightLegSummary> {
@@ -78,12 +98,42 @@ export class FlightService {
     }
   }
 
-  async findAll(): Promise<Flight[]> {
+  findAll(): Promise<Flight[]> {
     return this.flightModel.findAll({
       include: [
         {
           model: this.flightLegModel,
           where: { financialState: availableFinancialStates },
+        },
+      ],
+    })
+  }
+
+  findAllByFilter(body: GetFlightsBody | any): Promise<Flight[]> {
+    return this.flightModel.findAll({
+      where: {
+        ...(body.period
+          ? {
+              bookingDate: { '&gte': body.period.from, '&lte': body.period.to },
+            }
+          : {}),
+        ...(body.age
+          ? {
+              'userInfo.age': { '&gte': body.age.from, '&lte': body.age.to },
+            }
+          : {}),
+        ...(body.gender ? { 'userInfo.gender': body.gender } : {}),
+        ...(body.postalCode ? { 'userInfo.postalCode': body.postalCode } : {}),
+      },
+      include: [
+        {
+          model: this.flightLegModel,
+          where: {
+            ...(body.airline ? { airline: body.airline } : {}),
+            ...(body.state ? { financialState: body.state } : {}),
+            ...(body.flightLeg ? { origin: body.flightLeg.from } : {}),
+            ...(body.flightLeg ? { destination: body.flightLeg.to } : {}),
+          },
         },
       ],
     })
@@ -103,11 +153,24 @@ export class FlightService {
 
   async create(
     flight: FlightDto,
-    nationalId: string,
+    user: NationalRegistryUser,
     airline: string,
   ): Promise<Flight> {
+    const nationalId = user.nationalId
     return this.flightModel.create(
-      { ...flight, nationalId, airline },
+      {
+        ...flight,
+        flightLegs: flight.flightLegs.map((flightLeg) => ({
+          ...flightLeg,
+          airline: this.getAirline(flightLeg, airline),
+        })),
+        nationalId,
+        userInfo: {
+          age: kennitala.info(nationalId).age,
+          gender: user.gender,
+          postalCode: user.postalcode,
+        },
+      },
       { include: [this.flightLegModel] },
     )
   }
@@ -116,12 +179,17 @@ export class FlightService {
     return this.flightModel.findOne({
       where: {
         id: flightId,
-        airline,
       },
       include: [
         {
           model: this.flightLegModel,
-          where: { financialState: availableFinancialStates },
+          where: {
+            financialState: availableFinancialStates,
+            airline:
+              airline === Airlines.icelandair
+                ? [Airlines.icelandair, Airlines.norlandair]
+                : airline,
+          },
         },
       ],
     })

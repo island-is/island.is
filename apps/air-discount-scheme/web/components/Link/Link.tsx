@@ -20,11 +20,13 @@ export const Link: FC<LinkProps> = ({
   as = 'span',
   children,
 }) => {
-  const isExternalLink = isLinkExternal(href)
-
   const props = {
     variant,
     as,
+  }
+
+  if (!href) {
+    return <Typography {...props}>{children}</Typography>
   }
 
   const childIsString =
@@ -32,7 +34,7 @@ export const Link: FC<LinkProps> = ({
 
   return (
     <Typography links {...props}>
-      {isExternalLink ? (
+      {isLinkExternal(href) ? (
         <a
           href={href}
           className={styles.link}

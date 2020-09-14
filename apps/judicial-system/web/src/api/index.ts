@@ -1,5 +1,6 @@
 import 'isomorphic-fetch'
 import { Case, CreateCaseRequest } from '../types'
+import { getCookie, deleteCookie } from '../utils/cookies'
 
 // const getCaseById: (caseId: string) => Promise<GetCaseByIdResponse> = async (
 //   caseId: string,
@@ -18,14 +19,26 @@ import { Case, CreateCaseRequest } from '../types'
 //     }
 //   }
 // }
+const csrfToken = getCookie('judicial-system.csrf')
+
+const { API_URL = '' } = process.env
+
+export const apiUrl = API_URL
 
 export const getCases: () => Promise<Case[]> = async () => {
   try {
-    const response = await fetch('/api/cases')
+    const response = await fetch(`${apiUrl}/api/cases`, {
+      method: 'get',
+      headers: {
+        Authorization: `Bearer ${csrfToken}`,
+      },
+    })
 
     if (response.ok) {
       const cases = await response.json()
       return cases
+    } else if (response.status === 401) {
+      window.location.assign('/?error=true')
     } else {
       throw new Error(response.statusText)
     }
@@ -42,6 +55,7 @@ export const createCase: (
     const response = await fetch('/api/case', {
       method: 'post',
       headers: {
+        Authorization: `Bearer ${csrfToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(caseToCreate),
@@ -50,6 +64,8 @@ export const createCase: (
     if (response.ok) {
       const responseJSON: Case = await response.json()
       return responseJSON.id
+    } else if (response.status === 401) {
+      window.location.assign('/?error=true')
     } else {
       throw new Error(response.statusText)
     }
@@ -62,17 +78,18 @@ export const createCase: (
 export const saveCase: (
   caseId: string,
   caseField: string,
-  caseFieldValue: string,
+  caseFieldValue: string | Date,
 ) => Promise<number> = async (
   caseId: string,
   caseField: string,
-  caseFieldValue: string,
+  caseFieldValue: string | Date,
 ) => {
   if (caseId !== '') {
     const propertyChange = JSON.parse(`{"${caseField}": "${caseFieldValue}"}`)
     const response = await fetch(`/api/case/${caseId}`, {
       method: 'put',
       headers: {
+        Authorization: `Bearer ${csrfToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(propertyChange),
@@ -80,7 +97,25 @@ export const saveCase: (
 
     if (!response.ok) {
       // TODO: log error
+      if (response.status === 401) {
+        window.location.assign('/?error=true')
+      }
     }
     return response.status
+  }
+}
+
+export const logOut = async () => {
+  const response = await fetch('/api/auth/logout', {
+    headers: {
+      Authorization: `Bearer ${csrfToken}`,
+    },
+  })
+
+  if (response.ok) {
+    deleteCookie('judicial-system.csrf')
+    window.location.assign('/')
+  } else {
+    // TODO: Handle error
   }
 }

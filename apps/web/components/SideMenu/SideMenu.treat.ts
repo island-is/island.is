@@ -12,7 +12,7 @@ export const root = style({
   position: 'fixed',
   right: 0,
   top: 0,
-  zIndex: 1,
+  zIndex: 10,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
       height: 'auto',
@@ -36,12 +36,21 @@ export const tabBar = style({
 })
 
 export const tab = style({
-  borderBottom: `2px solid transparent`,
+  borderBottom: '2px solid transparent',
   flex: 1,
   padding: theme.spacing[2],
 })
+
 export const tabActive = style({
-  borderColor: theme.color.blue400,
+  borderBottomColor: theme.color.blue400,
+})
+
+export const tabFocused = style({
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      borderBottomColor: 'transparent',
+    },
+  },
 })
 
 export const content = style({

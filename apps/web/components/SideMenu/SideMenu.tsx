@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import FocusLock from 'react-focus-lock'
 import { RemoveScroll } from 'react-remove-scroll'
@@ -13,6 +13,7 @@ import {
   GridRow,
   GridColumn,
   Box,
+  FocusableBox,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useI18n } from '@island.is/web/i18n'
@@ -42,12 +43,19 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
   const [activeTab, setActiveTab] = useState(0)
   const { activeLocale, t } = useI18n()
   const { width } = useWindowSize()
+  const tabRefs = useRef<Array<HTMLElement | null>>([])
   const isMobile = width < theme.breakpoints.md
 
   useKey('Escape', handleClose)
 
   useEffect(() => {
     setActiveTab(0)
+  }, [isVisible])
+
+  useEffect(() => {
+    if (tabRefs.current) {
+      tabRefs.current[0] && tabRefs.current[0].focus()
+    }
   }, [isVisible])
 
   return isVisible ? (
@@ -60,9 +68,14 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
           height="full"
         >
           <Box display="flex" paddingBottom={3} justifyContent="flexEnd">
-            <button onClick={handleClose} tabIndex={-1}>
+            <FocusableBox
+              component="button"
+              onClick={handleClose}
+              tabIndex={-1}
+              padding={1}
+            >
               <Icon type="close" />
-            </button>
+            </FocusableBox>
           </Box>
           <Hidden above="sm">
             <GridContainer>
@@ -78,7 +91,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
               </GridRow>
               <GridRow>
                 <GridColumn span="8/12" paddingTop={3} paddingBottom={3}>
-                  <Link href="https://minarsidur.island.is/" passHref>
+                  <Link href="https://minarsidur.island.is/">
                     <Button variant="menu" leftIcon="user" width="fluid">
                       {t.login}
                     </Button>
@@ -93,20 +106,28 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
 
           <div className={styles.tabBar}>
             {tabs.map((tab, index) => (
-              <button
+              <FocusableBox
+                ref={(el) => (tabRefs.current[index] = el)}
+                component="button"
                 key={tab.title}
                 role="tab"
                 aria-controls={`tab-content-${index}`}
-                className={cn(styles.tab, {
-                  [styles.tabActive]: activeTab === index,
-                })}
                 aria-selected={activeTab === index}
                 onClick={() => setActiveTab(index)}
               >
-                <Typography variant="eyebrow" color="blue400">
-                  {tab.title}
-                </Typography>
-              </button>
+                {({ isFocused }) => (
+                  <div
+                    className={cn(styles.tab, {
+                      [styles.tabActive]: activeTab === index,
+                      [styles.tabFocused]: isFocused,
+                    })}
+                  >
+                    <Typography variant="eyebrow" color="blue400">
+                      {tab.title}
+                    </Typography>
+                  </div>
+                )}
+              </FocusableBox>
             ))}
           </div>
           {tabs.map((tab, index) => {
@@ -126,7 +147,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
                       color="blue400"
                       paddingBottom={index + 1 === tab.links.length ? 0 : 2}
                     >
-                      <a href={link.url}>{link.title}</a>
+                      <FocusableBox href={link.url}>{link.title}</FocusableBox>
                     </Typography>
                   ))}
                 </div>
@@ -147,12 +168,13 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
                     <div className={styles.linksContent}>
                       {tab.externalLinks.map((link) => (
                         <Typography
-                          key={link.url}
                           variant="sideMenu"
                           color="blue400"
                           paddingBottom={2}
                         >
-                          <a href={link.url}>{link.title}</a>
+                          <FocusableBox key={link.url} href={link.url}>
+                            {link.title}
+                          </FocusableBox>
                         </Typography>
                       ))}
                     </div>

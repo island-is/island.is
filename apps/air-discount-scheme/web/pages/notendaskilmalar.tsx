@@ -1,4 +1,4 @@
 import { withLocale } from '../i18n'
-import { TermsOfUse } from '../screens'
+import { GenericPage } from '../screens'
 
-export default withLocale('is', 'termsOfUse')(TermsOfUse)
+export default withLocale('is', 'termsOfUse')(GenericPage)

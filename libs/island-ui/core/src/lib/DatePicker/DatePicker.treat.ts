@@ -1,5 +1,6 @@
 import { style, styleMap, globalStyle } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
+import * as mixins from '../Input/Input.mixins'
 
 export const root = style({
   position: 'relative',
@@ -38,6 +39,16 @@ export const inputContainerVariants = styleMap({
   },
 })
 
+export const hasError = style({
+  border: `1px solid ${theme.color.red400}`,
+
+  ':hover': {
+    borderColor: theme.color.blue400,
+  },
+})
+
+export const errorMessage = style(mixins.errorMessage)
+
 export const labelAndPlaceholderContainer = style({
   textAlign: 'left',
 })
@@ -50,6 +61,14 @@ export const label = style({
   fontSize: 14,
   marginBottom: theme.spacing[1],
   transition: 'color 0.1s',
+})
+
+export const requiredStar = style({
+  color: theme.color.red400,
+})
+
+export const labelError = style({
+  color: theme.color.red400,
 })
 
 export const value = style({
@@ -122,6 +141,12 @@ globalStyle(`${root}.island-ui-datepicker .react-datepicker__month`, {
 globalStyle(`${root}.island-ui-datepicker .react-datepicker__day-names`, {
   marginBottom: '4px',
 })
+
+globalStyle(`${root} .react-datepicker__day-names, .react-datepicker__week`, {
+  display: 'flex',
+  justifyContent: 'space-between',
+})
+
 globalStyle(
   `${root}.island-ui-datepicker .react-datepicker__day-name, .react-datepicker__day`,
   {
@@ -129,7 +154,7 @@ globalStyle(
     fontStyle: 'normal',
     fontWeight: 600,
     fontSize: `${theme.typography.baseFontSize}px`,
-    lineHeight: `${theme.typography.baseLineHeight}px`,
+    lineHeight: `${theme.typography.baseLineHeight}`,
     textAlign: 'center',
     color: `${theme.color.dark400}`,
     margin: `0 ${theme.spacing[4]}px 0 0`,

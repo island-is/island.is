@@ -4,11 +4,11 @@ import Router from 'next/router'
 import {
   Box,
   Button,
-  ContentBlock,
-  Columns,
-  Column,
   Icon,
   Typography,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 
 import { useTranslations } from '../../i18n'
@@ -22,40 +22,39 @@ function NotFound() {
   }
 
   return (
-    <ContentBlock width="large">
-      <Box paddingX="gutter">
-        <Box marginBottom={4}>
-          <Columns>
-            <Box
-              background="blue100"
-              padding={[2, 2, 3]}
-              border="standard"
-              borderRadius="large"
-            >
-              <Columns>
-                <Column width="content">
-                  <Box marginRight={2} alignItems="center" display="flex">
-                    <Icon type="info" />
-                  </Box>
-                </Column>
-                <Column>
-                  <Box marginBottom={1}>
-                    <Typography variant="h4">{t.title}</Typography>
-                  </Box>
-                  <Typography variant="p">{t.content}</Typography>
-                </Column>
-              </Columns>
+    <GridContainer>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '8/12', '6/12']}>
+          <Box
+            marginBottom={8}
+            background="blue100"
+            borderColor="blue300"
+            borderWidth="standard"
+            borderStyle="solid"
+            borderRadius="standard"
+            display="flex"
+            alignItems="center"
+            padding={3}
+          >
+            <Box marginRight={2}>
+              <Icon type="info" />
             </Box>
-          </Columns>
-        </Box>
-        <Button variant="text" onClick={() => Router.back()}>
-          <Box marginRight={1} alignItems="center" display="flex">
-            <Icon type="arrowLeft" width={16} />
+            <Box marginRight={2}>
+              <Typography variant="p">
+                <strong>{t.title}</strong>
+              </Typography>
+              <Typography variant="p">{t.content}</Typography>
+            </Box>
           </Box>
-          {t.button}
-        </Button>
-      </Box>
-    </ContentBlock>
+        </GridColumn>
+      </GridRow>
+      <Button variant="text" onClick={() => Router.back()}>
+        <Box marginRight={1} alignItems="center" display="flex">
+          <Icon type="arrowLeft" width={16} />
+        </Box>
+        {t.button}
+      </Button>
+    </GridContainer>
   )
 }
 

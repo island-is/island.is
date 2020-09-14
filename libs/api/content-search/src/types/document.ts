@@ -8,6 +8,7 @@ export interface Document {
   category: string
   category_slug: string
   category_description: string
+  subgroup: string
   group: string
   group_slug: string
   group_description: string

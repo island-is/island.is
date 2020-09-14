@@ -1,10 +1,17 @@
-import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
-import { getConnectionToken } from '@nestjs/sequelize'
-import { INestApplication, Type } from '@nestjs/common'
 import { Sequelize } from 'sequelize-typescript'
-import { AppModule } from '../src/app/app.module'
+import { execSync } from 'child_process'
 
-export let app: INestApplication
+import { getConnectionToken } from '@nestjs/sequelize'
+import { INestApplication, Type, CanActivate } from '@nestjs/common'
+
+import { testServer, TestServerOptions } from '@island.is/infra-nest-server'
+
+import { JwtAuthGuard } from '../src/app/modules/auth'
+import { AppModule } from '../src/app'
+
+const noGuard: CanActivate = { canActivate: jest.fn(() => true) }
+
+let app: INestApplication
 let sequelize: Sequelize
 
 export const truncate = () => {
@@ -31,16 +38,20 @@ export const truncate = () => {
 export const setup = async (options?: Partial<TestServerOptions>) => {
   app = await testServer({
     appModule: AppModule,
+    override: (builder) =>
+      builder.overrideGuard(JwtAuthGuard).useValue(noGuard),
     ...options,
   })
   sequelize = await app.resolve(getConnectionToken() as Type<Sequelize>)
 
-  await sequelize.sync()
+  // Need to use sequelize-cli becuase sequelize.sync does not work for our models
+  execSync('yarn nx run judicial-system-api:migrate')
+  // await sequelize.sync()
 
   return app
 }
 
-beforeEach(() => truncate())
+beforeAll(() => truncate())
 
 afterAll(async () => {
   if (app && sequelize) {

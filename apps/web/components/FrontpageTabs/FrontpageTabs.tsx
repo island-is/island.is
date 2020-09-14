@@ -97,7 +97,9 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     let height = 0
 
     itemsRef.current.forEach((x) => {
-      height = Math.max(height, x.offsetHeight)
+      if (x) {
+        height = Math.max(height, x.offsetHeight)
+      }
     })
 
     setMinHeight(height)

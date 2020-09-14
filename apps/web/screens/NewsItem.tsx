@@ -16,10 +16,14 @@ import { useDateUtils } from '../i18n/useDateUtils'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { NewsItemLayout } from './Layouts/Layouts'
 import { GET_NEWS_ITEM_QUERY } from './queries'
-import { Query, ContentLanguage, QueryGetNewsArgs } from '@island.is/api/schema'
+import {
+  GetNewsItemQuery,
+  QueryGetNewsArgs,
+  ContentLanguage,
+} from '../graphql/schema'
 
 interface NewsItemProps {
-  newsItem: Query['getNews']
+  newsItem: GetNewsItemQuery['getNews']
 }
 
 const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
@@ -28,24 +32,20 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
   const { format } = useDateUtils()
 
   const sidebar = (
-    <Stack space={3}>
-      <Stack space={1}>
-        <Typography variant="eyebrow" as="p" color="blue400">
-          Höfundur
-        </Typography>
-        <Typography variant="h5" as="p">
-          Jón Jónsson
-        </Typography>
-      </Stack>
-      <Stack space={1}>
-        <Typography variant="eyebrow" as="p" color="blue400">
-          Birt
-        </Typography>
-        <Typography variant="h5" as="p">
-          {format(new Date(newsItem.date), 'do MMMM yyyy')}
-        </Typography>
-      </Stack>
-    </Stack>
+    <Box>
+      <Typography variant="eyebrow" as="p" color="blue400" paddingBottom={1}>
+        Höfundur
+      </Typography>
+      <Typography variant="h5" as="p" paddingBottom={2}>
+        Jón Jónsson
+      </Typography>
+      <Typography variant="eyebrow" as="p" color="blue400" paddingBottom={1}>
+        Birt
+      </Typography>
+      <Typography variant="h5" as="p" paddingBottom={2}>
+        {format(new Date(newsItem.date), 'do MMMM yyyy')}
+      </Typography>
+    </Box>
   )
 
   return (
@@ -54,27 +54,21 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
         <title>{newsItem.title} | Ísland.is</title>
       </Head>
       <NewsItemLayout sidebar={sidebar}>
-        <Box paddingTop={[3, 3, 6, 0]}>
-          <Stack space={3}>
-            <Breadcrumbs>
-              <Link href={makePath()}>Ísland.is</Link>
-              <Link href={makePath('news')}>Fréttir og tilkynningar</Link>
-            </Breadcrumbs>
-            <Box paddingTop={1}>
-              <Typography variant="h1" as="h1">
-                {newsItem.title}
-              </Typography>
-            </Box>
-            <Typography variant="intro" as="p">
-              {newsItem.intro}
-            </Typography>
-            {Boolean(newsItem.image) && (
-              <Box paddingY={2}>
-                <Image type="apiImage" image={newsItem.image} />
-              </Box>
-            )}
-          </Stack>
-        </Box>
+        <Breadcrumbs>
+          <Link href={makePath()}>Ísland.is</Link>
+          <Link href={makePath('news')}>Fréttir og tilkynningar</Link>
+        </Breadcrumbs>
+        <Typography variant="h1" as="h1" paddingTop={1} paddingBottom={2}>
+          {newsItem.title}
+        </Typography>
+        <Typography variant="intro" as="p" paddingBottom={2}>
+          {newsItem.intro}
+        </Typography>
+        {Boolean(newsItem.image) && (
+          <Box paddingY={2}>
+            <Image type="apiImage" image={newsItem.image} />
+          </Box>
+        )}
         <Content document={newsItem.content} />
       </NewsItemLayout>
     </>
@@ -84,7 +78,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
 NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
   const {
     data: { getNews: newsItem },
-  } = await apolloClient.query<Query, QueryGetNewsArgs>({
+  } = await apolloClient.query<GetNewsItemQuery, QueryGetNewsArgs>({
     query: GET_NEWS_ITEM_QUERY,
     variables: {
       input: {

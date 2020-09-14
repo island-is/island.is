@@ -28,7 +28,6 @@ const DiscountsQuery = gql`
         nationalId
         name
         fund {
-          nationalId
           used
           credit
           total
@@ -50,10 +49,10 @@ function Benefits({ misc }: PropTypes) {
     misc,
   )
   const benefits = discounts.filter(({ user }) => user.meetsADSRequirements)
-  const hasBenefits = !(benefits.length <= 0 && !loading && called)
+  const hasBenefits = benefits.length > 0
   return (
     <Box marginBottom={6}>
-      {hasBenefits && (
+      {hasBenefits && !loading && called && (
         <Box
           marginBottom={8}
           background="yellow200"
@@ -81,27 +80,25 @@ function Benefits({ misc }: PropTypes) {
         <Typography variant="h3">{myRights}</Typography>
         {hasBenefits ? (
           <>
-            {loading && !called ? (
-              <SkeletonLoader height={98} />
-            ) : (
-              benefits.map((discount, index) => {
-                const { user } = discount
-                const fundUsed = user.fund.used === user.fund.total
-                const status: Status = fundUsed ? 'fundUsed' : 'default'
-                return (
-                  <UserCredit
-                    key={index}
-                    misc={misc}
-                    discount={discount}
-                    status={status}
-                  />
-                )
-              })
-            )}
+            {benefits.map((discount, index) => {
+              const { user } = discount
+              const fundUsed = user.fund.used === user.fund.total
+              const status: Status = fundUsed ? 'fundUsed' : 'default'
+              return (
+                <UserCredit
+                  key={index}
+                  misc={misc}
+                  discount={discount}
+                  status={status}
+                />
+              )
+            })}
             <Box textAlign="right">
               <Typography variant="pSmall">{codeDescription}</Typography>
             </Box>
           </>
+        ) : (loading && !called) || loading ? (
+          <SkeletonLoader height={98} repeat={2} space={3} />
         ) : (
           <NoBenefits misc={misc} />
         )}

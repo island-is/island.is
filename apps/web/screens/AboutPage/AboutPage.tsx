@@ -1,15 +1,19 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, ReactNode, useRef, useMemo, Ref, forwardRef } from 'react'
-import fromPairs from 'lodash/fromPairs'
+import React, {
+  FC,
+  ReactNode,
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  Ref,
+  forwardRef,
+  useCallback,
+} from 'react'
+import { fromPairs, minBy } from 'lodash'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { useI18n } from '@island.is/web/i18n'
-import {
-  Query,
-  QueryGetAboutPageArgs,
-  AboutPage,
-  Slice,
-} from '@island.is/api/schema'
-import { GET_PAGE_QUERY } from '../queries'
+import { GET_ABOUT_PAGE_QUERY } from '../queries'
 import { Screen } from '@island.is/web/types'
 import {
   Header,
@@ -39,32 +43,101 @@ import {
 import { Content } from '@island.is/island-ui/contentful'
 import Sidebar, { SidebarProps } from './Sidebar'
 import * as styles from './AboutPage.treat'
-import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import Head from 'next/head'
+import {
+  GetAboutPageQuery,
+  QueryGetAboutPageArgs,
+  AllSlicesFragment,
+  AllSlicesEmbeddedVideoFragment,
+  AllSlicesImageFragment,
+} from '../../graphql/schema'
+import useViewport from '@island.is/web/hooks/useViewport'
 
-const extractSliceTitle = (slice: Slice): [string, string] | null => {
+const useScrollSpy = ({
+  margin = 0,
+  initialId = '',
+}: {
+  margin?: number
+  initialId?: string
+}): [(id: string) => (e: HTMLElement) => void, string | undefined] => {
+  const elements = useRef<{ [key: string]: HTMLElement }>({})
+  const [currentId, setCurrentId] = useState(initialId)
+
+  // re-render on scroll or resize
+  useViewport()
+
+  // Elements are cleared on each render. After the component that calls this
+  // hook has finished rendering, the useEffect hook below runs with
+  // elements.current populated by the component using this hook.
+  elements.current = {}
+
+  const spy = useCallback(
+    (key: string) => {
+      return (e: HTMLElement) => {
+        elements.current[key] = e
+      }
+    },
+    [elements],
+  )
+
+  useEffect(() => {
+    const candidates = Array.from(
+      Object.entries(elements.current),
+    ).map(([name, elem]) => ({ name, elem }))
+
+    const best = minBy(candidates, (c) => {
+      const { top, height } = c.elem.getBoundingClientRect()
+      return Math.min(
+        Math.abs(top - margin),
+        Math.abs(top + height - margin - 1),
+      )
+    })
+
+    if (best && best.name !== currentId) {
+      setCurrentId(best.name)
+    }
+  })
+
+  return [spy, currentId]
+}
+
+/**
+ * TODO: Both fragments Image and EmbeddedVideo aren't used inside
+ * queries, so no fields are retrieve, which mean `id` is undefined
+ */
+type AvailableSlices = Exclude<
+  AllSlicesFragment,
+  AllSlicesEmbeddedVideoFragment | AllSlicesImageFragment
+>
+
+const extractSliceTitle = (slice: AvailableSlices): [string, string] | null => {
   switch (slice.__typename) {
     case 'PageHeaderSlice':
       return [slice.id, slice.navigationText]
+
     case 'HeadingSlice':
     case 'LinkCardSlice':
     case 'MailingListSignupSlice':
     case 'LatestNewsSlice':
     case 'LogoListSlice':
       return [slice.id, slice.title]
+
     default:
       return null
   }
 }
 
-const connectSlices = (slices: Slice[]): { [k: string]: string } => {
+const connectSlices = (slices: AvailableSlices[]): { [k: string]: string } => {
   let head = slices.find(extractSliceTitle) ?? slices[0]
+
   const pairs = slices.map((slice) => {
     if (extractSliceTitle(slice)) {
       head = slice
     }
+
     return [slice.id, head.id]
   })
+
   return fromPairs(pairs)
 }
 
@@ -124,20 +197,21 @@ const Background = forwardRef<HTMLDivElement, BackgroundProps>(
   },
 )
 
-const decideSidebarType = (slice?: Slice): SidebarProps['type'] => {
+const decideSidebarType = (slice?: AllSlicesFragment): SidebarProps['type'] => {
   switch (slice && slice.__typename) {
     case 'PageHeaderSlice':
     case 'MailingListSignupSlice':
     case 'LogoListSlice':
       return 'gradient'
+
     default:
       return 'standard'
   }
 }
 
 interface SectionProps {
-  slice: Slice
-  page: AboutPage
+  slice: AvailableSlices
+  page: GetAboutPageQuery['getAboutPage']
   currentSliceId: string
   setRef: (k: string) => (e: HTMLDivElement) => void
 }
@@ -171,9 +245,9 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                       </Typography>
                     </Stack>
                   </div>
-                  {slice.slices.map((slice, index) => (
+                  {(slice.slices as AvailableSlices[]).map((slice) => (
                     <Section
-                      key={index}
+                      key={slice.id}
                       slice={slice}
                       page={page}
                       currentSliceId={currentSliceId}
@@ -185,7 +259,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
                   <Sidebar
                     title={page.title}
                     type={decideSidebarType(
-                      page.slices.find(
+                      (page.slices as AvailableSlices[]).find(
                         (slice) =>
                           !currentSliceId || slice.id === currentSliceId,
                       ),
@@ -307,7 +381,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           <Layout width="7/12" boxProps={{ paddingTop: 12, paddingBottom: 10 }}>
             <StoryList
               {...slice}
-              stories={slice.stories.map((story) => ({
+              stories={(slice.stories as any[]).map((story) => ({
                 ...story,
                 logoUrl: story.logo.url,
               }))}
@@ -363,13 +437,16 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
 }
 
 export interface AboutPageProps {
-  page?: AboutPage
+  page?: GetAboutPageQuery['getAboutPage']
 }
 
 const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
   const refs: Ref<{ [k: string]: HTMLDivElement }> = useRef({})
   const [spy, sliceId] = useScrollSpy({ margin: 200 })
-  const sliceMap = useMemo(() => connectSlices(page.slices), [page.slices])
+  const sliceMap = useMemo(
+    () => connectSlices(page.slices as AvailableSlices[]),
+    [page.slices],
+  )
 
   const setRef = (id: string) => {
     return (e: HTMLDivElement) => {
@@ -385,9 +462,9 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
         <meta name="description" content={page.seoDescription} />
       </Head>
       <Box position="relative">
-        {page.slices.map((slice, index) => (
+        {(page.slices as AvailableSlices[]).map((slice) => (
           <Section
-            key={index}
+            key={slice.id}
             slice={slice}
             page={page}
             currentSliceId={sliceMap[sliceId]}
@@ -402,8 +479,8 @@ const AboutPageScreen: Screen<AboutPageProps> = ({ page }) => {
 AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
   const {
     data: { getAboutPage: page },
-  } = await apolloClient.query<Query, QueryGetAboutPageArgs>({
-    query: GET_PAGE_QUERY,
+  } = await apolloClient.query<GetAboutPageQuery, QueryGetAboutPageArgs>({
+    query: GET_ABOUT_PAGE_QUERY,
     fetchPolicy: 'no-cache',
     variables: {
       input: {

@@ -10,7 +10,7 @@ import {
   HeadData,
   Body,
   Data,
-} from '@island.is/air-discount-scheme-web/components/Table/Table'
+} from '@island.is/air-discount-scheme-web/components/Table'
 import { format } from 'date-fns'
 import { is, enGB } from 'date-fns/locale'
 import { useI18n } from '@island.is/air-discount-scheme-web/i18n'
@@ -19,13 +19,16 @@ const THIRTY_SECONDS = 30000 // milli-seconds
 
 const FlightsQuery = gql`
   query FlightsQuery {
-    flights {
-      id
-      bookingDate
-      travel
-      user {
-        nationalId
-        name
+    user {
+      nationalId
+      flights {
+        id
+        bookingDate
+        travel
+        user {
+          nationalId
+          name
+        }
       }
     }
   }
@@ -40,8 +43,9 @@ function Usage({ misc }: PropTypes) {
     ssr: false,
     pollInterval: THIRTY_SECONDS,
   })
-  const { flights = [] } = data ?? {}
-  const { currentUsage, user, path, date } = JSON.parse(misc)
+  const { user } = data || {}
+  const flights = user?.flights || []
+  const { currentUsage, user: userTitle, path, date } = JSON.parse(misc)
   const { activeLocale } = useI18n()
 
   if (flights.length <= 0) {
@@ -56,7 +60,7 @@ function Usage({ misc }: PropTypes) {
       <Table>
         <Head>
           <Row>
-            <HeadData>{user}</HeadData>
+            <HeadData>{userTitle}</HeadData>
             <HeadData>{path}</HeadData>
             <HeadData>{date}</HeadData>
           </Row>

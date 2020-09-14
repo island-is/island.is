@@ -1,6 +1,7 @@
 export type FlightLeg = {
   id: string
   flightId: string
+  airline: string
   destination: string
   origin: string
   originalPrice: number
@@ -12,10 +13,16 @@ export type FlightLeg = {
   modified: Date
 }
 
+export type UserInfo = {
+  age: number
+  gender: 'kk' | 'kvk'
+  postalCode: number
+}
+
 export type Flight = {
   id: string
   nationalId: string
-  airline: string
+  userInfo: UserInfo
   bookingDate: Date
   flightLegs: FlightLeg[]
   created: Date

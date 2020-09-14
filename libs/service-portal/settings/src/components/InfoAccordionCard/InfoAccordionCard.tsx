@@ -25,9 +25,7 @@ const InfoAccordionCard: FC<Props> = ({ id, label, description, rows }) => {
     <AccordionCard
       id={id}
       label={label}
-      visibleContent={
-        description ? <Box marginTop={1}>{description}</Box> : null
-      }
+      visibleContent={description ? description : null}
     >
       <Stack space={2}>
         {rows.map((row, index) => (
@@ -38,19 +36,21 @@ const InfoAccordionCard: FC<Props> = ({ id, label, description, rows }) => {
             border="standard"
             borderRadius="large"
           >
-            <Columns collapseBelow="sm" alignY="center">
+            <Columns space={1} collapseBelow="sm" alignY="center">
               {row.columns.map((column, index) => (
                 <Column
                   key={`column-${index}`}
                   width={index === 0 ? '5/12' : index === 1 ? '4/12' : '3/12'}
                 >
-                  {column.render ? (
-                    column.render()
-                  ) : index === 0 ? (
-                    <Typography variant="h5">{column.content}</Typography>
-                  ) : (
-                    column.content
-                  )}
+                  <Box overflow="hidden">
+                    {column.render ? (
+                      column.render()
+                    ) : index === 0 ? (
+                      <Typography variant="h5">{column.content}</Typography>
+                    ) : (
+                      column.content
+                    )}
+                  </Box>
                 </Column>
               ))}
             </Columns>

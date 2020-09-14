@@ -3,7 +3,6 @@ import React, { FC, useState, useContext } from 'react'
 import { useRouter } from 'next/router'
 import {
   Logo,
-  Link,
   Columns,
   Column,
   Box,
@@ -14,6 +13,7 @@ import {
   GridColumn,
   GridRow,
   ColorSchemeContext,
+  FocusableBox,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
@@ -45,14 +45,14 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
         <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
           <Columns alignY="center" space={2}>
             <Column width="content">
-              <Link href={english ? '/en' : '/'}>
+              <FocusableBox href={english ? '/en' : '/'}>
                 <Hidden above="md">
                   <Logo width={40} iconOnly solid={isWhite} />
                 </Hidden>
                 <Hidden below="lg">
                   <Logo width={160} solid={isWhite} />
                 </Hidden>
-              </Link>
+              </FocusableBox>
             </Column>
             <Column>
               <Box
@@ -86,13 +86,17 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                     </Hidden>
                   </>
                 )}
-                <Box marginLeft={marginLeft}>
-                  <Link href="//minarsidur.island.is/">
-                    <Button variant="menu" leftIcon="user">
+                <Hidden below="md">
+                  <FocusableBox
+                    href="//minarsidur.island.is/"
+                    marginLeft={marginLeft}
+                    borderRadius="large"
+                  >
+                    <Button variant="menu" leftIcon="user" tabIndex={-1}>
                       {t.login}
                     </Button>
-                  </Link>
-                </Box>
+                  </FocusableBox>
+                </Hidden>
                 <Box marginLeft={marginLeft}>
                   <LanguageToggler hideWhenMobile />
                 </Box>

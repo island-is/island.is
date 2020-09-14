@@ -3,5 +3,3 @@ export function useNamespace(namespace = {}) {
     return namespace?.[key] ?? (fallback || key)
   }
 }
-
-export default useNamespace

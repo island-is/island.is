@@ -13,9 +13,21 @@ export const menuColumn = style({
   overflow: 'hidden',
 })
 
-export const separator = style({
+export const menuRow = style({
+  padding: `${theme.spacing[1]}px 0`,
+  width: '100%',
+  overflow: 'hidden',
+})
+
+export const separatorVertical = style({
   flexBasis: '1px',
   flexShrink: 0,
   background: theme.color.blue200,
   margin: `0 ${theme.spacing[3]}px`,
+})
+
+export const separatorHorizontal = style({
+  flexBasis: '1px',
+  background: theme.color.blue200,
+  margin: `${theme.spacing[2]}px 0`,
 })

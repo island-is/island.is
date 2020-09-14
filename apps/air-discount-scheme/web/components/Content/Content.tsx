@@ -1,5 +1,5 @@
 import React, { useMemo, ReactNode } from 'react'
-import { BLOCKS } from '@contentful/rich-text-types'
+import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 import {
   Typography,
   Box,
@@ -121,7 +121,9 @@ const embeddedNodes = () => ({
   },
 })
 
-const options = {
+const options = (type) => ({
+  renderText: (text) =>
+    text.split('\n').map((text, i) => [i > 0 && <br key={i} />, text]),
   renderNode: {
     [BLOCKS.PARAGRAPH]: (node, children) => {
       return (
@@ -135,7 +137,25 @@ const options = {
         file: { url },
         title,
       } = node.data.target.fields
-      return <img src={url} alt={title} />
+      if (type === 'sidebar') {
+        return (
+          <Box
+            textAlign="center"
+            padding={3}
+            borderStyle="solid"
+            borderWidth="standard"
+            borderRadius="standard"
+            borderColor="dark100"
+          >
+            <img src={url} alt={title} />
+          </Box>
+        )
+      }
+      return (
+        <Box marginTop={5}>
+          <img src={url} alt={title} />
+        </Box>
+      )
     },
     [BLOCKS.EMBEDDED_ENTRY]: (node) => {
       const embeddedNode = embeddedNodes()[
@@ -168,15 +188,19 @@ const options = {
         </ListItem>
       )
     },
+    [INLINES.HYPERLINK]: (node, children) => {
+      return <Link href={node.data.uri}>{children}</Link>
+    },
   },
-}
+})
 
 type Props = {
   document: string
+  type?: string
   wrapper?: ReactNode
 }
 
-export const Content: React.FC<Props> = ({ document, wrapper }) => {
+export const Content: React.FC<Props> = ({ document, wrapper, type }) => {
   const parsed = useMemo(() => {
     if (typeof document === 'object') {
       return document
@@ -187,7 +211,7 @@ export const Content: React.FC<Props> = ({ document, wrapper }) => {
   }, [document])
   return (
     <ConditionalWrapper cmp={wrapper}>
-      {documentToReactComponents(parsed, options)}
+      {documentToReactComponents(parsed, options(type))}
     </ConditionalWrapper>
   )
 }

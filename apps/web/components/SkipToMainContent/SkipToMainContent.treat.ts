@@ -15,6 +15,7 @@ export const container = style({
   borderStyle: 'solid',
   borderColor: theme.color.blue200,
   overflow: 'hidden',
+  zIndex: 1,
   '@media': {
     [`screen and (max-width: 991px)`]: {
       borderRadius: 0,

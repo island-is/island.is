@@ -6,8 +6,7 @@ import {
   UserWithMeta,
 } from '@island.is/service-portal/core'
 import { useStore } from '../../store/stateProvider'
-
-const tempClone = (item: object) => JSON.parse(JSON.stringify(item))
+import { cloneDeep } from 'lodash'
 
 const filterNavigationTree = (
   item: ServicePortalNavigationItem,
@@ -47,8 +46,7 @@ const useNavigation = () => {
 
   useEffect(() => {
     if (userInfo === null) return
-    // TODO: This has to be cloned better
-    const masterNav: ServicePortalNavigationItem[] = tempClone(
+    const masterNav: ServicePortalNavigationItem[] = cloneDeep(
       servicePortalMasterNavigation,
     )
     masterNav.filter((rootItem) =>

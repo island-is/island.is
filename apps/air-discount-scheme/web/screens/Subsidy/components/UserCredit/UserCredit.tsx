@@ -58,7 +58,7 @@ function UserCredit({ discount, misc, status = 'default' }: PropTypes) {
     >
       <Box marginBottom={[3, 0]}>
         <Typography variant="h3">
-          {user.name} {user.nationalId !== authUser.nationalId && kidsRights}
+          {user.name} {user?.nationalId !== authUser?.nationalId && kidsRights}
         </Typography>
         <Typography variant="p">
           {remaining.replace(

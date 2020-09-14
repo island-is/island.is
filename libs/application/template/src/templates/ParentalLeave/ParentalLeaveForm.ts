@@ -34,6 +34,14 @@ export const ParentalLeaveForm: Form = buildForm({
               subTitle: 'Staðfesting á að það sé yfir höfuð barn á leiðinni',
               title: 'Áætlaður fæðingardagur',
             }),
+            buildDataProviderItem({
+              id: 'salary',
+              type: DataProviderTypes.ExampleSucceeds,
+              source: 'Success indeed',
+              subTitle:
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+              title: 'Áætlaður fæðingardagur',
+            }),
             // buildDataProviderItem({
             //   id: 'willFail',
             //   type: DataProviderTypes.ExampleFails,
@@ -41,13 +49,6 @@ export const ParentalLeaveForm: Form = buildForm({
             //   subTitle: 'what is happening',
             //   title: 'Fail me please',
             // }),
-            buildDataProviderItem({
-              id: 'salary',
-              type: DataProviderTypes.ExampleSucceeds,
-              source: 'Success indeed',
-              subTitle: 'what is happening',
-              title: 'This should wokr me please',
-            }),
           ],
         }),
       ],

@@ -1,4 +1,5 @@
 const withTreat = require('next-treat')()
+const withHealthcheckConfig = require('./next-modules/withHealthcheckConfig')
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 
@@ -17,16 +18,18 @@ const { API_URL = 'http://localhost:4444' } = process.env
 const graphqlPath = '/api/graphql'
 
 module.exports = withTreat(
-  withTM({
-    cssModules: false,
-    serverRuntimeConfig: {
-      // Will only be available on the server side
-      // Requests made by the server are internal request made directly to the api hostname
-      graphqlEndpoint: `${API_URL}${graphqlPath}`,
-    },
-    publicRuntimeConfig: {
-      // Will be available on both server and client
-      graphqlEndpoint: graphqlPath,
-    },
-  }),
+  withTM(
+    withHealthcheckConfig({
+      cssModules: false,
+      serverRuntimeConfig: {
+        // Will only be available on the server side
+        // Requests made by the server are internal request made directly to the api hostname
+        graphqlEndpoint: `${API_URL}${graphqlPath}`,
+      },
+      publicRuntimeConfig: {
+        // Will be available on both server and client
+        graphqlEndpoint: graphqlPath,
+      },
+    }),
+  ),
 )

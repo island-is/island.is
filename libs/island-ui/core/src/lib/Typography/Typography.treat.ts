@@ -23,6 +23,8 @@ export type VariantTypes =
   | 'sideMenu'
   | 'placeholderText'
   | 'datepickerHeaderText'
+  | 'formProgressSection'
+  | 'formProgressSectionActive'
 
 type ResponsiveProps<T> = {
   xs?: T
@@ -186,9 +188,27 @@ export const variants: Variants = {
     fontWeight: theme.typography.semiBold,
     lineHeight: 1.666,
   },
+  formProgressSection: {
+    fontSize: {
+      xs: 16,
+      md: 18,
+    },
+    fontWeight: theme.typography.light,
+    lineHeight: 1.75,
+  },
+  formProgressSectionActive: {
+    fontSize: {
+      xs: 16,
+      md: 18,
+    },
+    fontWeight: theme.typography.semiBold,
+    lineHeight: 1.75,
+  },
 }
 
-export const links = style({})
+export const links = style({
+  cursor: 'pointer',
+})
 
 globalStyle(`${links} a`, {
   color: theme.color.blue400,
