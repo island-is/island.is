@@ -82,14 +82,15 @@ export class PublicFlightController {
     if (flightLegsLeft < flight.flightLegs.length) {
       throw new ForbiddenException('Flight leg quota is exceeded')
     }
-    await this.discountService.useDiscount(
-      params.discountCode,
-      discount.nationalId,
-    )
     const newFlight = await this.flightService.create(
       flight,
       user,
       request.airline,
+    )
+    await this.discountService.useDiscount(
+      params.discountCode,
+      discount.nationalId,
+      newFlight.id,
     )
     return new FlightViewModel(newFlight)
   }
@@ -124,6 +125,7 @@ export class PublicFlightController {
     if (!flight) {
       throw new NotFoundException(`Flight<${params.flightId}> not found`)
     }
+    await this.discountService.reactivateDiscount(flight.id)
     await this.flightService.delete(flight)
   }
 
