@@ -5,12 +5,6 @@ interface SearchInput {
   types: string[]
 }
 
-/*export interface AutocompleteTermResponse {
-  suggest: {
-    searchSuggester: [{ options: [{ text: string }] }]
-  }
-}*/
-
 export interface SearchRequestBody {
   query: {
     bool: {

@@ -139,12 +139,10 @@ export class ElasticService {
     const {queryString, size, page, types} = query
     
     const requestBody = searchQuery({queryString, size, page, types})
-    logger.info('requestBody', requestBody)
     const data = await this.findByQuery<
       any,
       SearchRequestBody
     >(index, requestBody)
-
     return data
   }
 
