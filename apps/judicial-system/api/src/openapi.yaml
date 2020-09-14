@@ -174,10 +174,12 @@ components:
           items:
             type: string
             enum:
-              - ISOLATION
-              - VISITAION
-              - COMMUNICATION
-              - MEDIA
+              - _95_1_A
+              - _95_1_B
+              - _95_1_C
+              - _95_1_D
+              - _95_2
+              - _99_1_B
         custodyRestrictions:
           type: array
           items:

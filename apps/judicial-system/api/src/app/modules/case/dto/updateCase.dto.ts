@@ -59,12 +59,12 @@ export class UpdateCaseDto {
   readonly lawsBroken: string
 
   @IsOptional()
-  @IsEnum(CaseState)
-  @ApiPropertyOptional({ enum: CaseCustodyRestrictions, isArray: true })
+  @IsEnum(CaseCustodyProvisions, { each: true })
+  @ApiPropertyOptional({ enum: CaseCustodyProvisions, isArray: true })
   readonly custodyProvisions: CaseCustodyProvisions[]
 
   @IsOptional()
-  @IsEnum(CaseState)
+  @IsEnum(CaseCustodyRestrictions, { each: true })
   @ApiPropertyOptional({ enum: CaseCustodyRestrictions, isArray: true })
   readonly custodyRestrictions: CaseCustodyRestrictions[]
 
