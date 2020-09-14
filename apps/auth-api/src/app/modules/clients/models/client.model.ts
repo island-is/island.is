@@ -32,259 +32,357 @@ export class Client extends Model<Client> {
     type: DataType.STRING,
     allowNull: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: 'client_id',
+  })
   clientId: string
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: false,
+  })
   allowOfflineAccess: boolean
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    defaultValue: 300,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: 300,
+  })
   identityTokenLifetime: number
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    defaultValue: 3600,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: 3600,
+  })
   accessTokenLifetime: number
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    defaultValue: 300,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: 300,
+  })
   authorizationCodeLifetime: number
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    defaultValue: 2592000,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: 2592000,
+  })
   absoluteRefreshTokenLifetime: number
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    defaultValue: 1296000,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: 1296000,
+  })
   slidingRefreshTokenLifetime: number
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: null,
+  })
   consentLifetime: number
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    defaultValue: 1,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: 1,
+  })
   refreshTokenUsage: number
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: true,
   })
-  @ApiProperty()
-  updateAccessTokenClaimsOnRefresh: string
+  @ApiProperty({
+    example: true,
+  })
+  updateAccessTokenClaimsOnRefresh: boolean
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    defaultValue: 0,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: 0,
+  })
   refreshTokenExpiration: number
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    defaultValue: 0,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: 0,
+  })
   accessTokenType: number
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: true,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: true,
+  })
   enableLocalLogin: boolean
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: true,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: true,
+  })
   includeJwtId: boolean
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: false,
+  })
   alwaysSendClientClaims: boolean
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: null,
+  })
   pairWiseSubjectSalt: string
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: null,
+  })
   userSsoLifetime: number
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: null,
+  })
   userCodeType: string
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
+    defaultValue: 300,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: 300,
+  })
   deviceCodeLifetime: number
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: false,
+  })
   alwaysIncludeUserClaimsInIdToken: boolean
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    defaultValue: true,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: true,
+  })
   backChannelLogoutSessionRequired: string
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: true,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: true,
+  })
   enabled: boolean
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: null,
+  })
   logoUri: string
 
   @Column({
     type: DataType.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
+    defaultValue: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: false,
+  })
   requireConsent: boolean
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: false,
+  })
   requirePkce: boolean
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: false,
+  })
   allowPlainTextPkce: boolean
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: false,
+  })
   allowAccessTokenViaBrowser: boolean
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: null,
+  })
   frontChannelLogoutUri: string
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: true,
   })
-  @ApiProperty()
-  frontChannelLogoutSessionRequired: string
+  @ApiProperty({
+    example: true,
+  })
+  frontChannelLogoutSessionRequired: boolean
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: null,
+  })
   backChannelLogoutUri: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    defaultValue: true,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: true,
+  })
   allowRememberConsent: boolean
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: 'client_claims_prefix',
+  })
   clientClaimsPrefix: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: null,
+  })
   clientName: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: null,
+  })
   clientUri: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: null,
+  })
   description: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: 'protocol_type',
+  })
   protocolType: string
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: true,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: true,
+  })
   requireClientSecret: boolean
 
   @CreatedAt
@@ -301,19 +399,19 @@ export class Client extends Model<Client> {
 
   @HasMany(() => ClientAllowedCorsOrigin)
   @ApiProperty()
-  readonly allowedCorsOrigin: ClientAllowedCorsOrigin[]
+  readonly allowedCorsOrigins: ClientAllowedCorsOrigin[]
 
   @HasMany(() => ClientPostLogoutRedirectUri)
   @ApiProperty()
-  readonly postLogoutRedirectUri
+  readonly postLogoutRedirectUris
 
-  @HasMany( () => ClientRedirectUri)
+  @HasMany(() => ClientRedirectUri)
   readonly redirectUris: ClientRedirectUri
 
-  @HasMany( () => ClientIdpRestrictions)
+  @HasMany(() => ClientIdpRestrictions)
   readonly identityProviderRestrictions: ClientIdpRestrictions
 
-  @HasMany( () => ClientSecret)
+  @HasMany(() => ClientSecret)
   readonly clientSecrets: ClientSecret
 
   @HasMany( () => ClientGrantType )

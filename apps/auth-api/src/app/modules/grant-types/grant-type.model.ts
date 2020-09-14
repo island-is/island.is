@@ -4,10 +4,10 @@ import {
   Model,
   Table,
   CreatedAt,
-  UpdatedAt
-
+  UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+const { v4: uuidv4 } = require('uuid')
 
 @Table({
   tableName: 'grant_type',
@@ -16,7 +16,7 @@ import { ApiProperty } from '@nestjs/swagger'
       fields: ['id'],
     },
   ],
-  timestamps: false
+  timestamps: false,
 })
 export class GrantType extends Model<GrantType> {
   @Column({
@@ -25,21 +25,27 @@ export class GrantType extends Model<GrantType> {
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: uuidv4(),
+  })
   id: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: "some_name"
+  })
   name: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  @ApiProperty()
+  @ApiProperty({
+    example: "some_description"
+  })
   description: string
 
   @CreatedAt
@@ -49,5 +55,4 @@ export class GrantType extends Model<GrantType> {
   @UpdatedAt
   @ApiProperty()
   readonly modified: Date
-
 }

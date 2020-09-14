@@ -4,12 +4,16 @@ import {
   NotFoundException,
   Param,
   UseGuards,
+  Post,
+  Body,
+  Put,
+  Delete,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiTags, ApiOAuth2 } from '@nestjs/swagger'
-import { UserProfile } from './user-profile.model'
+import { ApiOkResponse, ApiTags, ApiOAuth2, ApiCreatedResponse } from '@nestjs/swagger'
+import { UserProfile } from './models/user-profile.model'
 import { UserProfilesService } from './user-profiles.service'
 import { AuthGuard } from '@nestjs/passport'
-import { ConfigService } from '@nestjs/config'
+import { UserProfileDto } from './dto/user-profile.dto'
 
 @ApiOAuth2(['openid:profile']) // add OAuth restriction to this controller
 @UseGuards(AuthGuard('jwt'))
@@ -18,7 +22,6 @@ import { ConfigService } from '@nestjs/config'
 export class UserProfilesController {
   constructor(
     private readonly userProfilesService: UserProfilesService,
-    private readonly config: ConfigService
   ) {}
 
   @Get(':subjectId')
@@ -34,5 +37,24 @@ export class UserProfilesController {
 
     return userProfile
   }
+
+  @Post()
+  @ApiCreatedResponse({ type: UserProfile })
+  async create(@Body() userProfile: UserProfileDto): Promise<UserProfile> {
+    return await this.userProfilesService.create(userProfile)
+  }
+
+  @Put(":id")
+  @ApiOkResponse({ type: UserProfile }) 
+  async update(@Body() userProfile: UserProfileDto, @Param('id') id: string): Promise<UserProfile> {
+    return await this.userProfilesService.update(userProfile, id)
+  }
+
+  @Delete(":id")
+  @ApiOkResponse()
+  async delete(@Param('id') id: string): Promise<number> {
+    return await this.userProfilesService.delete(id)
+  }
+  
 }
 
