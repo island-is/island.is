@@ -255,11 +255,7 @@ const Event = ({ event, setVisibleModal, visibleModal, modalKey }) => {
             style={styles.popper}
             {...attributes.popper}
           >
-            <EventModal
-              event={event}
-              visible={isVisible}
-              onClose={() => setVisibleModal(null)}
-            />
+            <EventModal event={event} onClose={() => setVisibleModal(null)} />
           </div>,
           portalRef.current,
         )}
