@@ -215,6 +215,7 @@ export type Slice =
   | ProcessEntry
   | FaqList
   | EmbeddedVideo
+  | SectionWithImage
 
 export type PageHeaderSlice = {
   __typename?: 'PageHeaderSlice'
@@ -329,6 +330,14 @@ export type EmbeddedVideo = {
   id: Scalars['ID']
   title: Scalars['String']
   url: Scalars['String']
+}
+
+export type SectionWithImage = {
+  __typename?: 'SectionWithImage'
+  id: Scalars['ID']
+  title: Scalars['String']
+  image?: Maybe<Image>
+  html: Html
 }
 
 export type Article = {
@@ -505,7 +514,7 @@ export type LifeEventPage = {
   intro: Scalars['String']
   image: Image
   thumbnail?: Maybe<Image>
-  body: Scalars['JSON']
+  content: Array<Slice>
 }
 
 export type AdgerdirTags = {
@@ -1053,6 +1062,9 @@ export type GetAboutPageQuery = { __typename?: 'Query' } & {
         | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
         | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
         | ({ __typename?: 'EmbeddedVideo' } & AllSlicesEmbeddedVideoFragment)
+        | ({
+            __typename?: 'SectionWithImage'
+          } & AllSlicesSectionWithImageFragment)
       >
     }
 }
@@ -1091,6 +1103,9 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
           | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
           | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
           | ({ __typename?: 'EmbeddedVideo' } & AllSlicesEmbeddedVideoFragment)
+          | ({
+              __typename?: 'SectionWithImage'
+            } & AllSlicesSectionWithImageFragment)
         >
         group?: Maybe<
           { __typename?: 'ArticleGroup' } & Pick<
@@ -1145,6 +1160,9 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
                 | ({
                     __typename?: 'EmbeddedVideo'
                   } & AllSlicesEmbeddedVideoFragment)
+                | ({
+                    __typename?: 'SectionWithImage'
+                  } & AllSlicesSectionWithImageFragment)
               >
             }
         >
@@ -1252,6 +1270,52 @@ export type GetLandingPageQuery = { __typename?: 'Query' } & {
           | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
           | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
           | ({ __typename?: 'EmbeddedVideo' } & AllSlicesEmbeddedVideoFragment)
+          | ({
+              __typename?: 'SectionWithImage'
+            } & AllSlicesSectionWithImageFragment)
+        >
+      }
+  >
+}
+
+export type GetLifeEventQueryVariables = Exact<{
+  input: GetLifeEventPageInput
+}>
+
+export type GetLifeEventQuery = { __typename?: 'Query' } & {
+  getLifeEventPage?: Maybe<
+    { __typename?: 'LifeEventPage' } & Pick<
+      LifeEventPage,
+      'title' | 'slug' | 'intro'
+    > & {
+        image: { __typename?: 'Image' } & ImageFieldsFragment
+        content: Array<
+          | ({
+              __typename?: 'PageHeaderSlice'
+            } & AllSlicesPageHeaderSliceFragment)
+          | ({ __typename?: 'TimelineSlice' } & AllSlicesTimelineSliceFragment)
+          | ({ __typename?: 'HeadingSlice' } & AllSlicesHeadingSliceFragment)
+          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+          | ({ __typename?: 'LinkCardSlice' } & AllSlicesLinkCardSliceFragment)
+          | ({
+              __typename?: 'LatestNewsSlice'
+            } & AllSlicesLatestNewsSliceFragment)
+          | ({
+              __typename?: 'MailingListSignupSlice'
+            } & AllSlicesMailingListSignupSliceFragment)
+          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
+          | ({
+              __typename?: 'BulletListSlice'
+            } & AllSlicesBulletListSliceFragment)
+          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+          | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
+          | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
+          | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
+          | ({ __typename?: 'EmbeddedVideo' } & AllSlicesEmbeddedVideoFragment)
+          | ({
+              __typename?: 'SectionWithImage'
+            } & AllSlicesSectionWithImageFragment)
         >
       }
   >
@@ -1265,7 +1329,7 @@ export type GetLifeEventsQuery = { __typename?: 'Query' } & {
   getLifeEvents: Array<
     { __typename?: 'LifeEventPage' } & Pick<
       LifeEventPage,
-      'title' | 'slug' | 'intro' | 'body'
+      'title' | 'slug' | 'intro'
     > & {
         thumbnail?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
         image: { __typename?: 'Image' } & Pick<Image, 'url'>
@@ -1613,6 +1677,13 @@ export type EmbeddedVideoFieldsFragment = {
   __typename: 'EmbeddedVideo'
 } & Pick<EmbeddedVideo, 'id' | 'title' | 'url'>
 
+export type SectionWithImageFieldsFragment = {
+  __typename: 'SectionWithImage'
+} & Pick<SectionWithImage, 'id' | 'title'> & {
+    image?: Maybe<{ __typename?: 'Image' } & ImageFieldsFragment>
+    html: { __typename?: 'Html' } & HtmlFieldsFragment
+  }
+
 export type AllSlicesPageHeaderSliceFragment = {
   __typename?: 'PageHeaderSlice'
 } & PageHeaderFieldsFragment
@@ -1671,6 +1742,10 @@ export type AllSlicesEmbeddedVideoFragment = {
   __typename?: 'EmbeddedVideo'
 } & EmbeddedVideoFieldsFragment
 
+export type AllSlicesSectionWithImageFragment = {
+  __typename?: 'SectionWithImage'
+} & SectionWithImageFieldsFragment
+
 export type AllSlicesFragment =
   | AllSlicesPageHeaderSliceFragment
   | AllSlicesTimelineSliceFragment
@@ -1687,3 +1762,4 @@ export type AllSlicesFragment =
   | AllSlicesProcessEntryFragment
   | AllSlicesFaqListFragment
   | AllSlicesEmbeddedVideoFragment
+  | AllSlicesSectionWithImageFragment

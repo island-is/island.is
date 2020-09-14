@@ -199,6 +199,18 @@ export const slices = gql`
     url
   }
 
+  fragment SectionWithImageFields on SectionWithImage {
+    __typename
+    id
+    title
+    image {
+      ...ImageFields
+    }
+    html {
+      ...HtmlFields
+    }
+  }
+
   fragment AllSlices on Slice {
     ...PageHeaderFields
     ...TimelineFields
@@ -215,5 +227,6 @@ export const slices = gql`
     ...HtmlFields
     ...ImageFields
     ...EmbeddedVideoFields
+    ...SectionWithImageFields
   }
 `

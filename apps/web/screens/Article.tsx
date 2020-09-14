@@ -228,10 +228,8 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
   const [bullet, setBullet] = useState<HTMLElement>(null)
 
   const navigation = useMemo(() => {
-    const nav = []
-    nav.push({ id: slugify(article.title), text: article.title })
-    return nav.concat(createNavigation(article.body))
-  }, [article.body])
+    return createNavigation(article.body, { title: article.title })
+  }, [article])
 
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
   const [activeId, navigate] = useScrollSpy(ids)
@@ -450,7 +448,7 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   ])
 
   // we assume 404 if no article/sub-article is found
-  const subArticle = article.subArticles.find((a) => a.slug === query.subSlug)
+  const subArticle = article?.subArticles.find((a) => a.slug === query.subSlug)
   if (!article || (query.subSlug && !subArticle)) {
     throw new CustomNextError(404, 'Article not found')
   }
