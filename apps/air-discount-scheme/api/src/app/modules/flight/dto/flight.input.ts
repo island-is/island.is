@@ -1,82 +1,59 @@
-import { Field, InputType } from '@nestjs/graphql'
-import {
-  IsEnum,
-  IsString,
-  IsOptional,
-  IsObject,
-  IsNumber,
-  IsDate,
-} from 'class-validator'
+import { Field, InputType, Int } from '@nestjs/graphql'
 
-import { States, Airlines } from '@island.is/air-discount-scheme/consts'
+import {
+  FlightLegInput,
+  RangeInput,
+  PeriodInput,
+  FlightsInput as TFlightsInput,
+} from '@island.is/air-discount-scheme/types'
 
 @InputType()
-class FlightLeg {
-  @Field()
-  @IsString()
+class FlightLeg implements FlightLegInput {
+  @Field({ nullable: true })
   from: string
 
-  @Field()
-  @IsString()
+  @Field({ nullable: true })
   to: string
 }
 
 @InputType()
-class Period {
+class Period implements PeriodInput {
   @Field()
-  @IsDate()
   from: Date
 
   @Field()
-  @IsDate()
   to: Date
 }
 
 @InputType()
-class Range {
-  @Field()
-  @IsNumber()
+class Range implements RangeInput {
+  @Field((_) => Int, { nullable: true })
   from: number
 
-  @Field()
-  @IsNumber()
+  @Field((_) => Int, { nullable: true })
   to: number
 }
 
 @InputType()
-export class FlightsInput {
+export class FlightsInput implements TFlightsInput {
   @Field((_) => String, { nullable: true })
-  @IsOptional()
-  @IsEnum(Object.values(Airlines))
   airline: string
 
   @Field((_) => FlightLeg, { nullable: true })
-  @IsOptional()
-  @IsObject()
   flightLeg: FlightLeg
 
   @Field((_) => Period, { nullable: true })
-  @IsOptional()
-  @IsObject()
   period: Period
 
-  @Field((_) => String, { nullable: true })
-  @IsOptional()
-  @IsEnum(Object.values(States))
-  state: string
+  @Field((_) => [String], { nullable: true })
+  state: string[]
 
   @Field((_) => Range, { nullable: true })
-  @IsOptional()
-  @IsObject()
   age: Range
 
   @Field((_) => String, { nullable: true })
-  @IsOptional()
-  @IsEnum(['kk', 'kvk'])
-  gender: string
+  gender: 'kk' | 'kvk'
 
-  @Field((_) => Number, { nullable: true })
-  @IsOptional()
-  @IsNumber()
+  @Field((_) => Int, { nullable: true })
   postalCode: number
 }

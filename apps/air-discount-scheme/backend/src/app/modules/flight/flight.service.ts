@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import * as kennitala from 'kennitala'
 
 import { Airlines, States } from '@island.is/air-discount-scheme/consts'
@@ -111,28 +112,44 @@ export class FlightService {
 
   findAllByFilter(body: GetFlightsBody | any): Promise<Flight[]> {
     return this.flightModel.findAll({
-      where: {
-        ...(body.period
-          ? {
-              bookingDate: { '&gte': body.period.from, '&lte': body.period.to },
-            }
-          : {}),
-        ...(body.age
-          ? {
-              'userInfo.age': { '&gte': body.age.from, '&lte': body.age.to },
-            }
-          : {}),
-        ...(body.gender ? { 'userInfo.gender': body.gender } : {}),
-        ...(body.postalCode ? { 'userInfo.postalCode': body.postalCode } : {}),
-      },
+      where: Sequelize.and(
+        Sequelize.where(
+          Sequelize.fn('date', Sequelize.col('booking_date')),
+          '>=',
+          body.period.from,
+        ),
+        Sequelize.where(
+          Sequelize.fn('date', Sequelize.col('booking_date')),
+          '<=',
+          body.period.to,
+        ),
+        Sequelize.where(
+          Sequelize.literal("(user_info->>'age')::numeric"),
+          '>=',
+          body.age.from,
+        ),
+        Sequelize.where(
+          Sequelize.literal("(user_info->>'age')::numeric"),
+          '<=',
+          body.age.to,
+        ),
+        {
+          ...(body.gender ? { 'userInfo.gender': body.gender } : {}),
+          ...(body.postalCode
+            ? { 'userInfo.postalCode': body.postalCode }
+            : {}),
+        },
+      ),
       include: [
         {
           model: this.flightLegModel,
           where: {
             ...(body.airline ? { airline: body.airline } : {}),
-            ...(body.state ? { financialState: body.state } : {}),
-            ...(body.flightLeg ? { origin: body.flightLeg.from } : {}),
-            ...(body.flightLeg ? { destination: body.flightLeg.to } : {}),
+            ...(body.state && body.state.length > 0
+              ? { financialState: body.state }
+              : {}),
+            ...(body.flightLeg?.from ? { origin: body.flightLeg.from } : {}),
+            ...(body.flightLeg?.to ? { destination: body.flightLeg.to } : {}),
           },
         },
       ],
