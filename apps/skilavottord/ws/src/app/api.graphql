@@ -2,21 +2,21 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type User {
-  nationalId: ID!
-  name: String!
-  mobile: String
-}
-
 type Car {
   id: ID!
-  ownerId: String!
   name: String!
   model: String!
   color: String!
 }
 
+type User {
+  nationalId: ID!
+  name: String!
+  mobile: String
+  cars: [Car!]
+}
+
 type Query {
-  getUserByNationalId(nationalId: String!): User!
   getCarById(id: String!): Car!
+  getUserByNationalId(nationalId: String!): User!
 }
