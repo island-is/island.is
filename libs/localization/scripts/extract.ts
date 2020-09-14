@@ -36,6 +36,13 @@ execFileSync('npx', [
 ])
 
 function createNamespace(id: string, messages: MessageDict, locales: Locale[]) {
+  const emptyObjForEachLocale = locales.reduce(
+    (arr, curr) => ({
+      ...arr,
+      [curr.code]: {},
+    }),
+    {},
+  )
   return client
     .getSpace('2nfa4y6hpvvz')
     .then((space) => space.getEnvironment('master'))
@@ -48,20 +55,8 @@ function createNamespace(id: string, messages: MessageDict, locales: Locale[]) {
           defaults: {
             en: messages,
           },
-          fallback: locales.reduce(
-            (arr, curr) => ({
-              ...arr,
-              [curr.code]: {},
-            }),
-            {},
-          ),
-          strings: locales.reduce(
-            (arr, curr) => ({
-              ...arr,
-              [curr.code]: {},
-            }),
-            {},
-          ),
+          fallback: emptyObjForEachLocale,
+          strings: emptyObjForEachLocale,
         },
       }),
     )
