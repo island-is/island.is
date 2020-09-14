@@ -31,6 +31,7 @@ import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
 import useRouteNames from '../i18n/useRouteNames'
 import { CustomNextError } from '../units/ErrorBoundary'
+import { withMainLayout } from '../layouts/main'
 import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
@@ -457,4 +458,4 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   }
 }
 
-export default ArticleScreen
+export default withMainLayout(ArticleScreen)

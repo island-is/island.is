@@ -3,10 +3,8 @@ import React from 'react'
 import Head from 'next/head'
 import {
   Typography,
-  Stack,
   Breadcrumbs,
   Box,
-  ContentBlock,
   Link,
 } from '@island.is/island-ui/core'
 import { Content, Image } from '@island.is/island-ui/contentful'
@@ -15,6 +13,7 @@ import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '../i18n/useDateUtils'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { NewsItemLayout } from './Layouts/Layouts'
+import { withMainLayout } from '../layouts/main'
 import { GET_NEWS_ITEM_QUERY } from './queries'
 import {
   GetNewsItemQuery,
@@ -93,4 +92,4 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default NewsItem
+export default withMainLayout(NewsItem)

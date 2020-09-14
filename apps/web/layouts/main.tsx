@@ -2,8 +2,7 @@ import React from 'react'
 import Head from 'next/head'
 import { Page, Box, FooterLinkProps, Footer } from '@island.is/island-ui/core'
 import { NextComponentType, NextPageContext } from 'next'
-
-import { GetInitialPropsContext } from '../types'
+import { Screen, GetInitialPropsContext } from '../types'
 import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_NAMESPACE_QUERY } from '../screens/queries'
@@ -15,7 +14,7 @@ import {
 } from '../graphql/schema'
 import { GlobalNamespaceContext } from '../context/GlobalNamespaceContext/GlobalNamespaceContext'
 
-interface LayoutProps {
+export interface LayoutProps {
   showSearchInHeader?: boolean
   wrapContent?: boolean
   showHeader?: boolean
@@ -24,7 +23,7 @@ interface LayoutProps {
   footerLowerMenu?: FooterLinkProps[]
   footerMiddleMenu?: FooterLinkProps[]
   footerTagsMenu?: FooterLinkProps[]
-  namespace: Record<string, string>
+  namespace: Record<string, string | string[]>
 }
 
 const Layout: NextComponentType<
@@ -87,8 +86,8 @@ const Layout: NextComponentType<
             bottomLinks={footerLowerMenu}
             middleLinks={footerMiddleMenu}
             tagLinks={footerTagsMenu}
-            middleLinksTitle={namespace.footerMiddleLabel}
-            tagLinksTitle={namespace.footerRightLabel}
+            middleLinksTitle={String(namespace.footerMiddleLabel)}
+            tagLinksTitle={String(namespace.footerRightLabel)}
             showMiddleLinks
             showTagLinks
           />
@@ -222,6 +221,39 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
     })),
     namespace,
   }
+}
+
+type LayoutWrapper<T> = NextComponentType<
+  GetInitialPropsContext<NextPageContext>,
+  { layoutProps: LayoutProps; componentProps: T },
+  { layoutProps: LayoutProps; componentProps: T }
+>
+
+export const withMainLayout = <T,>(
+  Component: Screen<T>,
+  layoutConfig: Partial<LayoutProps> = {},
+): LayoutWrapper<T> => {
+  const WithMainLayout: LayoutWrapper<T> = ({
+    layoutProps,
+    componentProps,
+  }) => {
+    return (
+      <Layout {...layoutProps}>
+        <Component {...componentProps} />
+      </Layout>
+    )
+  }
+
+  WithMainLayout.getInitialProps = async (ctx) => {
+    const [layoutProps, componentProps] = await Promise.all([
+      Layout.getInitialProps(ctx),
+      Component.getInitialProps(ctx),
+    ])
+
+    return { layoutProps: { ...layoutProps, ...layoutConfig }, componentProps }
+  }
+
+  return WithMainLayout
 }
 
 export default Layout
