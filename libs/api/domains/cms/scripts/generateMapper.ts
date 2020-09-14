@@ -55,7 +55,7 @@ const contentfulTypeToMap = (field: Field, imports: Imports) => {
 
         return {
           value: field.required ? `${base}` : `${value} && ${base}`,
-          fallback: undefined,
+          fallback: '[]',
         }
       }
 
@@ -63,7 +63,7 @@ const contentfulTypeToMap = (field: Field, imports: Imports) => {
         imports.mappers.push('mapImage')
 
         return {
-          value: `${value}.map(mapImage)`,
+          value: `${field.required ? value : `(${value} ?? [])`}.map(mapImage)`,
           fallback: '[]',
         }
       }
