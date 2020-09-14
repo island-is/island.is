@@ -1,9 +1,8 @@
 import React, { FC, useState } from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
-import { Icon } from '../Icon/Icon'
-
 import * as styles from './Sleeve.treat'
+import Icon from '../Icon/Icon'
 export type SleeveBoxShadow = 'normal' | 'purple'
 
 interface SleeveProps {

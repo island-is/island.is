@@ -200,6 +200,7 @@ const ArticleFields = [
   'fields.subgroup',
   'fields.group',
   'fields.category',
+  'fields.subArticles',
 ].join(',')
 
 export const getAdgerdirNews = async (

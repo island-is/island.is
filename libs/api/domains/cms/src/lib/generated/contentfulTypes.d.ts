@@ -13,6 +13,9 @@ export interface IArticleFields {
   /** Short title */
   shortTitle?: string | undefined
 
+  /** Introduction */
+  intro?: string | undefined
+
   /** Slug */
   slug: string
 
@@ -295,6 +298,9 @@ export interface IFrontpageSliderFields {
     | IOrganization
     | IPage
     | undefined
+
+  /** Animation (zip) */
+  animationZip?: Asset | undefined
 }
 
 /** Efni í haus á forsíðu */

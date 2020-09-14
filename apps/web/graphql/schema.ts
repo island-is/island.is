@@ -62,6 +62,100 @@ export type WebSearchAutocomplete = {
   completions: Array<Scalars['String']>
 }
 
+export type Image = {
+  __typename?: 'Image'
+  id: Scalars['ID']
+  url: Scalars['String']
+  title: Scalars['String']
+  contentType: Scalars['String']
+  width: Scalars['Int']
+  height: Scalars['Int']
+}
+
+export type Link = {
+  __typename?: 'Link'
+  text: Scalars['String']
+  url: Scalars['String']
+}
+
+export type TimelineEvent = {
+  __typename?: 'TimelineEvent'
+  id: Scalars['ID']
+  title: Scalars['String']
+  date: Scalars['String']
+  numerator?: Maybe<Scalars['Int']>
+  denominator?: Maybe<Scalars['Int']>
+  label: Scalars['String']
+  body?: Maybe<Scalars['String']>
+  tags: Array<Scalars['String']>
+  link: Scalars['String']
+}
+
+export type TimelineSlice = {
+  __typename?: 'TimelineSlice'
+  id: Scalars['ID']
+  title: Scalars['String']
+  events: Array<TimelineEvent>
+}
+
+export type Story = {
+  __typename?: 'Story'
+  label: Scalars['String']
+  title: Scalars['String']
+  logo: Image
+  readMoreText: Scalars['String']
+  date: Scalars['String']
+  intro: Scalars['String']
+  body?: Maybe<Scalars['String']>
+}
+
+export type LinkCard = {
+  __typename?: 'LinkCard'
+  title: Scalars['String']
+  body: Scalars['String']
+  link: Scalars['String']
+  linkText: Scalars['String']
+}
+
+export type News = {
+  __typename?: 'News'
+  id: Scalars['String']
+  slug: Scalars['String']
+  title: Scalars['String']
+  subtitle: Scalars['String']
+  intro: Scalars['String']
+  image?: Maybe<Image>
+  date: Scalars['String']
+  content?: Maybe<Scalars['String']>
+}
+
+export type NumberBullet = {
+  __typename?: 'NumberBullet'
+  id: Scalars['ID']
+  title: Scalars['String']
+  body: Scalars['String']
+}
+
+export type Statistic = {
+  __typename?: 'Statistic'
+  id: Scalars['ID']
+  value: Scalars['String']
+  label: Scalars['String']
+}
+
+export type Html = {
+  __typename?: 'Html'
+  id: Scalars['ID']
+  document: Scalars['JSON']
+}
+
+export type QuestionAndAnswer = {
+  __typename?: 'QuestionAndAnswer'
+  id: Scalars['ID']
+  question: Scalars['String']
+  answer: Html
+}
+
 export type ArticleCategory = {
   __typename?: 'ArticleCategory'
   title: Scalars['String']
@@ -102,227 +196,7 @@ export type SubArticle = {
   __typename?: 'SubArticle'
   title: Scalars['String']
   slug: Scalars['String']
-  content: Scalars['String']
-}
-
-export type Article = {
-  __typename?: 'Article'
-  id: Scalars['ID']
-  contentStatus: Scalars['String']
-  title: Scalars['String']
-  shortTitle?: Maybe<Scalars['String']>
-  slug: Scalars['String']
-  content?: Maybe<Scalars['String']>
-  category?: Maybe<ArticleCategory>
-  group?: Maybe<ArticleGroup>
-  subgroup?: Maybe<ArticleSubgroup>
-  organization: Array<Organization>
-  relatedArticles: Array<Article>
-  subArticles: Array<SubArticle>
-}
-
-export type AdgerdirTag = {
-  __typename?: 'AdgerdirTag'
-  id: Scalars['ID']
-  title: Scalars['String']
-}
-
-export type AdgerdirPage = {
-  __typename?: 'AdgerdirPage'
-  id: Scalars['ID']
-  title: Scalars['String']
-  description: Scalars['String']
-  longDescription?: Maybe<Scalars['String']>
-  content?: Maybe<Scalars['String']>
-  objective?: Maybe<Scalars['String']>
-  slug: Scalars['String']
-  tags: Array<AdgerdirTag>
-  link?: Maybe<Scalars['String']>
-  linkButtonText?: Maybe<Scalars['String']>
-  status: Scalars['String']
-  estimatedCostIsk?: Maybe<Scalars['Float']>
-  finalCostIsk?: Maybe<Scalars['Float']>
-}
-
-export type Organizations = {
-  __typename?: 'Organizations'
-  items: Array<Organization>
-}
-
-export type Image = {
-  __typename?: 'Image'
-  id: Scalars['ID']
-  url: Scalars['String']
-  title: Scalars['String']
-  contentType: Scalars['String']
-  width: Scalars['Int']
-  height: Scalars['Int']
-}
-
-export type AdgerdirNews = {
-  __typename?: 'AdgerdirNews'
-  id: Scalars['String']
-  slug: Scalars['String']
-  subtitle: Scalars['String']
-  title: Scalars['String']
-  intro: Scalars['String']
-  image?: Maybe<Image>
-  date: Scalars['String']
-  content?: Maybe<Scalars['String']>
-  pages?: Maybe<Array<AdgerdirPage>>
-}
-
-export type AdgerdirPages = {
-  __typename?: 'AdgerdirPages'
-  items: Array<AdgerdirPage>
-}
-
-export type AdgerdirFrontpage = {
-  __typename?: 'AdgerdirFrontpage'
-  id: Scalars['ID']
-  slug: Scalars['String']
-  title: Scalars['String']
-  description?: Maybe<Scalars['String']>
-  content?: Maybe<Scalars['String']>
-  slices: Array<AdgerdirSlice>
-}
-
-export type AdgerdirSlice = AdgerdirGroupSlice | AdgerdirFeaturedNewsSlice
-
-export type AdgerdirGroupSlice = {
-  __typename?: 'AdgerdirGroupSlice'
-  id: Scalars['ID']
-  subtitle?: Maybe<Scalars['String']>
-  title: Scalars['String']
-  description?: Maybe<Scalars['String']>
-  image?: Maybe<Image>
-  pages: Array<AdgerdirPage>
-}
-
-export type AdgerdirFeaturedNewsSlice = {
-  __typename?: 'AdgerdirFeaturedNewsSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  featured: Array<AdgerdirNews>
-}
-
-export type FrontpageSlide = {
-  __typename?: 'FrontpageSlide'
-  title: Scalars['String']
-  subtitle: Scalars['String']
-  content: Scalars['String']
-  image?: Maybe<Image>
-  link?: Maybe<Scalars['String']>
-}
-
-export type FrontpageSliderList = {
-  __typename?: 'FrontpageSliderList'
-  items: Array<FrontpageSlide>
-}
-
-export type News = {
-  __typename?: 'News'
-  id: Scalars['String']
-  slug: Scalars['String']
-  title: Scalars['String']
-  subtitle: Scalars['String']
-  intro: Scalars['String']
-  image?: Maybe<Image>
-  date: Scalars['String']
-  content?: Maybe<Scalars['String']>
-}
-
-export type Pagination = {
-  __typename?: 'Pagination'
-  page: Scalars['Int']
-  perPage: Scalars['Int']
-  totalResults: Scalars['Int']
-  totalPages: Scalars['Int']
-}
-
-export type PaginatedNews = {
-  __typename?: 'PaginatedNews'
-  page: Pagination
-  news: Array<News>
-}
-
-export type Namespace = {
-  __typename?: 'Namespace'
-  namespace: Scalars['String']
-  fields: Scalars['String']
-}
-
-export type Link = {
-  __typename?: 'Link'
-  text: Scalars['String']
-  url: Scalars['String']
-}
-
-export type TimelineEvent = {
-  __typename?: 'TimelineEvent'
-  id: Scalars['ID']
-  title: Scalars['String']
-  date: Scalars['String']
-  numerator?: Maybe<Scalars['Int']>
-  denominator?: Maybe<Scalars['Int']>
-  label: Scalars['String']
-  body?: Maybe<Scalars['String']>
-  tags: Array<Scalars['String']>
-  link: Scalars['String']
-}
-
-export type Story = {
-  __typename?: 'Story'
-  label: Scalars['String']
-  title: Scalars['String']
-  logo: Image
-  readMoreText: Scalars['String']
-  date: Scalars['String']
-  intro: Scalars['String']
-  body?: Maybe<Scalars['String']>
-}
-
-export type LinkCard = {
-  __typename?: 'LinkCard'
-  title: Scalars['String']
-  body: Scalars['String']
-  link: Scalars['String']
-  linkText: Scalars['String']
-}
-
-export type NumberBullet = {
-  __typename?: 'NumberBullet'
-  id: Scalars['ID']
-  title: Scalars['String']
-  body: Scalars['String']
-}
-
-export type Statistic = {
-  __typename?: 'Statistic'
-  id: Scalars['ID']
-  value: Scalars['String']
-  label: Scalars['String']
-}
-
-export type Html = {
-  __typename?: 'Html'
-  id: Scalars['ID']
-  document: Scalars['JSON']
-}
-
-export type QuestionAndAnswer = {
-  __typename?: 'QuestionAndAnswer'
-  id: Scalars['ID']
-  question: Scalars['String']
-  answer: Html
-}
-
-export type AboutPage = {
-  __typename?: 'AboutPage'
-  title: Scalars['String']
-  seoDescription: Scalars['String']
-  theme: Scalars['String']
-  slices: Array<Slice>
+  body: Array<Slice>
 }
 
 export type Slice =
@@ -349,14 +223,7 @@ export type PageHeaderSlice = {
   introduction: Scalars['String']
   navigationText: Scalars['String']
   links: Array<Link>
-  slices: Array<Slice>
-}
-
-export type TimelineSlice = {
-  __typename?: 'TimelineSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  events: Array<TimelineEvent>
+  slices: Array<TimelineSlice>
 }
 
 export type HeadingSlice = {
@@ -462,6 +329,140 @@ export type EmbeddedVideo = {
   id: Scalars['ID']
   title: Scalars['String']
   url: Scalars['String']
+}
+
+export type Article = {
+  __typename?: 'Article'
+  id: Scalars['ID']
+  contentStatus: Scalars['String']
+  title: Scalars['String']
+  slug: Scalars['String']
+  shortTitle: Scalars['String']
+  intro: Scalars['String']
+  body: Array<Slice>
+  category?: Maybe<ArticleCategory>
+  group?: Maybe<ArticleGroup>
+  subgroup?: Maybe<ArticleSubgroup>
+  organization: Array<Organization>
+  subArticles: Array<SubArticle>
+  relatedArticles: Array<Article>
+}
+
+export type AdgerdirTag = {
+  __typename?: 'AdgerdirTag'
+  id: Scalars['ID']
+  title: Scalars['String']
+}
+
+export type AdgerdirPage = {
+  __typename?: 'AdgerdirPage'
+  id: Scalars['ID']
+  title: Scalars['String']
+  description: Scalars['String']
+  longDescription?: Maybe<Scalars['String']>
+  content?: Maybe<Scalars['String']>
+  objective?: Maybe<Scalars['String']>
+  slug: Scalars['String']
+  tags: Array<AdgerdirTag>
+  link?: Maybe<Scalars['String']>
+  linkButtonText?: Maybe<Scalars['String']>
+  status: Scalars['String']
+  estimatedCostIsk?: Maybe<Scalars['Float']>
+  finalCostIsk?: Maybe<Scalars['Float']>
+}
+
+export type Organizations = {
+  __typename?: 'Organizations'
+  items: Array<Organization>
+}
+
+export type AdgerdirNews = {
+  __typename?: 'AdgerdirNews'
+  id: Scalars['String']
+  slug: Scalars['String']
+  subtitle: Scalars['String']
+  title: Scalars['String']
+  intro: Scalars['String']
+  image?: Maybe<Image>
+  date: Scalars['String']
+  content?: Maybe<Scalars['String']>
+  pages?: Maybe<Array<AdgerdirPage>>
+}
+
+export type AdgerdirPages = {
+  __typename?: 'AdgerdirPages'
+  items: Array<AdgerdirPage>
+}
+
+export type AdgerdirFrontpage = {
+  __typename?: 'AdgerdirFrontpage'
+  id: Scalars['ID']
+  slug: Scalars['String']
+  title: Scalars['String']
+  description?: Maybe<Scalars['String']>
+  content?: Maybe<Scalars['String']>
+  slices: Array<AdgerdirSlice>
+}
+
+export type AdgerdirSlice = AdgerdirGroupSlice | AdgerdirFeaturedNewsSlice
+
+export type AdgerdirGroupSlice = {
+  __typename?: 'AdgerdirGroupSlice'
+  id: Scalars['ID']
+  subtitle?: Maybe<Scalars['String']>
+  title: Scalars['String']
+  description?: Maybe<Scalars['String']>
+  image?: Maybe<Image>
+  pages: Array<AdgerdirPage>
+}
+
+export type AdgerdirFeaturedNewsSlice = {
+  __typename?: 'AdgerdirFeaturedNewsSlice'
+  id: Scalars['ID']
+  title: Scalars['String']
+  featured: Array<AdgerdirNews>
+}
+
+export type FrontpageSlide = {
+  __typename?: 'FrontpageSlide'
+  title: Scalars['String']
+  subtitle: Scalars['String']
+  content: Scalars['String']
+  image?: Maybe<Image>
+  link?: Maybe<Scalars['String']>
+}
+
+export type FrontpageSliderList = {
+  __typename?: 'FrontpageSliderList'
+  items: Array<FrontpageSlide>
+}
+
+export type Pagination = {
+  __typename?: 'Pagination'
+  page: Scalars['Int']
+  perPage: Scalars['Int']
+  totalResults: Scalars['Int']
+  totalPages: Scalars['Int']
+}
+
+export type PaginatedNews = {
+  __typename?: 'PaginatedNews'
+  page: Pagination
+  news: Array<News>
+}
+
+export type Namespace = {
+  __typename?: 'Namespace'
+  namespace: Scalars['String']
+  fields: Scalars['String']
+}
+
+export type AboutPage = {
+  __typename?: 'AboutPage'
+  title: Scalars['String']
+  seoDescription: Scalars['String']
+  theme: Scalars['String']
+  slices: Array<Slice>
 }
 
 export type LinkList = {
@@ -1064,8 +1065,33 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
   getArticle?: Maybe<
     { __typename?: 'Article' } & Pick<
       Article,
-      'id' | 'slug' | 'title' | 'content'
+      'id' | 'slug' | 'title' | 'shortTitle' | 'intro'
     > & {
+        body: Array<
+          | ({
+              __typename?: 'PageHeaderSlice'
+            } & AllSlicesPageHeaderSliceFragment)
+          | ({ __typename?: 'TimelineSlice' } & AllSlicesTimelineSliceFragment)
+          | ({ __typename?: 'HeadingSlice' } & AllSlicesHeadingSliceFragment)
+          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+          | ({ __typename?: 'LinkCardSlice' } & AllSlicesLinkCardSliceFragment)
+          | ({
+              __typename?: 'LatestNewsSlice'
+            } & AllSlicesLatestNewsSliceFragment)
+          | ({
+              __typename?: 'MailingListSignupSlice'
+            } & AllSlicesMailingListSignupSliceFragment)
+          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
+          | ({
+              __typename?: 'BulletListSlice'
+            } & AllSlicesBulletListSliceFragment)
+          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+          | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
+          | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
+          | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
+          | ({ __typename?: 'EmbeddedVideo' } & AllSlicesEmbeddedVideoFragment)
+        >
         group?: Maybe<
           { __typename?: 'ArticleGroup' } & Pick<
             ArticleGroup,
@@ -1080,6 +1106,47 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
         >
         relatedArticles: Array<
           { __typename?: 'Article' } & Pick<Article, 'title' | 'slug'>
+        >
+        subArticles: Array<
+          { __typename?: 'SubArticle' } & Pick<SubArticle, 'title' | 'slug'> & {
+              body: Array<
+                | ({
+                    __typename?: 'PageHeaderSlice'
+                  } & AllSlicesPageHeaderSliceFragment)
+                | ({
+                    __typename?: 'TimelineSlice'
+                  } & AllSlicesTimelineSliceFragment)
+                | ({
+                    __typename?: 'HeadingSlice'
+                  } & AllSlicesHeadingSliceFragment)
+                | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+                | ({
+                    __typename?: 'LinkCardSlice'
+                  } & AllSlicesLinkCardSliceFragment)
+                | ({
+                    __typename?: 'LatestNewsSlice'
+                  } & AllSlicesLatestNewsSliceFragment)
+                | ({
+                    __typename?: 'MailingListSignupSlice'
+                  } & AllSlicesMailingListSignupSliceFragment)
+                | ({
+                    __typename?: 'LogoListSlice'
+                  } & AllSlicesLogoListSliceFragment)
+                | ({
+                    __typename?: 'BulletListSlice'
+                  } & AllSlicesBulletListSliceFragment)
+                | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+                | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+                | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
+                | ({
+                    __typename?: 'ProcessEntry'
+                  } & AllSlicesProcessEntryFragment)
+                | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
+                | ({
+                    __typename?: 'EmbeddedVideo'
+                  } & AllSlicesEmbeddedVideoFragment)
+              >
+            }
         >
       }
   >
@@ -1402,23 +1469,7 @@ export type PageHeaderFieldsFragment = { __typename: 'PageHeaderSlice' } & Pick<
   'id' | 'title' | 'introduction' | 'navigationText'
 > & {
     links: Array<{ __typename?: 'Link' } & Pick<Link, 'text' | 'url'>>
-    slices: Array<
-      | { __typename?: 'PageHeaderSlice' }
-      | ({ __typename?: 'TimelineSlice' } & TimelineFieldsFragment)
-      | { __typename?: 'HeadingSlice' }
-      | { __typename?: 'StorySlice' }
-      | { __typename?: 'LinkCardSlice' }
-      | { __typename?: 'LatestNewsSlice' }
-      | { __typename?: 'MailingListSignupSlice' }
-      | { __typename?: 'LogoListSlice' }
-      | { __typename?: 'BulletListSlice' }
-      | { __typename?: 'Html' }
-      | { __typename?: 'Image' }
-      | { __typename?: 'Statistics' }
-      | { __typename?: 'ProcessEntry' }
-      | { __typename?: 'FaqList' }
-      | { __typename?: 'EmbeddedVideo' }
-    >
+    slices: Array<{ __typename?: 'TimelineSlice' } & TimelineFieldsFragment>
   }
 
 export type TimelineFieldsFragment = { __typename: 'TimelineSlice' } & Pick<
@@ -1455,7 +1506,7 @@ export type StoryFieldsFragment = { __typename: 'StorySlice' } & Pick<
     stories: Array<
       { __typename?: 'Story' } & Pick<
         Story,
-        'title' | 'intro' | 'label' | 'body'
+        'title' | 'intro' | 'label' | 'readMoreText' | 'date' | 'body'
       > & { logo: { __typename?: 'Image' } & ImageFieldsFragment }
     >
   }
@@ -1467,7 +1518,7 @@ export type LatestNewsFieldsFragment = { __typename: 'LatestNewsSlice' } & Pick<
     news: Array<
       { __typename?: 'News' } & Pick<
         News,
-        'title' | 'slug' | 'date' | 'intro' | 'content'
+        'id' | 'title' | 'subtitle' | 'slug' | 'date' | 'intro' | 'content'
       > & { image?: Maybe<{ __typename?: 'Image' } & ImageFieldsFragment> }
     >
   }
@@ -1510,7 +1561,7 @@ export type BulletListFieldsFragment = { __typename: 'BulletListSlice' } & Pick<
             bullets: Array<
               { __typename?: 'NumberBullet' } & Pick<
                 NumberBullet,
-                'title' | 'body'
+                'id' | 'title' | 'body'
               >
             >
           })
@@ -1524,7 +1575,7 @@ export type FaqListFieldsFragment = { __typename: 'FaqList' } & Pick<
     questions: Array<
       { __typename?: 'QuestionAndAnswer' } & Pick<
         QuestionAndAnswer,
-        'question'
+        'id' | 'question'
       > & { answer: { __typename?: 'Html' } & HtmlFieldsFragment }
     >
   }
@@ -1538,7 +1589,7 @@ export type StatisticsFieldsFragment = { __typename: 'Statistics' } & Pick<
     >
   }
 
-export type ProcessEntryFieldsFragment = { __typename?: 'ProcessEntry' } & Pick<
+export type ProcessEntryFieldsFragment = { __typename: 'ProcessEntry' } & Pick<
   ProcessEntry,
   | 'id'
   | 'title'
@@ -1557,6 +1608,10 @@ export type HtmlFieldsFragment = { __typename: 'Html' } & Pick<
   Html,
   'id' | 'document'
 >
+
+export type EmbeddedVideoFieldsFragment = {
+  __typename: 'EmbeddedVideo'
+} & Pick<EmbeddedVideo, 'id' | 'title' | 'url'>
 
 export type AllSlicesPageHeaderSliceFragment = {
   __typename?: 'PageHeaderSlice'
@@ -1596,7 +1651,9 @@ export type AllSlicesBulletListSliceFragment = {
 
 export type AllSlicesHtmlFragment = { __typename?: 'Html' } & HtmlFieldsFragment
 
-export type AllSlicesImageFragment = { __typename?: 'Image' }
+export type AllSlicesImageFragment = {
+  __typename?: 'Image'
+} & ImageFieldsFragment
 
 export type AllSlicesStatisticsFragment = {
   __typename?: 'Statistics'
@@ -1610,7 +1667,9 @@ export type AllSlicesFaqListFragment = {
   __typename?: 'FaqList'
 } & FaqListFieldsFragment
 
-export type AllSlicesEmbeddedVideoFragment = { __typename?: 'EmbeddedVideo' }
+export type AllSlicesEmbeddedVideoFragment = {
+  __typename?: 'EmbeddedVideo'
+} & EmbeddedVideoFieldsFragment
 
 export type AllSlicesFragment =
   | AllSlicesPageHeaderSliceFragment
