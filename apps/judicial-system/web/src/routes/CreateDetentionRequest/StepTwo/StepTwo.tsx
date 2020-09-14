@@ -248,37 +248,40 @@ export const StepTwo: React.FC = () => {
               <GridContainer>
                 <GridRow>
                   {brokenLaws.map((brokenLaw, index) => (
-                    <GridColumn span="3/6">
-                      <Checkbox
-                        name={brokenLaw.brokenLaw}
-                        label={brokenLaw.brokenLaw}
-                        value={brokenLaw.brokenLaw}
-                        checked={brokenLaw.getCheckbox}
-                        tooltip={brokenLaw.explination}
-                        onChange={({ target }) => {
-                          // Toggle the checkbox on or off
-                          brokenLaw.setCheckbox(target.checked)
+                    <GridColumn span="3/7" key={index}>
+                      <Box marginBottom={3}>
+                        <Checkbox
+                          name={brokenLaw.brokenLaw}
+                          label={brokenLaw.brokenLaw}
+                          value={brokenLaw.brokenLaw}
+                          checked={brokenLaw.getCheckbox}
+                          tooltip={brokenLaw.explination}
+                          onChange={({ target }) => {
+                            // Toggle the checkbox on or off
+                            brokenLaw.setCheckbox(target.checked)
 
-                          // Create a copy of the state
-                          const copyOfState = Object.assign(workingCase, {})
+                            // Create a copy of the state
+                            const copyOfState = Object.assign(workingCase, {})
 
-                          // If the user is checking the box, add the broken law to the state
-                          if (target.checked) {
-                            copyOfState.case.brokenLaws.push(target.value)
-                          }
-                          // If the user is unchecking the box, remove the broken law from the state
-                          else {
-                            const brokenLaws = copyOfState.case.brokenLaws
-                            brokenLaws.splice(
-                              brokenLaws.indexOf(target.value),
-                              1,
-                            )
-                          }
+                            // If the user is checking the box, add the broken law to the state
+                            if (target.checked) {
+                              copyOfState.case.brokenLaws.push(target.value)
+                            }
+                            // If the user is unchecking the box, remove the broken law from the state
+                            else {
+                              const brokenLaws = copyOfState.case.brokenLaws
+                              brokenLaws.splice(
+                                brokenLaws.indexOf(target.value),
+                                1,
+                              )
+                            }
 
-                          // Set the updated state as the state
-                          setWorkingCase(copyOfState)
-                        }}
-                      />
+                            // Set the updated state as the state
+                            setWorkingCase(copyOfState)
+                          }}
+                          large
+                        />
+                      </Box>
                     </GridColumn>
                   ))}
                 </GridRow>
