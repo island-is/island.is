@@ -2,7 +2,8 @@ import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 
 import { setup } from '../../../../../test/setup'
-import { CaseState, Case } from '../case.model'
+import { Case } from '../case.model'
+import { CaseState } from '../case.types'
 
 let app: INestApplication
 
