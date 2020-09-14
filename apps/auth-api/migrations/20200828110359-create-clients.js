@@ -113,6 +113,15 @@ module.exports = {
         PRIMARY KEY (client_id, grant_type)
       );
 
+      Create Table grant_type (
+        id uuid NOT NULL,
+        name VARCHAR NOT NULL,
+        description VARCHAR NOT NULL,
+        created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        modified TIMESTAMP WITH TIME ZONE,
+        PRIMARY KEY (id)
+      );
+
       CREATE TABLE grants (
         id uuid NOT NULL,
         key VARCHAR NOT NULL,
@@ -140,6 +149,7 @@ module.exports = {
         DROP TABLE client_allowed_scope;
         DROP TABLE client_redirect_uri;
         DROP TABLE client_grant_type;
+        DROP TABLE grant_type;
         DROP TABLE grants;
         DROP TABLE client;
       COMMIT;
