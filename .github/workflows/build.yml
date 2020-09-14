@@ -119,13 +119,13 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-3
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-4
 
       - name: Cache for NodeJS dependencies - Docker layer
         uses: actions/cache@v1
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-4
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-5
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
@@ -243,20 +243,13 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-3
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-4
       - name: Cache for NodeJS dependencies - host OS
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v1
         with:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-yarn
-      - name: Set up Docker Buildx
-        if: ${{ matrix.projects != 'dummy' }}
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
-        with:
-          buildx-version: v0.4.1
-          qemu-version: latest
       - name: Running tests
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh test
@@ -328,14 +321,14 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-4
-      - name: Set up Docker Buildx
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-5
+      - name: Cache for NodeJS dependencies - Docker layer
         if: ${{ matrix.projects != 'dummy' }}
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
+        uses: actions/cache@v1
         with:
-          buildx-version: v0.4.1
-          qemu-version: latest
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-4
+
       - name: Docker login to ECR repo
         if: ${{ matrix.projects != 'dummy' }}
         run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
@@ -369,14 +362,14 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-4
-      - name: Set up Docker Buildx
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-5
+      - name: Cache for NodeJS dependencies - Docker layer
         if: ${{ matrix.projects != 'dummy' }}
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
+        uses: actions/cache@v1
         with:
-          buildx-version: v0.4.1
-          qemu-version: latest
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-4
+
       - name: Docker login to ECR repo
         if: ${{ matrix.projects != 'dummy' }}
         run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
@@ -410,14 +403,14 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-4
-      - name: Set up Docker Buildx
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-5
+      - name: Cache for NodeJS dependencies - Docker layer
         if: ${{ matrix.projects != 'dummy' }}
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
+        uses: actions/cache@v1
         with:
-          buildx-version: v0.4.1
-          qemu-version: latest
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-4
+
       - name: Docker login to ECR repo
         if: ${{ matrix.projects != 'dummy' }}
         run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
