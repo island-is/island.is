@@ -11,9 +11,11 @@ import initApollo from '../graphql/client'
 import Layout from '../layouts/main'
 import { withErrorBoundary } from '../units/ErrorBoundary'
 import { withHealthchecks } from '../units/Healthchecks/withHealthchecks'
+import { GetCategoriesQuery } from '../graphql/schema'
 
 interface AppCustomProps extends AppProps {
   layoutProps: {
+    categories: GetCategoriesQuery['categories']
     footerUpperMenu: FooterLinkProps[]
     footerLowerMenu: FooterLinkProps[]
     footerTagsMenu: FooterLinkProps[]

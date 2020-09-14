@@ -6,20 +6,28 @@ import { NextComponentType, NextPageContext } from 'next'
 import { GetInitialPropsContext } from '../types'
 import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
-import { GET_NAMESPACE_QUERY } from '../screens/queries'
+import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import {
   QueryGetMenuArgs,
   GetMenuQuery,
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
+  ContentLanguage,
+  GetCategoriesQuery,
+  QueryCategoriesArgs,
 } from '../graphql/schema'
 import { GlobalNamespaceContext } from '../context/GlobalNamespaceContext/GlobalNamespaceContext'
+import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
+import useRouteNames from '../i18n/useRouteNames'
+import { useI18n } from '../i18n'
 
 interface LayoutProps {
   showSearchInHeader?: boolean
   wrapContent?: boolean
   showHeader?: boolean
   showFooter?: boolean
+  categories: GetCategoriesQuery['categories']
+  topMenuCustomLinks?: FooterLinkProps[]
   footerUpperMenu?: FooterLinkProps[]
   footerLowerMenu?: FooterLinkProps[]
   footerMiddleMenu?: FooterLinkProps[]
@@ -36,6 +44,8 @@ const Layout: NextComponentType<
   wrapContent = true,
   showHeader = true,
   showFooter = true,
+  categories,
+  topMenuCustomLinks,
   footerUpperMenu,
   footerLowerMenu,
   footerMiddleMenu,
@@ -43,6 +53,28 @@ const Layout: NextComponentType<
   namespace,
   children,
 }) => {
+  const { activeLocale } = useI18n()
+  const { makePath } = useRouteNames(activeLocale)
+
+  const menuTabs = [
+    {
+      title: 'Þjónustuflokkar',
+      links: categories.map((x) => {
+        return {
+          title: x.title,
+          as: makePath(x.__typename, x.slug),
+          href: makePath(x.__typename, '[slug]'),
+        }
+      }),
+    },
+    {
+      title: 'Stafrænt Ísland',
+      links: topMenuCustomLinks,
+      externalLinksHeading: 'Aðrir opinberir vefir',
+      externalLinks: footerLowerMenu,
+    },
+  ]
+
   return (
     <GlobalNamespaceContext.Provider value={{ globalNamespace: namespace }}>
       <Page>
@@ -76,11 +108,17 @@ const Layout: NextComponentType<
         </Head>
         <SkipToMainContent />
         <PageLoader />
-        <FixedNav />
-        {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
-        <div id="main-content">
-          {wrapContent ? <Box width="full">{children}</Box> : children}
-        </div>
+        <MenuTabsContext.Provider
+          value={{
+            menuTabs,
+          }}
+        >
+          <FixedNav />
+          {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
+          <div id="main-content">
+            {wrapContent ? <Box width="full">{children}</Box> : children}
+          </div>
+        </MenuTabsContext.Provider>
         {showFooter && (
           <Footer
             topLinks={footerUpperMenu}
@@ -149,12 +187,32 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
   const lang = locale ?? 'is' // Defaulting to is when locale is undefined
 
   const [
+    categories,
+    topMenuCustomLinks,
     upperMenu,
     lowerMenu,
     middleMenu,
     tagsMenu,
     namespace,
   ] = await Promise.all([
+    apolloClient
+      .query<GetCategoriesQuery, QueryCategoriesArgs>({
+        query: GET_CATEGORIES_QUERY,
+        variables: {
+          input: {
+            language: locale as ContentLanguage,
+          },
+        },
+      })
+      .then((res) => res.data.categories),
+    apolloClient
+      .query<GetMenuQuery, QueryGetMenuArgs>({
+        query: GET_MENU_QUERY,
+        variables: {
+          input: { name: 'Top menu custom links', lang },
+        },
+      })
+      .then((res) => res.data.getMenu),
     apolloClient
       .query<GetMenuQuery, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
@@ -204,6 +262,13 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
   ])
 
   return {
+    categories,
+    topMenuCustomLinks: (topMenuCustomLinks.links ?? []).map(
+      ({ text, url }) => ({
+        title: text,
+        href: url,
+      }),
+    ),
     footerUpperMenu: (upperMenu.links ?? []).map(({ text, url }) => ({
       title: text,
       href: url,
