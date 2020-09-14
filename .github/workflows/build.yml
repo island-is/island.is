@@ -68,7 +68,7 @@ jobs:
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "::set-env name=DOCKER_TAG::${DOCKER_TAG}"
 
-      - run: git fetch --prune --all
+      - run: git fetch --all
       - run: git branch
       - run: git remote -v
       - run: |
