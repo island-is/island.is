@@ -84,7 +84,23 @@ FROM output-base as output-next
 # image with build of an Next.js app
 
 COPY --from=builder --chown=runner:runners /build/${APP_HOME}/next.config.js /webapp
+COPY --from=builder --chown=runner:runners /build/${APP_HOME}/next-modules/ /webapp/next-modules/
 COPY --from=builder --chown=runner:runners /build/${APP_HOME}/public /webapp/public
 COPY --from=builder --chown=runner:runners /build/${APP_DIST_HOME} /webapp/.next
 
 ENTRYPOINT [ "npx", "next", "start", "-p", "4200" ]
+
+FROM nginx:1.19.2-alpine as output-static
+
+ARG APP
+ARG APP_DIST_HOME
+ARG GIT_BRANCH
+ARG GIT_SHA
+LABEL branch=${GIT_BRANCH}
+LABEL commit=${GIT_SHA}
+ENV GIT_BRANCH=${GIT_BRANCH}
+ENV GIT_SHA=${GIT_SHA}
+ENV APP=${APP}
+
+ADD scripts/dockerfile-config/static-nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html

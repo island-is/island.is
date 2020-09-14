@@ -15,7 +15,7 @@ export type CustomImage = {
 export type ApiImageSource = {
   type: 'apiImage'
   maxWidth?: number
-  image: ApiImage
+  image: Partial<ApiImage>
 }
 
 type AnyImageType = CustomImage | ApiImageSource
@@ -27,8 +27,8 @@ const normalizeImage = (img: AnyImageType): CustomImage => {
     case 'apiImage':
       return {
         type: 'custom',
-        src: img.image.url + (img.maxWidth ? '?w=' + img.maxWidth : ''),
-        thumbnail: img.image.url + '?w=50',
+        src: img.image.url + (img.maxWidth ? `?w=${img.maxWidth}` : ''),
+        thumbnail: `${img.image.url}?w=50`,
         alt: img.image.title ?? '',
         originalWidth: img.image.width,
         originalHeight: img.image.height,

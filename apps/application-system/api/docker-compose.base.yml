@@ -1,6 +1,11 @@
 version: '3.3'
 
 services:
+  redis:
+    image: redis
+    ports:
+      - "127.0.0.1:6379:6379"
+
   db_application_system:
     image: postgres:11.6
     container_name: db_application_system
@@ -16,7 +21,6 @@ services:
       - DEV_DB_NAME=dev_db
     volumes:
       - ./bin/startup.sql:/docker-entrypoint-initdb.d/startup.sql
-
 
 networks:
   local:

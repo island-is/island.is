@@ -1,10 +1,4 @@
-import {
-  Context,
-  Mutation,
-  Parent,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Context, Query, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 
 import {
   Discount as TDiscount,
@@ -16,13 +10,15 @@ import { User } from '../user'
 
 type DiscountWithTUser = Discount & { user: TUser }
 
+const TWO_HOURS = 7200 // seconds
+
 @Resolver(() => Discount)
 export class DiscountResolver {
   constructor(private readonly authService: AuthService) {}
 
   @Authorize()
-  @Mutation(() => [Discount], { nullable: true })
-  async fetchDiscounts(
+  @Query(() => [Discount], { nullable: true })
+  async discounts(
     @CurrentUser() user: AuthUser,
     @Context('dataSources') { backendApi },
   ): Promise<DiscountWithTUser[]> {
@@ -35,7 +31,7 @@ export class DiscountResolver {
           let discount: TDiscount = await backendApi.getDiscount(
             relation.nationalId,
           )
-          if (!discount) {
+          if (!discount || discount.expiresIn <= TWO_HOURS) {
             discount = await backendApi.createDiscount(relation.nationalId)
           }
           return [...acc, { ...discount, user: relation }]

@@ -3,7 +3,7 @@ import {
   validateAnswers,
   FormNode,
   Schema,
-} from '@island.is/application/schema'
+} from '@island.is/application/template'
 import merge from 'lodash/merge'
 import { Resolver } from 'react-hook-form'
 

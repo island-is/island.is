@@ -1,12 +1,6 @@
-import React, { FC, useEffect, useReducer } from 'react'
-
-import {
-  FormValue,
-  FormType,
-  getFormByTypeId,
-} from '@island.is/application/schema'
+import React, { FC, useReducer } from 'react'
+import { Application } from '@island.is/application/template'
 import FormProgress from '../components/FormProgress/'
-import ApplicationName from '../components/ApplicationName/'
 import Sidebar from '../components/Sidebar'
 import Screen from '../components/Screen'
 import {
@@ -14,32 +8,24 @@ import {
   initializeReducer,
 } from '../reducer/ApplicationFormReducer'
 import { ActionTypes } from '../reducer/ReducerTypes'
-import { Box } from '@island.is/island-ui/core'
+import {
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+} from '@island.is/island-ui/core'
+
 import * as styles from './ApplicationForm.treat'
-import ProgressIndicator from '../components/ProgressIndicator'
 
-type ApplicationProps = {
-  applicationId?: string
-  formType: FormType
-  initialAnswers?: FormValue
-  loadingApplication: boolean
-  onApplicationCreated?(id: string): void
-}
-
-export const ApplicationForm: FC<ApplicationProps> = ({
-  applicationId,
-  formType,
-  initialAnswers,
-  loadingApplication,
-  onApplicationCreated = () => undefined,
+export const ApplicationForm: FC<{ application: Application }> = ({
+  application,
 }) => {
-  const form = getFormByTypeId(formType)
   const [state, dispatch] = useReducer(
     ApplicationReducer,
     {
-      form,
+      application,
+      form: undefined,
       formLeaves: [],
-      formValue: initialAnswers,
       activeSection: 0,
       activeSubSection: 0,
       activeScreen: 0,
@@ -53,77 +39,68 @@ export const ApplicationForm: FC<ApplicationProps> = ({
     activeSection,
     activeSubSection,
     activeScreen,
-    formValue,
-    progress,
+    application: storedApplication,
+    form,
+
     sections,
     screens,
   } = state
 
-  // TODO this is not good enough
-  useEffect(() => {
-    if (!loadingApplication) {
-      dispatch({
-        type: ActionTypes.RE_INITIALIZE,
-        payload: { formValue: initialAnswers },
-      })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [loadingApplication])
-
   return (
-    <Box display="flex" flexGrow={1}>
-      <Box
-        display="flex"
-        flexGrow={1}
-        flexDirection="row"
-        className={styles.applicationContainer}
-      >
-        <Box className={styles.sidebarContainer}>
-          <Sidebar>
-            <ApplicationName name={form.name} icon={form.icon} />
-            <Box display="flex" flexDirection={['column', 'columnReverse']}>
+    <Box paddingTop={[0, 4]} paddingBottom={[0, 5]} width="full" height="full">
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
+            <Box
+              paddingTop={[3, 6, 8]}
+              height="full"
+              borderRadius="large"
+              background="white"
+            >
+              <Screen
+                addExternalData={(payload) =>
+                  dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
+                }
+                answerQuestions={(payload) =>
+                  dispatch({ type: ActionTypes.ANSWER, payload })
+                }
+                dataSchema={form.schema}
+                externalData={storedApplication.externalData}
+                formTypeId={form.id}
+                formValue={storedApplication.answers}
+                expandRepeater={() =>
+                  dispatch({ type: ActionTypes.EXPAND_REPEATER })
+                }
+                answerAndGoToNextScreen={(payload) =>
+                  dispatch({
+                    type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN,
+                    payload,
+                  })
+                }
+                prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
+                shouldSubmit={activeScreen === screens.length - 1}
+                screen={screens[activeScreen]}
+                section={sections[activeSection]}
+                applicationId={storedApplication.id}
+              />
+            </Box>
+          </GridColumn>
+          <GridColumn
+            span={['12/12', '12/12', '3/12', '3/12']}
+            className={styles.largeSidebarContainer}
+          >
+            <Sidebar>
               <FormProgress
+                formName={form.name}
+                formIcon={form.icon}
                 sections={sections}
                 activeSection={activeSection}
                 activeSubSection={activeSubSection}
               />
-              <ProgressIndicator progress={progress} />
-            </Box>
-          </Sidebar>
-        </Box>
-
-        <Box
-          paddingX={[3, 3, 12]}
-          paddingTop={4}
-          height="full"
-          className={styles.screenContainer}
-        >
-          <Screen
-            answerQuestions={(payload) =>
-              dispatch({ type: ActionTypes.ANSWER, payload })
-            }
-            dataSchema={form.schema}
-            formTypeId={form.id}
-            formValue={formValue}
-            expandRepeater={() =>
-              dispatch({ type: ActionTypes.EXPAND_REPEATER })
-            }
-            answerAndGoToNextScreen={(payload) =>
-              dispatch({ type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN, payload })
-            }
-            prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
-            shouldSubmit={activeScreen === screens.length - 1}
-            setApplicationId={(id) => {
-              if (onApplicationCreated) {
-                onApplicationCreated(id)
-              }
-            }}
-            screen={screens[activeScreen]}
-            section={sections[activeSection]}
-            applicationId={applicationId}
-          />
-        </Box>
-      </Box>
+            </Sidebar>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
     </Box>
   )
 }

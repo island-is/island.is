@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const GET_NEWS_LIST_QUERY = gql`
-  query($input: GetNewsListInput!) {
+  query GetNewsList($input: GetNewsListInput!) {
     getNewsList(input: $input) {
       page {
         page
@@ -11,6 +11,7 @@ export const GET_NEWS_LIST_QUERY = gql`
       news {
         id
         title
+        subtitle
         date
         slug
         intro
@@ -26,10 +27,11 @@ export const GET_NEWS_LIST_QUERY = gql`
 `
 
 export const GET_NEWS_ITEM_QUERY = gql`
-  query($input: GetNewsInput!) {
+  query GetNewsItem($input: GetNewsInput!) {
     getNews(input: $input) {
       id
       title
+      subtitle
       date
       slug
       intro

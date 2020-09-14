@@ -1,5 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Image } from './image.model'
+
+import { IStory } from '../generated/contentfulTypes'
+
+import { Image, mapImage } from './image.model'
 
 @ObjectType()
 export class Story {
@@ -24,3 +27,13 @@ export class Story {
   @Field({ nullable: true })
   body?: string
 }
+
+export const mapStory = ({ fields, sys }: IStory): Story => ({
+  label: fields.label ?? '',
+  title: fields.title ?? '',
+  logo: mapImage(fields.logo),
+  date: sys.createdAt,
+  readMoreText: fields.readMoreText,
+  intro: fields.intro,
+  body: fields.body && JSON.stringify(fields.body),
+})

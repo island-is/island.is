@@ -13,6 +13,7 @@ import { Colors } from '@island.is/island-ui/theme'
 import { ResponsiveSpace } from '../Box/useBoxStyles'
 
 export interface TypographyProps {
+  id?: string
   variant?: VariantTypes
   children?: React.ReactNode
   as?:
@@ -34,6 +35,7 @@ export interface TypographyProps {
 }
 
 export const Typography = ({
+  id,
   variant,
   as: Cmp = 'p',
   children,
@@ -44,9 +46,10 @@ export const Typography = ({
   paddingBottom,
 }: TypographyProps) => (
   <Cmp
+    id={id}
     className={cn(
-      styles[variant],
-      colors[color],
+      variant ? styles[variant] : null,
+      color ? colors[color] : null,
       {
         [truncateStyle]: truncate,
         [linksStyle]: links,

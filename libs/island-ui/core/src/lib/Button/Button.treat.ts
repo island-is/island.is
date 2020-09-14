@@ -3,6 +3,16 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 const speed = '150ms'
 
+const hexToRgb = (hex) => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+
+  return result
+    ? `${parseInt(result[1], 16)}, ` +
+        `${parseInt(result[2], 16)}, ` +
+        `${parseInt(result[3], 16)}`
+    : null
+}
+
 export const button = style({
   display: 'inline-flex',
   position: 'relative',
@@ -298,9 +308,17 @@ export const variants = styleMap({
   },
 })
 
+export const rounded = style({
+  borderRadius: '50px',
+  ':after': {
+    borderRadius: '50px',
+  },
+})
+
 export const white = style({
   backgroundColor: theme.color.transparent,
   borderColor: theme.color.white,
+  color: theme.color.white,
   ':after': {
     borderColor: theme.color.mint400,
   },
@@ -308,10 +326,12 @@ export const white = style({
     color: theme.color.white,
   },
   ':hover': {
+    color: theme.color.white,
     borderColor: theme.color.white,
     backgroundColor: theme.color.transparent,
   },
   ':focus': {
+    color: theme.color.white,
     borderColor: theme.color.transparent,
     backgroundColor: theme.color.transparent,
   },
@@ -419,6 +439,7 @@ export const leftSpacer = style({
 })
 
 export const leftContentContainer = style({
+  backgroundColor: theme.color.blue100,
   borderTopLeftRadius: 5,
   borderBottomLeftRadius: 5,
   ...themeUtils.responsiveStyle({
@@ -429,6 +450,11 @@ export const leftContentContainer = style({
       width: 48,
     },
   }),
+  selectors: {
+    [`${white} &`]: {
+      backgroundColor: `rgba(${hexToRgb(theme.color.dark400)}, 0.1)`,
+    },
+  },
 })
 
 export const leftContent = style({

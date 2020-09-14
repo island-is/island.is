@@ -14,27 +14,27 @@ export const base = style({
 })
 
 export const xs = styleMap(
-  mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginTop', (rows) =>
+  mapToStyleProperty({ ...theme.spacing }, 'marginTop', (rows) =>
     negativeMarginTop(1, rows),
   ),
 )
 export const sm = styleMap(
-  mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginTop', (rows) =>
+  mapToStyleProperty({ ...theme.spacing }, 'marginTop', (rows) =>
     themeUtils.responsiveStyle({ sm: negativeMarginTop(1, rows) }),
   ),
 )
 export const md = styleMap(
-  mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginTop', (rows) =>
+  mapToStyleProperty({ ...theme.spacing }, 'marginTop', (rows) =>
     themeUtils.responsiveStyle({ md: negativeMarginTop(1, rows) }),
   ),
 )
 export const lg = styleMap(
-  mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginTop', (rows) =>
+  mapToStyleProperty({ ...theme.spacing }, 'marginTop', (rows) =>
     themeUtils.responsiveStyle({ lg: negativeMarginTop(1, rows) }),
   ),
 )
 export const xl = styleMap(
-  mapToStyleProperty({ none: 0, ...theme.spacing }, 'marginTop', (rows) =>
+  mapToStyleProperty({ ...theme.spacing }, 'marginTop', (rows) =>
     themeUtils.responsiveStyle({ xl: negativeMarginTop(1, rows) }),
   ),
 )

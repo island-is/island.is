@@ -4,8 +4,8 @@ import get from 'lodash/get'
 import { RadioButton, RadioButtonProps } from '../RadioButton/RadioButton'
 
 export interface FieldRadioButtonProps extends RadioButtonProps {
-  field?: FieldInputProps<string>
-  form?: FormikState<string | number>
+  field: FieldInputProps<string>
+  form: FormikState<string | number>
 }
 
 export const FieldRadioButton = ({

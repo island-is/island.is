@@ -1,17 +1,17 @@
 import {
+  Application,
   Form,
   FormLeaf,
-  FormValue,
   Section,
-} from '@island.is/application/schema'
+} from '@island.is/application/template'
 import { FormScreen } from '../types'
 
 export interface ApplicationUIState {
+  application: Application
   activeSection: number
   activeSubSection: number
   activeScreen: number
   form: Form
-  formValue: FormValue
   formLeaves: FormLeaf[]
   progress: number
   screens: FormScreen[]
@@ -23,7 +23,7 @@ export enum ActionTypes {
   EXPAND_REPEATER = 'EXPAND_REPEATER',
   ANSWER_AND_GO_NEXT_SCREEN = 'ANSWER_AND_GO_NEXT_SCREEN',
   PREV_SCREEN = 'PREV_SCREEN',
-  RE_INITIALIZE = 'RE_INITIALIZE',
+  ADD_EXTERNAL_DATA = 'ADD_EXTERNAL_DATA',
 }
 
 export interface Action {

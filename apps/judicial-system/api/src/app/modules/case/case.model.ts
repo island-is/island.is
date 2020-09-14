@@ -6,7 +6,8 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export enum CaseState {
   UNKNOWN = 'UNKNOWN',
@@ -38,11 +39,13 @@ export class Case extends Model<Case> {
   modified: Date
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
     allowNull: false,
+    values: Object.values(CaseState),
+    defaultValue: CaseState.DRAFT,
   })
-  @ApiProperty()
-  description: string
+  @ApiProperty({ enum: CaseState })
+  state: string
 
   @Column({
     type: DataType.STRING,
@@ -60,17 +63,36 @@ export class Case extends Model<Case> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   suspectName: string
 
   @Column({
-    type: DataType.ENUM,
-    allowNull: false,
-    values: Object.values(CaseState),
-    defaultValue: CaseState.DRAFT,
+    type: DataType.STRING,
+    allowNull: true,
   })
-  @ApiProperty({ enum: CaseState })
-  state: string
+  @ApiPropertyOptional()
+  suspectAddress: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  court: string
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  arrestDate: Date
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  requestedCourtDate: Date
 }

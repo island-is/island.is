@@ -54,7 +54,7 @@ export const colored = style({
 export const sizes = styleMap({
   medium: {
     height: 40,
-    fontSize: 15,
+    fontSize: 16,
     ...themeUtils.responsiveStyle({
       md: {
         height: 48,

@@ -1,0 +1,158 @@
+{
+  "order": 0,
+  "version": 1,
+  "index_patterns": ["island-en-v*"],
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "term_english": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": ["lowercase"]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text",
+        "fields": {
+          "sort": {
+            "type": "icu_collation_keyword",
+            "index": false,
+            "language": "en",
+            "country": "en"
+          },
+          "stemmed": {
+            "type": "text",
+            "analyzer": "standard"
+          }
+        }
+      },
+      "content": {
+        "type": "text",
+        "fields": {
+          "stemmed": {
+            "type": "text",
+            "analyzer": "standard"
+          }
+        }
+      },
+      "date_created": {
+        "type": "date"
+      },
+      "date_updated": {
+        "type": "date"
+      },
+      "date": {
+        "type": "date"
+      },
+      "category": {
+        "type": "keyword",
+        "fields": {
+          "stemmed": {
+            "type": "text",
+            "analyzer": "standard"
+          }
+        }
+      },
+      "category_slug": {
+        "type": "keyword"
+      },
+      "category_description": {
+        "type": "text"
+      },
+      "group": {
+        "type": "keyword",
+        "fields": {
+          "stemmed": {
+            "type": "text",
+            "analyzer": "standard"
+          }
+        }
+      },
+      "group_slug": {
+        "type": "keyword"
+      },
+      "group_description": {
+        "type": "text"
+      },
+      "lang": {
+        "type": "keyword"
+      },
+      "tag": {
+        "type": "keyword",
+        "fields": {
+          "stemmed": {
+            "type": "text",
+            "analyzer": "standard"
+          }
+        }
+      },
+      "url": {
+        "type": "keyword",
+        "fields": {
+          "tokenized": {
+            "type": "text"
+          }
+        }
+      },
+      "slug": {
+        "type": "keyword"
+      },
+      "image": {
+        "type": "keyword",
+        "index": false
+      },
+      "image_text": {
+        "type": "text",
+        "index": false,
+        "fields": {
+          "stemmed": {
+            "type": "text",
+            "analyzer": "standard"
+          }
+        }
+      },
+      "content_type": {
+        "type": "keyword"
+      },
+      "content_id": {
+        "type": "keyword"
+      },
+      "content_source": {
+        "type": "keyword"
+      },
+      "content_blob": {
+        "type": "text",
+        "index": false,
+        "store": true
+      },
+      "all": {
+        "type": "text",
+        "store": false,
+        "fields": {
+          "stemmed": {
+            "type": "text",
+            "analyzer": "standard"
+          }
+        }
+      },
+      "titles": {
+        "type": "text",
+        "store": false,
+        "fields": {
+          "stemmed": {
+            "type": "text",
+            "analyzer": "standard"
+          }
+        }
+      },
+      "term_pool": {
+        "type": "completion",
+        "analyzer": "term_english"
+      }
+    }
+  }
+}

@@ -1,4 +1,5 @@
-export * from './types'
 export { default as appWithTranslation } from './appWithTranslation'
 export { default as useI18n } from './useI18n'
+export { default as useTranslations } from './useTranslations'
 export { default as withLocale } from './withLocale'
+export { default as withTranslations } from './withTranslations'

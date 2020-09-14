@@ -5,21 +5,21 @@ import { NextComponentType, NextPageContext } from 'next'
 
 import {
   Box,
-  ContentBlock,
   Footer,
   Page,
   FooterLinkProps,
+  GridContainer,
 } from '@island.is/island-ui/core'
 
-import { Routes } from '../../i18n'
 import { ErrorBoundary, Header } from '../../components'
 import { UserContext } from '../../context'
-import { GetInitialPropsContext } from '../../types'
+import { GetInitialPropsContext, Routes } from '../../types'
 import {
   Query,
   QueryGetMenuArgs,
   QueryGetNamespaceArgs,
 } from '@island.is/api/schema'
+import { useI18n } from '../../i18n'
 
 interface AppLayoutProps {
   children?: React.ReactNode
@@ -34,6 +34,7 @@ interface AppLayoutProps {
   footerTagsMenu?: FooterLinkProps[]
   namespace: any
   routeKey: keyof Routes
+  localeKey: string
 }
 
 export const AppLayout: NextComponentType<
@@ -49,8 +50,21 @@ export const AppLayout: NextComponentType<
   footerTagsMenu,
   namespace,
   routeKey,
+  localeKey,
 }) => {
   const [user, setUser] = useState(null)
+  const { toRoute, activeLocale, switchLanguage } = useI18n()
+  const nextLanguage = activeLocale === 'is' ? 'en' : 'is'
+  const languageRoute: FooterLinkProps = {
+    title: nextLanguage === 'en' ? 'English' : 'Íslenska',
+    href: toRoute(routeKey, nextLanguage),
+  }
+
+  const noEmptyOrHash = ({ href }) => href && href !== '#'
+  const footerUpperMenuFiltered = footerUpperMenu.filter(noEmptyOrHash)
+  const footerLowerMenuFiltered = footerLowerMenu.filter(noEmptyOrHash)
+  const footerMiddleMenuFiltered = footerMiddleMenu.filter(noEmptyOrHash)
+  const footerTagsMenuFiltered = footerTagsMenu.filter(noEmptyOrHash)
 
   return (
     <UserContext.Provider value={{ isAuthenticated, user, setUser }}>
@@ -80,16 +94,16 @@ export const AppLayout: NextComponentType<
           <meta
             name="url"
             property="og:url"
-            content="https://ferdagjof.island.is"
+            content="https://loftbru.island.is"
           />
           <meta name="title" property="og:title" content="Ísland.is" />
           <meta
             name="image"
             property="og:image"
-            content="https://ferdagjof.island.is/og-img.png"
+            content="https://loftbru.island.is/og-img.png?version=1"
           />
-          <meta name="image-width" property="og:image:width" content="1080" />
-          <meta name="image-height" property="og:image:height" content="1203" />
+          <meta name="image-width" property="og:image:width" content="1200" />
+          <meta name="image-height" property="og:image:height" content="630" />
           <meta
             name="description"
             property="og:description"
@@ -97,23 +111,25 @@ export const AppLayout: NextComponentType<
           />
           <title>Ísland.is</title>
         </Head>
-        <Box paddingX="gutter">
-          <ContentBlock>
-            <Header routeKey={routeKey} />
-          </ContentBlock>
-        </Box>
+        <GridContainer>
+          <Header routeKey={routeKey} localeKey={localeKey} />
+        </GridContainer>
         <Box paddingTop={[5, 5, 9]} paddingBottom={[7, 7, 12]}>
           <ErrorBoundary>{children}</ErrorBoundary>
         </Box>
         <Footer
-          topLinks={footerUpperMenu}
-          bottomLinks={footerLowerMenu}
-          middleLinks={footerMiddleMenu}
-          tagLinks={footerTagsMenu}
+          topLinks={footerUpperMenuFiltered}
+          bottomLinks={footerLowerMenuFiltered}
+          middleLinks={footerMiddleMenuFiltered}
+          tagLinks={footerTagsMenuFiltered}
           middleLinksTitle={namespace.footerMiddleLabel}
           tagLinksTitle={namespace.footerRightLabel}
-          showMiddleLinks
-          showTagLinks
+          showMiddleLinks={footerMiddleMenuFiltered.length > 0}
+          showTagLinks={footerTagsMenuFiltered.length > 0}
+          languageSwitchLink={languageRoute}
+          languageSwitchOnClick={() => {
+            switchLanguage(null, nextLanguage)
+          }}
         />
         <style jsx global>{`
           @font-face {
@@ -196,7 +212,12 @@ export const GetNamespaceQuery = gql`
   }
 `
 
-AppLayout.getInitialProps = async ({ apolloClient, locale, routeKey }) => {
+AppLayout.getInitialProps = async ({
+  apolloClient,
+  locale,
+  routeKey,
+  localeKey,
+}) => {
   const [
     upperMenu,
     lowerMenu,
@@ -276,6 +297,7 @@ AppLayout.getInitialProps = async ({ apolloClient, locale, routeKey }) => {
     })),
     namespace,
     routeKey,
+    localeKey,
   }
 }
 

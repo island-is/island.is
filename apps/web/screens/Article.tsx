@@ -1,30 +1,29 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, useEffect, useState } from 'react'
-import Link from 'next/link'
+import React, { FC, useState, useMemo, ReactNode } from 'react'
+import { useFirstMountState } from 'react-use'
 import Head from 'next/head'
+import { useRouter } from 'next/router'
+import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
 import {
-  ContentBlock,
   Box,
   Typography,
   Stack,
   Breadcrumbs,
   Hidden,
-  Select,
-  BoxProps,
-  ResponsiveSpace,
+  GridColumn,
+  GridRow,
   Tag,
-  Option,
   Button,
+  Divider,
+  Link,
 } from '@island.is/island-ui/core'
-import { Content } from '@island.is/island-ui/contentful'
-import { Sidebar, getHeadingLinkElements } from '@island.is/web/components'
 import {
-  Query,
-  QueryGetNamespaceArgs,
-  ContentLanguage,
-  QuerySingleItemArgs,
-} from '@island.is/api/schema'
+  DrawerMenu,
+  SidebarBox,
+  Bullet,
+  SidebarSubNav,
+  RichText,
+} from '@island.is/web/components'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
 import { Screen } from '../types'
@@ -32,53 +31,313 @@ import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
 import useRouteNames from '../i18n/useRouteNames'
 import { CustomNextError } from '../units/ErrorBoundary'
+import {
+  QueryGetNamespaceArgs,
+  GetNamespaceQuery,
+  QueryGetArticleArgs,
+  GetArticleQuery,
+  ProcessEntry,
+  Article,
+  SubArticle,
+  Slice,
+} from '../graphql/schema'
+import { createNavigation } from '../utils/navigation'
+import useScrollSpy from '../hooks/useScrollSpy'
 
-interface ArticleProps {
-  article: Query['singleItem']
-  namespace: Query['getNamespace']
+const maybeBold = (content: ReactNode, condition: boolean): ReactNode =>
+  condition ? <b>{content}</b> : content
+
+const createSubArticleNavigation = (body: Slice[]) => {
+  // on sub-article page the main article title is h1, sub-article title is h2
+  // and navigation is generated from h3
+  const navigation = createNavigation(body, {
+    htmlTags: [BLOCKS.HEADING_3],
+  })
+
+  // we'll hide sub-article navigation if it's only one item
+  return navigation.length > 1 ? navigation : []
 }
 
-const simpleSpacing = [2, 2, 3] as ResponsiveSpace
+const createArticleNavigation = (
+  article: Article,
+  selectedSubArticle: SubArticle,
+  makePath: (t: string, p: string) => string,
+): Array<{ url: string; title: string }> => {
+  if (article.subArticles.length === 0) {
+    return createNavigation(article.body).map(({ id, text }) => ({
+      title: text,
+      url: '#' + id,
+    }))
+  }
 
-const Article: Screen<ArticleProps> = ({ article, namespace }) => {
-  const [contentOverviewOptions, setContentOverviewOptions] = useState([])
-  const { activeLocale } = useI18n()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale)
+  let nav = []
+  nav.push({ url: slugify(article.title), title: article.title })
 
-  useEffect(() => {
-    setContentOverviewOptions(
-      getHeadingLinkElements().map((link) => ({
-        label: link.textContent,
-        value: slugify(link.textContent),
-      })) || [],
-    )
-  }, [])
+  for (const subArticle of article.subArticles) {
+    nav.push({
+      title: subArticle.title,
+      url: makePath('article', '[slug]/[subSlug]'),
+      as: makePath('article', `${article.slug}/${subArticle.slug}`),
+    })
 
-  const { categorySlug, category: categoryTitle } = article
-  const groupTitle = article.group
-
-  const onChangeContentOverview = ({ value }: Option) => {
-    const slug = value as string
-
-    const el = document.querySelector(
-      `[data-sidebar-link="${slug}"]`,
-    ) as HTMLElement
-
-    if (el) {
-      window.scrollTo(0, el.offsetTop)
+    // expand sub-article navigation for selected sub-article
+    // TODO: we need to style these differently in the mobile drawer
+    if (subArticle === selectedSubArticle) {
+      nav = nav.concat(
+        createSubArticleNavigation(subArticle.body).map(({ id, text }) => ({
+          title: text,
+          url: '#' + id,
+        })),
+      )
     }
   }
 
-  const data = JSON.parse(article.content)
+  return nav
+}
 
-  const actionButtonLinks = data.content
-    .map((current) => current.data?.target?.fields?.processLink)
-    .filter(Boolean)
+const RelatedArticles: FC<{
+  title: string
+  articles: Array<{ slug: string; title: string }>
+}> = ({ title, articles }) => {
+  const { activeLocale } = useI18n()
+  const { makePath } = useRouteNames(activeLocale)
 
-  const actionButtonLink =
-    actionButtonLinks.length === 1 ? actionButtonLinks[0] : null
+  if (articles.length === 0) return null
+
+  return (
+    <SidebarBox>
+      <Stack space={[1, 1, 2]}>
+        <Typography variant="h4" as="h4">
+          {title}
+        </Typography>
+        <Divider weight="alternate" />
+        {articles.map((article) => (
+          <Typography key={article.slug} variant="p" as="span">
+            <Link
+              key={article.slug}
+              href={makePath('article', '[slug]')}
+              as={makePath('article', article.slug)}
+              withUnderline
+            >
+              {article.title}
+            </Link>
+          </Typography>
+        ))}
+      </Stack>
+    </SidebarBox>
+  )
+}
+
+const SubArticleNavigation: FC<{
+  title: string
+  article: Article
+  selectedSubArticle: SubArticle
+}> = ({ title, article, selectedSubArticle }) => {
+  const { activeLocale } = useI18n()
+  const { makePath } = useRouteNames(activeLocale)
+  const [bullet, setBullet] = useState<HTMLDivElement>(null)
+  const isFirstMount = useFirstMountState()
+  const navigation = useMemo(() => {
+    return createSubArticleNavigation(selectedSubArticle?.body ?? [])
+  }, [selectedSubArticle])
+
+  const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
+  const [activeId, navigate] = useScrollSpy(ids)
+
+  return (
+    <SidebarBox position="relative">
+      {/*
+        first render sets the bullet ref, which means we don't know on first render
+        where to show the bullet. When navigating between sub-articles there
+        is also one render call with bullet=null, but in that case we don't
+        want to remove the bullet element because we'd lose the movement animation
+      */}
+      {!isFirstMount && <Bullet align="left" top={bullet?.offsetTop ?? 0} />}
+
+      <Stack space={[1, 1, 2]}>
+        <Typography variant="h4" as="h4">
+          {title}
+        </Typography>
+        <Divider weight="alternate" />
+        <div ref={!selectedSubArticle ? setBullet : null}>
+          <Typography variant="p" as="p">
+            <Link
+              shallow
+              href={makePath('article', '[slug]')}
+              as={makePath('article', article.slug)}
+            >
+              {maybeBold(article.title, !selectedSubArticle)}
+            </Link>
+          </Typography>
+        </div>
+        {article.subArticles.map((subArticle) => (
+          <>
+            <div
+              ref={
+                subArticle === selectedSubArticle && navigation.length === 0
+                  ? setBullet
+                  : null
+              }
+            >
+              <Typography variant="p" as="span">
+                <Link
+                  shallow
+                  href={makePath('article', '[slug]/[subSlug]')}
+                  as={makePath('article', `${article.slug}/${subArticle.slug}`)}
+                >
+                  {maybeBold(
+                    subArticle.title,
+                    subArticle === selectedSubArticle,
+                  )}
+                </Link>
+              </Typography>
+            </div>
+            {subArticle === selectedSubArticle && navigation.length > 0 && (
+              <SidebarSubNav>
+                <Stack space={1}>
+                  {navigation.map(({ id, text }) => (
+                    <div ref={id === activeId ? setBullet : null}>
+                      <Box
+                        key={id}
+                        component="button"
+                        type="button"
+                        textAlign="left"
+                        outline="none"
+                        onClick={() => navigate(id)}
+                      >
+                        <Typography variant="pSmall">
+                          {maybeBold(text, id === activeId)}
+                        </Typography>
+                      </Box>
+                    </div>
+                  ))}
+                </Stack>
+              </SidebarSubNav>
+            )}
+          </>
+        ))}
+      </Stack>
+    </SidebarBox>
+  )
+}
+
+const ArticleNavigation: FC<{ title: string; article: Article }> = ({
+  title,
+  article,
+}) => {
+  const [bullet, setBullet] = useState<HTMLElement>(null)
+
+  const navigation = useMemo(() => {
+    return createNavigation(article.body, { title: article.title })
+  }, [article])
+
+  const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
+  const [activeId, navigate] = useScrollSpy(ids)
+
+  return (
+    <SidebarBox position="relative">
+      {bullet && <Bullet align="left" top={bullet.offsetTop} />}
+
+      <Stack space={[1, 1, 2]}>
+        <Typography variant="h4" as="h4">
+          {title}
+        </Typography>
+        <Divider weight="alternate" />
+
+        {navigation.map(({ id, text }) => (
+          <Box
+            ref={id === activeId ? setBullet : null}
+            key={id}
+            component="button"
+            type="button"
+            textAlign="left"
+            outline="none"
+            onClick={() => navigate(id)}
+          >
+            <Typography variant="p">
+              {id === activeId ? <b>{text}</b> : text}
+            </Typography>
+          </Box>
+        ))}
+      </Stack>
+    </SidebarBox>
+  )
+}
+
+const ActionButton: FC<{ content: Slice[]; defaultText: string }> = ({
+  content,
+  defaultText,
+}) => {
+  const processEntries = content.filter((slice): slice is ProcessEntry => {
+    return slice.__typename === 'ProcessEntry' && Boolean(slice.processLink)
+  })
+
+  // we'll only show the button if there is exactly one process entry on the page
+  if (processEntries.length !== 1) return null
+
+  const { buttonText, processLink } = processEntries[0]
+
+  return (
+    <SidebarBox>
+      <Button href={processLink} width="fluid">
+        {buttonText || defaultText}
+      </Button>
+    </SidebarBox>
+  )
+}
+
+interface ArticleSidebarProps {
+  article: Article
+  subArticle: SubArticle
+  n: (s: string) => string
+}
+
+const ArticleSidebar: FC<ArticleSidebarProps> = ({
+  article,
+  subArticle,
+  n,
+}) => {
+  return (
+    <Stack space={3}>
+      <ActionButton
+        content={article.body}
+        defaultText={n('processLinkButtonText')}
+      />
+      {article.subArticles.length === 0 ? (
+        <ArticleNavigation title="Efnisyfirlit" article={article} />
+      ) : (
+        <SubArticleNavigation
+          title="Efnisyfirlit"
+          article={article}
+          selectedSubArticle={subArticle}
+        />
+      )}
+      <RelatedArticles
+        title={n('relatedMaterial')}
+        articles={article.relatedArticles}
+      />
+    </Stack>
+  )
+}
+
+interface ArticleProps {
+  article: Article
+  namespace: GetNamespaceQuery['getNamespace']
+}
+
+const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
+  const n = useNamespace(namespace)
+  const { query } = useRouter()
+  const { activeLocale } = useI18n()
+  const { makePath } = useRouteNames(activeLocale)
+
+  const subArticle = article.subArticles.find((sub) => {
+    return sub.slug === query.subSlug
+  })
+
+  const contentOverviewOptions = useMemo(() => {
+    return createArticleNavigation(article, subArticle, makePath)
+  }, [article, subArticle, makePath])
 
   return (
     <>
@@ -87,83 +346,91 @@ const Article: Screen<ArticleProps> = ({ article, namespace }) => {
       </Head>
       <ArticleLayout
         sidebar={
-          <Stack space={3}>
-            {actionButtonLink ? (
-              <Box background="purple100" padding={4} borderRadius="large">
-                <Button href={actionButtonLink} width="fluid">
-                  {n('processLinkButtonText')}
-                </Button>
-              </Box>
-            ) : null}
-            <Sidebar title={n('sidebarHeader')} bullet="left" headingLinks />
-          </Stack>
+          <ArticleSidebar article={article} subArticle={subArticle} n={n} />
         }
       >
-        <Stack space={[3, 3, 4]}>
-          <Breadcrumbs>
-            <Link href={makePath()}>
-              <a>Ísland.is</a>
-            </Link>
-            <Link
-              href={`${makePath('category')}/[slug]`}
-              as={makePath('category', categorySlug)}
-            >
-              <a>{categoryTitle}</a>
-            </Link>
-            {groupTitle && (
-              <Tag variant="purple" label>
-                {groupTitle}
-              </Tag>
-            )}
-          </Breadcrumbs>
-          <Hidden above="md">
-            <Select
-              label="Efnisyfirlit"
-              placeholder="Flokkar"
-              options={contentOverviewOptions}
-              onChange={onChangeContentOverview}
-              name="content-overview"
-            />
-          </Hidden>
-          <Box marginBottom={simpleSpacing}>
+        <GridRow>
+          <GridColumn
+            offset={['0', '0', '1/9']}
+            span={['0', '0', '7/9']}
+            paddingBottom={2}
+          >
+            <Breadcrumbs>
+              <Link href={makePath()}>Ísland.is</Link>
+              <Link
+                href={`${makePath('category')}/[slug]`}
+                as={makePath('category', article.category.slug)}
+              >
+                {article.category.title}
+              </Link>
+              {article.group && (
+                <Link
+                  as={makePath(
+                    'category',
+                    article.category.slug +
+                      (article.group?.slug ? `#${article.group.slug}` : ''),
+                  )}
+                  href={makePath('category', '[slug]')}
+                >
+                  <Tag variant="blue">{article.group.title}</Tag>
+                </Link>
+              )}
+            </Breadcrumbs>
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn span="9/9" paddingBottom={4}>
+            <Hidden above="sm">
+              <DrawerMenu
+                categories={[
+                  { title: 'Efnisyfirlit', items: contentOverviewOptions },
+                ]}
+              />
+            </Hidden>
+          </GridColumn>
+        </GridRow>
+        <GridRow>
+          <GridColumn offset={['0', '0', '1/9']} span={['9/9', '9/9', '7/9']}>
             <Typography variant="h1" as="h1">
-              <span data-sidebar-link={slugify(article.title)}>
-                {article.title}
-              </span>
+              <span id={slugify(article.title)}>{article.title}</span>
             </Typography>
-          </Box>
-        </Stack>
-
-        <Content document={article.content} />
+            {article.intro && (
+              <Typography variant="intro" as="p" paddingTop={2}>
+                <span id={slugify(article.intro)}>{article.intro}</span>
+              </Typography>
+            )}
+            {subArticle && (
+              <Typography variant="h2" as="h2" paddingTop={7}>
+                <span id={slugify(subArticle.title)}>{subArticle.title}</span>
+              </Typography>
+            )}
+          </GridColumn>
+        </GridRow>
+        <Box paddingTop={subArticle ? 0 : 7}>
+          <RichText body={(subArticle ?? article).body} />
+        </Box>
       </ArticleLayout>
     </>
   )
 }
 
-Article.getInitialProps = async ({ apolloClient, query, locale }) => {
+ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   const slug = query.slug as string
+
   const [article, namespace] = await Promise.all([
     apolloClient
-      .query<Query, QuerySingleItemArgs>({
+      .query<GetArticleQuery, QueryGetArticleArgs>({
         query: GET_ARTICLE_QUERY,
         variables: {
           input: {
             slug,
-            language: locale as ContentLanguage,
+            lang: locale as string,
           },
         },
       })
-      .then((content) => {
-        // map data here to reduce data processing in component
-        // TODO: Elastic endpoint is returning the article document json nested inside ContentItem, look into flattening this
-        const contentObject = JSON.parse(content.data.singleItem.content)
-        return {
-          ...content.data.singleItem,
-          content: JSON.stringify(contentObject.content),
-        }
-      }),
+      .then((r) => r.data.getArticle),
     apolloClient
-      .query<Query, QueryGetNamespaceArgs>({
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
@@ -178,8 +445,9 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
       }),
   ])
 
-  // we assume 404 if no article is found
-  if (!article) {
+  // we assume 404 if no article/sub-article is found
+  const subArticle = article?.subArticles.find((a) => a.slug === query.subSlug)
+  if (!article || (query.subSlug && !subArticle)) {
     throw new CustomNextError(404, 'Article not found')
   }
 
@@ -189,6 +457,4 @@ Article.getInitialProps = async ({ apolloClient, query, locale }) => {
   }
 }
 
-export default Article
-
-// TODO: Add fields for micro strings to article namespace
+export default ArticleScreen

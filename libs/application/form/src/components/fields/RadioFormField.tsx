@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { RadioField } from '@island.is/application/schema'
+import { RadioField } from '@island.is/application/template'
 import {
   Typography,
   Box,

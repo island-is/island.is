@@ -4,9 +4,9 @@ import { AppProps } from 'next/app'
 import { ApolloProvider } from 'react-apollo'
 import { ApolloClient } from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
+import { Header, PageLoader } from '@island.is/adgerdir/components'
 
 import { Page, Footer, Box } from '@island.is/island-ui/core'
-import { Header } from '../components'
 import appWithTranslation from '../i18n/appWithTranslation'
 
 import initApollo from '../graphql/client'
@@ -57,9 +57,26 @@ const Layout: FC<LayoutProps> = ({
         />
         <title>Ísland.is</title>
       </Head>
-      {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
-      {wrapContent ? <Box width="full">{children}</Box> : children}
-      {showFooter && <Footer />}
+      <PageLoader />
+      {showHeader && <Header showSearchInHeader={false} />}
+      {wrapContent ? (
+        <Box flexGrow={1} width="full">
+          {children}
+        </Box>
+      ) : (
+        children
+      )}
+      {showFooter && (
+        <Footer
+          topLinks={topLinks}
+          middleLinks={links}
+          tagLinks={links}
+          languageSwitchLink={languageSwitchLink}
+          middleLinksTitle={'Tenglar'}
+          showMiddleLinks
+          showTagLinks
+        />
+      )}
       <style jsx global>{`
         @font-face {
           font-family: 'IBM Plex Sans';
@@ -126,5 +143,24 @@ const SupportApplication: FC<{
     </ApolloProvider>
   )
 }
+
+const topLinks = [
+  {
+    title: 'Um Stafrænt Ísland',
+    href: 'https://stafraent.island.is/',
+  },
+]
+
+const languageSwitchLink = {
+  title: 'English',
+  href: 'https://island.is/en',
+}
+
+const links = [
+  {
+    title: 'Hafa samband',
+    href: 'https://island.is/um-island-is/hafa-samband/',
+  },
+]
 
 export default appWithTranslation(SupportApplication)

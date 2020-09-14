@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import { groupBy, range, capitalize } from 'lodash'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { Screen } from '../types'
@@ -16,26 +15,28 @@ import {
   Stack,
   Breadcrumbs,
   Divider,
-  Columns,
-  Column,
   Pagination,
   Hidden,
   Select,
   Option,
   Tiles,
+  Link,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { GET_NEWS_LIST_QUERY } from './queries'
 import { NewsListLayout } from './Layouts/Layouts'
-import {
-  Query,
-  ContentLanguage,
-  QueryGetNewsListArgs,
-} from '@island.is/api/schema'
 import { CustomNextError } from '../units/ErrorBoundary'
+import {
+  GetNewsListQuery,
+  QueryGetNewsListArgs,
+  ContentLanguage,
+} from '../graphql/schema'
+import { NewsCard } from '../components/NewsCard'
 
 interface NewsListProps {
-  newsList: Query['getNewsList']['news']
-  page: Query['getNewsList']['page']
+  newsList: GetNewsListQuery['getNewsList']['news']
+  page: GetNewsListQuery['getNewsList']['page']
   dateRange: string[]
   selectedYear: number
   selectedMonth: number
@@ -101,15 +102,13 @@ const NewsList: Screen<NewsListProps> = ({
         onChange={(e) => Router.push(makeHref(e.target.value))}
       />
       <Typography variant="p" as="p">
-        <Link href={makeHref(selectedYear)}>
-          <a>Allt árið</a>
-        </Link>
+        <Link href={makeHref(selectedYear)}>Allt árið</Link>
         {selectedMonth === undefined && <Bullet align="right" />}
       </Typography>
       {months.map((date: Date) => (
         <Typography key={date.toISOString()} variant="p" as="p">
           <Link href={makeHref(date.getFullYear(), date.getMonth())}>
-            <a>{capitalize(format(date, 'MMMM'))}</a>
+            {capitalize(format(date, 'MMMM'))}
           </Link>
           {selectedMonth === date.getMonth() && <Bullet align="right" />}
         </Typography>
@@ -125,12 +124,8 @@ const NewsList: Screen<NewsListProps> = ({
       <NewsListLayout sidebar={sidebar}>
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
-            <Link href={makePath()}>
-              <a>Ísland.is</a>
-            </Link>
-            <Link href={makePath('news')}>
-              <a>Fréttir og tilkynningar</a>
-            </Link>
+            <Link href={makePath()}>Ísland.is</Link>
+            <Link href={makePath('news')}>Fréttir og tilkynningar</Link>
           </Breadcrumbs>
           <Hidden below="lg">
             <Typography variant="h1" as="h1">
@@ -138,8 +133,8 @@ const NewsList: Screen<NewsListProps> = ({
             </Typography>
           </Hidden>
 
-          <Hidden above="md">
-            <Tiles space={3} columns={2}>
+          <GridRow>
+            <GridColumn hideAbove="sm" span="12/12" paddingBottom={1}>
               <Select
                 label="Ár"
                 placeholder="Ár"
@@ -150,6 +145,8 @@ const NewsList: Screen<NewsListProps> = ({
                 onChange={({ value }: Option) => Router.push(makeHref(value))}
                 name="year"
               />
+            </GridColumn>
+            <GridColumn hideAbove="sm" span="12/12">
               <Select
                 label="Mánuður"
                 placeholder="Allt árið"
@@ -160,14 +157,20 @@ const NewsList: Screen<NewsListProps> = ({
                 }
                 name="month"
               />
-            </Tiles>
-          </Hidden>
+            </GridColumn>
+          </GridRow>
 
           {newsList.map((newsItem) => (
-            <NewsListItem key={newsItem.id} newsItem={newsItem} />
+            <NewsCard
+              title={newsItem.title}
+              introduction={newsItem.intro}
+              slug={newsItem.slug}
+              image={newsItem.image}
+              url={makePath('news', newsItem.slug)}
+              date={newsItem.date}
+            />
           ))}
-
-          <Box paddingTop={8}>
+          <Box paddingTop={[4, 4, 8]}>
             <Pagination
               {...page}
               renderLink={(page, className, children) => (
@@ -177,7 +180,7 @@ const NewsList: Screen<NewsListProps> = ({
                     query: { ...Router.query, page },
                   }}
                 >
-                  <a className={className}>{children}</a>
+                  <span className={className}>{children}</span>
                 </Link>
               )}
             />
@@ -185,46 +188,6 @@ const NewsList: Screen<NewsListProps> = ({
         </Stack>
       </NewsListLayout>
     </>
-  )
-}
-
-const NewsListItem = ({ newsItem }) => {
-  const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
-  const { format } = useDateUtils()
-
-  return (
-    <Box key={newsItem.id} boxShadow="subtle" padding={6} paddingRight={3}>
-      <Columns space={4} collapseBelow="xl">
-        <Column>
-          <Stack space={2}>
-            <Typography variant="eyebrow" as="p" color="purple400">
-              {format(new Date(newsItem.date), 'do MMMM yyyy')}
-            </Typography>
-            <Typography variant="h3" as="h3" color="blue400">
-              <Link href={makePath('news', newsItem.slug)}>
-                <a>{newsItem.title}</a>
-              </Link>
-            </Typography>
-            <Typography variant="p" as="p">
-              {newsItem.intro}
-            </Typography>
-          </Stack>
-        </Column>
-        {newsItem.image && (
-          <Column width="2/5">
-            <Link href={makePath('news', newsItem.slug)}>
-              <a>
-                <img
-                  src={newsItem.image.url + '?w=524'}
-                  alt={`Skoða frétt ${newsItem.title}`}
-                />
-              </a>
-            </Link>
-          </Column>
-        )}
-      </Columns>
-    </Box>
   )
 }
 
@@ -250,7 +213,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       },
     },
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetNewsListArgs>({
+    apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
       query: GET_NEWS_LIST_QUERY,
       variables: {
         input: {
@@ -259,7 +222,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetNewsListArgs>({
+    apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
       query: GET_NEWS_LIST_QUERY,
       variables: {
         input: {
@@ -267,7 +230,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetNewsListArgs>({
+    apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
       query: GET_NEWS_LIST_QUERY,
       variables: {
         input: {

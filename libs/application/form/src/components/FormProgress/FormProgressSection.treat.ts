@@ -1,21 +1,11 @@
 import { style } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
 
-export const root = style({
-  transition: 'margin-left .5s ease',
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      transition: 'none',
-    },
-  },
+export const subSectionContainer = style({
+  overflowY: 'hidden',
+  transition: 'height .5s ease-in-out',
 })
 
-export const sectionName = style({
-  // Fixes vertical center alignemnt of text and number
-  paddingTop: '3px',
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      paddingTop: 0,
-    },
-  },
+export const subSectionInnerContainer = style({
+  opacity: 0,
+  transition: 'opacity .3s ease-in-out',
 })

@@ -15,7 +15,6 @@ export const container = style({
   textDecoration: 'none',
   maxWidth: '100%',
   border: '1px solid transparent',
-
   ':focus': {
     backgroundColor: theme.color.mint400,
     color: theme.color.dark400,
@@ -45,7 +44,7 @@ export const variants = styleMap({
     backgroundColor: theme.color.purple100,
   },
   red: {
-    color: theme.color.red400,
+    color: theme.color.red600,
     backgroundColor: theme.color.red100,
     ':focus': {
       backgroundColor: theme.color.red200,
@@ -99,6 +98,10 @@ export const active = style({
     [`&${variants.red}`]: {
       backgroundColor: theme.color.white,
       color: theme.color.red600,
+    },
+    [`&${variants.blue}`]: {
+      backgroundColor: theme.color.white,
+      color: theme.color.blue400,
     },
   },
 })

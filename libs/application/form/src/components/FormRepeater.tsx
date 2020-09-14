@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { RepeaterScreen } from '../types'
 import { Button } from '@island.is/island-ui/core'
-import { Answer, FormValue } from '@island.is/application/schema'
+import { Answer, FormValue } from '@island.is/application/template'
 
 const FormRepeater: FC<{
   expandRepeater: (repeater: RepeaterScreen) => void

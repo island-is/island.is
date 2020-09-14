@@ -24,6 +24,18 @@ components:
           type: string
       required:
         - version
+    User:
+      type: object
+      properties:
+        nationalId:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+      required:
+        - nationalId
+        - roles
     Case:
       type: object
       properties:
@@ -33,14 +45,6 @@ components:
         modified:
           format: date-time
           type: string
-        description:
-          type: string
-        policeCaseNumber:
-          type: string
-        suspectNationalId:
-          type: string
-        suspectName:
-          type: string
         state:
           type: string
           enum:
@@ -49,41 +53,53 @@ components:
             - SUBMITTED
             - ACTIVE
             - COMPLETED
+        policeCaseNumber:
+          type: string
+        suspectNationalId:
+          type: string
+        suspectName:
+          type: string
+        suspectAddress:
+          type: string
+        court:
+          type: string
+        arrestDate:
+          format: date-time
+          type: string
+        requestedCourtDate:
+          format: date-time
+          type: string
       required:
         - created
         - modified
-        - description
+        - state
         - policeCaseNumber
         - suspectNationalId
-        - suspectName
-        - state
     CreateCaseDto:
       type: object
       properties:
-        description:
-          type: string
         policeCaseNumber:
           type: string
         suspectNationalId:
           type: string
         suspectName:
           type: string
+        suspectAddress:
+          type: string
+        court:
+          type: string
+        arrestDate:
+          format: date-time
+          type: string
+        requestedCourtDate:
+          format: date-time
+          type: string
       required:
-        - description
         - policeCaseNumber
         - suspectNationalId
-        - suspectName
     UpdateCaseDto:
       type: object
       properties:
-        description:
-          type: string
-        policeCaseNumber:
-          type: string
-        suspectNationalId:
-          type: string
-        suspectName:
-          type: string
         state:
           type: string
           enum:
@@ -92,10 +108,22 @@ components:
             - SUBMITTED
             - ACTIVE
             - COMPLETED
-      required:
-        - policeCaseNumber
-        - suspectNationalId
-        - suspectName
+        policeCaseNumber:
+          type: string
+        suspectNationalId:
+          type: string
+        suspectName:
+          type: string
+        suspectAddress:
+          type: string
+        court:
+          type: string
+        arrestDate:
+          format: date-time
+          type: string
+        requestedCourtDate:
+          format: date-time
+          type: string
 paths:
   /liveness:
     get:
@@ -123,6 +151,46 @@ paths:
                 $ref: '#/components/schemas/Version'
       tags:
         - internal
+  /api/auth/callback:
+    post:
+      operationId: AuthController_callback
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - api/auth
+  /api/auth/login:
+    get:
+      operationId: AuthController_login
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - api/auth
+  /api/auth/logout:
+    get:
+      operationId: AuthController_logout
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - api/auth
+  /api/user:
+    get:
+      operationId: UserController_getCurrentUser
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      tags:
+        - users
   /api/cases:
     get:
       operationId: CaseController_getAll
@@ -198,21 +266,3 @@ paths:
                 $ref: '#/components/schemas/Case'
       tags:
         - cases
-  /auth/login:
-    get:
-      operationId: AuthController_login
-      parameters: []
-      responses:
-        '200':
-          description: ''
-      tags:
-        - auth
-  /auth/logout:
-    get:
-      operationId: AuthController_logout
-      parameters: []
-      responses:
-        '200':
-          description: ''
-      tags:
-        - auth

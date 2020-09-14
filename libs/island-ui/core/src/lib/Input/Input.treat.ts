@@ -29,6 +29,10 @@ export const input = style({
   ':disabled': mixins.inputDisabled,
 })
 
+export const textarea = style({
+  resize: 'vertical',
+})
+
 export const errorMessage = style(mixins.errorMessage)
 
 export const hasError = style({
@@ -41,7 +45,12 @@ export const label = style({
     [`${hasError} &`]: mixins.labelErrorState,
   },
 })
+
 export const labelDisabledEmptyInput = style(mixins.labelDisabledEmptyInput)
+
+export const isRequiredStar = style({
+  color: theme.color.red400,
+})
 
 export const hasFocus = style({
   selectors: {

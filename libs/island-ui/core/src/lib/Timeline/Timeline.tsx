@@ -6,8 +6,10 @@ import React, {
   useCallback,
   useMemo,
   Fragment,
+  forwardRef,
 } from 'react'
 import cn from 'classnames'
+import { usePopper } from 'react-popper'
 import { Icon } from '../Icon/Icon'
 import { Button } from '../Button/Button'
 import { Stack } from '../Stack/Stack'
@@ -17,6 +19,7 @@ import { Inline } from '../Inline/Inline'
 
 import * as timelineStyles from './Timeline.treat'
 import * as eventStyles from './Event.treat'
+import ReactDOM from 'react-dom'
 
 const formatNumber = (value: number) =>
   value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
@@ -55,7 +58,7 @@ export interface TimelineProps {
 
 function setDefault<K, V>(map: Map<K, V>, key: K, value: V): V {
   if (!map.has(key)) map.set(key, value)
-  return map.get(key)
+  return map.get(key) as V
 }
 
 const mapEvents = (
@@ -66,7 +69,9 @@ const mapEvents = (
   const byYear = new Map()
   for (const event of events) {
     const byMonth = setDefault(byYear, event.date.getFullYear(), new Map())
-    setDefault(byMonth, event.date.getMonth(), []).push(event)
+    setDefault(byMonth, event.date.getMonth(), [] as TimelineEvent[]).push(
+      event,
+    )
   }
 
   return byYear
@@ -80,11 +85,12 @@ export const Timeline = ({ events }: TimelineProps) => {
   const [frameHeight, setFrameHeight] = useState(0)
   const [frameJump, setFrameJump] = useState(0)
   const [jumpIndex, setJumpIndex] = useState(0)
-  const [visibleModal, setVisibleModal] = useState('')
+  const [visibleModal, setVisibleModal] = useState<string | null>('')
 
   const eventMap = useMemo(() => mapEvents(events), [events])
 
   const onResize = useCallback(() => {
+    if (!frameRef.current || !innerContainerRef.current) return
     setFrameJump(frameRef.current.offsetHeight / 2)
     setContainerHeight(innerContainerRef.current.offsetHeight)
     setFrameHeight(frameRef.current.offsetHeight)
@@ -116,7 +122,8 @@ export const Timeline = ({ events }: TimelineProps) => {
       jump = diff
     }
 
-    innerContainerRef.current.style.transform = `translateY(-${jump}px)`
+    if (innerContainerRef.current)
+      innerContainerRef.current.style.transform = `translateY(-${jump}px)`
   }, [frameJump, jumpIndex, containerHeight, frameHeight])
 
   return (
@@ -172,21 +179,12 @@ export const Timeline = ({ events }: TimelineProps) => {
                             >
                               <div className={timelineStyles.event}>
                                 {larger ? (
-                                  <>
-                                    <EventBar
-                                      onClick={() => {
-                                        setVisibleModal(
-                                          isVisible ? null : modalKey,
-                                        )
-                                      }}
-                                      event={event}
-                                    />
-                                    <EventModal
-                                      event={event}
-                                      visible={isVisible}
-                                      onClose={() => setVisibleModal(null)}
-                                    />
-                                  </>
+                                  <Event
+                                    event={event}
+                                    visibleModal={visibleModal}
+                                    modalKey={modalKey}
+                                    setVisibleModal={setVisibleModal}
+                                  />
                                 ) : (
                                   <span className={timelineStyles.eventSimple}>
                                     {event.title}
@@ -216,15 +214,67 @@ export const Timeline = ({ events }: TimelineProps) => {
   )
 }
 
+const Event = ({ event, setVisibleModal, visibleModal, modalKey }) => {
+  const portalRef = useRef()
+  const [referenceElement, setReferenceElement] = useState(null)
+  const [popperElement, setPopperElement] = useState(null)
+  const [mounted, setMounted] = useState(false)
+  const { styles, attributes } = usePopper(referenceElement, popperElement, {
+    placement: 'top-start',
+    modifiers: [
+      {
+        name: 'flip',
+        options: {
+          rootBoundary: 'document',
+          flipVariations: false,
+          allowedAutoPlacements: ['top-start'],
+        },
+      },
+    ],
+  })
+  const isVisible = visibleModal === modalKey
+  useEffect(() => {
+    portalRef.current = document.querySelector('#__next')
+    setMounted(true)
+  }, [])
+
+  return (
+    <>
+      <EventBar
+        ref={setReferenceElement}
+        onClick={() => {
+          setVisibleModal(isVisible ? null : modalKey)
+        }}
+        event={event}
+      />
+      {mounted &&
+        isVisible &&
+        ReactDOM.createPortal(
+          <div
+            ref={setPopperElement}
+            style={styles.popper}
+            {...attributes.popper}
+          >
+            <EventModal event={event} onClose={() => setVisibleModal(null)} />
+          </div>,
+          portalRef.current,
+        )}
+    </>
+  )
+}
+
 interface EventBarProps {
   event: TimelineEvent
   onClick: () => void
 }
 
-const EventBar = ({ event, onClick }: EventBarProps) => {
-  return (
-    <>
-      <button onClick={onClick} className={eventStyles.eventBar}>
+const EventBar = forwardRef(
+  (
+    { event, onClick }: EventBarProps,
+    ref: React.LegacyRef<HTMLButtonElement>,
+  ) => {
+    return (
+      <button onClick={onClick} className={eventStyles.eventBar} ref={ref}>
         <div className={eventStyles.eventBarTitle}>
           <div className={eventStyles.eventBarIcon}>
             <Icon type="user" color="purple400" width="24" />
@@ -238,11 +288,11 @@ const EventBar = ({ event, onClick }: EventBarProps) => {
                 {formatNumber(event.value)}
               </span>
               <span className={eventStyles.maxValue}>
-                /{formatNumber(event.maxValue)}
+                /{formatNumber(event.maxValue || 0)}
               </span>
             </span>
             <span className={eventStyles.valueLabel}>
-              {event.valueLabel.split(/[\r\n]+/).map((line, i) => (
+              {event.valueLabel?.split(/[\r\n]+/).map((line, i) => (
                 <Fragment key={i}>
                   {line}
                   <br />
@@ -252,54 +302,56 @@ const EventBar = ({ event, onClick }: EventBarProps) => {
           </div>
         )}
       </button>
-    </>
-  )
-}
+    )
+  },
+)
 
 interface EventModalProps {
   event: TimelineEvent
-  visible: boolean
   onClose: () => void
 }
 
-const EventModal = ({ event, visible, onClose }: EventModalProps) => {
-  if (!event) {
-    return null
-  }
+const EventModal = forwardRef(
+  (
+    { event, onClose }: EventModalProps,
+    ref: React.LegacyRef<HTMLDivElement>,
+  ) => {
+    if (!event) {
+      return null
+    }
 
-  return (
-    <div
-      className={cn(eventStyles.eventModal, {
-        [eventStyles.eventModalVisible]: visible,
-      })}
-    >
-      <div className={eventStyles.eventBarIcon}>
-        <Icon type="user" color="purple400" width="24" />
+    return (
+      <div ref={ref} className={eventStyles.eventModal}>
+        <div className={eventStyles.eventBarIcon}>
+          <Icon type="user" color="purple400" width="24" />
+        </div>
+        <div className={eventStyles.eventModalContent}>
+          <button onClick={onClose} className={eventStyles.eventModalClose}>
+            <Icon type="close" />
+          </button>
+          <Stack space={2}>
+            <Typography variant="h2" as="h3" color="purple400">
+              {event.title}
+            </Typography>
+            {event.data?.labels && (
+              <Inline space={2}>
+                {event.data.labels.map((label, index) => (
+                  <Tag key={index} label>
+                    {label}
+                  </Tag>
+                ))}
+              </Inline>
+            )}
+            {event.data?.text || ''}
+            <Button variant="text" icon="arrowRight">
+              Lesa meira
+            </Button>
+          </Stack>
+        </div>
       </div>
-      <div className={eventStyles.eventModalContent}>
-        <button onClick={onClose} className={eventStyles.eventModalClose}>
-          <Icon type="close" />
-        </button>
-        <Stack space={2}>
-          <Typography variant="h2" as="h3" color="purple400">
-            {event.title}
-          </Typography>
-          {event.data?.labels && (
-            <Inline space={2}>
-              {event.data.labels.map((label) => (
-                <Tag label>{label}</Tag>
-              ))}
-            </Inline>
-          )}
-          {event.data.text}
-          <Button variant="text" icon="arrowRight">
-            Lesa meira
-          </Button>
-        </Stack>
-      </div>
-    </div>
-  )
-}
+    )
+  },
+)
 
 const BulletLine = ({ selected = false }: { selected?: boolean }) => {
   return (

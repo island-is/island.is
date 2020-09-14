@@ -1,18 +1,5 @@
-import {
-  Controller,
-  Param,
-  Post,
-  Get,
-  Inject,
-  forwardRef,
-  UseGuards,
-} from '@nestjs/common'
-import {
-  ApiBearerAuth,
-  ApiExcludeEndpoint,
-  ApiOkResponse,
-  ApiTags,
-} from '@nestjs/swagger'
+import { Controller, Param, Post, Get, NotFoundException } from '@nestjs/common'
+import { ApiExcludeEndpoint } from '@nestjs/swagger'
 
 import { Discount } from './discount.model'
 import {
@@ -20,30 +7,15 @@ import {
   GetCurrentDiscountByNationalIdParams,
 } from './discount.validator'
 import { DiscountService } from './discount.service'
-import { DiscountLimitExceeded } from './discount.error'
+import { NationalRegistryService } from '../nationalRegistry'
 import { AuthGuard } from '../common'
-
-@ApiTags('Discounts')
-@Controller('api/public')
-@UseGuards(AuthGuard)
-@ApiBearerAuth()
-export class PublicDiscountController {
-  constructor(private readonly discountService: DiscountService) {}
-
-  // TODO THIS SHOULD NOT GO TO PROD
-  // THIS IS ONLY FOR AIRLINES TO TEST THE API
-  @Post('users/:nationalId/discounts')
-  @ApiOkResponse({ type: Discount })
-  async createDiscountCode(
-    @Param() params: CreateDiscountCodeParams,
-  ): Promise<Discount> {
-    return this.discountService.createDiscountCode(params.nationalId)
-  }
-}
 
 @Controller('api/private')
 export class PrivateDiscountController {
-  constructor(private readonly discountService: DiscountService) {}
+  constructor(
+    private readonly discountService: DiscountService,
+    private readonly nationalRegistryService: NationalRegistryService,
+  ) {}
 
   @Get('users/:nationalId/discounts/current')
   @ApiExcludeEndpoint()
@@ -58,6 +30,11 @@ export class PrivateDiscountController {
   async createDiscountCode(
     @Param() params: CreateDiscountCodeParams,
   ): Promise<Discount> {
+    const user = await this.nationalRegistryService.getUser(params.nationalId)
+    if (!user) {
+      throw new NotFoundException(`User<${params.nationalId}> not found`)
+    }
+
     return this.discountService.createDiscountCode(params.nationalId)
   }
 }

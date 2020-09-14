@@ -1,8 +1,13 @@
 import { initTracing } from '@island.is/infra-tracing'
 import { NestFactory } from '@nestjs/core'
 import cookieParser from 'cookie-parser'
-import { INestApplication, Type, ValidationPipe } from '@nestjs/common'
-import { OpenAPIObject, SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
+import {
+  INestApplication,
+  Type,
+  ValidationPipe,
+  NestInterceptor,
+} from '@nestjs/common'
+import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
 import { runMetricServer } from './runMetricServer'
 import { logger, LoggingModule } from '@island.is/logging'
 import { collectDefaultMetrics } from 'prom-client'
@@ -11,6 +16,7 @@ import { InfraModule } from './infra/infra.module'
 import yaml from 'js-yaml'
 import * as yargs from 'yargs'
 import * as fs from 'fs'
+import * as Sentry from '@sentry/node'
 
 // const AuthUrl = "https://siidentityserverweb20200805020732.azurewebsites.net/connect/authorize"
 // const TokenUrl = "https://siidentityserverweb20200805020732.azurewebsites.net/connect/token"
@@ -45,6 +51,11 @@ type RunServerOptions = {
    * The port to start the server on.
    */
   port?: number
+
+  /**
+   * Hook up global interceptors to app
+   */
+  interceptors?: NestInterceptor[]
 }
 
 const createApp = async (options: RunServerOptions) => {
@@ -122,6 +133,11 @@ export const bootstrap = async (options: RunServerOptions) => {
       generateSchema(argv.generateSchema, document)
       return
     }
+  }
+  if (options.interceptors) {
+    options.interceptors.forEach((interceptor) => {
+      app.useGlobalInterceptors(interceptor)
+    })
   }
 
   startServer(app, options.port)

@@ -3,7 +3,6 @@ import { AsyncSearch } from './AsyncSearch'
 import { Stack, Box } from '../..'
 import { boolean } from '@storybook/addon-knobs'
 import Typography from '../Typography/Typography'
-import { blue100 } from '@island.is/island-ui/theme'
 
 export default {
   title: 'Components/AsyncSearch',
@@ -22,7 +21,7 @@ const items = [
   { label: 'Vottorð', value: 'vottord' },
 ]
 
-let timer = null
+let timer: NodeJS.Timer | null = null
 
 export const Features: FC = () => {
   const [options, setOptions] = useState(items)
@@ -33,7 +32,7 @@ export const Features: FC = () => {
   const colored = boolean('Colored', false)
   const large = boolean('Large', false)
 
-  const update = (value) => {
+  const update = (value: string) => {
     const newOpts = items.filter(
       (item) => value && item.label.toLowerCase().includes(value.toLowerCase()),
     )
@@ -51,7 +50,7 @@ export const Features: FC = () => {
   useEffect(() => {
     if (value !== null) {
       if (simulateAsync) {
-        clearTimeout(timer)
+        if (timer !== null) clearTimeout(timer)
         setLoading(true)
         timer = setTimeout(() => update(value), 600)
       } else {
@@ -83,7 +82,7 @@ export const OnSubmit: FC = () => {
         <AsyncSearch
           filter
           onSubmit={(inputValue, selectedOption) =>
-            window.alert('Submit ' + inputValue || selectedOption.value + '!')
+            window.alert('Submit ' + inputValue || selectedOption?.value + '!')
           }
           options={items}
         />
@@ -92,11 +91,20 @@ export const OnSubmit: FC = () => {
   )
 }
 
+interface ContainerProps {
+  active?: boolean
+  colored?: boolean
+}
+
 export const CustomItem: FC = () => {
   const colored = boolean('Colored', false)
   const large = boolean('Large', false)
 
-  const Container = ({ active, colored, children }) => {
+  const Container: React.FC<ContainerProps> = ({
+    active,
+    colored,
+    children,
+  }) => {
     const activeColor = colored ? 'white' : 'blue100'
     const inactiveColor = colored ? 'blue100' : 'white'
 
@@ -118,7 +126,7 @@ export const CustomItem: FC = () => {
     {
       label: 'Skráning nafns',
       value: 'skraning-nafns',
-      component: (props) => (
+      component: (props: ContainerProps) => (
         <Container {...props}>
           <Typography
             variant="eyebrow"
@@ -136,7 +144,7 @@ export const CustomItem: FC = () => {
     {
       label: 'Nafnbreyting',
       value: 'nafnbreyting',
-      component: (props) => (
+      component: (props: ContainerProps) => (
         <Container {...props}>
           <Typography
             variant="eyebrow"
@@ -154,7 +162,7 @@ export const CustomItem: FC = () => {
     {
       label: 'Breytt ritun nafns',
       value: 'breytt-ritun-nafns',
-      component: (props) => (
+      component: (props: ContainerProps) => (
         <Container {...props}>
           <Typography
             variant="eyebrow"

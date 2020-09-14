@@ -4,8 +4,8 @@ import get from 'lodash/get'
 import { Checkbox, CheckboxProps } from '../Checkbox/Checkbox'
 
 export interface FieldCheckboxProps extends CheckboxProps {
-  field?: FieldInputProps<boolean>
-  form?: FormikState<string | number>
+  field: FieldInputProps<boolean>
+  form: FormikState<string | number>
 }
 
 export const FieldCheckbox = ({

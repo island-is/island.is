@@ -14,9 +14,15 @@ Then run the migrations:
 
 You can serve this service locally by running:
 
-`yarn nx serve judicial-system-api`
+`yarn nx serve judicial-system-api --ssl`
 
-## Graphql
+To skip authentication at innskraning.island.is run:
+
+`AUTH_USER=<national id> yarn nx serve judicial-system-api`
+
+where `<national id>` is the national id of a known user.
+
+## Graphql - not yet implemented
 
 Make sure you are serving the graphql client as well in order for you to make graphql calls to this service:
 

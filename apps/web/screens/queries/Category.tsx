@@ -20,6 +20,7 @@ export const GET_ARTICLES_IN_CATEGORY_QUERY = gql`
       group
       groupDescription
       groupSlug
+      subgroup
     }
   }
 `

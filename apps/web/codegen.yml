@@ -1,0 +1,18 @@
+schema:
+  - apps/api/src/api.graphql
+documents: apps/web/screens/queries/*.{ts,tsx}
+generates:
+  apps/web/graphql/schema.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+    config:
+      exportFragmentSpreadSubTypes: true
+      scalars:
+        DateTime: Date
+        JSON: '{ [key: string]: any }'
+      namingConvention:
+        typeNames: change-case#pascalCase
+hooks:
+  afterAllFileWrite:
+    - prettier --write

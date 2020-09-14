@@ -6,10 +6,11 @@ import {
   Param,
   Post,
   Delete,
-  Inject,
-  forwardRef,
   UseGuards,
   Req,
+  NotFoundException,
+  BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common'
 import {
   ApiOkResponse,
@@ -23,16 +24,17 @@ import {
 import { Flight } from './flight.model'
 import { FlightService } from './flight.service'
 import {
+  FlightDto,
   GetFlightParams,
+  GetFlightsBody,
   CreateFlightParams,
   GetUserFlightsParams,
   DeleteFlightParams,
   DeleteFlightLegParams,
-} from './flight.validator'
-import { FlightLimitExceeded } from './flight.error'
-import { FlightDto } from './dto/flight.dto'
+} from './dto'
 import { DiscountService } from '../discount'
 import { AuthGuard } from '../common'
+import { NationalRegistryService } from '../nationalRegistry'
 
 @ApiTags('Flights')
 @Controller('api/public')
@@ -41,8 +43,8 @@ import { AuthGuard } from '../common'
 export class PublicFlightController {
   constructor(
     private readonly flightService: FlightService,
-    @Inject(forwardRef(() => DiscountService))
     private readonly discountService: DiscountService,
+    private readonly nationalRegistryService: NationalRegistryService,
   ) {}
 
   @Post('discounts/:discountCode/flights')
@@ -52,17 +54,44 @@ export class PublicFlightController {
     @Body() flight: FlightDto,
     @Req() request,
   ): Promise<Flight> {
-    const nationalId = await this.discountService.validateDiscount(
+    const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
     )
+    if (!discount) {
+      throw new BadRequestException('Discount code is invalid')
+    }
+
+    const user = await this.nationalRegistryService.getUser(discount.nationalId)
+    if (!user) {
+      throw new NotFoundException(`User<${discount.nationalId}> not found`)
+    }
+
+    const meetsADSRequirements = this.flightService.isADSPostalCode(
+      user.postalcode,
+    )
+    if (!meetsADSRequirements) {
+      throw new ForbiddenException('User postalcode does not meet conditions')
+    }
+
     const {
       unused: flightLegsLeft,
-    } = await this.flightService.countFlightLegsByNationalId(nationalId)
+    } = await this.flightService.countFlightLegsByNationalId(
+      discount.nationalId,
+    )
     if (flightLegsLeft < flight.flightLegs.length) {
-      throw new FlightLimitExceeded()
+      throw new ForbiddenException('Flight leg quota is exceeded')
     }
-    await this.discountService.useDiscount(params.discountCode, nationalId)
-    return this.flightService.create(flight, nationalId, request.airline)
+    await this.discountService.useDiscount(
+      params.discountCode,
+      discount.nationalId,
+    )
+    const newFlight = await this.flightService.create(
+      flight,
+      user,
+      request.airline,
+    )
+    newFlight.userInfo = undefined
+    return newFlight
   }
 
   @Get('flights/:flightId')
@@ -71,7 +100,14 @@ export class PublicFlightController {
     @Param() params: GetFlightParams,
     @Req() request,
   ): Promise<Flight> {
-    return this.flightService.findOne(params.flightId, request.airline)
+    const flight = await this.flightService.findOne(
+      params.flightId,
+      request.airline,
+    )
+    if (!flight) {
+      throw new NotFoundException(`Flight<${params.flightId}> not found`)
+    }
+    return flight
   }
 
   @Delete('flights/:flightId')
@@ -85,6 +121,9 @@ export class PublicFlightController {
       params.flightId,
       request.airline,
     )
+    if (!flight) {
+      throw new NotFoundException(`Flight<${params.flightId}> not found`)
+    }
     await this.flightService.delete(flight)
   }
 
@@ -99,7 +138,19 @@ export class PublicFlightController {
       params.flightId,
       request.airline,
     )
-    await this.flightService.deleteFlightLeg(flight, params.flightLegId)
+    if (!flight) {
+      throw new NotFoundException(`Flight<${params.flightId}> not found`)
+    }
+
+    const flightLeg = await flight.flightLegs.find(
+      (flightLeg) => flightLeg.id === params.flightLegId,
+    )
+    if (!flightLeg) {
+      throw new NotFoundException(
+        `FlightLeg<${params.flightLegId}> not found for Flight<${flight.id}>`,
+      )
+    }
+    await this.flightService.deleteFlightLeg(flightLeg)
   }
 }
 
@@ -111,6 +162,12 @@ export class PrivateFlightController {
   @ApiExcludeEndpoint()
   get(): Promise<Flight[]> {
     return this.flightService.findAll()
+  }
+
+  @Post('flights')
+  @ApiExcludeEndpoint()
+  getFlights(@Body() body: GetFlightsBody | {}): Promise<Flight[]> {
+    return this.flightService.findAllByFilter(body)
   }
 
   @Get('users/:nationalId/flights')

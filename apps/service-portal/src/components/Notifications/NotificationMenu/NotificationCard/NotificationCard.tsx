@@ -4,7 +4,7 @@ import { Box, Typography, Icon, Stack, Button } from '@island.is/island-ui/core'
 import { Link } from 'react-router-dom'
 import * as styles from './Notificationcard.treat'
 import cn from 'classnames'
-import ActionMenu, { ActionMenuItem } from '../../../ActionMenu/ActionMenu'
+import { ActionMenu, ActionMenuItem } from '@island.is/service-portal/core'
 
 interface Props {
   card: Card

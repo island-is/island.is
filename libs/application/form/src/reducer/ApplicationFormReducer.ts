@@ -2,10 +2,11 @@ import {
   FormItemTypes,
   FormLeaf,
   FormValue,
+  getFormByTypeId,
   getFormLeaves,
   getSectionsInForm,
   mergeAnswers,
-} from '@island.is/application/schema'
+} from '@island.is/application/template'
 import { Action, ActionTypes, ApplicationUIState } from './ReducerTypes'
 import {
   convertLeavesToScreens,
@@ -17,15 +18,18 @@ import {
 export function initializeReducer(
   state: ApplicationUIState,
 ): ApplicationUIState {
-  const { form, formValue } = state
+  const { application } = state
+  const { typeId, answers } = application
+  const form = state.form ? state.form : getFormByTypeId(typeId)
   const formLeaves: FormLeaf[] = getFormLeaves(form) // todo add conditions here to set isVisible: true/false
   const sections = getSectionsInForm(form)
-  const screens = convertLeavesToScreens(formLeaves, formValue)
-  const currentScreen = findCurrentScreen(screens, formValue)
+  const screens = convertLeavesToScreens(formLeaves, answers)
+  const currentScreen = findCurrentScreen(screens, answers)
 
   return moveToScreen(
     {
       ...state,
+      form,
       formLeaves,
       screens,
       sections,
@@ -39,11 +43,14 @@ const addNewAnswersToState = (
   state: ApplicationUIState,
   answers: FormValue,
 ): ApplicationUIState => {
-  const newFormValue = mergeAnswers(state.formValue, answers)
+  const newAnswers = mergeAnswers(state.application.answers, answers)
   return {
     ...state,
-    formValue: newFormValue,
-    screens: convertLeavesToScreens(state.formLeaves, newFormValue),
+    application: {
+      ...state.application,
+      answers: newAnswers,
+    },
+    screens: convertLeavesToScreens(state.formLeaves, newAnswers),
   }
 }
 
@@ -104,7 +111,7 @@ export const ApplicationReducer = (
         state.activeScreen,
         state.formLeaves,
         state.screens,
-        state.formValue,
+        state.application.answers,
       )
       if (!newFormLeaves) {
         // the current screen is not a repeater
@@ -123,8 +130,17 @@ export const ApplicationReducer = (
           1,
         false,
       )
-    case ActionTypes.RE_INITIALIZE:
-      return initializeReducer({ ...state, ...action.payload })
+    case ActionTypes.ADD_EXTERNAL_DATA:
+      return {
+        ...state,
+        application: {
+          ...state.application,
+          externalData: {
+            ...state.application.externalData,
+            ...action.payload,
+          },
+        },
+      }
     default:
       return state
   }
