@@ -8,7 +8,7 @@ These solutions are [FOSS] and open to contributions, but most development
 is performed by teams that win tenders to develop new functionality for
 Digital Iceland.
 
-[digital iceland]: https://www.government.is/ministries/ministry-of-transport-and-local-government/about-the-ministry/department-of-digital-communication/
+[digital iceland]: https://stafraent.island.is/
 [ministry of finance and economic affairs]: https://www.government.is/ministries/ministry-of-finance-and-economic-affairs/
 [foss]: https://en.wikipedia.org/wiki/Free_and_open-source_software
 
