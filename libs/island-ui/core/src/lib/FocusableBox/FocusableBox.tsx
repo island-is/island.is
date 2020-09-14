@@ -34,7 +34,6 @@ const FocusableBox = forwardRef<HTMLElement, Props>(
     {
       component = Link,
       display = 'flex',
-      borderRadius = 'large',
       color = 'purple',
       children,
       className,
@@ -51,7 +50,6 @@ const FocusableBox = forwardRef<HTMLElement, Props>(
       <Box
         component={component}
         display={display}
-        borderRadius={borderRadius}
         className={cn(
           styles.focusable,
           styles.colorSchemes[colorScheme || color],
