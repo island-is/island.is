@@ -86,6 +86,7 @@ export class ApplicationController {
     @Body()
     application: CreateApplicationDto,
   ): Promise<Application> {
+    // TODO not post the state, it should follow the initialstate of the machine
     validateApplicationSchema(
       {
         ...application,
@@ -96,6 +97,7 @@ export class ApplicationController {
       } as BaseApplication,
       application.answers as FormValue,
     )
+
     return this.applicationService.create(application)
   }
 

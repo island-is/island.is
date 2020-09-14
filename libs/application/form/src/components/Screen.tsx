@@ -8,7 +8,10 @@ import {
   ExternalData,
 } from '@island.is/application/template'
 import { Typography, Box, Button, GridColumn } from '@island.is/island-ui/core'
-import { UPDATE_APPLICATION, SUBMIT_APPLICATION } from '@island.is/application/graphql'
+import {
+  UPDATE_APPLICATION,
+  SUBMIT_APPLICATION,
+} from '@island.is/application/graphql'
 import deepmerge from 'deepmerge'
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form'
 import { FormScreen } from '../types'
