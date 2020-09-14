@@ -3,7 +3,6 @@ import React, { FC, useState, useContext } from 'react'
 import { useRouter } from 'next/router'
 import {
   Logo,
-  Link,
   Columns,
   Column,
   Box,
@@ -91,6 +90,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                   <FocusableBox
                     href="//minarsidur.island.is/"
                     marginLeft={marginLeft}
+                    borderRadius="large"
                   >
                     <Button variant="menu" leftIcon="user" tabIndex={-1}>
                       {t.login}

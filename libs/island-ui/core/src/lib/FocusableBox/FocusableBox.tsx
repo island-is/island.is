@@ -3,6 +3,7 @@ import React, {
   AllHTMLAttributes,
   forwardRef,
   useContext,
+  Ref,
 } from 'react'
 import cn from 'classnames'
 import { useToggle } from 'react-use'
@@ -20,6 +21,7 @@ interface Props
   extends Omit<UseBoxStylesProps, 'component'>,
     Omit<AllHTMLAttributes<HTMLElement>, 'width' | 'height' | 'className'> {
   component?: ElementType
+  ref?: Ref<HTMLElement>
   color?: ColorSchemes
 }
 
@@ -28,17 +30,19 @@ interface Props
 // By default it renders as a Link component.
 
 const FocusableBox = forwardRef<HTMLElement, Props>(
-  ({
-    component = Link,
-    display = 'flex',
-    borderRadius = 'large',
-    color = 'purple',
-    children,
-    className,
-    onFocus,
-    onBlur,
-    ...rest
-  }) => {
+  (
+    {
+      component = Link,
+      display = 'flex',
+      color = 'purple',
+      children,
+      className,
+      onFocus,
+      onBlur,
+      ...rest
+    },
+    ref,
+  ) => {
     const { colorScheme } = useContext(ColorSchemeContext)
     const [isFocused, toggle] = useToggle(false)
 
@@ -46,7 +50,6 @@ const FocusableBox = forwardRef<HTMLElement, Props>(
       <Box
         component={component}
         display={display}
-        borderRadius={borderRadius}
         className={cn(
           styles.focusable,
           styles.colorSchemes[colorScheme || color],
@@ -54,6 +57,7 @@ const FocusableBox = forwardRef<HTMLElement, Props>(
         )}
         onFocus={toggle}
         onBlur={toggle}
+        ref={ref}
         {...rest}
       >
         {typeof children === 'function' ? children({ isFocused }) : children}

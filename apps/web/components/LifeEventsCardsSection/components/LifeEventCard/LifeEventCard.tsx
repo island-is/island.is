@@ -1,6 +1,6 @@
 import React from 'react'
-import * as styles from './LifeEventCard.treat'
 import { Box, Typography, Link, FocusableBox } from '@island.is/island-ui/core'
+import * as styles from './LifeEventCard.treat'
 
 interface Props {
   title: string
@@ -17,6 +17,7 @@ const LifeEventCard: React.FC<Props> = ({ title, intro, image, url }) => {
       borderColor="blue200"
       borderWidth="standard"
       height="full"
+      borderRadius="large"
     >
       <Box
         className={styles.card}
@@ -24,7 +25,7 @@ const LifeEventCard: React.FC<Props> = ({ title, intro, image, url }) => {
         background="white"
         display="flex"
         height="full"
-        paddingX={[2, 2, 4]}
+        paddingX={[3, 3, 4]}
         paddingY={[1, 1, 3]}
         overflow="hidden"
       >
@@ -33,6 +34,7 @@ const LifeEventCard: React.FC<Props> = ({ title, intro, image, url }) => {
           flexDirection="column"
           className={styles.content}
           marginRight={[2, 2, 2, 2, 1]}
+          marginTop={[3, 3, 0]}
         >
           <Typography variant="h3" as="h3" paddingBottom={1} color="blue400">
             {title}

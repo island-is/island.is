@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, { FC, useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import FocusLock from 'react-focus-lock'
 import { RemoveScroll } from 'react-remove-scroll'
@@ -43,12 +43,19 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
   const [activeTab, setActiveTab] = useState(0)
   const { activeLocale, t } = useI18n()
   const { width } = useWindowSize()
+  const tabRefs = useRef<Array<HTMLElement | null>>([])
   const isMobile = width < theme.breakpoints.md
 
   useKey('Escape', handleClose)
 
   useEffect(() => {
     setActiveTab(0)
+  }, [isVisible])
+
+  useEffect(() => {
+    if (tabRefs.current) {
+      tabRefs.current[0] && tabRefs.current[0].focus()
+    }
   }, [isVisible])
 
   return isVisible ? (
@@ -100,6 +107,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
           <div className={styles.tabBar}>
             {tabs.map((tab, index) => (
               <FocusableBox
+                ref={(el) => (tabRefs.current[index] = el)}
                 component="button"
                 key={tab.title}
                 role="tab"
@@ -160,12 +168,13 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
                     <div className={styles.linksContent}>
                       {tab.externalLinks.map((link) => (
                         <Typography
-                          key={link.url}
                           variant="sideMenu"
                           color="blue400"
                           paddingBottom={2}
                         >
-                          <a href={link.url}>{link.title}</a>
+                          <FocusableBox key={link.url} href={link.url}>
+                            {link.title}
+                          </FocusableBox>
                         </Typography>
                       ))}
                     </div>

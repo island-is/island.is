@@ -1,4 +1,5 @@
 import React, { FC, useMemo } from 'react'
+import gql from 'graphql-tag'
 import { Screen } from '../../types'
 import { CustomNextError } from '../../units/ErrorBoundary'
 import {
