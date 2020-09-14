@@ -642,5 +642,6 @@ input DeleteAttachmentInput {
 
 input SubmitApplicationInput {
   id: String!
+  event: String!
   answers: JSON
 }

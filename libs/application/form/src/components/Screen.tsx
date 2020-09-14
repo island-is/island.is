@@ -79,6 +79,7 @@ const Screen: FC<ScreenProps> = ({
         variables: {
           input: {
             id: applicationId,
+            event: 'SUBMIT',
             answers: { ...formValue, ...data },
           },
         },

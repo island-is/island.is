@@ -132,6 +132,15 @@ components:
             $ref: '#/components/schemas/DataProviderDto'
       required:
         - dataProviders
+    UpdateApplicationStateDto:
+      type: object
+      properties:
+        event:
+          type: string
+        answers:
+          type: object
+      required:
+        - event
     AddAttachmentDto:
       type: object
       properties:
@@ -299,7 +308,7 @@ paths:
         content:
           application/json:
             schema:
-              type: string
+              $ref: '#/components/schemas/UpdateApplicationStateDto'
       responses:
         '200':
           description: ''

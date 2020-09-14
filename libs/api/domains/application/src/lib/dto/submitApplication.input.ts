@@ -8,6 +8,10 @@ export class SubmitApplicationInput {
   @IsString()
   id: string
 
+  @Field((type) => String)
+  @IsString()
+  event: string
+
   @Field((type) => graphqlTypeJson, { nullable: true })
   @IsObject()
   @IsOptional()

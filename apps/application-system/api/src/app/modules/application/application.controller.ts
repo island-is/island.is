@@ -41,6 +41,7 @@ import { buildDataProviders, buildExternalData } from './externalDataUtils'
 import { ApplicationByIdPipe } from './tools/applicationById.pipe'
 import { validateApplicationSchema } from './schemaValidationUtils'
 import { ApplicationSerializer } from './tools/application.serializer'
+import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
 
 @ApiTags('application')
 @Controller('application')
@@ -182,7 +183,7 @@ export class ApplicationController {
   async submitApplication(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     existingApplication: Application,
-    @Body() event: string,
+    @Body() updateApplicationStateDto: UpdateApplicationStateDto,
   ): Promise<Application> {
     const template = getApplicationTemplateByTypeId(
       existingApplication.typeId as ApplicationTypes,
@@ -197,7 +198,10 @@ export class ApplicationController {
       existingApplication as BaseApplication,
       template,
     )
-    const newState = helper.changeState(event)
+
+    // todo update the answers
+
+    const newState = helper.changeState(updateApplicationStateDto.event)
 
     if (newState.changed) {
       const {

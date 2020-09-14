@@ -81,8 +81,10 @@ export class ApplicationService {
   }
 
   async submitApplication(input: SubmitApplicationInput) {
+    const { id, ...updateApplicationStateDto } = input
     return this.applicationApi.applicationControllerSubmitApplication({
-      id: input.id,
+      id,
+      updateApplicationStateDto,
     })
   }
 }

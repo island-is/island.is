@@ -28,7 +28,7 @@ export const ParentalLeaveForm: Form = buildForm({
           id: 'approveExternalData',
           dataProviders: [
             buildDataProviderItem({
-              id: 'expectedBirthDate',
+              id: 'expectedDateOfBirth',
               type: DataProviderTypes.ExpectedDateOfBirth,
               source: 'Landlækni',
               subTitle: 'Staðfesting á að það sé yfir höfuð barn á leiðinni',
@@ -42,7 +42,7 @@ export const ParentalLeaveForm: Form = buildForm({
             //   title: 'Fail me please',
             // }),
             buildDataProviderItem({
-              id: 'willSucceed',
+              id: 'salary',
               type: DataProviderTypes.ExampleSucceeds,
               source: 'Success indeed',
               subTitle: 'what is happening',

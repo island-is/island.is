@@ -57,7 +57,7 @@ export const ParentalLeave: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: { target: 'employerApproval', cond: 'canSubmitDraft' },
+          SUBMIT: { target: 'employerApproval' },
         },
       },
       employerApproval: {

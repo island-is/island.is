@@ -849,6 +849,7 @@ export type DeleteAttachmentInput = {
 
 export type SubmitApplicationInput = {
   id: Scalars['String']
+  event: Scalars['String']
   answers?: Maybe<Scalars['JSON']>
 }
 
