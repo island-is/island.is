@@ -1,7 +1,7 @@
 import React from 'react'
 import { Box } from '@island.is/island-ui/core'
-//import { getQueryParser } from 'next/dist/next-server/server/api-utils';
-import styles from './service-card.styles'
+import * as stylesNew from './service-card.treat';
+import cn from 'classnames'
 
 export interface ServiceCardInformation {
     id:number
@@ -44,38 +44,38 @@ export const ServiceCard = (props: ServiceCardProps) => {
     <Box
       boxShadow="large"
       borderRadius="large"
-      style={styles.card}
-      className="service-card"
+      className={cn(stylesNew.card, "service-card")}
     >
-    <div  style={styles.serviceStatusContainer}>
-      <div style={styles.name}>{props.service.name}</div>
-      <div className={"service-status " + getServiceStatusClass(props.service.status)} style={styles.serviceStatus}></div>
+    <div  className={cn(stylesNew.serviceStatusContainer)}>
+      <div className={cn(stylesNew.name)}>{props.service.name}</div>
+      <div 
+        className={cn(stylesNew.serviceStatus,"service-status ", getServiceStatusClass(props.service.status))}></div>
     </div>
-    <div style={styles.serviceTexts}>
+    <div className={cn(stylesNew.serviceTexts)}>
     <div>
-      <div style={styles.owner}>{props.service.owner}</div>
+      <div className={cn(stylesNew.owner)}>{props.service.owner}</div>
     </div>
-        <div className="prices" style={styles.category} >
+        <div className={cn(stylesNew.category, "prices")}>
           {	props.service.pricing?.map((item, index) => (
-                <div style={styles.priceItem} className="card-item" key={index}>{item + ''} </div>
+                <div className={cn(stylesNew.priceItem,"card-item")} key={index}>{item + ''} </div>
             ))
           }
         </div>
-        <div className="categories" style={styles.category} >
+        <div className={cn(stylesNew.category, "categories")} >
           {	props.service.data?.map((item, index) => (
-                <div style={styles.categories} className="card-item" key={index}>{item + ''} </div>
+                <div className={cn(stylesNew.categories,"card-item")} key={index}>{item + ''} </div>
             ))
           }
         </div>
-        <div className="type" style={styles.category} >
+        <div className={cn(stylesNew.category, "type")} >
           {	props.service.type?.map((item, index) => (
-                <div style={styles.type} className="card-item" key={index}>{item + ''} </div>
+                <div className={cn(stylesNew.type,"card-item")} key={index}>{item + ''} </div>
             ))
           }
         </div>
-        <div className="access" style={styles.category} >
+        <div className={cn(stylesNew.category,"access")} >
           {	props.service.access?.map((item, index) => (
-                <div style={styles.access} className="card-item" key={index}>{item + ''} </div>
+                <div className={cn(stylesNew.access,"card-item")} key={index}>{item + ''} </div>
             ))
           }
         </div>
