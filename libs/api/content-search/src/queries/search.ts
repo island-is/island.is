@@ -20,7 +20,7 @@ export const searchQuery = ({ queryString, size = 10, page = 1, types }: SearchI
   const should = []
   const must = []
   should.push({
-    query_string: {
+    simple_query_string: {
       query: `*${queryString}*`,
       fields: [
         'title.stemmed^10',
