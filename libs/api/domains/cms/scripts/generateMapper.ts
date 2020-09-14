@@ -76,12 +76,12 @@ const contentfulTypeToMap = (field: Field, imports: Imports) => {
       }
 
       if (field.items.type === 'Link' && mapper) {
-        const base = `${value}.map(${mapper})`
-
         imports.mappers.push(mapper)
 
         return {
-          value: field.required ? `${base}` : `${value} && ${base}`,
+          value: `${
+            field.required ? value : `(${value} ?? [])`
+          }.map(${mapper})`,
           fallback: undefined,
         }
       }
