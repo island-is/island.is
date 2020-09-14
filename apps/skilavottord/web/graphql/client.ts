@@ -1,19 +1,49 @@
-import { createHttpLink } from 'apollo-link-http'
-import { InMemoryCache } from 'apollo-cache-inmemory'
-import { ApolloClient } from 'apollo-client'
-import fetch from 'isomorphic-fetch'
+import {
+  ApolloClient,
+  ApolloLink,
+  InMemoryCache,
+  NormalizedCacheObject,
+} from '@apollo/client'
 
-const gqlLink = createHttpLink({
-  uri: 'http://localhost:4000/',
-  fetch
-})
+import { isBrowser } from '../utils'
+import authLink from './authLink'
+import errorLink from './errorLink'
+import httpLink from './httpLink'
+import retryLink from './retryLink'
+import { possibleTypes } from './possibleTypes.json'
 
-const gqlCache = new InMemoryCache()
+let apolloClient: ApolloClient<NormalizedCacheObject> | null = null
 
-const client = new ApolloClient({
-  name: 'skilavottord-web-client',
-  link: gqlLink,
-  cache: gqlCache
-})
+const createClient = (initialState): ApolloClient<NormalizedCacheObject> => {
+  const link = ApolloLink.from([retryLink, errorLink, authLink, httpLink])
 
-export default client
+  const cache = new InMemoryCache({
+    possibleTypes,
+  }).restore(initialState || {})
+
+  return new ApolloClient<NormalizedCacheObject>({
+    name: 'skilavottord-web-client',
+    version: '0.1',
+    connectToDevTools: isBrowser,
+    ssrMode: !isBrowser, // Disables forceFetch on the server (so queries are only run once)
+    link,
+    cache,
+  })
+}
+
+const initApollo = (initialState): ApolloClient<NormalizedCacheObject> => {
+  // Make sure to create a new client for every server-side request so that data
+  // isn't shared between connections (which would be bad)
+  if (!isBrowser) {
+    return createClient(initialState)
+  }
+
+  // Reuse client on the client-side
+  if (!apolloClient) {
+    apolloClient = createClient(initialState)
+  }
+
+  return apolloClient
+}
+
+export default initApollo

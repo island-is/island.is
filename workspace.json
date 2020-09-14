@@ -3276,7 +3276,8 @@
           "builder": "@nrwl/next:dev-server",
           "options": {
             "buildTarget": "skilavottord-web:build",
-            "dev": true
+            "dev": true,
+            "proxyConfig": "apps/skilavottord/web/proxy.conf.json"
           },
           "configurations": {
             "production": {
