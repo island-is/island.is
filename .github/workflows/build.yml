@@ -84,7 +84,7 @@ jobs:
           fi
           echo "git log --format=%H --first-parent "$BRANCH"  $GITHUB_SHA... $BRANCH | wc -l | tr -d '[:space:]'"
           echo 'base' $GIT_BASE_BRANCH
-          echo 'gbranch $GIT_BRANCH
+          echo 'gbranch' $GIT_BRANCH
           echo 'kk' $BRANCH
           NUMBER_NEWER_COMMITS_THEN_ME=`git log --format=%H --first-parent "$BRANCH"  $GITHUB_SHA... $BRANCH | wc -l | tr -d '[:space:]'`
           LAST_GOOD_BUILD=`git log --format=%H --first-parent "$BRANCH" | tail -n +$((NUMBER_NEWER_COMMITS_THEN_ME+1)) | node .github/actions/dist/index.js`
