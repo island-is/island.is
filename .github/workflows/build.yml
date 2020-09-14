@@ -17,7 +17,7 @@ jobs:
   prepare:
     #runs-on: self-hosted
     runs-on: ubuntu-20.04
-    timeout-minutes: 15 #pulling dependencies potentially twice - host OS and docker layer
+    timeout-minutes: 25 #pulling dependencies potentially twice - host OS and docker layer
 
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
