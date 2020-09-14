@@ -8,7 +8,7 @@ import {
 import environment from '../environments/environment'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
-import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
+import { ElasticService, SearchIndexes, sortDirection } from '@island.is/api/content-search'
 import { SyncOptions } from '@island.is/elastic-indexing'
 import _ from 'lodash'
 import { PostSyncOptions } from './cmsSync.service'
@@ -67,29 +67,10 @@ export class ContentfulService {
   }
 
   private async getLastSyncToken(locale: keyof typeof SearchIndexes): Promise<string> {
-    const query = { types: ['cmsNextSyncToken'], sort: { dateUpdated: 'desc' }, size: 1 }
+    const query = { types: ['cmsNextSyncToken'], sort: { dateUpdated: 'desc' as sortDirection }, size: 1 }
+    logger.info('Getting next sync token from index', {index: SearchIndexes[locale]})
     const document = await this.elasticService.getDocumentsByTypes(SearchIndexes[locale], query)
-    logger.info('document', document)
-    return null
-    /* const index = SearchIndexes.is
-    // TODO: Use new elasticsearch service query here
-    const query = new RequestBodySearch()
-      .query(new ExistsQuery('nextSyncToken'))
-      .sort(new Sort('dateUpdated', 'desc'))
-      .size(1)
-    try {
-      const result = await this.elasticService.deprecatedFindByQuery(
-        index,
-        query,
-      )
-      return result.body.hits.hits[0]._source.nextSyncToken
-    } catch (e) {
-      logger.error('Could not fetch last sync token', {
-        error: e,
-      })
-      return null
-    }
-    */
+    return document.hits.hits?.[0]?._source.title
   }
 
   updateNextSyncToken({locale, token}: PostSyncOptions) {
@@ -114,7 +95,7 @@ export class ContentfulService {
     } else {
       // this is a partial sync, try and get the last sync token else do full sync
       const nextSyncToken = await this.getLastSyncToken(locale)
-      logger.info('Getting data from last sync token found in Contentful', {nextSyncToken})
+      logger.info('Getting data from last sync token found in Contentful', {locale, nextSyncToken})
       return nextSyncToken ? {nextSyncToken}: {initial: true}
     }
   }
@@ -148,7 +129,7 @@ export class ContentfulService {
   }
 
   async getSyncEntries({fullSync, locale}: SyncOptions): Promise<SyncerResult> {
-    const typeOfSync = await this.getTypeOfSync(fullSync)
+    const typeOfSync = await this.getTypeOfSync({fullSync, locale})
     
     // gets all changes in all locales
     const {

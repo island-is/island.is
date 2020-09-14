@@ -6,7 +6,7 @@ export interface DocumentByTypesInput {
   size?: number
 }
 
-export interface SearchRequestBody {
+export interface DocumentByTypesRequestBody {
   query: {
     terms: {
       type: string[]
@@ -16,7 +16,7 @@ export interface SearchRequestBody {
   size: Number
 }
 
-export const documentByTypeQuery = ({ types, sort = {}, size = 10 }: DocumentByTypesInput): SearchRequestBody => {
+export const documentByTypeQuery = ({ types, sort = {}, size = 10 }: DocumentByTypesInput): DocumentByTypesRequestBody => {
   const query = {
     query: {
       terms: {

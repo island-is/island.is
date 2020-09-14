@@ -1,5 +1,5 @@
-import { Client } from '@elastic/elasticsearch'
-import { SearchIndexes } from '../types'
+import { ApiResponse, Client } from '@elastic/elasticsearch'
+import { SearchIndexes, SearchResponse } from '../types'
 import esb, { RequestBodySearch, TermsAggregation } from 'elastic-builder'
 import { logger } from '@island.is/logging'
 import merge from 'lodash/merge'
@@ -15,7 +15,7 @@ import {
 } from '../queries/autocomplete'
 import { searchQuery, SearchRequestBody } from '../queries/search'
 import { MappedData } from '@island.is/elastic-indexing';
-import { DocumentByTypesInput } from '../queries/documentByTypes'
+import { documentByTypeQuery, DocumentByTypesInput, DocumentByTypesRequestBody } from '../queries/documentByTypes'
 
 const { elastic } = environment
 interface SyncRequest {
@@ -108,7 +108,12 @@ export class ElasticService {
   }
 
   async getDocumentsByTypes(index: SearchIndexes, query: DocumentByTypesInput ) {
-    
+    const requestBody = documentByTypeQuery(query)
+    const data = await this.findByQuery<
+      SearchResponse<MappedData>,
+      DocumentByTypesRequestBody
+    >(index, requestBody)
+    return data.body
   }
 
   /*
