@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef, useEffect } from 'react'
+import React, { FC, useState, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import FocusLock from 'react-focus-lock'
 import { RemoveScroll } from 'react-remove-scroll'
@@ -41,6 +41,7 @@ interface Props {
 
 export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
   const [activeTab, setActiveTab] = useState(0)
+  const ref = useRef(null)
   const { activeLocale, t } = useI18n()
   const { width } = useWindowSize()
   const tabRefs = useRef<Array<HTMLElement | null>>([])
@@ -48,18 +49,33 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
 
   useKey('Escape', handleClose)
 
+  const handleClickOutside = useCallback(
+    (e) => {
+      if (ref.current && !ref.current.contains(e.target)) {
+        handleClose()
+      }
+    },
+    [ref, handleClose],
+  )
+
   useEffect(() => {
     setActiveTab(0)
   }, [isVisible])
 
   useEffect(() => {
+    document.addEventListener('click', handleClickOutside, true)
+
     if (tabRefs.current) {
       tabRefs.current[0] && tabRefs.current[0].focus()
     }
-  }, [isVisible])
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside, true)
+    }
+  }, [isVisible, ref, handleClickOutside])
 
   return isVisible ? (
-    <RemoveScroll enabled={isMobile}>
+    <RemoveScroll ref={ref} enabled={isMobile}>
       <FocusLock>
         <Box
           className={cn(styles.root, { [styles.isVisible]: isVisible })}
