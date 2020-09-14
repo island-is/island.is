@@ -17,6 +17,7 @@ export interface CheckboxProps {
   hasError?: boolean
   errorMessage?: string
   value?: string
+  large?: boolean
 }
 
 export const Checkbox = ({
@@ -30,6 +31,7 @@ export const Checkbox = ({
   hasError,
   errorMessage,
   value,
+  large,
 }: CheckboxProps) => {
   const ariaError = hasError
     ? {
@@ -38,7 +40,11 @@ export const Checkbox = ({
       }
     : {}
   return (
-    <div className={styles.container}>
+    <div
+      className={cn(styles.container, large, {
+        [styles.large]: large,
+      })}
+    >
       <input
         className={styles.input}
         type="checkbox"
@@ -53,6 +59,7 @@ export const Checkbox = ({
         className={cn(styles.label, {
           [styles.labelChecked]: checked,
           [styles.checkboxLabelDisabled]: disabled,
+          [styles.largeLabel]: large,
         })}
         htmlFor={id}
       >
