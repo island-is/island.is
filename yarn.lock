@@ -1775,6 +1775,11 @@
   resolved "https://registry.yarnpkg.com/@formatjs/ecma402-abstract/-/ecma402-abstract-1.2.0.tgz#5b03ba4931436070ad926d1b2e89bf07edc5ea5b"
   integrity sha512-jc1bZHhIE1YI0HnZIZcdlKpF4wle2pkgQpzXHDoyy4bUqzBSvDqktnF26hOkyA04KD4wqd61gkuTvRrHMmroAg==
 
+"@formatjs/ecma402-abstract@^1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@formatjs/ecma402-abstract/-/ecma402-abstract-1.2.1.tgz#ad966998d7f0e96fca4bdc5de0ca28d02f371279"
+  integrity sha512-LvbwgHxprafjceDfOC7yMl4sP5al71rAWahXk3qug5bV020aCq64WjqAo+zNnkIJk8hqK2pFKnNdDsT58HZJQw==
+
 "@formatjs/intl-datetimeformat@^2.6.5":
   version "2.6.5"
   resolved "https://registry.yarnpkg.com/@formatjs/intl-datetimeformat/-/intl-datetimeformat-2.6.5.tgz#c8d67482bcd473d528c744cd89ad3adce1ef572b"
@@ -1802,6 +1807,13 @@
   integrity sha512-MfYcqX1LE2N4P9eVtQXI/L6APlXgjexCj0b7GxJfK+icrwbA0XINSPGTt96kUxO5hf/tDu0MxJXnt9gwMKm/EA==
   dependencies:
     "@formatjs/ecma402-abstract" "^1.2.0"
+
+"@formatjs/intl-pluralrules@^3.4.6":
+  version "3.4.6"
+  resolved "https://registry.yarnpkg.com/@formatjs/intl-pluralrules/-/intl-pluralrules-3.4.6.tgz#3047b1fc5c6f5d097588214a35650b8047d82c2f"
+  integrity sha512-6/K0Lqlej2bYM1K3HfSNsEURHlsmWJhrE95k/hZdE4wo7k5S7Fc/QUfHlieLQvCXF77n/zVgzp/9bpgxMDxL0A==
+  dependencies:
+    "@formatjs/ecma402-abstract" "^1.2.1"
 
 "@formatjs/intl-relativetimeformat@^7.2.5":
   version "7.2.5"

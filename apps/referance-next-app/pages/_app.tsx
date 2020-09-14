@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { ApolloProvider } from 'react-apollo'
 
 import initApollo from '../graphql/client'
-import appWithTranslation from 'libs/localization/src/lib/localization'
+import appWithLocale from 'libs/localization/src/lib/appWithLocale'
 
 const Layout: FC = ({ children }) => {
   return (
@@ -43,4 +43,4 @@ SupportApplication.getInitialProps = async (appContext) => {
   }
 }
 
-export default appWithTranslation(SupportApplication)
+export default appWithLocale(SupportApplication)

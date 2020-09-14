@@ -33,7 +33,8 @@
     "workspace-schematic": "nx workspace-schematic",
     "dep-graph": "nx dep-graph",
     "help": "nx help",
-    "storybook:island-ui": "nx run island-ui-storybook:storybook"
+    "storybook:island-ui": "nx run island-ui-storybook:storybook",
+    "ts-node": "node -r ./scripts/ts-node"
   },
   "dependencies": {
     "@apollo/client": "3.1.3",
@@ -44,6 +45,7 @@
     "@formatjs/cli": "^2.9.0",
     "@formatjs/intl-datetimeformat": "^2.6.5",
     "@formatjs/intl-numberformat": "^5.6.0",
+    "@formatjs/intl-pluralrules": "^3.4.6",
     "@formatjs/intl-relativetimeformat": "^7.2.5",
     "@formatjs/intl-utils": "^3.8.4",
     "@nestjs/bull": "0.1.2",

@@ -1,6 +1,9 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useState, useMemo, useEffect } from 'react'
 import { IntlProvider } from 'react-intl'
-import { shouldPolyfill } from '@formatjs/intl-datetimeformat/should-polyfill'
+import { useLazyQuery, QueryLazyOptions } from '@apollo/client'
+import gql from 'graphql-tag'
+import { difference, isEmpty, uniq } from 'lodash'
+import { parseMessageId } from './parseMessageId'
 
 export type Locale = 'is' | 'en'
 
@@ -13,7 +16,8 @@ interface MessagesDict {
 
 interface LocaleContextType {
   lang: Locale
-  messages: MessagesDict
+  loadMessages: (namespaces: string | string[], lang: Locale) => void
+  loadingMessages: boolean
 }
 
 interface LocaleProviderProps {
@@ -23,76 +27,125 @@ interface LocaleProviderProps {
 }
 
 export async function polyfill(locale: string) {
-  if (shouldPolyfill()) {
-    // Load the polyfill 1st BEFORE loading data
-    await Promise.all([
-      import('@formatjs/intl-datetimeformat/polyfill'),
-      import('@formatjs/intl-numberformat/polyfill'),
-      import('@formatjs/intl-relativetimeformat/polyfill'),
-    ])
-  }
+  console.log('POLIFilled')
+  await import('@formatjs/intl-pluralrules/polyfill-force')
+  await import(`@formatjs/intl-pluralrules/locale-data/is`)
 
-  const imports = [import(`@formatjs/intl-relativetimeformat/locale-data/is`)]
+  await import(`@formatjs/intl-numberformat/locale-data/is`)
+  await import('@formatjs/intl-numberformat/polyfill-force')
 
-  if (Intl.DateTimeFormat) {
-    // Parallelize CLDR data loading
-    console.log('load polifyll......')
-    imports.push(import('@formatjs/intl-datetimeformat/add-all-tz'))
-    imports.push(import(`@formatjs/intl-datetimeformat/locale-data/is`))
-  }
+  await import(`@formatjs/intl-datetimeformat/add-all-tz`)
+  await import('@formatjs/intl-datetimeformat/locale-data/is')
+  await import('@formatjs/intl-datetimeformat/polyfill-force')
 
-  if (Intl.NumberFormat) {
-    // Parallelize CLDR data loading
-    console.log('load polifyll......', Intl.NumberFormat)
-    imports.push(import(`@formatjs/intl-numberformat/locale-data/is`))
-  }
-
-  await Promise.all(imports)
+  await import(`@formatjs/intl-relativetimeformat/locale-data/is`)
+  await import(`@formatjs/intl-relativetimeformat/polyfill-force`)
 }
 
-const LocaleContext = createContext<LocaleContextType | null>(null)
+export const LocaleContext = createContext<LocaleContextType | null>(null)
+
+const GET_TRANSLATIONS = gql`
+  query GetTranslations($input: GetTranslationsInput!) {
+    getTranslations(input: $input)
+  }
+`
 
 export const LocaleProvider = ({
   children,
   locale = defaultLanguage,
   messages = {},
 }: LocaleProviderProps) => {
-  const [messagesDict, setMessagesDict] = useState(messages)
   const [activeLocale, setActiveLocale] = useState<Locale>(
     locale || defaultLanguage,
   )
+  const [messagesDict, setMessagesDict] = useState<MessagesDict>({})
+  const [loadedNamespaces, setLoadedNamespaces] = useState<String[]>([])
+
+  const [fetchMessages, { loading: loadingMessages, data }] = useLazyQuery(
+    GET_TRANSLATIONS,
+  )
 
   useEffect(() => {
-    async function loadMessages() {
-      if (locale !== activeLocale) {
-        setMessagesDict(messages)
-      } else {
-        const accumulatedTranslations = Object.entries(messages).reduce(
-          (arr, [key, val]) => ({
-            ...arr,
-            [key]: val,
-          }),
-          messagesDict,
-        )
-        setMessagesDict(accumulatedTranslations)
-      }
+    extractNamespaces(messagesDict)
+  }, [messagesDict])
+
+  useEffect(() => {
+    accumulateMessages(locale, messages, data?.getTranslations ?? {})
+  }, [locale, messages, data])
+
+  // const messagesDict = useMemo(
+  //   () => accumulateMessages(locale, messages, data?.getTranslations ?? {}),
+  //   [locale, messages, data],
+  // )
+
+  // const loadedNamespaces = useMemo(() => extractNamespaces(messagesDict), [
+  //   messagesDict,
+  // ])
+
+  const loadMessages = (namespaces: string | string[], lang: Locale) => {
+    const namespaceArr =
+      typeof namespaces === 'string' ? [namespaces] : namespaces
+    const diff = difference(namespaceArr, loadedNamespaces)
+
+    console.log('compare', namespaceArr, loadedNamespaces)
+    console.log('diff', diff)
+
+    // Only fetch namespaces that we have not fetched yet
+    if (!isEmpty(diff)) {
+      fetchMessages({
+        variables: {
+          input: {
+            namespaces: diff,
+            lang,
+          },
+        },
+      })
     }
+  }
 
-    loadMessages()
-  }, [locale, messages])
+  function extractNamespaces(dict: MessagesDict) {
+    setLoadedNamespaces(
+      uniq(Object.keys(dict).map((d) => parseMessageId(d).namespace)),
+    )
+  }
 
-  useEffect(() => {
-    console.log('locale', locale)
-    setActiveLocale(locale)
-  }, [locale])
+  function accumulateMessages(
+    locale: Locale,
+    messages: MessagesDict,
+    messagesFromQuery: any,
+  ) {
+    if (locale !== activeLocale) {
+      console.log('LOCALE is changing', messages)
+      // locele changed, reset messages
+      setActiveLocale(locale)
+      setMessagesDict(messages)
+    } else {
+      // accumulated messages
 
-  console.log('messagesDict', messagesDict)
+      console.log('I HAVE,', messagesDict, messages, messagesFromQuery)
+      console.log(
+        'AND IT BECOMES THIS',
+        Object.assign({}, messagesDict, messages, messagesFromQuery),
+      )
+      setMessagesDict(
+        Object.assign({}, messagesDict, messages, messagesFromQuery),
+      )
+    }
+  }
+
+  console.log(
+    'messagesDictMemo',
+    loadingMessages,
+    messagesDict,
+    loadedNamespaces,
+  )
 
   return (
     <LocaleContext.Provider
       value={{
-        messages: messagesDict,
         lang: activeLocale,
+        loadMessages,
+        loadingMessages,
       }}
     >
       <IntlProvider
@@ -105,5 +158,3 @@ export const LocaleProvider = ({
     </LocaleContext.Provider>
   )
 }
-
-export const useTranslations = () => useContext(LocaleContext)

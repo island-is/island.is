@@ -12,6 +12,7 @@ import { ActionTypes } from '../reducer/ReducerTypes'
 import { Box } from '@island.is/island-ui/core'
 import * as styles from './ApplicationForm.treat'
 import ProgressIndicator from '../components/ProgressIndicator'
+import { withLocale, useLocale } from '@island.is/localization'
 
 export const ApplicationForm: FC<{ application: Application }> = ({
   application,

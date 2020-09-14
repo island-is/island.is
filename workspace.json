@@ -2061,6 +2061,20 @@
             "tsConfig": "apps/application-system/form/tsconfig.spec.json",
             "passWithNoTests": true
           }
+        },
+        "extract-strings": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "parallel": false,
+            "commands": [
+              {
+                "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/form/src/{lib,components}/**/*.{js,ts,tsx}'"
+              },
+              {
+                "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/template/src/forms/**/*.{js,ts,tsx}'"
+              }
+            ]
+          }
         }
       }
     },
@@ -2989,7 +3003,7 @@
             "parallel": false,
             "commands": [
               {
-                "command": "node libs/localization/scripts/extract 'apps/referance-next-app/{screens,pages,components}/*.{js,ts,tsx}'"
+                "command": "yarn ts-node libs/localization/scripts/extract 'apps/referance-next-app/{screens,pages,components}/*.{js,ts,tsx}'"
               }
             ]
           }

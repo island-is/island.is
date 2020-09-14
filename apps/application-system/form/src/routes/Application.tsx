@@ -1,12 +1,16 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link, useRouteMatch } from 'react-router-dom'
 
 import { ApplicationForm } from '@island.is/application/form'
 import { GET_APPLICATION } from '@island.is/application/graphql'
 import { useQuery } from '@apollo/client'
+import { useLocale } from '@island.is/localization'
+import { Typography } from '@island.is/island-ui/core'
 
 export const Application = () => {
   const { id } = useParams()
+  const { url } = useRouteMatch()
+  const { loadingMessages, formatMessage } = useLocale('applications')
 
   const { data, error, loading } = useQuery(GET_APPLICATION, {
     variables: {
@@ -23,8 +27,18 @@ export const Application = () => {
   if (error) {
     return <p>{error}</p>
   }
-  if (loading) {
+  if (loading || loadingMessages) {
     return <p>Loading</p>
   }
-  return <ApplicationForm application={data.getApplication} />
+  return (
+    <>
+      <Typography>
+        {formatMessage({
+          id: 'applications:title',
+        })}
+      </Typography>
+      <Link to={`/test`}>Go to test route</Link>
+      <ApplicationForm application={data.getApplication} />
+    </>
+  )
 }

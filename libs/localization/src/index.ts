@@ -1,3 +1,5 @@
-export * from './lib/localization'
+export * from './lib/appWithLocale'
 export * from './lib/withLocale'
 export * from './lib/LocaleContext'
+export * from './lib/LocalizedRouter'
+export * from './lib/useLocale'

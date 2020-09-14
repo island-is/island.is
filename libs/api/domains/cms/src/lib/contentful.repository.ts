@@ -43,9 +43,10 @@ export class ContentfulRepository {
 
   async getLocales() {
     const locales = await this.getClient().getLocales()
-    return locales.items.map(({ code, name }) => ({
+    return locales.items.map(({ code, name, fallbackCode }) => ({
       code,
       name,
+      fallbackCode,
     }))
   }
 

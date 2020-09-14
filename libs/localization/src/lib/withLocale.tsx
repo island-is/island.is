@@ -1,12 +1,17 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import { NextComponentType } from 'next'
 import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
 import { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
+import { useQuery } from '@apollo/client'
 
 import gql from 'graphql-tag'
-import { defaultLanguage, supportedLocales } from './LocaleContext'
+import {
+  defaultLanguage,
+  supportedLocales,
+  LocaleContext,
+} from './LocaleContext'
 
 export const GET_TRANSLATIONS = gql`
   query GetTranslations($input: GetTranslationsInput!) {
@@ -18,15 +23,25 @@ export const withLocale = (namespaces: string | string[] = 'global') => (
   Component,
 ) => {
   const getInitialProps = Component.getInitialProps
+
   if (!getInitialProps) {
-    return Component
+    // For non Nextjs apps
+    const NewComponent = (props) => {
+      const { loadMessages, loadingMessages, lang } = useContext(LocaleContext)
+      useEffect(() => {
+        loadMessages(namespaces, lang)
+      }, [])
+      if (loadingMessages) return null
+      return <Component {...props} />
+    }
+    return NewComponent
   }
 
-  const NewComponent: NextComponentType<any> = (props) => (
+  const NewNextComponent: NextComponentType<any> = (props) => (
     <Component {...props} />
   )
 
-  NewComponent.getInitialProps = async (ctx) => {
+  NewNextComponent.getInitialProps = async (ctx) => {
     let locale = defaultLanguage
 
     if (
@@ -53,7 +68,7 @@ export const withLocale = (namespaces: string | string[] = 'global') => (
     }
   }
 
-  return NewComponent
+  return NewNextComponent
 }
 
 const getTranslations = ({
@@ -65,7 +80,6 @@ const getTranslations = ({
   locale: string
   namespaces: string[]
 }) => {
-  console.log('Im fetching new translations..........!!!!')
   return apolloClient
     .query<Query, QueryGetTranslationsArgs>({
       query: GET_TRANSLATIONS,
