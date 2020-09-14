@@ -51,6 +51,11 @@ export class UpdateCaseDto {
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
+  readonly requestedCustodyEndDate: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
   readonly lawsBroken: string
 
   @IsOptional()

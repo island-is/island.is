@@ -13,7 +13,7 @@ import {
   Query,
   Req,
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiTags, ApiQuery } from '@nestjs/swagger'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -109,10 +109,10 @@ export class AuthController {
   }
 
   @Get('login')
-  login(@Res() res, @Query() query) {
-    this.logger.debug('Received login request')
+  @ApiQuery({ name: 'returnUrl' })
+  login(@Res() res, @Query('returnUrl') returnUrl) {
+    this.logger.debug('Received login request' + returnUrl)
 
-    const { returnUrl } = query
     const { name, options } = REDIRECT_COOKIE
 
     res.clearCookie(name, options)
