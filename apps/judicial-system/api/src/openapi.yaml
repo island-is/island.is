@@ -75,21 +75,25 @@ components:
         lawsBroken:
           type: string
         custodyProvisions:
-          type: string
-          enum:
-            - _95_1_A
-            - _95_1_B
-            - _95_1_C
-            - _95_1_D
-            - _95_2
-            - _99_1_B
+          type: array
+          items:
+            type: string
+            enum:
+              - _95_1_A
+              - _95_1_B
+              - _95_1_C
+              - _95_1_D
+              - _95_2
+              - _99_1_B
         custodyRestrictions:
-          type: string
-          enum:
-            - ISOLATION
-            - VISITAION
-            - COMMUNICATION
-            - MEDIA
+          type: array
+          items:
+            type: string
+            enum:
+              - ISOLATION
+              - VISITAION
+              - COMMUNICATION
+              - MEDIA
         caseFacts:
           type: string
         witnessAccounts:

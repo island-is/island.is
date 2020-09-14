@@ -12,22 +12,26 @@ module.exports = {
         allowNull: true,
       }),
       queryInterface.addColumn('case', 'custody_provisions', {
-        type: Sequelize.ENUM(
-          '_95_1_A',
-          '_95_1_B',
-          '_95_1_C',
-          '_95_1_D',
-          '_95_2',
-          '_99_1_B',
+        type: Sequelize.ARRAY(
+          Sequelize.ENUM(
+            '_95_1_A',
+            '_95_1_B',
+            '_95_1_C',
+            '_95_1_D',
+            '_95_2',
+            '_99_1_B',
+          )
         ),
         allowNull: true,
       }),
       queryInterface.addColumn('case', 'custody_restrictions', {
-        type: Sequelize.ENUM(
-          'ISOLATION',
-          'VISITAION',
-          'COMMUNICATION',
-          'MEDIA',
+        type: Sequelize.ARRAY(
+          Sequelize.ENUM(
+            'ISOLATION',
+            'VISITAION',
+            'COMMUNICATION',
+            'MEDIA',
+          )
         ),
         allowNull: true,
       }),

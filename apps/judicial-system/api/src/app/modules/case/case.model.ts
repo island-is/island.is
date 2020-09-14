@@ -114,7 +114,7 @@ export class Case extends Model<Case> {
     allowNull: true,
     values: Object.values(CaseCustodyProvisions),
   })
-  @ApiProperty({ enum: CaseCustodyProvisions })
+  @ApiProperty({ enum: CaseCustodyProvisions, isArray: true })
   // Lagaákvæði sem krafan byggir á
   custodyProvisions: CaseCustodyProvisions[]
 
@@ -123,7 +123,7 @@ export class Case extends Model<Case> {
     allowNull: true,
     values: Object.values(CaseCustodyRestrictions),
   })
-  @ApiProperty({ enum: CaseCustodyRestrictions })
+  @ApiProperty({ enum: CaseCustodyRestrictions, isArray: true })
   // Takmarkanir á gæslu
   custodyRestrictions: CaseCustodyRestrictions[]
 
