@@ -121,6 +121,10 @@ export const  getAllAccessCategories = ():Array<string> => {
     return enumToArray(ACCESS_CATEGORY)
 }
 
+export const  getAllSearchMethods = ():Array<string> => {
+    return enumToArray(SERVICE_SEARCH_METHOD)
+}
+
 const isValidNumber = (value:unknown):boolean => {
     return value !==null && !isNaN(Number(value));
 }
