@@ -118,13 +118,13 @@ const Category: Screen<CategoryProps> = ({
     value: c.slug,
   }))
 
-  const subgroupSorting = (a, b) => {
+  const subgroupSorting = (a: string, b: string) => {
     // Make items with no subgroup appear last.
     if (b === 'null') {
       return -1
     }
     // Otherwise sort them alphabetically.
-    return a - b
+    return a.localeCompare(b, 'is')
   }
 
   const groupArticlesBySubgroup = (articles: Article) =>
