@@ -54,3 +54,33 @@ export const Bordered = () => (
     </Box>
   </ContentBlock>
 )
+
+export const NoBakgroundFill = () => (
+  <ContentBlock>
+    <Box paddingY={[1, 2]}>
+      <Inline space={1}>
+        <Tag bordered noBackgroundFill>
+          Ferðagjöf
+        </Tag>
+        <Tag variant="darkerBlue" bordered noBackgroundFill>
+          Gifting
+        </Tag>
+        <Tag variant="darkerMint" bordered noBackgroundFill>
+          Fæðingarorlof
+        </Tag>
+        <Tag variant="mint" bordered noBackgroundFill>
+          Skilnaður
+        </Tag>
+        <Tag variant="purple" bordered noBackgroundFill>
+          Færnimat
+        </Tag>
+        <Tag variant="red" bordered noBackgroundFill label>
+          Færnimat
+        </Tag>
+        <Tag variant="white" bordered label>
+          Færnimat
+        </Tag>
+      </Inline>
+    </Box>
+  </ContentBlock>
+)

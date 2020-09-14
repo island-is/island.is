@@ -23,4 +23,5 @@ export const card = style({
 
 export const content = style({
   flex: 1,
+  height: 156,
 })

@@ -1,5 +1,5 @@
 import { styleMap, style } from 'treat'
-import { theme } from '@island.is/island-ui/theme'
+import { theme, white } from '@island.is/island-ui/theme'
 
 export const container = style({
   borderRadius: '5px',
@@ -91,6 +91,10 @@ export const bordered = style({
       borderColor: theme.color.mint300,
     },
   },
+})
+
+export const noBackgroundFill = style({
+  backgroundColor: white,
 })
 
 export const active = style({

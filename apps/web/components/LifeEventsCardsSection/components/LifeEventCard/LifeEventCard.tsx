@@ -1,15 +1,23 @@
 import React from 'react'
 import * as styles from './LifeEventCard.treat'
-import { Box, Typography, Link, FocusableBox } from '@island.is/island-ui/core'
+import {
+  Box,
+  Typography,
+  Link,
+  FocusableBox,
+  Tag,
+  Inline,
+} from '@island.is/island-ui/core'
 
 interface Props {
   title: string
   intro: string
   image: string
   url: string
+  tags?: string[]
 }
 
-const LifeEventCard: React.FC<Props> = ({ title, intro, image, url }) => {
+const LifeEventCard: React.FC<Props> = ({ title, intro, image, url, tags }) => {
   return (
     <FocusableBox
       component={Link}
@@ -37,7 +45,24 @@ const LifeEventCard: React.FC<Props> = ({ title, intro, image, url }) => {
           <Typography variant="h3" as="h3" paddingBottom={1} color="blue400">
             {title}
           </Typography>
-          <Typography variant="p">{intro}</Typography>
+          <Box display="flex" flexGrow={1}>
+            <Typography variant="p">{intro}</Typography>
+          </Box>{' '}
+          {tags && (
+            <Inline space={1}>
+              {tags.map((tag, index) => (
+                <Tag
+                  key={index}
+                  label
+                  variant="purple"
+                  noBackgroundFill
+                  bordered
+                >
+                  {tag}
+                </Tag>
+              ))}
+            </Inline>
+          )}
         </Box>
 
         <div
