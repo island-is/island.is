@@ -8,6 +8,10 @@ import {
 import environment from '../environments/environment'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
+import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
+import { SyncOptions } from '@island.is/elastic-indexing'
+import _ from 'lodash'
+import { PostSyncOptions } from './cmsSync.service'
 
 interface SyncerResult {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,12 +20,14 @@ interface SyncerResult {
   token: string | undefined
 }
 
+type typeOfSync = {initial: boolean} | {nextSyncToken: string}
+
 @Injectable()
 export class ContentfulService {
   private defaultIncludeDepth = 10
   private contentfulClient: ContentfulClientApi
 
-  constructor() {
+  constructor(private readonly elasticService: ElasticService) {
     const params: CreateClientParams = {
       space: environment.contentful.space,
       accessToken: environment.contentful.accessToken,
@@ -32,11 +38,11 @@ export class ContentfulService {
     this.contentfulClient = createClient(params)
   }
 
-  private getChunkIds(chunkToProcess: Entry<any>[], indexableContentTypes: string[]): string {
+  private getFilteredIdString(chunkToProcess: Entry<any>[]): string {
     return chunkToProcess
       .reduce((csvIds, entry) => {
-        // if indexing this type is suported
-        if (indexableContentTypes.includes(entry.sys.contentType.sys.id)) {
+        // contentful sync api does not support limiting the sync to a single content type we filter here to reduce subsequent calls to Contentful
+        if (environment.indexableTypes.includes(entry.sys.contentType.sys.id)) {
           csvIds.push(entry.sys.id)
         }
         return csvIds
@@ -44,54 +50,128 @@ export class ContentfulService {
       .join(',')
   }
 
-  private async getContentfulData(chunkIds: string) {
-    logger.info('Getting contentful data')
+  private async getContentfulData(chunkIds: string, locale: keyof typeof SearchIndexes) {
+    // TODO: Make the contentful locale reflect the api locale
+    // contentful locale does not always reflect the api locale so we need this map
+    const contentfulLocaleMap = {
+      is: 'is-IS',
+      en: 'en'
+    }
     const data = await this.contentfulClient
       .getEntries({
         include: this.defaultIncludeDepth,
         'sys.id[in]': chunkIds,
+        locale: contentfulLocaleMap[locale]
       })
     return data.items
   }
 
-  async getSyncEntries({contentTypes, ...opts}): Promise<SyncerResult> {
+  private async getLastSyncToken(locale: keyof typeof SearchIndexes): Promise<string> {
+    const query = { types: ['cmsNextSyncToken'], sort: { dateUpdated: 'desc' }, size: 1 }
+    const document = await this.elasticService.getDocumentsByTypes(SearchIndexes[locale], query)
+    logger.info('document', document)
+    return null
+    /* const index = SearchIndexes.is
+    // TODO: Use new elasticsearch service query here
+    const query = new RequestBodySearch()
+      .query(new ExistsQuery('nextSyncToken'))
+      .sort(new Sort('dateUpdated', 'desc'))
+      .size(1)
+    try {
+      const result = await this.elasticService.deprecatedFindByQuery(
+        index,
+        query,
+      )
+      return result.body.hits.hits[0]._source.nextSyncToken
+    } catch (e) {
+      logger.error('Could not fetch last sync token', {
+        error: e,
+      })
+      return null
+    }
+    */
+  }
+
+  updateNextSyncToken({locale, token}: PostSyncOptions) {
+    // we get this next sync token from Contentful on sync request
+    const nextSyncTokenDocument = {
+      title: token,
+      type: 'cmsNextSyncToken',
+      dateCreated: new Date().getTime().toString(),
+      dateUpdated: new Date().getTime().toString(),
+    }
+
+    // write sync token to elastic here as it's own type
+    logger.info('Writing next sync token to elasticsearch index')
+    return this.elasticService.index(SearchIndexes[locale], nextSyncTokenDocument) 
+  }
+
+  private async getTypeOfSync({fullSync, locale}: SyncOptions): Promise<typeOfSync> {
+    if (fullSync) {
+      // this is a full sync, get all data
+      logger.info('Getting all data from Contentful')
+      return {initial: true}
+    } else {
+      // this is a partial sync, try and get the last sync token else do full sync
+      const nextSyncToken = await this.getLastSyncToken(locale)
+      logger.info('Getting data from last sync token found in Contentful', {nextSyncToken})
+      return nextSyncToken ? {nextSyncToken}: {initial: true}
+    }
+  }
+
+  private getSyncData(typeOfSync: typeOfSync): Promise<SyncCollection> {
+    return this.contentfulClient.sync({
+      resolveLinks: true,
+      ...typeOfSync
+    })
+  }
+
+  private async getAllEntriesFromContentful(entries: Entry<any>[], locale: keyof typeof SearchIndexes): Promise<Entry<any>[]> {
+    // contentful has a limit of 1000 entries per request but we get "414 Request URI Too Large" so we do a 500 per request
+    const chunkSize = 500
+    let chunkedChanges = []
+    let chunkToProcess = entries.splice(-chunkSize, chunkSize)
+    do {
+      const chunkIds = this.getFilteredIdString(chunkToProcess)
+
+      // the content type filter might remove all ids in that case skip trying to get this chunk
+      if (chunkIds) {
+        logger.info('Getting Contentful data', { locale, maxChunkSize: chunkSize })
+        // gets the changes for current locale
+        const items = await this.getContentfulData(chunkIds, locale)
+        chunkedChanges.push(items)
+      }
+      chunkToProcess = entries.splice(-chunkSize, chunkSize)
+    } while (chunkToProcess.length)
+
+    return _.flatten(chunkedChanges)
+  }
+
+  async getSyncEntries({fullSync, locale}: SyncOptions): Promise<SyncerResult> {
+    const typeOfSync = await this.getTypeOfSync(fullSync)
+    
+    // gets all changes in all locales
     const {
       entries,
-      nextSyncToken,
+      nextSyncToken: newNextSyncToken,
       deletedEntries,
-    }: SyncCollection = await this.contentfulClient.sync(opts)
-    const chunkSize = 100
-
+    } = await this.getSyncData(typeOfSync)
+    
     logger.info('Sync found entries', {
       entries: entries.length,
       deletedEntries: deletedEntries.length,
     })
-
-    // get all entries from contentful
-    let alteredItems = []
-    let chunkToProcess = entries.splice(-chunkSize, chunkSize)
-    do {
-      const chunkIds = this.getChunkIds(chunkToProcess, contentTypes)
-      const items = await this.getContentfulData(chunkIds)
-
-      alteredItems = [...alteredItems, ...items]
-      chunkToProcess = entries.splice(-chunkSize, chunkSize)
-    } while (chunkToProcess.length)
     
-
-    // extract ids from deletedItems
+    // get all sync entries from Contentful endpoints for this locale, we could parse the sync response into locales but we are opting for this for simplicity
+    const items = await this.getAllEntriesFromContentful(entries, locale)
+    
+    // extract ids from deletedEntries
     const deletedItems = deletedEntries.map((entry) => entry.sys.id)
-
+    
     return {
-      items: alteredItems,
-      token: nextSyncToken,
+      token: newNextSyncToken,
+      items,
       deletedItems,
     }
-  }
-
-  async getEntry(id: string): Promise<Entry<unknown> | undefined> {
-    return this.contentfulClient.getEntry(id, {
-      include: this.defaultIncludeDepth,
-    })
   }
 }

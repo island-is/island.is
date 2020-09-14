@@ -14,10 +14,12 @@ import {
   AutocompleteTermRequestBody,
 } from '../queries/autocomplete'
 import { searchQuery, SearchRequestBody } from '../queries/search'
+import { MappedData } from '@island.is/elastic-indexing';
+import { DocumentByTypesInput } from '../queries/documentByTypes'
 
 const { elastic } = environment
 interface SyncRequest {
-  add: any[]
+  add: MappedData[]
   remove: string[]
 }
 @Injectable()
@@ -27,23 +29,17 @@ export class ElasticService {
     logger.debug('Created ES Service')
   }
 
-  async index(index: SearchIndexes, document: any) {
-    const _id = document._id
-
+  async index(index: SearchIndexes, {_id, ...body}: MappedData) {
     try {
-      delete document._id
       const client = await this.getClient()
       return await client.index({
         id: _id,
         index: index,
-        body: document,
+        body
       })
-    } catch (e) {
-      ElasticService.handleError(
-        'Error indexing ES document',
-        { id: _id, index: index },
-        e,
-      )
+    } catch (error) {
+      logger.error('Elastic request failed on index', error)
+      throw error
     }
   }
 
@@ -79,17 +75,16 @@ export class ElasticService {
           index: index,
           body: requests,
         })
-        // TODO: Errors on index might not throw, log those errors here
-      } catch (e) {
-        ElasticService.handleError(
-          'Error indexing ES documents',
-          { index: index },
-          e,
-        )
+        // TODO: ES errors while indexing might not throw, but appear in response log those errors here
+        return true
+      } catch (error) {
+        logger.error('Elastic request failed on bulk index', error)
+        throw error
       }
     } else {
       logger.info('No requests to execute')
     }
+    return false
   }
 
 
@@ -110,6 +105,10 @@ export class ElasticService {
         e,
       )
     }
+  }
+
+  async getDocumentsByTypes(index: SearchIndexes, query: DocumentByTypesInput ) {
+    
   }
 
   /*

@@ -13,12 +13,11 @@ export class ArticleSyncService {
     return items.filter((item) => item.sys.contentType.sys.id === 'article')
   }
 
-  doMapping(entries: IArticle[], nextSyncToken: string): MappedData[] {
+  doMapping(entries: IArticle[]): MappedData[] {
     logger.info('Mapping articles')
     return entries.map<MappedData | boolean>((entry) => {
       let mapped: Article
       try {
-        logger.info(entry)
         mapped = mapArticle(entry)
       } catch(error) {
         logger.error('Failed to import article', error)
@@ -47,8 +46,7 @@ export class ArticleSyncService {
           type: 'category'
         }],
         dateCreated: entry.sys.createdAt,
-        dateUpdated: new Date().getTime().toString(),
-        nextSyncToken // TODO: Insert this as a tag or find a better place to store it (handle get next sync token)
+        dateUpdated: new Date().getTime().toString()
       }
     }).filter((value): value is MappedData => Boolean(value))
   }

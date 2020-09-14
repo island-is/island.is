@@ -3,7 +3,6 @@ import {
   ElasticService,
   SearchIndexes,
 } from '@island.is/api/content-search'
-import _ from 'lodash'
 import { logger } from '@island.is/logging'
 import { CmsSyncService } from '@island.is/api/domains/cms'
 import { SyncOptions } from '../types'
@@ -20,15 +19,18 @@ export class IndexingService {
   }
 
   async doSync(options: SyncOptions) {
-    const cmsData = await this.cmsSyncService.doSync(options)
-    await this.elasticService.bulk(SearchIndexes[options.locale], cmsData)
+    const {postSyncOptions, ...elasticData} = await this.cmsSyncService.doSync(options)
+    await this.elasticService.bulk(SearchIndexes[options.locale], elasticData)
 
-    // clear index of stale data by deleteing all ids but those added
+    // clear index of stale data by deleting all ids but those added on full sync
     if (options.fullSync) {
       logger.info('Removing stale data')
-      const allAddedIds = cmsData.add.map(({_id}) => _id)
+      const allAddedIds = elasticData.add.map(({_id}) => _id)
       await this.elasticService.deleteAllExcept(SearchIndexes[options.locale], allAddedIds)
     }
+
+    // allow sync services to clean up after sync
+    await this.cmsSyncService.postSync(postSyncOptions)
 
     logger.info('Done with sync')
     return true

@@ -14,7 +14,7 @@ export class LifeEventsPageSyncService {
     return lifeEventPages
   }
 
-  doMapping(entries: ILifeEventPage[], nextSyncToken: string): MappedData[] {
+  doMapping(entries: ILifeEventPage[]): MappedData[] {
     logger.info('Mapping life event pages')
     return entries.map<MappedData | boolean>((entry) => {
       let mapped: LifeEventPage
@@ -36,8 +36,7 @@ export class LifeEventsPageSyncService {
         response: JSON.stringify(mapped),
         tags: [],
         dateCreated: entry.sys.createdAt,
-        dateUpdated: new Date().getTime().toString(),
-        nextSyncToken // TODO: Insert this as a tag or find a better place to store it (handle get next sync token)
+        dateUpdated: new Date().getTime().toString()
       }
     }).filter((value): value is MappedData => Boolean(value))
   }

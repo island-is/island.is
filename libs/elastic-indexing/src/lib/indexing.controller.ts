@@ -1,6 +1,7 @@
-import { Controller, Get, Param } from '@nestjs/common'
+import { Controller, Get, Query } from '@nestjs/common'
 import { IndexingService } from './indexing.service'
 import { logger } from '@island.is/logging'
+import { SearchIndexes } from '@island.is/api/content-search'
 
 @Controller('')
 export class IndexingController {
@@ -20,18 +21,18 @@ export class IndexingController {
   }
 
   @Get('sync')
-  async sync() {
+  async sync(@Query('locale') locale: keyof typeof SearchIndexes = 'is') {
     logger.info('Doing sync')
-    await this.indexingService.doSync({fullSync: false, locale: 'is'})
+    await this.indexingService.doSync({fullSync: false, locale})
     return {
       acknowledge: true,
     }
   }
 
   @Get('re-sync')
-  async resync() {
+  async resync(@Query('locale') locale: keyof typeof SearchIndexes = 'is') {
     logger.info('Doing re-sync')
-    await this.indexingService.doSync({fullSync: true, locale: 'is'})
+    await this.indexingService.doSync({fullSync: true, locale})
     return {
       acknowledge: true,
     }

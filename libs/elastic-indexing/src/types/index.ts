@@ -5,9 +5,10 @@ export interface SyncOptions {
   fullSync: boolean
 }
 
-export interface SyncResponse<T> {
-  add: T[]
-  remove: string[]
+export interface SyncResponse<PostSyncOptionsType = any> {
+  add: MappedData[]
+  remove: string[],
+  postSyncOptions: PostSyncOptionsType
 }
 
 type tag = {
@@ -16,14 +17,14 @@ type tag = {
   type: string
 }
 export interface MappedData {
-  _id: string
+  _id?: string
   title: string
-  content: string
+  content?: string
   type: string
-  termPool: string[]
-  response: string
-  tags: tag[]
+  termPool?: string[]
+  response?: string
+  tags?: tag[]
   dateUpdated: string
   dateCreated: string
-  nextSyncToken: string
+  nextSyncToken?: string
 }
