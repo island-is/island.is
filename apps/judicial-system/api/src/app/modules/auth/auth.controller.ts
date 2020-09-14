@@ -65,7 +65,7 @@ const REDIRECT_COOKIE: Cookie = {
 }
 
 @Controller('api/auth')
-@ApiTags('api/auth')
+@ApiTags('authentication')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
