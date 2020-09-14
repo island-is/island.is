@@ -1,3 +1,4 @@
-export { ServiceCard, ServiceStatusValue } from './service-card';
-export type { ServiceCardInformation } from './service-card';
-export type { ServiceCardProps } from './service-card';
+export { ServiceCard} from './service-card';
+export type {   ServiceCardInformation,
+                ServiceCardProps } from './service-card';
+

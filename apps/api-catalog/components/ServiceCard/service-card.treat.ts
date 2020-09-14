@@ -1,5 +1,4 @@
 import { style} from 'treat'
-//import cn from 'classnames'
 
 export const card = style({
     paddingLeft:40,
@@ -80,18 +79,6 @@ export const type = style ({
 })
 
 
-export const serviceStatus = style({
-    width:50,
-    height:50,
-    borderBottomLeftRadius:50,
-    borderTopRightRadius:8
-});
-
-export const serviceStatusContainer = style({
-    display:'flex',
-    justifyContent:'space-between',
-})
-
-export const serviceTexts = style({
+export const categoryLabel = style({
     fontFamily : 'areal,sans-serif'
 });

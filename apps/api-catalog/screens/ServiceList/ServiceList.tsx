@@ -166,15 +166,6 @@ export default function ServiceList(props:ServiceListProps) {
                   </Stack>
                     {makeNavigation()}
                 </GridColumn>
-<<<<<<< HEAD
-                <GridColumn span={3} className="filter">
-                    <SidebarAccordion id="pricing" label="Verð">
-                      <CategoryCheckBox label="Frítt" value="free" onChange={updateCategoryCheckBox} checkValue={checkPricingFree}/>
-                    </SidebarAccordion>
-                    <SidebarAccordion id="data" label="Gögn">
-                      <CategoryCheckBox label="Persónuleg" value="personal" onChange={updateCategoryCheckBox} checkValue={checkDataPersonal}/>
-                    </SidebarAccordion>
-=======
                 <GridColumn  span="3/12" className="filter">
                 <SidebarAccordion  id="pricing_category" label="Verð">
                   <CategoryCheckBox label={PRICING_CATEGORY.FREE}    value={PRICING_CATEGORY.FREE}    checked={props.parameters.pricing.includes(PRICING_CATEGORY.FREE)}    onChange={({target})=>{updateCategoryCheckBox(target)}} />
@@ -231,7 +222,6 @@ export default function ServiceList(props:ServiceListProps) {
 
 
                   </SidebarAccordion>
->>>>>>> 2f8d8882... CheckBox component sets checked value on input box
                 </GridColumn>
               </GridRow>
             </GridContainer>
@@ -241,14 +231,9 @@ export default function ServiceList(props:ServiceListProps) {
   )
 }
 ServiceList.getInitialProps = async ():Promise<ServiceListProps> => {
-<<<<<<< HEAD
+
   const params:GetServicesParameters = { cursor:null,
     limit:null,
-=======
-
-  const params:GetServicesParameters = { cursor:null, 
-    limit:null, 
->>>>>>> 2f8d8882... CheckBox component sets checked value on input box
     owner:null,
     name:null,
     pricing:getAllPriceCategories(),
@@ -256,16 +241,7 @@ ServiceList.getInitialProps = async ():Promise<ServiceListProps> => {
     type:getAllTypeCategories(),
     access:getAllAccessCategories()
   };
-<<<<<<< HEAD
-
-  const response = await getServices(params);
-  const result = await response.result;
-
-  return { parameters:params, prevCursor:response.prevCursor, nextCursor:response.nextCursor, servicesList: result };
-}
-=======
   //params.pricing = params.pricing.filter(e => e !== PRICING_CATEGORY.FREE)
   console.log(JSON.parse(JSON.stringify(params)))
 return { parameters:params, prevCursor:null, nextCursor:null, servicesList: null };
 }
->>>>>>> 2f8d8882... CheckBox component sets checked value on input box
