@@ -24,6 +24,18 @@ components:
           type: string
       required:
         - version
+    User:
+      type: object
+      properties:
+        nationalId:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+      required:
+        - nationalId
+        - roles
     Case:
       type: object
       properties:
@@ -139,6 +151,46 @@ paths:
                 $ref: '#/components/schemas/Version'
       tags:
         - internal
+  /api/auth/callback:
+    post:
+      operationId: AuthController_callback
+      parameters: []
+      responses:
+        '201':
+          description: ''
+      tags:
+        - api/auth
+  /api/auth/login:
+    get:
+      operationId: AuthController_login
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - api/auth
+  /api/auth/logout:
+    get:
+      operationId: AuthController_logout
+      parameters: []
+      responses:
+        '200':
+          description: ''
+      tags:
+        - api/auth
+  /api/user:
+    get:
+      operationId: UserController_getCurrentUser
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+      tags:
+        - users
   /api/cases:
     get:
       operationId: CaseController_getAll
@@ -214,30 +266,3 @@ paths:
                 $ref: '#/components/schemas/Case'
       tags:
         - cases
-  /api/auth/callback:
-    post:
-      operationId: AuthController_callback
-      parameters: []
-      responses:
-        '201':
-          description: ''
-      tags:
-        - api/auth
-  /api/auth/login:
-    get:
-      operationId: AuthController_login
-      parameters: []
-      responses:
-        '200':
-          description: ''
-      tags:
-        - api/auth
-  /api/auth/logout:
-    get:
-      operationId: AuthController_logout
-      parameters: []
-      responses:
-        '200':
-          description: ''
-      tags:
-        - api/auth

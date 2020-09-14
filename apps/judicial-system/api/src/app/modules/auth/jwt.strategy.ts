@@ -3,8 +3,8 @@ import { Strategy } from 'passport-jwt'
 import { Injectable, Inject } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 
-import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { ACCESS_TOKEN_COOKIE_NAME } from '@island.is/judicial-system/consts'
 
 import { environment } from '../../../environments'
 import { Credentials } from './auth.types'

@@ -74,7 +74,7 @@ export class CaseController {
     )
 
     if (numberOfAffectedRows === 0) {
-      throw new NotFoundException(`An case with the id ${id} does not exist`)
+      throw new NotFoundException(`A case with the id ${id} does not exist`)
     }
 
     return updatedCase

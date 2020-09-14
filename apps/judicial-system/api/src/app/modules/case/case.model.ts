@@ -1,5 +1,4 @@
 import {
-  AllowNull,
   Column,
   CreatedAt,
   DataType,

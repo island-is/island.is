@@ -22,7 +22,13 @@ import {
 } from '@island.is/judicial-system/consts'
 
 import { environment } from '../../../environments'
-import { Cookie, CookieOptions, Credentials, VerifyResult } from './auth.types'
+import {
+  Cookie,
+  CookieOptions,
+  Credentials,
+  VerifyResult,
+  AuthUser,
+} from './auth.types'
 import { AuthService } from './auth.service'
 
 const { samlEntryPoint, jwtSecret } = environment.auth
@@ -91,46 +97,15 @@ export class AuthController {
       return res.redirect('/?error=true')
     }
 
-    const authUser = {
-      nationalId: user.kennitala,
-      name: user.fullname,
-      mobile: user.mobile,
-    }
-    if (!this.authService.validateUser(authUser)) {
-      this.logger.error('Unknown user', {
-        extra: {
-          user,
-        },
-      })
-      return res.redirect('/?error=true')
-    }
-
-    const csrfToken = new Entropy({ bits: 128 }).string()
-    const jwtToken = jwt.sign(
+    return this.redirectAuthenticatedUser(
       {
-        user: authUser,
-        csrfToken,
-      } as Credentials,
-      jwtSecret,
-      { expiresIn: JWT_EXPIRES_IN_SECONDS },
+        nationalId: user.kennitala,
+        name: user.fullname,
+        mobile: user.mobile,
+      },
+      returnUrl ?? '/gaesluvardhaldskrofur',
+      res,
     )
-
-    const tokenParts = jwtToken.split('.')
-    if (tokenParts.length !== 3) {
-      return res.redirect('/')
-    }
-
-    const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
-    return res
-      .cookie(CSRF_COOKIE.name, csrfToken, {
-        ...CSRF_COOKIE.options,
-        maxAge,
-      })
-      .cookie(ACCESS_TOKEN_COOKIE.name, jwtToken, {
-        ...ACCESS_TOKEN_COOKIE.options,
-        maxAge,
-      })
-      .redirect(returnUrl ?? '/gaesluvardhaldskrofur')
   }
 
   @Get('login')
@@ -141,6 +116,21 @@ export class AuthController {
     const { name, options } = REDIRECT_COOKIE
 
     res.clearCookie(name, options)
+
+    if (!environment.production && process.env.AUTH_USER) {
+      this.logger.debug(
+        `Logging in as ${process.env.AUTH_USER} in local development`,
+      )
+      return this.redirectAuthenticatedUser(
+        {
+          nationalId: process.env.AUTH_USER,
+          name: null,
+          mobile: null,
+        },
+        returnUrl ?? '/gaesluvardhaldskrofur',
+        res,
+      )
+    }
 
     const authId = `&authId=${uuid()}`
     const electronicIdOnly = '&qaa=4'
@@ -158,5 +148,47 @@ export class AuthController {
     res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
 
     return res.json({ logout: true })
+  }
+
+  private redirectAuthenticatedUser(
+    authUser: AuthUser,
+    returnUrl: string,
+    res: any,
+  ) {
+    if (!this.authService.validateUser(authUser)) {
+      this.logger.error('Unknown user', {
+        extra: {
+          authUser,
+        },
+      })
+      return res.redirect('/?error=true')
+    }
+
+    const csrfToken = new Entropy({ bits: 128 }).string()
+    const jwtToken = jwt.sign(
+      {
+        user: authUser,
+        csrfToken,
+      } as Credentials,
+      jwtSecret,
+      { expiresIn: JWT_EXPIRES_IN_SECONDS },
+    )
+
+    const tokenParts = jwtToken.split('.')
+    if (tokenParts.length !== 3) {
+      return res.redirect('/error=true')
+    }
+
+    const maxAge = JWT_EXPIRES_IN_SECONDS * 1000
+    return res
+      .cookie(CSRF_COOKIE.name, csrfToken, {
+        ...CSRF_COOKIE.options,
+        maxAge,
+      })
+      .cookie(ACCESS_TOKEN_COOKIE.name, jwtToken, {
+        ...ACCESS_TOKEN_COOKIE.options,
+        maxAge,
+      })
+      .redirect(returnUrl)
   }
 }
