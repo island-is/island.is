@@ -502,6 +502,18 @@ export type LandingPage = {
   content: Array<Slice>
 }
 
+export type AlertBanner = {
+  __typename?: 'AlertBanner'
+  id: Scalars['ID']
+  showAlertBanner: Scalars['Boolean']
+  bannerVariant: Scalars['String']
+  title?: Maybe<Scalars['String']>
+  description?: Maybe<Scalars['String']>
+  link?: Maybe<Link>
+  isDismissable: Scalars['Boolean']
+  dismissedForDays: Scalars['Int']
+}
+
 export type GenericPage = {
   __typename?: 'GenericPage'
   title: Scalars['String']
@@ -612,6 +624,7 @@ export type Query = {
   getNamespace?: Maybe<Namespace>
   getAboutPage: AboutPage
   getLandingPage?: Maybe<LandingPage>
+  getAlertBanner?: Maybe<AlertBanner>
   getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
   getOrganization?: Maybe<Organization>
@@ -682,6 +695,10 @@ export type QueryGetAboutPageArgs = {
 
 export type QueryGetLandingPageArgs = {
   input: GetLandingPageInput
+}
+
+export type QueryGetAlertBannerArgs = {
+  input: GetAlertBannerInput
 }
 
 export type QueryGetGenericPageArgs = {
@@ -834,6 +851,11 @@ export type GetAboutPageInput = {
 
 export type GetLandingPageInput = {
   slug: Scalars['String']
+  lang: Scalars['String']
+}
+
+export type GetAlertBannerInput = {
+  id: Scalars['String']
   lang: Scalars['String']
 }
 
@@ -1230,6 +1252,8 @@ export type ResolversTypes = {
   LandingPage: ResolverTypeWrapper<
     Omit<LandingPage, 'content'> & { content: Array<ResolversTypes['Slice']> }
   >
+  AlertBanner: ResolverTypeWrapper<AlertBanner>
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   GenericPage: ResolverTypeWrapper<GenericPage>
   Menu: ResolverTypeWrapper<Menu>
   LifeEventPage: ResolverTypeWrapper<
@@ -1243,7 +1267,6 @@ export type ResolversTypes = {
   ApplicationTypeIdEnum: ApplicationTypeIdEnum
   PresignedPost: ResolverTypeWrapper<PresignedPost>
   Document: ResolverTypeWrapper<Document>
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   DocumentDetails: ResolverTypeWrapper<DocumentDetails>
   DocumentCategory: ResolverTypeWrapper<DocumentCategory>
   Query: ResolverTypeWrapper<{}>
@@ -1262,6 +1285,7 @@ export type ResolversTypes = {
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
   GetLandingPageInput: GetLandingPageInput
+  GetAlertBannerInput: GetAlertBannerInput
   GetGenericPageInput: GetGenericPageInput
   GetAdgerdirPageInput: GetAdgerdirPageInput
   GetOrganizationInput: GetOrganizationInput
@@ -1387,6 +1411,8 @@ export type ResolversParentTypes = {
   LandingPage: Omit<LandingPage, 'content'> & {
     content: Array<ResolversParentTypes['Slice']>
   }
+  AlertBanner: AlertBanner
+  Boolean: Scalars['Boolean']
   GenericPage: GenericPage
   Menu: Menu
   LifeEventPage: Omit<LifeEventPage, 'content'> & {
@@ -1399,7 +1425,6 @@ export type ResolversParentTypes = {
   DateTime: Scalars['DateTime']
   PresignedPost: PresignedPost
   Document: Document
-  Boolean: Scalars['Boolean']
   DocumentDetails: DocumentDetails
   DocumentCategory: DocumentCategory
   Query: {}
@@ -1416,6 +1441,7 @@ export type ResolversParentTypes = {
   GetNamespaceInput: GetNamespaceInput
   GetAboutPageInput: GetAboutPageInput
   GetLandingPageInput: GetLandingPageInput
+  GetAlertBannerInput: GetAlertBannerInput
   GetGenericPageInput: GetGenericPageInput
   GetAdgerdirPageInput: GetAdgerdirPageInput
   GetOrganizationInput: GetOrganizationInput
@@ -2276,6 +2302,25 @@ export type LandingPageResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type AlertBannerResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['AlertBanner'] = ResolversParentTypes['AlertBanner']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  showAlertBanner?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
+  bannerVariant?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  description?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  link?: Resolver<Maybe<ResolversTypes['Link']>, ParentType, ContextType>
+  isDismissable?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>
+  dismissedForDays?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type GenericPageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['GenericPage'] = ResolversParentTypes['GenericPage']
@@ -2507,6 +2552,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetLandingPageArgs, 'input'>
   >
+  getAlertBanner?: Resolver<
+    Maybe<ResolversTypes['AlertBanner']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetAlertBannerArgs, 'input'>
+  >
   getGenericPage?: Resolver<
     Maybe<ResolversTypes['GenericPage']>,
     ParentType,
@@ -2723,6 +2774,7 @@ export type Resolvers<ContextType = Context> = {
   AboutPage?: AboutPageResolvers<ContextType>
   LinkList?: LinkListResolvers<ContextType>
   LandingPage?: LandingPageResolvers<ContextType>
+  AlertBanner?: AlertBannerResolvers<ContextType>
   GenericPage?: GenericPageResolvers<ContextType>
   Menu?: MenuResolvers<ContextType>
   LifeEventPage?: LifeEventPageResolvers<ContextType>
