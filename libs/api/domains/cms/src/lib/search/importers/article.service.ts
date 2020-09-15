@@ -41,40 +41,40 @@ export class ArticleSyncService {
             : []
 
           mapped = mapArticle(entry)
+
+          return {
+            _id: mapped.id,
+            title: mapped.title,
+            content: mapped.intro,
+            type: 'webArticle',
+            termPool: createTerms([
+              mapped.title,
+              mapped.category?.title,
+              mapped.group?.title,
+            ]),
+            response: JSON.stringify(mapped),
+            tags: [
+              {
+                key: entry.fields?.group?.fields?.slug,
+                value: entry.fields?.group?.fields?.title,
+                type: 'group',
+              },
+              {
+                key: entry.fields?.category?.fields?.slug,
+                value: entry.fields?.category?.fields?.title,
+                type: 'category',
+              },
+              {
+                key: entry.fields?.slug,
+                type: 'slug',
+              },
+            ],
+            dateCreated: entry.sys.createdAt,
+            dateUpdated: new Date().getTime().toString(),
+          }
         } catch (error) {
           logger.error('Failed to import article', error)
           return false
-        }
-
-        return {
-          _id: mapped.id,
-          title: mapped.title,
-          content: mapped.intro,
-          type: 'webArticle',
-          termPool: createTerms([
-            mapped.title,
-            mapped.category?.title,
-            mapped.group?.title,
-          ]),
-          response: JSON.stringify(mapped),
-          tags: [
-            {
-              key: entry.fields?.group?.fields?.slug,
-              value: entry.fields?.group?.fields?.title,
-              type: 'group',
-            },
-            {
-              key: entry.fields?.category?.fields?.slug,
-              value: entry.fields?.category?.fields?.title,
-              type: 'category',
-            },
-            {
-              key: entry.fields?.slug,
-              type: 'slug',
-            },
-          ],
-          dateCreated: entry.sys.createdAt,
-          dateUpdated: new Date().getTime().toString(),
         }
       })
       .filter((value): value is MappedData => Boolean(value))
