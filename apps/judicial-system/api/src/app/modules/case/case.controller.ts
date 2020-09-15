@@ -82,7 +82,7 @@ export class CaseController {
     return this.caseService.getAllNotificationsByCaseId(id)
   }
 
-  @Post('caser/:id/notification')
+  @Post('case/:id/notification')
   @ApiOkResponse({ type: Notification })
   sendNotificationByCaseId(@Param('id') id: string): Promise<Notification> {
     return this.caseService.sendNotificationByCaseId(id)
