@@ -42,7 +42,8 @@
           "type": "custom",
           "tokenizer": "standard",
           "filter": [
-            "lowercase"
+            "lowercase",
+            "icelandicSynonym"
           ]
         }
       }
