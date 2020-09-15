@@ -46,11 +46,13 @@ export const mapProcessEntry = ({ fields, sys }: IProcessEntry): ProcessEntry =>
     id: sys.id,
     title: fields.title,
     subtitle: fields.subtitle,
-    details: fields.details && mapHtml(fields.details),
+    details: fields.details && mapHtml(fields.details, sys.id + ':details'),
     type: fields.type,
     processTitle: fields.processTitle,
     processDescription: fields.processDescription,
-    processInfo: fields.processInfo && mapHtml(fields.processInfo),
+    processInfo:
+      fields.processInfo &&
+      mapHtml(fields.processInfo, sys.id + ':processInfo'),
     processLink: fields.processLink,
     buttonText: fields.buttonText ?? '',
   })

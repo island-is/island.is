@@ -28,11 +28,12 @@ export class LifeEventPage {
 
 export const mapLifeEventPage = ({
   fields,
+  sys,
 }: ILifeEventPage): LifeEventPage => ({
   title: fields.title,
   slug: fields.slug,
   intro: fields.intro,
   image: mapImage(fields.image),
   thumbnail: fields.thumbnail && mapImage(fields.thumbnail),
-  content: mapDocument(fields.content),
+  content: mapDocument(fields.content, sys.id + ':content'),
 })
