@@ -1,6 +1,5 @@
-import { NextComponentType } from 'next'
+import { NextPageContext } from 'next'
 import { ApolloProvider } from 'react-apollo'
-import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
 import initApollo from './client'
 
 export const withApollo = (Component) => {
