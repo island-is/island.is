@@ -61,7 +61,8 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
                 introduction={newsItem.intro}
                 slug={newsItem.slug}
                 image={newsItem.image}
-                url={makePath('news', newsItem.slug)}
+                as={makePath('news', newsItem.slug)}
+                url={makePath('news', '[slug]')}
               />
             </GridColumn>
           ))}
@@ -77,7 +78,8 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
               introduction={newsItem.intro}
               slug={newsItem.slug}
               image={newsItem.image}
-              url={makePath('news', newsItem.slug)}
+              as={makePath('news', newsItem.slug)}
+              url={makePath('news', '[slug]')}
             />
           ))}
         </Swiper>

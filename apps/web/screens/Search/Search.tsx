@@ -31,7 +31,6 @@ import {
 import { CategoryLayout } from '../Layouts/Layouts'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   GetSearchResultsDetailedQuery,
   QuerySearchResultsArgs,
@@ -335,4 +334,4 @@ const Filter = ({ selected, text, onClick, ...props }) => {
   )
 }
 
-export default withMainLayout(Search)
+export default Search

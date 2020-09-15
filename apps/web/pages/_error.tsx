@@ -5,10 +5,23 @@ import Layout, { LayoutProps } from '../layouts/main'
 import I18n, { Locale } from '../i18n/I18n'
 import { withApollo } from '../graphql/withApollo'
 
+import {
+  Article,
+  ArticleCategory,
+  GetUrlQuery,
+  QueryGetUrlArgs,
+} from '@island.is/web/graphql/schema'
+import { GET_URL_QUERY } from '@island.is/web/screens/queries'
+import ApolloClient from 'apollo-client'
+import { NormalizedCacheObject } from 'apollo-cache-inmemory'
+import { NextPageContext } from 'next'
+import useRouteNames, { PathTypes } from '../i18n/useRouteNames'
+
 type ErrorPageProps = {
   statusCode: number
   locale: Locale
   layoutProps: LayoutProps
+  redirectProps: RedirectProps | null
 }
 
 class ErrorPage extends React.Component<ErrorPageProps> {
@@ -48,6 +61,38 @@ class ErrorPage extends React.Component<ErrorPageProps> {
     const statusCode = err?.statusCode ?? res?.statusCode ?? 500
     const locale = getLocaleFromPath(asPath)
 
+    if (!asPath.startsWith('/_next') && statusCode === 404) {
+      const path = asPath
+        .trim()
+        .replace(/\/\/+(\/+?)/g, '/')
+        .replace(/\/+$/, '')
+        .toLowerCase()
+
+      const redirectProps = await getRedirectProps(path, {
+        ...props,
+        locale,
+      })
+
+      if (redirectProps) {
+        const { makePath } = useRouteNames(locale)
+
+        const { pageType, page } = redirectProps
+
+        // Found an URL content type that contained this
+        // path (which has a page assigned to it) so we redirect to that page
+        if (pageType && page) {
+          const url = makePath(pageType as PathTypes, page.slug)
+
+          if (!process.browser) {
+            res.writeHead(302, { Location: url })
+            res.end()
+          } else {
+            return (window.location.href = url)
+          }
+        }
+      }
+    }
+
     // TODO: Next-js takes care of calling this function for any error that
     // occurs anywhere in the application, so this would probably be an ideal
     // place to add some error logging
@@ -70,3 +115,43 @@ class ErrorPage extends React.Component<ErrorPageProps> {
 }
 
 export default withApollo(ErrorPage)
+
+export type RedirectPropsContext<Context> = Context & {
+  apolloClient: ApolloClient<NormalizedCacheObject>
+  locale: string
+}
+
+export interface RedirectProps {
+  pageType: string
+  page: Article | ArticleCategory
+}
+
+const getRedirectProps = async (
+  slug: string,
+  { apolloClient, locale }: RedirectPropsContext<NextPageContext>,
+) => {
+  const {
+    data: { getUrl },
+  } = await apolloClient
+    .query<GetUrlQuery, QueryGetUrlArgs>({
+      query: GET_URL_QUERY,
+      variables: {
+        input: {
+          slug,
+          lang: locale as string,
+        },
+      },
+    })
+    .then((r) => r)
+
+  const pageType = getUrl?.page?.__typename ?? null
+
+  if (!pageType) {
+    return null
+  }
+
+  return {
+    pageType,
+    page: getUrl.page,
+  }
+}

@@ -30,7 +30,6 @@ import {
 import { IntroductionSection } from '../components/IntroductionSection'
 import { LifeEventsCardsSection } from '../components/LifeEventsCardsSection'
 import { Section } from '../components/Section'
-import { withMainLayout } from '../layouts/main'
 import { Sleeve } from '@island.is/island-ui/core'
 import { ContentBlock } from '@island.is/island-ui/core'
 
@@ -224,4 +223,4 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(Home)
+export default Home

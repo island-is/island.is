@@ -44,7 +44,6 @@ import { Content } from '@island.is/island-ui/contentful'
 import Sidebar, { SidebarProps } from './Sidebar'
 import * as styles from './AboutPage.treat'
 import Head from 'next/head'
-import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   GetAboutPageQuery,
   QueryGetAboutPageArgs,
@@ -494,4 +493,4 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default withMainLayout(AboutPageScreen, { showHeader: false })
+export default AboutPageScreen

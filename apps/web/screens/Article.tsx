@@ -31,7 +31,6 @@ import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
 import useRouteNames from '../i18n/useRouteNames'
 import { CustomNextError } from '../units/errors'
-import { withMainLayout } from '../layouts/main'
 import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
@@ -77,7 +76,7 @@ const createArticleNavigation = (
   for (const subArticle of article.subArticles) {
     nav.push({
       title: subArticle.title,
-      url: makePath('article', '[slug]/[subSlug]'),
+      url: makePath('article', '[slug]/'),
       as: makePath('article', `${article.slug}/${subArticle.slug}`),
     })
 
@@ -164,7 +163,7 @@ const SubArticleNavigation: FC<{
           <Typography variant="p" as="p">
             <Link
               shallow
-              href={makePath('article', '[slug]')}
+              href={makePath('article', '[slug]/[subSlug]')}
               as={makePath('article', article.slug)}
             >
               {maybeBold(article.title, !selectedSubArticle)}
@@ -321,7 +320,7 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
   )
 }
 
-interface ArticleProps {
+export interface ArticleProps {
   article: Article
   namespace: GetNamespaceQuery['getNamespace']
 }
@@ -458,4 +457,4 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   }
 }
 
-export default withMainLayout(ArticleScreen)
+export default ArticleScreen

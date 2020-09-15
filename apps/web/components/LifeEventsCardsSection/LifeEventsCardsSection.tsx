@@ -41,7 +41,8 @@ const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
             <LifeEventCard
               title={lifeEvent.title}
               intro={lifeEvent.intro}
-              url={makePath('lifeEvent', lifeEvent.slug)}
+              href={makePath('lifeEvent', '[slug]')}
+              as={makePath('lifeEvent', lifeEvent.slug)}
               image={
                 lifeEvent.thumbnail
                   ? lifeEvent.thumbnail.url

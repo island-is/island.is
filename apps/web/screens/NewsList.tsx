@@ -31,7 +31,6 @@ import {
   QueryGetNewsListArgs,
   ContentLanguage,
 } from '../graphql/schema'
-import { withMainLayout } from '../layouts/main'
 import { NewsCard } from '../components/NewsCard'
 
 interface NewsListProps {
@@ -166,7 +165,8 @@ const NewsList: Screen<NewsListProps> = ({
               introduction={newsItem.intro}
               slug={newsItem.slug}
               image={newsItem.image}
-              url={makePath('news', newsItem.slug)}
+              as={makePath('news', newsItem.slug)}
+              url={makePath('news', '[slug]')}
               date={newsItem.date}
             />
           ))}
@@ -280,4 +280,4 @@ const createDateRange = (min: Date, max: Date): string[] => {
   ).map((i: number) => new Date(Math.floor(i / 12), i % 12).toISOString())
 }
 
-export default withMainLayout(NewsList)
+export default NewsList

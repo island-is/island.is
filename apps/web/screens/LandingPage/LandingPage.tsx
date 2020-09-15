@@ -19,7 +19,6 @@ import {
 import { RichText, SidebarNavigation } from '@island.is/web/components'
 import ArticleLayout from '../Layouts/Layouts'
 import useRouteNames from '../../i18n/useRouteNames'
-import { withMainLayout } from '../../layouts/main'
 import {
   QueryGetLandingPageArgs,
   GetLandingPageQuery,
@@ -124,4 +123,4 @@ LandingPageScreen.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default withMainLayout(LandingPageScreen)
+export default LandingPageScreen

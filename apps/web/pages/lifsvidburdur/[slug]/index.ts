@@ -1,5 +1,6 @@
 import withApollo from '@island.is/web/graphql/withApollo'
 import { withLocale } from '@island.is/web/i18n'
-import lifeEventScreen from '../../../screens/LifeEvent/LifeEvent'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import lifeEventScreen from '@island.is/web/screens/LifeEvent/LifeEvent'
 
-export default withApollo(withLocale('is')(lifeEventScreen))
+export default withApollo(withLocale('is')(withMainLayout(lifeEventScreen)))

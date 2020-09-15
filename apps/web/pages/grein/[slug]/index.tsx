@@ -1,5 +1,6 @@
-import { withApollo } from '@island.is/web/graphql/withApollo'
-import { withLocale } from '@island.is/web/i18n/withLocale'
+import withApollo from '@island.is/web/graphql/withApollo'
+import { withLocale } from '@island.is/web/i18n'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import articleScreen from '@island.is/web/screens/Article'
 
-export default withApollo(withLocale('is')(articleScreen))
+export default withApollo(withLocale('is')(withMainLayout(articleScreen)))

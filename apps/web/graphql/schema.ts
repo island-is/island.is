@@ -306,7 +306,7 @@ export type Article = {
   slug: Scalars['String']
   shortTitle: Scalars['String']
   intro: Scalars['String']
-  containsApplicationForm: Scalars['Boolean']
+  containsApplicationForm?: Maybe<Scalars['Boolean']>
   body: Array<Slice>
   category?: Maybe<ArticleCategory>
   group?: Maybe<ArticleGroup>
@@ -490,6 +490,16 @@ export type LifeEventPage = {
   content: Array<Slice>
 }
 
+export type Url = {
+  __typename?: 'Url'
+  id: Scalars['ID']
+  title?: Maybe<Scalars['String']>
+  page: UrlPage
+  urlsList: Array<Scalars['String']>
+}
+
+export type UrlPage = Article | ArticleCategory | News | LifeEventPage
+
 export type AdgerdirTags = {
   __typename?: 'AdgerdirTags'
   items: Array<AdgerdirTag>
@@ -523,6 +533,7 @@ export type ContentItem = {
   category?: Maybe<Scalars['String']>
   categorySlug?: Maybe<Scalars['String']>
   categoryDescription?: Maybe<Scalars['String']>
+  containsApplicationForm?: Maybe<Scalars['Boolean']>
   group?: Maybe<Scalars['String']>
   subgroup?: Maybe<Scalars['String']>
   groupSlug?: Maybe<Scalars['String']>
@@ -620,6 +631,7 @@ export type Query = {
   getArticleCategories: Array<ArticleCategory>
   getArticles: Array<Article>
   getSingleNews?: Maybe<News>
+  getUrl?: Maybe<Url>
   searchResults: SearchResult
   singleItem?: Maybe<ContentItem>
   webSearchAutocomplete: WebSearchAutocomplete
@@ -724,6 +736,10 @@ export type QueryGetArticlesArgs = {
 
 export type QueryGetSingleNewsArgs = {
   input: GetSingleNewsInput
+}
+
+export type QueryGetUrlArgs = {
+  input: GetUrlInput
 }
 
 export type QuerySearchResultsArgs = {
@@ -874,6 +890,11 @@ export type GetArticlesInput = {
 export type GetSingleNewsInput = {
   slug: Scalars['String']
   lang?: Maybe<Scalars['String']>
+}
+
+export type GetUrlInput = {
+  slug: Scalars['String']
+  lang: Scalars['String']
 }
 
 export type SearcherInput = {
@@ -1091,7 +1112,12 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
   getArticle?: Maybe<
     { __typename?: 'Article' } & Pick<
       Article,
-      'id' | 'slug' | 'title' | 'shortTitle' | 'intro'
+      | 'id'
+      | 'slug'
+      | 'title'
+      | 'shortTitle'
+      | 'intro'
+      | 'containsApplicationForm'
     > & {
         body: Array<
           | ({
@@ -1205,7 +1231,7 @@ export type GetArticlesQuery = { __typename?: 'Query' } & {
   getArticles: Array<
     { __typename?: 'Article' } & Pick<
       Article,
-      'intro' | 'slug' | 'title' | 'containsApplicationForm'
+      'intro' | 'containsApplicationForm' | 'slug' | 'title'
     > & {
         category?: Maybe<
           { __typename?: 'ArticleCategory' } & Pick<ArticleCategory, 'title'>
@@ -1602,6 +1628,22 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
             })
       >
     }
+}
+
+export type GetUrlQueryVariables = Exact<{
+  input: GetUrlInput
+}>
+
+export type GetUrlQuery = { __typename?: 'Query' } & {
+  getUrl?: Maybe<
+    { __typename?: 'Url' } & Pick<Url, 'id' | 'title' | 'urlsList'> & {
+        page:
+          | ({ __typename: 'Article' } & Pick<Article, 'slug'>)
+          | ({ __typename: 'ArticleCategory' } & Pick<ArticleCategory, 'slug'>)
+          | ({ __typename: 'News' } & Pick<News, 'slug'>)
+          | ({ __typename: 'LifeEventPage' } & Pick<LifeEventPage, 'slug'>)
+      }
+  >
 }
 
 export type ImageFieldsFragment = { __typename: 'Image' } & Pick<
