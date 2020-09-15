@@ -12,7 +12,6 @@ on:
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
-  MAX_JOBS: 1
 jobs:
   prepare:
     #runs-on: self-hosted
@@ -119,20 +118,20 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-4
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
 
       - name: Cache for NodeJS dependencies - Docker layer
         uses: actions/cache@v1
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-5
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         uses: actions/cache@v1
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-yarn
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
 
       - name: Building NodeJS dependencies - host OS
         if: steps.node-modules.outputs.cache-hit != 'true'
@@ -243,13 +242,13 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-4
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
       - name: Cache for NodeJS dependencies - host OS
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v1
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-yarn
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
       - name: Running tests
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh test
@@ -270,7 +269,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-yarn
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
       - name: Check formatting
         run: ./scripts/check_formatting.sh
 
@@ -294,7 +293,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-yarn
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
 
       - name: Linting
         if: ${{ matrix.projects != 'dummy' }}
@@ -321,13 +320,13 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-5
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
       - name: Cache for NodeJS dependencies - Docker layer
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-4
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
 
       - name: Docker login to ECR repo
         if: ${{ matrix.projects != 'dummy' }}
@@ -338,8 +337,6 @@ jobs:
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-express
-        env:
-          PUBLISH: local
 
   docker-static:
     needs: [prepare, tests]
@@ -362,13 +359,13 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-5
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
       - name: Cache for NodeJS dependencies - Docker layer
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-4
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
 
       - name: Docker login to ECR repo
         if: ${{ matrix.projects != 'dummy' }}
@@ -379,8 +376,6 @@ jobs:
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-static
-        env:
-          PUBLISH: local
 
   docker-next:
     needs: [prepare, tests]
@@ -403,13 +398,13 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache_output
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-5
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
       - name: Cache for NodeJS dependencies - Docker layer
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps-4
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
 
       - name: Docker login to ECR repo
         if: ${{ matrix.projects != 'dummy' }}
@@ -420,8 +415,6 @@ jobs:
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-next
-        env:
-          PUBLISH: local
 
   retag-unaffected:
     runs-on: ubuntu-20.04
