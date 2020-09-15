@@ -1,7 +1,11 @@
 import {SERVICE_STATUS } from  '..'
 import { ServiceCardInformation } from '../ServiceCard/service-card';
 
+<<<<<<< HEAD
 const MAX_LIMIT = 4;
+=======
+const MAX_LIMIT = 3;
+>>>>>>> 095b050a... Add more link instead of prev and next links
 
 export interface ServicesResult {
     result:Array<ServiceCardInformation>,
@@ -180,15 +184,18 @@ export async function getServices(parameters:GetServicesParameters):Promise<Serv
         );
     }
 
-    //console.log('filtered', JSON.parse(JSON.stringify(filtered)))
     if (!isValidNumber(params.cursor)) {
         params.cursor = null;
     }
     if (!isValidNumber(params.limit)) {
         params.limit = null;
     }
+<<<<<<< HEAD
 
     //console.log("params method,pricing,data,type,access", params.searchMethod, params.pricing, params.data, params.type, params.access);
+=======
+    
+>>>>>>> 095b050a... Add more link instead of prev and next links
     return await limitServices(filtered, params.cursor, params.limit);
 }
 
