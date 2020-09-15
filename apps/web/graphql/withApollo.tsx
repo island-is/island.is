@@ -1,3 +1,4 @@
+import React from 'react'
 import { NextPageContext } from 'next'
 import { ApolloProvider } from 'react-apollo'
 import initApollo from './client'

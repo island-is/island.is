@@ -35,6 +35,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
             </Layout>
           </I18n>
         )
+        // eslint-disable-next-line no-empty
       } catch {}
     }
 
@@ -58,9 +59,10 @@ class ErrorPage extends React.Component<ErrorPageProps> {
 
     // we'll attempt to use the layout component, but if it goes wrong we'll
     // show a simplified error page without any header or footer
-    let layoutProps = null
+    let layoutProps: LayoutProps = null
     try {
       layoutProps = await Layout.getInitialProps({ ...props, locale })
+      // eslint-disable-next-line no-empty
     } catch {}
 
     return { statusCode, locale, layoutProps }
