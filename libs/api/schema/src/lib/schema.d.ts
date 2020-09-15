@@ -56,7 +56,7 @@ export type TimelineEvent = {
   denominator?: Maybe<Scalars['Int']>
   label: Scalars['String']
   body?: Maybe<Scalars['String']>
-  tags: Array<Scalars['String']>
+  tags?: Maybe<Array<Scalars['String']>>
   link: Scalars['String']
 }
 
@@ -122,7 +122,7 @@ export type QuestionAndAnswer = {
   __typename?: 'QuestionAndAnswer'
   id: Scalars['ID']
   question: Scalars['String']
-  answer: Html
+  answer?: Maybe<Html>
 }
 
 export type ArticleCategory = {
@@ -321,9 +321,9 @@ export type Article = {
   category?: Maybe<ArticleCategory>
   group?: Maybe<ArticleGroup>
   subgroup?: Maybe<ArticleSubgroup>
-  organization: Array<Organization>
+  organization?: Maybe<Array<Organization>>
   subArticles: Array<SubArticle>
-  relatedArticles: Array<Article>
+  relatedArticles?: Maybe<Array<Article>>
 }
 
 export type LifeEventPage = {
@@ -1516,7 +1516,11 @@ export type TimelineEventResolvers<
   denominator?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  tags?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>
+  tags?: Resolver<
+    Maybe<Array<ResolversTypes['String']>>,
+    ParentType,
+    ContextType
+  >
   link?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
@@ -1615,7 +1619,7 @@ export type QuestionAndAnswerResolvers<
 > = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
   question?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  answer?: Resolver<ResolversTypes['Html'], ParentType, ContextType>
+  answer?: Resolver<Maybe<ResolversTypes['Html']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1954,7 +1958,7 @@ export type ArticleResolvers<
     ContextType
   >
   organization?: Resolver<
-    Array<ResolversTypes['Organization']>,
+    Maybe<Array<ResolversTypes['Organization']>>,
     ParentType,
     ContextType
   >
@@ -1964,7 +1968,7 @@ export type ArticleResolvers<
     ContextType
   >
   relatedArticles?: Resolver<
-    Array<ResolversTypes['Article']>,
+    Maybe<Array<ResolversTypes['Article']>>,
     ParentType,
     ContextType
   >

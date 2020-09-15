@@ -28,7 +28,7 @@ type TimelineEvent {
   denominator: Int
   label: String!
   body: String
-  tags: [String!]!
+  tags: [String!]
   link: String!
 }
 
@@ -91,7 +91,7 @@ scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/fi
 type QuestionAndAnswer {
   id: ID!
   question: String!
-  answer: Html!
+  answer: Html
 }
 
 type ArticleCategory {
@@ -252,9 +252,9 @@ type Article {
   category: ArticleCategory
   group: ArticleGroup
   subgroup: ArticleSubgroup
-  organization: [Organization!]!
+  organization: [Organization!]
   subArticles: [SubArticle!]!
-  relatedArticles: [Article!]!
+  relatedArticles: [Article!]
 }
 
 type LifeEventPage {

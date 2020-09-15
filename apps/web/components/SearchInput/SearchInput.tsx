@@ -86,20 +86,18 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
     setState({ ...state, isLoading: true })
 
     const thisTimerId = (timer.current = setTimeout(async () => {
-      const res = await client.query<
-        GetSearchResultsQuery,
-        QuerySearchResultsArgs
-      >({
+      const {
+        data: { searchResults: results },
+      } = await client.query<GetSearchResultsQuery, QuerySearchResultsArgs>({
         query: GET_SEARCH_RESULTS_QUERY,
         variables: {
           query: {
             queryString: term,
             language: locale as ContentLanguage,
-            // types: ['article'],
+            types: ['article'],
           },
         },
       })
-      console.log('-res', res)
 
       // the api only completes single terms get only single terms
       const indexOfLastSpace = term.lastIndexOf(' ')
@@ -129,7 +127,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
         setState({
           isLoading: false,
           term,
-          results: res.data.searchResults,
+          results,
           suggestions,
           prefix,
         })

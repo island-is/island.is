@@ -31,13 +31,11 @@ export class ContentSearchService implements SearcherService {
     return obj
   }
 
-  async find(query: SearcherInput): Promise<any> {
+  async find(query: SearcherInput): Promise<SearchResult> {
     const { body } = await this.elasticService.search(
       this.getIndex(query.language),
       query,
     )
-
-    console.log('-body', body)
 
     return {
       total: body.hits.total.value,

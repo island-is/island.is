@@ -39,7 +39,7 @@ export class ArticleSyncService {
           return {
             _id: mapped.id,
             title: mapped.title,
-            // content: mapped.content,
+            content: mapped.intro,
             type: 'webArticle',
             termPool: createTerms([
               mapped.title,
