@@ -86,7 +86,7 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
   }, [isVisible, ref, handleClickOutside])
 
   return (
-    <RemoveScroll ref={ref} enabled={isMobile}>
+    <RemoveScroll ref={ref} enabled={isMobile && isVisible}>
       <FocusLock>
         <Box
           className={cn(styles.root, { [styles.isVisible]: isVisible })}
