@@ -25,7 +25,7 @@ import {
 } from '@island.is/island-ui/core'
 import { GET_NEWS_LIST_QUERY } from './queries'
 import { NewsListLayout } from './Layouts/Layouts'
-import { CustomNextError } from '../units/ErrorBoundary'
+import { CustomNextError } from '../units/errors'
 import {
   GetNewsListQuery,
   QueryGetNewsListArgs,

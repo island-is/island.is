@@ -10,6 +10,7 @@ import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { NewsItemLayout } from './Layouts/Layouts'
 import { withMainLayout } from '../layouts/main'
 import { GET_NEWS_ITEM_QUERY } from './queries'
+import { CustomNextError } from '@island.is/web/units/errors'
 import {
   GetNewsItemQuery,
   QueryGetNewsArgs,
@@ -81,6 +82,10 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
       },
     },
   })
+
+  if (!newsItem) {
+    throw new CustomNextError(404, 'NewsItem not found')
+  }
 
   return {
     newsItem,

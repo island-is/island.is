@@ -1,6 +1,6 @@
 import React, { FC, useMemo, useState } from 'react'
 import { Screen } from '../../types'
-import { CustomNextError } from '../../units/ErrorBoundary'
+import { CustomNextError } from '../../units/errors'
 import {
   GridContainer,
   GridRow,

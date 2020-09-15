@@ -3,7 +3,7 @@ import React, { useMemo } from 'react'
 import { Hyperlink, Image } from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
 import { GET_LANDING_PAGE_QUERY } from '../queries'
-import { CustomNextError } from '../../units/ErrorBoundary'
+import { CustomNextError } from '../../units/errors'
 import Head from 'next/head'
 import { useI18n } from '@island.is/web/i18n'
 import {
