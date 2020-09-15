@@ -5,12 +5,40 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
     searchResults(query: $query) {
       total
       items {
-        id
-        title
-        content
-        slug
-        category
-        group
+        ... on Article {
+          id
+          contentStatus
+          title
+          slug
+          category {
+            slug
+            title
+          }
+          organization {
+            id
+            title
+            description
+            slug
+          }
+          relatedArticles {
+            title
+            slug
+          }
+          subArticles {
+            title
+            slug
+          }
+        }
+
+        ... on LifeEventPage {
+          id
+          title
+          slug
+          intro
+          image {
+            id
+          }
+        }
       }
     }
   }
@@ -29,17 +57,53 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
     searchResults(query: $query) {
       total
       items {
-        id
-        title
-        slug
-        tag
-        content
-        categoryDescription
-        categorySlug
-        category
-        group
-        groupSlug
-        contentType
+        ... on Article {
+          id
+          contentStatus
+          title
+          slug
+          category {
+            slug
+            title
+          }
+          organization {
+            id
+            title
+            description
+            slug
+          }
+          relatedArticles {
+            title
+            slug
+          }
+          subArticles {
+            title
+            slug
+          }
+        }
+
+        ... on LifeEventPage {
+          id
+          title
+          slug
+          intro
+          image {
+            id
+            url
+            title
+            contentType
+            width
+            height
+          }
+          thumbnail {
+            id
+            url
+            title
+            contentType
+            width
+            height
+          }
+        }
       }
     }
   }

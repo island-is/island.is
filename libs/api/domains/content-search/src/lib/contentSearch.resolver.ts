@@ -1,6 +1,5 @@
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { ContentSearchService } from './contentSearch.service'
-import { SearcherInput } from './dto/searcher.input'
 import { SearchResult } from './models/searchResult.model'
 import { ContentItem } from './models/contentItem.model'
 import { ItemInput } from './dto/item.input'
@@ -9,6 +8,7 @@ import { CategoriesInput } from './dto/categories.input'
 import { ArticlesInCategoryInput } from './dto/articlesInCategory.input'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 import { WebSearchAutocompleteInput } from './dto/webSearchAutocomplete.input'
+import { SearcherInput } from './dto/searcher.input'
 
 @Resolver()
 export class ContentSearchResolver {

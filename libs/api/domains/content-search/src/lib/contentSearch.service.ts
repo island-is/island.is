@@ -7,10 +7,12 @@ import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 import { ContentLanguage } from './enums/contentLanguage.enum'
 import { SearcherService } from '@island.is/api/schema'
+import { SearcherInput } from './dto/searcher.input'
+import { CategoriesInput } from './dto/categories.input'
 
 @Injectable()
 export class ContentSearchService implements SearcherService {
-  constructor(private repository: ElasticService) {}
+  constructor(private elasticService: ElasticService) {}
 
   getIndex(lang: ContentLanguage) {
     return SearchIndexes[lang] ?? SearchIndexes.is
@@ -29,25 +31,24 @@ export class ContentSearchService implements SearcherService {
     return obj
   }
 
-  async find(query): Promise<SearchResult> {
-    const { body } = await this.repository.query(
+  async find(query: SearcherInput): Promise<SearchResult> {
+    const { body } = await this.elasticService.search(
       this.getIndex(query.language),
       query,
     )
 
-    const items = body.hits.hits.map(this.fixCase)
-
     return {
       total: body.hits.total.value,
-      items: items,
+      // we map data when it goes into the index we can return it without mapping it here
+      items: body.hits.hits.map((item) => JSON.parse(item._source.response)),
     }
   }
 
-  // TODO: use aggregation here
-  async fetchCategories(query): Promise<ContentCategory[]> {
+  // TODO: Move this to CMS domain, index categories as own type?
+  async fetchCategories(query: CategoriesInput): Promise<ContentCategory[]> {
     // todo do properly not this awesome hack
     const queryTmp = new RequestBodySearch().size(1000)
-    const { body } = await this.repository.deprecatedFindByQuery(
+    const { body } = await this.elasticService.deprecatedFindByQuery(
       this.getIndex(query.language),
       queryTmp,
     )
@@ -69,7 +70,7 @@ export class ContentSearchService implements SearcherService {
   }
 
   async fetchSingle(input): Promise<ContentItem> {
-    const { body } = await this.repository.query(
+    const { body } = await this.elasticService.search(
       this.getIndex(input.language),
       input,
     )
@@ -82,7 +83,7 @@ export class ContentSearchService implements SearcherService {
   }
 
   async fetchItems(input): Promise<ContentItem[]> {
-    const { body } = await this.repository.fetchItems(
+    const { body } = await this.elasticService.fetchItems(
       this.getIndex(input.language),
       input,
     )
@@ -93,7 +94,7 @@ export class ContentSearchService implements SearcherService {
   async fetchAutocompleteTerm(input): Promise<WebSearchAutocomplete> {
     const {
       suggest: { searchSuggester },
-    } = await this.repository.fetchAutocompleteTerm(
+    } = await this.elasticService.fetchAutocompleteTerm(
       this.getIndex(input.language),
       {
         ...input,
