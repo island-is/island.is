@@ -21,6 +21,7 @@ export interface SearchRequestBody {
 export const searchQuery = ({ queryString, size = 10, page = 1, types }: SearchInput): SearchRequestBody => {
   const should = []
   const must = []
+  let minimum_should_match = 1
   should.push({
     simple_query_string: {
       query: `*${queryString}*`,
@@ -34,6 +35,7 @@ export const searchQuery = ({ queryString, size = 10, page = 1, types }: SearchI
 
   // if we have types restrict the query to those types
   if(types?.length) {
+    minimum_should_match++ // now we have to match at least one type and the search query
     types.forEach((type) => {
       const [value, boost = 1] = type.split('^')
       should.push({
@@ -51,7 +53,8 @@ export const searchQuery = ({ queryString, size = 10, page = 1, types }: SearchI
     query: {
       bool: {
         should,
-        must
+        must,
+        minimum_should_match,
       }
     },
     size,
