@@ -53,7 +53,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
       <Head>
         <title>{newsItem.title} | Ísland.is</title>
       </Head>
-      <NewsItemLayout sidebar={sidebar}>
+      <NewsItemLayout>
         <Breadcrumbs>
           <Link href={makePath()}>Ísland.is</Link>
           <Link href={makePath('news')}>Fréttir og tilkynningar</Link>
