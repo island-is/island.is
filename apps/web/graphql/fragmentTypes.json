@@ -49,6 +49,9 @@
           },
           {
             "name": "EmbeddedVideo"
+          },
+          {
+            "name": "SectionWithImage"
           }
         ]
       },
