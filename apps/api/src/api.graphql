@@ -257,56 +257,6 @@ type Article {
   relatedArticles: [Article!]
 }
 
-type LifeEventPage {
-  id: ID!
-  title: String!
-  slug: String!
-  intro: String!
-  image: Image!
-  thumbnail: Image
-  content: [Slice!]!
-}
-
-type SearchResult {
-  total: Int!
-  items: [Items!]!
-}
-
-union Items = Article | LifeEventPage
-
-type ContentItem {
-  id: ID!
-  title: String
-  content: String
-  tag: [String!]
-  category: String
-  categorySlug: String
-  categoryDescription: String
-  group: String
-  subgroup: String
-  groupSlug: String
-  groupDescription: String
-  contentBlob: String
-  contentId: String
-  contentType: String
-  date: String
-  image: String
-  imageText: String
-  lang: String
-  slug: String
-}
-
-type ContentCategory {
-  title: String
-  slug: String
-  description: String
-}
-
-type WebSearchAutocomplete {
-  total: Int!
-  completions: [String!]!
-}
-
 type AdgerdirTag {
   id: ID!
   title: String!
@@ -450,6 +400,16 @@ type Menu {
   links: [Link!]!
 }
 
+type LifeEventPage {
+  id: ID!
+  title: String!
+  slug: String!
+  intro: String!
+  image: Image!
+  thumbnail: Image
+  content: [Slice!]!
+}
+
 type AdgerdirTags {
   items: [AdgerdirTag!]!
 }
@@ -461,6 +421,46 @@ type PaginatedAdgerdirNews {
 
 type OrganizationTags {
   items: [OrganizationTag!]!
+}
+
+type SearchResult {
+  total: Int!
+  items: [Items!]!
+}
+
+union Items = Article | LifeEventPage
+
+type ContentItem {
+  id: ID!
+  title: String
+  content: String
+  tag: [String!]
+  category: String
+  categorySlug: String
+  categoryDescription: String
+  group: String
+  subgroup: String
+  groupSlug: String
+  groupDescription: String
+  contentBlob: String
+  contentId: String
+  contentType: String
+  date: String
+  image: String
+  imageText: String
+  lang: String
+  slug: String
+}
+
+type ContentCategory {
+  title: String
+  slug: String
+  description: String
+}
+
+type WebSearchAutocomplete {
+  total: Int!
+  completions: [String!]!
 }
 
 type Application {
@@ -516,11 +516,6 @@ type DocumentCategory {
 
 type Query {
   helloWorld(input: HelloWorldInput!): HelloWorld!
-  searchResults(query: SearcherInput!): SearchResult!
-  singleItem(input: ItemInput!): ContentItem
-  categories(input: CategoriesInput!): [ContentCategory!]!
-  articlesInCategory(category: ArticlesInCategoryInput!): [ContentItem!]!
-  webSearchAutocomplete(input: WebSearchAutocompleteInput!): WebSearchAutocomplete!
   getArticle(input: GetArticleInput!): Article
   getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput!): PaginatedNews!
@@ -542,6 +537,11 @@ type Query {
   getMenu(input: GetMenuInput!): Menu
   getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
   getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
+  searchResults(query: SearcherInput!): SearchResult!
+  singleItem(input: ItemInput!): ContentItem
+  categories(input: CategoriesInput!): [ContentCategory!]!
+  articlesInCategory(category: ArticlesInCategoryInput!): [ContentItem!]!
+  webSearchAutocomplete(input: WebSearchAutocompleteInput!): WebSearchAutocomplete!
   getApplication(input: GetApplicationInput!): Application
   getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
   getDocument(input: GetDocumentInput!): DocumentDetails
@@ -551,46 +551,6 @@ type Query {
 
 input HelloWorldInput {
   name: String = "World"
-}
-
-input SearcherInput {
-  queryString: String!
-  types: [String!]
-  language: ContentLanguage
-  size: Int
-  page: Int
-}
-
-enum ContentLanguage {
-  is
-  en
-}
-
-input ItemInput {
-  id: ID
-  slug: String
-  type: ItemType
-  language: ContentLanguage
-}
-
-enum ItemType {
-  article
-  category
-}
-
-input CategoriesInput {
-  language: ContentLanguage
-}
-
-input ArticlesInCategoryInput {
-  slug: String
-  language: ContentLanguage
-}
-
-input WebSearchAutocompleteInput {
-  singleTerm: String!
-  language: ContentLanguage = is
-  size: Int = 10
 }
 
 input GetArticleInput {
@@ -698,6 +658,46 @@ input GetLifeEventPageInput {
 
 input GetLifeEventsInput {
   lang: String!
+}
+
+input SearcherInput {
+  queryString: String!
+  types: [String!]
+  language: ContentLanguage
+  size: Int
+  page: Int
+}
+
+enum ContentLanguage {
+  is
+  en
+}
+
+input ItemInput {
+  id: ID
+  slug: String
+  type: ItemType
+  language: ContentLanguage
+}
+
+enum ItemType {
+  article
+  category
+}
+
+input CategoriesInput {
+  language: ContentLanguage
+}
+
+input ArticlesInCategoryInput {
+  slug: String
+  language: ContentLanguage
+}
+
+input WebSearchAutocompleteInput {
+  singleTerm: String!
+  language: ContentLanguage = is
+  size: Int = 10
 }
 
 input GetApplicationInput {
