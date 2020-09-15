@@ -6,4 +6,5 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'html'],
   coverageDirectory: '../../../coverage/libs/island-ui/core',
+  setupFilesAfterEnv: ['./jest.setup.ts'],
 }

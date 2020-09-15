@@ -6,6 +6,7 @@ import { Typography } from '../Typography/Typography'
 import InputError from '../InputError/InputError'
 import { Box } from '../Box/Box'
 import Tooltip from '../Tooltip/Tooltip'
+import useDeprecatedComponent from '../private/useDeprecatedComponent'
 
 export interface FieldPolarQuestionProps {
   label?: string
@@ -71,6 +72,7 @@ export const FieldPolarQuestion = ({
   field: { onChange, value, ...field },
   form: { touched, errors },
 }: FieldPolarQuestionProps) => {
+  useDeprecatedComponent('FieldPolarQuestion')
   const nameArray = (field.name && field.name.split('.')) || []
   const hasError = !!(get(touched, nameArray) && get(errors, nameArray))
   const errorMessage = get(errors, nameArray)
