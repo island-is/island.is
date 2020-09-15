@@ -8,7 +8,7 @@ import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
 import _ from 'lodash'
 
 export interface PostSyncOptions {
-  locale: keyof typeof SearchIndexes,
+  locale: keyof typeof SearchIndexes
   token: string
 }
 
@@ -20,13 +20,13 @@ export class CmsSyncService {
     private readonly lifeEventsPageSyncService: LifeEventsPageSyncService,
     private readonly contentfulService: ContentfulService,
   ) {
-    // these are used 
+    // these are used
     this.contentSyncProviders = [
       this.articleSyncService,
-      this.lifeEventsPageSyncService
+      this.lifeEventsPageSyncService,
     ]
   }
-  
+
   // this is triggered from ES indexer service
   async doSync(options: SyncOptions): Promise<SyncResponse<PostSyncOptions>> {
     logger.info('Doing cms sync', options)
@@ -34,23 +34,26 @@ export class CmsSyncService {
     const {
       items,
       deletedItems,
-      token
+      token,
     } = await this.contentfulService.getSyncEntries(options)
     logger.info('Got sync data')
-    
+
     // import data from all providers
-    const importableData = this.contentSyncProviders.map(({processSyncData, doMapping}) => {
-      const data = processSyncData(items)
-      return doMapping(data)
-    })
+    const importableData = this.contentSyncProviders.map(
+      ({ processSyncData, doMapping }) => {
+        const data = processSyncData(items)
+
+        return doMapping(data)
+      },
+    )
 
     return {
       add: _.flatten(importableData),
       remove: deletedItems,
       postSyncOptions: {
         locale: options.locale,
-        token
-      }
+        token,
+      },
     }
   }
 
