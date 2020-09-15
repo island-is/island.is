@@ -6,7 +6,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ClientsModule } from './modules/clients/clients.module'
 import { ResourcesModule } from './modules/resources/resources.module'
 import { GrantsModule } from './modules/grants/grants.module'
-import { AuthModule } from './modules/auth/auth.module'
+import { AuthModule } from '@island.is/auth-api'
 import { GrantTypesModule } from './modules/grant-types/grant-types.module';
 
 @Module({

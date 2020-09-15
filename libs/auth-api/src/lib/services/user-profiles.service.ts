@@ -3,10 +3,9 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Counter } from 'prom-client'
 import { Sequelize } from 'sequelize-typescript'
-import { UserProfile } from './models/user-profile.model'
-import { UserIdentity } from './models/user-identity.model'
+import { UserProfile } from '../entities/models/user-profile.model'
 import { UserIdentitiesService } from './user-identities.service'
-import { UserProfileDto } from './dto/user-profile.dto'
+import { UserProfileDto } from '../entities/dto/user-profile.dto'
 
 @Injectable()
 export class UserProfilesService {

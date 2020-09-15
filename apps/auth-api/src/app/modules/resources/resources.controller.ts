@@ -1,4 +1,3 @@
-import { IdentityResourcesDTO } from './dto/identity-resources-dto';
 import { Controller, Get, Query, Post, Body, Put, Param, Delete, UseGuards } from '@nestjs/common'
 import {
   ApiCreatedResponse,
@@ -7,12 +6,8 @@ import {
   ApiQuery,
   ApiOAuth2,
 } from '@nestjs/swagger'
-import { IdentityResource } from './model/identity-resource.model'
-import { ResourcesService } from './resources.service'
-import { ApiScope } from './model/api-scope.model'
-import { ApiResource } from './model/api-resource.model'
+import { IdentityResource, ResourcesService, ApiScope, ApiResource, ApiScopesDTO, IdentityResourcesDTO } from '@island.is/auth-api'
 import { AuthGuard } from '@nestjs/passport'
-import { ApiScopesDTO } from './dto/api-scopes-dto';
 
 @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(AuthGuard('jwt'))

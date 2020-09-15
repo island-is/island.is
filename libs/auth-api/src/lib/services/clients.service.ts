@@ -1,21 +1,22 @@
-import { ClientDTO } from './dto/client-dto';
 import {
   Inject,
   Injectable,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Client } from './models/client.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Counter } from 'prom-client'
 import { Sequelize } from 'sequelize-typescript'
-import { ClientAllowedScope } from './models/client-allowed-scope.model'
-import { ClientAllowedCorsOrigin } from './models/client-allowed-cors-origin.model'
-import { ClientRedirectUri } from './models/client-redirect-uri.model'
-import { ClientIdpRestrictions } from './models/client-idp-restrictions.model'
-import { ClientSecret } from './models/client-secret.model'
-import { ClientPostLogoutRedirectUri } from './models/client-post-logout-redirect-uri.model'
-import { ClientGrantType } from './models/client-grant-type.model'
-import { ClientUpdateDTO } from './dto/client-update-dto';
+import { Client } from '../entities/models/client.model'
+import { ClientAllowedScope } from '../entities/models/client-allowed-scope.model'
+import { ClientAllowedCorsOrigin } from '../entities/models/client-allowed-cors-origin.model'
+import { ClientRedirectUri } from '../entities/models/client-redirect-uri.model'
+import { ClientIdpRestrictions } from '../entities/models/client-idp-restrictions.model'
+import { ClientSecret } from '../entities/models/client-secret.model'
+import { ClientPostLogoutRedirectUri } from '../entities/models/client-post-logout-redirect-uri.model'
+import { ClientGrantType } from '../entities/models/client-grant-type.model'
+import { ClientDTO } from '../entities/dto/client-dto'
+import { ClientUpdateDTO } from '../entities/dto/client-update-dto'
+
 
 @Injectable()
 export class ClientsService {

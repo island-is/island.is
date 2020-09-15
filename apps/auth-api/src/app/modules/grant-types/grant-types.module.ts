@@ -1,7 +1,6 @@
-import { GrantTypeService } from './grant-types.service';
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { GrantType } from './grant-type.model'
+import { GrantType, GrantTypeService } from '@island.is/auth-api'
 import { GrantTypeController } from './grant-types.controller';
 
 @Module({

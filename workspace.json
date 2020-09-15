@@ -959,6 +959,34 @@
         }
       }
     },
+    "auth-api-lib": {
+      "root": "libs/auth-api",
+      "sourceRoot": "libs/auth-api/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/auth-api/.eslintrc",
+            "tsConfig": [
+              "libs/auth-api/tsconfig.lib.json",
+              "libs/auth-api/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/auth-api/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/auth-api/jest.config.js",
+            "tsConfig": "libs/auth-api/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
     "infra-tracing": {
       "root": "libs/infra-tracing",
       "sourceRoot": "libs/infra-tracing/src",

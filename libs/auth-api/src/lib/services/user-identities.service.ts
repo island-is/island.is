@@ -1,12 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { UserIdentity } from './models/user-identity.model'
-import { UserIdentityDto } from './dto/user-identity.dto'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Counter } from 'prom-client'
-import { Claim } from './models/claim.model'
+import { Claim } from '../entities/models/claim.model'
 import { Sequelize } from 'sequelize-typescript'
 import { config } from './users-config'
+import { UserIdentity } from '../entities/models/user-identity.model'
+import { UserIdentityDto } from '../entities/dto/user-identity.dto'
 
 @Injectable()
 export class UserIdentitiesService {

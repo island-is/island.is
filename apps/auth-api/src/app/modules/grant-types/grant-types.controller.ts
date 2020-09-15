@@ -7,8 +7,7 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags, ApiOAuth2 } from '@nestjs/swagger'
 import { AuthGuard } from '@nestjs/passport'
-import { GrantTypeService } from './grant-types.service'
-import { GrantType } from './grant-type.model'
+import { GrantType, GrantTypeService } from '@island.is/auth-api'
 
 @ApiOAuth2(['openid:profile'])
 @UseGuards(AuthGuard('jwt'))

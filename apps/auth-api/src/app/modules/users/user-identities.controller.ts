@@ -9,9 +9,7 @@ import {
   Put,
   Delete,
 } from '@nestjs/common'
-import { UserIdentity } from './models/user-identity.model'
-import { UserIdentitiesService } from './user-identities.service'
-import { UserIdentityDto } from './dto/user-identity.dto'
+import { UserIdentity, UserIdentitiesService, UserIdentityDto } from '@island.is/auth-api'
 import {
   ApiCreatedResponse,
   ApiOkResponse,

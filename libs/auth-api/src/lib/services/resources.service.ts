@@ -1,19 +1,20 @@
-import { ApiScopesDTO } from './dto/api-scopes-dto'
-import { IdentityResourcesDTO } from './dto/identity-resources-dto'
-import { Inject, Injectable, Optional } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Counter } from 'prom-client'
 import { Sequelize } from 'sequelize-typescript'
-import { IdentityResource } from './model/identity-resource.model'
 import { Op, WhereOptions } from 'sequelize'
-import { IdentityResourceUserClaim } from './model/identity-resource-user-claim.model'
-import { ApiScope } from './model/api-scope.model'
-import { ApiScopeUserClaim } from './model/api-scope-user-claim.model'
-import { ApiResourceUserClaim } from './model/api-resource-user-claim.model'
-import { ApiResource } from './model/api-resource.model'
-import { ApiResourceScope } from './model/api-resource-scope.model'
-import { ApiResourceSecret } from './model/api-resource-secret.model'
+import { IdentityResource } from '../entities/models/identity-resource.model'
+import { ApiScope } from '../entities/models/api-scope.model'
+import { ApiResource } from '../entities/models/api-resource.model'
+import { ApiResourceScope } from '../entities/models/api-resource-scope.model'
+import { IdentityResourceUserClaim } from '../entities/models/identity-resource-user-claim.model'
+import { ApiResourceSecret } from '../entities/models/api-resource-secret.model'
+import { ApiResourceUserClaim } from '../entities/models/api-resource-user-claim.model'
+import { ApiScopeUserClaim } from '../entities/models/api-scope-user-claim.model'
+import { IdentityResourcesDTO } from '../entities/dto/identity-resources-dto'
+import { ApiScopesDTO } from '../entities/dto/api-scopes-dto'
+
 
 @Injectable()
 export class ResourcesService {
@@ -58,7 +59,7 @@ export class ResourcesService {
   ): Promise<IdentityResource[]> {
     this.logger.debug(`Finding identity resources for scope names`, scopeNames)
 
-    let whereOptions: WhereOptions = {
+    const whereOptions: WhereOptions = {
       name: {
         [Op.in]: scopeNames,
       },
@@ -73,7 +74,7 @@ export class ResourcesService {
   async findApiScopesByNameAsync(scopeNames: string[]): Promise<ApiScope[]> {
     this.logger.debug(`Finding api scopes for scope names`, scopeNames)
 
-    let whereOptions: WhereOptions = {
+    const whereOptions: WhereOptions = {
       name: {
         [Op.in]: scopeNames,
       },
@@ -93,7 +94,7 @@ export class ResourcesService {
       apiResourceNames,
     )
 
-    let whereOptions: WhereOptions = {
+    const whereOptions: WhereOptions = {
       name: {
         [Op.in]: apiResourceNames,
       },
@@ -113,17 +114,17 @@ export class ResourcesService {
       apiResourceScopeNames,
     )
 
-    let scopesWhereOptions: WhereOptions = {
+    const scopesWhereOptions: WhereOptions = {
       scope_name: {
         [Op.in]: apiResourceScopeNames,
       },
     }
-    let scopes = await this.apiResourceScopeModel.findAll({
+    const scopes = await this.apiResourceScopeModel.findAll({
       raw: true,
       where: apiResourceScopeNames ? scopesWhereOptions : null,
     })
 
-    let whereOptions: WhereOptions = {
+    const whereOptions: WhereOptions = {
       id: {
         [Op.in]: scopes.map((scope) => scope.apiResourceId),
       },

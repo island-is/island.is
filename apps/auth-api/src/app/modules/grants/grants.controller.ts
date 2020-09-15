@@ -1,4 +1,3 @@
-import { GrantsService } from './grants.service'
 import {
   Controller,
   Get,
@@ -10,9 +9,8 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags, ApiOAuth2, ApiCreatedResponse } from '@nestjs/swagger'
-import { Grant } from './grants.model'
+import { Grant, GrantDTO, GrantsService } from '@island.is/auth-api'
 import { AuthGuard } from '@nestjs/passport'
-import { GrantDTO } from './dto/grant-dto'
 
 @ApiOAuth2(['openid:profile']) // add OAuth restriction to this controller
 @UseGuards(AuthGuard('jwt'))

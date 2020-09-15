@@ -10,10 +10,8 @@ import {
   Delete,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags, ApiOAuth2, ApiCreatedResponse } from '@nestjs/swagger'
-import { UserProfile } from './models/user-profile.model'
-import { UserProfilesService } from './user-profiles.service'
+import { UserProfile, UserProfilesService, UserProfileDto } from '@island.is/auth-api'
 import { AuthGuard } from '@nestjs/passport'
-import { UserProfileDto } from './dto/user-profile.dto'
 
 @ApiOAuth2(['openid:profile']) // add OAuth restriction to this controller
 @UseGuards(AuthGuard('jwt'))

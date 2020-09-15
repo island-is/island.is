@@ -1,9 +1,9 @@
-import { Grant } from './grants.model'
+import { Grant } from '../entities/models/grants.model'
 import { Inject, Injectable } from '@nestjs/common'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Sequelize } from 'sequelize-typescript'
 import { InjectModel } from '@nestjs/sequelize'
-import { GrantDTO } from './dto/grant-dto'
+import { GrantDTO } from '../entities/dto/grant-dto'
 
 @Injectable()
 export class GrantsService {

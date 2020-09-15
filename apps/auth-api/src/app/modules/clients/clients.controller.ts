@@ -10,11 +10,8 @@ import {
   Delete,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags, ApiOAuth2, ApiCreatedResponse } from '@nestjs/swagger'
-import { Client } from './models/client.model'
-import { ClientsService } from './clients.service'
+import { Client, ClientsService, ClientDTO, ClientUpdateDTO } from '@island.is/auth-api'
 import { AuthGuard } from '@nestjs/passport'
-import { ClientDTO } from './dto/client-dto'
-import { ClientUpdateDTO } from './dto/client-update-dto'
 
 @ApiOAuth2(['@identityserver.api/read'])
 @UseGuards(AuthGuard('jwt'))

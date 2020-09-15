@@ -1,7 +1,6 @@
 import { GrantsController } from './grants.controller';
 import { Module } from '@nestjs/common'
-import { GrantsService } from './grants.service';
-import { Grant } from './grants.model';
+import { Grant, GrantsService } from '@island.is/auth-api';
 import { SequelizeModule } from '@nestjs/sequelize';
 
 @Module({

@@ -1,12 +1,8 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
-import { UserIdentity } from './models/user-identity.model'
 import { UserIdentitiesController } from './user-identities.controller'
-import { UserIdentitiesService } from './user-identities.service'
-import { Claim } from './models/claim.model'
 import { UserProfilesController } from './user-profiles.controller'
-import { UserProfilesService } from './user-profiles.service'
-import { UserProfile } from './models/user-profile.model'
+import { UserIdentity, UserProfile, UserProfilesService, Claim, UserIdentitiesService } from '@island.is/auth-api'
 
 @Module({
   imports: [SequelizeModule.forFeature([Claim, UserIdentity, UserProfile])],

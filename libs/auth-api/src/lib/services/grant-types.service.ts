@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Sequelize } from 'sequelize-typescript'
-import { GrantType } from './grant-type.model'
+import { GrantType } from '../entities/models/grant-type.model'
 
 @Injectable()
 export class GrantTypeService {
