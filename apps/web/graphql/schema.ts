@@ -491,6 +491,18 @@ export type LandingPage = {
   content: Array<Slice>
 }
 
+export type AlertBanner = {
+  __typename?: 'AlertBanner'
+  id: Scalars['ID']
+  showAlertBanner: Scalars['Boolean']
+  bannerVariant: Scalars['String']
+  title?: Maybe<Scalars['String']>
+  description?: Maybe<Scalars['String']>
+  link?: Maybe<Link>
+  isDismissable: Scalars['Boolean']
+  dismissedForDays: Scalars['Int']
+}
+
 export type GenericPage = {
   __typename?: 'GenericPage'
   title: Scalars['String']
@@ -551,9 +563,7 @@ export type Application = {
 
 export enum ApplicationTypeIdEnum {
   ExampleForm = 'ExampleForm',
-  ExampleForm2 = 'ExampleForm2',
-  ExampleForm3 = 'ExampleForm3',
-  FamilyAndPets = 'FamilyAndPets',
+  DrivingLessons = 'DrivingLessons',
   ParentalLeave = 'ParentalLeave',
 }
 
@@ -602,6 +612,7 @@ export type Query = {
   getNamespace?: Maybe<Namespace>
   getAboutPage: AboutPage
   getLandingPage?: Maybe<LandingPage>
+  getAlertBanner?: Maybe<AlertBanner>
   getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
   getOrganization?: Maybe<Organization>
@@ -673,6 +684,10 @@ export type QueryGetAboutPageArgs = {
 
 export type QueryGetLandingPageArgs = {
   input: GetLandingPageInput
+}
+
+export type QueryGetAlertBannerArgs = {
+  input: GetAlertBannerInput
 }
 
 export type QueryGetGenericPageArgs = {
@@ -832,6 +847,11 @@ export type GetLandingPageInput = {
   lang: Scalars['String']
 }
 
+export type GetAlertBannerInput = {
+  id: Scalars['String']
+  lang: Scalars['String']
+}
+
 export type GetGenericPageInput = {
   slug: Scalars['String']
   lang: Scalars['String']
@@ -969,10 +989,8 @@ export type CreateApplicationInput = {
 
 export enum CreateApplicationDtoTypeIdEnum {
   ExampleForm = 'ExampleForm',
-  ExampleForm2 = 'ExampleForm2',
-  ExampleForm3 = 'ExampleForm3',
-  FamilyAndPets = 'FamilyAndPets',
   ParentalLeave = 'ParentalLeave',
+  DrivingLessons = 'DrivingLessons',
 }
 
 export type UpdateApplicationInput = {
@@ -1055,6 +1073,24 @@ export type GetAboutPageQuery = { __typename?: 'Query' } & {
           } & AllSlicesSectionWithImageFragment)
       >
     }
+}
+
+export type GetAlertBannerQueryVariables = Exact<{
+  input: GetAlertBannerInput
+}>
+
+export type GetAlertBannerQuery = { __typename?: 'Query' } & {
+  getAlertBanner?: Maybe<
+    { __typename?: 'AlertBanner' } & Pick<
+      AlertBanner,
+      | 'showAlertBanner'
+      | 'bannerVariant'
+      | 'title'
+      | 'description'
+      | 'isDismissable'
+      | 'dismissedForDays'
+    > & { link?: Maybe<{ __typename?: 'Link' } & Pick<Link, 'text' | 'url'>> }
+  >
 }
 
 export type GetArticleQueryVariables = Exact<{

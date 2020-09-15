@@ -3,6 +3,48 @@
 import { Asset, Entry } from 'contentful'
 import { Document } from '@contentful/rich-text-types'
 
+export interface IAlertBannerFields {
+  /** Show Alert Banner */
+  showAlertBanner: boolean
+
+  /** Banner variant */
+  bannerVariant: 'default' | 'warning' | 'error' | 'info' | 'success'
+
+  /** Title */
+  title?: string | undefined
+
+  /** description */
+  description?: string | undefined
+
+  /** link */
+  link?: ILink | undefined
+
+  /** Is dismissable */
+  isDismissable: boolean
+
+  /** dismissed for days */
+  dismissedForDays: number
+}
+
+/** Alert banner will show on top of all pages */
+
+export interface IAlertBanner extends Entry<IAlertBannerFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'alertBanner'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IArticleFields {
   /** Content status */
   contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
@@ -509,7 +551,7 @@ export interface ILifeEventPageFields {
   /** content */
   content: Document
 
-  /** Category */
+  /** category */
   category?: IArticleCategory | undefined
 }
 
@@ -1029,6 +1071,39 @@ export interface ISectionWithImage extends Entry<ISectionWithImageFields> {
     contentType: {
       sys: {
         id: 'sectionWithImage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ISideMenuFields {
+  /** Internal links */
+  internalLinks: (
+    | IArticle
+    | IArticleCategory
+    | IGenericPage
+    | ILandingPage
+    | ILifeEventPage
+    | IOrganization
+    | IPage
+  )[]
+
+  /** Title */
+  title?: string | undefined
+}
+
+export interface ISideMenu extends Entry<ISideMenuFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sideMenu'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1578,6 +1653,7 @@ export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
 }
 
 export type CONTENT_TYPE =
+  | 'alertBanner'
   | 'article'
   | 'articleCategory'
   | 'articleGroup'
@@ -1610,6 +1686,7 @@ export type CONTENT_TYPE =
   | 'questionAndAnswer'
   | 'sectionHeading'
   | 'sectionWithImage'
+  | 'sideMenu'
   | 'statistic'
   | 'statistics'
   | 'story'

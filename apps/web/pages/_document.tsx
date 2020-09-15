@@ -1,6 +1,12 @@
 import React from 'react'
-import Document, { Html, Head, Main, NextScript } from 'next/document'
-import { defaultLanguage } from '../i18n/I18n'
+import Document, {
+  Html,
+  Head,
+  Main,
+  NextScript,
+  DocumentContext,
+} from 'next/document'
+import { getLocaleFromPath } from '../i18n/withLocale'
 
 const getDomain = (host: string): string => {
   if (typeof host === 'string') {
@@ -14,24 +20,15 @@ const getDomain = (host: string): string => {
 }
 
 interface Props {
-  lang: string
+  lang: Locale
   domain: string
 }
 
 class MyDocument extends Document<Props> {
-  static async getInitialProps(ctx) {
+  static async getInitialProps(ctx: DocumentContext) {
     const initialProps = await Document.getInitialProps(ctx)
-    // Quick fix to get language from first part of url...
-    // TODO: Find a more natural way of retrieving the locale here
-    let lang = defaultLanguage
-
-    const domain = getDomain(ctx.req.get('host'))
-    const locale = ctx.req.url.substring(1, 3)
-    const suffix = ctx.req.url.substring(3, 4)
-
-    if (!suffix || suffix.match(/[?/#]/)) {
-      lang = locale || lang
-    }
+    const domain = getDomain(ctx.req.headers.host)
+    const lang = getLocaleFromPath(ctx.req.url)
 
     return { ...initialProps, lang, domain }
   }
@@ -40,7 +37,7 @@ class MyDocument extends Document<Props> {
     const { lang, domain } = this.props
 
     return (
-      <Html lang={lang}>
+      <Html lang={String(lang)}>
         <Head>
           {Boolean(domain) && (
             <script

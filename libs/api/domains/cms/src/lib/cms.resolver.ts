@@ -31,10 +31,12 @@ import { PaginatedNews } from './models/paginatedNews.model'
 import { Namespace } from './models/namespace.model'
 import { AboutPage } from './models/aboutPage.model'
 import { LandingPage } from './models/landingPage.model'
+import { AlertBanner } from './models/alertBanner.model'
 import { GenericPage } from './models/genericPage.model'
 import { GetNamespaceInput } from './dto/getNamespace.input'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
+import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
 import { GetLifeEventsInput } from './dto/getLifeEvents.input'
@@ -47,6 +49,7 @@ import {
   getNamespace,
   getAboutPage,
   getLandingPage,
+  getAlertBanner,
   getFrontpageSliderList,
   getGenericPage,
   getAdgerdirPage,
@@ -128,6 +131,14 @@ export class CmsResolver {
     @Args('input') input: GetLandingPageInput,
   ): Promise<LandingPage | null> {
     return getLandingPage(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => AlertBanner, { nullable: true })
+  getAlertBanner(
+    @Args('input') input: GetAlertBannerInput,
+  ): Promise<AlertBanner | null> {
+    return getAlertBanner(input)
   }
 
   @Directive(cacheControlDirective())

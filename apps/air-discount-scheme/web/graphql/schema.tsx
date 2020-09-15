@@ -516,7 +516,10 @@ export type FlightLeg = {
   __typename?: 'FlightLeg'
   id: Scalars['ID']
   airline: Scalars['String']
+  financialState: Scalars['String']
   travel: Scalars['String']
+  originalPrice: Scalars['Float']
+  discountPrice: Scalars['Float']
   flight: Flight
 }
 
@@ -816,7 +819,12 @@ export type FlightLegsQueryQuery = { __typename?: 'Query' } & {
   flightLegs: Array<
     { __typename?: 'FlightLeg' } & Pick<
       FlightLeg,
-      'id' | 'travel' | 'airline'
+      | 'id'
+      | 'travel'
+      | 'airline'
+      | 'originalPrice'
+      | 'discountPrice'
+      | 'financialState'
     > & {
         flight: { __typename?: 'Flight' } & Pick<
           Flight,
@@ -1078,6 +1086,9 @@ export const FlightLegsQueryDocument = gql`
       id
       travel
       airline
+      originalPrice
+      discountPrice
+      financialState
       flight {
         id
         bookingDate
