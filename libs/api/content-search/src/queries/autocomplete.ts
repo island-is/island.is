@@ -17,10 +17,6 @@ export interface AutocompleteTermRequestBody {
         field: string
         size: number
         skip_duplicates: boolean
-        fuzzy: {
-          unicode_aware: boolean
-          fuzziness: string
-        }
       }
     }
   }
@@ -34,12 +30,7 @@ export const autocompleteTermQuery = ({ prefix, size }: AutocompleteTermInput): 
         field: 'termPool',
         size,
         // eslint-disable-next-line @typescript-eslint/camelcase
-        skip_duplicates: true,
-        fuzzy: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          unicode_aware: true,
-          fuzziness: 'auto',
-        },
+        skip_duplicates: true
       },
     },
   },
