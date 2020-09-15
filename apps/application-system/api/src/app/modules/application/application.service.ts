@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { ExternalData, mergeAnswers } from '@island.is/application/template'
+import { ExternalData } from '@island.is/application/template'
 import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
-import { FormType } from '@island.is/application/template'
+import { ApplicationTypes } from '@island.is/application/template'
 
 @Injectable()
 export class ApplicationService {
@@ -27,7 +27,7 @@ export class ApplicationService {
     return this.applicationModel.findAll()
   }
 
-  async findAllByType(typeId: FormType): Promise<Application[]> {
+  async findAllByType(typeId: ApplicationTypes): Promise<Application[]> {
     return this.applicationModel.findAll({
       where: { typeId },
     })
@@ -45,6 +45,21 @@ export class ApplicationService {
       where: { id },
       returning: true,
     })
+
+    return { numberOfAffectedRows, updatedApplication }
+  }
+
+  async updateApplicationState(id: string, state: string) {
+    const [
+      numberOfAffectedRows,
+      [updatedApplication],
+    ] = await this.applicationModel.update(
+      { state },
+      {
+        where: { id },
+        returning: true,
+      },
+    )
 
     return { numberOfAffectedRows, updatedApplication }
   }

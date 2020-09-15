@@ -10,26 +10,43 @@ import {
   Tag,
   TagVariant,
 } from '@island.is/island-ui/core'
-import { Case, CaseState } from '../../types'
+import { Case, CaseState, User } from '../../types'
 import * as api from '../../api'
 import * as styles from './DetentionRequests.treat'
+import { hasRole, UserRole } from '../../utils/authenticate'
 
 export const DetentionRequests: React.FC = () => {
   const [cases, setCases] = useState<Case[]>(null)
+  const [user, setUser] = useState<User>(null)
   const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
     let isMounted = true
 
-    async function getCases() {
-      const response = await api.getCases()
-      if (isMounted) {
-        setCases(response)
-        setIsLoading(false)
+    async function getData() {
+      const casesResponse = await api.getCases()
+      const userResponse = await api.getUser()
+
+      if (isMounted && casesResponse) {
+        setUser({
+          nationalId: userResponse.nationalId,
+          roles: userResponse.roles,
+        })
+
+        if (hasRole(userResponse.roles, UserRole.JUDGE)) {
+          const judgeCases = casesResponse.filter((c) => {
+            return c.state === CaseState.SUBMITTED
+          })
+          setCases(judgeCases)
+        } else {
+          setCases(casesResponse)
+        }
       }
+      setIsLoading(false)
     }
 
-    getCases()
+    getData()
+
     return () => {
       isMounted = false
     }

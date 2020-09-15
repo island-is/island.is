@@ -8,7 +8,6 @@ import {
 } from './discount.validator'
 import { DiscountService } from './discount.service'
 import { NationalRegistryService } from '../nationalRegistry'
-import { AuthGuard } from '../common'
 
 @Controller('api/private')
 export class PrivateDiscountController {

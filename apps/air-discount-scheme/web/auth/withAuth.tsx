@@ -43,16 +43,7 @@ export default (WrappedComponent) =>
       const hasAuthenticated = isAuthenticated(ctx)
       const props = { redirectPath: ctx.pathname, hasAuthenticated }
       if (!hasAuthenticated) {
-        const { res } = ctx
-        if (res) {
-          res.writeHead(302, {
-            Location: AUTH_URL,
-            withCrendentials: true,
-          })
-          res.end()
-        } else {
-          return props
-        }
+        return props
       }
 
       if (WrappedComponent.getInitialProps) {

@@ -4,7 +4,7 @@ import { AxiosResponse } from 'axios'
 import { CacheManager } from 'cache-manager'
 import { of } from 'rxjs'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { environment } from '../../../../../environments'
 import {
   NationalRegistryService,
@@ -111,7 +111,6 @@ describe('NationalRegistryService', () => {
   let nationalRegistryService: NationalRegistryService
   let httpService: HttpService
   let cacheManager: CacheManager
-  let logger: Logger
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({

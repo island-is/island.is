@@ -28,3 +28,28 @@ export type Flight = {
   created: Date
   modified: Date
 }
+
+export type Travel = {
+  from?: string
+  to?: string
+}
+
+export type PeriodInput = {
+  from: Date
+  to: Date
+}
+
+export type RangeInput = {
+  from?: number
+  to?: number
+}
+
+export type FlightLegsInput = {
+  airline?: string
+  flightLeg?: Travel
+  period: PeriodInput
+  state?: string[]
+  age?: RangeInput
+  gender?: 'kk' | 'kvk'
+  postalCode?: number
+}

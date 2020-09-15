@@ -14,8 +14,8 @@ import {
   buildFileUploadField,
 } from '../../lib/fieldBuilders'
 import { Form } from '../../types/Form'
-import { nationalIdRegex } from '../formConstants'
-import { FormType } from '../FormType'
+import { nationalIdRegex } from './constants'
+import { ApplicationTypes } from '../../types/ApplicationTypes'
 
 const ExampleSchema = z.object({
   fileUpload: z
@@ -79,10 +79,10 @@ const ExampleSchema = z.object({
 type ExampleSchemaFormValues = z.infer<typeof ExampleSchema>
 
 export const ExampleForm3: Form = buildForm({
-  id: FormType.EXAMPLE3,
+  id: ApplicationTypes.EXAMPLE3,
   ownerId: 'DOL',
   name: "Driver's license",
-  schema: ExampleSchema,
+  // schema: ExampleSchema,
   children: [
     buildSection({
       id: 'student',

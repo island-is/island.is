@@ -2,7 +2,8 @@ import {
   FormItemTypes,
   FormLeaf,
   FormValue,
-  getFormByTypeId,
+  getApplicationStateInformation,
+  getApplicationTemplateByTypeId,
   getFormLeaves,
   getSectionsInForm,
   mergeAnswers,
@@ -19,8 +20,18 @@ export function initializeReducer(
   state: ApplicationUIState,
 ): ApplicationUIState {
   const { application } = state
-  const { typeId, answers } = application
-  const form = state.form ? state.form : getFormByTypeId(typeId)
+  const { answers, typeId } = application
+  const template = getApplicationTemplateByTypeId(typeId)
+  let form
+  if (state.form) {
+    form = state.form
+  } else {
+    const state = getApplicationStateInformation(application)
+    if (state?.roles?.length) {
+      // TODO later map this to current role
+      form = state.roles[0].form
+    }
+  }
   const formLeaves: FormLeaf[] = getFormLeaves(form) // todo add conditions here to set isVisible: true/false
   const sections = getSectionsInForm(form)
   const screens = convertLeavesToScreens(formLeaves, answers)
@@ -29,6 +40,7 @@ export function initializeReducer(
   return moveToScreen(
     {
       ...state,
+      dataSchema: state.dataSchema || template.dataSchema,
       form,
       formLeaves,
       screens,
