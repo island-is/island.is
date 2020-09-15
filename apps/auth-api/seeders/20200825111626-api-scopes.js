@@ -3,7 +3,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
 
-    var scopes = [
+    const scopes = [
       {
         id: 'aa3978a9-027b-48c2-81d5-147262bd3032',//uuidv4(),
         name: 'swagger_api.read',
@@ -33,7 +33,7 @@ module.exports = {
       }
     ]
 
-    var userClaims = [];
+    const userClaims = [];
 
     return queryInterface.bulkInsert('api_scope', scopes, {})
 
@@ -44,8 +44,8 @@ module.exports = {
 
   down: (queryInterface, Sequelize) => {
 
-    var userClaims =  queryInterface.bulkDelete('api_scope_user_claim', null, {});
-    var apiScopes =  queryInterface.bulkDelete('api_scope', null, {});
+    const userClaims =  queryInterface.bulkDelete('api_scope_user_claim', null, {});
+    const apiScopes =  queryInterface.bulkDelete('api_scope', null, {});
 
     return Promise.all([apiScopes, userClaims])
   }

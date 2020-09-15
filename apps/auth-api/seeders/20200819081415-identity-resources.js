@@ -3,7 +3,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
 
-    var openId = {
+    const openId = {
       id: 'a57a3c0d-2645-44fd-950e-f3a7fb23ee8e',//uuidv4(),
       name: 'openid',
       display_name: 'Your user identifier',
@@ -13,13 +13,13 @@ module.exports = {
       show_in_discovery_document: true
     };
 
-    var openIdClaims = [
+    const openIdClaims = [
       {identity_resource_id: openId.id, claim_name: 'sub'},
       {identity_resource_id: openId.id, claim_name: 'nat'},
       {identity_resource_id: openId.id, claim_name: 'natreg'}
     ];
 
-    var profile = {
+    const profile = {
       id: 'fde089c6-142c-471e-a3f7-c4f76d0360d1',//uuidv4(),
       name: 'profile',
       display_name: 'User profile',
@@ -30,7 +30,7 @@ module.exports = {
       show_in_discovery_document: true
     };
 
-    var profileClaims = [
+    const profileClaims = [
       {identity_resource_id: profile.id, claim_name: 'name'},
       {identity_resource_id: profile.id, claim_name: 'family_name'},
       {identity_resource_id: profile.id, claim_name: 'given_name'},
@@ -47,7 +47,7 @@ module.exports = {
       {identity_resource_id: profile.id, claim_name: 'updated_at'}
     ];
 
-    var email = {
+    const email = {
       id: 'ac5300ca-bce5-49db-8d98-17f73c233b8c',//uuidv4(),
       name: 'email',
       display_name: 'Your email address',
@@ -57,22 +57,22 @@ module.exports = {
       show_in_discovery_document: true
     };
 
-    var emailClaims = [
+    const emailClaims = [
       {identity_resource_id: email.id, claim_name: 'email'},
       {identity_resource_id: email.id, claim_name: 'email_verified'},
     ];
 
-    var identityResources = queryInterface.bulkInsert('identity_resource', [openId, profile, email], {});
+    const identityResources = queryInterface.bulkInsert('identity_resource', [openId, profile, email], {});
 
-    var userClaims = queryInterface.bulkInsert('identity_resource_user_claim', openIdClaims.concat(profileClaims, emailClaims), {});
+    const userClaims = queryInterface.bulkInsert('identity_resource_user_claim', openIdClaims.concat(profileClaims, emailClaims), {});
 
     return Promise.all([identityResources, userClaims])
   },
 
   down: (queryInterface, Sequelize) => {
 
-    var userClaims =  queryInterface.bulkDelete('identity_resource_user_claim', null, {});
-    var identityResources =  queryInterface.bulkDelete('identity_resource', null, {});
+    const userClaims =  queryInterface.bulkDelete('identity_resource_user_claim', null, {});
+    const identityResources =  queryInterface.bulkDelete('identity_resource', null, {});
 
     return Promise.all([identityResources, userClaims])
   }

@@ -3,7 +3,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
 
-    var apiResources = [
+    const apiResources = [
       {
         id: '241d6525-8544-4661-ab0b-541c00ae107f',//uuidv4(),
         name: 'swagger_api',
@@ -20,16 +20,16 @@ module.exports = {
       },
     ]
 
-    var userClaims = [
+    const userClaims = [
       {api_resource_id: apiResources[1].id, claim_name: 'natreg'},
     ];
 
-    var scopes = [
+    const scopes = [
       {api_resource_id: apiResources[0].id, scope_name: 'swagger_api.read'},
       {api_resource_id: apiResources[1].id, scope_name: 'postman_resource.scope'},
     ]
 
-    var secrets = [
+    const secrets = [
       {api_resource_id: apiResources[1].id, value: '8I04CDGgyV5bddUZfz0ydCTBRuRTmn7frlxVhJy1krc=', type: 'SharedSecret'},
     ]
 
@@ -41,10 +41,10 @@ module.exports = {
 
   down: (queryInterface, Sequelize) => {
 
-    var secrets =  queryInterface.bulkDelete('api_resource_secret', null, {});
-    var scopes =  queryInterface.bulkDelete('api_resource_scope', null, {});
-    var userClaims =  queryInterface.bulkDelete('api_resource_user_claim', null, {});
-    var apiResources =  queryInterface.bulkDelete('api_resource', null, {});
+    const secrets =  queryInterface.bulkDelete('api_resource_secret', null, {});
+    const scopes =  queryInterface.bulkDelete('api_resource_scope', null, {});
+    const userClaims =  queryInterface.bulkDelete('api_resource_user_claim', null, {});
+    const apiResources =  queryInterface.bulkDelete('api_resource', null, {});
 
     return Promise.all([apiResources, userClaims, scopes, secrets])
   }

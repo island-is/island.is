@@ -1,10 +1,10 @@
 'use strict';
 
-var SHA256 = require("crypto-js/sha256");
+const SHA256 = require("crypto-js/sha256");
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    var clients = [
+    const clients = [
       {
         client_id: 'dummy',
         require_client_secret: false,
@@ -137,7 +137,7 @@ module.exports = {
       }
     ];
 
-    var scopes = [
+    const scopes = [
       {
         client_id: 'postman',
         scope_name: 'openid'
@@ -176,12 +176,12 @@ module.exports = {
       }
     ];
 
-    var cors = [ {
+    const cors = [ {
       client_id: 'dummy',
       origin: 'http://127.0.0.1'
     }];
 
-    var clientIdbRestrictions = [
+    const clientIdbRestrictions = [
       {
         name: "islykill",
         client_id: "dummy",
@@ -192,7 +192,7 @@ module.exports = {
       }
     ];
 
-    var redirectUri = [
+    const redirectUri = [
       {
         client_id: 'postman',
         redirect_uri: 'https://postman'
@@ -211,7 +211,7 @@ module.exports = {
       }
     ];
 
-    var secrets = [{
+    const secrets = [{
       client_id: 'island-is-client-cred-1',
       value: SHA256('secret').toString(),
       description: "secret for island-is-client-cred-1",
@@ -220,12 +220,12 @@ module.exports = {
     }
     ];
 
-    var postRedirects = [{
+    const postRedirects = [{
       client_id: 'dummy',
       redirect_uri: 'localhost:8080'
     }];
 
-    var clientGrantTypes = [
+    const clientGrantTypes = [
     {
       client_id: 'postman',
       grant_type: 'authorization_code',
@@ -259,14 +259,14 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    var redirectUris = queryInterface.bulkDelete('client_redirect_uri', null, {})
-    var idpRestrictions = queryInterface.bulkDelete('client_idp_restrictions', null, {})
-    var cors = queryInterface.bulkDelete('client_allowed_cors_origin', null, {})
-    var scopes = queryInterface.bulkDelete('client_allowed_scope', null, {})
-    var secrets = queryInterface.bulkDelete('client_secret', null, {})
-    var postLogoutUris = queryInterface.bulkDelete('client_post_logout_redirect_uri', null, {})
-    var clients = queryInterface.bulkDelete('client', null, {})
-    var grantTypes = queryInterface.bulkDelete('client_grant_type', null, {})
+    const redirectUris = queryInterface.bulkDelete('client_redirect_uri', null, {})
+    const idpRestrictions = queryInterface.bulkDelete('client_idp_restrictions', null, {})
+    const cors = queryInterface.bulkDelete('client_allowed_cors_origin', null, {})
+    const scopes = queryInterface.bulkDelete('client_allowed_scope', null, {})
+    const secrets = queryInterface.bulkDelete('client_secret', null, {})
+    const postLogoutUris = queryInterface.bulkDelete('client_post_logout_redirect_uri', null, {})
+    const clients = queryInterface.bulkDelete('client', null, {})
+    const grantTypes = queryInterface.bulkDelete('client_grant_type', null, {})
 
     return new Promise((resolve, reject) => {
       Promise.all([cors, scopes, idpRestrictions, redirectUris, secrets, postLogoutUris, grantTypes]).then(result => {

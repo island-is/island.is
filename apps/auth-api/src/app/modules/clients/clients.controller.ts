@@ -16,8 +16,8 @@ import { AuthGuard } from '@nestjs/passport'
 import { ClientDTO } from './dto/client-dto'
 import { ClientUpdateDTO } from './dto/client-update-dto'
 
-// @ApiOAuth2(['@identityserver.api/read'])
-// @UseGuards(AuthGuard('jwt'))
+@ApiOAuth2(['@identityserver.api/read'])
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('clients')
 @Controller('clients')
 export class ClientsController {

@@ -3,7 +3,7 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
 
-    var grantTypes = [
+    const grantTypes = [
       {
         id: 'aa3978a9-027b-48c2-81d5-147262bd2032',//uuidv4(),
         name: 'authorization_code',
@@ -25,7 +25,7 @@ module.exports = {
 
   down: (queryInterface, Sequelize) => {
 
-    var grantTypes =  queryInterface.bulkDelete('grant_type', null, {});
+    const grantTypes =  queryInterface.bulkDelete('grant_type', null, {});
 
     return Promise.all([grantTypes])
   }
