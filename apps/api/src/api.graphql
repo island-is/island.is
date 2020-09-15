@@ -452,12 +452,15 @@ type ContentItem {
   slug: String
 }
 
+<<<<<<< HEAD
 type ContentCategory {
   title: String
   slug: String
   description: String
 }
 
+=======
+>>>>>>> Made web get content from elastic
 type WebSearchAutocomplete {
   total: Int!
   completions: [String!]!
@@ -537,10 +540,17 @@ type Query {
   getMenu(input: GetMenuInput!): Menu
   getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
   getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
+<<<<<<< HEAD
   searchResults(query: SearcherInput!): SearchResult!
   singleItem(input: ItemInput!): ContentItem
   categories(input: CategoriesInput!): [ContentCategory!]!
   articlesInCategory(category: ArticlesInCategoryInput!): [ContentItem!]!
+=======
+  getArticleCategories(input: GetArticleCategoriesInput!): [ArticleCategory!]!
+  getArticles(input: GetArticlesInput!): [Article!]!
+  searchResults(query: SearcherInput!): SearchResult!
+  singleItem(input: ItemInput!): ContentItem
+>>>>>>> Made web get content from elastic
   webSearchAutocomplete(input: WebSearchAutocompleteInput!): WebSearchAutocomplete!
   getApplication(input: GetApplicationInput!): Application
   getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
@@ -660,6 +670,20 @@ input GetLifeEventsInput {
   lang: String!
 }
 
+<<<<<<< HEAD
+=======
+input GetArticleCategoriesInput {
+  lang: String!
+  size: Int
+}
+
+input GetArticlesInput {
+  lang: String!
+  category: String!
+  size: Int
+}
+
+>>>>>>> Made web get content from elastic
 input SearcherInput {
   queryString: String!
   types: [String!]
@@ -685,6 +709,7 @@ enum ItemType {
   category
 }
 
+<<<<<<< HEAD
 input CategoriesInput {
   language: ContentLanguage
 }
@@ -694,6 +719,8 @@ input ArticlesInCategoryInput {
   language: ContentLanguage
 }
 
+=======
+>>>>>>> Made web get content from elastic
 input WebSearchAutocompleteInput {
   singleTerm: String!
   language: ContentLanguage = is

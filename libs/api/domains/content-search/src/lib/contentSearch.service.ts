@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
-import { RequestBodySearch } from 'elastic-builder'
-import { ContentCategory } from './models/contentCategory.model'
 import { ContentItem } from './models/contentItem.model'
 import { SearchResult } from './models/searchResult.model'
 import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
 import { ContentLanguage } from './enums/contentLanguage.enum'
 import { SearcherService } from '@island.is/api/schema'
 import { SearcherInput } from './dto/searcher.input'
-import { CategoriesInput } from './dto/categories.input'
 
 @Injectable()
 export class ContentSearchService implements SearcherService {
@@ -42,31 +39,6 @@ export class ContentSearchService implements SearcherService {
       // we map data when it goes into the index we can return it without mapping it here
       items: body.hits.hits.map((item) => JSON.parse(item._source.response)),
     }
-  }
-
-  // TODO: Move this to CMS domain, index categories as own type?
-  async fetchCategories(query: CategoriesInput): Promise<ContentCategory[]> {
-    // todo do properly not this awesome hack
-    const queryTmp = new RequestBodySearch().size(1000)
-    const { body } = await this.elasticService.deprecatedFindByQuery(
-      this.getIndex(query.language),
-      queryTmp,
-    )
-    const categories = {}
-    body?.hits?.hits.forEach(({ _source }) => {
-      if (!_source.category_slug) {
-        return
-      }
-      categories[_source.category_slug] = {
-        title: _source.category,
-        slug: _source.category_slug,
-        description: _source.category_description,
-      }
-    })
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    return Object.values(categories)
   }
 
   async fetchSingle(input): Promise<ContentItem> {

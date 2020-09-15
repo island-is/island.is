@@ -357,13 +357,6 @@ export type ContentItem = {
   slug?: Maybe<Scalars['String']>
 }
 
-export type ContentCategory = {
-  __typename?: 'ContentCategory'
-  title?: Maybe<Scalars['String']>
-  slug?: Maybe<Scalars['String']>
-  description?: Maybe<Scalars['String']>
-}
-
 export type WebSearchAutocomplete = {
   __typename?: 'WebSearchAutocomplete'
   total: Scalars['Int']
@@ -604,8 +597,6 @@ export type Query = {
   helloWorld: HelloWorld
   searchResults: SearchResult
   singleItem?: Maybe<ContentItem>
-  categories: Array<ContentCategory>
-  articlesInCategory: Array<ContentItem>
   webSearchAutocomplete: WebSearchAutocomplete
   getArticle?: Maybe<Article>
   getNews?: Maybe<News>
@@ -628,6 +619,8 @@ export type Query = {
   getMenu?: Maybe<Menu>
   getLifeEventPage?: Maybe<LifeEventPage>
   getLifeEvents: Array<LifeEventPage>
+  getArticleCategories: Array<ArticleCategory>
+  getArticles: Array<Article>
   getApplication?: Maybe<Application>
   getApplicationsByType?: Maybe<Array<Application>>
   getDocument?: Maybe<DocumentDetails>
@@ -645,14 +638,6 @@ export type QuerySearchResultsArgs = {
 
 export type QuerySingleItemArgs = {
   input: ItemInput
-}
-
-export type QueryCategoriesArgs = {
-  input: CategoriesInput
-}
-
-export type QueryArticlesInCategoryArgs = {
-  category: ArticlesInCategoryInput
 }
 
 export type QueryWebSearchAutocompleteArgs = {
@@ -743,6 +728,14 @@ export type QueryGetLifeEventsArgs = {
   input: GetLifeEventsInput
 }
 
+export type QueryGetArticleCategoriesArgs = {
+  input: GetArticleCategoriesInput
+}
+
+export type QueryGetArticlesArgs = {
+  input: GetArticlesInput
+}
+
 export type QueryGetApplicationArgs = {
   input: GetApplicationInput
 }
@@ -786,15 +779,6 @@ export type ItemInput = {
 export enum ItemType {
   Article = 'article',
   Category = 'category',
-}
-
-export type CategoriesInput = {
-  language?: Maybe<ContentLanguage>
-}
-
-export type ArticlesInCategoryInput = {
-  slug?: Maybe<Scalars['String']>
-  language?: Maybe<ContentLanguage>
 }
 
 export type WebSearchAutocompleteInput = {
@@ -908,6 +892,17 @@ export type GetLifeEventPageInput = {
 
 export type GetLifeEventsInput = {
   lang: Scalars['String']
+}
+
+export type GetArticleCategoriesInput = {
+  lang: Scalars['String']
+  size?: Maybe<Scalars['Int']>
+}
+
+export type GetArticlesInput = {
+  lang: Scalars['String']
+  category: Scalars['String']
+  size?: Maybe<Scalars['Int']>
 }
 
 export type GetApplicationInput = {
@@ -1187,36 +1182,39 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type GetCategoriesQueryVariables = Exact<{
-  input: CategoriesInput
+export type GetArticleCategoriesQueryVariables = Exact<{
+  input: GetArticleCategoriesInput
 }>
 
-export type GetCategoriesQuery = { __typename?: 'Query' } & {
-  categories: Array<
-    { __typename?: 'ContentCategory' } & Pick<
-      ContentCategory,
-      'title' | 'slug' | 'description'
+export type GetArticleCategoriesQuery = { __typename?: 'Query' } & {
+  getArticleCategories: Array<
+    { __typename?: 'ArticleCategory' } & Pick<
+      ArticleCategory,
+      'title' | 'description' | 'slug'
     >
   >
 }
 
-export type GetArticlesInCategoryQueryVariables = Exact<{
-  category: ArticlesInCategoryInput
+export type GetArticlesQueryVariables = Exact<{
+  input: GetArticlesInput
 }>
 
-export type GetArticlesInCategoryQuery = { __typename?: 'Query' } & {
-  articlesInCategory: Array<
-    { __typename?: 'ContentItem' } & Pick<
-      ContentItem,
-      | 'content'
-      | 'category'
-      | 'slug'
-      | 'title'
-      | 'group'
-      | 'groupDescription'
-      | 'groupSlug'
-      | 'subgroup'
-    >
+export type GetArticlesQuery = { __typename?: 'Query' } & {
+  getArticles: Array<
+    { __typename?: 'Article' } & Pick<Article, 'intro' | 'slug' | 'title'> & {
+        category?: Maybe<
+          { __typename?: 'ArticleCategory' } & Pick<ArticleCategory, 'title'>
+        >
+        group?: Maybe<
+          { __typename?: 'ArticleGroup' } & Pick<
+            ArticleGroup,
+            'slug' | 'title' | 'description'
+          >
+        >
+        subgroup?: Maybe<
+          { __typename?: 'ArticleSubgroup' } & Pick<ArticleSubgroup, 'title'>
+        >
+      }
   >
 }
 

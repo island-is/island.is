@@ -11,8 +11,8 @@ import {
   QueryGetFrontpageSliderListArgs,
   ContentLanguage,
   GetFrontpageSliderListQuery,
-  QueryCategoriesArgs,
-  GetCategoriesQuery,
+  QueryGetArticleCategoriesArgs,
+  GetArticleCategoriesQuery,
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
   GetNewsListQuery,
@@ -35,7 +35,7 @@ import { Sleeve } from '@island.is/island-ui/core'
 import { ContentBlock } from '@island.is/island-ui/core'
 
 interface HomeProps {
-  categories: GetCategoriesQuery['categories']
+  categories: GetArticleCategoriesQuery['getArticleCategories']
   frontpageSlides: GetFrontpageSliderListQuery['getFrontpageSliderList']['items']
   namespace: GetNamespaceQuery['getNamespace']
   news: GetNewsListQuery['getNewsList']['news']
@@ -60,8 +60,8 @@ const Home: Screen<HomeProps> = ({
   const cards = categories.map(({ title, slug, description }) => ({
     title,
     description,
-    href: `${makePath('category')}/[slug]`,
-    as: makePath('category', slug),
+    href: `${makePath('ArticleCategory')}/[slug]`,
+    as: makePath('ArticleCategory', slug),
   }))
 
   const searchContent = (
@@ -137,7 +137,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       },
     },
     {
-      data: { categories },
+      data: { getArticleCategories },
     },
     {
       data: {
@@ -160,11 +160,14 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<GetCategoriesQuery, QueryCategoriesArgs>({
+    apolloClient.query<
+      GetArticleCategoriesQuery,
+      QueryGetArticleCategoriesArgs
+    >({
       query: GET_CATEGORIES_QUERY,
       variables: {
         input: {
-          language: locale as ContentLanguage,
+          lang: locale as ContentLanguage,
         },
       },
     }),
@@ -215,7 +218,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     news,
     lifeEvents: getLifeEvents,
     frontpageSlides: items,
-    categories,
+    categories: getArticleCategories,
     namespace,
     showSearchInHeader: false,
   }
