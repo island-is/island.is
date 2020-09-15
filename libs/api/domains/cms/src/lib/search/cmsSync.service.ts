@@ -5,6 +5,7 @@ import { ArticleSyncService } from './importers/article.service'
 import { SyncOptions, SyncResponse } from '@island.is/elastic-indexing'
 import { ContentfulService } from './contentful.service'
 import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
+import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import _ from 'lodash'
 
 export interface PostSyncOptions {
@@ -16,6 +17,7 @@ export interface PostSyncOptions {
 export class CmsSyncService {
   private contentSyncProviders
   constructor(
+    private readonly articleCategorySyncService: ArticleCategorySyncService,
     private readonly articleSyncService: ArticleSyncService,
     private readonly lifeEventsPageSyncService: LifeEventsPageSyncService,
     private readonly contentfulService: ContentfulService,
@@ -24,6 +26,7 @@ export class CmsSyncService {
     this.contentSyncProviders = [
       this.articleSyncService,
       this.lifeEventsPageSyncService,
+      this.articleCategorySyncService,
     ]
   }
 

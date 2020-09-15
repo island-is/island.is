@@ -58,6 +58,10 @@ export class ArticleSyncService {
                 value: entry.fields?.category?.fields?.title,
                 type: 'category',
               },
+              {
+                key: entry.fields?.slug,
+                type: 'slug',
+              },
             ],
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),

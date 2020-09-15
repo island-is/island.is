@@ -13,7 +13,7 @@ export interface SyncResponse<PostSyncOptionsType = any> {
 
 type tag = {
   key: string
-  value: string
+  value?: string
   type: string
 }
 export interface MappedData {
