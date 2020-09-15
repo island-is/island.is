@@ -135,9 +135,7 @@ export const checkAWSAccess = async (): Promise<boolean> => {
     })
 
   logger.info('Validating esDomain agains aws domain list', { domains })
-  return !!domains.find(
-    (domain) => domain.DomainName === environment.esDomain,
-  )
+  return !!domains.find((domain) => domain.DomainName === environment.esDomain)
 }
 
 const createS3Key = (type: string, prefix = ''): string => {

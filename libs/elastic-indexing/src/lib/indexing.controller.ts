@@ -5,8 +5,7 @@ import { SearchIndexes } from '@island.is/api/content-search'
 
 @Controller('')
 export class IndexingController {
-  constructor(
-    private readonly indexingService: IndexingService) { }
+  constructor(private readonly indexingService: IndexingService) {}
 
   @Get('/')
   async hello() {
@@ -23,7 +22,7 @@ export class IndexingController {
   @Get('sync')
   async sync(@Query('locale') locale: keyof typeof SearchIndexes = 'is') {
     logger.info('Doing sync')
-    await this.indexingService.doSync({fullSync: false, locale})
+    await this.indexingService.doSync({ fullSync: false, locale })
     return {
       acknowledge: true,
     }
@@ -32,7 +31,7 @@ export class IndexingController {
   @Get('re-sync')
   async resync(@Query('locale') locale: keyof typeof SearchIndexes = 'is') {
     logger.info('Doing re-sync')
-    await this.indexingService.doSync({fullSync: true, locale})
+    await this.indexingService.doSync({ fullSync: true, locale })
     return {
       acknowledge: true,
     }

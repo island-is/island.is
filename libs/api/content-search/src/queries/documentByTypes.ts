@@ -11,20 +11,24 @@ export interface DocumentByTypesRequestBody {
     terms: {
       type: string[]
     }
-  },
-  sort: sortableFields[],
+  }
+  sort: sortableFields[]
   size: Number
 }
 
-export const documentByTypeQuery = ({ types, sort = {}, size = 10 }: DocumentByTypesInput): DocumentByTypesRequestBody => {
+export const documentByTypeQuery = ({
+  types,
+  sort = {},
+  size = 10,
+}: DocumentByTypesInput): DocumentByTypesRequestBody => {
   const query = {
     query: {
       terms: {
-        type: types
-      }
+        type: types,
+      },
     },
-    sort: Object.entries(sort).map(([key, value]) => ({[key]: value})),// elastic wants sorts as array og object with single keys
-    size
+    sort: Object.entries(sort).map(([key, value]) => ({ [key]: value })), // elastic wants sorts as array og object with single keys
+    size,
   }
 
   return query

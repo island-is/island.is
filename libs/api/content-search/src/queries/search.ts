@@ -10,31 +10,33 @@ interface SearchInput {
 export interface SearchRequestBody {
   query: {
     bool: {
-      should: any[], // Type this?
+      should: any[] // Type this?
       must: any[] // Type this?
     }
-  },
+  }
   size: number
   from: number
 }
 
-export const searchQuery = ({ queryString, size = 10, page = 1, types }: SearchInput): SearchRequestBody => {
+export const searchQuery = ({
+  queryString,
+  size = 10,
+  page = 1,
+  types,
+}: SearchInput): SearchRequestBody => {
   const should = []
   const must = []
   let minimum_should_match = 1
   should.push({
     simple_query_string: {
       query: `*${queryString}*`,
-      fields: [
-        'title.stemmed^10',
-        'content.stemmed^2'
-      ],
-      analyze_wildcard: true
-    }
+      fields: ['title.stemmed^10', 'content.stemmed^2'],
+      analyze_wildcard: true,
+    },
   })
 
   // if we have types restrict the query to those types
-  if(types?.length) {
+  if (types?.length) {
     minimum_should_match++ // now we have to match at least one type and the search query
     types.forEach((type) => {
       const [value, boost = 1] = type.split('^')
@@ -42,9 +44,9 @@ export const searchQuery = ({ queryString, size = 10, page = 1, types }: SearchI
         term: {
           type: {
             value,
-            boost
-          }
-        }
+            boost,
+          },
+        },
       })
     })
   }
@@ -55,10 +57,10 @@ export const searchQuery = ({ queryString, size = 10, page = 1, types }: SearchI
         should,
         must,
         minimum_should_match,
-      }
+      },
     },
     size,
-    from: (page - 1) * size // if we have a page number add it as offset for pagination
+    from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }
 
   return query

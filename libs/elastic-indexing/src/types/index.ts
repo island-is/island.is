@@ -1,4 +1,4 @@
-import { SearchIndexes } from '@island.is/api/content-search';
+import { SearchIndexes } from '@island.is/api/content-search'
 
 export interface SyncOptions {
   locale: keyof typeof SearchIndexes
@@ -7,7 +7,7 @@ export interface SyncOptions {
 
 export interface SyncResponse<PostSyncOptionsType = any> {
   add: MappedData[]
-  remove: string[],
+  remove: string[]
   postSyncOptions: PostSyncOptionsType
 }
 

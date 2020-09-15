@@ -9,4 +9,4 @@ import { IndexingService } from './indexing.service'
   controllers: [IndexingController],
   providers: [IndexingService, ElasticService],
 })
-export class IndexingModule { }
+export class IndexingModule {}

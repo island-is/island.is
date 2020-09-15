@@ -339,7 +339,7 @@ const Results: FC<{
               {(search.results.items as Article[])
                 .slice(0, 5)
                 .map(({ id, title, slug }) => (
-                  <div key={id} {...getItemProps({item: ''})}>
+                  <div key={id} {...getItemProps({ item: '' })}>
                     <Typography links variant="h5" color="blue400">
                       <Link href={makePath('article', slug)}>
                         <a>{title}</a>

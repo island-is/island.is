@@ -18,10 +18,7 @@ interface PromiseStatus {
 
 class App {
   async run() {
-    logger.info(
-      'Starting migration of dictionaries and ES config',
-      environment,
-    )
+    logger.info('Starting migration of dictionaries and ES config', environment)
 
     const hasAwsAccess = await aws.checkAWSAccess()
 

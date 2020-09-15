@@ -2,7 +2,10 @@ import { MappedData } from '@island.is/elastic-indexing'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { IArticleCategory } from '../../generated/contentfulTypes'
-import { mapArticleCategory, ArticleCategory } from '../../models/articleCategory.model'
+import {
+  mapArticleCategory,
+  ArticleCategory,
+} from '../../models/articleCategory.model'
 import { createTerms } from './utils'
 
 @Injectable()
@@ -10,7 +13,9 @@ export class ArticleCategorySyncService {
   processSyncData(items) {
     logger.info('Processing sync data for article category')
 
-    return items.filter((item) => item.sys.contentType.sys.id === 'articleCategory')
+    return items.filter(
+      (item) => item.sys.contentType.sys.id === 'articleCategory',
+    )
   }
 
   doMapping(entries: IArticleCategory[]): MappedData[] {
@@ -28,10 +33,7 @@ export class ArticleCategorySyncService {
             title: mapped.title,
             content: mapped.description,
             type: 'webArticleCategory',
-            termPool: createTerms([
-              mapped.title,
-              mapped.description
-            ]),
+            termPool: createTerms([mapped.title, mapped.description]),
             response: JSON.stringify(mapped),
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),

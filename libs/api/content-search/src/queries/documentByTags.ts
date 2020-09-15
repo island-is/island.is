@@ -6,33 +6,38 @@ export interface DocumentByTagInput {
   size?: number
 }
 
-type tagFields = {
-    term: {
-      'tags.key': string
-    }
-  }
+type tagFields =
   | {
-    term: {
-      'tags.type': string
+      term: {
+        'tags.key': string
+      }
     }
-  }
+  | {
+      term: {
+        'tags.type': string
+      }
+    }
 
 export interface DocumentByTagRequestBody {
   query: {
     nested: {
-      path: string,
+      path: string
       query: {
         bool: {
           must: tagFields[]
         }
       }
     }
-  },
-  sort: sortableFields[],
+  }
+  sort: sortableFields[]
   size: Number
 }
 
-export const documentByTagQuery = ({ tag, sort = {}, size = 10 }: DocumentByTagInput): DocumentByTagRequestBody => {
+export const documentByTagQuery = ({
+  tag,
+  sort = {},
+  size = 10,
+}: DocumentByTagInput): DocumentByTagRequestBody => {
   const query = {
     query: {
       nested: {
@@ -42,21 +47,21 @@ export const documentByTagQuery = ({ tag, sort = {}, size = 10 }: DocumentByTagI
             must: [
               {
                 term: {
-                  'tags.key': tag.key
-                }
+                  'tags.key': tag.key,
+                },
               },
               {
                 term: {
-                  'tags.type': tag.type
-                }
-              }
-            ]
-          }
-        }
-      }
+                  'tags.type': tag.type,
+                },
+              },
+            ],
+          },
+        },
+      },
     },
     size,
-    sort: Object.entries(sort).map(([key, value]) => ({[key]: value})),// elastic wants sorts as array og object with single keys
+    sort: Object.entries(sort).map(([key, value]) => ({ [key]: value })), // elastic wants sorts as array og object with single keys
   }
-  return query 
+  return query
 }

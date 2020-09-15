@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common'
 import { IndexingModule } from 'libs/elastic-indexing/src'
 
 @Module({
-  imports: [IndexingModule]
+  imports: [IndexingModule],
 })
-
-export class AppModule { }
+export class AppModule {}

@@ -1,18 +1,14 @@
 {
   "order": 0,
   "version": 2,
-  "index_patterns": [
-    "island-en-v*"
-  ],
+  "index_patterns": ["island-en-v*"],
   "settings": {
     "analysis": {
       "analyzer": {
         "termEnglish": {
           "type": "custom",
           "tokenizer": "standard",
-          "filter": [
-            "lowercase"
-          ]
+          "filter": ["lowercase"]
         }
       }
     }

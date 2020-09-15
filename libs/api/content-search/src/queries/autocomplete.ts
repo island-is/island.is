@@ -22,7 +22,10 @@ export interface AutocompleteTermRequestBody {
   }
 }
 
-export const autocompleteTermQuery = ({ prefix, size }: AutocompleteTermInput): AutocompleteTermRequestBody => ({
+export const autocompleteTermQuery = ({
+  prefix,
+  size,
+}: AutocompleteTermInput): AutocompleteTermRequestBody => ({
   suggest: {
     searchSuggester: {
       prefix,
@@ -30,7 +33,7 @@ export const autocompleteTermQuery = ({ prefix, size }: AutocompleteTermInput): 
         field: 'termPool',
         size,
         // eslint-disable-next-line @typescript-eslint/camelcase
-        skip_duplicates: true
+        skip_duplicates: true,
       },
     },
   },

@@ -1,3 +1,3 @@
 export const environment = {
-  domains: ['cms']
+  domains: ['cms'],
 }
