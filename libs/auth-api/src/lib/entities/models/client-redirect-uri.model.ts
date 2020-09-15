@@ -1,10 +1,8 @@
 import {
     Column,
-    CreatedAt,
     DataType,
     Model,
     Table,
-    UpdatedAt,
     ForeignKey,
     PrimaryKey,
   } from 'sequelize-typescript'

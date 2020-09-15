@@ -6,7 +6,6 @@ import {
     Table,
     UpdatedAt,
     ForeignKey,
-    BelongsTo,
     PrimaryKey,
   } from 'sequelize-typescript'
   import { ApiProperty } from '@nestjs/swagger'
