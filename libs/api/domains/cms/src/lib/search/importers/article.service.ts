@@ -1,17 +1,22 @@
 import { MappedData } from '@island.is/elastic-indexing'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
+
 import { IArticle } from '../../generated/contentfulTypes'
 import { mapArticle, Article } from '../../models/article.model'
-import { createTerms } from './utils'
+
+import { createTerms, getCircularReplacer } from './utils'
 
 @Injectable()
 export class ArticleSyncService {
   processSyncData(items) {
-    logger.info('Processing sync data for articles')
+    const articles = items.filter(
+      (item) => item.sys.contentType.sys.id === 'article',
+    )
 
-    // return all articles
-    return items.filter((item) => item.sys.contentType.sys.id === 'article')
+    logger.info('Processing sync data for articles', { count: articles.length })
+
+    return articles
   }
 
   doMapping(entries: IArticle[]): MappedData[] {
@@ -26,49 +31,50 @@ export class ArticleSyncService {
             ?.fields
             ? (entry.fields.relatedArticles.map(
                 ({
+                  sys,
                   fields: { relatedArticles, ...prunedRelatedArticlesFields },
                 }) => ({
-                  sys: { id: entry.sys.id },
+                  sys,
                   fields: prunedRelatedArticlesFields,
                 }),
-              ) as any)
+              ) as IArticle[])
             : []
 
           mapped = mapArticle(entry)
-
-          return {
-            _id: mapped.id,
-            title: mapped.title,
-            content: mapped.intro,
-            type: 'webArticle',
-            termPool: createTerms([
-              mapped.title,
-              mapped.category?.title,
-              mapped.group?.title,
-            ]),
-            response: JSON.stringify(mapped),
-            tags: [
-              {
-                key: entry.fields?.group?.fields?.slug,
-                value: entry.fields?.group?.fields?.title,
-                type: 'group',
-              },
-              {
-                key: entry.fields?.category?.fields?.slug,
-                value: entry.fields?.category?.fields?.title,
-                type: 'category',
-              },
-              {
-                key: entry.fields?.slug,
-                type: 'slug',
-              },
-            ],
-            dateCreated: entry.sys.createdAt,
-            dateUpdated: new Date().getTime().toString(),
-          }
         } catch (error) {
           logger.error('Failed to import article', error)
           return false
+        }
+
+        return {
+          _id: mapped.id,
+          title: mapped.title,
+          content: mapped.intro,
+          type: 'webArticle',
+          termPool: createTerms([
+            mapped.title,
+            mapped.category?.title,
+            mapped.group?.title,
+          ]),
+          response: JSON.stringify(mapped, getCircularReplacer()),
+          tags: [
+            {
+              key: entry.fields?.group?.fields?.slug,
+              value: entry.fields?.group?.fields?.title,
+              type: 'group',
+            },
+            {
+              key: entry.fields?.category?.fields?.slug,
+              value: entry.fields?.category?.fields?.title,
+              type: 'category',
+            },
+            {
+              key: entry.fields?.slug,
+              type: 'slug',
+            },
+          ],
+          dateCreated: entry.sys.createdAt,
+          dateUpdated: new Date().getTime().toString(),
         }
       })
       .filter((value): value is MappedData => Boolean(value))
