@@ -42,15 +42,8 @@ testem.log
 Thumbs.db
 .cache
 
-.env
-
 # Used to store local secrets
 .env.secret
 .env
 helm/**/*.tgz
 /cache
-
-# Visual Studio local files
-/.vs/island.is/config/applicationhost.config
-*.suo
-/.vs
