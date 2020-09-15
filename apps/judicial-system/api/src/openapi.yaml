@@ -199,6 +199,9 @@ components:
           type: string
         comments:
           type: string
+    Notification:
+      type: object
+      properties: {}
 paths:
   /liveness:
     get:
@@ -288,7 +291,7 @@ paths:
         - cases
   '/api/case/{id}':
     get:
-      operationId: CaseController_findOne
+      operationId: CaseController_getById
       parameters:
         - name: id
           required: true
@@ -344,5 +347,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Case'
+      tags:
+        - cases
+  '/api/case/{id}/notifications':
+    get:
+      operationId: CaseController_getAllNotificationsById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+      tags:
+        - cases
+  '/api/caser/{id}/notification':
+    post:
+      operationId: CaseController_sendNotificationByCaseId
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
       tags:
         - cases

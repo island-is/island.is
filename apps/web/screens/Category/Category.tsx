@@ -41,6 +41,7 @@ import {
   QueryGetNamespaceArgs,
   QueryGetLifeEventsInCategoryArgs,
 } from '../../graphql/schema'
+import { withMainLayout } from '@island.is/web/layouts/main'
 
 type Article = GetArticlesInCategoryQuery['articlesInCategory']
 type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
@@ -375,4 +376,4 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default Category
+export default withMainLayout(Category)

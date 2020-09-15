@@ -21,3 +21,5 @@ export enum CaseCustodyRestrictions {
   COMMUNICATION = 'COMMUNICATION',
   MEDIA = 'MEDIA',
 }
+
+export class Notification {}

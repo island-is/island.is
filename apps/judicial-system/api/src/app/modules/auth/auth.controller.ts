@@ -154,7 +154,7 @@ export class AuthController {
   private redirectAuthenticatedUser(
     authUser: AuthUser,
     returnUrl: string,
-    res: any,
+    res,
     csrfToken?: string,
   ) {
     if (!this.authService.validateUser(authUser)) {
