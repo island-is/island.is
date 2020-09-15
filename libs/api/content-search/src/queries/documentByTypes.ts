@@ -13,7 +13,7 @@ export interface DocumentByTypesRequestBody {
     }
   }
   sort: sortableFields[]
-  size: Number
+  size: number
 }
 
 export const documentByTypeQuery = ({

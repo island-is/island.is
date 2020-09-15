@@ -30,7 +30,7 @@ export interface DocumentByTagRequestBody {
     }
   }
   sort: sortableFields[]
-  size: Number
+  size: number
 }
 
 export const documentByTagQuery = ({

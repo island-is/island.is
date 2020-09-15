@@ -26,18 +26,24 @@ export const searchQuery = ({
 }: SearchInput): SearchRequestBody => {
   const should = []
   const must = []
+  // eslint-disable-next-line @typescript-eslint/camelcase
   let minimum_should_match = 1
+
   should.push({
+    // eslint-disable-next-line @typescript-eslint/camelcase
     simple_query_string: {
       query: `*${queryString}*`,
       fields: ['title.stemmed^10', 'content.stemmed^2'],
+      // eslint-disable-next-line @typescript-eslint/camelcase
       analyze_wildcard: true,
     },
   })
 
   // if we have types restrict the query to those types
   if (types?.length) {
+    // eslint-disable-next-line @typescript-eslint/camelcase
     minimum_should_match++ // now we have to match at least one type and the search query
+
     types.forEach((type) => {
       const [value, boost = 1] = type.split('^')
       should.push({
@@ -56,6 +62,7 @@ export const searchQuery = ({
       bool: {
         should,
         must,
+        // eslint-disable-next-line @typescript-eslint/camelcase
         minimum_should_match,
       },
     },

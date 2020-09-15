@@ -1,5 +1,5 @@
 import { ApiResponse, Client } from '@elastic/elasticsearch'
-import { SearchIndexes, SearchResponse } from '../types'
+import { MappedData, SearchIndexes, SearchResponse } from '../types'
 import esb, { RequestBodySearch, TermsAggregation } from 'elastic-builder'
 import { logger } from '@island.is/logging'
 import merge from 'lodash/merge'
@@ -17,7 +17,6 @@ import {
   AutocompleteTermRequestBody,
 } from '../queries/autocomplete'
 import { searchQuery, SearchRequestBody } from '../queries/search'
-import { MappedData } from '@island.is/elastic-indexing'
 import {
   documentByTypeQuery,
   DocumentByTypesInput,
@@ -87,7 +86,7 @@ export class ElasticService {
     if (requests.length) {
       try {
         const client = await this.getClient()
-        const reaponse = await client.bulk({
+        const response = await client.bulk({
           index: index,
           body: requests,
         })

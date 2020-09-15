@@ -1,4 +1,4 @@
-import { MappedData } from '@island.is/elastic-indexing'
+import { MappedData } from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 
