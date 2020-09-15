@@ -1,3 +1,5 @@
+import { logger } from '@island.is/logging'
+
 interface SearchInput {
   queryString: string
   size: number
@@ -32,10 +34,16 @@ export const searchQuery = ({ queryString, size = 10, page = 1, types }: SearchI
 
   // if we have types restrict the query to those types
   if(types?.length) {
-    must.push({
-      "terms": {
-        "type": types
-      }
+    types.forEach((type) => {
+      const [value, boost = 1] = type.split('^')
+      should.push({
+        term: {
+          type: {
+            value,
+            boost
+          }
+        }
+      })
     })
   }
 
