@@ -6,4 +6,5 @@ export * from './DeleteAttachmentDto';
 export * from './Liveness';
 export * from './PopulateExternalDataDto';
 export * from './UpdateApplicationDto';
+export * from './UpdateApplicationStateDto';
 export * from './Version';

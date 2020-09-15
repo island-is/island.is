@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { TextField } from '@island.is/application/template'
-import { Box, Input } from '@island.is/island-ui/core'
+import { Box, InputController } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '../../types'
 import { useFormContext } from 'react-hook-form'
 
@@ -14,17 +14,14 @@ const TextFormField: FC<Props> = ({
   showFieldName,
 }) => {
   const { id, name } = field
-  const { clearErrors, register } = useFormContext()
+  const { clearErrors } = useFormContext()
   return (
     <Box paddingTop={2}>
-      <Input
+      <InputController
         id={id}
-        name={id}
         label={showFieldName ? name : undefined}
-        ref={register}
         autoFocus={autoFocus}
-        hasError={error !== undefined}
-        errorMessage={error}
+        error={error}
         onChange={() => {
           if (error) {
             clearErrors(id)

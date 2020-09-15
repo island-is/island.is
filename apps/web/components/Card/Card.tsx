@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC } from 'react'
+import React, { FC, useContext } from 'react'
 import cn from 'classnames'
 import Link, { LinkProps } from 'next/link'
 import {
@@ -11,6 +11,9 @@ import {
   TagProps,
   IconTypes,
   Icon,
+  FocusableBox,
+  ColorSchemeContext,
+  TagVariant,
 } from '@island.is/island-ui/core'
 
 import * as styles from './Card.treat'
@@ -44,6 +47,29 @@ export const Card: FC<CardProps> = ({
   href,
   as,
 }) => {
+  const { colorScheme } = useContext(ColorSchemeContext)
+
+  let borderColor = null
+  let tagVariant = 'purple' as TagVariant
+
+  switch (colorScheme) {
+    case 'red':
+      borderColor = 'red200'
+      tagVariant = 'red'
+      break
+    case 'blue':
+      borderColor = 'blue200'
+      tagVariant = 'blue'
+      break
+    case 'purple':
+      borderColor = 'purple200'
+      tagVariant = 'purple'
+      break
+    default:
+      borderColor = 'purple200'
+      break
+  }
+
   const Content = (
     <Box
       display="flex"
@@ -72,7 +98,11 @@ export const Card: FC<CardProps> = ({
         <Box paddingTop={3} flexGrow={0}>
           <Inline space={1}>
             {tags.map(({ title, href, as, ...props }: CardTagsProps, index) => {
-              const tagProps = { ...tagPropsDefaults, ...props.tagProps }
+              const tagProps = {
+                ...tagPropsDefaults,
+                ...props.tagProps,
+                variant: tagVariant,
+              }
 
               return href ? (
                 <Link key={index} href={href} as={as}>
@@ -90,40 +120,34 @@ export const Card: FC<CardProps> = ({
     </Box>
   )
 
-  if (!href) {
-    return <Frame>{Content}</Frame>
+  if (href) {
+    return (
+      <FocusableBox
+        href={href}
+        as={as}
+        borderRadius="large"
+        flexDirection="column"
+        height="full"
+        borderColor={borderColor}
+        borderWidth="standard"
+      >
+        <Frame>{Content}</Frame>
+      </FocusableBox>
+    )
   }
 
-  return (
-    <Link href={href} as={as} passHref>
-      <a className={styles.card}>
-        <Box
-          borderRadius="large"
-          height="full"
-          background="white"
-          outline="none"
-          padding={[2, 2, 4]}
-        >
-          {Content}
-        </Box>
-      </a>
-    </Link>
-  )
+  return <Frame>{Content}</Frame>
 }
 
-interface FrameProps {
-  isFocused?: boolean
-}
-
-export const Frame: FC<FrameProps> = ({ children, isFocused = false }) => {
+export const Frame = ({ children }) => {
   return (
     <Box
+      className={cn(styles.card)}
       borderRadius="large"
       height="full"
       background="white"
       outline="none"
       padding={[2, 2, 4]}
-      className={cn(styles.card, { [styles.focused]: isFocused })}
     >
       {children}
     </Box>

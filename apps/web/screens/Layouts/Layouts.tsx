@@ -18,7 +18,7 @@ export const CategoryLayout: FC<CategoryProps> = ({
   children,
 }) => (
   <GridContainer>
-    <Box paddingBottom={[5, 5, 10]}>
+    <Box paddingY={[2, 2, 10]}>
       <GridRow>
         <GridColumn span={['12/12', '12/12', '4/12', '3/12']} hideBelow="md">
           <Sticky>{sidebar}</Sticky>
@@ -43,14 +43,10 @@ export const ArticleLayout: FC<ArticleProps> = ({ sidebar, children }) => (
   <GridContainer>
     <Box paddingY={[2, 2, 10]}>
       <GridRow>
-        <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
+        <GridColumn span={['12/12', '12/12', '9/12']}>
           <Box>{children}</Box>
         </GridColumn>
-        <GridColumn
-          hideBelow="md"
-          span={['0', '0', '4/12', '3/12']}
-          offset={['0', '0', '0', '1/12']}
-        >
+        <GridColumn hideBelow="md" span={['0', '0', '3/12']}>
           <Sticky>{sidebar}</Sticky>
         </GridColumn>
       </GridRow>

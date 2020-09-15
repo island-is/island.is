@@ -3,6 +3,48 @@
 import { Asset, Entry } from 'contentful'
 import { Document } from '@contentful/rich-text-types'
 
+export interface IAlertBannerFields {
+  /** Show Alert Banner */
+  showAlertBanner: boolean
+
+  /** Banner variant */
+  bannerVariant: 'default' | 'warning' | 'error' | 'info' | 'success'
+
+  /** Title */
+  title?: string | undefined
+
+  /** description */
+  description?: string | undefined
+
+  /** link */
+  link?: ILink | undefined
+
+  /** Is dismissable */
+  isDismissable: boolean
+
+  /** dismissed for days */
+  dismissedForDays: number
+}
+
+/** Alert banner will show on top of all pages */
+
+export interface IAlertBanner extends Entry<IAlertBannerFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'alertBanner'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IArticleFields {
   /** Content status */
   contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
@@ -12,6 +54,9 @@ export interface IArticleFields {
 
   /** Short title */
   shortTitle?: string | undefined
+
+  /** Introduction */
+  intro?: string | undefined
 
   /** Slug */
   slug: string
@@ -92,9 +137,6 @@ export interface IArticleGroupFields {
 
   /** Description */
   description?: string | undefined
-
-  /** Sort by */
-  sortBy?: 'A to Z' | 'Subgroups' | undefined
 }
 
 export interface IArticleGroup extends Entry<IArticleGroupFields> {
@@ -298,6 +340,9 @@ export interface IFrontpageSliderFields {
     | IOrganization
     | IPage
     | undefined
+
+  /** Animation (zip) */
+  animationZip?: Asset | undefined
 }
 
 /** Efni í haus á forsíðu */
@@ -505,6 +550,9 @@ export interface ILifeEventPageFields {
 
   /** content */
   content: Document
+
+  /** category */
+  category?: IArticleCategory | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -668,7 +716,7 @@ export interface INewsFields {
   title: string
 
   /** Subtitle */
-  subtitle?: string | undefined
+  subtitle: string
 
   /** Slug */
   slug: string
@@ -764,8 +812,17 @@ export interface IOrganizationFields {
   /** Title */
   title: string
 
+  /** Description */
+  description?: string | undefined
+
   /** Slug */
   slug: string
+
+  /** Tag */
+  tag?: IOrganizationTag[] | undefined
+
+  /** Link */
+  link?: string | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -778,6 +835,28 @@ export interface IOrganization extends Entry<IOrganizationFields> {
     contentType: {
       sys: {
         id: 'organization'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IOrganizationTagFields {
+  /** Title */
+  title: string
+}
+
+export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'organizationTag'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -992,6 +1071,39 @@ export interface ISectionWithImage extends Entry<ISectionWithImageFields> {
     contentType: {
       sys: {
         id: 'sectionWithImage'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface ISideMenuFields {
+  /** Internal links */
+  internalLinks: (
+    | IArticle
+    | IArticleCategory
+    | IGenericPage
+    | ILandingPage
+    | ILifeEventPage
+    | IOrganization
+    | IPage
+  )[]
+
+  /** Title */
+  title?: string | undefined
+}
+
+export interface ISideMenu extends Entry<ISideMenuFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sideMenu'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1236,30 +1348,6 @@ export interface IUiConfiguration extends Entry<IUiConfigurationFields> {
     contentType: {
       sys: {
         id: 'uiConfiguration'
-        linkType: 'ContentType'
-        type: 'Link'
-      }
-    }
-  }
-}
-
-export interface IUrlsFields {
-  /** slug */
-  slug?: string | undefined
-}
-
-/** List of urls */
-
-export interface IUrls extends Entry<IUrlsFields> {
-  sys: {
-    id: string
-    type: string
-    createdAt: string
-    updatedAt: string
-    locale: string
-    contentType: {
-      sys: {
-        id: 'urls'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1565,6 +1653,7 @@ export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
 }
 
 export type CONTENT_TYPE =
+  | 'alertBanner'
   | 'article'
   | 'articleCategory'
   | 'articleGroup'
@@ -1590,12 +1679,14 @@ export type CONTENT_TYPE =
   | 'numberBullet'
   | 'numberBulletSection'
   | 'organization'
+  | 'organizationTag'
   | 'page'
   | 'pageHeader'
   | 'processEntry'
   | 'questionAndAnswer'
   | 'sectionHeading'
   | 'sectionWithImage'
+  | 'sideMenu'
   | 'statistic'
   | 'statistics'
   | 'story'
@@ -1604,7 +1695,6 @@ export type CONTENT_TYPE =
   | 'timeline'
   | 'timelineEvent'
   | 'uiConfiguration'
-  | 'urls'
   | 'vidspyrna-frontpage'
   | 'vidspyrna-inline-image'
   | 'vidspyrna-process-entry'

@@ -3,7 +3,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { IPageHeader } from '../generated/contentfulTypes'
 
 import { Link, mapLink } from './link.model'
-import { Slice, mapSlice } from './slice.model'
+import { TimelineSlice, mapTimelineSlice } from './timelineSlice.model'
 
 @ObjectType()
 export class PageHeaderSlice {
@@ -26,8 +26,8 @@ export class PageHeaderSlice {
   @Field(() => [Link])
   links: Link[]
 
-  @Field(() => [Slice])
-  slices: Array<typeof Slice>
+  @Field(() => [TimelineSlice])
+  slices: Array<TimelineSlice>
 }
 
 export const mapPageHeaderSlice = ({
@@ -40,5 +40,5 @@ export const mapPageHeaderSlice = ({
     introduction: fields.introduction,
     navigationText: fields.navigationText,
     links: fields.links.map(mapLink),
-    slices: fields.slices.map(mapSlice),
+    slices: fields.slices.map(mapTimelineSlice),
   })

@@ -86,25 +86,24 @@ export const maxValue = style({
 // Modal
 export const eventModal = style({
   position: 'absolute',
-  transition: `all 300ms ease`,
-  opacity: 0,
-  visibility: 'hidden',
   zIndex: 1,
   top: 0,
   left: 0,
   borderRadius: `50px 5px 5px 5px`,
   boxSizing: 'border-box',
-  maxWidth: '660px',
-  minWidth: '660px',
-  width: '100%',
+  width: '660px',
   whiteSpace: 'normal',
   backgroundColor: theme.color.purple100,
-})
-
-export const eventModalVisible = style({
-  opacity: 1,
-  visibility: 'initial',
-  zIndex: 1,
+  '@keyframes': {
+    from: {
+      opacity: 0,
+    },
+    to: {
+      opacity: 1,
+    },
+  },
+  animationTimingFunction: 'ease-out',
+  animationDuration: '0.25s',
 })
 
 export const eventModalContent = style({

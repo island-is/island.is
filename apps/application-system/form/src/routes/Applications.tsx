@@ -18,7 +18,7 @@ export const Applications: FC<{}> = () => {
       variables: {
         input: {
           applicant: '123456-1234',
-          state: 'PENDING',
+          state: 'draft',
           attachments: {},
           typeId: type,
           assignee: '123456-1235',

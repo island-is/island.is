@@ -4,6 +4,7 @@ const routeNames = {
   is: {
     article: 'grein',
     category: 'flokkur',
+    ContentCategory: 'flokkur',
     news: 'frett',
     search: 'leit',
     landingPage: '',
@@ -13,6 +14,7 @@ const routeNames = {
   en: {
     article: 'article',
     category: 'category',
+    ContentCategory: 'category',
     news: 'news',
     search: 'search',
     landingPage: '',
@@ -24,6 +26,7 @@ const routeNames = {
 export type PathTypes =
   | 'article'
   | 'category'
+  | 'ContentCategory'
   | 'news'
   | 'search'
   | 'landingPage'

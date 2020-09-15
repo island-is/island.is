@@ -4,7 +4,7 @@ import { AxiosResponse } from 'axios'
 import { CacheManager } from 'cache-manager'
 import { of } from 'rxjs'
 
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { environment } from '../../../../../environments'
 import {
   NationalRegistryService,
@@ -25,7 +25,7 @@ const nationalRegistryGeneralLookupResponse: NationalRegistryGeneralLookupRespon
   name: 'Jón Gunnar Jónsson',
   gender: 'kk',
   address: 'Bessastaðir 1',
-  postalcode: 225,
+  postalcode: '225',
   city: 'Álftanes',
   lastmodified: '2011-10-05T14:48:00.000Z',
   charged: true,
@@ -39,36 +39,36 @@ const nationalRegistryFamilyLookupResponse: NationalRegistryFamilyLookupResponse
     {
       name: 'Jón Gunnar Jónsson',
       ssn: '1306886513',
-      gender: 1,
+      gender: '1',
       address: 'Bessastaðir 1',
-      postalcode: 225,
+      postalcode: '225',
       towncode: 1300,
       city: 'Álftanes',
     },
     {
       name: 'Guðrún Jónsdóttir',
       ssn: '0409084390',
-      gender: 3,
+      gender: '3',
       address: 'Bessastaðir 1',
-      postalcode: 225,
+      postalcode: '225',
       towncode: 1300,
       city: 'Álftanes',
     },
     {
       name: 'Atli Jónsson',
       ssn: '1201204330',
-      gender: 4,
+      gender: '4',
       address: 'Bessastaðir 1',
-      postalcode: 225,
+      postalcode: '225',
       towncode: 1300,
       city: 'Álftanes',
     },
     {
       name: 'Friðrik Jónsson',
       ssn: '0101932149',
-      gender: 2,
+      gender: '2',
       address: 'Bessastaðir 1',
-      postalcode: 225,
+      postalcode: '225',
       towncode: 1300,
       city: 'Álftanes',
     },
@@ -111,7 +111,6 @@ describe('NationalRegistryService', () => {
   let nationalRegistryService: NationalRegistryService
   let httpService: HttpService
   let cacheManager: CacheManager
-  let logger: Logger
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({

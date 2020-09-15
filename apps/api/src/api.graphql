@@ -44,71 +44,6 @@ type WebSearchAutocomplete {
   completions: [String!]!
 }
 
-type ArticleCategory {
-  title: String!
-  slug: String!
-  description: String
-}
-
-type ArticleGroup {
-  title: String!
-  slug: String!
-  description: String
-  sortBy: String
-}
-
-type ArticleSubgroup {
-  title: String!
-  slug: String!
-}
-
-type Organization {
-  title: String!
-  slug: String!
-}
-
-type SubArticle {
-  title: String!
-  slug: String!
-  content: String!
-}
-
-type Article {
-  id: ID!
-  contentStatus: String!
-  title: String!
-  shortTitle: String
-  slug: String!
-  content: String
-  category: ArticleCategory
-  group: ArticleGroup
-  subgroup: ArticleSubgroup
-  organization: [Organization!]!
-  relatedArticles: [Article!]!
-  subArticles: [SubArticle!]!
-}
-
-type AdgerdirTag {
-  id: ID!
-  title: String!
-}
-
-type AdgerdirPage {
-  id: ID!
-  title: String!
-  description: String!
-  longDescription: String
-  content: String
-  objective: String
-  slug: String!
-  tags: [AdgerdirTag!]!
-  link: String
-  linkButtonText: String
-  status: String!
-  estimatedCostIsk: Float
-  finalCostIsk: Float
-}
-
 type Image {
   id: ID!
   url: String!
@@ -116,88 +51,6 @@ type Image {
   contentType: String!
   width: Int!
   height: Int!
-}
-
-type AdgerdirNews {
-  id: String!
-  slug: String!
-  subtitle: String!
-  title: String!
-  intro: String!
-  image: Image
-  date: String!
-  content: String
-  pages: [AdgerdirPage!]
-}
-
-type AdgerdirPages {
-  items: [AdgerdirPage!]!
-}
-
-type AdgerdirFrontpage {
-  id: ID!
-  slug: String!
-  title: String!
-  description: String
-  content: String
-  slices: [AdgerdirSlice!]!
-}
-
-union AdgerdirSlice = AdgerdirGroupSlice | AdgerdirFeaturedNewsSlice
-
-type AdgerdirGroupSlice {
-  id: ID!
-  subtitle: String
-  title: String!
-  description: String
-  image: Image
-  pages: [AdgerdirPage!]!
-}
-
-type AdgerdirFeaturedNewsSlice {
-  id: ID!
-  title: String!
-  featured: [AdgerdirNews!]!
-}
-
-type FrontpageSlide {
-  title: String!
-  subtitle: String!
-  content: String!
-  image: Image
-  link: String
-}
-
-type FrontpageSliderList {
-  items: [FrontpageSlide!]!
-}
-
-type News {
-  id: String!
-  slug: String!
-  title: String!
-  subtitle: String!
-  intro: String!
-  image: Image
-  date: String!
-  content: String
-}
-
-type Pagination {
-  page: Int!
-  perPage: Int!
-  totalResults: Int!
-  totalPages: Int!
-}
-
-type PaginatedNews {
-  page: Pagination!
-  news: [News!]!
-}
-
-type Namespace {
-  namespace: String!
-  fields: String!
 }
 
 type Link {
@@ -217,6 +70,12 @@ type TimelineEvent {
   link: String!
 }
 
+type TimelineSlice {
+  id: ID!
+  title: String!
+  events: [TimelineEvent!]!
+}
+
 type Story {
   label: String!
   title: String!
@@ -232,6 +91,17 @@ type LinkCard {
   body: String!
   link: String!
   linkText: String!
+}
+
+type News {
+  id: String!
+  slug: String!
+  title: String!
+  subtitle: String!
+  intro: String!
+  image: Image
+  date: String!
+  content: String
 }
 
 type NumberBullet {
@@ -262,14 +132,44 @@ type QuestionAndAnswer {
   answer: Html!
 }
 
-type AboutPage {
+type ArticleCategory {
   title: String!
-  seoDescription: String!
-  theme: String!
-  slices: [Slice!]!
+  slug: String!
+  description: String
 }
 
-union Slice = PageHeaderSlice | TimelineSlice | HeadingSlice | StorySlice | LinkCardSlice | LatestNewsSlice | MailingListSignupSlice | LogoListSlice | BulletListSlice | Html | Image | Statistics | ProcessEntry | FaqList | EmbeddedVideo
+type ArticleGroup {
+  title: String!
+  slug: String!
+  description: String
+}
+
+type ArticleSubgroup {
+  title: String!
+  slug: String!
+}
+
+type OrganizationTag {
+  id: ID!
+  title: String!
+}
+
+type Organization {
+  id: ID!
+  title: String!
+  description: String
+  slug: String!
+  tag: [OrganizationTag!]
+  link: String
+}
+
+type SubArticle {
+  title: String!
+  slug: String!
+  body: [Slice!]!
+}
+
+union Slice = PageHeaderSlice | TimelineSlice | HeadingSlice | StorySlice | LinkCardSlice | LatestNewsSlice | MailingListSignupSlice | LogoListSlice | BulletListSlice | Html | Image | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage
 
 type PageHeaderSlice {
   id: ID!
@@ -277,13 +177,7 @@ type PageHeaderSlice {
   introduction: String!
   navigationText: String!
   links: [Link!]!
-  slices: [Slice!]!
-}
-
-type TimelineSlice {
-  id: ID!
-  title: String!
-  events: [TimelineEvent!]!
+  slices: [TimelineSlice!]!
 }
 
 type HeadingSlice {
@@ -378,6 +272,132 @@ type EmbeddedVideo {
   url: String!
 }
 
+type SectionWithImage {
+  id: ID!
+  title: String!
+  image: Image
+  html: Html!
+}
+
+type Article {
+  id: ID!
+  contentStatus: String!
+  title: String!
+  slug: String!
+  shortTitle: String!
+  intro: String!
+  body: [Slice!]!
+  category: ArticleCategory
+  group: ArticleGroup
+  subgroup: ArticleSubgroup
+  organization: [Organization!]!
+  subArticles: [SubArticle!]!
+  relatedArticles: [Article!]!
+}
+
+type AdgerdirTag {
+  id: ID!
+  title: String!
+}
+
+type AdgerdirPage {
+  id: ID!
+  title: String!
+  description: String!
+  longDescription: String
+  content: String
+  objective: String
+  slug: String!
+  tags: [AdgerdirTag!]!
+  link: String
+  linkButtonText: String
+  status: String!
+  estimatedCostIsk: Float
+  finalCostIsk: Float
+}
+
+type Organizations {
+  items: [Organization!]!
+}
+
+type AdgerdirNews {
+  id: String!
+  slug: String!
+  subtitle: String!
+  title: String!
+  intro: String!
+  image: Image
+  date: String!
+  content: String
+  pages: [AdgerdirPage!]
+}
+
+type AdgerdirPages {
+  items: [AdgerdirPage!]!
+}
+
+type AdgerdirFrontpage {
+  id: ID!
+  slug: String!
+  title: String!
+  description: String
+  content: String
+  slices: [AdgerdirSlice!]!
+}
+
+union AdgerdirSlice = AdgerdirGroupSlice | AdgerdirFeaturedNewsSlice
+
+type AdgerdirGroupSlice {
+  id: ID!
+  subtitle: String
+  title: String!
+  description: String
+  image: Image
+  pages: [AdgerdirPage!]!
+}
+
+type AdgerdirFeaturedNewsSlice {
+  id: ID!
+  title: String!
+  featured: [AdgerdirNews!]!
+}
+
+type FrontpageSlide {
+  title: String!
+  subtitle: String!
+  content: String!
+  image: Image
+  link: String
+}
+
+type FrontpageSliderList {
+  items: [FrontpageSlide!]!
+}
+
+type Pagination {
+  page: Int!
+  perPage: Int!
+  totalResults: Int!
+  totalPages: Int!
+}
+
+type PaginatedNews {
+  page: Pagination!
+  news: [News!]!
+}
+
+type Namespace {
+  namespace: String!
+  fields: String!
+}
+
+type AboutPage {
+  title: String!
+  seoDescription: String!
+  theme: String!
+  slices: [Slice!]!
+}
+
 type LinkList {
   title: String!
   links: [Link!]!
@@ -391,6 +411,17 @@ type LandingPage {
   actionButton: Link
   links: LinkList
   content: [Slice!]!
+}
+
+type AlertBanner {
+  id: ID!
+  showAlertBanner: Boolean!
+  bannerVariant: String!
+  title: String
+  description: String
+  link: Link
+  isDismissable: Boolean!
+  dismissedForDays: Int!
 }
 
 type GenericPage {
@@ -412,7 +443,8 @@ type LifeEventPage {
   slug: String!
   intro: String!
   image: Image!
-  body: JSON!
+  thumbnail: Image
+  content: [Slice!]!
 }
 
 type AdgerdirTags {
@@ -424,6 +456,10 @@ type PaginatedAdgerdirNews {
   news: [AdgerdirNews!]!
 }
 
+type OrganizationTags {
+  items: [OrganizationTag!]!
+}
+
 type Application {
   id: ID!
   created: DateTime!
@@ -431,7 +467,7 @@ type Application {
   applicant: String!
   assignee: String!
   externalId: String
-  state: ApplicationStateEnum!
+  state: String!
   attachments: JSON
   typeId: ApplicationTypeIdEnum!
   answers: JSON!
@@ -442,17 +478,6 @@ type Application {
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
-
-enum ApplicationStateEnum {
-  DRAFT
-  BEINGPROCESSED
-  NEEDSINFORMATION
-  PENDING
-  APPROVED
-  MANUALAPPROVED
-  REJECTED
-  UNKNOWN
-}
 
 enum ApplicationTypeIdEnum {
   ExampleForm
@@ -502,15 +527,20 @@ type Query {
   getNamespace(input: GetNamespaceInput!): Namespace
   getAboutPage(input: GetAboutPageInput!): AboutPage!
   getLandingPage(input: GetLandingPageInput!): LandingPage
+  getAlertBanner(input: GetAlertBannerInput!): AlertBanner
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
+  getOrganization(input: GetOrganizationInput!): Organization
   getAdgerdirNews(input: GetAdgerdirNewsInput!): AdgerdirNews
   getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages!
+  getOrganizations(input: GetOrganizationsInput!): Organizations!
   getAdgerdirTags(input: GetAdgerdirTagsInput!): AdgerdirTags
+  getOrganizationTags(input: GetOrganizationTagsInput!): OrganizationTags
   getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getMenu(input: GetMenuInput!): Menu
   getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
+  getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
   getApplication(input: GetApplicationInput!): Application
   getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
   getDocument(input: GetDocumentInput!): DocumentDetails
@@ -603,12 +633,22 @@ input GetLandingPageInput {
   lang: String!
 }
 
+input GetAlertBannerInput {
+  id: String!
+  lang: String!
+}
+
 input GetGenericPageInput {
   slug: String!
   lang: String!
 }
 
 input GetAdgerdirPageInput {
+  slug: String
+  lang: String!
+}
+
+input GetOrganizationInput {
   slug: String
   lang: String!
 }
@@ -623,7 +663,16 @@ input GetAdgerdirPagesInput {
   perPage: Int
 }
 
+input GetOrganizationsInput {
+  lang: String
+  perPage: Int
+}
+
 input GetAdgerdirTagsInput {
+  lang: String
+}
+
+input GetOrganizationTagsInput {
   lang: String
 }
 
@@ -642,6 +691,10 @@ input GetMenuInput {
 
 input GetLifeEventPageInput {
   slug: String!
+  lang: String!
+}
+
+input GetLifeEventsInput {
   lang: String!
 }
 
@@ -672,6 +725,7 @@ type Mutation {
   updateApplicationExternalData(input: UpdateApplicationExternalDataInput!): Application
   addAttachment(input: AddAttachmentInput!): Application
   deleteAttachment(input: DeleteAttachmentInput!): Application
+  submitApplication(input: SubmitApplicationInput!): Application
   createUploadUrl(filename: String!): PresignedPost!
 }
 
@@ -679,21 +733,10 @@ input CreateApplicationInput {
   applicant: String!
   assignee: String!
   externalId: String
-  state: CreateApplicationDtoStateEnum!
+  state: String!
   attachments: JSON
   typeId: CreateApplicationDtoTypeIdEnum!
   answers: JSON!
-}
-
-enum CreateApplicationDtoStateEnum {
-  DRAFT
-  BEINGPROCESSED
-  NEEDSINFORMATION
-  PENDING
-  APPROVED
-  MANUALAPPROVED
-  REJECTED
-  UNKNOWN
 }
 
 enum CreateApplicationDtoTypeIdEnum {
@@ -709,20 +752,8 @@ input UpdateApplicationInput {
   applicant: String
   assignee: String
   externalId: String
-  state: UpdateApplicationDtoStateEnum
   attachments: JSON
   answers: JSON
-}
-
-enum UpdateApplicationDtoStateEnum {
-  DRAFT
-  BEINGPROCESSED
-  NEEDSINFORMATION
-  PENDING
-  APPROVED
-  MANUALAPPROVED
-  REJECTED
-  UNKNOWN
 }
 
 input UpdateApplicationExternalDataInput {
@@ -750,4 +781,10 @@ input AddAttachmentInput {
 input DeleteAttachmentInput {
   id: String!
   key: String!
+}
+
+input SubmitApplicationInput {
+  id: String!
+  event: String!
+  answers: JSON
 }

@@ -8,6 +8,8 @@ import {
 } from '@nestjs/graphql'
 import { Article } from './models/article.model'
 import { AdgerdirPage } from './models/adgerdirPage.model'
+import { Organization } from './models/organization.model'
+import { Organizations } from './models/organizations.model'
 import { AdgerdirNews } from './models/adgerdirNews.model'
 import { AdgerdirPages } from './models/adgerdirPages.model'
 import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
@@ -18,20 +20,26 @@ import { GetNewsInput } from './dto/getNews.input'
 import { GetNewsListInput } from './dto/getNewsList.input'
 import { GetAdgerdirNewsListInput } from './dto/getAdgerdirNewsList.input'
 import { GetAdgerdirPageInput } from './dto/getAdgerdirPage.input'
+import { GetOrganizationTagsInput } from './dto/getOrganizationTags.input'
 import { GetAdgerdirNewsInput } from './dto/getAdgerdirNews.input'
 import { GetAdgerdirPagesInput } from './dto/getAdgerdirPages.input'
+import { GetOrganizationsInput } from './dto/getOrganizations.input'
+import { GetOrganizationInput } from './dto/getOrganization.input'
 import { GetAdgerdirFrontpageInput } from './dto/getAdgerdirFrontpage.input'
 import { GetFrontpageSliderListInput } from './dto/getFrontpageSliderList.input'
 import { PaginatedNews } from './models/paginatedNews.model'
 import { Namespace } from './models/namespace.model'
 import { AboutPage } from './models/aboutPage.model'
 import { LandingPage } from './models/landingPage.model'
+import { AlertBanner } from './models/alertBanner.model'
 import { GenericPage } from './models/genericPage.model'
 import { GetNamespaceInput } from './dto/getNamespace.input'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
+import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
+import { GetLifeEventsInput } from './dto/getLifeEvents.input'
 import {
   getArticle,
   getRelatedArticles,
@@ -40,16 +48,21 @@ import {
   getNamespace,
   getAboutPage,
   getLandingPage,
+  getAlertBanner,
   getFrontpageSliderList,
   getGenericPage,
   getAdgerdirPage,
+  getOrganization,
   getAdgerdirNews,
   getAdgerdirNewsList,
   getAdgerdirPages,
+  getOrganizations,
   getAdgerdirFrontpage,
   getMenu,
   getAdgerdirTags,
+  getOrganizationTags,
   getLifeEventPage,
+  getLifeEvents,
 } from './services'
 import { LatestNewsSlice } from './models/latestNewsSlice.model'
 import { Menu } from './models/menu.model'
@@ -59,6 +72,7 @@ import { GetAdgerdirTagsInput } from './dto/getAdgerdirTags.input'
 import { LifeEventPage } from './models/lifeEventPage.model'
 import { PaginatedAdgerdirNews } from './models/paginatedAdgerdirNews.model'
 import { environment } from './environments'
+import { OrganizationTags } from './models/organizationTags.model'
 
 const { cacheTime } = environment
 
@@ -118,6 +132,14 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
+  @Query(() => AlertBanner, { nullable: true })
+  getAlertBanner(
+    @Args('input') input: GetAlertBannerInput,
+  ): Promise<AlertBanner | null> {
+    return getAlertBanner(input)
+  }
+
+  @Directive(cacheControlDirective())
   @Query(() => GenericPage, { nullable: true })
   getGenericPage(
     @Args('input') input: GetGenericPageInput,
@@ -131,6 +153,14 @@ export class CmsResolver {
     @Args('input') input: GetAdgerdirPageInput,
   ): Promise<AdgerdirPage | null> {
     return getAdgerdirPage(input?.slug ?? '', input?.lang ?? 'is-IS')
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => Organization, { nullable: true })
+  getOrganization(
+    @Args('input') input: GetOrganizationInput,
+  ): Promise<Organization | null> {
+    return getOrganization(input?.slug ?? '', input?.lang ?? 'is-IS')
   }
 
   @Directive(cacheControlDirective())
@@ -150,11 +180,27 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
+  @Query(() => Organizations)
+  getOrganizations(
+    @Args('input') input: GetOrganizationsInput,
+  ): Promise<Organizations> {
+    return getOrganizations(input?.lang ?? 'is-IS')
+  }
+
+  @Directive(cacheControlDirective())
   @Query(() => AdgerdirTags, { nullable: true })
   getAdgerdirTags(
     @Args('input') input: GetAdgerdirTagsInput,
   ): Promise<AdgerdirTags | null> {
     return getAdgerdirTags(input?.lang ?? 'is-IS')
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => OrganizationTags, { nullable: true })
+  getOrganizationTags(
+    @Args('input') input: GetOrganizationTagsInput,
+  ): Promise<OrganizationTags | null> {
+    return getOrganizationTags(input?.lang ?? 'is-IS')
   }
 
   @Directive(cacheControlDirective())
@@ -185,6 +231,13 @@ export class CmsResolver {
     @Args('input') input: GetLifeEventPageInput,
   ): Promise<LifeEventPage | null> {
     return getLifeEventPage(input.slug, input.lang)
+  }
+
+  @Query(() => [LifeEventPage])
+  getLifeEvents(
+    @Args('input') input: GetLifeEventsInput,
+  ): Promise<LifeEventPage[]> {
+    return getLifeEvents(input.lang)
   }
 }
 

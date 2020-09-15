@@ -135,7 +135,7 @@ export class NationalRegistryService {
       lastName: parts.slice(-1).pop() || '',
       gender: response.gender,
       address: response.address,
-      postalcode: response.postalcode,
+      postalcode: parseInt(response.postalcode),
       city: response.city,
     }
   }
@@ -171,7 +171,7 @@ export class NationalRegistryService {
   }
 
   private isParent(person: FamilyMember): boolean {
-    return [1, 2].includes(person.gender)
+    return ['1', '2'].includes(person.gender)
   }
 
   private isChild(person: FamilyMember): boolean {

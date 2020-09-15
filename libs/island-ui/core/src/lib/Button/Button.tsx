@@ -9,6 +9,7 @@ import * as styles from './Button.treat'
 
 export type ButtonSize = 'small' | 'medium' | 'large'
 export type ButtonVariant = 'normal' | 'ghost' | 'text' | 'menu'
+
 export type ButtonWidth = 'normal' | 'fluid' | 'fixed'
 
 export interface ButtonProps {
@@ -35,6 +36,7 @@ export interface ButtonProps {
   target?: string
   white?: boolean
   tabIndex?: number
+  rounded?: boolean
 }
 
 const isLinkExternal = (href: string): boolean => href.indexOf('://') > 0
@@ -61,6 +63,7 @@ export const Button = forwardRef<
       target = '_blank',
       white,
       tabIndex,
+      rounded = false,
     },
     ref,
   ) => {
@@ -74,6 +77,7 @@ export const Button = forwardRef<
       {
         [styles.noWrap]: noWrap,
         [styles.white]: colorScheme === 'white' || white,
+        [styles.rounded]: rounded,
       },
     )
 

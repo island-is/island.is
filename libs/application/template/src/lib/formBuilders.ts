@@ -14,15 +14,14 @@ import {
   SubSection,
   DataProviderItem,
 } from '../types/Form'
-import { FormType } from '../forms'
+import { ApplicationTypes } from '../types/ApplicationTypes'
 import { DataProviderTypes } from '../types/DataProvider'
 
 export function buildForm(data: {
-  id: FormType
+  id: ApplicationTypes
   ownerId: string
   name: string
   children: FormChildren[]
-  schema: Schema
   icon?: string
 }): Form {
   return { ...data, type: FormItemTypes.FORM }
