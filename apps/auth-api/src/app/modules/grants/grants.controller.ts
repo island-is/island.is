@@ -57,7 +57,7 @@ export class GrantsController {
   async removeAllAsyncV2(
     @Param('subjectId') subjectId: string,
     @Param('clientId') clientId: string,
-    @Param('type') type: string,
+ //   @Param('type') type: string,
   ): Promise<number> {
     return await this.grantsService.removeAllAsync(subjectId, clientId)
   }
