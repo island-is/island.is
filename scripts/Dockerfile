@@ -7,7 +7,7 @@ WORKDIR /build
 
 # Adding and installing packages
 ADD package.json yarn.lock ./
-RUN yarn install --frozen-lockfile && rm -rf /home/runner/.cache
+RUN yarn install --frozen-lockfile && rm -rf /root/.cache
 
 FROM deps as src
 # image with the source code
@@ -65,7 +65,7 @@ RUN pip install awscli
 
 # Adding user for running the app
 RUN addgroup runners && adduser -D runner -G runners
-USER runner
+# USER runner
 
 FROM output-base as output-express
 # image with build of an Express.js app
