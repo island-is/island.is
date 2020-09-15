@@ -1,4 +1,3 @@
-
 export const config = {
-    nationalIdClaimName: 'natreg'
+  nationalIdClaimName: 'natreg',
 }

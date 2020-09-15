@@ -414,6 +414,6 @@ export class Client extends Model<Client> {
   @HasMany(() => ClientSecret)
   readonly clientSecrets: ClientSecret
 
-  @HasMany( () => ClientGrantType )
+  @HasMany(() => ClientGrantType)
   readonly allowedGrantTypes
 }

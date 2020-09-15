@@ -75,9 +75,7 @@ export class UserIdentitiesController {
 
   @Delete(':id')
   @ApiOkResponse()
-  async delete(
-    @Param('id') id: string,
-  ): Promise<number> {
+  async delete(@Param('id') id: string): Promise<number> {
     return await this.userIdentityService.delete(id)
   }
 }

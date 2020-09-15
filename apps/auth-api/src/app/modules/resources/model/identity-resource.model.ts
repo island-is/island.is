@@ -36,7 +36,7 @@ export class IdentityResource extends Model<IdentityResource> {
     defaultValue: true,
   })
   @ApiProperty({
-    example: true
+    example: true,
   })
   enabled: boolean
 
@@ -64,10 +64,10 @@ export class IdentityResource extends Model<IdentityResource> {
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
-    defaultValue: true
+    defaultValue: true,
   })
   @ApiProperty({
-    example: true
+    example: true,
   })
   showInDiscoveryDocument: boolean
 
@@ -79,17 +79,17 @@ export class IdentityResource extends Model<IdentityResource> {
     defaultValue: false,
   })
   @ApiProperty({
-    example: false
+    example: false,
   })
   required: boolean
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
-    defaultValue: false
+    defaultValue: false,
   })
   @ApiProperty({
-    example: false
+    example: false,
   })
   emphasize: boolean
 

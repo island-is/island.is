@@ -15,15 +15,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         // cacheMaxAge: ms('10m'), // Default value
         rateLimit: true,
         jwksRequestsPerMinute: 5,
-        jwksUri: configService.get<string>('IDS_JWKS_URI')
-        }),
-      
+        jwksUri: configService.get<string>('IDS_JWKS_URI'),
+      }),
+
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       audience: config.idsAudience,
       issuer: configService.get<string>('IDS_ISSUER'),
       algorithms: ['RS256'],
       ignoreExpiration: false,
-    });
+    })
   }
 
   async validate(payload: any) {

@@ -10,19 +10,19 @@ export class ApiScopesDTO {
 
   @IsString()
   @ApiProperty({
-    example: "set_name"
+    example: 'set_name',
   })
   name: string
 
   @IsString()
   @ApiProperty({
-    example: "set_display_name"
+    example: 'set_display_name',
   })
   displayName: string
 
   @IsString()
   @ApiProperty({
-    example: "set_description"
+    example: 'set_description',
   })
   description: string
 

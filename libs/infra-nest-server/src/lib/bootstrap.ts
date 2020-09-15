@@ -7,7 +7,7 @@ import {
   ValidationPipe,
   NestInterceptor,
 } from '@nestjs/common'
-import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
+import { OpenAPIObject, SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { runMetricServer } from './runMetricServer'
 import { logger, LoggingModule } from '@island.is/logging'
 import { collectDefaultMetrics } from 'prom-client'
@@ -88,17 +88,17 @@ function setupOpenApi(app: INestApplication, options: RunServerOptions) {
     .setDescription(options.openApi.info.description)
     .setVersion(options.openApi.info.version)
     .addOAuth2({
-      type: "oauth2",
+      type: 'oauth2',
       flows: {
         authorizationCode: {
           authorizationUrl: AuthUrl,
           tokenUrl: TokenUrl,
           scopes: {
-            "openid profile @identityserver.api/read":
-            "Sækir OpenId og Profile claim-ið"
-          }
-        }
-      }
+            'openid profile @identityserver.api/read':
+              'Sækir OpenId og Profile claim-ið',
+          },
+        },
+      },
     })
     .addBasicAuth()
     .addApiKey()
