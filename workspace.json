@@ -2068,10 +2068,7 @@
             "parallel": false,
             "commands": [
               {
-                "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/form/src/{lib,components}/**/*.{js,ts,tsx}'"
-              },
-              {
-                "command": "yarn ts-node libs/localization/scripts/extract 'libs/application/template/src/forms/**/*.{js,ts,tsx}'"
+                "command": "yarn ts-node libs/localization/scripts/extract 'apps/form/src/{app,routes,components}/**/*.{js,ts,tsx}'"
               }
             ]
           }
@@ -2857,8 +2854,10 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
+            "linter": "eslint",
+            "config": "libs/api/domains/translations/.eslintrc",
             "tsConfig": [
               "libs/api/domains/translations/tsconfig.lib.json",
               "libs/api/domains/translations/tsconfig.spec.json"
