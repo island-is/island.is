@@ -32,7 +32,7 @@ export const applicationsModule: ServicePortalModule = {
         render: () =>
           lazy(() =>
             import(
-              '../../../../apps/judicial-system/web/src/routes/CreateDetentionRequest/CreateDetentionRequest'
+              '../../../../apps/judicial-system/web/src/routes/CreateDetentionRequest/StepOne/StepOne'
             ),
           ),
       },

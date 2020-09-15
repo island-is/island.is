@@ -33,6 +33,5 @@ describe('User Controller', () => {
     expect(user.roles).toBeDefined()
     expect(user.roles.length).toBe(1)
     expect(user.roles).toContain(UserRole.PROCECUTOR)
-    expect(user.roles).toContain(UserRole.JUDGE)
   })
 })
