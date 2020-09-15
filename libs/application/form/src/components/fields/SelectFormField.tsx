@@ -11,7 +11,7 @@ const SelectFormField: FC<Props> = ({
   showFieldName = false,
   field,
 }) => {
-  const { id, name, options, placeholder } = field
+  const { id, name, options, placeholder, disabled } = field
 
   return (
     <div>
@@ -20,6 +20,7 @@ const SelectFormField: FC<Props> = ({
         <SelectController
           label={name}
           name={id}
+          disabled={disabled}
           error={error}
           id={id}
           options={options}

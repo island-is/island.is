@@ -14,7 +14,7 @@ const CheckboxFormField: FC<Props> = ({
   field,
   formValue,
 }) => {
-  const { id, name, options } = field
+  const { id, name, options, disabled } = field
 
   return (
     <div>
@@ -22,6 +22,7 @@ const CheckboxFormField: FC<Props> = ({
       <Box paddingTop={2}>
         <CheckboxController
           id={id}
+          disabled={disabled}
           name={`${id}`}
           defaultValue={getValueViaPath(formValue, id, [])}
           error={error}
