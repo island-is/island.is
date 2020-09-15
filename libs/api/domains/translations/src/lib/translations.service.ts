@@ -25,7 +25,7 @@ export class TranslationsService {
   ): Promise<TranslationsDict | null> => {
     const result = await this.contentfulRepository
       .getLocalizedEntries<any>(lang, {
-        ['content_type']: 'translationStrings',
+        ['content_type']: 'namespace',
         select: 'fields.strings,fields.fallback',
         'fields.namespace[in]': namespaces.join(','),
       })
