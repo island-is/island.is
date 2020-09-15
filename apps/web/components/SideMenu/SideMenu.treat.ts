@@ -4,7 +4,9 @@ import { theme } from '@island.is/island-ui/theme'
 const SIDE_MENU_WIDTH = 345
 
 export const root = style({
-  display: 'none',
+  visibility: 'hidden',
+  display: 'flex',
+  flexDirection: 'column',
   left: 0,
   paddingTop: theme.spacing[3],
   paddingLeft: theme.spacing[3],
@@ -24,11 +26,18 @@ export const root = style({
       width: SIDE_MENU_WIDTH,
     },
   },
+  opacity: 0,
+  transform: `translateY(10px)`,
+  boxShadow: `0px 4px 70px rgba(0, 97, 255, 0)`,
+  transition: `visibility 0s linear 300ms, opacity 150ms, transform 300ms ease-out, box-shadow 300ms ease-out`,
 })
 
 export const isVisible = style({
-  display: 'flex',
-  flexDirection: 'column',
+  visibility: 'visible',
+  opacity: 1,
+  transform: `translateY(0)`,
+  boxShadow: `0px 4px 70px rgba(0, 97, 255, 0.1)`,
+  transition: `visibility 0s linear 0s, opacity 150ms, transform 300ms ease-out, box-shadow 300ms ease-out`,
 })
 
 export const tabBar = style({
@@ -36,12 +45,21 @@ export const tabBar = style({
 })
 
 export const tab = style({
-  borderBottom: `2px solid transparent`,
+  borderBottom: '2px solid transparent',
   flex: 1,
   padding: theme.spacing[2],
 })
+
 export const tabActive = style({
-  borderColor: theme.color.blue400,
+  borderBottomColor: theme.color.blue400,
+})
+
+export const tabFocused = style({
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      borderBottomColor: 'transparent',
+    },
+  },
 })
 
 export const content = style({

@@ -123,7 +123,7 @@ const embeddedNodes = () => ({
 
 const options = (type) => ({
   renderText: (text) =>
-    text.split('\n').flatMap((text, i) => [i > 0 && <br key={i} />, text]),
+    text.split('\n').map((text, i) => [i > 0 && <br key={i} />, text]),
   renderNode: {
     [BLOCKS.PARAGRAPH]: (node, children) => {
       return (

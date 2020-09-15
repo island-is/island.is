@@ -1,4 +1,12 @@
-import React, { useContext, useState, ReactNode, forwardRef, FC } from 'react'
+import React, {
+  useContext,
+  useState,
+  ReactNode,
+  forwardRef,
+  FC,
+  useEffect,
+  useCallback,
+} from 'react'
 import cn from 'classnames'
 import AnimateHeight from 'react-animate-height'
 
@@ -23,6 +31,7 @@ export type AccordionItemBaseProps = {
   iconVariant?: IconVariantTypes
   visibleContent?: ReactNode
   children: ReactNode
+  startExpanded?: boolean
   onClick?: () => void
   onBlur?: () => void
   onFocus?: () => void
@@ -41,12 +50,13 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
     {
       id,
       label,
-      labelVariant = 'h3',
+      labelVariant = 'h4',
       iconVariant = 'default',
       visibleContent,
       expanded: expandedProp,
       onToggle,
       children,
+      startExpanded,
       onClick,
       onBlur,
       onFocus,
@@ -72,6 +82,32 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       }
     }
 
+    const handleOpen = () => {
+      const newValue = !expanded
+
+      if (typeof setToggledId === 'function' && newValue) {
+        setToggledId(id)
+      }
+
+      setHeight(newValue ? 'auto' : 0)
+
+      if (expandedProp === undefined) {
+        setExpandedFallback(newValue)
+      }
+
+      if (typeof onToggle === 'function') {
+        onToggle(newValue)
+      }
+    }
+
+    const onHandleOpen = useCallback(handleOpen, [])
+
+    useEffect(() => {
+      if (startExpanded) {
+        onHandleOpen()
+      }
+    }, [onHandleOpen, startExpanded])
+
     return (
       <Box>
         <Box position="relative" display="flex">
@@ -87,27 +123,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
             aria-expanded={expanded}
             onFocus={onFocus}
             onBlur={onBlur}
-            onClick={
-              onClick
-                ? onClick
-                : () => {
-                    const newValue = !expanded
-
-                    if (typeof setToggledId === 'function' && newValue) {
-                      setToggledId(id)
-                    }
-
-                    setHeight(newValue ? 'auto' : 0)
-
-                    if (expandedProp === undefined) {
-                      setExpandedFallback(newValue)
-                    }
-
-                    if (typeof onToggle === 'function') {
-                      onToggle(newValue)
-                    }
-                  }
-            }
+            onClick={onClick ? onClick : handleOpen}
           >
             <Columns space={2} alignY="center">
               <Column>
@@ -148,10 +164,15 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
                 </div>
               </Column>
             </Columns>
+
+            {visibleContent && (
+              <div className={styles.visibleContent}>
+                <Typography variant="pSmall">{visibleContent}</Typography>
+              </div>
+            )}
           </Box>
           <Overlay className={[styles.focusRing, hideFocusRingsClassName]} />
         </Box>
-        {visibleContent && visibleContent}
         <AnimateHeight duration={300} height={height}>
           <Box paddingTop={2} id={id}>
             {children}
@@ -178,7 +199,8 @@ export const AccordionCard: FC<AlternateAccordionItemBaseProps> = (props) => {
       height="full"
       background="white"
       borderRadius="large"
-      padding={[2, 2, 4]}
+      paddingX={[2, 2, 4]}
+      paddingY={2}
       className={cn(styles.card, { [styles.focused]: isFocused })}
     >
       <AccordionItem {...props} onFocus={handleFocus} onBlur={handleBlur}>

@@ -53,27 +53,18 @@ export const AppLayout: NextComponentType<
   localeKey,
 }) => {
   const [user, setUser] = useState(null)
-  const { toRoute } = useI18n()
-  const nextLanguage = localeKey === 'is' ? 'en' : 'is'
-  const languageRouteHref = localeKey && toRoute(routeKey, nextLanguage)
-
+  const { toRoute, activeLocale, switchLanguage } = useI18n()
+  const nextLanguage = activeLocale === 'is' ? 'en' : 'is'
   const languageRoute: FooterLinkProps = {
     title: nextLanguage === 'en' ? 'English' : 'Íslenska',
-    href: languageRouteHref ?? nextLanguage === 'en' ? '/en' : '/',
+    href: toRoute(routeKey, nextLanguage),
   }
 
-  const footerUpperMenuFiltered = footerUpperMenu.filter(
-    ({ href }) => href && href !== '#',
-  )
-  const footerLowerMenuFiltered = footerLowerMenu.filter(
-    ({ href }) => href && href !== '#',
-  )
-  const footerMiddleMenuFiltered = footerMiddleMenu.filter(
-    ({ href }) => href && href !== '#',
-  )
-  const footerTagsMenuFiltered = footerTagsMenu.filter(
-    ({ href }) => href && href !== '#',
-  )
+  const noEmptyOrHash = ({ href }) => href && href !== '#'
+  const footerUpperMenuFiltered = footerUpperMenu.filter(noEmptyOrHash)
+  const footerLowerMenuFiltered = footerLowerMenu.filter(noEmptyOrHash)
+  const footerMiddleMenuFiltered = footerMiddleMenu.filter(noEmptyOrHash)
+  const footerTagsMenuFiltered = footerTagsMenu.filter(noEmptyOrHash)
 
   return (
     <UserContext.Provider value={{ isAuthenticated, user, setUser }}>
@@ -109,10 +100,10 @@ export const AppLayout: NextComponentType<
           <meta
             name="image"
             property="og:image"
-            content="https://loftbru.island.is/og-img.png"
+            content="https://loftbru.island.is/og-img.png?version=1"
           />
-          <meta name="image-width" property="og:image:width" content="1001" />
-          <meta name="image-height" property="og:image:height" content="381" />
+          <meta name="image-width" property="og:image:width" content="1200" />
+          <meta name="image-height" property="og:image:height" content="630" />
           <meta
             name="description"
             property="og:description"
@@ -136,6 +127,9 @@ export const AppLayout: NextComponentType<
           showMiddleLinks={footerMiddleMenuFiltered.length > 0}
           showTagLinks={footerTagsMenuFiltered.length > 0}
           languageSwitchLink={languageRoute}
+          languageSwitchOnClick={() => {
+            switchLanguage(null, nextLanguage)
+          }}
         />
         <style jsx global>{`
           @font-face {

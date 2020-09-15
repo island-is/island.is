@@ -4,6 +4,7 @@ import { AxiosResponse } from 'axios'
 import { CacheManager } from 'cache-manager'
 import { of } from 'rxjs'
 
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { environment } from '../../../../../environments'
 import {
   NationalRegistryService,
@@ -24,7 +25,7 @@ const nationalRegistryGeneralLookupResponse: NationalRegistryGeneralLookupRespon
   name: 'Jón Gunnar Jónsson',
   gender: 'kk',
   address: 'Bessastaðir 1',
-  postalcode: 225,
+  postalcode: '225',
   city: 'Álftanes',
   lastmodified: '2011-10-05T14:48:00.000Z',
   charged: true,
@@ -38,24 +39,36 @@ const nationalRegistryFamilyLookupResponse: NationalRegistryFamilyLookupResponse
     {
       name: 'Jón Gunnar Jónsson',
       ssn: '1306886513',
+      gender: '1',
       address: 'Bessastaðir 1',
-      postalcode: 225,
+      postalcode: '225',
       towncode: 1300,
       city: 'Álftanes',
     },
     {
       name: 'Guðrún Jónsdóttir',
       ssn: '0409084390',
+      gender: '3',
       address: 'Bessastaðir 1',
-      postalcode: 225,
+      postalcode: '225',
+      towncode: 1300,
+      city: 'Álftanes',
+    },
+    {
+      name: 'Atli Jónsson',
+      ssn: '1201204330',
+      gender: '4',
+      address: 'Bessastaðir 1',
+      postalcode: '225',
       towncode: 1300,
       city: 'Álftanes',
     },
     {
       name: 'Friðrik Jónsson',
       ssn: '0101932149',
+      gender: '2',
       address: 'Bessastaðir 1',
-      postalcode: 225,
+      postalcode: '225',
       towncode: 1300,
       city: 'Álftanes',
     },
@@ -89,7 +102,10 @@ const user: NationalRegistryUser = {
   city: 'Álftanes',
 }
 
-const children: string[] = [nationalRegistryFamilyLookupResponse.results[1].ssn]
+const children: string[] = [
+  nationalRegistryFamilyLookupResponse.results[1].ssn,
+  nationalRegistryFamilyLookupResponse.results[2].ssn,
+]
 
 describe('NationalRegistryService', () => {
   let nationalRegistryService: NationalRegistryService
@@ -106,6 +122,12 @@ describe('NationalRegistryService', () => {
           useClass: jest.fn(() => ({
             get: () => ({}),
             set: () => ({}),
+          })),
+        },
+        {
+          provide: LOGGER_PROVIDER,
+          useClass: jest.fn(() => ({
+            error: (_) => ({}),
           })),
         },
       ],
@@ -210,7 +232,6 @@ describe('NationalRegistryService', () => {
       const result = await nationalRegistryService.getRelatedChildren(
         user.nationalId,
       )
-
       expect(cacheManagerGetSpy).toHaveBeenCalledWith(
         `${CACHE_KEY}_${user.nationalId}_children`,
       )
@@ -242,6 +263,66 @@ describe('NationalRegistryService', () => {
       expect(httpServiceSpy).not.toHaveBeenCalled()
       expect(cacheManagerSetSpy).not.toHaveBeenCalled()
       expect(result).toEqual(children)
+    })
+
+    it('should not fetch children of a child', async () => {
+      const childNationalId =
+        nationalRegistryFamilyLookupResponse.results[1].ssn
+
+      const cacheManagerGetSpy = jest
+        .spyOn(cacheManager, 'get')
+        .mockImplementation(() => Promise.resolve(null))
+      const httpServiceSpy = jest
+        .spyOn(httpService, 'get')
+        .mockImplementation(() => of(axiosFamilyLookupResponse))
+      const cacheManagerSetSpy = jest
+        .spyOn(cacheManager, 'set')
+        .mockImplementation(() => Promise.resolve(null))
+
+      const result = await nationalRegistryService.getRelatedChildren(
+        childNationalId,
+      )
+
+      expect(cacheManagerGetSpy).toHaveBeenCalledWith(
+        `${CACHE_KEY}_${childNationalId}_children`,
+      )
+      expect(httpServiceSpy).toHaveBeenCalledWith(
+        `${nationalRegistry.url}/family-lookup?ssn=${childNationalId}`,
+      )
+      expect(cacheManagerSetSpy).toHaveBeenCalledWith(
+        `${CACHE_KEY}_${childNationalId}_children`,
+        { children: [] },
+        { ttl: ONE_MONTH },
+      )
+
+      expect(result).toEqual([])
+    })
+
+    it('should return empty family when errored', async () => {
+      const errorResponse = axiosFamilyLookupResponse
+      errorResponse.data[0].error = 'No family found'
+
+      const cacheManagerGetSpy = jest
+        .spyOn(cacheManager, 'get')
+        .mockImplementation(() => Promise.resolve(null))
+      const httpServiceSpy = jest
+        .spyOn(httpService, 'get')
+        .mockImplementation(() => of(axiosFamilyLookupResponse))
+      const cacheManagerSetSpy = jest.spyOn(cacheManager, 'set')
+
+      const result = await nationalRegistryService.getRelatedChildren(
+        user.nationalId,
+      )
+
+      expect(cacheManagerGetSpy).toHaveBeenCalledWith(
+        `${CACHE_KEY}_${user.nationalId}_children`,
+      )
+      expect(httpServiceSpy).toHaveBeenCalledWith(
+        `${nationalRegistry.url}/family-lookup?ssn=${user.nationalId}`,
+      )
+      expect(cacheManagerSetSpy).not.toHaveBeenCalled()
+
+      expect(result).toEqual([])
     })
   })
 })

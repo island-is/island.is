@@ -12,6 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import { UserWithMeta, ServicePortalPath } from '@island.is/service-portal/core'
 import IconButton from '../../Button/IconButton/IconButton'
+import useAuth from '../../../hooks/useAuth/useAuth'
 
 interface Props {
   isOpen: boolean
@@ -27,9 +28,12 @@ export const Menu: FC<Props> = ({
   onSubjectSelection,
   onCloseMenu,
 }) => {
+  const { signOutUser } = useAuth()
   const subjectList = userInfo.mockSubjects
   const personSubjects = subjectList.filter((x) => x.subjectType === 'person')
   const companySubjects = subjectList.filter((x) => x.subjectType === 'company')
+
+  const handleLogoutClick = () => signOutUser()
 
   return (
     <Box
@@ -110,14 +114,9 @@ export const Menu: FC<Props> = ({
       )}
       <Divider />
       <Box padding={3}>
-        {/* TODO: This is a temp solution */}
-        <a
-          href="https://siidentityserverweb20200805020732.azurewebsites.net/Account/Logout"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Button width="fluid">Útskráning</Button>
-        </a>
+        <Button width="fluid" onClick={handleLogoutClick}>
+          Útskráning
+        </Button>
       </Box>
     </Box>
   )

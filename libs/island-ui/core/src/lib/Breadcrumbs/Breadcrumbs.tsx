@@ -12,8 +12,8 @@ interface BreadcrumbsProps {
 
 export const Breadcrumbs: FC<BreadcrumbsProps> = ({
   label = 'breadcrumb',
-  color = 'purple400',
-  separatorColor = 'roseTinted400',
+  color = 'blue400',
+  separatorColor = 'blue400',
   children,
 }) => {
   const crumbs = Children.toArray(children).filter((c) => c)

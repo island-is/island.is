@@ -2,6 +2,8 @@ import React from 'react'
 import { Typography, Box, Stack } from '@island.is/island-ui/core'
 import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
 import UserInfoCard from './cards/UserInfo'
+import ResidenceInfoCard from './cards/ResidenceInfo'
+import FamilyInfoCard from './cards/FamilyInfo'
 
 const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
   return (
@@ -13,6 +15,8 @@ const SubjectInfo: ServicePortalModuleComponent = ({ userInfo }) => {
       </Box>
       <Stack space={3}>
         <UserInfoCard userInfo={userInfo} />
+        <ResidenceInfoCard userInfo={userInfo} />
+        <FamilyInfoCard userInfo={userInfo} />
       </Stack>
     </>
   )

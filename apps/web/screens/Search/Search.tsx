@@ -25,26 +25,27 @@ import {
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
 import {
-  ContentLanguage,
-  QueryGetNamespaceArgs,
-  Query,
-  QuerySearchResultsArgs,
-} from '@island.is/api/schema'
-import {
   GET_NAMESPACE_QUERY,
   GET_SEARCH_RESULTS_QUERY_DETAILED,
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { CustomNextError } from '@island.is/web/units/ErrorBoundary'
+import {
+  GetSearchResultsDetailedQuery,
+  QuerySearchResultsArgs,
+  ContentLanguage,
+  QueryGetNamespaceArgs,
+  GetNamespaceQuery,
+} from '../../graphql/schema'
 
 const PerPage = 10
 
 interface CategoryProps {
   q: string
   page: number
-  searchResults: Query['searchResults']
-  namespace: Query['getNamespace']
+  searchResults: GetSearchResultsDetailedQuery['searchResults']
+  namespace: GetNamespaceQuery['getNamespace']
 }
 
 const Search: Screen<CategoryProps> = ({
@@ -137,7 +138,7 @@ const Search: Screen<CategoryProps> = ({
   return (
     <>
       <Head>
-        <title>Leitarniðurstöður | Ísland.is</title>
+        <title>{n('searchResults', 'Leitarniðurstöður')} | Ísland.is</title>
       </Head>
       <CategoryLayout
         sidebar={
@@ -145,12 +146,14 @@ const Search: Screen<CategoryProps> = ({
             <Filter
               selected={!filters.category}
               onClick={() => onSelectCategory(null)}
-              text={`Allir flokkar (${searchResults.total})`}
+              text={`${n('allCategories', 'Allir flokkar')} (${
+                searchResults.total
+              })`}
             />
             <Divider weight="alternate" />
             <SidebarAccordion
               id="sidebar_accordion_categories"
-              label="Sjá flokka"
+              label={n('seeCategories', 'Sjá flokka')}
             >
               <Stack space={[1, 1, 2]}>
                 {sidebarCategories.map((c, index) => {
@@ -218,8 +221,8 @@ const Search: Screen<CategoryProps> = ({
           />
           <Hidden above="md">
             <Select
-              label="Leitarflokkar"
-              placeholder="Flokkar"
+              label={n('searchResult', 'Leitarflokkar')}
+              placeholder={n('categories', 'Flokkar')}
               defaultValue={defaultSelectedCategory}
               options={categorySelectOptions}
               onChange={onChangeSelectCategoryOptions}
@@ -229,14 +232,19 @@ const Search: Screen<CategoryProps> = ({
           <Typography variant="intro" as="p">
             {filteredItems.length === 0 ? (
               <span>
-                Ekkert fannst við leit á <strong>{q}</strong>
+                {n('nothingFoundWhenSearchingFor', 'Ekkert fannst við leit á')}{' '}
+                <strong>{q}</strong>
               </span>
             ) : (
               <span>
-                {filteredItems.length} leitarniðurstöður{' '}
+                {filteredItems.length}{' '}
+                {filteredItems.length === 1
+                  ? n('searchResult', 'leitarniðurstaða')
+                  : n('searchResults', 'leitarniðurstöður')}
                 {filters.category && (
                   <>
-                    í flokki
+                    {' '}
+                    {n('inCategory', 'í flokki')}
                     {categoryTitle ? (
                       <>
                         : <strong>{categoryTitle}</strong>
@@ -267,7 +275,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QuerySearchResultsArgs>({
+    apolloClient.query<GetSearchResultsDetailedQuery, QuerySearchResultsArgs>({
       query: GET_SEARCH_RESULTS_QUERY_DETAILED,
       variables: {
         query: {
@@ -279,7 +287,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
       },
     }),
     apolloClient
-      .query<Query, QueryGetNamespaceArgs>({
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
@@ -323,4 +331,5 @@ const Filter = ({ selected, text, onClick, ...props }) => {
     </Box>
   )
 }
+
 export default Search

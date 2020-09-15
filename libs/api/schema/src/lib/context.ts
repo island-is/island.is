@@ -3,7 +3,6 @@ import {
   ContentCategory,
   SearchResult,
   ContentItem,
-  WebSearchAutocompleteInput,
   WebSearchAutocomplete,
 } from './schema'
 

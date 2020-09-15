@@ -19,13 +19,6 @@ import {
   GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
 } from '@island.is/web/screens/queries'
 import {
-  ContentLanguage,
-  QuerySearchResultsArgs,
-  Query,
-  SearchResult,
-  QueryWebSearchAutocompleteArgs,
-} from '@island.is/api/schema'
-import {
   AsyncSearchInput,
   AsyncSearchSizes,
   Box,
@@ -35,6 +28,14 @@ import {
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import * as styles from './SearchInput.treat'
 import { Locale } from '@island.is/web/i18n/I18n'
+import {
+  GetSearchResultsQuery,
+  QuerySearchResultsArgs,
+  ContentLanguage,
+  SearchResult,
+  QueryWebSearchAutocompleteArgs,
+  AutocompleteTermResultsQuery,
+} from '../../graphql/schema'
 import { GlobalNamespaceContext } from '@island.is/web/context/GlobalNamespaceContext/GlobalNamespaceContext'
 
 const DEBOUNCE_TIMER = 300
@@ -86,7 +87,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
     const thisTimerId = (timer.current = setTimeout(async () => {
       const {
         data: { searchResults: results },
-      } = await client.query<Query, QuerySearchResultsArgs>({
+      } = await client.query<GetSearchResultsQuery, QuerySearchResultsArgs>({
         query: GET_SEARCH_RESULTS_QUERY,
         variables: {
           query: {
@@ -106,7 +107,10 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
         data: {
           webSearchAutocomplete: { completions: suggestions },
         },
-      } = await client.query<Query, QueryWebSearchAutocompleteArgs>({
+      } = await client.query<
+        AutocompleteTermResultsQuery,
+        QueryWebSearchAutocompleteArgs
+      >({
         query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
         variables: {
           input: {
@@ -280,7 +284,10 @@ const Results: FC<{
   if (!search.term) {
     const suggestions = search.suggestions.map((suggestion, i) => (
       <div key={suggestion} {...getItemProps({ item: suggestion })}>
-        <Typography color={i === highlightedIndex ? 'blue400' : 'dark400'}>
+        <Typography
+          links
+          color={i === highlightedIndex ? 'blue400' : 'dark400'}
+        >
           {suggestion}
         </Typography>
       </div>
@@ -290,8 +297,14 @@ const Results: FC<{
   }
 
   return (
-    <Box display="flex" background="blue100" paddingY={2} paddingX={3}>
-      <div className={styles.menuColumn}>
+    <Box
+      display="flex"
+      flexDirection="column"
+      background="blue100"
+      paddingY={2}
+      paddingX={3}
+    >
+      <div className={styles.menuRow}>
         <Stack space={1}>
           {search.suggestions.map((suggestion, i) => {
             const suggestionHasTerm = suggestion.startsWith(search.term)
@@ -302,6 +315,7 @@ const Results: FC<{
             return (
               <div key={suggestion} {...getItemProps({ item: suggestion })}>
                 <Typography
+                  links
                   color={i === highlightedIndex ? 'blue400' : 'dark400'}
                 >
                   {`${search.prefix} ${startOfString}`}
@@ -311,26 +325,28 @@ const Results: FC<{
             )
           })}
         </Stack>
-      </div>
-      <div className={styles.separator} />
-      <div className={styles.menuColumn}>
-        {search.results && (
-          <Stack space={2}>
-            <Typography variant="eyebrow" color="purple400">
-              Beint að efninu
-            </Typography>
-            {search.results.items.map(({ id, title, slug }) => (
-              <div key={id} {...getItemProps()}>
-                <Typography links variant="h5" color="blue400">
-                  <Link href={makePath('article', slug)}>
-                    <a>{title}</a>
-                  </Link>
-                </Typography>
-              </div>
-            ))}
-          </Stack>
-        )}
-      </div>
+      </div>{' '}
+      {search.results.items.length > 0 && (
+        <>
+          <div className={styles.separatorHorizontal} />
+          <div className={styles.menuRow}>
+            <Stack space={2}>
+              <Typography variant="eyebrow" color="purple400">
+                Beint að efninu
+              </Typography>
+              {search.results.items.slice(0, 5).map(({ id, title, slug }) => (
+                <div key={id} {...getItemProps()}>
+                  <Typography links variant="h5" color="blue400">
+                    <Link href={makePath('article', slug)}>
+                      <a>{title}</a>
+                    </Link>
+                  </Typography>
+                </div>
+              ))}
+            </Stack>
+          </div>
+        </>
+      )}
     </Box>
   )
 }
@@ -347,7 +363,6 @@ const CommonSearchTerms = ({
   }
 
   const splitAt = Math.min(suggestions.length / 2)
-
   const left = suggestions.slice(0, splitAt)
   const right = suggestions.slice(splitAt)
 
@@ -371,7 +386,7 @@ const CommonSearchTerms = ({
       </div>
       {width > STACK_WIDTH - 1 ? (
         <>
-          <div className={styles.separator} />
+          <div className={styles.separatorVertical} />
           <div className={styles.menuColumn}>
             <Stack space={2}>{right}</Stack>
           </div>

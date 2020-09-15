@@ -11,16 +11,14 @@ export const OidcSignIn: FC = () => {
 
   useEffect(() => {
     userManager
-      .signinCallback(window.location.href)
+      .signinRedirectCallback(window.location.href)
       .then(function(user) {
         dispatch({
           type: ActionType.SetUserFulfilled,
           payload: user,
         })
 
-        // TODO: Send the user back to the route he was attempting to access
-        // instead of redirecting him to the frontpage every time
-        history.push('/')
+        history.push(typeof user.state === 'string' ? user.state : '/')
       })
       .catch(function(error) {
         // TODO: Handle error

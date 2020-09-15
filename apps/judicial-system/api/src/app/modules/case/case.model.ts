@@ -1,5 +1,4 @@
 import {
-  AllowNull,
   Column,
   CreatedAt,
   DataType,
@@ -10,13 +9,11 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-export enum CaseState {
-  UNKNOWN = 'UNKNOWN',
-  DRAFT = 'DRAFT',
-  SUBMITTED = 'SUBMITTED',
-  ACTIVE = 'ACTIVE',
-  COMPLETED = 'COMPLETED',
-} // TODO get from somewhere
+import {
+  CaseState,
+  CaseCustodyProvisions,
+  CaseCustodyRestrictions,
+} from './case.types'
 
 @Table({
   tableName: 'case',
@@ -96,4 +93,77 @@ export class Case extends Model<Case> {
   })
   @ApiPropertyOptional()
   requestedCourtDate: Date
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  requestedCustodyEndDate: Date
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  // Lagaákvæði sem brot varða við
+  lawsBroken: string
+
+  @Column({
+    type: DataType.ARRAY(DataType.ENUM),
+    allowNull: true,
+    values: Object.values(CaseCustodyProvisions),
+  })
+  @ApiProperty({ enum: CaseCustodyProvisions, isArray: true })
+  // Lagaákvæði sem krafan byggir á
+  custodyProvisions: CaseCustodyProvisions[]
+
+  @Column({
+    type: DataType.ARRAY(DataType.ENUM),
+    allowNull: true,
+    values: Object.values(CaseCustodyRestrictions),
+  })
+  @ApiProperty({ enum: CaseCustodyRestrictions, isArray: true })
+  // Takmarkanir á gæslu
+  custodyRestrictions: CaseCustodyRestrictions[]
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  // Málsatvik rakin
+  caseFacts: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  // Framburðir
+  witnessAccounts: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  // Staða rannsóknar og næstu skref
+  investigationProgress: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  // Lagarök
+  legalArguments: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional()
+  // Athugasemdir til dómara
+  comments: string
 }

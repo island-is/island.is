@@ -99,8 +99,7 @@ export const theme = {
   },
   color,
   grid: {
-    columns: { desktop: 12, mobile: 6 },
-    gutter: { desktop: 24, mobile: 16 },
+    gutter: { desktop: 24, mobile: 12 },
   },
 }
 

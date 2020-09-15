@@ -21,12 +21,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 
-import { Flight } from './flight.model'
+import { Flight, FlightLeg } from './flight.model'
 import { FlightService } from './flight.service'
 import {
   FlightDto,
   GetFlightParams,
-  GetFlightsBody,
+  GetFlightLegsBody,
   CreateFlightParams,
   GetUserFlightsParams,
   DeleteFlightParams,
@@ -100,7 +100,14 @@ export class PublicFlightController {
     @Param() params: GetFlightParams,
     @Req() request,
   ): Promise<Flight> {
-    return this.flightService.findOne(params.flightId, request.airline)
+    const flight = await this.flightService.findOne(
+      params.flightId,
+      request.airline,
+    )
+    if (!flight) {
+      throw new NotFoundException(`Flight<${params.flightId}> not found`)
+    }
+    return flight
   }
 
   @Delete('flights/:flightId')
@@ -157,10 +164,10 @@ export class PrivateFlightController {
     return this.flightService.findAll()
   }
 
-  @Post('flights')
+  @Post('flightLegs')
   @ApiExcludeEndpoint()
-  getFlights(@Body() body: GetFlightsBody | {}): Promise<Flight[]> {
-    return this.flightService.findAllByFilter(body)
+  getFlightLegs(@Body() body: GetFlightLegsBody | {}): Promise<FlightLeg[]> {
+    return this.flightService.findAllLegsByFilter(body)
   }
 
   @Get('users/:nationalId/flights')

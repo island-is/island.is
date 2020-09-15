@@ -15,13 +15,13 @@ describe('Application', () => {
       .post('/application')
       .send({
         applicant: '123456-4321',
-        state: 'PENDING',
+        state: 'draft',
         attachments: {},
-        typeId: 'ExampleForm',
+        typeId: 'ParentalLeave',
         assignee: '123456-1234',
         externalId: '123',
         answers: {
-          person: { age: '19' },
+          usage: 3,
         },
       })
       .expect(201)
@@ -35,12 +35,11 @@ describe('Application', () => {
       .put('/application/98e83b8a-fd75-44b5-a922-0f76c99bdcae')
       .send({
         applicant: '123456-4321',
-        state: 'PENDING',
         attachments: {},
         assignee: '123456-1234',
         externalId: '123',
         answers: {
-          person: { age: '19' },
+          usage: 4,
         },
       })
       .expect(404)
@@ -56,46 +55,44 @@ describe('Application', () => {
     const server = request(app.getHttpServer())
     const response = await server.post('/application').send({
       applicant: '123456-4321',
-      state: 'PENDING',
+      state: 'draft',
       attachments: {},
-      typeId: 'ExampleForm',
+      typeId: 'ParentalLeave',
       assignee: '123456-1234',
       externalId: '123',
       answers: {
-        person: { age: '19' },
+        usage: 4,
       },
     })
-
-    expect(response.body.answers.person.age).toBe('19')
-    expect(response.body.answers.careerHistory).toBe(undefined)
+    expect(response.body.answers.usage).toBe(4)
+    expect(response.body.answers.spread).toBe(undefined)
 
     const { id } = response.body
     const putResponse = await server
       .put(`/application/${id}`)
       .send({
         answers: {
-          careerHistory: 'yes',
-          person: { age: '22' },
+          usage: 1,
+          spread: 22,
         },
       })
       .expect(200)
 
     // Assert
-    expect(putResponse.body.answers.person.age).toBe('22')
-    expect(putResponse.body.answers.careerHistory).toBe('yes')
+    expect(putResponse.body.answers.usage).toBe(1)
+    expect(putResponse.body.answers.spread).toBe(22)
   })
 
   it('PUT /application/:id should not be able to overwrite external data', async () => {
     const server = request(app.getHttpServer())
     const response = await server.post('/application').send({
       applicant: '123456-4321',
-      state: 'PENDING',
       attachments: {},
-      typeId: 'ExampleForm',
+      typeId: 'ParentalLeave',
       assignee: '123456-1234',
       externalId: '123',
       answers: {
-        person: { age: '19' },
+        usage: 3,
       },
     })
 

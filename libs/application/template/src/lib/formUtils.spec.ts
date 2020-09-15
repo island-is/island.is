@@ -1,4 +1,4 @@
-import { ExampleForm } from '../forms/examples/ExampleForm'
+import { ExampleForm } from '../templates/examples/ExampleForm'
 import { getFormLeaves, getFormNodeLeaves } from './formUtils'
 
 describe('application schema utility functions', () => {

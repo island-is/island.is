@@ -1,6 +1,6 @@
 import { Client } from '@elastic/elasticsearch'
 import { Document, SearchIndexes } from '../types'
-import esb, { RequestBodySearch, Sort, TermsAggregation } from 'elastic-builder'
+import esb, { RequestBodySearch, TermsAggregation } from 'elastic-builder'
 import { logger } from '@island.is/logging'
 import merge from 'lodash/merge'
 import { environment } from '../environments/environment'
@@ -212,9 +212,11 @@ export class ElasticService {
 
   async ping() {
     const client = await this.getClient()
-    return client.ping().catch((e) => {
-      ElasticService.handleError('Error in ping', {}, e)
+    const result = await client.ping().catch((error) => {
+      ElasticService.handleError('Error in ping', {}, error)
     })
+    logger.info('Got elasticsearch ping response')
+    return result
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

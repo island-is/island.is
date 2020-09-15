@@ -1,31 +1,38 @@
 import React from 'react'
 import Head from 'next/head'
 import { Page, Box, FooterLinkProps, Footer } from '@island.is/island-ui/core'
-import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import { NextComponentType, NextPageContext } from 'next'
+
 import { GetInitialPropsContext } from '../types'
-import {
-  Query,
-  QueryGetMenuArgs,
-  QueryGetNamespaceArgs,
-} from '@island.is/api/schema'
-import {
-  GlobalNamespaceContext,
-  NamespaceType,
-} from '../context/GlobalNamespaceContext/GlobalNamespaceContext'
+import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
-import { GET_NAMESPACE_QUERY } from '../screens/queries'
+import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
+import {
+  QueryGetMenuArgs,
+  GetMenuQuery,
+  GetNamespaceQuery,
+  QueryGetNamespaceArgs,
+  ContentLanguage,
+  GetCategoriesQuery,
+  QueryCategoriesArgs,
+} from '../graphql/schema'
+import { GlobalNamespaceContext } from '../context/GlobalNamespaceContext/GlobalNamespaceContext'
+import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
+import useRouteNames from '../i18n/useRouteNames'
+import { useI18n } from '../i18n'
 
 interface LayoutProps {
   showSearchInHeader?: boolean
   wrapContent?: boolean
   showHeader?: boolean
   showFooter?: boolean
+  categories: GetCategoriesQuery['categories']
+  topMenuCustomLinks?: FooterLinkProps[]
   footerUpperMenu?: FooterLinkProps[]
   footerLowerMenu?: FooterLinkProps[]
   footerMiddleMenu?: FooterLinkProps[]
   footerTagsMenu?: FooterLinkProps[]
-  namespace: NamespaceType
+  namespace: Record<string, string>
 }
 
 const Layout: NextComponentType<
@@ -37,6 +44,8 @@ const Layout: NextComponentType<
   wrapContent = true,
   showHeader = true,
   showFooter = true,
+  categories,
+  topMenuCustomLinks,
   footerUpperMenu,
   footerLowerMenu,
   footerMiddleMenu,
@@ -44,6 +53,28 @@ const Layout: NextComponentType<
   namespace,
   children,
 }) => {
+  const { activeLocale } = useI18n()
+  const { makePath } = useRouteNames(activeLocale)
+
+  const menuTabs = [
+    {
+      title: 'Þjónustuflokkar',
+      links: categories.map((x) => {
+        return {
+          title: x.title,
+          as: makePath(x.__typename, x.slug),
+          href: makePath(x.__typename, '[slug]'),
+        }
+      }),
+    },
+    {
+      title: 'Stafrænt Ísland',
+      links: topMenuCustomLinks,
+      externalLinksHeading: 'Aðrir opinberir vefir',
+      externalLinks: footerLowerMenu,
+    },
+  ]
+
   return (
     <GlobalNamespaceContext.Provider value={{ globalNamespace: namespace }}>
       <Page>
@@ -77,11 +108,17 @@ const Layout: NextComponentType<
         </Head>
         <SkipToMainContent />
         <PageLoader />
-        <FixedNav />
-        {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
-        <div id="main-content">
-          {wrapContent ? <Box width="full">{children}</Box> : children}
-        </div>
+        <MenuTabsContext.Provider
+          value={{
+            menuTabs,
+          }}
+        >
+          <FixedNav />
+          {showHeader && <Header showSearchInHeader={showSearchInHeader} />}
+          <div id="main-content">
+            {wrapContent ? <Box width="full">{children}</Box> : children}
+          </div>
+        </MenuTabsContext.Provider>
         {showFooter && (
           <Footer
             topLinks={footerUpperMenu}
@@ -147,7 +184,11 @@ const Layout: NextComponentType<
 }
 
 Layout.getInitialProps = async ({ apolloClient, locale }) => {
+  const lang = locale ?? 'is' // Defaulting to is when locale is undefined
+
   const [
+    categories,
+    topMenuCustomLinks,
     upperMenu,
     lowerMenu,
     middleMenu,
@@ -155,72 +196,92 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
     namespace,
   ] = await Promise.all([
     apolloClient
-      .query<Query, QueryGetMenuArgs>({
-        query: GET_MENU_QUERY,
+      .query<GetCategoriesQuery, QueryCategoriesArgs>({
+        query: GET_CATEGORIES_QUERY,
         variables: {
-          input: { name: 'Footer upper', lang: locale },
+          input: {
+            language: locale as ContentLanguage,
+          },
         },
       })
-      .then((result) => result.data.getMenu),
+      .then((res) => res.data.categories),
     apolloClient
-      .query<Query, QueryGetMenuArgs>({
+      .query<GetMenuQuery, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
         variables: {
-          input: { name: 'Footer lower', lang: locale },
+          input: { name: 'Top menu custom links', lang },
         },
       })
-      .then((result) => result.data.getMenu),
+      .then((res) => res.data.getMenu),
     apolloClient
-      .query<Query, QueryGetMenuArgs>({
+      .query<GetMenuQuery, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
         variables: {
-          input: { name: 'Footer middle', lang: locale },
+          input: { name: 'Footer upper', lang },
         },
       })
-      .then((result) => result.data.getMenu),
+      .then((res) => res.data.getMenu),
     apolloClient
-      .query<Query, QueryGetMenuArgs>({
+      .query<GetMenuQuery, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
         variables: {
-          input: { name: 'Footer tags', lang: locale },
+          input: { name: 'Footer lower', lang },
         },
       })
-      .then((result) => result.data.getMenu),
+      .then((res) => res.data.getMenu),
     apolloClient
-      .query<Query, QueryGetNamespaceArgs>({
+      .query<GetMenuQuery, QueryGetMenuArgs>({
+        query: GET_MENU_QUERY,
+        variables: {
+          input: { name: 'Footer middle', lang },
+        },
+      })
+      .then((res) => res.data.getMenu),
+    apolloClient
+      .query<GetMenuQuery, QueryGetMenuArgs>({
+        query: GET_MENU_QUERY,
+        variables: {
+          input: { name: 'Footer tags', lang },
+        },
+      })
+      .then((res) => res.data.getMenu),
+    apolloClient
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
             namespace: 'Global',
-            lang: locale,
+            lang,
           },
         },
       })
-      .then((content) => {
+      .then((res) => {
         // map data here to reduce data processing in component
-        return JSON.parse(content.data.getNamespace.fields)
+        return JSON.parse(res.data.getNamespace.fields)
       }),
   ])
 
-  const upperMenuLinks = upperMenu ? upperMenu.links : []
-  const lowerMenuLinks = lowerMenu ? lowerMenu.links : []
-  const middleMenuLinks = middleMenu ? middleMenu.links : []
-  const tagsMenuLinks = tagsMenu ? tagsMenu.links : []
-
   return {
-    footerUpperMenu: upperMenuLinks.map(({ text, url }) => ({
+    categories,
+    topMenuCustomLinks: (topMenuCustomLinks.links ?? []).map(
+      ({ text, url }) => ({
+        title: text,
+        href: url,
+      }),
+    ),
+    footerUpperMenu: (upperMenu.links ?? []).map(({ text, url }) => ({
       title: text,
       href: url,
     })),
-    footerLowerMenu: lowerMenuLinks.map(({ text, url }) => ({
+    footerLowerMenu: (lowerMenu.links ?? []).map(({ text, url }) => ({
       title: text,
       href: url,
     })),
-    footerTagsMenu: tagsMenuLinks.map(({ text, url }) => ({
+    footerTagsMenu: (tagsMenu.links ?? []).map(({ text, url }) => ({
       title: text,
       href: url,
     })),
-    footerMiddleMenu: middleMenuLinks.map(({ text, url }) => ({
+    footerMiddleMenu: (middleMenu.links ?? []).map(({ text, url }) => ({
       title: text,
       href: url,
     })),

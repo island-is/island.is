@@ -17,17 +17,20 @@ import { useI18n } from '@island.is/air-discount-scheme-web/i18n'
 
 const THIRTY_SECONDS = 30000 // milli-seconds
 
-const FlightsQuery = gql`
-  query FlightsQuery {
+const UserFlightLegsQuery = gql`
+  query UserFlightLegsQuery {
     user {
       nationalId
-      flights {
+      flightLegs {
         id
-        bookingDate
         travel
-        user {
-          nationalId
-          name
+        flight {
+          id
+          bookingDate
+          user {
+            nationalId
+            name
+          }
         }
       }
     }
@@ -39,17 +42,16 @@ interface PropTypes {
 }
 
 function Usage({ misc }: PropTypes) {
-  const { data } = useQuery(FlightsQuery, {
+  const { data } = useQuery(UserFlightLegsQuery, {
     ssr: false,
     pollInterval: THIRTY_SECONDS,
   })
-  const {
-    user: { flights },
-  } = data ?? { user: { flights: [] } }
-  const { currentUsage, user, path, date } = JSON.parse(misc)
+  const { user } = data || {}
+  const flightLegs = user?.flightLegs || []
+  const { currentUsage, user: userTitle, path, date } = JSON.parse(misc)
   const { activeLocale } = useI18n()
 
-  if (flights.length <= 0) {
+  if (flightLegs.length <= 0) {
     return null
   }
 
@@ -61,23 +63,31 @@ function Usage({ misc }: PropTypes) {
       <Table>
         <Head>
           <Row>
-            <HeadData>{user}</HeadData>
+            <HeadData>{userTitle}</HeadData>
             <HeadData>{path}</HeadData>
             <HeadData>{date}</HeadData>
           </Row>
         </Head>
         <Body>
-          {flights.map((flight) => (
-            <Row key={flight.id}>
-              <Data>{flight.user.name}</Data>
-              <Data>{flight.travel}</Data>
-              <Data>
-                {format(new Date(flight.bookingDate), 'dd. MMMM - k:mm', {
-                  locale: activeLocale === 'is' ? is : enGB,
-                })}
-              </Data>
-            </Row>
-          ))}
+          {flightLegs.map((flightLeg) => {
+            const { user } = flightLeg.flight
+
+            return (
+              <Row key={flightLeg.id}>
+                <Data>{user.name}</Data>
+                <Data>{flightLeg.travel}</Data>
+                <Data>
+                  {format(
+                    new Date(flightLeg.flight.bookingDate),
+                    'dd. MMMM - k:mm',
+                    {
+                      locale: activeLocale === 'is' ? is : enGB,
+                    },
+                  )}
+                </Data>
+              </Row>
+            )
+          })}
         </Body>
       </Table>
     </Box>

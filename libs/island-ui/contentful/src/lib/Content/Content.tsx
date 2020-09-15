@@ -7,7 +7,6 @@ import {
   Bullet,
   Button,
   Box,
-  Stack,
   Accordion,
   AccordionItem,
   Blockquote,
@@ -22,12 +21,6 @@ import Paragraph from '../Paragraph/Paragraph'
 import Background from '../Background/Background'
 import BorderedContent from '../BorderedContent/BorderedContent'
 import Hyperlink from '../Hyperlink/Hyperlink'
-import Image from '../Image/Image'
-
-const mappedContentfulTypes = {
-  article: 'article',
-  articleCategory: 'category',
-}
 
 const ContentWrap: React.FC = ({ children }) => (
   <GridRow>
@@ -73,6 +66,7 @@ const embeddedNodes = () => ({
       return (
         <ContentWrap>
           <Typography
+            id={slugify(title)}
             variant="h2"
             as="h2"
             data-sidebar-scollable
@@ -153,7 +147,12 @@ const embeddedNodes = () => ({
         topContent: (
           <ProcessEntryWrap>
             {title && (
-              <Typography variant="h2" as="h3" paddingBottom={2}>
+              <Typography
+                id={slugify(title)}
+                variant="h2"
+                as="h3"
+                paddingBottom={2}
+              >
                 <span data-sidebar-link={slugify(title)}>{title}</span>
               </Typography>
             )}
@@ -208,7 +207,7 @@ const embeddedNodes = () => ({
       return (
         <Background background="dotted" paddingY={[6, 6, 10]} marginTop={5}>
           <Statistics
-            items={node.data.target.fields.statistics.map((s) => s.fields)}
+            statistics={node.data.target.fields.statistics.map((s) => s.fields)}
           />
         </Background>
       )
@@ -221,7 +220,13 @@ const embeddedNodes = () => ({
       if (!fields.image) {
         return (
           <>
-            <Typography variant="h2" as="h2" paddingTop={2} paddingBottom={2}>
+            <Typography
+              id={slugify(fields.title)}
+              variant="h2"
+              as="h2"
+              paddingTop={2}
+              paddingBottom={2}
+            >
               <span data-sidebar-link={slugify(fields.title)}>
                 {fields.title}
               </span>
@@ -239,7 +244,12 @@ const embeddedNodes = () => ({
                 <img src={fields.image.fields.file.url + '?w=320'} alt="" />
               </GridColumn>
               <GridColumn span="8/12">
-                <Typography variant="h2" as="h2" paddingBottom={2}>
+                <Typography
+                  id={slugify(fields.title)}
+                  variant="h2"
+                  as="h2"
+                  paddingBottom={2}
+                >
                   <span data-sidebar-link={slugify(fields.title)}>
                     {fields.title}
                   </span>
@@ -295,14 +305,20 @@ const defaultRenderNode = (overrides = {}) => {
     },
     [BLOCKS.HEADING_2]: (node, children) => (
       <ContentWrap>
-        <Typography variant="h2" as="h2" paddingBottom={2} paddingTop={2}>
+        <Typography
+          id={slugify(children.join(''))}
+          variant="h2"
+          as="h2"
+          paddingBottom={2}
+          paddingTop={2}
+        >
           <span data-sidebar-link={slugify(children.join(''))}>{children}</span>
         </Typography>
       </ContentWrap>
     ),
     [BLOCKS.HEADING_3]: (node, children) => (
       <ContentWrap>
-        <Typography variant="h3" as="h3">
+        <Typography id={slugify(children.join(''))} variant="h3" as="h3">
           <span data-sidebar-link={slugify(children.join(''))}>{children}</span>
         </Typography>
       </ContentWrap>

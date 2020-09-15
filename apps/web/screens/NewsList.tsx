@@ -15,28 +15,28 @@ import {
   Stack,
   Breadcrumbs,
   Divider,
-  Columns,
-  Column,
   Pagination,
   Hidden,
   Select,
   Option,
   Tiles,
   Link,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { GET_NEWS_LIST_QUERY } from './queries'
 import { NewsListLayout } from './Layouts/Layouts'
-import {
-  Query,
-  ContentLanguage,
-  QueryGetNewsListArgs,
-} from '@island.is/api/schema'
 import { CustomNextError } from '../units/ErrorBoundary'
+import {
+  GetNewsListQuery,
+  QueryGetNewsListArgs,
+  ContentLanguage,
+} from '../graphql/schema'
 import { NewsCard } from '../components/NewsCard'
 
 interface NewsListProps {
-  newsList: Query['getNewsList']['news']
-  page: Query['getNewsList']['page']
+  newsList: GetNewsListQuery['getNewsList']['news']
+  page: GetNewsListQuery['getNewsList']['page']
   dateRange: string[]
   selectedYear: number
   selectedMonth: number
@@ -133,8 +133,8 @@ const NewsList: Screen<NewsListProps> = ({
             </Typography>
           </Hidden>
 
-          <Hidden above="sm">
-            <Tiles space={3} columns={2}>
+          <GridRow>
+            <GridColumn hideAbove="sm" span="12/12" paddingBottom={1}>
               <Select
                 label="Ár"
                 placeholder="Ár"
@@ -145,6 +145,8 @@ const NewsList: Screen<NewsListProps> = ({
                 onChange={({ value }: Option) => Router.push(makeHref(value))}
                 name="year"
               />
+            </GridColumn>
+            <GridColumn hideAbove="sm" span="12/12">
               <Select
                 label="Mánuður"
                 placeholder="Allt árið"
@@ -155,8 +157,9 @@ const NewsList: Screen<NewsListProps> = ({
                 }
                 name="month"
               />
-            </Tiles>
-          </Hidden>
+            </GridColumn>
+          </GridRow>
+
           {newsList.map((newsItem) => (
             <NewsCard
               title={newsItem.title}
@@ -167,7 +170,7 @@ const NewsList: Screen<NewsListProps> = ({
               date={newsItem.date}
             />
           ))}
-          <Box paddingTop={8}>
+          <Box paddingTop={[4, 4, 8]}>
             <Pagination
               {...page}
               renderLink={(page, className, children) => (
@@ -210,7 +213,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
       },
     },
   ] = await Promise.all([
-    apolloClient.query<Query, QueryGetNewsListArgs>({
+    apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
       query: GET_NEWS_LIST_QUERY,
       variables: {
         input: {
@@ -219,7 +222,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetNewsListArgs>({
+    apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
       query: GET_NEWS_LIST_QUERY,
       variables: {
         input: {
@@ -227,7 +230,7 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     }),
-    apolloClient.query<Query, QueryGetNewsListArgs>({
+    apolloClient.query<GetNewsListQuery, QueryGetNewsListArgs>({
       query: GET_NEWS_LIST_QUERY,
       variables: {
         input: {

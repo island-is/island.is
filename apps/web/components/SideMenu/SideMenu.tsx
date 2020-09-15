@@ -1,4 +1,11 @@
-import React, { FC, useState, useEffect } from 'react'
+import React, {
+  FC,
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useContext,
+} from 'react'
 import Link from 'next/link'
 import FocusLock from 'react-focus-lock'
 import { RemoveScroll } from 'react-remove-scroll'
@@ -13,8 +20,10 @@ import {
   GridRow,
   GridColumn,
   Box,
+  FocusableBox,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import { MenuTabsContext } from '@island.is/web/context/MenuTabsContext/MenuTabsContext'
 import { useI18n } from '@island.is/web/i18n'
 import * as styles from './SideMenu.treat'
 import { SearchInput } from '../SearchInput/SearchInput'
@@ -22,7 +31,7 @@ import { LanguageToggler } from '../LanguageToggler'
 
 interface TabLink {
   title: string
-  url: string
+  href: string
 }
 
 interface Tab {
@@ -33,36 +42,67 @@ interface Tab {
 }
 
 interface Props {
-  tabs: Tab[]
+  tabs?: Tab[]
   isVisible: boolean
   handleClose: () => void
 }
 
-export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
+export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
   const [activeTab, setActiveTab] = useState(0)
+  const ref = useRef(null)
   const { activeLocale, t } = useI18n()
   const { width } = useWindowSize()
+  const tabRefs = useRef<Array<HTMLElement | null>>([])
   const isMobile = width < theme.breakpoints.md
+  const { menuTabs } = useContext(MenuTabsContext)
+
+  const tabList = menuTabs || tabs
 
   useKey('Escape', handleClose)
+
+  const handleClickOutside = useCallback(
+    (e) => {
+      if (isVisible && ref.current && !ref.current.contains(e.target)) {
+        handleClose()
+      }
+    },
+    [ref, isVisible, handleClose],
+  )
 
   useEffect(() => {
     setActiveTab(0)
   }, [isVisible])
 
-  return isVisible ? (
-    <RemoveScroll enabled={isMobile}>
+  useEffect(() => {
+    document.addEventListener('click', handleClickOutside, true)
+
+    if (tabRefs.current) {
+      tabRefs.current[0] && tabRefs.current[0].focus()
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside, true)
+    }
+  }, [isVisible, ref, handleClickOutside])
+
+  return (
+    <RemoveScroll ref={ref} enabled={isMobile}>
       <FocusLock>
         <Box
           className={cn(styles.root, { [styles.isVisible]: isVisible })}
           background="white"
-          boxShadow="subtle"
+          borderRadius="large"
           height="full"
         >
           <Box display="flex" paddingBottom={3} justifyContent="flexEnd">
-            <button onClick={handleClose} tabIndex={-1}>
+            <FocusableBox
+              component="button"
+              onClick={handleClose}
+              tabIndex={-1}
+              padding={1}
+            >
               <Icon type="close" />
-            </button>
+            </FocusableBox>
           </Box>
           <Hidden above="sm">
             <GridContainer>
@@ -78,7 +118,7 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
               </GridRow>
               <GridRow>
                 <GridColumn span="8/12" paddingTop={3} paddingBottom={3}>
-                  <Link href="https://minarsidur.island.is/" passHref>
+                  <Link href="https://minarsidur.island.is/">
                     <Button variant="menu" leftIcon="user" width="fluid">
                       {t.login}
                     </Button>
@@ -92,43 +132,62 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
           </Hidden>
 
           <div className={styles.tabBar}>
-            {tabs.map((tab, index) => (
-              <button
+            {tabList.map((tab, index) => (
+              <FocusableBox
+                ref={(el) => (tabRefs.current[index] = el)}
+                component="button"
                 key={tab.title}
                 role="tab"
                 aria-controls={`tab-content-${index}`}
-                className={cn(styles.tab, {
-                  [styles.tabActive]: activeTab === index,
-                })}
                 aria-selected={activeTab === index}
                 onClick={() => setActiveTab(index)}
               >
-                <Typography variant="eyebrow" color="blue400">
-                  {tab.title}
-                </Typography>
-              </button>
+                {({ isFocused }) => (
+                  <div
+                    className={cn(styles.tab, {
+                      [styles.tabActive]: activeTab === index,
+                      [styles.tabFocused]: isFocused,
+                    })}
+                  >
+                    <Typography variant="eyebrow" color="blue400">
+                      {tab.title}
+                    </Typography>
+                  </div>
+                )}
+              </FocusableBox>
             ))}
           </div>
-          {tabs.map((tab, index) => {
+          {tabList.map((tab, index) => {
             const hasExternalLinks =
               tab.externalLinks && tab.externalLinks.length
             return (
               <div
+                key={index}
                 aria-labelledby={`tab${index}`}
                 role="tabpanel"
                 className={styles.content}
                 hidden={activeTab !== index}
               >
                 <div className={styles.linksContent}>
-                  {tab.links.map((link, index) => (
-                    <Typography
-                      variant="sideMenu"
-                      color="blue400"
-                      paddingBottom={index + 1 === tab.links.length ? 0 : 2}
-                    >
-                      <a href={link.url}>{link.title}</a>
-                    </Typography>
-                  ))}
+                  {tab.links.map((link, index) => {
+                    const props = {
+                      ...(link.href && { href: link.href }),
+                      ...(link.as && { as: link.as }),
+                    }
+
+                    return (
+                      <span onClick={handleClose}>
+                        <Typography
+                          key={index}
+                          variant="sideMenu"
+                          color="blue400"
+                          paddingBottom={index + 1 === tab.links.length ? 0 : 2}
+                        >
+                          <FocusableBox {...props}>{link.title}</FocusableBox>
+                        </Typography>
+                      </span>
+                    )
+                  })}
                 </div>
                 {hasExternalLinks && (
                   <Box
@@ -145,14 +204,16 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
                       {tab.externalLinksHeading || 'Aðrir opinberir vefir'}
                     </Typography>
                     <div className={styles.linksContent}>
-                      {tab.externalLinks.map((link) => (
+                      {tab.externalLinks.map((link, index) => (
                         <Typography
-                          key={link.url}
+                          key={index}
                           variant="sideMenu"
                           color="blue400"
                           paddingBottom={2}
                         >
-                          <a href={link.url}>{link.title}</a>
+                          <FocusableBox href={link.href}>
+                            {link.title}
+                          </FocusableBox>
                         </Typography>
                       ))}
                     </div>
@@ -164,5 +225,5 @@ export const SideMenu: FC<Props> = ({ tabs, isVisible, handleClose }) => {
         </Box>
       </FocusLock>
     </RemoveScroll>
-  ) : null
+  )
 }
