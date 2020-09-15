@@ -29,7 +29,7 @@ export class LifeEventsPageSyncService {
         _id: mapped.id,
         title: mapped.title,
         content: mapped.intro,
-        type: 'lifeEventPage',
+        type: 'webLifeEventPage',
         termPool: createTerms([
           mapped.title
         ]),

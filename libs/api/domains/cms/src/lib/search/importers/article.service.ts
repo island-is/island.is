@@ -28,7 +28,7 @@ export class ArticleSyncService {
         _id: mapped.id,
         title: mapped.title,
         content: mapped.content,
-        type: 'article',
+        type: 'webArticle',
         termPool: createTerms([
           mapped.title,
           mapped.category?.title,
