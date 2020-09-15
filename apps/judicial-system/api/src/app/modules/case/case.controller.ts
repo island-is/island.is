@@ -8,7 +8,6 @@ import {
   Put,
   UseGuards,
   Inject,
-  Req,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
@@ -17,6 +16,7 @@ import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 import { JwtAuthGuard } from '../auth'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case } from './case.model'
+import { Notification } from './case.types'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './case.pipe'
 
@@ -32,17 +32,13 @@ export class CaseController {
 
   @Get('cases')
   @ApiOkResponse({ type: Case, isArray: true })
-  async getAll(@Req() req) {
-    this.logger.debug('Received request from user', {
-      extra: { user: req.user },
-    })
-
+  getAll(): Promise<Case[]> {
     return this.caseService.getAll()
   }
 
   @Get('case/:id')
   @ApiOkResponse({ type: Case })
-  async findOne(@Param('id') id: string) {
+  async getById(@Param('id') id: string): Promise<Case> {
     const existingCase = await this.caseService.findById(id)
 
     if (!existingCase) {
@@ -54,10 +50,10 @@ export class CaseController {
 
   @Post('case')
   @ApiCreatedResponse({ type: Case })
-  async create(
+  create(
     @Body(new CaseValidationPipe(true))
     caseToCreate: CreateCaseDto,
-  ) {
+  ): Promise<Case> {
     return this.caseService.create(caseToCreate)
   }
 
@@ -67,7 +63,7 @@ export class CaseController {
     @Param('id') id: string,
     @Body()
     caseToUpdate: UpdateCaseDto,
-  ) {
+  ): Promise<Case> {
     const { numberOfAffectedRows, updatedCase } = await this.caseService.update(
       id,
       caseToUpdate,
@@ -78,5 +74,17 @@ export class CaseController {
     }
 
     return updatedCase
+  }
+
+  @Get('case/:id/notifications')
+  @ApiOkResponse({ type: Notification, isArray: true })
+  getAllNotificationsById(@Param('id') id: string): Promise<Notification[]> {
+    return this.caseService.getAllNotificationsByCaseId(id)
+  }
+
+  @Post('caser/:id/notification')
+  @ApiOkResponse({ type: Notification })
+  sendNotificationByCaseId(@Param('id') id: string): Promise<Notification> {
+    return this.caseService.sendNotificationByCaseId(id)
   }
 }
