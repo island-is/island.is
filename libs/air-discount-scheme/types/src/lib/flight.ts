@@ -29,7 +29,7 @@ export type Flight = {
   modified: Date
 }
 
-export type FlightLegInput = {
+export type Travel = {
   from?: string
   to?: string
 }
@@ -44,9 +44,9 @@ export type RangeInput = {
   to?: number
 }
 
-export type FlightsInput = {
+export type FlightLegsInput = {
   airline?: string
-  flightLeg?: FlightLegInput
+  flightLeg?: Travel
   period: PeriodInput
   state?: string[]
   age?: RangeInput
