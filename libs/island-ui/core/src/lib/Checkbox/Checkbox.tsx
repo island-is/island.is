@@ -80,9 +80,13 @@ export const Checkbox = ({
         </div>
         {label}
         {tooltip && (
-          <Box marginLeft={2} display="inlineBlock">
+          <div
+            className={cn(styles.tooltipContainer, {
+              [styles.tooltipLargeContainer]: large,
+            })}
+          >
             <Tooltip text={tooltip} />
-          </Box>
+          </div>
         )}
         {hasError && errorMessage && (
           <div className={styles.errorMessage} id={id}>
