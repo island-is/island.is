@@ -35,7 +35,7 @@ export class GrantType extends Model<GrantType> {
     allowNull: false,
   })
   @ApiProperty({
-    example: 'some_name',
+    example: "some_name"
   })
   name: string
 
@@ -44,7 +44,7 @@ export class GrantType extends Model<GrantType> {
     allowNull: false,
   })
   @ApiProperty({
-    example: 'some_description',
+    example: "some_description"
   })
   description: string
 

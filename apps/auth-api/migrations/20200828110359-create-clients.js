@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -19,7 +19,7 @@ module.exports = {
           access_token_type             INTEGER NOT NULL DEFAULT 0,
           enable_local_login             BOOLEAN NOT NULL DEFAULT true,
           include_jwt_id                 BOOLEAN NOT NULL DEFAULT true,
-          always_send_client_claims      BOOLEAN NOT NULL DEFAULT false, 
+          always_send_client_claims      BOOLEAN NOT NULL DEFAULT false,
           pair_wise_subject_salt         VARCHAR,
           user_sso_lifetime              INTEGER,
           user_code_type                 VARCHAR,
@@ -155,4 +155,4 @@ module.exports = {
       COMMIT;
     `)
   },
-}
+};

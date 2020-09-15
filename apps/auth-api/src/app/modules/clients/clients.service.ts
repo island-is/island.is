@@ -1,5 +1,8 @@
-import { ClientDTO } from './dto/client-dto'
-import { Inject, Injectable } from '@nestjs/common'
+import { ClientDTO } from './dto/client-dto';
+import {
+  Inject,
+  Injectable,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Client } from './models/client.model'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -12,7 +15,7 @@ import { ClientIdpRestrictions } from './models/client-idp-restrictions.model'
 import { ClientSecret } from './models/client-secret.model'
 import { ClientPostLogoutRedirectUri } from './models/client-post-logout-redirect-uri.model'
 import { ClientGrantType } from './models/client-grant-type.model'
-import { ClientUpdateDTO } from './dto/client-update-dto'
+import { ClientUpdateDTO } from './dto/client-update-dto';
 
 @Injectable()
 export class ClientsService {
@@ -52,7 +55,9 @@ export class ClientsService {
   async create(client: ClientDTO): Promise<Client> {
     this.logger.debug('Creating a new client')
 
-    return await this.clientModel.create({ ...client })
+    return await this.clientModel.create(
+      { ...client }
+    )
   }
 
   async update(client: ClientUpdateDTO, id: string): Promise<Client> {
@@ -61,8 +66,8 @@ export class ClientsService {
     await this.clientModel.update(
       { ...client },
       {
-        where: { clientId: id },
-      },
+        where: { clientId: id}
+      }
     )
 
     return await this.findClientById(id)
@@ -72,7 +77,7 @@ export class ClientsService {
     this.logger.debug('Deleting client with id: ', id)
 
     return await this.clientModel.destroy({
-      where: { clientId: id },
+      where: { clientId: id }
     })
   }
 }

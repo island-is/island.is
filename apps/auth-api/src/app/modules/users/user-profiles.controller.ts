@@ -9,12 +9,7 @@ import {
   Put,
   Delete,
 } from '@nestjs/common'
-import {
-  ApiOkResponse,
-  ApiTags,
-  ApiOAuth2,
-  ApiCreatedResponse,
-} from '@nestjs/swagger'
+import { ApiOkResponse, ApiTags, ApiOAuth2, ApiCreatedResponse } from '@nestjs/swagger'
 import { UserProfile } from './models/user-profile.model'
 import { UserProfilesService } from './user-profiles.service'
 import { AuthGuard } from '@nestjs/passport'
@@ -25,7 +20,9 @@ import { UserProfileDto } from './dto/user-profile.dto'
 @ApiTags('user-profiles')
 @Controller('user-profiles')
 export class UserProfilesController {
-  constructor(private readonly userProfilesService: UserProfilesService) {}
+  constructor(
+    private readonly userProfilesService: UserProfilesService,
+  ) {}
 
   @Get(':subjectId')
   @ApiOkResponse({ type: UserProfile })
@@ -47,18 +44,17 @@ export class UserProfilesController {
     return await this.userProfilesService.create(userProfile)
   }
 
-  @Put(':id')
-  @ApiOkResponse({ type: UserProfile })
-  async update(
-    @Body() userProfile: UserProfileDto,
-    @Param('id') id: string,
-  ): Promise<UserProfile> {
+  @Put(":id")
+  @ApiOkResponse({ type: UserProfile }) 
+  async update(@Body() userProfile: UserProfileDto, @Param('id') id: string): Promise<UserProfile> {
     return await this.userProfilesService.update(userProfile, id)
   }
 
-  @Delete(':id')
+  @Delete(":id")
   @ApiOkResponse()
   async delete(@Param('id') id: string): Promise<number> {
     return await this.userProfilesService.delete(id)
   }
+  
 }
+

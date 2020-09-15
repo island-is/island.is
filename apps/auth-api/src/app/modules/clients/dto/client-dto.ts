@@ -102,7 +102,7 @@ export class ClientDTO {
 
   @IsOptional()
   @IsNumber({
-    allowNaN: true,
+    allowNaN: true
   })
   @ApiProperty({
     example: null,

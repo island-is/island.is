@@ -8,7 +8,9 @@ bootstrap({
   name: 'auth-api',
   openApi: new DocumentBuilder()
     .setTitle('IdentityServer Api')
-    .setDescription('Api for IdentityServer.')
+    .setDescription(
+      'Api for IdentityServer.',
+    )
     .setVersion('1.0')
     .addTag('auth-api')
     .build(),

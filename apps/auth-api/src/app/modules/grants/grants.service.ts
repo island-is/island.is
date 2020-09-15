@@ -79,6 +79,8 @@ export class GrantsService {
   async createAsync(grant: GrantDTO): Promise<Grant> {
     this.logger.debug(`Creating a new grant`)
 
-    return await this.grantModel.create({ ...grant })
+    return await this.grantModel.create(
+      { ...grant }
+    )
   }
 }

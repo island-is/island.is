@@ -1,3 +1,5 @@
+
 export const config = {
-  idsAudience: '@identityserver.api',
-}
+    idsAudience: '@identityserver.api',
+  }
+  

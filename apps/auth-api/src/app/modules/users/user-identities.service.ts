@@ -30,17 +30,14 @@ export class UserIdentitiesService {
     )
     this.applicationsRegistered.labels('res1').inc()
 
-    userIdentity.profileId = await this.findLinkableProfileId(userIdentity)
+    userIdentity.profileId = await this.findLinkableProfileId(userIdentity);
 
     try {
-      return this.sequelize.transaction((t) => {
-        return this.userIdentityModel.create(userIdentity, {
-          include: [Claim],
-          transaction: t,
-        })
+      return this.sequelize.transaction(t => {
+        return this.userIdentityModel.create(userIdentity, {include: [Claim], transaction: t})
       })
     } catch {
-      this.logger.warn('Error when executing transaction, rollbacked.')
+      this.logger.warn('Error when executing transaction, rollbacked.');
     }
   }
 
@@ -56,48 +53,37 @@ export class UserIdentitiesService {
     this.logger.debug(`Finding user identity for subjectId - "${subjectId}"`)
     return await this.userIdentityModel.findOne({
       where: { subjectId },
-      include: [Claim],
+      include: [Claim]
     })
   }
 
-  private async findLinkableProfileId(
-    userIdentity: UserIdentityDto,
-  ): Promise<string> {
+  private async findLinkableProfileId(userIdentity: UserIdentityDto) : Promise<string> {
     // For now we assume that if an identity exists with a 'natreg' claim, we want
     // to link its profile to the new identity.
     // TODO: Also check 'nat' claim.
     // TODO: We may want to consider which external providers were used, and only allow
     // profile linking for providers with a certain trust level.
-    const natreg = userIdentity.claims.find(
-      (c) => c.type == config.nationalIdClaimName,
-    )
+    const natreg = userIdentity.claims.find(c => c.type == config.nationalIdClaimName)
 
     if (natreg) {
-      const linkedIdentity = await this.userIdentityModel.findOne({
-        include: [
-          {
+        const linkedIdentity = await this.userIdentityModel.findOne({
+          include: [{
             model: Claim,
-            where: { type: config.nationalIdClaimName, value: natreg.value },
-          },
-        ],
-      })
+            where: { type: config.nationalIdClaimName, value: natreg.value}
+          }]
+        })
 
-      if (linkedIdentity) {
-        return linkedIdentity.profileId
-      }
+        if (linkedIdentity) {
+          return linkedIdentity.profileId;
+        }
     }
   }
 
-  async findByProviderSubjectId(
-    provider: string,
-    subjectId: string,
-  ): Promise<UserIdentity> {
-    this.logger.debug(
-      `Finding user identity for provider "${provider}" and subjectId - "${subjectId}"`,
-    )
+  async findByProviderSubjectId(provider: string, subjectId: string): Promise<UserIdentity> {
+    this.logger.debug(`Finding user identity for provider "${provider}" and subjectId - "${subjectId}"`)
     return this.userIdentityModel.findOne({
       where: { providerName: provider, providerSubjectId: subjectId },
-      include: [Claim],
+      include: [Claim]
     })
   }
 
@@ -117,11 +103,13 @@ export class UserIdentitiesService {
     return await this.getById(id)
   }
 
-  async delete(id: string): Promise<number> {
+  async delete(
+    id: string,
+  ): Promise<number> {
     this.logger.debug('Deleting user identity with id: ', id)
 
     return await this.userIdentityModel.destroy({
-      where: { id: id },
+      where: { id: id}
     })
   }
 }
