@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { GraphQLModule } from '@nestjs/graphql'
 
 import { UserModule, CarModule } from './modules'
+import { CarownerModule } from './modules/carowner'
 
 const debug = process.env.NODE_ENV === 'development'
 const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
@@ -13,8 +14,7 @@ const playground = debug || process.env.GQL_PLAYGROUND_ENABLED === 'true'
       playground,
       autoSchemaFile: 'apps/skilavottord/ws/src/app/api.graphql',
     }),
-    UserModule,
-    CarModule,
+    CarownerModule,
   ],
   //providers: [BackendAPI],
 })

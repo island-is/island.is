@@ -9,7 +9,7 @@ type Car {
   color: String!
 }
 
-type User {
+type Carowner {
   nationalId: ID!
   name: String!
   mobile: String
@@ -17,6 +17,5 @@ type User {
 }
 
 type Query {
-  getCarById(id: String!): Car!
-  getUserByNationalId(nationalId: String!): User!
+  getCarownerByNationalId(nationalId: String!): Carowner!
 }

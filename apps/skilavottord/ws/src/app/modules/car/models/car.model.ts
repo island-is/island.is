@@ -5,7 +5,7 @@ export class Car {
   constructor(id: string, name: string, model: string, color: string) {
     this.id = id
     this.name = name
-    this.model = model 
+    this.model = model
     this.color = color
   }
 
