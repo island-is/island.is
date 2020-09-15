@@ -1,6 +1,16 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC, ReactNode, useRef, useMemo, Ref, forwardRef } from 'react'
-import fromPairs from 'lodash/fromPairs'
+import React, {
+  FC,
+  ReactNode,
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  Ref,
+  forwardRef,
+  useCallback,
+} from 'react'
+import { fromPairs, minBy } from 'lodash'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_ABOUT_PAGE_QUERY } from '../queries'
@@ -33,8 +43,8 @@ import {
 import { Content } from '@island.is/island-ui/contentful'
 import Sidebar, { SidebarProps } from './Sidebar'
 import * as styles from './AboutPage.treat'
-import useScrollSpy from '@island.is/web/hooks/useScrollSpy'
 import Head from 'next/head'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   GetAboutPageQuery,
   QueryGetAboutPageArgs,
@@ -42,6 +52,55 @@ import {
   AllSlicesEmbeddedVideoFragment,
   AllSlicesImageFragment,
 } from '../../graphql/schema'
+import useViewport from '@island.is/web/hooks/useViewport'
+
+const useScrollSpy = ({
+  margin = 0,
+  initialId = '',
+}: {
+  margin?: number
+  initialId?: string
+}): [(id: string) => (e: HTMLElement) => void, string | undefined] => {
+  const elements = useRef<{ [key: string]: HTMLElement }>({})
+  const [currentId, setCurrentId] = useState(initialId)
+
+  // re-render on scroll or resize
+  useViewport()
+
+  // Elements are cleared on each render. After the component that calls this
+  // hook has finished rendering, the useEffect hook below runs with
+  // elements.current populated by the component using this hook.
+  elements.current = {}
+
+  const spy = useCallback(
+    (key: string) => {
+      return (e: HTMLElement) => {
+        elements.current[key] = e
+      }
+    },
+    [elements],
+  )
+
+  useEffect(() => {
+    const candidates = Array.from(
+      Object.entries(elements.current),
+    ).map(([name, elem]) => ({ name, elem }))
+
+    const best = minBy(candidates, (c) => {
+      const { top, height } = c.elem.getBoundingClientRect()
+      return Math.min(
+        Math.abs(top - margin),
+        Math.abs(top + height - margin - 1),
+      )
+    })
+
+    if (best && best.name !== currentId) {
+      setCurrentId(best.name)
+    }
+  })
+
+  return [spy, currentId]
+}
 
 /**
  * TODO: Both fragments Image and EmbeddedVideo aren't used inside
@@ -423,7 +482,6 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
     data: { getAboutPage: page },
   } = await apolloClient.query<GetAboutPageQuery, QueryGetAboutPageArgs>({
     query: GET_ABOUT_PAGE_QUERY,
-    fetchPolicy: 'no-cache',
     variables: {
       input: {
         lang: locale,
@@ -433,10 +491,7 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
 
   return {
     page,
-    layoutConfig: {
-      showHeader: false,
-    },
   }
 }
 
-export default AboutPageScreen
+export default withMainLayout(AboutPageScreen, { showHeader: false })

@@ -60,6 +60,8 @@ export const slices = gql`
       title
       intro
       label
+      readMoreText
+      date
       logo {
         ...ImageFields
       }
@@ -72,7 +74,9 @@ export const slices = gql`
     id
     title
     news {
+      id
       title
+      subtitle
       slug
       date
       intro
@@ -132,6 +136,7 @@ export const slices = gql`
         id
         defaultVisible
         bullets {
+          id
           title
           body
         }
@@ -144,6 +149,7 @@ export const slices = gql`
     id
     title
     questions {
+      id
       question
       answer {
         ...HtmlFields
@@ -163,6 +169,7 @@ export const slices = gql`
   }
 
   fragment ProcessEntryFields on ProcessEntry {
+    __typename
     id
     title
     subtitle
@@ -185,6 +192,25 @@ export const slices = gql`
     document
   }
 
+  fragment EmbeddedVideoFields on EmbeddedVideo {
+    __typename
+    id
+    title
+    url
+  }
+
+  fragment SectionWithImageFields on SectionWithImage {
+    __typename
+    id
+    title
+    image {
+      ...ImageFields
+    }
+    html {
+      ...HtmlFields
+    }
+  }
+
   fragment AllSlices on Slice {
     ...PageHeaderFields
     ...TimelineFields
@@ -199,5 +225,8 @@ export const slices = gql`
     ...StatisticsFields
     ...ProcessEntryFields
     ...HtmlFields
+    ...ImageFields
+    ...EmbeddedVideoFields
+    ...SectionWithImageFields
   }
 `

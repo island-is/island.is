@@ -10,6 +10,11 @@ generates:
       contextType: ./context#Context
       namingConvention:
         enumValues: keep
+  ./apps/web/graphql/fragmentTypes.json:
+    plugins:
+      - fragment-matcher
+    config:
+      module: commonjs
 hooks:
   afterAllFileWrite:
     - prettier --write

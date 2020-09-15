@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Sequelize } from 'sequelize-typescript'
 import * as kennitala from 'kennitala'
 
 import { Airlines, States } from '@island.is/air-discount-scheme/consts'
 import { FlightLegSummary } from './flight.types'
 import { Flight, FlightLeg, financialStateMachine } from './flight.model'
-import { FlightDto, FlightLegDto, GetFlightsBody } from './dto'
+import { FlightDto, FlightLegDto, GetFlightLegsBody } from './dto'
 import { NationalRegistryUser } from '../nationalRegistry'
 
 export const ADS_POSTAL_CODES = {
@@ -109,31 +110,47 @@ export class FlightService {
     })
   }
 
-  findAllByFilter(body: GetFlightsBody | any): Promise<Flight[]> {
-    return this.flightModel.findAll({
+  findAllLegsByFilter(body: GetFlightLegsBody | any): Promise<FlightLeg[]> {
+    return this.flightLegModel.findAll({
       where: {
-        ...(body.period
-          ? {
-              bookingDate: { '&gte': body.period.from, '&lte': body.period.to },
-            }
+        ...(body.airline ? { airline: body.airline } : {}),
+        ...(body.state && body.state.length > 0
+          ? { financialState: body.state }
           : {}),
-        ...(body.age
-          ? {
-              'userInfo.age': { '&gte': body.age.from, '&lte': body.age.to },
-            }
-          : {}),
-        ...(body.gender ? { 'userInfo.gender': body.gender } : {}),
-        ...(body.postalCode ? { 'userInfo.postalCode': body.postalCode } : {}),
+        ...(body.flightLeg?.from ? { origin: body.flightLeg.from } : {}),
+        ...(body.flightLeg?.to ? { destination: body.flightLeg.to } : {}),
       },
       include: [
         {
-          model: this.flightLegModel,
-          where: {
-            ...(body.airline ? { airline: body.airline } : {}),
-            ...(body.state ? { financialState: body.state } : {}),
-            ...(body.flightLeg ? { origin: body.flightLeg.from } : {}),
-            ...(body.flightLeg ? { destination: body.flightLeg.to } : {}),
-          },
+          model: this.flightModel,
+          where: Sequelize.and(
+            Sequelize.where(
+              Sequelize.fn('date', Sequelize.col('booking_date')),
+              '>=',
+              body.period.from,
+            ),
+            Sequelize.where(
+              Sequelize.fn('date', Sequelize.col('booking_date')),
+              '<=',
+              body.period.to,
+            ),
+            Sequelize.where(
+              Sequelize.literal("(user_info->>'age')::numeric"),
+              '>=',
+              body.age.from,
+            ),
+            Sequelize.where(
+              Sequelize.literal("(user_info->>'age')::numeric"),
+              '<=',
+              body.age.to,
+            ),
+            {
+              ...(body.gender ? { 'userInfo.gender': body.gender } : {}),
+              ...(body.postalCode
+                ? { 'userInfo.postalCode': body.postalCode }
+                : {}),
+            },
+          ),
         },
       ],
     })

@@ -6,6 +6,7 @@ import * as types from './generated/contentfulTypes'
 import { Article, mapArticle } from './models/article.model'
 import { AboutPage, mapAboutPage } from './models/aboutPage.model'
 import { LandingPage, mapLandingPage } from './models/landingPage.model'
+import { AlertBanner, mapAlertBanner } from './models/alertBanner.model'
 import { GenericPage, mapGenericPage } from './models/genericPage.model'
 import { News, mapNews } from './models/news.model'
 import { Pagination } from './models/pagination.model'
@@ -21,6 +22,7 @@ import { GetAdgerdirNewsListInput } from './dto/getAdgerdirNewsList.input'
 import { PaginatedNews } from './models/paginatedNews.model'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
+import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { Namespace, mapNamespace } from './models/namespace.model'
 import { Menu, mapMenu } from './models/menu.model'
@@ -200,6 +202,7 @@ const ArticleFields = [
   'fields.subgroup',
   'fields.group',
   'fields.category',
+  'fields.subArticles',
 ].join(',')
 
 export const getAdgerdirNews = async (
@@ -359,6 +362,18 @@ export const getLandingPage = async ({
   }).catch(errorHandler('getLandingPage'))
 
   return result.items.map(mapLandingPage)[0] ?? null
+}
+
+export const getAlertBanner = async ({
+  lang,
+  id,
+}: GetAlertBannerInput): Promise<AlertBanner | null> => {
+  const result = await getLocalizedEntries<types.IAlertBannerFields>(lang, {
+    ['content_type']: 'alertBanner',
+    'sys.id': id,
+  }).catch(errorHandler('getAlertBanner'))
+
+  return result.items.map(mapAlertBanner)[0] ?? null
 }
 
 export const getGenericPage = async ({

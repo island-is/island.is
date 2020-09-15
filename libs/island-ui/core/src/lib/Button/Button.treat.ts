@@ -308,6 +308,13 @@ export const variants = styleMap({
   },
 })
 
+export const rounded = style({
+  borderRadius: '50px',
+  ':after': {
+    borderRadius: '50px',
+  },
+})
+
 export const white = style({
   backgroundColor: theme.color.transparent,
   borderColor: theme.color.white,

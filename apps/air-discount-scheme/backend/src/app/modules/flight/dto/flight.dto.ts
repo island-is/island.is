@@ -4,6 +4,7 @@ import {
   IsString,
   IsNumber,
   IsISO8601,
+  IsArray,
   IsEnum,
   IsObject,
   IsOptional,
@@ -13,6 +14,12 @@ import {
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
+import {
+  Travel,
+  RangeInput,
+  PeriodInput,
+  FlightLegsInput,
+} from '@island.is/air-discount-scheme/types'
 import { States, Airlines } from '@island.is/air-discount-scheme/consts'
 
 export class FlightLegDto {
@@ -85,45 +92,32 @@ export class DeleteFlightLegParams {
   readonly flightLegId: string
 }
 
-type FlightLeg = {
-  from: string
-  to: string
-}
-
-type Period = {
-  from: Date
-  to: Date
-}
-
-type Range = {
-  from: number
-  to: number
-}
-
-export class GetFlightsBody {
+export class GetFlightLegsBody implements FlightLegsInput {
   @IsOptional()
   @IsEnum(Object.keys(Airlines))
   airline: string
 
   @IsOptional()
   @IsObject()
-  flightLeg: FlightLeg
+  flightLeg: Travel
 
   @IsOptional()
   @IsObject()
-  period: Period
+  period: PeriodInput
 
   @IsOptional()
-  @IsEnum(Object.values(States))
-  state: string
+  @IsArray()
+  @ValidateNested({ each: true })
+  @IsEnum(States)
+  state: string[]
 
   @IsOptional()
   @IsObject()
-  age: Range
+  age: RangeInput
 
   @IsOptional()
   @IsEnum(['kk', 'kvk'])
-  gender: string
+  gender: 'kk' | 'kvk'
 
   @IsOptional()
   @IsNumber()

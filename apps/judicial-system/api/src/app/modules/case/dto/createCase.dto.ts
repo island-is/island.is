@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsString, IsOptional } from 'class-validator'
+
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class CreateCaseDto {
@@ -36,4 +37,9 @@ export class CreateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly requestedCourtDate: Date
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional()
+  readonly requestedCustodyEndDate: Date
 }

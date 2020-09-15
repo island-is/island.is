@@ -36,6 +36,7 @@ import {
   QueryCategoriesArgs,
   QueryGetNamespaceArgs,
 } from '../../graphql/schema'
+import { withMainLayout } from '@island.is/web/layouts/main'
 
 type Article = GetArticlesInCategoryQuery['articlesInCategory']
 
@@ -118,13 +119,13 @@ const Category: Screen<CategoryProps> = ({
     value: c.slug,
   }))
 
-  const subgroupSorting = (a, b) => {
+  const subgroupSorting = (a: string, b: string) => {
     // Make items with no subgroup appear last.
     if (b === 'null') {
       return -1
     }
     // Otherwise sort them alphabetically.
-    return a - b
+    return a.localeCompare(b, 'is')
   }
 
   const groupArticlesBySubgroup = (articles: Article) =>
@@ -212,6 +213,7 @@ const Category: Screen<CategoryProps> = ({
                                         key={slug}
                                         href={`${makePath('article')}/[slug]`}
                                         as={makePath('article', slug)}
+                                        borderRadius="large"
                                       >
                                         <LinkCard>{title}</LinkCard>
                                       </FocusableBox>
@@ -336,4 +338,4 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default Category
+export default withMainLayout(Category)

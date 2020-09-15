@@ -77,15 +77,9 @@ export const createCase: (
 
 export const saveCase: (
   caseId: string,
-  caseField: string,
-  caseFieldValue: string | Date,
-) => Promise<number> = async (
-  caseId: string,
-  caseField: string,
-  caseFieldValue: string | Date,
-) => {
+  propertyChange: string,
+) => Promise<number> = async (caseId: string, propertyChange: string) => {
   if (caseId !== '') {
-    const propertyChange = JSON.parse(`{"${caseField}": "${caseFieldValue}"}`)
     const response = await fetch(`/api/case/${caseId}`, {
       method: 'put',
       headers: {
@@ -103,6 +97,16 @@ export const saveCase: (
     }
     return response.status
   }
+}
+
+export const getUser = async () => {
+  const response = await fetch('/api/user', {
+    headers: {
+      Authorization: `Bearer ${csrfToken}`,
+    },
+  })
+
+  return response.json()
 }
 
 export const logOut = async () => {
