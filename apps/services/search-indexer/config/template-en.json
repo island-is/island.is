@@ -62,9 +62,6 @@
       },
       "dateUpdated": {
         "type": "date"
-      },
-      "nextSyncToken": {
-        "type": "text"
       }
     }
   }
