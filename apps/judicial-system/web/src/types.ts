@@ -26,6 +26,11 @@ export interface CreateCaseRequest {
   suspectNationalId: string
 }
 
+export interface User {
+  nationalId: string
+  roles: string[]
+}
+
 export interface WorkingCaseFields {
   policeCaseNumber: string
   suspectNationalId: string

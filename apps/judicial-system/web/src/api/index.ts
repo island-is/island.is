@@ -105,6 +105,16 @@ export const saveCase: (
   }
 }
 
+export const getUser = async () => {
+  const response = await fetch('/api/user', {
+    headers: {
+      Authorization: `Bearer ${csrfToken}`,
+    },
+  })
+
+  return response.json()
+}
+
 export const logOut = async () => {
   const response = await fetch('/api/auth/logout', {
     headers: {
