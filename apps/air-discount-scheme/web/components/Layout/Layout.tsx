@@ -7,8 +7,8 @@ import {
   Stack,
 } from '@island.is/island-ui/core'
 import { ReactComponent as LoftbruLogo } from '../../assets/loftbru.svg'
-import { ReactComponent as SRNLogo } from '../../assets/SRN.svg'
-import { ReactComponent as VEGLogo } from '../../assets/VEG.svg'
+import { ReactComponent as SRNLogo } from '../../assets/srn.svg'
+import { ReactComponent as VEGLogo } from '../../assets/veg.svg'
 
 interface PropTypes {
   main: ReactNode
