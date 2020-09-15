@@ -34,5 +34,3 @@ docker buildx build \
   --build-arg APP_DIST_HOME=${APP_DIST_HOME} \
   -t ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} \
   $PROJECT_ROOT
-
-docker inspect ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} | jq ".[].RootFS" 
