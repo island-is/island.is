@@ -12,8 +12,8 @@ import {
   ElasticService,
   SearchIndexes,
   sortDirection,
+  SyncOptions,
 } from '@island.is/api/content-search'
-import { SyncOptions } from '@island.is/elastic-indexing'
 import _ from 'lodash'
 import { PostSyncOptions } from './cmsSync.service'
 
@@ -139,7 +139,7 @@ export class ContentfulService {
   ): Promise<Entry<any>[]> {
     // contentful has a limit of 1000 entries per request but we get "414 Request URI Too Large" so we do a 500 per request
     const chunkSize = 500
-    let chunkedChanges = []
+    const chunkedChanges = []
     let chunkToProcess = entries.splice(-chunkSize, chunkSize)
     do {
       const chunkIds = this.getFilteredIdString(chunkToProcess)

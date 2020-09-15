@@ -1,8 +1,11 @@
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
-import { SearchIndexes } from '@island.is/api/content-search'
+import {
+  SearchIndexes,
+  SyncOptions,
+  SyncResponse,
+} from '@island.is/api/content-search'
 import { ArticleSyncService } from './importers/article.service'
-import { SyncOptions, SyncResponse } from '@island.is/elastic-indexing'
 import { ContentfulService } from './contentful.service'
 import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
