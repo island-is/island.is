@@ -23,12 +23,11 @@ case $PUBLISH in
 
 esac
 
-docker buildx build \
-  --platform=linux/amd64 \
-  --cache-from=type=local,src=$PROJECT_ROOT/cache \
-  --cache-from=type=local,src=$PROJECT_ROOT/cache_output \
+docker build \
   -f ${DIR}/Dockerfile \
-  --target=$TARGET $PUBLISH_TO_REGISTRY \
+  --target $TARGET \
+  --cache-from ${CACHE_REGISTRY_REPO}deps:${DEPS} \
+  --cache-from ${CACHE_REGISTRY_REPO}output-base:${DEPS} \
   --build-arg APP=${APP} \
   --build-arg APP_HOME=${APP_HOME} \
   --build-arg APP_DIST_HOME=${APP_DIST_HOME} \
