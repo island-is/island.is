@@ -17,3 +17,19 @@ export const navigation = style({
 export const radioButton = style({
   marginTop:5
 })
+
+export const topSectionText = style({
+  fontSize:24,
+  margin: 'auto',
+  width:600, 
+  padding: 10
+})
+
+
+
+export const topSection = style({
+  marginBottom:40,
+  textAlign:'center'
+})
+
+
