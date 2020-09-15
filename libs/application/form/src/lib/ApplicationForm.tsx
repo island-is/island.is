@@ -1,5 +1,6 @@
 import React, { FC, useReducer } from 'react'
 import { Application } from '@island.is/application/template'
+import * as z from 'zod'
 import FormProgress from '../components/FormProgress/'
 import Sidebar from '../components/Sidebar'
 import Screen from '../components/Screen'
@@ -24,6 +25,7 @@ export const ApplicationForm: FC<{ application: Application }> = ({
     ApplicationReducer,
     {
       application,
+      dataSchema: z.object({}),
       form: undefined,
       formLeaves: [],
       activeSection: 0,
@@ -44,6 +46,7 @@ export const ApplicationForm: FC<{ application: Application }> = ({
 
     sections,
     screens,
+    dataSchema,
   } = state
 
   return (
@@ -64,9 +67,8 @@ export const ApplicationForm: FC<{ application: Application }> = ({
                 answerQuestions={(payload) =>
                   dispatch({ type: ActionTypes.ANSWER, payload })
                 }
-                dataSchema={form.schema}
+                dataSchema={dataSchema}
                 externalData={storedApplication.externalData}
-                formTypeId={form.id}
                 formValue={storedApplication.answers}
                 expandRepeater={() =>
                   dispatch({ type: ActionTypes.EXPAND_REPEATER })

@@ -48,7 +48,7 @@ export interface CreateApplicationDto {
      * @type {string}
      * @memberof CreateApplicationDto
      */
-    state: CreateApplicationDtoStateEnum;
+    state: string;
     /**
      * 
      * @type {object}
@@ -112,20 +112,6 @@ export enum CreateApplicationDtoTypeIdEnum {
     ExampleForm3 = 'ExampleForm3',
     FamilyAndPets = 'FamilyAndPets',
     ParentalLeave = 'ParentalLeave'
-}
-/**
-* @export
-* @enum {string}
-*/
-export enum CreateApplicationDtoStateEnum {
-    DRAFT = 'DRAFT',
-    BEINGPROCESSED = 'BEING_PROCESSED',
-    NEEDSINFORMATION = 'NEEDS_INFORMATION',
-    PENDING = 'PENDING',
-    APPROVED = 'APPROVED',
-    MANUALAPPROVED = 'MANUAL_APPROVED',
-    REJECTED = 'REJECTED',
-    UNKNOWN = 'UNKNOWN'
 }
 
 

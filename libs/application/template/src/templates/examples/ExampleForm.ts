@@ -12,9 +12,9 @@ import {
   buildTextField,
 } from '../../lib/fieldBuilders'
 import { Form } from '../../types/Form'
-import { nationalIdRegex } from '../formConstants'
+import { nationalIdRegex } from './constants'
 import { Comparators } from '../../types/Condition'
-import { FormType } from '../FormType'
+import { ApplicationTypes } from '../../types/ApplicationTypes'
 
 const ExampleSchema = z.object({
   person: z.object({
@@ -46,10 +46,9 @@ const ExampleSchema = z.object({
 type ExampleSchemaFormValues = z.infer<typeof ExampleSchema>
 
 export const ExampleForm: Form = buildForm({
-  id: FormType.EXAMPLE,
+  id: ApplicationTypes.EXAMPLE,
   ownerId: 'DOL',
   name: 'Atvinnuleysisbætur',
-  schema: ExampleSchema,
   children: [
     buildSection({
       id: 'intro',

@@ -16,6 +16,10 @@ export class UserService {
         nationalId: '1112902539',
         roles: [UserRole.PROCECUTOR, UserRole.JUDGE],
       },
+      {
+        nationalId: '2408783999',
+        roles: [UserRole.PROCECUTOR, UserRole.JUDGE],
+      },
     ]
   }
 

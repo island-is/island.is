@@ -7,7 +7,7 @@ import {
   buildTextField,
 } from '../../lib/fieldBuilders'
 import { Form } from '../../types/Form'
-import { FormType } from '../FormType'
+import { ApplicationTypes } from '../../types/ApplicationTypes'
 
 const PetsSchema = z.object({
   entrance: z.enum(['yes', 'no']),
@@ -34,10 +34,10 @@ const PetsSchema = z.object({
 })
 
 export const FamilyAndPets: Form = buildForm({
-  id: FormType.FAMILY_AND_PETS,
+  id: ApplicationTypes.FAMILY_AND_PETS,
   ownerId: 'Aranja',
   name: 'Gæludýr',
-  schema: PetsSchema,
+  // schema: PetsSchema,
   children: [
     buildSection({
       id: 'pets',

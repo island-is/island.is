@@ -552,22 +552,11 @@ export type Application = {
   applicant: Scalars['String']
   assignee: Scalars['String']
   externalId?: Maybe<Scalars['String']>
-  state: ApplicationStateEnum
+  state: Scalars['String']
   attachments?: Maybe<Scalars['JSON']>
   typeId: ApplicationTypeIdEnum
   answers: Scalars['JSON']
   externalData: Scalars['JSON']
-}
-
-export enum ApplicationStateEnum {
-  Draft = 'DRAFT',
-  Beingprocessed = 'BEINGPROCESSED',
-  Needsinformation = 'NEEDSINFORMATION',
-  Pending = 'PENDING',
-  Approved = 'APPROVED',
-  Manualapproved = 'MANUALAPPROVED',
-  Rejected = 'REJECTED',
-  Unknown = 'UNKNOWN',
 }
 
 export enum ApplicationTypeIdEnum {
@@ -936,6 +925,7 @@ export type Mutation = {
   updateApplicationExternalData?: Maybe<Application>
   addAttachment?: Maybe<Application>
   deleteAttachment?: Maybe<Application>
+  submitApplication?: Maybe<Application>
   createUploadUrl: PresignedPost
 }
 
@@ -959,6 +949,10 @@ export type MutationDeleteAttachmentArgs = {
   input: DeleteAttachmentInput
 }
 
+export type MutationSubmitApplicationArgs = {
+  input: SubmitApplicationInput
+}
+
 export type MutationCreateUploadUrlArgs = {
   filename: Scalars['String']
 }
@@ -967,21 +961,10 @@ export type CreateApplicationInput = {
   applicant: Scalars['String']
   assignee: Scalars['String']
   externalId?: Maybe<Scalars['String']>
-  state: CreateApplicationDtoStateEnum
+  state: Scalars['String']
   attachments?: Maybe<Scalars['JSON']>
   typeId: CreateApplicationDtoTypeIdEnum
   answers: Scalars['JSON']
-}
-
-export enum CreateApplicationDtoStateEnum {
-  Draft = 'DRAFT',
-  Beingprocessed = 'BEINGPROCESSED',
-  Needsinformation = 'NEEDSINFORMATION',
-  Pending = 'PENDING',
-  Approved = 'APPROVED',
-  Manualapproved = 'MANUALAPPROVED',
-  Rejected = 'REJECTED',
-  Unknown = 'UNKNOWN',
 }
 
 export enum CreateApplicationDtoTypeIdEnum {
@@ -997,20 +980,8 @@ export type UpdateApplicationInput = {
   applicant?: Maybe<Scalars['String']>
   assignee?: Maybe<Scalars['String']>
   externalId?: Maybe<Scalars['String']>
-  state?: Maybe<UpdateApplicationDtoStateEnum>
   attachments?: Maybe<Scalars['JSON']>
   answers?: Maybe<Scalars['JSON']>
-}
-
-export enum UpdateApplicationDtoStateEnum {
-  Draft = 'DRAFT',
-  Beingprocessed = 'BEINGPROCESSED',
-  Needsinformation = 'NEEDSINFORMATION',
-  Pending = 'PENDING',
-  Approved = 'APPROVED',
-  Manualapproved = 'MANUALAPPROVED',
-  Rejected = 'REJECTED',
-  Unknown = 'UNKNOWN',
 }
 
 export type UpdateApplicationExternalDataInput = {
@@ -1038,6 +1009,12 @@ export type AddAttachmentInput = {
 export type DeleteAttachmentInput = {
   id: Scalars['String']
   key: Scalars['String']
+}
+
+export type SubmitApplicationInput = {
+  id: Scalars['String']
+  event: Scalars['String']
+  answers?: Maybe<Scalars['JSON']>
 }
 
 export type ResolverTypeWrapper<T> = Promise<T> | T
@@ -1263,7 +1240,6 @@ export type ResolversTypes = {
   OrganizationTags: ResolverTypeWrapper<OrganizationTags>
   Application: ResolverTypeWrapper<Application>
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>
-  ApplicationStateEnum: ApplicationStateEnum
   ApplicationTypeIdEnum: ApplicationTypeIdEnum
   PresignedPost: ResolverTypeWrapper<PresignedPost>
   Document: ResolverTypeWrapper<Document>
@@ -1305,15 +1281,14 @@ export type ResolversTypes = {
   ListDocumentsInput: ListDocumentsInput
   Mutation: ResolverTypeWrapper<{}>
   CreateApplicationInput: CreateApplicationInput
-  CreateApplicationDtoStateEnum: CreateApplicationDtoStateEnum
   CreateApplicationDtoTypeIdEnum: CreateApplicationDtoTypeIdEnum
   UpdateApplicationInput: UpdateApplicationInput
-  UpdateApplicationDtoStateEnum: UpdateApplicationDtoStateEnum
   UpdateApplicationExternalDataInput: UpdateApplicationExternalDataInput
   DataProvider: DataProvider
   DataProviderDtoTypeEnum: DataProviderDtoTypeEnum
   AddAttachmentInput: AddAttachmentInput
   DeleteAttachmentInput: DeleteAttachmentInput
+  SubmitApplicationInput: SubmitApplicationInput
 }
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -1465,6 +1440,7 @@ export type ResolversParentTypes = {
   DataProvider: DataProvider
   AddAttachmentInput: AddAttachmentInput
   DeleteAttachmentInput: DeleteAttachmentInput
+  SubmitApplicationInput: SubmitApplicationInput
 }
 
 export type HelloWorldResolvers<
@@ -2390,11 +2366,7 @@ export type ApplicationResolvers<
     ParentType,
     ContextType
   >
-  state?: Resolver<
-    ResolversTypes['ApplicationStateEnum'],
-    ParentType,
-    ContextType
-  >
+  state?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   attachments?: Resolver<Maybe<ResolversTypes['JSON']>, ParentType, ContextType>
   typeId?: Resolver<
     ResolversTypes['ApplicationTypeIdEnum'],
@@ -2677,6 +2649,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationDeleteAttachmentArgs, 'input'>
+  >
+  submitApplication?: Resolver<
+    Maybe<ResolversTypes['Application']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationSubmitApplicationArgs, 'input'>
   >
   createUploadUrl?: Resolver<
     ResolversTypes['PresignedPost'],
