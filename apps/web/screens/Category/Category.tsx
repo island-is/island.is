@@ -24,29 +24,37 @@ import {
   GET_NAMESPACE_QUERY,
   GET_ARTICLES_IN_CATEGORY_QUERY,
   GET_CATEGORIES_QUERY,
+  GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
+import { LifeEventCard } from '../../components/LifeEventsCardsSection/components/LifeEventCard'
+
 import { useNamespace } from '@island.is/web/hooks'
 import {
   GetArticlesInCategoryQuery,
+  GetLifeEventsInCategoryQuery,
   GetCategoriesQuery,
   GetNamespaceQuery,
   QueryArticlesInCategoryArgs,
   ContentLanguage,
   QueryCategoriesArgs,
   QueryGetNamespaceArgs,
+  QueryGetLifeEventsInCategoryArgs,
 } from '../../graphql/schema'
 
 type Article = GetArticlesInCategoryQuery['articlesInCategory']
+type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
 
 interface CategoryProps {
   articles: Article
+  lifeEvents: LifeEvents
   categories: GetCategoriesQuery['categories']
   namespace: GetNamespaceQuery['getNamespace']
 }
 
 const Category: Screen<CategoryProps> = ({
   articles,
+  lifeEvents,
   categories,
   namespace,
 }) => {
@@ -142,7 +150,6 @@ const Category: Screen<CategoryProps> = ({
   const sortedGroups = Object.keys(groups).sort((a, b) =>
     a.localeCompare(b, 'is'),
   )
-
   return (
     <>
       <Head>
@@ -242,6 +249,21 @@ const Category: Screen<CategoryProps> = ({
                 )
               })}
             </Stack>
+            {lifeEvents.map((lifeEvent, index) => {
+              return (
+                <LifeEventCard
+                  key={index}
+                  title={lifeEvent.title}
+                  intro={lifeEvent.intro}
+                  url={makePath('lifeEvent', lifeEvent.slug)}
+                  image={
+                    lifeEvent.thumbnail
+                      ? lifeEvent.thumbnail.url
+                      : lifeEvent.image.url
+                  }
+                />
+              )
+            })}
           </Stack>
         }
       >
@@ -294,6 +316,9 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
       data: { articlesInCategory: articles },
     },
     {
+      data: { getLifeEventsInCategory: lifeEvents },
+    },
+    {
       data: { categories },
     },
     namespace,
@@ -309,6 +334,18 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
         },
       },
     ),
+    apolloClient.query<
+      GetLifeEventsInCategoryQuery,
+      QueryGetLifeEventsInCategoryArgs
+    >({
+      query: GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
+      variables: {
+        input: {
+          slug,
+          lang: locale as ContentLanguage,
+        },
+      },
+    }),
     apolloClient.query<GetCategoriesQuery, QueryCategoriesArgs>({
       query: GET_CATEGORIES_QUERY,
       variables: {
@@ -332,6 +369,7 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     articles,
+    lifeEvents,
     categories,
     namespace,
   }
