@@ -6,9 +6,16 @@ export type sortableFields = {
   dateUpdated?: sortDirection
   dateCreated?: sortDirection
 }
+
 export enum SearchIndexes {
   'is' = 'island-is',
-  'en' = 'island-en',
+  'en' = 'island-en'
+}
+
+export type elasticTagField = {
+  key: string
+  type: string
+  value?: string
 }
 
 interface ShardsResponse {

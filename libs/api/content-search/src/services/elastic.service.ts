@@ -16,6 +16,7 @@ import {
 import { searchQuery, SearchRequestBody } from '../queries/search'
 import { MappedData } from '@island.is/elastic-indexing';
 import { documentByTypeQuery, DocumentByTypesInput, DocumentByTypesRequestBody } from '../queries/documentByTypes'
+import { DocumentByTagInput, documentByTagQuery, DocumentByTagRequestBody } from '../queries/documentByTags'
 
 const { elastic } = environment
 interface SyncRequest {
@@ -116,6 +117,15 @@ export class ElasticService {
     return data.body
   }
 
+  async getDocumentsByTag(index: SearchIndexes, query: DocumentByTagInput ) {
+    const requestBody = documentByTagQuery(query)
+    const data = await this.findByQuery<
+      SearchResponse<MappedData>,
+      DocumentByTagRequestBody
+    >(index, requestBody)
+    return data.body
+  }
+
   /*
   Reason for deprecation:
   We are runnig elasticsearch 7.4
@@ -144,7 +154,7 @@ export class ElasticService {
     
     const requestBody = searchQuery({queryString, size, page, types})
     const data = await this.findByQuery<
-      any,
+      SearchResponse<MappedData>,
       SearchRequestBody
     >(index, requestBody)
     return data
