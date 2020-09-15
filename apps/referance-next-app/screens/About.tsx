@@ -16,14 +16,14 @@ const About = (props) => (
           <FormattedMessage
             id="referance.nextjs:title"
             description="This is a title in the referance.nextjs namespace"
-            defaultMessage="I'm a title!"
+            defaultMessage="Default titill"
           />
         </p>
         <p>
           <FormattedMessage
             id="referance.nextjs:description"
             description="This is a description in the referance.nextjs namespace"
-            defaultMessage="I'm a description!"
+            defaultMessage="Default lýsing"
           />
         </p>
       </Box>

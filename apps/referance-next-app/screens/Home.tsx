@@ -11,7 +11,7 @@ import { withLocale, useLocale } from '@island.is/localization'
 
 const welcomeMessage = defineMessage({
   id: 'global:welcome',
-  defaultMessage: 'Hello, {name}!',
+  defaultMessage: 'Hæ, {name}!',
   description: 'Welcome message',
 })
 
@@ -29,15 +29,15 @@ const Home = () => {
 
           <FormattedMessage
             id="global:title" // namespace:messageId
-            description="This is a title in the application namespace"
-            defaultMessage="I'm a default title!"
+            description="This is a title in the global namespace"
+            defaultMessage="Island.is"
           />
 
           <p>
             {formatMessage({
               id: 'global:description',
-              description: 'This is a description in the application namespace',
-              defaultMessage: "I'm a default description!",
+              description: 'This is a description in the global namespace',
+              defaultMessage: 'Lýsing',
             })}
           </p>
           <p>

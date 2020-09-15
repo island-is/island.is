@@ -18,8 +18,17 @@ export interface MessageDict {
   [key: string]: Message
 }
 
+const accessToken = process.env.CONTENTFUL_MANAGEMENT_ACCESS_TOKEN
+const space = process.env.CONTENTFUL_SPACE
+
+if (!space || !accessToken) {
+  throw new Error(
+    'Missing Contentful environment variables: CONTENTFUL_MANAGEMENT_ACCESS_TOKEN or CONTENTFUL_SPACE',
+  )
+}
+
 const client = createClient({
-  accessToken: process.env.CONTENTFUL_MANAGEMENT_ACCESS_TOKEN,
+  accessToken,
 })
 
 execFileSync('npx', [
@@ -41,16 +50,16 @@ function createNamespace(id: string, messages: MessageDict, locales: Locale[]) {
     {},
   )
   return client
-    .getSpace(process.env.CONTENTFUL_SPACE)
+    .getSpace(space)
     .then((space) => space.getEnvironment('master'))
     .then((environment) =>
-      environment.createEntryWithId('translationStrings', id, {
+      environment.createEntryWithId('namespace', id, {
         fields: {
           namespace: {
-            en: id,
+            ['is-IS']: id,
           },
           defaults: {
-            en: messages,
+            ['is-IS']: messages,
           },
           fallback: emptyObjForEachLocale,
           strings: emptyObjForEachLocale,
@@ -61,9 +70,9 @@ function createNamespace(id: string, messages: MessageDict, locales: Locale[]) {
 }
 
 function updateNamespace(namespace: Entry, messages: MessageDict) {
-  namespace.fields.defaults['en'] = Object.assign(
+  namespace.fields.defaults['is-IS'] = Object.assign(
     {},
-    namespace.fields.defaults['en'],
+    namespace.fields.defaults['is-IS'],
     messages,
   )
 
@@ -88,7 +97,7 @@ function updateNamespace(namespace: Entry, messages: MessageDict) {
 
 function getNamespace(id: string) {
   return client
-    .getSpace(process.env.CONTENTFUL_SPACE)
+    .getSpace(space)
     .then((space) => space.getEnvironment('master'))
     .then((environment) => environment.getEntry(id))
     .catch(() => null)
@@ -96,7 +105,7 @@ function getNamespace(id: string) {
 
 function getLocales() {
   return client
-    .getSpace(process.env.CONTENTFUL_SPACE)
+    .getSpace(space)
     .then((space) => space.getEnvironment('master'))
     .then((environment) => environment.getLocales())
     .catch(() => [])

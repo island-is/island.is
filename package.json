@@ -172,6 +172,7 @@
     "swagger-ui-express": "4.1.4",
     "timeout-signal": "1.0.0",
     "treat": "1.4.1",
+    "ts-node": "9.0.0",
     "turndown": "6.0.0",
     "uuidv4": "6.0.8",
     "webcrypto-jwt": "^0.2.2",
