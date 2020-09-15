@@ -86,6 +86,7 @@ export interface SelectField extends Question {
 export interface TextField extends Question {
   readonly type: FieldTypes.TEXT
   component: FieldComponents.TEXT
+  disabled?: boolean
   minLength?: number
   maxLength?: number
   placeholder?: string
