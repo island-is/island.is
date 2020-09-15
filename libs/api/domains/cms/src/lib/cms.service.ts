@@ -38,6 +38,8 @@ import {
   mapFrontpageSliderList,
 } from './models/frontpageSliderList.model'
 import { ContentfulRepository } from './contentful.repository'
+import { GetAlertBannerInput } from './dto/getAlertBanner.input'
+import { AlertBanner, mapAlertBanner } from './models/alertBanner.model'
 
 const makePage = (
   page: number,
@@ -408,5 +410,19 @@ export class CmsService {
       .catch(errorHandler('getLifeEvents'))
 
     return result.items.map(mapLifeEventPage)
+  }
+
+  async getAlertBanner({
+    lang,
+    id,
+  }: GetAlertBannerInput): Promise<AlertBanner | null> {
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IAlertBannerFields>(lang, {
+        ['content_type']: 'alertBanner',
+        'sys.id': id,
+      })
+      .catch(errorHandler('getAlertBanner'))
+
+    return result.items.map(mapAlertBanner)[0] ?? null
   }
 }
