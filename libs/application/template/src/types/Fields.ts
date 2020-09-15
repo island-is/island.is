@@ -7,11 +7,14 @@ export interface Option {
   tooltip?: string
   excludeOthers?: boolean
 }
+export type FieldWidth = 'full' | 'half'
+
 export interface BaseField extends FormItem {
   readonly id: string
   readonly component: FieldComponents | CustomFieldComponents // TODO maybe this does not belong here, and application-form lib has a map from type to component
   readonly name: string
   readonly children: undefined
+  width?: FieldWidth
   condition?: Condition
   repeaterIndex?: number
   // TODO use something like this for non-schema validation?
@@ -49,6 +52,7 @@ export enum FieldComponents {
 export interface Question extends BaseField {
   readonly isQuestion: true
   required?: boolean
+  disabled?: boolean
 }
 
 export interface CheckboxField extends Question {
@@ -98,7 +102,7 @@ export interface FileUploadField extends Question {
   readonly introduction: string
   readonly uploadHeader?: string
   readonly uploadDescription?: string
-  readonly upploadButtonLabel?: string
+  readonly uploadButtonLabel?: string
   readonly uploadMultiple?: boolean
   readonly uploadAccept?: string
 }

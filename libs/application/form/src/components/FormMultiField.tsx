@@ -13,14 +13,24 @@ const FormMultiField: FC<{
   answerQuestions(Answers): void
 }> = ({ applicationId, answerQuestions, errors, formValue, multiField }) => {
   return (
-    <div>
+    <Box display="flex" flexWrap="wrap">
       <ConditionHandler
         answerQuestions={answerQuestions}
         formValue={formValue}
         screen={multiField}
       />
       {multiField.children.map((field, index) => (
-        <Box key={field.id} paddingTop={2}>
+        <Box
+          key={field.id}
+          id={`${field.id}-${field.width}`}
+          paddingTop={2}
+          style={{
+            // TODO improve this
+            width: field.width === 'half' ? '45%' : '100%',
+            alignContent: 'space-between',
+            justifyContent: 'space-between',
+          }}
+        >
           <FormField
             applicationId={applicationId}
             showFieldName
@@ -32,7 +42,7 @@ const FormMultiField: FC<{
           />
         </Box>
       ))}
-    </div>
+    </Box>
   )
 }
 
