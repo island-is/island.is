@@ -1,10 +1,13 @@
 import React, { FC } from 'react'
+import cs from 'classnames'
 
-import * as styles from './Table.treat'
+import { isNumber } from '@island.is/air-discount-scheme-web/utils'
 import { Typography } from '@island.is/island-ui/core'
+import * as styles from './Table.treat'
 
 interface Data {
   span?: number
+  alignRight?: boolean
 }
 
 export const Table: FC = ({ children }) => {
@@ -23,17 +26,22 @@ export const Body: FC = ({ children }) => {
 export const Row: FC = ({ children }) => {
   return <tr className={styles.tr}>{children}</tr>
 }
-export const Data: FC<Data> = ({ children, span = 1 }) => {
+export const Data: FC<Data> = ({ children, span = 1, alignRight }) => {
   return (
-    <td className={styles.td} colSpan={span}>
+    <td
+      className={cs(styles.td, { [styles.alignRight]: alignRight })}
+      colSpan={span}
+    >
       <Typography variant="p">{children}</Typography>
     </td>
   )
 }
-export const HeadData: FC<Data> = ({ children, span }) => {
+export const HeadData: FC<Data> = ({ children, span, alignRight }) => {
   return (
     <Data span={span}>
-      <strong>{children}</strong>
+      <strong className={cs(styles.block, { [styles.alignRight]: alignRight })}>
+        {children}
+      </strong>
     </Data>
   )
 }
