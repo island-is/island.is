@@ -8,7 +8,7 @@ import styles, {
   truncate as truncateStyle,
   links as linksStyle,
   spacing,
-  fontWeight,
+  fontWeight as fontWeightStyles,
   defaultFontWeights,
 } from './Typography.treat'
 import { Colors } from '@island.is/island-ui/theme'
@@ -54,7 +54,7 @@ export const Typography = ({
     className={cn(
       variant ? styles[variant] : null,
       color ? colors[color] : null,
-      fontWeight ? fontWeight[fontWeight] : null,
+      fontWeight ? fontWeightStyles[fontWeight] : null,
       {
         [truncateStyle]: truncate,
         [linksStyle]: links,
