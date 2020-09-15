@@ -15,10 +15,10 @@ import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
 import {
-  FlightLegInput,
+  Travel,
   RangeInput,
   PeriodInput,
-  FlightsInput,
+  FlightLegsInput,
 } from '@island.is/air-discount-scheme/types'
 import { States, Airlines } from '@island.is/air-discount-scheme/consts'
 
@@ -92,14 +92,14 @@ export class DeleteFlightLegParams {
   readonly flightLegId: string
 }
 
-export class GetFlightsBody implements FlightsInput {
+export class GetFlightLegsBody implements FlightLegsInput {
   @IsOptional()
   @IsEnum(Object.keys(Airlines))
   airline: string
 
   @IsOptional()
   @IsObject()
-  flightLeg: FlightLegInput
+  flightLeg: Travel
 
   @IsOptional()
   @IsObject()

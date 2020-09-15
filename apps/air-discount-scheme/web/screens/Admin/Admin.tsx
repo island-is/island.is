@@ -1,11 +1,11 @@
 import React, { useState, useContext } from 'react'
 import { useQuery } from '@apollo/client'
-import { useForm, SubmitHandler } from 'react-hook-form'
+import { SubmitHandler } from 'react-hook-form'
 import { is } from 'date-fns/locale'
 import { format } from 'date-fns'
 import gql from 'graphql-tag'
 
-import { FlightsInput } from '@island.is/air-discount-scheme/types'
+import { FlightLegsInput } from '@island.is/air-discount-scheme/types'
 import { Layout } from '@island.is/air-discount-scheme-web/components'
 import { Airlines } from '@island.is/air-discount-scheme/consts'
 import { NotFound } from '@island.is/air-discount-scheme-web/screens'
@@ -29,16 +29,20 @@ import {
 import { Filters } from './components'
 import { Screen } from '../../types'
 
-const FlightsQuery = gql`
-  query FlightsQuery($input: FlightsInput!) {
-    flights(input: $input) {
+const FlightLegsQuery = gql`
+  query FlightLegsQuery($input: FlightLegsInput!) {
+    flightLegs(input: $input) {
       id
-      bookingDate
       travel
-      userInfo {
-        age
-        gender
-        postalCode
+      airline
+      flight {
+        id
+        bookingDate
+        userInfo {
+          age
+          gender
+          postalCode
+        }
       }
     }
   }
@@ -46,7 +50,7 @@ const FlightsQuery = gql`
 
 const TODAY = new Date()
 
-export type FilterInput = FlightsInput & {
+export type FilterInput = FlightLegsInput & {
   airline: { value: string }
 }
 
@@ -59,7 +63,7 @@ const Admin: Screen = ({}) => {
       to: TODAY,
     },
   } as any)
-  const { data, loading } = useQuery(FlightsQuery, {
+  const { data, loading } = useQuery(FlightLegsQuery, {
     ssr: false,
     variables: {
       input: {
@@ -80,7 +84,7 @@ const Admin: Screen = ({}) => {
       },
     },
   })
-  const { flights = [] } = data ?? {}
+  const { flightLegs = [] } = data ?? {}
 
   if (loading) {
     return null
@@ -124,20 +128,21 @@ const Admin: Screen = ({}) => {
                         <HeadData>Aldur</HeadData>
                         <HeadData>Póstnúmer</HeadData>
                         <HeadData>Flugferð</HeadData>
+                        <HeadData>Flugfélag</HeadData>
                         <HeadData>Bókun</HeadData>
                       </Row>
                     </Head>
                     <Body>
-                      {flights.map((flight) => (
-                        <Row key={flight.id}>
-                          <Data>{flight.userInfo.gender}</Data>
-                          <Data>{flight.userInfo.age}</Data>
-                          <Data>{flight.userInfo.postalCode}</Data>
-                          <Data>{flight.travel}</Data>
-                          <Data>{flight.airline}</Data>
+                      {flightLegs.map((flightLeg) => (
+                        <Row key={flightLeg.id}>
+                          <Data>{flightLeg.flight.userInfo.gender}</Data>
+                          <Data>{flightLeg.flight.userInfo.age}</Data>
+                          <Data>{flightLeg.flight.userInfo.postalCode}</Data>
+                          <Data>{flightLeg.travel}</Data>
+                          <Data>{flightLeg.airline}</Data>
                           <Data>
                             {format(
-                              new Date(flight.bookingDate),
+                              new Date(flightLeg.flight.bookingDate),
                               'dd. MMMM - k:mm',
                               {
                                 locale: is,
