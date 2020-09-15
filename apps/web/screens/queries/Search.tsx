@@ -6,17 +6,27 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
       total
       items {
         ... on Article {
-          __typename
+          id
+          contentStatus
           title
+          slug
           category {
             slug
             title
-            description
           }
-          group {
+          organization {
+            id
+            title
+            description
+            slug
+          }
+          relatedArticles {
             title
             slug
-            description
+          }
+          subArticles {
+            title
+            slug
           }
         }
 
@@ -28,7 +38,6 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           image {
             id
           }
-          body
         }
       }
     }
@@ -49,12 +58,10 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
       total
       items {
         ... on Article {
-          __typename
           id
           contentStatus
           title
           slug
-          content
           category {
             slug
             title
@@ -96,7 +103,6 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             width
             height
           }
-          body
         }
       }
     }

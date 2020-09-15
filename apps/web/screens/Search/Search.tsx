@@ -94,7 +94,8 @@ const Search: Screen<CategoryProps> = ({
 
   const items = (searchResults.items as Article[]).map((item) => ({
     title: item.title,
-    description: item.content,
+    // description: item.content,
+    description: 'item.content',
     href: makePath('article', '[slug]'),
     as: makePath('article', item.slug),
     categorySlug: item.category.slug,
