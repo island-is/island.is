@@ -33,11 +33,11 @@ export class CarownerService {
     )
   }
 
-  getUserList(): Carowner[] {
+  getCaronwerList(): Carowner[] {
     return this.carownerList
   }
 
-  getUserBynationalId(nId: string): Carowner{
+  getCarownerBynationalId(nId: string): Carowner{
     return this.carownerList.find((e) => e.nationalId === nId)
   }
 }

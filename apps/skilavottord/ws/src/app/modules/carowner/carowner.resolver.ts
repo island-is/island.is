@@ -12,6 +12,6 @@ export class CarownerResolver {
   //query b {getUserByNationalId(nationalId: "2222222222"){name, mobile}}
   @Query(() => Carowner)
   getCarownerByNationalId(@Args('nationalId') nid: string): Carowner {
-    return this.carownerService.getUserBynationalId(nid)
+    return this.carownerService.getCarownerBynationalId(nid)
   }
 }
