@@ -28,7 +28,6 @@ export class LifeEventPage {
 
   @Field(() => ArticleCategory, { nullable: true })
   category?: ArticleCategory
-
 }
 
 export const mapLifeEventPage = ({
@@ -41,5 +40,4 @@ export const mapLifeEventPage = ({
   thumbnail: fields.thumbnail && mapImage(fields.thumbnail),
   content: mapDocument(fields.content),
   category: fields.category?.fields,
-
 })

@@ -511,7 +511,6 @@ export interface ILifeEventPageFields {
 
   /** Category */
   category?: IArticleCategory | undefined
-
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
