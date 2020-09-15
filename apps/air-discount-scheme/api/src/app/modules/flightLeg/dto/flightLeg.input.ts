@@ -1,14 +1,14 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 
 import {
-  FlightLegInput,
+  Travel as TTravel,
   RangeInput,
   PeriodInput,
-  FlightsInput as TFlightsInput,
+  FlightLegsInput as TFlightLegsInput,
 } from '@island.is/air-discount-scheme/types'
 
 @InputType()
-class FlightLeg implements FlightLegInput {
+class Travel implements TTravel {
   @Field({ nullable: true })
   from: string
 
@@ -35,12 +35,12 @@ class Range implements RangeInput {
 }
 
 @InputType()
-export class FlightsInput implements TFlightsInput {
+export class FlightLegsInput implements TFlightLegsInput {
   @Field((_) => String, { nullable: true })
   airline: string
 
-  @Field((_) => FlightLeg, { nullable: true })
-  flightLeg: FlightLeg
+  @Field((_) => Travel, { nullable: true })
+  flightLeg: Travel
 
   @Field((_) => Period, { nullable: true })
   period: Period

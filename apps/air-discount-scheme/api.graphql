@@ -2,71 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type ArticleCategory {
-  title: String!
-  slug: String!
-  description: String
-}
-
-type ArticleGroup {
-  title: String!
-  slug: String!
-  description: String
-  sortBy: String
-}
-
-type ArticleSubgroup {
-  title: String!
-  slug: String!
-}
-
-type Organization {
-  title: String!
-  slug: String!
-}
-
-type SubArticle {
-  title: String!
-  slug: String!
-  content: String!
-}
-
-type Article {
-  id: ID!
-  contentStatus: String!
-  title: String!
-  shortTitle: String
-  slug: String!
-  content: String
-  category: ArticleCategory
-  group: ArticleGroup
-  subgroup: ArticleSubgroup
-  organization: [Organization!]!
-  relatedArticles: [Article!]!
-  subArticles: [SubArticle!]!
-}
-
-type AdgerdirTag {
-  id: ID!
-  title: String!
-}
-
-type AdgerdirPage {
-  id: ID!
-  title: String!
-  description: String!
-  longDescription: String
-  content: String
-  objective: String
-  slug: String!
-  tags: [AdgerdirTag!]!
-  link: String
-  linkButtonText: String
-  status: String!
-  estimatedCostIsk: Float
-  finalCostIsk: Float
-}
-
 type Image {
   id: ID!
   url: String!
@@ -74,88 +9,6 @@ type Image {
   contentType: String!
   width: Int!
   height: Int!
-}
-
-type AdgerdirNews {
-  id: String!
-  slug: String!
-  subtitle: String!
-  title: String!
-  intro: String!
-  image: Image
-  date: String!
-  content: String
-  pages: [AdgerdirPage!]
-}
-
-type AdgerdirPages {
-  items: [AdgerdirPage!]!
-}
-
-type AdgerdirFrontpage {
-  id: ID!
-  slug: String!
-  title: String!
-  description: String
-  content: String
-  slices: [AdgerdirSlice!]!
-}
-
-union AdgerdirSlice = AdgerdirGroupSlice | AdgerdirFeaturedNewsSlice
-
-type AdgerdirGroupSlice {
-  id: ID!
-  subtitle: String
-  title: String!
-  description: String
-  image: Image
-  pages: [AdgerdirPage!]!
-}
-
-type AdgerdirFeaturedNewsSlice {
-  id: ID!
-  title: String!
-  featured: [AdgerdirNews!]!
-}
-
-type FrontpageSlide {
-  title: String!
-  subtitle: String!
-  content: String!
-  image: Image
-  link: String
-}
-
-type FrontpageSliderList {
-  items: [FrontpageSlide!]!
-}
-
-type News {
-  id: String!
-  slug: String!
-  title: String!
-  subtitle: String!
-  intro: String!
-  image: Image
-  date: String!
-  content: String
-}
-
-type Pagination {
-  page: Int!
-  perPage: Int!
-  totalResults: Int!
-  totalPages: Int!
-}
-
-type PaginatedNews {
-  page: Pagination!
-  news: [News!]!
-}
-
-type Namespace {
-  namespace: String!
-  fields: String!
 }
 
 type Link {
@@ -175,6 +28,12 @@ type TimelineEvent {
   link: String!
 }
 
+type TimelineSlice {
+  id: ID!
+  title: String!
+  events: [TimelineEvent!]!
+}
+
 type Story {
   label: String!
   title: String!
@@ -190,6 +49,17 @@ type LinkCard {
   body: String!
   link: String!
   linkText: String!
+}
+
+type News {
+  id: String!
+  slug: String!
+  title: String!
+  subtitle: String!
+  intro: String!
+  image: Image
+  date: String!
+  content: String
 }
 
 type NumberBullet {
@@ -220,14 +90,44 @@ type QuestionAndAnswer {
   answer: Html!
 }
 
-type AboutPage {
+type ArticleCategory {
   title: String!
-  seoDescription: String!
-  theme: String!
-  slices: [Slice!]!
+  slug: String!
+  description: String
 }
 
-union Slice = PageHeaderSlice | TimelineSlice | HeadingSlice | StorySlice | LinkCardSlice | LatestNewsSlice | MailingListSignupSlice | LogoListSlice | BulletListSlice | Html | Image | Statistics | ProcessEntry | FaqList | EmbeddedVideo
+type ArticleGroup {
+  title: String!
+  slug: String!
+  description: String
+}
+
+type ArticleSubgroup {
+  title: String!
+  slug: String!
+}
+
+type OrganizationTag {
+  id: ID!
+  title: String!
+}
+
+type Organization {
+  id: ID!
+  title: String!
+  description: String
+  slug: String!
+  tag: [OrganizationTag!]
+  link: String
+}
+
+type SubArticle {
+  title: String!
+  slug: String!
+  body: [Slice!]!
+}
+
+union Slice = PageHeaderSlice | TimelineSlice | HeadingSlice | StorySlice | LinkCardSlice | LatestNewsSlice | MailingListSignupSlice | LogoListSlice | BulletListSlice | Html | Image | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage
 
 type PageHeaderSlice {
   id: ID!
@@ -235,13 +135,7 @@ type PageHeaderSlice {
   introduction: String!
   navigationText: String!
   links: [Link!]!
-  slices: [Slice!]!
-}
-
-type TimelineSlice {
-  id: ID!
-  title: String!
-  events: [TimelineEvent!]!
+  slices: [TimelineSlice!]!
 }
 
 type HeadingSlice {
@@ -336,6 +230,132 @@ type EmbeddedVideo {
   url: String!
 }
 
+type SectionWithImage {
+  id: ID!
+  title: String!
+  image: Image
+  html: Html!
+}
+
+type Article {
+  id: ID!
+  contentStatus: String!
+  title: String!
+  slug: String!
+  shortTitle: String!
+  intro: String!
+  body: [Slice!]!
+  category: ArticleCategory
+  group: ArticleGroup
+  subgroup: ArticleSubgroup
+  organization: [Organization!]!
+  subArticles: [SubArticle!]!
+  relatedArticles: [Article!]!
+}
+
+type AdgerdirTag {
+  id: ID!
+  title: String!
+}
+
+type AdgerdirPage {
+  id: ID!
+  title: String!
+  description: String!
+  longDescription: String
+  content: String
+  objective: String
+  slug: String!
+  tags: [AdgerdirTag!]!
+  link: String
+  linkButtonText: String
+  status: String!
+  estimatedCostIsk: Float
+  finalCostIsk: Float
+}
+
+type Organizations {
+  items: [Organization!]!
+}
+
+type AdgerdirNews {
+  id: String!
+  slug: String!
+  subtitle: String!
+  title: String!
+  intro: String!
+  image: Image
+  date: String!
+  content: String
+  pages: [AdgerdirPage!]
+}
+
+type AdgerdirPages {
+  items: [AdgerdirPage!]!
+}
+
+type AdgerdirFrontpage {
+  id: ID!
+  slug: String!
+  title: String!
+  description: String
+  content: String
+  slices: [AdgerdirSlice!]!
+}
+
+union AdgerdirSlice = AdgerdirGroupSlice | AdgerdirFeaturedNewsSlice
+
+type AdgerdirGroupSlice {
+  id: ID!
+  subtitle: String
+  title: String!
+  description: String
+  image: Image
+  pages: [AdgerdirPage!]!
+}
+
+type AdgerdirFeaturedNewsSlice {
+  id: ID!
+  title: String!
+  featured: [AdgerdirNews!]!
+}
+
+type FrontpageSlide {
+  title: String!
+  subtitle: String!
+  content: String!
+  image: Image
+  link: String
+}
+
+type FrontpageSliderList {
+  items: [FrontpageSlide!]!
+}
+
+type Pagination {
+  page: Int!
+  perPage: Int!
+  totalResults: Int!
+  totalPages: Int!
+}
+
+type PaginatedNews {
+  page: Pagination!
+  news: [News!]!
+}
+
+type Namespace {
+  namespace: String!
+  fields: String!
+}
+
+type AboutPage {
+  title: String!
+  seoDescription: String!
+  theme: String!
+  slices: [Slice!]!
+}
+
 type LinkList {
   title: String!
   links: [Link!]!
@@ -370,7 +390,8 @@ type LifeEventPage {
   slug: String!
   intro: String!
   image: Image!
-  body: JSON!
+  thumbnail: Image
+  content: [Slice!]!
 }
 
 type AdgerdirTags {
@@ -380,6 +401,10 @@ type AdgerdirTags {
 type PaginatedAdgerdirNews {
   page: Pagination!
   news: [AdgerdirNews!]!
+}
+
+type OrganizationTags {
+  items: [OrganizationTag!]!
 }
 
 type Fund {
@@ -396,11 +421,17 @@ type UserInfo {
 
 type Flight {
   id: ID!
-  airline: String!
   bookingDate: String!
-  travel: String!
+  flightLegs: [FlightLeg!]!
   user: User!
   userInfo: UserInfo!
+}
+
+type FlightLeg {
+  id: ID!
+  airline: String!
+  travel: String!
+  flight: Flight!
 }
 
 type User {
@@ -410,7 +441,7 @@ type User {
   role: String!
   fund: Fund
   meetsADSRequirements: Boolean!
-  flights: [Flight!]!
+  flightLegs: [FlightLeg!]!
 }
 
 type Discount {
@@ -430,14 +461,18 @@ type Query {
   getLandingPage(input: GetLandingPageInput!): LandingPage
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
+  getOrganization(input: GetOrganizationInput!): Organization
   getAdgerdirNews(input: GetAdgerdirNewsInput!): AdgerdirNews
   getAdgerdirPages(input: GetAdgerdirPagesInput!): AdgerdirPages!
+  getOrganizations(input: GetOrganizationsInput!): Organizations!
   getAdgerdirTags(input: GetAdgerdirTagsInput!): AdgerdirTags
+  getOrganizationTags(input: GetOrganizationTagsInput!): OrganizationTags
   getFrontpageSliderList(input: GetFrontpageSliderListInput!): FrontpageSliderList
   getAdgerdirFrontpage(input: GetAdgerdirFrontpageInput!): AdgerdirFrontpage
   getMenu(input: GetMenuInput!): Menu
   getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
-  flights(input: FlightsInput!): [Flight!]!
+  getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
+  flightLegs(input: FlightLegsInput!): [FlightLeg!]!
   user: User
   discounts: [Discount!]
 }
@@ -494,6 +529,11 @@ input GetAdgerdirPageInput {
   lang: String!
 }
 
+input GetOrganizationInput {
+  slug: String
+  lang: String!
+}
+
 input GetAdgerdirNewsInput {
   slug: String
   lang: String!
@@ -504,7 +544,16 @@ input GetAdgerdirPagesInput {
   perPage: Int
 }
 
+input GetOrganizationsInput {
+  lang: String
+  perPage: Int
+}
+
 input GetAdgerdirTagsInput {
+  lang: String
+}
+
+input GetOrganizationTagsInput {
   lang: String
 }
 
@@ -526,9 +575,13 @@ input GetLifeEventPageInput {
   lang: String!
 }
 
-input FlightsInput {
+input GetLifeEventsInput {
+  lang: String!
+}
+
+input FlightLegsInput {
   airline: String
-  flightLeg: FlightLeg
+  flightLeg: Travel
   period: Period
   state: [String!]
   age: Range
@@ -536,7 +589,7 @@ input FlightsInput {
   postalCode: Int
 }
 
-input FlightLeg {
+input Travel {
   from: String
   to: String
 }
