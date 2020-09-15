@@ -427,6 +427,10 @@ type Menu {
   links: [Link!]!
 }
 
+type AdgerdirTags {
+  items: [AdgerdirTag!]!
+}
+
 type LifeEventPage {
   title: String!
   slug: String!
@@ -434,10 +438,6 @@ type LifeEventPage {
   image: Image!
   thumbnail: Image
   content: [Slice!]!
-}
-
-type AdgerdirTags {
-  items: [AdgerdirTag!]!
 }
 
 type PaginatedAdgerdirNews {
