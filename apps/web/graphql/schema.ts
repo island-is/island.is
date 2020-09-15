@@ -45,7 +45,7 @@ export type TimelineEvent = {
   denominator?: Maybe<Scalars['Int']>
   label: Scalars['String']
   body?: Maybe<Scalars['String']>
-  tags: Array<Scalars['String']>
+  tags?: Maybe<Array<Scalars['String']>>
   link: Scalars['String']
 }
 
@@ -111,7 +111,7 @@ export type QuestionAndAnswer = {
   __typename?: 'QuestionAndAnswer'
   id: Scalars['ID']
   question: Scalars['String']
-  answer: Html
+  answer?: Maybe<Html>
 }
 
 export type ArticleCategory = {
@@ -310,9 +310,9 @@ export type Article = {
   category?: Maybe<ArticleCategory>
   group?: Maybe<ArticleGroup>
   subgroup?: Maybe<ArticleSubgroup>
-  organization: Array<Organization>
+  organization?: Maybe<Array<Organization>>
   subArticles: Array<SubArticle>
-  relatedArticles: Array<Article>
+  relatedArticles?: Maybe<Array<Article>>
 }
 
 export type LifeEventPage = {
@@ -1136,8 +1136,8 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
             'title' | 'slug' | 'description'
           >
         >
-        relatedArticles: Array<
-          { __typename?: 'Article' } & Pick<Article, 'title' | 'slug'>
+        relatedArticles?: Maybe<
+          Array<{ __typename?: 'Article' } & Pick<Article, 'title' | 'slug'>>
         >
         subArticles: Array<
           { __typename?: 'SubArticle' } & Pick<SubArticle, 'title' | 'slug'> & {
@@ -1503,14 +1503,18 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
                   'slug' | 'title'
                 >
               >
-              organization: Array<
-                { __typename?: 'Organization' } & Pick<
-                  Organization,
-                  'id' | 'title' | 'description' | 'slug'
+              organization?: Maybe<
+                Array<
+                  { __typename?: 'Organization' } & Pick<
+                    Organization,
+                    'id' | 'title' | 'description' | 'slug'
+                  >
                 >
               >
-              relatedArticles: Array<
-                { __typename?: 'Article' } & Pick<Article, 'title' | 'slug'>
+              relatedArticles?: Maybe<
+                Array<
+                  { __typename?: 'Article' } & Pick<Article, 'title' | 'slug'>
+                >
               >
               subArticles: Array<
                 { __typename?: 'SubArticle' } & Pick<
@@ -1558,14 +1562,18 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
                   'slug' | 'title'
                 >
               >
-              organization: Array<
-                { __typename?: 'Organization' } & Pick<
-                  Organization,
-                  'id' | 'title' | 'description' | 'slug'
+              organization?: Maybe<
+                Array<
+                  { __typename?: 'Organization' } & Pick<
+                    Organization,
+                    'id' | 'title' | 'description' | 'slug'
+                  >
                 >
               >
-              relatedArticles: Array<
-                { __typename?: 'Article' } & Pick<Article, 'title' | 'slug'>
+              relatedArticles?: Maybe<
+                Array<
+                  { __typename?: 'Article' } & Pick<Article, 'title' | 'slug'>
+                >
               >
               subArticles: Array<
                 { __typename?: 'SubArticle' } & Pick<
@@ -1710,7 +1718,7 @@ export type FaqListFieldsFragment = { __typename: 'FaqList' } & Pick<
       { __typename?: 'QuestionAndAnswer' } & Pick<
         QuestionAndAnswer,
         'id' | 'question'
-      > & { answer: { __typename?: 'Html' } & HtmlFieldsFragment }
+      > & { answer?: Maybe<{ __typename?: 'Html' } & HtmlFieldsFragment> }
     >
   }
 
