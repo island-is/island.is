@@ -430,7 +430,10 @@ type Flight {
 type FlightLeg {
   id: ID!
   airline: String!
+  financialState: String!
   travel: String!
+  originalPrice: Float!
+  discountPrice: Float!
   flight: Flight!
 }
 
