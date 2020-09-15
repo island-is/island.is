@@ -7,7 +7,7 @@ import {
   ValidationPipe,
   NestInterceptor,
 } from '@nestjs/common'
-import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger'
+import { OpenAPIObject, SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { runMetricServer } from './runMetricServer'
 import { logger, LoggingModule } from '@island.is/logging'
 import { collectDefaultMetrics } from 'prom-client'
