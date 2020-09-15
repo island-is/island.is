@@ -14,148 +14,18 @@ export type Scalars = {
   Float: number
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: any
-}
-
-export type Taxonomy = {
-  __typename?: 'Taxonomy'
-  title?: Maybe<Scalars['String']>
-  slug?: Maybe<Scalars['String']>
-  description?: Maybe<Scalars['String']>
-}
-
-export type Article = {
-  __typename?: 'Article'
-  id: Scalars['String']
-  slug: Scalars['String']
-  title: Scalars['String']
-  content?: Maybe<Scalars['String']>
-  group?: Maybe<Taxonomy>
-  category?: Maybe<Taxonomy>
-  relatedArticles: Array<Article>
-}
-
-export type AdgerdirTag = {
-  __typename?: 'AdgerdirTag'
-  id?: Maybe<Scalars['String']>
-  title?: Maybe<Scalars['String']>
-}
-
-export type AdgerdirPage = {
-  __typename?: 'AdgerdirPage'
-  id: Scalars['String']
-  title: Scalars['String']
-  description: Scalars['String']
-  longDescription?: Maybe<Scalars['String']>
-  content?: Maybe<Scalars['String']>
-  objective?: Maybe<Scalars['String']>
-  slug: Scalars['String']
-  tags: Array<AdgerdirTag>
-  link?: Maybe<Scalars['String']>
-  linkButtonText?: Maybe<Scalars['String']>
-  status: Scalars['String']
-  estimatedCostIsk?: Maybe<Scalars['Float']>
-  finalCostIsk?: Maybe<Scalars['Float']>
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
+  DateTime: any
 }
 
 export type Image = {
   __typename?: 'Image'
+  id: Scalars['ID']
   url: Scalars['String']
   title: Scalars['String']
   contentType: Scalars['String']
   width: Scalars['Int']
   height: Scalars['Int']
-}
-
-export type AdgerdirNews = {
-  __typename?: 'AdgerdirNews'
-  id: Scalars['String']
-  slug: Scalars['String']
-  subtitle: Scalars['String']
-  title: Scalars['String']
-  intro: Scalars['String']
-  image?: Maybe<Image>
-  date: Scalars['String']
-  content?: Maybe<Scalars['String']>
-  pages?: Maybe<Array<AdgerdirPage>>
-}
-
-export type AdgerdirPages = {
-  __typename?: 'AdgerdirPages'
-  items: Array<AdgerdirPage>
-}
-
-export type AdgerdirFrontpage = {
-  __typename?: 'AdgerdirFrontpage'
-  id: Scalars['String']
-  title: Scalars['String']
-  description: Scalars['String']
-  content?: Maybe<Scalars['String']>
-  slices: Array<AdgerdirSlice>
-}
-
-export type AdgerdirSlice = AdgerdirGroupSlice | AdgerdirFeaturedNewsSlice
-
-export type AdgerdirGroupSlice = {
-  __typename?: 'AdgerdirGroupSlice'
-  id: Scalars['ID']
-  subtitle?: Maybe<Scalars['String']>
-  title: Scalars['String']
-  description?: Maybe<Scalars['String']>
-  image?: Maybe<Image>
-  pages: Array<AdgerdirPage>
-}
-
-export type AdgerdirFeaturedNewsSlice = {
-  __typename?: 'AdgerdirFeaturedNewsSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  featured: Array<AdgerdirNews>
-}
-
-export type FrontpageSlide = {
-  __typename?: 'FrontpageSlide'
-  subtitle?: Maybe<Scalars['String']>
-  title?: Maybe<Scalars['String']>
-  content?: Maybe<Scalars['String']>
-  image?: Maybe<Image>
-  link?: Maybe<Scalars['String']>
-}
-
-export type FrontpageSliderList = {
-  __typename?: 'FrontpageSliderList'
-  items: Array<FrontpageSlide>
-}
-
-export type News = {
-  __typename?: 'News'
-  id: Scalars['String']
-  slug: Scalars['String']
-  title: Scalars['String']
-  subtitle: Scalars['String']
-  intro: Scalars['String']
-  image?: Maybe<Image>
-  date: Scalars['String']
-  content?: Maybe<Scalars['String']>
-}
-
-export type Pagination = {
-  __typename?: 'Pagination'
-  page: Scalars['Int']
-  perPage: Scalars['Int']
-  totalResults: Scalars['Int']
-  totalPages: Scalars['Int']
-}
-
-export type PaginatedNews = {
-  __typename?: 'PaginatedNews'
-  page: Pagination
-  news: Array<News>
-}
-
-export type Namespace = {
-  __typename?: 'Namespace'
-  namespace?: Maybe<Scalars['String']>
-  fields?: Maybe<Scalars['String']>
 }
 
 export type Link = {
@@ -177,6 +47,13 @@ export type TimelineEvent = {
   link: Scalars['String']
 }
 
+export type TimelineSlice = {
+  __typename?: 'TimelineSlice'
+  id: Scalars['ID']
+  title: Scalars['String']
+  events: Array<TimelineEvent>
+}
+
 export type Story = {
   __typename?: 'Story'
   label: Scalars['String']
@@ -196,6 +73,18 @@ export type LinkCard = {
   linkText: Scalars['String']
 }
 
+export type News = {
+  __typename?: 'News'
+  id: Scalars['String']
+  slug: Scalars['String']
+  title: Scalars['String']
+  subtitle: Scalars['String']
+  intro: Scalars['String']
+  image?: Maybe<Image>
+  date: Scalars['String']
+  content?: Maybe<Scalars['String']>
+}
+
 export type NumberBullet = {
   __typename?: 'NumberBullet'
   id: Scalars['ID']
@@ -203,12 +92,67 @@ export type NumberBullet = {
   body: Scalars['String']
 }
 
-export type AboutPage = {
-  __typename?: 'AboutPage'
+export type Statistic = {
+  __typename?: 'Statistic'
+  id: Scalars['ID']
+  value: Scalars['String']
+  label: Scalars['String']
+}
+
+export type Html = {
+  __typename?: 'Html'
+  id: Scalars['ID']
+  document: Scalars['JSON']
+}
+
+export type QuestionAndAnswer = {
+  __typename?: 'QuestionAndAnswer'
+  id: Scalars['ID']
+  question: Scalars['String']
+  answer: Html
+}
+
+export type ArticleCategory = {
+  __typename?: 'ArticleCategory'
   title: Scalars['String']
-  seoDescription: Scalars['String']
-  theme: Scalars['String']
-  slices: Array<Slice>
+  slug: Scalars['String']
+  description?: Maybe<Scalars['String']>
+}
+
+export type ArticleGroup = {
+  __typename?: 'ArticleGroup'
+  title: Scalars['String']
+  slug: Scalars['String']
+  description?: Maybe<Scalars['String']>
+}
+
+export type ArticleSubgroup = {
+  __typename?: 'ArticleSubgroup'
+  title: Scalars['String']
+  slug: Scalars['String']
+}
+
+export type OrganizationTag = {
+  __typename?: 'OrganizationTag'
+  id: Scalars['ID']
+  title: Scalars['String']
+}
+
+export type Organization = {
+  __typename?: 'Organization'
+  id: Scalars['ID']
+  title: Scalars['String']
+  description?: Maybe<Scalars['String']>
+  slug: Scalars['String']
+  tag?: Maybe<Array<OrganizationTag>>
+  link?: Maybe<Scalars['String']>
+}
+
+export type SubArticle = {
+  __typename?: 'SubArticle'
+  title: Scalars['String']
+  slug: Scalars['String']
+  body: Array<Slice>
 }
 
 export type Slice =
@@ -221,6 +165,13 @@ export type Slice =
   | MailingListSignupSlice
   | LogoListSlice
   | BulletListSlice
+  | Html
+  | Image
+  | Statistics
+  | ProcessEntry
+  | FaqList
+  | EmbeddedVideo
+  | SectionWithImage
 
 export type PageHeaderSlice = {
   __typename?: 'PageHeaderSlice'
@@ -229,14 +180,7 @@ export type PageHeaderSlice = {
   introduction: Scalars['String']
   navigationText: Scalars['String']
   links: Array<Link>
-  slices: Array<Slice>
-}
-
-export type TimelineSlice = {
-  __typename?: 'TimelineSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  events: Array<TimelineEvent>
+  slices: Array<TimelineSlice>
 }
 
 export type HeadingSlice = {
@@ -309,9 +253,186 @@ export type NumberBulletGroup = {
   bullets: Array<NumberBullet>
 }
 
+export type Statistics = {
+  __typename?: 'Statistics'
+  id: Scalars['ID']
+  title: Scalars['String']
+  statistics: Array<Statistic>
+}
+
+export type ProcessEntry = {
+  __typename?: 'ProcessEntry'
+  id: Scalars['ID']
+  title: Scalars['String']
+  subtitle?: Maybe<Scalars['String']>
+  details?: Maybe<Html>
+  type: Scalars['String']
+  processTitle: Scalars['String']
+  processDescription?: Maybe<Scalars['String']>
+  processInfo?: Maybe<Html>
+  processLink: Scalars['String']
+  buttonText: Scalars['String']
+}
+
+export type FaqList = {
+  __typename?: 'FaqList'
+  id: Scalars['ID']
+  title: Scalars['String']
+  questions: Array<QuestionAndAnswer>
+}
+
+export type EmbeddedVideo = {
+  __typename?: 'EmbeddedVideo'
+  id: Scalars['ID']
+  title: Scalars['String']
+  url: Scalars['String']
+}
+
+export type SectionWithImage = {
+  __typename?: 'SectionWithImage'
+  id: Scalars['ID']
+  title: Scalars['String']
+  image?: Maybe<Image>
+  html: Html
+}
+
+export type Article = {
+  __typename?: 'Article'
+  id: Scalars['ID']
+  contentStatus: Scalars['String']
+  title: Scalars['String']
+  slug: Scalars['String']
+  shortTitle: Scalars['String']
+  intro: Scalars['String']
+  body: Array<Slice>
+  category?: Maybe<ArticleCategory>
+  group?: Maybe<ArticleGroup>
+  subgroup?: Maybe<ArticleSubgroup>
+  organization: Array<Organization>
+  subArticles: Array<SubArticle>
+  relatedArticles: Array<Article>
+}
+
+export type AdgerdirTag = {
+  __typename?: 'AdgerdirTag'
+  id: Scalars['ID']
+  title: Scalars['String']
+}
+
+export type AdgerdirPage = {
+  __typename?: 'AdgerdirPage'
+  id: Scalars['ID']
+  title: Scalars['String']
+  description: Scalars['String']
+  longDescription?: Maybe<Scalars['String']>
+  content?: Maybe<Scalars['String']>
+  objective?: Maybe<Scalars['String']>
+  slug: Scalars['String']
+  tags: Array<AdgerdirTag>
+  link?: Maybe<Scalars['String']>
+  linkButtonText?: Maybe<Scalars['String']>
+  status: Scalars['String']
+  estimatedCostIsk?: Maybe<Scalars['Float']>
+  finalCostIsk?: Maybe<Scalars['Float']>
+}
+
+export type Organizations = {
+  __typename?: 'Organizations'
+  items: Array<Organization>
+}
+
+export type AdgerdirNews = {
+  __typename?: 'AdgerdirNews'
+  id: Scalars['String']
+  slug: Scalars['String']
+  subtitle: Scalars['String']
+  title: Scalars['String']
+  intro: Scalars['String']
+  image?: Maybe<Image>
+  date: Scalars['String']
+  content?: Maybe<Scalars['String']>
+  pages?: Maybe<Array<AdgerdirPage>>
+}
+
+export type AdgerdirPages = {
+  __typename?: 'AdgerdirPages'
+  items: Array<AdgerdirPage>
+}
+
+export type AdgerdirFrontpage = {
+  __typename?: 'AdgerdirFrontpage'
+  id: Scalars['ID']
+  slug: Scalars['String']
+  title: Scalars['String']
+  description?: Maybe<Scalars['String']>
+  content?: Maybe<Scalars['String']>
+  slices: Array<AdgerdirSlice>
+}
+
+export type AdgerdirSlice = AdgerdirGroupSlice | AdgerdirFeaturedNewsSlice
+
+export type AdgerdirGroupSlice = {
+  __typename?: 'AdgerdirGroupSlice'
+  id: Scalars['ID']
+  subtitle?: Maybe<Scalars['String']>
+  title: Scalars['String']
+  description?: Maybe<Scalars['String']>
+  image?: Maybe<Image>
+  pages: Array<AdgerdirPage>
+}
+
+export type AdgerdirFeaturedNewsSlice = {
+  __typename?: 'AdgerdirFeaturedNewsSlice'
+  id: Scalars['ID']
+  title: Scalars['String']
+  featured: Array<AdgerdirNews>
+}
+
+export type FrontpageSlide = {
+  __typename?: 'FrontpageSlide'
+  title: Scalars['String']
+  subtitle: Scalars['String']
+  content: Scalars['String']
+  image?: Maybe<Image>
+  link?: Maybe<Scalars['String']>
+}
+
+export type FrontpageSliderList = {
+  __typename?: 'FrontpageSliderList'
+  items: Array<FrontpageSlide>
+}
+
+export type Pagination = {
+  __typename?: 'Pagination'
+  page: Scalars['Int']
+  perPage: Scalars['Int']
+  totalResults: Scalars['Int']
+  totalPages: Scalars['Int']
+}
+
+export type PaginatedNews = {
+  __typename?: 'PaginatedNews'
+  page: Pagination
+  news: Array<News>
+}
+
+export type Namespace = {
+  __typename?: 'Namespace'
+  namespace: Scalars['String']
+  fields: Scalars['String']
+}
+
+export type AboutPage = {
+  __typename?: 'AboutPage'
+  title: Scalars['String']
+  seoDescription: Scalars['String']
+  theme: Scalars['String']
+  slices: Array<Slice>
+}
+
 export type LinkList = {
   __typename?: 'LinkList'
-  title?: Maybe<Scalars['String']>
+  title: Scalars['String']
   links: Array<Link>
 }
 
@@ -323,7 +444,7 @@ export type LandingPage = {
   image?: Maybe<Image>
   actionButton?: Maybe<Link>
   links?: Maybe<LinkList>
-  content?: Maybe<Scalars['String']>
+  content: Array<Slice>
 }
 
 export type GenericPage = {
@@ -342,18 +463,19 @@ export type Menu = {
   links: Array<Link>
 }
 
-export type AdgerdirTags = {
-  __typename?: 'AdgerdirTags'
-  items: Array<AdgerdirTag>
-}
-
 export type LifeEventPage = {
   __typename?: 'LifeEventPage'
   title: Scalars['String']
   slug: Scalars['String']
   intro: Scalars['String']
   image: Image
-  body: Scalars['JSON']
+  thumbnail?: Maybe<Image>
+  content: Array<Slice>
+}
+
+export type AdgerdirTags = {
+  __typename?: 'AdgerdirTags'
+  items: Array<AdgerdirTag>
 }
 
 export type PaginatedAdgerdirNews = {
@@ -362,11 +484,40 @@ export type PaginatedAdgerdirNews = {
   news: Array<AdgerdirNews>
 }
 
+export type OrganizationTags = {
+  __typename?: 'OrganizationTags'
+  items: Array<OrganizationTag>
+}
+
 export type Fund = {
   __typename?: 'Fund'
   credit: Scalars['Float']
   used: Scalars['Float']
   total: Scalars['Float']
+}
+
+export type UserInfo = {
+  __typename?: 'UserInfo'
+  gender: Scalars['String']
+  age: Scalars['Float']
+  postalCode: Scalars['Float']
+}
+
+export type Flight = {
+  __typename?: 'Flight'
+  id: Scalars['ID']
+  bookingDate: Scalars['String']
+  flightLegs: Array<FlightLeg>
+  user: User
+  userInfo: UserInfo
+}
+
+export type FlightLeg = {
+  __typename?: 'FlightLeg'
+  id: Scalars['ID']
+  airline: Scalars['String']
+  travel: Scalars['String']
+  flight: Flight
 }
 
 export type User = {
@@ -377,6 +528,7 @@ export type User = {
   role: Scalars['String']
   fund?: Maybe<Fund>
   meetsADSRequirements: Scalars['Boolean']
+  flightLegs: Array<FlightLeg>
 }
 
 export type Discount = {
@@ -384,15 +536,6 @@ export type Discount = {
   nationalId: Scalars['ID']
   discountCode: Scalars['String']
   expiresIn: Scalars['Float']
-  user: User
-}
-
-export type Flight = {
-  __typename?: 'Flight'
-  id: Scalars['ID']
-  airline: Scalars['String']
-  bookingDate: Scalars['String']
-  travel: Scalars['String']
   user: User
 }
 
@@ -407,16 +550,20 @@ export type Query = {
   getLandingPage?: Maybe<LandingPage>
   getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
+  getOrganization?: Maybe<Organization>
   getAdgerdirNews?: Maybe<AdgerdirNews>
   getAdgerdirPages: AdgerdirPages
+  getOrganizations: Organizations
   getAdgerdirTags?: Maybe<AdgerdirTags>
+  getOrganizationTags?: Maybe<OrganizationTags>
   getFrontpageSliderList?: Maybe<FrontpageSliderList>
   getAdgerdirFrontpage?: Maybe<AdgerdirFrontpage>
   getMenu?: Maybe<Menu>
   getLifeEventPage?: Maybe<LifeEventPage>
+  getLifeEvents: Array<LifeEventPage>
+  flightLegs: Array<FlightLeg>
   user?: Maybe<User>
   discounts?: Maybe<Array<Discount>>
-  flights: Array<Flight>
 }
 
 export type QueryGetArticleArgs = {
@@ -455,6 +602,10 @@ export type QueryGetAdgerdirPageArgs = {
   input: GetAdgerdirPageInput
 }
 
+export type QueryGetOrganizationArgs = {
+  input: GetOrganizationInput
+}
+
 export type QueryGetAdgerdirNewsArgs = {
   input: GetAdgerdirNewsInput
 }
@@ -463,8 +614,16 @@ export type QueryGetAdgerdirPagesArgs = {
   input: GetAdgerdirPagesInput
 }
 
+export type QueryGetOrganizationsArgs = {
+  input: GetOrganizationsInput
+}
+
 export type QueryGetAdgerdirTagsArgs = {
   input: GetAdgerdirTagsInput
+}
+
+export type QueryGetOrganizationTagsArgs = {
+  input: GetOrganizationTagsInput
 }
 
 export type QueryGetFrontpageSliderListArgs = {
@@ -481,6 +640,14 @@ export type QueryGetMenuArgs = {
 
 export type QueryGetLifeEventPageArgs = {
   input: GetLifeEventPageInput
+}
+
+export type QueryGetLifeEventsArgs = {
+  input: GetLifeEventsInput
+}
+
+export type QueryFlightLegsArgs = {
+  input: FlightLegsInput
 }
 
 export type GetArticleInput = {
@@ -535,6 +702,11 @@ export type GetAdgerdirPageInput = {
   lang: Scalars['String']
 }
 
+export type GetOrganizationInput = {
+  slug?: Maybe<Scalars['String']>
+  lang: Scalars['String']
+}
+
 export type GetAdgerdirNewsInput = {
   slug?: Maybe<Scalars['String']>
   lang: Scalars['String']
@@ -545,7 +717,16 @@ export type GetAdgerdirPagesInput = {
   perPage?: Maybe<Scalars['Int']>
 }
 
+export type GetOrganizationsInput = {
+  lang?: Maybe<Scalars['String']>
+  perPage?: Maybe<Scalars['Int']>
+}
+
 export type GetAdgerdirTagsInput = {
+  lang?: Maybe<Scalars['String']>
+}
+
+export type GetOrganizationTagsInput = {
   lang?: Maybe<Scalars['String']>
 }
 
@@ -565,6 +746,35 @@ export type GetMenuInput = {
 export type GetLifeEventPageInput = {
   slug: Scalars['String']
   lang: Scalars['String']
+}
+
+export type GetLifeEventsInput = {
+  lang: Scalars['String']
+}
+
+export type FlightLegsInput = {
+  airline?: Maybe<Scalars['String']>
+  flightLeg?: Maybe<Travel>
+  period?: Maybe<Period>
+  state?: Maybe<Array<Scalars['String']>>
+  age?: Maybe<Range>
+  gender?: Maybe<Scalars['String']>
+  postalCode?: Maybe<Scalars['Int']>
+}
+
+export type Travel = {
+  from?: Maybe<Scalars['String']>
+  to?: Maybe<Scalars['String']>
+}
+
+export type Period = {
+  from: Scalars['DateTime']
+  to: Scalars['DateTime']
+}
+
+export type Range = {
+  from?: Maybe<Scalars['Int']>
+  to?: Maybe<Scalars['Int']>
 }
 
 export type GetMenuQueryVariables = Exact<{
@@ -595,6 +805,29 @@ export type UserQueryQuery = { __typename?: 'Query' } & {
       User,
       'name' | 'nationalId' | 'mobile' | 'role'
     >
+  >
+}
+
+export type FlightLegsQueryQueryVariables = Exact<{
+  input: FlightLegsInput
+}>
+
+export type FlightLegsQueryQuery = { __typename?: 'Query' } & {
+  flightLegs: Array<
+    { __typename?: 'FlightLeg' } & Pick<
+      FlightLeg,
+      'id' | 'travel' | 'airline'
+    > & {
+        flight: { __typename?: 'Flight' } & Pick<
+          Flight,
+          'id' | 'bookingDate'
+        > & {
+            userInfo: { __typename?: 'UserInfo' } & Pick<
+              UserInfo,
+              'age' | 'gender' | 'postalCode'
+            >
+          }
+      }
   >
 }
 
@@ -649,14 +882,25 @@ export type DiscountsQueryQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type FlightsQueryQueryVariables = Exact<{ [key: string]: never }>
+export type UserFlightLegsQueryQueryVariables = Exact<{ [key: string]: never }>
 
-export type FlightsQueryQuery = { __typename?: 'Query' } & {
-  flights: Array<
-    { __typename?: 'Flight' } & Pick<
-      Flight,
-      'id' | 'bookingDate' | 'travel'
-    > & { user: { __typename?: 'User' } & Pick<User, 'nationalId' | 'name'> }
+export type UserFlightLegsQueryQuery = { __typename?: 'Query' } & {
+  user?: Maybe<
+    { __typename?: 'User' } & Pick<User, 'nationalId'> & {
+        flightLegs: Array<
+          { __typename?: 'FlightLeg' } & Pick<FlightLeg, 'id' | 'travel'> & {
+              flight: { __typename?: 'Flight' } & Pick<
+                Flight,
+                'id' | 'bookingDate'
+              > & {
+                  user: { __typename?: 'User' } & Pick<
+                    User,
+                    'nationalId' | 'name'
+                  >
+                }
+            }
+        >
+      }
   >
 }
 
@@ -827,6 +1071,73 @@ export type UserQueryLazyQueryHookResult = ReturnType<
 export type UserQueryQueryResult = ApolloReactCommon.QueryResult<
   UserQueryQuery,
   UserQueryQueryVariables
+>
+export const FlightLegsQueryDocument = gql`
+  query FlightLegsQuery($input: FlightLegsInput!) {
+    flightLegs(input: $input) {
+      id
+      travel
+      airline
+      flight {
+        id
+        bookingDate
+        userInfo {
+          age
+          gender
+          postalCode
+        }
+      }
+    }
+  }
+`
+
+/**
+ * __useFlightLegsQueryQuery__
+ *
+ * To run a query within a React component, call `useFlightLegsQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFlightLegsQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFlightLegsQueryQuery({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useFlightLegsQueryQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    FlightLegsQueryQuery,
+    FlightLegsQueryQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useQuery<
+    FlightLegsQueryQuery,
+    FlightLegsQueryQueryVariables
+  >(FlightLegsQueryDocument, baseOptions)
+}
+export function useFlightLegsQueryLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    FlightLegsQueryQuery,
+    FlightLegsQueryQueryVariables
+  >,
+) {
+  return ApolloReactHooks.useLazyQuery<
+    FlightLegsQueryQuery,
+    FlightLegsQueryQueryVariables
+  >(FlightLegsQueryDocument, baseOptions)
+}
+export type FlightLegsQueryQueryHookResult = ReturnType<
+  typeof useFlightLegsQueryQuery
+>
+export type FlightLegsQueryLazyQueryHookResult = ReturnType<
+  typeof useFlightLegsQueryLazyQuery
+>
+export type FlightLegsQueryQueryResult = ApolloReactCommon.QueryResult<
+  FlightLegsQueryQuery,
+  FlightLegsQueryQueryVariables
 >
 export const GetGenericPageDocument = gql`
   query getGenericPage($input: GetGenericPageInput!) {
@@ -1017,64 +1328,70 @@ export type DiscountsQueryQueryResult = ApolloReactCommon.QueryResult<
   DiscountsQueryQuery,
   DiscountsQueryQueryVariables
 >
-export const FlightsQueryDocument = gql`
-  query FlightsQuery {
-    flights {
-      id
-      bookingDate
-      travel
-      user {
-        nationalId
-        name
+export const UserFlightLegsQueryDocument = gql`
+  query UserFlightLegsQuery {
+    user {
+      nationalId
+      flightLegs {
+        id
+        travel
+        flight {
+          id
+          bookingDate
+          user {
+            nationalId
+            name
+          }
+        }
       }
     }
   }
 `
 
 /**
- * __useFlightsQueryQuery__
+ * __useUserFlightLegsQueryQuery__
  *
- * To run a query within a React component, call `useFlightsQueryQuery` and pass it any options that fit your needs.
- * When your component renders, `useFlightsQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useUserFlightLegsQueryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserFlightLegsQueryQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useFlightsQueryQuery({
+ * const { data, loading, error } = useUserFlightLegsQueryQuery({
  *   variables: {
  *   },
  * });
  */
-export function useFlightsQueryQuery(
+export function useUserFlightLegsQueryQuery(
   baseOptions?: ApolloReactHooks.QueryHookOptions<
-    FlightsQueryQuery,
-    FlightsQueryQueryVariables
+    UserFlightLegsQueryQuery,
+    UserFlightLegsQueryQueryVariables
   >,
 ) {
   return ApolloReactHooks.useQuery<
-    FlightsQueryQuery,
-    FlightsQueryQueryVariables
-  >(FlightsQueryDocument, baseOptions)
+    UserFlightLegsQueryQuery,
+    UserFlightLegsQueryQueryVariables
+  >(UserFlightLegsQueryDocument, baseOptions)
 }
-export function useFlightsQueryLazyQuery(
+export function useUserFlightLegsQueryLazyQuery(
   baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
-    FlightsQueryQuery,
-    FlightsQueryQueryVariables
+    UserFlightLegsQueryQuery,
+    UserFlightLegsQueryQueryVariables
   >,
 ) {
   return ApolloReactHooks.useLazyQuery<
-    FlightsQueryQuery,
-    FlightsQueryQueryVariables
-  >(FlightsQueryDocument, baseOptions)
+    UserFlightLegsQueryQuery,
+    UserFlightLegsQueryQueryVariables
+  >(UserFlightLegsQueryDocument, baseOptions)
 }
-export type FlightsQueryQueryHookResult = ReturnType<
-  typeof useFlightsQueryQuery
+export type UserFlightLegsQueryQueryHookResult = ReturnType<
+  typeof useUserFlightLegsQueryQuery
 >
-export type FlightsQueryLazyQueryHookResult = ReturnType<
-  typeof useFlightsQueryLazyQuery
+export type UserFlightLegsQueryLazyQueryHookResult = ReturnType<
+  typeof useUserFlightLegsQueryLazyQuery
 >
-export type FlightsQueryQueryResult = ApolloReactCommon.QueryResult<
-  FlightsQueryQuery,
-  FlightsQueryQueryVariables
+export type UserFlightLegsQueryQueryResult = ApolloReactCommon.QueryResult<
+  UserFlightLegsQueryQuery,
+  UserFlightLegsQueryQueryVariables
 >

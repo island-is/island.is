@@ -1,6 +1,5 @@
 {
   "possibleTypes": {
-    "AdgerdirSlice": ["AdgerdirGroupSlice", "AdgerdirFeaturedNewsSlice"],
     "Slice": [
       "PageHeaderSlice",
       "TimelineSlice",
@@ -10,8 +9,16 @@
       "LatestNewsSlice",
       "MailingListSignupSlice",
       "LogoListSlice",
-      "BulletListSlice"
+      "BulletListSlice",
+      "Html",
+      "Image",
+      "Statistics",
+      "ProcessEntry",
+      "FaqList",
+      "EmbeddedVideo",
+      "SectionWithImage"
     ],
-    "BulletEntry": ["IconBullet", "NumberBulletGroup"]
+    "BulletEntry": ["IconBullet", "NumberBulletGroup"],
+    "AdgerdirSlice": ["AdgerdirGroupSlice", "AdgerdirFeaturedNewsSlice"]
   }
 }

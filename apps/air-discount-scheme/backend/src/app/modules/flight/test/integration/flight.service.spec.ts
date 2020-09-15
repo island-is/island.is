@@ -4,7 +4,6 @@ import { setup } from '../../../../../../test/setup'
 import { NationalRegistryUser } from '../../../nationalRegistry'
 import { FlightService } from '../../flight.service'
 import { FlightDto } from '../../dto'
-import { Flight } from '../../flight.model'
 
 let app: INestApplication
 let flightService: FlightService
