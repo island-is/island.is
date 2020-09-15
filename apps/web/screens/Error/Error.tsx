@@ -11,7 +11,8 @@ const defaultTranslations = {
   error404Title: 'Afsakið hlé :(',
   error404Body: 'Ekkert fannst á slóðinni {PATH}.',
   error500Title: 'Afsakið hlé :(',
-  error500Body: 'Eitthvað fór úrskeiðis.\nVillan hefur verið skráð og unnið verður að viðgerð eins fljótt og auðið er.',
+  error500Body:
+    'Eitthvað fór úrskeiðis.\nVillan hefur verið skráð og unnið verður að viðgerð eins fljótt og auðið er.',
 } as const
 
 const nlToBr = (text: string): ReactNode =>

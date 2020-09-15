@@ -1,12 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
 import Head from 'next/head'
-import {
-  Typography,
-  Breadcrumbs,
-  Box,
-  Link,
-} from '@island.is/island-ui/core'
+import { Typography, Breadcrumbs, Box, Link } from '@island.is/island-ui/core'
 import { Content, Image } from '@island.is/island-ui/contentful'
 import { Screen } from '../types'
 import { useI18n } from '@island.is/web/i18n'
