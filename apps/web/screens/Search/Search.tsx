@@ -37,6 +37,7 @@ import {
   ContentLanguage,
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
+  Article,
 } from '../../graphql/schema'
 
 const PerPage = 10
@@ -70,35 +71,35 @@ const Search: Screen<CategoryProps> = ({
     }
   }, [searchRef])
 
-  const sidebarCategories = searchResults.items.reduce((all, cur) => {
-    const key = cur.categorySlug
+  const sidebarCategories = (searchResults.items as Article[]).reduce(
+    (all, cur) => {
+      const key = cur.category.slug
+      const item = all.find((x) => x.key === key)
 
-    const item = all.find((x) => x.key === key)
+      if (!item) {
+        all.push({
+          key,
+          total: 1,
+          title: cur.category.title ?? '',
+        })
+      } else {
+        item.total += 1
+      }
 
-    if (!item) {
-      all.push({
-        key,
-        total: 1,
-        title: cur.category || '',
-      })
-    } else {
-      item.total += 1
-    }
+      return all
+    },
+    [],
+  )
 
-    return all
-  }, [])
-
-  const items = searchResults.items.map((item) => {
-    return {
-      title: item.title,
-      description: item.content,
-      href: makePath('article', '[slug]'),
-      as: makePath('article', item.slug),
-      categorySlug: item.categorySlug,
-      category: item.category,
-      group: item.group,
-    }
-  })
+  const items = (searchResults.items as Article[]).map((item) => ({
+    title: item.title,
+    description: item.content,
+    href: makePath('article', '[slug]'),
+    as: makePath('article', item.slug),
+    categorySlug: item.category.slug,
+    category: item.category,
+    group: item.group,
+  }))
 
   const onSelectCategory = (key: string) => {
     Router.replace({
@@ -113,7 +114,7 @@ const Search: Screen<CategoryProps> = ({
   const filteredItems = items.filter(byCategory)
 
   const categoryTitle = items.find((x) => x.categorySlug === filters.category)
-    ?.category
+    ?.category.title
 
   const categorySlug = items.find((x) => x.categorySlug === filters.category)
     ?.categorySlug
@@ -180,7 +181,7 @@ const Search: Screen<CategoryProps> = ({
 
               if (item.group) {
                 tags.push({
-                  title: item.group,
+                  title: item.group.title,
                   tagProps: {
                     label: true,
                   },

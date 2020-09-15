@@ -35,6 +35,7 @@ import {
   SearchResult,
   QueryWebSearchAutocompleteArgs,
   AutocompleteTermResultsQuery,
+  Article,
 } from '../../graphql/schema'
 import { GlobalNamespaceContext } from '@island.is/web/context/GlobalNamespaceContext/GlobalNamespaceContext'
 
@@ -43,7 +44,7 @@ const STACK_WIDTH = 400
 
 type SearchState = {
   term: string
-  results?: SearchResult
+  results?: GetSearchResultsQuery['searchResults']
   suggestions: string[]
   prefix: string
   isLoading: boolean
@@ -85,18 +86,20 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
     setState({ ...state, isLoading: true })
 
     const thisTimerId = (timer.current = setTimeout(async () => {
-      const {
-        data: { searchResults: results },
-      } = await client.query<GetSearchResultsQuery, QuerySearchResultsArgs>({
+      const res = await client.query<
+        GetSearchResultsQuery,
+        QuerySearchResultsArgs
+      >({
         query: GET_SEARCH_RESULTS_QUERY,
         variables: {
           query: {
             queryString: term,
             language: locale as ContentLanguage,
-            types: ['article']
+            // types: ['article'],
           },
         },
       })
+      console.log('-res', res)
 
       // the api only completes single terms get only single terms
       const indexOfLastSpace = term.lastIndexOf(' ')
@@ -126,7 +129,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
         setState({
           isLoading: false,
           term,
-          results,
+          results: res.data.searchResults,
           suggestions,
           prefix,
         })
@@ -335,15 +338,17 @@ const Results: FC<{
               <Typography variant="eyebrow" color="purple400">
                 Beint að efninu
               </Typography>
-              {search.results.items.slice(0, 5).map(({ id, title, slug }) => (
-                <div key={id} {...getItemProps()}>
-                  <Typography links variant="h5" color="blue400">
-                    <Link href={makePath('article', slug)}>
-                      <a>{title}</a>
-                    </Link>
-                  </Typography>
-                </div>
-              ))}
+              {(search.results.items as Article[])
+                .slice(0, 5)
+                .map(({ id, title, slug }) => (
+                  <div key={id} {...getItemProps()}>
+                    <Typography links variant="h5" color="blue400">
+                      <Link href={makePath('article', slug)}>
+                        <a>{title}</a>
+                      </Link>
+                    </Typography>
+                  </div>
+                ))}
             </Stack>
           </div>
         </>

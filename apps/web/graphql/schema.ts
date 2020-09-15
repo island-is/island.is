@@ -20,48 +20,6 @@ export type HelloWorld = {
   message: Scalars['String']
 }
 
-export type ContentItem = {
-  __typename?: 'ContentItem'
-  id: Scalars['ID']
-  title?: Maybe<Scalars['String']>
-  content?: Maybe<Scalars['String']>
-  tag?: Maybe<Array<Scalars['String']>>
-  category?: Maybe<Scalars['String']>
-  categorySlug?: Maybe<Scalars['String']>
-  categoryDescription?: Maybe<Scalars['String']>
-  group?: Maybe<Scalars['String']>
-  subgroup?: Maybe<Scalars['String']>
-  groupSlug?: Maybe<Scalars['String']>
-  groupDescription?: Maybe<Scalars['String']>
-  contentBlob?: Maybe<Scalars['String']>
-  contentId?: Maybe<Scalars['String']>
-  contentType?: Maybe<Scalars['String']>
-  date?: Maybe<Scalars['String']>
-  image?: Maybe<Scalars['String']>
-  imageText?: Maybe<Scalars['String']>
-  lang?: Maybe<Scalars['String']>
-  slug?: Maybe<Scalars['String']>
-}
-
-export type SearchResult = {
-  __typename?: 'SearchResult'
-  total: Scalars['Int']
-  items: Array<ContentItem>
-}
-
-export type ContentCategory = {
-  __typename?: 'ContentCategory'
-  title?: Maybe<Scalars['String']>
-  slug?: Maybe<Scalars['String']>
-  description?: Maybe<Scalars['String']>
-}
-
-export type WebSearchAutocomplete = {
-  __typename?: 'WebSearchAutocomplete'
-  total: Scalars['Int']
-  completions: Array<Scalars['String']>
-}
-
 export type ArticleCategory = {
   __typename?: 'ArticleCategory'
   title: Scalars['String']
@@ -121,6 +79,71 @@ export type Article = {
   subArticles: Array<SubArticle>
 }
 
+export type Image = {
+  __typename?: 'Image'
+  id: Scalars['ID']
+  url: Scalars['String']
+  title: Scalars['String']
+  contentType: Scalars['String']
+  width: Scalars['Int']
+  height: Scalars['Int']
+}
+
+export type LifeEventPage = {
+  __typename?: 'LifeEventPage'
+  id: Scalars['ID']
+  title: Scalars['String']
+  slug: Scalars['String']
+  intro: Scalars['String']
+  image: Image
+  thumbnail?: Maybe<Image>
+  body: Scalars['JSON']
+}
+
+export type SearchResult = {
+  __typename?: 'SearchResult'
+  total: Scalars['Int']
+  items: Array<Items>
+}
+
+export type Items = Article | LifeEventPage
+
+export type ContentItem = {
+  __typename?: 'ContentItem'
+  id: Scalars['ID']
+  title?: Maybe<Scalars['String']>
+  content?: Maybe<Scalars['String']>
+  tag?: Maybe<Array<Scalars['String']>>
+  category?: Maybe<Scalars['String']>
+  categorySlug?: Maybe<Scalars['String']>
+  categoryDescription?: Maybe<Scalars['String']>
+  group?: Maybe<Scalars['String']>
+  subgroup?: Maybe<Scalars['String']>
+  groupSlug?: Maybe<Scalars['String']>
+  groupDescription?: Maybe<Scalars['String']>
+  contentBlob?: Maybe<Scalars['String']>
+  contentId?: Maybe<Scalars['String']>
+  contentType?: Maybe<Scalars['String']>
+  date?: Maybe<Scalars['String']>
+  image?: Maybe<Scalars['String']>
+  imageText?: Maybe<Scalars['String']>
+  lang?: Maybe<Scalars['String']>
+  slug?: Maybe<Scalars['String']>
+}
+
+export type ContentCategory = {
+  __typename?: 'ContentCategory'
+  title?: Maybe<Scalars['String']>
+  slug?: Maybe<Scalars['String']>
+  description?: Maybe<Scalars['String']>
+}
+
+export type WebSearchAutocomplete = {
+  __typename?: 'WebSearchAutocomplete'
+  total: Scalars['Int']
+  completions: Array<Scalars['String']>
+}
+
 export type AdgerdirTag = {
   __typename?: 'AdgerdirTag'
   id: Scalars['ID']
@@ -147,16 +170,6 @@ export type AdgerdirPage = {
 export type Organizations = {
   __typename?: 'Organizations'
   items: Array<Organization>
-}
-
-export type Image = {
-  __typename?: 'Image'
-  id: Scalars['ID']
-  url: Scalars['String']
-  title: Scalars['String']
-  contentType: Scalars['String']
-  width: Scalars['Int']
-  height: Scalars['Int']
 }
 
 export type AdgerdirNews = {
@@ -497,16 +510,6 @@ export type Menu = {
   links: Array<Link>
 }
 
-export type LifeEventPage = {
-  __typename?: 'LifeEventPage'
-  title: Scalars['String']
-  slug: Scalars['String']
-  intro: Scalars['String']
-  image: Image
-  thumbnail?: Maybe<Image>
-  body: Scalars['JSON']
-}
-
 export type AdgerdirTags = {
   __typename?: 'AdgerdirTags'
   items: Array<AdgerdirTag>
@@ -748,7 +751,7 @@ export type HelloWorldInput = {
 
 export type SearcherInput = {
   queryString: Scalars['String']
-  types: Array<Scalars['String']>
+  types?: Maybe<Array<Scalars['String']>>
   language?: Maybe<ContentLanguage>
   size?: Maybe<Scalars['Int']>
   page?: Maybe<Scalars['Int']>
@@ -1346,10 +1349,24 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
     'total'
   > & {
       items: Array<
-        { __typename?: 'ContentItem' } & Pick<
-          ContentItem,
-          'id' | 'title' | 'content' | 'slug' | 'category' | 'group'
-        >
+        | ({ __typename: 'Article' } & Pick<Article, 'title'> & {
+              category?: Maybe<
+                { __typename?: 'ArticleCategory' } & Pick<
+                  ArticleCategory,
+                  'slug' | 'title' | 'description'
+                >
+              >
+              group?: Maybe<
+                { __typename?: 'ArticleGroup' } & Pick<
+                  ArticleGroup,
+                  'title' | 'slug' | 'description'
+                >
+              >
+            })
+        | ({ __typename?: 'LifeEventPage' } & Pick<
+            LifeEventPage,
+            'id' | 'title' | 'slug' | 'intro' | 'body'
+          > & { image: { __typename?: 'Image' } & Pick<Image, 'id'> })
       >
     }
 }
@@ -1375,20 +1392,47 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
     'total'
   > & {
       items: Array<
-        { __typename?: 'ContentItem' } & Pick<
-          ContentItem,
-          | 'id'
-          | 'title'
-          | 'slug'
-          | 'tag'
-          | 'content'
-          | 'categoryDescription'
-          | 'categorySlug'
-          | 'category'
-          | 'group'
-          | 'groupSlug'
-          | 'contentType'
-        >
+        | ({ __typename: 'Article' } & Pick<
+            Article,
+            'id' | 'contentStatus' | 'title' | 'slug' | 'content'
+          > & {
+              category?: Maybe<
+                { __typename?: 'ArticleCategory' } & Pick<
+                  ArticleCategory,
+                  'slug' | 'title'
+                >
+              >
+              organization: Array<
+                { __typename?: 'Organization' } & Pick<
+                  Organization,
+                  'id' | 'title' | 'description' | 'slug'
+                >
+              >
+              relatedArticles: Array<
+                { __typename?: 'Article' } & Pick<Article, 'title' | 'slug'>
+              >
+              subArticles: Array<
+                { __typename?: 'SubArticle' } & Pick<
+                  SubArticle,
+                  'title' | 'slug'
+                >
+              >
+            })
+        | ({ __typename?: 'LifeEventPage' } & Pick<
+            LifeEventPage,
+            'id' | 'title' | 'slug' | 'intro' | 'body'
+          > & {
+              image: { __typename?: 'Image' } & Pick<
+                Image,
+                'id' | 'url' | 'title' | 'contentType' | 'width' | 'height'
+              >
+              thumbnail?: Maybe<
+                { __typename?: 'Image' } & Pick<
+                  Image,
+                  'id' | 'url' | 'title' | 'contentType' | 'width' | 'height'
+                >
+              >
+            })
       >
     }
 }

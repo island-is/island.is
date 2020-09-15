@@ -1,12 +1,25 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
-import { ContentItem } from './contentItem.model'
+import { createUnionType, Field, Int, ObjectType } from '@nestjs/graphql'
+
+import { Article } from 'libs/api/domains/cms/src/lib/models/article.model'
+import { LifeEventPage } from 'libs/api/domains/cms/src/lib/models/lifeEventPage.model'
+
+const Items = createUnionType({
+  name: 'Items',
+  types: () => [Article, LifeEventPage],
+  resolveType: (document) => {
+    if (document.image) {
+      return LifeEventPage
+    }
+
+    return Article
+  },
+})
 
 @ObjectType()
 export class SearchResult {
   @Field(() => Int)
   total: number
 
-  // TODO: Change this to slices of all indexed types
-  @Field(() => [ContentItem])
-  items: ContentItem[]
+  @Field(() => [Items])
+  items: Array<typeof Items>
 }

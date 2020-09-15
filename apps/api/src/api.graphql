@@ -6,44 +6,6 @@ type HelloWorld {
   message: String!
 }
 
-type ContentItem {
-  id: ID!
-  title: String
-  content: String
-  tag: [String!]
-  category: String
-  categorySlug: String
-  categoryDescription: String
-  group: String
-  subgroup: String
-  groupSlug: String
-  groupDescription: String
-  contentBlob: String
-  contentId: String
-  contentType: String
-  date: String
-  image: String
-  imageText: String
-  lang: String
-  slug: String
-}
-
-type SearchResult {
-  total: Int!
-  items: [ContentItem!]!
-}
-
-type ContentCategory {
-  title: String
-  slug: String
-  description: String
-}
-
-type WebSearchAutocomplete {
-  total: Int!
-  completions: [String!]!
-}
-
 type ArticleCategory {
   title: String!
   slug: String!
@@ -96,6 +58,70 @@ type Article {
   subArticles: [SubArticle!]!
 }
 
+type Image {
+  id: ID!
+  url: String!
+  title: String!
+  contentType: String!
+  width: Int!
+  height: Int!
+}
+
+type LifeEventPage {
+  id: ID!
+  title: String!
+  slug: String!
+  intro: String!
+  image: Image!
+  thumbnail: Image
+  body: JSON!
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
+
+type SearchResult {
+  total: Int!
+  items: [Items!]!
+}
+
+union Items = Article | LifeEventPage
+
+type ContentItem {
+  id: ID!
+  title: String
+  content: String
+  tag: [String!]
+  category: String
+  categorySlug: String
+  categoryDescription: String
+  group: String
+  subgroup: String
+  groupSlug: String
+  groupDescription: String
+  contentBlob: String
+  contentId: String
+  contentType: String
+  date: String
+  image: String
+  imageText: String
+  lang: String
+  slug: String
+}
+
+type ContentCategory {
+  title: String
+  slug: String
+  description: String
+}
+
+type WebSearchAutocomplete {
+  total: Int!
+  completions: [String!]!
+}
+
 type AdgerdirTag {
   id: ID!
   title: String!
@@ -119,15 +145,6 @@ type AdgerdirPage {
 
 type Organizations {
   items: [Organization!]!
-}
-
-type Image {
-  id: ID!
-  url: String!
-  title: String!
-  contentType: String!
-  width: Int!
-  height: Int!
 }
 
 type AdgerdirNews {
@@ -262,11 +279,6 @@ type Html {
   id: ID!
   document: JSON!
 }
-
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 type QuestionAndAnswer {
   id: ID!
@@ -417,16 +429,6 @@ type GenericPage {
 type Menu {
   title: String!
   links: [Link!]!
-}
-
-type LifeEventPage {
-  id: ID!
-  title: String!
-  slug: String!
-  intro: String!
-  image: Image!
-  thumbnail: Image
-  body: JSON!
 }
 
 type AdgerdirTags {
