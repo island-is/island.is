@@ -42,6 +42,8 @@ testem.log
 Thumbs.db
 .cache
 
+.env
+
 # Used to store local secrets
 .env.secret
 .env
