@@ -470,9 +470,7 @@ scalar DateTime
 
 enum ApplicationTypeIdEnum {
   ExampleForm
-  ExampleForm2
-  ExampleForm3
-  FamilyAndPets
+  DrivingLessons
   ParentalLeave
 }
 
@@ -724,9 +722,7 @@ input CreateApplicationInput {
 
 enum CreateApplicationDtoTypeIdEnum {
   ExampleForm
-  ExampleForm2
-  ExampleForm3
-  FamilyAndPets
+  DrivingLessons
   ParentalLeave
 }
 

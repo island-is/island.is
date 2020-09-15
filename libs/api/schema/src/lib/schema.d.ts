@@ -561,9 +561,7 @@ export type Application = {
 
 export enum ApplicationTypeIdEnum {
   ExampleForm = 'ExampleForm',
-  ExampleForm2 = 'ExampleForm2',
-  ExampleForm3 = 'ExampleForm3',
-  FamilyAndPets = 'FamilyAndPets',
+  DrivingLessons = 'DrivingLessons',
   ParentalLeave = 'ParentalLeave',
 }
 
@@ -969,9 +967,7 @@ export type CreateApplicationInput = {
 
 export enum CreateApplicationDtoTypeIdEnum {
   ExampleForm = 'ExampleForm',
-  ExampleForm2 = 'ExampleForm2',
-  ExampleForm3 = 'ExampleForm3',
-  FamilyAndPets = 'FamilyAndPets',
+  DrivingLessons = 'DrivingLessons',
   ParentalLeave = 'ParentalLeave',
 }
 

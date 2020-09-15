@@ -140,9 +140,7 @@ export function ApplicationToJSON(value?: Application | null): any {
 */
 export enum ApplicationTypeIdEnum {
     ExampleForm = 'ExampleForm',
-    ExampleForm2 = 'ExampleForm2',
-    ExampleForm3 = 'ExampleForm3',
-    FamilyAndPets = 'FamilyAndPets',
+    DrivingLessons = 'DrivingLessons',
     ParentalLeave = 'ParentalLeave'
 }
 

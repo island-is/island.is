@@ -124,11 +124,13 @@ export function buildTextField(data: {
   condition?: Condition
   id: string
   name: string
+  disabled?: boolean
   required?: boolean
 }): TextField {
-  const { condition, id, name, required = false } = data
+  const { condition, id, name, required = false, disabled = false } = data
   return {
     children: undefined,
+    disabled,
     required,
     isQuestion: true,
     condition,
