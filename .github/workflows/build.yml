@@ -137,6 +137,14 @@ jobs:
         if: steps.node-modules.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
+      - name: Set up Docker Buildx
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: v0.4.1
+          qemu-version: latest
+
       - name: Building NodeJS dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
         run: ./scripts/prepare_deps.sh
@@ -249,6 +257,14 @@ jobs:
         with:
           path: node_modules
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
+
+      - name: Set up Docker Buildx
+        if: ${{ matrix.projects != 'dummy' }}
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: v0.4.1
+          qemu-version: latest
+
       - name: Running tests
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh test
@@ -334,6 +350,14 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Set up Docker Buildx
+        if: ${{ matrix.projects != 'dummy' }}
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: v0.4.1
+          qemu-version: latest
+
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-express
@@ -373,6 +397,14 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Set up Docker Buildx
+        if: ${{ matrix.projects != 'dummy' }}
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: v0.4.1
+          qemu-version: latest
+
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-static
@@ -412,6 +444,14 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Set up Docker Buildx
+        if: ${{ matrix.projects != 'dummy' }}
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: v0.4.1
+          qemu-version: latest
+
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-next
