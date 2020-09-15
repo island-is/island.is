@@ -5,9 +5,13 @@ import { mapToStyleProperty } from 'libs/island-ui/core/src/utils'
 export const container = style({
   width: '100%',
   borderStyle: 'solid',
-  
   borderBottomWidth: 1,
   borderColor: theme.color.blue200,
+  selectors: {
+    [`&:first-child`]: {
+      borderTopWidth: 1,
+    },
+  },
 })
 
 export const backgroundColors = styleMap(

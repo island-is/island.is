@@ -25,11 +25,24 @@
     "info": "Adding your car for recycling which will allow you to recycle it at any of our connected recycling companies. This is not binding and the car will only be recyled if you hand over the car to a recycling company.",
     "buttons": {
       "cancel": "Cancel",
-      "sign": "Login again to sign"
+      "continue": "Login again to sign"
     },
     "checkbox": {
-      "label": "I agree to the",
+      "label": "I agree to the ",
       "linkLabel": "Terms and conditions"
+    }
+  },
+  "companies": {
+    "title": "Car is ready to be recycled!",
+    "subTitles": {
+      "recycle": "Take the car to any of our connected recycling companies for recycling",
+      "companies": "Recycling companies"
+    },
+    "info": "You can take the car too any of the connected recycling companies for recycling for free. Once the car is handed over you will recive your money within 2 business days.",
+    "buttons": {
+      "cancel": "Cancel recycling",
+      "continue": "Back to my cars",
+      "website": "Go to website"
     }
   }
 }

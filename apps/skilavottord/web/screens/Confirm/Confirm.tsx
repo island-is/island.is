@@ -11,7 +11,7 @@ import { ProcessPageLayout } from '../Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 import { useRouter } from 'next/router'
-import { DetailsBox } from './components'
+import { CarDetailsBox } from './components'
 import OutlinedBox from '@island.is/skilavottord-web/components/OutlinedBox/OutlinedBox'
 import * as styles from './Confirm.treat'
 
@@ -24,7 +24,7 @@ const mock = {
   hasCoOwner: true,
 }
 
-const Confirm: FC = () => {
+const Confirm = () => {
   const [checkbox, setCheckbox] = useState(false)
 
   const Router = useRouter()
@@ -40,13 +40,15 @@ const Confirm: FC = () => {
   }
 
   const onContinue = () => {
-    console.log('Sign in...')
+    Router.push({
+      pathname: makePath('recyclingCompanies'),
+    })
   }
 
   const checkboxLabel = (
     <div>
-      {t.checkbox.label}{' '}
-      <Link
+      {t.checkbox.label}
+      <Link 
         href=""
         className={
           checkbox ? styles.checkboxLabelLinkChecked : styles.checkboxLabelLink
@@ -58,15 +60,15 @@ const Confirm: FC = () => {
   )
 
   return (
-    <ProcessPageLayout isProcess>
+    <ProcessPageLayout>
       <Stack space={4}>
         <Typography variant="h1">{t.title}</Typography>
         <Stack space={2}>
           <Typography variant="h3">{t.subTitles.confirm}</Typography>
-          <Typography variant="intro">{t.info}</Typography>
+          <Typography variant="p">{t.info}</Typography>
         </Stack>
         <Stack space={2}>
-          <DetailsBox car={mock} />
+          <CarDetailsBox car={mock} />
           <OutlinedBox backgroundColor="blue100">
             <Box padding={4}>
               <Checkbox
@@ -84,8 +86,8 @@ const Confirm: FC = () => {
           <Button variant="ghost" onClick={onCancel}>
             {t.buttons.cancel}
           </Button>
-          <Button variant="normal" disabled={!checkbox}>
-            {t.buttons.sign}
+          <Button variant="normal" disabled={!checkbox} onClick={onContinue}>
+            {t.buttons.continue}
           </Button>
         </Box>
       </Stack>

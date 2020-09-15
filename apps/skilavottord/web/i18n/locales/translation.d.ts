@@ -11,6 +11,7 @@ export interface Translation {
   home: Home
   myCars: MyCars
   confirm: Confirm
+  companies: Companies
 }
 
 export interface Home {
@@ -28,7 +29,15 @@ export interface Confirm {
   title: string
   subTitles: ConfirmSubTitles
   info: string
-  buttons: ConfirmButtons
+  buttons: ProcessButtons
+  checkbox: CheckBox
+}
+
+export interface Companies {
+  title: string
+  subTitles: CompaniesSubTitles
+  info: string
+  buttons: CompaniesButton
   checkbox: CheckBox
 }
 
@@ -51,14 +60,23 @@ export interface ConfirmSubTitles {
   confirm: string
 }
 
-export interface ConfirmButtons {
+export interface ProcessButtons {
   cancel: string
-  sign: string
+  continue: string
 }
 
 export interface CheckBox {
   label: string
   linkLabel: string
+}
+
+export interface CompaniesSubTitles {
+  recycle: string
+  companies: string
+}
+
+export interface CompaniesButton extends ProcessButtons {
+  website: string
 }
 
 // Converts JSON strings to/from your types

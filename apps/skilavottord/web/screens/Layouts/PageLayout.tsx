@@ -41,12 +41,21 @@ export const ProcessPageLayout: FC<PageProps> = ({ children }) => (
   <Box paddingY={10} background="purple100">
     <GridContainer>
       <GridRow>
-        <GridColumn
-          span={['12/12', '12/12', '7/12', '7/12']}
-          offset={['0', '0', '1/12', '1/12']}
-        >
-          <OutlinedBox padding={6} backgroundColor="white" borderColor="white">
-            {children}
+        <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
+          <OutlinedBox
+            paddingTop={6}
+            paddingBottom={6}
+            backgroundColor="white"
+            borderColor="white"
+          >
+            <GridRow>
+              <GridColumn
+                span={['7/9', '7/9', '7/9', '7/9']}
+                offset={['1/9', '1/9', '1/9', '1/9']}
+              >
+                {children}
+              </GridColumn>
+            </GridRow>
           </OutlinedBox>
         </GridColumn>
         <GridColumn

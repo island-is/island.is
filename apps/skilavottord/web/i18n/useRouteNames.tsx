@@ -5,11 +5,13 @@ const routeNames = {
     home: '',
     companies: 'recycling-companies',
     myCars: 'my-cars',
+    recyclingCompanies: 'recycling-companies',
   },
   en: {
     home: '',
     companies: 'recycling-companies',
     myCars: 'my-cars',
+    recyclingCompanies: 'recycling-companies',
   },
 }
 
@@ -17,6 +19,7 @@ export type PathTypes =
   | 'home'
   | 'companies'
   | 'myCars'
+  | 'recyclingCompanies'
 
 export const useRouteNames = (locale: Locale = defaultLanguage) => {
   return {

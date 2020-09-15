@@ -34,7 +34,7 @@ export const CarDetailsBox: FC<BoxProps> = ({
             <Box padding={4}>
               <Box>
                 <Stack space={1}>
-                  <Typography variant="h5" color="blue400">
+                  <Typography variant="h5">
                     {id}
                   </Typography>
                   <Typography variant="p">

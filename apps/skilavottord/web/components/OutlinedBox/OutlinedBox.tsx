@@ -9,15 +9,27 @@ export interface OutlinedBoxProps {
   backgroundColor?: Colors
   borderColor?: Colors
   padding?: ResponsiveSpace
+  paddingLeft?: ResponsiveSpace
+  paddingRight?: ResponsiveSpace
+  paddingTop?: ResponsiveSpace
+  paddingBottom?: ResponsiveSpace
 }
 
 export const OutlinedBox: FC<OutlinedBoxProps> = ({
   children,
   backgroundColor,
   borderColor,
-  padding
+  padding,
+  paddingLeft,
+  paddingRight,
+  paddingTop,
+  paddingBottom
 }: OutlinedBoxProps) => (
   <Box padding={padding}
+  paddingTop={paddingTop}
+  paddingBottom={paddingBottom}
+  paddingLeft={paddingLeft}
+  paddingRight={paddingRight}
     className={cn(
       backgroundColor ? styles.backgroundColors[backgroundColor] : null,
       styles.container,
