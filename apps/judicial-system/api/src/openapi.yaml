@@ -69,12 +69,49 @@ components:
         requestedCourtDate:
           format: date-time
           type: string
+        requestedCustodyEndDate:
+          format: date-time
+          type: string
+        lawsBroken:
+          type: string
+        custodyProvisions:
+          type: array
+          items:
+            type: string
+            enum:
+              - _95_1_A
+              - _95_1_B
+              - _95_1_C
+              - _95_1_D
+              - _95_2
+              - _99_1_B
+        custodyRestrictions:
+          type: array
+          items:
+            type: string
+            enum:
+              - ISOLATION
+              - VISITAION
+              - COMMUNICATION
+              - MEDIA
+        caseFacts:
+          type: string
+        witnessAccounts:
+          type: string
+        investigationProgress:
+          type: string
+        legalArguments:
+          type: string
+        comments:
+          type: string
       required:
         - created
         - modified
         - state
         - policeCaseNumber
         - suspectNationalId
+        - custodyProvisions
+        - custodyRestrictions
     CreateCaseDto:
       type: object
       properties:
@@ -92,6 +129,9 @@ components:
           format: date-time
           type: string
         requestedCourtDate:
+          format: date-time
+          type: string
+        requestedCustodyEndDate:
           format: date-time
           type: string
       required:
@@ -123,6 +163,41 @@ components:
           type: string
         requestedCourtDate:
           format: date-time
+          type: string
+        requestedCustodyEndDate:
+          format: date-time
+          type: string
+        lawsBroken:
+          type: string
+        custodyProvisions:
+          type: array
+          items:
+            type: string
+            enum:
+              - _95_1_A
+              - _95_1_B
+              - _95_1_C
+              - _95_1_D
+              - _95_2
+              - _99_1_B
+        custodyRestrictions:
+          type: array
+          items:
+            type: string
+            enum:
+              - ISOLATION
+              - VISITAION
+              - COMMUNICATION
+              - MEDIA
+        caseFacts:
+          type: string
+        witnessAccounts:
+          type: string
+        investigationProgress:
+          type: string
+        legalArguments:
+          type: string
+        comments:
           type: string
 paths:
   /liveness:
@@ -159,16 +234,21 @@ paths:
         '201':
           description: ''
       tags:
-        - api/auth
+        - authentication
   /api/auth/login:
     get:
       operationId: AuthController_login
-      parameters: []
+      parameters:
+        - name: returnUrl
+          required: true
+          in: query
+          schema:
+            type: ''
       responses:
         '200':
           description: ''
       tags:
-        - api/auth
+        - authentication
   /api/auth/logout:
     get:
       operationId: AuthController_logout
@@ -177,7 +257,7 @@ paths:
         '200':
           description: ''
       tags:
-        - api/auth
+        - authentication
   /api/user:
     get:
       operationId: UserController_getCurrentUser

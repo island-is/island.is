@@ -37,7 +37,13 @@ module.exports = {
       queryInterface.removeColumn('case', 'police_case_number'),
       queryInterface.removeColumn('case', 'suspect_national_id'),
       queryInterface.removeColumn('case', 'suspect_name'),
-      queryInterface.removeColumn('case', 'state'),
+      queryInterface
+        .removeColumn('case', 'state')
+        .then(() =>
+          queryInterface.sequelize.query(
+            'DROP TYPE IF EXISTS "enum_case_state";',
+          ),
+        ),
     ])
   },
 }
