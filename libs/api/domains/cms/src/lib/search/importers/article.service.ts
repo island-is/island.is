@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common'
 import { IArticle } from '../../generated/contentfulTypes'
 import { mapArticle, Article } from '../../models/article.model'
 
-import { createTerms, getCircularReplacer } from './utils'
+import { createTerms } from './utils'
 
 @Injectable()
 export class ArticleSyncService {
@@ -56,7 +56,7 @@ export class ArticleSyncService {
             mapped.category?.title,
             mapped.group?.title,
           ]),
-          response: JSON.stringify(mapped, getCircularReplacer()),
+          response: JSON.stringify(mapped),
           tags: [
             {
               key: entry.fields?.group?.fields?.slug,

@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import flatten from 'lodash/flatten'
 
 export const createTerms = (termStrings: string[]): string[] => {
   const singleWords = termStrings.map((termString = '') => {
@@ -8,22 +8,5 @@ export const createTerms = (termStrings: string[]): string[] => {
       .split(/\s+/)
     return words
   })
-  return _.flatten(singleWords).filter((word) => word.length > 1) // fitler out 1 letter words and empty string
-}
-
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/Cyclic_object_value
-export const getCircularReplacer = () => {
-  const seen = new WeakSet()
-
-  return (_key: unknown, value: unknown) => {
-    if (typeof value === 'object' && value !== null) {
-      if (seen.has(value)) {
-        return
-      }
-
-      seen.add(value)
-    }
-
-    return value
-  }
+  return flatten(singleWords).filter((word) => word.length > 1) // fitler out 1 letter words and empty string
 }
