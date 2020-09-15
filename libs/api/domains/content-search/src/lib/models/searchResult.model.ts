@@ -1,7 +1,5 @@
 import { createUnionType, Field, Int, ObjectType } from '@nestjs/graphql'
-
-import { Article } from 'libs/api/domains/cms/src/lib/models/article.model'
-import { LifeEventPage } from 'libs/api/domains/cms/src/lib/models/lifeEventPage.model'
+import { Article, LifeEventPage } from '@island.is/api/domains/cms'
 
 const Items = createUnionType({
   name: 'Items',
