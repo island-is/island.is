@@ -1,6 +1,23 @@
-const withSass = require('@zeit/next-sass')
-module.exports = withSass({
-  // Set this to true if you use CSS modules.
-  // See: https://github.com/css-modules/css-modules
-  cssModules: false,
+const withTreat = require('next-treat')()
+
+const {
+  API_URL = 'http://localhost:3333/api',
+  WEB_PUBLIC_URL = 'http://localhost:4200',
+} = process.env
+
+module.exports = withTreat({
+  webpack: (config, options) => {
+    if (!options.isServer) {
+      config.resolve.alias['@sentry/node'] = '@sentry/browser'
+    }
+    return config
+  },
+  serverRuntimeConfig: {
+    // Will only be available on the server side
+    apiUrl: API_URL,
+  },
+  publicRuntimeConfig: {
+    // Will be available on both server and client
+    apiUrl: `${WEB_PUBLIC_URL}/api`,
+  },
 })

@@ -46,3 +46,6 @@ Thumbs.db
 .env.secret
 helm/**/*.tgz
 /cache
+
+# Extracted strings for localization
+/libs/localization/messages.json

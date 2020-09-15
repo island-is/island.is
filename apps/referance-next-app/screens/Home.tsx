@@ -1,40 +1,83 @@
 import React from 'react'
-import { FormattedMessage } from 'react-intl'
-import Link from 'next/link'
+import {
+  FormattedMessage,
+  FormattedDate,
+  FormattedTime,
+  defineMessage,
+} from 'react-intl'
+import { Header, Box, Divider, Page, Link } from '@island.is/island-ui/core'
 
-import { ReactComponent as NxLogo } from '../assets/nx-logo-white.svg'
-import { withLocale } from '@island.is/localization'
-import { useTranslations } from 'libs/localization/src/lib/LocaleContext'
+import { withLocale, useLocale } from '@island.is/localization'
 
-import './index.scss'
-const Home = (props) => {
-  const { lang } = useTranslations()
+const welcomeMessage = defineMessage({
+  id: 'global:welcome',
+  defaultMessage: 'Hello, {name}!',
+  description: 'Welcome message',
+})
+
+const Home = () => {
+  const { lang, formatDate, formatTime, formatMessage } = useLocale()
 
   return (
-    <div className="app">
-      <header className="flex">
-        <NxLogo alt="" width="75" height="50" />
-        <h1>
+    <div>
+      <Page>
+        <Box padding="containerGutter">
+          <Header />
+        </Box>
+        <Box padding="containerGutter">
+          <h2>Strings</h2>
+
           <FormattedMessage
-            id="applications:title"
-            description="This is a title in the application namespace" // Description should be a string literal
-            defaultMessage="I'm a default title!" // Message should be a string literal
+            id="global:title" // namespace:messageId
+            description="This is a title in the application namespace"
+            defaultMessage="I'm a default title!"
           />
-          <FormattedMessage
-            id="applications:description"
-            description="This is a description in the application namespace" // Description should be a string literal
-            defaultMessage="I'm a default description!" // Message should be a string literal
-          />
-        </h1>
-      </header>
-      <main>
-        <Link href="/[lang]/about" as={`/${lang}/about`}>
-          Client-Side Navigation: About same locale
-        </Link>
-        <Link href="/[lang]/about" as={`/en/about`}>
-          Client-Side Navigation: About
-        </Link>
-      </main>
+
+          <p>
+            {formatMessage({
+              id: 'global:description',
+              description: 'This is a description in the application namespace',
+              defaultMessage: "I'm a default description!",
+            })}
+          </p>
+          <p>
+            {formatMessage(welcomeMessage, {
+              name: 'Foo',
+            })}
+          </p>
+          <p>
+            <FormattedMessage {...welcomeMessage} values={{ name: 'Bar' }} />
+          </p>
+        </Box>
+
+        <Divider />
+        <Box padding="containerGutter">
+          <h2>Dates</h2>
+
+          <span title={formatDate(new Date())}>
+            <FormattedDate value={new Date()} />
+          </span>
+        </Box>
+        <Divider />
+        <Box padding="containerGutter">
+          <h2>Time</h2>
+          <span title={formatTime(new Date())}>
+            <FormattedTime value={new Date()} />
+          </span>
+        </Box>
+        <Box padding="containerGutter">
+          <p>
+            <Link href="/[lang]/about" as={`/${lang}/about`}>
+              About page
+            </Link>
+          </p>
+          <p>
+            <Link href="/[lang]" as={`/${lang === 'en' ? 'is' : 'en'}`}>
+              {lang === 'en' ? 'Icelandic' : 'English'}
+            </Link>
+          </p>
+        </Box>
+      </Page>
     </div>
   )
 }
@@ -43,4 +86,4 @@ Home.getInitialProps = async (props) => {
   return {}
 }
 
-export default withLocale('applications')(Home)
+export default withLocale('global')(Home)

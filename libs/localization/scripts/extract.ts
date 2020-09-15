@@ -9,16 +9,13 @@ import {
 } from 'contentful-management/dist/typings/entities/locale'
 import { Entry } from 'contentful-management/dist/typings/entities/entry'
 
-interface Message {
+export interface Message {
   defaultMessage: string
   description: string
 }
 
-interface MessageDict {
+export interface MessageDict {
   [key: string]: Message
-}
-interface NamespaceDict {
-  [key: string]: MessageDict
 }
 
 const client = createClient({
@@ -29,7 +26,7 @@ execFileSync('npx', [
   'formatjs',
   'extract',
   '--out-file',
-  'libs/localization/lang/messages/messages.json',
+  'libs/localization/messages.json',
   '--format',
   'libs/localization/scripts/formatter.js',
   process.argv[2],
@@ -64,6 +61,7 @@ function createNamespace(id: string, messages: MessageDict, locales: Locale[]) {
 }
 
 function updateNamespace(namespace: Entry, messages: MessageDict) {
+  console.log('messages', messages)
   namespace.fields.defaults['en'] = Object.assign(
     {},
     namespace.fields.defaults['en'],
@@ -106,7 +104,7 @@ function getLocales() {
 }
 
 glob
-  .sync('libs/localization/lang/messages/**/*.json')
+  .sync('libs/localization/messages.json')
   .map((filename) => readFileSync(filename, 'utf8'))
   .map((file) => JSON.parse(file))
   .forEach((f) => {

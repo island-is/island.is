@@ -1,10 +1,8 @@
 import React, { useContext, useEffect } from 'react'
 import { NextComponentType } from 'next'
-import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
 import { Query, QueryGetTranslationsArgs } from '@island.is/api/schema'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
-import { useQuery } from '@apollo/client'
 
 import gql from 'graphql-tag'
 import {
@@ -12,6 +10,7 @@ import {
   supportedLocales,
   LocaleContext,
 } from './LocaleContext'
+import { polyfill } from './polyfills'
 
 export const GET_TRANSLATIONS = gql`
   query GetTranslations($input: GetTranslationsInput!) {
@@ -28,10 +27,13 @@ export const withLocale = (namespaces: string | string[] = 'global') => (
     // For non Nextjs apps
     const NewComponent = (props) => {
       const { loadMessages, loadingMessages, lang } = useContext(LocaleContext)
+
       useEffect(() => {
         loadMessages(namespaces, lang)
-      }, [])
+      }, [namespaces, lang])
+
       if (loadingMessages) return null
+
       return <Component {...props} />
     }
     return NewComponent
@@ -56,7 +58,8 @@ export const withLocale = (namespaces: string | string[] = 'global') => (
       locale,
       namespaces: typeof namespaces === 'string' ? [namespaces] : namespaces,
     } as any
-    const [props, messages] = await Promise.all([
+    const [_, props, messages] = await Promise.all([
+      polyfill(locale),
       getInitialProps(newContext),
       getTranslations(newContext),
     ])

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common'
 import { createClient, EntryCollection, ContentfulClientApi } from 'contentful'
 import { logger } from '@island.is/logging'
 
-const space = '2nfa4y6hpvvz'
-const accessToken = 'YGVeSb9CHYwJXrknZL2Xd1RqGcpBZSbn5L7lO8LxDI4'
+const space = process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj'
+const accessToken = process.env.CONTENTFUL_ACCESS_TOKEN
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ContentfulQuery = any
@@ -37,7 +37,7 @@ export class ContentfulRepository {
       space,
       accessToken,
       environment: 'master',
-      host: 'cdn.contentful.com' || 'preview.contentful.com',
+      host: process.env.CONTENTFUL_HOST || 'preview.contentful.com',
     })
   }
 

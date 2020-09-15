@@ -14,9 +14,13 @@ export const Test: FC<{}> = () => {
     <Typography>
       {formatMessage({
         id: 'applications:title',
+        defaultMessage: 'default',
+        description: 'description',
       })}
       {formatMessage({
         id: 'global:title',
+        defaultMessage: 'default',
+        description: 'description',
       })}
     </Typography>
   )

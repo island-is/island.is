@@ -1,39 +1,35 @@
 import React from 'react'
 import { FormattedMessage } from 'react-intl'
 
-import { ReactComponent as NxLogo } from '../assets/nx-logo-white.svg'
 import { withLocale } from '@island.is/localization'
+import { Page, Box, Header } from '@island.is/island-ui/core'
 
-import './index.scss'
-
-const About = (props) => {
-  console.log('home props', props)
-
-  /*
-   * Replace the elements below with your own.
-   *
-   * Note: The corresponding styles are in the ./${fileName}.${style} file.
-   */
-  return (
-    <div className="app">
-      <header className="flex">
-        <NxLogo alt="" width="75" height="50" />
-        <h1>
+const About = (props) => (
+  <div>
+    <Page>
+      <Box padding="containerGutter">
+        <Header />
+      </Box>
+      <Box padding="containerGutter">
+        <h2>Strings</h2>
+        <p>
           <FormattedMessage
-            id="global:title"
-            description="This is a title in the application namespace" // Description should be a string literal
-            defaultMessage="I'm a default global title!" // Message should be a string literal
+            id="referance.nextjs:title"
+            description="This is a title in the referance.nextjs namespace"
+            defaultMessage="I'm a title!"
           />
+        </p>
+        <p>
           <FormattedMessage
-            id="global:description"
-            description="This is a description in the application namespace" // Description should be a string literal
-            defaultMessage="I'm a default global description!" // Message should be a string literal
+            id="referance.nextjs:description"
+            description="This is a description in the referance.nextjs namespace"
+            defaultMessage="I'm a description!"
           />
-        </h1>
-      </header>
-    </div>
-  )
-}
+        </p>
+      </Box>
+    </Page>
+  </div>
+)
 
 About.getInitialProps = async (props) => {
   return {}
