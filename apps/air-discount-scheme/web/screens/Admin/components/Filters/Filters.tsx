@@ -1,7 +1,6 @@
 import React from 'react'
 import { useForm, FormProvider, Controller } from 'react-hook-form'
 
-import { Airlines, States } from '@island.is/air-discount-scheme/consts'
 import { Checkbox } from '@island.is/air-discount-scheme-web/components'
 import {
   Box,
@@ -13,31 +12,16 @@ import {
   Input,
   Select,
 } from '@island.is/island-ui/core'
-import { FilterInput } from '../../Admin'
+import {
+  airlineOptions,
+  financialStateOptions,
+  FilterInput,
+} from '../../consts'
 
 interface PropTypes {
   onSubmit: (data) => void
   defaultValues: FilterInput
 }
-
-const airlineOptions = [
-  {
-    label: 'Öll flugfélög',
-    value: null,
-  },
-  {
-    label: 'Ernir',
-    value: Airlines.ernir,
-  },
-  {
-    label: 'Icelandair',
-    value: Airlines.icelandair,
-  },
-  {
-    label: 'Norlandair',
-    value: Airlines.norlandair,
-  },
-]
 
 function Filters({ onSubmit, defaultValues }: PropTypes) {
   const hookFormData = useForm<FilterInput>({
@@ -182,22 +166,7 @@ function Filters({ onSubmit, defaultValues }: PropTypes) {
             <Stack space={2}>
               <Typography variant="h5">Fjármál</Typography>
               <Divider weight="alternate" />
-              <Checkbox
-                name="state"
-                options={[
-                  {
-                    value: States.awaitingDebit,
-                    label: 'Á eftir að gjaldfæra',
-                  },
-                  { value: States.sentDebit, label: 'Gjaldfært' },
-                  {
-                    value: States.awaitingCredit,
-                    label: 'Á eftir að endurgreiða',
-                  },
-                  { value: States.sentCredit, label: 'Endurgreitt' },
-                  { value: States.cancelled, label: 'Afturkallað' },
-                ]}
-              />
+              <Checkbox name="state" options={financialStateOptions} />
             </Stack>
             <Box paddingTop={2}>
               <Button htmlType="submit" width="fluid">

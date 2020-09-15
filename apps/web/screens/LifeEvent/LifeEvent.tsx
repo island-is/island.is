@@ -1,7 +1,6 @@
-import React, { FC, useMemo } from 'react'
-import gql from 'graphql-tag'
+import React, { FC, useMemo, useState } from 'react'
 import { Screen } from '../../types'
-import { CustomNextError } from '../../units/ErrorBoundary'
+import { CustomNextError } from '../../units/errors'
 import {
   GridContainer,
   GridRow,
@@ -15,6 +14,7 @@ import {
 import { Image, ContentContainer } from '@island.is/island-ui/contentful'
 import { useI18n } from '../../i18n'
 import useRouteNames from '../../i18n/useRouteNames'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { Sticky, RichText, SidebarNavigation } from '../../components'
 import { GET_LIFE_EVENT_QUERY } from '../queries'
 import {
@@ -101,4 +101,4 @@ LifeEvent.getInitialProps = async ({ apolloClient, locale, query }) => {
   return { lifeEvent }
 }
 
-export default LifeEvent
+export default withMainLayout(LifeEvent)

@@ -176,9 +176,8 @@ export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
                     }
 
                     return (
-                      <span onClick={handleClose}>
+                      <span onClick={handleClose} key={index}>
                         <Typography
-                          key={index}
                           variant="sideMenu"
                           color="blue400"
                           paddingBottom={index + 1 === tab.links.length ? 0 : 2}

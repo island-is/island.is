@@ -413,6 +413,17 @@ type LandingPage {
   content: [Slice!]!
 }
 
+type AlertBanner {
+  id: ID!
+  showAlertBanner: Boolean!
+  bannerVariant: String!
+  title: String
+  description: String
+  link: Link
+  isDismissable: Boolean!
+  dismissedForDays: Int!
+}
+
 type GenericPage {
   title: String!
   slug: String!
@@ -516,6 +527,7 @@ type Query {
   getNamespace(input: GetNamespaceInput!): Namespace
   getAboutPage(input: GetAboutPageInput!): AboutPage!
   getLandingPage(input: GetLandingPageInput!): LandingPage
+  getAlertBanner(input: GetAlertBannerInput!): AlertBanner
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
   getOrganization(input: GetOrganizationInput!): Organization
@@ -619,6 +631,11 @@ input GetAboutPageInput {
 
 input GetLandingPageInput {
   slug: String!
+  lang: String!
+}
+
+input GetAlertBannerInput {
+  id: String!
   lang: String!
 }
 

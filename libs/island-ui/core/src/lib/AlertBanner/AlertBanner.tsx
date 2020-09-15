@@ -7,7 +7,12 @@ import Icon, { IconTypes } from '../Icon/Icon'
 import Typography from '../Typography/Typography'
 import Link from '../Link/Link'
 
-type Variants = 'error' | 'info' | 'success' | 'warning' | 'default'
+export type AlertBannerVariants =
+  | 'error'
+  | 'info'
+  | 'success'
+  | 'warning'
+  | 'default'
 
 type VariantStyle = {
   background: Colors
@@ -17,7 +22,7 @@ type VariantStyle = {
 }
 
 type VariantStyles = {
-  [Type in Variants]: VariantStyle
+  [Type in AlertBannerVariants]: VariantStyle
 }
 
 const variantStyles: VariantStyles = {
@@ -51,8 +56,8 @@ const variantStyles: VariantStyles = {
   },
 }
 
-interface AlertBannerProps {
-  variant?: Variants
+export interface AlertBannerProps {
+  variant?: AlertBannerVariants
   /**
    * Adds close button in corner to remove banner
    */

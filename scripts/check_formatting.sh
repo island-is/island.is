@@ -13,5 +13,4 @@ exec yarn run \
 #  --cache-from=type=local,src=$PROJECT_ROOT/cache \
 #  -f ${DIR}/Dockerfile \
 #  --target=formatting \
-#  --build-arg BUILDKIT_INLINE_CACHE=1 \
 #  $PROJECT_ROOT

@@ -12,12 +12,11 @@ on:
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
-
 jobs:
   prepare:
     #runs-on: self-hosted
-    runs-on: ubuntu-latest
-    timeout-minutes: 15 #pulling dependencies potentially twice - host OS and docker layer
+    runs-on: ubuntu-20.04
+    timeout-minutes: 25 #pulling dependencies potentially twice - host OS and docker layer
 
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
@@ -119,18 +118,32 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
+
+      - name: Cache for NodeJS dependencies - Docker layer
+        uses: actions/cache@v1
+        with:
+          path: cache_output
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
 
       - name: Cache for NodeJS dependencies - host OS
         id: node-modules
         uses: actions/cache@v1
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-yarn
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
 
       - name: Building NodeJS dependencies - host OS
         if: steps.node-modules.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
+
+      - name: Set up Docker Buildx
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: v0.4.1
+          qemu-version: latest
 
       - name: Building NodeJS dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
@@ -213,8 +226,8 @@ jobs:
         ports:
           - 5432:5432
     needs: prepare
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
+    runs-on: ubuntu-20.04
+    timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
@@ -237,20 +250,21 @@ jobs:
         uses: actions/cache@v1
         with:
           path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
       - name: Cache for NodeJS dependencies - host OS
         if: ${{ matrix.projects != 'dummy' }}
         uses: actions/cache@v1
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-yarn
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
+
       - name: Set up Docker Buildx
         if: ${{ matrix.projects != 'dummy' }}
-        id: buildx
         uses: crazy-max/ghaction-docker-buildx@v1
         with:
           buildx-version: v0.4.1
           qemu-version: latest
+
       - name: Running tests
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh test
@@ -259,7 +273,7 @@ jobs:
 
   formatting:
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     timeout-minutes: 5
     env:
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
@@ -271,13 +285,13 @@ jobs:
         uses: actions/cache@v1
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-yarn
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
       - name: Check formatting
         run: ./scripts/check_formatting.sh
 
   linting:
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     timeout-minutes: 25 # linting has proven to be quite resource intensive
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -295,7 +309,7 @@ jobs:
         uses: actions/cache@v1
         with:
           path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-yarn
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-yarn
 
       - name: Linting
         if: ${{ matrix.projects != 'dummy' }}
@@ -303,8 +317,8 @@ jobs:
 
   docker-express:
     needs: [prepare, tests]
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    runs-on: ubuntu-20.04
+    timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
@@ -321,29 +335,37 @@ jobs:
         id: cache-deps
         uses: actions/cache@v1
         with:
-          path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
-      - name: Set up Docker Buildx
+          path: cache_output
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
+      - name: Cache for NodeJS dependencies - Docker layer
         if: ${{ matrix.projects != 'dummy' }}
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
+        uses: actions/cache@v1
         with:
-          buildx-version: v0.4.1
-          qemu-version: latest
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
+
       - name: Docker login to ECR repo
         if: ${{ matrix.projects != 'dummy' }}
         run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Set up Docker Buildx
+        if: ${{ matrix.projects != 'dummy' }}
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: v0.4.1
+          qemu-version: latest
+
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-express
 
   docker-static:
     needs: [prepare, tests]
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    runs-on: ubuntu-20.04
+    timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
@@ -360,29 +382,37 @@ jobs:
         id: cache-deps
         uses: actions/cache@v1
         with:
-          path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
-      - name: Set up Docker Buildx
+          path: cache_output
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
+      - name: Cache for NodeJS dependencies - Docker layer
         if: ${{ matrix.projects != 'dummy' }}
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
+        uses: actions/cache@v1
         with:
-          buildx-version: v0.4.1
-          qemu-version: latest
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
+
       - name: Docker login to ECR repo
         if: ${{ matrix.projects != 'dummy' }}
         run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Set up Docker Buildx
+        if: ${{ matrix.projects != 'dummy' }}
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: v0.4.1
+          qemu-version: latest
+
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-static
 
   docker-next:
     needs: [prepare, tests]
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    runs-on: ubuntu-20.04
+    timeout-minutes: 25
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
@@ -399,27 +429,35 @@ jobs:
         id: cache-deps
         uses: actions/cache@v1
         with:
-          path: cache
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-${{ hashFiles('package.json') }}-3
-      - name: Set up Docker Buildx
+          path: cache_output
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-output-base
+      - name: Cache for NodeJS dependencies - Docker layer
         if: ${{ matrix.projects != 'dummy' }}
-        id: buildx
-        uses: crazy-max/ghaction-docker-buildx@v1
+        uses: actions/cache@v1
         with:
-          buildx-version: v0.4.1
-          qemu-version: latest
+          path: cache
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}-docker-deps
+
       - name: Docker login to ECR repo
         if: ${{ matrix.projects != 'dummy' }}
         run: aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${DOCKER_REGISTRY}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Set up Docker Buildx
+        if: ${{ matrix.projects != 'dummy' }}
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: v0.4.1
+          qemu-version: latest
+
       - name: Building Docker images
         if: ${{ matrix.projects != 'dummy' }}
         run: ./scripts/run-in-parallel.sh docker-next
 
   retag-unaffected:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     timeout-minutes: 5
     needs:
       [docker-express, docker-next, docker-static, prepare, linting, formatting]
@@ -441,7 +479,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   trigger-deployments:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: [retag-unaffected, prepare]
     env:
       GIT_BRANCH: ${{ needs.prepare.outputs.GIT_BRANCH}}
@@ -467,7 +505,7 @@ jobs:
           BODY
 
   failure-notification:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     if: failure()
     needs:
       [
