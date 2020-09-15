@@ -29,7 +29,7 @@ export const root = style({
   opacity: 0,
   transform: `translateY(10px)`,
   boxShadow: `0px 4px 70px rgba(0, 97, 255, 0)`,
-  transition: `visibility 0s linear 600ms, opacity 300ms, transform 600ms ease-out, box-shadow 600ms ease-out`,
+  transition: `visibility 0s linear 300ms, opacity 150ms, transform 300ms ease-out, box-shadow 300ms ease-out`,
 })
 
 export const isVisible = style({
@@ -37,7 +37,7 @@ export const isVisible = style({
   opacity: 1,
   transform: `translateY(0)`,
   boxShadow: `0px 4px 70px rgba(0, 97, 255, 0.1)`,
-  transition: `visibility 0s linear 0s, opacity 300ms, transform 600ms ease-out, box-shadow 600ms ease-out`,
+  transition: `visibility 0s linear 0s, opacity 150ms, transform 300ms ease-out, box-shadow 300ms ease-out`,
 })
 
 export const tabBar = style({

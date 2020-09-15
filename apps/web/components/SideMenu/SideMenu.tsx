@@ -28,12 +28,10 @@ import { useI18n } from '@island.is/web/i18n'
 import * as styles from './SideMenu.treat'
 import { SearchInput } from '../SearchInput/SearchInput'
 import { LanguageToggler } from '../LanguageToggler'
-import { PathTypes } from '@island.is/web/i18n/useRouteNames'
 
 interface TabLink {
   title: string
   href: string
-  type: PathTypes
 }
 
 interface Tab {
@@ -44,11 +42,12 @@ interface Tab {
 }
 
 interface Props {
+  tabs?: Tab[]
   isVisible: boolean
   handleClose: () => void
 }
 
-export const SideMenu: FC<Props> = ({ isVisible, handleClose }) => {
+export const SideMenu: FC<Props> = ({ tabs = [], isVisible, handleClose }) => {
   const [activeTab, setActiveTab] = useState(0)
   const ref = useRef(null)
   const { activeLocale, t } = useI18n()
@@ -56,6 +55,8 @@ export const SideMenu: FC<Props> = ({ isVisible, handleClose }) => {
   const tabRefs = useRef<Array<HTMLElement | null>>([])
   const isMobile = width < theme.breakpoints.md
   const { menuTabs } = useContext(MenuTabsContext)
+
+  const tabList = menuTabs || tabs
 
   useKey('Escape', handleClose)
 
@@ -131,7 +132,7 @@ export const SideMenu: FC<Props> = ({ isVisible, handleClose }) => {
           </Hidden>
 
           <div className={styles.tabBar}>
-            {menuTabs.map((tab, index) => (
+            {tabList.map((tab, index) => (
               <FocusableBox
                 ref={(el) => (tabRefs.current[index] = el)}
                 component="button"
@@ -156,7 +157,7 @@ export const SideMenu: FC<Props> = ({ isVisible, handleClose }) => {
               </FocusableBox>
             ))}
           </div>
-          {menuTabs.map((tab, index) => {
+          {tabList.map((tab, index) => {
             const hasExternalLinks =
               tab.externalLinks && tab.externalLinks.length
             return (
