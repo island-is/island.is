@@ -39,7 +39,7 @@ export class ContentSearchService implements SearcherService {
     )
 
     return {
-      total: body.hits.total.value,
+      total: body.hits.total,
       // we map data when it goes into the index we can return it without mapping it here
       items: body.hits.hits.map((item) => JSON.parse(item._source.response)),
     }
