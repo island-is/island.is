@@ -307,4 +307,4 @@ export class ElasticService {
   }
 }
 
-// TODO: We need to provide get data from ES for each domain, abstract that logic to another package and move search logic to content-search domain
+// TODO: This service needs to include only generic functions anything specific to cms search should belong there

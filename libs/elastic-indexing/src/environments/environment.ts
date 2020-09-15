@@ -1,3 +1,1 @@
-export const environment = {
-  domains: ['cms'],
-}
+export const environment = {}
