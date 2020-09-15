@@ -11,12 +11,18 @@ import {
   Input,
   Checkbox,
 } from '@island.is/island-ui/core'
-import { CreateDetentionReqStepTwoCase } from '@island.is/judicial-system-web/src/types'
+import {
+  CreateDetentionReqStepTwoCase,
+  CaseCustodyProvisions,
+  CaseCustodyRestrictions,
+} from '@island.is/judicial-system-web/src/types'
 import { updateState, autoSave } from '../../../utils/stepHelper'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 import { setHours, setMinutes, isValid } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
+import * as api from '../../../api'
+import { parseArray } from '@island.is/judicial-system-web/src/utils/parsers'
 
 export const StepTwo: React.FC = () => {
   const [workingCase, setWorkingCase] = useState<CreateDetentionReqStepTwoCase>(
@@ -64,6 +70,7 @@ export const StepTwo: React.FC = () => {
   const caseCustodyProvisions = [
     {
       brokenLaw: 'a-lið 1. mgr. 95. gr.',
+      value: CaseCustodyProvisions._95_1_A,
       getCheckbox: checkboxOne,
       setCheckbox: setCheckboxOne,
       explination:
@@ -71,6 +78,7 @@ export const StepTwo: React.FC = () => {
     },
     {
       brokenLaw: 'b-lið 1. mgr. 95. gr.',
+      value: CaseCustodyProvisions._95_1_B,
       getCheckbox: checkboxTwo,
       setCheckbox: setCheckboxTwo,
       explination:
@@ -78,6 +86,7 @@ export const StepTwo: React.FC = () => {
     },
     {
       brokenLaw: 'c-lið 1. mgr. 95. gr.',
+      value: CaseCustodyProvisions._95_1_C,
       getCheckbox: checkboxThree,
       setCheckbox: setCheckboxThree,
       explination:
@@ -85,6 +94,7 @@ export const StepTwo: React.FC = () => {
     },
     {
       brokenLaw: 'd-lið 1. mgr. 95. gr.',
+      value: CaseCustodyProvisions._95_1_D,
       getCheckbox: checkboxFour,
       setCheckbox: setCheckboxFour,
       explination:
@@ -92,6 +102,7 @@ export const StepTwo: React.FC = () => {
     },
     {
       brokenLaw: '2. mgr. 95. gr.',
+      value: CaseCustodyProvisions._95_2,
       getCheckbox: checkboxFive,
       setCheckbox: setCheckboxFive,
       explination:
@@ -99,6 +110,7 @@ export const StepTwo: React.FC = () => {
     },
     {
       brokenLaw: 'b-lið 1. mgr. 99. gr.',
+      value: CaseCustodyProvisions._99_1_B,
       getCheckbox: checkboxSix,
       setCheckbox: setCheckboxSix,
       explination:
@@ -109,6 +121,7 @@ export const StepTwo: React.FC = () => {
   const restrictions = [
     {
       restriction: 'B - Einangrun',
+      value: CaseCustodyRestrictions.ISOLATION,
       getCheckbox: restrictionCheckboxOne,
       setCheckbox: setRestrictionCheckboxOne,
       explination:
@@ -116,6 +129,7 @@ export const StepTwo: React.FC = () => {
     },
     {
       restriction: 'C - Heimsóknarbann',
+      value: CaseCustodyRestrictions.VISITAION,
       getCheckbox: restrictionCheckboxTwo,
       setCheckbox: setRestrictionCheckboxTwo,
       explination:
@@ -123,6 +137,7 @@ export const StepTwo: React.FC = () => {
     },
     {
       restriction: 'D - Bréfskoðun, símabann',
+      value: CaseCustodyRestrictions.COMMUNICATION,
       getCheckbox: restrictionCheckboxThree,
       setCheckbox: setRestrictionCheckboxThree,
       explination:
@@ -130,6 +145,7 @@ export const StepTwo: React.FC = () => {
     },
     {
       restriction: 'E - Fjölmiðlabanns',
+      value: CaseCustodyRestrictions.MEDIA,
       getCheckbox: restrictionCheckboxFour,
       setCheckbox: setRestrictionCheckboxFour,
       explination:
@@ -272,7 +288,7 @@ export const StepTwo: React.FC = () => {
                 onBlur={(evt) => {
                   const validateField = validate(evt.target.value, 'empty')
                   if (validateField.isValid) {
-                    updateState(
+                    autoSave(
                       workingCase,
                       'lawsBroken',
                       evt.target.value,
@@ -302,7 +318,7 @@ export const StepTwo: React.FC = () => {
                         <Checkbox
                           name={provision.brokenLaw}
                           label={provision.brokenLaw}
-                          value={provision.brokenLaw}
+                          value={provision.value}
                           checked={provision.getCheckbox}
                           tooltip={provision.explination}
                           onChange={({ target }) => {
@@ -315,7 +331,7 @@ export const StepTwo: React.FC = () => {
                             // If the user is checking the box, add the broken law to the state
                             if (target.checked) {
                               copyOfState.case.caseCustodyProvisions.push(
-                                target.value,
+                                target.value as CaseCustodyProvisions,
                               )
                             }
                             // If the user is unchecking the box, remove the broken law from the state
@@ -324,13 +340,24 @@ export const StepTwo: React.FC = () => {
                                 copyOfState.case.caseCustodyProvisions
 
                               provisions.splice(
-                                provisions.indexOf(target.value),
+                                provisions.indexOf(
+                                  target.value as CaseCustodyProvisions,
+                                ),
                                 1,
                               )
                             }
 
                             // Set the updated state as the state
                             setWorkingCase(copyOfState)
+
+                            // Save case
+                            api.saveCase(
+                              workingCase.id,
+                              parseArray(
+                                'custodyProvisions',
+                                copyOfState.case.caseCustodyProvisions,
+                              ),
+                            )
                           }}
                           large
                         />
@@ -357,7 +384,7 @@ export const StepTwo: React.FC = () => {
                         <Checkbox
                           name={restriction.restriction}
                           label={restriction.restriction}
-                          value={restriction.restriction}
+                          value={restriction.value}
                           checked={restriction.getCheckbox}
                           tooltip={restriction.explination}
                           onChange={({ target }) => {
@@ -369,19 +396,32 @@ export const StepTwo: React.FC = () => {
 
                             // If the user is checking the box, add the restriction to the state
                             if (target.checked) {
-                              copyOfState.case.restrictions.push(target.value)
+                              copyOfState.case.restrictions.push(
+                                target.value as CaseCustodyRestrictions,
+                              )
                             }
                             // If the user is unchecking the box, remove the restriction from the state
                             else {
                               const restrictions = copyOfState.case.restrictions
                               restrictions.splice(
-                                restrictions.indexOf(target.value),
+                                restrictions.indexOf(
+                                  target.value as CaseCustodyRestrictions,
+                                ),
                                 1,
                               )
                             }
 
                             // Set the updated state as the state
                             setWorkingCase(copyOfState)
+
+                            // Save case
+                            api.saveCase(
+                              workingCase.id,
+                              parseArray(
+                                'custodyRestrictions',
+                                copyOfState.case.restrictions,
+                              ),
+                            )
                           }}
                           large
                         />

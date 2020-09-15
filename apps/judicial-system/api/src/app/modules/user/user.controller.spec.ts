@@ -31,7 +31,7 @@ describe('User Controller', () => {
     expect(user).toBeDefined()
     expect(user.nationalId).toBe('2510654469')
     expect(user.roles).toBeDefined()
-    expect(user.roles.length).toBe(2)
+    expect(user.roles.length).toBe(1)
     expect(user.roles).toContain(UserRole.PROCECUTOR)
     expect(user.roles).toContain(UserRole.JUDGE)
   })
