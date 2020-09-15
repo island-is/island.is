@@ -120,7 +120,10 @@ const isEmptyNode = (node: Block): boolean => {
   })
 }
 
-export const mapDocument = (document: Document, idPrefix: string): Array<typeof Slice> => {
+export const mapDocument = (
+  document: Document,
+  idPrefix: string,
+): Array<typeof Slice> => {
   const slices: Array<typeof Slice> = []
 
   document.content.forEach((block, index) => {
