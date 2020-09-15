@@ -5,7 +5,6 @@ import { is } from 'date-fns/locale'
 import { format } from 'date-fns'
 
 import { Airlines } from '@island.is/air-discount-scheme/consts'
-import { FlightLeg } from '@island.is/air-discount-scheme-web/graphql/schema'
 import {
   Table,
   Row,

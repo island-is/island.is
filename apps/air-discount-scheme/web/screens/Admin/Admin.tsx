@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react'
 import { SubmitHandler } from 'react-hook-form'
 
 import { Layout } from '@island.is/air-discount-scheme-web/components'
-import { Airlines } from '@island.is/air-discount-scheme/consts'
 import { NotFound } from '@island.is/air-discount-scheme-web/screens'
 import { UserContext } from '@island.is/air-discount-scheme-web/context'
 import {

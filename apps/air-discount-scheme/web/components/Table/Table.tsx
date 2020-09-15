@@ -1,7 +1,6 @@
 import React, { FC } from 'react'
 import cs from 'classnames'
 
-import { isNumber } from '@island.is/air-discount-scheme-web/utils'
 import { Typography } from '@island.is/island-ui/core'
 import * as styles from './Table.treat'
 
