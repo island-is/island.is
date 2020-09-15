@@ -542,22 +542,11 @@ export type Application = {
   applicant: Scalars['String']
   assignee: Scalars['String']
   externalId?: Maybe<Scalars['String']>
-  state: ApplicationStateEnum
+  state: Scalars['String']
   attachments?: Maybe<Scalars['JSON']>
   typeId: ApplicationTypeIdEnum
   answers: Scalars['JSON']
   externalData: Scalars['JSON']
-}
-
-export enum ApplicationStateEnum {
-  Draft = 'DRAFT',
-  Beingprocessed = 'BEINGPROCESSED',
-  Needsinformation = 'NEEDSINFORMATION',
-  Pending = 'PENDING',
-  Approved = 'APPROVED',
-  Manualapproved = 'MANUALAPPROVED',
-  Rejected = 'REJECTED',
-  Unknown = 'UNKNOWN',
 }
 
 export enum ApplicationTypeIdEnum {
@@ -739,7 +728,7 @@ export type QueryGetLifeEventsArgs = {
 }
 
 export type QueryGetLifeEventsInCategoryArgs = {
-  input: GetLifeEventsInput
+  input: GetLifeEventsInCategoryInput
 }
 
 export type QueryGetApplicationArgs = {
@@ -900,6 +889,10 @@ export type GetLifeEventPageInput = {
 }
 
 export type GetLifeEventsInput = {
+  lang: Scalars['String']
+}
+
+export type GetLifeEventsInCategoryInput = {
   slug?: Maybe<Scalars['String']>
   lang: Scalars['String']
 }
@@ -932,6 +925,7 @@ export type Mutation = {
   updateApplicationExternalData?: Maybe<Application>
   addAttachment?: Maybe<Application>
   deleteAttachment?: Maybe<Application>
+  submitApplication?: Maybe<Application>
   createUploadUrl: PresignedPost
 }
 
@@ -955,6 +949,10 @@ export type MutationDeleteAttachmentArgs = {
   input: DeleteAttachmentInput
 }
 
+export type MutationSubmitApplicationArgs = {
+  input: SubmitApplicationInput
+}
+
 export type MutationCreateUploadUrlArgs = {
   filename: Scalars['String']
 }
@@ -963,21 +961,10 @@ export type CreateApplicationInput = {
   applicant: Scalars['String']
   assignee: Scalars['String']
   externalId?: Maybe<Scalars['String']>
-  state: CreateApplicationDtoStateEnum
+  state: Scalars['String']
   attachments?: Maybe<Scalars['JSON']>
   typeId: CreateApplicationDtoTypeIdEnum
   answers: Scalars['JSON']
-}
-
-export enum CreateApplicationDtoStateEnum {
-  Draft = 'DRAFT',
-  Beingprocessed = 'BEINGPROCESSED',
-  Needsinformation = 'NEEDSINFORMATION',
-  Pending = 'PENDING',
-  Approved = 'APPROVED',
-  Manualapproved = 'MANUALAPPROVED',
-  Rejected = 'REJECTED',
-  Unknown = 'UNKNOWN',
 }
 
 export enum CreateApplicationDtoTypeIdEnum {
@@ -993,20 +980,8 @@ export type UpdateApplicationInput = {
   applicant?: Maybe<Scalars['String']>
   assignee?: Maybe<Scalars['String']>
   externalId?: Maybe<Scalars['String']>
-  state?: Maybe<UpdateApplicationDtoStateEnum>
   attachments?: Maybe<Scalars['JSON']>
   answers?: Maybe<Scalars['JSON']>
-}
-
-export enum UpdateApplicationDtoStateEnum {
-  Draft = 'DRAFT',
-  Beingprocessed = 'BEINGPROCESSED',
-  Needsinformation = 'NEEDSINFORMATION',
-  Pending = 'PENDING',
-  Approved = 'APPROVED',
-  Manualapproved = 'MANUALAPPROVED',
-  Rejected = 'REJECTED',
-  Unknown = 'UNKNOWN',
 }
 
 export type UpdateApplicationExternalDataInput = {
@@ -1034,6 +1009,12 @@ export type AddAttachmentInput = {
 export type DeleteAttachmentInput = {
   id: Scalars['String']
   key: Scalars['String']
+}
+
+export type SubmitApplicationInput = {
+  id: Scalars['String']
+  event: Scalars['String']
+  answers?: Maybe<Scalars['JSON']>
 }
 
 export type GetAboutPageQueryVariables = Exact<{
@@ -1345,7 +1326,7 @@ export type GetLifeEventsQuery = { __typename?: 'Query' } & {
 }
 
 export type GetLifeEventsInCategoryQueryVariables = Exact<{
-  input: GetLifeEventsInput
+  input: GetLifeEventsInCategoryInput
 }>
 
 export type GetLifeEventsInCategoryQuery = { __typename?: 'Query' } & {

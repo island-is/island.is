@@ -38,6 +38,7 @@ import { GetLandingPageInput } from './dto/getLandingPage.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
 import { GetLifeEventsInput } from './dto/getLifeEvents.input'
+import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.input'
 import {
   getArticle,
   getRelatedArticles,
@@ -232,7 +233,7 @@ export class CmsResolver {
 
   @Query(() => [LifeEventPage])
   getLifeEventsInCategory(
-    @Args('input') input: GetLifeEventsInput,
+    @Args('input') input: GetLifeEventsInCategoryInput,
   ): Promise<LifeEventPage[]> {
     return getLifeEventsInCategory(input.lang, input.slug)
   }

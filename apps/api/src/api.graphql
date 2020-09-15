@@ -530,7 +530,7 @@ type Query {
   getMenu(input: GetMenuInput!): Menu
   getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
   getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
-  getLifeEventsInCategory(input: GetLifeEventsInput!): [LifeEventPage!]!
+  getLifeEventsInCategory(input: GetLifeEventsInCategoryInput!): [LifeEventPage!]!
   getApplication(input: GetApplicationInput!): Application
   getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
   getDocument(input: GetDocumentInput!): DocumentDetails
@@ -680,6 +680,10 @@ input GetLifeEventPageInput {
 }
 
 input GetLifeEventsInput {
+  lang: String!
+}
+
+input GetLifeEventsInCategoryInput {
   slug: String
   lang: String!
 }

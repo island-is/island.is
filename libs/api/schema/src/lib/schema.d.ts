@@ -739,7 +739,7 @@ export type QueryGetLifeEventsArgs = {
 }
 
 export type QueryGetLifeEventsInCategoryArgs = {
-  input: GetLifeEventsInput
+  input: GetLifeEventsInCategoryInput
 }
 
 export type QueryGetApplicationArgs = {
@@ -900,6 +900,10 @@ export type GetLifeEventPageInput = {
 }
 
 export type GetLifeEventsInput = {
+  lang: Scalars['String']
+}
+
+export type GetLifeEventsInCategoryInput = {
   slug?: Maybe<Scalars['String']>
   lang: Scalars['String']
 }
@@ -1282,6 +1286,7 @@ export type ResolversTypes = {
   GetMenuInput: GetMenuInput
   GetLifeEventPageInput: GetLifeEventPageInput
   GetLifeEventsInput: GetLifeEventsInput
+  GetLifeEventsInCategoryInput: GetLifeEventsInCategoryInput
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
@@ -1436,6 +1441,7 @@ export type ResolversParentTypes = {
   GetMenuInput: GetMenuInput
   GetLifeEventPageInput: GetLifeEventPageInput
   GetLifeEventsInput: GetLifeEventsInput
+  GetLifeEventsInCategoryInput: GetLifeEventsInCategoryInput
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
