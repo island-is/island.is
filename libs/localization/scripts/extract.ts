@@ -19,7 +19,7 @@ export interface MessageDict {
 }
 
 const client = createClient({
-  accessToken: 'CFPAT-BihGg69ZoLSobW76wolYFAFZ8sebTUcdDib1IMAlhn8',
+  accessToken: process.env.CONTENTFUL_MANAGEMENT_KEY,
 })
 
 execFileSync('npx', [
