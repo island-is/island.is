@@ -8,8 +8,6 @@ export enum ServicePortalPath {
   UmsoknirNyUmsokn = '/umsoknir/ny-umsokn',
   UmsoknirOpnarUmsoknir = '/umsoknir/opnar-umsoknir',
   UmsoknirLyfsedlar = '/umsoknir/lyfsedlar',
-  JudicialCreateDetentionPoc = '/stofna-krofu',
-  JudicialDetentionRequestsPoc = '/gaesluvardhaldskrofur',
   // Stillingar
   StillingarRoot = '/stillingar',
   StillingarUpplysingar = '/stillingar/upplysingar',
