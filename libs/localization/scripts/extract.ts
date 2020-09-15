@@ -41,7 +41,7 @@ function createNamespace(id: string, messages: MessageDict, locales: Locale[]) {
     {},
   )
   return client
-    .getSpace('2nfa4y6hpvvz')
+    .getSpace(process.env.CONTENTFUL_SPACE)
     .then((space) => space.getEnvironment('master'))
     .then((environment) =>
       environment.createEntryWithId('translationStrings', id, {
@@ -61,7 +61,6 @@ function createNamespace(id: string, messages: MessageDict, locales: Locale[]) {
 }
 
 function updateNamespace(namespace: Entry, messages: MessageDict) {
-  console.log('messages', messages)
   namespace.fields.defaults['en'] = Object.assign(
     {},
     namespace.fields.defaults['en'],
@@ -89,18 +88,18 @@ function updateNamespace(namespace: Entry, messages: MessageDict) {
 
 function getNamespace(id: string) {
   return client
-    .getSpace('2nfa4y6hpvvz')
+    .getSpace(process.env.CONTENTFUL_SPACE)
     .then((space) => space.getEnvironment('master'))
     .then((environment) => environment.getEntry(id))
-    .catch((err) => null)
+    .catch(() => null)
 }
 
 function getLocales() {
   return client
-    .getSpace('2nfa4y6hpvvz')
+    .getSpace(process.env.CONTENTFUL_SPACE)
     .then((space) => space.getEnvironment('master'))
     .then((environment) => environment.getLocales())
-    .catch((err) => [])
+    .catch(() => [])
 }
 
 glob
