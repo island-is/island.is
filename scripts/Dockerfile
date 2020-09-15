@@ -5,18 +5,13 @@ RUN apk add -U git
 
 WORKDIR /build
 
-# Adding user for building the app
-RUN addgroup runners && adduser -D runner -G runners
-RUN chown -R runner:runners /build
-USER runner
-
 # Adding and installing packages
-ADD --chown=runner:runners package.json yarn.lock ./
+ADD package.json yarn.lock ./
 RUN yarn install --frozen-lockfile && rm -rf /home/runner/.cache
 
 FROM deps as src
 # image with the source code
-ADD --chown=runner:runners . .
+ADD . .
 
 FROM src as formatting
 
@@ -60,22 +55,22 @@ ARG APP_DIST_HOME
 ENV APP=${APP}
 ENV NODE_ENV=production
 
+WORKDIR /webapp
+
+COPY --from=deps /build/node_modules /webapp/node_modules
+
 RUN apk add bash python py-pip jq curl -U \
     && rm -rf /var/cache/apk/*
 RUN pip install awscli
-WORKDIR /webapp
 
 # Adding user for running the app
 RUN addgroup runners && adduser -D runner -G runners
-RUN chown -R runner:runners /webapp
 USER runner
-
-COPY --from=builder --chown=runner:runners /build/node_modules /webapp/node_modules
 
 FROM output-base as output-express
 # image with build of an Express.js app
 
-COPY --from=builder --chown=runner:runners /build/${APP_DIST_HOME} /webapp
+COPY --from=builder /build/${APP_DIST_HOME} /webapp
 
 ENTRYPOINT [ "node" ]
 CMD [ "main.js" ]
@@ -83,10 +78,10 @@ CMD [ "main.js" ]
 FROM output-base as output-next
 # image with build of an Next.js app
 
-COPY --from=builder --chown=runner:runners /build/${APP_HOME}/next.config.js /webapp
-COPY --from=builder --chown=runner:runners /build/${APP_HOME}/next-modules/ /webapp/next-modules/
-COPY --from=builder --chown=runner:runners /build/${APP_HOME}/public /webapp/public
-COPY --from=builder --chown=runner:runners /build/${APP_DIST_HOME} /webapp/.next
+COPY --from=builder /build/${APP_HOME}/next.config.js /webapp
+COPY --from=builder /build/${APP_HOME}/next-modules/ /webapp/next-modules/
+COPY --from=builder /build/${APP_HOME}/public /webapp/public
+COPY --from=builder /build/${APP_DIST_HOME} /webapp/.next
 
 ENTRYPOINT [ "npx", "next", "start", "-p", "4200" ]
 
