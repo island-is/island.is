@@ -183,7 +183,7 @@ const Admin: Screen = ({}) => {
             </Box>
             <Box paddingTop={2}>
               <Button width="fluid" variant="ghost">
-                Búa til reikning
+                Prenta yfirlit
               </Button>
             </Box>
           </Box>
