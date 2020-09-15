@@ -1,12 +1,19 @@
-import { style/*, styleMap*/ } from 'treat'
-//import { theme } from '@island.is/island-ui/theme'
+import { style } from 'treat'
 
 
 export const filter = style({
-  marginTop:100
+  marginTop:10
+})
+
+export const filterItem = style({
+  marginTop:5
 })
 
 export const navigation = style({
   padding:50,
   textAlign: 'center'
+})
+
+export const radioButton = style({
+  marginTop:5
 })

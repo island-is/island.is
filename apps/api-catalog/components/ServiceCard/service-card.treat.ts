@@ -1,9 +1,7 @@
 import { style} from 'treat'
 
 export const card = style({
-    paddingLeft:40,
-    paddingTop:0,
-    paddingBottom:40
+    padding:40
   })
 
 export const name = style({
