@@ -1,0 +1,84 @@
+{
+  "__schema": {
+    "types": [
+      {
+        "kind": "UNION",
+        "name": "Slice",
+        "possibleTypes": [
+          {
+            "name": "PageHeaderSlice"
+          },
+          {
+            "name": "TimelineSlice"
+          },
+          {
+            "name": "HeadingSlice"
+          },
+          {
+            "name": "StorySlice"
+          },
+          {
+            "name": "LinkCardSlice"
+          },
+          {
+            "name": "LatestNewsSlice"
+          },
+          {
+            "name": "MailingListSignupSlice"
+          },
+          {
+            "name": "LogoListSlice"
+          },
+          {
+            "name": "BulletListSlice"
+          },
+          {
+            "name": "Html"
+          },
+          {
+            "name": "Image"
+          },
+          {
+            "name": "Statistics"
+          },
+          {
+            "name": "ProcessEntry"
+          },
+          {
+            "name": "FaqList"
+          },
+          {
+            "name": "EmbeddedVideo"
+          },
+          {
+            "name": "SectionWithImage"
+          }
+        ]
+      },
+      {
+        "kind": "UNION",
+        "name": "BulletEntry",
+        "possibleTypes": [
+          {
+            "name": "IconBullet"
+          },
+          {
+            "name": "NumberBulletGroup"
+          }
+        ]
+      },
+      {
+        "kind": "UNION",
+        "name": "AdgerdirSlice",
+        "possibleTypes": [
+          {
+            "name": "AdgerdirGroupSlice"
+          },
+          {
+            "name": "AdgerdirFeaturedNewsSlice"
+          }
+        ]
+      }
+    ]
+  }
+}

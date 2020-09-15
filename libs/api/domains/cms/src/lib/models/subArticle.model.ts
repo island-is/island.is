@@ -2,6 +2,8 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 import { ISubArticle } from '../generated/contentfulTypes'
 
+import { Slice, mapDocument } from './slice.model'
+
 @ObjectType()
 export class SubArticle {
   @Field()
@@ -10,12 +12,12 @@ export class SubArticle {
   @Field()
   slug: string
 
-  @Field()
-  content: string
+  @Field(() => [Slice])
+  body: Array<typeof Slice>
 }
 
 export const mapSubArticle = ({ fields }: ISubArticle): SubArticle => ({
   title: fields.title,
   slug: fields.slug,
-  content: JSON.stringify(fields.content),
+  body: mapDocument(fields.content),
 })

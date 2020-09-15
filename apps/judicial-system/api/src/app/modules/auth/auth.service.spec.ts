@@ -23,10 +23,10 @@ describe('AuthService', () => {
   describe('validateUser', () => {
     it('should be an unknown user', async () => {
       // Arrange & Act
-      const role = await authService.validateUser(user)
+      const found = await authService.validateUser(user)
 
       // Assert
-      expect(role).toBeNull()
+      expect(found).toBeFalsy()
     })
   })
 })

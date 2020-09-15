@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { useRouter } from 'next/router'
 import { Box, Stack, Inline, Tag } from '@island.is/island-ui/core'
 import { Categories, SearchInput, LatestNewsSection } from '../components'
 import { useI18n } from '../i18n'
@@ -31,6 +30,9 @@ import {
 import { IntroductionSection } from '../components/IntroductionSection'
 import { LifeEventsCardsSection } from '../components/LifeEventsCardsSection'
 import { Section } from '../components/Section'
+import { withMainLayout } from '../layouts/main'
+import { Sleeve } from '@island.is/island-ui/core'
+import { ContentBlock } from '@island.is/island-ui/core'
 
 interface HomeProps {
   categories: GetCategoriesQuery['categories']
@@ -49,7 +51,6 @@ const Home: Screen<HomeProps> = ({
 }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
-  const Router = useRouter()
   const { makePath } = useRouteNames(activeLocale)
 
   if (typeof document === 'object') {
@@ -92,23 +93,25 @@ const Home: Screen<HomeProps> = ({
       <Section paddingY={[0, 0, 3, 3, 6]}>
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
       </Section>
-      <Section background="purple100" paddingY={[4, 4, 4, 6]}>
-        <Categories title={n('articlesTitle')} cards={cards} />
-      </Section>
-      <Section
-        paddingTop={[8, 8, 3, 3, 6]}
-        backgroundBleed={{
-          bleedAmount: 160,
-          bleedDirection: 'top',
-          fromColor: 'white',
-          toColor: 'purple100',
-        }}
-      >
-        <LifeEventsCardsSection
-          title={n('lifeEventsTitle')}
-          lifeEvents={lifeEvents}
-        />
-      </Section>
+      <Box marginTop={0}>
+        <Sleeve minHeight={400} sleeveShadow="purple">
+          <Box>
+            <ContentBlock width="large">
+              <Section paddingTop={[8, 8, 6]}>
+                <LifeEventsCardsSection
+                  title={n('lifeEventsTitle')}
+                  lifeEvents={lifeEvents}
+                />
+              </Section>
+            </ContentBlock>
+          </Box>
+        </Sleeve>
+      </Box>
+      <Box marginTop={0} background="purple100">
+        <Section paddingTop={[8, 8, 6]}>
+          <Categories title={n('articlesTitle')} cards={cards} />
+        </Section>
+      </Box>
       <Section paddingTop={[8, 8, 6]}>
         <LatestNewsSection label="Fréttir og tilkynningar" items={news} />
       </Section>
@@ -218,4 +221,4 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default Home
+export default withMainLayout(Home)

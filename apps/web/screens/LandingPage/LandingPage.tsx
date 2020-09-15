@@ -1,10 +1,9 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
-import slugify from '@sindresorhus/slugify'
-import { Hyperlink, Image, RichTextV2 } from '@island.is/island-ui/contentful'
+import React, { useMemo } from 'react'
+import { Hyperlink, Image } from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
 import { GET_LANDING_PAGE_QUERY } from '../queries'
-import { CustomNextError } from '../../units/ErrorBoundary'
+import { CustomNextError } from '../../units/errors'
 import Head from 'next/head'
 import { useI18n } from '@island.is/web/i18n'
 import {
@@ -14,16 +13,18 @@ import {
   Box,
   Breadcrumbs,
   Link,
-  ContentBlock,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
-import { Sidebar } from '@island.is/web/components'
+import { RichText, SidebarNavigation } from '@island.is/web/components'
 import ArticleLayout from '../Layouts/Layouts'
 import useRouteNames from '../../i18n/useRouteNames'
+import { withMainLayout } from '../../layouts/main'
 import {
   QueryGetLandingPageArgs,
   GetLandingPageQuery,
-  Slice,
 } from '../../graphql/schema'
+import { createNavigation, makeId } from '@island.is/web/utils/navigation'
 
 export interface LandingPageProps {
   page?: GetLandingPageQuery['getLandingPage']
@@ -32,6 +33,9 @@ export interface LandingPageProps {
 const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
   const { activeLocale } = useI18n()
   const { makePath } = useRouteNames(activeLocale)
+  const navigation = useMemo(() => {
+    return createNavigation(page.content, { title: page.title })
+  }, [page])
 
   const sidebar = (
     <Stack space={3}>
@@ -42,7 +46,11 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
           </Button>
         </Box>
       )}
-      <Sidebar title="Efnisyfirlit" bullet="left" headingLinks />
+      <SidebarNavigation
+        title="Efnisyfirlit"
+        position="right"
+        navigation={navigation}
+      />
       {page.links && (
         <Box background="purple100" padding={4} borderRadius="large">
           <Stack space={2}>
@@ -66,17 +74,15 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
         <title>{page.title}</title>
       </Head>
       <ArticleLayout sidebar={sidebar}>
-        <Box paddingY="none" paddingX={[3, 3, 6, 0]} marginBottom={[2, 2, 3]}>
-          <ContentBlock width="small">
+        <GridRow>
+          <GridColumn span={['0', '0', '7/9']} offset={['0', '0', '1/9']}>
             <Stack space={[3, 3, 4]}>
               <Breadcrumbs>
                 <Link href={makePath()}>Ísland.is</Link>
                 <Link href={'/' + page.slug}>{page.title}</Link>
               </Breadcrumbs>
-              <Typography variant="h1" as="h1">
-                <span data-sidebar-link={slugify(page.title)}>
-                  {page.title}
-                </span>
+              <Typography id={makeId(page.title)} variant="h1" as="h1">
+                {page.title}
               </Typography>
               <Typography variant="intro" as="p">
                 {page.introduction}
@@ -85,10 +91,11 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
                 <Image type="apiImage" image={page.image} maxWidth={774} />
               )}
             </Stack>
-          </ContentBlock>
+          </GridColumn>
+        </GridRow>
+        <Box paddingTop={6}>
+          <RichText body={page.content} />
         </Box>
-
-        <RichTextV2 slices={page.content as Slice[]} />
       </ArticleLayout>
     </>
   )
@@ -100,7 +107,6 @@ LandingPageScreen.getInitialProps = async ({ apolloClient, locale, query }) => {
     QueryGetLandingPageArgs
   >({
     query: GET_LANDING_PAGE_QUERY,
-    fetchPolicy: 'no-cache',
     variables: {
       input: {
         lang: locale,
@@ -118,4 +124,4 @@ LandingPageScreen.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default LandingPageScreen
+export default withMainLayout(LandingPageScreen)

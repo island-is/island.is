@@ -1,53 +1,67 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
-import minBy from 'lodash/minBy'
-import useViewport from './useViewport'
+import { useEffect, useState, useCallback } from 'react'
+import { throttle, debounce } from 'lodash'
+import { useEvent } from 'react-use'
 
-const useScrollSpy = ({
-  margin = 0,
-  initialId = '',
-}: {
-  margin?: number
-  initialId?: string
-}): [(id: string) => (e: HTMLElement) => void, string | undefined] => {
-  const elements = useRef<{ [key: string]: HTMLElement }>({})
-  const [currentId, setCurrentId] = useState(initialId)
+const TOP_MARGIN = 100
 
-  // re-render on scroll or resize
-  useViewport()
+const guessVisibleSection = (ids: string[]): string | null => {
+  if (ids.length === 0) return null
 
-  // Elements are cleared on each render. After the component that calls this
-  // hook has finished rendering, the useEffect hook below runs with
-  // elements.current populated by the component using this hook.
-  elements.current = {}
+  // top of the page is a special case because otherwise we might match the
+  // second page section if the first one is small enough
+  if (window.scrollY <= 0) return ids[0]
 
-  const spy = useCallback(
-    (key: string) => {
-      return (e: HTMLElement) => {
-        elements.current[key] = e
-      }
+  return ids.reduce((match, id) => {
+    const el = document.getElementById(id)
+    const elPosY = el.getBoundingClientRect().top + window.scrollY
+    return window.scrollY + TOP_MARGIN >= elPosY ? id : match
+  }, ids[0])
+}
+
+const useScrollSpy = (
+  ids: string[],
+): [string | undefined, (id: string) => void] => {
+  const [current, setCurrent] = useState(ids[0])
+
+  // flag to ignore scroll event when user navigates manually
+  const [ignore, setIgnore] = useState(false)
+
+  // every time scrolling stops we'll reset the ignore flag
+  const checkScrollStop = useCallback(
+    debounce(() => setIgnore(false), 50),
+    [setIgnore],
+  )
+  useEvent('scroll', checkScrollStop, process.browser && window)
+
+  // function to manually navigate
+  const navigate = useCallback(
+    (id: string) => {
+      setCurrent(id)
+      setIgnore(true)
+      const rect = document.getElementById(id).getBoundingClientRect()
+      window.scrollTo(0, rect.top + window.scrollY - TOP_MARGIN)
     },
-    [elements],
+    [setCurrent, setIgnore],
   )
 
-  useEffect(() => {
-    const candidates = Array.from(
-      Object.entries(elements.current),
-    ).map(([name, elem]) => ({ name, elem }))
+  // throttled function to update the active section id
+  const updateCurrent = useCallback(
+    throttle(() => {
+      if (!ignore) {
+        setCurrent(guessVisibleSection(ids))
+      }
+    }, 100),
+    [ids, ignore, setCurrent],
+  )
 
-    const best = minBy(candidates, (c) => {
-      const { top, height } = c.elem.getBoundingClientRect()
-      return Math.min(
-        Math.abs(top - margin),
-        Math.abs(top + height - margin - 1),
-      )
-    })
+  // update if id list changes
+  useEffect(updateCurrent, [ids])
 
-    if (best && best.name !== currentId) {
-      setCurrentId(best.name)
-    }
-  })
+  // and call the update function on scroll and resize
+  useEvent('scroll', updateCurrent, process.browser && window)
+  useEvent('resize', updateCurrent, process.browser && window)
 
-  return [spy, currentId]
+  return [current, navigate]
 }
 
 export default useScrollSpy

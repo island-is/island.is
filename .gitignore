@@ -46,4 +46,4 @@ Thumbs.db
 .env.secret
 .env
 helm/**/*.tgz
-/cache
+/cache*

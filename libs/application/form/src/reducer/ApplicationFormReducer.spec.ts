@@ -1,19 +1,18 @@
 import {
   Application,
-  ApplicationState,
   buildForm,
   buildRepeater,
   buildSection,
   buildTextField,
   ExternalData,
   Form,
-  FormType,
+  ApplicationTypes,
 } from '@island.is/application/template'
 import * as z from 'zod'
 import { ApplicationReducer, initializeReducer } from './ApplicationFormReducer'
 import { ActionTypes, ApplicationUIState } from './ReducerTypes'
 
-const FamilyAndPetsSchema = z.object({
+const dataSchema = z.object({
   person: z
     .array(
       z.object({
@@ -43,12 +42,11 @@ const FamilyAndPetsSchema = z.object({
   familyName: z.string().nonempty(),
   house: z.string().optional(),
 })
-type FamilyAndPetsSchemaFormValues = z.infer<typeof FamilyAndPetsSchema>
+type FamilyAndPetsSchemaFormValues = z.infer<typeof dataSchema>
 const FamilyAndPets: Form = buildForm({
-  id: FormType.FAMILY_AND_PETS,
+  id: ApplicationTypes.FAMILY_AND_PETS,
   ownerId: 'Aranja',
   name: 'Family and pets',
-  schema: FamilyAndPetsSchema,
   children: [
     buildSection({
       id: 'family',
@@ -99,13 +97,13 @@ const FamilyAndPets: Form = buildForm({
 
 const application: Application = {
   id: '12315151515',
-  typeId: FormType.FAMILY_AND_PETS,
+  typeId: ApplicationTypes.FAMILY_AND_PETS,
   attachments: {},
   externalData: {},
   answers: {},
   applicant: '123123',
   externalId: '123123123',
-  state: ApplicationState.DRAFT,
+  state: 'draft',
   modified: null,
   created: null,
 }
@@ -116,6 +114,7 @@ describe('ApplicationFormReducer', () => {
     activeScreen: 0,
     activeSection: 0,
     activeSubSection: -1,
+    dataSchema,
     form: FamilyAndPets,
     screens: [],
     progress: 0,
@@ -287,9 +286,9 @@ describe('ApplicationFormReducer', () => {
     })
     it('should use the newest value of an array and not merge the previous value', () => {
       const initialState = {
+        dataSchema: z.object({ text: z.string() }),
         form: buildForm({
-          schema: z.object({ text: z.string() }),
-          id: FormType.FAMILY_AND_PETS,
+          id: ApplicationTypes.FAMILY_AND_PETS,
           name: 'Test',
           ownerId: '222',
           children: [],

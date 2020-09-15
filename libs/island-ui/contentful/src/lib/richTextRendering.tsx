@@ -17,27 +17,33 @@ import {
   Blockquote,
   Box,
   TypographyProps,
+  ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import ProcessEntry from './ProcessEntry/ProcessEntry'
 import EmbeddedVideo from './EmbeddedVideo/EmbeddedVideo'
 import StaticHtml from './StaticHtml/StaticHtml'
+import slugify from '@sindresorhus/slugify'
+import { SectionWithImage } from './SectionWithImage/SectionWithImage'
 
 export interface RenderNode {
   [k: string]: (node: Block | Inline, children: ReactNode) => ReactNode
 }
 
-interface RenderConfig {
-  renderComponent?: (slice: Slice, renderNode: RenderNode) => ReactNode
-  renderWrapper?: (slice: Slice, children: ReactNode) => ReactNode
-  renderPadding?: (top: Slice, bottom: Slice) => ReactNode
-  renderNode?: RenderNode
+type SliceType = Slice['__typename']
+type Ordered = 'ordered' | 'unordered'
+
+export interface RenderConfig {
+  renderComponent: (slice: Slice, config: RenderConfig) => ReactNode
+  renderPadding: (top: Slice, bottom: Slice, config: RenderConfig) => ReactNode
+  renderNode: RenderNode
   htmlClassName?: string
+  defaultPadding: ResponsiveSpace
+  padding: Readonly<Array<[SliceType, SliceType, ResponsiveSpace, Ordered?]>>
 }
 
 export const defaultRenderComponent = (
   slice: Slice,
-  renderNode: RenderNode,
-  htmlClassName?: string,
+  { renderNode, htmlClassName }: RenderConfig,
 ): ReactNode => {
   switch (slice.__typename) {
     case 'Html':
@@ -61,37 +67,34 @@ export const defaultRenderComponent = (
     case 'EmbeddedVideo':
       return <EmbeddedVideo {...slice} />
 
+    case 'SectionWithImage':
+      return <SectionWithImage {...slice} />
+
     default:
+      // TODO: this should be an exhaustive list of slice types, but some slice
+      // types are only used on certain types of pages that are not using this
+      // renderer at the moment (e.g. the AboutPage)
       return null
   }
 }
 
-export const defaultRenderWrapper = (
-  _slice: Slice,
-  children: ReactNode,
-): ReactNode => {
-  // TODO: when the grid supports it, we'll create a wrapper here to indent
-  // left and/or right side when needed
-  return children
-}
-
 const typography = (
   variant: TypographyProps['variant'] & TypographyProps['as'],
+  withId = false,
 ) => (_: Block, children: ReactNode) => (
-  <Typography variant={variant} as={variant}>
-    {['h2', 'h3'].includes(variant) ? (
-      // TODO: stop this data-sidebar-link madness
-      <span data-sidebar-link={String(children)}>{children}</span>
-    ) : (
-      children
-    )}
+  <Typography
+    id={withId ? slugify(String(children)) : null}
+    variant={variant}
+    as={variant}
+  >
+    {children}
   </Typography>
 )
 
 export const defaultRenderNode: Readonly<RenderNode> = {
-  [BLOCKS.HEADING_1]: typography('h1'),
-  [BLOCKS.HEADING_2]: typography('h2'),
-  [BLOCKS.HEADING_3]: typography('h3'),
+  [BLOCKS.HEADING_1]: typography('h1', true),
+  [BLOCKS.HEADING_2]: typography('h2', true),
+  [BLOCKS.HEADING_3]: typography('h3', true),
   [BLOCKS.HEADING_4]: typography('h4'),
   [BLOCKS.HEADING_5]: typography('h5'),
   [BLOCKS.PARAGRAPH]: typography('p'),
@@ -120,29 +123,42 @@ export const renderHtml = (
   )
 }
 
-export const defaultRenderPadding = (top: Slice, bottom: Slice): ReactNode => {
-  const [a, b] = [top, bottom].map((slice) => slice.__typename)
+const matches = (name: string, type: string) => name === '*' || name === type
 
-  if (a === b) {
-    return <Box paddingTop={3} />
+export const defaultRenderPadding = (
+  { __typename: above }: Slice,
+  { __typename: below }: Slice,
+  config: RenderConfig,
+): ReactNode => {
+  for (const [a, b, space, order = 'unordered'] of config.padding) {
+    if (
+      (matches(a, above) && matches(b, below)) ||
+      (order === 'unordered' && matches(a, below) && matches(b, above))
+    ) {
+      return <Box paddingTop={space} />
+    }
   }
 
-  if ([a, b].some((s) => s === 'Statistics')) {
-    return <Box paddingTop={6} />
-  }
-
-  return <Box paddingTop={15} />
+  return <Box paddingTop={config.defaultPadding} />
 }
 
+export const DefaultRenderConfig: RenderConfig = {
+  renderComponent: defaultRenderComponent,
+  renderPadding: defaultRenderPadding,
+  renderNode: defaultRenderNode,
+  defaultPadding: 10,
+  padding: [] as const,
+} as const
+
 export const renderSlices = (
-  slices?: Slice | Slice[],
-  {
-    renderComponent = defaultRenderComponent,
-    renderWrapper = defaultRenderWrapper,
-    renderPadding = defaultRenderPadding,
-    renderNode = defaultRenderNode,
-  }: RenderConfig = {},
+  slices: Slice | Slice[],
+  optionalConfig?: Partial<RenderConfig>,
 ): ReactNode => {
+  const config: RenderConfig = {
+    ...DefaultRenderConfig,
+    ...optionalConfig,
+  }
+
   if (!slices) {
     return null
   }
@@ -152,23 +168,18 @@ export const renderSlices = (
   }
 
   const components = slices.map((slice, index) => {
-    const comp = renderComponent(slice, renderNode)
+    const comp = config.renderComponent(slice, config)
     if (!comp) {
       return null
     }
 
     return (
-      <Fragment key={slice.__typename + ':' + index}>
-        {index > 0 && renderPadding(slices[index - 1], slice)}
-        {renderWrapper(slice, comp)}
+      <Fragment key={slice.id}>
+        {index > 0 && config.renderPadding(slices[index - 1], slice, config)}
+        {comp}
       </Fragment>
     )
   })
 
   return <>{components.filter(Boolean)}</>
 }
-
-export const RichTextV2: FC<{
-  slices: Slice | Slice[]
-  config?: RenderConfig
-}> = ({ slices, config }) => <>{renderSlices(slices, config)}</>

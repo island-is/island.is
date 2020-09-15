@@ -3,7 +3,6 @@ import React, { FC, useState, useContext } from 'react'
 import { useRouter } from 'next/router'
 import {
   Logo,
-  Link,
   Columns,
   Column,
   Box,
@@ -21,7 +20,6 @@ import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { SearchInput } from '../'
 import { LanguageToggler } from '../LanguageToggler'
 import { SideMenu } from '../SideMenu'
-import { tempTabs } from '../../json'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
@@ -91,6 +89,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                   <FocusableBox
                     href="//minarsidur.island.is/"
                     marginLeft={marginLeft}
+                    borderRadius="large"
                   >
                     <Button variant="menu" leftIcon="user" tabIndex={-1}>
                       {t.login}
@@ -117,7 +116,6 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
       <SideMenu
         isVisible={sideMenuOpen}
         handleClose={() => setSideMenuOpen(false)}
-        tabs={tempTabs}
       />
     </GridContainer>
   )

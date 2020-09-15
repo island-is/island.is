@@ -21,12 +21,12 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 
-import { Flight } from './flight.model'
+import { Flight, FlightLeg } from './flight.model'
 import { FlightService } from './flight.service'
 import {
   FlightDto,
   GetFlightParams,
-  GetFlightsBody,
+  GetFlightLegsBody,
   CreateFlightParams,
   GetUserFlightsParams,
   DeleteFlightParams,
@@ -164,10 +164,10 @@ export class PrivateFlightController {
     return this.flightService.findAll()
   }
 
-  @Post('flights')
+  @Post('flightLegs')
   @ApiExcludeEndpoint()
-  getFlights(@Body() body: GetFlightsBody | {}): Promise<Flight[]> {
-    return this.flightService.findAllByFilter(body)
+  getFlightLegs(@Body() body: GetFlightLegsBody | {}): Promise<FlightLeg[]> {
+    return this.flightService.findAllLegsByFilter(body)
   }
 
   @Get('users/:nationalId/flights')
