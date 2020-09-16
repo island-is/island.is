@@ -7,7 +7,7 @@ This library contains all the core functionality needed to build a library into 
 ### About
 
 Service Portal libraries are designed to be dynamically loaded into view when a user has access to their functionality and
-has navigated to a part if it's feature.
+has navigated to a part of it's feature.
 
 ### Usage
 
@@ -22,8 +22,8 @@ export interface ServicePortalModule {
 All libraries are implemented by defining an interface that gets loaded into the service portal shell on startup. This interface defines three aspects about the library:
 
 - Name - The name of the library
-- Widgets - A function that return an array of lazy loaded widgets
-- Routes
+- Widgets - A function that return an array of widgets
+- Routes - A function that returns an array of routes
 
 ### Widgets
 
