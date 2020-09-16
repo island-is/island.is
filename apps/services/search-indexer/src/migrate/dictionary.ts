@@ -7,7 +7,7 @@ import { AwsEsPackage } from './aws'
 const analyzers = ['stemmer', 'keywords', 'synonyms', 'stopwords']
 
 const getDictUrl = (type: string, lang: string): string => {
-  const url = environment.migrate.dictRepo
+  const url = environment.dictRepo
     .replace('api.github', 'github')
     .replace('/repos/', '/')
   return `${url}/blob/master/${lang}/${type}.txt?raw=true`
@@ -20,7 +20,7 @@ const getFile = (url: string) => {
 
 type dictionaryVersion = { tag_name: string }
 export const getDictionaryVersion = async (): Promise<string> => {
-  const url = environment.migrate.dictRepo + '/releases/latest'
+  const url = environment.dictRepo + '/releases/latest'
   const data: dictionaryVersion = await getFile(url).then((raw) => {
     return raw.json()
   })
@@ -33,7 +33,7 @@ export interface Dictionary {
   file: NodeJS.ReadableStream
 }
 export const getDictionaryFiles = async (): Promise<Dictionary[]> => {
-  const locales = environment.migrate.locales
+  const locales = environment.locales
 
   const dictionaries = locales.map((locale) => {
     return analyzers.map(async (analyzerType) => {
@@ -60,7 +60,7 @@ export const getDictionaryFiles = async (): Promise<Dictionary[]> => {
 }
 
 export const getFakeEsPackages = (): AwsEsPackage[] => {
-  const locales = environment.migrate.locales
+  const locales = environment.locales
   const fakePackages = locales.map((locale) => {
     return analyzers.map((analyzer) => ({
       packageId: `${analyzer}.txt`,

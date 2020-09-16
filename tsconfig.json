@@ -114,6 +114,7 @@
       "@island.is/judicial-system/consts": [
         "libs/judicial-system/consts/src/index.ts"
       ],
+      "@island.is/elastic-indexing": ["libs/elastic-indexing/src/index.ts"],
       "@island.is/service-portal/assets": [
         "libs/service-portal/assets/src/index.ts"
       ]

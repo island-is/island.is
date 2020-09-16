@@ -35,6 +35,7 @@ import {
   SearchResult,
   QueryWebSearchAutocompleteArgs,
   AutocompleteTermResultsQuery,
+  Article,
 } from '../../graphql/schema'
 import { GlobalNamespaceContext } from '@island.is/web/context/GlobalNamespaceContext/GlobalNamespaceContext'
 
@@ -43,7 +44,7 @@ const STACK_WIDTH = 400
 
 type SearchState = {
   term: string
-  results?: SearchResult
+  results?: GetSearchResultsQuery['searchResults']
   suggestions: string[]
   prefix: string
   isLoading: boolean
@@ -93,6 +94,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
           query: {
             queryString: term,
             language: locale as ContentLanguage,
+            types: ['webArticle'],
           },
         },
       })
@@ -334,15 +336,17 @@ const Results: FC<{
               <Typography variant="eyebrow" color="purple400">
                 Beint að efninu
               </Typography>
-              {search.results.items.slice(0, 5).map(({ id, title, slug }) => (
-                <div key={id} {...getItemProps()}>
-                  <Typography links variant="h5" color="blue400">
-                    <Link href={makePath('article', slug)}>
-                      <a>{title}</a>
-                    </Link>
-                  </Typography>
-                </div>
-              ))}
+              {(search.results.items as Article[])
+                .slice(0, 5)
+                .map(({ id, title, slug }) => (
+                  <div key={id} {...getItemProps({ item: '' })}>
+                    <Typography links variant="h5" color="blue400">
+                      <Link href={makePath('article', slug)}>
+                        <a>{title}</a>
+                      </Link>
+                    </Typography>
+                  </div>
+                ))}
             </Stack>
           </div>
         </>

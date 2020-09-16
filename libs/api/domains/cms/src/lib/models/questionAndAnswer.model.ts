@@ -12,7 +12,7 @@ export class QuestionAndAnswer {
   @Field()
   question: string
 
-  @Field(() => Html)
+  @Field(() => Html, { nullable: true })
   answer?: Html
 }
 

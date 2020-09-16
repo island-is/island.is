@@ -41,13 +41,13 @@ export class Article {
   @Field(() => ArticleSubgroup, { nullable: true })
   subgroup?: ArticleSubgroup
 
-  @Field(() => [Organization])
+  @Field(() => [Organization], { nullable: true })
   organization?: Array<Organization>
 
   @Field(() => [SubArticle])
   subArticles: Array<SubArticle>
 
-  @Field(() => [Article])
+  @Field(() => [Article], { nullable: true })
   relatedArticles?: Array<Article>
 }
 
