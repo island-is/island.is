@@ -298,7 +298,6 @@ export const StepOne: React.FC = () => {
                     label="Veldu dagsetningu"
                     placeholderText="Veldu dagsetningu"
                     locale="is"
-                    minDate={new Date()}
                     errorMessage={arrestDateErrorMessage}
                     hasError={arrestDateErrorMessage !== ''}
                     handleChange={(date) => {

@@ -1,4 +1,7 @@
-import { CreateDetentionReqStepOneCase } from '../types'
+import {
+  CreateDetentionReqStepOneCase,
+  CaseCustodyRestrictions,
+} from '../types'
 import * as api from '../api'
 import { parseString } from './formatters'
 
@@ -44,5 +47,18 @@ export const autoSave = async (
     } else {
       // TODO: Do something when autosave fails
     }
+  }
+}
+
+export const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
+  switch (value) {
+    case CaseCustodyRestrictions.COMMUNICATION:
+      return 'D - Bréfskoðun, símabann'
+    case CaseCustodyRestrictions.ISOLATION:
+      return 'B - Einangrun'
+    case CaseCustodyRestrictions.MEDIA:
+      return 'E - Fjölmiðlabann'
+    case CaseCustodyRestrictions.VISITAION:
+      return 'C - Heimsóknarbann'
   }
 }

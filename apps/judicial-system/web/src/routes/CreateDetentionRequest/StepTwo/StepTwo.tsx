@@ -262,7 +262,7 @@ export const StepTwo: React.FC = () => {
                         )
                         updateState(
                           workingCase,
-                          'requestedCustodyEndDate',
+                          'requestedCustodyEndTime',
                           evt.target.value,
                           setWorkingCase,
                         )
