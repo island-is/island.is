@@ -10,6 +10,7 @@ source $DIR/_common.sh
 mkdir -p $PROJECT_ROOT/cache
 # docker buildx create --driver docker-container --use || true
 
+$CACHE_PUBLISH && (docker pull ${CACHE_REGISTRY_REPO}deps:${DEPS} || true)
 docker image inspect ${CACHE_REGISTRY_REPO}deps:${DEPS} -f ' ' > /dev/null  2>&1 || ( \
 docker build \
   -f ${DIR}/Dockerfile \
