@@ -104,7 +104,7 @@ export const Default = () => (
 export const Responsive = () => (
   <GridContainer>
     <GridRow>
-      <GridColumn span={['12/12', '0', '0', '2/12']}>
+      <GridColumn span={['12/12', '6/12', '3/12', '2/12']}>
         <DemoBox text="span ['12/12', '6/12', '3/12', '2/12']" />
       </GridColumn>
       <GridColumn span={['12/12', '6/12', '3/12', '2/12']}>
