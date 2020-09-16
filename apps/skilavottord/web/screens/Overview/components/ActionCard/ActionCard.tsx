@@ -8,8 +8,10 @@ import {
   GridRow,
   GridColumn,
   Stack,
+  Tooltip,
 } from '@island.is/island-ui/core'
 import OutlinedBox from '@island.is/skilavottord-web/components/OutlinedBox/OutlinedBox'
+import { isMobile } from '@island.is/skilavottord-web/utils/isMobile'
 
 //TODO: Move to graphql schema (see air-discount-scheme)
 type Car = {
@@ -60,7 +62,7 @@ export const ActionCard: FC<ActionCardProps> = ({
                 width="full"
                 textAlign="center"
               >
-                <Button size="small" onClick={onClick}>
+                <Button size="small" onClick={onClick} width={isMobile() ? 'fluid': 'normal'}>
                   Recycle car
                 </Button>
               </ColumnBox>
@@ -72,7 +74,11 @@ export const ActionCard: FC<ActionCardProps> = ({
                 textAlign="center"
               >
                 <Typography variant="pSmall">
-                  Cannot be recycled as car still has loans
+                  Cannot be recycled as car still has loans.{' '}
+                  <Tooltip 
+                    text="Lorem ipsum"
+                    colored
+                  />
                 </Typography>
               </ColumnBox>
             )}

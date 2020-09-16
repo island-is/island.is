@@ -8,6 +8,7 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
+  Inline,
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '../Layouts'
 import CompanyList from './components/CompanyList'
@@ -40,18 +41,12 @@ const RecyclingCompanies = (props) => {
   return (
     <ProcessPageLayout>
       <Stack space={3}>
-        <GridContainer>
-          <GridRow>
-            <GridColumn>
-              <Box className={styles.iconWrapper}>
-                <Icon type="check" color="white" />
-              </Box>
-            </GridColumn>
-            <GridColumn>
-              <Typography variant="h1">{t.title}</Typography>
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
+        <Inline space={2}>
+          <Box className={styles.iconWrapper}>
+            <Icon type="check" color="white" />
+          </Box>
+          <Typography variant="h1">{t.title}</Typography>
+        </Inline>
         <Stack space={4}>
           <Stack space={2}>
             <Typography variant="h3">{t.subTitles.recycle}</Typography>
@@ -60,7 +55,7 @@ const RecyclingCompanies = (props) => {
           <Typography variant="h3">{t.subTitles.companies}</Typography>
           <CompanyList companies={companies} />
           <Box width="full" display="inlineFlex" justifyContent="spaceBetween">
-            <Button variant="ghost" onClick={onCancel}>
+            <Button variant="redGhost" onClick={onCancel}>
               {t.buttons.cancel}
             </Button>
             <Button variant="normal" onClick={onContinue}>

@@ -6,6 +6,7 @@ import {
   Button,
   Checkbox,
   Link,
+  Icon,
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '../Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -69,7 +70,7 @@ const Confirm = () => {
         </Stack>
         <Stack space={2}>
           <CarDetailsBox car={mock} />
-          <OutlinedBox backgroundColor="blue100">
+          <OutlinedBox backgroundColor="blue100" borderColor="white">
             <Box padding={4}>
               <Checkbox
                 name="confirm"
@@ -86,7 +87,7 @@ const Confirm = () => {
           <Button variant="ghost" onClick={onCancel}>
             {t.buttons.cancel}
           </Button>
-          <Button variant="normal" disabled={!checkbox} onClick={onContinue}>
+          <Button variant="normal" disabled={!checkbox} onClick={onContinue} icon="arrowRight">
             {t.buttons.continue}
           </Button>
         </Box>
