@@ -190,7 +190,10 @@ const SubArticleNavigation: FC<{
               href={makePath('article', '[slug]')}
               as={makePath('article', article.slug)}
             >
-              {maybeBold(article.shortTitle || article.title, !selectedSubArticle)}
+              {maybeBold(
+                article.shortTitle || article.title,
+                !selectedSubArticle,
+              )}
             </Link>
           </Typography>
         </div>
@@ -250,7 +253,9 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
   const [bullet, setBullet] = useState<HTMLElement>(null)
 
   const navigation = useMemo(() => {
-    return createNavigation(article.body, { title: article.shortTitle || article.title })
+    return createNavigation(article.body, {
+      title: article.shortTitle || article.title,
+    })
   }, [article])
 
   const ids = useMemo(() => navigation.map((x) => x.id), [navigation])
