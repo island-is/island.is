@@ -23,6 +23,7 @@ jobs:
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       CHUNK_SIZE: '2'
+      CACHE_PUBLISH: true
 
     outputs:
       GIT_BRANCH: ${{ steps.git_refs.outputs.GIT_BRANCH }}
