@@ -41,7 +41,7 @@ export const StepOne: React.FC = () => {
         court: caseDraftJSON.case.court ?? 'Héraðsdómur Reykjavíkur',
         arrestDate: caseDraftJSON.case.arrestDate ?? null,
         arrestTime: caseDraftJSON.case.arrestTime ?? '',
-        requestedCourtDate: null,
+        requestedCourtDate: caseDraftJSON.case.requestedCourtDate ?? null,
         requestedCourtTime: caseDraftJSON.case.requestedCourtTime ?? '',
         requestedCustodyEndDate: null,
         requestedCustodyEndTime: '',
