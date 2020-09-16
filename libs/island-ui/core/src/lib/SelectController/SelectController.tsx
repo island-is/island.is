@@ -5,6 +5,7 @@ import { Select, Option } from '../Select/Select'
 interface Props {
   error?: string
   id: string
+  disabled?: boolean
   name?: string
   label: string
   options?: Option[]
@@ -12,6 +13,7 @@ interface Props {
 }
 export const SelectController: FC<Props> = ({
   error,
+  disabled = false,
   id,
   name = id,
   label,
@@ -26,6 +28,7 @@ export const SelectController: FC<Props> = ({
       render={({ onChange, value }) => (
         <Select
           hasError={error !== undefined}
+          disabled={disabled}
           id={id}
           errorMessage={error}
           name={name}

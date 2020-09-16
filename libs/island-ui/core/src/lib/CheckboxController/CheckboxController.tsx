@@ -13,6 +13,7 @@ interface Option {
 }
 interface CheckboxControllerProps {
   defaultValue?: string[]
+  disabled?: boolean
   error?: string
   id: string
   name?: string
@@ -20,6 +21,7 @@ interface CheckboxControllerProps {
 }
 export const CheckboxController: FC<CheckboxControllerProps> = ({
   defaultValue,
+  disabled = false,
   error,
   id,
   name = id,
@@ -56,6 +58,7 @@ export const CheckboxController: FC<CheckboxControllerProps> = ({
             {options.map((option, index) => (
               <Box display="flex" key={`${id}-${index}`}>
                 <Checkbox
+                  disabled={disabled}
                   onChange={() => {
                     clearErrors(id)
                     const newChoices = handleSelect(option, value || [])
