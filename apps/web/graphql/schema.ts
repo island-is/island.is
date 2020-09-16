@@ -438,18 +438,19 @@ export type AdgerdirFeaturedNewsSlice = {
   featured: Array<AdgerdirNews>
 }
 
-export type FrontpageSlide = {
-  __typename?: 'FrontpageSlide'
+export type FrontpageSlider = {
+  __typename?: 'FrontpageSlider'
   title: Scalars['String']
   subtitle: Scalars['String']
   content: Scalars['String']
   image?: Maybe<Image>
   link?: Maybe<Scalars['String']>
+  animationJson?: Maybe<Scalars['String']>
 }
 
 export type FrontpageSliderList = {
   __typename?: 'FrontpageSliderList'
-  items: Array<FrontpageSlide>
+  items: Array<FrontpageSlider>
 }
 
 export type Pagination = {
@@ -1226,9 +1227,9 @@ export type GetFrontpageSliderListQuery = { __typename?: 'Query' } & {
   getFrontpageSliderList?: Maybe<
     { __typename?: 'FrontpageSliderList' } & {
       items: Array<
-        { __typename?: 'FrontpageSlide' } & Pick<
-          FrontpageSlide,
-          'subtitle' | 'title' | 'content' | 'link'
+        { __typename?: 'FrontpageSlider' } & Pick<
+          FrontpageSlider,
+          'subtitle' | 'title' | 'content' | 'link' | 'animationJson'
         > & {
             image?: Maybe<
               { __typename?: 'Image' } & Pick<
