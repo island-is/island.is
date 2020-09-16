@@ -124,6 +124,11 @@ const waitForPackageStatus = async (
 
 // checks connection and validates that we have access to requested domain
 export const checkAWSAccess = async (): Promise<boolean> => {
+  if (!environment.s3Bucket) {
+    logger.info('No credentials provided for AWS')
+    return false
+  }
+
   const domains = await awsEs
     .listDomainNames()
     .promise()

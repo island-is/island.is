@@ -123,10 +123,12 @@ export class ElasticService {
 
   async getDocumentsByTypes(index: SearchIndexes, query: DocumentByTypesInput) {
     const requestBody = documentByTypeQuery(query)
+
     const data = await this.findByQuery<
       SearchResponse<MappedData>,
       DocumentByTypesRequestBody
     >(index, requestBody)
+
     return data.body
   }
 

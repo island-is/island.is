@@ -195,6 +195,45 @@ export const variants = styleMap({
       },
     },
   },
+  redGhost: {
+    backgroundColor: 'transparent',
+    color: theme.color.red400,
+    ':disabled': {
+      color: theme.color.red300,
+    },
+    ':after': {
+      opacity: 1,
+      borderWidth: 1,
+      borderColor: theme.color.red400,
+      borderRadius: 10,
+    },
+    ':hover': {
+      color: theme.color.red600,
+    },
+    ':focus': {
+      color: theme.color.white,
+      backgroundColor: theme.color.red600,
+    },
+    ':active': {
+      backgroundColor: 'transparent',
+      color: theme.color.red600,
+    },
+    selectors: {
+      '&:disabled:after': {
+        borderColor: theme.color.red300,
+      },
+      '&:hover:after': {
+        borderColor: theme.color.red600,
+      },
+      '&:focus:after': {
+        borderColor: theme.color.red600,
+      },
+      '&:hover:active:after': {
+        borderWidth: 4,
+        opacity: 1,
+      },
+    },
+  },
   text: {
     backgroundColor: 'transparent',
     color: theme.color.blue400,

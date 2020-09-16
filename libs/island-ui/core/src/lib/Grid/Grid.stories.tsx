@@ -120,6 +120,28 @@ export const Responsive = () => (
   </GridContainer>
 )
 
+export const Order = () => (
+  <GridContainer>
+    <GridRow>
+      <GridColumn span="1/5" order={[0, 1, 2, 3, 4]}>
+        <DemoBox text="0, 1, 2, 3, 4" />
+      </GridColumn>
+      <GridColumn span="1/5" order={0}>
+        <DemoBox text="0" />
+      </GridColumn>
+      <GridColumn span="1/5" order={1}>
+        <DemoBox text="1" />
+      </GridColumn>
+      <GridColumn span="1/5" order={2}>
+        <DemoBox text="2" />
+      </GridColumn>
+      <GridColumn span="1/5" order={3}>
+        <DemoBox text="3" />
+      </GridColumn>
+    </GridRow>
+  </GridContainer>
+)
+
 export const Offsets = () => (
   <>
     <Box paddingY={1}>
