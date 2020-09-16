@@ -402,18 +402,19 @@ export type AdgerdirFeaturedNewsSlice = {
   featured: Array<AdgerdirNews>
 }
 
-export type FrontpageSlide = {
-  __typename?: 'FrontpageSlide'
+export type FrontpageSlider = {
+  __typename?: 'FrontpageSlider'
   title: Scalars['String']
   subtitle: Scalars['String']
   content: Scalars['String']
   image?: Maybe<Image>
   link?: Maybe<Scalars['String']>
+  animationJson?: Maybe<Scalars['String']>
 }
 
 export type FrontpageSliderList = {
   __typename?: 'FrontpageSliderList'
-  items: Array<FrontpageSlide>
+  items: Array<FrontpageSlider>
 }
 
 export type Pagination = {
@@ -1233,7 +1234,7 @@ export type ResolversTypes = {
     | ResolversTypes['AdgerdirFeaturedNewsSlice']
   AdgerdirGroupSlice: ResolverTypeWrapper<AdgerdirGroupSlice>
   AdgerdirFeaturedNewsSlice: ResolverTypeWrapper<AdgerdirFeaturedNewsSlice>
-  FrontpageSlide: ResolverTypeWrapper<FrontpageSlide>
+  FrontpageSlider: ResolverTypeWrapper<FrontpageSlider>
   FrontpageSliderList: ResolverTypeWrapper<FrontpageSliderList>
   Pagination: ResolverTypeWrapper<Pagination>
   PaginatedNews: ResolverTypeWrapper<PaginatedNews>
@@ -1394,7 +1395,7 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['AdgerdirFeaturedNewsSlice']
   AdgerdirGroupSlice: AdgerdirGroupSlice
   AdgerdirFeaturedNewsSlice: AdgerdirFeaturedNewsSlice
-  FrontpageSlide: FrontpageSlide
+  FrontpageSlider: FrontpageSlider
   FrontpageSliderList: FrontpageSliderList
   Pagination: Pagination
   PaginatedNews: PaginatedNews
@@ -2131,15 +2132,20 @@ export type AdgerdirFeaturedNewsSliceResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export type FrontpageSlideResolvers<
+export type FrontpageSliderResolvers<
   ContextType = Context,
-  ParentType extends ResolversParentTypes['FrontpageSlide'] = ResolversParentTypes['FrontpageSlide']
+  ParentType extends ResolversParentTypes['FrontpageSlider'] = ResolversParentTypes['FrontpageSlider']
 > = {
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   subtitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   content?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  animationJson?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2148,7 +2154,7 @@ export type FrontpageSliderListResolvers<
   ParentType extends ResolversParentTypes['FrontpageSliderList'] = ResolversParentTypes['FrontpageSliderList']
 > = {
   items?: Resolver<
-    Array<ResolversTypes['FrontpageSlide']>,
+    Array<ResolversTypes['FrontpageSlider']>,
     ParentType,
     ContextType
   >
@@ -2771,7 +2777,7 @@ export type Resolvers<ContextType = Context> = {
   AdgerdirSlice?: AdgerdirSliceResolvers<ContextType>
   AdgerdirGroupSlice?: AdgerdirGroupSliceResolvers<ContextType>
   AdgerdirFeaturedNewsSlice?: AdgerdirFeaturedNewsSliceResolvers<ContextType>
-  FrontpageSlide?: FrontpageSlideResolvers<ContextType>
+  FrontpageSlider?: FrontpageSliderResolvers<ContextType>
   FrontpageSliderList?: FrontpageSliderListResolvers<ContextType>
   Pagination?: PaginationResolvers<ContextType>
   PaginatedNews?: PaginatedNewsResolvers<ContextType>

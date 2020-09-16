@@ -120,7 +120,10 @@ const isEmptyNode = (node: Block): boolean => {
   })
 }
 
-export const mapDocument = (document: Document): Array<typeof Slice> => {
+export const mapDocument = (
+  document: Document,
+  idPrefix: string,
+): Array<typeof Slice> => {
   const slices: Array<typeof Slice> = []
   const docs = document?.content ?? []
 
@@ -142,7 +145,7 @@ export const mapDocument = (document: Document): Array<typeof Slice> => {
         if (prev instanceof Html) {
           prev.document.content.push(block)
         } else {
-          slices.push(mapHtml(block, index))
+          slices.push(mapHtml(block, `${idPrefix}:${index}`))
         }
       }
     }

@@ -325,16 +325,17 @@ type AdgerdirFeaturedNewsSlice {
   featured: [AdgerdirNews!]!
 }
 
-type FrontpageSlide {
+type FrontpageSlider {
   title: String!
   subtitle: String!
   content: String!
   image: Image
   link: String
+  animationJson: String
 }
 
 type FrontpageSliderList {
-  items: [FrontpageSlide!]!
+  items: [FrontpageSlider!]!
 }
 
 type Pagination {

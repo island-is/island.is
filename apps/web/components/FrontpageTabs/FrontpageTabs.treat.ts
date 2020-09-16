@@ -3,6 +3,17 @@ import { ThemeOrAny } from 'treat/theme'
 import { ThemedStyle, Style } from 'treat/lib/types/types'
 import { theme } from '@island.is/island-ui/theme'
 
+export const animationContainer = style({
+  opacity: 1,
+  transform: `translateX(0)`,
+  transition: `opacity 400ms ease, transform 400ms ease`,
+})
+
+export const animationContainerHidden = style({
+  opacity: 0,
+  transform: `translateX(25px)`,
+})
+
 const whenMobile = (style: ThemedStyle<Style, ThemeOrAny>) => ({
   '@media': {
     [`screen and (max-width: ${theme.breakpoints.md - 1}px)`]: {
