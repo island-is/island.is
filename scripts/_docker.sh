@@ -23,6 +23,9 @@ case $PUBLISH in
 
 esac
 
+docker pull ${CACHE_REGISTRY_REPO}deps:${DEPS} || true
+docker pull ${CACHE_REGISTRY_REPO}output-base:${DEPS} || true
+
 docker build \
   -f ${DIR}/Dockerfile \
   --target $TARGET \

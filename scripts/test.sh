@@ -26,14 +26,16 @@ if [ -f $PROJECT_ROOT/$APP_HOME/docker-compose.ci.yml ]; then
   } 
   trap 'clean_up $? $LINENO' EXIT
 
-  docker image inspect ${CACHE_REGISTRY_REPO}test:${DEPS} -f ' ' > /dev/null  2>&1 || \
+  docker image inspect ${CACHE_REGISTRY_REPO}test:${DEPS} -f ' ' > /dev/null  2>&1 || ( \
+    (docker pull ${CACHE_REGISTRY_REPO}deps:${DEPS} || true) \
+    ; \
     docker build \
       -f ${DIR}/Dockerfile \
       --target test \
       --cache-from ${CACHE_REGISTRY_REPO}deps:${DEPS} \
       -t ${CACHE_REGISTRY_REPO}test:${DEPS} \
       $PROJECT_ROOT \
-
+  )
 
   # Running the tests using docker-compose
   SUT=${CACHE_REGISTRY_REPO}test:${DEPS} docker-compose -p test-$APP $COMPOSE_FILES run --rm sut
