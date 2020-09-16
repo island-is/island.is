@@ -67,6 +67,7 @@ const ArticleFields = [
   'sys',
   'fields.slug',
   'fields.title',
+  'fields.shortTitle',
   'fields.content',
   'fields.subgroup',
   'fields.group',
