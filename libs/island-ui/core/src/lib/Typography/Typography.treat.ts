@@ -40,6 +40,10 @@ type Variants = {
   >
 }
 
+type defaultFontWeights = {
+  [Type in VariantTypes]: number
+}
+
 const makePaddingBottom = (breakpoint: Breakpoint) =>
   styleMap(
     mapValues(theme.spacing, (space) =>
@@ -75,13 +79,46 @@ export const truncate = style({
   whiteSpace: 'nowrap',
 })
 
+const fontWeightMap = {
+  light: theme.typography.light,
+  regular: theme.typography.regular,
+  medium: theme.typography.medium,
+  semiBold: theme.typography.semiBold,
+}
+
+const defaultFontWeightsMap: defaultFontWeights = {
+  h1: theme.typography.headingsFontWeight,
+  h2: theme.typography.headingsFontWeight,
+  h3: theme.typography.headingsFontWeight,
+  h4: theme.typography.headingsFontWeight,
+  h5: theme.typography.headingsFontWeight,
+  p: theme.typography.light,
+  pSmall: theme.typography.regular,
+  intro: theme.typography.light,
+  eyebrow: theme.typography.medium,
+  tag: theme.typography.semiBold,
+  cardCategoryTitle: theme.typography.headingsFontWeight,
+  sideMenu: theme.typography.medium,
+  placeholderText: theme.typography.light,
+  datepickerHeaderText: theme.typography.semiBold,
+  formProgressSection: theme.typography.light,
+  formProgressSectionActive: theme.typography.semiBold,
+}
+
+export const fontWeight = styleMap(
+  mapToStyleProperty(fontWeightMap, 'fontWeight'),
+)
+
+export const defaultFontWeights = styleMap(
+  mapToStyleProperty(defaultFontWeightsMap, 'fontWeight'),
+)
+
 export const variants: Variants = {
   h1: {
     fontSize: {
       xs: 32,
       md: 42,
     },
-    fontWeight: theme.typography.headingsFontWeight,
     lineHeight: 1.238095,
   },
   h2: {
@@ -89,7 +126,6 @@ export const variants: Variants = {
       xs: 26,
       md: 34,
     },
-    fontWeight: theme.typography.headingsFontWeight,
     lineHeight: 1.294118,
   },
   h3: {
@@ -97,7 +133,6 @@ export const variants: Variants = {
       xs: 20,
       md: 24,
     },
-    fontWeight: theme.typography.headingsFontWeight,
     lineHeight: 1.416667,
   },
   h4: {
@@ -105,7 +140,6 @@ export const variants: Variants = {
       xs: 18,
       md: 20,
     },
-    fontWeight: theme.typography.headingsFontWeight,
     lineHeight: 1.5,
   },
   h5: {
@@ -113,7 +147,6 @@ export const variants: Variants = {
       xs: 15,
       md: 18,
     },
-    fontWeight: theme.typography.headingsFontWeight,
     lineHeight: 1.5,
   },
   p: {
@@ -121,7 +154,6 @@ export const variants: Variants = {
       xs: 15,
       md: 18,
     },
-    fontWeight: theme.typography.light,
     lineHeight: 1.5,
   },
   pSmall: {
@@ -129,7 +161,6 @@ export const variants: Variants = {
       xs: 12,
       md: 15,
     },
-    fontWeight: theme.typography.regular,
     lineHeight: 1.666,
   },
   intro: {
@@ -137,7 +168,6 @@ export const variants: Variants = {
       xs: 20,
       md: 24,
     },
-    fontWeight: theme.typography.light,
     lineHeight: 1.416667,
   },
   eyebrow: {
@@ -145,7 +175,6 @@ export const variants: Variants = {
       xs: 12,
       md: 14,
     },
-    fontWeight: theme.typography.medium,
     lineHeight: 1.142857,
   },
   tag: {
@@ -153,7 +182,6 @@ export const variants: Variants = {
       xs: 12,
       md: 14,
     },
-    fontWeight: theme.typography.semiBold,
     lineHeight: 1.142857,
   },
   cardCategoryTitle: {
@@ -161,7 +189,6 @@ export const variants: Variants = {
       xs: 20,
       md: 24,
     },
-    fontWeight: theme.typography.headingsFontWeight,
     lineHeight: 1.416667,
   },
   sideMenu: {
@@ -169,7 +196,6 @@ export const variants: Variants = {
       xs: 16,
       md: 18,
     },
-    fontWeight: theme.typography.medium,
     lineHeight: 1.55,
   },
   placeholderText: {
@@ -177,7 +203,6 @@ export const variants: Variants = {
       xs: 20,
       md: 24,
     },
-    fontWeight: theme.typography.light,
     lineHeight: 1.416667,
   },
   datepickerHeaderText: {
@@ -185,7 +210,6 @@ export const variants: Variants = {
       xs: 18,
       md: 20,
     },
-    fontWeight: theme.typography.semiBold,
     lineHeight: 1.666,
   },
   formProgressSection: {
@@ -193,7 +217,6 @@ export const variants: Variants = {
       xs: 16,
       md: 18,
     },
-    fontWeight: theme.typography.light,
     lineHeight: 1.75,
   },
   formProgressSectionActive: {
@@ -201,7 +224,6 @@ export const variants: Variants = {
       xs: 16,
       md: 18,
     },
-    fontWeight: theme.typography.semiBold,
     lineHeight: 1.75,
   },
 }
