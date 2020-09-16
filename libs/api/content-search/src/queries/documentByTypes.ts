@@ -1,3 +1,4 @@
+import { logger } from '@island.is/logging'
 import { sortableFields } from '../types'
 
 export interface DocumentByTypesInput {
@@ -6,10 +7,16 @@ export interface DocumentByTypesInput {
   size?: number
 }
 
+type termQuery = {
+  terms: {
+    type: string[]
+  }
+}
+
 export interface DocumentByTypesRequestBody {
   query: {
-    terms: {
-      type: string[]
+    bool: {
+      must: termQuery[]
     }
   }
   sort: sortableFields[]
@@ -21,10 +28,18 @@ export const documentByTypeQuery = ({
   sort = {},
   size = 10,
 }: DocumentByTypesInput): DocumentByTypesRequestBody => {
+  logger.info(types)
+  logger.info('some', { size })
   const query = {
     query: {
-      terms: {
-        type: types,
+      bool: {
+        must: [
+          {
+            terms: {
+              type: types,
+            },
+          },
+        ],
       },
     },
     sort: Object.entries(sort).map(([key, value]) => ({ [key]: value })), // elastic wants sorts as array og object with single keys

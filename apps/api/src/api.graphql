@@ -452,12 +452,6 @@ type ContentItem {
   slug: String
 }
 
-type ContentCategory {
-  title: String
-  slug: String
-  description: String
-}
-
 type WebSearchAutocomplete {
   total: Int!
   completions: [String!]!
@@ -537,10 +531,10 @@ type Query {
   getMenu(input: GetMenuInput!): Menu
   getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
   getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
+  getArticleCategories(input: GetArticleCategoriesInput!): [ArticleCategory!]!
+  getArticles(input: GetArticlesInput!): [Article!]!
   searchResults(query: SearcherInput!): SearchResult!
   singleItem(input: ItemInput!): ContentItem
-  categories(input: CategoriesInput!): [ContentCategory!]!
-  articlesInCategory(category: ArticlesInCategoryInput!): [ContentItem!]!
   webSearchAutocomplete(input: WebSearchAutocompleteInput!): WebSearchAutocomplete!
   getApplication(input: GetApplicationInput!): Application
   getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
@@ -660,6 +654,17 @@ input GetLifeEventsInput {
   lang: String!
 }
 
+input GetArticleCategoriesInput {
+  lang: String!
+  size: Int
+}
+
+input GetArticlesInput {
+  lang: String!
+  category: String!
+  size: Int
+}
+
 input SearcherInput {
   queryString: String!
   types: [String!]
@@ -683,15 +688,6 @@ input ItemInput {
 enum ItemType {
   article
   category
-}
-
-input CategoriesInput {
-  language: ContentLanguage
-}
-
-input ArticlesInCategoryInput {
-  slug: String
-  language: ContentLanguage
 }
 
 input WebSearchAutocompleteInput {

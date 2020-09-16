@@ -368,13 +368,6 @@ export type ContentItem = {
   slug?: Maybe<Scalars['String']>
 }
 
-export type ContentCategory = {
-  __typename?: 'ContentCategory'
-  title?: Maybe<Scalars['String']>
-  slug?: Maybe<Scalars['String']>
-  description?: Maybe<Scalars['String']>
-}
-
 export type WebSearchAutocomplete = {
   __typename?: 'WebSearchAutocomplete'
   total: Scalars['Int']
@@ -615,8 +608,6 @@ export type Query = {
   helloWorld: HelloWorld
   searchResults: SearchResult
   singleItem?: Maybe<ContentItem>
-  categories: Array<ContentCategory>
-  articlesInCategory: Array<ContentItem>
   webSearchAutocomplete: WebSearchAutocomplete
   getArticle?: Maybe<Article>
   getNews?: Maybe<News>
@@ -639,6 +630,8 @@ export type Query = {
   getMenu?: Maybe<Menu>
   getLifeEventPage?: Maybe<LifeEventPage>
   getLifeEvents: Array<LifeEventPage>
+  getArticleCategories: Array<ArticleCategory>
+  getArticles: Array<Article>
   getApplication?: Maybe<Application>
   getApplicationsByType?: Maybe<Array<Application>>
   getDocument?: Maybe<DocumentDetails>
@@ -656,14 +649,6 @@ export type QuerySearchResultsArgs = {
 
 export type QuerySingleItemArgs = {
   input: ItemInput
-}
-
-export type QueryCategoriesArgs = {
-  input: CategoriesInput
-}
-
-export type QueryArticlesInCategoryArgs = {
-  category: ArticlesInCategoryInput
 }
 
 export type QueryWebSearchAutocompleteArgs = {
@@ -754,6 +739,14 @@ export type QueryGetLifeEventsArgs = {
   input: GetLifeEventsInput
 }
 
+export type QueryGetArticleCategoriesArgs = {
+  input: GetArticleCategoriesInput
+}
+
+export type QueryGetArticlesArgs = {
+  input: GetArticlesInput
+}
+
 export type QueryGetApplicationArgs = {
   input: GetApplicationInput
 }
@@ -797,15 +790,6 @@ export type ItemInput = {
 export enum ItemType {
   article = 'article',
   category = 'category',
-}
-
-export type CategoriesInput = {
-  language?: Maybe<ContentLanguage>
-}
-
-export type ArticlesInCategoryInput = {
-  slug?: Maybe<Scalars['String']>
-  language?: Maybe<ContentLanguage>
 }
 
 export type WebSearchAutocompleteInput = {
@@ -919,6 +903,17 @@ export type GetLifeEventPageInput = {
 
 export type GetLifeEventsInput = {
   lang: Scalars['String']
+}
+
+export type GetArticleCategoriesInput = {
+  lang: Scalars['String']
+  size?: Maybe<Scalars['Int']>
+}
+
+export type GetArticlesInput = {
+  lang: Scalars['String']
+  category: Scalars['String']
+  size?: Maybe<Scalars['Int']>
 }
 
 export type GetApplicationInput = {
@@ -1228,7 +1223,6 @@ export type ResolversTypes = {
   >
   Items: ResolversTypes['Article'] | ResolversTypes['LifeEventPage']
   ContentItem: ResolverTypeWrapper<ContentItem>
-  ContentCategory: ResolverTypeWrapper<ContentCategory>
   WebSearchAutocomplete: ResolverTypeWrapper<WebSearchAutocomplete>
   AdgerdirTag: ResolverTypeWrapper<AdgerdirTag>
   AdgerdirPage: ResolverTypeWrapper<AdgerdirPage>
@@ -1278,8 +1272,6 @@ export type ResolversTypes = {
   ContentLanguage: ContentLanguage
   ItemInput: ItemInput
   ItemType: ItemType
-  CategoriesInput: CategoriesInput
-  ArticlesInCategoryInput: ArticlesInCategoryInput
   WebSearchAutocompleteInput: WebSearchAutocompleteInput
   GetArticleInput: GetArticleInput
   GetNewsInput: GetNewsInput
@@ -1302,6 +1294,8 @@ export type ResolversTypes = {
   GetMenuInput: GetMenuInput
   GetLifeEventPageInput: GetLifeEventPageInput
   GetLifeEventsInput: GetLifeEventsInput
+  GetArticleCategoriesInput: GetArticleCategoriesInput
+  GetArticlesInput: GetArticlesInput
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
@@ -1392,7 +1386,6 @@ export type ResolversParentTypes = {
   }
   Items: ResolversParentTypes['Article'] | ResolversParentTypes['LifeEventPage']
   ContentItem: ContentItem
-  ContentCategory: ContentCategory
   WebSearchAutocomplete: WebSearchAutocomplete
   AdgerdirTag: AdgerdirTag
   AdgerdirPage: AdgerdirPage
@@ -1437,8 +1430,6 @@ export type ResolversParentTypes = {
   HelloWorldInput: HelloWorldInput
   SearcherInput: SearcherInput
   ItemInput: ItemInput
-  CategoriesInput: CategoriesInput
-  ArticlesInCategoryInput: ArticlesInCategoryInput
   WebSearchAutocompleteInput: WebSearchAutocompleteInput
   GetArticleInput: GetArticleInput
   GetNewsInput: GetNewsInput
@@ -1461,6 +1452,8 @@ export type ResolversParentTypes = {
   GetMenuInput: GetMenuInput
   GetLifeEventPageInput: GetLifeEventPageInput
   GetLifeEventsInput: GetLifeEventsInput
+  GetArticleCategoriesInput: GetArticleCategoriesInput
+  GetArticlesInput: GetArticlesInput
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
@@ -2059,20 +2052,6 @@ export type ContentItemResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export type ContentCategoryResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['ContentCategory'] = ResolversParentTypes['ContentCategory']
-> = {
-  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  description?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
 export type WebSearchAutocompleteResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['WebSearchAutocomplete'] = ResolversParentTypes['WebSearchAutocomplete']
@@ -2510,18 +2489,6 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QuerySingleItemArgs, 'input'>
   >
-  categories?: Resolver<
-    Array<ResolversTypes['ContentCategory']>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryCategoriesArgs, 'input'>
-  >
-  articlesInCategory?: Resolver<
-    Array<ResolversTypes['ContentItem']>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryArticlesInCategoryArgs, 'category'>
-  >
   webSearchAutocomplete?: Resolver<
     ResolversTypes['WebSearchAutocomplete'],
     ParentType,
@@ -2654,6 +2621,18 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetLifeEventsArgs, 'input'>
   >
+  getArticleCategories?: Resolver<
+    Array<ResolversTypes['ArticleCategory']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetArticleCategoriesArgs, 'input'>
+  >
+  getArticles?: Resolver<
+    Array<ResolversTypes['Article']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetArticlesArgs, 'input'>
+  >
   getApplication?: Resolver<
     Maybe<ResolversTypes['Application']>,
     ParentType,
@@ -2775,7 +2754,6 @@ export type Resolvers<ContextType = Context> = {
   SearchResult?: SearchResultResolvers<ContextType>
   Items?: ItemsResolvers<ContextType>
   ContentItem?: ContentItemResolvers<ContextType>
-  ContentCategory?: ContentCategoryResolvers<ContextType>
   WebSearchAutocomplete?: WebSearchAutocompleteResolvers<ContextType>
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
   AdgerdirPage?: AdgerdirPageResolvers<ContextType>
