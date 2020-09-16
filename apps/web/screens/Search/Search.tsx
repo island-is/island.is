@@ -72,7 +72,7 @@ const Search: Screen<CategoryProps> = ({
     }
   }, [searchRef])
 
-  const sidebarCategories = (searchResults.items as Article[]).reduce(
+  const sidebarCategories = (searchResults.items as Article[]).filter((item) => item.__typename === 'Article').reduce(
     (all, cur) => {
       const key = cur.category.slug
       const item = all.find((x) => x.key === key)
@@ -92,7 +92,7 @@ const Search: Screen<CategoryProps> = ({
     [],
   )
 
-  const items = (searchResults.items as Article[]).map((item) => ({
+  const items = (searchResults.items as Article[]).filter((item) => item.__typename === 'Article').map((item) => ({
     title: item.title,
     description: item.intro,
     href: makePath('article', '[slug]'),
@@ -101,6 +101,8 @@ const Search: Screen<CategoryProps> = ({
     category: item.category,
     group: item.group,
   }))
+
+  const lifeEvents = searchResults.items.filter((item) => item.__typename === 'LifeEventPage')
 
   const onSelectCategory = (key: string) => {
     Router.replace({
@@ -191,6 +193,10 @@ const Search: Screen<CategoryProps> = ({
 
               return <Card key={index} icon="article" tags={tags} {...item} />
             })}
+            {lifeEvents.map(() => {
+              // insert live events here maybe?
+            })}
+            
             <Box paddingTop={8}>
               <Pagination
                 page={page}
@@ -283,7 +289,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          types: ['webArticle'],
+          types: ['webArticle', 'webLifeEventPage'],
           size: PerPage,
           page,
         },
