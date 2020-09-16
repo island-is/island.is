@@ -28,21 +28,21 @@ export class LifeEventsPageSyncService {
         let mapped: LifeEventPage
         try {
           mapped = mapLifeEventPage(entry)
+
+          return {
+            _id: mapped.id,
+            title: mapped.title,
+            content: mapped.intro,
+            type: 'webLifeEventPage',
+            termPool: createTerms([mapped.title]),
+            response: JSON.stringify(mapped),
+            tags: [],
+            dateCreated: entry.sys.createdAt,
+            dateUpdated: new Date().getTime().toString(),
+          }
         } catch (error) {
           logger.error('Failed to import life event page', error)
           return false
-        }
-
-        return {
-          _id: mapped.id,
-          title: mapped.title,
-          content: mapped.intro,
-          type: 'webLifeEventPage',
-          termPool: createTerms([mapped.title]),
-          response: JSON.stringify(mapped),
-          tags: [],
-          dateCreated: entry.sys.createdAt,
-          dateUpdated: new Date().getTime().toString(),
         }
       })
       .filter((value): value is MappedData => Boolean(value))
