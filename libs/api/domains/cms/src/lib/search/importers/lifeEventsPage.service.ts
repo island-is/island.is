@@ -13,16 +13,13 @@ export class LifeEventsPageSyncService {
   processSyncData(items) {
     logger.info('Processing sync data for life event pages')
 
-    const lifeEventPages = items.filter(
+    return items.filter(
       (item) => item.sys.contentType.sys.id === 'lifeEventPage',
     )
-
-    logger.info('Found live event pages', { count: lifeEventPages.length })
-    return lifeEventPages
   }
 
   doMapping(entries: ILifeEventPage[]): MappedData[] {
-    logger.info('Mapping life event pages')
+    logger.info('Mapping life event pages', {count: entries.length})
     return entries
       .map<MappedData | boolean>((entry) => {
         let mapped: LifeEventPage

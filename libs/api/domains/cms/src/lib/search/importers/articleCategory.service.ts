@@ -19,7 +19,7 @@ export class ArticleCategorySyncService {
   }
 
   doMapping(entries: IArticleCategory[]): MappedData[] {
-    logger.info('Mapping article category')
+    logger.info('Mapping article category', {count: entries.length })
 
     return entries
       .map<MappedData | boolean>((entry) => {
