@@ -2,10 +2,6 @@ import { Injectable } from '@nestjs/common'
 import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
 import { ArticleCategory } from './models/articleCategory.model'
 import { Article } from './models/article.model'
-import {
-  GetArticleCategoriesInput,
-  GetArticlesInput,
-} from '@island.is/api/schema'
 
 @Injectable()
 export class CmsService {
@@ -15,8 +11,8 @@ export class CmsService {
     index: SearchIndexes,
     { size = 100 }: { size?: number },
   ): Promise<ArticleCategory[]> {
-    const query = { size, types: ['webArticleCategory'] }
-    const categoryResponse = await this.elasticService.getDocumentsByTypes(
+    let query = { types: ['webArticleCategory'], size }
+    const categoryResponse = await this.elasticService.getDocumentsByMetaData(
       index,
       query,
     )
@@ -31,11 +27,11 @@ export class CmsService {
     { category = '', size = 100 }: { category: string; size?: number },
   ): Promise<Article[]> {
     let query = {
-      tag: { type: 'category', key: category },
+      tags: [{ type: 'category', key: category }],
       size,
     }
 
-    const articlesResponse = await this.elasticService.getDocumentsByTag(
+    const articlesResponse = await this.elasticService.getDocumentsByMetaData(
       index,
       query,
     )

@@ -43,7 +43,6 @@ import { GetLifeEventsInput } from './dto/getLifeEvents.input'
 import {
   getArticle,
   getRelatedArticles,
-  getNews,
   getNewsList,
   getNamespace,
   getAboutPage,

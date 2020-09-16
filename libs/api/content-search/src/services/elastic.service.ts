@@ -1,6 +1,5 @@
-import { ApiResponse, Client } from '@elastic/elasticsearch'
+import { Client } from '@elastic/elasticsearch'
 import { MappedData, SearchIndexes, SearchResponse } from '../types'
-import esb, { RequestBodySearch, TermsAggregation } from 'elastic-builder'
 import { logger } from '@island.is/logging'
 import merge from 'lodash/merge'
 import { environment } from '../environments/environment'
@@ -16,14 +15,6 @@ import {
   AutocompleteTermResponse,
 } from '../queries/autocomplete'
 import { searchQuery } from '../queries/search'
-import {
-  documentByTypeQuery,
-  DocumentByTypesInput,
-} from '../queries/documentByTypes'
-import {
-  DocumentByTagInput,
-  documentByTagQuery,
-} from '../queries/documentByTags'
 import {
   DocumentByMetaDataInput,
   documentByMetaDataQuery,
@@ -121,27 +112,7 @@ export class ElasticService {
       )
     }
   }
-
-  async getDocumentsByTypes(index: SearchIndexes, query: DocumentByTypesInput) {
-    const requestBody = documentByTypeQuery(query)
-
-    const data = await this.findByQuery<
-      SearchResponse<MappedData>,
-      typeof requestBody
-    >(index, requestBody)
-
-    return data.body
-  }
-
-  async getDocumentsByTag(index: SearchIndexes, query: DocumentByTagInput) {
-    const requestBody = documentByTagQuery(query)
-    const data = await this.findByQuery<
-      SearchResponse<MappedData>,
-      typeof requestBody
-    >(index, requestBody)
-    return data.body
-  }
-
+  
   async getDocumentsByMetaData(
     index: SearchIndexes,
     query: DocumentByMetaDataInput,
@@ -252,29 +223,6 @@ export class ElasticService {
       ...AwsConnector(AWS.config),
       node: elastic.node,
     })
-  }
-
-  /*
-  Reason for deprecation:
-  We are runnig elasticsearch 7.4
-  Elastic builder is compatable with 6 alpha as stated on:
-  https://www.npmjs.com/package/elastic-builder (at the time of writing)
-  We are keeping this function until elastic builder has been phased out
-  */
-  async deprecatedFindByQuery(index: SearchIndexes, query) {
-    try {
-      const client = await this.getClient()
-      return client.search({
-        index: index,
-        body: query,
-      })
-    } catch (e) {
-      ElasticService.handleError(
-        'Error in ElasticService.deprecatedFindByQuery',
-        { query: query, index: index },
-        e,
-      )
-    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
