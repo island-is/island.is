@@ -317,7 +317,7 @@ export type Article = {
   slug: Scalars['String']
   shortTitle: Scalars['String']
   intro: Scalars['String']
-  containsApplicationForm: Scalars['Boolean']
+  containsApplicationForm?: Maybe<Scalars['Boolean']>
   body: Array<Slice>
   category?: Maybe<ArticleCategory>
   group?: Maybe<ArticleGroup>
@@ -534,6 +534,7 @@ export type ContentItem = {
   category?: Maybe<Scalars['String']>
   categorySlug?: Maybe<Scalars['String']>
   categoryDescription?: Maybe<Scalars['String']>
+  containsApplicationForm?: Maybe<Scalars['Boolean']>
   group?: Maybe<Scalars['String']>
   subgroup?: Maybe<Scalars['String']>
   groupSlug?: Maybe<Scalars['String']>
@@ -1217,6 +1218,7 @@ export type ResolversTypes = {
   Article: ResolverTypeWrapper<
     Omit<Article, 'body'> & { body: Array<ResolversTypes['Slice']> }
   >
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   AdgerdirTag: ResolverTypeWrapper<AdgerdirTag>
   AdgerdirPage: ResolverTypeWrapper<AdgerdirPage>
   Float: ResolverTypeWrapper<Scalars['Float']>
@@ -1246,7 +1248,6 @@ export type ResolversTypes = {
     Omit<LandingPage, 'content'> & { content: Array<ResolversTypes['Slice']> }
   >
   AlertBanner: ResolverTypeWrapper<AlertBanner>
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   GenericPage: ResolverTypeWrapper<GenericPage>
   Menu: ResolverTypeWrapper<Menu>
   LifeEventPage: ResolverTypeWrapper<
@@ -1380,6 +1381,7 @@ export type ResolversParentTypes = {
   Article: Omit<Article, 'body'> & {
     body: Array<ResolversParentTypes['Slice']>
   }
+  Boolean: Scalars['Boolean']
   AdgerdirTag: AdgerdirTag
   AdgerdirPage: AdgerdirPage
   Float: Scalars['Float']
@@ -1407,7 +1409,6 @@ export type ResolversParentTypes = {
     content: Array<ResolversParentTypes['Slice']>
   }
   AlertBanner: AlertBanner
-  Boolean: Scalars['Boolean']
   GenericPage: GenericPage
   Menu: Menu
   LifeEventPage: Omit<LifeEventPage, 'content'> & {
@@ -1936,6 +1937,11 @@ export type ArticleResolvers<
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   shortTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  containsApplicationForm?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
+    ParentType,
+    ContextType
+  >
   body?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
   category?: Resolver<
     Maybe<ResolversTypes['ArticleCategory']>,
@@ -2358,6 +2364,11 @@ export type ContentItemResolvers<
   >
   categoryDescription?: Resolver<
     Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  containsApplicationForm?: Resolver<
+    Maybe<ResolversTypes['Boolean']>,
     ParentType,
     ContextType
   >
