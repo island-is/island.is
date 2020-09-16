@@ -25,7 +25,7 @@ export async function polyfill(locale: string) {
   }
 
   // Polyfill Intl.DateTimeFormat if necessary
-  if (!areIntlLocalesSupported(locale) || shouldPolyfillDateTimeFormat()) {
+  if (!areIntlLocalesSupported(locale)) {
     await import(
       /* webpackChunkName: "intl-datetimeformat" */ '@formatjs/intl-datetimeformat/polyfill-force'
     )
