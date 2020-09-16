@@ -2977,8 +2977,10 @@
       "schematics": {},
       "architect": {
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@nrwl/linter:lint",
           "options": {
+            "linter": "eslint",
+            "config": "libs/nova-sms/.eslintrc",
             "tsConfig": [
               "libs/nova-sms/tsconfig.lib.json",
               "libs/nova-sms/tsconfig.spec.json"

@@ -1,7 +1,6 @@
 module.exports = {
   name: 'nova-sms',
   preset: '../../jest.config.js',
-  testEnvironment: 'node',
   transform: {
     '^.+\\.[tj]sx?$': 'ts-jest',
   },
