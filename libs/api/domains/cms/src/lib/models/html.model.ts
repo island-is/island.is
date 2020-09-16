@@ -17,10 +17,7 @@ export class Html {
   document: Document
 }
 
-export const mapHtml = (
-  html: Document | TopLevelBlock,
-  id: number | string = -1,
-): Html => {
+export const mapHtml = (html: Document | TopLevelBlock, id: string): Html => {
   switch (html.nodeType) {
     case BLOCKS.DOCUMENT:
       return new Html({
