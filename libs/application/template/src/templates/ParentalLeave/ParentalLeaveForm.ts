@@ -2,7 +2,6 @@ import {
   buildDataProviderItem,
   buildExternalDataProvider,
   buildForm,
-  buildMultiField,
   buildSection,
   buildSubSection,
 } from '../../lib/formBuilders'
