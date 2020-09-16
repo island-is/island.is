@@ -174,7 +174,7 @@ export const StepTwo: React.FC = () => {
   useEffect(() => {
     api.saveCase(
       window.localStorage.getItem('caseId'),
-      parseString('status', CaseState.SUBMITTED),
+      parseString('state', CaseState.SUBMITTED),
     )
     updateState(
       workingCase,

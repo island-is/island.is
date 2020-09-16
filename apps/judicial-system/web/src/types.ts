@@ -15,11 +15,11 @@ export enum CaseCustodyRestrictions {
 }
 
 export enum CaseState {
-  UNKNOWN = 'Óþekkt',
-  DRAFT = 'Drög',
-  SUBMITTED = 'Krafa staðfest',
-  ACTIVE = 'Gæsluvarðhald virkt',
-  COMPLETED = 'Gæsluvarðhaldi lokið',
+  UNKNOWN = 'UNKNOWN',
+  DRAFT = 'DRAFT',
+  SUBMITTED = 'SUBMITTED',
+  ACTIVE = 'ACTIVE',
+  COMPLETED = 'COMPLETED',
 }
 
 export interface Case {
