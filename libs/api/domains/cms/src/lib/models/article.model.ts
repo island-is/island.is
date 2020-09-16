@@ -1,4 +1,5 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
+import { isEmpty } from 'lodash'
 
 import { IArticle } from '../generated/contentfulTypes'
 import { Slice, mapDocument } from './slice.model'
@@ -62,7 +63,13 @@ export const mapArticle = ({ fields, sys }: IArticle): Article => ({
   category: fields.category?.fields,
   group: fields.group?.fields,
   subgroup: fields.subgroup?.fields,
-  organization: (fields.organization ?? []).map(mapOrganization),
-  subArticles: (fields.subArticles ?? []).map(mapSubArticle),
-  relatedArticles: (fields.relatedArticles ?? []).map(mapArticle),
+  organization: (fields?.organization ?? [])
+    .filter((doc) => !isEmpty(doc))
+    .map(mapOrganization),
+  subArticles: (fields?.subArticles ?? [])
+    .filter((doc) => !isEmpty(doc))
+    .map(mapSubArticle),
+  relatedArticles: (fields?.relatedArticles ?? [])
+    .filter((doc) => !isEmpty(doc))
+    .map(mapArticle),
 })
