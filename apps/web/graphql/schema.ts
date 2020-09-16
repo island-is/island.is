@@ -306,6 +306,7 @@ export type Article = {
   slug: Scalars['String']
   shortTitle: Scalars['String']
   intro: Scalars['String']
+  containsApplicationForm: Scalars['Boolean']
   body: Array<Slice>
   category?: Maybe<ArticleCategory>
   group?: Maybe<ArticleGroup>
@@ -1202,7 +1203,10 @@ export type GetArticlesQueryVariables = Exact<{
 
 export type GetArticlesQuery = { __typename?: 'Query' } & {
   getArticles: Array<
-    { __typename?: 'Article' } & Pick<Article, 'intro' | 'slug' | 'title'> & {
+    { __typename?: 'Article' } & Pick<
+      Article,
+      'intro' | 'slug' | 'title' | 'containsApplicationForm'
+    > & {
         category?: Maybe<
           { __typename?: 'ArticleCategory' } & Pick<ArticleCategory, 'title'>
         >

@@ -170,7 +170,6 @@ const Category: Screen<CategoryProps> = ({
               >
                 {sortedGroups.map((groupSlug, index) => {
                   const { title, description, articles } = groups[groupSlug]
-                  console.log(title, description)
 
                   const expanded = groupSlug === hash.replace('#', '')
 
@@ -211,18 +210,31 @@ const Category: Screen<CategoryProps> = ({
                                 <Stack space={2}>
                                   {sortArticlesByTitle(
                                     articlesBySubgroup[subgroup],
-                                  ).map(({ title, slug }) => {
-                                    return (
-                                      <FocusableBox
-                                        key={slug}
-                                        href={`${makePath('article')}/[slug]`}
-                                        as={makePath('article', slug)}
-                                        borderRadius="large"
-                                      >
-                                        <LinkCard>{title}</LinkCard>
-                                      </FocusableBox>
-                                    )
-                                  })}
+                                  ).map(
+                                    ({
+                                      title,
+                                      slug,
+                                      containsApplicationForm,
+                                    }) => {
+                                      return (
+                                        <FocusableBox
+                                          key={slug}
+                                          href={`${makePath('article')}/[slug]`}
+                                          as={makePath('article', slug)}
+                                          borderRadius="large"
+                                        >
+                                          <LinkCard
+                                            tag={
+                                              containsApplicationForm &&
+                                              'Umsókn'
+                                            }
+                                          >
+                                            {title}
+                                          </LinkCard>
+                                        </FocusableBox>
+                                      )
+                                    },
+                                  )}
                                 </Stack>
                               </React.Fragment>
                             )
