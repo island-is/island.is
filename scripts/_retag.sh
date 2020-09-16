@@ -9,15 +9,9 @@ if [[ "$DOCKER_REGISTRY" != */ ]]; then
     DOCKER_REGISTRY="${DOCKER_REGISTRY}/"
 fi
 
-if [[ -z "$TOKEN" ]]; then
-	TOKEN=$(aws ecr get-authorization-token --region eu-west-1 --output text --query 'authorizationData[].authorizationToken')
-fi
-
-time(
-	curl -H "Authorization: Basic $TOKEN" "https://${DOCKER_REGISTRY}v2/$IMAGE/manifests/$LAST_GOOD_BUILD_DOCKER_TAG" \
-	-H 'accept: application/vnd.docker.distribution.manifest.v2+json' \
-	| \
-	curl -XPUT -H "Authorization: Basic $TOKEN" "https://${DOCKER_REGISTRY}v2/$IMAGE/manifests/$DOCKER_TAG" \
-	-H 'content-type: application/vnd.docker.distribution.manifest.v2+json' \
-	-d @-
-)
+curl -H "Authorization: Basic $TOKEN" "https://${DOCKER_REGISTRY}v2/$IMAGE/manifests/$LAST_GOOD_BUILD_DOCKER_TAG" \
+-H 'accept: application/vnd.docker.distribution.manifest.v2+json' \
+| \
+curl -XPUT -H "Authorization: Basic $TOKEN" "https://${DOCKER_REGISTRY}v2/$IMAGE/manifests/$DOCKER_TAG" \
+-H 'content-type: application/vnd.docker.distribution.manifest.v2+json' \
+-d @-
