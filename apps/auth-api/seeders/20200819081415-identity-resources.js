@@ -1,7 +1,9 @@
 'use strict';
+/* eslint-env node */
+/* eslint-disable @typescript-eslint/camelcase */
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface) => {
 
     const openId = {
       id: 'a57a3c0d-2645-44fd-950e-f3a7fb23ee8e',//uuidv4(),
@@ -62,17 +64,17 @@ module.exports = {
       {identity_resource_id: email.id, claim_name: 'email_verified'},
     ];
 
-    var identityResources = queryInterface.bulkInsert('identity_resource', [openId, profile, email], {})
+    const identityResources = queryInterface.bulkInsert('identity_resource', [openId, profile, email], {})
 
-    var userClaims = queryInterface.bulkInsert('identity_resource_user_claim', openIdClaims.concat(profileClaims, emailClaims), {})
+    const userClaims = queryInterface.bulkInsert('identity_resource_user_claim', openIdClaims.concat(profileClaims, emailClaims), {})
 
     return identityResources.then(userClaims)
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
 
-    var identityResources =  queryInterface.bulkDelete('identity_resource', null, {});
-    var userClaims =  queryInterface.bulkDelete('identity_resource_user_claim', null, {});
+    const identityResources =  queryInterface.bulkDelete('identity_resource', null, {});
+    const userClaims =  queryInterface.bulkDelete('identity_resource_user_claim', null, {});
 
     return userClaims.then(identityResources)
   }

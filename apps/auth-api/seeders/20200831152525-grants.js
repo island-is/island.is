@@ -1,7 +1,10 @@
 'use strict';
+/* eslint-env node */
+/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable no-undef */
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface) => {
 
     const grantTypes = [
       {
@@ -23,7 +26,7 @@ module.exports = {
     return queryInterface.bulkInsert('grant_type', grantTypes, {})
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
 
     const grantTypes =  queryInterface.bulkDelete('grant_type', null, {});
 

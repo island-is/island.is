@@ -1,9 +1,13 @@
 'use strict';
+/* eslint-env node */
+/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable no-undef */
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const SHA256 = require("crypto-js/sha256");
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface) => {
     const clients = [
       {
         client_id: 'dummy',
@@ -72,7 +76,6 @@ module.exports = {
       {
         client_id: 'island-is-1',
         require_client_secret: false,
-        require_pkce: false,
         enable_local_login: true,
         require_pkce: true,
         allow_offline_access: true,
@@ -106,7 +109,6 @@ module.exports = {
       {
         client_id: 'island-is-client-cred-1',
         require_client_secret: false,
-        require_pkce: false,
         enable_local_login: true,
         require_pkce: true,
         allow_offline_access: true,
@@ -241,8 +243,8 @@ module.exports = {
   ];
 
 
-    return new Promise((resolve, reject) => {
-      queryInterface.bulkInsert('client', clients, {}).then(result => {
+    return new Promise((resolve) => {
+      queryInterface.bulkInsert('client', clients, {}).then(() => {
         Promise.all([
           queryInterface.bulkInsert('client_allowed_scope', scopes, {}),
           queryInterface.bulkInsert('client_allowed_cors_origin', cors, {}),
@@ -251,14 +253,14 @@ module.exports = {
           queryInterface.bulkInsert('client_secret', secrets, {}),
           queryInterface.bulkInsert('client_post_logout_redirect_uri', postRedirects, {}),
           queryInterface.bulkInsert('client_grant_type', clientGrantTypes, {})
-        ]).then(result => {
+        ]).then(() => {
           resolve("done");
         })
       })
     })
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     const redirectUris = queryInterface.bulkDelete('client_redirect_uri', null, {})
     const idpRestrictions = queryInterface.bulkDelete('client_idp_restrictions', null, {})
     const cors = queryInterface.bulkDelete('client_allowed_cors_origin', null, {})
@@ -268,9 +270,9 @@ module.exports = {
     const clients = queryInterface.bulkDelete('client', null, {})
     const grantTypes = queryInterface.bulkDelete('client_grant_type', null, {})
 
-    return new Promise((resolve, reject) => {
-      Promise.all([cors, scopes, idpRestrictions, redirectUris, secrets, postLogoutUris, grantTypes]).then(result => {
-        clients.then(result => {
+    return new Promise((resolve) => {
+      Promise.all([cors, scopes, idpRestrictions, redirectUris, secrets, postLogoutUris, grantTypes]).then(() => {
+        clients.then(() => {
           resolve("done");
         })
       })

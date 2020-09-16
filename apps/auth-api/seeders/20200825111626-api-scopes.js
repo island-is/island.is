@@ -1,7 +1,9 @@
 'use strict';
+/* eslint-env node */
+/* eslint-disable @typescript-eslint/camelcase */
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface) => {
 
     const scopes = [
       {
@@ -33,12 +35,10 @@ module.exports = {
       }
     ]
 
-    const userClaims = [];
-
     return queryInterface.bulkInsert('api_scope', scopes, {})
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
 
     const userClaims =  queryInterface.bulkDelete('api_scope_user_claim', null, {});
     const apiScopes =  queryInterface.bulkDelete('api_scope', null, {});

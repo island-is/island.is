@@ -1,7 +1,10 @@
 'use strict';
+/* eslint-env node */
+/* eslint-disable @typescript-eslint/camelcase */
+/* eslint-disable no-undef */
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface) => {
 
     const apiResources = [
       {
@@ -33,29 +36,29 @@ module.exports = {
       {api_resource_id: apiResources[1].id, value: '8I04CDGgyV5bddUZfz0ydCTBRuRTmn7frlxVhJy1krc=', type: 'SharedSecret'},
     ]
 
-    return new Promise((resolve, reject) => {
-      queryInterface.bulkInsert('api_resource', apiResources, {}).then(result => {
+    return new Promise((resolve) => {
+      queryInterface.bulkInsert('api_resource', apiResources, {}).then(() => {
         Promise.all([
           queryInterface.bulkInsert('api_resource_user_claim', userClaims, {}),
           queryInterface.bulkInsert('api_resource_scope', scopes, {}),
           queryInterface.bulkInsert('api_resource_secret', secrets, {})
-        ]).then(result => {
+        ]).then(() => {
           resolve("done");
         })
       })
     })
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
 
     const secrets =  queryInterface.bulkDelete('api_resource_secret', null, {});
     const scopes =  queryInterface.bulkDelete('api_resource_scope', null, {});
     const userClaims =  queryInterface.bulkDelete('api_resource_user_claim', null, {});
     const apiResources =  queryInterface.bulkDelete('api_resource', null, {});
 
-    return new Promise((resolve, reject) => {
-      Promise.all([userClaims, scopes, secrets]).then(result => {
-        apiResources.then(result => {
+    return new Promise((resolve) => {
+      Promise.all([userClaims, scopes, secrets]).then(() => {
+        apiResources.then(() => {
           resolve("done");
         })
       })
