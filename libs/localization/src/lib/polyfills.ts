@@ -1,5 +1,4 @@
 import { shouldPolyfill as shouldPolyfillNumberFormat } from '@formatjs/intl-numberformat/should-polyfill'
-import { shouldPolyfill as shouldPolyfillDateTimeFormat } from '@formatjs/intl-datetimeformat/should-polyfill'
 
 import areIntlLocalesSupported from 'intl-locales-supported'
 /**
@@ -16,6 +15,7 @@ export async function polyfill(locale: string) {
     )
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if ((Intl.NumberFormat as any).polyfilled) {
     dataPolyfills.push(
       import(
@@ -31,6 +31,7 @@ export async function polyfill(locale: string) {
     )
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if ((Intl.DateTimeFormat as any).polyfilled) {
     dataPolyfills.push(import('@formatjs/intl-datetimeformat/add-all-tz'))
     dataPolyfills.push(

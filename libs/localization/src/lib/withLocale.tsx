@@ -39,6 +39,7 @@ export const withLocale = (namespaces: string | string[] = 'global') => (
     return NewComponent
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const NewNextComponent: NextComponentType<any> = (props) => (
     <Component {...props} />
   )

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
-import { ContentfulRepository } from 'libs/api/domains/cms/src/lib/contentful.repository'
+import { ContentfulRepository } from '@island.is/api/domains/cms'
 import { isEmpty, mergeWith } from 'lodash'
 
 export interface TranslationsDict {

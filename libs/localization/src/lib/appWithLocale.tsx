@@ -1,7 +1,7 @@
 import React from 'react'
 import { LocaleProvider } from './LocaleContext'
 
-const appWithLocale = (WrappedComponent) => {
+export const appWithLocale = (WrappedComponent) => {
   const AppWithLocale = (props) => {
     return (
       <LocaleProvider

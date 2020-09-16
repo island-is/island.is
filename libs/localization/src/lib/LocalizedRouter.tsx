@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route, useRouteMatch } from 'react-router-dom'
+import { Route } from 'react-router-dom'
 import { Locale, defaultLanguage, LocaleProvider } from './LocaleContext'
 
 interface Props {

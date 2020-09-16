@@ -40,12 +40,12 @@ export const LocaleProvider = ({
   locale = defaultLanguage,
   messages = {},
 }: LocaleProviderProps) => {
-  const [ready, setReady] = useState<Boolean>(false)
+  const [ready, setReady] = useState<boolean>(false)
   const [activeLocale, setActiveLocale] = useState<Locale>(
     locale || defaultLanguage,
   )
   const [messagesDict, setMessagesDict] = useState<MessagesDict>(messages)
-  const [loadedNamespaces, setLoadedNamespaces] = useState<String[]>([])
+  const [loadedNamespaces, setLoadedNamespaces] = useState<string[]>([])
 
   const [fetchMessages, { loading: loadingMessages, data }] = useLazyQuery(
     GET_TRANSLATIONS,
@@ -57,7 +57,9 @@ export const LocaleProvider = ({
       setReady(true)
     }
 
-    prepare()
+    if (!ready) {
+      prepare()
+    }
   }, [])
 
   useEffect(() => {
@@ -99,8 +101,6 @@ export const LocaleProvider = ({
   ) {
     if (locale !== activeLocale) {
       // locele changed, reset messages
-      await polyfill(locale)
-      setActiveLocale(locale)
       setMessagesDict(messages)
     } else {
       setMessagesDict(

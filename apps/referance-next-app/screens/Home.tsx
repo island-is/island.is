@@ -17,6 +17,7 @@ const welcomeMessage = defineMessage({
 
 const Home = () => {
   const { lang, formatDate, formatTime, formatMessage } = useLocale()
+  console.log('__intl formatMessage__', formatMessage)
 
   return (
     <div>

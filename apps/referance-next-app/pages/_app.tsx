@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { ApolloProvider } from 'react-apollo'
 
 import initApollo from '../graphql/client'
-import appWithLocale from 'libs/localization/src/lib/appWithLocale'
+import { appWithLocale } from '@island.is/localization'
 
 const Layout: FC = ({ children }) => {
   return (

@@ -1,6 +1,6 @@
 import React from 'react'
 import Document, { Html, Head, Main, NextScript } from 'next/document'
-import { defaultLanguage } from 'libs/localization/src/lib/LocaleContext'
+import { defaultLanguage } from '@island.is/localization'
 
 interface Props {
   lang: string
@@ -14,7 +14,7 @@ class MyDocument extends Document<Props> {
   }
 
   render() {
-    const { lang, ...p } = this.props
+    const { lang } = this.props
 
     return (
       <Html lang={lang}>
