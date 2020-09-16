@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
 import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
 import {
@@ -12,9 +12,9 @@ import {
   Checkbox,
 } from '@island.is/island-ui/core'
 import {
-  CreateDetentionReqStepTwoCase,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
+  CreateDetentionReqStepOneCase,
 } from '@island.is/judicial-system-web/src/types'
 import { updateState, autoSave } from '../../../utils/stepHelper'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
@@ -22,23 +22,36 @@ import { setHours, setMinutes, isValid } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import * as api from '../../../api'
-import { parseArray } from '@island.is/judicial-system-web/src/utils/parsers'
+import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const StepTwo: React.FC = () => {
-  const [workingCase, setWorkingCase] = useState<CreateDetentionReqStepTwoCase>(
+  const caseDraft = window.localStorage.getItem('workingCase')
+  const caseDraftJSON = JSON.parse(caseDraft)
+
+  const [workingCase, setWorkingCase] = useState<CreateDetentionReqStepOneCase>(
     {
-      id: '',
+      id: caseDraftJSON.id,
       case: {
-        requestedCustodyEndDate: null,
-        requestedCustodyEndTime: 'string',
-        lawsBroken: '',
-        caseCustodyProvisions: [],
-        restrictions: [],
-        caseFacts: '',
-        witnessAccounts: '',
-        investigationProgress: '',
-        legalArguments: '',
-        comments: '',
+        policeCaseNumber: caseDraftJSON.case.policeCaseNumber ?? '',
+        suspectNationalId: caseDraftJSON.case.suspectNationalId ?? '',
+        suspectName: caseDraftJSON.case.suspectName ?? '',
+        suspectAddress: caseDraftJSON.case.suspectAddress ?? '',
+        court: caseDraftJSON.case.court ?? '',
+        arrestDate: caseDraftJSON.case.arrestDate ?? null,
+        arrestTime: caseDraftJSON.case.arrestTime ?? '',
+        requestedCourtDate: caseDraftJSON.case.requestedCourtDate ?? null,
+        requestedCustodyEndDate:
+          caseDraftJSON.case.requestedCustodyEndDate ?? null,
+        requestedCustodyEndTime:
+          caseDraftJSON.case.requestedCustodyEndTime ?? '',
+        lawsBroken: caseDraftJSON.case.lawsBroken ?? '',
+        caseCustodyProvisions: caseDraftJSON.case.caseCustodyProvisions ?? [],
+        restrictions: caseDraftJSON.case.restrictions ?? [],
+        caseFacts: caseDraftJSON.case.caseFacts ?? '',
+        witnessAccounts: caseDraftJSON.case.witnessAccounts ?? '',
+        investigationProgress: caseDraftJSON.case.investigationProgress ?? '',
+        legalArguments: caseDraftJSON.case.legalArguments ?? '',
+        comments: caseDraftJSON.case.comments ?? '',
       },
     },
   )
@@ -152,15 +165,6 @@ export const StepTwo: React.FC = () => {
         'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
     },
   ]
-
-  useEffect(() => {
-    updateState(
-      workingCase,
-      'id',
-      window.localStorage.getItem('caseId'),
-      setWorkingCase,
-    )
-  }, [])
 
   return (
     <Box marginTop={7}>
@@ -525,7 +529,7 @@ export const StepTwo: React.FC = () => {
             </Box>
             <FormFooter
               previousUrl="/stofna-krofu/grunnupplysingar"
-              nextUrl="/"
+              nextUrl="/stofna-krofu/yfirlit"
               nextIsDisabled={
                 workingCase.case.lawsBroken === '' &&
                 workingCase.case.caseCustodyProvisions.length === 0

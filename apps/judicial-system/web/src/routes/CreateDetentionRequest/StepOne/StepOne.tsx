@@ -21,18 +21,37 @@ import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
 
 export const StepOne: React.FC = () => {
+  if (!window.localStorage.getItem('workingCase')) {
+    window.localStorage.setItem(
+      'workingCase',
+      JSON.stringify({ id: '', case: {} }),
+    )
+  }
+
+  const caseDraft = window.localStorage.getItem('workingCase')
+  const caseDraftJSON = JSON.parse(caseDraft)
   const [workingCase, setWorkingCase] = useState<CreateDetentionReqStepOneCase>(
     {
       id: '',
       case: {
-        policeCaseNumber: '',
-        suspectNationalId: '',
-        suspectName: '',
-        suspectAddress: '',
-        court: '',
-        arrestDate: null,
-        arrestTime: '',
+        policeCaseNumber: caseDraftJSON.case.policeCaseNumber ?? '',
+        suspectNationalId: caseDraftJSON.case.suspectNationalId ?? '',
+        suspectName: caseDraftJSON.case.suspectName ?? '',
+        suspectAddress: caseDraftJSON.case.suspectAddress ?? '',
+        court: 'Héraðsdómur Reykjavíkur',
+        arrestDate: caseDraftJSON.case.arrestDate ?? null,
+        arrestTime: caseDraftJSON.case.arrestTime ?? '',
         requestedCourtDate: null,
+        requestedCustodyEndDate: null,
+        requestedCustodyEndTime: '',
+        lawsBroken: '',
+        caseCustodyProvisions: [],
+        restrictions: [],
+        caseFacts: '',
+        witnessAccounts: '',
+        investigationProgress: '',
+        legalArguments: '',
+        comments: '',
       },
     },
   )
@@ -83,7 +102,10 @@ export const StepOne: React.FC = () => {
         policeCaseNumber: policeCaseNumberRef.current.value,
         suspectNationalId: suspectNationalIdRef.current.value,
       })
-      window.localStorage.setItem('caseId', caseId)
+      window.localStorage.setItem(
+        'workingCase',
+        JSON.stringify({ id: caseId, case: workingCase.case }),
+      )
       setWorkingCase({ id: caseId, case: workingCase.case })
     }
   }
