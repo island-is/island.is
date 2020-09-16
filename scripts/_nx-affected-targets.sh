@@ -29,7 +29,6 @@ docker image inspect ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} -f ' ' || \
   --cache-from=type=local,src=$PROJECT_ROOT/cache \
   -f ${DIR}/Dockerfile \
   --target=nx-runner --load \
-  --build-arg BUILDKIT_INLINE_CACHE=1 \
   -t ${DOCKER_REGISTRY}${APP}:${DOCKER_TAG} \
   $PROJECT_ROOT
 

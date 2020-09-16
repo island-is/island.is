@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react'
-import { useRouter } from 'next/router'
 import { Box, Stack, Inline, Tag } from '@island.is/island-ui/core'
 import { Categories, SearchInput, LatestNewsSection } from '../components'
 import { useI18n } from '../i18n'
@@ -12,8 +11,8 @@ import {
   QueryGetFrontpageSliderListArgs,
   ContentLanguage,
   GetFrontpageSliderListQuery,
-  QueryCategoriesArgs,
-  GetCategoriesQuery,
+  QueryGetArticleCategoriesArgs,
+  GetArticleCategoriesQuery,
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
   GetNewsListQuery,
@@ -31,11 +30,12 @@ import {
 import { IntroductionSection } from '../components/IntroductionSection'
 import { LifeEventsCardsSection } from '../components/LifeEventsCardsSection'
 import { Section } from '../components/Section'
+import { withMainLayout } from '../layouts/main'
 import { Sleeve } from '@island.is/island-ui/core'
 import { ContentBlock } from '@island.is/island-ui/core'
 
 interface HomeProps {
-  categories: GetCategoriesQuery['categories']
+  categories: GetArticleCategoriesQuery['getArticleCategories']
   frontpageSlides: GetFrontpageSliderListQuery['getFrontpageSliderList']['items']
   namespace: GetNamespaceQuery['getNamespace']
   news: GetNewsListQuery['getNewsList']['news']
@@ -51,7 +51,6 @@ const Home: Screen<HomeProps> = ({
 }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
-  const Router = useRouter()
   const { makePath } = useRouteNames(activeLocale)
 
   if (typeof document === 'object') {
@@ -61,8 +60,8 @@ const Home: Screen<HomeProps> = ({
   const cards = categories.map(({ title, slug, description }) => ({
     title,
     description,
-    href: `${makePath('category')}/[slug]`,
-    as: makePath('category', slug),
+    href: `${makePath('ArticleCategory')}/[slug]`,
+    as: makePath('ArticleCategory', slug),
   }))
 
   const searchContent = (
@@ -122,7 +121,7 @@ const Home: Screen<HomeProps> = ({
           title="Öll opinber þjónusta á einum stað"
           introText="Við vinnum að margvíslegum verkefnum sem öll stuðla að því að gera opinbera þjónustu skilvirkari og notendavænni."
           text="Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn."
-          linkText="Nánar um stafrænt Ísland"
+          linkText="Nánar um Stafrænt Ísland"
           linkUrl="/um-island-is"
         />
       </Section>
@@ -138,7 +137,7 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
       },
     },
     {
-      data: { categories },
+      data: { getArticleCategories },
     },
     {
       data: {
@@ -161,11 +160,14 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
         },
       },
     }),
-    apolloClient.query<GetCategoriesQuery, QueryCategoriesArgs>({
+    apolloClient.query<
+      GetArticleCategoriesQuery,
+      QueryGetArticleCategoriesArgs
+    >({
       query: GET_CATEGORIES_QUERY,
       variables: {
         input: {
-          language: locale as ContentLanguage,
+          lang: locale as ContentLanguage,
         },
       },
     }),
@@ -216,10 +218,10 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
     news,
     lifeEvents: getLifeEvents,
     frontpageSlides: items,
-    categories,
+    categories: getArticleCategories,
     namespace,
     showSearchInHeader: false,
   }
 }
 
-export default Home
+export default withMainLayout(Home)

@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing'
 
-import { AirlineUser, User } from '../../user.model'
+import { User } from '../../user.model'
 import { UserService } from '../../user.service'
 import { FlightService } from '../../../flight'
 import { NationalRegistryService } from '../../../nationalRegistry'

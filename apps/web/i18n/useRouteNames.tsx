@@ -3,7 +3,8 @@ import { Locale, defaultLanguage } from './I18n'
 const routeNames = {
   is: {
     article: 'grein',
-    category: 'flokkur',
+    ArticleCategory: 'flokkur',
+    ContentCategory: 'flokkur',
     news: 'frett',
     search: 'leit',
     landingPage: '',
@@ -12,7 +13,8 @@ const routeNames = {
   },
   en: {
     article: 'article',
-    category: 'category',
+    ArticleCategory: 'category',
+    ContentCategory: 'category',
     news: 'news',
     search: 'search',
     landingPage: '',
@@ -23,7 +25,8 @@ const routeNames = {
 
 export type PathTypes =
   | 'article'
-  | 'category'
+  | 'ArticleCategory'
+  | 'ContentCategory'
   | 'news'
   | 'search'
   | 'landingPage'

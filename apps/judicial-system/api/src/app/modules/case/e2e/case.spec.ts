@@ -2,7 +2,12 @@ import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 
 import { setup } from '../../../../../test/setup'
-import { CaseState, Case } from '../case.model'
+import { Case } from '../case.model'
+import {
+  CaseState,
+  CaseCustodyRestrictions,
+  CaseCustodyProvisions,
+} from '../case.types'
 
 let app: INestApplication
 
@@ -20,6 +25,7 @@ describe('Case', () => {
       court: 'Court',
       arrestDate: '2020-09-08T08:00:00.000Z',
       requestedCourtDate: '2020-09-08T11:30:00.000Z',
+      requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
     }
 
     await request(app.getHttpServer())
@@ -39,6 +45,9 @@ describe('Case', () => {
         expect(response.body.court).toBe(data.court)
         expect(response.body.arrestDate).toBe(data.arrestDate)
         expect(response.body.requestedCourtDate).toBe(data.requestedCourtDate)
+        expect(response.body.requestedCustodyEndDate).toBe(
+          data.requestedCustodyEndDate,
+        )
 
         // Check the data in the database
         await Case.findOne({ where: { id: response.body.id } }).then(
@@ -55,6 +64,9 @@ describe('Case', () => {
             expect(value.arrestDate.toISOString()).toBe(data.arrestDate)
             expect(value.requestedCourtDate.toISOString()).toBe(
               data.requestedCourtDate,
+            )
+            expect(value.requestedCustodyEndDate.toISOString()).toBe(
+              data.requestedCustodyEndDate,
             )
           },
         )
@@ -84,6 +96,7 @@ describe('Case', () => {
         expect(response.body.court).toBeNull()
         expect(response.body.arrestDate).toBeNull()
         expect(response.body.requestedCourtDate).toBeNull()
+        expect(response.body.requestedCustodyEndDate).toBeNull()
 
         // Check the data in the database
         await Case.findOne({ where: { id: response.body.id } }).then(
@@ -99,6 +112,7 @@ describe('Case', () => {
             expect(value.court).toBeNull()
             expect(value.arrestDate).toBeNull()
             expect(value.requestedCourtDate).toBeNull()
+            expect(value.requestedCustodyEndDate).toBeNull()
           },
         )
       })
@@ -114,6 +128,21 @@ describe('Case', () => {
       court: 'Court',
       arrestDate: '2020-09-08T08:00:00.000Z',
       requestedCourtDate: '2020-09-08T11:30:00.000Z',
+      requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
+      lawsBroken: 'Broken Laws',
+      custodyProvisions: [
+        CaseCustodyProvisions._95_1_A,
+        CaseCustodyProvisions._99_1_B,
+      ],
+      custodyRestrictions: [
+        CaseCustodyRestrictions.ISOLATION,
+        CaseCustodyRestrictions.MEDIA,
+      ],
+      caseFacts: 'Case Facts',
+      witnessAccounts: 'Witness Accounts',
+      investigationProgress: 'Investigation Progress',
+      legalArguments: 'Legal Arguments',
+      comments: 'Comments',
     }).then(async (value) => {
       await request(app.getHttpServer())
         .get(`/api/case/${value.id}`)
@@ -134,6 +163,23 @@ describe('Case', () => {
           expect(response.body.requestedCourtDate).toBe(
             value.requestedCourtDate.toISOString(),
           )
+          expect(response.body.requestedCustodyEndDate).toBe(
+            value.requestedCustodyEndDate.toISOString(),
+          )
+          expect(response.body.lawsBroken).toBe(value.lawsBroken)
+          expect(response.body.custodyProvisions).toStrictEqual(
+            value.custodyProvisions,
+          )
+          expect(response.body.custodyRestrictions).toStrictEqual(
+            value.custodyRestrictions,
+          )
+          expect(response.body.caseFacts).toBe(value.caseFacts)
+          expect(response.body.witnessAccounts).toBe(value.witnessAccounts)
+          expect(response.body.investigationProgress).toBe(
+            value.investigationProgress,
+          )
+          expect(response.body.legalArguments).toBe(value.legalArguments)
+          expect(response.body.comments).toBe(value.comments)
         })
     })
   })
@@ -152,6 +198,21 @@ describe('Case', () => {
         court: 'Court',
         arrestDate: '2020-09-08T08:00:00.000Z',
         requestedCourtDate: '2020-09-08T11:30:00.000Z',
+        requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
+        lawsBroken: 'Broken Laws',
+        custodyProvisions: [
+          CaseCustodyProvisions._95_1_A,
+          CaseCustodyProvisions._99_1_B,
+        ],
+        custodyRestrictions: [
+          CaseCustodyRestrictions.ISOLATION,
+          CaseCustodyRestrictions.MEDIA,
+        ],
+        caseFacts: 'Case Facts',
+        witnessAccounts: 'Witness Accounts',
+        investigationProgress: 'Investigation Progress',
+        legalArguments: 'Legal Arguments',
+        comments: 'Comments',
       }
 
       await request(app.getHttpServer())
@@ -171,6 +232,23 @@ describe('Case', () => {
           expect(response.body.court).toBe(data.court)
           expect(response.body.arrestDate).toBe(data.arrestDate)
           expect(response.body.requestedCourtDate).toBe(data.requestedCourtDate)
+          expect(response.body.requestedCustodyEndDate).toBe(
+            data.requestedCustodyEndDate,
+          )
+          expect(response.body.lawsBroken).toBe(data.lawsBroken)
+          expect(response.body.custodyProvisions).toStrictEqual(
+            data.custodyProvisions,
+          )
+          expect(response.body.custodyRestrictions).toStrictEqual(
+            data.custodyRestrictions,
+          )
+          expect(response.body.caseFacts).toBe(data.caseFacts)
+          expect(response.body.witnessAccounts).toBe(data.witnessAccounts)
+          expect(response.body.investigationProgress).toBe(
+            data.investigationProgress,
+          )
+          expect(response.body.legalArguments).toBe(data.legalArguments)
+          expect(response.body.comments).toBe(data.comments)
 
           // Check the data in the database
           await Case.findOne({ where: { id: response.body.id } }).then(
@@ -190,6 +268,23 @@ describe('Case', () => {
               expect(newValue.requestedCourtDate.toISOString()).toBe(
                 data.requestedCourtDate,
               )
+              expect(newValue.requestedCustodyEndDate.toISOString()).toBe(
+                data.requestedCustodyEndDate,
+              )
+              expect(newValue.lawsBroken).toBe(data.lawsBroken)
+              expect(newValue.custodyProvisions).toStrictEqual(
+                data.custodyProvisions,
+              )
+              expect(newValue.custodyRestrictions).toStrictEqual(
+                data.custodyRestrictions,
+              )
+              expect(newValue.caseFacts).toBe(data.caseFacts)
+              expect(newValue.witnessAccounts).toBe(data.witnessAccounts)
+              expect(newValue.investigationProgress).toBe(
+                data.investigationProgress,
+              )
+              expect(newValue.legalArguments).toBe(data.legalArguments)
+              expect(newValue.comments).toBe(data.comments)
             },
           )
         })

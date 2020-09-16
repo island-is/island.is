@@ -10,10 +10,14 @@ export class UserService {
     this.users = [
       {
         nationalId: '2510654469',
-        roles: [UserRole.PROCECUTOR, UserRole.JUDGE],
+        roles: [UserRole.PROCECUTOR],
       },
       {
         nationalId: '1112902539',
+        roles: [UserRole.JUDGE],
+      },
+      {
+        nationalId: '2408783999',
         roles: [UserRole.PROCECUTOR, UserRole.JUDGE],
       },
     ]

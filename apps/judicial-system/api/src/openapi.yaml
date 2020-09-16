@@ -69,12 +69,49 @@ components:
         requestedCourtDate:
           format: date-time
           type: string
+        requestedCustodyEndDate:
+          format: date-time
+          type: string
+        lawsBroken:
+          type: string
+        custodyProvisions:
+          type: array
+          items:
+            type: string
+            enum:
+              - _95_1_A
+              - _95_1_B
+              - _95_1_C
+              - _95_1_D
+              - _95_2
+              - _99_1_B
+        custodyRestrictions:
+          type: array
+          items:
+            type: string
+            enum:
+              - ISOLATION
+              - VISITAION
+              - COMMUNICATION
+              - MEDIA
+        caseFacts:
+          type: string
+        witnessAccounts:
+          type: string
+        investigationProgress:
+          type: string
+        legalArguments:
+          type: string
+        comments:
+          type: string
       required:
         - created
         - modified
         - state
         - policeCaseNumber
         - suspectNationalId
+        - custodyProvisions
+        - custodyRestrictions
     CreateCaseDto:
       type: object
       properties:
@@ -92,6 +129,9 @@ components:
           format: date-time
           type: string
         requestedCourtDate:
+          format: date-time
+          type: string
+        requestedCustodyEndDate:
           format: date-time
           type: string
       required:
@@ -124,6 +164,44 @@ components:
         requestedCourtDate:
           format: date-time
           type: string
+        requestedCustodyEndDate:
+          format: date-time
+          type: string
+        lawsBroken:
+          type: string
+        custodyProvisions:
+          type: array
+          items:
+            type: string
+            enum:
+              - _95_1_A
+              - _95_1_B
+              - _95_1_C
+              - _95_1_D
+              - _95_2
+              - _99_1_B
+        custodyRestrictions:
+          type: array
+          items:
+            type: string
+            enum:
+              - ISOLATION
+              - VISITAION
+              - COMMUNICATION
+              - MEDIA
+        caseFacts:
+          type: string
+        witnessAccounts:
+          type: string
+        investigationProgress:
+          type: string
+        legalArguments:
+          type: string
+        comments:
+          type: string
+    Notification:
+      type: object
+      properties: {}
 paths:
   /liveness:
     get:
@@ -159,16 +237,21 @@ paths:
         '201':
           description: ''
       tags:
-        - api/auth
+        - authentication
   /api/auth/login:
     get:
       operationId: AuthController_login
-      parameters: []
+      parameters:
+        - name: returnUrl
+          required: true
+          in: query
+          schema:
+            type: ''
       responses:
         '200':
           description: ''
       tags:
-        - api/auth
+        - authentication
   /api/auth/logout:
     get:
       operationId: AuthController_logout
@@ -177,7 +260,7 @@ paths:
         '200':
           description: ''
       tags:
-        - api/auth
+        - authentication
   /api/user:
     get:
       operationId: UserController_getCurrentUser
@@ -208,7 +291,7 @@ paths:
         - cases
   '/api/case/{id}':
     get:
-      operationId: CaseController_findOne
+      operationId: CaseController_getById
       parameters:
         - name: id
           required: true
@@ -264,5 +347,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Case'
+      tags:
+        - cases
+  '/api/case/{id}/notifications':
+    get:
+      operationId: CaseController_getAllNotificationsById
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+      tags:
+        - cases
+  '/api/caser/{id}/notification':
+    post:
+      operationId: CaseController_sendNotificationByCaseId
+      parameters:
+        - name: id
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
       tags:
         - cases

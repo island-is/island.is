@@ -30,7 +30,8 @@ import { Screen } from '../types'
 import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
 import useRouteNames from '../i18n/useRouteNames'
-import { CustomNextError } from '../units/ErrorBoundary'
+import { CustomNextError } from '../units/errors'
+import { withMainLayout } from '../layouts/main'
 import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
@@ -358,19 +359,19 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             <Breadcrumbs>
               <Link href={makePath()}>Ísland.is</Link>
               <Link
-                href={`${makePath('category')}/[slug]`}
-                as={makePath('category', article.category.slug)}
+                href={`${makePath('ArticleCategory')}/[slug]`}
+                as={makePath('ArticleCategory', article.category.slug)}
               >
                 {article.category.title}
               </Link>
               {article.group && (
                 <Link
                   as={makePath(
-                    'category',
+                    'ArticleCategory',
                     article.category.slug +
                       (article.group?.slug ? `#${article.group.slug}` : ''),
                   )}
-                  href={makePath('category', '[slug]')}
+                  href={makePath('ArticleCategory', '[slug]')}
                 >
                   <Tag variant="blue">{article.group.title}</Tag>
                 </Link>
@@ -457,4 +458,4 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   }
 }
 
-export default ArticleScreen
+export default withMainLayout(ArticleScreen)

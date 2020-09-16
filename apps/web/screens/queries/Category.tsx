@@ -1,26 +1,32 @@
 import gql from 'graphql-tag'
 
 export const GET_CATEGORIES_QUERY = gql`
-  query GetCategories($input: CategoriesInput!) {
-    categories(input: $input) {
+  query GetArticleCategories($input: GetArticleCategoriesInput!) {
+    getArticleCategories(input: $input) {
       title
-      slug
       description
+      slug
     }
   }
 `
 
-export const GET_ARTICLES_IN_CATEGORY_QUERY = gql`
-  query GetArticlesInCategory($category: ArticlesInCategoryInput!) {
-    articlesInCategory(category: $category) {
-      content
-      category
+export const GET_ARTICLES_QUERY = gql`
+  query getArticles($input: GetArticlesInput!) {
+    getArticles(input: $input) {
+      intro
+      category {
+        title
+      }
       slug
       title
-      group
-      groupDescription
-      groupSlug
-      subgroup
+      group {
+        slug
+        title
+        description
+      }
+      subgroup {
+        title
+      }
     }
   }
 `
