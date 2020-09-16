@@ -147,8 +147,6 @@ const Category: Screen<CategoryProps> = ({
     a.localeCompare(b, 'is'),
   )
 
-  console.log(articles)
-
   return (
     <>
       <Head>
@@ -212,18 +210,31 @@ const Category: Screen<CategoryProps> = ({
                                 <Stack space={2}>
                                   {sortArticlesByTitle(
                                     articlesBySubgroup[subgroup],
-                                  ).map(({ title, slug }) => {
-                                    return (
-                                      <FocusableBox
-                                        key={slug}
-                                        href={`${makePath('article')}/[slug]`}
-                                        as={makePath('article', slug)}
-                                        borderRadius="large"
-                                      >
-                                        <LinkCard>{title}</LinkCard>
-                                      </FocusableBox>
-                                    )
-                                  })}
+                                  ).map(
+                                    ({
+                                      title,
+                                      slug,
+                                      containsApplicationForm,
+                                    }) => {
+                                      return (
+                                        <FocusableBox
+                                          key={slug}
+                                          href={`${makePath('article')}/[slug]`}
+                                          as={makePath('article', slug)}
+                                          borderRadius="large"
+                                        >
+                                          <LinkCard
+                                            tag={
+                                              containsApplicationForm &&
+                                              'Umsókn'
+                                            }
+                                          >
+                                            {title}
+                                          </LinkCard>
+                                        </FocusableBox>
+                                      )
+                                    },
+                                  )}
                                 </Stack>
                               </React.Fragment>
                             )
