@@ -1,10 +1,9 @@
 import React, { FC } from 'react'
 import FormField from './FormField'
 import { MultiFieldScreen } from '../types'
-import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { FormValue } from '@island.is/application/template'
 import ConditionHandler from './ConditionHandler'
-import { theme } from '@island.is/island-ui/theme'
 
 const FormMultiField: FC<{
   applicationId: string
