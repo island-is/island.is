@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common'
 import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
-import { RequestBodySearch } from 'elastic-builder'
-import { ContentCategory } from './models/contentCategory.model'
 import { ContentItem } from './models/contentItem.model'
 import { SearchResult } from './models/searchResult.model'
+import { WebSearchAutocomplete } from './models/webSearchAutocomplete.model'
+import { ContentLanguage } from './enums/contentLanguage.enum'
+import { SearcherService } from '@island.is/api/schema'
+import { SearcherInput } from './dto/searcher.input'
 
 @Injectable()
-export class ContentSearchService {
-  constructor(private repository: ElasticService) {}
+export class ContentSearchService implements SearcherService {
+  constructor(private elasticService: ElasticService) {}
 
-  getIndex(lang: string) {
+  getIndex(lang: ContentLanguage) {
     return SearchIndexes[lang] ?? SearchIndexes.is
   }
 
@@ -26,46 +28,21 @@ export class ContentSearchService {
     return obj
   }
 
-  async find(query): Promise<SearchResult> {
-    const { body } = await this.repository.query(
+  async find(query: SearcherInput): Promise<SearchResult> {
+    const { body } = await this.elasticService.search(
       this.getIndex(query.language),
       query,
     )
 
-    const items = body?.hits?.hits.map(this.fixCase)
-
     return {
-      total: items.length,
-      items: items,
+      total: body.hits.total.value,
+      // we map data when it goes into the index we can return it without mapping it here
+      items: body.hits.hits.map((item) => JSON.parse(item._source.response)),
     }
   }
 
-  async fetchCategories(query): Promise<ContentCategory[]> {
-    // todo do properly not this awesome hack
-    const queryTmp = new RequestBodySearch().size(1000)
-    const { body } = await this.repository.findByQuery(
-      this.getIndex(query.language),
-      queryTmp,
-    )
-    const categories = {}
-    body?.hits?.hits.forEach(({ _source }) => {
-      if (!_source.category_slug) {
-        return
-      }
-      categories[_source.category_slug] = {
-        title: _source.category,
-        slug: _source.category_slug,
-        description: _source.category_description,
-      }
-    })
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-    // @ts-ignore
-    return Object.values(categories)
-  }
-
   async fetchSingle(input): Promise<ContentItem> {
-    const { body } = await this.repository.query(
+    const { body } = await this.elasticService.search(
       this.getIndex(input.language),
       input,
     )
@@ -78,11 +55,33 @@ export class ContentSearchService {
   }
 
   async fetchItems(input): Promise<ContentItem[]> {
-    const { body } = await this.repository.fetchItems(
+    const { body } = await this.elasticService.fetchItems(
       this.getIndex(input.language),
       input,
     )
 
     return body?.hits?.hits.map(this.fixCase)
+  }
+
+  async fetchAutocompleteTerm(input): Promise<WebSearchAutocomplete> {
+    const {
+      suggest: { searchSuggester },
+    } = await this.elasticService.fetchAutocompleteTerm(
+      this.getIndex(input.language),
+      {
+        ...input,
+        singleTerm: input.singleTerm.trim(),
+      },
+    )
+
+    // we always handle just one terms at a time so we return results for first term
+    const firstWordSuggestions = searchSuggester[0].options
+
+    return {
+      total: firstWordSuggestions.length,
+      completions: firstWordSuggestions.map(
+        (suggestionObjects) => suggestionObjects.text,
+      ),
+    }
   }
 }

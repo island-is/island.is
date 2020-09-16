@@ -9,6 +9,7 @@ import WidgetLoading from './WidgetLoading/WidgetLoading'
 import { UserWithMeta } from '@island.is/service-portal/core'
 import { useModuleProps } from '../../hooks/useModuleProps/useModuleProps'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import Hero from '../../components/Hero/Hero'
 
 const Widget: FC<{
   widget: ServicePortalWidget
@@ -71,11 +72,14 @@ const WidgetLoader: FC<{
 
 export const Dashboard: FC<{}> = () => {
   const [{ modules }] = useStore()
-  const moduleProps = useModuleProps()
+  const { userInfo, client } = useModuleProps()
 
   return (
     <Box>
-      <WidgetLoader modules={modules} {...moduleProps} />
+      <Hero />
+      {userInfo !== null && (
+        <WidgetLoader modules={modules} userInfo={userInfo} client={client} />
+      )}
     </Box>
   )
 }

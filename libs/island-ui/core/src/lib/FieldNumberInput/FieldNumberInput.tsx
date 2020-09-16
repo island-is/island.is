@@ -4,13 +4,14 @@ import get from 'lodash/get'
 import { FormikState, FieldInputProps } from 'formik'
 import NumberFormat, { NumberFormatProps } from 'react-number-format'
 import { Input } from '../Input/Input'
+import useDeprecatedComponent from '../private/useDeprecatedComponent'
 
 type valueType = 'floatValue' | 'formattedValue' | 'value'
 
 interface FieldNumberInputProps {
   valueType?: valueType
-  form?: FormikState<string | number>
-  field?: FieldInputProps<string | number>
+  form: FormikState<string | number>
+  field: FieldInputProps<string | number>
 }
 
 export const FieldNumberInput = ({
@@ -20,6 +21,7 @@ export const FieldNumberInput = ({
   valueType = 'value',
   ...props
 }: FieldNumberInputProps & NumberFormatProps) => {
+  useDeprecatedComponent('FieldNumberInput')
   const nameArray = (field.name && field.name.split('.')) || []
   return (
     <NumberFormat

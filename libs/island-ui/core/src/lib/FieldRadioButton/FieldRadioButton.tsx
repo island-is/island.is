@@ -2,10 +2,11 @@ import React from 'react'
 import { FormikState, FieldInputProps } from 'formik'
 import get from 'lodash/get'
 import { RadioButton, RadioButtonProps } from '../RadioButton/RadioButton'
+import useDeprecatedComponent from '../private/useDeprecatedComponent'
 
 export interface FieldRadioButtonProps extends RadioButtonProps {
-  field?: FieldInputProps<string>
-  form?: FormikState<string | number>
+  field: FieldInputProps<string>
+  form: FormikState<string | number>
 }
 
 export const FieldRadioButton = ({
@@ -15,6 +16,7 @@ export const FieldRadioButton = ({
   value,
   ...props
 }: FieldRadioButtonProps) => {
+  useDeprecatedComponent('FieldRadioButton')
   const nameArray = (field.name && field.name.split('.')) || []
 
   return (

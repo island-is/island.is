@@ -1,15 +1,36 @@
-import { NotFoundException, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { Sequelize } from 'sequelize-typescript'
+import * as kennitala from 'kennitala'
 
-import { FlightLegFund } from '@island.is/air-discount-scheme/types'
-import { Flight, FlightLeg } from './flight.model'
-import { FlightDto } from './dto/flight.dto'
+import { Airlines, States } from '@island.is/air-discount-scheme/consts'
+import { FlightLegSummary } from './flight.types'
+import { Flight, FlightLeg, financialStateMachine } from './flight.model'
+import { FlightDto, FlightLegDto, GetFlightLegsBody } from './dto'
+import { NationalRegistryUser } from '../nationalRegistry'
 
+export const ADS_POSTAL_CODES = {
+  Reykhólahreppur: 380,
+  // from Reykhólahreppur to Þingeyri
+  Þingeyri: 471,
+
+  Hólmavík: 510,
+  // from Hólmavík to Öræfi
+  Öræfi: 785,
+
+  Vestmannaeyjar: 900,
+}
 const DEFAULT_AVAILABLE_LEGS = 6
 const AVAILABLE_FLIGHT_LEGS = {
-  '2020': 4,
+  '2020': 2,
   '2021': 6,
 }
+export const NORLANDAIR_FLIGHTS = ['VPN', 'THO', 'GRY']
+
+const availableFinancialStates = [
+  financialStateMachine.states[States.awaitingDebit].key,
+  financialStateMachine.states[States.sentDebit].key,
+]
 
 @Injectable()
 export class FlightService {
@@ -20,9 +41,42 @@ export class FlightService {
     private flightLegModel: typeof FlightLeg,
   ) {}
 
+  isADSPostalCode(postalcode: number): boolean {
+    if (
+      postalcode >= ADS_POSTAL_CODES['Reykhólahreppur'] &&
+      postalcode <= ADS_POSTAL_CODES['Þingeyri']
+    ) {
+      return true
+    } else if (
+      postalcode >= ADS_POSTAL_CODES['Hólmavík'] &&
+      postalcode <= ADS_POSTAL_CODES['Öræfi']
+    ) {
+      return true
+    } else if (postalcode === ADS_POSTAL_CODES['Vestmannaeyjar']) {
+      return true
+    }
+    return false
+  }
+
+  private getAirline(
+    flightLeg: FlightLegDto,
+    airline: ValueOf<typeof Airlines>,
+  ): ValueOf<typeof Airlines> {
+    if (airline === Airlines.icelandair) {
+      if (
+        NORLANDAIR_FLIGHTS.includes(flightLeg.destination) ||
+        NORLANDAIR_FLIGHTS.includes(flightLeg.origin)
+      ) {
+        return Airlines.norlandair
+      }
+    }
+
+    return airline
+  }
+
   async countFlightLegsByNationalId(
     nationalId: string,
-  ): Promise<FlightLegFund> {
+  ): Promise<FlightLegSummary> {
     const currentYear = new Date(Date.now()).getFullYear().toString()
     let availableLegsThisYear = DEFAULT_AVAILABLE_LEGS
     if (Object.keys(AVAILABLE_FLIGHT_LEGS).includes(currentYear)) {
@@ -30,49 +84,149 @@ export class FlightService {
     }
 
     const noFlightLegs = await this.flightModel.count({
-      where: { nationalId, invalid: false },
-      include: [this.flightLegModel],
+      where: { nationalId },
+      include: [
+        {
+          model: this.flightLegModel,
+          where: { financialState: availableFinancialStates },
+        },
+      ],
     })
     return {
-      nationalId,
+      used: noFlightLegs,
       unused: availableLegsThisYear - noFlightLegs,
       total: availableLegsThisYear,
     }
   }
 
-  async findAll(): Promise<Flight[]> {
-    return this.flightModel.findAll({ where: { invalid: false } })
+  findAll(): Promise<Flight[]> {
+    return this.flightModel.findAll({
+      include: [
+        {
+          model: this.flightLegModel,
+          where: { financialState: availableFinancialStates },
+        },
+      ],
+    })
+  }
+
+  findAllLegsByFilter(body: GetFlightLegsBody | any): Promise<FlightLeg[]> {
+    return this.flightLegModel.findAll({
+      where: {
+        ...(body.airline ? { airline: body.airline } : {}),
+        ...(body.state && body.state.length > 0
+          ? { financialState: body.state }
+          : {}),
+        ...(body.flightLeg?.from ? { origin: body.flightLeg.from } : {}),
+        ...(body.flightLeg?.to ? { destination: body.flightLeg.to } : {}),
+      },
+      include: [
+        {
+          model: this.flightModel,
+          where: Sequelize.and(
+            Sequelize.where(
+              Sequelize.fn('date', Sequelize.col('booking_date')),
+              '>=',
+              body.period.from,
+            ),
+            Sequelize.where(
+              Sequelize.fn('date', Sequelize.col('booking_date')),
+              '<=',
+              body.period.to,
+            ),
+            Sequelize.where(
+              Sequelize.literal("(user_info->>'age')::numeric"),
+              '>=',
+              body.age.from,
+            ),
+            Sequelize.where(
+              Sequelize.literal("(user_info->>'age')::numeric"),
+              '<=',
+              body.age.to,
+            ),
+            {
+              ...(body.gender ? { 'userInfo.gender': body.gender } : {}),
+              ...(body.postalCode
+                ? { 'userInfo.postalCode': body.postalCode }
+                : {}),
+            },
+          ),
+        },
+      ],
+    })
   }
 
   async findAllByNationalId(nationalId: string): Promise<Flight[]> {
     return this.flightModel.findAll({
-      where: { invalid: false, nationalId },
-      include: [this.flightLegModel],
+      where: { nationalId },
+      include: [
+        {
+          model: this.flightLegModel,
+          where: { financialState: availableFinancialStates },
+        },
+      ],
     })
   }
 
   async create(
     flight: FlightDto,
-    nationalId: string,
+    user: NationalRegistryUser,
     airline: string,
   ): Promise<Flight> {
+    const nationalId = user.nationalId
     return this.flightModel.create(
-      { ...flight, nationalId, airline },
-      { include: [FlightLeg] },
+      {
+        ...flight,
+        flightLegs: flight.flightLegs.map((flightLeg) => ({
+          ...flightLeg,
+          airline: this.getAirline(flightLeg, airline),
+        })),
+        nationalId,
+        userInfo: {
+          age: kennitala.info(nationalId).age,
+          gender: user.gender,
+          postalCode: user.postalcode,
+        },
+      },
+      { include: [this.flightLegModel] },
     )
   }
 
-  async findOne(flightId: string): Promise<Flight> {
-    const flight = await this.flightModel.findOne({
-      where: { id: flightId, invalid: false },
+  async findOne(flightId: string, airline: string): Promise<Flight> {
+    return this.flightModel.findOne({
+      where: {
+        id: flightId,
+      },
+      include: [
+        {
+          model: this.flightLegModel,
+          where: {
+            financialState: availableFinancialStates,
+            airline:
+              airline === Airlines.icelandair
+                ? [Airlines.icelandair, Airlines.norlandair]
+                : airline,
+          },
+        },
+      ],
     })
-    if (!flight) {
-      throw new NotFoundException('Unable to find flight')
-    }
-    return flight
   }
 
-  async delete(flight: Flight): Promise<Flight> {
-    return flight.update({ invalid: true })
+  delete(flight: Flight): Promise<FlightLeg[]> {
+    return Promise.all(
+      flight.flightLegs.map((flightLeg) => {
+        const financialState = financialStateMachine
+          .transition(flightLeg.financialState, 'REVOKE')
+          .value.toString()
+        return flightLeg.update({ financialState })
+      }),
+    )
+  }
+
+  async deleteFlightLeg(flightLeg: FlightLeg): Promise<FlightLeg> {
+    const financialState = financialStateMachine
+      .transition(flightLeg.financialState, 'REVOKE')
+      .value.toString()
+    return flightLeg.update({ financialState })
   }
 }

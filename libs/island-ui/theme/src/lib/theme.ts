@@ -20,6 +20,16 @@ export const spacing = {
   12: UNIT * 12,
   15: UNIT * 15,
   20: UNIT * 20,
+  21: UNIT * 21,
+  22: UNIT * 22,
+  23: UNIT * 23,
+  24: UNIT * 24,
+  25: UNIT * 25,
+  26: UNIT * 26,
+  27: UNIT * 27,
+  28: UNIT * 28,
+  29: UNIT * 29,
+  30: UNIT * 30,
   none: UNIT * 0,
   smallGutter: UNIT * 0.5,
   gutter: UNIT * 2,
@@ -70,10 +80,12 @@ export const theme = {
     width: {
       standard: 1,
       large: 2,
+      xl: 3,
     },
     color: {
       standard: color.blue200,
       focus: color.red200,
+      ...color,
     },
   },
   shadows: {
@@ -87,8 +99,7 @@ export const theme = {
   },
   color,
   grid: {
-    columns: { desktop: 12, mobile: 6 },
-    gutter: { desktop: 24, mobile: 16 },
+    gutter: { desktop: 24, mobile: 12 },
   },
 }
 
@@ -136,6 +147,7 @@ export type Colors =
   | 'yellow300'
   | 'yellow100'
   | 'transparent'
+  | 'currentColor'
 
 type RequiredTokens = Pick<Theme, 'breakpoints'>
 type StyleWithoutMediaQueries = Exclude<Style['@media'], undefined>[string]

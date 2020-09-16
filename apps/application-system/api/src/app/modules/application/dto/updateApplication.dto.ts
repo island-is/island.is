@@ -1,50 +1,29 @@
-import {
-  IsEnum,
-  IsObject,
-  IsString,
-  IsArray,
-  IsOptional,
-} from 'class-validator'
-import { ApplicationState } from '../application.model'
-import { FormType } from '@island.is/application/schema'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsObject, IsString, IsOptional } from 'class-validator'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateApplicationDto {
+  @IsOptional()
   @IsString()
-  @ApiProperty()
-  readonly id: string
-
-  @IsEnum(FormType)
-  @ApiProperty({ enum: FormType })
-  readonly typeId: FormType
+  @ApiPropertyOptional()
+  readonly applicant?: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly applicant: string
+  readonly assignee?: string
 
   @IsOptional()
   @IsString()
   @ApiPropertyOptional()
-  readonly assignee: string
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly externalId: string
-
-  @IsOptional()
-  @IsEnum(ApplicationState)
-  @ApiPropertyOptional({ enum: ApplicationState })
-  readonly state: ApplicationState
+  readonly externalId?: string
 
   @IsOptional()
   @IsObject()
   @ApiPropertyOptional()
-  readonly answers: object
+  readonly answers?: object
 
   @IsOptional()
-  @IsArray()
+  @IsObject()
   @ApiPropertyOptional()
-  readonly attachments: string[]
+  readonly attachments?: object
 }

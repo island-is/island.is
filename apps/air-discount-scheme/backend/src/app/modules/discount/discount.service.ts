@@ -1,12 +1,24 @@
+import { uuid } from 'uuidv4'
 import { Inject, Injectable, CACHE_MANAGER } from '@nestjs/common'
 import CacheManager from 'cache-manager'
 
 import { Discount } from './discount.model'
-import { DiscountCodeInvalid } from './discount.error'
 
-const DISCOUNT_CODE_LENGTH = 8
+interface CachedDiscount {
+  discountCode: string
+  nationalId: string
+}
+
+export const DISCOUNT_CODE_LENGTH = 8
 
 const ONE_DAY = 24 * 60 * 60
+
+const CACHE_KEYS = {
+  user: (nationalId) => `discount_user_lookup_${nationalId}`,
+  discount: (id) => `discount_id_${id}`,
+  discountCode: (discountCode) => `discount_code_lookup_${discountCode}`,
+  flight: (flightId) => `discount_flight_lookup_${flightId}`,
+}
 
 @Injectable()
 export class DiscountService {
@@ -37,6 +49,14 @@ export class DiscountService {
       .join('')
   }
 
+  private async setCache<T>(
+    key: string,
+    value: T,
+    ttl: number = ONE_DAY,
+  ): Promise<void> {
+    return this.cacheManager.set(key, value, { ttl })
+  }
+
   async createDiscountCode(nationalId: string): Promise<Discount> {
     const discountCode = this.generateDiscountCode()
     const discountCodeCacheKey = this.getDiscountCodeCacheKey(discountCode)
@@ -51,6 +71,10 @@ export class DiscountService {
       { discountCode },
       { ttl: ONE_DAY },
     )
+    const cacheId = CACHE_KEYS.discount(uuid())
+    await this.setCache<CachedDiscount>(cacheId, { nationalId, discountCode })
+    await this.setCache<string>(CACHE_KEYS.discountCode(discountCode), cacheId)
+    await this.setCache<string>(CACHE_KEYS.user(nationalId), cacheId)
     return new Discount(discountCode, nationalId, ONE_DAY)
   }
 
@@ -74,14 +98,6 @@ export class DiscountService {
 
     const ttl = await this.cacheManager.ttl(cacheKey)
     return new Discount(discountCode, cacheValue.nationalId, ttl)
-  }
-
-  async validateDiscount(discountCode: string): Promise<string> {
-    const discount = await this.getDiscountByDiscountCode(discountCode)
-    if (!discount) {
-      throw new DiscountCodeInvalid()
-    }
-    return discount.nationalId
   }
 
   async useDiscount(discountCode: string, nationalId: string): Promise<void> {

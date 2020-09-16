@@ -4,9 +4,8 @@ import {
   ApolloClient,
   NormalizedCacheObject,
 } from '@apollo/client'
-import { ServicePortalModuleProps } from '@island.is/service-portal/core'
 
-export const useModuleProps = (): ServicePortalModuleProps => {
+export const useModuleProps = () => {
   const [{ userInfo }] = useStore()
   const client = useApolloClient() as ApolloClient<NormalizedCacheObject>
 

@@ -43,28 +43,17 @@ components:
           type: string
         state:
           type: string
-          enum:
-            - DRAFT
-            - BEING_PROCESSED
-            - NEEDS_INFORMATION
-            - PENDING
-            - APPROVED
-            - MANUAL_APPROVED
-            - REJECTED
-            - UNKNOWN
         attachments:
-          type: array
-          items:
-            type: string
+          type: object
         typeId:
           type: string
           enum:
             - ExampleForm
-            - ExampleForm2
-            - ExampleForm3
-            - FamilyAndPets
-            - PaternityLeave
+            - DrivingLessons
+            - ParentalLeave
         answers:
+          type: object
+        externalData:
           type: object
       required:
         - id
@@ -75,6 +64,7 @@ components:
         - state
         - typeId
         - answers
+        - externalData
     CreateApplicationDto:
       type: object
       properties:
@@ -82,10 +72,8 @@ components:
           type: string
           enum:
             - ExampleForm
-            - ExampleForm2
-            - ExampleForm3
-            - FamilyAndPets
-            - PaternityLeave
+            - DrivingLessons
+            - ParentalLeave
         applicant:
           type: string
         assignee:
@@ -94,21 +82,10 @@ components:
           type: string
         state:
           type: string
-          enum:
-            - DRAFT
-            - BEING_PROCESSED
-            - NEEDS_INFORMATION
-            - PENDING
-            - APPROVED
-            - MANUAL_APPROVED
-            - REJECTED
-            - UNKNOWN
         answers:
           type: object
         attachments:
-          type: array
-          items:
-            type: string
+          type: object
       required:
         - typeId
         - applicant
@@ -118,42 +95,65 @@ components:
     UpdateApplicationDto:
       type: object
       properties:
-        id:
-          type: string
-        typeId:
-          type: string
-          enum:
-            - ExampleForm
-            - ExampleForm2
-            - ExampleForm3
-            - FamilyAndPets
-            - PaternityLeave
         applicant:
           type: string
         assignee:
           type: string
         externalId:
           type: string
-        state:
-          type: string
-          enum:
-            - DRAFT
-            - BEING_PROCESSED
-            - NEEDS_INFORMATION
-            - PENDING
-            - APPROVED
-            - MANUAL_APPROVED
-            - REJECTED
-            - UNKNOWN
         answers:
           type: object
         attachments:
-          type: array
-          items:
-            type: string
+          type: object
+    DataProviderDto:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - ExpectedDateOfBirth
+            - ExampleFails
+            - ExampleSucceeds
       required:
         - id
-        - typeId
+        - type
+    PopulateExternalDataDto:
+      type: object
+      properties:
+        dataProviders:
+          type: array
+          items:
+            $ref: '#/components/schemas/DataProviderDto'
+      required:
+        - dataProviders
+    UpdateApplicationStateDto:
+      type: object
+      properties:
+        event:
+          type: string
+        answers:
+          type: object
+      required:
+        - event
+    AddAttachmentDto:
+      type: object
+      properties:
+        key:
+          type: string
+        url:
+          type: string
+      required:
+        - key
+        - url
+    DeleteAttachmentDto:
+      type: object
+      properties:
+        key:
+          type: string
+      required:
+        - key
 paths:
   /liveness:
     get:
@@ -205,6 +205,8 @@ paths:
         - name: id
           required: true
           in: path
+          description: The id of the application to update.
+          allowEmptyValue: false
           schema:
             type: string
       requestBody:
@@ -253,6 +255,109 @@ paths:
               $ref: '#/components/schemas/CreateApplicationDto'
       responses:
         '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+      tags:
+        - application
+  '/application/{id}/externalData':
+    put:
+      operationId: ApplicationController_updateExternalData
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: The id of the application to update the external data for.
+          allowEmptyValue: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PopulateExternalDataDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+      tags:
+        - application
+  '/application/{id}/submit':
+    put:
+      operationId: ApplicationController_submitApplication
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: The id of the application to update the state for.
+          allowEmptyValue: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateApplicationStateDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+      tags:
+        - application
+  '/application/{id}/attachments':
+    put:
+      operationId: ApplicationController_addAttachment
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: The id of the application to update the attachments for.
+          allowEmptyValue: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddAttachmentDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+      tags:
+        - application
+    delete:
+      operationId: ApplicationController_deleteAttachment
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: The id of the application to delete attachment(s) from.
+          allowEmptyValue: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteAttachmentDto'
+      responses:
+        '200':
           description: ''
           content:
             application/json:

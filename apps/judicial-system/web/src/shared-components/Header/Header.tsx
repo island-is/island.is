@@ -1,5 +1,6 @@
 import React from 'react'
 import { Logo, Typography, Box, Button } from '@island.is/island-ui/core'
+import * as api from '../../api'
 
 import * as styles from './Header.treat'
 
@@ -25,11 +26,11 @@ const Header: React.FC<HeaderProps> = ({ loggedInUser }: HeaderProps) => {
               {loggedInUser}
             </Typography>
           </Box>
-          <Button variant="text" size="small">
-            Útskráning
-          </Button>
         </Box>
       )}
+      <Button variant="text" size="small" onClick={() => api.logOut()}>
+        Útskráning
+      </Button>
     </header>
   )
 }

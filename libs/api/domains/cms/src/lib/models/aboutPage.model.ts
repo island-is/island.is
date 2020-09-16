@@ -1,5 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Slice } from './slices/slice.model'
+
+import * as types from '../generated/contentfulTypes'
+
+import { Slice, mapSlice } from './slice.model'
 
 @ObjectType()
 export class AboutPage {
@@ -15,3 +18,10 @@ export class AboutPage {
   @Field(() => [Slice])
   slices: Array<typeof Slice>
 }
+
+export const mapAboutPage = ({ fields }: types.IPage): AboutPage => ({
+  slices: fields.slices.map(mapSlice),
+  title: fields.title,
+  theme: fields.theme.toLowerCase(),
+  seoDescription: fields.seoDescription ?? '',
+})

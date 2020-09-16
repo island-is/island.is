@@ -7,7 +7,13 @@ import {
   GenericPage,
   QueryGetGenericPageArgs,
 } from '@island.is/api/schema'
-import { Box, Stack, Typography, Icon } from '@island.is/island-ui/core'
+import {
+  Box,
+  Stack,
+  Typography,
+  GridRow,
+  GridColumn,
+} from '@island.is/island-ui/core'
 import {
   Content,
   IntroText,
@@ -22,44 +28,34 @@ interface PropTypes {
 const Subsidy: Screen<PropTypes> = ({
   page: { title, intro, mainContent, sidebar, misc },
 }) => {
-  const { attention, codeDisclaimer } = JSON.parse(misc)
-
   return (
     <Layout
-      left={
-        <Box marginBottom={[3, 3, 3, 12]}>
-          <Stack space={3}>
-            <Typography variant="h1" as="h1">
-              {title}
-            </Typography>
-            <IntroText document={intro} />
-            <Content
-              document={mainContent}
-              wrapper={(children) => <Stack space={3}>{children}</Stack>}
-            />
-            <Box
-              marginBottom={4}
-              background="blue100"
-              borderRadius="standard"
-              display="flex"
-              alignItems="center"
-              padding={3}
-            >
-              <Icon type="alert" color="blue400" />
-              <Box marginLeft={1} marginRight={2}>
-                <Typography variant="p">
-                  <strong>{attention}</strong>
+      main={
+        <GridRow>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '12/12', '7/9']}
+            offset={[null, null, null, null, '1/9']}
+          >
+            <Box marginBottom={[3, 3, 3, 12]}>
+              <Stack space={3}>
+                <Typography variant="h1" as="h1">
+                  {title}
                 </Typography>
-              </Box>
-              <Typography variant="p">{codeDisclaimer}</Typography>
+                <IntroText document={intro} />
+                <Content
+                  document={mainContent}
+                  wrapper={(children) => <Stack space={3}>{children}</Stack>}
+                />
+                <Benefits misc={misc} />
+              </Stack>
+              <Usage misc={misc} />
             </Box>
-          </Stack>
-          <Benefits misc={misc} />
-          <Usage misc={misc} />
-        </Box>
+          </GridColumn>
+        </GridRow>
       }
-      right={
+      aside={
         <Content
+          type="sidebar"
           document={sidebar}
           wrapper={(children) => <Stack space={3}>{children}</Stack>}
         />
@@ -88,7 +84,7 @@ Subsidy.getInitialProps = async ({ apolloClient, locale }) => {
     query: GetGenericPageQuery,
     variables: {
       input: {
-        lang: 'is-IS',
+        lang: locale,
         slug: 'min-rettindi',
       },
     },

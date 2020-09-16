@@ -8,8 +8,8 @@ module.exports = {
         {
           id: 'ec23d2ff-4798-43eb-b487-c0c37c2778b2',
           applicant: '123456-7890',
-          state: 'PENDING',
-          attachments: ['https://google.com', 'https://aranja.com'],
+          state: 'draft',
+          attachments: JSON.stringify({}),
           ['type_id']: 'example',
           answers: JSON.stringify({
             question1: 'some answer',

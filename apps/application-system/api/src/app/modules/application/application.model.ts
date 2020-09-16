@@ -7,18 +7,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { FormType } from '@island.is/application/schema'
-
-export enum ApplicationState {
-  DRAFT = 'DRAFT',
-  BEING_PROCESSED = 'BEING_PROCESSED',
-  NEEDS_INFORMATION = 'NEEDS_INFORMATION',
-  PENDING = 'PENDING',
-  APPROVED = 'APPROVED',
-  MANUAL_APPROVED = 'MANUAL_APPROVED',
-  REJECTED = 'REJECTED',
-  UNKNOWN = 'UNKNOWN',
-} // TODO get from somewhere
+import { ApplicationTypes } from '@island.is/application/template'
 
 @Table({
   tableName: 'application',
@@ -67,25 +56,24 @@ export class Application extends Model<Application> {
   externalId: string
 
   @Column({
-    type: DataType.ENUM,
-    allowNull: false,
-    values: Object.values(ApplicationState),
+    type: DataType.STRING,
   })
-  @ApiProperty({ enum: ApplicationState })
+  @ApiProperty()
   state: string
 
   @Column({
-    type: DataType.ARRAY(DataType.STRING),
+    type: DataType.JSONB,
+    defaultValue: {},
   })
   @ApiPropertyOptional()
-  attachments: string[]
+  attachments: object
 
   @Column({
     type: DataType.ENUM,
     allowNull: false,
-    values: Object.values(FormType),
+    values: Object.values(ApplicationTypes),
   })
-  @ApiProperty({ enum: FormType })
+  @ApiProperty({ enum: ApplicationTypes })
   typeId: string
 
   @Column({
@@ -95,4 +83,12 @@ export class Application extends Model<Application> {
   })
   @ApiProperty()
   answers: object
+
+  @Column({
+    type: DataType.JSONB,
+    defaultValue: {},
+    allowNull: false,
+  })
+  @ApiProperty()
+  externalData: object
 }

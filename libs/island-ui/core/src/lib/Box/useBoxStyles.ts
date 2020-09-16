@@ -38,6 +38,15 @@ export interface UseBoxStylesProps {
   border?: keyof typeof styleRefs.border
   borderRadius?: keyof typeof styleRefs.borderRadius
   background?: keyof typeof styleRefs.background
+  borderColor?: keyof typeof styleRefs.borderColor
+  borderWidth?: keyof typeof styleRefs.borderWidth
+  borderRightWidth?: keyof typeof styleRefs.borderRightWidth
+  borderTopWidth?: keyof typeof styleRefs.borderTopWidth
+  borderLeftWidth?: keyof typeof styleRefs.borderLeftWidth
+  borderBottomWidth?: keyof typeof styleRefs.borderBottomWidth
+  borderXWidth?: keyof typeof styleRefs.borderXWidth
+  borderYWidth?: keyof typeof styleRefs.borderYWidth
+  borderStyle?: keyof typeof styleRefs.borderStyle
   boxShadow?: keyof typeof styleRefs.boxShadow
   transform?: keyof typeof styleRefs.transform
   transition?: keyof typeof styleRefs.transition
@@ -83,6 +92,15 @@ export const useBoxStyles = ({
   justifyContent,
   textAlign,
   border,
+  borderColor,
+  borderWidth,
+  borderRightWidth,
+  borderTopWidth,
+  borderLeftWidth,
+  borderBottomWidth,
+  borderXWidth,
+  borderYWidth,
+  borderStyle = 'solid',
   borderRadius,
   background,
   boxShadow,
@@ -127,6 +145,15 @@ export const useBoxStyles = ({
       resetStyles.element[component as keyof typeof resetStyleRefs.element],
     styles.background[background!],
     styles.border[border!],
+    styles.borderColor[borderColor!],
+    styles.borderWidth[borderWidth!],
+    styles.borderRightWidth[borderRightWidth!],
+    styles.borderTopWidth[borderTopWidth!],
+    styles.borderLeftWidth[borderLeftWidth!],
+    styles.borderBottomWidth[borderBottomWidth!],
+    styles.borderXWidth[borderXWidth!],
+    styles.borderYWidth[borderYWidth!],
+    styles.borderStyle[borderStyle!],
     styles.borderRadius[borderRadius!],
     styles.boxShadow[boxShadow!],
     styles.transition[transition!],

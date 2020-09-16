@@ -24,12 +24,24 @@ export const normaliseResponsiveProp = <Keys extends string | number>(
 
     if (length === 3) {
       const [xsValue, smValue, mdValue] = value
-      return [xsValue, smValue, mdValue, mdValue, mdValue]
+      return [
+        xsValue,
+        smValue,
+        mdValue as Keys,
+        mdValue as Keys,
+        mdValue as Keys,
+      ]
     }
 
     if (length === 4) {
       const [xsValue, smValue, mdValue, lgValue] = value
-      return [xsValue, smValue, mdValue, lgValue, lgValue]
+      return [
+        xsValue,
+        smValue,
+        mdValue as Keys,
+        lgValue as Keys,
+        lgValue as Keys,
+      ]
     }
 
     if (length === 5) {

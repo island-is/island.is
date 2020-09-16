@@ -6,6 +6,7 @@ import { Typography } from '../Typography/Typography'
 import InputError from '../InputError/InputError'
 import { Box } from '../Box/Box'
 import Tooltip from '../Tooltip/Tooltip'
+import useDeprecatedComponent from '../private/useDeprecatedComponent'
 
 export interface FieldPolarQuestionProps {
   label?: string
@@ -13,28 +14,47 @@ export interface FieldPolarQuestionProps {
   negativeLabel?: string
   reverse?: boolean
   tooltip?: string
-  field?: FieldInputProps<boolean>
-  form?: FormikState<string | number>
+  field: FieldInputProps<boolean>
+  form: FormikState<string | number>
 }
 
 const RadioButtonMapped = ({
-  field,
+  field: { value: fieldValue, ...fieldProps },
   value,
   onChange,
   ariaError,
   idPostfix,
   fixedValue,
   label,
+}: {
+  field: FieldInputProps<boolean>
+  value: boolean
+  onChange: {
+    (e: React.ChangeEvent<HTMLInputElement>): void
+    <T = string | React.ChangeEvent<HTMLInputElement>>(
+      field: T,
+    ): T extends React.ChangeEvent<HTMLInputElement>
+      ? void
+      : (e: string | React.ChangeEvent<HTMLInputElement>) => void
+  }
+  ariaError: {
+    'aria-invalid'?: string
+    'aria-describedby'?: string
+  }
+  idPostfix: string
+  fixedValue: boolean
+  label: string
 }) => (
   <RadioButton
-    {...field}
+    value={fieldValue.toString()}
+    {...fieldProps}
     label={label}
-    id={`${field.name}${idPostfix}`}
+    id={`${fieldProps.name}${idPostfix}`}
     checked={value === fixedValue}
     onChange={() => {
       onChange({
         target: {
-          name: field.name,
+          name: fieldProps.name,
           value: fixedValue,
         },
       })
@@ -52,17 +72,22 @@ export const FieldPolarQuestion = ({
   field: { onChange, value, ...field },
   form: { touched, errors },
 }: FieldPolarQuestionProps) => {
+  useDeprecatedComponent('FieldPolarQuestion')
   const nameArray = (field.name && field.name.split('.')) || []
   const hasError = !!(get(touched, nameArray) && get(errors, nameArray))
   const errorMessage = get(errors, nameArray)
   const ariaError = hasError
     ? {
-        'aria-invalid': true,
+        'aria-invalid': 'true',
         'aria-describedby': field.name,
       }
     : {}
   const RadioButtonProps = {
-    field,
+    field: {
+      ...field,
+      value,
+      onChange,
+    },
     value,
     onChange,
     ariaError,
@@ -70,12 +95,12 @@ export const FieldPolarQuestion = ({
   const posRadioButton = {
     idPostfix: '-pos',
     fixedValue: true,
-    label: positiveLabel,
+    label: positiveLabel || '',
   }
   const negRadioButton = {
     idPostfix: '-neg',
     fixedValue: false,
-    label: negativeLabel,
+    label: negativeLabel || '',
   }
 
   return (
@@ -83,9 +108,11 @@ export const FieldPolarQuestion = ({
       <Box marginBottom={2}>
         <Typography variant="h4" as="span">
           {label}{' '}
-          <Box marginLeft={2} display="inlineBlock">
-            <Tooltip text={tooltip} />
-          </Box>
+          {tooltip && (
+            <Box marginLeft={2} display="inlineBlock">
+              <Tooltip text={tooltip} />
+            </Box>
+          )}
         </Typography>
       </Box>
       <Box marginRight={4} display="inlineBlock">

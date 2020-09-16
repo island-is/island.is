@@ -1,35 +1,52 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ApolloProvider } from '@apollo/client'
 
-import { Route, Switch } from 'react-router-dom'
+import { Redirect, Route, Switch } from 'react-router-dom'
 
-import { Box } from '@island.is/island-ui/core'
+import { Box, GridContainer } from '@island.is/island-ui/core'
 import { client } from '@island.is/application/graphql'
 import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
+import { Signin } from '../routes/SignIn'
+import { SilentSignIn } from '../routes/SilentSignin'
+
+import { fixSvgUrls } from '../utils'
 
 import * as styles from './App.treat'
-import { Signin } from '../routes/SignIn'
 import { AuthProvider } from '../context/AuthProvider'
-import { SilentSignIn } from '../routes/SilentSignin'
-import ProtectedRoute from '../components/ProtectedRoute'
+
 import Header from '../components/Header'
+import ProtectedRoute from '../components/ProtectedRoute'
 
 export const App = () => {
+  useEffect(() => {
+    // Fixes the island.is logo and other SVGs not appearing on
+    // Mobile Safari, when a <base> tag exists in index.html.
+    fixSvgUrls()
+  }, [])
 
   return (
     <ApolloProvider client={client}>
       <AuthProvider>
         <Box className={styles.root}>
-          <Box paddingLeft={[3, 3, 5]}>
-            <Header />
+          <Box background="white">
+            <GridContainer>
+              <Header />
+            </GridContainer>
           </Box>
           <Switch>
             <Route path="/signin-oidc" component={Signin} />
             <Route path="/silent/signin-oidc" component={SilentSignIn} />
-
-            <ProtectedRoute path="/applications/:type" component={Applications} />
-            <ProtectedRoute path="/:id?" component={Application} />
+            <Route exact path="/">
+              <Redirect to="/application/" />
+            </Route>
+            <ProtectedRoute
+              strict
+              exact
+              path="/applications/:type"
+              component={Applications}
+            />
+            <ProtectedRoute path="/application/:id" component={Application} />
           </Switch>
         </Box>
       </AuthProvider>

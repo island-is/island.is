@@ -5,8 +5,16 @@ generates:
     plugins:
       - typescript
       - typescript-resolvers
+      - fragment-matcher
     config:
       contextType: ./context#Context
+      namingConvention:
+        enumValues: keep
+  ./apps/web/graphql/fragmentTypes.json:
+    plugins:
+      - fragment-matcher
+    config:
+      module: commonjs
 hooks:
   afterAllFileWrite:
     - prettier --write

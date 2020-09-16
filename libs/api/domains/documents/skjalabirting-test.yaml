@@ -1,0 +1,267 @@
+swagger: '2.0'
+info:
+  version: v1
+  title: IslandIs.Skjalabirting
+host: test-skjalabirting-island-is.azurewebsites.net
+schemes:
+  - https
+paths:
+  '/api/mail/v1/customers/{kennitala}/messages/categories':
+    get:
+      tags:
+        - Customers
+      operationId: Customers_Categories
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: kennitala
+          in: path
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/CategoriesResponse'
+  '/api/mail/v1/customers/{kennitala}/messages':
+    get:
+      tags:
+        - Customers
+      operationId: Customers_ListDocuments
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: kennitala
+          in: path
+          required: true
+          type: string
+        - name: dateFrom
+          in: query
+          required: false
+          type: string
+          format: date-time
+        - name: dateTo
+          in: query
+          required: false
+          type: string
+          format: date-time
+        - name: categoryId
+          in: query
+          required: false
+          type: string
+        - name: typeId
+          in: query
+          required: false
+          type: string
+        - name: archived
+          in: query
+          required: false
+          type: boolean
+        - name: sortBy
+          in: query
+          required: false
+          type: string
+        - name: page
+          in: query
+          required: false
+          type: integer
+          format: int32
+        - name: pageSize
+          in: query
+          required: false
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ListDocumentsResponse'
+  '/api/mail/v1/customers/{kennitala}/messages/{messageId}/archive':
+    post:
+      tags:
+        - Customers
+      operationId: Customers_Archive
+      consumes: []
+      produces: []
+      parameters:
+        - name: kennitala
+          in: path
+          required: true
+          type: string
+        - name: messageId
+          in: path
+          required: true
+          type: string
+      responses:
+        '204':
+          description: No Content
+  '/api/mail/v1/customers/{kennitala}/messages/{messageId}/unarchive':
+    post:
+      tags:
+        - Customers
+      operationId: Customers_Unarchive
+      consumes: []
+      produces: []
+      parameters:
+        - name: kennitala
+          in: path
+          required: true
+          type: string
+        - name: messageId
+          in: path
+          required: true
+          type: string
+      responses:
+        '204':
+          description: No Content
+  '/api/mail/v1/customers/{kennitala}/messages/{messageId}/bookmark':
+    post:
+      tags:
+        - Customers
+      operationId: Customers_Bookmark
+      consumes: []
+      produces: []
+      parameters:
+        - name: kennitala
+          in: path
+          required: true
+          type: string
+        - name: messageId
+          in: path
+          required: true
+          type: string
+      responses:
+        '204':
+          description: No Content
+  '/api/mail/v1/customers/{kennitala}/messages/{messageId}/unbookmark':
+    post:
+      tags:
+        - Customers
+      operationId: Customers_Unbookmark
+      consumes: []
+      produces: []
+      parameters:
+        - name: kennitala
+          in: path
+          required: true
+          type: string
+        - name: messageId
+          in: path
+          required: true
+          type: string
+      responses:
+        '204':
+          description: No Content
+  '/api/mail/v1/customers/{kennitala}/messages/batcharchive':
+    post:
+      tags:
+        - Customers
+      operationId: Customers_BatchArchive
+      consumes:
+        - application/json
+        - text/json
+        - application/x-www-form-urlencoded
+      produces: []
+      parameters:
+        - name: kennitala
+          in: path
+          required: true
+          type: string
+        - name: ids
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '204':
+          description: No Content
+  '/api/mail/v1/customers/{kennitala}/messages/{messageId}':
+    get:
+      tags:
+        - Customers
+      operationId: Customers_Document
+      consumes: []
+      produces:
+        - application/json
+        - text/json
+      parameters:
+        - name: kennitala
+          in: path
+          required: true
+          type: string
+        - name: messageId
+          in: path
+          required: true
+          type: string
+        - name: authenticationType
+          in: query
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/DocumentDTO'
+definitions:
+  CategoriesResponse:
+    type: object
+    properties:
+      categories:
+        type: array
+        items:
+          $ref: '#/definitions/CategoryDTO'
+  CategoryDTO:
+    type: object
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+  ListDocumentsResponse:
+    type: object
+    properties:
+      messages:
+        type: array
+        items:
+          $ref: '#/definitions/DocumentInfoDTO'
+  DocumentInfoDTO:
+    type: object
+    properties:
+      id:
+        type: string
+      documentDate:
+        format: date-time
+        type: string
+      senderKennitala:
+        type: string
+      senderName:
+        type: string
+      subject:
+        type: string
+      categoryId:
+        type: string
+      opened:
+        type: boolean
+      withdrawn:
+        type: boolean
+      withdrawnReason:
+        type: string
+      minumumAuthenticationType:
+        type: string
+  DocumentDTO:
+    type: object
+    properties:
+      fileType:
+        type: string
+      content:
+        type: string
+      htmlContent:
+        type: string
+      url:
+        type: string

@@ -17,12 +17,34 @@ export const applicationsModule: ServicePortalModule = {
     const applicationRoutes = [
       {
         name: 'Umsóknir',
-        path: [
-          ServicePortalPath.UmsoknirRoot,
-          ServicePortalPath.UmsoknirNyUmsokn,
-          ServicePortalPath.UmsoknirOpnarUmsoknir,
-        ],
+        path: ServicePortalPath.UmsoknirRoot,
+        render: () =>
+          lazy(() => import('./screens/ApplicationList/ApplicationList')),
+      },
+      {
+        name: 'Umsóknir',
+        path: [ServicePortalPath.UmsoknirOpnarUmsoknir],
         render: () => lazy(() => import('./lib/service-portal-applications')),
+      },
+      {
+        name: 'Detention Request POC',
+        path: ServicePortalPath.JudicialCreateDetentionPoc,
+        render: () =>
+          lazy(() =>
+            import(
+              '../../../../apps/judicial-system/web/src/routes/CreateDetentionRequest/StepOne/StepOne'
+            ),
+          ),
+      },
+      {
+        name: 'Detention Request POC',
+        path: ServicePortalPath.JudicialDetentionRequestsPoc,
+        render: () =>
+          lazy(() =>
+            import(
+              '../../../../apps/judicial-system/web/src/routes/DetentionRequests/DetentionRequests'
+            ),
+          ),
       },
     ]
 

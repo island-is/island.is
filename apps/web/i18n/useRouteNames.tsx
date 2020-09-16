@@ -3,29 +3,35 @@ import { Locale, defaultLanguage } from './I18n'
 const routeNames = {
   is: {
     article: 'grein',
-    category: 'flokkur',
+    ArticleCategory: 'flokkur',
+    ContentCategory: 'flokkur',
     news: 'frett',
     search: 'leit',
     landingPage: '',
+    lifeEvent: 'lifsvidburdur',
     page: '',
   },
   en: {
     article: 'article',
-    category: 'category',
+    ArticleCategory: 'category',
+    ContentCategory: 'category',
     news: 'news',
     search: 'search',
     landingPage: '',
+    lifeEvent: 'life-event',
     page: '',
   },
 }
 
 export type PathTypes =
   | 'article'
-  | 'category'
+  | 'ArticleCategory'
+  | 'ContentCategory'
   | 'news'
   | 'search'
   | 'landingPage'
   | 'page'
+  | 'lifeEvent'
 
 export const useRouteNames = (locale: Locale = defaultLanguage) => {
   return {

@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useRef, useEffect } from 'react'
 import Head from 'next/head'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Screen } from '../../types'
 import {
@@ -21,30 +20,34 @@ import {
   Option,
   SidebarAccordion,
   Pagination,
+  Link,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import { useNamespace } from '@island.is/web/hooks'
-import {
-  ContentLanguage,
-  QueryGetNamespaceArgs,
-  Query,
-  QuerySearchResultsArgs,
-} from '@island.is/api/schema'
 import {
   GET_NAMESPACE_QUERY,
   GET_SEARCH_RESULTS_QUERY_DETAILED,
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
-import { CustomNextError } from '@island.is/web/units/ErrorBoundary'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import {
+  GetSearchResultsDetailedQuery,
+  QuerySearchResultsArgs,
+  ContentLanguage,
+  QueryGetNamespaceArgs,
+  GetNamespaceQuery,
+  Article,
+} from '../../graphql/schema'
 
 const PerPage = 10
 
 interface CategoryProps {
   q: string
   page: number
-  searchResults: Query['searchResults']
-  namespace: Query['getNamespace']
+  searchResults: GetSearchResultsDetailedQuery['searchResults']
+  namespace: GetNamespaceQuery['getNamespace']
 }
 
 const Search: Screen<CategoryProps> = ({
@@ -69,35 +72,35 @@ const Search: Screen<CategoryProps> = ({
     }
   }, [searchRef])
 
-  const sidebarCategories = searchResults.items.reduce((all, cur) => {
-    const key = cur.categorySlug
+  const sidebarCategories = (searchResults.items as Article[]).reduce(
+    (all, cur) => {
+      const key = cur.category.slug
+      const item = all.find((x) => x.key === key)
 
-    const item = all.find((x) => x.key === key)
+      if (!item) {
+        all.push({
+          key,
+          total: 1,
+          title: cur.category.title ?? '',
+        })
+      } else {
+        item.total += 1
+      }
 
-    if (!item) {
-      all.push({
-        key,
-        total: 1,
-        title: cur.category || '',
-      })
-    } else {
-      item.total += 1
-    }
+      return all
+    },
+    [],
+  )
 
-    return all
-  }, [])
-
-  const items = searchResults.items.map((item) => {
-    return {
-      title: item.title,
-      description: item.content,
-      href: makePath('article', '[slug]'),
-      as: makePath('article', item.slug),
-      categorySlug: item.categorySlug,
-      category: item.category,
-      group: item.group,
-    }
-  })
+  const items = (searchResults.items as Article[]).map((item) => ({
+    title: item.title,
+    description: item.intro,
+    href: makePath('article', '[slug]'),
+    as: makePath('article', item.slug),
+    categorySlug: item.category.slug,
+    category: item.category,
+    group: item.group,
+  }))
 
   const onSelectCategory = (key: string) => {
     Router.replace({
@@ -112,7 +115,7 @@ const Search: Screen<CategoryProps> = ({
   const filteredItems = items.filter(byCategory)
 
   const categoryTitle = items.find((x) => x.categorySlug === filters.category)
-    ?.category
+    ?.category.title
 
   const categorySlug = items.find((x) => x.categorySlug === filters.category)
     ?.categorySlug
@@ -137,7 +140,7 @@ const Search: Screen<CategoryProps> = ({
   return (
     <>
       <Head>
-        <title>Leitarniðurstöður | Ísland.is</title>
+        <title>{n('searchResults', 'Leitarniðurstöður')} | Ísland.is</title>
       </Head>
       <CategoryLayout
         sidebar={
@@ -145,12 +148,14 @@ const Search: Screen<CategoryProps> = ({
             <Filter
               selected={!filters.category}
               onClick={() => onSelectCategory(null)}
-              text={`Allir flokkar (${searchResults.total})`}
+              text={`${n('allCategories', 'Allir flokkar')} (${
+                searchResults.total
+              })`}
             />
             <Divider weight="alternate" />
             <SidebarAccordion
               id="sidebar_accordion_categories"
-              label="Sjá flokka"
+              label={n('seeCategories', 'Sjá flokka')}
             >
               <Stack space={[1, 1, 2]}>
                 {sidebarCategories.map((c, index) => {
@@ -177,7 +182,7 @@ const Search: Screen<CategoryProps> = ({
 
               if (item.group) {
                 tags.push({
-                  title: item.group,
+                  title: item.group.title,
                   tagProps: {
                     label: true,
                   },
@@ -197,7 +202,7 @@ const Search: Screen<CategoryProps> = ({
                       query: { ...Router.query, page },
                     }}
                   >
-                    <a className={className}>{children}</a>
+                    <span className={className}>{children}</span>
                   </Link>
                 )}
               />
@@ -207,11 +212,10 @@ const Search: Screen<CategoryProps> = ({
       >
         <Stack space={[3, 3, 4]}>
           <Breadcrumbs>
-            <Link href="/">
-              <a>Ísland.is</a>
-            </Link>
+            <Link href="/">Ísland.is</Link>
           </Breadcrumbs>
           <SearchInput
+            id="search_input_search_page"
             ref={searchRef}
             size="large"
             activeLocale={activeLocale}
@@ -219,8 +223,8 @@ const Search: Screen<CategoryProps> = ({
           />
           <Hidden above="md">
             <Select
-              label="Leitarflokkar"
-              placeholder="Flokkar"
+              label={n('searchResult', 'Leitarflokkar')}
+              placeholder={n('categories', 'Flokkar')}
               defaultValue={defaultSelectedCategory}
               options={categorySelectOptions}
               onChange={onChangeSelectCategoryOptions}
@@ -230,14 +234,19 @@ const Search: Screen<CategoryProps> = ({
           <Typography variant="intro" as="p">
             {filteredItems.length === 0 ? (
               <span>
-                Ekkert fannst við leit á <strong>{q}</strong>
+                {n('nothingFoundWhenSearchingFor', 'Ekkert fannst við leit á')}{' '}
+                <strong>{q}</strong>
               </span>
             ) : (
               <span>
-                {filteredItems.length} leitarniðurstöður{' '}
+                {filteredItems.length}{' '}
+                {filteredItems.length === 1
+                  ? n('searchResult', 'leitarniðurstaða')
+                  : n('searchResults', 'leitarniðurstöður')}
                 {filters.category && (
                   <>
-                    í flokki
+                    {' '}
+                    {n('inCategory', 'í flokki')}
                     {categoryTitle ? (
                       <>
                         : <strong>{categoryTitle}</strong>
@@ -268,19 +277,20 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<Query, QuerySearchResultsArgs>({
+    apolloClient.query<GetSearchResultsDetailedQuery, QuerySearchResultsArgs>({
       query: GET_SEARCH_RESULTS_QUERY_DETAILED,
       variables: {
         query: {
           language: locale as ContentLanguage,
           queryString,
+          types: ['webArticle'],
           size: PerPage,
           page,
         },
       },
     }),
     apolloClient
-      .query<Query, QueryGetNamespaceArgs>({
+      .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
         query: GET_NAMESPACE_QUERY,
         variables: {
           input: {
@@ -324,4 +334,5 @@ const Filter = ({ selected, text, onClick, ...props }) => {
     </Box>
   )
 }
-export default Search
+
+export default withMainLayout(Search)

@@ -20,6 +20,11 @@ export type VariantTypes =
   | 'eyebrow'
   | 'tag'
   | 'cardCategoryTitle'
+  | 'sideMenu'
+  | 'placeholderText'
+  | 'datepickerHeaderText'
+  | 'formProgressSection'
+  | 'formProgressSectionActive'
 
 type ResponsiveProps<T> = {
   xs?: T
@@ -33,6 +38,10 @@ type Variants = {
   [Type in VariantTypes]: CSS.Properties<
     string | ResponsiveProps<string | number>
   >
+}
+
+type defaultFontWeights = {
+  [Type in VariantTypes]: number
 }
 
 const makePaddingBottom = (breakpoint: Breakpoint) =>
@@ -70,13 +79,46 @@ export const truncate = style({
   whiteSpace: 'nowrap',
 })
 
+const fontWeightMap = {
+  light: theme.typography.light,
+  regular: theme.typography.regular,
+  medium: theme.typography.medium,
+  semiBold: theme.typography.semiBold,
+}
+
+const defaultFontWeightsMap: defaultFontWeights = {
+  h1: theme.typography.headingsFontWeight,
+  h2: theme.typography.headingsFontWeight,
+  h3: theme.typography.headingsFontWeight,
+  h4: theme.typography.headingsFontWeight,
+  h5: theme.typography.headingsFontWeight,
+  p: theme.typography.light,
+  pSmall: theme.typography.regular,
+  intro: theme.typography.light,
+  eyebrow: theme.typography.medium,
+  tag: theme.typography.semiBold,
+  cardCategoryTitle: theme.typography.headingsFontWeight,
+  sideMenu: theme.typography.medium,
+  placeholderText: theme.typography.light,
+  datepickerHeaderText: theme.typography.semiBold,
+  formProgressSection: theme.typography.light,
+  formProgressSectionActive: theme.typography.semiBold,
+}
+
+export const fontWeight = styleMap(
+  mapToStyleProperty(fontWeightMap, 'fontWeight'),
+)
+
+export const defaultFontWeights = styleMap(
+  mapToStyleProperty(defaultFontWeightsMap, 'fontWeight'),
+)
+
 export const variants: Variants = {
   h1: {
     fontSize: {
       xs: 32,
       md: 42,
     },
-    fontWeight: theme.typography.headingsFontWeight,
     lineHeight: 1.238095,
   },
   h2: {
@@ -84,7 +126,6 @@ export const variants: Variants = {
       xs: 26,
       md: 34,
     },
-    fontWeight: theme.typography.headingsFontWeight,
     lineHeight: 1.294118,
   },
   h3: {
@@ -92,7 +133,6 @@ export const variants: Variants = {
       xs: 20,
       md: 24,
     },
-    fontWeight: theme.typography.headingsFontWeight,
     lineHeight: 1.416667,
   },
   h4: {
@@ -100,7 +140,6 @@ export const variants: Variants = {
       xs: 18,
       md: 20,
     },
-    fontWeight: theme.typography.headingsFontWeight,
     lineHeight: 1.5,
   },
   h5: {
@@ -108,7 +147,6 @@ export const variants: Variants = {
       xs: 15,
       md: 18,
     },
-    fontWeight: theme.typography.headingsFontWeight,
     lineHeight: 1.5,
   },
   p: {
@@ -116,7 +154,6 @@ export const variants: Variants = {
       xs: 15,
       md: 18,
     },
-    fontWeight: theme.typography.light,
     lineHeight: 1.5,
   },
   pSmall: {
@@ -124,7 +161,6 @@ export const variants: Variants = {
       xs: 12,
       md: 15,
     },
-    fontWeight: theme.typography.regular,
     lineHeight: 1.666,
   },
   intro: {
@@ -132,7 +168,6 @@ export const variants: Variants = {
       xs: 20,
       md: 24,
     },
-    fontWeight: theme.typography.light,
     lineHeight: 1.416667,
   },
   eyebrow: {
@@ -140,7 +175,6 @@ export const variants: Variants = {
       xs: 12,
       md: 14,
     },
-    fontWeight: theme.typography.semiBold,
     lineHeight: 1.142857,
   },
   tag: {
@@ -148,7 +182,6 @@ export const variants: Variants = {
       xs: 12,
       md: 14,
     },
-    fontWeight: theme.typography.semiBold,
     lineHeight: 1.142857,
   },
   cardCategoryTitle: {
@@ -156,12 +189,48 @@ export const variants: Variants = {
       xs: 20,
       md: 24,
     },
-    fontWeight: theme.typography.headingsFontWeight,
     lineHeight: 1.416667,
+  },
+  sideMenu: {
+    fontSize: {
+      xs: 16,
+      md: 18,
+    },
+    lineHeight: 1.55,
+  },
+  placeholderText: {
+    fontSize: {
+      xs: 20,
+      md: 24,
+    },
+    lineHeight: 1.416667,
+  },
+  datepickerHeaderText: {
+    fontSize: {
+      xs: 18,
+      md: 20,
+    },
+    lineHeight: 1.666,
+  },
+  formProgressSection: {
+    fontSize: {
+      xs: 16,
+      md: 18,
+    },
+    lineHeight: 1.75,
+  },
+  formProgressSectionActive: {
+    fontSize: {
+      xs: 16,
+      md: 18,
+    },
+    lineHeight: 1.75,
   },
 }
 
-export const links = style({})
+export const links = style({
+  cursor: 'pointer',
+})
 
 globalStyle(`${links} a`, {
   color: theme.color.blue400,
@@ -187,7 +256,12 @@ globalStyle(`${links} a:hover svg path`, {
 
 export const colors = styleMap(mapToStyleProperty(theme.color, 'color'))
 
-export default Object.keys(variants).reduce((acc, variantKey) => {
-  acc[variantKey] = responsiveStyleMap(variants[variantKey])
-  return acc
-}, {})
+export default (Object.keys(variants) as VariantTypes[]).reduce(
+  (acc, variantKey) => {
+    acc[variantKey] = responsiveStyleMap(variants[variantKey])
+    return acc
+  },
+  {} as {
+    [Type in VariantTypes]: string
+  },
+)

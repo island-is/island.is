@@ -60,13 +60,13 @@ export interface Application {
      * @type {string}
      * @memberof Application
      */
-    state: ApplicationStateEnum;
+    state: string;
     /**
      * 
-     * @type {Array<string>}
+     * @type {object}
      * @memberof Application
      */
-    attachments?: Array<string>;
+    attachments?: object;
     /**
      * 
      * @type {string}
@@ -79,6 +79,12 @@ export interface Application {
      * @memberof Application
      */
     answers: object;
+    /**
+     * 
+     * @type {object}
+     * @memberof Application
+     */
+    externalData: object;
 }
 
 export function ApplicationFromJSON(json: any): Application {
@@ -101,6 +107,7 @@ export function ApplicationFromJSONTyped(json: any, ignoreDiscriminator: boolean
         'attachments': !exists(json, 'attachments') ? undefined : json['attachments'],
         'typeId': json['typeId'],
         'answers': json['answers'],
+        'externalData': json['externalData'],
     };
 }
 
@@ -123,6 +130,7 @@ export function ApplicationToJSON(value?: Application | null): any {
         'attachments': value.attachments,
         'typeId': value.typeId,
         'answers': value.answers,
+        'externalData': value.externalData,
     };
 }
 
@@ -130,26 +138,10 @@ export function ApplicationToJSON(value?: Application | null): any {
 * @export
 * @enum {string}
 */
-export enum ApplicationStateEnum {
-    DRAFT = 'DRAFT',
-    BEINGPROCESSED = 'BEING_PROCESSED',
-    NEEDSINFORMATION = 'NEEDS_INFORMATION',
-    PENDING = 'PENDING',
-    APPROVED = 'APPROVED',
-    MANUALAPPROVED = 'MANUAL_APPROVED',
-    REJECTED = 'REJECTED',
-    UNKNOWN = 'UNKNOWN'
-}
-/**
-* @export
-* @enum {string}
-*/
 export enum ApplicationTypeIdEnum {
     ExampleForm = 'ExampleForm',
-    ExampleForm2 = 'ExampleForm2',
-    ExampleForm3 = 'ExampleForm3',
-    FamilyAndPets = 'FamilyAndPets',
-    PaternityLeave = 'PaternityLeave'
+    DrivingLessons = 'DrivingLessons',
+    ParentalLeave = 'ParentalLeave'
 }
 
 

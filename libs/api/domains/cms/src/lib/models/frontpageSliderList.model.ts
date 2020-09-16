@@ -1,8 +1,17 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { FrontpageSlide } from './frontpageSlide.model'
+
+import { IFrontpageSliderList } from '../generated/contentfulTypes'
+
+import { FrontpageSlider, mapFrontpageSlider } from './frontpageSlider.model'
 
 @ObjectType()
 export class FrontpageSliderList {
-  @Field(() => [FrontpageSlide])
-  items: FrontpageSlide[]
+  @Field(() => [FrontpageSlider])
+  items: FrontpageSlider[]
 }
+
+export const mapFrontpageSliderList = ({
+  fields,
+}: IFrontpageSliderList): FrontpageSliderList => ({
+  items: fields.items.map(mapFrontpageSlider),
+})

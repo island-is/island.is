@@ -2,6 +2,7 @@ import {
   ServicePortalModule,
   ServicePortalRoute,
   UserWithMeta,
+  LanguageCode,
 } from '@island.is/service-portal/core'
 import { SubjectListDto } from '../mirage-server/models/subject'
 import { modules } from './modules'
@@ -12,16 +13,18 @@ import {
   AsyncActionState,
   NotificationMenuState,
 } from './actions'
+import { determineInitialLocale, setLangInLocalStore } from '../utils/locale'
 
 export interface StoreState {
   userInfo: UserWithMeta | null
-  userInfoState: AsyncActionState
+  userInfoState: AsyncActionState | 'logging-out'
   modules: ServicePortalModule[]
   navigationState: AsyncActionState
   subjectList: SubjectListDto[]
   subjectListState: AsyncActionState
   notificationMenuState: NotificationMenuState
   routes: ServicePortalRoute[]
+  lang: LanguageCode
 }
 
 export const initialState: StoreState = {
@@ -33,6 +36,7 @@ export const initialState: StoreState = {
   subjectListState: 'passive',
   notificationMenuState: 'closed',
   routes: [],
+  lang: determineInitialLocale(),
 }
 
 export const reducer = (state: StoreState, action: Action): StoreState => {
@@ -77,6 +81,18 @@ export const reducer = (state: StoreState, action: Action): StoreState => {
       return {
         ...state,
         routes: action.payload,
+      }
+    case ActionType.SetLanguage:
+      setLangInLocalStore(action.payload)
+
+      return {
+        ...state,
+        lang: action.payload,
+      }
+    case ActionType.SetUserLoggingOut:
+      return {
+        ...state,
+        userInfoState: 'logging-out',
       }
     default:
       return state

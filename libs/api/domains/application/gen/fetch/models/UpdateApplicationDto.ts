@@ -24,18 +24,6 @@ export interface UpdateApplicationDto {
      * @type {string}
      * @memberof UpdateApplicationDto
      */
-    id: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateApplicationDto
-     */
-    typeId: UpdateApplicationDtoTypeIdEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof UpdateApplicationDto
-     */
     applicant?: string;
     /**
      * 
@@ -51,22 +39,16 @@ export interface UpdateApplicationDto {
     externalId?: string;
     /**
      * 
-     * @type {string}
-     * @memberof UpdateApplicationDto
-     */
-    state?: UpdateApplicationDtoStateEnum;
-    /**
-     * 
      * @type {object}
      * @memberof UpdateApplicationDto
      */
     answers?: object;
     /**
      * 
-     * @type {Array<string>}
+     * @type {object}
      * @memberof UpdateApplicationDto
      */
-    attachments?: Array<string>;
+    attachments?: object;
 }
 
 export function UpdateApplicationDtoFromJSON(json: any): UpdateApplicationDto {
@@ -79,12 +61,9 @@ export function UpdateApplicationDtoFromJSONTyped(json: any, ignoreDiscriminator
     }
     return {
         
-        'id': json['id'],
-        'typeId': json['typeId'],
         'applicant': !exists(json, 'applicant') ? undefined : json['applicant'],
         'assignee': !exists(json, 'assignee') ? undefined : json['assignee'],
         'externalId': !exists(json, 'externalId') ? undefined : json['externalId'],
-        'state': !exists(json, 'state') ? undefined : json['state'],
         'answers': !exists(json, 'answers') ? undefined : json['answers'],
         'attachments': !exists(json, 'attachments') ? undefined : json['attachments'],
     };
@@ -99,41 +78,12 @@ export function UpdateApplicationDtoToJSON(value?: UpdateApplicationDto | null):
     }
     return {
         
-        'id': value.id,
-        'typeId': value.typeId,
         'applicant': value.applicant,
         'assignee': value.assignee,
         'externalId': value.externalId,
-        'state': value.state,
         'answers': value.answers,
         'attachments': value.attachments,
     };
-}
-
-/**
-* @export
-* @enum {string}
-*/
-export enum UpdateApplicationDtoTypeIdEnum {
-    ExampleForm = 'ExampleForm',
-    ExampleForm2 = 'ExampleForm2',
-    ExampleForm3 = 'ExampleForm3',
-    FamilyAndPets = 'FamilyAndPets',
-    PaternityLeave = 'PaternityLeave'
-}
-/**
-* @export
-* @enum {string}
-*/
-export enum UpdateApplicationDtoStateEnum {
-    DRAFT = 'DRAFT',
-    BEINGPROCESSED = 'BEING_PROCESSED',
-    NEEDSINFORMATION = 'NEEDS_INFORMATION',
-    PENDING = 'PENDING',
-    APPROVED = 'APPROVED',
-    MANUALAPPROVED = 'MANUAL_APPROVED',
-    REJECTED = 'REJECTED',
-    UNKNOWN = 'UNKNOWN'
 }
 
 

@@ -1,63 +1,28 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { FC } from 'react'
-import Link from 'next/link'
+import React, { FC, useState, useContext } from 'react'
+import { useRouter } from 'next/router'
 import {
   Logo,
   Columns,
   Column,
-  ContentBlock,
   Box,
   Button,
   Hidden,
   ResponsiveSpace,
-  Icon,
   GridContainer,
   GridColumn,
   GridRow,
+  ColorSchemeContext,
+  FocusableBox,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { SearchInput } from '../'
-import { useRouter } from 'next/router'
+import { LanguageToggler } from '../LanguageToggler'
+import { SideMenu } from '../SideMenu'
 
 interface HeaderProps {
   showSearchInHeader?: boolean
-}
-
-const LanguageToggler: FC<{
-  hideWhenMobile?: boolean
-}> = ({ hideWhenMobile }) => {
-  const { activeLocale, locale, t } = useI18n()
-  const otherLanguageUrl = activeLocale === 'en' ? '/' : '/en'
-  const onClick = () => {
-    locale(t.otherLanguageCode)
-  }
-  const languageButtonText =
-    activeLocale === 'is' ? (
-      <span>
-        <Hidden above="md">EN</Hidden>
-        <Hidden below="lg">English</Hidden>
-      </span>
-    ) : (
-      <span>
-        <Hidden above="md">IS</Hidden>
-        <Hidden below="lg">Íslenska</Hidden>
-      </span>
-    )
-
-  const LanguageButton = (
-    <Link href={otherLanguageUrl}>
-      <Button variant="menu" onClick={onClick}>
-        {t.otherLanguageName}
-      </Button>
-    </Link>
-  )
-
-  return !hideWhenMobile ? (
-    LanguageButton
-  ) : (
-    <Hidden below="md">{LanguageButton}</Hidden>
-  )
 }
 
 const marginLeft = [1, 1, 1, 2] as ResponsiveSpace
@@ -66,27 +31,27 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
   const { activeLocale, t } = useI18n()
   const Router = useRouter()
   const { makePath } = useRouteNames(activeLocale)
+  const [sideMenuOpen, setSideMenuOpen] = useState(false)
+  const { colorScheme } = useContext(ColorSchemeContext)
 
   const locale = activeLocale
   const english = activeLocale === 'en'
+  const isWhite = colorScheme === 'white'
 
   return (
     <GridContainer>
       <GridRow>
-        <GridColumn span={12} paddingTop={4} paddingBottom={4}>
+        <GridColumn span="12/12" paddingTop={4} paddingBottom={4}>
           <Columns alignY="center" space={2}>
             <Column width="content">
-              <Link href={english ? '/en' : '/'} passHref>
-                {/* eslint-disable-next-line */}
-                <a>
-                  <Hidden above="md">
-                    <Logo width={40} iconOnly />
-                  </Hidden>
-                  <Hidden below="lg">
-                    <Logo width={160} />
-                  </Hidden>
-                </a>
-              </Link>
+              <FocusableBox href={english ? '/en' : '/'}>
+                <Hidden above="md">
+                  <Logo width={40} iconOnly solid={isWhite} />
+                </Hidden>
+                <Hidden below="lg">
+                  <Logo width={160} solid={isWhite} />
+                </Hidden>
+              </FocusableBox>
             </Column>
             <Column>
               <Box
@@ -99,6 +64,7 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                   <>
                     <Hidden below="lg">
                       <SearchInput
+                        id="search_input_header"
                         size="medium"
                         activeLocale={locale}
                         placeholder="Leitaðu á Ísland.is"
@@ -119,19 +85,27 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
                     </Hidden>
                   </>
                 )}
-                <Box marginLeft={marginLeft}>
-                  <Link href="https://minarsidur.island.is/" passHref>
-                    <Button variant="menu" leftIcon="user">
+                <Hidden below="md">
+                  <FocusableBox
+                    href="//minarsidur.island.is/"
+                    marginLeft={marginLeft}
+                    borderRadius="large"
+                  >
+                    <Button variant="menu" leftIcon="user" tabIndex={-1}>
                       {t.login}
                     </Button>
-                  </Link>
-                </Box>
+                  </FocusableBox>
+                </Hidden>
                 <Box marginLeft={marginLeft}>
                   <LanguageToggler hideWhenMobile />
                 </Box>
-                <Box marginLeft={marginLeft}>
-                  <Button variant="menu">
-                    <Icon type="logo" />
+                <Box marginLeft={marginLeft} position="relative">
+                  <Button
+                    variant="menu"
+                    onClick={() => setSideMenuOpen(true)}
+                    icon="burger"
+                  >
+                    Valmynd
                   </Button>
                 </Box>
               </Box>
@@ -139,6 +113,10 @@ export const Header: FC<HeaderProps> = ({ showSearchInHeader = true }) => {
           </Columns>
         </GridColumn>
       </GridRow>
+      <SideMenu
+        isVisible={sideMenuOpen}
+        handleClose={() => setSideMenuOpen(false)}
+      />
     </GridContainer>
   )
 }

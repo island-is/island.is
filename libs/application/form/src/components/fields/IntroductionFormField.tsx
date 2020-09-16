@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { IntroductionField } from '@island.is/application/schema'
+import { IntroductionField } from '@island.is/application/template'
 import { Typography } from '@island.is/island-ui/core'
 
 const IntroductionFormField: FC<{

@@ -1,44 +1,60 @@
 import React from 'react'
-import { Locale } from './I18n'
-import { NextComponentType } from 'next'
-import { BaseContext, NextPageContext } from 'next/dist/next-server/lib/utils'
-import { QueryGetNamespaceArgs, Query } from '@island.is/api/schema'
-import { GET_NAMESPACE_QUERY } from '../screens/queries'
+import I18n, { Locale, isLocale, defaultLanguage } from './I18n'
+import { NextPage, NextPageContext, NextComponentType } from 'next'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
+import { GET_NAMESPACE_QUERY } from '../screens/queries'
+import { GetNamespaceQuery, QueryGetNamespaceArgs } from '../graphql/schema'
 
-export const withLocale = <
-  C extends BaseContext = NextPageContext,
-  IP = {},
-  P = {}
->(
-  locale: Locale,
-) => (Component: NextComponentType<C, IP, P>): NextComponentType<C, IP> => {
+export const getLocaleFromPath = (path: string): Locale => {
+  const maybeLocale = path.split('/').find(Boolean)
+  return isLocale(maybeLocale) ? maybeLocale : defaultLanguage
+}
+
+interface NewComponentProps<T> {
+  pageProps: T
+  locale: Locale
+  translations: { [k: string]: string }
+}
+
+export const withLocale = <Props,>(locale?: Locale) => (
+  Component: NextPage,
+): NextComponentType => {
   const getInitialProps = Component.getInitialProps
   if (!getInitialProps) {
     return Component
   }
 
-  const NewComponent: NextComponentType<C, IP, P> = (props) => (
-    <Component {...props} />
+  const NewComponent: NextPage<NewComponentProps<Props>> = ({
+    pageProps,
+    locale,
+    translations,
+  }) => (
+    <I18n locale={locale} translations={translations}>
+      <Component {...pageProps} />
+    </I18n>
   )
 
-  NewComponent.getInitialProps = async (ctx) => {
-    const newContext = { ...ctx, locale } as any
+  NewComponent.getInitialProps = async (ctx: NextPageContext) => {
+    const newContext = {
+      ...ctx,
+      locale: locale ?? getLocaleFromPath(ctx.asPath),
+    } as any
     const [props, translations] = await Promise.all([
       getInitialProps(newContext),
       getGlobalStrings(newContext),
     ])
     return {
-      ...props,
+      pageProps: props,
       locale,
       translations,
     }
   }
+
   return NewComponent
 }
 
-const getGlobalStrings = ({
+const getGlobalStrings = async ({
   apolloClient,
   locale,
 }: {
@@ -46,7 +62,7 @@ const getGlobalStrings = ({
   locale: Locale
 }) => {
   return apolloClient
-    .query<Query, QueryGetNamespaceArgs>({
+    .query<GetNamespaceQuery, QueryGetNamespaceArgs>({
       query: GET_NAMESPACE_QUERY,
       variables: {
         input: {

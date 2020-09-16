@@ -1,34 +1,34 @@
-import React, { FC } from 'react'
-import { useQuery } from '@apollo/client'
-import { useParams, Link } from 'react-router-dom'
-import { GET_APPLICATIONS_BY_TYPE } from '@island.is/application/graphql'
-import { Button } from '@island.is/island-ui/core'
+import React, { FC, useEffect } from 'react'
+import { useMutation } from '@apollo/client'
+import { useParams, useHistory } from 'react-router-dom'
+import { CREATE_APPLICATION } from '@island.is/application/graphql'
 
 export const Applications: FC<{}> = () => {
   const { type } = useParams()
-  const { loading, error, data } = useQuery(GET_APPLICATIONS_BY_TYPE, {
-    variables: {
-      input: {
-        typeId: type,
-      },
+  const history = useHistory()
+
+  const [createApplication, { error }] = useMutation(CREATE_APPLICATION, {
+    onCompleted({ createApplication }) {
+      history.replace(`../application/${createApplication.id}`)
     },
   })
 
-  if (loading) return <p>Loading...</p>
-  if (error) return <p>Error! {error.message}</p>
+  useEffect(() => {
+    createApplication({
+      variables: {
+        input: {
+          applicant: '123456-1234',
+          state: 'draft',
+          attachments: {},
+          typeId: type,
+          assignee: '123456-1235',
+          externalId: 'some_id',
+          answers: {},
+        },
+      },
+    })
+  }, [createApplication, type])
 
-  return (
-    <>
-      <ul>
-        {data?.getApplicationsByType.map((application) => (
-          <li key={application.id}>
-            <Link to={`/application/${application.id}`}>{application.id}</Link>
-          </li>
-        ))}
-      </ul>
-      <Link to={`/application`}>
-        <Button icon="plus">Apply for a new one</Button>
-      </Link>
-    </>
-  )
+  if (error) return <p>Error! {error.message}</p>
+  return <p>Loading...</p>
 }

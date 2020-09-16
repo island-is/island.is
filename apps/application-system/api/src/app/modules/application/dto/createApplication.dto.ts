@@ -3,18 +3,16 @@ import {
   IsNotEmpty,
   IsObject,
   IsString,
-  IsArray,
   IsOptional,
 } from 'class-validator'
-import { ApplicationState } from '../application.model'
-import { FormType } from '@island.is/application/schema'
+import { ApplicationTypes } from '@island.is/application/template'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class CreateApplicationDto {
   @IsNotEmpty()
-  @IsEnum(FormType)
-  @ApiProperty({ enum: FormType })
-  readonly typeId: FormType
+  @IsEnum(ApplicationTypes)
+  @ApiProperty({ enum: ApplicationTypes })
+  readonly typeId: ApplicationTypes
 
   @IsNotEmpty()
   @IsString()
@@ -32,9 +30,9 @@ export class CreateApplicationDto {
   readonly externalId: string
 
   @IsNotEmpty()
-  @IsEnum(ApplicationState)
-  @ApiProperty({ enum: ApplicationState })
-  readonly state: ApplicationState
+  @IsString()
+  @ApiProperty()
+  readonly state: string
 
   @IsNotEmpty()
   @IsObject()
@@ -42,7 +40,7 @@ export class CreateApplicationDto {
   readonly answers: object
 
   @IsOptional()
-  @IsArray()
+  @IsObject()
   @ApiPropertyOptional()
-  readonly attachments: string[]
+  readonly attachments: object
 }

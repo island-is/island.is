@@ -2,7 +2,7 @@ import { style } from 'treat'
 import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
-  overflow: 'scroll',
+  overflow: 'auto',
 })
 export const table = style({
   textAlign: 'left',
@@ -21,4 +21,12 @@ export const td = style({
   paddingRight: theme.spacing[1],
   paddingTop: theme.spacing[2],
   paddingBottom: theme.spacing[2],
+})
+
+export const alignRight = style({
+  textAlign: 'right',
+})
+
+export const block = style({
+  display: 'block',
 })

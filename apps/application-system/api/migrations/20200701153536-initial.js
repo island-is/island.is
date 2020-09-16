@@ -31,26 +31,23 @@ module.exports = {
           type: Sequelize.STRING,
         },
         state: {
-          type: Sequelize.ENUM(
-            'DRAFT',
-            'BEING_PROCESSED',
-            'NEEDS_INFORMATION',
-            'PENDING',
-            'APPROVED',
-            'MANUAL_APPROVED',
-            'REJECTED',
-            'UNKNOWN',
-          ),
+          type: Sequelize.STRING,
           allowNull: false,
         },
         attachments: {
-          type: Sequelize.ARRAY(Sequelize.STRING),
+          type: Sequelize.JSONB,
+          defaultValue: {},
         },
-        ['type_id']: {
+        type_id: {
           type: Sequelize.STRING,
           allowNull: false,
         },
         answers: {
+          type: Sequelize.JSONB,
+          defaultValue: {},
+          allowNull: false,
+        },
+        external_data: {
           type: Sequelize.JSONB,
           defaultValue: {},
           allowNull: false,

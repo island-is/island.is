@@ -1,16 +1,10 @@
 import { style, styleMap } from 'treat'
-import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
-  borderRadius: 0,
-  border: 'none',
-  ...themeUtils.responsiveStyle({
-    sm: {
-      borderRadius: theme.border.radius.large,
-      borderWidth: 1,
-      borderStyle: 'solid',
-    },
-  }),
+  borderRadius: theme.border.radius.large,
+  borderWidth: 1,
+  borderStyle: 'solid',
 })
 
 export const variants = styleMap({
@@ -23,10 +17,6 @@ export const variants = styleMap({
   red: {
     borderColor: theme.color.red200,
   },
-})
-
-export const top = style({
-  borderRadius: `${theme.border.radius.large} ${theme.border.radius.large} 0 0`,
 })
 
 export const bottom = style({

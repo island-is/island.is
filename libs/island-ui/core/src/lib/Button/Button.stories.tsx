@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, ButtonSize, ButtonVariant } from './Button'
+import { Button, ButtonSize, ButtonVariant, ButtonProps } from './Button'
 import { Box, Inline } from '../..'
 import { IconTypes } from '../Icon/Icon'
 import { boolean, select } from '@storybook/addon-knobs'
@@ -44,7 +44,7 @@ const makeButton = (variant: ButtonVariant = 'normal', text = '') => {
   )
 }
 
-const makeMenuButton = (text = '', props) => {
+const makeMenuButton = (text = '', props: Partial<ButtonProps>) => {
   const iconLabel = 'Icon'
   const iconOptions = ['', 'cheveron', 'loading', 'external', 'arrowRight']
   const iconDefaultValue = 'cheveron'
@@ -69,7 +69,19 @@ const makeMenuButton = (text = '', props) => {
 }
 
 export const Normal = () => makeButton('normal', 'Normal button')
-export const Ghost = () => makeButton('ghost', 'Ghost button')
+export const Ghost = () => {
+  const ghostButtons = [
+    () => makeButton('ghost', 'Ghost button'),
+    () => makeButton('redGhost', 'Red ghost button'),
+  ]
+  return (
+    <Inline space={2}>
+      {ghostButtons.map((Cmp, index) => (
+        <Cmp key={index} />
+      ))}
+    </Inline>
+  )
+}
 export const Text = () => makeButton('text', 'Text button')
 export const Menu = () => makeButton('menu', 'Text button')
 export const MenuVariations = () => {

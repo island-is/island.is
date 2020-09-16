@@ -1,25 +1,70 @@
 import React, { ReactNode } from 'react'
-import { Box, ContentBlock, Columns, Column } from '@island.is/island-ui/core'
+import {
+  GridRow,
+  GridColumn,
+  GridContainer,
+  Box,
+  Stack,
+} from '@island.is/island-ui/core'
+import { ReactComponent as LoftbruLogo } from '../../assets/loftbru.svg'
+import { ReactComponent as SRNLogo } from '../../assets/srn.svg'
+import { ReactComponent as VEGLogo } from '../../assets/veg.svg'
 
 interface PropTypes {
-  left: ReactNode
-  right?: ReactNode
+  main: ReactNode
+  aside?: ReactNode
 }
 
-function Layout({ left, right }: PropTypes) {
+function Layout({ main, aside }: PropTypes) {
   return (
-    <Box paddingX="gutter">
-      <ContentBlock>
-        <Columns align="right" space="gutter" collapseBelow="lg">
-          <Column width="7/12">{left}</Column>
-          <Column width="4/12">
-            <Box paddingLeft={[0, 0, 0, 8, 15]} width="full">
-              {right}
+    <GridContainer>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '7/12', '8/12', '9/12']}>
+          {main}
+        </GridColumn>
+        <GridColumn span={['12/12', '12/12', '5/12', '4/12', '3/12']}>
+          {aside}
+          <Stack space={3}>
+            <a
+              href="https://loftbru.is"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              <Box
+                textAlign="center"
+                padding={3}
+                borderStyle="solid"
+                borderWidth="standard"
+                borderRadius="standard"
+                borderColor="dark100"
+              >
+                <LoftbruLogo title="Loftbrú" />
+              </Box>
+            </a>
+            <Box
+              textAlign="center"
+              padding={3}
+              borderStyle="solid"
+              borderWidth="standard"
+              borderRadius="standard"
+              borderColor="dark100"
+            >
+              <SRNLogo title="Samgöngu- og sveitarstjórnarráðuneyti" />
             </Box>
-          </Column>
-        </Columns>
-      </ContentBlock>
-    </Box>
+            <Box
+              textAlign="center"
+              padding={3}
+              borderStyle="solid"
+              borderWidth="standard"
+              borderRadius="standard"
+              borderColor="dark100"
+            >
+              <VEGLogo title="Vegagerðin" />
+            </Box>
+          </Stack>
+        </GridColumn>
+      </GridRow>
+    </GridContainer>
   )
 }
 

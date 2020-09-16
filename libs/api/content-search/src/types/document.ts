@@ -8,6 +8,7 @@ export interface Document {
   category: string
   category_slug: string
   category_description: string
+  subgroup: string
   group: string
   group_slug: string
   group_description: string
@@ -19,6 +20,7 @@ export interface Document {
   content_type: string
   content_id: string
   content_source: string
+  term_pool: string[]
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   content_blob: any
   nextSyncToken?: string

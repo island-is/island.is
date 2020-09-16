@@ -6,7 +6,7 @@ export class Discount implements TDiscount {
   constructor(discountCode: string, nationalId: string, ttl: number) {
     this.discountCode = discountCode
     this.nationalId = nationalId
-    this.expires = new Date(Date.now() + ttl * 1000)
+    this.expiresIn = ttl
   }
 
   @ApiProperty()
@@ -16,5 +16,5 @@ export class Discount implements TDiscount {
   nationalId: string
 
   @ApiProperty()
-  expires: Date
+  expiresIn: number
 }

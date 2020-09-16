@@ -1,11 +1,19 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Link } from './link.model'
+
+import { ILinkList } from '../generated/contentfulTypes'
+
+import { Link, mapLink } from './link.model'
 
 @ObjectType()
 export class LinkList {
-  @Field({ nullable: true })
+  @Field()
   title: string
 
   @Field(() => [Link])
-  links: Array<typeof Link>
+  links: Array<Link>
 }
+
+export const mapLinkList = ({ fields }: ILinkList): LinkList => ({
+  title: fields.title ?? '',
+  links: fields.links.map(mapLink),
+})

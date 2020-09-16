@@ -11,11 +11,12 @@ interface AccordionContextValue {
 
 export const AccordionContext = createContext<AccordionContextValue>({
   toggledId: '',
-  setToggledId: null,
+  setToggledId: () => null,
 })
 
 export interface AccordionProps {
   children: ReactNodeNoStrings
+  dividers?: boolean
   dividerOnTop?: boolean
   dividerOnBottom?: boolean
   singleExpand?: boolean
@@ -23,6 +24,7 @@ export interface AccordionProps {
 
 export const Accordion = ({
   children,
+  dividers = true,
   dividerOnTop = true,
   dividerOnBottom = true,
   singleExpand = true,
@@ -36,7 +38,7 @@ export const Accordion = ({
         setToggledId,
       }}
     >
-      <Stack space={2} dividers>
+      <Stack space={2} dividers={dividers}>
         {children}
       </Stack>
     </AccordionContext.Provider>

@@ -1,13 +1,17 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { IsEnum, IsInt, IsOptional, IsString } from 'class-validator'
+import { IsArray, IsEnum, IsInt, IsOptional, IsString } from 'class-validator'
 import { ContentLanguage } from '../enums/contentLanguage.enum'
 
 @InputType()
 export class SearcherInput {
-  @Field({ nullable: true })
+  @Field(() => String)
   @IsString()
+  queryString: string
+
+  @Field(() => [String], { nullable: true })
+  @IsArray()
   @IsOptional()
-  queryString?: string
+  types?: string[]
 
   @Field(() => ContentLanguage, { nullable: true })
   @IsEnum(ContentLanguage)

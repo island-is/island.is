@@ -1,9 +1,19 @@
-export const environment = {
-  production: false,
-  contentful: {
-    space: process.env.CONTENTFUL_SPACE || '8k0h54kbe6bj',
-    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN || 'test',
-    environment: process.env.CONTENTFUL_ENVIRONMENT || 'master',
-    host: process.env.CONTENTFUL_HOST || 'preview.contentful.com',
-  },
+export interface Environment {
+  elasticNode: string
+  esDomain: string
+  s3Bucket: string
+  s3Folder: string
+  awsRegion: string
+  dictRepo: string
+  locales: string[]
+}
+
+export const environment: Environment = {
+  elasticNode: process.env.ELASTIC_NODE || '',
+  s3Bucket: process.env.S3_BUCKET,
+  awsRegion: process.env.AWS_REGION,
+  esDomain: 'search',
+  s3Folder: '',
+  dictRepo: 'https://api.github.com/repos/island-is/elasticsearch-dictionaries',
+  locales: ['is', 'en'],
 }

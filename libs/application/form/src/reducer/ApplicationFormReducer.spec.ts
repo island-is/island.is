@@ -1,16 +1,18 @@
 import {
+  Application,
   buildForm,
   buildRepeater,
   buildSection,
   buildTextField,
+  ExternalData,
   Form,
-  FormType,
-} from '@island.is/application/schema'
+  ApplicationTypes,
+} from '@island.is/application/template'
 import * as z from 'zod'
 import { ApplicationReducer, initializeReducer } from './ApplicationFormReducer'
 import { ActionTypes, ApplicationUIState } from './ReducerTypes'
 
-const FamilyAndPetsSchema = z.object({
+const dataSchema = z.object({
   person: z
     .array(
       z.object({
@@ -40,12 +42,11 @@ const FamilyAndPetsSchema = z.object({
   familyName: z.string().nonempty(),
   house: z.string().optional(),
 })
-type FamilyAndPetsSchemaFormValues = z.infer<typeof FamilyAndPetsSchema>
-const FamilyAndPets: Form = buildForm({
-  id: FormType.FAMILY_AND_PETS,
+type SchemaFormValues = z.infer<typeof dataSchema>
+const form: Form = buildForm({
+  id: ApplicationTypes.EXAMPLE,
   ownerId: 'Aranja',
   name: 'Family and pets',
-  schema: FamilyAndPetsSchema,
   children: [
     buildSection({
       id: 'family',
@@ -71,7 +72,7 @@ const FamilyAndPets: Form = buildForm({
         buildTextField({
           id: 'familyName',
           name: 'What is the family name?',
-          condition: (formValue: FamilyAndPetsSchemaFormValues) => {
+          condition: (formValue: SchemaFormValues) => {
             return formValue.person?.length
               ? formValue.person[0].name !== 'bad name'
               : true
@@ -94,16 +95,30 @@ const FamilyAndPets: Form = buildForm({
   ],
 })
 
+const application: Application = {
+  id: '12315151515',
+  typeId: ApplicationTypes.EXAMPLE,
+  attachments: {},
+  externalData: {},
+  answers: {},
+  applicant: '123123',
+  externalId: '123123123',
+  state: 'draft',
+  modified: null,
+  created: null,
+}
+
 describe('ApplicationFormReducer', () => {
   const initialState: ApplicationUIState = {
-    form: FamilyAndPets,
-    screens: [],
+    application,
     activeScreen: 0,
-    progress: 0,
-    formValue: {},
-    formLeaves: [],
-    activeSubSection: -1,
     activeSection: 0,
+    activeSubSection: -1,
+    dataSchema,
+    form,
+    screens: [],
+    progress: 0,
+    formLeaves: [],
     sections: [],
   }
   let initializedState
@@ -112,36 +127,42 @@ describe('ApplicationFormReducer', () => {
   })
   describe('initialize reducer', () => {
     it('should convert the form into valid leaves, screens, and sections', () => {
-      expect(initializedState.form).toBe(FamilyAndPets)
+      expect(initializedState.form).toBe(form)
       expect(initializedState.screens.length).toBe(4)
       expect(initializedState.screens[0].isNavigable).toBe(true)
       expect(initializedState.screens[1].isNavigable).toBe(true)
       expect(initializedState.sections.length).toBe(2)
       expect(initializedState.activeScreen).toBe(0)
       expect(initializedState.activeSection).toBe(0)
-      expect(initializedState.formValue).toEqual({})
+      expect(initializedState.application).toEqual(application)
     })
     it('should apply conditions to show or hide some screens', () => {
-      const formValue = {
+      const answers = {
         person: [{ name: 'bad name' }],
       }
       const stateWhichViolatesOneCondition = {
         ...initialState,
-        formValue,
+        application: {
+          ...application,
+          answers,
+        },
       }
       const initializedState = initializeReducer(stateWhichViolatesOneCondition)
       expect(initializedState.screens[0].isNavigable).toBe(true)
       expect(initializedState.screens[1].isNavigable).toBe(false)
-      expect(initializedState.formValue).toEqual(formValue)
+      expect(initializedState.application.answers).toEqual(answers)
     })
     it('should go to the screen where the last answer belongs to the screen before', () => {
-      const formValue = {
+      const answers = {
         person: [{ age: '19', name: 'Ingolfur' }],
         familyName: 'Arnarson',
       }
       const state = {
         ...initialState,
-        formValue,
+        application: {
+          ...application,
+          answers,
+        },
       }
       const initializedState = initializeReducer(state)
       expect(initializedState.activeScreen).toBe(2)
@@ -240,7 +261,7 @@ describe('ApplicationFormReducer', () => {
         type,
         payload: { familyName: 'Bezos' },
       })
-      expect(updatedState.formValue.familyName).toBe('Bezos')
+      expect(updatedState.application.answers.familyName).toBe('Bezos')
 
       const evenNewerState = ApplicationReducer(updatedState, {
         type,
@@ -249,8 +270,8 @@ describe('ApplicationFormReducer', () => {
           house: 'A big mansion',
         },
       })
-      expect(evenNewerState.formValue.familyName).toBe('Gates')
-      expect(evenNewerState.formValue.house).toBe('A big mansion')
+      expect(evenNewerState.application.answers.familyName).toBe('Gates')
+      expect(evenNewerState.application.answers.house).toBe('A big mansion')
     })
     it('should upon answering apply conditions to show or hide some screens', () => {
       const updatedState = ApplicationReducer(initializedState, {
@@ -265,15 +286,18 @@ describe('ApplicationFormReducer', () => {
     })
     it('should use the newest value of an array and not merge the previous value', () => {
       const initialState = {
+        dataSchema: z.object({ text: z.string() }),
         form: buildForm({
-          schema: z.object({ text: z.string() }),
-          id: FormType.FAMILY_AND_PETS,
+          id: ApplicationTypes.EXAMPLE,
           name: 'Test',
           ownerId: '222',
           children: [],
         }),
+        application: {
+          ...application,
+          answers: { historyCars: ['VW', 'Tesla'] },
+        },
         formLeaves: [],
-        formValue: { historyCars: ['VW', 'Tesla'] },
         activeSection: 0,
         activeSubSection: 0,
         activeScreen: 0,
@@ -287,7 +311,9 @@ describe('ApplicationFormReducer', () => {
         payload: { historyCars: ['Audi'] },
       }
       const updatedState = ApplicationReducer(initialState, updateAction)
-      expect(updatedState.formValue).toEqual({ historyCars: ['Audi'] })
+      expect(updatedState.application.answers).toEqual({
+        historyCars: ['Audi'],
+      })
     })
   })
   describe('expand repeater', () => {
@@ -337,6 +363,45 @@ describe('ApplicationFormReducer', () => {
         action,
       )
       expect(updatedState.activeScreen).toBe(3)
+    })
+  })
+  describe('add external data', () => {
+    const action = (payload) => ({
+      type: ActionTypes.ADD_EXTERNAL_DATA,
+      payload,
+    })
+    it('should be able to set external data', () => {
+      const newExternalData = { a: 1, b: 'asdf', c: true }
+      const updatedState = ApplicationReducer(
+        initialState,
+        action(newExternalData),
+      )
+      expect(updatedState.application.externalData).toEqual(newExternalData)
+    })
+    it('should only partially overwrite external data when called repeatedly', () => {
+      const externalData: ExternalData = {
+        a: { status: 'success', data: 1, date: new Date() },
+        b: { status: 'failure', reason: 'fail', date: new Date() },
+      }
+      const newExternalData: ExternalData = {
+        b: { status: 'success', data: 'nice', date: new Date() },
+        c: { status: 'failure', reason: 'fail', date: new Date() },
+      }
+      const updatedState = ApplicationReducer(
+        {
+          ...initialState,
+          application: {
+            ...application,
+            externalData,
+          },
+        },
+        action(newExternalData),
+      )
+      expect(updatedState.application.externalData).toEqual({
+        a: expect.objectContaining({ status: 'success', data: 1 }),
+        b: expect.objectContaining({ status: 'success', data: 'nice' }),
+        c: expect.objectContaining({ status: 'failure', reason: 'fail' }),
+      })
     })
   })
 })

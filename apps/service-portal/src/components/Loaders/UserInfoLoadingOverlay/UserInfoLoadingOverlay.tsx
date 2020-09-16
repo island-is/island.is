@@ -12,6 +12,12 @@ const UserInfoLoadingOverlay: FC<{}> = () => {
         <Typography variant="h2">Skipti um notanda</Typography>
       </div>
     )
+  else if (userInfoState === 'logging-out')
+    return (
+      <div className={styles.overlay}>
+        <Typography variant="h2">Skrái notanda út</Typography>
+      </div>
+    )
   return null
 }
 

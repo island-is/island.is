@@ -1,0 +1,68 @@
+{
+  "order": 0,
+  "version": 2,
+  "index_patterns": ["island-en-v*"],
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "termEnglish": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": ["lowercase"]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "title": {
+        "type": "text",
+        "fields": {
+          "stemmed": {
+            "type": "text"
+          }
+        }
+      },
+      "content": {
+        "type": "text",
+        "fields": {
+          "stemmed": {
+            "type": "text"
+          }
+        }
+      },
+      "type": {
+        "type": "keyword"
+      },
+      "tags": {
+        "type": "nested",
+        "properties": {
+          "key": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "text"
+          },
+          "type": {
+            "type": "keyword"
+          }
+        }
+      },
+      "termPool": {
+        "type": "completion",
+        "analyzer": "termEnglish"
+      },
+      "response": {
+        "type": "text",
+        "index": false,
+        "store": true
+      },
+      "dateCreated": {
+        "type": "date"
+      },
+      "dateUpdated": {
+        "type": "date"
+      }
+    }
+  }
+}
