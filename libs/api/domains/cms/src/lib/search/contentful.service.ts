@@ -173,6 +173,15 @@ export class ContentfulService {
       deletedEntries,
     } = await this.getSyncData(typeOfSync)
 
+    // TODO: Remove this
+    const foundTypes = []
+    entries.forEach((entry) => {
+      if (!foundTypes.includes(entry.sys.contentType.sys.id)) {
+        foundTypes.push(entry.sys.contentType.sys.id)
+      }
+    })
+    logger.info('Found types', { foundTypes })
+
     logger.info('Sync found entries', {
       entries: entries.length,
       deletedEntries: deletedEntries.length,

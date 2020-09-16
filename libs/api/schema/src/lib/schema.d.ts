@@ -327,54 +327,6 @@ export type Article = {
   relatedArticles?: Maybe<Array<Article>>
 }
 
-export type LifeEventPage = {
-  __typename?: 'LifeEventPage'
-  id: Scalars['ID']
-  title: Scalars['String']
-  slug: Scalars['String']
-  intro: Scalars['String']
-  image: Image
-  thumbnail?: Maybe<Image>
-  content: Array<Slice>
-}
-
-export type SearchResult = {
-  __typename?: 'SearchResult'
-  total: Scalars['Int']
-  items: Array<Items>
-}
-
-export type Items = Article | LifeEventPage
-
-export type ContentItem = {
-  __typename?: 'ContentItem'
-  id: Scalars['ID']
-  title?: Maybe<Scalars['String']>
-  content?: Maybe<Scalars['String']>
-  tag?: Maybe<Array<Scalars['String']>>
-  category?: Maybe<Scalars['String']>
-  categorySlug?: Maybe<Scalars['String']>
-  categoryDescription?: Maybe<Scalars['String']>
-  group?: Maybe<Scalars['String']>
-  subgroup?: Maybe<Scalars['String']>
-  groupSlug?: Maybe<Scalars['String']>
-  groupDescription?: Maybe<Scalars['String']>
-  contentBlob?: Maybe<Scalars['String']>
-  contentId?: Maybe<Scalars['String']>
-  contentType?: Maybe<Scalars['String']>
-  date?: Maybe<Scalars['String']>
-  image?: Maybe<Scalars['String']>
-  imageText?: Maybe<Scalars['String']>
-  lang?: Maybe<Scalars['String']>
-  slug?: Maybe<Scalars['String']>
-}
-
-export type WebSearchAutocomplete = {
-  __typename?: 'WebSearchAutocomplete'
-  total: Scalars['Int']
-  completions: Array<Scalars['String']>
-}
-
 export type AdgerdirTag = {
   __typename?: 'AdgerdirTag'
   id: Scalars['ID']
@@ -538,6 +490,17 @@ export type Menu = {
   links: Array<Link>
 }
 
+export type LifeEventPage = {
+  __typename?: 'LifeEventPage'
+  id: Scalars['ID']
+  title: Scalars['String']
+  slug: Scalars['String']
+  intro: Scalars['String']
+  image: Image
+  thumbnail?: Maybe<Image>
+  content: Array<Slice>
+}
+
 export type AdgerdirTags = {
   __typename?: 'AdgerdirTags'
   items: Array<AdgerdirTag>
@@ -552,6 +515,43 @@ export type PaginatedAdgerdirNews = {
 export type OrganizationTags = {
   __typename?: 'OrganizationTags'
   items: Array<OrganizationTag>
+}
+
+export type SearchResult = {
+  __typename?: 'SearchResult'
+  total: Scalars['Int']
+  items: Array<Items>
+}
+
+export type Items = Article | LifeEventPage
+
+export type ContentItem = {
+  __typename?: 'ContentItem'
+  id: Scalars['ID']
+  title?: Maybe<Scalars['String']>
+  content?: Maybe<Scalars['String']>
+  tag?: Maybe<Array<Scalars['String']>>
+  category?: Maybe<Scalars['String']>
+  categorySlug?: Maybe<Scalars['String']>
+  categoryDescription?: Maybe<Scalars['String']>
+  group?: Maybe<Scalars['String']>
+  subgroup?: Maybe<Scalars['String']>
+  groupSlug?: Maybe<Scalars['String']>
+  groupDescription?: Maybe<Scalars['String']>
+  contentBlob?: Maybe<Scalars['String']>
+  contentId?: Maybe<Scalars['String']>
+  contentType?: Maybe<Scalars['String']>
+  date?: Maybe<Scalars['String']>
+  image?: Maybe<Scalars['String']>
+  imageText?: Maybe<Scalars['String']>
+  lang?: Maybe<Scalars['String']>
+  slug?: Maybe<Scalars['String']>
+}
+
+export type WebSearchAutocomplete = {
+  __typename?: 'WebSearchAutocomplete'
+  total: Scalars['Int']
+  completions: Array<Scalars['String']>
 }
 
 export type Application = {
@@ -608,9 +608,6 @@ export type DocumentCategory = {
 export type Query = {
   __typename?: 'Query'
   helloWorld: HelloWorld
-  searchResults: SearchResult
-  singleItem?: Maybe<ContentItem>
-  webSearchAutocomplete: WebSearchAutocomplete
   getArticle?: Maybe<Article>
   getNews?: Maybe<News>
   getNewsList: PaginatedNews
@@ -634,6 +631,9 @@ export type Query = {
   getLifeEvents: Array<LifeEventPage>
   getArticleCategories: Array<ArticleCategory>
   getArticles: Array<Article>
+  searchResults: SearchResult
+  singleItem?: Maybe<ContentItem>
+  webSearchAutocomplete: WebSearchAutocomplete
   getApplication?: Maybe<Application>
   getApplicationsByType?: Maybe<Array<Application>>
   getDocument?: Maybe<DocumentDetails>
@@ -643,18 +643,6 @@ export type Query = {
 
 export type QueryHelloWorldArgs = {
   input: HelloWorldInput
-}
-
-export type QuerySearchResultsArgs = {
-  query: SearcherInput
-}
-
-export type QuerySingleItemArgs = {
-  input: ItemInput
-}
-
-export type QueryWebSearchAutocompleteArgs = {
-  input: WebSearchAutocompleteInput
 }
 
 export type QueryGetArticleArgs = {
@@ -749,6 +737,18 @@ export type QueryGetArticlesArgs = {
   input: GetArticlesInput
 }
 
+export type QuerySearchResultsArgs = {
+  query: SearcherInput
+}
+
+export type QuerySingleItemArgs = {
+  input: ItemInput
+}
+
+export type QueryWebSearchAutocompleteArgs = {
+  input: WebSearchAutocompleteInput
+}
+
 export type QueryGetApplicationArgs = {
   input: GetApplicationInput
 }
@@ -767,37 +767,6 @@ export type QueryListDocumentsArgs = {
 
 export type HelloWorldInput = {
   name?: Maybe<Scalars['String']>
-}
-
-export type SearcherInput = {
-  queryString: Scalars['String']
-  types?: Maybe<Array<Scalars['String']>>
-  language?: Maybe<ContentLanguage>
-  size?: Maybe<Scalars['Int']>
-  page?: Maybe<Scalars['Int']>
-}
-
-export enum ContentLanguage {
-  is = 'is',
-  en = 'en',
-}
-
-export type ItemInput = {
-  id?: Maybe<Scalars['ID']>
-  slug?: Maybe<Scalars['String']>
-  type?: Maybe<ItemType>
-  language?: Maybe<ContentLanguage>
-}
-
-export enum ItemType {
-  article = 'article',
-  category = 'category',
-}
-
-export type WebSearchAutocompleteInput = {
-  singleTerm: Scalars['String']
-  language?: Maybe<ContentLanguage>
-  size?: Maybe<Scalars['Int']>
 }
 
 export type GetArticleInput = {
@@ -915,6 +884,37 @@ export type GetArticleCategoriesInput = {
 export type GetArticlesInput = {
   lang: Scalars['String']
   category: Scalars['String']
+  size?: Maybe<Scalars['Int']>
+}
+
+export type SearcherInput = {
+  queryString: Scalars['String']
+  types?: Maybe<Array<Scalars['String']>>
+  language?: Maybe<ContentLanguage>
+  size?: Maybe<Scalars['Int']>
+  page?: Maybe<Scalars['Int']>
+}
+
+export enum ContentLanguage {
+  is = 'is',
+  en = 'en',
+}
+
+export type ItemInput = {
+  id?: Maybe<Scalars['ID']>
+  slug?: Maybe<Scalars['String']>
+  type?: Maybe<ItemType>
+  language?: Maybe<ContentLanguage>
+}
+
+export enum ItemType {
+  article = 'article',
+  category = 'category',
+}
+
+export type WebSearchAutocompleteInput = {
+  singleTerm: Scalars['String']
+  language?: Maybe<ContentLanguage>
   size?: Maybe<Scalars['Int']>
 }
 
@@ -1217,15 +1217,6 @@ export type ResolversTypes = {
   Article: ResolverTypeWrapper<
     Omit<Article, 'body'> & { body: Array<ResolversTypes['Slice']> }
   >
-  LifeEventPage: ResolverTypeWrapper<
-    Omit<LifeEventPage, 'content'> & { content: Array<ResolversTypes['Slice']> }
-  >
-  SearchResult: ResolverTypeWrapper<
-    Omit<SearchResult, 'items'> & { items: Array<ResolversTypes['Items']> }
-  >
-  Items: ResolversTypes['Article'] | ResolversTypes['LifeEventPage']
-  ContentItem: ResolverTypeWrapper<ContentItem>
-  WebSearchAutocomplete: ResolverTypeWrapper<WebSearchAutocomplete>
   AdgerdirTag: ResolverTypeWrapper<AdgerdirTag>
   AdgerdirPage: ResolverTypeWrapper<AdgerdirPage>
   Float: ResolverTypeWrapper<Scalars['Float']>
@@ -1258,9 +1249,18 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   GenericPage: ResolverTypeWrapper<GenericPage>
   Menu: ResolverTypeWrapper<Menu>
+  LifeEventPage: ResolverTypeWrapper<
+    Omit<LifeEventPage, 'content'> & { content: Array<ResolversTypes['Slice']> }
+  >
   AdgerdirTags: ResolverTypeWrapper<AdgerdirTags>
   PaginatedAdgerdirNews: ResolverTypeWrapper<PaginatedAdgerdirNews>
   OrganizationTags: ResolverTypeWrapper<OrganizationTags>
+  SearchResult: ResolverTypeWrapper<
+    Omit<SearchResult, 'items'> & { items: Array<ResolversTypes['Items']> }
+  >
+  Items: ResolversTypes['Article'] | ResolversTypes['LifeEventPage']
+  ContentItem: ResolverTypeWrapper<ContentItem>
+  WebSearchAutocomplete: ResolverTypeWrapper<WebSearchAutocomplete>
   Application: ResolverTypeWrapper<Application>
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>
   ApplicationTypeIdEnum: ApplicationTypeIdEnum
@@ -1270,11 +1270,6 @@ export type ResolversTypes = {
   DocumentCategory: ResolverTypeWrapper<DocumentCategory>
   Query: ResolverTypeWrapper<{}>
   HelloWorldInput: HelloWorldInput
-  SearcherInput: SearcherInput
-  ContentLanguage: ContentLanguage
-  ItemInput: ItemInput
-  ItemType: ItemType
-  WebSearchAutocompleteInput: WebSearchAutocompleteInput
   GetArticleInput: GetArticleInput
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
@@ -1298,6 +1293,11 @@ export type ResolversTypes = {
   GetLifeEventsInput: GetLifeEventsInput
   GetArticleCategoriesInput: GetArticleCategoriesInput
   GetArticlesInput: GetArticlesInput
+  SearcherInput: SearcherInput
+  ContentLanguage: ContentLanguage
+  ItemInput: ItemInput
+  ItemType: ItemType
+  WebSearchAutocompleteInput: WebSearchAutocompleteInput
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
@@ -1380,15 +1380,6 @@ export type ResolversParentTypes = {
   Article: Omit<Article, 'body'> & {
     body: Array<ResolversParentTypes['Slice']>
   }
-  LifeEventPage: Omit<LifeEventPage, 'content'> & {
-    content: Array<ResolversParentTypes['Slice']>
-  }
-  SearchResult: Omit<SearchResult, 'items'> & {
-    items: Array<ResolversParentTypes['Items']>
-  }
-  Items: ResolversParentTypes['Article'] | ResolversParentTypes['LifeEventPage']
-  ContentItem: ContentItem
-  WebSearchAutocomplete: WebSearchAutocomplete
   AdgerdirTag: AdgerdirTag
   AdgerdirPage: AdgerdirPage
   Float: Scalars['Float']
@@ -1419,9 +1410,18 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']
   GenericPage: GenericPage
   Menu: Menu
+  LifeEventPage: Omit<LifeEventPage, 'content'> & {
+    content: Array<ResolversParentTypes['Slice']>
+  }
   AdgerdirTags: AdgerdirTags
   PaginatedAdgerdirNews: PaginatedAdgerdirNews
   OrganizationTags: OrganizationTags
+  SearchResult: Omit<SearchResult, 'items'> & {
+    items: Array<ResolversParentTypes['Items']>
+  }
+  Items: ResolversParentTypes['Article'] | ResolversParentTypes['LifeEventPage']
+  ContentItem: ContentItem
+  WebSearchAutocomplete: WebSearchAutocomplete
   Application: Application
   DateTime: Scalars['DateTime']
   PresignedPost: PresignedPost
@@ -1430,9 +1430,6 @@ export type ResolversParentTypes = {
   DocumentCategory: DocumentCategory
   Query: {}
   HelloWorldInput: HelloWorldInput
-  SearcherInput: SearcherInput
-  ItemInput: ItemInput
-  WebSearchAutocompleteInput: WebSearchAutocompleteInput
   GetArticleInput: GetArticleInput
   GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
@@ -1456,6 +1453,9 @@ export type ResolversParentTypes = {
   GetLifeEventsInput: GetLifeEventsInput
   GetArticleCategoriesInput: GetArticleCategoriesInput
   GetArticlesInput: GetArticlesInput
+  SearcherInput: SearcherInput
+  ItemInput: ItemInput
+  WebSearchAutocompleteInput: WebSearchAutocompleteInput
   GetApplicationInput: GetApplicationInput
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
@@ -1970,103 +1970,6 @@ export type ArticleResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
-export type LifeEventPageResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['LifeEventPage'] = ResolversParentTypes['LifeEventPage']
-> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  image?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
-  thumbnail?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
-  content?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type SearchResultResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['SearchResult'] = ResolversParentTypes['SearchResult']
-> = {
-  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
-  items?: Resolver<Array<ResolversTypes['Items']>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type ItemsResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['Items'] = ResolversParentTypes['Items']
-> = {
-  __resolveType: TypeResolveFn<
-    'Article' | 'LifeEventPage',
-    ParentType,
-    ContextType
-  >
-}
-
-export type ContentItemResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['ContentItem'] = ResolversParentTypes['ContentItem']
-> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  tag?: Resolver<
-    Maybe<Array<ResolversTypes['String']>>,
-    ParentType,
-    ContextType
-  >
-  category?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  categorySlug?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
-  categoryDescription?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
-  group?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  subgroup?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  groupSlug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  groupDescription?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
-  contentBlob?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
-  contentId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  contentType?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
-  date?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  imageText?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  lang?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type WebSearchAutocompleteResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['WebSearchAutocomplete'] = ResolversParentTypes['WebSearchAutocomplete']
-> = {
-  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
-  completions?: Resolver<
-    Array<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
 export type AdgerdirTagResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AdgerdirTag'] = ResolversParentTypes['AdgerdirTag']
@@ -2364,6 +2267,20 @@ export type MenuResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type LifeEventPageResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['LifeEventPage'] = ResolversParentTypes['LifeEventPage']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  image?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
+  thumbnail?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
+  content?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type AdgerdirTagsResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['AdgerdirTags'] = ResolversParentTypes['AdgerdirTags']
@@ -2395,6 +2312,89 @@ export type OrganizationTagsResolvers<
 > = {
   items?: Resolver<
     Array<ResolversTypes['OrganizationTag']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type SearchResultResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['SearchResult'] = ResolversParentTypes['SearchResult']
+> = {
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  items?: Resolver<Array<ResolversTypes['Items']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type ItemsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Items'] = ResolversParentTypes['Items']
+> = {
+  __resolveType: TypeResolveFn<
+    'Article' | 'LifeEventPage',
+    ParentType,
+    ContextType
+  >
+}
+
+export type ContentItemResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['ContentItem'] = ResolversParentTypes['ContentItem']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  tag?: Resolver<
+    Maybe<Array<ResolversTypes['String']>>,
+    ParentType,
+    ContextType
+  >
+  category?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  categorySlug?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  categoryDescription?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  group?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  subgroup?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  groupSlug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  groupDescription?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  contentBlob?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  contentId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  contentType?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  date?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  imageText?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  lang?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  slug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type WebSearchAutocompleteResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['WebSearchAutocomplete'] = ResolversParentTypes['WebSearchAutocomplete']
+> = {
+  total?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
+  completions?: Resolver<
+    Array<ResolversTypes['String']>,
     ParentType,
     ContextType
   >
@@ -2483,24 +2483,6 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryHelloWorldArgs, 'input'>
-  >
-  searchResults?: Resolver<
-    ResolversTypes['SearchResult'],
-    ParentType,
-    ContextType,
-    RequireFields<QuerySearchResultsArgs, 'query'>
-  >
-  singleItem?: Resolver<
-    Maybe<ResolversTypes['ContentItem']>,
-    ParentType,
-    ContextType,
-    RequireFields<QuerySingleItemArgs, 'input'>
-  >
-  webSearchAutocomplete?: Resolver<
-    ResolversTypes['WebSearchAutocomplete'],
-    ParentType,
-    ContextType,
-    RequireFields<QueryWebSearchAutocompleteArgs, 'input'>
   >
   getArticle?: Resolver<
     Maybe<ResolversTypes['Article']>,
@@ -2640,6 +2622,24 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetArticlesArgs, 'input'>
   >
+  searchResults?: Resolver<
+    ResolversTypes['SearchResult'],
+    ParentType,
+    ContextType,
+    RequireFields<QuerySearchResultsArgs, 'query'>
+  >
+  singleItem?: Resolver<
+    Maybe<ResolversTypes['ContentItem']>,
+    ParentType,
+    ContextType,
+    RequireFields<QuerySingleItemArgs, 'input'>
+  >
+  webSearchAutocomplete?: Resolver<
+    ResolversTypes['WebSearchAutocomplete'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryWebSearchAutocompleteArgs, 'input'>
+  >
   getApplication?: Resolver<
     Maybe<ResolversTypes['Application']>,
     ParentType,
@@ -2757,11 +2757,6 @@ export type Resolvers<ContextType = Context> = {
   EmbeddedVideo?: EmbeddedVideoResolvers<ContextType>
   SectionWithImage?: SectionWithImageResolvers<ContextType>
   Article?: ArticleResolvers<ContextType>
-  LifeEventPage?: LifeEventPageResolvers<ContextType>
-  SearchResult?: SearchResultResolvers<ContextType>
-  Items?: ItemsResolvers<ContextType>
-  ContentItem?: ContentItemResolvers<ContextType>
-  WebSearchAutocomplete?: WebSearchAutocompleteResolvers<ContextType>
   AdgerdirTag?: AdgerdirTagResolvers<ContextType>
   AdgerdirPage?: AdgerdirPageResolvers<ContextType>
   Organizations?: OrganizationsResolvers<ContextType>
@@ -2782,9 +2777,14 @@ export type Resolvers<ContextType = Context> = {
   AlertBanner?: AlertBannerResolvers<ContextType>
   GenericPage?: GenericPageResolvers<ContextType>
   Menu?: MenuResolvers<ContextType>
+  LifeEventPage?: LifeEventPageResolvers<ContextType>
   AdgerdirTags?: AdgerdirTagsResolvers<ContextType>
   PaginatedAdgerdirNews?: PaginatedAdgerdirNewsResolvers<ContextType>
   OrganizationTags?: OrganizationTagsResolvers<ContextType>
+  SearchResult?: SearchResultResolvers<ContextType>
+  Items?: ItemsResolvers<ContextType>
+  ContentItem?: ContentItemResolvers<ContextType>
+  WebSearchAutocomplete?: WebSearchAutocompleteResolvers<ContextType>
   Application?: ApplicationResolvers<ContextType>
   DateTime?: GraphQLScalarType
   PresignedPost?: PresignedPostResolvers<ContextType>
@@ -2883,18 +2883,6 @@ const result: IntrospectionResultData = {
       },
       {
         kind: 'UNION',
-        name: 'Items',
-        possibleTypes: [
-          {
-            name: 'Article',
-          },
-          {
-            name: 'LifeEventPage',
-          },
-        ],
-      },
-      {
-        kind: 'UNION',
         name: 'AdgerdirSlice',
         possibleTypes: [
           {
@@ -2902,6 +2890,18 @@ const result: IntrospectionResultData = {
           },
           {
             name: 'AdgerdirFeaturedNewsSlice',
+          },
+        ],
+      },
+      {
+        kind: 'UNION',
+        name: 'Items',
+        possibleTypes: [
+          {
+            name: 'Article',
+          },
+          {
+            name: 'LifeEventPage',
           },
         ],
       },

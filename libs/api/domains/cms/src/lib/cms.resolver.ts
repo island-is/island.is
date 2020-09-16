@@ -75,8 +75,9 @@ import { environment } from './environments'
 import { OrganizationTags } from './models/organizationTags.model'
 import { ArticleCategory } from './models/articleCategory.model'
 import { GetArticleCategoriesInput } from './dto/getArticleCategories.input'
-import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
+import { SearchIndexes } from '@island.is/api/content-search'
 import { GetArticlesInput } from './dto/getArticles.input'
+import { CmsService } from './cms.service'
 
 const { cacheTime } = environment
 
@@ -85,7 +86,7 @@ const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
 @Resolver()
 @Directive(cacheControlDirective())
 export class CmsResolver {
-  constructor(private readonly elasticService: ElasticService) {}
+  constructor(private readonly cmsService: CmsService) {}
   @Directive(cacheControlDirective())
   @Query(() => Article, { nullable: true })
   getArticle(@Args('input') input: GetArticleInput): Promise<Article | null> {
@@ -249,30 +250,14 @@ export class CmsResolver {
   async getArticleCategories(
     @Args('input') input: GetArticleCategoriesInput,
   ): Promise<ArticleCategory[]> {
-    // TODO: Move this to a deticated service?
-    const categoryResponse = await this.elasticService.getDocumentsByTypes(
-      SearchIndexes[input.lang],
-      { types: ['webArticleCategory'], size: input.size ?? 100 },
-    )
-    return categoryResponse.hits.hits.map<ArticleCategory>((response) =>
-      JSON.parse(response._source.response),
-    )
+    return this.cmsService.getArticleCategories(SearchIndexes[input.lang], input)
   }
 
   @Query(() => [Article])
   async getArticles(
-    @Args('input') input: GetArticlesInput,
+    @Args('input') {lang, ...input}: GetArticlesInput,
   ): Promise<Article[]> {
-    const articlesResponse = await this.elasticService.getDocumentsByTag(
-      SearchIndexes[input.lang],
-      {
-        tag: { type: 'category', key: input.category },
-        size: input.size ?? 100,
-      },
-    )
-    return articlesResponse.hits.hits.map<Article>((response) =>
-      JSON.parse(response._source.response),
-    )
+    return this.cmsService.getArticles(SearchIndexes[lang], input)
   }
 }
 
