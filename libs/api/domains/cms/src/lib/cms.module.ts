@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { ElasticService } from '@island.is/api/content-search'
 import {
   CmsResolver,
   ArticleResolver,
@@ -12,6 +13,7 @@ import { ContentfulRepository } from './contentful.repository'
     CmsResolver,
     ArticleResolver,
     LatestNewsSliceResolver,
+    ElasticService,
     CmsService,
     ContentfulRepository,
   ],

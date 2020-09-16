@@ -49,9 +49,7 @@ components:
           type: string
           enum:
             - ExampleForm
-            - ExampleForm2
-            - ExampleForm3
-            - FamilyAndPets
+            - DrivingLessons
             - ParentalLeave
         answers:
           type: object
@@ -74,9 +72,7 @@ components:
           type: string
           enum:
             - ExampleForm
-            - ExampleForm2
-            - ExampleForm3
-            - FamilyAndPets
+            - DrivingLessons
             - ParentalLeave
         applicant:
           type: string

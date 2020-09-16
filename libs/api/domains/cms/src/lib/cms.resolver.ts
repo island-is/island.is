@@ -50,6 +50,10 @@ import { PaginatedAdgerdirNews } from './models/paginatedAdgerdirNews.model'
 import { environment } from './environments'
 import { OrganizationTags } from './models/organizationTags.model'
 import { CmsService } from './cms.service'
+import { ArticleCategory } from './models/articleCategory.model'
+import { GetArticleCategoriesInput } from './dto/getArticleCategories.input'
+import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
+import { GetArticlesInput } from './dto/getArticles.input'
 
 const { cacheTime } = environment
 
@@ -58,7 +62,10 @@ const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
 @Resolver()
 @Directive(cacheControlDirective())
 export class CmsResolver {
-  constructor(private cmsService: CmsService) {}
+  constructor(
+    private readonly cmsService: CmsService,
+    private readonly elasticService: ElasticService,
+  ) {}
 
   @Directive(cacheControlDirective())
   @Query(() => Article, { nullable: true })
@@ -229,6 +236,36 @@ export class CmsResolver {
     @Args('input') input: GetLifeEventsInput,
   ): Promise<LifeEventPage[]> {
     return this.cmsService.getLifeEvents(input.lang)
+  }
+
+  @Query(() => [ArticleCategory])
+  async getArticleCategories(
+    @Args('input') input: GetArticleCategoriesInput,
+  ): Promise<ArticleCategory[]> {
+    // TODO: Move this to a deticated service?
+    const categoryResponse = await this.elasticService.getDocumentsByTypes(
+      SearchIndexes[input.lang],
+      { types: ['webArticleCategory'], size: input.size ?? 100 },
+    )
+    return categoryResponse.hits.hits.map<ArticleCategory>((response) =>
+      JSON.parse(response._source.response),
+    )
+  }
+
+  @Query(() => [Article])
+  async getArticles(
+    @Args('input') input: GetArticlesInput,
+  ): Promise<Article[]> {
+    const articlesResponse = await this.elasticService.getDocumentsByTag(
+      SearchIndexes[input.lang],
+      {
+        tag: { type: 'category', key: input.category },
+        size: input.size ?? 100,
+      },
+    )
+    return articlesResponse.hits.hits.map<Article>((response) =>
+      JSON.parse(response._source.response),
+    )
   }
 }
 

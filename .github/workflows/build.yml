@@ -504,6 +504,13 @@ jobs:
           }
           BODY
 
+  success:
+    runs-on: ubuntu-20.04
+    needs: trigger-deployments
+    steps:
+      - name: Announce success
+        run: echo "Build is successful"
+
   failure-notification:
     runs-on: ubuntu-20.04
     if: failure()

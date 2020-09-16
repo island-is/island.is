@@ -41,13 +41,13 @@ export class Article {
   @Field(() => ArticleSubgroup, { nullable: true })
   subgroup?: ArticleSubgroup
 
-  @Field(() => [Organization])
+  @Field(() => [Organization], { nullable: true })
   organization?: Array<Organization>
 
   @Field(() => [SubArticle])
   subArticles: Array<SubArticle>
 
-  @Field(() => [Article])
+  @Field(() => [Article], { nullable: true })
   relatedArticles?: Array<Article>
 }
 
@@ -58,7 +58,7 @@ export const mapArticle = ({ fields, sys }: IArticle): Article => ({
   shortTitle: fields.shortTitle ?? '',
   slug: fields.slug,
   intro: fields.intro ?? '',
-  body: fields.content ? mapDocument(fields.content) : [],
+  body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
   category: fields.category?.fields,
   group: fields.group?.fields,
   subgroup: fields.subgroup?.fields,

@@ -13,5 +13,10 @@ export const familyModule: ServicePortalModule = {
       path: ServicePortalPath.FjolskyldanRoot,
       render: () => lazy(() => import('./lib/service-portal-family')),
     },
+    {
+      name: 'Mínar upplýsingar',
+      path: ServicePortalPath.MinarUpplysingar,
+      render: () => lazy(() => import('./screens/UserInfo/UserInfo')),
+    },
   ],
 }

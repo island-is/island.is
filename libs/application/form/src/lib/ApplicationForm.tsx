@@ -25,7 +25,7 @@ export const ApplicationForm: FC<{ application: Application }> = ({
     ApplicationReducer,
     {
       application,
-      dataSchema: z.object({}),
+      dataSchema: undefined,
       form: undefined,
       formLeaves: [],
       activeSection: 0,
@@ -43,7 +43,6 @@ export const ApplicationForm: FC<{ application: Application }> = ({
     activeScreen,
     application: storedApplication,
     form,
-
     sections,
     screens,
     dataSchema,
