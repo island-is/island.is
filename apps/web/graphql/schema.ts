@@ -306,6 +306,7 @@ export type Article = {
   slug: Scalars['String']
   shortTitle: Scalars['String']
   intro: Scalars['String']
+  containsApplicationForm: Scalars['Boolean']
   body: Array<Slice>
   category?: Maybe<ArticleCategory>
   group?: Maybe<ArticleGroup>

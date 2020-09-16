@@ -147,6 +147,8 @@ const Category: Screen<CategoryProps> = ({
     a.localeCompare(b, 'is'),
   )
 
+  console.log(articles)
+
   return (
     <>
       <Head>
@@ -170,7 +172,6 @@ const Category: Screen<CategoryProps> = ({
               >
                 {sortedGroups.map((groupSlug, index) => {
                   const { title, description, articles } = groups[groupSlug]
-                  console.log(title, description)
 
                   const expanded = groupSlug === hash.replace('#', '')
 

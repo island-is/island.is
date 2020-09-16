@@ -248,6 +248,7 @@ type Article {
   slug: String!
   shortTitle: String!
   intro: String!
+  containsApplicationForm: Boolean
   body: [Slice!]!
   category: ArticleCategory
   group: ArticleGroup
