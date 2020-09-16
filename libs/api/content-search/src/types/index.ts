@@ -5,7 +5,7 @@ export type sortDirection = 'desc' | 'asc'
 export type sortableFields = {
   dateUpdated?: sortDirection
   dateCreated?: sortDirection
-  title?: sortDirection
+  'title.sort'?: sortDirection
 }
 
 export enum SearchIndexes {

@@ -1,18 +1,17 @@
-import { logger } from '@island.is/logging'
 import { elasticTagField, sortableFields } from '../types'
 
-interface TagsBase {
+interface MetaPropsBase {
   types?: string[]
   tags?: elasticTagField[]
   sort?: sortableFields
   size?: number
 }
 
-interface RequiredTypes extends TagsBase {
+interface RequiredTypes extends MetaPropsBase {
   types: string[]
 }
 
-interface RequiredTags extends TagsBase {
+interface RequiredTags extends MetaPropsBase {
   tags: elasticTagField[]
 }
 
