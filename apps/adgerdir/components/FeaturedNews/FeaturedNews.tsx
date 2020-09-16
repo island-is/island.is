@@ -151,7 +151,7 @@ export const FeaturedNews: FC<FeaturedNewsProps> = ({ items }) => {
             justifyContent="center"
           >
             <Link href="/frettir" as="/frettir" passHref>
-              <Button width="fixed" variant="ghost" icon="arrowRight">
+              <Button width="fixed" variant="blueGhost" icon="arrowRight">
                 Sjá allar fréttir
               </Button>
             </Link>

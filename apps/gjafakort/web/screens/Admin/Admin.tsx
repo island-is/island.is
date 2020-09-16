@@ -194,7 +194,7 @@ function Admin() {
               <Columns space={[4, 4, 4, 12]} collapseBelow="lg" alignY="center">
                 <Column width="1/2">
                   <Button
-                    variant="ghost"
+                    variant="blueGhost"
                     width="fluid"
                     onClick={onReject}
                     disabled={rejectLoading || approveLoading}

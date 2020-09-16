@@ -75,7 +75,7 @@ const Admin: Screen = ({}) => {
               <Typography variant="h4">Aðgerðir</Typography>
             </Box>
             <Box paddingTop={2}>
-              <Button width="fluid" variant="ghost">
+              <Button width="fluid" variant="blueGhost">
                 Prenta yfirlit
               </Button>
             </Box>

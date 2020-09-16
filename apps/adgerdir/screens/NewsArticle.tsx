@@ -94,7 +94,7 @@ const NewsArticle: Screen<NewsArticleProps> = ({
         {article.content ? <Content document={article.content} /> : null}
         <Box marginTop={[6, 6, 10]} width="full">
           <Link href="/frettir" as="/frettir" passHref>
-            <Button width="fixed" variant="ghost" icon="arrowRight">
+            <Button width="fixed" variant="blueGhost" icon="arrowRight">
               Sjá allar fréttir
             </Button>
           </Link>

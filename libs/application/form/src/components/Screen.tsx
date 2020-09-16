@@ -181,7 +181,7 @@ const Screen: FC<ScreenProps> = ({
                 padding={2}
                 paddingLeft="none"
               >
-                <Button variant="ghost" onClick={goBack}>
+                <Button variant="blueGhost" onClick={goBack}>
                   Til baka
                 </Button>
               </Box>
@@ -191,7 +191,7 @@ const Screen: FC<ScreenProps> = ({
                 paddingLeft="none"
               >
                 <Button
-                  variant="ghost"
+                  variant="blueGhost"
                   rounded={true}
                   icon="arrowLeft"
                   onClick={goBack}

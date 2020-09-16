@@ -40,7 +40,7 @@ export const Wrapper = () => {
           </Button>
         </Badge>
         <Badge number={38}>
-          <Button variant="ghost" icon="arrowRight">
+          <Button variant="blueGhost" icon="arrowRight">
             Button here
           </Button>
         </Badge>

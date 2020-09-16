@@ -197,7 +197,7 @@ export const InputFileUpload = ({
       <Typography variant="h4">{header}</Typography>
       <Typography variant="p">{description}</Typography>
       <Box marginY={4}>
-        <Button variant="ghost" icon="file">
+        <Button variant="blueGhost" icon="file">
           {buttonLabel}
         </Button>
       </Box>

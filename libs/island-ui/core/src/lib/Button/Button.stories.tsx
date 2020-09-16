@@ -69,7 +69,8 @@ const makeMenuButton = (text = '', props: Partial<ButtonProps>) => {
 }
 
 export const Normal = () => makeButton('normal', 'Normal button')
-export const Ghost = () => makeButton('ghost', 'Ghost button')
+export const BlueGhost = () => makeButton('blueGhost', 'Blue ghost button')
+export const RedGhost = () => makeButton('redGhost', 'Red ghost button')
 export const Text = () => makeButton('text', 'Text button')
 export const Menu = () => makeButton('menu', 'Text button')
 export const MenuVariations = () => {

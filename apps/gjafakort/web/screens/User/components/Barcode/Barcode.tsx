@@ -270,7 +270,7 @@ function Barcode({ shouldPoll: initialPolling }: PropTypes) {
                     onClick={() => {
                       send('BACK_TO_LIST')
                     }}
-                    variant="ghost"
+                    variant="blueGhost"
                   >
                     {t.backButton}
                   </Button>
@@ -336,7 +336,7 @@ function Barcode({ shouldPoll: initialPolling }: PropTypes) {
               onClick={() => {
                 send('BACK_TO_GIVE')
               }}
-              variant="ghost"
+              variant="blueGhost"
             >
               {t.editButton}
             </Button>

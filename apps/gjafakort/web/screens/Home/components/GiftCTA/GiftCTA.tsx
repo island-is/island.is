@@ -48,7 +48,7 @@ function GiftCTA() {
         </Box>
         <Link href={routes.companies.home}>
           <span>
-            <Button width="fluid" variant="ghost">
+            <Button width="fluid" variant="blueGhost">
               {t.companies.content}
             </Button>
           </span>

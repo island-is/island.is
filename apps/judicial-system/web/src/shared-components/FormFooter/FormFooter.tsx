@@ -15,7 +15,7 @@ const FormFooter: React.FC<Props> = (props: Props) => {
   return (
     <Box display="flex" justifyContent="spaceBetween" marginBottom={30}>
       <Button
-        variant="ghost"
+        variant="blueGhost"
         disabled={props.previousIsDisabled}
         onClick={() => {
           history.push(props.previousUrl)

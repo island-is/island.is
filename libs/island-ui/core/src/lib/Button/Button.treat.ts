@@ -152,18 +152,18 @@ export const variants = styleMap({
       '&:focus:active': {
         color: theme.color.white,
       },
-      '&:hover:active:after': {
+      '&:hover:active::after': {
         opacity: 1,
       },
     },
   },
-  ghost: {
+  blueGhost: {
     backgroundColor: 'transparent',
     color: theme.color.blue400,
     ':disabled': {
       color: theme.color.blue300,
     },
-    ':after': {
+    '::after': {
       opacity: 1,
       borderWidth: 1,
       borderColor: theme.color.blue400,
@@ -180,16 +180,54 @@ export const variants = styleMap({
       color: theme.color.blue400,
     },
     selectors: {
-      '&:disabled:after': {
+      '&:disabled::after': {
         borderColor: theme.color.blue300,
       },
-      '&:hover:after': {
+      '&:hover::after': {
         borderColor: theme.color.blueberry400,
       },
-      '&:focus:after': {
+      '&:focus::after': {
         borderColor: theme.color.mint400,
       },
-      '&:hover:active:after': {
+      '&:hover:active::after': {
+        borderWidth: 4,
+        opacity: 1,
+      },
+    },
+  },
+  redGhost: {
+    backgroundColor: 'transparent',
+    color: theme.color.red400,
+    ':disabled': {
+      color: theme.color.red300,
+    },
+    '::after': {
+      opacity: 1,
+      borderWidth: 1,
+      borderColor: theme.color.red400,
+      borderRadius: 10,
+    },
+    ':hover': {
+      color: theme.color.roseTinted400,
+    },
+    ':focus': {
+      color: theme.color.dark400,
+    },
+    ':active': {
+      backgroundColor: 'transparent',
+      color: theme.color.red400,
+    },
+    selectors: {
+      '&:disabled::after': {
+        borderColor: theme.color.red300,
+      },
+      '&:hover::after': {
+        borderColor: theme.color.roseTinted400,
+      },
+      '&:focus::after': {
+        borderColor: theme.color.mint400,
+      },
+      '&:hover:active::after': {
         borderWidth: 4,
         opacity: 1,
       },
