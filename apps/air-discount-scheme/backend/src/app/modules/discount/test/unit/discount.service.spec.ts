@@ -35,7 +35,7 @@ describe('DiscountService', () => {
 
       const result = await discountService.createDiscountCode(nationalId)
 
-      expect(cacheManagerSpy).toHaveBeenCalledTimes(2)
+      expect(cacheManagerSpy).toHaveBeenCalledTimes(5)
       expect(result.discountCode).toHaveLength(DISCOUNT_CODE_LENGTH)
     })
   })
