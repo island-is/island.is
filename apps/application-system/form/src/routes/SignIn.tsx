@@ -21,7 +21,7 @@ export const Signin = () => {
 
         // TODO: Send the user back to the route he was attempting to access
         // instead of redirecting him to the frontpage every time
-        history.push('/application')
+        history.push(user.state?.redirect ?? '/')
       })
       .catch(function(error) {
         // TODO: Handle error
