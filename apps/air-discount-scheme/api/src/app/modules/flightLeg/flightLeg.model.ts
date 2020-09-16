@@ -10,6 +10,9 @@ export class FlightLeg {
   @Field()
   airline: string
 
+  @Field({ nullable: true })
+  cooperation: string
+
   @Field()
   financialState: string
 

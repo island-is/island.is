@@ -4,6 +4,7 @@ import { slices } from './fragments'
 export const GET_LIFE_EVENT_QUERY = gql`
   query GetLifeEvent($input: GetLifeEventPageInput!) {
     getLifeEventPage(input: $input) {
+      id
       title
       slug
       intro
@@ -21,9 +22,31 @@ export const GET_LIFE_EVENT_QUERY = gql`
 export const GET_LIFE_EVENTS_QUERY = gql`
   query GetLifeEvents($input: GetLifeEventsInput!) {
     getLifeEvents(input: $input) {
+      id
       title
       slug
       intro
+      thumbnail {
+        url
+      }
+      image {
+        url
+      }
+    }
+  }
+`
+
+export const GET_LIFE_EVENTS_IN_CATEGORY_QUERY = gql`
+  query GetLifeEventsInCategory($input: GetLifeEventsInCategoryInput!) {
+    getLifeEventsInCategory(input: $input) {
+      id
+      title
+      slug
+      intro
+      category {
+        title
+        slug
+      }
       thumbnail {
         url
       }

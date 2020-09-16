@@ -1,32 +1,26 @@
-import { ApiResponse, Client } from '@elastic/elasticsearch'
-import { MappedData, SearchIndexes, SearchResponse } from '../types'
-import esb, { RequestBodySearch, TermsAggregation } from 'elastic-builder'
-import { logger } from '@island.is/logging'
+import { Client } from '@elastic/elasticsearch'
 import merge from 'lodash/merge'
-import { environment } from '../environments/environment'
 import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
-import {
-  SearcherInput,
-  WebSearchAutocompleteInput,
-} from '@island.is/api/schema'
+import { logger } from '@island.is/logging'
 import {
   autocompleteTermQuery,
   AutocompleteTermResponse,
-  AutocompleteTermRequestBody,
 } from '../queries/autocomplete'
-import { searchQuery, SearchRequestBody } from '../queries/search'
+import { searchQuery } from '../queries/search'
 import {
-  documentByTypeQuery,
-  DocumentByTypesInput,
-  DocumentByTypesRequestBody,
-} from '../queries/documentByTypes'
+  DocumentByMetaDataInput,
+  documentByMetaDataQuery,
+} from '../queries/documentByMetaData'
+import { MappedData, SearchIndexes, SearchResponse } from '../types'
+import { environment } from '../environments/environment'
+import { SearcherInput, WebSearchAutocompleteInput } from '../dto'
 import {
-  DocumentByTagInput,
-  documentByTagQuery,
-  DocumentByTagRequestBody,
-} from '../queries/documentByTags'
+  DateAggregationInput,
+  dateAggregationQuery,
+  DateAggregationResponse,
+} from '../queries/dateAggregation'
 
 const { elastic } = environment
 interface SyncRequest {
@@ -40,7 +34,7 @@ export class ElasticService {
     logger.debug('Created ES Service')
   }
 
-  async index(index: SearchIndexes, { _id, ...body }: MappedData) {
+  async index(index: string, { _id, ...body }: MappedData) {
     try {
       const client = await this.getClient()
       return await client.index({
@@ -54,7 +48,8 @@ export class ElasticService {
     }
   }
 
-  async bulk(index: SearchIndexes, documents: SyncRequest) {
+  // this can partially succeed
+  async bulk(index: string, documents: SyncRequest) {
     logger.info('Processing documents', {
       index,
       added: documents.add.length,
@@ -82,28 +77,42 @@ export class ElasticService {
       })
     }
 
-    // if we have any requests execute them
-    if (requests.length) {
-      try {
-        const client = await this.getClient()
+    if (!requests.length) {
+      logger.info('No requests for elasticsearch to execute')
+      // no need to continue
+      return false
+    }
+
+    try {
+      // elasticsearch does not like big requests (above 5mb) so we limit the size to 200 entries just in case
+      const chunkSize = 200 // this has to be an even number
+      const client = await this.getClient()
+      let requestChunk = requests.splice(-chunkSize, chunkSize)
+      while (requestChunk.length) {
+        // wait for request b4 continuing
         const response = await client.bulk({
           index: index,
-          body: requests,
+          body: requestChunk,
         })
-        // TODO: ES errors while indexing might not throw, but appear in response log those errors here
-        return true
-      } catch (error) {
-        logger.error('Elastic request failed on bulk index', error)
-        throw error
+
+        // not all errors are thrown log if the response has any errors
+        if (response.body.errors) {
+          logger.error('Failed to import some documents in bulk import', {
+            response,
+          })
+        }
+        requestChunk = requests.splice(-chunkSize, chunkSize)
       }
-    } else {
-      logger.info('No requests to execute')
+
+      return true
+    } catch (error) {
+      logger.error('Elasticsearch request failed on bulk index', error)
+      throw error
     }
-    return false
   }
 
   async findByQuery<ResponseBody, RequestBody>(
-    index: SearchIndexes,
+    index: string,
     query: RequestBody,
   ) {
     try {
@@ -121,81 +130,40 @@ export class ElasticService {
     }
   }
 
-  async getDocumentsByTypes(index: SearchIndexes, query: DocumentByTypesInput) {
-    const requestBody = documentByTypeQuery(query)
-
+  async getDocumentsByMetaData(index: string, query: DocumentByMetaDataInput) {
+    const requestBody = documentByMetaDataQuery(query)
     const data = await this.findByQuery<
       SearchResponse<MappedData>,
-      DocumentByTypesRequestBody
-    >(index, requestBody)
-
-    return data.body
-  }
-
-  async getDocumentsByTag(index: SearchIndexes, query: DocumentByTagInput) {
-    const requestBody = documentByTagQuery(query)
-    const data = await this.findByQuery<
-      SearchResponse<MappedData>,
-      DocumentByTagRequestBody
+      typeof requestBody
     >(index, requestBody)
     return data.body
   }
 
-  /*
-  Reason for deprecation:
-  We are runnig elasticsearch 7.4
-  Elastic builder is compatable with 6 alpha as stated on:
-  https://www.npmjs.com/package/elastic-builder (at the time of writing)
-  We are keeping this function until elastic builder has been phased out
-  */
-  async deprecatedFindByQuery(index: SearchIndexes, query) {
-    try {
-      const client = await this.getClient()
-      return client.search({
-        index: index,
-        body: query,
-      })
-    } catch (e) {
-      ElasticService.handleError(
-        'Error in ElasticService.deprecatedFindByQuery',
-        { query: query, index: index },
-        e,
-      )
-    }
+  async getDateAggregation(index: string, query: DateAggregationInput) {
+    const requestBody = dateAggregationQuery(query)
+    const data = await this.findByQuery<
+      SearchResponse<any, DateAggregationResponse>,
+      typeof requestBody
+    >(index, requestBody)
+    return data.body
   }
 
   async search(index: SearchIndexes, query: SearcherInput) {
-    const { queryString, size, page, types } = query
+    const { queryString, size, page, types, tags, countTag } = query
 
-    const requestBody = searchQuery({ queryString, size, page, types })
-    const data = await this.findByQuery<
-      SearchResponse<MappedData>,
-      SearchRequestBody
-    >(index, requestBody)
-    return data
-  }
+    const requestBody = searchQuery({
+      queryString,
+      size,
+      page,
+      types,
+      tags,
+      countTag,
+    })
 
-  async fetchCategories(index: SearchIndexes) {
-    const query = new RequestBodySearch()
-      .agg(new TermsAggregation('categories', 'category'))
-      .agg(new TermsAggregation('catagories_slugs', 'category_slug'))
-      .size(0)
-
-    try {
-      return this.deprecatedFindByQuery(index, query)
-    } catch (e) {
-      console.log(e)
-    }
-  }
-
-  async fetchItems(index: SearchIndexes, input) {
-    const requestBody = new RequestBodySearch()
-      .query(
-        esb.boolQuery().must([esb.matchQuery('category_slug', input.slug)]),
-      )
-      .size(1000)
-
-    return this.deprecatedFindByQuery(index, requestBody)
+    return this.findByQuery<SearchResponse<MappedData>, typeof requestBody>(
+      index,
+      requestBody,
+    )
   }
 
   async fetchAutocompleteTerm(
@@ -207,7 +175,7 @@ export class ElasticService {
 
     const data = await this.findByQuery<
       AutocompleteTermResponse,
-      AutocompleteTermRequestBody
+      typeof requestBody
     >(index, requestBody)
 
     return data.body
@@ -232,7 +200,7 @@ export class ElasticService {
     })
   }
 
-  async deleteAllExcept(index: SearchIndexes, excludeIds: Array<string>) {
+  async deleteAllExcept(index: string, excludeIds: Array<string>) {
     const client = await this.getClient()
 
     return client.delete_by_query({
@@ -255,26 +223,6 @@ export class ElasticService {
     })
     logger.info('Got elasticsearch ping response')
     return result
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static handleError(message: string, context: any, error: any) {
-    ElasticService.logError(message, context, error)
-    throw new Error(message)
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static logError(message: string, context: any, error: any) {
-    const errorCtx = {
-      error: {
-        message: error.message,
-        reason: error.error?.meta?.body?.error?.reason,
-        status: error.error?.meta?.body?.status,
-        statusCode: error.error?.meta?.statusCode,
-      },
-    }
-
-    logger.error(message, merge(context, errorCtx))
   }
 
   async getClient(): Promise<Client> {
@@ -306,6 +254,26 @@ export class ElasticService {
       node: elastic.node,
     })
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static handleError(message: string, context: any, error: any) {
+    ElasticService.logError(message, context, error)
+    throw new Error(message)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static logError(message: string, context: any, error: any) {
+    const errorCtx = {
+      error: {
+        message: error.message,
+        reason: error.error?.meta?.body?.error?.reason,
+        status: error.error?.meta?.body?.status,
+        statusCode: error.error?.meta?.statusCode,
+      },
+    }
+
+    logger.error(message, merge(context, errorCtx))
+  }
 }
 
-// TODO: This service needs to include only generic functions anything specific to cms search should belong there
+// TODO: This service needs to include only generic functions anything specific to cms search should be in cms domain libary

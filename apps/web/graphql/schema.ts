@@ -9,19 +9,37 @@ export type Scalars = {
   Boolean: boolean
   Int: number
   Float: number
-  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
-  JSON: { [key: string]: any }
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: Date
+  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
+  JSON: { [key: string]: any }
 }
 
-export type HelloWorld = {
-  __typename?: 'HelloWorld'
-  message: Scalars['String']
+export type Application = {
+  __typename?: 'Application'
+  id: Scalars['ID']
+  created: Scalars['DateTime']
+  modified: Scalars['DateTime']
+  applicant: Scalars['String']
+  assignee: Scalars['String']
+  state: Scalars['String']
+  attachments?: Maybe<Scalars['JSON']>
+  typeId: ApplicationResponseDtoTypeIdEnum
+  answers: Scalars['JSON']
+  externalData: Scalars['JSON']
+  name?: Maybe<Scalars['String']>
+  progress?: Maybe<Scalars['Float']>
+}
+
+export enum ApplicationResponseDtoTypeIdEnum {
+  ExampleForm = 'ExampleForm',
+  DrivingLessons = 'DrivingLessons',
+  ParentalLeave = 'ParentalLeave',
 }
 
 export type Image = {
   __typename?: 'Image'
+  typename: Scalars['String']
   id: Scalars['ID']
   url: Scalars['String']
   title: Scalars['String']
@@ -30,10 +48,11 @@ export type Image = {
   height: Scalars['Int']
 }
 
-export type Link = {
-  __typename?: 'Link'
-  text: Scalars['String']
-  url: Scalars['String']
+export type Html = {
+  __typename?: 'Html'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  document: Scalars['JSON']
 }
 
 export type TimelineEvent = {
@@ -44,13 +63,14 @@ export type TimelineEvent = {
   numerator?: Maybe<Scalars['Int']>
   denominator?: Maybe<Scalars['Int']>
   label: Scalars['String']
-  body?: Maybe<Scalars['String']>
+  body?: Maybe<Html>
   tags?: Maybe<Array<Scalars['String']>>
   link: Scalars['String']
 }
 
 export type TimelineSlice = {
   __typename?: 'TimelineSlice'
+  typename: Scalars['String']
   id: Scalars['ID']
   title: Scalars['String']
   events: Array<TimelineEvent>
@@ -64,6 +84,8 @@ export type Story = {
   readMoreText: Scalars['String']
   date: Scalars['String']
   intro: Scalars['String']
+  link: Scalars['String']
+  linkedPage?: Maybe<Scalars['String']>
   body?: Maybe<Scalars['String']>
 }
 
@@ -75,16 +97,219 @@ export type LinkCard = {
   linkText: Scalars['String']
 }
 
+export type Author = {
+  __typename?: 'Author'
+  id: Scalars['ID']
+  name: Scalars['String']
+}
+
 export type News = {
   __typename?: 'News'
-  id: Scalars['String']
+  typename: Scalars['String']
+  id: Scalars['ID']
   slug: Scalars['String']
   title: Scalars['String']
   subtitle: Scalars['String']
-  intro: Scalars['String']
+  author?: Maybe<Author>
+  intro?: Maybe<Scalars['String']>
   image?: Maybe<Image>
   date: Scalars['String']
-  content?: Maybe<Scalars['String']>
+  content?: Maybe<Array<Slice>>
+}
+
+export type Slice =
+  | TimelineSlice
+  | MailingListSignupSlice
+  | HeadingSlice
+  | LinkCardSlice
+  | StorySlice
+  | LogoListSlice
+  | LatestNewsSlice
+  | BulletListSlice
+  | Statistics
+  | ProcessEntry
+  | FaqList
+  | EmbeddedVideo
+  | SectionWithImage
+  | TabSection
+  | TeamList
+  | ContactUs
+  | Location
+  | Html
+  | Image
+  | Asset
+
+export type MailingListSignupSlice = {
+  __typename?: 'MailingListSignupSlice'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  description?: Maybe<Scalars['String']>
+  inputLabel: Scalars['String']
+  buttonText: Scalars['String']
+}
+
+export type HeadingSlice = {
+  __typename?: 'HeadingSlice'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  body: Scalars['String']
+}
+
+export type LinkCardSlice = {
+  __typename?: 'LinkCardSlice'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  cards: Array<LinkCard>
+}
+
+export type StorySlice = {
+  __typename?: 'StorySlice'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  readMoreText: Scalars['String']
+  stories: Array<Story>
+}
+
+export type LogoListSlice = {
+  __typename?: 'LogoListSlice'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  body: Scalars['String']
+  images: Array<Image>
+}
+
+export type LatestNewsSlice = {
+  __typename?: 'LatestNewsSlice'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  news: Array<News>
+}
+
+export type BulletListSlice = {
+  __typename?: 'BulletListSlice'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  bullets: Array<BulletEntry>
+}
+
+export type BulletEntry = IconBullet | NumberBulletGroup
+
+export type IconBullet = {
+  __typename?: 'IconBullet'
+  id: Scalars['ID']
+  title: Scalars['String']
+  body: Scalars['String']
+  icon: Image
+  url?: Maybe<Scalars['String']>
+  linkText?: Maybe<Scalars['String']>
+}
+
+export type NumberBulletGroup = {
+  __typename?: 'NumberBulletGroup'
+  id: Scalars['ID']
+  defaultVisible: Scalars['Int']
+  bullets: Array<NumberBullet>
+}
+
+export type Statistics = {
+  __typename?: 'Statistics'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  statistics: Array<Statistic>
+}
+
+export type ProcessEntry = {
+  __typename?: 'ProcessEntry'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  type: Scalars['String']
+  processTitle: Scalars['String']
+  processLink: Scalars['String']
+  buttonText: Scalars['String']
+}
+
+export type FaqList = {
+  __typename?: 'FaqList'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  questions: Array<QuestionAndAnswer>
+}
+
+export type EmbeddedVideo = {
+  __typename?: 'EmbeddedVideo'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  url: Scalars['String']
+}
+
+export type SectionWithImage = {
+  __typename?: 'SectionWithImage'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  image?: Maybe<Image>
+  html: Html
+}
+
+export type TabSection = {
+  __typename?: 'TabSection'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  tabs: Array<TabContent>
+}
+
+export type TeamList = {
+  __typename?: 'TeamList'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  teamMembers: Array<TeamMember>
+}
+
+export type ContactUs = {
+  __typename?: 'ContactUs'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  required: Scalars['String']
+  invalidPhone: Scalars['String']
+  invalidEmail: Scalars['String']
+  labelName: Scalars['String']
+  labelPhone: Scalars['String']
+  labelEmail: Scalars['String']
+  labelSubject: Scalars['String']
+  labelMessage: Scalars['String']
+  submitButtonText: Scalars['String']
+  successMessage: Scalars['String']
+  errorMessage: Scalars['String']
+}
+
+export type Location = {
+  __typename?: 'Location'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  subTitle: Scalars['String']
+  address: Scalars['String']
+  link?: Maybe<Link>
+  background: Image
+}
+
+export type Asset = {
+  __typename?: 'Asset'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  url: Scalars['String']
+  title: Scalars['String']
+  contentType: Scalars['String']
 }
 
 export type NumberBullet = {
@@ -101,12 +326,6 @@ export type Statistic = {
   label: Scalars['String']
 }
 
-export type Html = {
-  __typename?: 'Html'
-  id: Scalars['ID']
-  document: Scalars['JSON']
-}
-
 export type QuestionAndAnswer = {
   __typename?: 'QuestionAndAnswer'
   id: Scalars['ID']
@@ -114,8 +333,30 @@ export type QuestionAndAnswer = {
   answer?: Maybe<Html>
 }
 
+export type TabContent = {
+  __typename?: 'TabContent'
+  tabTitle: Scalars['String']
+  contentTitle?: Maybe<Scalars['String']>
+  image?: Maybe<Image>
+  body?: Maybe<Html>
+}
+
+export type TeamMember = {
+  __typename?: 'TeamMember'
+  name: Scalars['String']
+  title: Scalars['String']
+  image: Image
+}
+
+export type Link = {
+  __typename?: 'Link'
+  text: Scalars['String']
+  url: Scalars['String']
+}
+
 export type ArticleCategory = {
   __typename?: 'ArticleCategory'
+  id: Scalars['ID']
   title: Scalars['String']
   slug: Scalars['String']
   description?: Maybe<Scalars['String']>
@@ -126,11 +367,13 @@ export type ArticleGroup = {
   title: Scalars['String']
   slug: Scalars['String']
   description?: Maybe<Scalars['String']>
+  importance?: Maybe<Scalars['Float']>
 }
 
 export type ArticleSubgroup = {
   __typename?: 'ArticleSubgroup'
   title: Scalars['String']
+  importance?: Maybe<Scalars['Float']>
   slug: Scalars['String']
 }
 
@@ -157,210 +400,33 @@ export type SubArticle = {
   body: Array<Slice>
 }
 
-export type Slice =
-  | PageHeaderSlice
-  | TimelineSlice
-  | HeadingSlice
-  | StorySlice
-  | LinkCardSlice
-  | LatestNewsSlice
-  | MailingListSignupSlice
-  | LogoListSlice
-  | BulletListSlice
-  | Html
-  | Image
-  | Statistics
-  | ProcessEntry
-  | FaqList
-  | EmbeddedVideo
-  | SectionWithImage
-
-export type PageHeaderSlice = {
-  __typename?: 'PageHeaderSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  introduction: Scalars['String']
-  navigationText: Scalars['String']
-  links: Array<Link>
-  slices: Array<TimelineSlice>
-}
-
-export type HeadingSlice = {
-  __typename?: 'HeadingSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  body: Scalars['String']
-}
-
-export type StorySlice = {
-  __typename?: 'StorySlice'
-  id: Scalars['ID']
-  readMoreText: Scalars['String']
-  stories: Array<Story>
-}
-
-export type LinkCardSlice = {
-  __typename?: 'LinkCardSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  cards: Array<LinkCard>
-}
-
-export type LatestNewsSlice = {
-  __typename?: 'LatestNewsSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  news: Array<News>
-}
-
-export type MailingListSignupSlice = {
-  __typename?: 'MailingListSignupSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  description?: Maybe<Scalars['String']>
-  inputLabel: Scalars['String']
-  buttonText: Scalars['String']
-}
-
-export type LogoListSlice = {
-  __typename?: 'LogoListSlice'
-  id: Scalars['ID']
-  title: Scalars['String']
-  body: Scalars['String']
-  images: Array<Image>
-}
-
-export type BulletListSlice = {
-  __typename?: 'BulletListSlice'
-  id: Scalars['ID']
-  bullets: Array<BulletEntry>
-}
-
-export type BulletEntry = IconBullet | NumberBulletGroup
-
-export type IconBullet = {
-  __typename?: 'IconBullet'
-  id: Scalars['ID']
-  title: Scalars['String']
-  body: Scalars['String']
-  icon: Image
-  url?: Maybe<Scalars['String']>
-  linkText?: Maybe<Scalars['String']>
-}
-
-export type NumberBulletGroup = {
-  __typename?: 'NumberBulletGroup'
-  id: Scalars['ID']
-  defaultVisible: Scalars['Int']
-  bullets: Array<NumberBullet>
-}
-
-export type Statistics = {
-  __typename?: 'Statistics'
-  id: Scalars['ID']
-  title: Scalars['String']
-  statistics: Array<Statistic>
-}
-
-export type ProcessEntry = {
-  __typename?: 'ProcessEntry'
-  id: Scalars['ID']
-  title: Scalars['String']
-  subtitle?: Maybe<Scalars['String']>
-  details?: Maybe<Html>
-  type: Scalars['String']
-  processTitle: Scalars['String']
-  processDescription?: Maybe<Scalars['String']>
-  processInfo?: Maybe<Html>
-  processLink: Scalars['String']
-  buttonText: Scalars['String']
-}
-
-export type FaqList = {
-  __typename?: 'FaqList'
-  id: Scalars['ID']
-  title: Scalars['String']
-  questions: Array<QuestionAndAnswer>
-}
-
-export type EmbeddedVideo = {
-  __typename?: 'EmbeddedVideo'
-  id: Scalars['ID']
-  title: Scalars['String']
-  url: Scalars['String']
-}
-
-export type SectionWithImage = {
-  __typename?: 'SectionWithImage'
-  id: Scalars['ID']
-  title: Scalars['String']
-  image?: Maybe<Image>
-  html: Html
-}
-
 export type Article = {
   __typename?: 'Article'
+  typename: Scalars['String']
   id: Scalars['ID']
-  contentStatus: Scalars['String']
   title: Scalars['String']
   slug: Scalars['String']
-  shortTitle: Scalars['String']
-  intro: Scalars['String']
+  shortTitle?: Maybe<Scalars['String']>
+  intro?: Maybe<Scalars['String']>
+  containsApplicationForm?: Maybe<Scalars['Boolean']>
+  importance?: Maybe<Scalars['Float']>
   body: Array<Slice>
   category?: Maybe<ArticleCategory>
+  otherCategories?: Maybe<Array<ArticleCategory>>
   group?: Maybe<ArticleGroup>
+  otherGroups?: Maybe<Array<ArticleGroup>>
   subgroup?: Maybe<ArticleSubgroup>
+  otherSubgroups?: Maybe<Array<ArticleSubgroup>>
   organization?: Maybe<Array<Organization>>
   subArticles: Array<SubArticle>
   relatedArticles?: Maybe<Array<Article>>
 }
 
-export type LifeEventPage = {
-  __typename?: 'LifeEventPage'
+export type ContentSlug = {
+  __typename?: 'ContentSlug'
   id: Scalars['ID']
-  title: Scalars['String']
   slug: Scalars['String']
-  intro: Scalars['String']
-  image: Image
-  thumbnail?: Maybe<Image>
-  content: Array<Slice>
-}
-
-export type SearchResult = {
-  __typename?: 'SearchResult'
-  total: Scalars['Int']
-  items: Array<Items>
-}
-
-export type Items = Article | LifeEventPage
-
-export type ContentItem = {
-  __typename?: 'ContentItem'
-  id: Scalars['ID']
-  title?: Maybe<Scalars['String']>
-  content?: Maybe<Scalars['String']>
-  tag?: Maybe<Array<Scalars['String']>>
-  category?: Maybe<Scalars['String']>
-  categorySlug?: Maybe<Scalars['String']>
-  categoryDescription?: Maybe<Scalars['String']>
-  group?: Maybe<Scalars['String']>
-  subgroup?: Maybe<Scalars['String']>
-  groupSlug?: Maybe<Scalars['String']>
-  groupDescription?: Maybe<Scalars['String']>
-  contentBlob?: Maybe<Scalars['String']>
-  contentId?: Maybe<Scalars['String']>
-  contentType?: Maybe<Scalars['String']>
-  date?: Maybe<Scalars['String']>
-  image?: Maybe<Scalars['String']>
-  imageText?: Maybe<Scalars['String']>
-  lang?: Maybe<Scalars['String']>
-  slug?: Maybe<Scalars['String']>
-}
-
-export type WebSearchAutocomplete = {
-  __typename?: 'WebSearchAutocomplete'
-  total: Scalars['Int']
-  completions: Array<Scalars['String']>
+  type: Scalars['String']
 }
 
 export type AdgerdirTag = {
@@ -443,7 +509,6 @@ export type FrontpageSlider = {
   title: Scalars['String']
   subtitle: Scalars['String']
   content: Scalars['String']
-  image?: Maybe<Image>
   link?: Maybe<Scalars['String']>
   animationJson?: Maybe<Scalars['String']>
 }
@@ -453,31 +518,32 @@ export type FrontpageSliderList = {
   items: Array<FrontpageSlider>
 }
 
-export type Pagination = {
-  __typename?: 'Pagination'
-  page: Scalars['Int']
-  perPage: Scalars['Int']
-  totalResults: Scalars['Int']
-  totalPages: Scalars['Int']
-}
-
-export type PaginatedNews = {
-  __typename?: 'PaginatedNews'
-  page: Pagination
-  news: Array<News>
-}
-
 export type Namespace = {
   __typename?: 'Namespace'
   namespace: Scalars['String']
   fields: Scalars['String']
 }
 
+export type PageHeader = {
+  __typename?: 'PageHeader'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  introduction: Scalars['String']
+  navigationText: Scalars['String']
+  links: Array<Link>
+  slices: Array<TimelineSlice>
+}
+
 export type AboutPage = {
   __typename?: 'AboutPage'
+  typename: Scalars['String']
+  id: Scalars['ID']
   title: Scalars['String']
+  slug: Scalars['String']
   seoDescription: Scalars['String']
   theme: Scalars['String']
+  pageHeader: PageHeader
   slices: Array<Slice>
 }
 
@@ -531,6 +597,27 @@ export type AdgerdirTags = {
   items: Array<AdgerdirTag>
 }
 
+export type LifeEventPage = {
+  __typename?: 'LifeEventPage'
+  typename: Scalars['String']
+  id: Scalars['ID']
+  title: Scalars['String']
+  slug: Scalars['String']
+  intro?: Maybe<Scalars['String']>
+  image?: Maybe<Image>
+  thumbnail?: Maybe<Image>
+  content: Array<Slice>
+  category?: Maybe<ArticleCategory>
+}
+
+export type Pagination = {
+  __typename?: 'Pagination'
+  page: Scalars['Int']
+  perPage: Scalars['Int']
+  totalResults: Scalars['Int']
+  totalPages: Scalars['Int']
+}
+
 export type PaginatedAdgerdirNews = {
   __typename?: 'PaginatedAdgerdirNews'
   page: Pagination
@@ -542,31 +629,71 @@ export type OrganizationTags = {
   items: Array<OrganizationTag>
 }
 
-export type Application = {
-  __typename?: 'Application'
+export type Url = {
+  __typename?: 'Url'
   id: Scalars['ID']
-  created: Scalars['DateTime']
-  modified: Scalars['DateTime']
-  applicant: Scalars['String']
-  assignee: Scalars['String']
-  externalId?: Maybe<Scalars['String']>
-  state: Scalars['String']
-  attachments?: Maybe<Scalars['JSON']>
-  typeId: ApplicationTypeIdEnum
-  answers: Scalars['JSON']
-  externalData: Scalars['JSON']
+  title?: Maybe<Scalars['String']>
+  page: UrlPage
+  urlsList: Array<Scalars['String']>
 }
 
-export enum ApplicationTypeIdEnum {
-  ExampleForm = 'ExampleForm',
-  DrivingLessons = 'DrivingLessons',
-  ParentalLeave = 'ParentalLeave',
+export type UrlPage = Article | ArticleCategory | News | LifeEventPage
+
+export type AboutSubPage = {
+  __typename?: 'AboutSubPage'
+  id: Scalars['ID']
+  title: Scalars['String']
+  slug: Scalars['String']
+  description: Scalars['String']
+  subDescription: Scalars['String']
+  slices: Array<Slice>
+  bottomSlices: Array<Slice>
 }
 
-export type PresignedPost = {
-  __typename?: 'PresignedPost'
-  url: Scalars['String']
-  fields: Scalars['JSON']
+export type Featured = {
+  __typename?: 'Featured'
+  title: Scalars['String']
+  attention: Scalars['Boolean']
+  thing: Article
+}
+
+export type Homepage = {
+  __typename?: 'Homepage'
+  id: Scalars['ID']
+  featuredThings: Array<Featured>
+}
+
+export type ContactUsPayload = {
+  __typename?: 'ContactUsPayload'
+  success: Scalars['Boolean']
+}
+
+export type NewsList = {
+  __typename?: 'NewsList'
+  total: Scalars['Int']
+  items: Array<News>
+}
+
+export type TagCount = {
+  __typename?: 'TagCount'
+  key: Scalars['String']
+  value: Scalars['String']
+  count: Scalars['Int']
+}
+
+export type SearchResult = {
+  __typename?: 'SearchResult'
+  total: Scalars['Int']
+  items: Array<Items>
+  tagCounts?: Maybe<Array<TagCount>>
+}
+
+export type Items = Article | LifeEventPage | News | AboutPage
+
+export type WebSearchAutocomplete = {
+  __typename?: 'WebSearchAutocomplete'
+  total: Scalars['Int']
+  completions: Array<Scalars['String']>
 }
 
 export type Document = {
@@ -593,19 +720,32 @@ export type DocumentCategory = {
   name: Scalars['String']
 }
 
+export type PresignedPost = {
+  __typename?: 'PresignedPost'
+  url: Scalars['String']
+  fields: Scalars['JSON']
+}
+
+export type UserProfile = {
+  __typename?: 'UserProfile'
+  nationalId: Scalars['ID']
+  mobilePhoneNumber: Scalars['String']
+  locale: Scalars['String']
+  email: Scalars['String']
+}
+
 export type Query = {
   __typename?: 'Query'
-  helloWorld: HelloWorld
-  searchResults: SearchResult
-  singleItem?: Maybe<ContentItem>
-  webSearchAutocomplete: WebSearchAutocomplete
-  getArticle?: Maybe<Article>
-  getNews?: Maybe<News>
-  getNewsList: PaginatedNews
+  getApplication?: Maybe<Application>
+  getApplicationsByType?: Maybe<Array<Application>>
+  getApplicationsByApplicant?: Maybe<Array<Application>>
+  getApplicationsByAssignee?: Maybe<Array<Application>>
   getAdgerdirNewsList: PaginatedAdgerdirNews
   getNamespace?: Maybe<Namespace>
   getAboutPage: AboutPage
+  getAboutSubPage?: Maybe<AboutSubPage>
   getLandingPage?: Maybe<LandingPage>
+  getContentSlug?: Maybe<ContentSlug>
   getAlertBanner?: Maybe<AlertBanner>
   getGenericPage?: Maybe<GenericPage>
   getAdgerdirPage?: Maybe<AdgerdirPage>
@@ -620,41 +760,38 @@ export type Query = {
   getMenu?: Maybe<Menu>
   getLifeEventPage?: Maybe<LifeEventPage>
   getLifeEvents: Array<LifeEventPage>
+  getLifeEventsInCategory: Array<LifeEventPage>
+  getUrl?: Maybe<Url>
   getArticleCategories: Array<ArticleCategory>
+  getSingleArticle?: Maybe<Article>
   getArticles: Array<Article>
-  getApplication?: Maybe<Application>
-  getApplicationsByType?: Maybe<Array<Application>>
+  getSingleNews?: Maybe<News>
+  getNewsDates: Array<Scalars['String']>
+  getNews: NewsList
+  getHomepage: Homepage
+  searchResults: SearchResult
+  webSearchAutocomplete: WebSearchAutocomplete
   getDocument?: Maybe<DocumentDetails>
   listDocuments?: Maybe<Array<Document>>
   getDocumentCategories?: Maybe<Array<DocumentCategory>>
+  getTranslations?: Maybe<Scalars['JSON']>
+  getUserProfile?: Maybe<UserProfile>
 }
 
-export type QueryHelloWorldArgs = {
-  input: HelloWorldInput
+export type QueryGetApplicationArgs = {
+  input: GetApplicationInput
 }
 
-export type QuerySearchResultsArgs = {
-  query: SearcherInput
+export type QueryGetApplicationsByTypeArgs = {
+  input: GetApplicationsByTypeInput
 }
 
-export type QuerySingleItemArgs = {
-  input: ItemInput
+export type QueryGetApplicationsByApplicantArgs = {
+  input: GetApplicationsByUserInput
 }
 
-export type QueryWebSearchAutocompleteArgs = {
-  input: WebSearchAutocompleteInput
-}
-
-export type QueryGetArticleArgs = {
-  input: GetArticleInput
-}
-
-export type QueryGetNewsArgs = {
-  input: GetNewsInput
-}
-
-export type QueryGetNewsListArgs = {
-  input: GetNewsListInput
+export type QueryGetApplicationsByAssigneeArgs = {
+  input: GetApplicationsByUserInput
 }
 
 export type QueryGetAdgerdirNewsListArgs = {
@@ -669,8 +806,16 @@ export type QueryGetAboutPageArgs = {
   input: GetAboutPageInput
 }
 
+export type QueryGetAboutSubPageArgs = {
+  input: GetAboutSubPageInput
+}
+
 export type QueryGetLandingPageArgs = {
   input: GetLandingPageInput
+}
+
+export type QueryGetContentSlugArgs = {
+  input: GetContentSlugInput
 }
 
 export type QueryGetAlertBannerArgs = {
@@ -729,20 +874,48 @@ export type QueryGetLifeEventsArgs = {
   input: GetLifeEventsInput
 }
 
+export type QueryGetLifeEventsInCategoryArgs = {
+  input: GetLifeEventsInCategoryInput
+}
+
+export type QueryGetUrlArgs = {
+  input: GetUrlInput
+}
+
 export type QueryGetArticleCategoriesArgs = {
   input: GetArticleCategoriesInput
+}
+
+export type QueryGetSingleArticleArgs = {
+  input: GetSingleArticleInput
 }
 
 export type QueryGetArticlesArgs = {
   input: GetArticlesInput
 }
 
-export type QueryGetApplicationArgs = {
-  input: GetApplicationInput
+export type QueryGetSingleNewsArgs = {
+  input: GetSingleNewsInput
 }
 
-export type QueryGetApplicationsByTypeArgs = {
-  input: GetApplicationsByTypeInput
+export type QueryGetNewsDatesArgs = {
+  input: GetNewsDatesInput
+}
+
+export type QueryGetNewsArgs = {
+  input: GetNewsInput
+}
+
+export type QueryGetHomepageArgs = {
+  input: GetHomepageInput
+}
+
+export type QuerySearchResultsArgs = {
+  query: SearcherInput
+}
+
+export type QueryWebSearchAutocompleteArgs = {
+  input: WebSearchAutocompleteInput
 }
 
 export type QueryGetDocumentArgs = {
@@ -753,58 +926,25 @@ export type QueryListDocumentsArgs = {
   input: ListDocumentsInput
 }
 
-export type HelloWorldInput = {
-  name?: Maybe<Scalars['String']>
+export type QueryGetTranslationsArgs = {
+  input: GetTranslationsInput
 }
 
-export type SearcherInput = {
-  queryString: Scalars['String']
-  types?: Maybe<Array<Scalars['String']>>
-  language?: Maybe<ContentLanguage>
-  size?: Maybe<Scalars['Int']>
-  page?: Maybe<Scalars['Int']>
+export type QueryGetUserProfileArgs = {
+  input: GetUserProfileInput
 }
 
-export enum ContentLanguage {
-  Is = 'is',
-  En = 'en',
+export type GetApplicationInput = {
+  id: Scalars['String']
 }
 
-export type ItemInput = {
-  id?: Maybe<Scalars['ID']>
-  slug?: Maybe<Scalars['String']>
-  type?: Maybe<ItemType>
-  language?: Maybe<ContentLanguage>
+export type GetApplicationsByTypeInput = {
+  typeId: ApplicationResponseDtoTypeIdEnum
 }
 
-export enum ItemType {
-  Article = 'article',
-  Category = 'category',
-}
-
-export type WebSearchAutocompleteInput = {
-  singleTerm: Scalars['String']
-  language?: Maybe<ContentLanguage>
-  size?: Maybe<Scalars['Int']>
-}
-
-export type GetArticleInput = {
-  slug?: Maybe<Scalars['String']>
-  lang: Scalars['String']
-}
-
-export type GetNewsInput = {
-  slug: Scalars['String']
-  lang?: Maybe<Scalars['String']>
-}
-
-export type GetNewsListInput = {
-  lang?: Maybe<Scalars['String']>
-  year?: Maybe<Scalars['Int']>
-  month?: Maybe<Scalars['Int']>
-  ascending?: Maybe<Scalars['Boolean']>
-  page?: Maybe<Scalars['Int']>
-  perPage?: Maybe<Scalars['Int']>
+export type GetApplicationsByUserInput = {
+  nationalRegistryId: Scalars['String']
+  typeId?: Maybe<ApplicationResponseDtoTypeIdEnum>
 }
 
 export type GetAdgerdirNewsListInput = {
@@ -825,8 +965,18 @@ export type GetAboutPageInput = {
   lang: Scalars['String']
 }
 
+export type GetAboutSubPageInput = {
+  slug: Scalars['String']
+  lang: Scalars['String']
+}
+
 export type GetLandingPageInput = {
   slug: Scalars['String']
+  lang: Scalars['String']
+}
+
+export type GetContentSlugInput = {
+  id: Scalars['String']
   lang: Scalars['String']
 }
 
@@ -895,9 +1045,24 @@ export type GetLifeEventsInput = {
   lang: Scalars['String']
 }
 
+export type GetLifeEventsInCategoryInput = {
+  slug: Scalars['String']
+  lang: Scalars['String']
+}
+
+export type GetUrlInput = {
+  slug: Scalars['String']
+  lang: Scalars['String']
+}
+
 export type GetArticleCategoriesInput = {
   lang: Scalars['String']
   size?: Maybe<Scalars['Int']>
+}
+
+export type GetSingleArticleInput = {
+  slug: Scalars['String']
+  lang: Scalars['String']
 }
 
 export type GetArticlesInput = {
@@ -906,12 +1071,64 @@ export type GetArticlesInput = {
   size?: Maybe<Scalars['Int']>
 }
 
-export type GetApplicationInput = {
-  id: Scalars['String']
+export type GetSingleNewsInput = {
+  slug: Scalars['String']
+  lang?: Maybe<Scalars['String']>
 }
 
-export type GetApplicationsByTypeInput = {
-  typeId: ApplicationTypeIdEnum
+export type GetNewsDatesInput = {
+  lang?: Maybe<Scalars['String']>
+  order?: Maybe<Scalars['String']>
+}
+
+export type GetNewsInput = {
+  lang?: Maybe<Scalars['String']>
+  year?: Maybe<Scalars['Int']>
+  month?: Maybe<Scalars['Int']>
+  order?: Maybe<Scalars['String']>
+  page?: Maybe<Scalars['Int']>
+  size?: Maybe<Scalars['Int']>
+}
+
+export type GetHomepageInput = {
+  lang: Scalars['String']
+}
+
+export type SearcherInput = {
+  queryString: Scalars['String']
+  types?: Maybe<Array<SearchableContentTypes>>
+  language?: Maybe<ContentLanguage>
+  size?: Maybe<Scalars['Int']>
+  page?: Maybe<Scalars['Int']>
+  tags?: Maybe<Array<Tag>>
+  countTag?: Maybe<SearchableTags>
+}
+
+export enum SearchableContentTypes {
+  WebAboutPage = 'webAboutPage',
+  WebArticle = 'webArticle',
+  WebLifeEventPage = 'webLifeEventPage',
+  WebNews = 'webNews',
+}
+
+export enum ContentLanguage {
+  Is = 'is',
+  En = 'en',
+}
+
+export type Tag = {
+  type: SearchableTags
+  key: Scalars['String']
+}
+
+export enum SearchableTags {
+  Category = 'category',
+}
+
+export type WebSearchAutocompleteInput = {
+  singleTerm: Scalars['String']
+  language?: Maybe<ContentLanguage>
+  size?: Maybe<Scalars['Int']>
 }
 
 export type GetDocumentInput = {
@@ -927,6 +1144,15 @@ export type ListDocumentsInput = {
   pageSize: Scalars['Float']
 }
 
+export type GetTranslationsInput = {
+  namespaces?: Maybe<Array<Scalars['String']>>
+  lang: Scalars['String']
+}
+
+export type GetUserProfileInput = {
+  nationalId: Scalars['String']
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<Application>
@@ -935,7 +1161,10 @@ export type Mutation = {
   addAttachment?: Maybe<Application>
   deleteAttachment?: Maybe<Application>
   submitApplication?: Maybe<Application>
+  contactUs: ContactUsPayload
   createUploadUrl: PresignedPost
+  createProfile?: Maybe<UserProfile>
+  updateProfile?: Maybe<UserProfile>
 }
 
 export type MutationCreateApplicationArgs = {
@@ -962,14 +1191,25 @@ export type MutationSubmitApplicationArgs = {
   input: SubmitApplicationInput
 }
 
+export type MutationContactUsArgs = {
+  input: ContactUsInput
+}
+
 export type MutationCreateUploadUrlArgs = {
   filename: Scalars['String']
+}
+
+export type MutationCreateProfileArgs = {
+  input: CreateUserProfileInput
+}
+
+export type MutationUpdateProfileArgs = {
+  input: UpdateUserProfileInput
 }
 
 export type CreateApplicationInput = {
   applicant: Scalars['String']
   assignee: Scalars['String']
-  externalId?: Maybe<Scalars['String']>
   state: Scalars['String']
   attachments?: Maybe<Scalars['JSON']>
   typeId: CreateApplicationDtoTypeIdEnum
@@ -986,7 +1226,6 @@ export type UpdateApplicationInput = {
   id: Scalars['String']
   applicant?: Maybe<Scalars['String']>
   assignee?: Maybe<Scalars['String']>
-  externalId?: Maybe<Scalars['String']>
   attachments?: Maybe<Scalars['JSON']>
   answers?: Maybe<Scalars['JSON']>
 }
@@ -1024,6 +1263,30 @@ export type SubmitApplicationInput = {
   answers?: Maybe<Scalars['JSON']>
 }
 
+export type ContactUsInput = {
+  name: Scalars['String']
+  phone: Scalars['String']
+  email: Scalars['String']
+  subject: Scalars['String']
+  message: Scalars['String']
+}
+
+export type CreateUserProfileInput = {
+  nationalId: Scalars['String']
+  mobilePhoneNumber: Scalars['String']
+  locale: Scalars['String']
+  email: Scalars['String']
+  profileImageUrl: Scalars['String']
+}
+
+export type UpdateUserProfileInput = {
+  nationalId: Scalars['String']
+  mobilePhoneNumber: Scalars['String']
+  locale: Scalars['String']
+  email: Scalars['String']
+  profileImageUrl: Scalars['String']
+}
+
 export type GetAboutPageQueryVariables = Exact<{
   input: GetAboutPageInput
 }>
@@ -1031,28 +1294,32 @@ export type GetAboutPageQueryVariables = Exact<{
 export type GetAboutPageQuery = { __typename?: 'Query' } & {
   getAboutPage: { __typename?: 'AboutPage' } & Pick<
     AboutPage,
-    'title' | 'seoDescription' | 'theme'
+    'title' | 'seoDescription' | 'theme' | 'slug'
   > & {
+      pageHeader: { __typename?: 'PageHeader' } & Pick<
+        PageHeader,
+        'id' | 'title' | 'introduction' | 'navigationText'
+      > & {
+          links: Array<{ __typename?: 'Link' } & Pick<Link, 'text' | 'url'>>
+          slices: Array<
+            { __typename?: 'TimelineSlice' } & AllSlicesTimelineSliceFragment
+          >
+        }
       slices: Array<
-        | ({
-            __typename?: 'PageHeaderSlice'
-          } & AllSlicesPageHeaderSliceFragment)
         | ({ __typename?: 'TimelineSlice' } & AllSlicesTimelineSliceFragment)
+        | ({
+            __typename?: 'MailingListSignupSlice'
+          } & AllSlicesMailingListSignupSliceFragment)
         | ({ __typename?: 'HeadingSlice' } & AllSlicesHeadingSliceFragment)
-        | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
         | ({ __typename?: 'LinkCardSlice' } & AllSlicesLinkCardSliceFragment)
+        | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+        | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
         | ({
             __typename?: 'LatestNewsSlice'
           } & AllSlicesLatestNewsSliceFragment)
         | ({
-            __typename?: 'MailingListSignupSlice'
-          } & AllSlicesMailingListSignupSliceFragment)
-        | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
-        | ({
             __typename?: 'BulletListSlice'
           } & AllSlicesBulletListSliceFragment)
-        | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
-        | ({ __typename?: 'Image' } & AllSlicesImageFragment)
         | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
         | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
         | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
@@ -1060,8 +1327,102 @@ export type GetAboutPageQuery = { __typename?: 'Query' } & {
         | ({
             __typename?: 'SectionWithImage'
           } & AllSlicesSectionWithImageFragment)
+        | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+        | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+        | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
+        | ({ __typename?: 'Location' } & AllSlicesLocationFragment)
+        | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+        | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+        | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
       >
     }
+}
+
+export type GetAboutPageNavigationQueryVariables = Exact<{
+  input: GetAboutPageInput
+}>
+
+export type GetAboutPageNavigationQuery = { __typename?: 'Query' } & {
+  getAboutPage: { __typename?: 'AboutPage' } & Pick<AboutPage, 'title'> & {
+      pageHeader: { __typename?: 'PageHeader' } & Pick<
+        PageHeader,
+        'navigationText'
+      > & { links: Array<{ __typename?: 'Link' } & Pick<Link, 'text' | 'url'>> }
+    }
+}
+
+export type GetAboutSubPageQueryVariables = Exact<{
+  input: GetAboutSubPageInput
+}>
+
+export type GetAboutSubPageQuery = { __typename?: 'Query' } & {
+  getAboutSubPage?: Maybe<
+    { __typename?: 'AboutSubPage' } & Pick<
+      AboutSubPage,
+      'title' | 'slug' | 'description' | 'subDescription'
+    > & {
+        slices: Array<
+          | ({ __typename?: 'TimelineSlice' } & AllSlicesTimelineSliceFragment)
+          | ({
+              __typename?: 'MailingListSignupSlice'
+            } & AllSlicesMailingListSignupSliceFragment)
+          | ({ __typename?: 'HeadingSlice' } & AllSlicesHeadingSliceFragment)
+          | ({ __typename?: 'LinkCardSlice' } & AllSlicesLinkCardSliceFragment)
+          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
+          | ({
+              __typename?: 'LatestNewsSlice'
+            } & AllSlicesLatestNewsSliceFragment)
+          | ({
+              __typename?: 'BulletListSlice'
+            } & AllSlicesBulletListSliceFragment)
+          | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
+          | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
+          | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
+          | ({ __typename?: 'EmbeddedVideo' } & AllSlicesEmbeddedVideoFragment)
+          | ({
+              __typename?: 'SectionWithImage'
+            } & AllSlicesSectionWithImageFragment)
+          | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+          | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+          | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
+          | ({ __typename?: 'Location' } & AllSlicesLocationFragment)
+          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+          | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
+        >
+        bottomSlices: Array<
+          | ({ __typename?: 'TimelineSlice' } & AllSlicesTimelineSliceFragment)
+          | ({
+              __typename?: 'MailingListSignupSlice'
+            } & AllSlicesMailingListSignupSliceFragment)
+          | ({ __typename?: 'HeadingSlice' } & AllSlicesHeadingSliceFragment)
+          | ({ __typename?: 'LinkCardSlice' } & AllSlicesLinkCardSliceFragment)
+          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
+          | ({
+              __typename?: 'LatestNewsSlice'
+            } & AllSlicesLatestNewsSliceFragment)
+          | ({
+              __typename?: 'BulletListSlice'
+            } & AllSlicesBulletListSliceFragment)
+          | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
+          | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
+          | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
+          | ({ __typename?: 'EmbeddedVideo' } & AllSlicesEmbeddedVideoFragment)
+          | ({
+              __typename?: 'SectionWithImage'
+            } & AllSlicesSectionWithImageFragment)
+          | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+          | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+          | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
+          | ({ __typename?: 'Location' } & AllSlicesLocationFragment)
+          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+          | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
+        >
+      }
+  >
 }
 
 export type GetAlertBannerQueryVariables = Exact<{
@@ -1082,36 +1443,37 @@ export type GetAlertBannerQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type GetArticleQueryVariables = Exact<{
-  input: GetArticleInput
+export type GetSingleArticleQueryVariables = Exact<{
+  input: GetSingleArticleInput
 }>
 
-export type GetArticleQuery = { __typename?: 'Query' } & {
-  getArticle?: Maybe<
+export type GetSingleArticleQuery = { __typename?: 'Query' } & {
+  getSingleArticle?: Maybe<
     { __typename?: 'Article' } & Pick<
       Article,
-      'id' | 'slug' | 'title' | 'shortTitle' | 'intro'
+      | 'id'
+      | 'slug'
+      | 'title'
+      | 'shortTitle'
+      | 'intro'
+      | 'containsApplicationForm'
+      | 'importance'
     > & {
         body: Array<
-          | ({
-              __typename?: 'PageHeaderSlice'
-            } & AllSlicesPageHeaderSliceFragment)
           | ({ __typename?: 'TimelineSlice' } & AllSlicesTimelineSliceFragment)
+          | ({
+              __typename?: 'MailingListSignupSlice'
+            } & AllSlicesMailingListSignupSliceFragment)
           | ({ __typename?: 'HeadingSlice' } & AllSlicesHeadingSliceFragment)
-          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
           | ({ __typename?: 'LinkCardSlice' } & AllSlicesLinkCardSliceFragment)
+          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
           | ({
               __typename?: 'LatestNewsSlice'
             } & AllSlicesLatestNewsSliceFragment)
           | ({
-              __typename?: 'MailingListSignupSlice'
-            } & AllSlicesMailingListSignupSliceFragment)
-          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
-          | ({
               __typename?: 'BulletListSlice'
             } & AllSlicesBulletListSliceFragment)
-          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
-          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
           | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
           | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
           | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
@@ -1119,6 +1481,13 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
           | ({
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
+          | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+          | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+          | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
+          | ({ __typename?: 'Location' } & AllSlicesLocationFragment)
+          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+          | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
         >
         group?: Maybe<
           { __typename?: 'ArticleGroup' } & Pick<
@@ -1129,7 +1498,7 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
         category?: Maybe<
           { __typename?: 'ArticleCategory' } & Pick<
             ArticleCategory,
-            'title' | 'slug' | 'description'
+            'id' | 'title' | 'slug' | 'description'
           >
         >
         relatedArticles?: Maybe<
@@ -1139,32 +1508,27 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
           { __typename?: 'SubArticle' } & Pick<SubArticle, 'title' | 'slug'> & {
               body: Array<
                 | ({
-                    __typename?: 'PageHeaderSlice'
-                  } & AllSlicesPageHeaderSliceFragment)
-                | ({
                     __typename?: 'TimelineSlice'
                   } & AllSlicesTimelineSliceFragment)
-                | ({
-                    __typename?: 'HeadingSlice'
-                  } & AllSlicesHeadingSliceFragment)
-                | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
-                | ({
-                    __typename?: 'LinkCardSlice'
-                  } & AllSlicesLinkCardSliceFragment)
-                | ({
-                    __typename?: 'LatestNewsSlice'
-                  } & AllSlicesLatestNewsSliceFragment)
                 | ({
                     __typename?: 'MailingListSignupSlice'
                   } & AllSlicesMailingListSignupSliceFragment)
                 | ({
+                    __typename?: 'HeadingSlice'
+                  } & AllSlicesHeadingSliceFragment)
+                | ({
+                    __typename?: 'LinkCardSlice'
+                  } & AllSlicesLinkCardSliceFragment)
+                | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+                | ({
                     __typename?: 'LogoListSlice'
                   } & AllSlicesLogoListSliceFragment)
                 | ({
+                    __typename?: 'LatestNewsSlice'
+                  } & AllSlicesLatestNewsSliceFragment)
+                | ({
                     __typename?: 'BulletListSlice'
                   } & AllSlicesBulletListSliceFragment)
-                | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
-                | ({ __typename?: 'Image' } & AllSlicesImageFragment)
                 | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
                 | ({
                     __typename?: 'ProcessEntry'
@@ -1176,10 +1540,27 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
                 | ({
                     __typename?: 'SectionWithImage'
                   } & AllSlicesSectionWithImageFragment)
+                | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+                | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+                | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
+                | ({ __typename?: 'Location' } & AllSlicesLocationFragment)
+                | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+                | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+                | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
               >
             }
         >
       }
+  >
+}
+
+export type GetContentSlugQueryVariables = Exact<{
+  input: GetContentSlugInput
+}>
+
+export type GetContentSlugQuery = { __typename?: 'Query' } & {
+  getContentSlug?: Maybe<
+    { __typename?: 'ContentSlug' } & Pick<ContentSlug, 'slug' | 'type'>
   >
 }
 
@@ -1191,7 +1572,7 @@ export type GetArticleCategoriesQuery = { __typename?: 'Query' } & {
   getArticleCategories: Array<
     { __typename?: 'ArticleCategory' } & Pick<
       ArticleCategory,
-      'title' | 'description' | 'slug'
+      'id' | 'title' | 'description' | 'slug'
     >
   >
 }
@@ -1202,20 +1583,53 @@ export type GetArticlesQueryVariables = Exact<{
 
 export type GetArticlesQuery = { __typename?: 'Query' } & {
   getArticles: Array<
-    { __typename?: 'Article' } & Pick<Article, 'intro' | 'slug' | 'title'> & {
+    { __typename?: 'Article' } & Pick<
+      Article,
+      'intro' | 'containsApplicationForm' | 'importance' | 'slug' | 'title'
+    > & {
         category?: Maybe<
           { __typename?: 'ArticleCategory' } & Pick<ArticleCategory, 'title'>
         >
         group?: Maybe<
           { __typename?: 'ArticleGroup' } & Pick<
             ArticleGroup,
-            'slug' | 'title' | 'description'
+            'slug' | 'title' | 'description' | 'importance'
           >
         >
         subgroup?: Maybe<
-          { __typename?: 'ArticleSubgroup' } & Pick<ArticleSubgroup, 'title'>
+          { __typename?: 'ArticleSubgroup' } & Pick<
+            ArticleSubgroup,
+            'title' | 'importance'
+          >
+        >
+        otherSubgroups?: Maybe<
+          Array<
+            { __typename?: 'ArticleSubgroup' } & Pick<
+              ArticleSubgroup,
+              'title' | 'slug' | 'importance'
+            >
+          >
+        >
+        otherGroups?: Maybe<
+          Array<
+            { __typename?: 'ArticleGroup' } & Pick<
+              ArticleGroup,
+              'title' | 'slug' | 'importance'
+            >
+          >
         >
       }
+  >
+}
+
+export type ContactUsMutationVariables = Exact<{
+  input: ContactUsInput
+}>
+
+export type ContactUsMutation = { __typename?: 'Mutation' } & {
+  contactUs: { __typename?: 'ContactUsPayload' } & Pick<
+    ContactUsPayload,
+    'success'
   >
 }
 
@@ -1230,17 +1644,24 @@ export type GetFrontpageSliderListQuery = { __typename?: 'Query' } & {
         { __typename?: 'FrontpageSlider' } & Pick<
           FrontpageSlider,
           'subtitle' | 'title' | 'content' | 'link' | 'animationJson'
-        > & {
-            image?: Maybe<
-              { __typename?: 'Image' } & Pick<
-                Image,
-                'url' | 'title' | 'contentType' | 'width' | 'height'
-              >
-            >
-          }
+        >
       >
     }
   >
+}
+
+export type GetHomepageQueryVariables = Exact<{
+  input: GetHomepageInput
+}>
+
+export type GetHomepageQuery = { __typename?: 'Query' } & {
+  getHomepage: { __typename?: 'Homepage' } & {
+    featuredThings: Array<
+      { __typename?: 'Featured' } & Pick<Featured, 'title' | 'attention'> & {
+          thing: { __typename?: 'Article' } & Pick<Article, 'slug'>
+        }
+    >
+  }
 }
 
 export type GetLandingPageQueryVariables = Exact<{
@@ -1263,25 +1684,20 @@ export type GetLandingPageQuery = { __typename?: 'Query' } & {
             }
         >
         content: Array<
-          | ({
-              __typename?: 'PageHeaderSlice'
-            } & AllSlicesPageHeaderSliceFragment)
           | ({ __typename?: 'TimelineSlice' } & AllSlicesTimelineSliceFragment)
+          | ({
+              __typename?: 'MailingListSignupSlice'
+            } & AllSlicesMailingListSignupSliceFragment)
           | ({ __typename?: 'HeadingSlice' } & AllSlicesHeadingSliceFragment)
-          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
           | ({ __typename?: 'LinkCardSlice' } & AllSlicesLinkCardSliceFragment)
+          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
           | ({
               __typename?: 'LatestNewsSlice'
             } & AllSlicesLatestNewsSliceFragment)
           | ({
-              __typename?: 'MailingListSignupSlice'
-            } & AllSlicesMailingListSignupSliceFragment)
-          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
-          | ({
               __typename?: 'BulletListSlice'
             } & AllSlicesBulletListSliceFragment)
-          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
-          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
           | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
           | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
           | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
@@ -1289,6 +1705,13 @@ export type GetLandingPageQuery = { __typename?: 'Query' } & {
           | ({
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
+          | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+          | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+          | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
+          | ({ __typename?: 'Location' } & AllSlicesLocationFragment)
+          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+          | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
         >
       }
   >
@@ -1302,29 +1725,24 @@ export type GetLifeEventQuery = { __typename?: 'Query' } & {
   getLifeEventPage?: Maybe<
     { __typename?: 'LifeEventPage' } & Pick<
       LifeEventPage,
-      'title' | 'slug' | 'intro'
+      'id' | 'title' | 'slug' | 'intro'
     > & {
-        image: { __typename?: 'Image' } & ImageFieldsFragment
+        image?: Maybe<{ __typename?: 'Image' } & ImageFieldsFragment>
         content: Array<
-          | ({
-              __typename?: 'PageHeaderSlice'
-            } & AllSlicesPageHeaderSliceFragment)
           | ({ __typename?: 'TimelineSlice' } & AllSlicesTimelineSliceFragment)
+          | ({
+              __typename?: 'MailingListSignupSlice'
+            } & AllSlicesMailingListSignupSliceFragment)
           | ({ __typename?: 'HeadingSlice' } & AllSlicesHeadingSliceFragment)
-          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
           | ({ __typename?: 'LinkCardSlice' } & AllSlicesLinkCardSliceFragment)
+          | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
           | ({
               __typename?: 'LatestNewsSlice'
             } & AllSlicesLatestNewsSliceFragment)
           | ({
-              __typename?: 'MailingListSignupSlice'
-            } & AllSlicesMailingListSignupSliceFragment)
-          | ({ __typename?: 'LogoListSlice' } & AllSlicesLogoListSliceFragment)
-          | ({
               __typename?: 'BulletListSlice'
             } & AllSlicesBulletListSliceFragment)
-          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
-          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
           | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
           | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
           | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
@@ -1332,6 +1750,13 @@ export type GetLifeEventQuery = { __typename?: 'Query' } & {
           | ({
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
+          | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+          | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+          | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
+          | ({ __typename?: 'Location' } & AllSlicesLocationFragment)
+          | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+          | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+          | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
         >
       }
   >
@@ -1345,10 +1770,32 @@ export type GetLifeEventsQuery = { __typename?: 'Query' } & {
   getLifeEvents: Array<
     { __typename?: 'LifeEventPage' } & Pick<
       LifeEventPage,
-      'title' | 'slug' | 'intro'
+      'id' | 'title' | 'slug' | 'intro'
     > & {
         thumbnail?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
-        image: { __typename?: 'Image' } & Pick<Image, 'url'>
+        image?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
+      }
+  >
+}
+
+export type GetLifeEventsInCategoryQueryVariables = Exact<{
+  input: GetLifeEventsInCategoryInput
+}>
+
+export type GetLifeEventsInCategoryQuery = { __typename?: 'Query' } & {
+  getLifeEventsInCategory: Array<
+    { __typename?: 'LifeEventPage' } & Pick<
+      LifeEventPage,
+      'id' | 'title' | 'slug' | 'intro'
+    > & {
+        category?: Maybe<
+          { __typename?: 'ArticleCategory' } & Pick<
+            ArticleCategory,
+            'title' | 'slug'
+          >
+        >
+        thumbnail?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
+        image?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
       }
   >
 }
@@ -1373,42 +1820,88 @@ export type GetNamespaceQuery = { __typename?: 'Query' } & {
   getNamespace?: Maybe<{ __typename?: 'Namespace' } & Pick<Namespace, 'fields'>>
 }
 
-export type GetNewsListQueryVariables = Exact<{
-  input: GetNewsListInput
-}>
-
-export type GetNewsListQuery = { __typename?: 'Query' } & {
-  getNewsList: { __typename?: 'PaginatedNews' } & {
-    page: { __typename?: 'Pagination' } & Pick<
-      Pagination,
-      'page' | 'perPage' | 'totalPages'
-    >
-    news: Array<
-      { __typename?: 'News' } & Pick<
-        News,
-        'id' | 'title' | 'subtitle' | 'date' | 'slug' | 'intro'
-      > & {
-          image?: Maybe<
-            { __typename?: 'Image' } & Pick<
-              Image,
-              'url' | 'title' | 'width' | 'height'
-            >
-          >
-        }
-    >
-  }
-}
-
-export type GetNewsItemQueryVariables = Exact<{
+export type GetNewsQueryVariables = Exact<{
   input: GetNewsInput
 }>
 
-export type GetNewsItemQuery = { __typename?: 'Query' } & {
-  getNews?: Maybe<
+export type GetNewsQuery = { __typename?: 'Query' } & {
+  getNews: { __typename?: 'NewsList' } & Pick<NewsList, 'total'> & {
+      items: Array<
+        { __typename?: 'News' } & Pick<
+          News,
+          'id' | 'title' | 'subtitle' | 'date' | 'slug' | 'intro'
+        > & {
+            image?: Maybe<
+              { __typename?: 'Image' } & Pick<
+                Image,
+                'url' | 'title' | 'width' | 'height'
+              >
+            >
+          }
+      >
+    }
+}
+
+export type GetNewsDatesQueryVariables = Exact<{
+  input: GetNewsDatesInput
+}>
+
+export type GetNewsDatesQuery = { __typename?: 'Query' } & Pick<
+  Query,
+  'getNewsDates'
+>
+
+export type GetSingleNewsItemQueryVariables = Exact<{
+  input: GetSingleNewsInput
+}>
+
+export type GetSingleNewsItemQuery = { __typename?: 'Query' } & {
+  getSingleNews?: Maybe<
     { __typename?: 'News' } & Pick<
       News,
-      'id' | 'title' | 'subtitle' | 'date' | 'slug' | 'intro' | 'content'
+      'id' | 'title' | 'subtitle' | 'date' | 'slug' | 'intro'
     > & {
+        author?: Maybe<{ __typename?: 'Author' } & Pick<Author, 'name'>>
+        content?: Maybe<
+          Array<
+            | ({
+                __typename?: 'TimelineSlice'
+              } & AllSlicesTimelineSliceFragment)
+            | ({
+                __typename?: 'MailingListSignupSlice'
+              } & AllSlicesMailingListSignupSliceFragment)
+            | ({ __typename?: 'HeadingSlice' } & AllSlicesHeadingSliceFragment)
+            | ({
+                __typename?: 'LinkCardSlice'
+              } & AllSlicesLinkCardSliceFragment)
+            | ({ __typename?: 'StorySlice' } & AllSlicesStorySliceFragment)
+            | ({
+                __typename?: 'LogoListSlice'
+              } & AllSlicesLogoListSliceFragment)
+            | ({
+                __typename?: 'LatestNewsSlice'
+              } & AllSlicesLatestNewsSliceFragment)
+            | ({
+                __typename?: 'BulletListSlice'
+              } & AllSlicesBulletListSliceFragment)
+            | ({ __typename?: 'Statistics' } & AllSlicesStatisticsFragment)
+            | ({ __typename?: 'ProcessEntry' } & AllSlicesProcessEntryFragment)
+            | ({ __typename?: 'FaqList' } & AllSlicesFaqListFragment)
+            | ({
+                __typename?: 'EmbeddedVideo'
+              } & AllSlicesEmbeddedVideoFragment)
+            | ({
+                __typename?: 'SectionWithImage'
+              } & AllSlicesSectionWithImageFragment)
+            | ({ __typename?: 'TabSection' } & AllSlicesTabSectionFragment)
+            | ({ __typename?: 'TeamList' } & AllSlicesTeamListFragment)
+            | ({ __typename?: 'ContactUs' } & AllSlicesContactUsFragment)
+            | ({ __typename?: 'Location' } & AllSlicesLocationFragment)
+            | ({ __typename?: 'Html' } & AllSlicesHtmlFragment)
+            | ({ __typename?: 'Image' } & AllSlicesImageFragment)
+            | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
+          >
+        >
         image?: Maybe<
           { __typename?: 'Image' } & Pick<
             Image,
@@ -1494,8 +1987,11 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
       items: Array<
         | ({ __typename?: 'Article' } & Pick<
             Article,
-            'id' | 'contentStatus' | 'title' | 'slug'
+            'id' | 'title' | 'slug' | 'intro' | 'containsApplicationForm'
           > & {
+              group?: Maybe<
+                { __typename?: 'ArticleGroup' } & Pick<ArticleGroup, 'title'>
+              >
               category?: Maybe<
                 { __typename?: 'ArticleCategory' } & Pick<
                   ArticleCategory,
@@ -1525,7 +2021,55 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
         | ({ __typename?: 'LifeEventPage' } & Pick<
             LifeEventPage,
             'id' | 'title' | 'slug' | 'intro'
-          > & { image: { __typename?: 'Image' } & Pick<Image, 'id'> })
+          > & {
+              category?: Maybe<
+                { __typename?: 'ArticleCategory' } & Pick<
+                  ArticleCategory,
+                  'slug' | 'title'
+                >
+              >
+              image?: Maybe<
+                { __typename?: 'Image' } & Pick<
+                  Image,
+                  'id' | 'url' | 'title' | 'contentType' | 'width' | 'height'
+                >
+              >
+              thumbnail?: Maybe<
+                { __typename?: 'Image' } & Pick<
+                  Image,
+                  'id' | 'url' | 'title' | 'contentType' | 'width' | 'height'
+                >
+              >
+            })
+        | ({ __typename?: 'News' } & Pick<
+            News,
+            'id' | 'intro' | 'title' | 'slug'
+          >)
+        | ({ __typename?: 'AboutPage' } & Pick<
+            AboutPage,
+            'title' | 'seoDescription' | 'slug'
+          >)
+      >
+    }
+}
+
+export type GetSearchResultsNewsQueryVariables = Exact<{
+  query: SearcherInput
+}>
+
+export type GetSearchResultsNewsQuery = { __typename?: 'Query' } & {
+  searchResults: { __typename?: 'SearchResult' } & Pick<
+    SearchResult,
+    'total'
+  > & {
+      items: Array<
+        | { __typename?: 'Article' }
+        | { __typename?: 'LifeEventPage' }
+        | ({ __typename?: 'News' } & Pick<
+            News,
+            'id' | 'intro' | 'title' | 'slug'
+          >)
+        | { __typename?: 'AboutPage' }
       >
     }
 }
@@ -1553,8 +2097,11 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
       items: Array<
         | ({ __typename?: 'Article' } & Pick<
             Article,
-            'id' | 'contentStatus' | 'title' | 'slug'
+            'id' | 'title' | 'slug' | 'intro' | 'containsApplicationForm'
           > & {
+              group?: Maybe<
+                { __typename?: 'ArticleGroup' } & Pick<ArticleGroup, 'title'>
+              >
               category?: Maybe<
                 { __typename?: 'ArticleCategory' } & Pick<
                   ArticleCategory,
@@ -1585,9 +2132,17 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
             LifeEventPage,
             'id' | 'title' | 'slug' | 'intro'
           > & {
-              image: { __typename?: 'Image' } & Pick<
-                Image,
-                'id' | 'url' | 'title' | 'contentType' | 'width' | 'height'
+              category?: Maybe<
+                { __typename?: 'ArticleCategory' } & Pick<
+                  ArticleCategory,
+                  'slug' | 'title'
+                >
+              >
+              image?: Maybe<
+                { __typename?: 'Image' } & Pick<
+                  Image,
+                  'id' | 'url' | 'title' | 'contentType' | 'width' | 'height'
+                >
               >
               thumbnail?: Maybe<
                 { __typename?: 'Image' } & Pick<
@@ -1596,8 +2151,40 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
                 >
               >
             })
+        | ({ __typename?: 'News' } & Pick<
+            News,
+            'id' | 'intro' | 'title' | 'slug'
+          >)
+        | ({ __typename?: 'AboutPage' } & Pick<
+            AboutPage,
+            'title' | 'seoDescription' | 'slug'
+          >)
+      >
+      tagCounts?: Maybe<
+        Array<
+          { __typename?: 'TagCount' } & Pick<
+            TagCount,
+            'key' | 'value' | 'count'
+          >
+        >
       >
     }
+}
+
+export type GetUrlQueryVariables = Exact<{
+  input: GetUrlInput
+}>
+
+export type GetUrlQuery = { __typename?: 'Query' } & {
+  getUrl?: Maybe<
+    { __typename?: 'Url' } & Pick<Url, 'id' | 'title' | 'urlsList'> & {
+        page:
+          | ({ __typename: 'Article' } & Pick<Article, 'slug'>)
+          | ({ __typename: 'ArticleCategory' } & Pick<ArticleCategory, 'slug'>)
+          | ({ __typename: 'News' } & Pick<News, 'slug'>)
+          | ({ __typename: 'LifeEventPage' } & Pick<LifeEventPage, 'slug'>)
+      }
+  >
 }
 
 export type ImageFieldsFragment = { __typename: 'Image' } & Pick<
@@ -1605,13 +2192,10 @@ export type ImageFieldsFragment = { __typename: 'Image' } & Pick<
   'id' | 'title' | 'url' | 'contentType' | 'width' | 'height'
 >
 
-export type PageHeaderFieldsFragment = { __typename: 'PageHeaderSlice' } & Pick<
-  PageHeaderSlice,
-  'id' | 'title' | 'introduction' | 'navigationText'
-> & {
-    links: Array<{ __typename?: 'Link' } & Pick<Link, 'text' | 'url'>>
-    slices: Array<{ __typename?: 'TimelineSlice' } & TimelineFieldsFragment>
-  }
+export type AssetFieldsFragment = { __typename: 'Asset' } & Pick<
+  Asset,
+  'id' | 'title' | 'url' | 'contentType'
+>
 
 export type TimelineFieldsFragment = { __typename: 'TimelineSlice' } & Pick<
   TimelineSlice,
@@ -1626,10 +2210,9 @@ export type TimelineFieldsFragment = { __typename: 'TimelineSlice' } & Pick<
         | 'numerator'
         | 'denominator'
         | 'label'
-        | 'body'
         | 'tags'
         | 'link'
-      >
+      > & { body?: Maybe<{ __typename?: 'Html' } & HtmlFieldsFragment> }
     >
   }
 
@@ -1647,7 +2230,14 @@ export type StoryFieldsFragment = { __typename: 'StorySlice' } & Pick<
     stories: Array<
       { __typename?: 'Story' } & Pick<
         Story,
-        'title' | 'intro' | 'label' | 'readMoreText' | 'date' | 'body'
+        | 'title'
+        | 'intro'
+        | 'label'
+        | 'readMoreText'
+        | 'date'
+        | 'body'
+        | 'linkedPage'
+        | 'link'
       > & { logo: { __typename?: 'Image' } & ImageFieldsFragment }
     >
   }
@@ -1659,7 +2249,7 @@ export type LatestNewsFieldsFragment = { __typename: 'LatestNewsSlice' } & Pick<
     news: Array<
       { __typename?: 'News' } & Pick<
         News,
-        'id' | 'title' | 'subtitle' | 'slug' | 'date' | 'intro' | 'content'
+        'typename' | 'id' | 'title' | 'subtitle' | 'slug' | 'date' | 'intro'
       > & { image?: Maybe<{ __typename?: 'Image' } & ImageFieldsFragment> }
     >
   }
@@ -1732,18 +2322,8 @@ export type StatisticsFieldsFragment = { __typename: 'Statistics' } & Pick<
 
 export type ProcessEntryFieldsFragment = { __typename: 'ProcessEntry' } & Pick<
   ProcessEntry,
-  | 'id'
-  | 'title'
-  | 'subtitle'
-  | 'type'
-  | 'processTitle'
-  | 'processDescription'
-  | 'processLink'
-  | 'buttonText'
-> & {
-    details?: Maybe<{ __typename?: 'Html' } & HtmlFieldsFragment>
-    processInfo?: Maybe<{ __typename?: 'Html' } & HtmlFieldsFragment>
-  }
+  'id' | 'type' | 'processTitle' | 'processLink' | 'buttonText'
+>
 
 export type HtmlFieldsFragment = { __typename: 'Html' } & Pick<
   Html,
@@ -1761,47 +2341,88 @@ export type SectionWithImageFieldsFragment = {
     html: { __typename?: 'Html' } & HtmlFieldsFragment
   }
 
-export type AllSlicesPageHeaderSliceFragment = {
-  __typename?: 'PageHeaderSlice'
-} & PageHeaderFieldsFragment
+export type TabSectionFieldsFragment = { __typename: 'TabSection' } & Pick<
+  TabSection,
+  'id' | 'title'
+> & {
+    tabs: Array<
+      { __typename?: 'TabContent' } & Pick<
+        TabContent,
+        'tabTitle' | 'contentTitle'
+      > & {
+          image?: Maybe<{ __typename?: 'Image' } & ImageFieldsFragment>
+          body?: Maybe<{ __typename?: 'Html' } & HtmlFieldsFragment>
+        }
+    >
+  }
+
+export type TeamListFieldsFragment = { __typename: 'TeamList' } & Pick<
+  TeamList,
+  'id'
+> & {
+    teamMembers: Array<
+      { __typename?: 'TeamMember' } & Pick<TeamMember, 'name' | 'title'> & {
+          image: { __typename?: 'Image' } & ImageFieldsFragment
+        }
+    >
+  }
+
+export type ContactUsFieldsFragment = { __typename: 'ContactUs' } & Pick<
+  ContactUs,
+  | 'id'
+  | 'title'
+  | 'required'
+  | 'invalidPhone'
+  | 'invalidEmail'
+  | 'labelName'
+  | 'labelPhone'
+  | 'labelEmail'
+  | 'labelSubject'
+  | 'labelMessage'
+  | 'submitButtonText'
+  | 'successMessage'
+  | 'errorMessage'
+>
+
+export type LocationFieldsFragment = { __typename: 'Location' } & Pick<
+  Location,
+  'typename' | 'id' | 'title' | 'subTitle' | 'address'
+> & {
+    link?: Maybe<{ __typename?: 'Link' } & Pick<Link, 'text' | 'url'>>
+    background: { __typename?: 'Image' } & ImageFieldsFragment
+  }
 
 export type AllSlicesTimelineSliceFragment = {
   __typename?: 'TimelineSlice'
 } & TimelineFieldsFragment
 
+export type AllSlicesMailingListSignupSliceFragment = {
+  __typename?: 'MailingListSignupSlice'
+} & MailingListSignupFieldsFragment
+
 export type AllSlicesHeadingSliceFragment = {
   __typename?: 'HeadingSlice'
 } & HeadingFieldsFragment
-
-export type AllSlicesStorySliceFragment = {
-  __typename?: 'StorySlice'
-} & StoryFieldsFragment
 
 export type AllSlicesLinkCardSliceFragment = {
   __typename?: 'LinkCardSlice'
 } & LinkCardFieldsFragment
 
-export type AllSlicesLatestNewsSliceFragment = {
-  __typename?: 'LatestNewsSlice'
-} & LatestNewsFieldsFragment
-
-export type AllSlicesMailingListSignupSliceFragment = {
-  __typename?: 'MailingListSignupSlice'
-} & MailingListSignupFieldsFragment
+export type AllSlicesStorySliceFragment = {
+  __typename?: 'StorySlice'
+} & StoryFieldsFragment
 
 export type AllSlicesLogoListSliceFragment = {
   __typename?: 'LogoListSlice'
 } & LogoListFieldsFragment
 
+export type AllSlicesLatestNewsSliceFragment = {
+  __typename?: 'LatestNewsSlice'
+} & LatestNewsFieldsFragment
+
 export type AllSlicesBulletListSliceFragment = {
   __typename?: 'BulletListSlice'
 } & BulletListFieldsFragment
-
-export type AllSlicesHtmlFragment = { __typename?: 'Html' } & HtmlFieldsFragment
-
-export type AllSlicesImageFragment = {
-  __typename?: 'Image'
-} & ImageFieldsFragment
 
 export type AllSlicesStatisticsFragment = {
   __typename?: 'Statistics'
@@ -1823,20 +2444,50 @@ export type AllSlicesSectionWithImageFragment = {
   __typename?: 'SectionWithImage'
 } & SectionWithImageFieldsFragment
 
+export type AllSlicesTabSectionFragment = {
+  __typename?: 'TabSection'
+} & TabSectionFieldsFragment
+
+export type AllSlicesTeamListFragment = {
+  __typename?: 'TeamList'
+} & TeamListFieldsFragment
+
+export type AllSlicesContactUsFragment = {
+  __typename?: 'ContactUs'
+} & ContactUsFieldsFragment
+
+export type AllSlicesLocationFragment = {
+  __typename?: 'Location'
+} & LocationFieldsFragment
+
+export type AllSlicesHtmlFragment = { __typename?: 'Html' } & HtmlFieldsFragment
+
+export type AllSlicesImageFragment = {
+  __typename?: 'Image'
+} & ImageFieldsFragment
+
+export type AllSlicesAssetFragment = {
+  __typename?: 'Asset'
+} & AssetFieldsFragment
+
 export type AllSlicesFragment =
-  | AllSlicesPageHeaderSliceFragment
   | AllSlicesTimelineSliceFragment
-  | AllSlicesHeadingSliceFragment
-  | AllSlicesStorySliceFragment
-  | AllSlicesLinkCardSliceFragment
-  | AllSlicesLatestNewsSliceFragment
   | AllSlicesMailingListSignupSliceFragment
+  | AllSlicesHeadingSliceFragment
+  | AllSlicesLinkCardSliceFragment
+  | AllSlicesStorySliceFragment
   | AllSlicesLogoListSliceFragment
+  | AllSlicesLatestNewsSliceFragment
   | AllSlicesBulletListSliceFragment
-  | AllSlicesHtmlFragment
-  | AllSlicesImageFragment
   | AllSlicesStatisticsFragment
   | AllSlicesProcessEntryFragment
   | AllSlicesFaqListFragment
   | AllSlicesEmbeddedVideoFragment
   | AllSlicesSectionWithImageFragment
+  | AllSlicesTabSectionFragment
+  | AllSlicesTeamListFragment
+  | AllSlicesContactUsFragment
+  | AllSlicesLocationFragment
+  | AllSlicesHtmlFragment
+  | AllSlicesImageFragment
+  | AllSlicesAssetFragment

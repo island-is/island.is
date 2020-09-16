@@ -18,8 +18,8 @@ export class LinkCard {
 }
 
 export const mapLinkCard = ({ fields }: ICard): LinkCard => ({
-  title: fields.title,
-  body: fields.body,
-  link: fields.link ?? '',
-  linkText: fields.linkText ?? '',
+  title: fields?.title ?? '',
+  body: fields?.body ?? '',
+  link: fields?.link ?? '',
+  linkText: fields?.linkText ?? '',
 })

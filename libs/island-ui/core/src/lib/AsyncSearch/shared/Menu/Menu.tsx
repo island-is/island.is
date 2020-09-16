@@ -28,5 +28,3 @@ export const Menu = forwardRef<HTMLUListElement, MenuProps>(
     )
   },
 )
-
-export default Menu

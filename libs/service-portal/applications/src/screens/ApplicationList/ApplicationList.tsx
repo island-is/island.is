@@ -1,34 +1,42 @@
 import React from 'react'
-import { ServicePortalModuleComponent } from '@island.is/service-portal/core'
-import ApplicationCard, {
-  MockApplication,
-} from '../../components/ApplicationCard/ApplicationCard'
+import format from 'date-fns/format'
+import {
+  ActionCardLoader,
+  ServicePortalModuleComponent,
+} from '@island.is/service-portal/core'
+import ApplicationCard from '../../components/ApplicationCard/ApplicationCard'
 import { Typography, Box, Stack } from '@island.is/island-ui/core'
+import { useListApplications } from '@island.is/service-portal/graphql'
+import { Application } from '@island.is/application/core'
 
-const mockApplications: MockApplication[] = [
-  {
-    name: 'Stafrænt ökuskírteini',
-    date: '2020-07-27T00:00:00.000',
-    status: true,
-    url: 'https://leyfisumsokn.island.is/Home/Completed?applicationID=93202',
-  },
-  {
-    name: 'Stafrænt ökuskírteini',
-    date: '2020-06-22T00:00:00.000',
-    status: false,
-    url: 'https://leyfisumsokn.island.is/Home/Completed?applicationID=93202',
-  },
-]
+const ApplicationList: ServicePortalModuleComponent = ({ userInfo }) => {
+  const { data: applications, loading, error } = useListApplications(
+    userInfo.profile.natreg,
+  )
 
-const ApplicationList: ServicePortalModuleComponent = () => {
   return (
     <>
       <Box marginBottom={5}>
         <Typography variant="h1">Umsóknir</Typography>
       </Box>
+      {loading && <ActionCardLoader repeat={3} />}
+      {error && (
+        <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
+          <Typography variant="h3">
+            Tókst ekki að sækja umsóknir, eitthvað fór úrskeiðis
+          </Typography>
+        </Box>
+      )}
       <Stack space={2}>
-        {mockApplications.map((application, index) => (
-          <ApplicationCard application={application} key={index} />
+        {applications?.map((application: Application) => (
+          <ApplicationCard
+            key={application.id}
+            name={application.name || application.typeId}
+            date={format(new Date(application.modified), 'MMMM')}
+            isComplete={application.progress === 1}
+            url={`http://localhost:4200/applications${application.id}`} // TODO update to correct path
+            progress={application.progress ? application.progress * 100 : 0}
+          />
         ))}
       </Stack>
     </>

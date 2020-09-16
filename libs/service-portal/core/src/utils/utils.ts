@@ -1,5 +1,5 @@
-import { UserWithMeta } from '../lib/service-portal-core'
+import { User } from 'oidc-client'
 
-export const userHasAccessToScope = (user: UserWithMeta, scope: string) => {
+export const userHasAccessToScope = (user: User, scope: string) => {
   return true
 }

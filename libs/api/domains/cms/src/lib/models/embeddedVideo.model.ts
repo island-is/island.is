@@ -4,9 +4,8 @@ import { IEmbeddedVideo } from '../generated/contentfulTypes'
 
 @ObjectType()
 export class EmbeddedVideo {
-  constructor(initializer: EmbeddedVideo) {
-    Object.assign(this, initializer)
-  }
+  @Field()
+  typename: string
 
   @Field(() => ID)
   id: string
@@ -21,8 +20,9 @@ export class EmbeddedVideo {
 export const mapEmbeddedVideo = ({
   fields,
   sys,
-}: IEmbeddedVideo): EmbeddedVideo =>
-  new EmbeddedVideo({
-    id: sys.id,
-    ...fields,
-  })
+}: IEmbeddedVideo): EmbeddedVideo => ({
+  typename: 'EmbeddedVideo',
+  id: sys.id,
+  title: fields.title ?? '',
+  url: fields.url ?? '',
+})

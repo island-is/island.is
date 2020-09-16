@@ -2,11 +2,8 @@ import { MappedData } from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { ILifeEventPage } from '../../generated/contentfulTypes'
-import {
-  LifeEventPage,
-  mapLifeEventPage,
-} from '../../models/lifeEventPage.model'
-import { createTerms } from './utils'
+import { mapLifeEventPage } from '../../models/lifeEventPage.model'
+import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
 export class LifeEventsPageSyncService {
@@ -22,17 +19,16 @@ export class LifeEventsPageSyncService {
     logger.info('Mapping life event pages', { count: entries.length })
     return entries
       .map<MappedData | boolean>((entry) => {
-        let mapped: LifeEventPage
         try {
-          mapped = mapLifeEventPage(entry)
-
+          const mapped = mapLifeEventPage(entry)
+          const type = 'webLifeEventPage'
           return {
             _id: mapped.id,
             title: mapped.title,
-            content: mapped.intro,
-            type: 'webLifeEventPage',
+            content: extractStringsFromObject(mapped.content),
+            type,
             termPool: createTerms([mapped.title]),
-            response: JSON.stringify(mapped),
+            response: JSON.stringify({ ...mapped, __typename: type }),
             tags: [],
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),

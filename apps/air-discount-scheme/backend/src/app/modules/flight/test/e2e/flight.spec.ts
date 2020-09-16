@@ -1,14 +1,14 @@
 import { setup } from '../../../../../../test/setup'
 import * as request from 'supertest'
 import { INestApplication, CACHE_MANAGER } from '@nestjs/common'
-import CacheManger from 'cache-manager'
 import {
   NationalRegistryService,
   NationalRegistryUser,
 } from '../../../nationalRegistry'
+import { Flight } from '../../flight.model'
 
 let app: INestApplication
-let cacheManager: CacheManger
+let cacheManager: CacheManager
 let nationalRegistryService: NationalRegistryService
 const user: NationalRegistryUser = {
   nationalId: '1234567890',
@@ -23,8 +23,8 @@ const user: NationalRegistryUser = {
 
 beforeAll(async () => {
   app = await setup()
-  cacheManager = app.get<CacheManger>(CACHE_MANAGER)
-  cacheManager.ttl = () => ''
+  cacheManager = app.get<CacheManager>(CACHE_MANAGER)
+  cacheManager.ttl = () => Promise.resolve('')
   nationalRegistryService = app.get<NationalRegistryService>(
     NationalRegistryService,
   )
@@ -37,7 +37,9 @@ describe('Create Flight', () => {
   it(`POST /api/public/discounts/:discountCode/flights should create a flight`, async () => {
     const spy = jest
       .spyOn(cacheManager, 'get')
-      .mockImplementation(() => ({ nationalId: user.nationalId }))
+      .mockImplementation(() =>
+        Promise.resolve({ nationalId: user.nationalId }),
+      )
     const response = await request(app.getHttpServer())
       .post('/api/public/discounts/12345678/flights')
       .set('Authorization', 'Bearer ernir')
@@ -64,36 +66,24 @@ describe('Create Flight', () => {
 
     expect(response.body).toEqual({
       id: expect.any(String),
-      created: expect.any(String),
-      modified: expect.any(String),
-      nationalId: user.nationalId,
+      nationalId: '123456xxx0',
       bookingDate: '2020-08-17T12:35:50.971Z',
       flightLegs: [
         {
           id: expect.any(String),
-          flightId: expect.any(String),
           date: '2021-03-12T12:35:50.971Z',
-          destination: 'AK',
-          airline: 'ernir',
-          discountPrice: 30000,
-          financialState: 'AWAITING_DEBIT',
           origin: 'REK',
+          destination: 'AK',
+          discountPrice: 30000,
           originalPrice: 50000,
-          created: expect.any(String),
-          modified: expect.any(String),
         },
         {
           id: expect.any(String),
-          flightId: expect.any(String),
           date: '2021-03-15T12:35:50.971Z',
-          destination: 'REK',
-          airline: 'ernir',
-          discountPrice: 60000,
-          financialState: 'AWAITING_DEBIT',
           origin: 'AK',
+          destination: 'REK',
+          discountPrice: 60000,
           originalPrice: 100000,
-          created: expect.any(String),
-          modified: expect.any(String),
         },
       ],
     })
@@ -117,7 +107,9 @@ describe('Delete Flight', () => {
   it(`DELETE /api/public/flights/:flightId should delete a flight`, async () => {
     const spy = jest
       .spyOn(cacheManager, 'get')
-      .mockImplementation(() => ({ nationalId: user.nationalId }))
+      .mockImplementation(() =>
+        Promise.resolve({ nationalId: user.nationalId }),
+      )
     const createRes = await request(app.getHttpServer())
       .post('/api/public/discounts/12345678/flights')
       .set('Authorization', 'Bearer icelandair')
@@ -173,7 +165,9 @@ describe('Delete Flight', () => {
     // Arrange
     const spy = jest
       .spyOn(cacheManager, 'get')
-      .mockImplementation(() => ({ nationalId: user.nationalId }))
+      .mockImplementation(() =>
+        Promise.resolve({ nationalId: user.nationalId }),
+      )
     const createRes = await request(app.getHttpServer())
       .post('/api/public/discounts/12345678/flights')
       .set('Authorization', 'Bearer icelandair')
@@ -213,8 +207,8 @@ describe('Delete Flight', () => {
       `/api/private/flights`,
     )
     expect(
-      getRes.body.find((flight) => flight.id === createRes.body.id).flightLegs
-        .length,
+      getRes.body.find((flight: Flight) => flight.id === createRes.body.id)
+        .flightLegs.length,
     ).toBe(1)
   })
 })

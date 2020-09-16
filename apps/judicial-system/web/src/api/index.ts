@@ -1,31 +1,23 @@
 import 'isomorphic-fetch'
-import { Case, CreateCaseRequest } from '../types'
+import {
+  DetentionRequest,
+  CreateCaseRequest,
+  Case,
+  GetCaseByIdResponse,
+  Notification,
+  SendNotificationResponse,
+  User,
+  RequestSignatureResponse,
+  RequestSignature,
+  ConfirmSignatureResponse,
+} from '../types'
 import { getCookie, deleteCookie } from '../utils/cookies'
 
-// const getCaseById: (caseId: string) => Promise<GetCaseByIdResponse> = async (
-//   caseId: string,
-// ) => {
-//   const response = await fetch(`/api/case/${caseId}`)
-
-//   if (response.ok) {
-//     const theCase: Case = await response.json()
-//     return {
-//       httpStatusCode: response.status,
-//       case: theCase,
-//     }
-//   } else {
-//     return {
-//       httpStatusCode: response.status,
-//     }
-//   }
-// }
 const csrfToken = getCookie('judicial-system.csrf')
-
 const { API_URL = '' } = process.env
-
 export const apiUrl = API_URL
 
-export const getCases: () => Promise<Case[]> = async () => {
+export const getCases: () => Promise<DetentionRequest[]> = async () => {
   try {
     const response = await fetch(`${apiUrl}/api/cases`, {
       method: 'get',
@@ -44,7 +36,31 @@ export const getCases: () => Promise<Case[]> = async () => {
     }
   } catch (ex) {
     // TODO: Log error
-    console.log(ex)
+  }
+}
+
+export const getCaseById: (
+  caseId: string,
+) => Promise<GetCaseByIdResponse> = async (caseId: string) => {
+  try {
+    const response = await fetch(`/api/case/${caseId}`, {
+      method: 'get',
+      headers: { Authorization: `Bearer ${csrfToken}` },
+    })
+
+    if (response.ok) {
+      const theCase: Case = await response.json()
+      return {
+        httpStatusCode: response.status,
+        case: theCase,
+      }
+    } else {
+      return {
+        httpStatusCode: response.status,
+      }
+    }
+  } catch (e) {
+    console.log(e)
   }
 }
 
@@ -62,7 +78,7 @@ export const createCase: (
     })
 
     if (response.ok) {
-      const responseJSON: Case = await response.json()
+      const responseJSON: DetentionRequest = await response.json()
       return responseJSON.id
     } else if (response.status === 401) {
       window.location.assign('/?error=true')
@@ -99,14 +115,41 @@ export const saveCase: (
   }
 }
 
-export const getUser = async () => {
+export const transitionCase: (
+  caseId: string,
+  transition: string,
+) => Promise<number> = async (caseId: string, transition: string) => {
+  const response = await fetch(`/api/case/${caseId}/state`, {
+    method: 'put',
+    headers: {
+      Authorization: `Bearer ${csrfToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(transition),
+  })
+
+  if (!response.ok) {
+    // TODO: log error
+    if (response.status === 401) {
+      window.location.assign('/?error=true')
+    }
+  }
+
+  return response.status
+}
+
+export const getUser = async (): Promise<User> => {
   const response = await fetch('/api/user', {
     headers: {
       Authorization: `Bearer ${csrfToken}`,
     },
   })
 
-  return response.json()
+  if (response.ok) {
+    return response.json()
+  } else if (window.location.pathname !== '/') {
+    window.location.assign('/')
+  }
 }
 
 export const logOut = async () => {
@@ -121,5 +164,94 @@ export const logOut = async () => {
     window.location.assign('/')
   } else {
     // TODO: Handle error
+  }
+}
+
+export const sendNotification: (
+  caseId: string,
+) => Promise<SendNotificationResponse> = async (caseId: string) => {
+  const response = await fetch(`/api/case/${caseId}/notification`, {
+    method: 'post',
+    headers: {
+      Authorization: `Bearer ${csrfToken}`,
+    },
+  })
+
+  if (response.ok) {
+    const a: Notification = await response.json()
+    return {
+      httpStatusCode: response.status,
+      response: a,
+    }
+  } else {
+    return {
+      httpStatusCode: response.status,
+    }
+  }
+}
+
+export const requestSignature: (
+  id: string,
+) => Promise<RequestSignatureResponse> = async (id: string) => {
+  try {
+    const response = await fetch(`/api/case/${id}/signature`, {
+      method: 'post',
+      headers: {
+        Authorization: `Bearer ${csrfToken}`,
+      },
+    })
+
+    if (response.ok) {
+      const rs: RequestSignature = await response.json()
+
+      return {
+        httpStatusCode: response.status,
+        response: rs,
+      }
+    } else {
+      return {
+        httpStatusCode: response.status,
+      }
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+export const confirmSignature: (
+  id: string,
+  documentToken: string,
+) => Promise<ConfirmSignatureResponse> = async (
+  id: string,
+  documentToken: string,
+) => {
+  try {
+    const response = await fetch(
+      `/api/case/${id}/signature?documentToken=${documentToken}`,
+      {
+        method: 'get',
+        headers: {
+          Authorization: `Bearer ${csrfToken}`,
+        },
+      },
+    )
+
+    if (response.ok) {
+      const rs: Case = await response.json()
+
+      return {
+        httpStatusCode: response.status,
+        response: rs,
+      }
+    } else {
+      const rs = await response.json()
+      return {
+        httpStatusCode: response.status,
+        code: rs?.code,
+        message: rs?.message,
+      }
+    }
+  } catch (e) {
+    console.log(e)
   }
 }

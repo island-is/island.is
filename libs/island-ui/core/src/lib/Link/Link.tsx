@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import NextLink, { LinkProps } from 'next/link'
 import cn from 'classnames'
 import * as styles from './Link.treat'
@@ -9,17 +9,21 @@ const isLinkInternal = (href: string) => {
   return true
 }
 
-export type LinkColor = 'white' | 'blue400'
+export type LinkColor = 'white' | 'blue400' | 'blue600'
+export type UnderlineVisibility = 'always' | 'hover'
+export type UnderlineVariants = 'normal' | 'small'
 
 interface Props extends LinkProps {
   color?: LinkColor
   className?: string
-  withUnderline?: boolean
+  underline?: UnderlineVariants
+  underlineVisibility?: UnderlineVisibility
   onClick?: () => void
+  pureChildren?: boolean
 }
 
 // Next link that can handle external urls
-const Link: React.FC<Props> = ({
+export const Link: React.FC<Props> = ({
   children,
   href,
   as,
@@ -30,18 +34,25 @@ const Link: React.FC<Props> = ({
   prefetch,
   color,
   className,
-  withUnderline,
+  underline,
+  underlineVisibility = 'hover',
+  pureChildren,
   ...linkProps
 }) => {
   const isInternal = isLinkInternal(href as string)
   const classNames = cn(
     styles.link,
     color ? styles.colors[color] : undefined,
+    underline ? styles.underlines[underline] : undefined,
+    underline && underlineVisibility
+      ? styles.underlineVisibilities[underlineVisibility]
+      : undefined,
     className,
-    {
-      [styles.withUnderline]: withUnderline,
-    },
   )
+
+  // In next 9.5.3 and later, this will be unnecessary, since the as parameter will be
+  // optiona - but as things stand, as is needed if you have a dynamic href
+  const prefetchDefault = !as ? false : prefetch
 
   if (isInternal) {
     return (
@@ -51,11 +62,15 @@ const Link: React.FC<Props> = ({
         shallow={shallow}
         scroll={scroll}
         passHref={passHref}
-        prefetch={prefetch}
+        prefetch={prefetchDefault}
       >
-        <a className={classNames} {...linkProps}>
-          {children}
-        </a>
+        {pureChildren ? (
+          children
+        ) : (
+          <a className={classNames} {...linkProps}>
+            {children}
+          </a>
+        )}
       </NextLink>
     )
   } else {
@@ -72,5 +87,3 @@ const Link: React.FC<Props> = ({
     )
   }
 }
-
-export default Link

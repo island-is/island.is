@@ -1,36 +1,41 @@
-import React from 'react'
-import { Logo, Typography, Box, Button } from '@island.is/island-ui/core'
+import React, { useContext } from 'react'
+import {
+  Logo,
+  Text,
+  Box,
+  ButtonDeprecated as Button,
+} from '@island.is/island-ui/core'
+import { Link } from 'react-router-dom'
+
+import { userContext } from '../../utils/userContext'
 import * as api from '../../api'
-
 import * as styles from './Header.treat'
+import * as Constants from '../../utils/constants'
 
-export interface HeaderProps {
-  loggedInUser?: string
-}
+const Header: React.FC = () => {
+  const uContext = useContext(userContext)
 
-const Header: React.FC<HeaderProps> = ({ loggedInUser }: HeaderProps) => {
   return (
     <header className={`${styles.header}`}>
-      <Box display="flex" alignItems="center">
-        <Logo width={32} iconOnly />
-        <Box marginLeft={[1, 2, 4]}>
-          <Typography as="h1" variant="h4">
-            Réttarvörslugátt
-          </Typography>
-        </Box>
-      </Box>
-      {loggedInUser && (
+      <Link
+        to={Constants.DETENTION_REQUESTS_ROUTE}
+        style={{ textDecoration: 'none' }}
+        data-testid="link-to-home"
+      >
         <Box display="flex" alignItems="center">
-          <Box marginRight={[1, 2, 4]}>
-            <Typography as="p" variant="h5">
-              {loggedInUser}
-            </Typography>
+          <Logo width={32} iconOnly />
+          <Box marginLeft={[1, 2, 4]}>
+            <Text as="h1" variant="h4">
+              Réttarvörslugátt
+            </Text>
           </Box>
         </Box>
+      </Link>
+      {uContext?.user && (
+        <Button variant="text" size="small" onClick={() => api.logOut()}>
+          Útskráning
+        </Button>
       )}
-      <Button variant="text" size="small" onClick={() => api.logOut()}>
-        Útskráning
-      </Button>
     </header>
   )
 }

@@ -33,12 +33,6 @@ export interface UpdateApplicationDto {
     assignee?: string;
     /**
      * 
-     * @type {string}
-     * @memberof UpdateApplicationDto
-     */
-    externalId?: string;
-    /**
-     * 
      * @type {object}
      * @memberof UpdateApplicationDto
      */
@@ -63,7 +57,6 @@ export function UpdateApplicationDtoFromJSONTyped(json: any, ignoreDiscriminator
         
         'applicant': !exists(json, 'applicant') ? undefined : json['applicant'],
         'assignee': !exists(json, 'assignee') ? undefined : json['assignee'],
-        'externalId': !exists(json, 'externalId') ? undefined : json['externalId'],
         'answers': !exists(json, 'answers') ? undefined : json['answers'],
         'attachments': !exists(json, 'attachments') ? undefined : json['attachments'],
     };
@@ -80,7 +73,6 @@ export function UpdateApplicationDtoToJSON(value?: UpdateApplicationDto | null):
         
         'applicant': value.applicant,
         'assignee': value.assignee,
-        'externalId': value.externalId,
         'answers': value.answers,
         'attachments': value.attachments,
     };

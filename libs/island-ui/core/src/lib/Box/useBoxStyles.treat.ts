@@ -1,21 +1,23 @@
 import { style, styleMap } from 'treat'
 import { Properties } from 'csstype'
 import omit from 'lodash/omit'
-import { mapToStyleProperty } from '../../utils'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
+
+import { mapToStyleProperty } from '../../utils'
 
 const spaceMapToCss = (
   t: typeof theme,
   cssPropertyName: keyof Properties,
   breakpoint: keyof typeof theme['breakpoints'],
 ) => {
-  const spaceWithNone = {
+  const spaceWithKeywords = {
     ...t.spacing,
     none: 0,
+    auto: 'auto',
   }
 
   return mapToStyleProperty(
-    spaceWithNone,
+    spaceWithKeywords,
     cssPropertyName,
     (value, propertyName) => {
       const styles = {
@@ -198,6 +200,7 @@ const positionRules = {
   absolute: 'absolute',
   relative: 'relative',
   fixed: 'fixed',
+  static: 'static',
 }
 export const position = styleMap(mapToStyleProperty(positionRules, 'position'))
 
@@ -492,6 +495,7 @@ export const minWidth = styleMap(
 
 const relativePositionRules = {
   0: 0,
+  4: '32px',
   20: '20px',
 }
 // Remove this when 'styleMap' supports numbers as keys and it's been released to sku consumers,
@@ -521,4 +525,5 @@ export const outline = styleMap({
 
 export const opacity = styleMap({
   0: { opacity: 0 },
+  1: { opacity: 1 },
 })

@@ -7,7 +7,7 @@ const authGuard = new AuthGuard()
 
 describe('AuthGuard', () => {
   it('Api key should work for Ernir', async () => {
-    const request = {
+    const request: any = {
       headers: {
         authorization: `bearer ${airlineApiKeys.ernir}`,
       },
@@ -19,7 +19,7 @@ describe('AuthGuard', () => {
   })
 
   it('Api key should work for Icelandair', async () => {
-    const request = {
+    const request: any = {
       headers: {
         authorization: `bearer ${airlineApiKeys.icelandair}`,
       },
@@ -31,7 +31,7 @@ describe('AuthGuard', () => {
   })
 
   it('Api key should not work for invalid key', async () => {
-    const request = {
+    const request: any = {
       headers: {
         authorization: 'bearer invalidKey',
       },

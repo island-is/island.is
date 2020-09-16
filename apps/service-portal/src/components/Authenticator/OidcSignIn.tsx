@@ -12,7 +12,7 @@ export const OidcSignIn: FC = () => {
   useEffect(() => {
     userManager
       .signinRedirectCallback(window.location.href)
-      .then(function(user) {
+      .then(function (user) {
         dispatch({
           type: ActionType.SetUserFulfilled,
           payload: user,
@@ -20,7 +20,7 @@ export const OidcSignIn: FC = () => {
 
         history.push(typeof user.state === 'string' ? user.state : '/')
       })
-      .catch(function(error) {
+      .catch(function (error) {
         // TODO: Handle error
         console.log('error', error)
       })

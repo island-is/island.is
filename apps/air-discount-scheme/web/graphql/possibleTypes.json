@@ -1,24 +1,29 @@
 {
   "possibleTypes": {
     "Slice": [
-      "PageHeaderSlice",
       "TimelineSlice",
-      "HeadingSlice",
-      "StorySlice",
-      "LinkCardSlice",
-      "LatestNewsSlice",
       "MailingListSignupSlice",
+      "HeadingSlice",
+      "LinkCardSlice",
+      "StorySlice",
       "LogoListSlice",
+      "LatestNewsSlice",
       "BulletListSlice",
-      "Html",
-      "Image",
       "Statistics",
       "ProcessEntry",
       "FaqList",
       "EmbeddedVideo",
-      "SectionWithImage"
+      "SectionWithImage",
+      "TabSection",
+      "TeamList",
+      "ContactUs",
+      "Location",
+      "Html",
+      "Image",
+      "Asset"
     ],
     "BulletEntry": ["IconBullet", "NumberBulletGroup"],
-    "AdgerdirSlice": ["AdgerdirGroupSlice", "AdgerdirFeaturedNewsSlice"]
+    "AdgerdirSlice": ["AdgerdirGroupSlice", "AdgerdirFeaturedNewsSlice"],
+    "UrlPage": ["Article", "ArticleCategory", "News", "LifeEventPage"]
   }
 }

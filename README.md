@@ -1,4 +1,4 @@
-# Island
+# Ísland
 
 This repository is the center of development for digital government
 services on `island.is`. It is managed by the [Digital Iceland] department
@@ -8,7 +8,7 @@ These solutions are [FOSS] and open to contributions, but most development
 is performed by teams that win tenders to develop new functionality for
 Digital Iceland.
 
-[digital iceland]: http://www.reddit.com
+[digital iceland]: https://stafraent.island.is/
 [ministry of finance and economic affairs]: https://www.government.is/ministries/ministry-of-finance-and-economic-affairs/
 [foss]: https://en.wikipedia.org/wiki/Free_and_open-source_software
 
@@ -195,6 +195,26 @@ Run `yarn nx run <project>:migrate/generate`
 
 Run `yarn nx run <project>:migrate`
 
+### Schemas and types
+
+All generated files are ignored from the git repository to avoid noises (except contentfulTypes.d.ts that we will keep tracked), to make reviews easier on PRs and don't notify teams with code reviews when not needed.
+
+Once you do a `yarn install`/`npm install`, a postinstall script will generate all the schemas and types for the whole project. It takes around ~30sec to generate all schemas, definitions types and open api schemas.
+
+The normal development process stays the same, `e.g. yarn start api` will keep generating on the fly the schemas files.
+
+However, if you need to generate all the schemas files manually, you can do it with `yarn schemas`. Besides you can generate schemas, project by project with the following `yarn nx run <project>:init-schema`.
+
+### Generating schemas and types for a new library/application
+
+- You will need to create a `buildSchema.ts`, if your project has a graphql module. (e.g. [air-discount-scheme-api](https://github.com/island-is/island.is/blob/1641df5f1b04c0a5caad3b07cff2f500566b6349/apps/air-discount-scheme/api/src/buildSchema.ts))
+- You will need to create a `buildOpenApi`, if your project has an open api. (e.g. [application-system-api](https://github.com/island-is/island.is/blob/1641df5f1b04c0a5caad3b07cff2f500566b6349/apps/application-system/api/src/buildOpenApi.ts))
+- You will need to create a `codegen.yml`, if your project is a react application. (e.g. [adgerdir](https://github.com/island-is/island.is/blob/1641df5f1b04c0a5caad3b07cff2f500566b6349/apps/adgerdir/codegen.yml))
+
+It's very common to create more than one file for the same project, for example the `buildSchema` and a `codegen`. Once you have one or multiple of these file, you can create your workspace architect:
+
+- `yarn schemas` runs all the `init-schema` that it can find for all the targets inside the workspace. If you create a new `init-schema` and place it your newly created file it will be triggered during postinstall. (e.g. [air-discount-scheme-api architect](https://github.com/island-is/island.is/blob/1641df5f1b04c0a5caad3b07cff2f500566b6349/workspace.json#L1584-L1593), [application-system-api architect](https://github.com/island-is/island.is/blob/1641df5f1b04c0a5caad3b07cff2f500566b6349/workspace.json#L2032-L2037), [adgerdir architect](https://github.com/island-is/island.is/blob/1641df5f1b04c0a5caad3b07cff2f500566b6349/workspace.json#L2161-L2172))
+
 ### Generate schema and client types
 
 All api calls should be type checked to backend schemas. When you update an API, you may need to generate schema files:
@@ -212,6 +232,13 @@ yarn nx run <project>:codegen
 ### Understand your workspace
 
 Run `yarn nx dep-graph` to see a diagram of the dependencies of your projects.
+
+### Making dev secrets available locally
+
+Environment variables that should not be tracked but needed locally should be added to the `.env.secret` file.
+Additionally if that same variable is also stored in AWS Parameter Store, the secret can be labeled with the `dev` label from `History` -> `Attach labels`.
+
+All secrets labeled with the `dev` label can be fetched using `yarn env-secrets`.
 
 ### Fetch development secrets for your project
 

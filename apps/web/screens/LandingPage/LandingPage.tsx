@@ -1,6 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useMemo } from 'react'
-import { Hyperlink, Image } from '@island.is/island-ui/contentful'
+import {
+  Hyperlink,
+  Image,
+  Slice as SliceType,
+} from '@island.is/island-ui/contentful'
 import { Screen } from '@island.is/web/types'
 import { GET_LANDING_PAGE_QUERY } from '../queries'
 import { CustomNextError } from '../../units/errors'
@@ -8,18 +12,18 @@ import Head from 'next/head'
 import { useI18n } from '@island.is/web/i18n'
 import {
   Stack,
-  Button,
-  Typography,
+  ButtonDeprecated as Button,
+  Text,
   Box,
   Breadcrumbs,
   Link,
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { RichText, SidebarNavigation } from '@island.is/web/components'
 import ArticleLayout from '../Layouts/Layouts'
-import useRouteNames from '../../i18n/useRouteNames'
-import { withMainLayout } from '../../layouts/main'
+import routeNames from '../../i18n/routeNames'
 import {
   QueryGetLandingPageArgs,
   GetLandingPageQuery,
@@ -32,7 +36,7 @@ export interface LandingPageProps {
 
 const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
   const navigation = useMemo(() => {
     return createNavigation(page.content, { title: page.title })
   }, [page])
@@ -54,9 +58,7 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
       {page.links && (
         <Box background="purple100" padding={4} borderRadius="large">
           <Stack space={2}>
-            {page.links.title && (
-              <Typography variant="p">{page.links.title}</Typography>
-            )}
+            {page.links.title && <Text>{page.links.title}</Text>}
             {page.links.links.map(({ url, text }, index) => (
               <Hyperlink key={index} href={url}>
                 {text}
@@ -81,20 +83,24 @@ const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
                 <Link href={makePath()}>Ísland.is</Link>
                 <Link href={'/' + page.slug}>{page.title}</Link>
               </Breadcrumbs>
-              <Typography id={makeId(page.title)} variant="h1" as="h1">
+              <Text id={makeId(page.title)} variant="h1" as="h1">
                 {page.title}
-              </Typography>
-              <Typography variant="intro" as="p">
+              </Text>
+              <Text variant="intro" as="p">
                 {page.introduction}
-              </Typography>
+              </Text>
               {page.image && (
-                <Image type="apiImage" image={page.image} maxWidth={774} />
+                <Image
+                  {...page.image}
+                  url={page.image.url + '?w=774'}
+                  thumbnail={page.image.url + '?w=50'}
+                />
               )}
             </Stack>
           </GridColumn>
         </GridRow>
         <Box paddingTop={6}>
-          <RichText body={page.content} />
+          <RichText body={page.content as SliceType[]} />
         </Box>
       </ArticleLayout>
     </>

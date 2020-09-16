@@ -1,12 +1,8 @@
 import { styleMap, style, globalStyle } from 'treat'
 import * as CSS from 'csstype'
-import { themeUtils, Theme, theme } from '@island.is/island-ui/theme'
+import { theme } from '@island.is/island-ui/theme'
 import { mapToStyleProperty } from '../../utils'
 import { responsiveStyleMap } from '../../utils/responsiveStyleMap'
-import mapValues from 'lodash/mapValues'
-
-type Spacing = Record<keyof typeof theme.spacing, string>
-type Breakpoint = keyof Theme['breakpoints']
 
 export type VariantTypes =
   | 'p'
@@ -18,13 +14,12 @@ export type VariantTypes =
   | 'h5'
   | 'intro'
   | 'eyebrow'
+  | 'menuTab'
   | 'tag'
   | 'cardCategoryTitle'
   | 'sideMenu'
   | 'placeholderText'
   | 'datepickerHeaderText'
-  | 'formProgressSection'
-  | 'formProgressSectionActive'
 
 type ResponsiveProps<T> = {
   xs?: T
@@ -44,39 +39,14 @@ type defaultFontWeights = {
   [Type in VariantTypes]: number
 }
 
-const makePaddingBottom = (breakpoint: Breakpoint) =>
-  styleMap(
-    mapValues(theme.spacing, (space) =>
-      themeUtils.responsiveStyle({ [breakpoint]: { paddingBottom: space } }),
-    ),
-    `paddingBottom_${breakpoint}`,
-  ) as Spacing
-
-const makePaddingTop = (breakpoint: Breakpoint) =>
-  styleMap(
-    mapValues(theme.spacing, (space) =>
-      themeUtils.responsiveStyle({ [breakpoint]: { paddingTop: space } }),
-    ),
-    `paddingTop_${breakpoint}`,
-  ) as Spacing
-
-export const spacing = {
-  paddingBottomXs: makePaddingBottom('xs'),
-  paddingBottomSm: makePaddingBottom('sm'),
-  paddingBottomMd: makePaddingBottom('md'),
-  paddingBottomLg: makePaddingBottom('lg'),
-  paddingBottomXl: makePaddingBottom('xl'),
-  paddingTopXs: makePaddingTop('xs'),
-  paddingTopSm: makePaddingTop('sm'),
-  paddingTopMd: makePaddingTop('md'),
-  paddingTopLg: makePaddingTop('lg'),
-  paddingTopXl: makePaddingTop('xl'),
-}
-
 export const truncate = style({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
+})
+
+export const base = style({
+  ['-webkit-font-smoothing' as any]: 'antialiased',
 })
 
 const fontWeightMap = {
@@ -96,13 +66,12 @@ const defaultFontWeightsMap: defaultFontWeights = {
   pSmall: theme.typography.regular,
   intro: theme.typography.light,
   eyebrow: theme.typography.medium,
+  menuTab: theme.typography.medium,
   tag: theme.typography.semiBold,
   cardCategoryTitle: theme.typography.headingsFontWeight,
   sideMenu: theme.typography.medium,
   placeholderText: theme.typography.light,
   datepickerHeaderText: theme.typography.semiBold,
-  formProgressSection: theme.typography.light,
-  formProgressSectionActive: theme.typography.semiBold,
 }
 
 export const fontWeight = styleMap(
@@ -151,7 +120,7 @@ export const variants: Variants = {
   },
   p: {
     fontSize: {
-      xs: 15,
+      xs: 16,
       md: 18,
     },
     lineHeight: 1.5,
@@ -174,6 +143,12 @@ export const variants: Variants = {
     fontSize: {
       xs: 12,
       md: 14,
+    },
+    lineHeight: { xs: 1.5, md: 1.142857 },
+  },
+  menuTab: {
+    fontSize: {
+      xs: 14,
     },
     lineHeight: 1.142857,
   },
@@ -212,20 +187,6 @@ export const variants: Variants = {
     },
     lineHeight: 1.666,
   },
-  formProgressSection: {
-    fontSize: {
-      xs: 16,
-      md: 18,
-    },
-    lineHeight: 1.75,
-  },
-  formProgressSectionActive: {
-    fontSize: {
-      xs: 16,
-      md: 18,
-    },
-    lineHeight: 1.75,
-  },
 }
 
 export const links = style({
@@ -256,7 +217,7 @@ globalStyle(`${links} a:hover svg path`, {
 
 export const colors = styleMap(mapToStyleProperty(theme.color, 'color'))
 
-export default (Object.keys(variants) as VariantTypes[]).reduce(
+export const variantStyles = (Object.keys(variants) as VariantTypes[]).reduce(
   (acc, variantKey) => {
     acc[variantKey] = responsiveStyleMap(variants[variantKey])
     return acc

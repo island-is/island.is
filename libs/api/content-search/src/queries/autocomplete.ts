@@ -9,23 +9,10 @@ export interface AutocompleteTermResponse {
   }
 }
 
-export interface AutocompleteTermRequestBody {
-  suggest: {
-    searchSuggester: {
-      prefix: string
-      completion: {
-        field: string
-        size: number
-        skip_duplicates: boolean
-      }
-    }
-  }
-}
-
 export const autocompleteTermQuery = ({
   prefix,
   size,
-}: AutocompleteTermInput): AutocompleteTermRequestBody => ({
+}: AutocompleteTermInput) => ({
   suggest: {
     searchSuggester: {
       prefix,

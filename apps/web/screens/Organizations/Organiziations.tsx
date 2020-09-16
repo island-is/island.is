@@ -5,7 +5,7 @@ import Head from 'next/head'
 import {
   ContentBlock,
   Box,
-  Typography,
+  Text,
   Breadcrumbs,
   ColorSchemeContext,
   Link,
@@ -19,6 +19,7 @@ import {
   QueryGetOrganizationTagsArgs,
   QueryGetOrganizationArgs,
 } from '@island.is/api/schema'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { FilteredCards } from '@island.is/web/components'
 import {
   GET_ORGANIZATIONS_QUERY,
@@ -27,11 +28,10 @@ import {
 } from '../queries'
 import { ArticleLayout } from '@island.is/web/screens/Layouts/Layouts'
 import { useNamespace } from '@island.is/web/hooks'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
 import { Screen } from '@island.is/web/types'
 import { useI18n } from '@island.is/web/i18n'
 import { CustomNextError } from '../../units/errors'
-import { withMainLayout } from '@island.is/web/layouts/main'
 
 interface OrganizationProps {
   organizations: Query['getOrganizations']
@@ -46,7 +46,7 @@ const OrganizationPage: Screen<OrganizationProps> = ({
 }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   const { items: organizationsItems } = organizations
   const { items: tagsItems } = tags
@@ -73,9 +73,9 @@ const OrganizationPage: Screen<OrganizationProps> = ({
         </GridRow>
         <GridRow>
           <GridColumn offset={['0', '0', '1/8']} span={['8/8', '8/8', '7/8']}>
-            <Typography variant="h1" as="h1" paddingBottom={2}>
+            <Text variant="h1" as="h1" paddingBottom={2}>
               {n('stofnanirHeading', 'Stofnanir Íslenska Ríkisins')}
-            </Typography>
+            </Text>
           </GridColumn>
         </GridRow>
       </ArticleLayout>

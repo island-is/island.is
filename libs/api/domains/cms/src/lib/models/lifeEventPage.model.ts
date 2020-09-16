@@ -1,12 +1,16 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, ID } from '@nestjs/graphql'
 
 import { ILifeEventPage } from '../generated/contentfulTypes'
 
-import { Slice, mapDocument } from './slice.model'
 import { Image, mapImage } from './image.model'
+import { ArticleCategory, mapArticleCategory } from './articleCategory.model'
+import { Slice, mapDocument } from './slice.model'
 
 @ObjectType()
 export class LifeEventPage {
+  @Field()
+  typename: string
+
   @Field(() => ID)
   id: string
 
@@ -16,28 +20,35 @@ export class LifeEventPage {
   @Field()
   slug: string
 
-  @Field()
-  intro: string
+  @Field({ nullable: true })
+  intro?: string
 
-  @Field()
-  image: Image
+  @Field({ nullable: true })
+  image?: Image
 
   @Field({ nullable: true })
   thumbnail?: Image
 
   @Field(() => [Slice])
   content: Array<typeof Slice>
+
+  @Field(() => ArticleCategory, { nullable: true })
+  category?: ArticleCategory
 }
 
 export const mapLifeEventPage = ({
   fields,
   sys,
 }: ILifeEventPage): LifeEventPage => ({
+  typename: 'LifeEventPage',
   id: sys.id,
-  title: fields.title,
-  slug: fields.slug,
-  intro: fields.intro,
+  title: fields.title ?? '',
+  slug: fields.slug ?? '',
+  intro: fields.intro ?? '',
   image: mapImage(fields.image),
-  thumbnail: fields.thumbnail && mapImage(fields.thumbnail),
-  content: mapDocument(fields.content, sys.id + ':content'),
+  thumbnail: mapImage(fields.thumbnail),
+  content: fields?.content
+    ? mapDocument(fields.content, sys.id + ':content')
+    : [],
+  category: fields.category ? mapArticleCategory(fields.category) : null,
 })

@@ -6,7 +6,7 @@ import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { GET_NAMESPACE_QUERY } from '../screens/queries'
 import { GetNamespaceQuery, QueryGetNamespaceArgs } from '../graphql/schema'
 
-export const getLocaleFromPath = (path: string): Locale => {
+export const getLocaleFromPath = (path = ''): Locale => {
   const maybeLocale = path.split('/').find(Boolean)
   return isLocale(maybeLocale) ? maybeLocale : defaultLanguage
 }
@@ -18,7 +18,7 @@ interface NewComponentProps<T> {
 }
 
 export const withLocale = <Props,>(locale?: Locale) => (
-  Component: NextPage,
+  Component: NextPage<Props>,
 ): NextComponentType => {
   const getInitialProps = Component.getInitialProps
   if (!getInitialProps) {
@@ -38,7 +38,7 @@ export const withLocale = <Props,>(locale?: Locale) => (
   NewComponent.getInitialProps = async (ctx: NextPageContext) => {
     const newContext = {
       ...ctx,
-      locale: locale ?? getLocaleFromPath(ctx.asPath),
+      locale: locale || getLocaleFromPath(ctx.asPath),
     } as any
     const [props, translations] = await Promise.all([
       getInitialProps(newContext),

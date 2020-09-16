@@ -9,10 +9,10 @@ import {
 
 const navScreenItems: NavigationScreenItem[] = [
   {
-    name: 'Umboð',
-    url: ServicePortalPath.StillingarUmbod,
-    text: 'Hér er hægt að sækja um breyta, gefa eða eyða umboðum. ',
-    tags: ['Gefa umboð', 'Sækja um umboð', 'Breyta umboði'],
+    name: 'Mínar upplýsingar',
+    url: ServicePortalPath.MinarUpplysingar,
+    text: 'Meðal annars fæðingarorlof, nöfn, forsjá, gifting og skilnaður.',
+    tags: ['Fæðingarorlof', 'Skilnaður', 'COVID-19'],
   },
 ]
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { render, waitFor } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import fetchMock from 'fetch-mock'
 import { BrowserRouter } from 'react-router-dom'
 
@@ -16,5 +16,15 @@ describe('App', () => {
     )
 
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should have a title set', () => {
+    render(
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>,
+    )
+
+    expect(document.title).toEqual('Réttarvörslugátt')
   })
 })

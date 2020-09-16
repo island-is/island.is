@@ -1,14 +1,11 @@
 import gql from 'graphql-tag'
+import { slices } from './fragments'
 
-export const GET_NEWS_LIST_QUERY = gql`
-  query GetNewsList($input: GetNewsListInput!) {
-    getNewsList(input: $input) {
-      page {
-        page
-        perPage
-        totalPages
-      }
-      news {
+export const GET_NEWS_QUERY = gql`
+  query GetNews($input: GetNewsInput!) {
+    getNews(input: $input) {
+      total
+      items {
         id
         title
         subtitle
@@ -26,16 +23,27 @@ export const GET_NEWS_LIST_QUERY = gql`
   }
 `
 
-export const GET_NEWS_ITEM_QUERY = gql`
-  query GetNewsItem($input: GetNewsInput!) {
-    getNews(input: $input) {
+export const GET_NEWS_DATES_QUERY = gql`
+  query GetNewsDates($input: GetNewsDatesInput!) {
+    getNewsDates(input: $input)
+  }
+`
+
+export const GET_SINGLE_NEWS_ITEM_QUERY = gql`
+  query GetSingleNewsItem($input: GetSingleNewsInput!) {
+    getSingleNews(input: $input) {
       id
       title
       subtitle
       date
       slug
       intro
-      content
+      author {
+        name
+      }
+      content {
+        ...AllSlices
+      }
       image {
         url
         title
@@ -44,4 +52,5 @@ export const GET_NEWS_ITEM_QUERY = gql`
       }
     }
   }
+  ${slices}
 `

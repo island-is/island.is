@@ -1,11 +1,12 @@
 import { ContentType, FieldValidation } from 'contentful'
 import { createClient } from 'contentful-management'
 import { Environment } from 'contentful-management/dist/typings/entities/environment'
-import { codegen } from '@jeremybarbet/contentful-typescript-codegen'
 import { flattenDeep } from 'lodash'
+import { logger } from '@island.is/logging'
 
 import { execShellCommand } from './execShellCommand'
 import { generateFile } from './generateFile'
+import { codegenContentful } from './codegenContentful'
 
 export interface LinkContentType {
   id: string
@@ -17,20 +18,7 @@ export interface Args {
   overwrite: boolean
 }
 
-const client = createClient({
-  accessToken: process.env.CONTENTFUL_MANAGEMENT_ACCESS_TOKEN,
-})
-
-async function codegenContentful(environment: Environment) {
-  try {
-    codegen({
-      outputFile: 'libs/api/domains/cms/src/lib/generated/contentfulTypes.d.ts',
-      environment,
-    })
-  } catch (e) {
-    console.error(`Cannot generate contentful types ${e.message}`)
-  }
-}
+const { CONTENTFUL_MANAGEMENT_ACCESS_TOKEN } = process.env
 
 async function getContentType(
   id: string,
@@ -40,7 +28,7 @@ async function getContentType(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return (await environment.getContentType(id)) as any
   } catch (e) {
-    console.error(`Error getContentType ${e.message}`)
+    logger.error('Error getContentType', { message: e.message })
     process.exit()
   }
 }
@@ -98,8 +86,13 @@ async function main() {
     .filter((v) => v !== 'undefined')
   const overwriteRaw = process.argv?.[4]
 
+  if (!CONTENTFUL_MANAGEMENT_ACCESS_TOKEN) {
+    logger.error('Missing content management access token')
+    process.exit()
+  }
+
   if (id === 'undefined' || !id) {
-    console.error('No id defined for the contentType.')
+    logger.error('No id defined for the contentType.')
     process.exit()
   }
 
@@ -110,7 +103,7 @@ async function main() {
         value !== 'id' && value !== 'createdAt' && value !== 'updatedAt',
     )
   ) {
-    console.error(
+    logger.error(
       'You can only use "id", "createdAt" or "updatedAt" as the value of the `sys` argument.',
     )
     process.exit()
@@ -121,7 +114,7 @@ async function main() {
     overwriteRaw !== 'true' &&
     overwriteRaw !== 'false'
   ) {
-    console.error(
+    logger.error(
       'You can only use "true" or "false" as value of the `overwrite` argument.',
     )
     process.exit()
@@ -132,12 +125,16 @@ async function main() {
   const overwrite = Boolean(overwriteRaw === 'true')
   const args: Args = { sys, overwrite }
 
+  const client = createClient({
+    accessToken: CONTENTFUL_MANAGEMENT_ACCESS_TOKEN,
+  })
+
   // 1. Create contentful management client
   const space = await client.getSpace('8k0h54kbe6bj')
   const environment = await space.getEnvironment('master')
 
   // 2. We generate new contentful types
-  await codegenContentful(environment)
+  await codegenContentful()
 
   // 3. Get main contentType
   const contentType = await getContentType(id, environment)
@@ -154,20 +151,36 @@ async function main() {
   )
 
   // 6. Re-generate the api codegen
-  await execShellCommand(`yarn nx run api:codegen`)
+  try {
+    await execShellCommand(`yarn nx run api:codegen`)
+  } catch (e) {
+    logger.error(`'yarn nx run api:codegen' has an error`, {
+      message: e.message,
+    })
+  }
 
   // 7. Re-generate the web codegen
-  await execShellCommand(`yarn nx run web:codegen`)
+  try {
+    await execShellCommand(`yarn nx run web:codegen`)
+  } catch (e) {
+    logger.error(`'yarn nx run web:codegen' has an error`, {
+      message: e.message,
+    })
+  }
 
   // 8. We run prettier on all new files so it looks good
-  await execShellCommand(
-    'prettier --write ./libs/api/domains/cms/src/lib/models/**.ts',
-  )
+  try {
+    await execShellCommand(
+      'prettier --write ./libs/api/domains/cms/src/lib/models/**.ts',
+    )
+  } catch (e) {
+    logger.error('prettier has an error', { message: e.message })
+  }
 
   // We don't want the main contentType to appear in the logs for the linkContentType
   const linkTypes = generatedFiles.filter((type) => type !== contentType.sys.id)
 
-  console.log(`
+  logger.info(`
     ${
       generatedFiles.length <= 0
         ? `• We couldn't generate any contentTypes. All files already existed and you are using --overwrite=false. Try again using --overwrite=true to re-generate existing models.`

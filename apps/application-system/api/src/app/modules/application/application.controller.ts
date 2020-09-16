@@ -11,53 +11,64 @@ import {
   ParseUUIDPipe,
   BadRequestException,
   UseInterceptors,
+  Optional,
 } from '@nestjs/common'
 import { omit } from 'lodash'
 import { InjectQueue } from '@nestjs/bull'
 import { Queue } from 'bull'
+import { WhereOptions } from 'sequelize/types'
 import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiParam,
   ApiTags,
+  ApiQuery,
 } from '@nestjs/swagger'
 import {
   Application as BaseApplication,
   callDataProviders,
   ApplicationTypes,
   FormValue,
-  getApplicationTemplateByTypeId,
   ApplicationTemplateHelper,
-} from '@island.is/application/template'
+  ExternalData,
+} from '@island.is/application/core'
+import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import { Application } from './application.model'
 import { ApplicationService } from './application.service'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
 import { AddAttachmentDto } from './dto/addAttachment.dto'
-import { mergeAnswers } from '@island.is/application/template'
+import { mergeAnswers } from '@island.is/application/core'
 import { DeleteAttachmentDto } from './dto/deleteAttachment.dto'
 import { PopulateExternalDataDto } from './dto/populateExternalData.dto'
-import { buildDataProviders, buildExternalData } from './externalDataUtils'
+import {
+  buildDataProviders,
+  buildExternalData,
+} from './utils/externalDataUtils'
 import { ApplicationByIdPipe } from './tools/applicationById.pipe'
-import { validateApplicationSchema } from './schemaValidationUtils'
+import {
+  validateApplicationSchema,
+  validateIncomingAnswers,
+  validateIncomingExternalDataProviders,
+} from './utils/validationUtils'
 import { ApplicationSerializer } from './tools/application.serializer'
 import { UpdateApplicationStateDto } from './dto/updateApplicationState.dto'
+import { ApplicationResponseDto } from './dto/application.response.dto'
 
-@ApiTags('application')
-@Controller('application')
+@ApiTags('applications')
+@Controller()
 export class ApplicationController {
   constructor(
     private readonly applicationService: ApplicationService,
-    @InjectQueue('upload')
-    private readonly uploadQueue: Queue,
+    @Optional() @InjectQueue('upload') private readonly uploadQueue: Queue,
   ) {}
 
-  @Get(':id')
-  @ApiOkResponse({ type: Application })
+  @Get('applications/:id')
+  @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async findOne(
     @Param('id', new ParseUUIDPipe()) id: string,
-  ): Promise<Application> {
+  ): Promise<ApplicationResponseDto> {
     const application = await this.applicationService.findById(id)
 
     if (!application) {
@@ -68,10 +79,14 @@ export class ApplicationController {
 
     return application
   }
+
   // TODO REMOVE
   @Get()
-  @ApiOkResponse({ type: Application, isArray: true })
-  async findAll(@Query('typeId') typeId: string): Promise<Application[]> {
+  @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
+  @UseInterceptors(ApplicationSerializer)
+  async findAll(
+    @Query('typeId') typeId: string,
+  ): Promise<ApplicationResponseDto[]> {
     if (typeId) {
       return this.applicationService.findAllByType(typeId as ApplicationTypes)
     } else {
@@ -79,29 +94,73 @@ export class ApplicationController {
     }
   }
 
-  @Post()
-  @ApiCreatedResponse({ type: Application })
+  @Get('applicants/:nationalRegistryId/applications')
+  @ApiQuery({
+    name: 'typeId',
+    required: false,
+    type: String,
+  })
+  @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
+  @UseInterceptors(ApplicationSerializer)
+  async findApplicantApplications(
+    @Param('nationalRegistryId') nationalRegistryId: string,
+    @Query('typeId') typeId?: string,
+  ): Promise<ApplicationResponseDto[]> {
+    const whereOptions: WhereOptions = {
+      applicant: nationalRegistryId,
+    }
+
+    if (typeId) {
+      whereOptions.typeId = typeId
+    }
+
+    return this.applicationService.findAll({
+      where: whereOptions,
+    })
+  }
+
+  @Get('assignees/:nationalRegistryId/applications')
+  @ApiQuery({
+    name: 'typeId',
+    required: false,
+    type: String,
+  })
+  @ApiOkResponse({ type: ApplicationResponseDto, isArray: true })
+  @UseInterceptors(ApplicationSerializer)
+  async findAssigneeApplications(
+    @Param('nationalRegistryId') nationalRegistryId: string,
+    @Query('typeId') typeId?: string,
+  ): Promise<Application[]> {
+    const whereOptions: WhereOptions = {
+      assignee: nationalRegistryId,
+    }
+
+    if (typeId) {
+      whereOptions.typeId = typeId
+    }
+
+    return this.applicationService.findAll({
+      where: whereOptions,
+    })
+  }
+
+  @Post('applications')
+  @ApiCreatedResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async create(
     @Body()
     application: CreateApplicationDto,
-  ): Promise<Application> {
+  ): Promise<ApplicationResponseDto> {
     // TODO not post the state, it should follow the initialstate of the machine
-    validateApplicationSchema(
-      {
-        ...application,
-        externalData: {},
-        id: undefined,
-        modified: new Date(),
-        created: new Date(),
-      } as BaseApplication,
+    await validateApplicationSchema(
+      application,
       application.answers as FormValue,
     )
 
     return this.applicationService.create(application)
   }
 
-  @Put(':id')
+  @Put('applications/:id')
   @ApiParam({
     name: 'id',
     type: String,
@@ -109,22 +168,25 @@ export class ApplicationController {
     description: 'The id of the application to update.',
     allowEmptyValue: false,
   })
-  @ApiOkResponse({ type: Application })
+  @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async update(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     existingApplication: Application,
     @Body()
     application: UpdateApplicationDto,
-  ): Promise<Application> {
-    validateApplicationSchema(
+  ): Promise<ApplicationResponseDto> {
+    const newAnswers = application.answers as FormValue
+    await validateIncomingAnswers(
       existingApplication as BaseApplication,
-      application.answers as FormValue,
+      newAnswers,
     )
-    const mergedAnswers = mergeAnswers(
-      existingApplication.answers,
-      application.answers,
+
+    await validateApplicationSchema(
+      existingApplication as BaseApplication,
+      newAnswers,
     )
+    const mergedAnswers = mergeAnswers(existingApplication.answers, newAnswers)
     const { updatedApplication } = await this.applicationService.update(
       existingApplication.id,
       {
@@ -136,7 +198,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Put(':id/externalData')
+  @Put('applications/:id/externalData')
   @ApiParam({
     name: 'id',
     type: String,
@@ -144,15 +206,19 @@ export class ApplicationController {
     description: 'The id of the application to update the external data for.',
     allowEmptyValue: false,
   })
-  @ApiOkResponse({ type: Application })
+  @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async updateExternalData(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     existingApplication: Application,
     @Body()
     externalDataDto: PopulateExternalDataDto,
-  ): Promise<Application> {
-    // TODO how can we know if the requested data-providers are actually associated with this given form?
+  ): Promise<ApplicationResponseDto> {
+    await validateIncomingExternalDataProviders(
+      existingApplication as BaseApplication,
+      externalDataDto,
+    )
+
     const results = await callDataProviders(
       buildDataProviders(externalDataDto),
       existingApplication as BaseApplication,
@@ -161,6 +227,7 @@ export class ApplicationController {
       updatedApplication,
     } = await this.applicationService.updateExternalData(
       existingApplication.id,
+      existingApplication.externalData as ExternalData,
       buildExternalData(externalDataDto, results),
     )
     if (!updatedApplication) {
@@ -172,7 +239,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Put(':id/submit')
+  @Put('applications/:id/submit')
   @ApiParam({
     name: 'id',
     type: String,
@@ -180,16 +247,17 @@ export class ApplicationController {
     description: 'The id of the application to update the state for.',
     allowEmptyValue: false,
   })
-  @ApiOkResponse({ type: Application })
+  @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async submitApplication(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     existingApplication: Application,
     @Body() updateApplicationStateDto: UpdateApplicationStateDto,
-  ): Promise<Application> {
-    const template = getApplicationTemplateByTypeId(
+  ): Promise<ApplicationResponseDto> {
+    const template = await getApplicationTemplateByTypeId(
       existingApplication.typeId as ApplicationTypes,
     )
+    // TODO
     if (template === null) {
       throw new BadRequestException(
         `No application template exists for type: ${existingApplication.typeId}`,
@@ -219,7 +287,7 @@ export class ApplicationController {
     return existingApplication
   }
 
-  @Put(':id/attachments')
+  @Put('applications/:id/attachments')
   @ApiParam({
     name: 'id',
     type: String,
@@ -227,13 +295,13 @@ export class ApplicationController {
     description: 'The id of the application to update the attachments for.',
     allowEmptyValue: false,
   })
-  @ApiOkResponse({ type: Application })
+  @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async addAttachment(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     existingApplication: Application,
     @Body() input: AddAttachmentDto,
-  ): Promise<Application> {
+  ): Promise<ApplicationResponseDto> {
     const { key, url } = input
 
     const { updatedApplication } = await this.applicationService.update(
@@ -254,7 +322,7 @@ export class ApplicationController {
     return updatedApplication
   }
 
-  @Delete(':id/attachments')
+  @Delete('applications/:id/attachments')
   @ApiParam({
     name: 'id',
     type: String,
@@ -262,13 +330,13 @@ export class ApplicationController {
     description: 'The id of the application to delete attachment(s) from.',
     allowEmptyValue: false,
   })
-  @ApiOkResponse({ type: Application })
+  @ApiOkResponse({ type: ApplicationResponseDto })
   @UseInterceptors(ApplicationSerializer)
   async deleteAttachment(
     @Param('id', new ParseUUIDPipe(), ApplicationByIdPipe)
     existingApplication: Application,
     @Body() input: DeleteAttachmentDto,
-  ): Promise<Application> {
+  ): Promise<ApplicationResponseDto> {
     const { key } = input
 
     const { updatedApplication } = await this.applicationService.update(

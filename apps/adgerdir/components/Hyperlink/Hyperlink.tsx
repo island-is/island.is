@@ -2,10 +2,10 @@
 import React, { FC, ReactElement } from 'react'
 import Link from 'next/link'
 import {
-  Icon,
+  IconDeprecated as Icon,
   Typography,
   TypographyProps,
-  Button,
+  ButtonDeprecated as Button,
 } from '@island.is/island-ui/core'
 import useRouteNames, { pathTypes } from '../../i18n/useRouteNames'
 import { Locale } from '@island.is/adgerdir/i18n/I18n'

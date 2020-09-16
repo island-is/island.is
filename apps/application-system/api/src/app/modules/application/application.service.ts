@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { FindOptions } from 'sequelize/types'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-import { ExternalData } from '@island.is/application/template'
 import { Application } from './application.model'
 import { CreateApplicationDto } from './dto/createApplication.dto'
 import { UpdateApplicationDto } from './dto/updateApplication.dto'
-import { ApplicationTypes } from '@island.is/application/template'
+import { ApplicationTypes, ExternalData } from '@island.is/application/core'
 
 @Injectable()
 export class ApplicationService {
@@ -16,15 +16,15 @@ export class ApplicationService {
     private logger: Logger,
   ) {}
 
-  async findById(id: string): Promise<Application> {
+  async findById(id: string): Promise<Application | null> {
     this.logger.debug(`Finding application by id - "${id}"`)
     return this.applicationModel.findOne({
       where: { id },
     })
   }
 
-  async findAll(): Promise<Application[]> {
-    return this.applicationModel.findAll()
+  async findAll(options?: FindOptions): Promise<Application[]> {
+    return this.applicationModel.findAll(options)
   }
 
   async findAllByType(typeId: ApplicationTypes): Promise<Application[]> {
@@ -64,18 +64,17 @@ export class ApplicationService {
     return { numberOfAffectedRows, updatedApplication }
   }
 
-  async updateExternalData(id: string, externalData: ExternalData) {
-    const existingApplication = await this.applicationModel.findOne({
-      where: { id },
-    })
-
+  async updateExternalData(
+    id: string,
+    oldExternalData: ExternalData,
+    externalData: ExternalData,
+  ) {
     const [
       numberOfAffectedRows,
       [updatedApplication],
     ] = await this.applicationModel.update(
       {
-        ...existingApplication,
-        externalData: { ...existingApplication.externalData, ...externalData },
+        externalData: { ...oldExternalData, ...externalData },
       },
       { where: { id }, returning: true },
     )

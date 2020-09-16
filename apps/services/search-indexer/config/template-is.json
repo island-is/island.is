@@ -1,6 +1,6 @@
 {
   "order": 0,
-  "version": 4,
+  "version": 10,
   "index_patterns": ["island-is-v*"],
   "settings": {
     "analysis": {
@@ -22,6 +22,13 @@
           "type": "synonym",
           "lenient": true,
           "synonyms_path": "analyzers/{SYNONYMS}"
+        },
+        "icelandicDeCompounded": {
+          "type": "hyphenation_decompounder",
+          "word_list_path": "analyzers/{HYPHENWHITELIST}",
+          "hyphenation_patterns_path": "analyzers/{HYPHENPATTERNS}",
+          "max_subword_size": 18,
+          "min_subword_size": 4
         }
       },
       "analyzer": {
@@ -36,10 +43,22 @@
             "icelandicStemmer"
           ]
         },
+        "compoundIcelandic": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "icelandicSynonym",
+            "icelandicStop",
+            "icelandicKeyword",
+            "icelandicDeCompounded",
+            "icelandicStemmer"
+          ]
+        },
         "termIcelandic": {
           "type": "custom",
           "tokenizer": "standard",
-          "filter": ["lowercase", "icelandicSynonym"]
+          "filter": ["lowercase", "icelandicSynonym", "icelandicStop"]
         }
       }
     }
@@ -49,9 +68,19 @@
       "title": {
         "type": "text",
         "fields": {
+          "sort": {
+            "type": "icu_collation_keyword",
+            "index": false,
+            "language": "is",
+            "country": "is"
+          },
           "stemmed": {
             "type": "text",
             "analyzer": "baseIcelandic"
+          },
+          "compound": {
+            "type": "text",
+            "analyzer": "compoundIcelandic"
           }
         }
       },
@@ -75,7 +104,12 @@
           },
           "value": {
             "type": "text",
-            "analyzer": "baseIcelandic"
+            "analyzer": "baseIcelandic",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
           },
           "type": {
             "type": "keyword"

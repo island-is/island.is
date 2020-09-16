@@ -8,13 +8,6 @@ export const GET_FRONTPAGE_SLIDES_QUERY = gql`
         title
         content
         link
-        image {
-          url
-          title
-          contentType
-          width
-          height
-        }
         animationJson
       }
     }

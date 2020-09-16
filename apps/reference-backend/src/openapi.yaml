@@ -2,11 +2,11 @@ openapi: 3.0.0
 info:
   title: Reference backend
   description: This is provided as a reference to implement other backends.
-  version: "1.0"
+  version: '1.0'
   contact: {}
 tags:
   - name: reference
-    description: ""
+    description: ''
 servers: []
 components:
   schemas:
@@ -55,27 +55,27 @@ paths:
       operationId: InfraController_liveness
       parameters: []
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Liveness"
+                $ref: '#/components/schemas/Liveness'
       tags:
-        &a1
         - internal
   /version:
     get:
       operationId: InfraController_version
       parameters: []
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Version"
-      tags: *a1
+                $ref: '#/components/schemas/Version'
+      tags:
+        - internal
   /resource:
     post:
       operationId: ResourceController_create
@@ -85,18 +85,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ResourceDto"
+              $ref: '#/components/schemas/ResourceDto'
       responses:
-        "201":
-          description: ""
+        '201':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Resource"
+                $ref: '#/components/schemas/Resource'
       tags:
-        &a2
         - resource
-  "/resource/{nationalId}":
+  '/resource/{nationalId}':
     get:
       operationId: ResourceController_findOne
       parameters:
@@ -106,10 +105,11 @@ paths:
           schema:
             type: string
       responses:
-        "200":
-          description: ""
+        '200':
+          description: ''
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Resource"
-      tags: *a2
+                $ref: '#/components/schemas/Resource'
+      tags:
+        - resource

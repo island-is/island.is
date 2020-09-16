@@ -1,6 +1,6 @@
 import React from 'react'
 import { BulletList, Bullet } from './BulletList'
-import { Box } from '../Box'
+import { Box } from '../Box/Box'
 import { boolean } from '@storybook/addon-knobs'
 
 export default {
@@ -26,6 +26,19 @@ export const Default = () => {
           Réttur foreldris til fæðingarorlofs er bundinn því að það fari sjálft
           með forsjá barnsins eða hafi sameiginlega forsjá ásamt hinu foreldri
           þess þegar taka fæðingarorlofs hefst.
+        </Bullet>
+      </BulletList>
+    </Box>
+  )
+}
+
+export const Nested = () => {
+  return (
+    <Box padding="gutter">
+      <BulletList type="ul">
+        <Bullet>
+          First bullet
+          <Bullet>Nested bullet</Bullet>
         </Bullet>
       </BulletList>
     </Box>

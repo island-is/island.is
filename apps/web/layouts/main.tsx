@@ -12,6 +12,9 @@ import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
 import { MD5 } from 'crypto-js'
 import Cookies from 'js-cookie'
+import * as Sentry from '@sentry/node'
+import { RewriteFrames } from '@sentry/integrations'
+import { useRouter } from 'next/router'
 
 import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
@@ -27,18 +30,20 @@ import {
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
 } from '../graphql/schema'
-import { GlobalNamespaceContext } from '../context/GlobalNamespaceContext/GlobalNamespaceContext'
+import { GlobalContextProvider, GlobalContext } from '../context'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
-import useRouteNames from '../i18n/useRouteNames'
+import routeNames from '../i18n/routeNames'
 import { useI18n } from '../i18n'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
-import { AlertBanner as AlertBannerSchema } from '@island.is/api/schema'
+import { environment } from '../environments/environment'
+import { useNamespace } from '../hooks'
 
 export interface LayoutProps {
   showSearchInHeader?: boolean
   wrapContent?: boolean
   showHeader?: boolean
   showFooter?: boolean
+  hasDrawerMenu?: boolean
   categories: GetArticleCategoriesQuery['getArticleCategories']
   topMenuCustomLinks?: FooterLinkProps[]
   footerUpperMenu?: FooterLinkProps[]
@@ -46,7 +51,22 @@ export interface LayoutProps {
   footerMiddleMenu?: FooterLinkProps[]
   footerTagsMenu?: FooterLinkProps[]
   namespace: Record<string, string | string[]>
-  alertBannerContent?: AlertBannerSchema
+  alertBannerContent?: GetAlertBannerQuery['getAlertBanner']
+}
+
+if (environment.sentryDsn) {
+  Sentry.init({
+    dsn: environment.sentryDsn,
+    enabled: environment.production,
+    integrations: [
+      new RewriteFrames({
+        iteratee: (frame) => {
+          frame.filename = frame.filename.replace(`~/.next`, 'app:///_next')
+          return frame
+        },
+      }),
+    ],
+  })
 }
 
 const Layout: NextComponentType<
@@ -58,6 +78,7 @@ const Layout: NextComponentType<
   wrapContent = true,
   showHeader = true,
   showFooter = true,
+  hasDrawerMenu = false,
   categories,
   topMenuCustomLinks,
   footerUpperMenu,
@@ -68,12 +89,32 @@ const Layout: NextComponentType<
   alertBannerContent,
   children,
 }) => {
-  const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { activeLocale, t } = useI18n()
+  const { makePath } = routeNames(activeLocale)
+  const n = useNamespace(namespace)
+  const { route, pathname, query, asPath } = useRouter()
+
+  Sentry.configureScope((scope) => {
+    scope.setExtra('lang', activeLocale)
+
+    scope.setContext('router', {
+      route,
+      pathname,
+      query,
+      asPath,
+    })
+  })
+
+  Sentry.addBreadcrumb({
+    category: 'pages/main',
+    message: `Rendering from ${process.browser ? 'browser' : 'server'}`,
+    level: Sentry.Severity.Debug,
+  })
 
   const menuTabs = [
     {
-      title: 'Þjónustuflokkar',
+      title: t.serviceCategories,
+      externalLinksHeading: t.serviceCategories,
       links: categories.map((x) => {
         return {
           title: x.title,
@@ -83,16 +124,17 @@ const Layout: NextComponentType<
       }),
     },
     {
-      title: 'Stafrænt Ísland',
+      title: t.siteTitle,
       links: topMenuCustomLinks,
-      externalLinksHeading: 'Aðrir opinberir vefir',
+      externalLinksHeading: t.siteExternalTitle,
       externalLinks: footerLowerMenu,
     },
   ]
 
   const alertBannerId = MD5(JSON.stringify(alertBannerContent)).toString()
+
   return (
-    <GlobalNamespaceContext.Provider value={{ globalNamespace: namespace }}>
+    <GlobalContextProvider namespace={namespace}>
       <Page>
         <Head>
           <link
@@ -113,14 +155,20 @@ const Layout: NextComponentType<
             href="/favicon-16x16.png"
           />
           <link rel="manifest" href="/site.webmanifest" />
-          <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
           <meta name="msapplication-TileColor" content="#da532c" />
           <meta name="theme-color" content="#ffffff" />
+          <meta property="og:title" content={n('title')} />
+          <meta property="og:type" content="website" />
+          <meta property="og:url" content="https://island.is/" />
+          <meta property="og:image" content="/island-fb-1200x630.png" />
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
           <meta
             name="description"
-            content="Ísland.is er upplýsinga- og þjónustuveita opinberra aðila á Íslandi. Þar getur fólk og fyrirtæki fengið upplýsingar og notið margvíslegrar þjónustu hjá opinberum aðilum á einum stað í gegnum eina gátt."
+            property="og:description"
+            content={n('description')}
           />
-          <title>Ísland.is</title>
+          <title>{n('title')}</title>
         </Head>
         {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
           <AlertBanner
@@ -159,11 +207,17 @@ const Layout: NextComponentType<
             topLinks={footerUpperMenu}
             bottomLinks={footerLowerMenu}
             middleLinks={footerMiddleMenu}
+            bottomLinksTitle={t.siteExternalTitle}
             tagLinks={footerTagsMenu}
             middleLinksTitle={String(namespace.footerMiddleLabel)}
             tagLinksTitle={String(namespace.footerRightLabel)}
+            languageSwitchLink={{
+              title: activeLocale === 'en' ? 'Íslenska' : 'English',
+              href: activeLocale === 'en' ? '/' : '/en',
+            }}
             showMiddleLinks
             showTagLinks
+            hasDrawerMenu
           />
         )}
         <style jsx global>{`
@@ -214,7 +268,7 @@ const Layout: NextComponentType<
           }
         `}</style>
       </Page>
-    </GlobalNamespaceContext.Provider>
+    </GlobalContextProvider>
   )
 }
 

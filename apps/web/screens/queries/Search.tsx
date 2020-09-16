@@ -7,9 +7,13 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
       items {
         ... on Article {
           id
-          contentStatus
           title
           slug
+          intro
+          containsApplicationForm
+          group {
+            title
+          }
           category {
             slug
             title
@@ -35,9 +39,55 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           title
           slug
           intro
+          category {
+            slug
+            title
+          }
           image {
             id
+            url
+            title
+            contentType
+            width
+            height
           }
+          thumbnail {
+            id
+            url
+            title
+            contentType
+            width
+            height
+          }
+        }
+
+        ... on News {
+          id
+          intro
+          title
+          slug
+        }
+
+        ... on AboutPage {
+          title
+          seoDescription
+          slug
+        }
+      }
+    }
+  }
+`
+
+export const GET_SEARCH_RESULTS_NEWS_QUERY = gql`
+  query GetSearchResultsNews($query: SearcherInput!) {
+    searchResults(query: $query) {
+      total
+      items {
+        ... on News {
+          id
+          intro
+          title
+          slug
         }
       }
     }
@@ -59,9 +109,13 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
       items {
         ... on Article {
           id
-          contentStatus
           title
           slug
+          intro
+          containsApplicationForm
+          group {
+            title
+          }
           category {
             slug
             title
@@ -87,6 +141,10 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           title
           slug
           intro
+          category {
+            slug
+            title
+          }
           image {
             id
             url
@@ -104,6 +162,24 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             height
           }
         }
+
+        ... on News {
+          id
+          intro
+          title
+          slug
+        }
+
+        ... on AboutPage {
+          title
+          seoDescription
+          slug
+        }
+      }
+      tagCounts {
+        key
+        value
+        count
       }
     }
   }

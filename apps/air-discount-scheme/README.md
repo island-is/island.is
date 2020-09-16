@@ -1,4 +1,4 @@
-# Air Discount Scheme - Loftbru
+# Air Discount Scheme - Loftbrú
 
 ## About
 
@@ -34,7 +34,7 @@ URL: [https://loftbru.dev01.devland.is/admin](https://loftbru.dev01.devland.is/a
 
 ### Public API
 
-The API is used by the airlines to verify the discount code validity and get
+The API is used by airlines to verify the discount code validity and get
 basic booking info about the user.
 
 The airlines that have access to this api are `Air Iceland Connect` and `Ernir`.
@@ -62,9 +62,18 @@ To get started developing this project, go ahead and:
 Navigate to [localhost:4200](http://localhost:4200) for the website or
 [localhost:4248/api/swagger/](http://localhost:4248/api/swagger/) for the airline api.
 
+### Admin
+
+To access the Admin UI, you'll need to add your Icelandic National ID to the comma separated
+environment variable `DEVELOPERS` (.env.secret) and restart the `api`.
+
+```bash
+export DEVELOPERS=1234567890
+```
+
 ## Shortcuts
 
-Because of the short timeline this assignment had, there were shortcuts taken
+Because of the short timeline this assignment had, there were few shortcuts taken
 that can be improved upon:
 
 - The authentication is pretty primitive, the IDP is still in development at

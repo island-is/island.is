@@ -1,8 +1,9 @@
 import { ContentType, Field } from 'contentful'
-import { upperFirst } from 'lodash'
+import { uniq, upperFirst } from 'lodash'
 
 import { Imports } from './generateFile'
 import { getFirstLevelContentType, Args } from './contentType'
+import { pushOnce } from './generateModel'
 
 const validationsToMapperFunction = (validations?: string[]): string => {
   switch (validations.length) {
@@ -49,21 +50,22 @@ const contentfulTypeToMap = (field: Field, imports: Imports) => {
       if (field.items.linkType === 'Entry' && items.length > 1) {
         const base = `${value}.map(${mapper})`
 
-        imports.apollo.push('ApolloError')
+        pushOnce('ApolloError', imports.apollo)
+
         imports.slices.push(...items)
         imports.mappers.push(...items.map((name) => `map${upperFirst(name)}`))
 
         return {
           value: field.required ? `${base}` : `${value} && ${base}`,
-          fallback: undefined,
+          fallback: '[]',
         }
       }
 
       if (field.items.linkType === 'Asset' && items.length <= 0) {
-        imports.mappers.push('mapImage')
+        pushOnce('mapImage', imports.mappers)
 
         return {
-          value: `${value}.map(mapImage)`,
+          value: `${field.required ? value : `(${value} ?? [])`}.map(mapImage)`,
           fallback: '[]',
         }
       }
@@ -76,12 +78,12 @@ const contentfulTypeToMap = (field: Field, imports: Imports) => {
       }
 
       if (field.items.type === 'Link' && mapper) {
-        const base = `${value}.map(${mapper})`
-
-        imports.mappers.push(mapper)
+        pushOnce(mapper, imports.mappers)
 
         return {
-          value: field.required ? `${base}` : `${value} && ${base}`,
+          value: `${
+            field.required ? value : `(${value} ?? [])`
+          }.map(${mapper})`,
           fallback: undefined,
         }
       }
@@ -94,7 +96,7 @@ const contentfulTypeToMap = (field: Field, imports: Imports) => {
 
     case 'Link': {
       if (field.linkType === 'Asset') {
-        imports.mappers.push('mapImage')
+        pushOnce('mapImage', imports.mappers)
 
         return {
           value: `mapImage(${value})`,
@@ -162,8 +164,10 @@ export const getMapper = (
       : ''
 
   // We don't import the model within itself
-  const mapperImports = imports.mappers.filter(
-    (name) => name !== `map${upperFirst(contentType.sys.id)}`,
+  const mapperImports = uniq(
+    imports.mappers.filter(
+      (name) => name !== `map${upperFirst(contentType.sys.id)}`,
+    ),
   )
 
   const mapperSlice =

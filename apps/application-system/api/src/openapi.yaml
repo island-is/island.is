@@ -24,7 +24,7 @@ components:
           type: string
       required:
         - version
-    Application:
+    ApplicationResponseDto:
       type: object
       properties:
         id:
@@ -38,8 +38,6 @@ components:
         applicant:
           type: string
         assignee:
-          type: string
-        externalId:
           type: string
         state:
           type: string
@@ -55,6 +53,10 @@ components:
           type: object
         externalData:
           type: object
+        name:
+          type: string
+        progress:
+          type: number
       required:
         - id
         - created
@@ -78,8 +80,6 @@ components:
           type: string
         assignee:
           type: string
-        externalId:
-          type: string
         state:
           type: string
         answers:
@@ -98,8 +98,6 @@ components:
         applicant:
           type: string
         assignee:
-          type: string
-        externalId:
           type: string
         answers:
           type: object
@@ -181,7 +179,7 @@ paths:
                 $ref: '#/components/schemas/Version'
       tags:
         - internal
-  '/application/{id}':
+  '/applications/{id}':
     get:
       operationId: ApplicationController_findOne
       parameters:
@@ -196,9 +194,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
-        - application
+        - applications
     put:
       operationId: ApplicationController_update
       parameters:
@@ -221,10 +219,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
-        - application
-  /application:
+        - applications
+  /:
     get:
       operationId: ApplicationController_findAll
       parameters:
@@ -241,9 +239,60 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Application'
+                  $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
-        - application
+        - applications
+  '/applicants/{nationalRegistryId}/applications':
+    get:
+      operationId: ApplicationController_findApplicantApplications
+      parameters:
+        - name: nationalRegistryId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: typeId
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApplicationResponseDto'
+      tags:
+        - applications
+  '/assignees/{nationalRegistryId}/applications':
+    get:
+      operationId: ApplicationController_findAssigneeApplications
+      parameters:
+        - name: nationalRegistryId
+          required: true
+          in: path
+          schema:
+            type: string
+        - name: typeId
+          required: false
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApplicationResponseDto'
+      tags:
+        - applications
+  /applications:
     post:
       operationId: ApplicationController_create
       parameters: []
@@ -259,10 +308,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
-        - application
-  '/application/{id}/externalData':
+        - applications
+  '/applications/{id}/externalData':
     put:
       operationId: ApplicationController_updateExternalData
       parameters:
@@ -285,10 +334,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
-        - application
-  '/application/{id}/submit':
+        - applications
+  '/applications/{id}/submit':
     put:
       operationId: ApplicationController_submitApplication
       parameters:
@@ -311,10 +360,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
-        - application
-  '/application/{id}/attachments':
+        - applications
+  '/applications/{id}/attachments':
     put:
       operationId: ApplicationController_addAttachment
       parameters:
@@ -337,9 +386,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
-        - application
+        - applications
     delete:
       operationId: ApplicationController_deleteAttachment
       parameters:
@@ -362,6 +411,6 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                $ref: '#/components/schemas/ApplicationResponseDto'
       tags:
-        - application
+        - applications

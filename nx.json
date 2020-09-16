@@ -6,163 +6,35 @@
       "dependencies": "*",
       "devDependencies": "*"
     },
-    "tsconfig.json": "*",
-    "nx.json": "*"
+    "nx.json": "*",
+    "tsconfig.base.json": "*"
   },
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": [
-          "build",
-          "lint",
-          "test",
-          "e2e",
-          "build-storybook"
-        ]
+        "cacheableOperations": ["build", "lint", "test", "e2e"]
       }
     }
   },
   "projects": {
-    "web": {
+    "adgerdir": {
       "tags": []
     },
-    "web-e2e": {
+    "adgerdir-e2e": {
       "tags": [],
-      "implicitDependencies": ["web"]
-    },
-    "island-ui-core": {
-      "tags": [],
-      "implicitDependencies": ["island-ui-theme"]
-    },
-    "gjafakort-web": {
-      "tags": [],
-      "implicitDependencies": ["gjafakort-api"]
-    },
-    "gjafakort-web-e2e": {
-      "tags": [],
-      "implicitDependencies": ["gjafakort-web"]
-    },
-    "gjafakort-api": {
-      "tags": []
-    },
-    "gjafakort-application": {
-      "tags": []
-    },
-    "api": {
-      "tags": []
-    },
-    "api-domains-hello-world": {
-      "tags": []
-    },
-    "api-domains-cms": {
-      "tags": []
-    },
-    "api-schema": {
-      "tags": []
-    },
-    "island-ui-storybook": {
-      "tags": []
-    },
-    "gjafakort-queue-listener": {
-      "tags": []
-    },
-    "message-queue": {
-      "tags": []
-    },
-    "logging": {
-      "tags": []
-    },
-    "cache": {
-      "tags": []
-    },
-    "reference-backend": {
-      "tags": []
-    },
-    "infra-tracing": {
-      "tags": []
-    },
-    "infra-express-server": {
-      "tags": []
-    },
-    "infra-nest-server": {
-      "tags": []
-    },
-    "api-content-search": {
-      "tags": []
-    },
-    "services-search-indexer": {
-      "tags": []
-    },
-    "api-domains-content-search": {
-      "tags": []
-    },
-    "contentful-importer": {
-      "tags": []
-    },
-    "gjafakort-types": {
-      "tags": []
-    },
-    "gjafakort-consts": {
-      "tags": []
-    },
-    "application-template": {
-      "tags": []
-    },
-    "application-form": {
-      "tags": []
-    },
-    "application-system-form": {
-      "tags": []
-    },
-    "application-system-form-e2e": {
-      "tags": [],
-      "implicitDependencies": ["application-system-form"]
-    },
-    "application-system-api": {
-      "tags": []
-    },
-    "island-ui-theme": {
-      "tags": []
-    },
-    "service-portal": {
-      "tags": []
-    },
-    "service-portal-e2e": {
-      "tags": [],
-      "implicitDependencies": ["service-portal"]
-    },
-    "service-portal-constants": {
-      "tags": []
-    },
-    "service-portal-core": {
-      "tags": []
-    },
-    "service-portal-applications": {
-      "tags": []
-    },
-    "service-portal-documents": {
-      "tags": []
-    },
-    "service-portal-settings": {
-      "tags": []
-    },
-    "service-portal-finance": {
-      "tags": []
-    },
-    "service-portal-family": {
-      "tags": []
-    },
-    "service-portal-health": {
-      "tags": []
-    },
-    "service-portal-education": {
-      "tags": []
-    },
-    "island-ui-contentful": {
-      "tags": []
+      "implicitDependencies": ["adgerdir"]
     },
     "air-discount-scheme-api": {
+      "tags": []
+    },
+    "air-discount-scheme-backend": {
+      "tags": []
+    },
+    "air-discount-scheme-consts": {
+      "tags": []
+    },
+    "air-discount-scheme-types": {
       "tags": []
     },
     "air-discount-scheme-web": {
@@ -172,35 +44,152 @@
       "tags": [],
       "implicitDependencies": ["air-discount-scheme-web"]
     },
-    "air-discount-scheme-backend": {
+    "api": {
       "tags": []
     },
-    "air-discount-scheme-consts": {
+    "api-content-search": {
       "tags": []
     },
     "api-domains-application": {
       "tags": []
     },
-    "adgerdir": {
+    "api-domains-cms": {
       "tags": []
     },
-    "adgerdir-e2e": {
-      "tags": [],
-      "implicitDependencies": ["adgerdir"]
+    "api-domains-content-search": {
+      "tags": []
+    },
+    "api-domains-documents": {
+      "tags": []
     },
     "api-domains-file-upload": {
       "tags": []
     },
-    "file-storage": {
+    "api-domains-translations": {
+      "tags": []
+    },
+    "api-domains-user-profile": {
+      "tags": []
+    },
+    "api-schema": {
+      "tags": []
+    },
+    "application-core": {
+      "tags": []
+    },
+    "application-data-providers": {
       "tags": []
     },
     "application-graphql": {
       "tags": []
     },
-    "air-discount-scheme-types": {
+    "application-system-api": {
+      "tags": []
+    },
+    "application-system-form": {
+      "tags": []
+    },
+    "application-system-form-e2e": {
+      "tags": [],
+      "implicitDependencies": ["application-system-form"]
+    },
+    "application-template-loader": {
+      "tags": []
+    },
+    "application-templates-driving-lessons": {
+      "tags": []
+    },
+    "application-templates-parental-leave": {
+      "tags": []
+    },
+    "application-templates-reference-template": {
+      "tags": []
+    },
+    "application-ui-fields": {
+      "tags": []
+    },
+    "application-ui-shell": {
+      "tags": []
+    },
+    "cache": {
+      "tags": []
+    },
+    "contentful-importer": {
+      "tags": []
+    },
+    "dokobit-signing": {
+      "tags": []
+    },
+    "elastic-indexing": {
+      "tags": []
+    },
+    "email-service": {
+      "tags": []
+    },
+    "file-storage": {
+      "tags": []
+    },
+    "gjafakort-api": {
+      "tags": []
+    },
+    "gjafakort-application": {
+      "tags": []
+    },
+    "gjafakort-consts": {
+      "tags": []
+    },
+    "gjafakort-queue-listener": {
+      "tags": []
+    },
+    "gjafakort-types": {
+      "tags": []
+    },
+    "gjafakort-web": {
+      "tags": [],
+      "implicitDependencies": ["gjafakort-api"]
+    },
+    "gjafakort-web-e2e": {
+      "tags": [],
+      "implicitDependencies": ["gjafakort-web"]
+    },
+    "infra-express-server": {
+      "tags": []
+    },
+    "infra-monitoring": {
+      "tags": []
+    },
+    "infra-nest-server": {
+      "tags": []
+    },
+    "infra-tracing": {
+      "tags": []
+    },
+    "island-ui-contentful": {
+      "tags": []
+    },
+    "island-ui-core": {
+      "tags": [],
+      "implicitDependencies": ["island-ui-theme"]
+    },
+    "island-ui-fonts": {
+      "tags": []
+    },
+    "island-ui-storybook": {
+      "tags": []
+    },
+    "island-ui-theme": {
       "tags": []
     },
     "judicial-system-api": {
+      "tags": []
+    },
+    "judicial-system-consts": {
+      "tags": []
+    },
+    "judicial-system-formatters": {
+      "tags": []
+    },
+    "judicial-system-types": {
       "tags": []
     },
     "judicial-system-web": {
@@ -210,26 +199,98 @@
       "tags": [],
       "implicitDependencies": ["judicial-system-web"]
     },
-    "api-domains-documents": {
+    "localization": {
+      "tags": []
+    },
+    "logging": {
+      "tags": []
+    },
+    "message-queue": {
+      "tags": []
+    },
+    "nova-sms": {
+      "tags": []
+    },
+    "reference-backend": {
+      "tags": []
+    },
+    "reference-next-app": {
+      "tags": []
+    },
+    "service-portal": {
+      "tags": []
+    },
+    "service-portal-applications": {
+      "tags": []
+    },
+    "service-portal-assets": {
+      "tags": []
+    },
+    "service-portal-constants": {
+      "tags": []
+    },
+    "service-portal-core": {
+      "tags": []
+    },
+    "service-portal-documents": {
+      "tags": []
+    },
+    "service-portal-e2e": {
+      "tags": [],
+      "implicitDependencies": ["service-portal"]
+    },
+    "service-portal-education": {
+      "tags": []
+    },
+    "service-portal-family": {
+      "tags": []
+    },
+    "service-portal-finance": {
       "tags": []
     },
     "service-portal-graphql": {
       "tags": []
     },
-    "application-data-providers": {
+    "service-portal-health": {
+      "tags": []
+    },
+    "service-portal-settings": {
+      "tags": []
+    },
+    "services-search-indexer": {
+      "tags": []
+    },
+    "services-user-profile": {
+      "tags": []
+    },
+    "shared-form-fields": {
+      "tags": []
+    },
+    "skilavottord-consts": {
+      "tags": []
+    },
+    "skilavottord-types": {
+      "tags": []
+    },
+    "skilavottord-web": {
       "tags": []
     },
     "skilavottord-ws": {
       "tags": []
     },
-    "infra-monitoring": {
+    "skilavottord/web-e2e": {
+      "tags": [],
+      "implicitDependencies": ["skilavottord-web"]
+    },
+    "web": {
       "tags": []
     },
-    "judicial-system-consts": {
-      "tags": []
-    },
-    "elastic-indexing": {
-      "tags": []
+    "web-e2e": {
+      "tags": [],
+      "implicitDependencies": ["web"]
     }
+  },
+  "affected": {
+    "defaultBase": "master"
   }
 }

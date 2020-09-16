@@ -34,24 +34,24 @@ export const findLastGoodBuild = async (
   base,
   workflowQueries: WorkflowQueries,
 ) => {
+  const getGoodBuildOnBranch = async (branch) => {
+    const successWorkflows = await workflowQueries.getData(branch)
+    let successOnBranch = getSuccessWorkflowsForBranch(successWorkflows)
+
+    return pickFirstMatchingSuccess(shas, successOnBranch)
+  }
   // First we try to find the last successful workflow build on our branch
-  const successWorkflows = await workflowQueries.getData(branch)
-  let successOnBranch = getSuccessWorkflowsForBranch(successWorkflows)
-
-  const matchOnBranch = pickFirstMatchingSuccess(shas, successOnBranch)
-  if (matchOnBranch) {
-    return matchOnBranch
+  // Then try to find the last successful workflow build on our target branch
+  // Failing that, and in case base != master, we try master
+  const branchTargets = [branch, base]
+  if (base != 'master') {
+    branchTargets.push('master')
   }
-
-  // Fallback we try to find the last successful workflow build on the base branch
-  const successWorkflowsBase = await workflowQueries.getData(base)
-  let successOnBase = getSuccessWorkflowsForBranch(successWorkflowsBase)
-
-  const matchOnBase = pickFirstMatchingSuccess(shas, successOnBase)
-  if (matchOnBase) {
-    return matchOnBase
+  for (const branchTarget of branchTargets) {
+    const goodBuild = await getGoodBuildOnBranch(branchTarget)
+    if (goodBuild) {
+      return goodBuild
+    }
   }
-
-  // Unlikely but still
   return {}
 }

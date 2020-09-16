@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, Fragment } from 'react'
+import React, { ReactNode, Fragment } from 'react'
 import {
   Document,
   Block,
@@ -6,31 +6,103 @@ import {
   BLOCKS,
   INLINES,
 } from '@contentful/rich-text-types'
+import { Asset } from 'contentful'
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer'
-import Image from './Image/Image'
-import FaqList from './FaqList/FaqList'
-import { Slice } from '@island.is/api/schema'
-import { Statistics } from './Statistics/Statistics'
+import { Image, ImageProps } from './Image/Image'
+import FaqList, { FaqListProps } from './FaqList/FaqList'
+import { Statistics, StatisticsProps } from './Statistics/Statistics'
 import Hyperlink from './Hyperlink/Hyperlink'
+import { AssetLink, AssetLinkProps } from './AssetLink/AssetLink'
 import {
-  Typography,
+  Text,
+  TextProps,
   Blockquote,
   Box,
-  TypographyProps,
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
-import ProcessEntry from './ProcessEntry/ProcessEntry'
-import EmbeddedVideo from './EmbeddedVideo/EmbeddedVideo'
+import { ProcessEntry, ProcessEntryProps } from './ProcessEntry/ProcessEntry'
+import EmbeddedVideo, {
+  EmbeddedVideoProps,
+} from './EmbeddedVideo/EmbeddedVideo'
 import StaticHtml from './StaticHtml/StaticHtml'
 import slugify from '@sindresorhus/slugify'
-import { SectionWithImage } from './SectionWithImage/SectionWithImage'
+import {
+  SectionWithImage,
+  SectionWithImageProps,
+} from './SectionWithImage/SectionWithImage'
+import { TeamList, TeamListProps } from './TeamList/TeamList'
+import { ContactUs, ContactUsProps } from './ContactUs/ContactUs'
+import { Location, LocationProps } from './Location/Location'
+
+type HtmlSlice = { __typename: 'Html'; id: string; document: Document }
+type FaqListSlice = { __typename: 'FaqList'; id: string } & FaqListProps
+type StatisticsSlice = {
+  __typename: 'Statistics'
+  id: string
+} & StatisticsProps
+type ImageSlice = { __typename: 'Image'; id: string } & Omit<
+  ImageProps,
+  'thumbnail'
+>
+type AssetSlice = { __typename: 'Asset'; id: string } & AssetLinkProps
+type ProcessEntrySlice = {
+  __typename: 'ProcessEntry'
+  id: string
+} & ProcessEntryProps
+type EmbeddedVideoSlice = {
+  __typename: 'EmbeddedVideo'
+  id: string
+} & EmbeddedVideoProps
+type TeamListSlice = { __typename: 'TeamList'; id: string } & TeamListProps
+type LocationSlice = { __typename: 'Location'; id: string } & LocationProps
+type ContactUsSlice = { __typename: 'ContactUs'; id: string } & Omit<
+  ContactUsProps,
+  'state' | 'onSubmit'
+>
+type SectionWithImageSlice = {
+  __typename: 'SectionWithImage'
+  id: string
+} & SectionWithImageProps
+
+export type Slice =
+  | HtmlSlice
+  | FaqListSlice
+  | StatisticsSlice
+  | ImageSlice
+  | AssetSlice
+  | ProcessEntrySlice
+  | EmbeddedVideoSlice
+  | TeamListSlice
+  | ContactUsSlice
+  | LocationSlice
+  | SectionWithImageSlice
+  | {
+      // TODO: these are used on the about page - we need to move their rendering
+      // to here to make them re-usable by other page types
+      __typename:
+        | 'TimelineSlice'
+        | 'HeadingSlice'
+        | 'LinkCardSlice'
+        | 'MailingListSignupSlice'
+        | 'StorySlice'
+        | 'LatestNewsSlice'
+        | 'LogoListSlice'
+        | 'BulletListSlice'
+        | 'TabSection'
+      id: string
+    }
+
+type SliceType = Slice['__typename']
 
 export interface RenderNode {
   [k: string]: (node: Block | Inline, children: ReactNode) => ReactNode
 }
 
-type SliceType = Slice['__typename']
-type Ordered = 'ordered' | 'unordered'
+export interface PaddingConfig {
+  sorted?: boolean
+  space: ResponsiveSpace
+  types: [SliceType, SliceType]
+}
 
 export interface RenderConfig {
   renderComponent: (slice: Slice, config: RenderConfig) => ReactNode
@@ -38,7 +110,7 @@ export interface RenderConfig {
   renderNode: RenderNode
   htmlClassName?: string
   defaultPadding: ResponsiveSpace
-  padding: Readonly<Array<[SliceType, SliceType, ResponsiveSpace, Ordered?]>>
+  padding: Readonly<Array<PaddingConfig>>
 }
 
 export const defaultRenderComponent = (
@@ -59,7 +131,10 @@ export const defaultRenderComponent = (
       return <Statistics {...slice} />
 
     case 'Image':
-      return <Image type="apiImage" image={slice} />
+      return <Image {...slice} thumbnail={slice.url + '?w=50'} />
+
+    case 'Asset':
+      return <AssetLink {...slice} />
 
     case 'ProcessEntry':
       return <ProcessEntry {...slice} />
@@ -70,6 +145,22 @@ export const defaultRenderComponent = (
     case 'SectionWithImage':
       return <SectionWithImage {...slice} />
 
+    case 'TeamList':
+      return <TeamList {...slice} />
+
+    case 'Location':
+      return <Location {...slice} />
+
+    case 'ContactUs':
+      // NB: ContactUs needs to be connected with submit logic higher up
+      return (
+        <ContactUs
+          {...slice}
+          onSubmit={async (data) => console.warn(data)}
+          state="edit"
+        />
+      )
+
     default:
       // TODO: this should be an exhaustive list of slice types, but some slice
       // types are only used on certain types of pages that are not using this
@@ -79,31 +170,42 @@ export const defaultRenderComponent = (
 }
 
 const typography = (
-  variant: TypographyProps['variant'] & TypographyProps['as'],
+  variant: TextProps['variant'],
+  as: TextProps['as'],
   withId = false,
-) => (_: Block, children: ReactNode) => (
-  <Typography
-    id={withId ? slugify(String(children)) : null}
+) => (_: Block | Inline, children: ReactNode) => (
+  <Text
+    id={withId ? slugify(String(children)) : undefined}
     variant={variant}
-    as={variant}
+    as={as}
   >
     {children}
-  </Typography>
+  </Text>
 )
 
 export const defaultRenderNode: Readonly<RenderNode> = {
-  [BLOCKS.HEADING_1]: typography('h1', true),
-  [BLOCKS.HEADING_2]: typography('h2', true),
-  [BLOCKS.HEADING_3]: typography('h3', true),
-  [BLOCKS.HEADING_4]: typography('h4'),
-  [BLOCKS.HEADING_5]: typography('h5'),
-  [BLOCKS.PARAGRAPH]: typography('p'),
-  [BLOCKS.QUOTE]: (_node: Block, children: ReactNode): ReactNode => (
+  [BLOCKS.HEADING_1]: typography('h1', 'h1', true),
+  [BLOCKS.HEADING_2]: typography('h2', 'h2', true),
+  [BLOCKS.HEADING_3]: typography('h3', 'h3', true),
+  [BLOCKS.HEADING_4]: typography('h4', 'h4', true),
+  [BLOCKS.HEADING_5]: typography('h5', 'h5'),
+  [BLOCKS.PARAGRAPH]: typography('default', 'p'),
+  [BLOCKS.QUOTE]: (node: Block | Inline, children: ReactNode): ReactNode => (
     <Blockquote>{children}</Blockquote>
   ),
-  [INLINES.HYPERLINK]: (node: Inline, children: ReactNode): ReactNode => (
-    <Hyperlink href={node.data.uri}>{children}</Hyperlink>
-  ),
+  [INLINES.HYPERLINK]: (
+    node: Block | Inline,
+    children: ReactNode,
+  ): ReactNode => <Hyperlink href={node.data.uri}>{children}</Hyperlink>,
+  [INLINES.ASSET_HYPERLINK]: (
+    node: Block | Inline,
+    children: ReactNode,
+  ): ReactNode => {
+    const asset = (node.data.target as unknown) as Asset
+    return asset.fields.file?.url ? (
+      <Hyperlink href={asset.fields.file.url}>{children}</Hyperlink>
+    ) : null
+  },
 }
 
 export const renderHtml = (
@@ -123,17 +225,19 @@ export const renderHtml = (
   )
 }
 
-const matches = (name: string, type: string) => name === '*' || name === type
-
 export const defaultRenderPadding = (
   { __typename: above }: Slice,
   { __typename: below }: Slice,
   config: RenderConfig,
 ): ReactNode => {
-  for (const [a, b, space, order = 'unordered'] of config.padding) {
+  for (const {
+    sorted = false,
+    space,
+    types: [a, b],
+  } of config.padding) {
     if (
-      (matches(a, above) && matches(b, below)) ||
-      (order === 'unordered' && matches(a, below) && matches(b, above))
+      (a === above && b === below) ||
+      (!sorted && a === below && b === above)
     ) {
       return <Box paddingTop={space} />
     }
@@ -173,9 +277,11 @@ export const renderSlices = (
       return null
     }
 
+    const allSlices = slices as { [key: number]: Slice }
+
     return (
-      <Fragment key={slice.id}>
-        {index > 0 && config.renderPadding(slices[index - 1], slice, config)}
+      <Fragment key={index}>
+        {index > 0 && config.renderPadding(allSlices[index - 1], slice, config)}
         {comp}
       </Fragment>
     )

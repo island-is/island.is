@@ -109,6 +109,7 @@ export const indicatorsContainer = style(
 )
 export const dropdownIndicator = style(
   {
+    cursor: 'pointer',
     selectors: {
       [`${wrapper} &`]: {
         padding: 0,
@@ -143,6 +144,7 @@ export const menu = style(
 )
 export const option = style(
   {
+    cursor: 'pointer',
     selectors: {
       [`${wrapper} &`]: {
         position: 'relative',

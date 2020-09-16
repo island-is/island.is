@@ -1,20 +1,23 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, useContext } from 'react'
+import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import Link, { LinkProps } from 'next/link'
 import {
   Box,
   Stack,
-  Typography,
+  Text,
   Tag,
   Inline,
   TagProps,
-  IconTypes,
-  Icon,
+  IconTypesDeprecated as IconTypes,
+  IconDeprecated as Icon,
   FocusableBox,
   ColorSchemeContext,
   TagVariant,
 } from '@island.is/island-ui/core'
+import { Image } from '@island.is/web/graphql/schema'
+import { BackgroundImage } from '@island.is/web/components'
 
 import * as styles from './Card.treat'
 
@@ -32,6 +35,7 @@ const tagPropsDefaults: Omit<TagProps, 'children'> = {
 interface CardProps {
   title: string
   icon?: IconTypes
+  image?: Image
   description: string
   tags?: Array<CardTagsProps>
   linkProps?: LinkProps
@@ -42,12 +46,16 @@ interface CardProps {
 export const Card: FC<CardProps> = ({
   title,
   icon,
+  image,
   description,
   tags = [],
   href,
   as,
 }) => {
   const { colorScheme } = useContext(ColorSchemeContext)
+  const [ref, { width }] = useMeasure()
+
+  const stackImage = width < 360
 
   let borderColor = null
   let tagVariant = 'purple' as TagVariant
@@ -70,53 +78,95 @@ export const Card: FC<CardProps> = ({
       break
   }
 
+  const items = [
+    <Box
+      key={1}
+      className={cn(styles.cardContent, {
+        [styles.cardContentNarrower]: image && !stackImage,
+      })}
+    >
+      <Stack space={1}>
+        <Text as="h3" variant="h3" color="blue400">
+          <Box display="flex" flexDirection="row" alignItems="center">
+            <Box display="inlineFlex" flexGrow={1}>
+              {title}
+            </Box>
+            {icon && (
+              <Box marginLeft={1} display="inlineFlex">
+                <Icon type={icon} />
+              </Box>
+            )}
+          </Box>
+        </Text>
+        {description && <Text>{description}</Text>}
+        {tags.length > 0 && (
+          <Box paddingTop={3} flexGrow={0} position="relative">
+            <Inline space={1}>
+              {tags.map(
+                ({ title, href, as, ...props }: CardTagsProps, index) => {
+                  const tagProps = {
+                    ...tagPropsDefaults,
+                    ...props.tagProps,
+                    variant: tagVariant,
+                  }
+
+                  return href ? (
+                    <Link key={index} href={href} as={as}>
+                      <Tag {...tagProps}>{title}</Tag>
+                    </Link>
+                  ) : (
+                    <Tag key={index} {...tagProps}>
+                      {title}
+                    </Tag>
+                  )
+                },
+              )}
+            </Inline>
+          </Box>
+        )}
+      </Stack>
+    </Box>,
+    !!image && (
+      <Box
+        key={2}
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        className={cn(styles.imageContainer, {
+          [styles.imageContainerStacked]: stackImage,
+        })}
+      >
+        <BackgroundImage
+          positionX={!stackImage ? 'right' : null}
+          background="transparent"
+          backgroundSize="contain"
+          image={image}
+        />
+      </Box>
+    ),
+  ]
+
+  if (stackImage) {
+    items.reverse()
+  }
+
   const Content = (
     <Box
+      ref={ref}
       display="flex"
       height="full"
       borderRadius="large"
       flexDirection="column"
     >
-      <Box flexGrow={1} height="full">
-        <Stack space={1}>
-          <Typography variant="cardCategoryTitle" as="h3" color="blue400">
-            <Box display="flex" flexDirection="row" alignItems="center">
-              <Box display="inlineFlex" flexGrow={1}>
-                {title}
-              </Box>
-              {icon && (
-                <Box marginLeft={1} display="inlineFlex">
-                  <Icon type={icon} />
-                </Box>
-              )}
-            </Box>
-          </Typography>
-          {description && <Typography variant="p">{description}</Typography>}
-        </Stack>
+      <Box
+        flexGrow={1}
+        height="full"
+        position="relative"
+        display="flex"
+        flexDirection={stackImage ? 'column' : 'row'}
+      >
+        {items}
       </Box>
-      {tags.length > 0 && (
-        <Box paddingTop={3} flexGrow={0}>
-          <Inline space={1}>
-            {tags.map(({ title, href, as, ...props }: CardTagsProps, index) => {
-              const tagProps = {
-                ...tagPropsDefaults,
-                ...props.tagProps,
-                variant: tagVariant,
-              }
-
-              return href ? (
-                <Link key={index} href={href} as={as}>
-                  <Tag {...tagProps}>{title}</Tag>
-                </Link>
-              ) : (
-                <Tag key={index} {...tagProps}>
-                  {title}
-                </Tag>
-              )
-            })}
-          </Inline>
-        </Box>
-      )}
     </Box>
   )
 
@@ -128,6 +178,7 @@ export const Card: FC<CardProps> = ({
         borderRadius="large"
         flexDirection="column"
         height="full"
+        width="full"
         borderColor={borderColor}
         borderWidth="standard"
       >
@@ -143,7 +194,9 @@ export const Frame = ({ children }) => {
   return (
     <Box
       className={cn(styles.card)}
+      position="relative"
       borderRadius="large"
+      overflow="hidden"
       height="full"
       background="white"
       outline="none"

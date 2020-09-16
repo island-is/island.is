@@ -1,9 +1,19 @@
 import fs from 'fs'
 import { logger } from '@island.is/logging'
-import { ElasticService } from '@island.is/api/content-search'
+import { ElasticService, SyncOptions } from '@island.is/api/content-search'
 import { AwsEsPackage } from './aws'
+import { IndexingModule, IndexingService } from '@island.is/elastic-indexing'
+import { NestFactory } from '@nestjs/core'
 
 const esService = new ElasticService()
+
+export interface MigrationInfo {
+  [key: string]: {
+    oldIndexVersion: number
+    oldTemplate?: string
+    newIndexVersion?: number
+  }
+}
 
 const getIndexBaseName = (locale: string) => {
   return `island-${locale}`
@@ -102,7 +112,7 @@ const createTemplateBody = (locale: string, packageMap: PackageMap): string => {
     }
   }
 
-  logger.info('Created template config', { locale })
+  logger.info('Created template config', { locale: locale, config: config })
   return config
 }
 
@@ -200,37 +210,22 @@ export const removeIndexesBelowVersion = async (
   return true
 }
 
-export const moveOldContentToNewIndex = async (
+export const importContentToNewIndex = async (
   locale: string,
   newIndexVersion: number,
-  oldIndexVersion: number,
 ) => {
-  // if we found no older index there is nothing to move
-  if (oldIndexVersion === 0) {
-    return false
-  }
-  const oldIndexName = getIndexNameForVersion(locale, oldIndexVersion)
-  const newIndexName = getIndexNameForVersion(locale, newIndexVersion)
-
-  logger.info('Moving content from old index to new index', {
-    oldIndexName,
-    newIndexName,
+  // we do a full sync here to import data
+  const elasticIndex = getIndexNameForVersion(locale, newIndexVersion)
+  const app = await NestFactory.create(IndexingModule)
+  const indexingService = app.get(IndexingService)
+  await indexingService.doSync({
+    fullSync: true,
+    locale: locale as SyncOptions['locale'],
+    elasticIndex,
   })
+  await app.close()
 
-  const params = {
-    waitForCompletion: true,
-    body: {
-      source: {
-        index: oldIndexName,
-      },
-      dest: {
-        index: newIndexName,
-      },
-    },
-  }
-  const client = await esService.getClient()
-  await client.reindex(params)
-  logger.info('Moved all content to new index')
+  logger.info('Imported all content into new index')
   return true
 }
 

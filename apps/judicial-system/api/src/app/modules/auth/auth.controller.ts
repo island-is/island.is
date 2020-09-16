@@ -33,7 +33,7 @@ import { AuthService } from './auth.service'
 
 const { samlEntryPoint, jwtSecret } = environment.auth
 
-export const JWT_EXPIRES_IN_SECONDS = 1800
+export const JWT_EXPIRES_IN_SECONDS = 4 * 60 * 60
 export const ONE_HOUR = 60 * 60 * 1000
 const REDIRECT_COOKIE_NAME = 'judicial-system.redirect'
 
@@ -69,8 +69,10 @@ const REDIRECT_COOKIE: Cookie = {
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    @Inject('IslandisLogin') private loginIS: IslandisLogin,
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject('IslandisLogin')
+    private readonly loginIS: IslandisLogin,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   @Post('callback')
@@ -112,12 +114,13 @@ export class AuthController {
   @Get('login')
   @ApiQuery({ name: 'returnUrl' })
   login(@Res() res, @Query('returnUrl') returnUrl) {
-    this.logger.debug('Received login request' + returnUrl)
+    this.logger.debug(`Received login request with return url ${returnUrl}`)
 
     const { name, options } = REDIRECT_COOKIE
 
     res.clearCookie(name, options)
 
+    // Local development
     if (!environment.production && process.env.AUTH_USER) {
       this.logger.debug(
         `Logging in as ${process.env.AUTH_USER} in local development`,
@@ -133,12 +136,12 @@ export class AuthController {
       )
     }
 
-    const authId = `&authId=${uuid()}`
+    const authId = uuid()
     const electronicIdOnly = '&qaa=4'
 
     return res
       .cookie(name, { authId, returnUrl }, { ...options, maxAge: ONE_HOUR })
-      .redirect(`${samlEntryPoint}${authId}${electronicIdOnly}`)
+      .redirect(`${samlEntryPoint}&authId=${authId}${electronicIdOnly}`)
   }
 
   @Get('logout')
@@ -151,13 +154,15 @@ export class AuthController {
     return res.json({ logout: true })
   }
 
-  private redirectAuthenticatedUser(
+  private async redirectAuthenticatedUser(
     authUser: AuthUser,
     returnUrl: string,
     res,
     csrfToken?: string,
   ) {
-    if (!this.authService.validateUser(authUser)) {
+    const valid = await this.authService.validateUser(authUser)
+
+    if (!valid) {
       this.logger.error('Unknown user', {
         extra: {
           authUser,

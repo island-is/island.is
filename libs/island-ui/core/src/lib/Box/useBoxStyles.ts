@@ -2,12 +2,14 @@
 import { ElementType } from 'react'
 import classnames from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
+
 import {
   resolveResponsiveProp,
   ResponsiveProp,
 } from '../../utils/responsiveProp'
 import * as resetStyleRefs from '../../reset/reset.treat'
 import * as styleRefs from './useBoxStyles.treat'
+
 export type Space = keyof typeof theme.spacing
 export type ResponsiveSpace = ResponsiveProp<Space>
 
@@ -20,13 +22,13 @@ export interface UseBoxStylesProps {
   paddingBottom?: ResponsiveSpace
   paddingLeft?: ResponsiveSpace
   paddingRight?: ResponsiveSpace
-  margin?: ResponsiveSpace
-  marginX?: ResponsiveSpace
-  marginY?: ResponsiveSpace
-  marginTop?: ResponsiveSpace
-  marginBottom?: ResponsiveSpace
-  marginLeft?: ResponsiveSpace
-  marginRight?: ResponsiveSpace
+  margin?: ResponsiveProp<Space | 'auto'>
+  marginX?: ResponsiveProp<Space | 'auto'>
+  marginY?: ResponsiveProp<Space | 'auto'>
+  marginTop?: ResponsiveProp<Space | 'auto'>
+  marginBottom?: ResponsiveProp<Space | 'auto'>
+  marginLeft?: ResponsiveProp<Space | 'auto'>
+  marginRight?: ResponsiveProp<Space | 'auto'>
   display?: ResponsiveProp<keyof typeof styleRefs.display>
   flexDirection?: ResponsiveProp<keyof typeof styleRefs.flexDirection>
   flexWrap?: keyof typeof styleRefs.flexWrap
@@ -122,12 +124,8 @@ export const useBoxStyles = ({
   opacity,
   className,
 }: UseBoxStylesProps) => {
-  const resetStyles = {
-    ...resetStyleRefs,
-  }
-  const styles = {
-    ...styleRefs,
-  }
+  const resetStyles = { ...resetStyleRefs }
+  const styles = { ...styleRefs }
 
   const resolvedPaddingTop = paddingTop ?? paddingY ?? padding
   const resolvedPaddingBottom = paddingBottom ?? paddingY ?? padding

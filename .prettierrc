@@ -2,5 +2,7 @@
   "singleQuote": true,
   "semi": false,
   "trailingComma": "all",
-  "arrowParens": "always"
+  "arrowParens": "always",
+  "plugins": ["./scripts/prettier-plugins/sort-projects"],
+  "endOfLine": "lf"
 }

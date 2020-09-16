@@ -5,6 +5,7 @@ export type sortDirection = 'desc' | 'asc'
 export type sortableFields = {
   dateUpdated?: sortDirection
   dateCreated?: sortDirection
+  'title.sort'?: sortDirection
 }
 
 export enum SearchIndexes {
@@ -31,7 +32,7 @@ interface Explanation {
   details: Explanation[]
 }
 
-export interface SearchResponse<T> {
+export interface SearchResponse<ResponseSource, ResponseAggregation = any> {
   took: number
   timed_out: boolean
   _scroll_id?: string
@@ -47,7 +48,7 @@ export interface SearchResponse<T> {
       _type: string
       _id: string
       _score: number
-      _source: T
+      _source: ResponseSource
       _version?: number
       _explanation?: Explanation
       fields?: any
@@ -57,12 +58,13 @@ export interface SearchResponse<T> {
       sort?: string[]
     }>
   }
-  aggregations?: any
+  aggregations?: ResponseAggregation
 }
 
 export interface SyncOptions {
   locale: keyof typeof SearchIndexes
   fullSync: boolean
+  elasticIndex?: string
 }
 
 export interface SyncResponse<PostSyncOptionsType = any> {
@@ -88,3 +90,5 @@ export interface MappedData {
   dateCreated: string
   nextSyncToken?: string
 }
+
+export type dateResolution = 'year' | 'month' | 'week' | 'day'

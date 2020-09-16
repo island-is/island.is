@@ -1,7 +1,11 @@
 import React, { useContext } from 'react'
 import Link from 'next/link'
 
-import { Box, Typography, Button } from '@island.is/island-ui/core'
+import {
+  Box,
+  Typography,
+  ButtonDeprecated as Button,
+} from '@island.is/island-ui/core'
 
 import { useI18n } from '@island.is/gjafakort-web/i18n'
 import { UserContext } from '@island.is/gjafakort-web/context'

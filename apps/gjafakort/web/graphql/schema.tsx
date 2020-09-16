@@ -2,6 +2,9 @@ import gql from 'graphql-tag'
 import * as ApolloReactCommon from '@apollo/react-common'
 import * as ApolloReactHooks from '@apollo/react-hooks'
 export type Maybe<T> = T | null
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K]
+}
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string
@@ -272,7 +275,7 @@ export type GiveGiftInput = {
   message?: Maybe<Scalars['String']>
 }
 
-export type UserQueryQueryVariables = {}
+export type UserQueryQueryVariables = Exact<{ [key: string]: never }>
 
 export type UserQueryQuery = { __typename?: 'Query' } & {
   user?: Maybe<
@@ -283,7 +286,9 @@ export type UserQueryQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type CompanyApplicationsQueryQueryVariables = {}
+export type CompanyApplicationsQueryQueryVariables = Exact<{
+  [key: string]: never
+}>
 
 export type CompanyApplicationsQueryQuery = { __typename?: 'Query' } & {
   companyApplications?: Maybe<
@@ -326,9 +331,9 @@ export type CompanyApplicationsQueryQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type ApproveCompanyApplicationMutationVariables = {
+export type ApproveCompanyApplicationMutationVariables = Exact<{
   input: ApproveCompanyApplicationInput
-}
+}>
 
 export type ApproveCompanyApplicationMutation = { __typename?: 'Mutation' } & {
   approveCompanyApplication?: Maybe<
@@ -343,9 +348,9 @@ export type ApproveCompanyApplicationMutation = { __typename?: 'Mutation' } & {
   >
 }
 
-export type RejectCompanyApplicationMutationVariables = {
+export type RejectCompanyApplicationMutationVariables = Exact<{
   input: RejectCompanyApplicationInput
-}
+}>
 
 export type RejectCompanyApplicationMutation = { __typename?: 'Mutation' } & {
   rejectCompanyApplication?: Maybe<
@@ -360,9 +365,9 @@ export type RejectCompanyApplicationMutation = { __typename?: 'Mutation' } & {
   >
 }
 
-export type CompanyApplicationQueryQueryVariables = {
+export type CompanyApplicationQueryQueryVariables = Exact<{
   id: Scalars['String']
-}
+}>
 
 export type CompanyApplicationQueryQuery = { __typename?: 'Query' } & {
   user?: Maybe<{ __typename?: 'AuthUser' } & Pick<AuthUser, 'role'>>
@@ -402,9 +407,9 @@ export type CompanyApplicationQueryQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type UpdateCompanyApplicationMutationMutationVariables = {
+export type UpdateCompanyApplicationMutationMutationVariables = Exact<{
   input: UpdateCompanyApplicationInput
-}
+}>
 
 export type UpdateCompanyApplicationMutationMutation = {
   __typename?: 'Mutation'
@@ -421,7 +426,9 @@ export type UpdateCompanyApplicationMutationMutation = {
   >
 }
 
-export type CompanyApplicationsQueryMinimalQueryVariables = {}
+export type CompanyApplicationsQueryMinimalQueryVariables = Exact<{
+  [key: string]: never
+}>
 
 export type CompanyApplicationsQueryMinimalQuery = { __typename?: 'Query' } & {
   companyApplications?: Maybe<
@@ -436,6 +443,8 @@ export type CompanyApplicationsQueryMinimalQuery = { __typename?: 'Query' } & {
           | 'companySSN'
           | 'generalEmail'
           | 'companyDisplayName'
+          | 'operationsTrouble'
+          | 'publicHelpAmount'
           | 'companyName'
         > & {
             logs?: Maybe<
@@ -454,16 +463,18 @@ export type CompanyApplicationsQueryMinimalQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type UserApplicationCountQueryQueryVariables = {}
+export type UserApplicationCountQueryQueryVariables = Exact<{
+  [key: string]: never
+}>
 
 export type UserApplicationCountQueryQuery = { __typename?: 'Query' } & Pick<
   Query,
   'userApplicationCount'
 >
 
-export type FetchUserApplicationQueryMutationVariables = {
+export type FetchUserApplicationQueryMutationVariables = Exact<{
   ssn: Scalars['String']
-}
+}>
 
 export type FetchUserApplicationQueryMutation = { __typename?: 'Mutation' } & {
   fetchUserApplication?: Maybe<
@@ -485,7 +496,7 @@ export type FetchUserApplicationQueryMutation = { __typename?: 'Mutation' } & {
   >
 }
 
-export type CompaniesQueryQueryVariables = {}
+export type CompaniesQueryQueryVariables = Exact<{ [key: string]: never }>
 
 export type CompaniesQueryQuery = { __typename?: 'Query' } & {
   companies?: Maybe<
@@ -493,9 +504,9 @@ export type CompaniesQueryQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type CompanyQueryQueryVariables = {
+export type CompanyQueryQueryVariables = Exact<{
   ssn: Scalars['String']
-}
+}>
 
 export type CompanyQueryQuery = { __typename?: 'Query' } & {
   company?: Maybe<
@@ -521,9 +532,9 @@ export type CompanyQueryQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type CreateCompanyApplicationMutationMutationVariables = {
+export type CreateCompanyApplicationMutationMutationVariables = Exact<{
   input: CreateCompanyApplicationInput
-}
+}>
 
 export type CreateCompanyApplicationMutationMutation = {
   __typename?: 'Mutation'
@@ -540,7 +551,7 @@ export type CreateCompanyApplicationMutationMutation = {
   >
 }
 
-export type UserApplicationQueryQueryVariables = {}
+export type UserApplicationQueryQueryVariables = Exact<{ [key: string]: never }>
 
 export type UserApplicationQueryQuery = { __typename?: 'Query' } & {
   userApplication?: Maybe<
@@ -551,9 +562,9 @@ export type UserApplicationQueryQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type CreateUserApplicationMutationMutationVariables = {
+export type CreateUserApplicationMutationMutationVariables = Exact<{
   input: CreateUserApplicationInput
-}
+}>
 
 export type CreateUserApplicationMutationMutation = {
   __typename?: 'Mutation'
@@ -570,9 +581,9 @@ export type CreateUserApplicationMutationMutation = {
   >
 }
 
-export type VerifyUserApplicationMutationMutationVariables = {
+export type VerifyUserApplicationMutationMutationVariables = Exact<{
   input: VerifyUserApplicationInput
-}
+}>
 
 export type VerifyUserApplicationMutationMutation = {
   __typename?: 'Mutation'
@@ -589,7 +600,7 @@ export type VerifyUserApplicationMutationMutation = {
   >
 }
 
-export type GiftCardsQueryQueryVariables = {}
+export type GiftCardsQueryQueryVariables = Exact<{ [key: string]: never }>
 
 export type GiftCardsQueryQuery = { __typename?: 'Query' } & {
   giftCards?: Maybe<
@@ -618,9 +629,9 @@ export type GiftCardsQueryQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type GiftCardCodeQueryQueryVariables = {
+export type GiftCardCodeQueryQueryVariables = Exact<{
   giftCardId: Scalars['Int']
-}
+}>
 
 export type GiftCardCodeQueryQuery = { __typename?: 'Query' } & {
   giftCardCode?: Maybe<
@@ -631,17 +642,17 @@ export type GiftCardCodeQueryQuery = { __typename?: 'Query' } & {
   >
 }
 
-export type GiveGiftMutationMutationVariables = {
+export type GiveGiftMutationMutationVariables = Exact<{
   input: GiveGiftInput
-}
+}>
 
 export type GiveGiftMutationMutation = { __typename?: 'Mutation' } & {
   giveGift?: Maybe<{ __typename?: 'GiveGift' } & Pick<GiveGift, 'success'>>
 }
 
-export type ConfirmMobileMutationMutationVariables = {
+export type ConfirmMobileMutationMutationVariables = Exact<{
   input: ConfirmMobileInput
-}
+}>
 
 export type ConfirmMobileMutationMutation = { __typename?: 'Mutation' } & {
   confirmMobile?: Maybe<
@@ -1044,6 +1055,8 @@ export const CompanyApplicationsQueryMinimalDocument = gql`
       companySSN
       generalEmail
       companyDisplayName
+      operationsTrouble
+      publicHelpAmount
       companyName
       logs {
         id

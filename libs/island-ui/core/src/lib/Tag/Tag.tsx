@@ -12,6 +12,7 @@ export type TagVariant =
   | 'red'
   | 'mint'
   | 'darkerMint'
+  | 'rose'
 
 export interface TagProps {
   onClick?: () => void
@@ -22,6 +23,7 @@ export interface TagProps {
   disabled?: boolean
   label?: boolean
   bordered?: boolean
+  attention?: boolean // Renders a red dot driving attention to the tag.
   children: string | ReactNode
 }
 
@@ -38,6 +40,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       disabled,
       label,
       bordered = false,
+      attention,
       ...props
     }: TagProps,
     ref,
@@ -46,6 +49,7 @@ export const Tag = forwardRef<HTMLButtonElement & HTMLAnchorElement, TagProps>(
       [styles.label]: label,
       [styles.active]: active,
       [styles.bordered]: bordered,
+      [styles.attention]: attention,
     })
 
     const isExternal = href && isLinkExternal(href)

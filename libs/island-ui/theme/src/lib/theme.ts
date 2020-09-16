@@ -34,6 +34,7 @@ export const spacing = {
   smallGutter: UNIT * 0.5,
   gutter: UNIT * 2,
   containerGutter: UNIT * 6,
+  auto: 'auto',
 }
 
 export const theme = {
@@ -51,7 +52,7 @@ export const theme = {
   },
   touchableSize: 10,
   typography: {
-    fontFamily: `"IBM Plex Sans", sans-serif`,
+    fontFamily: `"IBM Plex Sans", San Francisco, Segoe UI, sans-serif`,
     light: 300,
     regular: 400,
     medium: 500,
@@ -105,49 +106,7 @@ export const theme = {
 
 export type Theme = typeof theme
 
-export type Colors =
-  | 'blue600'
-  | 'blue400'
-  | 'blue300'
-  | 'blue200'
-  | 'blue100'
-  | 'dark400'
-  | 'dark300'
-  | 'dark200'
-  | 'dark100'
-  | 'red600'
-  | 'red400'
-  | 'red300'
-  | 'red200'
-  | 'red100'
-  | 'white'
-  | 'blueberry600'
-  | 'blueberry400'
-  | 'blueberry300'
-  | 'blueberry200'
-  | 'blueberry100'
-  | 'purple600'
-  | 'purple400'
-  | 'purple300'
-  | 'purple200'
-  | 'purple100'
-  | 'roseTinted600'
-  | 'roseTinted400'
-  | 'roseTinted300'
-  | 'roseTinted200'
-  | 'roseTinted100'
-  | 'mint600'
-  | 'mint400'
-  | 'mint200'
-  | 'mint300'
-  | 'mint100'
-  | 'yellow600'
-  | 'yellow400'
-  | 'yellow200'
-  | 'yellow300'
-  | 'yellow100'
-  | 'transparent'
-  | 'currentColor'
+export type Colors = keyof typeof color
 
 type RequiredTokens = Pick<Theme, 'breakpoints'>
 type StyleWithoutMediaQueries = Exclude<Style['@media'], undefined>[string]

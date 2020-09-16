@@ -1,5 +1,6 @@
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
+import _ from 'lodash'
 import {
   SearchIndexes,
   SyncOptions,
@@ -9,10 +10,11 @@ import { ArticleSyncService } from './importers/article.service'
 import { ContentfulService } from './contentful.service'
 import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
-import _ from 'lodash'
+import { NewsSyncService } from './importers/news.service'
+import { AboutPageSyncService } from './importers/aboutPage.service'
 
 export interface PostSyncOptions {
-  locale: keyof typeof SearchIndexes
+  elasticIndex: string
   token: string
 }
 
@@ -20,6 +22,8 @@ export interface PostSyncOptions {
 export class CmsSyncService {
   private contentSyncProviders
   constructor(
+    private readonly aboutPageSyncService: AboutPageSyncService,
+    private readonly newsSyncService: NewsSyncService,
     private readonly articleCategorySyncService: ArticleCategorySyncService,
     private readonly articleSyncService: ArticleSyncService,
     private readonly lifeEventsPageSyncService: LifeEventsPageSyncService,
@@ -30,6 +34,8 @@ export class CmsSyncService {
       this.articleSyncService,
       this.lifeEventsPageSyncService,
       this.articleCategorySyncService,
+      this.newsSyncService,
+      this.aboutPageSyncService,
     ]
   }
 
@@ -41,6 +47,7 @@ export class CmsSyncService {
       items,
       deletedItems,
       token,
+      elasticIndex,
     } = await this.contentfulService.getSyncEntries(options)
     logger.info('Got sync data')
 
@@ -57,7 +64,7 @@ export class CmsSyncService {
       add: _.flatten(importableData),
       remove: deletedItems,
       postSyncOptions: {
-        locale: options.locale,
+        elasticIndex,
         token,
       },
     }

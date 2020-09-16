@@ -1,5 +1,5 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { IsBoolean, IsInt, IsOptional, IsString } from 'class-validator'
+import { IsInt, IsOptional, IsString } from 'class-validator'
 
 @InputType()
 export class GetAdgerdirPagesInput {

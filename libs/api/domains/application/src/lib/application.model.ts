@@ -1,43 +1,46 @@
 import { Field, ObjectType, ID, registerEnumType } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
-import { ApplicationTypeIdEnum } from '../../gen/fetch'
+import { ApplicationResponseDtoTypeIdEnum } from '../../gen/fetch/models/ApplicationResponseDto'
 
-registerEnumType(ApplicationTypeIdEnum, {
-  name: 'ApplicationTypeIdEnum',
+registerEnumType(ApplicationResponseDtoTypeIdEnum, {
+  name: 'ApplicationResponseDtoTypeIdEnum',
 })
 
 @ObjectType()
 export class Application {
-  @Field((type) => ID)
+  @Field(() => ID)
   id: string
 
-  @Field((type) => Date)
+  @Field(() => Date)
   created: Date
 
-  @Field((type) => Date)
+  @Field(() => Date)
   modified: Date
 
-  @Field((type) => String)
+  @Field(() => String)
   applicant: string
 
-  @Field((type) => String)
+  @Field(() => String)
   assignee: string
 
-  @Field((type) => String, { nullable: true })
-  externalId?: string
-
-  @Field((type) => String)
+  @Field(() => String)
   state: string
 
-  @Field((type) => graphqlTypeJson, { nullable: true })
+  @Field(() => graphqlTypeJson, { nullable: true })
   attachments?: object
 
-  @Field((type) => ApplicationTypeIdEnum)
-  typeId: ApplicationTypeIdEnum
+  @Field(() => ApplicationResponseDtoTypeIdEnum)
+  typeId: ApplicationResponseDtoTypeIdEnum
 
-  @Field((type) => graphqlTypeJson)
+  @Field(() => graphqlTypeJson)
   answers: object
 
-  @Field((type) => graphqlTypeJson)
+  @Field(() => graphqlTypeJson)
   externalData: object
+
+  @Field(() => String, { nullable: true })
+  name?: string
+
+  @Field(() => Number, { nullable: true })
+  progress?: number
 }

@@ -1,511 +1,420 @@
-import { styleMap, style, globalStyle } from 'treat'
+import { style, Style, styleMap } from 'treat'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-const speed = '150ms'
+// this is used to generate uniqe classname for button so we can target empty styles for icon
+export const isEmpty = style({})
 
-const hexToRgb = (hex) => {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-
-  return result
-    ? `${parseInt(result[1], 16)}, ` +
-        `${parseInt(result[2], 16)}, ` +
-        `${parseInt(result[3], 16)}`
-    : null
-}
-
-export const button = style({
-  display: 'inline-flex',
-  position: 'relative',
-  justifyContent: 'center',
+const buttonBase = {
+  display: 'flex',
   alignItems: 'center',
-  borderRadius: 10,
-  outline: 0,
-  border: 0,
-  cursor: 'pointer',
-  fontFamily: 'IBM Plex Sans, sans-serif',
-  fontStyle: 'normal',
   fontWeight: theme.typography.semiBold,
-  transition: `color ${speed} ease, background-color ${speed} ease`,
-  ':disabled': {
-    cursor: 'not-allowed',
-    pointerEvents: 'none',
-  },
+  borderRadius: 8,
+  outline: 'none',
+  transition: 'box-shadow .25s, color .25s, background-color .25s',
   ':focus': {
     color: theme.color.dark400,
     backgroundColor: theme.color.mint400,
   },
-  ':hover': {
-    textDecoration: 'none',
+  ':active': {
+    boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
   },
-  ':after': {
-    content: "''",
-    position: 'absolute',
-    pointerEvents: 'none',
-    borderStyle: 'solid',
-    borderWidth: 4,
-    borderColor: theme.color.mint400,
-    borderRadius: 10,
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-    opacity: 0,
-    transition: `border-color ${speed} ease, opacity ${speed} ease`,
+}
+
+const textBase = {
+  fontWeight: theme.typography.semiBold,
+  outline: 'none',
+  cursor: 'pointer',
+  transition: 'box-shadow .25s, color .25s, background-color .25s',
+
+  ':focus': {
+    color: theme.color.dark400,
+    backgroundColor: theme.color.mint400,
+    boxShadow: `inset 0 -1px 0 0 ${theme.color.dark400}`,
   },
+  ':disabled': {
+    cursor: 'normal',
+  },
+  selectors: {
+    // text button uses span instead of button and data active is used to emulate button active, span is used to make text button inline, because button element will default to inline-block if you use display: inline
+    '&[data-active="true"]': {
+      boxShadow: `inset 0 -3px 0 0 ${theme.color.mint400}`,
+    },
+    '&[data-active="true"]:focus': {
+      backgroundColor: 'transparent',
+      boxShadow: `inset 0 -3px 0 0 ${theme.color.mint400}`,
+    },
+  },
+}
+
+export const variants = styleMap({
+  primary: buttonBase,
+  ghost: buttonBase,
+  text: textBase,
+  utility: buttonBase,
 })
 
-export const noWrap = style({
-  whiteSpace: 'nowrap',
-})
-
-const sizeMenuDesktop = {
-  height: 48,
-  padding: '0 12px',
-  fontSize: 14,
-  lineHeight: 1.142857,
-}
-
-const sizeMenuMobile = {
-  height: 40,
-  padding: '0 12px',
-  fontSize: 12,
-  lineHeight: 1.333333,
-}
-
-const sizeMediumDesktop = {
-  fontSize: 18,
-  lineHeight: 1.555555,
-  height: 64,
-  padding: '0 24px',
-}
-
-const sizeLargeDesktop = {
-  fontSize: 24,
-  lineHeight: 1.416666,
-  height: 80,
-  padding: '0 24px',
-}
-
-const sizeMediumMobile = {
-  fontSize: 15,
-  lineHeight: 2.75,
-  height: 64,
-  padding: '0 24px',
-}
-
-const sizeLargeMobile = {
-  fontSize: 20,
-  lineHeight: 1.4,
-  height: 72,
-  padding: '0 24px',
-}
-
-export const sizes = styleMap({
-  small: {
+export const size = styleMap({
+  default: {
+    fontSize: 16,
+    lineHeight: 1.25,
     ...themeUtils.responsiveStyle({
-      xs: sizeMediumMobile,
-      md: sizeMediumDesktop,
+      md: {
+        fontSize: 18,
+        lineHeight: 1.6,
+      },
     }),
   },
-  medium: {
+  small: {
+    fontSize: 16,
+    lineHeight: 1.25,
     ...themeUtils.responsiveStyle({
-      xs: sizeMediumMobile,
-      md: sizeMediumDesktop,
+      md: {
+        fontSize: 18,
+        lineHeight: 1.6,
+      },
     }),
   },
   large: {
+    fontSize: 20,
+    lineHeight: 1.4,
     ...themeUtils.responsiveStyle({
-      xs: sizeLargeMobile,
-      md: sizeLargeDesktop,
+      md: {
+        fontSize: 24,
+        lineHeight: 1.42,
+      },
     }),
   },
-})
-
-export const width = styleMap({
-  normal: {
-    width: 'auto',
-  },
-  fixed: {
-    maxWidth: 210,
-    width: '100%',
-  },
-  fluid: {
-    width: '100%',
-  },
-})
-
-export const variants = styleMap({
-  normal: {
-    backgroundColor: theme.color.blue400,
-    color: theme.color.white,
-    ':disabled': {
-      backgroundColor: theme.color.blue300,
-    },
-    ':hover': {
-      color: theme.color.white,
-      backgroundColor: theme.color.blueberry400,
-    },
-    ':active': {
-      backgroundColor: theme.color.blueberry400,
-    },
-    selectors: {
-      '&:focus:active': {
-        color: theme.color.white,
-      },
-      '&:hover:active:after': {
-        opacity: 1,
-      },
-    },
-  },
-  ghost: {
-    backgroundColor: 'transparent',
-    color: theme.color.blue400,
-    ':disabled': {
-      color: theme.color.blue300,
-    },
-    ':after': {
-      opacity: 1,
-      borderWidth: 1,
-      borderColor: theme.color.blue400,
-      borderRadius: 10,
-    },
-    ':hover': {
-      color: theme.color.blueberry400,
-    },
-    ':focus': {
-      color: theme.color.dark400,
-    },
-    ':active': {
-      backgroundColor: 'transparent',
-      color: theme.color.blue400,
-    },
-    selectors: {
-      '&:disabled:after': {
-        borderColor: theme.color.blue300,
-      },
-      '&:hover:after': {
-        borderColor: theme.color.blueberry400,
-      },
-      '&:focus:after': {
-        borderColor: theme.color.mint400,
-      },
-      '&:hover:active:after': {
-        borderWidth: 4,
-        opacity: 1,
-      },
-    },
-  },
-  redGhost: {
-    backgroundColor: 'transparent',
-    color: theme.color.red400,
-    ':disabled': {
-      color: theme.color.red300,
-    },
-    ':after': {
-      opacity: 1,
-      borderWidth: 1,
-      borderColor: theme.color.red400,
-      borderRadius: 10,
-    },
-    ':hover': {
-      color: theme.color.red600,
-    },
-    ':focus': {
-      color: theme.color.white,
-      backgroundColor: theme.color.red600,
-    },
-    ':active': {
-      backgroundColor: 'transparent',
-      color: theme.color.red600,
-    },
-    selectors: {
-      '&:disabled:after': {
-        borderColor: theme.color.red300,
-      },
-      '&:hover:after': {
-        borderColor: theme.color.red600,
-      },
-      '&:focus:after': {
-        borderColor: theme.color.red600,
-      },
-      '&:hover:active:after': {
-        borderWidth: 4,
-        opacity: 1,
-      },
-    },
-  },
-  text: {
-    backgroundColor: 'transparent',
-    color: theme.color.blue400,
-    borderRadius: 0,
-    fontStyle: 'normal',
-    padding: 0,
-    fontWeight: theme.typography.semiBold,
-    ':disabled': {
-      color: theme.color.blue300,
-    },
-    ':after': {
-      opacity: 1,
-      borderWidth: 1,
-      borderTop: 0,
-      borderLeft: 0,
-      borderRight: 0,
-      borderColor: theme.color.blue400,
-      borderRadius: 0,
-    },
-    ':hover': {
-      color: theme.color.blueberry400,
-    },
-    selectors: {
-      '&:disabled:after': {
-        borderColor: theme.color.blue300,
-      },
-      [`&${sizes.small}`]: {
-        height: 24,
+  utility: {
+    fontSize: 12,
+    lineHeight: 1.333333,
+    ...themeUtils.responsiveStyle({
+      md: {
         fontSize: 14,
         lineHeight: 1.142857,
-        padding: 0,
       },
-      [`&${sizes.medium}`]: {
-        height: 36,
-        fontSize: 18,
-        lineHeight: 1.555555,
-        padding: 0,
-      },
-      [`&${sizes.large}`]: {
-        height: 42,
-        fontSize: 24,
-        lineHeight: 1.416666,
-        padding: 0,
-      },
-      '&:focus:hover': {
-        color: theme.color.dark400,
-      },
-      '&:hover:after': {
-        borderColor: theme.color.blueberry400,
-      },
-      '&:focus:active, &:active': {
-        backgroundColor: theme.color.mint400,
-        color: theme.color.blue400,
-      },
-      '&:focus:after': {
-        borderColor: theme.color.dark400,
-      },
-      '&:focus:active:after, &:hover:active:after': {
-        borderWidth: 1,
-        borderColor: theme.color.blue400,
-        opacity: 1,
-      },
-    },
-  },
-  menu: {
-    backgroundColor: theme.color.transparent,
-    borderStyle: 'solid',
-    borderColor: theme.color.blue200,
-    borderWidth: 1,
-    borderRadius: 5,
-    transition: `border-color ${speed} ease`,
-    ...themeUtils.responsiveStyle({
-      xs: sizeMenuMobile,
-      md: sizeMenuDesktop,
     }),
-    ':after': {
-      borderColor: theme.color.mint400,
-      borderWidth: 3,
-      opacity: 0,
-      borderRadius: 5,
-      top: -3,
-      left: -3,
-      bottom: -3,
-      right: -3,
-    },
-    ':disabled': {
-      color: theme.color.dark300,
-      opacity: 0.5,
-    },
-    ':hover': {
-      borderColor: theme.color.blue400,
-      backgroundColor: theme.color.transparent,
-    },
-    ':focus': {
-      borderColor: theme.color.transparent,
-      backgroundColor: theme.color.transparent,
-    },
-    selectors: {
-      [`&:hover:focus`]: {
-        borderColor: theme.color.transparent,
-        backgroundColor: theme.color.transparent,
-      },
-      [`&:hover:after`]: {
-        borderColor: theme.color.blue400,
-      },
-      [`&:focus:after`]: {
-        borderColor: theme.color.mint400,
-        opacity: 1,
-      },
-    },
   },
 })
 
-export const rounded = style({
-  borderRadius: '50px',
-  ':after': {
-    borderRadius: '50px',
+export const padding = styleMap({
+  text: {
+    paddingTop: 4,
+    paddingBottom: 4,
+  },
+  default: {
+    padding: '14px 16px',
+    ...themeUtils.responsiveStyle({
+      md: {
+        padding: '18px 24px',
+      },
+    }),
+  },
+  small: {
+    padding: '10px 16px',
+  },
+  large: {
+    padding: '18px 24px',
+    ...themeUtils.responsiveStyle({
+      md: {
+        padding: '23px 32px',
+      },
+    }),
+  },
+  utility: {
+    padding: '12px 16px',
+    ...themeUtils.responsiveStyle({
+      md: {
+        padding: '16px',
+      },
+    }),
   },
 })
 
-export const white = style({
-  backgroundColor: theme.color.transparent,
-  borderColor: theme.color.white,
-  color: theme.color.white,
-  ':after': {
-    borderColor: theme.color.mint400,
+export const circleSizes = styleMap({
+  default: {
+    width: 32,
+    height: 32,
+    ...themeUtils.responsiveStyle({
+      md: {
+        width: 40,
+        height: 40,
+      },
+    }),
   },
+  small: {
+    width: 24,
+    height: 24,
+  },
+  large: {
+    width: 48,
+    height: 48,
+    ...themeUtils.responsiveStyle({
+      md: {
+        width: 64,
+        height: 64,
+      },
+    }),
+  },
+})
+
+type PrimaryColors = (
+  main: string,
+  text: string,
+  hover: string,
+  disabled: string,
+) => Style
+
+type BorderedColors = (main: string, hover: string, disabled: string) => Style
+type UtilityColors = (
+  text: string,
+  border: string,
+  textHover: string,
+  borderHover: string,
+  textDisabled: string,
+  borderDisabled: string,
+) => Style
+
+const primaryColors: PrimaryColors = (main, text, hover, disabled) => ({
+  backgroundColor: main,
+  color: text,
   ':disabled': {
-    color: theme.color.white,
+    backgroundColor: disabled,
   },
   ':hover': {
-    color: theme.color.white,
-    borderColor: theme.color.white,
-    backgroundColor: theme.color.transparent,
+    backgroundColor: hover,
+  },
+  ':active': {
+    backgroundColor: hover,
+  },
+  selectors: {
+    '&:focus:hover': {
+      color: text,
+    },
+    '&:focus:active': {
+      color: text,
+    },
+  },
+})
+const ghostColors: BorderedColors = (main, hover, disabled) => ({
+  backgroundColor: theme.color.transparent,
+  boxShadow: `inset 0 0 0 1px ${main}`,
+  color: main,
+  ':disabled': {
+    boxShadow: `inset 0 0 0 1px ${disabled}`,
+    color: disabled,
   },
   ':focus': {
-    color: theme.color.white,
-    borderColor: theme.color.transparent,
+    boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+  },
+  ':hover': {
     backgroundColor: theme.color.transparent,
+    boxShadow: `inset 0 0 0 2px ${hover}`,
+    color: hover,
   },
   selectors: {
-    [`&:hover:focus`]: {
-      borderColor: theme.color.transparent,
+    '&:focus:active': {
       backgroundColor: theme.color.transparent,
-    },
-    [`&:hover:after`]: {
-      borderColor: theme.color.white,
-    },
-    [`&:focus:after`]: {
-      borderColor: theme.color.mint400,
-      opacity: 1,
+      boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
     },
   },
 })
-
-globalStyle(`${button} path`, {
-  transition: `fill ${speed} ease`,
-})
-
-// Normal icon colors
-globalStyle(`${variants.normal} path`, {
-  fill: theme.color.white,
-})
-globalStyle(`${variants.normal}:focus path`, {
-  fill: theme.color.dark400,
-})
-globalStyle(`${variants.normal}:hover path`, {
-  fill: theme.color.white,
-})
-globalStyle(`${variants.normal}:active path`, {
-  fill: theme.color.white,
-})
-globalStyle(`${variants.normal}:active path`, {
-  fill: theme.color.white,
-})
-
-// Ghost icon colors
-globalStyle(`${variants.ghost} path`, {
-  fill: theme.color.blue400,
-})
-globalStyle(`${variants.ghost}:hover path`, {
-  fill: theme.color.blueberry400,
-})
-globalStyle(`${variants.ghost}:focus path`, {
-  fill: theme.color.dark400,
-})
-globalStyle(`${variants.ghost}:active path`, {
-  fill: theme.color.blue400,
-})
-
-// Text icon colors
-globalStyle(`${variants.text} path`, {
-  fill: theme.color.blue400,
-})
-globalStyle(`${variants.text}:hover path`, {
-  fill: theme.color.blueberry400,
-})
-globalStyle(`${variants.text}:focus path`, {
-  fill: theme.color.dark400,
-})
-globalStyle(`${variants.text}:active path`, {
-  fill: theme.color.blue400,
-})
-
-// Menu icon colors
-globalStyle(`${variants.menu} path`, {
-  fill: theme.color.blue400,
-})
-globalStyle(`${variants.menu}:hover path`, {
-  fill: theme.color.blue400,
-})
-globalStyle(`${variants.menu}:focus path`, {
-  fill: theme.color.blue400,
-})
-globalStyle(`${variants.menu}:active path`, {
-  fill: theme.color.blue400,
-})
-
-// White/transparent icon colors
-globalStyle(`${white} path`, {
-  fill: theme.color.white,
-})
-globalStyle(`${white}:hover path`, {
-  fill: theme.color.white,
-})
-globalStyle(`${white}:focus path`, {
-  fill: theme.color.white,
-})
-globalStyle(`${white}:active path`, {
-  fill: theme.color.white,
-})
-
-export const leftSpacer = style({
-  ...themeUtils.responsiveStyle({
-    xs: {
-      width: 24,
-    },
-    md: {
-      width: 32,
-    },
-  }),
-})
-
-export const leftContentContainer = style({
-  backgroundColor: theme.color.blue100,
-  borderTopLeftRadius: 5,
-  borderBottomLeftRadius: 5,
-  ...themeUtils.responsiveStyle({
-    xs: {
-      width: 40,
-    },
-    md: {
-      width: 48,
-    },
-  }),
+const textColors: BorderedColors = (main, hover, disabled) => ({
+  backgroundColor: theme.color.transparent,
+  boxShadow: `inset 0 -1px 0 0 ${main}`,
+  color: main,
+  ':disabled': {
+    boxShadow: `inset 0 -1px 0 0 ${disabled}`,
+    color: disabled,
+  },
+  ':focus': {
+    boxShadow: `inset 0 -1px 0 0 ${theme.color.dark400}`,
+  },
+  ':hover': {
+    backgroundColor: theme.color.transparent,
+    boxShadow: `inset 0 -2px 0 0 ${hover}`,
+    color: hover,
+  },
   selectors: {
-    [`${white} &`]: {
-      backgroundColor: `rgba(${hexToRgb(theme.color.dark400)}, 0.1)`,
+    '&:focus:active': {
+      backgroundColor: theme.color.transparent,
+      boxShadow: `inset 0 -3px 0 0 ${theme.color.mint400}`,
+    },
+  },
+})
+const utilityColors: UtilityColors = (
+  text,
+  border,
+  textHover,
+  borderHover,
+  textDisabled,
+  borderDisabled,
+) => ({
+  backgroundColor: theme.color.transparent,
+  boxShadow: `inset 0 0 0 1px ${border}`,
+  color: text,
+  ':disabled': {
+    boxShadow: `inset 0 0 0 1px ${borderDisabled}`,
+    color: textDisabled,
+  },
+  ':focus': {
+    boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
+  },
+  ':hover': {
+    backgroundColor: theme.color.transparent,
+    boxShadow: `inset 0 0 0 2px ${borderHover}`,
+    color: textHover,
+  },
+  selectors: {
+    '&:focus:active': {
+      backgroundColor: theme.color.transparent,
+      boxShadow: `inset 0 0 0 3px ${theme.color.mint400}`,
     },
   },
 })
 
-export const leftContent = style({
-  height: 32,
-  width: 32,
+export const colors = {
+  primary: styleMap({
+    default: primaryColors(
+      theme.color.blue400,
+      theme.color.white,
+      theme.color.blueberry400,
+      theme.color.blue300,
+    ),
+    destructive: primaryColors(
+      theme.color.red600,
+      theme.color.white,
+      theme.color.roseTinted400,
+      theme.color.red200,
+    ),
+    negative: primaryColors(
+      theme.color.white,
+      theme.color.blue400,
+      theme.color.blueberry100,
+      theme.color.blue300,
+    ),
+  }),
+  ghost: styleMap({
+    default: ghostColors(
+      theme.color.blue400,
+      theme.color.blueberry400,
+      theme.color.blue300,
+    ),
+    destructive: ghostColors(
+      theme.color.red600,
+      theme.color.roseTinted400,
+      theme.color.red200,
+    ),
+    negative: ghostColors(
+      theme.color.white,
+      theme.color.dark100,
+      theme.color.dark200,
+    ),
+  }),
+  text: styleMap({
+    default: textColors(
+      theme.color.blue400,
+      theme.color.blueberry400,
+      theme.color.blue300,
+    ),
+    destructive: textColors(
+      theme.color.red600,
+      theme.color.roseTinted400,
+      theme.color.red200,
+    ),
+    negative: textColors(
+      theme.color.white,
+      theme.color.dark100,
+      theme.color.dark200,
+    ),
+  }),
+  utility: styleMap({
+    default: utilityColors(
+      theme.color.dark400,
+      theme.color.blue200,
+      theme.color.dark400,
+      theme.color.blue400,
+      theme.color.dark200,
+      theme.color.blue100,
+    ),
+    destructive: utilityColors(
+      theme.color.dark400,
+      theme.color.red200,
+      theme.color.dark400,
+      theme.color.roseTinted400,
+      theme.color.dark200,
+      theme.color.red100,
+    ),
+    negative: utilityColors(
+      theme.color.white,
+      theme.color.white,
+      theme.color.white,
+      theme.color.white,
+      theme.color.dark200,
+      theme.color.blue100,
+    ),
+  }),
+}
+
+export const circle = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: '50%',
+  padding: 0,
 })
 
-export const image = style({
-  display: 'inline-block',
-  width: '100%',
-  height: '100%',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center center',
-  backgroundRepeat: 'no-repeat',
+const utilityIconColor = (
+  scheme: keyof typeof colors.utility,
+  color: string,
+  hovercolor: string,
+) => ({
+  [`${variants.utility}${colors.utility[scheme]}:not(:focus) &`]: {
+    color: color,
+  },
+  [`${variants.utility}${colors.utility[scheme]}:active &`]: {
+    color: color,
+  },
+  [`${variants.utility}${colors.utility[scheme]}:hover &`]: {
+    color: hovercolor,
+  },
+})
+
+export const icon = style({
+  width: 24,
+  height: 24,
+  marginLeft: 15,
+  selectors: {
+    [`${isEmpty} &`]: {
+      marginLeft: 0,
+    },
+    [`${circle} &`]: {
+      marginLeft: 0,
+      width: '50%',
+      height: '50%',
+    },
+    [`${size.small} &`]: {
+      width: 15,
+      height: 15,
+    },
+    [`${variants.text}:not(${isEmpty}) &`]: {
+      width: 15,
+      height: 15,
+      marginLeft: 8,
+    },
+    [`${variants.utility}:not(${isEmpty}) &`]: {
+      width: 16,
+      height: 16,
+      marginLeft: 8,
+    },
+    ...utilityIconColor(
+      'default',
+      theme.color.blue400,
+      theme.color.blueberry400,
+    ),
+    ...utilityIconColor(
+      'destructive',
+      theme.color.red600,
+      theme.color.roseTinted400,
+    ),
+  },
 })

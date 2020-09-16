@@ -1,22 +1,27 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
-import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
-import { Typography, Button, Box, Alert } from '@island.is/island-ui/core'
+import {
+  Text,
+  ButtonDeprecated as Button,
+  Box,
+  AlertMessage,
+} from '@island.is/island-ui/core'
 import { apiUrl } from '../../api'
 import * as styles from './Login.treat'
 
 export const Login = () => {
   const urlParams = new URLSearchParams(window.location.search)
 
+  useEffect(() => {
+    document.title = 'Réttarvörslugátt'
+  }, [])
+
   return (
     <div className={styles.loginContainer}>
-      <div className={styles.logoContainer}>
-        <Logo />
-      </div>
       {urlParams.has('error') && (
         <div className={styles.errorMessage}>
           <Box marginBottom={6}>
-            <Alert
+            <AlertMessage
               type="info"
               title="Innskráning ógild"
               message="Innskráning ekki lengur gild. Vinsamlegast reynið aftur."
@@ -26,16 +31,16 @@ export const Login = () => {
       )}
       <div className={styles.titleContainer}>
         <Box>
-          <Typography as="h1" variant="h1">
+          <Text as="h1" variant="h1">
             Skráðu þig inn í Réttarvörslugátt
-          </Typography>
+          </Text>
         </Box>
       </div>
       <div className={styles.subTitleContainer}>
-        <Typography>
+        <Text>
           Notaðu rafræn skilríki til þess að skrá þig inn. Passaðu upp á að það
           sé kveikt á símanum eða hann sé ólæstur.
-        </Typography>
+        </Text>
       </div>
       <div className={styles.buttonContainer}>
         <Button

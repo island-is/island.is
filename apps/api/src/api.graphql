@@ -2,11 +2,8 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type HelloWorld {
-  message: String!
-}
-
 type Image {
+  typename: String!
   id: ID!
   url: String!
   title: String!
@@ -15,10 +12,16 @@ type Image {
   height: Int!
 }
 
-type Link {
-  text: String!
-  url: String!
+type Html {
+  typename: String!
+  id: ID!
+  document: JSON!
 }
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
 
 type TimelineEvent {
   id: ID!
@@ -27,12 +30,13 @@ type TimelineEvent {
   numerator: Int
   denominator: Int
   label: String!
-  body: String
+  body: Html
   tags: [String!]
   link: String!
 }
 
 type TimelineSlice {
+  typename: String!
   id: ID!
   title: String!
   events: [TimelineEvent!]!
@@ -45,6 +49,8 @@ type Story {
   readMoreText: String!
   date: String!
   intro: String!
+  link: String!
+  linkedPage: String
   body: String
 }
 
@@ -55,15 +61,178 @@ type LinkCard {
   linkText: String!
 }
 
+type Author {
+  id: ID!
+  name: String!
+}
+
 type News {
-  id: String!
+  typename: String!
+  id: ID!
   slug: String!
   title: String!
   subtitle: String!
-  intro: String!
+  author: Author
+  intro: String
   image: Image
   date: String!
-  content: String
+  content: [Slice!]
+}
+
+union Slice = TimelineSlice | MailingListSignupSlice | HeadingSlice | LinkCardSlice | StorySlice | LogoListSlice | LatestNewsSlice | BulletListSlice | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage | TabSection | TeamList | ContactUs | Location | Html | Image | Asset
+
+type MailingListSignupSlice {
+  typename: String!
+  id: ID!
+  title: String!
+  description: String
+  inputLabel: String!
+  buttonText: String!
+}
+
+type HeadingSlice {
+  typename: String!
+  id: ID!
+  title: String!
+  body: String!
+}
+
+type LinkCardSlice {
+  typename: String!
+  id: ID!
+  title: String!
+  cards: [LinkCard!]!
+}
+
+type StorySlice {
+  typename: String!
+  id: ID!
+  readMoreText: String!
+  stories: [Story!]!
+}
+
+type LogoListSlice {
+  typename: String!
+  id: ID!
+  title: String!
+  body: String!
+  images: [Image!]!
+}
+
+type LatestNewsSlice {
+  typename: String!
+  id: ID!
+  title: String!
+  news: [News!]!
+}
+
+type BulletListSlice {
+  typename: String!
+  id: ID!
+  bullets: [BulletEntry!]!
+}
+
+union BulletEntry = IconBullet | NumberBulletGroup
+
+type IconBullet {
+  id: ID!
+  title: String!
+  body: String!
+  icon: Image!
+  url: String
+  linkText: String
+}
+
+type NumberBulletGroup {
+  id: ID!
+  defaultVisible: Int!
+  bullets: [NumberBullet!]!
+}
+
+type Statistics {
+  typename: String!
+  id: ID!
+  title: String!
+  statistics: [Statistic!]!
+}
+
+type ProcessEntry {
+  typename: String!
+  id: ID!
+  type: String!
+  processTitle: String!
+  processLink: String!
+  buttonText: String!
+}
+
+type FaqList {
+  typename: String!
+  id: ID!
+  title: String!
+  questions: [QuestionAndAnswer!]!
+}
+
+type EmbeddedVideo {
+  typename: String!
+  id: ID!
+  title: String!
+  url: String!
+}
+
+type SectionWithImage {
+  typename: String!
+  id: ID!
+  title: String!
+  image: Image
+  html: Html!
+}
+
+type TabSection {
+  typename: String!
+  id: ID!
+  title: String!
+  tabs: [TabContent!]!
+}
+
+type TeamList {
+  typename: String!
+  id: ID!
+  teamMembers: [TeamMember!]!
+}
+
+type ContactUs {
+  typename: String!
+  id: ID!
+  title: String!
+  required: String!
+  invalidPhone: String!
+  invalidEmail: String!
+  labelName: String!
+  labelPhone: String!
+  labelEmail: String!
+  labelSubject: String!
+  labelMessage: String!
+  submitButtonText: String!
+  successMessage: String!
+  errorMessage: String!
+}
+
+type Location {
+  typename: String!
+  id: ID!
+  title: String!
+  subTitle: String!
+  address: String!
+  link: Link
+  background: Image!
+}
+
+type Asset {
+  typename: String!
+  id: ID!
+  url: String!
+  title: String!
+  contentType: String!
 }
 
 type NumberBullet {
@@ -78,23 +247,32 @@ type Statistic {
   label: String!
 }
 
-type Html {
-  id: ID!
-  document: JSON!
-}
-
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf")
-
 type QuestionAndAnswer {
   id: ID!
   question: String!
   answer: Html
 }
 
+type TabContent {
+  tabTitle: String!
+  contentTitle: String
+  image: Image
+  body: Html
+}
+
+type TeamMember {
+  name: String!
+  title: String!
+  image: Image!
+}
+
+type Link {
+  text: String!
+  url: String!
+}
+
 type ArticleCategory {
+  id: ID!
   title: String!
   slug: String!
   description: String
@@ -104,10 +282,12 @@ type ArticleGroup {
   title: String!
   slug: String!
   description: String
+  importance: Float
 }
 
 type ArticleSubgroup {
   title: String!
+  importance: Float
   slug: String!
 }
 
@@ -131,130 +311,31 @@ type SubArticle {
   body: [Slice!]!
 }
 
-union Slice = PageHeaderSlice | TimelineSlice | HeadingSlice | StorySlice | LinkCardSlice | LatestNewsSlice | MailingListSignupSlice | LogoListSlice | BulletListSlice | Html | Image | Statistics | ProcessEntry | FaqList | EmbeddedVideo | SectionWithImage
-
-type PageHeaderSlice {
-  id: ID!
-  title: String!
-  introduction: String!
-  navigationText: String!
-  links: [Link!]!
-  slices: [TimelineSlice!]!
-}
-
-type HeadingSlice {
-  id: ID!
-  title: String!
-  body: String!
-}
-
-type StorySlice {
-  id: ID!
-  readMoreText: String!
-  stories: [Story!]!
-}
-
-type LinkCardSlice {
-  id: ID!
-  title: String!
-  cards: [LinkCard!]!
-}
-
-type LatestNewsSlice {
-  id: ID!
-  title: String!
-  news: [News!]!
-}
-
-type MailingListSignupSlice {
-  id: ID!
-  title: String!
-  description: String
-  inputLabel: String!
-  buttonText: String!
-}
-
-type LogoListSlice {
-  id: ID!
-  title: String!
-  body: String!
-  images: [Image!]!
-}
-
-type BulletListSlice {
-  id: ID!
-  bullets: [BulletEntry!]!
-}
-
-union BulletEntry = IconBullet | NumberBulletGroup
-
-type IconBullet {
-  id: ID!
-  title: String!
-  body: String!
-  icon: Image!
-  url: String
-  linkText: String
-}
-
-type NumberBulletGroup {
-  id: ID!
-  defaultVisible: Int!
-  bullets: [NumberBullet!]!
-}
-
-type Statistics {
-  id: ID!
-  title: String!
-  statistics: [Statistic!]!
-}
-
-type ProcessEntry {
-  id: ID!
-  title: String!
-  subtitle: String
-  details: Html
-  type: String!
-  processTitle: String!
-  processDescription: String
-  processInfo: Html
-  processLink: String!
-  buttonText: String!
-}
-
-type FaqList {
-  id: ID!
-  title: String!
-  questions: [QuestionAndAnswer!]!
-}
-
-type EmbeddedVideo {
-  id: ID!
-  title: String!
-  url: String!
-}
-
-type SectionWithImage {
-  id: ID!
-  title: String!
-  image: Image
-  html: Html!
-}
-
 type Article {
+  typename: String!
   id: ID!
-  contentStatus: String!
   title: String!
   slug: String!
-  shortTitle: String!
-  intro: String!
+  shortTitle: String
+  intro: String
+  containsApplicationForm: Boolean
+  importance: Float
   body: [Slice!]!
   category: ArticleCategory
+  otherCategories: [ArticleCategory!]
   group: ArticleGroup
+  otherGroups: [ArticleGroup!]
   subgroup: ArticleSubgroup
+  otherSubgroups: [ArticleSubgroup!]
   organization: [Organization!]
   subArticles: [SubArticle!]!
   relatedArticles: [Article!]
+}
+
+type ContentSlug {
+  id: ID!
+  slug: String!
+  type: String!
 }
 
 type AdgerdirTag {
@@ -328,7 +409,6 @@ type FrontpageSlider {
   title: String!
   subtitle: String!
   content: String!
-  image: Image
   link: String
   animationJson: String
 }
@@ -337,27 +417,29 @@ type FrontpageSliderList {
   items: [FrontpageSlider!]!
 }
 
-type Pagination {
-  page: Int!
-  perPage: Int!
-  totalResults: Int!
-  totalPages: Int!
-}
-
-type PaginatedNews {
-  page: Pagination!
-  news: [News!]!
-}
-
 type Namespace {
   namespace: String!
   fields: String!
 }
 
-type AboutPage {
+type PageHeader {
+  typename: String!
+  id: ID!
   title: String!
+  introduction: String!
+  navigationText: String!
+  links: [Link!]!
+  slices: [TimelineSlice!]!
+}
+
+type AboutPage {
+  typename: String!
+  id: ID!
+  title: String!
+  slug: String!
   seoDescription: String!
   theme: String!
+  pageHeader: PageHeader!
   slices: [Slice!]!
 }
 
@@ -401,18 +483,27 @@ type Menu {
   links: [Link!]!
 }
 
+type AdgerdirTags {
+  items: [AdgerdirTag!]!
+}
+
 type LifeEventPage {
+  typename: String!
   id: ID!
   title: String!
   slug: String!
-  intro: String!
-  image: Image!
+  intro: String
+  image: Image
   thumbnail: Image
   content: [Slice!]!
+  category: ArticleCategory
 }
 
-type AdgerdirTags {
-  items: [AdgerdirTag!]!
+type Pagination {
+  page: Int!
+  perPage: Int!
+  totalResults: Int!
+  totalPages: Int!
 }
 
 type PaginatedAdgerdirNews {
@@ -424,34 +515,58 @@ type OrganizationTags {
   items: [OrganizationTag!]!
 }
 
+type Url {
+  id: ID!
+  title: String
+  page: UrlPage!
+  urlsList: [String!]!
+}
+
+union UrlPage = Article | ArticleCategory | News | LifeEventPage
+
+type AboutSubPage {
+  id: ID!
+  title: String!
+  slug: String!
+  description: String!
+  subDescription: String!
+  slices: [Slice!]!
+  bottomSlices: [Slice!]!
+}
+
+type Featured {
+  title: String!
+  attention: Boolean!
+  thing: Article!
+}
+
+type Homepage {
+  id: ID!
+  featuredThings: [Featured!]!
+}
+
+type ContactUsPayload {
+  success: Boolean!
+}
+
+type NewsList {
+  total: Int!
+  items: [News!]!
+}
+
+type TagCount {
+  key: String!
+  value: String!
+  count: Int!
+}
+
 type SearchResult {
   total: Int!
   items: [Items!]!
+  tagCounts: [TagCount!]
 }
 
-union Items = Article | LifeEventPage
-
-type ContentItem {
-  id: ID!
-  title: String
-  content: String
-  tag: [String!]
-  category: String
-  categorySlug: String
-  categoryDescription: String
-  group: String
-  subgroup: String
-  groupSlug: String
-  groupDescription: String
-  contentBlob: String
-  contentId: String
-  contentType: String
-  date: String
-  image: String
-  imageText: String
-  lang: String
-  slug: String
-}
+union Items = Article | LifeEventPage | News | AboutPage
 
 type WebSearchAutocomplete {
   total: Int!
@@ -464,12 +579,13 @@ type Application {
   modified: DateTime!
   applicant: String!
   assignee: String!
-  externalId: String
   state: String!
   attachments: JSON
-  typeId: ApplicationTypeIdEnum!
+  typeId: ApplicationResponseDtoTypeIdEnum!
   answers: JSON!
   externalData: JSON!
+  name: String
+  progress: Float
 }
 
 """
@@ -477,7 +593,7 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
-enum ApplicationTypeIdEnum {
+enum ApplicationResponseDtoTypeIdEnum {
   ExampleForm
   DrivingLessons
   ParentalLeave
@@ -509,15 +625,20 @@ type DocumentCategory {
   name: String!
 }
 
+type UserProfile {
+  nationalId: ID!
+  mobilePhoneNumber: String!
+  locale: String!
+  email: String!
+}
+
 type Query {
-  helloWorld(input: HelloWorldInput!): HelloWorld!
-  getArticle(input: GetArticleInput!): Article
-  getNews(input: GetNewsInput!): News
-  getNewsList(input: GetNewsListInput!): PaginatedNews!
   getAdgerdirNewsList(input: GetAdgerdirNewsListInput!): PaginatedAdgerdirNews!
   getNamespace(input: GetNamespaceInput!): Namespace
   getAboutPage(input: GetAboutPageInput!): AboutPage!
+  getAboutSubPage(input: GetAboutSubPageInput!): AboutSubPage
   getLandingPage(input: GetLandingPageInput!): LandingPage
+  getContentSlug(input: GetContentSlugInput!): ContentSlug
   getAlertBanner(input: GetAlertBannerInput!): AlertBanner
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
@@ -532,39 +653,26 @@ type Query {
   getMenu(input: GetMenuInput!): Menu
   getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
   getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
+  getLifeEventsInCategory(input: GetLifeEventsInCategoryInput!): [LifeEventPage!]!
+  getUrl(input: GetUrlInput!): Url
   getArticleCategories(input: GetArticleCategoriesInput!): [ArticleCategory!]!
+  getSingleArticle(input: GetSingleArticleInput!): Article
   getArticles(input: GetArticlesInput!): [Article!]!
+  getSingleNews(input: GetSingleNewsInput!): News
+  getNewsDates(input: GetNewsDatesInput!): [String!]!
+  getNews(input: GetNewsInput!): NewsList!
+  getHomepage(input: GetHomepageInput!): Homepage!
   searchResults(query: SearcherInput!): SearchResult!
-  singleItem(input: ItemInput!): ContentItem
   webSearchAutocomplete(input: WebSearchAutocompleteInput!): WebSearchAutocomplete!
   getApplication(input: GetApplicationInput!): Application
   getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
+  getApplicationsByApplicant(input: GetApplicationsByUserInput!): [Application!]
+  getApplicationsByAssignee(input: GetApplicationsByUserInput!): [Application!]
   getDocument(input: GetDocumentInput!): DocumentDetails
   listDocuments(input: ListDocumentsInput!): [Document!]
   getDocumentCategories: [DocumentCategory!]
-}
-
-input HelloWorldInput {
-  name: String = "World"
-}
-
-input GetArticleInput {
-  slug: String
-  lang: String!
-}
-
-input GetNewsInput {
-  slug: String!
-  lang: String
-}
-
-input GetNewsListInput {
-  lang: String
-  year: Int
-  month: Int
-  ascending: Boolean
-  page: Int
-  perPage: Int
+  getTranslations(input: GetTranslationsInput!): JSON
+  getUserProfile(input: GetUserProfileInput!): UserProfile
 }
 
 input GetAdgerdirNewsListInput {
@@ -585,8 +693,18 @@ input GetAboutPageInput {
   lang: String!
 }
 
+input GetAboutSubPageInput {
+  slug: String!
+  lang: String!
+}
+
 input GetLandingPageInput {
   slug: String!
+  lang: String!
+}
+
+input GetContentSlugInput {
+  id: String!
   lang: String!
 }
 
@@ -655,23 +773,70 @@ input GetLifeEventsInput {
   lang: String!
 }
 
+input GetLifeEventsInCategoryInput {
+  slug: String!
+  lang: String!
+}
+
+input GetUrlInput {
+  slug: String!
+  lang: String!
+}
+
 input GetArticleCategoriesInput {
   lang: String!
-  size: Int
+  size: Int = 100
+}
+
+input GetSingleArticleInput {
+  slug: String!
+  lang: String!
 }
 
 input GetArticlesInput {
   lang: String!
   category: String!
-  size: Int
+  size: Int = 100
+}
+
+input GetSingleNewsInput {
+  slug: String!
+  lang: String
+}
+
+input GetNewsDatesInput {
+  lang: String = "is"
+  order: String = "desc"
+}
+
+input GetNewsInput {
+  lang: String = "is"
+  year: Int
+  month: Int
+  order: String = "desc"
+  page: Int = 1
+  size: Int = 10
+}
+
+input GetHomepageInput {
+  lang: String!
 }
 
 input SearcherInput {
   queryString: String!
-  types: [String!]
-  language: ContentLanguage
+  types: [SearchableContentTypes!] = [webAboutPage, webArticle, webLifeEventPage, webNews]
+  language: ContentLanguage = is
   size: Int
   page: Int
+  tags: [Tag!]
+  countTag: SearchableTags
+}
+
+enum SearchableContentTypes {
+  webAboutPage
+  webArticle
+  webLifeEventPage
+  webNews
 }
 
 enum ContentLanguage {
@@ -679,15 +844,12 @@ enum ContentLanguage {
   en
 }
 
-input ItemInput {
-  id: ID
-  slug: String
-  type: ItemType
-  language: ContentLanguage
+input Tag {
+  type: SearchableTags!
+  key: String!
 }
 
-enum ItemType {
-  article
+enum SearchableTags {
   category
 }
 
@@ -702,7 +864,12 @@ input GetApplicationInput {
 }
 
 input GetApplicationsByTypeInput {
-  typeId: ApplicationTypeIdEnum!
+  typeId: ApplicationResponseDtoTypeIdEnum!
+}
+
+input GetApplicationsByUserInput {
+  nationalRegistryId: String!
+  typeId: ApplicationResponseDtoTypeIdEnum
 }
 
 input GetDocumentInput {
@@ -718,7 +885,17 @@ input ListDocumentsInput {
   pageSize: Float!
 }
 
+input GetTranslationsInput {
+  namespaces: [String!]
+  lang: String!
+}
+
+input GetUserProfileInput {
+  nationalId: String!
+}
+
 type Mutation {
+  contactUs(input: ContactUsInput!): ContactUsPayload!
   createApplication(input: CreateApplicationInput!): Application
   updateApplication(input: UpdateApplicationInput!): Application
   updateApplicationExternalData(input: UpdateApplicationExternalDataInput!): Application
@@ -726,12 +903,21 @@ type Mutation {
   deleteAttachment(input: DeleteAttachmentInput!): Application
   submitApplication(input: SubmitApplicationInput!): Application
   createUploadUrl(filename: String!): PresignedPost!
+  createProfile(input: CreateUserProfileInput!): UserProfile
+  updateProfile(input: UpdateUserProfileInput!): UserProfile
+}
+
+input ContactUsInput {
+  name: String!
+  phone: String!
+  email: String!
+  subject: String!
+  message: String!
 }
 
 input CreateApplicationInput {
   applicant: String!
   assignee: String!
-  externalId: String
   state: String!
   attachments: JSON
   typeId: CreateApplicationDtoTypeIdEnum!
@@ -748,7 +934,6 @@ input UpdateApplicationInput {
   id: String!
   applicant: String
   assignee: String
-  externalId: String
   attachments: JSON
   answers: JSON
 }
@@ -784,4 +969,20 @@ input SubmitApplicationInput {
   id: String!
   event: String!
   answers: JSON
+}
+
+input CreateUserProfileInput {
+  nationalId: String!
+  mobilePhoneNumber: String!
+  locale: String!
+  email: String!
+  profileImageUrl: String!
+}
+
+input UpdateUserProfileInput {
+  nationalId: String!
+  mobilePhoneNumber: String!
+  locale: String!
+  email: String!
+  profileImageUrl: String!
 }

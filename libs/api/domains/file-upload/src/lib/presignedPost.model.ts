@@ -4,8 +4,8 @@ import graphqlTypeJson from 'graphql-type-json'
 @ObjectType()
 export class PresignedPost {
   @Field(() => String)
-  url: string
+  url!: string
 
   @Field(() => graphqlTypeJson)
-  fields: object
+  fields!: object
 }

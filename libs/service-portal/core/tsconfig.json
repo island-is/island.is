@@ -1,15 +1,21 @@
 {
-  "extends": "../../../tsconfig.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react",
     "allowJs": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    "strict": true
   },
-  "files": [
-    "../../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
-    "../../../node_modules/@nrwl/react/typings/image.d.ts"
-  ],
-  "include": ["**/*.ts", "**/*.tsx"]
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

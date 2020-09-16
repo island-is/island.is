@@ -11,19 +11,12 @@ export const slices = gql`
     height
   }
 
-  fragment PageHeaderFields on PageHeaderSlice {
+  fragment AssetFields on Asset {
     __typename
     id
     title
-    introduction
-    navigationText
-    links {
-      text
-      url
-    }
-    slices {
-      ...TimelineFields
-    }
+    url
+    contentType
   }
 
   fragment TimelineFields on TimelineSlice {
@@ -37,7 +30,9 @@ export const slices = gql`
       numerator
       denominator
       label
-      body
+      body {
+        ...HtmlFields
+      }
       tags
       link
     }
@@ -66,6 +61,8 @@ export const slices = gql`
         ...ImageFields
       }
       body
+      linkedPage
+      link
     }
   }
 
@@ -74,13 +71,13 @@ export const slices = gql`
     id
     title
     news {
+      typename
       id
       title
       subtitle
       slug
       date
       intro
-      content
       image {
         ...ImageFields
       }
@@ -171,17 +168,8 @@ export const slices = gql`
   fragment ProcessEntryFields on ProcessEntry {
     __typename
     id
-    title
-    subtitle
-    details {
-      ...HtmlFields
-    }
     type
     processTitle
-    processDescription
-    processInfo {
-      ...HtmlFields
-    }
     processLink
     buttonText
   }
@@ -211,8 +199,68 @@ export const slices = gql`
     }
   }
 
+  fragment TabSectionFields on TabSection {
+    __typename
+    id
+    title
+    tabs {
+      tabTitle
+      contentTitle
+      image {
+        ...ImageFields
+      }
+      body {
+        ...HtmlFields
+      }
+    }
+  }
+
+  fragment TeamListFields on TeamList {
+    __typename
+    id
+    teamMembers {
+      name
+      title
+      image {
+        ...ImageFields
+      }
+    }
+  }
+
+  fragment ContactUsFields on ContactUs {
+    __typename
+    id
+    title
+    required
+    invalidPhone
+    invalidEmail
+    labelName
+    labelPhone
+    labelEmail
+    labelSubject
+    labelMessage
+    submitButtonText
+    successMessage
+    errorMessage
+  }
+
+  fragment LocationFields on Location {
+    __typename
+    typename
+    id
+    title
+    subTitle
+    address
+    link {
+      text
+      url
+    }
+    background {
+      ...ImageFields
+    }
+  }
+
   fragment AllSlices on Slice {
-    ...PageHeaderFields
     ...TimelineFields
     ...MailingListSignupFields
     ...StoryFields
@@ -226,7 +274,12 @@ export const slices = gql`
     ...ProcessEntryFields
     ...HtmlFields
     ...ImageFields
+    ...AssetFields
     ...EmbeddedVideoFields
     ...SectionWithImageFields
+    ...TabSectionFields
+    ...TeamListFields
+    ...ContactUsFields
+    ...LocationFields
   }
 `

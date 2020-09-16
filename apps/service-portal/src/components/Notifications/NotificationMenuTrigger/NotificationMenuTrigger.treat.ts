@@ -4,7 +4,7 @@ import { theme } from '@island.is/island-ui/theme'
 export const notificationCount = style({
   position: 'absolute',
   top: theme.spacing['2'],
-  left: theme.spacing['1'],
+  left: 4,
   zIndex: 2,
   display: 'flex',
   justifyContent: 'center',

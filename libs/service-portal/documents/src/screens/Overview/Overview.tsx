@@ -1,13 +1,12 @@
-import React, { useState, ChangeEvent } from 'react'
+import React, { useState } from 'react'
 import {
   Typography,
   Box,
   Stack,
   Columns,
   Column,
-  Button,
+  ButtonDeprecated as Button,
   Select,
-  Input,
   Pagination,
   Option,
   DatePicker,
@@ -25,13 +24,13 @@ import AnimateHeight from 'react-animate-height'
 import * as styles from './Overview.treat'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { ValueType } from 'react-select'
+import { useLocale, useNamespaces } from '@island.is/localization'
 
 const defaultCategory = { label: 'Allir flokkar', value: '' }
 const pageSize = 4
 const defaultStartDate = '2000-01-01T00:00:00.000'
 
 type FilterValues = {
-  search: string
   dateFrom: Date
   dateTo: Date
 }
@@ -39,16 +38,17 @@ type FilterValues = {
 export const ServicePortalDocuments: ServicePortalModuleComponent = ({
   userInfo,
 }) => {
+  useNamespaces('sp.documents')
+  const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const [searchOpen, setSearchOpen] = useState(false)
   const [filterValue, setFilterValue] = useState<FilterValues>({
-    search: '',
     dateFrom: new Date(defaultStartDate),
     dateTo: new Date(),
   })
   const [activeCategory, setActiveCategory] = useState<Option>(defaultCategory)
   const { data, loading, error } = useListDocuments(
-    userInfo.user.profile.natreg,
+    userInfo.profile.natreg,
     filterValue.dateFrom,
     filterValue.dateTo,
     page,
@@ -69,20 +69,12 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     if (searchOpen) {
       setSearchOpen(false)
       setFilterValue({
-        search: '',
         dateFrom: new Date(defaultStartDate),
         dateTo: new Date(),
       })
     } else {
       setSearchOpen(true)
     }
-  }
-
-  const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
-    setFilterValue({
-      ...filterValue,
-      [e.target.name]: e.target.value,
-    })
   }
 
   const handleDateFromInput = (value: Date) =>
@@ -102,16 +94,22 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
     setActiveCategory(cat as Option)
 
   return (
-    <>
+    <Box marginBottom={[4, 4, 6, 10]}>
       <Stack space={3}>
         <Typography variant="h1" as="h1">
-          Rafræn skjöl
+          {formatMessage({
+            id: 'sp.documents:title',
+            defaultMessage: 'Rafræn skjöl',
+          })}
         </Typography>
         <Columns collapseBelow="sm">
           <Column width="7/12">
             <Typography variant="intro">
-              Hér getur þú fundið öll þau skjöl sem eru send til þín frá
-              stofnunum ríkisins.
+              {formatMessage({
+                id: 'sp.documents:intro',
+                defaultMessage:
+                  'Hér munt þú geta fundið öll þau skjöl sem eru send til þín frá stofnunum ríkisins',
+              })}
             </Typography>
           </Column>
         </Columns>
@@ -130,10 +128,19 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                 </div>
                 <Column width="content">
                   <Button
-                    icon={searchOpen ? 'close' : 'search'}
+                    variant="ghost"
+                    icon={searchOpen ? 'close' : 'plus'}
                     onClick={handleExtendSearchClick}
                   >
-                    {searchOpen ? 'Loka ítarleit' : 'Ítarleit'}
+                    {searchOpen
+                      ? formatMessage({
+                          id: 'sp.documents:close-filters',
+                          defaultMessage: 'Loka ítarleit',
+                        })
+                      : formatMessage({
+                          id: 'sp.documents:filters',
+                          defaultMessage: 'Ítarleit',
+                        })}
                   </Button>
                 </Column>
               </Columns>
@@ -146,12 +153,6 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
                   marginTop={2}
                 >
                   <Stack space={2}>
-                    <Input
-                      name="search"
-                      value={filterValue.search}
-                      onChange={handleInput}
-                      placeholder="Leita í skjölum... (Óvirkt)"
-                    />
                     <Columns space={2} collapseBelow="sm">
                       <Column width="1/2">
                         <DatePicker
@@ -180,36 +181,46 @@ export const ServicePortalDocuments: ServicePortalModuleComponent = ({
             {error && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
                 <Typography variant="h3">
-                  Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis
+                  {formatMessage({
+                    id: 'sp.documents:error',
+                    defaultMessage:
+                      'Tókst ekki að sækja rafræn skjöl, eitthvað fór úrskeiðis',
+                  })}
                 </Typography>
               </Box>
             )}
             {!loading && !error && data?.length === 0 && (
               <Box display="flex" justifyContent="center" margin={[3, 3, 3, 6]}>
                 <Typography variant="h3">
-                  Engin skjöl fundust fyrir gefin leitarskilyrði
+                  {formatMessage({
+                    id: 'sp.documents:not-found',
+                    defaultMessage:
+                      'Engin skjöl fundust fyrir gefin leitarskilyrði',
+                  })}
                 </Typography>
               </Box>
             )}
             {data?.map((document) => (
               <DocumentCard key={document.id} document={document} />
             ))}
-            <Pagination
-              page={page}
-              totalPages={data?.length === pageSize ? page + 1 : page}
-              renderLink={(page, className, children) => (
-                <button
-                  className={className}
-                  onClick={handlePageChange.bind(null, page)}
-                >
-                  {children}
-                </button>
-              )}
-            />
+            {data && data.length > pageSize && (
+              <Pagination
+                page={page}
+                totalPages={data?.length === pageSize ? page + 1 : page}
+                renderLink={(page, className, children) => (
+                  <button
+                    className={className}
+                    onClick={handlePageChange.bind(null, page)}
+                  >
+                    {children}
+                  </button>
+                )}
+              />
+            )}
           </Stack>
         </Box>
       </Stack>
-    </>
+    </Box>
   )
 }
 

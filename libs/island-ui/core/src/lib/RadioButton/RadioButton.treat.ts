@@ -5,48 +5,58 @@ import {
   errorMessage as inputErrorMessage,
 } from '../Input/Input.mixins'
 
-const radioButtonSize = 24
+const radioButtonSize = theme.spacing[3]
 const radioButtonCheckSize = 12
-const radioButtonMargin = 16
+export const checkMarkWidth = theme.spacing[2]
 
 export const container = style({
   position: 'relative',
-  paddingLeft: radioButtonSize + radioButtonMargin,
 })
 
-export const checkMarkWidth = 17
+export const filled = style({
+  background: theme.color.white,
+})
+
+export const large = style({
+  borderRadius: theme.border.radius.large,
+  border: `1px solid ${theme.color.blue200}`,
+})
+
 export const input = style({
-  position: 'absolute',
-  opacity: 0,
-  left: 0,
-  top: 0,
   height: radioButtonSize,
+  left: 0,
+  opacity: 0,
+  position: 'absolute',
+  top: 0,
   width: radioButtonSize,
 })
 export const label = style({
+  display: 'flex',
   fontSize: theme.typography.baseFontSize,
   fontWeight: theme.typography.light,
+})
+export const largeLabel = style({
+  padding: `${theme.spacing[4]}px ${theme.spacing[3]}px`,
 })
 export const labelChecked = style({
   fontWeight: theme.typography.medium,
 })
 export const radioButtonDisabled = style({
-  borderColor: theme.color.blue200,
   background: 'transparent',
+  borderColor: theme.color.blue200,
 })
 export const radioButton = style({
-  height: radioButtonSize,
-  width: radioButtonSize,
+  alignItems: 'center',
+  backgroundColor: theme.color.white,
   border: `1px solid ${theme.color.blue200}`,
   borderRadius: '50%',
-  position: 'absolute',
-  left: 0,
-  top: 0,
   display: 'flex',
-  alignItems: 'center',
+  flexShrink: 0,
+  height: radioButtonSize,
   justifyContent: 'center',
-  backgroundColor: theme.color.white,
+  marginRight: theme.spacing[2],
   transition: 'border-color .1s, shadow .1s, background-color .1s',
+  width: radioButtonSize,
   selectors: {
     [`${container}:hover &:not(${radioButtonDisabled})`]: {
       borderColor: theme.color.blue400,
@@ -60,12 +70,12 @@ export const radioButton = style({
 export const radioButtonChecked = style({})
 
 export const checkMark = style({
-  width: radioButtonCheckSize,
-  height: radioButtonCheckSize,
-  borderRadius: '50%',
   backgroundColor: theme.color.transparent,
+  borderRadius: '50%',
+  height: radioButtonCheckSize,
   transform: 'scale(1.4)',
   transition: 'transform .2s ease-out, background-color .2s',
+  width: radioButtonCheckSize,
   selectors: {
     [`${radioButtonChecked} &`]: {
       backgroundColor: theme.color.blue400,
@@ -80,3 +90,13 @@ export const radioButtonLabelDisabled = style({
 
 export const radioButtonError = style(inputErrorState)
 export const errorMessage = style(inputErrorMessage)
+
+export const tooltipContainer = style({
+  display: 'inline-block',
+  marginLeft: theme.spacing[2],
+})
+
+export const tooltipLargeContainer = style({
+  marginLeft: 'auto',
+  paddingLeft: theme.spacing[2],
+})

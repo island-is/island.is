@@ -12,5 +12,3 @@ export const InputError = ({ id, errorMessage }: InputErrorProps) => (
     {errorMessage}
   </div>
 )
-
-export default InputError

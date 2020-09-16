@@ -2,17 +2,17 @@ import React from 'react'
 import { Formik, Form, Field } from 'formik'
 
 import {
-  FieldSelect,
   Box,
   Column,
   Columns,
-  Button,
+  ButtonDeprecated as Button,
   Typography,
   Option,
 } from '@island.is/island-ui/core'
 
 import { useI18n } from '@island.is/gjafakort-web/i18n'
 import { Company } from '@island.is/gjafakort-web/graphql/schema'
+import { FieldSelect } from '@island.is/gjafakort-web/components'
 
 interface PropTypes {
   onSubmit: (values: Company) => void

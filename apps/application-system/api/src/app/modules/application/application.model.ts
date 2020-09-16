@@ -7,7 +7,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { ApplicationTypes } from '@island.is/application/template'
+import { ApplicationTypes } from '@island.is/application/core'
 
 @Table({
   tableName: 'application',
@@ -26,47 +26,41 @@ export class Application extends Model<Application> {
     defaultValue: DataType.UUIDV4,
   })
   @ApiProperty()
-  id: string
+  id!: string
 
   @CreatedAt
   @ApiProperty()
-  created: Date
+  created!: Date
 
   @UpdatedAt
   @ApiProperty()
-  modified: Date
+  modified!: Date
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty()
-  applicant: string
+  applicant!: string
 
   @Column({
     type: DataType.STRING,
   })
   @ApiProperty()
-  assignee: string
-
-  @Column({
-    type: DataType.STRING,
-  })
-  @ApiPropertyOptional()
-  externalId: string
+  assignee!: string
 
   @Column({
     type: DataType.STRING,
   })
   @ApiProperty()
-  state: string
+  state!: string
 
   @Column({
     type: DataType.JSONB,
     defaultValue: {},
   })
   @ApiPropertyOptional()
-  attachments: object
+  attachments?: object
 
   @Column({
     type: DataType.ENUM,
@@ -74,7 +68,7 @@ export class Application extends Model<Application> {
     values: Object.values(ApplicationTypes),
   })
   @ApiProperty({ enum: ApplicationTypes })
-  typeId: string
+  typeId!: string
 
   @Column({
     type: DataType.JSONB,
@@ -82,7 +76,7 @@ export class Application extends Model<Application> {
     allowNull: false,
   })
   @ApiProperty()
-  answers: object
+  answers!: object
 
   @Column({
     type: DataType.JSONB,
@@ -90,5 +84,5 @@ export class Application extends Model<Application> {
     allowNull: false,
   })
   @ApiProperty()
-  externalData: object
+  externalData!: object
 }

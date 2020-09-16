@@ -8,6 +8,14 @@ export class DocumentOauthConnection {
     const client_id = process.env.POSTHOLF_CLIENTID
     const client_secret = process.env.POSTHOLF_CLIENT_SECRET
     const token_url = process.env.POSTHOLF_TOKEN_URL
+
+    if (!client_id || !client_secret || !token_url) {
+      logger.info(
+        'No credentials provided to fetchToken for DocumentOauthConnection',
+      )
+      return ''
+    }
+
     logger.debug('Fetching token for Document Service')
 
     try {

@@ -1,0 +1,159 @@
+{
+  "home": {
+    "title": "Skilavottord"
+  },
+  "myCars": {
+    "title": "Recycle your car",
+    "subTitles": {
+      "pending": "Pending recycle",
+      "active": "Your cars",
+      "done": "Recycled cars"
+    },
+    "info": {
+      "noCarsAvailable": "We cannot find any cars registered to you."
+    },
+    "actions": {
+      "valid": "Recycle car",
+      "invalid": "Cannot be recycled"
+    },
+    "status": {
+      "coOwned": "Co-owned",
+      "recycle": "Take to recycling company",
+      "done": "Recycled"
+    },
+    "buttons": {
+      "openProcess": "Open process",
+      "seeDetails": "See details"
+    },
+    "tooltip": {
+      "text": "A car cannot be recycled if it still has loans, if the car has been reported as stolen or if it has been seized by the police. Login to see more information at",
+      "link": "https://innskranning.island.is/?id=mitt.samgongustofa.is"
+    },
+    "error": {
+      "message": "We have problem with the connection to the database and cannot show your cars, please try to re-load the page.",
+      "primaryButton": "Re-load page"
+    }
+  },
+  "confirm": {
+    "title": "Confirm car",
+    "subTitles": {
+      "confirm": "Do you want select this car for recycling?"
+    },
+    "info": "Adding your car for recycling which will allow you to recycle it at any of our connected recycling companies. This is not binding and the car will only be recycled if you hand over the car to a recycling company.",
+    "buttons": {
+      "cancel": "Cancel",
+      "continue": "Confirm with icekey"
+    },
+    "checkbox": {
+      "label": "I agree to the",
+      "linkLabel": " Terms and conditions"
+    }
+  },
+  "handover": {
+    "title": "Successfully confirmed for recycling",
+    "info": "The car has been successfully confirmed for recycling and is now ready to be handed over to a recycling company.",
+    "subTitles": {
+      "nextStep": "Next step: Handover the car to recycling company",
+      "companies": "Available recycling companies"
+    },
+    "subInfo": "Handover the car to any of the recycling companies below. Some recycling companies offers pick up, see their website or contact them directly for opening hours and details. Once the car has been handed over for recycling you will receive your payment within 2 business days.",
+    "buttons": {
+      "cancel": "Cancel recycling",
+      "close": "Close"
+    },
+    "cancelModal": {
+      "title": "Cancel the recycling process for this car",
+      "info": "When you cancel the recycling the car cannot be recycled at the recycling companies until you mark it for recycling again. You can simply redo the process if change your mind.",
+      "buttons": {
+        "cancel": "No",
+        "continue": "Yes"
+      }
+    }
+  },
+  "completed": {
+    "title": "Car has been recycled!",
+    "subTitles": {
+      "summary": "Summary",
+      "payment": "Payment"
+    },
+    "info": {
+      "payment": "Money will be payed by Fjársýsla ríkisins to your state collector within 2 days of the payment has been initiated. You will find your payment",
+      "paymentLinkText": "your financial pages"
+    },
+    "confirmedBy": {
+      "user": "Confirmed for recycling by",
+      "company": "Handed over to",
+      "authority": "Car deregistered with Samgöngustofa",
+      "fund": "Car payment inititated by Fjársýsla ríkisins"
+    },
+    "buttons": {
+      "close": "Close"
+    }
+  },
+  "processes": {
+    "citizen": {
+      "title": "Recycle car",
+      "sections": ["Confirm car for recycling", "Handover car to recycle"]
+    },
+    "company": {
+      "title": "Deregister car",
+      "sections": ["Select car", "Deregister car"]
+    }
+  },
+  "companyOverview": {
+    "title": "Deregister car",
+    "info": "This process will deregister the car and initiate the payment to car owner and  allow for your company to start the recycling process of the car.",
+    "subtitles": {
+      "history": "History"
+    },
+    "buttons": {
+      "deregister": "Deregister car"
+    },
+    "search": {
+      "label": "Search for reg nr",
+      "placeholder": "Search for reg nr"
+    },
+    "table": ["Reg nr", "Brand", "Model", "Year", "User", "Deregistered"]
+  },
+  "companySidenav": {
+    "deregister": "Deregister car",
+    "companyInfo": "Company information"
+  },
+  "deregisterVehicle": {
+    "select": {
+      "title": "Select car",
+      "info": "Enter the registration number to the car that you want to deregister. Only cars confirmed by the owner/owners on island.is can be deregistered.",
+      "input": {
+        "label": "Car registration number",
+        "placeholder": "ex MD2341"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "continue": "Continue"
+      }
+    },
+    "deregister": {
+      "title": "Deregister car",
+      "info": "Confirm car for deregistration. This process cannot be undone.",
+      "buttons": {
+        "back": "Back",
+        "confirm": "Confirm"
+      }
+    }
+  },
+  "routes": {
+    "home": "/",
+    "myCars": "/my-cars",
+    "recycleVehicle": {
+      "baseRoute": "/recycle-vehicle",
+      "confirm": "/recycle-vehicle/[id]/confirm",
+      "handover": "/recycle-vehicle/[id]/handover",
+      "completed": "/recycle-vehicle/[id]/completed"
+    },
+    "deregisterVehicle": {
+      "baseRoute": "/deregister-vehicle",
+      "select": "/deregister-vehicle/select",
+      "deregister": "/deregister-vehicle/[id]"
+    }
+  }
+}

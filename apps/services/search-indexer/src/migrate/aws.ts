@@ -25,7 +25,7 @@ const createPackageName = (
 }
 
 // break down the name used for packages in AWS ES
-const parsePackageName = (packageName: string) => {
+export const parsePackageName = (packageName: string) => {
   const [locale, analyzerType, version] = packageName.split('-')
   return {
     locale,
@@ -77,6 +77,7 @@ export const getAllDomainEsPackages = async (): Promise<AwsEsPackage[]> => {
   return domainPackageList.DomainPackageDetailsList.map((esPackage) => {
     const { locale, analyzerType } = parsePackageName(esPackage.PackageName)
     return {
+      packageName: esPackage.PackageName,
       packageId: esPackage.PackageID,
       locale,
       analyzerType,
@@ -236,7 +237,16 @@ const removePackagesIfExist = async (
       }
 
       // this package should never be in use so we can delete it
-      return awsEs.deletePackage(params).promise()
+      return awsEs
+        .deletePackage(params)
+        .promise()
+        .catch((error) => {
+          logger.info('Unable to remove conflicting package', {
+            error: error,
+            existingPackage: existingPackage,
+          })
+          return false
+        })
     } else {
       // no file found, return promise
       return false
@@ -249,10 +259,11 @@ const removePackagesIfExist = async (
 }
 
 /*
-createAwsEsPackagesshould only run when we are updating, we can therefore assume no assigned packages exist in AWS ES for this version
+createAwsEsPackages should only run when we are updating, we can therefore assume no assigned packages exist in AWS ES for this version
 We run a remove packages for this version function to handle failed partial updates
 */
 export interface AwsEsPackage {
+  packageName?: string
   packageId: string
   locale: string
   analyzerType: string
@@ -319,42 +330,44 @@ export const associatePackagesWithAwsEs = async (packages: AwsEsPackage[]) => {
 }
 
 export const getUnusedEsPackages = async (
-  inUseEsPackages: AwsEsPackage[],
+  dictionaryVersion: number,
 ): Promise<string[]> => {
   const allAwsEsPackages = await getAwsEsPackagesDetails()
-  const allAwsEsPackageIds = allAwsEsPackages.map(
-    (awsEsPackage) => awsEsPackage.PackageID,
-  )
-  const inUseEsPackageIds = inUseEsPackages.map(
-    (inUseEsPackage) => inUseEsPackage.packageId,
-  )
 
-  // we remove packages that are in use from allAwsEsPackageIds and return
-  return allAwsEsPackageIds.filter(
-    (awsEsPackageId) => !inUseEsPackageIds.includes(awsEsPackageId),
-  )
+  // remove all packages we assume are in use
+  return allAwsEsPackages.reduce((packageIds, esPackage) => {
+    const { version } = parsePackageName(esPackage.PackageName)
+
+    // we remove packages if it is below dictionary version
+    if (parseInt(version) < dictionaryVersion) {
+      packageIds.push(esPackage.PackageID)
+    }
+    return packageIds
+  }, [])
 }
 
 export const getUnusedAwsEsPackages = async (
-  inUseEsPackages: AwsEsPackage[],
+  dictionaryVersion: number,
 ): Promise<string[]> => {
   const allAwsEsDomainPackages = await getAllDomainEsPackages()
-  const inuseEsPackageIds = inUseEsPackages.map(
-    (esPackage) => esPackage.packageId,
-  )
-  const inuseAwsEsPackageIds = allAwsEsDomainPackages.map(
-    (awsEsPackage) => awsEsPackage.packageId,
-  )
-  return inuseAwsEsPackageIds.filter(
-    (awsEsDomainPackageId) => !inuseEsPackageIds.includes(awsEsDomainPackageId),
-  )
+
+  // remove all packages we assume are in use
+  return allAwsEsDomainPackages.reduce((packageIds, esPackage) => {
+    const { version } = parsePackageName(esPackage.packageName)
+
+    // we remove packages if it is below dictionary version
+    if (parseInt(version) < dictionaryVersion) {
+      packageIds.push(esPackage.packageId)
+    }
+    return packageIds
+  }, [])
 }
 
 export const disassociateUnusedPackagesFromAwsEs = async (
-  inUseEsPackages: AwsEsPackage[],
+  dictionaryVersion: number,
 ) => {
   logger.info('Disassociating old packages from AWS ES')
-  const packagesToRemove = await getUnusedAwsEsPackages(inUseEsPackages)
+  const packagesToRemove = await getUnusedAwsEsPackages(dictionaryVersion)
   for (const esAwsPackageId of packagesToRemove) {
     logger.info('Disassociating package', { packageId: esAwsPackageId })
     const params = {
@@ -371,10 +384,10 @@ export const disassociateUnusedPackagesFromAwsEs = async (
 }
 
 export const deleteUnusedPackagesFromAwsEs = async (
-  inUseEsPackages: AwsEsPackage[],
+  dictionaryVersion: number,
 ) => {
   logger.info('Deleting old packages from AWS ES')
-  const unusedEsPackageIds = await getUnusedEsPackages(inUseEsPackages)
+  const unusedEsPackageIds = await getUnusedEsPackages(dictionaryVersion)
   unusedEsPackageIds.map((esPackageId) => {
     logger.info('Deleting package', { packageId: esPackageId })
     const params = {

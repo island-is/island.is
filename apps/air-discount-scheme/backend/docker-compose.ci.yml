@@ -2,7 +2,12 @@ version: '3.3'
 
 services:
   sut:
-    image: ${SUT}
+    build:
+      context: .
+      dockerfile: ../../../scripts/ci/Dockerfile.test
+      args:
+        DB_NAME: db_ads_backend
+        APP: air-discount-scheme-backend
     networks:
       - local
     depends_on:
@@ -12,17 +17,8 @@ services:
       - TEST_DB_PASS=test_db
       - TEST_DB_NAME=test_db
       - DB_HOST=db_ads_backend
-    entrypoint:
-      [
-        'scripts/_wait-for.sh',
-        'db_ads_backend:5432',
-        '-t',
-        '5',
-        '--',
-        'yarn',
-        'test',
-        'air-discount-scheme-backend',
-      ]
+    volumes:
+      - ../../..:/code
 
   db_ads_backend:
     ports: []

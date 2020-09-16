@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { Box, Typography, Stack, Divider } from '@island.is/island-ui/core'
+import { Box, Divider, Stack } from '@island.is/island-ui/core'
 import * as styles from './Sidebar.treat'
 import ModuleNavigation from './ModuleNavigation'
 import useNavigation from '../../hooks/useNavigation/useNavigation'
@@ -9,29 +9,24 @@ export const Sidebar: FC<{}> = () => {
 
   return (
     <aside className={styles.sidebar}>
-      <Stack space={3}>
-        {navigation.map((rootItem, index) => (
+      {navigation.map((rootItem, rootIndex) => (
+        <div key={rootIndex}>
           <Box
-            background={index === 0 ? 'purple100' : 'blueberry100'}
+            background="blue100"
             paddingY={3}
             paddingX={4}
             borderRadius="large"
-            key={index}
+            key={rootIndex}
           >
-            <Stack space={2}>
-              <Typography variant="h3" as="h3">
-                {rootItem.name}
-              </Typography>
-              <Divider weight="alternate" />
-              <Stack space={3}>
-                {rootItem.children?.map((navRoot, index) => (
-                  <ModuleNavigation key={index} nav={navRoot} />
-                ))}
-              </Stack>
+            <Stack space={3}>
+              {rootItem.children?.map((navRoot, index) => (
+                <ModuleNavigation key={index} nav={navRoot} />
+              ))}
             </Stack>
           </Box>
-        ))}
-      </Stack>
+          {rootIndex < navigation.length - 1 && <Divider />}
+        </div>
+      ))}
     </aside>
   )
 }

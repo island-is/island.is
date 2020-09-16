@@ -1,30 +1,30 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
+
 import { Box } from '../../Box/Box'
+import { ResponsiveSpace } from '../../Box/useBoxStyles'
 import {
   resolveResponsiveProp,
   ResponsiveProp,
 } from '../../../utils/responsiveProp'
-import {
-  resolveResponsiveRangeProps,
-  ResponsiveRangeProps,
-} from '../../../utils/responsiveRangeProps'
-
 import * as styles from './GridColumn.treat'
-import { ResponsiveSpace } from '../../Box/useBoxStyles'
+import { resolveResponsiveRangeProps } from '../../../utils/responsiveRangeProps'
 
 type Breakpoint = keyof typeof theme['breakpoints']
+type position = 'relative' | 'fixed' | 'absolute' | 'static'
 
-export interface GridColumnProps extends ResponsiveRangeProps {
+export type SpanType = ResponsiveProp<styles.GridColumns>
+export interface GridColumnProps {
   span?: ResponsiveProp<styles.GridColumns>
   offset?: ResponsiveProp<styles.GridColumns>
   order?: ResponsiveProp<styles.Order>
   paddingBottom?: ResponsiveSpace
   paddingTop?: ResponsiveSpace
   className?: string
-  hideAbove?: Exclude<Breakpoint, 'xl'>
-  hideBelow?: Exclude<Breakpoint, 'xs'>
+  hiddenAbove?: Exclude<Breakpoint, 'xl'>
+  hiddenBelow?: Exclude<Breakpoint, 'xs'>
+  position?: position | 'none'
 }
 
 export const GridColumn: FC<GridColumnProps> = ({
@@ -35,9 +35,16 @@ export const GridColumn: FC<GridColumnProps> = ({
   paddingBottom,
   paddingTop,
   className,
-  hideAbove: above,
-  hideBelow: below,
+  hiddenAbove: above,
+  hiddenBelow: below,
+  position = 'relative',
 }) => {
+  const pos: { position?: position } = {}
+
+  if (position !== 'none') {
+    pos.position = position
+  }
+
   const [
     hiddenOnXs,
     hiddenOnSm,
@@ -45,8 +52,10 @@ export const GridColumn: FC<GridColumnProps> = ({
     hiddenOnLg,
     hiddenOnXl,
   ] = resolveResponsiveRangeProps({ above, below })
+
   return (
     <Box
+      {...pos}
       paddingTop={paddingTop}
       paddingBottom={paddingBottom}
       display={[

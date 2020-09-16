@@ -1,18 +1,14 @@
 import React, { FC, ReactNode, useState } from 'react'
 import cn from 'classnames'
-import {
-  Box,
-  Typography,
-  Divider,
-  DividerProps,
-} from '@island.is/island-ui/core'
+import { Box, Text, Divider, DividerProps } from '@island.is/island-ui/core'
 import Bullet from '../../components/Bullet/Bullet'
-import { Colors } from '@island.is/island-ui/theme'
+import { Colors, theme } from '@island.is/island-ui/theme'
 import * as styles from './Sidebar.treat'
 
 type ColorConfig = {
   main: Colors
   secondary: Colors
+  subNavBorder: Colors
   divider: DividerProps['weight']
 }
 
@@ -21,11 +17,13 @@ const ColorConfig: { [key: string]: ColorConfig } = {
     main: 'blue400',
     secondary: 'dark400',
     divider: 'regular',
+    subNavBorder: 'blue200',
   },
   gradient: {
     main: 'white',
     secondary: 'blue100',
     divider: 'purple400',
+    subNavBorder: 'blue400',
   },
 }
 
@@ -52,7 +50,7 @@ const Sidebar: FC<SidebarProps> = ({ title, type, children }) => {
             top: container.offsetTop + 'px',
             left: container.offsetLeft + 'px',
             width: container.offsetWidth + 'px',
-            bottom: 0,
+            bottom: theme.spacing[12] + 'px',
           }
         }
       >
@@ -72,9 +70,9 @@ const Sidebar: FC<SidebarProps> = ({ title, type, children }) => {
               <Box paddingX={4} paddingY={3}>
                 {title && (
                   <>
-                    <Typography variant="h3" as="h3" color={colors.main}>
+                    <Text variant="h3" as="h3" color={colors.main}>
                       {title}
-                    </Typography>
+                    </Text>
                     <Box paddingY={2}>
                       <Divider weight={colors.divider} />
                     </Box>

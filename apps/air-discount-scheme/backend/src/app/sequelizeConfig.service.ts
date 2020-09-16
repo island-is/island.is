@@ -3,6 +3,7 @@ import {
   SequelizeModuleOptions,
   SequelizeOptionsFactory,
 } from '@nestjs/sequelize'
+import { SequelizeOptions } from 'sequelize-typescript'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
@@ -30,6 +31,7 @@ export class SequelizeConfigService implements SequelizeOptionsFactory {
 
     return {
       ...config,
+      dialect: config.dialect as SequelizeOptions['dialect'],
       define: {
         underscored: true,
         timestamps: true,

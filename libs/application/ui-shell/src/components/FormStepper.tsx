@@ -1,0 +1,107 @@
+import React, { FC } from 'react'
+import {
+  FormStepper as CoreFormStepper,
+  FormStepperThemes,
+  Tag,
+} from '@island.is/island-ui/core'
+import {
+  Application,
+  FormMode,
+  Section,
+  SectionChildren,
+  formatText,
+} from '@island.is/application/core'
+import { useLocale } from '@island.is/localization'
+import { MessageDescriptor } from 'react-intl'
+
+import { FormModes } from '../types'
+
+interface FormStepperProps {
+  application: Application
+  form: {
+    name: MessageDescriptor | string
+    icon?: string
+  }
+  mode: FormMode
+  showTag: boolean
+  sections: Section[]
+  activeSection: number
+  activeSubSection: number
+}
+
+const FormStepper: FC<FormStepperProps> = ({
+  application,
+  form,
+  mode,
+  showTag,
+  sections,
+  activeSection,
+  activeSubSection,
+}) => {
+  const { formatMessage } = useLocale()
+
+  const progressTheme: Record<FormModes, FormStepperThemes> = {
+    [FormModes.APPLYING]: FormStepperThemes.PURPLE,
+    [FormModes.APPROVED]: FormStepperThemes.GREEN,
+    [FormModes.REVIEW]: FormStepperThemes.BLUE,
+    [FormModes.PENDING]: FormStepperThemes.BLUE,
+    [FormModes.REJECTED]: FormStepperThemes.RED,
+  }
+
+  // Cannot infers type because of circular loop
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const formattedChildren = (child: SectionChildren): any => ({
+    name: formatText(child.name, application, formatMessage),
+    type: child.type,
+    children: (child.children ?? []).map((c) => formattedChildren(c)),
+  })
+
+  const formattedSections = sections.map((section: Section) => ({
+    name: formatText(section.name, application, formatMessage),
+    type: section.type,
+    children: section.children.map((child) => formattedChildren(child)),
+  }))
+
+  const ProgressTag: FC = () => {
+    switch (mode) {
+      case FormModes.REVIEW:
+      case FormModes.PENDING:
+        return (
+          <Tag variant="darkerBlue" label bordered>
+            Status: In Review
+          </Tag>
+        )
+
+      case FormModes.APPROVED:
+        return (
+          <Tag variant="darkerMint" label bordered>
+            Status: Approved
+          </Tag>
+        )
+
+      case FormModes.REJECTED:
+        return (
+          <Tag variant="red" label bordered>
+            Status: Rejected
+          </Tag>
+        )
+
+      default:
+        return null
+    }
+  }
+
+  return (
+    <CoreFormStepper
+      theme={progressTheme[mode]}
+      tag={showTag && <ProgressTag />}
+      formName={formatMessage(form.name)}
+      formIcon={form.icon}
+      sections={formattedSections}
+      activeSection={activeSection}
+      activeSubSection={activeSubSection}
+    />
+  )
+}
+
+export default FormStepper

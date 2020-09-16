@@ -3,9 +3,8 @@ import { Asset } from 'contentful'
 
 @ObjectType()
 export class Image {
-  constructor(initializer: Image) {
-    Object.assign(this, initializer)
-  }
+  @Field()
+  typename: string
 
   @Field(() => ID)
   id: string
@@ -26,12 +25,16 @@ export class Image {
   height: number
 }
 
-export const mapImage = ({ fields, sys }: Asset): Image =>
-  new Image({
-    id: sys.id,
-    url: fields.file.url,
-    title: fields.title,
-    contentType: fields.file.contentType,
-    width: fields.file.details.image.width,
-    height: fields.file.details.image.height,
-  })
+export const mapImage = (entry: Asset): Image => {
+  const fields = entry?.fields
+  const sys = entry?.sys
+  return {
+    typename: 'Image',
+    id: sys?.id ?? '',
+    url: fields?.file?.url ?? '',
+    title: fields?.title ?? '',
+    contentType: fields?.file?.contentType ?? '',
+    width: fields?.file?.details?.image?.width ?? 0,
+    height: fields?.file?.details?.image?.height ?? 0,
+  }
+}

@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import * as React from 'react'
+import { useEffect, useState } from 'react'
 import cn from 'classnames'
 import {
   default as ReactDatePicker,
@@ -10,8 +11,8 @@ import pl from 'date-fns/locale/pl'
 import is from 'date-fns/locale/is'
 import en from 'date-fns/locale/en-US'
 
-import Icon from '../Icon/Icon'
-import Typography from '../Typography/Typography'
+import { Icon } from '../Icon/Icon'
+import { Typography } from '../Typography/Typography'
 
 import * as styles from './DatePicker.treat'
 import * as coreStyles from './react-datepicker.treat'
@@ -23,30 +24,36 @@ interface DatePickerProps {
   locale?: Locale
   value?: ReactDatePickerProps['value']
   minDate?: ReactDatePickerProps['minDate']
+  selected?: ReactDatePickerProps['selected']
+  disabled?: boolean
   hasError?: boolean
   errorMessage?: string
+  id?: string
   handleChange?: (date: Date) => void
   onInputClick?: ReactDatePickerProps['onInputClick']
-  handleCloseCalander?: (date: Date) => void
-  handleOpenCalander?: () => void
+  handleCloseCalendar?: (date: Date | null) => void
+  handleOpenCalendar?: () => void
   required?: boolean
 }
 
 export const DatePicker: React.FC<DatePickerProps> = ({
+  id,
   label,
   placeholderText,
   locale,
   value,
   minDate,
+  selected,
+  disabled = false,
   hasError = false,
   errorMessage,
   handleChange,
   onInputClick,
-  handleCloseCalander,
-  handleOpenCalander,
+  handleCloseCalendar,
+  handleOpenCalendar,
   required,
 }) => {
-  const [startDate, setStartDate] = useState<Date | null>(null)
+  const [startDate, setStartDate] = useState<Date | null>(selected ?? null)
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
     'closed',
   )
@@ -66,30 +73,32 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     }
   }, [locale])
 
-  const getLocale = (locale: Locale) => {
+  const getLocale = (locale?: Locale) => {
     return locale === 'is' ? is : locale === 'pl' ? pl : en
   }
 
   const CustomInput = React.forwardRef<
     HTMLButtonElement,
-    { inputValue: string; onClick: () => void; placeholderText: string }
-  >(({ inputValue, onClick, placeholderText }, ref) => {
-    const valueAsDate = new Date(inputValue)
+    { value?: string; onClick?: () => void; placeholderText?: string }
+  >(({ value, onClick = () => undefined, placeholderText }, ref) => {
+    const valueAsDate = value === undefined ? new Date() : new Date(value)
 
     return (
-      <button className={className} onClick={onClick}>
+      <button type="button" className={className} onClick={onClick}>
         <div className={styles.labelAndPlaceholderContainer}>
           <p className={cn(styles.label, { [styles.labelError]: hasError })}>
             {label}
             {required && <span className={styles.requiredStar}> *</span>}
           </p>
           <div className={styles.value}>
-            {inputValue ? (
-              <Typography variant="h3">
-                {format(valueAsDate, 'P', {
-                  locale: getLocale(locale),
-                })}
-              </Typography>
+            {value ? (
+              <span data-testid="datepicker-value">
+                <Typography variant="h3">
+                  {format(valueAsDate, 'P', {
+                    locale: getLocale(locale),
+                  })}
+                </Typography>
+              </span>
             ) : placeholderText ? (
               <Typography as="span" variant="placeholderText" color="dark300">
                 {placeholderText}
@@ -103,10 +112,12 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   })
 
   return (
-    <div className={coreStyles.root}>
+    <div className={coreStyles.root} data-testid="datepicker">
       <div className={cn(styles.root, 'island-ui-datepicker')}>
         <ReactDatePicker
-          selected={startDate}
+          id={id}
+          disabled={disabled}
+          selected={selected ?? startDate}
           locale={locale}
           minDate={minDate}
           showPopperArrow={false}
@@ -122,11 +133,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           }}
           onCalendarOpen={() => {
             setDatePickerState('open')
-            handleOpenCalander && handleOpenCalander()
+            handleOpenCalendar && handleOpenCalendar()
           }}
           onCalendarClose={() => {
             setDatePickerState('closed')
-            handleCloseCalander && handleCloseCalander(startDate)
+            handleCloseCalendar && handleCloseCalendar(startDate)
           }}
           onChange={(date: Date) => {
             setStartDate(date)
@@ -134,7 +145,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           }}
           customInput={
             <CustomInput
-              inputValue={value}
+              value={value}
               onClick={onInputClick}
               placeholderText={placeholderText}
             />
@@ -148,6 +159,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             return (
               <div className={styles.customHeaderContainer}>
                 <button
+                  type="button"
                   onClick={decreaseMonth}
                   className={styles.decreaseButton}
                 >
@@ -157,6 +169,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                   {`${capitalizedMonth} ${getYear(date)}`}
                 </Typography>
                 <button
+                  type="button"
                   onClick={increaseMonth}
                   className={styles.increaseButton}
                 >
@@ -173,5 +186,3 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     </div>
   )
 }
-
-export default DatePicker

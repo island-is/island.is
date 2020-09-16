@@ -1,7 +1,6 @@
 import { Test } from '@nestjs/testing'
 import { HttpModule, HttpService, CACHE_MANAGER } from '@nestjs/common'
 import { AxiosResponse } from 'axios'
-import { CacheManager } from 'cache-manager'
 import { of } from 'rxjs'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -127,7 +126,7 @@ describe('NationalRegistryService', () => {
         {
           provide: LOGGER_PROVIDER,
           useClass: jest.fn(() => ({
-            error: (_) => ({}),
+            error: () => ({}),
           })),
         },
       ],

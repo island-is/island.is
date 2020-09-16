@@ -42,12 +42,6 @@ export interface CreateApplicationDto {
      * @type {string}
      * @memberof CreateApplicationDto
      */
-    externalId?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof CreateApplicationDto
-     */
     state: string;
     /**
      * 
@@ -76,7 +70,6 @@ export function CreateApplicationDtoFromJSONTyped(json: any, ignoreDiscriminator
         'typeId': json['typeId'],
         'applicant': json['applicant'],
         'assignee': json['assignee'],
-        'externalId': !exists(json, 'externalId') ? undefined : json['externalId'],
         'state': json['state'],
         'answers': json['answers'],
         'attachments': !exists(json, 'attachments') ? undefined : json['attachments'],
@@ -95,7 +88,6 @@ export function CreateApplicationDtoToJSON(value?: CreateApplicationDto | null):
         'typeId': value.typeId,
         'applicant': value.applicant,
         'assignee': value.assignee,
-        'externalId': value.externalId,
         'state': value.state,
         'answers': value.answers,
         'attachments': value.attachments,

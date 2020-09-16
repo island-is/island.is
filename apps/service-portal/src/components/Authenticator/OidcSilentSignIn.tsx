@@ -6,7 +6,7 @@ import AuthenticatorLoadingScreen from './AuthenticatorLoadingScreen'
 // For further optimization it can be minimized into a barebones html file
 export const OidcSilentSignIn: FC = () => {
   useEffect(() => {
-    userManager.signinSilentCallback().catch(function(error) {
+    userManager.signinSilentCallback().catch(function (error) {
       // TODO: Handle error
       console.log(error)
     })

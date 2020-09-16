@@ -4,14 +4,18 @@ import { ThemedStyle, Style } from 'treat/lib/types/types'
 import { theme } from '@island.is/island-ui/theme'
 
 export const animationContainer = style({
+  position: 'absolute',
+  display: 'inline-block',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
   opacity: 1,
-  transform: `translateX(0)`,
-  transition: `opacity 400ms ease, transform 400ms ease`,
+  transition: `opacity 400ms ease`,
 })
 
 export const animationContainerHidden = style({
   opacity: 0,
-  transform: `translateX(25px)`,
 })
 
 const whenMobile = (style: ThemedStyle<Style, ThemeOrAny>) => ({
@@ -28,13 +32,6 @@ export const link = style({
   },
 })
 
-export const removeMobileSpacing = style({
-  ...whenMobile({
-    paddingLeft: theme.grid.gutter.mobile / 2,
-    paddingRight: theme.grid.gutter.mobile / 2,
-  }),
-})
-
 export const tabWrapper = style({
   display: 'inline-flex',
 })
@@ -44,6 +41,10 @@ export const tabContainer = style({
 })
 
 export const tabPanelWrapper = style({
+  position: 'relative',
+})
+
+export const tabPanelRow = style({
   position: 'relative',
 })
 
@@ -115,11 +116,10 @@ export const dots = style({
 
 export const imageContainer = style({
   position: 'relative',
-  display: 'flex',
+  display: 'inline-block',
   overflow: 'hidden',
+  height: '100%',
   width: '100%',
-  alignItems: 'center',
-  justifyContent: 'center',
 })
 
 export const arrowButton = style({
@@ -148,7 +148,23 @@ export const arrowButtonDisabled = style({
 })
 
 export const searchContentContainer = style({
+  borderRadius: theme.border.radius.large,
   ...whenMobile({
     borderRadius: 0,
+    marginLeft: -24,
+    marginRight: -24,
+    width: `calc(100% + ${24 * 2}px)`,
   }),
+})
+
+export const tabListArrowLeft = style({
+  position: 'absolute',
+  top: 0,
+  left: 12,
+})
+
+export const tabListArrowRight = style({
+  position: 'absolute',
+  top: 0,
+  right: 12,
 })

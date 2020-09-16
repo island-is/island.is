@@ -1,10 +1,10 @@
 import React, { FC } from 'react'
-import { Illustration } from './TempIllustration'
+import Illustration from './TempIllustration'
 import {
   GridContainer,
   GridRow,
   GridColumn,
-  Typography,
+  Text,
   Box,
   ArrowLink,
 } from '@island.is/island-ui/core'
@@ -32,7 +32,7 @@ interface Props {
   linkUrl: string
 }
 
-const IntroductionSection: FC<Props> = ({
+export const IntroductionSection: FC<Props> = ({
   subtitle,
   title,
   introText,
@@ -47,23 +47,31 @@ const IntroductionSection: FC<Props> = ({
           span={['12/12', '12/12', '4/12']}
           offset={[null, null, '1/12']}
         >
-          <Illustration />
+          <Box
+            display="inlineFlex"
+            height="full"
+            width="full"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Illustration width="100%" />
+          </Box>
         </GridColumn>
         <GridColumn
           span={['12/12', '12/12', '5/12']}
           offset={[null, null, '1/12']}
           paddingTop={4}
         >
-          <Typography variant="eyebrow" color="purple400" paddingBottom={2}>
+          <Text variant="eyebrow" color="purple400" paddingBottom={2}>
             {subtitle}
-          </Typography>
-          <Typography as="h2" variant="h1" paddingBottom={2}>
+          </Text>
+          <Text as="h2" variant="h1" paddingBottom={2}>
             {title}
-          </Typography>
-          <Typography variant="intro" paddingBottom={text ? 2 : 0}>
+          </Text>
+          <Text variant="intro" paddingBottom={text ? 2 : 0}>
             {introText}
-          </Typography>
-          <Typography variant="p">{text}</Typography>
+          </Text>
+          <Text>{text}</Text>
           <Box paddingY={2}>
             <ArrowLink href={linkUrl} color="blue400">
               {linkText}

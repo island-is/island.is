@@ -1,35 +1,80 @@
-export enum CaseCustodyProvisions {
-  _95_1_A = '_95_1_A', // a-lið 1. mgr. 95. gr.
-  _95_1_B = '_95_1_B', // b-lið 1. mgr. 95. gr.
-  _95_1_C = '_95_1_C', // c-lið 1. mgr. 95. gr.
-  _95_1_D = '_95_1_D', // d-lið 1. mgr. 95. gr.
-  _95_2 = '_95_2', // d-lið 1. mgr. 95. gr.
-  _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
+import {
+  CaseAppealDecision,
+  CaseCustodyProvisions,
+  CaseCustodyRestrictions,
+  CaseState,
+} from '@island.is/judicial-system/types'
+import { Validation } from './utils/validate'
+
+export enum NotificationType {
+  HEADS_UP = 'HEADS_UP',
+  READY_FOR_COURT = 'READY_FOR_COURT',
 }
 
-export enum CaseCustodyRestrictions {
-  ISOLATION = 'ISOLATION',
-  VISITAION = 'VISITAION',
-  COMMUNICATION = 'COMMUNICATION',
-  MEDIA = 'MEDIA',
+export enum AppealDecitionRole {
+  PROSECUTOR = 'PROSECUTOR',
+  ACCUSED = 'ACCUSED',
 }
 
-export enum CaseState {
-  UNKNOWN = 'Óþekkt',
-  DRAFT = 'Drög',
-  SUBMITTED = 'Krafa staðfest',
-  ACTIVE = 'Gæsluvarðhald virkt',
-  COMPLETED = 'Gæsluvarðhaldi lokið',
+export interface DetentionRequest {
+  id: string
+  policeCaseNumber: string
+  accusedName: string
+  accusedNationalId: string
+  created: string
+  modified: string
+  state: CaseState
 }
 
 export interface Case {
   id: string
-  policeCaseNumber: string
-  suspectName: string
-  suspectNationalId: string
   created: string
   modified: string
   state: CaseState
+  policeCaseNumber: string
+  accusedNationalId: string
+  accusedName?: string
+  accusedAddress?: string
+  court?: string
+  arrestDate?: string
+  requestedCourtDate?: string
+  requestedCustodyEndDate?: string
+  lawsBroken?: string
+  custodyProvisions?: CaseCustodyProvisions[]
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
+  caseFacts?: string
+  witnessAccounts?: string
+  investigationProgress?: string
+  legalArguments?: string
+  comments?: string
+  notifications?: Notification[]
+  courtCaseNumber?: string
+  courtStartTime?: string
+  courtEndTime?: string
+  courtAttendees?: string
+  policeDemands?: string
+  accusedPlea?: string
+  litigationPresentations?: string
+  ruling?: string
+  rejecting?: boolean
+  custodyEndDate?: string
+  custodyRestrictions?: CaseCustodyRestrictions[]
+  accusedAppealDecision?: CaseAppealDecision
+  prosecutorAppealDecision?: CaseAppealDecision
+  accusedAppealAnnouncement?: string
+  prosecutorAppealAnnouncement?: string
+  prosecutorId?: string
+  prosecutor?: User
+  judgeId?: string
+  judge?: User
+}
+
+export interface Notification {
+  id: string
+  created: string
+  caseId: string
+  type: NotificationType
+  message: string
 }
 
 export interface GetCaseByIdResponse {
@@ -37,46 +82,46 @@ export interface GetCaseByIdResponse {
   case?: Case
 }
 
+export interface SendNotificationResponse {
+  httpStatusCode: number
+  response?: Notification
+}
+
 export interface CreateCaseRequest {
   policeCaseNumber: string
-  suspectNationalId: string
+  accusedNationalId: string
+  court: string
 }
 
 export interface User {
+  id: string
+  created: string
+  modified: string
   nationalId: string
-  roles: string[]
+  name: string
+  title: string
+  mobileNumber: string
+  role: string
 }
 
-export interface CreateDetentionReqStepOneFields {
-  policeCaseNumber: string
-  suspectNationalId: string
-  suspectName: string
-  suspectAddress: string
-  court: string
-  arrestDate: Date
-  arrestTime: string
-  requestedCourtDate: Date
+export interface RequestSignature {
+  controlCode: string
+  documentToken: string
 }
 
-export interface CreateDetentionReqStepTwoFields {
-  requestedCustodyEndDate: Date
-  requestedCustodyEndTime: string
-  lawsBroken: string
-  caseCustodyProvisions: CaseCustodyProvisions[]
-  restrictions: CaseCustodyRestrictions[]
-  caseFacts: string
-  witnessAccounts: string
-  investigationProgress: string
-  legalArguments: string
-  comments: string
+export interface RequestSignatureResponse {
+  httpStatusCode: number
+  response?: RequestSignature
 }
 
-export interface CreateDetentionReqStepOneCase {
-  id: string
-  case: CreateDetentionReqStepOneFields
+export interface ConfirmSignatureResponse {
+  httpStatusCode: number
+  response?: Case
+  code?: number
+  message?: string
 }
 
-export interface CreateDetentionReqStepTwoCase {
-  id: string
-  case: CreateDetentionReqStepTwoFields
+export interface RequiredField {
+  value: string
+  validations: Validation[]
 }
