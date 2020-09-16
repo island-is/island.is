@@ -34,7 +34,7 @@ export interface TypographyProps {
   links?: boolean
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
-  fontWeight?: keyof typeof fontWeight
+  fontWeight?: keyof typeof fontWeightStyles
 }
 
 export const Typography = ({
