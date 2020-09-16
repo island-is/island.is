@@ -6,7 +6,7 @@ import * as kennitala from 'kennitala'
 import { Airlines, States } from '@island.is/air-discount-scheme/consts'
 import { FlightLegSummary } from './flight.types'
 import { Flight, FlightLeg, financialStateMachine } from './flight.model'
-import { FlightDto, FlightLegDto, GetFlightLegsBody } from './dto'
+import { CreateFlightBody, CreateFlightLegBody, GetFlightLegsBody } from './dto'
 import { NationalRegistryUser } from '../nationalRegistry'
 
 export const ADS_POSTAL_CODES = {
@@ -59,7 +59,7 @@ export class FlightService {
   }
 
   private getAirline(
-    flightLeg: FlightLegDto,
+    flightLeg: CreateFlightLegBody,
     airline: ValueOf<typeof Airlines>,
   ): ValueOf<typeof Airlines> {
     if (airline === Airlines.icelandair) {
@@ -169,7 +169,7 @@ export class FlightService {
   }
 
   async create(
-    flight: FlightDto,
+    flight: CreateFlightBody,
     user: NationalRegistryUser,
     airline: string,
   ): Promise<Flight> {

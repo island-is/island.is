@@ -13,10 +13,7 @@ import {
   ApiExcludeEndpoint,
 } from '@nestjs/swagger'
 
-import {
-  GetUserByDiscountCodeParams,
-  GetUserRelationsParams,
-} from './user.validator'
+import { GetUserByDiscountCodeParams, GetUserRelationsParams } from './dto'
 import { UserService } from './user.service'
 import { AirlineUser, User } from './user.model'
 import { DiscountService } from '../discount'
