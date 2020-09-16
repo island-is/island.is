@@ -31,7 +31,7 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
   type,
   buttonText,
 }) => {
-  const eyebrow = Titles[type]
+  const label = Titles[type]
 
   return (
     <Box background="blue100" className={styles.container}>
@@ -40,9 +40,9 @@ export const ProcessEntry: FC<ProcessEntryProps> = ({
           <Box display="flex" flexDirection={['column', 'column', 'row']}>
             <Box flexGrow={1}>
               <Stack space={1}>
-                {Boolean(eyebrow) && (
+                {Boolean(label) && (
                   <Typography variant="eyebrow" as="p" color="blue400">
-                    {eyebrow}
+                    {label}
                   </Typography>
                 )}
                 <Typography variant="h3" as="h3">
