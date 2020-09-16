@@ -24,11 +24,11 @@ export class Article {
   @Field()
   slug: string
 
-  @Field()
-  shortTitle: string
+  @Field({ nullable: true })
+  shortTitle?: string
 
-  @Field()
-  intro: string
+  @Field({ nullable: true })
+  intro?: string
 
   @Field(() => [Slice])
   body: Array<typeof Slice>
@@ -59,7 +59,7 @@ export const mapArticle = ({ fields, sys }: IArticle): Article => ({
   shortTitle: fields.shortTitle ?? '',
   slug: fields.slug,
   intro: fields.intro ?? '',
-  body: fields.content ? mapDocument(fields.content) : [],
+  body: fields?.content ? mapDocument(fields.content) : [],
   category: fields.category?.fields,
   group: fields.group?.fields,
   subgroup: fields.subgroup?.fields,
