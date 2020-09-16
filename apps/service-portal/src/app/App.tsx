@@ -17,9 +17,6 @@ import './App.css'
 
 export const App = () => {
   makeServer()
-  console.log('env', process)
-  console.log('env', process.env.NODE_ENV)
-  console.log('env', process.env.NX_SERVICE_PORTAL_BASE_URL)
   return (
     <div className={styles.page}>
       <Router>
