@@ -69,6 +69,18 @@
       },
       {
         "kind": "UNION",
+        "name": "Items",
+        "possibleTypes": [
+          {
+            "name": "Article"
+          },
+          {
+            "name": "LifeEventPage"
+          }
+        ]
+      },
+      {
+        "kind": "UNION",
         "name": "AdgerdirSlice",
         "possibleTypes": [
           {

@@ -2941,6 +2941,34 @@
           }
         }
       }
+    },
+    "elastic-indexing": {
+      "root": "libs/elastic-indexing",
+      "sourceRoot": "libs/elastic-indexing/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/elastic-indexing/.eslintrc",
+            "tsConfig": [
+              "libs/elastic-indexing/tsconfig.lib.json",
+              "libs/elastic-indexing/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/elastic-indexing/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/elastic-indexing/jest.config.js",
+            "tsConfig": "libs/elastic-indexing/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

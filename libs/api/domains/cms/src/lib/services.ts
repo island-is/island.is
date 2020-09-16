@@ -39,6 +39,7 @@ import {
   FrontpageSliderList,
   mapFrontpageSliderList,
 } from './models/frontpageSliderList.model'
+import { ArticleCategory } from './models/articleCategory.model'
 
 const makePage = (
   page: number,

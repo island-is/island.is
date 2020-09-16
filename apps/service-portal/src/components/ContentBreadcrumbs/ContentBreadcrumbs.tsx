@@ -43,7 +43,7 @@ const ContentBreadcrumbs: FC<{}> = () => {
   return (
     <Hidden below="lg">
       <Box paddingY={2}>
-        <Breadcrumbs>
+        <Breadcrumbs color="purple400" separatorColor="purple400">
           {items.map(
             (item, index) =>
               item.path !== undefined && (
