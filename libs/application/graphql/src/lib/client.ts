@@ -8,7 +8,6 @@ import {
 import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { setContext } from '@apollo/client/link/context'
-import { userManager } from '../../../../../apps/application-system/form/src/utils/userManager'
 
 const httpLink = new HttpLink({
   uri: 'http://localhost:4444/api/graphql',
@@ -29,12 +28,12 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 })
 
 const authLink = setContext(async (_, { headers }) => {
-  const user = await userManager.getUser()
+  const token = 'mock_token'
 
   return {
     headers: {
       ...headers,
-      authorization: user?.access_token ? `Bearer ${user?.access_token}` : '',
+      authorization: token ? `Bearer ${token}` : '',
     },
   }
 })

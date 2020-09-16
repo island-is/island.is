@@ -5,9 +5,9 @@ export const AuthContext = createContext(null)
 export type AsyncActionState = 'passive' | 'pending' | 'fulfilled' | 'failed'
 
 export interface AuthReducerState {
-  userInfo: User,
-  userInfoState: AsyncActionState,
-  isAuthenticated: boolean,
+  userInfo: User
+  userInfoState: AsyncActionState
+  isAuthenticated: boolean
 }
 
 export enum ActionType {
@@ -60,5 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   )
 }
 
-export const useAuthState: () => [AuthReducerState, (action: Action) => void] = () =>
-  useContext(AuthContext)
+export const useAuthState: () => [
+  AuthReducerState,
+  (action: Action) => void,
+] = () => useContext(AuthContext)

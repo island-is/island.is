@@ -7,23 +7,22 @@ export const ProtectedRoute: FC<RouteProps> = (props) => {
   const { userInfo, userInfoState, signInUser } = useAuth()
 
   useEffect(() => {
-    if (
-      (userInfo === null) &&
-      userInfoState === 'passive'
-    ) {
+    if (userInfo === null && userInfoState === 'passive') {
       signInUser()
     }
   }, [userInfo, userInfoState, signInUser])
 
-  return <>
-    {userInfo ? <Route {...props as RouteProps} />
-    : (
-      <Box display="flex" justifyContent="center" margin={12}>
-        <Typography variant="h2">Augnablik</Typography>
-      </Box>
-      )
-    }
+  return (
+    <>
+      {userInfo ? (
+        <Route {...(props as RouteProps)} />
+      ) : (
+        <Box display="flex" justifyContent="center" margin={12}>
+          <Typography variant="h2">Augnablik</Typography>
+        </Box>
+      )}
     </>
+  )
 }
 
 export default ProtectedRoute
