@@ -31,6 +31,7 @@ import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { Screen } from '@island.is/web/types'
 import { useI18n } from '@island.is/web/i18n'
 import { CustomNextError } from '../../units/errors'
+import { withMainLayout } from '@island.is/web/layouts/main'
 
 interface OrganizationProps {
   organizations: Query['getOrganizations']
@@ -145,4 +146,4 @@ OrganizationPage.getInitialProps = async ({ apolloClient, query, locale }) => {
   }
 }
 
-export default OrganizationPage
+export default withMainLayout(OrganizationPage)
