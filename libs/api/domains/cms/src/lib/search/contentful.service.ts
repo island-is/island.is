@@ -138,7 +138,7 @@ export class ContentfulService {
     locale: keyof typeof SearchIndexes,
   ): Promise<Entry<any>[]> {
     // contentful has a limit of 1000 entries per request but we get "414 Request URI Too Large" so we do a 500 per request
-    const chunkSize = 500
+    const chunkSize = 30
     const chunkedChanges = []
     let chunkToProcess = entries.splice(-chunkSize, chunkSize)
     do {

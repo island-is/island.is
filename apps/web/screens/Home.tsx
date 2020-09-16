@@ -121,7 +121,7 @@ const Home: Screen<HomeProps> = ({
           title="Öll opinber þjónusta á einum stað"
           introText="Við vinnum að margvíslegum verkefnum sem öll stuðla að því að gera opinbera þjónustu skilvirkari og notendavænni."
           text="Við viljum að stafræn þjónusta sé aðgengileg, sniðin að notandanum og með skýra framtíðarsýn."
-          linkText="Nánar um stafrænt Ísland"
+          linkText="Nánar um Stafrænt Ísland"
           linkUrl="/um-island-is"
         />
       </Section>

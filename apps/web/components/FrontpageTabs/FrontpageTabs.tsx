@@ -7,6 +7,7 @@ import React, {
   useCallback,
   useEffect,
 } from 'react'
+import bodymovin from 'lottie-web'
 import Link from 'next/link'
 import cn from 'classnames'
 import { useTabState, Tab, TabList, TabPanel } from 'reakit/Tab'
@@ -43,6 +44,7 @@ type TabsProps = {
   content?: string
   image?: ImageProps
   link?: string
+  animationJson?: string
 }
 
 export interface FrontpageTabsProps {
@@ -71,7 +73,15 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
   autoplay = true,
 }) => {
   const contentRef = useRef(null)
+  const animationContainerRef = useRef(null)
+  const animationTimer = useRef(null)
+  const [animationData, setAnimationData] = useState([])
+  const [
+    animationContainerTransitioning,
+    setAnimationContainerTransitioning,
+  ] = useState<boolean>(true)
   const timer = useRef(null)
+  const animationDataLoaded = useRef(null)
   const [minHeight, setMinHeight] = useState<number>(0)
   const [maxContainerHeight, setMaxContainerHeight] = useState<number>(0)
   const [autoplayOn, setAutoplayOn] = useState<boolean>(autoplay)
@@ -89,6 +99,36 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
       setImage(tabs[selectedIndex].image)
     }
   }, [selectedIndex, tabs])
+
+  useEffect(() => {
+    if (!animationDataLoaded.current) {
+      const data = tabs.map((x) => JSON.parse(x.animationJson))
+      setAnimationData(data)
+      animationDataLoaded.current = true
+    }
+  }, [tabs, animationDataLoaded])
+
+  useEffect(() => {
+    if (animationContainerRef.current) {
+      setAnimationContainerTransitioning(false)
+      clearTimeout(animationTimer.current)
+
+      animationTimer.current = setTimeout(() => {
+        bodymovin.destroy()
+
+        bodymovin.loadAnimation({
+          container: animationContainerRef.current,
+          loop: true,
+          autoplay: true,
+          animationData: animationData[selectedIndex],
+        })
+
+        setAnimationContainerTransitioning(false)
+      }, 400)
+
+      setAnimationContainerTransitioning(true)
+    }
+  }, [animationData, animationContainerRef, selectedIndex])
 
   const onResize = useCallback(() => {
     setMinHeight(0)
@@ -329,9 +369,16 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
             overflow="hidden"
             style={{ maxHeight: `${maxContainerHeight}px` }}
           >
-            <Hidden below="lg">
-              <Image image={image} />
-            </Hidden>
+            <div className={styles.imageContainer}>
+              <Hidden below="lg">
+                <div
+                  ref={animationContainerRef}
+                  className={cn(styles.animationContainer, {
+                    [styles.animationContainerHidden]: animationContainerTransitioning,
+                  })}
+                />
+              </Hidden>
+            </div>
           </Box>
         </GridColumn>
         <GridColumn span={[null, null, null, '1/12']}>

@@ -40,10 +40,6 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
         icon: 'lock',
         children: [
           {
-            name: 'Upplýsingar',
-            path: ServicePortalPath.StillingarUpplysingar,
-          },
-          {
             name: 'Umboð',
             path: ServicePortalPath.StillingarUmbod,
           },
@@ -54,6 +50,13 @@ export const servicePortalMasterNavigation: ServicePortalNavigationItem[] = [
   {
     name: 'Upplýsingar',
     children: [
+      // Minar upplysingar
+      {
+        name: 'Mínar upplýsingar',
+        path: ServicePortalPath.MinarUpplysingar,
+        icon: 'user',
+      },
+
       // Fjolskyldan
       {
         name: 'Fjölskyldan',

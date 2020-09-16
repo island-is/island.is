@@ -10,10 +10,10 @@ export enum ServicePortalPath {
   UmsoknirLyfsedlar = '/umsoknir/lyfsedlar',
   // Stillingar
   StillingarRoot = '/stillingar',
-  StillingarUpplysingar = '/stillingar/upplysingar',
   StillingarUmbod = '/stillingar/umbod',
   // Fjolskyldan
   FjolskyldanRoot = '/fjolskyldan',
+  MinarUpplysingar = '/minar-upplysingar',
   // Fjarmal
   FjarmalRoot = '/fjarmal',
   FjarmalOkutaeki = 'https://mitt.samgongustofa.is/',
