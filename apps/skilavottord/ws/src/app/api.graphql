@@ -7,6 +7,8 @@ type Car {
   name: String!
   model: String!
   color: String!
+  year: String!
+  recyclable: Boolean!
 }
 
 type Carowner {

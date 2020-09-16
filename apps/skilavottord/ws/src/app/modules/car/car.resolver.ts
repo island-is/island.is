@@ -12,7 +12,7 @@ export class CarResolver {
   //Test
   //query b {getCarById(id: "2"){id, ownerId, name, model}}
   //@Query(() => Car)
-  getCarById(@Args('id') nid: string): Car {
+  getCar(@Args('id') nid: string): Car {
     return this.carService.getCarById(nid)
   }
 }
