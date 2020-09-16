@@ -1203,7 +1203,10 @@ export type GetArticlesQueryVariables = Exact<{
 
 export type GetArticlesQuery = { __typename?: 'Query' } & {
   getArticles: Array<
-    { __typename?: 'Article' } & Pick<Article, 'intro' | 'slug' | 'title'> & {
+    { __typename?: 'Article' } & Pick<
+      Article,
+      'intro' | 'slug' | 'title' | 'containsApplicationForm'
+    > & {
         category?: Maybe<
           { __typename?: 'ArticleCategory' } & Pick<ArticleCategory, 'title'>
         >

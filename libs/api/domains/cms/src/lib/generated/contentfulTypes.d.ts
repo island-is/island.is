@@ -58,6 +58,9 @@ export interface IArticleFields {
   /** Introduction */
   intro?: string | undefined
 
+  /** Introduction */
+  containsApplicationForm?: boolean | undefined
+
   /** Slug */
   slug: string
 
