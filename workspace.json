@@ -2969,6 +2969,32 @@
           }
         }
       }
+    },
+    "nova-sms": {
+      "root": "libs/nova-sms",
+      "sourceRoot": "libs/nova-sms/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/nova-sms/tsconfig.lib.json",
+              "libs/nova-sms/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/nova-sms/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/nova-sms/jest.config.js",
+            "tsConfig": "libs/nova-sms/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {

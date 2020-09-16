@@ -37,9 +37,4 @@ export class CreateCaseDto {
   @IsString()
   @ApiPropertyOptional()
   readonly requestedCourtDate: Date
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly requestedCustodyEndDate: Date
 }
