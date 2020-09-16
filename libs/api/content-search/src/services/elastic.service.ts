@@ -112,7 +112,7 @@ export class ElasticService {
       )
     }
   }
-  
+
   async getDocumentsByMetaData(
     index: SearchIndexes,
     query: DocumentByMetaDataInput,
