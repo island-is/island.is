@@ -188,6 +188,7 @@ const Category: Screen<CategoryProps> = ({
                       <AccordionCard
                         id={`accordion-item-${groupSlug}`}
                         label={title}
+                        labelUse="h2"
                         startExpanded={expanded}
                         visibleContent={description}
                       >
