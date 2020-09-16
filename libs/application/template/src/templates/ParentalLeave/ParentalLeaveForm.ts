@@ -28,62 +28,6 @@ export const ParentalLeaveForm: Form = buildForm({
       id: 'introduction',
       name: 'Intro',
       children: [
-        // TODO REMOVE THIS MULTIFIELD BEFORE MERGING
-        buildMultiField({
-          id: 'test',
-          name: 'sick',
-          children: [
-            buildRadioField({
-              id: 'test.a',
-              name:
-                'question 1 is very long so long lets see how long it truly is really right? Lets have it so wide that it breaks the 4th barrier',
-
-              width: 'half',
-              options: [
-                { value: 'yaaaaa', label: 'YES' },
-                { value: 'nooooo', label: 'NO' },
-                { value: 'noooooaaaa', label: 'or what' },
-              ],
-            }),
-            buildCheckboxField({
-              id: 'test.a',
-              name:
-                'question 2 is even longer right? So long indeed, should we just do something weird???? Lets see how long it truly is really right? Lets have it so wide that it breaks the 4th barrier',
-
-              width: 'half',
-              options: [
-                { value: 'yaaaaa', label: 'YES' },
-                { value: 'nooooo', label: 'NO' },
-                { value: 'noooooaaaa', label: 'or what' },
-                { value: 'a', label: 'komaso' },
-                { value: 's', label: 'testing' },
-              ],
-            }),
-            buildSelectField({
-              id: 'test.a',
-              name:
-                'question 2 is even longer right? So long indeed, should we just do something weird???? Lets see how long it truly is really right? Lets have it so wide that it breaks the 4th barrier',
-
-              width: 'half',
-              options: [
-                { value: 'yaaaaa', label: 'YES' },
-                { value: 'nooooo', label: 'NO' },
-                { value: 'noooooaaaa', label: 'or what' },
-                { value: 'a', label: 'komaso' },
-                { value: 's', label: 'testing' },
-              ],
-            }),
-            buildTextField({
-              id: 'test.c',
-              name: 'question 3',
-
-              width: 'half',
-            }),
-            buildTextField({ id: 'test.b', name: 'question 2', width: 'half' }),
-            buildTextField({ id: 'test.d', name: 'question 4', width: 'half' }),
-            buildTextField({ id: 'test.e', name: 'question 5', width: 'half' }),
-          ],
-        }),
         buildExternalDataProvider({
           name: 'Sækja gögn',
           id: 'approveExternalData',
