@@ -1,7 +1,7 @@
 import { style } from 'treat'
 
 
-export const sericeList = style ({
+export const serviceList = style ({
   /*background:'yellow',
   justifyContent:'center'*/
 })
@@ -26,10 +26,9 @@ export const radioButton = style({
 export const topSectionText = style({
   fontSize:24,
   margin: 'auto',
-  padding: 10
+  padding: 10,
+  maxWidth:600
 })
-
-
 
 export const topSection = style({
   marginBottom:40,

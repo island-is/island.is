@@ -1,7 +1,7 @@
 import React, { useState, useEffect, ReactNode } from 'react'
 import {  Box,  
   Button, 
-  SidebarAccordion, RadioButton, ContentBlock, Columns, Column, GridRow, GridColumn 
+  SidebarAccordion, RadioButton, ContentBlock, GridRow, GridColumn 
 } from '@island.is/island-ui/core'
 
 import {  
@@ -40,12 +40,12 @@ export function ServiceLayout({ top, left, right }: PropTypes) {
       </ContentBlock>}
       <ContentBlock>
         <GridRow >
-          <GridColumn span={['12/12', '8/12',  '8/12', '8/12', '8/12']}
+          <GridColumn span={['12/12', '12/12',  '8/12', '8/12', '8/12']}
                     offset={[    '0',     '0',     '0', '1/12', '1/12']}>
             {left}
           </GridColumn>
-          <GridColumn span={[ '6/12',  '3/12',  '3/12', '2/12', '2/12']}
-          offset={[           '1/12',     '0',     '0', '1/12', '1/12']}>
+          <GridColumn span={[ '7/12',  '4/12',  '3/12', '2/12', '2/12']}
+                    offset={[    '0',  '1/12',     '0', '1/12', '1/12']}>
               {right}
           </GridColumn>
         </GridRow>
@@ -181,15 +181,16 @@ export default function ServiceList(props:ServiceListProps) {
     
   return (   
       <ServiceLayout 
-      top={<div className={cn(styles.topSection)}>
-              <h1>API Vörulisti</h1>
-        <div className={cn(styles.topSectionText)}>
-          <p>Í miðlægum vörulista hins opinbera er hægt að lálgast upplýsingar um gögn og vefþjónustur á einfaldan og fljótvirkan hátt.</p>
-        </div>
-        </div>
+      top={
+            <div className={cn(styles.topSection)}>
+              <h1>API Catalogue</h1>
+              <div className={cn(styles.topSectionText)}>
+                <p>Í miðlægum vörulista hins opinbera er hægt að lálgast upplýsingar um gögn og vefþjónustur á einfaldan og fljótvirkan hátt.</p>
+              </div>
+            </div>
       }
       left={
-          <Box className={cn(styles.sericeList, "BALLER")} marginBottom="containerGutter" marginTop={1}>
+          <Box className={cn(styles.serviceList, "BALLER")} marginBottom="containerGutter" marginTop={1}>
                     {
                       services?.map( (item, index) => {
                         return <ServiceCard key={index} service={item} />
@@ -197,7 +198,7 @@ export default function ServiceList(props:ServiceListProps) {
                     }
                   <div className={cn(styles.navigation)}>
                     <Button disabled={nextCursor === null} variant="text" onClick={() => onPageMoreButtonClick()} icon="cheveron" >
-                      Sækja fleiri
+                      Fetch more
                     </Button>
                   </div>
                 
@@ -207,7 +208,7 @@ export default function ServiceList(props:ServiceListProps) {
         <Box  className={cn(styles.filter)}>
               <h4>Filter:</h4>
               <div className={cn(styles.filterItem)}>
-                <SidebarAccordion  id="pricing_category" label="Verð">
+                <SidebarAccordion  id="pricing_category" label="Pricing">
                   <CategoryCheckBox label={PRICING_CATEGORY.FREE}    value={PRICING_CATEGORY.FREE}    checked={props.parameters.pricing.includes(PRICING_CATEGORY.FREE)}    onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={PRICING_CATEGORY.USAGE}   value={PRICING_CATEGORY.USAGE}   checked={props.parameters.pricing.includes(PRICING_CATEGORY.USAGE)}   onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={PRICING_CATEGORY.DAILY}   value={PRICING_CATEGORY.DAILY}   checked={props.parameters.pricing.includes(PRICING_CATEGORY.DAILY)}   onChange={({target})=>{updateCategoryCheckBox(target)}} />
@@ -217,7 +218,7 @@ export default function ServiceList(props:ServiceListProps) {
                 </SidebarAccordion>
               </div>
               <div className={cn(styles.filterItem)}>
-                <SidebarAccordion id="data_category" label="Gögn">
+                <SidebarAccordion id="data_category" label="Data">
                   <CategoryCheckBox label={DATA_CATEGORY.PUBLIC}    value={DATA_CATEGORY.PUBLIC}    checked={props.parameters.data.includes(DATA_CATEGORY.PUBLIC)}    onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={DATA_CATEGORY.OFFICIAL}  value={DATA_CATEGORY.OFFICIAL}  checked={props.parameters.data.includes(DATA_CATEGORY.OFFICIAL)}  onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={DATA_CATEGORY.PERSONAL}  value={DATA_CATEGORY.PERSONAL}  checked={props.parameters.data.includes(DATA_CATEGORY.PERSONAL)}  onChange={({target})=>{updateCategoryCheckBox(target)}} />
@@ -226,27 +227,27 @@ export default function ServiceList(props:ServiceListProps) {
                 </SidebarAccordion>
               </div>
               <div className={cn(styles.filterItem)}>
-                <SidebarAccordion id="type_category" label="Gerð">
+                <SidebarAccordion id="type_category" label="Type">
                   <CategoryCheckBox label={TYPE_CATEGORY.REACT}   value={TYPE_CATEGORY.REACT}   checked={props.parameters.type.includes(TYPE_CATEGORY.REACT)}   onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={TYPE_CATEGORY.SOAP}    value={TYPE_CATEGORY.SOAP}    checked={props.parameters.type.includes(TYPE_CATEGORY.SOAP)}    onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={TYPE_CATEGORY.GRAPHQL} value={TYPE_CATEGORY.GRAPHQL} checked={props.parameters.type.includes(TYPE_CATEGORY.GRAPHQL)} onChange={({target})=>{updateCategoryCheckBox(target)}} />
                 </SidebarAccordion>
               </div>
               <div className={cn(styles.filterItem)}>
-                <SidebarAccordion id="access_category" label="Aðgangur">
+                <SidebarAccordion id="access_category" label="Access">
                   <CategoryCheckBox label={ACCESS_CATEGORY.X_ROAD} value={ACCESS_CATEGORY.X_ROAD}  checked={props.parameters.access.includes(ACCESS_CATEGORY.X_ROAD)} onChange={({target})=>{updateCategoryCheckBox(target)}} />
                   <CategoryCheckBox label={ACCESS_CATEGORY.API_GW} value={ACCESS_CATEGORY.API_GW}  checked={props.parameters.access.includes(ACCESS_CATEGORY.API_GW)} onChange={({target})=>{updateCategoryCheckBox(target)}} />
                 </SidebarAccordion>
               </div>
               <div className={cn(styles.filterItem)}>
-                <SidebarAccordion id="filter_settings" label="Stillingar">
-                  <CategoryCheckBox label="Velja"   value="select-all" 
+                <SidebarAccordion id="filter_settings" label="Settings">
+                  <CategoryCheckBox label="Select all"   value="select-all" 
                     checked={checkSettingsCheckAll}     onChange={onCheckSettingsCheckAllClick}
-                    tooltip="Haka í eða úr öllum gildum í öllum flokkum."/>
+                    tooltip="Check all or none of category checkboxes."/>
                     <div className={cn(styles.filterItem)}>
-                      <SidebarAccordion id="searchMethod" label="Leitaraðferð">
-                        <RadioButton name="RadioButtonSearchMethod" id="SearchMethod1" label="Einn" value="1"
-                          tooltip="Eitt gildi í einum flokk þarf að passa"
+                      <SidebarAccordion id="searchMethod" label="Search method">
+                        <RadioButton name="RadioButtonSearchMethod" id="SearchMethod1" label="One" value="1"
+                          tooltip="One value in one category must match."
                           onChange={({ target }) => {
                           setRadioSearchMethod(target.value)
                           props.parameters.searchMethod = target.value === '1'? SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY : SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_EACH_CATEGORY;
@@ -257,8 +258,8 @@ export default function ServiceList(props:ServiceListProps) {
                         checked={radioSearchMethod === '1'}
                       />
                         <div className={cn(styles.radioButton)}>
-                          <RadioButton name="RadioButtonSearchMethod" id="SearchMethod2" label="Allir" value="2"
-                            tooltip="Eitt gildi í hverjum flokk þarf að passa"
+                          <RadioButton name="RadioButtonSearchMethod" id="SearchMethod2" label="All" value="2"
+                            tooltip="At least one value must match in each category."
                             onChange={({ target }) => {
                               setRadioSearchMethod(target.value)
                               props.parameters.searchMethod = target.value === '2'? SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_EACH_CATEGORY : SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY;
