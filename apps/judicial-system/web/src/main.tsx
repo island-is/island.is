@@ -9,6 +9,7 @@ import * as styles from './main.treat'
 import Header from './shared-components/Header/Header'
 import { StepTwo, StepOne } from './routes/CreateDetentionRequest'
 import { DetentionRequests } from './routes/DetentionRequests'
+import { Overview } from './routes/Overview'
 import { Login } from './routes/Login'
 // Sentry.init({
 //   dsn:
@@ -22,6 +23,9 @@ ReactDOM.render(
     <Header />
     <main className={styles.mainConainer}>
       <Switch>
+        <Route path="/stofna-krofu/yfirlit">
+          <Overview />
+        </Route>
         <Route path="/stofna-krofu/lagaakvaedi">
           <StepTwo />
         </Route>

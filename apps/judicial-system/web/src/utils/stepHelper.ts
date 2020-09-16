@@ -1,12 +1,12 @@
 import {
   CreateDetentionReqStepOneCase,
-  CreateDetentionReqStepTwoCase,
+  CaseCustodyRestrictions,
 } from '../types'
 import * as api from '../api'
-import { parseString } from './parsers'
+import { parseString } from './formatters'
 
 export const updateState = (
-  state: CreateDetentionReqStepOneCase | CreateDetentionReqStepTwoCase,
+  state: CreateDetentionReqStepOneCase,
   fieldToUpdate: string,
   fieldValue: string | string[] | Date,
   stateSetter: (state: any) => void,
@@ -23,10 +23,12 @@ export const updateState = (
 
   // Set the copy of the state as the state
   stateSetter(copyOfState)
+
+  window.localStorage.setItem('workingCase', JSON.stringify(copyOfState))
 }
 
 export const autoSave = async (
-  state: CreateDetentionReqStepOneCase | CreateDetentionReqStepTwoCase,
+  state: CreateDetentionReqStepOneCase,
   caseField: string,
   caseFieldValue: string | Date,
   stateSetter: (state: any) => void,
@@ -35,7 +37,6 @@ export const autoSave = async (
   if (state[caseField] !== caseFieldValue && state.id !== '') {
     // Parse the property change
     const propertyChange = parseString(caseField, caseFieldValue)
-    console.log(propertyChange)
 
     // Save the case
     const response = await api.saveCase(state.id, propertyChange)
@@ -46,5 +47,18 @@ export const autoSave = async (
     } else {
       // TODO: Do something when autosave fails
     }
+  }
+}
+
+export const getRestrictionByValue = (value: CaseCustodyRestrictions) => {
+  switch (value) {
+    case CaseCustodyRestrictions.COMMUNICATION:
+      return 'D - Bréfskoðun, símabann'
+    case CaseCustodyRestrictions.ISOLATION:
+      return 'B - Einangrun'
+    case CaseCustodyRestrictions.MEDIA:
+      return 'E - Fjölmiðlabann'
+    case CaseCustodyRestrictions.VISITAION:
+      return 'C - Heimsóknarbann'
   }
 }
