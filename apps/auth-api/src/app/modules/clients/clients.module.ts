@@ -1,6 +1,16 @@
 import { Module } from '@nestjs/common'
 import { ClientsController } from './clients.controller'
-import { Client, ClientAllowedScope, ClientAllowedCorsOrigin, ClientPostLogoutRedirectUri, ClientRedirectUri, ClientIdpRestrictions, ClientSecret, ClientGrantType, ClientsService } from '@island.is/auth-api'
+import {
+  Client,
+  ClientAllowedScope,
+  ClientAllowedCorsOrigin,
+  ClientPostLogoutRedirectUri,
+  ClientRedirectUri,
+  ClientIdpRestrictions,
+  ClientSecret,
+  ClientGrantType,
+  ClientsService,
+} from '@island.is/auth-api'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 @Module({
@@ -20,4 +30,4 @@ import { SequelizeModule } from '@nestjs/sequelize'
   controllers: [ClientsController],
   providers: [ClientsService],
 })
-export class ClientsModule { }
+export class ClientsModule {}
