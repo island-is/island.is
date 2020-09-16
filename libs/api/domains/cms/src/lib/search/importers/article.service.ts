@@ -32,6 +32,7 @@ export class ArticleSyncService {
               ) as IArticle[])
             : []
 
+          // eslint-disable-next-line prefer-const
           mapped = mapArticle(entry)
 
           try {
