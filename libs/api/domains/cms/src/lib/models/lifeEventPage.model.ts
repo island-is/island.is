@@ -41,7 +41,7 @@ export const mapLifeEventPage = ({
   title: fields.title,
   slug: fields.slug,
   intro: fields.intro,
-  image: mapImage(fields.image),
+  image: fields.image?.fields?.file ? mapImage(fields.image) : null,
   thumbnail: fields.thumbnail && mapImage(fields.thumbnail),
   content: fields?.content
     ? mapDocument(fields.content, sys.id + ':content')

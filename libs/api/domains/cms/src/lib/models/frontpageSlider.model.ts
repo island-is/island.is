@@ -30,7 +30,7 @@ export const mapFrontpageSlider = ({
   title: fields.title,
   subtitle: fields.subtitle,
   content: fields.content,
-  image: mapImage(fields.image),
+  image: fields.image?.fields?.file ? mapImage(fields.image) : null,
   link: fields.link && JSON.stringify(fields.link),
   animationJson: fields.animationJson
     ? JSON.stringify(fields.animationJson)
