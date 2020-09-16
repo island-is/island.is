@@ -25,7 +25,7 @@ docker build \
   $PROJECT_ROOT \
   ; \
   $CACHE_PUBLISH && docker push ${CACHE_REGISTRY_REPO}deps:${DEPS} \
-  ;
+  ; \
   $CACHE_PUBLISH && docker push ${CACHE_REGISTRY_REPO}output-base:${DEPS} \
 
 )
