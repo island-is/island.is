@@ -49,6 +49,9 @@
           },
           {
             "name": "EmbeddedVideo"
+          },
+          {
+            "name": "SectionWithImage"
           }
         ]
       },
@@ -61,6 +64,18 @@
           },
           {
             "name": "NumberBulletGroup"
+          }
+        ]
+      },
+      {
+        "kind": "UNION",
+        "name": "Items",
+        "possibleTypes": [
+          {
+            "name": "Article"
+          },
+          {
+            "name": "LifeEventPage"
           }
         ]
       },

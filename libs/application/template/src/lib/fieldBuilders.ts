@@ -175,6 +175,7 @@ export function buildTextField(data: {
   condition?: Condition
   id: string
   name: string
+  disabled?: boolean
   required?: boolean
   disabled?: boolean
   width?: FieldWidth
@@ -189,6 +190,7 @@ export function buildTextField(data: {
   } = data
   return {
     children: undefined,
+    disabled,
     required,
     disabled,
     width,

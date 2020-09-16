@@ -1,8 +1,18 @@
 import React from 'react'
 import Head from 'next/head'
-import { Page, Box, FooterLinkProps, Footer } from '@island.is/island-ui/core'
+import {
+  Page,
+  Box,
+  FooterLinkProps,
+  Footer,
+  AlertBanner,
+  AlertBannerVariants,
+} from '@island.is/island-ui/core'
 import { NextComponentType, NextPageContext } from 'next'
 import { Screen, GetInitialPropsContext } from '../types'
+import { MD5 } from 'crypto-js'
+import Cookies from 'js-cookie'
+
 import { Header, PageLoader, FixedNav, SkipToMainContent } from '../components'
 import { GET_MENU_QUERY } from '../screens/queries/Menu'
 import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
@@ -12,26 +22,31 @@ import {
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
   ContentLanguage,
-  GetCategoriesQuery,
-  QueryCategoriesArgs,
+  GetAlertBannerQuery,
+  QueryGetAlertBannerArgs,
+  GetArticleCategoriesQuery,
+  QueryGetArticleCategoriesArgs,
 } from '../graphql/schema'
 import { GlobalNamespaceContext } from '../context/GlobalNamespaceContext/GlobalNamespaceContext'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
 import useRouteNames from '../i18n/useRouteNames'
 import { useI18n } from '../i18n'
+import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
+import { AlertBanner as AlertBannerSchema } from '@island.is/api/schema'
 
 export interface LayoutProps {
   showSearchInHeader?: boolean
   wrapContent?: boolean
   showHeader?: boolean
   showFooter?: boolean
-  categories: GetCategoriesQuery['categories']
+  categories: GetArticleCategoriesQuery['getArticleCategories']
   topMenuCustomLinks?: FooterLinkProps[]
   footerUpperMenu?: FooterLinkProps[]
   footerLowerMenu?: FooterLinkProps[]
   footerMiddleMenu?: FooterLinkProps[]
   footerTagsMenu?: FooterLinkProps[]
   namespace: Record<string, string | string[]>
+  alertBannerContent?: AlertBannerSchema
 }
 
 const Layout: NextComponentType<
@@ -50,6 +65,7 @@ const Layout: NextComponentType<
   footerMiddleMenu,
   footerTagsMenu,
   namespace,
+  alertBannerContent,
   children,
 }) => {
   const { activeLocale } = useI18n()
@@ -74,6 +90,7 @@ const Layout: NextComponentType<
     },
   ]
 
+  const alertBannerId = MD5(JSON.stringify(alertBannerContent)).toString()
   return (
     <GlobalNamespaceContext.Provider value={{ globalNamespace: namespace }}>
       <Page>
@@ -105,6 +122,25 @@ const Layout: NextComponentType<
           />
           <title>Ísland.is</title>
         </Head>
+        {!Cookies.get(alertBannerId) && alertBannerContent.showAlertBanner && (
+          <AlertBanner
+            title={alertBannerContent.title}
+            description={alertBannerContent.description}
+            link={{
+              href: alertBannerContent.link.url,
+              title: alertBannerContent.link.text,
+            }}
+            variant={alertBannerContent.bannerVariant as AlertBannerVariants}
+            dismissable={alertBannerContent.isDismissable}
+            onDismiss={() => {
+              if (alertBannerContent.dismissedForDays !== 0) {
+                Cookies.set(alertBannerId, 'hide', {
+                  expires: alertBannerContent.dismissedForDays,
+                })
+              }
+            }}
+          />
+        )}
         <SkipToMainContent />
         <PageLoader />
         <MenuTabsContext.Provider
@@ -188,6 +224,7 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
   const [
     categories,
     topMenuCustomLinks,
+    alertBanner,
     upperMenu,
     lowerMenu,
     middleMenu,
@@ -195,15 +232,15 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
     namespace,
   ] = await Promise.all([
     apolloClient
-      .query<GetCategoriesQuery, QueryCategoriesArgs>({
+      .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
         query: GET_CATEGORIES_QUERY,
         variables: {
           input: {
-            language: locale as ContentLanguage,
+            lang: locale as ContentLanguage,
           },
         },
       })
-      .then((res) => res.data.categories),
+      .then((res) => res.data.getArticleCategories),
     apolloClient
       .query<GetMenuQuery, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
@@ -212,6 +249,14 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
         },
       })
       .then((res) => res.data.getMenu),
+    apolloClient
+      .query<GetAlertBannerQuery, QueryGetAlertBannerArgs>({
+        query: GET_ALERT_BANNER_QUERY,
+        variables: {
+          input: { id: '2foBKVNnRnoNXx9CfiM8to', lang },
+        },
+      })
+      .then((res) => res.data.getAlertBanner),
     apolloClient
       .query<GetMenuQuery, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,
@@ -268,6 +313,7 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
         href: url,
       }),
     ),
+    alertBannerContent: alertBanner,
     footerUpperMenu: (upperMenu.links ?? []).map(({ text, url }) => ({
       title: text,
       href: url,

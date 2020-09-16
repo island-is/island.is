@@ -42,9 +42,9 @@ const dataSchema = z.object({
   familyName: z.string().nonempty(),
   house: z.string().optional(),
 })
-type FamilyAndPetsSchemaFormValues = z.infer<typeof dataSchema>
-const FamilyAndPets: Form = buildForm({
-  id: ApplicationTypes.FAMILY_AND_PETS,
+type SchemaFormValues = z.infer<typeof dataSchema>
+const form: Form = buildForm({
+  id: ApplicationTypes.EXAMPLE,
   ownerId: 'Aranja',
   name: 'Family and pets',
   children: [
@@ -72,7 +72,7 @@ const FamilyAndPets: Form = buildForm({
         buildTextField({
           id: 'familyName',
           name: 'What is the family name?',
-          condition: (formValue: FamilyAndPetsSchemaFormValues) => {
+          condition: (formValue: SchemaFormValues) => {
             return formValue.person?.length
               ? formValue.person[0].name !== 'bad name'
               : true
@@ -97,7 +97,7 @@ const FamilyAndPets: Form = buildForm({
 
 const application: Application = {
   id: '12315151515',
-  typeId: ApplicationTypes.FAMILY_AND_PETS,
+  typeId: ApplicationTypes.EXAMPLE,
   attachments: {},
   externalData: {},
   answers: {},
@@ -115,7 +115,7 @@ describe('ApplicationFormReducer', () => {
     activeSection: 0,
     activeSubSection: -1,
     dataSchema,
-    form: FamilyAndPets,
+    form,
     screens: [],
     progress: 0,
     formLeaves: [],
@@ -127,7 +127,7 @@ describe('ApplicationFormReducer', () => {
   })
   describe('initialize reducer', () => {
     it('should convert the form into valid leaves, screens, and sections', () => {
-      expect(initializedState.form).toBe(FamilyAndPets)
+      expect(initializedState.form).toBe(form)
       expect(initializedState.screens.length).toBe(4)
       expect(initializedState.screens[0].isNavigable).toBe(true)
       expect(initializedState.screens[1].isNavigable).toBe(true)
@@ -288,7 +288,7 @@ describe('ApplicationFormReducer', () => {
       const initialState = {
         dataSchema: z.object({ text: z.string() }),
         form: buildForm({
-          id: ApplicationTypes.FAMILY_AND_PETS,
+          id: ApplicationTypes.EXAMPLE,
           name: 'Test',
           ownerId: '222',
           children: [],

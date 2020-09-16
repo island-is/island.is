@@ -31,10 +31,12 @@ import { PaginatedNews } from './models/paginatedNews.model'
 import { Namespace } from './models/namespace.model'
 import { AboutPage } from './models/aboutPage.model'
 import { LandingPage } from './models/landingPage.model'
+import { AlertBanner } from './models/alertBanner.model'
 import { GenericPage } from './models/genericPage.model'
 import { GetNamespaceInput } from './dto/getNamespace.input'
 import { GetAboutPageInput } from './dto/getAboutPage.input'
 import { GetLandingPageInput } from './dto/getLandingPage.input'
+import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
 import { GetLifeEventsInput } from './dto/getLifeEvents.input'
@@ -46,6 +48,7 @@ import {
   getNamespace,
   getAboutPage,
   getLandingPage,
+  getAlertBanner,
   getFrontpageSliderList,
   getGenericPage,
   getAdgerdirPage,
@@ -70,6 +73,10 @@ import { LifeEventPage } from './models/lifeEventPage.model'
 import { PaginatedAdgerdirNews } from './models/paginatedAdgerdirNews.model'
 import { environment } from './environments'
 import { OrganizationTags } from './models/organizationTags.model'
+import { ArticleCategory } from './models/articleCategory.model'
+import { GetArticleCategoriesInput } from './dto/getArticleCategories.input'
+import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
+import { GetArticlesInput } from './dto/getArticles.input'
 
 const { cacheTime } = environment
 
@@ -78,6 +85,7 @@ const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
 @Resolver()
 @Directive(cacheControlDirective())
 export class CmsResolver {
+  constructor(private readonly elasticService: ElasticService) {}
   @Directive(cacheControlDirective())
   @Query(() => Article, { nullable: true })
   getArticle(@Args('input') input: GetArticleInput): Promise<Article | null> {
@@ -126,6 +134,14 @@ export class CmsResolver {
     @Args('input') input: GetLandingPageInput,
   ): Promise<LandingPage | null> {
     return getLandingPage(input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => AlertBanner, { nullable: true })
+  getAlertBanner(
+    @Args('input') input: GetAlertBannerInput,
+  ): Promise<AlertBanner | null> {
+    return getAlertBanner(input)
   }
 
   @Directive(cacheControlDirective())
@@ -227,6 +243,36 @@ export class CmsResolver {
     @Args('input') input: GetLifeEventsInput,
   ): Promise<LifeEventPage[]> {
     return getLifeEvents(input.lang)
+  }
+
+  @Query(() => [ArticleCategory])
+  async getArticleCategories(
+    @Args('input') input: GetArticleCategoriesInput,
+  ): Promise<ArticleCategory[]> {
+    // TODO: Move this to a deticated service?
+    const categoryResponse = await this.elasticService.getDocumentsByTypes(
+      SearchIndexes[input.lang],
+      { types: ['webArticleCategory'], size: input.size ?? 100 },
+    )
+    return categoryResponse.hits.hits.map<ArticleCategory>((response) =>
+      JSON.parse(response._source.response),
+    )
+  }
+
+  @Query(() => [Article])
+  async getArticles(
+    @Args('input') input: GetArticlesInput,
+  ): Promise<Article[]> {
+    const articlesResponse = await this.elasticService.getDocumentsByTag(
+      SearchIndexes[input.lang],
+      {
+        tag: { type: 'category', key: input.category },
+        size: input.size ?? 100,
+      },
+    )
+    return articlesResponse.hits.hits.map<Article>((response) =>
+      JSON.parse(response._source.response),
+    )
   }
 }
 

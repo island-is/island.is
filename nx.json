@@ -227,6 +227,9 @@
     },
     "judicial-system-consts": {
       "tags": []
+    },
+    "elastic-indexing": {
+      "tags": []
     }
   }
 }
