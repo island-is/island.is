@@ -64,9 +64,36 @@ module.exports = {
       {identity_resource_id: email.id, claim_name: 'email_verified'},
     ];
 
-    const identityResources = queryInterface.bulkInsert('identity_resource', [openId, profile, email], {})
+    const phone = {
+      id: 'bf311b49-8029-4901-ac4e-e7fe60f03854',//uuidv4(),
+      name: 'phone',
+      display_name: 'Your phone',
+      required: false,
+      emphasize: true,
+      enabled: true,
+      show_in_discovery_document: true}
 
-    const userClaims = queryInterface.bulkInsert('identity_resource_user_claim', openIdClaims.concat(profileClaims, emailClaims), {})
+    const phoneClaims = [
+      {identity_resource_id: phone.id, claim_name: 'phone'},
+      {identity_resource_id: phone.id, claim_name: 'phone_verified'},
+    ]
+
+    const address = {
+      id: '926cbe71-c842-4ab9-8ad9-d3e1229cf037',//uuidv4(),
+      name: 'address',
+      display_name: 'Your address',
+      required: false,
+      emphasize: true,
+      enabled: true,
+      show_in_discovery_document: true}
+
+    const addressClaims = [
+      {identity_resource_id: address.id, claim_name: 'address'},
+    ]
+
+    const identityResources = queryInterface.bulkInsert('identity_resource', [openId, profile, email, phone, address], {})
+
+    const userClaims = queryInterface.bulkInsert('identity_resource_user_claim', openIdClaims.concat(profileClaims, emailClaims, phoneClaims, addressClaims), {})
 
     return identityResources.then(userClaims)
   },
