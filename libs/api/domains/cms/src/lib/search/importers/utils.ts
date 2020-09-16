@@ -10,3 +10,19 @@ export const createTerms = (termStrings: string[]): string[] => {
   })
   return flatten(singleWords).filter((word) => word.length > 1) // fitler out 1 letter words and empty string
 }
+
+export const getReplacer = () => {
+  const seen = new WeakSet()
+
+  return (_key: unknown, value: unknown) => {
+    if (typeof value === 'object' && value !== null) {
+      if (seen.has(value)) {
+        return
+      }
+
+      seen.add(value)
+    }
+
+    return value
+  }
+}

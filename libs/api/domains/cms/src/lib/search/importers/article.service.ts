@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common'
 import { IArticle } from '../../generated/contentfulTypes'
 import { mapArticle, Article } from '../../models/article.model'
 
-import { createTerms } from './utils'
+import { createTerms, getReplacer } from './utils'
 
 @Injectable()
 export class ArticleSyncService {
@@ -18,23 +18,32 @@ export class ArticleSyncService {
 
     return entries
       .map<MappedData | boolean>((entry) => {
-        let mapped: Article
-
         try {
+          let mapped: Article
+          let response: string
+
           entry.fields.relatedArticles = entry.fields?.relatedArticles?.[0]
             ?.fields
             ? (entry.fields.relatedArticles.map(
-                ({
+                ({ sys, fields: { relatedArticles, ...updatedFields } }) => ({
                   sys,
-                  fields: { relatedArticles, ...prunedRelatedArticlesFields },
-                }) => ({
-                  sys,
-                  fields: prunedRelatedArticlesFields,
+                  fields: updatedFields,
                 }),
               ) as IArticle[])
             : []
 
           mapped = mapArticle(entry)
+
+          try {
+            response = JSON.stringify(mapped)
+          } catch (e) {
+            logger.error('Cannot stringify response', {
+              message: e.message,
+            })
+
+            // We return a response string without the broken part
+            response = JSON.stringify(mapped, getReplacer())
+          }
 
           return {
             _id: mapped.id,
@@ -46,7 +55,7 @@ export class ArticleSyncService {
               mapped.category?.title,
               mapped.group?.title,
             ]),
-            response: JSON.stringify(mapped),
+            response,
             tags: [
               {
                 key: entry.fields?.group?.fields?.slug,
