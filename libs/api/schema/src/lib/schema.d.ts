@@ -143,6 +143,7 @@ export type ArticleSubgroup = {
   __typename?: 'ArticleSubgroup'
   title: Scalars['String']
   slug: Scalars['String']
+  importance?: Maybe<Scalars['Int']>
 }
 
 export type OrganizationTag = {
@@ -315,8 +316,8 @@ export type Article = {
   contentStatus: Scalars['String']
   title: Scalars['String']
   slug: Scalars['String']
-  shortTitle: Scalars['String']
-  intro: Scalars['String']
+  shortTitle?: Maybe<Scalars['String']>
+  intro?: Maybe<Scalars['String']>
   body: Array<Slice>
   category?: Maybe<ArticleCategory>
   group?: Maybe<ArticleGroup>
@@ -494,9 +495,10 @@ export type LifeEventPage = {
   title: Scalars['String']
   slug: Scalars['String']
   intro: Scalars['String']
-  image: Image
+  image?: Maybe<Image>
   thumbnail?: Maybe<Image>
   content: Array<Slice>
+  category?: Maybe<ArticleCategory>
 }
 
 export type AdgerdirTags = {
@@ -1650,6 +1652,7 @@ export type ArticleSubgroupResolvers<
 > = {
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  importance?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1932,8 +1935,12 @@ export type ArticleResolvers<
   contentStatus?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  shortTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  shortTitle?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  intro?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   body?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
   category?: Resolver<
     Maybe<ResolversTypes['ArticleCategory']>,
@@ -2268,9 +2275,14 @@ export type LifeEventPageResolvers<
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  image?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
+  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   thumbnail?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   content?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
+  category?: Resolver<
+    Maybe<ResolversTypes['ArticleCategory']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 

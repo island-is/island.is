@@ -132,6 +132,7 @@ export type ArticleSubgroup = {
   __typename?: 'ArticleSubgroup'
   title: Scalars['String']
   slug: Scalars['String']
+  importance?: Maybe<Scalars['Int']>
 }
 
 export type OrganizationTag = {
@@ -304,8 +305,8 @@ export type Article = {
   contentStatus: Scalars['String']
   title: Scalars['String']
   slug: Scalars['String']
-  shortTitle: Scalars['String']
-  intro: Scalars['String']
+  shortTitle?: Maybe<Scalars['String']>
+  intro?: Maybe<Scalars['String']>
   body: Array<Slice>
   category?: Maybe<ArticleCategory>
   group?: Maybe<ArticleGroup>
@@ -483,9 +484,10 @@ export type LifeEventPage = {
   title: Scalars['String']
   slug: Scalars['String']
   intro: Scalars['String']
-  image: Image
+  image?: Maybe<Image>
   thumbnail?: Maybe<Image>
   content: Array<Slice>
+  category?: Maybe<ArticleCategory>
 }
 
 export type AdgerdirTags = {
@@ -1303,7 +1305,7 @@ export type GetLifeEventQuery = { __typename?: 'Query' } & {
       LifeEventPage,
       'title' | 'slug' | 'intro'
     > & {
-        image: { __typename?: 'Image' } & ImageFieldsFragment
+        image?: Maybe<{ __typename?: 'Image' } & ImageFieldsFragment>
         content: Array<
           | ({
               __typename?: 'PageHeaderSlice'
@@ -1347,7 +1349,7 @@ export type GetLifeEventsQuery = { __typename?: 'Query' } & {
       'title' | 'slug' | 'intro'
     > & {
         thumbnail?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
-        image: { __typename?: 'Image' } & Pick<Image, 'url'>
+        image?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'url'>>
       }
   >
 }
@@ -1524,7 +1526,7 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
         | ({ __typename?: 'LifeEventPage' } & Pick<
             LifeEventPage,
             'id' | 'title' | 'slug' | 'intro'
-          > & { image: { __typename?: 'Image' } & Pick<Image, 'id'> })
+          > & { image?: Maybe<{ __typename?: 'Image' } & Pick<Image, 'id'>> })
       >
     }
 }
@@ -1584,9 +1586,11 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
             LifeEventPage,
             'id' | 'title' | 'slug' | 'intro'
           > & {
-              image: { __typename?: 'Image' } & Pick<
-                Image,
-                'id' | 'url' | 'title' | 'contentType' | 'width' | 'height'
+              image?: Maybe<
+                { __typename?: 'Image' } & Pick<
+                  Image,
+                  'id' | 'url' | 'title' | 'contentType' | 'width' | 'height'
+                >
               >
               thumbnail?: Maybe<
                 { __typename?: 'Image' } & Pick<
