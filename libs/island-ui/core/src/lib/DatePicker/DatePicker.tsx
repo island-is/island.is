@@ -23,6 +23,7 @@ interface DatePickerProps {
   locale?: Locale
   value?: ReactDatePickerProps['value']
   minDate?: ReactDatePickerProps['minDate']
+  selected?: ReactDatePickerProps['selected']
   hasError?: boolean
   errorMessage?: string
   handleChange?: (date: Date) => void
@@ -38,6 +39,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   locale,
   value,
   minDate,
+  selected,
   hasError = false,
   errorMessage,
   handleChange,
@@ -106,7 +108,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     <div className={coreStyles.root}>
       <div className={cn(styles.root, 'island-ui-datepicker')}>
         <ReactDatePicker
-          selected={startDate}
+          selected={selected ?? startDate}
           locale={locale}
           minDate={minDate}
           showPopperArrow={false}

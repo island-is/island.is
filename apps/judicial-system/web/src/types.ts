@@ -56,6 +56,7 @@ export interface CreateDetentionReqStepOneFields {
   arrestDate: Date
   arrestTime: string
   requestedCourtDate: Date
+  requestedCourtTime: string
   requestedCustodyEndDate: Date
   requestedCustodyEndTime: string
   lawsBroken: string

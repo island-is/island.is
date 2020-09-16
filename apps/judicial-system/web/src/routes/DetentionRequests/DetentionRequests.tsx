@@ -73,7 +73,11 @@ export const DetentionRequests: React.FC = () => {
         <Logo />
       </div>
       <div className={styles.addDetentionRequestButtonContainer}>
-        <Button icon="plus" href="/stofna-krofu/grunnupplysingar">
+        <Button
+          icon="plus"
+          href="/stofna-krofu/grunnupplysingar"
+          onClick={() => window.localStorage.removeItem('workingCase')}
+        >
           Stofna nýja kröfu
         </Button>
       </div>

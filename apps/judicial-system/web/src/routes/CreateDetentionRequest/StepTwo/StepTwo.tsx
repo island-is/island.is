@@ -287,6 +287,7 @@ export const StepTwo: React.FC = () => {
               <Input
                 name="lawsBroken"
                 label="Lagaákvæði sem ætluð brot kærða þykja varða við"
+                value={workingCase.case.lawsBroken}
                 errorMessage={lawsBrokenErrorMessage}
                 hasError={lawsBrokenErrorMessage !== ''}
                 onBlur={(evt) => {
