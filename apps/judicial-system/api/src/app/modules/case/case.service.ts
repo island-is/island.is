@@ -80,7 +80,10 @@ export class CaseService {
 
     // Production or local development with judge phone number
     if (environment.production || environment.notifications.judgePhoneNumber) {
-      await this.smsService.sendSms('8589030', smsText)
+      await this.smsService.sendSms(
+        environment.notifications.judgePhoneNumber,
+        smsText,
+      )
     }
 
     const notification = new Notification()
