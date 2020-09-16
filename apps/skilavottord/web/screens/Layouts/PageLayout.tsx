@@ -6,13 +6,11 @@ import {
   GridRow,
   GridColumn,
   Footer,
-  Page,
 } from '@island.is/island-ui/core'
 import OutlinedBox from '@island.is/skilavottord-web/components/OutlinedBox/OutlinedBox'
 
 interface PageProps {
   children: ReactNode
-  isProcess?: boolean
 }
 
 export const PageLayout: FC<PageProps> = ({ children }) => (

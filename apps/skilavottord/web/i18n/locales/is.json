@@ -44,5 +44,13 @@
       "continue": "Back to my cars",
       "website": "Go to website"
     }
+  },
+  "cancelModal": {
+    "title": "Cancel the recycling process for this car",
+    "info": "When you cancel the recycling the car cannot be recycled at the recyclingcompanies untill you mark it for recycling again. You can simply redo the process if change your mind.",
+    "buttons": {
+      "cancel": "No",
+      "continue": "Yes"
+    }
   }
 }

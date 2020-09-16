@@ -12,6 +12,7 @@ export interface Translation {
   myCars: MyCars
   confirm: Confirm
   companies: Companies
+  cancelModal: CancelModal
 }
 
 export interface Home {
@@ -38,7 +39,12 @@ export interface Companies {
   subTitles: CompaniesSubTitles
   info: string
   buttons: CompaniesButton
-  checkbox: CheckBox
+}
+
+export interface CancelModal {
+  title: string
+  info: string
+  buttons: ProcessButtons
 }
 
 export interface MyCarsSubtitles {

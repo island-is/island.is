@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { useState } from 'react'
 import {
   Box,
   Stack,
@@ -11,14 +11,16 @@ import {
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '../Layouts'
 import CompanyList from './components/CompanyList'
-import { withApollo } from '@island.is/skilavottord-web/graphql/withApollo'
 import * as styles from './Companies.treat'
 import { useRouter } from 'next/router'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
+import { Modal } from '@island.is/skilavottord-web/components/Modal/Modal'
 
 const RecyclingCompanies = (props) => {
   const { companies } = props
+
+  const [showModal, setModal] = useState(false)
 
   const {
     activeLocale,
@@ -32,7 +34,7 @@ const RecyclingCompanies = (props) => {
   }
 
   const onCancel = () => {
-    Router.push(makePath('myCars'))
+    setModal(true)
   }
 
   return (
@@ -59,7 +61,7 @@ const RecyclingCompanies = (props) => {
           <CompanyList companies={companies} />
           <Box width="full" display="inlineFlex" justifyContent="spaceBetween">
             <Button variant="ghost" onClick={onCancel}>
-              <div className={styles.cancelButtonText}>{t.buttons.cancel}</div>
+              {t.buttons.cancel}
             </Button>
             <Button variant="normal" onClick={onContinue}>
               {t.buttons.continue}
@@ -67,6 +69,14 @@ const RecyclingCompanies = (props) => {
           </Box>
         </Stack>
       </Stack>
+      <Modal
+        show={showModal}
+        onCancel={() => setModal(false)}
+        onContinue={() => {
+          Router.push(makePath('myCars'))
+          setModal(false)
+        }}
+      />
     </ProcessPageLayout>
   )
 }
