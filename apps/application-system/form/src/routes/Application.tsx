@@ -26,9 +26,5 @@ export const Application = () => {
   if (loading) {
     return <p>Loading</p>
   }
-  return (
-    <>
-      <ApplicationForm application={data.getApplication} />
-    </>
-  )
+  return <ApplicationForm application={data.getApplication} />
 }
