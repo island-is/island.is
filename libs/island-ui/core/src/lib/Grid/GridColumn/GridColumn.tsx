@@ -13,13 +13,13 @@ import {
 
 import * as styles from './GridColumn.treat'
 import { ResponsiveSpace } from '../../Box/useBoxStyles'
-import { GridColumns } from './GridColumn.treat'
 
 type Breakpoint = keyof typeof theme['breakpoints']
 
 export interface GridColumnProps extends ResponsiveRangeProps {
-  span?: ResponsiveProp<GridColumns>
-  offset?: ResponsiveProp<GridColumns>
+  span?: ResponsiveProp<styles.GridColumns>
+  offset?: ResponsiveProp<styles.GridColumns>
+  order?: ResponsiveProp<styles.Order>
   paddingBottom?: ResponsiveSpace
   paddingTop?: ResponsiveSpace
   className?: string
@@ -31,6 +31,7 @@ export const GridColumn: FC<GridColumnProps> = ({
   children,
   span,
   offset,
+  order,
   paddingBottom,
   paddingTop,
   className,
@@ -75,6 +76,15 @@ export const GridColumn: FC<GridColumnProps> = ({
             styles.offsetMd,
             styles.offsetLg,
             styles.offsetXl,
+          ),
+        order !== undefined &&
+          resolveResponsiveProp(
+            order,
+            styles.orderXs,
+            styles.orderSm,
+            styles.orderMd,
+            styles.orderLg,
+            styles.orderXl,
           ),
       )}
     >
