@@ -2,17 +2,12 @@ import {
   buildDataProviderItem,
   buildExternalDataProvider,
   buildForm,
-  buildMultiField,
   buildSection,
   buildSubSection,
 } from '../../lib/formBuilders'
 import {
-  buildCheckboxField,
   buildCustomField,
   buildIntroductionField,
-  buildRadioField,
-  buildSelectField,
-  buildTextField,
 } from '../../lib/fieldBuilders'
 import { Form } from '../../types/Form'
 import { ApplicationTypes } from '../../types/ApplicationTypes'
