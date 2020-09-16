@@ -195,7 +195,7 @@ const Screen: FC<ScreenProps> = ({
                   rounded={true}
                   icon="arrowLeft"
                   onClick={goBack}
-                ></Button>
+                />
               </Box>
               <Box display="inlineFlex" padding={2} paddingRight="none">
                 {shouldSubmit ? (
@@ -225,7 +225,7 @@ const Screen: FC<ScreenProps> = ({
                         icon="arrowRight"
                         htmlType="submit"
                         rounded
-                      ></Button>
+                      />
                     </Box>
                   </>
                 )}

@@ -7,7 +7,7 @@ import {
 import * as z from 'zod'
 import { DrivingLessonsApplication } from './forms/DrivingLessonsApplication'
 import { nationalIdRegex } from '../examples/constants'
-import { ParentalLeaveForm } from '../ParentalLeave/ParentalLeaveForm'
+import { ReviewApplication } from './forms/ReviewApplication'
 
 type Events =
   | { type: 'APPROVE' }
@@ -16,6 +16,7 @@ type Events =
   | { type: 'ABORT' }
 
 const dataSchema = z.object({
+  passportPicture: z.array(z.object({})).nonempty(),
   school: z.string().nonempty(),
   teacher: z.string().nonempty(),
   type: z.enum(['B', 'AM', 'A', 'A1', 'A2', 'T']),
@@ -69,20 +70,29 @@ export const DrivingLessons: ApplicationTemplate<
       inReview: {
         meta: {
           name: 'In Review',
-          roles: [{ id: 'reviewer', form: ParentalLeaveForm }],
+          roles: [
+            {
+              id: 'reviewer',
+              form: ReviewApplication,
+              actions: [
+                { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
+                { event: 'REJECT', name: 'Hafna', type: 'reject' },
+              ],
+            },
+          ],
         },
         on: {
-          APPROVE: { target: 'payment' },
+          APPROVE: { target: 'approved' },
           REJECT: { target: 'draft' },
         },
       },
-      payment: {
-        meta: {
-          name: 'Greiðsla',
-          roles: [{ id: 'applicant', write: { externalData: ['payment'] } }],
-        },
-        on: { SUBMIT: { target: 'approved' } },
-      },
+      // payment: {
+      //   meta: {
+      //     name: 'Greiðsla',
+      //     roles: [{ id: 'applicant', write: { externalData: ['payment'] } }],
+      //   },
+      //   on: { SUBMIT: { target: 'approved' } },
+      // },
       approved: {
         meta: {
           name: 'Approved',

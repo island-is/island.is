@@ -18,7 +18,7 @@ export function extractPartialSchemaForValues(
             z.object({
               [key]: z.array(
                 extractPartialSchemaForValues(
-                  schema.shape[key]._def.type,
+                  schema.shape[key]?._def?.type,
                   answerToFocusOn as FormValue,
                 ),
               ),

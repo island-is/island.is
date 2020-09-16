@@ -6,7 +6,6 @@ import {
   buildSection,
 } from '../../../lib/formBuilders'
 import {
-  buildFileUploadField,
   buildIntroductionField,
   buildRadioField,
   buildSelectField,
@@ -19,10 +18,11 @@ import { ApplicationTypes } from '../../../types/ApplicationTypes'
 const yesOption = { value: 'yes', label: 'Já' }
 const noOption = { value: 'no', label: 'Nei' }
 
-export const DrivingLessonsApplication: Form = buildForm({
+//TODO change this
+export const ReviewApplication: Form = buildForm({
   id: ApplicationTypes.DRIVING_LESSONS,
   ownerId: 'TODO?',
-  name: 'Ökunám',
+  name: 'Samþykkja eða hafna umsókn um ökunám',
   children: [
     buildSection({
       id: 'student',
@@ -57,17 +57,6 @@ export const DrivingLessonsApplication: Form = buildForm({
               name: 'Póstnúmer og staður',
             }),
           ],
-        }),
-        buildFileUploadField({
-          id: 'passportPicture',
-          name: 'Passamynd',
-          introduction: 'Ökunámsumsókn krefst passamyndar',
-          uploadAccept: '.jpg .png',
-          uploadHeader:
-            'Dragðu skjalið hingað, eða smelltu á hnappinn að neðan',
-          uploadDescription: 'Myndin þarf að vera á .png eða .jpg sniðmáti',
-          upploadButtonLabel: 'Veldu skjal',
-          uploadMultiple: false,
         }),
       ],
     }),
@@ -192,13 +181,13 @@ export const DrivingLessonsApplication: Form = buildForm({
           name: 'Sækja gögn',
           id: 'fetchData',
           dataProviders: [
-            // buildDataProviderItem({
-            //   id: 'passportImgAndSignature',
-            //   title: 'Passamynd og undirskrift',
-            //   subTitle:
-            //     'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            //   type: DataProviderTypes.ExampleSucceeds,
-            // }),
+            buildDataProviderItem({
+              id: 'passportImgAndSignature',
+              title: 'Passamynd og undirskrift',
+              subTitle:
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+              type: DataProviderTypes.ExampleSucceeds,
+            }),
             buildDataProviderItem({
               id: 'healthInfo',
               title: 'Gögn úr Heilsuveru',
