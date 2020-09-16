@@ -167,7 +167,7 @@ export const StepTwo: React.FC = () => {
   ]
 
   return (
-    <Box marginTop={7}>
+    <Box marginTop={7} marginBottom={30}>
       <GridContainer>
         <GridRow>
           <GridColumn span={'3/12'}>

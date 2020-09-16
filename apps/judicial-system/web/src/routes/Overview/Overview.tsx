@@ -13,13 +13,14 @@ import { formatDate, capitalize } from '../../utils/formatters'
 import is from 'date-fns/locale/is'
 import { getRestrictionByValue } from '../../utils/stepHelper'
 import { CaseCustodyRestrictions } from '../../types'
+import { FormFooter } from '../../shared-components/FormFooter'
 
 export const Overview: React.FC = () => {
   const caseDraft = window.localStorage.getItem('workingCase')
   const caseDraftJSON = JSON.parse(caseDraft)
 
   return (
-    <Box marginTop={7}>
+    <Box marginTop={7} marginBottom={30}>
       <GridContainer>
         <GridRow>
           <GridColumn span={'3/12'}>
@@ -178,6 +179,12 @@ export const Overview: React.FC = () => {
                 </AccordionItem>
               </Accordion>
             </Box>
+            <FormFooter
+              previousUrl="/stofna-krofu/lagaakvaedi"
+              nextUrl="/"
+              nextButtonText="Staðfesta kröfu fyrir héraðsdóm"
+              confirmationText="Með því að ýta á þennan hnapp fær dómari á vakt tilkynningu um að krafan sé tilbúin."
+            />
           </GridColumn>
         </GridRow>
       </GridContainer>
