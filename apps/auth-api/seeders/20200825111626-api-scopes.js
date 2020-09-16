@@ -36,10 +36,6 @@ module.exports = {
     const userClaims = [];
 
     return queryInterface.bulkInsert('api_scope', scopes, {})
-
-    // return Promise.all([queryInterface.bulkInsert('api_scope', scopes, {}),
-    //   queryInterface.bulkInsert('api_scope_user_claim', userClaims, {})])
-
   },
 
   down: (queryInterface, Sequelize) => {
@@ -47,6 +43,6 @@ module.exports = {
     const userClaims =  queryInterface.bulkDelete('api_scope_user_claim', null, {});
     const apiScopes =  queryInterface.bulkDelete('api_scope', null, {});
 
-    return Promise.all([apiScopes, userClaims])
+    return userClaims.then(apiScopes)
   }
 };

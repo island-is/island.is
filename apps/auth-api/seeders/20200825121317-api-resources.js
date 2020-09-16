@@ -33,10 +33,17 @@ module.exports = {
       {api_resource_id: apiResources[1].id, value: '8I04CDGgyV5bddUZfz0ydCTBRuRTmn7frlxVhJy1krc=', type: 'SharedSecret'},
     ]
 
-    return Promise.all([queryInterface.bulkInsert('api_resource', apiResources, {}),
-      queryInterface.bulkInsert('api_resource_user_claim', userClaims, {}),
-      queryInterface.bulkInsert('api_resource_scope', scopes, {}),
-      queryInterface.bulkInsert('api_resource_secret', secrets, {})])
+    return new Promise((resolve, reject) => {
+      queryInterface.bulkInsert('api_resource', apiResources, {}).then(result => {
+        Promise.all([
+          queryInterface.bulkInsert('api_resource_user_claim', userClaims, {}),
+          queryInterface.bulkInsert('api_resource_scope', scopes, {}),
+          queryInterface.bulkInsert('api_resource_secret', secrets, {})
+        ]).then(result => {
+          resolve("done");
+        })
+      })
+    })
   },
 
   down: (queryInterface, Sequelize) => {
@@ -46,6 +53,12 @@ module.exports = {
     const userClaims =  queryInterface.bulkDelete('api_resource_user_claim', null, {});
     const apiResources =  queryInterface.bulkDelete('api_resource', null, {});
 
-    return Promise.all([apiResources, userClaims, scopes, secrets])
+    return new Promise((resolve, reject) => {
+      Promise.all([userClaims, scopes, secrets]).then(result => {
+        apiResources.then(result => {
+          resolve("done");
+        })
+      })
+    })
   }
 };

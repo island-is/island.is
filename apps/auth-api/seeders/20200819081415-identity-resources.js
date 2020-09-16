@@ -62,18 +62,18 @@ module.exports = {
       {identity_resource_id: email.id, claim_name: 'email_verified'},
     ];
 
-    const identityResources = queryInterface.bulkInsert('identity_resource', [openId, profile, email], {});
+    var identityResources = queryInterface.bulkInsert('identity_resource', [openId, profile, email], {})
 
-    const userClaims = queryInterface.bulkInsert('identity_resource_user_claim', openIdClaims.concat(profileClaims, emailClaims), {});
+    var userClaims = queryInterface.bulkInsert('identity_resource_user_claim', openIdClaims.concat(profileClaims, emailClaims), {})
 
-    return Promise.all([identityResources, userClaims])
+    return identityResources.then(userClaims)
   },
 
   down: (queryInterface, Sequelize) => {
 
-    const userClaims =  queryInterface.bulkDelete('identity_resource_user_claim', null, {});
-    const identityResources =  queryInterface.bulkDelete('identity_resource', null, {});
+    var identityResources =  queryInterface.bulkDelete('identity_resource', null, {});
+    var userClaims =  queryInterface.bulkDelete('identity_resource_user_claim', null, {});
 
-    return Promise.all([identityResources, userClaims])
+    return userClaims.then(identityResources)
   }
 };
