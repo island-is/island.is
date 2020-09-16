@@ -1,6 +1,11 @@
 import { style } from 'treat'
 
 
+export const sericeList = style ({
+  /*background:'yellow',
+  justifyContent:'center'*/
+})
+
 export const filter = style({
   marginTop:10
 })
@@ -21,7 +26,6 @@ export const radioButton = style({
 export const topSectionText = style({
   fontSize:24,
   margin: 'auto',
-  width:600, 
   padding: 10
 })
 

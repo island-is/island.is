@@ -24,6 +24,7 @@ export const ServiceCard = (props: ServiceCardProps) => {
 
   return (
     <Box
+      width="full"
       boxShadow="large"
       borderRadius="large"
       className={cn(styles.card, "service-card")}

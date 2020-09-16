@@ -2,7 +2,7 @@ import { style} from 'treat'
 
 export const card = style({
     padding:40,
-    marginBottom:40
+    marginBottom:40,
   })
 
 export const name = style({
@@ -52,7 +52,7 @@ export const priceItem=style ({
 
 export const category = style({
     display:'flex',
-    justifyContent:'spaceBetween'
+    flexWrap:'wrap'
 })
 
 export const access = style({
