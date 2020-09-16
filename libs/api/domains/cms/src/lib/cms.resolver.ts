@@ -16,7 +16,7 @@ import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { FrontpageSliderList } from './models/frontpageSliderList.model'
 import { GetArticleInput } from './dto/getArticle.input'
 import { News } from './models/news.model'
-import { GetNewsInput } from './dto/getNews.input'
+import { GetSingleNewsInput } from './dto/getSingleNews.input'
 import { GetNewsListInput } from './dto/getNewsList.input'
 import { GetAdgerdirNewsListInput } from './dto/getAdgerdirNewsList.input'
 import { GetAdgerdirPageInput } from './dto/getAdgerdirPage.input'
@@ -91,12 +91,6 @@ export class CmsResolver {
   @Query(() => Article, { nullable: true })
   getArticle(@Args('input') input: GetArticleInput): Promise<Article | null> {
     return getArticle(input?.slug ?? '', input?.lang ?? 'is-IS')
-  }
-
-  @Directive(cacheControlDirective())
-  @Query(() => News, { nullable: true })
-  getNews(@Args('input') input: GetNewsInput): Promise<News | null> {
-    return getNews(input.lang ?? 'is-IS', input.slug)
   }
 
   @Directive(cacheControlDirective())
@@ -247,17 +241,28 @@ export class CmsResolver {
   }
 
   @Query(() => [ArticleCategory])
-  async getArticleCategories(
+  getArticleCategories(
     @Args('input') input: GetArticleCategoriesInput,
   ): Promise<ArticleCategory[]> {
-    return this.cmsService.getArticleCategories(SearchIndexes[input.lang], input)
+    return this.cmsService.getArticleCategories(
+      SearchIndexes[input.lang],
+      input,
+    )
   }
 
   @Query(() => [Article])
-  async getArticles(
-    @Args('input') {lang, ...input}: GetArticlesInput,
+  getArticles(
+    @Args('input') { lang, ...input }: GetArticlesInput,
   ): Promise<Article[]> {
     return this.cmsService.getArticles(SearchIndexes[lang], input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => News, { nullable: true })
+  getSingleNews(
+    @Args('input') { lang, ...input }: GetSingleNewsInput,
+  ): Promise<News | null> {
+    return this.cmsService.getNews(SearchIndexes[lang], input)
   }
 }
 

@@ -609,7 +609,6 @@ export type Query = {
   __typename?: 'Query'
   helloWorld: HelloWorld
   getArticle?: Maybe<Article>
-  getNews?: Maybe<News>
   getNewsList: PaginatedNews
   getAdgerdirNewsList: PaginatedAdgerdirNews
   getNamespace?: Maybe<Namespace>
@@ -631,6 +630,7 @@ export type Query = {
   getLifeEvents: Array<LifeEventPage>
   getArticleCategories: Array<ArticleCategory>
   getArticles: Array<Article>
+  getSingleNews?: Maybe<News>
   searchResults: SearchResult
   singleItem?: Maybe<ContentItem>
   webSearchAutocomplete: WebSearchAutocomplete
@@ -647,10 +647,6 @@ export type QueryHelloWorldArgs = {
 
 export type QueryGetArticleArgs = {
   input: GetArticleInput
-}
-
-export type QueryGetNewsArgs = {
-  input: GetNewsInput
 }
 
 export type QueryGetNewsListArgs = {
@@ -737,6 +733,10 @@ export type QueryGetArticlesArgs = {
   input: GetArticlesInput
 }
 
+export type QueryGetSingleNewsArgs = {
+  input: GetSingleNewsInput
+}
+
 export type QuerySearchResultsArgs = {
   query: SearcherInput
 }
@@ -772,11 +772,6 @@ export type HelloWorldInput = {
 export type GetArticleInput = {
   slug?: Maybe<Scalars['String']>
   lang: Scalars['String']
-}
-
-export type GetNewsInput = {
-  slug: Scalars['String']
-  lang?: Maybe<Scalars['String']>
 }
 
 export type GetNewsListInput = {
@@ -885,6 +880,11 @@ export type GetArticlesInput = {
   lang: Scalars['String']
   category: Scalars['String']
   size?: Maybe<Scalars['Int']>
+}
+
+export type GetSingleNewsInput = {
+  slug: Scalars['String']
+  lang?: Maybe<Scalars['String']>
 }
 
 export type SearcherInput = {
@@ -1271,7 +1271,6 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>
   HelloWorldInput: HelloWorldInput
   GetArticleInput: GetArticleInput
-  GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
   GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
   GetNamespaceInput: GetNamespaceInput
@@ -1293,6 +1292,7 @@ export type ResolversTypes = {
   GetLifeEventsInput: GetLifeEventsInput
   GetArticleCategoriesInput: GetArticleCategoriesInput
   GetArticlesInput: GetArticlesInput
+  GetSingleNewsInput: GetSingleNewsInput
   SearcherInput: SearcherInput
   ContentLanguage: ContentLanguage
   ItemInput: ItemInput
@@ -1431,7 +1431,6 @@ export type ResolversParentTypes = {
   Query: {}
   HelloWorldInput: HelloWorldInput
   GetArticleInput: GetArticleInput
-  GetNewsInput: GetNewsInput
   GetNewsListInput: GetNewsListInput
   GetAdgerdirNewsListInput: GetAdgerdirNewsListInput
   GetNamespaceInput: GetNamespaceInput
@@ -1453,6 +1452,7 @@ export type ResolversParentTypes = {
   GetLifeEventsInput: GetLifeEventsInput
   GetArticleCategoriesInput: GetArticleCategoriesInput
   GetArticlesInput: GetArticlesInput
+  GetSingleNewsInput: GetSingleNewsInput
   SearcherInput: SearcherInput
   ItemInput: ItemInput
   WebSearchAutocompleteInput: WebSearchAutocompleteInput
@@ -2490,12 +2490,6 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetArticleArgs, 'input'>
   >
-  getNews?: Resolver<
-    Maybe<ResolversTypes['News']>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryGetNewsArgs, 'input'>
-  >
   getNewsList?: Resolver<
     ResolversTypes['PaginatedNews'],
     ParentType,
@@ -2621,6 +2615,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetArticlesArgs, 'input'>
+  >
+  getSingleNews?: Resolver<
+    Maybe<ResolversTypes['News']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetSingleNewsArgs, 'input'>
   >
   searchResults?: Resolver<
     ResolversTypes['SearchResult'],

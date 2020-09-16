@@ -514,7 +514,6 @@ type DocumentCategory {
 type Query {
   helloWorld(input: HelloWorldInput!): HelloWorld!
   getArticle(input: GetArticleInput!): Article
-  getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput!): PaginatedNews!
   getAdgerdirNewsList(input: GetAdgerdirNewsListInput!): PaginatedAdgerdirNews!
   getNamespace(input: GetNamespaceInput!): Namespace
@@ -536,6 +535,7 @@ type Query {
   getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
   getArticleCategories(input: GetArticleCategoriesInput!): [ArticleCategory!]!
   getArticles(input: GetArticlesInput!): [Article!]!
+  getSingleNews(input: GetSingleNewsInput!): News
   searchResults(query: SearcherInput!): SearchResult!
   singleItem(input: ItemInput!): ContentItem
   webSearchAutocomplete(input: WebSearchAutocompleteInput!): WebSearchAutocomplete!
@@ -553,11 +553,6 @@ input HelloWorldInput {
 input GetArticleInput {
   slug: String
   lang: String!
-}
-
-input GetNewsInput {
-  slug: String!
-  lang: String
 }
 
 input GetNewsListInput {
@@ -666,6 +661,11 @@ input GetArticlesInput {
   lang: String!
   category: String!
   size: Int
+}
+
+input GetSingleNewsInput {
+  slug: String!
+  lang: String
 }
 
 input SearcherInput {

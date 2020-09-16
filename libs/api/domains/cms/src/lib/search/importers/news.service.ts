@@ -10,9 +10,7 @@ export class NewsSyncService {
   processSyncData(items) {
     logger.info('Processing sync data for news')
 
-    return items.filter(
-      (item) => item.sys.contentType.sys.id === 'news',
-    )
+    return items.filter((item) => item.sys.contentType.sys.id === 'news')
   }
 
   doMapping(entries: INews[]): MappedData[] {
@@ -34,7 +32,7 @@ export class NewsSyncService {
               {
                 key: mapped.slug,
                 type: 'slug',
-              }
+              },
             ],
             dateCreated: mapped.date,
             dateUpdated: new Date().getTime().toString(),
