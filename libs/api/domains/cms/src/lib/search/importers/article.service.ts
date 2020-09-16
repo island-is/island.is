@@ -10,13 +10,11 @@ import { createTerms } from './utils'
 @Injectable()
 export class ArticleSyncService {
   processSyncData(items) {
-    return items.filter(
-      (item) => item.sys.contentType.sys.id === 'article',
-    )
+    return items.filter((item) => item.sys.contentType.sys.id === 'article')
   }
 
   doMapping(entries: IArticle[]): MappedData[] {
-    logger.info('Mapping articles', {count: entries.length})
+    logger.info('Mapping articles', { count: entries.length })
 
     return entries
       .map<MappedData | boolean>((entry) => {
