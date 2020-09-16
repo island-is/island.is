@@ -249,11 +249,12 @@ export class CmsResolver {
   async getArticleCategories(
     @Args('input') input: GetArticleCategoriesInput,
   ): Promise<ArticleCategory[]> {
-    // TODO: Move this to a deticated service?
+    // TODO: Move this to a dedicated service?
     const categoryResponse = await this.elasticService.getDocumentsByTypes(
       SearchIndexes[input.lang],
       { types: ['webArticleCategory'], size: input.size ?? 100 },
     )
+
     return categoryResponse.hits.hits.map<ArticleCategory>((response) =>
       JSON.parse(response._source.response),
     )

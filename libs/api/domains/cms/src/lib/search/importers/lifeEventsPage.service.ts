@@ -22,9 +22,8 @@ export class LifeEventsPageSyncService {
     logger.info('Mapping life event pages', { count: entries.length })
     return entries
       .map<MappedData | boolean>((entry) => {
-        let mapped: LifeEventPage
         try {
-          mapped = mapLifeEventPage(entry)
+          const mapped: LifeEventPage = mapLifeEventPage(entry)
 
           return {
             _id: mapped.id,
