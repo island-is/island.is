@@ -108,7 +108,7 @@ const RelatedArticles: FC<{
   return (
     <SidebarBox>
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h4">
+        <Typography variant="h4" as="h2">
           {title}
         </Typography>
         <Divider weight="alternate" />
@@ -240,7 +240,7 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
       {bullet && <Bullet align="left" top={bullet.offsetTop} />}
 
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h4">
+        <Typography variant="h4" as="h2">
           {title}
         </Typography>
         <Divider weight="alternate" />
