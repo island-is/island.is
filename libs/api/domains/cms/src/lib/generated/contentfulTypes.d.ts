@@ -170,7 +170,7 @@ export interface IArticleSubgroupFields {
   slug: string
 
   /** Importance */
-  importance?: number | undefined
+  importance?: number
 }
 
 /** Used inside groups to further categorize articles by subject */

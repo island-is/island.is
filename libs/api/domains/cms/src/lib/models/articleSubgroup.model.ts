@@ -8,7 +8,7 @@ export class ArticleSubgroup {
   title: string
 
   @Field({ nullable: true })
-  importance: number
+  importance?: number
 
   @Field()
   slug: string
