@@ -12,6 +12,10 @@ const FULL_WIDTH_SLICE_TYPES: Array<Slice['__typename']> = [
   'SectionWithImage',
 ]
 
+export const RichTextPadding: RenderConfig['padding'] = [
+  { types: ['Asset', 'Asset'], space: 2 },
+]
+
 const renderComponent = (slice: Slice, config: RenderConfig) => {
   let children = defaultRenderComponent(slice, config)
 
@@ -43,7 +47,8 @@ export const RichText: FC<{
   body: Slice[]
   config?: Partial<RenderConfig>
 }> = memo(({ body, config = {} }) => {
-  return <>{renderSlices(body, { renderComponent, ...config })}</>
+  config = { renderComponent, padding: RichTextPadding, ...config }
+  return <>{renderSlices(body, config)}</>
 })
 
 export default RichText

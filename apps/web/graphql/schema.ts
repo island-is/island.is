@@ -174,6 +174,7 @@ export type Slice =
   | FaqList
   | EmbeddedVideo
   | SectionWithImage
+  | Asset
 
 export type PageHeaderSlice = {
   __typename?: 'PageHeaderSlice'
@@ -298,6 +299,14 @@ export type SectionWithImage = {
   html: Html
 }
 
+export type Asset = {
+  __typename?: 'Asset'
+  id: Scalars['ID']
+  url: Scalars['String']
+  title: Scalars['String']
+  contentType: Scalars['String']
+}
+
 export type Article = {
   __typename?: 'Article'
   id: Scalars['ID']
@@ -306,7 +315,7 @@ export type Article = {
   slug: Scalars['String']
   shortTitle: Scalars['String']
   intro: Scalars['String']
-  containsApplicationForm: Scalars['Boolean']
+  containsApplicationForm?: Maybe<Scalars['Boolean']>
   body: Array<Slice>
   category?: Maybe<ArticleCategory>
   group?: Maybe<ArticleGroup>
@@ -523,6 +532,7 @@ export type ContentItem = {
   category?: Maybe<Scalars['String']>
   categorySlug?: Maybe<Scalars['String']>
   categoryDescription?: Maybe<Scalars['String']>
+  containsApplicationForm?: Maybe<Scalars['Boolean']>
   group?: Maybe<Scalars['String']>
   subgroup?: Maybe<Scalars['String']>
   groupSlug?: Maybe<Scalars['String']>
@@ -1061,6 +1071,7 @@ export type GetAboutPageQuery = { __typename?: 'Query' } & {
         | ({
             __typename?: 'SectionWithImage'
           } & AllSlicesSectionWithImageFragment)
+        | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
       >
     }
 }
@@ -1091,7 +1102,12 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
   getArticle?: Maybe<
     { __typename?: 'Article' } & Pick<
       Article,
-      'id' | 'slug' | 'title' | 'shortTitle' | 'intro'
+      | 'id'
+      | 'slug'
+      | 'title'
+      | 'shortTitle'
+      | 'intro'
+      | 'containsApplicationForm'
     > & {
         body: Array<
           | ({
@@ -1120,6 +1136,7 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
           | ({
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
+          | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
         >
         group?: Maybe<
           { __typename?: 'ArticleGroup' } & Pick<
@@ -1177,6 +1194,7 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
                 | ({
                     __typename?: 'SectionWithImage'
                   } & AllSlicesSectionWithImageFragment)
+                | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
               >
             }
         >
@@ -1205,7 +1223,7 @@ export type GetArticlesQuery = { __typename?: 'Query' } & {
   getArticles: Array<
     { __typename?: 'Article' } & Pick<
       Article,
-      'intro' | 'slug' | 'title' | 'containsApplicationForm'
+      'intro' | 'containsApplicationForm' | 'slug' | 'title'
     > & {
         category?: Maybe<
           { __typename?: 'ArticleCategory' } & Pick<ArticleCategory, 'title'>
@@ -1293,6 +1311,7 @@ export type GetLandingPageQuery = { __typename?: 'Query' } & {
           | ({
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
+          | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
         >
       }
   >
@@ -1336,6 +1355,7 @@ export type GetLifeEventQuery = { __typename?: 'Query' } & {
           | ({
               __typename?: 'SectionWithImage'
             } & AllSlicesSectionWithImageFragment)
+          | ({ __typename?: 'Asset' } & AllSlicesAssetFragment)
         >
       }
   >
@@ -1609,6 +1629,11 @@ export type ImageFieldsFragment = { __typename: 'Image' } & Pick<
   'id' | 'title' | 'url' | 'contentType' | 'width' | 'height'
 >
 
+export type AssetFieldsFragment = { __typename: 'Asset' } & Pick<
+  Asset,
+  'id' | 'title' | 'url' | 'contentType'
+>
+
 export type PageHeaderFieldsFragment = { __typename: 'PageHeaderSlice' } & Pick<
   PageHeaderSlice,
   'id' | 'title' | 'introduction' | 'navigationText'
@@ -1827,6 +1852,10 @@ export type AllSlicesSectionWithImageFragment = {
   __typename?: 'SectionWithImage'
 } & SectionWithImageFieldsFragment
 
+export type AllSlicesAssetFragment = {
+  __typename?: 'Asset'
+} & AssetFieldsFragment
+
 export type AllSlicesFragment =
   | AllSlicesPageHeaderSliceFragment
   | AllSlicesTimelineSliceFragment
@@ -1844,3 +1873,4 @@ export type AllSlicesFragment =
   | AllSlicesFaqListFragment
   | AllSlicesEmbeddedVideoFragment
   | AllSlicesSectionWithImageFragment
+  | AllSlicesAssetFragment

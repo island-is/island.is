@@ -1,24 +1,30 @@
-import React, { forwardRef } from 'react'
-import { Box } from '../Box/Box'
+import React, { forwardRef, ComponentPropsWithRef } from 'react'
+import { Box, BoxProps } from '../Box/Box'
 import { Typography } from '../Typography/Typography'
 import { Tag, TagVariant } from '../Tag/Tag'
 import * as styles from './LinkCard.treat'
 
-export interface LinkCardProps {
+export interface LinkCardProps extends ComponentPropsWithRef<'div'> {
   onClick?: () => void
-  children: string
+  background?: BoxProps['background']
   tag?: string
   tagVariant?: TagVariant
 }
 
-export const LinkCard = forwardRef<HTMLAnchorElement, LinkCardProps>(
+export const LinkCard = forwardRef<HTMLDivElement, LinkCardProps>(
   (
-    { onClick, children, tag, tagVariant = 'darkerBlue' }: LinkCardProps,
+    {
+      onClick,
+      background = 'blue100',
+      children,
+      tag,
+      tagVariant = 'darkerBlue',
+    }: LinkCardProps,
     ref,
   ) => {
     return (
       <Box
-        background="blue100"
+        background={background}
         borderRadius="large"
         position="relative"
         display="flex"

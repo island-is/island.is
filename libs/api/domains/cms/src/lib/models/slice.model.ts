@@ -1,6 +1,12 @@
 import { createUnionType } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
-import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
+import {
+  Document,
+  BLOCKS,
+  Block,
+  TopLevelBlock,
+} from '@contentful/rich-text-types'
+import { Asset as ContentfulAsset } from 'contentful'
 
 import {
   IPageHeader,
@@ -20,6 +26,7 @@ import {
 } from '../generated/contentfulTypes'
 
 import { Image, mapImage } from './image.model'
+import { Asset, mapAsset } from './asset.model'
 import {
   MailingListSignupSlice,
   mapMailingListSignup,
@@ -74,6 +81,7 @@ export const Slice = createUnionType({
     FaqList,
     EmbeddedVideo,
     SectionWithImage,
+    Asset,
   ],
 })
 
@@ -132,9 +140,13 @@ export const mapDocument = (
         slices.push(mapSlice(block.data.target))
         break
       case BLOCKS.EMBEDDED_ASSET:
-        slices.push(mapImage(block.data.target))
+        if (block.data.target.fields.file) {
+          block.data.target.fields.file.details?.image
+            ? slices.push(mapImage(block.data.target))
+            : slices.push(mapAsset(block.data.target))
+        }
         break
-      default: {
+      default:
         // ignore last empty paragraph because of this annoying bug:
         // https://github.com/contentful/rich-text/issues/101
         if (index === document.content.length - 1 && isEmptyNode(block)) return
@@ -146,7 +158,6 @@ export const mapDocument = (
         } else {
           slices.push(mapHtml(block, `${idPrefix}:${index}`))
         }
-      }
     }
   })
 
