@@ -1,6 +1,6 @@
 import React, { FC } from 'react'
 import { DividerField } from '@island.is/application/template'
-import { Box, Divider, Typography } from '@island.is/island-ui/core'
+import { Box, Typography } from '@island.is/island-ui/core'
 
 const DividerFormField: FC<{
   field: DividerField
