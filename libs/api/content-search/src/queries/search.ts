@@ -1,5 +1,3 @@
-import { logger } from '@island.is/logging'
-
 interface SearchInput {
   queryString: string
   size: number
