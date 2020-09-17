@@ -135,17 +135,21 @@ module.exports = {
       );
 
       CREATE TABLE grants (
-        id uuid NOT NULL,
         key VARCHAR NOT NULL,
-        client_id  VARCHAR NOT NULL,
-        data  VARCHAR NOT NULL,
-        expiration TIMESTAMP WITH TIME ZONE DEFAULT now(),
-        subject_id VARCHAR NOT NULL,
         type VARCHAR NOT NULL,
+        subject_id VARCHAR NOT NULL,
+        session_id VARCHAR NOT NULL,
+        client_id VARCHAR NOT NULL,
+        description VARCHAR,
+        creation_time TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+        expiration TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+        consumed_time TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        data VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
-        PRIMARY KEY (id),
-        CONSTRAINT FK_grant_client FOREIGN KEY (client_id) REFERENCES client (client_id)
+        PRIMARY KEY (key),
+        CONSTRAINT FK_grant_client FOREIGN KEY (client_id) REFERENCES client (client_id),
+        CONSTRAINT FK_grant_user_identity FOREIGN KEY (subject_id) REFERENCES user_identity (subject_id)
       );
 
     COMMIT;

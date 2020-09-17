@@ -1,27 +1,12 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript'
+import { Column, DataType, Model, PrimaryKey, Table } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
-const { v4: uuidv4 } = require('uuid')
 
 @Table({
   tableName: 'grants',
-  indexes: [
-    {
-      fields: ['id'],
-    },
-  ],
 })
 export class Grant extends Model<Grant> {
-  @Column({
-    type: DataType.UUID,
-    primaryKey: true,
-    allowNull: false,
-    defaultValue: DataType.UUIDV4,
-  })
-  @ApiProperty({
-    example: uuidv4(),
-  })
-  id: string
 
+  @PrimaryKey
   @Column({
     type: DataType.STRING,
     allowNull: false,
@@ -36,18 +21,52 @@ export class Grant extends Model<Grant> {
     allowNull: false,
   })
   @ApiProperty({
-    example: 'postman',
+    example: 'type',
   })
-  clientId: string
+  type: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty({
-    example: 'data',
+    example: 'subjectId',
   })
-  data: string
+  subjectId: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty({
+    example: 'sessionId',
+  })
+  sessionId: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty({
+    example: 'postman',
+  })
+  clientId: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiProperty({
+    example: 'description',
+  })
+  description: string
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
+  @ApiProperty()
+  creationTime: string
 
   @Column({
     type: DataType.DATE,
@@ -60,20 +79,18 @@ export class Grant extends Model<Grant> {
   expiration: string
 
   @Column({
-    type: DataType.STRING,
-    allowNull: false,
+    type: DataType.DATE,
+    allowNull: true,
   })
-  @ApiProperty({
-    example: 'subject_id',
-  })
-  subject_id: string
+  @ApiProperty()
+  consumedTime: string
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty({
-    example: 'type',
+    example: 'data',
   })
-  type: string
+  data: string
 }
