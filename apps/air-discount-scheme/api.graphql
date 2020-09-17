@@ -406,7 +406,17 @@ type LifeEventPage {
   image: Image!
   thumbnail: Image
   content: [Slice!]!
+  category: ArticleCategory
 }
+
+type Url {
+  id: ID!
+  title: String
+  page: UrlPage!
+  urlsList: [String!]!
+}
+
+union UrlPage = Article | ArticleCategory | News | LifeEventPage
 
 type AdgerdirTags {
   items: [AdgerdirTag!]!
@@ -489,9 +499,11 @@ type Query {
   getMenu(input: GetMenuInput!): Menu
   getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
   getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
+  getLifeEventsInCategory(input: GetLifeEventsInCategoryInput!): [LifeEventPage!]!
   getArticleCategories(input: GetArticleCategoriesInput!): [ArticleCategory!]!
   getArticles(input: GetArticlesInput!): [Article!]!
   getSingleNews(input: GetSingleNewsInput!): News
+  getUrl(input: GetUrlInput!): Url
   flightLegs(input: FlightLegsInput!): [FlightLeg!]!
   user: User
   discounts: [Discount!]
@@ -599,6 +611,11 @@ input GetLifeEventsInput {
   lang: String!
 }
 
+input GetLifeEventsInCategoryInput {
+  slug: String!
+  lang: String!
+}
+
 input GetArticleCategoriesInput {
   lang: String!
   size: Int
@@ -613,6 +630,11 @@ input GetArticlesInput {
 input GetSingleNewsInput {
   slug: String!
   lang: String
+}
+
+input GetUrlInput {
+  slug: String!
+  lang: String!
 }
 
 input FlightLegsInput {

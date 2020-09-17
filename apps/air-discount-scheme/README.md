@@ -1,4 +1,4 @@
-# Air Discount Scheme - Loftbru
+# Air Discount Scheme - Loftbrú
 
 ## About
 
@@ -64,7 +64,7 @@ Navigate to [localhost:4200](http://localhost:4200) for the website or
 
 ## Shortcuts
 
-Because of the short timeline this assignment had, there were shortcuts taken
+Because of the short timeline this assignment had, there were few shortcuts taken
 that can be improved upon:
 
 - The authentication is pretty primitive, the IDP is still in development at
