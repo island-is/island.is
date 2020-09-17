@@ -1,5 +1,6 @@
 import { FormItem } from './Form'
 import { Condition } from './Condition'
+import { CallToAction } from './StateMachine'
 
 export interface Option {
   value: string
@@ -31,6 +32,8 @@ export enum FieldTypes {
   SELECT = 'SELECT',
   TEXT = 'TEXT',
   FILEUPLOAD = 'FILEUPLOAD',
+  REVIEW = 'REVIEW',
+  DIVIDER = 'DIVIDER',
 }
 
 export enum CustomFieldComponents {
@@ -47,6 +50,8 @@ export enum FieldComponents {
   RADIO = 'RadioFormField',
   SELECT = 'SelectFormField',
   FILEUPLOAD = 'FileUploadFormField',
+  DIVIDER = 'DividerFormField',
+  REVIEW = 'ReviewFormField',
 }
 
 export interface Question extends BaseField {
@@ -107,6 +112,17 @@ export interface FileUploadField extends Question {
   readonly uploadAccept?: string
 }
 
+export interface ReviewField extends BaseField {
+  readonly type: FieldTypes.REVIEW
+  component: FieldComponents.REVIEW
+  readonly actions: CallToAction[]
+}
+
+export interface DividerField extends BaseField {
+  readonly type: FieldTypes.DIVIDER
+  component: FieldComponents.DIVIDER
+}
+
 export interface CustomField extends Question {
   readonly type: FieldTypes.CUSTOM
   readonly component: CustomFieldComponents
@@ -122,3 +138,5 @@ export type Field =
   | SelectField
   | TextField
   | FileUploadField
+  | DividerField
+  | ReviewField

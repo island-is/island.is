@@ -15,7 +15,6 @@ const SelectFormField: FC<Props> = ({
 
   return (
     <div>
-      {showFieldName && <Typography variant="p">{name}</Typography>}
       <Box paddingTop={2}>
         <SelectController
           label={name}

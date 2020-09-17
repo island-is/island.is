@@ -33,7 +33,7 @@ export interface ApplicationContext {
   application: Application
 }
 
-type CallToAction<T extends EventObject = AnyEventObject> = {
+export type CallToAction<T extends EventObject = AnyEventObject> = {
   event: Event<T> | string
   name: string
   type: 'primary' | 'subtle' | 'reject' | string

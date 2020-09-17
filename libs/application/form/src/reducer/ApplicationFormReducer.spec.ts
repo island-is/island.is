@@ -168,6 +168,23 @@ describe('ApplicationFormReducer', () => {
       expect(initializedState.activeScreen).toBe(2)
       expect(initializedState.activeSection).toBe(1)
     })
+    it('should go to the first screen although there are answers, if and only if the current form is in review mode', () => {
+      const answers = {
+        person: [{ age: '19', name: 'Ingolfur' }],
+        familyName: 'Arnarson',
+      }
+      const state = {
+        ...initialState,
+        form: { ...form, formMode: 'review' as const },
+        application: {
+          ...application,
+          answers,
+        },
+      }
+      const initializedState = initializeReducer(state)
+      expect(initializedState.activeScreen).toBe(0)
+      expect(initializedState.activeSection).toBe(0)
+    })
   })
   describe('next screen', () => {
     const action = { type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN, payload: {} }

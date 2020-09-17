@@ -77,7 +77,7 @@ const FileUploadFormField: FC<Props> = ({
     introduction,
     uploadDescription = 'Documents accepted with extension: .pdf, .docx, .rtf',
     uploadHeader = 'Drag documents here to upload',
-    upploadButtonLabel = 'Select documents to upload',
+    uploadButtonLabel = 'Select documents to upload',
   } = field
   const { clearErrors, setValue } = useFormContext()
   const [uploadError, setUploadError] = useState<string | undefined>(undefined)
@@ -233,7 +233,7 @@ const FileUploadFormField: FC<Props> = ({
                 fileList={state}
                 header={uploadHeader}
                 description={uploadDescription}
-                buttonLabel={upploadButtonLabel}
+                buttonLabel={uploadButtonLabel}
                 onChange={onFileChange}
                 onRemove={onRemoveFile}
                 errorMessage={error || uploadError}

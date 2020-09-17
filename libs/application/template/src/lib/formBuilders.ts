@@ -12,6 +12,7 @@ import {
   SectionChildren,
   SubSection,
   DataProviderItem,
+  FormMode,
 } from '../types/Form'
 import { ApplicationTypes } from '../types/ApplicationTypes'
 import { DataProviderTypes } from '../types/DataProvider'
@@ -20,6 +21,7 @@ export function buildForm(data: {
   id: ApplicationTypes
   ownerId: string
   name: string
+  formMode?: FormMode
   children: FormChildren[]
   icon?: string
 }): Form {

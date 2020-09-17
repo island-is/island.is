@@ -4,16 +4,19 @@ import {
   CustomField,
   CustomFieldComponents,
   DateField,
+  DividerField,
   FieldComponents,
   FieldTypes,
+  FieldWidth,
+  FileUploadField,
   IntroductionField,
   Option,
   RadioField,
+  ReviewField,
   SelectField,
   TextField,
-  FileUploadField,
-  FieldWidth,
 } from '../types/Fields'
+import { CallToAction } from '../types/StateMachine'
 
 export function buildCheckboxField(data: {
   condition?: Condition
@@ -264,5 +267,32 @@ export function buildFileUploadField(data: {
     uploadAccept,
     type: FieldTypes.FILEUPLOAD,
     component: FieldComponents.FILEUPLOAD,
+  }
+}
+
+export function buildDividerField(data: { name: string }): DividerField {
+  const { name } = data
+  return {
+    children: undefined,
+    type: FieldTypes.DIVIDER,
+    component: FieldComponents.DIVIDER,
+    id: name,
+    name,
+  }
+}
+
+export function buildReviewField(data: {
+  id: string
+  name: string
+  actions: CallToAction[]
+}): ReviewField {
+  const { id, name, actions } = data
+  return {
+    children: undefined,
+    id,
+    name,
+    actions,
+    type: FieldTypes.REVIEW,
+    component: FieldComponents.REVIEW,
   }
 }

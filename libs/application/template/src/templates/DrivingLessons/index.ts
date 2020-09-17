@@ -16,7 +16,7 @@ type Events =
   | { type: 'ABORT' }
 
 const dataSchema = z.object({
-  passportPicture: z.array(z.object({})).nonempty(),
+  passportPicture: z.any().optional(),
   school: z.string().nonempty(),
   teacher: z.string().nonempty(),
   type: z.enum(['B', 'AM', 'A', 'A1', 'A2', 'T']),
@@ -31,6 +31,7 @@ const dataSchema = z.object({
     address: z.string().nonempty(),
     zipCode: z.string().nonempty(),
   }),
+  approveExternalData: z.boolean().refine((v) => v === true),
   useGlasses: z.enum(['yes', 'no']),
   damagedEyeSight: z.enum(['yes', 'no']),
   limitedFieldOfView: z.enum(['yes', 'no']),
@@ -72,12 +73,13 @@ export const DrivingLessons: ApplicationTemplate<
           name: 'In Review',
           roles: [
             {
-              id: 'reviewer',
+              id: 'applicant', // TODO this should be reviewer
               form: ReviewApplication,
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
               ],
+              read: 'all',
             },
           ],
         },

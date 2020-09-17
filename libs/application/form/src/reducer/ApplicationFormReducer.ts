@@ -35,7 +35,8 @@ export function initializeReducer(
   const formLeaves: FormLeaf[] = getFormLeaves(form) // todo add conditions here to set isVisible: true/false
   const sections = getSectionsInForm(form)
   const screens = convertLeavesToScreens(formLeaves, answers)
-  const currentScreen = findCurrentScreen(screens, answers)
+  const currentScreen =
+    form.formMode === 'review' ? 0 : findCurrentScreen(screens, answers)
 
   return moveToScreen(
     {

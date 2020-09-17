@@ -6,7 +6,7 @@ import {
   buildSection,
 } from '../../../lib/formBuilders'
 import {
-  buildFileUploadField,
+  buildDividerField,
   buildIntroductionField,
   buildRadioField,
   buildSelectField,
@@ -34,41 +34,46 @@ export const DrivingLessonsApplication: Form = buildForm({
           children: [
             buildTextField({
               id: 'student.name',
-              name: 'Nafn nemandi',
-              disabled: true,
+              name: 'Nafn nemanda',
             }),
             buildTextField({
               id: 'student.parentEmail',
-              name: 'Netfang forráðamans',
-              disabled: true,
+              name: 'Netfang forráðamanns',
             }),
+            buildDividerField({ name: 'Testing the divider component' }),
             buildTextField({
               id: 'student.nationalId',
               name: 'Kennitala nemanda',
-              disabled: true,
+              width: 'half',
             }),
             buildTextField({
               id: 'student.phoneNumber',
               name: 'Símanúmer',
+              width: 'half',
             }),
-            buildTextField({ id: 'student.address', name: 'Heimilisfang' }),
+            buildTextField({
+              id: 'student.address',
+              name: 'Heimilisfang',
+              width: 'half',
+            }),
             buildTextField({
               id: 'student.zipCode',
               name: 'Póstnúmer og staður',
+              width: 'half',
             }),
           ],
         }),
-        buildFileUploadField({
-          id: 'passportPicture',
-          name: 'Passamynd',
-          introduction: 'Ökunámsumsókn krefst passamyndar',
-          uploadAccept: '.jpg .png',
-          uploadHeader:
-            'Dragðu skjalið hingað, eða smelltu á hnappinn að neðan',
-          uploadDescription: 'Myndin þarf að vera á .png eða .jpg sniðmáti',
-          upploadButtonLabel: 'Veldu skjal',
-          uploadMultiple: false,
-        }),
+        // buildFileUploadField({
+        //   id: 'passportPicture',
+        //   name: 'Passamynd',
+        //   introduction: 'Ökunámsumsókn krefst passamyndar',
+        //   uploadAccept: '.jpg .png',
+        //   uploadHeader:
+        //     'Dragðu skjalið hingað, eða smelltu á hnappinn að neðan',
+        //   uploadDescription: 'Myndin þarf að vera á .png eða .jpg sniðmáti',
+        //   uploadButtonLabel: 'Veldu skjal',
+        //   uploadMultiple: false,
+        // }),
       ],
     }),
     buildSection({
@@ -163,7 +168,7 @@ export const DrivingLessonsApplication: Form = buildForm({
       children: [
         buildMultiField({
           id: 'eyeSight',
-          name: 'HeilbrigðisUpplýsingar',
+          name: 'Heilbrigðisupplýsingar',
           children: [
             buildRadioField({
               id: 'useGlasses',
@@ -185,20 +190,13 @@ export const DrivingLessonsApplication: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'fetchData',
+      id: 'approveExternalData',
       name: 'Sækja gögn',
       children: [
         buildExternalDataProvider({
           name: 'Sækja gögn',
           id: 'fetchData',
           dataProviders: [
-            // buildDataProviderItem({
-            //   id: 'passportImgAndSignature',
-            //   title: 'Passamynd og undirskrift',
-            //   subTitle:
-            //     'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            //   type: DataProviderTypes.ExampleSucceeds,
-            // }),
             buildDataProviderItem({
               id: 'healthInfo',
               title: 'Gögn úr Heilsuveru',
@@ -216,8 +214,9 @@ export const DrivingLessonsApplication: Form = buildForm({
       children: [
         buildIntroductionField({
           id: 'overview',
-          name: 'Hvað á eiginlega að koma hér?',
-          introduction: 'TODO IMPLEMENT',
+          name: 'Takk fyrir að sækja um?',
+          introduction:
+            'Með því að smella á Submit hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
         }),
       ],
     }),
