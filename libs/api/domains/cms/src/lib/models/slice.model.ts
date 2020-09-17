@@ -1,10 +1,6 @@
 import { createUnionType } from '@nestjs/graphql'
 import { ApolloError } from 'apollo-server-express'
-import {
-  Document,
-  BLOCKS,
-  Block,
-} from '@contentful/rich-text-types'
+import { Document, BLOCKS, Block } from '@contentful/rich-text-types'
 
 import {
   IPageHeader,
