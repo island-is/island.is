@@ -490,6 +490,11 @@ export type Menu = {
   links: Array<Link>
 }
 
+export type AdgerdirTags = {
+  __typename?: 'AdgerdirTags'
+  items: Array<AdgerdirTag>
+}
+
 export type LifeEventPage = {
   __typename?: 'LifeEventPage'
   id: Scalars['ID']
@@ -499,11 +504,6 @@ export type LifeEventPage = {
   image: Image
   thumbnail?: Maybe<Image>
   content: Array<Slice>
-}
-
-export type AdgerdirTags = {
-  __typename?: 'AdgerdirTags'
-  items: Array<AdgerdirTag>
 }
 
 export type PaginatedAdgerdirNews = {
@@ -1260,10 +1260,10 @@ export type ResolversTypes = {
   AlertBanner: ResolverTypeWrapper<AlertBanner>
   GenericPage: ResolverTypeWrapper<GenericPage>
   Menu: ResolverTypeWrapper<Menu>
+  AdgerdirTags: ResolverTypeWrapper<AdgerdirTags>
   LifeEventPage: ResolverTypeWrapper<
     Omit<LifeEventPage, 'content'> & { content: Array<ResolversTypes['Slice']> }
   >
-  AdgerdirTags: ResolverTypeWrapper<AdgerdirTags>
   PaginatedAdgerdirNews: ResolverTypeWrapper<PaginatedAdgerdirNews>
   OrganizationTags: ResolverTypeWrapper<OrganizationTags>
   SearchResult: ResolverTypeWrapper<
@@ -1422,10 +1422,10 @@ export type ResolversParentTypes = {
   AlertBanner: AlertBanner
   GenericPage: GenericPage
   Menu: Menu
+  AdgerdirTags: AdgerdirTags
   LifeEventPage: Omit<LifeEventPage, 'content'> & {
     content: Array<ResolversParentTypes['Slice']>
   }
-  AdgerdirTags: AdgerdirTags
   PaginatedAdgerdirNews: PaginatedAdgerdirNews
   OrganizationTags: OrganizationTags
   SearchResult: Omit<SearchResult, 'items'> & {
@@ -2285,6 +2285,18 @@ export type MenuResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type AdgerdirTagsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['AdgerdirTags'] = ResolversParentTypes['AdgerdirTags']
+> = {
+  items?: Resolver<
+    Array<ResolversTypes['AdgerdirTag']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type LifeEventPageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['LifeEventPage'] = ResolversParentTypes['LifeEventPage']
@@ -2296,18 +2308,6 @@ export type LifeEventPageResolvers<
   image?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
   thumbnail?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   content?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type AdgerdirTagsResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['AdgerdirTags'] = ResolversParentTypes['AdgerdirTags']
-> = {
-  items?: Resolver<
-    Array<ResolversTypes['AdgerdirTag']>,
-    ParentType,
-    ContextType
-  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2806,8 +2806,8 @@ export type Resolvers<ContextType = Context> = {
   AlertBanner?: AlertBannerResolvers<ContextType>
   GenericPage?: GenericPageResolvers<ContextType>
   Menu?: MenuResolvers<ContextType>
-  LifeEventPage?: LifeEventPageResolvers<ContextType>
   AdgerdirTags?: AdgerdirTagsResolvers<ContextType>
+  LifeEventPage?: LifeEventPageResolvers<ContextType>
   PaginatedAdgerdirNews?: PaginatedAdgerdirNewsResolvers<ContextType>
   OrganizationTags?: OrganizationTagsResolvers<ContextType>
   SearchResult?: SearchResultResolvers<ContextType>

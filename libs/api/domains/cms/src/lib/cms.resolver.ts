@@ -78,12 +78,6 @@ export class CmsResolver {
   }
 
   @Directive(cacheControlDirective())
-  @Query(() => News, { nullable: true })
-  getNews(@Args('input') input: GetNewsInput): Promise<News | null> {
-    return this.cmsContentfulService.getNews(input.lang ?? 'is-IS', input.slug)
-  }
-
-  @Directive(cacheControlDirective())
   @Query(() => PaginatedNews)
   getNewsList(@Args('input') input: GetNewsListInput): Promise<PaginatedNews> {
     return this.cmsContentfulService.getNewsList(input)
