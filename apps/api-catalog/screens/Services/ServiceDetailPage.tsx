@@ -1,12 +1,15 @@
 import React from 'react'
 import { ServiceCardInformation, 
         getService, 
-        ServiceResult, ServiceDetail} from '../../components';
+        ServiceResult, ServiceDetail, Layout} from '../../components';
 
 export function ServiceDetailPage(service: ServiceCardInformation) {
 
     return (
-        <ServiceDetail service={service} />
+        <Layout
+            left ={
+                        <ServiceDetail service={service} />}
+        />
     )
 }
 
