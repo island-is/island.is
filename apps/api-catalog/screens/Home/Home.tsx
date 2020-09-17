@@ -8,50 +8,46 @@ import {
   Stack,
   Typography,
   Footer,
-  Tiles
+  Tiles,
 } from '@island.is/island-ui/core'
 
-function Home({cards}) {
+export default function Home({ cards }) {
   return (
-    <Layout left={
-      <Box>
-        <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
-          <Stack space={5}>
-            <Stack space={3}>
-              <Typography variant="h1">
-                Viskuausan
-              </Typography>
-            </Stack>
-            <Stack space={3}>
-              <Typography variant="intro">
-                Hér getur þú leitað í 137 vefþjónustum og 75 gagnaskilgreiningum
-                hjá hinu opinbera
-              </Typography>
-            </Stack>
-            <Stack space={3}>
-              <Tiles space={3} columns={3}>
-                {
-                  cards.map((item, index) => {
+    <Layout
+      left={
+        <Box>
+          <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
+            <Stack space={5}>
+              <Stack space={3}>
+                <Typography variant="h1">Viskuausan</Typography>
+              </Stack>
+              <Stack space={3}>
+                <Typography variant="intro">
+                  Hér getur þú leitað í 137 vefþjónustum og 75
+                  gagnaskilgreiningum hjá hinu opinbera
+                </Typography>
+              </Stack>
+              <Stack space={3}>
+                <Tiles space={3} columns={3}>
+                  {cards.map((item, index) => {
                     return <Card key={index} card={item} />
-                  })
-                }
-              </Tiles>
+                  })}
+                </Tiles>
+              </Stack>
             </Stack>
-          </Stack>
+          </Box>
         </Box>
-      </Box>
-    } />
+      }
+    />
   )
 }
 
 Home.getInitialProps = () => {
   const cards = [
-    { title: "Services", slug: "/services" },
-    { title: "Data Models", slug: "/data-models" },
-    { title: "API Design Guide", slug: "/design-guide" }
+    { title: 'Services', slug: '/services' },
+    { title: 'Data Models', slug: '/data-models' },
+    { title: 'API Design Guide', slug: '/design-guide' },
   ]
 
-  return {cards:cards}
+  return { cards: cards }
 }
-
-export default Home

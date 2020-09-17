@@ -8,12 +8,14 @@ export class ApiCatalogueResolver {
   constructor(private catalogueService: ApiCatalogueService) {}
 
   @Query(() => [ApiCatalogue])
-  catalogues(): ApiCatalogue[] {
+  getApiCatalogues(): ApiCatalogue[] {
     return this.catalogueService.getCatalogues()
   }
 
   @Query(() => ApiCatalogue)
-  getCatalogueById(@Args('input') input: GetApiCatalogueInput): ApiCatalogue {
+  getApiCatalogueById(
+    @Args('input') input: GetApiCatalogueInput,
+  ): ApiCatalogue {
     return this.catalogueService.getCatalogueById(input.id)
   }
 }

@@ -726,8 +726,8 @@ type Query {
   listDocuments(input: ListDocumentsInput!): [Document!]
   getDocumentCategories: [DocumentCategory!]
   getTranslations(input: GetTranslationsInput!): JSON
-  catalogues: [ApiCatalogue!]!
-  getCatalogueById(input: GetApiCatalogueInput!): ApiCatalogue!
+  getApiCatalogues: [ApiCatalogue!]!
+  getApiCatalogueById(input: GetApiCatalogueInput!): ApiCatalogue!
 }
 
 input GetAdgerdirNewsListInput {
