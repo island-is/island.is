@@ -499,6 +499,7 @@ export type LifeEventPage = {
   image: Image
   thumbnail?: Maybe<Image>
   content: Array<Slice>
+  category?: Maybe<ArticleCategory>
 }
 
 export type Url = {
@@ -639,6 +640,7 @@ export type Query = {
   getMenu?: Maybe<Menu>
   getLifeEventPage?: Maybe<LifeEventPage>
   getLifeEvents: Array<LifeEventPage>
+  getLifeEventsInCategory: Array<LifeEventPage>
   getArticleCategories: Array<ArticleCategory>
   getArticles: Array<Article>
   getSingleNews?: Maybe<News>
@@ -735,6 +737,10 @@ export type QueryGetLifeEventPageArgs = {
 
 export type QueryGetLifeEventsArgs = {
   input: GetLifeEventsInput
+}
+
+export type QueryGetLifeEventsInCategoryArgs = {
+  input: GetLifeEventsInCategoryInput
 }
 
 export type QueryGetArticleCategoriesArgs = {
@@ -884,6 +890,11 @@ export type GetLifeEventPageInput = {
 }
 
 export type GetLifeEventsInput = {
+  lang: Scalars['String']
+}
+
+export type GetLifeEventsInCategoryInput = {
+  slug: Scalars['String']
   lang: Scalars['String']
 }
 
@@ -1319,6 +1330,7 @@ export type ResolversTypes = {
   GetMenuInput: GetMenuInput
   GetLifeEventPageInput: GetLifeEventPageInput
   GetLifeEventsInput: GetLifeEventsInput
+  GetLifeEventsInCategoryInput: GetLifeEventsInCategoryInput
   GetArticleCategoriesInput: GetArticleCategoriesInput
   GetArticlesInput: GetArticlesInput
   GetSingleNewsInput: GetSingleNewsInput
@@ -1486,6 +1498,7 @@ export type ResolversParentTypes = {
   GetMenuInput: GetMenuInput
   GetLifeEventPageInput: GetLifeEventPageInput
   GetLifeEventsInput: GetLifeEventsInput
+  GetLifeEventsInCategoryInput: GetLifeEventsInCategoryInput
   GetArticleCategoriesInput: GetArticleCategoriesInput
   GetArticlesInput: GetArticlesInput
   GetSingleNewsInput: GetSingleNewsInput
@@ -2320,6 +2333,11 @@ export type LifeEventPageResolvers<
   image?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
   thumbnail?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   content?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
+  category?: Resolver<
+    Maybe<ResolversTypes['ArticleCategory']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2672,6 +2690,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetLifeEventsArgs, 'input'>
+  >
+  getLifeEventsInCategory?: Resolver<
+    Array<ResolversTypes['LifeEventPage']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetLifeEventsInCategoryArgs, 'input'>
   >
   getArticleCategories?: Resolver<
     Array<ResolversTypes['ArticleCategory']>,

@@ -40,6 +40,7 @@ import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
 import { GetLifeEventsInput } from './dto/getLifeEvents.input'
+import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.input'
 import {
   getArticle,
   getRelatedArticles,
@@ -62,6 +63,7 @@ import {
   getOrganizationTags,
   getLifeEventPage,
   getLifeEvents,
+  getLifeEventsInCategory,
   getUrl,
 } from './services'
 import { LatestNewsSlice } from './models/latestNewsSlice.model'
@@ -240,6 +242,13 @@ export class CmsResolver {
     @Args('input') input: GetLifeEventsInput,
   ): Promise<LifeEventPage[]> {
     return getLifeEvents(input.lang)
+  }
+
+  @Query(() => [LifeEventPage])
+  getLifeEventsInCategory(
+    @Args('input') input: GetLifeEventsInCategoryInput,
+  ): Promise<LifeEventPage[]> {
+    return getLifeEventsInCategory(input.lang, input.slug)
   }
 
   @Query(() => [ArticleCategory])
