@@ -6,11 +6,14 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const SHA256 = require("crypto-js/sha256");
 
+const domainId = 'e3888706-8ad9-47af-8cb4-d69f04911aea'
+
 module.exports = {
   up: (queryInterface) => {
     const clients = [
       {
         client_id: 'dummy',
+        domain_id: domainId,
         require_client_secret: false,
         require_pkce: false,
 
@@ -43,6 +46,7 @@ module.exports = {
       },
       {
         client_id: 'postman',
+        domain_id: domainId,
         require_client_secret: false,
         require_pkce: false,
 
@@ -75,6 +79,7 @@ module.exports = {
       },
       {
         client_id: 'island-is-1',
+        domain_id: domainId,
         require_client_secret: false,
         enable_local_login: true,
         require_pkce: true,
@@ -108,6 +113,7 @@ module.exports = {
       },
       {
         client_id: 'island-is-client-cred-1',
+        domain_id: domainId,
         require_client_secret: false,
         enable_local_login: true,
         require_pkce: true,

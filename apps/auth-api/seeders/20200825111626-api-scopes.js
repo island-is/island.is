@@ -5,9 +5,12 @@
 module.exports = {
   up: (queryInterface) => {
 
+    const domainId = 'e3888706-8ad9-47af-8cb4-d69f04911aea'
+
     const scopes = [
       {
         id: 'aa3978a9-027b-48c2-81d5-147262bd3032',//uuidv4(),
+        domain_id: domainId,
         name: 'swagger_api.read',
         display_name: 'swagger_api.read',
         required: false,
@@ -17,6 +20,7 @@ module.exports = {
       },
       {
         id: '99a94b84-e95b-4ed6-a326-9fc9a13921da',//uuidv4(),
+        domain_id: domainId,
         name: 'postman_resource.scope',
         display_name: 'postman_resource.scope',
         required: false,
@@ -26,6 +30,7 @@ module.exports = {
       },
       {
         id: '3872e55c-3137-41c7-a4d9-700760477ce2',//uuidv4(),
+        domain_id: domainId,
         name: '@identityserver.api/read',
         display_name: '@identityserver.api/read',
         required: false,

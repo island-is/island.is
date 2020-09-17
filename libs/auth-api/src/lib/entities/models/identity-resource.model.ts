@@ -71,6 +71,10 @@ export class IdentityResource extends Model<IdentityResource> {
   })
   showInDiscoveryDocument: boolean
 
+  @HasMany(() => IdentityResourceUserClaim)
+  @ApiProperty()
+  public userClaims: IdentityResourceUserClaim[]
+
   // Common properties end
 
   @Column({
@@ -100,8 +104,4 @@ export class IdentityResource extends Model<IdentityResource> {
   @UpdatedAt
   @ApiProperty()
   readonly modified: Date
-
-  @HasMany(() => IdentityResourceUserClaim)
-  @ApiProperty()
-  public userClaims: IdentityResourceUserClaim[]
 }

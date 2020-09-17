@@ -27,6 +27,15 @@ export class ApiScope extends Model<ApiScope> {
   })
   @ApiProperty()
   id: string
+  
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  @ApiProperty({
+    example: 'domain_id',
+  })
+  domainId: string
 
   // Common properties for all resources (no single table inheritance)
 
@@ -71,6 +80,10 @@ export class ApiScope extends Model<ApiScope> {
   })
   showInDiscoveryDocument: boolean
 
+  @HasMany(() => ApiScopeUserClaim)
+  @ApiProperty()
+  public userClaims: ApiScopeUserClaim[]
+
   // Common properties end
 
   @Column({
@@ -100,8 +113,4 @@ export class ApiScope extends Model<ApiScope> {
   @UpdatedAt
   @ApiProperty()
   readonly modified: Date
-
-  @HasMany(() => ApiScopeUserClaim)
-  @ApiProperty()
-  public userClaims: ApiScopeUserClaim[]
 }

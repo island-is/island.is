@@ -29,12 +29,22 @@ export class ApiResource extends Model<ApiResource> {
   })
   @ApiProperty()
   id: string
+  
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  @ApiProperty({
+    example: 'domain_id',
+  })
+  domainId: string
 
   // Common properties for all resources (no single table inheritance)
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: true,
   })
   @ApiProperty()
   enabled: boolean
@@ -63,9 +73,14 @@ export class ApiResource extends Model<ApiResource> {
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
+    defaultValue: true,
   })
   @ApiProperty()
   showInDiscoveryDocument: boolean
+
+  @HasMany(() => ApiResourceUserClaim)
+  @ApiProperty()
+  public userClaims: ApiResourceUserClaim[]
 
   // Common properties end
 
@@ -77,19 +92,14 @@ export class ApiResource extends Model<ApiResource> {
   @ApiProperty()
   readonly modified: Date
 
-  @HasMany(() => ApiResourceUserClaim)
-  @ApiProperty()
-  public userClaims: ApiResourceUserClaim[]
-
   @HasMany(() => ApiResourceScope)
   @ApiProperty()
   public scopes: ApiResourceScope[]
 
-  // TODO: Do we need to configure access token signing algoritms per api resource?
-  // @ApiProperty()
-  // public allowedAccessTokenSigningAlgorithms: string[]
-
   @HasMany(() => ApiResourceSecret)
   @ApiProperty()
   readonly apiSecrets: ApiResourceSecret[]
+
+  // Signing algorithm for access token. If empty, will use the server default signing algorithm.
+  // public allowedAccessTokenSigningAlgorithms
 }

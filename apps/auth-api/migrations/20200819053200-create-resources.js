@@ -1,4 +1,5 @@
 'use strict'
+/* eslint-env node */
 
 module.exports = {
   up: (queryInterface) => {
@@ -7,11 +8,11 @@ module.exports = {
 
       CREATE TABLE identity_resource (
         id UUID NOT NULL,
-        enabled BOOLEAN NOT NULL DEFAULT false,
+        enabled BOOLEAN NOT NULL DEFAULT true,
         name VARCHAR NOT NULL,
         display_name VARCHAR NOT NULL,
         description VARCHAR,
-        show_in_discovery_document BOOLEAN NOT NULL DEFAULT false,
+        show_in_discovery_document BOOLEAN NOT NULL DEFAULT true,
         required BOOLEAN NOT NULL DEFAULT false,
         emphasize BOOLEAN NOT NULL DEFAULT false,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
@@ -30,11 +31,12 @@ module.exports = {
 
       CREATE TABLE api_scope (
         id UUID NOT NULL,
-        enabled BOOLEAN NOT NULL DEFAULT false,
+        domain_id UUID NOT NULL,
+        enabled BOOLEAN NOT NULL DEFAULT true,
         name VARCHAR NOT NULL,
         display_name VARCHAR NOT NULL,
         description VARCHAR,
-        show_in_discovery_document BOOLEAN NOT NULL DEFAULT false,
+        show_in_discovery_document BOOLEAN NOT NULL DEFAULT true,
         required BOOLEAN NOT NULL DEFAULT false,
         emphasize BOOLEAN NOT NULL DEFAULT false,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
@@ -53,11 +55,12 @@ module.exports = {
 
       CREATE TABLE api_resource (
         id UUID NOT NULL,
-        enabled BOOLEAN NOT NULL DEFAULT false,
+        domain_id UUID NOT NULL,
+        enabled BOOLEAN NOT NULL DEFAULT true,
         name VARCHAR NOT NULL,
         display_name VARCHAR NOT NULL,
         description VARCHAR,
-        show_in_discovery_document BOOLEAN NOT NULL DEFAULT false,
+        show_in_discovery_document BOOLEAN NOT NULL DEFAULT true,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
         PRIMARY KEY (id)

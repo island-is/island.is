@@ -10,6 +10,7 @@ import {
   ClientSecret,
   ClientGrantType,
   ClientsService,
+  ClientClaim,
 } from '@island.is/auth-api'
 import { SequelizeModule } from '@nestjs/sequelize'
 
@@ -25,6 +26,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
       ClientSecret,
       ClientPostLogoutRedirectUri,
       ClientGrantType,
+      ClientClaim,
     ]),
   ],
   controllers: [ClientsController],

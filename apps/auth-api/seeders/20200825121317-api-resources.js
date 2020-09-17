@@ -6,9 +6,12 @@
 module.exports = {
   up: (queryInterface) => {
 
+    const domainId = 'e3888706-8ad9-47af-8cb4-d69f04911aea'
+
     const apiResources = [
       {
         id: '241d6525-8544-4661-ab0b-541c00ae107f',//uuidv4(),
+        domain_id: domainId,
         name: 'swagger_api',
         display_name: 'Demo API',
         enabled: true,
@@ -16,6 +19,7 @@ module.exports = {
       },
       {
         id: 'c2f1c57f-a9a2-41d3-b647-d62f0fa3e4d2',//uuidv4(),
+        domain_id: domainId,
         name: 'postman_resource',
         display_name: 'postman_resource',
         enabled: true,
