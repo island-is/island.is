@@ -92,16 +92,13 @@ const Admin: Screen = ({}) => {
       <GridRow>
         <GridColumn
           span={['12/12', '12/12', '7/12', '8/12', '9/12']}
-          order={[0, 0, 2, 2, 2]}
+          order={[0, 0, 2]}
         >
           <Hidden above="sm">
             {!loading && <Summary flightLegs={flightLegs} />}
           </Hidden>
         </GridColumn>
-        <GridColumn
-          span={['12/12', '12/12', '5/12', '4/12', '3/12']}
-          order={[1, 1, 1, 1, 1]}
-        >
+        <GridColumn span={['12/12', '12/12', '5/12', '4/12', '3/12']} order={1}>
           <Stack space={3}>
             <Box
               background="purple100"
@@ -134,7 +131,7 @@ const Admin: Screen = ({}) => {
 
         <GridColumn
           span={['12/12', '12/12', '7/12', '8/12', '9/12']}
-          order={[2, 2, 0, 0, 0]}
+          order={[2, 2, 0]}
         >
           <GridRow>
             {loading ? (
