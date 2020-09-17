@@ -48,7 +48,7 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
           </Box>
         </GridColumn>
       </GridRow>
-      <Hidden below="md">
+      <Hidden below="lg">
         <GridRow>
           {newsItems.map((newsItem) => (
             <GridColumn
