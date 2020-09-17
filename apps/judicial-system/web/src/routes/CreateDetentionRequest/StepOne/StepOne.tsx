@@ -157,7 +157,6 @@ export const StepOne: React.FC = () => {
         'workingCase',
         JSON.stringify({ id, case: currentCase.case }),
       )
-      console.log(currentCase)
     }
 
     if (id) {
