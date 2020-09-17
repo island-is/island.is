@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import * as styles from './ActionCard.treat'
 import {
   Box,
   Typography,
@@ -9,12 +8,13 @@ import {
   GridColumn,
   Stack,
   Tooltip,
+  Inline,
 } from '@island.is/island-ui/core'
 import OutlinedBox from '@island.is/skilavottord-web/components/OutlinedBox/OutlinedBox'
 import { isMobile } from '@island.is/skilavottord-web/utils/isMobile'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 
-//TODO: Move to graphql schema (see air-discount-scheme)
-type Car = {
+interface MockCar {
   id: string
   brand: string
   model: string
@@ -25,61 +25,78 @@ type Car = {
 
 interface ActionCardProps {
   onClick?: () => void
-  car: Car
+  car: MockCar
 }
 
 export const ActionCard: FC<ActionCardProps> = ({
   onClick,
   car: { id, brand, model, year, status, hasCoOwner = false },
 }: ActionCardProps) => {
+  const {
+    t: { myCars: t },
+  } = useI18n()
+
   return (
     <OutlinedBox backgroundColor="white">
       <GridContainer>
         <GridRow>
-          <GridColumn span={hasCoOwner ? ["7/10", "8/10", "5/10", "5/10"] : ["7/10", "7/10", "7/10", "7/10"]}>
-            <Box padding={4}>
-              <Stack space={1}>
-                <Typography variant="h5" color="blue400">
-                  {id}
-                </Typography>
-                <Typography variant="p">
-                  {`${brand} ${model}, ${year}`}
-                </Typography>
-              </Stack>
-            </Box>
+          <GridColumn span={['10/10', '10/10', '7/10', '7/10']}>
+            <GridRow>
+              <GridColumn span={['6/10', '8/10', '8/10', '7/10']}>
+                <Box paddingLeft={4} paddingY={3}>
+                  <Stack space={1}>
+                    <Typography variant="h5">{id}</Typography>
+                    <Typography variant="p">
+                      {`${brand} ${model}, ${year}`}
+                    </Typography>
+                  </Stack>
+                </Box>
+              </GridColumn>
+              <GridColumn span={['4/10', '2/10', '2/10', '3/10']}>
+                {hasCoOwner && (
+                  <ColumnBox width="full" paddingRight={[4, 4, 4, 1]}>
+                    <Typography variant="h5">{t.status.coOwned}</Typography>
+                  </ColumnBox>
+                )}
+              </GridColumn>
+            </GridRow>
           </GridColumn>
-          {hasCoOwner && (
-            <GridColumn span={["3/10", "2/10", "2/10", "2/10"]}>
-              <ColumnBox width="full">
-                <Typography variant="h5">Co-owned</Typography>
-              </ColumnBox>
-            </GridColumn>
-          )}
-          <GridColumn span={["10/10", "10/10", "3/10", "3/10"]}>
+          <GridColumn span={['10/10', '10/10', '3/10', '3/10']}>
             {status === 'enabled' ? (
               <ColumnBox
-                className={`${styles.rightContainer} ${styles.buttonContainer}`}
+                background="blue100"
                 width="full"
                 textAlign="center"
+                borderRadius="large"
+                paddingX={4}
+                paddingY={3}
               >
-                <Button size="small" onClick={onClick} width={isMobile() ? 'fluid': 'normal'}>
+                <Button
+                  size="small"
+                  onClick={onClick}
+                  width={isMobile() ? 'fluid' : 'normal'}
+                >
                   Recycle car
                 </Button>
               </ColumnBox>
             ) : (
               <ColumnBox
-                className={`${styles.rightContainer} ${styles.textContainer}`}
+                borderColor="blue200"
+                borderTopWidth={isMobile() ? "standard" : "none"}
+                borderLeftWidth={isMobile() ? "none" : "standard"}
+                borderStyle="solid"
+                borderRadius="large"
                 padding={4}
                 width="full"
                 textAlign="center"
               >
-                <Typography variant="pSmall">
-                  Cannot be recycled as car still has loans.{' '}
-                  <Tooltip 
-                    text="Lorem ipsum"
+                <Inline space={'smallGutter'}>
+                  <Typography variant="pSmall">{t.actions.invalid}</Typography>
+                  <Tooltip
+                    text={t.tooltip}
                     colored
                   />
-                </Typography>
+                </Inline>
               </ColumnBox>
             )}
           </GridColumn>

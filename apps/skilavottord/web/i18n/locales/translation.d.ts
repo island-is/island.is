@@ -22,8 +22,10 @@ export interface Home {
 export interface MyCars {
   title: string
   subTitles: MyCarsSubtitles
-  actions: MyCarsActions
-  status: CarSttaus
+  actions: CarActions
+  status: CarStatus
+  buttons: CarsButtons
+  tooltip: string
 }
 
 export interface Confirm {
@@ -54,12 +56,19 @@ export interface MyCarsSubtitles {
 }
 
 export interface CarActions {
-  recycle: string
-  loan: string
+  valid: string
+  invalid: string
 }
 
 export interface CarStatus {
   coOwned: string
+  recycle: string
+  done: string
+}
+
+export interface CarsButtons {
+  openProcess: string
+  seeDetails: string
 }
 
 export interface ConfirmSubTitles {

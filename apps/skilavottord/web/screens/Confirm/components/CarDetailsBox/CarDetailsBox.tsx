@@ -28,24 +28,14 @@ export const CarDetailsBox: FC<BoxProps> = ({
 }: BoxProps) => {
   return (
     <OutlinedBox>
-      <GridContainer>
-        <GridRow>
-          <GridColumn span={'9/12'}>
-            <Box padding={4}>
-              <Box>
-                <Stack space={1}>
-                  <Typography variant="h5">
-                    {id}
-                  </Typography>
-                  <Typography variant="p">
-                    {`${brand} ${model}, ${year}`}
-                  </Typography>
-                </Stack>
-              </Box>
-            </Box>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+      <Box paddingX={4} paddingY={3}>
+        <Box>
+          <Stack space={1}>
+            <Typography variant="h5">{id}</Typography>
+            <Typography variant="p">{`${brand} ${model}, ${year}`}</Typography>
+          </Stack>
+        </Box>
+      </Box>
     </OutlinedBox>
   )
 }

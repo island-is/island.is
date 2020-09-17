@@ -7,6 +7,7 @@ import {
   Checkbox,
   Link,
   Icon,
+  Inline,
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '../Layouts'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
@@ -47,17 +48,21 @@ const Confirm = () => {
   }
 
   const checkboxLabel = (
-    <div>
-      {t.checkbox.label}
-      <Link 
-        href=""
-        className={
-          checkbox ? styles.checkboxLabelLinkChecked : styles.checkboxLabelLink
-        }
-      >
-        {t.checkbox.linkLabel}
-      </Link>
-    </div>
+    <>
+      <Inline space={1}>
+        {t.checkbox.label}
+        <Link
+          href=""
+          className={
+            checkbox
+              ? styles.checkboxLabelLinkChecked
+              : styles.checkboxLabelLink
+          }
+        >
+          {t.checkbox.linkLabel}
+        </Link>
+      </Inline>
+    </>
   )
 
   return (
@@ -87,7 +92,12 @@ const Confirm = () => {
           <Button variant="ghost" onClick={onCancel}>
             {t.buttons.cancel}
           </Button>
-          <Button variant="normal" disabled={!checkbox} onClick={onContinue} icon="arrowRight">
+          <Button
+            variant="normal"
+            disabled={!checkbox}
+            onClick={onContinue}
+            icon="arrowRight"
+          >
             {t.buttons.continue}
           </Button>
         </Box>

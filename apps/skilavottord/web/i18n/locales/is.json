@@ -10,12 +10,19 @@
       "done": "Recycled cars"
     },
     "actions": {
-      "recycle": "Recycle car",
-      "loan": "Cannot be recycled as car still has loans"
+      "valid": "Recycle car",
+      "invalid": "Cannot be recycled"
     },
     "status": {
-      "coOwned": "Co-owned"
-    }
+      "coOwned": "Co-owned",
+      "recycle": "Take to recycling company",
+      "done": "Recycled"
+    },
+    "buttons": {
+      "openProcess": "Open process",
+      "seeDetails": "See details"
+    },
+    "tooltip": "A car cannot be recycled if it still has loans, if the car has been reported as stolen or if it has been seiced by the police. Login to see more information at https://innskranning.island.is/?id=mitt.samgongustofa.is"
   },
   "confirm": {
     "title": "Confirm car",
@@ -28,8 +35,8 @@
       "continue": "Login again to sign"
     },
     "checkbox": {
-      "label": "I agree to the ",
-      "linkLabel": "Terms and conditions"
+      "label": "I agree to the",
+      "linkLabel": " Terms and conditions"
     }
   },
   "companies": {

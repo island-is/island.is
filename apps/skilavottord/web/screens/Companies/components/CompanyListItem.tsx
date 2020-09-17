@@ -11,6 +11,7 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from './CompanyListItem.treat'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
+import { isMobile } from '@island.is/skilavottord-web/utils/isMobile'
 
 export interface CompanyProps {
   name?: string
@@ -51,7 +52,7 @@ export const CompanyListItem: FC<CompanyProps> = ({
                 height="full"
               >
                 <Link href={website} passHref>
-                  <Button variant="ghost">{t.buttons.website}</Button>
+                  <Button size="small" variant="ghost" width={isMobile() ? 'fluid': 'normal'}>{t.buttons.website}</Button>
                 </Link>
               </Box>
             </GridColumn>

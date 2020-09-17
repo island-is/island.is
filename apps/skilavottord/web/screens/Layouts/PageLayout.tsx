@@ -40,12 +40,7 @@ export const ProcessPageLayout: FC<PageProps> = ({ children }) => (
     <GridContainer>
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
-          <OutlinedBox
-            paddingTop={6}
-            paddingBottom={6}
-            backgroundColor="white"
-            borderColor="white"
-          >
+          <OutlinedBox paddingY={6} backgroundColor="white" borderColor="white">
             <GridRow>
               <GridColumn
                 span={['7/9', '7/9', '7/9', '7/9']}

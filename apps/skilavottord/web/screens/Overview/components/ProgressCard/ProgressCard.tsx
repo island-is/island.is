@@ -1,34 +1,92 @@
 import React, { FC } from 'react'
-import * as styles from './ProgressCard.treat'
 import {
   Box,
+  Stack,
   Typography,
+  Tag,
   Button,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
+import ProgressBar from '../ProgressBar/ProgressBar'
+import OutlinedBox from '@island.is/skilavottord-web/components/OutlinedBox/OutlinedBox'
+import { isMobile } from '@island.is/skilavottord-web/utils/isMobile'
+import { useI18n } from '@island.is/skilavottord-web/i18n'
 
-export interface LinkCardProps {
-  onClick?: () => void
-  title: string
-  description: string
-  isRecycable?: boolean
+interface MockCar {
+  id: string
+  brand: string
+  model: string
+  year: number
+  status: string
+  hasCoOwner?: boolean
 }
 
-export const ProgressCard: FC<LinkCardProps> = (
-  { isRecycable = false, onClick, title, description }: LinkCardProps,
-  ref,
-) => {
+interface ProgressCardProps {
+  onClick?: () => void
+  car: MockCar
+}
+
+export const ProgressCard: FC<ProgressCardProps> = ({
+  onClick,
+  car: { id, brand, model, year, status, hasCoOwner = false },
+}: ProgressCardProps) => {
+  const {
+    t: { myCars: t },
+  } = useI18n()
   return (
-    <Box
-      className={styles.container}
-      display="inlineFlex"
-      justifyContent="spaceBetween"
+    <OutlinedBox
+      paddingY={3}
+      paddingX={4}
+      borderColor={status === 'pending' ? 'blue200' : 'dark200'}
+      backgroundColor={status === 'pending' ? 'white' : 'dark100'}
     >
-      <Box paddingTop={4} paddingBottom={4} paddingLeft={4} width="full">
-        <Typography variant="h4" color="blue400">
-          {title}
-        </Typography>
-        {description}
-      </Box>
-    </Box>
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={['10/10', '10/10', '10/10', '7/10']}>
+            <Stack space={2}>
+              <Stack space={1}>
+                <Typography variant="h5">{id}</Typography>
+                <Typography variant="p">{`${brand} ${model}, ${year}`}</Typography>
+              </Stack>
+              <Box paddingRight={[0, 0, 0, 4]}>
+                <ProgressBar progress={status === 'pending' ? 50 : 100} />
+              </Box>
+            </Stack>
+          </GridColumn>
+          <GridColumn span={['10/10', '10/10', '10/10', '3/10']}>
+            <Box marginTop={[3, 3, 3, 0]}>
+              <Stack space={2}>
+                <Box
+                  display="flex"
+                  justifyContent={isMobile() ? 'flexStart' : 'flexEnd'}
+                >
+                  <Tag
+                    variant={status === 'pending' ? 'darkerMint' : 'grey'}
+                    label
+                  >
+                    {status === 'pending'
+                      ? 'Take to recycling company'
+                      : 'Recycled'}
+                  </Tag>
+                </Box>
+                <Box
+                  display="flex"
+                  justifyContent={isMobile() ? 'flexStart' : 'flexEnd'}
+                  paddingTop={[0, 0, 0, 3]}
+                >
+                  <Button variant="text" icon="arrowRight" size="small">
+                    {status === 'pending'
+                      ? t.buttons.openProcess
+                      : t.buttons.seeDetails}
+                  </Button>
+                </Box>
+              </Stack>
+            </Box>
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+    </OutlinedBox>
   )
 }

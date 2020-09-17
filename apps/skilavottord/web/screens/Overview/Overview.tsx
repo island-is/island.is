@@ -12,12 +12,14 @@ import { useI18n } from '@island.is/skilavottord-web/i18n'
 
 const Overview: FC = () => {
   const Router = useRouter()
-  const { makePath } = useRouteNames();
-  const { t: { myCars: t } } = useI18n();
+  const { makePath } = useRouteNames()
+  const {
+    t: { myCars: t },
+  } = useI18n()
 
   const onClick = (id) => {
     Router.push({
-      pathname: makePath('myCars', id)
+      pathname: makePath('myCars', id),
     })
   }
 
@@ -44,12 +46,8 @@ const Overview: FC = () => {
                 return car
               }
             })
-            .map((car) => (
-              <ProgressCard
-                key={car.id}
-                title="BVZ655"
-                description="Volvo V70, 2006"
-              />
+            .map((car, index) => (
+              <ProgressCard key={index} car={car} />
             ))}
         </Stack>
       </Box>
@@ -81,7 +79,7 @@ const Overview: FC = () => {
               }
             })
             .map((car) => (
-              <ActionCard key={car.id} car={car} />
+              <ProgressCard key={car.id} car={car} />
             ))}
         </Stack>
       </Box>
