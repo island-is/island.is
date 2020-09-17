@@ -235,8 +235,10 @@ const Category: Screen<CategoryProps> = ({
                           {sortedSubgroupKeys.map((subgroup, index) => {
                             const hasSubgroups = sortedSubgroupKeys.length > 1
                             const subgroupName =
-                              subgroup === 'undefined'
-                                ? n('other', 'Annað')
+                              subgroup === 'undefined' ||
+                              subgroup === 'null' ||
+                              !subgroup
+                                ? n('other')
                                 : subgroup
 
                             return (
