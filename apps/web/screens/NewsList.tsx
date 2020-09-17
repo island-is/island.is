@@ -89,7 +89,6 @@ const NewsList: Screen<NewsListProps> = ({
 
   const makeHref = (y: string | number, m?: string | number) => {
     const query: { [k: string]: number | string } = y ? { y } : null
-
     if (y && m != null) {
       query.m = m
     }
@@ -156,15 +155,16 @@ const NewsList: Screen<NewsListProps> = ({
             <GridColumn hideAbove="sm" span="12/12" paddingBottom={1}>
               <Select
                 label="Ár"
-                placeholder={allYears}
-                value={yearOptions.find((o) => {
-                  o.value ===
-                    (selectedYear ? selectedYear.toString() : allYears)
-                })}
+                placeholder="Ár"
+                value={yearOptions.find(
+                  (option) =>
+                    option.value ===
+                    (selectedYear ? selectedYear.toString() : allYears),
+                )}
                 options={yearOptions}
-                onChange={({ value }: Option) =>
-                  Router.push(makeHref(value === selectedYear ? value : null))
-                }
+                onChange={({ value }: Option) => {
+                  Router.push(makeHref(value === allYears ? null : value))
+                }}
                 name="year"
               />
             </GridColumn>
@@ -218,7 +218,7 @@ const NewsList: Screen<NewsListProps> = ({
 }
 
 NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
-  let year = getIntParam(query.y)
+  const year = getIntParam(query.y)
   const month = year && getIntParam(query.m)
   const selectedPage = getIntParam(query.page) ?? 1
 
