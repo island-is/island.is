@@ -21,7 +21,7 @@ export function buildForm(data: {
   id: ApplicationTypes
   ownerId: string
   name: string
-  formMode?: FormMode
+  mode?: FormMode
   children: FormChildren[]
   icon?: string
 }): Form {

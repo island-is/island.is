@@ -16,12 +16,11 @@ import { ApplicationTypes } from '../../../types/ApplicationTypes'
 const yesOption = { value: 'yes', label: 'Já' }
 const noOption = { value: 'no', label: 'Nei' }
 
-//TODO change this
 export const ReviewApplication: Form = buildForm({
   id: ApplicationTypes.DRIVING_LESSONS,
   ownerId: 'TODO?',
   name: 'Úrvinnsla umsóknar um ökunám',
-  formMode: 'review',
+  mode: 'review',
   children: [
     buildSection({
       id: 'student',
@@ -67,10 +66,48 @@ export const ReviewApplication: Form = buildForm({
               width: 'half',
             }),
             buildDividerField({ name: 'Ökunámið sjálft' }),
-            buildTextField({
+            buildSelectField({
               id: 'type',
               name: 'Tegund ökunáms',
               disabled: true,
+              options: [
+                {
+                  value: 'B',
+                  label: 'Fólksbifreið (B)',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'AM',
+                  label: 'Léttbifhjól (AM)',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'A',
+                  label: 'Bifhjól (A)',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'A1',
+                  label: 'Bifhjól (A1)',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'A2',
+                  label: 'Bifhjól (A2)',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'T',
+                  label: 'Dráttarvél (T)',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+              ],
             }),
             buildSelectField({
               id: 'teacher',
@@ -137,7 +174,7 @@ export const ReviewApplication: Form = buildForm({
               width: 'half',
             }),
             buildReviewField({
-              id: 'approveApplication',
+              id: 'approvedByReviewer',
               name: 'Samþykkirðu þessa umsókn?',
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },

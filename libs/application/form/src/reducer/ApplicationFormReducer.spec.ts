@@ -175,7 +175,7 @@ describe('ApplicationFormReducer', () => {
       }
       const state = {
         ...initialState,
-        form: { ...form, formMode: 'review' as const },
+        form: { ...form, mode: 'review' as const },
         application: {
           ...application,
           answers,

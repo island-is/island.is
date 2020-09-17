@@ -8,6 +8,7 @@ import * as z from 'zod'
 import { DrivingLessonsApplication } from './forms/DrivingLessonsApplication'
 import { nationalIdRegex } from '../examples/constants'
 import { ReviewApplication } from './forms/ReviewApplication'
+import { Approved } from './forms/Approved'
 
 type Events =
   | { type: 'APPROVE' }
@@ -35,6 +36,7 @@ const dataSchema = z.object({
   useGlasses: z.enum(['yes', 'no']),
   damagedEyeSight: z.enum(['yes', 'no']),
   limitedFieldOfView: z.enum(['yes', 'no']),
+  approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
 })
 
 export const DrivingLessons: ApplicationTemplate<
@@ -88,16 +90,10 @@ export const DrivingLessons: ApplicationTemplate<
           REJECT: { target: 'draft' },
         },
       },
-      // payment: {
-      //   meta: {
-      //     name: 'Greiðsla',
-      //     roles: [{ id: 'applicant', write: { externalData: ['payment'] } }],
-      //   },
-      //   on: { SUBMIT: { target: 'approved' } },
-      // },
       approved: {
         meta: {
           name: 'Approved',
+          roles: [{ id: 'applicant', form: Approved }],
         },
         type: 'final' as const,
       },

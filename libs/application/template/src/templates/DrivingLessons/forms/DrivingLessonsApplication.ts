@@ -40,7 +40,6 @@ export const DrivingLessonsApplication: Form = buildForm({
               id: 'student.parentEmail',
               name: 'Netfang forráðamanns',
             }),
-            buildDividerField({ name: 'Testing the divider component' }),
             buildTextField({
               id: 'student.nationalId',
               name: 'Kennitala nemanda',

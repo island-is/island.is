@@ -36,7 +36,7 @@ export function initializeReducer(
   const sections = getSectionsInForm(form)
   const screens = convertLeavesToScreens(formLeaves, answers)
   const currentScreen =
-    form.formMode === 'review' ? 0 : findCurrentScreen(screens, answers)
+    form.mode === 'review' ? 0 : findCurrentScreen(screens, answers)
 
   return moveToScreen(
     {

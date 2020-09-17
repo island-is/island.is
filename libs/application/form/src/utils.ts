@@ -1,4 +1,12 @@
-import { DataProviderItem, ExternalData } from '@island.is/application/template'
+import {
+  CallToAction,
+  DataProviderItem,
+  ExternalData,
+  FieldTypes,
+  FormItemTypes,
+  ReviewField,
+} from '@island.is/application/template'
+import { FormScreen } from './types'
 
 export const getValueViaPath = (obj, path, defaultValue = undefined) => {
   try {
@@ -29,4 +37,19 @@ export function verifyExternalData(
     }
   }
   return true
+}
+
+export function findReviewField(screen: FormScreen): ReviewField {
+  if (screen.type === FieldTypes.REVIEW) {
+    return screen
+  }
+  if (screen.type === FormItemTypes.MULTI_FIELD) {
+    const reviewScreen = screen.children.find(
+      (child) => child.type === FieldTypes.REVIEW,
+    )
+    if (reviewScreen !== undefined) {
+      return reviewScreen as ReviewField
+    }
+  }
+  return undefined
 }

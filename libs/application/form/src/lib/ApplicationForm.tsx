@@ -81,7 +81,7 @@ export const ApplicationForm: FC<{ application: Application }> = ({
                 prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
                 shouldSubmit={activeScreen === screens.length - 1}
                 screen={screens[activeScreen]}
-                section={sections[activeSection]}
+                mode={state.form.mode}
                 applicationId={storedApplication.id}
               />
             </Box>
