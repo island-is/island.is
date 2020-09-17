@@ -233,6 +233,9 @@
     },
     "auth-api-lib": {
       "tags": []
+    },
+    "auth-admin-api": {
+      "tags": []
     }
   }
 }

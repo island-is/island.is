@@ -38,8 +38,12 @@ export * from './lib/services/grants.service'
 export * from './lib/services/resources.service'
 export * from './lib/services/user-identities.service'
 export * from './lib/services/user-profiles.service'
+export * from './lib/services/sequelizeConfig.service'
 
 // Auth
 export * from './lib/auth/auth-config'
 export * from './lib/auth/auth.module'
 export * from './lib/auth/jwt.strategy'
+
+// Config
+//export * as DbConfig from './lib/config/sequelize.config.js'
