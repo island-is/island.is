@@ -38,13 +38,7 @@ export class CaseController {
   @Get('case/:id')
   @ApiOkResponse({ type: Case })
   async getById(@Param('id') id: string): Promise<Case> {
-    const existingCase = await this.caseService.findById(id)
-
-    if (!existingCase) {
-      throw new NotFoundException(`A case with the id ${id} does not exist`)
-    }
-
-    return existingCase
+    return this.findCaseById(id)
   }
 
   @Post('case')
@@ -77,8 +71,12 @@ export class CaseController {
 
   @Get('case/:id/notifications')
   @ApiOkResponse({ type: Notification, isArray: true })
-  getAllNotificationsById(@Param('id') id: string): Promise<Notification[]> {
-    return this.caseService.getAllNotificationsByCaseId(id)
+  async getAllNotificationsById(
+    @Param('id') id: string,
+  ): Promise<Notification[]> {
+    const existingCase = await this.findCaseById(id)
+
+    return this.caseService.getAllNotificationsByCaseId(existingCase)
   }
 
   @Post('case/:id/notification')
@@ -86,12 +84,18 @@ export class CaseController {
   async sendNotificationByCaseId(
     @Param('id') id: string,
   ): Promise<Notification> {
+    const existingCase = await this.findCaseById(id)
+
+    return this.caseService.sendNotificationByCaseId(existingCase)
+  }
+
+  private async findCaseById(id: string) {
     const existingCase = await this.caseService.findById(id)
 
     if (!existingCase) {
       throw new NotFoundException(`A case with the id ${id} does not exist`)
     }
 
-    return this.caseService.sendNotificationByCaseId(existingCase)
+    return existingCase
   }
 }

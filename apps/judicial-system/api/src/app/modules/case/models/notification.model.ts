@@ -1,10 +1,55 @@
+import {
+  Column,
+  CreatedAt,
+  DataType,
+  ForeignKey,
+  Model,
+  Table,
+} from 'sequelize-typescript'
+
 import { ApiProperty } from '@nestjs/swagger'
+
+import { Case } from './case.model'
 import { NotificationType } from './notification.types'
 
-export class Notification {
+@Table({
+  tableName: 'notification',
+  timestamps: false,
+})
+export class Notification extends Model<Notification> {
+  @Column({
+    type: DataType.UUID,
+    primaryKey: true,
+    allowNull: false,
+    defaultValue: DataType.UUIDV4,
+  })
+  @ApiProperty()
+  id: string
+
+  @CreatedAt
+  @ApiProperty()
+  created: Date
+
+  @ForeignKey(() => Case)
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
   @ApiProperty()
   caseId: string
 
-  @ApiProperty()
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(NotificationType),
+  })
+  @ApiProperty({ enum: NotificationType })
   type: NotificationType
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  message: string
 }

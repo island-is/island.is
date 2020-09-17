@@ -13,6 +13,8 @@ export class CaseService {
   constructor(
     @InjectModel(Case)
     private caseModel: typeof Case,
+    @InjectModel(Notification)
+    private notificationModel: typeof Notification,
     @Inject(SmsService)
     private smsService: SmsService,
     @Inject(LOGGER_PROVIDER)
@@ -22,7 +24,10 @@ export class CaseService {
   getAll(): Promise<Case[]> {
     this.logger.debug('Getting all cases')
 
-    return this.caseModel.findAll({ order: [['modified', 'DESC']] })
+    return this.caseModel.findAll({
+      order: [['modified', 'DESC']],
+      include: [Notification],
+    })
   }
 
   findById(id: string): Promise<Case> {
@@ -30,6 +35,7 @@ export class CaseService {
 
     return this.caseModel.findOne({
       where: { id },
+      include: [Notification],
     })
   }
 
@@ -56,16 +62,17 @@ export class CaseService {
     return { numberOfAffectedRows, updatedCase }
   }
 
-  delete(id: string): Promise<number> {
-    this.logger.debug(`Deleting case with id "${id}"`)
+  async getAllNotificationsByCaseId(
+    existingCase: Case,
+  ): Promise<Notification[]> {
+    this.logger.debug(
+      `Getting all notifications for case with id "${existingCase.id}"`,
+    )
 
-    return this.caseModel.destroy({ where: { id } })
-  }
-
-  async getAllNotificationsByCaseId(id: string): Promise<Notification[]> {
-    this.logger.debug(`Getting all notifications for case with id "${id}"`)
-
-    return []
+    return this.notificationModel.findAll({
+      where: { caseId: existingCase.id },
+      order: [['created', 'DESC']],
+    })
   }
 
   async sendNotificationByCaseId(existingCase: Case): Promise<Notification> {
@@ -85,11 +92,11 @@ export class CaseService {
       )
     }
 
-    const notification = new Notification()
-    notification.caseId = existingCase.id
-    notification.type = NotificationType.HEADS_UP
-
-    return notification
+    return this.notificationModel.create({
+      caseId: existingCase.id,
+      type: NotificationType.HEADS_UP,
+      message: smsText,
+    })
   }
 
   private constructSmsText(existingCase: Case): string {
