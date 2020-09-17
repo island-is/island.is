@@ -41,7 +41,6 @@ import {
   ColorSchemeContext,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { Content } from '@island.is/island-ui/contentful'
 import Sidebar, { SidebarProps } from './Sidebar'
 import * as styles from './AboutPage.treat'
 import Head from 'next/head'
@@ -53,6 +52,7 @@ import {
   AllSlicesImageFragment,
 } from '../../graphql/schema'
 import useViewport from '@island.is/web/hooks/useViewport'
+import { renderSlices } from '@island.is/island-ui/contentful'
 
 const useScrollSpy = ({
   margin = 0,
@@ -323,9 +323,9 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
       return (
         <Timeline
           {...slice}
-          events={slice.events.map((event, index) => ({
+          events={slice.events.map((event) => ({
             ...event,
-            body: event.body && <Content key={index} document={event.body} />,
+            body: event.body && renderSlices(event.body),
           }))}
         />
       )
