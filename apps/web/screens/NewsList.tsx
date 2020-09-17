@@ -60,13 +60,16 @@ const NewsList: Screen<NewsListProps> = ({
   const years = Object.keys(datesByYear)
   const months = datesByYear[selectedYear] ?? []
 
-  const allYears = 'Allar fréttir'
-  const allMonths = 'Allt árið'
+  const allYearsString = 'Allar fréttir'
+  const allMonthsString = 'Allt árið'
+
+  const yearString = 'Ár'
+  const monthString = 'Mánuður'
 
   const yearOptions = [
     {
-      label: allYears,
-      value: allYears,
+      label: allYearsString,
+      value: allYearsString,
     },
   ].concat(
     years.map((year) => ({
@@ -77,7 +80,7 @@ const NewsList: Screen<NewsListProps> = ({
 
   const monthOptions = [
     {
-      label: allMonths,
+      label: allMonthsString,
       value: undefined,
     },
   ].concat(
@@ -107,17 +110,17 @@ const NewsList: Screen<NewsListProps> = ({
       <Divider weight="alternate" />
       <NativeSelect
         name="year"
-        value={selectedYear ? selectedYear.toString() : allYears}
+        value={selectedYear ? selectedYear.toString() : allYearsString}
         options={yearOptions}
         onChange={(e) => {
           const selectedValue =
-            e.target.value !== allYears ? e.target.value : null
+            e.target.value !== allYearsString ? e.target.value : null
           Router.push(makeHref(selectedValue))
         }}
       />
       {selectedYear && (
         <Typography variant="p" as="p">
-          <Link href={makeHref(selectedYear)}>{allMonths}</Link>
+          <Link href={makeHref(selectedYear)}>{allMonthsString}</Link>
           {selectedMonth === undefined && <Bullet align="right" />}
         </Typography>
       )}
@@ -151,38 +154,36 @@ const NewsList: Screen<NewsListProps> = ({
             </Hidden>
           )}
 
-          <GridRow>
-            <GridColumn hideAbove="sm" span="12/12" paddingBottom={1}>
+          <GridColumn hideAbove="sm" paddingBottom={1}>
+            <Select
+              label={yearString}
+              placeholder={yearString}
+              value={yearOptions.find(
+                (option) =>
+                  option.value ===
+                  (selectedYear ? selectedYear.toString() : allYearsString),
+              )}
+              options={yearOptions}
+              onChange={({ value }: Option) => {
+                Router.push(makeHref(value === allYearsString ? null : value))
+              }}
+              name="year"
+            />
+          </GridColumn>
+          {selectedYear && (
+            <GridColumn hideAbove="sm">
               <Select
-                label="Ár"
-                placeholder="Ár"
-                value={yearOptions.find(
-                  (option) =>
-                    option.value ===
-                    (selectedYear ? selectedYear.toString() : allYears),
-                )}
-                options={yearOptions}
-                onChange={({ value }: Option) => {
-                  Router.push(makeHref(value === allYears ? null : value))
-                }}
-                name="year"
+                label={monthString}
+                placeholder={monthString}
+                value={monthOptions.find((o) => o.value === selectedMonth)}
+                options={monthOptions}
+                onChange={({ value }: Option) =>
+                  Router.push(makeHref(selectedYear, value))
+                }
+                name="month"
               />
             </GridColumn>
-            {selectedYear && (
-              <GridColumn hideAbove="sm" span="12/12">
-                <Select
-                  label="Mánuður"
-                  placeholder={allYears}
-                  value={monthOptions.find((o) => o.value === selectedMonth)}
-                  options={monthOptions}
-                  onChange={({ value }: Option) =>
-                    Router.push(makeHref(selectedYear, value))
-                  }
-                  name="month"
-                />
-              </GridColumn>
-            )}
-          </GridRow>
+          )}
 
           {newsList.map((newsItem, index) => (
             <NewsCard
