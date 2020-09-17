@@ -2,7 +2,7 @@ import { mock } from 'jest-mock-extended'
 
 import { Test, TestingModule } from '@nestjs/testing'
 
-import { Logger, LOGGER_PROVIDER, logger } from '@island.is/logging'
+import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { SmsService } from './sms.service'
 
@@ -12,8 +12,8 @@ const testSendSms = 'SendSms'
 const testCode = '0'
 const postMock = jest.fn(function(
   path: string,
-  boddy: Body,
-  init: RequestInit,
+  body?: Body,
+  init?: RequestInit,
 ) {
   switch (path) {
     case testLogin:

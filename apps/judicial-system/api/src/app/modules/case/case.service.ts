@@ -101,7 +101,7 @@ export class CaseService {
 
   private constructSmsText(existingCase: Case): string {
     // Arrest date
-    const ad = existingCase.arrestDate.toISOString()
+    const ad = existingCase.arrestDate?.toISOString()
     const adText = ad
       ? ` Viðkomandi handtekinn ${ad.substring(8, 10)}.${ad.substring(
           5,
@@ -113,7 +113,7 @@ export class CaseService {
       : ''
 
     // Court date
-    const cd = existingCase.requestedCourtDate.toISOString()
+    const cd = existingCase.requestedCourtDate?.toISOString()
     const cdText = cd
       ? ` ÓE fyrirtöku ${cd.substring(8, 10)}.${cd.substring(
           5,
