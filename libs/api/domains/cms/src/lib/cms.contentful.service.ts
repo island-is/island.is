@@ -40,6 +40,7 @@ import {
 import { ContentfulRepository } from './contentful.repository'
 import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { AlertBanner, mapAlertBanner } from './models/alertBanner.model'
+import { mapUrl, Url } from './models/url.model'
 
 const makePage = (
   page: number,
@@ -424,5 +425,32 @@ export class CmsContentfulService {
       .catch(errorHandler('getAlertBanner'))
 
     return result.items.map(mapAlertBanner)[0] ?? null
+  }
+
+  async getUrl(slug: string, lang: string): Promise<Url | null> {
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IUrlFields>(lang, {
+        ['content_type']: 'url',
+        'fields.urlsList[all]': slug,
+        include: 1,
+      })
+      .catch(errorHandler('getUrl'))
+
+    return result.items.map(mapUrl)[0] ?? null
+  }
+
+  async getLifeEventsInCategory(
+    lang: string,
+    slug: string,
+  ): Promise<LifeEventPage[]> {
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.ILifeEventPageFields>(lang, {
+        ['content_type']: 'lifeEventPage',
+        'fields.category.sys.contentType.sys.id': 'articleCategory',
+        'fields.category.fields.slug': slug,
+      })
+      .catch(errorHandler('getLifeEventsInCategory'))
+
+    return result.items.map(mapLifeEventPage)
   }
 }
