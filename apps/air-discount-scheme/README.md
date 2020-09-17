@@ -62,6 +62,14 @@ To get started developing this project, go ahead and:
 Navigate to [localhost:4200](http://localhost:4200) for the website or
 [localhost:4248/api/swagger/](http://localhost:4248/api/swagger/) for the airline api.
 
+### Admin
+
+To access the Admin UI, you'll need to add your Icelandic National ID to the comma separated
+environment variable `DEVELOPERS` (.env.secret) and restart the `api`.
+```bash
+export DEVELOPERS=1234567890
+```
+
 ## Shortcuts
 
 Because of the short timeline this assignment had, there were few shortcuts taken
