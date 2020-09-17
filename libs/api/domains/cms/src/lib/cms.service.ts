@@ -15,7 +15,7 @@ export class CmsService {
     index: SearchIndexes,
     { size = 100 }: { size?: number },
   ): Promise<ArticleCategory[]> {
-    let query = {
+    const query = {
       types: ['webArticleCategory'],
       sort: { 'title.sort': 'asc' as sortDirection },
       size,
@@ -34,7 +34,7 @@ export class CmsService {
     index: SearchIndexes,
     { category = '', size = 100 }: { category: string; size?: number },
   ): Promise<Article[]> {
-    let query = {
+    const query = {
       tags: [{ type: 'category', key: category }],
       sort: { 'title.sort': 'asc' as sortDirection },
       size,
@@ -49,20 +49,18 @@ export class CmsService {
     )
   }
 
-  async getNews(index: SearchIndexes, { slug }: { slug?: string }) {
+  async getNews(index: SearchIndexes, { slug }: { slug: string }) {
     // return a single news item by slug
-    if (slug) {
-      let query = { types: ['webNews'], tags: [{ type: 'slug', key: slug }] }
-      const newsResponse = await this.elasticService.getDocumentsByMetaData(
-        index,
-        query,
-      )
-      const response = newsResponse.hits.hits?.[0]?._source?.response
-      if (response) {
-        return JSON.parse(response)
-      } else {
-        return null
-      }
+    const query = { types: ['webNews'], tags: [{ type: 'slug', key: slug }] }
+    const newsResponse = await this.elasticService.getDocumentsByMetaData(
+      index,
+      query,
+    )
+    const response = newsResponse.hits.hits?.[0]?._source?.response
+    if (response) {
+      return JSON.parse(response)
+    } else {
+      return null
     }
   }
 }
