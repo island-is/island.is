@@ -39,6 +39,7 @@ import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
   Article,
+  LifeEventPage,
 } from '../../graphql/schema'
 
 const PerPage = 10
@@ -98,14 +99,33 @@ const Search: Screen<CategoryProps> = ({
     ],
   )
 
+  const getLabels = (item) => {
+    const labels = []
+
+    switch (item.__typename as LifeEventPage['__typename']) {
+      case 'LifeEventPage':
+        labels.push(n('lifeEvent'))
+        break
+      default:
+        break
+    }
+
+    if (item.containsApplicationForm) {
+      labels.push(n('applicationForm'))
+    }
+
+    return labels
+  }
+
   const items = (searchResults.items as Article[]).map((item) => ({
     title: item.title,
     description: item.intro,
-    href: makePath('article', '[slug]'),
-    as: makePath('article', item.slug),
+    href: makePath(item.__typename, '[slug]'),
+    as: makePath(item.__typename, item.slug),
     categorySlug: item.category?.slug,
     category: item.category,
     group: item.group,
+    labels: getLabels(item),
   }))
 
   const onSelectCategory = (key: string) => {
@@ -191,7 +211,6 @@ const Search: Screen<CategoryProps> = ({
             {filteredItems.map((item, index) => {
               const tags: Array<CardTagsProps> = []
 
-              console.log('item', item)
               if (item.group) {
                 tags.push({
                   title: item.group.title,
@@ -200,6 +219,15 @@ const Search: Screen<CategoryProps> = ({
                   },
                 })
               }
+
+              item.labels.forEach((label) => {
+                tags.push({
+                  title: label,
+                  tagProps: {
+                    label: true,
+                  },
+                })
+              })
 
               return <Card key={index} tags={tags} {...item} />
             })}
@@ -295,7 +323,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          types: ['webArticle'],
+          types: ['webArticle', 'webLifeEventPage'],
           size: PerPage,
           page,
         },

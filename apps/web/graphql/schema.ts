@@ -1567,10 +1567,21 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
     'total'
   > & {
       items: Array<
-        | ({ __typename?: 'Article' } & Pick<
+        | ({ __typename: 'Article' } & Pick<
             Article,
-            'id' | 'contentStatus' | 'title' | 'slug'
+            | 'id'
+            | 'contentStatus'
+            | 'title'
+            | 'slug'
+            | 'intro'
+            | 'containsApplicationForm'
           > & {
+              group?: Maybe<
+                { __typename?: 'ArticleGroup' } & Pick<
+                  ArticleGroup,
+                  'title' | 'slug' | 'description'
+                >
+              >
               category?: Maybe<
                 { __typename?: 'ArticleCategory' } & Pick<
                   ArticleCategory,
@@ -1597,7 +1608,7 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
                 >
               >
             })
-        | ({ __typename?: 'LifeEventPage' } & Pick<
+        | ({ __typename: 'LifeEventPage' } & Pick<
             LifeEventPage,
             'id' | 'title' | 'slug' | 'intro'
           > & { image: { __typename?: 'Image' } & Pick<Image, 'id'> })
@@ -1626,10 +1637,21 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
     'total'
   > & {
       items: Array<
-        | ({ __typename?: 'Article' } & Pick<
+        | ({ __typename: 'Article' } & Pick<
             Article,
-            'id' | 'contentStatus' | 'title' | 'slug'
+            | 'id'
+            | 'contentStatus'
+            | 'title'
+            | 'slug'
+            | 'intro'
+            | 'containsApplicationForm'
           > & {
+              group?: Maybe<
+                { __typename?: 'ArticleGroup' } & Pick<
+                  ArticleGroup,
+                  'title' | 'slug' | 'description'
+                >
+              >
               category?: Maybe<
                 { __typename?: 'ArticleCategory' } & Pick<
                   ArticleCategory,
@@ -1656,10 +1678,16 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
                 >
               >
             })
-        | ({ __typename?: 'LifeEventPage' } & Pick<
+        | ({ __typename: 'LifeEventPage' } & Pick<
             LifeEventPage,
             'id' | 'title' | 'slug' | 'intro'
           > & {
+              category?: Maybe<
+                { __typename?: 'ArticleCategory' } & Pick<
+                  ArticleCategory,
+                  'title'
+                >
+              >
               image: { __typename?: 'Image' } & Pick<
                 Image,
                 'id' | 'url' | 'title' | 'contentType' | 'width' | 'height'
