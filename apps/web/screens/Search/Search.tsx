@@ -114,6 +114,10 @@ const Search: Screen<CategoryProps> = ({
       labels.push(n('applicationForm'))
     }
 
+    if (item.group) {
+      labels.push(item.group.title)
+    }
+
     return labels
   }
 
@@ -210,15 +214,6 @@ const Search: Screen<CategoryProps> = ({
           <Stack space={2}>
             {filteredItems.map((item, index) => {
               const tags: Array<CardTagsProps> = []
-
-              if (item.group) {
-                tags.push({
-                  title: item.group.title,
-                  tagProps: {
-                    label: true,
-                  },
-                })
-              }
 
               item.labels.forEach((label) => {
                 tags.push({
