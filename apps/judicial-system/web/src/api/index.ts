@@ -1,24 +1,7 @@
 import 'isomorphic-fetch'
-import { Case, CreateCaseRequest } from '../types'
+import { Case, CreateCaseRequest, GetCaseByIdResponse } from '../types'
 import { getCookie, deleteCookie } from '../utils/cookies'
 
-// const getCaseById: (caseId: string) => Promise<GetCaseByIdResponse> = async (
-//   caseId: string,
-// ) => {
-//   const response = await fetch(`/api/case/${caseId}`)
-
-//   if (response.ok) {
-//     const theCase: Case = await response.json()
-//     return {
-//       httpStatusCode: response.status,
-//       case: theCase,
-//     }
-//   } else {
-//     return {
-//       httpStatusCode: response.status,
-//     }
-//   }
-// }
 const csrfToken = getCookie('judicial-system.csrf')
 
 const { API_URL = '' } = process.env
@@ -45,6 +28,24 @@ export const getCases: () => Promise<Case[]> = async () => {
   } catch (ex) {
     // TODO: Log error
     console.log(ex)
+  }
+}
+
+export const getCaseById: (
+  caseId: string,
+) => Promise<GetCaseByIdResponse> = async (caseId: string) => {
+  const response = await fetch(`/api/case/${caseId}`)
+
+  if (response.ok) {
+    const theCase: Case = await response.json()
+    return {
+      httpStatusCode: response.status,
+      case: theCase,
+    }
+  } else {
+    return {
+      httpStatusCode: response.status,
+    }
   }
 }
 

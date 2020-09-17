@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 
 import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
 import {
@@ -19,6 +19,7 @@ import { updateState, autoSave } from '../../../utils/stepHelper'
 import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
+import { useParams } from 'react-router-dom'
 
 export const StepOne: React.FC = () => {
   if (!window.localStorage.getItem('workingCase')) {
@@ -75,6 +76,7 @@ export const StepOne: React.FC = () => {
   const [arrestTimeErrorMessage, setArrestTimeErrorMessage] = useState<string>(
     '',
   )
+  const { id } = useParams()
 
   const policeCaseNumberRef = useRef<HTMLInputElement>()
   const suspectNationalIdRef = useRef<HTMLInputElement>()
@@ -145,6 +147,21 @@ export const StepOne: React.FC = () => {
       setWorkingCase({ id: caseId, case: workingCase.case })
     }
   }
+
+  useEffect(() => {
+    const getCurrentCase = async () => {
+      const currentCase = await api.getCaseById(id)
+      window.localStorage.setItem(
+        'workingCase',
+        JSON.stringify({ id, case: currentCase.case }),
+      )
+      console.log(currentCase)
+    }
+
+    if (id) {
+      getCurrentCase()
+    }
+  }, [])
 
   return (
     <Box marginTop={7} marginBottom={30}>

@@ -116,7 +116,11 @@ export const DetentionRequests: React.FC = () => {
                   </Tag>
                 </td>
                 <td>
-                  <Button href="/" icon="arrowRight" variant="text">
+                  <Button
+                    href={`/krafa/${c.id}`}
+                    icon="arrowRight"
+                    variant="text"
+                  >
                     Opna kröfu
                   </Button>
                 </td>
