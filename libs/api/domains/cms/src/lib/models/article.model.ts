@@ -33,7 +33,7 @@ export class Article {
   containsApplicationForm: boolean
 
   @Field({ nullable: true })
-  importance: number | undefined
+  importance: number
 
   @Field(() => [Slice])
   body: Array<typeof Slice>
