@@ -188,6 +188,7 @@ export const StepOne: React.FC = () => {
                 </Typography>
               </Box>
               <Input
+                data-testid="policeCaseNumber"
                 name="policeCaseNumber"
                 label="Slá inn LÖKE málsnúmer"
                 defaultValue={workingCase.case.policeCaseNumber}
@@ -221,6 +222,7 @@ export const StepOne: React.FC = () => {
               </Box>
               <Box marginBottom={3}>
                 <Input
+                  data-testid="nationalId"
                   name="nationalId"
                   label="Kennitala"
                   defaultValue={workingCase.case.suspectNationalId}
@@ -248,6 +250,7 @@ export const StepOne: React.FC = () => {
               </Box>
               <Box marginBottom={3}>
                 <Input
+                  data-testid="suspectName"
                   name="suspectName"
                   label="Fullt nafn kærða"
                   defaultValue={workingCase.case.suspectName}
@@ -273,6 +276,7 @@ export const StepOne: React.FC = () => {
               </Box>
               <Box marginBottom={3}>
                 <Input
+                  data-testid="suspectAddress"
                   name="suspectAddress"
                   label="Lögheimili/dvalarstaður"
                   defaultValue={workingCase.case.suspectAddress}
@@ -360,6 +364,7 @@ export const StepOne: React.FC = () => {
                 </GridColumn>
                 <GridColumn span="3/8">
                   <Input
+                    data-testid="arrestTime"
                     name="arrestTime"
                     label="Tímasetning"
                     placeholder="Settu inn tíma"
@@ -453,6 +458,7 @@ export const StepOne: React.FC = () => {
                 </GridColumn>
                 <GridColumn span="3/8">
                   <Input
+                    data-testid="courtDate"
                     name="courtDate"
                     label="Tímasetning"
                     placeholder="Settu inn tíma"

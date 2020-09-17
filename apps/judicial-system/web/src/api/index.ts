@@ -1,5 +1,10 @@
 import 'isomorphic-fetch'
-import { Case, CreateCaseRequest, GetCaseByIdResponse } from '../types'
+import {
+  Case,
+  CreateCaseRequest,
+  GetCaseByIdResponse,
+  GetCaseByIdCaseResponse,
+} from '../types'
 import { getCookie, deleteCookie } from '../utils/cookies'
 
 const csrfToken = getCookie('judicial-system.csrf')
@@ -37,7 +42,7 @@ export const getCaseById: (
   const response = await fetch(`/api/case/${caseId}`)
 
   if (response.ok) {
-    const theCase: Case = await response.json()
+    const theCase: GetCaseByIdCaseResponse = await response.json()
     return {
       httpStatusCode: response.status,
       case: theCase,
