@@ -1,4 +1,14 @@
-import { Controller, Get, Query, Post, Body, Put, Param, Delete, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Query,
+  Post,
+  Body,
+  Put,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common'
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -6,7 +16,14 @@ import {
   ApiQuery,
   ApiOAuth2,
 } from '@nestjs/swagger'
-import { IdentityResource, ResourcesService, ApiScope, ApiResource, ApiScopesDTO, IdentityResourcesDTO } from '@island.is/auth-api'
+import {
+  IdentityResource,
+  ResourcesService,
+  ApiScope,
+  ApiResource,
+  ApiScopesDTO,
+  IdentityResourcesDTO,
+} from '@island.is/auth-api'
 import { AuthGuard } from '@nestjs/passport'
 
 @ApiOAuth2(['@identityserver.api/read'])
@@ -68,38 +85,49 @@ export class ResourcesController {
   }
 
   @Post('identity-resource')
-  @ApiCreatedResponse({ type: IdentityResource})
-  async createIdentityResource(@Body() identityResource: IdentityResourcesDTO): Promise<IdentityResource> {
+  @ApiCreatedResponse({ type: IdentityResource })
+  async createIdentityResource(
+    @Body() identityResource: IdentityResourcesDTO,
+  ): Promise<IdentityResource> {
     return await this.resourcesService.createIdentityResource(identityResource)
   }
 
-  @Put('identity-resource/:id')
-  @ApiOkResponse({ type: IdentityResource})
-  async updateIdentityResource(@Body() identityResource: IdentityResourcesDTO, @Param('id') id: string): Promise<IdentityResource> {
-    return await this.resourcesService.updateIdentityResource(identityResource, id)
-  }
+  // @Put('identity-resource/:id')
+  // @ApiOkResponse({ type: IdentityResource })
+  // async updateIdentityResource(
+  //   @Body() identityResource: IdentityResourcesDTO,
+  //   @Param('id') id: string,
+  // ): Promise<IdentityResource> {
+  //   return await this.resourcesService.updateIdentityResource(
+  //     identityResource,
+  //     id,
+  //   )
+  // }
 
-  @Delete('identity-resource/:id')
-  @ApiOkResponse()
-  async deleteIdentityResource(@Param('id') id: string): Promise<number> {
-    return await this.resourcesService.deleteIdentityResource(id)
-  }
+  // @Delete('identity-resource/:id')
+  // @ApiOkResponse()
+  // async deleteIdentityResource(@Param('id') id: string): Promise<number> {
+  //   return await this.resourcesService.deleteIdentityResource(id)
+  // }
 
   @Post('api-scope')
-  @ApiCreatedResponse({ type: ApiScope})
+  @ApiCreatedResponse({ type: ApiScope })
   async createApiScope(@Body() apiScope: ApiScopesDTO): Promise<ApiScope> {
     return await this.resourcesService.createApiScope(apiScope)
   }
 
-  @Put('api-scope/:id')
-  @ApiOkResponse({ type: ApiScope })
-  async updateApiScope(@Body() apiScope: ApiScopesDTO, @Param('id') id: string): Promise<ApiScope> {
-    return await this.resourcesService.updateApiScope(apiScope, id)
-  }
+  // @Put('api-scope/:id')
+  // @ApiOkResponse({ type: ApiScope })
+  // async updateApiScope(
+  //   @Body() apiScope: ApiScopesDTO,
+  //   @Param('id') id: string,
+  // ): Promise<ApiScope> {
+  //   return await this.resourcesService.updateApiScope(apiScope, id)
+  // }
 
-  @Delete('api-scope/:id')
-  @ApiOkResponse()
-  async deleteApiScope(@Param('id') id: string): Promise<number> {
-    return await this.resourcesService.deleteApiScope(id)
-  }
+  // @Delete('api-scope/:id')
+  // @ApiOkResponse()
+  // async deleteApiScope(@Param('id') id: string): Promise<number> {
+  //   return await this.resourcesService.deleteApiScope(id)
+  // }
 }

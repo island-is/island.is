@@ -92,23 +92,23 @@ export class ResourcesController {
     return await this.resourcesService.createIdentityResource(identityResource)
   }
 
-  @Put('identity-resource/:id')
-  @ApiOkResponse({ type: IdentityResource })
-  async updateIdentityResource(
-    @Body() identityResource: IdentityResourcesDTO,
-    @Param('id') id: string,
-  ): Promise<IdentityResource> {
-    return await this.resourcesService.updateIdentityResource(
-      identityResource,
-      id,
-    )
-  }
+  // @Put('identity-resource/:id')
+  // @ApiOkResponse({ type: IdentityResource })
+  // async updateIdentityResource(
+  //   @Body() identityResource: IdentityResourcesDTO,
+  //   @Param('id') id: string,
+  // ): Promise<IdentityResource> {
+  //   return await this.resourcesService.updateIdentityResource(
+  //     identityResource,
+  //     id,
+  //   )
+  // }
 
-  @Delete('identity-resource/:id')
-  @ApiOkResponse()
-  async deleteIdentityResource(@Param('id') id: string): Promise<number> {
-    return await this.resourcesService.deleteIdentityResource(id)
-  }
+  // @Delete('identity-resource/:id')
+  // @ApiOkResponse()
+  // async deleteIdentityResource(@Param('id') id: string): Promise<number> {
+  //   return await this.resourcesService.deleteIdentityResource(id)
+  // }
 
   @Post('api-scope')
   @ApiCreatedResponse({ type: ApiScope })
@@ -116,18 +116,18 @@ export class ResourcesController {
     return await this.resourcesService.createApiScope(apiScope)
   }
 
-  @Put('api-scope/:id')
-  @ApiOkResponse({ type: ApiScope })
-  async updateApiScope(
-    @Body() apiScope: ApiScopesDTO,
-    @Param('id') id: string,
-  ): Promise<ApiScope> {
-    return await this.resourcesService.updateApiScope(apiScope, id)
-  }
+  // @Put('api-scope/:id')
+  // @ApiOkResponse({ type: ApiScope })
+  // async updateApiScope(
+  //   @Body() apiScope: ApiScopesDTO,
+  //   @Param('id') id: string,
+  // ): Promise<ApiScope> {
+  //   return await this.resourcesService.updateApiScope(apiScope, id)
+  // }
 
-  @Delete('api-scope/:id')
-  @ApiOkResponse()
-  async deleteApiScope(@Param('id') id: string): Promise<number> {
-    return await this.resourcesService.deleteApiScope(id)
-  }
+  // @Delete('api-scope/:id')
+  // @ApiOkResponse()
+  // async deleteApiScope(@Param('id') id: string): Promise<number> {
+  //   return await this.resourcesService.deleteApiScope(id)
+  // }
 }

@@ -9,7 +9,11 @@ import {
   Put,
   Delete,
 } from '@nestjs/common'
-import { UserIdentity, UserIdentitiesService, UserIdentityDto } from '@island.is/auth-api'
+import {
+  UserIdentity,
+  UserIdentitiesService,
+  UserIdentityDto,
+} from '@island.is/auth-api'
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -73,9 +77,7 @@ export class UserIdentitiesController {
 
   @Delete(':id')
   @ApiOkResponse()
-  async delete(
-    @Param('id') id: string,
-  ): Promise<number> {
+  async delete(@Param('id') id: string): Promise<number> {
     return await this.userIdentityService.delete(id)
   }
 }
