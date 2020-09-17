@@ -11,7 +11,6 @@ export class TranslationsResolver {
   getTranslations(
     @Args('input') input: GetTranslationsInput,
   ): Promise<TranslationsDict | null> {
-    console.log('getTranslations', input)
     return this.translationsService.getTranslations(
       input?.namespaces,
       input?.lang,

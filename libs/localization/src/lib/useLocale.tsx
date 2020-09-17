@@ -4,8 +4,6 @@ import { useIntl } from 'react-intl'
 
 export function useLocale(namespaces?: string | string[]) {
   const intl = useIntl()
-
-  console.log('__intl__', intl)
   const { loadMessages, loadingMessages, lang } = useContext(LocaleContext)
 
   useEffect(() => {
