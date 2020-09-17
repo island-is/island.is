@@ -3,12 +3,9 @@ import React from 'react'
 import { render } from '@testing-library/react'
 
 import ServiceList from './ServiceList'
-import { ServiceCardInformation, SERVICE_STATUS } from '../../components';
 import {  getAllPriceCategories, 
           GetServicesParameters, 
-          SERVICE_SEARCH_METHOD, 
-          PRICING_CATEGORY, DATA_CATEGORY, ACCESS_CATEGORY, TYPE_CATEGORY 
-        } from '../../components/ServiceRepository/service-repository';
+          SERVICE_SEARCH_METHOD  } from '../../../components/ServiceRepository/service-repository';
 
 describe(' ServiceList ', () => {
   

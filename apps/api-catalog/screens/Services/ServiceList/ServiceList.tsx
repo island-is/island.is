@@ -8,7 +8,7 @@ import {
   ServiceCard,
   ServiceCardInformation, 
   CategoryCheckBox
-} from '../../components'
+} from '../../../components'
 
 import { getServices, 
   PRICING_CATEGORY, 
@@ -21,7 +21,7 @@ import { getServices,
   getAllDataCategories, 
   getAllAccessCategories, 
   getAllTypeCategories,
-} from '../../components/ServiceRepository/service-repository'
+} from '../../../components/ServiceRepository/service-repository'
 
 import * as styles from './ServiceList.treat';
 import cn from 'classnames'

@@ -1,4 +1,4 @@
-export { ServiceCard} from './service-card';
+export { ServiceCard} from './ServiceCard';
 export type {   ServiceCardInformation,
-                ServiceCardProps } from './service-card';
+                ServiceCardProps } from './ServiceCard';
 
