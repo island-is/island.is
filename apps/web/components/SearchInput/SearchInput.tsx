@@ -197,11 +197,20 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       <Downshift<string>
         id={id}
         initialInputValue={initialInputValue}
-        onChange={(q) => onSubmit(`${search.prefix} ${q}`.trim())}
+        onChange={(q) => {
+          console.log('q')
+          return onSubmit(`${search.prefix} ${q}`.trim() || '')
+        }}
         onInputValueChange={(q) => setSearchTerm(q)}
-        itemToString={(v) =>
-          `${search.prefix ? search.prefix + ' ' : ''}${v}`.trim() ?? ''
-        }
+        itemToString={(v) => {
+          const str = `${search.prefix ? search.prefix + ' ' : ''}${v}`.trim()
+
+          if (str === 'null') {
+            return ''
+          }
+
+          return str
+        }}
         stateReducer={(state, changes) => {
           // pressing tab when input is not empty should move focus to the
           // search icon, so we need to prevent downshift from closing on blur
@@ -237,6 +246,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             buttonProps={{
               onClick: () => {
                 closeMenu()
+                console.log('c')
                 onSubmit(inputValue)
               },
               onFocus,
@@ -256,6 +266,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               onKeyDown: (e) => {
                 if (e.key === 'Enter' && highlightedIndex == null) {
                   closeMenu()
+                  console.log('o')
                   onSubmit(e.currentTarget.value)
                 }
               },
