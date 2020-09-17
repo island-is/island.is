@@ -74,7 +74,7 @@ const Search: Screen<CategoryProps> = ({
 
   const sidebarCategories = (searchResults.items as Article[]).reduce(
     (all, cur) => {
-      const key = cur.category.slug
+      const key = cur.category?.slug ?? 'uncategorized'
       const item = all.find((x) => x.key === key)
 
       if (!item) {
@@ -89,7 +89,13 @@ const Search: Screen<CategoryProps> = ({
 
       return all
     },
-    [],
+    [
+      {
+        key: 'uncategorized',
+        total: 0,
+        title: n('uncategorized'),
+      },
+    ],
   )
 
   const items = (searchResults.items as Article[]).map((item) => ({
@@ -97,7 +103,7 @@ const Search: Screen<CategoryProps> = ({
     description: item.intro,
     href: makePath('article', '[slug]'),
     as: makePath('article', item.slug),
-    categorySlug: item.category.slug,
+    categorySlug: item.category?.slug,
     category: item.category,
     group: item.group,
   }))
@@ -109,13 +115,18 @@ const Search: Screen<CategoryProps> = ({
     })
   }
 
-  const byCategory = (item) =>
-    !filters.category || filters.category === item.categorySlug
+  const byCategory = (item) => {
+    if (!item.category && filters.category === 'uncategorized') {
+      return true
+    }
+
+    return !filters.category || filters.category === item.categorySlug
+  }
 
   const filteredItems = items.filter(byCategory)
 
   const categoryTitle = items.find((x) => x.categorySlug === filters.category)
-    ?.category.title
+    ?.category?.title
 
   const categorySlug = items.find((x) => x.categorySlug === filters.category)
     ?.categorySlug
