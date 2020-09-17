@@ -65,7 +65,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
     if (!asPath.startsWith('/_next') && statusCode === 404) {
       const path = asPath
         .trim()
-        .replace(/\/\/+(\/+?)/g, '/')
+        .replace(/\/\/+/g, '/')
         .replace(/\/+$/, '')
         .toLowerCase()
 
