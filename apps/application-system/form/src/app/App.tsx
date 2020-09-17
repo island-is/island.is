@@ -3,14 +3,20 @@ import { ApolloProvider } from '@apollo/client'
 
 import { Redirect, Route, Switch } from 'react-router-dom'
 
-import { Header, Box, GridContainer } from '@island.is/island-ui/core'
+import { Box, GridContainer } from '@island.is/island-ui/core'
 import { client } from '@island.is/application/graphql'
 import { Application } from '../routes/Application'
 import { Applications } from '../routes/Applications'
+import { Signin } from '../routes/SignIn'
+import { SilentSignIn } from '../routes/SilentSignin'
 
 import { fixSvgUrls } from '../utils'
 
 import * as styles from './App.treat'
+import { AuthProvider } from '../context/AuthProvider'
+
+import Header from '../components/Header'
+import ProtectedRoute from '../components/ProtectedRoute'
 
 export const App = () => {
   useEffect(() => {
@@ -21,24 +27,29 @@ export const App = () => {
 
   return (
     <ApolloProvider client={client}>
-      <Box className={styles.root}>
-        <Box background="white">
-          <GridContainer>
-            <Header />
-          </GridContainer>
+      <AuthProvider>
+        <Box className={styles.root}>
+          <Box background="white">
+            <GridContainer>
+              <Header />
+            </GridContainer>
+          </Box>
+          <Switch>
+            <Route path="/signin-oidc" component={Signin} />
+            <Route path="/silent/signin-oidc" component={SilentSignIn} />
+            <Route exact path="/">
+              <Redirect to="/application/" />
+            </Route>
+            <ProtectedRoute
+              strict
+              exact
+              path="/applications/:type"
+              component={Applications}
+            />
+            <ProtectedRoute path="/application/:id" component={Application} />
+          </Switch>
         </Box>
-        <Switch>
-          <Route exact path="/">
-            <Redirect to="/application/" />
-          </Route>
-          <Route strict exact path="/applications/:type">
-            <Applications />
-          </Route>
-          <Route path="/application/:id">
-            <Application />
-          </Route>
-        </Switch>
-      </Box>
+      </AuthProvider>
     </ApolloProvider>
   )
 }

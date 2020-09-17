@@ -2970,9 +2970,9 @@
         }
       }
     },
-    "service-portal-assets": {
-      "root": "libs/service-portal/assets",
-      "sourceRoot": "libs/service-portal/assets/src",
+    "nova-sms": {
+      "root": "libs/nova-sms",
+      "sourceRoot": "libs/nova-sms/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -2980,21 +2980,49 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/service-portal/assets/.eslintrc",
+            "config": "libs/nova-sms/.eslintrc",
             "tsConfig": [
-              "libs/service-portal/assets/tsconfig.lib.json",
-              "libs/service-portal/assets/tsconfig.spec.json"
+              "libs/nova-sms/tsconfig.lib.json",
+              "libs/nova-sms/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/service-portal/assets/**"]
+            "exclude": ["**/node_modules/**", "!libs/nova-sms/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/service-portal/assets/jest.config.js",
-            "tsConfig": "libs/service-portal/assets/tsconfig.spec.json",
+            "jestConfig": "libs/nova-sms/jest.config.js",
+            "tsConfig": "libs/nova-sms/tsconfig.spec.json",
             "passWithNoTests": true
           }
+        }
+      }
+    }
+  },
+  "service-portal-assets": {
+    "root": "libs/service-portal/assets",
+    "sourceRoot": "libs/service-portal/assets/src",
+    "projectType": "library",
+    "schematics": {},
+    "architect": {
+      "lint": {
+        "builder": "@nrwl/linter:lint",
+        "options": {
+          "linter": "eslint",
+          "config": "libs/service-portal/assets/.eslintrc",
+          "tsConfig": [
+            "libs/service-portal/assets/tsconfig.lib.json",
+            "libs/service-portal/assets/tsconfig.spec.json"
+          ],
+          "exclude": ["**/node_modules/**", "!libs/service-portal/assets/**"]
+        }
+      },
+      "test": {
+        "builder": "@nrwl/jest:jest",
+        "options": {
+          "jestConfig": "libs/service-portal/assets/jest.config.js",
+          "tsConfig": "libs/service-portal/assets/tsconfig.spec.json",
+          "passWithNoTests": true
         }
       }
     }

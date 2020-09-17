@@ -18,16 +18,21 @@ import {
 } from '@island.is/island-ui/core'
 import { Card, Sidebar } from '../../components'
 import { useI18n } from '@island.is/web/i18n'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
   GET_ARTICLES_QUERY,
   GET_CATEGORIES_QUERY,
+  GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
+import { LifeEventCard } from '../../components/LifeEventsCardsSection/components/LifeEventCard'
+
 import { useNamespace } from '@island.is/web/hooks'
 import {
+  GetLifeEventsInCategoryQuery,
   GetNamespaceQuery,
   GetArticlesQuery,
   QueryGetArticlesArgs,
@@ -35,28 +40,33 @@ import {
   QueryGetNamespaceArgs,
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
+  QueryGetLifeEventsInCategoryArgs,
 } from '../../graphql/schema'
-import { withMainLayout } from '@island.is/web/layouts/main'
 
 type Article = GetArticlesQuery['getArticles']
+type LifeEvents = GetLifeEventsInCategoryQuery['getLifeEventsInCategory']
 
-interface CategoryProps {
+export interface CategoryProps {
   articles: Article
+  lifeEvents: LifeEvents
   categories: GetArticleCategoriesQuery['getArticleCategories']
   namespace: GetNamespaceQuery['getNamespace']
+  slug: string
 }
 
 const Category: Screen<CategoryProps> = ({
   articles,
+  lifeEvents,
   categories,
   namespace,
+  slug,
 }) => {
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [hash, setHash] = useState<string>('')
   const { activeLocale } = useI18n()
   const Router = useRouter()
   const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   // group articles
   const { groups, cards } = articles.reduce(
@@ -84,7 +94,7 @@ const Category: Screen<CategoryProps> = ({
   )
 
   // find current category in categories list
-  const category = categories.find((x) => x.slug === Router.query.slug)
+  const category = categories.find((x) => x.slug === slug)
 
   useEffect(() => {
     const hashMatch = Router.asPath.match(/#([a-z0-9_-]+)/gi)
@@ -146,7 +156,6 @@ const Category: Screen<CategoryProps> = ({
   const sortedGroups = Object.keys(groups).sort((a, b) =>
     a.localeCompare(b, 'is'),
   )
-
   return (
     <>
       <Head>
@@ -170,7 +179,6 @@ const Category: Screen<CategoryProps> = ({
               >
                 {sortedGroups.map((groupSlug, index) => {
                   const { title, description, articles } = groups[groupSlug]
-                  console.log(title, description)
 
                   const expanded = groupSlug === hash.replace('#', '')
 
@@ -189,6 +197,7 @@ const Category: Screen<CategoryProps> = ({
                       <AccordionCard
                         id={`accordion-item-${groupSlug}`}
                         label={title}
+                        labelUse="h2"
                         startExpanded={expanded}
                         visibleContent={description}
                       >
@@ -211,18 +220,31 @@ const Category: Screen<CategoryProps> = ({
                                 <Stack space={2}>
                                   {sortArticlesByTitle(
                                     articlesBySubgroup[subgroup],
-                                  ).map(({ title, slug }) => {
-                                    return (
-                                      <FocusableBox
-                                        key={slug}
-                                        href={`${makePath('article')}/[slug]`}
-                                        as={makePath('article', slug)}
-                                        borderRadius="large"
-                                      >
-                                        <LinkCard>{title}</LinkCard>
-                                      </FocusableBox>
-                                    )
-                                  })}
+                                  ).map(
+                                    ({
+                                      title,
+                                      slug,
+                                      containsApplicationForm,
+                                    }) => {
+                                      return (
+                                        <FocusableBox
+                                          key={slug}
+                                          href={`${makePath('article')}/[slug]`}
+                                          as={makePath('article', slug)}
+                                          borderRadius="large"
+                                        >
+                                          <LinkCard
+                                            tag={
+                                              containsApplicationForm &&
+                                              'Umsókn'
+                                            }
+                                          >
+                                            {title}
+                                          </LinkCard>
+                                        </FocusableBox>
+                                      )
+                                    },
+                                  )}
                                 </Stack>
                               </React.Fragment>
                             )
@@ -247,6 +269,22 @@ const Category: Screen<CategoryProps> = ({
                 )
               })}
             </Stack>
+            {lifeEvents.map((lifeEvent, index) => {
+              return (
+                <LifeEventCard
+                  key={index}
+                  title={lifeEvent.title}
+                  intro={lifeEvent.intro}
+                  href={makePath('lifeEvent', '[slug]')}
+                  as={makePath('lifeEvent', lifeEvent.slug)}
+                  image={
+                    lifeEvent.thumbnail
+                      ? lifeEvent.thumbnail.url
+                      : lifeEvent.image.url
+                  }
+                />
+              )
+            })}
           </Stack>
         }
       >
@@ -299,6 +337,9 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
       data: { getArticles: articles },
     },
     {
+      data: { getLifeEventsInCategory: lifeEvents },
+    },
+    {
       data: { getArticleCategories },
     },
     namespace,
@@ -309,6 +350,18 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
         input: {
           lang: locale as ContentLanguage,
           category: slug,
+        },
+      },
+    }),
+    apolloClient.query<
+      GetLifeEventsInCategoryQuery,
+      QueryGetLifeEventsInCategoryArgs
+    >({
+      query: GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
+      variables: {
+        input: {
+          slug,
+          lang: locale as ContentLanguage,
         },
       },
     }),
@@ -338,8 +391,10 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     articles,
+    lifeEvents,
     categories: getArticleCategories,
     namespace,
+    slug,
   }
 }
 

@@ -8,7 +8,6 @@ import {
   MultiField,
   ExternalDataProvider,
   Repeater,
-  Schema,
   Section,
   SectionChildren,
   SubSection,

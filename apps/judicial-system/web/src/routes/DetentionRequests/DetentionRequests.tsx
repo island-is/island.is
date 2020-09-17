@@ -52,18 +52,20 @@ export const DetentionRequests: React.FC = () => {
     }
   }, [])
 
-  const mapCaseStateToTagVariant = (state: string): TagVariant => {
+  const mapCaseStateToTagVariant = (
+    state: CaseState,
+  ): { color: TagVariant; text: string } => {
     switch (state) {
-      case 'DRAFT':
-        return 'red'
-      case 'SUBMITTED':
-        return 'purple'
-      case 'ACTIVE':
-        return 'darkerMint'
-      case 'COMPLETED':
-        return 'blue'
+      case CaseState.DRAFT:
+        return { color: 'red', text: 'Drög' }
+      case CaseState.SUBMITTED:
+        return { color: 'purple', text: 'Krafa staðfest' }
+      case CaseState.ACTIVE:
+        return { color: 'darkerMint', text: 'Gæsluvarðhald virkt' }
+      case CaseState.COMPLETED:
+        return { color: 'blue', text: 'Gæsluvarðhaldi lokið' }
       default:
-        return 'white'
+        return { color: 'white', text: 'Óþekkt' }
     }
   }
 
@@ -73,7 +75,11 @@ export const DetentionRequests: React.FC = () => {
         <Logo />
       </div>
       <div className={styles.addDetentionRequestButtonContainer}>
-        <Button icon="plus" href="/stofna-krofu/grunnupplysingar">
+        <Button
+          icon="plus"
+          href="/stofna-krofu/grunnupplysingar"
+          onClick={() => window.localStorage.removeItem('workingCase')}
+        >
           Stofna nýja kröfu
         </Button>
       </div>
@@ -105,8 +111,8 @@ export const DetentionRequests: React.FC = () => {
                   {format(parseISO(c.created), 'PP', { locale: localeIS })}
                 </td>
                 <td>
-                  <Tag variant={mapCaseStateToTagVariant(c.state)} label>
-                    {CaseState[c.state]}
+                  <Tag variant={mapCaseStateToTagVariant(c.state).color} label>
+                    {mapCaseStateToTagVariant(c.state).text}
                   </Tag>
                 </td>
                 <td>

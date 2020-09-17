@@ -231,8 +231,11 @@
     "elastic-indexing": {
       "tags": []
     },
-    "service-portal-assets": {
+    "nova-sms": {
       "tags": []
-    }
+    },
+    "@island.is/service-portal/assets": [
+      "libs/service-portal/assets/src/index.ts"
+    ]
   }
 }

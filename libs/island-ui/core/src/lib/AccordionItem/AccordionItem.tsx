@@ -24,10 +24,13 @@ import { AccordionContext } from '../Accordion/Accordion'
 
 type IconVariantTypes = 'default' | 'sidebar'
 
+export type AccordionItemLabelTags = 'p' | 'h2' | 'h3' | 'h4' | 'h5'
+
 export type AccordionItemBaseProps = {
   id: string
   label: string
   labelVariant?: VariantTypes
+  labelUse?: AccordionItemLabelTags
   iconVariant?: IconVariantTypes
   visibleContent?: ReactNode
   children: ReactNode
@@ -51,6 +54,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
       id,
       label,
       labelVariant = 'h4',
+      labelUse = 'h3',
       iconVariant = 'default',
       visibleContent,
       expanded: expandedProp,
@@ -127,7 +131,7 @@ export const AccordionItem = forwardRef<HTMLButtonElement, AccordionItemProps>(
           >
             <Columns space={2} alignY="center">
               <Column>
-                <Typography variant={labelVariant} as="h3">
+                <Typography variant={labelVariant} as={labelUse}>
                   {label}
                 </Typography>
               </Column>

@@ -1,5 +1,5 @@
 import { UserRole, hasRole } from './authenticate'
-import { parseArray, parseString } from './parsers'
+import { parseArray, parseString } from './formatters'
 
 describe('Authenticate utils', () => {
   describe('HasRole util', () => {
@@ -23,7 +23,7 @@ describe('Authenticate utils', () => {
   })
 })
 
-describe('Parsers utils', () => {
+describe('Formatters utils', () => {
   describe('Parse array', () => {
     test('given a property name and an array of strings should parse correctly into JSON', () => {
       // Arrange

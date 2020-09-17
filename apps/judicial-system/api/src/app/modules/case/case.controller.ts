@@ -84,7 +84,15 @@ export class CaseController {
 
   @Post('case/:id/notification')
   @ApiOkResponse({ type: Notification })
-  sendNotificationByCaseId(@Param('id') id: string): Promise<Notification> {
-    return this.caseService.sendNotificationByCaseId(id)
+  async sendNotificationByCaseId(
+    @Param('id') id: string,
+  ): Promise<Notification> {
+    const existingCase = await this.caseService.findById(id)
+
+    if (!existingCase) {
+      throw new NotFoundException(`A case with the id ${id} does not exist`)
+    }
+
+    return this.caseService.sendNotificationByCaseId(existingCase)
   }
 }

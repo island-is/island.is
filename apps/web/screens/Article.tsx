@@ -24,14 +24,14 @@ import {
   SidebarSubNav,
   RichText,
 } from '@island.is/web/components'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
-import useRouteNames from '../i18n/useRouteNames'
+import routeNames from '../i18n/routeNames'
 import { CustomNextError } from '../units/errors'
-import { withMainLayout } from '../layouts/main'
 import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
@@ -77,7 +77,7 @@ const createArticleNavigation = (
   for (const subArticle of article.subArticles) {
     nav.push({
       title: subArticle.title,
-      url: makePath('article', '[slug]/[subSlug]'),
+      url: makePath('article', '[slug]/'),
       as: makePath('article', `${article.slug}/${subArticle.slug}`),
     })
 
@@ -101,14 +101,14 @@ const RelatedArticles: FC<{
   articles: Array<{ slug: string; title: string }>
 }> = ({ title, articles }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   if (articles.length === 0) return null
 
   return (
     <SidebarBox>
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h4">
+        <Typography variant="h4" as="h2">
           {title}
         </Typography>
         <Divider weight="alternate" />
@@ -135,7 +135,7 @@ const SubArticleNavigation: FC<{
   selectedSubArticle: SubArticle
 }> = ({ title, article, selectedSubArticle }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
   const [bullet, setBullet] = useState<HTMLDivElement>(null)
   const isFirstMount = useFirstMountState()
   const navigation = useMemo(() => {
@@ -164,7 +164,7 @@ const SubArticleNavigation: FC<{
           <Typography variant="p" as="p">
             <Link
               shallow
-              href={makePath('article', '[slug]')}
+              href={makePath('article', '[slug]/[subSlug]')}
               as={makePath('article', article.slug)}
             >
               {maybeBold(article.title, !selectedSubArticle)}
@@ -240,7 +240,7 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
       {bullet && <Bullet align="left" top={bullet.offsetTop} />}
 
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h4">
+        <Typography variant="h4" as="h2">
           {title}
         </Typography>
         <Divider weight="alternate" />
@@ -265,28 +265,6 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
   )
 }
 
-const ActionButton: FC<{ content: Slice[]; defaultText: string }> = ({
-  content,
-  defaultText,
-}) => {
-  const processEntries = content.filter((slice): slice is ProcessEntry => {
-    return slice.__typename === 'ProcessEntry' && Boolean(slice.processLink)
-  })
-
-  // we'll only show the button if there is exactly one process entry on the page
-  if (processEntries.length !== 1) return null
-
-  const { buttonText, processLink } = processEntries[0]
-
-  return (
-    <SidebarBox>
-      <Button href={processLink} width="fluid">
-        {buttonText || defaultText}
-      </Button>
-    </SidebarBox>
-  )
-}
-
 interface ArticleSidebarProps {
   article: Article
   subArticle: SubArticle
@@ -300,10 +278,6 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
 }) => {
   return (
     <Stack space={3}>
-      <ActionButton
-        content={article.body}
-        defaultText={n('processLinkButtonText')}
-      />
       {article.subArticles.length === 0 ? (
         <ArticleNavigation title="Efnisyfirlit" article={article} />
       ) : (
@@ -321,7 +295,7 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
   )
 }
 
-interface ArticleProps {
+export interface ArticleProps {
   article: Article
   namespace: GetNamespaceQuery['getNamespace']
 }
@@ -330,7 +304,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const n = useNamespace(namespace)
   const { query } = useRouter()
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   const subArticle = article.subArticles.find((sub) => {
     return sub.slug === query.subSlug

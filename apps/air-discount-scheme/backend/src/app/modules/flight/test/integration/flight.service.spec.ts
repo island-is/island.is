@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common'
 import { setup } from '../../../../../../test/setup'
 import { NationalRegistryUser } from '../../../nationalRegistry'
 import { FlightService } from '../../flight.service'
-import { FlightDto } from '../../dto'
+import { CreateFlightBody } from '../../dto'
 
 let app: INestApplication
 let flightService: FlightService
@@ -14,7 +14,7 @@ beforeAll(async () => {
 })
 
 describe('create', () => {
-  const flightDto: FlightDto = {
+  const flightDto: CreateFlightBody = {
     bookingDate: new Date('2020-08-17T12:35:50.971Z'),
     flightLegs: [
       {

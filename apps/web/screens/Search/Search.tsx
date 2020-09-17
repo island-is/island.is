@@ -29,7 +29,7 @@ import {
   GET_SEARCH_RESULTS_QUERY_DETAILED,
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import {
@@ -60,7 +60,7 @@ const Search: Screen<CategoryProps> = ({
   const searchRef = useRef<HTMLInputElement | null>(null)
   const Router = useRouter()
   const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   const filters = {
     category: Router.query.category,

@@ -5,6 +5,7 @@ import { ArticleSyncService } from './importers/article.service'
 import { CmsSyncService } from './cmsSync.service'
 import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
+import { NewsSyncService } from './importers/news.service'
 
 @Module({
   providers: [
@@ -14,6 +15,7 @@ import { ArticleCategorySyncService } from './importers/articleCategory.service'
     ArticleSyncService,
     LifeEventsPageSyncService,
     ArticleCategorySyncService,
+    NewsSyncService,
   ],
   exports: [CmsSyncService],
 })

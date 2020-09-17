@@ -5,6 +5,7 @@ import {
   ArticleResolver,
   LatestNewsSliceResolver,
 } from './cms.resolver'
+import { CmsService } from './cms.service'
 
 @Module({
   providers: [
@@ -12,6 +13,7 @@ import {
     ArticleResolver,
     LatestNewsSliceResolver,
     ElasticService,
+    CmsService,
   ],
 })
 export class CmsModule {}

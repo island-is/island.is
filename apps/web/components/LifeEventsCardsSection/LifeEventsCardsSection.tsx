@@ -6,7 +6,7 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
 import { LifeEventCard } from './components/LifeEventCard'
 import { GetLifeEventsQuery } from '../../graphql/schema'
 
@@ -20,13 +20,13 @@ const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   lifeEvents = [],
 }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   return (
     <GridContainer>
       <GridRow>
         <GridColumn span={['6/12', '6/12', '12/12']}>
-          <Typography variant="h3" as="h3" paddingBottom={4}>
+          <Typography variant="h3" as="h2" paddingBottom={4}>
             {title}
           </Typography>
         </GridColumn>
@@ -41,7 +41,8 @@ const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
             <LifeEventCard
               title={lifeEvent.title}
               intro={lifeEvent.intro}
-              url={makePath('lifeEvent', lifeEvent.slug)}
+              href={makePath('lifeEvent', '[slug]')}
+              as={makePath('lifeEvent', lifeEvent.slug)}
               image={
                 lifeEvent.thumbnail
                   ? lifeEvent.thumbnail.url

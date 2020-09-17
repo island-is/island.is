@@ -39,7 +39,7 @@ import {
   FrontpageSliderList,
   mapFrontpageSliderList,
 } from './models/frontpageSliderList.model'
-import { ArticleCategory } from './models/articleCategory.model'
+import { mapUrl, Url } from './models/url.model'
 
 const makePage = (
   page: number,
@@ -204,6 +204,7 @@ const ArticleFields = [
   'fields.group',
   'fields.category',
   'fields.subArticles',
+  'fields.containsApplicationForm',
 ].join(',')
 
 export const getAdgerdirNews = async (
@@ -231,6 +232,19 @@ export const getArticle = async (
   }).catch(errorHandler('getArticle'))
 
   return result.items.map(mapArticle)[0] ?? null
+}
+
+export const getUrl = async (
+  slug: string,
+  lang: string,
+): Promise<Url | null> => {
+  const result = await getLocalizedEntries<types.IUrlFields>(lang, {
+    ['content_type']: 'url',
+    'fields.urlsList[all]': slug,
+    include: 1,
+  }).catch(errorHandler('getUrl'))
+
+  return result.items.map(mapUrl)[0] ?? null
 }
 
 export const getRelatedArticles = async (
@@ -431,6 +445,19 @@ export const getLifeEvents = async (lang: string): Promise<LifeEventPage[]> => {
     ['content_type']: 'lifeEventPage',
     order: '-sys.createdAt',
   }).catch(errorHandler('getLifeEvents'))
+
+  return result.items.map(mapLifeEventPage)
+}
+
+export const getLifeEventsInCategory = async (
+  lang: string,
+  slug: string,
+): Promise<LifeEventPage[]> => {
+  const result = await getLocalizedEntries<types.ILifeEventPageFields>(lang, {
+    ['content_type']: 'lifeEventPage',
+    'fields.category.sys.contentType.sys.id': 'articleCategory',
+    'fields.category.fields.slug': slug,
+  }).catch(errorHandler('getLifeEventsInCategory'))
 
   return result.items.map(mapLifeEventPage)
 }

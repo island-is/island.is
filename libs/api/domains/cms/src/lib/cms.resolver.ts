@@ -16,7 +16,7 @@ import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { FrontpageSliderList } from './models/frontpageSliderList.model'
 import { GetArticleInput } from './dto/getArticle.input'
 import { News } from './models/news.model'
-import { GetNewsInput } from './dto/getNews.input'
+import { GetSingleNewsInput } from './dto/getSingleNews.input'
 import { GetNewsListInput } from './dto/getNewsList.input'
 import { GetAdgerdirNewsListInput } from './dto/getAdgerdirNewsList.input'
 import { GetAdgerdirPageInput } from './dto/getAdgerdirPage.input'
@@ -40,10 +40,10 @@ import { GetAlertBannerInput } from './dto/getAlertBanner.input'
 import { GetGenericPageInput } from './dto/getGenericPage.input'
 import { GetLifeEventPageInput } from './dto/getLifeEventPage.input'
 import { GetLifeEventsInput } from './dto/getLifeEvents.input'
+import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.input'
 import {
   getArticle,
   getRelatedArticles,
-  getNews,
   getNewsList,
   getNamespace,
   getAboutPage,
@@ -63,6 +63,8 @@ import {
   getOrganizationTags,
   getLifeEventPage,
   getLifeEvents,
+  getLifeEventsInCategory,
+  getUrl,
 } from './services'
 import { LatestNewsSlice } from './models/latestNewsSlice.model'
 import { Menu } from './models/menu.model'
@@ -75,8 +77,11 @@ import { environment } from './environments'
 import { OrganizationTags } from './models/organizationTags.model'
 import { ArticleCategory } from './models/articleCategory.model'
 import { GetArticleCategoriesInput } from './dto/getArticleCategories.input'
-import { ElasticService, SearchIndexes } from '@island.is/api/content-search'
+import { SearchIndexes } from '@island.is/api/content-search'
 import { GetArticlesInput } from './dto/getArticles.input'
+import { CmsService } from './cms.service'
+import { GetUrlInput } from './dto/getUrl.input'
+import { Url } from './models/url.model'
 
 const { cacheTime } = environment
 
@@ -85,17 +90,11 @@ const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
 @Resolver()
 @Directive(cacheControlDirective())
 export class CmsResolver {
-  constructor(private readonly elasticService: ElasticService) {}
+  constructor(private readonly cmsService: CmsService) {}
   @Directive(cacheControlDirective())
   @Query(() => Article, { nullable: true })
   getArticle(@Args('input') input: GetArticleInput): Promise<Article | null> {
     return getArticle(input?.slug ?? '', input?.lang ?? 'is-IS')
-  }
-
-  @Directive(cacheControlDirective())
-  @Query(() => News, { nullable: true })
-  getNews(@Args('input') input: GetNewsInput): Promise<News | null> {
-    return getNews(input.lang ?? 'is-IS', input.slug)
   }
 
   @Directive(cacheControlDirective())
@@ -245,34 +244,41 @@ export class CmsResolver {
     return getLifeEvents(input.lang)
   }
 
+  @Query(() => [LifeEventPage])
+  getLifeEventsInCategory(
+    @Args('input') input: GetLifeEventsInCategoryInput,
+  ): Promise<LifeEventPage[]> {
+    return getLifeEventsInCategory(input.lang, input.slug)
+  }
+
   @Query(() => [ArticleCategory])
-  async getArticleCategories(
+  getArticleCategories(
     @Args('input') input: GetArticleCategoriesInput,
   ): Promise<ArticleCategory[]> {
-    // TODO: Move this to a deticated service?
-    const categoryResponse = await this.elasticService.getDocumentsByTypes(
+    return this.cmsService.getArticleCategories(
       SearchIndexes[input.lang],
-      { types: ['webArticleCategory'], size: input.size ?? 100 },
-    )
-    return categoryResponse.hits.hits.map<ArticleCategory>((response) =>
-      JSON.parse(response._source.response),
+      input,
     )
   }
 
   @Query(() => [Article])
-  async getArticles(
-    @Args('input') input: GetArticlesInput,
+  getArticles(
+    @Args('input') { lang, ...input }: GetArticlesInput,
   ): Promise<Article[]> {
-    const articlesResponse = await this.elasticService.getDocumentsByTag(
-      SearchIndexes[input.lang],
-      {
-        tag: { type: 'category', key: input.category },
-        size: input.size ?? 100,
-      },
-    )
-    return articlesResponse.hits.hits.map<Article>((response) =>
-      JSON.parse(response._source.response),
-    )
+    return this.cmsService.getArticles(SearchIndexes[lang], input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => News, { nullable: true })
+  getSingleNews(
+    @Args('input') { lang, ...input }: GetSingleNewsInput,
+  ): Promise<News | null> {
+    return this.cmsService.getNews(SearchIndexes[lang], input)
+  }
+
+  @Query(() => Url, { nullable: true })
+  getUrl(@Args('input') input: GetUrlInput): Promise<Url | null> {
+    return getUrl(input?.slug ?? '', input?.lang ?? 'is-IS')
   }
 }
 

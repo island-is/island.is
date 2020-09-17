@@ -10,7 +10,7 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { NewsCard } from '../NewsCard'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
 import { GetNewsListQuery } from '../../graphql/schema'
 
@@ -28,19 +28,19 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
 }) => {
   const newsItems = items.slice(0, 3)
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   return (
     <GridContainer>
       <GridRow>
         <GridColumn span={['12/12', '12/12', '6/12']}>
-          <Typography variant="h3" as="h3" paddingBottom={4}>
+          <Typography variant="h3" as="h2" paddingBottom={4}>
             {label}
           </Typography>
         </GridColumn>
         <GridColumn span="6/12" hideBelow="md">
           <Box display="flex" justifyContent="flexEnd" paddingBottom={4}>
-            <Typography variant="h3" as="h3" paddingBottom={4}>
+            <Typography variant="h3" as="p" paddingBottom={4}>
               <ArrowLink href="/frett" arrowHeight={16}>
                 Sjá fleiri
               </ArrowLink>
@@ -61,7 +61,8 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
                 introduction={newsItem.intro}
                 slug={newsItem.slug}
                 image={newsItem.image}
-                url={makePath('news', newsItem.slug)}
+                as={makePath('news', newsItem.slug)}
+                url={makePath('news', '[slug]')}
               />
             </GridColumn>
           ))}
@@ -77,7 +78,8 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
               introduction={newsItem.intro}
               slug={newsItem.slug}
               image={newsItem.image}
-              url={makePath('news', newsItem.slug)}
+              as={makePath('news', newsItem.slug)}
+              url={makePath('news', '[slug]')}
             />
           ))}
         </Swiper>

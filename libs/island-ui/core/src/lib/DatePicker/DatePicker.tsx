@@ -23,6 +23,7 @@ interface DatePickerProps {
   locale?: Locale
   value?: ReactDatePickerProps['value']
   minDate?: ReactDatePickerProps['minDate']
+  selected?: ReactDatePickerProps['selected']
   hasError?: boolean
   errorMessage?: string
   handleChange?: (date: Date) => void
@@ -38,6 +39,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   locale,
   value,
   minDate,
+  selected,
   hasError = false,
   errorMessage,
   handleChange,
@@ -72,9 +74,9 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
   const CustomInput = React.forwardRef<
     HTMLButtonElement,
-    { inputValue: string; onClick: () => void; placeholderText: string }
-  >(({ inputValue, onClick, placeholderText }, ref) => {
-    const valueAsDate = new Date(inputValue)
+    { value: string; onClick: () => void; placeholderText: string }
+  >(({ value, onClick, placeholderText }, ref) => {
+    const valueAsDate = new Date(value)
 
     return (
       <button className={className} onClick={onClick}>
@@ -84,7 +86,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             {required && <span className={styles.requiredStar}> *</span>}
           </p>
           <div className={styles.value}>
-            {inputValue ? (
+            {value ? (
               <Typography variant="h3">
                 {format(valueAsDate, 'P', {
                   locale: getLocale(locale),
@@ -106,7 +108,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     <div className={coreStyles.root}>
       <div className={cn(styles.root, 'island-ui-datepicker')}>
         <ReactDatePicker
-          selected={startDate}
+          selected={selected ?? startDate}
           locale={locale}
           minDate={minDate}
           showPopperArrow={false}
@@ -134,7 +136,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           }}
           customInput={
             <CustomInput
-              inputValue={value}
+              value={value}
               onClick={onInputClick}
               placeholderText={placeholderText}
             />
