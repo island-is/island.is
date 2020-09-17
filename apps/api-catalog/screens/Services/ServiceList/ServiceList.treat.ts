@@ -19,6 +19,13 @@ export const navigation = style({
   textAlign: 'center'
 })
 
+export const displayInline = style({
+  display:'inline'
+})
+export const displayHidden = style({
+  display:'none'
+})
+
 export const radioButton = style({
   marginTop:5
 })

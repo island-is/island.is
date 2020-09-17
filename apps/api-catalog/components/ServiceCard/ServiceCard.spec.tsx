@@ -3,7 +3,7 @@ import { render } from '@testing-library/react'
 
 import {ServiceCard, ServiceCardInformation} from '.'
 
-import { ACCESS_CATEGORY, DATA_CATEGORY, PRICING_CATEGORY, TYPE_CATEGORY } from '../ServiceRepository/service-repository';
+import { ACCESS_CATEGORY, DATA_CATEGORY, PRICING_CATEGORY, TYPE_CATEGORY } from '../ServiceRepository';
 import { SERVICE_STATUS } from '..';
 
 describe(' ServiceCard ', () => {

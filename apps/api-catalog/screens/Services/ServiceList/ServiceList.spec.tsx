@@ -5,7 +5,7 @@ import { render } from '@testing-library/react'
 import ServiceList from './ServiceList'
 import {  getAllPriceCategories, 
           GetServicesParameters, 
-          SERVICE_SEARCH_METHOD  } from '../../../components/ServiceRepository/service-repository';
+          SERVICE_SEARCH_METHOD  } from '../../../components';
 
 describe(' ServiceList ', () => {
   

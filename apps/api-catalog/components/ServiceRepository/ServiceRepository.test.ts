@@ -1,4 +1,4 @@
-import {getServices, GetServicesParameters} from './service-repository'
+import {getServices, GetServicesParameters} from './ServiceRepository'
 
 
 describe('ServiceRepository', ()=>{

@@ -1,27 +1,29 @@
 import React, { useState, useEffect, ReactNode } from 'react'
 import {  Box,  
-  Button, 
-  SidebarAccordion, RadioButton, ContentBlock, GridRow, GridColumn 
+          Button, 
+          SidebarAccordion, 
+          RadioButton, 
+          ContentBlock, 
+          GridRow, 
+          GridColumn,
+          Icon
 } from '@island.is/island-ui/core'
+
+import { ACCESS_CATEGORY, DATA_CATEGORY, getAllAccessCategories, getAllTypeCategories, getServices, TYPE_CATEGORY } from '../../../components'
 
 import {  
   ServiceCard,
   ServiceCardInformation, 
-  CategoryCheckBox
-} from '../../../components'
-
-import { getServices, 
-  PRICING_CATEGORY, 
-  DATA_CATEGORY, 
-  TYPE_CATEGORY, 
-  ACCESS_CATEGORY, 
-  SERVICE_SEARCH_METHOD,
-  GetServicesParameters, 
+  CategoryCheckBox, 
   getAllPriceCategories, 
   getAllDataCategories, 
-  getAllAccessCategories, 
-  getAllTypeCategories,
-} from '../../../components/ServiceRepository/service-repository'
+  GetServicesParameters,
+  PRICING_CATEGORY, 
+  SERVICE_SEARCH_METHOD
+} from '../../../components'
+
+
+
 
 import * as styles from './ServiceList.treat';
 import cn from 'classnames'
@@ -65,15 +67,24 @@ export interface ServiceListProps {
 export default function ServiceList(props:ServiceListProps) {
   
   if (!props.parameters === null) {
-    props.parameters = { cursor:0, limit:null, owner:null, name:null, pricing:null, data:null, type:null, access:null, searchMethod:SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY };
+    props.parameters = { 
+      cursor:0, 
+      limit:null, 
+      owner:null, 
+      name:null, 
+      pricing:null, 
+      data:null, 
+      type:null, 
+      access:null, 
+      searchMethod:SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY };
   }
  
   const selectAllCheckboxes = (select:boolean) => {
     props.parameters.cursor  = null;
     props.parameters.pricing = select? getAllPriceCategories()  : [];
     props.parameters.data    = select? getAllDataCategories()   : [];
-    props.parameters.type    = select? getAllTypeCategories()   : [];
-    props.parameters.access  = select? getAllAccessCategories() : [];
+    props.parameters.type    = select? getAllPriceCategories()   : [];
+    props.parameters.access  = select? getAllPriceCategories() : [];
     
     setStatusQueryString(createStatusQueryString());
     setFirstGet(true);
@@ -143,6 +154,7 @@ export default function ServiceList(props:ServiceListProps) {
     return str;  
   }
 
+  const [isLoading,    setLoading]   = useState<boolean>(true);
   const [services,    setServices]   = useState<Array<ServiceCardInformation>>(null);
   const [nextCursor,  setNextCursor] = useState<number>(props.nextCursor);
   const [nextFetch,   setNextFetch] = useState<number>(null);
@@ -157,9 +169,11 @@ export default function ServiceList(props:ServiceListProps) {
   useEffect(() => {
     
     const appendData = async () => {
+      setLoading(true);
       const response = await getServices(props.parameters);
-          services.push(...response.result);    
-          setNextCursor(response.nextCursor);
+      services.push(...response.result);    
+      setNextCursor(response.nextCursor);
+      setLoading(false);
     }
 
     if (!firstGet && nextFetch) {
@@ -170,10 +184,12 @@ export default function ServiceList(props:ServiceListProps) {
   useEffect(() => {
       
       const loadData = async () => {
+        setLoading(true);
         setFirstGet(true);
         const response = await getServices(props.parameters);
         setNextCursor(response.nextCursor);
         setServices(response.result);
+        setLoading(false);
       }
       if (firstGet)
         loadData();
@@ -197,11 +213,15 @@ export default function ServiceList(props:ServiceListProps) {
                       })
                     }
                   <div className={cn(styles.navigation)}>
-                    <Button disabled={nextCursor === null} variant="text" onClick={() => onPageMoreButtonClick()} icon="cheveron" >
-                      Fetch more
-                    </Button>
+                    <div className={cn(isLoading? styles.displayInline: styles.displayHidden)}>
+                      <Icon width="32" height="32" spin={true} type='loading' color="blue600" />
+                    </div>
+                    <div className={cn(isLoading? styles.displayHidden : {})}>
+                      <Button disabled={nextCursor === null} variant="text" onClick={() => onPageMoreButtonClick()} icon="cheveron" >
+                        Fetch more
+                      </Button>
+                    </div>
                   </div>
-                
           </Box>
       } 
       right={
