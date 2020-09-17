@@ -10,8 +10,6 @@ import { Applications } from '../routes/Applications'
 
 import { fixSvgUrls } from '../utils'
 
-import * as styles from './App.treat'
-
 export const App = () => {
   useEffect(() => {
     // Fixes the island.is logo and other SVGs not appearing on
@@ -21,24 +19,22 @@ export const App = () => {
 
   return (
     <ApolloProvider client={client}>
-      <Box className={styles.root}>
-        <Box background="white">
-          <GridContainer>
-            <Header />
-          </GridContainer>
-        </Box>
-        <Switch>
-          <Route exact path="/">
-            <Redirect to="/application/" />
-          </Route>
-          <Route strict exact path="/applications/:type">
-            <Applications />
-          </Route>
-          <Route path="/application/:id">
-            <Application />
-          </Route>
-        </Switch>
+      <Box background="white">
+        <GridContainer>
+          <Header />
+        </GridContainer>
       </Box>
+      <Switch>
+        <Route exact path="/">
+          <Redirect to="/application/" />
+        </Route>
+        <Route strict exact path="/applications/:type">
+          <Applications />
+        </Route>
+        <Route path="/application/:id">
+          <Application />
+        </Route>
+      </Switch>
     </ApolloProvider>
   )
 }

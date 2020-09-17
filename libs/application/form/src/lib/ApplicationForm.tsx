@@ -1,4 +1,6 @@
 import React, { FC, useReducer } from 'react'
+import cn from 'classnames'
+
 import { Application } from '@island.is/application/template'
 
 import FormProgress from '../components/FormProgress/'
@@ -49,59 +51,71 @@ export const ApplicationForm: FC<{ application: Application }> = ({
   } = state
 
   return (
-    <Box paddingTop={[0, 4]} paddingBottom={[0, 5]} width="full" height="full">
-      <GridContainer>
-        <GridRow>
-          <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
-            <Box
-              paddingTop={[3, 6, 8]}
-              height="full"
-              borderRadius="large"
-              background="white"
+    <Box
+      className={cn(styles.root, {
+        [styles.rootEditing]: true,
+        [styles.rootReviewing]: false,
+      })}
+    >
+      <Box
+        paddingTop={[0, 4]}
+        paddingBottom={[0, 5]}
+        width="full"
+        height="full"
+      >
+        <GridContainer>
+          <GridRow>
+            <GridColumn span={['12/12', '12/12', '9/12', '9/12']}>
+              <Box
+                paddingTop={[3, 6, 8]}
+                height="full"
+                borderRadius="large"
+                background="white"
+              >
+                <Screen
+                  addExternalData={(payload) =>
+                    dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
+                  }
+                  answerQuestions={(payload) =>
+                    dispatch({ type: ActionTypes.ANSWER, payload })
+                  }
+                  dataSchema={dataSchema}
+                  externalData={storedApplication.externalData}
+                  formValue={storedApplication.answers}
+                  expandRepeater={() =>
+                    dispatch({ type: ActionTypes.EXPAND_REPEATER })
+                  }
+                  answerAndGoToNextScreen={(payload) =>
+                    dispatch({
+                      type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN,
+                      payload,
+                    })
+                  }
+                  prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
+                  shouldSubmit={activeScreen === screens.length - 1}
+                  screen={screens[activeScreen]}
+                  mode={state.form.mode}
+                  applicationId={storedApplication.id}
+                />
+              </Box>
+            </GridColumn>
+            <GridColumn
+              span={['12/12', '12/12', '3/12', '3/12']}
+              className={styles.largeSidebarContainer}
             >
-              <Screen
-                addExternalData={(payload) =>
-                  dispatch({ type: ActionTypes.ADD_EXTERNAL_DATA, payload })
-                }
-                answerQuestions={(payload) =>
-                  dispatch({ type: ActionTypes.ANSWER, payload })
-                }
-                dataSchema={dataSchema}
-                externalData={storedApplication.externalData}
-                formValue={storedApplication.answers}
-                expandRepeater={() =>
-                  dispatch({ type: ActionTypes.EXPAND_REPEATER })
-                }
-                answerAndGoToNextScreen={(payload) =>
-                  dispatch({
-                    type: ActionTypes.ANSWER_AND_GO_NEXT_SCREEN,
-                    payload,
-                  })
-                }
-                prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
-                shouldSubmit={activeScreen === screens.length - 1}
-                screen={screens[activeScreen]}
-                mode={state.form.mode}
-                applicationId={storedApplication.id}
-              />
-            </Box>
-          </GridColumn>
-          <GridColumn
-            span={['12/12', '12/12', '3/12', '3/12']}
-            className={styles.largeSidebarContainer}
-          >
-            <Sidebar>
-              <FormProgress
-                formName={form.name}
-                formIcon={form.icon}
-                sections={sections}
-                activeSection={activeSection}
-                activeSubSection={activeSubSection}
-              />
-            </Sidebar>
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
+              <Sidebar>
+                <FormProgress
+                  formName={form.name}
+                  formIcon={form.icon}
+                  sections={sections}
+                  activeSection={activeSection}
+                  activeSubSection={activeSubSection}
+                />
+              </Sidebar>
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Box>
     </Box>
   )
 }
