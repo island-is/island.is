@@ -58,6 +58,7 @@ describe('PublicFlightController', () => {
           useClass: jest.fn(() => ({
             getDiscountByDiscountCode: () => ({}),
             useDiscount: () => ({}),
+            reactivateDiscount: () => ({}),
           })),
         },
         {
@@ -135,7 +136,11 @@ describe('PublicFlightController', () => {
         { airline },
       )
 
-      expect(useDiscountSpy).toHaveBeenCalledWith(discountCode, nationalId)
+      expect(useDiscountSpy).toHaveBeenCalledWith(
+        discountCode,
+        nationalId,
+        flight.id,
+      )
       expect(result).toEqual(flight)
     })
 
@@ -240,9 +245,14 @@ describe('PublicFlightController', () => {
         .spyOn(flightService as any, 'findOne')
         .mockImplementation(() => Promise.resolve(flight))
       const deleteSpy = jest.spyOn(flightService, 'delete')
+      const reactivateDiscountSpy = jest.spyOn(
+        discountService,
+        'reactivateDiscount',
+      )
 
       await publicFlightController.delete({ flightId: flight.id }, { airline })
 
+      expect(reactivateDiscountSpy).toHaveBeenCalledWith(flight.id)
       expect(deleteSpy).toHaveBeenCalledWith(flight)
     })
 
