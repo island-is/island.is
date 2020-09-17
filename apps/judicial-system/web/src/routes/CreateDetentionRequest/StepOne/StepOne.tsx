@@ -44,16 +44,18 @@ export const StepOne: React.FC = () => {
         arrestTime: caseDraftJSON.case.arrestTime ?? '',
         requestedCourtDate: caseDraftJSON.case.requestedCourtDate ?? null,
         requestedCourtTime: caseDraftJSON.case.requestedCourtTime ?? '',
-        requestedCustodyEndDate: null,
-        requestedCustodyEndTime: '',
-        lawsBroken: '',
-        caseCustodyProvisions: [],
-        restrictions: [],
-        caseFacts: '',
-        witnessAccounts: '',
-        investigationProgress: '',
-        legalArguments: '',
-        comments: '',
+        requestedCustodyEndDate:
+          caseDraftJSON.case.requestedCustodyEndDate ?? null,
+        requestedCustodyEndTime:
+          caseDraftJSON.case.requestedCustodyEndTime ?? '',
+        lawsBroken: caseDraftJSON.case.lawsBroken ?? '',
+        caseCustodyProvisions: caseDraftJSON.case.caseCustodyProvisions ?? [],
+        restrictions: caseDraftJSON.case.restrictions ?? [],
+        caseFacts: caseDraftJSON.case.caseFacts ?? '',
+        witnessAccounts: caseDraftJSON.case.witnessAccounts ?? '',
+        investigationProgress: caseDraftJSON.case.investigationProgress ?? '',
+        legalArguments: caseDraftJSON.case.legalArguments ?? '',
+        comments: caseDraftJSON.case.comments ?? '',
       },
     },
   )
@@ -305,8 +307,14 @@ export const StepOne: React.FC = () => {
                 name="court"
                 label="Veldu dómstól"
                 defaultValue={{
-                  label: defaultCourt[0].label,
-                  value: defaultCourt[0].value,
+                  label:
+                    defaultCourt.length > 0
+                      ? defaultCourt[0].label
+                      : courts[0].label,
+                  value:
+                    defaultCourt.length > 0
+                      ? defaultCourt[0].value
+                      : courts[0].value,
                 }}
                 options={courts}
                 onChange={({ label }: Option) => {
