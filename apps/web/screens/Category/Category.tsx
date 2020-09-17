@@ -165,7 +165,7 @@ const Category: Screen<CategoryProps> = ({
     )
   }
 
-  const sortSubgroups = (articlesBySubgroup: Object) =>
+  const sortSubgroups = (articlesBySubgroup: Record<string, Articles>) =>
     Object.keys(articlesBySubgroup).sort((a, b) => {
       // Look up the subgroups being sorted and find+compare their importance.
       // If their importance is equal we sort alphabetically.
