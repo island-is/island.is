@@ -24,14 +24,14 @@ import {
   SidebarSubNav,
   RichText,
 } from '@island.is/web/components'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
-import useRouteNames from '../i18n/useRouteNames'
+import routeNames from '../i18n/routeNames'
 import { CustomNextError } from '../units/errors'
-import { withMainLayout } from '../layouts/main'
 import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
@@ -77,7 +77,7 @@ const createArticleNavigation = (
   for (const subArticle of article.subArticles) {
     nav.push({
       title: subArticle.title,
-      url: makePath('article', '[slug]/[subSlug]'),
+      url: makePath('article', '[slug]/'),
       as: makePath('article', `${article.slug}/${subArticle.slug}`),
     })
 
@@ -101,7 +101,7 @@ const RelatedArticles: FC<{
   articles: Array<{ slug: string; title: string }>
 }> = ({ title, articles }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   if (articles.length === 0) return null
 
@@ -135,7 +135,7 @@ const SubArticleNavigation: FC<{
   selectedSubArticle: SubArticle
 }> = ({ title, article, selectedSubArticle }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
   const [bullet, setBullet] = useState<HTMLDivElement>(null)
   const isFirstMount = useFirstMountState()
   const navigation = useMemo(() => {
@@ -164,7 +164,7 @@ const SubArticleNavigation: FC<{
           <Typography variant="p" as="p">
             <Link
               shallow
-              href={makePath('article', '[slug]')}
+              href={makePath('article', '[slug]/[subSlug]')}
               as={makePath('article', article.slug)}
             >
               {maybeBold(article.title, !selectedSubArticle)}
@@ -295,7 +295,7 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
   )
 }
 
-interface ArticleProps {
+export interface ArticleProps {
   article: Article
   namespace: GetNamespaceQuery['getNamespace']
 }
@@ -304,7 +304,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const n = useNamespace(namespace)
   const { query } = useRouter()
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   const subArticle = article.subArticles.find((sub) => {
     return sub.slug === query.subSlug
