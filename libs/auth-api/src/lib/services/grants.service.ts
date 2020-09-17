@@ -52,34 +52,29 @@ export class GrantsService {
     })
   }
 
-  async removeAllAsync(subjectId: string, clientId: string): Promise<number> {
-    this.logger.debug(
-      `Removing grants with subjectId - "${subjectId}" and clientId - "${clientId}"`,
-    )
+  async removeAllAsync(subjectId: string, sessionId: string, clientId: string, type: string): Promise<number> {
+    let whereOptions: WhereOptions = {}
+
+    if (subjectId) {
+      whereOptions = {...whereOptions, subjectId: subjectId}
+    }
+
+    if (sessionId) {
+      whereOptions = {...whereOptions, sessionId: sessionId}
+    }
+
+    if (clientId) {
+      whereOptions = {...whereOptions, clientId: clientId}
+    }
+
+    if (type) {
+      whereOptions = {...whereOptions, type: type}
+    }
+
+    this.logger.debug(`Removing grants with filter `, whereOptions)
 
     return await this.grantModel.destroy({
-      where: {
-        subjectId: subjectId,
-        clientId: clientId,
-      },
-    })
-  }
-
-  async removeAllAsyncV2(
-    subjectId: string,
-    clientId: string,
-    type: string,
-  ): Promise<number> {
-    this.logger.debug(
-      `Removing grants with subjectId - "${subjectId}"    and clientId - "${clientId}"    and type - "${type}"`,
-    )
-
-    return await this.grantModel.destroy({
-      where: {
-        subjectId: subjectId,
-        clientId: clientId,
-        type: type,
-      },
+      where: whereOptions,
     })
   }
 
@@ -100,4 +95,5 @@ export class GrantsService {
       { ...grant }
     )
   }
+
 }

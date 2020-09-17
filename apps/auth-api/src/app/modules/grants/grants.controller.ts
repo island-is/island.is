@@ -50,23 +50,11 @@ export class GrantsController {
     return grant
   }
 
-  @Delete(':subjectId/:clientId')
+  @Delete()
   @ApiOkResponse()
-  async removeAllAsync(
-    @Param('subjectId') subjectId: string,
-    @Param('clientId') clientId: string,
-  ): Promise<number> {
-    return await this.grantsService.removeAllAsync(subjectId, clientId)
-  }
-
-  @Delete(':subjectId/:clientId/:type')
-  @ApiOkResponse()
-  async removeAllAsyncV2(
-    @Param('subjectId') subjectId: string,
-    @Param('clientId') clientId: string,
-    //   @Param('type') type: string,
-  ): Promise<number> {
-    return await this.grantsService.removeAllAsync(subjectId, clientId)
+  async removeAllAsync(@Query('subjectId') subjectId: string, @Query('sessionId') sessionId: string,
+  @Query('clientId') clientId: string, @Query('type') type: string): Promise<number> {
+    return await this.grantsService.removeAllAsync(subjectId, sessionId, clientId, type)
   }
 
   @Delete(':key')
