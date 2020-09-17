@@ -9,24 +9,25 @@ import {  Box,
           Icon
 } from '@island.is/island-ui/core'
 
-import { ACCESS_CATEGORY, DATA_CATEGORY, getAllAccessCategories, getAllTypeCategories, getServices, TYPE_CATEGORY } from '../../../components'
-
-import {  
-  ServiceCard,
-  ServiceCardInformation, 
-  CategoryCheckBox, 
-  getAllPriceCategories, 
-  getAllDataCategories, 
-  GetServicesParameters,
-  PRICING_CATEGORY, 
-  SERVICE_SEARCH_METHOD
-} from '../../../components'
-
-
-
 
 import * as styles from './ServiceList.treat';
 import cn from 'classnames'
+import {  PRICING_CATEGORY, 
+          DATA_CATEGORY, 
+          TYPE_CATEGORY,
+          ACCESS_CATEGORY, 
+          SERVICE_SEARCH_METHOD, 
+          getAllPriceCategories, 
+          getAllDataCategories, 
+          getAllTypeCategories, 
+          getAllAccessCategories, 
+          GetServicesParameters, 
+          getServices, 
+          ServiceCardInformation, 
+          ServiceCard, 
+          CategoryCheckBox, 
+
+} from '../../../components';
 
 interface PropTypes {
   top?: ReactNode
@@ -83,8 +84,8 @@ export default function ServiceList(props:ServiceListProps) {
     props.parameters.cursor  = null;
     props.parameters.pricing = select? getAllPriceCategories()  : [];
     props.parameters.data    = select? getAllDataCategories()   : [];
-    props.parameters.type    = select? getAllPriceCategories()   : [];
-    props.parameters.access  = select? getAllPriceCategories() : [];
+    props.parameters.type    = select? getAllTypeCategories()   : [];
+    props.parameters.access  = select? getAllAccessCategories() : [];
     
     setStatusQueryString(createStatusQueryString());
     setFirstGet(true);

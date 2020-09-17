@@ -43,31 +43,31 @@ const enumToArray = (enumObject) => {
 }
 
 export enum PRICING_CATEGORY {
-    FREE   ='free',
-    USAGE  ='usage',
-    DAILY  ='daily',
-    MONTHLY='monthly',
-    YEARLY ='yearly',
-    CUSTOM ='custom',
+    FREE   ='FREE',
+    USAGE  ='USAGE',
+    DAILY  ='DAILY',
+    MONTHLY='MONTHLY',
+    YEARLY ='YEARLY',
+    CUSTOM ='CUSTOM',
 }
 
 export enum DATA_CATEGORY {
-    PUBLIC   ='public',
-    OFFICIAL ='official',
-    PERSONAL ='personal',
-    HEALTH   ='health',
-    FINANCIAL='financial',
+    PUBLIC   ='PUBLIC',
+    OFFICIAL ='OFFICIAL',
+    PERSONAL ='PERSONAL',
+    HEALTH   ='HEALTH',
+    FINANCIAL='FINANCIAL',
 }
 
 export enum TYPE_CATEGORY {
     REACT  ='REACT',
     SOAP   ='SOAP',
-    GRAPHQL='GraphQl',
+    GRAPHQL='GRAPHQL',
 }
 
 export enum ACCESS_CATEGORY {
-    X_ROAD  ='X-Road',
-    API_GW  ='API GW',
+    X_ROAD  ='XROAD',
+    API_GW  ='APIGW',
 }
 
 const OrgServices:Array<ServiceCardInformation> =[
