@@ -24,7 +24,7 @@ type TimelineEvent {
   denominator: Int
   label: String!
   body: String
-  tags: [String!]!
+  tags: [String!]
   link: String!
 }
 
@@ -87,7 +87,7 @@ scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/fi
 type QuestionAndAnswer {
   id: ID!
   question: String!
-  answer: Html!
+  answer: Html
 }
 
 type ArticleCategory {
@@ -248,9 +248,9 @@ type Article {
   category: ArticleCategory
   group: ArticleGroup
   subgroup: ArticleSubgroup
-  organization: [Organization!]!
+  organization: [Organization!]
   subArticles: [SubArticle!]!
-  relatedArticles: [Article!]!
+  relatedArticles: [Article!]
 }
 
 type AdgerdirTag {
@@ -320,16 +320,17 @@ type AdgerdirFeaturedNewsSlice {
   featured: [AdgerdirNews!]!
 }
 
-type FrontpageSlide {
+type FrontpageSlider {
   title: String!
   subtitle: String!
   content: String!
   image: Image
   link: String
+  animationJson: String
 }
 
 type FrontpageSliderList {
-  items: [FrontpageSlide!]!
+  items: [FrontpageSlider!]!
 }
 
 type Pagination {
@@ -371,6 +372,17 @@ type LandingPage {
   content: [Slice!]!
 }
 
+type AlertBanner {
+  id: ID!
+  showAlertBanner: Boolean!
+  bannerVariant: String!
+  title: String
+  description: String
+  link: Link
+  isDismissable: Boolean!
+  dismissedForDays: Int!
+}
+
 type GenericPage {
   title: String!
   slug: String!
@@ -386,6 +398,7 @@ type Menu {
 }
 
 type LifeEventPage {
+  id: ID!
   title: String!
   slug: String!
   intro: String!
@@ -430,7 +443,10 @@ type Flight {
 type FlightLeg {
   id: ID!
   airline: String!
+  financialState: String!
   travel: String!
+  originalPrice: Float!
+  discountPrice: Float!
   flight: Flight!
 }
 
@@ -459,6 +475,7 @@ type Query {
   getNamespace(input: GetNamespaceInput!): Namespace
   getAboutPage(input: GetAboutPageInput!): AboutPage!
   getLandingPage(input: GetLandingPageInput!): LandingPage
+  getAlertBanner(input: GetAlertBannerInput!): AlertBanner
   getGenericPage(input: GetGenericPageInput!): GenericPage
   getAdgerdirPage(input: GetAdgerdirPageInput!): AdgerdirPage
   getOrganization(input: GetOrganizationInput!): Organization
@@ -472,6 +489,8 @@ type Query {
   getMenu(input: GetMenuInput!): Menu
   getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
   getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
+  getArticleCategories(input: GetArticleCategoriesInput!): [ArticleCategory!]!
+  getArticles(input: GetArticlesInput!): [Article!]!
   flightLegs(input: FlightLegsInput!): [FlightLeg!]!
   user: User
   discounts: [Discount!]
@@ -516,6 +535,11 @@ input GetAboutPageInput {
 
 input GetLandingPageInput {
   slug: String!
+  lang: String!
+}
+
+input GetAlertBannerInput {
+  id: String!
   lang: String!
 }
 
@@ -577,6 +601,17 @@ input GetLifeEventPageInput {
 
 input GetLifeEventsInput {
   lang: String!
+}
+
+input GetArticleCategoriesInput {
+  lang: String!
+  size: Int
+}
+
+input GetArticlesInput {
+  lang: String!
+  category: String!
+  size: Int
 }
 
 input FlightLegsInput {

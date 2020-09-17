@@ -24,7 +24,8 @@ import {
 import { Flight, FlightLeg } from './flight.model'
 import { FlightService } from './flight.service'
 import {
-  FlightDto,
+  FlightViewModel,
+  CreateFlightBody,
   GetFlightParams,
   GetFlightLegsBody,
   CreateFlightParams,
@@ -48,12 +49,12 @@ export class PublicFlightController {
   ) {}
 
   @Post('discounts/:discountCode/flights')
-  @ApiCreatedResponse({ type: Flight })
+  @ApiCreatedResponse({ type: FlightViewModel })
   async create(
     @Param() params: CreateFlightParams,
-    @Body() flight: FlightDto,
+    @Body() flight: CreateFlightBody,
     @Req() request,
-  ): Promise<Flight> {
+  ): Promise<FlightViewModel> {
     const discount = await this.discountService.getDiscountByDiscountCode(
       params.discountCode,
     )
@@ -63,7 +64,7 @@ export class PublicFlightController {
 
     const user = await this.nationalRegistryService.getUser(discount.nationalId)
     if (!user) {
-      throw new NotFoundException(`User<${discount.nationalId}> not found`)
+      throw new NotFoundException(`User not found`)
     }
 
     const meetsADSRequirements = this.flightService.isADSPostalCode(
@@ -81,25 +82,25 @@ export class PublicFlightController {
     if (flightLegsLeft < flight.flightLegs.length) {
       throw new ForbiddenException('Flight leg quota is exceeded')
     }
-    await this.discountService.useDiscount(
-      params.discountCode,
-      discount.nationalId,
-    )
     const newFlight = await this.flightService.create(
       flight,
       user,
       request.airline,
     )
-    newFlight.userInfo = undefined
-    return newFlight
+    await this.discountService.useDiscount(
+      params.discountCode,
+      discount.nationalId,
+      newFlight.id,
+    )
+    return new FlightViewModel(newFlight)
   }
 
   @Get('flights/:flightId')
-  @ApiOkResponse({ type: Flight })
+  @ApiOkResponse({ type: FlightViewModel })
   async getFlightById(
     @Param() params: GetFlightParams,
     @Req() request,
-  ): Promise<Flight> {
+  ): Promise<FlightViewModel> {
     const flight = await this.flightService.findOne(
       params.flightId,
       request.airline,
@@ -107,7 +108,7 @@ export class PublicFlightController {
     if (!flight) {
       throw new NotFoundException(`Flight<${params.flightId}> not found`)
     }
-    return flight
+    return new FlightViewModel(flight)
   }
 
   @Delete('flights/:flightId')
@@ -124,6 +125,7 @@ export class PublicFlightController {
     if (!flight) {
       throw new NotFoundException(`Flight<${params.flightId}> not found`)
     }
+    await this.discountService.reactivateDiscount(flight.id)
     await this.flightService.delete(flight)
   }
 

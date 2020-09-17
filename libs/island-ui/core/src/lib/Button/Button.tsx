@@ -8,7 +8,7 @@ import { ColorSchemeContext } from '../context'
 import * as styles from './Button.treat'
 
 export type ButtonSize = 'small' | 'medium' | 'large'
-export type ButtonVariant = 'normal' | 'ghost' | 'text' | 'menu'
+export type ButtonVariant = 'normal' | 'ghost' | 'redGhost' | 'text' | 'menu'
 
 export type ButtonWidth = 'normal' | 'fluid' | 'fixed'
 

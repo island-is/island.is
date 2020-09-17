@@ -25,7 +25,7 @@ export class TimelineEvent {
   @Field({ nullable: true })
   body?: string
 
-  @Field(() => [String])
+  @Field(() => [String], { nullable: true })
   tags?: Array<string>
 
   @Field()

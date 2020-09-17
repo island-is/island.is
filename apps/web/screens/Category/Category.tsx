@@ -22,26 +22,27 @@ import useRouteNames from '@island.is/web/i18n/useRouteNames'
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
-  GET_ARTICLES_IN_CATEGORY_QUERY,
+  GET_ARTICLES_QUERY,
   GET_CATEGORIES_QUERY,
 } from '../queries'
 import { CategoryLayout } from '../Layouts/Layouts'
 import { useNamespace } from '@island.is/web/hooks'
 import {
-  GetArticlesInCategoryQuery,
-  GetCategoriesQuery,
   GetNamespaceQuery,
-  QueryArticlesInCategoryArgs,
+  GetArticlesQuery,
+  QueryGetArticlesArgs,
   ContentLanguage,
-  QueryCategoriesArgs,
   QueryGetNamespaceArgs,
+  GetArticleCategoriesQuery,
+  QueryGetArticleCategoriesArgs,
 } from '../../graphql/schema'
+import { withMainLayout } from '@island.is/web/layouts/main'
 
-type Article = GetArticlesInCategoryQuery['articlesInCategory']
+type Article = GetArticlesQuery['getArticles']
 
 interface CategoryProps {
   articles: Article
-  categories: GetCategoriesQuery['categories']
+  categories: GetArticleCategoriesQuery['getArticleCategories']
   namespace: GetNamespaceQuery['getNamespace']
 }
 
@@ -60,16 +61,16 @@ const Category: Screen<CategoryProps> = ({
   // group articles
   const { groups, cards } = articles.reduce(
     (content, article) => {
-      if (article.groupSlug && !content.groups[article.groupSlug]) {
+      if (article?.group?.slug && !content.groups[article?.group?.slug]) {
         // group does not exist create the collection
-        content.groups[article.groupSlug] = {
-          title: article.group,
-          description: article.groupDescription,
+        content.groups[article?.group?.slug] = {
+          title: article?.group?.title,
+          description: article?.group?.description,
           articles: [article],
         }
-      } else if (article.groupSlug) {
+      } else if (article?.group?.slug) {
         // group should exists push into collection
-        content.groups[article.groupSlug].articles.push(article)
+        content.groups[article?.group?.slug].articles.push(article)
       } else {
         // this article belongs to no group
         content.cards.push(article)
@@ -109,8 +110,8 @@ const Category: Screen<CategoryProps> = ({
   const sidebarCategoryLinks = categories.map((c) => ({
     title: c.title,
     active: c.slug === Router.query.slug,
-    href: `${makePath('category')}/[slug]`,
-    as: makePath('category', c.slug),
+    href: `${makePath('ArticleCategory')}/[slug]`,
+    as: makePath('ArticleCategory', c.slug),
   }))
 
   const categoryOptions = categories.map((c) => ({
@@ -131,7 +132,10 @@ const Category: Screen<CategoryProps> = ({
     articles.reduce(
       (result, item) => ({
         ...result,
-        [item['subgroup']]: [...(result[item['subgroup']] || []), item],
+        [item?.subgroup?.title]: [
+          ...(result[item?.subgroup?.title] || []),
+          item,
+        ],
       }),
       {},
     )
@@ -184,6 +188,7 @@ const Category: Screen<CategoryProps> = ({
                       <AccordionCard
                         id={`accordion-item-${groupSlug}`}
                         label={title}
+                        labelUse="h2"
                         startExpanded={expanded}
                         visibleContent={description}
                       >
@@ -206,18 +211,31 @@ const Category: Screen<CategoryProps> = ({
                                 <Stack space={2}>
                                   {sortArticlesByTitle(
                                     articlesBySubgroup[subgroup],
-                                  ).map(({ title, slug }) => {
-                                    return (
-                                      <FocusableBox
-                                        key={slug}
-                                        href={`${makePath('article')}/[slug]`}
-                                        as={makePath('article', slug)}
-                                        borderRadius="large"
-                                      >
-                                        <LinkCard>{title}</LinkCard>
-                                      </FocusableBox>
-                                    )
-                                  })}
+                                  ).map(
+                                    ({
+                                      title,
+                                      slug,
+                                      containsApplicationForm,
+                                    }) => {
+                                      return (
+                                        <FocusableBox
+                                          key={slug}
+                                          href={`${makePath('article')}/[slug]`}
+                                          as={makePath('article', slug)}
+                                          borderRadius="large"
+                                        >
+                                          <LinkCard
+                                            tag={
+                                              containsApplicationForm &&
+                                              'Umsókn'
+                                            }
+                                          >
+                                            {title}
+                                          </LinkCard>
+                                        </FocusableBox>
+                                      )
+                                    },
+                                  )}
                                 </Stack>
                               </React.Fragment>
                             )
@@ -262,8 +280,8 @@ const Category: Screen<CategoryProps> = ({
               const slug = value as string
 
               Router.push(
-                `${makePath('category')}/[slug]`,
-                makePath('category', slug),
+                `${makePath('ArticleCategory')}/[slug]`,
+                makePath('ArticleCategory', slug),
               )
             }}
             options={categoryOptions}
@@ -291,29 +309,30 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   const [
     {
-      data: { articlesInCategory: articles },
+      data: { getArticles: articles },
     },
     {
-      data: { categories },
+      data: { getArticleCategories },
     },
     namespace,
   ] = await Promise.all([
-    apolloClient.query<GetArticlesInCategoryQuery, QueryArticlesInCategoryArgs>(
-      {
-        query: GET_ARTICLES_IN_CATEGORY_QUERY,
-        variables: {
-          category: {
-            slug,
-            language: locale as ContentLanguage,
-          },
+    apolloClient.query<GetArticlesQuery, QueryGetArticlesArgs>({
+      query: GET_ARTICLES_QUERY,
+      variables: {
+        input: {
+          lang: locale as ContentLanguage,
+          category: slug,
         },
       },
-    ),
-    apolloClient.query<GetCategoriesQuery, QueryCategoriesArgs>({
+    }),
+    apolloClient.query<
+      GetArticleCategoriesQuery,
+      QueryGetArticleCategoriesArgs
+    >({
       query: GET_CATEGORIES_QUERY,
       variables: {
         input: {
-          language: locale as ContentLanguage,
+          lang: locale as ContentLanguage,
         },
       },
     }),
@@ -332,9 +351,9 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
 
   return {
     articles,
-    categories,
+    categories: getArticleCategories,
     namespace,
   }
 }
 
-export default Category
+export default withMainLayout(Category)

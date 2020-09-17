@@ -13,7 +13,7 @@ describe('Discovering last successful build', () => {
     const lastGoodBuild = await findLastGoodBuild(
       shasBranch,
       'new-br',
-      'master',
+      'baseBranch',
       workflowQueried,
     )
     expect(lastGoodBuild).toStrictEqual({
@@ -23,12 +23,12 @@ describe('Discovering last successful build', () => {
     })
   })
 
-  it('should find it on base if branch has no successful runs', async () => {
+  it('should find it on baseBranch if branch has no successful runs', async () => {
     const workflowQueried = Substitute.for<WorkflowQueries>()
     workflowQueried
-      .getData('master')
+      .getData('baseBranch')
       .resolves(
-        (workflowsMaster as unknown) as ActionsListWorkflowRunsForRepoResponseData,
+        (workflowsBase as unknown) as ActionsListWorkflowRunsForRepoResponseData,
       )
     workflowQueried
       .getData('new-br')
@@ -36,17 +36,43 @@ describe('Discovering last successful build', () => {
     const lastGoodBuild = await findLastGoodBuild(
       shasBranch,
       'new-br',
-      'master',
+      'baseBranch',
       workflowQueried,
     )
     expect(lastGoodBuild).toStrictEqual({
       sha: '4be24b2648c1bde30bc7f0358d251652a9aee08a',
-      branch: 'master',
+      branch: 'baseBranch',
       run_number: 23,
     })
   })
 
-  it('should return empty object if not found neither on base nor on the branch', async () => {
+  it('should find it on master if not found on the branch nor the base', async () => {
+    const workflowQueried = Substitute.for<WorkflowQueries>()
+    workflowQueried
+      .getData('new-br')
+      .resolves({ total_count: 0, workflow_runs: [] })
+    workflowQueried
+      .getData('baseBranch')
+      .resolves({ total_count: 0, workflow_runs: [] })
+    workflowQueried
+      .getData('master')
+      .resolves(
+        (workflowsMaster as unknown) as ActionsListWorkflowRunsForRepoResponseData,
+      )
+    const lastGoodBuild = await findLastGoodBuild(
+      shasBranch,
+      'new-br',
+      'baseBranch',
+      workflowQueried,
+    )
+    expect(lastGoodBuild).toStrictEqual({
+      sha: 'b39fb602059ec0f873623249e9a72e2740686a28',
+      branch: 'master',
+      run_number: 157,
+    })
+  })
+
+  it('should return empty object if not found on baseBranch, master nor on the branch', async () => {
     const workflowQueried = Substitute.for<WorkflowQueries>()
     workflowQueried
       .getData(Arg.any())
@@ -54,7 +80,7 @@ describe('Discovering last successful build', () => {
     const lastGoodBuild = await findLastGoodBuild(
       shasBranch,
       'new-br',
-      'master',
+      'baseBranch',
       workflowQueried,
     )
     expect(lastGoodBuild).toStrictEqual({})
@@ -81,7 +107,9 @@ const shasBranch = [
   '3f92c034c80a7ae0734e0685bf0cd8591c1e1568',
   'd89035753004221699c4896d76a4a94e3dfb1323',
   '188ddd4db84a84753d16ab9441706fa5724b33de',
+  'b39fb602059ec0f873623249e9a72e2740686a28',
 ]
 
-import * as workflowsMaster from './masterWorkflows.json'
+import * as workflowsBase from './baseWorkflows.json'
 import * as workflowsBranch from './branchWorkflows.json'
+import * as workflowsMaster from './masterWorkflows.json'

@@ -1,4 +1,4 @@
-# Island
+# Ísland
 
 This repository is the center of development for digital government
 services on `island.is`. It is managed by the [Digital Iceland] department

@@ -227,6 +227,12 @@
     },
     "judicial-system-consts": {
       "tags": []
+    },
+    "elastic-indexing": {
+      "tags": []
+    },
+    "nova-sms": {
+      "tags": []
     }
   }
 }

@@ -35,7 +35,11 @@ describe('DiscountService', () => {
 
       const result = await discountService.createDiscountCode(nationalId)
 
-      expect(cacheManagerSpy).toHaveBeenCalledTimes(2)
+      const uuid = cacheManagerSpy.mock.calls[0][0]
+      expect(cacheManagerSpy.mock.calls[1][1]).toBe(uuid)
+      expect(cacheManagerSpy.mock.calls[2][1]).toBe(uuid)
+
+      expect(cacheManagerSpy).toHaveBeenCalledTimes(3)
       expect(result.discountCode).toHaveLength(DISCOUNT_CODE_LENGTH)
     })
   })
@@ -116,15 +120,29 @@ describe('DiscountService', () => {
 
   describe('useDiscount', () => {
     it('should delete discount from cache', async () => {
+      const flightId = '70de7be1-6b6d-4ec3-8063-be55e241d488'
       const nationalId = '1234567890'
       const discountCode = 'ABCDEFG'
-      const cacheManagerSpy = jest
-        .spyOn(cacheManager, 'del')
-        .mockImplementation(() => null)
+      const cacheManagerDelSpy = jest.spyOn(cacheManager, 'del')
+      const cacheManagerSetSpy = jest.spyOn(cacheManager, 'set')
 
-      await discountService.useDiscount(discountCode, nationalId)
+      await discountService.useDiscount(discountCode, nationalId, flightId)
 
-      expect(cacheManagerSpy).toHaveBeenCalledTimes(2)
+      expect(cacheManagerDelSpy).toHaveBeenCalledTimes(2)
+      expect(cacheManagerSetSpy).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('reactivateDiscount', () => {
+    it('should delete discount from cache', async () => {
+      const flightId = '70de7be1-6b6d-4ec3-8063-be55e241d488'
+      const cacheManagerDelSpy = jest.spyOn(cacheManager, 'del')
+      const cacheManagerSetSpy = jest.spyOn(cacheManager, 'set')
+
+      await discountService.reactivateDiscount(flightId)
+
+      expect(cacheManagerDelSpy).toHaveBeenCalledTimes(1)
+      expect(cacheManagerSetSpy).toHaveBeenCalledTimes(1)
     })
   })
 })

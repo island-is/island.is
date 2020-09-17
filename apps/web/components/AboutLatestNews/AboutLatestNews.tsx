@@ -58,7 +58,7 @@ const BigNewsItem = ({ news }: { news: LatestNewsItem }) => {
       <Typography variant="eyebrow" color="purple400">
         {format(new Date(news.date), 'do MMMM yyyy')}
       </Typography>
-      <Typography variant="h2" as="h2">
+      <Typography variant="h2" as="h3">
         {news.title}
       </Typography>
       <Typography variant="intro">{news.intro}</Typography>

@@ -91,7 +91,7 @@ const NumberSection: FC<{ group: NumberBulletGroup }> = ({ group }) => {
       }
     >
       <Stack space={1}>
-        <Typography variant="h4" as="h4">
+        <Typography variant="h4" as="h3">
           {bullet.title}
         </Typography>
         <Typography variant="p" as="p">

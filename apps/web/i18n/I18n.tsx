@@ -2,7 +2,11 @@ import React, { createContext, useState, useRef, useEffect } from 'react'
 import rosetta, { Rosetta } from 'rosetta'
 
 export type Locale = 'is' | 'en'
-export const defaultLanguage = 'is'
+export const defaultLanguage: Locale = 'is'
+
+export const isLocale = (x: string): x is Locale => {
+  return x === 'is' || x === 'en'
+}
 
 const i18n = rosetta()
 i18n.locale(defaultLanguage)

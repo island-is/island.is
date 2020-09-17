@@ -9,37 +9,18 @@ export interface AutocompleteTermResponse {
   }
 }
 
-export interface AutocompleteTermRequestBody {
-  suggest: {
-    searchSuggester: {
-      prefix: string
-      completion: {
-        field: string
-        size: number
-        skip_duplicates: boolean
-        fuzzy: {
-          unicode_aware: boolean
-          fuzziness: string
-        }
-      }
-    }
-  }
-}
-
-export const autocompleteTerm = ({ prefix, size }: AutocompleteTermInput) => ({
+export const autocompleteTermQuery = ({
+  prefix,
+  size,
+}: AutocompleteTermInput) => ({
   suggest: {
     searchSuggester: {
       prefix,
       completion: {
-        field: 'term_pool',
+        field: 'termPool',
         size,
         // eslint-disable-next-line @typescript-eslint/camelcase
         skip_duplicates: true,
-        fuzzy: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          unicode_aware: true,
-          fuzziness: 'auto',
-        },
       },
     },
   },

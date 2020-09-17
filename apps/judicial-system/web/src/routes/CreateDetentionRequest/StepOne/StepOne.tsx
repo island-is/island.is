@@ -16,23 +16,43 @@ import { CreateDetentionReqStepOneCase } from '../../../types'
 import * as api from '../../../api'
 import { validate } from '../../../utils/validate'
 import { updateState, autoSave } from '../../../utils/stepHelper'
-import { setHours, setMinutes, isValid } from 'date-fns'
+import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
 
 export const StepOne: React.FC = () => {
+  if (!window.localStorage.getItem('workingCase')) {
+    window.localStorage.setItem(
+      'workingCase',
+      JSON.stringify({ id: '', case: {} }),
+    )
+  }
+
+  const caseDraft = window.localStorage.getItem('workingCase')
+  const caseDraftJSON = JSON.parse(caseDraft)
   const [workingCase, setWorkingCase] = useState<CreateDetentionReqStepOneCase>(
     {
       id: '',
       case: {
-        policeCaseNumber: '',
-        suspectNationalId: '',
-        suspectName: '',
-        suspectAddress: '',
-        court: '',
-        arrestDate: null,
-        arrestTime: '',
-        requestedCourtDate: null,
+        policeCaseNumber: caseDraftJSON.case.policeCaseNumber ?? '',
+        suspectNationalId: caseDraftJSON.case.suspectNationalId ?? '',
+        suspectName: caseDraftJSON.case.suspectName ?? '',
+        suspectAddress: caseDraftJSON.case.suspectAddress ?? '',
+        court: caseDraftJSON.case.court ?? 'Héraðsdómur Reykjavíkur',
+        arrestDate: caseDraftJSON.case.arrestDate ?? null,
+        arrestTime: caseDraftJSON.case.arrestTime ?? '',
+        requestedCourtDate: caseDraftJSON.case.requestedCourtDate ?? null,
+        requestedCourtTime: caseDraftJSON.case.requestedCourtTime ?? '',
+        requestedCustodyEndDate: null,
+        requestedCustodyEndTime: '',
+        lawsBroken: '',
+        caseCustodyProvisions: [],
+        restrictions: [],
+        caseFacts: '',
+        witnessAccounts: '',
+        investigationProgress: '',
+        legalArguments: '',
+        comments: '',
       },
     },
   )
@@ -72,6 +92,41 @@ export const StepOne: React.FC = () => {
     (requiredField) => requiredField !== '' && !isNull(requiredField),
   )
 
+  const courts = [
+    {
+      label: 'Héraðsdómur Reykjavíkur',
+      value: 0,
+    },
+    {
+      label: 'Héraðsdómur Vesturlands',
+      value: 1,
+    },
+    {
+      label: 'Héraðsdómur Vestfjarða',
+      value: 2,
+    },
+    {
+      label: 'Héraðsdómur Norðurlands vestra',
+      value: 3,
+    },
+    {
+      label: 'Héraðsdómur Norðurlands eystra',
+      value: 4,
+    },
+    {
+      label: 'Héraðsdómur Austurlands',
+      value: 5,
+    },
+    {
+      label: 'Héraðsdómur Reykjaness',
+      value: 6,
+    },
+  ]
+
+  const defaultCourt = courts.filter(
+    (court) => court.label === workingCase.case.court,
+  )
+
   const createCaseIfPossible = async () => {
     const isPossibleToSave =
       workingCase.id === '' &&
@@ -83,13 +138,16 @@ export const StepOne: React.FC = () => {
         policeCaseNumber: policeCaseNumberRef.current.value,
         suspectNationalId: suspectNationalIdRef.current.value,
       })
-      window.localStorage.setItem('caseId', caseId)
+      window.localStorage.setItem(
+        'workingCase',
+        JSON.stringify({ id: caseId, case: workingCase.case }),
+      )
       setWorkingCase({ id: caseId, case: workingCase.case })
     }
   }
 
   return (
-    <Box marginTop={7}>
+    <Box marginTop={7} marginBottom={30}>
       <GridContainer>
         <GridRow>
           <GridColumn span={'3/12'}>
@@ -113,6 +171,7 @@ export const StepOne: React.FC = () => {
               <Input
                 name="policeCaseNumber"
                 label="Slá inn LÖKE málsnúmer"
+                defaultValue={workingCase.case.policeCaseNumber}
                 ref={policeCaseNumberRef}
                 errorMessage={policeCaseNumberErrorMessage}
                 hasError={policeCaseNumberErrorMessage !== ''}
@@ -145,6 +204,7 @@ export const StepOne: React.FC = () => {
                 <Input
                   name="nationalId"
                   label="Kennitala"
+                  defaultValue={workingCase.case.suspectNationalId}
                   ref={suspectNationalIdRef}
                   errorMessage={nationalIdErrorMessage}
                   hasError={nationalIdErrorMessage !== ''}
@@ -171,6 +231,7 @@ export const StepOne: React.FC = () => {
                 <Input
                   name="suspectName"
                   label="Fullt nafn kærða"
+                  defaultValue={workingCase.case.suspectName}
                   errorMessage={suspectNameErrorMessage}
                   hasError={suspectNameErrorMessage !== ''}
                   onBlur={(evt) => {
@@ -195,6 +256,7 @@ export const StepOne: React.FC = () => {
                 <Input
                   name="suspectAddress"
                   label="Lögheimili/dvalarstaður"
+                  defaultValue={workingCase.case.suspectAddress}
                   errorMessage={suspectAddressErrorMessage}
                   hasError={suspectAddressErrorMessage !== ''}
                   onBlur={(evt) => {
@@ -226,39 +288,10 @@ export const StepOne: React.FC = () => {
                 name="court"
                 label="Veldu dómstól"
                 defaultValue={{
-                  label: 'Héraðsdómur Reykjavíkur',
-                  value: 0,
+                  label: defaultCourt[0].label,
+                  value: defaultCourt[0].value,
                 }}
-                options={[
-                  {
-                    label: 'Héraðsdómur Reykjavíkur',
-                    value: 0,
-                  },
-                  {
-                    label: 'Héraðsdómur Vesturlands',
-                    value: 1,
-                  },
-                  {
-                    label: 'Héraðsdómur Vestfjarða',
-                    value: 2,
-                  },
-                  {
-                    label: 'Héraðsdómur Norðurlands vestra',
-                    value: 3,
-                  },
-                  {
-                    label: 'Héraðsdómur Norðurlands eystra',
-                    value: 4,
-                  },
-                  {
-                    label: 'Héraðsdómur Austurlands',
-                    value: 5,
-                  },
-                  {
-                    label: 'Héraðsdómur Reykjaness',
-                    value: 6,
-                  },
-                ]}
+                options={courts}
                 onChange={({ label }: Option) => {
                   autoSave(workingCase, 'court', label, setWorkingCase)
                 }}
@@ -276,9 +309,13 @@ export const StepOne: React.FC = () => {
                     label="Veldu dagsetningu"
                     placeholderText="Veldu dagsetningu"
                     locale="is"
-                    minDate={new Date()}
                     errorMessage={arrestDateErrorMessage}
                     hasError={arrestDateErrorMessage !== ''}
+                    selected={
+                      caseDraftJSON.case.arrestDate
+                        ? parseISO(caseDraftJSON.case.arrestDate.toString())
+                        : null
+                    }
                     handleChange={(date) => {
                       updateState(
                         workingCase,
@@ -304,6 +341,7 @@ export const StepOne: React.FC = () => {
                     disabled={!workingCase.case.arrestDate}
                     errorMessage={arrestTimeErrorMessage}
                     hasError={arrestTimeErrorMessage !== ''}
+                    defaultValue={caseDraftJSON.case.arrestTime}
                     onBlur={(evt) => {
                       const validateTimeEmpty = validate(
                         evt.target.value,
@@ -371,6 +409,13 @@ export const StepOne: React.FC = () => {
                     placeholderText="Veldu dagsetningu"
                     locale="is"
                     minDate={new Date()}
+                    selected={
+                      caseDraftJSON.case.requestedCourtDate
+                        ? parseISO(
+                            caseDraftJSON.case.requestedCourtDate.toString(),
+                          )
+                        : null
+                    }
                     handleChange={(date) => {
                       updateState(
                         workingCase,
@@ -386,6 +431,7 @@ export const StepOne: React.FC = () => {
                     name="courtDate"
                     label="Tímasetning"
                     placeholder="Settu inn tíma"
+                    defaultValue={caseDraftJSON.case.requestedCourtTime}
                     disabled={!workingCase.case.requestedCourtDate}
                     onBlur={(evt) => {
                       const timeWithoutColon = evt.target.value.replace(':', '')
@@ -404,6 +450,13 @@ export const StepOne: React.FC = () => {
                         workingCase,
                         'requestedCourtDate',
                         requestedCourtDateMinutes,
+                        setWorkingCase,
+                      )
+
+                      updateState(
+                        workingCase,
+                        'requestedCourtTime',
+                        evt.target.value,
                         setWorkingCase,
                       )
                     }}

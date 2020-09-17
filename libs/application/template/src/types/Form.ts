@@ -19,7 +19,6 @@ export type Schema = ZodObject<any>
 export interface Form {
   id: ApplicationTypes
   name: string
-  // schema: Schema
   type: FormItemTypes.FORM
   icon?: string
   ownerId: string

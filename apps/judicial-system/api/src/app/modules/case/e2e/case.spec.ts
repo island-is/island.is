@@ -1,4 +1,5 @@
 import * as request from 'supertest'
+
 import { INestApplication } from '@nestjs/common'
 
 import { setup } from '../../../../../test/setup'
@@ -25,7 +26,6 @@ describe('Case', () => {
       court: 'Court',
       arrestDate: '2020-09-08T08:00:00.000Z',
       requestedCourtDate: '2020-09-08T11:30:00.000Z',
-      requestedCustodyEndDate: '2020-09-29T12:00:00.000Z',
     }
 
     await request(app.getHttpServer())
@@ -45,9 +45,6 @@ describe('Case', () => {
         expect(response.body.court).toBe(data.court)
         expect(response.body.arrestDate).toBe(data.arrestDate)
         expect(response.body.requestedCourtDate).toBe(data.requestedCourtDate)
-        expect(response.body.requestedCustodyEndDate).toBe(
-          data.requestedCustodyEndDate,
-        )
 
         // Check the data in the database
         await Case.findOne({ where: { id: response.body.id } }).then(
@@ -65,9 +62,15 @@ describe('Case', () => {
             expect(value.requestedCourtDate.toISOString()).toBe(
               data.requestedCourtDate,
             )
-            expect(value.requestedCustodyEndDate.toISOString()).toBe(
-              data.requestedCustodyEndDate,
-            )
+            expect(value.requestedCustodyEndDate).toBeNull()
+            expect(value.lawsBroken).toBeNull()
+            expect(value.custodyProvisions).toBeNull()
+            expect(value.custodyRestrictions).toBeNull()
+            expect(value.caseFacts).toBeNull()
+            expect(value.witnessAccounts).toBeNull()
+            expect(value.investigationProgress).toBeNull()
+            expect(value.legalArguments).toBeNull()
+            expect(value.comments).toBeNull()
           },
         )
       })
@@ -96,7 +99,6 @@ describe('Case', () => {
         expect(response.body.court).toBeNull()
         expect(response.body.arrestDate).toBeNull()
         expect(response.body.requestedCourtDate).toBeNull()
-        expect(response.body.requestedCustodyEndDate).toBeNull()
 
         // Check the data in the database
         await Case.findOne({ where: { id: response.body.id } }).then(
@@ -113,6 +115,14 @@ describe('Case', () => {
             expect(value.arrestDate).toBeNull()
             expect(value.requestedCourtDate).toBeNull()
             expect(value.requestedCustodyEndDate).toBeNull()
+            expect(value.lawsBroken).toBeNull()
+            expect(value.custodyProvisions).toBeNull()
+            expect(value.custodyRestrictions).toBeNull()
+            expect(value.caseFacts).toBeNull()
+            expect(value.witnessAccounts).toBeNull()
+            expect(value.investigationProgress).toBeNull()
+            expect(value.legalArguments).toBeNull()
+            expect(value.comments).toBeNull()
           },
         )
       })

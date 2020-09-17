@@ -3,6 +3,48 @@
 import { Asset, Entry } from 'contentful'
 import { Document } from '@contentful/rich-text-types'
 
+export interface IAlertBannerFields {
+  /** Show Alert Banner */
+  showAlertBanner: boolean
+
+  /** Banner variant */
+  bannerVariant: 'default' | 'warning' | 'error' | 'info' | 'success'
+
+  /** Title */
+  title?: string | undefined
+
+  /** description */
+  description?: string | undefined
+
+  /** link */
+  link?: ILink | undefined
+
+  /** Is dismissable */
+  isDismissable: boolean
+
+  /** dismissed for days */
+  dismissedForDays: number
+}
+
+/** Alert banner will show on top of all pages */
+
+export interface IAlertBanner extends Entry<IAlertBannerFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'alertBanner'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IArticleFields {
   /** Content status */
   contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
@@ -15,6 +57,9 @@ export interface IArticleFields {
 
   /** Introduction */
   intro?: string | undefined
+
+  /** Introduction */
+  containsApplicationForm?: boolean | undefined
 
   /** Slug */
   slug: string
@@ -120,6 +165,9 @@ export interface IArticleSubgroupFields {
 
   /** Slug */
   slug: string
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 /** Used inside groups to further categorize articles by subject */
@@ -301,6 +349,9 @@ export interface IFrontpageSliderFields {
 
   /** Animation (zip) */
   animationZip?: Asset | undefined
+
+  /** Animation (JSON) */
+  animationJson?: Record<string, any> | undefined
 }
 
 /** Efni í haus á forsíðu */
@@ -508,6 +559,9 @@ export interface ILifeEventPageFields {
 
   /** content */
   content: Document
+
+  /** category */
+  category?: IArticleCategory | undefined
 }
 
 export interface ILifeEventPage extends Entry<ILifeEventPageFields> {
@@ -656,6 +710,39 @@ export interface IMenu extends Entry<IMenuFields> {
     contentType: {
       sys: {
         id: 'menu'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface INamespaceFields {
+  /** Namespace */
+  namespace?: string | undefined
+
+  /** Strings */
+  strings?: Record<string, any> | undefined
+
+  /** Defaults */
+  defaults?: Record<string, any> | undefined
+
+  /** Fallback */
+  fallback?: Record<string, any> | undefined
+}
+
+/** Namespace containing translations */
+
+export interface INamespace extends Entry<INamespaceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'namespace'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1033,6 +1120,39 @@ export interface ISectionWithImage extends Entry<ISectionWithImageFields> {
   }
 }
 
+export interface ISideMenuFields {
+  /** Internal links */
+  internalLinks: (
+    | IArticle
+    | IArticleCategory
+    | IGenericPage
+    | ILandingPage
+    | ILifeEventPage
+    | IOrganization
+    | IPage
+  )[]
+
+  /** Title */
+  title?: string | undefined
+}
+
+export interface ISideMenu extends Entry<ISideMenuFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'sideMenu'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IStatisticFields {
   /** Value */
   value: string
@@ -1270,6 +1390,34 @@ export interface IUiConfiguration extends Entry<IUiConfigurationFields> {
     contentType: {
       sys: {
         id: 'uiConfiguration'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IUrlFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Page */
+  page: IArticle | IArticleCategory
+
+  /** Urls list */
+  urlsList: string[]
+}
+
+export interface IUrl extends Entry<IUrlFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'url'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1575,6 +1723,7 @@ export interface IVidspyrnaTag extends Entry<IVidspyrnaTagFields> {
 }
 
 export type CONTENT_TYPE =
+  | 'alertBanner'
   | 'article'
   | 'articleCategory'
   | 'articleGroup'
@@ -1596,6 +1745,7 @@ export type CONTENT_TYPE =
   | 'logoListSlice'
   | 'mailingListSignup'
   | 'menu'
+  | 'namespace'
   | 'news'
   | 'numberBullet'
   | 'numberBulletSection'
@@ -1607,6 +1757,7 @@ export type CONTENT_TYPE =
   | 'questionAndAnswer'
   | 'sectionHeading'
   | 'sectionWithImage'
+  | 'sideMenu'
   | 'statistic'
   | 'statistics'
   | 'story'
@@ -1615,6 +1766,7 @@ export type CONTENT_TYPE =
   | 'timeline'
   | 'timelineEvent'
   | 'uiConfiguration'
+  | 'url'
   | 'vidspyrna-frontpage'
   | 'vidspyrna-inline-image'
   | 'vidspyrna-process-entry'

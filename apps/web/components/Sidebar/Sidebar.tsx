@@ -174,7 +174,7 @@ export const Sidebar: FC<SidebarProps> = ({
         </span>
       )}
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h4">
+        <Typography variant="h4" as="h2">
           {title}
         </Typography>
         {headingLinks && links.length ? (
