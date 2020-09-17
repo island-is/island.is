@@ -204,6 +204,7 @@ const ArticleFields = [
   'fields.category',
   'fields.subArticles',
   'fields.containsApplicationForm',
+  'fields.importance',
 ].join(',')
 
 export const getAdgerdirNews = async (

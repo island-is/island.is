@@ -140,8 +140,15 @@ const Category: Screen<CategoryProps> = ({
       {},
     )
 
-  const sortArticlesByTitle = (articles: Article) =>
-    articles.sort((a, b) => a.title.localeCompare(b.title, 'is'))
+  const sortArticles = (articles: Article) => {
+    // Sort articles by importance (which defaults to 0).
+    // If both articles being compared have the same importance we sort by comparing their titles.
+    return articles.sort((a, b) =>
+      a.importance > b.importance
+        ? -1
+        : a.importance === b.importance && a.title.localeCompare(b.title),
+    )
+  }
 
   const sortedGroups = Object.keys(groups).sort((a, b) =>
     a.localeCompare(b, 'is'),
@@ -208,7 +215,7 @@ const Category: Screen<CategoryProps> = ({
                                   </Typography>
                                 )}
                                 <Stack space={2}>
-                                  {sortArticlesByTitle(
+                                  {sortArticles(
                                     articlesBySubgroup[subgroup],
                                   ).map(
                                     ({

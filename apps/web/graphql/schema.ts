@@ -306,7 +306,8 @@ export type Article = {
   slug: Scalars['String']
   shortTitle: Scalars['String']
   intro: Scalars['String']
-  containsApplicationForm: Scalars['Boolean']
+  containsApplicationForm?: Maybe<Scalars['Boolean']>
+  importance?: Maybe<Scalars['Int']>
   body: Array<Slice>
   category?: Maybe<ArticleCategory>
   group?: Maybe<ArticleGroup>
@@ -523,6 +524,8 @@ export type ContentItem = {
   category?: Maybe<Scalars['String']>
   categorySlug?: Maybe<Scalars['String']>
   categoryDescription?: Maybe<Scalars['String']>
+  containsApplicationForm?: Maybe<Scalars['Boolean']>
+  importance?: Maybe<Scalars['Int']>
   group?: Maybe<Scalars['String']>
   subgroup?: Maybe<Scalars['String']>
   groupSlug?: Maybe<Scalars['String']>
@@ -1091,7 +1094,13 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
   getArticle?: Maybe<
     { __typename?: 'Article' } & Pick<
       Article,
-      'id' | 'slug' | 'title' | 'shortTitle' | 'intro'
+      | 'id'
+      | 'slug'
+      | 'title'
+      | 'shortTitle'
+      | 'intro'
+      | 'containsApplicationForm'
+      | 'importance'
     > & {
         body: Array<
           | ({
@@ -1205,7 +1214,7 @@ export type GetArticlesQuery = { __typename?: 'Query' } & {
   getArticles: Array<
     { __typename?: 'Article' } & Pick<
       Article,
-      'intro' | 'slug' | 'title' | 'containsApplicationForm'
+      'intro' | 'containsApplicationForm' | 'importance' | 'slug' | 'title'
     > & {
         category?: Maybe<
           { __typename?: 'ArticleCategory' } & Pick<ArticleCategory, 'title'>

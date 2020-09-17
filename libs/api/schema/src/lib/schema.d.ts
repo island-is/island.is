@@ -318,6 +318,7 @@ export type Article = {
   shortTitle: Scalars['String']
   intro: Scalars['String']
   containsApplicationForm?: Maybe<Scalars['Boolean']>
+  importance?: Maybe<Scalars['Int']>
   body: Array<Slice>
   category?: Maybe<ArticleCategory>
   group?: Maybe<ArticleGroup>
@@ -535,6 +536,7 @@ export type ContentItem = {
   categorySlug?: Maybe<Scalars['String']>
   categoryDescription?: Maybe<Scalars['String']>
   containsApplicationForm?: Maybe<Scalars['Boolean']>
+  importance?: Maybe<Scalars['Int']>
   group?: Maybe<Scalars['String']>
   subgroup?: Maybe<Scalars['String']>
   groupSlug?: Maybe<Scalars['String']>
