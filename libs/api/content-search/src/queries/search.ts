@@ -5,23 +5,12 @@ interface SearchInput {
   types: string[]
 }
 
-export interface SearchRequestBody {
-  query: {
-    bool: {
-      should: any[] // Type this?
-      must: any[] // Type this?
-    }
-  }
-  size: number
-  from: number
-}
-
 export const searchQuery = ({
   queryString,
   size = 10,
   page = 1,
   types,
-}: SearchInput): SearchRequestBody => {
+}: SearchInput) => {
   const should = []
   const must = []
   // eslint-disable-next-line @typescript-eslint/camelcase
