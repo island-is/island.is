@@ -11,7 +11,6 @@ export interface CheckboxProps {
   id?: string
   label?: string
   checked?: boolean
-  defaultChecked?: boolean
   disabled?: boolean
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
   tooltip?: string
@@ -26,7 +25,6 @@ export const Checkbox = ({
   name,
   id = name,
   checked,
-  defaultChecked,
   disabled,
   onChange,
   tooltip,
@@ -52,7 +50,6 @@ export const Checkbox = ({
         type="checkbox"
         name={name}
         disabled={disabled}
-        defaultChecked={defaultChecked}
         id={id}
         onChange={onChange}
         value={value}
@@ -61,7 +58,6 @@ export const Checkbox = ({
       <label
         className={cn(styles.label, {
           [styles.labelChecked]: checked,
-          [styles.labelChecked]: defaultChecked,
           [styles.checkboxLabelDisabled]: disabled,
           [styles.largeLabel]: large,
         })}
@@ -70,7 +66,6 @@ export const Checkbox = ({
         <div
           className={cn(styles.checkbox, {
             [styles.checkboxChecked]: checked,
-            [styles.checkboxChecked]: defaultChecked,
             [styles.checkboxError]: hasError,
             [styles.checkboxDisabled]: disabled,
           })}
@@ -79,9 +74,7 @@ export const Checkbox = ({
             type="check"
             width={styles.checkMarkWidth}
             color={
-              checked || defaultChecked
-                ? styles.checkMarkColor
-                : styles.checkMarkColorUnchecked
+              checked ? styles.checkMarkColor : styles.checkMarkColorUnchecked
             }
           />
         </div>
