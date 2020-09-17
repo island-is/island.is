@@ -46,7 +46,7 @@ const RadioButtonMapped = ({
   label: string
 }) => (
   <RadioButton
-    value={fieldValue.toString()}
+    value={fieldValue?.toString()}
     {...fieldProps}
     label={label}
     id={`${fieldProps.name}${idPostfix}`}
