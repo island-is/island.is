@@ -490,6 +490,11 @@ export type Menu = {
   links: Array<Link>
 }
 
+export type AdgerdirTags = {
+  __typename?: 'AdgerdirTags'
+  items: Array<AdgerdirTag>
+}
+
 export type LifeEventPage = {
   __typename?: 'LifeEventPage'
   id: Scalars['ID']
@@ -502,21 +507,6 @@ export type LifeEventPage = {
   category?: Maybe<ArticleCategory>
 }
 
-export type Url = {
-  __typename?: 'Url'
-  id: Scalars['ID']
-  title?: Maybe<Scalars['String']>
-  page: UrlPage
-  urlsList: Array<Scalars['String']>
-}
-
-export type UrlPage = Article | ArticleCategory | News | LifeEventPage
-
-export type AdgerdirTags = {
-  __typename?: 'AdgerdirTags'
-  items: Array<AdgerdirTag>
-}
-
 export type PaginatedAdgerdirNews = {
   __typename?: 'PaginatedAdgerdirNews'
   page: Pagination
@@ -527,6 +517,16 @@ export type OrganizationTags = {
   __typename?: 'OrganizationTags'
   items: Array<OrganizationTag>
 }
+
+export type Url = {
+  __typename?: 'Url'
+  id: Scalars['ID']
+  title?: Maybe<Scalars['String']>
+  page: UrlPage
+  urlsList: Array<Scalars['String']>
+}
+
+export type UrlPage = Article | ArticleCategory | News | LifeEventPage
 
 export type SearchResult = {
   __typename?: 'SearchResult'
@@ -653,6 +653,7 @@ export type Query = {
   getDocument?: Maybe<DocumentDetails>
   listDocuments?: Maybe<Array<Document>>
   getDocumentCategories?: Maybe<Array<DocumentCategory>>
+  getTranslations?: Maybe<Scalars['JSON']>
 }
 
 export type QueryHelloWorldArgs = {
@@ -785,6 +786,10 @@ export type QueryGetDocumentArgs = {
 
 export type QueryListDocumentsArgs = {
   input: ListDocumentsInput
+}
+
+export type QueryGetTranslationsArgs = {
+  input: GetTranslationsInput
 }
 
 export type HelloWorldInput = {
@@ -969,6 +974,11 @@ export type ListDocumentsInput = {
   category: Scalars['String']
   page: Scalars['Float']
   pageSize: Scalars['Float']
+}
+
+export type GetTranslationsInput = {
+  namespaces?: Maybe<Array<Scalars['String']>>
+  lang: Scalars['String']
 }
 
 export type Mutation = {
@@ -1281,9 +1291,12 @@ export type ResolversTypes = {
   AlertBanner: ResolverTypeWrapper<AlertBanner>
   GenericPage: ResolverTypeWrapper<GenericPage>
   Menu: ResolverTypeWrapper<Menu>
+  AdgerdirTags: ResolverTypeWrapper<AdgerdirTags>
   LifeEventPage: ResolverTypeWrapper<
     Omit<LifeEventPage, 'content'> & { content: Array<ResolversTypes['Slice']> }
   >
+  PaginatedAdgerdirNews: ResolverTypeWrapper<PaginatedAdgerdirNews>
+  OrganizationTags: ResolverTypeWrapper<OrganizationTags>
   Url: ResolverTypeWrapper<
     Omit<Url, 'page'> & { page: ResolversTypes['UrlPage'] }
   >
@@ -1292,9 +1305,6 @@ export type ResolversTypes = {
     | ResolversTypes['ArticleCategory']
     | ResolversTypes['News']
     | ResolversTypes['LifeEventPage']
-  AdgerdirTags: ResolverTypeWrapper<AdgerdirTags>
-  PaginatedAdgerdirNews: ResolverTypeWrapper<PaginatedAdgerdirNews>
-  OrganizationTags: ResolverTypeWrapper<OrganizationTags>
   SearchResult: ResolverTypeWrapper<
     Omit<SearchResult, 'items'> & { items: Array<ResolversTypes['Items']> }
   >
@@ -1344,6 +1354,7 @@ export type ResolversTypes = {
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
   ListDocumentsInput: ListDocumentsInput
+  GetTranslationsInput: GetTranslationsInput
   Mutation: ResolverTypeWrapper<{}>
   CreateApplicationInput: CreateApplicationInput
   CreateApplicationDtoTypeIdEnum: CreateApplicationDtoTypeIdEnum
@@ -1452,18 +1463,18 @@ export type ResolversParentTypes = {
   AlertBanner: AlertBanner
   GenericPage: GenericPage
   Menu: Menu
+  AdgerdirTags: AdgerdirTags
   LifeEventPage: Omit<LifeEventPage, 'content'> & {
     content: Array<ResolversParentTypes['Slice']>
   }
+  PaginatedAdgerdirNews: PaginatedAdgerdirNews
+  OrganizationTags: OrganizationTags
   Url: Omit<Url, 'page'> & { page: ResolversParentTypes['UrlPage'] }
   UrlPage:
     | ResolversParentTypes['Article']
     | ResolversParentTypes['ArticleCategory']
     | ResolversParentTypes['News']
     | ResolversParentTypes['LifeEventPage']
-  AdgerdirTags: AdgerdirTags
-  PaginatedAdgerdirNews: PaginatedAdgerdirNews
-  OrganizationTags: OrganizationTags
   SearchResult: Omit<SearchResult, 'items'> & {
     items: Array<ResolversParentTypes['Items']>
   }
@@ -1510,6 +1521,7 @@ export type ResolversParentTypes = {
   GetApplicationsByTypeInput: GetApplicationsByTypeInput
   GetDocumentInput: GetDocumentInput
   ListDocumentsInput: ListDocumentsInput
+  GetTranslationsInput: GetTranslationsInput
   Mutation: {}
   CreateApplicationInput: CreateApplicationInput
   UpdateApplicationInput: UpdateApplicationInput
@@ -2322,6 +2334,18 @@ export type MenuResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type AdgerdirTagsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['AdgerdirTags'] = ResolversParentTypes['AdgerdirTags']
+> = {
+  items?: Resolver<
+    Array<ResolversTypes['AdgerdirTag']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
 export type LifeEventPageResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['LifeEventPage'] = ResolversParentTypes['LifeEventPage']
@@ -2335,40 +2359,6 @@ export type LifeEventPageResolvers<
   content?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
   category?: Resolver<
     Maybe<ResolversTypes['ArticleCategory']>,
-    ParentType,
-    ContextType
-  >
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type UrlResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['Url'] = ResolversParentTypes['Url']
-> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  page?: Resolver<ResolversTypes['UrlPage'], ParentType, ContextType>
-  urlsList?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type UrlPageResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['UrlPage'] = ResolversParentTypes['UrlPage']
-> = {
-  __resolveType: TypeResolveFn<
-    'Article' | 'ArticleCategory' | 'News' | 'LifeEventPage',
-    ParentType,
-    ContextType
-  >
-}
-
-export type AdgerdirTagsResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['AdgerdirTags'] = ResolversParentTypes['AdgerdirTags']
-> = {
-  items?: Resolver<
-    Array<ResolversTypes['AdgerdirTag']>,
     ParentType,
     ContextType
   >
@@ -2398,6 +2388,28 @@ export type OrganizationTagsResolvers<
     ContextType
   >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type UrlResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Url'] = ResolversParentTypes['Url']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  page?: Resolver<ResolversTypes['UrlPage'], ParentType, ContextType>
+  urlsList?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type UrlPageResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['UrlPage'] = ResolversParentTypes['UrlPage']
+> = {
+  __resolveType: TypeResolveFn<
+    'Article' | 'ArticleCategory' | 'News' | 'LifeEventPage',
+    ParentType,
+    ContextType
+  >
 }
 
 export type SearchResultResolvers<
@@ -2768,6 +2780,12 @@ export type QueryResolvers<
     ParentType,
     ContextType
   >
+  getTranslations?: Resolver<
+    Maybe<ResolversTypes['JSON']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetTranslationsArgs, 'input'>
+  >
 }
 
 export type MutationResolvers<
@@ -2876,12 +2894,12 @@ export type Resolvers<ContextType = Context> = {
   AlertBanner?: AlertBannerResolvers<ContextType>
   GenericPage?: GenericPageResolvers<ContextType>
   Menu?: MenuResolvers<ContextType>
-  LifeEventPage?: LifeEventPageResolvers<ContextType>
-  Url?: UrlResolvers<ContextType>
-  UrlPage?: UrlPageResolvers<ContextType>
   AdgerdirTags?: AdgerdirTagsResolvers<ContextType>
+  LifeEventPage?: LifeEventPageResolvers<ContextType>
   PaginatedAdgerdirNews?: PaginatedAdgerdirNewsResolvers<ContextType>
   OrganizationTags?: OrganizationTagsResolvers<ContextType>
+  Url?: UrlResolvers<ContextType>
+  UrlPage?: UrlPageResolvers<ContextType>
   SearchResult?: SearchResultResolvers<ContextType>
   Items?: ItemsResolvers<ContextType>
   ContentItem?: ContentItemResolvers<ContextType>
