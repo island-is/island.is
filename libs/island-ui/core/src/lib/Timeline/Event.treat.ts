@@ -21,17 +21,18 @@ export const eventBarIcon = style({
   height: 64,
   width: 64,
   borderRadius: 50,
-  marginRight: 15,
   backgroundColor: theme.color.white,
+  boxShadow: '0px 4px 30px rgba(0, 0, 0, 0.05)',
 })
 
 export const eventBarTitle = style({
-  display: 'flex',
   alignItems: 'center',
   height: 64,
-  paddingRight: 25,
   borderRadius: 50,
-  backgroundColor: theme.color.purple100,
+})
+
+export const nowrap = style({
+  whiteSpace: 'nowrap',
 })
 
 export const eventBarStats = style({
@@ -89,7 +90,7 @@ export const eventModal = style({
   zIndex: 1,
   top: 0,
   left: 0,
-  borderRadius: `50px 5px 5px 5px`,
+  borderRadius: `32px 5px 5px 5px`,
   boxSizing: 'border-box',
   width: '660px',
   whiteSpace: 'normal',
