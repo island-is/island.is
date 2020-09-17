@@ -191,6 +191,7 @@ const Search: Screen<CategoryProps> = ({
             {filteredItems.map((item, index) => {
               const tags: Array<CardTagsProps> = []
 
+              console.log('item', item)
               if (item.group) {
                 tags.push({
                   title: item.group.title,
@@ -200,7 +201,7 @@ const Search: Screen<CategoryProps> = ({
                 })
               }
 
-              return <Card key={index} icon="article" tags={tags} {...item} />
+              return <Card key={index} tags={tags} {...item} />
             })}
             <Box paddingTop={8}>
               <Pagination
