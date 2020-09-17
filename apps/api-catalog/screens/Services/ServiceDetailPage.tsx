@@ -3,20 +3,16 @@ import { ServiceCardInformation,
         getService, 
         ServiceResult, ServiceDetail} from '../../components';
 
-export interface ServiceDetailPageProps {
-    service:ServiceCardInformation
-}
-
-export function ServiceDetailPage(props:ServiceDetailPageProps) {
+export function ServiceDetailPage(service: ServiceCardInformation) {
 
     return (
-        <ServiceDetail service={props.service} />
+        <ServiceDetail service={service} />
     )
 }
 
-ServiceDetailPage.getInitialProps = async (ctx):Promise<ServiceDetailPageProps> => {
+ServiceDetailPage.getInitialProps = async (ctx):Promise<ServiceCardInformation> => {
     const { query } = ctx;
     const service:ServiceResult = await getService(query.service);
 
-  return { service:service.result };
-  }
+  return service.result;
+}
