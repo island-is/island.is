@@ -32,12 +32,11 @@ import {
   GetSearchResultsQuery,
   QuerySearchResultsArgs,
   ContentLanguage,
-  SearchResult,
   QueryWebSearchAutocompleteArgs,
   AutocompleteTermResultsQuery,
   Article,
-} from '../../graphql/schema'
-import { GlobalNamespaceContext } from '@island.is/web/context/GlobalNamespaceContext/GlobalNamespaceContext'
+} from '@island.is/web/graphql/schema'
+import { GlobalNamespaceContext } from '@island.is/web/context'
 
 const DEBOUNCE_TIMER = 300
 const STACK_WIDTH = 400
@@ -92,7 +91,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
         query: GET_SEARCH_RESULTS_QUERY,
         variables: {
           query: {
-            queryString: term,
+            queryString: term.trim(),
             language: locale as ContentLanguage,
             types: ['webArticle'],
           },
@@ -116,7 +115,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
         query: GET_SEARCH_AUTOCOMPLETE_TERM_QUERY,
         variables: {
           input: {
-            singleTerm: queryString,
+            singleTerm: queryString.trim(),
             language: locale as ContentLanguage,
             size: 10, // only show top X completions to prevent long list
           },
@@ -198,15 +197,18 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
       <Downshift<string>
         id={id}
         initialInputValue={initialInputValue}
-        onChange={(q) => onSubmit(q)}
+        onChange={(q) => onSubmit(`${search.prefix} ${q}`.trim())}
         onInputValueChange={(q) => setSearchTerm(q)}
-        itemToString={(v) => v ?? ''}
+        itemToString={(v) =>
+          `${search.prefix ? search.prefix + ' ' : ''}${v}`.trim() ?? ''
+        }
         stateReducer={(state, changes) => {
           // pressing tab when input is not empty should move focus to the
           // search icon, so we need to prevent downshift from closing on blur
           const shouldIgnore =
-            changes.type === Downshift.stateChangeTypes.blurInput &&
-            state.inputValue !== ''
+            changes.type === Downshift.stateChangeTypes.mouseUp ||
+            (changes.type === Downshift.stateChangeTypes.blurInput &&
+              state.inputValue !== '')
 
           return shouldIgnore ? {} : changes
         }}
