@@ -276,13 +276,8 @@ export type Statistics = {
 export type ProcessEntry = {
   __typename?: 'ProcessEntry'
   id: Scalars['ID']
-  title: Scalars['String']
-  subtitle?: Maybe<Scalars['String']>
-  details?: Maybe<Html>
   type: Scalars['String']
   processTitle: Scalars['String']
-  processDescription?: Maybe<Scalars['String']>
-  processInfo?: Maybe<Html>
   processLink: Scalars['String']
   buttonText: Scalars['String']
 }
@@ -1937,17 +1932,8 @@ export type ProcessEntryResolvers<
   ParentType extends ResolversParentTypes['ProcessEntry'] = ResolversParentTypes['ProcessEntry']
 > = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  subtitle?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
-  details?: Resolver<Maybe<ResolversTypes['Html']>, ParentType, ContextType>
   type?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   processTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  processDescription?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >
-  processInfo?: Resolver<Maybe<ResolversTypes['Html']>, ParentType, ContextType>
   processLink?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   buttonText?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>

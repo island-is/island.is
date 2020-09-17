@@ -211,13 +211,8 @@ type Statistics {
 
 type ProcessEntry {
   id: ID!
-  title: String!
-  subtitle: String
-  details: Html
   type: String!
   processTitle: String!
-  processDescription: String
-  processInfo: Html
   processLink: String!
   buttonText: String!
 }

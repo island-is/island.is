@@ -265,13 +265,8 @@ export type Statistics = {
 export type ProcessEntry = {
   __typename?: 'ProcessEntry'
   id: Scalars['ID']
-  title: Scalars['String']
-  subtitle?: Maybe<Scalars['String']>
-  details?: Maybe<Html>
   type: Scalars['String']
   processTitle: Scalars['String']
-  processDescription?: Maybe<Scalars['String']>
-  processInfo?: Maybe<Html>
   processLink: Scalars['String']
   buttonText: Scalars['String']
 }
@@ -479,6 +474,11 @@ export type Menu = {
   links: Array<Link>
 }
 
+export type AdgerdirTags = {
+  __typename?: 'AdgerdirTags'
+  items: Array<AdgerdirTag>
+}
+
 export type LifeEventPage = {
   __typename?: 'LifeEventPage'
   id: Scalars['ID']
@@ -491,21 +491,6 @@ export type LifeEventPage = {
   category?: Maybe<ArticleCategory>
 }
 
-export type Url = {
-  __typename?: 'Url'
-  id: Scalars['ID']
-  title?: Maybe<Scalars['String']>
-  page: UrlPage
-  urlsList: Array<Scalars['String']>
-}
-
-export type UrlPage = Article | ArticleCategory | News | LifeEventPage
-
-export type AdgerdirTags = {
-  __typename?: 'AdgerdirTags'
-  items: Array<AdgerdirTag>
-}
-
 export type PaginatedAdgerdirNews = {
   __typename?: 'PaginatedAdgerdirNews'
   page: Pagination
@@ -516,6 +501,16 @@ export type OrganizationTags = {
   __typename?: 'OrganizationTags'
   items: Array<OrganizationTag>
 }
+
+export type Url = {
+  __typename?: 'Url'
+  id: Scalars['ID']
+  title?: Maybe<Scalars['String']>
+  page: UrlPage
+  urlsList: Array<Scalars['String']>
+}
+
+export type UrlPage = Article | ArticleCategory | News | LifeEventPage
 
 export type SearchResult = {
   __typename?: 'SearchResult'
@@ -642,6 +637,7 @@ export type Query = {
   getDocument?: Maybe<DocumentDetails>
   listDocuments?: Maybe<Array<Document>>
   getDocumentCategories?: Maybe<Array<DocumentCategory>>
+  getTranslations?: Maybe<Scalars['JSON']>
 }
 
 export type QueryHelloWorldArgs = {
@@ -774,6 +770,10 @@ export type QueryGetDocumentArgs = {
 
 export type QueryListDocumentsArgs = {
   input: ListDocumentsInput
+}
+
+export type QueryGetTranslationsArgs = {
+  input: GetTranslationsInput
 }
 
 export type HelloWorldInput = {
@@ -958,6 +958,11 @@ export type ListDocumentsInput = {
   category: Scalars['String']
   page: Scalars['Float']
   pageSize: Scalars['Float']
+}
+
+export type GetTranslationsInput = {
+  namespaces?: Maybe<Array<Scalars['String']>>
+  lang: Scalars['String']
 }
 
 export type Mutation = {
@@ -1811,18 +1816,8 @@ export type StatisticsFieldsFragment = { __typename: 'Statistics' } & Pick<
 
 export type ProcessEntryFieldsFragment = { __typename: 'ProcessEntry' } & Pick<
   ProcessEntry,
-  | 'id'
-  | 'title'
-  | 'subtitle'
-  | 'type'
-  | 'processTitle'
-  | 'processDescription'
-  | 'processLink'
-  | 'buttonText'
-> & {
-    details?: Maybe<{ __typename?: 'Html' } & HtmlFieldsFragment>
-    processInfo?: Maybe<{ __typename?: 'Html' } & HtmlFieldsFragment>
-  }
+  'id' | 'type' | 'processTitle' | 'processLink' | 'buttonText'
+>
 
 export type HtmlFieldsFragment = { __typename: 'Html' } & Pick<
   Html,
