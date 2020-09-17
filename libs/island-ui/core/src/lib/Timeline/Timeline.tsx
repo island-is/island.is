@@ -297,7 +297,7 @@ const EventBar = forwardRef(
               <span className={eventStyles.value}>
                 {formatNumber(event.value)}
               </span>
-              {event.maxValue && (
+              {!!event.maxValue && (
                 <span className={eventStyles.maxValue}>
                   /{formatNumber(event.maxValue)}
                 </span>
@@ -353,7 +353,7 @@ const EventModal = forwardRef(
               <Typography variant="h2" color="purple400" as="span">
                 {formatNumber(event.value)}
               </Typography>
-              {event.maxValue && (
+              {!!event.maxValue && (
                 <Typography
                   variant="h2"
                   color="purple400"
