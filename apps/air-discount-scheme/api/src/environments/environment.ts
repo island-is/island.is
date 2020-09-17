@@ -3,6 +3,10 @@ export default {
   sentry: {
     dsn: process.env.SENTRY_DSN,
   },
+  accessGroups: {
+    developers: process.env.DEVELOPERS,
+    admins: process.env.ADMINS,
+  },
   auth: {
     samlEntryPoint: 'https://innskraning.island.is/?id=ads.local',
     audience: 'localhost:4200',
