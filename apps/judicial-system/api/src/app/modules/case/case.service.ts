@@ -2,16 +2,20 @@ import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { SmsService } from '@island.is/nova-sms'
 
+import { environment } from '../../../environments'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
 import { Case } from './case.model'
-import { Notification } from './case.types'
+import { Notification, NotificationType } from './case.types'
 
 @Injectable()
 export class CaseService {
   constructor(
     @InjectModel(Case)
     private caseModel: typeof Case,
+    @Inject(SmsService)
+    private smsService: SmsService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
   ) {}
@@ -65,7 +69,55 @@ export class CaseService {
     return []
   }
 
-  async sendNotificationByCaseId(id: string): Promise<Notification> {
-    return new Notification()
+  async sendNotificationByCaseId(existingCase: Case): Promise<Notification> {
+    this.logger.debug(
+      `Sending a notification for case with id "${existingCase.id}"`,
+    )
+
+    const smsText = this.constructSmsText(existingCase)
+
+    this.logger.debug(smsText)
+
+    // Production or local development with judge phone number
+    if (environment.production || environment.notifications.judgePhoneNumber) {
+      await this.smsService.sendSms(
+        environment.notifications.judgePhoneNumber,
+        smsText,
+      )
+    }
+
+    const notification = new Notification()
+    notification.caseId = existingCase.id
+    notification.type = NotificationType.HEADS_UP
+
+    return notification
+  }
+
+  private constructSmsText(existingCase: Case): string {
+    // Arrest date
+    const ad = existingCase.arrestDate.toISOString()
+    const adText = ad
+      ? ` Viðkomandi handtekinn ${ad.substring(8, 10)}.${ad.substring(
+          5,
+          7,
+        )}.${ad.substring(0, 4)} kl. ${ad.substring(11, 13)}:${ad.substring(
+          14,
+          16,
+        )}.`
+      : ''
+
+    // Court date
+    const cd = existingCase.requestedCourtDate.toISOString()
+    const cdText = cd
+      ? ` ÓE fyrirtöku ${cd.substring(8, 10)}.${cd.substring(
+          5,
+          7,
+        )}.${cd.substring(0, 4)} eftir kl. ${cd.substring(
+          11,
+          13,
+        )}:${cd.substring(14, 16)}.`
+      : ''
+
+    return `Ný gæsluvarðhaldskrafa í vinnslu.${adText}${cdText}`
   }
 }

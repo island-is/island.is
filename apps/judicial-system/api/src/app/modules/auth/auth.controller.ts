@@ -118,6 +118,7 @@ export class AuthController {
 
     res.clearCookie(name, options)
 
+    // Local development
     if (!environment.production && process.env.AUTH_USER) {
       this.logger.debug(
         `Logging in as ${process.env.AUTH_USER} in local development`,
