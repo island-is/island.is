@@ -28,6 +28,7 @@ export const GET_ARTICLES_QUERY = gql`
       }
       subgroup {
         title
+        importance
       }
     }
   }

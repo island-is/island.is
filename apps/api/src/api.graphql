@@ -108,6 +108,7 @@ type ArticleGroup {
 
 type ArticleSubgroup {
   title: String!
+  importance: Float
   slug: String!
 }
 
