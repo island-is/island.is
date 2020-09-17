@@ -10,7 +10,6 @@ module.exports = {
 
     const apiResources = [
       {
-        id: '241d6525-8544-4661-ab0b-541c00ae107f',//uuidv4(),
         domain_id: domainId,
         name: 'swagger_api',
         display_name: 'Demo API',
@@ -18,7 +17,6 @@ module.exports = {
         show_in_discovery_document: true
       },
       {
-        id: 'c2f1c57f-a9a2-41d3-b647-d62f0fa3e4d2',//uuidv4(),
         domain_id: domainId,
         name: 'postman_resource',
         display_name: 'postman_resource',
@@ -28,16 +26,16 @@ module.exports = {
     ]
 
     const userClaims = [
-      {api_resource_id: apiResources[1].id, claim_name: 'natreg'},
+      {domain_id: domainId, api_resource_name: apiResources[1].name, claim_name: 'natreg'},
     ];
 
     const scopes = [
-      {api_resource_id: apiResources[0].id, scope_name: 'swagger_api.read'},
-      {api_resource_id: apiResources[1].id, scope_name: 'postman_resource.scope'},
+      {domain_id: domainId, api_resource_name: apiResources[0].name, scope_name: 'swagger_api.read'},
+      {domain_id: domainId, api_resource_name: apiResources[1].name, scope_name: 'postman_resource.scope'},
     ]
 
     const secrets = [
-      {api_resource_id: apiResources[1].id, value: '8I04CDGgyV5bddUZfz0ydCTBRuRTmn7frlxVhJy1krc=', type: 'SharedSecret'},
+      {domain_id: domainId, api_resource_name: apiResources[1].name, value: '8I04CDGgyV5bddUZfz0ydCTBRuRTmn7frlxVhJy1krc=', type: 'SharedSecret'},
     ]
 
     return new Promise((resolve) => {

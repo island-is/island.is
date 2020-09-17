@@ -22,12 +22,23 @@ import { ApiScope } from './api-scope.model'
   export class ApiScopeUserClaim extends Model<ApiScopeUserClaim> {
     @PrimaryKey
     @Column({
-        type: DataType.UUID,
+      type: DataType.UUID,
+      allowNull: false,
+    })
+    @ForeignKey(() => ApiScope)
+    @ApiProperty({
+      example: 'domain_id',
+    })
+    domainId: string
+
+    @PrimaryKey
+    @Column({
+        type: DataType.STRING,
         allowNull: false,
       })
     @ForeignKey(() => ApiScope)
     @ApiProperty()
-    apiScopeId: string
+    apiScopeName: string
 
     @PrimaryKey
     @Column({

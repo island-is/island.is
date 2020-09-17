@@ -38,21 +38,21 @@ export class ResourcesService {
     private logger: Logger,
   ) {}
 
-  async getIdentityResourceById(id: string): Promise<IdentityResource> {
-    this.logger.debug('Getting data about identity resource with id: ', id)
+  // async getIdentityResourceById(id: string): Promise<IdentityResource> {
+  //   this.logger.debug('Getting data about identity resource with id: ', id)
 
-    return this.identityResourceModel.findOne({
-      where: { id: id },
-    })
-  }
+  //   return this.identityResourceModel.findOne({
+  //     where: { id: id },
+  //   })
+  // }
 
-  async getApiScopeById(id: string): Promise<ApiScope> {
-    this.logger.debug('Getting data about api scope with id: ', id)
+  // async getApiScopeById(id: string): Promise<ApiScope> {
+  //   this.logger.debug('Getting data about api scope with id: ', id)
 
-    return this.apiScopeModel.findOne({
-      where: { id: id },
-    })
-  }
+  //   return this.apiScopeModel.findOne({
+  //     where: { id: id },
+  //   })
+  // }
 
   async findIdentityResourcesByScopeName(
     scopeNames: string[],
@@ -115,7 +115,7 @@ export class ResourcesService {
     )
 
     const scopesWhereOptions: WhereOptions = {
-      scope_name: {
+      scopeName: {
         [Op.in]: apiResourceScopeNames,
       },
     }
@@ -125,8 +125,8 @@ export class ResourcesService {
     })
 
     const whereOptions: WhereOptions = {
-      id: {
-        [Op.in]: scopes.map((scope) => scope.apiResourceId),
+      name: {
+        [Op.in]: scopes.map((scope) => scope.apiResourceName),
       },
     }
     return this.apiResourceModel.findAll({
@@ -143,25 +143,25 @@ export class ResourcesService {
     return await this.identityResourceModel.create({ ...identityResource })
   }
 
-  async updateIdentityResource(
-    identityResource: IdentityResourcesDTO,
-    id: string,
-  ): Promise<IdentityResource> {
-    this.logger.debug('Updating identity resource with id: ', id)
+  // async updateIdentityResource(
+  //   identityResource: IdentityResourcesDTO,
+  //   id: string,
+  // ): Promise<IdentityResource> {
+  //   this.logger.debug('Updating identity resource with id: ', id)
 
-    await this.identityResourceModel.update(
-      { ...identityResource },
-      { where: { id: id } },
-    )
+  //   await this.identityResourceModel.update(
+  //     { ...identityResource },
+  //     { where: { id: id } },
+  //   )
 
-    return await this.getIdentityResourceById(id)
-  }
+  //   return await this.getIdentityResourceById(id)
+  // }
 
-  async deleteIdentityResource(id: string): Promise<number> {
-    this.logger.debug('Removing identity resource with id: ', id)
+  // async deleteIdentityResource(id: string): Promise<number> {
+  //   this.logger.debug('Removing identity resource with id: ', id)
 
-    return await this.identityResourceModel.destroy({ where: { id: id } })
-  }
+  //   return await this.identityResourceModel.destroy({ where: { id: id } })
+  // }
 
   async createApiScope(apiScope: ApiScopesDTO): Promise<ApiScope> {
     this.logger.debug('Creating a new api scope')
@@ -169,17 +169,17 @@ export class ResourcesService {
     return await this.apiScopeModel.create({ ...apiScope })
   }
 
-  async updateApiScope(apiScope: ApiScopesDTO, id: string): Promise<ApiScope> {
-    this.logger.debug('Updating api scope with id: ', id)
+  // async updateApiScope(apiScope: ApiScopesDTO, id: string): Promise<ApiScope> {
+  //   this.logger.debug('Updating api scope with id: ', id)
 
-    await this.apiScopeModel.update({ ...apiScope }, { where: { id: id } })
+  //   await this.apiScopeModel.update({ ...apiScope }, { where: { id: id } })
 
-    return this.getApiScopeById(id)
-  }
+  //   return this.getApiScopeById(id)
+  // }
 
-  async deleteApiScope(id: string): Promise<number> {
-    this.logger.debug('Deleting api scope with id: ', id)
+  // async deleteApiScope(id: string): Promise<number> {
+  //   this.logger.debug('Deleting api scope with id: ', id)
 
-    return await this.apiScopeModel.destroy({ where: { id: id }})
-  }
+  //   return await this.apiScopeModel.destroy({ where: { id: id }})
+  // }
 }

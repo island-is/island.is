@@ -6,6 +6,7 @@ import {
   Table,
   UpdatedAt,
   HasMany,
+  PrimaryKey,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { ApiResourceSecret } from './api-resource-secret.model'
@@ -14,22 +15,9 @@ import { ApiResourceScope } from './api-resource-scope.model'
 
 @Table({
   tableName: 'api_resource',
-  indexes: [
-    {
-      fields: ['id'],
-    },
-  ],
 })
 export class ApiResource extends Model<ApiResource> {
-  @Column({
-    type: DataType.UUID,
-    primaryKey: true,
-    allowNull: false,
-    defaultValue: DataType.UUIDV4,
-  })
-  @ApiProperty()
-  id: string
-  
+  @PrimaryKey
   @Column({
     type: DataType.UUID,
     allowNull: false,
@@ -41,6 +29,14 @@ export class ApiResource extends Model<ApiResource> {
 
   // Common properties for all resources (no single table inheritance)
 
+  @PrimaryKey
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  name: string
+
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
@@ -48,13 +44,6 @@ export class ApiResource extends Model<ApiResource> {
   })
   @ApiProperty()
   enabled: boolean
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
-  name: string
 
   @Column({
     type: DataType.STRING,
