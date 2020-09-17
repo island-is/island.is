@@ -4,9 +4,7 @@ import {
   Document,
   BLOCKS,
   Block,
-  TopLevelBlock,
 } from '@contentful/rich-text-types'
-import { Asset as ContentfulAsset } from 'contentful'
 
 import {
   IPageHeader,
@@ -146,7 +144,7 @@ export const mapDocument = (
             : slices.push(mapAsset(block.data.target))
         }
         break
-      default:
+      default: {
         // ignore last empty paragraph because of this annoying bug:
         // https://github.com/contentful/rich-text/issues/101
         if (index === document.content.length - 1 && isEmptyNode(block)) return
@@ -158,6 +156,7 @@ export const mapDocument = (
         } else {
           slices.push(mapHtml(block, `${idPrefix}:${index}`))
         }
+      }
     }
   })
 
