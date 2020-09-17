@@ -47,7 +47,15 @@ const IntroductionSection: FC<Props> = ({
           span={['12/12', '12/12', '4/12']}
           offset={[null, null, '1/12']}
         >
-          <Illustration />
+          <Box
+            display="inlineFlex"
+            height="full"
+            width="full"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Illustration />
+          </Box>
         </GridColumn>
         <GridColumn
           span={['12/12', '12/12', '5/12']}
