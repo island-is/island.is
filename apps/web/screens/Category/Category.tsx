@@ -236,15 +236,15 @@ const Category: Screen<CategoryProps> = ({
 
                             return (
                               <React.Fragment key={subgroup}>
-                                {hasSubgroups && (
-                                  <Typography
-                                    variant="h5"
-                                    paddingBottom={3}
-                                    paddingTop={index === 0 ? 0 : 3}
-                                  >
-                                    {subgroupName}
-                                  </Typography>
-                                )}
+                                <Typography
+                                  variant="h5"
+                                  paddingBottom={3}
+                                  paddingTop={index === 0 ? 0 : 3}
+                                >
+                                  {hasSubgroups
+                                    ? subgroupName
+                                    : n('sortedAlphabetically', 'A til Ö')}
+                                </Typography>
                                 <Stack space={2}>
                                   {sortArticles(
                                     articlesBySubgroup[subgroup],
