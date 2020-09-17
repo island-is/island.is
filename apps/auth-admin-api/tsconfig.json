@@ -1,9 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "types": ["node", "jest"],
-    "emitDecoratorMetadata": true,
-    "target": "es2015"
+    "allowJs": true,
+    "types": ["node", "jest"]
   },
-  "include": ["**/*.ts", "../../libs/auth-api/src/lib/services/sequelizeConfig.service.ts"]
+  "include": [
+    "**/*.ts",
+    "../../libs/infra-express-server/src/lib/express-app.ts",
+    "../../libs/infra-express-server/src/lib/metrics-publisher.ts"
+  ]
 }

@@ -5,7 +5,7 @@ import { bootstrap } from '@island.is/infra-nest-server'
 
 bootstrap({
   appModule: AppModule,
-  name: 'auth-api',
+  name: 'auth-admin-api',
   openApi: new DocumentBuilder()
     .setTitle('IdentityServer Admin api')
     .setDescription(
