@@ -665,7 +665,7 @@ input GetLifeEventsInput {
 }
 
 input GetLifeEventsInCategoryInput {
-  slug: String
+  slug: String!
   lang: String!
 }
 

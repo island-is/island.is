@@ -1,11 +1,10 @@
 import { Field, InputType } from '@nestjs/graphql'
-import { IsString, IsOptional } from 'class-validator'
+import { IsString } from 'class-validator'
 
 @InputType()
 export class GetLifeEventsInCategoryInput {
-  @Field({ nullable: true })
+  @Field()
   @IsString()
-  @IsOptional()
   slug?: string
 
   @Field()

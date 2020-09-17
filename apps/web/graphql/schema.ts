@@ -883,7 +883,7 @@ export type GetLifeEventsInput = {
 }
 
 export type GetLifeEventsInCategoryInput = {
-  slug?: Maybe<Scalars['String']>
+  slug: Scalars['String']
   lang: Scalars['String']
 }
 
