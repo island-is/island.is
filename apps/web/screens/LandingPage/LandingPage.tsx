@@ -18,7 +18,7 @@ import {
 } from '@island.is/island-ui/core'
 import { RichText, SidebarNavigation } from '@island.is/web/components'
 import ArticleLayout from '../Layouts/Layouts'
-import useRouteNames from '../../i18n/useRouteNames'
+import routeNames from '../../i18n/routeNames'
 import {
   QueryGetLandingPageArgs,
   GetLandingPageQuery,
@@ -31,7 +31,7 @@ export interface LandingPageProps {
 
 const LandingPageScreen: Screen<LandingPageProps> = ({ page }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
   const navigation = useMemo(() => {
     return createNavigation(page.content, { title: page.title })
   }, [page])

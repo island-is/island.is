@@ -15,7 +15,7 @@ import { GET_URL_QUERY } from '@island.is/web/screens/queries'
 import ApolloClient from 'apollo-client'
 import { NormalizedCacheObject } from 'apollo-cache-inmemory'
 import { NextPageContext } from 'next'
-import useRouteNames, { PathTypes } from '../i18n/useRouteNames'
+import routeNames, { PathTypes } from '../i18n/routeNames'
 
 type ErrorPageProps = {
   statusCode: number
@@ -74,7 +74,7 @@ class ErrorPage extends React.Component<ErrorPageProps> {
       })
 
       if (redirectProps) {
-        const { makePath } = useRouteNames(locale)
+        const { makePath } = routeNames(locale)
 
         const { pageType, page } = redirectProps
 

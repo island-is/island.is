@@ -10,7 +10,7 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { NewsCard } from '../NewsCard'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
 import { GetNewsListQuery } from '../../graphql/schema'
 
@@ -28,7 +28,7 @@ const LatestNewsSection: React.FC<LatestNewsProps> = ({
 }) => {
   const newsItems = items.slice(0, 3)
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   return (
     <GridContainer>

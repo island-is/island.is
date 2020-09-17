@@ -1,6 +1,6 @@
 import { Locale, defaultLanguage } from './I18n'
 
-const routeNames = {
+const routes = {
   is: {
     article: '',
     Article: '',
@@ -39,12 +39,12 @@ export type PathTypes =
   | 'lifeEvent'
   | 'LifeEventPage'
 
-export const useRouteNames = (locale: Locale = defaultLanguage) => {
+export const routeNames = (locale: Locale = defaultLanguage) => {
   return {
     makePath: (type?: PathTypes, subfix?: string) => {
       let path = ''
 
-      const typePath = (type && routeNames[locale][type]) ?? null
+      const typePath = (type && routes[locale][type]) ?? null
 
       if (locale && locale !== defaultLanguage) {
         path += '/' + locale
@@ -63,4 +63,4 @@ export const useRouteNames = (locale: Locale = defaultLanguage) => {
   }
 }
 
-export default useRouteNames
+export default routeNames

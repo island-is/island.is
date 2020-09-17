@@ -8,7 +8,7 @@ import NativeSelect from '../components/Select/Select'
 import Bullet from '../components/Bullet/Bullet'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
 import {
   Box,
   Typography,
@@ -50,7 +50,7 @@ const NewsList: Screen<NewsListProps> = ({
 }) => {
   const Router = useRouter()
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
   const { format } = useDateUtils()
 
   const dates = dateRange.map((s) => new Date(s))

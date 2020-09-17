@@ -5,7 +5,7 @@ import { Categories, SearchInput, LatestNewsSection } from '../components'
 import { useI18n } from '../i18n'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
-import useRouteNames from '../i18n/useRouteNames'
+import routeNames from '../i18n/routeNames'
 import FrontpageTabs from '../components/FrontpageTabs/FrontpageTabs'
 import {
   QueryGetFrontpageSliderListArgs,
@@ -50,7 +50,7 @@ const Home: Screen<HomeProps> = ({
 }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale

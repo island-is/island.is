@@ -29,7 +29,7 @@ import { ArticleLayout } from './Layouts/Layouts'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
 import { useI18n } from '../i18n'
-import useRouteNames from '../i18n/useRouteNames'
+import routeNames from '../i18n/routeNames'
 import { CustomNextError } from '../units/errors'
 import {
   QueryGetNamespaceArgs,
@@ -100,7 +100,7 @@ const RelatedArticles: FC<{
   articles: Array<{ slug: string; title: string }>
 }> = ({ title, articles }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   if (articles.length === 0) return null
 
@@ -134,7 +134,7 @@ const SubArticleNavigation: FC<{
   selectedSubArticle: SubArticle
 }> = ({ title, article, selectedSubArticle }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
   const [bullet, setBullet] = useState<HTMLDivElement>(null)
   const isFirstMount = useFirstMountState()
   const navigation = useMemo(() => {
@@ -329,7 +329,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
   const n = useNamespace(namespace)
   const { query } = useRouter()
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   const subArticle = article.subArticles.find((sub) => {
     return sub.slug === query.subSlug

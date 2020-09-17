@@ -18,7 +18,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Card, Sidebar } from '../../components'
 import { useI18n } from '@island.is/web/i18n'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
@@ -57,7 +57,7 @@ const Category: Screen<CategoryProps> = ({
   const { activeLocale } = useI18n()
   const Router = useRouter()
   const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   // group articles
   const { groups, cards } = articles.reduce(

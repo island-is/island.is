@@ -13,7 +13,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Image, ContentContainer } from '@island.is/island-ui/contentful'
 import { useI18n } from '../../i18n'
-import useRouteNames from '../../i18n/useRouteNames'
+import routeNames from '../../i18n/routeNames'
 import { Sticky, RichText, SidebarNavigation } from '../../components'
 import { GET_LIFE_EVENT_QUERY } from '../queries'
 import {
@@ -30,7 +30,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
   lifeEvent: { image, title, intro, content },
 }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
   const navigation = useMemo(() => {
     return createNavigation(content, { title })
   }, [content, title])
