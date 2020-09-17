@@ -105,6 +105,7 @@ type ArticleGroup {
 type ArticleSubgroup {
   title: String!
   slug: String!
+  importance: Int
 }
 
 type OrganizationTag {
