@@ -5,7 +5,7 @@ import { Discount } from './discount.model'
 import {
   CreateDiscountCodeParams,
   GetCurrentDiscountByNationalIdParams,
-} from './discount.validator'
+} from './dto'
 import { DiscountService } from './discount.service'
 import { NationalRegistryService } from '../nationalRegistry'
 

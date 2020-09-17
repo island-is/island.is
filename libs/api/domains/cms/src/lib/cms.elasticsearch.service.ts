@@ -8,7 +8,7 @@ import { ArticleCategory } from './models/articleCategory.model'
 import { Article } from './models/article.model'
 
 @Injectable()
-export class CmsService {
+export class CmsElasticsearchService {
   constructor(private elasticService: ElasticService) {}
 
   async getArticleCategories(

@@ -24,7 +24,7 @@ export const Application = () => {
     return <p>{error}</p>
   }
   if (loading) {
-    return <p>Loading</p>
+    return null
   }
   return <ApplicationForm application={data.getApplication} />
 }

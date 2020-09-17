@@ -5,7 +5,7 @@ import { Categories, SearchInput, LatestNewsSection } from '../components'
 import { useI18n } from '../i18n'
 import { Screen } from '../types'
 import { useNamespace } from '../hooks'
-import useRouteNames from '../i18n/useRouteNames'
+import routeNames from '../i18n/routeNames'
 import FrontpageTabs from '../components/FrontpageTabs/FrontpageTabs'
 import {
   QueryGetFrontpageSliderListArgs,
@@ -27,10 +27,10 @@ import {
   GET_NEWS_LIST_QUERY,
   GET_LIFE_EVENTS_QUERY,
 } from './queries'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { IntroductionSection } from '../components/IntroductionSection'
 import { LifeEventsCardsSection } from '../components/LifeEventsCardsSection'
 import { Section } from '../components/Section'
-import { withMainLayout } from '../layouts/main'
 import { Sleeve } from '@island.is/island-ui/core'
 import { ContentBlock } from '@island.is/island-ui/core'
 
@@ -51,7 +51,7 @@ const Home: Screen<HomeProps> = ({
 }) => {
   const { activeLocale } = useI18n()
   const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   if (typeof document === 'object') {
     document.documentElement.lang = activeLocale

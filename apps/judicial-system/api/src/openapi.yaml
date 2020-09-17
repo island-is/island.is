@@ -131,9 +131,6 @@ components:
         requestedCourtDate:
           format: date-time
           type: string
-        requestedCustodyEndDate:
-          format: date-time
-          type: string
       required:
         - policeCaseNumber
         - suspectNationalId
@@ -201,7 +198,14 @@ components:
           type: string
     Notification:
       type: object
-      properties: {}
+      properties:
+        caseId:
+          type: string
+        type:
+          type: string
+      required:
+        - caseId
+        - type
 paths:
   /liveness:
     get:
@@ -369,7 +373,7 @@ paths:
                   $ref: '#/components/schemas/Notification'
       tags:
         - cases
-  '/api/caser/{id}/notification':
+  '/api/case/{id}/notification':
     post:
       operationId: CaseController_sendNotificationByCaseId
       parameters:

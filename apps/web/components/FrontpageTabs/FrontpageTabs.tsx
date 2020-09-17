@@ -23,7 +23,7 @@ import {
   Hidden,
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/web/i18n/I18n'
-import { useRouteNames } from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '../../i18n'
 
 import * as styles from './FrontpageTabs.treat'
@@ -92,7 +92,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
     baseId: 'frontpage-tab',
   })
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale as Locale)
+  const { makePath } = routeNames(activeLocale as Locale)
 
   const updateImage = useCallback(() => {
     if (selectedIndex >= 0) {
@@ -317,7 +317,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                         <Stack space={3}>
                           <Typography
                             variant="eyebrow"
-                            as="h2"
+                            as="p"
                             color="purple400"
                           >
                             <span className={styles.textItem}>{subtitle}</span>

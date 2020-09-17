@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
 import {
@@ -15,6 +15,7 @@ import {
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
   CreateDetentionReqStepOneCase,
+  CaseState,
 } from '@island.is/judicial-system-web/src/types'
 import { updateState, autoSave } from '../../../utils/stepHelper'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
@@ -22,7 +23,10 @@ import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import * as api from '../../../api'
-import { parseArray } from '@island.is/judicial-system-web/src/utils/formatters'
+import {
+  parseArray,
+  parseString,
+} from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const StepTwo: React.FC = () => {
   const caseDraft = window.localStorage.getItem('workingCase')
@@ -166,6 +170,19 @@ export const StepTwo: React.FC = () => {
         'Gæslufangar mega lesa dagblöð og bækur, svo og fylgjast með hljóðvarpi og sjónvarpi. Þó getur sá sem rannsókn stýrir takmarkað aðgang gæslufanga að fjölmiðlum ef nauðsyn ber til í þágu rannsóknar.',
     },
   ]
+
+  useEffect(() => {
+    api.saveCase(
+      window.localStorage.getItem('caseId'),
+      parseString('state', CaseState.SUBMITTED),
+    )
+    updateState(
+      workingCase,
+      'id',
+      window.localStorage.getItem('caseId'),
+      setWorkingCase,
+    )
+  }, [])
 
   return (
     <Box marginTop={7} marginBottom={30}>
@@ -335,11 +352,6 @@ export const StepTwo: React.FC = () => {
                             label={provision.brokenLaw}
                             value={provision.value}
                             checked={provision.getCheckbox}
-                            defaultChecked={
-                              caseDraftJSON.case.caseCustodyProvisions.indexOf(
-                                provision.value,
-                              ) > -1
-                            }
                             tooltip={provision.explination}
                             onChange={({ target }) => {
                               console.log(target.checked)
@@ -415,11 +427,6 @@ export const StepTwo: React.FC = () => {
                           label={restriction.restriction}
                           value={restriction.value}
                           checked={restriction.getCheckbox}
-                          defaultChecked={
-                            caseDraftJSON.case.restrictions.indexOf(
-                              restriction.value,
-                            ) > -1
-                          }
                           tooltip={restriction.explination}
                           onChange={({ target }) => {
                             // Toggle the checkbox on or off

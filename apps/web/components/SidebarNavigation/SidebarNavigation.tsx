@@ -31,7 +31,7 @@ export const SidebarNavigation: FC<SidebarNavigationProps> = ({
       <Stack space={[1, 1, 2]}>
         {Boolean(title) && (
           <>
-            <Typography variant="h4" as="h4">
+            <Typography variant="h4" as="h2">
               {title}
             </Typography>
             <Divider weight="alternate" />
