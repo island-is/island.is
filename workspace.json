@@ -3075,6 +3075,63 @@
           }
         }
       }
+    },
+    "auth-admin-api": {
+      "root": "apps/auth-admin-api",
+      "sourceRoot": "apps/auth-admin-api/src",
+      "projectType": "application",
+      "prefix": "auth-admin-api",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/auth-admin-api",
+            "main": "apps/auth-admin-api/src/main.ts",
+            "tsConfig": "apps/auth-admin-api/tsconfig.app.json",
+            "assets": ["apps/auth-admin-api/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/auth-admin-api/src/environments/environment.ts",
+                  "with": "apps/auth-admin-api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "auth-admin-api:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "apps/auth-admin-api/.eslintrc",
+            "tsConfig": [
+              "apps/auth-admin-api/tsconfig.app.json",
+              "apps/auth-admin-api/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/auth-admin-api/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/auth-admin-api/jest.config.js",
+            "tsConfig": "apps/auth-admin-api/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {
