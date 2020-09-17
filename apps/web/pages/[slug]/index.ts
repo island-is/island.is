@@ -5,9 +5,9 @@ import articleScreen from '@island.is/web/screens/Article'
 import { withHealthchecks } from '@island.is/web/units/Healthchecks/withHealthchecks'
 
 const { serverRuntimeConfig } = getConfig()
-const { graphqlUrl } = serverRuntimeConfig	
-const externalEndpointDependencies = [graphqlUrl]	
+const { graphqlUrl } = serverRuntimeConfig
+const externalEndpointDependencies = [graphqlUrl]
 
-export default withHealthchecks(externalEndpointDependencies)(	
-  withApollo(withLocale('is')(articleScreen)),	
+export default withHealthchecks(externalEndpointDependencies)(
+  withApollo(withLocale('is')(articleScreen)),
 )
