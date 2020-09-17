@@ -83,7 +83,7 @@ export class ContentfulService {
     logger.info('Getting next sync token from index', {
       index: SearchIndexes[locale],
     })
-    const document = await this.elasticService.getDocumentsByMetaData(
+    const document = await this.elasticService.getDocumentsByTypes(
       SearchIndexes[locale],
       query,
     )

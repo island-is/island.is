@@ -1,5 +1,6 @@
-import { Client } from '@elastic/elasticsearch'
+import { ApiResponse, Client } from '@elastic/elasticsearch'
 import { MappedData, SearchIndexes, SearchResponse } from '../types'
+import esb, { RequestBodySearch, TermsAggregation } from 'elastic-builder'
 import { logger } from '@island.is/logging'
 import merge from 'lodash/merge'
 import { environment } from '../environments/environment'
@@ -13,12 +14,19 @@ import {
 import {
   autocompleteTermQuery,
   AutocompleteTermResponse,
+  AutocompleteTermRequestBody,
 } from '../queries/autocomplete'
-import { searchQuery } from '../queries/search'
+import { searchQuery, SearchRequestBody } from '../queries/search'
 import {
-  DocumentByMetaDataInput,
-  documentByMetaDataQuery,
-} from '../queries/documentByMetaData'
+  documentByTypeQuery,
+  DocumentByTypesInput,
+  DocumentByTypesRequestBody,
+} from '../queries/documentByTypes'
+import {
+  DocumentByTagInput,
+  documentByTagQuery,
+  DocumentByTagRequestBody,
+} from '../queries/documentByTags'
 
 const { elastic } = environment
 interface SyncRequest {
@@ -113,16 +121,47 @@ export class ElasticService {
     }
   }
 
-  async getDocumentsByMetaData(
-    index: SearchIndexes,
-    query: DocumentByMetaDataInput,
-  ) {
-    const requestBody = documentByMetaDataQuery(query)
+  async getDocumentsByTypes(index: SearchIndexes, query: DocumentByTypesInput) {
+    const requestBody = documentByTypeQuery(query)
+
     const data = await this.findByQuery<
       SearchResponse<MappedData>,
-      typeof requestBody
+      DocumentByTypesRequestBody
+    >(index, requestBody)
+
+    return data.body
+  }
+
+  async getDocumentsByTag(index: SearchIndexes, query: DocumentByTagInput) {
+    const requestBody = documentByTagQuery(query)
+    const data = await this.findByQuery<
+      SearchResponse<MappedData>,
+      DocumentByTagRequestBody
     >(index, requestBody)
     return data.body
+  }
+
+  /*
+  Reason for deprecation:
+  We are runnig elasticsearch 7.4
+  Elastic builder is compatable with 6 alpha as stated on:
+  https://www.npmjs.com/package/elastic-builder (at the time of writing)
+  We are keeping this function until elastic builder has been phased out
+  */
+  async deprecatedFindByQuery(index: SearchIndexes, query) {
+    try {
+      const client = await this.getClient()
+      return client.search({
+        index: index,
+        body: query,
+      })
+    } catch (e) {
+      ElasticService.handleError(
+        'Error in ElasticService.deprecatedFindByQuery',
+        { query: query, index: index },
+        e,
+      )
+    }
   }
 
   async search(index: SearchIndexes, query: SearcherInput) {
@@ -131,9 +170,32 @@ export class ElasticService {
     const requestBody = searchQuery({ queryString, size, page, types })
     const data = await this.findByQuery<
       SearchResponse<MappedData>,
-      typeof requestBody
+      SearchRequestBody
     >(index, requestBody)
     return data
+  }
+
+  async fetchCategories(index: SearchIndexes) {
+    const query = new RequestBodySearch()
+      .agg(new TermsAggregation('categories', 'category'))
+      .agg(new TermsAggregation('catagories_slugs', 'category_slug'))
+      .size(0)
+
+    try {
+      return this.deprecatedFindByQuery(index, query)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  async fetchItems(index: SearchIndexes, input) {
+    const requestBody = new RequestBodySearch()
+      .query(
+        esb.boolQuery().must([esb.matchQuery('category_slug', input.slug)]),
+      )
+      .size(1000)
+
+    return this.deprecatedFindByQuery(index, requestBody)
   }
 
   async fetchAutocompleteTerm(
@@ -145,7 +207,7 @@ export class ElasticService {
 
     const data = await this.findByQuery<
       AutocompleteTermResponse,
-      typeof requestBody
+      AutocompleteTermRequestBody
     >(index, requestBody)
 
     return data.body
@@ -195,6 +257,26 @@ export class ElasticService {
     return result
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static handleError(message: string, context: any, error: any) {
+    ElasticService.logError(message, context, error)
+    throw new Error(message)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  static logError(message: string, context: any, error: any) {
+    const errorCtx = {
+      error: {
+        message: error.message,
+        reason: error.error?.meta?.body?.error?.reason,
+        status: error.error?.meta?.body?.status,
+        statusCode: error.error?.meta?.statusCode,
+      },
+    }
+
+    logger.error(message, merge(context, errorCtx))
+  }
+
   async getClient(): Promise<Client> {
     if (this.client) {
       return this.client
@@ -223,26 +305,6 @@ export class ElasticService {
       ...AwsConnector(AWS.config),
       node: elastic.node,
     })
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static handleError(message: string, context: any, error: any) {
-    ElasticService.logError(message, context, error)
-    throw new Error(message)
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static logError(message: string, context: any, error: any) {
-    const errorCtx = {
-      error: {
-        message: error.message,
-        reason: error.error?.meta?.body?.error?.reason,
-        status: error.error?.meta?.body?.status,
-        statusCode: error.error?.meta?.statusCode,
-      },
-    }
-
-    logger.error(message, merge(context, errorCtx))
   }
 }
 

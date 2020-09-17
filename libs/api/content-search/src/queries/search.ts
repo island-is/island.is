@@ -1,3 +1,5 @@
+import { logger } from '@island.is/logging'
+
 interface SearchInput {
   queryString: string
   size: number
@@ -5,12 +7,23 @@ interface SearchInput {
   types: string[]
 }
 
+export interface SearchRequestBody {
+  query: {
+    bool: {
+      should: any[] // Type this?
+      must: any[] // Type this?
+    }
+  }
+  size: number
+  from: number
+}
+
 export const searchQuery = ({
   queryString,
   size = 10,
   page = 1,
   types,
-}: SearchInput) => {
+}: SearchInput): SearchRequestBody => {
   const should = []
   const must = []
   // eslint-disable-next-line @typescript-eslint/camelcase
