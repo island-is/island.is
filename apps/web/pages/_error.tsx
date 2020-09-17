@@ -21,7 +21,6 @@ type ErrorPageProps = {
   statusCode: number
   locale: Locale
   layoutProps: LayoutProps
-  redirectProps: RedirectProps | null
 }
 
 class ErrorPage extends React.Component<ErrorPageProps> {
