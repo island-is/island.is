@@ -9,8 +9,17 @@ import {
   Put,
   Delete,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiTags, ApiOAuth2, ApiCreatedResponse } from '@nestjs/swagger'
-import { UserProfile, UserProfilesService, UserProfileDto } from '@island.is/auth-api'
+import {
+  ApiOkResponse,
+  ApiTags,
+  ApiOAuth2,
+  ApiCreatedResponse,
+} from '@nestjs/swagger'
+import {
+  UserProfile,
+  UserProfilesService,
+  UserProfileDto,
+} from '@island.is/auth-api'
 import { AuthGuard } from '@nestjs/passport'
 
 @ApiOAuth2(['openid:profile']) // add OAuth restriction to this controller
@@ -18,9 +27,7 @@ import { AuthGuard } from '@nestjs/passport'
 @ApiTags('user-profiles')
 @Controller('user-profiles')
 export class UserProfilesController {
-  constructor(
-    private readonly userProfilesService: UserProfilesService,
-  ) {}
+  constructor(private readonly userProfilesService: UserProfilesService) {}
 
   @Get(':subjectId')
   @ApiOkResponse({ type: UserProfile })
@@ -42,17 +49,18 @@ export class UserProfilesController {
     return await this.userProfilesService.create(userProfile)
   }
 
-  @Put(":id")
-  @ApiOkResponse({ type: UserProfile }) 
-  async update(@Body() userProfile: UserProfileDto, @Param('id') id: string): Promise<UserProfile> {
+  @Put(':id')
+  @ApiOkResponse({ type: UserProfile })
+  async update(
+    @Body() userProfile: UserProfileDto,
+    @Param('id') id: string,
+  ): Promise<UserProfile> {
     return await this.userProfilesService.update(userProfile, id)
   }
 
-  @Delete(":id")
+  @Delete(':id')
   @ApiOkResponse()
   async delete(@Param('id') id: string): Promise<number> {
     return await this.userProfilesService.delete(id)
   }
-  
 }
-

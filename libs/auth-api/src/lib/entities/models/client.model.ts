@@ -5,7 +5,6 @@ import {
   Model,
   Table,
   UpdatedAt,
-  ForeignKey,
   PrimaryKey,
   HasMany,
 } from 'sequelize-typescript'
@@ -17,6 +16,7 @@ import { ClientRedirectUri } from './client-redirect-uri.model'
 import { ClientIdpRestrictions } from './client-idp-restrictions.model'
 import { ClientSecret } from './client-secret.model'
 import { ClientGrantType } from './client-grant-type.model'
+import { ClientClaim } from './client-claim.model'
 
 @Table({
   tableName: 'client',
@@ -36,6 +36,15 @@ export class Client extends Model<Client> {
     example: 'client_id',
   })
   clientId: string
+  
+  @Column({
+    type: DataType.UUID,
+    allowNull: false,
+  })
+  @ApiProperty({
+    example: 'domain_id',
+  })
+  domainId: string
 
   @Column({
     type: DataType.BOOLEAN,
@@ -119,7 +128,7 @@ export class Client extends Model<Client> {
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
-    defaultValue: true,
+    defaultValue: false,
   })
   @ApiProperty({
     example: true,
@@ -129,10 +138,10 @@ export class Client extends Model<Client> {
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
-    defaultValue: 0,
+    defaultValue: 1,
   })
   @ApiProperty({
-    example: 0,
+    example: 1,
   })
   refreshTokenExpiration: number
 
@@ -265,12 +274,22 @@ export class Client extends Model<Client> {
   @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
-    defaultValue: false,
+    defaultValue: true,
   })
   @ApiProperty({
     example: false,
   })
   requirePkce: boolean
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty({
+    example: false,
+  })
+  requireRequestObject: boolean
 
   @Column({
     type: DataType.BOOLEAN,
@@ -333,6 +352,7 @@ export class Client extends Model<Client> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    defaultValue: 'client_'
   })
   @ApiProperty({
     example: 'client_claims_prefix',
@@ -369,6 +389,7 @@ export class Client extends Model<Client> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
+    defaultValue: 'oidc'
   })
   @ApiProperty({
     example: 'protocol_type',
@@ -403,17 +424,23 @@ export class Client extends Model<Client> {
 
   @HasMany(() => ClientPostLogoutRedirectUri)
   @ApiProperty()
-  readonly postLogoutRedirectUris
+  readonly postLogoutRedirectUris: ClientPostLogoutRedirectUri[]
 
   @HasMany(() => ClientRedirectUri)
-  readonly redirectUris: ClientRedirectUri
+  readonly redirectUris: ClientRedirectUri[]
 
   @HasMany(() => ClientIdpRestrictions)
-  readonly identityProviderRestrictions: ClientIdpRestrictions
+  readonly identityProviderRestrictions: ClientIdpRestrictions[]
 
   @HasMany(() => ClientSecret)
-  readonly clientSecrets: ClientSecret
+  readonly clientSecrets: ClientSecret[]
 
-  @HasMany( () => ClientGrantType )
-  readonly allowedGrantTypes
+  @HasMany(() => ClientGrantType)
+  readonly allowedGrantTypes : ClientGrantType[]
+
+  @HasMany(() => ClientClaim)
+  readonly claims : ClientClaim[]
+
+  // Signing algorithm for identity token. If empty, will use the server default signing algorithm.
+  // readonly allowedIdentityTokenSigningAlgorithms
 }

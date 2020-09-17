@@ -6,29 +6,25 @@ import {
   Table,
   UpdatedAt,
   HasMany,
+  PrimaryKey,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { IdentityResourceUserClaim } from './identity-resource-user-claim.model'
 
 @Table({
   tableName: 'identity_resource',
-  indexes: [
-    {
-      fields: ['id'],
-    },
-  ],
 })
 export class IdentityResource extends Model<IdentityResource> {
-  @Column({
-    type: DataType.UUID,
-    primaryKey: true,
-    allowNull: false,
-    defaultValue: DataType.UUIDV4,
-  })
-  @ApiProperty()
-  id: string
 
   // Common properties for all resources (no single table inheritance)
+
+  @PrimaryKey
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  name: string
 
   @Column({
     type: DataType.BOOLEAN,
@@ -39,13 +35,6 @@ export class IdentityResource extends Model<IdentityResource> {
     example: true
   })
   enabled: boolean
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
-  name: string
 
   @Column({
     type: DataType.STRING,
@@ -70,6 +59,10 @@ export class IdentityResource extends Model<IdentityResource> {
     example: true
   })
   showInDiscoveryDocument: boolean
+
+  @HasMany(() => IdentityResourceUserClaim)
+  @ApiProperty()
+  public userClaims: IdentityResourceUserClaim[]
 
   // Common properties end
 
@@ -100,8 +93,4 @@ export class IdentityResource extends Model<IdentityResource> {
   @UpdatedAt
   @ApiProperty()
   readonly modified: Date
-
-  @HasMany(() => IdentityResourceUserClaim)
-  @ApiProperty()
-  public userClaims: IdentityResourceUserClaim[]
 }

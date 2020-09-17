@@ -1,11 +1,11 @@
-import { GrantsController } from './grants.controller';
+import { GrantsController } from './grants.controller'
 import { Module } from '@nestjs/common'
-import { Grant, GrantsService } from '@island.is/auth-api';
-import { SequelizeModule } from '@nestjs/sequelize';
+import { Grant, GrantsService } from '@island.is/auth-api'
+import { SequelizeModule } from '@nestjs/sequelize'
 
 @Module({
   imports: [SequelizeModule.forFeature([Grant])],
   controllers: [GrantsController],
-  providers: [GrantsService]
+  providers: [GrantsService],
 })
-export class GrantsModule { }
+export class GrantsModule {}

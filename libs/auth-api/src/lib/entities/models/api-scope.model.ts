@@ -6,29 +6,34 @@ import {
   Table,
   UpdatedAt,
   HasMany,
+  PrimaryKey,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { ApiScopeUserClaim } from './api-scope-user-claim.model'
 
 @Table({
   tableName: 'api_scope',
-  indexes: [
-    {
-      fields: ['id'],
-    },
-  ],
 })
 export class ApiScope extends Model<ApiScope> {
+  @PrimaryKey
   @Column({
     type: DataType.UUID,
-    primaryKey: true,
     allowNull: false,
-    defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
-  id: string
+  @ApiProperty({
+    example: 'domain_id',
+  })
+  domainId: string
 
   // Common properties for all resources (no single table inheritance)
+
+  @PrimaryKey
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  @ApiProperty()
+  name: string
 
   @Column({
     type: DataType.BOOLEAN,
@@ -39,13 +44,6 @@ export class ApiScope extends Model<ApiScope> {
     example: true,
   })
   enabled: boolean
-
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
-  name: string
 
   @Column({
     type: DataType.STRING,
@@ -70,6 +68,10 @@ export class ApiScope extends Model<ApiScope> {
     example: true,
   })
   showInDiscoveryDocument: boolean
+
+  @HasMany(() => ApiScopeUserClaim)
+  @ApiProperty()
+  public userClaims: ApiScopeUserClaim[]
 
   // Common properties end
 
@@ -100,8 +102,4 @@ export class ApiScope extends Model<ApiScope> {
   @UpdatedAt
   @ApiProperty()
   readonly modified: Date
-
-  @HasMany(() => ApiScopeUserClaim)
-  @ApiProperty()
-  public userClaims: ApiScopeUserClaim[]
 }

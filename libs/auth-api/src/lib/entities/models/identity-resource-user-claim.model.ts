@@ -22,12 +22,12 @@ import { IdentityResource } from './identity-resource.model'
   export class IdentityResourceUserClaim extends Model<IdentityResourceUserClaim> {
     @PrimaryKey
     @Column({
-        type: DataType.UUID,
+        type: DataType.STRING,
         allowNull: false,
       })
     @ForeignKey(() => IdentityResource)
     @ApiProperty()
-    identityResourceId: string
+    identityResourceName: string
 
     @PrimaryKey
     @Column({

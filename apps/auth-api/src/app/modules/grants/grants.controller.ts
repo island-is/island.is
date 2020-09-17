@@ -8,7 +8,12 @@ import {
   Body,
   UseGuards,
 } from '@nestjs/common'
-import { ApiOkResponse, ApiTags, ApiOAuth2, ApiCreatedResponse } from '@nestjs/swagger'
+import {
+  ApiOkResponse,
+  ApiTags,
+  ApiOAuth2,
+  ApiCreatedResponse,
+} from '@nestjs/swagger'
 import { Grant, GrantDTO, GrantsService } from '@island.is/auth-api'
 import { AuthGuard } from '@nestjs/passport'
 
@@ -57,16 +62,14 @@ export class GrantsController {
   async removeAllAsyncV2(
     @Param('subjectId') subjectId: string,
     @Param('clientId') clientId: string,
- //   @Param('type') type: string,
+    //   @Param('type') type: string,
   ): Promise<number> {
     return await this.grantsService.removeAllAsync(subjectId, clientId)
   }
 
   @Delete(':key')
   @ApiOkResponse()
-  async removeAsync(
-    @Param('key') key: string,
-  ): Promise<number> {
+  async removeAsync(@Param('key') key: string): Promise<number> {
     return await this.grantsService.removeAsync(key)
   }
 

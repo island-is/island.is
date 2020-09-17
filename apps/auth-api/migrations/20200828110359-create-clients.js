@@ -1,11 +1,13 @@
 'use strict';
+/* eslint-env node */
 
 module.exports = {
-  up: async (queryInterface, Sequelize) => {
+  up: async (queryInterface) => {
     return queryInterface.sequelize.query(`
       BEGIN;
         CREATE TABLE client (
           client_id VARCHAR NOT NULL,
+          domain_id UUID NOT NULL,
           allow_offline_access BOOLEAN NOT NULL DEFAULT false,
           identity_token_lifetime         INTEGER NOT NULL DEFAULT 300,
           access_token_lifetime           INTEGER NOT NULL DEFAULT 3600,
@@ -14,8 +16,8 @@ module.exports = {
           sliding_refresh_token_lifetime  INTEGER NOT NULL DEFAULT 1296000,
           consent_lifetime                INTEGER,
           refresh_token_usage            INTEGER NOT NULL DEFAULT 1,
-          update_access_token_claims_on_refresh    BOOLEAN NOT NULL DEFAULT true,
-          refresh_token_expiration       INTEGER NOT NULL DEFAULT 0,
+          update_access_token_claims_on_refresh    BOOLEAN NOT NULL DEFAULT false,
+          refresh_token_expiration       INTEGER NOT NULL DEFAULT 1,
           access_token_type             INTEGER NOT NULL DEFAULT 0,
           enable_local_login             BOOLEAN NOT NULL DEFAULT true,
           include_jwt_id                 BOOLEAN NOT NULL DEFAULT true,
@@ -113,6 +115,16 @@ module.exports = {
         PRIMARY KEY (client_id, grant_type)
       );
 
+      CREATE TABLE client_claim (
+        client_id  VARCHAR NOT NULL,
+        type VARCHAR NOT NULL,
+        value VARCHAR NOT NULL,
+        created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        modified TIMESTAMP WITH TIME ZONE,
+        CONSTRAINT FK_client_claim_client FOREIGN KEY (client_id) REFERENCES client (client_id),
+        PRIMARY KEY (client_id, value)
+      );
+
       Create Table grant_type (
         id uuid NOT NULL,
         name VARCHAR NOT NULL,
@@ -148,6 +160,7 @@ module.exports = {
         DROP TABLE client_allowed_cors_origin;
         DROP TABLE client_allowed_scope;
         DROP TABLE client_redirect_uri;
+        DROP TABLE client_claim;
         DROP TABLE client_grant_type;
         DROP TABLE grant_type;
         DROP TABLE grants;

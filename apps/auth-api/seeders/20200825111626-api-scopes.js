@@ -1,11 +1,15 @@
 'use strict';
+/* eslint-env node */
+/* eslint-disable @typescript-eslint/camelcase */
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface) => {
+
+    const domainId = 'e3888706-8ad9-47af-8cb4-d69f04911aea'
 
     const scopes = [
       {
-        id: 'aa3978a9-027b-48c2-81d5-147262bd3032',//uuidv4(),
+        domain_id: domainId,
         name: 'swagger_api.read',
         display_name: 'swagger_api.read',
         required: false,
@@ -14,7 +18,7 @@ module.exports = {
         show_in_discovery_document: true
       },
       {
-        id: '99a94b84-e95b-4ed6-a326-9fc9a13921da',//uuidv4(),
+        domain_id: domainId,
         name: 'postman_resource.scope',
         display_name: 'postman_resource.scope',
         required: false,
@@ -23,7 +27,7 @@ module.exports = {
         show_in_discovery_document: true
       },
       {
-        id: '3872e55c-3137-41c7-a4d9-700760477ce2',//uuidv4(),
+        domain_id: domainId,
         name: '@identityserver.api/read',
         display_name: '@identityserver.api/read',
         required: false,
@@ -33,20 +37,14 @@ module.exports = {
       }
     ]
 
-    const userClaims = [];
-
     return queryInterface.bulkInsert('api_scope', scopes, {})
-
-    // return Promise.all([queryInterface.bulkInsert('api_scope', scopes, {}),
-    //   queryInterface.bulkInsert('api_scope_user_claim', userClaims, {})])
-
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
 
     const userClaims =  queryInterface.bulkDelete('api_scope_user_claim', null, {});
     const apiScopes =  queryInterface.bulkDelete('api_scope', null, {});
 
-    return Promise.all([apiScopes, userClaims])
+    return userClaims.then(apiScopes)
   }
 };

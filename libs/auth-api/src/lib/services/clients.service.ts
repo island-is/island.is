@@ -16,6 +16,7 @@ import { ClientPostLogoutRedirectUri } from '../entities/models/client-post-logo
 import { ClientGrantType } from '../entities/models/client-grant-type.model'
 import { ClientDTO } from '../entities/dto/client-dto'
 import { ClientUpdateDTO } from '../entities/dto/client-update-dto'
+import { ClientClaim } from '../entities/models/client-claim.model'
 
 
 @Injectable()
@@ -49,6 +50,7 @@ export class ClientsService {
         ClientPostLogoutRedirectUri,
         ClientPostLogoutRedirectUri,
         ClientGrantType,
+        ClientClaim,
       ],
     })
   }
