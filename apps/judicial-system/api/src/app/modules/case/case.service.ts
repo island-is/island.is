@@ -6,8 +6,7 @@ import { SmsService } from '@island.is/nova-sms'
 
 import { environment } from '../../../environments'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
-import { Case } from './case.model'
-import { Notification, NotificationType } from './case.types'
+import { Case, Notification, NotificationType } from './models'
 
 @Injectable()
 export class CaseService {

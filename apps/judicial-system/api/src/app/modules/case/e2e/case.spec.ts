@@ -3,12 +3,12 @@ import * as request from 'supertest'
 import { INestApplication } from '@nestjs/common'
 
 import { setup } from '../../../../../test/setup'
-import { Case } from '../case.model'
 import {
+  Case,
   CaseState,
   CaseCustodyRestrictions,
   CaseCustodyProvisions,
-} from '../case.types'
+} from '../models'
 
 let app: INestApplication
 

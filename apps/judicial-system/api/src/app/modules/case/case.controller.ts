@@ -15,8 +15,7 @@ import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 
 import { JwtAuthGuard } from '../auth'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
-import { Case } from './case.model'
-import { Notification } from './case.types'
+import { Case, Notification } from './models'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './case.pipe'
 

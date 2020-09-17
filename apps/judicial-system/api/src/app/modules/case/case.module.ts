@@ -8,7 +8,7 @@ import { SmsService, SmsServiceOptions } from '@island.is/nova-sms'
 
 import { environment } from '../../../environments'
 import { AuthModule } from '../auth'
-import { Case } from './case.model'
+import { Case } from './models'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
 
