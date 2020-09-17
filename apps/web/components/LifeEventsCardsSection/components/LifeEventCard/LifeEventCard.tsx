@@ -6,14 +6,16 @@ interface Props {
   title: string
   intro: string
   image: string
-  url: string
+  href: string
+  as: string
 }
 
-const LifeEventCard: React.FC<Props> = ({ title, intro, image, url }) => {
+const LifeEventCard: React.FC<Props> = ({ title, intro, image, href, as }) => {
   return (
     <FocusableBox
       component={Link}
-      href={url}
+      href={href}
+      as={as}
       borderColor="blue200"
       borderWidth="standard"
       height="full"

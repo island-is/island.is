@@ -13,6 +13,7 @@ interface NewsCardProps {
   image?: Partial<Image>
   readMoreText?: string
   url: string
+  as: string
   date?: string
   imagePosition?: 'top' | 'right'
 }
@@ -25,6 +26,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
   image,
   readMoreText = 'Lesa nánar',
   url,
+  as,
   date,
 }) => {
   const { format } = useDateUtils()
@@ -32,6 +34,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
     <Box
       component={Link}
       href={url}
+      as={as}
       className={styles.root}
       boxShadow="subtle"
       overflow="hidden"

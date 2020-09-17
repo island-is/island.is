@@ -1,28 +1,26 @@
 import {
+  IsOptional,
+  IsObject,
+  IsEnum,
+  IsArray,
   ArrayMinSize,
   ValidateNested,
   IsString,
   IsNumber,
   IsISO8601,
-  IsArray,
-  IsEnum,
-  IsObject,
-  IsOptional,
-  IsUUID,
-  Length,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
+import { Airlines, States } from '@island.is/air-discount-scheme/consts'
 import {
   Travel,
   RangeInput,
   PeriodInput,
   FlightLegsInput,
 } from '@island.is/air-discount-scheme/types'
-import { States, Airlines } from '@island.is/air-discount-scheme/consts'
 
-export class FlightLegDto {
+export class CreateFlightLegBody {
   @IsString()
   @ApiProperty()
   readonly origin: string
@@ -44,52 +42,16 @@ export class FlightLegDto {
   readonly date: Date
 }
 
-export class FlightDto {
+export class CreateFlightBody {
   @IsISO8601()
   @ApiProperty()
   readonly bookingDate: Date
 
   @ArrayMinSize(1)
   @ValidateNested({ each: true })
-  @Type(() => FlightLegDto)
-  @ApiProperty({ type: [FlightLegDto] })
-  readonly flightLegs: FlightLegDto[]
-}
-
-export class GetFlightParams {
-  @IsUUID()
-  @ApiProperty()
-  readonly flightId: string
-}
-
-export class DeleteFlightParams {
-  @IsUUID()
-  @ApiProperty()
-  readonly flightId: string
-}
-
-export class CreateFlightParams {
-  @IsString()
-  @Length(8, 8)
-  @ApiProperty()
-  readonly discountCode: string
-}
-
-export class GetUserFlightsParams {
-  @IsString()
-  @Length(10, 10)
-  @ApiProperty()
-  readonly nationalId: string
-}
-
-export class DeleteFlightLegParams {
-  @IsUUID()
-  @ApiProperty()
-  readonly flightId: string
-
-  @IsUUID()
-  @ApiProperty()
-  readonly flightLegId: string
+  @Type(() => CreateFlightLegBody)
+  @ApiProperty({ type: [CreateFlightLegBody] })
+  readonly flightLegs: CreateFlightLegBody[]
 }
 
 export class GetFlightLegsBody implements FlightLegsInput {

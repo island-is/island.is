@@ -414,6 +414,7 @@ type LifeEventPage {
   image: Image!
   thumbnail: Image
   content: [Slice!]!
+  category: ArticleCategory
 }
 
 type PaginatedAdgerdirNews {
@@ -424,6 +425,15 @@ type PaginatedAdgerdirNews {
 type OrganizationTags {
   items: [OrganizationTag!]!
 }
+
+type Url {
+  id: ID!
+  title: String
+  page: UrlPage!
+  urlsList: [String!]!
+}
+
+union UrlPage = Article | ArticleCategory | News | LifeEventPage
 
 type SearchResult {
   total: Int!
@@ -533,9 +543,11 @@ type Query {
   getMenu(input: GetMenuInput!): Menu
   getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
   getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
+  getLifeEventsInCategory(input: GetLifeEventsInCategoryInput!): [LifeEventPage!]!
   getArticleCategories(input: GetArticleCategoriesInput!): [ArticleCategory!]!
   getArticles(input: GetArticlesInput!): [Article!]!
   getSingleNews(input: GetSingleNewsInput!): News
+  getUrl(input: GetUrlInput!): Url
   searchResults(query: SearcherInput!): SearchResult!
   singleItem(input: ItemInput!): ContentItem
   webSearchAutocomplete(input: WebSearchAutocompleteInput!): WebSearchAutocomplete!
@@ -653,6 +665,11 @@ input GetLifeEventsInput {
   lang: String!
 }
 
+input GetLifeEventsInCategoryInput {
+  slug: String!
+  lang: String!
+}
+
 input GetArticleCategoriesInput {
   lang: String!
   size: Int
@@ -667,6 +684,11 @@ input GetArticlesInput {
 input GetSingleNewsInput {
   slug: String!
   lang: String
+}
+
+input GetUrlInput {
+  slug: String!
+  lang: String!
 }
 
 input SearcherInput {

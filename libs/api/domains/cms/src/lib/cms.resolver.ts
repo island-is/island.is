@@ -55,6 +55,9 @@ import { ArticleCategory } from './models/articleCategory.model'
 import { GetArticleCategoriesInput } from './dto/getArticleCategories.input'
 import { SearchIndexes } from '@island.is/api/content-search'
 import { GetArticlesInput } from './dto/getArticles.input'
+import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.input'
+import { GetUrlInput } from './dto/getUrl.input'
+import { Url } from './models/url.model'
 
 const { cacheTime } = environment
 
@@ -243,6 +246,16 @@ export class CmsResolver {
     return this.cmsContentfulService.getLifeEvents(input.lang)
   }
 
+  @Query(() => [LifeEventPage])
+  getLifeEventsInCategory(
+    @Args('input') input: GetLifeEventsInCategoryInput,
+  ): Promise<LifeEventPage[]> {
+    return this.cmsContentfulService.getLifeEventsInCategory(
+      input.lang,
+      input.slug,
+    )
+  }
+
   @Query(() => [ArticleCategory])
   getArticleCategories(
     @Args('input') input: GetArticleCategoriesInput,
@@ -266,6 +279,14 @@ export class CmsResolver {
     @Args('input') { lang, ...input }: GetSingleNewsInput,
   ): Promise<News | null> {
     return this.cmsElasticsearchService.getNews(SearchIndexes[lang], input)
+  }
+
+  @Query(() => Url, { nullable: true })
+  getUrl(@Args('input') input: GetUrlInput): Promise<Url | null> {
+    return this.cmsContentfulService.getUrl(
+      input?.slug ?? '',
+      input?.lang ?? 'is-IS',
+    )
   }
 }
 

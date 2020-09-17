@@ -504,6 +504,22 @@ export type LifeEventPage = {
   image: Image
   thumbnail?: Maybe<Image>
   content: Array<Slice>
+  category?: Maybe<ArticleCategory>
+}
+
+export type Url = {
+  __typename?: 'Url'
+  id: Scalars['ID']
+  title?: Maybe<Scalars['String']>
+  page: UrlPage
+  urlsList: Array<Scalars['String']>
+}
+
+export type UrlPage = Article | ArticleCategory | News | LifeEventPage
+
+export type AdgerdirTags = {
+  __typename?: 'AdgerdirTags'
+  items: Array<AdgerdirTag>
 }
 
 export type PaginatedAdgerdirNews = {
@@ -629,9 +645,11 @@ export type Query = {
   getMenu?: Maybe<Menu>
   getLifeEventPage?: Maybe<LifeEventPage>
   getLifeEvents: Array<LifeEventPage>
+  getLifeEventsInCategory: Array<LifeEventPage>
   getArticleCategories: Array<ArticleCategory>
   getArticles: Array<Article>
   getSingleNews?: Maybe<News>
+  getUrl?: Maybe<Url>
   searchResults: SearchResult
   singleItem?: Maybe<ContentItem>
   webSearchAutocomplete: WebSearchAutocomplete
@@ -727,6 +745,10 @@ export type QueryGetLifeEventsArgs = {
   input: GetLifeEventsInput
 }
 
+export type QueryGetLifeEventsInCategoryArgs = {
+  input: GetLifeEventsInCategoryInput
+}
+
 export type QueryGetArticleCategoriesArgs = {
   input: GetArticleCategoriesInput
 }
@@ -737,6 +759,10 @@ export type QueryGetArticlesArgs = {
 
 export type QueryGetSingleNewsArgs = {
   input: GetSingleNewsInput
+}
+
+export type QueryGetUrlArgs = {
+  input: GetUrlInput
 }
 
 export type QuerySearchResultsArgs = {
@@ -877,6 +903,11 @@ export type GetLifeEventsInput = {
   lang: Scalars['String']
 }
 
+export type GetLifeEventsInCategoryInput = {
+  slug: Scalars['String']
+  lang: Scalars['String']
+}
+
 export type GetArticleCategoriesInput = {
   lang: Scalars['String']
   size?: Maybe<Scalars['Int']>
@@ -891,6 +922,11 @@ export type GetArticlesInput = {
 export type GetSingleNewsInput = {
   slug: Scalars['String']
   lang?: Maybe<Scalars['String']>
+}
+
+export type GetUrlInput = {
+  slug: Scalars['String']
+  lang: Scalars['String']
 }
 
 export type SearcherInput = {
@@ -1264,6 +1300,15 @@ export type ResolversTypes = {
   LifeEventPage: ResolverTypeWrapper<
     Omit<LifeEventPage, 'content'> & { content: Array<ResolversTypes['Slice']> }
   >
+  Url: ResolverTypeWrapper<
+    Omit<Url, 'page'> & { page: ResolversTypes['UrlPage'] }
+  >
+  UrlPage:
+    | ResolversTypes['Article']
+    | ResolversTypes['ArticleCategory']
+    | ResolversTypes['News']
+    | ResolversTypes['LifeEventPage']
+  AdgerdirTags: ResolverTypeWrapper<AdgerdirTags>
   PaginatedAdgerdirNews: ResolverTypeWrapper<PaginatedAdgerdirNews>
   OrganizationTags: ResolverTypeWrapper<OrganizationTags>
   SearchResult: ResolverTypeWrapper<
@@ -1301,9 +1346,11 @@ export type ResolversTypes = {
   GetMenuInput: GetMenuInput
   GetLifeEventPageInput: GetLifeEventPageInput
   GetLifeEventsInput: GetLifeEventsInput
+  GetLifeEventsInCategoryInput: GetLifeEventsInCategoryInput
   GetArticleCategoriesInput: GetArticleCategoriesInput
   GetArticlesInput: GetArticlesInput
   GetSingleNewsInput: GetSingleNewsInput
+  GetUrlInput: GetUrlInput
   SearcherInput: SearcherInput
   ContentLanguage: ContentLanguage
   ItemInput: ItemInput
@@ -1426,6 +1473,13 @@ export type ResolversParentTypes = {
   LifeEventPage: Omit<LifeEventPage, 'content'> & {
     content: Array<ResolversParentTypes['Slice']>
   }
+  Url: Omit<Url, 'page'> & { page: ResolversParentTypes['UrlPage'] }
+  UrlPage:
+    | ResolversParentTypes['Article']
+    | ResolversParentTypes['ArticleCategory']
+    | ResolversParentTypes['News']
+    | ResolversParentTypes['LifeEventPage']
+  AdgerdirTags: AdgerdirTags
   PaginatedAdgerdirNews: PaginatedAdgerdirNews
   OrganizationTags: OrganizationTags
   SearchResult: Omit<SearchResult, 'items'> & {
@@ -1462,9 +1516,11 @@ export type ResolversParentTypes = {
   GetMenuInput: GetMenuInput
   GetLifeEventPageInput: GetLifeEventPageInput
   GetLifeEventsInput: GetLifeEventsInput
+  GetLifeEventsInCategoryInput: GetLifeEventsInCategoryInput
   GetArticleCategoriesInput: GetArticleCategoriesInput
   GetArticlesInput: GetArticlesInput
   GetSingleNewsInput: GetSingleNewsInput
+  GetUrlInput: GetUrlInput
   SearcherInput: SearcherInput
   ItemInput: ItemInput
   WebSearchAutocompleteInput: WebSearchAutocompleteInput
@@ -2308,6 +2364,45 @@ export type LifeEventPageResolvers<
   image?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
   thumbnail?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   content?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
+  category?: Resolver<
+    Maybe<ResolversTypes['ArticleCategory']>,
+    ParentType,
+    ContextType
+  >
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type UrlResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Url'] = ResolversParentTypes['Url']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  page?: Resolver<ResolversTypes['UrlPage'], ParentType, ContextType>
+  urlsList?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export type UrlPageResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['UrlPage'] = ResolversParentTypes['UrlPage']
+> = {
+  __resolveType: TypeResolveFn<
+    'Article' | 'ArticleCategory' | 'News' | 'LifeEventPage',
+    ParentType,
+    ContextType
+  >
+}
+
+export type AdgerdirTagsResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['AdgerdirTags'] = ResolversParentTypes['AdgerdirTags']
+> = {
+  items?: Resolver<
+    Array<ResolversTypes['AdgerdirTag']>,
+    ParentType,
+    ContextType
+  >
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -2627,6 +2722,12 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryGetLifeEventsArgs, 'input'>
   >
+  getLifeEventsInCategory?: Resolver<
+    Array<ResolversTypes['LifeEventPage']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetLifeEventsInCategoryArgs, 'input'>
+  >
   getArticleCategories?: Resolver<
     Array<ResolversTypes['ArticleCategory']>,
     ParentType,
@@ -2644,6 +2745,12 @@ export type QueryResolvers<
     ParentType,
     ContextType,
     RequireFields<QueryGetSingleNewsArgs, 'input'>
+  >
+  getUrl?: Resolver<
+    Maybe<ResolversTypes['Url']>,
+    ParentType,
+    ContextType,
+    RequireFields<QueryGetUrlArgs, 'input'>
   >
   searchResults?: Resolver<
     ResolversTypes['SearchResult'],
@@ -2806,6 +2913,9 @@ export type Resolvers<ContextType = Context> = {
   AlertBanner?: AlertBannerResolvers<ContextType>
   GenericPage?: GenericPageResolvers<ContextType>
   Menu?: MenuResolvers<ContextType>
+  LifeEventPage?: LifeEventPageResolvers<ContextType>
+  Url?: UrlResolvers<ContextType>
+  UrlPage?: UrlPageResolvers<ContextType>
   AdgerdirTags?: AdgerdirTagsResolvers<ContextType>
   LifeEventPage?: LifeEventPageResolvers<ContextType>
   PaginatedAdgerdirNews?: PaginatedAdgerdirNewsResolvers<ContextType>
@@ -2919,6 +3029,24 @@ const result: IntrospectionResultData = {
           },
           {
             name: 'AdgerdirFeaturedNewsSlice',
+          },
+        ],
+      },
+      {
+        kind: 'UNION',
+        name: 'UrlPage',
+        possibleTypes: [
+          {
+            name: 'Article',
+          },
+          {
+            name: 'ArticleCategory',
+          },
+          {
+            name: 'News',
+          },
+          {
+            name: 'LifeEventPage',
           },
         ],
       },
