@@ -8,6 +8,8 @@ import styles, {
   truncate as truncateStyle,
   links as linksStyle,
   spacing,
+  fontWeight as fontWeightStyles,
+  defaultFontWeights,
 } from './Typography.treat'
 import { Colors } from '@island.is/island-ui/theme'
 import { ResponsiveSpace } from '../Box/useBoxStyles'
@@ -32,6 +34,7 @@ export interface TypographyProps {
   links?: boolean
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
+  fontWeight?: keyof typeof fontWeightStyles
 }
 
 export const Typography = ({
@@ -44,15 +47,18 @@ export const Typography = ({
   links,
   paddingTop,
   paddingBottom,
+  fontWeight,
 }: TypographyProps) => (
   <Cmp
     id={id}
     className={cn(
       variant ? styles[variant] : null,
       color ? colors[color] : null,
+      fontWeight ? fontWeightStyles[fontWeight] : null,
       {
         [truncateStyle]: truncate,
         [linksStyle]: links,
+        [defaultFontWeights[variant]]: variant && !fontWeight,
       },
       paddingBottom !== undefined &&
         resolveResponsiveProp(

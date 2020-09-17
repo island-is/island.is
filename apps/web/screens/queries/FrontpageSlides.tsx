@@ -15,6 +15,7 @@ export const GET_FRONTPAGE_SLIDES_QUERY = gql`
           width
           height
         }
+        animationJson
       }
     }
   }

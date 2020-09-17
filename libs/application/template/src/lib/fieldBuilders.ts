@@ -12,6 +12,7 @@ import {
   SelectField,
   TextField,
   FileUploadField,
+  FieldWidth,
 } from '../types/Fields'
 
 export function buildCheckboxField(data: {
@@ -20,12 +21,24 @@ export function buildCheckboxField(data: {
   name: string
   options: Option[]
   required?: boolean
+  disabled?: boolean
+  width?: FieldWidth
 }): CheckboxField {
-  const { condition, id, name, options, required = false } = data
+  const {
+    condition,
+    id,
+    name,
+    options,
+    required = false,
+    disabled = false,
+    width = 'full',
+  } = data
   return {
     children: undefined,
     isQuestion: true,
-    required: required,
+    required,
+    disabled,
+    width,
     condition,
     id,
     name,
@@ -42,14 +55,27 @@ export function buildDateField(data: {
   maxDate?: Date
   minDate?: Date
   required?: boolean
+  disabled?: boolean
+  width?: FieldWidth
 }): DateField {
-  const { condition, id, name, maxDate, minDate, required = false } = data
+  const {
+    condition,
+    id,
+    name,
+    maxDate,
+    minDate,
+    required = false,
+    disabled = false,
+    width = 'full',
+  } = data
   return {
     children: undefined,
     isQuestion: true,
     condition,
     id,
-    required: required,
+    required,
+    disabled,
+    width,
     name,
     maxDate,
     minDate,
@@ -82,12 +108,24 @@ export function buildRadioField(data: {
   name: string
   options: Option[]
   required?: boolean
+  disabled?: boolean
+  width?: FieldWidth
 }): RadioField {
-  const { condition, id, name, options, required = false } = data
+  const {
+    condition,
+    id,
+    name,
+    options,
+    required = false,
+    disabled = false,
+    width = 'full',
+  } = data
   return {
     children: undefined,
     isQuestion: true,
     required,
+    disabled,
+    width,
     condition,
     id,
     name,
@@ -104,13 +142,26 @@ export function buildSelectField(data: {
   placeholder?: string
   options: Option[]
   required?: boolean
+  disabled?: boolean
+  width?: FieldWidth
 }): SelectField {
-  const { condition, id, name, options, placeholder, required = false } = data
+  const {
+    condition,
+    id,
+    name,
+    options,
+    placeholder,
+    required = false,
+    disabled = false,
+    width = 'full',
+  } = data
   return {
     children: undefined,
     isQuestion: true,
     placeholder,
     required,
+    disabled,
+    width,
     condition,
     id,
     name,
@@ -124,14 +175,23 @@ export function buildTextField(data: {
   condition?: Condition
   id: string
   name: string
-  disabled?: boolean
   required?: boolean
+  disabled?: boolean
+  width?: FieldWidth
 }): TextField {
-  const { condition, id, name, required = false, disabled = false } = data
+  const {
+    condition,
+    id,
+    name,
+    required = false,
+    disabled = false,
+    width = 'full',
+  } = data
   return {
     children: undefined,
-    disabled,
     required,
+    disabled,
+    width,
     isQuestion: true,
     condition,
     id,
@@ -172,7 +232,7 @@ export function buildFileUploadField(data: {
   introduction: string
   uploadHeader?: string
   uploadDescription?: string
-  upploadButtonLabel?: string
+  uploadButtonLabel?: string
   uploadMultiple?: boolean
   uploadAccept?: string
   required?: boolean
@@ -184,7 +244,7 @@ export function buildFileUploadField(data: {
     introduction,
     uploadHeader,
     uploadDescription,
-    upploadButtonLabel,
+    uploadButtonLabel,
     uploadMultiple,
     uploadAccept,
     required = false,
@@ -199,7 +259,7 @@ export function buildFileUploadField(data: {
     introduction,
     uploadHeader,
     uploadDescription,
-    upploadButtonLabel,
+    uploadButtonLabel,
     uploadMultiple,
     uploadAccept,
     type: FieldTypes.FILEUPLOAD,

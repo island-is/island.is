@@ -108,7 +108,7 @@ const RelatedArticles: FC<{
   return (
     <SidebarBox>
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h4">
+        <Typography variant="h4" as="h2">
           {title}
         </Typography>
         <Divider weight="alternate" />
@@ -240,7 +240,7 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
       {bullet && <Bullet align="left" top={bullet.offsetTop} />}
 
       <Stack space={[1, 1, 2]}>
-        <Typography variant="h4" as="h4">
+        <Typography variant="h4" as="h2">
           {title}
         </Typography>
         <Divider weight="alternate" />
@@ -265,28 +265,6 @@ const ArticleNavigation: FC<{ title: string; article: Article }> = ({
   )
 }
 
-const ActionButton: FC<{ content: Slice[]; defaultText: string }> = ({
-  content,
-  defaultText,
-}) => {
-  const processEntries = content.filter((slice): slice is ProcessEntry => {
-    return slice.__typename === 'ProcessEntry' && Boolean(slice.processLink)
-  })
-
-  // we'll only show the button if there is exactly one process entry on the page
-  if (processEntries.length !== 1) return null
-
-  const { buttonText, processLink } = processEntries[0]
-
-  return (
-    <SidebarBox>
-      <Button href={processLink} width="fluid">
-        {buttonText || defaultText}
-      </Button>
-    </SidebarBox>
-  )
-}
-
 interface ArticleSidebarProps {
   article: Article
   subArticle: SubArticle
@@ -300,10 +278,6 @@ const ArticleSidebar: FC<ArticleSidebarProps> = ({
 }) => {
   return (
     <Stack space={3}>
-      <ActionButton
-        content={article.body}
-        defaultText={n('processLinkButtonText')}
-      />
       {article.subArticles.length === 0 ? (
         <ArticleNavigation title="Efnisyfirlit" article={article} />
       ) : (
@@ -359,19 +333,19 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             <Breadcrumbs>
               <Link href={makePath()}>Ísland.is</Link>
               <Link
-                href={`${makePath('category')}/[slug]`}
-                as={makePath('category', article.category.slug)}
+                href={`${makePath('ArticleCategory')}/[slug]`}
+                as={makePath('ArticleCategory', article.category.slug)}
               >
                 {article.category.title}
               </Link>
               {article.group && (
                 <Link
                   as={makePath(
-                    'category',
+                    'ArticleCategory',
                     article.category.slug +
                       (article.group?.slug ? `#${article.group.slug}` : ''),
                   )}
-                  href={makePath('category', '[slug]')}
+                  href={makePath('ArticleCategory', '[slug]')}
                 >
                   <Tag variant="blue">{article.group.title}</Tag>
                 </Link>

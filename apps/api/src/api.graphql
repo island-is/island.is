@@ -6,44 +6,6 @@ type HelloWorld {
   message: String!
 }
 
-type ContentItem {
-  id: ID!
-  title: String
-  content: String
-  tag: [String!]
-  category: String
-  categorySlug: String
-  categoryDescription: String
-  group: String
-  subgroup: String
-  groupSlug: String
-  groupDescription: String
-  contentBlob: String
-  contentId: String
-  contentType: String
-  date: String
-  image: String
-  imageText: String
-  lang: String
-  slug: String
-}
-
-type SearchResult {
-  total: Int!
-  items: [ContentItem!]!
-}
-
-type ContentCategory {
-  title: String
-  slug: String
-  description: String
-}
-
-type WebSearchAutocomplete {
-  total: Int!
-  completions: [String!]!
-}
-
 type Image {
   id: ID!
   url: String!
@@ -66,7 +28,7 @@ type TimelineEvent {
   denominator: Int
   label: String!
   body: String
-  tags: [String!]!
+  tags: [String!]
   link: String!
 }
 
@@ -129,7 +91,7 @@ scalar JSON @specifiedBy(url: "http://www.ecma-international.org/publications/fi
 type QuestionAndAnswer {
   id: ID!
   question: String!
-  answer: Html!
+  answer: Html
 }
 
 type ArticleCategory {
@@ -286,13 +248,14 @@ type Article {
   slug: String!
   shortTitle: String!
   intro: String!
+  containsApplicationForm: Boolean
   body: [Slice!]!
   category: ArticleCategory
   group: ArticleGroup
   subgroup: ArticleSubgroup
-  organization: [Organization!]!
+  organization: [Organization!]
   subArticles: [SubArticle!]!
-  relatedArticles: [Article!]!
+  relatedArticles: [Article!]
 }
 
 type AdgerdirTag {
@@ -362,16 +325,17 @@ type AdgerdirFeaturedNewsSlice {
   featured: [AdgerdirNews!]!
 }
 
-type FrontpageSlide {
+type FrontpageSlider {
   title: String!
   subtitle: String!
   content: String!
   image: Image
   link: String
+  animationJson: String
 }
 
 type FrontpageSliderList {
-  items: [FrontpageSlide!]!
+  items: [FrontpageSlider!]!
 }
 
 type Pagination {
@@ -439,6 +403,7 @@ type Menu {
 }
 
 type LifeEventPage {
+  id: ID!
   title: String!
   slug: String!
   intro: String!
@@ -459,6 +424,41 @@ type PaginatedAdgerdirNews {
 
 type OrganizationTags {
   items: [OrganizationTag!]!
+}
+
+type SearchResult {
+  total: Int!
+  items: [Items!]!
+}
+
+union Items = Article | LifeEventPage
+
+type ContentItem {
+  id: ID!
+  title: String
+  content: String
+  tag: [String!]
+  category: String
+  categorySlug: String
+  categoryDescription: String
+  containsApplicationForm: Boolean
+  group: String
+  subgroup: String
+  groupSlug: String
+  groupDescription: String
+  contentBlob: String
+  contentId: String
+  contentType: String
+  date: String
+  image: String
+  imageText: String
+  lang: String
+  slug: String
+}
+
+type WebSearchAutocomplete {
+  total: Int!
+  completions: [String!]!
 }
 
 type Application {
@@ -514,13 +514,7 @@ type DocumentCategory {
 
 type Query {
   helloWorld(input: HelloWorldInput!): HelloWorld!
-  searchResults(query: SearcherInput!): SearchResult!
-  singleItem(input: ItemInput!): ContentItem
-  categories(input: CategoriesInput!): [ContentCategory!]!
-  articlesInCategory(category: ArticlesInCategoryInput!): [ContentItem!]!
-  webSearchAutocomplete(input: WebSearchAutocompleteInput!): WebSearchAutocomplete!
   getArticle(input: GetArticleInput!): Article
-  getNews(input: GetNewsInput!): News
   getNewsList(input: GetNewsListInput!): PaginatedNews!
   getAdgerdirNewsList(input: GetAdgerdirNewsListInput!): PaginatedAdgerdirNews!
   getNamespace(input: GetNamespaceInput!): Namespace
@@ -541,6 +535,12 @@ type Query {
   getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
   getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
   getLifeEventsInCategory(input: GetLifeEventsInCategoryInput!): [LifeEventPage!]!
+  getArticleCategories(input: GetArticleCategoriesInput!): [ArticleCategory!]!
+  getArticles(input: GetArticlesInput!): [Article!]!
+  getSingleNews(input: GetSingleNewsInput!): News
+  searchResults(query: SearcherInput!): SearchResult!
+  singleItem(input: ItemInput!): ContentItem
+  webSearchAutocomplete(input: WebSearchAutocompleteInput!): WebSearchAutocomplete!
   getApplication(input: GetApplicationInput!): Application
   getApplicationsByType(input: GetApplicationsByTypeInput!): [Application!]
   getDocument(input: GetDocumentInput!): DocumentDetails
@@ -552,53 +552,9 @@ input HelloWorldInput {
   name: String = "World"
 }
 
-input SearcherInput {
-  queryString: String
-  language: ContentLanguage
-  size: Int
-  page: Int
-}
-
-enum ContentLanguage {
-  is
-  en
-}
-
-input ItemInput {
-  id: ID
-  slug: String
-  type: ItemType
-  language: ContentLanguage
-}
-
-enum ItemType {
-  article
-  category
-}
-
-input CategoriesInput {
-  language: ContentLanguage
-}
-
-input ArticlesInCategoryInput {
-  slug: String
-  language: ContentLanguage
-}
-
-input WebSearchAutocompleteInput {
-  singleTerm: String!
-  language: ContentLanguage = is
-  size: Int = 10
-}
-
 input GetArticleInput {
   slug: String
   lang: String!
-}
-
-input GetNewsInput {
-  slug: String!
-  lang: String
 }
 
 input GetNewsListInput {
@@ -701,6 +657,53 @@ input GetLifeEventsInput {
 input GetLifeEventsInCategoryInput {
   slug: String
   lang: String!
+}
+
+input GetArticleCategoriesInput {
+  lang: String!
+  size: Int
+}
+
+input GetArticlesInput {
+  lang: String!
+  category: String!
+  size: Int
+}
+
+input GetSingleNewsInput {
+  slug: String!
+  lang: String
+}
+
+input SearcherInput {
+  queryString: String!
+  types: [String!]
+  language: ContentLanguage
+  size: Int
+  page: Int
+}
+
+enum ContentLanguage {
+  is
+  en
+}
+
+input ItemInput {
+  id: ID
+  slug: String
+  type: ItemType
+  language: ContentLanguage
+}
+
+enum ItemType {
+  article
+  category
+}
+
+input WebSearchAutocompleteInput {
+  singleTerm: String!
+  language: ContentLanguage = is
+  size: Int = 10
 }
 
 input GetApplicationInput {

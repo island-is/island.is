@@ -3,7 +3,6 @@ import { theme } from '@island.is/island-ui/theme'
 
 export const container = style({
   position: 'relative',
-  background: theme.color.dark100,
   overflow: 'hidden',
 })
 
@@ -25,4 +24,8 @@ export const thumbnail = style({
 
 export const show = style({
   opacity: 1,
+})
+
+export const hide = style({
+  opacity: 0,
 })

@@ -1,45 +1,45 @@
 {
   "order": 0,
-  "version": 3,
+  "version": 5,
   "index_patterns": ["island-is-v*"],
   "settings": {
     "analysis": {
       "filter": {
-        "icelandic_stemmer": {
+        "icelandicStemmer": {
           "type": "stemmer_override",
           "rules_path": "analyzers/{STEMMER}"
         },
-        "icelandic_stop": {
+        "icelandicStop": {
           "type": "stop",
           "stopwords_path": "analyzers/{STOPWORDS}"
         },
-        "icelandic_keyword": {
+        "icelandicKeyword": {
           "type": "keyword_marker",
           "ignore_case": true,
           "keywords_path": "analyzers/{KEYWORDS}"
         },
-        "icelandic_synonym": {
+        "icelandicSynonym": {
           "type": "synonym",
           "lenient": true,
           "synonyms_path": "analyzers/{SYNONYMS}"
         }
       },
       "analyzer": {
-        "base_icelandic": {
+        "baseIcelandic": {
           "type": "custom",
           "tokenizer": "standard",
           "filter": [
             "lowercase",
-            "icelandic_synonym",
-            "icelandic_stop",
-            "icelandic_keyword",
-            "icelandic_stemmer"
+            "icelandicSynonym",
+            "icelandicStop",
+            "icelandicKeyword",
+            "icelandicStemmer"
           ]
         },
-        "term_icelandic": {
+        "termIcelandic": {
           "type": "custom",
           "tokenizer": "standard",
-          "filter": ["lowercase"]
+          "filter": ["lowercase", "icelandicSynonym"]
         }
       }
     }
@@ -57,7 +57,7 @@
           },
           "stemmed": {
             "type": "text",
-            "analyzer": "base_icelandic"
+            "analyzer": "baseIcelandic"
           }
         }
       },
@@ -66,123 +66,42 @@
         "fields": {
           "stemmed": {
             "type": "text",
-            "analyzer": "base_icelandic"
+            "analyzer": "baseIcelandic"
           }
         }
       },
-      "date_created": {
-        "type": "date"
+      "type": {
+        "type": "keyword"
       },
-      "date_updated": {
-        "type": "date"
-      },
-      "date": {
-        "type": "date"
-      },
-      "category": {
-        "type": "keyword",
-        "fields": {
-          "stemmed": {
+      "tags": {
+        "type": "nested",
+        "properties": {
+          "key": {
+            "type": "keyword"
+          },
+          "value": {
             "type": "text",
-            "analyzer": "base_icelandic"
+            "analyzer": "baseIcelandic"
+          },
+          "type": {
+            "type": "keyword"
           }
         }
       },
-      "category_slug": {
-        "type": "keyword"
+      "termPool": {
+        "type": "completion",
+        "analyzer": "termIcelandic"
       },
-      "category_description": {
-        "type": "text"
-      },
-      "group": {
-        "type": "keyword",
-        "fields": {
-          "stemmed": {
-            "type": "text",
-            "analyzer": "base_icelandic"
-          }
-        }
-      },
-      "group_slug": {
-        "type": "keyword"
-      },
-      "group_description": {
-        "type": "text"
-      },
-      "lang": {
-        "type": "keyword"
-      },
-      "tag": {
-        "type": "keyword",
-        "fields": {
-          "stemmed": {
-            "type": "text",
-            "analyzer": "base_icelandic"
-          }
-        }
-      },
-      "url": {
-        "type": "keyword",
-        "fields": {
-          "tokenized": {
-            "type": "text"
-          }
-        }
-      },
-      "slug": {
-        "type": "keyword"
-      },
-      "image": {
-        "type": "keyword",
-        "index": false
-      },
-      "image_text": {
-        "type": "text",
-        "index": false,
-        "fields": {
-          "stemmed": {
-            "type": "text",
-            "analyzer": "base_icelandic"
-          }
-        }
-      },
-      "content_type": {
-        "type": "keyword"
-      },
-      "content_id": {
-        "type": "keyword"
-      },
-      "content_source": {
-        "type": "keyword"
-      },
-      "content_blob": {
+      "response": {
         "type": "text",
         "index": false,
         "store": true
       },
-      "all": {
-        "type": "text",
-        "store": false,
-        "fields": {
-          "stemmed": {
-            "type": "text",
-            "analyzer": "base_icelandic"
-          }
-        }
+      "dateCreated": {
+        "type": "date"
       },
-      "titles": {
-        "type": "text",
-        "store": false,
-        "fields": {
-          "stemmed": {
-            "type": "text",
-            "analyzer": "base_icelandic"
-          }
-        }
-      },
-      "term_pool": {
-        "type": "completion",
-        "analyzer": "term_icelandic"
+      "dateUpdated": {
+        "type": "date"
       }
     }
   }

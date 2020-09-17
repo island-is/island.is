@@ -22,10 +22,10 @@ import {
   GetNamespaceQuery,
   QueryGetNamespaceArgs,
   ContentLanguage,
-  GetCategoriesQuery,
-  QueryCategoriesArgs,
   GetAlertBannerQuery,
   QueryGetAlertBannerArgs,
+  GetArticleCategoriesQuery,
+  QueryGetArticleCategoriesArgs,
 } from '../graphql/schema'
 import { GlobalNamespaceContext } from '../context/GlobalNamespaceContext/GlobalNamespaceContext'
 import { MenuTabsContext } from '../context/MenuTabsContext/MenuTabsContext'
@@ -39,7 +39,7 @@ export interface LayoutProps {
   wrapContent?: boolean
   showHeader?: boolean
   showFooter?: boolean
-  categories: GetCategoriesQuery['categories']
+  categories: GetArticleCategoriesQuery['getArticleCategories']
   topMenuCustomLinks?: FooterLinkProps[]
   footerUpperMenu?: FooterLinkProps[]
   footerLowerMenu?: FooterLinkProps[]
@@ -232,15 +232,15 @@ Layout.getInitialProps = async ({ apolloClient, locale }) => {
     namespace,
   ] = await Promise.all([
     apolloClient
-      .query<GetCategoriesQuery, QueryCategoriesArgs>({
+      .query<GetArticleCategoriesQuery, QueryGetArticleCategoriesArgs>({
         query: GET_CATEGORIES_QUERY,
         variables: {
           input: {
-            language: locale as ContentLanguage,
+            lang: locale as ContentLanguage,
           },
         },
       })
-      .then((res) => res.data.categories),
+      .then((res) => res.data.getArticleCategories),
     apolloClient
       .query<GetMenuQuery, QueryGetMenuArgs>({
         query: GET_MENU_QUERY,

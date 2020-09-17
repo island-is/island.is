@@ -1,11 +1,11 @@
 {
   "order": 0,
-  "version": 1,
+  "version": 3,
   "index_patterns": ["island-en-v*"],
   "settings": {
     "analysis": {
       "analyzer": {
-        "term_english": {
+        "termEnglish": {
           "type": "custom",
           "tokenizer": "standard",
           "filter": ["lowercase"]
@@ -19,14 +19,10 @@
         "type": "text",
         "fields": {
           "sort": {
-            "type": "icu_collation_keyword",
-            "index": false,
-            "language": "en",
-            "country": "en"
+            "type": "keyword"
           },
           "stemmed": {
-            "type": "text",
-            "analyzer": "standard"
+            "type": "text"
           }
         }
       },
@@ -34,124 +30,41 @@
         "type": "text",
         "fields": {
           "stemmed": {
-            "type": "text",
-            "analyzer": "standard"
-          }
-        }
-      },
-      "date_created": {
-        "type": "date"
-      },
-      "date_updated": {
-        "type": "date"
-      },
-      "date": {
-        "type": "date"
-      },
-      "category": {
-        "type": "keyword",
-        "fields": {
-          "stemmed": {
-            "type": "text",
-            "analyzer": "standard"
-          }
-        }
-      },
-      "category_slug": {
-        "type": "keyword"
-      },
-      "category_description": {
-        "type": "text"
-      },
-      "group": {
-        "type": "keyword",
-        "fields": {
-          "stemmed": {
-            "type": "text",
-            "analyzer": "standard"
-          }
-        }
-      },
-      "group_slug": {
-        "type": "keyword"
-      },
-      "group_description": {
-        "type": "text"
-      },
-      "lang": {
-        "type": "keyword"
-      },
-      "tag": {
-        "type": "keyword",
-        "fields": {
-          "stemmed": {
-            "type": "text",
-            "analyzer": "standard"
-          }
-        }
-      },
-      "url": {
-        "type": "keyword",
-        "fields": {
-          "tokenized": {
             "type": "text"
           }
         }
       },
-      "slug": {
+      "type": {
         "type": "keyword"
       },
-      "image": {
-        "type": "keyword",
-        "index": false
-      },
-      "image_text": {
-        "type": "text",
-        "index": false,
-        "fields": {
-          "stemmed": {
-            "type": "text",
-            "analyzer": "standard"
+      "tags": {
+        "type": "nested",
+        "properties": {
+          "key": {
+            "type": "keyword"
+          },
+          "value": {
+            "type": "text"
+          },
+          "type": {
+            "type": "keyword"
           }
         }
       },
-      "content_type": {
-        "type": "keyword"
+      "termPool": {
+        "type": "completion",
+        "analyzer": "termEnglish"
       },
-      "content_id": {
-        "type": "keyword"
-      },
-      "content_source": {
-        "type": "keyword"
-      },
-      "content_blob": {
+      "response": {
         "type": "text",
         "index": false,
         "store": true
       },
-      "all": {
-        "type": "text",
-        "store": false,
-        "fields": {
-          "stemmed": {
-            "type": "text",
-            "analyzer": "standard"
-          }
-        }
+      "dateCreated": {
+        "type": "date"
       },
-      "titles": {
-        "type": "text",
-        "store": false,
-        "fields": {
-          "stemmed": {
-            "type": "text",
-            "analyzer": "standard"
-          }
-        }
-      },
-      "term_pool": {
-        "type": "completion",
-        "analyzer": "term_english"
+      "dateUpdated": {
+        "type": "date"
       }
     }
   }

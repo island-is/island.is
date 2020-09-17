@@ -12,33 +12,51 @@ import {
   Checkbox,
 } from '@island.is/island-ui/core'
 import {
-  CreateDetentionReqStepTwoCase,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
+  CreateDetentionReqStepOneCase,
+  CaseState,
 } from '@island.is/judicial-system-web/src/types'
 import { updateState, autoSave } from '../../../utils/stepHelper'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
-import { setHours, setMinutes, isValid } from 'date-fns'
+import { setHours, setMinutes, isValid, parseISO } from 'date-fns'
 import { isNull } from 'lodash'
 import { FormFooter } from '../../../shared-components/FormFooter'
 import * as api from '../../../api'
-import { parseArray } from '@island.is/judicial-system-web/src/utils/parsers'
+import {
+  parseArray,
+  parseString,
+} from '@island.is/judicial-system-web/src/utils/formatters'
 
 export const StepTwo: React.FC = () => {
-  const [workingCase, setWorkingCase] = useState<CreateDetentionReqStepTwoCase>(
+  const caseDraft = window.localStorage.getItem('workingCase')
+  const caseDraftJSON = JSON.parse(caseDraft)
+
+  const [workingCase, setWorkingCase] = useState<CreateDetentionReqStepOneCase>(
     {
-      id: '',
+      id: caseDraftJSON.id,
       case: {
-        requestedCustodyEndDate: null,
-        requestedCustodyEndTime: 'string',
-        lawsBroken: '',
-        caseCustodyProvisions: [],
-        restrictions: [],
-        caseFacts: '',
-        witnessAccounts: '',
-        investigationProgress: '',
-        legalArguments: '',
-        comments: '',
+        policeCaseNumber: caseDraftJSON.case.policeCaseNumber ?? '',
+        suspectNationalId: caseDraftJSON.case.suspectNationalId ?? '',
+        suspectName: caseDraftJSON.case.suspectName ?? '',
+        suspectAddress: caseDraftJSON.case.suspectAddress ?? '',
+        court: caseDraftJSON.case.court ?? '',
+        arrestDate: caseDraftJSON.case.arrestDate ?? null,
+        arrestTime: caseDraftJSON.case.arrestTime ?? '',
+        requestedCourtDate: caseDraftJSON.case.requestedCourtDate ?? null,
+        requestedCourtTime: caseDraftJSON.case.requestedCourtTime ?? '',
+        requestedCustodyEndDate:
+          caseDraftJSON.case.requestedCustodyEndDate ?? null,
+        requestedCustodyEndTime:
+          caseDraftJSON.case.requestedCustodyEndTime ?? '',
+        lawsBroken: caseDraftJSON.case.lawsBroken ?? '',
+        caseCustodyProvisions: caseDraftJSON.case.caseCustodyProvisions ?? [],
+        restrictions: caseDraftJSON.case.restrictions ?? [],
+        caseFacts: caseDraftJSON.case.caseFacts ?? '',
+        witnessAccounts: caseDraftJSON.case.witnessAccounts ?? '',
+        investigationProgress: caseDraftJSON.case.investigationProgress ?? '',
+        legalArguments: caseDraftJSON.case.legalArguments ?? '',
+        comments: caseDraftJSON.case.comments ?? '',
       },
     },
   )
@@ -154,6 +172,10 @@ export const StepTwo: React.FC = () => {
   ]
 
   useEffect(() => {
+    api.saveCase(
+      window.localStorage.getItem('caseId'),
+      parseString('state', CaseState.SUBMITTED),
+    )
     updateState(
       workingCase,
       'id',
@@ -163,7 +185,7 @@ export const StepTwo: React.FC = () => {
   }, [])
 
   return (
-    <Box marginTop={7}>
+    <Box marginTop={7} marginBottom={30}>
       <GridContainer>
         <GridRow>
           <GridColumn span={'3/12'}>
@@ -189,6 +211,13 @@ export const StepTwo: React.FC = () => {
                   <DatePicker
                     label="Veldu dagsetningu"
                     placeholderText="Veldu dagsetningu"
+                    selected={
+                      caseDraftJSON.case.requestedCustodyEndDate
+                        ? parseISO(
+                            caseDraftJSON.case.requestedCustodyEndDate.toString(),
+                          )
+                        : null
+                    }
                     locale="is"
                     minDate={new Date()}
                     hasError={requestedCustodyEndDateErrorMessage !== ''}
@@ -218,6 +247,7 @@ export const StepTwo: React.FC = () => {
                     name="requestedCustodyEndTime"
                     label="Tímasetning"
                     placeholder="Settu inn tíma"
+                    defaultValue={caseDraftJSON.case.requestedCustodyEndTime}
                     disabled={!workingCase.case.requestedCustodyEndDate}
                     errorMessage={requestedCustodyEndTimeErrorMessage}
                     hasError={requestedCustodyEndTimeErrorMessage !== ''}
@@ -258,7 +288,7 @@ export const StepTwo: React.FC = () => {
                         )
                         updateState(
                           workingCase,
-                          'requestedCustodyEndDate',
+                          'requestedCustodyEndTime',
                           evt.target.value,
                           setWorkingCase,
                         )
@@ -283,6 +313,7 @@ export const StepTwo: React.FC = () => {
               <Input
                 name="lawsBroken"
                 label="Lagaákvæði sem ætluð brot kærða þykja varða við"
+                defaultValue={workingCase.case.lawsBroken}
                 errorMessage={lawsBrokenErrorMessage}
                 hasError={lawsBrokenErrorMessage !== ''}
                 onBlur={(evt) => {
@@ -312,58 +343,73 @@ export const StepTwo: React.FC = () => {
               </Box>
               <GridContainer>
                 <GridRow>
-                  {caseCustodyProvisions.map((provision, index) => (
-                    <GridColumn span="3/7" key={index}>
-                      <Box marginBottom={3}>
-                        <Checkbox
-                          name={provision.brokenLaw}
-                          label={provision.brokenLaw}
-                          value={provision.value}
-                          checked={provision.getCheckbox}
-                          tooltip={provision.explination}
-                          onChange={({ target }) => {
-                            // Toggle the checkbox on or off
-                            provision.setCheckbox(target.checked)
-
-                            // Create a copy of the state
-                            const copyOfState = Object.assign(workingCase, {})
-
-                            // If the user is checking the box, add the broken law to the state
-                            if (target.checked) {
-                              copyOfState.case.caseCustodyProvisions.push(
-                                target.value as CaseCustodyProvisions,
-                              )
+                  {caseCustodyProvisions.map((provision, index) => {
+                    return (
+                      <GridColumn span="3/7" key={index}>
+                        <Box marginBottom={3}>
+                          <Checkbox
+                            name={provision.brokenLaw}
+                            label={provision.brokenLaw}
+                            value={provision.value}
+                            checked={provision.getCheckbox}
+                            defaultChecked={
+                              caseDraftJSON.case.caseCustodyProvisions.indexOf(
+                                provision.value,
+                              ) > -1
                             }
-                            // If the user is unchecking the box, remove the broken law from the state
-                            else {
-                              const provisions =
-                                copyOfState.case.caseCustodyProvisions
+                            tooltip={provision.explination}
+                            onChange={({ target }) => {
+                              console.log(target.checked)
+                              // Toggle the checkbox on or off
+                              provision.setCheckbox(target.checked)
 
-                              provisions.splice(
-                                provisions.indexOf(
+                              // Create a copy of the state
+                              const copyOfState = Object.assign(workingCase, {})
+
+                              // If the user is checking the box, add the broken law to the state
+                              if (target.checked) {
+                                copyOfState.case.caseCustodyProvisions.push(
                                   target.value as CaseCustodyProvisions,
+                                )
+                              }
+                              // If the user is unchecking the box, remove the broken law from the state
+                              else {
+                                const provisions =
+                                  copyOfState.case.caseCustodyProvisions
+
+                                provisions.splice(
+                                  provisions.indexOf(
+                                    target.value as CaseCustodyProvisions,
+                                  ),
+                                  1,
+                                )
+                              }
+
+                              // Set the updated state as the state
+                              setWorkingCase(copyOfState)
+
+                              // Save case
+                              api.saveCase(
+                                workingCase.id,
+                                parseArray(
+                                  'custodyProvisions',
+                                  copyOfState.case.caseCustodyProvisions,
                                 ),
-                                1,
                               )
-                            }
 
-                            // Set the updated state as the state
-                            setWorkingCase(copyOfState)
-
-                            // Save case
-                            api.saveCase(
-                              workingCase.id,
-                              parseArray(
-                                'custodyProvisions',
+                              updateState(
+                                workingCase,
+                                'caseCustodyProvisions',
                                 copyOfState.case.caseCustodyProvisions,
-                              ),
-                            )
-                          }}
-                          large
-                        />
-                      </Box>
-                    </GridColumn>
-                  ))}
+                                setWorkingCase,
+                              )
+                            }}
+                            large
+                          />
+                        </Box>
+                      </GridColumn>
+                    )
+                  })}
                 </GridRow>
               </GridContainer>
             </Box>
@@ -386,6 +432,11 @@ export const StepTwo: React.FC = () => {
                           label={restriction.restriction}
                           value={restriction.value}
                           checked={restriction.getCheckbox}
+                          defaultChecked={
+                            caseDraftJSON.case.restrictions.indexOf(
+                              restriction.value,
+                            ) > -1
+                          }
                           tooltip={restriction.explination}
                           onChange={({ target }) => {
                             // Toggle the checkbox on or off
@@ -422,6 +473,13 @@ export const StepTwo: React.FC = () => {
                                 copyOfState.case.restrictions,
                               ),
                             )
+
+                            updateState(
+                              workingCase,
+                              'restrictions',
+                              copyOfState.case.restrictions,
+                              setWorkingCase,
+                            )
                           }}
                           large
                         />
@@ -443,6 +501,7 @@ export const StepTwo: React.FC = () => {
                   rows={2}
                   name="caseFacts"
                   label="Málsatvik rakin"
+                  defaultValue={caseDraftJSON.case.caseFacts}
                   placeholder="Skrifa hér..."
                   onBlur={(evt) => {
                     autoSave(
@@ -461,6 +520,7 @@ export const StepTwo: React.FC = () => {
                   name="witnessAccounts"
                   label="Framburðir"
                   placeholder="Skrifa hér..."
+                  defaultValue={caseDraftJSON.case.witnessAccounts}
                   onBlur={(evt) => {
                     autoSave(
                       workingCase,
@@ -478,6 +538,7 @@ export const StepTwo: React.FC = () => {
                   name="investigationProgress"
                   label="Staða rannsóknar og næstu skref"
                   placeholder="Skrifa hér..."
+                  defaultValue={caseDraftJSON.case.investigationProgress}
                   onBlur={(evt) => {
                     autoSave(
                       workingCase,
@@ -495,6 +556,7 @@ export const StepTwo: React.FC = () => {
                   name="legalArguments"
                   label="Lagarök"
                   placeholder="Skrifa hér..."
+                  defaultValue={caseDraftJSON.case.legalArguments}
                   onBlur={(evt) => {
                     autoSave(
                       workingCase,
@@ -512,6 +574,7 @@ export const StepTwo: React.FC = () => {
                   name="comments"
                   label="Athugasemdir til dómara"
                   placeholder="Skrifa hér..."
+                  defaultValue={caseDraftJSON.case.comments}
                   onBlur={(evt) => {
                     autoSave(
                       workingCase,
@@ -525,7 +588,7 @@ export const StepTwo: React.FC = () => {
             </Box>
             <FormFooter
               previousUrl="/stofna-krofu/grunnupplysingar"
-              nextUrl="/"
+              nextUrl="/stofna-krofu/yfirlit"
               nextIsDisabled={
                 workingCase.case.lawsBroken === '' &&
                 workingCase.case.caseCustodyProvisions.length === 0

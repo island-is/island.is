@@ -78,6 +78,18 @@
             "name": "AdgerdirFeaturedNewsSlice"
           }
         ]
+      },
+      {
+        "kind": "UNION",
+        "name": "Items",
+        "possibleTypes": [
+          {
+            "name": "Article"
+          },
+          {
+            "name": "LifeEventPage"
+          }
+        ]
       }
     ]
   }

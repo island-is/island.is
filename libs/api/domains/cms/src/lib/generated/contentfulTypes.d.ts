@@ -58,6 +58,9 @@ export interface IArticleFields {
   /** Introduction */
   intro?: string | undefined
 
+  /** Introduction */
+  containsApplicationForm?: boolean | undefined
+
   /** Slug */
   slug: string
 
@@ -162,6 +165,9 @@ export interface IArticleSubgroupFields {
 
   /** Slug */
   slug: string
+
+  /** Importance */
+  importance?: number | undefined
 }
 
 /** Used inside groups to further categorize articles by subject */
@@ -343,6 +349,9 @@ export interface IFrontpageSliderFields {
 
   /** Animation (zip) */
   animationZip?: Asset | undefined
+
+  /** Animation (JSON) */
+  animationJson?: Record<string, any> | undefined
 }
 
 /** Efni í haus á forsíðu */
@@ -701,6 +710,39 @@ export interface IMenu extends Entry<IMenuFields> {
     contentType: {
       sys: {
         id: 'menu'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface INamespaceFields {
+  /** Namespace */
+  namespace?: string | undefined
+
+  /** Strings */
+  strings?: Record<string, any> | undefined
+
+  /** Defaults */
+  defaults?: Record<string, any> | undefined
+
+  /** Fallback */
+  fallback?: Record<string, any> | undefined
+}
+
+/** Namespace containing translations */
+
+export interface INamespace extends Entry<INamespaceFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'namespace'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -1355,6 +1397,34 @@ export interface IUiConfiguration extends Entry<IUiConfigurationFields> {
   }
 }
 
+export interface IUrlFields {
+  /** Title */
+  title?: string | undefined
+
+  /** Page */
+  page: IArticle | IArticleCategory
+
+  /** Urls list */
+  urlsList: string[]
+}
+
+export interface IUrl extends Entry<IUrlFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'url'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
 export interface IVidspyrnaFrontpageFields {
   /** Title */
   title: string
@@ -1675,6 +1745,7 @@ export type CONTENT_TYPE =
   | 'logoListSlice'
   | 'mailingListSignup'
   | 'menu'
+  | 'namespace'
   | 'news'
   | 'numberBullet'
   | 'numberBulletSection'
@@ -1695,6 +1766,7 @@ export type CONTENT_TYPE =
   | 'timeline'
   | 'timelineEvent'
   | 'uiConfiguration'
+  | 'url'
   | 'vidspyrna-frontpage'
   | 'vidspyrna-inline-image'
   | 'vidspyrna-process-entry'

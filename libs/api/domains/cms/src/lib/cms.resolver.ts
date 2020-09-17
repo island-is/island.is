@@ -16,7 +16,7 @@ import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { FrontpageSliderList } from './models/frontpageSliderList.model'
 import { GetArticleInput } from './dto/getArticle.input'
 import { News } from './models/news.model'
-import { GetNewsInput } from './dto/getNews.input'
+import { GetSingleNewsInput } from './dto/getSingleNews.input'
 import { GetNewsListInput } from './dto/getNewsList.input'
 import { GetAdgerdirNewsListInput } from './dto/getAdgerdirNewsList.input'
 import { GetAdgerdirPageInput } from './dto/getAdgerdirPage.input'
@@ -44,7 +44,6 @@ import { GetLifeEventsInCategoryInput } from './dto/getLifeEventsInCategory.inpu
 import {
   getArticle,
   getRelatedArticles,
-  getNews,
   getNewsList,
   getNamespace,
   getAboutPage,
@@ -75,6 +74,11 @@ import { LifeEventPage } from './models/lifeEventPage.model'
 import { PaginatedAdgerdirNews } from './models/paginatedAdgerdirNews.model'
 import { environment } from './environments'
 import { OrganizationTags } from './models/organizationTags.model'
+import { ArticleCategory } from './models/articleCategory.model'
+import { GetArticleCategoriesInput } from './dto/getArticleCategories.input'
+import { SearchIndexes } from '@island.is/api/content-search'
+import { GetArticlesInput } from './dto/getArticles.input'
+import { CmsService } from './cms.service'
 
 const { cacheTime } = environment
 
@@ -83,16 +87,11 @@ const cacheControlDirective = (ms = cacheTime) => `@cacheControl(maxAge: ${ms})`
 @Resolver()
 @Directive(cacheControlDirective())
 export class CmsResolver {
+  constructor(private readonly cmsService: CmsService) {}
   @Directive(cacheControlDirective())
   @Query(() => Article, { nullable: true })
   getArticle(@Args('input') input: GetArticleInput): Promise<Article | null> {
     return getArticle(input?.slug ?? '', input?.lang ?? 'is-IS')
-  }
-
-  @Directive(cacheControlDirective())
-  @Query(() => News, { nullable: true })
-  getNews(@Args('input') input: GetNewsInput): Promise<News | null> {
-    return getNews(input.lang ?? 'is-IS', input.slug)
   }
 
   @Directive(cacheControlDirective())
@@ -247,6 +246,31 @@ export class CmsResolver {
     @Args('input') input: GetLifeEventsInCategoryInput,
   ): Promise<LifeEventPage[]> {
     return getLifeEventsInCategory(input.lang, input.slug)
+  }
+
+  @Query(() => [ArticleCategory])
+  getArticleCategories(
+    @Args('input') input: GetArticleCategoriesInput,
+  ): Promise<ArticleCategory[]> {
+    return this.cmsService.getArticleCategories(
+      SearchIndexes[input.lang],
+      input,
+    )
+  }
+
+  @Query(() => [Article])
+  getArticles(
+    @Args('input') { lang, ...input }: GetArticlesInput,
+  ): Promise<Article[]> {
+    return this.cmsService.getArticles(SearchIndexes[lang], input)
+  }
+
+  @Directive(cacheControlDirective())
+  @Query(() => News, { nullable: true })
+  getSingleNews(
+    @Args('input') { lang, ...input }: GetSingleNewsInput,
+  ): Promise<News | null> {
+    return this.cmsService.getNews(SearchIndexes[lang], input)
   }
 }
 

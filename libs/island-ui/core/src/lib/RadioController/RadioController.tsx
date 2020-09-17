@@ -13,6 +13,7 @@ interface Option {
 }
 interface Props {
   defaultValue?: string[]
+  disabled?: boolean
   error?: string
   id: string
   name?: string
@@ -20,6 +21,7 @@ interface Props {
 }
 export const RadioController: FC<Props> = ({
   defaultValue,
+  disabled = false,
   error,
   id,
   name = id,
@@ -47,6 +49,7 @@ export const RadioController: FC<Props> = ({
                   name={`${id}`}
                   label={option.label}
                   value={option.value}
+                  disabled={disabled}
                   errorMessage={
                     index === options.length - 1 ? error : undefined
                   }
