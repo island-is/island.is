@@ -8,7 +8,7 @@ import NativeSelect from '../components/Select/Select'
 import Bullet from '../components/Bullet/Bullet'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
 import {
   Box,
   Typography,
@@ -23,6 +23,7 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_NEWS_LIST_QUERY } from './queries'
 import { NewsListLayout } from './Layouts/Layouts'
 import { CustomNextError } from '../units/errors'
@@ -31,7 +32,6 @@ import {
   QueryGetNewsListArgs,
   ContentLanguage,
 } from '../graphql/schema'
-import { withMainLayout } from '../layouts/main'
 import { NewsCard } from '../components/NewsCard'
 
 interface NewsListProps {
@@ -51,7 +51,7 @@ const NewsList: Screen<NewsListProps> = ({
 }) => {
   const Router = useRouter()
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
   const { format } = useDateUtils()
 
   const dates = dateRange.map((s) => new Date(s))
@@ -166,7 +166,8 @@ const NewsList: Screen<NewsListProps> = ({
               introduction={newsItem.intro}
               slug={newsItem.slug}
               image={newsItem.image}
-              url={makePath('news', newsItem.slug)}
+              as={makePath('news', newsItem.slug)}
+              url={makePath('news', '[slug]')}
               date={newsItem.date}
             />
           ))}

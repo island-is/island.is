@@ -1,44 +1,50 @@
 import { Locale, defaultLanguage } from './I18n'
 
-const routeNames = {
+const routes = {
   is: {
-    article: 'grein',
+    article: '',
+    Article: '',
+    category: 'flokkur',
     ArticleCategory: 'flokkur',
     ContentCategory: 'flokkur',
     news: 'frett',
+    News: 'frett',
     search: 'leit',
-    landingPage: '',
     lifeEvent: 'lifsvidburdur',
-    page: '',
+    LifeEventPage: 'lifsvidburdur',
   },
   en: {
-    article: 'article',
+    article: '',
+    Article: '',
+    category: 'category',
     ArticleCategory: 'category',
     ContentCategory: 'category',
     news: 'news',
+    News: 'news',
     search: 'search',
-    landingPage: '',
     lifeEvent: 'life-event',
-    page: '',
+    LifeEventPage: 'life-event',
   },
 }
 
 export type PathTypes =
   | 'article'
-  | 'ArticleCategory'
+  | 'Article'
+  | 'category'
   | 'ContentCategory'
+  | 'ArticleCategory'
   | 'news'
+  | 'News'
   | 'search'
-  | 'landingPage'
-  | 'page'
   | 'lifeEvent'
+  | 'LifeEventPage'
 
-export const useRouteNames = (locale: Locale = defaultLanguage) => {
+export const routeNames = (locale: Locale = defaultLanguage) => {
   return {
     makePath: (type?: PathTypes, subfix?: string) => {
       let path = ''
 
-      const typePath = (type && routeNames[locale][type]) ?? null
+      const typePath = (type && routes[locale][type]) ?? null
 
       if (locale && locale !== defaultLanguage) {
         path += '/' + locale
@@ -52,9 +58,9 @@ export const useRouteNames = (locale: Locale = defaultLanguage) => {
         path += '/' + subfix
       }
 
-      return path || '/'
+      return path
     },
   }
 }
 
-export default useRouteNames
+export default routeNames

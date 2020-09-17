@@ -39,6 +39,7 @@ import {
   FrontpageSliderList,
   mapFrontpageSliderList,
 } from './models/frontpageSliderList.model'
+import { mapUrl, Url } from './models/url.model'
 
 const makePage = (
   page: number,
@@ -231,6 +232,19 @@ export const getArticle = async (
   }).catch(errorHandler('getArticle'))
 
   return result.items.map(mapArticle)[0] ?? null
+}
+
+export const getUrl = async (
+  slug: string,
+  lang: string,
+): Promise<Url | null> => {
+  const result = await getLocalizedEntries<types.IUrlFields>(lang, {
+    ['content_type']: 'url',
+    'fields.urlsList[all]': slug,
+    include: 1,
+  }).catch(errorHandler('getUrl'))
+
+  return result.items.map(mapUrl)[0] ?? null
 }
 
 export const getRelatedArticles = async (

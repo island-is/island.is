@@ -62,6 +62,7 @@ import {
   getOrganizationTags,
   getLifeEventPage,
   getLifeEvents,
+  getUrl,
 } from './services'
 import { LatestNewsSlice } from './models/latestNewsSlice.model'
 import { Menu } from './models/menu.model'
@@ -77,6 +78,8 @@ import { GetArticleCategoriesInput } from './dto/getArticleCategories.input'
 import { SearchIndexes } from '@island.is/api/content-search'
 import { GetArticlesInput } from './dto/getArticles.input'
 import { CmsService } from './cms.service'
+import { GetUrlInput } from './dto/getUrl.input'
+import { Url } from './models/url.model'
 
 const { cacheTime } = environment
 
@@ -262,6 +265,11 @@ export class CmsResolver {
     @Args('input') { lang, ...input }: GetSingleNewsInput,
   ): Promise<News | null> {
     return this.cmsService.getNews(SearchIndexes[lang], input)
+  }
+
+  @Query(() => Url, { nullable: true })
+  getUrl(@Args('input') input: GetUrlInput): Promise<Url | null> {
+    return getUrl(input?.slug ?? '', input?.lang ?? 'is-IS')
   }
 }
 

@@ -18,7 +18,8 @@ import {
 } from '@island.is/island-ui/core'
 import { Card, Sidebar } from '../../components'
 import { useI18n } from '@island.is/web/i18n'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
@@ -36,27 +37,28 @@ import {
   GetArticleCategoriesQuery,
   QueryGetArticleCategoriesArgs,
 } from '../../graphql/schema'
-import { withMainLayout } from '@island.is/web/layouts/main'
 
 type Article = GetArticlesQuery['getArticles']
 
-interface CategoryProps {
+export interface CategoryProps {
   articles: Article
   categories: GetArticleCategoriesQuery['getArticleCategories']
   namespace: GetNamespaceQuery['getNamespace']
+  slug: string
 }
 
 const Category: Screen<CategoryProps> = ({
   articles,
   categories,
   namespace,
+  slug,
 }) => {
   const itemsRef = useRef<Array<HTMLElement | null>>([])
   const [hash, setHash] = useState<string>('')
   const { activeLocale } = useI18n()
   const Router = useRouter()
   const n = useNamespace(namespace)
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   // group articles
   const { groups, cards } = articles.reduce(
@@ -84,7 +86,7 @@ const Category: Screen<CategoryProps> = ({
   )
 
   // find current category in categories list
-  const category = categories.find((x) => x.slug === Router.query.slug)
+  const category = categories.find((x) => x.slug === slug)
 
   useEffect(() => {
     const hashMatch = Router.asPath.match(/#([a-z0-9_-]+)/gi)
@@ -353,6 +355,7 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
     articles,
     categories: getArticleCategories,
     namespace,
+    slug,
   }
 }
 
