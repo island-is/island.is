@@ -29,12 +29,15 @@ components:
       properties:
         nationalId:
           type: string
+        name:
+          type: string
         roles:
           type: array
           items:
             type: string
       required:
         - nationalId
+        - name
         - roles
     Notification:
       type: object

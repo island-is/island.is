@@ -8,14 +8,17 @@ import {
   Put,
   UseGuards,
   Inject,
+  Req,
+  ForbiddenException,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 
-import { JwtAuthGuard } from '../auth'
+import { JwtAuthGuard, AuthUser } from '../auth'
+import { UserService } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
-import { Case, Notification } from './models'
+import { Case, Notification, CaseState } from './models'
 import { CaseService } from './case.service'
 import { CaseValidationPipe } from './case.pipe'
 
@@ -25,8 +28,10 @@ import { CaseValidationPipe } from './case.pipe'
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
+    @Inject(UserService)
+    private readonly userService: UserService,
     @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   @Get('cases')
@@ -44,7 +49,7 @@ export class CaseController {
   @Post('case')
   @ApiCreatedResponse({ type: Case })
   create(
-    @Body(new CaseValidationPipe(true))
+    @Body(new CaseValidationPipe())
     caseToCreate: CreateCaseDto,
   ): Promise<Case> {
     return this.caseService.create(caseToCreate)
@@ -83,10 +88,24 @@ export class CaseController {
   @ApiOkResponse({ type: Notification })
   async sendNotificationByCaseId(
     @Param('id') id: string,
+    @Req() req,
   ): Promise<Notification> {
     const existingCase = await this.findCaseById(id)
 
-    return this.caseService.sendNotificationByCaseId(existingCase)
+    if (
+      existingCase.state !== CaseState.DRAFT &&
+      existingCase.state !== CaseState.SUBMITTED
+    ) {
+      throw new ForbiddenException(
+        `Cannot send a notification for case in state ${existingCase.state}`,
+      )
+    }
+
+    const authUser: AuthUser = req.user
+
+    const user = await this.userService.findByNationalId(authUser)
+
+    return this.caseService.sendNotificationByCaseId(existingCase, user)
   }
 
   private async findCaseById(id: string) {

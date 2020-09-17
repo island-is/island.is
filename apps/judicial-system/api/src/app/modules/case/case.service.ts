@@ -5,20 +5,20 @@ import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
 
 import { environment } from '../../../environments'
+import { User } from '../user'
 import { CreateCaseDto, UpdateCaseDto } from './dto'
-import { Case, Notification, NotificationType } from './models'
+import { Case, Notification, NotificationType, CaseState } from './models'
 
 @Injectable()
 export class CaseService {
   constructor(
+    private readonly smsService: SmsService,
     @InjectModel(Case)
-    private caseModel: typeof Case,
+    private readonly caseModel: typeof Case,
     @InjectModel(Notification)
-    private notificationModel: typeof Notification,
-    @Inject(SmsService)
-    private smsService: SmsService,
+    private readonly notificationModel: typeof Notification,
     @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   getAll(): Promise<Case[]> {
@@ -75,14 +75,19 @@ export class CaseService {
     })
   }
 
-  async sendNotificationByCaseId(existingCase: Case): Promise<Notification> {
+  async sendNotificationByCaseId(
+    existingCase: Case,
+    user: User,
+  ): Promise<Notification> {
     this.logger.debug(
       `Sending a notification for case with id "${existingCase.id}"`,
     )
 
-    const smsText = this.constructSmsText(existingCase)
-
-    this.logger.debug(smsText)
+    const smsText =
+      existingCase.state === CaseState.DRAFT
+        ? this.constructHeadsUpSmsText(existingCase)
+        : // State is CaseState.SUBMITTED
+          this.constructReadyForCourtpSmsText(existingCase, user)
 
     // Production or local development with judge phone number
     if (environment.production || environment.notifications.judgePhoneNumber) {
@@ -94,12 +99,16 @@ export class CaseService {
 
     return this.notificationModel.create({
       caseId: existingCase.id,
-      type: NotificationType.HEADS_UP,
+      type:
+        existingCase.state === CaseState.DRAFT
+          ? NotificationType.HEADS_UP
+          : // State is CaseState.SUBMITTED
+            NotificationType.READY_FOR_COURT,
       message: smsText,
     })
   }
 
-  private constructSmsText(existingCase: Case): string {
+  private constructHeadsUpSmsText(existingCase: Case): string {
     // Arrest date
     const ad = existingCase.arrestDate?.toISOString()
     const adText = ad
@@ -125,5 +134,18 @@ export class CaseService {
       : ''
 
     return `Ný gæsluvarðhaldskrafa í vinnslu.${adText}${cdText}`
+  }
+
+  private constructReadyForCourtpSmsText(
+    existingCase: Case,
+    user: User,
+  ): string {
+    // Procecutor
+    const procecutor = user ? ` Ákærandi: ${user.name}.` : ''
+
+    // Court
+    const court = existingCase.court ? ` Dómstóll: ${existingCase.court}.` : ''
+
+    return `Gæsluvarðhaldskrafa tilbúin til afgreiðslu.${procecutor}${court}`
   }
 }

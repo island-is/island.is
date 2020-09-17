@@ -69,8 +69,10 @@ const REDIRECT_COOKIE: Cookie = {
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    @Inject('IslandisLogin') private loginIS: IslandisLogin,
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject('IslandisLogin')
+    private readonly loginIS: IslandisLogin,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   @Post('callback')

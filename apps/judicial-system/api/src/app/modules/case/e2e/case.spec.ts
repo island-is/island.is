@@ -329,7 +329,7 @@ describe('Case', () => {
     })
   })
 
-  it('POST /api/case/:id/notification should create a notification', async () => {
+  it('POST /api/case/:id/notification should send a notification', async () => {
     await Case.create({
       policeCaseNumber: 'Case Number',
       suspectNationalId: '0101010000',

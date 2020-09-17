@@ -20,6 +20,8 @@ const postMock = jest.fn(function(
       return { Token: testToken }
     case testSendSms:
       return { Code: testCode }
+    default:
+      throw new Error()
   }
 })
 jest.mock('apollo-datasource-rest', function() {

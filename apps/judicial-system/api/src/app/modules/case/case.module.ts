@@ -8,12 +8,17 @@ import { SmsService, SmsServiceOptions } from '@island.is/nova-sms'
 
 import { environment } from '../../../environments'
 import { AuthModule } from '../auth'
+import { UserModule } from '../user'
 import { Case, Notification } from './models'
 import { CaseController } from './case.controller'
 import { CaseService } from './case.service'
 
 @Module({
-  imports: [AuthModule, SequelizeModule.forFeature([Case, Notification])],
+  imports: [
+    AuthModule,
+    UserModule,
+    SequelizeModule.forFeature([Case, Notification]),
+  ],
   controllers: [CaseController],
   providers: [
     CaseService,
