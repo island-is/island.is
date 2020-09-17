@@ -68,7 +68,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
             {format(new Date(date), 'do MMMM yyyy')}
           </Typography>
         )}
-        <Typography variant="h3" as="h2" paddingBottom={1}>
+        <Typography variant="h3" as="h3" paddingBottom={1}>
           {title}
         </Typography>
         <Typography variant="p" paddingBottom={3}>

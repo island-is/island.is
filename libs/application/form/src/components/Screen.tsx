@@ -164,7 +164,7 @@ const Screen: FC<ScreenProps> = ({
             )}
           </Box>
         </GridColumn>
-        <Box marginTop={[3, 3, 0]} className={styles.buttonContainer}>
+        <Box marginTop={3} className={styles.buttonContainer}>
           <GridColumn
             span={['12/12', '12/12', '7/9', '7/9']}
             offset={[null, null, '1/9']}

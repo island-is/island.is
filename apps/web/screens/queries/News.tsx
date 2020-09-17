@@ -26,9 +26,9 @@ export const GET_NEWS_LIST_QUERY = gql`
   }
 `
 
-export const GET_NEWS_ITEM_QUERY = gql`
-  query GetNewsItem($input: GetNewsInput!) {
-    getNews(input: $input) {
+export const GET_SINGLE_NEWS_ITEM_QUERY = gql`
+  query GetSingleNewsItem($input: GetSingleNewsInput!) {
+    getSingleNews(input: $input) {
       id
       title
       subtitle

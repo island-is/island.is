@@ -29,27 +29,19 @@
     },
     "web-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "web"
-      ]
+      "implicitDependencies": ["web"]
     },
     "island-ui-core": {
       "tags": [],
-      "implicitDependencies": [
-        "island-ui-theme"
-      ]
+      "implicitDependencies": ["island-ui-theme"]
     },
     "gjafakort-web": {
       "tags": [],
-      "implicitDependencies": [
-        "gjafakort-api"
-      ]
+      "implicitDependencies": ["gjafakort-api"]
     },
     "gjafakort-web-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "gjafakort-web"
-      ]
+      "implicitDependencies": ["gjafakort-web"]
     },
     "gjafakort-api": {
       "tags": []
@@ -125,9 +117,7 @@
     },
     "application-system-form-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "application-system-form"
-      ]
+      "implicitDependencies": ["application-system-form"]
     },
     "application-system-api": {
       "tags": []
@@ -140,9 +130,7 @@
     },
     "service-portal-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "service-portal"
-      ]
+      "implicitDependencies": ["service-portal"]
     },
     "service-portal-constants": {
       "tags": []
@@ -182,9 +170,7 @@
     },
     "air-discount-scheme/web-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "air-discount-scheme-web"
-      ]
+      "implicitDependencies": ["air-discount-scheme-web"]
     },
     "air-discount-scheme-backend": {
       "tags": []
@@ -200,9 +186,7 @@
     },
     "adgerdir-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "adgerdir"
-      ]
+      "implicitDependencies": ["adgerdir"]
     },
     "api-domains-file-upload": {
       "tags": []
@@ -224,9 +208,7 @@
     },
     "judicial-system/web-e2e": {
       "tags": [],
-      "implicitDependencies": [
-        "judicial-system-web"
-      ]
+      "implicitDependencies": ["judicial-system-web"]
     },
     "api-domains-documents": {
       "tags": []
@@ -256,6 +238,9 @@
       "tags": []
     },
     "reference-next-app": {
+      "tags": []
+    },
+    "nova-sms": {
       "tags": []
     }
   }

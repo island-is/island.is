@@ -1,5 +1,6 @@
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
+import _ from 'lodash'
 import {
   SearchIndexes,
   SyncOptions,
@@ -9,7 +10,7 @@ import { ArticleSyncService } from './importers/article.service'
 import { ContentfulService } from './contentful.service'
 import { LifeEventsPageSyncService } from './importers/lifeEventsPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
-import _ from 'lodash'
+import { NewsSyncService } from './importers/news.service'
 
 export interface PostSyncOptions {
   locale: keyof typeof SearchIndexes
@@ -20,6 +21,7 @@ export interface PostSyncOptions {
 export class CmsSyncService {
   private contentSyncProviders
   constructor(
+    private readonly newsSyncService: NewsSyncService,
     private readonly articleCategorySyncService: ArticleCategorySyncService,
     private readonly articleSyncService: ArticleSyncService,
     private readonly lifeEventsPageSyncService: LifeEventsPageSyncService,
@@ -30,6 +32,7 @@ export class CmsSyncService {
       this.articleSyncService,
       this.lifeEventsPageSyncService,
       this.articleCategorySyncService,
+      this.newsSyncService,
     ]
   }
 

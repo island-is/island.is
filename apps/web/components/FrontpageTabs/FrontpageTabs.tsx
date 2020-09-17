@@ -317,7 +317,7 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
                         <Stack space={3}>
                           <Typography
                             variant="eyebrow"
-                            as="h2"
+                            as="p"
                             color="purple400"
                           >
                             <span className={styles.textItem}>{subtitle}</span>

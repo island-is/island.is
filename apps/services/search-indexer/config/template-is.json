@@ -1,6 +1,6 @@
 {
   "order": 0,
-  "version": 4,
+  "version": 5,
   "index_patterns": ["island-is-v*"],
   "settings": {
     "analysis": {
@@ -49,6 +49,12 @@
       "title": {
         "type": "text",
         "fields": {
+          "sort": {
+            "type": "icu_collation_keyword",
+            "index": false,
+            "language": "is",
+            "country": "is"
+          },
           "stemmed": {
             "type": "text",
             "analyzer": "baseIcelandic"

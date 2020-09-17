@@ -16,7 +16,7 @@ import { AdgerdirFrontpage } from './models/adgerdirFrontpage.model'
 import { FrontpageSliderList } from './models/frontpageSliderList.model'
 import { GetArticleInput } from './dto/getArticle.input'
 import { News } from './models/news.model'
-import { GetNewsInput } from './dto/getNews.input'
+import { GetSingleNewsInput } from './dto/getSingleNews.input'
 import { GetNewsListInput } from './dto/getNewsList.input'
 import { GetAdgerdirNewsListInput } from './dto/getAdgerdirNewsList.input'
 import { GetAdgerdirPageInput } from './dto/getAdgerdirPage.input'
@@ -71,7 +71,10 @@ export class CmsResolver {
   @Directive(cacheControlDirective())
   @Query(() => Article, { nullable: true })
   getArticle(@Args('input') input: GetArticleInput): Promise<Article | null> {
-    return this.cmsContentfulService.getArticle(input?.slug ?? '', input?.lang ?? 'is-IS')
+    return this.cmsContentfulService.getArticle(
+      input?.slug ?? '',
+      input?.lang ?? 'is-IS',
+    )
   }
 
   @Directive(cacheControlDirective())
@@ -207,7 +210,9 @@ export class CmsResolver {
   getFrontpageSliderList(
     @Args('input') input: GetFrontpageSliderListInput,
   ): Promise<FrontpageSliderList | null> {
-    return this.cmsContentfulService.getFrontpageSliderList(input?.lang ?? 'is-IS')
+    return this.cmsContentfulService.getFrontpageSliderList(
+      input?.lang ?? 'is-IS',
+    )
   }
 
   @Directive(cacheControlDirective())
@@ -215,13 +220,18 @@ export class CmsResolver {
   getAdgerdirFrontpage(
     @Args('input') input: GetAdgerdirFrontpageInput,
   ): Promise<AdgerdirFrontpage | null> {
-    return this.cmsContentfulService.getAdgerdirFrontpage(input?.lang ?? 'is-IS')
+    return this.cmsContentfulService.getAdgerdirFrontpage(
+      input?.lang ?? 'is-IS',
+    )
   }
 
   @Directive(cacheControlDirective())
   @Query(() => Menu, { nullable: true })
   getMenu(@Args('input') input: GetMenuInput): Promise<Menu | null> {
-    return this.cmsContentfulService.getMenu(input?.name ?? '', input?.lang ?? 'is-IS')
+    return this.cmsContentfulService.getMenu(
+      input?.name ?? '',
+      input?.lang ?? 'is-IS',
+    )
   }
 
   @Directive(cacheControlDirective())

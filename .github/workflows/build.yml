@@ -8,7 +8,8 @@ on:
     paths-ignore:
       - '**/*.md'
   pull_request:
-    branches: [master]
+    branches:
+      - master
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
@@ -65,9 +66,8 @@ jobs:
           echo "::set-output name=DOCKER_TAG::${DOCKER_TAG}"
           echo "::set-env name=DOCKER_TAG::${DOCKER_TAG}"
 
-      - run: git checkout "$GIT_BRANCH"
-      - run: git checkout "$GIT_BASE_BRANCH"
-      - run: git checkout $GITHUB_SHA
+      - name: GitHub envs
+        run: env | grep GITHUB
       - run: |
           echo "::set-env name=HEAD::${GITHUB_SHA}"
         id: git_nx_head
@@ -79,12 +79,13 @@ jobs:
           else
             export BRANCH=$GIT_BRANCH
           fi
-          NUMBER_NEWER_COMMITS_THEN_ME=`git log --format=%H --first-parent "$BRANCH"  $GITHUB_SHA... $BRANCH | wc -l | tr -d '[:space:]'`
-          LAST_GOOD_BUILD=`git log --format=%H --first-parent "$BRANCH" | tail -n +$((NUMBER_NEWER_COMMITS_THEN_ME+1)) | node .github/actions/dist/index.js`
+          # Consider all hashes between HEAD and our merge base ~20 as possibilities
+          MERGE_BASE=$(git merge-base origin/master HEAD)
+          LAST_GOOD_BUILD=`git log --format=%H $MERGE_BASE~20..HEAD | node .github/actions/dist/index.js`
           LAST_GOOD_BUILD_SHA=`echo $LAST_GOOD_BUILD | jq -r '.sha'`
           LAST_GOOD_BUILD_BRANCH=`echo $LAST_GOOD_BUILD | jq -r '.branch'`
           LAST_GOOD_BUILD_RUN_NUMBER=`echo $LAST_GOOD_BUILD | jq -r '.run_number'`
-          echo "Last successful build on $BRANCH is with SHA '$LAST_GOOD_BUILD_SHA', branch '$LAST_GOOD_BUILD_BRANCH' and number '$LAST_GOOD_BUILD_RUN_NUMBER'"
+          echo "Last successful build is with SHA '$LAST_GOOD_BUILD_SHA', branch '$LAST_GOOD_BUILD_BRANCH' and number '$LAST_GOOD_BUILD_RUN_NUMBER'"
           echo "::set-env name=BASE::$LAST_GOOD_BUILD_SHA"
           LAST_GOOD_BUILD_DOCKER_BRANCH_TAG=$(echo ${LAST_GOOD_BUILD_BRANCH} | tr "/." "-" )
           export LAST_GOOD_BUILD_DOCKER_TAG=${LAST_GOOD_BUILD_RUN_NUMBER}_${LAST_GOOD_BUILD_DOCKER_BRANCH_TAG}_${LAST_GOOD_BUILD_SHA:0:7}
@@ -98,8 +99,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BASE_BRANCH: ${{ env.GIT_BASE_BRANCH }}
-      - name: GitHub envs
-        run: env | grep GITHUB
 
       - name: Set publish flag
         id: publish_flag

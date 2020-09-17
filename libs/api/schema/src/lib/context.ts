@@ -8,7 +8,6 @@ export interface HelloWorldService {
 export interface SearcherService {
   find(query): Promise<SearchResult>
   fetchSingle(input): Promise<ContentItem>
-  fetchItems(input): Promise<ContentItem[]>
   fetchAutocompleteTerm(input): Promise<WebSearchAutocomplete>
 }
 
