@@ -10,6 +10,7 @@ import routeNames from '@island.is/web/i18n/routeNames'
 import { NewsItemLayout } from './Layouts/Layouts'
 import { GET_SINGLE_NEWS_ITEM_QUERY } from './queries'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
   GetSingleNewsItemQuery,
@@ -91,4 +92,4 @@ NewsItem.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default NewsItem
+export default withMainLayout(NewsItem)

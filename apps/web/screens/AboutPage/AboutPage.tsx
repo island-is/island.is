@@ -40,6 +40,7 @@ import {
   Link,
   ColorSchemeContext,
 } from '@island.is/island-ui/core'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { Content } from '@island.is/island-ui/contentful'
 import Sidebar, { SidebarProps } from './Sidebar'
 import * as styles from './AboutPage.treat'
@@ -493,4 +494,4 @@ AboutPageScreen.getInitialProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default AboutPageScreen
+export default withMainLayout(AboutPageScreen, { showHeader: false })

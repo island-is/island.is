@@ -23,6 +23,7 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_NEWS_LIST_QUERY } from './queries'
 import { NewsListLayout } from './Layouts/Layouts'
 import { CustomNextError } from '../units/errors'
@@ -280,4 +281,4 @@ const createDateRange = (min: Date, max: Date): string[] => {
   ).map((i: number) => new Date(Math.floor(i / 12), i % 12).toISOString())
 }
 
-export default NewsList
+export default withMainLayout(NewsList)

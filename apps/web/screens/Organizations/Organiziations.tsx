@@ -19,6 +19,7 @@ import {
   QueryGetOrganizationTagsArgs,
   QueryGetOrganizationArgs,
 } from '@island.is/api/schema'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { FilteredCards } from '@island.is/web/components'
 import {
   GET_ORGANIZATIONS_QUERY,
@@ -145,4 +146,4 @@ OrganizationPage.getInitialProps = async ({ apolloClient, query, locale }) => {
   }
 }
 
-export default OrganizationPage
+export default withMainLayout(OrganizationPage)

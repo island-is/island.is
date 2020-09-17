@@ -11,6 +11,7 @@ import {
   Typography,
   Box,
 } from '@island.is/island-ui/core'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { Image, ContentContainer } from '@island.is/island-ui/contentful'
 import { useI18n } from '../../i18n'
 import routeNames from '../../i18n/routeNames'
@@ -100,4 +101,4 @@ LifeEvent.getInitialProps = async ({ apolloClient, locale, query }) => {
   return { lifeEvent }
 }
 
-export default LifeEvent
+export default withMainLayout(LifeEvent)

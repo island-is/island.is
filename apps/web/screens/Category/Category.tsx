@@ -19,6 +19,7 @@ import {
 import { Card, Sidebar } from '../../components'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '../../types'
 import {
   GET_NAMESPACE_QUERY,
@@ -357,4 +358,4 @@ Category.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default Category
+export default withMainLayout(Category)

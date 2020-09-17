@@ -27,6 +27,7 @@ import {
   GET_NEWS_LIST_QUERY,
   GET_LIFE_EVENTS_QUERY,
 } from './queries'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { IntroductionSection } from '../components/IntroductionSection'
 import { LifeEventsCardsSection } from '../components/LifeEventsCardsSection'
 import { Section } from '../components/Section'
@@ -223,4 +224,4 @@ Home.getInitialProps = async ({ apolloClient, locale }) => {
   }
 }
 
-export default Home
+export default withMainLayout(Home)

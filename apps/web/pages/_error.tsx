@@ -8,6 +8,8 @@ import { withApollo } from '../graphql/withApollo'
 import {
   Article,
   ArticleCategory,
+  LifeEventPage,
+  News,
   GetUrlQuery,
   QueryGetUrlArgs,
 } from '@island.is/web/graphql/schema'
@@ -67,8 +69,9 @@ class ErrorPage extends React.Component<ErrorPageProps> {
         .replace(/\/+$/, '')
         .toLowerCase()
 
-      const redirectProps = await getRedirectProps(path, {
-        ...props,
+      const redirectProps = await getRedirectProps({
+        path,
+        apolloClient: props.apolloClient,
         locale,
       })
 
@@ -115,20 +118,26 @@ class ErrorPage extends React.Component<ErrorPageProps> {
 
 export default withApollo(ErrorPage)
 
-export type RedirectPropsContext<Context> = Context & {
+export interface RedirectProps {
+  pageType: string
+  page:
+    | Pick<Article, 'slug'>
+    | Pick<Article, 'slug'>
+    | Pick<News, 'slug'>
+    | Pick<LifeEventPage, 'slug'>
+}
+
+interface GetRedirectPropsProps {
+  path: string
   apolloClient: ApolloClient<NormalizedCacheObject>
   locale: string
 }
 
-export interface RedirectProps {
-  pageType: string
-  page: Article | ArticleCategory
-}
-
-const getRedirectProps = async (
-  slug: string,
-  { apolloClient, locale }: RedirectPropsContext<NextPageContext>,
-) => {
+const getRedirectProps = async ({
+  path,
+  apolloClient,
+  locale,
+}: GetRedirectPropsProps): Promise<RedirectProps | null> => {
   const {
     data: { getUrl },
   } = await apolloClient
@@ -136,7 +145,7 @@ const getRedirectProps = async (
       query: GET_URL_QUERY,
       variables: {
         input: {
-          slug,
+          slug: path,
           lang: locale as string,
         },
       },

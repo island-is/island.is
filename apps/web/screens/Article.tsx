@@ -24,6 +24,7 @@ import {
   SidebarSubNav,
   RichText,
 } from '@island.is/web/components'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from './queries'
 import { ArticleLayout } from './Layouts/Layouts'
 import { Screen } from '../types'
@@ -457,4 +458,4 @@ ArticleScreen.getInitialProps = async ({ apolloClient, query, locale }) => {
   }
 }
 
-export default ArticleScreen
+export default withMainLayout(ArticleScreen)

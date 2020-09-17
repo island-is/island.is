@@ -241,7 +241,7 @@ export const getUrl = async (
   const result = await getLocalizedEntries<types.IUrlFields>(lang, {
     ['content_type']: 'url',
     'fields.urlsList[all]': slug,
-    include: 10,
+    include: 1,
   }).catch(errorHandler('getUrl'))
 
   return result.items.map(mapUrl)[0] ?? null

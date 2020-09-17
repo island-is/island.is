@@ -16,6 +16,7 @@ import {
   GridRow,
   GridColumn,
 } from '@island.is/island-ui/core'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { RichText, SidebarNavigation } from '@island.is/web/components'
 import ArticleLayout from '../Layouts/Layouts'
 import routeNames from '../../i18n/routeNames'
@@ -123,4 +124,4 @@ LandingPageScreen.getInitialProps = async ({ apolloClient, locale, query }) => {
   }
 }
 
-export default LandingPageScreen
+export default withMainLayout(LandingPageScreen)
