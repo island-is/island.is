@@ -6,6 +6,7 @@ import { environment } from '../environments/environment'
 import * as AWS from 'aws-sdk'
 import * as AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
+
 import {
   SearcherInput,
   WebSearchAutocompleteInput,
@@ -77,15 +78,24 @@ export class ElasticService {
     // if we have any requests execute them
     if (requests.length) {
       try {
+        const chunkSize = 200 // this has to be an even number
         const client = await this.getClient()
-        const response = await client.bulk({
-          index: index,
-          body: requests,
-        })
-        // TODO: ES errors while indexing might not throw, but appear in response log those errors here
+        let requestChunk = requests.splice(-chunkSize, chunkSize)
+        do {
+          // wait for request b4 continuing
+          const response = await client.bulk({
+            index: index,
+            body: requestChunk,
+          })
+          if (response.body.errors) {
+            logger.error('Failed to import some documents in bulk import', { response })
+          }
+          requestChunk = requests.splice(-chunkSize, chunkSize)
+        } while (requestChunk.length) // while we have requests to process
+
         return true
       } catch (error) {
-        logger.error('Elastic request failed on bulk index', error)
+        logger.error('Elasticsearch request failed on bulk index', error)
         throw error
       }
     } else {
