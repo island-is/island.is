@@ -16,6 +16,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Tag,
 } from '@island.is/island-ui/core'
 
 import * as styles from './ApplicationForm.treat'
@@ -58,6 +59,31 @@ export const ApplicationForm: FC<{ application: Application }> = ({
     [FormModes.APPROVED]: ProgressThemes.GREEN,
     [FormModes.REVIEW]: ProgressThemes.BLUE,
     [FormModes.REJECTED]: ProgressThemes.RED,
+  }
+
+  const ProgressTag: FC = () => {
+    switch (mode) {
+      case FormModes.REVIEW:
+        return (
+          <Tag variant="darkerBlue" label bordered>
+            Status: In Review
+          </Tag>
+        )
+      case FormModes.APPROVED:
+        return (
+          <Tag variant="darkerMint" label bordered>
+            Status: Approved
+          </Tag>
+        )
+      case FormModes.REJECTED:
+        return (
+          <Tag variant="red" label bordered>
+            Status: Rejected
+          </Tag>
+        )
+      default:
+        return null
+    }
   }
 
   return (
@@ -118,6 +144,7 @@ export const ApplicationForm: FC<{ application: Application }> = ({
               <Sidebar>
                 <FormProgress
                   theme={progressTheme[mode]}
+                  tag={<ProgressTag />}
                   formName={form.name}
                   formIcon={form.icon}
                   sections={sections}

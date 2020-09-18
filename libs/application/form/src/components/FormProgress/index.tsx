@@ -6,10 +6,11 @@ import ApplicationName from './components/ApplicationName'
 import { Box } from '@island.is/island-ui/core'
 
 import * as styles from './FormProgress.treat'
-import { FormModes, ProgressThemes } from '../../types'
+import { ProgressThemes } from '../../types'
 
 const FormProgress: FC<{
   theme?: ProgressThemes
+  tag?: React.ReactNode
   formName: string
   formIcon: string
   activeSection: number
@@ -18,6 +19,7 @@ const FormProgress: FC<{
   showSubSectionIcons?: boolean
 }> = ({
   theme = ProgressThemes.PURPLE,
+  tag,
   formName,
   formIcon,
   activeSection,
@@ -32,6 +34,7 @@ const FormProgress: FC<{
       width="full"
       className={styles.root}
     >
+      {tag && <Box className={styles.tagContainer}>{tag}</Box>}
       <ApplicationName name={formName} icon={formIcon} />
       <Box marginTop={4}>
         {sections.map((section, index) => (
