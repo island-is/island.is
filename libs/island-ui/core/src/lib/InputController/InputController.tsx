@@ -4,6 +4,7 @@ import { useFormContext } from 'react-hook-form'
 
 interface Props {
   autoFocus?: boolean
+  disabled?: boolean
   error?: string
   id: string
   label?: string
@@ -15,6 +16,7 @@ interface Props {
 }
 export const InputController: FC<Props> = ({
   autoFocus,
+  disabled = false,
   error,
   id,
   label,
@@ -26,6 +28,7 @@ export const InputController: FC<Props> = ({
   return (
     <Input
       id={id}
+      disabled={disabled}
       name={name}
       placeholder={placeholder}
       label={label}

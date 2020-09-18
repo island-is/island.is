@@ -24,6 +24,12 @@ export class ContentItem {
   categoryDescription: string
 
   @Field({ nullable: true })
+  containsApplicationForm: boolean
+
+  @Field({ nullable: true })
+  importance: number
+
+  @Field({ nullable: true })
   group: string
 
   @Field({ nullable: true })

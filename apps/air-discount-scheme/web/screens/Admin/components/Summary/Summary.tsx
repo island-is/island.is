@@ -19,7 +19,6 @@ type TSummary = {
 
 interface PropTypes {
   flightLegs: FlightLeg[]
-  airline: ValueOf<typeof Airlines>
 }
 
 function KeyValues({ data, title }: { data: TItem; title: string }) {
@@ -42,50 +41,74 @@ function KeyValues({ data, title }: { data: TItem; title: string }) {
   )
 }
 
-function Summary({ flightLegs, airline }: PropTypes) {
+function Summary({ flightLegs }: PropTypes) {
   const sum = (arr: FlightLeg[], key: string): number =>
     arr.reduce((acc, item) => acc + item[key], 0)
 
-  const legs = flightLegs.filter((flightLeg) => flightLeg.airline === airline)
-  const awaitingCredit = legs.filter(
-    (leg) => leg.financialState === States.awaitingCredit,
-  )
-  const awaitingDebit = legs.filter(
-    (leg) => leg.financialState === States.awaitingDebit,
-  )
-  const cancelled = legs.filter(
-    (leg) => leg.financialState === States.cancelled,
-  )
-
-  const data: TSummary = {
-    awaitingCredit: {
-      count: awaitingCredit.length,
-      discountPrice: sum(awaitingCredit, 'discountPrice'),
-      originalPrice: sum(awaitingCredit, 'originalPrice'),
-    },
-    awaitingDebit: {
-      count: awaitingDebit.length,
-      discountPrice: sum(awaitingDebit, 'discountPrice'),
-      originalPrice: sum(awaitingDebit, 'originalPrice'),
-    },
-    cancelled: {
-      count: cancelled.length,
-      discountPrice: sum(cancelled, 'discountPrice'),
-      originalPrice: sum(cancelled, 'originalPrice'),
-    },
-  }
-
   return (
-    <Stack space={1}>
-      <Typography variant="h3">
-        <span className={styles.capitalize}>{airline}</span>
-      </Typography>
-      <Box display="flex" justifyContent="spaceBetween">
-        <KeyValues title="Í gjaldfærslubið" data={data.awaitingDebit} />
-        <KeyValues title="Í endurgreiðslubið" data={data.awaitingCredit} />
-        <KeyValues title="Afturkallaðir" data={data.cancelled} />
-      </Box>
-    </Stack>
+    <Box marginBottom={3}>
+      <Stack space={3}>
+        <Typography variant="h1" as="h1">
+          Yfirlit
+        </Typography>
+        <Typography variant="intro">
+          Samantektin byggist á núverandi síu
+        </Typography>
+        <Stack space={3}>
+          {Object.values(Airlines).map((airline) => {
+            const legs = flightLegs.filter(
+              (flightLeg) => flightLeg.airline === airline,
+            )
+            const awaitingCredit = legs.filter(
+              (leg) => leg.financialState === States.awaitingCredit,
+            )
+            const awaitingDebit = legs.filter(
+              (leg) => leg.financialState === States.awaitingDebit,
+            )
+            const cancelled = legs.filter(
+              (leg) => leg.financialState === States.cancelled,
+            )
+
+            const data: TSummary = {
+              awaitingCredit: {
+                count: awaitingCredit.length,
+                discountPrice: sum(awaitingCredit, 'discountPrice'),
+                originalPrice: sum(awaitingCredit, 'originalPrice'),
+              },
+              awaitingDebit: {
+                count: awaitingDebit.length,
+                discountPrice: sum(awaitingDebit, 'discountPrice'),
+                originalPrice: sum(awaitingDebit, 'originalPrice'),
+              },
+              cancelled: {
+                count: cancelled.length,
+                discountPrice: sum(cancelled, 'discountPrice'),
+                originalPrice: sum(cancelled, 'originalPrice'),
+              },
+            }
+
+            return (
+              <Stack space={1} key={airline}>
+                <Typography variant="h3">
+                  <span className={styles.capitalize}>{airline}</span>
+                </Typography>
+                <Box display="flex" justifyContent="spaceBetween">
+                  <KeyValues
+                    title="Í gjaldfærslubið"
+                    data={data.awaitingDebit}
+                  />
+                  <KeyValues
+                    title="Í endurgreiðslubið"
+                    data={data.awaitingCredit}
+                  />
+                  <KeyValues title="Afturkallaðir" data={data.cancelled} />
+                </Box>
+              </Stack>
+            )
+          })}
+        </Stack>
+      </Stack>
+    </Box>
   )
 }
 

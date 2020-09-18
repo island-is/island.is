@@ -9,6 +9,8 @@ export const GET_ARTICLE_QUERY = gql`
       title
       shortTitle
       intro
+      containsApplicationForm
+      importance
       body {
         ...AllSlices
       }

@@ -9,6 +9,7 @@ type InputBackgroundColor = 'white' | 'blue'
 interface InputComponentProps {
   name: string
   value?: string | number
+  defaultValue?: string | number
   id?: string
   className?: string
   disabled?: boolean
@@ -79,6 +80,7 @@ export const Input = forwardRef(
       label,
       hasError = false,
       value,
+      defaultValue,
       errorMessage = '',
       id = name,
       disabled,
@@ -146,6 +148,7 @@ export const Input = forwardRef(
             ref={mergedRefs}
             placeholder={placeholder}
             value={value}
+            defaultValue={defaultValue}
             onFocus={(e) => {
               setHasFocus(true)
               if (onFocus) {

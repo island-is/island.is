@@ -30,6 +30,12 @@ export class Article {
   @Field({ nullable: true })
   intro?: string
 
+  @Field({ nullable: true })
+  containsApplicationForm: boolean
+
+  @Field({ nullable: true })
+  importance: number
+
   @Field(() => [Slice])
   body: Array<typeof Slice>
 
@@ -59,6 +65,8 @@ export const mapArticle = ({ fields, sys }: IArticle): Article => ({
   shortTitle: fields.shortTitle ?? '',
   slug: fields.slug,
   intro: fields.intro ?? '',
+  containsApplicationForm: fields.containsApplicationForm ?? false,
+  importance: fields.importance ?? 0,
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
   category: fields.category?.fields,
   group: fields.group?.fields,

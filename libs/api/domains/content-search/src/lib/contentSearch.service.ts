@@ -54,15 +54,6 @@ export class ContentSearchService implements SearcherService {
     return this.fixCase(hit)
   }
 
-  async fetchItems(input): Promise<ContentItem[]> {
-    const { body } = await this.elasticService.fetchItems(
-      this.getIndex(input.language),
-      input,
-    )
-
-    return body?.hits?.hits.map(this.fixCase)
-  }
-
   async fetchAutocompleteTerm(input): Promise<WebSearchAutocomplete> {
     const {
       suggest: { searchSuggester },

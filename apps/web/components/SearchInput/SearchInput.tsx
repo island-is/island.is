@@ -25,7 +25,7 @@ import {
   Typography,
   Stack,
 } from '@island.is/island-ui/core'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
 import * as styles from './SearchInput.treat'
 import { Locale } from '@island.is/web/i18n/I18n'
 import {
@@ -143,7 +143,7 @@ const useSearch = (locale: Locale, term?: string): SearchState => {
 
 const useSubmit = (locale: Locale) => {
   const Router = useRouter()
-  const { makePath } = useRouteNames(locale)
+  const { makePath } = routeNames(locale)
 
   return useCallback(
     (q: string) => {
@@ -281,7 +281,7 @@ const Results: FC<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getItemProps: any
 }> = ({ locale, search, highlightedIndex, getItemProps }) => {
-  const { makePath } = useRouteNames(locale)
+  const { makePath } = routeNames(locale)
 
   if (!search.term) {
     const suggestions = search.suggestions.map((suggestion, i) => (

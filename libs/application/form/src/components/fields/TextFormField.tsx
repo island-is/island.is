@@ -13,11 +13,12 @@ const TextFormField: FC<Props> = ({
   field,
   showFieldName,
 }) => {
-  const { id, name } = field
+  const { id, disabled, name } = field
   const { clearErrors } = useFormContext()
   return (
     <Box paddingTop={2}>
       <InputController
+        disabled={disabled}
         id={id}
         label={showFieldName ? name : undefined}
         autoFocus={autoFocus}

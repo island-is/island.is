@@ -5,6 +5,9 @@ import {
   ArticleResolver,
   LatestNewsSliceResolver,
 } from './cms.resolver'
+import { CmsContentfulService } from './cms.contentful.service'
+import { ContentfulRepository } from './contentful.repository'
+import { CmsElasticsearchService } from './cms.elasticsearch.service'
 
 @Module({
   providers: [
@@ -12,6 +15,10 @@ import {
     ArticleResolver,
     LatestNewsSliceResolver,
     ElasticService,
+    CmsContentfulService,
+    CmsElasticsearchService,
+    ContentfulRepository,
   ],
+  exports: [ContentfulRepository],
 })
 export class CmsModule {}

@@ -69,8 +69,10 @@ const REDIRECT_COOKIE: Cookie = {
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    @Inject('IslandisLogin') private loginIS: IslandisLogin,
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
+    @Inject('IslandisLogin')
+    private readonly loginIS: IslandisLogin,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   @Post('callback')
@@ -118,6 +120,7 @@ export class AuthController {
 
     res.clearCookie(name, options)
 
+    // Local development
     if (!environment.production && process.env.AUTH_USER) {
       this.logger.debug(
         `Logging in as ${process.env.AUTH_USER} in local development`,

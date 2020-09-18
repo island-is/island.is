@@ -15,11 +15,11 @@ export enum CaseCustodyRestrictions {
 }
 
 export enum CaseState {
-  UNKNOWN = 'Óþekkt',
-  DRAFT = 'Drög',
-  SUBMITTED = 'Krafa staðfest',
-  ACTIVE = 'Gæsluvarðhald virkt',
-  COMPLETED = 'Gæsluvarðhaldi lokið',
+  UNKNOWN = 'UNKNOWN',
+  DRAFT = 'DRAFT',
+  SUBMITTED = 'SUBMITTED',
+  ACTIVE = 'ACTIVE',
+  COMPLETED = 'COMPLETED',
 }
 
 export interface Case {
@@ -56,9 +56,7 @@ export interface CreateDetentionReqStepOneFields {
   arrestDate: Date
   arrestTime: string
   requestedCourtDate: Date
-}
-
-export interface CreateDetentionReqStepTwoFields {
+  requestedCourtTime: string
   requestedCustodyEndDate: Date
   requestedCustodyEndTime: string
   lawsBroken: string
@@ -74,9 +72,4 @@ export interface CreateDetentionReqStepTwoFields {
 export interface CreateDetentionReqStepOneCase {
   id: string
   case: CreateDetentionReqStepOneFields
-}
-
-export interface CreateDetentionReqStepTwoCase {
-  id: string
-  case: CreateDetentionReqStepTwoFields
 }
