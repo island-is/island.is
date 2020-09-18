@@ -9,6 +9,10 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           id
           title
           slug
+          containsApplicationForm
+          group {
+            title
+          }
           category {
             slug
             title
@@ -60,6 +64,10 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           id
           title
           slug
+          containsApplicationForm
+          group {
+            title
+          }
           category {
             slug
             title

@@ -54,7 +54,7 @@ export const Card: FC<CardProps> = ({
   const { colorScheme } = useContext(ColorSchemeContext)
   const [ref, { width }] = useMeasure()
 
-  const stackImage = width < 500
+  const stackImage = width < 600
 
   let borderColor = null
   let tagVariant = 'purple' as TagVariant
