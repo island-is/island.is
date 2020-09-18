@@ -41,3 +41,17 @@ export type FormScreen =
   | ExternalDataProviderScreen
   | MultiFieldScreen
   | RepeaterScreen
+
+export enum FormModes {
+  APPLYING = 'applying',
+  APPROVED = 'approved',
+  REVIEW = 'review',
+  REJECTED = 'rejected',
+}
+
+export enum ProgressThemes {
+  GREEN = 'green',
+  BLUE = 'blue',
+  PURPLE = 'purple',
+  RED = 'red',
+}

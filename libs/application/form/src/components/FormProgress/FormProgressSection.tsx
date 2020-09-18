@@ -11,6 +11,7 @@ import SectionNumber from './components/SectionNumber'
 import SubSectionItem from './components/SubSectionItem'
 
 import * as styles from './FormProgressSection.treat'
+import { ProgressThemes } from '../../types'
 
 const SubSections: FC<{
   isActive: boolean
@@ -67,6 +68,7 @@ const SubSections: FC<{
 }
 
 const FormProgressSection: FC<{
+  theme?: ProgressThemes
   section: Section
   sectionIndex: number
   isActive: boolean
@@ -75,6 +77,7 @@ const FormProgressSection: FC<{
   activeSubSection: number
   showSubSectionIcon?: boolean
 }> = ({
+  theme = ProgressThemes.PURPLE,
   section,
   sectionIndex,
   isActive,
@@ -104,6 +107,7 @@ const FormProgressSection: FC<{
         <Box display="flex" alignItems="flexStart" marginBottom={1}>
           <Box paddingTop={2}>
             <SectionNumber
+              theme={theme}
               lineHeight={isLastSection ? 0 : containerHeight}
               currentState={
                 isActive ? 'active' : isComplete ? 'previous' : 'next'

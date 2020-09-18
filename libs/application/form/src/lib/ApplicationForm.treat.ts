@@ -43,7 +43,7 @@ export const rootRejected = style({
   background: theme.color.white,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
-      background: theme.color.red100,
+      background: theme.color.dark100,
     },
   },
 })
