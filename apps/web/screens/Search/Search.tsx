@@ -137,6 +137,9 @@ const Search: Screen<CategoryProps> = ({
     ? { label: categoryTitle, value: categorySlug }
     : { label: 'Allir flokkar', value: '' }
 
+  const resultsCountToShow = categoryTitle
+    ? filteredItems.length
+    : searchResults.total
   return (
     <>
       <Head>
@@ -145,17 +148,11 @@ const Search: Screen<CategoryProps> = ({
       <CategoryLayout
         sidebar={
           <Sidebar title={n('sidebarHeader')}>
-            <Filter
-              selected={!filters.category}
-              onClick={() => onSelectCategory(null)}
-              text={`${n('allCategories', 'Allir flokkar')} (${
-                searchResults.total
-              })`}
-            />
-            <Divider weight="alternate" />
             <SidebarAccordion
               id="sidebar_accordion_categories"
-              label={n('seeCategories', 'Sjá flokka')}
+              label={`${n('allCategories', 'Allir flokkar')} (${
+                searchResults.total
+              })`}
             >
               <Stack space={[1, 1, 2]}>
                 {sidebarCategories.map((c, index) => {
@@ -239,8 +236,8 @@ const Search: Screen<CategoryProps> = ({
               </span>
             ) : (
               <span>
-                {filteredItems.length}{' '}
-                {filteredItems.length === 1
+                {resultsCountToShow}{' '}
+                {resultsCountToShow === 1
                   ? n('searchResult', 'leitarniðurstaða')
                   : n('searchResults', 'leitarniðurstöður')}
                 {filters.category && (
