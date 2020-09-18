@@ -165,7 +165,7 @@ const Admin: Screen = ({}) => {
                 >
                   <Box marginBottom={[3, 3, 3, 12]}>
                     <Stack space={3}>
-                      <Box paddingBottom={2} paddingTop={5}>
+                      <Box paddingBottom={2} paddingTop={3}>
                         <Typography variant="h3" as="h3">
                           <span>Niðurstaða</span>
                         </Typography>

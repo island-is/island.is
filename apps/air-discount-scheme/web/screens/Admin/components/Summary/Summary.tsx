@@ -3,43 +3,14 @@ import React from 'react'
 import { Airlines, States } from '@island.is/air-discount-scheme/consts'
 import { Typography, Box, Stack } from '@island.is/island-ui/core'
 import { FlightLeg } from '@island.is/air-discount-scheme-web/graphql/schema'
+
+import { KeyValues } from '../'
+import { TSummary } from '../../types'
 import * as styles from './Summary.treat'
-
-type TItem = {
-  count: number
-  discountPrice: number
-  originalPrice: number
-}
-
-type TSummary = {
-  awaitingDebit: TItem
-  awaitingCredit: TItem
-  cancelled: TItem
-}
 
 interface PropTypes {
   flightLegs: FlightLeg[]
   airline: ValueOf<typeof Airlines>
-}
-
-function KeyValues({ data, title }: { data: TItem; title: string }) {
-  return (
-    <Box>
-      <Typography variant="eyebrow">{title}</Typography>
-      <Box display="flex" alignItems="baseline">
-        <Box marginRight={1}>
-          <Typography variant="h4">{data.count}</Typography>
-        </Box>
-        flugleggir
-      </Box>
-      <Typography color="blue400">
-        {data.discountPrice.toLocaleString('de-DE')}.- kr.
-      </Typography>
-      <Typography variant="pSmall" color="dark300">
-        {data.originalPrice.toLocaleString('de-DE')}.- kr.
-      </Typography>
-    </Box>
-  )
 }
 
 function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
@@ -51,7 +22,7 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
   )
 
   return (
-    <Box marginBottom={3}>
+    <Box marginBottom={6}>
       <Stack space={3}>
         <Typography variant="h1" as="h1">
           Yfirlit
@@ -59,7 +30,7 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
         <Typography variant="intro">
           Samantektin byggist á núverandi síu
         </Typography>
-        <Stack space={3}>
+        <Stack space={6}>
           {airlines.map((airline) => {
             const legs = flightLegs.filter(
               (flightLeg) => flightLeg.airline === airline,
@@ -93,21 +64,27 @@ function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
             }
 
             return (
-              <Stack space={1} key={airline}>
+              <Stack space={2} key={airline}>
                 <Typography variant="h3">
                   <span className={styles.capitalize}>{airline}</span>
                 </Typography>
-                <Box display="flex" justifyContent="spaceBetween">
-                  <KeyValues
-                    title="Í gjaldfærslubið"
-                    data={data.awaitingDebit}
-                  />
-                  <KeyValues
-                    title="Í endurgreiðslubið"
-                    data={data.awaitingCredit}
-                  />
-                  <KeyValues title="Afturkallaðir" data={data.cancelled} />
-                </Box>
+                <Stack space={1}>
+                  <Box background="blue100" borderRadius="standard" padding={2}>
+                    <KeyValues
+                      title="Í gjaldfærslubið"
+                      data={data.awaitingDebit}
+                    />
+                  </Box>
+                  <Box padding={2}>
+                    <KeyValues
+                      title="Í endurgreiðslubið"
+                      data={data.awaitingCredit}
+                    />
+                  </Box>
+                  <Box background="red100" borderRadius="standard" padding={2}>
+                    <KeyValues title="Afturkallaðir" data={data.cancelled} />
+                  </Box>
+                </Stack>
               </Stack>
             )
           })}
