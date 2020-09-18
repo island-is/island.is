@@ -2,6 +2,7 @@ import { ApplicationTemplate } from '../ApplicationTemplate'
 import { ApplicationTypes } from '../../types/ApplicationTypes'
 import {
   ApplicationContext,
+  ApplicationRole,
   ApplicationStateSchema,
 } from '../../types/StateMachine'
 import * as z from 'zod'
@@ -107,5 +108,8 @@ export const ParentalLeave: ApplicationTemplate<
         },
       },
     },
+  },
+  mapNationalRegistryIdToRole(): Promise<ApplicationRole> {
+    return Promise.resolve('applicant')
   },
 }

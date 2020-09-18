@@ -4,9 +4,9 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
+  buildSubSection,
 } from '../../../lib/formBuilders'
 import {
-  buildDividerField,
   buildIntroductionField,
   buildRadioField,
   buildSelectField,
@@ -77,86 +77,104 @@ export const DrivingLessonsApplication: Form = buildForm({
     }),
     buildSection({
       id: 'type',
-      name: 'Tegund ökunáms',
+      name: 'Ökunám',
       children: [
-        buildRadioField({
+        buildSubSection({
           id: 'type',
-          name: 'Tegund ökunáms',
-          options: [
-            {
-              value: 'B',
-              label: 'Fólksbifreið (B)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            },
-            {
-              value: 'AM',
-              label: 'Léttbifhjól (AM)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            },
-            {
-              value: 'A',
-              label: 'Bifhjól (A)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            },
-            {
-              value: 'A1',
-              label: 'Bifhjól (A1)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            },
-            {
-              value: 'A2',
-              label: 'Bifhjól (A2)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            },
-            {
-              value: 'T',
-              label: 'Dráttarvél (T)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            },
+          name: 'Tegund',
+          children: [
+            buildRadioField({
+              id: 'type',
+              name: 'Tegund ökunáms',
+              options: [
+                {
+                  value: 'B',
+                  label: 'Fólksbifreið (B)',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'AM',
+                  label: 'Léttbifhjól (AM)',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'A',
+                  label: 'Bifhjól (A)',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'A1',
+                  label: 'Bifhjól (A1)',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'A2',
+                  label: 'Bifhjól (A2)',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+                {
+                  value: 'T',
+                  label: 'Dráttarvél (T)',
+                  tooltip:
+                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                },
+              ],
+            }),
           ],
         }),
-        buildSelectField({
+        buildSubSection({
           id: 'teacher',
-          name: 'Ökukennari',
-          placeholder: 'Veldu ökukennara',
-          options: [
-            {
-              label: 'Ingólfur Jónsson (101)',
-              value: '1',
-            },
-            {
-              label: 'Hallveig Traustadóttir (105)',
-              value: '2',
-            },
-            {
-              label: 'Björn Egilsson (107)',
-              value: '3',
-            },
-            {
-              label: 'Auður Egilsdóttir (170)',
-              value: '4',
-            },
+          name: 'Kennari',
+          children: [
+            buildSelectField({
+              id: 'teacher',
+              name: 'Ökukennari',
+              placeholder: 'Veldu ökukennara',
+              options: [
+                {
+                  label: 'Ingólfur Jónsson (101)',
+                  value: '1',
+                },
+                {
+                  label: 'Hallveig Traustadóttir (105)',
+                  value: '2',
+                },
+                {
+                  label: 'Björn Egilsson (107)',
+                  value: '3',
+                },
+                {
+                  label: 'Auður Egilsdóttir (170)',
+                  value: '4',
+                },
+              ],
+            }),
           ],
         }),
-        buildSelectField({
+        buildSubSection({
           id: 'school',
           name: 'Ökuskóli',
-          placeholder: 'Veldu ökuskóla',
-          options: [
-            {
-              label: 'Harvard',
-              value: '1',
-            },
-            {
-              label: 'Oxford',
-              value: '2',
-            },
+          children: [
+            buildSelectField({
+              id: 'school',
+              name: 'Ökuskóli',
+              placeholder: 'Veldu ökuskóla',
+              options: [
+                {
+                  label: 'Harvard',
+                  value: '1',
+                },
+                {
+                  label: 'Oxford',
+                  value: '2',
+                },
+              ],
+            }),
           ],
         }),
       ],
@@ -215,7 +233,7 @@ export const DrivingLessonsApplication: Form = buildForm({
           id: 'overview',
           name: 'Takk fyrir að sækja um',
           introduction:
-            'Með því að smella á Submit hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
+            'Með því að smella á "Staðfesta" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
         }),
       ],
     }),

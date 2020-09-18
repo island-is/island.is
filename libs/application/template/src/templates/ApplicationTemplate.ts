@@ -22,6 +22,10 @@ export interface ApplicationTemplate<
   readonly dataSchema: Schema
   readonly dataProviders: DataProvider[]
   readonly stateMachineConfig: MachineConfig<TContext, TStateSchema, TEvents>
+  mapNationalRegistryIdToRole(
+    id: string,
+    state: string,
+  ): Promise<ApplicationRole>
 }
 
 export class ApplicationTemplateHelper<
@@ -111,8 +115,4 @@ export class ApplicationTemplateHelper<
     })
     return returnValue
   }
-
-  // async mapNationalRegistryIdToRole(id: string): Promise<ApplicationRole> {
-  //   return Promise.resolve('applicant')
-  // }
 }

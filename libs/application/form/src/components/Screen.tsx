@@ -207,7 +207,7 @@ const Screen: FC<ScreenProps> = ({
                       disabled={!canProceed()}
                       htmlType="submit"
                     >
-                      Submit
+                      Staðfesta
                     </Button>
                   ) : (
                     <>

@@ -123,7 +123,6 @@ const FormExternalDataProvider: FC<{
                       })
                     }
                   }}
-                  defaultChecked={value}
                   checked={value}
                   name={`${id}`}
                   label={label}

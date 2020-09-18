@@ -28,7 +28,7 @@ export const ReviewApplication: Form = buildForm({
       children: [
         buildMultiField({
           id: 'overview',
-          name: 'Umsókn um ökunám innihélt eftirfarandi upplýsingar:',
+          name: 'Umsókn um ökunám:',
           children: [
             buildDividerField({ name: 'Umsækjandi' }),
             buildTextField({

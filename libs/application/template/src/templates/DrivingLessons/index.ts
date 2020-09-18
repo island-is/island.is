@@ -2,6 +2,7 @@ import { ApplicationTemplate } from '../ApplicationTemplate'
 import { ApplicationTypes } from '../../types/ApplicationTypes'
 import {
   ApplicationContext,
+  ApplicationRole,
   ApplicationStateSchema,
 } from '../../types/StateMachine'
 import * as z from 'zod'
@@ -105,5 +106,14 @@ export const DrivingLessons: ApplicationTemplate<
         },
       },
     },
+  },
+  mapNationalRegistryIdToRole(
+    id: string,
+    state: string,
+  ): Promise<ApplicationRole> {
+    if (state === 'inReview' && (id === '0811902249' || id === '2212902169')) {
+      return Promise.resolve('reviewer')
+    }
+    return Promise.resolve('applicant')
   },
 }
