@@ -102,7 +102,12 @@ export const FrontpageTabs: FC<FrontpageTabsProps> = ({
 
   useEffect(() => {
     if (!animationDataLoaded.current) {
-      const data = tabs.map((x) => JSON.parse(x.animationJson))
+      const data = tabs.reduce((acc, x) => {
+        if (x.animationJson) {
+          acc.push(JSON.parse(x.animationJson))
+        }
+        return acc
+      }, [])
       setAnimationData(data)
       animationDataLoaded.current = true
     }

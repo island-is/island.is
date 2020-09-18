@@ -18,7 +18,7 @@ interface LifeEventsSectionProps {
   lifeEvents: GetLifeEventsQuery['getLifeEvents']
 }
 
-const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
+export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   title = 'Lífsviðburðir',
   lifeEvents = [],
 }) => {

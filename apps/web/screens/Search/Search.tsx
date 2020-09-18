@@ -39,7 +39,9 @@ import {
   QueryGetNamespaceArgs,
   GetNamespaceQuery,
   Article,
+  LifeEventPage,
 } from '../../graphql/schema'
+import { Image } from '@island.is/web/graphql/schema'
 
 const PerPage = 10
 
@@ -74,7 +76,7 @@ const Search: Screen<CategoryProps> = ({
 
   const sidebarCategories = (searchResults.items as Article[]).reduce(
     (all, cur) => {
-      const key = cur.category.slug
+      const key = cur.category?.slug ?? 'uncategorized'
       const item = all.find((x) => x.key === key)
 
       if (!item) {
@@ -89,18 +91,50 @@ const Search: Screen<CategoryProps> = ({
 
       return all
     },
-    [],
+    [
+      {
+        key: 'uncategorized',
+        total: 0,
+        title: n('uncategorized'),
+      },
+    ],
   )
 
-  const items = (searchResults.items as Article[]).map((item) => ({
-    title: item.title,
-    description: item.intro,
-    href: makePath('article', '[slug]'),
-    as: makePath('article', item.slug),
-    categorySlug: item.category.slug,
-    category: item.category,
-    group: item.group,
-  }))
+  const getLabels = (item) => {
+    const labels = []
+
+    switch (item.__typename as LifeEventPage['__typename']) {
+      case 'LifeEventPage':
+        labels.push(n('lifeEvent'))
+        break
+      default:
+        break
+    }
+
+    if (item.containsApplicationForm) {
+      labels.push(n('applicationForm'))
+    }
+
+    if (item.group) {
+      labels.push(item.group.title)
+    }
+
+    return labels
+  }
+
+  const items = (searchResults.items as Array<Article & LifeEventPage>).map(
+    (item) => ({
+      title: item.title,
+      description: item.intro,
+      href: makePath(item.__typename, '[slug]'),
+      as: makePath(item.__typename, item.slug),
+      categorySlug: item.category?.slug,
+      category: item.category,
+      group: item.group,
+      ...(item.image && { image: item.image as Image }),
+      labels: getLabels(item),
+    }),
+  )
 
   const onSelectCategory = (key: string) => {
     Router.replace({
@@ -109,13 +143,18 @@ const Search: Screen<CategoryProps> = ({
     })
   }
 
-  const byCategory = (item) =>
-    !filters.category || filters.category === item.categorySlug
+  const byCategory = (item) => {
+    if (!item.category && filters.category === 'uncategorized') {
+      return true
+    }
+
+    return !filters.category || filters.category === item.categorySlug
+  }
 
   const filteredItems = items.filter(byCategory)
 
   const categoryTitle = items.find((x) => x.categorySlug === filters.category)
-    ?.category.title
+    ?.category?.title
 
   const categorySlug = items.find((x) => x.categorySlug === filters.category)
     ?.categorySlug
@@ -180,16 +219,16 @@ const Search: Screen<CategoryProps> = ({
             {filteredItems.map((item, index) => {
               const tags: Array<CardTagsProps> = []
 
-              if (item.group) {
+              item.labels.forEach((label) => {
                 tags.push({
-                  title: item.group.title,
+                  title: label,
                   tagProps: {
                     label: true,
                   },
                 })
-              }
+              })
 
-              return <Card key={index} icon="article" tags={tags} {...item} />
+              return <Card key={index} tags={tags} {...item} />
             })}
             <Box paddingTop={8}>
               <Pagination
@@ -283,7 +322,7 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
         query: {
           language: locale as ContentLanguage,
           queryString,
-          types: ['webArticle'],
+          types: ['webArticle', 'webLifeEventPage'],
           size: PerPage,
           page,
         },

@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react'
 import { Box } from '../Box/Box'
 import { Typography } from '../Typography/Typography'
-import { Tag, TagVariant } from '../Tag/Tag'
+import { Tag, TagVariant, TagProps } from '../Tag/Tag'
 import * as styles from './LinkCard.treat'
 
 export interface LinkCardProps {
@@ -9,11 +9,20 @@ export interface LinkCardProps {
   children: string
   tag?: string
   tagVariant?: TagVariant
+  tagProps?: Omit<TagProps, 'children'>
 }
 
 export const LinkCard = forwardRef<HTMLAnchorElement, LinkCardProps>(
   (
-    { onClick, children, tag, tagVariant = 'darkerBlue' }: LinkCardProps,
+    {
+      onClick,
+      children,
+      tag,
+      tagVariant = 'darkerBlue',
+      tagProps = {
+        label: true,
+      },
+    }: LinkCardProps,
     ref,
   ) => {
     return (
@@ -32,7 +41,9 @@ export const LinkCard = forwardRef<HTMLAnchorElement, LinkCardProps>(
         </Typography>
         {tag && (
           <Box className={styles.tag} paddingLeft={2}>
-            <Tag variant={tagVariant}>{tag}</Tag>
+            <Tag variant={tagVariant} {...tagProps}>
+              {tag}
+            </Tag>
           </Box>
         )}
       </Box>
