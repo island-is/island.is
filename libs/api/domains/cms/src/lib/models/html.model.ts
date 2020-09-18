@@ -8,7 +8,7 @@ import {
   Text,
 } from '@contentful/rich-text-types'
 import graphqlTypeJson from 'graphql-type-json'
-import { ContentType, RichTextContent } from 'contentful'
+import { RichTextContent } from 'contentful'
 
 import { Slice } from './slice.model'
 
@@ -33,33 +33,12 @@ const deepChange = (obj: Document | TopLevelBlock | RichText, id: string) => ({
   },
 })
 
-const sanitizeData = (html: Document | TopLevelBlock) => {
-  const dataId = html.data?.target?.sys?.id
-  const dataFields: { data: { target: ContentType } }[] =
-    html.data?.target?.fields?.details?.content
-  const contentId = html?.content?.some((c) => c.data?.target?.sys?.id)
-
-  if (contentId) {
-    const content: (TopLevelBlock | RichText)[] = html?.content
-
-    return {
-      ...html,
-      content: content.map((content) => {
-        const subId = content?.data?.target?.sys?.id
-
-        return deepChange(content, subId)
-      }),
-    }
-  }
-
-  if (
-    (dataFields ?? []).some((field) => dataId === field?.data?.target?.sys?.id)
-  ) {
-    return deepChange(html, dataId)
-  }
-
-  return html
-}
+const sanitizeData = (html: Document | TopLevelBlock) => ({
+  ...deepChange(html, html.data?.target?.sys?.id),
+  content: (html.content as (TopLevelBlock | RichText)[]).map((content) =>
+    deepChange(content, content?.data?.target?.sys?.id),
+  ),
+})
 
 @ObjectType()
 export class Html {
