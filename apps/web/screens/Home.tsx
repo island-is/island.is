@@ -31,8 +31,6 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { IntroductionSection } from '../components/IntroductionSection'
 import { LifeEventsCardsSection } from '../components/LifeEventsCardsSection'
 import { Section } from '../components/Section'
-import { Sleeve } from '@island.is/island-ui/core'
-import { ContentBlock } from '@island.is/island-ui/core'
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
@@ -94,18 +92,10 @@ const Home: Screen<HomeProps> = ({
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
       </Section>
       <Box marginTop={0}>
-        <Sleeve minHeight={400} sleeveShadow="purple">
-          <Box>
-            <ContentBlock width="large">
-              <Section paddingTop={[8, 8, 6]}>
-                <LifeEventsCardsSection
-                  title={n('lifeEventsTitle')}
-                  lifeEvents={lifeEvents}
-                />
-              </Section>
-            </ContentBlock>
-          </Box>
-        </Sleeve>
+        <LifeEventsCardsSection
+          title={n('lifeEventsTitle')}
+          lifeEvents={lifeEvents}
+        />
       </Box>
       <Box marginTop={0} background="purple100">
         <Section paddingTop={[8, 8, 6]}>
