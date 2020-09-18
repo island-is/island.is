@@ -4,7 +4,7 @@ import { Box } from '../Box'
 import { ContentBlock } from '../ContentBlock'
 
 export default {
-  title: 'Core/Select',
+  title: 'Components/Select',
   component: Select,
 }
 

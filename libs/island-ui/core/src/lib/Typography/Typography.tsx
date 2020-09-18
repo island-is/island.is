@@ -34,6 +34,7 @@ export interface TypographyProps {
   links?: boolean
   paddingTop?: ResponsiveSpace
   paddingBottom?: ResponsiveSpace
+  paddingY?: ResponsiveSpace
   fontWeight?: keyof typeof fontWeightStyles
 }
 
@@ -47,41 +48,47 @@ export const Typography = ({
   links,
   paddingTop,
   paddingBottom,
+  paddingY,
   fontWeight,
-}: TypographyProps) => (
-  <Cmp
-    id={id}
-    className={cn(
-      variant ? styles[variant] : null,
-      color ? colors[color] : null,
-      fontWeight ? fontWeightStyles[fontWeight] : null,
-      {
-        [truncateStyle]: truncate,
-        [linksStyle]: links,
-        [defaultFontWeights[variant]]: variant && !fontWeight,
-      },
-      paddingBottom !== undefined &&
-        resolveResponsiveProp(
-          paddingBottom,
-          spacing.paddingBottomXs,
-          spacing.paddingBottomSm,
-          spacing.paddingBottomMd,
-          spacing.paddingBottomLg,
-          spacing.paddingBottomXl,
-        ),
-      paddingTop !== undefined &&
-        resolveResponsiveProp(
-          paddingTop,
-          spacing.paddingTopXs,
-          spacing.paddingTopSm,
-          spacing.paddingTopMd,
-          spacing.paddingTopLg,
-          spacing.paddingTopXl,
-        ),
-    )}
-  >
-    {children}
-  </Cmp>
-)
+}: TypographyProps) => {
+  const resolvedPaddingTop = paddingTop ?? paddingY
+  const resolvedPaddingBottom = paddingBottom ?? paddingY
+
+  return (
+    <Cmp
+      id={id}
+      className={cn(
+        variant ? styles[variant] : null,
+        color ? colors[color] : null,
+        fontWeight ? fontWeightStyles[fontWeight] : null,
+        {
+          [truncateStyle]: truncate,
+          [linksStyle]: links,
+          [defaultFontWeights[variant!]]: variant && !fontWeight,
+        },
+        resolvedPaddingBottom !== undefined &&
+          resolveResponsiveProp(
+            resolvedPaddingBottom,
+            spacing.paddingBottomXs,
+            spacing.paddingBottomSm,
+            spacing.paddingBottomMd,
+            spacing.paddingBottomLg,
+            spacing.paddingBottomXl,
+          ),
+        resolvedPaddingTop !== undefined &&
+          resolveResponsiveProp(
+            resolvedPaddingTop,
+            spacing.paddingTopXs,
+            spacing.paddingTopSm,
+            spacing.paddingTopMd,
+            spacing.paddingTopLg,
+            spacing.paddingTopXl,
+          ),
+      )}
+    >
+      {children}
+    </Cmp>
+  )
+}
 
 export default Typography

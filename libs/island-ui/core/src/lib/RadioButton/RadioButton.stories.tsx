@@ -5,7 +5,7 @@ import { ContentBlock } from '../ContentBlock'
 import { Stack } from '../Stack/Stack'
 
 export default {
-  title: 'Core/RadioButton',
+  title: 'Components/RadioButton',
   component: RadioButton,
 }
 

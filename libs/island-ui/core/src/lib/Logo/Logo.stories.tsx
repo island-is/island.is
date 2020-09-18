@@ -3,7 +3,7 @@ import { Logo } from './Logo'
 import { color } from '@storybook/addon-knobs'
 
 export default {
-  title: 'Core/Logo',
+  title: 'Components/Logo',
   component: Logo,
 }
 
