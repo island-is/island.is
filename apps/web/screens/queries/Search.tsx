@@ -38,6 +38,10 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
           title
           slug
           intro
+          category {
+            slug
+            title
+          }
           image {
             id
           }
@@ -93,6 +97,10 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
           title
           slug
           intro
+          category {
+            slug
+            title
+          }
           image {
             id
             url
