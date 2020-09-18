@@ -1,6 +1,5 @@
-import React from 'react'
-import Head from 'next/head'
-import { Layout } from '../../components'
+import React from 'react';
+import { Layout } from '../../components';
 import {
   Box,
   Breadcrumbs, 
@@ -8,10 +7,11 @@ import {
   Typography, 
   Button,
   Link
-} from '@island.is/island-ui/core'
+} from '@island.is/island-ui/core';
 
+function DesignGuide({ pageContent }) {
+  const guideButton = pageContent.buttons.find(b => b.id ==='ext-design-guide');
 
-function DesignGuide() {
   return (
     <Layout left={
       <Box>
@@ -20,38 +20,28 @@ function DesignGuide() {
               <a href="/">
                 Ísland.is
               </a>
-              <span>API Design Guide</span>
+              <span>{pageContent.title}</span>
           </Breadcrumbs>
         </Box>
         <Box marginBottom={[3, 3, 3, 12]} marginTop={1}>
           <Stack space={5}>
             <Stack space={3}>
               <Typography variant="h1">
-                API Design Guide
+                {pageContent.title}
               </Typography>
             </Stack>
             <Stack space={3}>
               <Typography variant="intro">
-                This is the home of the API Design Guide published by Stafrænt Ísland
-                as a best practice guide for API development.
+                {pageContent.introText}
               </Typography>
               <Typography variant="p">
-                This guide should help synchronize the work between developers and
-                make working together easier. It covers the relevant design principles 
-                and patterns to use so the consumer experience is enjoyable and
-                consistent throughout APIs.
-                <br/><br/>
-                The guide is under constant review and updates will be made over time
-                as new design patterns and styles are adopted.
-                <br/>
-                All feedback is welcomed and encouraged to help make the guide better
-                so please feel free to create pull requests. 
+                {pageContent.body}
               </Typography>
             </Stack>
             <Stack space={3}>
-              <Link href="https://github.com/island-is/handbook/tree/feature/add-api-design-guide-structure/docs/api-design-guide">
+              <Link href={guideButton.linkUrl}>
                 <Button variant="normal" icon="external">
-                  View the API Design Guide on GitHub
+                  {guideButton.label}
                 </Button>
               </Link>
             </Stack>
@@ -59,7 +49,7 @@ function DesignGuide() {
         </Box>
       </Box>
     } />
-  )
+  );
 }
 
-export default DesignGuide
+export default DesignGuide;

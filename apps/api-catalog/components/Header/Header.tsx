@@ -1,5 +1,5 @@
 import React from 'react'
-import Link from 'next/link'
+import { Link } from '@island.is/island-ui/core'
 
 import { Header as IslandUIHeader } from '@island.is/island-ui/core'
 
@@ -8,7 +8,7 @@ function Header() {
     <IslandUIHeader
       logoRender={(logo) => (
         <Link href="/">
-          <a>{logo}</a>
+          {logo}
         </Link>
       )}
     />

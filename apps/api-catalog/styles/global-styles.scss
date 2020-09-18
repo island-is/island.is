@@ -44,61 +44,9 @@
     url('/fonts/ibm-plex/ibm-plex-sans-v7-latin-600.woff') format('woff');
 }
 
-body {
-  $color-service-status-unknown: lavender;
-  $color-service-status-ok: #00e4ca;
-  $color-service-status-warning: #fff066;
-  $color-service-status-error: #ff0250;
-  .service-list {
-    ul {
-      /*Bullet legends*/
-      li:first-child circle {
-        fill: $color-service-status-ok !important;
-      }
-      li:nth-child(2) circle {
-        fill: $color-service-status-warning !important;
-      }
-      li:nth-child(3) circle {
-        fill: $color-service-status-error !important;
-      }
-      li:nth-child(4) circle {
-        fill: $color-service-status-unknown !important;
-      }
-    }
-    .navigation {
-      button {
-        padding: 8px;
-      }
-      padding: 50px;
-      text-align: center;
-    }
-  }
-  .service-card {
-    .service-status {
-      background: $color-service-status-unknown;
-    }
-    .service-status.ok {
-      background: $color-service-status-ok;
-    }
-    .service-status.warning {
-      background: $color-service-status-warning;
-    }
-    .service-status.error {
-      background: $color-service-status-error;
-    }
-  }
-
-  .service-items {
-    padding-top: 50px;
-  }
-  .filter {
-    margin-top: 40px;
-    min-width: 80px;
-  }
-  .filter button {
-    margin-top: 8px;
-  }
-  .filter .category-checkbox {
-    margin-top: 5px;
-  }
+.home-card {
+  height: 10rem;
+  width: 12rem;
 }
+
+/* body {} */

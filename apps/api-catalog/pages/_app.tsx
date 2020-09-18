@@ -1,4 +1,3 @@
-import type { AppProps } from 'next/app'
 import Head from 'next/head'
 import React from 'react'
 
@@ -13,7 +12,7 @@ import { Header } from '../components'
 import '../styles/global-styles.scss'
 
  
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps }) {
   return (
     <Page>
       <Head>
@@ -63,7 +62,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         hideLanguageSwith
       />
     </Page>
-    
   )
   
 }
