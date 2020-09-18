@@ -4,8 +4,6 @@ import { CreateCaseDto, UpdateCaseDto } from './dto'
 
 @Injectable()
 export class CaseValidationPipe implements PipeTransform {
-  constructor(private partialValidation: boolean) {}
-
   transform(theCase: CreateCaseDto | UpdateCaseDto) {
     // Not necessary, but here for testing
     if (!theCase.policeCaseNumber) {

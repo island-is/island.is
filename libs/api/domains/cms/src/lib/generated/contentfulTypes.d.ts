@@ -58,8 +58,11 @@ export interface IArticleFields {
   /** Introduction */
   intro?: string | undefined
 
-  /** Introduction */
+  /** Contains application form */
   containsApplicationForm?: boolean | undefined
+
+  /** Importance */
+  importance?: number | undefined
 
   /** Slug */
   slug: string
@@ -167,7 +170,7 @@ export interface IArticleSubgroupFields {
   slug: string
 
   /** Importance */
-  importance?: number | undefined
+  importance?: number
 }
 
 /** Used inside groups to further categorize articles by subject */

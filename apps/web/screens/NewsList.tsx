@@ -60,14 +60,27 @@ const NewsList: Screen<NewsListProps> = ({
   const years = Object.keys(datesByYear)
   const months = datesByYear[selectedYear] ?? []
 
-  const yearOptions = years.map((year) => ({
-    label: year,
-    value: year,
-  }))
+  const allYearsString = 'Allar fréttir'
+  const allMonthsString = 'Allt árið'
+
+  const yearString = 'Ár'
+  const monthString = 'Mánuður'
+
+  const yearOptions = [
+    {
+      label: allYearsString,
+      value: allYearsString,
+    },
+  ].concat(
+    years.map((year) => ({
+      label: year,
+      value: year,
+    })),
+  )
 
   const monthOptions = [
     {
-      label: 'Allt árið',
+      label: allMonthsString,
       value: undefined,
     },
   ].concat(
@@ -78,8 +91,8 @@ const NewsList: Screen<NewsListProps> = ({
   )
 
   const makeHref = (y: string | number, m?: string | number) => {
-    const query: { [k: string]: number | string } = { y }
-    if (m != null) {
+    const query: { [k: string]: number | string } = y ? { y } : null
+    if (y && m != null) {
       query.m = m
     }
 
@@ -97,14 +110,20 @@ const NewsList: Screen<NewsListProps> = ({
       <Divider weight="alternate" />
       <NativeSelect
         name="year"
-        value={selectedYear.toString()}
+        value={selectedYear ? selectedYear.toString() : allYearsString}
         options={yearOptions}
-        onChange={(e) => Router.push(makeHref(e.target.value))}
+        onChange={(e) => {
+          const selectedValue =
+            e.target.value !== allYearsString ? e.target.value : null
+          Router.push(makeHref(selectedValue))
+        }}
       />
-      <Typography variant="p" as="p">
-        <Link href={makeHref(selectedYear)}>Allt árið</Link>
-        {selectedMonth === undefined && <Bullet align="right" />}
-      </Typography>
+      {selectedYear && (
+        <Typography variant="p" as="p">
+          <Link href={makeHref(selectedYear)}>{allMonthsString}</Link>
+          {selectedMonth === undefined && <Bullet align="right" />}
+        </Typography>
+      )}
       {months.map((date: Date) => (
         <Typography key={date.toISOString()} variant="p" as="p">
           <Link href={makeHref(date.getFullYear(), date.getMonth())}>
@@ -127,29 +146,35 @@ const NewsList: Screen<NewsListProps> = ({
             <Link href={makePath()}>Ísland.is</Link>
             <Link href={makePath('news')}>Fréttir og tilkynningar</Link>
           </Breadcrumbs>
-          <Hidden below="lg">
-            <Typography variant="h1" as="h1">
-              {selectedYear}
-            </Typography>
-          </Hidden>
+          {selectedYear && (
+            <Hidden below="lg">
+              <Typography variant="h1" as="h1">
+                {selectedYear}
+              </Typography>
+            </Hidden>
+          )}
 
-          <GridRow>
-            <GridColumn hideAbove="sm" span="12/12" paddingBottom={1}>
+          <GridColumn hideAbove="sm" paddingBottom={1}>
+            <Select
+              label={yearString}
+              placeholder={yearString}
+              value={yearOptions.find(
+                (option) =>
+                  option.value ===
+                  (selectedYear ? selectedYear.toString() : allYearsString),
+              )}
+              options={yearOptions}
+              onChange={({ value }: Option) => {
+                Router.push(makeHref(value === allYearsString ? null : value))
+              }}
+              name="year"
+            />
+          </GridColumn>
+          {selectedYear && (
+            <GridColumn hideAbove="sm">
               <Select
-                label="Ár"
-                placeholder="Ár"
-                value={yearOptions.find(
-                  (o) => o.value === selectedYear.toString(),
-                )}
-                options={yearOptions}
-                onChange={({ value }: Option) => Router.push(makeHref(value))}
-                name="year"
-              />
-            </GridColumn>
-            <GridColumn hideAbove="sm" span="12/12">
-              <Select
-                label="Mánuður"
-                placeholder="Allt árið"
+                label={monthString}
+                placeholder={monthString}
                 value={monthOptions.find((o) => o.value === selectedMonth)}
                 options={monthOptions}
                 onChange={({ value }: Option) =>
@@ -158,10 +183,11 @@ const NewsList: Screen<NewsListProps> = ({
                 name="month"
               />
             </GridColumn>
-          </GridRow>
+          )}
 
-          {newsList.map((newsItem) => (
+          {newsList.map((newsItem, index) => (
             <NewsCard
+              key={index}
               title={newsItem.title}
               introduction={newsItem.intro}
               slug={newsItem.slug}
@@ -193,7 +219,7 @@ const NewsList: Screen<NewsListProps> = ({
 }
 
 NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
-  let year = getIntParam(query.y)
+  const year = getIntParam(query.y)
   const month = year && getIntParam(query.m)
   const selectedPage = getIntParam(query.page) ?? 1
 
@@ -249,15 +275,10 @@ NewsList.getInitialProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404)
   }
 
-  // default to year of first result if no year is selected
-  if (!year && newsList.length > 0) {
-    year = new Date(newsList[0].date).getFullYear()
-  }
-
   return {
     newsList,
     page,
-    selectedYear: year,
+    selectedYear: year ?? null,
     selectedMonth: month,
     dateRange: createDateRange(
       oldest[0] && new Date(oldest[0].date),

@@ -131,6 +131,7 @@ export type ArticleGroup = {
 export type ArticleSubgroup = {
   __typename?: 'ArticleSubgroup'
   title: Scalars['String']
+  importance?: Maybe<Scalars['Int']>
   slug: Scalars['String']
 }
 
@@ -265,13 +266,8 @@ export type Statistics = {
 export type ProcessEntry = {
   __typename?: 'ProcessEntry'
   id: Scalars['ID']
-  title: Scalars['String']
-  subtitle?: Maybe<Scalars['String']>
-  details?: Maybe<Html>
   type: Scalars['String']
   processTitle: Scalars['String']
-  processDescription?: Maybe<Scalars['String']>
-  processInfo?: Maybe<Html>
   processLink: Scalars['String']
   buttonText: Scalars['String']
 }
@@ -307,6 +303,7 @@ export type Article = {
   shortTitle: Scalars['String']
   intro: Scalars['String']
   containsApplicationForm?: Maybe<Scalars['Boolean']>
+  importance?: Maybe<Scalars['Int']>
   body: Array<Slice>
   category?: Maybe<ArticleCategory>
   group?: Maybe<ArticleGroup>
@@ -479,6 +476,11 @@ export type Menu = {
   links: Array<Link>
 }
 
+export type AdgerdirTags = {
+  __typename?: 'AdgerdirTags'
+  items: Array<AdgerdirTag>
+}
+
 export type LifeEventPage = {
   __typename?: 'LifeEventPage'
   id: Scalars['ID']
@@ -491,21 +493,6 @@ export type LifeEventPage = {
   category?: Maybe<ArticleCategory>
 }
 
-export type Url = {
-  __typename?: 'Url'
-  id: Scalars['ID']
-  title?: Maybe<Scalars['String']>
-  page: UrlPage
-  urlsList: Array<Scalars['String']>
-}
-
-export type UrlPage = Article | ArticleCategory | News | LifeEventPage
-
-export type AdgerdirTags = {
-  __typename?: 'AdgerdirTags'
-  items: Array<AdgerdirTag>
-}
-
 export type PaginatedAdgerdirNews = {
   __typename?: 'PaginatedAdgerdirNews'
   page: Pagination
@@ -516,6 +503,16 @@ export type OrganizationTags = {
   __typename?: 'OrganizationTags'
   items: Array<OrganizationTag>
 }
+
+export type Url = {
+  __typename?: 'Url'
+  id: Scalars['ID']
+  title?: Maybe<Scalars['String']>
+  page: UrlPage
+  urlsList: Array<Scalars['String']>
+}
+
+export type UrlPage = Article | ArticleCategory | News | LifeEventPage
 
 export type SearchResult = {
   __typename?: 'SearchResult'
@@ -535,6 +532,7 @@ export type ContentItem = {
   categorySlug?: Maybe<Scalars['String']>
   categoryDescription?: Maybe<Scalars['String']>
   containsApplicationForm?: Maybe<Scalars['Boolean']>
+  importance?: Maybe<Scalars['Int']>
   group?: Maybe<Scalars['String']>
   subgroup?: Maybe<Scalars['String']>
   groupSlug?: Maybe<Scalars['String']>
@@ -642,6 +640,7 @@ export type Query = {
   getDocument?: Maybe<DocumentDetails>
   listDocuments?: Maybe<Array<Document>>
   getDocumentCategories?: Maybe<Array<DocumentCategory>>
+  getTranslations?: Maybe<Scalars['JSON']>
 }
 
 export type QueryHelloWorldArgs = {
@@ -774,6 +773,10 @@ export type QueryGetDocumentArgs = {
 
 export type QueryListDocumentsArgs = {
   input: ListDocumentsInput
+}
+
+export type QueryGetTranslationsArgs = {
+  input: GetTranslationsInput
 }
 
 export type HelloWorldInput = {
@@ -960,6 +963,11 @@ export type ListDocumentsInput = {
   pageSize: Scalars['Float']
 }
 
+export type GetTranslationsInput = {
+  namespaces?: Maybe<Array<Scalars['String']>>
+  lang: Scalars['String']
+}
+
 export type Mutation = {
   __typename?: 'Mutation'
   createApplication?: Maybe<Application>
@@ -1129,6 +1137,7 @@ export type GetArticleQuery = { __typename?: 'Query' } & {
       | 'shortTitle'
       | 'intro'
       | 'containsApplicationForm'
+      | 'importance'
     > & {
         body: Array<
           | ({
@@ -1242,7 +1251,7 @@ export type GetArticlesQuery = { __typename?: 'Query' } & {
   getArticles: Array<
     { __typename?: 'Article' } & Pick<
       Article,
-      'intro' | 'containsApplicationForm' | 'slug' | 'title'
+      'intro' | 'containsApplicationForm' | 'importance' | 'slug' | 'title'
     > & {
         category?: Maybe<
           { __typename?: 'ArticleCategory' } & Pick<ArticleCategory, 'title'>
@@ -1254,7 +1263,10 @@ export type GetArticlesQuery = { __typename?: 'Query' } & {
           >
         >
         subgroup?: Maybe<
-          { __typename?: 'ArticleSubgroup' } & Pick<ArticleSubgroup, 'title'>
+          { __typename?: 'ArticleSubgroup' } & Pick<
+            ArticleSubgroup,
+            'title' | 'importance'
+          >
         >
       }
   >
@@ -1811,18 +1823,8 @@ export type StatisticsFieldsFragment = { __typename: 'Statistics' } & Pick<
 
 export type ProcessEntryFieldsFragment = { __typename: 'ProcessEntry' } & Pick<
   ProcessEntry,
-  | 'id'
-  | 'title'
-  | 'subtitle'
-  | 'type'
-  | 'processTitle'
-  | 'processDescription'
-  | 'processLink'
-  | 'buttonText'
-> & {
-    details?: Maybe<{ __typename?: 'Html' } & HtmlFieldsFragment>
-    processInfo?: Maybe<{ __typename?: 'Html' } & HtmlFieldsFragment>
-  }
+  'id' | 'type' | 'processTitle' | 'processLink' | 'buttonText'
+>
 
 export type HtmlFieldsFragment = { __typename: 'Html' } & Pick<
   Html,

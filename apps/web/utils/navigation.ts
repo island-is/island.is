@@ -55,11 +55,6 @@ const sliceToNavLinks = (slice: Slice, htmlTags: BLOCKS[]): NavLink[] => {
       }))
   }
 
-  if (slice.__typename === 'ProcessEntry') {
-    // this slice type was changed and its title is obsolete
-    return [{ id: slice.id, text: slice.processTitle }]
-  }
-
   if (isNavigatable(slice)) {
     const { id, title: text } = slice
     return [{ id, text }]

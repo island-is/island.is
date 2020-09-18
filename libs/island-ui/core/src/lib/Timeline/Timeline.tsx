@@ -297,9 +297,11 @@ const EventBar = forwardRef(
               <span className={eventStyles.value}>
                 {formatNumber(event.value)}
               </span>
-              <span className={eventStyles.maxValue}>
-                /{formatNumber(event.maxValue || 0)}
-              </span>
+              {!!event.maxValue && (
+                <span className={eventStyles.maxValue}>
+                  /{formatNumber(event.maxValue)}
+                </span>
+              )}
             </span>
             <span className={eventStyles.valueLabel}>
               {event.valueLabel?.split(/[\r\n]+/).map((line, i) => (
@@ -348,17 +350,19 @@ const EventModal = forwardRef(
               paddingLeft={2}
               paddingRight={4}
             >
-              <Typography variant="h1" color="purple400" as="span">
+              <Typography variant="h2" color="purple400" as="span">
                 {formatNumber(event.value)}
               </Typography>
-              <Typography
-                variant="h1"
-                color="purple400"
-                as="span"
-                fontWeight="light"
-              >
-                /{formatNumber(event.maxValue || 0)}
-              </Typography>
+              {!!event.maxValue && (
+                <Typography
+                  variant="h2"
+                  color="purple400"
+                  as="span"
+                  fontWeight="light"
+                >
+                  /{formatNumber(event.maxValue)}
+                </Typography>
+              )}
               <Box marginLeft={1}>
                 <Typography
                   variant="eyebrow"

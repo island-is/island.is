@@ -29,16 +29,44 @@ components:
       properties:
         nationalId:
           type: string
+        name:
+          type: string
         roles:
           type: array
           items:
             type: string
       required:
         - nationalId
+        - name
         - roles
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+        created:
+          format: date-time
+          type: string
+        caseId:
+          type: string
+        type:
+          type: string
+          enum:
+            - HEADS_UP
+            - READY_FOR_COURT
+        message:
+          type: string
+      required:
+        - id
+        - created
+        - caseId
+        - type
+        - message
     Case:
       type: object
       properties:
+        id:
+          type: string
         created:
           format: date-time
           type: string
@@ -104,7 +132,12 @@ components:
           type: string
         comments:
           type: string
+        notifications:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
       required:
+        - id
         - created
         - modified
         - state
@@ -196,16 +229,6 @@ components:
           type: string
         comments:
           type: string
-    Notification:
-      type: object
-      properties:
-        caseId:
-          type: string
-        type:
-          type: string
-      required:
-        - caseId
-        - type
 paths:
   /liveness:
     get:
