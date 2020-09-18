@@ -7,7 +7,7 @@ import {
   DividerProps,
 } from '@island.is/island-ui/core'
 import Bullet from '../../components/Bullet/Bullet'
-import { Colors } from '@island.is/island-ui/theme'
+import { Colors, theme } from '@island.is/island-ui/theme'
 import * as styles from './Sidebar.treat'
 
 type ColorConfig = {
@@ -52,7 +52,7 @@ const Sidebar: FC<SidebarProps> = ({ title, type, children }) => {
             top: container.offsetTop + 'px',
             left: container.offsetLeft + 'px',
             width: container.offsetWidth + 'px',
-            bottom: 0,
+            bottom: theme.spacing[12] + 'px',
           }
         }
       >
