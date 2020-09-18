@@ -429,7 +429,7 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
           className={styles.gradient}
         >
           <Layout width={mainContentSpan}>
-            <Box paddingTop={12} paddingBottom={10}>
+            <Box paddingTop={12} paddingBottom={5}>
               <LogoList
                 {...slice}
                 images={slice.images.map((img) => img.url)}
