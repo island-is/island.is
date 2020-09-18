@@ -7,6 +7,7 @@ import {
   Post,
   Body,
   UseGuards,
+  Query,
 } from '@nestjs/common'
 import {
   ApiOkResponse,
@@ -14,7 +15,7 @@ import {
   ApiOAuth2,
   ApiCreatedResponse,
 } from '@nestjs/swagger'
-import { Grant, GrantDTO, GrantsService } from '@island.is/auth-api-lib'
+import { Grant, GrantDto, GrantsService } from '@island.is/auth-api'
 import { AuthGuard } from '@nestjs/passport'
 
 @ApiOAuth2(['openid:profile']) // add OAuth restriction to this controller
@@ -24,10 +25,11 @@ import { AuthGuard } from '@nestjs/passport'
 export class GrantsController {
   constructor(private readonly grantsService: GrantsService) {}
 
-  @Get(':subjectId')
+  @Get()
   @ApiOkResponse({ type: Grant })
-  async getAll(@Param('subjectId') subjectId: string): Promise<Grant[]> {
-    const grants = await this.grantsService.getAllAsync(subjectId)
+  async getAll(@Query('subjectId') subjectId: string, @Query('sessionId') sessionId: string,
+  @Query('clientId') clientId: string, @Query('type') type: string): Promise<Grant[]> {
+    const grants = await this.grantsService.getAllAsync(subjectId, sessionId, clientId, type)
 
     if (!grants) {
       throw new NotFoundException('Nothing found')
@@ -39,32 +41,20 @@ export class GrantsController {
   @Get(':key')
   @ApiOkResponse({ type: Grant })
   async getAsync(@Param('key') key: string): Promise<Grant> {
-    const grants = await this.grantsService.getAsync(key)
+    const grant = await this.grantsService.getAsync(key)
 
-    if (!grants) {
+    if (!grant) {
       throw new NotFoundException("This particular grant doesn't exist")
     }
 
-    return grants
+    return grant
   }
 
-  @Delete(':subjectId/:clientId')
+  @Delete()
   @ApiOkResponse()
-  async removeAllAsync(
-    @Param('subjectId') subjectId: string,
-    @Param('clientId') clientId: string,
-  ): Promise<number> {
-    return await this.grantsService.removeAllAsync(subjectId, clientId)
-  }
-
-  @Delete(':subjectId/:clientId/:type')
-  @ApiOkResponse()
-  async removeAllAsyncV2(
-    @Param('subjectId') subjectId: string,
-    @Param('clientId') clientId: string,
-    //   @Param('type') type: string,
-  ): Promise<number> {
-    return await this.grantsService.removeAllAsync(subjectId, clientId)
+  async removeAllAsync(@Query('subjectId') subjectId: string, @Query('sessionId') sessionId: string,
+  @Query('clientId') clientId: string, @Query('type') type: string): Promise<number> {
+    return await this.grantsService.removeAllAsync(subjectId, sessionId, clientId, type)
   }
 
   @Delete(':key')
@@ -75,7 +65,8 @@ export class GrantsController {
 
   @Post()
   @ApiCreatedResponse({ type: Grant })
-  async create(@Body() grant: GrantDTO): Promise<Grant> {
+  async create(@Body() grant: GrantDto): Promise<Grant> {
+    console.log(grant)
     return await this.grantsService.createAsync(grant)
   }
 }

@@ -3,7 +3,8 @@ import { Inject, Injectable } from '@nestjs/common'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { Sequelize } from 'sequelize-typescript'
 import { InjectModel } from '@nestjs/sequelize'
-import { GrantDTO } from '../entities/dto/grant-dto'
+import { GrantDto } from '../entities/dto/grant-dto'
+import { WhereOptions } from 'sequelize/types'
 
 @Injectable()
 export class GrantsService {
@@ -15,13 +16,29 @@ export class GrantsService {
     private logger: Logger,
   ) {}
 
-  async getAllAsync(subjectId: string): Promise<Grant[]> {
-    this.logger.debug(`Finding all grants with subjectId - "${subjectId}"`)
+  async getAllAsync(subjectId: string, sessionId: string, clientId: string, type: string): Promise<Grant[]> {
+    let whereOptions: WhereOptions = {}
+
+    if (subjectId) {
+      whereOptions = {...whereOptions, subjectId: subjectId}
+    }
+
+    if (sessionId) {
+      whereOptions = {...whereOptions, sessionId: sessionId}
+    }
+
+    if (clientId) {
+      whereOptions = {...whereOptions, clientId: clientId}
+    }
+
+    if (type) {
+      whereOptions = {...whereOptions, type: type}
+    }
+
+    this.logger.debug(`Finding all grants with filter `, whereOptions)
 
     return await this.grantModel.findAll({
-      where: {
-        subject_id: subjectId,
-      },
+      where: whereOptions,
     })
   }
 
@@ -35,34 +52,29 @@ export class GrantsService {
     })
   }
 
-  async removeAllAsync(subjectId: string, clientId: string): Promise<number> {
-    this.logger.debug(
-      `Removing grants with subjectId - "${subjectId}" and clientId - "${clientId}"`,
-    )
+  async removeAllAsync(subjectId: string, sessionId: string, clientId: string, type: string): Promise<number> {
+    let whereOptions: WhereOptions = {}
+
+    if (subjectId) {
+      whereOptions = {...whereOptions, subjectId: subjectId}
+    }
+
+    if (sessionId) {
+      whereOptions = {...whereOptions, sessionId: sessionId}
+    }
+
+    if (clientId) {
+      whereOptions = {...whereOptions, clientId: clientId}
+    }
+
+    if (type) {
+      whereOptions = {...whereOptions, type: type}
+    }
+
+    this.logger.debug(`Removing grants with filter `, whereOptions)
 
     return await this.grantModel.destroy({
-      where: {
-        subject_id: subjectId,
-        client_id: clientId,
-      },
-    })
-  }
-
-  async removeAllAsyncV2(
-    subjectId: string,
-    clientId: string,
-    type: string,
-  ): Promise<number> {
-    this.logger.debug(
-      `Removing grants with subjectId - "${subjectId}"    and clientId - "${clientId}"    and type - "${type}"`,
-    )
-
-    return await this.grantModel.destroy({
-      where: {
-        subject_id: subjectId,
-        client_id: clientId,
-        type: type,
-      },
+      where: whereOptions,
     })
   }
 
@@ -76,11 +88,12 @@ export class GrantsService {
     })
   }
 
-  async createAsync(grant: GrantDTO): Promise<Grant> {
+  async createAsync(grant: GrantDto): Promise<Grant> {
     this.logger.debug(`Creating a new grant`)
 
     return await this.grantModel.create(
       { ...grant }
     )
   }
+
 }

@@ -6,18 +6,18 @@
 module.exports = {
   up: (queryInterface) => {
 
-    const domainId = 'e3888706-8ad9-47af-8cb4-d69f04911aea'
+    const domain = '@island.is'
 
     const apiResources = [
       {
-        domain_id: domainId,
+        domain: domain,
         name: 'swagger_api',
         display_name: 'Demo API',
         enabled: true,
         show_in_discovery_document: true
       },
       {
-        domain_id: domainId,
+        domain: domain,
         name: 'postman_resource',
         display_name: 'postman_resource',
         enabled: true,
@@ -26,16 +26,16 @@ module.exports = {
     ]
 
     const userClaims = [
-      {domain_id: domainId, api_resource_name: apiResources[1].name, claim_name: 'natreg'},
+      {domain: domain, api_resource_name: apiResources[1].name, claim_name: 'natreg'},
     ];
 
     const scopes = [
-      {domain_id: domainId, api_resource_name: apiResources[0].name, scope_name: 'swagger_api.read'},
-      {domain_id: domainId, api_resource_name: apiResources[1].name, scope_name: 'postman_resource.scope'},
+      {domain: domain, api_resource_name: apiResources[0].name, scope_name: 'swagger_api.read'},
+      {domain: domain, api_resource_name: apiResources[1].name, scope_name: 'postman_resource.scope'},
     ]
 
     const secrets = [
-      {domain_id: domainId, api_resource_name: apiResources[1].name, value: '8I04CDGgyV5bddUZfz0ydCTBRuRTmn7frlxVhJy1krc=', type: 'SharedSecret'},
+      {domain: domain, api_resource_name: apiResources[1].name, value: '8I04CDGgyV5bddUZfz0ydCTBRuRTmn7frlxVhJy1krc=', type: 'SharedSecret'},
     ]
 
     return new Promise((resolve) => {
