@@ -8,8 +8,6 @@ export const Signin = () => {
   const history = useHistory()
   const [, dispatch] = useAuthState()
 
-  console.log({ userManager })
-
   useEffect(() => {
     userManager
       .signinCallback(window.location.href)

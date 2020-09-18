@@ -83,7 +83,6 @@ export class ApplicationTemplateHelper<
     const stateInformation = this.getApplicationStateInformation(
       this.application.state,
     )
-    console.log({ role, stateInformation })
     if (!stateInformation) return returnValue
 
     const roleInState = stateInformation.roles?.find(({ id }) => id === role)

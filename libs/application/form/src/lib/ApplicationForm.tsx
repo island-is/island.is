@@ -66,6 +66,7 @@ export const ApplicationForm: FC<{
   const ProgressTag: FC = () => {
     switch (mode) {
       case FormModes.REVIEW:
+      case FormModes.PENDING:
         return (
           <Tag variant="darkerBlue" label bordered>
             Status: In Review

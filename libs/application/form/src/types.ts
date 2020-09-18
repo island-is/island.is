@@ -45,6 +45,7 @@ export type FormScreen =
 export enum FormModes {
   APPLYING = 'applying',
   APPROVED = 'approved',
+  PENDING = 'pending',
   REVIEW = 'review',
   REJECTED = 'rejected',
 }

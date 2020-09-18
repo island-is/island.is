@@ -15,7 +15,7 @@ import {
 } from '@island.is/application/graphql'
 import deepmerge from 'deepmerge'
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import { FormScreen } from '../types'
+import { FormModes, FormScreen } from '../types'
 import FormMultiField from './FormMultiField'
 import FormField from './FormField'
 import { resolver } from '../validation/resolver'
@@ -166,7 +166,7 @@ const Screen: FC<ScreenProps> = ({
             )}
           </Box>
         </GridColumn>
-        {(mode === 'review' || mode === 'applying') && (
+        {(mode === FormModes.REVIEW || mode === FormModes.APPLYING) && (
           <Box marginTop={3} className={styles.buttonContainer}>
             <GridColumn
               span={['12/12', '12/12', '7/9', '7/9']}
