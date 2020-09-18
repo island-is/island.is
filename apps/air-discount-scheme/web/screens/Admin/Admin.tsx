@@ -95,7 +95,12 @@ const Admin: Screen = ({}) => {
           order={[0, 0, 2]}
         >
           <Hidden above="sm">
-            {!loading && <Summary flightLegs={flightLegs} />}
+            {!loading && (
+              <Summary
+                flightLegs={flightLegs}
+                airline={filters.airline?.value}
+              />
+            )}
           </Hidden>
         </GridColumn>
         <GridColumn span={['12/12', '12/12', '5/12', '4/12', '3/12']} order={1}>
@@ -148,7 +153,10 @@ const Admin: Screen = ({}) => {
                   offset={[null, null, null, null, '1/9']}
                 >
                   <Hidden below="md">
-                    <Summary flightLegs={flightLegs} />
+                    <Summary
+                      flightLegs={flightLegs}
+                      airline={filters.airline?.value}
+                    />
                   </Hidden>
                 </GridColumn>
                 <GridColumn
@@ -157,7 +165,7 @@ const Admin: Screen = ({}) => {
                 >
                   <Box marginBottom={[3, 3, 3, 12]}>
                     <Stack space={3}>
-                      <Box paddingBottom={2} paddingTop={5}>
+                      <Box paddingBottom={2} paddingTop={3}>
                         <Typography variant="h3" as="h3">
                           <span>Niðurstaða</span>
                         </Typography>
