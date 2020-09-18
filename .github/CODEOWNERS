@@ -6,9 +6,7 @@
 
 /apps/adgerdir*/                @island-is/kosmos-kaos
 /apps/web*/                     @island-is/kosmos-kaos
-/libs/api/cms/                  @island-is/kosmos-kaos
-/apps/services/search-indexer/  @island.is/kosmos-kaos
-content-search/                 @island.is/kosmos-kaos
+/libs/api/cms/                  @island-is/kosmos-kaos          
 
 air-discount-scheme/            @island-is/vice-versa
 gjafakort/                      @island-is/vice-versa
@@ -24,8 +22,8 @@ gjafakort/                      @island-is/vice-versa
 service-portal*/                @island-is/sendiradid
 /libs/api/documents/            @island-is/sendiradid
 
-/apps/services/search-indexer/  @island-is/stefna
-content-search/                 @island-is/stefna
+/apps/services/search-indexer/  @island-is/stefna @island.is/kosmos-kaos
+content-search/                 @island-is/stefna @island.is/kosmos-kaos
 
 /libs/island-ui/                @island-is/island-ui
 
