@@ -13,12 +13,12 @@ export const m = defineMessages({
   },
   studentName: {
     id: 'dl.application:student.name',
-    defaultMessage: 'Nafn nemandi',
+    defaultMessage: 'Nafn nemanda',
     description: 'Some description',
   },
   parentEmail: {
     id: 'dl.application:student.parentEmail',
-    defaultMessage: 'Netfang forráðamans',
+    defaultMessage: 'Netfang forráðamanns',
     description: 'Some description',
   },
   nationalId: {
@@ -43,7 +43,7 @@ export const m = defineMessages({
   },
   typeSection: {
     id: 'dl.application:type.section',
-    defaultMessage: 'Tegund ökunáms',
+    defaultMessage: 'Ökunám',
     description: 'Some description',
   },
   type: {
@@ -113,7 +113,7 @@ export const m = defineMessages({
   },
   overview: {
     id: 'dl.application:overview',
-    defaultMessage: 'Hvað á eiginlega að koma hér?',
+    defaultMessage: 'Takk fyrir að sækja um',
     description: 'Some description',
   },
   typeOption1Label: {
@@ -168,7 +168,7 @@ export const m = defineMessages({
   },
   typeOption6Label: {
     id: 'dl.application:type.option6.label',
-    defaultMessage: 'Bifhjól (T)',
+    defaultMessage: 'Dráttarvél (T)',
     description: 'Some description',
   },
   typeOption6Tooltip: {
@@ -204,6 +204,12 @@ export const m = defineMessages({
   healthInfoSubtitle: {
     id: 'dl.application:healthInfo.subtitle',
     defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    description: 'Some description',
+  },
+  overviewIntro: {
+    id: 'dl.application:overview.introduction',
+    defaultMessage:
+      'Með því að smella á "Staðfesta" hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
     description: 'Some description',
   },
 })
