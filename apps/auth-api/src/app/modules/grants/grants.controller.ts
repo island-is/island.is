@@ -15,7 +15,7 @@ import {
   ApiOAuth2,
   ApiCreatedResponse,
 } from '@nestjs/swagger'
-import { Grant, GrantDto, GrantsService } from '@island.is/auth-api'
+import { Grant, GrantDto, GrantsService } from '@island.is/auth-api-lib'
 import { AuthGuard } from '@nestjs/passport'
 
 @ApiOAuth2(['openid:profile']) // add OAuth restriction to this controller
