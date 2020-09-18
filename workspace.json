@@ -3142,6 +3142,34 @@
           }
         }
       }
+    },
+    "service-portal-assets": {
+      "root": "libs/service-portal/assets",
+      "sourceRoot": "libs/service-portal/assets/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "config": "libs/service-portal/assets/.eslintrc",
+            "tsConfig": [
+              "libs/service-portal/assets/tsconfig.lib.json",
+              "libs/service-portal/assets/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/service-portal/assets/**"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/service-portal/assets/jest.config.js",
+            "tsConfig": "libs/service-portal/assets/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
     }
   },
   "cli": {
