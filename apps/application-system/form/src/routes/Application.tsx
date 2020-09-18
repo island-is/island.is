@@ -8,11 +8,7 @@ import { useNamespaces } from '@island.is/localization'
 
 export const Application = () => {
   const { id } = useParams()
-  const { loadingMessages } = useNamespaces([
-    'dl.application',
-    'pl.application',
-    'application.system',
-  ])
+  useNamespaces(['dl.application', 'pl.application', 'application.system'])
 
   const { data, error, loading } = useQuery(GET_APPLICATION, {
     variables: {
@@ -29,7 +25,7 @@ export const Application = () => {
   if (error) {
     return <p>{error}</p>
   }
-  if (loading || loadingMessages) {
+  if (loading) {
     return null
   }
   return <ApplicationForm application={data.getApplication} />
