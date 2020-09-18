@@ -158,11 +158,20 @@ const Category: Screen<CategoryProps> = ({
   const sortArticles = (articles: Articles) => {
     // Sort articles by importance (which defaults to 0).
     // If both articles being compared have the same importance we sort by comparing their titles.
-    return articles.sort((a, b) =>
+    const sortedArticles = articles.sort((a, b) =>
       a.importance > b.importance
         ? -1
         : a.importance === b.importance && a.title.localeCompare(b.title),
     )
+
+    // If it's sorted alphabetically we need to be able to communicate that.
+    const isSortedAlphabetically =
+      JSON.stringify(sortedArticles) ===
+      JSON.stringify(
+        [...articles].sort((a, b) => a.title.localeCompare(b.title)),
+      )
+
+    return { sortedArticles, isSortedAlphabetically }
   }
 
   const sortSubgroups = (articlesBySubgroup: Record<string, Articles>) =>
@@ -233,27 +242,42 @@ const Category: Screen<CategoryProps> = ({
                       >
                         <Box paddingY={2}>
                           {sortedSubgroupKeys.map((subgroup, index) => {
+                            const {
+                              sortedArticles,
+                              isSortedAlphabetically,
+                            } = sortArticles(articlesBySubgroup[subgroup])
+
+                            // Articles with 1 subgroup only have the "other" group and don't get a heading.
                             const hasSubgroups = sortedSubgroupKeys.length > 1
+
+                            // Single articles that don't belong to a subgroup don't get a heading
+                            const isSingleArticle = sortedArticles.length === 1
+
+                            // Rename 'undefined' group to 'Other'
                             const subgroupName =
                               subgroup === 'undefined'
                                 ? n('other', 'Annað')
                                 : subgroup
 
+                            const heading = hasSubgroups
+                              ? subgroupName
+                              : isSortedAlphabetically && !isSingleArticle
+                              ? n('sortedAlphabetically', 'A til Ö')
+                              : '' // No subgroup and custom sorting = no heading
+
                             return (
                               <React.Fragment key={subgroup}>
-                                <Typography
-                                  variant="h5"
-                                  paddingBottom={3}
-                                  paddingTop={index === 0 ? 0 : 3}
-                                >
-                                  {hasSubgroups
-                                    ? subgroupName
-                                    : n('sortedAlphabetically', 'A til Ö')}
-                                </Typography>
+                                {heading && (
+                                  <Typography
+                                    variant="h5"
+                                    paddingBottom={3}
+                                    paddingTop={index === 0 ? 0 : 3}
+                                  >
+                                    {heading}
+                                  </Typography>
+                                )}
                                 <Stack space={2}>
-                                  {sortArticles(
-                                    articlesBySubgroup[subgroup],
-                                  ).map(
+                                  {sortedArticles.map(
                                     ({
                                       title,
                                       slug,
@@ -269,7 +293,7 @@ const Category: Screen<CategoryProps> = ({
                                           <LinkCard
                                             tag={
                                               containsApplicationForm &&
-                                              'Umsókn'
+                                              n('applicationProcess', 'Umsókn')
                                             }
                                           >
                                             {title}
