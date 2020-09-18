@@ -1682,12 +1682,6 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
             LifeEventPage,
             'id' | 'title' | 'slug' | 'intro'
           > & {
-              category?: Maybe<
-                { __typename?: 'ArticleCategory' } & Pick<
-                  ArticleCategory,
-                  'title'
-                >
-              >
               image: { __typename?: 'Image' } & Pick<
                 Image,
                 'id' | 'url' | 'title' | 'contentType' | 'width' | 'height'
