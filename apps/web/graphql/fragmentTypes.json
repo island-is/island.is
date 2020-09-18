@@ -84,6 +84,24 @@
       },
       {
         "kind": "UNION",
+        "name": "UrlPage",
+        "possibleTypes": [
+          {
+            "name": "Article"
+          },
+          {
+            "name": "ArticleCategory"
+          },
+          {
+            "name": "News"
+          },
+          {
+            "name": "LifeEventPage"
+          }
+        ]
+      },
+      {
+        "kind": "UNION",
         "name": "Items",
         "possibleTypes": [
           {

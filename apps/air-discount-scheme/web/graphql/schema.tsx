@@ -130,6 +130,7 @@ export type ArticleSubgroup = {
   __typename?: 'ArticleSubgroup'
   title: Scalars['String']
   slug: Scalars['String']
+  importance?: Maybe<Scalars['Int']>
 }
 
 export type OrganizationTag = {

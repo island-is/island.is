@@ -1,0 +1,33 @@
+# Fallback. If there is no owner, assign to core maintainers.
+*                               @island-is/core
+
+# Project folders are usually owned by the team assigned.
+# Add new projects here.
+
+/apps/adgerdir*/                @island-is/kosmos-kaos
+/apps/web*/                     @island-is/kosmos-kaos
+/libs/api/cms/                  @island-is/kosmos-kaos
+
+air-discount-scheme/            @island-is/vice-versa
+gjafakort/                      @island-is/vice-versa
+
+/apps/application-system/       @island-is/aranja
+/libs/api/application/          @island-is/aranja
+/libs/application/              @island-is/aranja
+
+/apps/judicial-system/          @island-is/kolibri
+/libs/judicial-system/          @island-is/kolibri
+/libs/nova-sms/                 @island-is/kolibri
+
+service-portal*/                @island-is/sendiradid
+/libs/api/documents/            @island-is/sendiradid
+
+/apps/services/search-indexer/  @island-is/stefna
+content-search/                 @island-is/stefna
+
+/libs/island-ui/                @island-is/island-ui
+
+/apps/reference-backend/        @island-is/devops
+/libs/infra*/                   @island-is/devops
+/libs/logging/                  @island-is/devops
+/scripts/                       @island-is/devops

@@ -2,6 +2,7 @@ import {
   Column,
   CreatedAt,
   DataType,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -9,10 +10,11 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { Notification } from './notification.model'
 import {
-  CaseState,
   CaseCustodyProvisions,
   CaseCustodyRestrictions,
+  CaseState,
 } from './case.types'
 
 @Table({
@@ -26,6 +28,7 @@ export class Case extends Model<Case> {
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
+  @ApiProperty()
   id: string
 
   @CreatedAt
@@ -166,4 +169,8 @@ export class Case extends Model<Case> {
   @ApiPropertyOptional()
   // Athugasemdir til dómara
   comments: string
+
+  @HasMany(() => Notification)
+  @ApiPropertyOptional({ type: Notification, isArray: true })
+  notifications: Notification[]
 }

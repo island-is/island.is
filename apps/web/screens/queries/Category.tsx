@@ -15,6 +15,7 @@ export const GET_ARTICLES_QUERY = gql`
     getArticles(input: $input) {
       intro
       containsApplicationForm
+      importance
       category {
         title
       }
@@ -27,6 +28,7 @@ export const GET_ARTICLES_QUERY = gql`
       }
       subgroup {
         title
+        importance
       }
     }
   }

@@ -5,7 +5,7 @@ import {
   CaseState,
   CaseCustodyRestrictions,
   CaseCustodyProvisions,
-} from '../case.types'
+} from '../models'
 
 export class UpdateCaseDto {
   @IsOptional()

@@ -179,17 +179,8 @@ export const slices = gql`
   fragment ProcessEntryFields on ProcessEntry {
     __typename
     id
-    title
-    subtitle
-    details {
-      ...HtmlFields
-    }
     type
     processTitle
-    processDescription
-    processInfo {
-      ...HtmlFields
-    }
     processLink
     buttonText
   }
