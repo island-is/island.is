@@ -1,3 +1,6 @@
+/**
+ * @deprecated Use `<Box hiddenAbove="_breakpoint_" HiddenBelow="_breakpoint_" />` instead.
+ */
 import React, { ReactNode } from 'react'
 
 import { Box } from '../Box/Box'

@@ -1,30 +1,22 @@
 import React, { FC } from 'react'
 import cn from 'classnames'
-import { theme } from '@island.is/island-ui/theme'
 import { Box } from '../../Box/Box'
+import { ResponsiveSpace, Breakpoint } from '../../Box/useBoxStyles'
 import {
   resolveResponsiveProp,
   ResponsiveProp,
 } from '../../../utils/responsiveProp'
-import {
-  resolveResponsiveRangeProps,
-  ResponsiveRangeProps,
-} from '../../../utils/responsiveRangeProps'
-
 import * as styles from './GridColumn.treat'
-import { ResponsiveSpace } from '../../Box/useBoxStyles'
 
-type Breakpoint = keyof typeof theme['breakpoints']
-
-export interface GridColumnProps extends ResponsiveRangeProps {
+export interface GridColumnProps {
   span?: ResponsiveProp<styles.GridColumns>
   offset?: ResponsiveProp<styles.GridColumns>
   order?: ResponsiveProp<styles.Order>
   paddingBottom?: ResponsiveSpace
   paddingTop?: ResponsiveSpace
   className?: string
-  hideAbove?: Exclude<Breakpoint, 'xl'>
-  hideBelow?: Exclude<Breakpoint, 'xs'>
+  hiddenAbove?: Exclude<Breakpoint, 'xl'>
+  hiddenBelow?: Exclude<Breakpoint, 'xs'>
 }
 
 export const GridColumn: FC<GridColumnProps> = ({
@@ -35,27 +27,15 @@ export const GridColumn: FC<GridColumnProps> = ({
   paddingBottom,
   paddingTop,
   className,
-  hideAbove: above,
-  hideBelow: below,
+  hiddenAbove,
+  hiddenBelow,
 }) => {
-  const [
-    hiddenOnXs,
-    hiddenOnSm,
-    hiddenOnMd,
-    hiddenOnLg,
-    hiddenOnXl,
-  ] = resolveResponsiveRangeProps({ above, below })
   return (
     <Box
       paddingTop={paddingTop}
       paddingBottom={paddingBottom}
-      display={[
-        hiddenOnXs ? 'none' : 'block',
-        hiddenOnSm ? 'none' : 'block',
-        hiddenOnMd ? 'none' : 'block',
-        hiddenOnLg ? 'none' : 'block',
-        hiddenOnXl ? 'none' : 'block',
-      ]}
+      hiddenAbove={hiddenAbove}
+      hiddenBelow={hiddenBelow}
       className={cn(
         className,
         styles.base,

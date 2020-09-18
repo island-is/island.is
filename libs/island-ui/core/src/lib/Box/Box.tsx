@@ -4,6 +4,7 @@ import {
   AllHTMLAttributes,
   ElementType,
 } from 'react'
+import { resolveResponsiveRangeProps } from '../../utils/responsiveRangeProps'
 import { useBoxStyles, UseBoxStylesProps } from './useBoxStyles'
 
 export interface BoxProps
@@ -68,6 +69,8 @@ export const Box = forwardRef<HTMLElement, BoxProps>(
       outline,
       opacity,
       className,
+      hiddenAbove,
+      hiddenBelow,
       ...restProps
     },
     ref,
@@ -126,6 +129,8 @@ export const Box = forwardRef<HTMLElement, BoxProps>(
       outline,
       opacity,
       className,
+      hiddenAbove,
+      hiddenBelow,
     })
 
     return createElement(component, {
