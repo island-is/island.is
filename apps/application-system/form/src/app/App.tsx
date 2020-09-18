@@ -42,17 +42,17 @@ export const App = () => {
               <Switch>
                 <Route path="/signin-oidc" component={Signin} />
                 <Route path="/silent/signin-oidc" component={SilentSignIn} />
-                <Route exact path="/">
+                <Route exact path="/:lang?">
                   <Redirect to="/application/" />
                 </Route>
                 <ProtectedRoute
                   strict
                   exact
-                  path="/applications/:type"
+                  path="/:lang?/applications/:type"
                   component={Applications}
                 />
                 <ProtectedRoute
-                  path="/application/:id"
+                  path="/:lang?/application/:id"
                   component={Application}
                 />
                 <ProtectedRoute path={`${path}/test`} component={Test} />

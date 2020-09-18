@@ -20,6 +20,7 @@ import {
   ADD_ATTACHMENT,
   DELETE_ATTACHMENT,
 } from '@island.is/application/graphql'
+import { useLocale } from '@island.is/localization'
 
 type UploadFileAnswer = {
   name: string
@@ -74,6 +75,7 @@ const FileUploadFormField: FC<Props> = ({
 }) => {
   const { id, introduction } = field
   const { clearErrors, setValue } = useFormContext()
+  const { formatMessage } = useLocale()
   const [uploadError, setUploadError] = useState<string | undefined>(undefined)
   const val = getValueViaPath(formValue, id, [])
 
@@ -216,7 +218,7 @@ const FileUploadFormField: FC<Props> = ({
 
   return (
     <Box>
-      <Typography variant="p">{introduction}</Typography>
+      <Typography variant="p">{formatMessage(introduction)}</Typography>
       <Controller
         name={`${id}`}
         defaultValue={initialUploadFiles}

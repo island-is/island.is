@@ -15,6 +15,7 @@ import {
 } from '../types/Form'
 import { ApplicationTypes } from '../types/ApplicationTypes'
 import { DataProviderTypes } from '../types/DataProvider'
+import { MessageDescriptor } from 'react-intl'
 
 export function buildForm(data: {
   id: ApplicationTypes
@@ -29,7 +30,7 @@ export function buildForm(data: {
 export function buildMultiField(data: {
   id?: string
   condition?: Condition
-  name: string
+  name: MessageDescriptor | string | string
   children: Field[]
 }): MultiField {
   return { ...data, type: FormItemTypes.MULTI_FIELD }
@@ -38,7 +39,7 @@ export function buildMultiField(data: {
 export function buildRepeater(data: {
   id?: string
   condition?: Condition
-  name: string
+  name: MessageDescriptor | string
   children: FormLeaf[]
   labelKey: string
 }): Repeater {
@@ -48,7 +49,7 @@ export function buildRepeater(data: {
 export function buildSection(data: {
   id?: string
   condition?: Condition
-  name: string
+  name: MessageDescriptor | string
   children: SectionChildren[]
 }): Section {
   return { ...data, type: FormItemTypes.SECTION }
@@ -57,14 +58,14 @@ export function buildSection(data: {
 export function buildSubSection(data: {
   id?: string
   condition?: Condition
-  name: string
+  name: MessageDescriptor | string
   children: FormLeaf[]
 }): SubSection {
   return { ...data, type: FormItemTypes.SUB_SECTION }
 }
 
 export function buildExternalDataProvider(data: {
-  name: string
+  name: MessageDescriptor | string
   id: string
   dataProviders: DataProviderItem[]
 }): ExternalDataProvider {
@@ -79,8 +80,8 @@ export function buildExternalDataProvider(data: {
 export function buildDataProviderItem(data: {
   id: string
   type: DataProviderTypes
-  title: string
-  subTitle?: string
+  title: MessageDescriptor | string
+  subTitle?: MessageDescriptor | string
   source?: string
 }): DataProviderItem {
   return data

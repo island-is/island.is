@@ -2,10 +2,12 @@ import React, { FC, useEffect } from 'react'
 import { useMutation } from '@apollo/client'
 import { useParams, useHistory } from 'react-router-dom'
 import { CREATE_APPLICATION } from '@island.is/application/graphql'
+import { useAuthState } from '../context/AuthProvider'
 
 export const Applications: FC<{}> = () => {
   const { type } = useParams()
   const history = useHistory()
+  const [{ userInfo }] = useAuthState()
 
   const [createApplication, { error }] = useMutation(CREATE_APPLICATION, {
     onCompleted({ createApplication }) {
@@ -17,7 +19,7 @@ export const Applications: FC<{}> = () => {
     createApplication({
       variables: {
         input: {
-          applicant: '123456-1234',
+          applicant: userInfo?.profile?.natreg,
           state: 'draft',
           attachments: {},
           typeId: type,

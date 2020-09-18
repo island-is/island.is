@@ -3,6 +3,7 @@ import { Condition } from './Condition'
 import { Field } from './Fields'
 import { ApplicationTypes } from './ApplicationTypes'
 import { DataProviderTypes } from './DataProvider'
+import { MessageDescriptor } from 'react-intl'
 
 export enum FormItemTypes {
   FORM = 'FORM',
@@ -34,7 +35,7 @@ export type SectionChildren = SubSection | FormLeaf
 export interface FormItem {
   readonly id?: string
   readonly type: string
-  readonly name: string
+  readonly name: MessageDescriptor | string
 }
 
 export interface Section extends FormItem {
@@ -77,7 +78,7 @@ export interface ExternalDataProvider extends FormItem {
 export interface DataProviderItem {
   readonly id: string
   readonly type: DataProviderTypes
-  readonly title: string
-  readonly subTitle?: string
+  readonly title: MessageDescriptor | string
+  readonly subTitle?: MessageDescriptor | string
   readonly source?: string
 }

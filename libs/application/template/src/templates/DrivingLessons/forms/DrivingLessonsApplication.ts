@@ -14,9 +14,10 @@ import {
 import { Form } from '../../../types/Form'
 import { DataProviderTypes } from '../../../types/DataProvider'
 import { ApplicationTypes } from '../../../types/ApplicationTypes'
+import { m } from './messages'
 
-const yesOption = { value: 'yes', label: 'Já' }
-const noOption = { value: 'no', label: 'Nei' }
+const yesOption = { value: 'yes', label: m.yesOptionLabel }
+const noOption = { value: 'no', label: m.noOptionLabel }
 
 export const DrivingLessonsApplication: Form = buildForm({
   id: ApplicationTypes.DRIVING_LESSONS,
@@ -25,35 +26,38 @@ export const DrivingLessonsApplication: Form = buildForm({
   children: [
     buildSection({
       id: 'student',
-      name: 'Nemandi',
+      name: m.studentSection,
       children: [
         buildMultiField({
           id: 'student',
-          name: 'Upplýsingar um nemanda',
+          name: m.studentTitle,
           children: [
             buildTextField({
               id: 'student.name',
-              name: 'Nafn nemandi',
-              disabled: true,
+              name: m.studentName,
+              disabled: false,
             }),
             buildTextField({
               id: 'student.parentEmail',
-              name: 'Netfang forráðamans',
-              disabled: true,
+              name: m.parentEmail,
+              disabled: false,
             }),
             buildTextField({
               id: 'student.nationalId',
-              name: 'Kennitala nemanda',
-              disabled: true,
+              name: m.nationalId,
+              disabled: false,
             }),
             buildTextField({
               id: 'student.phoneNumber',
-              name: 'Símanúmer',
+              name: m.phoneNumber,
             }),
-            buildTextField({ id: 'student.address', name: 'Heimilisfang' }),
+            buildTextField({
+              id: 'student.address',
+              name: m.address,
+            }),
             buildTextField({
               id: 'student.zipCode',
-              name: 'Póstnúmer og staður',
+              name: m.zipCode,
             }),
           ],
         }),
@@ -61,53 +65,47 @@ export const DrivingLessonsApplication: Form = buildForm({
     }),
     buildSection({
       id: 'type',
-      name: 'Tegund ökunáms',
+      name: m.typeSection,
       children: [
         buildRadioField({
           id: 'type',
-          name: 'Tegund ökunáms',
+          name: m.type,
           options: [
             {
               value: 'B',
-              label: 'Fólksbifreið (B)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+              label: m.typeOption1Label,
+              tooltip: m.typeOption1Tooltip,
             },
             {
               value: 'AM',
-              label: 'Léttbifhjól (AM)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+              label: m.typeOption2Label,
+              tooltip: m.typeOption2Tooltip,
             },
             {
               value: 'A',
-              label: 'Bifhjól (A)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+              label: m.typeOption3Label,
+              tooltip: m.typeOption3Tooltip,
             },
             {
               value: 'A1',
-              label: 'Bifhjól (A1)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+              label: m.typeOption4Label,
+              tooltip: m.typeOption4Tooltip,
             },
             {
               value: 'A2',
-              label: 'Bifhjól (A2)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+              label: m.typeOption5Label,
+              tooltip: m.typeOption5Tooltip,
             },
             {
               value: 'T',
-              label: 'Dráttarvél (T)',
-              tooltip:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+              label: m.typeOption6Label,
+              tooltip: m.typeOption6Tooltip,
             },
           ],
         }),
         buildSelectField({
           id: 'teacher',
-          name: 'Ökukennari',
+          name: m.teacher,
           placeholder: 'Veldu ökukennara',
           options: [
             {
@@ -130,7 +128,7 @@ export const DrivingLessonsApplication: Form = buildForm({
         }),
         buildSelectField({
           id: 'school',
-          name: 'Ökuskóli',
+          name: m.school,
           placeholder: 'Veldu ökuskóla',
           options: [
             {
@@ -147,25 +145,25 @@ export const DrivingLessonsApplication: Form = buildForm({
     }),
     buildSection({
       id: 'health',
-      name: 'Heilbrigðisupplýsingar',
+      name: m.healthSection,
       children: [
         buildMultiField({
           id: 'eyeSight',
-          name: 'HeilbrigðisUpplýsingar',
+          name: m.eyeSight,
           children: [
             buildRadioField({
               id: 'useGlasses',
-              name: 'Notar þú gleraugu eða snertilinsur?',
+              name: m.useGlasses,
               options: [yesOption, noOption],
             }),
             buildRadioField({
               id: 'damagedEyeSight',
-              name: 'Hefur þú skerta sjón á öðru auga eða báðum?',
+              name: m.damagedEyeSight,
               options: [yesOption, noOption],
             }),
             buildRadioField({
               id: 'limitedFieldOfView',
-              name: 'Hefur þú skert sjónsvið til annarrar hliðar eða beggja?',
+              name: m.limitedFieldOfView,
               options: [yesOption, noOption],
             }),
           ],
@@ -174,24 +172,22 @@ export const DrivingLessonsApplication: Form = buildForm({
     }),
     buildSection({
       id: 'fetchData',
-      name: 'Sækja gögn',
+      name: m.fetchDataSection,
       children: [
         buildExternalDataProvider({
-          name: 'Sækja gögn',
+          name: m.fetchData,
           id: 'fetchData',
           dataProviders: [
             buildDataProviderItem({
               id: 'passportImgAndSignature',
-              title: 'Passamynd og undirskrift',
-              subTitle:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+              title: m.passportImgAndSignatureTitle,
+              subTitle: m.passportImgAndSignatureSubtitle,
               type: DataProviderTypes.ExampleSucceeds,
             }),
             buildDataProviderItem({
               id: 'healthInfo',
-              title: 'Gögn úr Heilsuveru',
-              subTitle:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+              title: m.healthInfoTitle,
+              subTitle: m.healthInfoSubtitle,
               type: DataProviderTypes.ExampleSucceeds,
             }),
           ],
@@ -200,22 +196,22 @@ export const DrivingLessonsApplication: Form = buildForm({
     }),
     buildSection({
       id: 'payment',
-      name: 'Greiðsla',
+      name: m.paymentSection,
       children: [
         buildIntroductionField({
           id: 'payment',
-          name: 'Ganga frá greiðslu',
+          name: m.payment,
           introduction: 'TODO IMPLEMENT',
         }),
       ],
     }),
     buildSection({
       id: 'confirmation',
-      name: 'Staðfesta',
+      name: m.confirmationSection,
       children: [
         buildIntroductionField({
           id: 'overview',
-          name: 'Hvað á eiginlega að koma hér?',
+          name: m.overview,
           introduction: 'TODO IMPLEMENT',
         }),
       ],
