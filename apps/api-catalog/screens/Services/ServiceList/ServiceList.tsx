@@ -202,7 +202,7 @@ export default function ServiceList(props:ServiceListProps) {
             <div className={cn(styles.topSection)}>
               <h1>API Catalogue</h1>
               <div className={cn(styles.topSectionText)}>
-                <p>Í miðlægum vörulista hins opinbera er hægt að lálgast upplýsingar um gögn og vefþjónustur á einfaldan og fljótvirkan hátt.</p>
+                <p>Í miðlægum vörulista hins opinbera er hægt að nálgast upplýsingar um gögn og vefþjónustur á einfaldan og fljótvirkan hátt.</p>
               </div>
             </div>
       }
