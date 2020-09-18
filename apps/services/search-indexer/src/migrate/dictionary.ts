@@ -4,7 +4,14 @@ import { logger } from '@island.is/logging'
 import _ from 'lodash'
 import { AwsEsPackage } from './aws'
 
-const analyzers = ['stemmer', 'keywords', 'synonyms', 'stopwords']
+const analyzers = [
+  'stemmer',
+  'keywords',
+  'synonyms',
+  'stopwords',
+  'hyphenation_decompound_is',
+  'hyphenation_decompound_whitelist',
+]
 
 const getDictUrl = (type: string, lang: string): string => {
   const url = environment.dictRepo
