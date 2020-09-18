@@ -12,9 +12,6 @@ export class ArticleSubgroup {
 
   @Field()
   slug: string
-
-  @Field(() => Int, { nullable: true })
-  importance?: number
 }
 
 export const mapArticleSubgroup = ({
@@ -23,5 +20,4 @@ export const mapArticleSubgroup = ({
   title: fields.title,
   importance: fields.importance ?? 0,
   slug: fields.slug,
-  importance: fields?.importance ?? 0,
 })
