@@ -242,6 +242,9 @@
     },
     "nova-sms": {
       "tags": []
+    },
+    "service-portal-assets": {
+      "tags": []
     }
   }
 }

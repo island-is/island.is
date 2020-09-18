@@ -77,7 +77,7 @@ const createArticleNavigation = (
   for (const subArticle of article.subArticles) {
     nav.push({
       title: subArticle.title,
-      url: makePath('article', '[slug]/'),
+      url: makePath('article', '[slug]'),
       as: makePath('article', `${article.slug}/${subArticle.slug}`),
     })
 
@@ -164,7 +164,7 @@ const SubArticleNavigation: FC<{
           <Typography variant="p" as="p">
             <Link
               shallow
-              href={makePath('article', '[slug]/[subSlug]')}
+              href={makePath('article', '[slug]')}
               as={makePath('article', article.slug)}
             >
               {maybeBold(article.title, !selectedSubArticle)}
@@ -332,12 +332,14 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           >
             <Breadcrumbs>
               <Link href={makePath()}>Ísland.is</Link>
-              <Link
-                href={`${makePath('ArticleCategory')}/[slug]`}
-                as={makePath('ArticleCategory', article.category.slug)}
-              >
-                {article.category.title}
-              </Link>
+              {!!article.category && (
+                <Link
+                  href={`${makePath('ArticleCategory')}/[slug]`}
+                  as={makePath('ArticleCategory', article.category.slug)}
+                >
+                  {article.category.title}
+                </Link>
+              )}
               {article.group && (
                 <Link
                   as={makePath(

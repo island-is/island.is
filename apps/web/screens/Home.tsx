@@ -1,12 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react'
+import React, { useContext } from 'react'
 import { Box, Stack, Inline, Tag } from '@island.is/island-ui/core'
-import { Categories, SearchInput, LatestNewsSection } from '../components'
-import { useI18n } from '../i18n'
-import { Screen } from '../types'
-import { useNamespace } from '../hooks'
-import routeNames from '../i18n/routeNames'
-import FrontpageTabs from '../components/FrontpageTabs/FrontpageTabs'
+import { useI18n } from '@island.is/web/i18n'
+import { Screen } from '@island.is/web/types'
+import { useNamespace } from '@island.is/web/hooks'
+import routeNames from '@island.is/web/i18n/routeNames'
 import {
   QueryGetFrontpageSliderListArgs,
   ContentLanguage,
@@ -19,7 +17,7 @@ import {
   GetLifeEventsQuery,
   QueryGetNewsListArgs,
   QueryGetLifeEventsArgs,
-} from '../graphql/schema'
+} from '@island.is/web/graphql/schema'
 import {
   GET_NAMESPACE_QUERY,
   GET_CATEGORIES_QUERY,
@@ -27,12 +25,18 @@ import {
   GET_NEWS_LIST_QUERY,
   GET_LIFE_EVENTS_QUERY,
 } from './queries'
+import {
+  IntroductionSection,
+  LifeEventsCardsSection,
+  Section,
+  Categories,
+  SearchInput,
+  FrontpageTabs,
+  LatestNewsSection,
+} from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { IntroductionSection } from '../components/IntroductionSection'
-import { LifeEventsCardsSection } from '../components/LifeEventsCardsSection'
-import { Section } from '../components/Section'
-import { Sleeve } from '@island.is/island-ui/core'
-import { ContentBlock } from '@island.is/island-ui/core'
+import { Sleeve, ContentBlock } from '@island.is/island-ui/core'
+import { GlobalNamespaceContext } from '@island.is/web/context'
 
 interface HomeProps {
   categories: GetArticleCategoriesQuery['getArticleCategories']
@@ -50,7 +54,9 @@ const Home: Screen<HomeProps> = ({
   lifeEvents,
 }) => {
   const { activeLocale } = useI18n()
+  const { globalNamespace } = useContext(GlobalNamespaceContext)
   const n = useNamespace(namespace)
+  const gn = useNamespace(globalNamespace)
   const { makePath } = routeNames(activeLocale)
 
   if (typeof document === 'object') {
@@ -113,7 +119,7 @@ const Home: Screen<HomeProps> = ({
         </Section>
       </Box>
       <Section paddingTop={[8, 8, 6]}>
-        <LatestNewsSection label="Fréttir og tilkynningar" items={news} />
+        <LatestNewsSection label={gn('newsAndAnnouncements')} items={news} />
       </Section>
       <Section paddingY={[8, 8, 8, 10, 15]}>
         <IntroductionSection

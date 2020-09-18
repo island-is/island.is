@@ -104,8 +104,8 @@ type ArticleGroup {
 
 type ArticleSubgroup {
   title: String!
+  importance: Float
   slug: String!
-  importance: Int
 }
 
 type OrganizationTag {
@@ -208,13 +208,8 @@ type Statistics {
 
 type ProcessEntry {
   id: ID!
-  title: String!
-  subtitle: String
-  details: Html
   type: String!
   processTitle: String!
-  processDescription: String
-  processInfo: Html
   processLink: String!
   buttonText: String!
 }
@@ -246,6 +241,7 @@ type Article {
   shortTitle: String!
   intro: String!
   containsApplicationForm: Boolean
+  importance: Float
   body: [Slice!]!
   category: ArticleCategory
   group: ArticleGroup
@@ -399,6 +395,10 @@ type Menu {
   links: [Link!]!
 }
 
+type AdgerdirTags {
+  items: [AdgerdirTag!]!
+}
+
 type LifeEventPage {
   id: ID!
   title: String!
@@ -410,19 +410,6 @@ type LifeEventPage {
   category: ArticleCategory
 }
 
-type Url {
-  id: ID!
-  title: String
-  page: UrlPage!
-  urlsList: [String!]!
-}
-
-union UrlPage = Article | ArticleCategory | News | LifeEventPage
-
-type AdgerdirTags {
-  items: [AdgerdirTag!]!
-}
-
 type PaginatedAdgerdirNews {
   page: Pagination!
   news: [AdgerdirNews!]!
@@ -431,6 +418,15 @@ type PaginatedAdgerdirNews {
 type OrganizationTags {
   items: [OrganizationTag!]!
 }
+
+type Url {
+  id: ID!
+  title: String
+  page: UrlPage!
+  urlsList: [String!]!
+}
+
+union UrlPage = Article | ArticleCategory | News | LifeEventPage
 
 type Fund {
   credit: Float!

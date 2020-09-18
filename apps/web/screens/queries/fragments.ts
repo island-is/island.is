@@ -37,7 +37,9 @@ export const slices = gql`
       numerator
       denominator
       label
-      body
+      body {
+        ...HtmlFields
+      }
       tags
       link
     }
