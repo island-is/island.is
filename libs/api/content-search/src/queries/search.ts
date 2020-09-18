@@ -19,8 +19,8 @@ export const searchQuery = ({
   should.push({
     // eslint-disable-next-line @typescript-eslint/camelcase
     simple_query_string: {
-      query: `*${queryString}*`,
-      fields: ['title.stemmed^10', 'content.stemmed^2'],
+      query: queryString,
+      fields: ['title^20', 'title.stemmed^10', 'content.stemmed^2'],
       // eslint-disable-next-line @typescript-eslint/camelcase
       analyze_wildcard: true,
     },
@@ -44,7 +44,7 @@ export const searchQuery = ({
     })
   }
 
-  const query = {
+  return {
     query: {
       bool: {
         should,
@@ -56,6 +56,4 @@ export const searchQuery = ({
     size,
     from: (page - 1) * size, // if we have a page number add it as offset for pagination
   }
-
-  return query
 }
