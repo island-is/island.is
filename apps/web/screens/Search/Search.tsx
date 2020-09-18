@@ -155,6 +155,7 @@ const Search: Screen<CategoryProps> = ({
             >
               <div
                 style={{
+                  right: 40,
                   position: 'absolute',
                   left: '0',
                   top: '-4px',
@@ -336,14 +337,16 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
 const Filter = ({ selected, text, onClick, ...props }) => {
   return (
     <Box
+      display="inlineBlock"
       component="button"
       type="button"
       textAlign="left"
       outline="none"
+      width="full"
       onClick={onClick}
       {...props}
     >
-      <Typography variant="p" as="span">
+      <Typography variant="p" as="div" truncate>
         {selected ? <strong>{text}</strong> : text}
       </Typography>
     </Box>
