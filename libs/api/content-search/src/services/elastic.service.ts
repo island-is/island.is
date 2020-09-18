@@ -88,7 +88,9 @@ export class ElasticService {
             body: requestChunk,
           })
           if (response.body.errors) {
-            logger.error('Failed to import some documents in bulk import', { response })
+            logger.error('Failed to import some documents in bulk import', {
+              response,
+            })
           }
           requestChunk = requests.splice(-chunkSize, chunkSize)
         } while (requestChunk.length) // while we have requests to process
