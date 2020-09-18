@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
-import { User, UserRole } from './user.types'
 import { AuthUser } from '../auth/auth.types'
+import { User, UserRole } from './user.types'
 
 @Injectable()
 export class UserService {
@@ -12,7 +12,7 @@ export class UserService {
       {
         nationalId: '2510654469',
         name: 'Guðjón Guðjónsson',
-        roles: [UserRole.PROCECUTOR],
+        roles: [UserRole.PROSECUTOR],
       },
       {
         nationalId: '1112902539',
@@ -22,7 +22,7 @@ export class UserService {
       {
         nationalId: '2408783999',
         name: 'Baldur Kristjánsson',
-        roles: [UserRole.PROCECUTOR, UserRole.JUDGE],
+        roles: [UserRole.PROSECUTOR, UserRole.JUDGE],
       },
     ]
   }

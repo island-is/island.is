@@ -1,5 +1,5 @@
 export enum UserRole {
-  PROCECUTOR = 'PROCECUTOR',
+  PROSECUTOR = 'PROSECUTOR',
   JUDGE = 'JUDGE',
 }
 

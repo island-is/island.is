@@ -22,6 +22,11 @@ To skip authentication at innskraning.island.is run:
 
 where `<national id>` is the national id of a known user.
 
+Similarly, you can enable SMS notifications to an on-call judge by providing a password for the SMS service and
+a judge phone number:
+
+`NOVA_PASSWORD=<SMS password> JUDGE_PHONE_NUMBER=<judge phone number>`
+
 ## Graphql - not yet implemented
 
 Make sure you are serving the graphql client as well in order for you to make graphql calls to this service:
