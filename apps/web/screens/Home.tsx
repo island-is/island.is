@@ -1,16 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { useContext } from 'react'
 import { Box, Stack, Inline, Tag } from '@island.is/island-ui/core'
-import {
-  Categories,
-  SearchInput,
-  LatestNewsSection,
-} from '@island.is/web/components'
 import { useI18n } from '@island.is/web/i18n'
 import { Screen } from '@island.is/web/types'
 import { useNamespace } from '@island.is/web/hooks'
 import routeNames from '@island.is/web/i18n/routeNames'
-import FrontpageTabs from '@island.is/web/components/FrontpageTabs/FrontpageTabs'
 import {
   QueryGetFrontpageSliderListArgs,
   ContentLanguage,
@@ -31,12 +25,17 @@ import {
   GET_NEWS_LIST_QUERY,
   GET_LIFE_EVENTS_QUERY,
 } from './queries'
-import { IntroductionSection } from '@island.is/web/components/IntroductionSection'
-import { LifeEventsCardsSection } from '@island.is/web/components/LifeEventsCardsSection'
-import { Section } from '@island.is/web/components/Section'
+import {
+  IntroductionSection,
+  LifeEventsCardsSection,
+  Section,
+  Categories,
+  SearchInput,
+  FrontpageTabs,
+  LatestNewsSection,
+} from '@island.is/web/components'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { Sleeve } from '@island.is/island-ui/core'
-import { ContentBlock } from '@island.is/island-ui/core'
+import { Sleeve, ContentBlock } from '@island.is/island-ui/core'
 import { GlobalNamespaceContext } from '@island.is/web/context'
 
 interface HomeProps {

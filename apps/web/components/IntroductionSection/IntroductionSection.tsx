@@ -32,7 +32,7 @@ interface Props {
   linkUrl: string
 }
 
-const IntroductionSection: FC<Props> = ({
+export const IntroductionSection: FC<Props> = ({
   subtitle,
   title,
   introText,

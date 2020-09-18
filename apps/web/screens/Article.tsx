@@ -332,14 +332,14 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
           >
             <Breadcrumbs>
               <Link href={makePath()}>Ísland.is</Link>
-              {article.category ? (
+              {!!article.category && (
                 <Link
                   href={`${makePath('ArticleCategory')}/[slug]`}
                   as={makePath('ArticleCategory', article.category.slug)}
                 >
                   {article.category.title}
                 </Link>
-              ) : null}
+              )}
               {article.group && (
                 <Link
                   as={makePath(

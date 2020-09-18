@@ -198,7 +198,6 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
         id={id}
         initialInputValue={initialInputValue}
         onChange={(q) => {
-          console.log('q')
           return onSubmit(`${search.prefix} ${q}`.trim() || '')
         }}
         onInputValueChange={(q) => setSearchTerm(q)}
@@ -246,7 +245,6 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
             buttonProps={{
               onClick: () => {
                 closeMenu()
-                console.log('c')
                 onSubmit(inputValue)
               },
               onFocus,
@@ -266,7 +264,6 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
               onKeyDown: (e) => {
                 if (e.key === 'Enter' && highlightedIndex == null) {
                   closeMenu()
-                  console.log('o')
                   onSubmit(e.currentTarget.value)
                 }
               },
