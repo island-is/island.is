@@ -21,6 +21,5 @@ Attach Screenshots / Gifs to help reviewers understand the scope of the pull req
 - [ ] I have made corresponding changes to the documentation
 - [ ] My changes generate no new warnings
 - [ ] I have added tests that prove my fix is effective or that my feature works
-- [ ] New and existing unit tests pass locally with my changes
-- [ ] Linting and formatting pass locally with my changes
+- [ ] Formatting passes locally with my changes
 - [ ] I have rebased against master before asking for a review
