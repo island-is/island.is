@@ -27,6 +27,11 @@ export const input = style({
   '::placeholder': mixins.inputPlaceholder,
   ':focus': mixins.inputFocus,
   ':disabled': mixins.inputDisabled,
+  selectors: {
+    '&:-webkit-autofill, &:-webkit-autofill:focus, &:-webkit-autofill:hover': {
+      boxShadow: '0 0 0px 1000px white inset',
+    },
+  },
 })
 
 export const textarea = style({

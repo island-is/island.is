@@ -20,13 +20,15 @@ import {
 
 import * as styles from './ApplicationForm.treat'
 
-export const ApplicationForm: FC<{ application: Application }> = ({
-  application,
-}) => {
+export const ApplicationForm: FC<{
+  application: Application
+  nationalRegistryId: string
+}> = ({ application, nationalRegistryId }) => {
   const [state, dispatch] = useReducer(
     ApplicationReducer,
     {
       application,
+      nationalRegistryId,
       dataSchema: undefined,
       form: undefined,
       formLeaves: [],
@@ -57,6 +59,7 @@ export const ApplicationForm: FC<{ application: Application }> = ({
       className={cn(styles.root, {
         [styles.rootApplying]: mode === 'applying',
         [styles.rootApproved]: mode === 'approved',
+        [styles.rootPending]: mode === 'pending',
         [styles.rootReviewing]: mode === 'review',
         [styles.rootRejected]: mode === 'rejected',
       })}

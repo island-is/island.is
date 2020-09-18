@@ -16,7 +16,12 @@ export enum FormItemTypes {
 //eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Schema = ZodObject<any>
 
-export type FormMode = 'review' | 'applying' | 'approved' | 'rejected'
+export type FormMode =
+  | 'review'
+  | 'applying'
+  | 'approved'
+  | 'rejected'
+  | 'pending'
 
 export interface Form {
   id: ApplicationTypes

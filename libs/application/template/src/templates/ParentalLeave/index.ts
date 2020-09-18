@@ -109,7 +109,7 @@ export const ParentalLeave: ApplicationTemplate<
       },
     },
   },
-  mapNationalRegistryIdToRole(): Promise<ApplicationRole> {
-    return Promise.resolve('applicant')
+  mapNationalRegistryIdToRole(): ApplicationRole {
+    return 'applicant'
   },
 }

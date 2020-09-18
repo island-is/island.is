@@ -3,17 +3,16 @@ import { buildIntroductionField } from '../../../lib/fieldBuilders'
 import { Form } from '../../../types/Form'
 import { ApplicationTypes } from '../../../types/ApplicationTypes'
 
-export const Approved: Form = buildForm({
+export const PendingReview: Form = buildForm({
   id: ApplicationTypes.DRIVING_LESSONS,
   ownerId: 'TODO?',
-  name: 'Samþykkt',
-  mode: 'approved',
+  name: 'Í vinnslu',
+  mode: 'pending',
   children: [
     buildIntroductionField({
-      id: 'approved',
-      name: 'Til hamingju!',
-      introduction:
-        'Umsókn þín um ökunám hefur verið samþykkt! Það er mikið gleðiefni. Ökukennarinn sem þú valdir mun hafa samband innan tveggja vikna til að ákveða framhaldið. ',
+      id: 'inReview',
+      name: 'Í vinnslu',
+      introduction: 'Umsókn þín um ökunám er nú í vinnslu. ',
     }),
   ],
 })

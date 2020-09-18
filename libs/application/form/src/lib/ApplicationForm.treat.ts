@@ -31,6 +31,14 @@ export const rootApproved = style({
     },
   },
 })
+export const rootPending = style({
+  background: theme.color.white,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      background: theme.color.roseTinted100,
+    },
+  },
+})
 export const rootRejected = style({
   background: theme.color.white,
   '@media': {

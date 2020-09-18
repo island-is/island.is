@@ -166,7 +166,7 @@ const Screen: FC<ScreenProps> = ({
             )}
           </Box>
         </GridColumn>
-        {mode !== 'approved' && (
+        {(mode === 'review' || mode === 'applying') && (
           <Box marginTop={3} className={styles.buttonContainer}>
             <GridColumn
               span={['12/12', '12/12', '7/9', '7/9']}

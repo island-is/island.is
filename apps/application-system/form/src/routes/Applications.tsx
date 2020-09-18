@@ -7,7 +7,7 @@ import useAuth from '../hooks/useAuth'
 export const Applications: FC<{}> = () => {
   const { type } = useParams()
   const history = useHistory()
-  const { userInfo, userInfoState } = useAuth()
+  const { userInfo } = useAuth()
 
   const [createApplication, { error }] = useMutation(CREATE_APPLICATION, {
     onCompleted({ createApplication }) {

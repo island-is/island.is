@@ -15,6 +15,7 @@ export interface ApplicationUIState {
   dataSchema: Schema
   form: Form
   formLeaves: FormLeaf[]
+  nationalRegistryId: string
   progress: number
   screens: FormScreen[]
   sections: Section[]

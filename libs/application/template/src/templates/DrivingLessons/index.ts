@@ -11,6 +11,7 @@ import { nationalIdRegex } from '../examples/constants'
 import { ReviewApplication } from './forms/ReviewApplication'
 import { Approved } from './forms/Approved'
 import { Rejected } from './forms/Rejected'
+import { PendingReview } from './forms/PendingReview'
 
 type Events =
   | { type: 'APPROVE' }
@@ -77,12 +78,17 @@ export const DrivingLessons: ApplicationTemplate<
           name: 'In Review',
           roles: [
             {
-              id: 'applicant', // TODO this should be reviewer
+              id: 'reviewer',
               form: ReviewApplication,
               actions: [
                 { event: 'APPROVE', name: 'Samþykkja', type: 'primary' },
                 { event: 'REJECT', name: 'Hafna', type: 'reject' },
               ],
+              read: 'all',
+            },
+            {
+              id: 'applicant',
+              form: PendingReview,
               read: 'all',
             },
           ],
@@ -107,13 +113,10 @@ export const DrivingLessons: ApplicationTemplate<
       },
     },
   },
-  mapNationalRegistryIdToRole(
-    id: string,
-    state: string,
-  ): Promise<ApplicationRole> {
-    if (state === 'inReview' && (id === '0811902249' || id === '2212902169')) {
-      return Promise.resolve('reviewer')
+  mapNationalRegistryIdToRole(id: string, state: string): ApplicationRole {
+    if (state === 'inReview' && id === '2212902169') {
+      return 'reviewer'
     }
-    return Promise.resolve('applicant')
+    return 'applicant'
   },
 }
