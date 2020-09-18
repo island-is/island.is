@@ -59,8 +59,8 @@ export function ServiceLayout({ top, left, right }: PropTypes) {
 
 
 export interface ServiceListProps {
-  nextCursor: number
-  prevCursor: number
+  nextCursor: string
+  prevCursor: string
   parameters: GetServicesParameters
 }
 
@@ -69,7 +69,7 @@ export default function ServiceList(props:ServiceListProps) {
   
   if (!props.parameters === null) {
     props.parameters = { 
-      cursor:0, 
+      cursor:null, 
       limit:null, 
       owner:null, 
       name:null, 
@@ -157,8 +157,8 @@ export default function ServiceList(props:ServiceListProps) {
 
   const [isLoading,    setLoading]   = useState<boolean>(true);
   const [services,    setServices]   = useState<Array<ServiceCardInformation>>(null);
-  const [nextCursor,  setNextCursor] = useState<number>(props.nextCursor);
-  const [nextFetch,   setNextFetch] = useState<number>(null);
+  const [nextCursor,  setNextCursor] = useState<string>(props.nextCursor);
+  const [nextFetch,   setNextFetch] = useState<string>(null);
   const [firstGet,    setFirstGet] = useState<boolean>(true);
   const [StatusQueryString, setStatusQueryString]= useState<string>(createStatusQueryString());
 
@@ -187,6 +187,7 @@ export default function ServiceList(props:ServiceListProps) {
       const loadData = async () => {
         setLoading(true);
         setFirstGet(true);
+        props.parameters.cursor=null;
         const response = await getServices(props.parameters);
         setNextCursor(response.nextCursor);
         setServices(response.result);

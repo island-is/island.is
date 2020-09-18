@@ -5,7 +5,7 @@ import cn from 'classnames'
 import { ServiceStatus, SERVICE_STATUS } from '..';
 
 export interface ServiceCardInformation {
-    id:number
+    id:string
     name: string;
     owner:string;
     url:string;

@@ -1,20 +1,29 @@
 import {SERVICE_STATUS } from  '..'
 import { ServiceCardInformation } from '../ServiceCard/ServiceCard';
 
-<<<<<<< HEAD
-const MAX_LIMIT = 4;
-=======
 const MAX_LIMIT = 3;
->>>>>>> 095b050a... Add more link instead of prev and next links
 
 export interface ServicesResult {
     result:Array<ServiceCardInformation>,
-    prevCursor:number;
-    nextCursor:number;
+    prevCursor:string;
+    nextCursor:string;
+}
+
+export interface ServiceDetailX {
+    id:string;
+    name: string;
+    description: string;
+    owner:string;
+    url:string;
+    pricing:Array<string>;
+    data:Array<string>
+    type:Array<string>;
+    access:Array<string>;
+    status:SERVICE_STATUS;
 }
 
 export interface ServiceResult {
-    result:ServiceCardInformation,
+    result:ServiceDetailX,
 }
 
 export enum SERVICE_SEARCH_METHOD {
@@ -23,7 +32,7 @@ export enum SERVICE_SEARCH_METHOD {
 }
 
 export interface GetServicesParameters {
-    cursor:number
+    cursor:string
     limit:number
     owner:string
     name:string
@@ -71,44 +80,44 @@ export enum ACCESS_CATEGORY {
 }
 
 const OrgServices:Array<ServiceCardInformation> =[
-    { id:0, owner:"Þjóðskrá", name:"Fasteignaskrá", url:"http://fasteignaskra.thodskra.is:4700", status:SERVICE_STATUS.OK,
+    { id:'0', owner:"Þjóðskrá", name:"Fasteignaskrá", url:"http://fasteignaskra.thodskra.is:4700", status:SERVICE_STATUS.OK,      
         pricing:[PRICING_CATEGORY.FREE],
         data:   [DATA_CATEGORY.PUBLIC],
+        type:   [TYPE_CATEGORY.REACT], 
+        access: [ACCESS_CATEGORY.X_ROAD] },
+    { id:'1', owner:"Þjóðskrá", name:"Einstaklingsskrá", url:"http://einstaklingskra.thodskra.is:4700", status:SERVICE_STATUS.WARNING,
+        pricing:[PRICING_CATEGORY.FREE, PRICING_CATEGORY.CUSTOM],                           
+        data:   [DATA_CATEGORY.PERSONAL],                         
         type:   [TYPE_CATEGORY.REACT],
         access: [ACCESS_CATEGORY.X_ROAD] },
-    { id:1, owner:"Þjóðskrá", name:"Einstaklingsskrá", url:"http://einstaklingskra.thodskra.is:4700", status:SERVICE_STATUS.WARNING,
-        pricing:[PRICING_CATEGORY.FREE, PRICING_CATEGORY.CUSTOM],
-        data:   [DATA_CATEGORY.PERSONAL],
-        type:   [TYPE_CATEGORY.REACT],
-        access: [ACCESS_CATEGORY.X_ROAD] },
-    { id:2, owner:"Þjóðskrá", name:"Staðfangaskrá", url:"http://stadfangaskra.thodskra.is:4700", status:SERVICE_STATUS.ERROR,
-        pricing:[PRICING_CATEGORY.USAGE],
-        data:   [DATA_CATEGORY.PUBLIC],
+    { id:'2', owner:"Þjóðskrá", name:"Staðfangaskrá", url:"http://stadfangaskra.thodskra.is:4700", status:SERVICE_STATUS.ERROR, 
+        pricing:[PRICING_CATEGORY.USAGE],                                                   
+        data:   [DATA_CATEGORY.PUBLIC],                           
         type:[TYPE_CATEGORY.REACT],
         access:[ACCESS_CATEGORY.X_ROAD]},
-    { id:3, owner:"Skatturinn", name:"Virðisaukaskattur", url:"http://vsk.skattur.is/:2100",              status:SERVICE_STATUS.WARNING,
-        pricing:[PRICING_CATEGORY.DAILY,PRICING_CATEGORY.MONTHLY, PRICING_CATEGORY.YEARLY],
-        data:   [DATA_CATEGORY.PERSONAL, DATA_CATEGORY.PUBLIC],
-        type:   [TYPE_CATEGORY.SOAP],
+    { id:'3', owner:"Skatturinn", name:"Virðisaukaskattur", url:"http://vsk.skattur.is/:2100",              status:SERVICE_STATUS.WARNING, 
+        pricing:[PRICING_CATEGORY.DAILY,PRICING_CATEGORY.MONTHLY, PRICING_CATEGORY.YEARLY], 
+        data:   [DATA_CATEGORY.PERSONAL, DATA_CATEGORY.PUBLIC],   
+        type:   [TYPE_CATEGORY.SOAP], 
         access: [ACCESS_CATEGORY.API_GW]},
-    { id:4, owner:"Skatturinn", name:"Staðgreiðsla", url:"http://stadgreidsla.skattur.is:2100", status:SERVICE_STATUS.OK ,
-        pricing:[PRICING_CATEGORY.FREE,PRICING_CATEGORY.MONTHLY, PRICING_CATEGORY.YEARLY],
+    { id:'4', owner:"Skatturinn", name:"Staðgreiðsla", url:"http://stadgreidsla.skattur.is:2100", status:SERVICE_STATUS.OK ,      
+        pricing:[PRICING_CATEGORY.FREE,PRICING_CATEGORY.MONTHLY, PRICING_CATEGORY.YEARLY],  
         data:   [  DATA_CATEGORY.PERSONAL, DATA_CATEGORY.FINANCIAL],
         type:   [TYPE_CATEGORY.SOAP], access:[ACCESS_CATEGORY.API_GW]},
-    { id:5, owner:"Vinnumálastofnun",name:"Fæðingarorlofssjóður",url:"http://faedingarorlofssjodur.vms.is:74200",status:SERVICE_STATUS.ERROR,
-        pricing:[PRICING_CATEGORY.YEARLY],
-        data:   [DATA_CATEGORY.PERSONAL, DATA_CATEGORY.PUBLIC],
+    { id:'5', owner:"Vinnumálastofnun",name:"Fæðingarorlofssjóður",url:"http://faedingarorlofssjodur.vms.is:74200",status:SERVICE_STATUS.ERROR, 
+        pricing:[PRICING_CATEGORY.YEARLY],                                                  
+        data:   [DATA_CATEGORY.PERSONAL, DATA_CATEGORY.PUBLIC],   
         type:   [TYPE_CATEGORY.REACT],
         access: [ACCESS_CATEGORY.API_GW]},
-    { id:6, owner:"Samgöngustofa", name:"Ökutækjaskrá", url:"http://okutaeki.samgongustofa.is:74200", status:SERVICE_STATUS.UNKNOWN,
-        pricing:[PRICING_CATEGORY.FREE,PRICING_CATEGORY.MONTHLY, PRICING_CATEGORY.YEARLY],
-        data:   [DATA_CATEGORY.PERSONAL, DATA_CATEGORY.PUBLIC],
-        type:   [TYPE_CATEGORY.SOAP],
+    { id:'6', owner:"Samgöngustofa", name:"Ökutækjaskrá", url:"http://okutaeki.samgongustofa.is:74200", status:SERVICE_STATUS.UNKNOWN,     
+        pricing:[PRICING_CATEGORY.FREE,PRICING_CATEGORY.MONTHLY, PRICING_CATEGORY.YEARLY],  
+        data:   [DATA_CATEGORY.PERSONAL, DATA_CATEGORY.PUBLIC],   
+        type:   [TYPE_CATEGORY.SOAP], 
         access: [ACCESS_CATEGORY.API_GW]},
-    { id:7, owner:"Dúddi í bæ", name:"Monthly free service", url:"http://asdf.asdf:74200", status:SERVICE_STATUS.UNKNOWN,
-        pricing:[PRICING_CATEGORY.FREE,PRICING_CATEGORY.MONTHLY],
-        data:   [DATA_CATEGORY.PUBLIC, DATA_CATEGORY.OFFICIAL, DATA_CATEGORY.PERSONAL,DATA_CATEGORY.HEALTH, DATA_CATEGORY.PUBLIC],
-        type:   [TYPE_CATEGORY.SOAP],
+    { id:'7', owner:"Dúddi í bæ", name:"Monthly free service", url:"http://asdf.asdf:74200", status:SERVICE_STATUS.UNKNOWN, 
+        pricing:[PRICING_CATEGORY.FREE,PRICING_CATEGORY.MONTHLY],                           
+        data:   [DATA_CATEGORY.PUBLIC, DATA_CATEGORY.OFFICIAL, DATA_CATEGORY.PERSONAL,DATA_CATEGORY.HEALTH, DATA_CATEGORY.PUBLIC], 
+        type:   [TYPE_CATEGORY.SOAP], 
         access: [ACCESS_CATEGORY.API_GW]}
 ];
 
@@ -141,8 +150,12 @@ const isValidString = (value:unknown):boolean => {
     return value !==null && typeof value === "string" && String(value).length > 0;
 }
 
-const ArrayContainsOneOrMoreOf = (checkMe:Array<string>, shouldContainOneOf:Array<string>):boolean => {
+const isValidId = (value:unknown):boolean => {
+    return isValidString(value);
+}
 
+const ArrayContainsOneOrMoreOf = (checkMe:Array<string>, shouldContainOneOf:Array<string>):boolean => {
+    
     if (shouldContainOneOf === undefined || shouldContainOneOf === null){
         return false;
     }
@@ -170,16 +183,27 @@ const ParameterArraysContainsOneOrMoreOf = (service:ServiceCardInformation, para
     }
 }
 
-export async function getService(id: number):Promise<ServiceResult> {
+export async function getService(id: string):Promise<ServiceResult> {
     await timeout(500);
     const filter = OrgServices.filter( e => {
-        return e.id === Number(id)
+        return e.id === id
     });
     if (filter.length < 1){
         return { result:null};
     } 
-
-    return { result:filter[0] };
+    const ret:ServiceDetailX = {
+        id : filter[0].id.toString(),
+        name: filter[0].name,
+        owner: filter[0].owner,
+        description: 'todo description',
+        url:filter[0].url,
+        access:filter[0].access,
+        data:filter[0].data,
+        pricing:filter[0].pricing,
+        type:filter[0].type,
+        status:filter[0].status
+    }
+    return { result:ret };
     
 }
 
@@ -192,26 +216,21 @@ export async function getServices(parameters:GetServicesParameters):Promise<Serv
     if (isValidString(params.owner)) {
         filtered = filtered.filter(e => e.owner.includes(params.owner));
     }
-
+    
     if ( params.pricing !== null) {
-        filtered = JSON.parse(JSON.stringify(filtered.filter(function (e) {
+        filtered = JSON.parse(JSON.stringify(filtered.filter(function (e) { 
             return ParameterArraysContainsOneOrMoreOf(e, params)
         }))
         );
     }
 
-    if (!isValidNumber(params.cursor)) {
+    if (!isValidId(params.cursor)) {
         params.cursor = null;
     }
     if (!isValidNumber(params.limit)) {
         params.limit = null;
     }
-<<<<<<< HEAD
-
-    //console.log("params method,pricing,data,type,access", params.searchMethod, params.pricing, params.data, params.type, params.access);
-=======
     
->>>>>>> 095b050a... Add more link instead of prev and next links
     return await limitServices(filtered, params.cursor, params.limit);
 }
 
@@ -219,18 +238,17 @@ function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function limitServices(services, cursor:number, limit:number): Promise<ServicesResult> {
+async function limitServices(services, cursor:string, limit:number): Promise<ServicesResult> {
     await timeout(1000);
     const errorResult:ServicesResult = { result: null, prevCursor:null, nextCursor:null };
     const len = services.length;
-    const searchCursor = cursor === null? 0 : cursor;
+    const searchCursor = cursor === null? '0' : cursor;
     const safeLimit = (limit === null || limit < 0 || limit > MAX_LIMIT)? MAX_LIMIT : limit;
 
     if (len < 1) {
         return errorResult;
     }
-
-    const startIndex = ( cursor === null || cursor < 0 )? 0 : services.map(function(x) {return x.id; }).indexOf(searchCursor);
+    const startIndex = ( cursor === null || !isValidId(cursor) )? 0 : services.map(function(x) {return x.id; }).indexOf(searchCursor);
 
     if (startIndex < 0) {
         return errorResult;

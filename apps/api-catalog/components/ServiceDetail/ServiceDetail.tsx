@@ -20,7 +20,6 @@ export const ServiceDetail = (props: ServiceDetailProps) => {
   return (
       <Box
         width="full"
-        boxShadow="large"
         borderRadius="large"
         className={cn(styles.root)}
       >
