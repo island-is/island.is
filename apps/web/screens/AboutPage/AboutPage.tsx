@@ -50,7 +50,7 @@ import {
   AllSlicesFragment,
   AllSlicesEmbeddedVideoFragment,
   AllSlicesImageFragment,
-} from '../../graphql/schema'
+} from '@island.is/web/graphql/schema'
 import useViewport from '@island.is/web/hooks/useViewport'
 import { renderSlices } from '@island.is/island-ui/contentful'
 
