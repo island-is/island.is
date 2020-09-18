@@ -47,6 +47,12 @@ export type Link = {
   url: Scalars['String']
 }
 
+export type Html = {
+  __typename?: 'Html'
+  id: Scalars['ID']
+  document: Scalars['JSON']
+}
+
 export type TimelineEvent = {
   __typename?: 'TimelineEvent'
   id: Scalars['ID']
@@ -55,7 +61,7 @@ export type TimelineEvent = {
   numerator?: Maybe<Scalars['Int']>
   denominator?: Maybe<Scalars['Int']>
   label: Scalars['String']
-  body?: Maybe<Scalars['String']>
+  body?: Maybe<Html>
   tags?: Maybe<Array<Scalars['String']>>
   link: Scalars['String']
 }
@@ -110,12 +116,6 @@ export type Statistic = {
   id: Scalars['ID']
   value: Scalars['String']
   label: Scalars['String']
-}
-
-export type Html = {
-  __typename?: 'Html'
-  id: Scalars['ID']
-  document: Scalars['JSON']
 }
 
 export type QuestionAndAnswer = {
@@ -1197,6 +1197,8 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']>
   Int: ResolverTypeWrapper<Scalars['Int']>
   Link: ResolverTypeWrapper<Link>
+  Html: ResolverTypeWrapper<Html>
+  JSON: ResolverTypeWrapper<Scalars['JSON']>
   TimelineEvent: ResolverTypeWrapper<TimelineEvent>
   TimelineSlice: ResolverTypeWrapper<TimelineSlice>
   Story: ResolverTypeWrapper<Story>
@@ -1204,8 +1206,6 @@ export type ResolversTypes = {
   News: ResolverTypeWrapper<News>
   NumberBullet: ResolverTypeWrapper<NumberBullet>
   Statistic: ResolverTypeWrapper<Statistic>
-  Html: ResolverTypeWrapper<Html>
-  JSON: ResolverTypeWrapper<Scalars['JSON']>
   QuestionAndAnswer: ResolverTypeWrapper<QuestionAndAnswer>
   ArticleCategory: ResolverTypeWrapper<ArticleCategory>
   ArticleGroup: ResolverTypeWrapper<ArticleGroup>
@@ -1373,6 +1373,8 @@ export type ResolversParentTypes = {
   ID: Scalars['ID']
   Int: Scalars['Int']
   Link: Link
+  Html: Html
+  JSON: Scalars['JSON']
   TimelineEvent: TimelineEvent
   TimelineSlice: TimelineSlice
   Story: Story
@@ -1380,8 +1382,6 @@ export type ResolversParentTypes = {
   News: News
   NumberBullet: NumberBullet
   Statistic: Statistic
-  Html: Html
-  JSON: Scalars['JSON']
   QuestionAndAnswer: QuestionAndAnswer
   ArticleCategory: ArticleCategory
   ArticleGroup: ArticleGroup
@@ -1560,6 +1560,20 @@ export type LinkResolvers<
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
+export type HtmlResolvers<
+  ContextType = Context,
+  ParentType extends ResolversParentTypes['Html'] = ResolversParentTypes['Html']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
+  document?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
+  __isTypeOf?: IsTypeOfResolverFn<ParentType>
+}
+
+export interface JsonScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
+  name: 'JSON'
+}
+
 export type TimelineEventResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['TimelineEvent'] = ResolversParentTypes['TimelineEvent']
@@ -1570,7 +1584,7 @@ export type TimelineEventResolvers<
   numerator?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
   denominator?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  body?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
+  body?: Resolver<Maybe<ResolversTypes['Html']>, ParentType, ContextType>
   tags?: Resolver<
     Maybe<Array<ResolversTypes['String']>>,
     ParentType,
@@ -1652,20 +1666,6 @@ export type StatisticResolvers<
   value?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   label?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export type HtmlResolvers<
-  ContextType = Context,
-  ParentType extends ResolversParentTypes['Html'] = ResolversParentTypes['Html']
-> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>
-  document?: Resolver<ResolversTypes['JSON'], ParentType, ContextType>
-  __isTypeOf?: IsTypeOfResolverFn<ParentType>
-}
-
-export interface JsonScalarConfig
-  extends GraphQLScalarTypeConfig<ResolversTypes['JSON'], any> {
-  name: 'JSON'
 }
 
 export type QuestionAndAnswerResolvers<
@@ -2830,6 +2830,8 @@ export type Resolvers<ContextType = Context> = {
   HelloWorld?: HelloWorldResolvers<ContextType>
   Image?: ImageResolvers<ContextType>
   Link?: LinkResolvers<ContextType>
+  Html?: HtmlResolvers<ContextType>
+  JSON?: GraphQLScalarType
   TimelineEvent?: TimelineEventResolvers<ContextType>
   TimelineSlice?: TimelineSliceResolvers<ContextType>
   Story?: StoryResolvers<ContextType>
@@ -2837,8 +2839,6 @@ export type Resolvers<ContextType = Context> = {
   News?: NewsResolvers<ContextType>
   NumberBullet?: NumberBulletResolvers<ContextType>
   Statistic?: StatisticResolvers<ContextType>
-  Html?: HtmlResolvers<ContextType>
-  JSON?: GraphQLScalarType
   QuestionAndAnswer?: QuestionAndAnswerResolvers<ContextType>
   ArticleCategory?: ArticleCategoryResolvers<ContextType>
   ArticleGroup?: ArticleGroupResolvers<ContextType>

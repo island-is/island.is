@@ -36,6 +36,12 @@ export type Link = {
   url: Scalars['String']
 }
 
+export type Html = {
+  __typename?: 'Html'
+  id: Scalars['ID']
+  document: Scalars['JSON']
+}
+
 export type TimelineEvent = {
   __typename?: 'TimelineEvent'
   id: Scalars['ID']
@@ -44,7 +50,7 @@ export type TimelineEvent = {
   numerator?: Maybe<Scalars['Int']>
   denominator?: Maybe<Scalars['Int']>
   label: Scalars['String']
-  body?: Maybe<Scalars['String']>
+  body?: Maybe<Html>
   tags?: Maybe<Array<Scalars['String']>>
   link: Scalars['String']
 }
@@ -99,12 +105,6 @@ export type Statistic = {
   id: Scalars['ID']
   value: Scalars['String']
   label: Scalars['String']
-}
-
-export type Html = {
-  __typename?: 'Html'
-  id: Scalars['ID']
-  document: Scalars['JSON']
 }
 
 export type QuestionAndAnswer = {
@@ -1717,10 +1717,9 @@ export type TimelineFieldsFragment = { __typename: 'TimelineSlice' } & Pick<
         | 'numerator'
         | 'denominator'
         | 'label'
-        | 'body'
         | 'tags'
         | 'link'
-      >
+      > & { body?: Maybe<{ __typename?: 'Html' } & HtmlFieldsFragment> }
     >
   }
 

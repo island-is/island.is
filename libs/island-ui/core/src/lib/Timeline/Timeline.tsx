@@ -397,7 +397,7 @@ const EventModal = forwardRef(
                 ))}
               </Inline>
             )}
-            {event.data?.text || ''}
+            {Boolean(event.data?.text) && event.data.text}
             <Button variant="text" icon="arrowRight">
               Lesa meira
             </Button>
