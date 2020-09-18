@@ -41,5 +41,3 @@ export const topSection = style({
   marginBottom:40,
   textAlign:'center'
 })
-
-

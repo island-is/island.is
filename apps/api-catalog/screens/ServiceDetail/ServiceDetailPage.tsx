@@ -11,7 +11,7 @@ import {
     QueryGetApiCatalogueByIdArgs
   } from '@island.is/api/schema'
 
-export function ServiceDetailPage(service: ServiceCardInformation) {
+function ServiceDetailPage(service: ServiceCardInformation) {
 /*
     const { data, loading } = useQuery<Query, QueryGetApiCatalogueByIdArgs>(
         GET_CATALOGUES_QUERY,
@@ -40,3 +40,5 @@ ServiceDetailPage.getInitialProps = async (ctx):Promise<ServiceCardInformation> 
 
   return service.result;
 }
+
+export default ServiceDetailPage;

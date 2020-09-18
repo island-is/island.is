@@ -1,3 +1,3 @@
-import {  ServiceDetails } from '../../screens'
+import { ServiceDetail } from '../../screens'
 
-export default ServiceDetails
+export default ServiceDetail

@@ -1,4 +1,4 @@
 export { DesignGuide } from './DesignGuide'
 export { Home } from './Home'
-export { ServiceList } from './Services/ServiceList'
-export { ServiceDetailPage as ServiceDetails } from './Services/ServiceDetailPage'
+export { ServiceList } from './ServiceList'
+export { ServiceDetail } from './ServiceDetail'

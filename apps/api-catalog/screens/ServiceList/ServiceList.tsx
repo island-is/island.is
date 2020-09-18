@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ReactNode } from 'react'
+import React, { useState, useEffect, ReactNode } from 'react';
 import {  Box,  
           Button, 
           SidebarAccordion, 
@@ -6,8 +6,9 @@ import {  Box,
           ContentBlock, 
           GridRow, 
           GridColumn,
-          Icon
-} from '@island.is/island-ui/core'
+          Icon,
+          Typography
+} from '@island.is/island-ui/core';
 
 
 import * as styles from './ServiceList.treat';
@@ -25,9 +26,10 @@ import {  PRICING_CATEGORY,
           getServices, 
           ServiceCardInformation, 
           ServiceCard, 
-          CategoryCheckBox, 
-
-} from '../../../components';
+          CategoryCheckBox
+} from '../../components';
+import ContentfulApi from '../../services/contentful'
+import { StaticPage } from '../../services/contentful.types'
 
 interface PropTypes {
   top?: ReactNode
@@ -61,7 +63,8 @@ export function ServiceLayout({ top, left, right }: PropTypes) {
 export interface ServiceListProps {
   nextCursor: string
   prevCursor: string
-  parameters: GetServicesParameters
+  parameters: GetServicesParameters,
+  pageContent: StaticPage
 }
 
 
@@ -201,9 +204,9 @@ export default function ServiceList(props:ServiceListProps) {
       <ServiceLayout 
       top={
             <div className={cn(styles.topSection)}>
-              <h1>API Catalogue</h1>
+              <Typography variant="h1">{props.pageContent.title}</Typography>
               <div className={cn(styles.topSectionText)}>
-                <p>Í miðlægum vörulista hins opinbera er hægt að nálgast upplýsingar um gögn og vefþjónustur á einfaldan og fljótvirkan hátt.</p>
+                <Typography variant="intro">{props.pageContent.introText}</Typography>
               </div>
             </div>
       }
@@ -220,7 +223,7 @@ export default function ServiceList(props:ServiceListProps) {
                     </div>
                     <div className={cn(isLoading? styles.displayHidden : {})}>
                       <Button disabled={nextCursor === null} variant="text" onClick={() => onPageMoreButtonClick()} icon="cheveron" >
-                        Fetch more
+                        {props.pageContent.buttons.find(b => b.id === 'services-fetch-more').label}
                       </Button>
                     </div>
                   </div>
@@ -303,6 +306,11 @@ export default function ServiceList(props:ServiceListProps) {
 
 ServiceList.getInitialProps = async ():Promise<ServiceListProps> => {
 
+  const client = new ContentfulApi();
+
+  const pageContent = await client.fetchStaticPageBySlug('services', 'is-IS');
+  console.log(pageContent);
+
   const params:GetServicesParameters = { 
     cursor:null, 
     limit:null, 
@@ -314,5 +322,10 @@ ServiceList.getInitialProps = async ():Promise<ServiceListProps> => {
     access:getAllAccessCategories(),
     searchMethod:SERVICE_SEARCH_METHOD.MUST_CONTAIN_ONE_OF_CATEGORY
   };
-return { parameters:params, prevCursor:null, nextCursor:null};
+return { 
+  parameters:params, 
+  prevCursor:null, 
+  nextCursor:null, 
+  pageContent:pageContent
+};
 }
