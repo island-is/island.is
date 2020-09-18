@@ -5,19 +5,10 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
     searchResults(query: $query) {
       total
       items {
-        __typename
         ... on Article {
           id
-          contentStatus
           title
           slug
-          intro
-          containsApplicationForm
-          group {
-            title
-            slug
-            description
-          }
           category {
             slug
             title
@@ -65,19 +56,10 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
     searchResults(query: $query) {
       total
       items {
-        __typename
         ... on Article {
           id
-          contentStatus
           title
           slug
-          intro
-          containsApplicationForm
-          group {
-            title
-            slug
-            description
-          }
           category {
             slug
             title
