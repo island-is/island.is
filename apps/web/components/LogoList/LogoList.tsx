@@ -23,10 +23,9 @@ export const LogoList: FC<LogoListProps> = ({ title, body, images }) => (
       flexWrap="wrap"
       alignItems="center"
       justifyContent="spaceBetween"
-      className={styles.logos}
     >
       {images.map((src, i) => (
-        <Box marginLeft={5} marginRight={5} marginBottom={5}>
+        <Box marginBottom={5} className={styles.logo}>
           <img key={i} src={src} alt="" />
         </Box>
       ))}
