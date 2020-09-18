@@ -15,6 +15,7 @@ import * as styles from './GridColumn.treat'
 import { ResponsiveSpace } from '../../Box/useBoxStyles'
 
 type Breakpoint = keyof typeof theme['breakpoints']
+type position = 'relative' | 'fixed' | 'absolute'
 
 export interface GridColumnProps extends ResponsiveRangeProps {
   span?: ResponsiveProp<styles.GridColumns>
@@ -25,6 +26,7 @@ export interface GridColumnProps extends ResponsiveRangeProps {
   className?: string
   hideAbove?: Exclude<Breakpoint, 'xl'>
   hideBelow?: Exclude<Breakpoint, 'xs'>
+  position?: position | 'none'
 }
 
 export const GridColumn: FC<GridColumnProps> = ({
@@ -37,6 +39,7 @@ export const GridColumn: FC<GridColumnProps> = ({
   className,
   hideAbove: above,
   hideBelow: below,
+  position = 'relative',
 }) => {
   const [
     hiddenOnXs,
@@ -45,8 +48,16 @@ export const GridColumn: FC<GridColumnProps> = ({
     hiddenOnLg,
     hiddenOnXl,
   ] = resolveResponsiveRangeProps({ above, below })
+
+  const pos: { position?: position } = {}
+
+  if (position !== 'none') {
+    pos.position = position
+  }
+
   return (
     <Box
+      {...pos}
       paddingTop={paddingTop}
       paddingBottom={paddingBottom}
       display={[
