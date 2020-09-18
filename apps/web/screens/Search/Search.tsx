@@ -148,28 +148,46 @@ const Search: Screen<CategoryProps> = ({
       <CategoryLayout
         sidebar={
           <Sidebar title={n('sidebarHeader')}>
-            <SidebarAccordion
-              id="sidebar_accordion_categories"
-              label={`${n('allCategories', 'Allir flokkar')} (${
-                searchResults.total
-              })`}
+            <div
+              style={{
+                position: 'relative',
+              }}
             >
-              <Stack space={[1, 1, 2]}>
-                {sidebarCategories.map((c, index) => {
-                  const selected = c.key === filters.category
-                  const text = `${c.title} (${c.total})`
+              <div
+                style={{
+                  position: 'absolute',
+                  left: '0',
+                  top: '-4px',
+                  zIndex: 10, // to accommodate for being absolute
+                }}
+              >
+                <Filter
+                  selected={!filters.category}
+                  onClick={() => onSelectCategory(null)}
+                  text={`${n('allCategories', 'Allir flokkar')} (${
+                    searchResults.total
+                  })`}
+                />
+              </div>
 
-                  return (
-                    <Filter
-                      key={index}
-                      selected={selected}
-                      onClick={() => onSelectCategory(c.key)}
-                      text={text}
-                    />
-                  )
-                })}
-              </Stack>
-            </SidebarAccordion>
+              <SidebarAccordion id="sidebar_accordion_categories" label={''}>
+                <Stack space={[1, 1, 2]}>
+                  {sidebarCategories.map((c, index) => {
+                    const selected = c.key === filters.category
+                    const text = `${c.title} (${c.total})`
+
+                    return (
+                      <Filter
+                        key={index}
+                        selected={selected}
+                        onClick={() => onSelectCategory(c.key)}
+                        text={text}
+                      />
+                    )
+                  })}
+                </Stack>
+              </SidebarAccordion>
+            </div>
           </Sidebar>
         }
         belowContent={
