@@ -2,10 +2,11 @@ import { FormItem } from './Form'
 import { Condition } from './Condition'
 import { CallToAction } from './StateMachine'
 
+import { MessageDescriptor } from 'react-intl'
 export interface Option {
   value: string
-  label: string
-  tooltip?: string
+  label: MessageDescriptor | string
+  tooltip?: MessageDescriptor | string
   excludeOthers?: boolean
 }
 export type FieldWidth = 'full' | 'half'
@@ -13,7 +14,7 @@ export type FieldWidth = 'full' | 'half'
 export interface BaseField extends FormItem {
   readonly id: string
   readonly component: FieldComponents | CustomFieldComponents // TODO maybe this does not belong here, and application-form lib has a map from type to component
-  readonly name: string
+  readonly name: MessageDescriptor | string
   readonly children: undefined
   width?: FieldWidth
   condition?: Condition
@@ -76,7 +77,7 @@ export interface DateField extends Question {
 export interface IntroductionField extends BaseField {
   readonly type: FieldTypes.INTRO
   component: FieldComponents.INTRO
-  readonly introduction: string
+  readonly introduction: MessageDescriptor | string
 }
 
 export interface RadioField extends Question {
@@ -104,7 +105,7 @@ export interface TextField extends Question {
 export interface FileUploadField extends Question {
   readonly type: FieldTypes.FILEUPLOAD
   component: FieldComponents.FILEUPLOAD
-  readonly introduction: string
+  readonly introduction: MessageDescriptor | string
   readonly uploadHeader?: string
   readonly uploadDescription?: string
   readonly uploadButtonLabel?: string

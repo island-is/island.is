@@ -13,6 +13,7 @@ import { Form } from '../../types/Form'
 import { ApplicationTypes } from '../../types/ApplicationTypes'
 import { CustomFieldComponents } from '../../types/Fields'
 import { DataProviderTypes } from '../../types/DataProvider'
+import { m } from './messages'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: ApplicationTypes.PARENTAL_LEAVE,
@@ -21,26 +22,25 @@ export const ParentalLeaveForm: Form = buildForm({
   children: [
     buildSection({
       id: 'introduction',
-      name: 'Intro',
+      name: m.introductionSection,
       children: [
         buildExternalDataProvider({
-          name: 'Sækja gögn',
+          name: m.introductionProvider,
           id: 'approveExternalData',
           dataProviders: [
             buildDataProviderItem({
               id: 'expectedDateOfBirth',
               type: DataProviderTypes.ExpectedDateOfBirth,
               source: 'Landlækni',
-              subTitle: 'Staðfesting á að það sé yfir höfuð barn á leiðinni',
-              title: 'Áætlaður fæðingardagur',
+              title: m.expectedDateOfBirthTitle,
+              subTitle: m.expectedDateOfBirthSubtitle,
             }),
             buildDataProviderItem({
               id: 'salary',
               type: DataProviderTypes.ExampleSucceeds,
               source: 'Success indeed',
-              subTitle:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-              title: 'Áætlaður fæðingardagur',
+              title: m.salaryTitle,
+              subTitle: m.salarySubtitle,
             }),
             // buildDataProviderItem({
             //   id: 'willFail',
@@ -55,16 +55,16 @@ export const ParentalLeaveForm: Form = buildForm({
     }),
     buildSection({
       id: 'calculator',
-      name: 'Reiknivél',
+      name: m.calculatorSection,
       children: [
         buildSubSection({
           id: 'usage',
-          name: 'Ráðstöfun',
+          name: m.usageSubsection,
           children: [
             buildCustomField(
               {
                 id: 'usage',
-                name: 'Hvað ætlar þú að nýta þér marga mánuði í fæðingarorlof?',
+                name: m.usage,
                 required: true,
                 component: CustomFieldComponents.PARENTAL_LEAVE_USAGE,
               },
@@ -74,12 +74,12 @@ export const ParentalLeaveForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'calculations',
-          name: 'Útreikningur',
+          name: m.calculationsSubsection,
           children: [
             buildCustomField(
               {
                 id: 'spread',
-                name: '',
+                name: m.spread,
                 required: true,
                 component: CustomFieldComponents.PARENTAL_LEAVE_CALCULATIONS,
               },
@@ -88,7 +88,7 @@ export const ParentalLeaveForm: Form = buildForm({
             buildCustomField(
               {
                 id: 'periods',
-                name: 'Viltu breyta eða skipta upp tímabilinu?',
+                name: m.periods,
                 component: CustomFieldComponents.PARENTAL_LEAVE_CALCULATIONS,
               },
               {},
@@ -99,12 +99,12 @@ export const ParentalLeaveForm: Form = buildForm({
     }),
     buildSection({
       id: 'summary',
-      name: 'Yfirlit og staðfesting',
+      name: m.summarySection,
       children: [
         buildIntroductionField({
           id: 'todo',
-          name: 'Here we need a summary screen',
-          introduction: 'very nice',
+          name: m.summaryName,
+          introduction: m.summaryIntro,
         }),
       ],
     }),

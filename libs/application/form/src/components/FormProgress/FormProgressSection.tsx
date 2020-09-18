@@ -1,5 +1,6 @@
 import React, { FC, useRef, useState, useEffect } from 'react'
 import useComponentSize from '@rehooks/component-size'
+import { useLocale } from '@island.is/localization'
 
 import {
   Section,
@@ -24,6 +25,7 @@ const SubSections: FC<{
     'auto',
   )
   const isClient = typeof window === 'object'
+  const { formatMessage } = useLocale()
 
   useEffect(() => {
     if (!isClient) return
@@ -57,7 +59,7 @@ const SubSections: FC<{
               }
               showIcon={showSubSectionIcon}
             >
-              {subSection.name}
+              {formatMessage(subSection.name)}
             </SubSectionItem>
           ))}
         </BulletList>
@@ -89,6 +91,7 @@ const FormProgressSection: FC<{
   const { height: activeHeight } = useComponentSize(containerRef)
   const [containerHeight, setContainerHeight] = useState(0)
   const isClient = typeof window === 'object'
+  const { formatMessage } = useLocale()
 
   useEffect(() => {
     if (!isClient) return
@@ -117,7 +120,7 @@ const FormProgressSection: FC<{
                 isActive ? 'formProgressSectionActive' : 'formProgressSection'
               }
             >
-              {section.name}
+              {formatMessage(section.name)}
             </Typography>
           </Box>
         </Box>

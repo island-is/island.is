@@ -17,8 +17,10 @@ interface MessagesDict {
 
 interface LocaleContextType {
   lang: Locale
-  loadMessages: (namespaces: string | string[], lang: Locale) => void
+  loadMessages: (namespaces: string | string[]) => void
   loadingMessages: boolean
+  loadedNamespaces: string[]
+  messages: MessagesDict
 }
 
 interface LocaleProviderProps {
@@ -70,7 +72,7 @@ export const LocaleProvider = ({
     accumulateMessages(locale, messages, data?.getTranslations ?? {})
   }, [locale, messages, data])
 
-  const loadMessages = async (namespaces: string | string[], lang: Locale) => {
+  const loadMessages = async (namespaces: string | string[]) => {
     const namespaceArr =
       typeof namespaces === 'string' ? [namespaces] : namespaces
     const diff = difference(namespaceArr, loadedNamespaces)
@@ -81,7 +83,7 @@ export const LocaleProvider = ({
         variables: {
           input: {
             namespaces: diff,
-            lang,
+            lang: activeLocale,
           },
         },
       })
@@ -115,6 +117,8 @@ export const LocaleProvider = ({
         lang: activeLocale,
         loadMessages,
         loadingMessages: !ready || loadingMessages,
+        loadedNamespaces,
+        messages: messagesDict,
       }}
     >
       {ready && (
