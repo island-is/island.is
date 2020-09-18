@@ -19,6 +19,7 @@ type TSummary = {
 
 interface PropTypes {
   flightLegs: FlightLeg[]
+  airline: ValueOf<typeof Airlines>
 }
 
 function KeyValues({ data, title }: { data: TItem; title: string }) {
@@ -41,9 +42,13 @@ function KeyValues({ data, title }: { data: TItem; title: string }) {
   )
 }
 
-function Summary({ flightLegs }: PropTypes) {
+function Summary({ flightLegs, airline: filteredAirline }: PropTypes) {
   const sum = (arr: FlightLeg[], key: string): number =>
     arr.reduce((acc, item) => acc + item[key], 0)
+
+  const airlines = Object.values(Airlines).filter(
+    (airline) => !filteredAirline || airline === filteredAirline,
+  )
 
   return (
     <Box marginBottom={3}>
@@ -55,7 +60,7 @@ function Summary({ flightLegs }: PropTypes) {
           Samantektin byggist á núverandi síu
         </Typography>
         <Stack space={3}>
-          {Object.values(Airlines).map((airline) => {
+          {airlines.map((airline) => {
             const legs = flightLegs.filter(
               (flightLeg) => flightLeg.airline === airline,
             )
