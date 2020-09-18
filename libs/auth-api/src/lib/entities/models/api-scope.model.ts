@@ -17,13 +17,13 @@ import { ApiScopeUserClaim } from './api-scope-user-claim.model'
 export class ApiScope extends Model<ApiScope> {
   @PrimaryKey
   @Column({
-    type: DataType.UUID,
+    type: DataType.STRING,
     allowNull: false,
   })
   @ApiProperty({
-    example: 'domain_id',
+    example: 'domain',
   })
-  domainId: string
+  domain: string
 
   // Common properties for all resources (no single table inheritance)
 

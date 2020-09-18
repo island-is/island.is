@@ -6,6 +6,13 @@ module.exports = {
     return queryInterface.sequelize.query(`
       BEGIN;
 
+      CREATE TABLE domain (
+        name VARCHAR NOT NULL,
+        created TIMESTAMP WITH TIME ZONE DEFAULT now(),
+        modified TIMESTAMP WITH TIME ZONE,
+        PRIMARY KEY (name)
+      );
+
       CREATE TABLE identity_resource (
         enabled BOOLEAN NOT NULL DEFAULT true,
         name VARCHAR NOT NULL,
@@ -29,7 +36,7 @@ module.exports = {
       );
 
       CREATE TABLE api_scope (
-        domain_id UUID NOT NULL,
+        domain VARCHAR NOT NULL,
         enabled BOOLEAN NOT NULL DEFAULT true,
         name VARCHAR NOT NULL,
         display_name VARCHAR NOT NULL,
@@ -39,21 +46,23 @@ module.exports = {
         emphasize BOOLEAN NOT NULL DEFAULT false,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
-        PRIMARY KEY (domain_id, name)
+        PRIMARY KEY (domain, name),
+        CONSTRAINT FK_api_scope_domain FOREIGN KEY (domain) REFERENCES domain (name)
       );
 
       CREATE TABLE api_scope_user_claim (
-        domain_id UUID NOT NULL,
+        domain VARCHAR NOT NULL,
         api_scope_name VARCHAR NOT NULL,
         claim_name VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
-        PRIMARY KEY (domain_id, api_scope_name, claim_name),
-        CONSTRAINT FK_api_scope_user_claim_api_scope FOREIGN KEY (domain_id, api_scope_name) REFERENCES api_scope (domain_id, name)
+        PRIMARY KEY (domain, api_scope_name, claim_name),
+        CONSTRAINT FK_api_scope_user_claim_api_scope FOREIGN KEY (domain, api_scope_name) REFERENCES api_scope (domain, name),
+        CONSTRAINT FK_api_scope_domain FOREIGN KEY (domain) REFERENCES domain (name)
       );
 
       CREATE TABLE api_resource (
-        domain_id UUID NOT NULL,
+        domain VARCHAR NOT NULL,
         enabled BOOLEAN NOT NULL DEFAULT true,
         name VARCHAR NOT NULL,
         display_name VARCHAR NOT NULL,
@@ -61,31 +70,34 @@ module.exports = {
         show_in_discovery_document BOOLEAN NOT NULL DEFAULT true,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
-        PRIMARY KEY (domain_id, name)
+        PRIMARY KEY (domain, name),
+        CONSTRAINT FK_api_scope_domain FOREIGN KEY (domain) REFERENCES domain (name)
       );
 
       CREATE TABLE api_resource_user_claim (
-        domain_id UUID NOT NULL,
+        domain VARCHAR NOT NULL,
         api_resource_name VARCHAR NOT NULL,
         claim_name VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
-        PRIMARY KEY (domain_id, api_resource_name, claim_name),
-        CONSTRAINT FK_api_resource_user_claim_api_resource FOREIGN KEY (domain_id, api_resource_name) REFERENCES api_resource (domain_id, name)
+        PRIMARY KEY (domain, api_resource_name, claim_name),
+        CONSTRAINT FK_api_resource_user_claim_api_resource FOREIGN KEY (domain, api_resource_name) REFERENCES api_resource (domain, name),
+        CONSTRAINT FK_api_scope_domain FOREIGN KEY (domain) REFERENCES domain (name)
       );
 
       CREATE TABLE api_resource_scope (
-        domain_id UUID NOT NULL,
+        domain VARCHAR NOT NULL,
         api_resource_name VARCHAR NOT NULL,
         scope_name VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
-        PRIMARY KEY (domain_id, api_resource_name, scope_name),
-        CONSTRAINT FK_api_resource_scope_api_resource FOREIGN KEY (domain_id, api_resource_name) REFERENCES api_resource (domain_id, name)
+        PRIMARY KEY (domain, api_resource_name, scope_name),
+        CONSTRAINT FK_api_resource_scope_api_resource FOREIGN KEY (domain, api_resource_name) REFERENCES api_resource (domain, name),
+        CONSTRAINT FK_api_scope_domain FOREIGN KEY (domain) REFERENCES domain (name)
       );
 
       CREATE TABLE api_resource_secret (
-        domain_id UUID NOT NULL,
+        domain VARCHAR NOT NULL,
         api_resource_name VARCHAR NOT NULL,
         value VARCHAR NOT NULL,
         description VARCHAR,
@@ -93,8 +105,9 @@ module.exports = {
         type VARCHAR NOT NULL,
         created TIMESTAMP WITH TIME ZONE DEFAULT now(),
         modified TIMESTAMP WITH TIME ZONE,
-        PRIMARY KEY (domain_id, api_resource_name, value),
-        CONSTRAINT FK_api_resource_secret_api_resource FOREIGN KEY (domain_id, api_resource_name) REFERENCES api_resource (domain_id, name)
+        PRIMARY KEY (domain, api_resource_name, value),
+        CONSTRAINT FK_api_resource_secret_api_resource FOREIGN KEY (domain, api_resource_name) REFERENCES api_resource (domain, name),
+        CONSTRAINT FK_api_scope_domain FOREIGN KEY (domain) REFERENCES domain (name)
       );
 
       COMMIT;
@@ -116,6 +129,8 @@ module.exports = {
       DROP TABLE api_resource_secret;
       DROP TABLE api_resource;
 
+      DROP TABLE domain;
+      
       COMMIT;
     `)
   },

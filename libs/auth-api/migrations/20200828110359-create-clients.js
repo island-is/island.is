@@ -7,7 +7,7 @@ module.exports = {
       BEGIN;
         CREATE TABLE client (
           client_id VARCHAR NOT NULL,
-          domain_id UUID NOT NULL,
+          domain VARCHAR NOT NULL,
           allow_offline_access BOOLEAN NOT NULL DEFAULT false,
           identity_token_lifetime         INTEGER NOT NULL DEFAULT 300,
           access_token_lifetime           INTEGER NOT NULL DEFAULT 3600,
@@ -47,7 +47,8 @@ module.exports = {
           require_client_secret          BOOLEAN NOT NULL DEFAULT true,
           created TIMESTAMP WITH TIME ZONE DEFAULT now(),
           modified TIMESTAMP WITH TIME ZONE,
-          PRIMARY KEY (client_id)
+          PRIMARY KEY (client_id),
+          CONSTRAINT FK_api_scope_domain FOREIGN KEY (domain) REFERENCES domain (name)
       );
 
       CREATE TABLE client_allowed_cors_origin (

@@ -22,14 +22,14 @@ import { ApiResource } from './api-resource.model'
   export class ApiResourceSecret extends Model<ApiResourceSecret> {
     @PrimaryKey
     @Column({
-      type: DataType.UUID,
+      type: DataType.STRING,
       allowNull: false,
     })
     @ForeignKey(() => ApiResource)
     @ApiProperty({
-      example: 'domain_id',
+      example: 'domain',
     })
-    domainId: string
+    domain: string
 
     @PrimaryKey
     @Column({
