@@ -66,6 +66,7 @@ Navigate to [localhost:4200](http://localhost:4200) for the website or
 
 To access the Admin UI, you'll need to add your Icelandic National ID to the comma separated
 environment variable `DEVELOPERS` (.env.secret) and restart the `api`.
+
 ```bash
 export DEVELOPERS=1234567890
 ```
