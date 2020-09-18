@@ -11,7 +11,7 @@ import {
   ApiResourceScope,
   ApiScope,
   IdentityResourceUserClaim,
-} from '@island.is/auth-api'
+} from '@island.is/auth-api-lib'
 
 @Module({
   imports: [

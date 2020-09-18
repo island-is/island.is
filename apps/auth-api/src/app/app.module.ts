@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { UsersModule } from './modules/users/users.module'
-import { SequelizeConfigService } from '@island.is/auth-api'
+import { SequelizeConfigService } from '@island.is/auth-api-lib'
 import { ClientsModule } from './modules/clients/clients.module'
 import { ResourcesModule } from './modules/resources/resources.module'
 import { GrantsModule } from './modules/grants/grants.module'
-import { AuthModule } from '@island.is/auth-api'
+import { AuthModule } from '@island.is/auth-api-lib'
 import { GrantTypesModule } from './modules/grant-types/grant-types.module'
 
 @Module({

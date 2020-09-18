@@ -13,7 +13,7 @@ import {
   UserIdentity,
   UserIdentitiesService,
   UserIdentityDto,
-} from '@island.is/auth-api'
+} from '@island.is/auth-api-lib'
 import {
   ApiCreatedResponse,
   ApiOkResponse,

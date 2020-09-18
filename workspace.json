@@ -960,8 +960,8 @@
       }
     },
     "auth-api-lib": {
-      "root": "libs/auth-api",
-      "sourceRoot": "libs/auth-api/src",
+      "root": "libs/auth-api-lib",
+      "sourceRoot": "libs/auth-api-lib/src",
       "projectType": "library",
       "schematics": {},
       "architect": {
@@ -969,19 +969,19 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "config": "libs/auth-api/.eslintrc",
+            "config": "libs/auth-api-lib/.eslintrc",
             "tsConfig": [
-              "libs/auth-api/tsconfig.lib.json",
-              "libs/auth-api/tsconfig.spec.json"
+              "libs/auth-api-lib/tsconfig.lib.json",
+              "libs/auth-api-lib/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!libs/auth-api/**"]
+            "exclude": ["**/node_modules/**", "!libs/auth-api-lib/**"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "libs/auth-api/jest.config.js",
-            "tsConfig": "libs/auth-api/tsconfig.spec.json",
+            "jestConfig": "libs/auth-api-lib/jest.config.js",
+            "tsConfig": "libs/auth-api-lib/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }

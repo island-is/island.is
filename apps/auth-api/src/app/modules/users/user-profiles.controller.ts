@@ -19,7 +19,7 @@ import {
   UserProfile,
   UserProfilesService,
   UserProfileDto,
-} from '@island.is/auth-api'
+} from '@island.is/auth-api-lib'
 import { AuthGuard } from '@nestjs/passport'
 
 @ApiOAuth2(['openid:profile']) // add OAuth restriction to this controller

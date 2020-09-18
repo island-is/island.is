@@ -8,7 +8,7 @@ import {
   UserProfilesService,
   Claim,
   UserIdentitiesService,
-} from '@island.is/auth-api'
+} from '@island.is/auth-api-lib'
 
 @Module({
   imports: [SequelizeModule.forFeature([Claim, UserIdentity, UserProfile])],

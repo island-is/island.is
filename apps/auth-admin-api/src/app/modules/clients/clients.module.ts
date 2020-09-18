@@ -11,7 +11,7 @@ import {
   ClientGrantType,
   ClientsService,
   ClientClaim,
-} from '@island.is/auth-api'
+} from '@island.is/auth-api-lib'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 @Module({

@@ -114,7 +114,7 @@
       "@island.is/judicial-system/consts": [
         "libs/judicial-system/consts/src/index.ts"
       ],
-      "@island.is/auth-api": ["libs/auth-api/src/index.ts"]
+      "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
