@@ -3,7 +3,7 @@ import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 const speed = '150ms'
 
-const hexToRgb = (hex) => {
+const hexToRgb = (hex: string) => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
 
   return result
