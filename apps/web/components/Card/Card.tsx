@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React, { FC, useContext } from 'react'
+import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import Link, { LinkProps } from 'next/link'
 import {
@@ -15,6 +16,7 @@ import {
   ColorSchemeContext,
   TagVariant,
 } from '@island.is/island-ui/core'
+import { Image } from '@island.is/web/graphql/schema'
 
 import * as styles from './Card.treat'
 
@@ -32,6 +34,7 @@ const tagPropsDefaults: Omit<TagProps, 'children'> = {
 interface CardProps {
   title: string
   icon?: IconTypes
+  image?: Image
   description: string
   tags?: Array<CardTagsProps>
   linkProps?: LinkProps
@@ -42,12 +45,16 @@ interface CardProps {
 export const Card: FC<CardProps> = ({
   title,
   icon,
+  image,
   description,
   tags = [],
   href,
   as,
 }) => {
   const { colorScheme } = useContext(ColorSchemeContext)
+  const [ref, { width }] = useMeasure()
+
+  const stackImage = width < 500
 
   let borderColor = null
   let tagVariant = 'purple' as TagVariant
@@ -72,30 +79,45 @@ export const Card: FC<CardProps> = ({
 
   const Content = (
     <Box
+      ref={ref}
       display="flex"
       height="full"
       borderRadius="large"
       flexDirection="column"
     >
-      <Box flexGrow={1} height="full">
-        <Stack space={1}>
-          <Typography variant="cardCategoryTitle" as="h3" color="blue400">
-            <Box display="flex" flexDirection="row" alignItems="center">
-              <Box display="inlineFlex" flexGrow={1}>
-                {title}
-              </Box>
-              {icon && (
-                <Box marginLeft={1} display="inlineFlex">
-                  <Icon type={icon} />
+      {!!image && (
+        <div
+          className={cn(styles.imageContainer, {
+            [styles.imageContainerStacked]: stackImage,
+          })}
+          style={{ backgroundImage: `url(${image.url})` }}
+        />
+      )}
+      <Box flexGrow={1} height="full" position="relative">
+        <div
+          className={cn(styles.cardContent, {
+            [styles.cardContentNarrower]: image && !stackImage,
+          })}
+        >
+          <Stack space={1}>
+            <Typography variant="cardCategoryTitle" as="h3" color="blue400">
+              <Box display="flex" flexDirection="row" alignItems="center">
+                <Box display="inlineFlex" flexGrow={1}>
+                  {title}
                 </Box>
-              )}
-            </Box>
-          </Typography>
-          {description && <Typography variant="p">{description}</Typography>}
-        </Stack>
+                {icon && (
+                  <Box marginLeft={1} display="inlineFlex">
+                    <Icon type={icon} />
+                  </Box>
+                )}
+              </Box>
+            </Typography>
+            {description && <Typography variant="p">{description}</Typography>}
+          </Stack>
+        </div>
       </Box>
       {tags.length > 0 && (
-        <Box paddingTop={3} flexGrow={0}>
+        <Box paddingTop={3} flexGrow={0} position="relative">
           <Inline space={1}>
             {tags.map(({ title, href, as, ...props }: CardTagsProps, index) => {
               const tagProps = {
@@ -143,7 +165,9 @@ export const Frame = ({ children }) => {
   return (
     <Box
       className={cn(styles.card)}
+      position="relative"
       borderRadius="large"
+      overflow="hidden"
       height="full"
       background="white"
       outline="none"

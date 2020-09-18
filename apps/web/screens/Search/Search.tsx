@@ -41,6 +41,7 @@ import {
   Article,
   LifeEventPage,
 } from '../../graphql/schema'
+import { Image } from '@island.is/web/graphql/schema'
 
 const PerPage = 10
 
@@ -121,16 +122,19 @@ const Search: Screen<CategoryProps> = ({
     return labels
   }
 
-  const items = (searchResults.items as Article[]).map((item) => ({
-    title: item.title,
-    description: item.intro,
-    href: makePath(item.__typename, '[slug]'),
-    as: makePath(item.__typename, item.slug),
-    categorySlug: item.category?.slug,
-    category: item.category,
-    group: item.group,
-    labels: getLabels(item),
-  }))
+  const items = (searchResults.items as Array<Article & LifeEventPage>).map(
+    (item) => ({
+      title: item.title,
+      description: item.intro,
+      href: makePath(item.__typename, '[slug]'),
+      as: makePath(item.__typename, item.slug),
+      categorySlug: item.category?.slug,
+      category: item.category,
+      group: item.group,
+      ...(item.image && { image: item.image as Image }),
+      labels: getLabels(item),
+    }),
+  )
 
   const onSelectCategory = (key: string) => {
     Router.replace({
