@@ -5,9 +5,6 @@ import {
   Typography,
   Button,
   Icon,
-  GridContainer,
-  GridRow,
-  GridColumn,
   Inline,
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '../Layouts'
@@ -19,6 +16,7 @@ import useRouteNames from '@island.is/skilavottord-web/i18n/useRouteNames'
 import { Modal } from '@island.is/skilavottord-web/components/Modal/Modal'
 
 const RecyclingCompanies = (props) => {
+  console.log(props)
   const { companies } = props
 
   const [showModal, setModal] = useState(false)

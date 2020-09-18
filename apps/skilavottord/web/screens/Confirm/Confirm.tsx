@@ -6,7 +6,6 @@ import {
   Button,
   Checkbox,
   Link,
-  Icon,
   Inline,
 } from '@island.is/island-ui/core'
 import { ProcessPageLayout } from '../Layouts'
@@ -16,24 +15,49 @@ import { useRouter } from 'next/router'
 import { CarDetailsBox } from './components'
 import OutlinedBox from '@island.is/skilavottord-web/components/OutlinedBox/OutlinedBox'
 import * as styles from './Confirm.treat'
+import { useQuery } from '@apollo/client'
+import { GET_USER } from '@island.is/skilavottord-web/graphql/queries'
 
-const mock = {
-  id: 'BVZ655',
-  model: 'V70',
-  brand: 'Volvo',
-  year: 2002,
-  status: 'enabled',
-  hasCoOwner: true,
-}
+const nationalId = '2222222222'
 
 const Confirm = () => {
   const [checkbox, setCheckbox] = useState(false)
 
-  const Router = useRouter()
-  const { makePath } = useRouteNames()
   const {
     t: { confirm: t },
   } = useI18n()
+
+  const Router = useRouter()
+  const { makePath } = useRouteNames()
+
+  const { id } = Router.query
+
+  const { data, loading, error } = useQuery(GET_USER, {
+    variables: { nationalId },
+  })
+
+  if (error || (loading && !data)) {
+    return <>ERROR</>
+  }
+  const { cars } = data.getCarownerByNationalId || {}
+
+  let car = {
+    id: null,
+    model: null,
+    brand: null,
+    year: null,
+    status: null,
+    hasCoOwner: null,
+    name: null,
+    color: null,
+    recyclable: null,
+  }
+
+  for (const carEntry of cars) {
+    if (carEntry.id === id) {
+      car = carEntry
+    }
+  }
 
   const onCancel = () => {
     Router.push({
@@ -41,10 +65,12 @@ const Confirm = () => {
     })
   }
 
-  const onContinue = () => {
-    Router.push({
-      pathname: makePath('recyclingCompanies'),
-    })
+  const onContinue = (id) => {
+    // Login with return URL
+    // with car info
+    // Mutate data on DB
+    console.log('login')
+    console.log('mutate be')
   }
 
   const checkboxLabel = (
@@ -74,7 +100,7 @@ const Confirm = () => {
           <Typography variant="p">{t.info}</Typography>
         </Stack>
         <Stack space={2}>
-          <CarDetailsBox car={mock} />
+          <CarDetailsBox car={car} />
           <OutlinedBox backgroundColor="blue100" borderColor="white">
             <Box padding={4}>
               <Checkbox
@@ -84,6 +110,7 @@ const Confirm = () => {
                   setCheckbox(target.checked)
                 }}
                 checked={checkbox}
+                disabled={!car.recyclable}
               />
             </Box>
           </OutlinedBox>
@@ -92,14 +119,20 @@ const Confirm = () => {
           <Button variant="ghost" onClick={onCancel}>
             {t.buttons.cancel}
           </Button>
-          <Button
-            variant="normal"
-            disabled={!checkbox}
-            onClick={onContinue}
-            icon="arrowRight"
+          <Link
+            href="/recycling-companies"
+            as={makePath('recyclingCompanies', id.toString())}
+            passHref
           >
-            {t.buttons.continue}
-          </Button>
+            <Button
+              variant="normal"
+              disabled={!checkbox}
+              icon="arrowRight"
+              onClick={onContinue}
+            >
+              {t.buttons.continue}
+            </Button>
+          </Link>
         </Box>
       </Stack>
     </ProcessPageLayout>

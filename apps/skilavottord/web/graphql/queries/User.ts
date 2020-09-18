@@ -1,11 +1,20 @@
 import gql from 'graphql-tag'
 
+
 export const GET_USER = gql`
-  {
-    getUser(id: 10) {
+  query getCarownerByNationalId($nationalId: String!) {
+    getCarownerByNationalId(nationalId: $nationalId) {
       name
+      nationalId
       mobile
-      meetsADSRequirements
+      cars {
+        id
+        name
+        model
+        color
+        year
+        recyclable
+      }
     }
   }
 `

@@ -1,21 +1,17 @@
 import React, { FC } from 'react'
-import {
-  Box,
-  Typography,
-  GridContainer,
-  GridRow,
-  GridColumn,
-  Stack,
-} from '@island.is/island-ui/core'
+import { Box, Typography, Stack } from '@island.is/island-ui/core'
 import OutlinedBox from '@island.is/skilavottord-web/components/OutlinedBox/OutlinedBox'
 
 //TODO: Move to graphql schema (see air-discount-scheme)
-type Car = {
+interface Car {
   id: string
-  brand: string
+  name: string
   model: string
   year: number
-  status: string
+  color: string
+  recyclable: boolean
+  brand?: string
+  status?: string
   hasCoOwner?: boolean
 }
 
@@ -24,7 +20,7 @@ interface BoxProps {
 }
 
 export const CarDetailsBox: FC<BoxProps> = ({
-  car: { id, brand, model, year, status, hasCoOwner = false },
+  car: { id, brand, model, year, name, color, status, hasCoOwner = false },
 }: BoxProps) => {
   return (
     <OutlinedBox>
@@ -32,7 +28,7 @@ export const CarDetailsBox: FC<BoxProps> = ({
         <Box>
           <Stack space={1}>
             <Typography variant="h5">{id}</Typography>
-            <Typography variant="p">{`${brand} ${model}, ${year}`}</Typography>
+            <Typography variant="p">{`${name} ${model}, ${year}`}</Typography>
           </Stack>
         </Box>
       </Box>
