@@ -1,6 +1,6 @@
-import React, { FC, useMemo, useState } from 'react'
-import { Screen } from '../../types'
-import { CustomNextError } from '../../units/errors'
+import React, { useMemo } from 'react'
+import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
 import {
   GridContainer,
   GridRow,
@@ -13,10 +13,10 @@ import {
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { Image, ContentContainer } from '@island.is/island-ui/contentful'
-import { useI18n } from '../../i18n'
-import routeNames from '../../i18n/routeNames'
-import { Sticky, RichText, SidebarNavigation } from '../../components'
-import { GET_LIFE_EVENT_QUERY } from '../queries'
+import { useI18n } from '@island.is/web/i18n'
+import routeNames from '@island.is/web/i18n/routeNames'
+import { Sticky, RichText, SidebarNavigation } from '@island.is/web/components'
+import { GET_LIFE_EVENT_QUERY } from '@island.is/web/screens/queries'
 import {
   GetLifeEventQuery,
   QueryGetLifeEventPageArgs,
@@ -40,7 +40,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
     <Box paddingBottom={10}>
       <GridContainer>
         <GridRow>
-          <GridColumn span="9/12">
+          <GridColumn span={['12/12', '12/12', '12/12', '8/12', '9/12']}>
             <Box paddingX={[0, 0, 8]}>
               <Image type="apiImage" image={image} />
             </Box>
@@ -68,7 +68,7 @@ export const LifeEvent: Screen<LifeEventProps> = ({
               <RichText body={content} config={{ defaultPadding: 12 }} />
             </Box>
           </GridColumn>
-          <GridColumn span="3/12" paddingTop={10}>
+          <GridColumn span={[null, null, null, '4/12', '3/12']} paddingTop={10}>
             <Sticky>
               <SidebarNavigation
                 title="Efnisyfirlit"

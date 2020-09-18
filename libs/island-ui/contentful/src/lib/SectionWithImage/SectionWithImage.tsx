@@ -10,6 +10,8 @@ import slugify from '@sindresorhus/slugify'
 import StaticHtml from '../StaticHtml/StaticHtml'
 import { renderSlices } from '../richTextRendering'
 
+import * as styles from './SectionWithImage.treat'
+
 export interface SectionWithImageProps {
   title?: string
   image?: {
@@ -45,10 +47,12 @@ export const SectionWithImage: FC<SectionWithImageProps> = ({
   return (
     <GridContainer>
       <GridRow>
-        <GridColumn span="3/9">
-          <img src={image.url + '?w=320'} alt="" />
+        <GridColumn span={['12/12', '12/12', '12/12', '12/12', '3/9']}>
+          <div className={styles.imageContainer}>
+            <img className={styles.image} src={image.url + '?w=600'} alt="" />
+          </div>
         </GridColumn>
-        <GridColumn span="6/9">
+        <GridColumn span={['12/12', '12/12', '12/12', '12/12', '6/9']}>
           {title && (
             <Typography
               id={slugify(title)}
