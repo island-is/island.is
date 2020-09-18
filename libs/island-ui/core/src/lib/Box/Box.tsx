@@ -4,7 +4,6 @@ import {
   AllHTMLAttributes,
   ElementType,
 } from 'react'
-import { resolveResponsiveRangeProps } from '../../utils/responsiveRangeProps'
 import { useBoxStyles, UseBoxStylesProps } from './useBoxStyles'
 
 export interface BoxProps
