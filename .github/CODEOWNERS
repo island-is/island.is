@@ -1,5 +1,10 @@
 # Fallback. If there is no owner, assign to core maintainers.
-*                               @island-is/core
+# Remove fallback rule while graphql files are in the way.
+# *                               @island-is/core
+
+/*                              @island-is/core
+/.github/                       @island-is/core
+
 
 # Project folders are usually owned by the team assigned.
 # Add new projects here.
@@ -25,6 +30,7 @@ service-portal*/                @island-is/sendiradid
 /apps/services/search-indexer/  @island-is/stefna
 content-search/                 @island-is/stefna
 
+/.storybook/                    @island-is/island-ui
 /libs/island-ui/                @island-is/island-ui
 
 /apps/reference-backend/        @island-is/devops
