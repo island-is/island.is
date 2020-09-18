@@ -25,8 +25,8 @@ export const LogoList: FC<LogoListProps> = ({ title, body, images }) => (
       justifyContent="spaceBetween"
     >
       {images.map((src, i) => (
-        <Box marginBottom={5} className={styles.logo}>
-          <img key={i} src={src} alt="" />
+        <Box marginBottom={5} className={styles.logo} key={i}>
+          <img src={src} alt="" />
         </Box>
       ))}
     </Box>
