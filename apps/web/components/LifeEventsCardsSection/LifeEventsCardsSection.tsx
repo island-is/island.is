@@ -27,6 +27,7 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
 
   const renderLifeEventCard = (lifeEvent) => (
     <LifeEventCard
+      key={lifeEvent.title}
       title={lifeEvent.title}
       intro={lifeEvent.intro}
       href={makePath('lifeEvent', '[slug]')}
