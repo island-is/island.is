@@ -108,6 +108,7 @@ type ArticleGroup {
 
 type ArticleSubgroup {
   title: String!
+  importance: Float
   slug: String!
 }
 
@@ -244,6 +245,7 @@ type Article {
   shortTitle: String!
   intro: String!
   containsApplicationForm: Boolean
+  importance: Float
   body: [Slice!]!
   category: ArticleCategory
   group: ArticleGroup
@@ -446,6 +448,7 @@ type ContentItem {
   categorySlug: String
   categoryDescription: String
   containsApplicationForm: Boolean
+  importance: Float
   group: String
   subgroup: String
   groupSlug: String
