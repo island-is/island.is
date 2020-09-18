@@ -1,11 +1,20 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
-import { Document, BLOCKS, TopLevelBlock } from '@contentful/rich-text-types'
+import {
+  Document,
+  BLOCKS,
+  TopLevelBlock,
+  Block,
+  Inline,
+  Text,
+} from '@contentful/rich-text-types'
 import graphqlTypeJson from 'graphql-type-json'
 import { ContentType, RichTextContent } from 'contentful'
 
 import { Slice } from './slice.model'
 
-const deepChange = (obj: Record<any, any>, id: string) => ({
+type RichText = Block | Inline | Text
+
+const deepChange = (obj: Document | TopLevelBlock | RichText, id: string) => ({
   ...obj,
   data: {
     ...obj.data,
@@ -31,9 +40,11 @@ const sanitizeData = (html: Document | TopLevelBlock) => {
   const contentId = html?.content?.some((c) => c.data?.target?.sys?.id)
 
   if (contentId) {
+    const content: (TopLevelBlock | RichText)[] = html?.content
+
     return {
       ...html,
-      content: (html?.content as any[]).map((content) => {
+      content: content.map((content) => {
         const subId = content?.data?.target?.sys?.id
 
         return deepChange(content, subId)
@@ -66,7 +77,7 @@ export class Html {
 export const mapHtml = (html: Document | TopLevelBlock, id: string): Html => {
   const newHtml = sanitizeData(html)
 
-  switch (html.nodeType) {
+  switch (newHtml.nodeType) {
     case BLOCKS.DOCUMENT:
       return new Html({
         id: String(id),
