@@ -7,6 +7,8 @@
 /apps/adgerdir*/                @island-is/kosmos-kaos
 /apps/web*/                     @island-is/kosmos-kaos
 /libs/api/cms/                  @island-is/kosmos-kaos
+/apps/services/search-indexer/  @island.is/kosmos-kaos
+content-search/                 @island.is/kosmos-kaos
 
 air-discount-scheme/            @island-is/vice-versa
 gjafakort/                      @island-is/vice-versa
