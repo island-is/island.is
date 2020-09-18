@@ -176,6 +176,9 @@ const Search: Screen<CategoryProps> = ({
     ? { label: categoryTitle, value: categorySlug }
     : { label: 'Allir flokkar', value: '' }
 
+  const resultsCountToShow = categoryTitle
+    ? filteredItems.length
+    : searchResults.total
   return (
     <>
       <Head>
@@ -184,34 +187,47 @@ const Search: Screen<CategoryProps> = ({
       <CategoryLayout
         sidebar={
           <Sidebar title={n('sidebarHeader')}>
-            <Filter
-              selected={!filters.category}
-              onClick={() => onSelectCategory(null)}
-              text={`${n('allCategories', 'Allir flokkar')} (${
-                searchResults.total
-              })`}
-            />
-            <Divider weight="alternate" />
-            <SidebarAccordion
-              id="sidebar_accordion_categories"
-              label={n('seeCategories', 'Sjá flokka')}
+            <div
+              style={{
+                position: 'relative',
+              }}
             >
-              <Stack space={[1, 1, 2]}>
-                {sidebarCategories.map((c, index) => {
-                  const selected = c.key === filters.category
-                  const text = `${c.title} (${c.total})`
+              <div
+                style={{
+                  right: 40,
+                  position: 'absolute',
+                  left: '0',
+                  top: '-4px',
+                  zIndex: 10, // to accommodate for being absolute
+                }}
+              >
+                <Filter
+                  selected={!filters.category}
+                  onClick={() => onSelectCategory(null)}
+                  text={`${n('allCategories', 'Allir flokkar')} (${
+                    searchResults.total
+                  })`}
+                />
+              </div>
 
-                  return (
-                    <Filter
-                      key={index}
-                      selected={selected}
-                      onClick={() => onSelectCategory(c.key)}
-                      text={text}
-                    />
-                  )
-                })}
-              </Stack>
-            </SidebarAccordion>
+              <SidebarAccordion id="sidebar_accordion_categories" label={''}>
+                <Stack space={[1, 1, 2]}>
+                  {sidebarCategories.map((c, index) => {
+                    const selected = c.key === filters.category
+                    const text = `${c.title} (${c.total})`
+
+                    return (
+                      <Filter
+                        key={index}
+                        selected={selected}
+                        onClick={() => onSelectCategory(c.key)}
+                        text={text}
+                      />
+                    )
+                  })}
+                </Stack>
+              </SidebarAccordion>
+            </div>
           </Sidebar>
         }
         belowContent={
@@ -278,8 +294,8 @@ const Search: Screen<CategoryProps> = ({
               </span>
             ) : (
               <span>
-                {filteredItems.length}{' '}
-                {filteredItems.length === 1
+                {resultsCountToShow}{' '}
+                {resultsCountToShow === 1
                   ? n('searchResult', 'leitarniðurstaða')
                   : n('searchResults', 'leitarniðurstöður')}
                 {filters.category && (
@@ -360,14 +376,16 @@ Search.getInitialProps = async ({ apolloClient, locale, query }) => {
 const Filter = ({ selected, text, onClick, ...props }) => {
   return (
     <Box
+      display="inlineBlock"
       component="button"
       type="button"
       textAlign="left"
       outline="none"
+      width="full"
       onClick={onClick}
       {...props}
     >
-      <Typography variant="p" as="span">
+      <Typography variant="p" as="div" truncate>
         {selected ? <strong>{text}</strong> : text}
       </Typography>
     </Box>
