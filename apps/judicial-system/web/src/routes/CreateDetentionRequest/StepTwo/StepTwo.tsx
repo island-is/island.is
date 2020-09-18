@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 
 import { Logo } from '@island.is/judicial-system-web/src/shared-components/Logo/Logo'
 import {
@@ -10,6 +11,7 @@ import {
   DatePicker,
   Input,
   Checkbox,
+  Button,
 } from '@island.is/island-ui/core'
 import {
   CaseCustodyProvisions,
@@ -27,10 +29,13 @@ import {
   parseArray,
   parseString,
 } from '@island.is/judicial-system-web/src/utils/formatters'
+import Modal from '@island.is/judicial-system-web/src/shared-components/Modal/Modal'
 
 export const StepTwo: React.FC = () => {
   const caseDraft = window.localStorage.getItem('workingCase')
   const caseDraftJSON = JSON.parse(caseDraft)
+
+  const history = useHistory()
 
   const [workingCase, setWorkingCase] = useState<CreateDetentionReqStepOneCase>(
     {
@@ -118,6 +123,9 @@ export const StepTwo: React.FC = () => {
   const [restrictionCheckboxFour, setRestrictionCheckboxFour] = useState(
     caseDraftJSON.case.restrictions.indexOf(CaseCustodyRestrictions.MEDIA) > -1,
   )
+
+  const [modalVisible, setModalVisible] = useState(false)
+  const [isSendingNotification, setIsSendingNotification] = useState(false)
 
   const caseCustodyProvisions = [
     {
@@ -219,200 +227,273 @@ export const StepTwo: React.FC = () => {
   }, [])
 
   return (
-    <Box marginTop={7} marginBottom={30}>
-      <GridContainer>
-        <GridRow>
-          <GridColumn span={'3/12'}>
-            <Logo />
-          </GridColumn>
-          <GridColumn span={'8/12'} offset={'1/12'}>
-            <Typography as="h1">Krafa um gæsluvarðhald</Typography>
-          </GridColumn>
-        </GridRow>
-        <GridRow>
-          <GridColumn span={['12/12', '3/12']}>
-            <Typography>Hliðarstika</Typography>
-          </GridColumn>
-          <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
-            <Box component="section" marginBottom={7}>
-              <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
-                  Dómkröfur
-                </Typography>
-              </Box>
-              <GridRow>
-                <GridColumn span="5/8">
-                  <DatePicker
-                    label="Veldu dagsetningu"
-                    placeholderText="Veldu dagsetningu"
-                    selected={
-                      caseDraftJSON.case.requestedCustodyEndDate
-                        ? parseISO(
-                            caseDraftJSON.case.requestedCustodyEndDate.toString(),
-                          )
-                        : null
-                    }
-                    locale="is"
-                    minDate={new Date()}
-                    hasError={requestedCustodyEndDateErrorMessage !== ''}
-                    errorMessage={requestedCustodyEndDateErrorMessage}
-                    handleChange={(date) => {
-                      updateState(
-                        workingCase,
-                        'requestedCustodyEndDate',
-                        date,
-                        setWorkingCase,
-                      )
-                    }}
-                    handleCloseCalander={(date: Date) => {
-                      if (isNull(date) || !isValid(date)) {
-                        setRequestedCustodyEndDateErrorMessage(
-                          'Reitur má ekki vera tómur',
-                        )
+    <>
+      <Box marginTop={7} marginBottom={30}>
+        <GridContainer>
+          <GridRow>
+            <GridColumn span={'3/12'}>
+              <Logo />
+            </GridColumn>
+            <GridColumn span={'8/12'} offset={'1/12'}>
+              <Typography as="h1">Krafa um gæsluvarðhald</Typography>
+            </GridColumn>
+          </GridRow>
+          <GridRow>
+            <GridColumn span={['12/12', '3/12']}>
+              <Typography>Hliðarstika</Typography>
+            </GridColumn>
+            <GridColumn span={['12/12', '7/12']} offset={['0', '1/12']}>
+              <Box component="section" marginBottom={7}>
+                <Box marginBottom={2}>
+                  <Typography as="h3" variant="h3">
+                    Dómkröfur
+                  </Typography>
+                </Box>
+                <GridRow>
+                  <GridColumn span="5/8">
+                    <DatePicker
+                      label="Veldu dagsetningu"
+                      placeholderText="Veldu dagsetningu"
+                      selected={
+                        caseDraftJSON.case.requestedCustodyEndDate
+                          ? parseISO(
+                              caseDraftJSON.case.requestedCustodyEndDate.toString(),
+                            )
+                          : null
                       }
-                    }}
-                    handleOpenCalander={() =>
-                      setRequestedCustodyEndDateErrorMessage('')
-                    }
-                  />
-                </GridColumn>
-                <GridColumn span="3/8">
-                  <Input
-                    name="requestedCustodyEndTime"
-                    label="Tímasetning"
-                    placeholder="Settu inn tíma"
-                    defaultValue={caseDraftJSON.case.requestedCustodyEndTime}
-                    disabled={!workingCase.case.requestedCustodyEndDate}
-                    errorMessage={requestedCustodyEndTimeErrorMessage}
-                    hasError={requestedCustodyEndTimeErrorMessage !== ''}
-                    onBlur={(evt) => {
-                      const validateTimeEmpty = validate(
-                        evt.target.value,
-                        'empty',
-                      )
-                      const validateTimeFormat = validate(
-                        evt.target.value,
-                        'time-format',
-                      )
-
-                      if (
-                        validateTimeEmpty.isValid &&
-                        validateTimeFormat.isValid
-                      ) {
-                        const timeWithoutColon = evt.target.value.replace(
-                          ':',
-                          '',
-                        )
-
-                        const requestedCustodyEndDateHours = setHours(
-                          workingCase.case.requestedCustodyEndDate,
-                          parseInt(timeWithoutColon.substr(0, 2)),
-                        )
-
-                        const requestedCustodyEndDateMinutes = setMinutes(
-                          requestedCustodyEndDateHours,
-                          parseInt(timeWithoutColon.substr(2, 4)),
-                        )
-
-                        autoSave(
-                          workingCase,
-                          'requestedCustodyEndDate',
-                          requestedCustodyEndDateMinutes,
-                          setWorkingCase,
-                        )
+                      locale="is"
+                      minDate={new Date()}
+                      hasError={requestedCustodyEndDateErrorMessage !== ''}
+                      errorMessage={requestedCustodyEndDateErrorMessage}
+                      handleChange={(date) => {
                         updateState(
                           workingCase,
-                          'requestedCustodyEndTime',
-                          evt.target.value,
+                          'requestedCustodyEndDate',
+                          date,
                           setWorkingCase,
                         )
-                      } else {
-                        setRequestedCustodyEndTimeErrorMessage(
-                          validateTimeEmpty.errorMessage ||
-                            validateTimeFormat.errorMessage,
-                        )
+                      }}
+                      handleCloseCalander={(date: Date) => {
+                        if (isNull(date) || !isValid(date)) {
+                          setRequestedCustodyEndDateErrorMessage(
+                            'Reitur má ekki vera tómur',
+                          )
+                        }
+                      }}
+                      handleOpenCalander={() =>
+                        setRequestedCustodyEndDateErrorMessage('')
                       }
-                    }}
-                    onFocus={() => setRequestedCustodyEndTimeErrorMessage('')}
-                  />
-                </GridColumn>
-              </GridRow>
-            </Box>
-            <Box component="section" marginBottom={7}>
-              <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
-                  Lagaákvæði sem brot varða við
-                </Typography>
+                    />
+                  </GridColumn>
+                  <GridColumn span="3/8">
+                    <Input
+                      name="requestedCustodyEndTime"
+                      label="Tímasetning"
+                      placeholder="Settu inn tíma"
+                      defaultValue={caseDraftJSON.case.requestedCustodyEndTime}
+                      disabled={!workingCase.case.requestedCustodyEndDate}
+                      errorMessage={requestedCustodyEndTimeErrorMessage}
+                      hasError={requestedCustodyEndTimeErrorMessage !== ''}
+                      onBlur={(evt) => {
+                        const validateTimeEmpty = validate(
+                          evt.target.value,
+                          'empty',
+                        )
+                        const validateTimeFormat = validate(
+                          evt.target.value,
+                          'time-format',
+                        )
+
+                        if (
+                          validateTimeEmpty.isValid &&
+                          validateTimeFormat.isValid
+                        ) {
+                          const timeWithoutColon = evt.target.value.replace(
+                            ':',
+                            '',
+                          )
+
+                          const requestedCustodyEndDateHours = setHours(
+                            workingCase.case.requestedCustodyEndDate,
+                            parseInt(timeWithoutColon.substr(0, 2)),
+                          )
+
+                          const requestedCustodyEndDateMinutes = setMinutes(
+                            requestedCustodyEndDateHours,
+                            parseInt(timeWithoutColon.substr(2, 4)),
+                          )
+
+                          autoSave(
+                            workingCase,
+                            'requestedCustodyEndDate',
+                            requestedCustodyEndDateMinutes,
+                            setWorkingCase,
+                          )
+                          updateState(
+                            workingCase,
+                            'requestedCustodyEndTime',
+                            evt.target.value,
+                            setWorkingCase,
+                          )
+                        } else {
+                          setRequestedCustodyEndTimeErrorMessage(
+                            validateTimeEmpty.errorMessage ||
+                              validateTimeFormat.errorMessage,
+                          )
+                        }
+                      }}
+                      onFocus={() => setRequestedCustodyEndTimeErrorMessage('')}
+                    />
+                  </GridColumn>
+                </GridRow>
               </Box>
-              <Input
-                name="lawsBroken"
-                label="Lagaákvæði sem ætluð brot kærða þykja varða við"
-                defaultValue={workingCase.case.lawsBroken}
-                errorMessage={lawsBrokenErrorMessage}
-                hasError={lawsBrokenErrorMessage !== ''}
-                onBlur={(evt) => {
-                  const validateField = validate(evt.target.value, 'empty')
-                  if (validateField.isValid) {
-                    autoSave(
-                      workingCase,
-                      'lawsBroken',
-                      evt.target.value,
-                      setWorkingCase,
-                    )
-                  } else {
-                    setLawsBrokenErrorMessage(validateField.errorMessage)
-                  }
-                }}
-                onFocus={() => setLawsBrokenErrorMessage('')}
-                required
-                textarea
-                rows={3}
-              />
-            </Box>
-            <Box component="section" marginBottom={7}>
-              <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
-                  Lagaákvæði sem krafan er byggð á
-                </Typography>
+              <Box component="section" marginBottom={7}>
+                <Box marginBottom={2}>
+                  <Typography as="h3" variant="h3">
+                    Lagaákvæði sem brot varða við
+                  </Typography>
+                </Box>
+                <Input
+                  name="lawsBroken"
+                  label="Lagaákvæði sem ætluð brot kærða þykja varða við"
+                  defaultValue={workingCase.case.lawsBroken}
+                  errorMessage={lawsBrokenErrorMessage}
+                  hasError={lawsBrokenErrorMessage !== ''}
+                  onBlur={(evt) => {
+                    const validateField = validate(evt.target.value, 'empty')
+                    if (validateField.isValid) {
+                      autoSave(
+                        workingCase,
+                        'lawsBroken',
+                        evt.target.value,
+                        setWorkingCase,
+                      )
+                    } else {
+                      setLawsBrokenErrorMessage(validateField.errorMessage)
+                    }
+                  }}
+                  onFocus={() => setLawsBrokenErrorMessage('')}
+                  required
+                  textarea
+                  rows={3}
+                />
               </Box>
-              <GridContainer>
-                <GridRow>
-                  {caseCustodyProvisions.map((provision, index) => {
-                    return (
+              <Box component="section" marginBottom={7}>
+                <Box marginBottom={2}>
+                  <Typography as="h3" variant="h3">
+                    Lagaákvæði sem krafan er byggð á
+                  </Typography>
+                </Box>
+                <GridContainer>
+                  <GridRow>
+                    {caseCustodyProvisions.map((provision, index) => {
+                      return (
+                        <GridColumn span="3/7" key={index}>
+                          <Box marginBottom={3}>
+                            <Checkbox
+                              name={provision.brokenLaw}
+                              label={provision.brokenLaw}
+                              value={provision.value}
+                              checked={provision.getCheckbox}
+                              tooltip={provision.explination}
+                              onChange={({ target }) => {
+                                console.log(target.checked)
+                                // Toggle the checkbox on or off
+                                provision.setCheckbox(target.checked)
+
+                                // Create a copy of the state
+                                const copyOfState = Object.assign(
+                                  workingCase,
+                                  {},
+                                )
+
+                                // If the user is checking the box, add the broken law to the state
+                                if (target.checked) {
+                                  copyOfState.case.caseCustodyProvisions.push(
+                                    target.value as CaseCustodyProvisions,
+                                  )
+                                }
+                                // If the user is unchecking the box, remove the broken law from the state
+                                else {
+                                  const provisions =
+                                    copyOfState.case.caseCustodyProvisions
+
+                                  provisions.splice(
+                                    provisions.indexOf(
+                                      target.value as CaseCustodyProvisions,
+                                    ),
+                                    1,
+                                  )
+                                }
+
+                                // Set the updated state as the state
+                                setWorkingCase(copyOfState)
+
+                                // Save case
+                                api.saveCase(
+                                  workingCase.id,
+                                  parseArray(
+                                    'custodyProvisions',
+                                    copyOfState.case.caseCustodyProvisions,
+                                  ),
+                                )
+
+                                updateState(
+                                  workingCase,
+                                  'caseCustodyProvisions',
+                                  copyOfState.case.caseCustodyProvisions,
+                                  setWorkingCase,
+                                )
+                              }}
+                              large
+                            />
+                          </Box>
+                        </GridColumn>
+                      )
+                    })}
+                  </GridRow>
+                </GridContainer>
+              </Box>
+              <Box component="section" marginBottom={7}>
+                <Box marginBottom={2}>
+                  <Typography as="h3" variant="h3">
+                    Takmarkanir á gæslu
+                  </Typography>
+                  <Typography>
+                    Ef ekkert er valið, er viðkomandi í lausagæslu
+                  </Typography>
+                </Box>
+                <GridContainer>
+                  <GridRow>
+                    {restrictions.map((restriction, index) => (
                       <GridColumn span="3/7" key={index}>
                         <Box marginBottom={3}>
                           <Checkbox
-                            name={provision.brokenLaw}
-                            label={provision.brokenLaw}
-                            value={provision.value}
-                            checked={provision.getCheckbox}
-                            tooltip={provision.explination}
+                            name={restriction.restriction}
+                            label={restriction.restriction}
+                            value={restriction.value}
+                            checked={restriction.getCheckbox}
+                            tooltip={restriction.explination}
                             onChange={({ target }) => {
                               // Toggle the checkbox on or off
-                              provision.setCheckbox(!provision.getCheckbox)
+                              restriction.setCheckbox(target.checked)
 
                               // Create a copy of the state
                               const copyOfState = Object.assign(workingCase, {})
 
-                              // If the user is checking the box, add the broken law to the state
-                              if (
-                                target.checked &&
-                                copyOfState.case.caseCustodyProvisions.indexOf(
-                                  target.value as CaseCustodyProvisions,
-                                ) === -1
-                              ) {
-                                copyOfState.case.caseCustodyProvisions.push(
-                                  target.value as CaseCustodyProvisions,
+                              // If the user is checking the box, add the restriction to the state
+                              if (target.checked) {
+                                copyOfState.case.restrictions.push(
+                                  target.value as CaseCustodyRestrictions,
                                 )
                               }
-                              // If the user is unchecking the box, remove the broken law from the state
+                              // If the user is unchecking the box, remove the restriction from the state
                               else {
-                                const provisions =
-                                  copyOfState.case.caseCustodyProvisions
-
-                                provisions.splice(
-                                  provisions.indexOf(
-                                    target.value as CaseCustodyProvisions,
+                                const restrictions =
+                                  copyOfState.case.restrictions
+                                restrictions.splice(
+                                  restrictions.indexOf(
+                                    target.value as CaseCustodyRestrictions,
                                   ),
                                   1,
                                 )
@@ -425,15 +506,15 @@ export const StepTwo: React.FC = () => {
                               api.saveCase(
                                 workingCase.id,
                                 parseArray(
-                                  'custodyProvisions',
-                                  copyOfState.case.caseCustodyProvisions,
+                                  'custodyRestrictions',
+                                  copyOfState.case.restrictions,
                                 ),
                               )
 
                               updateState(
                                 workingCase,
-                                'caseCustodyProvisions',
-                                copyOfState.case.caseCustodyProvisions,
+                                'restrictions',
+                                copyOfState.case.restrictions,
                                 setWorkingCase,
                               )
                             }}
@@ -441,196 +522,136 @@ export const StepTwo: React.FC = () => {
                           />
                         </Box>
                       </GridColumn>
-                    )
-                  })}
-                </GridRow>
-              </GridContainer>
-            </Box>
-            <Box component="section" marginBottom={7}>
-              <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
-                  Takmarkanir á gæslu
-                </Typography>
-                <Typography>
-                  Ef ekkert er valið, er viðkomandi í lausagæslu
-                </Typography>
+                    ))}
+                  </GridRow>
+                </GridContainer>
               </Box>
-              <GridContainer>
-                <GridRow>
-                  {restrictions.map((restriction, index) => (
-                    <GridColumn span="3/7" key={index}>
-                      <Box marginBottom={3}>
-                        <Checkbox
-                          name={restriction.restriction}
-                          label={restriction.restriction}
-                          value={restriction.value}
-                          checked={restriction.getCheckbox}
-                          tooltip={restriction.explination}
-                          onChange={({ target }) => {
-                            // Toggle the checkbox on or off
-                            restriction.setCheckbox(!restriction.getCheckbox)
-
-                            // Create a copy of the state
-                            const copyOfState = Object.assign(workingCase, {})
-
-                            // If the user is checking the box, add the restriction to the state
-                            if (
-                              target.checked &&
-                              copyOfState.case.restrictions.indexOf(
-                                target.value as CaseCustodyRestrictions,
-                              ) === -1
-                            ) {
-                              copyOfState.case.restrictions.push(
-                                target.value as CaseCustodyRestrictions,
-                              )
-                            }
-                            // If the user is unchecking the box, remove the restriction from the state
-                            else {
-                              const restrictions = copyOfState.case.restrictions
-                              restrictions.splice(
-                                restrictions.indexOf(
-                                  target.value as CaseCustodyRestrictions,
-                                ),
-                                1,
-                              )
-                            }
-
-                            // Set the updated state as the state
-                            setWorkingCase(copyOfState)
-
-                            // Save case
-                            api.saveCase(
-                              workingCase.id,
-                              parseArray(
-                                'custodyRestrictions',
-                                copyOfState.case.restrictions,
-                              ),
-                            )
-
-                            updateState(
-                              workingCase,
-                              'restrictions',
-                              copyOfState.case.restrictions,
-                              setWorkingCase,
-                            )
-                          }}
-                          large
-                        />
-                      </Box>
-                    </GridColumn>
-                  ))}
-                </GridRow>
-              </GridContainer>
-            </Box>
-            <Box component="section" marginBottom={7}>
-              <Box marginBottom={2}>
-                <Typography as="h3" variant="h3">
-                  Greinargerð um málsatvik og lagarök
-                </Typography>
+              <Box component="section" marginBottom={7}>
+                <Box marginBottom={2}>
+                  <Typography as="h3" variant="h3">
+                    Greinargerð um málsatvik og lagarök
+                  </Typography>
+                </Box>
+                <Box marginBottom={3}>
+                  <Input
+                    textarea
+                    rows={2}
+                    name="caseFacts"
+                    label="Málsatvik rakin"
+                    defaultValue={caseDraftJSON.case.caseFacts}
+                    placeholder="Skrifa hér..."
+                    onBlur={(evt) => {
+                      autoSave(
+                        workingCase,
+                        'caseFacts',
+                        evt.target.value,
+                        setWorkingCase,
+                      )
+                    }}
+                  />
+                </Box>
+                <Box marginBottom={3}>
+                  <Input
+                    textarea
+                    rows={2}
+                    name="witnessAccounts"
+                    label="Framburðir"
+                    placeholder="Skrifa hér..."
+                    defaultValue={caseDraftJSON.case.witnessAccounts}
+                    onBlur={(evt) => {
+                      autoSave(
+                        workingCase,
+                        'witnessAccounts',
+                        evt.target.value,
+                        setWorkingCase,
+                      )
+                    }}
+                  />
+                </Box>
+                <Box marginBottom={3}>
+                  <Input
+                    textarea
+                    rows={2}
+                    name="investigationProgress"
+                    label="Staða rannsóknar og næstu skref"
+                    placeholder="Skrifa hér..."
+                    defaultValue={caseDraftJSON.case.investigationProgress}
+                    onBlur={(evt) => {
+                      autoSave(
+                        workingCase,
+                        'investigationProgress',
+                        evt.target.value,
+                        setWorkingCase,
+                      )
+                    }}
+                  />
+                </Box>
+                <Box marginBottom={3}>
+                  <Input
+                    textarea
+                    rows={2}
+                    name="legalArguments"
+                    label="Lagarök"
+                    placeholder="Skrifa hér..."
+                    defaultValue={caseDraftJSON.case.legalArguments}
+                    onBlur={(evt) => {
+                      autoSave(
+                        workingCase,
+                        'legalArguments',
+                        evt.target.value,
+                        setWorkingCase,
+                      )
+                    }}
+                  />
+                </Box>
+                <Box marginBottom={3}>
+                  <Input
+                    textarea
+                    rows={2}
+                    name="comments"
+                    label="Athugasemdir til dómara"
+                    placeholder="Skrifa hér..."
+                    defaultValue={caseDraftJSON.case.comments}
+                    onBlur={(evt) => {
+                      autoSave(
+                        workingCase,
+                        'comments',
+                        evt.target.value,
+                        setWorkingCase,
+                      )
+                    }}
+                  />
+                </Box>
               </Box>
-              <Box marginBottom={3}>
-                <Input
-                  textarea
-                  rows={2}
-                  name="caseFacts"
-                  label="Málsatvik rakin"
-                  defaultValue={caseDraftJSON.case.caseFacts}
-                  placeholder="Skrifa hér..."
-                  onBlur={(evt) => {
-                    autoSave(
-                      workingCase,
-                      'caseFacts',
-                      evt.target.value,
-                      setWorkingCase,
-                    )
-                  }}
-                />
-              </Box>
-              <Box marginBottom={3}>
-                <Input
-                  textarea
-                  rows={2}
-                  name="witnessAccounts"
-                  label="Framburðir"
-                  placeholder="Skrifa hér..."
-                  defaultValue={caseDraftJSON.case.witnessAccounts}
-                  onBlur={(evt) => {
-                    autoSave(
-                      workingCase,
-                      'witnessAccounts',
-                      evt.target.value,
-                      setWorkingCase,
-                    )
-                  }}
-                />
-              </Box>
-              <Box marginBottom={3}>
-                <Input
-                  textarea
-                  rows={2}
-                  name="investigationProgress"
-                  label="Staða rannsóknar og næstu skref"
-                  placeholder="Skrifa hér..."
-                  defaultValue={caseDraftJSON.case.investigationProgress}
-                  onBlur={(evt) => {
-                    autoSave(
-                      workingCase,
-                      'investigationProgress',
-                      evt.target.value,
-                      setWorkingCase,
-                    )
-                  }}
-                />
-              </Box>
-              <Box marginBottom={3}>
-                <Input
-                  textarea
-                  rows={2}
-                  name="legalArguments"
-                  label="Lagarök"
-                  placeholder="Skrifa hér..."
-                  defaultValue={caseDraftJSON.case.legalArguments}
-                  onBlur={(evt) => {
-                    autoSave(
-                      workingCase,
-                      'legalArguments',
-                      evt.target.value,
-                      setWorkingCase,
-                    )
-                  }}
-                />
-              </Box>
-              <Box marginBottom={3}>
-                <Input
-                  textarea
-                  rows={2}
-                  name="comments"
-                  label="Athugasemdir til dómara"
-                  placeholder="Skrifa hér..."
-                  defaultValue={caseDraftJSON.case.comments}
-                  onBlur={(evt) => {
-                    autoSave(
-                      workingCase,
-                      'comments',
-                      evt.target.value,
-                      setWorkingCase,
-                    )
-                  }}
-                />
-              </Box>
-            </Box>
-            <FormFooter
-              previousUrl="/stofna-krofu/grunnupplysingar"
-              nextUrl="/stofna-krofu/yfirlit"
-              nextIsDisabled={
-                workingCase.case.lawsBroken === '' &&
-                workingCase.case.caseCustodyProvisions.length === 0
-              }
-            />
-          </GridColumn>
-        </GridRow>
-      </GridContainer>
-    </Box>
+              <FormFooter
+                previousUrl="/stofna-krofu/grunnupplysingar"
+                nextUrl="/stofna-krofu/yfirlit"
+                onNextButtonClick={() => setModalVisible(true)}
+                nextIsDisabled={
+                  workingCase.case.lawsBroken === '' &&
+                  workingCase.case.caseCustodyProvisions.length === 0
+                }
+              />
+            </GridColumn>
+          </GridRow>
+        </GridContainer>
+      </Box>
+      {modalVisible && (
+        <Modal
+          handleClose={() => setModalVisible(false)}
+          handleSecondaryButtonClick={() =>
+            history.push('/stofna-krofu/yfirlit')
+          }
+          handlePrimaryButtonClick={async () => {
+            setIsSendingNotification(true)
+            await api.sendNotification(workingCase.id)
+            setIsSendingNotification(false)
+            // history.push('/stofna-krofu/yfirlit')
+          }}
+          isPrimaryButtonLoading={isSendingNotification}
+        />
+      )}
+    </>
   )
 }
 
