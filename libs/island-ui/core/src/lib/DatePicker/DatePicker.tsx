@@ -87,11 +87,13 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           </p>
           <div className={styles.value}>
             {value ? (
-              <Typography variant="h3">
-                {format(valueAsDate, 'P', {
-                  locale: getLocale(locale),
-                })}
-              </Typography>
+              <span data-testid="datepicker-value">
+                <Typography variant="h3">
+                  {format(valueAsDate, 'P', {
+                    locale: getLocale(locale),
+                  })}
+                </Typography>
+              </span>
             ) : placeholderText ? (
               <Typography as="span" variant="placeholderText" color="dark300">
                 {placeholderText}
@@ -105,7 +107,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   })
 
   return (
-    <div className={coreStyles.root}>
+    <div className={coreStyles.root} data-testid="datepicker">
       <div className={cn(styles.root, 'island-ui-datepicker')}>
         <ReactDatePicker
           selected={selected ?? startDate}
