@@ -5,8 +5,8 @@ export const thumbnail = style({
   backgroundSize: 'contain',
   backgroundPosition: 'center',
   backgroundRepeat: 'no-repeat',
-  width: 137,
-  height: 156,
+  width: theme.spacing['20'],
+  height: theme.spacing['20'],
   flex: 'none',
   display: 'none',
   '@media': {
