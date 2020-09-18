@@ -60,13 +60,11 @@ const mainContentSpan: ResponsiveProp<GridColumns> = [
   '12/12',
   '12/12',
   '8/12',
-  '8/12',
 ]
 const mainContentSpanWithIndent: ResponsiveProp<GridColumns> = [
   '12/12',
   '12/12',
   '12/12',
-  '7/12',
   '7/12',
 ]
 const mainContentIndent: ResponsiveProp<GridColumns> = [
@@ -74,13 +72,11 @@ const mainContentIndent: ResponsiveProp<GridColumns> = [
   null,
   null,
   '1/12',
-  '1/12',
 ]
 const sidebarContentSpan: ResponsiveProp<GridColumns> = [
   '12/12',
   '12/12',
   '12/12',
-  '3/12',
   '3/12',
 ]
 
@@ -251,26 +247,29 @@ const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
         <Background ref={setRef(slice.id)} id={slice.id} theme={page.theme}>
           <GridContainer position="none">
             <ColorSchemeContext.Provider value={{ colorScheme: 'white' }}>
-              <Box marginBottom={15}>
+              <Box marginBottom={[8, 8, 8, 15]}>
                 <Header />
               </Box>
             </ColorSchemeContext.Provider>
             <GridRow>
-              <GridColumn span={['12/12', '12/12', '12/12', '9/12', '9/12']}>
-                <div className={styles.indent}>
-                  <Stack space={2}>
-                    <Breadcrumbs color="blue300" separatorColor="blue300">
-                      <Link href={makePath()}>Ísland.is</Link>
-                      <Link href="">{page.title}</Link>
-                    </Breadcrumbs>
-                    <Typography variant="h1" as="h1" color="white">
-                      {slice.title}
-                    </Typography>
-                    <Typography variant="p" as="p" color="white">
-                      {slice.introduction}
-                    </Typography>
-                  </Stack>
-                </div>
+              <GridColumn
+                offset={mainContentIndent}
+                span={mainContentSpanWithIndent}
+              >
+                <Stack space={2}>
+                  <Breadcrumbs color="blue300" separatorColor="blue300">
+                    <Link href={makePath()}>Ísland.is</Link>
+                    <span>{page.title}</span>
+                  </Breadcrumbs>
+                  <Typography variant="h1" as="h1" color="white">
+                    {slice.title}
+                  </Typography>
+                  <Typography variant="p" as="p" color="white">
+                    {slice.introduction}
+                  </Typography>
+                </Stack>
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '12/12', '9/12']}>
                 {(slice.slices as AvailableSlices[]).map((slice) => (
                   <Section
                     key={slice.id}
