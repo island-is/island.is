@@ -86,6 +86,8 @@ export const ApplicationForm: FC<{ application: Application }> = ({
     }
   }
 
+  const showProgressTag = mode !== FormModes.APPLYING
+
   return (
     <Box
       className={cn(styles.root, {
@@ -144,7 +146,7 @@ export const ApplicationForm: FC<{ application: Application }> = ({
               <Sidebar>
                 <FormProgress
                   theme={progressTheme[mode]}
-                  tag={<ProgressTag />}
+                  tag={showProgressTag && <ProgressTag />}
                   formName={form.name}
                   formIcon={form.icon}
                   sections={sections}
