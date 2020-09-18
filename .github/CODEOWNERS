@@ -1,6 +1,7 @@
 # Fallback. If there is no owner, assign to core maintainers.
 *                               @island-is/core
 
+# Order is important; the last matching pattern takes the most precedence.
 # Project folders are usually owned by the team assigned.
 # Add new projects here.
 
