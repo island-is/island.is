@@ -213,7 +213,7 @@ export const DrivingLessonsApplication: Form = buildForm({
       children: [
         buildIntroductionField({
           id: 'overview',
-          name: 'Takk fyrir að sækja um?',
+          name: 'Takk fyrir að sækja um',
           introduction:
             'Með því að smella á Submit hér að neðan, þá sendist umsóknin inn til úrvinnslu. Við látum þig vita þegar hún er samþykkt eða henni er hafnað.',
         }),

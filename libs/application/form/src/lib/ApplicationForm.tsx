@@ -50,11 +50,15 @@ export const ApplicationForm: FC<{ application: Application }> = ({
     dataSchema,
   } = state
 
+  const { mode = 'applying' } = state.form
+
   return (
     <Box
       className={cn(styles.root, {
-        [styles.rootEditing]: true,
-        [styles.rootReviewing]: false,
+        [styles.rootApplying]: mode === 'applying',
+        [styles.rootApproved]: mode === 'approved',
+        [styles.rootReviewing]: mode === 'review',
+        [styles.rootRejected]: mode === 'rejected',
       })}
     >
       <Box
@@ -94,7 +98,7 @@ export const ApplicationForm: FC<{ application: Application }> = ({
                   prevScreen={() => dispatch({ type: ActionTypes.PREV_SCREEN })}
                   shouldSubmit={activeScreen === screens.length - 1}
                   screen={screens[activeScreen]}
-                  mode={state.form.mode}
+                  mode={mode}
                   applicationId={storedApplication.id}
                 />
               </Box>

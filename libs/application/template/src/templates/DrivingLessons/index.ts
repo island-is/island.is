@@ -9,6 +9,7 @@ import { DrivingLessonsApplication } from './forms/DrivingLessonsApplication'
 import { nationalIdRegex } from '../examples/constants'
 import { ReviewApplication } from './forms/ReviewApplication'
 import { Approved } from './forms/Approved'
+import { Rejected } from './forms/Rejected'
 
 type Events =
   | { type: 'APPROVE' }
@@ -87,7 +88,7 @@ export const DrivingLessons: ApplicationTemplate<
         },
         on: {
           APPROVE: { target: 'approved' },
-          REJECT: { target: 'draft' },
+          REJECT: { target: 'rejected' },
         },
       },
       approved: {
@@ -100,6 +101,7 @@ export const DrivingLessons: ApplicationTemplate<
       rejected: {
         meta: {
           name: 'Rejected',
+          roles: [{ id: 'applicant', form: Rejected }],
         },
       },
     },

@@ -14,7 +14,7 @@ export const root = style({
   },
 })
 
-export const rootEditing = style({
+export const rootApplying = style({
   background: theme.color.white,
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
@@ -23,6 +23,22 @@ export const rootEditing = style({
   },
 })
 
+export const rootApproved = style({
+  background: theme.color.white,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      background: theme.color.mint100,
+    },
+  },
+})
+export const rootRejected = style({
+  background: theme.color.white,
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      background: theme.color.red100,
+    },
+  },
+})
 export const rootReviewing = style({
   background: theme.color.white,
   '@media': {
