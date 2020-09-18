@@ -152,8 +152,14 @@ export class NationalRegistryService {
 
     const cacheKey = this.getCacheKey(nationalId, 'user')
     const cacheValue = await this.cacheManager.get(cacheKey)
-    if (cacheValue) {
-      return cacheValue.user
+    if (cacheValue && cacheValue.user) {
+      // TODO remove after ttl runs out (when this commit is one month old).
+      // This fix is because the user was cached with postalcode as string
+      // and it is way to expensive to clear the cache.
+      return {
+        ...cacheValue.user,
+        postalcode: parseInt(cacheValue.user.postalcode),
+      }
     }
 
     const response: {

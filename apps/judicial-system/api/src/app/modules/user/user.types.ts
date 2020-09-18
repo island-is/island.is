@@ -10,5 +10,8 @@ export class User {
   nationalId: string
 
   @ApiProperty()
+  name: string
+
+  @ApiProperty()
   roles: UserRole[]
 }

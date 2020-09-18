@@ -11,7 +11,7 @@ import React, {
   useCallback,
 } from 'react'
 import { fromPairs, minBy } from 'lodash'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_ABOUT_PAGE_QUERY } from '../queries'
 import { Screen } from '@island.is/web/types'
@@ -40,11 +40,11 @@ import {
   Link,
   ColorSchemeContext,
 } from '@island.is/island-ui/core'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import { Content } from '@island.is/island-ui/contentful'
 import Sidebar, { SidebarProps } from './Sidebar'
 import * as styles from './AboutPage.treat'
 import Head from 'next/head'
-import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   GetAboutPageQuery,
   QueryGetAboutPageArgs,
@@ -219,7 +219,7 @@ interface SectionProps {
 
 const Section: FC<SectionProps> = ({ slice, page, currentSliceId, setRef }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
 
   switch (slice.__typename) {
     case 'PageHeaderSlice':

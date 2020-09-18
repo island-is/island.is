@@ -6,11 +6,11 @@ import { Content, Image } from '@island.is/island-ui/contentful'
 import { Screen } from '../types'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '../i18n/useDateUtils'
-import useRouteNames from '@island.is/web/i18n/useRouteNames'
+import routeNames from '@island.is/web/i18n/routeNames'
 import { NewsItemLayout } from './Layouts/Layouts'
-import { withMainLayout } from '../layouts/main'
 import { GET_SINGLE_NEWS_ITEM_QUERY } from './queries'
 import { CustomNextError } from '@island.is/web/units/errors'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   ContentLanguage,
   GetSingleNewsItemQuery,
@@ -23,7 +23,7 @@ interface NewsItemProps {
 
 const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
   const { activeLocale } = useI18n()
-  const { makePath } = useRouteNames(activeLocale)
+  const { makePath } = routeNames(activeLocale)
   const { format } = useDateUtils()
 
   const sidebar = (
@@ -48,7 +48,7 @@ const NewsItem: Screen<NewsItemProps> = ({ newsItem }) => {
       <Head>
         <title>{newsItem.title} | Ísland.is</title>
       </Head>
-      <NewsItemLayout sidebar={sidebar}>
+      <NewsItemLayout>
         <Breadcrumbs>
           <Link href={makePath()}>Ísland.is</Link>
           <Link href={makePath('news')}>Fréttir og tilkynningar</Link>

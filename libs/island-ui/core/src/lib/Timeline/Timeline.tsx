@@ -20,6 +20,7 @@ import { Inline } from '../Inline/Inline'
 import * as timelineStyles from './Timeline.treat'
 import * as eventStyles from './Event.treat'
 import ReactDOM from 'react-dom'
+import { Box } from '../Box'
 
 const formatNumber = (value: number) =>
   value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.')
@@ -171,7 +172,12 @@ export const Timeline = ({ events }: TimelineProps) => {
                           const larger = Boolean(event.data)
                           const modalKey = `modal-${year}-${month}-${eventIndex}`
                           const isVisible = visibleModal === modalKey
-
+                          const bulletLineClass = cn(
+                            timelineStyles.bulletLine,
+                            {
+                              [timelineStyles.bulletLineLarger]: larger,
+                            },
+                          )
                           return (
                             <div
                               key={eventIndex}
@@ -191,11 +197,7 @@ export const Timeline = ({ events }: TimelineProps) => {
                                   </span>
                                 )}
                               </div>
-                              <span
-                                className={cn(timelineStyles.bulletLine, {
-                                  [timelineStyles.bulletLineLarger]: larger,
-                                })}
-                              >
+                              <span className={bulletLineClass}>
                                 <BulletLine selected={isVisible} />
                               </span>
                             </div>
@@ -275,13 +277,21 @@ const EventBar = forwardRef(
   ) => {
     return (
       <button onClick={onClick} className={eventStyles.eventBar} ref={ref}>
-        <div className={eventStyles.eventBarTitle}>
-          <div className={eventStyles.eventBarIcon}>
-            <Icon type="user" color="purple400" width="24" />
-          </div>
-          <span className={eventStyles.title}>{event.title}</span>
-        </div>
-        {event.value && (
+        <Box
+          className={eventStyles.eventBarTitle}
+          background="purple100"
+          display="flex"
+        >
+          <Box className={eventStyles.eventBarIcon}>
+            <Icon type="user" color="purple400" width="24" height="24" />
+          </Box>
+          <Box paddingLeft={2} paddingRight={3}>
+            <Typography variant="h5" color="purple400">
+              {event.title}
+            </Typography>
+          </Box>
+        </Box>
+        {!!event.value && (
           <div className={eventStyles.eventBarStats}>
             <span className={eventStyles.valueWrapper}>
               <span className={eventStyles.value}>
@@ -322,10 +332,51 @@ const EventModal = forwardRef(
 
     return (
       <div ref={ref} className={eventStyles.eventModal}>
-        <div className={eventStyles.eventBarIcon}>
-          <Icon type="user" color="purple400" width="24" />
-        </div>
-        <div className={eventStyles.eventModalContent}>
+        <Box
+          className={eventStyles.eventBarTitle}
+          background="white"
+          display="inlineFlex"
+        >
+          <Box className={eventStyles.eventBarIcon}>
+            <Icon type="user" color="purple400" width="24" height="24" />
+          </Box>
+          {!!event.value && (
+            <Box
+              display="inlineFlex"
+              alignItems="center"
+              className={eventStyles.nowrap}
+              paddingLeft={2}
+              paddingRight={4}
+            >
+              <Typography variant="h1" color="purple400" as="span">
+                {formatNumber(event.value)}
+              </Typography>
+              <Typography
+                variant="h1"
+                color="purple400"
+                as="span"
+                fontWeight="light"
+              >
+                /{formatNumber(event.maxValue || 0)}
+              </Typography>
+              <Box marginLeft={1}>
+                <Typography
+                  variant="eyebrow"
+                  color="purple400"
+                  fontWeight="semiBold"
+                >
+                  {event.valueLabel?.split(/[\r\n]+/).map((line, i) => (
+                    <Fragment key={i}>
+                      {line}
+                      <br />
+                    </Fragment>
+                  ))}
+                </Typography>
+              </Box>
+            </Box>
+          )}
+        </Box>
+        <Box padding={6}>
           <button onClick={onClose} className={eventStyles.eventModalClose}>
             <Icon type="close" />
           </button>
@@ -347,7 +398,7 @@ const EventModal = forwardRef(
               Lesa meira
             </Button>
           </Stack>
-        </div>
+        </Box>
       </div>
     )
   },

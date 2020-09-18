@@ -4,7 +4,7 @@ import { Injectable, Inject } from '@nestjs/common'
 
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-interface NovaResponse {
+export interface NovaResponse {
   Code: number
   Message: string
 }
@@ -13,7 +13,7 @@ interface NovaAuthResponse extends NovaResponse {
   Token: string
 }
 
-class NovaError extends Error {
+export class NovaError extends Error {
   constructor(code: number, message: string) {
     super()
     const errorCodes = {

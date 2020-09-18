@@ -352,11 +352,6 @@ export const StepTwo: React.FC = () => {
                             label={provision.brokenLaw}
                             value={provision.value}
                             checked={provision.getCheckbox}
-                            defaultChecked={
-                              caseDraftJSON.case.caseCustodyProvisions.indexOf(
-                                provision.value,
-                              ) > -1
-                            }
                             tooltip={provision.explination}
                             onChange={({ target }) => {
                               console.log(target.checked)
@@ -432,11 +427,6 @@ export const StepTwo: React.FC = () => {
                           label={restriction.restriction}
                           value={restriction.value}
                           checked={restriction.getCheckbox}
-                          defaultChecked={
-                            caseDraftJSON.case.restrictions.indexOf(
-                              restriction.value,
-                            ) > -1
-                          }
                           tooltip={restriction.explination}
                           onChange={({ target }) => {
                             // Toggle the checkbox on or off

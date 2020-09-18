@@ -402,6 +402,10 @@ type Menu {
   links: [Link!]!
 }
 
+type AdgerdirTags {
+  items: [AdgerdirTag!]!
+}
+
 type LifeEventPage {
   id: ID!
   title: String!
@@ -410,10 +414,7 @@ type LifeEventPage {
   image: Image!
   thumbnail: Image
   content: [Slice!]!
-}
-
-type AdgerdirTags {
-  items: [AdgerdirTag!]!
+  category: ArticleCategory
 }
 
 type PaginatedAdgerdirNews {
@@ -424,6 +425,15 @@ type PaginatedAdgerdirNews {
 type OrganizationTags {
   items: [OrganizationTag!]!
 }
+
+type Url {
+  id: ID!
+  title: String
+  page: UrlPage!
+  urlsList: [String!]!
+}
+
+union UrlPage = Article | ArticleCategory | News | LifeEventPage
 
 type SearchResult {
   total: Int!
@@ -533,9 +543,11 @@ type Query {
   getMenu(input: GetMenuInput!): Menu
   getLifeEventPage(input: GetLifeEventPageInput!): LifeEventPage
   getLifeEvents(input: GetLifeEventsInput!): [LifeEventPage!]!
+  getLifeEventsInCategory(input: GetLifeEventsInCategoryInput!): [LifeEventPage!]!
   getArticleCategories(input: GetArticleCategoriesInput!): [ArticleCategory!]!
   getArticles(input: GetArticlesInput!): [Article!]!
   getSingleNews(input: GetSingleNewsInput!): News
+  getUrl(input: GetUrlInput!): Url
   searchResults(query: SearcherInput!): SearchResult!
   singleItem(input: ItemInput!): ContentItem
   webSearchAutocomplete(input: WebSearchAutocompleteInput!): WebSearchAutocomplete!
@@ -544,6 +556,7 @@ type Query {
   getDocument(input: GetDocumentInput!): DocumentDetails
   listDocuments(input: ListDocumentsInput!): [Document!]
   getDocumentCategories: [DocumentCategory!]
+  getTranslations(input: GetTranslationsInput!): JSON
 }
 
 input HelloWorldInput {
@@ -652,6 +665,11 @@ input GetLifeEventsInput {
   lang: String!
 }
 
+input GetLifeEventsInCategoryInput {
+  slug: String!
+  lang: String!
+}
+
 input GetArticleCategoriesInput {
   lang: String!
   size: Int
@@ -666,6 +684,11 @@ input GetArticlesInput {
 input GetSingleNewsInput {
   slug: String!
   lang: String
+}
+
+input GetUrlInput {
+  slug: String!
+  lang: String!
 }
 
 input SearcherInput {
@@ -718,6 +741,11 @@ input ListDocumentsInput {
   category: String!
   page: Float!
   pageSize: Float!
+}
+
+input GetTranslationsInput {
+  namespaces: [String!]
+  lang: String!
 }
 
 type Mutation {
