@@ -104,4 +104,6 @@ const makeSpacingComponent = (text = '') => {
 
 export const Default = () => makeDefaultComponent('Choose a variant')
 export const Spacing = () =>
-  makeSpacingComponent('Typography is a layout component and can control vertical spacing')
+  makeSpacingComponent(
+    'Typography is a layout component and can control vertical spacing',
+  )
