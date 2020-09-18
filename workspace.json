@@ -3779,6 +3779,26 @@
             "tsConfig": "apps/services/xroad-collector/tsconfig.spec.json",
             "passWithNoTests": true
           }
+        },
+        "codegen-xrd": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o apps/services/xroad-collector/gen/fetch-xrd -i apps/services/xroad-collector/config/xrd-meta-oas.yaml"
+              }
+            ]
+          }
+        },
+        "codegen-xrd-rest": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "openapi-generator generate -g typescript-fetch --additional-properties=typescriptThreePlus=true -o apps/services/xroad-collector/gen/fetch-xrd-rest -i apps/services/xroad-collector/config/xrd-rest-meta-oas.yaml"
+              }
+            ]
+          }
         }
       }
     }
