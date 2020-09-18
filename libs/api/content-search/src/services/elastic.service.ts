@@ -47,6 +47,7 @@ export class ElasticService {
     }
   }
 
+  // this can partially succeed
   async bulk(index: SearchIndexes, documents: SyncRequest) {
     logger.info('Processing documents', {
       index,
@@ -75,35 +76,38 @@ export class ElasticService {
       })
     }
 
-    // if we have any requests execute them
-    if (requests.length) {
-      try {
-        const chunkSize = 200 // this has to be an even number
-        const client = await this.getClient()
-        let requestChunk = requests.splice(-chunkSize, chunkSize)
-        do {
-          // wait for request b4 continuing
-          const response = await client.bulk({
-            index: index,
-            body: requestChunk,
-          })
-          if (response.body.errors) {
-            logger.error('Failed to import some documents in bulk import', {
-              response,
-            })
-          }
-          requestChunk = requests.splice(-chunkSize, chunkSize)
-        } while (requestChunk.length) // while we have requests to process
-
-        return true
-      } catch (error) {
-        logger.error('Elasticsearch request failed on bulk index', error)
-        throw error
-      }
-    } else {
-      logger.info('No requests to execute')
+    if (!requests.length){
+      logger.info('No requests for elasticsearch to execute')
+      // no need to continue
+      return false
     }
-    return false
+
+    try {
+      // elasticsearch does not like big requests (above 5mb) so we limit the size to 200 entries just in case
+      const chunkSize = 200 // this has to be an even number
+      const client = await this.getClient()
+      let requestChunk = requests.splice(-chunkSize, chunkSize)
+      while (requestChunk.length) {
+        // wait for request b4 continuing
+        const response = await client.bulk({
+          index: index,
+          body: requestChunk,
+        })
+
+        // not all errors are thrown log if the response has any errors
+        if (response.body.errors) {
+          logger.error('Failed to import some documents in bulk import', {
+            response,
+          })
+        }
+        requestChunk = requests.splice(-chunkSize, chunkSize)
+      } 
+
+      return true
+    } catch (error) {
+      logger.error('Elasticsearch request failed on bulk index', error)
+      throw error
+    }
   }
 
   async findByQuery<ResponseBody, RequestBody>(
