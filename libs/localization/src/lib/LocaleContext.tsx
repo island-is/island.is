@@ -17,8 +17,11 @@ interface MessagesDict {
 
 interface LocaleContextType {
   lang: Locale
-  loadMessages: (namespaces: string | string[], lang: Locale) => void
+  loadMessages: (namespaces: string | string[]) => void
+  changeLanguage: (lang: Locale) => void
   loadingMessages: boolean
+  loadedNamespaces: string[]
+  messages: MessagesDict
 }
 
 interface LocaleProviderProps {
@@ -63,50 +66,55 @@ export const LocaleProvider = ({
   }, [])
 
   useEffect(() => {
-    extractNamespaces(messagesDict)
-  }, [messagesDict])
+    setActiveLocale(locale)
+    setMessagesDict(messages)
+  }, [locale])
 
   useEffect(() => {
-    accumulateMessages(locale, messages, data?.getTranslations ?? {})
-  }, [locale, messages, data])
+    accumulateMessages(messages, data?.getTranslations ?? {})
+  }, [messages, data])
 
-  const loadMessages = async (namespaces: string | string[], lang: Locale) => {
+  async function changeLanguage(lang: Locale) {
+    await polyfill(lang)
+    setMessagesDict({})
+    setActiveLocale(lang)
+    fetchMessages({
+      variables: {
+        input: {
+          namespaces: loadedNamespaces,
+          lang,
+        },
+      },
+    })
+  }
+
+  const loadMessages = async (namespaces: string | string[]) => {
     const namespaceArr =
       typeof namespaces === 'string' ? [namespaces] : namespaces
     const diff = difference(namespaceArr, loadedNamespaces)
 
     // Only fetch namespaces that we have not fetched yet
     if (!isEmpty(diff)) {
+      setLoadedNamespaces([...loadedNamespaces, ...diff])
+
       fetchMessages({
         variables: {
           input: {
             namespaces: diff,
-            lang,
+            lang: activeLocale,
           },
         },
       })
     }
   }
 
-  function extractNamespaces(dict: MessagesDict) {
-    setLoadedNamespaces(
-      uniq(Object.keys(dict).map((d) => parseMessageId(d).namespace)),
-    )
-  }
-
   async function accumulateMessages(
-    locale: Locale,
     messages: MessagesDict,
     messagesFromQuery: any,
   ) {
-    if (locale !== activeLocale) {
-      // locele changed, reset messages
-      setMessagesDict(messages)
-    } else {
-      setMessagesDict(
-        Object.assign({}, messagesDict, messages, messagesFromQuery),
-      )
-    }
+    setMessagesDict(
+      Object.assign({}, messagesDict, messages, messagesFromQuery),
+    )
   }
 
   return (
@@ -114,7 +122,10 @@ export const LocaleProvider = ({
       value={{
         lang: activeLocale,
         loadMessages,
+        changeLanguage,
         loadingMessages: !ready || loadingMessages,
+        loadedNamespaces,
+        messages: messagesDict,
       }}
     >
       {ready && (

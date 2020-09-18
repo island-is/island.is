@@ -24,6 +24,7 @@ import FormExternalDataProvider from './FormExternalDataProvider'
 import { findReviewField, verifyExternalData } from '../utils'
 
 import * as styles from './Screen.treat'
+import { useLocale } from '@island.is/localization'
 
 type ScreenProps = {
   answerAndGoToNextScreen(Answers): void
@@ -54,6 +55,7 @@ const Screen: FC<ScreenProps> = ({
   mode,
   applicationId,
 }) => {
+  const { formatMessage } = useLocale()
   const hookFormData = useForm<FormValue>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -131,7 +133,7 @@ const Screen: FC<ScreenProps> = ({
           span={['12/12', '12/12', '7/9', '7/9']}
           offset={[null, null, '1/9']}
         >
-          <Typography variant="h2">{screen.name}</Typography>
+          <Typography variant="h2">{formatMessage(screen.name)}</Typography>
           <Box>
             {screen.type === FormItemTypes.REPEATER ? (
               <FormRepeater
@@ -185,7 +187,11 @@ const Screen: FC<ScreenProps> = ({
                   paddingLeft="none"
                 >
                   <Button variant="ghost" onClick={goBack}>
-                    Til baka
+                    {formatMessage({
+                      id: 'application.system:button.back',
+                      defaultMessage: 'Til baka',
+                      description: 'Back button text',
+                    })}
                   </Button>
                 </Box>
                 <Box
@@ -207,7 +213,11 @@ const Screen: FC<ScreenProps> = ({
                       disabled={!canProceed()}
                       htmlType="submit"
                     >
-                      Staðfesta
+                      {formatMessage({
+                        id: 'application.system:button.submit',
+                        defaultMessage: 'Submit',
+                        description: 'Submit button text',
+                      })}
                     </Button>
                   ) : (
                     <>
@@ -218,7 +228,11 @@ const Screen: FC<ScreenProps> = ({
                           icon="arrowRight"
                           htmlType="submit"
                         >
-                          Halda áfram
+                          {formatMessage({
+                            id: 'application.system:button.next',
+                            defaultMessage: 'Halda áfram',
+                            description: 'Next button text',
+                          })}
                         </Button>
                       </Box>
                       <Box display={['inlineFlex', 'none']}>

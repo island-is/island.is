@@ -15,6 +15,7 @@ import { Form } from '../../types/Form'
 import { nationalIdRegex } from './constants'
 import { Comparators } from '../../types/Condition'
 import { ApplicationTypes } from '../../types/ApplicationTypes'
+import { m } from './messages'
 
 const ExampleSchema = z.object({
   person: z.object({
@@ -52,40 +53,40 @@ export const ExampleForm: Form = buildForm({
   children: [
     buildSection({
       id: 'intro',
-      name: 'Upplýsingar',
+      name: m.introSection,
       children: [
         buildIntroductionField({
           id: 'field',
-          name: 'Velkomin(n)',
+          name: m.introField,
           introduction: 'Þessi umsókn snýr að atvinnuleysisbótum',
         }),
         buildMultiField({
           id: 'about',
-          name: 'Um þig',
+          name: m.about,
           children: [
             buildTextField({
               id: 'person.name',
-              name: 'Nafn',
+              name: m.name,
               required: true,
             }),
             buildTextField({
               id: 'person.nationalId',
-              name: 'Kennitala',
+              name: m.nationalId,
               required: true,
             }),
             buildTextField({
               id: 'person.age',
-              name: 'Aldur',
+              name: m.age,
               required: true,
             }),
             buildTextField({
               id: 'person.email',
-              name: 'Netfang',
+              name: m.email,
               required: false,
             }),
             buildTextField({
               id: 'person.phoneNumber',
-              name: 'Símanúmer',
+              name: m.phoneNumber,
               required: false,
               condition: {
                 questionId: 'person.age',
@@ -100,19 +101,19 @@ export const ExampleForm: Form = buildForm({
     }),
     buildSection({
       id: 'career',
-      name: 'Starfsferill',
+      name: m.career,
       children: [
         buildSubSection({
           id: 'history',
-          name: 'Hvar hefur þú unnið áður?',
+          name: m.history,
           children: [
             buildRadioField({
               id: 'careerHistory',
-              name: 'Hefurðu unnið yfir höfuð einhvern tímann áður?',
+              name: m.careerHistory,
               required: true,
               options: [
-                { value: 'yes', label: 'Já' },
-                { value: 'no', label: 'Nei' },
+                { value: 'yes', label: m.yesOptionLabel },
+                { value: 'no', label: m.noOptionLabel },
               ],
               condition: (formValue: ExampleSchemaFormValues) => {
                 return formValue?.person?.age >= '18'
@@ -120,10 +121,10 @@ export const ExampleForm: Form = buildForm({
             }),
             buildCheckboxField({
               id: 'careerHistoryCompanies',
-              name: 'Hefurðu unnið fyrir eftirfarandi aðila?',
+              name: m.careerHistoryCompanies,
               required: false,
               options: [
-                { value: 'government', label: 'Ríkið' },
+                { value: 'government', label: m.governmentOptionLabel },
                 { value: 'aranja', label: 'Aranja' },
                 { value: 'advania', label: 'Advania' },
               ],
@@ -132,11 +133,11 @@ export const ExampleForm: Form = buildForm({
         }),
         buildSubSection({
           id: 'future',
-          name: 'Hvar langar þig að vinna?',
+          name: m.future,
           children: [
             buildTextField({
               id: 'dreamJob',
-              name: 'Einhver draumavinnustaður?',
+              name: m.dreamJob,
               required: false,
             }),
           ],

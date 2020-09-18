@@ -1,3 +1,4 @@
+import { MessageDescriptor } from 'react-intl'
 import { Condition } from '../types/Condition'
 import {
   CheckboxField,
@@ -21,7 +22,7 @@ import { CallToAction } from '../types/StateMachine'
 export function buildCheckboxField(data: {
   condition?: Condition
   id: string
-  name: string
+  name: MessageDescriptor | string
   options: Option[]
   required?: boolean
   disabled?: boolean
@@ -54,7 +55,7 @@ export function buildCheckboxField(data: {
 export function buildDateField(data: {
   condition?: Condition
   id: string
-  name: string
+  name: MessageDescriptor | string
   maxDate?: Date
   minDate?: Date
   required?: boolean
@@ -90,8 +91,8 @@ export function buildDateField(data: {
 export function buildIntroductionField(data: {
   condition?: Condition
   id: string
-  name: string
-  introduction: string
+  name: MessageDescriptor | string
+  introduction: MessageDescriptor | string
 }): IntroductionField {
   const { condition, id, name, introduction } = data
   return {
@@ -108,7 +109,7 @@ export function buildIntroductionField(data: {
 export function buildRadioField(data: {
   condition?: Condition
   id: string
-  name: string
+  name: MessageDescriptor | string
   options: Option[]
   required?: boolean
   disabled?: boolean
@@ -141,7 +142,7 @@ export function buildRadioField(data: {
 export function buildSelectField(data: {
   condition?: Condition
   id: string
-  name: string
+  name: MessageDescriptor | string
   placeholder?: string
   options: Option[]
   required?: boolean
@@ -177,7 +178,7 @@ export function buildSelectField(data: {
 export function buildTextField(data: {
   condition?: Condition
   id: string
-  name: string
+  name: MessageDescriptor | string
   required?: boolean
   disabled?: boolean
   width?: FieldWidth
@@ -208,7 +209,7 @@ export function buildCustomField(
   data: {
     condition?: Condition
     id: string
-    name: string
+    name: MessageDescriptor | string
     required?: boolean
     component: CustomFieldComponents
   },
@@ -231,8 +232,8 @@ export function buildCustomField(
 export function buildFileUploadField(data: {
   condition?: Condition
   id: string
-  name: string
-  introduction: string
+  name: MessageDescriptor | string | string
+  introduction: MessageDescriptor | string
   uploadHeader?: string
   uploadDescription?: string
   uploadButtonLabel?: string
