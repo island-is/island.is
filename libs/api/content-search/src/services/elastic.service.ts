@@ -76,7 +76,7 @@ export class ElasticService {
       })
     }
 
-    if (!requests.length){
+    if (!requests.length) {
       logger.info('No requests for elasticsearch to execute')
       // no need to continue
       return false
@@ -101,7 +101,7 @@ export class ElasticService {
           })
         }
         requestChunk = requests.splice(-chunkSize, chunkSize)
-      } 
+      }
 
       return true
     } catch (error) {
