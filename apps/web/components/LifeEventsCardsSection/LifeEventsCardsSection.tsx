@@ -48,7 +48,9 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
         </GridColumn>
       </GridRow>
       <GridRow>
-        {lifeEvents.map((lifeEvent) => (
+        {lifeEvents
+          .filter((lifeEvent) => lifeEvent.title && lifeEvent.slug) // life event can be empty in some locales
+          .map((lifeEvent) => (
           <GridColumn
             span={['12/12', '12/12', '6/12', '6/12', '4/12']}
             paddingBottom={3}
