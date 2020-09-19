@@ -1,4 +1,4 @@
-import React, { FC, useState, useMemo, ReactNode } from 'react'
+import React, { FC, useState, useMemo, ReactNode, Fragment } from 'react'
 import { useFirstMountState } from 'react-use'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -171,8 +171,8 @@ const SubArticleNavigation: FC<{
             </Link>
           </Typography>
         </div>
-        {article.subArticles.map((subArticle) => (
-          <>
+        {article.subArticles.map((subArticle, id) => (
+          <Fragment key={id}>
             <div
               ref={
                 subArticle === selectedSubArticle && navigation.length === 0
@@ -197,9 +197,8 @@ const SubArticleNavigation: FC<{
               <SidebarSubNav>
                 <Stack space={1}>
                   {navigation.map(({ id, text }) => (
-                    <div ref={id === activeId ? setBullet : null}>
+                    <div key={id} ref={id === activeId ? setBullet : null}>
                       <Box
-                        key={id}
                         component="button"
                         type="button"
                         textAlign="left"
@@ -215,7 +214,7 @@ const SubArticleNavigation: FC<{
                 </Stack>
               </SidebarSubNav>
             )}
-          </>
+          </Fragment>
         ))}
       </Stack>
     </SidebarBox>
@@ -383,7 +382,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             )}
           </GridColumn>
         </GridRow>
-        <Box paddingTop={subArticle ? 0 : 7}>
+        <Box paddingTop={subArticle ? 2 : 7}>
           <RichText body={(subArticle ?? article).body} />
         </Box>
       </ArticleLayout>
