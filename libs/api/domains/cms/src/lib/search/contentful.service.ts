@@ -5,6 +5,7 @@ import {
   Entry,
   SyncCollection,
 } from 'contentful'
+import Bottleneck from 'bottleneck'
 import environment from '../environments/environment'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
@@ -28,6 +29,7 @@ type typeOfSync = { initial: boolean } | { nextSyncToken: string }
 
 @Injectable()
 export class ContentfulService {
+  private limiter: Bottleneck
   private defaultIncludeDepth = 10
   private contentfulClient: ContentfulClientApi
 
@@ -40,6 +42,12 @@ export class ContentfulService {
     }
     logger.debug('Syncer created', params)
     this.contentfulClient = createClient(params)
+
+    // we dont want the importer to exceed the contentful max requests per second so we cap the request count
+    this.limiter = new Bottleneck({
+      maxTime: 200, //limit to 5 requests a second
+      maxConcurrent: 10, // only allow 10 concurrent requests at a time
+    })
   }
 
   private getFilteredIdString(chunkToProcess: Entry<any>[]): string {
@@ -138,7 +146,7 @@ export class ContentfulService {
     locale: keyof typeof SearchIndexes,
   ): Promise<Entry<any>[]> {
     // contentful has a limit of 1000 entries per request but we get "414 Request URI Too Large" so we do a 500 per request
-    const chunkSize = 30
+    const chunkSize = 100
     const chunkedChanges = []
     let chunkToProcess = entries.splice(-chunkSize, chunkSize)
     do {
@@ -150,8 +158,10 @@ export class ContentfulService {
           locale,
           maxChunkSize: chunkSize,
         })
-        // gets the changes for current locale
-        const items = await this.getContentfulData(chunkIds, locale)
+        const items = await this.limiter.schedule(() => {
+          // gets the changes for current locale
+          return this.getContentfulData(chunkIds, locale)
+        })
         chunkedChanges.push(items)
       }
       chunkToProcess = entries.splice(-chunkSize, chunkSize)
