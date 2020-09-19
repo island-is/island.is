@@ -12,7 +12,7 @@
 
 /apps/adgerdir*/                @island-is/kosmos-kaos
 /apps/web*/                     @island-is/kosmos-kaos @island-is/aranja
-/libs/api/domains/cms/                  @island-is/kosmos-kaos @island-is/aranja
+/libs/api/domains/cms/          @island-is/kosmos-kaos @island-is/aranja
 
 air-discount-scheme/            @island-is/vice-versa
 gjafakort/                      @island-is/vice-versa
