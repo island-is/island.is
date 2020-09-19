@@ -1,3 +1,4 @@
+import { logger } from '@island.is/logging'
 import flatten from 'lodash/flatten'
 
 export const createTerms = (termStrings: string[]): string[] => {
@@ -16,7 +17,7 @@ export const extractStringsFromObject = (contentObject) => {
     if (typeof content === 'object') {
       // lets extract string from nested objects
       return contentString + extractStringsFromObject(content)
-    } else if(typeof content === 'string') {
+    } else if (typeof content === 'string') {
       try {
         const parsedContent = JSON.parse(content)
         return contentString + extractStringsFromObject(parsedContent)

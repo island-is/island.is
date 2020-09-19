@@ -28,7 +28,7 @@ export class LifeEventsPageSyncService {
           return {
             _id: mapped.id,
             title: mapped.title,
-            content: mapped.intro,
+            content: extractStringsFromObject(mapped.content),
             type: 'webLifeEventPage',
             termPool: createTerms([mapped.title]),
             response: JSON.stringify(mapped),
