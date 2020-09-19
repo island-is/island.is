@@ -6,12 +6,13 @@
 /.github/                       @island-is/core
 
 
+# Order is important; the last matching pattern takes the most precedence.
 # Project folders are usually owned by the team assigned.
 # Add new projects here.
 
 /apps/adgerdir*/                @island-is/kosmos-kaos
-/apps/web*/                     @island-is/kosmos-kaos
-/libs/api/domains/cms/          @island-is/kosmos-kaos
+/apps/web*/                     @island-is/kosmos-kaos @island-is/aranja
+/libs/api/domains/cms/          @island-is/kosmos-kaos @island-is/aranja
 
 air-discount-scheme/            @island-is/vice-versa
 gjafakort/                      @island-is/vice-versa
@@ -27,8 +28,8 @@ gjafakort/                      @island-is/vice-versa
 service-portal*/                @island-is/sendiradid
 /libs/api/domains/documents/    @island-is/sendiradid
 
-/apps/services/search-indexer/  @island-is/stefna
-content-search/                 @island-is/stefna
+/apps/services/search-indexer/  @island-is/stefna @island.is/kosmos-kaos @island-is/aranja
+content-search/                 @island-is/stefna @island.is/kosmos-kaos @island-is/aranja
 
 /.storybook/                    @island-is/island-ui
 /libs/island-ui/                @island-is/island-ui
