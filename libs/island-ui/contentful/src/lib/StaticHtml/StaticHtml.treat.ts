@@ -19,6 +19,24 @@ globalStyle(`${container} > *:last-child`, {
   marginBottom: 0,
 })
 
+globalStyle(`${container} ol li`, {
+  listStyle: 'none',
+  counterIncrement: 'section',
+  position: 'relative',
+  paddingLeft: theme.spacing[3],
+  paddingBottom: theme.spacing[1],
+})
+
+globalStyle(`${container} ol li:before`, {
+  position: 'absolute',
+  top: '2px',
+  left: 0,
+  display: 'inline-block',
+  content: 'counter(section)',
+  color: theme.color.red400,
+  fontWeight: theme.typography.semiBold,
+})
+
 globalStyle(`${container} ul`, {
   listStyle: 'none',
 })
@@ -36,9 +54,4 @@ globalStyle(`${container} ul li:before`, {
   left: 0,
   borderRadius: '50%',
   border: `4px solid red`,
-})
-
-globalStyle(`${container} ol`, {
-  listStyle: 'decimal',
-  marginLeft: theme.spacing[3],
 })
