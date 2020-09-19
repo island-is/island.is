@@ -11,7 +11,6 @@
 # Add new projects here.
 
 /apps/adgerdir*/                @island-is/kosmos-kaos
-
 /apps/web*/                     @island-is/kosmos-kaos @island-is/aranja
 /libs/api/cms/                  @island-is/kosmos-kaos @island-is/aranja
 
