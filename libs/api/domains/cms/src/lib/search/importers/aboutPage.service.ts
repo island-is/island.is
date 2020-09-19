@@ -25,10 +25,8 @@ export class AboutPageSyncService {
             title: mapped.title,
             content: extractStringsFromObject(mapped.slices),
             type,
-            termPool: createTerms([
-              mapped.title,
-            ]),
-            response: JSON.stringify({...mapped, __typename: type}),
+            termPool: createTerms([mapped.title]),
+            response: JSON.stringify({ ...mapped, __typename: type }),
             tags: [
               {
                 key: entry.fields?.slug,

@@ -46,7 +46,7 @@ export class ArticleSyncService {
               mapped.category?.title,
               mapped.group?.title,
             ]),
-            response: JSON.stringify({...mapped, __typename: type}),
+            response: JSON.stringify({ ...mapped, __typename: type }),
             tags: [
               {
                 key: entry.fields?.group?.fields?.slug,

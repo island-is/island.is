@@ -2,9 +2,7 @@ import { MappedData } from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { IArticleCategory } from '../../generated/contentfulTypes'
-import {
-  mapArticleCategory,
-} from '../../models/articleCategory.model'
+import { mapArticleCategory } from '../../models/articleCategory.model'
 import { createTerms } from './utils'
 
 @Injectable()
@@ -31,7 +29,7 @@ export class ArticleCategorySyncService {
             content: mapped.description,
             type,
             termPool: createTerms([mapped.title, mapped.description]),
-            response: JSON.stringify({...mapped, __typename: type}),
+            response: JSON.stringify({ ...mapped, __typename: type }),
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
           }

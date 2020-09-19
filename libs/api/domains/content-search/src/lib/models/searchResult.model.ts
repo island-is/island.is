@@ -1,16 +1,21 @@
 import { createUnionType, Field, Int, ObjectType } from '@nestjs/graphql'
-import { AboutPage, Article, LifeEventPage, News } from '@island.is/api/domains/cms'
+import {
+  AboutPage,
+  Article,
+  LifeEventPage,
+  News,
+} from '@island.is/api/domains/cms'
 
 const types = {
   webArticle: Article,
   webLifeEventPage: LifeEventPage,
   webNews: News,
-  webAboutPage: AboutPage
+  webAboutPage: AboutPage,
 }
 const Items = createUnionType({
   name: 'Items',
   types: () => Object.values(types),
-  resolveType: (document) => types[document.__typename] // __typename is appended to request on indexing
+  resolveType: (document) => types[document.__typename], // __typename is appended to request on indexing
 })
 
 @ObjectType()

@@ -26,7 +26,7 @@ export class NewsSyncService {
             content: extractStringsFromObject(JSON.parse(mapped.content)),
             type,
             termPool: createTerms([mapped.title, mapped.intro]),
-            response: JSON.stringify({...mapped, __typename: type}),
+            response: JSON.stringify({ ...mapped, __typename: type }),
             tags: [
               {
                 key: mapped.slug,

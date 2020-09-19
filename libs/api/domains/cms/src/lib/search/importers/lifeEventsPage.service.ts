@@ -2,9 +2,7 @@ import { MappedData } from '@island.is/api/content-search'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { ILifeEventPage } from '../../generated/contentfulTypes'
-import {
-  mapLifeEventPage,
-} from '../../models/lifeEventPage.model'
+import { mapLifeEventPage } from '../../models/lifeEventPage.model'
 import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
@@ -30,7 +28,7 @@ export class LifeEventsPageSyncService {
             content: extractStringsFromObject(mapped.content),
             type,
             termPool: createTerms([mapped.title]),
-            response: JSON.stringify({...mapped, __typename: type}),
+            response: JSON.stringify({ ...mapped, __typename: type }),
             tags: [],
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),

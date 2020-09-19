@@ -8,7 +8,7 @@ import { Slice, mapSlice } from './slice.model'
 export class AboutPage {
   @Field(() => ID)
   id: string
-  
+
   @Field()
   title: string
 
