@@ -38,7 +38,7 @@ export const mapLifeEventPage = ({
   sys,
 }: ILifeEventPage): LifeEventPage => ({
   id: sys.id,
-  title: fields?.title ?? '',
+  title: fields.title ?? '',
   slug: fields.slug ?? '',
   intro: fields.intro ?? '',
   image: mapImage(fields.image),
