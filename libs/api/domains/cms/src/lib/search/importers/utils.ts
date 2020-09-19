@@ -1,4 +1,3 @@
-import { logger } from '@island.is/logging'
 import flatten from 'lodash/flatten'
 
 export const createTerms = (termStrings: string[]): string[] => {
