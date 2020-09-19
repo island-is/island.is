@@ -151,7 +151,6 @@ export const orderXl = makeOrder('xl')
 export const base = style({
   paddingRight: theme.grid.gutter.mobile / 2,
   paddingLeft: theme.grid.gutter.mobile / 2,
-  position: 'relative',
 
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
