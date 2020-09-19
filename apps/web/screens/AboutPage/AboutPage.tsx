@@ -38,6 +38,7 @@ import {
   GridContainer,
   GridColumn,
   GridRow,
+  SpanType,
 } from '@island.is/island-ui/core'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import Sidebar, { SidebarProps } from './Sidebar'
@@ -52,33 +53,11 @@ import {
 } from '@island.is/web/graphql/schema'
 import useViewport from '@island.is/web/hooks/useViewport'
 import { renderSlices } from '@island.is/island-ui/contentful'
-import { GridColumns } from 'libs/island-ui/core/src/lib/Grid/GridColumn/GridColumn.treat'
-import { ResponsiveProp } from 'libs/island-ui/core/src/utils/responsiveProp'
 
-const mainContentSpan: ResponsiveProp<GridColumns> = [
-  '12/12',
-  '12/12',
-  '12/12',
-  '8/12',
-]
-const mainContentSpanWithIndent: ResponsiveProp<GridColumns> = [
-  '12/12',
-  '12/12',
-  '12/12',
-  '7/12',
-]
-const mainContentIndent: ResponsiveProp<GridColumns> = [
-  null,
-  null,
-  null,
-  '1/12',
-]
-const sidebarContentSpan: ResponsiveProp<GridColumns> = [
-  '12/12',
-  '12/12',
-  '12/12',
-  '3/12',
-]
+const mainContentSpan: SpanType = ['12/12', '12/12', '12/12', '8/12']
+const mainContentSpanWithIndent: SpanType = ['12/12', '12/12', '12/12', '7/12']
+const mainContentIndent: SpanType = [null, null, null, '1/12']
+const sidebarContentSpan: SpanType = ['12/12', '12/12', '12/12', '3/12']
 
 const useScrollSpy = ({
   margin = 0,
@@ -169,8 +148,8 @@ const connectSlices = (slices: AvailableSlices[]): { [k: string]: string } => {
 }
 
 export interface LayoutProps {
-  width: ResponsiveProp<GridColumns>
-  indent?: ResponsiveProp<GridColumns>
+  width: SpanType
+  indent?: SpanType
   boxProps?: BoxProps
 }
 

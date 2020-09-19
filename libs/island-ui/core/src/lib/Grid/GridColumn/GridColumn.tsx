@@ -17,6 +17,7 @@ import { ResponsiveSpace } from '../../Box/useBoxStyles'
 type Breakpoint = keyof typeof theme['breakpoints']
 type position = 'relative' | 'fixed' | 'absolute'
 
+export type SpanType = ResponsiveProp<styles.GridColumns>
 export interface GridColumnProps extends ResponsiveRangeProps {
   span?: ResponsiveProp<styles.GridColumns>
   offset?: ResponsiveProp<styles.GridColumns>
