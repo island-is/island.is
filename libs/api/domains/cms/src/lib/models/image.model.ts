@@ -26,11 +26,12 @@ export class Image {
   height: number
 }
 
-export const mapImage = ({ fields, sys }: Asset): Image => new Image({
-  id: sys?.id ?? '',
-  url: fields?.file?.url ?? '',
-  title: fields?.title ?? '',
-  contentType: fields?.file?.contentType ?? '',
-  width: fields?.file?.details?.image?.width ?? 0,
-  height: fields?.file?.details?.image?.height ?? 0,
-})
+export const mapImage = ({ fields, sys }: Asset): Image =>
+  new Image({
+    id: sys?.id ?? '',
+    url: fields?.file?.url ?? '',
+    title: fields?.title ?? '',
+    contentType: fields?.file?.contentType ?? '',
+    width: fields?.file?.details?.image?.width ?? 0,
+    height: fields?.file?.details?.image?.height ?? 0,
+  })

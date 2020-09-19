@@ -35,9 +35,9 @@ const deepChange = (obj: Document | TopLevelBlock | RichText, id: string) => ({
 
 const sanitizeData = (html: Document | TopLevelBlock) => ({
   ...deepChange(html, html?.data?.target?.sys?.id),
-  content: (html?.content ?? [] as (TopLevelBlock | RichText)[]).map((content) =>
-    deepChange(content, content?.data?.target?.sys?.id),
-  ),
+  content: (
+    html?.content ?? ([] as (TopLevelBlock | RichText)[])
+  ).map((content) => deepChange(content, content?.data?.target?.sys?.id)),
 })
 
 @ObjectType()
