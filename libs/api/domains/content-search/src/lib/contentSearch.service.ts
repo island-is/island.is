@@ -12,7 +12,8 @@ export class ContentSearchService implements SearcherService {
   constructor(private elasticService: ElasticService) {}
 
   getIndex(lang: ContentLanguage) {
-    return SearchIndexes[lang] ?? SearchIndexes.is
+    const languageCode = ContentLanguage[lang]
+    return SearchIndexes[languageCode] ?? SearchIndexes.is
   }
 
   private fixCase(doc) {
