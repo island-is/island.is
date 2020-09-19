@@ -352,6 +352,7 @@ type Namespace {
 }
 
 type AboutPage {
+  id: ID!
   title: String!
   seoDescription: String!
   theme: String!
@@ -436,7 +437,7 @@ type SearchResult {
   items: [Items!]!
 }
 
-union Items = Article | LifeEventPage
+union Items = Article | LifeEventPage | News | AboutPage
 
 type ContentItem {
   id: ID!
@@ -690,10 +691,17 @@ input GetUrlInput {
 
 input SearcherInput {
   queryString: String!
-  types: [String!]
-  language: ContentLanguage
+  types: [SearchableContentTypes!] = [webAboutPage, webArticle, webLifeEventPage, webNews]
+  language: ContentLanguage = en
   size: Int
   page: Int
+}
+
+enum SearchableContentTypes {
+  webAboutPage
+  webArticle
+  webLifeEventPage
+  webNews
 }
 
 enum ContentLanguage {
@@ -715,7 +723,7 @@ enum ItemType {
 
 input WebSearchAutocompleteInput {
   singleTerm: String!
-  language: ContentLanguage = is
+  language: ContentLanguage = en
   size: Int = 10
 }
 

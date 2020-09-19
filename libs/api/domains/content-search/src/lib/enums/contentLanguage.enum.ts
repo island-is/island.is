@@ -1,8 +1,8 @@
 import { registerEnumType } from '@nestjs/graphql'
 
 export enum ContentLanguage {
-  is,
-  en,
+  is = 'is',
+  en = 'is',
 }
 
 registerEnumType(ContentLanguage, { name: 'ContentLanguage' })

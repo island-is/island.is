@@ -145,6 +145,7 @@ export class ElasticService {
     const { queryString, size, page, types } = query
 
     const requestBody = searchQuery({ queryString, size, page, types })
+    logger.info('elastic request', {requestBody})
     const data = await this.findByQuery<
       SearchResponse<MappedData>,
       typeof requestBody
