@@ -6,7 +6,7 @@ import {
   LifeEventPage,
   mapLifeEventPage,
 } from '../../models/lifeEventPage.model'
-import { createTerms } from './utils'
+import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
 export class LifeEventsPageSyncService {

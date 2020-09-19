@@ -3,7 +3,7 @@ import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { INews } from '../../generated/contentfulTypes'
 import { News, mapNews } from '../../models/news.model'
-import { createTerms } from './utils'
+import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
 export class NewsSyncService {
