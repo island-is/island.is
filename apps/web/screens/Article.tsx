@@ -13,7 +13,6 @@ import {
   GridColumn,
   GridRow,
   Tag,
-  Button,
   Divider,
   Link,
 } from '@island.is/island-ui/core'
@@ -37,7 +36,6 @@ import {
   GetNamespaceQuery,
   QueryGetArticleArgs,
   GetArticleQuery,
-  ProcessEntry,
   Article,
   SubArticle,
   Slice,
@@ -382,7 +380,7 @@ const ArticleScreen: Screen<ArticleProps> = ({ article, namespace }) => {
             )}
           </GridColumn>
         </GridRow>
-        <Box paddingTop={subArticle ? 2 : 7}>
+        <Box paddingTop={subArticle ? 2 : 4}>
           <RichText body={(subArticle ?? article).body} />
         </Box>
       </ArticleLayout>
