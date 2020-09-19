@@ -33,7 +33,7 @@ export class LandingPage {
 
 export const mapLandingPage = ({ sys, fields }: ILandingPage): LandingPage => ({
   ...fields,
-  image: fields.image && mapImage(fields.image),
+  image: fields.image?.fields?.file ? mapImage(fields.image) : null,
   actionButton: fields.actionButton && mapLink(fields.actionButton),
   links: fields.links && mapLinkList(fields.links),
   content: fields.content && mapDocument(fields.content, sys.id + ':content'),

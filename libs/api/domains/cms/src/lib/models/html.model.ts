@@ -17,14 +17,14 @@ type RichText = Block | Inline | Text
 const deepChange = (obj: Document | TopLevelBlock | RichText, id: string) => ({
   ...obj,
   data: {
-    ...obj.data,
+    ...obj?.data,
     target: {
-      ...obj.data?.target,
+      ...obj?.data?.target,
       fields: {
-        ...obj.data?.target?.fields,
+        ...obj?.data?.target?.fields,
         details: {
-          ...obj.data?.target?.details,
-          content: (obj.data?.target?.fields?.details?.content ?? []).filter(
+          ...obj?.data?.target?.details,
+          content: (obj?.data?.target?.fields?.details?.content ?? []).filter(
             (field: RichTextContent) => id !== field?.data?.target?.sys?.id,
           ),
         },
@@ -34,10 +34,10 @@ const deepChange = (obj: Document | TopLevelBlock | RichText, id: string) => ({
 })
 
 const sanitizeData = (html: Document | TopLevelBlock) => ({
-  ...deepChange(html, html.data?.target?.sys?.id),
-  content: (html.content as (TopLevelBlock | RichText)[]).map((content) =>
-    deepChange(content, content?.data?.target?.sys?.id),
-  ),
+  ...deepChange(html, html?.data?.target?.sys?.id),
+  content: (
+    html?.content ?? ([] as (TopLevelBlock | RichText)[])
+  ).map((content) => deepChange(content, content?.data?.target?.sys?.id)),
 })
 
 @ObjectType()

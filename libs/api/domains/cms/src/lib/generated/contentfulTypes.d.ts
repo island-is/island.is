@@ -47,7 +47,13 @@ export interface IAlertBanner extends Entry<IAlertBannerFields> {
 
 export interface IArticleFields {
   /** Content status */
-  contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
+  contentStatus:
+    | 'Undefined'
+    | 'Needs work'
+    | 'In review'
+    | 'Needs translation'
+    | 'In translation'
+    | 'Done'
 
   /** Title */
   title: string
@@ -479,7 +485,13 @@ export interface IIconBullet extends Entry<IIconBulletFields> {
 
 export interface ILandingPageFields {
   /** Content status */
-  contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
+  contentStatus:
+    | 'Undefined'
+    | 'Needs work'
+    | 'In review'
+    | 'Needs translation'
+    | 'In translation'
+    | 'Done'
 
   /** Title */
   title: string
@@ -773,7 +785,7 @@ export interface INewsFields {
   intro: string
 
   /** Featured image */
-  image?: Asset | undefined
+  image: Asset
 
   /** Content */
   content?: Document | undefined
@@ -911,7 +923,13 @@ export interface IOrganizationTag extends Entry<IOrganizationTagFields> {
 
 export interface IPageFields {
   /** Content status */
-  contentStatus: 'Undefined' | 'Needs work' | 'In review' | 'Done'
+  contentStatus:
+    | 'Undefined'
+    | 'Needs work'
+    | 'In review'
+    | 'Needs translation'
+    | 'In translation'
+    | 'Done'
 
   /** Page title */
   title: string

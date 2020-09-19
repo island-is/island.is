@@ -142,7 +142,7 @@ export type ArticleGroup = {
 export type ArticleSubgroup = {
   __typename?: 'ArticleSubgroup'
   title: Scalars['String']
-  importance?: Maybe<Scalars['Int']>
+  importance?: Maybe<Scalars['Float']>
   slug: Scalars['String']
 }
 
@@ -311,10 +311,10 @@ export type Article = {
   contentStatus: Scalars['String']
   title: Scalars['String']
   slug: Scalars['String']
-  shortTitle: Scalars['String']
-  intro: Scalars['String']
+  shortTitle?: Maybe<Scalars['String']>
+  intro?: Maybe<Scalars['String']>
   containsApplicationForm?: Maybe<Scalars['Boolean']>
-  importance?: Maybe<Scalars['Int']>
+  importance?: Maybe<Scalars['Float']>
   body: Array<Slice>
   category?: Maybe<ArticleCategory>
   group?: Maybe<ArticleGroup>
@@ -498,7 +498,7 @@ export type LifeEventPage = {
   title: Scalars['String']
   slug: Scalars['String']
   intro: Scalars['String']
-  image: Image
+  image?: Maybe<Image>
   thumbnail?: Maybe<Image>
   content: Array<Slice>
   category?: Maybe<ArticleCategory>
@@ -543,7 +543,7 @@ export type ContentItem = {
   categorySlug?: Maybe<Scalars['String']>
   categoryDescription?: Maybe<Scalars['String']>
   containsApplicationForm?: Maybe<Scalars['Boolean']>
-  importance?: Maybe<Scalars['Int']>
+  importance?: Maybe<Scalars['Float']>
   group?: Maybe<Scalars['String']>
   subgroup?: Maybe<Scalars['String']>
   groupSlug?: Maybe<Scalars['String']>
@@ -1210,6 +1210,7 @@ export type ResolversTypes = {
   ArticleCategory: ResolverTypeWrapper<ArticleCategory>
   ArticleGroup: ResolverTypeWrapper<ArticleGroup>
   ArticleSubgroup: ResolverTypeWrapper<ArticleSubgroup>
+  Float: ResolverTypeWrapper<Scalars['Float']>
   OrganizationTag: ResolverTypeWrapper<OrganizationTag>
   Organization: ResolverTypeWrapper<Organization>
   SubArticle: ResolverTypeWrapper<
@@ -1260,7 +1261,6 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>
   AdgerdirTag: ResolverTypeWrapper<AdgerdirTag>
   AdgerdirPage: ResolverTypeWrapper<AdgerdirPage>
-  Float: ResolverTypeWrapper<Scalars['Float']>
   Organizations: ResolverTypeWrapper<Organizations>
   AdgerdirNews: ResolverTypeWrapper<AdgerdirNews>
   AdgerdirPages: ResolverTypeWrapper<AdgerdirPages>
@@ -1386,6 +1386,7 @@ export type ResolversParentTypes = {
   ArticleCategory: ArticleCategory
   ArticleGroup: ArticleGroup
   ArticleSubgroup: ArticleSubgroup
+  Float: Scalars['Float']
   OrganizationTag: OrganizationTag
   Organization: Organization
   SubArticle: Omit<SubArticle, 'body'> & {
@@ -1434,7 +1435,6 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean']
   AdgerdirTag: AdgerdirTag
   AdgerdirPage: AdgerdirPage
-  Float: Scalars['Float']
   Organizations: Organizations
   AdgerdirNews: AdgerdirNews
   AdgerdirPages: AdgerdirPages
@@ -1711,8 +1711,8 @@ export type ArticleSubgroupResolvers<
   ParentType extends ResolversParentTypes['ArticleSubgroup'] = ResolversParentTypes['ArticleSubgroup']
 > = {
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  importance?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  importance?: Resolver<ResolversTypes['Int'], ParentType, ContextType>
   __isTypeOf?: IsTypeOfResolverFn<ParentType>
 }
 
@@ -1986,13 +1986,18 @@ export type ArticleResolvers<
   contentStatus?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  shortTitle?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
+  shortTitle?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >
+  intro?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   containsApplicationForm?: Resolver<
     Maybe<ResolversTypes['Boolean']>,
     ParentType,
     ContextType
   >
+  importance?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>
   body?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
   category?: Resolver<
     Maybe<ResolversTypes['ArticleCategory']>,
@@ -2344,7 +2349,7 @@ export type LifeEventPageResolvers<
   title?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   slug?: Resolver<ResolversTypes['String'], ParentType, ContextType>
   intro?: Resolver<ResolversTypes['String'], ParentType, ContextType>
-  image?: Resolver<ResolversTypes['Image'], ParentType, ContextType>
+  image?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   thumbnail?: Resolver<Maybe<ResolversTypes['Image']>, ParentType, ContextType>
   content?: Resolver<Array<ResolversTypes['Slice']>, ParentType, ContextType>
   category?: Resolver<
@@ -2450,6 +2455,7 @@ export type ContentItemResolvers<
     ParentType,
     ContextType
   >
+  importance?: Resolver<Maybe<ResolversTypes['Float']>, ParentType, ContextType>
   group?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   subgroup?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
   groupSlug?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>
