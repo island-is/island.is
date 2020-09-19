@@ -1569,8 +1569,11 @@ export type GetSearchResultsQuery = { __typename?: 'Query' } & {
       items: Array<
         | ({ __typename?: 'Article' } & Pick<
             Article,
-            'id' | 'title' | 'slug'
+            'id' | 'title' | 'slug' | 'containsApplicationForm'
           > & {
+              group?: Maybe<
+                { __typename?: 'ArticleGroup' } & Pick<ArticleGroup, 'title'>
+              >
               category?: Maybe<
                 { __typename?: 'ArticleCategory' } & Pick<
                   ArticleCategory,
@@ -1628,8 +1631,11 @@ export type GetSearchResultsDetailedQuery = { __typename?: 'Query' } & {
       items: Array<
         | ({ __typename?: 'Article' } & Pick<
             Article,
-            'id' | 'title' | 'slug'
+            'id' | 'title' | 'slug' | 'containsApplicationForm'
           > & {
+              group?: Maybe<
+                { __typename?: 'ArticleGroup' } & Pick<ArticleGroup, 'title'>
+              >
               category?: Maybe<
                 { __typename?: 'ArticleCategory' } & Pick<
                   ArticleCategory,

@@ -5,7 +5,7 @@ import { IArticle } from '../generated/contentfulTypes'
 import { Slice, mapDocument } from './slice.model'
 
 import { ArticleCategory } from './articleCategory.model'
-import { ArticleGroup } from './articleGroup.model'
+import { ArticleGroup, mapArticleGroup } from './articleGroup.model'
 import { ArticleSubgroup } from './articleSubgroup.model'
 import { Organization, mapOrganization } from './organization.model'
 import { SubArticle, mapSubArticle } from './subArticle.model'
@@ -69,7 +69,7 @@ export const mapArticle = ({ fields, sys }: IArticle): Article => ({
   importance: fields.importance ?? 0,
   body: fields.content ? mapDocument(fields.content, sys.id + ':body') : [],
   category: fields.category?.fields,
-  group: fields.group?.fields,
+  group: mapArticleGroup(fields.group),
   subgroup: fields.subgroup?.fields,
   organization: (fields?.organization ?? [])
     .filter((doc) => !isEmpty(doc))

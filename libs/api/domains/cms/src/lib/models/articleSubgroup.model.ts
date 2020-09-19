@@ -17,7 +17,7 @@ export class ArticleSubgroup {
 export const mapArticleSubgroup = ({
   fields,
 }: IArticleSubgroup): ArticleSubgroup => ({
-  title: fields.title,
-  importance: fields.importance ?? 0,
-  slug: fields.slug,
+  title: fields?.title ?? '',
+  importance: fields?.importance ?? 0,
+  slug: fields?.slug ?? '',
 })

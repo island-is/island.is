@@ -39,6 +39,6 @@ export const mapPageHeaderSlice = ({
     title: fields.title,
     introduction: fields.introduction,
     navigationText: fields.navigationText,
-    links: fields.links.map(mapLink),
+    links: (fields.links ?? []).map(mapLink),
     slices: fields.slices.map(mapTimelineSlice),
   })
