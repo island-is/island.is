@@ -3,7 +3,7 @@ import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import { INews } from '../../generated/contentfulTypes'
 import { News, mapNews } from '../../models/news.model'
-import { createTerms } from './utils'
+import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
 export class NewsSyncService {
@@ -24,7 +24,7 @@ export class NewsSyncService {
           return {
             _id: mapped.id,
             title: mapped.title,
-            content: mapped.intro,
+            content: extractStringsFromObject(JSON.parse(mapped.content)),
             type: 'webNews',
             termPool: createTerms([mapped.title, mapped.intro]),
             response: JSON.stringify(mapped),

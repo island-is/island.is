@@ -6,7 +6,7 @@ import {
   LifeEventPage,
   mapLifeEventPage,
 } from '../../models/lifeEventPage.model'
-import { createTerms } from './utils'
+import { createTerms, extractStringsFromObject } from './utils'
 
 @Injectable()
 export class LifeEventsPageSyncService {
@@ -28,7 +28,7 @@ export class LifeEventsPageSyncService {
           return {
             _id: mapped.id,
             title: mapped.title,
-            content: mapped.intro,
+            content: extractStringsFromObject(mapped.content),
             type: 'webLifeEventPage',
             termPool: createTerms([mapped.title]),
             response: JSON.stringify(mapped),
