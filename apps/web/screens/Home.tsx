@@ -100,18 +100,10 @@ const Home: Screen<HomeProps> = ({
         <FrontpageTabs tabs={frontpageSlides} searchContent={searchContent} />
       </Section>
       <Box marginTop={0}>
-        <Sleeve minHeight={400} sleeveShadow="purple">
-          <Box>
-            <ContentBlock width="large">
-              <Section paddingTop={[8, 8, 6]}>
-                <LifeEventsCardsSection
-                  title={n('lifeEventsTitle')}
-                  lifeEvents={lifeEvents}
-                />
-              </Section>
-            </ContentBlock>
-          </Box>
-        </Sleeve>
+        <LifeEventsCardsSection
+          title={n('lifeEventsTitle')}
+          lifeEvents={lifeEvents}
+        />
       </Box>
       <Box marginTop={0} background="purple100">
         <Section paddingTop={[8, 8, 6]}>

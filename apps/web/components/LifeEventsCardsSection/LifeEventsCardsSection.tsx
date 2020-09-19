@@ -4,11 +4,14 @@ import {
   GridContainer,
   GridRow,
   GridColumn,
+  Swiper,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { useI18n } from '@island.is/web/i18n'
 import routeNames from '@island.is/web/i18n/routeNames'
 import { LifeEventCard } from './components/LifeEventCard'
 import { GetLifeEventsQuery } from '../../graphql/schema'
+import { Sleeve } from '@island.is/island-ui/core'
 
 interface LifeEventsSectionProps {
   title?: string
@@ -22,11 +25,24 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
   const { activeLocale } = useI18n()
   const { makePath } = routeNames(activeLocale)
 
-  return (
+  const renderLifeEventCard = (lifeEvent) => (
+    <LifeEventCard
+      key={lifeEvent.title}
+      title={lifeEvent.title}
+      intro={lifeEvent.intro}
+      href={makePath('lifeEvent', '[slug]')}
+      as={makePath('lifeEvent', lifeEvent.slug)}
+      image={
+        lifeEvent.thumbnail ? lifeEvent.thumbnail.url : lifeEvent.image.url
+      }
+    />
+  )
+
+  const renderDesktopView = (lifeEvents) => (
     <GridContainer>
       <GridRow>
         <GridColumn span={['6/12', '6/12', '12/12']}>
-          <Typography variant="h3" as="h2" paddingBottom={4}>
+          <Typography variant="h3" as="h3" paddingBottom={4}>
             {title}
           </Typography>
         </GridColumn>
@@ -38,21 +54,30 @@ export const LifeEventsCardsSection: React.FC<LifeEventsSectionProps> = ({
             paddingBottom={3}
             key={lifeEvent.title}
           >
-            <LifeEventCard
-              title={lifeEvent.title}
-              intro={lifeEvent.intro}
-              href={makePath('lifeEvent', '[slug]')}
-              as={makePath('lifeEvent', lifeEvent.slug)}
-              image={
-                lifeEvent.thumbnail
-                  ? lifeEvent.thumbnail.url
-                  : lifeEvent.image.url
-              }
-            />
+            {renderLifeEventCard(lifeEvent)}
           </GridColumn>
         ))}
       </GridRow>
     </GridContainer>
+  )
+
+  return (
+    <>
+      <Hidden below="sm">
+        {lifeEvents.length > 6 ? (
+          <Sleeve sleeveShadow="purple">{renderDesktopView(lifeEvents)}</Sleeve>
+        ) : (
+          renderDesktopView(lifeEvents)
+        )}
+      </Hidden>
+      <GridContainer>
+        <Hidden above="xs">
+          <Swiper>
+            {lifeEvents.map((lifeEvent) => renderLifeEventCard(lifeEvent))}
+          </Swiper>
+        </Hidden>
+      </GridContainer>
+    </>
   )
 }
 
